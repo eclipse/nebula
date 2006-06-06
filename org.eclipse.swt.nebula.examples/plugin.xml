@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+   <extension-point id="examples" name="Nebula Example Part" schema="schema/examples.exsd"/>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="org.eclipse.swt.nebula.examples.ExamplesView"
+            icon="icons/eclipse.png"
+            id="org.eclipse.swt.nebula.examples.view"
+            name="Nebula Examples"/>
+   </extension>
+   <extension
+         point="org.eclipse.swt.nebula.examples.examples">
+      <tab
+            class="org.eclipse.swt.nebula.examples.parts.GridExampleTab"
+            name="Grid"/>
+   </extension>
+
+</plugin>
