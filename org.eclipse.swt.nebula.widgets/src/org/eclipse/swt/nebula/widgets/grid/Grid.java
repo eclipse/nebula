@@ -58,7 +58,7 @@ import java.util.List;
  * <p>
  * <dl>
  * <dt><b>Styles:</b></dt>
- * <dd>SWT.SINGLE, SWT.MULTI, SWT.NO_FOCUS</dd>
+ * <dd>SWT.SINGLE, SWT.MULTI, SWT.NO_FOCUS, SWT.CHECK</dd>
  * <dt><b>Events:</b></dt>
  * <dd>Selection, DefaultSelection</dd>
  * </dl>
@@ -383,7 +383,7 @@ public class Grid extends Canvas
     private static int checkStyle(int style)
     {
         int mask = SWT.BORDER | SWT.LEFT_TO_RIGHT | SWT.RIGHT_TO_LEFT | SWT.H_SCROLL | SWT.V_SCROLL
-                   | SWT.SINGLE | SWT.MULTI | SWT.NO_FOCUS;
+                   | SWT.SINGLE | SWT.MULTI | SWT.NO_FOCUS | SWT.CHECK;
         int newStyle = style & mask;
         newStyle |= SWT.DOUBLE_BUFFERED;
         return newStyle;
@@ -5177,5 +5177,7 @@ public class Grid extends Canvas
             return;
         }
         this.columnScrolling = columnScrolling;
+        scrollValuesObsolete = true;
+        redraw();        
     }
 }

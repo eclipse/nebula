@@ -15,6 +15,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.nebula.examples.AbstractExampleTab;
 import org.eclipse.swt.nebula.examples.ButtonFactory;
@@ -28,6 +29,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
 /**
@@ -43,6 +45,19 @@ public class GridExampleTab extends AbstractExampleTab
     private Button border;
     private Button single;
     private Button multi;
+    private Grid grid;
+    private Button showLines;
+    private Button showHeader;
+    private Button showRowHeader;
+    private Button columnScrolling;
+    private Button moveableColumns;
+    private Button resizeableColumns;
+    private Button left;
+    private Button center;
+    private Button right;
+    private Button columnCheck;
+    private Button check;
+    private Button toggle;
 
     public GridExampleTab()
     {
@@ -56,6 +71,7 @@ public class GridExampleTab extends AbstractExampleTab
         Group styles = new Group(parent,SWT.SHADOW_ETCHED_IN);
         styles.setText("Styles");
         styles.setLayout(new GridLayout());
+        styles.setLayoutData(new GridData(GridData.FILL_VERTICAL));
         
         Listener listenerRecreates = new Listener()
         {
@@ -75,6 +91,85 @@ public class GridExampleTab extends AbstractExampleTab
         single = ButtonFactory.create(selectionComp,SWT.RADIO,"SWT.SINGLE",listenerRecreates,true);
         multi = ButtonFactory.create(selectionComp,SWT.RADIO,"SWT.MULTI",listenerRecreates);
 
+        check = ButtonFactory.create(styles, SWT.CHECK, "SWT.CHECK", listenerRecreates,false);
+        Label l = new Label(styles,SWT.NONE);
+        l.setText("Styles for Second Column:");
+        
+        Composite alignmentComp = new Composite(styles,SWT.NONE);
+        GridLayoutFactory.swtDefaults().margins(0,0).applyTo(alignmentComp);
+        
+        left = ButtonFactory.create(alignmentComp,SWT.RADIO, "SWT.LEFT",listenerRecreates,true);
+        center = ButtonFactory.create(alignmentComp,SWT.RADIO, "SWT.CENTER",listenerRecreates,false);
+        right = ButtonFactory.create(alignmentComp,SWT.RADIO, "SWT.RIGHT",listenerRecreates,false);
+        
+        columnCheck = ButtonFactory.create(styles, SWT.CHECK, "SWT.CHECK", listenerRecreates, false);
+        
+        l = new Label(styles,SWT.NONE);
+        l.setText("Styles for Column Group:");
+        
+        toggle = ButtonFactory.create(styles,SWT.CHECK,"SWT.TOGGLE",listenerRecreates,true);
+        
+        Group other = new Group(parent,SWT.SHADOW_ETCHED_IN);
+        other.setText("Other");
+        other.setLayout(new GridLayout());
+        other.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+        
+        showLines = ButtonFactory.create(other, SWT.CHECK, "Show Lines", new Listener()
+        {
+            public void handleEvent(Event event)
+            {
+                grid.setLinesVisible(showLines.getSelection());
+            }
+        }, true);
+        
+        showHeader = ButtonFactory.create(other, SWT.CHECK, "Show Column Headers", new Listener()
+        {
+            public void handleEvent(Event event)
+            {
+                grid.setHeaderVisible(showHeader.getSelection());
+            }
+        }, true);
+        
+        showRowHeader = ButtonFactory.create(other, SWT.CHECK, "Show Row Headers", new Listener()
+        {
+            public void handleEvent(Event event)
+            {
+                grid.setRowHeaderVisible(showRowHeader.getSelection());
+                columnScrolling.setEnabled(!showRowHeader.getSelection());
+                if (showRowHeader.getSelection())
+                    columnScrolling.setSelection(true);
+            }
+        });
+        
+        columnScrolling = ButtonFactory.create(other, SWT.CHECK, "Scroll by Column", new Listener()
+        {
+            public void handleEvent(Event event)
+            {
+                grid.setColumnScrolling(columnScrolling.getSelection());
+            }        
+        });
+        
+        moveableColumns = ButtonFactory.create(other, SWT.CHECK, "Moveable Columns", new Listener()
+        {
+            public void handleEvent(Event event)
+            {
+                for (int i = 0; i < grid.getColumns().length; i++)
+                {
+                    grid.getColumn(i).setMoveable(moveableColumns.getSelection());
+                }
+            }
+        }, true);
+
+        resizeableColumns = ButtonFactory.create(other, SWT.CHECK, "Resizeable Columns",new Listener()
+         {
+             public void handleEvent(Event event)
+             {
+                 for (int i = 0; i < grid.getColumns().length; i++)
+                 {
+                     grid.getColumn(i).setResizeable(resizeableColumns.getSelection());
+                 }
+             }
+         }, true);
     }
 
     public Control createControl(Composite parent)
@@ -96,29 +191,43 @@ public class GridExampleTab extends AbstractExampleTab
         if (multi.getSelection())
             style |= SWT.MULTI;
         
-        Grid grid = new Grid(parent, style);
+        if (check.getSelection())
+            style |= SWT.CHECK;
         
+        grid = new Grid(parent, style);
         grid.setHeaderVisible(true);
         
-        GridColumn col = new GridColumn(grid, SWT.CHECK);
+        GridColumn col = new GridColumn(grid, SWT.NONE);
         col.setTree(true);
         col.setText("First Column");
         col.setWidth(140);
-//        col.setMoveable(setMoveableColumns.getSelection());
-//        col.setResizeable(setResizeableColumns.getSelection());
         
 //        if (showHeaderImage.getSelection())
 //            col.setImage(ExamplesPlugin.getImage("icons/eclipse.png"));
         
-        GridColumnGroup group = new GridColumnGroup(grid,SWT.TOGGLE);
+        int groupStyle = SWT.NONE;
+        if (toggle.getSelection())
+            groupStyle |= SWT.TOGGLE;
+        
+        GridColumnGroup group = new GridColumnGroup(grid,groupStyle);
         group.setText("Column Grouping");
         
-        GridColumn col2 = new GridColumn(group,SWT.NONE);
+        
+        int colStyle = SWT.NONE;
+        
+        if (left.getSelection())
+            colStyle |= SWT.LEFT;
+        if (center.getSelection())
+            colStyle |= SWT.CENTER;
+        if (right.getSelection())
+            colStyle |= SWT.RIGHT;
+        if (columnCheck.getSelection())
+            colStyle |= SWT.CHECK;
+        
+        GridColumn col2 = new GridColumn(group,colStyle);
         col2.setText("The Column #2");
         col2.setWidth(230);
         col2.setResizeable(false);
-//        col2.setMoveable(setMoveableColumns.getSelection());
-//        col2.setResizeable(setResizeableColumns.getSelection());
         //col2.setSummary(false);
         
         final GridColumn col3 = new GridColumn(group, SWT.NONE);
@@ -137,8 +246,6 @@ public class GridExampleTab extends AbstractExampleTab
                 }               
             }       
         });
-//        col3.setMoveable(setMoveableColumns.getSelection());
-//        col3.setResizeable(setResizeableColumns.getSelection());
         
         final GridItem item = new GridItem(grid,SWT.NONE);
         item.setText("Item #000000000000000000000");
@@ -196,18 +303,39 @@ public class GridExampleTab extends AbstractExampleTab
             }
         }
         
-//        grid.setRowHeaderVisible(showRowHeader.getSelection());
-//        grid.setHeaderVisible(showHeader.getSelection());
-//        grid.setLinesVisible(setLinesVisible.getSelection());
-//        grid.setColumnScrolling(setColumnScrolling.getSelection());
-
         GridColumn col4 = new GridColumn(grid,SWT.NONE);
         col4.setText("4th col");
         col4.setWidth(50);
-//        col4.setMoveable(setMoveableColumns.getSelection());
-//        col4.setResizeable(setResizeableColumns.getSelection());
+
+        
+        grid.setRowHeaderVisible(showRowHeader.getSelection());
+        grid.setHeaderVisible(showHeader.getSelection());
+        grid.setLinesVisible(showLines.getSelection());
+        grid.setColumnScrolling(columnScrolling.getSelection());
+        for (int i = 0; i < grid.getColumns().length; i++)
+        {
+            grid.getColumn(i).setMoveable(moveableColumns.getSelection());
+        }
+        for (int i = 0; i < grid.getColumns().length; i++)
+        {
+            grid.getColumn(i).setResizeable(resizeableColumns.getSelection());
+        }  
+        
         
         return grid;
+    }
+
+    public String[] createLinks()
+    {
+        String[] links = new String[3];
+        
+        links[0] = "<a href=\"http://www.eclipse.org/nebula/widgets/grid/grid.php\">Grid Home Page</a>";
+        
+        links[1] = "<a href=\"http://www.eclipse.org/nebula/widgets/grid/snippets.php\">Snippets</a>";
+        
+        links[2] = "<a href=\"https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=&classification=Technology&product=Nebula&component=Grid&long_desc_type=allwordssubstr&long_desc=&bug_file_loc_type=allwordssubstr&bug_file_loc=&status_whiteboard_type=allwordssubstr&status_whiteboard=&keywords_type=allwords&keywords=&emailtype1=substring&email1=&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=&chfieldto=Now&chfieldvalue=&cmdtype=doit&order=Reuse+same+sort+as+last+time&field0-0-0=noop&type0-0-0=noop&value0-0-0=\">Bugs</a>";
+        
+        return links;
     }
 
 }

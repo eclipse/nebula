@@ -12,6 +12,7 @@
 package org.eclipse.swt.nebula.examples;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ArmEvent;
 import org.eclipse.swt.events.ControlEvent;
@@ -23,6 +24,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.TraverseEvent;
@@ -31,6 +33,7 @@ import org.eclipse.swt.events.TypedEvent;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -38,6 +41,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
@@ -103,6 +107,8 @@ public abstract class AbstractExampleTab
      * @return the example control.
      */
     public abstract Control createControl(Composite parent);
+    
+    public abstract String[] createLinks();
 
     /**
      * Recreates the example control.  This method will call <code>createControl</code>.  Extenders 
@@ -163,10 +169,21 @@ public abstract class AbstractExampleTab
         Composite paramsArea = new Composite(paramsGroup,SWT.NONE);
         createParameters(paramsArea);
         
-        Group sizeGroup = new Group(paramsGroup,SWT.SHADOW_ETCHED_IN);
+        Composite lowerParamsArea = new Composite(paramsGroup,SWT.NONE);
+        lowerParamsArea.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        GridLayoutFactory.swtDefaults().margins(0,0).numColumns(2).applyTo(lowerParamsArea);
+        
+        Group sizeGroup = new Group(lowerParamsArea,SWT.SHADOW_ETCHED_IN);
         sizeGroup.setText("Size");
+        sizeGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
         
         createSize(sizeGroup);
+        
+        Group linksGroup = new Group(lowerParamsArea, SWT.SHADOW_ETCHED_IN);
+        linksGroup.setText("Links");
+        linksGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
+        
+        createLinks(linksGroup);
         
         Group listenersGroup = new Group(parent,SWT.SHADOW_ETCHED_IN);
         listenersGroup.setText("Listeners");
@@ -179,6 +196,29 @@ public abstract class AbstractExampleTab
         recreateExample();
     }
     
+    private void createLinks(Composite parent)
+    {
+        parent.setLayout(new GridLayout());
+        
+        String[] links = createLinks();
+        
+        if (links == null)
+            return;
+        
+        for (int i = 0; i < links.length; i++)
+        {
+            Link link = new Link(parent,SWT.NONE);
+            link.setText(links[i]);
+            link.addSelectionListener(new SelectionAdapter()
+            {
+                public void widgetSelected(SelectionEvent e)
+                {
+                    Program.launch(e.text);
+                }            
+            });
+        }
+    }
+
     /**
      * @param parent
      */
