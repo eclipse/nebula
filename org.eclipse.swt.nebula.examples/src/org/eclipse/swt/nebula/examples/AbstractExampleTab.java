@@ -258,7 +258,7 @@ public abstract class AbstractExampleTab
     {
         parent.setLayout(new GridLayout(4,false));
         
-        Button selectListeners = ButtonFactory.create(parent,SWT.PUSH,"Select Listeners",new Listener()
+        ButtonFactory.create(parent,SWT.PUSH,"Select Listeners",new Listener()
         {
             public void handleEvent(Event event)
             {
