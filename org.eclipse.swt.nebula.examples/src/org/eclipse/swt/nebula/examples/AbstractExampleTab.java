@@ -158,7 +158,12 @@ public abstract class AbstractExampleTab
         parent.setLayout(gl);
         
         controlArea = new Composite(parent,SWT.NONE);
-        controlArea.setLayoutData(new GridData(GridData.FILL_BOTH));
+        GridData gd = new GridData();
+        gd.verticalAlignment = SWT.FILL;
+        gd.horizontalAlignment = SWT.FILL;
+        gd.grabExcessHorizontalSpace = true;
+        gd.minimumHeight = 100;
+        controlArea.setLayoutData(gd);
         controlArea.setLayout(new GridLayout());
         
         Group paramsGroup = new Group(parent,SWT.SHADOW_ETCHED_IN);
@@ -187,7 +192,7 @@ public abstract class AbstractExampleTab
         
         Group listenersGroup = new Group(parent,SWT.SHADOW_ETCHED_IN);
         listenersGroup.setText("Listeners");
-        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 2;
         listenersGroup.setLayoutData(gd);
         
@@ -325,7 +330,7 @@ public abstract class AbstractExampleTab
         
         final Text eventText = new Text(parent,SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-        gd.heightHint = 120;
+        gd.heightHint = 120;     
         gd.horizontalSpan = 4;
         eventText.setLayoutData(gd);
         
