@@ -32,7 +32,6 @@ import org.eclipse.swt.widgets.TypedListener;
  * </dl>
  * 
  * @author chris.gross@us.ibm.com
- * @since 1.0.0
  */
 public class GridColumn extends Item
 {
@@ -171,6 +170,27 @@ public class GridColumn extends Item
         init(parent, style, index);
     }
 
+    /**
+     * Constructs a new instance of this class given its parent column group (which must be a
+     * <code>GridColumnGroup</code>), a style value describing its behavior and
+     * appearance, and the index at which to place it in the items maintained by
+     * its parent.
+     * 
+     * @param parent an Grid control which will be the parent of the new
+     * instance (cannot be null)
+     * @param style the style of control to construct
+     * @param index the index to store the receiver in its parent
+     * @throws IllegalArgumentException
+     * <ul>
+     * <li>ERROR_NULL_ARGUMENT - if the parent is null</li>
+     * </ul>
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the parent</li>
+     * <li>ERROR_INVALID_SUBCLASS - if this class is not an allowed subclass</li>
+     * </ul>
+     */
     public GridColumn(GridColumnGroup parent, int style)
     {
         super(parent.getParent(), style, parent.getNewColumnIndex());
@@ -407,7 +427,7 @@ public class GridColumn extends Item
     {
         if (group != null)
         {
-            if ((group.isExpanded() && !isDetail()) || (!group.isExpanded() && !isSummary()))
+            if ((group.getExpanded() && !isDetail()) || (!group.getExpanded() && !isSummary()))
             {
                 return false;
             }

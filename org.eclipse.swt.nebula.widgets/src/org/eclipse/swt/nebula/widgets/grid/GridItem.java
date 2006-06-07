@@ -35,7 +35,6 @@ import java.util.List;
  * </dl>
  * 
  * @author chris.gross@us.ibm.com
- * @since 1.0.0
  */
 public class GridItem extends Item
 {

@@ -19,7 +19,6 @@ import org.eclipse.swt.widgets.Widget;
  * unchecked.
  * 
  * @author chris.gross@us.ibm.com
- * @since 2.0.0
  */
 public class CheckEvent extends TypedEvent
 {

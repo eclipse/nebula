@@ -8,7 +8,7 @@
  * Contributors:
  *    chris.gross@us.ibm.com - initial API and implementation
  *******************************************************************************/ 
-package org.eclipse.swt.nebula.widgets.grid;
+package org.eclipse.swt.nebula.widgets.grid.internal;
 
 import org.eclipse.swt.widgets.Event;
 

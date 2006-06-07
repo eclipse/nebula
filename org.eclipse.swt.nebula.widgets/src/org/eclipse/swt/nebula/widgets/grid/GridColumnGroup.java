@@ -15,8 +15,15 @@ import org.eclipse.swt.nebula.widgets.grid.internal.DefaultColumnGroupHeaderRend
 import org.eclipse.swt.widgets.Item;
 
 /**
+ * Instances of this class represent a column group in a grid widget.
+ * <dl>
+ * <dt><b>Styles:</b></dt>
+ * <dd>SWT.TOGGLE</dd>
+ * <dt><b>Events:</b></dt>
+ * <dd>Selection</dd>
+ * </dl>
+ * 
  * @author chris.gross@us.ibm.com
- * @since 2.0.0
  */
 public class GridColumnGroup extends Item
 {
@@ -32,6 +39,13 @@ public class GridColumnGroup extends Item
      */
     private IInternalWidget headerRenderer = new DefaultColumnGroupHeaderRenderer();
 
+    /**
+     * Constructs a new instance of this class given its parent (which must be a Table) and a style 
+     * value describing its behavior and appearance. 
+     * 
+     * @param parent the parent table
+     * @param style the style of the group
+     */
     public GridColumnGroup(Grid parent, int style)
     {
         super(parent, style);
@@ -66,6 +80,8 @@ public class GridColumnGroup extends Item
     }
 
     /**
+     * Returns the columns within this group.
+     * 
      * @return the columns
      */
     public GridColumn[] getColumns()
@@ -106,14 +122,18 @@ public class GridColumnGroup extends Item
     }
 
     /**
-     * @return the expanded
+     * Returns true if the receiver is expanded, false otherwise.
+     * 
+     * @return the expanded attribute
      */
-    public boolean isExpanded()
+    public boolean getExpanded()
     {
         return expanded;
     }
 
     /**
+     * Sets the expanded state of the receiver.
+     * 
      * @param expanded the expanded to set
      */
     public void setExpanded(boolean expanded)

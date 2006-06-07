@@ -34,6 +34,7 @@ import org.eclipse.swt.nebula.widgets.grid.internal.DefaultEmptyRowHeaderRendere
 import org.eclipse.swt.nebula.widgets.grid.internal.DefaultFocusRenderer;
 import org.eclipse.swt.nebula.widgets.grid.internal.DefaultRowHeaderRenderer;
 import org.eclipse.swt.nebula.widgets.grid.internal.DefaultTopLeftRenderer;
+import org.eclipse.swt.nebula.widgets.grid.internal.IScrollBarProxy;
 import org.eclipse.swt.nebula.widgets.grid.internal.NullScrollBarProxy;
 import org.eclipse.swt.nebula.widgets.grid.internal.ScrollBarProxyAdapter;
 import org.eclipse.swt.widgets.Canvas;
@@ -64,7 +65,6 @@ import java.util.List;
  * </dl>
  * 
  * @author chris.gross@us.ibm.com
- * @since 1.0.0
  */
 public class Grid extends Canvas
 {
@@ -1153,7 +1153,7 @@ public class Grid extends Canvas
      * created the receiver</li>
      * </ul>
      */
-    public IScrollBarProxy getExternalHorizontalScrollBar()
+    protected IScrollBarProxy getExternalHorizontalScrollBar()
     {
         checkWidget();
         return hScroll;
@@ -1171,7 +1171,7 @@ public class Grid extends Canvas
      * created the receiver</li>
      * </ul>
      */
-    public IScrollBarProxy getExternalVerticalScrollBar()
+    protected IScrollBarProxy getExternalVerticalScrollBar()
     {
         checkWidget();
         return vScroll;
@@ -2208,7 +2208,7 @@ public class Grid extends Canvas
      * created the receiver</li>
      * </ul>
      */
-    public void setHorizontalScrollBarProxy(IScrollBarProxy scroll)
+    protected void setHorizontalScrollBarProxy(IScrollBarProxy scroll)
     {
         checkWidget();
         if (getHorizontalBar() != null)
@@ -2234,7 +2234,7 @@ public class Grid extends Canvas
      * created the receiver</li>
      * </ul>
      */
-    public void setlVerticalScrollBarProxy(IScrollBarProxy scroll)
+    protected void setlVerticalScrollBarProxy(IScrollBarProxy scroll)
     {
         checkWidget();
         if (getVerticalBar() != null)
@@ -3787,8 +3787,8 @@ public class Grid extends Canvas
                     while (nextCol != null && nextCol.getColumnGroup() == column.getColumnGroup())
                     {
 
-                        if ((nextCol.getColumnGroup().isExpanded() && !nextCol.isDetail())
-                            || (!nextCol.getColumnGroup().isExpanded() && !nextCol.isSummary()))
+                        if ((nextCol.getColumnGroup().getExpanded() && !nextCol.isDetail())
+                            || (!nextCol.getColumnGroup().getExpanded() && !nextCol.isSummary()))
                         {
                         }
                         else

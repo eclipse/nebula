@@ -64,7 +64,7 @@ public class DefaultColumnGroupHeaderRenderer extends AbstractInternalWidget
         if ((group.getStyle() & SWT.TOGGLE) != 0)
         {
             toggleRenderer.setHover(isHover() && getHoverDetail().equals("toggle"));
-            toggleRenderer.setExpanded(group.isExpanded());
+            toggleRenderer.setExpanded(group.getExpanded());
             toggleRenderer.setBounds(getToggleBounds());
             toggleRenderer.paint(gc, null);
         }
@@ -118,7 +118,7 @@ public class DefaultColumnGroupHeaderRenderer extends AbstractInternalWidget
             {
                 if (getToggleBounds().contains(point))
                 {                    
-                    group.setExpanded(!group.isExpanded());
+                    group.setExpanded(!group.getExpanded());
                     return true;
                 }
             }

@@ -1,6 +1,5 @@
 package org.eclipse.swt.nebula.widgets.grid.internal;
 
-import org.eclipse.swt.nebula.widgets.grid.IScrollBarProxy;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.ScrollBar;
 

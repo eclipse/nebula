@@ -20,7 +20,6 @@ package org.eclipse.swt.nebula.widgets.grid;
  * 
  * @see CheckEvent
  * @author chris.gross@us.ibm.com
- * @since 2.0.0
  */
 public interface ICheckListener
 {
