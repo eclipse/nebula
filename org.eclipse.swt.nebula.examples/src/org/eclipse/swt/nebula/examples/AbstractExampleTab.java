@@ -403,7 +403,7 @@ public abstract class AbstractExampleTab
                 break;
 
             case SWT.MouseUp: case SWT.MouseDown: case SWT.MouseDoubleClick: case SWT.MouseMove:
-            case SWT.MouseEnter: case SWT.MouseExit: case SWT.MouseHover:
+            case SWT.MouseEnter: case SWT.MouseExit: case SWT.MouseHover: case SWT.MouseWheel:
                 typedEvent = new MouseEvent(e);
                 break;
                 
