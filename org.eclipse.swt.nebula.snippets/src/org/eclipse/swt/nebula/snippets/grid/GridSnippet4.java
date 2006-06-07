@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Shell;
  * Create a grid with static column group.
  *
  * For a list of all Nebula Grid example snippets see
- * http://www.eclipse.org/nebula/grid/snippets.php
+ * http://www.eclipse.org/nebula/widgets/grid/snippets.php
  */
 public class GridSnippet4 {
 

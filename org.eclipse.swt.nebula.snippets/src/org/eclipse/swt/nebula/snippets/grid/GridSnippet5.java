@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Shell;
  * 'detail' only column (i.e. it will show/hide as the group is expanded/collapsed).
  *
  * For a list of all Nebula Grid example snippets see
- * http://www.eclipse.org/nebula/grid/snippets.php
+ * http://www.eclipse.org/nebula/widgets/grid/snippets.php
  */
 public class GridSnippet5 {
 
