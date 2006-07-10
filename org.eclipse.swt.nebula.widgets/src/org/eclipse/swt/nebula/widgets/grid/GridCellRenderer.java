@@ -31,7 +31,9 @@ public abstract class GridCellRenderer extends AbstractInternalWidget
 
     private boolean rowFocus = false;
 
-    private boolean columnFocus = false;
+    private boolean cellFocus = false;
+    
+    private boolean cellSelected = false;
 
     /**
      * @return Returns the row.
@@ -148,17 +150,17 @@ public abstract class GridCellRenderer extends AbstractInternalWidget
     /**
      * @return Returns the columnFocus.
      */
-    public boolean isColumnFocus()
+    public boolean isCellFocus()
     {
-        return columnFocus;
+        return cellFocus;
     }
 
     /**
      * @param columnFocus The columnFocus to set.
      */
-    public void setColumnFocus(boolean columnFocus)
+    public void setCellFocus(boolean columnFocus)
     {
-        this.columnFocus = columnFocus;
+        this.cellFocus = columnFocus;
     }
 
     /**
@@ -175,6 +177,22 @@ public abstract class GridCellRenderer extends AbstractInternalWidget
     public void setRowFocus(boolean rowFocus)
     {
         this.rowFocus = rowFocus;
+    }
+
+    /**
+     * @return the cellSelected
+     */
+    public boolean isCellSelected()
+    {
+        return cellSelected;
+    }
+
+    /**
+     * @param cellSelected the cellSelected to set
+     */
+    public void setCellSelected(boolean cellSelected)
+    {
+        this.cellSelected = cellSelected;
     }
 
 }

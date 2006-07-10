@@ -58,6 +58,9 @@ public class GridExampleTab extends AbstractExampleTab
     private Button columnCheck;
     private Button check;
     private Button toggle;
+    private Button cellSelection;
+    private Button selectionEnabled;
+    private Button columnCellSelection;
 
     public GridExampleTab()
     {
@@ -170,6 +173,44 @@ public class GridExampleTab extends AbstractExampleTab
                  }
              }
          }, true);
+        
+        selectionEnabled = ButtonFactory.create(other, SWT.CHECK, "Selection Enabled",new Listener()
+                                             {
+            public void handleEvent(Event event)
+            {
+                for (int i = 0; i < grid.getColumns().length; i++)
+                {
+                    grid.setSelectionEnabled(selectionEnabled.getSelection());
+                }
+            }
+        },true);
+        
+        cellSelection = ButtonFactory.create(other, SWT.CHECK, "Cell Selection",new Listener()
+                                             {
+            public void handleEvent(Event event)
+            {
+                for (int i = 0; i < grid.getColumns().length; i++)
+                {
+                    grid.setCellSelection(cellSelection.getSelection());
+                }
+            }
+        });
+        
+        
+        l = new Label(other,SWT.NONE);
+        l.setText("Properties for Second Column:");
+        
+        columnCellSelection = ButtonFactory.create(other, SWT.CHECK, "Cell Selection Enabled",new Listener()
+                                             {
+            public void handleEvent(Event event)
+            {
+                for (int i = 0; i < grid.getColumns().length; i++)
+                {
+                    grid.getColumn(1).setCellSelectionEnabled(columnCellSelection.getSelection());
+                }
+            }
+        },true);
+        
     }
 
     public Control createControl(Composite parent)
@@ -282,7 +323,7 @@ public class GridExampleTab extends AbstractExampleTab
         item55.setForeground(1,Display.getCurrent().getSystemColor(SWT.COLOR_RED));
         item55.setBackground(1,Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GREEN));
         
-        item55.setColumnSpan(1,5);
+        item55.setColumnSpan(1,2);
         
         
         GridItem item52 = new GridItem(item55,SWT.NONE);
@@ -320,7 +361,9 @@ public class GridExampleTab extends AbstractExampleTab
         {
             grid.getColumn(i).setResizeable(resizeableColumns.getSelection());
         }  
-        
+        grid.setSelectionEnabled(selectionEnabled.getSelection());
+        grid.setCellSelection(cellSelection.getSelection());
+        grid.getColumn(1).setCellSelectionEnabled(columnCellSelection.getSelection());
         
         return grid;
     }

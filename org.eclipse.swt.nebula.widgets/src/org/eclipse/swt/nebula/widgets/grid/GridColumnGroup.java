@@ -10,9 +10,12 @@
  *******************************************************************************/ 
 package org.eclipse.swt.nebula.widgets.grid;
 
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.nebula.widgets.grid.internal.DefaultColumnGroupHeaderRenderer;
 import org.eclipse.swt.widgets.Item;
+
+import java.util.Vector;
 
 /**
  * Instances of this class represent a column group in a grid widget.
@@ -139,7 +142,39 @@ public class GridColumnGroup extends Item
     public void setExpanded(boolean expanded)
     {
         this.expanded = expanded;
+        
+        
+        
+        if (!expanded && getParent().isCellSelection())
+        {
+            Vector collapsedCols = new Vector();
+            for (int j = 0; j < columns.length; j++)
+            {
+                if (!columns[j].isSummary())
+                {
+                    collapsedCols.add(new Integer(getParent().indexOf(columns[j])));                    
+                }
+            }   
+            Point[] selection = getParent().getSelectedCells();
+            for (int i = 0; i < selection.length; i++)
+            {
+                if (collapsedCols.contains(new Integer(selection[i].x)))
+                {
+                    getParent().deselectCell(selection[i]);
+                }
+            }
 
+            if (getParent().getFocusColumn() != null && getParent().getFocusColumn().getColumnGroup() == this)
+            {
+                getParent().updateColumnFocus();
+            }
+            
+            parent.updateColumnSelection();
+        }
+
+        if (parent.isCellSelection())
+            
+            
         parent.refreshHoverState();
         parent.setScrollValuesObsolete();
         parent.redraw();

@@ -13,7 +13,10 @@ package org.eclipse.swt.nebula.widgets.grid.internal;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.nebula.widgets.grid.Grid;
 import org.eclipse.swt.nebula.widgets.grid.GridCellRenderer;
+import org.eclipse.swt.nebula.widgets.grid.GridColumn;
 import org.eclipse.swt.nebula.widgets.grid.GridItem;
 import org.eclipse.swt.nebula.widgets.grid.IInternalWidget;
 
@@ -42,8 +45,15 @@ public class DefaultCellRenderer extends GridCellRenderer
         GridItem item = (GridItem)value;
 
         gc.setFont(item.getFont(getColumn()));
+        
+        boolean drawAsSelected = isSelected();
+        
+        if (isCellSelected())
+        {
+            drawAsSelected = true;//(!isCellFocus());        
+        }
 
-        if (isSelected())
+        if (drawAsSelected)
         {
             gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION));
             gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT));
@@ -61,14 +71,10 @@ public class DefaultCellRenderer extends GridCellRenderer
             gc.setForeground(item.getForeground(getColumn()));
         }
 
-        if (isRowFocus() && isColumnFocus())
-        {
-            gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_RED));
-        }
-
         gc.fillRectangle(getBounds().x, getBounds().y, getBounds().width + 1,
                          getBounds().height + 1);
 
+        
         int x = leftMargin;
 
         if (isTree())
@@ -130,7 +136,7 @@ public class DefaultCellRenderer extends GridCellRenderer
             }
         }
 
-        if (isSelected())
+        if (drawAsSelected)
         {
             gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT));
         }
@@ -143,7 +149,15 @@ public class DefaultCellRenderer extends GridCellRenderer
 
         if (item.getParent().getLinesVisible())
         {
-            gc.setForeground(item.getParent().getLineColor());
+            if (isCellSelected())
+            {
+                //XXX: should be user definable?
+                gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
+            }
+            else
+            {
+                gc.setForeground(item.getParent().getLineColor());
+            }
             gc.drawLine(getBounds().x, getBounds().y + getBounds().height, getBounds().x
                                                                            + getBounds().width,
                         getBounds().y + getBounds().height);
@@ -151,6 +165,76 @@ public class DefaultCellRenderer extends GridCellRenderer
                                                                               + getBounds().width
                                                                               - 1,
                         getBounds().y + getBounds().height);
+        }
+        
+        if (isCellFocus())
+        {
+//            Grid grid = item.getParent();
+//            GridColumn column = grid.getColumn(getColumn());
+//            
+//            Point cell = new Point(grid.indexOf(grid.getPreviousVisibleColumn(column)),grid.indexOf(item));
+//            
+//            boolean left = !grid.isCellSelected(cell);
+//            
+//            cell = new Point(grid.indexOf(grid.getNextVisibleColumn(column)),grid.indexOf(item));
+//            
+//            boolean right = !grid.isCellSelected(cell);
+//            
+//            cell = new Point(getColumn(),grid.indexOf(grid.getPreviousVisibleItem(item)));
+//            
+//            boolean top = !grid.isCellSelected(cell);
+//            
+//            cell = new Point(getColumn(),grid.indexOf(grid.getNextVisibleItem(item)));
+//            
+//            boolean bottom = !grid.isCellSelected(cell);
+
+            
+            Rectangle focusRect = new Rectangle(getBounds().x -1, getBounds().y - 1, getBounds().width,
+                                                getBounds().height + 1);
+            
+            gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND));
+            gc.drawRectangle(focusRect);
+            
+//            if (top) gc.drawLine(focusRect.x,focusRect.y,focusRect.x + focusRect.width,focusRect.y);
+//            if (bottom) gc.drawLine(focusRect.x,focusRect.y + focusRect.height,focusRect.x + focusRect.width,focusRect.y + focusRect.height);
+//            if (left) gc.drawLine(focusRect.x,focusRect.y,focusRect.x,focusRect.y + focusRect.height);
+//            if (right) gc.drawLine(focusRect.x + focusRect.width,focusRect.y,focusRect.x + focusRect.width,focusRect.y + focusRect.height);
+//            
+            if (isFocus())
+            {
+                focusRect.x ++;
+                focusRect.width -= 2;
+                focusRect.y ++;
+                focusRect.height -= 2;
+                
+                gc.drawRectangle(focusRect);
+
+//                if (top) gc.drawLine(focusRect.x,focusRect.y + 1,focusRect.x + focusRect.width,focusRect.y + 1);
+//                if (bottom) gc.drawLine(focusRect.x,focusRect.y + focusRect.height -1,focusRect.x + focusRect.width,focusRect.y + focusRect.height -1);
+//                if (left) gc.drawLine(focusRect.x + 1,focusRect.y,focusRect.x + 1,focusRect.y + focusRect.height);
+//                if (right) gc.drawLine(focusRect.x + focusRect.width -1,focusRect.y,focusRect.x + focusRect.width -1,focusRect.y + focusRect.height);
+//                
+            }
+        }
+        else if (isCellFocus())
+        {
+            Rectangle focusRect = new Rectangle(getBounds().x -1, getBounds().y - 1, getBounds().width,
+                                                getBounds().height + 1);
+            
+            gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
+
+            gc.drawLine(focusRect.x,focusRect.y,focusRect.x + focusRect.width,focusRect.y);
+            gc.drawLine(focusRect.x,focusRect.y + focusRect.height,focusRect.x + focusRect.width,focusRect.y + focusRect.height);
+            gc.drawLine(focusRect.x,focusRect.y,focusRect.x,focusRect.y + focusRect.height);
+            gc.drawLine(focusRect.x + focusRect.width,focusRect.y,focusRect.x + focusRect.width,focusRect.y + focusRect.height);
+            
+            if (isFocus())
+            {
+                gc.drawLine(focusRect.x,focusRect.y + 1,focusRect.x + focusRect.width,focusRect.y + 1);
+                gc.drawLine(focusRect.x,focusRect.y + focusRect.height -1,focusRect.x + focusRect.width,focusRect.y + focusRect.height -1);
+                gc.drawLine(focusRect.x + 1,focusRect.y,focusRect.x + 1,focusRect.y + focusRect.height);
+                gc.drawLine(focusRect.x + focusRect.width -1,focusRect.y,focusRect.x + focusRect.width -1,focusRect.y + focusRect.height);
+            }
         }
 
     }

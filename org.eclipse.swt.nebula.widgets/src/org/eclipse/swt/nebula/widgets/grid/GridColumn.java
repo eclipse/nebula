@@ -113,7 +113,7 @@ public class GridColumn extends Item
 
     private boolean visible = true;
     
-    private boolean cellSelection = false;
+    private boolean cellSelectionEnabled = true;
 
     private GridColumnGroup group;
 
@@ -211,12 +211,6 @@ public class GridColumn extends Item
         if ((style & SWT.CHECK) == SWT.CHECK)
         {
             check = true;
-        }
-        
-        
-        if ((style & SWT.SINGLE) == SWT.SINGLE)
-        {
-            cellSelection = true;
         }
 
         initHeaderRenderer();
@@ -843,11 +837,6 @@ public class GridColumn extends Item
         return bounds;
     }
 
-    boolean isCellSelection()
-    {
-        return cellSelection;
-    }
-
     /**
      * @return the tableCheck
      */
@@ -864,5 +853,21 @@ public class GridColumn extends Item
         this.tableCheck = tableCheck;
         
         cellRenderer.setCheck(tableCheck || check);
+    }
+
+    /**
+     * @return the cellSelectionEnabled
+     */
+    public boolean isCellSelectionEnabled()
+    {
+        return cellSelectionEnabled;
+    }
+
+    /**
+     * @param cellSelectionEnabled the cellSelectionEnabled to set
+     */
+    public void setCellSelectionEnabled(boolean cellSelectionEnabled)
+    {
+        this.cellSelectionEnabled = cellSelectionEnabled;
     }
 }

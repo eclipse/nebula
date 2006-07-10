@@ -978,14 +978,24 @@ public class GridItem extends Item
             item.setVisible(expanded);
             if (!expanded)
             {
-                if (getParent().isSelected(item))
+                if (!getParent().isCellSelection())
                 {
-                    unselected = true;
+                    if (getParent().isSelected(item))
+                    {
+                        unselected = true;
+                        getParent().deselect(getParent().indexOf(item));
+                    }                
+                    if (deselectChildren(item))
+                    {
+                        unselected = true;
+                    }
                 }
-                getParent().deselect(getParent().indexOf(item));
-                if (deselectChildren(item))
+                else
                 {
-                    unselected = true;
+                    if (deselectCells(item))
+                    {
+                        unselected = true;
+                    }
                 }
             }
         }
@@ -1000,8 +1010,43 @@ public class GridItem extends Item
         {
             getParent().setFocusItem(this);
         }
+        
+        if (getParent().isCellSelection())
+        {
+            getParent().updateColumnSelection();
+        }
     }
 
+    private boolean deselectCells(GridItem item)
+    {
+        boolean flag = false;
+        
+        int index = getParent().indexOf(item);
+        
+        GridColumn[] columns = getParent().getColumns();
+        
+        for (int i = 0; i < columns.length; i++)
+        {
+            Point cell = new Point(getParent().indexOf(columns[i]),index);
+            if (getParent().isCellSelected(cell))
+            {
+                flag = true;
+                getParent().deselectCell(cell);
+            }
+        }
+        
+        GridItem[] kids = item.getItems();
+        for (int i = 0; i < kids.length; i++)
+        {
+            if (deselectCells(kids[i]))
+            {
+                flag = true;
+            }
+        }
+        
+        return flag;
+    }
+    
     /**
      * Deselects the given item's children recursively.
      * 
