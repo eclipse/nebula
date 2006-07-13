@@ -58,7 +58,7 @@ public class GridColumnGroup extends Item
         parent.newColumnGroup(this);
     }
 
-    Grid getParent()
+    public Grid getParent()
     {
         return parent;
     }
@@ -155,7 +155,7 @@ public class GridColumnGroup extends Item
                     collapsedCols.add(new Integer(getParent().indexOf(columns[j])));                    
                 }
             }   
-            Point[] selection = getParent().getSelectedCells();
+            Point[] selection = getParent().getCellSelection();
             for (int i = 0; i < selection.length; i++)
             {
                 if (collapsedCols.contains(new Integer(selection[i].x)))

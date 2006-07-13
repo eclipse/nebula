@@ -14,6 +14,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.nebula.widgets.grid.AbstractRenderer;
+import org.eclipse.swt.nebula.widgets.grid.GridItem;
 
 public class DefaultRowHeaderRenderer extends AbstractRenderer
 {
@@ -28,61 +29,84 @@ public class DefaultRowHeaderRenderer extends AbstractRenderer
 
     public void paint(GC gc, Object value)
     {
-        String num = ((Integer)value).toString();
+        GridItem item = (GridItem) value;
+        
+        String num = (item.getParent().indexOf(item) + 1) + "";
 
         gc.setFont(getDisplay().getSystemFont());
-
+        
         gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+        
+        if (isSelected() && item.getParent().isCellSelection())
+        {
+            gc.setBackground(item.getParent().getCellSelectionBackground());
+        }
 
         gc.fillRectangle(getBounds().x, getBounds().y, getBounds().width, getBounds().height + 1);
 
-        if (isSelected())
+        if (!item.getParent().isCellSelection())
         {
-            gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
-        }
-        else
-        {
-            gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW));
-        }
-
-        gc.drawLine(getBounds().x, getBounds().y, getBounds().x + getBounds().width - 1,
-                    getBounds().y);
-        gc.drawLine(getBounds().x, getBounds().y, getBounds().x, getBounds().y + getBounds().height
-                                                                 - 1);
-
-        if (!isSelected())
-        {
-            gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
-            gc.drawLine(getBounds().x + 1, getBounds().y + 1,
-                        getBounds().x + getBounds().width - 2, getBounds().y + 1);
-            gc.drawLine(getBounds().x + 1, getBounds().y + 1, getBounds().x + 1,
-                        getBounds().y + getBounds().height - 2);
-        }
-
-        if (isSelected())
-        {
-            gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+            if (isSelected())
+            {
+                gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+            }
+            else
+            {
+                gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW));
+            }
+            
+            
+    
+            gc.drawLine(getBounds().x, getBounds().y, getBounds().x + getBounds().width - 1,
+                        getBounds().y);
+            gc.drawLine(getBounds().x, getBounds().y, getBounds().x, getBounds().y + getBounds().height
+                                                                     - 1);
+    
+            if (!isSelected())
+            {
+                gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
+                gc.drawLine(getBounds().x + 1, getBounds().y + 1,
+                            getBounds().x + getBounds().width - 2, getBounds().y + 1);
+                gc.drawLine(getBounds().x + 1, getBounds().y + 1, getBounds().x + 1,
+                            getBounds().y + getBounds().height - 2);
+            }
+    
+            if (isSelected())
+            {
+                gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+            }
+            else
+            {
+                gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
+            }
+            gc.drawLine(getBounds().x + getBounds().width - 1, getBounds().y, getBounds().x
+                                                                              + getBounds().width - 1,
+                        getBounds().y + getBounds().height - 1);
+            gc.drawLine(getBounds().x, getBounds().y + getBounds().height - 1, getBounds().x
+                                                                               + getBounds().width - 1,
+                        getBounds().y + getBounds().height - 1);
+    
+            if (!isSelected())
+            {
+                gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+                gc.drawLine(getBounds().x + getBounds().width - 2, getBounds().y + 1,
+                            getBounds().x + getBounds().width - 2, getBounds().y + getBounds().height
+                                                                   - 2);
+                gc.drawLine(getBounds().x + 1, getBounds().y + getBounds().height - 2,
+                            getBounds().x + getBounds().width - 2, getBounds().y + getBounds().height
+                                                                   - 2);
+            }
         }
         else
         {
             gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
-        }
-        gc.drawLine(getBounds().x + getBounds().width - 1, getBounds().y, getBounds().x
-                                                                          + getBounds().width - 1,
-                    getBounds().y + getBounds().height - 1);
-        gc.drawLine(getBounds().x, getBounds().y + getBounds().height - 1, getBounds().x
-                                                                           + getBounds().width - 1,
-                    getBounds().y + getBounds().height - 1);
 
-        if (!isSelected())
-        {
-            gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
-            gc.drawLine(getBounds().x + getBounds().width - 2, getBounds().y + 1,
-                        getBounds().x + getBounds().width - 2, getBounds().y + getBounds().height
-                                                               - 2);
-            gc.drawLine(getBounds().x + 1, getBounds().y + getBounds().height - 2,
-                        getBounds().x + getBounds().width - 2, getBounds().y + getBounds().height
-                                                               - 2);
+            gc.drawLine(getBounds().x + getBounds().width - 1, getBounds().y, getBounds().x
+                                                                              + getBounds().width - 1,
+                        getBounds().y + getBounds().height - 1);
+            gc.drawLine(getBounds().x, getBounds().y + getBounds().height - 1, getBounds().x
+                                                                               + getBounds().width - 1,
+                        getBounds().y + getBounds().height - 1);
         }
 
         int x = leftMargin;
@@ -94,7 +118,7 @@ public class DefaultRowHeaderRenderer extends AbstractRenderer
 
         int y = getBounds().y + (getBounds().height - gc.stringExtent(num).y) / 2;
 
-        if (isSelected())
+        if (isSelected() && !item.getParent().isCellSelection())
         {
             gc.drawString(TextUtils.getShortString(gc, num, width), getBounds().x + x + 1, y + 1);
         }

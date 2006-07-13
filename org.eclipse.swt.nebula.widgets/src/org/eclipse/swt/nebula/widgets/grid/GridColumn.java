@@ -44,7 +44,7 @@ public class GridColumn extends Item
     /**
      * Parent table.
      */
-    private Grid table;
+    private Grid parent;
 
     /**
      * Header renderer.
@@ -204,7 +204,7 @@ public class GridColumn extends Item
 
     private void init(Grid table, int style, int index)
     {
-        this.table = table;
+        this.parent = table;
 
         columnIndex = table.newColumn(this, index);
 
@@ -222,7 +222,7 @@ public class GridColumn extends Item
      */
     public void dispose()
     {
-        table.removeColumn(this);
+        parent.removeColumn(this);
         super.dispose();
     }
 
@@ -309,8 +309,8 @@ public class GridColumn extends Item
     {
         checkWidget();
         this.width = width;
-        table.setScrollValuesObsolete();
-        table.redraw();
+        parent.setScrollValuesObsolete();
+        parent.redraw();
     }
 
     /**
@@ -330,7 +330,7 @@ public class GridColumn extends Item
     {
         checkWidget();
         sortStyle = style;
-        table.redraw();
+        parent.redraw();
     }
 
     /**
@@ -405,7 +405,7 @@ public class GridColumn extends Item
         Event e = new Event();
         e.display = this.getDisplay();
         e.item = this;
-        e.widget = table;
+        e.widget = parent;
 
         this.notifyListeners(SWT.Selection, e);
     }
@@ -417,7 +417,7 @@ public class GridColumn extends Item
      * 
      * @return true if visible, false otherwise
      */
-    boolean isVisible()
+    public boolean isVisible()
     {
         if (group != null)
         {
@@ -463,11 +463,11 @@ public class GridColumn extends Item
     {
         checkWidget();
 
-        GC gc = new GC(table);
+        GC gc = new GC(parent);
         int newWidth = getHeaderRenderer().computeSize(gc, SWT.DEFAULT, SWT.DEFAULT, this).x;
-        for (int i = 0; i < table.getItems().length; i++)
+        for (int i = 0; i < parent.getItems().length; i++)
         {
-            GridItem item = table.getItems()[i];
+            GridItem item = parent.getItems()[i];
             if (item.isVisible())
             {
                 newWidth = Math.max(newWidth, getCellRenderer().computeSize(gc, SWT.DEFAULT,
@@ -476,7 +476,7 @@ public class GridColumn extends Item
         }
         gc.dispose();
         setWidth(newWidth);
-        table.redraw();
+        parent.redraw();
     }
 
     /**
@@ -511,7 +511,7 @@ public class GridColumn extends Item
     {
         checkWidget();
 
-        return check;
+        return check || tableCheck;
     }
 
     /**
@@ -613,7 +613,7 @@ public class GridColumn extends Item
         Event e = new Event();
         e.display = this.getDisplay();
         e.item = this;
-        e.widget = table;
+        e.widget = parent;
 
         this.notifyListeners(SWT.Move, e);
     }
@@ -626,7 +626,7 @@ public class GridColumn extends Item
         Event e = new Event();
         e.display = this.getDisplay();
         e.item = this;
-        e.widget = table;
+        e.widget = parent;
 
         this.notifyListeners(SWT.Resize, e);
     }
@@ -648,7 +648,7 @@ public class GridColumn extends Item
 
         this.tree = tree;
         cellRenderer.setTree(tree);
-        table.redraw();
+        parent.redraw();
     }
 
     /**
@@ -717,6 +717,7 @@ public class GridColumn extends Item
     {
         checkWidget();
         this.moveable = moveable;
+        parent.redraw();
     }
 
     /**
@@ -824,14 +825,14 @@ public class GridColumn extends Item
             return bounds;
         }
 
-        Point loc = table.getOrigin(this, null);
+        Point loc = parent.getOrigin(this, null);
         bounds.x = loc.x;
         bounds.y = loc.y;
         bounds.width = getWidth();
-        bounds.height = table.getHeaderHeight();
+        bounds.height = parent.getHeaderHeight();
         if (getColumnGroup() != null)
         {
-            bounds.height -= table.getGroupHeaderHeight();
+            bounds.height -= parent.getGroupHeaderHeight();
         }
 
         return bounds;
@@ -869,5 +870,21 @@ public class GridColumn extends Item
     public void setCellSelectionEnabled(boolean cellSelectionEnabled)
     {
         this.cellSelectionEnabled = cellSelectionEnabled;
+    }
+
+    /**
+     * @return the parent
+     */
+    public Grid getParent()
+    {
+        return parent;
+    }
+
+    /**
+     * @param parent the parent to set
+     */
+    public void setParent(Grid parent)
+    {
+        this.parent = parent;
     }
 }

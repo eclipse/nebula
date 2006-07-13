@@ -292,6 +292,7 @@ public class GridExampleTab extends AbstractExampleTab
         item.setText("Item #000000000000000000000");
         item.setText(1,"Test data ");       
         item.setText(2,"asdfjas;dlfjk");
+        item.setColumnSpan(2,1);
         
         GridItem item2 = new GridItem(item,SWT.NONE);
         item2.setText("first tree");
@@ -315,13 +316,13 @@ public class GridExampleTab extends AbstractExampleTab
 
         final GridItem item55 = new GridItem(grid,SWT.NONE);
         item55.setText("Item #55");
-        item55.setText(1,"55");     
-        item55.setText(2,"55");
+     
+        item55.setText(1,"This cell spans over many columns, use setColumnSpan method to achieve this");
         item55.setChecked(1,true);
        
         
-        item55.setForeground(1,Display.getCurrent().getSystemColor(SWT.COLOR_RED));
-        item55.setBackground(1,Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GREEN));
+//        item55.setForeground(1,Display.getCurrent().getSystemColor(SWT.COLOR_RED));
+//        item55.setBackground(1,Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GREEN));
         
         item55.setColumnSpan(1,2);
         

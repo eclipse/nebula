@@ -329,35 +329,15 @@ public class GridItem extends Item
     {
         checkWidget();
 
-        if (column == 0)
-        {
-            Event selectionEvent = new Event();
-            selectionEvent.display = getDisplay();
-            selectionEvent.widget = this;
-            selectionEvent.item = this;
-            selectionEvent.type = SWT.Selection;
-            selectionEvent.detail = SWT.CHECK;
+        Event selectionEvent = new Event();
+        selectionEvent.display = getDisplay();
+        selectionEvent.widget = this;
+        selectionEvent.item = this;
+        selectionEvent.type = SWT.Selection;
+        selectionEvent.detail = SWT.CHECK;
+        selectionEvent.index = column;
 
-            getParent().notifyListeners(SWT.Selection, selectionEvent);
-        }
-
-        Event e = new Event();
-        e.type = SWT.NONE;
-        e.display = getDisplay();
-        e.widget = this;
-        e.item = this;
-
-        CheckEvent checkEvent = new CheckEvent(e);
-        checkEvent.column = column;
-
-        ICheckListener[] listeners = getParent().getCheckListeners();
-        for (int i = 0; i < listeners.length; i++)
-        {
-            if (listeners[i] != null)
-            {
-                listeners[i].checkChanged(checkEvent);
-            }
-        }
+        getParent().notifyListeners(SWT.Selection, selectionEvent);
     }
 
     /**
@@ -1016,6 +996,8 @@ public class GridItem extends Item
             getParent().updateColumnSelection();
         }
     }
+    
+    
 
     private boolean deselectCells(GridItem item)
     {

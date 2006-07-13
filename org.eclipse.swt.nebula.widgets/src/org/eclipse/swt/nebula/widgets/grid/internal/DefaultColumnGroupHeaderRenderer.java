@@ -37,7 +37,14 @@ public class DefaultColumnGroupHeaderRenderer extends AbstractInternalWidget
     {
         GridColumnGroup group = (GridColumnGroup)value;
 
-        gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+        if (isSelected())
+        {
+            gc.setBackground(group.getParent().getCellSelectionBackground());
+        }
+        else
+        {
+            gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+        }
 
         gc.fillRectangle(getBounds().x, getBounds().y, getBounds().width + 1,
                          getBounds().height + 1);
