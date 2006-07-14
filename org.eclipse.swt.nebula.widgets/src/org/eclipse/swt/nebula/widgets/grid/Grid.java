@@ -76,13 +76,8 @@ public class Grid extends Canvas
     //TODO: scroll as necessary when performing drag select (current strategy ok)
     //TODO: need to refactor the way the range select remembers older selection
     //TODO: remember why i decided i needed to refactor the way the range select remembers older selection
-    //TODO: need to alter how column drag selection works to allow selection of spanned cells 
-    //TODO: row header renderer changes need to be recorded somewhere, the value passed in is now 
-    //the item rather than the row number, but the computeSize method still takes the row number
-    //this all needs to be rethought    
+    //TODO: need to alter how column drag selection works to allow selection of spanned cells   
     //TODO:  JAVADOC!
-    //TODO: put alpha warnings in class comment
-    //TODO: record internal widget event name changes
     //TODO: column freezing
     
     /**
