@@ -191,7 +191,7 @@ public class GridExampleTab extends AbstractExampleTab
             {
                 for (int i = 0; i < grid.getColumns().length; i++)
                 {
-                    grid.setCellSelection(cellSelection.getSelection());
+                    grid.setCellSelectionEnabled(cellSelection.getSelection());
                 }
             }
         });
@@ -363,8 +363,17 @@ public class GridExampleTab extends AbstractExampleTab
             grid.getColumn(i).setResizeable(resizeableColumns.getSelection());
         }  
         grid.setSelectionEnabled(selectionEnabled.getSelection());
-        grid.setCellSelection(cellSelection.getSelection());
+        grid.setCellSelectionEnabled(cellSelection.getSelection());
         grid.getColumn(1).setCellSelectionEnabled(columnCellSelection.getSelection());
+        
+        for (int i = 0; i < grid.getColumns().length; i++)
+        {
+            this.addEventParticipant(grid.getColumn(i));            
+        }
+        for (int i = 0; i < grid.getColumnGroups().length; i++)
+        {
+            this.addEventParticipant(grid.getColumnGroup(i));            
+        }
         
         return grid;
     }

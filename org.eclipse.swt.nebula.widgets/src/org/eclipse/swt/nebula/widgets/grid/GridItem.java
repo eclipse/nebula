@@ -958,7 +958,7 @@ public class GridItem extends Item
             item.setVisible(expanded);
             if (!expanded)
             {
-                if (!getParent().isCellSelection())
+                if (!getParent().getCellSelectionEnabled())
                 {
                     if (getParent().isSelected(item))
                     {
@@ -991,7 +991,7 @@ public class GridItem extends Item
             getParent().setFocusItem(this);
         }
         
-        if (getParent().isCellSelection())
+        if (getParent().getCellSelectionEnabled())
         {
             getParent().updateColumnSelection();
         }

@@ -18,6 +18,7 @@ import org.eclipse.swt.nebula.widgets.grid.AbstractInternalWidget;
 import org.eclipse.swt.nebula.widgets.grid.GridColumnGroup;
 import org.eclipse.swt.nebula.widgets.grid.IInternalWidget;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 
 public class DefaultColumnGroupHeaderRenderer extends AbstractInternalWidget
 {
@@ -39,7 +40,7 @@ public class DefaultColumnGroupHeaderRenderer extends AbstractInternalWidget
 
         if (isSelected())
         {
-            gc.setBackground(group.getParent().getCellSelectionBackground());
+            gc.setBackground(group.getParent().getCellHeaderSelectionBackground());
         }
         else
         {
@@ -121,11 +122,20 @@ public class DefaultColumnGroupHeaderRenderer extends AbstractInternalWidget
         
         if ((group.getStyle() & SWT.TOGGLE) != 0)
         {
-            if (event == IInternalWidget.CLICK)
+            if (event == IInternalWidget.LeftMouseButtonDown)
             {
                 if (getToggleBounds().contains(point))
                 {                    
                     group.setExpanded(!group.getExpanded());
+
+                    if (group.getExpanded())
+                    {
+                        group.notifyListeners(SWT.Expand,new Event());
+                    }
+                    else
+                    {
+                        group.notifyListeners(SWT.Collapse,new Event());
+                    }
                     return true;
                 }
             }

@@ -37,14 +37,14 @@ public class DefaultRowHeaderRenderer extends AbstractRenderer
         
         gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
         
-        if (isSelected() && item.getParent().isCellSelection())
+        if (isSelected() && item.getParent().getCellSelectionEnabled())
         {
-            gc.setBackground(item.getParent().getCellSelectionBackground());
+            gc.setBackground(item.getParent().getCellHeaderSelectionBackground());
         }
 
         gc.fillRectangle(getBounds().x, getBounds().y, getBounds().width, getBounds().height + 1);
 
-        if (!item.getParent().isCellSelection())
+        if (!item.getParent().getCellSelectionEnabled())
         {
             if (isSelected())
             {
@@ -118,7 +118,7 @@ public class DefaultRowHeaderRenderer extends AbstractRenderer
 
         int y = getBounds().y + (getBounds().height - gc.stringExtent(num).y) / 2;
 
-        if (isSelected() && !item.getParent().isCellSelection())
+        if (isSelected() && !item.getParent().getCellSelectionEnabled())
         {
             gc.drawString(TextUtils.getShortString(gc, num, width), getBounds().x + x + 1, y + 1);
         }

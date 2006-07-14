@@ -10,6 +10,7 @@
  *******************************************************************************/ 
 package org.eclipse.swt.nebula.widgets.grid;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 
 /**
@@ -23,10 +24,10 @@ public interface IInternalWidget extends IRenderer
 
     // Event type constants
     /** Hover State. */
-    int HOVER = 1;
+    int MouseMove = SWT.MouseMove;
 
     /** Mouse down state. */
-    int CLICK = 2;
+    int LeftMouseButtonDown = SWT.MouseDown;
 
     /**
      * Mechanism used to notify the light weight widgets that an event occurred

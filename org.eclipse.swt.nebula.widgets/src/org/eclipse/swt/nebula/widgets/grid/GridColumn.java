@@ -416,9 +416,17 @@ public class GridColumn extends Item
      * returns false (and vice versa).
      * 
      * @return true if visible, false otherwise
+     * 
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
      */
     public boolean isVisible()
     {
+        checkWidget();
         if (group != null)
         {
             if ((group.getExpanded() && !isDetail()) || (!group.getExpanded() && !isSummary()))
@@ -433,9 +441,16 @@ public class GridColumn extends Item
      * Returns the visibility state as set with {@code setVisible}.
      * 
      * @return the visible
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
      */
     public boolean getVisible()
     {
+        checkWidget();
         return visible;
     }
 
@@ -443,9 +458,16 @@ public class GridColumn extends Item
      * Sets the column's visibility.
      * 
      * @param visible the visible to set
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
      */
     public void setVisible(boolean visible)
     {
+        checkWidget();
         this.visible = visible;
     }
 
@@ -759,9 +781,16 @@ public class GridColumn extends Item
      * {@code null} otherwise.
      * 
      * @return the column group.
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
      */
     public GridColumnGroup getColumnGroup()
     {
+        checkWidget();
         return group;
     }
 
@@ -770,9 +799,16 @@ public class GridColumn extends Item
      * Detail columns are shown when the group is expanded.
      * 
      * @return true if the column is a detail column.
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
      */
     public boolean isDetail()
     {
+        checkWidget();
         return detail;
     }
 
@@ -782,9 +818,16 @@ public class GridColumn extends Item
      * a column group, this method has no effect.
      * 
      * @param detail true to show this column when the group is expanded.
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
      */
     public void setDetail(boolean detail)
     {
+        checkWidget();
         this.detail = detail;
     }
 
@@ -793,9 +836,16 @@ public class GridColumn extends Item
      * Summary columns are shown when the group is collapsed.
      * 
      * @return true if the column is a summary column.
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
      */
     public boolean isSummary()
     {
+        checkWidget();
         return summary;
     }
 
@@ -805,9 +855,16 @@ public class GridColumn extends Item
      * created in a column group, this method has no effect.
      * 
      * @param summary true to show this column when the group is collapsed.
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
      */
     public void setSummary(boolean summary)
     {
+        checkWidget();
         this.summary = summary;
     }
 
@@ -857,34 +914,52 @@ public class GridColumn extends Item
     }
 
     /**
+     * Returns true if cells in the receiver can be selected.
+     * 
      * @return the cellSelectionEnabled
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
      */
-    public boolean isCellSelectionEnabled()
+    public boolean getCellSelectionEnabled()
     {
+        checkWidget();
         return cellSelectionEnabled;
     }
 
     /**
+     * Sets whether cells in the receiver can be selected.
+     * 
      * @param cellSelectionEnabled the cellSelectionEnabled to set
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
      */
     public void setCellSelectionEnabled(boolean cellSelectionEnabled)
     {
+        checkWidget();
         this.cellSelectionEnabled = cellSelectionEnabled;
     }
 
     /**
-     * @return the parent
+     * Returns the parent grid.
+     * 
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
      */
     public Grid getParent()
     {
+        checkWidget();
         return parent;
-    }
-
-    /**
-     * @param parent the parent to set
-     */
-    public void setParent(Grid parent)
-    {
-        this.parent = parent;
     }
 }

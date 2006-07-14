@@ -6,3 +6,4 @@ Bundle-Version: 1.0.0
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.swt
 Export-Package: org.eclipse.swt.nebula.widgets.grid
+Bundle-RequiredExecutionEnvironment: J2SE-1.4

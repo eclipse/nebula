@@ -282,7 +282,7 @@ public class DefaultCellRenderer extends GridCellRenderer
 
         if (isCheck())
         {
-            if (event == IInternalWidget.HOVER)
+            if (event == IInternalWidget.MouseMove)
             {
                 if (overCheck(item, point))
                 {
@@ -291,7 +291,7 @@ public class DefaultCellRenderer extends GridCellRenderer
                 }
             }
 
-            if (event == IInternalWidget.CLICK)
+            if (event == IInternalWidget.LeftMouseButtonDown)
             {
                 if (overCheck(item, point))
                 {
@@ -307,7 +307,7 @@ public class DefaultCellRenderer extends GridCellRenderer
 
         if (isTree() && item.hasChildren())
         {
-            if (event == IInternalWidget.HOVER)
+            if (event == IInternalWidget.MouseMove)
             {
                 if (overToggle(item, point))
                 {
@@ -316,7 +316,7 @@ public class DefaultCellRenderer extends GridCellRenderer
                 }
             }
 
-            if (event == IInternalWidget.CLICK)
+            if (event == IInternalWidget.LeftMouseButtonDown)
             {
                 if (overToggle(item, point))
                 {

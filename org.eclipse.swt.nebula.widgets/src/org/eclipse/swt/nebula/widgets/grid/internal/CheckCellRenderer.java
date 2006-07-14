@@ -85,7 +85,7 @@ public class CheckCellRenderer extends GridCellRenderer
     {
         GridItem item = (GridItem)value;
 
-        if (event == IInternalWidget.HOVER)
+        if (event == IInternalWidget.MouseMove)
         {
             if (overCheck(point))
             {
@@ -93,7 +93,7 @@ public class CheckCellRenderer extends GridCellRenderer
                 return true;
             }
         }
-        if (event == IInternalWidget.CLICK)
+        if (event == IInternalWidget.LeftMouseButtonDown)
         {
             if (overCheck(point))
             {

@@ -70,7 +70,7 @@ public class DefaultColumnHeaderRenderer extends AbstractInternalWidget
     public void paint(GC gc, GridColumn column)
     {
 
-        boolean flat = (column.getParent().isCellSelection() && !column.getMoveable());
+        boolean flat = (column.getParent().getCellSelectionEnabled() && !column.getMoveable());
         
         boolean drawSelected = ((isMouseDown() && isHover()));
 
@@ -78,7 +78,7 @@ public class DefaultColumnHeaderRenderer extends AbstractInternalWidget
 
         if (flat && isSelected())
         {
-            gc.setBackground(column.getParent().getCellSelectionBackground());
+            gc.setBackground(column.getParent().getCellHeaderSelectionBackground());
         }
         
         gc.fillRectangle(getBounds().x, getBounds().y, getBounds().width + 1,

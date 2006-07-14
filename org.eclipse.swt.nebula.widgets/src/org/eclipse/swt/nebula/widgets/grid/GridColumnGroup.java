@@ -10,6 +10,7 @@
  *******************************************************************************/ 
 package org.eclipse.swt.nebula.widgets.grid;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.nebula.widgets.grid.internal.DefaultColumnGroupHeaderRenderer;
@@ -18,7 +19,11 @@ import org.eclipse.swt.widgets.Item;
 import java.util.Vector;
 
 /**
- * Instances of this class represent a column group in a grid widget.
+ * Instances of this class represent a column group in a grid widget.  A column group header is 
+ * displayed above grouped columns.  The column group can optionally be configured to expand and 
+ * collapse.  A column group in the expanded state shows {@code GridColumn}s whose detail property 
+ * is true.  A column group in the collapsed state shows {@code GridColumn}s whose summary property 
+ * is true.
  * <dl>
  * <dt><b>Styles:</b></dt>
  * <dd>SWT.TOGGLE</dd>
@@ -48,6 +53,16 @@ public class GridColumnGroup extends Item
      * 
      * @param parent the parent table
      * @param style the style of the group
+     * @throws IllegalArgumentException
+     * <ul>
+     * <li>ERROR_NULL_ARGUMENT - if the parent is null</li>
+     * </ul>
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the parent</li>
+     * <li>ERROR_INVALID_SUBCLASS - if this class is not an allowed subclass</li>
+     * </ul>
      */
     public GridColumnGroup(Grid parent, int style)
     {
@@ -58,8 +73,19 @@ public class GridColumnGroup extends Item
         parent.newColumnGroup(this);
     }
 
+    /**
+     * Returns the parent grid.
+     * 
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
+     */
     public Grid getParent()
     {
+        checkWidget();
         return parent;
     }
 
@@ -84,12 +110,24 @@ public class GridColumnGroup extends Item
 
     /**
      * Returns the columns within this group.
-     * 
+     * <p>
+     * Note: This is not the actual structure used by the receiver to maintain
+     * its list of items, so modifying the array will not affect the receiver.
+     * </p>
      * @return the columns
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
      */
     public GridColumn[] getColumns()
     {
-        return columns;
+        checkWidget();
+        GridColumn[] newArray = new GridColumn[columns.length];
+        System.arraycopy (columns, 0, newArray, 0, columns.length);
+        return newArray;
     }
 
     /**
@@ -108,18 +146,41 @@ public class GridColumnGroup extends Item
     }
 
     /**
-     * @return the headerRenderer
+     * Sets the header renderer.
+     * 
+     * @param headerRenderer The headerRenderer to set.
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
      */
     public IInternalWidget getHeaderRenderer()
     {
+        checkWidget();
         return headerRenderer;
     }
 
     /**
-     * @param headerRenderer the headerRenderer to set
+     * Sets the header renderer.
+     * 
+     * @param headerRenderer The headerRenderer to set.
+     * @throws IllegalArgumentException
+     * <ul>
+     * <li>ERROR_NULL_ARGUMENT - if the renderer is null</li> 
+     * </ul>
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
      */
     public void setHeaderRenderer(IInternalWidget headerRenderer)
     {
+        if (headerRenderer == null)
+            SWT.error(SWT.ERROR_NULL_ARGUMENT);
         this.headerRenderer = headerRenderer;
         headerRenderer.setDisplay(getDisplay());
     }
@@ -128,9 +189,16 @@ public class GridColumnGroup extends Item
      * Returns true if the receiver is expanded, false otherwise.
      * 
      * @return the expanded attribute
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
      */
     public boolean getExpanded()
     {
+        checkWidget();
         return expanded;
     }
 
@@ -138,14 +206,20 @@ public class GridColumnGroup extends Item
      * Sets the expanded state of the receiver.
      * 
      * @param expanded the expanded to set
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
      */
     public void setExpanded(boolean expanded)
     {
+        checkWidget();
+        
         this.expanded = expanded;
         
-        
-        
-        if (!expanded && getParent().isCellSelection())
+        if (!expanded && getParent().getCellSelectionEnabled())
         {
             Vector collapsedCols = new Vector();
             for (int j = 0; j < columns.length; j++)
@@ -172,7 +246,7 @@ public class GridColumnGroup extends Item
             parent.updateColumnSelection();
         }
 
-        if (parent.isCellSelection())
+        if (parent.getCellSelectionEnabled())
             
             
         parent.refreshHoverState();

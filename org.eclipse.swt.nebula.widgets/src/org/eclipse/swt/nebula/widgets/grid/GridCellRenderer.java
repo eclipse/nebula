@@ -12,6 +12,12 @@ package org.eclipse.swt.nebula.widgets.grid;
 
 import org.eclipse.swt.SWT;
 
+/**
+ * The super class for all grid cell renderers.  Contains the properties specific
+ * to a grid cell.
+ *
+ * @author chris.gross@us.ibm.com
+ */
 public abstract class GridCellRenderer extends AbstractInternalWidget
 {
 
