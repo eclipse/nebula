@@ -83,6 +83,7 @@ public class Grid extends Canvas
     //TODO:  JAVADOC!
     //TODO: put alpha warnings in class comment
     //TODO: record internal widget event name changes
+    //TODO: column freezing
     
     /**
      * Alpha blending value used when drawing the dragged column header.
