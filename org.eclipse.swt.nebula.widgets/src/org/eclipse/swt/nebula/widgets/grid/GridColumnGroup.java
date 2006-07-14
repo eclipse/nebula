@@ -19,11 +19,16 @@ import org.eclipse.swt.widgets.Item;
 import java.util.Vector;
 
 /**
+ * <p>
+ * NOTE:  THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.  THIS IS A PRE-RELEASE ALPHA 
+ * VERSION.  USERS SHOULD EXPECT API CHANGES IN FUTURE VERSIONS.
+ * </p> 
  * Instances of this class represent a column group in a grid widget.  A column group header is 
  * displayed above grouped columns.  The column group can optionally be configured to expand and 
  * collapse.  A column group in the expanded state shows {@code GridColumn}s whose detail property 
  * is true.  A column group in the collapsed state shows {@code GridColumn}s whose summary property 
  * is true.
+ * <p>
  * <dl>
  * <dt><b>Styles:</b></dt>
  * <dd>SWT.TOGGLE</dd>

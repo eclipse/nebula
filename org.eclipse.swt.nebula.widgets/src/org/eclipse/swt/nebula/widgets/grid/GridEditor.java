@@ -20,6 +20,11 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 
 /**
+ * <p>
+ * NOTE:  THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.  THIS IS A PRE-RELEASE ALPHA 
+ * VERSION.  USERS SHOULD EXPECT API CHANGES IN FUTURE VERSIONS.
+ * </p> 
+ * 
  * A TableEditor is a manager for a Control that appears above a cell in a Table
  * and tracks with the moving and resizing of that cell. It can be used to
  * display a text widget above a cell in a Table so that the user can edit the

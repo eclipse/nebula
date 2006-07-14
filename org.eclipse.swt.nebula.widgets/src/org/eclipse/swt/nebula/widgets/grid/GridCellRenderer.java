@@ -13,6 +13,10 @@ package org.eclipse.swt.nebula.widgets.grid;
 import org.eclipse.swt.SWT;
 
 /**
+ * <p>
+ * NOTE:  THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.  THIS IS A PRE-RELEASE ALPHA 
+ * VERSION.  USERS SHOULD EXPECT API CHANGES IN FUTURE VERSIONS.
+ * </p> 
  * The super class for all grid cell renderers.  Contains the properties specific
  * to a grid cell.
  *

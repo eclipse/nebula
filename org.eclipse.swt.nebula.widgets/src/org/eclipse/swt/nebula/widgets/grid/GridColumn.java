@@ -23,7 +23,12 @@ import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.TypedListener;
 
 /**
+ * <p>
+ * NOTE:  THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.  THIS IS A PRE-RELEASE ALPHA 
+ * VERSION.  USERS SHOULD EXPECT API CHANGES IN FUTURE VERSIONS.
+ * </p> 
  * Instances of this class represent a column in a grid widget.
+ * <p>
  * <dl>
  * <dt><b>Styles:</b></dt>
  * <dd>SWT.LEFT, SWT.RIGHT, SWT.CENTER, SWT.CHECK</dd>

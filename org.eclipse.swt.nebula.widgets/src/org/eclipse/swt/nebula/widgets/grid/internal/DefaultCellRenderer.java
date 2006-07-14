@@ -14,9 +14,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.nebula.widgets.grid.Grid;
 import org.eclipse.swt.nebula.widgets.grid.GridCellRenderer;
-import org.eclipse.swt.nebula.widgets.grid.GridColumn;
 import org.eclipse.swt.nebula.widgets.grid.GridItem;
 import org.eclipse.swt.nebula.widgets.grid.IInternalWidget;
 

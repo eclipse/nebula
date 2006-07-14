@@ -14,6 +14,11 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 
 /**
+ * <p>
+ * NOTE:  THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.  THIS IS A PRE-RELEASE ALPHA 
+ * VERSION.  USERS SHOULD EXPECT API CHANGES IN FUTURE VERSIONS.
+ * </p> 
+ * 
  * TODO fill in.
  * 
  * @author chris.gross@us.ibm.com

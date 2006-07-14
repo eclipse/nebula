@@ -12,6 +12,10 @@
 package org.eclipse.swt.nebula.widgets.grid;
 
 /**
+ * <p>
+ * NOTE:  THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.  THIS IS A PRE-RELEASE ALPHA 
+ * VERSION.  USERS SHOULD EXPECT API CHANGES IN FUTURE VERSIONS.
+ * </p> 
  * Base implementation of IRenderer and IInternalWidget. Provides management of
  * a few values. 
  * 

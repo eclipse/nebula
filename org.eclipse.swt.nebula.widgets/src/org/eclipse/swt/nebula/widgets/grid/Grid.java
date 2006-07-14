@@ -42,7 +42,6 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TypedListener;
 
 import java.util.ArrayList;
@@ -52,13 +51,16 @@ import java.util.List;
 import java.util.Vector;
 
 /**
+ * <p>
+ * NOTE:  THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.  THIS IS A PRE-RELEASE ALPHA 
+ * VERSION.  USERS SHOULD EXPECT API CHANGES IN FUTURE VERSIONS.
+ * </p> 
  * Instances of this class implement a selectable user interface object that
  * displays a list of images and strings and issue notification when selected.
  * <p>
  * The item children that may be added to instances of this class must be of
  * type {@code GridItem}.
  * </p>
- * <p>
  * <dl>
  * <dt><b>Styles:</b></dt>
  * <dd>SWT.SINGLE, SWT.MULTI, SWT.NO_FOCUS, SWT.CHECK</dd>
