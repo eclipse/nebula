@@ -12,6 +12,7 @@ package org.eclipse.swt.nebula.widgets.grid.internal;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.nebula.widgets.grid.GridCellRenderer;
@@ -113,6 +114,25 @@ public class DefaultCellRenderer extends GridCellRenderer
             x += checkRenderer.getBounds().width + insideMargin;
         }
 
+        Image image = item.getImage(getColumn());
+        if (image != null)
+        {
+            int y = getBounds().y;
+            int height = image.getBounds().height;
+            
+            y += (getBounds().height - image.getBounds().height)/2;
+            
+            if (height > getBounds().height)
+            {
+                height = getBounds().height;
+                y = getBounds().y;
+            }
+            
+            gc.drawImage(image, 0, 0, image.getBounds().width, getBounds().height, getBounds().x + x, y, image.getBounds().width, getBounds().height);
+            
+            x += image.getBounds().width + insideMargin;
+        }
+        
         int width = getBounds().width - x - rightMargin;
 
         String text = TextUtils.getShortString(gc, item.getText(getColumn()), width);

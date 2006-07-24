@@ -12,6 +12,8 @@ package org.eclipse.swt.nebula.examples.parts;
 
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
@@ -80,6 +82,14 @@ public class GridExampleTab extends AbstractExampleTab
         {
             public void handleEvent(Event event)
             {
+                if (event.widget instanceof Button)
+                {
+                    Button b = (Button)event.widget;
+                    if ((b.getStyle() & SWT.RADIO) != 0)
+                    {
+                        if (!b.getSelection()) return;
+                    }
+                }
                 recreateExample();
             }        
         };
@@ -306,7 +316,7 @@ public class GridExampleTab extends AbstractExampleTab
         item2 = new GridItem(item,SWT.NONE);
         item2.setText("first tree");
         item2.setText(1,"first tree");
-        
+
         GridItem item22 = new GridItem(item2,SWT.NONE);
         item22.setText("second tree");
         item22.setText(1,"second tree");
@@ -374,6 +384,11 @@ public class GridExampleTab extends AbstractExampleTab
         {
             this.addEventParticipant(grid.getColumnGroup(i));            
         }
+        for (int i = 0; i < grid.getItems().length; i++)
+        {
+            this.addEventParticipant(grid.getItem(i));            
+        }
+        
         
         return grid;
     }

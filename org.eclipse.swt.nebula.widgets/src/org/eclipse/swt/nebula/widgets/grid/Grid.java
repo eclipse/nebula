@@ -11,6 +11,8 @@
 package org.eclipse.swt.nebula.widgets.grid;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.MouseEvent;
@@ -77,7 +79,7 @@ public class Grid extends Canvas
     //TODO: need to refactor the way the range select remembers older selection
     //TODO: remember why i decided i needed to refactor the way the range select remembers older selection
     //TODO: need to alter how column drag selection works to allow selection of spanned cells   
-    //TODO:  JAVADOC!
+    //TODO: JAVADOC!
     //TODO: column freezing
     
     /**
@@ -498,28 +500,13 @@ public class Grid extends Canvas
         rowHeight = gc.getFontMetrics().getHeight() + 2;
         gc.dispose();
         
-        selectedCells.add(new Point(1,1));
-        
         RGB sel = getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION).getRGB();
         RGB white = getDisplay().getSystemColor(SWT.COLOR_WHITE).getRGB();
         
         RGB cellSel = blend(sel,white,50);
         
         cellHeaderSelectionBackground = new Color(getDisplay(),cellSel);
-    }
-
-    
-    
-    /** 
-     * {@inheritDoc}
-     */
-    public void dispose()
-    {
-        cellHeaderSelectionBackground.dispose();
-        super.dispose();
-    }
-
-    
+    }    
     
     /**
      * Returns the background color of column and row headers when a cell in 
@@ -2195,9 +2182,11 @@ public class Grid extends Canvas
     public void removeAll()
     {
         checkWidget();
-        items.clear();
-        selectedItems.clear();
-        focusItem = null;
+        
+        while (items.size() > 0)
+        {
+            ((GridItem)items.get(0)).dispose();
+        }
         redraw();
     }
 
@@ -3728,6 +3717,7 @@ public class Grid extends Canvas
      */
     private void onPaint(PaintEvent e)
     {
+
         if (scrollValuesObsolete)
         {
             updateScrollbars();
@@ -4704,6 +4694,14 @@ public class Grid extends Canvas
      */
     private void initListeners()
     {
+        addDisposeListener(new DisposeListener()
+        {
+            public void widgetDisposed(DisposeEvent e)
+            {
+                onDispose();
+            }
+        });
+        
         addPaintListener(new PaintListener()
         {
             public void paintControl(PaintEvent e)
@@ -4822,6 +4820,22 @@ public class Grid extends Canvas
                 onMouseWheel(e);
             }
         });
+    }
+    
+    private void onDispose()
+    {
+        cellHeaderSelectionBackground.dispose();
+        removeAll();
+        
+        while (columnGroups.length > 0)
+        {
+            columnGroups[0].dispose();
+        }
+        
+        while (columns.size() > 0)
+        {
+            ((GridColumn)columns.get(0)).dispose();
+        }        
     }
 
     /**
@@ -6127,20 +6141,37 @@ public class Grid extends Canvas
      * 
      * @return item in focus or {@code null}.
      */
-    GridItem getFocusItem()
+    public GridItem getFocusItem()
     {
+        //TODO: javadoc
+        checkWidget();
         return focusItem;
     }
 
     /**
-     * Sets the given item as the focused item.
+     * Sets the focused item to the given item.  
      * 
-     * @param newFocus item to get focus.
+     * @param item item to focus or null.
+     * @throws IllegalArgumentException
+     * <ul>
+     * <li>ERROR_INVALID_ARGUMENT - if item is disposed</li>
+     * </ul>
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
      */
-    void setFocusItem(GridItem newFocus)
+    public void setFocusItem(GridItem item)
     {
-        focusItem = newFocus;
-        return;
+        checkWidget();
+        //TODO: check and make sure this item is valid for focus
+        if (item != null && item.isDisposed())
+        {
+            SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+        }
+        focusItem = item;
     }
 
     /**
@@ -6940,6 +6971,8 @@ public class Grid extends Canvas
         
         return true;
     }
+    
+   
 }
 
 
