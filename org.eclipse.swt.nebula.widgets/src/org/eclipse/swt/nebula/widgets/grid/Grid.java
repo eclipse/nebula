@@ -15,6 +15,8 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.MenuEvent;
+import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
@@ -5366,11 +5368,11 @@ public class Grid extends Canvas
     {  
         
         int attemptExpandCollapse = 0;
-        if ((e.character == '-' || (!cellSelectionEnabled && e.keyCode == SWT.ARROW_LEFT)) && focusItem.isExpanded())
+        if ((e.character == '-' || (!cellSelectionEnabled && e.keyCode == SWT.ARROW_LEFT)) && focusItem != null && focusItem.isExpanded())
         {
             attemptExpandCollapse = SWT.Collapse;
         }
-        else if ((e.character == '+' || (!cellSelectionEnabled && e.keyCode == SWT.ARROW_RIGHT)) && !focusItem.isExpanded())
+        else if ((e.character == '+' || (!cellSelectionEnabled && e.keyCode == SWT.ARROW_RIGHT)) && focusItem != null && !focusItem.isExpanded())
         {
             attemptExpandCollapse = SWT.Expand;
         }
