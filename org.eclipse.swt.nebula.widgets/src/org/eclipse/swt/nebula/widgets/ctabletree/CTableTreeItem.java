@@ -220,10 +220,6 @@ public class CTableTreeItem extends CContainerItem {
 		}
 	}
 
-	/**
-	 * Sets the image of the tree cell
-	 * @param image
-	 */
 	public void setImage(Image image) {
 		if(hasTreeCell()) {
 			getTreeCell().setImage(image);
@@ -238,8 +234,8 @@ public class CTableTreeItem extends CContainerItem {
 
 	public void setImages(Image[] images) {
 		CContainerCell[] cells = getCells();
-		if(cells.length == images.length) {
-			for(int i = 0; i < cells.length; i++) {
+		if(cells.length >= images.length) {
+			for(int i = 0; i < images.length; i++) {
 				((CTableTreeCell) cells[i]).setImage(images[i]);
 			}
 		}
@@ -258,10 +254,17 @@ public class CTableTreeItem extends CContainerItem {
 		}
 	}
 	
+	public void setText(String string) {
+		CContainerCell[] cells = getCells();
+		if(cells.length > 0) {
+			((CTableTreeCell) cells[0]).setText(string);
+		}
+	}
+	
 	public void setText(String[] strings) {
 		CContainerCell[] cells = getCells();
-		if(cells.length == strings.length) {
-			for(int i = 0; i < cells.length; i++) {
+		if(cells.length >= strings.length) {
+			for(int i = 0; i < strings.length; i++) {
 				((CTableTreeCell) cells[i]).setText(strings[i]);
 			}
 		}
