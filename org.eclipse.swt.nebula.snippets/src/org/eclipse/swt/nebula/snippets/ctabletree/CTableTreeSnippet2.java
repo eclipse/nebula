@@ -34,23 +34,23 @@ public class CTableTreeSnippet2 {
 		Shell shell = new Shell (display);
 		shell.setLayout(new FillLayout());
 
-		CTableTree CTableTree = new CTableTree(shell, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-		CTableTree.setHeaderVisible(true);
-		CContainerColumn column1 = new CContainerColumn(CTableTree, SWT.LEFT);
+		CTableTree ctt = new CTableTree(shell, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		ctt.setHeaderVisible(true);
+		CContainerColumn column1 = new CContainerColumn(ctt, SWT.LEFT);
 		column1.setText("Column 1");
 		column1.setWidth(100);
-		CContainerColumn column2 = new CContainerColumn(CTableTree, SWT.CENTER);
+		CContainerColumn column2 = new CContainerColumn(ctt, SWT.CENTER);
 		column2.setText("Column 2");
 		column2.setWidth(200);
-		CContainerColumn column3 = new CContainerColumn(CTableTree, SWT.RIGHT);
+		CContainerColumn column3 = new CContainerColumn(ctt, SWT.RIGHT);
 		column3.setText("Column 3");
 		column3.setWidth(300);
 
-		CTableTree.setTreeColumn(1);
+		ctt.setTreeColumn(1);
 
-		Class[] classes = new Class[] { null, null, TableCell.class };
+		Class[] cellClasses = new Class[] { null, null, TableCell.class };
 		for (int i = 0; i < 4; i++) {
-			CTableTreeItem item = new CTableTreeItem(CTableTree, SWT.NONE, classes);
+			CTableTreeItem item = new CTableTreeItem(ctt, SWT.NONE, cellClasses);
 			item.setText(new String[] { "item " + i, "abc", "defghi" });
 			for (int j = 0; j < 4; j++) {
 				CTableTreeItem subItem = new CTableTreeItem(item, SWT.NONE);
