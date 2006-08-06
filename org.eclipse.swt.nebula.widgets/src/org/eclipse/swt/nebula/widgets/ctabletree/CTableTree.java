@@ -284,6 +284,7 @@ public class CTableTree extends CContainer {
 				if(item.isVisible()) {
 					Rectangle r = item.getUnifiedBounds();
 					r.x = 0;
+					r.y -= getOrigin().y;
 					r.width = getBodySize().x;
 					r.height += getGridLineWidth();
 					gc.setBackground(colors.getItemBackgroundSelected());
