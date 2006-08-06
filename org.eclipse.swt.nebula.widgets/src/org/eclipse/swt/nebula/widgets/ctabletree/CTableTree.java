@@ -286,7 +286,7 @@ public class CTableTree extends CContainer {
 					r.x = 0;
 					r.y -= getOrigin().y;
 					r.width = getBodySize().x;
-					r.height += getGridLineWidth();
+					r.height = item.fixedTitleHeight + getGridLineWidth();
 					gc.setBackground(colors.getItemBackgroundSelected());
 					gc.fillRectangle(r);
 				}
