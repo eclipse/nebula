@@ -278,16 +278,25 @@ public abstract class CContainerCell {
 		return l;
 	}
 
-	private List getControls(Composite c) {
-		if(c != null) {
+	/**
+	 * A recursive utility function used to every child control of a composite, 
+	 * including the children of children.<br/>
+	 * NOTE: This method will <b>NOT</b> return disposed children.
+	 * @param c the composite to start from
+	 * @return all the children and grandchildren of the given composite
+	 */
+	public static List getControls(Composite c) {
+		if(c != null && !c.isDisposed()) {
 			List l = new ArrayList();
 			l.add(c);
-			Object[] a = c.getChildren();
+			Control[] a = c.getChildren();
 			for(int i = 0; i < a.length; i++) {
-				if(a[i] instanceof Composite) {
-					l.addAll(getControls((Composite) a[i]));
-				} else {
-					l.add(a[i]);
+				if(!a[i].isDisposed()) {
+					if(a[i] instanceof Composite) {
+						l.addAll(getControls((Composite) a[i]));
+					} else {
+						l.add(a[i]);
+					}
 				}
 			}
 			return l;
