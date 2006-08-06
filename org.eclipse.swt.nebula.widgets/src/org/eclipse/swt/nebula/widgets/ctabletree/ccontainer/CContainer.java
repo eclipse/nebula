@@ -1574,7 +1574,7 @@ public abstract class CContainer extends Composite implements Listener {
 			botIndex = bot;
 
 			List oldPainted = (paintedItems == null) ? new ArrayList() : new ArrayList(paintedItems);
-			paintedItems = (topIndex == -1 || botIndex < topIndex) ?
+			paintedItems = (topIndex == -1 || topIndex >= visibleItems.size() || botIndex < topIndex) ?
 					new ArrayList() :
 						new ArrayList(visibleItems.subList(topIndex, botIndex + 1));
 			List newPainted = new ArrayList(paintedItems);
