@@ -329,7 +329,8 @@ public class CTableTree extends CContainer {
 	 * <p>If column is greater than the number of columns, then it is set to -1
 	 * which  indicates that there is no Tree Column and this control is to be 
 	 * used as a flat List or Table</p>
-	 * <p>Note that the CTableTree must be empty while setting the tree column.
+	 * <p>Note that the CTableTree must be empty while setting the tree column, and the
+	 * column must already exist.</p>
 	 * @param column the column to use for the tree or -1 for a flat layout
 	 * @return true if the tree column was changed, false otherwise
 	 */
