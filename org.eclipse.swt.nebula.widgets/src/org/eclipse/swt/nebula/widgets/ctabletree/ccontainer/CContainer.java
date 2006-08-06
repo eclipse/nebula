@@ -1314,7 +1314,7 @@ public abstract class CContainer extends Composite implements Listener {
 	}
 
 	public void setHeaderVisible(boolean show) {
-		if(internalTable != null) internalTable.setHeaderVisible(show);
+		getInternalTable().setHeaderVisible(show);
 	}
 
 	/**
