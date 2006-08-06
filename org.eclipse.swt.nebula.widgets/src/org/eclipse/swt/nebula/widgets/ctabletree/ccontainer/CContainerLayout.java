@@ -197,7 +197,7 @@ public abstract class CContainerLayout extends Layout {
 		r.y += (headerSize.y);
 		r.height -= headerSize.y;
 		layoutBody(r);
-		layoutHeader(r);
+		if(CContainer.gtk) layoutHeader(r);
 		layoutItems(r);
 	}
 	protected void opLayoutCustom(int operation, Rectangle r) {
