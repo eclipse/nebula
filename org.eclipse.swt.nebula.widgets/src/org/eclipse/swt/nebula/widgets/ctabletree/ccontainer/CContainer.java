@@ -43,6 +43,10 @@ import org.eclipse.swt.widgets.TypedListener;
 
 
 /**
+ * <p>
+ * NOTE:  THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.  THIS IS A PRE-RELEASE ALPHA 
+ * VERSION.  USERS SHOULD EXPECT API CHANGES IN FUTURE VERSIONS.
+ * </p> 
  */
 public abstract class CContainer extends Composite implements Listener {
 

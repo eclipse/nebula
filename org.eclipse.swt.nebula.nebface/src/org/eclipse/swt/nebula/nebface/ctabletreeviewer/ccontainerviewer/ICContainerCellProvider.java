@@ -10,6 +10,13 @@
 *****************************************************************************/
 package org.eclipse.swt.nebula.nebface.ctabletreeviewer.ccontainerviewer;
 
+
+/**
+ * <p>
+ * NOTE:  THIS VIEWER AND ITS API ARE STILL UNDER DEVELOPMENT.  THIS IS A PRE-RELEASE ALPHA 
+ * VERSION.  USERS SHOULD EXPECT API CHANGES IN FUTURE VERSIONS.
+ * </p>
+ */
 public interface ICContainerCellProvider {
 
 	public abstract Class[] getCellClasses(Object element);

@@ -24,6 +24,12 @@ import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
 
 
+/**
+ * <p>
+ * NOTE:  THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.  THIS IS A PRE-RELEASE ALPHA 
+ * VERSION.  USERS SHOULD EXPECT API CHANGES IN FUTURE VERSIONS.
+ * </p>
+ */
 public class SComposite extends Canvas implements Listener {
 
 	private static Color WHITE = Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);

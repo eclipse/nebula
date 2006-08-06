@@ -20,6 +20,12 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.nebula.widgets.ctabletree.ccontainer.CContainerItem;
 import org.eclipse.swt.nebula.widgets.ctabletree.ccontainer.CContainerLayout;
 
+/**
+ * <p>
+ * NOTE:  THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.  THIS IS A PRE-RELEASE ALPHA 
+ * VERSION.  USERS SHOULD EXPECT API CHANGES IN FUTURE VERSIONS.
+ * </p> 
+ */
 class CTableTreeLayout extends CContainerLayout {
 
 	CTableTreeLayout(CTableTree tree) {

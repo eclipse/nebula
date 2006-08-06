@@ -13,6 +13,13 @@ package org.eclipse.swt.nebula.nebface.ctabletreeviewer.ccontainerviewer;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.swt.graphics.Image;
 
+
+/**
+ * <p>
+ * NOTE:  THIS VIEWER AND ITS API ARE STILL UNDER DEVELOPMENT.  THIS IS A PRE-RELEASE ALPHA 
+ * VERSION.  USERS SHOULD EXPECT API CHANGES IN FUTURE VERSIONS.
+ * </p>
+ */
 public interface ICContainerLabelProvider extends ITableLabelProvider {
 
 	public abstract Image[] getColumnImages(Object object, int columnIndex);

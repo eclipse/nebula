@@ -25,7 +25,6 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ITreeViewerListener;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.nebula.nebface.ctabletreeviewer.ccontainerviewer.CContainerViewer;
 import org.eclipse.swt.nebula.nebface.ctabletreeviewer.ccontainerviewer.ICContainerLabelProvider;
@@ -38,18 +37,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Widget;
 
 /**
- * A concrete viewer based on an SWT <code>List</code> control.
  * <p>
- * This class is not intended to be subclassed. It is designed to be
- * instantiated with a pre-existing SWT <code>List</code> control and configured
- * with a domain-specific content provider, label provider, element filter (optional),
- * and element sorter (optional).
- * <p>
- * Note that the SWT <code>List</code> control only supports the display of strings, not icons.
- * If you need to show icons for items, use <code>TableViewer</code> instead.
+ * NOTE:  THIS VIEWER AND ITS API ARE STILL UNDER DEVELOPMENT.  THIS IS A PRE-RELEASE ALPHA 
+ * VERSION.  USERS SHOULD EXPECT API CHANGES IN FUTURE VERSIONS.
  * </p>
- * 
- * @see TableViewer
  */
 public class CTableTreeViewer extends CContainerViewer {
 	private int treeColumn = -1;
