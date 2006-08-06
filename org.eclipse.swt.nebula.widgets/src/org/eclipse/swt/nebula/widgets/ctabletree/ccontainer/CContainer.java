@@ -994,8 +994,12 @@ public abstract class CContainer extends Composite implements Listener {
 	}
 
 	protected void paintGridLines(GC gc, Rectangle ebounds) {
+		Rectangle r = getBodyClientArea();
+		
 		if(linesVisible && (!nativeGrid || getGridLineWidth() > 0)) {
 			gc.setForeground(getColors().getGrid());
+
+			int y = -getOrigin().y;
 
 			if(win32 && nativeGrid) {
 				if(visibleItems.isEmpty()) {
@@ -1003,16 +1007,20 @@ public abstract class CContainer extends Composite implements Listener {
 						Point tSize = gc.textExtent(emptyMessage);
 						rowHeight = tSize.y+2;
 					}
-				} else if(!paintedItems.isEmpty()){
-					rowHeight = ((CContainerItem) paintedItems.get(
-							paintedItems.size() - 1)).getUnifiedBounds().height;
+				} else {
+					int gridline = getGridLineWidth();
+					for(Iterator i = visibleItems.iterator(); i.hasNext(); ) {
+						gc.drawLine(r.x, y, r.x+r.width, y);
+						CContainerItem item = (CContainerItem) i.next();
+						y += item.getUnifiedBounds().height + gridline;
+					}
+					rowHeight = ((CContainerItem) visibleItems.get(
+							visibleItems.size() - 1)).fixedTitleHeight;
 				}
-			}
-
-			Rectangle r = getBodyClientArea();
+			} 
+			
 			if(hLines) {
 				int gridline = getGridLineWidth();
-				int y = -getOrigin().y;
 				while(y < r.height) {
 					gc.drawLine(r.x, y, r.x+r.width, y);
 					y += rowHeight + gridline;
