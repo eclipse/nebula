@@ -44,6 +44,10 @@ public class CContainerColumn extends TableColumn {
 		// ouch, that hurts! :)
 	}
 	
+	public Color getColor() {
+		return color;
+	}
+
 	public int getLeft() {
 		int[] ixs = container.getColumnOrder();
 		int x = 0;
@@ -57,26 +61,18 @@ public class CContainerColumn extends TableColumn {
 		}
 		return x;
 	}
-
+	
 	public int getRight() {
 		return getLeft() + getWidth();
 	}
-	
+
 	public boolean isAutoWidth() {
 		return autoWidth;
 	}
-
+	
 	public void pack() {
 		// TODO: presently only packs the Header...
 		super.pack();
-	}
-	
-	public Color getColor() {
-		return color;
-	}
-	
-	public void setColor(Color color) {
-		this.color = color;
 	}
 	
 	public void paint(GC gc, Rectangle ebounds) {
@@ -90,6 +86,10 @@ public class CContainerColumn extends TableColumn {
 					container.getBodySize().y
 					);
 		}
+	}
+	
+	public void setColor(Color color) {
+		this.color = color;
 	}
 	
 	public void setFillLayout(boolean fill) {
