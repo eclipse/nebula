@@ -218,5 +218,16 @@ public abstract class GridCellRenderer extends AbstractInternalWidget
     {
         return null;
     }
+    
+    /**
+     * Returns true if the given text area would be truncated within the current bounds.
+     * 
+     * @param textBounds the bounds of text
+     * @return true if the text would be truncated, false otherwise.
+     */
+    public boolean isTruncated(Rectangle textBounds)
+    {
+        return false;
+    }
 
 }

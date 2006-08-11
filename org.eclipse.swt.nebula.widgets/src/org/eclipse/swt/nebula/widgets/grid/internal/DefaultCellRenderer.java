@@ -418,6 +418,11 @@ public class DefaultCellRenderer extends GridCellRenderer
             checkRenderer = null;
         }
     }
+    
+    public boolean isTruncated(Rectangle textBounds)
+    {
+        return (textBounds.x + textBounds.width > getBounds().width - rightMargin);
+    }
 
     public Rectangle getTextBounds(GridItem item)
     {

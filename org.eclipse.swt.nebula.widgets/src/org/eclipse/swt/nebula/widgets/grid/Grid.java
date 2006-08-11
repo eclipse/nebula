@@ -5967,7 +5967,7 @@ public class Grid extends Canvas
                 Rectangle cellBounds = col.getCellRenderer().getBounds();
                 Rectangle textBounds = col.getCellRenderer().getTextBounds(item);
                 
-                if (cellBounds.width - textBounds.x - textBounds.width < 0)
+                if (col.getCellRenderer().isTruncated(textBounds))
                 {
                     ignoreMouseExit = true;
                     showToolTip(item,col, new Point(cellBounds.x + textBounds.x,cellBounds.y + 
