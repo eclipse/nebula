@@ -78,5 +78,5 @@ public class DefaultEmptyCellRenderer extends GridCellRenderer
         // TODO Auto-generated method stub
         return false;
     }
-
+    
 }

@@ -11,6 +11,8 @@
 package org.eclipse.swt.nebula.widgets.grid;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 
 /**
  * <p>
@@ -203,6 +205,18 @@ public abstract class GridCellRenderer extends AbstractInternalWidget
     public void setCellSelected(boolean cellSelected)
     {
         this.cellSelected = cellSelected;
+    }
+    
+    /**
+     * Returns the bounds of the text in the cell.  This is used when displaying in-place tooltips.
+     * If <code>null</code> is returned here, in-place tooltips will not be displayed.
+     * 
+     * @param item item to calculate text bounds.
+     * @return bounds of the text.
+     */
+    public Rectangle getTextBounds(GridItem item)
+    {
+        return null;
     }
 
 }

@@ -11,12 +11,8 @@
 package org.eclipse.swt.nebula.widgets.grid;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.MenuEvent;
-import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
@@ -39,6 +35,7 @@ import org.eclipse.swt.nebula.widgets.grid.internal.DefaultEmptyRowHeaderRendere
 import org.eclipse.swt.nebula.widgets.grid.internal.DefaultFocusRenderer;
 import org.eclipse.swt.nebula.widgets.grid.internal.DefaultRowHeaderRenderer;
 import org.eclipse.swt.nebula.widgets.grid.internal.DefaultTopLeftRenderer;
+import org.eclipse.swt.nebula.widgets.grid.internal.GridToolTip;
 import org.eclipse.swt.nebula.widgets.grid.internal.IScrollBarProxy;
 import org.eclipse.swt.nebula.widgets.grid.internal.NullScrollBarProxy;
 import org.eclipse.swt.nebula.widgets.grid.internal.ScrollBarProxyAdapter;
@@ -49,7 +46,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TypedListener;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -378,6 +374,11 @@ public class Grid extends Canvas
      * painting.
      */
     private String hoveringDetail = "";
+    
+    /**
+     * True if the mouse is hovering of a cell's text.
+     */
+    private boolean hoveringOverText = false;
 
     /**
      * Are the grid lines visible?
@@ -416,6 +417,22 @@ public class Grid extends Canvas
     private int groupHeaderHeight;
 
     private Color cellHeaderSelectionBackground;
+    
+    /**
+     * Dispose listener.  This listener is removed during the dispose event to allow re-firing of
+     * the event.
+     */
+    private Listener disposeListener;
+    
+    /**
+     * The inplace tooltip.
+     */
+    private GridToolTip inplaceToolTip;
+
+    /**
+     * True to ignore the mouse exit event (when triggered by the inplace tooltip).
+     */
+    private boolean ignoreMouseExit;
     
     /**
      * Filters out unnecessary styles, adds mandatory styles and generally
@@ -1363,6 +1380,8 @@ public class Grid extends Canvas
         if (point == null)
             SWT.error(SWT.ERROR_NULL_ARGUMENT);
 
+        if (point.x < 0 || point.x > getClientArea().width) return null;
+        
         Point p = new Point(point.x, point.y);
 
         if (columnHeadersVisible)
@@ -2734,30 +2753,6 @@ public class Grid extends Canvas
     }
 
     /**
-     * Sets the receiver's selection to be the given List of items. The current
-     * selection is cleared before the new items are selected.
-     * <p>
-     * Items that are not in the receiver are ignored. If the receiver is
-     * single-select and multiple items are specified, then all items are
-     * ignored.
-     * 
-     * @param selection the List of items
-     * @throws org.eclipse.swt.SWTException
-     * <ul>
-     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
-     * created the receiver</li>
-     * </ul>
-     */
-    private void setSelection(List selection)
-    {
-        checkWidget();
-        selectedItems.clear();
-        selectedItems.addAll(selection);
-        redraw();
-    }
-
-    /**
      * Sets the receiver's selection to be the given array of items. The current
      * selection is cleared before the new items are selected.
      * <p>
@@ -2787,9 +2782,23 @@ public class Grid extends Canvas
         
         if (!selectionEnabled) return;
         
+        if (_items == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
+        
         if (selectionType == SWT.SINGLE && _items.length > 1) return;
         
-        setSelection(Arrays.asList(_items));
+        selectedItems.clear();
+        
+        for (int i = 0; i < _items.length; i++)
+        {
+            GridItem item = _items[i];
+            if (item == null) continue;
+            if (item.isDisposed()) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+            if (item.getParent() != this) continue;
+            
+            selectedItems.add(item);
+        }
+        
+        redraw();
     }
 
     /**
@@ -2943,6 +2952,7 @@ public class Grid extends Canvas
                 if (!parent.isExpanded())
                 {
                     parent.setExpanded(true);
+                    parent.fireEvent(SWT.Expand);
                 }
                 parent = parent.getParentItem();
             }
@@ -4696,13 +4706,14 @@ public class Grid extends Canvas
      */
     private void initListeners()
     {
-        addDisposeListener(new DisposeListener()
+        disposeListener = new Listener()
         {
-            public void widgetDisposed(DisposeEvent e)
+            public void handleEvent(Event e)
             {
-                onDispose();
+                onDispose(e);
             }
-        });
+        };
+        addListener(SWT.Dispose,disposeListener);
         
         addPaintListener(new PaintListener()
         {
@@ -4824,8 +4835,14 @@ public class Grid extends Canvas
         });
     }
     
-    private void onDispose()
+    private void onDispose(Event event)
     {
+        //We only want to dispose of our items and such *after* anybody else who may have been 
+        //listening to the dispose has had a chance to do whatever.
+        removeListener(SWT.Dispose, disposeListener);
+        notifyListeners(SWT.Dispose, event);
+        event.type = SWT.None;
+        
         cellHeaderSelectionBackground.dispose();
         removeAll();
         
@@ -5353,10 +5370,15 @@ public class Grid extends Canvas
      */
     private void onMouseExit(MouseEvent e)
     {
-        hoveringItem = null;
-        hoveringDetail = "";
-        hoveringColumn = null;
-        redraw();
+        if (!ignoreMouseExit)
+        {
+            hoveringItem = null;
+            hoveringDetail = "";
+            hoveringColumn = null;
+            hoveringOverText = false;
+            hideToolTip();
+            redraw();
+        }
     }
 
     /**
@@ -5431,60 +5453,80 @@ public class Grid extends Canvas
         switch (e.keyCode)
         {
             case SWT.ARROW_RIGHT :
-                if (impliedFocusItem != null && impliedFocusColumn != null)
-                {                    
-                    newSelection = impliedFocusItem;                    
-                    
-                    int index = displayOrderedColumns.indexOf(impliedFocusColumn);
-                    
-                    int jumpAhead = impliedFocusItem.getColumnSpan(indexOf(impliedFocusColumn));
-                    
-                    jumpAhead ++;
-                    
-                    while (jumpAhead > 0)
-                    {
-                        index ++;
+                if (cellSelectionEnabled)
+                {
+                    if (impliedFocusItem != null && impliedFocusColumn != null)
+                    {                    
+                        newSelection = impliedFocusItem;                    
+                        
+                        int index = displayOrderedColumns.indexOf(impliedFocusColumn);
+                        
+                        int jumpAhead = impliedFocusItem.getColumnSpan(indexOf(impliedFocusColumn));
+                        
+                        jumpAhead ++;
+                        
+                        while (jumpAhead > 0)
+                        {
+                            index ++;
+                            if (index < displayOrderedColumns.size())
+                            {
+                                if (((GridColumn)displayOrderedColumns.get(index)).isVisible())
+                                    jumpAhead --;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        
                         if (index < displayOrderedColumns.size())
                         {
-                            if (((GridColumn)displayOrderedColumns.get(index)).isVisible())
-                                jumpAhead --;
+                            newColumnFocus = (GridColumn)displayOrderedColumns.get(index);                    
                         }
                         else
                         {
-                            break;
-                        }
+                            newColumnFocus = impliedFocusColumn;
+                        }                    
+                    }      
+                    intendedFocusColumn = newColumnFocus;
+                }
+                else
+                {
+                    if (impliedFocusItem != null && impliedFocusItem.hasChildren())
+                    {   
+                        newSelection = impliedFocusItem.getItem(0);
                     }
-                    
-                    if (index < displayOrderedColumns.size())
-                    {
-                        newColumnFocus = (GridColumn)displayOrderedColumns.get(index);                    
-                    }
-                    else
-                    {
-                        newColumnFocus = impliedFocusColumn;
-                    }                    
-                }      
-                intendedFocusColumn = newColumnFocus;
+                }
                 break;            
             case SWT.ARROW_LEFT :
-                if (impliedFocusItem != null && impliedFocusColumn != null)
-                {                    
-                    newSelection = impliedFocusItem;
-                    
-                    int index = displayOrderedColumns.indexOf(impliedFocusColumn);
-                    
-                    if (index != 0)
-                    {
-                        newColumnFocus = (GridColumn)displayOrderedColumns.get(index -1);
+                if (cellSelectionEnabled)
+                {
+                    if (impliedFocusItem != null && impliedFocusColumn != null)
+                    {                    
+                        newSelection = impliedFocusItem;
                         
-                        newColumnFocus = getVisibleColumn_DegradeLeft(impliedFocusItem, newColumnFocus);
+                        int index = displayOrderedColumns.indexOf(impliedFocusColumn);
+                        
+                        if (index != 0)
+                        {
+                            newColumnFocus = (GridColumn)displayOrderedColumns.get(index -1);
+                            
+                            newColumnFocus = getVisibleColumn_DegradeLeft(impliedFocusItem, newColumnFocus);
+                        }
+                        else
+                        {
+                            newColumnFocus = impliedFocusColumn;
+                        }                    
                     }
-                    else
-                    {
-                        newColumnFocus = impliedFocusColumn;
-                    }                    
+                    intendedFocusColumn = newColumnFocus;
                 }
-                intendedFocusColumn = newColumnFocus;
+                else
+                {
+                    if (impliedFocusItem != null && impliedFocusItem.getParentItem() != null)
+                    {
+                        newSelection = impliedFocusItem.getParentItem();
+                    }
+                }
                 break;
             case SWT.ARROW_UP :
                 if (impliedFocusItem != null)
@@ -5716,6 +5758,7 @@ public class Grid extends Canvas
      */
     private void onScrollSelection()
     {
+        refreshHoverState();
         redraw(getClientArea().x, getClientArea().y, getClientArea().width, getClientArea().height,
                false);
     }
@@ -5839,9 +5882,11 @@ public class Grid extends Canvas
     {
 
         String detail = "";
+        
+        boolean overText = false;
 
-        GridColumn col = getColumn(new Point(x, y));
-        GridItem item = getItem(new Point(x, y));
+        final GridColumn col = getColumn(new Point(x, y));
+        final GridItem item = getItem(new Point(x, y));
 
         GridColumnGroup hoverColGroup = null;
         GridColumn hoverColHeader = null;
@@ -5857,6 +5902,13 @@ public class Grid extends Canvas
                     detail = col.getCellRenderer().getHoverDetail();
                 }
 
+                Rectangle textBounds = col.getCellRenderer().getTextBounds(item);
+                
+                if (textBounds != null)
+                {
+                    Point p = new Point(x - col.getCellRenderer().getBounds().x, y - col.getCellRenderer().getBounds().y);
+                    overText = textBounds.contains(p);                  
+                }               
             }
             else
             {
@@ -5889,6 +5941,8 @@ public class Grid extends Canvas
             }
         }
 
+        boolean returnVal = false;
+        
         if (hoveringItem != item || !hoveringDetail.equals(detail) || hoveringColumn != col
             || hoverColGroup != hoverColumnGroupHeader || hoverColHeader != hoveringColumnHeader)
         {
@@ -5899,10 +5953,41 @@ public class Grid extends Canvas
             hoverColumnGroupHeader = hoverColGroup;
             redraw();
             
-            return true;
+            returnVal = true;
         }
         
-        return false;
+        //do inplaceToolTip stuff
+        if (hoveringItem != item || hoveringColumn != col || hoveringOverText != overText)
+        {
+            hoveringOverText = overText;
+            
+            if (overText){
+                
+                //determine truncation
+                Rectangle cellBounds = col.getCellRenderer().getBounds();
+                Rectangle textBounds = col.getCellRenderer().getTextBounds(item);
+                
+                if (cellBounds.width - textBounds.x - textBounds.width < 0)
+                {
+                    ignoreMouseExit = true;
+                    showToolTip(item,col, new Point(cellBounds.x + textBounds.x,cellBounds.y + 
+                                                    textBounds.y));
+                    getDisplay().asyncExec(new Runnable()
+                    {                    
+                        public void run()
+                        {
+                            ignoreMouseExit = false;
+                        }                    
+                    });                    
+                }
+            }
+            else
+            {                        
+                hideToolTip();
+            }
+        }
+        
+        return returnVal;
     }
 
     /**
@@ -6169,7 +6254,7 @@ public class Grid extends Canvas
     {
         checkWidget();
         //TODO: check and make sure this item is valid for focus
-        if (item != null && item.isDisposed())
+        if (item != null && (item.isDisposed() || item.getParent() != this))
         {
             SWT.error(SWT.ERROR_INVALID_ARGUMENT);
         }
@@ -6973,8 +7058,37 @@ public class Grid extends Canvas
         
         return true;
     }
+
+    /**
+     * Shows the inplace tooltip for the given item and column.  The location is the x and y origin 
+     * of the text in the cell.
+     */
+    protected void showToolTip(GridItem item, GridColumn column, Point location)
+    {
+        if (inplaceToolTip == null)
+        {
+            inplaceToolTip = new GridToolTip(this);
+        }
+        
+        inplaceToolTip.setFont(item.getFont(item.getParent().indexOf(column)));
+        inplaceToolTip.setText(item.getText(item.getParent().indexOf(column)));
+        
+        Point p = item.getParent().getDisplay().map(this, null, location);
+        
+        inplaceToolTip.setLocation(p);
+        
+        inplaceToolTip.setVisible(true);
+    }
     
-   
+    /**
+     * Hides the inplace tooltip.
+     */
+    protected void hideToolTip()
+    {
+        if (inplaceToolTip != null)
+            inplaceToolTip.setVisible(false);
+    }
+    
 }
 
 

@@ -187,37 +187,12 @@ public class DefaultCellRenderer extends GridCellRenderer
         
         if (isCellFocus())
         {
-//            Grid grid = item.getParent();
-//            GridColumn column = grid.getColumn(getColumn());
-//            
-//            Point cell = new Point(grid.indexOf(grid.getPreviousVisibleColumn(column)),grid.indexOf(item));
-//            
-//            boolean left = !grid.isCellSelected(cell);
-//            
-//            cell = new Point(grid.indexOf(grid.getNextVisibleColumn(column)),grid.indexOf(item));
-//            
-//            boolean right = !grid.isCellSelected(cell);
-//            
-//            cell = new Point(getColumn(),grid.indexOf(grid.getPreviousVisibleItem(item)));
-//            
-//            boolean top = !grid.isCellSelected(cell);
-//            
-//            cell = new Point(getColumn(),grid.indexOf(grid.getNextVisibleItem(item)));
-//            
-//            boolean bottom = !grid.isCellSelected(cell);
-
-            
             Rectangle focusRect = new Rectangle(getBounds().x -1, getBounds().y - 1, getBounds().width,
                                                 getBounds().height + 1);
             
             gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND));
             gc.drawRectangle(focusRect);
-            
-//            if (top) gc.drawLine(focusRect.x,focusRect.y,focusRect.x + focusRect.width,focusRect.y);
-//            if (bottom) gc.drawLine(focusRect.x,focusRect.y + focusRect.height,focusRect.x + focusRect.width,focusRect.y + focusRect.height);
-//            if (left) gc.drawLine(focusRect.x,focusRect.y,focusRect.x,focusRect.y + focusRect.height);
-//            if (right) gc.drawLine(focusRect.x + focusRect.width,focusRect.y,focusRect.x + focusRect.width,focusRect.y + focusRect.height);
-//            
+      
             if (isFocus())
             {
                 focusRect.x ++;
@@ -226,12 +201,7 @@ public class DefaultCellRenderer extends GridCellRenderer
                 focusRect.height -= 2;
                 
                 gc.drawRectangle(focusRect);
-
-//                if (top) gc.drawLine(focusRect.x,focusRect.y + 1,focusRect.x + focusRect.width,focusRect.y + 1);
-//                if (bottom) gc.drawLine(focusRect.x,focusRect.y + focusRect.height -1,focusRect.x + focusRect.width,focusRect.y + focusRect.height -1);
-//                if (left) gc.drawLine(focusRect.x + 1,focusRect.y,focusRect.x + 1,focusRect.y + focusRect.height);
-//                if (right) gc.drawLine(focusRect.x + focusRect.width -1,focusRect.y,focusRect.x + focusRect.width -1,focusRect.y + focusRect.height);
-//                
+       
             }
         }
         else if (isCellFocus())
@@ -449,4 +419,40 @@ public class DefaultCellRenderer extends GridCellRenderer
         }
     }
 
+    public Rectangle getTextBounds(GridItem item)
+    {
+        int x = leftMargin;
+
+        if (isTree())
+        {
+            x += getToggleIndent(item);
+
+            x += toggleRenderer.getBounds().width + insideMargin;
+
+        }
+
+        if (isCheck())
+        {
+            x += checkRenderer.getBounds().width + insideMargin;
+        }
+
+        Image image = item.getImage(getColumn());
+        if (image != null)
+        {
+            x += image.getBounds().width + insideMargin;
+        }
+        
+        Rectangle bounds = new Rectangle(x,topMargin,0,0);
+        
+        GC gc = new GC(item.getParent());
+        gc.setFont(item.getFont(getColumn()));
+        Point size = gc.stringExtent(item.getText(getColumn()));
+        bounds.width = size.x;
+        bounds.height = size.y;
+        
+        gc.dispose();
+        
+        return bounds;
+    }
+    
 }

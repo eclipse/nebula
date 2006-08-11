@@ -1271,7 +1271,7 @@ public class GridItem extends Item
         ensureSize(texts);
         texts.set(index, text);
     }
-
+    
     /**
      * {@inheritDoc}
      */
