@@ -138,7 +138,14 @@ public class GridToolTip extends Widget
 
     public void setVisible(boolean visible)
     {
-        shell.setVisible(visible);
+        if (visible && shell.getVisible())
+        {
+            shell.redraw();
+        }
+        else
+        {
+            shell.setVisible(visible);
+        }
     }
 
     public void setFont(Font font)
