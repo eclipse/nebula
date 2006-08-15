@@ -128,7 +128,9 @@ public class DefaultCellRenderer extends GridCellRenderer
                 y = getBounds().y;
             }
             
-            gc.drawImage(image, 0, 0, image.getBounds().width, getBounds().height, getBounds().x + x, y, image.getBounds().width, getBounds().height);
+            
+            
+            gc.drawImage(image, 0, 0, image.getBounds().width, height, getBounds().x + x, y, image.getBounds().width, getBounds().height);
             
             x += image.getBounds().width + insideMargin;
         }

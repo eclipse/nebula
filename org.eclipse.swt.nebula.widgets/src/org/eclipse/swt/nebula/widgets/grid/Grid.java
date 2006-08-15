@@ -72,6 +72,8 @@ import java.util.Vector;
  */
 public class Grid extends Canvas
 {
+    //Positioning in getBounds is off by one when header not visible
+    
     //TODO: figure out better way to allow renderers to trigger events
     //TODO: scroll as necessary when performing drag select (current strategy ok)
     //TODO: need to refactor the way the range select remembers older selection
@@ -247,7 +249,7 @@ public class Grid extends Canvas
     /**
      * Height of each row.
      */
-    private int rowHeight = 0;
+    private int rowHeight = 1;
 
     /**
      * Width of each row header.
@@ -3117,7 +3119,7 @@ public class Grid extends Canvas
         // would require
         // changing more than just this method)
 
-        int height = -1;
+        int height = 1;
 
         if (columns.size() == 0 || items.size() == 0)
         {
@@ -3656,7 +3658,7 @@ public class Grid extends Canvas
         for (int index = displayOrderedColumns.indexOf(columnBeingResized) + 1; index < displayOrderedColumns.size(); index ++)
         {
             GridColumn col = (GridColumn)displayOrderedColumns.get(index);
-            col.fireMoved();
+            if (col.isVisible()) col.fireMoved();
         }
     }
 

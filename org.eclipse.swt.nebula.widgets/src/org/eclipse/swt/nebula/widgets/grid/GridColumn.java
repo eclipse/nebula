@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.TypedListener;
  * <dt><b>Styles:</b></dt>
  * <dd>SWT.LEFT, SWT.RIGHT, SWT.CENTER, SWT.CHECK</dd>
  * <dt><b>Events:</b></dt>
- * <dd> Move, Resize, Selection</dd>
+ * <dd> Move, Resize, Selection, Show, Hide</dd>
  * </dl>
  * 
  * @author chris.gross@us.ibm.com
@@ -473,7 +473,39 @@ public class GridColumn extends Item
     public void setVisible(boolean visible)
     {
         checkWidget();
+        
+        boolean before = isVisible();
+        
         this.visible = visible;
+        
+        if (isVisible() != before)
+        {
+            if (visible)
+            {
+                notifyListeners(SWT.Show, new Event());                
+            }
+            else
+            {
+                notifyListeners(SWT.Hide, new Event());
+            }
+            
+            GridColumn[] colsOrdered = parent.getColumnsInOrder();
+            boolean fire = false;
+            for (int i = 0; i < colsOrdered.length; i++)
+            {
+                GridColumn column = colsOrdered[i];
+                if (column == this)
+                {
+                    fire = true;
+                }
+                else
+                {
+                    if (column.isVisible()) column.fireMoved();
+                }
+            }
+            
+            parent.redraw();            
+        }
     }
 
     /**

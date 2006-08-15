@@ -12,8 +12,6 @@ package org.eclipse.swt.nebula.examples.parts;
 
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
@@ -21,6 +19,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.nebula.examples.AbstractExampleTab;
 import org.eclipse.swt.nebula.examples.ButtonFactory;
+import org.eclipse.swt.nebula.examples.ExamplesView;
 import org.eclipse.swt.nebula.widgets.grid.Grid;
 import org.eclipse.swt.nebula.widgets.grid.GridColumn;
 import org.eclipse.swt.nebula.widgets.grid.GridColumnGroup;
@@ -303,6 +302,7 @@ public class GridExampleTab extends AbstractExampleTab
         item.setText(1,"Test data ");       
         item.setText(2,"asdfjas;dlfjk");
         item.setColumnSpan(2,1);
+        item.setImage(ExamplesView.getImage("icons/eclipse.png"));
         
         GridItem item2 = new GridItem(item,SWT.NONE);
         item2.setText("first tree");
@@ -388,8 +388,7 @@ public class GridExampleTab extends AbstractExampleTab
         {
             this.addEventParticipant(grid.getItem(i));            
         }
-        
-        
+
         return grid;
     }
 

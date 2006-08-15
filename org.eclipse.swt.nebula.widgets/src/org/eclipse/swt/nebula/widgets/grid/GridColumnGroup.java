@@ -11,10 +11,13 @@
 package org.eclipse.swt.nebula.widgets.grid;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
+import org.eclipse.swt.events.TreeListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.nebula.widgets.grid.internal.DefaultColumnGroupHeaderRenderer;
 import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.TypedListener;
 
 import java.util.Vector;
 
@@ -33,7 +36,7 @@ import java.util.Vector;
  * <dt><b>Styles:</b></dt>
  * <dd>SWT.TOGGLE</dd>
  * <dt><b>Events:</b></dt>
- * <dd>Selection</dd>
+ * <dd>Expand, Collapse</dd>
  * </dl>
  * 
  * @author chris.gross@us.ibm.com
@@ -78,6 +81,57 @@ public class GridColumnGroup extends Item
         parent.newColumnGroup(this);
     }
 
+    /**
+     * Adds the listener to the collection of listeners who will
+     * be notified when an item in the receiver is expanded or collapsed
+     * by sending it one of the messages defined in the <code>TreeListener</code>
+     * interface.
+     *
+     * @param listener the listener which should be notified
+     *
+     * @exception IllegalArgumentException <ul>
+     *    <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
+     * </ul>
+     * @exception SWTException <ul>
+     *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+     * </ul>
+     *
+     * @see TreeListener
+     * @see #removeTreeListener
+     */
+    public void addTreeListener(TreeListener listener) {
+        checkWidget ();
+        if (listener == null) SWT.error (SWT.ERROR_NULL_ARGUMENT);
+        TypedListener typedListener = new TypedListener (listener);
+        addListener (SWT.Expand, typedListener);
+        addListener (SWT.Collapse, typedListener);
+    }
+    
+    /**
+     * Removes the listener from the collection of listeners who will
+     * be notified when items in the receiver are expanded or collapsed.
+     *
+     * @param listener the listener which should no longer be notified
+     *
+     * @exception IllegalArgumentException <ul>
+     *    <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
+     * </ul>
+     * @exception SWTException <ul>
+     *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+     * </ul>
+     *
+     * @see TreeListener
+     * @see #addTreeListener
+     */
+    public void removeTreeListener(TreeListener listener) {
+        checkWidget ();
+        if (listener == null) SWT.error (SWT.ERROR_NULL_ARGUMENT);
+        removeListener (SWT.Expand, listener);
+        removeListener (SWT.Collapse, listener);
+    }
+        
     /**
      * Returns the parent grid.
      * 

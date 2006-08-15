@@ -83,7 +83,7 @@ public class ExamplesView extends ViewPart
      * @return the image descriptor
      */
     public static ImageDescriptor getImageDescriptor(String path) {
-        return AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.nebula.examples", path);
+        return AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.swt.nebula.examples", path);
     }
     
     /**

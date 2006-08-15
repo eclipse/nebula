@@ -47,12 +47,16 @@ public class GridEditor extends ControlEditor
     
     Listener resizeListener;
 
+    private Listener columnVisibleListener;
+
+    private Listener columnGroupListener;
+
     /**
      * Creates a TableEditor for the specified Table.
      * 
      * @param table the Table Control above which this editor will be displayed
      */
-    public GridEditor(Grid table)
+    public GridEditor(final Grid table)
     {
         super(table);
         this.table = table;
@@ -70,6 +74,15 @@ public class GridEditor extends ControlEditor
             }
         };
         
+        columnVisibleListener = new Listener()
+        {
+          public void handleEvent(Event event)
+            {
+              getEditor().setVisible(((GridColumn)event.widget).isVisible());
+              if (getEditor().isVisible()) layout();
+            }  
+        };
+        
         resizeListener = new Listener()
         {
          public void handleEvent(Event event)
@@ -78,7 +91,15 @@ public class GridEditor extends ControlEditor
             }   
         };
         
-
+        columnGroupListener = new Listener()
+        {
+            public void handleEvent(Event event)
+            {
+                
+                getEditor().setVisible(table.getColumn(getColumn()).isVisible());
+                if (getEditor().isVisible()) layout();
+            }
+        };
 
         // The following three listeners are workarounds for
         // Eclipse bug 105764
@@ -162,6 +183,10 @@ public class GridEditor extends ControlEditor
         {
             GridColumn tableColumn = table.getColumn(this.column);
             tableColumn.removeControlListener(columnListener);
+            if (tableColumn.getColumnGroup() != null){
+                tableColumn.getColumnGroup().removeListener(SWT.Expand, columnGroupListener);
+                tableColumn.getColumnGroup().removeListener(SWT.Collapse, columnGroupListener);
+            }
         }
         
         if (!table.isDisposed())
@@ -229,6 +254,8 @@ public class GridEditor extends ControlEditor
         {
             GridColumn tableColumn = table.getColumn(this.column);
             tableColumn.removeControlListener(columnListener);
+            tableColumn.removeListener(SWT.Show, columnVisibleListener);
+            tableColumn.removeListener(SWT.Hide, columnVisibleListener);
             this.column = -1;
         }
 
@@ -238,6 +265,12 @@ public class GridEditor extends ControlEditor
         this.column = column;
         GridColumn tableColumn = table.getColumn(this.column);
         tableColumn.addControlListener(columnListener);
+        tableColumn.addListener(SWT.Show, columnVisibleListener);
+        tableColumn.addListener(SWT.Hide, columnVisibleListener);
+        if (tableColumn.getColumnGroup() != null){
+            tableColumn.getColumnGroup().addListener(SWT.Expand, columnGroupListener);
+            tableColumn.getColumnGroup().addListener(SWT.Collapse, columnGroupListener);
+        }
         layout();
     }
 
