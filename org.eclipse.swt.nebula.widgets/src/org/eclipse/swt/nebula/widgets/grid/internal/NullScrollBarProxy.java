@@ -1,5 +1,6 @@
 package org.eclipse.swt.nebula.widgets.grid.internal;
 
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Event;
 
 public class NullScrollBarProxy implements IScrollBarProxy
@@ -75,6 +76,18 @@ public class NullScrollBarProxy implements IScrollBarProxy
     public int getPageIncrement()
     {
         return 0;
+    }
+
+    public void addSelectionListener(SelectionListener listener)
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public void removeSelectionListener(SelectionListener listener)
+    {
+        // TODO Auto-generated method stub
+        
     }
 
 }

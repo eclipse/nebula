@@ -1234,7 +1234,7 @@ public class Grid extends Canvas
      * created the receiver</li>
      * </ul>
      */
-    protected IScrollBarProxy getExternalHorizontalScrollBar()
+    protected IScrollBarProxy getHorizontalScrollBarProxy()
     {
         checkWidget();
         return hScroll;
@@ -1252,7 +1252,7 @@ public class Grid extends Canvas
      * created the receiver</li>
      * </ul>
      */
-    protected IScrollBarProxy getExternalVerticalScrollBar()
+    protected IScrollBarProxy getVerticalScrollBarProxy()
     {
         checkWidget();
         return vScroll;
@@ -3262,7 +3262,7 @@ public class Grid extends Canvas
      * 
      * @return the number of potentially visible rows
      */
-    private int getPotentiallyPaintedRows()
+    int getPotentiallyPaintedRows()
     {
         int visibleRows = getClientArea().height;
         if (columnHeadersVisible)
@@ -3737,7 +3737,6 @@ public class Grid extends Canvas
      */
     private void onPaint(PaintEvent e)
     {
-
         if (scrollValuesObsolete)
         {
             updateScrollbars();
@@ -6161,6 +6160,10 @@ public class Grid extends Canvas
         }
 
         scrollValuesObsolete = true;
+        if (item.isVisible()) 
+        {
+            currentVisibleItems --;
+        }
         redraw();
     }
 

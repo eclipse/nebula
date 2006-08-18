@@ -14,8 +14,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ControlEditor;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -50,6 +50,8 @@ public class GridEditor extends ControlEditor
     private Listener columnVisibleListener;
 
     private Listener columnGroupListener;
+
+    private SelectionListener scrollListener;
 
     /**
      * Creates a TableEditor for the specified Table.
@@ -91,6 +93,17 @@ public class GridEditor extends ControlEditor
             }   
         };
         
+        scrollListener = new SelectionListener()
+        {
+            public void widgetSelected(SelectionEvent e)
+            {
+                layout();
+            }
+            public void widgetDefaultSelected(SelectionEvent e)
+            {
+            }        
+        };
+        
         columnGroupListener = new Listener()
         {
             public void handleEvent(Event event)
@@ -106,13 +119,13 @@ public class GridEditor extends ControlEditor
         // https://bugs.eclipse.org/bugs/show_bug.cgi?id=105764
         table.addListener(SWT.Resize, resizeListener);
         
-        if (table.getVerticalBar() != null)
+        if (table.getVerticalScrollBarProxy() != null)
         {
-            table.getVerticalBar().addListener(SWT.Selection, resizeListener);
+            table.getVerticalScrollBarProxy().addSelectionListener(scrollListener);
         }
-        if (table.getHorizontalBar() != null)
+        if (table.getHorizontalScrollBarProxy() != null)
         {
-            table.getHorizontalBar().addListener(SWT.Selection, resizeListener);
+            table.getHorizontalScrollBarProxy().addSelectionListener(scrollListener);
         }
 
         // To be consistent with older versions of SWT, grabVertical defaults to
@@ -193,11 +206,11 @@ public class GridEditor extends ControlEditor
         {
             table.removeListener(SWT.Resize, resizeListener);
             
-            if (table.getVerticalBar() != null)
-                table.getVerticalBar().removeListener(SWT.Selection, resizeListener);
+            if (table.getVerticalScrollBarProxy() != null)
+                table.getVerticalScrollBarProxy().removeSelectionListener(scrollListener);
             
-            if (table.getHorizontalBar() != null)
-                table.getHorizontalBar().removeListener(SWT.Selection, resizeListener);
+            if (table.getHorizontalScrollBarProxy() != null)
+                table.getHorizontalScrollBarProxy().removeSelectionListener(scrollListener);
         }
         
         columnListener = null;

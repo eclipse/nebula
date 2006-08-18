@@ -407,7 +407,30 @@ public class GridItem extends Item
     public Rectangle getBounds(int columnIndex)
     {
         checkWidget();
+        
+        if (!isVisible()) return new Rectangle(0,0,0,0);
+        
+        int index = parent.indexOf(this);
 
+        int topIndex = parent.getTopIndex();
+        
+        if (index < topIndex) return new Rectangle(0,0,0,0);
+        
+        int visibleRows = parent.getPotentiallyPaintedRows();
+        
+        boolean found = false;
+        
+        for (int i = 0; i < visibleRows; i++)
+        {
+            if (parent.getItem(topIndex + i) == this)
+            {
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) return new Rectangle(0,0,0,0);
+        
         Point origin = parent.getOrigin(parent.getColumn(columnIndex), this);
 
         int width = 0;

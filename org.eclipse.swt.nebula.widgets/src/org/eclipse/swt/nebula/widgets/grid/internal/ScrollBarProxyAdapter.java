@@ -1,5 +1,6 @@
 package org.eclipse.swt.nebula.widgets.grid.internal;
 
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.ScrollBar;
 
@@ -154,5 +155,15 @@ public class ScrollBarProxyAdapter implements IScrollBarProxy
     public void handleMouseWheel(Event e)
     {
         //do nothing        
+    }
+
+    public void addSelectionListener(SelectionListener listener)
+    {
+        scrollBar.addSelectionListener(listener);
+    }
+
+    public void removeSelectionListener(SelectionListener listener)
+    {
+        scrollBar.removeSelectionListener(listener);
     }
 }

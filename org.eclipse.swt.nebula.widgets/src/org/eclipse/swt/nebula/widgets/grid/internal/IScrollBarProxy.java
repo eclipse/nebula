@@ -10,6 +10,7 @@
  *******************************************************************************/ 
 package org.eclipse.swt.nebula.widgets.grid.internal;
 
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Event;
 
 /**
@@ -85,4 +86,8 @@ public interface IScrollBarProxy
     public void setPageIncrement(int page);
     
     public int getPageIncrement();
+    
+    public void addSelectionListener(SelectionListener listener);
+    
+    public void removeSelectionListener(SelectionListener listener);
 }
