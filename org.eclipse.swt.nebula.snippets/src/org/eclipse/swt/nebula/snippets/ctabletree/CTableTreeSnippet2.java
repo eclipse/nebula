@@ -22,8 +22,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /*
- * Create a CTableTree with the Tree in the second column.
- * Compare with SWT Snippet "Create a Tree with columns".
+ * Create a CTableTree with the Tree in the second column and
+ * a custom cell in the third column.  The custom cell for this
+ * snippet is a TableCell.
  *
  * For a list of all Nebula CTableTree example snippets see
  * http://www.eclipse.org/nebula/widgets/ctabletree/snippets.php
