@@ -74,17 +74,9 @@ public abstract class CContainerItem extends Widget {
 	}
 
 	public void addListener(int eventType, Listener handler) {
-		
-		// TODO: addListener - need to maintain the listeners who want to listen to the child...
-		//						perhaps an "addChildListener" routine?
-		//						until then selection and such will not happen on child controls...
-		
-//		super.addListener(eventType, handler);
-//		for(int i = 0; i < cells.length; i++) {
-//			if((i != treeCell) || ((eventType != SWT.Collapse) && (eventType != SWT.Expand))) {
-//				cells[i].addListener(eventType, handler);
-//			}
-//		}
+		for(int i = 0; i < cells.length; i++) {
+			cells[i].addListener(eventType, handler);
+		}
 	}
 
 
@@ -431,12 +423,9 @@ public abstract class CContainerItem extends Widget {
 	}
 	
 	public void removeListener(int eventType, Listener handler) {
-//		super.removeListener(eventType, handler);
-//		for(int i = 0; i < cells.length; i++) {
-//			if((i != treeCell) || ((eventType != SWT.Collapse) && (eventType != SWT.Expand))) {
-//				cells[i].removeListener(eventType, handler);
-//			}
-//		}
+		for(int i = 0; i < cells.length; i++) {
+			cells[i].addListener(eventType, handler);
+		}
 	}
 
 	public void setAutoHeight(boolean auto) {
