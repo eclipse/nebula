@@ -54,17 +54,17 @@ public abstract class CContainer extends Composite implements Listener {
 	public static final boolean win32 = "win32".equals(SWT.getPlatform());
 	public static final GC staticGC = new GC(Display.getDefault());
 
-	public static final int OP_NONE 				= 0;
+	public static final int OP_NONE 			= 0;
 	public static final int OP_ADD 				= 1;
 	public static final int OP_REMOVE 			= 2;
-	public static final int OP_CELL_COLLAPSE		= 3;
+	public static final int OP_CELL_COLLAPSE	= 3;
 	public static final int OP_CELL_EXPAND 		= 4;
-	public static final int OP_COLUMN_RESIZE		= 5;
+	public static final int OP_COLUMN_RESIZE	= 5;
 	public static final int DIRTY_ORDERED 		= 1 << 0;
 	public static final int DIRTY_PAINTED		= 1 << 1;
 	public static final int DIRTY_VISIBLE		= 1 << 2;
 	public static final int MODE_NORMAL			= 0;
-	public static final int MODE_MARQUEE			= 1;
+	public static final int MODE_MARQUEE		= 1;
 	public static final int MODE_CREATE			= 2;
 
 	private static int getParentStyle(int style) {
@@ -124,13 +124,13 @@ public abstract class CContainer extends Composite implements Listener {
 	 * toggle is clicked on, as opposed to their body.
 	 */
 	protected boolean selectOnToggle = true;
-	
+
 	private int mode = MODE_MARQUEE;
-	
+
 	ScrolledComposite sc;
 	protected Canvas body;
 	protected Table internalTable;
-	
+
 	protected boolean hasFocus = false;
 	protected String emptyMessage = "";
 	protected boolean linesVisible = false;
@@ -160,7 +160,7 @@ public abstract class CContainer extends Composite implements Listener {
 //	public static final int STATE_BUSY 		= 1;
 	private List activeItems = new ArrayList();
 //	private boolean selectionActive = false;
-	
+
 	public CContainer(Composite parent, int style) {
 		super(parent, getParentStyle(style));
 
@@ -178,7 +178,7 @@ public abstract class CContainer extends Composite implements Listener {
 				}
 			}
 		};
-		
+
 		addListener(SWT.Dispose, new Listener() {
 			public void handleEvent(Event event) {
 				getDisplay().removeFilter(SWT.FocusIn, filter);
@@ -190,8 +190,8 @@ public abstract class CContainer extends Composite implements Listener {
 	}
 
 //	protected void addColumn(CContainerColumn column, int style) {
-//		column.column = new TableColumn(getInternalTable(), style);
-//		columns.put(column, column);
+//	column.column = new TableColumn(getInternalTable(), style);
+//	columns.put(column, column);
 //	}
 
 	protected void addItem(CContainerItem item) {
@@ -460,22 +460,22 @@ public abstract class CContainer extends Composite implements Listener {
 		notifyListeners(event.type, event);
 	}
 
-//	Composite getBody() {
-//		return body;
-//	}
+	public Composite getBody() {
+		return body;
+	}
 
 	public Rectangle getBodyClientArea() {
 		return body.getClientArea();
 	}
-	
+
 	public Point getBodySize() {
 		return body.getSize();
 	}
-	
+
 	public Point getScSize() {
 		return sc.getSize();
 	}
-	
+
 	/**
 	 * Get the index of the Bottom Item, as defined by the implementation class
 	 * @return the index
@@ -523,7 +523,7 @@ public abstract class CContainer extends Composite implements Listener {
 	public CContainerItem getDirtyItem() {
 		return dirtyItem;
 	}
-	
+
 	/**
 	 * The Empty Message is the text message that will be displayed when there are no Items to be displayed (the CTable is empty).
 	 * @return a String representing the Empty Message.  Guaranteed to NOT be null.
@@ -606,7 +606,7 @@ public abstract class CContainer extends Composite implements Listener {
 	protected List getItems(CContainerItem item) {
 		return Collections.EMPTY_LIST;
 	}
-	
+
 	/**
 	 * Get a list of items within, or touching, the given rectangle.
 	 * @param rect
@@ -635,7 +635,7 @@ public abstract class CContainer extends Composite implements Listener {
 	public boolean getLinesVisible() {
 		return linesVisible;
 	}
-	
+
 	public Point getOrigin() {
 		return sc.getOrigin();
 	}
@@ -643,7 +643,7 @@ public abstract class CContainer extends Composite implements Listener {
 	public CContainerItem[] getRemovedItems() {
 		return removedItems;
 	}
-	
+
 	public CContainerItem[] getSelection() {
 		return selection.isEmpty() ? 
 				new CContainerItem[0] : 
@@ -711,22 +711,33 @@ public abstract class CContainer extends Composite implements Listener {
 	private Point mdPoint = null;	// mouse down point
 	private Point muPoint = null;	// mouse up point
 	private Point mmDelta = null;	// mouse move delta
-	private boolean tracker = false;
-	protected void handleMouseEvents(Event event) {
-		CContainerItem item;
+	private boolean marquee = false;
+
+	protected boolean handleMouseEvents(CContainerItem item, Event event) {
+		if(SWT.MouseUp == event.type &&
+				item != null && item.isTogglePoint(muPoint)) {
+			boolean open = !item.isOpen(muPoint);
+			setDirtyFlag(DIRTY_VISIBLE);
+			setOperation(open ? OP_CELL_EXPAND : OP_CELL_COLLAPSE);
+			item.removeListener(open ? SWT.Expand : SWT.Collapse, this);
+			item.setOpen(muPoint, open);
+			item.addListener(open ? SWT.Expand : SWT.Collapse, this);
+			layout(item);
+		}
+		return true;
+	}
+	
+	private void handleMousePosition(CContainerItem item, Event event) {
 		switch (event.type) {
 		case SWT.MouseDoubleClick:
 			if(!selectOnToggle) {
-				Point pt = new Point(event.x, event.y);
-				item = getItem(pt);
 				if(item != null) {
-					if(!selectOnToggle && item.isTogglePoint(pt)) break;
+					if(!selectOnToggle && item.isTogglePoint(new Point(event.x, event.y))) break;
 				}
 			}
 			fireSelectionEvent(true);
 			break;
 		case SWT.MouseDown:
-			if(!hasFocus) setFocus();
 			mmPoint = null;
 			muPoint = null;
 			mmDelta = null;
@@ -738,18 +749,55 @@ public abstract class CContainer extends Composite implements Listener {
 					break;
 				}
 			}
-			item = getItem(mdPoint);
+			break;
+		case SWT.MouseMove:
+			if(mmPoint == null) {
+				mmDelta = new Point(0,0);
+			} else {
+				mmDelta.x = event.x - mmPoint.x;
+				mmDelta.y = event.y - mmPoint.y;
+			}
+			mmPoint = new Point(event.x, event.y);
+			break;
+		case SWT.MouseUp:
+			mmPoint = null;
+			mdPoint = null;
+			mmDelta = null;
+			muPoint = new Point(event.x, event.y);
+			break;
+		default:
+			break;
+		}
+	}
+	
+	protected void handleMouseSelection(CContainerItem item, Event event) {
+		switch (event.type) {
+		case SWT.MouseDoubleClick:
+			if(!selectOnToggle) {
+				if(item != null) {
+					if(!selectOnToggle && item.isTogglePoint(new Point(event.x, event.y))) break;
+				}
+			}
+			fireSelectionEvent(true);
+			break;
+		case SWT.MouseDown:
+			if(!hasFocus) setFocus();
+			if(event.widget == body) {
+				item = getItem(mdPoint);
+			} else if(items.contains(event.item)) {
+				item = (CContainerItem) event.item;
+			}
 			if(item == null) {
 				if((event.stateMask & (SWT.CTRL | SWT.SHIFT)) == 0) {
 					if(mode == MODE_MARQUEE) holdSelection = true;
 					body.setCursor(getDisplay().getSystemCursor(SWT.CURSOR_CROSS));
 					clearSelection();
-					tracker = true;
+					marquee = true;
 				}
 				break;
 			}
 			if(mode == MODE_MARQUEE) holdSelection = selection.contains(item);
-			tracker = false;
+			marquee = false;
 			if(!body.isFocusControl()) {
 				setFocus();
 			}
@@ -782,14 +830,7 @@ public abstract class CContainer extends Composite implements Listener {
 			}
 			break;
 		case SWT.MouseMove:
-			if(mmPoint == null) {
-				mmDelta = new Point(0,0);
-			} else {
-				mmDelta.x = event.x - mmPoint.x;
-				mmDelta.y = event.y - mmPoint.y;
-			}
-			mmPoint = new Point(event.x, event.y);
-			if(mode == MODE_MARQUEE && tracker) {
+			if(mode == MODE_MARQUEE && marquee) {
 				int x = Math.min(mdPoint.x, mmPoint.x);
 				int y = Math.min(mdPoint.y, mmPoint.y);
 				int w = Math.abs(mdPoint.x - mmPoint.x);
@@ -800,29 +841,14 @@ public abstract class CContainer extends Composite implements Listener {
 			body.redraw();
 			break;
 		case SWT.MouseUp:
-			tracker = false;
+			marquee = false;
 			body.setCursor(getDisplay().getSystemCursor(SWT.CURSOR_ARROW));
-			mmPoint = null;
-			mdPoint = null;
-			mmDelta = null;
-			muPoint = new Point(event.x, event.y);
-			item = getItem(muPoint);
-			if(item != null && item.isTogglePoint(muPoint)) {
-				boolean open = !item.isOpen(muPoint);
-				setDirtyFlag(DIRTY_VISIBLE);
-				setOperation(open ? OP_CELL_EXPAND : OP_CELL_COLLAPSE);
-				item.removeListener(open ? SWT.Expand : SWT.Collapse, this);
-				item.setOpen(muPoint, open);
-				item.addListener(open ? SWT.Expand : SWT.Collapse, this);
-				layout(item);
-//				body.redraw();
-			}
 			body.redraw();
 			break;
 		}
 
 	}
-	
+
 	public void handleEvent(Event event) {
 		switch (event.type) {
 		case SWT.FocusIn:
@@ -833,28 +859,36 @@ public abstract class CContainer extends Composite implements Listener {
 		case SWT.MouseDown:
 		case SWT.MouseMove:
 		case SWT.MouseUp:
-			handleMouseEvents(event);
-			
-			int result = 0;
-			Set s = new HashSet(selection);
-			s.addAll(paintedItems);
-			for(Iterator i = s.iterator(); i.hasNext(); ) {
-				CContainerItem item = (CContainerItem) i.next();
-				result |= item.handleMouseEvent(event, !activeItems.isEmpty());
-				if((item.isCellState(CContainerCell.CELL_MOVING | CContainerCell.CELL_RESIZING))) {
-					if(!activeItems.contains(item)) {
-						activeItems.add(item);
+			CContainerItem item = null;
+			if(event.widget == body) {
+				item = getItem(new Point(event.x, event.y));
+			} else if(items.contains(event.item)) {
+				item = (CContainerItem) event.item;
+			}
+			handleMousePosition(item, event);
+			if(handleMouseEvents(item, event)) {
+				handleMouseSelection(item, event);
+				int result = 0;
+				Set s = new HashSet(selection);
+				s.addAll(paintedItems);
+				for(Iterator i = s.iterator(); i.hasNext(); ) {
+					item = (CContainerItem) i.next();
+					result |= item.handleMouseEvent(event, !activeItems.isEmpty());
+					if((item.isCellState(CContainerCell.CELL_MOVING | CContainerCell.CELL_RESIZING))) {
+						if(!activeItems.contains(item)) {
+							activeItems.add(item);
+						}
+					} else {
+						activeItems.remove(item);
 					}
-				} else {
-					activeItems.remove(item);
+					if((result & CContainerCell.RESULT_CONSUME) != 0) break;
 				}
-				if((result & CContainerCell.RESULT_CONSUME) != 0) break;
-			}
-			if((result & CContainerCell.RESULT_LAYOUT) != 0) {
-				layout();
-			}
-			if((result & CContainerCell.RESULT_REDRAW) != 0) {
-				body.redraw();
+				if((result & CContainerCell.RESULT_LAYOUT) != 0) {
+					layout();
+				}
+				if((result & CContainerCell.RESULT_REDRAW) != 0) {
+					body.redraw();
+				}
 			}
 			break;
 		case SWT.Traverse:
@@ -951,7 +985,7 @@ public abstract class CContainer extends Composite implements Listener {
 		opLayout();
 		if(redraw) body.redraw();
 	}
-	
+
 	public void move(CContainerItem item, int newIndex) {
 		if(newIndex >= 0 && newIndex < visibleItems.size() && visibleItems.contains(item)) {
 			int oldIndex = visibleItems.indexOf(item);
@@ -986,7 +1020,7 @@ public abstract class CContainer extends Composite implements Listener {
 			columns[i].paint(gc, ebounds);
 		}
 	}
-	
+
 	protected void paintItemBackgrounds(GC gc, Rectangle ebounds) {
 	}
 
@@ -995,7 +1029,7 @@ public abstract class CContainer extends Composite implements Listener {
 
 	protected void paintGridLines(GC gc, Rectangle ebounds) {
 		Rectangle r = getBodyClientArea();
-		
+
 		if(linesVisible && (!nativeGrid || getGridLineWidth() > 0)) {
 			gc.setForeground(getColors().getGrid());
 
@@ -1018,7 +1052,7 @@ public abstract class CContainer extends Composite implements Listener {
 							visibleItems.size() - 1)).fixedTitleHeight;
 				}
 			} 
-			
+
 			if(hLines) {
 				int gridline = getGridLineWidth();
 				while(y < r.height) {
@@ -1083,12 +1117,12 @@ public abstract class CContainer extends Composite implements Listener {
 		paintViewport(gc, ebounds);
 		paintTracker(gc, ebounds);
 		paintFocus(gc,ebounds);
-		
+
 		e.gc.drawImage(image, ebounds.x, ebounds.y);
 		gc.dispose();
 		image.dispose();
 	}
-	
+
 	protected void paintViewport(GC gc, Rectangle ebounds) {
 		if(drawViewportNorth || drawViewportEast || drawViewportSouth || drawViewportWest) {
 			gc.setAlpha(255);
@@ -1100,22 +1134,27 @@ public abstract class CContainer extends Composite implements Listener {
 			if(drawViewportWest)  gc.drawLine(r.x, r.y, r.x, r.y + r.height);
 		}
 	}
-	
+
 	protected void paintTracker(GC gc, Rectangle ebounds) {
-		if(tracker && mdPoint != null && mmPoint != null) {
+		if(marquee && mdPoint != null && mmPoint != null) {
 			gc.setAlpha(75);
 			gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_GRAY));
 			gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_GRAY));
-			gc.fillRectangle(mdPoint.x-ebounds.x, mdPoint.y-ebounds.y, mmPoint.x - mdPoint.x, mmPoint.y - mdPoint.y);
+			int x = (mmPoint.x > mdPoint.x ? mdPoint.x : mmPoint.x)-ebounds.x;
+			int y = (mmPoint.y > mdPoint.y ? mdPoint.y : mmPoint.y)-ebounds.y;
+			int w = Math.abs(mmPoint.x - mdPoint.x);
+			int h = Math.abs(mmPoint.y - mdPoint.y);
+			gc.fillRectangle(x, y, w, h);
 			gc.setAlpha(255);
-			gc.drawRectangle(mdPoint.x-ebounds.x, mdPoint.y-ebounds.y, mmPoint.x - mdPoint.x, mmPoint.y - mdPoint.y);
+			gc.setLineStyle(SWT.LINE_DASHDOTDOT);
+			gc.drawRectangle(x, y, w, h);
 		}
 	}
-	
+
 	protected void paintFocus(GC gc, Rectangle ebounds) {
 		if(hasFocus) {
 			if(win32 || (gtk && !paintedItems.isEmpty())) return;
-			
+
 			gc.setAlpha(255);
 			gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
 			gc.setLineDash(new int[] { 1, 1 } );
@@ -1127,7 +1166,7 @@ public abstract class CContainer extends Composite implements Listener {
 			gc.drawRectangle(r);
 		}
 	}
-	
+
 	public void redraw() {
 		body.redraw();
 		super.redraw();
@@ -1150,15 +1189,15 @@ public abstract class CContainer extends Composite implements Listener {
 				if(!item.isDisposed()) item.dispose();
 			}
 			selection.removeAll(l);
-	
+
 			setRemovedItems(l.isEmpty() ? new CContainerItem[0] :
 				(CContainerItem[]) l.toArray(new CContainerItem[l.size()]));
-	
+
 			setDirtyFlag(DIRTY_ORDERED);
 			setOperation(OP_REMOVE);
 			updateItemLists();
 			opLayout();
-	
+
 			if(selChange) fireSelectionEvent(false);
 		}
 	}
@@ -1215,15 +1254,15 @@ public abstract class CContainer extends Composite implements Listener {
 	public void scrollTo(Point pt) {
 		sc.setOrigin(pt);
 	}
-	
+
 	public void scrollToX(int x) {
 		sc.setOrigin(x, sc.getOrigin().y);
 	}
-	
+
 	public void scrollToY(int y) {
 		sc.setOrigin(sc.getOrigin().x, y);
 	}
-	
+
 	public void select(int index) {
 		select(index, true);
 	}
@@ -1280,11 +1319,11 @@ public abstract class CContainer extends Composite implements Listener {
 	public void clearDirtyFlags() {
 		dirtyFlags = 0;
 	}
-	
+
 	public void clearDirtyItem() {
 		dirtyItem = null;
 	}
-	
+
 	public void setDirtyFlag(int flag) {
 		switch(flag) {
 		case DIRTY_ORDERED:
@@ -1298,7 +1337,7 @@ public abstract class CContainer extends Composite implements Listener {
 			break;
 		}
 	}
-	
+
 	public void setDirtyItem(CContainerItem item) {
 		dirtyItem = item;
 	}
@@ -1366,7 +1405,7 @@ public abstract class CContainer extends Composite implements Listener {
 	public void setHorizontalLinesVisible(boolean visible) {
 		hLines = visible;
 	}
-	
+
 	public void setMode(int mode) {
 		this.mode = mode;
 	}
@@ -1385,7 +1424,7 @@ public abstract class CContainer extends Composite implements Listener {
 	private void setRemovedItems(CContainerItem[] items) {
 		removedItems = items;
 	}
-	
+
 	/**
 	 * Enables items in this Container to be selected
 	 * @param selectable
@@ -1488,7 +1527,7 @@ public abstract class CContainer extends Composite implements Listener {
 	public void setVerticalLinesVisible(boolean visible) {
 		vLines = visible;
 	}
-	
+
 	/**
 	 * not yet implemented
 	 * <p>post a feature request if you need it enabled</p>
@@ -1571,7 +1610,7 @@ public abstract class CContainer extends Composite implements Listener {
 		}
 		updatePaintedItems();
 	}
-	
+
 	protected void updateOrderedItems() {
 		orderedItems = new ArrayList(items);
 	}
@@ -1589,23 +1628,23 @@ public abstract class CContainer extends Composite implements Listener {
 			paintedItems = (topIndex == -1 || topIndex >= visibleItems.size() || botIndex < topIndex) ?
 					new ArrayList() :
 						new ArrayList(visibleItems.subList(topIndex, botIndex + 1));
-			List newPainted = new ArrayList(paintedItems);
+					List newPainted = new ArrayList(paintedItems);
 
-			// remove common elements from both lists
-			for(Iterator i = oldPainted.iterator(); i.hasNext(); ) {
-				Object o = i.next();
-				if(newPainted.contains(o)) {
-					newPainted.remove(o);
-					i.remove();
-				}
-			}
+					// remove common elements from both lists
+					for(Iterator i = oldPainted.iterator(); i.hasNext(); ) {
+						Object o = i.next();
+						if(newPainted.contains(o)) {
+							newPainted.remove(o);
+							i.remove();
+						}
+					}
 
-			for(Iterator i = oldPainted.iterator(); i.hasNext(); ) {
-				firePaintedItemEvent((CContainerItem) i.next(), false);
-			}
-			for(Iterator i = newPainted.iterator(); i.hasNext(); ) {
-				firePaintedItemEvent((CContainerItem) i.next(), true);
-			}
+					for(Iterator i = oldPainted.iterator(); i.hasNext(); ) {
+						firePaintedItemEvent((CContainerItem) i.next(), false);
+					}
+					for(Iterator i = newPainted.iterator(); i.hasNext(); ) {
+						firePaintedItemEvent((CContainerItem) i.next(), true);
+					}
 		}
 	}
 
