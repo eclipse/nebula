@@ -35,21 +35,88 @@ import org.eclipse.swt.widgets.Listener;
  * </p> 
  */
 public abstract class CContainerCell {
-	private class DeferredListener {
-		public int eventType;
-		public Listener handler;
+	
+//	private class DeferredListener {
+//		public int eventType;
+//		public Listener handler;
+//
+//		DeferredListener(int eventType, Listener handler) {
+//			this.eventType = eventType;
+//			this.handler = handler;
+//		}
+//
+//		public boolean equals(Object object) {
+//			if(object instanceof DeferredListener) {
+//				DeferredListener handler = (DeferredListener) object;
+//				return (handler.eventType == this.eventType && handler.handler == this.handler);
+//			}
+//			return false;
+//		}
+//		
+//		public boolean isType(int type) {
+//			return eventType == type;
+//		}
+//	}
 
-		DeferredListener(int eventType, Listener handler) {
-			this.eventType = eventType;
-			this.handler = handler;
-		}
+	private class EventHandler {
+		List[] handlers;
 
-		public boolean equals(Object object) {
-			if(object instanceof DeferredListener) {
-				DeferredListener handler = (DeferredListener) object;
-				return (handler.eventType == this.eventType && handler.handler == this.handler);
+		boolean add(int eventType, Listener handler) {
+			if(eventType > 0 && handler != null) {
+				if(handlers == null) {
+					handlers = new List[4];
+				}
+				if(eventType >= handlers.length) {
+					List[] newHandlers = new List[eventType+1];
+					System.arraycopy(handlers, 0, newHandlers, 0, handlers.length);
+					handlers = newHandlers;
+				}
+				if(handlers[eventType] == null) {
+					handlers[eventType] = new ArrayList();
+				}
+				if(!handlers[eventType].contains(handler)) {
+					handlers[eventType].add(handler);
+					return true;
+				}
 			}
 			return false;
+		}
+
+		int[] getEventTypes() {
+			int count = 0;
+			for(int i = 0; i < handlers.length; i++) {
+				if(handlers[i] != null && !handlers[i].isEmpty()) count++;
+			}
+			int[] types = new int[count];
+			count = 0;
+			for(int i = 0; i < handlers.length; i++) {
+				if(handlers[i] != null && !handlers[i].isEmpty()) types[count++] = i;
+			}
+			return types;
+		}
+		
+		boolean hasHandler(int eventType) {
+			return (eventType > 0 && eventType < handlers.length &&
+					handlers[eventType] != null && !handlers[eventType].isEmpty());
+		}
+
+		boolean remove(int eventType, Listener handler) {
+			if(eventType > 0 && eventType < handlers.length && 
+					handlers[eventType] != null) {
+				return handlers[eventType].remove(handler);
+			}
+			return false;
+		}
+		
+		void sendEvent(Event event) {
+			if(hasHandler(event.type)) {
+				event.data = CContainerCell.this;
+				event.item = getItem(); // TODO: necessary?
+				Listener[] la = (Listener[]) handlers[event.type].toArray(new Listener[handlers[event.type].size()]);
+				for(int i = 0; i < la.length; i++) {
+					la[i].handleEvent(event);
+				}
+			}
 		}
 	}
 	
@@ -126,7 +193,8 @@ public abstract class CContainerCell {
 	protected boolean isGridLine = false;
 	private int cellState = CELL_NORMAL;
 
-	private List dlisteners = new ArrayList();
+	private EventHandler ehandler = new EventHandler();
+//	private List dlisteners = new ArrayList();
 
 
 	public CContainerCell(CContainerItem item, int style) {
@@ -139,25 +207,31 @@ public abstract class CContainerCell {
 		this.item = item;
 	}
 
-
+	private Listener l = new Listener() {
+		public void handleEvent(Event event) {
+			ehandler.sendEvent(event);
+		}
+	};
 	public void addListener(int eventType, Listener handler) {
-		List controls = getEventManagedControls();
-		for(Iterator iter = controls.iterator(); iter.hasNext(); ) {
-			Control control = (Control) iter.next();
-			control.addListener(eventType, handler);
-		}
-
-		if((getStyle() & SWT.DROP_DOWN) != 0) {
-			DeferredListener dl = new DeferredListener(eventType, handler);
-			boolean contains = false;
-			for(Iterator i = dlisteners.iterator(); i.hasNext(); ) {
-				if(dl.equals(i.next())) {
-					contains = true;
-					break;
-				}
+		if(ehandler.add(eventType, handler)) {
+			List controls = getEventManagedControls();
+			for(Iterator iter = controls.iterator(); iter.hasNext(); ) {
+				Control control = (Control) iter.next();
+				control.addListener(eventType, l);
 			}
-			if(!contains) dlisteners.add(dl);
-		}
+
+//			if((getStyle() & SWT.DROP_DOWN) != 0 && childArea == null) {
+//				DeferredListener dl = new DeferredListener(eventType, handler);
+//				boolean contains = false;
+//				for(Iterator i = dlisteners.iterator(); i.hasNext(); ) {
+//					if(dl.equals(i.next())) {
+//						contains = true;
+//						break;
+//					}
+//				}
+//				if(!contains) dlisteners.add(dl);
+//			}
+		}			
 	}
 
 	protected void clearCellStateFlags() {
@@ -502,17 +576,19 @@ public abstract class CContainerCell {
 	}
 
 	public void removeListener(int eventType, Listener handler) {
-		List controls = getEventManagedControls();
-		for(Iterator iter = controls.iterator(); iter.hasNext(); ) {
-			Control control = (Control) iter.next();
-			control.removeListener(eventType, handler);
-		}
-
-		if((getStyle() & SWT.DROP_DOWN) != 0) {
-			DeferredListener h = new DeferredListener(eventType, handler);
-			for(Iterator i = dlisteners.iterator(); i.hasNext(); ) {
-				if(h.equals(i.next())) i.remove();
+		if(ehandler.remove(eventType, handler)) {
+			List controls = getEventManagedControls();
+			for(Iterator iter = controls.iterator(); iter.hasNext(); ) {
+				Control control = (Control) iter.next();
+				control.removeListener(eventType, handler);
 			}
+	
+//			if((getStyle() & SWT.DROP_DOWN) != 0) {
+//				DeferredListener h = new DeferredListener(eventType, handler);
+//				for(Iterator i = dlisteners.iterator(); i.hasNext(); ) {
+//					if(h.equals(i.next())) i.remove();
+//				}
+//			}
 		}
 	}
 
@@ -599,9 +675,14 @@ public abstract class CContainerCell {
 				if(childArea == null) {
 					childArea = new SComposite(item.container.body, getStyle());
 					createChildContents(childArea, getStyle());
-					for(Iterator i = dlisteners.iterator(); i.hasNext(); )	{
-						DeferredListener h = (DeferredListener) i.next();
-						addListener(h.eventType, h.handler);
+					// TODO: review...
+					int[] types = ehandler.getEventTypes();
+					for(int i = 0; i < types.length; i++) {
+						List controls = getEventManagedControls();
+						for(Iterator iter = controls.iterator(); iter.hasNext(); ) {
+							Control control = (Control) iter.next();
+							control.addListener(types[i], l);
+						}
 					}
 					updateColors();
 					update();
