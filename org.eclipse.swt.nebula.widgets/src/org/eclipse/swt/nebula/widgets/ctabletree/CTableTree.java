@@ -25,7 +25,6 @@ import org.eclipse.swt.nebula.widgets.ctabletree.ccontainer.CContainer;
 import org.eclipse.swt.nebula.widgets.ctabletree.ccontainer.CContainerItem;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.TypedListener;
 import org.eclipse.swt.widgets.Widget;
 
@@ -39,7 +38,7 @@ import org.eclipse.swt.widgets.Widget;
 public class CTableTree extends CContainer {
 
 	public static final int OP_TREE_COL			= 6;
-	public static final int OP_TREE_COLLAPSE		= 7;
+	public static final int OP_TREE_COLLAPSE	= 7;
 	public static final int OP_TREE_EXPAND 		= 8;
 
 	private boolean selectOnTreeToggle = false;
@@ -48,7 +47,7 @@ public class CTableTree extends CContainer {
 
 	public CTableTree(Composite parent, int style) {
 		super(parent, style);
-		setLinesVisible(true);
+//		setLinesVisible(true);
 		setLayout(layout = new CTableTreeLayout(this));
 	}
 
@@ -81,17 +80,20 @@ public class CTableTree extends CContainer {
 	}
 
 	public CContainerItem getBottomItem() {
-		if(!visibleItems.isEmpty()) {
-			Point pt = getOrigin();
-			pt.x += marginWidth;
-			pt.y += getClientArea().height;
-			for(Iterator i = visibleItems.iterator(); i.hasNext(); ) {
-				CContainerItem item = (CContainerItem) i.next();
-				if(item.contains(pt)) return item;
+		int bot = getOrigin().y;
+		bot += getClientArea().height;
+		int itop = 0;
+		int ibot = 0;
+		for(Iterator i = visibleItems.iterator(); i.hasNext(); ) {
+			CContainerItem item = (CContainerItem) i.next();
+			Rectangle r = item.getUnifiedBounds();
+			ibot = r.y+r.height;
+			if(itop < bot && bot <= ibot) {
+				return item;
 			}
-			return (CContainerItem) visibleItems.get(visibleItems.size()-1);
+			itop = r.y+r.height;
 		}
-		return null;
+		return (CContainerItem) visibleItems.get(visibleItems.size()-1);
 	}
 
 	protected List getItems(CContainerItem item) {
@@ -107,9 +109,9 @@ public class CTableTree extends CContainer {
 	}
 
 
-	public CContainerItem getParentItem() {
-		return null;
-	}
+//	public CContainerItem getParentItem() {
+//		return null;
+//	}
 
 	/**
 	 * @see CTableTree#setSelectOnTreeToggle(boolean)
@@ -124,12 +126,18 @@ public class CTableTree extends CContainer {
 	}
 
 	public CContainerItem getTopItem() {
-		Point pt = getOrigin();
-		pt.x += marginWidth;
-		pt.y += marginHeight;
+		int top = getOrigin().y;
+		top += marginHeight;
+		int itop = 0;
+		int ibot = 0;
 		for(Iterator i = visibleItems.iterator(); i.hasNext(); ) {
 			CContainerItem item = (CContainerItem) i.next();
-			if(item.contains(pt)) return item;
+			Rectangle r = item.getUnifiedBounds();
+			ibot = r.y+r.height;
+			if(itop <= top && top < ibot) {
+				return item;
+			}
+			itop = r.y+r.height;
 		}
 		return null;
 	}
@@ -142,90 +150,35 @@ public class CTableTree extends CContainer {
 		return treeIndent;
 	}
 
-	protected void handleMouseEvents(Event event) {
-		CTableTreeItem item;
-		switch (event.type) {
-		case SWT.MouseDoubleClick:
-			if(!selectOnTreeToggle || !selectOnToggle) {
-				Point pt = new Point(event.x, event.y);
-				item = (CTableTreeItem) getItem(pt);
-				if(item != null) {
-					if(!selectOnTreeToggle && item.isTreeTogglePoint(pt)) break;
-					if(!selectOnToggle && item.isTogglePoint(pt)) break;
-				}
-			}
-			fireSelectionEvent(true);
-			break;
-		case SWT.MouseDown:
-			if(!hasFocus) setFocus();
+	protected boolean handleMouseEvents(CContainerItem item, Event event) {
+		if(item != null && item instanceof CTableTreeItem) {
+			CTableTreeItem ti = (CTableTreeItem) item;
 			Point pt = new Point(event.x, event.y);
-//			if(event.widget != body) {
-//				if(event.widget instanceof Control) {
-//					pt = getDisplay().map((Control) event.widget, body, pt);
-//				} else {
-//					break;
-//				}
-//			}
-			item = (CTableTreeItem) getItem(pt);
-			if(item == null) {
-				if((event.stateMask & (SWT.CTRL | SWT.SHIFT)) == 0) {
-					clearSelection();
+			switch (event.type) {
+			case SWT.MouseDoubleClick:
+			case SWT.MouseDown:
+				if(!selectOnTreeToggle && ti.isTreeTogglePoint(pt)) return false;
+				break;
+			case SWT.MouseUp:
+				pt = new Point(event.x, event.y);
+				if(item != null && item.isTogglePoint(pt)) {
+					boolean open = item.isOpen(pt);
+					boolean tree = ti.isTreeTogglePoint(pt);
+					setDirtyFlag(DIRTY_VISIBLE);
+					setOperation(open ? (tree ? OP_TREE_EXPAND : OP_CELL_EXPAND) : 
+						(tree ? OP_TREE_COLLAPSE : OP_CELL_COLLAPSE));
+					item.removeListener(open ? SWT.Expand : SWT.Collapse, this);
+					item.setOpen(pt, !open);
+					item.addListener(open ? SWT.Expand : SWT.Collapse, this);
+					layout(item);
+					fireTreeEvent(item, SWT.Collapse == event.type);
+					if(tree) break;
 				}
 				break;
 			}
-//			if(!body.isFocusControl()) {
-//				setFocus();
-//			}
-			switch (event.button) {
-			// TODO - popup menu: not just for mouse down events!
-			case 3:
-				Menu menu = getMenu();
-				if((menu != null) && ((menu.getStyle() & SWT.POP_UP) != 0)) {
-					menu.setVisible(true);
-				}
-			case 1:
-				if(!selectOnTreeToggle && item.isTreeTogglePoint(pt)) break;
-				if(!selectOnToggle && item.isTogglePoint(pt)) break;
-				if((event.stateMask & SWT.SHIFT) != 0) {
-					if(shiftSel == null) {
-						if(selection.isEmpty()) selection.add(item);
-						shiftSel = (CContainerItem) selection.get(selection.size() - 1);
-					}
-					int start = items.indexOf(shiftSel);
-					int end = items.indexOf(item);
-					setSelection(start, end);
-				} else if((event.stateMask & SWT.CONTROL) != 0) {
-					toggleSelection(item);
-					shiftSel = null;
-				} else {
-					setSelection(item);
-					shiftSel = null;
-				}
-				break;
-			}
-			break;
-		case SWT.MouseMove:
-			break;
-		case SWT.MouseUp:
-			pt = new Point(event.x, event.y);
-			item = (CTableTreeItem) getItem(pt);
-			if(item == null) break;
-			if(item.isTogglePoint(pt)) {
-				boolean open = item.isOpen(pt);
-				boolean tree = item.isTreeTogglePoint(pt);
-				setDirtyFlag(DIRTY_VISIBLE);
-				setOperation(open ? (tree ? OP_TREE_EXPAND : OP_CELL_EXPAND) : 
-					(tree ? OP_TREE_COLLAPSE : OP_CELL_COLLAPSE));
-				item.removeListener(open ? SWT.Expand : SWT.Collapse, this);
-				item.setOpen(pt, !open);
-				item.addListener(open ? SWT.Expand : SWT.Collapse, this);
-				layout(item);
-				fireTreeEvent(item, SWT.Collapse == event.type);
-				if(tree) break;
-			}
-			break;
+			return true;
 		}
-
+		return false;
 	}
 
 	/**
