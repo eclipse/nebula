@@ -347,6 +347,16 @@ public abstract class CContainerCell {
 		return childArea;
 	}
 
+	public Rectangle getClientArea() {
+		Rectangle ca = new Rectangle(0,0,bounds.width,bounds.height);
+		ca.x = marginLeft + marginWidth;
+		if(toggleVisible || ghostToggle) ca.x += toggleBounds.width;
+		ca.y = marginTop + marginHeight;
+		ca.width -= (ca.x + marginRight + marginWidth);
+		ca.height -= (ca.y + marginBottom + marginHeight);
+		return ca;
+	}
+	
 	protected List getColorManagedControls() {
 		List l = new ArrayList();
 		if((getStyle() & SWT.SIMPLE) != 0) {
