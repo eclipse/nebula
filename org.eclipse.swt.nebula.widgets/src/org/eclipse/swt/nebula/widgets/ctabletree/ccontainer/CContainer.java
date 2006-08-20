@@ -21,6 +21,7 @@ import java.util.ListIterator;
 import java.util.Set;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -36,6 +37,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
@@ -1383,6 +1385,26 @@ public abstract class CContainer extends Composite implements Listener {
 	public void setItemCount(int count) {
 	}
 
+	/**
+	 * Sets the layout which is associated with the receiver to be
+	 * the argument which may be null.
+	 * If the argument is non-null then it must be a subclass of
+	 * CContainerLayout or this method will simply return.
+	 *
+	 * @param layout the receiver's new layout or null
+	 *
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 * </ul>
+	 */
+	public void setLayout(Layout layout) {
+		if(layout instanceof CContainerLayout) {
+			this.layout = (CContainerLayout) layout;
+			super.setLayout(layout);
+		}
+	}
+	
 	public void setLinesVisible(boolean visible) {
 		setLinesVisible(visible, true);
 	}
