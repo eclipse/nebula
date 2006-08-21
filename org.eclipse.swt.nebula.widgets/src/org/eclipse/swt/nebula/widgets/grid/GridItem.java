@@ -420,14 +420,25 @@ public class GridItem extends Item
         
         boolean found = false;
         
-        for (int i = 0; i < visibleRows; i++)
+        GridItem currentItem = parent.getItem(topIndex);
+        
+        if (currentItem == this)
         {
-            if (parent.getItem(topIndex + i) == this)
-            {
-                found = true;
-                break;
-            }
+            found = true;
         }
+        else
+        {
+            for (int i = 1; i < visibleRows; i++)
+            {
+                currentItem = parent.getNextVisibleItem(currentItem);
+                if (currentItem == null) return new Rectangle(0,0,0,0);
+                if (currentItem == this)
+                {
+                    found = true;
+                    break;
+                }
+            }          
+        }    
 
         if (!found) return new Rectangle(0,0,0,0);
         
