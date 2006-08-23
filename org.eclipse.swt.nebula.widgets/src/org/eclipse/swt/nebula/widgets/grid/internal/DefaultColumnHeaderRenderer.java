@@ -13,11 +13,11 @@ package org.eclipse.swt.nebula.widgets.grid.internal;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.nebula.widgets.grid.AbstractInternalWidget;
 import org.eclipse.swt.nebula.widgets.grid.GridColumn;
+import org.eclipse.swt.nebula.widgets.grid.GridHeaderRenderer;
 import org.eclipse.swt.widgets.Display;
 
-public class DefaultColumnHeaderRenderer extends AbstractInternalWidget
+public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
 {
 
     int leftMargin = 6;

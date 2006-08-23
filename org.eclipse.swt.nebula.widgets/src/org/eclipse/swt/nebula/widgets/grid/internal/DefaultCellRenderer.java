@@ -251,16 +251,20 @@ public class DefaultCellRenderer extends GridCellRenderer
         {
             x += checkRenderer.getBounds().width + insideMargin;
         }
+        
+        int y = 0;
+        
+        Image image = item.getImage(getColumn());
+        if (image != null)
+        {  
+            y = topMargin + image.getBounds().height + bottomMargin;
+            
+            x += image.getBounds().width + insideMargin;
+        }
 
         x += gc.stringExtent(item.getText(getColumn())).x + rightMargin;
 
-        int y = 0;
-
-        y += topMargin;
-
-        y += gc.getFontMetrics().getHeight();
-
-        y += bottomMargin;
+        y = Math.max(y,topMargin + gc.getFontMetrics().getHeight() + bottomMargin);
 
         return new Point(x, y);
     }

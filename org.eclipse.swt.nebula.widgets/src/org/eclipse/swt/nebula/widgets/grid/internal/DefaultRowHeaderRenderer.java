@@ -21,7 +21,7 @@ public class DefaultRowHeaderRenderer extends AbstractRenderer
 
     int leftMargin = 6;
 
-    int rightMargin = 6;
+    int rightMargin = 8;
 
     int topMargin = 3;
 
@@ -31,7 +31,7 @@ public class DefaultRowHeaderRenderer extends AbstractRenderer
     {
         GridItem item = (GridItem) value;
         
-        String num = (item.getParent().indexOf(item) + 1) + "";
+        String text = getHeaderText(item);
 
         gc.setFont(getDisplay().getSystemFont());
         
@@ -116,28 +116,30 @@ public class DefaultRowHeaderRenderer extends AbstractRenderer
 
         gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
 
-        int y = getBounds().y + (getBounds().height - gc.stringExtent(num).y) / 2;
+        int y = getBounds().y + (getBounds().height - gc.stringExtent(text).y) / 2;
 
         if (isSelected() && !item.getParent().getCellSelectionEnabled())
         {
-            gc.drawString(TextUtils.getShortString(gc, num, width), getBounds().x + x + 1, y + 1);
+            gc.drawString(TextUtils.getShortString(gc, text, width), getBounds().x + x + 1, y + 1);
         }
         else
         {
-            gc.drawString(TextUtils.getShortString(gc, num, width), getBounds().x + x, y);
+            gc.drawString(TextUtils.getShortString(gc, text, width), getBounds().x + x, y);
         }
 
     }
 
     public Point computeSize(GC gc, int wHint, int hHint, Object value)
     {
-        String num = ((Integer)value).toString();
+        GridItem item = (GridItem) value;
+
+        String text = getHeaderText(item);
 
         int x = 0;
 
         x += leftMargin;
 
-        x += gc.stringExtent(num).x + rightMargin;
+        x += gc.stringExtent(text).x + rightMargin;
 
         int y = 0;
 
@@ -148,6 +150,16 @@ public class DefaultRowHeaderRenderer extends AbstractRenderer
         y += bottomMargin;
 
         return new Point(x, y);
+    }
+    
+    private String getHeaderText(GridItem item)
+    {
+        String text = item.getHeaderText();
+        if (text == null)
+        {
+            text = (item.getParent().indexOf(item) + 1) + "";
+        }
+        return text;
     }
 
 }

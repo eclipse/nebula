@@ -14,6 +14,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -133,6 +134,11 @@ public class GridItem extends Item
      */
     private boolean visible = true;
 
+    /**
+     * Row header text.
+     */
+    private String headerText = null;
+    
     /**
      * Creates a new instance of this class and places the item at the end of
      * the grid.
@@ -1298,6 +1304,7 @@ public class GridItem extends Item
      */
     public void setText(int index, String text)
     {
+        checkWidget();
         if (text == null)
         {
             SWT.error(SWT.ERROR_NULL_ARGUMENT);
@@ -1422,6 +1429,62 @@ public class GridItem extends Item
                 item.setVisible(childrenVisible);
             }
         }
+    }
+
+    /**
+     * Returns the receiver's row header text.  If the text is <code>null</code> the row header will
+     * display the row number.
+     * 
+     * @param index the column index
+     * @return the text stored at the given column index in the receiver
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
+     */
+    public String getHeaderText()
+    {
+        checkWidget();
+        return headerText;
+    }
+
+    /**
+     * Sets the receiver's row header text.  If the text is <code>null</code> the row header will
+     * display the row number.
+     * 
+     * @param text the new text
+     * @throws IllegalArgumentException
+     * <ul>
+     * <li>ERROR_NULL_ARGUMENT - if the text is null</li>
+     * </ul>
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
+     */
+    public void setHeaderText(String text)
+    {
+        checkWidget();
+        if (text == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
+        if (text != headerText)
+        {
+            GC gc = new GC(parent);
+            
+            int oldWidth = parent.getRowHeaderRenderer().computeSize(gc, SWT.DEFAULT, SWT.DEFAULT, this).x;
+            
+            this.headerText = text;
+            
+            int newWidth = parent.getRowHeaderRenderer().computeSize(gc, SWT.DEFAULT, SWT.DEFAULT, this).x;
+            
+            gc.dispose();
+            
+            parent.recalculateRowHeaderWidth(this,oldWidth,newWidth);
+        }
+        
     }
 
 }

@@ -24,6 +24,7 @@ import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.events.TreeListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
@@ -113,13 +114,13 @@ public class Grid extends Canvas
      * The number used when sizing the row header (i.e. size it for '1000')
      * initially.
      */
-    private static final int INITIAL_ROW_HEADER_SIZING_VALUE = 1000;
+//    private static final int INITIAL_ROW_HEADER_SIZING_VALUE = 1000;
 
     /**
      * The factor to multiply the current row header sizing value by when
      * determining the next sizing value. Used for performance reasons.
      */
-    private static final int ROW_HEADER_SIZING_MULTIPLIER = 10;
+//    private static final int ROW_HEADER_SIZING_MULTIPLIER = 10;
 
     /**
      * Tracks whether the scroll values are correct. If not they will be
@@ -254,7 +255,7 @@ public class Grid extends Canvas
     /**
      * Width of each row header.
      */
-    private int rowHeaderWidth = 30;
+    private int rowHeaderWidth = 0;
 
     /**
      * The row header width is variable. The row header width gets larger as
@@ -266,7 +267,7 @@ public class Grid extends Canvas
      * the number of items is greater than this value, we need to recalculate
      * the row header width. See newItem().
      */
-    private int lastRowHeaderWidthCalculationAt = 0;
+//    private int lastRowHeaderWidthCalculationAt = 0;
 
     /**
      * Height of each column header.
@@ -436,6 +437,8 @@ public class Grid extends Canvas
      */
     private boolean ignoreMouseExit;
     
+    private GC sizingGC;
+    
     /**
      * Filters out unnecessary styles, adds mandatory styles and generally
      * manages the style to pass to the super class.
@@ -476,6 +479,8 @@ public class Grid extends Canvas
     {
         super(parent, checkStyle(style));
 
+        sizingGC = new GC(this);
+        
         topLeftRenderer.setDisplay(getDisplay());
         rowHeaderRenderer.setDisplay(getDisplay());
         emptyColumnHeaderRenderer.setDisplay(getDisplay());
@@ -517,9 +522,9 @@ public class Grid extends Canvas
 
         initListeners();
 
-        GC gc = new GC(this);
-        rowHeight = gc.getFontMetrics().getHeight() + 2;
-        gc.dispose();
+        
+        rowHeight = sizingGC.getFontMetrics().getHeight() + 2;
+        
         
         RGB sel = getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION).getRGB();
         RGB white = getDisplay().getSystemColor(SWT.COLOR_WHITE).getRGB();
@@ -3411,7 +3416,9 @@ public class Grid extends Canvas
         dragDropBeforeColumn = local_dragDropBeforeColumn;
         dragDropAfterColumn = local_dragDropAfterColumn;
 
-        redraw();
+        Rectangle clientArea = getClientArea();
+        redraw(clientArea.x,clientArea.y,clientArea.width,clientArea.height,false);
+
         return true;
     }
 
@@ -3650,9 +3657,12 @@ public class Grid extends Canvas
         {
             return;
         }
-        columnBeingResized.setWidth(newWidth);
+        columnBeingResized.setWidth(newWidth,false);
         scrollValuesObsolete = true;
-        redraw();
+
+        Rectangle clientArea = getClientArea();
+        redraw(clientArea.x,clientArea.y,clientArea.width,clientArea.height,false);
+        
         columnBeingResized.fireResized();
         
         for (int index = displayOrderedColumns.indexOf(columnBeingResized) + 1; index < displayOrderedColumns.size(); index ++)
@@ -4389,7 +4399,9 @@ public class Grid extends Canvas
             
             selectedItems.clear();
             selectedItems.add(item);
-            redraw();
+
+            Rectangle clientArea = getClientArea();
+            redraw(clientArea.x,clientArea.y,clientArea.width,clientArea.height,false);
 
             this.fireSelectionListeners(item);
         }
@@ -4416,7 +4428,8 @@ public class Grid extends Canvas
 
                 selectedItems.add(item);
 
-                redraw();
+                Rectangle clientArea = getClientArea();
+                redraw(clientArea.x,clientArea.y,clientArea.width,clientArea.height,false);
 
                 shiftSelectionAnchorItem = null;
 
@@ -4484,7 +4497,8 @@ public class Grid extends Canvas
                         selectedItems.add((GridItem)items.get(i));
                     }
                 }
-                redraw();
+                Rectangle clientArea = getClientArea();
+                redraw(clientArea.x,clientArea.y,clientArea.width,clientArea.height,false);
 
                 fireSelectionListeners(null);
 
@@ -4499,7 +4513,8 @@ public class Grid extends Canvas
                 {
                     selectedItems.add(item);
                 }
-                redraw();
+                Rectangle clientArea = getClientArea();
+                redraw(clientArea.x,clientArea.y,clientArea.width,clientArea.height,false);
 
                 shiftSelectionAnchorItem = null;
 
@@ -4507,7 +4522,8 @@ public class Grid extends Canvas
             }
         }
         
-        redraw();
+        Rectangle clientArea = getClientArea();
+        redraw(clientArea.x,clientArea.y,clientArea.width,clientArea.height,false);
     }
     
     private void updateCellSelection(Point newCell, int stateMask, boolean dragging, boolean reverseDuplicateSelections)
@@ -4676,7 +4692,8 @@ public class Grid extends Canvas
         
         notifyListeners(SWT.Selection,e);
         
-        redraw();
+        Rectangle clientArea = getClientArea();
+        redraw(clientArea.x,clientArea.y,clientArea.width,clientArea.height,false);
     }
     
     private void addToCellSelection(Point newCell)
@@ -4861,7 +4878,9 @@ public class Grid extends Canvas
         while (columns.size() > 0)
         {
             ((GridColumn)columns.get(0)).dispose();
-        }        
+        }
+        
+        sizingGC.dispose();
     }
 
     /**
@@ -5349,7 +5368,9 @@ public class Grid extends Canvas
                     hoveringColumn = null;
                     hoveringColumnHeader = null;
                     hoverColumnGroupHeader = null;
-                    redraw();
+
+                    Rectangle clientArea = getClientArea();
+                    redraw(clientArea.x,clientArea.y,clientArea.width,clientArea.height,false);
                 }
                 return;
             }
@@ -5958,8 +5979,10 @@ public class Grid extends Canvas
             hoveringColumn = col;
             hoveringColumnHeader = hoverColHeader;
             hoverColumnGroupHeader = hoverColGroup;
-            redraw();
             
+            Rectangle clientArea = getClientArea();
+            redraw(clientArea.x,clientArea.y,clientArea.width,clientArea.height,false);
+
             returnVal = true;
         }
         
@@ -6037,9 +6060,7 @@ public class Grid extends Canvas
             displayOrderedColumns.add(index, column);
         }
 
-        GC gc = new GC(this);
-        computeHeaderHeight(gc);
-        gc.dispose();
+        computeHeaderHeight(sizingGC);
 
         updatePrimaryCheckColumn();
         
@@ -6109,27 +6130,10 @@ public class Grid extends Canvas
         }
 
         if (items.size() == 1)
-        {
-            GC gc = new GC(this);
+            rowHeight = computeRowHeight(sizingGC);
 
-            rowHeight = computeRowHeight(gc);
-
-            lastRowHeaderWidthCalculationAt = INITIAL_ROW_HEADER_SIZING_VALUE;
-            rowHeaderWidth = rowHeaderRenderer.computeSize(gc, SWT.DEFAULT, SWT.DEFAULT,
-                                                           new Integer(lastRowHeaderWidthCalculationAt)).x;
-
-            gc.dispose();
-        }
-        else if (items.size() > lastRowHeaderWidthCalculationAt)
-        {
-            GC gc = new GC(this);
-
-            lastRowHeaderWidthCalculationAt = lastRowHeaderWidthCalculationAt
-                                              * ROW_HEADER_SIZING_MULTIPLIER;
-            rowHeaderWidth = rowHeaderRenderer.computeSize(gc, SWT.DEFAULT, SWT.DEFAULT,
-                                                           new Integer(lastRowHeaderWidthCalculationAt)).x;
-            gc.dispose();
-        }
+        rowHeaderWidth = Math.max(rowHeaderWidth,rowHeaderRenderer
+            .computeSize(sizingGC, SWT.DEFAULT, SWT.DEFAULT, item).x);
 
         scrollValuesObsolete = true;
 
@@ -6184,9 +6188,7 @@ public class Grid extends Canvas
         // height
         if (columnGroups.length == 1)
         {
-            GC gc = new GC(this);
-            computeHeaderHeight(gc);
-            gc.dispose();
+            computeHeaderHeight(sizingGC);
         }
 
         scrollValuesObsolete = true;
@@ -6215,9 +6217,7 @@ public class Grid extends Canvas
 
         if (columnGroups.length == 0)
         {
-            GC gc = new GC(this);
-            computeHeaderHeight(gc);
-            gc.dispose();
+            computeHeaderHeight(sizingGC);
         }
 
         scrollValuesObsolete = true;
@@ -7098,6 +7098,37 @@ public class Grid extends Canvas
     {
         if (inplaceToolTip != null)
             inplaceToolTip.setVisible(false);
+    }
+    
+    void recalculateRowHeaderWidth(GridItem item,int oldWidth, int newWidth)
+    {
+        if (newWidth > rowHeaderWidth)
+        {
+            rowHeaderWidth = newWidth;
+        }
+        else if (newWidth < rowHeaderWidth && oldWidth == rowHeaderWidth)
+        {
+            //if the changed width is smaller, and the previous width of that rows header was equal 
+            //to the current row header width then its possible that we may need to make the new 
+            //row header width smaller, but to do that we need to ask all the rows all over again           
+            for (Iterator iter = items.iterator(); iter.hasNext();)
+            {
+                GridItem iterItem = (GridItem)iter.next();
+                newWidth = Math.max(newWidth,rowHeaderRenderer.computeSize(sizingGC, SWT.DEFAULT,SWT.DEFAULT,iterItem).x);
+            }
+            
+            rowHeaderWidth = newWidth;
+        }
+        redraw();
+    }
+
+    /** 
+     * {@inheritDoc}
+     */
+    public void setFont(Font font)
+    {
+        super.setFont(font);
+        sizingGC.setFont(font);
     }
     
 }

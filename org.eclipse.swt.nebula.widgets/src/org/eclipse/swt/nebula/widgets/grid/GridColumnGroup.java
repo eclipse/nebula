@@ -53,7 +53,7 @@ public class GridColumnGroup extends Item
     /**
      * Header renderer.
      */
-    private IInternalWidget headerRenderer = new DefaultColumnGroupHeaderRenderer();
+    private GridHeaderRenderer headerRenderer = new DefaultColumnGroupHeaderRenderer();
 
     /**
      * Constructs a new instance of this class given its parent (which must be a Table) and a style 
@@ -236,7 +236,7 @@ public class GridColumnGroup extends Item
      * created the receiver</li>
      * </ul>
      */
-    public void setHeaderRenderer(IInternalWidget headerRenderer)
+    public void setHeaderRenderer(GridHeaderRenderer headerRenderer)
     {
         if (headerRenderer == null)
             SWT.error(SWT.ERROR_NULL_ARGUMENT);

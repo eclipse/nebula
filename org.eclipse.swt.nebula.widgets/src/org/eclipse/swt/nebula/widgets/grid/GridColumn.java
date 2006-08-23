@@ -54,7 +54,7 @@ public class GridColumn extends Item
     /**
      * Header renderer.
      */
-    private IInternalWidget headerRenderer = new DefaultColumnHeaderRenderer();
+    private GridHeaderRenderer headerRenderer = new DefaultColumnHeaderRenderer();
 
     /**
      * Cell renderer.
@@ -313,9 +313,17 @@ public class GridColumn extends Item
     public void setWidth(int width)
     {
         checkWidget();
+        setWidth(width,true);
+    }
+    
+    void setWidth(int width, boolean redraw)
+    {
         this.width = width;
-        parent.setScrollValuesObsolete();
-        parent.redraw();
+        if (redraw)
+        {
+            parent.setScrollValuesObsolete();
+            parent.redraw();
+        }        
     }
 
     /**
@@ -603,7 +611,7 @@ public class GridColumn extends Item
      * created the receiver</li>
      * </ul>
      */
-    public void setHeaderRenderer(IInternalWidget headerRenderer)
+    public void setHeaderRenderer(GridHeaderRenderer headerRenderer)
     {
         checkWidget();
         this.headerRenderer = headerRenderer;
