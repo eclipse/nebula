@@ -202,31 +202,9 @@ public class DefaultCellRenderer extends GridCellRenderer
                 focusRect.y ++;
                 focusRect.height -= 2;
                 
-                gc.drawRectangle(focusRect);
-       
+                gc.drawRectangle(focusRect);       
             }
-        }
-        else if (isCellFocus())
-        {
-            Rectangle focusRect = new Rectangle(getBounds().x -1, getBounds().y - 1, getBounds().width,
-                                                getBounds().height + 1);
-            
-            gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
-
-            gc.drawLine(focusRect.x,focusRect.y,focusRect.x + focusRect.width,focusRect.y);
-            gc.drawLine(focusRect.x,focusRect.y + focusRect.height,focusRect.x + focusRect.width,focusRect.y + focusRect.height);
-            gc.drawLine(focusRect.x,focusRect.y,focusRect.x,focusRect.y + focusRect.height);
-            gc.drawLine(focusRect.x + focusRect.width,focusRect.y,focusRect.x + focusRect.width,focusRect.y + focusRect.height);
-            
-            if (isFocus())
-            {
-                gc.drawLine(focusRect.x,focusRect.y + 1,focusRect.x + focusRect.width,focusRect.y + 1);
-                gc.drawLine(focusRect.x,focusRect.y + focusRect.height -1,focusRect.x + focusRect.width,focusRect.y + focusRect.height -1);
-                gc.drawLine(focusRect.x + 1,focusRect.y,focusRect.x + 1,focusRect.y + focusRect.height);
-                gc.drawLine(focusRect.x + focusRect.width -1,focusRect.y,focusRect.x + focusRect.width -1,focusRect.y + focusRect.height);
-            }
-        }
-
+        }        
     }
 
     public Point computeSize(GC gc, int wHint, int hHint, Object value)
