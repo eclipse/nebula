@@ -7,6 +7,11 @@ import org.eclipse.swt.nebula.widgets.ctabletree.CTableTreeCell;
 import org.eclipse.swt.nebula.widgets.ctabletree.ccontainer.CContainer;
 import org.eclipse.swt.nebula.widgets.ctabletree.ccontainer.CContainerItem;
 
+/**
+ * A Sample custom cell with no styles set (a "base" cell).
+ * Everything is drawn custom and the toggle's visibility 
+ * is set on and off dynamically.
+ */
 public class MultiLineCell extends CTableTreeCell {
 
 	private String text;
