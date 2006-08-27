@@ -41,30 +41,36 @@ public class CTableTreeCell extends CContainerCell {
 	
 	public Point computeSize(int wHint, int hHint) {
 		Point size = new Point(0,0);
-		if((getStyle() & SWT.SIMPLE) != 0) {
-			size = titleArea.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		size.x = marginLeft + marginWidth + marginWidth + marginRight;
+		if(toggleVisible || ghostToggle) size.x += toggleWidth;
+
+		if(item.useFixedTitleHeight) {
+			size.y = item.getFixedTitleHeight();
 		} else {
-			Image image = getImage();
-			Rectangle iBounds = (image != null && !image.isDisposed()) ? image.getBounds() : new Rectangle(0,0,1,1);
-			
-			String text = getText();
-			GC gc = CTableTree.staticGC;
-			Point tSize = (text.length() > 0) ? gc.textExtent(text) : new Point(0,0);
-			
-			size.x = 	marginLeft +
-			marginWidth +
-			iBounds.width +
-			((iBounds.width > 0 && tSize.x > 0) ? horizontalSpacing : 0) +
-			tSize.x +
-			marginWidth +
-			marginRight;
-			
-			size.y = (item.useFixedTitleHeight) ? item.getFixedTitleHeight() :
-				marginTop +
-				marginHeight +
-				Math.max(iBounds.height, tSize.y) +
-				marginHeight +
-				marginBottom;
+			size.y = marginTop + marginHeight + marginHeight + marginBottom;
+			if(titleArea != null) {
+				size.y += titleArea.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+			} else {
+				Image[] images = getImages();
+				Rectangle iBounds = null;
+				if(images != null && images.length > 0) {
+					iBounds = images[0].getBounds();
+					for(int i = 1; i < images.length; i++) {
+						Rectangle ib = images[i].getBounds();
+						iBounds.width += horizontalSpacing + ib.width;
+						iBounds.height = Math.max(iBounds.height, ib.height);
+					}
+				} else {
+					iBounds = new Rectangle(0,0,1,1);
+				}
+				
+				String text = getText();
+				GC gc = CTableTree.staticGC;
+				Point tSize = (text.length() > 0) ? gc.textExtent(text) : new Point(0,0);
+	
+				size.x += iBounds.width + ((iBounds.width > 0 && tSize.x > 0) ? horizontalSpacing : 0) + tSize.x;
+				size.y += Math.max(iBounds.height, tSize.y);
+			}
 		}
 		
 		if(open && childArea != null) {
@@ -84,8 +90,9 @@ public class CTableTreeCell extends CContainerCell {
 	}
 	
 	public int computeTitleHeight(int hHint) {
-		if((getStyle() & SWT.SIMPLE) != 0) {
-			titleHeight = titleArea.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+		titleHeight = marginTop + marginHeight + marginHeight + marginBottom;
+		if(titleArea != null) {
+			titleHeight += titleArea.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
 		} else {
 			int height = 0;
 			for(int i = 0; i < iBounds.length; i++) {
@@ -96,7 +103,7 @@ public class CTableTreeCell extends CContainerCell {
 				GC gc = CTableTree.staticGC;
 				height = Math.max(height, gc.textExtent(text).y);
 			}
-			titleHeight = marginTop + marginHeight + height + marginHeight + marginBottom;
+			titleHeight += height;
 		}
 		if(hHint != SWT.DEFAULT) {
 			titleHeight = Math.min(titleHeight, hHint);
@@ -128,9 +135,8 @@ public class CTableTreeCell extends CContainerCell {
 			iBounds[i] = (images[i] != null && !images[i].isDisposed()) ? images[i].getBounds() : new Rectangle(0,0,1,1);
 		}
 		String text = getText();
-		GC gc = CTableTree.staticGC;
-		Point tSize = (text.length() > 0) ? gc.textExtent(text, SWT.DRAW_DELIMITER | SWT.DRAW_TAB | SWT.DRAW_TRANSPARENT) : new Point(0,0);
-//		gc.dispose();
+		Point tSize = (text.length() > 0) ? 
+				CTableTree.staticGC.textExtent(text, SWT.DRAW_DELIMITER | SWT.DRAW_TAB | SWT.DRAW_TRANSPARENT) : new Point(0,0);
 		tBounds.width = tSize.x;
 		tBounds.height = tSize.y;
 		
@@ -201,22 +207,30 @@ public class CTableTreeCell extends CContainerCell {
 		}
 
 	// set positions of self drawing components
-		if(open && childArea != null) {
-			childArea.setBounds(
-					bounds.x+marginWidth+toggleBounds.width,
-					bounds.y+titleHeight+childSpacing,
-					bounds.width-(marginWidth+toggleBounds.width+rightChildIndent),
-					bounds.height-(titleHeight+childSpacing+childSpacing)
-			);
-		} else if(childArea != null) {
-			childArea.setBounds(0, 0, 0, 0);
+		if(titleArea != null) {
+			Rectangle ca = getClientArea();
+			titleArea.setBounds(bounds.x + ca.x, bounds.y + ca.y, ca.width, ca.height);
+			titleArea.layout(true, true);
+		}
+		
+		if(childArea != null) {
+			if(open) {
+				childArea.setBounds(
+						bounds.x+marginWidth+toggleBounds.width,
+						bounds.y+titleHeight+childSpacing,
+						bounds.width-(marginWidth+toggleBounds.width+rightChildIndent),
+						bounds.height-(titleHeight+childSpacing+childSpacing)
+						);
+			} else {
+				childArea.setBounds(0, 0, 0, 0);
+			}
 		}
 		
 		needsLayout = false;
 	}
 	
 	public void paint(GC gc, Rectangle eventBounds) {
-		if((getStyle() & SWT.SIMPLE) != 0) return;
+//		if((getStyle() & SWT.SIMPLE) != 0) return;
 		if((bounds.width <= 0) || bounds.height <= 0) return;
 		
 		if(needsLayout) {
