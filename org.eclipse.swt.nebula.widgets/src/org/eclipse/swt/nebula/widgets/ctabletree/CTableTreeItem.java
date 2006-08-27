@@ -115,7 +115,7 @@ public class CTableTreeItem extends CContainerItem {
 	
 	/**
 	 * Returns the Tree Cell expansion state
-	 * <p>If there is no Tree Cell, simple returns false</p>
+	 * <p>If there is no Tree Cell, simply returns false</p>
 	 * @return
 	 * @see org.aspencloud.widgets.ccontainer#getExpanded(boolean)
 	 */
