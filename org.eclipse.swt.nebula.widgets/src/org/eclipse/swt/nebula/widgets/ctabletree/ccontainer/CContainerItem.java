@@ -99,6 +99,30 @@ public abstract class CContainerItem extends Widget {
 	}
 	
 	/**
+	 * A convenience method to compute the size of each cell using the same widthHints
+	 * @param widthHint
+	 * @param heightHint
+	 * @return an array of Point objects representing the computed cell sizes
+	 */
+	public Point[] computeSize(int[] widthHint, int heightHint) {
+		int[] ha = new int[cells.length];
+		Arrays.fill(ha, heightHint);
+		return computeSize(widthHint, ha);
+	}
+	
+	/**
+	 * A convenience method to compute the size of each cell using the same heightHints
+	 * @param widthHint
+	 * @param heightHint
+	 * @return an array of Point objects representing the computed cell sizes
+	 */
+	public Point[] computeSize(int widthHint, int[] heightHint) {
+		int[] wa = new int[cells.length];
+		Arrays.fill(wa, widthHint);
+		return computeSize(wa, heightHint);
+	}
+	
+	/**
 	 * Computes the size of each cell using the widthHint and heightHint with the same
 	 * index as the cell.
 	 * @param widthHint
