@@ -21,7 +21,7 @@ public class MultiLineTextCell extends CTableTreeCell {
 	private Text text;
 	
 	public MultiLineTextCell(CContainerItem item, int style) {
-		super(item, style | SWT.TITLE);
+		super(item, style | SWT.TITLE | SWT.TOP);
 	}
 
 	protected void createTitleContents(Composite contents, int style) {
