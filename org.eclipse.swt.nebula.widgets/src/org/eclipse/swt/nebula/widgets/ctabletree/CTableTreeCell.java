@@ -162,21 +162,17 @@ public class CTableTreeCell extends CContainerCell {
 		height += tSize.y;
 
 	// calculate positions
-		if((horizontalAlignment & SWT.CENTER) != 0) {
+		if((style & SWT.CENTER) != 0) {
 			x += ((bounds.width-(indent+marginLeft+marginWidth+width+marginWidth+marginRight))/2);
-		} else if((horizontalAlignment & SWT.RIGHT) != 0) {
+		} else if((style & SWT.RIGHT) != 0) {
 			x += (bounds.width-(width+marginWidth+marginRight));
 		} else { // defaults to LEFT
 			x += (indent+marginLeft+marginWidth);
 		}
 
-//		int toggleClippingWidth = -1;
 		if(ghostToggle || toggleVisible) {
 			toggleBounds.x = x - 1;
 			x += toggleBounds.width;
-//			if(toggleVisible && (x-bounds.x) > bounds.width) {
-//				toggleClippingWidth = Math.max(0, bounds.width-(toggleBounds.x-bounds.x));
-//			}
 		}
 		for(int i = 0; i < iBounds.length; i++) {
 			iBounds[i].x = x;
@@ -185,14 +181,14 @@ public class CTableTreeCell extends CContainerCell {
 		}
 		tBounds.x = x;
 		
-		if((open && childArea != null) || (verticalAlignment & SWT.TOP) != 0) {
+		if((open && childArea != null) || (style & SWT.TOP) != 0) {
 			toggleBounds.y = y; // toggle centers itself, so don't add margins to it
 			y += marginTop+marginHeight;
 			for(int i = 0; i < iBounds.length; i++) {
 				iBounds[i].y = y;
 			}
 			tBounds.y = y;
-		} else if((verticalAlignment & SWT.BOTTOM) != 0) {
+		} else if((style & SWT.BOTTOM) != 0) {
 			toggleBounds.y = y + bounds.height-(toggleBounds.y+marginHeight+marginBottom);
 			for(int i = 0; i < iBounds.length; i++) {
 				iBounds[i].y = y + bounds.height-(iBounds[i].y+marginHeight+marginBottom);
