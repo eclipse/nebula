@@ -22,9 +22,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /*
- * Create a CTableTree with the Tree in the third column and a
- * custom cell in the second.  The custom cell for this snippet
- * is a MultiLineCell.
+ * Create a CTableTree with the Tree in the third column and
+ * custom cells in the second and third. The custom cells are
+ * the MultiLineCell and MultiLineTextCell.
  *
  * For a list of all Nebula CTableTree example snippets see
  * http://www.eclipse.org/nebula/widgets/ctabletree/snippets.php
@@ -49,7 +49,7 @@ public class CTableTreeSnippet3 {
 
 		ctt.setTreeColumn(2);
 
-		Class[] cellClasses = new Class[] { null, MultiLineCell.class, null };
+		Class[] cellClasses = new Class[] { null, MultiLineCell.class, MultiLineTextCell.class };
 		for (int i = 0; i < 4; i++) {
 			CTableTreeItem item = new CTableTreeItem(ctt, SWT.NONE, cellClasses);
 			item.setText(new String[] { "item " + i, "word1 word2 word3", "abc" });
