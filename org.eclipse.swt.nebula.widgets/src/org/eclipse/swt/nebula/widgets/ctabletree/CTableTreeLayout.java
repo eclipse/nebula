@@ -42,7 +42,7 @@ class CTableTreeLayout extends CContainerLayout {
 			if(container.isOperation(CTableTree.OP_ADD)) {
 				if(dirtyItem == null || !dirtyItem.isVisible()) return bodySize; // nothing to do
 				if(!dirtyItem.isAutoHeight()) {
-					Point[] sa = dirtyItem.computeSize(-1, -1);
+					Point[] sa = dirtyItem.computeSize(columnWidths, -1);
 					dirtyItem.setSize(sa);
 					Point p = dirtyItem.getUnifiedSize();
 					bodySize.x = Math.max(bodySize.x, p.x);
@@ -66,7 +66,7 @@ class CTableTreeLayout extends CContainerLayout {
 				if(!dirtyItem.isAutoHeight()) {
 					if(dirtyItem == null || !dirtyItem.isVisible()) return bodySize; // nothing to do
 					Point oldS = dirtyItem.getUnifiedSize();
-					Point[] sa = dirtyItem.computeSize(-1, -1);
+					Point[] sa = dirtyItem.computeSize(columnWidths, -1);
 					dirtyItem.setSize(sa);
 					Point newS = dirtyItem.getUnifiedSize();
 					for(int i = 0; i < items.length; i++) {
@@ -80,8 +80,7 @@ class CTableTreeLayout extends CContainerLayout {
 				fillers.clear();
 				for(int i = 0; i < items.length; i++) {
 					if(!items[i].isAutoHeight()) {
-//						fillers.remove(items[i]);
-						Point[] sa = items[i].computeSize(-1, -1);
+						Point[] sa = items[i].computeSize(columnWidths, -1);
 						items[i].setSize(sa);
 						p = items[i].getUnifiedSize();
 						bodySize.x = Math.max(bodySize.x, p.x);
