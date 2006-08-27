@@ -134,14 +134,14 @@ public abstract class CContainerItem extends Widget {
 		
 		// Set the title height, if requested to be constant across cells
 		if(useFixedTitleHeight) {
-			fixedTitleHeight = cells[0].computeTitleHeight(SWT.DEFAULT);
+			fixedTitleHeight = cells[0].computeTitleHeight(heightHint[0]);
 			for(int i = 1; i < cells.length; i++) {
-				fixedTitleHeight = Math.max(fixedTitleHeight, cells[i].computeTitleHeight(SWT.DEFAULT));
+				fixedTitleHeight = Math.max(fixedTitleHeight, cells[i].computeTitleHeight(heightHint[i]));
 			}
 		}
 
 		for(int i = 0; i < cells.length; i++) {
-			cellSize[i] = cells[i].computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			cellSize[i] = cells[i].computeSize(widthHint[i], heightHint[i]);
 		}
 		
 		return cellSize;
