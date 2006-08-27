@@ -188,8 +188,8 @@ public abstract class CContainerCell {
 	public int marginHeight = gtk ? 4 : 1;
 	public int marginBottom = 0;
 	public int horizontalSpacing = 2;
-	public int horizontalAlignment = SWT.LEFT;
-	public int verticalAlignment = SWT.CENTER;
+//	public int horizontalAlignment = SWT.LEFT;
+//	public int verticalAlignment = SWT.CENTER;
 	public int toggleWidth = 16;
 	public int childSpacing = 1;
 	public int rightChildIndent = 2;
@@ -541,7 +541,7 @@ public abstract class CContainerCell {
 	protected void paintToggle(GC gc, Rectangle ebounds) {
 		Rectangle bounds = getBounds();
 		double x = indent + ((toggleBounds.width - pointsWidth) / 2) + bounds.x - ebounds.x;
-		double y = ((toggleBounds.height - pointsWidth) / 2) + bounds.y - ebounds.y;
+		double y = ((toggleBounds.height - pointsWidth) / 2) + toggleBounds.y - ebounds.y;
 		int[] data = open ? openPoints : closedPoints;
 		int[] pts = new int[data.length];
 		for (int i = 0; i < data.length; i += 2) {
