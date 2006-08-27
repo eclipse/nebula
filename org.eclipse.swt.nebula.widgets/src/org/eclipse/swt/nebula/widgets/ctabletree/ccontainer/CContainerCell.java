@@ -32,6 +32,16 @@ import org.eclipse.swt.widgets.Listener;
  * <p>
  * NOTE:  THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.  THIS IS A PRE-RELEASE ALPHA 
  * VERSION.  USERS SHOULD EXPECT API CHANGES IN FUTURE VERSIONS.
+ * </p>
+ * <p>
+ * Styles:
+ * <ul>
+ * 	<li>SWT.NONE - creates a "base" cell which must be completely custom drawn; there is
+ * no Title Area or Child Area</li>
+ * 	<li>SWT.DROP_DOWN - creates the Child Area</li>
+ * 	<li>SWT.TITLE - creates the Title Area</li>
+ * 	<li>SWT.TOGGLE - creates the CContainerCell's implementation of a toggle</li>
+ * </ul>
  * </p> 
  */
 public abstract class CContainerCell {
@@ -164,6 +174,9 @@ public abstract class CContainerCell {
 	protected boolean titleVisible = false;
 	protected boolean childVisible = false;
 	protected int indent = 0;
+	/**
+	 * If true, the toggle will not be drawn, but will take up space
+	 */
 	protected boolean ghostToggle = false;
 	protected boolean mouseDown = false;
 	protected boolean mouseOver = false;
@@ -195,23 +208,35 @@ public abstract class CContainerCell {
 
 	private EventHandler ehandler = new EventHandler();
 //	private List dlisteners = new ArrayList();
-
-
-	public CContainerCell(CContainerItem item, int style) {
-		this.container = item.container;
-		this.style = style;
-		createContents(container.body, style);
-		if((style & SWT.SIMPLE) != 0) {
-			createTitleContents(titleArea, style);
-		}
-		this.item = item;
-	}
-
 	private Listener l = new Listener() {
 		public void handleEvent(Event event) {
 			ehandler.sendEvent(event);
 		}
 	};
+	
+
+	/**
+	 * <p>
+	 * Styles:
+	 * <ul>
+	 * 	<li>SWT.NONE - creates a "base" cell which must be completely custom drawn; there is
+	 * no Title Area or Child Area</li>
+	 * 	<li>SWT.DROP_DOWN - creates the Child Area</li>
+	 * 	<li>SWT.TITLE - creates the Title Area</li>
+	 * 	<li>SWT.TOGGLE - creates the CContainerCell's implementation of a toggle</li>
+	 * </ul>
+	 * </p> 
+	 */
+	public CContainerCell(CContainerItem item, int style) {
+		this.container = item.container;
+		this.style = style;
+		createContents(container.body, style);
+		if(titleArea != null) {
+			createTitleContents(titleArea, style);
+		}
+		this.item = item;
+	}
+
 	public void addListener(int eventType, Listener handler) {
 		if(ehandler.add(eventType, handler)) {
 			List controls = getEventManagedControls();
@@ -240,10 +265,10 @@ public abstract class CContainerCell {
 	
 	/**
 	 * Compute the preferred size of the cell for its current state (open or closed, if applicable)
-	 * just the way it would be done in a regular SWT layout
+	 * just the way it would be done in a regular SWT layout.
 	 * <p>Implementations are to implement this themselves, though if the the cell's style is 
-	 * SWT.SIMPLE then most likely they will simply return the computed size as found by
-	 * titleArea.computeSize(int, int)</p> 
+	 * SWT.TITLE then most likely they will simply return the computed size as found by
+	 * titleArea.computeSize(int, int)</p>
 	 * @param wHint
 	 * @param hHint
 	 * @return a Point representing the preferred size of the cell
@@ -252,9 +277,9 @@ public abstract class CContainerCell {
 
 	/**
 	 * Compute the preferred size of the cell's Title Area, similar to the way it would be done 
-	 * in a regular SWT layout
+	 * in a regular SWT layout.
 	 * <p>Implementations are to implement this themselves, though if the the cell's style is 
-	 * SWT.SIMPLE then most likely they will simply return the computed height as found by
+	 * SWT.TITLE then most likely they will simply return the computed height as found by
 	 * titleArea.computeSize(int, -1).y</p> 
 	 * @param wHint
 	 * @return an int representing the preferred height of the cell
@@ -276,14 +301,22 @@ public abstract class CContainerCell {
 	protected void createChildContents(SComposite contents, int style) {}
 
 	private void createContents(Composite parent, int style) {
-		if((style & SWT.SIMPLE) != 0) {
+		bounds = new Rectangle(0,0,0,0);
+		background = parent.getBackground();
+		foreground = parent.getForeground();
+
+		if((style & SWT.TITLE) != 0) {
 			titleArea = new Composite(parent, style);
-			titleArea.setBackground(parent.getBackground());
+			titleArea.setBackground(background);
+			titleArea.setForeground(foreground);
 			titleVisible = true;
-		} else {
-			bounds = new Rectangle(0,0,0,0);
-			background = parent.getBackground();
-			foreground = parent.getForeground();
+			container.addPaintedItemListener(new Listener() {
+				public void handleEvent(Event event) {
+					if(event.detail == -1) {
+						layout();
+					}
+				}
+			});
 		}
 
 		if((style & SWT.DROP_DOWN) != 0) {
@@ -299,9 +332,13 @@ public abstract class CContainerCell {
 	/**
 	 * Create the contents of your custom cell's Title Area here
 	 * <p>The Title Area is the composite that makes up the body of the "traditional"
-	 * cell; it is called "Title" because it sits above the Child Area like a title or header</p>
-	 * <p>The base cell class will call this immediately after creating its body if, and only if,
-	 * the style bit for SWT.SIMPLE is set</p>
+	 * cell; it is called "Title" because it initially sat above the Child Area like 
+	 * a title or header, though this is no longer a requirement.  The Title Area may
+	 * also be thought of as the "always visible" portion of a cell.</p>
+	 * <p>This method is called immediately after creating the body if, and only if,
+	 * the style bit for SWT.TITLE is set.  This means that it is created at the same 
+	 * time as the cell (rather than lazily, like the child area), so be careful how 
+	 * much code is put in here or filling large table will take forever!</p>
 	 * <p>Note that NO layout has been assigned to the parameter "contents".  Implementations
 	 * must provide this or things may not work as expected</p>
 	 * @param contents the Title Area of the cell
@@ -316,19 +353,11 @@ public abstract class CContainerCell {
 	}
 
 	public Color getBackground() {
-		if((getStyle() & SWT.SIMPLE) != 0) {
-			return titleArea.getBackground();
-		} else {
-			return background;
-		}
+		return background;
 	}
 
 	public Rectangle getBounds() {
-		if((getStyle() & SWT.SIMPLE) != 0) {
-			return titleArea.getBounds();
-		} else {
-			return bounds;
-		}
+		return bounds;
 	}
 
 	public Color getCellBackground() {
@@ -348,7 +377,11 @@ public abstract class CContainerCell {
 	}
 
 	public Rectangle getClientArea() {
-		Rectangle ca = new Rectangle(0,0,bounds.width,bounds.height);
+		return computeClientArea(bounds.width, bounds.height);
+	}
+	
+	public Rectangle computeClientArea(int sizeX, int sizeY) {
+		Rectangle ca = new Rectangle(0,0,sizeX,sizeY);
 		ca.x = marginLeft + marginWidth;
 		if(toggleVisible || ghostToggle) ca.x += toggleBounds.width;
 		ca.y = marginTop + marginHeight;
@@ -358,13 +391,8 @@ public abstract class CContainerCell {
 	}
 	
 	protected List getColorManagedControls() {
-		List l = new ArrayList();
-		if((getStyle() & SWT.SIMPLE) != 0) {
-			l.addAll(getControls(titleArea));
-		}
-		if((getStyle() & SWT.DROP_DOWN) != 0) {
-			l.addAll(getControls(childArea));
-		}
+		List l = new ArrayList(getControls(titleArea));
+		l.addAll(getControls(childArea));
 		return l;
 	}
 
@@ -406,11 +434,7 @@ public abstract class CContainerCell {
 	}
 
 	public Color getForeground() {
-		if((getStyle() & SWT.SIMPLE) != 0) {
-			return titleArea.getForeground();
-		} else {
-			return foreground;
-		}
+		return foreground;
 	}
 
 	public int getIndent() {
@@ -461,7 +485,7 @@ public abstract class CContainerCell {
 		int result = RESULT_NONE;
 		switch(event.type) {
 		case SWT.MouseDown:
-			if(bounds != null) { // such as is the case with SWT.SIMPLE style cells
+			if(bounds != null) {
 				Point pt = new Point(event.x, event.y);
 				boolean tmp = bounds.contains(pt);
 				if(tmp != mouseOver) {
@@ -502,15 +526,13 @@ public abstract class CContainerCell {
 	/**
 	 * Requests a layout of the cell.
 	 * <p>Subclasses are to implement this themselves just as they would with a custom SWT layout</p>
-	 * <p>Cells of style SWT.SIMPLE will probably just pass this call to the titleArea composite:
-	 * titleArea.layout()</p>
 	 */
 	protected abstract void layout();
 
 	/**
 	 * Called by Container during its paint method to draw the cell's Title Area
 	 * <p>Subclasses need to override if they want to have a visual representation</p>
-	 * <p>If SWT.SIMPLE is set this method should probably just return, but is not required to.</p>
+	 * <p>If SWT.TITLE is set this method may just return, but is not required to.</p>
 	 * @param gc the GC upon which the cell will be painted
 	 * @param ebounds the bounding rectangle of the Container's paint event
 	 */
@@ -609,14 +631,10 @@ public abstract class CContainerCell {
 
 	public void setBounds(Rectangle bounds) {
 		bounds = snap(bounds);
-		if((getStyle() & SWT.SIMPLE) != 0) {
-			titleArea.setBounds(bounds);
-		} else {
-			this.bounds.x = bounds.x;
-			this.bounds.y = bounds.y;
-			this.bounds.width = bounds.width;
-			this.bounds.height = bounds.height;
-		}
+		this.bounds.x = bounds.x;
+		this.bounds.y = bounds.y;
+		this.bounds.width = bounds.width;
+		this.bounds.height = bounds.height;
 		needsLayout = true;
 	}
 
@@ -664,18 +682,20 @@ public abstract class CContainerCell {
 	}
 
 	public void setLocation(Point location) {
-		if((getStyle() & SWT.SIMPLE) != 0) {
-			titleArea.setLocation(location);
-		} else {
-			bounds.x = location.x;
-			bounds.y = location.y;
+		bounds.x = location.x;
+		bounds.y = location.y;
+		if(titleArea != null && !titleArea.isDisposed()) {
+			Rectangle ca = getClientArea();
+			titleArea.setLocation(ca.x, ca.y);
 		}
 	}
-
+	
 	/**
 	 * Requests the cell to either open or close
-	 * <p>Only relevant to cells that have a toggle - ie. created with the 
-	 * SWT.TOGGLE or SWT.DROP_DOWN style</p>
+	 * <p>The base implementation creates the Child Area the first time
+	 * setOpen(true) is called (if, of course, the cell was created with 
+	 * the SWT.DROP_DOWN style).</p>
+	 * <p>What exactly open refers to can be overridden by subclasses</p>
 	 * @param open if true, the cell will open, otherwise it will close
 	 */
 	public void setOpen(boolean open) {
@@ -709,12 +729,8 @@ public abstract class CContainerCell {
 	}
 
 	public void setSize(Point size) {
-		if((getStyle() & SWT.SIMPLE) != 0) {
-			titleArea.setSize(size);
-		} else {
-			bounds.width = size.x;
-			bounds.height = size.y;
-		}
+		bounds.width = size.x;
+		bounds.height = size.y;
 		needsLayout = true;
 	}
 
@@ -804,7 +820,8 @@ public abstract class CContainerCell {
 			back = (cellBackground != null) ? cellBackground : item.container.getColors().getItemBackgroundNormal();
 			fore = (cellForeground != null) ? cellForeground : item.container.getColors().getItemForegroundNormal();
 		}
-		if((getStyle() & (SWT.SIMPLE | SWT.DROP_DOWN)) != 0) {
+		if((childArea != null && !childArea.isDisposed()) || 
+				(titleArea != null && !titleArea.isDisposed())) {
 			List l = getColorManagedControls();
 			for(Iterator iter = l.iterator(); iter.hasNext(); ) {
 				Control c = (Control) iter.next();
@@ -817,13 +834,13 @@ public abstract class CContainerCell {
 	}
 
 	private void updateVisibility() {
-		if(titleArea != null) {
+		if(titleArea != null && !titleArea.isDisposed()) {
 			List controls = getControls(titleArea);
 			for(Iterator i = controls.iterator(); i.hasNext(); ) {
 				((Control) i.next()).setVisible(titleVisible&&visible);
 			}
 		}
-		if(childArea != null) {
+		if(childArea != null && !childArea.isDisposed()) {
 			List controls = getControls(childArea);
 			for(Iterator i = controls.iterator(); i.hasNext(); ) {
 				((Control) i.next()).setVisible(childVisible&&open&&visible);
