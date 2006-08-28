@@ -6238,12 +6238,45 @@ public class Grid extends Canvas
      * Returns the current item in focus.
      * 
      * @return item in focus or {@code null}.
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
      */
     public GridItem getFocusItem()
     {
-        //TODO: javadoc
         checkWidget();
         return focusItem;
+    }
+    
+    /**
+     * Returns the current cell in focus.  If cell selection is disabled, this method returns null.
+     * 
+     * @return cell in focus or {@code null}.
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
+     */
+    public Point getFocusCell()
+    {
+        checkWidget();
+        if (!cellSelectionEnabled) return null;
+        
+        int x = -1;
+        int y = -1;
+        
+        if (focusColumn != null)
+            x = indexOf(focusColumn);
+        
+        if (focusItem != null)
+            y = indexOf(focusItem);
+        
+        return new Point(x,y);
     }
 
     /**
