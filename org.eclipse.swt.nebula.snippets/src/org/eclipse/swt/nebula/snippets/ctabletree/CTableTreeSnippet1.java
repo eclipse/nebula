@@ -47,7 +47,7 @@ public class CTableTreeSnippet1 {
 		column3.setWidth(200);
 
 		ctt.setTreeColumn(1);
-		
+
 		for (int i = 0; i < 4; i++) {
 			CTableTreeItem item = new CTableTreeItem(ctt, SWT.NONE);
 			item.setText(new String[] { "item " + i, "abc", "defghi" });
@@ -61,15 +61,15 @@ public class CTableTreeSnippet1 {
 			}
 		}
 
-        Point size = shell.computeSize(-1, -1);
-        size.y = 300;
-        Rectangle screen = display.getMonitors()[0].getBounds();
-        shell.setBounds(
-            (screen.width-size.x)/2,
-            (screen.height-size.y)/2,
-            size.x,
-            size.y
-            );
+		Point size = shell.computeSize(-1, -1);
+		size.y = 300;
+		Rectangle screen = display.getMonitors()[0].getBounds();
+		shell.setBounds(
+				(screen.width-size.x)/2,
+				(screen.height-size.y)/2,
+				size.x,
+				size.y
+		);
 		shell.open ();
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch ()) display.sleep ();

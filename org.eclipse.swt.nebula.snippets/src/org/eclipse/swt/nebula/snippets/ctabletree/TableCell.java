@@ -14,7 +14,7 @@ import org.eclipse.swt.widgets.TableItem;
 
 /**
  * A Sample custom cell of style DROP_DOWN.  Uses the CContainerCell's toggle
- * via style TOGGLE, and contains a native SWT Table.
+ * via style TOGGLE, and contains a native SWT Table in its Child Area.
  */
 public class TableCell extends CTableTreeCell {
 

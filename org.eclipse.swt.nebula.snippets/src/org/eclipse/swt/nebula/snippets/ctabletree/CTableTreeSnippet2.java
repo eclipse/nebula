@@ -69,15 +69,15 @@ public class CTableTreeSnippet2 {
 			}
 		}
 
-        Point size = shell.computeSize(-1, -1);
-        size.y = 300;
-        Rectangle screen = display.getMonitors()[0].getBounds();
-        shell.setBounds(
-            (screen.width-size.x)/2,
-            (screen.height-size.y)/2,
-            size.x,
-            size.y
-            );
+		Point size = shell.computeSize(-1, -1);
+		size.y = 300;
+		Rectangle screen = display.getMonitors()[0].getBounds();
+		shell.setBounds(
+				(screen.width-size.x)/2,
+				(screen.height-size.y)/2,
+				size.x,
+				size.y
+		);
 		shell.open ();
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch ()) display.sleep ();

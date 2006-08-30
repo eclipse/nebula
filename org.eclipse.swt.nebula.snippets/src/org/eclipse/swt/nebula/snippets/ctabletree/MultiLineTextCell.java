@@ -12,9 +12,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * A Sample custom cell with no styles set (a "base" cell).
- * Everything is drawn custom and the toggle's visibility 
- * is set on and off dynamically.
+ * A Sample custom cell of style TITLE.
+ * The CContainerCell's toggle is set on and off dynamically, and contains a
+ * native SWT Text box in its Title Area.
+ * <p>Note that the style SWT.TOP is also set so that the toggle will be drawn
+ * at the top of the cell when it is expanded (compare to MultiLineCell which
+ * does not have this style set).</p>
  */
 public class MultiLineTextCell extends CTableTreeCell {
 
