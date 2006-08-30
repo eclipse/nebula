@@ -47,8 +47,8 @@ public class CTableTreeSnippet2 {
 		column3.setText("MultiLineTextCell");
 		column3.pack();
 		CContainerColumn column4 = new CContainerColumn(ctt, SWT.LEFT);
-		column4.setText("DropTableCell");
-		column4.pack();
+		column4.setText("TableCell");
+		column4.setWidth(150);
 		CContainerColumn column5 = new CContainerColumn(ctt, SWT.LEFT);
 		column5.setText("null Cell");
 		column5.pack();
