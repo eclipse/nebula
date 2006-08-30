@@ -22,8 +22,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /*
- * Create a CTableTree with the Tree in the second column and
- * a custom cell in the third column.
+ * Create a CTableTree with the Tree in the second column.
  *
  * For a list of all Nebula CTableTree example snippets see
  * http://www.eclipse.org/nebula/widgets/ctabletree/snippets.php
@@ -36,6 +35,7 @@ public class CTableTreeSnippet1 {
 
 		CTableTree ctt = new CTableTree(shell, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		ctt.setHeaderVisible(true);
+		ctt.setLinesVisible(true);
 		CContainerColumn column1 = new CContainerColumn(ctt, SWT.LEFT);
 		column1.setText("Column 1");
 		column1.setWidth(200);

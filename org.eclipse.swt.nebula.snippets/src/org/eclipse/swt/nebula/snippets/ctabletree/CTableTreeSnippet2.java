@@ -22,9 +22,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /*
- * Create a CTableTree with the Tree in the second column and
- * a custom cell in the third column.  The custom cell for this
- * snippet is a TableCell.
+ * Create a CTableTree demonstrating the implementation of
+ * custom cells.
  *
  * For a list of all Nebula CTableTree example snippets see
  * http://www.eclipse.org/nebula/widgets/ctabletree/snippets.php
@@ -37,26 +36,33 @@ public class CTableTreeSnippet2 {
 
 		CTableTree ctt = new CTableTree(shell, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		ctt.setHeaderVisible(true);
+		ctt.setLinesVisible(true);
 		CContainerColumn column1 = new CContainerColumn(ctt, SWT.LEFT);
-		column1.setText("Column 1");
-		column1.setWidth(100);
-		CContainerColumn column2 = new CContainerColumn(ctt, SWT.CENTER);
-		column2.setText("Column 2");
-		column2.setWidth(200);
-		CContainerColumn column3 = new CContainerColumn(ctt, SWT.RIGHT);
-		column3.setText("Column 3");
-		column3.setWidth(300);
+		column1.setText("MultiLineCell");
+		column1.pack();
+		CContainerColumn column2 = new CContainerColumn(ctt, SWT.LEFT);
+		column2.setText("null Cell / Tree Column");
+		column2.pack();
+		CContainerColumn column3 = new CContainerColumn(ctt, SWT.LEFT);
+		column3.setText("MultiLineTextCell");
+		column3.pack();
+		CContainerColumn column4 = new CContainerColumn(ctt, SWT.LEFT);
+		column4.setText("DropTableCell");
+		column4.pack();
+		CContainerColumn column5 = new CContainerColumn(ctt, SWT.LEFT);
+		column5.setText("null Cell");
+		column5.pack();
 
 		ctt.setTreeColumn(1);
 
-		Class[] cellClasses = new Class[] { null, null, TableCell.class };
-		for (int i = 0; i < 4; i++) {
+		Class[] cellClasses = new Class[] { MultiLineCell.class, null, MultiLineTextCell.class, TableCell.class };
+		for (int i = 0; i < 5; i++) {
 			CTableTreeItem item = new CTableTreeItem(ctt, SWT.NONE, cellClasses);
-			item.setText(new String[] { "item " + i, "abc", "defghi" });
-			for (int j = 0; j < 4; j++) {
+			item.setText(new String[] { "word1 word2 word3", "abc", "defghi", "item " + i, "item " + i});
+			for (int j = 0; j < 2; j++) {
 				CTableTreeItem subItem = new CTableTreeItem(item, SWT.NONE);
 				subItem.setText(new String[] { "subitem " + j, "jklmnop", "qrs" });
-				for (int k = 0; k < 4; k++) {
+				for (int k = 0; k < 2; k++) {
 					CTableTreeItem subsubItem = new CTableTreeItem(subItem, SWT.NONE);
 					subsubItem.setText(new String[] { "subsubitem " + k, "tuv", "wxyz" });
 				}
