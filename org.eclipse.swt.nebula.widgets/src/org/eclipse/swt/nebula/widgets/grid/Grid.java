@@ -5355,28 +5355,29 @@ public class Grid extends Canvas
     private void handleHovering(int x, int y)
     {
         // TODO: need to clean up and refactor hover code
-
+        handleCellHover(x, y);
+        
         if (columnHeadersVisible)
         {
             if (handleHoverOnColumnResizer(x, y))
             {
-                if (hoveringItem != null || !hoveringDetail.equals("") || hoveringColumn != null
-                    || hoveringColumnHeader != null || hoverColumnGroupHeader != null)
-                {
-                    hoveringItem = null;
-                    hoveringDetail = "";
-                    hoveringColumn = null;
-                    hoveringColumnHeader = null;
-                    hoverColumnGroupHeader = null;
-
-                    Rectangle clientArea = getClientArea();
-                    redraw(clientArea.x,clientArea.y,clientArea.width,clientArea.height,false);
-                }
+//                if (hoveringItem != null || !hoveringDetail.equals("") || hoveringColumn != null
+//                    || hoveringColumnHeader != null || hoverColumnGroupHeader != null)
+//                {
+//                    hoveringItem = null;
+//                    hoveringDetail = "";
+//                    hoveringColumn = null;
+//                    hoveringColumnHeader = null;
+//                    hoverColumnGroupHeader = null;
+//
+//                    Rectangle clientArea = getClientArea();
+//                    redraw(clientArea.x,clientArea.y,clientArea.width,clientArea.height,false);
+//                }
                 return;
             }
         }
 
-        handleCellHover(x, y);
+       // handleCellHover(x, y);
     }
 
     /**
@@ -5930,7 +5931,7 @@ public class Grid extends Canvas
                     detail = col.getCellRenderer().getHoverDetail();
                 }
 
-                Rectangle textBounds = col.getCellRenderer().getTextBounds(item);
+                Rectangle textBounds = col.getCellRenderer().getTextBounds(item,false);
                 
                 if (textBounds != null)
                 {
@@ -5952,6 +5953,14 @@ public class Grid extends Canvas
                         {
                             detail = hoverColGroup.getHeaderRenderer().getHoverDetail();
                         }
+                        
+                        Rectangle textBounds = hoverColGroup.getHeaderRenderer().getTextBounds(hoverColGroup,false);
+                        
+                        if (textBounds != null)
+                        {
+                            Point p = new Point(x - hoverColGroup.getHeaderRenderer().getBounds().x, y - hoverColGroup.getHeaderRenderer().getBounds().y);
+                            overText = textBounds.contains(p);                  
+                        }  
                     }
                     else
                     {
@@ -5964,12 +5973,20 @@ public class Grid extends Canvas
                         {
                             detail = col.getHeaderRenderer().getHoverDetail();
                         }
+                        
+                        Rectangle textBounds = col.getHeaderRenderer().getTextBounds(col,false);
+                        
+                        if (textBounds != null)
+                        {
+                            Point p = new Point(x - col.getHeaderRenderer().getBounds().x, y - col.getHeaderRenderer().getBounds().y);
+                            overText = textBounds.contains(p);                  
+                        }  
                     }
                 }
             }
         }
 
-        boolean returnVal = false;
+        boolean hoverChange = false;
         
         if (hoveringItem != item || !hoveringDetail.equals(detail) || hoveringColumn != col
             || hoverColGroup != hoverColumnGroupHeader || hoverColHeader != hoveringColumnHeader)
@@ -5983,24 +6000,44 @@ public class Grid extends Canvas
             Rectangle clientArea = getClientArea();
             redraw(clientArea.x,clientArea.y,clientArea.width,clientArea.height,false);
 
-            returnVal = true;
+            hoverChange = true;
         }
         
         //do inplaceToolTip stuff
-        if (hoveringItem != item || hoveringColumn != col || hoveringOverText != overText)
+        if (hoverChange || hoveringOverText != overText)
         {
             hoveringOverText = overText;
             
             if (overText){
                 
-                //determine truncation
-                Rectangle cellBounds = col.getCellRenderer().getBounds();
-                Rectangle textBounds = col.getCellRenderer().getTextBounds(item);
+                Rectangle cellBounds = null;
+                Rectangle textBounds = null;
+                Rectangle preferredTextBounds = null;
                 
-                if (col.getCellRenderer().isTruncated(textBounds))
+                if (hoveringItem != null)
+                {
+                    cellBounds = col.getCellRenderer().getBounds();
+                    textBounds = col.getCellRenderer().getTextBounds(item,false);
+                    preferredTextBounds = col.getCellRenderer().getTextBounds(item,true);
+                }
+                else if (hoveringColumnHeader != null)
+                {
+                    cellBounds = hoveringColumnHeader.getHeaderRenderer().getBounds();
+                    textBounds = hoveringColumnHeader.getHeaderRenderer().getTextBounds(col,false);
+                    preferredTextBounds = hoveringColumnHeader.getHeaderRenderer().getTextBounds(col,true);
+                }
+                else if (hoverColumnGroupHeader != null)
+                {
+                    cellBounds = hoverColumnGroupHeader.getHeaderRenderer().getBounds();
+                    textBounds = hoverColumnGroupHeader.getHeaderRenderer().getTextBounds(hoverColumnGroupHeader,false);
+                    preferredTextBounds = hoverColumnGroupHeader.getHeaderRenderer().getTextBounds(hoverColumnGroupHeader,true);
+                }
+                
+                //if we are truncated
+                if (textBounds.width < preferredTextBounds.width)
                 {
                     ignoreMouseExit = true;
-                    showToolTip(item,col, new Point(cellBounds.x + textBounds.x,cellBounds.y + 
+                    showToolTip(item,col, hoverColumnGroupHeader, new Point(cellBounds.x + textBounds.x,cellBounds.y + 
                                                     textBounds.y));
                     getDisplay().asyncExec(new Runnable()
                     {                    
@@ -6017,7 +6054,7 @@ public class Grid extends Canvas
             }
         }
         
-        return returnVal;
+        return hoverChange;
     }
 
     /**
@@ -7107,17 +7144,32 @@ public class Grid extends Canvas
      * Shows the inplace tooltip for the given item and column.  The location is the x and y origin 
      * of the text in the cell.
      */
-    protected void showToolTip(GridItem item, GridColumn column, Point location)
+    protected void showToolTip(GridItem item, GridColumn column, GridColumnGroup group, Point location)
     {
         if (inplaceToolTip == null)
         {
             inplaceToolTip = new GridToolTip(this);
         }
         
-        inplaceToolTip.setFont(item.getFont(item.getParent().indexOf(column)));
-        inplaceToolTip.setText(item.getText(item.getParent().indexOf(column)));
+        if (group != null)
+        {
+            inplaceToolTip.setFont(getFont());
+            inplaceToolTip.setText(group.getText());
+        }
+        else if (item != null)
+        {
+            inplaceToolTip.setFont(item.getFont(item.getParent().indexOf(column)));
+            inplaceToolTip.setText(item.getText(item.getParent().indexOf(column)));  
+        }
+        else if (column != null)
+        {
+            inplaceToolTip.setFont(getFont());
+            inplaceToolTip.setText(column.getText());           
+        }
         
-        Point p = item.getParent().getDisplay().map(this, null, location);
+
+        
+        Point p = getDisplay().map(this, null, location);
         
         inplaceToolTip.setLocation(p);
         

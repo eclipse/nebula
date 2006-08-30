@@ -402,13 +402,8 @@ public class DefaultCellRenderer extends GridCellRenderer
             checkRenderer = null;
         }
     }
-    
-    public boolean isTruncated(Rectangle textBounds)
-    {
-        return (textBounds.x + textBounds.width > getBounds().width - rightMargin);
-    }
 
-    public Rectangle getTextBounds(GridItem item)
+    public Rectangle getTextBounds(GridItem item, boolean preferred)
     {
         int x = leftMargin;
 
@@ -436,8 +431,17 @@ public class DefaultCellRenderer extends GridCellRenderer
         GC gc = new GC(item.getParent());
         gc.setFont(item.getFont(getColumn()));
         Point size = gc.stringExtent(item.getText(getColumn()));
-        bounds.width = size.x;
+        
         bounds.height = size.y;
+        
+        if (preferred)
+        {
+            bounds.width = size.x;
+        }
+        else
+        {
+            bounds.width = getBounds().width - x - rightMargin;
+        }
         
         gc.dispose();
         

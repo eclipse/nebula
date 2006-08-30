@@ -7,25 +7,18 @@ import org.eclipse.swt.graphics.Rectangle;
 public abstract class GridHeaderRenderer extends AbstractInternalWidget
 {
     /**
-     * Returns the bounds of the text in the header.  This is used when displaying in-place tooltips.
-     * If <code>null</code> is returned here, in-place tooltips will not be displayed.
+     * Returns the bounds of the text in the cell.  This is used when displaying in-place tooltips.
+     * If <code>null</code> is returned here, in-place tooltips will not be displayed.  If the 
+     * <code>preferred</code> argument is <code>true</code> then the returned bounds should be large
+     * enough to show the entire text.  If <code>preferred</code> is <code>false</code> then the 
+     * returned bounds should be be relative to the current bounds.
      * 
-     * @param item item to calculate text bounds.
+     * @param value the object being rendered.
+     * @param preferred true if the preferred width of the text should be returned.
      * @return bounds of the text.
      */
-    public Rectangle getTextBounds(GridItem item)
+    public Rectangle getTextBounds(Object value, boolean preferred)
     {
         return null;
-    }
-    
-    /**
-     * Returns true if the given text area would be truncated within the current bounds.
-     * 
-     * @param textBounds the bounds of text
-     * @return true if the text would be truncated, false otherwise.
-     */
-    public boolean isTruncated(Rectangle textBounds)
-    {
-        return false;
     }
 }

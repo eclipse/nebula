@@ -205,7 +205,7 @@ public class GridColumnGroup extends Item
     }
 
     /**
-     * Sets the header renderer.
+     * Gets the header renderer.
      * 
      * @param headerRenderer The headerRenderer to set.
      * @throws org.eclipse.swt.SWTException
@@ -215,7 +215,7 @@ public class GridColumnGroup extends Item
      * created the receiver</li>
      * </ul>
      */
-    public IInternalWidget getHeaderRenderer()
+    public GridHeaderRenderer getHeaderRenderer()
     {
         checkWidget();
         return headerRenderer;

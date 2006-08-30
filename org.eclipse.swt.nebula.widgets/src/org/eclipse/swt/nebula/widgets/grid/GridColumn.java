@@ -267,7 +267,7 @@ public class GridColumn extends Item
      * 
      * @return header renderer
      */
-    IInternalWidget getHeaderRenderer()
+    GridHeaderRenderer getHeaderRenderer()
     {
         return headerRenderer;
     }

@@ -13,6 +13,7 @@ package org.eclipse.swt.nebula.widgets.grid.internal;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.nebula.widgets.grid.GridColumn;
 import org.eclipse.swt.nebula.widgets.grid.GridHeaderRenderer;
 import org.eclipse.swt.widgets.Display;
@@ -226,4 +227,53 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
         return false;
     }
 
+    /** 
+     * {@inheritDoc}
+     */
+    public Rectangle getTextBounds(Object value, boolean preferred)
+    {
+        GridColumn column = (GridColumn)value;
+        
+        int x = leftMargin;
+
+        if (column.getImage() != null)
+        {
+            x += column.getImage().getBounds().width + imageSpacing;
+        }
+
+
+
+        GC gc = new GC(column.getParent());
+        gc.setFont(column.getParent().getFont());
+        int y = getBounds().height - bottomMargin - gc.getFontMetrics().getHeight();
+        
+        Rectangle bounds = new Rectangle(x,y,0,0);
+        
+        Point p = gc.stringExtent(column.getText());
+        
+        bounds.height = p.y;
+        
+        if (preferred)
+        {
+            bounds.width = p.x;
+        }
+        else
+        {
+            int width = getBounds().width - x;
+            if (column.getSort() == SWT.NONE)
+            {
+                width -= rightMargin;
+            }
+            else
+            {
+                width -= arrowMargin + arrowRenderer.getSize().x + arrowMargin;
+            }
+            bounds.width = width;
+        }
+        
+        
+        gc.dispose();
+        
+        return bounds;        
+    }    
 }

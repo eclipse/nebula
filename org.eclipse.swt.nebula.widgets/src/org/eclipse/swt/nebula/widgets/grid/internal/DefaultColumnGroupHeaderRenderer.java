@@ -170,4 +170,44 @@ public class DefaultColumnGroupHeaderRenderer extends GridHeaderRenderer
         toggleRenderer.setDisplay(display);
     }
 
+    /** 
+     * {@inheritDoc}
+     */
+    public Rectangle getTextBounds(Object value, boolean preferred)
+    {
+        GridColumnGroup group = (GridColumnGroup)value;
+
+        int x = leftMargin;
+
+        if (group.getImage() != null)
+        {
+            x += group.getImage().getBounds().width + imageSpacing;
+        }
+
+        Rectangle bounds = new Rectangle(x, topMargin, 0, 0);
+        
+        GC gc = new GC(group.getParent());
+        gc.setFont(group.getParent().getFont());
+
+        Point p = gc.stringExtent(group.getText());
+        
+        bounds.height = p.y;
+        
+        if (preferred)
+        {
+            bounds.width = p.x;
+        }
+        else
+        {
+            int width = getBounds().width - x - rightMargin;
+            if ((group.getStyle() & SWT.TOGGLE) != 0)
+            {
+                width -= toggleRenderer.getSize().x;
+            }  
+            bounds.width = width;
+        }        
+
+        gc.dispose();
+        return bounds;
+    }    
 }

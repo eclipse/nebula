@@ -133,7 +133,7 @@ public class GridEditor extends ControlEditor
         grabVertical = true;
     }
 
-    Rectangle computeBounds()
+    protected Rectangle computeBounds()
     {
         if (item == null || column == -1 || item.isDisposed())
             return new Rectangle(0, 0, 0, 0);
