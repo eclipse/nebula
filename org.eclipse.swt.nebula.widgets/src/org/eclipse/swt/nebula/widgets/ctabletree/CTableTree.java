@@ -42,7 +42,7 @@ public class CTableTree extends CContainer {
 	public static final int OP_TREE_EXPAND 		= 8;
 
 	private boolean selectOnTreeToggle = false;
-	private int treeColumn = -1;
+	private int treeColumn = 0;
 	private int treeIndent = 16;
 
 	public CTableTree(Composite parent, int style) {
@@ -287,14 +287,13 @@ public class CTableTree extends CContainer {
 	 * <p>If column is greater than the number of columns, then it is set to -1
 	 * which  indicates that there is no Tree Column and this control is to be 
 	 * used as a flat List or Table</p>
-	 * <p>Note that the CTableTree must be empty while setting the tree column, and the
-	 * column must already exist.</p>
+	 * <p>Note that the CTableTree must be empty while setting the tree column.</p>
 	 * @param column the column to use for the tree or -1 for a flat layout
 	 * @return true if the tree column was changed, false otherwise
 	 */
 	public boolean setTreeColumn(int column) {
 		if(treeColumn != column && items.isEmpty()) {
-			if(column < -1 || column >= getColumnCount()) column = -1;
+			if(column < 0) column = -1;
 			treeColumn = column;
 			return true;
 		}
