@@ -34,6 +34,7 @@ public class CTableTreeSnippet1 {
 		shell.setLayout(new FillLayout());
 
 		CTableTree ctt = new CTableTree(shell, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		ctt.setTreeColumn(1);
 		ctt.setHeaderVisible(true);
 		ctt.setLinesVisible(true);
 		CContainerColumn column1 = new CContainerColumn(ctt, SWT.LEFT);
@@ -45,8 +46,6 @@ public class CTableTreeSnippet1 {
 		CContainerColumn column3 = new CContainerColumn(ctt, SWT.RIGHT);
 		column3.setText("Column 3");
 		column3.setWidth(200);
-
-		ctt.setTreeColumn(1);
 
 		for (int i = 0; i < 4; i++) {
 			CTableTreeItem item = new CTableTreeItem(ctt, SWT.NONE);

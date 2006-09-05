@@ -35,6 +35,7 @@ public class CTableTreeSnippet2 {
 		shell.setLayout(new FillLayout());
 
 		CTableTree ctt = new CTableTree(shell, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		ctt.setTreeColumn(1);
 		ctt.setHeaderVisible(true);
 		ctt.setLinesVisible(true);
 		CContainerColumn column1 = new CContainerColumn(ctt, SWT.LEFT);
@@ -52,8 +53,6 @@ public class CTableTreeSnippet2 {
 		CContainerColumn column5 = new CContainerColumn(ctt, SWT.LEFT);
 		column5.setText("null Cell");
 		column5.pack();
-
-		ctt.setTreeColumn(1);
 
 		Class[] cellClasses = new Class[] { MultiLineCell.class, null, MultiLineTextCell.class, TableCell.class };
 		for (int i = 0; i < 5; i++) {
