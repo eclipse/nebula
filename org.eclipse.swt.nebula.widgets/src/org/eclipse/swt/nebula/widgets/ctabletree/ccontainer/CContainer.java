@@ -1007,12 +1007,6 @@ public abstract class CContainer extends Composite implements Listener {
 		if(!isDisposed()) ((CContainerLayout) getLayout()).opLayout();
 	}
 
-	public void paint(CContainerItem item) {
-//		Rectangle r = item.getBounds();
-//		body.redraw(r.x-1, r.y-1, r.width+2, r.height+2, true);
-		body.redraw();
-	}
-
 	protected void paintBackground(GC gc, Rectangle ebounds) {
 	}
 
@@ -1172,6 +1166,13 @@ public abstract class CContainer extends Composite implements Listener {
 	public void redraw() {
 		body.redraw();
 		super.redraw();
+	}
+
+	public void redraw(CContainerItem item) {
+		// TODO: paint / redraw individual item
+//		Rectangle r = item.getBounds();
+//		body.redraw(r.x-1, r.y-1, r.width+2, r.height+2, true);
+		body.redraw();
 	}
 
 	public void remove(CContainerItem[] items) {
