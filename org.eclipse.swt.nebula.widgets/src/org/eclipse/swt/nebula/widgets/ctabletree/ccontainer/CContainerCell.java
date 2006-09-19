@@ -12,6 +12,7 @@
 package org.eclipse.swt.nebula.widgets.ctabletree.ccontainer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -338,9 +339,9 @@ public abstract class CContainerCell {
 	 * <p>This method is called immediately after creating the body if, and only if,
 	 * the style bit for SWT.TITLE is set.  This means that it is created at the same 
 	 * time as the cell (rather than lazily, like the child area), so be careful how 
-	 * much code is put in here or filling large table will take forever!</p>
+	 * much code is put in here or filling a large table will take forever!</p>
 	 * <p>Note that NO layout has been assigned to the parameter "contents".  Implementations
-	 * must provide this or things may not work as expected</p>
+	 * must provide this or things may not work as expected.</p>
 	 * @param contents the Title Area of the cell
 	 * @param style the style that was passed to the constructor
 	 * @see org.aspencloud.widgets.ccontainer#createChildContents(Composite, int)
@@ -794,9 +795,9 @@ public abstract class CContainerCell {
 	 * <p>Functionality is only provided for a basic cell, subclasses should override</p>
 	 * @param element the data to use in updating the cell
 	 * @param properties the properties of the cell to be updated
-	 * @return true if this cell (and thus maybe the CTable) needs its layout updated,
-	 * actually calling layout on the cell and/or the CTable is left up to the caller so that
-	 * performance improvements can be made - for instance, if several cells are updated, the CTable
+	 * @return true if this cell (and thus maybe its container) needs its layout updated,
+	 * actually calling layout on the cell and/or the CContainer is left up to the caller so that
+	 * performance improvements can be made - for instance, if several cells are updated, the CContainer
 	 * need only be updated once.
 	 */
 	public boolean update(Object element, String[] properties) {
