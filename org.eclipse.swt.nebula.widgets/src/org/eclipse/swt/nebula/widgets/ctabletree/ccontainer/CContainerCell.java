@@ -288,7 +288,7 @@ public abstract class CContainerCell {
 
 	/**
 	 * Create the contents of your custom cell's Child Area here
-	 * <p>The Child Area is the SComposite (@see org.aspencloud.widgets.SComposite)
+	 * <p>The Child Area is the SComposite (@see SComposite)
 	 * that will appear and disappear as the cell is opened and closed</p>
 	 * <p>The base cell class will call this immediately after creating its body if, and only if,
 	 * the style bit for SWT.DROP_DOWN is set
@@ -296,7 +296,7 @@ public abstract class CContainerCell {
 	 * must provide this or things may not work as expected</p>
 	 * @param contents the Child Area of the cell
 	 * @param style the style that was passed to the constructor
-	 * @see org.aspencloud.widgets.ccontainer#createTitleContents(Composite, int)
+	 * @see CContainer#createTitleContents(Composite, int)
 	 */
 	protected void createChildContents(SComposite contents, int style) {}
 
@@ -333,8 +333,12 @@ public abstract class CContainerCell {
 			paintedItemListener = new Listener() {
 				public void handleEvent(Event event) {
 					if(event.item == item) {
-						if(titleArea != null && !titleArea.isDisposed()) titleArea.setVisible(event.detail == 1);
-						if(childArea != null && !childArea.isDisposed()) childArea.setVisible(event.detail == 1);
+						// TODO: finish up
+						titleVisible = event.detail == 1;
+						childVisible = event.detail == 1;
+						updateVisibility();
+//						if(titleArea != null && !titleArea.isDisposed()) titleArea.setVisible(event.detail == 1);
+//						if(childArea != null && !childArea.isDisposed()) childArea.setVisible(event.detail == 1);
 //						if(event.detail == -1) {
 //							if(titleArea != null) titleArea.setBounds(0,0,0,0);
 //							if(childArea != null) childArea.setBounds(0,0,0,0);
@@ -499,8 +503,8 @@ public abstract class CContainerCell {
 	 * @param event the Event
 	 * @return 0: do nothing, 1: redraw, 2: layout
 	 */
-	// TODO: handleMouseEvent uses bitwise OR'ed return code, allow "consumed" code?
 	public int handleMouseEvent(Event event, boolean selectionActive) {
+		// TODO: handleMouseEvent uses bitwise OR'ed return code, allow "consumed" code?
 		int result = RESULT_NONE;
 		switch(event.type) {
 		case SWT.MouseDown:
@@ -854,17 +858,20 @@ public abstract class CContainerCell {
 	}
 
 	private void updateVisibility() {
+		// TODO: finish up
 		if(titleArea != null && !titleArea.isDisposed()) {
-			List controls = getControls(titleArea);
-			for(Iterator i = controls.iterator(); i.hasNext(); ) {
-				((Control) i.next()).setVisible(titleVisible&&visible);
-			}
+//			List controls = getControls(titleArea);
+//			for(Iterator i = controls.iterator(); i.hasNext(); ) {
+//				((Control) i.next()).setVisible(titleVisible&&visible);
+//			}
+			titleArea.setVisible(titleVisible&&visible);
 		}
 		if(childArea != null && !childArea.isDisposed()) {
-			List controls = getControls(childArea);
-			for(Iterator i = controls.iterator(); i.hasNext(); ) {
-				((Control) i.next()).setVisible(childVisible&&open&&visible);
-			}
+//			List controls = getControls(childArea);
+//			for(Iterator i = controls.iterator(); i.hasNext(); ) {
+//				((Control) i.next()).setVisible(childVisible&&open&&visible);
+//			}
+			childArea.setVisible(childVisible&&visible);
 		}
 	}
 }
