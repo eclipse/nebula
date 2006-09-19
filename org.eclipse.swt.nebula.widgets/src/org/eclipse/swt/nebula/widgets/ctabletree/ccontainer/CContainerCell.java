@@ -12,7 +12,6 @@
 package org.eclipse.swt.nebula.widgets.ctabletree.ccontainer;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -307,17 +306,7 @@ public abstract class CContainerCell {
 		foreground = parent.getForeground();
 
 		if((style & SWT.TITLE) != 0) {
-			titleArea = new Composite(parent, style);
-			titleArea.setBackground(background);
-			titleArea.setForeground(foreground);
-			titleVisible = true;
-			container.addPaintedItemListener(new Listener() {
-				public void handleEvent(Event event) {
-					if(event.detail == -1) {
-						layout();
-					}
-				}
-			});
+			createTitleArea();
 		}
 
 		if((style & SWT.DROP_DOWN) != 0) {
@@ -330,6 +319,35 @@ public abstract class CContainerCell {
 		}
 	}
 
+	protected void createTitleArea() {
+		titleArea = new Composite(container.body, style);
+		titleArea.setBackground(background);
+		titleArea.setForeground(foreground);
+		titleVisible = true;
+		container.addPaintedItemListener(getPaintedItemListener());
+	}
+
+	private Listener paintedItemListener;
+	private Listener getPaintedItemListener() {
+		if(paintedItemListener == null) {
+			paintedItemListener = new Listener() {
+				public void handleEvent(Event event) {
+					if(event.item == item) {
+						if(titleArea != null && !titleArea.isDisposed()) titleArea.setVisible(event.detail == 1);
+						if(childArea != null && !childArea.isDisposed()) childArea.setVisible(event.detail == 1);
+//						if(event.detail == -1) {
+//							if(titleArea != null) titleArea.setBounds(0,0,0,0);
+//							if(childArea != null) childArea.setBounds(0,0,0,0);
+//						} else {
+//							layout();
+//						}
+					}
+				}
+			};
+		}
+		return paintedItemListener;
+	}
+	
 	/**
 	 * Create the contents of your custom cell's Title Area here
 	 * <p>The Title Area is the composite that makes up the body of the "traditional"
@@ -705,6 +723,7 @@ public abstract class CContainerCell {
 			if((getStyle() & SWT.DROP_DOWN) != 0) {
 				if(childArea == null) {
 					childArea = new SComposite(item.container.body, getStyle());
+					container.addPaintedItemListener(getPaintedItemListener());
 					createChildContents(childArea, getStyle());
 					// TODO: review...
 					int[] types = ehandler.getEventTypes();
