@@ -55,7 +55,7 @@ public class CTableTree extends CContainer {
 		super.addItem(index, item);
 		CTableTreeItem citem = (CTableTreeItem) item;
 		if(citem.hasParentItem() && citem.getParentItem().getVisible()) {
-			paint(citem.getParentItem());
+			redraw(citem.getParentItem());
 		}
 	}
 	
@@ -218,7 +218,7 @@ public class CTableTree extends CContainer {
 					gc.setBackground(getColors().getGrid());
 					gc.fillRectangle(
 							r.x,
-							item.getUnifiedBounds().y-getOrigin().y,
+							item.getUnifiedBounds().y-getOrigin().y-ebounds.y,
 							r.width,
 							item.getFixedTitleHeight()+gridline
 					);
