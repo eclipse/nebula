@@ -59,7 +59,7 @@ public class CTableTreeSnippet2 {
 			CTableTreeItem item = new CTableTreeItem(ctt, SWT.NONE, cellClasses);
 			item.setText(new String[] { "word1 word2 word3", "abc", "defghi", "item " + i, "item " + i});
 			for (int j = 0; j < 2; j++) {
-				CTableTreeItem subItem = new CTableTreeItem(item, SWT.NONE);
+				CTableTreeItem subItem = new CTableTreeItem(item, SWT.NONE, cellClasses);
 				subItem.setText(new String[] { "subitem " + j, "jklmnop", "qrs" });
 				for (int k = 0; k < 2; k++) {
 					CTableTreeItem subsubItem = new CTableTreeItem(subItem, SWT.NONE);
