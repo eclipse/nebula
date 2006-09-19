@@ -218,7 +218,7 @@ public class CTableTree extends CContainer {
 					gc.setBackground(getColors().getGrid());
 					gc.fillRectangle(
 							r.x,
-							item.getUnifiedBounds().y-getOrigin().y-ebounds.y,
+							item.getUnifiedBounds().y-ebounds.y,
 							r.width,
 							item.getFixedTitleHeight()+gridline
 					);
