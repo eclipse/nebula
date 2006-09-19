@@ -320,11 +320,13 @@ public abstract class CContainerCell {
 	}
 
 	protected void createTitleArea() {
-		titleArea = new Composite(container.body, style);
-		titleArea.setBackground(background);
-		titleArea.setForeground(foreground);
-		titleVisible = true;
-		container.addPaintedItemListener(getPaintedItemListener());
+		if(titleArea == null) {
+			titleArea = new Composite(container.body, style);
+			titleArea.setBackground(background);
+			titleArea.setForeground(foreground);
+			titleVisible = true;
+			container.addPaintedItemListener(getPaintedItemListener());
+		}
 	}
 
 	private Listener paintedItemListener;
