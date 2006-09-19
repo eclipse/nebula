@@ -279,14 +279,14 @@ public class CTableTreeCell extends CContainerCell {
 			if(doit) this.images = images;
 		}
 		update = true;
-		container.paint(getItem());
+		container.redraw(getItem());
 	}
 	
 	public void setText(String string) {
 		if(string != null && !string.equals(getText())) {
 			text = string;
 			update = true;
-			container.paint(getItem());
+			container.redraw(getItem());
 		}
 	}
 	
