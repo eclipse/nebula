@@ -38,9 +38,6 @@ public class CTableTreeItem extends CContainerItem {
 	public CTableTreeItem(CTableTree container, int style) {
 		this(container, style, -1);
 	}
-	public CTableTreeItem(CTableTreeItem parent, int style) {
-		this(parent, style, -1);
-	}
 	public CTableTreeItem(CTableTree container, int style, Class cellClass) {
 		this(container, style, -1, new Class[] { cellClass } );
 	}
@@ -49,6 +46,13 @@ public class CTableTreeItem extends CContainerItem {
 	}
 	public CTableTreeItem(CTableTree container, int style, int index) {
 		this(container, style, index, new Class[0]);
+	}
+	public CTableTreeItem(CTableTreeItem parent, int style) {
+		this(parent, style, -1);
+	}
+	public CTableTreeItem(CTableTreeItem parent, int style, Class[] cellClasses) {
+		super(parent.container, style, -1, cellClasses, new Object[] { parent } );
+		if(hasTreeCell()) getTreeCell().setToggleVisible(false, true);
 	}
 	public CTableTreeItem(CTableTreeItem parent, int style, int index) {
 		this(parent, style, index, new Class[0]);
