@@ -204,7 +204,7 @@ public class CTableTreeCell extends CContainerCell {
 
 	// set positions of self drawing components
 		if(titleArea != null) {
-			Rectangle ca = getClientArea();
+			Rectangle ca = getTitleClientArea();
 			titleArea.setBounds(bounds.x + ca.x, bounds.y + ca.y, ca.width, ca.height);
 			titleArea.layout(true, true);
 		}
