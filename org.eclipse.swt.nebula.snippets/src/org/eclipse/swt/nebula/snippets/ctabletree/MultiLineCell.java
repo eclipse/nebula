@@ -33,7 +33,7 @@ public class MultiLineCell extends CTableTreeCell {
 	private String format(String text) {
 		if(text == null || text.length() == 0) return "";
 		
-		int maxLen = getClientArea().width;
+		int maxLen = getTitleClientArea().width;
 		
 		if((!toggleVisible && CContainer.staticGC.stringExtent(text).x < maxLen) ||
 				(toggleVisible && CContainer.staticGC.stringExtent(text).x < maxLen+toggleBounds.width)) {

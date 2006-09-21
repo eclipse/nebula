@@ -78,7 +78,7 @@ public class MultiLineTextCell extends CTableTreeCell {
 	public void setBounds(Rectangle bounds) {
 		super.setBounds(bounds);
 		if(!open && text != null) {
-			boolean needsToggle = text.computeSize(getClientArea().width, SWT.DEFAULT).y > getClientArea().height;
+			boolean needsToggle = text.computeSize(getTitleClientArea().width, SWT.DEFAULT).y > getTitleClientArea().height;
 			if(!toggleVisible && needsToggle) {
 				setToggleVisible(true, false);
 				super.setBounds(bounds);
