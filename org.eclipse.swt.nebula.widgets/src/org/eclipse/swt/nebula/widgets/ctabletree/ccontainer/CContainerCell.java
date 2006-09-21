@@ -275,6 +275,16 @@ public abstract class CContainerCell {
 	 */
 	public abstract Point computeSize(int wHint, int hHint);
 
+	public Rectangle computeTitleClientArea(int sizeX, int sizeY) {
+		Rectangle ca = new Rectangle(0,0,sizeX,sizeY);
+		ca.x = marginLeft + marginWidth + indent;
+		if(toggleVisible || ghostToggle) ca.x += toggleBounds.width;
+		ca.y = marginTop + marginHeight;
+		ca.width -= (ca.x + marginRight + marginWidth);
+		ca.height -= (ca.y + marginBottom + marginHeight);
+		return ca;
+	}
+	
 	/**
 	 * Compute the preferred size of the cell's Title Area, similar to the way it would be done 
 	 * in a regular SWT layout.
@@ -401,20 +411,6 @@ public abstract class CContainerCell {
 		return childArea;
 	}
 
-	public Rectangle getClientArea() {
-		return computeClientArea(bounds.width, bounds.height);
-	}
-	
-	public Rectangle computeClientArea(int sizeX, int sizeY) {
-		Rectangle ca = new Rectangle(0,0,sizeX,sizeY);
-		ca.x = marginLeft + marginWidth;
-		if(toggleVisible || ghostToggle) ca.x += toggleBounds.width;
-		ca.y = marginTop + marginHeight;
-		ca.width -= (ca.x + marginRight + marginWidth);
-		ca.height -= (ca.y + marginBottom + marginHeight);
-		return ca;
-	}
-	
 	protected List getColorManagedControls() {
 		List l = new ArrayList(getControls(titleArea));
 		l.addAll(getControls(childArea));
@@ -488,6 +484,10 @@ public abstract class CContainerCell {
 		return titleArea;
 	}
 
+	public Rectangle getTitleClientArea() {
+		return computeTitleClientArea(bounds.width, bounds.height);
+	}
+	
 	public int getTitleHeight() {
 		return titleHeight;
 	}
@@ -710,7 +710,7 @@ public abstract class CContainerCell {
 		bounds.x = location.x;
 		bounds.y = location.y;
 		if(titleArea != null && !titleArea.isDisposed()) {
-			Rectangle ca = getClientArea();
+			Rectangle ca = getTitleClientArea();
 			titleArea.setLocation(ca.x, ca.y);
 		}
 	}
