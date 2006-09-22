@@ -231,9 +231,6 @@ public abstract class CContainerCell {
 		this.container = item.container;
 		this.style = style;
 		createContents(container.body, style);
-		if(titleArea != null) {
-			createTitleContents(titleArea, style);
-		}
 		this.item = item;
 	}
 
@@ -317,6 +314,7 @@ public abstract class CContainerCell {
 
 		if((style & SWT.TITLE) != 0) {
 			createTitleArea();
+			createTitleContents(titleArea, style);
 		}
 
 		if((style & SWT.DROP_DOWN) != 0) {
