@@ -10,8 +10,6 @@
  *****************************************************************************/
 package org.eclipse.swt.nebula.snippets.ctabletree;
 
-import java.util.List;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -64,17 +62,8 @@ public class TableCell extends CTableTreeCell {
 		item.setText(new String[] { "i2, c1", "i2, c2", "i2, c3" } );
 		item = new TableItem(table, SWT.NONE);
 		item.setText(new String[] { "i3, c1", "i3, c2", "i3, c3" } );
+		
+		setExclusions(table);
 	}
 	
-	protected List getColorManagedControls() {
-		List list = super.getColorManagedControls();
-		list.remove(table);
-		return list;
-	}
-	
-	protected List getEventManagedControls() {
-		List list = super.getEventManagedControls();
-		list.remove(table);
-		return list;
-	}
 }

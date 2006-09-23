@@ -10,8 +10,6 @@
  *****************************************************************************/
 package org.eclipse.swt.nebula.snippets.ctabletree;
 
-import java.util.List;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -41,6 +39,8 @@ public class MultiLineTextCell extends CTableTreeCell {
 		contents.setLayout(new FillLayout());
 		text = new Text(contents, SWT.BORDER | SWT.WRAP | SWT.MULTI);
 		text.setText("This is a text box with multiple lines This is a text box with multiple lines");
+
+		setExclusions(text);
 	}
 	
 	public Point computeSize(int wHint, int hHint) {
@@ -61,18 +61,6 @@ public class MultiLineTextCell extends CTableTreeCell {
 			
 			return size;
 		}
-	}
-	
-	protected List getColorManagedControls() {
-		List list = super.getColorManagedControls();
-		list.remove(text);
-		return list;
-	}
-	
-	protected List getEventManagedControls() {
-		List list = super.getEventManagedControls();
-		list.remove(text);
-		return list;
 	}
 	
 	public void setBounds(Rectangle bounds) {

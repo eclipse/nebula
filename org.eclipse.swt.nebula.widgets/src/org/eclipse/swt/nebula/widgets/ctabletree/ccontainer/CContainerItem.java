@@ -12,10 +12,7 @@
 package org.eclipse.swt.nebula.widgets.ctabletree.ccontainer;
 
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
@@ -147,8 +144,11 @@ public abstract class CContainerItem extends Widget {
 		return cellSize;
 	}
 	
-	public boolean contains(Control control) {
-		return getEventManagedControls().contains(control);
+	boolean contains(Control control) {
+		for(int i = 0; i < cells.length; i++) {
+			if(cells[i].contains(control)) return true;
+		}
+		return false;
 	}
 
 	public boolean contains(Point pt) {
@@ -279,29 +279,29 @@ public abstract class CContainerItem extends Widget {
 		return null;
 	}
 
-	protected List getColorManagedControls() {
-		List list = new ArrayList();
-		for(int i = 0; i < cells.length; i++) {
-			list.addAll(cells[i].getColorManagedControls());
-		}
-		return list;
-	}
+//	protected List getColorManagedControls() {
+//		List list = new ArrayList();
+//		for(int i = 0; i < cells.length; i++) {
+//			list.addAll(cells[i].getColorManagedControls());
+//		}
+//		return list;
+//	}
 
 	public CContainer getContainer() {
 		return container;
 	}
 	
-	protected List getEventManagedControls() {
-		if(enabled) {
-			List list = new ArrayList();
-			for(int i = 0; i < cells.length; i++) {
-				list.addAll(cells[i].getEventManagedControls());
-			}
-			return list;
-		} else {
-			return Collections.EMPTY_LIST;
-		}
-	}
+//	protected List getEventManagedControls() {
+//		if(enabled) {
+//			List list = new ArrayList();
+//			for(int i = 0; i < cells.length; i++) {
+//				list.addAll(cells[i].getEventManagedControls());
+//			}
+//			return list;
+//		} else {
+//			return Collections.EMPTY_LIST;
+//		}
+//	}
 	
 	public int getFixedHeight() {
 		return fixedHeight;

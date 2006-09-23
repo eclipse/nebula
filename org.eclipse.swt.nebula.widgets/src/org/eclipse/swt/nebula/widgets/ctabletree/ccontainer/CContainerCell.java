@@ -206,6 +206,9 @@ public abstract class CContainerCell {
 	protected boolean isGridLine = false;
 	private int cellState = CELL_NORMAL;
 
+	private List colorExclusions;
+	private List eventExclusions;
+
 	private EventHandler ehandler = new EventHandler();
 //	private List dlisteners = new ArrayList();
 	private Listener l = new Listener() {
@@ -380,6 +383,10 @@ public abstract class CContainerCell {
 	 */
 	protected void createTitleContents(Composite contents, int style) {}
 
+	boolean contains(Control control) {
+		return getEventManagedControls().contains(control);
+	}
+	
 	public void dispose() {
 		if(titleArea != null && !titleArea.isDisposed()) titleArea.dispose();
 		if(childArea != null && !childArea.isDisposed()) childArea.dispose();
@@ -409,28 +416,31 @@ public abstract class CContainerCell {
 		return childArea;
 	}
 
-	protected List getColorManagedControls() {
-		List l = new ArrayList(getControls(titleArea));
-		l.addAll(getControls(childArea));
+	private List getColorManagedControls() {
+		List l = new ArrayList(getControls(titleArea, colorExclusions));
+		l.addAll(getControls(childArea, colorExclusions));
 		return l;
 	}
 
 	/**
-	 * A recursive utility function used to every child control of a composite, 
+	 * A recursive utility function used to get every child control of a composite, 
 	 * including the children of children.<br/>
 	 * NOTE: This method will <b>NOT</b> return disposed children.
 	 * @param c the composite to start from
+	 * @param exclusions a list of controls to be excluded from the return list. If
+	 * an item in this list is a composite, then its children will also be excluded.
 	 * @return all the children and grandchildren of the given composite
 	 */
-	public static List getControls(Composite c) {
+	public static List getControls(Composite c, List exclusions) {
 		if(c != null && !c.isDisposed()) {
+			if(exclusions == null) exclusions = Collections.EMPTY_LIST;
 			List l = new ArrayList();
 			l.add(c);
 			Control[] a = c.getChildren();
 			for(int i = 0; i < a.length; i++) {
-				if(!a[i].isDisposed()) {
+				if(!a[i].isDisposed() && !exclusions.contains(a[i])) {
 					if(a[i] instanceof Composite) {
-						l.addAll(getControls((Composite) a[i]));
+						l.addAll(getControls((Composite) a[i], exclusions));
 					} else {
 						l.add(a[i]);
 					}
@@ -446,9 +456,9 @@ public abstract class CContainerCell {
 		return container.getDisplay();
 	}
 
-	protected List getEventManagedControls() {
-		List l = new ArrayList(getControls(titleArea));
-		l.addAll(getControls(childArea));
+	private List getEventManagedControls() {
+		List l = new ArrayList(getControls(titleArea, eventExclusions));
+		l.addAll(getControls(childArea, eventExclusions));
 		return l;
 	}
 
@@ -687,6 +697,15 @@ public abstract class CContainerCell {
 		container.body.setCursor(getDisplay().getSystemCursor(id));
 	}
 
+	protected void setExclusions(Control exclude) {
+		colorExclusions = eventExclusions = Collections.singletonList(exclude);
+	}
+
+	protected void setExclusions(List colors, List events) {
+		colorExclusions = colors;
+		eventExclusions = events;
+	}
+	
 	public boolean setFocus() {
 		// TODO setFocus not yet implemented
 		return false;
