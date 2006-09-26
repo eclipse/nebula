@@ -11,6 +11,8 @@
 
 package org.eclipse.swt.nebula.widgets.ctabletree.ccontainer;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -217,6 +219,7 @@ public abstract class CContainerCell {
 		}
 	};
 	
+	private PropertyChangeSupport pcListeners;
 
 	/**
 	 * <p>
@@ -259,6 +262,20 @@ public abstract class CContainerCell {
 		}			
 	}
 
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		if(pcListeners == null) {
+			pcListeners = new PropertyChangeSupport(this);
+		}
+		pcListeners.addPropertyChangeListener(listener);
+	}
+	
+	public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+		if(pcListeners == null) {
+			pcListeners = new PropertyChangeSupport(this);
+		}
+		pcListeners.addPropertyChangeListener(propertyName, listener);
+	}
+	
 	protected void clearCellStateFlags() {
 		cellState = 0;
 	}
@@ -392,6 +409,18 @@ public abstract class CContainerCell {
 		if(childArea != null && !childArea.isDisposed()) childArea.dispose();
 	}
 
+	protected void fireIndexedPropertyChange(String propertyName, int index, Object oldValue, Object newValue) {
+		if(pcListeners != null) {
+			pcListeners.fireIndexedPropertyChange(propertyName, index, oldValue, newValue);
+		}
+	}
+	
+	protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
+		if(pcListeners != null) {
+			pcListeners.firePropertyChange(propertyName, oldValue, newValue);
+		}
+	}
+	
 	public Color getBackground() {
 		return background;
 	}
@@ -657,6 +686,18 @@ public abstract class CContainerCell {
 		}
 	}
 
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		if(pcListeners != null) {
+			pcListeners.removePropertyChangeListener(listener);
+		}
+	}
+	
+	public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+		if(pcListeners != null) {
+			pcListeners.removePropertyChangeListener(propertyName, listener);
+		}
+	}
+	
 	public void setBounds(int x, int y, int width, int height) {
 		Rectangle bounds = new Rectangle(x, y, width, height);
 		setBounds(bounds);
