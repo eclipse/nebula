@@ -409,12 +409,6 @@ public abstract class CContainerCell {
 		if(childArea != null && !childArea.isDisposed()) childArea.dispose();
 	}
 
-	protected void fireIndexedPropertyChange(String propertyName, int index, Object oldValue, Object newValue) {
-		if(pcListeners != null) {
-			pcListeners.fireIndexedPropertyChange(propertyName, index, oldValue, newValue);
-		}
-	}
-	
 	protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
 		if(pcListeners != null) {
 			pcListeners.firePropertyChange(propertyName, oldValue, newValue);
