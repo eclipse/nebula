@@ -1,13 +1,13 @@
 /****************************************************************************
-* Copyright (c) 2005-2006 Jeremy Dowdall
-* All rights reserved. This program and the accompanying materials
-* are made available under the terms of the Eclipse Public License v1.0
-* which accompanies this distribution, and is available at
-* http://www.eclipse.org/legal/epl-v10.html
-*
-* Contributors:
-*    Jeremy Dowdall <jeremyd@aspencloud.com> - initial API and implementation
-*****************************************************************************/
+ * Copyright (c) 2005-2006 Jeremy Dowdall
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Jeremy Dowdall <jeremyd@aspencloud.com> - initial API and implementation
+ *****************************************************************************/
 
 package org.eclipse.swt.nebula.widgets.ctabletree.ccontainer;
 
@@ -50,9 +50,9 @@ public class SComposite extends Canvas implements Listener {
 	 * otherwise the corners will be rounded.
 	 */
 	public static int SQUARE	= 1 << 2;
-	
+
 	private static Color WHITE = Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
-	
+
 	private Color	borderColor;
 	private int		borderStyle;
 	private int		borderWidth;
@@ -75,21 +75,22 @@ public class SComposite extends Canvas implements Listener {
 
 		borderStyle = style;
 		borderWidth = 0;
-		
+
 		updateBackground();
 		setBackground(parent.getBackground());
-		
+
 		// setup graphics support
 		GC gc = new GC(Display.getCurrent());
 		gc.setAdvanced(true);
 		advancedGraphics = gc.getAdvanced();
 		gc.dispose();
-		
+
 		setLayout(new GridLayout());
-		
+		setMargins(0,0);
+
 		addListener(SWT.Paint, this);
 	}
-	
+
 	public int getBorderStyle() {
 		return borderStyle;
 	}
@@ -103,7 +104,7 @@ public class SComposite extends Canvas implements Listener {
 			paintControl(event.gc);
 		}
 	}
-	
+
 	private void paintControl(GC gc) {
 		if((borderStyle & BORDER) != 0) {
 			if(advancedGraphics) {
@@ -111,9 +112,9 @@ public class SComposite extends Canvas implements Listener {
 			}
 
 			gc.setLineWidth(borderWidth);
-			
+
 			Rectangle r = getClientArea();
-			
+
 			if((borderStyle & SQUARE) != 0) {
 				if((borderStyle & FLAT) == 0) {
 					gc.setForeground(WHITE);
@@ -133,7 +134,7 @@ public class SComposite extends Canvas implements Listener {
 			}
 		}
 	}
-	
+
 	/**
 	 * The setBackground method of an SComposite does not actually set its own
 	 * background color, as a typical Composite does, but rather the color of its border.
@@ -155,9 +156,22 @@ public class SComposite extends Canvas implements Listener {
 			borderColor = color;
 		}
 	}
-	
+
+	/**
+	 * Convenience method; simply calls setBorderStyle(style) and then setBorderWidth(width).
+	 * @param style
+	 * @param width
+	 * @see #setBorderStyle(int)
+	 * @see #setBorderWidth(int)
+	 */
+	public void setBorder(int style, int width) {
+		setBorderStyle(style);
+		setBorderWidth(width);
+	}
+
 	/**
 	 * Set the style of border to be drawn.<br />
+	 * If turning the border OFF after it has been ON, the margins may need to be reset.<br />
 	 * Valid Styles:
 	 * <ul>
 	 * 	<li>NONE (default)</li>
@@ -166,11 +180,12 @@ public class SComposite extends Canvas implements Listener {
 	 * 	<li>SQUARE</li>
 	 * </ul>
 	 * @param style
-	 * @see #setLayout(Layout)
+	 * @see #setMargins(int, int)
 	 */
 	public void setBorderStyle(int style) {
 		if(borderStyle != style) {
 			borderStyle = style;
+			updateLayout();
 		}
 	}
 
@@ -181,10 +196,10 @@ public class SComposite extends Canvas implements Listener {
 	public void setBorderWidth(int width) {
 		if(borderWidth != width) {
 			borderWidth = width;
-			setLayout(getLayout());
+			updateLayout();
 		}
 	}
-	
+
 	/**
 	 * Sets the layout ONLY if layout is a GridLayout
 	 * and makes sure that there is room for the borders by setting the margins as
@@ -198,44 +213,26 @@ public class SComposite extends Canvas implements Listener {
 	 */
 	public void setLayout(Layout layout) {
 		if((layout != null) && (layout instanceof GridLayout)) {
-			GridLayout gridlayout = (GridLayout) layout;
-
-			if((borderStyle & BORDER) != 0) {
-				if((borderStyle & SQUARE) != 0) {
-					if(gridlayout.marginHeight < (borderWidth+1)) {
-						if(gridlayout.marginTop 	< (borderWidth+1)) gridlayout.marginTop    = (borderWidth+1); 
-						if(gridlayout.marginBottom 	< (borderWidth+1)) gridlayout.marginBottom = (borderWidth+1); 
-					}
-					if(gridlayout.marginWidth < (borderWidth+1)) {
-						if(gridlayout.marginLeft  < (borderWidth+1)) gridlayout.marginLeft  = (borderWidth+1); 
-						if(gridlayout.marginRight < (borderWidth+1)) gridlayout.marginRight = (borderWidth+1); 
-					}
-				} else 
-					if((borderStyle & FLAT) != 0) {
-						if(gridlayout.marginHeight < borderWidth) {
-							if(gridlayout.marginTop 	< borderWidth) gridlayout.marginTop    = borderWidth; 
-							if(gridlayout.marginBottom 	< borderWidth) gridlayout.marginBottom = borderWidth; 
-						}
-						if(gridlayout.marginWidth < borderWidth) {
-							if(gridlayout.marginLeft  < borderWidth) gridlayout.marginLeft  = borderWidth; 
-							if(gridlayout.marginRight < borderWidth) gridlayout.marginRight = borderWidth; 
-						}
-					} else {
-						if(gridlayout.marginHeight < (borderWidth+1)) {
-							if(gridlayout.marginTop 	< (borderWidth+1)) gridlayout.marginTop 	= (borderWidth+1); 
-							if(gridlayout.marginBottom 	< (borderWidth+1)) gridlayout.marginBottom  = (borderWidth+1); 
-						}
-						if(gridlayout.marginWidth < (borderWidth+1)) {
-							if(gridlayout.marginLeft  < (borderWidth+1)) gridlayout.marginLeft  = (borderWidth+1); 
-							if(gridlayout.marginRight < (borderWidth+1)) gridlayout.marginRight = (borderWidth+1); 
-						}
-					}
-			}
 			super.setLayout(layout);
-			layout(true, true);
+			updateLayout();
 		}
 	}
-	
+
+	/**
+	 * Set the margin for the layout.  Internally this method calls setLayout(layout)
+	 * so that the border is guaranteed to show properly.
+	 * Call this method AFTER setting the border style.
+	 * @param width
+	 * @param height
+	 * @see #setLayout(Layout)
+	 */
+	public void setMargins(int width, int height) {
+		GridLayout layout = (GridLayout) getLayout();
+		layout.marginWidth = width;
+		layout.marginHeight = height;
+		updateLayout();
+	}
+
 	/**
 	 * Set the color of the border to be drawn when the cell is NOT selected.<br />
 	 * @param color
@@ -243,12 +240,48 @@ public class SComposite extends Canvas implements Listener {
 	public void setNormalBorderColor(Color color) {
 		normalBorderColor = color;
 	}
-	
+
 	/**
 	 * This method to sets the actual background of this SComposite
 	 * to match that of its parent.  Use when the parent's background has been changed.
 	 */
 	public void updateBackground() {
 		super.setBackground(getParent().getBackground());
+	}
+
+	private void updateLayout() {
+		GridLayout gridlayout = (GridLayout) getLayout();
+		if((borderStyle & BORDER) != 0) {
+			if((borderStyle & SQUARE) != 0) {
+				if(gridlayout.marginHeight < (borderWidth+1)) {
+					if(gridlayout.marginTop 	< (borderWidth+1)) gridlayout.marginTop    = (borderWidth+1); 
+					if(gridlayout.marginBottom 	< (borderWidth+1)) gridlayout.marginBottom = (borderWidth+1); 
+				}
+				if(gridlayout.marginWidth < (borderWidth+1)) {
+					if(gridlayout.marginLeft  < (borderWidth+1)) gridlayout.marginLeft  = (borderWidth+1); 
+					if(gridlayout.marginRight < (borderWidth+1)) gridlayout.marginRight = (borderWidth+1); 
+				}
+			} else {
+				if((borderStyle & FLAT) != 0) {
+					if(gridlayout.marginHeight < borderWidth) {
+						if(gridlayout.marginTop 	< borderWidth) gridlayout.marginTop    = borderWidth; 
+						if(gridlayout.marginBottom 	< borderWidth) gridlayout.marginBottom = borderWidth; 
+					}
+					if(gridlayout.marginWidth < borderWidth) {
+						if(gridlayout.marginLeft  < borderWidth) gridlayout.marginLeft  = borderWidth; 
+						if(gridlayout.marginRight < borderWidth) gridlayout.marginRight = borderWidth; 
+					}
+				} else {
+					if(gridlayout.marginHeight < (borderWidth+1)) {
+						if(gridlayout.marginTop 	< (borderWidth+1)) gridlayout.marginTop 	= (borderWidth+1); 
+						if(gridlayout.marginBottom 	< (borderWidth+1)) gridlayout.marginBottom  = (borderWidth+1); 
+					}
+					if(gridlayout.marginWidth < (borderWidth+1)) {
+						if(gridlayout.marginLeft  < (borderWidth+1)) gridlayout.marginLeft  = (borderWidth+1); 
+						if(gridlayout.marginRight < (borderWidth+1)) gridlayout.marginRight = (borderWidth+1); 
+					}
+				}
+			}
+		}
 	}
 }
