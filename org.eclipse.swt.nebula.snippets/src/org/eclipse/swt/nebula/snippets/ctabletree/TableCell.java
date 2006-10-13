@@ -12,7 +12,6 @@ package org.eclipse.swt.nebula.snippets.ctabletree;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.nebula.widgets.ctabletree.CTableTreeCell;
 import org.eclipse.swt.nebula.widgets.ctabletree.ccontainer.CContainerItem;
 import org.eclipse.swt.nebula.widgets.ctabletree.ccontainer.SComposite;
@@ -33,12 +32,7 @@ public class TableCell extends CTableTreeCell {
 	}
 
 	protected void createChildContents(SComposite contents, int style) {
-		contents.setBorderStyle(SComposite.BORDER);
-		contents.setBorderWidth(1);
-		GridLayout layout = new GridLayout();
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		contents.setLayout(layout);
+		contents.setBorder(SComposite.BORDER, 1);
 
 		table = new Table(contents, SWT.VERTICAL);
 		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
