@@ -33,7 +33,7 @@ public class TableCell extends CTableTreeCell {
 	}
 
 	protected void createChildContents(SComposite contents, int style) {
-		contents.setBorderStyle(SWT.BORDER);
+		contents.setBorderStyle(SComposite.BORDER);
 		contents.setBorderWidth(1);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
