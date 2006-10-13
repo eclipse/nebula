@@ -780,7 +780,7 @@ public abstract class CContainerCell {
 			this.open = open;
 			if((getStyle() & SWT.DROP_DOWN) != 0) {
 				if(childArea == null) {
-					childArea = new SComposite(item.container.body, getStyle());
+					childArea = new SComposite(item.container.body, SComposite.NONE);
 					container.addPaintedItemListener(getPaintedItemListener());
 					createChildContents(childArea, getStyle());
 					// TODO: review...
