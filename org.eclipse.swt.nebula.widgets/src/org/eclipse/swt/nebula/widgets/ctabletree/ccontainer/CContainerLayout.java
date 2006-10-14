@@ -56,19 +56,14 @@ public abstract class CContainerLayout extends Layout {
 	protected abstract Point computeBodySize();
 
 	private Point computeHeaderSize(Rectangle r) {
+		updateColumnWidths();
+		headerSize.x = headerSize.y = 0;
 		if(container.internalTable != null) {
 			int gridLine = container.getGridLineWidth();
-			headerSize.x = headerSize.y = 0;
-
-			CContainerColumn[] ca = container.getColumns();
-			columnWidths = new int[ca.length];
-			for(int i = 0; i < ca.length; i++) {
-				columnWidths[i] = ca[i].getWidth();
+			for(int i = 0; i < columnWidths.length; i++) {
 				headerSize.x += (columnWidths[i] + gridLine);
 			}
 			headerSize.y = container.internalTable.getHeaderHeight();
-		} else {
-			columnWidths = new int[] { r.width };
 		}
 		lastColWidth = columnWidths[columnWidths.length -1];
 
@@ -153,6 +148,8 @@ public abstract class CContainerLayout extends Layout {
 				}
 			}
 		}
+
+		updateColumnWidths();
 	}
 
 	protected abstract void layoutItems(Rectangle r);
@@ -237,6 +234,21 @@ public abstract class CContainerLayout extends Layout {
 		container.clearDirtyItem();
 		container.setOperation(CContainer.OP_NONE);
 		container.redraw();
+	}
+
+	private void updateColumnWidths() {
+		if(container.internalTable != null) {
+			CContainerColumn[] ca = container.getColumns();
+			if(columnWidths == null || ca.length != columnWidths.length) {
+				columnWidths = new int[ca.length];
+			}
+			for(int i = 0; i < ca.length; i++) {
+				columnWidths[i] = ca[i].getWidth();
+			}
+		} else {
+			columnWidths = new int[] { container.getBodyClientArea().width };
+		}
+		lastColWidth = columnWidths[columnWidths.length -1];
 	}
 
 	private void updateScrollSize(Rectangle r) {
