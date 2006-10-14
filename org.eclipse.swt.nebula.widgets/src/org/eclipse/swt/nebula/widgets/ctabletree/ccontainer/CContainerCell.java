@@ -295,7 +295,7 @@ public abstract class CContainerCell {
 	public Rectangle computeTitleClientArea(int sizeX, int sizeY) {
 		Rectangle ca = new Rectangle(0,0,sizeX,sizeY);
 		ca.x = marginLeft + marginWidth + indent;
-		if(toggleVisible || ghostToggle) ca.x += toggleBounds.width;
+		if(toggleVisible || ghostToggle) ca.x += toggleWidth;
 		ca.y = marginTop + marginHeight;
 		ca.width -= (ca.x + marginRight + marginWidth);
 		ca.height -= (ca.y + marginBottom + marginHeight);
