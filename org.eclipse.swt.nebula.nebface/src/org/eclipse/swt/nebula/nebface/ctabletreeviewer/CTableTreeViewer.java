@@ -15,16 +15,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.ITreePathContentProvider;
 import org.eclipse.jface.viewers.ITreeViewerListener;
+import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.nebula.nebface.ctabletreeviewer.ccontainerviewer.CContainerViewer;
 import org.eclipse.swt.nebula.nebface.ctabletreeviewer.ccontainerviewer.ICContainerLabelProvider;
@@ -34,6 +38,7 @@ import org.eclipse.swt.nebula.widgets.ctabletree.CTableTreeItem;
 import org.eclipse.swt.nebula.widgets.ctabletree.ccontainer.CContainerCell;
 import org.eclipse.swt.nebula.widgets.ctabletree.ccontainer.CContainerItem;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
 
 /**
@@ -100,6 +105,18 @@ public class CTableTreeViewer extends CContainerViewer {
 				}
 			}
 		}
+		if(cp != null && cp instanceof ITreePathContentProvider) {
+			TreePath[] paths = ((ITreePathContentProvider) cp).getParents(element);
+			if(paths.length > 0) {
+				Object parent = paths[0].getLastSegment();
+				if(parent != null) {
+					Widget parentItem = findItem(parent);
+					if(parentItem != null && parentItem instanceof CTableTreeItem) {
+						item = new CTableTreeItem((CTableTreeItem) parentItem, SWT.NONE, index, classes);
+					}
+				}
+			}
+		}
 		if(item == null) item = new CTableTreeItem(getCTableTree(), SWT.NONE, index, classes);		
 		updateItem(item, element);
 	}
@@ -132,6 +149,13 @@ public class CTableTreeViewer extends CContainerViewer {
 	
 	protected Object[] getRawChildren(Object parent) {
 		Object[] result = null;
+    	TreePath path;
+    	if(parent instanceof TreePath) {
+			path = (TreePath) parent;
+			parent = path.getLastSegment();
+		} else {
+			path = null;
+		}
 		if(parent != null) {
 			IStructuredContentProvider cp = (IStructuredContentProvider) getContentProvider();
 			if(cp != null) {
@@ -162,6 +186,56 @@ public class CTableTreeViewer extends CContainerViewer {
 							result = tcp.getChildren(parent);
 						}
 					}
+				}
+				else if(cp instanceof ITreePathContentProvider) {
+	    			ITreePathContentProvider tpcp = (ITreePathContentProvider) cp;
+					// if Flat, must iteratively get all children and return them as one array
+					//   so that the filters and sorters hit every element
+					// if NOT Flat (Hierarchical) then only return the direct elements or children
+					//   requested - the getSortedChildren method will compile all branches after
+					//   being filtered
+					if(getCTableTree().isFlat()) {
+						Object[] oa;
+						if(equals(parent, getRoot())) {
+							oa = tpcp.getElements(parent);
+						} else {
+			    			if(path == null) {
+			    				// A path was not provided so try and find one
+			    				Widget w = findItem(parent);
+			    				if (w instanceof Item) {
+			    					Item item = (Item) w;
+			    					path = getTreePathFromItem(item);
+			    				}
+			    				if (path == null) {
+			    					path = new TreePath(new Object[] { parent });
+			    				}
+			    			}
+			    			oa = tpcp.getChildren(path);
+						}
+						Set s = new HashSet(oa.length);
+						for(int i = 0; i < oa.length; i++) {
+							s.add(oa[i]);
+							s.addAll(Arrays.asList(getRawChildren(oa[i])));
+						}
+						result = s.isEmpty() ? new Object[0] : s.toArray();
+					} else {
+						if(equals(parent, getRoot())) {
+							result = tpcp.getElements(parent);
+						} else {
+			    			if(path == null) {
+			    				// A path was not provided so try and find one
+			    				Widget w = findItem(parent);
+			    				if (w instanceof Item) {
+			    					Item item = (Item) w;
+			    					path = getTreePathFromItem(item);
+			    				}
+			    				if (path == null) {
+			    					path = new TreePath(new Object[] { parent });
+			    				}
+			    			}
+			    			result = tpcp.getChildren(path);
+						}
+					}
 				} else {
 					result = cp.getElements(parent);
 				}
@@ -169,6 +243,22 @@ public class CTableTreeViewer extends CContainerViewer {
 			}
 		}
 		return (result != null) ? result : new Object[0];
+	}
+
+    /**
+     * Returns the tree path for the given item.
+     * from abstracttreeviewer
+     * @since 3.2
+     */
+    protected TreePath getTreePathFromItem(Widget item) {
+		LinkedList segments = new LinkedList();
+		while(item!=null) {
+			Object segment = item.getData();
+			Assert.isNotNull(segment);
+			segments.addFirst(segment);
+			item = ((CTableTreeItem) item).getParentItem();
+		}
+		return new TreePath(segments.toArray());
 	}
 
 	protected Object[] getSortedChildren(Object parent) {
