@@ -5,7 +5,8 @@ Bundle-SymbolicName: org.eclipse.swt.nebula.nebface
 Bundle-Version: 1.0.0
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.jface;visibility:=reexport,
- org.eclipse.swt.nebula;visibility:=reexport
+ org.eclipse.swt.nebula;visibility:=reexport,
+ org.eclipse.equinox.common;visibility:=reexport
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
 Export-Package: org.eclipse.swt.nebula.nebface.ctabletreeviewer,
  org.eclipse.swt.nebula.nebface.ctabletreeviewer.ccontainerviewer
