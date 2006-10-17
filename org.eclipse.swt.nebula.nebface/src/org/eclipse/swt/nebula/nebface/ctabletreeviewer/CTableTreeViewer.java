@@ -51,17 +51,6 @@ public class CTableTreeViewer extends CContainerViewer {
 	private int treeColumn = -1;
 	
 	/**
-	 * Creates a CTableTree viewer on the given CTableTree control.
-	 * The viewer has no input, no content provider, a default label provider, 
-	 * no sorter, and no filters.
-	 *
-	 * @param list the list control
-	 */
-	public CTableTreeViewer(CTableTree cTableTree) {
-		super(cTableTree);
-	}
-	
-	/**
 	 * Creates a CTableTree viewer on a newly-created CTableTree control under the given parent.
 	 * The CTableTree control is created using the SWT style bits <code>MULTI, H_SCROLL, V_SCROLL,</code> and <code>BORDER</code>.
 	 * The viewer has no input, no content provider, a default label provider, 
@@ -86,6 +75,66 @@ public class CTableTreeViewer extends CContainerViewer {
 		super(new CTableTree(parent, style));
 	}
 	
+	/**
+	 * Creates a CTableTree viewer on the given CTableTree control.
+	 * The viewer has no input, no content provider, a default label provider, 
+	 * no sorter, and no filters.
+	 *
+	 * @param list the list control
+	 */
+	public CTableTreeViewer(CTableTree cTableTree) {
+		super(cTableTree);
+	}
+	
+	/**
+	 * not yet implemented
+	 * <p>post a feature request if you need it enabled</p>
+	 */
+	public void add(Object parentElement, Object childElement) {
+		// TODO Auto-generated method stub
+	}
+
+	/**
+	 * not yet implemented
+	 * <p>post a feature request if you need it enabled</p>
+	 */
+	public void add(Object parentElement, Object[] childElements) {
+		// TODO Auto-generated method stub
+	}
+	
+	/**
+	 * not yet implemented
+	 * <p>post a feature request if you need it enabled</p>
+	 */
+	public void addTreeListener(ITreeViewerListener listener) {
+		// TODO Auto-generated method stub
+	}
+	
+	/**
+	 * not yet implemented
+	 * <p>post a feature request if you need it enabled</p>
+	 */
+	public void clear(int index) {
+		// TODO Auto-generated method stub
+	}
+
+    public void collapseAll() {
+		CContainerItem[] items = container.getItems();
+		for(int i = 0; i < items.length; i++) {
+			if(((CTableTreeItem) items[i]).getExpanded()) {
+				((CTableTreeItem) items[i]).setExpanded(false);
+			}
+		}
+	}
+
+	/**
+	 * not yet implemented
+	 * <p>post a feature request if you need it enabled</p>
+	 */
+	public void collapseToLevel(Object element, int level) {
+		// TODO Auto-generated method stub
+	}
+
 	/**
 	 * 
 	 * @param element
@@ -142,11 +191,119 @@ public class CTableTreeViewer extends CContainerViewer {
 			cttc.setText(text);
 		}
 	}
-	
+
+	public void expandAll() {
+		expandAll(false);
+	}
+
+	/**
+	 * If allCells is true, it affects all the item's cells, not just the Tree Cell
+	 * <p>If allCells is false, it simply call expandAll()</p>
+	 * @param allCells
+	 * @see org.eclipse.jface.viewers.TreeViewer#expandAll()
+	 */
+	public void expandAll(boolean allCells) {
+		if(allCells) {
+			CContainerItem[] items = container.getItems();
+			for(int i = 0; i < items.length; i++) {
+//				if(!items[i].getExpanded(allCells)) 
+//					items[i].setExpanded(true, allCells);
+			}
+		} else {
+			expandAll();
+		}
+	}
+
+	/**
+	 * not yet implemented
+	 * <p>post a feature request if you need it enabled</p>
+	 */
+	public void expandToLevel(int level) {
+		// TODO Auto-generated method stub
+	}
+
+	/**
+	 * not yet implemented
+	 * <p>post a feature request if you need it enabled</p>
+	 */
+	public void expandToLevel(Object element, int level) {
+		// TODO Auto-generated method stub
+	}
+
+	/**
+	 * not yet implemented
+	 * <p>post a feature request if you need it enabled</p>
+	 */
+	public int getAutoExpandLevel() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 	public CTableTree getCTableTree() {
 		return (CTableTree) container;
 	}
-	
+
+	public Object[] getExpandedElements() {
+		return getExpandedElements(false);
+	}
+
+	/**
+	 * If allCells is true, it affects all the item's cells, not just the Tree Cell
+	 * <p>If allCells is false, it is the same as getExpandedState(Object)</p>
+	 * @param element
+	 * @param allCells
+	 * @return
+	 * @see org.eclipse.jface.viewers.TreeViewer#getExpandedState(Object)
+	 */
+	public Object[] getExpandedElements(boolean allCells) {
+		List l = new ArrayList(Arrays.asList(container.getItems()));
+//		for(Iterator i = l.iterator(); i.hasNext(); ) {
+//			CTableTreeItem item = ((CTableTreeItem) i.next());
+//			if(!item.getExpanded(allCells)) i.remove();
+//		}
+		Object[] elements = new Object[l.size()];
+		for(int i = 0; i < elements.length; i++) {
+			elements[i] = ((CTableTreeItem) l.get(i)).getData();
+		}
+		return elements;
+	}
+
+//	/**
+//	 * If allCells is true, it affects all the item's cells, not just the Tree Cell
+//	 * <p>If allCells is false, it simply call collapseAll()</p>
+//	 * @param allCells
+//	 * @see org.eclipse.jface.viewers.TreeViewer#collapseAll()
+//	 */
+//	public void collapseAll(boolean allCells) {
+//		if(allCells) {
+//			CTableTreeItem[] items = cTableTree.getItems();
+//			for(int i = 0; i < items.length; i++) {
+//				if(items[i].getExpanded(allCells)) 
+//					items[i].setExpanded(false, allCells);
+//			}
+//		} else {
+//			collapseAll();
+//		}
+//	}
+
+	public boolean getExpandedState(Object element) {
+		return getExpandedState(element, false);
+	}
+
+	/**
+	 * If allCells is true, it affects all the item's cells, not just the Tree Cell
+	 * <p>If allCells is false, it is the same as getExpandedState(Object)</p>
+	 * @param element
+	 * @param allCells
+	 * @return
+	 * @see org.eclipse.jface.viewers.TreeViewer#getExpandedState(Object)
+	 */
+	public boolean getExpandedState(Object element, boolean allCells) {
+//		CTableTreeItem item = (CTableTreeItem) findItem(element);
+//		if(item != null) return item.getExpanded(allCells);
+		return false;
+	}
+
 	protected Object[] getRawChildren(Object parent) {
 		Object[] result = null;
     	TreePath path;
@@ -245,22 +402,6 @@ public class CTableTreeViewer extends CContainerViewer {
 		return (result != null) ? result : new Object[0];
 	}
 
-    /**
-     * Returns the tree path for the given item.
-     * from abstracttreeviewer
-     * @since 3.2
-     */
-    protected TreePath getTreePathFromItem(Widget item) {
-		LinkedList segments = new LinkedList();
-		while(item!=null) {
-			Object segment = item.getData();
-			Assert.isNotNull(segment);
-			segments.addFirst(segment);
-			item = ((CTableTreeItem) item).getParentItem();
-		}
-		return new TreePath(segments.toArray());
-	}
-
 	protected Object[] getSortedChildren(Object parent) {
 		Object[] result = null;
 		if (parent != null) {
@@ -283,6 +424,35 @@ public class CTableTreeViewer extends CContainerViewer {
 			}
 		}
 		return (result != null) ? result : new Object[0];
+	}
+
+	/**
+     * Returns the tree path for the given item.
+     * from abstracttreeviewer
+     * @since 3.2
+     */
+    protected TreePath getTreePathFromItem(Widget item) {
+		LinkedList segments = new LinkedList();
+		while(item!=null) {
+			Object segment = item.getData();
+			Assert.isNotNull(segment);
+			segments.addFirst(segment);
+			item = ((CTableTreeItem) item).getParentItem();
+		}
+		return new TreePath(segments.toArray());
+	}
+
+	public Object[] getVisibleExpandedElements() {
+		List l = new ArrayList(Arrays.asList(container.getItems()));
+		for(Iterator i = l.iterator(); i.hasNext(); ) {
+			CTableTreeItem item = ((CTableTreeItem) i.next());
+			if(!getCTableTree().isVisible(item)) i.remove();
+		}
+		Object[] elements = new Object[l.size()];
+		for(int i = 0; i < elements.length; i++) {
+			elements[i] = ((CTableTreeItem) l.get(i)).getData();
+		}
+		return elements;
 	}
 
 	/**
@@ -311,40 +481,6 @@ public class CTableTreeViewer extends CContainerViewer {
 		}
 		setExpandedElements(expanded, true);
 	}
-
-	/**
-	 * not yet implemented
-	 * <p>post a feature request if you need it enabled</p>
-	 */
-	public void setItemCount(int count) {
-		// TODO Auto-generated method stub
-	}
-
-	/**
-	 * not yet implemented
-	 * <p>post a feature request if you need it enabled</p>
-	 */
-	public void clear(int index) {
-		// TODO Auto-generated method stub
-	}
-
-	/**
-	 * not yet implemented
-	 * <p>post a feature request if you need it enabled</p>
-	 */
-	public void setChildCount(Object element, int count) {
-		// TODO Auto-generated method stub
-	}
-
-	/**
-	 * not yet implemented
-	 * <p>post a feature request if you need it enabled</p>
-	 */
-	public void replace(Object parent, int index, Object element) {
-		// TODO Auto-generated method stub
-		
-	}
-
 	/**
 	 * not yet implemented
 	 * <p>post a feature request if you need it enabled</p>
@@ -358,155 +494,16 @@ public class CTableTreeViewer extends CContainerViewer {
 	 * not yet implemented
 	 * <p>post a feature request if you need it enabled</p>
 	 */
-	public void add(Object parentElement, Object[] childElements) {
-		// TODO Auto-generated method stub
-	}
-
-	/**
-	 * not yet implemented
-	 * <p>post a feature request if you need it enabled</p>
-	 */
-	public void add(Object parentElement, Object childElement) {
-		// TODO Auto-generated method stub
-	}
-
-	/**
-	 * not yet implemented
-	 * <p>post a feature request if you need it enabled</p>
-	 */
-	public void addTreeListener(ITreeViewerListener listener) {
-		// TODO Auto-generated method stub
-	}
-
-	public void collapseAll() {
-		CContainerItem[] items = container.getItems();
-		for(int i = 0; i < items.length; i++) {
-			if(((CTableTreeItem) items[i]).getExpanded()) {
-				((CTableTreeItem) items[i]).setExpanded(false);
-			}
-		}
-	}
-
-//	/**
-//	 * If allCells is true, it affects all the item's cells, not just the Tree Cell
-//	 * <p>If allCells is false, it simply call collapseAll()</p>
-//	 * @param allCells
-//	 * @see org.eclipse.jface.viewers.TreeViewer#collapseAll()
-//	 */
-//	public void collapseAll(boolean allCells) {
-//		if(allCells) {
-//			CTableTreeItem[] items = cTableTree.getItems();
-//			for(int i = 0; i < items.length; i++) {
-//				if(items[i].getExpanded(allCells)) 
-//					items[i].setExpanded(false, allCells);
-//			}
-//		} else {
-//			collapseAll();
-//		}
-//	}
-
-	/**
-	 * not yet implemented
-	 * <p>post a feature request if you need it enabled</p>
-	 */
-	public void collapseToLevel(Object element, int level) {
-		// TODO Auto-generated method stub
-	}
-
-	public void expandAll() {
-		expandAll(false);
-	}
-
-	/**
-	 * If allCells is true, it affects all the item's cells, not just the Tree Cell
-	 * <p>If allCells is false, it simply call expandAll()</p>
-	 * @param allCells
-	 * @see org.eclipse.jface.viewers.TreeViewer#expandAll()
-	 */
-	public void expandAll(boolean allCells) {
-		if(allCells) {
-			CContainerItem[] items = container.getItems();
-			for(int i = 0; i < items.length; i++) {
-//				if(!items[i].getExpanded(allCells)) 
-//					items[i].setExpanded(true, allCells);
-			}
-		} else {
-			expandAll();
-		}
-	}
-
-	/**
-	 * not yet implemented
-	 * <p>post a feature request if you need it enabled</p>
-	 */
-	public void expandToLevel(int level) {
-		// TODO Auto-generated method stub
-	}
-
-	/**
-	 * not yet implemented
-	 * <p>post a feature request if you need it enabled</p>
-	 */
-	public void expandToLevel(Object element, int level) {
-		// TODO Auto-generated method stub
-	}
-
-	/**
-	 * not yet implemented
-	 * <p>post a feature request if you need it enabled</p>
-	 */
-	public int getAutoExpandLevel() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public Object[] getExpandedElements() {
-		return getExpandedElements(false);
-	}
-	/**
-	 * If allCells is true, it affects all the item's cells, not just the Tree Cell
-	 * <p>If allCells is false, it is the same as getExpandedState(Object)</p>
-	 * @param element
-	 * @param allCells
-	 * @return
-	 * @see org.eclipse.jface.viewers.TreeViewer#getExpandedState(Object)
-	 */
-	public Object[] getExpandedElements(boolean allCells) {
-		List l = new ArrayList(Arrays.asList(container.getItems()));
-//		for(Iterator i = l.iterator(); i.hasNext(); ) {
-//			CTableTreeItem item = ((CTableTreeItem) i.next());
-//			if(!item.getExpanded(allCells)) i.remove();
-//		}
-		Object[] elements = new Object[l.size()];
-		for(int i = 0; i < elements.length; i++) {
-			elements[i] = ((CTableTreeItem) l.get(i)).getData();
-		}
-		return elements;
-	}
-
-	public boolean getExpandedState(Object element) {
-		return getExpandedState(element, false);
-	}
-	/**
-	 * If allCells is true, it affects all the item's cells, not just the Tree Cell
-	 * <p>If allCells is false, it is the same as getExpandedState(Object)</p>
-	 * @param element
-	 * @param allCells
-	 * @return
-	 * @see org.eclipse.jface.viewers.TreeViewer#getExpandedState(Object)
-	 */
-	public boolean getExpandedState(Object element, boolean allCells) {
-//		CTableTreeItem item = (CTableTreeItem) findItem(element);
-//		if(item != null) return item.getExpanded(allCells);
-		return false;
-	}
-
-	/**
-	 * not yet implemented
-	 * <p>post a feature request if you need it enabled</p>
-	 */
 	public void removeTreeListener(ITreeViewerListener listener) {
 		// TODO Auto-generated method stub
+	}
+	/**
+	 * not yet implemented
+	 * <p>post a feature request if you need it enabled</p>
+	 */
+	public void replace(Object parent, int index, Object element) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	/**
@@ -514,6 +511,14 @@ public class CTableTreeViewer extends CContainerViewer {
 	 * <p>post a feature request if you need it enabled</p>
 	 */
 	public void setAutoExpandLevel(int level) {
+		// TODO Auto-generated method stub
+	}
+
+	/**
+	 * not yet implemented
+	 * <p>post a feature request if you need it enabled</p>
+	 */
+	public void setChildCount(Object element, int count) {
 		// TODO Auto-generated method stub
 	}
 
@@ -540,17 +545,12 @@ public class CTableTreeViewer extends CContainerViewer {
 //		if(item != null) item.setExpanded(expanded, allCells);
 	}
 
-	public Object[] getVisibleExpandedElements() {
-		List l = new ArrayList(Arrays.asList(container.getItems()));
-		for(Iterator i = l.iterator(); i.hasNext(); ) {
-			CTableTreeItem item = ((CTableTreeItem) i.next());
-			if(!getCTableTree().isVisible(item)) i.remove();
-		}
-		Object[] elements = new Object[l.size()];
-		for(int i = 0; i < elements.length; i++) {
-			elements[i] = ((CTableTreeItem) l.get(i)).getData();
-		}
-		return elements;
+	/**
+	 * not yet implemented
+	 * <p>post a feature request if you need it enabled</p>
+	 */
+	public void setItemCount(int count) {
+		// TODO Auto-generated method stub
 	}
 }
 
