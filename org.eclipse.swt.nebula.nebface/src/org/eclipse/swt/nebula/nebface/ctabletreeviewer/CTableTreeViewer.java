@@ -86,20 +86,19 @@ public class CTableTreeViewer extends CContainerViewer {
 		super(cTableTree);
 	}
 	
-	/**
-	 * not yet implemented
-	 * <p>post a feature request if you need it enabled</p>
-	 */
 	public void add(Object parentElement, Object childElement) {
-		// TODO Auto-generated method stub
+		add(parentElement, new Object[] { childElement });
 	}
 
-	/**
-	 * not yet implemented
-	 * <p>post a feature request if you need it enabled</p>
-	 */
 	public void add(Object parentElement, Object[] childElements) {
-		// TODO Auto-generated method stub
+		assertElementsNotNull(childElements);
+		Object[] filtered = filter(childElements);
+		
+		for (int i = 0; i < filtered.length; i++) {
+			Object element = filtered[i];
+			int index = indexForElement(element);
+			createItem(parentElement, element, index);
+		}
 	}
 	
 	/**
@@ -136,35 +135,35 @@ public class CTableTreeViewer extends CContainerViewer {
 	}
 
 	/**
-	 * 
 	 * @param element
 	 * @param index
 	 */
 	protected void createItem(Object element, int index) {
+		Object parent = null;
+		IContentProvider cp = getContentProvider();
+		if(cp != null && cp instanceof ITreeContentProvider) {
+			parent = ((ITreeContentProvider) cp).getParent(element);
+		}
+		else if(cp != null && cp instanceof ITreePathContentProvider) {
+			TreePath[] paths = ((ITreePathContentProvider) cp).getParents(element);
+			if(paths.length > 0) {
+				parent = paths[0].getLastSegment();
+			}
+		}
+		createItem(parent, element, index);
+	}
+
+	/**
+	 * @param element
+	 * @param index
+	 */
+	protected void createItem(Object parent, Object element, int index) {
 		Class[] classes = (cellProvider != null) ? cellProvider.getCellClasses(element) : null;
 		CTableTreeItem item = null;
 		
-		IContentProvider cp = getContentProvider();
-		if(cp != null && cp instanceof ITreeContentProvider) {
-			Object parent = ((ITreeContentProvider) cp).getParent(element);
-			if(parent != null) {
-				Widget parentItem = findItem(parent);
-				if(parentItem != null && parentItem instanceof CTableTreeItem) {
-					item = new CTableTreeItem((CTableTreeItem) parentItem, SWT.NONE, index, classes);
-				}
-			}
-		}
-		if(cp != null && cp instanceof ITreePathContentProvider) {
-			TreePath[] paths = ((ITreePathContentProvider) cp).getParents(element);
-			if(paths.length > 0) {
-				Object parent = paths[0].getLastSegment();
-				if(parent != null) {
-					Widget parentItem = findItem(parent);
-					if(parentItem != null && parentItem instanceof CTableTreeItem) {
-						item = new CTableTreeItem((CTableTreeItem) parentItem, SWT.NONE, index, classes);
-					}
-				}
-			}
+		Widget parentItem = findItem(parent);
+		if(parentItem != null && parentItem instanceof CTableTreeItem) {
+			item = new CTableTreeItem((CTableTreeItem) parentItem, SWT.NONE, index, classes);
 		}
 		if(item == null) item = new CTableTreeItem(getCTableTree(), SWT.NONE, index, classes);		
 		updateItem(item, element);
