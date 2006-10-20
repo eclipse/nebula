@@ -15,6 +15,9 @@
       <tab
             class="org.eclipse.swt.nebula.examples.parts.GridExampleTab"
             name="Grid"/>
+      <tab
+            class="org.eclipse.swt.nebula.examples.parts.PGroupExampleTab"
+            name="PGroup"/>
    </extension>
 
 </plugin>

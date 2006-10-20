@@ -14,6 +14,7 @@ package org.eclipse.swt.nebula.examples;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ArmEvent;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.DisposeEvent;
@@ -31,10 +32,12 @@ import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.events.TypedEvent;
 import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -169,12 +172,18 @@ public abstract class AbstractExampleTab
         Group paramsGroup = new Group(parent,SWT.SHADOW_ETCHED_IN);
         paramsGroup.setText("Parameters");
         paramsGroup.setLayoutData(new GridData(GridData.FILL_VERTICAL));
-        paramsGroup.setLayout(new GridLayout());
+        paramsGroup.setLayout(new FillLayout());
         
-        Composite paramsArea = new Composite(paramsGroup,SWT.NONE);
+        ScrolledComposite sc = new ScrolledComposite(paramsGroup, SWT.V_SCROLL);
+        sc.getVerticalBar().setIncrement(10);
+        sc.getVerticalBar().setPageIncrement(100);
+        Composite content = new Composite(sc, SWT.NONE);
+        content.setLayout(new GridLayout());
+        
+        Composite paramsArea = new Composite(content,SWT.NONE);
         createParameters(paramsArea);
         
-        Composite lowerParamsArea = new Composite(paramsGroup,SWT.NONE);
+        Composite lowerParamsArea = new Composite(content,SWT.NONE);
         lowerParamsArea.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         GridLayoutFactory.swtDefaults().margins(0,0).numColumns(2).applyTo(lowerParamsArea);
         
@@ -190,6 +199,21 @@ public abstract class AbstractExampleTab
         
         createLinks(linksGroup);
         
+        Composite thirdParmsArea = new Composite(content,SWT.NONE);
+        thirdParmsArea.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        GridLayoutFactory.swtDefaults().margins(0,0).numColumns(2).applyTo(thirdParmsArea);
+        
+        Group backModeGroup = new Group(thirdParmsArea,SWT.SHADOW_ETCHED_IN);
+        backModeGroup.setText("Background Mode on Parent");
+        backModeGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
+        
+        createBackMode(backModeGroup);
+        
+        sc.setContent(content);
+        sc.setMinSize(content.computeSize(SWT.DEFAULT,SWT.DEFAULT));
+        sc.setExpandHorizontal(true);
+        sc.setExpandVertical(true);
+        
         Group listenersGroup = new Group(parent,SWT.SHADOW_ETCHED_IN);
         listenersGroup.setText("Listeners");
         gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -199,6 +223,60 @@ public abstract class AbstractExampleTab
         createListeners(listenersGroup);
         
         recreateExample();
+    }
+    
+    private void createBackMode(Composite parent)
+    {
+        parent.setLayout(new GridLayout());
+        final Combo backMode = new Combo(parent,SWT.READ_ONLY);
+        backMode.setItems(new String[]{"SWT.INHERIT_NONE","SWT.INHERIT_DEFAULT","SWT.INHERIT_FORCE"});
+        backMode.select(0);
+        backMode.addListener(SWT.Selection,new Listener()
+        {
+            public void handleEvent(Event event)
+            {
+                int mode = SWT.INHERIT_NONE;
+                if (backMode.getText().contains("DEFAULT"))
+                    mode = SWT.INHERIT_DEFAULT;
+                if (backMode.getText().contains("FORCE"))
+                    mode = SWT.INHERIT_FORCE;
+                controlArea.setBackgroundMode(mode);
+            }        
+        });
+        
+        final Button backImage = new Button(parent,SWT.CHECK);
+        backImage.setText("Background Image");
+        backImage.addListener(SWT.Selection, new Listener()
+        {
+            public void handleEvent(Event event)
+            {
+                if (backImage.getSelection())
+                {
+                    controlArea.setBackgroundImage(ExamplesView.getImage("icons/background.PNG"));
+                }
+                else
+                {
+                    controlArea.setBackgroundImage(null);
+                }                
+            }        
+        });
+        
+        final Button backColor = new Button(parent,SWT.CHECK);
+        backColor.setText("Background Color");
+        backColor.addListener(SWT.Selection,new Listener()
+        {
+            public void handleEvent(Event event)
+            {
+                if (backColor.getSelection())
+                {
+                    controlArea.setBackground(controlArea.getDisplay().getSystemColor(SWT.COLOR_CYAN));
+                }
+                else
+                {
+                    controlArea.setBackground(null);
+                }
+            }        
+        });
     }
     
     private void createLinks(Composite parent)

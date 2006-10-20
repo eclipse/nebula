@@ -34,11 +34,11 @@ public class ExamplesView extends ViewPart
 
     private TabFolder tabFolder;
     private static ImageRegistry imgRegistry = new ImageRegistry();
-    
-    
+
     public ExamplesView()
     {
         super();
+        
     }
 
     public void createPartControl(Composite parent)
@@ -69,6 +69,7 @@ public class ExamplesView extends ViewPart
         tabFolder.setSelection(tabFolder.getItem(0));
         
     }
+    
 
     public void setFocus()
     {
