@@ -3,6 +3,7 @@ package org.eclipse.swt.nebula.examples.parts;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.nebula.examples.AbstractExampleTab;
 import org.eclipse.swt.nebula.examples.ButtonFactory;
@@ -25,6 +26,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Text;
 
 public class PGroupExampleTab extends AbstractExampleTab
 {
@@ -38,6 +40,7 @@ public class PGroupExampleTab extends AbstractExampleTab
     private Button imageOnTop;
     
     private PGroup group;
+    private Text text;
 
     public Control createControl(Composite parent)
     {
@@ -80,7 +83,7 @@ public class PGroupExampleTab extends AbstractExampleTab
         group = new PGroup(parent, style);
         group.setStrategy(strat);
         group.setToggleRenderer(toggleRenderer);
-        group.setText("PGroup Example");
+        group.setText(text.getText());
         group.setImage(ExamplesView.getImage("icons/eclipse32.png"));
         
         int imagePos = SWT.NONE;
@@ -202,6 +205,18 @@ public class PGroupExampleTab extends AbstractExampleTab
         ButtonFactory.create(linePos, SWT.RADIO, "Line on Bottom",listenerRecreates, true);
         lineCenter = ButtonFactory.create(linePos, SWT.RADIO, "Line in Center",listenerRecreates, false);
 
+        new Label(parms,SWT.NONE).setText("Text:");
+        text = new Text(parms,SWT.BORDER);
+        text.setText("PGroup Example");
+        text.addListener(SWT.Modify, new Listener()
+        {
+            public void handleEvent(Event event)
+            {
+              group.setText(text.getText());
+            }        
+        });
+        
+        text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
     }
 
 }

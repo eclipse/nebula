@@ -186,7 +186,7 @@ public class SimpleGroupStrategy extends AbstractGroupStrategy
             return false;
 
         Rectangle textBounds = getTextBounds();
-        textBounds.width = textWidth;
+        textBounds.width = Math.min(textWidth,textBounds.width);
         if (textBounds.contains(x, y))
             return true;
 

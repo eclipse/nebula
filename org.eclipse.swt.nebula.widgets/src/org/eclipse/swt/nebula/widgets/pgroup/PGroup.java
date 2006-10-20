@@ -358,8 +358,8 @@ public class PGroup extends Canvas
         if (strategy == null)
             SWT.error(SWT.ERROR_NULL_ARGUMENT);
         this.strategy = strategy;
-        strategy.initialize(this);
         setForeground(null);
+        strategy.initialize(this);
     }
 
     /**

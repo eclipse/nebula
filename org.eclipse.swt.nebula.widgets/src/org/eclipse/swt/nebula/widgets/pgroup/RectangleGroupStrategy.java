@@ -401,7 +401,7 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
         else
         {
             Rectangle textBounds = getTextBounds();
-            textBounds.width = textWidth;
+            textBounds.width = Math.min(textWidth,textBounds.width);
             if (textBounds.contains(x, y))
                 active = true;
         }
