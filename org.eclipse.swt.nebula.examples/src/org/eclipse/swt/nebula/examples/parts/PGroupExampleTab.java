@@ -44,6 +44,7 @@ public class PGroupExampleTab extends AbstractExampleTab
 
     public Control createControl(Composite parent)
     {
+        
         AbstractRenderer toggleRenderer = null;
         
         if (toggle.getText().contains("Chevron"))
