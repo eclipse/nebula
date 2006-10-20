@@ -135,23 +135,30 @@ public class FormGroupStrategy extends AbstractGroupStrategy
         Color fore = gc.getForeground();
         gc.setForeground(initialBackColor);
         gc.setBackground(getGroup().getParent().getBackground());
-        Pattern p = new Pattern(getGroup().getDisplay(), 0, 0, getGroup().getSize().x, titleHeight,
+        Pattern p = new Pattern(getGroup().getDisplay(), 0, 0, 0, titleHeight,
                                 initialBackColor, 255, getGroup().getParent().getBackground(), 0);
         gc.setBackgroundPattern(p);
-        gc.fillGradientRectangle(0, 0, getGroup().getSize().x, titleHeight, true);
+        gc.fillRectangle(0, 0, getGroup().getSize().x, titleHeight);
         p.dispose();
         gc.setBackgroundPattern(null);
+        
+        if (getGroup().getExpanded() && getGroup().getSize().x > 1)
+        {            
+            reg.subtract(1,titleHeight -1,getGroup().getSize().x -2,1);
+            gc.setClipping(reg);
+        }
+        
         gc.setForeground(borderColor);
         GraphicUtils.drawRoundRectangle(gc, 0, 0, getGroup().getSize().x - 1, titleHeight, null,
                                         true, false);
-
+        
         reg.dispose();
         gc.setClipping((Region)null);
 
         gc.setForeground(getGroup().getParent().getBackground());
 
-        if (getGroup().getExpanded())
-            gc.fillRectangle(1, titleHeight - 1, getGroup().getSize().x - 2, 1);
+//        if (getGroup().getExpanded())
+//            gc.fillRectangle(1, titleHeight - 1, getGroup().getSize().x - 2, 1);
 
         gc.setBackground(back);
         gc.setForeground(fore);
