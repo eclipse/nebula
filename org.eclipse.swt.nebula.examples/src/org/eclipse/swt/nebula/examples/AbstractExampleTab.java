@@ -236,9 +236,9 @@ public abstract class AbstractExampleTab
             public void handleEvent(Event event)
             {
                 int mode = SWT.INHERIT_NONE;
-                if (backMode.getText().contains("DEFAULT"))
+                if (backMode.getText().indexOf("DEFAULT") != -1)
                     mode = SWT.INHERIT_DEFAULT;
-                if (backMode.getText().contains("FORCE"))
+                if (backMode.getText().indexOf("FORCE") != -1)
                     mode = SWT.INHERIT_FORCE;
                 controlArea.setBackgroundMode(mode);
             }        

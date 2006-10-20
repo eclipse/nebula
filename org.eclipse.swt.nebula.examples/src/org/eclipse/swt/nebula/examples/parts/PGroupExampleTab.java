@@ -47,28 +47,28 @@ public class PGroupExampleTab extends AbstractExampleTab
         
         AbstractRenderer toggleRenderer = null;
         
-        if (toggle.getText().contains("Chevron"))
+        if (toggle.getText().indexOf("Chevron") != -1)
         {
             toggleRenderer = new ChevronsToggleRenderer();
         }
-        else if (toggle.getText().contains("MinMax"))
+        else if (toggle.getText().indexOf("MinMax") != -1)
         {
             toggleRenderer = new MinMaxToggleRenderer();
         }
-        else if (toggle.getText().contains("Twiste"))
+        else if (toggle.getText().indexOf("Twiste") != -1)
         {
             toggleRenderer = new TwisteToggleRenderer();
         }
-        else if (toggle.getText().contains("Tree"))
+        else if (toggle.getText().indexOf("Tree") != -1)
         {
             toggleRenderer = new TreeNodeToggleRenderer();
         }
         
         AbstractGroupStrategy strat;
-        if (strategy.getText().contains("Form"))
+        if (strategy.getText().indexOf("Form") != -1)
         {
             strat = new FormGroupStrategy();
-        } else if (strategy.getText().contains("Rectangle"))
+        } else if (strategy.getText().indexOf("Rectangle") != -1)
         {
             strat = new RectangleGroupStrategy();
         } else
