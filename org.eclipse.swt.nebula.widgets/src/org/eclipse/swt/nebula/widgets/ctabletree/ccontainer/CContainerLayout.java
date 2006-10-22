@@ -65,7 +65,7 @@ public abstract class CContainerLayout extends Layout {
 			}
 			headerSize.y = container.internalTable.getHeaderHeight();
 		}
-		lastColWidth = columnWidths[columnWidths.length -1];
+//		lastColWidth = columnWidths[columnWidths.length -1];
 
 		return headerSize;
 	}
@@ -99,13 +99,13 @@ public abstract class CContainerLayout extends Layout {
 		oldWidth = r.width;
 
 		computeSize(composite, -1, -1, flushCache);
-		updateScrollSize(r);
 		layoutTable(r);
 		r.y += (headerSize.y);
 		r.height -= headerSize.y;
 		layoutBody(r);
 		layoutHeader(r);
 		layoutItems(r);
+		updateScrollSize(r);
 	}
 
 	private void layoutBody(Rectangle r) {

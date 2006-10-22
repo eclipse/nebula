@@ -55,6 +55,11 @@ public class CContainerColumn extends TableColumn {
 		return color;
 	}
 
+	private boolean isLast() {
+		int[] ixs = container.getColumnOrder();
+		return container.getColumn(ixs[ixs.length-1]) == this;
+	}
+	
 	public int getLeft() {
 		int[] ixs = container.getColumnOrder();
 		int x = 0;
@@ -70,7 +75,9 @@ public class CContainerColumn extends TableColumn {
 	}
 	
 	public int getRight() {
-		return getLeft() + getWidth();
+		return getLeft() +(isLast() ? 
+				container.layout.columnWidths[container.layout.columnWidths.length-1] :
+					getWidth());
 	}
 
 	public boolean isAutoWidth() {
