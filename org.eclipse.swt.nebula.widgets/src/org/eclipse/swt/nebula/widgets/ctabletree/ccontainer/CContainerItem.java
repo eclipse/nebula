@@ -246,7 +246,7 @@ public abstract class CContainerItem extends Widget {
 		return null;
 	}
 	
-	int getCellIndex(CContainerCell cell) {
+	public int getCellIndex(CContainerCell cell) {
 		return Arrays.asList(cells).indexOf(cell);
 	}
 	
