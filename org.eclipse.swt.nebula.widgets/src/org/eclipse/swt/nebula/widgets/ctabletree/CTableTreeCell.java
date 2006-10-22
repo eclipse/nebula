@@ -11,6 +11,8 @@
 
 package org.eclipse.swt.nebula.widgets.ctabletree;
 
+import java.util.Arrays;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -33,11 +35,13 @@ public class CTableTreeCell extends CContainerCell {
 	private Rectangle[] iBounds = new Rectangle[0];
 	private Rectangle tBounds = new Rectangle(0,0,0,0);
 	
+	private int[] childSpan = new int[] { -1, 1 };	// default setting keeps the child area
+													// within the same column as the title area
 
 	public CTableTreeCell(CContainerItem item, int style) {
 		super(item, style);
 	}
-	
+
 	
 	public Point computeSize(int wHint, int hHint) {
 		Point size = new Point(0,0);
@@ -111,6 +115,19 @@ public class CTableTreeCell extends CContainerCell {
 		return titleHeight;
 	}
 	
+	/**
+	 * Get information on if and how the child area of this CTableTree will span
+	 * the columns.
+	 * 
+	 * @return an int[] with a length of 2: int[0] represents the starting
+	 *         column, and int[1] represents the number of columns, from the
+	 *         start, to span.
+	 * @see #setChildSpan(int, int)
+	 */
+	public int[] getChildSpan() {
+		return childSpan;
+	}
+
 	public Image getImage() {
 		if(images.length > 0) return images[0];
 		return null;
@@ -210,11 +227,24 @@ public class CTableTreeCell extends CContainerCell {
 		}
 		
 		if(childArea != null) {
-			if(open) {
+			if(open && childSpan[0] < container.getColumnCount()) {
+				int s0 = childSpan[0] < 0 ?
+						Arrays.asList(item.getCells()).indexOf(this) :
+							childSpan[0];
+				int s1 = childSpan[1] < 0 ?
+						container.getColumnCount() - 1 :
+							s0 + childSpan[1] - 1;
+				if(s1 >= container.getColumnCount()) s1 = container.getColumnCount() - 1;
+
+				int cx = childSpan[0] < 0 ?
+						bounds.x+marginWidth+toggleBounds.width :
+							container.getColumn(s0).getLeft();
+				int cw = container.getColumn(s1).getRight() - cx - rightChildIndent;
+
 				childArea.setBounds(
-						bounds.x+marginWidth+toggleBounds.width,
+						cx,
 						bounds.y+titleHeight+childSpacing,
-						bounds.width-(marginWidth+toggleBounds.width+rightChildIndent),
+						cw,
 						bounds.height-(titleHeight+childSpacing+childSpacing)
 						);
 			} else {
@@ -281,7 +311,28 @@ public class CTableTreeCell extends CContainerCell {
 		update = true;
 		container.redraw(getItem());
 	}
-	
+
+	/**
+	 * Set which columns the Child Area of this CTableTreeCell will span.<br />
+	 * The default setting is: start == -1 and len == 1. To span the entire
+	 * CTableTree (all columns), then use <code>setChildSpan(0, -1)</code>.
+	 * 
+	 * @param start
+	 *            the column in which the child area will begin. A value of -1
+	 *            indicates that the child area should begin in the same column
+	 *            as its title area (same cell).
+	 * @param len
+	 *            how many columns, starting with the one specified by 'start',
+	 *            the child area will span. A value of '-1' indicates that the
+	 *            child area should span all the way to the end of the last
+	 *            column.
+	 * @see #getChildSpan()
+	 */
+	public void setChildSpan(int start, int len) {
+		childSpan[0] = start;
+		childSpan[1] = len;
+	}
+
 	public void setText(String string) {
 		if(string != null && !string.equals(getText())) {
 			text = string;
@@ -289,5 +340,5 @@ public class CTableTreeCell extends CContainerCell {
 			container.redraw(getItem());
 		}
 	}
-	
+
 }
