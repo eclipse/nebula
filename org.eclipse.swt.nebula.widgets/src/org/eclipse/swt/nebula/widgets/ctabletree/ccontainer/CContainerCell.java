@@ -420,7 +420,7 @@ public abstract class CContainerCell {
 	}
 
 	public Rectangle getBounds() {
-		return bounds;
+		return new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height);
 	}
 
 	public Color getCellBackground() {
