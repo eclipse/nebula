@@ -228,9 +228,7 @@ public class CTableTreeCell extends CContainerCell {
 		
 		if(childArea != null) {
 			if(open && childSpan[0] < container.getColumnCount()) {
-				int s0 = childSpan[0] < 0 ?
-						Arrays.asList(item.getCells()).indexOf(this) :
-							childSpan[0];
+				int s0 = childSpan[0] < 0 ? item.getCellIndex(this) : childSpan[0];
 				int s1 = childSpan[1] < 0 ?
 						container.getColumnCount() - 1 :
 							s0 + childSpan[1] - 1;
