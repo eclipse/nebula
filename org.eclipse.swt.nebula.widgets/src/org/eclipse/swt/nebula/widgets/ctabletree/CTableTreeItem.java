@@ -172,6 +172,28 @@ public class CTableTreeItem extends CContainerItem {
 		return null;
 	}
 	
+	/**
+	 * If this item has a tree column, this method will return the first image from that column
+	 * @return the image from the tree column, null if neither exist
+	 */
+	public String getText() {
+		if(hasTreeCell()) {
+			return getTreeCell().getText();
+		}
+		return null;
+	}
+
+	/**
+	 * @param column the column from which to get the image
+	 * @return the first image from the given column
+	 */
+	public String getText(int column) {
+		if(column >= 0 && column < cells.length) {
+			return ((CTableTreeCell) cells[column]).getText();
+		}
+		return null;
+	}
+
 	public CTableTreeCell getTreeCell() {
 		return (CTableTreeCell) cells[treeCell];
 	}
@@ -284,6 +306,5 @@ public class CTableTreeItem extends CContainerItem {
 		if(hasTreeCell()) {
 			getTreeCell().setIndent(indent);
 		}
-	}
-	
+	}	
 }
