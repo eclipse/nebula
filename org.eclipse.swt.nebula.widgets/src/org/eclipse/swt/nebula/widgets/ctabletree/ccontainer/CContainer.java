@@ -127,7 +127,7 @@ public abstract class CContainer extends Composite implements Listener {
 	 */
 	protected boolean selectOnToggle = true;
 
-	private int mode = MODE_MARQUEE;
+	private int mode = MODE_NORMAL;
 
 	ScrolledComposite sc;
 	protected Canvas body;
@@ -459,6 +459,7 @@ public abstract class CContainer extends Composite implements Listener {
 	protected void fireSelectionEvent(boolean defaultSelection) {
 		Event event = new Event();
 		event.type = defaultSelection ? SWT.DefaultSelection : SWT.Selection;
+		if(selection.size() == 1) event.item = (CContainerItem) selection.get(0);
 		notifyListeners(event.type, event);
 	}
 
