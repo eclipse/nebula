@@ -8,6 +8,7 @@ Require-Bundle: org.eclipse.swt
 Export-Package: org.eclipse.swt.nebula.widgets.compositetable,
  org.eclipse.swt.nebula.widgets.ctabletree,
  org.eclipse.swt.nebula.widgets.ctabletree.ccontainer,
+ org.eclipse.swt.nebula.widgets.ctabletree.editor,
  org.eclipse.swt.nebula.widgets.grid,
  org.eclipse.swt.nebula.widgets.pgroup
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
