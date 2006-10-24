@@ -108,6 +108,15 @@ public class CTableTree extends CContainer {
 		return l;
 	}
 
+	public int getItemCount() {
+		int count = 0;
+		for(Iterator i = visibleItems.iterator(); i.hasNext(); ) {
+			if(!((CTableTreeItem) i.next()).hasParentItem()) {
+				count++;
+			}
+		}
+		return count;
+	}
 
 //	public CContainerItem getParentItem() {
 //		return null;
