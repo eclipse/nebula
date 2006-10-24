@@ -109,6 +109,7 @@ public class CTableTree extends CContainer {
 	}
 
 	public int getItemCount() {
+		updateItemLists();
 		int count = 0;
 		for(Iterator i = visibleItems.iterator(); i.hasNext(); ) {
 			if(!((CTableTreeItem) i.next()).hasParentItem()) {
@@ -118,9 +119,18 @@ public class CTableTree extends CContainer {
 		return count;
 	}
 
-//	public CContainerItem getParentItem() {
-//		return null;
-//	}
+	public CContainerItem[] getItems() {
+		updateItemLists();
+		List l = new ArrayList(visibleItems);
+		for(Iterator i = l.iterator(); i.hasNext(); ) {
+			if(((CTableTreeItem) i.next()).hasParentItem()) {
+				i.remove();
+			}
+		}
+		return l.isEmpty() ? 
+				new CContainerItem[0] : 
+					(CContainerItem[]) l.toArray(new CContainerItem[l.size()]);
+	}
 
 	/**
 	 * @see CTableTree#setSelectOnTreeToggle(boolean)
