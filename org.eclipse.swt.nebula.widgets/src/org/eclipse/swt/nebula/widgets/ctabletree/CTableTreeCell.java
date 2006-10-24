@@ -14,6 +14,7 @@ package org.eclipse.swt.nebula.widgets.ctabletree;
 import java.util.Arrays;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -284,9 +285,53 @@ public class CTableTreeCell extends CContainerCell {
 			gc.drawText(getText(), tBounds.x-eventBounds.x, tBounds.y-eventBounds.y);
 		}
 
+		if(((CTableTreeItem) item).getTreeCell() == this) {
+			paintChildLines(gc, eventBounds);
+		}
+		
 		// toggle (it changes the colors again so paint it last...)
 		if(toggleVisible) {
 			paintToggle(gc, eventBounds);
+		}
+	}
+	
+	private void paintChildLines(GC gc, Rectangle ebounds) {
+		if(win32) {
+			int x = toggleBounds.x + (toggleBounds.width/2) - ebounds.x;
+			int y = bounds.y + (bounds.height/2) - ebounds.y;
+			gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
+			gc.setLineStyle(SWT.LINE_DOT);
+			gc.drawLine(x, y, x+toggleBounds.width/2, y);
+			CTableTreeItem it = (CTableTreeItem) item;
+			int index = it.hasParentItem() ? 
+					Arrays.asList(it.getParentItem().getItems()).indexOf(it) : 
+						container.getItemIndex(it);
+			int count = it.hasParentItem() ? 
+					it.getParentItem().getItemCount() : 
+						container.getItemCount();
+			if(index > 0 || it.hasParentItem()) {
+				gc.drawLine(x, bounds.y - ebounds.y, x, y);
+			}
+			if(index < count - 1) {
+				int y2 = it.hasParentItem() ?
+						it.getParentItem().getItem(index+1).getBounds()[0].y :
+							container.getItem(index+1).getBounds()[0].y;
+				gc.drawLine(x, y, x, y2 - ebounds.y);
+			}
+			while(it.hasParentItem()) {
+				x -= ((CTableTree) container).getTreeIndent();
+				it = it.getParentItem();
+				index = it.hasParentItem() ? 
+						Arrays.asList(it.getParentItem().getItems()).indexOf(it) : 
+							container.getItemIndex(it);
+				count = it.hasParentItem() ? 
+						it.getParentItem().getItemCount() : 
+							container.getItemCount();
+				if(index < count - 1) {
+					gc.drawLine(x, bounds.y - ebounds.y, x, bounds.y+bounds.height - ebounds.y);
+				}
+			}
+			gc.setLineStyle(SWT.LINE_SOLID);
 		}
 	}
 
