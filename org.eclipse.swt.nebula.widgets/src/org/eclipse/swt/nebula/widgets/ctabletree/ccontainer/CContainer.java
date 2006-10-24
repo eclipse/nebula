@@ -557,8 +557,9 @@ public abstract class CContainer extends Composite implements Listener {
 	}
 
 	public CContainerItem getItem(int index) {
-		if((index >= 0) && (index < visibleItems.size())) {
-			return (CContainerItem) visibleItems.get(index);
+		CContainerItem[] ia = getItems();
+		if((index >= 0) && (index < ia.length)) {
+			return ia[index];
 		}
 		return null;
 	}
@@ -585,14 +586,14 @@ public abstract class CContainer extends Composite implements Listener {
 		return 0;
 	}
 
-	public int getItemIndex(CContainerItem item) {
-		return visibleItems.indexOf(item);
-	}
-
-	public int getItemIndex(Point pt) {
-		CContainerItem item = getItem(pt);
-		return getItemIndex(item);
-	}
+//	public int getItemIndex(CContainerItem item) {
+//		return Arrays.asList(getItems()).indexOf(item);
+//	}
+//
+//	public int getItemIndex(Point pt) {
+//		CContainerItem item = getItem(pt);
+//		return getItemIndex(item);
+//	}
 
 	public CContainerItem[] getItems() {
 		updateItemLists();
