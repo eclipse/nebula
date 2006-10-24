@@ -296,8 +296,11 @@ public class CTableTreeCell extends CContainerCell {
 	
 	private void paintChildLines(GC gc, Rectangle ebounds) {
 		if(win32) {
+			int gline = container.getGridLineWidth();
 			Rectangle ibounds = item.getUnifiedBounds();
-			Rectangle tbounds = bounds;
+			ibounds.y++;
+			Rectangle tbounds = getBounds();
+			tbounds.y++;
 			int x1 = 0, x2 = 0, y1 = 0, y2 = 0;
 			int x = toggleBounds.x + (toggleBounds.width/2) - ebounds.x;
 			int y = tbounds.y + (tbounds.height/2) - ebounds.y;
@@ -307,8 +310,10 @@ public class CTableTreeCell extends CContainerCell {
 			x2 = x+toggleBounds.width/2;
 			y1 = y;
 			y2 = y;
-			if(y1 % 2 == 1) y1 -= 1;
-			if(y2 % 2 == 1) y2 -= 1;
+			if(gline % 2 == 0) {
+				if(y1 % 2 == 1) y1 -= 1;
+				if(y2 % 2 == 1) y2 -= 1;
+			}
 			gc.drawLine(x1, y1, x2, y2);
 			CTableTreeItem it = (CTableTreeItem) item;
 			int index = Arrays.asList(
@@ -324,8 +329,10 @@ public class CTableTreeCell extends CContainerCell {
 				x2 = x;
 				y1 = ibounds.y - ebounds.y;
 				y2 = y;
-				if(y1 % 2 == 1) y1 -= 1;
-				if(y2 % 2 == 1) y2 -= 1;
+				if(gline % 2 == 0) {
+					if(y1 % 2 == 1) y1 -= 1;
+					if(y2 % 2 == 1) y2 -= 1;
+				}
 				gc.drawLine(x1, y1, x2, y2);
 			}
 			if(index < count - 1) {
@@ -336,16 +343,20 @@ public class CTableTreeCell extends CContainerCell {
 						it.getParentItem().getItem(index+1).getBounds()[0].y :
 							container.getItem(index+1).getBounds()[0].y)
 							- ebounds.y;
-				if(y1 % 2 == 1) y1 -= 1;
-				if(y2 % 2 == 1) y2 -= 1;
+				if(gline % 2 == 0) {
+					if(y1 % 2 == 1) y1 -= 1;
+					if(y2 % 2 == 1) y2 -= 1;
+				}
 				gc.drawLine(x1, y1, x2, y2);
 			}
 			x1 = x;
 			x2 = x;
 			y1 = ibounds.y - ebounds.y;
 			y2 = ibounds.y+ibounds.height - ebounds.y;
-			if(y1 % 2 == 1) y1 -= 1;
-			if(y2 % 2 == 1) y2 -= 1;
+			if(gline % 2 == 0) {
+				if(y1 % 2 == 1) y1 -= 1;
+				if(y2 % 2 == 1) y2 -= 1;
+			}
 			while(it.hasParentItem()) {
 				x1 = x2 -= ((CTableTree) container).getTreeIndent();
 				it = it.getParentItem();
@@ -365,8 +376,10 @@ public class CTableTreeCell extends CContainerCell {
 				x1 = x2 = x + ((CTableTree) container).getTreeIndent();
 				y1 = tbounds.y + tbounds.height - ebounds.y;
 				y2 = ibounds.y + ibounds.height - ebounds.y;
-				if(y1 % 2 == 1) y1 -= 1;
-				if(y2 % 2 == 1) y2 -= 1;
+				if(gline % 2 == 0) {
+					if(y1 % 2 == 1) y1 -= 1;
+					if(y2 % 2 == 1) y2 -= 1;
+				}
 				gc.drawLine(x1, y1, x2, y2);
 			}
 			gc.setLineDash(null);
