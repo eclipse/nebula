@@ -14,7 +14,6 @@ package org.eclipse.swt.nebula.widgets.ctabletree;
 import java.util.Arrays;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -297,41 +296,80 @@ public class CTableTreeCell extends CContainerCell {
 	
 	private void paintChildLines(GC gc, Rectangle ebounds) {
 		if(win32) {
+			Rectangle ibounds = item.getUnifiedBounds();
+			Rectangle tbounds = bounds;
+			int x1 = 0, x2 = 0, y1 = 0, y2 = 0;
 			int x = toggleBounds.x + (toggleBounds.width/2) - ebounds.x;
-			int y = bounds.y + (bounds.height/2) - ebounds.y;
+			int y = tbounds.y + (tbounds.height/2) - ebounds.y;
 			gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
-			gc.setLineStyle(SWT.LINE_DOT);
-			gc.drawLine(x, y, x+toggleBounds.width/2, y);
+			gc.setLineDash(new int[] { 1, 1 });
+			x1 = x;
+			x2 = x+toggleBounds.width/2;
+			y1 = y;
+			y2 = y;
+			if(y1 % 2 == 1) y1 -= 1;
+			if(y2 % 2 == 1) y2 -= 1;
+			gc.drawLine(x1, y1, x2, y2);
 			CTableTreeItem it = (CTableTreeItem) item;
-			int index = it.hasParentItem() ? 
-					Arrays.asList(it.getParentItem().getItems()).indexOf(it) : 
-						container.getItemIndex(it);
+			int index = Arrays.asList(
+					it.hasParentItem() ? 
+							it.getParentItem().getItems() :
+								container.getItems()
+								).indexOf(it);
 			int count = it.hasParentItem() ? 
 					it.getParentItem().getItemCount() : 
 						container.getItemCount();
 			if(index > 0 || it.hasParentItem()) {
-				gc.drawLine(x, bounds.y - ebounds.y, x, y);
+				x1 = x;
+				x2 = x;
+				y1 = ibounds.y - ebounds.y;
+				y2 = y;
+				if(y1 % 2 == 1) y1 -= 1;
+				if(y2 % 2 == 1) y2 -= 1;
+				gc.drawLine(x1, y1, x2, y2);
 			}
 			if(index < count - 1) {
-				int y2 = it.hasParentItem() ?
+				x1 = x;
+				x2 = x;
+				y1 = y;
+				y2 = (it.hasParentItem() ?
 						it.getParentItem().getItem(index+1).getBounds()[0].y :
-							container.getItem(index+1).getBounds()[0].y;
-				gc.drawLine(x, y, x, y2 - ebounds.y);
+							container.getItem(index+1).getBounds()[0].y)
+							- ebounds.y;
+				if(y1 % 2 == 1) y1 -= 1;
+				if(y2 % 2 == 1) y2 -= 1;
+				gc.drawLine(x1, y1, x2, y2);
 			}
+			x1 = x;
+			x2 = x;
+			y1 = ibounds.y - ebounds.y;
+			y2 = ibounds.y+ibounds.height - ebounds.y;
+			if(y1 % 2 == 1) y1 -= 1;
+			if(y2 % 2 == 1) y2 -= 1;
 			while(it.hasParentItem()) {
-				x -= ((CTableTree) container).getTreeIndent();
+				x1 = x2 -= ((CTableTree) container).getTreeIndent();
 				it = it.getParentItem();
-				index = it.hasParentItem() ? 
-						Arrays.asList(it.getParentItem().getItems()).indexOf(it) : 
-							container.getItemIndex(it);
+				index = Arrays.asList(
+						it.hasParentItem() ? 
+								it.getParentItem().getItems() :
+									container.getItems()
+									).indexOf(it);
 				count = it.hasParentItem() ? 
 						it.getParentItem().getItemCount() : 
 							container.getItemCount();
 				if(index < count - 1) {
-					gc.drawLine(x, bounds.y - ebounds.y, x, bounds.y+bounds.height - ebounds.y);
+					gc.drawLine(x1, y1, x2, y2);
 				}
 			}
-			gc.setLineStyle(SWT.LINE_SOLID);
+			if(open && ((CTableTreeItem) item).hasItems()) {
+				x1 = x2 = x + ((CTableTree) container).getTreeIndent();
+				y1 = tbounds.y + tbounds.height - ebounds.y;
+				y2 = ibounds.y + ibounds.height - ebounds.y;
+				if(y1 % 2 == 1) y1 -= 1;
+				if(y2 % 2 == 1) y2 -= 1;
+				gc.drawLine(x1, y1, x2, y2);
+			}
+			gc.setLineDash(null);
 		}
 	}
 
