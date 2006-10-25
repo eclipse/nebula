@@ -18,6 +18,9 @@
       <tab
             class="org.eclipse.swt.nebula.examples.parts.PGroupExampleTab"
             name="PGroup"/>
+      <tab
+            class="org.eclipse.swt.nebula.examples.parts.PShelfExampleTab"
+            name="PShelf"/>
    </extension>
 
 </plugin>

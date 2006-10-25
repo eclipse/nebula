@@ -18,7 +18,6 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.ExpandListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -522,7 +521,7 @@ public class PGroup extends Canvas
      * @see ExpandListener
      * @see #removeExpandListener
      */
-    public void addExpandListener(SelectionListener listener)
+    public void addExpandListener(ExpandListener listener)
     {
         checkWidget();
         if (listener == null)
@@ -550,7 +549,7 @@ public class PGroup extends Canvas
      * @see ExpandListener
      * @see #addExpandListener
      */
-    public void removeExpandListener(SelectionListener listener)
+    public void removeExpandListener(ExpandListener listener)
     {
         checkWidget();
         if (listener == null)
