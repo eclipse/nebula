@@ -85,7 +85,7 @@ public class PGroupExampleTab extends AbstractExampleTab
         group.setStrategy(strat);
         group.setToggleRenderer(toggleRenderer);
         group.setText(text.getText());
-        group.setImage(ExamplesView.getImage("icons/eclipse32.png"));
+        group.setImage(ExamplesView.getImage("icons/woman3.png"));
         
         int imagePos = SWT.NONE;
         if (imageLeft.getSelection())
