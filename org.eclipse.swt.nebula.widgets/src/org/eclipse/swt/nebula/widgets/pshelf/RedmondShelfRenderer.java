@@ -18,6 +18,14 @@ import org.eclipse.swt.nebula.widgets.grid.internal.TextUtils;
 import org.eclipse.swt.nebula.widgets.pgroup.internal.GraphicUtils;
 import org.eclipse.swt.widgets.Control;
 
+/**
+ * <p>
+ * NOTE:  THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.  THIS IS A PRE-RELEASE ALPHA 
+ * VERSION.  USERS SHOULD EXPECT API CHANGES IN FUTURE VERSIONS.
+ * </p> 
+ *
+ * @author cgross
+ */
 public class RedmondShelfRenderer extends AbstractRenderer {
 
 	private int textMargin = 2;

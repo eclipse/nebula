@@ -16,6 +16,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
 
 /**
+ * <p>
+ * NOTE:  THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.  THIS IS A PRE-RELEASE ALPHA 
+ * VERSION.  USERS SHOULD EXPECT API CHANGES IN FUTURE VERSIONS.
+ * </p> 
+ * 
  * Instances of this class represent an individual shelf.  A shelf is a container widget similar 
  * to a tab folder but with a list-like visualization.
  * <p>
@@ -151,5 +156,17 @@ public class PShelfItem extends Item {
         super.setImage(image);
         parent.computeItemHeight();
         parent.onResize();
+        parent.redraw();
     }
+
+    /** 
+     * {@inheritDoc}
+     */
+    public void setText(String string)
+    {
+        super.setText(string);
+        parent.redraw();
+    }
+    
+    
 }

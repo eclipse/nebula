@@ -15,6 +15,14 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
 
+/**
+ * <p>
+ * NOTE:  THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.  THIS IS A PRE-RELEASE ALPHA 
+ * VERSION.  USERS SHOULD EXPECT API CHANGES IN FUTURE VERSIONS.
+ * </p> 
+ *
+ * @author cgross
+ */
 public class PaletteShelfRenderer extends AbstractRenderer {
 	
 	private int textMargin = 2;

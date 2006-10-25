@@ -15,7 +15,6 @@ import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.ExpandListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
@@ -31,12 +30,16 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.TypedListener;
-import org.eclipse.swt.widgets.Widget;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
+ * <p>
+ * NOTE:  THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.  THIS IS A PRE-RELEASE ALPHA 
+ * VERSION.  USERS SHOULD EXPECT API CHANGES IN FUTURE VERSIONS.
+ * </p> 
+ * 
  * Instances of this class implement a selectable accordion metaphor, where each shelf contains 
  * a client area.
  * <p>
@@ -49,7 +52,7 @@ import java.util.Iterator;
  * <dt><b>Styles:</b></dt>
  * <dd>BORDER, SIMPLE</dd>
  * <dt><b>Events:</b></dt>
- * <dd>Expand, Collapse</dd>
+ * <dd>Selection</dd>
  * </dl>
  * <p>
  * IMPORTANT: This class is <em>not</em> intended to be subclassed.
