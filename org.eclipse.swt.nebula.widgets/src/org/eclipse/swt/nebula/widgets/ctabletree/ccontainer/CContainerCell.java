@@ -207,7 +207,9 @@ public abstract class CContainerCell {
 	protected Color cellForeground = null;
 	protected boolean isGridLine = false;
 	private int cellState = CELL_NORMAL;
-
+	
+	public int colSpan = 1;
+	
 	private List colorExclusions;
 	private List eventExclusions;
 

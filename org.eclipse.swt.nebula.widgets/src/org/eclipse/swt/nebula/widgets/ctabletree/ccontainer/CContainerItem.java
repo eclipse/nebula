@@ -471,8 +471,25 @@ public abstract class CContainerItem extends Widget {
 	}
 	
 	public void setBounds(Rectangle[] bounds) {
-		for(int i = 0; i < cells.length && i < bounds.length; i++) {
-			cells[i].setBounds(bounds[i].x, bounds[i].y, bounds[i].width, bounds[i].height);
+		int i = 0, j = 0;
+		for( ; i < cells.length && j < bounds.length; i++) {
+			int span = cells[i].colSpan;
+			if(span > 1) {
+				Rectangle ub = new Rectangle(bounds[j].x,bounds[j].y,bounds[j].width,bounds[j].height);
+				for(j++; j < (i + span) && j < bounds.length; j++) {
+					ub.add(new Rectangle(bounds[j].x,bounds[j].y,bounds[j].width,bounds[j].height));
+				}
+				cells[i].setBounds(ub.x, ub.y, ub.width, ub.height);
+			} else {
+				cells[i].setBounds(bounds[j].x, bounds[j].y, bounds[j].width, bounds[j].height);
+				j++;
+			}
+		}
+		if(i < cells.length) {
+			j = bounds.length-1;
+			for( ; i < cells.length; i++) {
+				cells[i].setBounds(bounds[j].x,bounds[j].y,0,0);
+			}
 		}
 	}
 	
