@@ -174,6 +174,7 @@ public abstract class CContainerLayout extends Layout {
 		computeSize(container, -1, -1, false);
 		r.y += (headerSize.y);
 		r.height -= headerSize.y;
+		updateColumnWidths();
 		updateScrollSize(r);
 		layoutBody(r);
 		layoutItems(r);
