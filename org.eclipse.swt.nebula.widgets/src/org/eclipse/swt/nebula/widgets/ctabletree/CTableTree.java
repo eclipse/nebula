@@ -21,8 +21,6 @@ import org.eclipse.swt.events.TreeListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.nebula.widgets.ctabletree.ccontainer.CContainer;
-import org.eclipse.swt.nebula.widgets.ctabletree.ccontainer.CContainerItem;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.TypedListener;

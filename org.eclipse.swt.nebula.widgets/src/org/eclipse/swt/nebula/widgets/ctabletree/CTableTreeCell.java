@@ -18,8 +18,6 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.nebula.widgets.ctabletree.ccontainer.CContainerCell;
-import org.eclipse.swt.nebula.widgets.ctabletree.ccontainer.CContainerItem;
 
 /**
  * <p>

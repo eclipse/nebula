@@ -1,16 +1,13 @@
-package org.eclipse.swt.nebula.widgets.ctabletree.editor;
+package org.eclipse.swt.nebula.widgets.ctabletree;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ControlEditor;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.events.TreeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.nebula.widgets.ctabletree.CTableTree;
-import org.eclipse.swt.nebula.widgets.ctabletree.CTableTreeCell;
-import org.eclipse.swt.nebula.widgets.ctabletree.CTableTreeItem;
-import org.eclipse.swt.nebula.widgets.ctabletree.ccontainer.CContainerColumn;
 import org.eclipse.swt.widgets.Control;
 
 /**
@@ -38,10 +35,10 @@ public class CTableTreeEditor extends ControlEditor {
 
 		columnListener = new ControlListener() {
 			public void controlMoved(ControlEvent e){
-				_resize();
+				layout();
 			}
 			public void controlResized(ControlEvent e){
-				_resize();
+				layout();
 			}
 		};
 		treeListener = new TreeListener () {
@@ -50,7 +47,7 @@ public class CTableTreeEditor extends ControlEditor {
 					Control editor = getEditor();
 					if (editor == null || editor.isDisposed()) return;
 					if (CTableTreeEditor.this.tree.isDisposed()) return;
-					_resize();
+					layout();
 					editor.setVisible(true);
 				}
 			};
@@ -71,56 +68,6 @@ public class CTableTreeEditor extends ControlEditor {
 
 		// To be consistent with older versions of SWT, grabVertical defaults to true
 		grabVertical = true;
-	}
-
-	Rectangle computeBounds () {
-		if (item == null || column == -1 || item.isDisposed()) return new Rectangle(0, 0, 0, 0);
-		Rectangle cell = item.getCell(column).getBounds();
-		cell.x += item.getCell(column).getTitleClientArea().x;
-		cell.x -= getEditor().getBorderWidth();
-		Image img = ((CTableTreeCell) item.getCell(column)).getImage();
-		Rectangle rect = img == null ? new Rectangle(cell.x,cell.y,0,0) : img.getBounds();
-		cell.x = rect.x + rect.width;
-		cell.width -= rect.width;
-		Rectangle area = tree.getClientArea();
-		if (cell.x < area.x + area.width) {
-			if (cell.x + cell.width > area.x + area.width) {
-				cell.width = area.x + area.width - cell.x;
-			}
-		}
-		Rectangle editorRect = new Rectangle(cell.x, cell.y, minimumWidth, minimumHeight);
-
-		if (grabHorizontal) {
-			if (tree.getColumnCount() == 0) {
-				// Bounds of tree item only include the text area - stretch out to include 
-				// entire client area
-				cell.width = area.x + area.width - cell.x;
-			}
-			editorRect.width = Math.max(cell.width, minimumWidth);
-		}
-
-		if (grabVertical) {
-			editorRect.height = Math.max(cell.height, minimumHeight);
-		}
-
-		if (horizontalAlignment == SWT.RIGHT) {
-			editorRect.x += cell.width - editorRect.width;
-		} else if (horizontalAlignment == SWT.LEFT) {
-			// do nothing - cell.x is the right answer
-		} else { // default is CENTER
-			editorRect.x += (cell.width - editorRect.width)/2;
-		}
-		// don't let the editor overlap with the +/- of the tree
-		editorRect.x = Math.max(cell.x, editorRect.x);
-
-		if (verticalAlignment == SWT.BOTTOM) {
-			editorRect.y += cell.height - editorRect.height;
-		} else if (verticalAlignment == SWT.TOP) {
-			// do nothing - cell.y is the right answer
-		} else { // default is CENTER
-			editorRect.y += (cell.height - editorRect.height)/2;
-		}
-		return editorRect;
 	}
 
 	/**
@@ -175,7 +122,7 @@ public class CTableTreeEditor extends ControlEditor {
 		// In this situation, there is a single default column.
 		if (columnCount == 0) {
 			this.column = (column == 0) ? 0 : -1;
-			_resize();
+			layout();
 			return;
 		}
 		if (this.column > -1 && this.column < columnCount){
@@ -189,12 +136,12 @@ public class CTableTreeEditor extends ControlEditor {
 		this.column = column;
 		CContainerColumn treeColumn = tree.getColumn(this.column);
 		treeColumn.addControlListener(columnListener);
-		_resize();
+		layout();
 	}
 
 	public void setItem (CTableTreeItem item) {
 		this.item = item;
-		_resize();
+		layout();
 	}
 
 	/**
@@ -228,14 +175,72 @@ public class CTableTreeEditor extends ControlEditor {
 		setEditor(editor);
 	}
 
-	void _resize () {
+	public void layout() {
 		if (tree.isDisposed()) return;
 		if (item == null || item.isDisposed()) return;	
 		int columnCount = tree.getColumnCount();
 		if (columnCount == 0 && column != 0) return;
 		if (columnCount > 0 && (column < 0 || column >= columnCount)) return;
-		super._resize();
 		Control editor = getEditor();
-		if(editor != null && !editor.isDisposed()) editor.moveAbove(null);
+		if(editor == null || editor.isDisposed()) return;
+
+		Rectangle cell = item.getCell(column).getBounds();
+		cell.x += item.getCell(column).getTitleClientArea().x;
+		cell.x -= getEditor().getBorderWidth();
+		Image img = ((CTableTreeCell) item.getCell(column)).getImage();
+		Rectangle rect = img == null ? new Rectangle(cell.x,cell.y,0,0) : img.getBounds();
+		cell.x = rect.x + rect.width;
+		cell.width -= rect.width;
+		Rectangle area = tree.getClientArea();
+		if (cell.x < area.x + area.width) {
+			if (cell.x + cell.width > area.x + area.width) {
+				cell.width = area.x + area.width - cell.x;
+			}
+		}
+		Rectangle editorRect = new Rectangle(cell.x, cell.y, minimumWidth, minimumHeight);
+
+		if (grabHorizontal) {
+			if (tree.getColumnCount() == 0) {
+				// Bounds of tree item only include the text area - stretch out to include 
+				// entire client area
+				cell.width = area.x + area.width - cell.x;
+			}
+			editorRect.width = Math.max(cell.width, minimumWidth);
+		}
+
+		if (grabVertical) {
+			editorRect.height = Math.max(cell.height, minimumHeight);
+		}
+
+		if (horizontalAlignment == SWT.RIGHT) {
+			editorRect.x += cell.width - editorRect.width;
+		} else if (horizontalAlignment == SWT.LEFT) {
+			// do nothing - cell.x is the right answer
+		} else { // default is CENTER
+			editorRect.x += (cell.width - editorRect.width)/2;
+		}
+		// don't let the editor overlap with the +/- of the tree
+		editorRect.x = Math.max(cell.x, editorRect.x);
+
+		if (verticalAlignment == SWT.BOTTOM) {
+			editorRect.y += cell.height - editorRect.height;
+		} else if (verticalAlignment == SWT.TOP) {
+			// do nothing - cell.y is the right answer
+		} else { // default is CENTER
+			editorRect.y += (cell.height - editorRect.height)/2;
+		}
+
+		if(editor == null || editor.isDisposed()) return;
+		boolean hadFocus = editor.getVisible () && editor.isFocusControl();
+		// this doesn't work because
+		// resizing the column takes the focus away
+		// before we get here
+		editor.setBounds (editorRect);
+		if(hadFocus) {
+			if (editor == null || editor.isDisposed()) return;
+			editor.setFocus ();
+		}
+
+		editor.moveAbove(null);
 	}
 }

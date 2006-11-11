@@ -17,8 +17,6 @@ import java.util.List;
 
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.nebula.widgets.ctabletree.ccontainer.CContainerItem;
-import org.eclipse.swt.nebula.widgets.ctabletree.ccontainer.CContainerLayout;
 
 /**
  * <p>

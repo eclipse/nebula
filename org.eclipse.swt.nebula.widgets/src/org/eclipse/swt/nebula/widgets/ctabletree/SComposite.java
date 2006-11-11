@@ -9,7 +9,7 @@
  *    Jeremy Dowdall <jeremyd@aspencloud.com> - initial API and implementation
  *****************************************************************************/
 
-package org.eclipse.swt.nebula.widgets.ctabletree.ccontainer;
+package org.eclipse.swt.nebula.widgets.ctabletree;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;

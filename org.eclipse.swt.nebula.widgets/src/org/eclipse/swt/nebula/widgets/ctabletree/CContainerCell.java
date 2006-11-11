@@ -9,7 +9,7 @@
  *    Jeremy Dowdall <jeremyd@aspencloud.com> - initial API and implementation
  *****************************************************************************/
 
-package org.eclipse.swt.nebula.widgets.ctabletree.ccontainer;
+package org.eclipse.swt.nebula.widgets.ctabletree;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
