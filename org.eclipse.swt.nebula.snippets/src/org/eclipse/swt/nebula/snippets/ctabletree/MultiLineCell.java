@@ -13,9 +13,9 @@ package org.eclipse.swt.nebula.snippets.ctabletree;
 import java.text.BreakIterator;
 
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.nebula.widgets.ctabletree.CContainer;
+import org.eclipse.swt.nebula.widgets.ctabletree.CContainerItem;
 import org.eclipse.swt.nebula.widgets.ctabletree.CTableTreeCell;
-import org.eclipse.swt.nebula.widgets.ctabletree.ccontainer.CContainer;
-import org.eclipse.swt.nebula.widgets.ctabletree.ccontainer.CContainerItem;
 
 /**
  * A Sample custom cell with no styles set (a "base" cell).

@@ -28,9 +28,9 @@ import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.nebula.widgets.ctabletree.ccontainer.CContainer;
-import org.eclipse.swt.nebula.widgets.ctabletree.ccontainer.CContainerCell;
-import org.eclipse.swt.nebula.widgets.ctabletree.ccontainer.CContainerItem;
+import org.eclipse.swt.nebula.widgets.ctabletree.CContainer;
+import org.eclipse.swt.nebula.widgets.ctabletree.CContainerCell;
+import org.eclipse.swt.nebula.widgets.ctabletree.CContainerItem;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Widget;
 

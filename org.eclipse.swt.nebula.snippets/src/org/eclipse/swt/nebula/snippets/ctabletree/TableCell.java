@@ -12,9 +12,9 @@ package org.eclipse.swt.nebula.snippets.ctabletree;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.nebula.widgets.ctabletree.CContainerItem;
 import org.eclipse.swt.nebula.widgets.ctabletree.CTableTreeCell;
-import org.eclipse.swt.nebula.widgets.ctabletree.ccontainer.CContainerItem;
-import org.eclipse.swt.nebula.widgets.ctabletree.ccontainer.SComposite;
+import org.eclipse.swt.nebula.widgets.ctabletree.SComposite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
