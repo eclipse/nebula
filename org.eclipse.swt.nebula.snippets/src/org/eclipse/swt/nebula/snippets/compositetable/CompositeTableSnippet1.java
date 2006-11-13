@@ -28,17 +28,17 @@ public class CompositeTableSnippet1 {
 	}
 	
 	static Name[] swtCommitters = new Name[] {
-			new Name("Grant", "Gayed"),
-			new Name("Veronika", "Irvine"),
-			new Name("Steve", "Northover"),
-			new Name("Mike", "Wilson"),
-			new Name("Christophe", "Cornu"),
-			new Name("Lynne", "Kues"),
-			new Name("Silenio", "Quarti"),
-			new Name("Tod", "Creasey"),
-			new Name("Felipe", "Heidrich"),
-			new Name("Billy", "Biggs"),
-			new Name("B", "Shingar")
+		new Name("Grant", "Gayed"),
+		new Name("Veronika", "Irvine"),
+		new Name("Steve", "Northover"),
+		new Name("Mike", "Wilson"),
+		new Name("Christophe", "Cornu"),
+		new Name("Lynne", "Kues"),
+		new Name("Silenio", "Quarti"),
+		new Name("Tod", "Creasey"),
+		new Name("Felipe", "Heidrich"),
+		new Name("Billy", "Biggs"),
+		new Name("B", "Shingar")
 	};
 
 	// Now, define the table's header and row objects
