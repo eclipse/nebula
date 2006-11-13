@@ -497,6 +497,9 @@ public class InternalCompositeTable extends Composite implements Listener {
 			Constructor constructor) {
 		Control result = null;
 		try {
+			if (!constructor.isAccessible()) {
+				constructor.setAccessible(true);
+			}
 			result = (Control) constructor.newInstance(new Object[] { parent,
 					new Integer(SWT.NULL) });
 		} catch (Exception e) {
