@@ -9,7 +9,7 @@
  * Contributors:
  *     db4objects - Initial API and implementation
  */
-package org.eclipse.swt.nebula.widgets.compositetable.reflect;
+package org.eclipse.swt.nebula.widgets.compositetable.internal;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
