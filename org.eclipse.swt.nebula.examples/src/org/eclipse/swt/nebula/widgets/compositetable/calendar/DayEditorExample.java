@@ -8,7 +8,7 @@
  * Contributors:
  *     The Pampered Chef - initial API and implementation
  ******************************************************************************/
-package org.eclipse.swt.nebula.widgets.compositetable.day;
+package org.eclipse.swt.nebula.widgets.compositetable.calendar;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -20,6 +20,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.nebula.widgets.compositetable.day.DayEditor;
 import org.eclipse.swt.nebula.widgets.compositetable.timeeditor.CalendarableItem;
 import org.eclipse.swt.nebula.widgets.compositetable.timeeditor.EventContentProvider;
 import org.eclipse.swt.nebula.widgets.compositetable.timeeditor.EventCountProvider;
@@ -32,7 +33,7 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * @since 3.2
  */
-public class DayEditorTest {
+public class DayEditorExample {
 
 	private Shell sShell = null; // @jve:decl-index=0:visual-constraint="10,10"
 	private Composite navBar = null;
@@ -72,17 +73,16 @@ public class DayEditorTest {
 				new Event(time(11, 00), time(12, 15), "Meet with customer")},
 			{},
 			{},
-			{new Event("Nat. Conference"),
+			{new Event("EclipseCon"),
 				new Event(time(7, 50), time(9, 00), "Stand-up meeting"),
 				new Event(time(10, 15), time(12, 00), "Work on prototype")},
-			{new Event("Nat. Conference"),
-				new Event("Field trip to PC HQ"),
+			{new Event("EclipseCon"),
 				new Event(time(8, 30), time(9, 30), "Stand-up meeting"),
 				new Event(time(10, 00), time(13, 15), "Meet with customer"),
 				new Event(time(12, 45), time(14, 15), "RC1 due"),
 				new Event(time(13, 45), time(14, 15), "Way too much work"),
 				new Event(time(10, 00), time(13, 30), "Callisto meeting")},
-			{new Event("Nat. Conference")},
+			{new Event("EclipseCon")},
 			{new Event(time(8, 30), time(11, 30), "Stand-up meeting"),
 				new Event(time(10, 00), time(12, 15), "Meet with customer1"),
 				new Event(time(11, 45), time(12, 15), "Meet with customer2"),
@@ -184,16 +184,23 @@ public class DayEditorTest {
 	
 	private EventCountProvider eventCountProvider = new EventCountProvider() {
 		public int getNumberOfEventsInDay(Date day) {
-			return events[getOffset(day)].length;
+			try {
+				return events[getOffset(day)].length;
+			} catch (IndexOutOfBoundsException e) {
+				return 0;
+			}
 		}
 	};
 	
 	private EventContentProvider eventContentProvider = new EventContentProvider() {
 		public void refresh(Date day, CalendarableItem[] controls) {
-			int dayOffset = getOffset(day);
-			
-			for (int event=0; event < events[dayOffset].length; ++event) {
-				fillEvent(controls[event], events[dayOffset][event]);
+			try {
+				int dayOffset = getOffset(day);
+				
+				for (int event=0; event < events[dayOffset].length; ++event) {
+					fillEvent(controls[event], events[dayOffset][event]);
+				}
+			} catch (IndexOutOfBoundsException e) {
 			}
 		}
 
@@ -243,7 +250,7 @@ public class DayEditorTest {
 	 */
 	public static void main(String[] args) {
 		Display display = Display.getDefault();
-		DayEditorTest thisClass = new DayEditorTest();
+		DayEditorExample thisClass = new DayEditorExample();
 		thisClass.createSShell();
 		thisClass.sShell.open();
 		while (!thisClass.sShell.isDisposed()) {

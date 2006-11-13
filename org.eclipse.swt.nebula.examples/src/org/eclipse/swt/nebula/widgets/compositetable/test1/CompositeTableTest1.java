@@ -1,5 +1,3 @@
-package org.eclipse.swt.nebula.widgets.compositetable.perftest;
-
 /*
  * Copyright (C) 2005 David Orme <djo@coconut-palm-software.com>
  * 
@@ -11,6 +9,7 @@ package org.eclipse.swt.nebula.widgets.compositetable.perftest;
  * Contributors:
  *     David Orme     - Initial API and implementation
  */
+package org.eclipse.swt.nebula.widgets.compositetable.test1;
 
 import java.util.LinkedList;
 
@@ -28,18 +27,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * Comment :-
- * Can the row height follow my row's composite object ?
- * Is there's anyway that I can insert row ?
- * 
- */
-
-
-/**
  * @since 3.2
  *
  */
-public class CompositeTableTest2 {
+public class CompositeTableTest1 {
 
 	private Shell sShell = null;  //  @jve:decl-index=0:visual-constraint="10,10"
 	private CompositeTable table = null;
@@ -49,12 +40,26 @@ public class CompositeTableTest2 {
 	/**
 	 * 
 	 */
-	public CompositeTableTest2() {
-		
-		for( int li_count = 0 ; li_count < 100 ; li_count ++ ){
-			
-			personList.add(new Person("John" + String.valueOf( li_count ), "1234", "Wheaton" + String.valueOf( li_count ), "IL" + String.valueOf( li_count )));
-		}
+	public CompositeTableTest1() {
+		personList.add(new Person("John", "1234", "Wheaton", "IL"));
+		personList.add(new Person("Jane", "1234", "Wheaton", "IL"));
+		personList.add(new Person("Frank", "1234", "Wheaton", "IL"));
+		personList.add(new Person("Joe", "1234", "Wheaton", "IL"));
+		personList.add(new Person("Chet", "1234", "Wheaton", "IL"));
+		personList.add(new Person("Jane", "1234", "Wheaton", "IL"));
+		personList.add(new Person("Frank", "1234", "Wheaton", "IL"));
+		personList.add(new Person("Joe", "1234", "Wheaton", "IL"));
+		personList.add(new Person("Chet", "1234", "Wheaton", "IL"));
+		personList.add(new Person("Jane", "1234", "Wheaton", "IL"));
+		personList.add(new Person("Frank", "1234", "Wheaton", "IL"));
+		personList.add(new Person("Joe", "1234", "Wheaton", "IL"));
+		personList.add(new Person("Chet", "1234", "Wheaton", "IL"));
+		personList.add(new Person("Jane", "1234", "Wheaton", "IL"));
+		personList.add(new Person("Frank", "1234", "Wheaton", "IL"));
+		personList.add(new Person("Joe", "1234", "Wheaton", "IL"));
+		personList.add(new Person("Chet", "1234", "Wheaton", "IL"));
+		personList.add(new Person("Wilbur", "1234", "Wheaton", "IL"));
+		personList.add(new Person("Elmo", "1234", "Wheaton", "IL"));
 	}
 
 	/**
@@ -64,13 +69,10 @@ public class CompositeTableTest2 {
 	private void createCompositeTable() {
 		table = new CompositeTable(sShell, SWT.NONE);
 		table.setRunTime(true);
-		table.setWeights(new int[] {100, 100, 80, 21});
-      
-//      table.setFittingVertically(false);
-//		table.setFittingHorizontally(false);
-//		table.setLinesVisible(true);
+      table.setWeights(new int[] {100, 100, 80, 40});
+		table.setFittingHorizontally(false);
 //      table.setWeights(new int[] {30, 30, 30, 10});
-//		table.setFittingHorizontally(true);
+//      table.setFittingHorizontally(true);
 		table.addRowContentProvider(rowContentProvider);
 		table.addDeleteHandler(deleteHandler);
 		table.addInsertHandler(insertHandler);
@@ -83,7 +85,7 @@ public class CompositeTableTest2 {
 	
 	private ScrollListener scrollListener = new ScrollListener() {
 		public void tableScrolled(ScrollEvent scrollEvent) {
-//			System.out.println(scrollEvent);
+			System.out.println(scrollEvent);
 		}
 	};
 	
@@ -120,11 +122,11 @@ public class CompositeTableTest2 {
 	
 	private IRowFocusListener rowListener = new IRowFocusListener() {
 		public boolean requestRowChange(CompositeTable sender, int currentObjectOffset, Control row) {
-//			System.out.println("requestRC");
+			System.out.println("requestRC");
 			return true;
 		}
 		public void depart(CompositeTable sender, int currentObjectOffset, Control row) {
-//			System.out.println("depart");
+			System.out.println("depart");
 			Person person = (Person)personList.get(currentObjectOffset);
 			Row rowObj = (Row) row;
 			person.name = rowObj.name.getText();
@@ -133,7 +135,7 @@ public class CompositeTableTest2 {
 			person.state = rowObj.state.getText();
 		}
 		public void arrive(CompositeTable sender, int currentObjectOffset, Control row) {
-//			System.out.println("arrive");
+			System.out.println("arrive");
 		}
 	};
 	
@@ -158,7 +160,7 @@ public class CompositeTableTest2 {
 	 */
 	public static void main(String[] args) {
 		Display display = Display.getDefault();
-		CompositeTableTest2 thisClass = new CompositeTableTest2();
+		CompositeTableTest1 thisClass = new CompositeTableTest1();
 		thisClass.createSShell();
 		thisClass.sShell.open();
 

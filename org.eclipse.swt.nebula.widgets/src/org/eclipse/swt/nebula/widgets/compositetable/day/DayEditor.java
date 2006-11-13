@@ -46,6 +46,7 @@ import org.eclipse.swt.nebula.widgets.compositetable.day.internal.EventLayoutCom
 import org.eclipse.swt.nebula.widgets.compositetable.day.internal.ICalendarableItemControl;
 import org.eclipse.swt.nebula.widgets.compositetable.day.internal.TimeSlice;
 import org.eclipse.swt.nebula.widgets.compositetable.day.internal.TimeSlot;
+import org.eclipse.swt.nebula.widgets.compositetable.timeeditor.AbstractEventEditor;
 import org.eclipse.swt.nebula.widgets.compositetable.timeeditor.CalendarableItem;
 import org.eclipse.swt.nebula.widgets.compositetable.timeeditor.CalendarableModel;
 import org.eclipse.swt.nebula.widgets.compositetable.timeeditor.EventContentProvider;

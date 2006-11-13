@@ -9,14 +9,15 @@
  * Contributors:
  *     David Orme     - Initial API and implementation
  */
-package org.eclipse.swt.nebula.widgets.compositetable.month;
+package org.eclipse.swt.nebula.widgets.compositetable.calendar;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.nebula.widgets.compositetable.month.MonthCalendar;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-public class MonthCalendarTest {
+public class MonthCalendarExample {
 
 	private Shell sShell = null;  //  @jve:decl-index=0:visual-constraint="10,10"
 	
@@ -33,7 +34,7 @@ public class MonthCalendarTest {
 	 */
 	public static void main(String[] args) {
 		Display display = Display.getDefault();
-		MonthCalendarTest thisClass = new MonthCalendarTest();
+		MonthCalendarExample thisClass = new MonthCalendarExample();
 		thisClass.createSShell();
 		thisClass.sShell.open();
 

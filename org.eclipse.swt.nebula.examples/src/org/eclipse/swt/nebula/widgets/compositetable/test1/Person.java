@@ -9,7 +9,7 @@
  * Contributors:
  *     David Orme     - Initial API and implementation
  */
-package org.eclipse.swt.nebula.widgets.compositetable.test;
+package org.eclipse.swt.nebula.widgets.compositetable.test1;
 
 public class Person {
 	

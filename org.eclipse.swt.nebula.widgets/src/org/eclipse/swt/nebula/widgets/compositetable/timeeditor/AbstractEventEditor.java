@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006 The Pampered Chef and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     The Pampered Chef - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.swt.nebula.widgets.compositetable.day;
+package org.eclipse.swt.nebula.widgets.compositetable.timeeditor;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -18,7 +18,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.swt.SWTException;
-import org.eclipse.swt.nebula.widgets.compositetable.timeeditor.CalendarableItem;
+import org.eclipse.swt.nebula.widgets.compositetable.day.CalendarableItemEvent;
+import org.eclipse.swt.nebula.widgets.compositetable.day.CalendarableItemEventHandler;
+import org.eclipse.swt.nebula.widgets.compositetable.day.NewEvent;
 import org.eclipse.swt.widgets.Composite;
 
 /**

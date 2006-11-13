@@ -1,4 +1,4 @@
-package org.eclipse.swt.nebula.widgets.compositetable.perftest;
+package org.eclipse.swt.nebula.widgets.compositetable.test2;
 
 /*
  * Copyright (C) 2005 David Orme <djo@coconut-palm-software.com>
