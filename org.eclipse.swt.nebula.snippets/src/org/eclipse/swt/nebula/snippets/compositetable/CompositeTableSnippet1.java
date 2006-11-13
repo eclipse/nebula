@@ -74,22 +74,21 @@ public class CompositeTableSnippet1 {
 	    shell.setLayout(new FillLayout());
 
 	    CompositeTable table = new CompositeTable(shell, SWT.NULL);
-	    new Header(table, SWT.NULL);
+	    new Header(table, SWT.NULL); // Just drop the Header and Row in that order...
 	    new Row(table, SWT.NULL);
 	    table.setRunTime(true);
-	    table.setNumRowsInCollection(30);
+	    table.setNumRowsInCollection(swtCommitters.length);
 	    
 	    // Note the JFace-like virtual table API
 	    table.addRowContentProvider(new IRowContentProvider() {
 			public void refresh(CompositeTable sender, int currentObjectOffset, Control rowControl) {
 				Row row = (Row) rowControl;
-				int offset = currentObjectOffset%swtCommitters.length;
-				row.firstName.setText(swtCommitters[offset].first);
-				row.lastName.setText(swtCommitters[offset].last);
+				row.firstName.setText(swtCommitters[currentObjectOffset].first);
+				row.lastName.setText(swtCommitters[currentObjectOffset].last);
 			}
 	    });
 	    
-	    shell.setSize(500, 300);
+	    shell.setSize(500, 150);
 	    shell.open ();
 	    while (!shell.isDisposed()) {
 	        if (!display.readAndDispatch ()) display.sleep ();
