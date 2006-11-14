@@ -4,6 +4,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.nebula.widgets.compositetable.CompositeTable;
 import org.eclipse.swt.nebula.widgets.compositetable.IRowContentProvider;
+import org.eclipse.swt.nebula.widgets.compositetable.RowFocusAdapter;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -12,15 +13,15 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * A CompositeTable displaying first/last name pairs
+ * A CompositeTable editing first/last name pairs
  * 
  * @author djo
  */
-public class CompositeTableSnippet1 {
-	// First some data to display...
+public class CompositeTableSnippet2 {
+	// First some data to edit...
 	private static class Name {
-		public final String first;
-		public final String last;
+		public String first;
+		public String last;
 		public Name(String first, String last) {
 			this.first = first;
 			this.last = last;
@@ -70,7 +71,7 @@ public class CompositeTableSnippet1 {
 	public static void main (String [] args) {
 	    Display display = new Display ();
 	    Shell shell = new Shell (display);
-	    shell.setText("CompositeTable Snippet 1 -- Display first/last name");
+	    shell.setText("CompositeTable Snippet 2 -- Edit first/last name");
 	    shell.setLayout(new FillLayout());
 
 	    CompositeTable table = new CompositeTable(shell, SWT.NULL);
@@ -88,11 +89,24 @@ public class CompositeTableSnippet1 {
 			}
 	    });
 	    
+	    table.addRowFocusListener(new RowFocusAdapter() {
+			public void depart(CompositeTable sender, int currentObjectOffset, Control rowControl) {
+				Row row = (Row) rowControl;
+				swtCommitters[currentObjectOffset].first = row.firstName.getText();
+				swtCommitters[currentObjectOffset].last = row.lastName.getText();
+			}
+	    });
+	    
 	    shell.setSize(500, 150);
 	    shell.open ();
 	    while (!shell.isDisposed()) {
 	        if (!display.readAndDispatch ()) display.sleep ();
 	    }
 	    display.dispose ();
+
+	    // Print the results
+	    for (int i = 0; i < swtCommitters.length; i++) {
+			System.out.println(swtCommitters[i].first + " " + swtCommitters[i].last);
+		}
 	}
 }

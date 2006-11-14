@@ -3,45 +3,19 @@ package org.eclipse.swt.nebula.snippets.compositetable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.nebula.widgets.compositetable.CompositeTable;
-import org.eclipse.swt.nebula.widgets.compositetable.IRowContentProvider;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * A CompositeTable displaying first/last name pairs
+ * A CompositeTable displaying a header and some row controls but no data
  * 
  * @author djo
  */
-public class CompositeTableSnippet1 {
-	// First some data to display...
-	private static class Name {
-		public final String first;
-		public final String last;
-		public Name(String first, String last) {
-			this.first = first;
-			this.last = last;
-		}
-	}
-	
-	static Name[] swtCommitters = new Name[] {
-		new Name("Grant", "Gayed"),
-		new Name("Veronika", "Irvine"),
-		new Name("Steve", "Northover"),
-		new Name("Mike", "Wilson"),
-		new Name("Christophe", "Cornu"),
-		new Name("Lynne", "Kues"),
-		new Name("Silenio", "Quarti"),
-		new Name("Tod", "Creasey"),
-		new Name("Felipe", "Heidrich"),
-		new Name("Billy", "Biggs"),
-		new Name("B", "Shingar")
-	};
-
-	// Now, define the table's header and row objects
+public class CompositeTableSnippet0 {
+	// Define the table's header and row objects
 	//
 	// A tabular layout is desired, so no layout manager is needed on the header 
 	// or row.  CompositeTable will handle the layout automatically.  However,
@@ -70,23 +44,14 @@ public class CompositeTableSnippet1 {
 	public static void main (String [] args) {
 	    Display display = new Display ();
 	    Shell shell = new Shell (display);
-	    shell.setText("CompositeTable Snippet 1 -- Display first/last name");
+	    shell.setText("CompositeTable Snippet 0 -- Display a header and some rows");
 	    shell.setLayout(new FillLayout());
 
 	    CompositeTable table = new CompositeTable(shell, SWT.NULL);
 	    new Header(table, SWT.NULL); // Just drop the Header and Row in that order...
 	    new Row(table, SWT.NULL);
 	    table.setRunTime(true);
-	    table.setNumRowsInCollection(swtCommitters.length);
-	    
-	    // Note the JFace-like virtual table API
-	    table.addRowContentProvider(new IRowContentProvider() {
-			public void refresh(CompositeTable sender, int currentObjectOffset, Control rowControl) {
-				Row row = (Row) rowControl;
-				row.firstName.setText(swtCommitters[currentObjectOffset].first);
-				row.lastName.setText(swtCommitters[currentObjectOffset].last);
-			}
-	    });
+	    table.setNumRowsInCollection(40); // some arbitrary number for now
 	    
 	    shell.setSize(500, 150);
 	    shell.open ();
