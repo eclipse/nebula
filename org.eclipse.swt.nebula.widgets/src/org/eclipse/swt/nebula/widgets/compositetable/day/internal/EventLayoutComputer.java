@@ -20,7 +20,6 @@ import java.util.List;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.nebula.widgets.compositetable.timeeditor.CalendarableItem;
 import org.eclipse.swt.nebula.widgets.compositetable.timeeditor.IEventEditor;
-
 /**
  * Represents a model of how the events are laid out in a particular day
  * 

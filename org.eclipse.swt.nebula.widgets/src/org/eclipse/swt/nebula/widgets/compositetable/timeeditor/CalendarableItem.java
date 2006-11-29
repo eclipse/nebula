@@ -188,6 +188,9 @@ public class CalendarableItem extends ModelObject {
 	 * @param startTime the event's start time.
 	 */
 	public void setStartTime(Date startTime) {
+		if (startTime == null && isAllDayEvent()) {
+			return;
+		}
 		Date oldValue = this.startTime;
 		this.startTime = setTimeComponentOf(startTime, this.startTime);
 		firePropertyChange(PROP_START_TIME, oldValue, startTime);
@@ -210,6 +213,9 @@ public class CalendarableItem extends ModelObject {
 	 * @param endTime the event's end time.  This value is ignored if this is an all-day event.
 	 */
 	public void setEndTime(Date endTime) {
+		if (endTime == null && isAllDayEvent()) {
+			return;
+		}
 		Date oldValue = this.endTime;
 		this.endTime = setTimeComponentOf(endTime, this.endTime);
 		firePropertyChange(PROP_END_TIME, oldValue, endTime);
