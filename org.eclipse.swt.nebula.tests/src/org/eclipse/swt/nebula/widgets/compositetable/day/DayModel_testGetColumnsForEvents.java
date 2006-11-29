@@ -11,7 +11,6 @@
 
 package org.eclipse.swt.nebula.widgets.compositetable.day;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -20,6 +19,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.nebula.widgets.compositetable.day.internal.EventLayoutComputer;
 import org.eclipse.swt.nebula.widgets.compositetable.timeeditor.CalendarableItem;
 import org.eclipse.swt.nebula.widgets.compositetable.timeeditor.IEventEditor;

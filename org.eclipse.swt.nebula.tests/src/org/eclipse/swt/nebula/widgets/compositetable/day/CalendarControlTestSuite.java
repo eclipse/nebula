@@ -22,7 +22,7 @@ public class CalendarControlTestSuite {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite(
-				"Test for org.eclipse.jface.examples.databinding.compositetable.timeeditor.test");
+				"Test for org.eclipse.swt.nebula.widgets.compositetable.day");
 		//$JUnit-BEGIN$
 		suite.addTestSuite(DayModel_testGetColumnsForEvents.class);
 		suite.addTestSuite(CalendarableModel_testInit.class);
