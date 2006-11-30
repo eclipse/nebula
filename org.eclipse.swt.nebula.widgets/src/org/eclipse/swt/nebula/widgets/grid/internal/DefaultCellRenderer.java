@@ -11,6 +11,7 @@
 package org.eclipse.swt.nebula.widgets.grid.internal;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -47,6 +48,8 @@ public class DefaultCellRenderer extends GridCellRenderer
         
         boolean drawAsSelected = isSelected();
         
+        boolean drawBackground = true;
+        
         if (isCellSelected())
         {
             drawAsSelected = true;//(!isCellFocus());        
@@ -61,7 +64,16 @@ public class DefaultCellRenderer extends GridCellRenderer
         {
             if (item.getParent().isEnabled())
             {
-                gc.setBackground(item.getBackground(getColumn()));
+                Color back = item.getBackground(getColumn());
+                
+                if (back != null)
+                {
+                    gc.setBackground(back);
+                }
+                else
+                {
+                    drawBackground = false;
+                }
             }
             else
             {
@@ -70,8 +82,9 @@ public class DefaultCellRenderer extends GridCellRenderer
             gc.setForeground(item.getForeground(getColumn()));
         }
 
-        gc.fillRectangle(getBounds().x, getBounds().y, getBounds().width + 1,
-                         getBounds().height + 1);
+        if (drawBackground)
+            gc.fillRectangle(getBounds().x, getBounds().y, getBounds().width,
+                         getBounds().height);
 
         
         int x = leftMargin;
@@ -179,12 +192,10 @@ public class DefaultCellRenderer extends GridCellRenderer
                 gc.setForeground(item.getParent().getLineColor());
             }
             gc.drawLine(getBounds().x, getBounds().y + getBounds().height, getBounds().x
-                                                                           + getBounds().width,
+                                                                           + getBounds().width -1,
                         getBounds().y + getBounds().height);
-            gc.drawLine(getBounds().x + getBounds().width - 1, getBounds().y, getBounds().x
-                                                                              + getBounds().width
-                                                                              - 1,
-                        getBounds().y + getBounds().height);
+            gc.drawLine(getBounds().x + getBounds().width - 1, getBounds().y, 
+                        getBounds().x + getBounds().width - 1, getBounds().y + getBounds().height);
         }
         
         if (isCellFocus())

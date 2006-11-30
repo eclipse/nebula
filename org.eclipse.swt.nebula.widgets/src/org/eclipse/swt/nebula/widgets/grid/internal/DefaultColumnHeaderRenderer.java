@@ -82,8 +82,8 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
             gc.setBackground(column.getParent().getCellHeaderSelectionBackground());
         }
         
-        gc.fillRectangle(getBounds().x, getBounds().y, getBounds().width + 1,
-                         getBounds().height + 1);
+        gc.fillRectangle(getBounds().x, getBounds().y, getBounds().width,
+                         getBounds().height);
 
         int pushedDrawingOffset = 0;
         if (drawSelected)

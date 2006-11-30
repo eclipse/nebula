@@ -34,6 +34,8 @@ public class DefaultEmptyCellRenderer extends GridCellRenderer
             table = item.getParent();
         }
 
+        boolean drawBackground = true;
+        
         if (isSelected())
         {
             gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION));
@@ -43,7 +45,7 @@ public class DefaultEmptyCellRenderer extends GridCellRenderer
         {
             if (table.isEnabled())
             {
-                gc.setBackground(table.getBackground());
+                drawBackground = false;
             }
             else
             {
@@ -52,8 +54,9 @@ public class DefaultEmptyCellRenderer extends GridCellRenderer
             gc.setForeground(table.getForeground());
         }
 
-        gc.fillRectangle(getBounds().x, getBounds().y, getBounds().width + 1,
-                         getBounds().height + 1);
+        if (drawBackground)
+            gc.fillRectangle(getBounds().x, getBounds().y, getBounds().width + 1,
+                         getBounds().height);
 
         if (table.getLinesVisible())
         {
