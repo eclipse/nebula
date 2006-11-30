@@ -12,10 +12,13 @@ package org.eclipse.swt.nebula.widgets.grid;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ControlEditor;
+import org.eclipse.swt.custom.TreeEditor;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.TreeEvent;
+import org.eclipse.swt.events.TreeListener;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -52,6 +55,8 @@ public class GridEditor extends ControlEditor
     private Listener columnGroupListener;
 
     private SelectionListener scrollListener;
+    
+    private TreeListener treeListener;
 
     /**
      * Creates a TableEditor for the specified Table.
@@ -62,6 +67,28 @@ public class GridEditor extends ControlEditor
     {
         super(table);
         this.table = table;
+        
+        treeListener = new TreeListener () {
+            final Runnable runnable = new Runnable() {
+                public void run() {
+                    if (getEditor() == null || getEditor().isDisposed()) return;
+                    if (table.isDisposed()) return;
+                    layout();
+                    getEditor().setVisible(true);
+                }
+            };
+            public void treeCollapsed(TreeEvent e) {
+                if (getEditor() == null || getEditor().isDisposed ()) return;
+                getEditor().setVisible(false);
+                e.display.asyncExec(runnable);
+            }
+            public void treeExpanded(TreeEvent e) {
+                if (getEditor() == null || getEditor().isDisposed ()) return;
+                getEditor().setVisible(false);
+                e.display.asyncExec(runnable);
+            }
+        };
+        table.addTreeListener(treeListener);
 
         columnListener = new ControlListener()
         {
