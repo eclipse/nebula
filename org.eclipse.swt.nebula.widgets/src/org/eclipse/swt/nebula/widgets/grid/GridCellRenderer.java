@@ -222,5 +222,4 @@ public abstract class GridCellRenderer extends AbstractInternalWidget
     {
         return null;
     }
-
 }
