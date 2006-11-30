@@ -390,10 +390,10 @@ public class GridItem extends Item
         checkWidget();
         ensureSize(backgrounds);
         Color c = (Color)backgrounds.get(index);
-        if (c == null)
-        {
-            c = getBackground();
-        }
+//        if (c == null)
+//        {
+//            c = getBackground();
+//        }
         return c;
     }
 
@@ -1000,7 +1000,7 @@ public class GridItem extends Item
         for (Iterator itemIterator = children.iterator(); itemIterator.hasNext(); )
         {
             GridItem item = (GridItem) itemIterator.next();
-            item.setVisible(expanded);
+            item.setVisible(expanded && visible);
             if (!expanded)
             {
                 if (!getParent().getCellSelectionEnabled())
