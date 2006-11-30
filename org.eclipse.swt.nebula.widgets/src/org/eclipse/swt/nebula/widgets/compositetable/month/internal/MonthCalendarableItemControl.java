@@ -10,7 +10,7 @@
  *     The Pampered Chef - Adapted for month calendar
  *******************************************************************************/
 
-package org.eclipse.swt.nebula.widgets.compositetable.month;
+package org.eclipse.swt.nebula.widgets.compositetable.month.internal;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
