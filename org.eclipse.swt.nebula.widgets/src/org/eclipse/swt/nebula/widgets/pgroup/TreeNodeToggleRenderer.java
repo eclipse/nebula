@@ -13,7 +13,6 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Transform;
-import org.eclipse.swt.nebula.widgets.grid.AbstractRenderer;
 
 /**
  * This toggle strategy mimics a Windows tree node. That is, it shows a plus
@@ -42,16 +41,16 @@ public class TreeNodeToggleRenderer extends AbstractRenderer
         Color back = gc.getBackground();
         Color fore = gc.getForeground();
 
-        gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+        gc.setBackground(gc.getDevice().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
         gc.fillRectangle(0, 0, 8, 8);
 
-        gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
+        gc.setForeground(gc.getDevice().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
         gc.drawLine(2, 4, 6, 4);
         if (!isExpanded())
         {
             gc.drawLine(4, 2, 4, 6);
         }
-        gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+        gc.setForeground(gc.getDevice().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
         gc.drawRectangle(0, 0, 8, 8);
 
         if (isFocus())

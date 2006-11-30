@@ -12,7 +12,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Transform;
-import org.eclipse.swt.nebula.widgets.grid.AbstractRenderer;
 
 /**
  * This toggle strategy mimics the buttons found in SWT's CTabFolder (i.e. the
@@ -41,18 +40,18 @@ public class MinMaxToggleRenderer extends AbstractRenderer
         transform.translate(getBounds().x, getBounds().y);
         gc.setTransform(transform);
 
-        gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-        gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+        gc.setBackground(gc.getDevice().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+        gc.setForeground(gc.getDevice().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
 
         if (isHover())
         {
-            gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+            gc.setForeground(gc.getDevice().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
             // gc.fillRoundRectangle(0,0,16,17,5,5);
             gc.drawRoundRectangle(0, 0, 17, 17, 5, 5);
         }
 
-        gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-        gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+        gc.setBackground(gc.getDevice().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+        gc.setForeground(gc.getDevice().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
 
         if (isExpanded())
         {

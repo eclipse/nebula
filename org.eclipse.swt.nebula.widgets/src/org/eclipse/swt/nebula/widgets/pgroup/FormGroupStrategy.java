@@ -17,8 +17,8 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
-import org.eclipse.swt.nebula.widgets.grid.internal.TextUtils;
 import org.eclipse.swt.nebula.widgets.pgroup.internal.GraphicUtils;
+import org.eclipse.swt.nebula.widgets.pgroup.internal.TextUtils;
 
 /**
  * FormGroupStrategy makes a PGroup mimic the look and feel of an Eclipse Form

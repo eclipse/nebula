@@ -12,7 +12,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.nebula.widgets.grid.internal.TextUtils;
+import org.eclipse.swt.nebula.widgets.pgroup.internal.TextUtils;
 
 /**
  * SimpleGroupStrategy adds a seperator to the normal PGroup's image and text.

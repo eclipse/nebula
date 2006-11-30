@@ -23,7 +23,6 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.nebula.widgets.grid.AbstractRenderer;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -152,8 +151,6 @@ public class PGroup extends Canvas
     public void setToggleRenderer(AbstractRenderer toggleRenderer)
     {
         checkWidget();
-        if (toggleRenderer != null)
-            toggleRenderer.setDisplay(getDisplay());
         this.toggleRenderer = toggleRenderer;
         strategy.update();
         redraw();

@@ -13,7 +13,6 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Transform;
-import org.eclipse.swt.nebula.widgets.grid.AbstractRenderer;
 
 /**
  * A dual chevron toggle strategy that shows two chevrons facing upwards when
@@ -47,7 +46,7 @@ public class ChevronsToggleRenderer extends AbstractRenderer
         if (isHover())
         {
             Color old = gc.getForeground();
-            gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+            gc.setForeground(gc.getDevice().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
             gc.drawRoundRectangle(0, 0, 16, 15, 5, 5);
             gc.setForeground(old);
         }

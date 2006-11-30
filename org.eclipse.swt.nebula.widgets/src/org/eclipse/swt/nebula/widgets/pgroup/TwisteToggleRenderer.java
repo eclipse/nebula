@@ -13,7 +13,6 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Transform;
-import org.eclipse.swt.nebula.widgets.grid.AbstractRenderer;
 
 /**
  * This toggle strategy appears as a triangle pointing to the right when
@@ -44,11 +43,11 @@ public class TwisteToggleRenderer extends AbstractRenderer
 
         if (!isHover())
         {
-            gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+            gc.setForeground(gc.getDevice().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
         }
         else
         {
-            gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION));
+            gc.setForeground(gc.getDevice().getSystemColor(SWT.COLOR_LIST_SELECTION));
         }
 
         gc.setBackground(gc.getForeground());
