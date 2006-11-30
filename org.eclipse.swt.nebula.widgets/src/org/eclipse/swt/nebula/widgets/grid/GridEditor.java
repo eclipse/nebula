@@ -108,7 +108,7 @@ public class GridEditor extends ControlEditor
         {
             public void handleEvent(Event event)
             {
-                
+                if (getEditor() == null || getEditor().isDisposed()) return;
                 getEditor().setVisible(table.getColumn(getColumn()).isVisible());
                 if (getEditor().isVisible()) layout();
             }

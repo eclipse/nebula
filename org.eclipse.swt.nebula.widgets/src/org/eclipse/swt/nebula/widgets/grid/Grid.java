@@ -73,8 +73,6 @@ import java.util.Vector;
  */
 public class Grid extends Canvas
 {
-    //Positioning in getBounds is off by one when header not visible
-    
     //TODO: figure out better way to allow renderers to trigger events
     //TODO: scroll as necessary when performing drag select (current strategy ok)
     //TODO: need to refactor the way the range select remembers older selection
@@ -438,6 +436,8 @@ public class Grid extends Canvas
     private boolean ignoreMouseExit;
     
     private GC sizingGC;
+
+    private Color backgroundColor;
     
     /**
      * Filters out unnecessary styles, adds mandatory styles and generally
@@ -489,7 +489,6 @@ public class Grid extends Canvas
         focusRenderer.setDisplay(getDisplay());
         emptyRowHeaderRenderer.setDisplay(getDisplay());
 
-        setBackground(getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
         setForeground(getDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND));
         setLineColor(getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 
@@ -534,6 +533,29 @@ public class Grid extends Canvas
         cellHeaderSelectionBackground = new Color(getDisplay(),cellSel);
     }    
     
+    
+    
+    /** 
+     * {@inheritDoc}
+     */
+    public Color getBackground()
+    {
+        checkWidget();
+        if (backgroundColor == null)
+            return getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+        return backgroundColor;
+    }
+
+    /** 
+     * {@inheritDoc}
+     */
+    public void setBackground(Color color)
+    {
+        checkWidget();
+        backgroundColor = color;
+        redraw();
+    }
+
     /**
      * Returns the background color of column and row headers when a cell in 
      * the row or header is selected.
@@ -572,6 +594,10 @@ public class Grid extends Canvas
      * Adds the listener to the collection of listeners who will be notified
      * when the receiver's selection changes, by sending it one of the messages
      * defined in the {@code SelectionListener} interface.
+     * <p>
+     * Cell selection events may have <code>Event.detail = SWT.DRAG</code> when the 
+     * user is drag selecting multiple cells.  A follow up selection event will be generated 
+     * when the drag is complete.    
      * 
      * @param listener the listener which should be notified
      * @throws IllegalArgumentException
@@ -679,6 +705,8 @@ public class Grid extends Canvas
      * Deselects the item at the given zero-relative index in the receiver. If
      * the item at the index was already deselected, it remains deselected.
      * Indices that are out of range are ignored.
+     * <p>
+     * If cell selection is enabled, all cells in the specified item are deselected.
      * 
      * @param index the index of the item to deselect
      * @throws org.eclipse.swt.SWTException
@@ -698,11 +726,18 @@ public class Grid extends Canvas
         }
 
         GridItem item = (GridItem)items.get(index);
-        if (selectedItems.contains(item))
+        
+        if (!cellSelectionEnabled)
         {
-            selectedItems.remove(item);
+            if (selectedItems.contains(item))
+            {
+                selectedItems.remove(item);
+            }
         }
-
+        else
+        {
+            deselectCells(getCells(item));
+        }
         redraw();
     }
 
@@ -712,6 +747,8 @@ public class Grid extends Canvas
      * it is deselected. If the item at the index was not selected, it remains
      * deselected. The range of the indices is inclusive. Indices that are out
      * of range are ignored.
+     * <p>
+     * If cell selection is enabled, all cells in the given range are deselected.
      * 
      * @param start the start index of the items to deselect
      * @param end the end index of the items to deselect
@@ -738,9 +775,17 @@ public class Grid extends Canvas
             }
 
             GridItem item = (GridItem)items.get(i);
-            if (selectedItems.contains(item))
+            
+            if (!cellSelectionEnabled)
             {
-                selectedItems.remove(item);
+                if (selectedItems.contains(item))
+                {
+                    selectedItems.remove(item);
+                }
+            }
+            else
+            {
+                deselectCells(getCells(item));
             }
         }
         redraw();
@@ -752,6 +797,8 @@ public class Grid extends Canvas
      * it is deselected. If the item at the index was not selected, it remains
      * deselected. Indices that are out of range and duplicate indices are
      * ignored.
+     * <p>
+     * If cell selection is enabled, all cells in the given items are deselected.
      * 
      * @param indices the array of indices for the items to deselect
      * @throws IllegalArgumentException
@@ -780,9 +827,17 @@ public class Grid extends Canvas
             if (j >= 0 && j < items.size())
             {
                 GridItem item = (GridItem)items.get(j);
-                if (selectedItems.contains(item))
+                
+                if (!cellSelectionEnabled)
                 {
-                    selectedItems.remove(item);
+                    if (selectedItems.contains(item))
+                    {
+                        selectedItems.remove(item);
+                    }
+                }
+                else
+                {
+                    deselectCells(getCells(item));
                 }
             }
         }
@@ -790,7 +845,8 @@ public class Grid extends Canvas
     }
 
     /**
-     * Deselects all selected items in the receiver.
+     * Deselects all selected items in the receiver.  If cell selection is enabled,
+     * all cells are deselected.
      * 
      * @throws org.eclipse.swt.SWTException
      * <ul>
@@ -802,8 +858,16 @@ public class Grid extends Canvas
     public void deselectAll()
     {
         checkWidget();
-        selectedItems.clear();
-        redraw();
+        
+        if (!cellSelectionEnabled)
+        {
+            selectedItems.clear();
+            redraw();
+        }
+        else
+        {
+            deselectAllCells();
+        }
     }
 
     /**
@@ -880,7 +944,7 @@ public class Grid extends Canvas
         }
 
         x2 -= getHScrollSelectionInPixels();
-
+        
         for (Iterator columnIterator = displayOrderedColumns.iterator(); columnIterator.hasNext(); )
         {
             GridColumn column = (GridColumn) columnIterator.next();
@@ -890,7 +954,7 @@ public class Grid extends Canvas
                 continue;
             }
 
-            if (point.x >= x2 && point.x <= x2 + column.getWidth())
+            if (point.x >= x2 && point.x < x2 + column.getWidth())
             {
                 overThis = column;
                 break;
@@ -1482,7 +1546,7 @@ public class Grid extends Canvas
     }
 
     /**
-     * Returns a (possibly empty) List of {@code NGridItem}s which are the
+     * Returns a (possibly empty) array of {@code NGridItem}s which are the
      * items in the receiver.
      * <p>
      * Note: This is not the actual structure used by the receiver to maintain
@@ -1765,13 +1829,15 @@ public class Grid extends Canvas
     }
 
     /**
-     * Returns a arrray of {@code GridItem}s that are currently selected in the
+     * Returns a array of {@code GridItem}s that are currently selected in the
      * receiver. The order of the items is unspecified. An empty array indicates
      * that no items are selected.
      * <p>
      * Note: This is not the actual structure used by the receiver to maintain
      * its selection, so modifying the array will not affect the receiver.
-     * </p>
+     * <p>
+     * If cell selection is enabled, any items which contain at least one selected
+     * cell are returned.
      * 
      * @return an array representing the selection
      * @throws org.eclipse.swt.SWTException
@@ -1784,11 +1850,28 @@ public class Grid extends Canvas
     public GridItem[] getSelection()
     {
         checkWidget();
-        return (GridItem[])selectedItems.toArray(new GridItem[selectedItems.size()]);
+        
+        if (!cellSelectionEnabled)
+        {
+            return (GridItem[])selectedItems.toArray(new GridItem[selectedItems.size()]);    
+        }
+        else
+        {
+            Vector items = new Vector();
+            for (Iterator iter = selectedCells.iterator(); iter.hasNext();)
+            {
+                Point cell = (Point)iter.next();
+                GridItem item = getItem(cell.y);
+                if (!items.contains(item))
+                    items.add(item);                
+            }
+            return (GridItem[])items.toArray(new GridItem[]{});
+        }
     }
 
     /**
-     * Returns the number of selected items contained in the receiver.
+     * Returns the number of selected items contained in the receiver.  If cell selection
+     * is enabled, the number of items with at least one selected cell are returned.
      * 
      * @return the number of selected items
      * @throws org.eclipse.swt.SWTException
@@ -1801,7 +1884,23 @@ public class Grid extends Canvas
     public int getSelectionCount()
     {
         checkWidget();
-        return selectedItems.size();
+        
+        if (!cellSelectionEnabled)
+        {
+            return selectedItems.size();
+        }
+        else
+        {
+            Vector items = new Vector();
+            for (Iterator iter = selectedCells.iterator(); iter.hasNext();)
+            {
+                Point cell = (Point)iter.next();
+                GridItem item = getItem(cell.y);
+                if (!items.contains(item))
+                    items.add(item);                
+            }
+            return items.size();
+        }
     }
     
     /**
@@ -1823,7 +1922,8 @@ public class Grid extends Canvas
 
     /**
      * Returns the zero-relative index of the item which is currently selected
-     * in the receiver, or -1 if no item is selected.
+     * in the receiver, or -1 if no item is selected.  If cell selection is enabled,
+     * returns the index of first item that contains at least one selected cell.
      * 
      * @return the index of the selected item
      * @throws org.eclipse.swt.SWTException
@@ -1837,12 +1937,22 @@ public class Grid extends Canvas
     {
         checkWidget();
 
-        if (selectedItems.size() == 0)
+        if (cellSelectionEnabled)
         {
-            return -1;
+            if (selectedItems.size() == 0)
+            {
+                return -1;
+            }
+    
+            return items.indexOf(selectedItems.get(0));
         }
-
-        return items.indexOf(selectedItems.get(0));
+        else
+        {
+            if (selectedCells.size() == 0)
+                return -1;
+            
+            return ((Point)selectedCells.get(0)).y;
+        }
     }
 
     /**
@@ -1852,7 +1962,9 @@ public class Grid extends Canvas
      * <p>
      * Note: This is not the actual structure used by the receiver to maintain
      * its selection, so modifying the array will not affect the receiver.
-     * </p>
+     * <p>
+     * If cell selection is enabled, returns the indices of any items which 
+     * contain at least one selected cell.
      * 
      * @return the array of indices of the selected items
      * @throws org.eclipse.swt.SWTException
@@ -1866,15 +1978,38 @@ public class Grid extends Canvas
     {
         checkWidget();
 
-        int[] indices = new int[selectedItems.size()];
-        int i = 0;
-        for (Iterator itemIterator = selectedItems.iterator(); itemIterator.hasNext(); )
+        if (!cellSelectionEnabled)
         {
-            GridItem item = (GridItem) itemIterator.next();
-            indices[i] = items.indexOf(item);
-            i++;
+            int[] indices = new int[selectedItems.size()];
+            int i = 0;
+            for (Iterator itemIterator = selectedItems.iterator(); itemIterator.hasNext(); )
+            {
+                GridItem item = (GridItem) itemIterator.next();
+                indices[i] = items.indexOf(item);
+                i++;
+            }
+            return indices;
         }
-        return indices;
+        else
+        {
+            Vector items = new Vector();
+            for (Iterator iter = selectedCells.iterator(); iter.hasNext();)
+            {
+                Point cell = (Point)iter.next();
+                GridItem item = getItem(cell.y);
+                if (!items.contains(item))
+                    items.add(item);                
+            }
+            int[] indices = new int[items.size()];
+            int i = 0;
+            for (Iterator itemIterator = items.iterator(); itemIterator.hasNext(); )
+            {
+                GridItem item = (GridItem) itemIterator.next();
+                indices[i] = items.indexOf(item);
+                i++;
+            }
+            return indices;
+        }
     }
 
     /**
@@ -2018,7 +2153,9 @@ public class Grid extends Canvas
 
     /**
      * Returns {@code true} if the item is selected, and {@code false}
-     * otherwise. Indices out of range are ignored.
+     * otherwise. Indices out of range are ignored.  If cell selection is 
+     * enabled, returns true if the item at the given index contains at 
+     * least one selected cell.
      * 
      * @param index the index of the item
      * @return the visibility state of the item at the index
@@ -2035,11 +2172,24 @@ public class Grid extends Canvas
         
         if (index < 0 || index >= items.size()) return false;
         
-        return isSelected((GridItem)items.get(index));
+        if (!cellSelectionEnabled)
+        {
+            return isSelected((GridItem)items.get(index));
+        }
+        else
+        {
+            for (Iterator iter = selectedCells.iterator(); iter.hasNext();)
+            {
+                Point cell = (Point)iter.next();
+                if (cell.y == index) return true;                
+            }
+            return false;
+        }
     }
 
     /**
-     * Returns true if the given item is selected.
+     * Returns true if the given item is selected.  If cell selection is enabled,
+     * returns true if the given item contains at least one selected cell.
      * 
      * @param item item
      * @return true if the item is selected.
@@ -2057,7 +2207,21 @@ public class Grid extends Canvas
     public boolean isSelected(GridItem item)
     {
         checkWidget();
-        return selectedItems.contains(item);
+        if (!cellSelectionEnabled)
+        {
+            return selectedItems.contains(item);
+        }
+        else
+        {
+            int index = indexOf(item);
+            if (index == -1) return false;
+            for (Iterator iter = selectedCells.iterator(); iter.hasNext();)
+            {
+                Point cell = (Point)iter.next();
+                if (cell.y == index) return true;
+            }
+            return false;
+        }
     }
 
     /**
@@ -2263,7 +2427,9 @@ public class Grid extends Canvas
     /**
      * Selects the item at the given zero-relative index in the receiver. If the
      * item at the index was already selected, it remains selected. Indices that
-     * are out of range are ignored.
+     * are out of range are ignored. 
+     * <p>
+     * If cell selection is enabled, selects all cells at the given index.
      * 
      * @param index the index of the item to select
      * @throws org.eclipse.swt.SWTException
@@ -2283,11 +2449,18 @@ public class Grid extends Canvas
         
         GridItem item = (GridItem)items.get(index);
         
-        if (selectionType == SWT.MULTI && selectedItems.contains(item)) return;
+        if (!cellSelectionEnabled)
+        {
+            if (selectionType == SWT.MULTI && selectedItems.contains(item)) return;
 
-        if (selectionType == SWT.SINGLE) selectedItems.clear();
+            if (selectionType == SWT.SINGLE) selectedItems.clear();
         
-        selectedItems.add(item);
+            selectedItems.add(item);
+        }
+        else
+        {
+            selectCells(getCells(item));
+        }
 
         redraw();
     }
@@ -2302,6 +2475,8 @@ public class Grid extends Canvas
      * that are out of range are ignored and no items will be selected if start
      * is greater than end. If the receiver is single-select and there is more
      * than one item in the given range, then all indices are ignored.
+     * <p>
+     * If cell selection is enabled, all cells within the given range are selected.
      * 
      * @param start the start of the range
      * @param end the end of the range
@@ -2321,7 +2496,10 @@ public class Grid extends Canvas
         
         if (selectionType == SWT.SINGLE && start != end) return;
         
-        if (selectionType == SWT.SINGLE) selectedItems.clear();
+        if (!cellSelectionEnabled)
+        {
+            if (selectionType == SWT.SINGLE) selectedItems.clear();            
+        }
         
         for (int i = start; i <= end; i++)
         {
@@ -2336,9 +2514,17 @@ public class Grid extends Canvas
 
             GridItem item = (GridItem)items.get(i);
             
-            if (!selectedItems.contains(item))
-                selectedItems.add(item);
+            if (!cellSelectionEnabled)
+            {
+                if (!selectedItems.contains(item))
+                    selectedItems.add(item);
+            }
+            else
+            {
+                selectCells(getCells(item));
+            }
         }
+        
         redraw();
     }
 
@@ -2351,6 +2537,9 @@ public class Grid extends Canvas
      * are out of range and duplicate indices are ignored. If the receiver is
      * single-select and multiple indices are specified, then all indices are
      * ignored.
+     * <p>
+     * If cell selection is enabled, all cells within the given indices are 
+     * selected.
      * 
      * @param indices the array of indices for the items to select
      * @throws IllegalArgumentException
@@ -2378,7 +2567,8 @@ public class Grid extends Canvas
         
         if (selectionType == SWT.SINGLE && indices.length > 1) return;
         
-        if (selectionType == SWT.SINGLE) selectedItems.clear();
+        if (!cellSelectionEnabled)
+            if (selectionType == SWT.SINGLE) selectedItems.clear();
 
         for (int i = 0; i < indices.length; i++)
         {
@@ -2387,8 +2577,16 @@ public class Grid extends Canvas
             if (j >= 0 && j < items.size())
             {
                 GridItem item = (GridItem)items.get(j);
-                if (!selectedItems.contains(item))
-                    selectedItems.add(item);
+                
+                if (!cellSelectionEnabled)
+                {
+                    if (!selectedItems.contains(item))
+                        selectedItems.add(item);
+                }
+                else
+                {
+                    selectCells(getCells(item));
+                }
             }
         }
         redraw();
@@ -2397,7 +2595,8 @@ public class Grid extends Canvas
     /**
      * Selects all of the items in the receiver.
      * <p>
-     * If the receiver is single-select, do nothing.
+     * If the receiver is single-select, do nothing.  If cell selection is enabled,
+     * all cells are selected.
      * 
      * @throws org.eclipse.swt.SWTException
      * <ul>
@@ -2413,6 +2612,12 @@ public class Grid extends Canvas
         if (!selectionEnabled) return;
         
         if (selectionType == SWT.SINGLE) return;
+        
+        if (cellSelectionEnabled)
+        {
+            selectAllCells();
+            return;
+        }
         
         selectedItems.clear();
         selectedItems.addAll(items);
@@ -2639,6 +2844,9 @@ public class Grid extends Canvas
     /**
      * Selects the item at the given zero-relative index in the receiver. The
      * current selection is first cleared, then the new item is selected.
+     * <p>
+     * If cell selection is enabled, all cells within the item at the given index
+     * are selected.
      * 
      * @param index the index of the item to select
      * @throws org.eclipse.swt.SWTException
@@ -2656,9 +2864,17 @@ public class Grid extends Canvas
         
         if (index >= 0 && index < items.size())
         {
-            selectedItems.clear();
-            selectedItems.add((GridItem)items.get(index));
-            redraw();
+            if (!cellSelectionEnabled)
+            {
+                selectedItems.clear();
+                selectedItems.add((GridItem)items.get(index));
+                redraw();
+            }
+            else
+            {
+                selectedCells.clear();
+                selectCells(getCells((GridItem)items.get(index)));
+            }
         }
     }
 
@@ -2670,6 +2886,8 @@ public class Grid extends Canvas
      * Indices that are out of range are ignored and no items will be selected
      * if start is greater than end. If the receiver is single-select and there
      * is more than one item in the given range, then all indices are ignored.
+     * <p>
+     * If cell selection is enabled, all cells within the given range are selected.
      * 
      * @param start the start index of the items to select
      * @param end the end index of the items to select
@@ -2690,7 +2908,15 @@ public class Grid extends Canvas
         
         if (selectionType == SWT.SINGLE && start != end) return;
 
-        selectedItems.clear();
+        if (!cellSelectionEnabled)
+        {
+            selectedItems.clear();    
+        }
+        else
+        {
+            selectedCells.clear();
+        }
+        
         for (int i = start; i <= end; i++)
         {
             if (i < 0)
@@ -2703,7 +2929,15 @@ public class Grid extends Canvas
             }
 
             GridItem item = (GridItem)items.get(i);
-            selectedItems.add(item);
+            
+            if (!cellSelectionEnabled)
+            {
+                selectedItems.add(item);
+            }
+            else
+            {
+                selectCells(getCells(item));
+            }
         }
         redraw();
     }
@@ -2715,6 +2949,8 @@ public class Grid extends Canvas
      * Indices that are out of range and duplicate indices are ignored. If the
      * receiver is single-select and multiple indices are specified, then all
      * indices are ignored.
+     * <p>
+     * If cell selection is enabled, all cells within the given indices are selected.
      * 
      * @param indices the indices of the items to select
      * @throws IllegalArgumentException
@@ -2738,7 +2974,15 @@ public class Grid extends Canvas
         
         if (selectionType == SWT.SINGLE && indices.length > 1) return;
 
-        selectedItems.clear();
+        if (!cellSelectionEnabled)
+        {
+            selectedItems.clear();    
+        }
+        else
+        {
+            selectedCells.clear();
+        }
+        
         for (int i = 0; i < indices.length; i++)
         {
             int j = indices[i];
@@ -2753,8 +2997,15 @@ public class Grid extends Canvas
             }
 
             GridItem item = (GridItem)items.get(j);
-            selectedItems.add(item);
-
+            
+            if (!cellSelectionEnabled)
+            {
+                selectedItems.add(item);    
+            }
+            else
+            {
+                selectCells(getCells(item));
+            }
         }
         redraw();
     }
@@ -2765,7 +3016,8 @@ public class Grid extends Canvas
      * <p>
      * Items that are not in the receiver are ignored. If the receiver is
      * single-select and multiple items are specified, then all items are
-     * ignored.
+     * ignored.  If cell selection is enabled, all cells within the given items
+     * are selected.
      * 
      * @param _items the array of items
      * @throws IllegalArgumentException
@@ -2793,7 +3045,14 @@ public class Grid extends Canvas
         
         if (selectionType == SWT.SINGLE && _items.length > 1) return;
         
-        selectedItems.clear();
+        if (!cellSelectionEnabled)
+        {
+            selectedItems.clear();
+        }
+        else
+        {
+            selectedCells.clear();
+        }
         
         for (int i = 0; i < _items.length; i++)
         {
@@ -2802,7 +3061,14 @@ public class Grid extends Canvas
             if (item.isDisposed()) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
             if (item.getParent() != this) continue;
             
-            selectedItems.add(item);
+            if (!cellSelectionEnabled)
+            {
+                selectedItems.add(item);
+            }
+            else
+            {
+                selectCells(getCells(item));
+            }
         }
         
         redraw();
@@ -2900,13 +3166,13 @@ public class Grid extends Canvas
         }
 
         int x = getColumnHeaderXPosition(col);
-
+        
         int firstVisibleX = 0;
         if (rowHeaderVisible)
         {
             firstVisibleX = rowHeaderWidth;
         }
-
+        
         // if its visible just return
         if (x >= firstVisibleX
             && (x + col.getWidth()) <= (firstVisibleX + (getClientArea().width - firstVisibleX)))
@@ -2914,20 +3180,35 @@ public class Grid extends Canvas
             return;
         }
 
-        if (x < firstVisibleX)
+        if (!getColumnScrolling())
         {
-            hScroll.setSelection(getHScrollSelectionInPixels() - (firstVisibleX - x));
-        }
-        else
-        {
-            if (col.getWidth() > getClientArea().width - firstVisibleX)
+            if (x < firstVisibleX)
             {
-                hScroll.setSelection(getHScrollSelectionInPixels() + (x - firstVisibleX));
+                hScroll.setSelection(getHScrollSelectionInPixels() - (firstVisibleX - x));
             }
             else
             {
-                x -= getClientArea().width - firstVisibleX - col.getWidth();
-                hScroll.setSelection(getHScrollSelectionInPixels() + (x - firstVisibleX));
+                if (col.getWidth() > getClientArea().width - firstVisibleX)
+                {
+                    hScroll.setSelection(getHScrollSelectionInPixels() + (x - firstVisibleX));
+                }
+                else
+                {
+                    x -= getClientArea().width - firstVisibleX - col.getWidth();
+                    hScroll.setSelection(getHScrollSelectionInPixels() + (x - firstVisibleX));
+                }
+            }
+        }
+        else
+        {
+            if (x < firstVisibleX || col.getWidth() > getClientArea().width - firstVisibleX)
+            {
+                int sel = displayOrderedColumns.indexOf(col);
+                hScroll.setSelection(sel);
+            }
+            else
+            {
+                //TODO: code this branch
             }
         }
 
@@ -3020,15 +3301,33 @@ public class Grid extends Canvas
     public void showSelection()
     {
         checkWidget();
+        
+        if (scrollValuesObsolete) 
+            updateScrollbars();
+        
+        GridItem item = null;
 
-        if (selectedItems.size() == 0)
+        if (!cellSelectionEnabled)
         {
-            return;
+            if (selectedItems.size() == 0)
+            {
+                return;
+            }
+    
+            item = (GridItem)selectedItems.get(0);
+            showItem(item);
         }
-
-        GridItem item = (GridItem)selectedItems.get(0);
-
-        showItem(item);
+        else
+        {
+            if (selectedCells.size() == 0) return;
+            
+            Point cell = (Point)selectedCells.get(0);
+            item = getItem(cell.y);
+            showItem(item);
+            GridColumn col = getColumn(cell.x);
+            showColumn(col);
+        }
+        
     }
     
     /**
@@ -3747,6 +4046,8 @@ public class Grid extends Canvas
      */
     private void onPaint(PaintEvent e)
     {
+        this.drawBackground(e.gc,0,0,getSize().x,getSize().y);
+        
         if (scrollValuesObsolete)
         {
             updateScrollbars();
@@ -3755,7 +4056,7 @@ public class Grid extends Canvas
 
         int x = 0;
         int y = 0;
-
+        
         if (columnHeadersVisible)
         {
             paintHeader(e.gc);
@@ -3770,14 +4071,14 @@ public class Grid extends Canvas
         firstVisibleIndex = getTopIndex();
 
         int row = firstVisibleIndex;
-
+        
         for (int i = 0; i < visibleRows; i++)
         {
 
             x = 0;
 
             x -= getHScrollSelectionInPixels();
-
+            
             // get the item to draw
             GridItem item = null;
             if (row < items.size())
@@ -3810,7 +4111,8 @@ public class Grid extends Canvas
                     // rowHeaderRenderer.paint(e.gc, row + 1);
 
                     x += rowHeaderWidth;
-                }
+                }                
+
 
                 int focusY = y;
 
@@ -3824,6 +4126,7 @@ public class Grid extends Canvas
                 for (Iterator columnIterator = displayOrderedColumns.iterator(); columnIterator.hasNext(); )
                 {
                     GridColumn column = (GridColumn) columnIterator.next();
+                                       
                     if (!column.isVisible())
                     {
                         colIndex++;
@@ -3866,7 +4169,7 @@ public class Grid extends Canvas
                         
                         column.getCellRenderer().setRowHover(hoveringItem == item);
                         column.getCellRenderer().setColumnHover(hoveringColumn == column);
-                        
+ 
                         if (selectedCells.contains(new Point(indexOf(column),row)))
                         {
                             column.getCellRenderer().setCellSelected(true);
@@ -3901,13 +4204,15 @@ public class Grid extends Canvas
 
                 if (x < getClientArea().width)
                 {
-
                     emptyCellRenderer.setSelected(selectedItems.contains(item));
                     emptyCellRenderer.setFocus(this.isFocusControl());
                     emptyCellRenderer.setRow(i + 1);
                     emptyCellRenderer.setBounds(x, y, getClientArea().width - x + 1, rowHeight);
+                    emptyCellRenderer.setColumn(getColumnCount());
                     emptyCellRenderer.paint(e.gc, item);
                 }
+                
+                x = 0;
 
                 if (rowHeaderVisible)
                 {
@@ -3923,9 +4228,10 @@ public class Grid extends Canvas
 
                     rowHeaderRenderer.setBounds(0, y, rowHeaderWidth, rowHeight + 1);
                     rowHeaderRenderer.paint(e.gc, item);
-
-                }
-
+                    
+                    x += rowHeaderWidth;
+                }                
+                
                 // focus
                 if (isFocusControl() && !cellSelectionEnabled)
                 {
@@ -3952,8 +4258,8 @@ public class Grid extends Canvas
 
                 if (rowHeaderVisible)
                 {
-                    emptyRowHeaderRenderer.setBounds(x, y, rowHeaderWidth, rowHeight + 1);
-                    emptyRowHeaderRenderer.paint(e.gc, this);
+//                    emptyRowHeaderRenderer.setBounds(x, y, rowHeaderWidth, rowHeight + 1);
+//                    emptyRowHeaderRenderer.paint(e.gc, this);
 
                     x += rowHeaderWidth;
                 }
@@ -3966,28 +4272,35 @@ public class Grid extends Canvas
                 for (Iterator columnIterator = displayOrderedColumns.iterator(); columnIterator.hasNext(); )
                 {
                     GridColumn column = (GridColumn) columnIterator.next();
+                    
                     if (column.isVisible())
                     {
                         emptyCellRenderer.setBounds(x, y, column.getWidth(), rowHeight);
+                        emptyCellRenderer.setColumn(indexOf(column));
                         emptyCellRenderer.paint(e.gc, this);
 
                         x += column.getWidth();
                     }
                 }
-
-                if (rowHeaderVisible)
-                {
-                    emptyRowHeaderRenderer.setBounds(0, y, rowHeaderWidth, rowHeight + 1);
-                    emptyRowHeaderRenderer.paint(e.gc, this);
-
-                    // x += rowHeaderWidth;
-                }
-
+                
                 if (x < getClientArea().width)
                 {
                     emptyCellRenderer.setBounds(x, y, getClientArea().width - x + 1, rowHeight);
+                    emptyCellRenderer.setColumn(getColumnCount());
                     emptyCellRenderer.paint(e.gc, this);
                 }
+                
+
+                x = 0;
+                
+                if (rowHeaderVisible)
+                {
+                    emptyRowHeaderRenderer.setBounds(x, y, rowHeaderWidth, rowHeight + 1);
+                    emptyRowHeaderRenderer.paint(e.gc, this);
+
+                    x += rowHeaderWidth;
+                }
+
             }
 
             row++;
@@ -4087,7 +4400,7 @@ public class Grid extends Canvas
         int y = 0;
 
         x -= getHScrollSelectionInPixels();
-
+        
         if (rowHeaderVisible)
         {
             // paint left corner
@@ -4102,7 +4415,7 @@ public class Grid extends Canvas
         {
             GridColumn column = (GridColumn) columnIterator.next();
             int height = 0;
-
+            
             if (!column.isVisible())
             {
                 continue;
@@ -4209,13 +4522,15 @@ public class Grid extends Canvas
             emptyColumnHeaderRenderer.setBounds(x, 0, getClientArea().width - x, headerHeight);
             emptyColumnHeaderRenderer.paint(gc, null);
         }
+        
+        x = 0;
 
         if (rowHeaderVisible)
         {
             // paint left corner
             topLeftRenderer.setBounds(0, 0, rowHeaderWidth, headerHeight);
             topLeftRenderer.paint(gc, this);
-            // x += rowHeaderWidth;
+            x += rowHeaderWidth;
         }
 
         if (draggingColumn)
@@ -4343,15 +4658,18 @@ public class Grid extends Canvas
 
                 int max = 0;
                 int i = 0;
-
+     
                 while (hiddenArea > 0 && i < getColumnCount())
                 {
-                    if (((GridColumn)displayOrderedColumns.get(i)).isVisible())
+                    GridColumn col = (GridColumn)displayOrderedColumns.get(i);
+                    
+                    i++;
+                    
+                    if (col.isVisible())
                     {
-                        hiddenArea -= ((GridColumn)displayOrderedColumns.get(max)).getWidth();
+                        hiddenArea -= col.getWidth();
                         max++;
                     }
-                    i++;
                 }
 
                 max++;
@@ -5028,6 +5346,7 @@ public class Grid extends Canvas
                 
                 focusItem = item;
                 showItem(item);
+                redraw();
             }
         }
         else if (cellSelectionEnabled && e.button == 1 && rowHeaderVisible && e.x <= rowHeaderWidth && e.y < headerHeight)
@@ -5418,6 +5737,15 @@ public class Grid extends Canvas
     private void onKeyDown(Event e)
     {  
         
+        if (e.character == '\r' && focusItem != null)
+        {
+            Event newEvent = new Event();
+            newEvent.item = focusItem;
+
+            notifyListeners(SWT.DefaultSelection, newEvent);
+            return;
+        }
+        
         int attemptExpandCollapse = 0;
         if ((e.character == '-' || (!cellSelectionEnabled && e.keyCode == SWT.ARROW_LEFT)) && focusItem != null && focusItem.isExpanded())
         {
@@ -5799,7 +6127,7 @@ public class Grid extends Canvas
      * @param item item
      * @return x,y of top left corner of the cell
      */
-    protected Point getOrigin(GridColumn column, GridItem item)
+    Point getOrigin(GridColumn column, GridItem item)
     {
         int x = 0;
 
@@ -5807,13 +6135,13 @@ public class Grid extends Canvas
         {
             x += rowHeaderWidth;
         }
-
+        
         x -= getHScrollSelectionInPixels();
 
         for (Iterator colIterIterator = displayOrderedColumns.iterator(); colIterIterator.hasNext(); )
         {
             GridColumn colIter = (GridColumn) colIterIterator.next();
-
+            
             if (colIter == column)
             {
                 break;
@@ -5828,10 +6156,9 @@ public class Grid extends Canvas
         int y = 0;
         if (item != null)
         {
-            y = 1;
             if (columnHeadersVisible)
             {
-                y = +headerHeight;
+                y += headerHeight;
             }
 
             for (Iterator itemIterIterator = items.iterator(); itemIterIterator.hasNext(); )
@@ -6378,6 +6705,7 @@ public class Grid extends Canvas
         {
             return;
         }
+        
         this.columnScrolling = columnScrolling;
         scrollValuesObsolete = true;
         redraw();        
@@ -6923,6 +7251,33 @@ public class Grid extends Canvas
             cells.add(new Point(indexOf(nextCol),itemIndex));
         }
     } 
+    
+    private Point[] getCells(GridItem item)
+    {
+        Vector cells = new Vector();
+        
+        int itemIndex = indexOf(item);
+        
+        int span = 0;
+        
+        for (Iterator iter = displayOrderedColumns.iterator(); iter.hasNext();)
+        {
+            GridColumn nextCol = (GridColumn)iter.next();   
+            
+            if (span > 0)
+            {
+                span --;
+                continue;
+            }
+            
+            if (!nextCol.isVisible()) continue;                                       
+            
+            span = item.getColumnSpan(indexOf(nextCol));
+            
+            cells.add(new Point(indexOf(nextCol),itemIndex));
+        } 
+        return (Point[])cells.toArray(new Point[]{});
+    }
         
 
     private void getCells(GridItem fromItem, GridItem toItem, Vector cells)
@@ -7215,7 +7570,7 @@ public class Grid extends Canvas
         super.setFont(font);
         sizingGC.setFont(font);
     }
-    
+
 }
 
 
