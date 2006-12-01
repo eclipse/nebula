@@ -12,7 +12,6 @@ package org.eclipse.swt.nebula.widgets.grid;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ControlEditor;
-import org.eclipse.swt.custom.TreeEditor;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.SelectionEvent;
