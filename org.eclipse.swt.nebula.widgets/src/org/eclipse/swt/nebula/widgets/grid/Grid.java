@@ -6520,6 +6520,7 @@ public class Grid extends Canvas
         if (selectedItems.contains(item))
         {
             selectedItems.remove(item);
+            notifyListeners(SWT.Selection,new Event());
         }
 
         if (focusItem == item)
