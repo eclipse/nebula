@@ -42,7 +42,7 @@ import org.eclipse.swt.widgets.Widget;
  * <dt><b>Styles:</b></dt>
  * <dd>SMOOTH</dd>
  * <dt><b>Events:</b></dt>
- * <dd>Selection</dd>
+ * <dd>Expand, Collapse</dd>
  * </dl>
  * 
  * @author cgross
@@ -69,6 +69,8 @@ public class PGroup extends Canvas
     private boolean overToggle = false;
     
     private AbstractRenderer toggleRenderer;
+    
+    private Color backgroundColor;
 
     private static int checkStyle(int style)
     {
@@ -119,7 +121,31 @@ public class PGroup extends Canvas
         initListeners();
     }
 
+    /** 
+     * {@inheritDoc}
+     */
+    public Color getBackground()
+    {
+        checkWidget();
+        if (backgroundColor == null)
+            return super.getBackground();
+        return backgroundColor;
+    }
     
+    Color internalGetBackground()
+    {
+        return backgroundColor;
+    }
+
+    /** 
+     * {@inheritDoc}
+     */
+    public void setBackground(Color color)
+    {
+        checkWidget();
+        backgroundColor = color;
+        redraw();
+    }
     
     /**
      * Returns the toggle renderer or <code>null</code>.

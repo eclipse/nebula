@@ -151,6 +151,60 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
                                                             + (2 * vMargin));
             }
         }
+        
+        Color back = getGroup().internalGetBackground();
+        if (back != null)
+        {
+            gc.fillRectangle(0,0,getGroup().getSize().x,getGroup().getSize().y);
+            
+            int yOffset = 0;
+            if ((getGroup().getImagePosition() & SWT.TOP) != 0 && image != null)
+            {
+                yOffset = titleHeight - titleAreaHeight;
+            }
+            
+            Region reg = new Region();
+            reg.add(0,yOffset + 0, 5, 1);
+            reg.add(0,yOffset + 1, 3, 1);
+            reg.add(0,yOffset + 2, 2, 1);
+            reg.add(0,yOffset + 3, 1, 1);
+            reg.add(0,yOffset + 4, 1, 1);
+            
+            reg.add(getGroup().getSize().x - 5,yOffset + 0, 5, 1);
+            reg.add(getGroup().getSize().x - 3,yOffset + 1, 3, 1);
+            reg.add(getGroup().getSize().x - 2,yOffset + 2, 2, 1);
+            reg.add(getGroup().getSize().x - 1,yOffset + 3, 1, 1);
+            reg.add(getGroup().getSize().x - 1,yOffset + 4, 1, 1);
+            
+            int height = getGroup().getSize().y;
+
+            reg.add(0, height - 1, 5, 1);
+            reg.add(0, height - 2, 3, 1);
+            reg.add(0, height - 3, 2, 1);
+            reg.add(0, height - 4, 1, 1);
+            reg.add(0, height - 5, 1, 1);
+
+            reg.add(getGroup().getSize().x - 5, height - 1, 5, 1);
+            reg.add(getGroup().getSize().x - 3, height - 2, 3, 1);
+            reg.add(getGroup().getSize().x - 2, height - 3, 2, 1);
+            reg.add(getGroup().getSize().x - 1, height - 4, 1, 1);
+            reg.add(getGroup().getSize().x - 1, height - 5, 1, 1);
+            
+            if (yOffset != 0)
+            {
+                reg.add(0,0,getGroup().getSize().x,yOffset);
+            }
+            
+            gc.setClipping(reg);
+            
+            getGroup().drawBackground(gc, 0, 0, getGroup().getSize().x,getGroup().getSize().y); 
+            
+            gc.setClipping((Region)null);
+            reg.dispose();
+        }
+        
+        
+        
 
         // Paint rectangle
         int toggleHeight = 0;

@@ -9,6 +9,7 @@
 package org.eclipse.swt.nebula.widgets.pgroup;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -63,6 +64,12 @@ public class SimpleGroupStrategy extends AbstractGroupStrategy
      */
     public void paint(GC gc)
     {
+        Color back = getGroup().internalGetBackground();
+        if (back != null)
+        {
+            gc.fillRectangle(0,0,getGroup().getSize().x,getGroup().getSize().y);
+        }
+        
         // gc.fillRectangle(0,0,getGroup().getSize().x,getTitleHeight());
 
         if (getGroup().getToggleRenderer() != null)

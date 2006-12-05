@@ -93,7 +93,32 @@ public class FormGroupStrategy extends AbstractGroupStrategy
      */
     public void paint(GC gc)
     {
-
+        Color back = getGroup().internalGetBackground();
+        if (back != null)
+        {
+            gc.fillRectangle(0,0,getGroup().getSize().x,getGroup().getSize().y);
+            
+            Region reg = new Region();
+            reg.add(0, 0, 5, 1);
+            reg.add(0, 1, 3, 1);
+            reg.add(0, 2, 2, 1);
+            reg.add(0, 3, 1, 1);
+            reg.add(0, 4, 1, 1);
+            
+            reg.add(getGroup().getSize().x - 5, 0, 5, 1);
+            reg.add(getGroup().getSize().x - 3, 1, 3, 1);
+            reg.add(getGroup().getSize().x - 2, 2, 2, 1);
+            reg.add(getGroup().getSize().x - 1, 3, 1, 1);
+            reg.add(getGroup().getSize().x - 1, 4, 1, 1);
+            
+            gc.setClipping(reg);
+            
+            getGroup().drawBackground(gc, 0, 0, getGroup().getSize().x,5); 
+            
+            gc.setClipping((Region)null);
+            reg.dispose();
+        }
+        
         Point imagePoint = new Point(0, 0);
 
         if (getGroup().getToggleRenderer() != null)
@@ -131,12 +156,12 @@ public class FormGroupStrategy extends AbstractGroupStrategy
 
         gc.setClipping(reg);
 
-        Color back = gc.getBackground();
+        back = gc.getBackground();
         Color fore = gc.getForeground();
         gc.setForeground(initialBackColor);
         gc.setBackground(getGroup().getParent().getBackground());
         Pattern p = new Pattern(getGroup().getDisplay(), 0, 0, 0, titleHeight,
-                                initialBackColor, 255, getGroup().getParent().getBackground(), 0);
+                                initialBackColor, 255, getGroup().getBackground(), 0);
         gc.setBackgroundPattern(p);
         gc.fillRectangle(0, 0, getGroup().getSize().x, titleHeight);
         p.dispose();
