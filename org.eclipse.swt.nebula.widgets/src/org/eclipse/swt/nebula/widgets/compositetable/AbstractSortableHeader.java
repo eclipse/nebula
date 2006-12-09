@@ -90,7 +90,6 @@ public abstract class AbstractSortableHeader extends Composite {
 	public AbstractSortableHeader(Composite parent, int style) {
 		super(parent, style);
 		makeMouseAdapter();
-		initialize();
 		addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent arg0) {
 				sortUpIndicator.dispose();
@@ -152,7 +151,7 @@ public abstract class AbstractSortableHeader extends Composite {
 
 	private void initialize() {
 		this.labels = new ArrayList();
-		String[] fields = getLabelStrings();
+		String[] fields = labelStrings;
 		for (int i = 0; i < fields.length; i++) {
 			CLabel label = new CLabel(this, SWT.NONE);
 			this.labels.add(label);
@@ -161,12 +160,12 @@ public abstract class AbstractSortableHeader extends Composite {
 		}
 	}
 
-	/**
-	 * Clients must override this method to retrieve the label strings
-	 * 
-	 * @return A String[] where each element represents a column header string
-	 */
-	protected abstract String[] getLabelStrings();
+	private String[] labelStrings;
+	
+	public void setLabelStrings(String[] labelStrings) {
+		this.labelStrings = labelStrings;
+		initialize();
+	}
 
 	public List getLabels() {
 		return this.labels;
