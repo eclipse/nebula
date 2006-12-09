@@ -1743,7 +1743,8 @@ public class InternalCompositeTable extends Composite implements Listener {
 			// currentRow() can be null if it's scrolled off the top or bottom
 			TableRow row = currentRow();
 			Control control = row != null ? row.getRowControl() : null;
-			listener.depart(parent, topRow + currentRow, control);
+			if (control != null)
+				listener.depart(parent, topRow + currentRow, control);
 		}
 	}
 
