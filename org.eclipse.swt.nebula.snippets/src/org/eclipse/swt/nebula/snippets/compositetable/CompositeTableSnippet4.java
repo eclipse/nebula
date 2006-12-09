@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.Shell;
  * @author djo
  */
 public class CompositeTableSnippet4 {
-	// First some data to edit...
+	// First some data...
 	private static class Name {
 		public String first;
 		public String last;
