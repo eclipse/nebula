@@ -41,11 +41,9 @@ public class CompositeTableSnippet4 {
 		new Name("B", "Shingar")
 	};
 
-	// Now, define the table's header and row objects
-	//
-	// A tabular layout is desired, so no layout manager is needed on the header 
-	// or row.  CompositeTable will handle the layout automatically.  However,
-	// if you supply a layout manager, CompositeTable will respect and use it.
+	// Define our header and row objects.  For convenience, we use
+	// abstract classes provided along with CompositeTable that make it
+	// easy to add common behaviors to our header and row objects.
 	
 	private static class Header extends Composite {
 		public Header(Composite parent, int style) {
