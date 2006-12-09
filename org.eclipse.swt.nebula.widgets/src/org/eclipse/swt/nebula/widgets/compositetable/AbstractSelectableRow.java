@@ -66,12 +66,10 @@ public abstract class AbstractSelectableRow extends Composite implements
 
 	public AbstractSelectableRow(Composite parent, int style) {
 		super(parent, style);
-		initialize();
 		addTraverseListener(this);
 		addFocusListener(this);
 		addMouseListener(this);
 		addKeyListener(this);
-		setRowColor(LIST_FOREGROUND, LIST_BACKGROUND);
 	}
 
 	/**
@@ -86,8 +84,6 @@ public abstract class AbstractSelectableRow extends Composite implements
 			label.addMouseListener(this);
 		}
 	}
-
-	protected abstract int getColumnCount();
 
 	public List getLabelsList() {
 		return this.labels;
@@ -115,7 +111,9 @@ public abstract class AbstractSelectableRow extends Composite implements
 		setSelection(model);
 	}
 
-	protected abstract void setSelection(Object model);
+	protected void setSelection(Object model) {
+		// noop
+	}
 
 	private boolean selected = false;
 
@@ -207,6 +205,27 @@ public abstract class AbstractSelectableRow extends Composite implements
 //	       if (e.character == SWT.CR && e.stateMask == 0) {
 //	          runDoubleClickOpenAction();
 //	       }
+	}
+	
+	private int columnCount = -1;
+
+	/**
+	 * Method setColumnCount.  Sets the number of columns in the row.  This
+	 * method must be called <b>exactly</b> once in the overridden constructor.
+	 * 
+	 * @param columnCount The number of columns in the row.
+	 */
+	public void setColumnCount(int columnCount) {
+		if (this.columnCount > -1) {
+			throw new IllegalArgumentException("Cannot setColumnCount more than once");
+		}
+		this.columnCount = columnCount;
+		initialize();
+		setRowColor(LIST_FOREGROUND, LIST_BACKGROUND);
+	}
+	
+	private int getColumnCount() {
+		return columnCount;
 	}
 
 }
