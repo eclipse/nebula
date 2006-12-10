@@ -6,8 +6,6 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.nebula.widgets.compositetable.CompositeTable;
-import org.eclipse.swt.nebula.widgets.compositetable.IDeleteHandler;
-import org.eclipse.swt.nebula.widgets.compositetable.IInsertHandler;
 import org.eclipse.swt.nebula.widgets.compositetable.IRowContentProvider;
 import org.eclipse.swt.nebula.widgets.compositetable.RowFocusAdapter;
 import org.eclipse.swt.widgets.Combo;
@@ -50,7 +48,8 @@ public class CompositeTableSnippet6 {
 		new Address("Andy Taylor", "1913 North Path", "", "Wheaton", "Illinois", "60187"),
 		new Address("George Owen", "1624 Highwood", "", "Glenbrook", "Illinois", "60085"),
 	};
-
+	
+	
 	// Now define the row object.  It's just a regular Composite like you 
 	// might make to edit an Address anywhere else.
 	
