@@ -73,7 +73,7 @@ public class CompositeTableSnippet3 {
 	public static void main (String [] args) {
 	    Display display = new Display ();
 	    Shell shell = new Shell (display);
-	    shell.setText("CompositeTable Snippet 2 -- Edit first/last name");
+	    shell.setText("CompositeTable Snippet 3 -- Edit first/last name");
 	    shell.setLayout(new FillLayout());
 
 	    CompositeTable table = new CompositeTable(shell, SWT.NULL);
