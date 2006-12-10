@@ -10,6 +10,7 @@ import org.eclipse.swt.nebula.widgets.compositetable.IDeleteHandler;
 import org.eclipse.swt.nebula.widgets.compositetable.IInsertHandler;
 import org.eclipse.swt.nebula.widgets.compositetable.IRowContentProvider;
 import org.eclipse.swt.nebula.widgets.compositetable.RowFocusAdapter;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -44,10 +45,10 @@ public class CompositeTableSnippet6 {
 	}
 	
 	protected static Address[] addressList = new Address[] {
-		new Address("John Wright", "810 Trail's End", "", "Glen Ellyn", "IL", "60017"),
-		new Address("Anna Smith", "600 Milky Spore Rd", "", "Addison", "IL", "60010"),
-		new Address("Andy Taylor", "1913 North Path", "", "Wheaton", "IL", "60187"),
-		new Address("George Owen", "1624 Highwood", "", "Glenbrook", "IL", "60085"),
+		new Address("John Wright", "810 Trail's End", "", "Glen Ellyn", "Illinois", "60017"),
+		new Address("Anna Smith", "600 Milky Spore Rd", "", "Addison", "Illinois", "60010"),
+		new Address("Andy Taylor", "1913 North Path", "", "Wheaton", "Illinois", "60187"),
+		new Address("George Owen", "1624 Highwood", "", "Glenbrook", "Illinois", "60085"),
 	};
 
 	// Now define the row object.  It's just a regular Composite like you 
@@ -70,7 +71,9 @@ public class CompositeTableSnippet6 {
 			new Label(this, SWT.NULL).setText("City:");
 			new Label(this, SWT.NULL).setText("State:");
 			city = new Text(this, SWT.BORDER);
-			state = new Text(this, SWT.BORDER);
+			city.setLayoutData(fillGD());
+			state = new Combo(this, SWT.BORDER);
+			state.setLayoutData(fillGD());
 			new Label(this, SWT.NULL).setText("Zip:");
 			new Label(this, SWT.NULL);
 			postalCode = new Text(this, SWT.BORDER);
@@ -83,11 +86,16 @@ public class CompositeTableSnippet6 {
 			return gd;
 		}
 		
+		private GridData fillGD() {
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
+			return gd;
+		}
+		
 		public final Text name;
 		public final Text address1;
 		public final Text address2;
 		public final Text city;
-		public final Text state;
+		public final Combo state;
 		public final Text postalCode;
 	}
 	
