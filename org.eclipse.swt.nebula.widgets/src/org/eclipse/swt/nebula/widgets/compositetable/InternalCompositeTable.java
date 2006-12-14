@@ -755,6 +755,34 @@ public class InternalCompositeTable extends Composite implements Listener {
 			fireRefreshEvent(topRow + row, rowControl.getRowControl());
 			++row;
 		}
+      resetFocus();
+	}
+
+	/**
+	 * Make sure that something sane inside the table has focus.
+	 */
+	private void resetFocus() {
+		/*
+		 * FEATURE IN WINDOWS: When we refresh all rows and one already has
+		 * focus, Windows gets into a schizophrenic state where some part of
+		 * Windows thinks that the current control has focus and another part of
+		 * Windows thinks that the current control doesn't have focus.
+		 * 
+		 * The symptom is that the current control stops receiving events from
+		 * Windows but Windows still thinks the current control has focus and so
+		 * it won't give the control complete focus if you click on it.
+		 * 
+		 * The workaround is to set the focus away from the currently-focused
+		 * control and to set it back.
+		 */
+		this.setFocus();
+		if (currentRow < numRowsVisible) {
+			internalSetSelection(currentColumn, currentRow, false);
+		} else if (currentRow > 0 && numRowsVisible > 0) {
+			internalSetSelection(currentColumn, numRowsVisible-1, true);
+		} else {
+			// noop; nothing's visible to focus
+		}
 	}
 
 	/**
