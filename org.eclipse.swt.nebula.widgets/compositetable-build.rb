@@ -5,7 +5,11 @@
 # project is checked out in the same workspace.  Also assumes that it is
 # running in a Unix-like environment or in Cygwin.
 
+# Other Nebula committers--feel free to make copies/versions for your controls
+
 # ---Configuration variables---
+
+@RELEASE_VERSION='0.8.0'
 
 @JAR_EXE='/cygdrive/C/java/bin/jar'
 @ZIP_EXE='/usr/bin/zip'
@@ -13,11 +17,20 @@
 @RM_EXE='/usr/bin/rm'
 @MKDIR_EXE='/usr/bin/mkdir'
 @JAVA_EXE='/cygdrive/C/java/bin/java'
+@JAVADOC_EXE='/cygdrive/C/java/bin/javadoc'
+
+@COMPOSITETABLE_JAR='nebula_compositetable.jar'
+
+@CLASSPATH="#{@COMPOSITETABLE_JAR};../org.eclipse.swt.nebula.snippets/bin;c:/eclipse/eclipse/plugins/org.eclipse.swt_3.2.1.v3235e.jar;C:/eclipse/eclipse/plugins/org.eclipse.swt.win32.win32.x86_3.2.1.v3235.jar"
 @SWT_LIB_PATH='C:\eclipse\eclipse\configuration\org.eclipse.osgi\bundles\79\1\.cp'
 
-@COMPOSITETABLE_JAR='compositetable.jar'
+@DOWNLOAD_ZIP='nebula_compositetable_beta.zip'
+
 
 @README=<<README
+CompositeTable #{@RELEASE_VERSION}, an Eclipse Nebula control
+http://www.eclipse.org/nebula
+
 Welcome to CompositeTable, a Nebula control sponsored by Coconut Palm Software!
 Coconut Palm Softwre may be found at http://www.coconut-palm-software.com
 
@@ -28,15 +41,18 @@ For CompositeTable support, please post to the eclipse.technology.nebula
 newsgroup with [CompositeTable] in the subject.
 
 Inside this archive you will find the JAR library for CompositeTable 
-(#{@COMPOSITETABLE_JAR}), the sources (src.zip), and a copy of the current 
-snippets (snippets.zip) as of the time when the CompositeTable library was 
-built.
+(#{@COMPOSITETABLE_JAR}), the sources (src.zip), JavaDoc (JavaDoc folder), 
+and a copy of the current snippets (snippets.zip) as of the time when this
+version (#{@RELEASE_VERSION}) of the CompositeTable library was built.
 README
 
 # ---End configuration---
 
 @ORIG="/org/eclipse/swt/nebula/widgets/"
 @SNIPPETS="/org/eclipse/swt/nebula/snippets/compositetable"
+
+# Remove old download zip if it exists
+print `#{@RM_EXE} -f #{@DOWNLOAD_ZIP}`
 
 # Create binary jar
 print `#{@RM_EXE} -fr bin_o`
@@ -58,12 +74,19 @@ end
 # Create README file
 File.open('README', 'w') {|f| f << @README }
 
+# Create JavaDoc
+command="#{@JAVADOC_EXE} -classpath '#{@CLASSPATH};./bin' -d JavaDoc -sourcepath src org.eclipse.swt.nebula.widgets.compositetable"
+print command
+print `#{command}`
+
 # Create CompositeTable download zip
-print `#{@ZIP_EXE} compositetable.zip #{@COMPOSITETABLE_JAR} src.zip snippets.zip README`
+print `#{@ZIP_EXE} #{@DOWNLOAD_ZIP} #{@COMPOSITETABLE_JAR} src.zip snippets.zip JavaDoc README`
 
 # Make sure we can run using the JAR we just built
-print `#{@JAVA_EXE} -classpath '#{@COMPOSITETABLE_JAR};../org.eclipse.swt.nebula.snippets/bin;c:/eclipse/eclipse/plugins/org.eclipse.swt_3.2.1.v3235e.jar;C:/eclipse/eclipse/plugins/org.eclipse.swt.win32.win32.x86_3.2.1.v3235.jar'  -Djava.library.path='#{@SWT_LIB_PATH}' org.eclipse.swt.nebula.snippets.compositetable.CompositeTableSnippet0`
+command="#{@JAVA_EXE} -classpath '#{@CLASSPATH}'  -Djava.library.path='#{@SWT_LIB_PATH}' org.eclipse.swt.nebula.snippets.compositetable.CompositeTableSnippet0"
+print command
+print `#{command}`
 
 # cleanup
-print `#{@RM_EXE} -fr #{@COMPOSITETABLE_JAR} src.zip snippets.zip README bin_o`
+print `#{@RM_EXE} -fr #{@COMPOSITETABLE_JAR} src.zip snippets.zip README bin_o JavaDoc`
 
