@@ -9,7 +9,7 @@
  * Contributors:
  *     David Orme     - Initial API and implementation
  */
-package org.eclipse.swt.nebula.widgets.compositetable.calendar;
+package org.eclipse.swt.nebula.snippets.compositetable;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;

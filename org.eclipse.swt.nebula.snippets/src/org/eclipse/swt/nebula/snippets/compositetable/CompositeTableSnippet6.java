@@ -51,30 +51,39 @@ public class CompositeTableSnippet6 {
 	
 	
 	// Now define the row object.  It's just a regular Composite like you 
-	// might make to edit an Address anywhere else.
+	// might use to edit an Address anywhere else.
 	
-	private static class Row extends Composite {
-		public Row(Composite parent, int style) {
+	private static class AddressEditor extends Composite {
+		
+		public AddressEditor(Composite parent, int style) {
 			super(parent, style | SWT.BORDER);
+			
 			setLayout(new GridLayout(2, true));
 			new Label(this, SWT.NULL).setText("Name:");
 			new Label(this, SWT.NULL);
+			
 			name = new Text(this, SWT.BORDER);
 			name.setLayoutData(spanGD());
+			
 			new Label(this, SWT.NULL).setText("Address:");
 			new Label(this, SWT.NULL);
+			
 			address1 = new Text(this, SWT.BORDER);
 			address1.setLayoutData(spanGD());
 			address2 = new Text(this, SWT.BORDER);
 			address2.setLayoutData(spanGD());
+			
 			new Label(this, SWT.NULL).setText("City:");
 			new Label(this, SWT.NULL).setText("State:");
+			
 			city = new Text(this, SWT.BORDER);
 			city.setLayoutData(fillGD());
 			state = new Combo(this, SWT.BORDER);
 			state.setLayoutData(fillGD());
+			
 			new Label(this, SWT.NULL).setText("Zip:");
 			new Label(this, SWT.NULL);
+			
 			postalCode = new Text(this, SWT.BORDER);
 			postalCode.setLayoutData(spanGD());
 		}
@@ -107,14 +116,14 @@ public class CompositeTableSnippet6 {
 	    shell.setLayout(new FillLayout());
 
 	    CompositeTable table = new CompositeTable(shell, SWT.NULL);
-	    Row row = new Row(table, SWT.NULL);  // No header?  No problem.
+	    AddressEditor row = new AddressEditor(table, SWT.NULL);  // No header?  No problem.
 	    table.setRunTime(true);
 	    table.setNumRowsInCollection(addressList.length);
 	    
 	    // Note the JFace-like virtual table API
 	    table.addRowContentProvider(new IRowContentProvider() {
 			public void refresh(CompositeTable sender, int currentObjectOffset, Control rowControl) {
-				Row row = (Row) rowControl;
+				AddressEditor row = (AddressEditor) rowControl;
 				row.name.setText(addressList[currentObjectOffset].name);
 				row.address1.setText(addressList[currentObjectOffset].address1);
 				row.address2.setText(addressList[currentObjectOffset].address2);
@@ -126,7 +135,7 @@ public class CompositeTableSnippet6 {
 	    
 	    table.addRowFocusListener(new RowFocusAdapter() {
 			public void depart(CompositeTable sender, int currentObjectOffset, Control rowControl) {
-				Row row = (Row) rowControl;
+				AddressEditor row = (AddressEditor) rowControl;
 				addressList[currentObjectOffset].name = row.name.getText();
 				addressList[currentObjectOffset].address1 = row.address1.getText();
 				addressList[currentObjectOffset].address2 = row.address2.getText();

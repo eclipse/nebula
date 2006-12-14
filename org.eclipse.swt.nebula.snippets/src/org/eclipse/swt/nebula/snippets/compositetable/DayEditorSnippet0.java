@@ -68,7 +68,7 @@ public class DayEditorSnippet0 {
 				new Event(time(10, 00), time(13, 15), "Meet with customer"),
 				new Event(time(12, 45), time(14, 15), "RC1 due"),
 				new Event(time(13, 45), time(14, 15), "Way too much work"),
-				new Event(time(10, 00), time(13, 30), "Callisto meeting")},
+				new Event(time(10, 00), time(13, 30), "Europa meeting")},
 			{new Event("EclipseCon")},
 			{new Event(time(8, 30), time(11, 30), "Stand-up meeting"),
 				new Event(time(10, 00), time(12, 15), "Meet with customer1"),
@@ -209,7 +209,7 @@ public class DayEditorSnippet0 {
 
 	private void createShell() {
 		sShell = new Shell();
-		sShell.setText("DayEditorSnippet0 -- Load data into DayEditor");
+		sShell.setText("DayEditorSnippet0 -- Display calendar events in DayEditor");
 		sShell.setLayout(new GridLayout());
 		createNavBar();
 		createDayEditor();
