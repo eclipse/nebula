@@ -39,10 +39,6 @@
 
 
 @README=<<README
-CompositeTable #{@RELEASE_VERSION}, an Eclipse Nebula control
-http://www.eclipse.org/nebula
-
-
 Copyright (C) 2005, 2006 by Coconut Palm Software, Inc.  
 <djo@coconut-palm-software.com>
 
@@ -55,6 +51,10 @@ Contributors:
      Coconut Palm Software, Inc.  - Initial API, implementation
      Pampered Chef, Inc.          - Minor enhancements, bug fixes
 
+-------------------------------------------------------------------------------
+
+CompositeTable #{@RELEASE_VERSION}, an Eclipse Nebula control
+http://www.eclipse.org/nebula
 
 Thanks for trying CompositeTable!  We hope you like it and that it meets your 
 needs in an advanced tabular input control for SWT.
