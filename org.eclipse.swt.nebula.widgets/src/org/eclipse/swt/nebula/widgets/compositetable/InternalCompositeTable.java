@@ -775,11 +775,11 @@ public class InternalCompositeTable extends Composite implements Listener {
 		 * The workaround is to set the focus away from the currently-focused
 		 * control and to set it back.
 		 */
-		if (numRowsVisible < 1) {
+		if (numRowsVisible < 1 || currentRow < 0) {
 			return;
 		}
 		Control control = null;
-		if (currentRow < numRowsVisible || currentRow < 0) {
+		if (currentRow < numRowsVisible) {
 			control = getControl(currentColumn, currentRow);
 		} else if (currentRow > 0) {
 			control = getControl(currentColumn, numRowsVisible - 1);
