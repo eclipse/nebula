@@ -9,7 +9,7 @@
 
 # ---Configuration variables---
 
-@RELEASE_VERSION='0.8.0'
+@RELEASE_VERSION='0.8.1'
 
 @JAR_EXE='/cygdrive/C/java/bin/jar'
 @ZIP_EXE='/usr/bin/zip'
@@ -32,7 +32,7 @@ CompositeTable #{@RELEASE_VERSION}, an Eclipse Nebula control
 http://www.eclipse.org/nebula
 
 Welcome to CompositeTable, a Nebula control sponsored by Coconut Palm Software!
-Coconut Palm Softwre may be found at http://www.coconut-palm-software.com
+Coconut Palm Software may be found at http://www.coconut-palm-software.com
 
 Thanks for trying CompositeTable!  I hope you like it and that it meets your 
 needs in an advanced tabular input control for SWT.
