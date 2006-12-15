@@ -1088,7 +1088,7 @@ public class DayEditor extends AbstractEventEditor implements IEventEditor {
 		gc.setTime(startDate);
 
 		SimpleDateFormat formatter = new SimpleDateFormat("EE, MMM d");
-		formatter.applyPattern(formatter.toLocalizedPattern());
+		formatter.applyLocalizedPattern(formatter.toLocalizedPattern());
 		
 		for (Iterator iter = columns.iterator(); iter.hasNext();) {
 			CLabel headerLabel = (CLabel) iter.next();
