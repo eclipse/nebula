@@ -154,6 +154,7 @@ public abstract class AbstractSortableHeader extends Composite {
 		String[] fields = labelStrings;
 		for (int i = 0; i < fields.length; i++) {
 			CLabel label = new CLabel(this, SWT.NONE);
+			if (label.isDisposed()) return;
 			this.labels.add(label);
 			label.setText(fields[i]);
 			label.addMouseListener(this.sortMouseAdapter);
