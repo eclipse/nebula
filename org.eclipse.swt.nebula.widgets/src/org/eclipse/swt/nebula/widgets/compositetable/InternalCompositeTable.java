@@ -779,7 +779,7 @@ public class InternalCompositeTable extends Composite implements Listener {
 			return;
 		}
 		Control control = null;
-		if (currentRow < numRowsVisible) {
+		if (currentRow < numRowsVisible || currentRow < 0) {
 			control = getControl(currentColumn, currentRow);
 		} else if (currentRow > 0) {
 			control = getControl(currentColumn, numRowsVisible - 1);
