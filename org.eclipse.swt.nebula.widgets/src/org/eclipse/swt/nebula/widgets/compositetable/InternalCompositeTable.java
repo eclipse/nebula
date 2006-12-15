@@ -497,6 +497,9 @@ public class InternalCompositeTable extends Composite implements Listener {
 			Constructor constructor) {
 		Control result = null;
 		try {
+			if (!constructor.isAccessible()) {
+				constructor.setAccessible(true);
+			}
 			result = (Control) constructor.newInstance(new Object[] { parent,
 					new Integer(SWT.NULL) });
 		} catch (Exception e) {
@@ -756,38 +759,38 @@ public class InternalCompositeTable extends Composite implements Listener {
 	}
 
 	/**
-    * Make sure that something sane inside the table has focus.
-    */
-   private void resetFocus() {
-      /*
-       * FEATURE IN WINDOWS:  When we refresh all rows and one already has
-       * focus, Windows gets into a schizophrenic state where some part of
-       * Windows thinks that the current control has focus and another part
-       * of Windows thinks that the current control doesn't have focus.
-       * 
-       * The symptom is that the current control stops receiving events from
-       * Windows but Windows still thinks the current control has focus and
-       * so it won't give the control complete focus if you click on it.
-       * 
-       * The workaround is to set the focus away from the currently-focused
-       * control and to set it back.
-       */
-      if (numRowsVisible < 1) {
-         return;
-      }
-      Control control = null;
-      if (currentRow < numRowsVisible) {
-         control = getControl(currentColumn, currentRow);
-      } else if (currentRow > 0) {
-         control = getControl(currentColumn, numRowsVisible-1);
-      }
-      if (control != null && control.isFocusControl()) {
-         this.setFocus();
-         deferredSetFocus(control, true);
-      }
-   }
+	 * Make sure that something sane inside the table has focus.
+	 */
+	private void resetFocus() {
+		/*
+		 * FEATURE IN WINDOWS: When we refresh all rows and one already has
+		 * focus, Windows gets into a schizophrenic state where some part of
+		 * Windows thinks that the current control has focus and another part of
+		 * Windows thinks that the current control doesn't have focus.
+		 * 
+		 * The symptom is that the current control stops receiving events from
+		 * Windows but Windows still thinks the current control has focus and so
+		 * it won't give the control complete focus if you click on it.
+		 * 
+		 * The workaround is to set the focus away from the currently-focused
+		 * control and to set it back.
+		 */
+		if (numRowsVisible < 1) {
+			return;
+		}
+		Control control = null;
+		if (currentRow < numRowsVisible) {
+			control = getControl(currentColumn, currentRow);
+		} else if (currentRow > 0) {
+			control = getControl(currentColumn, numRowsVisible - 1);
+		}
+		if (control != null && control.isFocusControl()) {
+			this.setFocus();
+			deferredSetFocus(control, true);
+		}
+	}
 
-   /**
+	/**
 	 * Insert a new row object at the specified 0-based position relatve to the
 	 * topmost row.
 	 * 
@@ -1773,7 +1776,8 @@ public class InternalCompositeTable extends Composite implements Listener {
 			// currentRow() can be null if it's scrolled off the top or bottom
 			TableRow row = currentRow();
 			Control control = row != null ? row.getRowControl() : null;
-			listener.depart(parent, topRow + currentRow, control);
+			if (control != null)
+				listener.depart(parent, topRow + currentRow, control);
 		}
 	}
 
@@ -2118,9 +2122,7 @@ public class InternalCompositeTable extends Composite implements Listener {
 		}
 		Display.getCurrent().asyncExec(new Runnable() {
 			public void run() {
-				if (toFocus.isDisposed()) {
-					return;
-				}
+				if (toFocus.isDisposed()) return;
 				toFocus.setFocus();
 				if (rowChange) {
 					fireRowArriveEvent();
