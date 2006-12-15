@@ -1,4 +1,15 @@
 #!/usr/bin/ruby
+#
+#  Copyright (C) 2006 by Coconut Palm Software, Inc.  <djo@coconut-palm-software.com>
+#  
+#  All rights reserved. This program and the accompanying materials
+#  are made available under the terms of the Eclipse Public License v1.0
+#  which accompanies this distribution, and is available at
+#  http://www.eclipse.org/legal/epl-v10.html
+# 
+#  Contributors:
+#      Coconut Palm Software, Inc.     - Initial API and implementation
+#
 
 # Auto-build script for creating compositetable.zip download.  Assumes
 # that CWD is the root of the Nebula widgets project and that the snippets
@@ -31,10 +42,21 @@
 CompositeTable #{@RELEASE_VERSION}, an Eclipse Nebula control
 http://www.eclipse.org/nebula
 
-Welcome to CompositeTable, a Nebula control sponsored by Coconut Palm Software!
-Coconut Palm Software may be found at http://www.coconut-palm-software.com
 
-Thanks for trying CompositeTable!  I hope you like it and that it meets your 
+Copyright (C) 2005, 2006 by Coconut Palm Software, Inc.  
+<djo@coconut-palm-software.com>
+
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/epl-v10.html
+ 
+Contributors:
+     Coconut Palm Software, Inc.  - Initial API, implementation
+     Pampered Chef, Inc.          - Minor enhancements, bug fixes
+
+
+Thanks for trying CompositeTable!  We hope you like it and that it meets your 
 needs in an advanced tabular input control for SWT.
 
 For CompositeTable support, please post to the eclipse.technology.nebula 
@@ -80,7 +102,7 @@ print command
 print `#{command}`
 
 # Create CompositeTable download zip
-print `#{@ZIP_EXE} #{@DOWNLOAD_ZIP} #{@COMPOSITETABLE_JAR} src.zip snippets.zip JavaDoc README`
+print `#{@ZIP_EXE} #{@DOWNLOAD_ZIP} #{@COMPOSITETABLE_JAR} src.zip snippets.zip JavaDoc README epl-v10.html`
 
 # Make sure we can run using the JAR we just built
 command="#{@JAVA_EXE} -classpath '#{@CLASSPATH}'  -Djava.library.path='#{@SWT_LIB_PATH}' org.eclipse.swt.nebula.snippets.compositetable.CompositeTableSnippet0"
