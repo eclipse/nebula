@@ -9,7 +9,7 @@
  *     The Pampered Chef - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.swt.nebula.widgets.compositetable.day.internal;
+package org.eclipse.swt.nebula.widgets.compositetable.day;
 
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Image;

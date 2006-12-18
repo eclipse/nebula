@@ -35,7 +35,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.nebula.widgets.compositetable.day.internal.ICalendarableItemControl;
+import org.eclipse.swt.nebula.widgets.compositetable.day.ICalendarableItemControl;
 import org.eclipse.swt.nebula.widgets.compositetable.timeeditor.CalendarableItem;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;

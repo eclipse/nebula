@@ -43,7 +43,6 @@ import org.eclipse.swt.nebula.widgets.compositetable.ScrollEvent;
 import org.eclipse.swt.nebula.widgets.compositetable.ScrollListener;
 import org.eclipse.swt.nebula.widgets.compositetable.day.internal.DayEditorCalendarableItemControl;
 import org.eclipse.swt.nebula.widgets.compositetable.day.internal.EventLayoutComputer;
-import org.eclipse.swt.nebula.widgets.compositetable.day.internal.ICalendarableItemControl;
 import org.eclipse.swt.nebula.widgets.compositetable.day.internal.TimeSlice;
 import org.eclipse.swt.nebula.widgets.compositetable.day.internal.TimeSlot;
 import org.eclipse.swt.nebula.widgets.compositetable.timeeditor.AbstractEventEditor;

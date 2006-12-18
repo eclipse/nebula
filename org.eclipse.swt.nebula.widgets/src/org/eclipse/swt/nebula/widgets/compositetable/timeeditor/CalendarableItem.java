@@ -21,7 +21,7 @@ import java.util.Map;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.nebula.widgets.compositetable.day.internal.ICalendarableItemControl;
+import org.eclipse.swt.nebula.widgets.compositetable.day.ICalendarableItemControl;
 
 /**
  * This class represents an event that can be displayed on a calendar.
