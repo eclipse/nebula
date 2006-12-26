@@ -812,20 +812,15 @@ public class MonthCalendarableItemControl extends Canvas
 		if (t == null) return null;
 		int w = gc.textExtent(ELLIPSIS, DRAW_FLAGS).x;
 		int l = t.length();
-		int pivot = l/2;
-		int s = pivot;
-		int e = pivot+1;
-		while (s >= 0 && e < l) {
+		int s = l;
+		while (s >= 0) {
 			String s1 = t.substring(0, s);
-			String s2 = t.substring(e, l);
 			int l1 = gc.textExtent(s1, DRAW_FLAGS).x;
-			int l2 = gc.textExtent(s2, DRAW_FLAGS).x;
-			if (l1+w+l2 < width) {
-				t = s1 + ELLIPSIS + s2;
+			if (l1+w < width) {
+				t = s1 + ELLIPSIS;
 				break;
 			}
 			s--;
-			e++;
 		}
 		return t;
 	}
