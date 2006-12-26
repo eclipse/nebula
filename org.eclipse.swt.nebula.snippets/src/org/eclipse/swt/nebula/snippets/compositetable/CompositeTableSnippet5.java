@@ -46,6 +46,16 @@ public class CompositeTableSnippet5 {
 		new Name("B", "Shingar")
 	};
 	
+	static class Opposite implements Comparator {
+		private Comparator c;
+		public Opposite(Comparator c) {
+			this.c = c;
+		}
+		public int compare(Object o1, Object o2) {
+			return -1 * c.compare(o1, o2);
+		}
+	}
+	
 	static final Comparator firstNameAscending = new Comparator() {
 		public int compare(Object o1, Object o2) {
 			Name name1 = (Name) o1;
@@ -53,14 +63,7 @@ public class CompositeTableSnippet5 {
 			return name1.first.compareToIgnoreCase(name2.first);
 		};
 	};
-
-	static final Comparator firstNameDescending = new Comparator() {
-		public int compare(Object o1, Object o2) {
-			Name name1 = (Name) o1;
-			Name name2 = (Name) o2;
-			return -1 * name1.first.compareToIgnoreCase(name2.first);
-		};
-	};
+	static final Comparator firstNameDescending = new Opposite(firstNameAscending);
 
 	static final Comparator lastNameAscending = new Comparator() {
 		public int compare(Object o1, Object o2) {
@@ -69,14 +72,7 @@ public class CompositeTableSnippet5 {
 			return name1.last.compareToIgnoreCase(name2.last);
 		};
 	};
-
-	static final Comparator lastNameDescending = new Comparator() {
-		public int compare(Object o1, Object o2) {
-			Name name1 = (Name) o1;
-			Name name2 = (Name) o2;
-			return -1 * name1.last.compareToIgnoreCase(name2.last);
-		};
-	};
+	static final Comparator lastNameDescending = new Opposite(lastNameAscending);
 
 	// Define our header and row objects.  For convenience, we use
 	// abstract classes provided along with CompositeTable that make it
@@ -149,4 +145,5 @@ public class CompositeTableSnippet5 {
 	    }
 	    display.dispose ();
 	}
+
 }
