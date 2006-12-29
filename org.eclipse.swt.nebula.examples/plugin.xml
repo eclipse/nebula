@@ -21,6 +21,9 @@
       <tab
             class="org.eclipse.swt.nebula.examples.parts.PShelfExampleTab"
             name="PShelf"/>
+      <tab
+            class="org.eclipse.swt.nebula.examples.parts.CDateTimeExampleTab"
+            name="CDateTime"/>
    </extension>
 
 </plugin>
