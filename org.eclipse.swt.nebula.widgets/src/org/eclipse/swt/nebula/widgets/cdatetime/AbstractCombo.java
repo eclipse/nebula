@@ -129,7 +129,7 @@ public abstract class AbstractCombo extends Composite {
 	
 	protected Button button = null;
 	protected Text text = null;
-	protected Shell contentShell = null;
+	private Shell contentShell = null;
 	private Control content;
 
 	private boolean dontOpen = false;
@@ -198,7 +198,7 @@ public abstract class AbstractCombo extends Composite {
 			leftAlign = ((style & CDT.BUTTON_LEFT) != 0);
 
 			int textStyle = SWT.SINGLE;
-			if(gtk) textStyle |= SWT.BORDER;
+			if(!win32) textStyle |= SWT.BORDER;
 			if((style & CDT.TEXT_RIGHT) != 0) textStyle |= SWT.RIGHT_TO_LEFT;
 			else if((style & CDT.TEXT_LEFT) != 0) textStyle |= SWT.LEFT_TO_RIGHT;
 	
@@ -438,6 +438,12 @@ public abstract class AbstractCombo extends Composite {
 		return text.getMenu();
 	}
 
+	protected Composite getParentForContent() {
+		if(isSimple()) return this;
+		if(isDropDown()) return getContentShell();
+		return null; // not supposed to have content unless either simple or drop_down...
+	}
+
 	protected Shell getContentShell() {
 		checkWidget();
 		if(contentShell == null) createContentShell();
@@ -576,8 +582,10 @@ public abstract class AbstractCombo extends Composite {
 			// chance for subclasses to do something before the shell becomes visible
 			aboutToOpen(contentShell);
 			
+//			contentShell.setBounds(100, 100, 500, 500);
+//			contentShell.layout(true);
 			contentShell.setVisible(true);
-			content.setFocus();
+//			content.setFocus();
 			this.open = true;
 		}
 		if(buttonVisibility == CDT.BUTTON_AUTO) {
@@ -719,13 +727,6 @@ public abstract class AbstractCombo extends Composite {
 		}
 		this.content = contents;
 
-		if(simple) {
-			this.content.setParent(this);
-		} else {
-			if(contentShell == null) createContentShell();
-			this.content.setParent(contentShell);
-		}
-		
 		int[] contentsEvents = { SWT.FocusIn };
 		for(int i = 0; i < contentsEvents.length; i++) {
 			for(Iterator iter = getContentControls().iterator(); iter.hasNext(); ) {
