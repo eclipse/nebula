@@ -249,6 +249,8 @@ public class Grid extends Canvas
      * Height of each row.
      */
     private int rowHeight = 1;
+    
+    private boolean userModifiedRowHeight = false;
 
     /**
      * Width of each row header.
@@ -438,6 +440,11 @@ public class Grid extends Canvas
     private GC sizingGC;
 
     private Color backgroundColor;
+    
+    /**
+     * True if the widget is being disposed.  When true, events are not fired.
+     */
+    private boolean disposing = false;
     
     /**
      * Filters out unnecessary styles, adds mandatory styles and generally
@@ -1544,6 +1551,30 @@ public class Grid extends Canvas
         checkWidget();
         return rowHeight;
     }
+    
+    /**
+     * Sets the height of each row.
+     * 
+     * @param height height of each row
+     * @throws IllegalArgumentException
+     * <ul>
+     * <li>ERROR_INVALID_ARGUMENT - if the height is < 1</li> 
+     * </ul>
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
+     */
+    public void setItemHeight(int height)
+    {
+        if (height < 1)
+            SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+        rowHeight = height;
+        setScrollValuesObsolete();
+        redraw();
+    }
 
     /**
      * Returns a (possibly empty) array of {@code NGridItem}s which are the
@@ -1937,7 +1968,7 @@ public class Grid extends Canvas
     {
         checkWidget();
 
-        if (cellSelectionEnabled)
+        if (!cellSelectionEnabled)
         {
             if (selectedItems.size() == 0)
             {
@@ -2249,6 +2280,8 @@ public class Grid extends Canvas
         
         return selectedCells.contains(cell);
     }
+    
+    
     
     /**
      * Removes the item from the receiver at the given zero-relative index.
@@ -4160,6 +4193,8 @@ public class Grid extends Canvas
 
                         column.getCellRenderer().setBounds(x, y, width, rowHeight);
 
+                        e.gc.setClipping(new Rectangle(x -1,y -1,width +1,rowHeight + 2));
+                        
                         column.getCellRenderer().setRow(i + 1);
 
                         column.getCellRenderer().setSelected(selectedItems.contains(item));
@@ -4190,6 +4225,8 @@ public class Grid extends Canvas
                         }
 
                         column.getCellRenderer().paint(e.gc, item);
+                        
+                        e.gc.setClipping((Rectangle)null);
 
                         x += width;
 
@@ -5178,12 +5215,14 @@ public class Grid extends Canvas
     }
     
     private void onDispose(Event event)
-    {
+    {   
         //We only want to dispose of our items and such *after* anybody else who may have been 
         //listening to the dispose has had a chance to do whatever.
         removeListener(SWT.Dispose, disposeListener);
         notifyListeners(SWT.Dispose, event);
         event.type = SWT.None;
+        
+        disposing = true;
         
         cellHeaderSelectionBackground.dispose();
         removeAll();
@@ -5736,6 +5775,11 @@ public class Grid extends Canvas
      */
     private void onKeyDown(Event e)
     {  
+        if (focusColumn == null)
+        {
+            focusColumn = getColumn(0);
+            intendedFocusColumn = focusColumn;
+        }
         
         if (e.character == '\r' && focusItem != null)
         {
@@ -6394,16 +6438,6 @@ public class Grid extends Canvas
     }
 
     /**
-     * Returns the row height.
-     * 
-     * @return Returns the rowHeight.
-     */
-    int getRowHeight()
-    {
-        return rowHeight;
-    }
-
-    /**
      * Inserts a new column into the table.
      * 
      * @param column new column
@@ -6493,7 +6527,7 @@ public class Grid extends Canvas
             row = index;
         }
 
-        if (items.size() == 1)
+        if (items.size() == 1 && !userModifiedRowHeight)
             rowHeight = computeRowHeight(sizingGC);
 
         rowHeaderWidth = Math.max(rowHeaderWidth,rowHeaderRenderer
@@ -6520,7 +6554,8 @@ public class Grid extends Canvas
         if (selectedItems.contains(item))
         {
             selectedItems.remove(item);
-            notifyListeners(SWT.Selection,new Event());
+            if (!disposing)
+                notifyListeners(SWT.Selection,new Event());
         }
 
         if (focusItem == item)

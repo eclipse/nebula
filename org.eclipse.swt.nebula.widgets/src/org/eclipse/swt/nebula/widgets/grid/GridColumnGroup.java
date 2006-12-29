@@ -166,6 +166,21 @@ public class GridColumnGroup extends Item
         newAllColumns[newAllColumns.length - 1] = column;
         columns = newAllColumns;
     }
+    
+    void removeColumn(GridColumn col)
+    {
+        GridColumn[] newAllColumns = new GridColumn[columns.length - 1];
+        int x = 0;
+        for (int i = 0; i < columns.length; i++)
+        {
+            if (columns[i] != col)
+            {
+                newAllColumns[x] = columns[i];
+                x ++;
+            }
+        }
+        columns = newAllColumns;
+    }
 
     /**
      * Returns the columns within this group.

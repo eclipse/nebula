@@ -462,7 +462,7 @@ public class GridItem extends Item
             width += parent.getColumn(columnIndex + i).getWidth();
         }
 
-        int height = parent.getRowHeight();
+        int height = parent.getItemHeight();
 
         return new Rectangle(origin.x, origin.y, width - 1, height);
     }
@@ -671,6 +671,7 @@ public class GridItem extends Item
      */
     public Image getImage()
     {
+        checkWidget();
         return getImage(0);
     }
 
@@ -714,7 +715,52 @@ public class GridItem extends Item
      */
     public GridItem getItem(int index)
     {
+        checkWidget();
         return (GridItem)children.get(index);
+    }
+    
+    /**
+     * Returns the number of items contained in the receiver
+     * that are direct item children of the receiver.
+     *
+     * @return the number of items
+     *
+     * @throws SWTException
+     * <ul>
+     *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+     * </ul>
+     */
+    public int getItemCount()
+    {
+        checkWidget();
+        return children.size();
+    }
+    
+    /**
+     * Searches the receiver's list starting at the first item
+     * (index 0) until an item is found that is equal to the 
+     * argument, and returns the index of that item. If no item
+     * is found, returns -1.
+     *
+     * @param item the search item
+     * @return the index of the item
+     *
+     * @exception IllegalArgumentException <ul>
+     *    <li>ERROR_NULL_ARGUMENT - if the item is null</li>
+     *    <li>ERROR_INVALID_ARGUMENT - if the item has been disposed</li>
+     * </ul>
+     * @exception SWTException <ul>
+     *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+     * </ul>
+     */
+    public int indexOf (GridItem item) {
+        checkWidget ();
+        if (item == null) SWT.error (SWT.ERROR_NULL_ARGUMENT);
+        if (item.isDisposed()) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+
+        return children.indexOf(item);
     }
 
     /**

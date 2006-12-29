@@ -131,19 +131,10 @@ public class DefaultCellRenderer extends GridCellRenderer
         if (image != null)
         {
             int y = getBounds().y;
-            int height = image.getBounds().height;
-            
+ 
             y += (getBounds().height - image.getBounds().height)/2;
-            
-            if (height > getBounds().height)
-            {
-                height = getBounds().height;
-                y = getBounds().y;
-            }
-            
-            
-            
-            gc.drawImage(image, 0, 0, image.getBounds().width, height, getBounds().x + x, y, image.getBounds().width, getBounds().height);
+                            
+            gc.drawImage(image, getBounds().x + x, y);
             
             x += image.getBounds().width + insideMargin;
         }

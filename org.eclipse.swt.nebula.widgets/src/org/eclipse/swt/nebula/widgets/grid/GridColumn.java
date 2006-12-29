@@ -228,6 +228,8 @@ public class GridColumn extends Item
     public void dispose()
     {
         parent.removeColumn(this);
+        if (group != null)
+            group.removeColumn(this);
         super.dispose();
     }
 
