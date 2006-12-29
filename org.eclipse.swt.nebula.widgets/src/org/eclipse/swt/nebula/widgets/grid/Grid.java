@@ -5312,9 +5312,13 @@ public class Grid extends Canvas
         {
             if (cellSelectionEnabled)
             {
-                if (e.button == 1)
+                GridColumn col = getColumn(new Point(e.x, e.y));
+                boolean isSelectedCell = false;
+                if (col != null)
+                    isSelectedCell = selectedCells.contains(new Point(indexOf(col),indexOf(item)));
+                
+                if (e.button == 1 || (e.button == 3 && col != null && !isSelectedCell))
                 {
-                    GridColumn col = getColumn(new Point(e.x, e.y));
                     if (col != null)
                     {
                         updateCellSelection(new Point(indexOf(col),indexOf(item)), e.stateMask, false, true);
@@ -5406,6 +5410,9 @@ public class Grid extends Canvas
             if (col.getColumnGroup() != null && e.y < groupHeaderHeight)
                 return;
             
+            if (getItemCount() == 0)
+                return;
+
             
             Vector cells = new Vector();
             
@@ -6475,6 +6482,7 @@ public class Grid extends Canvas
      */
     void removeColumn(GridColumn column)
     {
+        //TODO: deal with cell selection changing
         columns.remove(column);
         displayOrderedColumns.remove(column);
         
@@ -6550,12 +6558,17 @@ public class Grid extends Canvas
      */
     void removeItem(GridItem item)
     {
+        Point[] cells = getCells(item);
+        boolean selectionModified = false;
+
         items.remove(item);
-        if (selectedItems.contains(item))
+        if (selectedItems.remove(item))
+            selectionModified = true;
+
+        for (int i = 0; i < cells.length; i++)
         {
-            selectedItems.remove(item);
-            if (!disposing)
-                notifyListeners(SWT.Selection,new Event());
+            if (selectedCells.remove(cells[i]))
+                selectionModified = true;
         }
 
         if (focusItem == item)
@@ -6564,10 +6577,17 @@ public class Grid extends Canvas
         }
 
         scrollValuesObsolete = true;
-        if (item.isVisible()) 
+        if (item.isVisible())
         {
-            currentVisibleItems --;
+            currentVisibleItems--;
         }
+
+        if (selectionModified && !disposing)
+        {
+            notifyListeners(SWT.Selection, new Event());
+            updateColumnSelection();
+        }
+
         redraw();
     }
 
@@ -6603,6 +6623,7 @@ public class Grid extends Canvas
      */
     void removeColumnGroup(GridColumnGroup group)
     {
+        //TODO: deal with cell selection changing
         GridColumnGroup[] newColumnGroups = new GridColumnGroup[columnGroups.length - 1];
         int newIndex = 0;
         for (int i = 0; i < columnGroups.length; i++)
