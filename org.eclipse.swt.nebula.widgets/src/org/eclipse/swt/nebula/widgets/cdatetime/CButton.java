@@ -25,6 +25,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
@@ -43,7 +44,9 @@ import org.eclipse.swt.widgets.Listener;
  */
 public class CButton extends Composite {
 
-	public static final int[] Points_OK 	 	= { 2,6, 5,9, 10,3, 9,2, 5,7, 3,5 };
+	public static final boolean carbon = "carbon".equals(SWT.getPlatform());
+	
+	public static final int[] Points_OK 	= { 2,6, 5,9, 10,3, 9,2, 5,7, 3,5 };
 	public static final int[] Points_Cancel = { 0,1, 3,4, 0,7, 1,8, 4,5, 7,8, 8,7, 5,4, 8,1, 7,0, 4,3, 1,0 };
 	public static final int[] Points_Left 	= { 9,0, 4,5, 9,10 };
 	public static final int[] Points_Right 	= { 2,0, 7,5, 2,10 };
@@ -102,18 +105,15 @@ public class CButton extends Composite {
 	}
 	public CButton(Composite parent, int style, Color fillColor) {
 		super(parent, SWT.DOUBLE_BUFFERED);
-		
 		setLayout(new FillLayout());
 
 		int bStyle;
-		if((style & SWT.TOGGLE) != 0) bStyle = SWT.TOGGLE;
+		if(carbon || (style & SWT.TOGGLE) != 0) bStyle = SWT.TOGGLE;
 		else bStyle = SWT.PUSH;
 		
 		button = new Button(this, bStyle | SWT.DOUBLE_BUFFERED);
-		button.setBackground(getBackground());
 		button.setVisible(false);
-
-		setBackground(parent.getBackground());
+		setBackground(parent.getBackground()); // set both button and this backgrounds
 
 		if((style & SWT.OK) != 0) {
 			setPolygon(Points_OK, (fillColor != null) ? fillColor : (fillColor = getDisplay().getSystemColor(SWT.COLOR_DARK_GREEN)));
@@ -144,6 +144,20 @@ public class CButton extends Composite {
 				}
 			}
 		});
+
+		if(carbon && (style & SWT.TOGGLE) == 0) {
+			button.addListener(SWT.MouseUp, new Listener() {
+				public void handleEvent(Event event) {
+					if(SWT.MouseUp == event.type) {
+						Display.getCurrent().asyncExec(new Runnable() {
+							public void run() {
+								button.setSelection(false);
+							}
+						});
+					}
+				}
+			});
+		}
 		
 		addListener(SWT.Paint, new Listener() {
 			public void handleEvent(Event event) {
@@ -161,7 +175,6 @@ public class CButton extends Composite {
 					getDisplay().removeFilter(SWT.MouseMove, filter);
 				}
 				disposeImage();
-//				button = null;
 			}
 		});
 	}
@@ -375,7 +388,6 @@ public class CButton extends Composite {
 			} else {
 				if(button.isVisible()) button.setVisible(false);
 				redraw();
-				update();
 			}
 		} else {
 			drawControl(e);
@@ -412,7 +424,6 @@ public class CButton extends Composite {
 	}
 	
 	public void setFillColor(Color fillColor) {
-//		disposeFillColor();
 		this.fillColor = fillColor; //new Color(getDisplay(), fillColor.getRGB());
 	}
 	
@@ -429,13 +440,9 @@ public class CButton extends Composite {
 		setImage(image);
 	}
 	public void setImage(Image image) {
-//		points = null;
-//		disposeFillColor();
-//		text = null;
 		disposeImage();
 		this.image = new Image(getDisplay(), image.getImageData());
 		redraw();
-		update();
 	}
 
 	public void setMargins(int marginWidth, int marginHeight) {
@@ -455,12 +462,9 @@ public class CButton extends Composite {
 
 	public void setPolygon(int[] points, Color fillColor) {
 		if(points.length < 2 || points.length % 2 != 0) return;
-//		disposeImage();
-//		text = null;
 		this.points = points;
 		this.fillColor = fillColor;
 		redraw();
-		update();
 	}
 
 	public void setSelection(boolean selected) {
@@ -478,16 +482,11 @@ public class CButton extends Composite {
 	}
 
 	public void setText(String text) {
-//		disposeImage();
-//		points = null;
-//		disposeFillColor();
 		this.text = text;
 		if(button.isVisible()) {
 			button.redraw();
-			button.update();
 		} else {
 			redraw();
-			update();
 		}
 	}
 
