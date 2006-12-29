@@ -932,7 +932,7 @@ public class CDateTime extends AbstractCombo {
 			pickerSash.dispose();
 		}
 		pickerSash = null;
-		pickerSash = new SashForm(this, SWT.HORIZONTAL);
+		pickerSash = new SashForm(getParentForContent(), SWT.HORIZONTAL);
 		pickerSash.setLayout(new FillLayout());
 		setContent(pickerSash);
 
