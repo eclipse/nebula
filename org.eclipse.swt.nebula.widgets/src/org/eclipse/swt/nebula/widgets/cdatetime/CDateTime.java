@@ -262,49 +262,45 @@ public class CDateTime extends AbstractCombo {
 		calendar.setTime(new Date());
 		tabStops = (style & CDT.TAB_STOPS) != 0;
 		
-//		if(isSimple() || isDropDown()) {
-//			pickerSash = new SashForm(this, SWT.HORIZONTAL);
-//			pickerSash.setLayout(new FillLayout());
-//			setContent(pickerSash);
-//		}
-		
 		setFormat(style);
 
 		if(!isSimple()) {
 			if(isDropDown()) {
 				setButtonVisibility(CDT.BUTTON_ALWAYS);
 			} else {
-				spinner = new Spinner(this, SWT.VERTICAL);
-				spinner.setMinimum(0);
-				spinner.setMaximum(50);
-				spinner.setDigits(1);
-				spinner.setIncrement(1);
-				spinner.setPageIncrement(1);
-				spinner.setSelection(25);
-				spinner.addFocusListener(new FocusAdapter() {
-					public void focusGained(FocusEvent e) {
-						setFocus();
-					}
-				});
-				spinner.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						text.forceFocus();
-						if(spinner.getSelection() > 25) {
-							fieldAdjust(1);
-						} else {
-							fieldAdjust(-1);
-						}
-						spinner.setSelection(25);
-					}
-				});
-				if(win32) {
-					win32Hack = new Composite(this, SWT.NONE);
-					win32Hack.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
-					win32Hack.moveAbove(null);
-					win32Hack.moveBelow(text);
-				}
-				setLayout(new BasicLayout());
 				setButtonVisibility(CDT.BUTTON_NEVER);
+				if((style & CDT.SPINNER) != 0) {
+					spinner = new Spinner(this, SWT.VERTICAL);
+					spinner.setMinimum(0);
+					spinner.setMaximum(50);
+					spinner.setDigits(1);
+					spinner.setIncrement(1);
+					spinner.setPageIncrement(1);
+					spinner.setSelection(25);
+					spinner.addFocusListener(new FocusAdapter() {
+						public void focusGained(FocusEvent e) {
+							setFocus();
+						}
+					});
+					spinner.addSelectionListener(new SelectionAdapter() {
+						public void widgetSelected(SelectionEvent e) {
+							text.forceFocus();
+							if(spinner.getSelection() > 25) {
+								fieldAdjust(1);
+							} else {
+								fieldAdjust(-1);
+							}
+							spinner.setSelection(25);
+						}
+					});
+					if(win32) {
+						win32Hack = new Composite(this, SWT.NONE);
+						win32Hack.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
+						win32Hack.moveAbove(null);
+						win32Hack.moveBelow(text);
+					}
+					setLayout(new BasicLayout());
+				}
 			}
 			
 			text.setText(df.format(calendar.getTime()));
