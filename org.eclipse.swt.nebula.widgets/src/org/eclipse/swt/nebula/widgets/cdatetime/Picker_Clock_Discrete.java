@@ -241,7 +241,13 @@ class Picker_Clock_Discrete extends AbstractPicker {
 
 	void setFields(int[] calendarFields) {
 		super.setFields(calendarFields);
-		is24Hour = isSet(Calendar.HOUR_OF_DAY);
+		if((combo.getStyle() & CDT.CLOCK_12_HOUR) != 0) {
+			is24Hour = false;
+		} else if((combo.getStyle() & CDT.CLOCK_24_HOUR) != 0) {
+			is24Hour = true;
+		} else {
+			is24Hour = isSet(Calendar.HOUR_OF_DAY);
+		}
 		updateContents();
 	}
 	
