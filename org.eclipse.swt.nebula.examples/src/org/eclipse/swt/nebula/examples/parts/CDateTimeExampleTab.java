@@ -25,6 +25,8 @@ public class CDateTimeExampleTab extends AbstractExampleTab {
 	private Locale locale;
 	private Button simple;
 	private Button drop;
+	private Button hour12;
+	private Button hour24;
 	
 	public CDateTimeExampleTab() {
 		// TODO Auto-generated constructor stub
@@ -54,14 +56,6 @@ public class CDateTimeExampleTab extends AbstractExampleTab {
 	public void createParameters(Composite parent) {
 		parent.setLayout(new GridLayout());
 		
-		Button clear = new Button(parent, SWT.PUSH);
-		clear.setText("Clear");
-		clear.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				cdc.setSelection(null);
-			}
-		});
-		
 		Group g = new Group(parent, SWT.BORDER);
 		g.setText("Styles:");
 		g.setLayout(new GridLayout());
@@ -78,7 +72,7 @@ public class CDateTimeExampleTab extends AbstractExampleTab {
 				} else {
 					style &= ~CDT.SIMPLE;
 				}
-                recreateExample();
+                recreateAndLayout();
 			}
 		});
 
@@ -93,7 +87,7 @@ public class CDateTimeExampleTab extends AbstractExampleTab {
 				} else {
 					style &= ~CDT.DROP_DOWN;
 				}
-                recreateExample();
+                recreateAndLayout();
 			}
 		});
 
@@ -107,7 +101,7 @@ public class CDateTimeExampleTab extends AbstractExampleTab {
 				} else {
 					style &= ~CDT.BORDER;
 				}
-                recreateExample();
+                recreateAndLayout();
 			}
 		});
 
@@ -120,7 +114,20 @@ public class CDateTimeExampleTab extends AbstractExampleTab {
 				} else {
 					style &= ~CDT.COMPACT;
 				}
-                recreateExample();
+                recreateAndLayout();
+			}
+		});
+		
+		b = new Button(g, SWT.CHECK);
+		b.setText("Spinner");
+		b.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if(((Button) e.widget).getSelection()) {
+					style |= CDT.SPINNER;
+				} else {
+					style &= ~CDT.SPINNER;
+				}
+                recreateAndLayout();
 			}
 		});
 		
@@ -141,18 +148,15 @@ public class CDateTimeExampleTab extends AbstractExampleTab {
 		b.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if(((Button) e.widget).getSelection()) {
-					style &= ~CDT.CLOCK_ANALOG;
 					style |= CDT.CLOCK_DISCRETE;
 					((GridData) dc.getLayoutData()).exclude = false;
 					dc.setVisible(true);
 				} else {
 					style &= ~CDT.CLOCK_DISCRETE;
-					style |= CDT.CLOCK_ANALOG;
 					((GridData) dc.getLayoutData()).exclude = true;
 					dc.setVisible(false);
 				}
-				dc.getParent().getParent().getParent().layout(true);
-                recreateExample();
+                recreateAndLayout();
 			}
 		});
 
@@ -176,7 +180,37 @@ public class CDateTimeExampleTab extends AbstractExampleTab {
 					style &= ~CDT.VERTICAL;
 					style |= CDT.HORIZONTAL;
 				}
-                recreateExample();
+                recreateAndLayout();
+			}
+		});
+
+		hour12 = new Button(g, SWT.CHECK);
+		hour12.setText("Force 12 Hour Clock");
+		hour12.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if(hour12.getSelection()) {
+					style |= CDT.CLOCK_12_HOUR;
+					style &= ~CDT.CLOCK_24_HOUR;
+					hour24.setSelection(false);
+				} else {
+					style &= ~CDT.CLOCK_12_HOUR;
+				}
+                recreateAndLayout();
+			}
+		});
+
+		hour24 = new Button(g, SWT.CHECK);
+		hour24.setText("Force 24 Hour Clock");
+		hour24.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if(hour24.getSelection()) {
+					style |= CDT.CLOCK_24_HOUR;
+					style &= ~CDT.CLOCK_12_HOUR;
+					hour12.setSelection(false);
+				} else {
+					style &= ~CDT.CLOCK_24_HOUR;
+				}
+                recreateAndLayout();
 			}
 		});
 
@@ -226,7 +260,7 @@ public class CDateTimeExampleTab extends AbstractExampleTab {
 					}
 					cdc.setFormat(format);
 				}
-				cdc.getParent().layout(true);
+				relayoutExample();
 			}
 		});
 
@@ -244,9 +278,22 @@ public class CDateTimeExampleTab extends AbstractExampleTab {
 			public void widgetSelected(SelectionEvent e) {
 				locale = Locale.getAvailableLocales()[localeCombo.getSelectionIndex()];
 				cdc.setLocale(locale);
-				cdc.getParent().layout(true);
+				relayoutExample();
+			}
+		});
+
+		Button clear = new Button(g, SWT.PUSH);
+		clear.setText("Selection to Null");
+		clear.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				cdc.setSelection(null);
+				relayoutExample();
 			}
 		});
 	}
 
+	private void recreateAndLayout() {
+		recreateExample();
+		relayoutExample();
+	}
 }
