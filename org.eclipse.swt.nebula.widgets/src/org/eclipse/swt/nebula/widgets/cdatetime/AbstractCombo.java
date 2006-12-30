@@ -582,10 +582,8 @@ public abstract class AbstractCombo extends Composite {
 			// chance for subclasses to do something before the shell becomes visible
 			aboutToOpen(contentShell);
 			
-//			contentShell.setBounds(100, 100, 500, 500);
-//			contentShell.layout(true);
 			contentShell.setVisible(true);
-//			content.setFocus();
+			content.setFocus();
 			this.open = true;
 		}
 		if(buttonVisibility == CDT.BUTTON_AUTO) {
