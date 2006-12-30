@@ -252,16 +252,6 @@ public class CDT {
 	 */
 	public static final int TIME_MEDIUM		= 1 << 24;
 
-
-//	/**
-//	 * Style constant indicating that the seconds hand is NOT to be used
-//	 * on the CDatepicker's Clock (value is 1&lt;&lt;18).
-//	 * <p><b>Used By:</b><ul>
-//	 * <li><code>CDatepicker</code></li>
-//	 * </ul></p>
-//	 */
-//	public static final int SECONDS_OFF 	= 1 << 25;
-
 	/**
 	 * Style constant indicating that the TAB key should be used to traverse
 	 * the CDatepickerCombo's fields (value is 1&lt;&lt;19).
@@ -271,7 +261,11 @@ public class CDT {
 	 */
 	public static final int TAB_STOPS 		= 1 << 25;
 
-	public static final int CLOCK_ANALOG	= 1 << 26;
+	public static final int SPINNER			= 1 << 26;
+
 	public static final int CLOCK_DISCRETE	= 1 << 27;
 	
+	public static final int CLOCK_12_HOUR	= 1 << 28;
+
+	public static final int CLOCK_24_HOUR	= 1 << 29;
 }
