@@ -26,27 +26,27 @@ class Picker_Clock_Analog extends AbstractPicker {
 	private class BaseLayout extends Layout {
 		protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
 			Point size = dialComposite.computeSize(wHint, hHint, flushCache);
-			if(compact) {
+			if(!compact) {
+				size.y += footerButton.computeSize(wHint, hHint, flushCache).y;
+			} else if(hasSpinner) {
 				int scw = spinner.getClientArea().width;
 				if(scw == 0) {
 					size.x += spinner.computeSize(SWT.DEFAULT, SWT.DEFAULT).x - 24;
 				} else {
 					size.x += spinner.computeSize(SWT.DEFAULT, SWT.DEFAULT).x - scw;
 				}
-			} else {
-				size.y += footerButton.computeSize(wHint, hHint, flushCache).y;
 			}
 			return size;
 		}
 		protected void layout(Composite composite, boolean flushCache) {
 			Rectangle r = composite.getClientArea();
-			Point ssize = !compact ? new Point(0,0) :
-				spinner.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
+			Point ssize = (compact && hasSpinner) ? 
+					spinner.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache) : new Point(0,0);
 			Point fsize = compact ? new Point(0,0) : 
 				footerButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
 			int scw = 0;
 			do {
-				scw = compact ? spinner.getClientArea().width : 0;
+				scw = (compact && hasSpinner) ? spinner.getClientArea().width : 0;
 				int swidth = ssize.x - scw;
 				int dwidth = r.width - swidth;
 				int dheight = Math.min(dwidth, r.height-fsize.y);
@@ -54,12 +54,10 @@ class Picker_Clock_Analog extends AbstractPicker {
 				int dx = r.x+(r.width-dwidth-swidth)/2;
 				int dy = r.y+(r.height-dheight-fsize.y)/2;
 				dialComposite.setBounds(dx, dy, dwidth, dheight);
-				if(compact) spinner.setBounds(dx+dwidth-scw, dy+(dheight-ssize.y)/2, ssize.x, ssize.y);
-			} while (compact && scw == 0);
+				if(compact && hasSpinner) spinner.setBounds(dx+dwidth-scw, dy+(dheight-ssize.y)/2, ssize.x, ssize.y);
+			} while (compact && hasSpinner && scw == 0);
 			
-			if(compact) {
-				spinner.moveBelow(null);
-			} else {
+			if(!compact) {
 				fsize.x += 10;
 				Rectangle dc = dialComposite.getBounds();
 				footerButton.setBounds(
@@ -68,6 +66,8 @@ class Picker_Clock_Analog extends AbstractPicker {
 						fsize.x,
 						fsize.y
 						);
+			} else if(hasSpinner){
+				spinner.moveBelow(null);
 			}
 			
 			Point size = cancel.computeSize(-1, -1);
@@ -122,6 +122,7 @@ class Picker_Clock_Analog extends AbstractPicker {
 	private boolean secHand;
 	private boolean am_pm;
 	private boolean compact;
+	private boolean hasSpinner;
 	private int[] snap = { 1, 1 };
 	private long increment = 300000; // 5 minutes
 
@@ -134,6 +135,7 @@ class Picker_Clock_Analog extends AbstractPicker {
 	Picker_Clock_Analog(Composite parent1, CDateTime parent, Date selection) {
 		super(parent1, parent, selection);
 		compact = (parent.style & CDT.COMPACT) != 0;
+		hasSpinner = (parent.style & CDT.SPINNER) != 0;
 
 		createContents();
 	}
@@ -148,7 +150,10 @@ class Picker_Clock_Analog extends AbstractPicker {
 		dialComposite.setBackgroundMode(SWT.INHERIT_FORCE);
 		dialComposite.setLayout(new DialLayout());
 		
-		if(compact) {
+		if(!compact) {
+			footerButton = new CDateTime(this, (hasSpinner ? CDT.SPINNER : 0) | CDT.BORDER);
+			footerButton.addSelectionListener(footerListener);
+		} else if(hasSpinner) {
 			spinner = new Spinner(this, SWT.VERTICAL);
 			spinner.setMinimum(0);
 			spinner.setMaximum(50);
@@ -168,9 +173,6 @@ class Picker_Clock_Analog extends AbstractPicker {
 					spinner.setSelection(25);
 				}
 			});
-		} else {
-			footerButton = new CDateTime(this, CDT.BORDER);
-			footerButton.addSelectionListener(footerListener);
 		}
 		
 		dialNow = new CButton(dialComposite, SWT.NONE);
@@ -315,7 +317,7 @@ class Picker_Clock_Analog extends AbstractPicker {
 					gc.setTextAntialias(SWT.ON);
 
 					// Paint Clock "spinner handle"
-					if(compact) {
+					if(compact && hasSpinner) {
 						gc.setBackground(event.display.getSystemColor(SWT.COLOR_GRAY));
 						int y = spinner.getBounds().y + 2 - dialComposite.getLocation().y;
 						int h = spinner.getBounds().height - 5;
@@ -504,7 +506,13 @@ class Picker_Clock_Analog extends AbstractPicker {
 	
 	void setFields(int[] calendarFields) {
 		super.setFields(calendarFields);
-		is24Hour = isSet(Calendar.HOUR_OF_DAY);
+		if((combo.getStyle() & CDT.CLOCK_12_HOUR) != 0) {
+			is24Hour = false;
+		} else if((combo.getStyle() & CDT.CLOCK_24_HOUR) != 0) {
+			is24Hour = true;
+		} else {
+			is24Hour = isSet(Calendar.HOUR_OF_DAY);
+		}
 		hourHand = isSet(Calendar.HOUR) || isSet(Calendar.HOUR_OF_DAY);
 		minHand = isSet(Calendar.MINUTE);
 		secHand = isSet(Calendar.SECOND);
