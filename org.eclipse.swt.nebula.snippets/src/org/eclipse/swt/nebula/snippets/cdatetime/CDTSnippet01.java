@@ -26,7 +26,7 @@ public class CDTSnippet01 {
 		GridLayout layout = new GridLayout(2, true);
 		shell.setLayout(layout);
 
-		final CDateTime cdc1 = new CDateTime(shell, CDT.BORDER | CDT.SIMPLE);
+		final CDateTime cdc1 = new CDateTime(shell, CDT.BORDER | CDT.DROP_DOWN);
 		cdc1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		Combo combo = new Combo(shell, SWT.BORDER);
