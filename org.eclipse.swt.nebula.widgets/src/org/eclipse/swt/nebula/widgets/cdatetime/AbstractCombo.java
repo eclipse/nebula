@@ -328,7 +328,7 @@ public abstract class AbstractCombo extends Composite {
 					handleFocus(event.type, event.widget);
 					break;
 				case SWT.MouseDown:
-					if(gtk) {
+					if(!win32) {
 						if(!dontOpen) {
 							setOpen(!isOpen());
 						}
@@ -616,11 +616,11 @@ public abstract class AbstractCombo extends Composite {
 			if(menuActive) break;
 			
 			// when the popup shell is deactivated by clicking the button,
-			// we receive two Deactivate events on Win32, whereas on GTK
+			// we receive two Deactivate events on Win32, whereas on Carbon and GTK
 			// we first receive one Deactivation event from the shell and
 			// then a Selection event from the button.
-			// as a work-around, set a flag (dontPop) if running GTK
-			if(gtk) {
+			// as a work-around, set a flag (dontOpen) if running Carbon or GTK
+			if(!win32) {
 				Point loc = button.toControl(getDisplay().getCursorLocation());
 				Point size = button.getSize();
 				if((loc.x >= 0) && (loc.y >= 0) && (loc.x < size.x) && (loc.y < size.y)) {
