@@ -204,6 +204,7 @@ class Picker_Calendar extends AbstractPicker {
 			// TODO: clean up dayButton listeners
 			CButton dayButton = new CButton(body, SWT.TOGGLE);
 			dayButtons[day] = dayButton;
+			dayButton.setBackground(body.getBackground());
 			dayButton.setSquare(true);
 			dayButton.setMargins(4, 4);
 			dayButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -762,8 +763,10 @@ class Picker_Calendar extends AbstractPicker {
 			int old = selDayButton;
 			selDayButton = dayButton;
 			dayButtons[old].setSelection(false);
-			dayButtons[selDayButton].setSelection(true);
-			dayButtons[selDayButton].setFocus();
+			if(!dayButtons[selDayButton].getSelection()) {
+				dayButtons[selDayButton].setSelection(true);
+				dayButtons[selDayButton].setFocus();
+			}
 			selection = (Date) dayButtons[selDayButton].getData(DATE);
 			tmpcal.setTime(selection);
 			int year = tmpcal.get(Calendar.YEAR);
