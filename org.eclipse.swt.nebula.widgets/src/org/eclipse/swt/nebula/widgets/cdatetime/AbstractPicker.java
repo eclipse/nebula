@@ -21,8 +21,8 @@ abstract class AbstractPicker extends Composite {
 	 * @param style constants from ACW.java
 	 * @return constants from SWT.java
 	 */
-	static int swtStyle(int style) {
-		if((CDT.BORDER & style) != 0) return SWT.BORDER;
+	static int swtStyle(CDateTime combo) {
+		if(combo.isDropDown() || (CDT.BORDER & combo.style) != 0) return SWT.BORDER;
 		return SWT.NONE;
 	}
 
@@ -32,7 +32,7 @@ abstract class AbstractPicker extends Composite {
 
 
 	AbstractPicker(Composite parent, CDateTime combo, Date selection) {
-		super(parent, swtStyle(combo.style));
+		super(parent, swtStyle(combo));
 		this.combo = combo;
 		this.selection = selection;
 	}
