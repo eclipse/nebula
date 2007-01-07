@@ -20,18 +20,15 @@ public class CDTSnippet01 {
 	public static void main(String[] args) {
 		final Display display = new Display();
 		final Shell shell = new Shell(display);
-		shell.setText("CDC");
+		shell.setText("Nebula CDateTime");
 		shell.setLayout(new GridLayout());
 
-		GridLayout layout = new GridLayout(2, true);
+		GridLayout layout = new GridLayout();
 		shell.setLayout(layout);
 
-		final CDateTime cdc1 = new CDateTime(shell, CDT.BORDER | CDT.DROP_DOWN);
-		cdc1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		final CDateTime cdt = new CDateTime(shell, CDT.BORDER | CDT.DROP_DOWN);
+		cdt.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-		Combo combo = new Combo(shell, SWT.BORDER);
-		combo.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-		
 		shell.pack();
 		Point size = shell.getSize();
 		Rectangle screen = display.getMonitors()[0].getBounds();
