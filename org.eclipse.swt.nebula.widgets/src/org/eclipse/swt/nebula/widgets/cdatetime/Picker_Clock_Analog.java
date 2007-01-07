@@ -70,11 +70,13 @@ class Picker_Clock_Analog extends AbstractPicker {
 				spinner.moveBelow(null);
 			}
 			
-			Point size = cancel.computeSize(-1, -1);
-			r = getClientArea();
-			int y = r.y+dialCenter.y-dialRadius-1;
-			cancel.setBounds(r.x+r.width-size.x-2, y, size.x, size.y);
-			accept.setBounds(r.x+r.width-(2*size.x+3), y, size.x, size.y);
+//			if(combo.isDropDown()) {
+//				Point size = cancel.computeSize(-1, -1);
+//				r = getClientArea();
+//				int y = r.y+dialCenter.y-dialRadius-1;
+//				cancel.setBounds(r.x+r.width-size.x-2, y, size.x, size.y);
+//				accept.setBounds(r.x+r.width-(2*size.x+3), y, size.x, size.y);
+//			}
 		}
 	}
 	
@@ -105,8 +107,8 @@ class Picker_Clock_Analog extends AbstractPicker {
 	private CButton dialNow;
 	private CButton dialAmPm;
 	private CDateTime footerButton;
-	private CButton accept;
-	private CButton cancel;
+//	private CButton accept;
+//	private CButton cancel;
 	private int dialRadius;
 	private Point dialCenter = new Point(0,0);
 
@@ -147,7 +149,7 @@ class Picker_Clock_Analog extends AbstractPicker {
 		setLayout(new BaseLayout());
 
 		dialComposite = new Composite(this, SWT.DOUBLE_BUFFERED);
-		dialComposite.setBackgroundMode(SWT.INHERIT_FORCE);
+//		dialComposite.setBackgroundMode(SWT.INHERIT_FORCE);
 		dialComposite.setLayout(new DialLayout());
 		
 		if(!compact) {
@@ -176,7 +178,7 @@ class Picker_Clock_Analog extends AbstractPicker {
 		}
 		
 		dialNow = new CButton(dialComposite, SWT.NONE);
-		dialNow.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
+//		dialNow.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		dialNow.setFillColor(getDisplay().getSystemColor(SWT.COLOR_GRAY));
 		dialNow.setMargins(4, 4);
 		dialNow.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false));
@@ -187,7 +189,7 @@ class Picker_Clock_Analog extends AbstractPicker {
 		});
 
 		dialAmPm = new CButton(dialComposite, SWT.NONE);
-		dialAmPm.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
+//		dialAmPm.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		dialAmPm.setMargins(4, 4);
 		Listener tapl = new Listener() {
 			public void handleEvent(Event event) {
@@ -199,26 +201,26 @@ class Picker_Clock_Analog extends AbstractPicker {
 		};
 		dialAmPm.addListener(SWT.Selection, tapl);
 		dialAmPm.addListener(SWT.MouseWheel, tapl);
-		
-		accept = new CButton(this, SWT.OK);
-		accept.moveAbove(null);
-//		accept.setVisible(false);
-		accept.setMargins(5, CDT.gtk ? 10 : 8);
-		accept.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				setSelection(getSelection(), -1, NOTIFY_DEFAULT);
-			}
-		});
 
-		cancel = new CButton(this, SWT.CANCEL);
-		cancel.moveAbove(null);
-//		cancel.setVisible(false);
-		cancel.setMargins(5, CDT.gtk ? 10 : 8);
-		cancel.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				combo.setOpen(false);
-			}
-		});
+//		if(combo.isDropDown()) {
+//			accept = new CButton(this, SWT.OK);
+//			accept.moveAbove(null);
+//			accept.setMargins(5, CDT.gtk ? 10 : 8);
+//			accept.addSelectionListener(new SelectionAdapter() {
+//				public void widgetSelected(SelectionEvent e) {
+//					setSelection(getSelection(), -1, NOTIFY_DEFAULT);
+//				}
+//			});
+//	
+//			cancel = new CButton(this, SWT.CANCEL);
+//			cancel.moveAbove(null);
+//			cancel.setMargins(5, CDT.gtk ? 10 : 8);
+//			cancel.addSelectionListener(new SelectionAdapter() {
+//				public void widgetSelected(SelectionEvent e) {
+//					combo.setOpen(false);
+//				}
+//			});
+//		}
 		
 		final Listener listener = new Listener() {
 			public void handleEvent(Event event) {
@@ -309,9 +311,6 @@ class Picker_Clock_Analog extends AbstractPicker {
 					Image timage = new Image(event.display, r.width, r.height);
 					event.gc.copyArea(timage, 0, 0);
 					GC gc = new GC(timage);
-					
-//					gc.setBackground(dialComposite.getBackground());
-//					gc.fillRectangle(r);
 					
 					gc.setAntialias(SWT.ON);
 					gc.setTextAntialias(SWT.ON);
@@ -458,11 +457,12 @@ class Picker_Clock_Analog extends AbstractPicker {
 					gc.fillOval(dialCenter.x-4, dialCenter.y-4, 8, 8);
 
 					dialNow.setImage(timage);
-					accept.setImage(timage,
-							accept.getLocation().x + accept.getSize().x/2 - dialCenter.x - dialComposite.getLocation().x,
-							accept.getLocation().y + accept.getSize().y/2 - dialCenter.y - dialComposite.getLocation().y);
+//					accept.setImage(timage,
+//							accept.getLocation().x + accept.getSize().x/2 - dialCenter.x - dialComposite.getLocation().x,
+//							accept.getLocation().y + accept.getSize().y/2 - dialCenter.y - dialComposite.getLocation().y);
 					if(am_pm) dialAmPm.setImage(timage, 0, dialAmPm.getLocation().y - dialCenter.y + dialAmPm.getSize().y/2);
 					event.gc.drawImage(timage, 0, 0);
+//					dialComposite.setBackgroundImage(timage);					
 					gc.dispose();
 					timage.dispose();
 					break;
@@ -516,7 +516,7 @@ class Picker_Clock_Analog extends AbstractPicker {
 		hourHand = isSet(Calendar.HOUR) || isSet(Calendar.HOUR_OF_DAY);
 		minHand = isSet(Calendar.MINUTE);
 		secHand = isSet(Calendar.SECOND);
-		am_pm = isSet(Calendar.AM_PM);
+		am_pm = !is24Hour && isSet(Calendar.AM_PM);
 		dialAmPm.setVisible(am_pm);
 		if(!compact) {
 			String pattern = "";
@@ -610,8 +610,10 @@ class Picker_Clock_Analog extends AbstractPicker {
 
 	void updateLabels() {
 		dialNow.setToolTipText(Messages.getString("nav_current_time", combo.locale));//$NON-NLS-1$
-		accept.setToolTipText(Messages.getString("accept", combo.locale));//$NON-NLS-1$
-		cancel.setToolTipText(Messages.getString("cancel", combo.locale));//$NON-NLS-1$
+//		if(combo.isDropDown()) {
+//			accept.setToolTipText(Messages.getString("accept", combo.locale));//$NON-NLS-1$
+//			cancel.setToolTipText(Messages.getString("cancel", combo.locale));//$NON-NLS-1$
+//		}
 	}
 
 	void updateSelection() {
