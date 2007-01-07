@@ -607,6 +607,12 @@ public class CDateTime extends AbstractCombo {
 		return isNull ? null : calendar.getTime();
 	}
 
+	public String getText() {
+		return isNull ? 
+				Messages.getString("null_text", locale) : //$NON-NLS-1$ 
+					df.format(calendar.getTime());
+	}
+	
 	protected void handleFocus(int type, Widget widget) {
 		if(isDisposed()) return;
 		if(SWT.FocusIn == type) {
@@ -619,6 +625,7 @@ public class CDateTime extends AbstractCombo {
 		
 		super.handleFocus(type, widget);
 		
+		if(isDisposed()) return;
 		if(SWT.FocusOut == type) {
 			if(!hasFocus) {
 				if(!rightClick) {
