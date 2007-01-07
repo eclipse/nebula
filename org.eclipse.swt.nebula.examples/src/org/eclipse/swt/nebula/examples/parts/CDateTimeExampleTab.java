@@ -157,6 +157,7 @@ public class CDateTimeExampleTab extends AbstractExampleTab {
 					dc.setVisible(false);
 				}
                 recreateAndLayout();
+                dc.getParent().getParent().layout(true);
 			}
 		});
 
