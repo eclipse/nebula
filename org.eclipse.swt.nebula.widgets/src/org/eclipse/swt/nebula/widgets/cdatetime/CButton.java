@@ -113,7 +113,6 @@ public class CButton extends Composite {
 		
 		button = new Button(this, bStyle | SWT.DOUBLE_BUFFERED);
 		button.setVisible(false);
-		setBackground(parent.getBackground()); // set both button and this backgrounds
 
 		if((style & SWT.OK) != 0) {
 			setPolygon(Points_OK, (fillColor != null) ? fillColor : (fillColor = getDisplay().getSystemColor(SWT.COLOR_DARK_GREEN)));
@@ -151,7 +150,7 @@ public class CButton extends Composite {
 					if(SWT.MouseUp == event.type) {
 						Display.getCurrent().asyncExec(new Runnable() {
 							public void run() {
-								button.setSelection(false);
+								if(!button.isDisposed()) button.setSelection(false);
 							}
 						});
 					}
