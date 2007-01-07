@@ -147,8 +147,7 @@ public abstract class AbstractCombo extends Composite {
 	Listener listener, filter;
 	
 	public AbstractCombo(Composite parent, int style) {
-		super(parent, SWT.INHERIT_FORCE);
-		setBackgroundMode(SWT.INHERIT_FORCE);
+		super(parent, SWT.NONE);
 		
 		this.style = style;
 		simple = (style & CDT.SIMPLE) != 0;
