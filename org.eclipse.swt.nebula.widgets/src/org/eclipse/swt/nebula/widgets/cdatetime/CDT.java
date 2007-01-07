@@ -189,8 +189,6 @@ public class CDT {
 	public static final int HORIZONTAL		= 1 << 11;
 	public static final int VERTICAL		= 1 << 12;
 	public static final int READ_ONLY		= 1 << 13;
-	public static final int FOOTER			= 1 << 14;
-	public static final int COMPACT			= 1 << 15;
 	
 ///////////////////////////////////////////////////////////////////////////////////////
 // END OF AbstractCombo STYLES
@@ -252,6 +250,8 @@ public class CDT {
 	 */
 	public static final int TIME_MEDIUM		= 1 << 24;
 
+	public static final int COMPACT			= 1 << 15;
+
 	/**
 	 * Style constant indicating that the TAB key should be used to traverse
 	 * the CDatepickerCombo's fields (value is 1&lt;&lt;19).
@@ -259,7 +259,7 @@ public class CDT {
 	 * <li><code>CDatepickerCombo</code></li>
 	 * </ul></p>
 	 */
-	public static final int TAB_STOPS 		= 1 << 25;
+	public static final int TAB_FIELDS 		= 1 << 25;
 
 	public static final int SPINNER			= 1 << 26;
 
