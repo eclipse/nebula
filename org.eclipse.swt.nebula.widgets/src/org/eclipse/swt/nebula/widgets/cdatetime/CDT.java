@@ -15,13 +15,13 @@ import org.eclipse.swt.SWT;
 
 /**
  * This class provides access to the the public constants provided
- * by AspenCloud Widgets (ACW).  This class is analogous to the SWT class
+ * by the CDateTime widget.  This class is analogous to the SWT class
  * of the Standard Widget Toolkit (SWT) and has been created separately
- * to avoid collision.
+ * to avoid collisions.
  * <p>
  * Note that, unlike the SWT class, these constants apply for all platforms
- * (upon which ACW has been tested) because all widgets in ACW are 
- * custom widgets.
+ * (upon which CDateTime has been tested) because the CDateTime is a 
+ * custom widget.
  * </p>
  */
 public class CDT {
