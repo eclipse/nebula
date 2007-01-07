@@ -260,7 +260,7 @@ public class CDateTime extends AbstractCombo {
 		locale = Locale.getDefault();
 		calendar = Calendar.getInstance(this.locale);
 		calendar.setTime(new Date());
-		tabStops = (style & CDT.TAB_STOPS) != 0;
+		tabStops = (style & CDT.TAB_FIELDS) != 0;
 		
 		setFormat(style);
 
@@ -929,6 +929,7 @@ public class CDateTime extends AbstractCombo {
 		}
 		pickerSash = null;
 		pickerSash = new SashForm(getParentForContent(), SWT.HORIZONTAL);
+//		pickerSash.setBackgroundMode(SWT.INHERIT_FORCE);
 		pickerSash.setLayout(new FillLayout());
 		setContent(pickerSash);
 
@@ -990,6 +991,7 @@ public class CDateTime extends AbstractCombo {
 		
 		for(int i = 0; i < pickers.length; i++) {
 			pickers[i].setFields(fa);
+//			pickerComps[i].setBackgroundMode(SWT.INHERIT_FORCE);
 		}
 
 		if(pickerComps.length == 1) pickerSash.setMaximizedControl(pickerComps[0]);
