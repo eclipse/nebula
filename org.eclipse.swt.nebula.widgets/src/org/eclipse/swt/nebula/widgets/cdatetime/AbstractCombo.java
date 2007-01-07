@@ -189,15 +189,15 @@ public abstract class AbstractCombo extends Composite {
 			int[] baseEvents = { SWT.Dispose, SWT.Move, SWT.Resize };
 			for(int i = 0; i < baseEvents.length; i++) this.addListener (baseEvents[i], listener);
 		} else {
+			// TODO: if not DROP_DOWN, don't create the button!
 			setLayout(new DropComboLayout());
-			
 	
 			if(win32) setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
 			
 			leftAlign = ((style & CDT.BUTTON_LEFT) != 0);
 
 			int textStyle = SWT.SINGLE;
-			if(!win32) textStyle |= SWT.BORDER;
+			if(!win32) textStyle |= ((CDT.BORDER & style) != 0) ? SWT.BORDER : 0;
 			if((style & CDT.TEXT_RIGHT) != 0) textStyle |= SWT.RIGHT_TO_LEFT;
 			else if((style & CDT.TEXT_LEFT) != 0) textStyle |= SWT.LEFT_TO_RIGHT;
 	
