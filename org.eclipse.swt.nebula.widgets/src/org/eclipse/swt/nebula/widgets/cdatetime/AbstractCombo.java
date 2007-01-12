@@ -20,6 +20,7 @@ import java.util.List;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -35,7 +36,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.TypedListener;
 import org.eclipse.swt.widgets.Widget;
 
 /**
@@ -276,13 +276,19 @@ public abstract class AbstractCombo extends Composite {
 	 * @see ModifyListener
 	 * @see #removeModifyListener
 	 */
-	public void addModifyListener (ModifyListener listener) {
+	public void addModifyListener(ModifyListener listener) {
 		checkWidget();
-		if (listener == null) SWT.error (SWT.ERROR_NULL_ARGUMENT);
-		TypedListener typedListener = new TypedListener (listener);
-		addListener (SWT.Modify, typedListener);
+		if(text != null) text.addModifyListener(listener);
+//		if (listener == null) SWT.error (SWT.ERROR_NULL_ARGUMENT);
+//		TypedListener typedListener = new TypedListener (listener);
+//		addListener (SWT.Modify, typedListener);
 	}
 
+	public void addTraverseListener(TraverseListener listener) {
+		checkWidget();
+		if(text != null) text.addTraverseListener(listener);
+	}
+	
 	/**
 	 * Event handler for the content Composite and its children.<br>
 	 * TODO: re-evaluate
@@ -554,6 +560,7 @@ public abstract class AbstractCombo extends Composite {
 			if(!holdOpen) {
 				contentShell.setVisible(false);
 				this.open = false;
+				if(text != null) text.setFocus();
 			}
 		} else {
 			contentShell.pack(true);
@@ -654,10 +661,15 @@ public abstract class AbstractCombo extends Composite {
 	 */
 	public void removeModifyListener (ModifyListener listener) {
 		checkWidget();
-		if (listener == null) SWT.error (SWT.ERROR_NULL_ARGUMENT);
-		removeListener(SWT.Modify, listener);	
+		if(text != null) text.addModifyListener(listener);
+//		if (listener == null) SWT.error (SWT.ERROR_NULL_ARGUMENT);
+//		removeListener(SWT.Modify, listener);
 	}
 
+	public void removeTraverseListener(TraverseListener listener) {
+		checkWidget();
+		if(text != null) text.removeTraverseListener(listener);
+	}
 	/**
 	 * Set the visibility style of the drop button.
 	 * <p>The style will be forced to NEVER if the contents are null</p>
