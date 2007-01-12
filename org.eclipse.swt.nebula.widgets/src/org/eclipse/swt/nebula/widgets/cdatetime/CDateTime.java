@@ -349,14 +349,12 @@ public class CDateTime extends AbstractCombo {
 	}
 
 	/**
-	 * Delegates to {@link #setSelection(Date)}, only it fires a notification
-	 * @param date
+	 * The selection has been set by the graphical selector (picker).  Updates
+	 * the open state, the local calendar time, the text, and then fires
+	 * the appropriate selection event.
+	 * @param field
+	 * @param defaultSelection
 	 */
-	private void textCalendarSet(Date date) {
-		setSelection(date);
-		fireSelectionChanged(-1, false);
-	}
-	
 	void setSelectionFromPicker(int field, boolean defaultSelection) {
 		if(defaultSelection && isOpen()) {
 			cancelDate = null;
@@ -524,7 +522,7 @@ public class CDateTime extends AbstractCombo {
 			}
 			calendar.set(calendarField, value);
 			updateText();
-			updatePickerSelection();
+			updatePickerSelection(calendar.getTime());
 			fireSelectionChanged(calendarField, false);
 		}
 		return true;
@@ -728,19 +726,10 @@ public class CDateTime extends AbstractCombo {
 	private boolean hasField(int field) {
 		return field >= 0 && field <= this.field.length;
 	}
-	
-	public void setOpen(boolean open) {
-		checkWidget();
-		if(open) {
-			cancelDate = getSelection();
-			updatePickerSelection();
-		} else if(cancelDate != null){
-			setSelection(cancelDate);
-			cancelDate = null;
-			updateText();
-		}
-		super.setOpen(open);
-	}
+
+//	protected boolean isNull() {
+//		return isNull;
+//	}
 	
 	/**
 	 * Removes the listener from the collection of listeners who will
@@ -834,6 +823,19 @@ public class CDateTime extends AbstractCombo {
 		}
 	}
 	
+	public void setOpen(boolean open) {
+		checkWidget();
+		if(open) {
+			cancelDate = getSelection();
+			updatePickerSelection(calendar.getTime());
+		} else if(cancelDate != null){
+			setSelection(cancelDate);
+			cancelDate = null;
+			updateText();
+		}
+		super.setOpen(open);
+	}
+	
 	/**
 	 * Set the style of this CDateTime to work with dates and / or times 
 	 * as determined by the given pattern. This will set the fields shown in the
@@ -911,19 +913,9 @@ public class CDateTime extends AbstractCombo {
 			calendar.setTime(date);
 		}
 		updateText();
-		updatePickerSelection();
+		updatePickerSelection(date);
 	}
 	
-	/**
-	 * set the pickers' selection
-	 */
-	private void updatePickerSelection() {
-		if(pickers == null) return;
-		for(int i = 0; i < pickers.length; i++) {
-			pickers[i].setSelection(calendar.getTime(), -1, AbstractPicker.NOTIFY_NONE);
-		}
-	}
-
 	/**
 	 * If style is neither SIMPLE or DROP_DOWN, then this method simply returns,
 	 * otherwise it sets the format of the picker.
@@ -1060,6 +1052,16 @@ public class CDateTime extends AbstractCombo {
 	}
 	
 	/**
+	 * set the pickers' selection with the local calendar time
+	 */
+	private void updatePickerSelection(Date date) {
+		if(pickers == null) return;
+		for(int i = 0; i < pickers.length; i++) {
+			pickers[i].updateSelection(date);
+		}
+	}
+
+	/**
 	 * This is the only way that text is set to the text box.<br>
 	 * The selection is also set here (corresponding to the active field) as well as
 	 * if a field is being edited, it's "edit text" is inserted for display.
@@ -1167,10 +1169,11 @@ public class CDateTime extends AbstractCombo {
 						updateText();
 					}
 				}
-				updatePickerSelection();
+				updatePickerSelection(calendar.getTime());
 			} else {
 				try {
-					textCalendarSet(df.parse(e.text));
+					setSelection(df.parse(e.text));
+					fireSelectionChanged(-1, false);
 				} catch (ParseException pe) {
 				}
 			}
