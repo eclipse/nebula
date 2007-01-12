@@ -10,7 +10,7 @@ Export-Package: org.eclipse.swt.nebula.widgets.cdatetime,
  org.eclipse.swt.nebula.widgets.compositetable.day,
  org.eclipse.swt.nebula.widgets.compositetable.month,
  org.eclipse.swt.nebula.widgets.compositetable.timeeditor,
- org.eclipse.swt.nebula.widgets.ctabletree,
+ org.eclipse.swt.nebula.widgets.ctree,
  org.eclipse.swt.nebula.widgets.grid,
  org.eclipse.swt.nebula.widgets.pgroup,
  org.eclipse.swt.nebula.widgets.pshelf
