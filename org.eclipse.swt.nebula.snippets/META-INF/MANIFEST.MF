@@ -6,5 +6,5 @@ Bundle-Version: 1.0.0
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.swt,
  org.eclipse.swt.nebula
-Export-Package: org.eclipse.swt.nebula.snippets.ctabletree,
+Export-Package: org.eclipse.swt.nebula.snippets.ctree,
  org.eclipse.swt.nebula.snippets.grid
