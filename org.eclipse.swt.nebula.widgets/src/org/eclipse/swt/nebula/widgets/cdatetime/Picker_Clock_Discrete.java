@@ -31,7 +31,7 @@ class Picker_Clock_Discrete extends AbstractPicker {
 		selection = new Date();
 	}
 
-	void clearContents() {
+	protected void clearContents() {
 		Control[] ca = getChildren();
 		for(int i = 0; i < ca.length; i++) {
 			ca[i].dispose();
@@ -42,7 +42,7 @@ class Picker_Clock_Discrete extends AbstractPicker {
 		am_pm = null;
 	}
 
-	void createContents() {
+	protected void createContents() {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = isHorizontal ? (is24Hour ? 12 : 14) : (is24Hour ? 4 : 3);
 		layout.makeColumnsEqualWidth = false;
@@ -233,13 +233,13 @@ class Picker_Clock_Discrete extends AbstractPicker {
 		}
 	}
 	
-	int[] getFields() {
+	protected int[] getFields() {
 		return new int[] { 
 				Calendar.HOUR_OF_DAY,
 				Calendar.MINUTE };
 	}
 
-	void setFields(int[] calendarFields) {
+	protected void setFields(int[] calendarFields) {
 		super.setFields(calendarFields);
 		if((combo.getStyle() & CDT.CLOCK_12_HOUR) != 0) {
 			is24Hour = false;
@@ -258,7 +258,7 @@ class Picker_Clock_Discrete extends AbstractPicker {
 		return hours[hour].setFocus();
 	}
 
-	void setSelection(Date date, int field, int notification) {
+	protected void setSelection(Date date, int field, int notification) {
 		clearButtons();
 	}
 
@@ -283,7 +283,7 @@ class Picker_Clock_Discrete extends AbstractPicker {
 //		if(!is24Hour) am_pm[cal.get(Calendar.AM_PM)].setSelection(true);
 //	}
 
-	void updateLabels() {
+	protected void updateLabels() {
 		SimpleDateFormat sdf = null;
 		String pattern = ((SimpleDateFormat) SimpleDateFormat.getTimeInstance(DateFormat.SHORT, combo.locale)).toPattern();
 		if(pattern.indexOf("HH") > -1) {
@@ -318,7 +318,11 @@ class Picker_Clock_Discrete extends AbstractPicker {
 		}
 	}
 
-	void updateSelection() {
+	protected void updateNullSelection() {
+		clearButtons();
+	}
+	
+	protected void updateSelection() {
 		Calendar cal = Calendar.getInstance(combo.locale);
 		cal.setTime(selection);
 		boolean hour_set = false;

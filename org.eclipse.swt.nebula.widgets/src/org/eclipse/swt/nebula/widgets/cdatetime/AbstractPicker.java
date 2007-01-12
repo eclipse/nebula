@@ -37,11 +37,11 @@ abstract class AbstractPicker extends Composite {
 		this.selection = selection;
 	}
 
-	abstract void clearContents();
+	protected abstract void clearContents();
 	
-	abstract void createContents();
+	protected abstract void createContents();
 	
-	abstract int[] getFields();
+	protected abstract int[] getFields();
 	
 	int[] getFieldValues() {
 		Calendar cal = Calendar.getInstance(combo.locale);
@@ -96,8 +96,18 @@ abstract class AbstractPicker extends Composite {
 		updateSelection();
 	}
 
-	abstract void updateLabels();
+	protected abstract void updateLabels();
 
-	abstract void updateSelection();
+	protected abstract void updateNullSelection();
 
+	protected abstract void updateSelection();
+
+	void updateSelection(Date date) {
+		if(date == null) {
+			updateNullSelection();
+		} else {
+			selection = date;
+			updateSelection();
+		}
+	}
 }

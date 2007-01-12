@@ -142,10 +142,10 @@ class Picker_Clock_Analog extends AbstractPicker {
 		createContents();
 	}
 	
-	void clearContents() {
+	protected void clearContents() {
 	}
 	
-	void createContents() {
+	protected void createContents() {
 		setLayout(new BaseLayout());
 
 		dialComposite = new Composite(this, SWT.DOUBLE_BUFFERED);
@@ -477,7 +477,7 @@ class Picker_Clock_Analog extends AbstractPicker {
 		dialComposite.addListener(SWT.Paint, listener);
 	}
 	
-	int[] getFields() {
+	protected int[] getFields() {
 		return new int[] { 
 				Calendar.HOUR_OF_DAY,
 				Calendar.HOUR,
@@ -504,7 +504,7 @@ class Picker_Clock_Analog extends AbstractPicker {
 		return snap;
 	}
 	
-	void setFields(int[] calendarFields) {
+	protected void setFields(int[] calendarFields) {
 		super.setFields(calendarFields);
 		if((combo.getStyle() & CDT.CLOCK_12_HOUR) != 0) {
 			is24Hour = false;
@@ -547,7 +547,7 @@ class Picker_Clock_Analog extends AbstractPicker {
 	}
 
 
-	void setSelection(Date date, int field, int notification) {
+	protected void setSelection(Date date, int field, int notification) {
 		selection = snap(date);
 		if(!compact) {
 			footerButton.removeSelectionListener(footerListener);
@@ -608,7 +608,7 @@ class Picker_Clock_Analog extends AbstractPicker {
 	}
 
 
-	void updateLabels() {
+	protected void updateLabels() {
 		dialNow.setToolTipText(Messages.getString("nav_current_time", combo.locale));//$NON-NLS-1$
 //		if(combo.isDropDown()) {
 //			accept.setToolTipText(Messages.getString("accept", combo.locale));//$NON-NLS-1$
@@ -616,7 +616,11 @@ class Picker_Clock_Analog extends AbstractPicker {
 //		}
 	}
 
-	void updateSelection() {
+	protected void updateNullSelection() {
+		// TODO Auto-generated method stub
+	}
+	
+	protected void updateSelection() {
 		// TODO Auto-generated method stub
 	}
 }

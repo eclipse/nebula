@@ -123,7 +123,7 @@ class Picker_Calendar extends AbstractPicker {
 		selection = (Date) dayButtons[selDayButton].getData(DATE);
 	}
 
-	void clearContents() {
+	protected void clearContents() {
 	}
 
 	/**
@@ -243,7 +243,7 @@ class Picker_Calendar extends AbstractPicker {
 		}
 	}
 
-	void createContents() {
+	protected void createContents() {
 
 		if(month || year) {
 			createHeader();
@@ -526,7 +526,7 @@ class Picker_Calendar extends AbstractPicker {
 		}
 	}
 
-	int[] getFields() {
+	protected int[] getFields() {
 		return new int[] { 
 				Calendar.YEAR, 
 				Calendar.MONTH, 
@@ -667,7 +667,7 @@ class Picker_Calendar extends AbstractPicker {
 		editYear = edit;
 	}
 	
-	void setFields(int[] calendarFields) {
+	protected void setFields(int[] calendarFields) {
 		super.setFields(calendarFields);
 		year = isSet(Calendar.YEAR);
 		month = isSet(Calendar.MONTH);
@@ -702,9 +702,9 @@ class Picker_Calendar extends AbstractPicker {
 		return forceFocus();
 	}
 	
-	void setSelection(Date date) {
-		setSelection(date, true);
-	}
+//	void setSelection(Date date) {
+//		setSelection(date, true);
+//	}
 
 	/**
 	 * Set the selection for this CDatepicker to that of the provided
@@ -721,12 +721,12 @@ class Picker_Calendar extends AbstractPicker {
 	 * @see #getSelection()
 	 * @see #setSelection(Date)
 	 */
-	void setSelection(Date date, boolean alignMonth) {
+//	void setSelection(Date date, boolean alignMonth) {
 //		if(!selection.equals(date)) {
-			tmpcal.setTime(date);
-			setSelection(tmpcal.getTime(), alignMonth, NOTIFY_NONE);
+//			tmpcal.setTime(date);
+//			setSelection(tmpcal.getTime(), alignMonth, NOTIFY_NONE);
 //		}
-	}
+//	}
 
 	/**
 	 * if the selection is different from the current, then updates the days,
@@ -867,9 +867,9 @@ class Picker_Calendar extends AbstractPicker {
 	 * TODO: udpateDays() should to be redone.
 	 */
 	private void updateDays() {
-		getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				if(isDisposed()) return;
+//		getDisplay().asyncExec(new Runnable() {
+//			public void run() {
+//				if(isDisposed()) return;
 				CButton dayButton;
 				SimpleDateFormat sdf = new SimpleDateFormat("d", combo.locale);
 				Calendar today = Calendar.getInstance(combo.locale);
@@ -898,8 +898,8 @@ class Picker_Calendar extends AbstractPicker {
 						dayButton.setText(sdf.format(tmpcal.getTime()));
 					}
 				}
-			}
-		});
+//			}
+//		});
 	}
 	
 	/**
@@ -958,8 +958,8 @@ class Picker_Calendar extends AbstractPicker {
 		}
 	}
 	
-	void updateLabels() {
-		setSelection(selection);
+	protected void updateLabels() {
+//		setSelection(selection);
 		updateLocale();
 //		setDays(selection, true);
 //		updateDays();
@@ -1001,7 +1001,12 @@ class Picker_Calendar extends AbstractPicker {
 			bodyItem.setText(Messages.getString("nav_current_day", combo.locale));//$NON-NLS-1$
 		}
 	}
+
+	protected void updateNullSelection() {
+		dayButtons[selDayButton].setSelection(false);
+	}
 	
-	void updateSelection() {
+	protected void updateSelection() {
+		setSelection(selection, true, NOTIFY_NONE);
 	}
 }
