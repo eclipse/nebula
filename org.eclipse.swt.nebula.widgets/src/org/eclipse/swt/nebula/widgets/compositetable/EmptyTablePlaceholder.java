@@ -9,7 +9,7 @@
  * Contributors:
  *     David Orme     - Initial API and implementation
  */
-package org.eclipse.swt.nebula.widgets.compositetable.internal;
+package org.eclipse.swt.nebula.widgets.compositetable;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
@@ -27,13 +27,12 @@ import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.nebula.widgets.compositetable.InternalCompositeTable;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
-/**
+/** (Non-API)
  * Class EmptyTablePlaceholder.  An SWT control that is displayed in the table when
  * there are no rows to display.  It has four purposes:
  * 
@@ -46,7 +45,7 @@ import org.eclipse.swt.widgets.Display;
  * 
  * @author djo
  */
-public class EmptyTablePlaceholder extends Canvas {
+class EmptyTablePlaceholder extends Canvas {
 
 	private boolean focusControl = false;
 	private InternalCompositeTable parentTable = null;

@@ -20,7 +20,7 @@
 
 # ---Configuration variables---
 
-@RELEASE_VERSION='0.8.1'
+@RELEASE_VERSION='0.8.2'
 
 @JAR_EXE='/cygdrive/C/java/bin/jar'
 @ZIP_EXE='/usr/bin/zip'

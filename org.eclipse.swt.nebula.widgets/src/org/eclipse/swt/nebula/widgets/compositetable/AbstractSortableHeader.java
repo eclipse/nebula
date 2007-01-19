@@ -12,6 +12,7 @@
  */
 package org.eclipse.swt.nebula.widgets.compositetable;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +38,9 @@ import org.eclipse.swt.widgets.Display;
  */
 public abstract class AbstractSortableHeader extends Composite {
 
-	private List labels;
+    protected List labels;
+    private String[] labelStrings;
+
 	private MouseAdapter sortMouseAdapter;
 	private Boolean sortDescending = null; // choices: null (no sort); true; false
 
@@ -149,26 +152,29 @@ public abstract class AbstractSortableHeader extends Composite {
 	 */
 	protected abstract void sortOnColumn(int column, boolean sortDescending);
 
-	private void initialize() {
-		this.labels = new ArrayList();
-		String[] fields = labelStrings;
-		for (int i = 0; i < fields.length; i++) {
-			CLabel label = new CLabel(this, SWT.NONE);
-			if (label.isDisposed()) return;
-			this.labels.add(label);
-			label.setText(fields[i]);
-			label.addMouseListener(this.sortMouseAdapter);
-		}
-	}
+    public void setLabelStrings(String[] labelStrings) {
+        this.labelStrings = labelStrings;
+        initialize();
+    }
 
-	private String[] labelStrings;
-	
-	public void setLabelStrings(String[] labelStrings) {
-		this.labelStrings = labelStrings;
-		initialize();
-	}
+    private void initialize() {
+        this.labels = new ArrayList();
+        String[] fields = labelStrings;
+        for (int i = 0; i < fields.length; i++) {
+            CLabel label = new CLabel(this, SWT.NONE);
+            if (label.isDisposed()) return;
+            this.labels.add(label);
+            label.setText(fields[i]);
+            initializeLabel(label);
+        }
+    }
+    
+    protected void initializeLabel(CLabel label) {
+        label.addMouseListener(this.sortMouseAdapter);
+    }
+    
+    public List getLabels() {
+        return this.labels;
+    }
 
-	public List getLabels() {
-		return this.labels;
-	}
 }

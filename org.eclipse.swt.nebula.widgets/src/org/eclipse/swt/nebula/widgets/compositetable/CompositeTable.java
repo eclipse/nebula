@@ -1,4 +1,4 @@
-/*
+/* 
  * Copyright (C) 2005 David Orme <djo@coconut-palm-software.com>
  * 
  * All rights reserved. This program and the accompanying materials
@@ -38,10 +38,8 @@ import org.eclipse.swt.widgets.Menu;
  * 
  * <b>Synopsis:</b>
  * <p>
- * 
  * In order to edit anything, one must:
  * <p>
- * 
  * <ul>
  * <li>Extend Composite or Canvas and create an object that can be duplicated
  * to represent the rows in your table.
@@ -128,8 +126,6 @@ public class CompositeTable extends Canvas {
 	// Property fields here
 	private boolean runTime = false;
 
-	private int[] weights = new int[0];
-
 	private int numRowsInCollection = 0;
 
 	private int maxRowsVisible = Integer.MAX_VALUE;
@@ -143,7 +139,8 @@ public class CompositeTable extends Canvas {
 
 	private Control rowControl = null;
 
-	// TODO: on public API methods that reference contentPane, make sure it's not null before doing anything
+	// TODO: on public API methods that reference contentPane, make sure it's
+	// not null before doing anything
 	private InternalCompositeTable contentPane = null;
 
 	/**
@@ -281,42 +278,65 @@ public class CompositeTable extends Canvas {
 	 */
 	protected void resizeAndRecordPrototypeRows() {
 		Control[] children = getChildren();
-		ArrayList realChildren = new ArrayList();
-		Control[] finalChildren = children;
+  		Control[] finalChildren = children;
 
-		// Find first two prototypes
-		for (int i = 0; i < children.length; i++) {
-			if (children[i] instanceof InternalCompositeTable) {
-				continue;
-			}
-			if (realChildren.size() < 2) {
-				realChildren.add(children[i]);
-			}
-		}
-		finalChildren = (Control[]) realChildren
-				.toArray(new Control[realChildren.size()]);
+		finalChildren = findPrototypeHeaderAndRowObjects(children);
 
-		if (finalChildren.length == 0) {
-			headerConstructor = null;
-			headerControl = null;
-			rowConstructor = null;
-			rowControl = null;
-			return;
-		}
-
-		// Get a constructor for the header and/or the row prototype
 		headerConstructor = null;
 		headerControl = null;
 		rowConstructor = null;
 		rowControl = null;
+        
+		if (finalChildren.length == 0) {
+			return;
+		}
 
+		findPrototypeConstructors(finalChildren);
+		resizePrototypeObjects(finalChildren);
+
+		numChildrenLastTime = children.length;
+        
+        // I think this is a hack to work around some SWT layout bug, but
+        // I'm not sure so I'm going to comment it out and see if that breaks
+        // anything.
+//		Display.getCurrent().asyncExec(new Runnable() {
+//			public void run() {
+//				if (!CompositeTable.this.isDisposed()) {
+//					if (!getParent().isDisposed()) {
+//						getParent().layout(true);
+//					}
+//				}
+//			}
+//		});
+	}
+
+	private Control[] findPrototypeHeaderAndRowObjects(Control[] children) {
+	    Control[] finalChildren;
+	    // Find first two prototypes
+	    ArrayList realChildren = new ArrayList();
+	    for (int i = 0; i < children.length; i++) {
+	        if (children[i] instanceof InternalCompositeTable) {
+	            continue;
+	        }
+	        if (realChildren.size() < 2) {
+	            realChildren.add(children[i]);
+	        }
+	    }
+	    finalChildren = (Control[]) realChildren
+	    .toArray(new Control[realChildren.size()]);
+	    return finalChildren;
+	}
+	
+    private void findPrototypeConstructors(Control[] finalChildren) {
+        // Get a constructor for the header and/or the row prototype
 		if (finalChildren.length == 1) {
 			try {
 				rowControl = (Composite) finalChildren[0];
 				rowConstructor = finalChildren[0].getClass().getConstructor(
 						new Class[] { Composite.class, Integer.TYPE });
 			} catch (Exception e) {
-				throw new RuntimeException("Unable to get constructor object for header or row", e);
+				throw new RuntimeException(
+						"Unable to get constructor object for header or row", e);
 			}
 		} else {
 			try {
@@ -327,222 +347,25 @@ public class CompositeTable extends Canvas {
 						new Class[] { Composite.class, Integer.TYPE });
 				rowControl = finalChildren[1];
 			} catch (Exception e) {
-				throw new RuntimeException("Unable to get constructor object for header or row", e);
+				throw new RuntimeException(
+						"Unable to get constructor object for header or row", e);
 			}
 		}
+    }
 
-		// Now actually resize the children
-		int top = 0;
-		int width = getSize().x;
-		for (int i = 0; i < finalChildren.length; ++i) {
-			int height = 50;
-			if (finalChildren[i] instanceof Composite) {
-				Composite child = (Composite) finalChildren[i];
-				if (child.getLayout() == null) {
-					height = layoutHeaderOrRow(child, i==0);	// The 0th element is the header
-				} else {
-					height = finalChildren[i].computeSize(SWT.DEFAULT,
-							SWT.DEFAULT).y;
-				}
-			} else {
-				height = finalChildren[i].computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
-			}
-
-			finalChildren[i].setBounds(0, top, width, height);
-			top += height;
-		}
-
-		numChildrenLastTime = children.length;
-		Display.getCurrent().asyncExec(new Runnable() {
-			public void run() {
-				if (!CompositeTable.this.isDisposed()) {
-					if (!getParent().isDisposed()) {
-						getParent().layout(true);
-					}
-				}
-			}
-		});
-	}
-
-	/**
-	 * (non-API) Method layoutHeaderOrRow. If a header or row object does not
-	 * have a layout manager, this method will automatically be called to layout
-	 * the child controls of that header or row object.
-	 * 
-	 * @param child
-	 *            The child object to layout.
-	 * @param isHeader If we're laying out a header or a row object
-	 * @return the height of the header or row
-	 */
-	int layoutHeaderOrRow(Composite child, boolean isHeader) {
-		if (isFittingHorizontally() || isWidthWiderThanAllColumns()) {
-			return layoutWeightedHeaderOrRow(child, isHeader);
-		}
-		return layoutAbsoluteWidthHeaderOrRow(child, isHeader);
-	}
-	
-   boolean isWidthWiderThanAllColumns() {
-      // isFittingHorizontally must be false because this is only called
-      // as the second part of a short-circuit boolean evaluation
-      int allColumnsTotalWidth = 0;
-      for (int i = 0; i < weights.length; i++) {
-         allColumnsTotalWidth += weights[i]+2;
-      }
-      return getSize().x > allColumnsTotalWidth;
-   }
-
-   private int layoutWeightedHeaderOrRow(Composite child, boolean isHeader) {
-		Control[] children = child.getChildren();
-		if (children.length == 0) {
-			return 50;
-		}
-		int maxHeight = computeMaxHeight(isHeader, children);
-
-		int[] weights = this.weights;
-      if (isFittingHorizontally()) {
-         weights = checkWeights(weights, children.length);
-      } else {
-         weights = computeWeights(weights, children.length);
-      }
-		
-		int widthRemaining = child.getParent().getSize().x;
-		int totalSize = widthRemaining;
-		for (int i = 0; i < children.length - 1; i++) {
-			int left = totalSize - widthRemaining;
-			int desiredHeight = computeDesiredHeight(children[i], isHeader);
-			int top = computeTop(maxHeight, desiredHeight);
-			int width = (int) (((float) weights[i]) / 100 * totalSize);
-			children[i].setBounds(left + 2, top, width - 4, desiredHeight);
-			widthRemaining -= width;
-		}
-
-		int left = totalSize - widthRemaining;
-		int desiredHeight = computeDesiredHeight(children[children.length - 1], isHeader);
-		int top = computeTop(maxHeight, desiredHeight);
-		children[children.length - 1].setBounds(left + 2, top,
-				widthRemaining - 4, desiredHeight);
-
-		return maxHeight;
-	}
-	
-   private int layoutAbsoluteWidthHeaderOrRow(Composite child, boolean isHeader) {
-		Control[] children = child.getChildren();
-		if (children.length == 0) {
-			return 50;
-		}
-		int maxHeight = computeMaxHeight(isHeader, children);
-
-		int[] weights = this.weights;
-		int left = 0;
-		for (int i = 0; i < children.length; i++) {
-			int desiredHeight = computeDesiredHeight(children[i], isHeader);
-			int top = computeTop(maxHeight, desiredHeight);
-			children[i].setBounds(left + 2, top, weights[i], desiredHeight);
-			left += weights[i]+4;
-		}
-
-		return maxHeight;
-	}
-
-	private int computeTop(int maxHeight, int desiredHeight) {
-		return maxHeight - desiredHeight - 1;
-	}
-
-	private int computeMaxHeight(boolean isHeader, Control[] children) {
-		int maxHeight = 0;
-		for (int i = 0; i < children.length; i++) {
-			int height = computeDesiredHeight(children[i], isHeader);
-			if (maxHeight < height) {
-				maxHeight = height;
-			}
-		}
-		++maxHeight;
-		return maxHeight;
-	}
-	
-	int computeDesiredHeight(Control control, boolean isHeader) {
-		int controlHeight = control.computeSize(SWT.DEFAULT,
-				SWT.DEFAULT, false).y;
-		if (maxRowsVisible == Integer.MAX_VALUE || isHeader) {
-			return controlHeight;
-		}
-		if (contentPane != null && fittingVertically && isRunTime()) {
-			// FIXME: Yuck: bad code smell here...  (coupling with contentPane)
-			int fitControlHeight = contentPane.clientAreaHeight / maxRowsVisible;
-			if (fitControlHeight < controlHeight) {
-				return controlHeight;
-			}
-			return fitControlHeight-2;
-		}
-		return controlHeight;
-	}
-
-   private int[] computeWeights(int[] weights, int numChildren) {
-      if (weights.length != numChildren) {
-         return checkWeights(weights, numChildren);
-      }
-      int allColumnsTotalWidth = 0;
-      for (int i = 0; i < weights.length; i++) {
-         allColumnsTotalWidth += weights[i];
-      }
-      int[] realWeights = new int[numChildren];
-      int total=100;
-      for (int i = 0; i < realWeights.length; i++) {
-         realWeights[i] = (int) (((double)weights[i])/allColumnsTotalWidth * 100);
-         total -= realWeights[i];
-      }
-      int i=0;
-      while (total > 0) {
-         ++realWeights[i];
-         --total;
-         ++i;
-         if (i >= realWeights.length) {
-            i = 0;
-         }
-      }
-      return realWeights;
-   }
-
-	/**
-	 * Compute and return a weights array where each weight is the percentage
-	 * the corresponding column should occupy of the entire control width. If
-	 * the elements in the supplied weights array add up to 100 and the length
-	 * of the array is the same as the number of columns, the supplied weights
-	 * array is used. Otherwise, this method computes and returns a weights
-	 * array that makes each column an equal size.
-	 * 
-	 * @param weights
-	 *            The default or user-supplied weights array.
-	 * @param numChildren
-	 *            The number of child controls.
-	 * @return The weights array that will be used by the layout manager.
-	 */
-	private int[] checkWeights(int[] weights, int numChildren) {
-		if (weights.length == numChildren) {
-			int sum = 0;
-			for (int i = 0; i < weights.length; i++) {
-				sum += weights[i];
-			}
-			if (sum == 100) {
-				return weights;
-			}
-		}
-
-		// Either the number of weights doesn't match or they don't add up.
-		// Compute something sane and return that instead.
-		int[] result = new int[numChildren];
-		int weight = 100 / numChildren;
-		int extra = 100 % numChildren;
-		for (int i = 0; i < result.length - 1; i++) {
-			result[i] = weight;
-			if (extra > 0) {
-				result[i]++;
-				extra--;
-			}
-		}
-		result[numChildren - 1] = weight + extra;
-		return result;
-	}
+    private void resizePrototypeObjects(Control[] finalChildren) {
+        // Now actually resize the children
+        int top = 0;
+        int width = getSize().x;
+        for (int i = 0; i < finalChildren.length; ++i) {
+            Control control = finalChildren[i];
+            
+            int height = control.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+            control.setBounds(0, top, width, height);
+            
+            top += height;
+        }
+    }
 
 	/**
 	 * Method isRunTime. Returns if the CompositeTable is in run time mode as
@@ -579,57 +402,12 @@ public class CompositeTable extends Canvas {
 		}
 	}
 
-	/**
-	 * Method getWeights. If isFittingHorizontally, returns an array 
-	 * representing the percentage of the total width each column is allocated 
-	 * or null if no weights have been specified.
-	 * <p> 
-	 * If !isFittingHorizontally, returns an array where each element is the
-	 * absolute width in pixels of the corresponding column.
-	 * <p>
-	 * This property is ignored if the programmer has set a layout
-	 * manager on the header and/or the row prototype objects.
-	 * 
-	 * @return the current weights array or null if no weights have been
-	 *         specified.
-	 */
-	public int[] getWeights() {
-		return weights;
-	}
-
-	/**
-	 * Method setWeights.  If isFittingHorizontally, specifies an array 
-	 * representing the percentage of the total width each column is allocated 
-	 * or null if no weights have been specified.
-	 * <p> 
-	 * If !isFittingHorizontally, specifies an array where each element is the
-	 * absolute width in pixels of the corresponding column.
-	 * <p>
-	 * This property is ignored if the programmer has set a layout
-	 * manager on the header and/or the row prototype objects.
-	 * <p>
-	 * The number of elements in the array must match the number of columns and
-	 * if isFittingHorizontally, the sum of all elements must equal 100. 
-	 * If either of these constraints is not true, this property will be ignored 
-	 * and all columns will be created equal in width.
-	 * 
-	 * @param weights
-	 *            the weights to use if the CompositeTable is automatically
-	 *            laying out controls.
-	 */
-	public void setWeights(int[] weights) {
-		this.weights = weights;
-		if (contentPane != null) {
-			contentPane.setWeights();
-		}
-	}
-
 	boolean linesVisible = true;
 
 	/**
-	 * Method getLinesVisible. Returns if the CompositeTable will draw grid lines
-	 * on the header and row Composite objects. This property is ignored if the
-	 * programmer has set a layout manager on the header and/or the row
+	 * Method getLinesVisible. Returns if the CompositeTable will draw grid
+	 * lines on the header and row Composite objects. This property is ignored
+	 * if the programmer has set a layout manager on the header and/or the row
 	 * prototype objects.
 	 * 
 	 * @return true if the CompositeTable will draw grid lines; false otherwise.
@@ -639,8 +417,8 @@ public class CompositeTable extends Canvas {
 	}
 
 	/**
-	 * Method setLinesVisible. Sets if the CompositeTable will draw grid lines on
-	 * the header and row Composite objects. This property is ignored if the
+	 * Method setLinesVisible. Sets if the CompositeTable will draw grid lines
+	 * on the header and row Composite objects. This property is ignored if the
 	 * programmer has set a layout manager on the header and/or the row
 	 * prototype objects.
 	 * 
@@ -673,9 +451,9 @@ public class CompositeTable extends Canvas {
 	 */
 	public void setInsertHint(String newHint) {
 		this.insertHint = newHint;
-      if (contentPane != null && numRowsInCollection < 1) {
-         contentPane.emptyTablePlaceholder.setMessage(newHint);
-      }
+		if (contentPane != null && numRowsInCollection < 1) {
+			contentPane.emptyTablePlaceholder.setMessage(newHint);
+		}
 	}
 
 	/**
@@ -707,63 +485,6 @@ public class CompositeTable extends Canvas {
 		this.maxRowsVisible = maxRowsVisible;
 		if (contentPane != null) {
 			contentPane.setMaxRowsVisible(maxRowsVisible);
-		}
-	}
-
-	private boolean fittingVertically = false;
-
-	/**
-	 * Method isFittingVertically. Returns if the CompositeTable control will
-	 * scale the height of all rows so that maxRowsVisible rows exactly fits
-	 * vertically in the available space.
-	 * 
-	 * @return true if the visible rows will be scaled; false otherwise.
-	 */
-	public boolean isFittingVertically() {
-		return fittingVertically;
-	}
-
-	/**
-	 * Method setFittingVertically. Sets if the CompositeTable will scale the
-	 * visible rows sot that maxRowsVisible rows will exactly fit vertically in
-	 * the available space.
-	 * 
-	 * @param fittingVertically
-	 *            true if the visible rows will be scaled; false otherwise.
-	 */
-	public void setFittingVertically(boolean fittingVertically) {
-		this.fittingVertically = fittingVertically;
-		if (contentPane != null) {
-			contentPane.setFittingVertically(fittingVertically);
-		}
-	}
-	
-	private boolean fittingHorizontally = true;
-	
-	/**
-	 * Method isFittingHorizontally.  Returns if the CompositeTable control
-	 * will scale the widths of all columns so that they all fit into the
-	 * available space.
-	 * 
-	 * @return Returns true if the table's actual width is set to equal the
-	 * visible width; false otherwise.
-	 */
-	public boolean isFittingHorizontally() {
-		return fittingHorizontally;
-	}
-	
-	/**
-	 * Method setFittingHorizontally. Sets if the CompositeTable control
-	 * will scale the widths of all columns so that they all fit into the
-	 * available space.
-	 * 
-	 * @param fittingHorizontally true if the table's actual width is set to 
-	 * equal the visible width; false otherwise.
-	 */
-	public void setFittingHorizontally(boolean fittingHorizontally) {
-		this.fittingHorizontally = fittingHorizontally;
-		if (contentPane != null) {
-			contentPane.setFittingHorizontally(fittingHorizontally);
 		}
 	}
 
@@ -857,7 +578,7 @@ public class CompositeTable extends Canvas {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Method refreshAllRows. Refresh all visible rows in the CompositeTable
 	 * from the original data.
@@ -930,7 +651,7 @@ public class CompositeTable extends Canvas {
 	public Control getCurrentRowControl() {
 		return contentPane.getCurrentRowControl();
 	}
-	
+
 	/**
 	 * Method getRowControls. Returns an array of SWT controls where each
 	 * control represents a row control in the CompositeTable's current scrolled
@@ -945,8 +666,10 @@ public class CompositeTable extends Canvas {
 	public Control[] getRowControls() {
 		return contentPane.getRowControls();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.swt.widgets.Control#setMenu(org.eclipse.swt.widgets.Menu)
 	 */
 	public void setMenu(Menu menu) {
@@ -955,14 +678,16 @@ public class CompositeTable extends Canvas {
 			contentPane.setMenu(menu);
 		}
 	}
-	
+
 	/**
-	 * Method getControlRow.  Given a row control, returns its row number
+	 * Method getControlRow. Given a row control, returns its row number
 	 * relative to the topRow.
 	 * 
-	 * @param rowControl The row object to find
+	 * @param rowControl
+	 *            The row object to find
 	 * @return The row number of the rowControl relative to the topRow (0-based)
-	 * @throws IllegalArgumentException if rowControl is not currently visible
+	 * @throws IllegalArgumentException
+	 *             if rowControl is not currently visible
 	 */
 	public int getControlRow(Control rowControl) {
 		return contentPane.getControlRow(rowControl);
@@ -1214,34 +939,36 @@ public class CompositeTable extends Canvas {
 	public void setDeleteEnabled(boolean deleteEnabled) {
 		this.deleteEnabled = deleteEnabled;
 	}
-	
+
 	LinkedList scrollListeners = new LinkedList();
-	
+
 	/**
-	 * Method addScrollListener.  Adds the specified scroll listener to the
-	 * list of listeners that will be notified when this CompositeTable control
-	 * scrolls the top-visible row.  This event is not fired when the 
+	 * Method addScrollListener. Adds the specified scroll listener to the list
+	 * of listeners that will be notified when this CompositeTable control
+	 * scrolls the top-visible row. This event is not fired when the
 	 * CompositeTable is resized.
 	 * 
-	 * @param scrollListener the ScrollListener to add.
+	 * @param scrollListener
+	 *            the ScrollListener to add.
 	 */
 	public void addScrollListener(ScrollListener scrollListener) {
 		scrollListeners.add(scrollListener);
 	}
-	
+
 	/**
-	 * Method removeScrollListener.  Removes the specified scroll listener from the
-	 * list of listeners that will be notified when this CompositeTable control
-	 * scrolls the top-visible row.
+	 * Method removeScrollListener. Removes the specified scroll listener from
+	 * the list of listeners that will be notified when this CompositeTable
+	 * control scrolls the top-visible row.
 	 * 
-	 * @param scrollListener the ScrollListener to remove.
+	 * @param scrollListener
+	 *            the ScrollListener to remove.
 	 */
 	public void removeScrollListener(ScrollListener scrollListener) {
 		scrollListeners.remove(scrollListener);
 	}
 
 	private boolean traverseOnTabsEnabled = true;
-	
+
 	/**
 	 * Method isTraverseOnTabsEnabled. Returns true if Tab and Shift-tab cause
 	 * the focus to wrap from the end of the table back to the beginning and
@@ -1257,14 +984,15 @@ public class CompositeTable extends Canvas {
 	}
 
 	/**
-	 * Method setTraverseOnTabsEnabled. Sets if Tab and Shift-tab cause
-	 * the focus to wrap from the end of the table back to the beginning and
-	 * Enter causes the focus to advance.
+	 * Method setTraverseOnTabsEnabled. Sets if Tab and Shift-tab cause the
+	 * focus to wrap from the end of the table back to the beginning and Enter
+	 * causes the focus to advance.
 	 * <p>
 	 * This property defaults to true.
 	 * 
-	 * @param enabled true if CompositeTable is handling Tab, Shift-tab, and Enter key
-	 *         behavior; false otherwise.
+	 * @param enabled
+	 *            true if CompositeTable is handling Tab, Shift-tab, and Enter
+	 *            key behavior; false otherwise.
 	 */
 	public void setTraverseOnTabsEnabled(boolean enabled) {
 		this.traverseOnTabsEnabled = enabled;

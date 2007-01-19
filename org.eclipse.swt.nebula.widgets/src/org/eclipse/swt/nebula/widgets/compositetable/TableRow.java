@@ -9,7 +9,7 @@
  * Contributors:
  *     David Orme     - Initial API and implementation
  */
-package org.eclipse.swt.nebula.widgets.compositetable.internal;
+package org.eclipse.swt.nebula.widgets.compositetable;
 
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
@@ -19,11 +19,10 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
-import org.eclipse.swt.nebula.widgets.compositetable.InternalCompositeTable;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
-/**
+/** (non-API)
  * Class TableRow.  Encapsulates operations on a SWT row control.  Discovers the 
  * SWT controls inside the row control representing columns and exposes those for
  * operations by the CompositeTable.  Listens to SWT events on the column controls
@@ -31,7 +30,7 @@ import org.eclipse.swt.widgets.Control;
  * 
  * @author djo
  */
-public class TableRow {
+class TableRow {
 	private Control row;
 	private Control[] columns;
 	protected InternalCompositeTable parent;
