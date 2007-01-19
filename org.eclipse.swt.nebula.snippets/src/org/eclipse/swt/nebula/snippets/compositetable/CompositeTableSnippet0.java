@@ -3,6 +3,7 @@ package org.eclipse.swt.nebula.snippets.compositetable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.nebula.widgets.compositetable.CompositeTable;
+import org.eclipse.swt.nebula.widgets.compositetable.GridRowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
@@ -17,13 +18,13 @@ import org.eclipse.swt.widgets.Text;
 public class CompositeTableSnippet0 {
 	// Define the table's header and row objects
 	//
-	// A tabular layout is desired, so no layout manager is needed on the header 
-	// or row.  CompositeTable will handle the layout automatically.  However,
-	// if you supply a layout manager, CompositeTable will respect and use it.
+	// A tabular layout is desired, so we use the GridRowLayout shipped with
+    // CompositeTable.
 	
 	private static class Header extends Composite {
 		public Header(Composite parent, int style) {
 			super(parent, style);
+			setLayout(new GridRowLayout(new int[] { 160, 100 }, false));
 			new Label(this, SWT.NULL).setText("First Name");
 			new Label(this, SWT.NULL).setText("Last Name");
 		}
@@ -32,14 +33,13 @@ public class CompositeTableSnippet0 {
 	private static class Row extends Composite {
 		public Row(Composite parent, int style) {
 			super(parent, style);
+            setLayout(new GridRowLayout(new int[] { 160, 100 }, false));
 			firstName = new Text(this, SWT.NULL);
 			lastName = new Text(this, SWT.NULL);
 		}
 		public final Text firstName;
 		public final Text lastName;
 	}
-	
-	// Where it all starts...
 	
 	public static void main (String [] args) {
 	    Display display = new Display ();

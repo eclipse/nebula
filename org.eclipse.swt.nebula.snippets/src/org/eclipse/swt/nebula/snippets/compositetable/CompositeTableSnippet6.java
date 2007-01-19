@@ -1,156 +1,154 @@
 package org.eclipse.swt.nebula.snippets.compositetable;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.nebula.widgets.compositetable.AbstractSelectableRow;
+import org.eclipse.swt.nebula.widgets.compositetable.AbstractSortableHeader;
 import org.eclipse.swt.nebula.widgets.compositetable.CompositeTable;
 import org.eclipse.swt.nebula.widgets.compositetable.IRowContentProvider;
-import org.eclipse.swt.nebula.widgets.compositetable.RowFocusAdapter;
-import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.nebula.widgets.compositetable.ResizableGridHeaderLayout;
+import org.eclipse.swt.nebula.widgets.compositetable.ResizableGridRowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 
 /**
- * A CompositeTable editing a name/address block
+ * A CompositeTable listing first/last name pairs, allowing sorting by 
+ * clicking columns and allowing columns to be resized by dragging in
+ * the header.
  * 
  * @author djo
  */
 public class CompositeTableSnippet6 {
-	// First some data to edit...
-	
-	private static class Address {
-		public String name;
-		public String address1;
-		public String address2;
-		public String city;
-		public String state;
-		public String postalCode;
-		public Address(String name, String address1, String address2, String city,
-				String state, String postalCode) {
-			this.name = name;
-			this.address1 = address1;
-			this.address2 = address2;
-			this.city = city;
-			this.state = state;
-			this.postalCode = postalCode;
+	// First some data...
+	private static class Name {
+		public String first;
+		public String last;
+		public Name(String first, String last) {
+			this.first = first;
+			this.last = last;
 		}
 	}
 	
-	protected static Address[] addressList = new Address[] {
-		new Address("John Wright", "810 Trail's End", "", "Glen Ellyn", "Illinois", "60017"),
-		new Address("Anna Smith", "600 Milky Spore Rd", "", "Addison", "Illinois", "60010"),
-		new Address("Andy Taylor", "1913 North Path", "", "Wheaton", "Illinois", "60187"),
-		new Address("George Owen", "1624 Highwood", "", "Glenbrook", "Illinois", "60085"),
+	static Name[] swtCommitters = new Name[] {
+		new Name("Grant", "Gayed"),
+		new Name("Veronika", "Irvine"),
+		new Name("Steve", "Northover"),
+		new Name("Mike", "Wilson"),
+		new Name("Christophe", "Cornu"),
+		new Name("Lynne", "Kues"),
+		new Name("Silenio", "Quarti"),
+		new Name("Tod", "Creasey"),
+		new Name("Felipe", "Heidrich"),
+		new Name("Billy", "Biggs"),
+		new Name("B", "Shingar")
 	};
 	
-	
-	// Now define the row object.  It's just a regular Composite like you 
-	// might use to edit an Address anywhere else.
-	
-	private static class AddressEditor extends Composite {
-		
-		public AddressEditor(Composite parent, int style) {
-			super(parent, style | SWT.BORDER);
-			
-			setLayout(new GridLayout(2, true));
-			new Label(this, SWT.NULL).setText("Name:");
-			new Label(this, SWT.NULL);
-			
-			name = new Text(this, SWT.BORDER);
-			name.setLayoutData(spanGD());
-			
-			new Label(this, SWT.NULL).setText("Address:");
-			new Label(this, SWT.NULL);
-			
-			address1 = new Text(this, SWT.BORDER);
-			address1.setLayoutData(spanGD());
-			address2 = new Text(this, SWT.BORDER);
-			address2.setLayoutData(spanGD());
-			
-			new Label(this, SWT.NULL).setText("City:");
-			new Label(this, SWT.NULL).setText("State:");
-			
-			city = new Text(this, SWT.BORDER);
-			city.setLayoutData(fillGD());
-			state = new Combo(this, SWT.BORDER);
-			state.setLayoutData(fillGD());
-			
-			new Label(this, SWT.NULL).setText("Zip:");
-			new Label(this, SWT.NULL);
-			
-			postalCode = new Text(this, SWT.BORDER);
-			postalCode.setLayoutData(spanGD());
+	static class Opposite implements Comparator {
+		private Comparator c;
+		public Opposite(Comparator c) {
+			this.c = c;
 		}
-		
-		private GridData spanGD() {
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
-			gd.horizontalSpan=2;
-			return gd;
+		public int compare(Object o1, Object o2) {
+			return -1 * c.compare(o1, o2);
 		}
-		
-		private GridData fillGD() {
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
-			return gd;
-		}
-		
-		public final Text name;
-		public final Text address1;
-		public final Text address2;
-		public final Text city;
-		public final Combo state;
-		public final Text postalCode;
 	}
 	
+	static final Comparator firstNameAscending = new Comparator() {
+		public int compare(Object o1, Object o2) {
+			Name name1 = (Name) o1;
+			Name name2 = (Name) o2;
+			return name1.first.compareToIgnoreCase(name2.first);
+		};
+	};
+	static final Comparator firstNameDescending = new Opposite(firstNameAscending);
+
+	static final Comparator lastNameAscending = new Comparator() {
+		public int compare(Object o1, Object o2) {
+			Name name1 = (Name) o1;
+			Name name2 = (Name) o2;
+			return name1.last.compareToIgnoreCase(name2.last);
+		};
+	};
+	static final Comparator lastNameDescending = new Opposite(lastNameAscending);
+
+	// Define our header and row objects.  For convenience, we use
+	// abstract classes provided along with CompositeTable that make it
+	// easy to add common behaviors to our header and row objects.
+
+	private static class Header extends AbstractSortableHeader {
+		public Header(Composite parent, int style) {
+			super(parent, style);
+            setLayout(new ResizableGridHeaderLayout(new int[] { 160, 100 }, false));
+			setLabelStrings(new String[] {"First name", "Last name"});
+		}
+		
+		protected void sortOnColumn(int column, boolean sortDescending) {
+			Comparator comparator = null;
+			if (column == 0) {
+				if (sortDescending) {
+					comparator = firstNameDescending;
+				} else {
+					comparator = firstNameAscending;
+				}
+			} else {
+				if (sortDescending) {
+					comparator = lastNameDescending;
+				} else {
+					comparator = lastNameAscending;
+				}
+			}
+			Arrays.sort(swtCommitters, comparator);
+			table.refreshAllRows();
+		}
+	}
+	
+	private static class Row extends AbstractSelectableRow {
+		public Row(Composite parent, int style) {
+			super(parent, style);
+            setLayout(new ResizableGridRowLayout());
+			setColumnCount(2);
+		}
+	}
+	
+	private static CompositeTable table;
+
+
 	// Where it all starts...
 	
 	public static void main (String [] args) {
 	    Display display = new Display ();
 	    Shell shell = new Shell (display);
-	    shell.setText("CompositeTable Snippet 6 -- Edit name/address block");
+	    shell.setText("CompositeTable Snippet 5 -- List first/last names with sortable columns");
 	    shell.setLayout(new FillLayout());
 
-	    CompositeTable table = new CompositeTable(shell, SWT.NULL);
-	    AddressEditor row = new AddressEditor(table, SWT.NULL);  // No header?  No problem.
+	    table = new CompositeTable(shell, SWT.NULL);
+	    new Header(table, SWT.NULL); // Just drop the Header and Row in that order...
+	    new Row(table, SWT.NULL);
 	    table.setRunTime(true);
-	    table.setNumRowsInCollection(addressList.length);
+	    table.setNumRowsInCollection(swtCommitters.length);
 	    
 	    // Note the JFace-like virtual table API
 	    table.addRowContentProvider(new IRowContentProvider() {
 			public void refresh(CompositeTable sender, int currentObjectOffset, Control rowControl) {
-				AddressEditor row = (AddressEditor) rowControl;
-				row.name.setText(addressList[currentObjectOffset].name);
-				row.address1.setText(addressList[currentObjectOffset].address1);
-				row.address2.setText(addressList[currentObjectOffset].address2);
-				row.city.setText(addressList[currentObjectOffset].city);
-				row.state.setText(addressList[currentObjectOffset].state);
-				row.postalCode.setText(addressList[currentObjectOffset].postalCode);
+				Row row = (Row) rowControl;
+				Control[] children = row.getChildren();
+				((Label)children[0]).setText(swtCommitters[currentObjectOffset].first);
+				((Label)children[1]).setText(swtCommitters[currentObjectOffset].last);
 			}
 	    });
 	    
-	    table.addRowFocusListener(new RowFocusAdapter() {
-			public void depart(CompositeTable sender, int currentObjectOffset, Control rowControl) {
-				AddressEditor row = (AddressEditor) rowControl;
-				addressList[currentObjectOffset].name = row.name.getText();
-				addressList[currentObjectOffset].address1 = row.address1.getText();
-				addressList[currentObjectOffset].address2 = row.address2.getText();
-				addressList[currentObjectOffset].city = row.city.getText();
-				addressList[currentObjectOffset].state = row.state.getText();
-				addressList[currentObjectOffset].postalCode = row.postalCode.getText();
-			}
-	    });
-
-	    Point preferredSize = row.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-	    shell.setSize(500, 2*preferredSize.y+35);
+	    shell.setSize(500, 150);
 	    shell.open ();
 	    while (!shell.isDisposed()) {
 	        if (!display.readAndDispatch ()) display.sleep ();
 	    }
 	    display.dispose ();
 	}
+
 }

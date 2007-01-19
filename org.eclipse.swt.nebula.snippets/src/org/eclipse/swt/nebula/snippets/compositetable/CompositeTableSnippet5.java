@@ -8,6 +8,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.nebula.widgets.compositetable.AbstractSelectableRow;
 import org.eclipse.swt.nebula.widgets.compositetable.AbstractSortableHeader;
 import org.eclipse.swt.nebula.widgets.compositetable.CompositeTable;
+import org.eclipse.swt.nebula.widgets.compositetable.GridRowLayout;
 import org.eclipse.swt.nebula.widgets.compositetable.IRowContentProvider;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -81,6 +82,7 @@ public class CompositeTableSnippet5 {
 	private static class Header extends AbstractSortableHeader {
 		public Header(Composite parent, int style) {
 			super(parent, style);
+            setLayout(new GridRowLayout(new int[] { 160, 100 }, false));
 			setLabelStrings(new String[] {"First name", "Last name"});
 		}
 		
@@ -107,6 +109,7 @@ public class CompositeTableSnippet5 {
 	private static class Row extends AbstractSelectableRow {
 		public Row(Composite parent, int style) {
 			super(parent, style);
+            setLayout(new GridRowLayout(new int[] { 160, 100 }, false));
 			setColumnCount(2);
 		}
 	}

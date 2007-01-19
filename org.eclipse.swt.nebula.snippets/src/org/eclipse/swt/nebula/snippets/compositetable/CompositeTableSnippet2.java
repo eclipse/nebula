@@ -3,6 +3,7 @@ package org.eclipse.swt.nebula.snippets.compositetable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.nebula.widgets.compositetable.CompositeTable;
+import org.eclipse.swt.nebula.widgets.compositetable.GridRowLayout;
 import org.eclipse.swt.nebula.widgets.compositetable.IRowContentProvider;
 import org.eclipse.swt.nebula.widgets.compositetable.RowFocusAdapter;
 import org.eclipse.swt.widgets.Composite;
@@ -51,6 +52,7 @@ public class CompositeTableSnippet2 {
 	private static class Header extends Composite {
 		public Header(Composite parent, int style) {
 			super(parent, style);
+            setLayout(new GridRowLayout(new int[] { 160, 100 }, false));
 			new Label(this, SWT.NULL).setText("First Name");
 			new Label(this, SWT.NULL).setText("Last Name");
 		}
@@ -59,6 +61,7 @@ public class CompositeTableSnippet2 {
 	private static class Row extends Composite {
 		public Row(Composite parent, int style) {
 			super(parent, style);
+            setLayout(new GridRowLayout(new int[] { 160, 100 }, false));
 			firstName = new Text(this, SWT.NULL);
 			lastName = new Text(this, SWT.NULL);
 		}
