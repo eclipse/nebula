@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -45,7 +46,7 @@ import org.eclipse.swt.widgets.Listener;
  * 	<li>SWT.TITLE - creates the Title Area</li>
  * 	<li>SWT.TOGGLE - creates the CContainerCell's implementation of a toggle</li>
  * </ul>
- * </p> 
+ * </p>
  */
 public abstract class AbstractCell {
 	
@@ -167,16 +168,15 @@ public abstract class AbstractCell {
 	protected AbstractItem item;
 
 	protected int style;
-	protected Composite titleArea;
-	protected SComposite childArea;
+	private Control[] controls;
+	private Control[] childControls;
 	protected boolean update = true;
-	protected boolean needsLayout = true;
 	protected boolean open = false;
 	protected boolean selected = false;
 	protected boolean visible = true;
-	protected boolean toggleVisible = false;
-	protected boolean titleVisible = false;
 	protected boolean childVisible = false;
+	protected boolean toggleVisible = false;
+	private   boolean painted = false;
 	protected int indent = 0;
 	/**
 	 * If true, the toggle will not be drawn, but will take up space
@@ -191,18 +191,18 @@ public abstract class AbstractCell {
 	public int marginTop 	= gtk ? 0 : 0;
 	public int marginHeight = gtk ? 4 : 1;
 	public int marginBottom = 0;
-	public int horizontalSpacing = 2;
-//	public int horizontalAlignment = SWT.LEFT;
-//	public int verticalAlignment = SWT.CENTER;
 	public int toggleWidth = 16;
-	public int childSpacing = 1;
-	public int rightChildIndent = 2;
-	// TODO minX & minY - full implementation, or are these really emptyX & emptyY?
-	public int minX = 1;
-	public int minY = 1;
+	
 	protected Rectangle bounds;
+	protected Rectangle childBounds;
+
+	protected Rectangle boundsOld;
+	protected Rectangle childBoundsOld;
+
+	private boolean hasChild;
+	private Point scrollPos;
+	
 	protected Rectangle toggleBounds = new Rectangle(0,0,0,0);
-	protected int titleHeight = 0;
 	protected Font font;
 	protected Color activeBackground;
 	protected Color activeForeground;
@@ -211,13 +211,10 @@ public abstract class AbstractCell {
 	protected boolean isGridLine = false;
 	private int cellState = CELL_NORMAL;
 	
-	public int colSpan = 1;
-	
 	private List colorExclusions;
 	private List eventExclusions;
 
 	private EventHandler ehandler = new EventHandler();
-//	private List dlisteners = new ArrayList();
 	private Listener l = new Listener() {
 		public void handleEvent(Event event) {
 			ehandler.sendEvent(event);
@@ -240,9 +237,18 @@ public abstract class AbstractCell {
 	 */
 	public AbstractCell(AbstractItem item, int style) {
 		this.container = item.container;
-		this.style = style;
-		createContents(container.body, style);
 		this.item = item;
+		this.style = style;
+		bounds = new Rectangle(0,0,0,0);
+		if((style & SWT.DROP_DOWN) != 0) {
+			hasChild = true;
+			setChildVisible(true);
+		} else {
+			hasChild = false;
+		}
+		if((style & SWT.TOGGLE) != 0) {
+			setToggleVisible(true, true);
+		}
 	}
 
 	public void addListener(int eventType, Listener handler) {
@@ -288,16 +294,15 @@ public abstract class AbstractCell {
 	/**
 	 * Compute the preferred size of the cell for its current state (open or closed, if applicable)
 	 * just the way it would be done in a regular SWT layout.
-	 * <p>Implementations are to implement this themselves, though if the the cell's style is 
-	 * SWT.TITLE then most likely they will simply return the computed size as found by
-	 * titleArea.computeSize(int, int)</p>
 	 * @param wHint
 	 * @param hHint
 	 * @return a Point representing the preferred size of the cell
 	 */
-	public abstract Point computeSize(int wHint, int hHint);
+	abstract Point computeSize(int wHint, int hHint);
 
-	public Rectangle computeTitleClientArea(int sizeX, int sizeY) {
+	Point computeChildSize(int wHint, int hHint) { return null; }
+	
+	public Rectangle computeClientArea(int sizeX, int sizeY) {
 		Rectangle ca = new Rectangle(0,0,sizeX,sizeY);
 		ca.x = marginLeft + marginWidth + indent;
 		if(toggleVisible || ghostToggle) ca.x += toggleWidth;
@@ -308,17 +313,6 @@ public abstract class AbstractCell {
 	}
 	
 	/**
-	 * Compute the preferred size of the cell's Title Area, similar to the way it would be done 
-	 * in a regular SWT layout.
-	 * <p>Implementations are to implement this themselves, though if the the cell's style is 
-	 * SWT.TITLE then most likely they will simply return the computed height as found by
-	 * titleArea.computeSize(int, -1).y</p> 
-	 * @param wHint
-	 * @return an int representing the preferred height of the cell
-	 */
-	public abstract int computeTitleHeight(int hHint);
-
-	/**
 	 * Create the contents of your custom cell's Child Area here
 	 * <p>The Child Area is the SComposite (@see SComposite)
 	 * that will appear and disappear as the cell is opened and closed</p>
@@ -328,90 +322,38 @@ public abstract class AbstractCell {
 	 * must provide this or things may not work as expected</p>
 	 * @param contents the Child Area of the cell
 	 * @param style the style that was passed to the constructor
-	 * @see AbstractContainer#createTitleContents(Composite, int)
+	 * @see AbstractContainer#createContents(Composite, int)
 	 */
 	protected void createChildContents(SComposite contents, int style) {}
 
-	private void createContents(Composite parent, int style) {
-		bounds = new Rectangle(0,0,0,0);
-		activeBackground = parent.getBackground();
-		activeForeground = parent.getForeground();
+//	protected void createTitleArea() {
+//		if(titleArea == null) {
+//			titleArea = new Composite(container, style);
+//			titleArea.setBackground(activeBackground);
+//			titleArea.setForeground(activeForeground);
+//			container.addPaintedItemListener(getPaintedItemListener());
+//		}
+//	}
 
-		if((style & SWT.TITLE) != 0) {
-			createTitleArea();
-			createTitleContents(titleArea, style);
-		}
-
-		if((style & SWT.DROP_DOWN) != 0) {
-			// NOTE: childArea is created the first time the cell is opened
-			setChildVisible(true);
-		}
-		
-		if((style & SWT.TOGGLE) != 0) {
-			setToggleVisible(true, true);
-		}
-	}
-
-	protected void createTitleArea() {
-		if(titleArea == null) {
-			titleArea = new Composite(container.body, style);
-			titleArea.setBackground(activeBackground);
-			titleArea.setForeground(activeForeground);
-			titleVisible = true;
-			container.addPaintedItemListener(getPaintedItemListener());
-		}
-	}
-
-	private Listener paintedItemListener;
-	private Listener getPaintedItemListener() {
-		if(paintedItemListener == null) {
-			paintedItemListener = new Listener() {
-				public void handleEvent(Event event) {
-					if(event.item == item) {
-						// TODO: finish up
-						titleVisible = event.detail == 1;
-						childVisible = event.detail == 1;
-						updateVisibility();
-//						if(titleArea != null && !titleArea.isDisposed()) titleArea.setVisible(event.detail == 1);
-//						if(childArea != null && !childArea.isDisposed()) childArea.setVisible(event.detail == 1);
-//						if(event.detail == -1) {
-//							if(titleArea != null) titleArea.setBounds(0,0,0,0);
-//							if(childArea != null) childArea.setBounds(0,0,0,0);
-//						} else {
-//							layout();
-//						}
-					}
-				}
-			};
-		}
-		return paintedItemListener;
-	}
-	
 	/**
-	 * Create the contents of your custom cell's Title Area here
+	 * Create the contents of your custom cell here
 	 * <p>The Title Area is the composite that makes up the body of the "traditional"
 	 * cell; it is called "Title" because it initially sat above the Child Area like 
 	 * a title or header, though this is no longer a requirement.  The Title Area may
 	 * also be thought of as the "always visible" portion of a cell.</p>
-	 * <p>This method is called immediately after creating the body if, and only if,
-	 * the style bit for SWT.TITLE is set.  This means that it is created at the same 
-	 * time as the cell (rather than lazily, like the child area), so be careful how 
-	 * much code is put in here or filling a large table will take forever!</p>
-	 * <p>Note that NO layout has been assigned to the parameter "contents".  Implementations
-	 * must provide this or things may not work as expected.</p>
-	 * @param contents the Title Area of the cell
+	 * <p>This method is called immediately before the cell is painted for the first time.
 	 * @param style the style that was passed to the constructor
 	 * @see org.aspencloud.widgets.ccontainer#createChildContents(Composite, int)
 	 */
-	protected void createTitleContents(Composite contents, int style) {}
+	protected void createContents(Composite contents, int style) {}
 
 	boolean contains(Control control) {
 		return getEventManagedControls().contains(control);
 	}
 	
-	public void dispose() {
-		if(titleArea != null && !titleArea.isDisposed()) titleArea.dispose();
-		if(childArea != null && !childArea.isDisposed()) childArea.dispose();
+	void dispose() {
+//		if(titleArea != null && !titleArea.isDisposed()) titleArea.dispose();
+//		if(childArea != null && !childArea.isDisposed()) childArea.dispose();
 	}
 
 	protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
@@ -440,14 +382,15 @@ public abstract class AbstractCell {
 		return cellState;
 	}
 
-	public Composite getChildArea() {
-		return childArea;
-	}
+//	public Composite getChildArea() {
+//		return childArea;
+//	}
 
 	private List getColorManagedControls() {
-		List l = new ArrayList(getControls(titleArea, colorExclusions));
-		l.addAll(getControls(childArea, colorExclusions));
-		return l;
+//		List l = new ArrayList(getControls(titleArea, colorExclusions));
+//		l.addAll(getControls(childArea, colorExclusions));
+//		return l;
+		return new ArrayList();
 	}
 
 	/**
@@ -485,9 +428,10 @@ public abstract class AbstractCell {
 	}
 
 	private List getEventManagedControls() {
-		List l = new ArrayList(getControls(titleArea, eventExclusions));
-		l.addAll(getControls(childArea, eventExclusions));
-		return l;
+//		List l = new ArrayList(getControls(titleArea, eventExclusions));
+//		l.addAll(getControls(childArea, eventExclusions));
+//		return l;
+		return new ArrayList();
 	}
 
 	public Font getFont() {
@@ -520,20 +464,16 @@ public abstract class AbstractCell {
 		return style;
 	}
 
-	public Composite getTitleArea() {
-		return titleArea;
-	}
+//	public Composite getTitleArea() {
+//		return titleArea;
+//	}
 
-	public Rectangle getTitleClientArea() {
-		return computeTitleClientArea(bounds.width, bounds.height);
+	public Rectangle getClientArea() {
+		return computeClientArea(bounds.width, bounds.height);
 	}
 	
-	public int getTitleHeight() {
-		return titleHeight;
-	}
-
 	public Rectangle getToggleBounds() {
-		return toggleBounds;
+		return mapRectangle(toggleBounds);
 	}
 
 	public boolean getToggleVisible() {
@@ -589,10 +529,19 @@ public abstract class AbstractCell {
 	}
 
 	/**
-	 * Requests a layout of the cell.
-	 * <p>Subclasses are to implement this themselves just as they would with a custom SWT layout</p>
+	 * Update the layout of the cell.
 	 */
 	protected abstract void layout();
+
+	protected void layoutChild() {}
+
+	/**
+	 * Update the location of the cell.
+	 * <p>Subclasses are to implement this themselves</p>
+	 */
+	protected abstract void locate();
+
+	protected void locateChild() {}
 
 	/**
 	 * Called by Container during its paint method to draw the cell's Title Area
@@ -601,12 +550,41 @@ public abstract class AbstractCell {
 	 * @param gc the GC upon which the cell will be painted
 	 * @param ebounds the bounding rectangle of the Container's paint event
 	 */
-	public abstract void paint(GC gc, Rectangle ebounds);
+	void paint(GC gc, Rectangle ebounds) {
+		if(!painted || bounds.isEmpty()) return;
 
-	protected void paintToggle(GC gc, Rectangle ebounds) {
-		Rectangle bounds = getBounds();
-		double x = indent + ((toggleBounds.width - pointsWidth) / 2) + bounds.x - ebounds.x;
-		double y = ((toggleBounds.height - pointsWidth) / 2) + toggleBounds.y - ebounds.y;
+		if(boundsOld == null || bounds.width != boundsOld.width || bounds.height != boundsOld.height) {
+			layout();
+			boundsOld = new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height);
+		}
+		
+		Point newSPos = container.getScrollPosition();
+		if(bounds.x != boundsOld.x || bounds.y != boundsOld.y || 
+				scrollPos == null || scrollPos.x != newSPos.x || scrollPos.y != newSPos.y) {
+			locate();
+			boundsOld = new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height);
+			scrollPos = newSPos;
+		}
+		
+		if(hasChild && open) {
+			if(childBoundsOld == null || childBounds.width != childBoundsOld.width || childBounds.height != childBoundsOld.height) {
+				layoutChild();
+				childBoundsOld = new Rectangle(childBounds.x, childBounds.y, childBounds.width, childBounds.height);
+			}
+			if(childBounds.x != childBoundsOld.x || childBounds.y != childBoundsOld.y) {
+				locateChild();
+				childBoundsOld = new Rectangle(childBounds.x, childBounds.y, childBounds.width, childBounds.height);
+			}
+		}
+
+		doPaint(gc, new Point(bounds.x-scrollPos.x-ebounds.x,bounds.y-scrollPos.y-ebounds.y));
+	}
+	
+	abstract void doPaint(GC gc, Point offset);
+
+	protected void paintToggle(GC gc, Point offset) {
+		double x = indent + ((toggleBounds.width - pointsWidth) / 2) + offset.x;
+		double y = ((toggleBounds.height - pointsWidth) / 2) + toggleBounds.y + offset.y;
 		int[] data = open ? openPoints : closedPoints;
 		int[] pts = new int[data.length];
 		for (int i = 0; i < data.length; i += 2) {
@@ -707,23 +685,29 @@ public abstract class AbstractCell {
 		}
 	}
 	
+	protected void restoreState(Map memento) {
+		// base implementation so subclass do not need to override
+	}
+	
+	protected Map retrieveState() {
+		return Collections.EMPTY_MAP;
+	}
+	
 	public void setBackground(Color color) {
 		storedBackground = color;
 		updateColors();
 	}
 	
-	public void setBounds(int x, int y, int width, int height) {
-		Rectangle bounds = new Rectangle(x, y, width, height);
-		setBounds(bounds);
+	void setBounds(int x, int y, int width, int height) {
+		bounds.x = x;
+		bounds.y = y;
+		bounds.width = width;
+		bounds.height = height;
+		snap(bounds);
 	}
 
-	public void setBounds(Rectangle bounds) {
-		bounds = snap(bounds);
-		this.bounds.x = bounds.x;
-		this.bounds.y = bounds.y;
-		this.bounds.width = bounds.width;
-		this.bounds.height = bounds.height;
-		needsLayout = true;
+	void setBounds(Rectangle bounds) {
+		setBounds(bounds.x,bounds.y,bounds.width,bounds.height);
 	}
 
 //	public void setCellBackground(Color color) {
@@ -749,7 +733,7 @@ public abstract class AbstractCell {
 	}
 
 	protected void setCursor(int id) {
-		container.body.setCursor(getDisplay().getSystemCursor(id));
+		container.setCursor(getDisplay().getSystemCursor(id));
 	}
 
 	protected void setExclusions(Control exclude) {
@@ -778,7 +762,6 @@ public abstract class AbstractCell {
 	
 	public void setIndent(int indent) {
 		this.indent = indent;
-		needsLayout = true;
 	}
 
 	public void setIsGridLine(boolean isGridLine) {
@@ -788,13 +771,16 @@ public abstract class AbstractCell {
 		}
 	}
 
-	public void setLocation(Point location) {
-		bounds.x = location.x;
-		bounds.y = location.y;
-		if(titleArea != null && !titleArea.isDisposed()) {
-			Rectangle ca = getTitleClientArea();
-			titleArea.setLocation(ca.x, ca.y);
-		}
+	Rectangle mapRectangle(Rectangle rect) {
+		return mapRectangle(rect.x, rect.y, rect.width, rect.height);
+	}
+
+	// TODO: map methods?
+	Rectangle mapRectangle(int x, int y, int width, int height) {
+		Rectangle r = new Rectangle(x,y,width,height);
+		r.x += bounds.x;
+		r.y += bounds.y;
+		return r;
 	}
 	
 	/**
@@ -808,43 +794,44 @@ public abstract class AbstractCell {
 	public void setOpen(boolean open) {
 		if(this.open != open) {
 			this.open = open;
-			if((getStyle() & SWT.DROP_DOWN) != 0) {
-				if(childArea == null) {
-					childArea = new SComposite(item.container.body, SComposite.NONE);
-					container.addPaintedItemListener(getPaintedItemListener());
-					createChildContents(childArea, getStyle());
-					// TODO: review...
-					int[] types = ehandler.getEventTypes();
-					for(int i = 0; i < types.length; i++) {
-						List controls = getEventManagedControls();
-						for(Iterator iter = controls.iterator(); iter.hasNext(); ) {
-							Control control = (Control) iter.next();
-							control.addListener(types[i], l);
-						}
-					}
-					updateColors();
-					update();
-				}
+			if(hasChild) {
+				// TODO: setOpen - childArea
+//				if(childArea == null) {
+//					childArea = new SComposite(container, SComposite.NONE);
+//					container.addPaintedItemListener(getPaintedItemListener());
+//					createChildContents(childArea, getStyle());
+//					// TODO: review...
+//					int[] types = ehandler.getEventTypes();
+//					for(int i = 0; i < types.length; i++) {
+//						List controls = getEventManagedControls();
+//						for(Iterator iter = controls.iterator(); iter.hasNext(); ) {
+//							Control control = (Control) iter.next();
+//							control.addListener(types[i], l);
+//						}
+//					}
+//					updateColors();
+//					update();
+//				}
 
 				updateVisibility();
 			}
 		}
 	}
 
+	void setPainted(boolean painted) {
+		if(this.painted != painted) {
+			this.painted = painted;
+			if(painted) {
+				// TODO: setPainted
+			} else {
+				// TODO: setPainted
+			}
+		}
+	}
+	
 	public void setSelected(boolean selected) {
 		this.selected = selected;
 		updateColors();
-	}
-
-	public void setSize(Point size) {
-		bounds.width = size.x;
-		bounds.height = size.y;
-		needsLayout = true;
-	}
-
-	public void setTitleVisible(boolean visible) {
-		titleVisible = visible;
-		updateVisibility();
 	}
 
 	/**
@@ -877,10 +864,9 @@ public abstract class AbstractCell {
 	/**
 	 * Called during setBounds. To be implemented in sub-classes
 	 * @param bounds
-	 * @return
 	 */
-	protected Rectangle snap(Rectangle bounds) {
-		return bounds;
+	protected void snap(Rectangle bounds) {
+		// subclasses to implement
 	}
 
 	/**
@@ -928,34 +914,35 @@ public abstract class AbstractCell {
 			back = (storedBackground != null) ? storedBackground : item.container.getColors().getItemBackgroundNormal();
 			fore = (storedForeground != null) ? storedForeground : item.container.getColors().getItemForegroundNormal();
 		}
-		if((childArea != null && !childArea.isDisposed()) || 
-				(titleArea != null && !titleArea.isDisposed())) {
-			List l = getColorManagedControls();
-			for(Iterator iter = l.iterator(); iter.hasNext(); ) {
-				Control c = (Control) iter.next();
-				c.setBackground(back);
-				c.setForeground(fore);
-			}
-		}
+		// TODO: updateColors - childArea
+//		if((childArea != null && !childArea.isDisposed()) || 
+//				(titleArea != null && !titleArea.isDisposed())) {
+//			List l = getColorManagedControls();
+//			for(Iterator iter = l.iterator(); iter.hasNext(); ) {
+//				Control c = (Control) iter.next();
+//				c.setBackground(back);
+//				c.setForeground(fore);
+//			}
+//		}
 		activeBackground = back;
 		activeForeground = fore;
 	}
 
 	private void updateVisibility() {
-		// TODO: finish up
-		if(titleArea != null && !titleArea.isDisposed()) {
+		// TODO: redo updateVisibility
+//		if(titleArea != null && !titleArea.isDisposed()) {
 //			List controls = getControls(titleArea);
 //			for(Iterator i = controls.iterator(); i.hasNext(); ) {
 //				((Control) i.next()).setVisible(titleVisible&&visible);
 //			}
-			titleArea.setVisible(titleVisible&&visible);
-		}
-		if(childArea != null && !childArea.isDisposed()) {
+//			titleArea.setVisible(titleVisible&&visible);
+//		}
+//		if(childArea != null && !childArea.isDisposed()) {
 //			List controls = getControls(childArea);
 //			for(Iterator i = controls.iterator(); i.hasNext(); ) {
 //				((Control) i.next()).setVisible(childVisible&&open&&visible);
 //			}
-			childArea.setVisible(childVisible&&visible);
-		}
+//			childArea.setVisible(childVisible&&visible);
+//		}
 	}
 }

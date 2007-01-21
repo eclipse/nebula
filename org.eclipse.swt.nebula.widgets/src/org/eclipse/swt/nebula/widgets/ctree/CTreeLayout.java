@@ -11,12 +11,9 @@
 
 package org.eclipse.swt.nebula.widgets.ctree;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Iterator;
 
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.SWT;
 
 /**
  * <p>
@@ -24,121 +21,113 @@ import org.eclipse.swt.graphics.Rectangle;
  * VERSION.  USERS SHOULD EXPECT API CHANGES IN FUTURE VERSIONS.
  * </p> 
  */
-class CTreeLayout extends AbstractLayout {
+class CTreeLayout extends AbstractContainerLayout {
 
-	CTreeLayout(CTree tree) {
-		super(tree);
+	private CTree ctree;
+	private int rowHeight = 0;
+	private boolean fixedHeight = true;
+	
+	public CTreeLayout(CTree ctree) {
+		super(ctree);
+		this.ctree = ctree;
 	}
-
-	private List fillers = new ArrayList();
-	protected Point computeBodySize() {
-		AbstractItem[] items = container.getVisibleItems();
-		if(items.length > 0) {
-			int gridLine = container.getGridLineWidth();
-
-			AbstractItem dirtyItem = container.getDirtyItem();
-			if(container.isOperation(CTree.OP_ADD)) {
-				if(dirtyItem == null || !dirtyItem.isVisible()) return bodySize; // nothing to do
-				if(!dirtyItem.isAutoHeight()) {
-					Point[] sa = dirtyItem.computeSize(columnWidths, -1);
-					dirtyItem.setSize(sa);
-					Point p = dirtyItem.getSize();
-					bodySize.x = Math.max(bodySize.x, p.x);
-					bodySize.y += (p.y + gridLine);
-				} else if(!fillers.contains(dirtyItem)) {
-					fillers.add(dirtyItem);
-				}
-			} else if(container.isOperation(CTree.OP_REMOVE)) {
-				for(int i = 0; i < items.length; i++) {
-					bodySize.x = Math.max(bodySize.x, items[i].getSize().x);
-				}
-				AbstractItem[] ritems = container.getRemovedItems();
-				for(int i = 0; i < ritems.length; i++) {
-					if(!ritems[i].isAutoHeight()) {
-						bodySize.y -= (container.getRemovedItems()[i].getSize().y + gridLine);
-					} else {
-						fillers.remove(ritems[i]);
-					}
-				}
-			} else if(container.isOperation(CTree.OP_CELL_COLLAPSE) || container.isOperation(CTree.OP_CELL_EXPAND)) {
-				if(!dirtyItem.isAutoHeight()) {
-					if(dirtyItem == null || !dirtyItem.isVisible()) return bodySize; // nothing to do
-					Point oldS = dirtyItem.getSize();
-					Point[] sa = dirtyItem.computeSize(columnWidths, -1);
-					dirtyItem.setSize(sa);
-					Point newS = dirtyItem.getSize();
-					for(int i = 0; i < items.length; i++) {
-						bodySize.x = Math.max(bodySize.x, items[i].getSize().x);
-					}
-					bodySize.y = bodySize.y - oldS.y + newS.y;
-				}
-			} else {
-				Point p;
-				bodySize.x = bodySize.y = 0;
-				fillers.clear();
-				for(int i = 0; i < items.length; i++) {
-					if(!items[i].isAutoHeight()) {
-						Point[] sa = items[i].computeSize(columnWidths, -1);
-						items[i].setSize(sa);
-						p = items[i].getSize();
-						bodySize.x = Math.max(bodySize.x, p.x);
-						bodySize.y += (p.y + gridLine);
-					} else if(!fillers.contains(items[i])) {
-						fillers.add(items[i]);
-					}
-				}
-			}
+	
+	protected void computeContentHeight() {
+		if(ctree.visibleItems.isEmpty()) {
+			contentHeight = 0;
+		} else if(fixedHeight) {
+			contentHeight = getRowHeight() * ctree.visibleItems.size();
 		} else {
-			bodySize.x = bodySize.y = 0;
-			fillers.clear();
+			contentHeight = 0;
+			for(Iterator i = ctree.visibleItems.iterator(); i.hasNext(); ) {
+				contentHeight += ((CTreeItem) i.next()).computeHeight();
+			}
 		}
-
-		return bodySize;
+		if(ctree.getGridLineWidth() > 0) {
+			contentHeight += (ctree.visibleItems.size() - 1) * ctree.getGridLineWidth();
+		}
 	}
 
-	private int oldHeight = -1;
-	protected void layoutItems(Rectangle r) {
-		r.x = container.marginWidth;
-		r.y = 0;
-		int gridLine = container.getGridLineWidth();
-		int fillerHeight0 = fillers.isEmpty() ? 1 : (r.height - bodySize.y) / fillers.size();
-		int fillerHeight1 = fillers.isEmpty() ? 1 : r.height - bodySize.y - (fillerHeight0 * (fillers.size() - 1));
-		if(fillerHeight0 == 0) fillerHeight0 = 1;
-		if(fillerHeight1 == 0) fillerHeight1 = 1;
-		Object lastFiller = fillers.isEmpty() ? null : fillers.get(fillers.size()-1);
+	protected void computeContentHeight(int eventType, AbstractCell cell) {
+		if(SWT.Collapse == eventType) {
+			if(fixedHeight) {
+				contentHeight -= (getRowHeight() * ctree.getItems(cell.item, false).size());
+			} else {
+				// TODO
+			}
+		} else if(SWT.Expand == eventType) {
+			if(fixedHeight) {
+				contentHeight += (getRowHeight() * ctree.getItems(cell.item, false).size());
+			} else {
+				// TODO
+			}
+		}
+	}
+
+	protected void computeContentHeight(int eventType, AbstractColumn column) {
+		if(!fixedHeight) {
+			computeContentHeight();
+		}
+	}
+
+	protected void computeContentHeight(int eventType, AbstractItem item) {
+		// TODO Auto-generated method stub
 		
-		AbstractItem[] items = container.getVisibleItems();
-		int start = Arrays.asList(items).indexOf(container.getDirtyItem());
-		if(items.length > 0 && start < 0) {
-			start = 0;
-		}
-		if(oldHeight != r.height && !fillers.isEmpty()) {
-			oldHeight = r.height;
-			start = 0;
-		}
-		if(start >= 0 && start < items.length) {
-			if(start > 0) {
-				Rectangle ubounds = items[start-1].getBounds();
-				r.y += (ubounds.y + ubounds.height) + gridLine;
-			}
-			Point location = new Point(r.x, r.y);
-			Rectangle[] bounds = new Rectangle[columnWidths.length];
-			for(int i = start; i < items.length; i++) {
-				location.x = r.x;
-				for(int j = 0; j < columnWidths.length; j++) {
-					bounds[j] = new Rectangle(
-							location.x,
-							location.y,
-							columnWidths[j],
-							items[i].isAutoHeight() ?
-									(items[i] != lastFiller ? fillerHeight0 : fillerHeight1) :
-										items[i].getCellSizes()[j].y
-							);
-					location.x += columnWidths[j];
+	}
+
+	private int getRowHeight() {
+		return (rowHeight > 0) ? rowHeight : ((CTreeItem) ctree.visibleItems.get(0)).computeHeight();
+	}
+	
+	protected void layoutContent() {
+		int gridLine = ctree.getGridLineWidth();
+		int top = headerSize.y;
+		int height = fixedHeight ? getRowHeight() : 0;
+		for(Iterator iter = ctree.visibleItems.iterator(); iter.hasNext(); ) {
+			CTreeItem item = (CTreeItem) iter.next();
+			if(!fixedHeight) {
+				height = item.getSize().y;
+				if(height <= 0) {
+					height = item.computeHeight();
 				}
-				items[i].setBounds(bounds);
-				location.y += items[i].getBounds().height + gridLine;
+			}
+			item.setBounds(-1, top, -1, height);
+			top += height + gridLine;
+		}
+	}
+	
+	protected void layoutContent(int eventType, AbstractCell cell) {
+		if(SWT.Collapse == eventType || SWT.Expand == eventType) {
+			if(SWT.Collapse == eventType && 
+					ctree.visibleItems.get(ctree.visibleItems.size()-1) == cell.item) {
+				return;
+			}
+			int gridLine = ctree.getGridLineWidth();
+			int top = cell.bounds.y + cell.bounds.height + gridLine;
+			int height = fixedHeight ? getRowHeight() : 0;
+			CTreeItem[] items = ctree.getVisibleItems();
+			for(int i = ctree.visibleItems.indexOf(cell.item)+1; i < items.length; i++) {
+				if(!fixedHeight) {
+					height = items[i].getSize().y;
+					if(height <= 0) {
+						height = items[i].computeHeight();
+					}
+				}
+				items[i].setBounds(-1, top, -1, height);
+				top += height + gridLine;
 			}
 		}
+	}
+
+	protected void layoutContent(int eventType, AbstractColumn column) {
+		for(Iterator iter = ctree.visibleItems.iterator(); iter.hasNext(); ) {
+			CTreeItem item = (CTreeItem) iter.next();
+			item.setBounds(1,-1,1,-1);
+		}
+	}
+
+	protected void layoutContent(int eventType, AbstractItem item) {
+		// TODO Auto-generated method stub
+		
 	}
 }

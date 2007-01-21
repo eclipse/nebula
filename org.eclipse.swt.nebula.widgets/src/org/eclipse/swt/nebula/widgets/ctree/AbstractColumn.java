@@ -36,15 +36,33 @@ public abstract class AbstractColumn extends TableColumn {
 	public AbstractColumn(AbstractContainer parent, int style) {
 		super(parent.getInternalTable(), style);
 		this.container = parent;
-		addListener(SWT.Resize, new Listener() {
+		container.setSortColumn(this);
+		container.setSortDirection(SWT.DOWN);
+		Listener listener = new Listener() {
 			public void handleEvent(Event e) {
-				if(SWT.Resize == e.type) {
-					container.setOperation(AbstractContainer.OP_COLUMN_RESIZE);
-					container.opLayout();
+				switch(e.type) {
+				case SWT.Move:
+				case SWT.Resize:
+					container.layout(e.type, AbstractColumn.this);
 					container.redraw();
+					break;
+//				case SWT.Selection:
+//					if(container.internalGetSortColumn() == AbstractColumn.this) {
+//						if(SWT.UP == container.getSortDirection()) {
+//							container.setSortDirection(SWT.DOWN);
+//						} else {
+//							container.setSortDirection(SWT.UP);
+//						}
+//					} else {
+//						container.setSortColumn(AbstractColumn.this);
+//						container.setSortDirection(SWT.DOWN);
+//					}
 				}
 			}
-		});
+		};
+		addListener(SWT.Move, listener);
+		addListener(SWT.Resize, listener);
+//		addListener(SWT.Selection, listener);
 	}
 
 	protected void checkSubclass() {
@@ -57,16 +75,27 @@ public abstract class AbstractColumn extends TableColumn {
 
 	private boolean isLast() {
 		int[] ixs = container.getColumnOrder();
-		return container.getColumn(ixs[ixs.length-1]) == this;
+		return container.internalGetColumn(ixs[ixs.length-1]) == this;
+	}
+	
+	public boolean isVisible() {
+		Rectangle r = container.getClientArea();
+		r.x += container.getScrollPosition().x;
+		return r.intersects(getBounds());
+	}
+	
+	public Rectangle getBounds() {
+		return new Rectangle(getLeft(), container.getClientArea().y, getWidth(), container.getClientArea().height);
 	}
 	
 	public int getLeft() {
+		int gridline = container.getGridLineWidth();
 		int[] ixs = container.getColumnOrder();
-		int x = 0;
+		int x = container.getClientArea().x;
 		for(int i = 0; i < ixs.length; i++) {
-			AbstractColumn column = container.getColumn(i);
+			AbstractColumn column = container.internalGetColumn(ixs[i]);
 			if(column != this) {
-				x += column.getWidth();
+				x += column.getWidth() + gridline;
 			} else {
 				break;
 			}
@@ -95,9 +124,9 @@ public abstract class AbstractColumn extends TableColumn {
 			gc.setBackground(color);
 			gc.fillRectangle(
 					getLeft(),
-					ebounds.y - container.getOrigin().y,
+					ebounds.y - container.getScrollPosition().y,
 					getWidth(),
-					container.getBodySize().y
+					container.getClientArea().height
 					);
 		}
 	}

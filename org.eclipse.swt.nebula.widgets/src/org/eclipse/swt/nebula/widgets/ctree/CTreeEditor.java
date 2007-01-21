@@ -76,7 +76,7 @@ public class CTreeEditor extends ControlEditor {
 	 */
 	public void dispose () {
 		if (this.column > -1 && this.column < tree.getColumnCount()){
-			AbstractColumn treeColumn = tree.getColumn(this.column);
+			AbstractColumn treeColumn = tree.internalGetColumn(this.column);
 			treeColumn.removeControlListener(columnListener);
 		}
 		columnListener = null;
@@ -126,7 +126,7 @@ public class CTreeEditor extends ControlEditor {
 			return;
 		}
 		if (this.column > -1 && this.column < columnCount){
-			AbstractColumn treeColumn = tree.getColumn(this.column);
+			AbstractColumn treeColumn = tree.internalGetColumn(this.column);
 			treeColumn.removeControlListener(columnListener);
 			this.column = -1;
 		}
@@ -134,7 +134,7 @@ public class CTreeEditor extends ControlEditor {
 		if (column < 0  || column >= tree.getColumnCount()) return;	
 
 		this.column = column;
-		AbstractColumn treeColumn = tree.getColumn(this.column);
+		AbstractColumn treeColumn = tree.internalGetColumn(this.column);
 		treeColumn.addControlListener(columnListener);
 		layout();
 	}
@@ -185,7 +185,7 @@ public class CTreeEditor extends ControlEditor {
 		if(editor == null || editor.isDisposed()) return;
 
 		Rectangle cell = item.getCell(column).getBounds();
-		Rectangle ca = item.getCell(column).getTitleClientArea();
+		Rectangle ca = item.getCell(column).getClientArea();
 		cell.x += ca.x;
 		cell.width = ca.width - 1;
 		cell.y += 1;

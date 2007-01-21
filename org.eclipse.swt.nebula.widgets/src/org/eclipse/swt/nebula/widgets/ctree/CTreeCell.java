@@ -28,62 +28,64 @@ import org.eclipse.swt.graphics.Rectangle;
  */
 public class CTreeCell extends AbstractCell {
 
-	private CTree ctt;
+	private CTree ctree;
 	private Image[] images = new Image[0];
 	private String text;
-	
+
+	private int horizontalSpacing = 2;
 	private Rectangle[] iBounds = new Rectangle[0];
 	private Rectangle tBounds = new Rectangle(0,0,0,0);
-	
+
 	private int[] childSpan = new int[] { -1, 1 };	// default setting keeps the child area
 													// within the same column as the title area
 
 	public CTreeCell(AbstractItem item, int style) {
 		super(item, style);
-		ctt = (CTree) container;
+		ctree = (CTree) container;
 	}
 
-	
 	public Point computeSize(int wHint, int hHint) {
 		Point size = new Point(0,0);
-		size.x = marginLeft + marginWidth + marginWidth + marginRight;
-		if(toggleVisible || ghostToggle) size.x += toggleWidth;
-
-		if(item.useFixedTitleHeight) {
-			size.y = item.getFixedTitleHeight();
-		} else {
-			size.y = marginTop + marginHeight + marginHeight + marginBottom;
-			if(titleArea != null) {
-				size.y += titleArea.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
-			} else {
-				Image[] images = getImages();
-				Rectangle iBounds = null;
-				if(images != null && images.length > 0) {
-					iBounds = images[0].getBounds();
-					for(int i = 1; i < images.length; i++) {
-						Rectangle ib = images[i].getBounds();
-						iBounds.width += horizontalSpacing + ib.width;
-						iBounds.height = Math.max(iBounds.height, ib.height);
-					}
-				} else {
-					iBounds = new Rectangle(0,0,1,1);
+//		if(titleArea != null) {
+//			titleSize.y += titleArea.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+//		} else {
+			Image[] images = getImages();
+			Rectangle iBounds = null;
+			if(images != null && images.length > 0) {
+				iBounds = images[0].getBounds();
+				for(int i = 1; i < images.length; i++) {
+					Rectangle ib = images[i].getBounds();
+					iBounds.width += horizontalSpacing + ib.width;
+					iBounds.height = Math.max(iBounds.height, ib.height);
 				}
-				
-				String text = getText();
-				GC gc = CTree.staticGC;
-				Point tSize = (text.length() > 0) ? gc.textExtent(text) : new Point(0,0);
-	
-				size.x += iBounds.width + ((iBounds.width > 0 && tSize.x > 0) ? horizontalSpacing : 0) + tSize.x;
-				size.y += Math.max(iBounds.height, tSize.y);
+			} else {
+				iBounds = new Rectangle(0,0,1,1);
 			}
-		}
+			
+			String text = getText();
+			GC gc = ctree.internalGC;
+			Point tSize = (text.length() > 0) ? gc.textExtent(text) : new Point(0,0);
+
+			size.x += iBounds.width + ((iBounds.width > 0 && tSize.x > 0) ? horizontalSpacing : 0) + tSize.x;
+			size.y += Math.max(iBounds.height, tSize.y);
+//		}
 		
-		if(open && childArea != null) {
-			Point childSize = childArea.computeSize(SWT.DEFAULT,SWT.DEFAULT);
-			size.x = marginLeft+marginWidth+toggleWidth+Math.max(size.x, childSize.x)+marginWidth+marginRight;
-			size.y += (childSpacing + childSize.y + childSpacing);
-		}
-		
+//		if(open) {
+//			childSize = childArea.computeSize(SWT.DEFAULT,SWT.DEFAULT);
+//			titleSize.x = Math.max(titleSize.x, childSize.x);
+//		} else {
+//			Point childSize = new Point(0,0);
+//		}
+
+		if(toggleVisible || ghostToggle) size.x += toggleWidth;
+		size.x += marginLeft + marginWidth + marginWidth + marginRight;
+		size.y += marginTop + marginHeight + marginHeight + marginBottom;
+
+//		Point returnSize = new Point(size.x, size.y);
+//		if(childSize.y > 0) {
+//			returnSize.y += (childBounds.y + childSize.y + childBounds.y);
+//		}
+
 		if(wHint != SWT.DEFAULT) {
 			size.x = Math.min(size.x, wHint);
 		}
@@ -94,27 +96,36 @@ public class CTreeCell extends AbstractCell {
 		return size;
 	}
 	
-	public int computeTitleHeight(int hHint) {
-		titleHeight = marginTop + marginHeight + marginHeight + marginBottom;
-		if(titleArea != null) {
-			titleHeight += titleArea.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
-		} else {
-			int height = 0;
-			for(int i = 0; i < iBounds.length; i++) {
-				height = Math.max(height, iBounds[i].height);
-			}
-			String text = getText();
-			if(text != null) {
-				GC gc = CTree.staticGC;
-				height = Math.max(height, gc.textExtent(text).y);
-			}
-			titleHeight += height;
-		}
-		if(hHint != SWT.DEFAULT) {
-			titleHeight = Math.min(titleHeight, hHint);
-		}
-		return titleHeight;
-	}
+//	/**
+//	 * Compute the preferred size of the cell's Title Area, similar to the way it would be done 
+//	 * in a regular SWT layout.
+//	 * <p>Implementations are to implement this themselves, though if the the cell's style is 
+//	 * SWT.TITLE then most likely they will simply return the computed height as found by
+//	 * titleArea.computeSize(int, -1).y</p> 
+//	 * @param wHint
+//	 * @return an int representing the preferred height of the cell
+//	 */
+//	public int computeTitleHeight(int hHint) {
+//		titleHeight = marginTop + marginHeight + marginHeight + marginBottom;
+//		if(titleArea != null) {
+//			titleHeight += titleArea.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+//		} else {
+//			int height = 0;
+//			for(int i = 0; i < iBounds.length; i++) {
+//				height = Math.max(height, iBounds[i].height);
+//			}
+//			String text = getText();
+//			if(text != null) {
+//				GC gc = CTree.staticGC;
+//				height = Math.max(height, gc.textExtent(text).y);
+//			}
+//			titleHeight += height;
+//		}
+//		if(hHint != SWT.DEFAULT) {
+//			titleHeight = Math.min(titleHeight, hHint);
+//		}
+//		return titleHeight;
+//	}
 	
 	/**
 	 * Get information on if and how the child area of this CTableTree will span
@@ -143,22 +154,20 @@ public class CTreeCell extends AbstractCell {
 	}
 	
 	protected void layout() {
-		if(item.useFixedTitleHeight) titleHeight = item.getFixedTitleHeight();
-		
 		toggleBounds.width = Math.min(bounds.width, toggleWidth);
-		toggleBounds.height = Math.min(bounds.height, titleHeight);
+		toggleBounds.height = bounds.height;
 		
 		iBounds = new Rectangle[images.length];
 		for(int i = 0; i < iBounds.length; i++) {
 			iBounds[i] = (images[i] != null && !images[i].isDisposed()) ? images[i].getBounds() : new Rectangle(0,0,1,1);
 		}
 		String text = getText();
-		Point tSize = (text.length() > 0) ? 
-				CTree.staticGC.textExtent(text, SWT.DRAW_DELIMITER | SWT.DRAW_TAB | SWT.DRAW_TRANSPARENT) : new Point(0,0);
+		Point tSize = (text.length() > 0) ?
+				ctree.internalGC.textExtent(text, SWT.DRAW_DELIMITER | SWT.DRAW_TAB | SWT.DRAW_TRANSPARENT) : new Point(0,0);
 		tBounds.width = tSize.x;
 		tBounds.height = tSize.y;
 		
-		int x = bounds.x, y = bounds.y, width = 0, height = 0;
+		int x = 0, y = 0, width = 0, height = 0;
 		
 		// indent
 		width = indent;
@@ -199,7 +208,7 @@ public class CTreeCell extends AbstractCell {
 		}
 		tBounds.x = x;
 		
-		if((open && childArea != null) || (style & SWT.TOP) != 0) {
+		if((open) || (style & SWT.TOP) != 0) {
 			toggleBounds.y = y; // toggle centers itself, so don't add margins to it
 			y += marginTop+marginHeight;
 			for(int i = 0; i < iBounds.length; i++) {
@@ -221,62 +230,57 @@ public class CTreeCell extends AbstractCell {
 		}
 
 	// set positions of self drawing components
-		if(titleArea != null) {
-			Rectangle ca = getTitleClientArea();
-			titleArea.setBounds(bounds.x + ca.x, bounds.y + ca.y, ca.width, ca.height);
-			titleArea.layout(true, true);
-		}
+//		if(titleArea != null) {
+//			Rectangle ca = getClientArea();
+//			titleArea.setBounds(bounds.x + ca.x, bounds.y + ca.y, ca.width, ca.height);
+//			titleArea.layout(true, true);
+//		}
 		
-		if(childArea != null) {
-			if(open && childSpan[0] < ctt.getColumnCount()) {
-				int s0 = childSpan[0] < 0 ? item.getCellIndex(this) : childSpan[0];
-				int s1 = childSpan[1] < 0 ?
-						ctt.getColumnCount() - 1 :
-							s0 + childSpan[1] - 1;
-				if(s1 >= ctt.getColumnCount()) s1 = ctt.getColumnCount() - 1;
-
-				int cx = childSpan[0] < 0 ?
-						bounds.x+marginWidth+toggleBounds.width :
-							ctt.getColumn(s0).getLeft();
-				int cw = ctt.getColumn(s1).getRight() - cx - rightChildIndent;
-
-				childArea.setBounds(
-						cx,
-						bounds.y+titleHeight+childSpacing,
-						cw,
-						bounds.height-(titleHeight+childSpacing+childSpacing)
-						);
-			} else {
-				childArea.setBounds(0, 0, 0, 0);
-			}
-		}
-		
-		needsLayout = false;
+//		if(childArea != null) {
+//			if(open && childSpan[0] < ctt.getColumnCount()) {
+//				int s0 = childSpan[0] < 0 ? item.getCellIndex(this) : childSpan[0];
+//				int s1 = childSpan[1] < 0 ?
+//						ctt.getColumnCount() - 1 :
+//							s0 + childSpan[1] - 1;
+//				if(s1 >= ctt.getColumnCount()) s1 = ctt.getColumnCount() - 1;
+//
+//				int cx = childSpan[0] < 0 ?
+//						bounds.x+marginWidth+toggleBounds.width :
+//							ctt.internalGetColumn(s0).getLeft();
+//				int cw = ctt.internalGetColumn(s1).getRight() - cx - rightChildIndent;
+//
+//				childArea.setBounds(
+//						cx,
+//						bounds.y+titleSize.y+childBounds.y,
+//						cw,
+//						bounds.height-(titleSize.y+childBounds.y+childBounds.y)
+//						);
+//			} else {
+//				childArea.setBounds(0, 0, 0, 0);
+//			}
+//		}
 	}
 	
-	public void paint(GC gc, Rectangle eventBounds) {
-//		if((getStyle() & SWT.SIMPLE) != 0) return;
-		if((bounds.width <= 0) || bounds.height <= 0) return;
-		
-		if(needsLayout) {
-			layout();
-		}
-		
+	protected void locate() {
+		// TODO: locate
+	}
+	
+	public void doPaint(GC gc, Point offset) {
 		if(activeBackground != null) gc.setBackground(activeBackground);
 		if(activeForeground != null) gc.setForeground(activeForeground);
 
 		// background
 		gc.fillRectangle(
-				bounds.x-eventBounds.x,
-				bounds.y-eventBounds.y,
+				offset.x,
+				offset.y,
 				bounds.width,
-				open ? titleHeight : bounds.height
+				bounds.height
 		);
 
 		// images
 		for(int i = 0; i < iBounds.length; i++) {
 			if(!images[i].isDisposed()) {
-				gc.drawImage(images[i], iBounds[i].x-eventBounds.x, iBounds[i].y-eventBounds.y);
+				gc.drawImage(images[i], offset.x+iBounds[i].x, offset.y+iBounds[i].y);
 			}
 		}
 
@@ -284,30 +288,34 @@ public class CTreeCell extends AbstractCell {
 		if(getText().length() > 0) {
 			Font bf = gc.getFont();
 			if(getFont() != null) gc.setFont(getFont());
-			gc.drawText(getText(), tBounds.x-eventBounds.x, tBounds.y-eventBounds.y);
+			gc.drawText(getText(), offset.x+tBounds.x, offset.y+tBounds.y);
 			if(getFont() != null) gc.setFont(bf);
 		}
 
 		if(((CTreeItem) item).getTreeCell() == this) {
-			paintChildLines(gc, eventBounds);
+			paintChildLines(gc, offset);
 		}
 		
 		// toggle (it changes the colors again so paint it last...)
 		if(toggleVisible) {
-			paintToggle(gc, eventBounds);
+			paintToggle(gc, offset);
 		}
 	}
 	
-	private void paintChildLines(GC gc, Rectangle ebounds) {
+	public boolean isTreeCell() {
+		return ((CTreeItem) item).getTreeCell() == this;
+	}
+	
+	private void paintChildLines(GC gc, Point offset) {
 		if(win32) {
-			int gline = ctt.getGridLineWidth();
+			int gline = ctree.getGridLineWidth();
 			Rectangle ibounds = item.getBounds();
 			ibounds.y++;
 			Rectangle tbounds = getBounds();
 			tbounds.y++;
 			int x1 = 0, x2 = 0, y1 = 0, y2 = 0;
-			int x = toggleBounds.x + (toggleBounds.width/2) - ebounds.x;
-			int y = tbounds.y + (tbounds.height/2) - ebounds.y;
+			int x = toggleBounds.x + (toggleBounds.width/2) - offset.x;
+			int y = tbounds.y + (tbounds.height/2) - offset.y;
 			gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
 			gc.setLineDash(new int[] { 1, 1 });
 			x1 = x;
@@ -323,15 +331,15 @@ public class CTreeCell extends AbstractCell {
 			int index = Arrays.asList(
 					it.hasParentItem() ? 
 							it.getParentItem().getItems() :
-								ctt.getItems()
+								ctree.getItems()
 								).indexOf(it);
 			int count = it.hasParentItem() ? 
 					it.getParentItem().getItemCount() : 
-						ctt.getItemCount();
+						ctree.getItemCount();
 			if(index > 0 || it.hasParentItem()) {
 				x1 = x;
 				x2 = x;
-				y1 = ibounds.y - ebounds.y;
+				y1 = ibounds.y - offset.y;
 				y2 = y;
 				if(gline % 2 == 0) {
 					if(y1 % 2 == 1) y1 -= 1;
@@ -345,8 +353,8 @@ public class CTreeCell extends AbstractCell {
 				y1 = y;
 				y2 = (it.hasParentItem() ?
 						it.getParentItem().getItem(index+1).getCellBounds()[0].y :
-							ctt.getItem(index+1).getCellBounds()[0].y)
-							- ebounds.y;
+							ctree.getItem(index+1).getCellBounds()[0].y)
+							- offset.y;
 				if(gline % 2 == 0) {
 					if(y1 % 2 == 1) y1 -= 1;
 					if(y2 % 2 == 1) y2 -= 1;
@@ -355,31 +363,31 @@ public class CTreeCell extends AbstractCell {
 			}
 			x1 = x;
 			x2 = x;
-			y1 = ibounds.y - ebounds.y;
-			y2 = ibounds.y+ibounds.height - ebounds.y;
+			y1 = ibounds.y - offset.y;
+			y2 = ibounds.y+ibounds.height - offset.y;
 			if(gline % 2 == 0) {
 				if(y1 % 2 == 1) y1 -= 1;
 				if(y2 % 2 == 1) y2 -= 1;
 			}
 			while(it.hasParentItem()) {
-				x1 = x2 -= ((CTree) ctt).getTreeIndent();
+				x1 = x2 -= ((CTree) ctree).getTreeIndent();
 				it = it.getParentItem();
 				index = Arrays.asList(
 						it.hasParentItem() ? 
 								it.getParentItem().getItems() :
-									ctt.getItems()
+									ctree.getItems()
 									).indexOf(it);
 				count = it.hasParentItem() ? 
 						it.getParentItem().getItemCount() : 
-							ctt.getItemCount();
+							ctree.getItemCount();
 				if(index < count - 1) {
 					gc.drawLine(x1, y1, x2, y2);
 				}
 			}
 			if(open && ((CTreeItem) item).hasItems()) {
-				x1 = x2 = x + ((CTree) ctt).getTreeIndent();
-				y1 = tbounds.y + tbounds.height - ebounds.y;
-				y2 = ibounds.y + ibounds.height - ebounds.y;
+				x1 = x2 = x + ((CTree) ctree).getTreeIndent();
+				y1 = tbounds.y + tbounds.height - offset.y;
+				y2 = ibounds.y + ibounds.height - offset.y;
 				if(gline % 2 == 0) {
 					if(y1 % 2 == 1) y1 -= 1;
 					if(y2 % 2 == 1) y2 -= 1;
@@ -407,7 +415,7 @@ public class CTreeCell extends AbstractCell {
 			if(doit) this.images = images;
 		}
 		update = true;
-		ctt.redraw(getItem());
+		ctree.redraw(this);
 	}
 
 	/**
@@ -431,11 +439,22 @@ public class CTreeCell extends AbstractCell {
 		childSpan[1] = len;
 	}
 
+//	public void setOpen(boolean open) {
+//		if(((CTreeItem) item).getTreeCell() == this) {
+//			if(this.open != open) {
+//				this.open = open;
+//				container.layout(open ? SWT.Expand : SWT.Collapse, item);
+//			}
+//		} else {
+//			super.setOpen(open);
+//		}
+//	}
+	
 	public void setText(String string) {
 		if(string != null && !string.equals(getText())) {
 			text = string;
 			update = true;
-			ctt.redraw(getItem());
+			ctree.redraw(this);
 		}
 	}
 
