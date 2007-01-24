@@ -449,7 +449,27 @@ public class RedmondShelfRenderer extends AbstractRenderer {
 
     private static RGB saturate(RGB rgb, float saturation)
     {
-        float[] hsb = rgb.getHSB();
+//        float[] hsb = rgb.getHSB();
+//
+//        hsb[1] += saturation;
+//        if (hsb[1] > 1.0f)
+//            hsb[1] = 1.0f;
+//        if (hsb[1] < 0f)
+//            hsb[1] = 0f;
+//
+//        hsb[0] += saturation;
+//        if (hsb[0] > 1.0f)
+//            hsb[0] = 1.0f;
+//
+//        if (hsb[0] < 0f)
+//            hsb[0] = 0f;
+//
+//        // hsb[2] += saturation;
+//        // if (hsb[2] > 1.0f)
+//        // hsb[2] = 1.0f;
+//
+//        return new RGB(hsb[0], hsb[1], hsb[2]);
+        float[] hsb = java.awt.Color.RGBtoHSB(rgb.red, rgb.green, rgb.blue, null);
 
         hsb[1] += saturation;
         if (hsb[1] > 1.0f)
@@ -468,7 +488,11 @@ public class RedmondShelfRenderer extends AbstractRenderer {
         // if (hsb[2] > 1.0f)
         // hsb[2] = 1.0f;
 
-        return new RGB(hsb[0], hsb[1], hsb[2]);
+        java.awt.Color awtColor = new java.awt.Color(java.awt.Color
+            .HSBtoRGB(hsb[0], hsb[1], hsb[2]));
+        // awtColor = awtColor.brighter();
+        // awtColor = awtColor.brighter();
+        return new RGB(awtColor.getRed(), awtColor.getGreen(), awtColor.getBlue());
     }
 
     private static Color createNewSaturatedColor(Color c, float saturation)
