@@ -14,9 +14,9 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.nebula.widgets.grid.internal.TextUtils;
-import org.eclipse.swt.nebula.widgets.pgroup.internal.GraphicUtils;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * <p>
@@ -134,6 +134,19 @@ public class RedmondShelfRenderer extends AbstractRenderer {
     			gc.drawLine(0,getBounds().y,getBounds().width -1,getBounds().y);
     		}	
         }
+        else
+        {
+            if (parent.getItems()[0] != item)
+            {
+                gc.setForeground(lineColor);
+                gc.drawLine(0,getBounds().y,getBounds().width -1,getBounds().y);
+            }
+            
+            if (isSelected()){
+                gc.setForeground(lineColor);
+                gc.drawLine(0,getBounds().y + getBounds().height -1,getBounds().width -1,getBounds().y + getBounds().height -1);               
+            }
+        }
 		
         boolean imageLeft = true;
         
@@ -183,7 +196,7 @@ public class RedmondShelfRenderer extends AbstractRenderer {
 			textWidth -= 6;
 		}
 		
-		gc.drawString(TextUtils.getShortString(gc,item.getText(),textWidth),x,getBounds().y +y2,true);
+		gc.drawString(getShortString(gc,item.getText(),textWidth),x,getBounds().y +y2,true);
 		
 		if (item.getImage() != null && !imageLeft){
 			int y3 = (getBounds().height - item.getImage().getBounds().height)/2;
@@ -207,24 +220,24 @@ public class RedmondShelfRenderer extends AbstractRenderer {
 		
 		Color baseColor = parent.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT);
 		
-		gradient1 = GraphicUtils.createNewBlendedColor(baseColor,parent.getDisplay().getSystemColor(SWT.COLOR_WHITE),30);
+		gradient1 = createNewBlendedColor(baseColor,parent.getDisplay().getSystemColor(SWT.COLOR_WHITE),30);
 		
-		baseColor = GraphicUtils.createNewBlendedColor(parent.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT),parent.getDisplay().getSystemColor(SWT.COLOR_WHITE),80);
+		baseColor = createNewBlendedColor(parent.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT),parent.getDisplay().getSystemColor(SWT.COLOR_WHITE),80);
 		
-		gradient2 = GraphicUtils.createNewSaturatedColor(baseColor,.01f);
+		gradient2 = createNewSaturatedColor(baseColor,.01f);
 		
 		baseColor.dispose();
 		
-		lineColor = GraphicUtils.createNewSaturatedColor(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION),.02f);
+		lineColor = createNewSaturatedColor(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION),.02f);
 
 		
 		baseColor = parent.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION);
 		
-		selectedGradient1 = GraphicUtils.createNewBlendedColor(baseColor,parent.getDisplay().getSystemColor(SWT.COLOR_WHITE),70);
+		selectedGradient1 = createNewBlendedColor(baseColor,parent.getDisplay().getSystemColor(SWT.COLOR_WHITE),70);
 		
-		baseColor = GraphicUtils.createNewBlendedColor(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION),parent.getDisplay().getSystemColor(SWT.COLOR_BLACK),80);
+		baseColor = createNewBlendedColor(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION),parent.getDisplay().getSystemColor(SWT.COLOR_BLACK),80);
 		
-		selectedGradient2 = GraphicUtils.createNewSaturatedColor(baseColor,.02f);
+		selectedGradient2 = createNewSaturatedColor(baseColor,.02f);
 		
 		baseColor.dispose();
 
@@ -236,14 +249,14 @@ public class RedmondShelfRenderer extends AbstractRenderer {
 		
 		selectedForeground = parent.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT);
 		
-		baseColor = GraphicUtils.createNewReverseColor(parent.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND));
+		baseColor = createNewReverseColor(parent.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND));
 		
-		hoverGradient1 = GraphicUtils.createNewBlendedColor(baseColor,parent.getDisplay().getSystemColor(SWT.COLOR_WHITE),30);
+		hoverGradient1 = createNewBlendedColor(baseColor,parent.getDisplay().getSystemColor(SWT.COLOR_WHITE),30);
 		
 				
-		Color baseColor2 = GraphicUtils.createNewBlendedColor(baseColor,parent.getDisplay().getSystemColor(SWT.COLOR_WHITE),99);
+		Color baseColor2 = createNewBlendedColor(baseColor,parent.getDisplay().getSystemColor(SWT.COLOR_WHITE),99);
 		
-		hoverGradient2 = GraphicUtils.createNewSaturatedColor(baseColor2,.00f);
+		hoverGradient2 = createNewSaturatedColor(baseColor2,.00f);
 		
 		baseColor2.dispose();
 		baseColor.dispose();
@@ -346,5 +359,122 @@ public class RedmondShelfRenderer extends AbstractRenderer {
 	public void setSelectedGradient2(Color selectedGradient2) {
 		this.selectedGradient2 = selectedGradient2;
 	}
+    
+    private static String getShortString(GC gc, String t, int width)
+    {
 
+        if (t == null)
+        {
+            return null;
+        }
+
+        if (t.equals(""))
+        {
+            return "";
+        }
+
+        if (width >= gc.stringExtent(t).x)
+        {
+            return t;
+        }
+
+        int w = gc.stringExtent("...").x;
+        String text = t;
+        int l = text.length();
+        int pivot = l / 2;
+        int s = pivot;
+        int e = pivot + 1;
+        while (s >= 0 && e < l)
+        {
+            String s1 = text.substring(0, s);
+            String s2 = text.substring(e, l);
+            int l1 = gc.stringExtent(s1).x;
+            int l2 = gc.stringExtent(s2).x;
+            if (l1 + w + l2 < width)
+            {
+                text = s1 + "..." + s2;
+                break;
+            }
+            s--;
+            e++;
+        }
+
+        if (s == 0 || e == l)
+        {
+            text = text.substring(0, 1) + "..." + text.substring(l - 1, l);
+        }
+
+        return text;
+    }
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    private static int blend(int v1, int v2, int ratio)
+    {
+        return (ratio * v1 + (100 - ratio) * v2) / 100;
+    }
+
+    private static RGB blend(RGB c1, RGB c2, int ratio)
+    {
+        int r = blend(c1.red, c2.red, ratio);
+        int g = blend(c1.green, c2.green, ratio);
+        int b = blend(c1.blue, c2.blue, ratio);
+        return new RGB(r, g, b);
+    }
+
+    private static Color createNewBlendedColor(Color c1, Color c2, int ratio)
+    {
+        Color newColor = new Color(Display.getCurrent(), blend(c1.getRGB(), c2.getRGB(), ratio));
+
+        return newColor;
+    }
+
+    private static Color createNewReverseColor(Color c)
+    {
+        Color newColor = new Color(Display.getCurrent(), 255 - c.getRed(), 255 - c.getGreen(),
+                                   255 - c.getBlue());
+        return newColor;
+    }
+
+    private static RGB saturate(RGB rgb, float saturation)
+    {
+        float[] hsb = rgb.getHSB();
+
+        hsb[1] += saturation;
+        if (hsb[1] > 1.0f)
+            hsb[1] = 1.0f;
+        if (hsb[1] < 0f)
+            hsb[1] = 0f;
+
+        hsb[0] += saturation;
+        if (hsb[0] > 1.0f)
+            hsb[0] = 1.0f;
+
+        if (hsb[0] < 0f)
+            hsb[0] = 0f;
+
+        // hsb[2] += saturation;
+        // if (hsb[2] > 1.0f)
+        // hsb[2] = 1.0f;
+
+        return new RGB(hsb[0], hsb[1], hsb[2]);
+    }
+
+    private static Color createNewSaturatedColor(Color c, float saturation)
+    {
+        RGB newRGB = saturate(c.getRGB(), saturation);
+        return new Color(Display.getCurrent(), newRGB);
+    }
+    
 }

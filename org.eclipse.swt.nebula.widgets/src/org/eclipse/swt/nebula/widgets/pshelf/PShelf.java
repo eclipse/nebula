@@ -29,6 +29,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TypedListener;
 
 import java.util.ArrayList;
@@ -110,17 +111,17 @@ public class PShelf extends Canvas {
 			}		
 		});
 		
-		this.addControlListener(new ControlListener() {
-			public void controlResized(ControlEvent arg0) {
-				onResize();
-			}		
-			public void controlMoved(ControlEvent arg0) {
-			}		
-		});
+		this.addListener(SWT.Resize, new Listener()
+        {        
+            public void handleEvent(Event event)
+            {
+                onResize();
+            }        
+        });
 		
 		this.addMouseListener(new MouseListener() {
 			public void mouseUp(MouseEvent e) {
-				PShelfItem item = getItemUnder(e.y);
+				PShelfItem item = getItem(new Point(1,e.y));
 				if ((item) == null)
 					return;
 				if (item == mouseDownItem && item != openItem){
@@ -128,7 +129,7 @@ public class PShelf extends Canvas {
 				}
 			}
 			public void mouseDown(MouseEvent e) {
-				mouseDownItem = getItemUnder(e.y);
+				mouseDownItem = getItem(new Point(1,e.y));
 			}
 			public void mouseDoubleClick(MouseEvent arg0) {
 			}		
@@ -153,7 +154,7 @@ public class PShelf extends Canvas {
 		
         this.addMouseMoveListener(new MouseMoveListener(){
             public void mouseMove(MouseEvent e) {
-				PShelfItem item = getItemUnder(e.y);
+				PShelfItem item = getItem(new Point(1,e.y));
 				if (item != hoverItem){
 					hoverItem = item;
 					redraw();
@@ -318,7 +319,7 @@ public class PShelf extends Canvas {
 		if (openItem == item && items.size() > 0)
 			openItem((PShelfItem) items.get(0),false);
         
-        computeItemYCoordinates();
+        onResize();
 	}
 	
 	private void openItem(PShelfItem item, boolean animation){
@@ -336,7 +337,7 @@ public class PShelf extends Canvas {
 				animateOpenFromBottom(previousOpen,item);
 			}
 		} else {
-			if (previousOpen != null)
+			if (previousOpen != null && !previousOpen.isDisposed())
 				previousOpen.getBodyParent().setBounds(0,0,0,0);
 			if ((getStyle() & SWT.SIMPLE) != 0){
 				//reorder the items
@@ -477,8 +478,7 @@ public class PShelf extends Canvas {
         for (Iterator iter = items.iterator(); iter.hasNext();)
         {
             PShelfItem item = (PShelfItem)iter.next();
-            item.getBody().setBounds(0,0,getClientArea().width,clientHeight);
-            
+            item.getBody().setBounds(0,0,getClientArea().width,clientHeight);            
         }
 	}
     
@@ -530,10 +530,28 @@ public class PShelf extends Canvas {
 		gc.dispose();
 	}
 	
-	private PShelfItem getItemUnder(int y){		
+    /**
+     * Returns the item at the given location.
+     *
+     * @param point location
+     *
+     * @exception IllegalArgumentException <ul>
+     *    <li>ERROR_NULL_ARGUMENT - if the point is null</li>
+     * </ul>
+     * @exception SWTException <ul>
+     *    <li>ERROR_WIDGET_DISPOSED - if the receiver or the renderer has been disposed</li>
+     *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+     * </ul>
+     */
+	public PShelfItem getItem(Point point){	
+        checkWidget();
+        
 		int y1 = 0;
 		int y2 = 0;
 		int c = 0;
+        
+        if (point == null)
+            SWT.error(SWT.ERROR_NULL_ARGUMENT);
         
         for (Iterator iter = items.iterator(); iter.hasNext();)
         {
@@ -541,7 +559,7 @@ public class PShelf extends Canvas {
             
             y2 += itemHeight;
             
-            if (y >= y1 && y <= y2 -1){
+            if (point.y >= y1 && point.y <= y2 -1){
                 return item;
             }
             if (item == openItem){

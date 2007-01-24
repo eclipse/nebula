@@ -142,9 +142,8 @@ public class PShelfItem extends Item {
 	 */
 	public void dispose() {
         checkWidget();
-		bodyParent.dispose();
 		parent.removeItem(this);
-		
+        bodyParent.dispose();
 		super.dispose();
 	}
 

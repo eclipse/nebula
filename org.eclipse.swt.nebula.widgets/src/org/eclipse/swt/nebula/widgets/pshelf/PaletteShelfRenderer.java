@@ -99,7 +99,8 @@ public class PaletteShelfRenderer extends AbstractRenderer {
         if (isHover() && !isSelected())
             gc.setForeground(gc.getDevice().getSystemColor(SWT.COLOR_LIST_SELECTION));
 		
-		gc.drawString(item.getText(),x,getBounds().y +y2,true);
+        String text = getShortString(gc, item.getText(), getBounds().width - x - 4);
+		gc.drawString(text,x,getBounds().y +y2,true);
 		
 		if (isFocus()){
 			gc.drawFocus(1,1,getBounds().width-2,getBounds().height-1);
@@ -119,4 +120,50 @@ public class PaletteShelfRenderer extends AbstractRenderer {
 		this.shadeColor = shadeColor;
 	}
 
+    private static String getShortString(GC gc, String t, int width)
+    {
+
+        if (t == null)
+        {
+            return null;
+        }
+
+        if (t.equals(""))
+        {
+            return "";
+        }
+
+        if (width >= gc.stringExtent(t).x)
+        {
+            return t;
+        }
+
+        int w = gc.stringExtent("...").x;
+        String text = t;
+        int l = text.length();
+        int pivot = l / 2;
+        int s = pivot;
+        int e = pivot + 1;
+        while (s >= 0 && e < l)
+        {
+            String s1 = text.substring(0, s);
+            String s2 = text.substring(e, l);
+            int l1 = gc.stringExtent(s1).x;
+            int l2 = gc.stringExtent(s2).x;
+            if (l1 + w + l2 < width)
+            {
+                text = s1 + "..." + s2;
+                break;
+            }
+            s--;
+            e++;
+        }
+
+        if (s == 0 || e == l)
+        {
+            text = text.substring(0, 1) + "..." + text.substring(l - 1, l);
+        }
+
+        return text;
+    }
 }
