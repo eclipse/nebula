@@ -61,7 +61,7 @@ public class CDT {
 	 * Style constant for drop down combo behavior (value is 1&lt;&lt;1).
 	 * <p><b>Used By:</b><ul>
 	 * <li><code>DropCombo</code></li>
-	 * <li><code>CDatepickerCombo</code></li>
+	 * <li><code>CDateTime</code></li>
 	 * <li><code>CNumPadCombo</code></li>
 	 * </ul></p>
 	 */
@@ -71,7 +71,7 @@ public class CDT {
 	 * Style constant for simple combo behavior (value is 1&lt;&lt;1).
 	 * <p><b>Used By:</b><ul>
 	 * <li><code>DropCombo</code></li>
-	 * <li><code>CDatepickerCombo</code></li>
+	 * <li><code>CDateTime</code></li>
 	 * <li><code>CNumPadCombo</code></li>
 	 * </ul></p>
 	 */
@@ -198,10 +198,9 @@ public class CDT {
 	/**
 	 * Style constant for showing a short date format (value is 1&lt;&lt;2).
 	 * <p><b>Used By:</b><ul>
-	 * <li><code>CDatepicker</code></li>
-	 * <li><code>CDatepickerCombo</code></li>
+	 * <li><code>CDateTime</code></li>
 	 * </ul></p>
-	 * @see CDatePicker#setPattern(int)
+	 * @see CDateTime#setPattern(int)
 	 * @see CDateTime#setFormat(int)
 	 */
 	public static final int DATE_SHORT		= 1 << 20;
@@ -209,10 +208,9 @@ public class CDT {
 	/**
 	 * Style constant for showing a medium date format (value is 1&lt;&lt;3).
 	 * <p><b>Used By:</b><ul>
-	 * <li><code>CDatepicker</code></li>
-	 * <li><code>CDatepickerCombo</code></li>
+	 * <li><code>CDateTime</code></li>
 	 * </ul></p>
-	 * @see CDatePicker#setPattern(int)
+	 * @see CDateTime#setPattern(int)
 	 * @see CDateTime#setFormat(int)
 	 */
 	public static final int DATE_MEDIUM		= 1 << 21;
@@ -220,10 +218,9 @@ public class CDT {
 	/**
 	 * Style constant for showing a long date format (value is 1&lt;&lt;4).
 	 * <p><b>Used By:</b><ul>
-	 * <li><code>CDatepicker</code></li>
-	 * <li><code>CDatepickerCombo</code></li>
+	 * <li><code>CDateTime</code></li>
 	 * </ul></p>
-	 * @see CDatePicker#setPattern(int)
+	 * @see CDateTime#setPattern(int)
 	 * @see CDateTime#setFormat(int)
 	 */
 	public static final int DATE_LONG		= 1 << 22;
@@ -231,10 +228,9 @@ public class CDT {
 	/**
 	 * Style constant for showing a short time format (value is 1&lt;&lt;6).
 	 * <p><b>Used By:</b><ul>
-	 * <li><code>CDatepicker</code></li>
-	 * <li><code>CDatepickerCombo</code></li>
+	 * <li><code>CDateTime</code></li>
 	 * </ul></p>
-	 * @see CDatePicker#setPattern(int)
+	 * @see CDateTime#setPattern(int)
 	 * @see CDateTime#setFormat(int)
 	 */
 	public static final int TIME_SHORT		= 1 << 23;
@@ -242,10 +238,9 @@ public class CDT {
 	/**
 	 * Style constant for showing a medium time format (value is 1&lt;&lt;7).
 	 * <p><b>Used By:</b><ul>
-	 * <li><code>CDatepicker</code></li>
-	 * <li><code>CDatepickerCombo</code></li>
+	 * <li><code>CDateTime</code></li>
 	 * </ul></p>
-	 * @see CDatePicker#setPattern(int)
+	 * @see CDateTime#setPattern(int)
 	 * @see CDateTime#setFormat(int)
 	 */
 	public static final int TIME_MEDIUM		= 1 << 24;
@@ -254,9 +249,9 @@ public class CDT {
 
 	/**
 	 * Style constant indicating that the TAB key should be used to traverse
-	 * the CDatepickerCombo's fields (value is 1&lt;&lt;19).
+	 * the CDateTime's fields (value is 1&lt;&lt;19).
 	 * <p><b>Used By:</b><ul>
-	 * <li><code>CDatepickerCombo</code></li>
+	 * <li><code>CDateTime</code></li>
 	 * </ul></p>
 	 */
 	public static final int TAB_FIELDS 		= 1 << 25;
