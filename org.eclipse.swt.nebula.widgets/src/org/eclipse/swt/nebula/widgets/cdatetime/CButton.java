@@ -40,7 +40,7 @@ import org.eclipse.swt.widgets.Listener;
  *  <li>Can draw polygons and ovals.</li>
  *  <li>Can center or otherwise align its visual display (text, image, polygon or oval).</li>
  * </ul>
- * @see CDatePicker for some example uses
+ * @see CDateTime for some example uses
  */
 public class CButton extends Composite {
 
