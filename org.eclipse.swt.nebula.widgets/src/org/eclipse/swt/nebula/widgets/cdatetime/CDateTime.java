@@ -48,7 +48,7 @@ import org.eclipse.swt.widgets.Widget;
  * "combo" in their name, the base of this component is a text box which, if the
  * DROP_DOWN style is set, is complimented by a down-arrow that will open / pop
  * up / drop down a graphical component; for the CDateTime, the drop down
- * component is a CDatepicker (automatically set a style appropriate for date
+ * component is a CDateTime (automatically set a style appropriate for date
  * format of the text box).  If the style DROP_DOWN is not set, then this combo
  * will NOT show a drop down arrow button, but will instead show a spinner which
  * can be used to increment / decrement the selected date field in the text box.
@@ -530,7 +530,7 @@ public class CDateTime extends AbstractCombo {
 	
 	/**
 	 * Notifies listeners that the selected date for this CDateTime has changed,
-	 * either by the text box or the drop down CDatepicker.
+	 * either by the text box or the drop down CDateTime.
 	 * @param field the Calendar Field which caused the change, or -1 if <code>setTime</code>
 	 * was called (thus setting all Calendar Fields)
 	 * @param defaultSelection whether or not this event should be a "default" event, currently
@@ -546,12 +546,12 @@ public class CDateTime extends AbstractCombo {
 //	/**
 //	 * Returns an array of all locales which are fully supported for the given style.
 //	 * If the style is of DROP_DOWN, then the fully supported Locales will be limited by the
-//	 * CDatepicker and this method will return the array obtained by calling
-//	 * <code>CDatepicker.getAvailableLocales()</code>.  If the style is not of DROP_DOWN then the
+//	 * CDateTime and this method will return the array obtained by calling
+//	 * <code>CDateTime.getAvailableLocales()</code>.  If the style is not of DROP_DOWN then the
 //	 * list of fully supported Locales is limited only by the system and the array returned is from 
 //	 * <code>Calendar.getAvailableLocales()</code>.
 //	 * @return an array of fully supported Locale objects
-//	 * @see CDatePicker#getAvailableLocales()
+//	 * @see CDateTime#getAvailableLocales()
 //	 * @see Calendar#getAvailableLocales()
 //	 */
 //	public Locale[] getAvailableLocales() {
@@ -585,7 +585,7 @@ public class CDateTime extends AbstractCombo {
 	 * The locale currently in use by this CDateTime.
 	 * @return the locale
 	 * @see #setLocale(Locale)
-	 * @see CDatePicker#setLocale(Locale)
+	 * @see CDateTime#setLocale(Locale)
 	 */
 	public Locale getLocale() {
 		checkWidget();
@@ -639,7 +639,7 @@ public class CDateTime extends AbstractCombo {
 	 * @param e the event
 	 */
 	private void handleKey(Event e) {
-		if(SWT.DEL == e.keyCode) {
+		if(SWT.DEL == e.keyCode || (SWT.BS == e.keyCode && editField == null)) {
 			e.doit = false;
 			setSelection(null);
 		} else if(!hasField(activeField) && !isNull) {
@@ -874,7 +874,7 @@ public class CDateTime extends AbstractCombo {
 	 * returns.  If the provided Locale is null then this CDateTime will use
 	 * the system's default locale.<br>
 	 * If this <code>CDateTime</code> is of style <code>DROP_DOWN</code>
-	 * then the associated <code>CDatepicker</code> will be set to the same locale.
+	 * then the associated <code>CDateTime</code> will be set to the same locale.
 	 * @param locale the Locale, or null to use the system's default
 	 * @see #getLocale()
 	 */
@@ -899,7 +899,7 @@ public class CDateTime extends AbstractCombo {
 	 * Set the selection for this CDateTime to that of the provided
 	 * <code>Date</code> object.<br>
 	 * This method will update the text box and, if the <code>DROP_DOWN</code>
-	 * style is set, the selection of the associated drop down CDatepicker.
+	 * style is set, the selection of the associated drop down CDateTime.
 	 * @param date the <code>Date</code> object to use for the new selection
 	 * @see #getSelection()
 	 */
@@ -919,7 +919,7 @@ public class CDateTime extends AbstractCombo {
 	/**
 	 * If style is neither SIMPLE or DROP_DOWN, then this method simply returns,
 	 * otherwise it sets the format of the picker.
-	 * @see CDatePicker#setPattern(int)
+	 * @see CDateTime#setPattern(int)
 	 */
 	private void updatePickerFormat() {
 		if(!isSimple() && !isDropDown()) return;
@@ -928,7 +928,6 @@ public class CDateTime extends AbstractCombo {
 		}
 		pickerSash = null;
 		pickerSash = new SashForm(getParentForContent(), SWT.HORIZONTAL);
-//		pickerSash.setBackgroundMode(SWT.INHERIT_FORCE);
 		pickerSash.setLayout(new FillLayout());
 		setContent(pickerSash);
 
@@ -990,7 +989,6 @@ public class CDateTime extends AbstractCombo {
 		
 		for(int i = 0; i < pickers.length; i++) {
 			pickers[i].setFields(fa);
-//			pickerComps[i].setBackgroundMode(SWT.INHERIT_FORCE);
 		}
 
 		if(pickerComps.length == 1) pickerSash.setMaximizedControl(pickerComps[0]);
