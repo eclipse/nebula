@@ -262,7 +262,7 @@ public abstract class AbstractCombo extends Composite {
 	 * it one of the messages defined in the <code>ModifyListener</code>
 	 * interface.<br>
 	 *<p>Note: event.data will hold implementation specific data<br>
-	 *ie: CDatepickerCombo places its current Date object here</p><br>
+	 *ie: CDateTime places its current Date object here</p><br>
 	 * @param listener the listener which should be notified
 	 *
 	 * @exception IllegalArgumentException <ul>
