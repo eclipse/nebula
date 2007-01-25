@@ -91,7 +91,7 @@ class Picker_Calendar extends AbstractPicker {
 	 * @param parent a widget which will be the parent of the new instance (cannot be null)
 	 * @param style the style of widget to construct
 	 * @param date a Date object representing the initial selection
-	 * @param locale the locale which this CDatepicker is to use
+	 * @param locale the locale which this CDateTime is to use
 	 */
 	Picker_Calendar(Composite parent1, CDateTime parent, Date selection) {
 		super(parent1, parent, selection);
@@ -271,7 +271,7 @@ class Picker_Calendar extends AbstractPicker {
 	}
 	
 	/**
-	 * create the footer (footerButton) for the Calendar part of this CDatepicker<br/>
+	 * create the footer (footerButton) for the Calendar part of this CDateTime<br/>
 	 * there is currently no footer for the Clock part - should there be?  or
 	 * should this footer span both parts?
 	 */
@@ -287,7 +287,7 @@ class Picker_Calendar extends AbstractPicker {
 	}
 
 	/**
-	 * create the header for the Calendar part of this CDatepicker<br/>
+	 * create the header for the Calendar part of this CDateTime<br/>
 	 * there is no equivalent for the Clock part
 	 */
 	private void createHeader() {
@@ -707,10 +707,10 @@ class Picker_Calendar extends AbstractPicker {
 //	}
 
 	/**
-	 * Set the selection for this CDatepicker to that of the provided
+	 * Set the selection for this CDateTime to that of the provided
 	 * <code>Date</code> object and update all affected attributes.<br>
 	 * Note that all Calendar fields will be set by this method, even if part of the
-	 * CDatepicker is not visible - for instance, if the CDatepicker is of style DATE,
+	 * CDateTime is not visible - for instance, if the CDateTime is of style DATE,
 	 * and only the date part is visible, this method will still set the time fields.<br>
 	 * If <code>alignMonth</code> is true then the visible calendar will be centered on the 
 	 * month containing the given date, otherwise it will scroll by week so that the given
@@ -832,7 +832,7 @@ class Picker_Calendar extends AbstractPicker {
 	
 	/**
 	 * set / update the text of the <code></code>displayLabels.  these are the Week 
-	 * column headers above the days on the Calendar part of the <code>CDatepicker</code>.
+	 * column headers above the days on the Calendar part of the <code>CDateTime</code>.
 	 */
 	private void updateDayLabels() {
 		tmpcal = Calendar.getInstance(combo.locale);
