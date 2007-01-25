@@ -356,16 +356,20 @@ public class CDateTime extends AbstractCombo {
 	 * @param defaultSelection
 	 */
 	void setSelectionFromPicker(int field, boolean defaultSelection) {
-		if(defaultSelection && isOpen()) {
-			cancelDate = null;
-			setOpen(false);
+		if(defaultSelection) {
+			if(isOpen()) {
+				cancelDate = null;
+				setOpen(false);
+			}
+			if(isNull) {
+				isNull = false;
+			}
 		}
-		if(isNull) {
-			isNull = false;
+		if(!isNull) {
+			calendar.setTime(getPickerSelection());
+			updateText();
+			fireSelectionChanged(field, defaultSelection);
 		}
-		calendar.setTime(getPickerSelection());
-		updateText();
-		fireSelectionChanged(field, defaultSelection);
 	}
 
 	/**
@@ -827,7 +831,7 @@ public class CDateTime extends AbstractCombo {
 		checkWidget();
 		if(open) {
 			cancelDate = getSelection();
-			updatePickerSelection(calendar.getTime());
+			updatePickerSelection(cancelDate);
 		} else if(cancelDate != null){
 			setSelection(cancelDate);
 			cancelDate = null;
