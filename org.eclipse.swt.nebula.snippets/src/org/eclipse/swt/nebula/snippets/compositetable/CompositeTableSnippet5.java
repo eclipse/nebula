@@ -6,10 +6,11 @@ import java.util.Comparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.nebula.widgets.compositetable.AbstractSelectableRow;
-import org.eclipse.swt.nebula.widgets.compositetable.AbstractSortableHeader;
+import org.eclipse.swt.nebula.widgets.compositetable.AbstractHeader;
 import org.eclipse.swt.nebula.widgets.compositetable.CompositeTable;
 import org.eclipse.swt.nebula.widgets.compositetable.GridRowLayout;
 import org.eclipse.swt.nebula.widgets.compositetable.IRowContentProvider;
+import org.eclipse.swt.nebula.widgets.compositetable.HeaderLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -18,7 +19,8 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * A CompositeTable listing first/last name pairs, allowing sorting by 
- * clicking columns.
+ * clicking columns and allowing columns to be resized by dragging in
+ * the header.
  * 
  * @author djo
  */
@@ -79,30 +81,34 @@ public class CompositeTableSnippet5 {
 	// abstract classes provided along with CompositeTable that make it
 	// easy to add common behaviors to our header and row objects.
 
-	private static class Header extends AbstractSortableHeader {
+	private static class Header extends AbstractHeader {
 		public Header(Composite parent, int style) {
 			super(parent, style);
-            setLayout(new GridRowLayout(new int[] { 160, 100 }, false));
-			setLabelStrings(new String[] {"First name", "Last name"});
+            setLayout(new HeaderLayout(new int[] { 160, 100 }, false));
+			setColumnText(new String[] {"First name", "Last name"});
 		}
 		
-		protected void sortOnColumn(int column, boolean sortDescending) {
+		protected boolean sortOnColumn(int column, int sortDirection) {
 			Comparator comparator = null;
+            
 			if (column == 0) {
-				if (sortDescending) {
+				if (sortDirection == SWT.DOWN) {
 					comparator = firstNameDescending;
 				} else {
 					comparator = firstNameAscending;
 				}
 			} else {
-				if (sortDescending) {
+				if (sortDirection == SWT.DOWN) {
 					comparator = lastNameDescending;
 				} else {
 					comparator = lastNameAscending;
 				}
 			}
+            
 			Arrays.sort(swtCommitters, comparator);
 			table.refreshAllRows();
+            
+            return true;
 		}
 	}
 	
