@@ -90,6 +90,11 @@ public abstract class AbstractSortableHeader extends Composite {
 		return imageData;
 	}
 
+	/**
+     * 
+	 * @param parent
+	 * @param style
+	 */
 	public AbstractSortableHeader(Composite parent, int style) {
 		super(parent, style);
 		makeMouseAdapter();
@@ -152,8 +157,14 @@ public abstract class AbstractSortableHeader extends Composite {
 	 */
 	protected abstract void sortOnColumn(int column, boolean sortDescending);
 
-    public void setLabelStrings(String[] labelStrings) {
-        this.labelStrings = labelStrings;
+    /**
+     * Clients must call this method (normally in the constructor) to set the
+     * column names.
+     * 
+     * @param columnText String[] The text to display in each column
+     */
+    public void setColumnText(String[] columnText) {
+        this.labelStrings = columnText;
         initialize();
     }
 
@@ -172,9 +183,4 @@ public abstract class AbstractSortableHeader extends Composite {
     protected void initializeLabel(CLabel label) {
         label.addMouseListener(this.sortMouseAdapter);
     }
-    
-    public List getLabels() {
-        return this.labels;
-    }
-
 }

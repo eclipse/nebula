@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Layout;
  */
 public class ResizableGridRowLayout extends CompositeTableLayout {
     
-    private ResizableGridHeaderLayout header;
+    private HeaderLayout headerLayout;
     private GridRowLayout nullLayout = null;
     
     protected Point computeSize(Composite composite, int wHint, int hHint,
@@ -32,8 +32,8 @@ public class ResizableGridRowLayout extends CompositeTableLayout {
     
     private CompositeTableLayout getLayoutDelegate(Composite composite) {
         findHeader(composite);
-        if (header != null) {
-            return header;
+        if (headerLayout != null) {
+            return headerLayout;
         }
         createNullLayout(composite);
         return nullLayout;
@@ -47,7 +47,7 @@ public class ResizableGridRowLayout extends CompositeTableLayout {
     }
     
     private void findHeader(Composite row) {
-        if (header != null) {
+        if (headerLayout != null) {
             return;
         }
         Control[] children = row.getParent().getChildren();
@@ -56,8 +56,8 @@ public class ResizableGridRowLayout extends CompositeTableLayout {
                 Composite child = (Composite) children[i];
                 Layout layout = child.getLayout();
                 
-                if (layout instanceof ResizableGridHeaderLayout) {
-                    header = (ResizableGridHeaderLayout) layout;
+                if (layout instanceof HeaderLayout) {
+                    headerLayout = (HeaderLayout) layout;
                     return;
                 }
             }
