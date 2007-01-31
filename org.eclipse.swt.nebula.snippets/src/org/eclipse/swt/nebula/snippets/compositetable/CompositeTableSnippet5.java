@@ -138,7 +138,7 @@ public class CompositeTableSnippet5 {
 	public static void main (String [] args) {
 	    Display display = new Display ();
 	    Shell shell = new Shell (display);
-	    shell.setText("CompositeTable Snippet 5 -- List first/last names with sortable columns");
+	    shell.setText("CompositeTable Snippet 5 -- List first/last names with sortable, movable, resizable columns and a native header");
 	    shell.setLayout(new FillLayout());
 
 	    table = new CompositeTable(shell, SWT.NULL);
