@@ -13,7 +13,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * A CompositeTable listing first/last name pairs
+ * A CompositeTable listing first/last name pairs, emulating SWT.FULL_SELECTION
+ * on the row objects.
  * 
  * @author djo
  */
