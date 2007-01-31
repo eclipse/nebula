@@ -5,12 +5,11 @@ import java.util.Comparator;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.nebula.widgets.compositetable.AbstractNativeHeader;
 import org.eclipse.swt.nebula.widgets.compositetable.AbstractSelectableRow;
-import org.eclipse.swt.nebula.widgets.compositetable.AbstractHeader;
 import org.eclipse.swt.nebula.widgets.compositetable.CompositeTable;
-import org.eclipse.swt.nebula.widgets.compositetable.GridRowLayout;
 import org.eclipse.swt.nebula.widgets.compositetable.IRowContentProvider;
-import org.eclipse.swt.nebula.widgets.compositetable.HeaderLayout;
+import org.eclipse.swt.nebula.widgets.compositetable.ResizableGridRowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -18,9 +17,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * A CompositeTable listing first/last name pairs, allowing sorting by 
- * clicking columns and allowing columns to be resized by dragging in
- * the header.
+ * A CompositeTable listing first/last name pairs, utilizing a native header
+ * control, allowing sorting by clicking columns and allowing columns to be 
+ * resized by dragging in the header.
  * 
  * @author djo
  */
@@ -77,14 +76,20 @@ public class CompositeTableSnippet5 {
 	};
 	static final Comparator lastNameDescending = new Opposite(lastNameAscending);
 
-	// Define our header and row objects.  For convenience, we use
-	// abstract classes provided along with CompositeTable that make it
-	// easy to add common behaviors to our header and row objects.
+    /*
+ 	 * Define our header and row objects.  For convenience, we use
+	 * abstract classes provided along with CompositeTable that make it
+	 * easy to add common behaviors to our header and row objects.
+     * 
+     * Notice that since AbstractNativeHeader is a native header control, it
+     * doesn't make sense to use a layout manager, but it has methods similar 
+     * to the GridRowLayout layout manager.
+     */
 
-	private static class Header extends AbstractHeader {
+	private static class Header extends AbstractNativeHeader {
 		public Header(Composite parent, int style) {
 			super(parent, style);
-            setLayout(new HeaderLayout(new int[] { 160, 100 }, false));
+            setWeights(new int[] { 160, 100 });
 			setColumnText(new String[] {"First name", "Last name"});
 		}
 		
@@ -112,10 +117,15 @@ public class CompositeTableSnippet5 {
 		}
 	}
 	
+    /*
+     * So that the row's columns size with the header, we use a
+     * ResizableGridRowLayout here.  The value of weights and fittingHorizontally
+     * is gotten from the header, so we don't need to set anything else here.
+     */
 	private static class Row extends AbstractSelectableRow {
 		public Row(Composite parent, int style) {
 			super(parent, style);
-            setLayout(new GridRowLayout(new int[] { 160, 100 }, false));
+            setLayout(new ResizableGridRowLayout());
 			setColumnCount(2);
 		}
 	}
