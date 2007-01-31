@@ -104,7 +104,7 @@ public class GridRowLayout extends AbstractGridRowLayout {
         return maxHeight;
     }
 
-    protected Point computeSize(Widget columnObject, int wHint, int hHint, boolean flush) {
+    protected Point computeColumnSize(Widget columnObject, int wHint, int hHint, boolean flush) {
         Control control = (Control) columnObject;
         return control.computeSize(wHint, hHint, flush);
     }
