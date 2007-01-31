@@ -115,11 +115,12 @@ abstract class AbstractGridRowLayout extends CompositeTableLayout {
 
     private int computePreferredWidth(Composite child) {
         if (isFittingHorizontally()) {
-            return child.getSize().x;
+            return 1;
         }
         int allColumnsTotalWidth = 0;
-        for (int i = 0; i < weights.length; i++) {
-            allColumnsTotalWidth += weights[i] + 2*CELL_BORDER_WIDTH;
+        int[] colWeights = getWeights();
+        for (int i = 0; i < colWeights.length; i++) {
+            allColumnsTotalWidth += colWeights[i] + 2*CELL_BORDER_WIDTH;
         }
         return allColumnsTotalWidth;
     }
@@ -132,11 +133,11 @@ abstract class AbstractGridRowLayout extends CompositeTableLayout {
         }
         int maxHeight = computeMaxHeight(child);
 
-        int[] weights = getWeights();
+        int[] colWeights = getWeights();
         if (isFittingHorizontally()) {
-            weights = checkWeights(weights, numChildren);
+            colWeights = checkWeights(colWeights, numChildren);
         } else {
-            weights = computeWeights(weights, numChildren);
+            colWeights = computeWeights(colWeights, numChildren);
         }
 
         int widthRemaining = child.getParent().getSize().x;
@@ -146,9 +147,9 @@ abstract class AbstractGridRowLayout extends CompositeTableLayout {
             Widget columnObject = getColumnAt(child, i);
             
             int leftPos = left + CELL_BORDER_WIDTH;
-            int width = (int) (((float) weights[i]) / 100 * totalSize);
+            int width = (int) (((float) colWeights[i]) / 100 * totalSize);
             int widthIncludingBorderWidth = width - 2*CELL_BORDER_WIDTH;
-            int desiredHeight = computeSize(columnObject, SWT.DEFAULT, 
+            int desiredHeight = computeColumnSize(columnObject, SWT.DEFAULT, 
                     SWT.DEFAULT, false).y;
             int top = computeTop(maxHeight, desiredHeight);
             
@@ -160,7 +161,7 @@ abstract class AbstractGridRowLayout extends CompositeTableLayout {
         Widget lastColumn = getColumnAt(child, numChildren - 1);
         
         int left = totalSize - widthRemaining;
-        int desiredHeight = computeSize(lastColumn,
+        int desiredHeight = computeColumnSize(lastColumn,
                 SWT.DEFAULT, SWT.DEFAULT, false).y;
         int top = computeTop(maxHeight, desiredHeight);
         
@@ -177,15 +178,15 @@ abstract class AbstractGridRowLayout extends CompositeTableLayout {
         }
         int maxHeight = computeMaxHeight(child);
 
-        int[] weights = getWeights();
+        int[] colWidths = getWeights();
         int left = 0;
         for (int i = 0; i < numChildren; i++) {
             Widget column = getColumnAt(child, i);
-            int desiredHeight = computeSize(column, SWT.DEFAULT,
+            int desiredHeight = computeColumnSize(column, SWT.DEFAULT,
                     SWT.DEFAULT, false).y;
             int top = computeTop(maxHeight, desiredHeight);
-            setBounds(column, left + 2, top, weights[i], desiredHeight);
-            left += weights[i] + 2*CELL_BORDER_WIDTH;
+            setBounds(column, left + 2, top, colWidths[i], desiredHeight);
+            left += colWidths[i] + 2*CELL_BORDER_WIDTH;
         }
 
         return maxHeight;
@@ -225,7 +226,7 @@ abstract class AbstractGridRowLayout extends CompositeTableLayout {
      * @param flush If any cached size should be flushed and recomputed.
      * @return Point the preferred size.
      */
-    protected abstract Point computeSize(Widget columnObject, int wHint, int hHint, boolean flush);
+    protected abstract Point computeColumnSize(Widget columnObject, int wHint, int hHint, boolean flush);
     
     /**
      * Set the bounds of the specified column object.  Any of the parameters may
@@ -248,17 +249,15 @@ abstract class AbstractGridRowLayout extends CompositeTableLayout {
         if (weights.length != numChildren) {
             return checkWeights(weights, numChildren);
         }
-        int allColumnsTotalWidth = 0;
-        for (int i = 0; i < weights.length; i++) {
-            allColumnsTotalWidth += weights[i];
-        }
+        
         int[] realWeights = new int[numChildren];
         int total = 100;
         for (int i = 0; i < realWeights.length; i++) {
             realWeights[i] = (int) (((double) weights[i])
-                    / allColumnsTotalWidth * 100);
+                    / getSumOfAllWeights() * 100);
             total -= realWeights[i];
         }
+        
         int i = 0;
         while (total > 0) {
             ++realWeights[i];
@@ -352,7 +351,23 @@ abstract class AbstractGridRowLayout extends CompositeTableLayout {
      */
     public AbstractGridRowLayout setWeights(int[] weights) {
         this.weights = weights;
+        sumOfAllWeights = 0;
+        for (int i = 0; i < weights.length; i++) {
+            sumOfAllWeights += weights[i];
+        }
+        
         return this;
+    }
+
+    private int sumOfAllWeights;
+    
+    /**
+     * Returns the sum of all the weights in the weights property
+     * 
+     * @return the sum of all the weights in the weights property
+     */
+    public int getSumOfAllWeights() {
+        return sumOfAllWeights;
     }
 
     private boolean fittingHorizontally = false;
