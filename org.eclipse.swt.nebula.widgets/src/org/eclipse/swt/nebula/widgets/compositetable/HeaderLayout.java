@@ -404,8 +404,15 @@ class HeaderLayout extends AbstractGridRowLayout {
     
     private ControlListener headerControlListener = null;
     
+    private boolean wasResized = true;
+    
     private class HeaderControlListener implements ControlListener {
         public void controlMoved(ControlEvent e) {
+            // Eat the move event that is fired after resize events
+            if (wasResized) {
+                wasResized = false;
+                return;
+            }
             Table table = header.headerTable;
             fireColumnMovedEvent(table.getColumnOrder());
             storeLastWidths(table);
@@ -413,6 +420,7 @@ class HeaderLayout extends AbstractGridRowLayout {
 
         public void controlResized(ControlEvent e) {
             if (lastWidths == null) return;
+            wasResized = true;
             if (!layingOut) {
                 layingOut = true;
                 try {
