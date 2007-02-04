@@ -71,7 +71,7 @@ static final int MODE_MARQUEE = 1;
 		int mask = SWT.BORDER | SWT.LEFT_TO_RIGHT | SWT.RIGHT_TO_LEFT
 				| SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE | SWT.MULTI
 				| SWT.NO_FOCUS | SWT.CHECK;
-		return (style & mask) | SWT.NO_BACKGROUND;
+		return (style & mask) | SWT.DOUBLE_BUFFERED;
 	}
 
 	GC internalGC = new GC(Display.getDefault());
@@ -1019,13 +1019,6 @@ static final int MODE_MARQUEE = 1;
 		e.gc.drawImage(image, ebounds.x, ebounds.y);
 		gc.dispose();
 		image.dispose();
-		
-		for(Iterator iter = paintedItems.iterator(); iter.hasNext();) {
-			AbstractCell[] ca = ((AbstractItem) iter.next()).getCells();
-			for(int i = 0; i < ca.length; i++) {
-				ca[i].adjust();
-			}
-		}
 	}
 	protected void paintColumns(GC gc, Rectangle ebounds) {
 		AbstractColumn[] columns = internalGetColumns();
@@ -1354,12 +1347,12 @@ static final int MODE_MARQUEE = 1;
 		redraw();
 	}
 
-//	public void setRedraw(boolean redraw) {
-//		super.setRedraw(redraw);
-//		if (internalTable != null) {
-//			internalTable.setRedraw(redraw);
-//		}
-//	}
+	public void setRedraw(boolean redraw) {
+		super.setRedraw(redraw);
+		if (internalTable != null) {
+			internalTable.setRedraw(redraw);
+		}
+	}
 
 	void setScrollPosition(Point origin) {
 		setOrigin(origin.x,origin.y);
