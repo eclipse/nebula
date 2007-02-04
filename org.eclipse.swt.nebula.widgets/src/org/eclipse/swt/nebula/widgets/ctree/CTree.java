@@ -39,35 +39,35 @@ public class CTree extends AbstractContainer {
 	public static final int OP_TREE_COLLAPSE	= 7;
 	public static final int OP_TREE_EXPAND 		= 8;
 
-	private boolean selectOnTreeToggle = false;
+	private int checkColumn = -1;
+	private boolean checkRoots = true;
 	private int treeColumn = 0;
 	private int treeIndent = 16;
+	private boolean selectOnTreeToggle = false;
 
-	/**
-	 * A list of items which have the CTree as their parent.<br>
-	 * These are the items to be returned by the getItem methods.
-	 */
-	List roots = new ArrayList();
+
+	List itemList = new ArrayList();
 	
 	public CTree(Composite parent, int style) {
 		super(parent, style);
-//		setLinesVisible(true);
+		if((style & SWT.CHECK) != 0) checkColumn = 0;
 		setLayout(layout = new CTreeLayout(this));
 	}
 
-	protected void addItem(int index, AbstractItem item) {
-		super.addItem(index, item);
-		CTreeItem citem = (CTreeItem) item;
-		if(!citem.hasParentItem()) {
-			roots.add(citem);
-		} else {
-			citem.setTreeIndent(citem.getParentItem().getTreeIndent() + treeIndent);
-			if(citem.getParentItem().getVisible()) {
-				redraw(citem.getParentItem().getTreeCell());
-			}
-		}
+	void addItem(AbstractItem item) {
+		addItem(-1, item);
 	}
-	
+
+	void addItem(int index, AbstractItem item) {
+		if(index < 0 || index > itemList.size()-1) {
+			itemList.add(item);
+		} else {
+			itemList.add(index, item);
+		}
+		addedItems.add(item);
+		redraw();
+	}
+
 	public void addTreeListener(TreeListener listener) {
 		checkWidget ();
 		if(listener != null) {
@@ -88,75 +88,6 @@ public class CTree extends AbstractContainer {
 		return (CTreeColumn) internalGetColumn(index);
 	}
 	
-//	public int getLastPaintedItemIndex() {
-//		return visibleItems.indexOf(getLastPaintedItem());
-//	}
-
-	protected List getPaintedItems() {
-		int top = getScrollPosition().y;
-		int bot = top + getClientArea().height;
-		int itop = 0;
-		int ibot = 0;
-		List list = new ArrayList();
-		boolean painting = false;
-		for(Iterator i = visibleItems.iterator(); i.hasNext(); ) {
-			CTreeItem item = (CTreeItem) i.next();
-			Rectangle r = item.getBounds();
-			ibot = r.y+r.height;
-			if(itop <= top && top < ibot) {
-				painting = true;
-			}
-			if(painting) {
-				list.add(item);
-			}
-			if(itop < bot && bot <= ibot) {
-				break;
-			}
-			itop = r.y+r.height;
-		}
-		return list;
-	}
-	
-//	public AbstractItem getLastPaintedItem() {
-//		int bot = getScrollPosition().y;
-//		bot += getClientArea().height;
-//		int itop = 0;
-//		int ibot = 0;
-//		for(Iterator i = visibleItems.iterator(); i.hasNext(); ) {
-//			AbstractItem item = (AbstractItem) i.next();
-//			Rectangle r = item.getBounds();
-//			ibot = r.y+r.height;
-//			if(itop < bot && bot <= ibot) {
-//				return item;
-//			}
-//			itop = r.y+r.height;
-//		}
-//		return (AbstractItem) visibleItems.get(visibleItems.size()-1);
-//	}
-
-	/**
-	 * returns a deep list of items belonging to the given item
-	 * {@inheritDoc}
-	 */
-	protected List getItems(AbstractItem item) {
-		return getItems(item, true);
-	}
-	protected List getItems(AbstractItem item, boolean includeCollapsed) {
-		List l = new ArrayList();
-		CTreeItem[] items = ((CTreeItem) item).getItems();
-		for(int i = 0; i < items.length; i++) {
-			l.add(items[i]);
-			if(includeCollapsed || items[i].getExpanded()) {
-				l.addAll(getItems(items[i]));
-			}
-		}
-		return l;
-	}
-
-	public int getItemCount() {
-		return roots.size();
-	}
-
 	public CTreeItem getItem(Point p) {
 		return (CTreeItem) internalGetItem(p);
 	}
@@ -179,10 +110,29 @@ public class CTree extends AbstractContainer {
 	 * </ul>
 	 */
 	public CTreeItem[] getItems() {
-		return roots.isEmpty() ?
-				new CTreeItem[0] : 
-					(CTreeItem[]) roots.toArray(new CTreeItem[roots.size()]);
+		if(isEmpty()) return new CTreeItem[0];
+		return (CTreeItem[]) itemList.toArray(new CTreeItem[itemList.size()]);
 	}
+	
+	/**
+	 * returns a deep list of items belonging to the given item
+	 * {@inheritDoc}
+	 */
+//	List getItems(AbstractItem item) {
+//		return getItems(item, true);
+//	}
+	List getItems(CTreeItem item, boolean all) {
+		List l = new ArrayList();
+		CTreeItem[] items = item.getItems();
+		for(int i = 0; i < items.length; i++) {
+			l.add(items[i]);
+			if(all || items[i].getExpanded()) {
+				l.addAll(getItems(items[i], all));
+			}
+		}
+		return l;
+	}
+
 
 	public CTreeItem[] getSelection() {
 		return selection.isEmpty() ? 
@@ -198,15 +148,36 @@ public class CTree extends AbstractContainer {
 		return selectOnTreeToggle;
 	}
 
-//	public int getFirstPaintedItemIndex() {
-//		return visibleItems.indexOf(getTopItem());
-//	}
-
+	protected List getPaintedItems() {
+		int top = getScrollPosition().y;
+		int bot = top + getClientArea().height;
+		int itop = 0;
+		int ibot = 0;
+		List list = new ArrayList();
+		boolean painting = false;
+		for(Iterator i = items(false).iterator(); i.hasNext(); ) {
+			AbstractItem item = (AbstractItem) i.next();
+			Rectangle r = item.getBounds();
+			ibot = r.y+r.height;
+			if(itop <= top && top < ibot) {
+				painting = true;
+			}
+			if(painting) {
+				list.add(item);
+			}
+			if(itop < bot && bot <= ibot) {
+				break;
+			}
+			itop = r.y+r.height;
+		}
+		return list;
+	}
+	
 	public CTreeItem getTopItem() {
 		int top = getScrollPosition().y;
 		int itop = 0;
 		int ibot = 0;
-		for(Iterator i = visibleItems.iterator(); i.hasNext(); ) {
+		for(Iterator i = items(false).iterator(); i.hasNext(); ) {
 			CTreeItem item = (CTreeItem) i.next();
 			Rectangle r = item.getBounds();
 			ibot = r.y+r.height;
@@ -218,6 +189,14 @@ public class CTree extends AbstractContainer {
 		return null;
 	}
 
+	public int getCheckColumn() {
+		return checkColumn;
+	}
+	
+	public boolean getCheckRoots() {
+		return checkRoots;
+	}
+	
 	public int getTreeColumn() {
 		return treeColumn;
 	}
@@ -226,9 +205,9 @@ public class CTree extends AbstractContainer {
 		return treeIndent;
 	}
 
-	public CTreeItem[] getVisibleItems() {
-		return (visibleItems.isEmpty()) ? new CTreeItem[0] : (CTreeItem[]) visibleItems.toArray(new CTreeItem[visibleItems.size()]);
-	}
+//	public CTreeItem[] getVisibleItems() {
+//		return (visibleItems.isEmpty()) ? new CTreeItem[0] : (CTreeItem[]) visibleItems.toArray(new CTreeItem[visibleItems.size()]);
+//	}
 
 	protected boolean handleMouseEvents(AbstractItem item, Event event) {
 		if(item != null && item instanceof CTreeItem) {
@@ -269,6 +248,23 @@ public class CTree extends AbstractContainer {
 		return treeColumn >= 0 && treeColumn < getColumnCount();
 	}
 
+	public boolean isEmpty() {
+		return itemList.isEmpty();
+	}
+	
+	List items(boolean all) {
+		List items = new ArrayList();
+		for(Iterator i = itemList.iterator(); i.hasNext(); ) {
+			CTreeItem item = (CTreeItem) i.next();
+			if(all || item.isVisible()) {
+				items.add(item);
+				if(all || item.getExpanded()) {
+					items.addAll(getItems(item, all));
+				}
+			}
+		}
+		return items;
+	}
 	
 	/**
 	 * Use this method to find out if an item is visible, and thus has the potential to be
@@ -280,19 +276,19 @@ public class CTree extends AbstractContainer {
 	 * parent item being collapsed
 	 */
 	public boolean isVisible(CTreeItem item) {
-		CTreeItem parentItem = item.getParentItem();
-		if(parentItem == null) return true;
-		if(parentItem.getExpanded()) return isVisible(parentItem);
+		if(item.getVisible()) {
+			CTreeItem parentItem = item.getParentItem();
+			if(parentItem == null) return true;
+			if(parentItem.getExpanded()) return isVisible(parentItem);
+		}
 		return false;
 	}
 
 	void layout(int eventType, AbstractCell cell) {
 		if((SWT.Collapse == eventType || SWT.Expand == eventType) && ((CTreeCell) cell).isTreeCell()) {
 			if(SWT.Collapse == eventType) {
-				visibleItems.removeAll(getItems(cell.item, false));
 				layout.layout(eventType, cell);
 			} else if(isVisible((CTreeItem) cell.item)) {
-				visibleItems.addAll(visibleItems.indexOf(cell.item)+1, getItems(cell.item, false));
 				layout.layout(eventType, cell);
 			}
 			updatePaintedList = true;
@@ -302,24 +298,14 @@ public class CTree extends AbstractContainer {
 	}
 	
 	void layout(int eventType, AbstractItem item) {
-		if(hasTreeColumn()) {
-			if(SWT.Show == eventType && !visibleItems.contains(item)) {
-				if(!isVisible((CTreeItem) item)) return;
-				if(visibleItems.isEmpty()) {
-					visibleItems.add(item);
-				} else {
-					CTreeItem cti = ((CTreeItem) item).getItem(true);
-					while(cti != null && !visibleItems.contains(cti = cti.getItem(true)));
-					visibleItems.add(visibleItems.indexOf(cti)+1, item);
-				}
-				layout.layout(eventType, item);
-				updatePaintedList = true;
-			} else if(SWT.Hide == eventType && visibleItems.remove(item)) {
-				layout.layout(eventType, item);
-				updatePaintedList = true;
-			}
-		} else {
-			super.layout(eventType, item);
+		if(SWT.Show == eventType && !isVisible((CTreeItem)item)) {
+			layout.layout(eventType, item);
+			updatePaintedList = true;
+			item.setVisible(true);
+		} else if(SWT.Hide == eventType && isVisible((CTreeItem)item)) {
+			layout.layout(eventType, item);
+			updatePaintedList = true;
+			item.setVisible(false);
 		}
 	}
 	
@@ -333,22 +319,21 @@ public class CTree extends AbstractContainer {
 			int rowHeight = 0;
 			
 			if(win32 && nativeGrid) {
-				if(visibleItems.isEmpty()) {
+				if(isEmpty()) {
 					if(emptyMessage.length() > 0) {
 						Point tSize = gc.textExtent(emptyMessage);
 						rowHeight = tSize.y+2;
 					}
 				} else {
 					int gridline = getGridLineWidth();
-					for(Iterator i = visibleItems.iterator(); i.hasNext(); ) {
+					for(Iterator i = items(false).iterator(); i.hasNext(); ) {
 						gc.drawLine(r.x, y, r.x+r.width, y);
 						AbstractItem item = (AbstractItem) i.next();
 						y += item.getSize().y + gridline;
 					}
-					rowHeight = ((CTreeItem) visibleItems.get(
-							visibleItems.size() - 1)).getSize().y;
+					rowHeight = getItemHeight();
 				}
-			} 
+			}
 
 			if(hLines) {
 				int gridline = getGridLineWidth();
@@ -374,11 +359,22 @@ public class CTree extends AbstractContainer {
 		}
 	}
 
+	public int getItemCount() {
+		return itemList.size();
+	}
+	
+	public int getItemHeight() {
+		return ((CTreeLayout) layout).getItemHeight();
+	}
+	
 	protected void paintItemBackgrounds(GC gc, Rectangle ebounds) {
 		if(gtk && nativeGrid && !paintedItems.isEmpty()) {
 			Rectangle r = getClientArea();
 			int gridline = getGridLineWidth();
-			int firstPaintedIndex = visibleItems.indexOf(paintedItems.get(0));
+			int firstPaintedIndex = 0;
+//			for(IItemIterator i = ((AbstractItem) paintedItems.get(0)).iterator(); i.hasPreviousVisible(); i.previousVisible()) {
+//				firstPaintedIndex++;
+//			}
 			for(int i = 0; i < paintedItems.size(); i++) {
 				CTreeItem item = (CTreeItem) paintedItems.get(i);
 				if(linesVisible && ((firstPaintedIndex + i + 1) % 2 == 0)) {
@@ -414,13 +410,37 @@ public class CTree extends AbstractContainer {
 		}
 	}
 	
-	protected void removeItem(AbstractItem item) {
-		super.removeItem(item);
-		if(!((CTreeItem) item).hasParentItem()) {
-			roots.add(item);
+	public void removeAll() {
+		if(!isEmpty()) {
+			boolean selChange = false;
+			if(!selection.isEmpty()) {
+				selection = new ArrayList();
+				selChange = true;
+			}
+
+			for(Iterator i = items(true).iterator(); i.hasNext(); ) {
+				AbstractItem item = (AbstractItem) i.next();
+				if(!item.isDisposed()) {
+					removedItems.add(item);
+					item.dispose();
+				}
+			}
+			itemList = new ArrayList();
+
+			if(selChange) fireSelectionEvent(false);
 		}
 	}
-	
+
+	void removeItem(AbstractItem item) {
+		itemList.remove(item);
+		if(!removedItems.contains(item)) {
+			removedItems.add(item);
+			boolean selChange = selection.remove(item);
+			if(selChange) fireSelectionEvent(false);
+			redraw();
+		}
+	}
+
 	public void removeTreeListener(TreeListener listener) {
 		checkWidget ();
 		if(listener != null) {
@@ -429,6 +449,17 @@ public class CTree extends AbstractContainer {
 		}
 	}
 
+	public void setCheckColumn(int column, boolean roots) {
+		if(checkColumn != column) {
+			checkColumn = column;
+			checkRoots = roots;
+			// TODO update check cells
+		}
+	}
+	public void setSelection(AbstractItem from, AbstractItem to) {
+		// TODO Auto-generated method stub
+	}
+	
 	/**
 	 * If the the user clicks on the toggle of the treeCell the corresponding item will
 	 * become selected if, and only if, selectOnTreeToggle is true
@@ -448,29 +479,6 @@ public class CTree extends AbstractContainer {
 	public void setTreeColumn(int column) {
 		if(treeColumn != column) {
 			treeColumn = column;
-			if(!hasTreeColumn()) {
-//				orderedItems = new ArrayList(items);
-				visibleItems = new ArrayList(items);
-				for(Iterator i = visibleItems.iterator(); i.hasNext(); ) {
-					CTreeItem item = (CTreeItem) i.next();
-					if(!item.getVisible()) {
-						i.remove();
-					} else {
-						item.setTreeIndent(0);
-					}
-				}
-			} else {
-				visibleItems = new ArrayList(items);
-				for(Iterator i = items.iterator(); i.hasNext(); ) {
-					CTreeItem item = (CTreeItem) i.next();
-					if(item.getParentItem() == null) {
-						if(isVisible(item)) {
-							visibleItems.add(item);
-							visibleItems.addAll(getItems(item, false));
-						}
-					}
-				}
-			}
 		}
 	}
 
@@ -511,10 +519,25 @@ public class CTree extends AbstractContainer {
 	}
 
 	public CTreeItem getItem(int index) {
-		if(index >= 0 && index < roots.size()) {
-			return (CTreeItem) roots.get(index);
-		}
-		return null;
+		if(isEmpty() || index < 0 || index > itemList.size()-1) return null;
+		return (CTreeItem) itemList.get(index);
+//		if(index == itemCount-1) return lastItem;
+//		if(index == 0) return firstItem;
+//		AbstractItem item = null;
+//		if(index < (itemCount/2)) {
+//			item = firstItem;
+//			for(int i = 0; i == index; i++) {
+//				if(item.hasNext()) item = item.next();
+//				else return null;
+//			}
+//		} else {
+//			item = lastItem;
+//			for(int i = itemCount-1; i == index; i--) {
+//				if(item.hasPrevious()) item = item.previous();
+//				else return null;
+//			}
+//		}
+//		return item;
 	}
 
 	public CTreeItem getParentItem() {
@@ -536,7 +559,7 @@ public class CTree extends AbstractContainer {
 	}
 
 	public int indexOf(CTreeItem item) {
-		return roots.indexOf(item);
+		return itemList.indexOf(item);
 	}
 
 	public void setColumnOrder(int[] order) {

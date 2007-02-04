@@ -40,6 +40,7 @@ public abstract class AbstractItem extends Item {
 	protected boolean enabled = true;
 	protected boolean visible = true;
 	boolean painted = false;
+	
 
 	
 	public AbstractItem(AbstractContainer parent, int style) {
@@ -48,8 +49,34 @@ public abstract class AbstractItem extends Item {
 	public AbstractItem(AbstractContainer parent, int style, int index) {
 		super(parent, style);
 		container = parent;
+		cells = new AbstractCell[container.getColumnCount()];
+		createCells(container.cellClasses);
 	}
 
+	private AbstractItem next;
+	private AbstractItem previous;
+	boolean hasNext() { return next != null; }
+	boolean hasPrevious() { return previous != null; }
+	AbstractItem next() { return next; }
+	AbstractItem nextVisible() {
+		for(AbstractItem i = this; i.hasNext(); ) {
+			AbstractItem item = i.next();
+			if(item.getVisible()) return item;
+		}
+		return null;
+	}
+	AbstractItem previous() { return previous; }
+	AbstractItem previousVisible() {
+		for(AbstractItem i = this; i.hasPrevious(); ) {
+			AbstractItem item = i.previous();
+			if(item.getVisible()) return item;
+		}
+		return null;
+	}
+	void setNext(AbstractItem item) { next = item; }
+	void setPrevious(AbstractItem item) { previous = item; }
+	
+	
 	
 	public void addListener(int eventType, Listener handler) {
 		for(int i = 0; i < cells.length; i++) {
@@ -83,12 +110,13 @@ public abstract class AbstractItem extends Item {
 	 * @param index the index the new cell
 	 * @return the new cell
 	 */
-	protected abstract AbstractCell createCell(int index, int style);
+	protected abstract void createCell(int index, int style);
 
 	public void createCell(int index, int style, Class clazz) {
 		if(!hasCell(index)) return;
 		
-		Map memento = cells[index].retrieveState();
+		Map memento = null;
+		if(cells[index] != null) memento = cells[index].retrieveState();
 		if(clazz != null) {
 			boolean failed = true;
 			try {
@@ -109,17 +137,21 @@ public abstract class AbstractItem extends Item {
 			}
 			if(failed) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 		} else {
-			cells[index] = createCell(index, style);
+			createCell(index, style);
 		}
-		cells[index].restoreState(memento);
+		if(memento != null) cells[index].restoreState(memento);
 	}
+	
+	protected abstract int getCellStyle(int index);
 
-	protected AbstractCell[] createCells(Object parent) {
-		AbstractCell[] ca = new AbstractCell[container.getColumnCount()];
-		for(int i = 0; i < ca.length; i++) {
-			ca[i] = createCell(i, getStyle());
+	protected void createCells(Object parent) {
+		for(int i = 0; i < cells.length; i++) {
+			if(container.cellClasses != null && i < container.cellClasses.length) {
+				createCell(i, getCellStyle(i), container.cellClasses[i]);
+			} else {
+				createCell(i, getCellStyle(i));
+			}
 		}
-		return ca;
 	}
 	
 //	private AbstractCell[] createCells(Class[] cellClasses) {
@@ -333,16 +365,19 @@ public abstract class AbstractItem extends Item {
 	}
 	
 	/**
-	 * Returns true if the receiver is visible and all parents up to and including the 
-	 * root of its container are visible. Otherwise, false is returned.
+	 * Returns true if the receiver is visible, otherwise, false is returned.
 	 * @return true if visible, false otherwise
 	 * @see AbstractItem#getVisible()
 	 * @see Control#isVisible()
 	 */
 	public boolean isVisible() {
-		return container.visibleItems.contains(this);
+		return visible;
 	}
 	
+//	ItemIterator iterator() {
+//		return new ItemIterator(this);
+//	}
+
 	boolean hasCell(int index) {
 		return (index >= 0 && index < cells.length);
 	}
@@ -426,7 +461,7 @@ public abstract class AbstractItem extends Item {
 	
 	public void removeListener(int eventType, Listener handler) {
 		for(int i = 0; i < cells.length; i++) {
-			cells[i].addListener(eventType, handler);
+			cells[i].removeListener(eventType, handler);
 		}
 	}
 
@@ -548,22 +583,6 @@ public abstract class AbstractItem extends Item {
 			}
 		}
 	}
-
-//	public void setSize(int cell, Point size) {
-//		if(cell >= 0 && cell < cells.length) {
-//			cells[cell].setSize(size);
-//		}
-//	}
-	
-//	public void setSize(Point size) {
-//		cells[0].setSize(size);
-//	}
-	
-//	public void setSize(Point[] size) {
-//		for(int i = 0; i < cells.length; i++) {
-//			cells[i].setSize(size[i]);
-//		}
-//	}
 
 	public void setVisible(boolean visible) {
 		if(this.visible != visible) {

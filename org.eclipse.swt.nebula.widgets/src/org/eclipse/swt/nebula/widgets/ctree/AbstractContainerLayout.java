@@ -27,7 +27,6 @@ public abstract class AbstractContainerLayout extends Layout {
 
 	protected AbstractContainer container;
 
-	protected int[] columnWidths;
 	protected Point headerSize = new Point(0,0);
 	protected int 	contentHeight = 0;
 	private Point 	size = new Point(0,0);
@@ -37,47 +36,6 @@ public abstract class AbstractContainerLayout extends Layout {
 	 */
 	protected AbstractContainerLayout(AbstractContainer container) {
 		this.container = container;
-	}
-
-	private void computeColumnWidths() {
-		//// CREATE SUBROUTINE?
-		int num_fillers = 0;
-		AbstractColumn[] ca = container.internalGetColumns();
-		columnWidths = new int[ca.length];
-		for(int i = 0; i < ca.length; i++) {
-			if(ca[i].isAutoWidth()) {
-				num_fillers++;
-			} else {
-				columnWidths[i] = ca[i].getWidth();
-			}
-		}
-		//// END CREATE SUBROUTINE?
-		
-		if(num_fillers > 0) {
-			int[] fillers = new int[num_fillers];
-
-			int xconsumed = 0;
-			for(int i = 0, j = 0; i < ca.length && j < num_fillers; i++) {
-				if(ca[i].isAutoWidth()) {
-					fillers[j++] = i;
-				} else {
-					xconsumed += columnWidths[i];
-				}
-			}
-
-			int fillerWidth0 = (headerSize.x - xconsumed) / num_fillers;
-			int fillerWidth1 = headerSize.x - xconsumed - (fillerWidth0 * (num_fillers - 1));
-			if(fillerWidth0 == 0) fillerWidth0 = 1;
-			if(fillerWidth1 == 0) fillerWidth1 = 1;
-
-			for(int i = 0; i < num_fillers; i++) {
-				if(i == num_fillers-1) {
-					columnWidths[fillers[i]] = fillerWidth1;
-				} else {
-					columnWidths[fillers[i]] = fillerWidth0;
-				}
-			}
-		}
 	}
 
 	/**
@@ -137,20 +95,21 @@ public abstract class AbstractContainerLayout extends Layout {
 
 	private void computeHeaderSize() {
 		headerSize.x = headerSize.y = 0;
-		if(container.internalTable != null) {
-			int gridLine = container.getGridLineWidth();
-			for(int i = 0; i < columnWidths.length; i++) {
-				headerSize.x += (columnWidths[i] + gridLine);
+		int gridLine = container.getGridLineWidth();
+		AbstractColumn[] columns = container.internalGetColumns();
+		for(int i = 0; i < columns.length; i++) {
+			if(!columns[i].getAutoWidth()) {
+				headerSize.x += columns[i].getWidth();
 			}
-			headerSize.y = container.internalTable.getHeaderHeight();
+			headerSize.x += gridLine;
 		}
+		headerSize.y = container.getHeaderHeight();
 	}
 
 	protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
-		computeColumnWidths();
 		computeHeaderSize();
 		computeContentHeight();
-	
+
 		size.x = headerSize.x;
 		size.y = headerSize.y + contentHeight;
 
@@ -174,7 +133,6 @@ public abstract class AbstractContainerLayout extends Layout {
 
 	private void computeSize(int eventType, AbstractColumn column) {
 		if(SWT.Resize == eventType) {
-			computeColumnWidths();
 			computeHeaderSize();
 			computeContentHeight(eventType, column);
 			size.x = headerSize.x;
@@ -196,13 +154,13 @@ public abstract class AbstractContainerLayout extends Layout {
 		
 		if(flushCache) computeSize(composite, -1, -1, flushCache);
 
-		container.header.setBounds(
+		container.getHeader().setBounds(
 				area.x,
 				area.y,
 				area.width,
 				headerSize.y
 			);
-
+		
 		layoutHeader();
 		
 		layoutContent();
@@ -245,7 +203,9 @@ public abstract class AbstractContainerLayout extends Layout {
 	 * @param column
 	 */
 	void layout(int eventType, AbstractColumn column) {
-		computeSize(eventType, column);
+		if(SWT.Resize == eventType) {
+			computeSize(eventType, column);
+		}
 		layoutContent(eventType, column);
 		if(SWT.Resize == eventType) {
 			updateScrollBars();
@@ -331,8 +291,8 @@ public abstract class AbstractContainerLayout extends Layout {
 	protected abstract void layoutContent(int eventType, AbstractItem item);
 
 	protected void layoutHeader() {
-		if(container.internalTable != null) {
-			Rectangle tBounds = container.header.getClientArea();
+		if(container.nativeHeader) {
+			Rectangle tBounds = container.getHeader().getClientArea();
 			tBounds.height += 30; // TODO: does this value matter, as long as it's > the scrollbar size?
 			// pogramatic scrolling doesn't work on win32
 			if(AbstractContainer.win32 && container.hBar != null) {
@@ -341,6 +301,41 @@ public abstract class AbstractContainerLayout extends Layout {
 				tBounds.width += sel;
 			}
 			container.internalTable.setBounds(tBounds);
+		}
+		
+		int num_fillers = 0;
+		AbstractColumn[] columns = container.internalGetColumns();
+		for(int i = 0; i < columns.length; i++) {
+			if(columns[i].getAutoWidth()) {
+				num_fillers++;
+			}
+		}
+		
+		if(num_fillers > 0) {
+			int[] fillers = new int[num_fillers];
+
+			int xconsumed = 0;
+			for(int i = 0, j = 0; i < columns.length && j < num_fillers; i++) {
+				if(columns[i].getAutoWidth()) {
+					fillers[j++] = i;
+				} else {
+					xconsumed += columns[i].getWidth();
+				}
+			}
+
+			int headerWidth = container.getHeader().getSize().x;
+			int fillerWidth0 = (headerWidth - xconsumed) / num_fillers;
+			int fillerWidth1 = headerWidth - xconsumed - (fillerWidth0 * (num_fillers - 1));
+			if(fillerWidth0 == 0) fillerWidth0 = 1;
+			if(fillerWidth1 == 0) fillerWidth1 = 1;
+
+			for(int i = 0; i < num_fillers; i++) {
+				if(i == num_fillers-1) {
+					columns[fillers[i]].setWidth(fillerWidth1);
+				} else {
+					columns[fillers[i]].setWidth(fillerWidth0);
+				}
+			}
 		}
 	}
 	
@@ -351,29 +346,33 @@ public abstract class AbstractContainerLayout extends Layout {
 		Rectangle area = container.getClientArea();
 		if(area.isEmpty()) return;
 		
-		if(area.width < size.x) {
-			container.hBar.setMaximum(size.x);
-			container.hBar.setThumb(area.width);
-			if(!container.hBar.getVisible()) {
-				container.hBar.setVisible(true);
-			}
-		} else {
-			container.hBar.setMaximum(1);
-			if(container.hBar.getVisible()) {
-				container.hBar.setVisible(false);
+		if(container.hBar != null) {
+			if(area.width < size.x) {
+				container.hBar.setMaximum(size.x);
+				container.hBar.setThumb(area.width);
+				if(!container.hBar.getVisible()) {
+					container.hBar.setVisible(true);
+				}
+			} else {
+				container.hBar.setMaximum(1);
+				if(container.hBar.getVisible()) {
+					container.hBar.setVisible(false);
+				}
 			}
 		}
 
-		if(area.height < size.y) {
-			container.vBar.setMaximum(size.y);
-			container.vBar.setThumb(area.height);
-			if(!container.vBar.getVisible()) {
-				container.vBar.setVisible(true);
-			}
-		} else {
-			container.vBar.setMaximum(1);
-			if(container.vBar.getVisible()) {
-				container.vBar.setVisible(false);
+		if(container.vBar != null) {
+			if(area.height < size.y) {
+				container.vBar.setMaximum(size.y);
+				container.vBar.setThumb(area.height);
+				if(!container.vBar.getVisible()) {
+					container.vBar.setVisible(true);
+				}
+			} else {
+				container.vBar.setMaximum(1);
+				if(container.vBar.getVisible()) {
+					container.vBar.setVisible(false);
+				}
 			}
 		}
 	}

@@ -12,10 +12,14 @@
 package org.eclipse.swt.nebula.widgets.ctree;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TableColumn;
 
@@ -26,22 +30,42 @@ import org.eclipse.swt.widgets.TableColumn;
  * VERSION.  USERS SHOULD EXPECT API CHANGES IN FUTURE VERSIONS.
  * </p> 
  */
-public abstract class AbstractColumn extends TableColumn {
+public class AbstractColumn extends Item {
 	
 	AbstractContainer container;
-	private boolean autoWidth = false;
-	private Color color;
-
+	TableColumn nativeColumn;
 	
+	private String toolTipText;
+	private int width;
+	private int alignment;
+	private boolean moveable;
+	private boolean resizeable;
+	private boolean autoWidth;
+	private Color bgcolor;
+	private Color fgcolor;
+	boolean isNative;
+
 	public AbstractColumn(AbstractContainer parent, int style) {
-		super(parent.getInternalTable(), style);
-		this.container = parent;
+		super(parent, style);
+		container = parent;
+		container.addColumn(this, style);
+		if(container.getNativeHeader()) {
+			nativeColumn = new TableColumn(container.getInternalTable(), style);
+			isNative = true;
+			autoWidth = false;
+		} else {
+			isNative = false;
+			autoWidth = true;
+		}
 		container.setSortColumn(this);
 		container.setSortDirection(SWT.DOWN);
 		Listener listener = new Listener() {
 			public void handleEvent(Event e) {
 				switch(e.type) {
 				case SWT.Move:
+					if(container.getNativeHeader()) {
+						container.columnOrder = nativeColumn.getParent().getColumnOrder();
+					}
 				case SWT.Resize:
 					container.layout(e.type, AbstractColumn.this);
 					container.redraw();
@@ -63,29 +87,65 @@ public abstract class AbstractColumn extends TableColumn {
 		addListener(SWT.Move, listener);
 		addListener(SWT.Resize, listener);
 //		addListener(SWT.Selection, listener);
+		
+		addListener(SWT.Dispose, new Listener() {
+			public void handleEvent(Event event) {
+				doDispose();
+			}
+		});
 	}
 
-	protected void checkSubclass() {
-		// ouch, that hurts! :)
-	}
-	
-	public Color getColor() {
-		return color;
+	public void addControlListener(ControlListener listener) {
+		if(isNative) {
+			nativeColumn.addControlListener(listener);
+		} else {
+			// TODO
+		}
 	}
 
-	private boolean isLast() {
-		int[] ixs = container.getColumnOrder();
-		return container.internalGetColumn(ixs[ixs.length-1]) == this;
+	public void addListener(int eventType, Listener listener) {
+		if(isNative) {
+			nativeColumn.addListener(eventType, listener);
+		} else {
+			super.addListener(eventType, listener);
+		}
 	}
 	
-	public boolean isVisible() {
-		Rectangle r = container.getClientArea();
-		r.x += container.getScrollPosition().x;
-		return r.intersects(getBounds());
+	public void addSelectionListener(SelectionListener listener) {
+		if(isNative) {
+			nativeColumn.addSelectionListener(listener);
+		} else {
+			// TODO
+		}
+	}
+
+	protected void doDispose() {
+		if(container != null && !container.isDisposed()) {
+			container.removeColumn(this);
+			if(nativeColumn != null && !nativeColumn.isDisposed()) {
+				nativeColumn.dispose();
+			}
+		}
+	}
+	
+	public int getAlignment() {
+		if(isNative) {
+			return nativeColumn.getAlignment();
+		} else {
+			return alignment;
+		}
 	}
 	
 	public Rectangle getBounds() {
 		return new Rectangle(getLeft(), container.getClientArea().y, getWidth(), container.getClientArea().height);
+	}
+	
+	public Color getBackground() {
+		return bgcolor;
+	}
+	
+	public Color getForeground() {
+		return fgcolor;
 	}
 	
 	public int getLeft() {
@@ -102,26 +162,81 @@ public abstract class AbstractColumn extends TableColumn {
 		}
 		return x;
 	}
+
+	public boolean getMoveable() {
+		if(isNative) {
+			return nativeColumn.getMoveable();
+		} else {
+			return moveable;
+		}
+	}
+	
+	public AbstractContainer getParent() {
+		return container;
+	}
+	
+	public boolean getResizable() {
+		if(isNative) {
+			return nativeColumn.getResizable();
+		} else {
+			return resizeable;
+		}
+	}
 	
 	public int getRight() {
-		return getLeft() +(isLast() ? 
-				container.layout.columnWidths[container.layout.columnWidths.length-1] :
-					getWidth());
+		return getLeft() + getWidth();
 	}
 
-	public boolean isAutoWidth() {
+	public String getText() {
+		if(isNative) {
+			return nativeColumn.getText();
+		} else {
+			return super.getText();
+		}
+	}
+	
+	public String getToolTipText() {
+		if(isNative) {
+			return nativeColumn.getToolTipText();
+		} else {
+			return toolTipText;
+		}
+	}
+
+	public int getWidth() {
+		if(isNative) {
+			return nativeColumn.getWidth();
+		} else {
+			return width;
+		}
+	}
+	
+	public boolean getAutoWidth() {
 		return autoWidth;
 	}
-	
+
+//	private boolean isLast() {
+//		int[] ixs = container.getColumnOrder();
+//		return container.internalGetColumn(ixs[ixs.length-1]) == this;
+//	}
+
+	public boolean isVisible() {
+		Rectangle r = container.getClientArea();
+		r.x += container.getScrollPosition().x;
+		return r.intersects(getBounds());
+	}
+
 	public void pack() {
 		// TODO: presently only packs the Header...
-		super.pack();
+		if(isNative) {
+			nativeColumn.pack();
+		}
 	}
-	
+
 	public void paint(GC gc, Rectangle ebounds) {
-		if(color != null) {
+		if(bgcolor != null) {
 			gc.setAlpha(35);
-			gc.setBackground(color);
+			gc.setBackground(bgcolor);
 			gc.fillRectangle(
 					getLeft(),
 					ebounds.y - container.getScrollPosition().y,
@@ -130,13 +245,89 @@ public abstract class AbstractColumn extends TableColumn {
 					);
 		}
 	}
-	
-	public void setColor(Color color) {
-		this.color = color;
+
+	public void removeControlListener(ControlListener listener) {
+		if(isNative) {
+			nativeColumn.removeControlListener(listener);
+		} else {
+			// TODO
+		}
 	}
-	
-	public void setFillLayout(boolean fill) {
-		autoWidth = fill;
-		setResizable(!fill);
+
+	public void removeSelectionListener(SelectionListener listener) {
+		if(isNative) {
+			nativeColumn.removeSelectionListener(listener);
+		} else {
+			// TODO
+		}
+	}
+
+	public void setAlignment(int alignment) {
+		if(isNative) {
+			nativeColumn.setAlignment(alignment);
+		} else {
+			this.alignment = alignment;
+		}
+	}
+
+	public void setBackground(Color color) {
+		this.bgcolor = color;
+	}
+
+	public void setAutoWidth(boolean auto) {
+		autoWidth = auto;
+		setResizable(!auto);
+	}
+
+	public void setForeground(Color color) {
+		this.fgcolor = color;
+	}
+
+	public void setImage(Image image) {
+		if(isNative) {
+			nativeColumn.setImage(image);
+		} else {
+			super.setImage(image);
+		}
+	}
+
+	public void setMoveable(boolean moveable) {
+		if(isNative) {
+			nativeColumn.setMoveable(moveable);
+		} else {
+			this.moveable = moveable;
+		}
+	}
+
+	public void setResizable(boolean resizable) {
+		if(isNative) {
+			nativeColumn.setResizable(resizable);
+		} else {
+			this.resizeable = resizable;
+		}
+	}
+
+	public void setText(String string) {
+		if(isNative) {
+			nativeColumn.setText(string);
+		} else {
+			super.setText(string);
+		}
+	}
+
+	public void setToolTipText(String string) {
+		if(isNative) {
+			nativeColumn.setToolTipText(string);
+		} else {
+			toolTipText = string;
+		}
+	}
+
+	public void setWidth(int width) {
+		if(isNative) {
+			nativeColumn.setWidth(width);
+		} else {
+			this.width = width;
+		}
 	}
 }

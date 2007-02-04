@@ -19,6 +19,9 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.TreeItem;
 
 /**
  * <p>
@@ -29,7 +32,7 @@ import org.eclipse.swt.graphics.Rectangle;
 public class CTreeCell extends AbstractCell {
 
 	private CTree ctree;
-	private Image[] images = new Image[0];
+	private Image[] images;
 	private String text;
 
 	private int horizontalSpacing = 2;
@@ -38,54 +41,65 @@ public class CTreeCell extends AbstractCell {
 
 	private int[] childSpan = new int[] { -1, 1 };	// default setting keeps the child area
 													// within the same column as the title area
-
+	
 	public CTreeCell(AbstractItem item, int style) {
 		super(item, style);
 		ctree = (CTree) container;
 	}
+	
+	public void clear() {
+		text = null;
+		images = null;
+	}
+	
+	public Point computeClientSize(int wHint, int hHint) {
+		Point size = new Point(0,0);
+		
+		Image[] images = getImages();
+		Rectangle iBounds = null;
+		if(images != null && images.length > 0) {
+			iBounds = images[0].getBounds();
+			for(int i = 1; i < images.length; i++) {
+				Rectangle ib = images[i].getBounds();
+				iBounds.width += horizontalSpacing + ib.width;
+				iBounds.height = Math.max(iBounds.height, ib.height);
+			}
+		} else {
+			iBounds = new Rectangle(0,0,0,0);
+		}
+		
+		Point tSize = computeTextSize(wHint-iBounds.width, -1);
+
+		size.x = iBounds.width + ((iBounds.width > 0 && tSize.x > 0) ? horizontalSpacing : 0) + tSize.x;
+		size.y = Math.max(iBounds.height, tSize.y);
+
+		if(open) {
+			Point cSize = computeControlSize(wHint-size.x, -1);
+			size.x += cSize.x;
+			size.y = Math.max(size.y, cSize.y);
+		}
+
+		return size;
+	}
 
 	public Point computeSize(int wHint, int hHint) {
-		Point size = new Point(0,0);
-//		if(titleArea != null) {
-//			titleSize.y += titleArea.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
-//		} else {
-			Image[] images = getImages();
-			Rectangle iBounds = null;
-			if(images != null && images.length > 0) {
-				iBounds = images[0].getBounds();
-				for(int i = 1; i < images.length; i++) {
-					Rectangle ib = images[i].getBounds();
-					iBounds.width += horizontalSpacing + ib.width;
-					iBounds.height = Math.max(iBounds.height, ib.height);
-				}
-			} else {
-				iBounds = new Rectangle(0,0,1,1);
-			}
-			
-			String text = getText();
-			GC gc = ctree.internalGC;
-			Point tSize = (text.length() > 0) ? gc.textExtent(text) : new Point(0,0);
-
-			size.x += iBounds.width + ((iBounds.width > 0 && tSize.x > 0) ? horizontalSpacing : 0) + tSize.x;
-			size.y += Math.max(iBounds.height, tSize.y);
-//		}
+		if(wHint == 0 || hHint == 0) return new Point(0,0);
 		
-//		if(open) {
-//			childSize = childArea.computeSize(SWT.DEFAULT,SWT.DEFAULT);
-//			titleSize.x = Math.max(titleSize.x, childSize.x);
-//		} else {
-//			Point childSize = new Point(0,0);
-//		}
-
+		Point size = new Point(marginLeft+marginWidth+marginWidth+marginRight, marginTop+marginHeight+marginHeight+marginBottom);
 		if(toggleVisible || ghostToggle) size.x += toggleWidth;
-		size.x += marginLeft + marginWidth + marginWidth + marginRight;
-		size.y += marginTop + marginHeight + marginHeight + marginBottom;
-
-//		Point returnSize = new Point(size.x, size.y);
-//		if(childSize.y > 0) {
-//			returnSize.y += (childBounds.y + childSize.y + childBounds.y);
-//		}
-
+		
+		Point clientSize = computeClientSize(wHint-size.x, hHint-size.y);
+		if(clientSize != null) {
+			size.x += clientSize.x;
+			size.y += clientSize.y;
+		}
+		
+		Point childSize = computeChildSize(wHint-size.x, hHint-size.y);
+		if(childSize != null) {
+			size.x += (childSize.x + (childBounds.x - bounds.x));
+			size.y += (childSize.y + (childBounds.y - bounds.y));
+		}
+		
 		if(wHint != SWT.DEFAULT) {
 			size.x = Math.min(size.x, wHint);
 		}
@@ -96,173 +110,10 @@ public class CTreeCell extends AbstractCell {
 		return size;
 	}
 	
-//	/**
-//	 * Compute the preferred size of the cell's Title Area, similar to the way it would be done 
-//	 * in a regular SWT layout.
-//	 * <p>Implementations are to implement this themselves, though if the the cell's style is 
-//	 * SWT.TITLE then most likely they will simply return the computed height as found by
-//	 * titleArea.computeSize(int, -1).y</p> 
-//	 * @param wHint
-//	 * @return an int representing the preferred height of the cell
-//	 */
-//	public int computeTitleHeight(int hHint) {
-//		titleHeight = marginTop + marginHeight + marginHeight + marginBottom;
-//		if(titleArea != null) {
-//			titleHeight += titleArea.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
-//		} else {
-//			int height = 0;
-//			for(int i = 0; i < iBounds.length; i++) {
-//				height = Math.max(height, iBounds[i].height);
-//			}
-//			String text = getText();
-//			if(text != null) {
-//				GC gc = CTree.staticGC;
-//				height = Math.max(height, gc.textExtent(text).y);
-//			}
-//			titleHeight += height;
-//		}
-//		if(hHint != SWT.DEFAULT) {
-//			titleHeight = Math.min(titleHeight, hHint);
-//		}
-//		return titleHeight;
-//	}
-	
-	/**
-	 * Get information on if and how the child area of this CTableTree will span
-	 * the columns.
-	 * 
-	 * @return an int[] with a length of 2: int[0] represents the starting
-	 *         column, and int[1] represents the number of columns, from the
-	 *         start, to span.
-	 * @see #setChildSpan(int, int)
-	 */
-	public int[] getChildSpan() {
-		return childSpan;
-	}
-
-	public Image getImage() {
-		if(images.length > 0) return images[0];
-		return null;
-	}
-	
-	public Image[] getImages() {
-		return images == null ? new Image[0] : images;
-	}
-	
-	public String getText() {
-		return (text == null) ? "" : text;
-	}
-	
-	protected void layout() {
-		toggleBounds.width = Math.min(bounds.width, toggleWidth);
-		toggleBounds.height = bounds.height;
-		
-		iBounds = new Rectangle[images.length];
-		for(int i = 0; i < iBounds.length; i++) {
-			iBounds[i] = (images[i] != null && !images[i].isDisposed()) ? images[i].getBounds() : new Rectangle(0,0,1,1);
-		}
-		String text = getText();
-		Point tSize = (text.length() > 0) ?
-				ctree.internalGC.textExtent(text, SWT.DRAW_DELIMITER | SWT.DRAW_TAB | SWT.DRAW_TRANSPARENT) : new Point(0,0);
-		tBounds.width = tSize.x;
-		tBounds.height = tSize.y;
-		
-		int x = 0, y = 0, width = 0, height = 0;
-		
-		// indent
-		width = indent;
-		
-		// toggle
-		if(ghostToggle || toggleVisible) {
-			width += toggleBounds.width;
-		}
-		
-		// images
-		for(int i = 0; i < iBounds.length; i++) {
-			width += iBounds[i].width; 
-			if((i != iBounds.length-1) || (text.length() > 0)) width += horizontalSpacing;
-			height = Math.max(height, iBounds[i].height);
-		}
-		
-		// text
-		width += tSize.x;
-		height += tSize.y;
-
-	// calculate positions
-		if((style & SWT.CENTER) != 0) {
-			x += ((bounds.width-(indent+marginLeft+marginWidth+width+marginWidth+marginRight))/2);
-		} else if((style & SWT.RIGHT) != 0) {
-			x += (bounds.width-(width+marginWidth+marginRight));
-		} else { // defaults to LEFT
-			x += (indent+marginLeft+marginWidth);
-		}
-
-		if(ghostToggle || toggleVisible) {
-			toggleBounds.x = x - 1;
-			x += toggleBounds.width;
-		}
-		for(int i = 0; i < iBounds.length; i++) {
-			iBounds[i].x = x;
-			x += iBounds[i].width;
-			if((i != iBounds.length-1) || (text.length() > 0)) x += horizontalSpacing;
-		}
-		tBounds.x = x;
-		
-		if((open) || (style & SWT.TOP) != 0) {
-			toggleBounds.y = y; // toggle centers itself, so don't add margins to it
-			y += marginTop+marginHeight;
-			for(int i = 0; i < iBounds.length; i++) {
-				iBounds[i].y = y;
-			}
-			tBounds.y = y;
-		} else if((style & SWT.BOTTOM) != 0) {
-			toggleBounds.y = y + bounds.height-(toggleBounds.y+marginHeight+marginBottom);
-			for(int i = 0; i < iBounds.length; i++) {
-				iBounds[i].y = y + bounds.height-(iBounds[i].y+marginHeight+marginBottom);
-			}
-			tBounds.y = y + bounds.height-(tBounds.y+marginHeight+marginBottom);
-		} else { // defaults to CENTER
-			toggleBounds.y = y + (bounds.height-toggleBounds.height)/2;
-			for(int i = 0; i < iBounds.length; i++) {
-				iBounds[i].y = y + (bounds.height-iBounds[i].height)/2;
-			}
-			tBounds.y = y + (bounds.height-tBounds.height)/2;
-		}
-
-	// set positions of self drawing components
-//		if(titleArea != null) {
-//			Rectangle ca = getClientArea();
-//			titleArea.setBounds(bounds.x + ca.x, bounds.y + ca.y, ca.width, ca.height);
-//			titleArea.layout(true, true);
-//		}
-		
-//		if(childArea != null) {
-//			if(open && childSpan[0] < ctt.getColumnCount()) {
-//				int s0 = childSpan[0] < 0 ? item.getCellIndex(this) : childSpan[0];
-//				int s1 = childSpan[1] < 0 ?
-//						ctt.getColumnCount() - 1 :
-//							s0 + childSpan[1] - 1;
-//				if(s1 >= ctt.getColumnCount()) s1 = ctt.getColumnCount() - 1;
-//
-//				int cx = childSpan[0] < 0 ?
-//						bounds.x+marginWidth+toggleBounds.width :
-//							ctt.internalGetColumn(s0).getLeft();
-//				int cw = ctt.internalGetColumn(s1).getRight() - cx - rightChildIndent;
-//
-//				childArea.setBounds(
-//						cx,
-//						bounds.y+titleSize.y+childBounds.y,
-//						cw,
-//						bounds.height-(titleSize.y+childBounds.y+childBounds.y)
-//						);
-//			} else {
-//				childArea.setBounds(0, 0, 0, 0);
-//			}
-//		}
-	}
-	
-	protected void locate() {
-		// TODO: locate
+	protected Point computeTextSize(int wHint, int hHint) {
+		return (text != null && text.length() > 0) ?
+				ctree.internalGC.textExtent(text, SWT.DRAW_DELIMITER | SWT.DRAW_TAB | SWT.DRAW_TRANSPARENT) : 
+					new Point(0,0);
 	}
 	
 	public void doPaint(GC gc, Point offset) {
@@ -301,9 +152,144 @@ public class CTreeCell extends AbstractCell {
 			paintToggle(gc, offset);
 		}
 	}
+
+	/**
+	 * Get information on if and how the child area of this CTableTree will span
+	 * the columns.
+	 * 
+	 * @return an int[] with a length of 2: int[0] represents the starting
+	 *         column, and int[1] represents the number of columns, from the
+	 *         start, to span.
+	 * @see #setChildSpan(int, int)
+	 */
+	public int[] getChildSpan() {
+		return childSpan;
+	}
+	
+	public Image getImage() {
+		if(images.length > 0) return images[0];
+		return null;
+	}
+	
+	public Image[] getImages() {
+		return images == null ? new Image[0] : images;
+	}
+
+	public String getText() {
+		return (text == null) ? "" : text;
+	}
+
+	void internalFirstPainting() {
+		if(isCheckCell()) setCheck(true);
+		if(isTreeCell()) {
+			if(((CTreeItem) item).hasParentItem()) {
+				setIndent(((CTreeItem) item).getParentIndent() + ctree.getTreeIndent());
+			}
+			setToggleVisible(((CTreeItem) item).hasItems(), true);
+		}
+	}
+
+//	private boolean isClear() {
+//		return (text == null || text.length() == 0) && (images == null || images.length == 0);
+//	}
+
+	public boolean isCheckCell() {
+		return ((CTreeItem) item).getCheckCell() == this;
+	}
 	
 	public boolean isTreeCell() {
 		return ((CTreeItem) item).getTreeCell() == this;
+	}
+	
+	protected void layout(Control control) {
+		Rectangle area = getClientArea();
+		Point size = control.computeSize(-1, -1);
+		size.x = (hAlign == SWT.FILL) ? area.width : Math.min(area.width, size.x);
+		size.y = (vAlign == SWT.FILL) ? area.height : Math.min(area.height, size.y);
+		control.setSize(size.x, size.y);
+		locate(control);
+	}
+	
+	final protected void layoutInternal() {
+		if(ghostToggle || toggleVisible) {
+			toggleBounds.x = indent;
+			toggleBounds.y = 0;
+		}
+		toggleBounds.width = Math.min(bounds.width, toggleWidth);
+		toggleBounds.height = bounds.height;
+
+		Rectangle clientBounds = getClientArea();
+		Point clientSize = computeClientSize(clientBounds.width, clientBounds.height);
+
+		if(images == null) {
+			iBounds = new Rectangle[0];
+		} else {
+			iBounds = new Rectangle[images.length];
+			for(int i = 0; i < iBounds.length; i++) {
+				iBounds[i] = (images[i] != null && !images[i].isDisposed()) ? images[i].getBounds() : new Rectangle(0,0,1,1);
+			}
+		}
+
+		int x;
+		if((style & SWT.CENTER) != 0) {
+			x = clientBounds.x+((clientBounds.width-clientSize.x)/2);
+		} else if((style & SWT.RIGHT) != 0) {
+			x = clientBounds.x+clientBounds.width-clientSize.x;
+		} else { // defaults to LEFT
+			x = clientBounds.x;
+		}
+
+		for(int i = 0; i < iBounds.length; i++) {
+			iBounds[i].x = x;
+			x += iBounds[i].width;
+			if((i != iBounds.length-1) || (text.length() > 0)) x += horizontalSpacing;
+		}
+		
+		tBounds.x = x;
+
+		Point tSize = computeTextSize(clientBounds.width-tBounds.x, bounds.height);
+		tBounds.width = tSize.x;
+		tBounds.height = tSize.y;
+
+		if((open) || (style & SWT.TOP) != 0) {
+			for(int i = 0; i < iBounds.length; i++) {
+				iBounds[i].y = clientBounds.y;
+			}
+			tBounds.y = clientBounds.y;
+		} else if((style & SWT.BOTTOM) != 0) {
+			toggleBounds.y = clientBounds.y + clientBounds.height - toggleBounds.height;
+			for(int i = 0; i < iBounds.length; i++) {
+				iBounds[i].y = clientBounds.y + clientBounds.height - iBounds[i].height;
+			}
+			tBounds.y = clientBounds.y + clientBounds.height - tBounds.height;
+		} else { // defaults to CENTER
+			toggleBounds.y = clientBounds.y + (clientBounds.height-toggleBounds.height)/2;
+			for(int i = 0; i < iBounds.length; i++) {
+				iBounds[i].y = clientBounds.y + (clientBounds.height-iBounds[i].height)/2;
+			}
+			tBounds.y = clientBounds.y + (clientBounds.height-tBounds.height)/2;
+		}
+	}
+
+	protected void locate(Control control) {
+		Point scroll = container.getScrollPosition();
+		Rectangle area = getClientArea();
+		Point loc = new Point(bounds.x+area.x-scroll.x, bounds.y+area.y-scroll.y);
+		Point size = control.getSize();
+		if(hAlign == SWT.RIGHT) loc.x += (area.width-size.x);
+		else if(hAlign == SWT.CENTER) loc.x += ((area.width-size.x)/2);
+		if(vAlign == SWT.BOTTOM) loc.y += (area.height-size.y);
+		else if(vAlign == SWT.CENTER) loc.y += ((area.height-size.y)/2);
+		control.setLocation(loc);
+	}
+
+	protected void locateCheck(Button check) {
+		Point scroll = container.getScrollPosition();
+		Rectangle area = getClientArea();
+		check.setLocation(
+				bounds.x+area.x-scroll.x,
+				bounds.y+-scroll.y+(bounds.height-check.computeSize(-1, -1).y)/2
+				);
 	}
 	
 	private void paintChildLines(GC gc, Point offset) {
@@ -397,27 +383,7 @@ public class CTreeCell extends AbstractCell {
 			gc.setLineDash(null);
 		}
 	}
-
-	public void setImage(Image image) {
-		if(image == null) images = new Image[0];
-		else images = new Image[] { image };
-	}
 	
-	public void setImages(Image[] images) {
-		if(images == null) {
-			this.images = new Image[0];
-		}
-		else {
-			boolean doit = true;
-			for(int i = 0; i < images.length; i++) {
-				if(images[i] == null || images[i].isDisposed()) doit = false;
-			}
-			if(doit) this.images = images;
-		}
-		update = true;
-		ctree.redraw(this);
-	}
-
 	/**
 	 * Set which columns the Child Area of this CTableTreeCell will span.<br />
 	 * The default setting is: start == -1 and len == 1. To span the entire
@@ -439,6 +405,26 @@ public class CTreeCell extends AbstractCell {
 		childSpan[1] = len;
 	}
 
+	public void setImage(Image image) {
+		if(image == null) images = new Image[0];
+		else images = new Image[] { image };
+	}
+
+	public void setImages(Image[] images) {
+		if(images == null) {
+			this.images = new Image[0];
+		}
+		else {
+			boolean doit = true;
+			for(int i = 0; i < images.length; i++) {
+				if(images[i] == null || images[i].isDisposed()) doit = false;
+			}
+			if(doit) this.images = images;
+		}
+		update = true;
+		ctree.redraw(this);
+	}
+
 //	public void setOpen(boolean open) {
 //		if(((CTreeItem) item).getTreeCell() == this) {
 //			if(this.open != open) {
@@ -457,5 +443,5 @@ public class CTreeCell extends AbstractCell {
 			ctree.redraw(this);
 		}
 	}
-
+	
 }

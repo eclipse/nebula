@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
@@ -55,9 +54,7 @@ public abstract class AbstractContainer extends Composite implements Listener {
 	public static final boolean gtk = "gtk".equals(SWT.getPlatform());
 	public static final boolean win32 = "win32".equals(SWT.getPlatform());
 	
-	GC internalGC = new GC(Display.getDefault());
-
-//	public static final int OP_NONE = 0;
+	//	public static final int OP_NONE = 0;
 //	public static final int OP_ADD = 1;
 //	public static final int OP_REMOVE = 2;
 //	public static final int OP_CELL_COLLAPSE = 3;
@@ -67,36 +64,24 @@ public abstract class AbstractContainer extends Composite implements Listener {
 //	public static final int DIRTY_PAINTED = 1 << 1;
 //	public static final int DIRTY_VISIBLE = 1 << 2;
 	static final int MODE_NORMAL = 0;
-	static final int MODE_MARQUEE = 1;
-	static final int MODE_CREATE = 2;
 
+static final int MODE_MARQUEE = 1;
+	static final int MODE_CREATE = 2;
 	private static int checkStyle(int style) {
 		int mask = SWT.BORDER | SWT.LEFT_TO_RIGHT | SWT.RIGHT_TO_LEFT
 				| SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE | SWT.MULTI
 				| SWT.NO_FOCUS | SWT.CHECK;
-		return (style & mask) | SWT.DOUBLE_BUFFERED;
+		return (style & mask) | SWT.NO_BACKGROUND;
 	}
+
+	GC internalGC = new GC(Display.getDefault());
 
 	/**
 	 * A list of all items belonging to this container.<br>
 	 * Items are in the order that they were added, taking into account that
 	 * some may have been added at a requested index.
 	 */
-	protected List items = new ArrayList();
-//	/**
-//	 * A list of all items belonging to this container.<br>
-//	 * Items are in the order that is relevant to the concrete subclass; default
-//	 * is same as the items list.
-//	 * <p>
-//	 * Note that this is NOT a mechanism to be used for sorting and is thus not exposed
-//	 * for external manipulation.
-//	 * </p>
-//	 * <p>
-//	 * An example usage is a hierarchical layout: child items may not be next
-//	 * to their siblings in the items list, but will be in the orderedItems list.
-//	 * </p>
-//	 */
-//	protected List orderedItems = new LinkedList();
+//	protected List items = new ArrayList();
 	/**
 	 * A list of items that can be painted to the screen, whether they are
 	 * on-screen or not, as determined by the concrete subclass; default is the
@@ -104,7 +89,7 @@ public abstract class AbstractContainer extends Composite implements Listener {
 	 * due to Item.getVisible() returning false.<br>
 	 * Items are in the order as specified by the orderedItems list.
 	 */
-	protected List visibleItems = new LinkedList();
+//	protected List visibleItems = new LinkedList();
 	/**
 	 * A list of items that will actually be painted to the screen.<br>
 	 * Subclasses may override the order as the order of paintedItems represents
@@ -151,9 +136,15 @@ public abstract class AbstractContainer extends Composite implements Listener {
 
 	protected int style = 0;
 	protected Composite header;
+	protected Table internalTable;
+	AbstractColumn[] columns = new AbstractColumn[0];
+	int[] columnOrder = new int[0];
+	boolean fillerColumnSet = false;
+	boolean nativeHeader = true;
+	AbstractColumn sortColumn;
+	int sortDirection = -1;
 	protected ScrollBar hBar;
 	protected ScrollBar vBar;
-	protected Table internalTable;
 
 	protected boolean hasFocus = false;
 	protected String emptyMessage = "";
@@ -188,66 +179,10 @@ public abstract class AbstractContainer extends Composite implements Listener {
 
 	// private boolean selectionActive = false;
 
-	AbstractContainer(Composite parent, int style) {
-		super(parent, checkStyle(style));
-
-		this.style = style;
-
-		colors = new SColors(getDisplay());
-		updateColors();
-
-		createContents(style);
-
-		filter = new Listener() {
-			public void handleEvent(Event event) {
-				if (AbstractContainer.this.getShell() == ((Control) event.widget)
-						.getShell()) {
-					handleFocus(SWT.FocusOut);
-				}
-			}
-		};
-
-		addListener(SWT.Dispose, new Listener() {
-			public void handleEvent(Event event) {
-				getDisplay().removeFilter(SWT.FocusIn, filter);
-				removeAll();
-				if (internalTable != null && !internalTable.isDisposed()) {
-					internalTable.dispose();
-				}
-				if(internalGC != null && internalGC.isDisposed()) {
-					internalGC.dispose();
-				}
-			}
-		});
-	}
-
-	protected void addItem(AbstractItem item) {
-		addItem(items.size(), item);
-	}
-
-	protected void addItem(int index, AbstractItem item) {
-		if (!items.contains(item)) {
-			if (index < 0)
-				index = items.size();
-
-			// add the item to the list
-			if (index >= items.size()) {
-				items.add(item);
-			} else {
-				items.add(index, item);
-			}
-//			addOrderedItem(item);
-
-			// setup properties and event handlers for the item
-			item.setEnabled(selectable);
-			item.updateColors();
-			item.addListener(SWT.FocusIn, this);
-			item.addListener(SWT.MouseDown, this);
-			item.addListener(SWT.Traverse, this);
-
-			layout(SWT.Show, item);
-		}
-	}
+	public boolean drawViewportNorth = false;
+	public boolean drawViewportEast = false;
+	
+	public boolean drawViewportSouth = false;
 
 	// public void addListener(int eventType, Listener listener) {
 	// switch(eventType) {
@@ -285,6 +220,154 @@ public abstract class AbstractContainer extends Composite implements Listener {
 //		orderedItems.add(item);
 //	}
 	
+	public boolean drawViewportWest = false;
+
+	public boolean paintGridAsBackground = false;
+
+	List addedItems = new ArrayList();
+
+	List removedItems = new ArrayList();
+
+	int topOld = -1;
+
+	int heightOld = -1;
+
+	boolean updatePaintedList = false;
+
+//	protected int getLastPaintedColumnIndex() {
+//		Rectangle ca = getContentArea();
+//		int right = getScrollPosition().x + ca.x + ca.width;
+//		int gridline = getGridLineWidth();
+//		int[] widths = getColumnWidths();
+//		for(int i = 0; i < widths.length; i++) {
+//			right -= (widths[i] + gridline);
+//			if(right <= 0) return i;
+//		}
+//		return -1;
+//	}
+
+//	/**
+//	 * Get the index of the Bottom Item, as defined by the implementation class
+//	 * 
+//	 * @return the index
+//	 */
+//	protected abstract int getLastPaintedItemIndex();
+
+//	/**
+//	 * Get the Bottom Item, as defined by the implementation class
+//	 * 
+//	 * @return the index
+//	 */
+//	protected abstract AbstractItem getLastPaintedItem();
+
+	AbstractContainer(Composite parent, int style) {
+		super(parent, checkStyle(style));
+
+//		setBackgroundMode(SWT.INHERIT_FORCE);
+		this.style = style;
+
+		colors = new SColors(getDisplay());
+		updateColors();
+		setBackground(getColors().getTableBackground());
+
+		hBar = getHorizontalBar();
+		if (hBar != null) {
+			hBar.setVisible(false);
+			hBar.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					if (internalTable != null) {
+						if (win32) { // pogramatic scrolling doesn't work on
+										// win32
+							int sel = hBar.getSelection();
+							Rectangle hBounds = internalTable.getBounds();
+							hBounds.x = -sel;
+							hBounds.width += sel;
+							internalTable.setBounds(hBounds);
+						} else {
+							internalTable.getHorizontalBar().setSelection(
+									hBar.getSelection());
+						}
+					}
+					redraw();
+				}
+			});
+		}
+		vBar = getVerticalBar();
+		if (vBar != null) {
+			vBar.setVisible(false);
+			vBar.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					redraw();
+				}
+			});
+		}
+
+		nativeHeader = false;
+		new AbstractColumn(this, 0);
+		fillerColumnSet = true;
+		nativeHeader = true;
+		
+		filter = new Listener() {
+			public void handleEvent(Event event) {
+				if (AbstractContainer.this.getShell() == ((Control) event.widget)
+						.getShell()) {
+					handleFocus(SWT.FocusOut);
+				}
+			}
+		};
+
+		addKeyListener(new KeyAdapter() {}); // traverse does not work without this...
+		addListener(SWT.FocusIn, this);
+		addListener(SWT.MouseDown, this);
+		addListener(SWT.MouseDoubleClick, this);
+		addListener(SWT.MouseMove, this);
+		addListener(SWT.MouseUp, this);
+		addListener(SWT.Paint, new Listener() {
+			public void handleEvent(Event e) {
+				if (SWT.Paint == e.type) {
+					paintBody(e);
+				}
+			}
+		});
+		addListener(SWT.Traverse, this);
+
+		addListener(SWT.Dispose, new Listener() {
+			public void handleEvent(Event event) {
+				getDisplay().removeFilter(SWT.FocusIn, filter);
+				removeAll();
+				if (internalTable != null && !internalTable.isDisposed()) {
+					internalTable.dispose();
+				}
+				if(internalGC != null && internalGC.isDisposed()) {
+					internalGC.dispose();
+				}
+			}
+		});
+	}
+
+	void addColumn(AbstractColumn column, int style) {
+		if(fillerColumnSet) {
+			fillerColumnSet = false;
+			columns[0].dispose();
+		}
+		AbstractColumn[] newColumns = new AbstractColumn[columns.length+1];
+		int[] newColumnOrder = new int[columnOrder.length+1];
+		System.arraycopy(columns, 0, newColumns, 0, columns.length);
+		System.arraycopy(columnOrder, 0, newColumnOrder, 0, columnOrder.length);
+		columns = newColumns;
+		columnOrder = newColumnOrder;
+		columns[columns.length-1] = column;
+		columnOrder[columnOrder.length-1] = columnOrder.length-1;
+	}
+
+	abstract void addItem(AbstractItem item);
+
+	void addItems() {
+		addedItems = new ArrayList();
+		layout(true, true);
+		updatePaintedList = true;
+	}
+
 	/**
 	 * Adds the listener to the collection of listeners who will be notified
 	 * when the Paint Status of an item changes.
@@ -341,108 +424,15 @@ public abstract class AbstractContainer extends Composite implements Listener {
 		}
 	}
 
-	/**
-	 * Clears (empties) the selection
-	 */
-	public void clearSelection() {
-		selection = new ArrayList();
-		finishSelection();
-	}
-
-	private void createContents(int style) {
-		hBar = getHorizontalBar();
-		if (hBar != null) {
-			hBar.setVisible(false);
-			hBar.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					if (internalTable != null) {
-						if (win32) { // pogramatic scrolling doesn't work on
-										// win32
-							int sel = hBar.getSelection();
-							Rectangle hBounds = internalTable.getBounds();
-							hBounds.x = -sel;
-							hBounds.width += sel;
-							internalTable.setBounds(hBounds);
-						} else {
-							internalTable.getHorizontalBar().setSelection(
-									hBar.getSelection());
-						}
-					}
-					redraw();
-				}
-			});
-		}
-		vBar = getVerticalBar();
-		if (vBar != null) {
-			vBar.setVisible(false);
-			vBar.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					redraw();
-				}
-			});
-		}
-
-		setBackground(getColors().getTableBackground());
-		addKeyListener(new KeyAdapter() {
-		}); // traverse does not work without this...
-		addListener(SWT.FocusIn, this);
-		addListener(SWT.MouseDown, this);
-		addListener(SWT.MouseDoubleClick, this);
-		addListener(SWT.MouseMove, this);
-		addListener(SWT.MouseUp, this);
-		addListener(SWT.Paint, new Listener() {
-			public void handleEvent(Event e) {
-				if (SWT.Paint == e.type) {
-					paintBody(e);
-				}
-			}
-		});
-		addListener(SWT.Traverse, this);
-	}
-
-	public void deselect(int index) {
-		deselect(index, true);
-	}
-
-	private void deselect(int index, boolean finish) {
-		if (index >= 0 && index < visibleItems.size()) {
-			selection.remove(visibleItems.get(index));
-		}
-
-		if (finish) {
-			finishSelection();
-		}
-	}
-
-	public void deselect(int start, int end) {
-		if ((start >= 0) && (start < visibleItems.size()) && (end >= 0)
-				&& (end < visibleItems.size())) {
-			int i1 = (start < end) ? start : end;
-			int i2 = (start < end) ? end : start;
-			for (int i = i1; i <= i2; i++) {
-				deselect(i, false);
-			}
-			finishSelection();
-		}
-	}
-
-	public void deselect(int[] indices) {
-		for (int i = 0; i < indices.length; i++) {
-			deselect(indices[i], false);
-		}
-		finishSelection();
-	}
-
 	public void deselectAll() {
 		selection = new ArrayList();
 		finishSelection();
 	}
 
 	private void finishSelection() {
-		if (!isDisposed()) {
-			for (Iterator i = visibleItems.iterator(); i.hasNext();) {
-				AbstractItem item = ((AbstractItem) i.next());
-				item.setSelected(selection.contains(item));
+		if(!isDisposed()) {
+			for(Iterator i = selection.iterator(); i.hasNext(); ) {
+				((AbstractItem) i.next()).setSelected(true);
 			}
 			showSelection();
 			redraw();
@@ -471,68 +461,34 @@ public abstract class AbstractContainer extends Composite implements Listener {
 		notifyListeners(event.type, event);
 	}
 
-//	protected int getLastPaintedColumnIndex() {
-//		Rectangle ca = getContentArea();
-//		int right = getScrollPosition().x + ca.x + ca.width;
-//		int gridline = getGridLineWidth();
-//		int[] widths = getColumnWidths();
-//		for(int i = 0; i < widths.length; i++) {
-//			right -= (widths[i] + gridline);
-//			if(right <= 0) return i;
-//		}
-//		return -1;
-//	}
-
-//	/**
-//	 * Get the index of the Bottom Item, as defined by the implementation class
-//	 * 
-//	 * @return the index
-//	 */
-//	protected abstract int getLastPaintedItemIndex();
-
-//	/**
-//	 * Get the Bottom Item, as defined by the implementation class
-//	 * 
-//	 * @return the index
-//	 */
-//	protected abstract AbstractItem getLastPaintedItem();
-
 	public SColors getColors() {
 		return colors;
 	}
 
-	AbstractColumn internalGetColumn(int index) {
-		return (internalTable != null) ? (AbstractColumn) internalTable.getColumn(index) : null;
-	}
-
 	public int getColumnCount() {
-		return (internalTable != null) ? internalTable.getColumnCount() : 1;
+		return columns.length;
 	}
 
 	public int[] getColumnOrder() {
-		return (internalTable != null) ? internalTable.getColumnOrder()
-				: new int[] { 0 };
-	}
-
-	AbstractColumn[] internalGetColumns() {
-		if (internalTable != null) {
-			Object[] nca = internalTable.getColumns();
-			AbstractColumn[] cca = new AbstractColumn[nca.length];
-			for (int i = 0; i < cca.length; i++) {
-				cca[i] = (AbstractColumn) nca[i];
-			}
-			return cca;
-		}
-		return new AbstractColumn[0];
+		int[] order = new int[columnOrder.length];
+		System.arraycopy(columnOrder, 0, order, 0, columnOrder.length);
+		return order;
 	}
 
 	int[] getColumnWidths() {
-		return layout.columnWidths;
+		int[] widths = new int[columns.length];
+		for(int i = 0; i < widths.length; i++) {
+			widths[i] = columns[i].getWidth();
+		}
+		return widths;
 	}
 
-//	AbstractItem getDirtyItem() {
-//		return dirtyItem;
-//	}
+	protected Rectangle getContentArea() {
+		Rectangle area = getClientArea();
+		area.y = layout.headerSize.y;
+		area.height -= layout.headerSize.y;
+		return area;
+	}
 
 	/**
 	 * The Empty Message is the text message that will be displayed when there
@@ -550,15 +506,6 @@ public abstract class AbstractContainer extends Composite implements Listener {
 		return (internalTable != null) ? internalTable.getGridLineWidth() : 0;
 	}
 
-	public int getHeaderHeight() {
-		return (internalTable != null) ? internalTable.getHeaderHeight() : 0;
-	}
-
-	public boolean getHeaderVisible() {
-		return (internalTable != null) ? internalTable.getHeaderVisible()
-				: false;
-	}
-
 	Composite getHeader() {
 		if (header == null) {
 			header = new Composite(this, SWT.NONE);
@@ -566,54 +513,29 @@ public abstract class AbstractContainer extends Composite implements Listener {
 		return header;
 	}
 
+	public int getHeaderHeight() {
+		if(nativeHeader) {
+			return internalTable.getHeaderHeight();
+		}
+		// TODO: getHeaderHeight... get from the first non-native column?
+		return 0;
+	}
+
+	public boolean getHeaderVisible() {
+		if(nativeHeader) {
+			return internalTable.getHeaderVisible();
+		}
+		return false;
+	}
+
 	Table getInternalTable() {
-		if (internalTable == null) {
+		if(internalTable == null) {
 			internalTable = new Table(getHeader(), SWT.NONE);
 			internalTable.setLinesVisible(linesVisible);
 		}
 		return internalTable;
 	}
-
-	AbstractItem internalGetItem(Point pt) {
-		// must iterate in reverse drawing order in case items overlap each
-		// other
-		for (ListIterator i = paintedItems.listIterator(paintedItems.size()); i
-				.hasPrevious();) {
-			AbstractItem item = (AbstractItem) i.previous();
-			if (item.contains(pt))
-				return item;
-		}
-		return null;
-	}
-
-	public int getItemCount() {
-		return visibleItems.size();
-	}
-
-	/**
-	 * not yet implemented
-	 * <p>
-	 * post a feature request if you need it enabled
-	 * </p>
-	 * TODO: items may (will!) have different heights...
-	 */
-	public int getItemHeight() {
-		return 0;
-	}
-
-	/**
-	 * Get a list of all items associated with the given item.
-	 * <p>
-	 * Actual meaning is up to the implementation class
-	 * </p>
-	 * 
-	 * @param item
-	 * @return
-	 */
-	protected List getItems(AbstractItem item) {
-		return Collections.EMPTY_LIST;
-	}
-
+	
 	/**
 	 * Get a list of items within, or touching, the given rectangle.
 	 * 
@@ -621,27 +543,37 @@ public abstract class AbstractContainer extends Composite implements Listener {
 	 * @return
 	 */
 	protected AbstractItem[] getItems(Rectangle rect) {
-		List items = new ArrayList();
-		for (Iterator i = visibleItems.iterator(); i.hasNext();) {
-			AbstractItem item = (AbstractItem) i.next();
-			Rectangle[] ra = item.getCellBounds();
-			for (int j = 0; j < ra.length; j++) {
-				if (ra[j].intersects(rect)) {
-					items.add(item);
-					break;
+		if(isEmpty()) {
+			return new AbstractItem[0];
+		} else {
+			List il = new ArrayList();
+			for(Iterator i = paintedItems.iterator(); i.hasNext(); ) {
+				AbstractItem item = (AbstractItem) i.next();
+				Rectangle[] ra = item.getCellBounds();
+				for (int j = 0; j < ra.length; j++) {
+					if (ra[j].intersects(rect)) {
+						il.add(item);
+						break;
+					}
 				}
 			}
+			return (il.isEmpty()) ? new AbstractItem[0] : (AbstractItem[]) il.toArray(new AbstractItem[il.size()]);
 		}
-		return (items.isEmpty()) ? new AbstractItem[0] : (AbstractItem[]) items.toArray(new AbstractItem[items.size()]);
 	}
-
+	
 	public boolean getLastLineVisible() {
 		return lastLine;
 	}
-
+	
 	public boolean getLinesVisible() {
 		return linesVisible;
 	}
+
+	public boolean getNativeHeader() {
+		return nativeHeader;
+	}
+
+	protected abstract List getPaintedItems();
 
 	Point getScrollPosition() {
 		return new Point(
@@ -649,27 +581,8 @@ public abstract class AbstractContainer extends Composite implements Listener {
 				(vBar == null || vBar.isDisposed()) ? 0 : vBar.getSelection());
 	}
 
-//	AbstractItem[] getRemovedItems() {
-//		return removedItems;
-//	}
-
 	public int getSelectionCount() {
 		return selection.size();
-	}
-
-	public int getSelectionIndex() {
-		int[] ixs = getSelectionIndices();
-		return (ixs.length > 0) ? ixs[0] : -1;
-	}
-
-	public int[] getSelectionIndices() {
-		// TODO this is the trade-off - is it a problem? I think we use
-		// getSelection more often...
-		int[] ixs = new int[selection.size()];
-		for (int i = 0; i < ixs.length; i++) {
-			ixs[i] = visibleItems.indexOf(selection.get(i));
-		}
-		return ixs;
 	}
 
 	/**
@@ -680,189 +593,32 @@ public abstract class AbstractContainer extends Composite implements Listener {
 		return selectOnToggle;
 	}
 
-	public int getStyle() {
-		return style;
-	}
-
-//	protected int getFirstPaintedColumnIndex() {
-//		int left = getScrollPosition().x;
-//		int gridline = getGridLineWidth();
-//		int[] widths = getColumnWidths();
-//		for(int i = 0; i < widths.length; i++) {
-//			left -= (widths[i] + gridline);
-//			if(left < 0) return i;
-//		}
-//		return -1;
+//	public int indexOf(AbstractItem item) {
+//		return items.indexOf(item);
 //	}
 
-//	protected abstract int getFirstPaintedItemIndex();
+//	public int indexOf(AbstractColumn column) {
+//		return (internalTable != null) ? internalTable.indexOf(column) : -1;
+//	}
 
-//	protected abstract AbstractItem getFirstPaintedItem();
+//	public boolean isDirty(int opcode) {
+//		return ((dirtyFlags & opcode) != 0);
+//	}
 
-	protected boolean handleMouseEvents(AbstractItem item, Event event) {
-		// TODO: handleMouseEvents(AbstractItem item, Event event)
-//		if (SWT.MouseUp == event.type && item != null && item.isTogglePoint(muPoint)) {
-//			boolean open = !item.isOpen(muPoint);
-//			int etype = open ? SWT.Collapse : SWT.Expand;
-//			item.removeListener(etype, this);
-//			item.setOpen(muPoint, open);
-//			item.addListener(etype, this);
-//			layout(etype, item);
-//		}
-		return true;
+	public int getSortDirection() {
+		return sortDirection;
 	}
 
-	Point mapPoint(int x, int y) {
-		Point point = getScrollPosition();
-		point.x += x;
-		point.y += y;
-		return point;
-	}
-	
-	Rectangle mapRectangle(Rectangle rect) {
-		return mapRectangle(rect.x, rect.y, rect.width, rect.height);
-	}
-	
-	Rectangle mapRectangle(int x, int y, int width, int height) {
-		Rectangle r = new Rectangle(x,y,width,height);
-		Point point = getScrollPosition();
-		r.x += point.x;
-		r.y += point.y;
-		return r;
-	}
-	
-	private void handleMousePosition(AbstractItem item, Event event) {
-		switch (event.type) {
-		case SWT.MouseDoubleClick:
-			if (!selectOnToggle) {
-				if (item != null) {
-					if (!selectOnToggle
-							&& item.isTogglePoint(mapPoint(event.x, event.y)))
-						break;
-				}
-			}
-			fireSelectionEvent(true);
-			break;
-		case SWT.MouseDown:
-			mmPoint = null;
-			muPoint = null;
-			mmDelta = null;
-			mdPoint = mapPoint(event.x, event.y);
-			if (event.widget != this) {
-				if (event.widget instanceof Control) {
-					mdPoint = getDisplay().map((Control) event.widget, this,
-							mdPoint);
-				} else {
-					break;
-				}
-			}
-			break;
-		case SWT.MouseMove:
-			if (mmPoint == null) {
-				mmDelta = mapPoint(0, 0);
-			} else {
-				mmDelta.x = event.x - mmPoint.x;
-				mmDelta.y = event.y - mmPoint.y;
-			}
-			mmPoint = mapPoint(event.x, event.y);
-			break;
-		case SWT.MouseUp:
-			mmPoint = null;
-			mdPoint = null;
-			mmDelta = null;
-			muPoint = mapPoint(event.x, event.y);
-			break;
-		default:
-			break;
-		}
-	}
+//	public boolean isOperation(int opcode) {
+//		return operation == opcode;
+//	}
 
-	protected void handleMouseSelection(AbstractItem item, Event event) {
-		switch (event.type) {
-		case SWT.MouseDoubleClick:
-			if (!selectOnToggle) {
-				if (item != null) {
-					if (!selectOnToggle
-							&& item.isTogglePoint(mapPoint(event.x, event.y)))
-						break;
-				}
-			}
-			fireSelectionEvent(true);
-			break;
-		case SWT.MouseDown:
-			if (!hasFocus)
-				setFocus();
-			if (event.widget == this) {
-				item = internalGetItem(mdPoint);
-			} else if (items.contains(event.item)) {
-				item = (AbstractItem) event.item;
-			}
-			if (item == null) {
-				if ((event.stateMask & (SWT.CTRL | SWT.SHIFT)) == 0) {
-					if (mode == MODE_MARQUEE)
-						holdSelection = true;
-					setCursor(getDisplay().getSystemCursor(SWT.CURSOR_CROSS));
-					clearSelection();
-					marquee = true;
-				}
-				break;
-			}
-			if (mode == MODE_MARQUEE)
-				holdSelection = selection.contains(item);
-			marquee = false;
-			if (!isFocusControl()) {
-				setFocus();
-			}
-			switch (event.button) {
-			// TODO - popup menu: not just for mouse down events!
-			case 3:
-				Menu menu = getMenu();
-				if ((menu != null) && ((menu.getStyle() & SWT.POP_UP) != 0)) {
-					menu.setVisible(true);
-				}
-			case 1:
-				if (holdSelection)
-					break;
-				if (!selectOnToggle && item.isTogglePoint(mdPoint))
-					break;
-				if ((event.stateMask & SWT.SHIFT) != 0) {
-					if (shiftSel == null) {
-						if (selection.isEmpty())
-							selection.add(item);
-						shiftSel = (AbstractItem) selection.get(selection
-								.size() - 1);
-					}
-					int start = visibleItems.indexOf(shiftSel);
-					int end = visibleItems.indexOf(item);
-					setSelection(start, end);
-				} else if ((event.stateMask & SWT.CONTROL) != 0) {
-					toggleSelection(item);
-					shiftSel = null;
-				} else {
-					setSelection(item);
-					shiftSel = null;
-				}
-				break;
-			}
-			break;
-		case SWT.MouseMove:
-			if (mode == MODE_MARQUEE && marquee) {
-				int x = Math.min(mdPoint.x, mmPoint.x);
-				int y = Math.min(mdPoint.y, mmPoint.y);
-				int w = Math.abs(mdPoint.x - mmPoint.x);
-				int h = Math.abs(mdPoint.y - mmPoint.y);
-				Rectangle r = new Rectangle(x, y, w, h);
-				setSelection(getItems(r));
-			}
-			redraw();
-			break;
-		case SWT.MouseUp:
-			marquee = false;
-			setCursor(getDisplay().getSystemCursor(SWT.CURSOR_ARROW));
-			redraw();
-			break;
-		}
+	// public boolean isSelected(int index) {
+	// return getItem(index).isSelected();
+	// }
 
+	public int getStyle() {
+		return style;
 	}
 
 	public void handleEvent(Event event) {
@@ -878,7 +634,7 @@ public abstract class AbstractContainer extends Composite implements Listener {
 			AbstractItem item = null;
 			if (event.widget == this) {
 				item = internalGetItem(mapPoint(event.x, event.y));
-			} else if (items.contains(event.item)) {
+			} else if (event.item instanceof AbstractItem) {
 				item = (AbstractItem) event.item;
 			}
 			handleMousePosition(item, event);
@@ -938,9 +694,8 @@ public abstract class AbstractContainer extends Composite implements Listener {
 			Control focusControl = getDisplay().getFocusControl();
 			if (focusControl == this)
 				return;
-			for (Iterator i = visibleItems.iterator(); i.hasNext();) {
-				if (((AbstractItem) i.next()).contains(focusControl))
-					return;
+			for(Iterator i = items(false).iterator(); i.hasNext(); ) {
+				if(((AbstractItem) i.next()).contains(focusControl)) return;
 			}
 			hasFocus = false;
 			updateFocus();
@@ -952,6 +707,161 @@ public abstract class AbstractContainer extends Composite implements Listener {
 		}
 	}
 
+	protected boolean handleMouseEvents(AbstractItem item, Event event) {
+		// TODO: handleMouseEvents(AbstractItem item, Event event)
+//		if (SWT.MouseUp == event.type && item != null && item.isTogglePoint(muPoint)) {
+//			boolean open = !item.isOpen(muPoint);
+//			int etype = open ? SWT.Collapse : SWT.Expand;
+//			item.removeListener(etype, this);
+//			item.setOpen(muPoint, open);
+//			item.addListener(etype, this);
+//			layout(etype, item);
+//		}
+		return true;
+	}
+
+//	public void move(AbstractItem item, int newIndex) {
+//		if (newIndex >= 0 && newIndex < visibleItems.size() && visibleItems.contains(item)) {
+//			int oldIndex = visibleItems.indexOf(item);
+//			if (visibleItems.remove(item)) {
+//				visibleItems.add(newIndex, item);
+//				layout(SWT.Move, (AbstractItem) visibleItems.get(oldIndex));
+//				layout(SWT.Move, item);
+//			}
+//		}
+//	}
+
+	private void handleMousePosition(AbstractItem item, Event event) {
+		switch (event.type) {
+		case SWT.MouseDoubleClick:
+			if (!selectOnToggle) {
+				if (item != null) {
+					if (!selectOnToggle
+							&& item.isTogglePoint(mapPoint(event.x, event.y)))
+						break;
+				}
+			}
+			fireSelectionEvent(true);
+			break;
+		case SWT.MouseDown:
+			mmPoint = null;
+			muPoint = null;
+			mmDelta = null;
+			mdPoint = mapPoint(event.x, event.y);
+			if (event.widget != this) {
+				if (event.widget instanceof Control) {
+					mdPoint = getDisplay().map((Control) event.widget, this,
+							mdPoint);
+				} else {
+					break;
+				}
+			}
+			break;
+		case SWT.MouseMove:
+			if (mmPoint == null) {
+				mmDelta = mapPoint(0, 0);
+			} else {
+				mmDelta.x = event.x - mmPoint.x;
+				mmDelta.y = event.y - mmPoint.y;
+			}
+			mmPoint = mapPoint(event.x, event.y);
+			break;
+		case SWT.MouseUp:
+			mmPoint = null;
+			mdPoint = null;
+			mmDelta = null;
+			muPoint = mapPoint(event.x, event.y);
+			break;
+		default:
+			break;
+		}
+	}
+
+	protected void handleMouseSelection(AbstractItem item, Event event) {
+		switch (event.type) {
+		case SWT.MouseDoubleClick:
+			if (!selectOnToggle) {
+				if (item != null) {
+					if (!selectOnToggle
+							&& item.isTogglePoint(mapPoint(event.x, event.y)))
+						break;
+				}
+			}
+			fireSelectionEvent(true);
+			break;
+		case SWT.MouseDown:
+			if(!hasFocus)
+				setFocus();
+			if(event.widget == this) {
+				item = internalGetItem(mdPoint);
+			} else if(event.item instanceof AbstractItem) {
+				item = (AbstractItem) event.item;
+			}
+			if (item == null) {
+				if ((event.stateMask & (SWT.CTRL | SWT.SHIFT)) == 0) {
+					if (mode == MODE_MARQUEE)
+						holdSelection = true;
+					setCursor(getDisplay().getSystemCursor(SWT.CURSOR_CROSS));
+					deselectAll();
+					marquee = true;
+				}
+				break;
+			}
+			if (mode == MODE_MARQUEE)
+				holdSelection = selection.contains(item);
+			marquee = false;
+			if (!isFocusControl()) {
+				setFocus();
+			}
+			switch (event.button) {
+			// TODO - popup menu: not just for mouse down events!
+			case 3:
+				Menu menu = getMenu();
+				if ((menu != null) && ((menu.getStyle() & SWT.POP_UP) != 0)) {
+					menu.setVisible(true);
+				}
+			case 1:
+				if (holdSelection)
+					break;
+				if (!selectOnToggle && item.isTogglePoint(mdPoint))
+					break;
+				if ((event.stateMask & SWT.SHIFT) != 0) {
+					if (shiftSel == null) {
+						if (selection.isEmpty())
+							selection.add(item);
+						shiftSel = (AbstractItem) selection.get(selection.size() - 1);
+					}
+					setSelection(shiftSel, item);
+				} else if ((event.stateMask & SWT.CONTROL) != 0) {
+					toggleSelection(item);
+					shiftSel = null;
+				} else {
+					setSelection(item);
+					shiftSel = null;
+				}
+				break;
+			}
+			break;
+		case SWT.MouseMove:
+			if (mode == MODE_MARQUEE && marquee) {
+				int x = Math.min(mdPoint.x, mmPoint.x);
+				int y = Math.min(mdPoint.y, mmPoint.y);
+				int w = Math.abs(mdPoint.x - mmPoint.x);
+				int h = Math.abs(mdPoint.y - mmPoint.y);
+				Rectangle r = new Rectangle(x, y, w, h);
+				setSelection(getItems(r));
+			}
+			redraw();
+			break;
+		case SWT.MouseUp:
+			marquee = false;
+			setCursor(getDisplay().getSystemCursor(SWT.CURSOR_ARROW));
+			redraw();
+			break;
+		}
+
+	}
+
 	private void handleTraverse(Event event) {
 		switch (event.detail) {
 		case SWT.TRAVERSE_RETURN:
@@ -960,43 +870,48 @@ public abstract class AbstractContainer extends Composite implements Listener {
 			}
 			break;
 		case SWT.TRAVERSE_ARROW_NEXT:
-			int[] ia = getSelectionIndices();
-			if (ia.length > 0) {
-				setSelection(ia[ia.length - 1] + 1);
+			if(!selection.isEmpty()) {
+				setSelection(((AbstractItem) selection.get(selection.size()-1)).nextVisible());
 			}
 			break;
 		case SWT.TRAVERSE_ARROW_PREVIOUS:
-			ia = getSelectionIndices();
-			if (ia.length > 0) {
-				setSelection(ia[ia.length - 1] - 1);
+			if(!selection.isEmpty()) {
+				setSelection(((AbstractItem) selection.get(0)).previousVisible());
 			}
 			break;
 		}
 	}
 
-	public int indexOf(AbstractItem item) {
-		return visibleItems.indexOf(item);
+	AbstractColumn internalGetColumn(int index) {
+		if(index >= 0 && index < columns.length) {
+			return columns[index];
+		}
+		return null;
 	}
 
-	public int indexOf(AbstractColumn column) {
-		return (internalTable != null) ? internalTable.indexOf(column) : -1;
+	AbstractColumn[] internalGetColumns() {
+		AbstractColumn[] ca = new AbstractColumn[columns.length];
+		System.arraycopy(columns, 0, ca, 0, columns.length);
+		return ca;
 	}
 
-//	public boolean isDirty(int opcode) {
-//		return ((dirtyFlags & opcode) != 0);
-//	}
-
-	public boolean isEmpty() {
-		return visibleItems.isEmpty();
+	AbstractItem internalGetItem(Point pt) {
+		// must iterate in reverse drawing order in case items overlap each other
+		for (ListIterator i = paintedItems.listIterator(paintedItems.size()); i.hasPrevious();) {
+			AbstractItem item = (AbstractItem) i.previous();
+			if (item.contains(pt))
+				return item;
+		}
+		return null;
 	}
 
-//	public boolean isOperation(int opcode) {
-//		return operation == opcode;
-//	}
+	protected AbstractColumn internalGetSortColumn() {
+		return sortColumn;
+	}
+	
+	public abstract boolean isEmpty();
 
-	// public boolean isSelected(int index) {
-	// return getItem(index).isSelected();
-	// }
+	abstract List items(boolean all);
 
 	/**
 	 * <p>
@@ -1045,81 +960,38 @@ public abstract class AbstractContainer extends Composite implements Listener {
 	void layout(int eventType, AbstractItem item) {
 		if(SWT.Show == eventType) {
 			// TODO: won't work
-			visibleItems.add(items.indexOf(item), item);
-			layout.layout(eventType, item);
-			updatePaintedList = true;
+//			visibleItems.add(items.indexOf(item), item);
+//			layout.layout(eventType, item);
+//			updatePaintedList = true;
 		} else if(SWT.Hide == eventType) {
-			visibleItems.remove(item);
-			layout.layout(eventType, item);
-			updatePaintedList = true;
+//			visibleItems.remove(item);
+//			layout.layout(eventType, item);
+//			updatePaintedList = true;
 		}
 	}
-
-//	public void layout(AbstractItem item, int opcode, boolean redraw) {
-//		setDirtyItem(item);
-//		setOperation(opcode);
-//		opLayout();
-//		if (redraw)
-//			redraw();
-//	}
-
-	public void move(AbstractItem item, int newIndex) {
-		if (newIndex >= 0 && newIndex < visibleItems.size() && visibleItems.contains(item)) {
-			int oldIndex = visibleItems.indexOf(item);
-			if (visibleItems.remove(item)) {
-				visibleItems.add(newIndex, item);
-				layout(SWT.Move, (AbstractItem) visibleItems.get(oldIndex));
-				layout(SWT.Move, item);
-			}
-		}
+	Point mapPoint(int x, int y) {
+		Point point = getScrollPosition();
+		point.x += x;
+		point.y += y;
+		return point;
 	}
-
+	
+	Rectangle mapRectangle(int x, int y, int width, int height) {
+		Rectangle r = new Rectangle(x,y,width,height);
+		Point point = getScrollPosition();
+		r.x += point.x;
+		r.y += point.y;
+		return r;
+	}
+	Rectangle mapRectangle(Rectangle rect) {
+		return mapRectangle(rect.x, rect.y, rect.width, rect.height);
+	}
 	protected void paintBackground(GC gc, Rectangle ebounds) {
 	}
-
-	protected void paintColumns(GC gc, Rectangle ebounds) {
-		AbstractColumn[] columns = internalGetColumns();
-		for (int i = 0; i < columns.length; i++) {
-			columns[i].paint(gc, ebounds);
-		}
-	}
-
-	protected void paintItemBackgrounds(GC gc, Rectangle ebounds) {
-	}
-
-	protected void paintSelectionIndicators(GC gc, Rectangle ebounds) {
-	}
-
-	protected void paintGridLines(GC gc, Rectangle ebounds) {
-	}
-
-	protected void paintItems(GC gc, Rectangle ebounds) {
-		if (visibleItems.isEmpty()) {
-			if (emptyMessage.length() > 0) {
-				Point bSize = getSize();
-				Point tSize = gc.textExtent(emptyMessage);
-				gc.setForeground(colors.getItemForegroundNormal());
-				gc.drawText(emptyMessage, (bSize.x - tSize.x) / 2 - ebounds.x,
-						4 - ebounds.y);
-			}
-		} else {
-			for (Iterator i = paintedItems.iterator(); i.hasNext();) {
-				((AbstractItem) i.next()).paint(gc, ebounds);
-			}
-		}
-	}
-
-	public boolean drawViewportNorth = false;
-	public boolean drawViewportEast = false;
-	public boolean drawViewportSouth = false;
-	public boolean drawViewportWest = false;
-
-	public boolean paintGridAsBackground = false;
-
-	int topOld = -1;
-	int heightOld = -1;
-	boolean updatePaintedList = false;
 	protected void paintBody(Event e) {
+		if(!addedItems.isEmpty()) addItems();
+		if(!removedItems.isEmpty()) removeItems();
+		
 		int top = ((vBar == null || vBar.isDisposed()) ? -1 : vBar.getSelection());
 		int height = getClientArea().height;
 		if(updatePaintedList || topOld != top || heightOld != height) {
@@ -1147,6 +1019,83 @@ public abstract class AbstractContainer extends Composite implements Listener {
 		e.gc.drawImage(image, ebounds.x, ebounds.y);
 		gc.dispose();
 		image.dispose();
+		
+		for(Iterator iter = paintedItems.iterator(); iter.hasNext();) {
+			AbstractCell[] ca = ((AbstractItem) iter.next()).getCells();
+			for(int i = 0; i < ca.length; i++) {
+				ca[i].adjust();
+			}
+		}
+	}
+	protected void paintColumns(GC gc, Rectangle ebounds) {
+		AbstractColumn[] columns = internalGetColumns();
+		for (int i = 0; i < columns.length; i++) {
+			columns[i].paint(gc, ebounds);
+		}
+	}
+	protected void paintFocus(GC gc, Rectangle ebounds) {
+		if (hasFocus) {
+			if (win32 || (gtk && !paintedItems.isEmpty()))
+				return;
+
+			gc.setAlpha(255);
+			gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
+			gc.setLineDash(new int[] { 1, 1 });
+			Rectangle r = getContentArea();
+			r.x += (1 - ebounds.x);
+			r.y += (1 - ebounds.y);
+			r.width -= 3;
+			r.height -= 3;
+			gc.drawRectangle(r);
+		}
+	}
+
+	protected void paintGridLines(GC gc, Rectangle ebounds) {
+	}
+
+	protected void paintItemBackgrounds(GC gc, Rectangle ebounds) {
+	}
+
+	protected void paintItems(GC gc, Rectangle ebounds) {
+		if(isEmpty()) {
+			if (emptyMessage.length() > 0) {
+				Point bSize = getSize();
+				Point tSize = gc.textExtent(emptyMessage);
+				gc.setForeground(colors.getItemForegroundNormal());
+				gc.drawText(emptyMessage, (bSize.x - tSize.x) / 2 - ebounds.x,
+						4 - ebounds.y);
+			}
+		} else {
+			for (Iterator i = paintedItems.iterator(); i.hasNext();) {
+				((AbstractItem) i.next()).paint(gc, ebounds);
+			}
+		}
+	}
+
+	protected void paintSelectionIndicators(GC gc, Rectangle ebounds) {
+	}
+
+//	public void redraw(AbstractItem item) {
+//		// TODO: paint / redraw individual item
+//		// Rectangle r = item.getBounds();
+//		// body.redraw(r.x-1, r.y-1, r.width+2, r.height+2, true);
+//		redraw();
+//	}
+
+	protected void paintTracker(GC gc, Rectangle ebounds) {
+		if (marquee && mdPoint != null && mmPoint != null) {
+			gc.setAlpha(75);
+			gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_GRAY));
+			gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_GRAY));
+			int x = (mmPoint.x > mdPoint.x ? mdPoint.x : mmPoint.x) - ebounds.x;
+			int y = (mmPoint.y > mdPoint.y ? mdPoint.y : mmPoint.y) - ebounds.y;
+			int w = Math.abs(mmPoint.x - mdPoint.x);
+			int h = Math.abs(mmPoint.y - mdPoint.y);
+			gc.fillRectangle(x, y, w, h);
+			gc.setAlpha(255);
+			gc.setLineStyle(SWT.LINE_DASHDOTDOT);
+			gc.drawRectangle(x, y, w, h);
+		}
 	}
 
 	protected void paintViewport(GC gc, Rectangle ebounds) {
@@ -1168,119 +1117,14 @@ public abstract class AbstractContainer extends Composite implements Listener {
 		}
 	}
 
-	protected void paintTracker(GC gc, Rectangle ebounds) {
-		if (marquee && mdPoint != null && mmPoint != null) {
-			gc.setAlpha(75);
-			gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_GRAY));
-			gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_GRAY));
-			int x = (mmPoint.x > mdPoint.x ? mdPoint.x : mmPoint.x) - ebounds.x;
-			int y = (mmPoint.y > mdPoint.y ? mdPoint.y : mmPoint.y) - ebounds.y;
-			int w = Math.abs(mmPoint.x - mdPoint.x);
-			int h = Math.abs(mmPoint.y - mdPoint.y);
-			gc.fillRectangle(x, y, w, h);
-			gc.setAlpha(255);
-			gc.setLineStyle(SWT.LINE_DASHDOTDOT);
-			gc.drawRectangle(x, y, w, h);
-		}
-	}
-
-	protected void paintFocus(GC gc, Rectangle ebounds) {
-		if (hasFocus) {
-			if (win32 || (gtk && !paintedItems.isEmpty()))
-				return;
-
-			gc.setAlpha(255);
-			gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
-			gc.setLineDash(new int[] { 1, 1 });
-			Rectangle r = getContentArea();
-			r.x += (1 - ebounds.x);
-			r.y += (1 - ebounds.y);
-			r.width -= 3;
-			r.height -= 3;
-			gc.drawRectangle(r);
-		}
-	}
-
-	protected Rectangle getContentArea() {
-		Rectangle area = getClientArea();
-		area.y = layout.headerSize.y;
-		area.height -= layout.headerSize.y;
-		return area;
-	}
-
-//	public void redraw(AbstractItem item) {
-//		// TODO: paint / redraw individual item
-//		// Rectangle r = item.getBounds();
-//		// body.redraw(r.x-1, r.y-1, r.width+2, r.height+2, true);
-//		redraw();
-//	}
-
 	public void redraw(AbstractCell cell) {
 		Rectangle r = cell.getBounds();
 		redraw(r.x-1, r.y-1, r.width+2, r.height+2, true);
 	}
 
-	public void remove(AbstractItem[] items) {
-		List l = new ArrayList();
-		for (int i = 0; i < items.length; i++) {
-			if (this.items.contains(items[i])) {
-				l.add(items[i]);
-				l.addAll(getItems(items[i]));
-			}
-		}
-		if (!l.isEmpty()) {
-			boolean selChange = false;
-			for(Iterator i = l.iterator(); i.hasNext(); ) {
-				AbstractItem item = (AbstractItem) i.next();
-				if(!selChange && selection.contains(item)) selChange = true;
-				if(!item.isDisposed()) {
-					layout(SWT.Hide, item);
-					this.items.remove(item);
-//					removeOrderedItem(item);
-					item.dispose();
-				}
-			}
-			selection.removeAll(l);
-
-			if(selChange) fireSelectionEvent(false);
-		}
-	}
-
-	public void remove(int index) {
-		if ((index >= 0) && (index < visibleItems.size())) {
-			((AbstractItem) visibleItems.get(index)).dispose();
-		}
-	}
-
-	public void remove(int start, int end) {
-		if ((start >= 0) && (start < visibleItems.size()) && (end >= 0)
-				&& (end < visibleItems.size())) {
-			int i1 = (start < end) ? start : end;
-			int i2 = (start < end) ? end : start;
-			AbstractItem[] items = new AbstractItem[i2 - i1 + 1];
-			for (int i = 0; i1 <= i2; i++, i1++) {
-				items[i] = (AbstractItem) visibleItems.get(i1);
-			}
-			remove(items);
-		}
-	}
-
-	public void remove(int[] indices) {
-		AbstractItem[] items = new AbstractItem[indices.length];
-		for (int i = 0; i < indices.length; i++) {
-			items[i] = (AbstractItem) visibleItems.get(indices[i]);
-		}
-		remove(items);
-	}
-
-	public void removeAll() {
-		remove(0, visibleItems.size() - 1);
-	}
-
-	protected void removeItem(AbstractItem item) {
-		if (items.contains(item)) {
-			remove(new AbstractItem[] { item });
-		}
+	public void redraw(AbstractItem item) {
+		Rectangle r = item.getBounds();
+		redraw(r.x-1, r.y-1, r.width+2, r.height+2, true);
 	}
 
 	// public void removeListener(int eventType, Listener listener) {
@@ -1315,6 +1159,28 @@ public abstract class AbstractContainer extends Composite implements Listener {
 	// container.removeMouseTrackListener(listener);
 	// }
 
+	public abstract void removeAll();
+
+	void removeColumn(AbstractColumn column) {
+		if(columns.length > 0) {
+			AbstractColumn[] newColumns = new AbstractColumn[columns.length-1];
+			int[] newColumnOrder = new int[columnOrder.length-1];
+			System.arraycopy(columns, 0, newColumns, 0, newColumns.length);
+			System.arraycopy(columnOrder, 0, newColumnOrder, 0, newColumnOrder.length);
+			columns = newColumns;
+			columnOrder = newColumnOrder;
+			// TODO: removeColumn - remove sortcolumn...
+		}
+	}
+	
+	abstract void removeItem(AbstractItem item);
+
+	void removeItems() {
+		removedItems = new ArrayList();
+		layout(true, true);
+		updatePaintedList = true;
+	}
+
 	public void removePaintedItemListener(Listener listener) {
 		if (paintedItemListeners != null) {
 			paintedItemListeners.remove(listener);
@@ -1335,55 +1201,6 @@ public abstract class AbstractContainer extends Composite implements Listener {
 
 	void scrollToX(int x) {
 		setOrigin(x, getScrollPosition().y);
-	}
-
-	void scrollToY(int y) {
-		setOrigin(getScrollPosition().x, y);
-	}
-
-	public void select(int index) {
-		select(index, true);
-	}
-
-	private void select(int index, boolean finish) {
-		if ((index >= 0) && (index < visibleItems.size())) {
-			Object o = visibleItems.get(index);
-			if (!selection.contains(o)) {
-				selection.add(o);
-			}
-		}
-		if (finish)
-			finishSelection();
-	}
-
-	public void select(int start, int end) {
-		if ((start >= 0) && (start < visibleItems.size()) && (end >= 0)
-				&& (end < visibleItems.size())) {
-			int i1 = (start < end) ? start : end;
-			int i2 = (start < end) ? end : start;
-			for (int i = i1; i <= i2; i++) {
-				select(i, false);
-			}
-			finishSelection();
-		}
-	}
-
-	public void select(int[] indices) {
-		for (int i = 0; i < indices.length; i++) {
-			select(indices[i], false);
-		}
-		finishSelection();
-	}
-
-	public void selectAll() {
-		selection = new ArrayList(visibleItems);
-		finishSelection();
-	}
-
-	/**
-	 * disabled: use the SColors class instead
-	 */
-	public void setBackground(Color color) {
 	}
 
 //	public void clearDirtyFlags() {
@@ -1413,6 +1230,36 @@ public abstract class AbstractContainer extends Composite implements Listener {
 //		dirtyItem = item;
 //	}
 
+	void scrollToY(int y) {
+		setOrigin(getScrollPosition().x, y);
+	}
+
+	public void selectAll() {
+		if((getStyle() & SWT.SINGLE) == 0) {
+			selection = new ArrayList();
+			for(Iterator i = items(true).iterator(); i.hasNext(); ) {
+				AbstractItem item = (AbstractItem ) i.next();
+				item.setSelected(true);
+				selection.add(item);
+			}
+			finishSelection();
+		}
+	}
+
+	/**
+	 * disabled: use the SColors class instead
+	 */
+	public void setBackground(Color color) {
+	}
+
+	public void setCellClass(Class clazz) {
+		cellClasses = new Class[] { clazz };
+	}
+
+	public void setCellClasses(Class[] classes) {
+		cellClasses = classes;
+	}
+
 	/**
 	 * Sets the message that will be displayed when their are no Items to be
 	 * displayed (the Container is empty). The message will span all rows and be
@@ -1441,6 +1288,10 @@ public abstract class AbstractContainer extends Composite implements Listener {
 
 	public void setHeaderVisible(boolean show) {
 		getInternalTable().setHeaderVisible(show);
+	}
+
+	public void setHorizontalLinesVisible(boolean visible) {
+		hLines = visible;
 	}
 
 	/**
@@ -1489,28 +1340,12 @@ public abstract class AbstractContainer extends Composite implements Listener {
 		this.lastLine = lastLine;
 	}
 
-	public void setHorizontalLinesVisible(boolean visible) {
-		hLines = visible;
-	}
-
 	void setMode(int mode) {
 		this.mode = mode;
 	}
 
-//	public void setOperation(int opcode) {
-//		operation = opcode;
-//	}
-
-	public void setCellClass(Class clazz) {
-		cellClasses = new Class[] { clazz };
-	}
-
-	public void setCellClasses(Class[] classes) {
-		cellClasses = classes;
-	}
-
-	void setScrollPosition(Point origin) {
-		setOrigin(origin.x,origin.y);
+	public void setNativeHeader(boolean nativeHeader) {
+		this.nativeHeader = nativeHeader;
 	}
 
 	void setOrigin(int x, int y) {
@@ -1519,17 +1354,17 @@ public abstract class AbstractContainer extends Composite implements Listener {
 		redraw();
 	}
 
-	public void setRedraw(boolean redraw) {
-		super.setRedraw(redraw);
-		if (internalTable != null)
-			internalTable.setRedraw(redraw);
-		setRedraw(redraw);
-	}
-
-//	private void setRemovedItems(AbstractItem[] items) {
-//		removedItems = items;
+//	public void setRedraw(boolean redraw) {
+//		super.setRedraw(redraw);
+//		if (internalTable != null) {
+//			internalTable.setRedraw(redraw);
+//		}
 //	}
 
+	void setScrollPosition(Point origin) {
+		setOrigin(origin.x,origin.y);
+	}
+	
 	/**
 	 * Enables items in this Container to be selected
 	 * 
@@ -1537,13 +1372,16 @@ public abstract class AbstractContainer extends Composite implements Listener {
 	 */
 	public void setSelectable(boolean selectable) {
 		this.selectable = selectable;
-		for (Iterator i = items.iterator(); i.hasNext();) {
+		for(Iterator i = items(true).iterator(); i.hasNext();) {
 			((AbstractItem) i.next()).setEnabled(selectable);
 		}
 	}
 
 	public void setSelection(AbstractItem item) {
-		if (item == null) {
+		for(Iterator i = selection.iterator(); i.hasNext(); ) {
+			((AbstractItem) i.next()).setSelected(false);
+		}
+		if(item == null) {
 			selection = new ArrayList();
 		} else {
 			selection = new ArrayList(Collections.singleton(item));
@@ -1552,45 +1390,18 @@ public abstract class AbstractContainer extends Composite implements Listener {
 		finishSelection();
 	}
 
+	public abstract void setSelection(AbstractItem from, AbstractItem to);
+
 	public void setSelection(AbstractItem[] items) {
-		if (items == null || items.length == 0) {
+		for(Iterator i = selection.iterator(); i.hasNext(); ) {
+			((AbstractItem) i.next()).setSelected(false);
+		}
+		if(items == null || items.length == 0) {
 			selection = new ArrayList();
 		} else {
 			selection = new ArrayList(Arrays.asList(items));
 			shiftSel = items[0];
 		}
-		finishSelection();
-	}
-
-	public void setSelection(int index) {
-		if (index >= 0 && index < visibleItems.size()) {
-			AbstractItem item = (AbstractItem) visibleItems.get(index);
-			selection = new ArrayList(Collections.singleton(item));
-			shiftSel = item;
-			finishSelection();
-		}
-	}
-
-	public void setSelection(int start, int end) {
-		if (start >= 0 && start < visibleItems.size() && end >= 0
-				&& end < visibleItems.size()) {
-			selection = new ArrayList();
-			int i1 = (start < end) ? start : end;
-			int i2 = (start < end) ? end : start;
-			for (int i = i1; i <= i2; i++) {
-				selection.add(visibleItems.get(i));
-			}
-			shiftSel = (AbstractItem) visibleItems.get(start);
-			finishSelection();
-		}
-	}
-
-	public void setSelection(int[] ixs) {
-		selection = new ArrayList();
-		for (int i = 0; i < ixs.length; i++) {
-			selection.add(visibleItems.get(i));
-		}
-		shiftSel = (AbstractItem) visibleItems.get(ixs[0]);
 		finishSelection();
 	}
 
@@ -1605,27 +1416,29 @@ public abstract class AbstractContainer extends Composite implements Listener {
 	public void setSelectOnToggle(boolean select) {
 		selectOnToggle = select;
 	}
-
-	protected AbstractColumn internalGetSortColumn() {
-		return (internalTable != null) ? (AbstractColumn) internalTable.getSortColumn() : null;
-	}
 	
-	public int getSortDirection() {
-		return (internalTable != null) ? internalTable.getSortDirection() : -1;
-	}
-
 	public void setSortColumn(AbstractColumn column) {
-		if(internalTable != null) internalTable.setSortColumn(column);
+		sortColumn = column;
+		if(nativeHeader) {
+			internalTable.setSortColumn(column.nativeColumn);
+		}
 	}
 	
 	public void setSortDirection(int direction) {
-		if(internalTable != null) internalTable.setSortDirection(direction);
+		sortDirection = direction;
+		if(nativeHeader) {
+			internalTable.setSortDirection(direction);
+		}
 	}
-	
+
 	public void setVerticalLinesVisible(boolean visible) {
 		vLines = visible;
 	}
 
+	/**
+	 * TODO
+	 * @param column
+	 */
 	public void showColumn(CTreeColumn column) {
 		// TODO Auto-generated method stub
 	}
@@ -1639,26 +1452,12 @@ public abstract class AbstractContainer extends Composite implements Listener {
 		} else if(!c.contains(new Point(r.x, r.y + r.height - 1 - scroll.y))) {
 			setScrollPosition(new Point(scroll.x, r.y - c.y - c.height + r.height));
 		}
-		// TODO: showItem needs to work horizontally as well
-	}
-
-	/**
-	 * @see org.eclipse.swt.widgets.Table#showItem(java.lang.Object)
-	 * @param index the index of the item to show
-	 */
-	public void showItem(int index) {
-		if ((index >= 0) && (index < visibleItems.size())) {
-			showItem((AbstractItem) visibleItems.get(index));
-		}
+		// TODO: showItem needs to work horizontally as well (call showColumn)
 	}
 
 	public void showSelection() {
-		if (!selection.isEmpty()) {
-			int topIndex = visibleItems.indexOf(selection.get(0));
-			for (Iterator i = selection.iterator(); i.hasNext();) {
-				topIndex = Math.min(topIndex, visibleItems.indexOf((AbstractItem) i.next()));
-			}
-			showItem((AbstractItem) visibleItems.get(topIndex));
+		if(!selection.isEmpty()) {
+			showItem((AbstractItem) selection.get(0));
 		}
 	}
 
@@ -1698,44 +1497,15 @@ public abstract class AbstractContainer extends Composite implements Listener {
 		}
 	}
 
-//	protected void updateItemLists(int eventType) {
-//		if (isDirty(DIRTY_ORDERED)) {
-//			updateOrderedItems();
-//			dirtyFlags &= ~DIRTY_ORDERED;
-//		}
-//		if (isDirty(DIRTY_VISIBLE)) {
-//			updateVisibleItems();
-//			dirtyFlags &= ~DIRTY_VISIBLE;
-//		}
-//		updatePaintedItems();
-//	}
-
-//	protected void removeOrderedItem(AbstractItem item) {
-//		orderedItems.remove(item);
-//	}
-
-	protected abstract List getPaintedItems();
-
 	protected void updatePaintedItems() {
-		System.out.println("updatePaintedItems");
+//		System.out.println("updatePaintedItems");
 		
-//		int top = visibleItems.isEmpty() ? -1 : getFirstPaintedItemIndex();
-//		int bot = (top == -1) ? -1 : getLastPaintedItemIndex();
-//		if (top != firstPaintedIndex || bot != lastPaintedIndex) {
-
 		List newPainted = getPaintedItems();
 		if(!newPainted.equals(paintedItems)) {
-			System.out.println("updatePaintedItems: changed");
-			
-//			firstPaintedIndex = top;
-//			lastPaintedIndex = bot;
-
+//			System.out.println("updatePaintedItems: changed");
+	
 			List oldPainted = (paintedItems == null) ? new ArrayList() : new ArrayList(paintedItems);
-//			paintedItems = (firstPaintedIndex == -1 || firstPaintedIndex >= visibleItems.size() || lastPaintedIndex < firstPaintedIndex) ? new ArrayList()
-//					: new ArrayList(visibleItems
-//							.subList(firstPaintedIndex, lastPaintedIndex + 1));
 			paintedItems = new ArrayList(newPainted);
-//			List newPainted = new ArrayList(paintedItems);
 
 			// remove common elements from both lists
 			for (Iterator i = oldPainted.iterator(); i.hasNext();) {
@@ -1755,18 +1525,4 @@ public abstract class AbstractContainer extends Composite implements Listener {
 			}
 		}
 	}
-
-	/**
-	 * Resets the visibleItems list to equal the orderedItems list minus all items which
-	 * return false to getVisible()
-	 */
-//	protected void updateVisibleItems() {
-//		visibleItems = new ArrayList(orderedItems);
-//		for (Iterator i = visibleItems.iterator(); i.hasNext();) {
-//			AbstractItem item = (AbstractItem) i.next();
-//			if(!item.getVisible()) {
-//				i.remove();
-//			}
-//		}
-//	}
 }

@@ -12,6 +12,7 @@
 package org.eclipse.swt.nebula.widgets.ctree;
 
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 
@@ -24,8 +25,9 @@ import org.eclipse.swt.SWT;
 class CTreeLayout extends AbstractContainerLayout {
 
 	private CTree ctree;
-	private int rowHeight = 0;
-	private boolean fixedHeight = true;
+	int itemHeight = CTree.gtk ? 25 : 20;
+	private boolean itemHeightSet = false;
+	private boolean fixedHeight = false;
 	
 	public CTreeLayout(CTree ctree) {
 		super(ctree);
@@ -33,33 +35,36 @@ class CTreeLayout extends AbstractContainerLayout {
 	}
 	
 	protected void computeContentHeight() {
-		if(ctree.visibleItems.isEmpty()) {
+		if(ctree.isEmpty()) {
 			contentHeight = 0;
 		} else if(fixedHeight) {
-			contentHeight = getRowHeight() * ctree.visibleItems.size();
+			int count = ctree.items(false).size();
+			contentHeight = getItemHeight() * count;
+			if(ctree.getGridLineWidth() > 1) {
+				contentHeight += (count - 1) * ctree.getGridLineWidth();
+			}
 		} else {
 			contentHeight = 0;
-			for(Iterator i = ctree.visibleItems.iterator(); i.hasNext(); ) {
+			for(Iterator i = ctree.items(false).iterator(); i.hasNext(); ) {
 				contentHeight += ((CTreeItem) i.next()).computeHeight();
+				contentHeight += ctree.getGridLineWidth();
 			}
-		}
-		if(ctree.getGridLineWidth() > 0) {
-			contentHeight += (ctree.visibleItems.size() - 1) * ctree.getGridLineWidth();
+			contentHeight -= ctree.getGridLineWidth();
 		}
 	}
 
 	protected void computeContentHeight(int eventType, AbstractCell cell) {
 		if(SWT.Collapse == eventType) {
 			if(fixedHeight) {
-				contentHeight -= (getRowHeight() * ctree.getItems(cell.item, false).size());
+				contentHeight -= (getItemHeight() * ctree.getItems((CTreeItem) cell.item, false).size());
 			} else {
-				// TODO
+				contentHeight -= ((CTreeItem) cell.item).computeHeight();
 			}
 		} else if(SWT.Expand == eventType) {
 			if(fixedHeight) {
-				contentHeight += (getRowHeight() * ctree.getItems(cell.item, false).size());
+				contentHeight += (getItemHeight() * ctree.getItems((CTreeItem) cell.item, false).size());
 			} else {
-				// TODO
+				contentHeight += ((CTreeItem) cell.item).computeHeight();
 			}
 		}
 	}
@@ -71,63 +76,134 @@ class CTreeLayout extends AbstractContainerLayout {
 	}
 
 	protected void computeContentHeight(int eventType, AbstractItem item) {
-		// TODO Auto-generated method stub
-		
+		if(SWT.Show == eventType || SWT.Hide == eventType) {
+			int height = itemHeight;
+			if(!fixedHeight) {
+//				height = item.getSize().y;
+//				if(height <= 0) {
+					height = ((CTreeItem) item).computeHeight();
+//				}
+			}
+//			if(item.hasPreviousVisible()) contentHeight += ctree.getGridLineWidth();
+			contentHeight += (SWT.Show == eventType) ? height : -height;
+		}
 	}
 
-	private int getRowHeight() {
-		return (rowHeight > 0) ? rowHeight : ((CTreeItem) ctree.visibleItems.get(0)).computeHeight();
+	int getItemHeight() {
+		if(itemHeightSet) return itemHeight;
+		if(ctree.isEmpty()) return itemHeight;
+		itemHeight = ((CTreeItem) ctree.itemList.get(0)).computeHeight();
+		itemHeightSet = true;
+		return itemHeight;
+	}
+
+	void setItemHeight(int height) {
+		itemHeight = height;
+		itemHeightSet = true;
 	}
 	
 	protected void layoutContent() {
 		int gridLine = ctree.getGridLineWidth();
 		int top = headerSize.y;
-		int height = fixedHeight ? getRowHeight() : 0;
-		for(Iterator iter = ctree.visibleItems.iterator(); iter.hasNext(); ) {
-			CTreeItem item = (CTreeItem) iter.next();
+		int height = fixedHeight ? getItemHeight() : 0;
+		for(Iterator i = ctree.items(false).iterator(); i.hasNext(); ) {
+			CTreeItem item = (CTreeItem) i.next();
 			if(!fixedHeight) {
-				height = item.getSize().y;
-				if(height <= 0) {
+//				height = item.getSize().y;
+//				if(height <= 0) {
 					height = item.computeHeight();
-				}
+//				}
 			}
-			item.setBounds(-1, top, -1, height);
+			item.setBounds(1, top, 1, height);
 			top += height + gridLine;
 		}
 	}
 	
 	protected void layoutContent(int eventType, AbstractCell cell) {
 		if(SWT.Collapse == eventType || SWT.Expand == eventType) {
-			if(SWT.Collapse == eventType && 
-					ctree.visibleItems.get(ctree.visibleItems.size()-1) == cell.item) {
+			List items = ctree.items(false);
+			if(SWT.Collapse == eventType && items.get(items.size()-1) == cell.item) {
 				return;
 			}
 			int gridLine = ctree.getGridLineWidth();
 			int top = cell.bounds.y + cell.bounds.height + gridLine;
-			int height = fixedHeight ? getRowHeight() : 0;
-			CTreeItem[] items = ctree.getVisibleItems();
-			for(int i = ctree.visibleItems.indexOf(cell.item)+1; i < items.length; i++) {
-				if(!fixedHeight) {
-					height = items[i].getSize().y;
-					if(height <= 0) {
-						height = items[i].computeHeight();
+			int height = fixedHeight ? getItemHeight() : 0;
+			boolean doit = false;
+			for(Iterator i = items.iterator(); i.hasNext(); ) {
+				if(doit) {
+					CTreeItem item = (CTreeItem) i.next();
+					if(!fixedHeight) {
+//						height = item.getSize().y;
+//						if(height <= 0) {
+							height = item.computeHeight();
+//						}
 					}
+					item.setBounds(1, top, 1, height);
+					top += height + gridLine;
+				} else {
+					if(i.next() == cell.item) doit = true;
 				}
-				items[i].setBounds(-1, top, -1, height);
-				top += height + gridLine;
+			}
+		} else if(SWT.Resize == eventType) {
+			List items = ctree.items(false);
+			int gridLine = ctree.getGridLineWidth();
+			int top = cell.bounds.y;
+			int height = fixedHeight ? getItemHeight() : ((CTreeItem) cell.item).computeHeight();
+			((CTreeItem) cell.item).setBounds(1, top, 1, height);
+			top += height + gridLine;
+
+			boolean doit = false;
+			for(Iterator i = items.iterator(); i.hasNext(); ) {
+				if(doit) {
+					CTreeItem item = (CTreeItem) i.next();
+					if(!fixedHeight) {
+						height = item.computeHeight();
+					}
+					item.setBounds(1, top, 1, height);
+					top += height + gridLine;
+				} else {
+					if(i.next() == cell.item) doit = true;
+				}
 			}
 		}
 	}
 
 	protected void layoutContent(int eventType, AbstractColumn column) {
-		for(Iterator iter = ctree.visibleItems.iterator(); iter.hasNext(); ) {
-			CTreeItem item = (CTreeItem) iter.next();
-			item.setBounds(1,-1,1,-1);
+		if(SWT.Move == eventType) {
+			for(Iterator i = ctree.items(false).iterator(); i.hasNext(); ) {
+				CTreeItem item = (CTreeItem) i.next();
+				item.setBounds(1,-1,-1,-1);
+			}
+		} else {
+			for(Iterator i = ctree.items(false).iterator(); i.hasNext(); ) {
+				CTreeItem item = (CTreeItem) i.next();
+				item.setBounds(1,-1,1,-1);
+			}
 		}
 	}
 
 	protected void layoutContent(int eventType, AbstractItem item) {
-		// TODO Auto-generated method stub
-		
+		layoutContent();
+//		if(SWT.Show == eventType || SWT.Hide == eventType) {
+//			if(ctree.visibleItems.isEmpty()) return;
+//			if(ctree.visibleItems.size() == 1) {
+//				layoutContent();
+//				return;
+//			}
+//			int gridLine = ctree.getGridLineWidth();
+//			CTreeItem prev = ((CTreeItem) item).getItem(true);
+//			int top = prev.cells[0].bounds.y + prev.cells[0].bounds.height + gridLine;
+//			int height = fixedHeight ? getItemHeight() : 0;
+//			for(int i = ctree.visibleItems.indexOf(item); i < items.length; i++) {
+//				if(!fixedHeight) {
+//					height = items[i].getSize().y;
+//					if(height <= 0) {
+//						height = items[i].computeHeight();
+//					}
+//				}
+//				items[i].setBounds(1, top, 1, height);
+//				top += height + gridLine;
+//			}
+//		}
 	}
 }
