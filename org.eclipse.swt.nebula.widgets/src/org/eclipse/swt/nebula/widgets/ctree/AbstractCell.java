@@ -613,14 +613,7 @@ public abstract class AbstractCell {
 		if(!painted || bounds.isEmpty()) return;
 
 		updateColors();
-		layoutInternal();
-		layout();
 
-		scrollPos = container.getScrollPosition();
-		doPaint(gc, new Point(bounds.x-scrollPos.x-ebounds.x,bounds.y-scrollPos.y-ebounds.y));
-	}
-
-	void adjust() {
 		if(boundsOld == null) boundsOld = new Rectangle(-1,-1,0,0);
 		if(scrollPos == null) scrollPos = new Point(-1,-1);
 
@@ -637,8 +630,6 @@ public abstract class AbstractCell {
 			didLayout = true;
 		}
 
-		if(check != null) locateCheck(check);
-		if(control != null) locate(control);
 		Point newSPos = container.getScrollPosition();
 		if(!didLayout && (bounds.x != boundsOld.x || bounds.y != boundsOld.y || 
 				scrollPos.x != newSPos.x || scrollPos.y != newSPos.y)) {
@@ -674,6 +665,8 @@ public abstract class AbstractCell {
 			}
 		}
 		scrollPos = newSPos;
+
+		doPaint(gc, new Point(bounds.x-scrollPos.x-ebounds.x,bounds.y-scrollPos.y-ebounds.y));
 	}
 
 	protected void paintToggle(GC gc, Point offset) {
@@ -934,10 +927,8 @@ public abstract class AbstractCell {
 					firstPainting = false;
 					internalFirstPainting();
 					doFirstPainting();
-					check = createCheck();
 				}
-//				check = createCheck();
-				if(check != null) check.setVisible(true);
+				check = createCheck();
 				if(control == null) {
 					control = createControl(container);
 				} else {
@@ -946,11 +937,10 @@ public abstract class AbstractCell {
 			} else {
 				boundsOld = null;
 				scrollPos = null;
-				if(check != null) check.setVisible(false);
-//				if(check != null) {
-//					check.dispose();
-//					check = null;
-//				}
+				if(check != null) {
+					check.dispose();
+					check = null;
+				}
 				if(control != null) {
 					if(holdControl) {
 						control.setVisible(false);
