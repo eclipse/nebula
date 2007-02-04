@@ -16,7 +16,7 @@ public class TextCell extends CTreeCell {
 		super(item, style| SWT.TITLE);
 	}
 	
-	protected void createTitleContents(final Composite contents, int style) {
+	protected void createControl(final Composite contents, int style) {
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns=1;
 		gridLayout.marginHeight=0;

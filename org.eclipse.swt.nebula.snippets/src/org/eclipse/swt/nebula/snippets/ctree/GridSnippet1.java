@@ -11,9 +11,7 @@
 package org.eclipse.swt.nebula.snippets.ctree;
 
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
@@ -22,12 +20,11 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.nebula.widgets.ctree.CTree;
-import org.eclipse.swt.nebula.widgets.ctree.CTreeColumn;
-import org.eclipse.swt.nebula.widgets.ctree.CTreeItem;
+import org.eclipse.swt.nebula.widgets.grid.Grid;
+import org.eclipse.swt.nebula.widgets.grid.GridColumn;
+import org.eclipse.swt.nebula.widgets.grid.GridItem;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -38,13 +35,13 @@ import org.eclipse.swt.widgets.Shell;
  * For a list of all Nebula CTableTree example snippets see
  * http://www.eclipse.org/nebula/widgets/ctabletree/snippets.php
  */
-public class CTreeSnippet1 {
+public class GridSnippet1 {
 	public static void main (String [] args) {
 		Display display = new Display ();
 		Shell shell = new Shell (display);
 		shell.setLayout(new GridLayout(2, true));
 
-		final CTree tree = new CTree(shell, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		final Grid tree = new Grid(shell, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		data.horizontalSpan = 2;
 		tree.setLayoutData(data);
@@ -55,16 +52,16 @@ public class CTreeSnippet1 {
 		b.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				Date start = new Date();
-
-				for (int i = 0; i < 100; i++) {
-					CTreeItem item = new CTreeItem(tree, SWT.NONE);
-					item.setText(new String[] { "item " + i, "abc", "defghi" });
+				
+				for (int i = 0; i < 1100; i++) {
+					GridItem item = new GridItem(tree, SWT.NONE);
+//					item.setText(new String[] { "item " + i, "abc", "defghi" });
 					for (int j = 0; j < 4; j++) {
-						CTreeItem subItem = new CTreeItem(item, SWT.NONE);
-						subItem.setText(new String[] { "subitem " + j, "jklmnop", "qrs" });
+						GridItem subItem = new GridItem(item, SWT.NONE);
+//						subItem.setText(new String[] { "subitem " + j, "jklmnop", "qrs" });
 						for (int k = 0; k < 4; k++) {
-							CTreeItem subsubItem = new CTreeItem(subItem, SWT.NONE);
-							subsubItem.setText(new String[] { "subsubitem " + k, "tuv", "wxyz" });
+							GridItem subsubItem = new GridItem(subItem, SWT.NONE);
+//							subsubItem.setText(new String[] { "subsubitem " + k, "tuv", "wxyz" });
 						}
 					}
 				}
@@ -94,19 +91,19 @@ public class CTreeSnippet1 {
 			}
 		});
 		
-		tree.setTreeColumn(1);
-		tree.setNativeHeader(true);
+//		tree.setTreeColumn(1);
 		tree.setHeaderVisible(true);
-		tree.setLinesVisible(true);
-		CTreeColumn column1 = new CTreeColumn(tree, SWT.CENTER);
+//		tree.setLinesVisible(true);
+		GridColumn column1 = new GridColumn(tree, SWT.LEFT);
 		column1.setText("Column 1");
 		column1.setWidth(200);
 		column1.setMoveable(true);
-		CTreeColumn column2 = new CTreeColumn(tree, SWT.LEFT);
+		GridColumn column2 = new GridColumn(tree, SWT.CENTER);
 		column2.setText("Column 2");
 		column2.setWidth(200);
 		column2.setMoveable(true);
-		CTreeColumn column3 = new CTreeColumn(tree, SWT.RIGHT);
+		column2.setTree(true);
+		GridColumn column3 = new GridColumn(tree, SWT.RIGHT);
 		column3.setText("Column 3");
 		column3.setWidth(200);
 		column3.setMoveable(true);

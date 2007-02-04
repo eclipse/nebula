@@ -12,8 +12,9 @@ package org.eclipse.swt.nebula.snippets.ctree;
 
 import java.text.BreakIterator;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.nebula.widgets.ctree.AbstractContainer;
 import org.eclipse.swt.nebula.widgets.ctree.AbstractItem;
 import org.eclipse.swt.nebula.widgets.ctree.CTreeCell;
 
@@ -24,19 +25,17 @@ import org.eclipse.swt.nebula.widgets.ctree.CTreeCell;
  */
 public class MultiLineCell extends CTreeCell {
 
-	private String text;
+	private String originalText;
 	
 	public MultiLineCell(AbstractItem item, int style) {
 		super(item, style);
 	}
 
-	private String format(String text) {
+	private String format(String text, int width) {
 		if(text == null || text.length() == 0) return "";
 		
-		int maxLen = getTitleClientArea().width;
-		
-		if((!toggleVisible && AbstractContainer.staticGC.stringExtent(text).x < maxLen) ||
-				(toggleVisible && AbstractContainer.staticGC.stringExtent(text).x < maxLen+toggleBounds.width)) {
+		if((!toggleVisible && internalGC().stringExtent(text).x < width) ||
+				(toggleVisible && internalGC().stringExtent(text).x < width+toggleBounds.width)) {
 			if(open) open = false;
 			if(toggleVisible) setToggleVisible(false);
 			return text;
@@ -45,7 +44,7 @@ public class MultiLineCell extends CTreeCell {
 		if(!open) {
 			if(!toggleVisible) setToggleVisible(true);
 			String str = text.substring(0, 1) + "...";
-			for(int i = 2; i < text.length() && AbstractContainer.staticGC.stringExtent(str).x < maxLen; i++) {
+			for(int i = 2; i < text.length() && internalGC().stringExtent(str).x < width; i++) {
 				str = text.substring(0, i) + "...";
 			}
 			return str;
@@ -59,10 +58,10 @@ public class MultiLineCell extends CTreeCell {
 		    String str = "";
 		    while(end != BreakIterator.DONE) {
 				String word = text.substring(start,end);
-				lineLen = lineLen + AbstractContainer.staticGC.stringExtent(word).x;
-				if(lineLen >= maxLen && str.length() > 0) {
+				lineLen = lineLen + internalGC().stringExtent(word).x;
+				if(lineLen >= width && str.length() > 0) {
 					str += "\n";
-				    lineLen = AbstractContainer.staticGC.stringExtent(word).x;
+				    lineLen = internalGC().stringExtent(word).x;
 				}
 				str += word;
 				start = end;
@@ -71,19 +70,23 @@ public class MultiLineCell extends CTreeCell {
 		    return str;
 		}
 	}
-	
-	public void setBounds(Rectangle bounds) {
-		super.setBounds(bounds);
-		if(text != null) setText(text);
+
+	protected void layout() {
+		int width = getClientArea().width;
+		super.setText(format(originalText, width));
 	}
-	
-	public void setOpen(boolean open) {
-		super.setOpen(open);
-		setText(text);
+
+	public Point computeTextSize(int wHint, int hHint) {
+		if(originalText != null) {
+			String str = format(originalText, wHint);
+			return internalGC().textExtent(str);
+		} else {
+			return new Point(0,0);
+		}
 	}
 	
 	public void setText(String string) {
-		text = string;
-		super.setText(format(text));
+		originalText = string;
+		redraw();
 	}
 }
