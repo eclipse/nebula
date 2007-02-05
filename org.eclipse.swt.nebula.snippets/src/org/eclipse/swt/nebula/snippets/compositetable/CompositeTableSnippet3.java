@@ -3,8 +3,8 @@ package org.eclipse.swt.nebula.snippets.compositetable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.nebula.widgets.compositetable.CompositeTable;
+import org.eclipse.swt.nebula.widgets.compositetable.DeleteAdapter;
 import org.eclipse.swt.nebula.widgets.compositetable.GridRowLayout;
-import org.eclipse.swt.nebula.widgets.compositetable.IDeleteHandler;
 import org.eclipse.swt.nebula.widgets.compositetable.IInsertHandler;
 import org.eclipse.swt.nebula.widgets.compositetable.IRowContentProvider;
 import org.eclipse.swt.nebula.widgets.compositetable.RowFocusAdapter;
@@ -116,7 +116,7 @@ public class CompositeTableSnippet3 {
 	    });
 	    
 	    // Ctrl-Del is the default delete key binding.
-	    table.addDeleteHandler(new IDeleteHandler() {
+	    table.addDeleteHandler(new DeleteAdapter() {
 			public boolean canDelete(int rowInCollection) {
 				return true;	// or show a message box, etc.
 			}
@@ -129,6 +129,10 @@ public class CompositeTableSnippet3 {
 						swtCommitters, rowInCollection, 
 						oldCommitters.length - rowInCollection - 1);
 			}
+            
+            public void rowDeleted(int rowInCollection) {
+                System.out.println("Row " + rowInCollection + " deleted.");
+            }
 	    });
 	    
 	    shell.setSize(500, 150);
