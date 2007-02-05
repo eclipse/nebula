@@ -1197,6 +1197,7 @@ class InternalCompositeTable extends Composite implements Listener {
 						internalSetSelection(currentColumn, currentRow, true);
 					}
 				}
+                fireRowDeletedEvent();
 				return;
 			default:
 				return;
@@ -1732,7 +1733,16 @@ class InternalCompositeTable extends Composite implements Listener {
 		return true;
 	}
 
-	/**
+    private void fireRowDeletedEvent() {
+        int absoluteRow = topRow + currentRow;
+        for (Iterator deleteHandlersIter = parent.deleteHandlers.iterator(); deleteHandlersIter
+                .hasNext();) {
+            IDeleteHandler handler = (IDeleteHandler) deleteHandlersIter.next();
+            handler.rowDeleted(absoluteRow);
+        }
+    }
+
+    /**
 	 * Request that the model insert a new row into itself.
 	 * 
 	 * @return The 0-based offset of the new row from the start of the

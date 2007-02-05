@@ -34,4 +34,12 @@ public interface IDeleteHandler {
 	 * @param rowInCollection The row in the collection to delete (0-based).
 	 */
 	public void deleteRow(int rowInCollection);
+    
+    /**
+     * Method rowDeleted.  This method is called after the specified row has
+     * been successfully deleted.
+     * 
+     * @param rowInCollection The row in the collection that was deleted (0-based).
+     */
+    public void rowDeleted(int rowInCollection);
 }
