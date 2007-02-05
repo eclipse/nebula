@@ -1664,7 +1664,7 @@ class InternalCompositeTable extends Composite implements Listener {
 	 * @return true if all listeners permit the row change; false otherwise.
 	 */
 	private boolean fireRequestRowChangeEvent() {
-		if (rows.size() < 1 || currentRow < 1) {
+		if (rows.size() < 1 || (currentRow < 1 && topRow != 0)) {
 			return true;
 		}
 		if (currentRow > rows.size() - 1) {
@@ -1691,7 +1691,7 @@ class InternalCompositeTable extends Composite implements Listener {
 	 * Indicate to listeners that the focus is about to leave the current row.
 	 */
 	private void fireRowDepartEvent() {
-		if (rows.size() < 1 || currentRow < 1) {
+		if (rows.size() < 1 || (currentRow < 1 && topRow != 0)) {
 			return;
 		}
 		for (Iterator rowChangeListenersIter = parent.rowFocusListeners
