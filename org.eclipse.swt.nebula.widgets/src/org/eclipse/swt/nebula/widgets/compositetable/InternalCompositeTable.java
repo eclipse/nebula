@@ -995,10 +995,12 @@ class InternalCompositeTable extends Composite implements Listener {
 	private Listener displayKeyDownFilter = new Listener() {
 		public void handleEvent(Event event) {
 			if (rowControl.getClass().isAssignableFrom(event.widget.getClass())) {
-				makeFocusedRowVisible();
+				doMakeFocusedRowVisible();
 			}
 		}
 	};
+    
+
 	
 	/**
 	 * Handle a keyPressed event on any row control.
@@ -1009,195 +1011,21 @@ class InternalCompositeTable extends Composite implements Listener {
 	 *            the actual KeyEvent
 	 */
 	public void keyPressed(TableRow sender, KeyEvent e) {
-		if (makeFocusedRowVisible()) return;
+		if (doMakeFocusedRowVisible()) return;
 		
 		if ((e.stateMask & SWT.CONTROL) != 0) {
 			switch (e.keyCode) {
 			case SWT.HOME:
-				if (topRow <= 0) {
-					return;
-				}
-
-				if (!fireRequestRowChangeEvent()) {
-					return;
-				}
-				needToRequestRC = false;
-
-				deselect(e.widget);
-
-				// If the focus is already in the top visible row, we will need
-				// to explicitly
-				// fire an arrive event.
-				boolean needToArrive = true;
-				if (currentRow > 0) {
-					needToArrive = false;
-				}
-
-				setTopRow(0);
-
-				if (needToArrive) {
-					internalSetSelection(currentColumn, 0, true);
-				} else {
-					internalSetSelection(currentColumn, 0, false);
-				}
+                doFocusInitialRow();
 				return;
 			case SWT.END:
-				if (topRow + numRowsVisible < numRowsInCollection) {
-					if (!fireRequestRowChangeEvent()) {
-						return;
-					}
-					needToRequestRC = false;
-
-					deselect(e.widget);
-
-					// If the focus is already in the last visible row, we will
-					// need to explicitly
-					// fire an arrive event.
-					needToArrive = true;
-					if (currentRow < numRowsVisible - 1) {
-						needToArrive = false;
-					}
-
-					setTopRow(numRowsInCollection - numRowsVisible);
-
-					if (needToArrive) {
-						internalSetSelection(currentColumn, numRowsVisible - 1,
-								true);
-					} else {
-						internalSetSelection(currentColumn, numRowsVisible - 1,
-								false);
-					}
-				}
+                doFocusLastRow();
 				return;
 			case SWT.INSERT:
-				// If no insertHandler has been registered, bail out
-				if (parent.insertHandlers.size() < 1) {
-					return;
-				}
-
-				// Make sure we can leave the current row
-				if (!fireRequestRowChangeEvent()) {
-					return;
-				}
-				needToRequestRC = false;
-
-				// Insert the new object
-				int newRowPosition = fireInsertEvent();
-				if (newRowPosition < 0) {
-					// This should never happen, but...
-					return;
-				}
-
-				disposeEmptyTablePlaceholder();
-
-				// If the current widget has a selection, deselect it
-				deselect(e.widget);
-
-				// If the new row is in the visible space, refresh it
-				if (topRow <= newRowPosition
-						&& numRowsVisible > newRowPosition - topRow) {
-					insertRowAt(newRowPosition - topRow);
-					++numRowsInCollection;
-					updateVisibleRows();
-					int newRowNumber = newRowPosition - topRow;
-					if (newRowNumber != currentRow) {
-						internalSetSelection(currentColumn, newRowNumber, false);
-					} else {
-						internalSetSelection(currentColumn, newRowNumber, true);
-					}
-					return;
-				}
-
-				// else...
-
-				++numRowsInCollection;
-
-				// If the new row is above us, scroll up to it
-				if (newRowPosition < topRow + currentRow) {
-					setTopRow(newRowPosition);
-					Display.getDefault().asyncExec(new Runnable() {
-						public void run() {
-							updateVisibleRows();
-							if (currentRow != 0) {
-								internalSetSelection(currentColumn, 0, false);
-							} else {
-								internalSetSelection(currentColumn, 0, true);
-							}
-						}
-					});
-				} else {
-					// If we're appending
-					if (numRowsInDisplay > numRowsVisible) {
-						updateVisibleRows();
-						int newRowNumber = newRowPosition - topRow;
-						if (newRowNumber != currentRow) {
-							internalSetSelection(currentColumn, newRowNumber,
-									false);
-						} else {
-							internalSetSelection(currentColumn, newRowNumber,
-									true);
-						}
-					} else {
-						// It's somewhere in the middle below us; scroll down to
-						// it
-						setTopRow(newRowPosition - numRowsVisible + 1);
-						int newRowNumber = numRowsVisible - 1;
-						if (newRowNumber != currentRow) {
-							internalSetSelection(currentColumn, newRowNumber,
-									false);
-						} else {
-							internalSetSelection(currentColumn, newRowNumber,
-									true);
-						}
-					}
-				}
+                doInsertRow();
 				return;
 			case SWT.DEL:
-				if (fireDeleteEvent()) {
-					// We know the object is gone if we made it here, so now
-					// refresh the display...
-					--numRowsInCollection;
-
-					// If we deleted the last row in the list
-					if (currentRow >= numRowsVisible - 1) {
-						// If that wasn't the last row in the collection, move
-						// the focus
-						if (numRowsInCollection > 0) {
-
-							// If we're only displaying one row, scroll first
-							if (currentRow < 1) {
-								needToRequestRC = false;
-								deleteRowAt(currentRow);
-								setTopRow(topRow - 1);
-								internalSetSelection(currentColumn, currentRow,
-										true);
-							} else {
-								needToRequestRC = false;
-								internalSetSelection(currentColumn,
-										currentRow - 1, false);
-								Display.getCurrent().asyncExec(new Runnable() {
-									public void run() {
-										deleteRowAt(currentRow + 1);
-										updateVisibleRows();
-									}
-								});
-							}
-						} else {
-							// Otherwise, show the placeholder object and give
-							// it focus
-							deleteRowAt(currentRow);
-							--numRowsVisible;
-							createEmptyTablePlaceholer();
-							emptyTablePlaceholder.setFocus();
-						}
-					} else {
-						// else, keep the focus where it was
-						deleteRowAt(currentRow);
-						updateVisibleRows();
-						internalSetSelection(currentColumn, currentRow, true);
-					}
-				}
-                fireRowDeletedEvent();
+                doDeleteRow();
 				return;
 			default:
 				return;
@@ -1205,90 +1033,16 @@ class InternalCompositeTable extends Composite implements Listener {
 		}
 		switch (e.keyCode) {
 		case SWT.ARROW_UP:
-			if (maxRowsVisible <= 1)
-				return;
-
-			if (currentRow > 0) {
-				if (!fireRequestRowChangeEvent()) {
-					return;
-				}
-				needToRequestRC = false;
-
-				deselect(e.widget);
-
-				internalSetSelection(currentColumn, currentRow - 1, false);
-				return;
-			}
-			if (topRow > 0) {
-				if (!fireRequestRowChangeEvent()) {
-					return;
-				}
-				needToRequestRC = false;
-
-				deselect(e.widget);
-
-				setTopRow(topRow - 1);
-				internalSetSelection(currentColumn, currentRow, true);
-				return;
-			}
+            doRowUp();
 			return;
 		case SWT.ARROW_DOWN:
-			if (maxRowsVisible <= 1)
-				return;
-
-			if (currentRow < numRowsVisible - 1) {
-				if (!fireRequestRowChangeEvent()) {
-					return;
-				}
-				needToRequestRC = false;
-
-				deselect(e.widget);
-
-				internalSetSelection(currentColumn, currentRow + 1, false);
-				return;
-			}
-			if (topRow + numRowsVisible < numRowsInCollection) {
-				if (!fireRequestRowChangeEvent()) {
-					return;
-				}
-				needToRequestRC = false;
-
-				deselect(e.widget);
-
-				setTopRow(topRow + 1);
-				internalSetSelection(currentColumn, currentRow, true);
-				return;
-			}
+            doRowDown();
 			return;
 		case SWT.PAGE_UP:
-			if (topRow > 0) {
-				if (!fireRequestRowChangeEvent()) {
-					return;
-				}
-				needToRequestRC = false;
-
-				int newTopRow = topRow - numRowsInDisplay;
-				if (newTopRow < 0) {
-					newTopRow = 0;
-				}
-				setTopRow(newTopRow);
-				internalSetSelection(currentColumn, currentRow, true);
-			}
+            doPageUp();
 			return;
 		case SWT.PAGE_DOWN:
-			if (topRow + numRowsVisible < numRowsInCollection) {
-				if (!fireRequestRowChangeEvent()) {
-					return;
-				}
-				needToRequestRC = false;
-
-				int newTopRow = topRow + numRowsVisible;
-				if (newTopRow >= numRowsInCollection - 1) {
-					newTopRow = numRowsInCollection - 1;
-				}
-				setTopRow(newTopRow);
-				internalSetSelection(currentColumn, currentRow, true);
-			}
+            doPageDown();
 			return;
 		}
 	}
@@ -1302,7 +1056,7 @@ class InternalCompositeTable extends Composite implements Listener {
 	 *            The SWT TraverseEvent
 	 */
 	public void keyTraversed(TableRow sender, TraverseEvent e) {
-		if (makeFocusedRowVisible()) return;
+		if (doMakeFocusedRowVisible()) return;
 
 		if (parent.isTraverseOnTabsEnabled()) {
 			if (e.detail == SWT.TRAVERSE_TAB_NEXT) {
@@ -1342,7 +1096,7 @@ class InternalCompositeTable extends Composite implements Listener {
 	 * 
 	 * @return true if the display needed to be scrolled; false otherwise
 	 */
-	public boolean makeFocusedRowVisible() {
+	public boolean doMakeFocusedRowVisible() {
 		if (numRowsVisible < 1) {
 			return false;
 		}
@@ -2065,6 +1819,295 @@ class InternalCompositeTable extends Composite implements Listener {
 			}
 		});
 	}
+
+    public void doFocusInitialRow() {
+        if (topRow <= 0) {
+            return;
+        }
+
+        if (!fireRequestRowChangeEvent()) {
+            return;
+        }
+        needToRequestRC = false;
+
+        Widget widget = getDisplay().getFocusControl();
+        deselect(widget);  // Used to be e.widget
+
+        // If the focus is already in the top visible row, we will need
+        // to explicitly
+        // fire an arrive event.
+        boolean needToArrive = true;
+        if (currentRow > 0) {
+            needToArrive = false;
+        }
+
+        setTopRow(0);
+
+        if (needToArrive) {
+            internalSetSelection(currentColumn, 0, true);
+        } else {
+            internalSetSelection(currentColumn, 0, false);
+        }
+    }
+
+    public void doFocusLastRow() {
+        if (topRow + numRowsVisible < numRowsInCollection) {
+            if (!fireRequestRowChangeEvent()) {
+                return;
+            }
+            needToRequestRC = false;
+
+            Widget widget = getDisplay().getFocusControl();
+            deselect(widget);  // Used to be e.widget
+
+            // If the focus is already in the last visible row, we will
+            // need to explicitly
+            // fire an arrive event.
+            boolean needToArrive = true;
+            if (currentRow < numRowsVisible - 1) {
+                needToArrive = false;
+            }
+
+            setTopRow(numRowsInCollection - numRowsVisible);
+
+            if (needToArrive) {
+                internalSetSelection(currentColumn, numRowsVisible - 1,
+                        true);
+            } else {
+                internalSetSelection(currentColumn, numRowsVisible - 1,
+                        false);
+            }
+        }
+    }
+
+    public void doPageUp() {
+        if (topRow > 0) {
+            if (!fireRequestRowChangeEvent()) {
+                return;
+            }
+            needToRequestRC = false;
+
+            int newTopRow = topRow - numRowsInDisplay;
+            if (newTopRow < 0) {
+                newTopRow = 0;
+            }
+            setTopRow(newTopRow);
+            internalSetSelection(currentColumn, currentRow, true);
+        }
+    }
+
+    public void doPageDown() {
+        if (topRow + numRowsVisible < numRowsInCollection) {
+            if (!fireRequestRowChangeEvent()) {
+                return;
+            }
+            needToRequestRC = false;
+
+            int newTopRow = topRow + numRowsVisible;
+            if (newTopRow >= numRowsInCollection - 1) {
+                newTopRow = numRowsInCollection - 1;
+            }
+            setTopRow(newTopRow);
+            internalSetSelection(currentColumn, currentRow, true);
+        }
+    }
+
+    public void doRowUp() {
+        if (maxRowsVisible <= 1)
+            return;
+
+        if (currentRow > 0) {
+            if (!fireRequestRowChangeEvent()) {
+                return;
+            }
+            needToRequestRC = false;
+
+            Widget widget = getDisplay().getFocusControl();
+            deselect(widget);  // Used to be e.widget
+
+            internalSetSelection(currentColumn, currentRow - 1, false);
+            return;
+        }
+        if (topRow > 0) {
+            if (!fireRequestRowChangeEvent()) {
+                return;
+            }
+            needToRequestRC = false;
+
+            Widget widget = getDisplay().getFocusControl();
+            deselect(widget);  // Used to be e.widget
+
+            setTopRow(topRow - 1);
+            internalSetSelection(currentColumn, currentRow, true);
+            return;
+        }
+    }
+
+    public void doRowDown() {
+        if (maxRowsVisible <= 1)
+            return;
+
+        if (currentRow < numRowsVisible - 1) {
+            if (!fireRequestRowChangeEvent()) {
+                return;
+            }
+            needToRequestRC = false;
+
+            Widget widget = getDisplay().getFocusControl();
+            deselect(widget);  // Used to be e.widget
+
+            internalSetSelection(currentColumn, currentRow + 1, false);
+            return;
+        }
+        if (topRow + numRowsVisible < numRowsInCollection) {
+            if (!fireRequestRowChangeEvent()) {
+                return;
+            }
+            needToRequestRC = false;
+
+            Widget widget = getDisplay().getFocusControl();
+            deselect(widget);  // Used to be e.widget
+
+            setTopRow(topRow + 1);
+            internalSetSelection(currentColumn, currentRow, true);
+            return;
+        }
+    }
+
+    public boolean doInsertRow() {
+        // If no insertHandler has been registered, bail out
+        if (parent.insertHandlers.size() < 1) {
+            return false;
+        }
+
+        // Make sure we can leave the current row
+        if (!fireRequestRowChangeEvent()) {
+            return false;
+        }
+        needToRequestRC = false;
+
+        // Insert the new object
+        int newRowPosition = fireInsertEvent();
+        if (newRowPosition < 0) {
+            // This should never happen, but...
+            throw new IllegalArgumentException("Insert < row 0???");
+        }
+
+        disposeEmptyTablePlaceholder();
+
+        // If the current widget has a selection, deselect it
+        Widget widget = getDisplay().getFocusControl();
+        deselect(widget);  // Used to be e.widget
+
+        // If the new row is in the visible space, refresh it
+        if (topRow <= newRowPosition
+                && numRowsVisible > newRowPosition - topRow) {
+            insertRowAt(newRowPosition - topRow);
+            ++numRowsInCollection;
+            updateVisibleRows();
+            int newRowNumber = newRowPosition - topRow;
+            if (newRowNumber != currentRow) {
+                internalSetSelection(currentColumn, newRowNumber, false);
+            } else {
+                internalSetSelection(currentColumn, newRowNumber, true);
+            }
+            return true;
+        }
+
+        // else...
+
+        ++numRowsInCollection;
+
+        // If the new row is above us, scroll up to it
+        if (newRowPosition < topRow + currentRow) {
+            setTopRow(newRowPosition);
+            Display.getDefault().asyncExec(new Runnable() {
+                public void run() {
+                    updateVisibleRows();
+                    if (currentRow != 0) {
+                        internalSetSelection(currentColumn, 0, false);
+                    } else {
+                        internalSetSelection(currentColumn, 0, true);
+                    }
+                }
+            });
+        } else {
+            // If we're appending
+            if (numRowsInDisplay > numRowsVisible) {
+                updateVisibleRows();
+                int newRowNumber = newRowPosition - topRow;
+                if (newRowNumber != currentRow) {
+                    internalSetSelection(currentColumn, newRowNumber,
+                            false);
+                } else {
+                    internalSetSelection(currentColumn, newRowNumber,
+                            true);
+                }
+            } else {
+                // It's somewhere in the middle below us; scroll down to
+                // it
+                setTopRow(newRowPosition - numRowsVisible + 1);
+                int newRowNumber = numRowsVisible - 1;
+                if (newRowNumber != currentRow) {
+                    internalSetSelection(currentColumn, newRowNumber,
+                            false);
+                } else {
+                    internalSetSelection(currentColumn, newRowNumber,
+                            true);
+                }
+            }
+        }
+        return false;
+    }
+    
+    public boolean doDeleteRow() {
+        if (fireDeleteEvent()) {
+            // We know the object is gone if we made it here, so now
+            // refresh the display...
+            --numRowsInCollection;
+
+            // If we deleted the last row in the list
+            if (currentRow >= numRowsVisible - 1) {
+                // If that wasn't the last row in the collection, move
+                // the focus
+                if (numRowsInCollection > 0) {
+
+                    // If we're only displaying one row, scroll first
+                    if (currentRow < 1) {
+                        needToRequestRC = false;
+                        deleteRowAt(currentRow);
+                        setTopRow(topRow - 1);
+                        internalSetSelection(currentColumn, currentRow,
+                                true);
+                    } else {
+                        needToRequestRC = false;
+                        internalSetSelection(currentColumn,
+                                currentRow - 1, false);
+                        Display.getCurrent().asyncExec(new Runnable() {
+                            public void run() {
+                                deleteRowAt(currentRow + 1);
+                                updateVisibleRows();
+                            }
+                        });
+                    }
+                } else {
+                    // Otherwise, show the placeholder object and give
+                    // it focus
+                    deleteRowAt(currentRow);
+                    --numRowsVisible;
+                    createEmptyTablePlaceholer();
+                    emptyTablePlaceholder.setFocus();
+                }
+            } else {
+                // else, keep the focus where it was
+                deleteRowAt(currentRow);
+                updateVisibleRows();
+                internalSetSelection(currentColumn, currentRow, true);
+            }
+            fireRowDeletedEvent();
+        }
+        return false;
+    }
 
 
 }

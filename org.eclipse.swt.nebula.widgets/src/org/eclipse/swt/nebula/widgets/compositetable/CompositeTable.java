@@ -14,9 +14,16 @@ package org.eclipse.swt.nebula.widgets.compositetable;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Canvas;
@@ -572,12 +579,89 @@ public class CompositeTable extends Canvas {
 	 * 
 	 * @return true if the display needed to be scrolled; false otherwise
 	 */
-	public boolean makeFocusedRowVisible() {
+	public boolean doMakeFocusedRowVisible() {
 		if (contentPane != null) {
-			return contentPane.makeFocusedRowVisible();
+			return contentPane.doMakeFocusedRowVisible();
 		}
 		return false;
 	}
+    
+    /**
+     * Method doFocusInitialRow.  Set the focus on row 0 in the collection.
+     */
+    public void doFocusInitialRow() {
+        if (contentPane == null) {
+            return;
+        }
+        contentPane.doFocusInitialRow();
+    }
+    
+    /**
+     * Method doFocusLastRow.  Set the focus on row collection.size()-1.
+     */
+    public void doFocusLastRow() {
+        if (contentPane == null) {
+            return;
+        }
+        contentPane.doFocusLastRow();
+    }
+    
+    /**
+     * Method doPageUp.  Move the focus one page earlier in the collection.
+     * The page size is normally the same as getNumeRowsVisible().  
+     */
+    public void doPageUp() {
+        if (contentPane == null) {
+            return;
+        }
+        contentPane.doPageUp();
+    }
+    
+    /**
+     * Method doPageDown.  Move the focus one page later in the collection.
+     * The page size is normally the same as getNumeRowsVisible().  
+     */
+    public void doPageDown() {
+        if (contentPane == null) {
+            return;
+        }
+        contentPane.doPageDown();
+    }
+    
+    /**
+     * Method doRowUp.  Move the focus one row earlier in the collection if
+     * it is not already on row 0.
+     */
+    public void doRowUp() {
+        if (contentPane == null) {
+            return;
+        }
+        contentPane.doRowUp();
+    }
+    
+    /**
+     * Method doRowDown.
+     */
+    public void doRowDown() {
+        if (contentPane == null) {
+            return;
+        }
+        contentPane.doRowDown();
+    }
+    
+    public boolean doInsertRow() {
+        if (contentPane == null) {
+            return false;
+        }
+        return contentPane.doInsertRow();
+    }
+    
+    public boolean doDeleteRow() {
+        if (contentPane == null) {
+            return false;
+        }
+        return contentPane.doDeleteRow();
+    }
 
 	/**
 	 * Method refreshAllRows. Refresh all visible rows in the CompositeTable
@@ -997,5 +1081,89 @@ public class CompositeTable extends Canvas {
 	public void setTraverseOnTabsEnabled(boolean enabled) {
 		this.traverseOnTabsEnabled = enabled;
 	}
+    
+    private List keyEventListeners = new ArrayList();
+    
+    /** 
+     * {@inheritDoc}
+     */
+    public void addKeyListener(KeyListener listener) {
+        keyEventListeners.add(listener);
+    }
 
+    /** 
+     * {@inheritDoc}
+     */
+    public void removeKeyListener(KeyListener listener) {
+        keyEventListeners.remove(listener);
+    }
+    
+    void fireKeyPressed(KeyEvent e) {
+        for (Iterator i = keyEventListeners.iterator(); i.hasNext();) {
+            KeyListener l = (KeyListener) i.next();
+            l.keyPressed(e);
+        }
+    }
+    
+    void fireKeyReleased(KeyEvent e) {
+        for (Iterator i = keyEventListeners.iterator(); i.hasNext();) {
+            KeyListener l = (KeyListener) i.next();
+            l.keyReleased(e);
+        }
+    }
+    
+    private List mouseListeners = new ArrayList();
+    
+    /** 
+     * {@inheritDoc}
+     */
+    public void addMouseListener(MouseListener listener) {
+        mouseListeners.add(listener);
+    }
+    
+    /** 
+     * {@inheritDoc}
+     */
+    public void removeMouseListener(MouseListener listener) {
+        mouseListeners.remove(listener);
+    }
+
+    void fireMouseDown(MouseEvent e) {
+        for (Iterator i = mouseListeners.iterator(); i.hasNext();) {
+            MouseListener l = (MouseListener) i.next();
+            l.mouseDown(e);
+        }
+    }
+
+    void fireMouseUp(MouseEvent e) {
+        for (Iterator i = mouseListeners.iterator(); i.hasNext();) {
+            MouseListener l = (MouseListener) i.next();
+            l.mouseUp(e);
+        }
+    }
+
+    void fireMouseDouble(MouseEvent e) {
+        for (Iterator i = mouseListeners.iterator(); i.hasNext();) {
+            MouseListener l = (MouseListener) i.next();
+            l.mouseDoubleClick(e);
+        }
+    }
+
+    private List mouseMoveListeners = new ArrayList();
+    
+    public void addMouseMoveListener(MouseMoveListener listener) {
+        mouseMoveListeners.add(listener);
+    }
+    
+    public void removeMouseMoveListener(MouseMoveListener listener) {
+        mouseMoveListeners.remove(listener);
+    }
+
+    void fireMouseMove(MouseEvent e) {
+        for (Iterator i = mouseMoveListeners.iterator(); i.hasNext();) {
+            MouseMoveListener l = (MouseMoveListener) i.next();
+            l.mouseMove(e);
+        }
+    }
+    
 } // @jve:decl-index=0:visual-constraint="10,10"
