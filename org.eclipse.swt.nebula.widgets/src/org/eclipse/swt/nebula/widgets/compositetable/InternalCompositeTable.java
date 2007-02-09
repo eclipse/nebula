@@ -1623,7 +1623,7 @@ class InternalCompositeTable extends Composite implements Listener {
 	 * @return the current TableRow
 	 */
 	private TableRow currentRow() {
-		if (currentRow > rows.size() - 1) {
+		if (currentRow < 0 || currentRow > rows.size() - 1) {
 			return null;
 		}
 		return (TableRow) rows.get(currentRow);
