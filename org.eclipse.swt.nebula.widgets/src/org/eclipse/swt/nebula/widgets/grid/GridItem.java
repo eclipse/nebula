@@ -935,6 +935,7 @@ public class GridItem extends Item
         }
 
         defaultBackground = background;
+        parent.redraw();
     }
 
     /**
@@ -964,6 +965,7 @@ public class GridItem extends Item
         }
         ensureSize(backgrounds);
         backgrounds.set(index, background);
+        parent.redraw();
     }
 
     /**
@@ -981,6 +983,7 @@ public class GridItem extends Item
     {
         checkWidget();
         setChecked(0, checked);
+        parent.redraw();
     }
 
     /**
@@ -1000,6 +1003,7 @@ public class GridItem extends Item
         checkWidget();
         ensureSize(checks);
         checks.set(index, new Boolean(checked));
+        parent.redraw();
     }
 
     /**
@@ -1020,6 +1024,7 @@ public class GridItem extends Item
         checkWidget();
         ensureSize(columnSpans);
         columnSpans.set(index, new Integer(span));
+        parent.redraw();
     }
 
     /**
@@ -1170,6 +1175,7 @@ public class GridItem extends Item
             SWT.error(SWT.ERROR_INVALID_ARGUMENT);
         }
         defaultFont = f;
+        parent.redraw();
     }
 
     /**
@@ -1199,6 +1205,7 @@ public class GridItem extends Item
         }
         ensureSize(fonts);
         fonts.set(index, font);
+        parent.redraw();
     }
 
     /**
@@ -1226,6 +1233,7 @@ public class GridItem extends Item
             SWT.error(SWT.ERROR_INVALID_ARGUMENT);
         }
         defaultForeground = foreground;
+        parent.redraw();
     }
 
     /**
@@ -1255,6 +1263,7 @@ public class GridItem extends Item
         }
         ensureSize(foregrounds);
         foregrounds.set(index, foreground);
+        parent.redraw();
     }
 
     /**
@@ -1274,6 +1283,7 @@ public class GridItem extends Item
     {
         checkWidget();
         setGrayed(0, grayed);
+        parent.redraw();
     }
 
     /**
@@ -1295,6 +1305,7 @@ public class GridItem extends Item
         checkWidget();
         ensureSize(grayeds);
         grayeds.set(index, new Boolean(grayed));
+        parent.redraw();
     }
 
     /**
@@ -1303,6 +1314,7 @@ public class GridItem extends Item
     public void setImage(Image image)
     {
         setImage(0, image);
+        parent.redraw();
     }
 
     /**
@@ -1330,6 +1342,7 @@ public class GridItem extends Item
         }
         ensureSize(images);
         images.set(index, image);
+        parent.redraw();
     }
 
     /**
@@ -1357,6 +1370,7 @@ public class GridItem extends Item
         }
         ensureSize(texts);
         texts.set(index, text);
+        parent.redraw();
     }
     
     /**
@@ -1365,6 +1379,7 @@ public class GridItem extends Item
     public void setText(String string)
     {
         setText(0, string);
+        parent.redraw();
     }
 
     /**
@@ -1530,7 +1545,7 @@ public class GridItem extends Item
             
             parent.recalculateRowHeaderWidth(this,oldWidth,newWidth);
         }
-        
+        parent.redraw();        
     }
 
 }
