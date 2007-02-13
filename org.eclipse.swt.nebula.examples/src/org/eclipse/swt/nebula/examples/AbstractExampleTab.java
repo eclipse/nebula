@@ -32,11 +32,14 @@ import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.events.TypedEvent;
 import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -94,6 +97,9 @@ public abstract class AbstractExampleTab
     private boolean hFill = false;
     private Button listen;
     
+    private Color modifiedBack;
+    private Color modifiedFore;
+    
 
     /**
      * Create the parameters section that will display to the right of the example widget.  
@@ -124,6 +130,13 @@ public abstract class AbstractExampleTab
             controlExample.dispose();
         
         controlExample = createControl(controlArea);
+        
+        if (modifiedBack != null)
+            controlExample.setBackground(modifiedBack);
+
+        if (modifiedFore != null)
+            controlExample.setForeground(modifiedFore);
+
         
         updateListeners();
         
@@ -203,6 +216,12 @@ public abstract class AbstractExampleTab
         thirdParmsArea.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         GridLayoutFactory.swtDefaults().margins(0,0).numColumns(2).applyTo(thirdParmsArea);
         
+        Group colorsGroup = new Group(thirdParmsArea,SWT.SHADOW_ETCHED_IN);
+        colorsGroup.setText("Colors");
+        colorsGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
+        
+        createColors(colorsGroup);
+        
         Group backModeGroup = new Group(thirdParmsArea,SWT.SHADOW_ETCHED_IN);
         backModeGroup.setText("Background Mode on Parent");
         backModeGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -223,6 +242,47 @@ public abstract class AbstractExampleTab
         createListeners(listenersGroup);
         
         recreateExample();
+    }
+    
+    private void createColors(Composite parent)
+    {
+        parent.setLayout(new GridLayout());
+        Button back = new Button(parent,SWT.PUSH);
+        back.setText("Background...");
+        back.addListener(SWT.Selection,new Listener()
+        {        
+            public void handleEvent(Event event)
+            {
+               ColorDialog cd = new ColorDialog(Display.getCurrent().getActiveShell());
+               RGB newRGB = cd.open();
+               if (newRGB != null)
+               {
+                   Color newColor = new Color(Display.getCurrent(),newRGB);
+                   controlExample.setBackground(newColor);
+                   if (modifiedBack != null)
+                       modifiedBack.dispose();
+                   modifiedBack = newColor;
+               }
+            }        
+        });
+        Button fore = new Button(parent,SWT.PUSH);
+        fore.setText("Foreground...");
+        fore.addListener(SWT.Selection, new Listener()
+        {
+            public void handleEvent(Event event)
+            {
+                ColorDialog cd = new ColorDialog(Display.getCurrent().getActiveShell());
+                RGB newRGB = cd.open();
+                if (newRGB != null)
+                {
+                    Color newColor = new Color(Display.getCurrent(),newRGB);
+                    controlExample.setForeground(newColor);
+                    if (modifiedFore != null)
+                        modifiedFore.dispose();
+                    modifiedFore = newColor;
+                }
+            }        
+        });        
     }
     
     private void createBackMode(Composite parent)
