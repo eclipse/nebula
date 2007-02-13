@@ -35,7 +35,7 @@ public static void main (String [] args) {
     Shell shell = new Shell (display);
     shell.setLayout(new FillLayout());
 
-    PShelf shelf = new PShelf(shell, SWT.BORDER);
+    PShelf shelf = new PShelf(shell, SWT.NONE);
     
 //  Optionally, change the renderer
 //  shelf.setRenderer(new RedmondShelfRenderer());
