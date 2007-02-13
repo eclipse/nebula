@@ -14,4 +14,4 @@ Export-Package: org.eclipse.swt.nebula.widgets.cdatetime,
  org.eclipse.swt.nebula.widgets.grid,
  org.eclipse.swt.nebula.widgets.pgroup,
  org.eclipse.swt.nebula.widgets.pshelf
-Bundle-RequiredExecutionEnvironment: J2SE-1.4 
+Bundle-RequiredExecutionEnvironment: J2SE-1.4
