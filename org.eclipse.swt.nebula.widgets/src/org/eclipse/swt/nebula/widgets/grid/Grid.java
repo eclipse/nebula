@@ -6675,7 +6675,7 @@ public class Grid extends Canvas
     /**
      * Returns the current cell in focus.  If cell selection is disabled, this method returns null.
      * 
-     * @return cell in focus or {@code null}.
+     * @return cell in focus or {@code null}. x represents the column and y the row the cell is in
      * @throws org.eclipse.swt.SWTException
      * <ul>
      * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
@@ -7628,6 +7628,24 @@ public class Grid extends Canvas
         sizingGC.setFont(font);
     }
 
+    /**
+     * Returns the row header width or 0 if row headers are not visible.
+     * 
+     * @return the width of the row headers
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
+     */
+    public int getItemHeaderWidth()
+    {
+        checkWidget();
+        if (!rowHeaderVisible)
+            return 0;
+        return rowHeaderWidth;
+    }
 }
 
 
