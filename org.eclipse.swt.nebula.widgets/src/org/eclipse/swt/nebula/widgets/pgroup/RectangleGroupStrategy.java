@@ -61,6 +61,8 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
 
     private int fontHeight;
 
+    private int titleAreaHeight;
+
     /**
      * Constructs a RectangleGroupStrategy with the given toggle and style.
      * 
@@ -117,13 +119,6 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
             }
             else
             {
-                int titleAreaHeight = fontHeight + (2 * titleTextMargin) + (2 * vMargin);
-                if (getGroup().getToggleRenderer() != null)
-                {
-                    titleAreaHeight = Math.max(titleAreaHeight, getGroup().getToggleRenderer()
-                        .getSize().y
-                                                                + (2 * vMargin));
-                }
                 toggleY = (titleHeight - titleAreaHeight) + (titleAreaHeight - p.y) / 2;
             }
             if ((getGroup().getTogglePosition() & SWT.LEAD) != 0)
@@ -135,20 +130,6 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
                 getGroup().getToggleRenderer().setLocation(
                                                            new Point(getGroup().getSize().x
                                                                      - hMargin - p.x, toggleY));
-            }
-        }
-
-        // Compute Title Area Height for later use
-        int titleAreaHeight = 0;
-
-        if (image != null && !((getGroup().getImagePosition() & SWT.TOP) == 0))
-        {
-            titleAreaHeight = fontHeight + (2 * titleTextMargin) + (2 * vMargin);
-            if (getGroup().getToggleRenderer() != null)
-            {
-                titleAreaHeight = Math.max(titleAreaHeight, getGroup().getToggleRenderer()
-                    .getSize().y
-                                                            + (2 * vMargin));
             }
         }
         
@@ -177,6 +158,10 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
             reg.add(getGroup().getSize().x - 1,yOffset + 4, 1, 1);
             
             int height = getGroup().getSize().y;
+            if (!getGroup().getExpanded())
+            {
+                height = titleHeight;
+            }
 
             reg.add(0, height - 1, 5, 1);
             reg.add(0, height - 2, 3, 1);
@@ -193,6 +178,11 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
             if (yOffset != 0)
             {
                 reg.add(0,0,getGroup().getSize().x,yOffset);
+            }
+            
+            if (!getGroup().getExpanded())
+            {
+                reg.add(new Rectangle(0,titleHeight,getGroup().getSize().x,getGroup().getSize().y - titleHeight));
             }
             
             gc.setClipping(reg);
@@ -443,23 +433,10 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
      */
     public boolean isToggleLocation(int x, int y)
     {
-        active = false;
-
-        if (getGroup().getToggleRenderer() == null)
-            return false;
-
-        if (super.isToggleLocation(x, y))
-        {
-            active = true;
-        }
-        else
-        {
-            Rectangle textBounds = getTextBounds();
-            textBounds.width = Math.min(textWidth,textBounds.width);
-            if (textBounds.contains(x, y))
-                active = true;
-        }
-        return active;
+        if (y >= titleHeight - titleAreaHeight && y <= titleHeight)
+            return true;
+        return false;
+        
     }
 
     private Rectangle getTextBounds()
@@ -533,15 +510,15 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
     {
         Rectangle area = getGroup().getBounds();
         area.x = margin;
-        area.y = titleHeight;
+        area.y = titleHeight +1;
         area.width -= (2 * margin);
         if ((getGroup().getStyle() & SWT.SMOOTH) != 0)
         {
-            area.height -= titleHeight + 5;
+            area.height -= titleHeight + 5 + 1;
         }
         else
         {
-            area.height -= titleHeight + margin;
+            area.height -= titleHeight + margin + 1;
         }
         return area;
     }
@@ -765,6 +742,14 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
 
         textWidth = gc.stringExtent(getGroup().getText()).x;
 
+        titleAreaHeight = fontHeight + (2 * titleTextMargin) + (2 * vMargin);
+        if (getGroup().getToggleRenderer() != null)
+        {
+            titleAreaHeight = Math.max(titleAreaHeight, getGroup().getToggleRenderer()
+                .getSize().y
+                                                        + (2 * vMargin));
+        }
+        
         gc.dispose();
     }
 }
