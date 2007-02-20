@@ -5447,24 +5447,25 @@ public class Grid extends Canvas
      */
     private void onMouseDoubleClick(MouseEvent e)
     {
-        if (hoveringOnColumnResizer)
+        if (e.button == 1)
         {
-            if (e.button == 1)
+            
+            if (hoveringOnColumnResizer)
             {
                 columnBeingResized.pack();
                 resizingColumn = false;
                 handleHoverOnColumnResizer(e.x, e.y);
+                return;
             }
-            return;
-        }
-
-        GridItem item = getItem(new Point(e.x, e.y));
-        if (item != null)
-        {
-            Event newEvent = new Event();
-            newEvent.item = item;
-
-            notifyListeners(SWT.DefaultSelection, newEvent);
+            
+            GridItem item = getItem(new Point(e.x, e.y));
+            if (item != null)
+            {
+                Event newEvent = new Event();
+                newEvent.item = item;
+    
+                notifyListeners(SWT.DefaultSelection, newEvent);
+            }        
         }
     }
 
