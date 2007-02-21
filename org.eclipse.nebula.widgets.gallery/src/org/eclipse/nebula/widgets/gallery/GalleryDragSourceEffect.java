@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.gallery;
 
-import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.dnd.DragSourceEffect;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.graphics.Image;
 
 /**
  * 
@@ -22,45 +24,21 @@ import org.eclipse.swt.graphics.GC;
  * 
  * @author Nicolas Richeton (nicolas.richeton@gmail.com)
  */
-public abstract class AbstractGalleryItemRenderer {
-	protected Gallery gallery;
+public class GalleryDragSourceEffect extends DragSourceEffect {
+	Gallery g = null;
 
-	protected boolean selected;
-
-	/**
-	 * true is the current item is selected
-	 * 
-	 * @return
-	 */
-	public boolean isSelected() {
-		return selected;
+	public GalleryDragSourceEffect(Gallery gallery) {
+		super(gallery);
+		g = gallery;
 	}
 
-	public void setSelected(boolean selected) {
-		this.selected = selected;
+	public void dragStart(DragSourceEvent event) {
+		GalleryItem[] selection = g.getSelection();
+		if (selection != null) {
+			Image img = selection[0].getImage();
+			if (img != null) {
+				event.image = img;
+			}
+		}
 	}
-
-	abstract void draw(GC gc, GalleryItem item, int index, int x, int y, int width, int height);
-
-	abstract void dispose();
-
-	/**
-	 * This method is called before drawing the first item. It may be used to
-	 * calculate some values (like font metrics) that will be used for each
-	 * item.
-	 * 
-	 * @param gc
-	 */
-	public void preDraw(GC gc) {
-
-	}
-
-	public Gallery getGallery() {
-		return gallery;
-	}
-
-	public void setGallery(Gallery gallery) {
-		this.gallery = gallery;
-	}
-
 }

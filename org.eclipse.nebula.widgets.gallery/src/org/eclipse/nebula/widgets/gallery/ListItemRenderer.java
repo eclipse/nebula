@@ -10,11 +10,12 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.gallery;
 
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Vector;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -22,7 +23,10 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 
 /**
+ * Item drawing with a list style :<br/> Image on the left, text and
+ * description on the right.<br/>
  * 
+ * Best with bigger width than height.
  * <p>
  * NOTE: THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT. THIS IS A
  * PRE-RELEASE ALPHA VERSION. USERS SHOULD EXPECT API CHANGES IN FUTURE
@@ -30,14 +34,16 @@ import org.eclipse.swt.widgets.Display;
  * </p>
  * 
  * @author Nicolas Richeton (nicolas.richeton@gmail.com)
+ * 
  */
-public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 
-	ArrayList dropShadowsColors = new ArrayList();
+public class ListItemRenderer extends AbstractGalleryItemRenderer {
+
+	Vector dropShadowsColors = new Vector();
 
 	boolean dropShadows = false;
 
-	int dropShadowsSize = 0;
+	int dropShadowsSize = 5;
 
 	int dropShadowsAlphaStep = 20;
 
@@ -46,6 +52,12 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 	Color foregroundColor;
 
 	Color backgroundColor;
+
+	Color descriptionColor;
+
+	Font textFont;
+
+	Font descriptionFont;
 
 	boolean showLabels = true;
 
@@ -57,24 +69,22 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 		this.showLabels = showLabels;
 	}
 
-	public DefaultGalleryItemRenderer() {
+	public ListItemRenderer() {
 		selectionColor = Display.getDefault().getSystemColor(SWT.COLOR_LIST_SELECTION);
 		foregroundColor = Display.getDefault().getSystemColor(SWT.COLOR_LIST_FOREGROUND);
 		backgroundColor = Display.getDefault().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+		descriptionColor = Display.getDefault().getSystemColor(SWT.COLOR_DARK_GRAY);
 
-		// Create drop shadows
-		createColors();
+		textFont = Display.getDefault().getSystemFont();
+		descriptionFont = Display.getDefault().getSystemFont();
 	}
 
+	
 	public void draw(GC gc, GalleryItem item, int index, int x, int y, int width, int height) {
+
 		Image itemImage = item.getImage();
 
 		int useableHeight = height;
-		int fontHeight = 0;
-		if (item.getText() != null && this.showLabels) {
-			fontHeight = gc.getFontMetrics().getHeight();
-			useableHeight -= fontHeight + 2;
-		}
 
 		int imageWidth = 0;
 		int imageHeight = 0;
@@ -87,9 +97,9 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 			imageWidth = itemImageBounds.width;
 			imageHeight = itemImageBounds.height;
 
-			size = getBestSize(imageWidth, imageHeight, width - 8 - 2 * this.dropShadowsSize, useableHeight - 8 - 2 * this.dropShadowsSize);
+			size = getBestSize(imageWidth, imageHeight, useableHeight - 2 - this.dropShadowsSize, useableHeight - 2 - this.dropShadowsSize);
 
-			xShift = (width - size.x) >> 1;
+			xShift = ((useableHeight - size.x) >> 1) + 2;
 			yShift = (useableHeight - size.y) >> 1;
 
 			if (dropShadows) {
@@ -98,8 +108,8 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 					c = (Color) dropShadowsColors.get(i);
 					gc.setForeground(c);
 
-					gc.drawLine(x + width + i - xShift - 1, y + dropShadowsSize + yShift, x + width + i - xShift - 1, y + useableHeight + i - yShift);
-					gc.drawLine(x + xShift + dropShadowsSize, y + useableHeight + i - yShift - 1, x + width + i - xShift, y - 1 + useableHeight + i - yShift);
+					gc.drawLine(x + useableHeight + i - xShift - 1, y + dropShadowsSize + yShift, x + useableHeight + i - xShift - 1, y + useableHeight + i - yShift);
+					gc.drawLine(x + xShift + dropShadowsSize, y + useableHeight + i - yShift - 1, x + useableHeight + i - xShift, y - 1 + useableHeight + i - yShift);
 				}
 			}
 		}
@@ -109,30 +119,41 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 			gc.setBackground(selectionColor);
 			gc.setForeground(selectionColor);
 			gc.fillRoundRectangle(x, y, width, useableHeight, 15, 15);
-
-			if (item.getText() != null && showLabels) {
-				gc.fillRoundRectangle(x, y + height - fontHeight, width, fontHeight, 15, 15);
-			}
 		}
 
-		// Draw image
 		if (itemImage != null) {
 			gc.drawImage(itemImage, 0, 0, imageWidth, imageHeight, x + xShift, y + yShift, size.x, size.y);
 		}
 
-		// Draw label
 		if (item.getText() != null && showLabels) {
-			gc.setBackground(this.backgroundColor);
-			String text = createLabel(item.getText(), gc, width - 10);
 
-			int textWidth = getTextWidth(text, gc);
-			int textxShift = (width - (textWidth > width ? width : textWidth)) >> 1;
+			// Calculate font height (text and description)
+			gc.setFont(textFont);
+			String text = createLabel(item.getText(), gc, width - useableHeight - 10);
+			int textFontHeight = gc.getFontMetrics().getHeight();
 
-			if (selected) {
-				gc.setBackground(selectionColor);
+			String description = null;
+			int descriptionFontHeight = 0;
+			if (item.getDescription() != null) {
+				gc.setFont(descriptionFont);
+				description = createLabel(item.getDescription(), gc, width - useableHeight - 10);
+				descriptionFontHeight = gc.getFontMetrics().getHeight();
 			}
+
+			// Background color
+			gc.setBackground(selected ? selectionColor : backgroundColor);
+
+			// Draw text
 			gc.setForeground(this.foregroundColor);
-			gc.drawText(text, x + textxShift, y + height - fontHeight, true);
+			gc.setFont(textFont);
+			gc.drawText(text, x + useableHeight + 5, y + ((height - descriptionFontHeight - textFontHeight - 1) >> 1), true);
+
+			// Draw description
+			if (description != null) {
+				gc.setForeground(this.descriptionColor);
+				gc.setFont(descriptionFont);
+				gc.drawText(description, x + useableHeight + 5, y + ((height - descriptionFontHeight - textFontHeight - 1) >> 1) + textFontHeight + 1, true);
+			}
 		}
 	}
 
@@ -227,6 +248,7 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 		return dropShadowsSize;
 	}
 
+	
 	public void dispose() {
 		freeDropShadowsColors();
 	}
