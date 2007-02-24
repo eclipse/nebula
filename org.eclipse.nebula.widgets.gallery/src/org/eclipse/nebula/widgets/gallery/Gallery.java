@@ -7,6 +7,7 @@
  *
  * Contributors :
  *    Nicolas Richeton (nicolas.richeton@gmail.com) - initial API and implementation
+ *    Tom Schindl      (tom.schindl@bestsolution.at) - fix for bug 174933
  *******************************************************************************/
 
 package org.eclipse.nebula.widgets.gallery;
@@ -606,8 +607,17 @@ public class Gallery extends Canvas {
 			System.out.println("paint");
 
 		GC newGC = gc;
-		newGC.setAntialias(antialias);
-		newGC.setInterpolation(interpolation);
+
+		// Linux-GTK Bug 174932
+		if (!SWT.getPlatform().equals("gtk")) {
+			newGC.setAdvanced(true);
+		}
+
+		if (gc.getAdvanced()) {
+			newGC.setAntialias(antialias);
+			newGC.setInterpolation(interpolation);
+		}
+
 		newGC.setBackground(backgroundColor);
 		newGC.fillRectangle(gc.getClipping());
 
