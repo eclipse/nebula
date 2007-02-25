@@ -29,7 +29,9 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 
 	private int fontHeight = 0;
 
-	static int OFFSET = 30;
+	private int titleHeight = fontHeight + 5;
+
+	private int offset = minMargin + titleHeight;
 
 	// True if margins have already been calculated. Prevents
 	// margins calculation for each group
@@ -42,23 +44,25 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 	void draw(GC gc, GalleryItem group, int x, int y, int clipX, int clipY, int clipWidth, int clipHeight) {
 		// TODO: finish drawing.
 
+		// Title background
 		gc.setBackground(gallery.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND));
+		gc.fillRoundRectangle(x, y, group.width, titleHeight, 10, 10);
 
-		gc.fillRoundRectangle(x, y, group.width, this.fontHeight + 5, 10, 10);
-		String text = null;
-		if (expanded)
-			text = "- ";
-		else
-			text = "+ ";
+		// Color for text
+		gc.setForeground(gallery.getDisplay().getSystemColor(SWT.COLOR_TITLE_FOREGROUND));
 
+		// Title text
+		String text = "";
 		text += group.getText();
 		text += " (" + group.getItemCount() + ")";
+		gc.drawText(text, x + 2 + 16, y + 2);
 
-		gc.setForeground(gallery.getDisplay().getSystemColor(SWT.COLOR_TITLE_FOREGROUND));
+		// Toggle Button
+		text = expanded ? "-" : "+";
 		gc.drawText(text, x + 2, y + 2);
 
 		if (expanded) {
-			int[] indexes = getVisibleItems(group, x, y, clipX, clipY, clipWidth, clipHeight, OFFSET);
+			int[] indexes = getVisibleItems(group, x, y, clipX, clipY, clipWidth, clipHeight, offset);
 
 			if (indexes != null && indexes.length > 0) {
 				for (int i = indexes.length - 1; i >= 0; i--) {
@@ -66,7 +70,7 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 					boolean selected = group.isSelected(group.getItem(indexes[i]));
 					if (Gallery.DEBUG)
 						System.out.println("Selected : " + selected + " index : " + indexes[i] + "item : " + group.getItem(indexes[i]));
-					drawItem(gc, indexes[i], selected, group, OFFSET);
+					drawItem(gc, indexes[i], selected, group, offset);
 
 				}
 			}
@@ -79,7 +83,7 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 
 		if (gallery.isVertical()) {
 			int sizeX = group.width;
-			group.height = getTitleHeight() + OFFSET;
+			group.height = offset + 3 * minMargin;
 
 			if (expanded) {
 				Point l = gridLayout(sizeX, countLocal, itemWidth);
@@ -118,10 +122,6 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 
 	}
 
-	private int getTitleHeight() {
-		return fontHeight + 10;
-	}
-
 	public void preDraw(GC gc) {
 		pre(gc);
 	}
@@ -142,19 +142,21 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 		// Get font height
 		fontHeight = gc.getFontMetrics().getHeight();
 
+		// Compute title height & grid offset
+		titleHeight = fontHeight + 5;
+		offset = titleHeight + minMargin;
+
 		if (gcCreated)
 			gc.dispose();
 	}
 
 	public GalleryItem getItem(GalleryItem group, Point coords) {
-		//
-		return super.getItem(group, coords, OFFSET);
+		return super.getItem(group, coords, offset);
 	}
 
 	boolean mouseDown(GalleryItem group, MouseEvent e, Point coords) {
-		// TODO Auto-generated method stub
 
-		if (coords.y - group.y <= OFFSET) {
+		if (coords.y - group.y <= titleHeight) {
 			group.setExpanded(!group.isExpanded());
 			if (!group.isExpanded()) {
 				group.deselectAll();

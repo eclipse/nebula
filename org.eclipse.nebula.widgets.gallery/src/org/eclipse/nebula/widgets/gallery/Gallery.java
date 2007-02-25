@@ -252,7 +252,7 @@ public class Gallery extends Canvas {
 		virtual = (style & SWT.VIRTUAL) > 0;
 		vertical = (style & SWT.V_SCROLL) > 0;
 		multi = (style & SWT.MULTI) > 0;
-		backgroundColor = Display.getDefault().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+		backgroundColor = getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 
 		// Dispose renderers on dispose
 		this.addDisposeListener(new DisposeListener() {
@@ -418,10 +418,11 @@ public class Gallery extends Canvas {
 						if (item == null) {
 							_deselectAll();
 						} else {
-							_deselectAll();
 							if (DEBUG)
 								System.out.println("setSelected");
-							setSelected(item, true, true);
+
+							_deselectAll();
+							setSelected(item, true, lastSingleClick != item);
 							lastSingleClick = item;
 
 						}
@@ -618,10 +619,11 @@ public class Gallery extends Canvas {
 			newGC.setInterpolation(interpolation);
 		}
 
-		newGC.setBackground(backgroundColor);
-		newGC.fillRectangle(gc.getClipping());
+		Rectangle clipping = newGC.getClipping();
+		gc.setBackground(backgroundColor);
+		drawBackground(newGC, clipping.x, clipping.y, clipping.width, clipping.height);
 
-		int[] indexes = getVisibleItems(gc.getClipping());
+		int[] indexes = getVisibleItems(clipping);
 
 		if (indexes != null && indexes.length > 0) {
 
@@ -681,7 +683,6 @@ public class Gallery extends Canvas {
 
 	public void redraw(GalleryItem item) {
 		checkWidget();
-
 	}
 
 	/**
