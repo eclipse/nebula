@@ -6,5 +6,6 @@ Bundle-Version: 1.0.0
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.swt.nebula
+ org.eclipse.swt.nebula,
+ org.eclipse.nebula.widgets.gallery
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

@@ -24,6 +24,9 @@
       <tab
             class="org.eclipse.swt.nebula.examples.parts.CDateTimeExampleTab"
             name="CDateTime"/>
+      <tab
+            class="org.eclipse.swt.nebula.examples.parts.GalleryExampleTab"
+            name="Gallery"/>
    </extension>
 
 </plugin>
