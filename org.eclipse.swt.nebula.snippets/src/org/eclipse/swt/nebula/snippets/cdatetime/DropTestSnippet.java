@@ -29,7 +29,6 @@ class MyDialog extends Dialog {
 		shell.setLayout(new GridLayout());
 
 		final CDateTime cdc2 = new CDateTime(shell, CDT.BORDER | CDT.DROP_DOWN);
-//		cdc2.getCDatepicker().setGridVisible(true);
 		cdc2.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
 		Display display = parent.getDisplay();
@@ -70,7 +69,6 @@ public class DropTestSnippet {
 		cdc1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
 		final CDateTime cdc2 = new CDateTime(shell, CDT.BORDER | CDT.DROP_DOWN);
-//		cdc2.getCDatepicker().setGridVisible(true);
 		cdc2.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
 
