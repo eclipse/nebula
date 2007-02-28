@@ -31,6 +31,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -51,45 +52,40 @@ import org.eclipse.swt.widgets.TypedListener;
  */
 public abstract class AbstractContainer extends Composite implements Listener {
 
+	/**
+	 * true if the platform is detected as being "carbon"
+	 */
+	public static final boolean carbon = "carbon".equals(SWT.getPlatform());
+	/**
+	 * true if the platform is detected as being "gtk"
+	 */
 	public static final boolean gtk = "gtk".equals(SWT.getPlatform());
+	/**
+	 * true if the platform is detected as being "win32"
+	 */
 	public static final boolean win32 = "win32".equals(SWT.getPlatform());
-	
-	//	public static final int OP_NONE = 0;
-//	public static final int OP_ADD = 1;
-//	public static final int OP_REMOVE = 2;
-//	public static final int OP_CELL_COLLAPSE = 3;
-//	public static final int OP_CELL_EXPAND = 4;
-//	public static final int OP_COLUMN_RESIZE = 5;
-//	public static final int DIRTY_ORDERED = 1 << 0;
-//	public static final int DIRTY_PAINTED = 1 << 1;
-//	public static final int DIRTY_VISIBLE = 1 << 2;
-	static final int MODE_NORMAL = 0;
+	/**
+	 * Drawing mode for normal selection.
+	 */
+	public static final int MODE_NORMAL = 0;
+	/**
+	 * Drawing mode for selection using the marqee selection tool.
+	 */
+	public static final int MODE_MARQUEE = 1;
+	/**
+	 * Drawing mode indicating that rather than selected items, an item is to be created.
+	 */
+	public static final int MODE_CREATE = 2;
 
-static final int MODE_MARQUEE = 1;
-	static final int MODE_CREATE = 2;
 	private static int checkStyle(int style) {
 		int mask = SWT.BORDER | SWT.LEFT_TO_RIGHT | SWT.RIGHT_TO_LEFT
 				| SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE | SWT.MULTI
 				| SWT.NO_FOCUS | SWT.CHECK;
-		return (style & mask) | SWT.DOUBLE_BUFFERED;
+		return (style & mask);
 	}
 
 	GC internalGC = new GC(Display.getDefault());
 
-	/**
-	 * A list of all items belonging to this container.<br>
-	 * Items are in the order that they were added, taking into account that
-	 * some may have been added at a requested index.
-	 */
-//	protected List items = new ArrayList();
-	/**
-	 * A list of items that can be painted to the screen, whether they are
-	 * on-screen or not, as determined by the concrete subclass; default is the
-	 * orderedItems list minus the individual items that request to not be drawn
-	 * due to Item.getVisible() returning false.<br>
-	 * Items are in the order as specified by the orderedItems list.
-	 */
-//	protected List visibleItems = new LinkedList();
 	/**
 	 * A list of items that will actually be painted to the screen.<br>
 	 * Subclasses may override the order as the order of paintedItems represents
@@ -135,6 +131,7 @@ static final int MODE_MARQUEE = 1;
 	private boolean marquee = false;
 
 	protected int style = 0;
+	protected Canvas body;
 	protected Composite header;
 	protected Table internalTable;
 	AbstractColumn[] columns = new AbstractColumn[0];
@@ -154,22 +151,13 @@ static final int MODE_MARQUEE = 1;
 	protected boolean hLines = true;
 	protected SColors colors;
 
-	// public int marginWidth = gtk ? 0 : 1;
-	// public int marginHeight = gtk ? 0 : 0;
-//	protected AbstractItem dirtyItem = null;
-//	int operation = OP_NONE;
-//	protected int dirtyFlags = 0;
+//	public int marginWidth = gtk ? 0 : 1;
+//	public int marginHeight = gtk ? 0 : 0;
 
 	private Listener filter;
 	private List paintedItemListeners;
-//	protected int firstPaintedIndex;
-//	protected int lastPaintedIndex;
 
-
-//	protected AbstractItem[] removedItems = null;
-//	protected int rowHeight = 20;
 	protected boolean nativeGrid = true;
-//	protected boolean autoFillCells = true;
 
 	protected AbstractContainerLayout layout;
 
@@ -180,9 +168,12 @@ static final int MODE_MARQUEE = 1;
 	// private boolean selectionActive = false;
 
 	public boolean drawViewportNorth = false;
+
 	public boolean drawViewportEast = false;
 	
 	public boolean drawViewportSouth = false;
+
+	public boolean drawViewportWest = false;
 
 	// public void addListener(int eventType, Listener listener) {
 	// switch(eventType) {
@@ -216,12 +207,6 @@ static final int MODE_MARQUEE = 1;
 	// container.addMouseTrackListener(listener);
 	// }
 
-//	protected void addOrderedItem(AbstractItem item) {
-//		orderedItems.add(item);
-//	}
-	
-	public boolean drawViewportWest = false;
-
 	public boolean paintGridAsBackground = false;
 
 	List addedItems = new ArrayList();
@@ -234,41 +219,15 @@ static final int MODE_MARQUEE = 1;
 
 	boolean updatePaintedList = false;
 
-//	protected int getLastPaintedColumnIndex() {
-//		Rectangle ca = getContentArea();
-//		int right = getScrollPosition().x + ca.x + ca.width;
-//		int gridline = getGridLineWidth();
-//		int[] widths = getColumnWidths();
-//		for(int i = 0; i < widths.length; i++) {
-//			right -= (widths[i] + gridline);
-//			if(right <= 0) return i;
-//		}
-//		return -1;
-//	}
-
-//	/**
-//	 * Get the index of the Bottom Item, as defined by the implementation class
-//	 * 
-//	 * @return the index
-//	 */
-//	protected abstract int getLastPaintedItemIndex();
-
-//	/**
-//	 * Get the Bottom Item, as defined by the implementation class
-//	 * 
-//	 * @return the index
-//	 */
-//	protected abstract AbstractItem getLastPaintedItem();
-
 	AbstractContainer(Composite parent, int style) {
 		super(parent, checkStyle(style));
 
-//		setBackgroundMode(SWT.INHERIT_FORCE);
 		this.style = style;
 
 		colors = new SColors(getDisplay());
 		updateColors();
-		setBackground(getColors().getTableBackground());
+//		setBackground(getColors().getTableBackground());
+		setBackground(getDisplay().getSystemColor(SWT.COLOR_RED));
 
 		hBar = getHorizontalBar();
 		if (hBar != null) {
@@ -288,7 +247,10 @@ static final int MODE_MARQUEE = 1;
 									hBar.getSelection());
 						}
 					}
-					redraw();
+					if(gtk) {
+						body.setLocation(-hBar.getSelection(), body.getLocation().y);
+					}
+					body.redraw();
 				}
 			});
 		}
@@ -297,16 +259,22 @@ static final int MODE_MARQUEE = 1;
 			vBar.setVisible(false);
 			vBar.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-					redraw();
+					if(gtk) {
+						body.setLocation(body.getLocation().x, layout.headerSize.y-vBar.getSelection());
+					}
+					body.redraw();
 				}
 			});
 		}
+
+		body = new Canvas(this, SWT.BORDER | SWT.NO_BACKGROUND);
+		body.setBackground(colors.getTableBackground());
 
 		nativeHeader = false;
 		new AbstractColumn(this, 0);
 		fillerColumnSet = true;
 		nativeHeader = true;
-		
+
 		filter = new Listener() {
 			public void handleEvent(Event event) {
 				if (AbstractContainer.this.getShell() == ((Control) event.widget)
@@ -316,20 +284,20 @@ static final int MODE_MARQUEE = 1;
 			}
 		};
 
-		addKeyListener(new KeyAdapter() {}); // traverse does not work without this...
-		addListener(SWT.FocusIn, this);
-		addListener(SWT.MouseDown, this);
-		addListener(SWT.MouseDoubleClick, this);
-		addListener(SWT.MouseMove, this);
-		addListener(SWT.MouseUp, this);
-		addListener(SWT.Paint, new Listener() {
+		body.addKeyListener(new KeyAdapter() {}); // traverse does not work without this...
+		body.addListener(SWT.FocusIn, this);
+		body.addListener(SWT.MouseDown, this);
+		body.addListener(SWT.MouseDoubleClick, this);
+		body.addListener(SWT.MouseMove, this);
+		body.addListener(SWT.MouseUp, this);
+		body.addListener(SWT.Paint, new Listener() {
 			public void handleEvent(Event e) {
 				if (SWT.Paint == e.type) {
 					paintBody(e);
 				}
 			}
 		});
-		addListener(SWT.Traverse, this);
+		body.addListener(SWT.Traverse, this);
 
 		addListener(SWT.Dispose, new Listener() {
 			public void handleEvent(Event event) {
@@ -461,6 +429,10 @@ static final int MODE_MARQUEE = 1;
 		notifyListeners(event.type, event);
 	}
 
+	Composite getBody() {
+		return body;
+	}
+	
 	public SColors getColors() {
 		return colors;
 	}
@@ -509,6 +481,7 @@ static final int MODE_MARQUEE = 1;
 	Composite getHeader() {
 		if (header == null) {
 			header = new Composite(this, SWT.NONE);
+			body.moveBelow(header);
 		}
 		return header;
 	}
@@ -905,10 +878,19 @@ static final int MODE_MARQUEE = 1;
 		return null;
 	}
 
+	/**
+	 * returns the sort column of this container as an AbstractColumn.
+	 * subclasses should override to provide an appropriate cast.
+	 * @return the sort column
+	 */
 	protected AbstractColumn internalGetSortColumn() {
 		return sortColumn;
 	}
-	
+
+	/**
+	 * Returns whether or not this container holds any items.
+	 * @return true if there are items, false otherwise.
+	 */
 	public abstract boolean isEmpty();
 
 	abstract List items(boolean all);
@@ -986,8 +968,9 @@ static final int MODE_MARQUEE = 1;
 	Rectangle mapRectangle(Rectangle rect) {
 		return mapRectangle(rect.x, rect.y, rect.width, rect.height);
 	}
-	protected void paintBackground(GC gc, Rectangle ebounds) {
-	}
+	
+	protected void paintBackground(GC gc, Rectangle ebounds) {}
+	
 	protected void paintBody(Event e) {
 		if(!addedItems.isEmpty()) addItems();
 		if(!removedItems.isEmpty()) removeItems();

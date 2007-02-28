@@ -35,10 +35,6 @@ import org.eclipse.swt.widgets.Widget;
  */
 public class CTree extends AbstractContainer {
 
-	public static final int OP_TREE_COL			= 6;
-	public static final int OP_TREE_COLLAPSE	= 7;
-	public static final int OP_TREE_EXPAND 		= 8;
-
 	private int checkColumn = -1;
 	private boolean checkRoots = true;
 	private int treeColumn = 0;
@@ -65,7 +61,8 @@ public class CTree extends AbstractContainer {
 			itemList.add(index, item);
 		}
 		addedItems.add(item);
-		redraw();
+		visibleItems = null;
+		body.redraw();
 	}
 
 	public void addTreeListener(TreeListener listener) {
@@ -252,18 +249,21 @@ public class CTree extends AbstractContainer {
 		return itemList.isEmpty();
 	}
 	
+	private List visibleItems = null;
 	List items(boolean all) {
-		List items = new ArrayList();
-		for(Iterator i = itemList.iterator(); i.hasNext(); ) {
-			CTreeItem item = (CTreeItem) i.next();
-			if(all || item.isVisible()) {
-				items.add(item);
-				if(all || item.getExpanded()) {
-					items.addAll(getItems(item, all));
+		if(visibleItems == null) {
+			visibleItems = new ArrayList();
+			for(Iterator i = itemList.iterator(); i.hasNext(); ) {
+				CTreeItem item = (CTreeItem) i.next();
+				if(all || item.isVisible()) {
+					visibleItems.add(item);
+					if(all || item.getExpanded()) {
+						visibleItems.addAll(getItems(item, all));
+					}
 				}
 			}
 		}
-		return items;
+		return visibleItems;
 	}
 	
 	/**
@@ -385,9 +385,9 @@ public class CTree extends AbstractContainer {
 							r.width,
 							item.getSize().y+gridline
 					);
-					item.setIsGridLine(true);
+					item.setGridLine(true);
 				} else {
-					item.setIsGridLine(false);
+					item.setGridLine(false);
 				}
 			}
 		}

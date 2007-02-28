@@ -12,8 +12,10 @@
 package org.eclipse.swt.nebula.widgets.ctree;
 
 import java.util.Arrays;
+import java.util.Iterator;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -21,7 +23,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.TreeItem;
 
 /**
  * <p>
@@ -38,6 +39,16 @@ public class CTreeCell extends AbstractCell {
 	private int horizontalSpacing = 2;
 	private Rectangle[] iBounds = new Rectangle[0];
 	private Rectangle tBounds = new Rectangle(0,0,0,0);
+
+	/**
+	 * the amount by which the toggle, and thus the rest of the cell, is to be indented
+	 */
+	protected int indent = 0;
+	/**
+	 * indicates whether or not this cell is to be drawn as though it were a gridline.
+	 * typically only relevant to GTK.
+	 */
+	protected boolean isGridLine = false;
 
 	private int[] childSpan = new int[] { -1, 1 };	// default setting keeps the child area
 													// within the same column as the title area
@@ -116,7 +127,7 @@ public class CTreeCell extends AbstractCell {
 					new Point(0,0);
 	}
 	
-	public void doPaint(GC gc, Point offset) {
+	public void paintCell(GC gc, Point offset) {
 		if(activeBackground != null) gc.setBackground(activeBackground);
 		if(activeForeground != null) gc.setForeground(activeForeground);
 
@@ -166,6 +177,16 @@ public class CTreeCell extends AbstractCell {
 		return childSpan;
 	}
 	
+	public Rectangle getClientArea() {
+		Rectangle ca = new Rectangle(0,0,bounds.width, bounds.height);
+		ca.x = marginLeft + marginWidth;
+		if(toggleVisible || ghostToggle) ca.x += toggleWidth;
+		ca.y = marginTop + marginHeight;
+		ca.width -= (ca.x + marginRight + marginWidth);
+		ca.height -= (ca.y + marginBottom + marginHeight);
+		return ca;
+	}
+
 	public Image getImage() {
 		if(images.length > 0) return images[0];
 		return null;
@@ -173,6 +194,10 @@ public class CTreeCell extends AbstractCell {
 	
 	public Image[] getImages() {
 		return images == null ? new Image[0] : images;
+	}
+
+	public int getIndent() {
+		return indent;
 	}
 
 	public String getText() {
@@ -302,7 +327,7 @@ public class CTreeCell extends AbstractCell {
 			int x1 = 0, x2 = 0, y1 = 0, y2 = 0;
 			int x = toggleBounds.x + (toggleBounds.width/2) - offset.x;
 			int y = tbounds.y + (tbounds.height/2) - offset.y;
-			gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
+			gc.setForeground(container.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
 			gc.setLineDash(new int[] { 1, 1 });
 			x1 = x;
 			x2 = x+toggleBounds.width/2;
@@ -421,7 +446,6 @@ public class CTreeCell extends AbstractCell {
 			}
 			if(doit) this.images = images;
 		}
-		update = true;
 		ctree.redraw(this);
 	}
 
@@ -436,12 +460,44 @@ public class CTreeCell extends AbstractCell {
 //		}
 //	}
 	
+	public void setIndent(int indent) {
+		this.indent = indent;
+	}
+
+	public void setGridLine(boolean isGridLine) {
+		if(this.isGridLine != isGridLine) {
+			this.isGridLine = isGridLine;
+			updateColors();
+		}
+	}
+	
 	public void setText(String string) {
 		if(string != null && !string.equals(getText())) {
 			text = string;
-			update = true;
 			ctree.redraw(this);
 		}
 	}
 	
+	protected void updateColors() {
+		Color back;
+		Color fore;
+		if(selected) {
+			back = item.container.getColors().getItemBackgroundSelected();
+			fore = item.container.getColors().getItemForegroundSelected();
+		} else if(isGridLine){
+			back = (storedBackground != null) ? storedBackground : item.container.getColors().getGrid();
+			fore = (storedForeground != null) ? storedForeground : item.container.getColors().getItemForegroundNormal();
+		} else {
+			back = (storedBackground != null) ? storedBackground : item.container.getColors().getItemBackgroundNormal();
+			fore = (storedForeground != null) ? storedForeground : item.container.getColors().getItemForegroundNormal();
+		}
+
+		activeBackground = back;
+		activeForeground = fore;
+
+		for(Iterator iter = getColorManagedControls().iterator(); iter.hasNext(); ) {
+			Control c = (Control) iter.next();
+			c.setBackground(activeBackground);
+		}
+	}
 }

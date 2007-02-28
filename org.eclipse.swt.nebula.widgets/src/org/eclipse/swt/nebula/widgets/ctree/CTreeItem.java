@@ -67,19 +67,19 @@ public class CTreeItem extends AbstractItem {
 //		addItem(-1, item);
 //	}
 
+	int computedHeight = -1;
 	/**
 	 * Computes the size of each cell using the widthHint and heightHint with the same
 	 * index as the cell.
+	 * @return int the computed height
 	 */
 	public int computeHeight() {
 		int[] widths = container.getColumnWidths();
-		int height = cells[0].computeSize(widths[0], -1).y;
-//		titleHeight = ((CTreeCell) cells[0]).getSize().y;
+		computedHeight = cells[0].computeSize(widths[0], -1).y;
 		for(int i = 1; i < cells.length; i++) {
-			height = Math.max(height, cells[i].computeSize(widths[i], -1).y);
-//			titleHeight = Math.max(titleHeight, ((CTreeCell) cells[0]).getSize().y);
+			computedHeight = Math.max(computedHeight, cells[i].computeSize(widths[i], -1).y);
 		}
-		return height;
+		return computedHeight;
 	}
 
 	/**
@@ -373,23 +373,47 @@ public class CTreeItem extends AbstractItem {
 		}
 	}
 
-	void setBounds(int x, int y, int width, int height) {
+	int getHeight() {
+		return cells[0].bounds.height;
+	}
+	
+	int getTop() {
+		return cells[0].bounds.y;
+	}
+
+	int getBottom() {
+		return cells[0].bounds.y + cells[0].bounds.height;
+	}
+	
+	void setHeight(int height) {
 		for(int i = 0; i < cells.length; i++) {
-			// TODO: container.internalGetColumn(i).getBounds() is too expensive!
-			if(x>-1 || width>-1) {
-				if(container.internalTable != null) {
-					AbstractColumn column = container.internalGetColumn(i);
-					if(x>-1) cells[i].bounds.x = column.getLeft();
-					if(width>-1) cells[i].bounds.width = column.getWidth();
-				} else {
-					if(x>-1) cells[i].bounds.x = container.getClientArea().x;
-					if(width>-1) cells[i].bounds.width = container.getClientArea().width;
-				}
-			}
-			if(y>-1) cells[i].bounds.y = y;
-			if(height>-1) cells[i].bounds.height = height;
+			cells[i].bounds.height = height;
 		}
 	}
+
+	void setTop(int top) {
+		for(int i = 0; i < cells.length; i++) {
+			cells[i].bounds.y = top;
+		}
+	}
+	
+//	void setBounds(int x, int y, int width, int height) {
+//		for(int i = 0; i < cells.length; i++) {
+//			// TODO: container.internalGetColumn(i).getBounds() is too expensive!
+//			if(x>-1 || width>-1) {
+//				if(container.internalTable != null) {
+//					AbstractColumn column = container.internalGetColumn(i);
+//					if(x>-1) cells[i].bounds.x = column.getLeft();
+//					if(width>-1) cells[i].bounds.width = column.getWidth();
+//				} else {
+//					if(x>-1) cells[i].bounds.x = container.getClientArea().x;
+//					if(width>-1) cells[i].bounds.width = container.getClientArea().width;
+//				}
+//			}
+//			if(y>-1) cells[i].bounds.y = y;
+//			if(height>-1) cells[i].bounds.height = height;
+//		}
+//	}
 	
 //	void setWidth(int column, int width) {
 //		if(hasCell(column)) {
@@ -428,6 +452,12 @@ public class CTreeItem extends AbstractItem {
 	public void setExpanded(boolean expanded) {
 		if(hasTreeCell() && getTreeCell().isOpen() != expanded) {
 			getTreeCell().setOpen(expanded);
+		}
+	}
+
+	public void setGridLine(boolean gridLine) {
+		for(int i = 0; i < cells.length; i++) {
+			((CTreeCell) cells[i]).setGridLine(gridLine);
 		}
 	}
 

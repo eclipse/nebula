@@ -35,10 +35,25 @@ import org.eclipse.swt.widgets.Listener;
  */
 public abstract class AbstractItem extends Item {
 
+	/**
+	 * The container to which this item belongs.
+	 */
 	protected AbstractContainer container;
+	/**
+	 * The cells which belong to, or are contained by, this item.
+	 */
 	protected AbstractCell[] cells;
+	/**
+	 * Whether or not this item is enabled.
+	 */
 	protected boolean enabled = true;
+	/**
+	 * Whether or not this item is visible.
+	 */
 	protected boolean visible = true;
+	/**
+	 * Whether or not this item is actually painted to the screen.
+	 */
 	boolean painted = false;
 	
 
@@ -306,31 +321,40 @@ public abstract class AbstractItem extends Item {
 //			return Collections.EMPTY_LIST;
 //		}
 //	}
-	
+
+	/**
+	 * Get the font being used by the first cell
+	 * @return Font
+	 */
 	public Font getFont() {
 		return cells[0].getFont();
 	}
 	
+	/**
+	 * Get the font being used by the specified cell
+	 * @param index an int used to specify the cell by an index
+	 * @return Font
+	 */
 	public Font getFont(int index) {
 		if(hasCell(index)) return cells[index].getFont();
 		return null;
 	}
 	
-	public int getHeight() {
-		int height = cells[0].getBounds().height;
-		for(int i = 1; i < cells.length; i++) {
-			height = Math.max(height, cells[i].getBounds().height);
-		}
-		return height;
-	}
+//	public int getHeight() {
+//		int height = cells[0].getBounds().height;
+//		for(int i = 1; i < cells.length; i++) {
+//			height = Math.max(height, cells[i].getBounds().height);
+//		}
+//		return height;
+//	}
 	
-	public Point[] getLocation() {
-		Point[] la = new Point[cells.length];
-		for(int i = 0; i < la.length; i++) {
-			la[i] = cells[i].getLocation();
-		}
-		return la;
-	}
+//	public Point[] getLocation() {
+//		Point[] la = new Point[cells.length];
+//		for(int i = 0; i < la.length; i++) {
+//			la[i] = cells[i].getLocation();
+//		}
+//		return la;
+//	}
 
 	Point[] getCellSizes() {
 		Point[] sa = new Point[cells.length];
@@ -506,22 +530,6 @@ public abstract class AbstractItem extends Item {
 		if(hasCell(index)) cells[index].setForeground(color);
 	}
 	
-	/**
-	 * @return true if ALL cells are of type SWT.SIMPLE, false otherwise
-	 */
-//	public boolean isSimple() {
-//		for(int i = 0; i < cells.length; i++) {
-//			if((cells[i].getStyle() & (SWT.SIMPLE|SWT.DROP_DOWN)) == 0) return true;
-//		}
-//		return false;
-//	}
-	
-	public void setIsGridLine(boolean isGridLine) {
-		for(int i = 0; i < cells.length; i++) {
-			cells[i].setIsGridLine(isGridLine);
-		}
-	}
-
 //	public void setLocation(int cell, Point location) {
 //		if(cell >= 0 && cell < cells.length) {
 //			cells[cell].setLocation(location);

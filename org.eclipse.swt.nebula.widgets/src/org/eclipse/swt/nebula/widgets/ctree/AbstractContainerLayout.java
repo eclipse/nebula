@@ -25,14 +25,37 @@ import org.eclipse.swt.widgets.Layout;
  */
 public abstract class AbstractContainerLayout extends Layout {
 
+	/**
+	 * true if the platform is detected as being "carbon"
+	 */
+	public static final boolean carbon = "carbon".equals(SWT.getPlatform());
+	/**
+	 * true if the platform is detected as being "gtk"
+	 */
+	public static final boolean gtk = "gtk".equals(SWT.getPlatform());
+	/**
+	 * true if the platform is detected as being "win32"
+	 */
+	public static final boolean win32 = "win32".equals(SWT.getPlatform());
+
+	/**
+	 * the AbstractContainer
+	 */
 	protected AbstractContainer container;
 
+	/**
+	 * the size of the container's header composite
+	 */
 	protected Point headerSize = new Point(0,0);
+	/**
+	 * the height of the container contents
+	 */
 	protected int 	contentHeight = 0;
+	
 	private Point 	size = new Point(0,0);
 
 	/**
-	 * @param tree
+	 * @param container
 	 */
 	protected AbstractContainerLayout(AbstractContainer container) {
 		this.container = container;
@@ -159,6 +182,14 @@ public abstract class AbstractContainerLayout extends Layout {
 				area.y,
 				area.width,
 				headerSize.y
+			);
+
+		int height = area.height-headerSize.y;
+		container.body.setBounds(
+				area.x,
+				area.y+headerSize.y,
+				(gtk ? Math.max(area.width, headerSize.x) : area.width),
+				(gtk ? Math.max(height, contentHeight) : height)
 			);
 		
 		layoutHeader();
@@ -290,6 +321,9 @@ public abstract class AbstractContainerLayout extends Layout {
 	 */
 	protected abstract void layoutContent(int eventType, AbstractItem item);
 
+	/**
+	 * layout the header.  will recalcuate and resize any autowidth columns if necessary
+	 */
 	protected void layoutHeader() {
 		if(container.nativeHeader) {
 			Rectangle tBounds = container.getHeader().getClientArea();

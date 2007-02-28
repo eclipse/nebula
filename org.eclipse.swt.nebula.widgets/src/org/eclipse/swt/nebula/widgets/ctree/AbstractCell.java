@@ -126,7 +126,7 @@ public abstract class AbstractCell {
 		void sendEvent(Event event) {
 			if(hasHandler(event.type)) {
 				event.data = AbstractCell.this;
-				event.item = getItem(); // TODO: necessary?
+				event.item = AbstractCell.this.item; // TODO: necessary?
 				Listener[] la = (Listener[]) handlers[event.type].toArray(new Listener[handlers[event.type].size()]);
 				for(int i = 0; i < la.length; i++) {
 					la[i].handleEvent(event);
@@ -135,17 +135,47 @@ public abstract class AbstractCell {
 		}
 	}
 
+	/**
+	 * true if the platform is detected as being "carbon"
+	 */
 	public static final boolean carbon = "carbon".equals(SWT.getPlatform());
+	/**
+	 * true if the platform is detected as being "gtk"
+	 */
 	public static final boolean gtk = "gtk".equals(SWT.getPlatform());
+	/**
+	 * true if the platform is detected as being "win32"
+	 */
 	public static final boolean win32 = "win32".equals(SWT.getPlatform());
-
-	public static final int CELL_NORMAL 	= 0;
-	public static final int CELL_MOVING 	= 1 << 0;
-	public static final int CELL_RESIZING 	= 1 << 1;
-	public static final int RESULT_NONE		= 0; 
-	public static final int RESULT_CONSUME	= 1 << 0; 
-	public static final int RESULT_REDRAW	= 1 << 1; 
-	public static final int RESULT_LAYOUT	= 1 << 2;
+	/**
+	 * cell state indicating that all is normal
+	 */
+	protected static final int CELL_NORMAL 	= 0;
+	/**
+	 * cell state indicating that the cell is in the process of being moved
+	 */
+	protected static final int CELL_MOVING 	= 1 << 0;
+	/**
+	 * cell state indicating that the cell is in the process of being resized
+	 */
+	protected static final int CELL_RESIZING 	= 1 << 1;
+	/**
+	 * return value indicating no action is necessary
+	 */
+	protected static final int RESULT_NONE		= 0; 
+	/**
+	 * return value indicating that this cell wants to consume the event
+	 * thereby preventing the delivery of the event to other cells and/or items.
+	 */
+	protected static final int RESULT_CONSUME	= 1 << 0; 
+	/**
+	 * return value indicating that a redraw is necessary
+	 */
+	protected static final int RESULT_REDRAW	= 1 << 1; 
+	/**
+	 * return value indicating that a layout is necessary
+	 */
+	protected static final int RESULT_LAYOUT	= 1 << 2;
 
 	private static final Color bgOver = gtk ? Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_BORDER) :
 		Display.getCurrent().getSystemColor(SWT.COLOR_BLACK);
@@ -201,58 +231,173 @@ public abstract class AbstractCell {
 			return Collections.EMPTY_LIST;
 		}
 	}
+	
+	
+	/**
+	 * the container to which this cell's item belongs
+	 */
 	protected AbstractContainer container;
-
+	/**
+	 * the item to which this cell belongs
+	 */
 	protected AbstractItem item;
+	/**
+	 * the style settings for this cell
+	 */
 	protected int style;
+	/**
+	 * the check button control, if this is a check cell
+	 */
 	private Button check;
+	/**
+	 * the control which is in the client area of this cell, if created
+	 */
 	private Control control;
+	/**
+	 * the horizontal alignment to use when positioning the control in the client area, if it was created
+	 */
 	int hAlign = SWT.FILL;
+	/**
+	 * the vertical alignment to use when positioning the control in the client area, if it was created
+	 */
 	int vAlign = SWT.FILL;
+	/**
+	 * the control which is in the child area of this cell, if created
+	 */
 	private Control childControl;
-	protected boolean update = true;
+	/**
+	 * indicates whether or not this cell is considered 'open' or 'closed'.
+	 * the actual meaning may vary between concrete implementations.
+	 */
 	protected boolean open = false;
+	/**
+	 * indicates whether or not this cell is selected, and thereby included in the
+	 * container's current selection list.
+	 */
 	protected boolean selected = false;
+	/**
+	 * indicates whether or not this cell is visible and should be considered for
+	 * painting by the container.
+	 */
 	protected boolean visible = true;
+	/**
+	 * indicates whether or not this cell's child area is visible
+	 */
 	protected boolean childVisible = false;
+	/**
+	 * indicates whether or not this cell's toggle is visible
+	 */
 	protected boolean toggleVisible = false;
+	/**
+	 * indicates whether or not this cell is actually painted to the screen.
+	 */
 	private   boolean painted = false;
-	private	  boolean firstPainting = true;
-	private	  boolean firstChildPainting = true;
-	protected int indent = 0;
 	/**
 	 * If true, the toggle will not be drawn, but will take up space
 	 */
 	protected boolean ghostToggle = false;
+	/**
+	 * indicates whether or not the primary mouse button is down, whether or not it is over this cell.
+	 */
 	protected boolean mouseDown = false;
+	/**
+	 * indicates whether or not the mouse is over this cell.
+	 */
 	protected boolean mouseOver = false;
+	/**
+	 * indicates whether or not the mouse is over this cell's toggle.
+	 */
 	protected boolean mouseOverToggle = false;
+	/**
+	 * An amount of margin to be applied to the left side of the cell.
+	 */
 	public int marginLeft 	= gtk ? 2 : 1;
+	/**
+	 * An amount of margin to be applied to both the left and right sides of the cell.
+	 */
 	public int marginWidth 	= 0;
+	/**
+	 * An amount of margin to be applied to the right side of the cell.
+	 */
 	public int marginRight 	= 0;
+	/**
+	 * An amount of margin to be applied to the top of the cell.
+	 */
 	public int marginTop 	= gtk ? 0 : 0;
+	/**
+	 * An amount of margin to be applied to both the top and bottom of the cell.
+	 */
 	public int marginHeight = gtk ? 4 : 1;
+	/**
+	 * An amount of margin to be applied to the bottom of the cell.
+	 */
 	public int marginBottom = 0;
 
+	/**
+	 * sets the width of the toggle
+	 */
 	public int toggleWidth = 16;
+	/**
+	 * the bounds of this cell relative to...
+	 */
 	protected Rectangle bounds;
+	/**
+	 * the bounds of this cell the <b>last</b> time it was painted
+	 */
 	protected Rectangle boundsOld;
+	/**
+	 * the bounds of this cell's child area relative to the cell's own
+	 * origin (bounds.x, bounds.y)
+	 * @see #bounds
+	 */
 	protected Rectangle childBounds;
+	/**
+	 * the bounds of this cell's child area the <b>last</b> time it was painted
+	 */
 	protected Rectangle childBoundsOld;
+	/**
+	 * indicates whether or not this cell has a child area.
+	 */
 	private boolean hasChild;
 
+	/**
+	 * the position of the scroll bars the <b>last</b> time this cell was painted
+	 */
 	private Point scrollPos;
+	/**
+	 * the bounds for the toggle, relative to... to what? TODO
+	 */
 	protected Rectangle toggleBounds = new Rectangle(0,0,0,0);
+	/**
+	 * the font to use for any text in this cell.
+	 */
 	protected Font font;
+	/**
+	 * The color that the cell will actually use for its background.  It may be different
+	 * from the storedBackground if, for instance, the cell is selected.
+	 * @see #storedBackground
+	 */
 	protected Color activeBackground;
+	/**
+	 * The color that the cell will actually use for its forground.  It may be different
+	 * from the storedForeground if, for instance, the cell is selected.
+	 * @see #storedForeground
+	 */
 	protected Color activeForeground;
+	/**
+	 * The color that the cell would like to use for its background.
+	 * @see #activeBackground
+	 */
 	protected Color storedBackground = null;
+	/**
+	 * The color that the cell would like to use for its foreground.
+	 * @see #activeForeground
+	 */
 	protected Color storedForeground = null;
-	protected boolean isGridLine = false;
 
 	private int cellState = CELL_NORMAL;
+	
 	private List colorExclusions;
-
 	private List eventExclusions;
 	private EventHandler ehandler = new EventHandler();
 
@@ -279,6 +424,8 @@ public abstract class AbstractCell {
 	 * 	<li>SWT.TOGGLE - creates the CContainerCell's implementation of a toggle</li>
 	 * </ul>
 	 * </p> 
+	 * @param item the item to which this cell belongs
+	 * @param style an int specifying custom style settings
 	 */
 	public AbstractCell(AbstractItem item, int style) {
 		this.container = item.container;
@@ -299,6 +446,10 @@ public abstract class AbstractCell {
 		}
 	}
 
+	/**
+	 * @param eventType
+	 * @param handler
+	 */
 	public void addListener(int eventType, Listener handler) {
 		if(ehandler.add(eventType, handler)) {
 			List controls = getEventManagedControls();
@@ -321,6 +472,9 @@ public abstract class AbstractCell {
 		}			
 	}
 
+	/**
+	 * @param listener
+	 */
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		if(pcListeners == null) {
 			pcListeners = new PropertyChangeSupport(this);
@@ -328,6 +482,10 @@ public abstract class AbstractCell {
 		pcListeners.addPropertyChangeListener(listener);
 	}
 
+	/**
+	 * @param propertyName
+	 * @param listener
+	 */
 	public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
 		if(pcListeners == null) {
 			pcListeners = new PropertyChangeSupport(this);
@@ -335,16 +493,24 @@ public abstract class AbstractCell {
 		pcListeners.addPropertyChangeListener(propertyName, listener);
 	}
 
-	protected void clearCellStateFlags() {
-		cellState = 0;
-	}
+//	protected void clearCellStateFlags() {
+//		cellState = 0;
+//	}
 
 	Point computeChildSize(int wHint, int hHint) { return null; }
 
+	/**
+	 * compute the size of this cell's client area; that is, compute the size
+	 * of the area which is not covered by margins, toggles, or checks.
+	 * @param wHint
+	 * @param hHint
+	 * @return a <code>Point</code> representing the computed size
+	 */
 	abstract public Point computeClientSize(int wHint, int hHint);
-	Point computeControlSize(int wHint, int hHint) {
-		return (control != null) ? control.computeSize(wHint, hHint) : new Point(0,0);
+		Point computeControlSize(int wHint, int hHint) {
+			return (control != null) ? control.computeSize(wHint, hHint) : new Point(0,0);
 	}
+
 	/**
 	 * Compute the preferred size of the cell for its current state (open or closed, if applicable)
 	 * just the way it would be done in a regular SWT layout.
@@ -354,13 +520,18 @@ public abstract class AbstractCell {
 	 */
 	abstract Point computeSize(int wHint, int hHint);
 
+	/**
+	 * @param control
+	 * @return true if the control is part of this cell, false otherwise
+	 */
 	boolean contains(Control control) {
+		//TODO: contains?
 		return getEventManagedControls().contains(control);
 	}
 
 	private Button createCheck() {
 		if(isCheck) {
-			Button b = new Button(container, SWT.CHECK);
+			Button b = new Button(container.body, SWT.CHECK);
 			b.setBackground(activeBackground);
 			b.setForeground(activeForeground);
 			b.setSelection(isChecked);
@@ -384,62 +555,70 @@ public abstract class AbstractCell {
 	}
 
 	/**
-	 * Create the contents of your custom cell's Child Area here
-	 * <p>The Child Area is the SComposite (@see SComposite)
-	 * that will appear and disappear as the cell is opened and closed</p>
-	 * <p>The base cell class will call this immediately after creating its body if, and only if,
-	 * the style bit for SWT.DROP_DOWN is set
-	 * <p>Note that NO layout has been assigned to the parameter "contents".  Implementations
-	 * must provide this or things may not work as expected</p>
-	 * @param contents the Child Area of the cell
-	 * @param style the style that was passed to the constructor
-	 * @see AbstractContainer#createControl(Composite, int)
+	 * Create the contents of your custom cell's Child Area here.
+	 * @param parent the parent composite of your new control
+	 * @return the newly created control (for multiple controls, create them inside
+	 * a composite, and return the composite here)
 	 */
-	protected Control createChildControl(Composite contents) { return null; }
+	protected Control createChildControl(Composite parent) { return null; }
 
 	/**
 	 * Create the contents of your custom cell here
-	 * <p>The Title Area is the composite that makes up the body of the "traditional"
-	 * cell; it is called "Title" because it initially sat above the Child Area like 
-	 * a title or header, though this is no longer a requirement.  The Title Area may
-	 * also be thought of as the "always visible" portion of a cell.</p>
-	 * <p>This method is called immediately before the cell is painted for the first time.
-	 * @param style the style that was passed to the constructor
-	 * @see org.aspencloud.widgets.ccontainer#createChildControl(Composite, int)
+	 * @param parent the parent composite of your new control
+	 * @return the newly created control (for multiple controls, create them inside
+	 * a composite, and return the composite here)
 	 */
-	protected Control createControl(Composite contents) { return null; }
+	protected Control createControl(Composite parent) { return null; }
 
 	void dispose() {
 //		if(titleArea != null && !titleArea.isDisposed()) titleArea.dispose();
 //		if(childArea != null && !childArea.isDisposed()) childArea.dispose();
 	}
 
-	protected void doFirstChildPainting() {}
-
-	protected void doFirstPainting() {}
-
-	protected abstract void doPaint(GC gc, Point offset);
-
-	protected void doSetPainted(boolean painted) {}
-
+	/**
+	 * @param propertyName
+	 * @param oldValue
+	 * @param newValue
+	 */
 	protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
 		if(pcListeners != null) {
 			pcListeners.firePropertyChange(propertyName, oldValue, newValue);
 		}
 	}
 
+	/**
+	 * Returns the active background color.
+	 * @return Color
+	 * @see #activeBackground
+	 * @see #getForeground()
+	 * @see #setBackground(Color)
+	 */
 	public Color getBackground() {
 		return activeBackground;
 	}
 
+	/**
+	 * Returns the bounds of this cell, relative to the container's body.
+	 * @return Rectangle
+	 */
 	public Rectangle getBounds() {
 		return new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height);
 	}
 
+	/**
+	 * Returns the stored background color.
+	 * @return Color
+	 * @see #storedBackground
+	 */
 	public Color getCellBackground() {
 		return storedBackground;
 	}
 
+	/**
+	 * Returns the stored foreground color.
+	 * @return Color
+	 * @see #storedForeground
+	 */
 	public Color getCellForeground() {
 		return storedForeground;
 	}
@@ -448,51 +627,68 @@ public abstract class AbstractCell {
 		return cellState;
 	}
 
+	/**
+	 * Returns whether or not this cell is checked.  If the cell is not of
+	 * style SWT.CHECK, false is returned.
+	 * @return boolean representing the check state of the cell.
+	 */
 	public boolean getChecked() {
 		return isChecked;
 	}
 
-	public Rectangle getClientArea() {
-		Rectangle ca = new Rectangle(0,0,bounds.width, bounds.height);
-		ca.x = marginLeft + marginWidth + indent;
-		if(toggleVisible || ghostToggle) ca.x += toggleWidth;
-		ca.y = marginTop + marginHeight;
-		ca.width -= (ca.x + marginRight + marginWidth);
-		ca.height -= (ca.y + marginBottom + marginHeight);
-		return ca;
-	}
+	/**
+	 * Get the client area of this cell.  This is the area
+	 * where controls can be placed and painting can occur by subclasses.
+	 * @return Rectangle
+	 */
+	public abstract Rectangle getClientArea();
 
-	private List getColorManagedControls() {
+	/**
+	 * Get a list containing all of the controls whose colors (foreground and background)
+	 * are managed by this cell.
+	 * @return List
+	 */
+	protected List getColorManagedControls() {
+		// TODO add child controls
 		List l = new ArrayList(getControls(control, colorExclusions));
 		if(check != null) l.add(check);
 		return l;
 	}
 
-	protected Display getDisplay() {
-		return container.getDisplay();
-	}
-
-	private List getEventManagedControls() {
+	/**
+	 * Get a list containing all of the controls whose events (such as mouse and keyboard)
+	 * are managed by this cell.
+	 * @return List
+	 */
+	protected List getEventManagedControls() {
+		// TODO add child controls
 		List l = new ArrayList(getControls(control, eventExclusions));
 		if(check != null) l.add(check);
 		return l;
 	}
 
+	/**
+	 * Get the font in use by this cell.
+	 * @return Font
+	 */
 	public Font getFont() {
 		return (font == null || font.isDisposed()) ? null : font;
 	}
 
+	/**
+	 * Returns the active foreground color.
+	 * @return Color
+	 * @see #activeForeground
+	 * @see #getBackground()
+	 * @see #setForeground(Color)
+	 */
 	public Color getForeground() {
 		return activeForeground;
 	}
 
-	public int getIndent() {
-		return indent;
-	}
-
-	public AbstractItem getItem() {
-		return item;
-	}
+//	public AbstractItem getItem() {
+//		return item;
+//	}
 
 	public Point getLocation() {
 		Rectangle r = getBounds();
@@ -508,20 +704,21 @@ public abstract class AbstractCell {
 		return style;
 	}
 
-	public Rectangle getToggleBounds() {
+	Rectangle getToggleBounds() {
 		return mapRectangle(toggleBounds);
 	}
 
-	public boolean getToggleVisible() {
+	boolean getToggleVisible() {
 		return toggleVisible;
 	}
 
 	/**
 	 * Give the Item a chance to handle the mouse event
 	 * @param event the Event
+	 * @param selectionActive 
 	 * @return 0: do nothing, 1: redraw, 2: layout
 	 */
-	public int handleMouseEvent(Event event, boolean selectionActive) {
+	protected int handleMouseEvent(Event event, boolean selectionActive) {
 		// TODO: handleMouseEvent uses bitwise OR'ed return code, allow "consumed" code?
 		int result = RESULT_NONE;
 		switch(event.type) {
@@ -550,10 +747,6 @@ public abstract class AbstractCell {
 
 	abstract void internalFirstPainting();
 
-	protected GC internalGC() {
-		return container.internalGC;
-	}
-
 	protected boolean isCellState(int opcode) {
 		return ((cellState & opcode) != 0);
 	}
@@ -561,9 +754,11 @@ public abstract class AbstractCell {
 	protected boolean isCellStateNormal() {
 		return cellState == 0;
 	}
+
 	public boolean isOpen() {
 		return open;
 	}
+
 	public boolean isSelected() {
 		return selected;
 	}
@@ -603,13 +798,13 @@ public abstract class AbstractCell {
 	}
 
 	/**
-	 * Called by Container during its paint method to draw the cell's Title Area
-	 * <p>Subclasses need to override if they want to have a visual representation</p>
-	 * <p>If SWT.TITLE is set this method may just return, but is not required to.</p>
 	 * @param gc the GC upon which the cell will be painted
 	 * @param ebounds the bounding rectangle of the Container's paint event
 	 */
 	void paint(GC gc, Rectangle ebounds) {
+		bounds.x = container.internalGetColumn(item.getCellIndex(this)).getLeft();
+		bounds.width = container.internalGetColumn(item.getCellIndex(this)).getWidth();
+
 		if(!painted || bounds.isEmpty()) return;
 
 		updateColors();
@@ -633,19 +828,15 @@ public abstract class AbstractCell {
 		Point newSPos = container.getScrollPosition();
 		if(!didLayout && (bounds.x != boundsOld.x || bounds.y != boundsOld.y || 
 				scrollPos.x != newSPos.x || scrollPos.y != newSPos.y)) {
-			if(check != null) locateCheck(check);
-			if(control != null) locate(control);
+			if(!gtk) {
+				if(check != null) locateCheck(check);
+				if(control != null) locate(control);
+			}
 			boundsOld.x = bounds.x;
 			boundsOld.y = bounds.y;
 		}
 		if(hasChild && open) {
-			if(firstChildPainting) {
-				firstChildPainting = false;
-				childBoundsOld = new Rectangle(-1,-1,0,0);
-				childBounds = new Rectangle(0,0,10,10);
-				doFirstChildPainting();
-			}
-//			if(!holdChild) childControl = createChildControl(container);
+			if(childControl == null) childControl = createChildControl(container);
 			didLayout = false;
 			if(childBounds.width != childBoundsOld.width || childBounds.height != childBoundsOld.height) {
 				layoutChild();
@@ -666,11 +857,17 @@ public abstract class AbstractCell {
 		}
 		scrollPos = newSPos;
 
-		doPaint(gc, new Point(bounds.x-scrollPos.x-ebounds.x,bounds.y-scrollPos.y-ebounds.y));
+		if(gtk) {
+			paintCell(gc, new Point(bounds.x-ebounds.x,bounds.y-ebounds.y));
+		} else {
+			paintCell(gc, new Point(bounds.x-scrollPos.x-ebounds.x,bounds.y-scrollPos.y-ebounds.y));
+		}
 	}
 
+	protected abstract void paintCell(GC gc, Point offset);
+	
 	protected void paintToggle(GC gc, Point offset) {
-		double x = indent + ((toggleBounds.width - pointsWidth) / 2) + offset.x;
+		double x = ((toggleBounds.width - pointsWidth) / 2) + offset.x;
 		double y = ((toggleBounds.height - pointsWidth) / 2) + toggleBounds.y + offset.y;
 		int[] data = open ? openPoints : closedPoints;
 		int[] pts = new int[data.length];
@@ -688,7 +885,7 @@ public abstract class AbstractCell {
 			gc.setAdvanced(false);
 		} else if(carbon) {
 			// TODO: carbon toggle
-			gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_GRAY));
+			gc.setBackground(container.getDisplay().getSystemColor(SWT.COLOR_GRAY));
 			gc.setAntialias(SWT.ON);
 			gc.fillPolygon(pts);
 			gc.setAdvanced(false);
@@ -700,7 +897,7 @@ public abstract class AbstractCell {
 					pointsWidth,
 					pointsWidth,
 					3, 3);
-			Color color = new Color(getDisplay(), 223, 229, 234);
+			Color color = new Color(container.getDisplay(), 223, 229, 234);
 			gc.setForeground(color);
 			gc.drawLine(
 					(int) x,
@@ -721,7 +918,7 @@ public abstract class AbstractCell {
 					(int) y + pointsWidth-3
 			);
 			color.dispose();
-			color = new Color(getDisplay(), 196, 206, 216);
+			color = new Color(container.getDisplay(), 196, 206, 216);
 			gc.setForeground(color);
 			color.dispose();
 			gc.drawLine(
@@ -846,7 +1043,7 @@ public abstract class AbstractCell {
 	}
 
 	protected void setCursor(int id) {
-		container.setCursor(getDisplay().getSystemCursor(id));
+		container.setCursor(container.getDisplay().getSystemCursor(id));
 	}
 
 	protected void setExclusions(Control exclude) {
@@ -871,15 +1068,6 @@ public abstract class AbstractCell {
 	public void setForeground(Color color) {
 		storedForeground = color;
 		updateColors();
-	}
-	public void setIndent(int indent) {
-		this.indent = indent;
-	}
-	public void setIsGridLine(boolean isGridLine) {
-		if(this.isGridLine != isGridLine) {
-			this.isGridLine = isGridLine;
-			updateColors();
-		}
 	}
 	/**
 	 * Requests the cell to either open or close
@@ -923,14 +1111,9 @@ public abstract class AbstractCell {
 		if(this.painted != painted) {
 			this.painted = painted;
 			if(painted) {
-				if(firstPainting) {
-					firstPainting = false;
-					internalFirstPainting();
-					doFirstPainting();
-				}
-				check = createCheck();
+				if(check == null) check = createCheck();
 				if(control == null) {
-					control = createControl(container);
+					control = createControl(container.body);
 				} else {
 					control.setVisible(true);
 				}
@@ -958,14 +1141,16 @@ public abstract class AbstractCell {
 					}
 				}
 			}
-
-			doSetPainted(painted);
 		}
 	}
 
-	public Control getControl() { return check; }
+//	public Control getControl() { return control; }
 	
-	public void setSelected(boolean selected) {
+	/**
+	 * Set the selection state of this cell.
+	 * @param selected true if selected, false otherwise
+	 */
+	void setSelected(boolean selected) {
 		this.selected = selected;
 		updateColors();
 	}
@@ -992,6 +1177,10 @@ public abstract class AbstractCell {
 		updateVisibility();
 	}
 
+	/**
+	 * Sets the visibility of the cell
+	 * @param visible
+	 */
 	public void setVisible(boolean visible) {
 		this.visible = visible;
 		updateVisibility();
@@ -1006,10 +1195,10 @@ public abstract class AbstractCell {
 	}
 
 	/**
-	 * Updates this CTableCell with the CTableItem's data object, as returned by 
+	 * Updates this cell with its item's data object, as returned by
 	 * item.getData(). If getData() returns null, then this method simply returns false.
-	 * @return true if this cell (and thus maybe the CTable) needs its layout updated
-	 * @see org.aspencloud.widgets.ccontainer#update(Object, String[])
+	 * @return true if this cell (and thus maybe the container) needs its layout updated
+	 * @see #update(Object, String[])
 	 */
 	public boolean update() {
 		Object obj = null;
@@ -1030,42 +1219,16 @@ public abstract class AbstractCell {
 	 * need only be updated once.
 	 */
 	public boolean update(Object element, String[] properties) {
-		if(update) {
-			update = false;
-			return true;
-		}
+		// TODO rework the JFace style 'update' functionality
 		return false;
 	}
 
-	protected void updateColors() {
-		Color back;
-		Color fore;
-		if(selected) {
-			back = item.container.getColors().getItemBackgroundSelected();
-			fore = item.container.getColors().getItemForegroundSelected();
-		} else if(isGridLine){
-			back = (storedBackground != null) ? storedBackground : item.container.getColors().getGrid();
-			fore = (storedForeground != null) ? storedForeground : item.container.getColors().getItemForegroundNormal();
-		} else {
-			back = (storedBackground != null) ? storedBackground : item.container.getColors().getItemBackgroundNormal();
-			fore = (storedForeground != null) ? storedForeground : item.container.getColors().getItemForegroundNormal();
-		}
-
-		activeBackground = back;
-		activeForeground = fore;
-
-		// TODO: updateColors - childArea
-//		if((childArea != null && !childArea.isDisposed()) || 
-//		(titleArea != null && !titleArea.isDisposed())) {
-		List l = getColorManagedControls();
-		for(Iterator iter = l.iterator(); iter.hasNext(); ) {
-			Control c = (Control) iter.next();
-//			c.setBackground(getDisplay().getSystemColor(SWT.COLOR_BLUE));
-			c.setBackground(activeBackground);
-//			c.setForeground(activeForeground);
-		}
-//		}
-	}
+	/**
+	 * Update the background and foreground colors for the cell and any contained
+	 * controls.  This method should be called whenever something may change the color
+	 * of the cell, such as a change in selection state.
+	 */
+	protected abstract void updateColors();
 
 	private void updateVisibility() {
 		// TODO: redo updateVisibility

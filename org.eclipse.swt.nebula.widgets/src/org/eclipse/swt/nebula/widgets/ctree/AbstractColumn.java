@@ -67,8 +67,8 @@ public class AbstractColumn extends Item {
 						container.columnOrder = nativeColumn.getParent().getColumnOrder();
 					}
 				case SWT.Resize:
-					container.layout(e.type, AbstractColumn.this);
-					container.redraw();
+//					container.layout(e.type, AbstractColumn.this);
+					container.body.redraw();
 					break;
 //				case SWT.Selection:
 //					if(container.internalGetSortColumn() == AbstractColumn.this) {
@@ -137,7 +137,8 @@ public class AbstractColumn extends Item {
 	}
 	
 	public Rectangle getBounds() {
-		return new Rectangle(getLeft(), container.getClientArea().y, getWidth(), container.getClientArea().height);
+		Rectangle ca = container.getClientArea();
+		return new Rectangle(getLeft(), ca.y, getWidth(), ca.height);
 	}
 	
 	public Color getBackground() {
