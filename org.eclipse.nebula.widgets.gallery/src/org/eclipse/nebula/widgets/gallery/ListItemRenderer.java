@@ -253,7 +253,7 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 		freeDropShadowsColors();
 	}
 
-	public Point getBestSize(int originalX, int originalY, int maxX, int maxY) {
+	protected Point getBestSize(int originalX, int originalY, int maxX, int maxY) {
 		double widthRatio = (double) originalX / (double) maxX;
 		double heightRatio = (double) originalY / (double) maxY;
 
@@ -263,5 +263,37 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 		int newHeight = (int) ((double) originalY / bestRatio);
 
 		return new Point(newWidth, newHeight);
+	}
+
+	public Color getSelectionColor() {
+		return selectionColor;
+	}
+
+	public void setSelectionColor(Color selectionColor) {
+		this.selectionColor = selectionColor;
+	}
+
+	public Color getForegroundColor() {
+		return foregroundColor;
+	}
+
+	public void setForegroundColor(Color foregroundColor) {
+		this.foregroundColor = foregroundColor;
+	}
+
+	public Color getBackgroundColor() {
+		return backgroundColor;
+	}
+
+	public void setBackgroundColor(Color backgroundColor) {
+		this.backgroundColor = backgroundColor;
+	}
+
+	public Color getDescriptionColor() {
+		return descriptionColor;
+	}
+
+	public void setDescriptionColor(Color descriptionColor) {
+		this.descriptionColor = descriptionColor;
 	}
 }

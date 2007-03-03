@@ -75,7 +75,7 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 			fontHeight = gc.getFontMetrics().getHeight();
 			useableHeight -= fontHeight + 2;
 		}
-
+		
 		int imageWidth = 0;
 		int imageHeight = 0;
 		int xShift = 0;
@@ -231,7 +231,7 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 		freeDropShadowsColors();
 	}
 
-	public Point getBestSize(int originalX, int originalY, int maxX, int maxY) {
+	protected Point getBestSize(int originalX, int originalY, int maxX, int maxY) {
 		double widthRatio = (double) originalX / (double) maxX;
 		double heightRatio = (double) originalY / (double) maxY;
 
@@ -241,5 +241,29 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 		int newHeight = (int) ((double) originalY / bestRatio);
 
 		return new Point(newWidth, newHeight);
+	}
+
+	public Color getSelectionColor() {
+		return selectionColor;
+	}
+
+	public void setSelectionColor(Color selectionColor) {
+		this.selectionColor = selectionColor;
+	}
+
+	public Color getForegroundColor() {
+		return foregroundColor;
+	}
+
+	public void setForegroundColor(Color foregroundColor) {
+		this.foregroundColor = foregroundColor;
+	}
+
+	public Color getBackgroundColor() {
+		return backgroundColor;
+	}
+
+	public void setBackgroundColor(Color backgroundColor) {
+		this.backgroundColor = backgroundColor;
 	}
 }
