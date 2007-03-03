@@ -362,7 +362,7 @@ public class Gallery extends Canvas {
 						_deselectAll();
 						redraw();
 					} else {
-						if ((e.stateMask & SWT.CTRL) == 0 && (e.stateMask & SWT.SHIFT) == 0) {
+						if ((e.stateMask & SWT.MOD1) == 0 && (e.stateMask & SWT.SHIFT) == 0) {
 
 							if (!isSelected(item)) {
 								_deselectAll();
@@ -398,7 +398,7 @@ public class Gallery extends Canvas {
 					if (item == null)
 						return;
 
-					if ((e.stateMask & SWT.CTRL) > 0) {
+					if ((e.stateMask & SWT.MOD1) > 0) {
 						if (item != null) {
 							if (DEBUG)
 								System.out.println("setSelected : inverse");
