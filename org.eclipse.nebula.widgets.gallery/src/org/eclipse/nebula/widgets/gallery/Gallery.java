@@ -532,7 +532,7 @@ public class Gallery extends Canvas {
 			// TODO: Handle double click.
 
 		}
-		
+
 		mouseClickHandled = true;
 	}
 
@@ -541,9 +541,10 @@ public class Gallery extends Canvas {
 			System.out.println("onMouseUp");
 
 		if (mouseClickHandled) {
-			System.out.println("onMouseUp : mouse event already handled");
+			if (DEBUG) {
+				System.out.println("onMouseUp : mouse event already handled");
+			}
 			return;
-
 		}
 
 		if (e.button == 1) {
@@ -613,7 +614,7 @@ public class Gallery extends Canvas {
 						setSelected(item, true, true);
 
 						lastSingleClick = item;
-						redraw();						
+						redraw();
 						mouseClickHandled = true;
 					}
 				}
