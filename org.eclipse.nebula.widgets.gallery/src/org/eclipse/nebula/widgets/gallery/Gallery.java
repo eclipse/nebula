@@ -19,6 +19,8 @@ import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.PaintEvent;
@@ -32,7 +34,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.ScrollBar;
@@ -272,6 +273,7 @@ public class Gallery extends Canvas {
 		_addPaintListeners();
 		_addScrollBarsListeners();
 		_addMouseListeners();
+		_addKeyListeners();
 
 		// Layout
 		updateStructuralValues(false);
@@ -334,6 +336,18 @@ public class Gallery extends Canvas {
 
 	}
 
+	private void _addKeyListeners() {
+		this.addKeyListener(new KeyListener() {
+
+			public void keyPressed(KeyEvent e) {
+			}
+
+			public void keyReleased(KeyEvent e) {
+			}
+
+		});
+	}
+
 	/**
 	 * Add internal mouse listeners to this gallery.
 	 */
@@ -379,6 +393,18 @@ public class Gallery extends Canvas {
 				int toIndex = toParent.indexOf(to);
 				fromParent.select(fromIndex, toIndex);
 			}
+		} else {
+			int fromParentIndex = indexOf(fromParent);
+			int toParentIndex = indexOf(toParent);
+			int fromIndex = fromParent.indexOf(from);
+			int toIndex = toParent.indexOf(to);
+		
+			fromParent.select(fromIndex, fromParent.getItemCount()-1);
+			for( int i = fromParentIndex + 1; i <toParentIndex; i ++){
+				getItem( i )._selectAll();
+			}
+			toParent.select(0, toIndex);
+
 		}
 		this.notifySelectionListeners(to, indexOf(to));
 		redraw();
@@ -388,6 +414,9 @@ public class Gallery extends Canvas {
 
 		GalleryItem newParent = before.getParentItem();
 		GalleryItem oldParent = after.getParentItem();
+
+		int beforeParentIndex = indexOf(newParent );
+		int afterParentIndex = indexOf( oldParent);
 
 		if (newParent == oldParent) {
 			int newParentIndex;
@@ -403,8 +432,7 @@ public class Gallery extends Canvas {
 			return (newParentIndex < oldParentIndex);
 		}
 
-		// TODO : handle case when item don't have the same parent
-		return true;
+		return beforeParentIndex < afterParentIndex;
 	}
 
 	/**
@@ -415,7 +443,7 @@ public class Gallery extends Canvas {
 	 * @param notifyListeners
 	 *            TODO
 	 */
-	private void setSelected(GalleryItem item, boolean selected, boolean notifyListeners) {
+	protected void setSelected(GalleryItem item, boolean selected, boolean notifyListeners) {
 		if (selected) {
 			if (!isSelected(item)) {
 				_addSelection(item);
