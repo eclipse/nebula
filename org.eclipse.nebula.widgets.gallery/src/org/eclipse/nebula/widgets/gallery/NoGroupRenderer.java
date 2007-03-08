@@ -13,6 +13,7 @@ package org.eclipse.nebula.widgets.gallery;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 
 /**
  * NoGroup Renderer <br/> This group renderer does not draw group decoration.
@@ -84,4 +85,7 @@ public class NoGroupRenderer extends AbstractGridGroupRenderer {
 		return true;
 	}
 
+	public Rectangle getSize( GalleryItem item){
+		return super.getSize(item, OFFSET);	
+		}
 }

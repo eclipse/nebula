@@ -14,6 +14,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 
 /**
  * 
@@ -157,16 +158,30 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 	boolean mouseDown(GalleryItem group, MouseEvent e, Point coords) {
 
 		if (coords.y - group.y <= titleHeight) {
-			group.setExpanded(!group.isExpanded());
-			if (!group.isExpanded()) {
-				group.deselectAll();
+
+			if (coords.x <= 20) {
+				// Toogle 
+				group.setExpanded(!group.isExpanded());
+				if (!group.isExpanded()) {
+					group.deselectAll();
+				}
+				gallery.updateStructuralValues(false);
+				gallery.updateScrollBarsProperties();
+
+			} else {
+				group.selectAll();
+				gallery.notifySelectionListeners(group, gallery.indexOf(group));
 			}
-			gallery.updateStructuralValues(false);
-			gallery.updateScrollBarsProperties();
 			gallery.redraw();
 			return false;
+
 		}
 		return true;
 	}
 
+	public Rectangle getSize(GalleryItem item) {
+		Rectangle r =super.getSize(item, offset) ;
+		
+		return r;
+	}
 }

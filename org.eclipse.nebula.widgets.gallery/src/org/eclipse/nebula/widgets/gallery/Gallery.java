@@ -340,12 +340,61 @@ public class Gallery extends Canvas {
 		this.addKeyListener(new KeyListener() {
 
 			public void keyPressed(KeyEvent e) {
+
+				switch (e.keyCode) {
+				case SWT.ARROW_LEFT:
+				case SWT.ARROW_RIGHT:
+				case SWT.ARROW_UP:
+				case SWT.ARROW_DOWN:
+					GalleryItem newItem = groupRenderer.getNextItem(lastSingleClick, e.keyCode);
+
+					if (newItem != null) {
+						_deselectAll();
+						setSelected(newItem, true, true);
+						lastSingleClick = newItem;
+						_showItem(newItem);
+						redraw();
+					}
+
+					break;
+				}
 			}
 
 			public void keyReleased(KeyEvent e) {
 			}
 
 		});
+	}
+
+	public void showItem(GalleryItem item) {
+		this.checkWidget();
+		this._showItem(item);
+	}
+
+	private void _showItem(GalleryItem item) {
+		int y;
+		int height;
+		Rectangle rect = groupRenderer.getSize(item);
+		if (rect == null) {
+			return;
+		}
+
+		if (vertical) {
+			y = rect.y;
+			height = rect.height;
+		} else {
+			y = rect.x;
+			height = rect.width;
+		}
+	
+		if (y < translate) {
+			translate = y;
+		} else if (translate + this.getClientArea().height < y + height) {
+			translate = y + height - this.getClientArea().height;
+		}
+		this.updateScrollBarsProperties();
+		redraw();
+
 	}
 
 	/**
@@ -398,10 +447,10 @@ public class Gallery extends Canvas {
 			int toParentIndex = indexOf(toParent);
 			int fromIndex = fromParent.indexOf(from);
 			int toIndex = toParent.indexOf(to);
-		
-			fromParent.select(fromIndex, fromParent.getItemCount()-1);
-			for( int i = fromParentIndex + 1; i <toParentIndex; i ++){
-				getItem( i )._selectAll();
+
+			fromParent.select(fromIndex, fromParent.getItemCount() - 1);
+			for (int i = fromParentIndex + 1; i < toParentIndex; i++) {
+				getItem(i)._selectAll();
 			}
 			toParent.select(0, toIndex);
 
@@ -415,8 +464,8 @@ public class Gallery extends Canvas {
 		GalleryItem newParent = before.getParentItem();
 		GalleryItem oldParent = after.getParentItem();
 
-		int beforeParentIndex = indexOf(newParent );
-		int afterParentIndex = indexOf( oldParent);
+		int beforeParentIndex = indexOf(newParent);
+		int afterParentIndex = indexOf(oldParent);
 
 		if (newParent == oldParent) {
 			int newParentIndex;
@@ -631,6 +680,7 @@ public class Gallery extends Canvas {
 				_deselectAll();
 				redraw();
 				mouseClickHandled = true;
+				lastSingleClick = null;
 			} else {
 				if ((e.stateMask & SWT.MOD1) == 0 && (e.stateMask & SWT.SHIFT) == 0) {
 
@@ -665,38 +715,44 @@ public class Gallery extends Canvas {
 		if (DEBUG)
 			System.out.println("paint");
 
-		GC newGC = gc;
+		try {
+			GC newGC = gc;
 
-		// Linux-GTK Bug 174932
-		if (!SWT.getPlatform().equals("gtk")) {
-			newGC.setAdvanced(true);
-		}
-
-		if (gc.getAdvanced()) {
-			newGC.setAntialias(antialias);
-			newGC.setInterpolation(interpolation);
-		}
-
-		Rectangle clipping = newGC.getClipping();
-		gc.setBackground(backgroundColor);
-		drawBackground(newGC, clipping.x, clipping.y, clipping.width, clipping.height);
-
-		int[] indexes = getVisibleItems(clipping);
-
-		if (indexes != null && indexes.length > 0) {
-
-			// Call preDraw for optimization
-			if (groupRenderer != null)
-				groupRenderer.preDraw(newGC);
-			if (itemRenderer != null)
-				itemRenderer.preDraw(newGC);
-
-			for (int i = indexes.length - 1; i >= 0; i--) {
-				if (DEBUG)
-					System.out.println("Drawing group " + indexes[i]);
-
-				_drawGroup(newGC, indexes[i]);
+			// Linux-GTK Bug 174932
+			if (!SWT.getPlatform().equals("gtk")) {
+				newGC.setAdvanced(true);
 			}
+
+			if (gc.getAdvanced()) {
+				newGC.setAntialias(antialias);
+				newGC.setInterpolation(interpolation);
+			}
+
+			Rectangle clipping = newGC.getClipping();
+			gc.setBackground(backgroundColor);
+			drawBackground(newGC, clipping.x, clipping.y, clipping.width, clipping.height);
+
+			int[] indexes = getVisibleItems(clipping);
+
+			if (indexes != null && indexes.length > 0) {
+
+				// Call preDraw for optimization
+				if (groupRenderer != null)
+					groupRenderer.preDraw(newGC);
+				if (itemRenderer != null)
+					itemRenderer.preDraw(newGC);
+
+				for (int i = indexes.length - 1; i >= 0; i--) {
+					if (DEBUG)
+						System.out.println("Drawing group " + indexes[i]);
+
+					_drawGroup(newGC, indexes[i]);
+				}
+			}
+		} catch (Exception e) {
+			// We can't let onPaint throw an exception because unexpected
+			// results may occur in SWT.
+			e.printStackTrace();
 		}
 
 	}

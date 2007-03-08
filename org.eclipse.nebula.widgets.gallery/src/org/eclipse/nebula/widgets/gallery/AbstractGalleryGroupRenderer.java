@@ -13,6 +13,7 @@ package org.eclipse.nebula.widgets.gallery;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 
 /**
  * 
@@ -76,6 +77,16 @@ public abstract class AbstractGalleryGroupRenderer {
 
 	abstract void dispose();
 
+	/**
+	 * Returns the item that should be selected when the current item is 'item'
+	 * and the 'key' is pressed
+	 * 
+	 * @param item
+	 * @param key
+	 * @return
+	 */
+	abstract GalleryItem getNextItem(GalleryItem item, int key);
+
 	public void preLayout(GC gc) {
 
 	}
@@ -83,6 +94,8 @@ public abstract class AbstractGalleryGroupRenderer {
 	abstract void layout(GC gc, GalleryItem group);
 
 	abstract GalleryItem getItem(GalleryItem group, Point coords);
+	
+	abstract Rectangle getSize( GalleryItem item );
 
 	abstract boolean mouseDown(GalleryItem group, MouseEvent e, Point coords);
 

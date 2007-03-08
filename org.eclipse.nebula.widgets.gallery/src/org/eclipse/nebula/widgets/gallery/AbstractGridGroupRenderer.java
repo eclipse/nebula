@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.gallery;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
@@ -240,6 +241,29 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 		super.preLayout(gc);
 	}
 
+	protected Rectangle getSize(GalleryItem item, int offset) {
+
+		GalleryItem parent = item.getParentItem();
+		if (parent != null) {
+			int index = parent.indexOf(item);
+
+			int hCount = ((Integer) parent.getData(H_COUNT)).intValue();
+			int vCount = ((Integer) parent.getData(V_COUNT)).intValue();
+
+			if (Gallery.DEBUG)
+				System.out.println("hCount :  " + hCount + " vCount : " + vCount);
+
+			int posX = index % hCount;
+			int posY = (index - posX) / hCount;
+
+			int xPixelPos = posX * (itemWidth + margin) + margin;
+			int yPixelPos = posY * (itemHeight + minMargin) + minMargin + ((parent == null) ? 0 : (parent.y) + offset);
+
+			return new Rectangle(xPixelPos, yPixelPos, this.itemWidth, this.itemHeight);
+		}
+		return null;
+	}
+
 	/**
 	 * Get item at pixel position
 	 * 
@@ -286,4 +310,142 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 
 		return null;
 	}
+
+	public GalleryItem getNextItem(GalleryItem item, int key) {
+
+		if (item.getParentItem() == null) {
+			// Key navigation is only available for child items ATM
+			return null;
+		}
+		GalleryItem group = item.getParentItem();
+		int pos = group.indexOf(item);
+		GalleryItem next = null;
+		int hCount = ((Integer) group.getData(H_COUNT)).intValue();
+		int colPos = -1;
+
+		switch (key) {
+		case SWT.ARROW_LEFT:
+			pos--;
+			if (pos < 0)
+				next = this.getFirstItem(this.getPreviousGroup(group), END);
+			else
+				next = group.getItem(pos);
+			break;
+
+		case SWT.ARROW_RIGHT:
+			pos++;
+			if (pos >= group.getItemCount())
+				next = this.getFirstItem(this.getNextGroup(group), START);
+			else
+				next = group.getItem(pos);
+			break;
+
+		case SWT.ARROW_UP:
+			colPos = pos % hCount;
+			pos -= hCount;
+			if (pos < 0)
+				next = this.getItemAt(this.getPreviousGroup(group), colPos, END);
+			else
+				next = group.getItem(pos);
+			break;
+
+		case SWT.ARROW_DOWN:
+			colPos = pos % hCount;
+			pos += hCount;
+			if (pos >= group.getItemCount())
+				next = this.getItemAt(this.getNextGroup(group), colPos, START);
+			else
+				next = group.getItem(pos);
+			break;
+
+		}
+
+		return next;
+	}
+
+	private GalleryItem getPreviousGroup(GalleryItem group) {
+		int gPos = gallery.indexOf(group);
+		while (gPos > 0){
+			GalleryItem newGroup = gallery.getItem(gPos - 1);
+			if (newGroup.isExpanded())
+				return newGroup;
+			gPos--;
+		}
+			
+		return null;
+	}
+
+	private GalleryItem getNextGroup(GalleryItem group) {
+		int gPos = gallery.indexOf(group);
+		while (gPos < gallery.getItemCount() - 1) {
+			GalleryItem newGroup = gallery.getItem(gPos + 1);
+			if (newGroup.isExpanded())
+				return newGroup;
+			gPos++;
+		}
+
+		return null;
+	}
+
+	private final int END = 0;
+
+	private final int START = 1;
+
+	private GalleryItem getFirstItem(GalleryItem group, int from) {
+
+		switch (from) {
+		case END:
+			return group.getItem(group.getItemCount() - 1);
+
+		case START:
+		default:
+			return group.getItem(0);
+		}
+
+	}
+
+	/**
+	 * Return the child item of group which is at column 'pos' starting from
+	 * direction. If this item doesn't exists, returns the nearest item.
+	 * 
+	 * @param group
+	 * @param pos
+	 * @param from
+	 *            START or END
+	 * @return
+	 */
+	private GalleryItem getItemAt(GalleryItem group, int pos, int from) {
+		int hCount = ((Integer) group.getData(H_COUNT)).intValue();
+		int offset = 0;
+		switch (from) {
+		case END:
+			// Last item column
+			int endPos = group.getItemCount() % hCount;
+
+			// If last item column is 0, the line is full
+			if (endPos == 0) {
+				endPos = hCount - 1;
+				offset--;
+			}
+
+			// If there is an item at column 'pos'
+			if (pos < endPos) {
+				int nbLines = (group.getItemCount() / hCount) + offset;
+				return group.getItem(nbLines * hCount + pos);
+			}
+
+			// Get the last item.
+			return group.getItem((group.getItemCount() / hCount + offset) * hCount + endPos - 1);
+
+		case START:
+		default:
+			if (pos >= group.getItemCount())
+				return group.getItem(group.getItemCount() - 1);
+
+			return group.getItem(pos);
+
+		}
+
+	}
+
 }

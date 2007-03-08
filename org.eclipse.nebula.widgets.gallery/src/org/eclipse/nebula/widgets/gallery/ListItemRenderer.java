@@ -97,7 +97,7 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 			imageWidth = itemImageBounds.width;
 			imageHeight = itemImageBounds.height;
 
-			size = getBestSize(imageWidth, imageHeight, useableHeight - 2 - this.dropShadowsSize, useableHeight - 2 - this.dropShadowsSize);
+			size = getBestSize(imageWidth, imageHeight, useableHeight - 4 - this.dropShadowsSize, useableHeight - 4 - this.dropShadowsSize);
 
 			xShift = ((useableHeight - size.x) >> 1) + 2;
 			yShift = (useableHeight - size.y) >> 1;
