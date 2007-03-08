@@ -41,7 +41,9 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 
 	int dropShadowsAlphaStep = 20;
 
-	Color selectionColor;
+	Color selectionForegroundColor;
+
+	Color selectionBackgroundColor;
 
 	Color foregroundColor;
 
@@ -58,9 +60,10 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 	}
 
 	public DefaultGalleryItemRenderer() {
-		selectionColor = Display.getDefault().getSystemColor(SWT.COLOR_LIST_SELECTION);
 		foregroundColor = Display.getDefault().getSystemColor(SWT.COLOR_LIST_FOREGROUND);
 		backgroundColor = Display.getDefault().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+		selectionForegroundColor = foregroundColor;
+		selectionBackgroundColor = Display.getDefault().getSystemColor(SWT.COLOR_LIST_SELECTION);
 
 		// Create drop shadows
 		createColors();
@@ -75,7 +78,7 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 			fontHeight = gc.getFontMetrics().getHeight();
 			useableHeight -= fontHeight + 2;
 		}
-		
+
 		int imageWidth = 0;
 		int imageHeight = 0;
 		int xShift = 0;
@@ -106,8 +109,8 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 
 		// Draw selection background (rounded rectangles)
 		if (selected) {
-			gc.setBackground(selectionColor);
-			gc.setForeground(selectionColor);
+			gc.setBackground(selectionBackgroundColor);
+			gc.setForeground(selectionBackgroundColor);
 			gc.fillRoundRectangle(x, y, width, useableHeight, 15, 15);
 
 			if (item.getText() != null && showLabels) {
@@ -128,10 +131,9 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 			int textWidth = getTextWidth(text, gc);
 			int textxShift = (width - (textWidth > width ? width : textWidth)) >> 1;
 
-			if (selected) {
-				gc.setBackground(selectionColor);
-			}
-			gc.setForeground(this.foregroundColor);
+			gc.setForeground(selected ? this.selectionForegroundColor : this.foregroundColor);
+			gc.setBackground(selected ? selectionBackgroundColor : this.selectionBackgroundColor);
+
 			gc.drawText(text, x + textxShift, y + height - fontHeight, true);
 		}
 	}
@@ -243,20 +245,28 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 		return new Point(newWidth, newHeight);
 	}
 
-	public Color getSelectionColor() {
-		return selectionColor;
-	}
-
-	public void setSelectionColor(Color selectionColor) {
-		this.selectionColor = selectionColor;
-	}
-
 	public Color getForegroundColor() {
 		return foregroundColor;
 	}
 
 	public void setForegroundColor(Color foregroundColor) {
 		this.foregroundColor = foregroundColor;
+	}
+
+	public Color getSelectionForegroundColor() {
+		return selectionForegroundColor;
+	}
+
+	public void setSelectionForegroundColor(Color selectionForegroundColor) {
+		this.selectionForegroundColor = selectionForegroundColor;
+	}
+
+	public Color getSelectionBackgroundColor() {
+		return selectionBackgroundColor;
+	}
+
+	public void setSelectionBackgroundColor(Color selectionBackgroundColor) {
+		this.selectionBackgroundColor = selectionBackgroundColor;
 	}
 
 	public Color getBackgroundColor() {

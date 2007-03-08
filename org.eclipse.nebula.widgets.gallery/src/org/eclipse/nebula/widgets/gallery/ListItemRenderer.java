@@ -47,7 +47,9 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 
 	int dropShadowsAlphaStep = 20;
 
-	Color selectionColor;
+	Color selectionBackgroundColor;
+
+	Color selectionForegroundColor;
 
 	Color foregroundColor;
 
@@ -70,16 +72,16 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 	}
 
 	public ListItemRenderer() {
-		selectionColor = Display.getDefault().getSystemColor(SWT.COLOR_LIST_SELECTION);
 		foregroundColor = Display.getDefault().getSystemColor(SWT.COLOR_LIST_FOREGROUND);
 		backgroundColor = Display.getDefault().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+		selectionBackgroundColor = Display.getDefault().getSystemColor(SWT.COLOR_LIST_SELECTION);
+		this.selectionForegroundColor = foregroundColor;
 		descriptionColor = Display.getDefault().getSystemColor(SWT.COLOR_DARK_GRAY);
 
 		textFont = Display.getDefault().getSystemFont();
 		descriptionFont = Display.getDefault().getSystemFont();
 	}
 
-	
 	public void draw(GC gc, GalleryItem item, int index, int x, int y, int width, int height) {
 
 		Image itemImage = item.getImage();
@@ -108,16 +110,18 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 					c = (Color) dropShadowsColors.get(i);
 					gc.setForeground(c);
 
-					gc.drawLine(x + useableHeight + i - xShift - 1, y + dropShadowsSize + yShift, x + useableHeight + i - xShift - 1, y + useableHeight + i - yShift);
-					gc.drawLine(x + xShift + dropShadowsSize, y + useableHeight + i - yShift - 1, x + useableHeight + i - xShift, y - 1 + useableHeight + i - yShift);
+					gc.drawLine(x + useableHeight + i - xShift - 1, y + dropShadowsSize + yShift, x + useableHeight + i - xShift - 1, y + useableHeight + i
+							- yShift);
+					gc.drawLine(x + xShift + dropShadowsSize, y + useableHeight + i - yShift - 1, x + useableHeight + i - xShift, y - 1 + useableHeight + i
+							- yShift);
 				}
 			}
 		}
 
 		// Draw selection background (rounded rectangles)
 		if (selected) {
-			gc.setBackground(selectionColor);
-			gc.setForeground(selectionColor);
+			gc.setBackground(selectionBackgroundColor);
+			gc.setForeground(selectionBackgroundColor);
 			gc.fillRoundRectangle(x, y, width, useableHeight, 15, 15);
 		}
 
@@ -141,10 +145,10 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 			}
 
 			// Background color
-			gc.setBackground(selected ? selectionColor : backgroundColor);
+			gc.setBackground(selected ? selectionBackgroundColor : backgroundColor);
 
 			// Draw text
-			gc.setForeground(this.foregroundColor);
+			gc.setForeground(selected ? this.selectionForegroundColor : this.foregroundColor);
 			gc.setFont(textFont);
 			gc.drawText(text, x + useableHeight + 5, y + ((height - descriptionFontHeight - textFontHeight - 1) >> 1), true);
 
@@ -248,7 +252,6 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 		return dropShadowsSize;
 	}
 
-	
 	public void dispose() {
 		freeDropShadowsColors();
 	}
@@ -265,12 +268,12 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 		return new Point(newWidth, newHeight);
 	}
 
-	public Color getSelectionColor() {
-		return selectionColor;
+	public Color getSelectionBackgroundColor() {
+		return selectionBackgroundColor;
 	}
 
-	public void setSelectionColor(Color selectionColor) {
-		this.selectionColor = selectionColor;
+	public void setSelectionBackgroundColor(Color selectionColor) {
+		this.selectionBackgroundColor = selectionColor;
 	}
 
 	public Color getForegroundColor() {
@@ -295,5 +298,13 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 
 	public void setDescriptionColor(Color descriptionColor) {
 		this.descriptionColor = descriptionColor;
+	}
+
+	public Color getSelectionForegroundColor() {
+		return selectionForegroundColor;
+	}
+
+	public void setSelectionForegroundColor(Color selectionForegroundColor) {
+		this.selectionForegroundColor = selectionForegroundColor;
 	}
 }
