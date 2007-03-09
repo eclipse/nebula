@@ -120,7 +120,9 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 
 		// Draw image
 		if (itemImage != null) {
-			gc.drawImage(itemImage, 0, 0, imageWidth, imageHeight, x + xShift, y + yShift, size.x, size.y);
+			if (size.x > 0 && size.y > 0) {
+				gc.drawImage(itemImage, 0, 0, imageWidth, imageHeight, x + xShift, y + yShift, size.x, size.y);
+			}
 		}
 
 		// Draw label
