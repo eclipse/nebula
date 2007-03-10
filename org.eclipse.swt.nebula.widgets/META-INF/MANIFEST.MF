@@ -5,12 +5,10 @@ Bundle-SymbolicName: org.eclipse.swt.nebula
 Bundle-Version: 1.0.0
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.swt
-Export-Package: org.eclipse.swt.nebula.widgets.cdatetime,
- org.eclipse.swt.nebula.widgets.compositetable,
+Export-Package: org.eclipse.swt.nebula.widgets.compositetable,
  org.eclipse.swt.nebula.widgets.compositetable.day,
  org.eclipse.swt.nebula.widgets.compositetable.month,
  org.eclipse.swt.nebula.widgets.compositetable.timeeditor,
- org.eclipse.swt.nebula.widgets.ctree,
  org.eclipse.swt.nebula.widgets.grid,
  org.eclipse.swt.nebula.widgets.pgroup,
  org.eclipse.swt.nebula.widgets.pshelf
