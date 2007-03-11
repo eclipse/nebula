@@ -22,7 +22,7 @@ import java.util.ResourceBundle;
  * several property files at once, thus supporting multiple locales simultaneously.
  */
 public class Messages {
-	private static final String BUNDLE_NAME = "org.eclipse.swt.nebula.widgets.cdatetime.messages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.nebula.widgets.cdatetime.messages"; //$NON-NLS-1$
 
 	private static final Map bundles = new HashMap();
 
