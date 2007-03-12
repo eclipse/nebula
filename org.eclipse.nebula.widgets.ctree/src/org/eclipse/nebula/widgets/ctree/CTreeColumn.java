@@ -66,9 +66,9 @@ public class CTreeColumn extends Item {
 					if(ctree.getNativeHeader()) {
 						ctree.columnOrder = nativeColumn.getParent().getColumnOrder();
 					}
+					ctree.body.redraw();
 				case SWT.Resize:
 					ctree.layout(e.type, CTreeColumn.this);
-//					ctree.body.redraw();
 					break;
 //				case SWT.Selection:
 //					if(ctree.internalGetSortColumn() == CTreeColumn.this) {
