@@ -11,10 +11,11 @@
 package org.eclipse.swt.nebula.snippets.ctree;
 
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
+import org.eclipse.nebula.widgets.ctree.CTree;
+import org.eclipse.nebula.widgets.ctree.CTreeColumn;
+import org.eclipse.nebula.widgets.ctree.CTreeItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -22,12 +23,8 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.nebula.widgets.ctree.CTree;
-import org.eclipse.swt.nebula.widgets.ctree.CTreeColumn;
-import org.eclipse.swt.nebula.widgets.ctree.CTreeItem;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -51,22 +48,22 @@ public class CTreeSnippet1 {
 		
 		Button b = new Button(shell, SWT.PUSH);
 		b.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false, false));
-		b.setText("Add lots of items");
+		b.setText("Add item(s)");
 		b.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				Date start = new Date();
 
-				for (int i = 0; i < 100; i++) {
+				for (int i = 0; i < 10; i++) {
 					CTreeItem item = new CTreeItem(tree, SWT.NONE);
 					item.setText(new String[] { "item " + i, "abc", "defghi" });
-					for (int j = 0; j < 4; j++) {
-						CTreeItem subItem = new CTreeItem(item, SWT.NONE);
-						subItem.setText(new String[] { "subitem " + j, "jklmnop", "qrs" });
-						for (int k = 0; k < 4; k++) {
-							CTreeItem subsubItem = new CTreeItem(subItem, SWT.NONE);
-							subsubItem.setText(new String[] { "subsubitem " + k, "tuv", "wxyz" });
-						}
-					}
+//					for (int j = 0; j < 4; j++) {
+//						CTreeItem subItem = new CTreeItem(item, SWT.NONE);
+//						subItem.setText(new String[] { "subitem " + j, "jklmnop", "qrs" });
+//						for (int k = 0; k < 4; k++) {
+//							CTreeItem subsubItem = new CTreeItem(subItem, SWT.NONE);
+//							subsubItem.setText(new String[] { "subsubitem " + k, "tuv", "wxyz" });
+//						}
+//					}
 				}
 
 				Date end = new Date();

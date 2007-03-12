@@ -11,15 +11,13 @@
 package org.eclipse.swt.nebula.snippets.ctree;
 
 
+import org.eclipse.nebula.widgets.ctree.CTree;
+import org.eclipse.nebula.widgets.ctree.CTreeColumn;
+import org.eclipse.nebula.widgets.ctree.CTreeItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.nebula.widgets.ctree.CTree;
-import org.eclipse.swt.nebula.widgets.ctree.CTreeColumn;
-import org.eclipse.swt.nebula.widgets.ctree.CTreeItem;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 

@@ -10,12 +10,9 @@
  *****************************************************************************/
 package org.eclipse.swt.nebula.snippets.ctree;
 
+import org.eclipse.nebula.widgets.ctree.CTreeCell;
+import org.eclipse.nebula.widgets.ctree.CTreeItem;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.nebula.widgets.cdatetime.CButton;
-import org.eclipse.swt.nebula.widgets.ctree.AbstractItem;
-import org.eclipse.swt.nebula.widgets.ctree.CTreeCell;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -34,7 +31,7 @@ public class MultiLineTextCell extends CTreeCell {
 	private Text text;
 	private Button b;
 	
-	public MultiLineTextCell(AbstractItem item, int style) {
+	public MultiLineTextCell(CTreeItem item, int style) {
 		super(item, style | SWT.TOGGLE);
 		marginHeight = 1;
 		marginWidth = 1;

@@ -10,11 +10,11 @@
  *****************************************************************************/
 package org.eclipse.swt.nebula.snippets.ctree;
 
+import org.eclipse.nebula.widgets.ctree.CTreeCell;
+import org.eclipse.nebula.widgets.ctree.CTreeItem;
+import org.eclipse.nebula.widgets.ctree.SComposite;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.nebula.widgets.ctree.AbstractItem;
-import org.eclipse.swt.nebula.widgets.ctree.CTreeCell;
-import org.eclipse.swt.nebula.widgets.ctree.SComposite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -27,7 +27,7 @@ public class TableCell extends CTreeCell {
 
 	private Table table;
 	
-	public TableCell(AbstractItem item, int style) {
+	public TableCell(CTreeItem item, int style) {
 		super(item, style | SWT.DROP_DOWN | SWT.TOGGLE);
 	}
 

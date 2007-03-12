@@ -1,10 +1,10 @@
 package org.eclipse.swt.nebula.snippets.ctree;
 
+import org.eclipse.nebula.widgets.ctree.CTree;
+import org.eclipse.nebula.widgets.ctree.CTreeColumn;
+import org.eclipse.nebula.widgets.ctree.CTreeItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.nebula.widgets.ctree.CTree;
-import org.eclipse.swt.nebula.widgets.ctree.CTreeColumn;
-import org.eclipse.swt.nebula.widgets.ctree.CTreeItem;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
@@ -26,13 +26,14 @@ public class TableTreeTest {
 		column1.setText("Name");
 		column1.pack();
 
-		// TextCell should display this data (data[i] in i-th column) an update it when users change the Text.
+		// TextCell should display this data (data[i] in i-th column) and update it when users change the Text.
 		String [] data = new String[] { "foo", "bar", "foo2", "bar2", "blub"};
 
-		Class[] cellClasses = new Class[] { TextCell.class };
+		ctt.setCellClasses(new Class[] { TextCell.class });
 		
 		for (int i = 0; i < 5; i++) {
-			CTreeItem item =new CTreeItem(ctt, SWT.NONE, cellClasses);
+			CTreeItem item =new CTreeItem(ctt, SWT.NONE);
+			item.setData(data);
 		}
 		
 

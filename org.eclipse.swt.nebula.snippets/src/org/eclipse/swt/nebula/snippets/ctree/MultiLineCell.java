@@ -12,11 +12,9 @@ package org.eclipse.swt.nebula.snippets.ctree;
 
 import java.text.BreakIterator;
 
-import org.eclipse.swt.SWT;
+import org.eclipse.nebula.widgets.ctree.CTreeCell;
+import org.eclipse.nebula.widgets.ctree.CTreeItem;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.nebula.widgets.ctree.AbstractItem;
-import org.eclipse.swt.nebula.widgets.ctree.CTreeCell;
 
 /**
  * A Sample custom cell with no styles set (a "base" cell).
@@ -27,7 +25,7 @@ public class MultiLineCell extends CTreeCell {
 
 	private String originalText;
 	
-	public MultiLineCell(AbstractItem item, int style) {
+	public MultiLineCell(CTreeItem item, int style) {
 		super(item, style);
 	}
 
@@ -71,7 +69,7 @@ public class MultiLineCell extends CTreeCell {
 		}
 	}
 
-	protected void layout() {
+	public void layout() {
 		int width = getClientArea().width;
 		super.setText(format(originalText, width));
 	}

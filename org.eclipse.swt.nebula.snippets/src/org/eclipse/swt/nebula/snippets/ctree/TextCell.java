@@ -1,10 +1,10 @@
 package org.eclipse.swt.nebula.snippets.ctree;
 
+import org.eclipse.nebula.widgets.ctree.CTreeCell;
+import org.eclipse.nebula.widgets.ctree.CTreeItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.nebula.widgets.ctree.CTreeCell;
-import org.eclipse.swt.nebula.widgets.ctree.CTreeItem;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
