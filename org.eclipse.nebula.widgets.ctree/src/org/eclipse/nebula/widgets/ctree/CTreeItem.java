@@ -70,20 +70,20 @@ public class CTreeItem extends Item {
 	private CTreeItem next;
 	private CTreeItem previous;
 	int computedHeight = -1;
-	private CTreeItem(CTree ctree, CTreeItem parent, int style, int index) {
+	private CTreeItem(CTree parent, CTreeItem parentItem, int style, int index) {
 		super(parent, style);
-		this.ctree = ctree;
-		this.parentItem = parent;
-		cells = new CTreeCell[ctree.getColumnCount()];
-		createCells(ctree.cellClasses);
-		treeCell = ctree.getTreeColumn();
-		if(parent != null) {
-			checkCell = ctree.getCheckColumn();
-			parentItem = (CTreeItem) parent;
-			((CTreeItem) parent).addItem(index, this);
+		this.ctree = parent;
+		this.parentItem = parentItem;
+		this.cells = new CTreeCell[parent.getColumnCount()];
+		createCells(parent.cellClasses);
+		this.treeCell = parent.getTreeColumn();
+		if(parentItem != null) {
+			this.checkCell = parent.getCheckColumn();
+			this.parentItem = (CTreeItem) parentItem;
+			((CTreeItem) parentItem).addItem(index, this);
 		} else {
-			checkCell = ctree.getCheckRoots() ? ctree.getCheckColumn() : -1;
-			ctree.addItem(index, this);
+			this.checkCell = parent.getCheckRoots() ? parent.getCheckColumn() : -1;
+			parent.addItem(index, this);
 		}
 	}
 	public CTreeItem(CTree parent, int style) {
