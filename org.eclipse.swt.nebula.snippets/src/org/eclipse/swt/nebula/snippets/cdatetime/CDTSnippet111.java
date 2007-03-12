@@ -20,12 +20,12 @@ package org.eclipse.swt.nebula.snippets.cdatetime;
  */
 import java.util.Date;
 
+import org.eclipse.nebula.widgets.cdatetime.CDT;
+import org.eclipse.nebula.widgets.cdatetime.CDateTime;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TreeEditor;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.nebula.widgets.cdatetime.CDT;
-import org.eclipse.swt.nebula.widgets.cdatetime.CDateTime;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
