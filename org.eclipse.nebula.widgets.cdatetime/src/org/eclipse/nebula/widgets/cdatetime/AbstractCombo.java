@@ -582,7 +582,11 @@ public abstract class AbstractCombo extends Composite {
 				location.x -= positionControl.getLocation().x + size.x - positionControl.getSize().x;
 				if(location.x < 0) location.x = 0;
 			}
-			if(win32) location.x -= 2;
+			if(win32) {
+				location.x -= 2;
+			} else if(carbon) {
+				location.y += 8;
+			}
 			contentShell.setLocation(location);
 
 			// chance for subclasses to do something before the shell becomes visible
