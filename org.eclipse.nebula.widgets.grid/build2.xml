@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="org.eclipse.nebula.widgets.grid2" default="doitall" basedir=".">
+<project name="org.eclipse.nebula.widgets.grid" default="doitall" basedir=".">
 
 <target name="doitall">
 	<antcall target="pdebuild"/>
@@ -10,17 +10,7 @@
 </target>
 
 <target name="pdebuild">
-	<exec executable="java">
-	    <arg value="-cp"/>
-	    <arg value="${eclipsehome}\startup.jar"/>
-	    <arg value="org.eclipse.core.launcher.Main"/>
-	    <arg value="-application"/>
-	    <arg value="org.eclipse.ant.core.antRunner"/>
-	    <arg value="-buildfile"/>
-	    <arg value="build.xml"/>
-	    <arg value="-DbaseLocation=${eclipsehome}"/>
-	    <arg value="build.update.jar"/>
-	</exec>
+	<pde.exportPlugins plugins="org.eclipse.nebula.widgets.grid" destination="." exportType="directory" useJARFormat="true" exportSource="true"/>
 </target>
 
 <target name="javadoc"> 
@@ -48,7 +38,7 @@
 		<zipfileset dir="src" prefix="src"/>
 		<zipfileset dir="javadoc" prefix="javadoc"/>
 		<zipfileset dir="snippets" prefix="snippets"/>
-		<zipfileset dir="." includes="org.eclipse.nebula.widgets.grid_1.0.0.jar"/>
+		<zipfileset dir="." includes="plugins/org.eclipse.nebula.widgets.grid_1.0.0.jar"/>
 	</zip>
 
 </target>
