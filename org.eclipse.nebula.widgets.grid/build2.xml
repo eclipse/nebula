@@ -43,12 +43,13 @@
 
 
 <target name="zip">
- <zip destfile="grid_1.0_ALPHA.zip">
-	 <zipfileset dir="src" prefix="src"/>
-	 <zipfileset dir="javadoc" prefix="javadoc"/>
-	 <zipfileset dir="snippets" prefix="snippets"/>
-	 <zipfileset dir="." includes="org.eclipse.nebula.widgets.grid_1.0.0.jar"/>
- </zip>
+	<tstamp/>
+	<zip destfile="grid_1.0_ALPHA_NIGHTLY.zip">
+		<zipfileset dir="src" prefix="src"/>
+		<zipfileset dir="javadoc" prefix="javadoc"/>
+		<zipfileset dir="snippets" prefix="snippets"/>
+		<zipfileset dir="." includes="org.eclipse.nebula.widgets.grid_1.0.0.jar"/>
+	</zip>
 
 </target>
 
@@ -58,8 +59,8 @@
 	
 	<sshexec host="download1.eclipse.org" username="cgross" password="${password}" trust="yes" failonerror="no" command="mkdir downloads/technology/nebula/${DSTAMP}" />
 
-	<scp sftp="yes" trust="yes" file="grid_1.0_ALPHA.zip" todir="cgross:${password}@download1.eclipse.org:downloads/technology/nebula/${DSTAMP}/"/>
-	<scp sftp="yes" trust="yes" file="grid_1.0_ALPHA.zip" todir="cgross:${password}@download1.eclipse.org:downloads/technology/nebula/"/>
+	<scp sftp="yes" trust="yes" file="grid_1.0_ALPHA_NIGHTLY.zip" todir="cgross:${password}@download1.eclipse.org:downloads/technology/nebula/${DSTAMP}/"/>
+	<scp sftp="yes" trust="yes" file="grid_1.0_ALPHA_NIGHTLY.zip" todir="cgross:${password}@download1.eclipse.org:downloads/technology/nebula/"/>
 </target>
 
 
