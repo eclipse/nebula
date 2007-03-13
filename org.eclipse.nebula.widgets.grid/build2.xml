@@ -38,7 +38,7 @@
 		<zipfileset dir="src" prefix="src"/>
 		<zipfileset dir="javadoc" prefix="javadoc"/>
 		<zipfileset dir="snippets" prefix="snippets"/>
-		<zipfileset dir="." includes="plugins/org.eclipse.nebula.widgets.grid_1.0.0.jar"  prefix="."/>
+		<zipfileset dir="." file="plugins/org.eclipse.nebula.widgets.grid_1.0.0.jar"/>
 	</zip>
 
 </target>
