@@ -20,6 +20,8 @@
 	    <arg value="build.xml"/>
 	    <arg value="-DbaseLocation=${eclipsehome}"/>
 	    <arg value="build.update.jar"/>
+		
+		<env key="ECLIPSEHOME" path="${eclipsehome}"/>
 	</exec>
 </target>
 
