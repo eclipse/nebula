@@ -1,5 +1,7 @@
-set PATH=C:\Program Files\Java\jdk1.5.0_04\bin;%PATH%;C:\apache-ant-1.7.0\bin;c:\build\bin
+set PATH=C:\Program Files\Java\jdk1.5.0_04\bin;%PATH%;c:\build\bin
+set ECLIPSE_HOME=c:\eclipse33m5\eclipse
 
 cd\build
 
-ant -buildfile masterbuild.xml -Dpassword=xxxxxx -Declipsehome=c:\eclipse33m5\eclipse
+java -cp %ECLIPSE_HOME%\startup.jar org.eclipse.core.launcher.Main -application org.eclipse.ant.core.antRunner -buildfile masterbuild.xml -DbaseLocation=%ECLIPSE_HOME% -logfile log.txt -Dpassword=soldier*
+
