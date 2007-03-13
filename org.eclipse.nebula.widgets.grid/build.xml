@@ -70,8 +70,8 @@
 		<delete dir="${temp.folder}/@dot.bin"/>
 		<mkdir dir="${temp.folder}/@dot.bin"/>
 		<path id="@dot.classpath">
-			<pathelement path="../../../../eclipse33m5/eclipse/plugins/org.eclipse.swt_3.3.0.v3325g.jar"/>
-			<pathelement path="../../../../eclipse33m5/eclipse/plugins/org.eclipse.swt.win32.win32.x86_3.3.0.v3325.jar"/>
+			<pathelement path="c:/eclipse33m5/eclipse/plugins/org.eclipse.swt_3.3.0.v3325g.jar"/>
+			<pathelement path="c:/eclipse33m5/eclipse/plugins/org.eclipse.swt.win32.win32.x86_3.3.0.v3325.jar"/>
 		</path>
 		<!-- compile the source code -->
 		<javac destdir="${temp.folder}/@dot.bin" failonerror="${javacFailOnError}" verbose="${javacVerbose}" debug="${javacDebugInfo}" includeAntRuntime="no" bootclasspath="${bundleBootClasspath}" source="${bundleJavacSource}" target="${bundleJavacTarget}"		>
