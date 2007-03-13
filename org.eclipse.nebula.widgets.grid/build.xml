@@ -125,6 +125,9 @@
 	<target name="gather.sources" depends="init" if="destination.temp.folder">
 		<mkdir dir="${destination.temp.folder}/org.eclipse.nebula.widgets.grid_1.0.0"/>
 		<copy file="${build.result.folder}/src.zip" todir="${destination.temp.folder}/org.eclipse.nebula.widgets.grid_1.0.0" failonerror="false" overwrite="false"/>
+		<copy todir="${destination.temp.folder}/org.eclipse.nebula.widgets.grid_1.0.0" failonerror="false" overwrite="false">
+			<fileset dir="${basedir}" includes=".project,.classpath,META-INF/,build.properties,build.xml,javaCompiler...args"			/>
+		</copy>
 	</target>
 
 	<target name="gather.logs" depends="init" if="destination.temp.folder">
