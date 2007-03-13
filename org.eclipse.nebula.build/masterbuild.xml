@@ -12,6 +12,8 @@ To add your component to the master build:
     Do not vary significantly from this example.  All downloads should be similar.
 3.  Alter the buildall target in this file, duplicate the antcall task with the component 
     parameter for your widget.
+4.  Tell Chris that you've updated this file.  I will need to copy the new version of this file
+    to the build pc.
     
     
 When setting up a machine to run the master build the following are required:
