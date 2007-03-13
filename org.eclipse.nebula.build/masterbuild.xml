@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="org.eclipse.nebula.masterbuild" default="buildall" basedir=".">
+
+
+<!--
+
+This is the master build script for Nebula.  
+
+To add your component to the master build:
+1.  Use the Eclipse PDE feature to create a build.xml.
+2.  Create a build2.xml based on the example found in grid.
+    Do not vary significantly from this example.  All downloads should be similar.
+3.  Alter the buildall target in this file, duplicate the antcall task with the component 
+    parameter for your widget.
+    
+    
+When setting up a machine to run the master build the following are required:
+1.  JDK\bin in the path.
+2.  cvs.exe and zip.exe in the path.
+3   Ant 1.7 and the optional jsch-xxx.jar.
+4.  Eclipse
+
+When running this build file you must pass the following properties:
+-Dpassword=committer password for cgross to allow the push of files to the download server
+-Declipsehome=Eclipse directory for the PDE build
+-->
+
+<target name="buildall">
+	<antcall target="buildcomponent">
+		<param name="component" value="org.eclipse.nebula.widgets.grid"/>
+	</antcall>
+
+</target>
+
+
+<target name="buildcomponent">
+	<delete dir="${component}"/>
+
+	<cvs cvsRoot=":pserver:anonymous@dev.eclipse.org:/cvsroot/technology"
+      		 package="org.eclipse.swt.nebula/${component}"
+  		/>
+  
+	<ant antfile="build2.xml" dir="org.eclipse.swt.nebula/${component}"/>
+
+	<delete dir="org.eclipse.swt.nebula/${component}"/>
+
+</target>
+
+</project>
