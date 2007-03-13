@@ -145,6 +145,12 @@ public class GalleryItem extends Item {
 		}
 	}
 
+	/**
+	 * Returns the number of items contained in the receiver that are direct
+	 * item children of the receiver.
+	 * 
+	 * @return
+	 */
 	public int getItemCount() {
 		if (virtualGallery)
 			return itemCount;
@@ -181,8 +187,10 @@ public class GalleryItem extends Item {
 	}
 
 	/**
-	 * Get the item at index.<br/> If SWT.VIRTUAL is used and the item has not
-	 * been used yet, the item is created and a SWT.SetData event is fired.
+	 * Searches the receiver's list starting at the first item (index 0) until
+	 * an item is found that is equal to the argument, and returns the index of
+	 * that item. <br/> If SWT.VIRTUAL is used and the item has not been used
+	 * yet, the item is created and a SWT.SetData event is fired.
 	 * 
 	 * @param index :
 	 *            index of the item.
@@ -207,7 +215,7 @@ public class GalleryItem extends Item {
 	}
 
 	/**
-	 * Returns true if this item is expanded.
+	 * Returns true if the receiver is expanded, and false otherwise.
 	 * 
 	 * @return
 	 */
@@ -215,6 +223,11 @@ public class GalleryItem extends Item {
 		return expanded;
 	}
 
+	/**
+	 * Sets the expanded state of the receiver.
+	 * 
+	 * @param expanded
+	 */
 	public void setExpanded(boolean expanded) {
 		this.expanded = expanded;
 	}
@@ -310,7 +323,7 @@ public class GalleryItem extends Item {
 	}
 
 	/**
-	 * Select all children of this item.
+	 * Selects all of the items in the receiver.
 	 */
 	public void selectAll() {
 		checkWidget();

@@ -15,6 +15,7 @@ package org.eclipse.nebula.widgets.gallery;
 import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.DisposeEvent;
@@ -40,10 +41,44 @@ import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.TypedListener;
 
 /**
- * SWT Widget that displays a picture gallery<br/> see
- * http://nicolas.richeton.free.fr/swtgallery<br/>This class must be compatible
- * with jdk-1.4
- * 
+ * <p>
+ * SWT Widget that displays a picture gallery<br/> see This widget requires
+ * jdk-1.4+
+ * </p>
+ * <p>
+ * Style <code>VIRTUAL</code> is used to create a <code>Gallery</code> whose
+ * <code>GalleryItem</code>s are to be populated by the client on an
+ * on-demand basis instead of up-front. This can provide significant performance
+ * improvements for galleries that are very large or for which
+ * <code>GalleryItem</code> population is expensive (for example, retrieving
+ * values from an external source).
+ * </p>
+ * <p>
+ * Here is an example of using a <code>Gallery</code> with style
+ * <code>VIRTUAL</code>: <code><pre>
+ * final Gallery gallery = new Gallery(parent, SWT.VIRTUAL | V_SCROLL | SWT.BORDER);
+ * gallery.setGroupRenderer(new DefaultGalleryGroupRenderer());
+ * gallery.setItemRenderer(new DefaultGalleryItemRenderer());
+ * gallery.setItemCount(1000000);
+ * gallery.addListener(SWT.SetData, new Listener() {
+ * 	public void handleEvent(Event event) {
+ * 		GalleryItem item = (GalleryItem) event.item;
+ * 		int index = gallery.indexOf(item);
+ * 		item.setText(&quot;Item &quot; + index);
+ * 		System.out.println(item.getText());
+ * 	}
+ * });
+ * </pre></code>
+ * </p>
+ * <p>
+ * <dl>
+ * <dt><b>Styles:</b></dt>
+ * <dd>SINGLE, MULTI, VIRTUAL, V_SCROLL, H_SCROLL</dd>
+ * </dl>
+ * </p>
+ * <p>
+ * Note: Only one of the styles SINGLE, and MULTI may be specified.
+ * </p>
  * <p>
  * NOTE: THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT. THIS IS A
  * PRE-RELEASE ALPHA VERSION. USERS SHOULD EXPECT API CHANGES IN FUTURE
@@ -174,19 +209,56 @@ public class Gallery extends Canvas {
 	}
 
 	/**
-	 * Add selection listener
+	 * Adds the listener to the collection of listeners who will be notified
+	 * when the receiver's selection changes, by sending it one of the messages
+	 * defined in the <code>SelectionListener</code> interface.
+	 * <p>
+	 * When <code>widgetSelected</code> is called, the item field of the event
+	 * object is valid.
+	 * </p>
 	 * 
 	 * @param listener
+	 *            the listener which should be notified
+	 * 
+	 * @exception IllegalArgumentException
+	 *                <ul>
+	 *                <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
+	 *                </ul>
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
+	 *                </ul>
+	 * 
+	 * @see SelectionListener
+	 * @see #removeSelectionListener
+	 * @see SelectionEvent
 	 */
 	public void addSelectionListener(SelectionListener listener) {
 		checkWidget();
+		if (listener == null)
+			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		addListener(SWT.Selection, new TypedListener(listener));
 	}
 
 	/**
-	 * Remove selection listener
-	 * 
-	 * @param listener
+	 * Removes the listener from the collection of listeners who will
+	 * be notified when the receiver's selection changes.
+	 *
+	 * @param listener the listener which should no longer be notified
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
+	 * </ul>
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 * </ul>
+	 *
+	 * @see SelectionListener
+	 * @see #addSelectionListener(SelectionListener)
 	 */
 	public void removeSelectionListener(SelectionListener listener) {
 		checkWidget();
@@ -386,7 +458,7 @@ public class Gallery extends Canvas {
 			y = rect.x;
 			height = rect.width;
 		}
-	
+
 		if (y < translate) {
 			translate = y;
 		} else if (translate + this.getClientArea().height < y + height) {
@@ -576,6 +648,9 @@ public class Gallery extends Canvas {
 		return false;
 	}
 
+	/**
+	 * Deselects the item at the given zero-relative index in the receiver.
+	 */
 	public void deselectAll() {
 		checkWidget();
 		_deselectAll();
@@ -1166,7 +1241,7 @@ public class Gallery extends Canvas {
 	 * Get item at pixel position
 	 * 
 	 * @param coords
-	 * @return
+	 * @return GalleryItem or null
 	 */
 	public GalleryItem getItem(Point coords) {
 		checkWidget();
@@ -1407,13 +1482,16 @@ public class Gallery extends Canvas {
 		return selection.length;
 	}
 
+	/**
+	 * Selects all of the items in the receiver.
+	 */
 	public void selectAll() {
 		checkWidget();
 		_selectAll();
 		redraw();
 	}
 
-	public void _selectAll() {
+	protected void _selectAll() {
 		select(0, this.getItemCount() - 1);
 	}
 }
