@@ -4,7 +4,7 @@
 <target name="doitall">
 	<antcall target="pdebuild"/>
 	<antcall target="javadoc"/>
-	<antcall target="snippets"/>
+	<!-- <antcall target="snippets"/> -->
 	<antcall target="zip"/>
 	<antcall target="sftp"/>	
 </target>
