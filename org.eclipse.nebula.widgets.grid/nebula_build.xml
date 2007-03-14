@@ -10,11 +10,11 @@
 </target>
 
 <target name="pdebuild">
-	<pde.exportPlugins plugins="org.eclipse.nebula.widgets.grid" destination="../temp" exportType="directory" useJARFormat="true" exportSource="true"/>
+	<pde.exportPlugins plugins="org.eclipse.nebula.widgets.grid" destination="../../temp" exportType="directory" useJARFormat="true" exportSource="true"/>
 </target>
 
 <target name="javadoc"> 
-	<javadoc destdir="../temp/javadoc" packagenames="org.eclipse.nebula.widgets.grid.*" excludepackagenames=
+	<javadoc destdir="../../temp/javadoc" packagenames="org.eclipse.nebula.widgets.grid.*" excludepackagenames=
 	    "org.eclipse.nebula.widgets.grid.internal.*" sourcepath="src"/> 
 </target>
 
@@ -25,20 +25,20 @@
 	  />
 	  
 	  <copy todir="snippets">
-		  <fileset dir="..\temp\snippets\org.eclipse.swt.nebula\org.eclipse.swt.nebula.snippets\src\org\eclipse\swt\nebula\snippets\grid"/>
+		  <fileset dir="..\..\temp\snippets\org.eclipse.swt.nebula\org.eclipse.swt.nebula.snippets\src\org\eclipse\swt\nebula\snippets\grid"/>
 	  </copy>
 	  
-	  <delete dir="..\temp\snippets\org.eclipse.swt.nebula"/>
+	  <delete dir="..\..\temp\snippets\org.eclipse.swt.nebula"/>
 </target>
 
 
 <target name="zip">
 	<tstamp/>
-	<zip destfile="..\temp\grid_1.0_ALPHA_NIGHTLY.zip">
+	<zip destfile="..\..\temp\grid_1.0_ALPHA_NIGHTLY.zip">
 		<zipfileset dir="src" prefix="src"/>
-		<zipfileset dir="..\temp\javadoc" prefix="javadoc"/>
-		<zipfileset dir="..\temp\snippets" prefix="snippets"/>
-		<zipfileset dir="." file="..\temp\plugins\org.eclipse.nebula.widgets.grid_1.0.0.jar"/>
+		<zipfileset dir="..\..\temp\javadoc" prefix="javadoc"/>
+		<zipfileset dir="..\..\temp\snippets" prefix="snippets"/>
+		<zipfileset dir="." file="..\..\temp\plugins\org.eclipse.nebula.widgets.grid_1.0.0.jar"/>
 	</zip>
 
 </target>
@@ -49,8 +49,8 @@
 	
 	<sshexec host="download1.eclipse.org" username="cgross" password="${password}" trust="yes" failonerror="no" command="mkdir downloads/technology/nebula/${DSTAMP}" />
 
-	<scp trust="yes" file="..\temp\grid_1.0_ALPHA_NIGHTLY.zip" todir="cgross:${password}@download1.eclipse.org:downloads/technology/nebula/${DSTAMP}/"/>
-	<scp trust="yes" file="..\temp\grid_1.0_ALPHA_NIGHTLY.zip" todir="cgross:${password}@download1.eclipse.org:downloads/technology/nebula/"/>
+	<scp trust="yes" file="..\..\temp\grid_1.0_ALPHA_NIGHTLY.zip" todir="cgross:${password}@download1.eclipse.org:downloads/technology/nebula/${DSTAMP}/"/>
+	<scp trust="yes" file="..\..\temp\grid_1.0_ALPHA_NIGHTLY.zip" todir="cgross:${password}@download1.eclipse.org:downloads/technology/nebula/"/>
 </target>
 
 
