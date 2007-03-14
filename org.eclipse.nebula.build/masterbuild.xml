@@ -7,7 +7,7 @@
 This is the master build script for Nebula.  
 
 To add your component to the master build:
-1. Create a build.xml file following the examples in the grid component.
+1. Create a nebula_build.xml file following the examples in the grid component.
 2. Update the buildall target in this file, duplicate the antcall task specifying
    your component.
     
@@ -30,15 +30,14 @@ When setting up a machine to run the master build the following are required:
 
 
 <target name="buildcomponent">
-	<delete dir="${component}"/>
+	<delete dir="temp"/>
+	<mkdir dir="temp"/>
 
-	<cvs cvsRoot=":pserver:anonymous@dev.eclipse.org:/cvsroot/technology"
-      		 package="org.eclipse.swt.nebula/${component}"
-  		/>
+	<cvs command="update" dest="eclipse_workspace/${component}" />
   
-	<ant antfile="build.xml" dir="org.eclipse.swt.nebula/${component}"/>
+	<ant antfile="nebula_build.xml" dir="eclipse_workspace/${component}"/>
 
-	<delete dir="org.eclipse.swt.nebula/${component}"/>
+	<delete dir="temp"/>
 
 </target>
 
