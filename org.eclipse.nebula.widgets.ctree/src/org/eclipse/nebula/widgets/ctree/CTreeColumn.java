@@ -158,7 +158,7 @@ public class CTreeColumn extends Item {
 		int[] ixs = ctree.getColumnOrder();
 		int x = ctree.getClientArea().x;
 		for(int i = 0; i < ixs.length; i++) {
-			CTreeColumn column = ctree.internalGetColumn(ixs[i]);
+			CTreeColumn column = ctree.getColumn(ixs[i]);
 			if(column != this) {
 				x += column.getWidth() + gridline;
 			} else {

@@ -105,9 +105,7 @@ class CTreeLayout extends Layout {
 	 * @param cell
 	 */
 	protected void computeContentHeight(int eventType, CTreeCell cell) {
-//		if(SWT.Collapse == eventType) {
-//		} else if(SWT.Expand == eventType) {
-//		}
+		computeContentHeight();
 	}
 	
 	/**
@@ -125,8 +123,7 @@ class CTreeLayout extends Layout {
 	 * @param column
 	 */
 	protected void computeContentHeight(int eventType, CTreeColumn column) {
-//		if(SWT.Resize == eventType) {
-//		}
+		computeContentHeight();
 	}
 
 	/**
@@ -145,14 +142,13 @@ class CTreeLayout extends Layout {
 	 * @param item
 	 */
 	protected void computeContentHeight(int eventType, CTreeItem item) {
-//		if(SWT.Show == eventType || SWT.Hide == eventType) {
-//		}
+		computeContentHeight();
 	}
 	
 	private void computeHeaderSize() {
 		headerSize.x = headerSize.y = 0;
 		int gridLine = ctree.getGridLineWidth();
-		CTreeColumn[] columns = ctree.internalGetColumns();
+		CTreeColumn[] columns = ctree.getColumns();
 		for(int i = 0; i < columns.length; i++) {
 			if(!columns[i].getAutoWidth()) {
 				headerSize.x += columns[i].getWidth();
@@ -256,7 +252,6 @@ class CTreeLayout extends Layout {
 	 * @param cell
 	 */
 	void layout(int eventType, CTreeCell cell) {
-		// TODO: handle SWT.Move for cells too?
 		computeSize(eventType, cell);
 		layoutContent(eventType, cell);
 		updateScrollBars();
@@ -295,6 +290,8 @@ class CTreeLayout extends Layout {
 	 * <p>
 	 *  Event types:
 	 *  <ul>
+	 *   <li>SWT.Collapse</li>
+	 *   <li>SWT.Expand</li>
 	 *   <li>SWT.Hide</li>
 	 *   <li>SWT.Move</li>
 	 *   <li>SWT.Show</li>
@@ -326,6 +323,7 @@ class CTreeLayout extends Layout {
 			item.setHeight(fixedHeight ? getItemHeight() : item.computeHeight());
 			top += item.getHeight() + gridLine;
 		}
+		ctree.body.redraw();
 	}
 
 	/**
@@ -343,20 +341,7 @@ class CTreeLayout extends Layout {
 	 * @param cell
 	 */
 	protected void layoutContent(int eventType, CTreeCell cell) {
-		if(SWT.Resize == eventType) {
-			CTreeItem item = (CTreeItem) cell.item;
-			int offset = item.getHeight();
-			item.setHeight(fixedHeight ? getItemHeight() : item.computeHeight());
-			offset = item.getHeight() - offset;
-			List items = ctree.items(false);
-			for(int i = items.indexOf(item) + 1; i < items.size(); i++) {
-				item = (CTreeItem) items.get(i);
-				item.setTop(item.getTop() + offset);
-			}
-			ctree.body.redraw();
-		} else if(SWT.Collapse == eventType || SWT.Expand == eventType) {
-			// TODO: tree columns...
-		}
+		layoutContent();
 	}
 
 	/**
@@ -373,10 +358,7 @@ class CTreeLayout extends Layout {
 	 * @param column
 	 */
 	protected void layoutContent(int eventType, CTreeColumn column) {
-		ctree.body.redraw();
-//		if(SWT.Move == eventType) {
-//		} else if(SWT.Resize == eventType) {
-//		}
+		layoutContent();
 	}
 	
 	/**
@@ -395,7 +377,7 @@ class CTreeLayout extends Layout {
 	 * @param item
 	 */
 	protected void layoutContent(int eventType, CTreeItem item) {
-//		layoutContent();
+		layoutContent();
 	}
 	
 	/**
@@ -415,7 +397,7 @@ class CTreeLayout extends Layout {
 		}
 		
 		int num_fillers = 0;
-		CTreeColumn[] columns = ctree.internalGetColumns();
+		CTreeColumn[] columns = ctree.getColumns();
 		for(int i = 0; i < columns.length; i++) {
 			if(columns[i].getAutoWidth()) {
 				num_fillers++;

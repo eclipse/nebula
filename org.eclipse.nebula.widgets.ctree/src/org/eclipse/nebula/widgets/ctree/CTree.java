@@ -65,18 +65,6 @@ public class CTree extends Composite implements Listener {
 	 * true if the platform is detected as being "win32"
 	 */
 	public static final boolean win32 = "win32".equals(SWT.getPlatform());
-	/**
-	 * Drawing mode for normal selection.
-	 */
-	public static final int MODE_NORMAL = 0;
-	/**
-	 * Drawing mode for selection using the marqee selection tool.
-	 */
-	public static final int MODE_MARQUEE = 1;
-	/**
-	 * Drawing mode indicating that rather than selected items, an item is to be created.
-	 */
-	public static final int MODE_CREATE = 2;
 
 	private static int checkStyle(int style) {
 		int mask = SWT.BORDER | SWT.LEFT_TO_RIGHT | SWT.RIGHT_TO_LEFT
@@ -106,13 +94,6 @@ public class CTree extends Composite implements Listener {
 	 */
 	protected CTreeItem shiftSel;
 	/**
-	 * Used in conjunction with MODE_MARQUEE. Signifies that a selection created
-	 * with the marquee selection tool will be "held onto" during the
-	 * immediately following mouse operation. Otherwise, the marquee selection
-	 * could never be used.
-	 */
-	protected boolean holdSelection = false;
-	/**
 	 * Signifies whether or not the items of this container can be selected.
 	 */
 	protected boolean selectable = true;
@@ -124,12 +105,10 @@ public class CTree extends Composite implements Listener {
 
 	Class[] cellClasses = null;
 
-	private Point mmPoint = null; // mouse move point
-	private Point mdPoint = null; // mouse down point
-	private Point muPoint = null; // mouse up point
-	private Point mmDelta = null; // mouse move delta
-	private int mode = MODE_NORMAL;
-	private boolean marquee = false;
+//	private Point mmPoint = null; // mouse move point
+//	private Point mdPoint = null; // mouse down point
+//	private Point muPoint = null; // mouse up point
+//	private Point mmDelta = null; // mouse move delta
 
 	protected int style = 0;
 	protected Canvas body;
@@ -161,12 +140,6 @@ public class CTree extends Composite implements Listener {
 	protected boolean nativeGrid = true;
 
 	protected CTreeLayout layout;
-
-	// public static final int STATE_NORMAL = 0;
-	// public static final int STATE_BUSY = 1;
-	private List activeItems = new ArrayList();
-
-	// private boolean selectionActive = false;
 
 	public boolean drawViewportNorth = false;
 
@@ -289,8 +262,7 @@ public class CTree extends Composite implements Listener {
 
 		filter = new Listener() {
 			public void handleEvent(Event event) {
-				if (CTree.this.getShell() == ((Control) event.widget)
-						.getShell()) {
+				if(CTree.this.getShell() == ((Control) event.widget).getShell()) {
 					handleFocus(SWT.FocusOut);
 				}
 			}
@@ -497,10 +469,6 @@ public class CTree extends Composite implements Listener {
 		return colors;
 	}
 
-	public CTreeColumn getColumn(int index) {
-		return (CTreeColumn) internalGetColumn(index);
-	}
-	
 	public int getColumnCount() {
 		return columns.length;
 	}
@@ -596,38 +564,6 @@ public class CTree extends Composite implements Listener {
 	public CTreeItem getItem(int index) {
 		if(isEmpty() || index < 0 || index > itemList.size()-1) return null;
 		return (CTreeItem) itemList.get(index);
-//		if(index == itemCount-1) return lastItem;
-//		if(index == 0) return firstItem;
-//		CTreeItem item = null;
-//		if(index < (itemCount/2)) {
-//			item = firstItem;
-//			for(int i = 0; i == index; i++) {
-//				if(item.hasNext()) item = item.next();
-//				else return null;
-//			}
-//		} else {
-//			item = lastItem;
-//			for(int i = itemCount-1; i == index; i--) {
-//				if(item.hasPrevious()) item = item.previous();
-//				else return null;
-//			}
-//		}
-//		return item;
-	}
-
-//	public void move(CTreeItem item, int newIndex) {
-//		if (newIndex >= 0 && newIndex < visibleItems.size() && visibleItems.contains(item)) {
-//			int oldIndex = visibleItems.indexOf(item);
-//			if (visibleItems.remove(item)) {
-//				visibleItems.add(newIndex, item);
-//				layout(SWT.Move, (CTreeItem) visibleItems.get(oldIndex));
-//				layout(SWT.Move, item);
-//			}
-//		}
-//	}
-
-	public CTreeItem getItem(Point p) {
-		return (CTreeItem) internalGetItem(p);
 	}
 
 	public int getItemCount() {
@@ -782,10 +718,6 @@ public class CTree extends Composite implements Listener {
 //		redraw();
 //	}
 
-	public CTreeColumn getSortColumn() {
-		return (CTreeColumn) internalGetSortColumn();
-	}
-
 	public int getSortDirection() {
 		return sortDirection;
 	}
@@ -860,37 +792,7 @@ public class CTree extends Composite implements Listener {
 		case SWT.MouseDown:
 		case SWT.MouseMove:
 		case SWT.MouseUp:
-			CTreeItem item = null;
-			if (event.widget == body) {
-				item = internalGetItem(mapPoint(event.x, event.y));
-			} else if (event.item instanceof CTreeItem) {
-				item = (CTreeItem) event.item;
-			}
-			handleMousePosition(item, event);
-			if(handleMouseEvents(item, event)) {
-				handleMouseSelection(item, event);
-//				int result = 0;
-//				Set s = new HashSet(selection);
-//				s.addAll(paintedItems);
-//				for(Iterator i = s.iterator(); i.hasNext();) {
-//					item = (CTreeItem) i.next();
-//					result |= item.handleMouseEvent(event, !activeItems.isEmpty());
-//					if((item.isCellState(CTreeCell.CELL_MOVING | CTreeCell.CELL_RESIZING))) {
-//						if(!activeItems.contains(item)) {
-//							activeItems.add(item);
-//						}
-//					} else {
-//						activeItems.remove(item);
-//					}
-//					if((result & CTreeCell.RESULT_CONSUME) != 0) break;
-//				}
-//				if((result & CTreeCell.RESULT_LAYOUT) != 0) {
-//					layout();
-//				}
-//				if((result & CTreeCell.RESULT_REDRAW) != 0) {
-//					redraw();
-//				}
-			}
+			handleMouseEvents(event);
 			break;
 		case SWT.Traverse:
 			handleTraverse(event);
@@ -933,137 +835,28 @@ public class CTree extends Composite implements Listener {
 		}
 	}
 
-	protected boolean handleMouseEvents(CTreeItem item, Event event) {
-		if(item != null && item instanceof CTreeItem) {
-			CTreeItem ti = (CTreeItem) item;
-			Point pt = mapPoint(event.x, event.y);
-			switch (event.type) {
-			case SWT.MouseDoubleClick:
-			case SWT.MouseDown:
-				if(!selectOnTreeToggle && ti.isTreeTogglePoint(pt)) return false;
-				break;
-			case SWT.MouseUp:
-				if(ti.isTogglePoint(pt)) {
-					boolean open = ti.isOpen(pt);
-					boolean tree = ti.isTreeTogglePoint(pt);
-					int etype = open ? SWT.Collapse : SWT.Expand;
-					ti.removeListener(etype, this);
-					ti.setOpen(pt, !open);
-					ti.addListener(etype, this);
-					layout(etype, ti.getCell(pt));
-					fireTreeEvent(ti, SWT.Collapse == event.type);
-					if(tree) break;
-				}
-				break;
-			}
-			return true;
+	protected void handleMouseEvents(Event event) {
+		CTreeItem item = null;
+		if (event.widget == body) {
+			item = getItem(event.x, event.y);
+		} else if (event.item instanceof CTreeItem) {
+			item = (CTreeItem) event.item;
 		}
-		return false;
-	}
-
-	private void handleMousePosition(CTreeItem item, Event event) {
+		
 		switch (event.type) {
 		case SWT.MouseDoubleClick:
-			if (!selectOnToggle) {
-				if (item != null) {
-					if (!selectOnToggle
-							&& item.isTogglePoint(mapPoint(event.x, event.y)))
-						break;
-				}
+			if(item != null && (selectOnToggle || !item.isToggle(event.x, event.y))) {
+				fireSelectionEvent(true);
 			}
-			fireSelectionEvent(true);
-			break;
-		case SWT.MouseDown:
-			mmPoint = null;
-			muPoint = null;
-			mmDelta = null;
-			mdPoint = mapPoint(event.x, event.y);
-			if (event.widget != body) {
-				if (event.widget instanceof Control) {
-					mdPoint = getDisplay().map((Control) event.widget, body, mdPoint);
-				} else {
-					break;
-				}
-			}
-			break;
-		case SWT.MouseMove:
-			if (mmPoint == null) {
-				mmDelta = mapPoint(0, 0);
-			} else {
-				mmDelta.x = event.x - mmPoint.x;
-				mmDelta.y = event.y - mmPoint.y;
-			}
-			mmPoint = mapPoint(event.x, event.y);
-			break;
-		case SWT.MouseUp:
-			mmPoint = null;
-			mdPoint = null;
-			mmDelta = null;
-			muPoint = mapPoint(event.x, event.y);
-			break;
-		default:
-			break;
-		}
-	}
-
-//	public void clearDirtyFlags() {
-//		dirtyFlags = 0;
-//	}
-
-//	public void clearDirtyItem() {
-//		dirtyItem = null;
-//	}
-
-//	public void setDirtyFlag(int flag) {
-//		switch (flag) {
-//		case DIRTY_ORDERED:
-//			dirtyFlags |= DIRTY_ORDERED;
-//		case DIRTY_VISIBLE:
-//			dirtyFlags |= DIRTY_VISIBLE;
-//		case DIRTY_PAINTED:
-//			dirtyFlags |= DIRTY_PAINTED;
-//			topIndex = -2; // topIndex will never be set to this, thus forcing
-//							// a refresh
-//			botIndex = -2;
-//			break;
-//		}
-//	}
-
-	protected void handleMouseSelection(CTreeItem item, Event event) {
-		switch (event.type) {
-		case SWT.MouseDoubleClick:
-			if (!selectOnToggle) {
-				if (item != null) {
-					if (!selectOnToggle
-							&& item.isTogglePoint(mapPoint(event.x, event.y)))
-						break;
-				}
-			}
-			fireSelectionEvent(true);
 			break;
 		case SWT.MouseDown:
 			if(!hasFocus) setFocus();
 			if(item == null) {
 				if(event.widget == body) {
-					item = internalGetItem(mdPoint);
+					item = getItem(event.x, event.y);
 				} else if(event.item instanceof CTreeItem) {
 					item = (CTreeItem) event.item;
 				}
-			}
-			if(item == null) {
-				if ((event.stateMask & (SWT.CTRL | SWT.SHIFT)) == 0) {
-					if (mode == MODE_MARQUEE)
-						holdSelection = true;
-					setCursor(getDisplay().getSystemCursor(SWT.CURSOR_CROSS));
-					deselectAll();
-					marquee = true;
-				}
-				break;
-			}
-			if(mode == MODE_MARQUEE) holdSelection = selection.contains(item);
-			marquee = false;
-			if(!isFocusControl()) {
-				setFocus();
 			}
 			switch(event.button) {
 			// TODO - popup menu: not just for mouse down events!
@@ -1073,42 +866,40 @@ public class CTree extends Composite implements Listener {
 					menu.setVisible(true);
 				}
 			case 1:
-				if (holdSelection)
-					break;
-				if (!selectOnToggle && item.isTogglePoint(mdPoint))
-					break;
-				if ((event.stateMask & SWT.SHIFT) != 0) {
-					if (shiftSel == null) {
-						if (selection.isEmpty())
-							selection.add(item);
-						shiftSel = (CTreeItem) selection.get(selection.size() - 1);
+				if(selectOnToggle || !item.isToggle(event.x, event.y)) {
+					if(selectOnTreeToggle || !item.isTreeToggle(event.x,event.y)) {
+						if((event.stateMask & SWT.SHIFT) != 0) {
+							if(shiftSel == null) {
+								if(selection.isEmpty()) selection.add(item);
+								shiftSel = (CTreeItem) selection.get(selection.size() - 1);
+							}
+							setSelection(shiftSel, item);
+						} else if((event.stateMask & SWT.CONTROL) != 0) {
+							toggleSelection(item);
+							shiftSel = null;
+						} else {
+							setSelection(item);
+							shiftSel = null;
+						}
 					}
-					setSelection(shiftSel, item);
-				} else if ((event.stateMask & SWT.CONTROL) != 0) {
-					toggleSelection(item);
-					shiftSel = null;
-				} else {
-					setSelection(item);
-					shiftSel = null;
 				}
 				break;
 			}
 			break;
 		case SWT.MouseMove:
-			if (mode == MODE_MARQUEE && marquee) {
-				int x = Math.min(mdPoint.x, mmPoint.x);
-				int y = Math.min(mdPoint.y, mmPoint.y);
-				int w = Math.abs(mdPoint.x - mmPoint.x);
-				int h = Math.abs(mdPoint.y - mmPoint.y);
-				Rectangle r = new Rectangle(x, y, w, h);
-				setSelection(getItems(r));
-			}
-			redraw();
+			// TODO: make toggles more dynamic
 			break;
 		case SWT.MouseUp:
-			marquee = false;
-			setCursor(getDisplay().getSystemCursor(SWT.CURSOR_ARROW));
-			redraw();
+			if(item.isToggle(event.x,event.y)) {
+				boolean open = item.isOpen(event.x,event.y);
+				if(item.isTreeToggle(event.x,event.y)) {
+//					visibleItems = null;
+					item.setExpanded(!open);
+					fireTreeEvent(item, !open);
+				} else {
+					item.getCell(event.x, event.y).setOpen(!open);
+				}
+			}
 			break;
 		}
 
@@ -1153,25 +944,24 @@ public class CTree extends Composite implements Listener {
 		return itemList.indexOf(item);
 	}
 
-	CTreeColumn internalGetColumn(int index) {
+	CTreeColumn getColumn(int index) {
 		if(index >= 0 && index < columns.length) {
 			return columns[index];
 		}
 		return null;
 	}
 
-	CTreeColumn[] internalGetColumns() {
+	CTreeColumn[] getColumns() {
 		CTreeColumn[] ca = new CTreeColumn[columns.length];
 		System.arraycopy(columns, 0, ca, 0, columns.length);
 		return ca;
 	}
 
-	CTreeItem internalGetItem(Point pt) {
+	CTreeItem getItem(int x, int y) {
 		// must iterate in reverse drawing order in case items overlap each other
-		for (ListIterator i = paintedItems.listIterator(paintedItems.size()); i.hasPrevious();) {
+		for(ListIterator i = paintedItems.listIterator(paintedItems.size()); i.hasPrevious();) {
 			CTreeItem item = (CTreeItem) i.previous();
-			if (item.contains(pt))
-				return item;
+			if(item.contains(x,y)) return item;
 		}
 		return null;
 	}
@@ -1181,7 +971,7 @@ public class CTree extends Composite implements Listener {
 	 * subclasses should override to provide an appropriate cast.
 	 * @return the sort column
 	 */
-	protected CTreeColumn internalGetSortColumn() {
+	protected CTreeColumn getSortColumn() {
 		return sortColumn;
 	}
 
@@ -1236,17 +1026,8 @@ public class CTree extends Composite implements Listener {
 	 * @param cell
 	 */
 	void layout(int eventType, CTreeCell cell) {
-		if((SWT.Collapse == eventType || SWT.Expand == eventType) && ((CTreeCell) cell).isTreeCell()) {
-			if(SWT.Collapse == eventType) {
-				layout.layout(eventType, cell);
-			} else if(isVisible((CTreeItem) cell.item)) {
-				layout.layout(eventType, cell);
-			}
-			updatePaintedList = true;
-		} else {
-			layout.layout(eventType, cell);
-			updatePaintedList = true;
-		}
+		layout.layout(eventType, cell);
+		updatePaintedList = true;
 	}
 
 	/**
@@ -1269,7 +1050,10 @@ public class CTree extends Composite implements Listener {
 	 * <p>
 	 *  Event types:
 	 *  <ul>
+	 *   <li>SWT.Collapse</li>
+	 *   <li>SWT.Expand</li>
 	 *   <li>SWT.Hide</li>
+	 *   <li>SWT.Move</li>
 	 *   <li>SWT.Show</li>
 	 *  </ul>
 	 * </p>
@@ -1277,25 +1061,22 @@ public class CTree extends Composite implements Listener {
 	 * @param item
 	 */
 	void layout(int eventType, CTreeItem item) {
-		if(SWT.Show == eventType && !isVisible((CTreeItem)item)) {
+		if(SWT.Collapse == eventType) {
 			layout.layout(eventType, item);
+			visibleItems = null;
 			updatePaintedList = true;
-			item.setVisible(true);
+		} else if(SWT.Expand == eventType) {
+			layout.layout(eventType, item);
+			visibleItems = null;
+			updatePaintedList = true;
 		} else if(SWT.Hide == eventType && isVisible((CTreeItem)item)) {
 			layout.layout(eventType, item);
 			updatePaintedList = true;
 			item.setVisible(false);
-		}
-	}
-
-	Point mapPoint(int x, int y) {
-		if(!gtk) {
-			Point point = getScrollPosition();
-			point.x += x;
-			point.y += y;
-			return point;
-		} else {
-			return new Point(x,y);
+		} else if(SWT.Show == eventType && !isVisible((CTreeItem)item)) {
+			layout.layout(eventType, item);
+			updatePaintedList = true;
+			item.setVisible(true);
 		}
 	}
 
@@ -1338,7 +1119,6 @@ public class CTree extends Composite implements Listener {
 		paintItems(gc, ebounds);
 		if(!paintGridAsBackground) paintGridLines(gc, ebounds);
 		paintViewport(gc, ebounds);
-		paintTracker(gc, ebounds);
 		paintFocus(gc, ebounds);
 
 		e.gc.drawImage(image, ebounds.x, ebounds.y);
@@ -1347,7 +1127,7 @@ public class CTree extends Composite implements Listener {
 	}
 
 	protected void paintColumns(GC gc, Rectangle ebounds) {
-		CTreeColumn[] columns = internalGetColumns();
+		CTreeColumn[] columns = getColumns();
 		for (int i = 0; i < columns.length; i++) {
 			columns[i].paint(gc, ebounds);
 		}
@@ -1453,9 +1233,28 @@ public class CTree extends Composite implements Listener {
 						4 - ebounds.y);
 			}
 		} else {
-			for (Iterator i = paintedItems.iterator(); i.hasNext();) {
-				((CTreeItem) i.next()).paint(gc, ebounds);
+			Image image = new Image(gc.getDevice(), ebounds);
+			GC gc2 = new GC(image);
+			for (Iterator iter = paintedItems.iterator(); iter.hasNext();) {
+				CTreeItem item = (CTreeItem) iter.next();
+				for(int i = 0; i < item.cells.length; i++) {
+					CTreeCell cell = item.cells[i];
+					cell.paint(gc, ebounds);
+					Rectangle cb = cell.getClientArea();
+					gc2.setBackground(getDisplay().getSystemColor(SWT.COLOR_CYAN));
+					gc2.fillRectangle(ebounds);
+					if(!cb.isEmpty() &&
+							cell.paintClientArea(gc2, 
+									new Rectangle(0,0,cb.width,cb.height))) {
+						gc.drawImage(image,
+							0,0,Math.min(ebounds.width, cb.width),Math.min(ebounds.height, cb.height),
+							cb.x-ebounds.x,cb.y-ebounds.y,cb.width,cb.height
+							);
+					}
+				}
 			}
+			gc2.dispose();
+			image.dispose();
 		}
 	}
 
@@ -1473,22 +1272,6 @@ public class CTree extends Composite implements Listener {
 					gc.fillRectangle(r);
 				}
 			}
-		}
-	}
-
-	protected void paintTracker(GC gc, Rectangle ebounds) {
-		if (marquee && mdPoint != null && mmPoint != null) {
-			gc.setAlpha(75);
-			gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_GRAY));
-			gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_GRAY));
-			int x = (mmPoint.x > mdPoint.x ? mdPoint.x : mmPoint.x) - ebounds.x;
-			int y = (mmPoint.y > mdPoint.y ? mdPoint.y : mmPoint.y) - ebounds.y;
-			int w = Math.abs(mmPoint.x - mdPoint.x);
-			int h = Math.abs(mmPoint.y - mdPoint.y);
-			gc.fillRectangle(x, y, w, h);
-			gc.setAlpha(255);
-			gc.setLineStyle(SWT.LINE_DASHDOTDOT);
-			gc.drawRectangle(x, y, w, h);
 		}
 	}
 
@@ -1528,6 +1311,8 @@ public class CTree extends Composite implements Listener {
 				selection = new ArrayList();
 				selChange = true;
 			}
+			visibleItems = null;
+			paintedItems = new ArrayList();
 
 			for(Iterator i = items(true).iterator(); i.hasNext(); ) {
 				CTreeItem item = (CTreeItem) i.next();
@@ -1563,8 +1348,9 @@ public class CTree extends Composite implements Listener {
 		}
 	}
 
-	void removeItems() {
+	private void removeItems() {
 		removedItems = new ArrayList();
+		visibleItems = null;
 		layout(true, true);
 		updatePaintedList = true;
 	}
@@ -1733,10 +1519,6 @@ public class CTree extends Composite implements Listener {
 		this.lastLine = lastLine;
 	}
 	
-	void setMode(int mode) {
-		this.mode = mode;
-	}
-
 	public void setNativeHeader(boolean nativeHeader) {
 		this.nativeHeader = nativeHeader;
 	}

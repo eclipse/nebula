@@ -76,7 +76,7 @@ public class CTreeEditor extends ControlEditor {
 	 */
 	public void dispose () {
 		if (this.column > -1 && this.column < tree.getColumnCount()){
-			CTreeColumn treeColumn = tree.internalGetColumn(this.column);
+			CTreeColumn treeColumn = tree.getColumn(this.column);
 			treeColumn.removeControlListener(columnListener);
 		}
 		columnListener = null;
@@ -206,7 +206,7 @@ public class CTreeEditor extends ControlEditor {
 			return;
 		}
 		if (this.column > -1 && this.column < columnCount){
-			CTreeColumn treeColumn = tree.internalGetColumn(this.column);
+			CTreeColumn treeColumn = tree.getColumn(this.column);
 			treeColumn.removeControlListener(columnListener);
 			this.column = -1;
 		}
@@ -214,7 +214,7 @@ public class CTreeEditor extends ControlEditor {
 		if (column < 0  || column >= tree.getColumnCount()) return;	
 
 		this.column = column;
-		CTreeColumn treeColumn = tree.internalGetColumn(this.column);
+		CTreeColumn treeColumn = tree.getColumn(this.column);
 		treeColumn.addControlListener(columnListener);
 		layout();
 	}

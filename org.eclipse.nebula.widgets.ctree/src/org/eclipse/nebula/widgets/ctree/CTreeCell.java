@@ -138,35 +138,6 @@ public class CTreeCell {
 	 * true if the platform is detected as being "win32"
 	 */
 	public static final boolean win32 = "win32".equals(SWT.getPlatform());
-	/**
-	 * cell state indicating that all is normal
-	 */
-	protected static final int CELL_NORMAL 	= 0;
-	/**
-	 * cell state indicating that the cell is in the process of being moved
-	 */
-	protected static final int CELL_MOVING 	= 1 << 0;
-	/**
-	 * cell state indicating that the cell is in the process of being resized
-	 */
-	protected static final int CELL_RESIZING 	= 1 << 1;
-	/**
-	 * return value indicating no action is necessary
-	 */
-	protected static final int RESULT_NONE		= 0; 
-	/**
-	 * return value indicating that this cell wants to consume the event
-	 * thereby preventing the delivery of the event to other cells and/or items.
-	 */
-	protected static final int RESULT_CONSUME	= 1 << 0; 
-	/**
-	 * return value indicating that a redraw is necessary
-	 */
-	protected static final int RESULT_REDRAW	= 1 << 1; 
-	/**
-	 * return value indicating that a layout is necessary
-	 */
-	protected static final int RESULT_LAYOUT	= 1 << 2;
 
 	private static final Color bgOver = gtk ? Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_BORDER) :
 		Display.getCurrent().getSystemColor(SWT.COLOR_BLACK);
@@ -223,7 +194,6 @@ public class CTreeCell {
 		}
 	}
 	
-	
 	/**
 	 * the container to which this cell's item belongs
 	 */
@@ -232,6 +202,10 @@ public class CTreeCell {
 	 * the item to which this cell belongs
 	 */
 	protected CTreeItem item;
+	/**
+	 * the index of this cell in its item's cell array
+	 */
+	private int index = -1;
 	/**
 	 * the style settings for this cell
 	 */
@@ -247,7 +221,7 @@ public class CTreeCell {
 	/**
 	 * the horizontal alignment to use when positioning the control in the client area, if it was created
 	 */
-	int hAlign = SWT.FILL;
+	int hAlign = SWT.RIGHT;
 	/**
 	 * the vertical alignment to use when positioning the control in the client area, if it was created
 	 */
@@ -331,21 +305,25 @@ public class CTreeCell {
 	/**
 	 * the bounds of this cell relative to...
 	 */
-	protected Rectangle bounds;
+//	protected Rectangle bounds;
 	/**
 	 * the bounds of this cell the <b>last</b> time it was painted
 	 */
-	protected Rectangle boundsOld;
+	private Rectangle bounds;
+	/**
+	 * the client area of this cell the <b>last</b> time it was painted
+	 */
+	private Rectangle clientArea;
 	/**
 	 * the bounds of this cell's child area relative to the cell's own
 	 * origin (bounds.x, bounds.y)
 	 * @see #bounds
 	 */
-	protected Rectangle childBounds;
+//	protected Rectangle childBounds;
 	/**
 	 * the bounds of this cell's child area the <b>last</b> time it was painted
 	 */
-	protected Rectangle childBoundsOld;
+//	protected Rectangle childBoundsOld;
 	/**
 	 * indicates whether or not this cell has a child area.
 	 */
@@ -358,36 +336,34 @@ public class CTreeCell {
 	/**
 	 * the bounds for the toggle, relative to... to what? TODO
 	 */
-	protected Rectangle toggleBounds = new Rectangle(0,0,0,0);
+	private Rectangle toggleBounds;
 	/**
 	 * the font to use for any text in this cell.
 	 */
-	protected Font font;
+	private Font font;
 	/**
 	 * The color that the cell will actually use for its background.  It may be different
 	 * from the storedBackground if, for instance, the cell is selected.
 	 * @see #storedBackground
 	 */
-	protected Color activeBackground;
+	private Color activeBackground;
 	/**
 	 * The color that the cell will actually use for its forground.  It may be different
 	 * from the storedForeground if, for instance, the cell is selected.
 	 * @see #storedForeground
 	 */
-	protected Color activeForeground;
+	private Color activeForeground;
 	/**
 	 * The color that the cell would like to use for its background.
 	 * @see #activeBackground
 	 */
-	protected Color storedBackground = null;
+	private Color storedBackground = null;
 	/**
 	 * The color that the cell would like to use for its foreground.
 	 * @see #activeForeground
 	 */
-	protected Color storedForeground = null;
+	private Color storedForeground = null;
 
-	private int cellState = CELL_NORMAL;
-	
 	private List colorExclusions;
 	private List eventExclusions;
 	private EventHandler ehandler = new EventHandler();
@@ -403,13 +379,15 @@ public class CTreeCell {
 	private boolean isCheck = false;
 
 	private boolean isChecked = false;
+	
+	private boolean inited = false;
 
 	private Image[] images;
 	private String text;
 
 	private int horizontalSpacing = 2;
-	private Rectangle[] iBounds = new Rectangle[0];
-	private Rectangle tBounds = new Rectangle(0,0,0,0);
+	private Rectangle[] iBounds;
+	private Rectangle tBounds;
 
 	/**
 	 * the amount by which the toggle, and thus the rest of the cell, is to be indented
@@ -423,8 +401,10 @@ public class CTreeCell {
 
 	private int[] childSpan = new int[] { -1, 1 };	// default setting keeps the child area
 													// within the same column as the title area
-	
-	private boolean holdControl = true;
+
+	private int span = 1;
+
+	protected boolean holdControl = true;
 	
 	private boolean holdChild = true;
 
@@ -432,18 +412,8 @@ public class CTreeCell {
 		this.ctree = item.ctree;
 		this.item = item;
 		this.style = style;
-		bounds = new Rectangle(0,0,0,0);
 		if((style & SWT.CHECK) != 0) {
 			isCheck = true;
-		}
-		if((style & SWT.DROP_DOWN) != 0) {
-			hasChild = true;
-			setChildVisible(true);
-		} else {
-			hasChild = false;
-		}
-		if((style & SWT.TOGGLE) != 0) {
-			setToggleVisible(true, true);
 		}
 	}
 
@@ -513,29 +483,11 @@ public class CTreeCell {
 	public Point computeClientSize(int wHint, int hHint) {
 		Point size = new Point(0,0);
 		
-		Image[] images = getImages();
-		Rectangle iBounds = null;
-		if(images != null && images.length > 0) {
-			iBounds = images[0].getBounds();
-			for(int i = 1; i < images.length; i++) {
-				Rectangle ib = images[i].getBounds();
-				iBounds.width += horizontalSpacing + ib.width;
-				iBounds.height = Math.max(iBounds.height, ib.height);
-			}
-		} else {
-			iBounds = new Rectangle(0,0,0,0);
-		}
-		
-		Point tSize = computeTextSize(wHint-iBounds.width, -1);
+		Point cSize = computeControlSize(wHint, -1);
+		Point tSize = computeTextSize(wHint-cSize.x, -1);
 
-		size.x = iBounds.width + ((iBounds.width > 0 && tSize.x > 0) ? horizontalSpacing : 0) + tSize.x;
-		size.y = Math.max(iBounds.height, tSize.y);
-
-		if(open) {
-			Point cSize = computeControlSize(wHint-size.x, -1);
-			size.x += cSize.x;
-			size.y = Math.max(size.y, cSize.y);
-		}
+		size.x = cSize.x + tSize.x;
+		size.y = Math.max(cSize.y, tSize.y);
 
 		return size;
 	}
@@ -556,7 +508,29 @@ public class CTreeCell {
 		
 		Point size = new Point(marginLeft+marginWidth+marginWidth+marginRight, marginTop+marginHeight+marginHeight+marginBottom);
 		if(toggleVisible || ghostToggle) size.x += toggleWidth;
-		
+
+		if(isCheck) {
+// TODO: check is null unless cell is painted - request from ctree's painted list
+//			Point cSize = check.computeSize(wHint, hHint);
+//			size.x += cSize.x;
+//			size.y = Math.max(cSize.y, size.y);
+		}
+
+		Image[] images = getImages();
+		Rectangle iBounds = null;
+		if(images != null && images.length > 0) {
+			iBounds = images[0].getBounds();
+			for(int i = 1; i < images.length; i++) {
+				Rectangle ib = images[i].getBounds();
+				iBounds.width += horizontalSpacing + ib.width;
+				iBounds.height = Math.max(iBounds.height, ib.height);
+			}
+		} else {
+			iBounds = new Rectangle(0,0,0,0);
+		}
+		size.x += iBounds.width;
+		size.y = Math.max(iBounds.height, size.y);
+
 		Point clientSize = computeClientSize(wHint-size.x, hHint-size.y);
 		if(clientSize != null) {
 			size.x += clientSize.x;
@@ -565,8 +539,8 @@ public class CTreeCell {
 		
 		Point childSize = computeChildSize(wHint-size.x, hHint-size.y);
 		if(childSize != null) {
-			size.x += (childSize.x + (childBounds.x - bounds.x));
-			size.y += (childSize.y + (childBounds.y - bounds.y));
+//			size.x += (childSize.x + (childBounds.x - bounds.x));
+//			size.y += (childSize.y + (childBounds.y - bounds.y));
 		}
 		
 		if(wHint != SWT.DEFAULT) {
@@ -595,28 +569,25 @@ public class CTreeCell {
 	}
 
 	private Button createCheck() {
-		if(isCheck) {
-			Button b = new Button(ctree.body, SWT.CHECK);
-			b.setBackground(activeBackground);
-			b.setForeground(activeForeground);
-			b.setSelection(isChecked);
-			b.addListener(SWT.FocusIn, new Listener() {
-				public void handleEvent(Event event) {
-					if(SWT.FocusIn == event.type) ctree.setFocus();
+		Button b = new Button(ctree.body, SWT.CHECK);
+		b.setBackground(activeBackground);
+		b.setForeground(activeForeground);
+		b.setSelection(isChecked);
+		b.addListener(SWT.FocusIn, new Listener() {
+			public void handleEvent(Event event) {
+				if(SWT.FocusIn == event.type) ctree.setFocus();
+			}
+		});
+		b.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				if(SWT.Selection == event.type) {
+					isChecked = ((Button) event.widget).getSelection();
 				}
-			});
-			b.addListener(SWT.Selection, new Listener() {
-				public void handleEvent(Event event) {
-					if(SWT.Selection == event.type) {
-						isChecked = ((Button) event.widget).getSelection();
-					}
-				}
-			});
-			// TODO set size of check
-			b.setSize(b.computeSize(-1, -1));
-			return b;
-		}
-		return null;
+			}
+		});
+		// TODO set size of check
+//		b.setSize(b.computeSize(-1, -1));
+		return b;
 	}
 
 	/**
@@ -640,8 +611,18 @@ public class CTreeCell {
 	}
 
 	void dispose() {
-//		if(titleArea != null && !titleArea.isDisposed()) titleArea.dispose();
-//		if(childArea != null && !childArea.isDisposed()) childArea.dispose();
+		if(check != null) {
+			if(!check.isDisposed()) check.dispose();
+			check = null;
+		}
+		if(control != null) {
+			if(!control.isDisposed()) control.dispose();
+			control = null;
+		}
+		if(childControl != null) {
+			if(!childControl.isDisposed()) childControl.dispose();
+			childControl = null;
+		}
 	}
 
 	/**
@@ -671,7 +652,12 @@ public class CTreeCell {
 	 * @return Rectangle
 	 */
 	public Rectangle getBounds() {
-		return new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height);
+		CTreeColumn col = getColumn();
+		return new Rectangle(
+					col.getLeft(),
+					item.getTop(),
+					col.getWidth(),
+					item.getHeight());
 	}
 
 	/**
@@ -690,10 +676,6 @@ public class CTreeCell {
 	 */
 	public Color getCellForeground() {
 		return storedForeground;
-	}
-
-	public int getCellState() {
-		return cellState;
 	}
 
 	/**
@@ -721,21 +703,12 @@ public class CTreeCell {
 	/**
 	 * Get the client area of this cell.  This is the area
 	 * where controls can be placed and painting can occur by subclasses.
+	 * ONLY VALID WHEN bounds IS VALID
 	 * @return Rectangle
 	 */
 	public Rectangle getClientArea() {
-		Rectangle ca = new Rectangle(0,0,bounds.width, bounds.height);
-		ca.x = marginLeft + marginWidth;
-		if(toggleVisible || ghostToggle) ca.x += toggleWidth;
-		ca.y = marginTop + marginHeight;
-		ca.width -= (ca.x + marginRight + marginWidth);
-		ca.height -= (ca.y + marginBottom + marginHeight);
-		return ca;
+		return clientArea;
 	}
-
-//	public CTreeItem getItem() {
-//		return item;
-//	}
 
 	/**
 	 * Get a list containing all of the controls whose colors (foreground and background)
@@ -798,11 +771,39 @@ public class CTreeCell {
 		return new Point(r.x, r.y);
 	}
 
+	public boolean getPainted() {
+		return painted;
+	}
+	
 	public Point getSize() {
-		Rectangle r = getBounds();
-		return new Point(r.width, r.height);
+		return new Point(getWidth(),getHeight());
 	}
 
+	public int getIndex() {
+		if(index < 0) {
+			index = item.getCellIndex(this);
+		}
+		return index;
+	}
+	
+	public int getHeight() {
+		return item.getHeight();
+	}
+	
+	public int getWidth() {
+		if(span > 1) {
+			CTreeColumn c1 = ctree.getColumn(getIndex());
+			CTreeColumn c2 = ctree.getColumn(getIndex()+span);
+			return c2.getRight() - c1.getLeft();
+		} else {
+			return ctree.getColumn(getIndex()).getWidth();
+		}
+	}
+	
+	public CTreeColumn getColumn() {
+		return ctree.getColumn(getIndex());
+	}
+	
 	public int getStyle() {
 		return style;
 	}
@@ -810,9 +811,9 @@ public class CTreeCell {
 	public String getText() {
 		return (text == null) ? "" : text;
 	}
-	
-	Rectangle getToggleBounds() {
-		return mapRectangle(toggleBounds);
+
+	boolean isToggle(int x, int y) {
+		return toggleVisible && toggleBounds.contains(x,y);
 	}
 
 	boolean getToggleVisible() {
@@ -823,36 +824,39 @@ public class CTreeCell {
 	 * Give the Item a chance to handle the mouse event
 	 * @param event the Event
 	 * @param selectionActive 
-	 * @return 0: do nothing, 1: redraw, 2: layout
 	 */
-	protected int handleMouseEvent(Event event, boolean selectionActive) {
-		// TODO: handleMouseEvent uses bitwise OR'ed return code, allow "consumed" code?
-		int result = RESULT_NONE;
-		switch(event.type) {
-		case SWT.MouseDown:
-			if(bounds != null) {
-				Point pt = new Point(event.x, event.y);
-				boolean tmp = bounds.contains(pt);
-				if(tmp != mouseOver) {
-					mouseOver = tmp;
-					result |= RESULT_REDRAW;
-				}
-				if(!mouseOver && mouseDown) {
-					mouseDown = false;
-					result |= RESULT_REDRAW;
-				}
-				tmp = toggleVisible && toggleBounds.contains(pt);
-				if(tmp != mouseOverToggle) {
-					mouseOverToggle = tmp;
-					result |= RESULT_REDRAW;
-				}
-			}
-			break;
-		}
-		return result;
+	protected void handleMouseEvent(Event event, boolean selectionActive) {
+//		switch(event.type) {
+//		case SWT.MouseDown:
+//			Point pt = new Point(event.x, event.y);
+//			boolean tmp = getBounds().contains(pt);
+//			if(tmp != mouseOver) {
+//				mouseOver = tmp;
+//			}
+//			if(!mouseOver && mouseDown) {
+//				mouseDown = false;
+//			}
+//			tmp = toggleVisible && toggleBounds.contains(pt);
+//			if(tmp != mouseOverToggle) {
+//				mouseOverToggle = tmp;
+//			}
+//			break;
+//		}
 	}
 
-	void internalFirstPainting() {
+	void initialize() {
+		toggleBounds = new Rectangle(0,0,0,0);
+		iBounds = new Rectangle[0];
+		tBounds = new Rectangle(0,0,0,0);
+		if((style & SWT.DROP_DOWN) != 0) {
+			hasChild = true;
+			setChildVisible(true);
+		} else {
+			hasChild = false;
+		}
+		if((style & SWT.TOGGLE) != 0) {
+			setToggleVisible(true, true);
+		}
 		if(isCheckCell()) setCheck(true);
 		if(isTreeCell()) {
 			if(((CTreeItem) item).hasParentItem()) {
@@ -860,18 +864,11 @@ public class CTreeCell {
 			}
 			setToggleVisible(((CTreeItem) item).hasItems(), true);
 		}
+		inited = true;
 	}
 
 	protected GC internalGC() {
 		return ctree.internalGC;
-	}
-
-	protected boolean isCellState(int opcode) {
-		return ((cellState & opcode) != 0);
-	}
-
-	protected boolean isCellStateNormal() {
-		return cellState == 0;
 	}
 
 	public boolean isCheckCell() {
@@ -890,13 +887,14 @@ public class CTreeCell {
 		return ((CTreeItem) item).getTreeCell() == this;
 	}
 
-	public void layout() {}
+	protected void layout() {
+	}
 
 	protected void layout(Control control) {
 		Rectangle area = getClientArea();
 		Point size = control.computeSize(-1, -1);
 		size.x = (hAlign == SWT.FILL) ? area.width : Math.min(area.width, size.x);
-		size.y = (vAlign == SWT.FILL) ? area.height : Math.min(area.height, size.y);
+		size.y = (vAlign == SWT.FILL) ? item.getHeight() : Math.min(area.height, size.y);
 		control.setSize(size.x, size.y);
 		locate(control);
 	}
@@ -905,21 +903,32 @@ public class CTreeCell {
 		ctree.layout(eventType, this);
 	}
 
-	protected void layoutChild() {}
-
-	protected void layoutChild(Control childControl) {}
-
-	final protected void layoutInternal() {
+	private void layoutCell() {
+		int x = bounds.x + marginLeft + marginWidth + indent;
+		int y = bounds.y + marginTop + marginHeight;
+		int height = item.getHeight() - (marginHeight + marginTop + marginBottom + marginHeight);
+		
+		// TOGGLE
 		if(ghostToggle || toggleVisible) {
-			toggleBounds.x = indent;
-			toggleBounds.y = 0;
+			toggleBounds.x = x;
+			toggleBounds.y = y;
+			toggleBounds.width = Math.min(bounds.width, toggleWidth);
+			toggleBounds.height = height;
+			x += toggleBounds.width;
 		}
-		toggleBounds.width = Math.min(bounds.width, toggleWidth);
-		toggleBounds.height = bounds.height;
 
-		Rectangle clientBounds = getClientArea();
-		Point clientSize = computeClientSize(clientBounds.width, clientBounds.height);
-
+		// CHECK
+		if(isCheck) {
+			check.setBounds(
+					x,
+					item.getTop(),
+					check.computeSize(-1, -1).x,
+					height
+					);
+			x += check.getSize().x + horizontalSpacing;
+		}
+		
+		// IMAGES
 		if(images == null) {
 			iBounds = new Rectangle[0];
 		} else {
@@ -929,158 +938,116 @@ public class CTreeCell {
 			}
 		}
 
-		int x;
-		if((style & SWT.CENTER) != 0) {
-			x = clientBounds.x+((clientBounds.width-clientSize.x)/2);
-		} else if((style & SWT.RIGHT) != 0) {
-			x = clientBounds.x+clientBounds.width-clientSize.x;
-		} else { // defaults to LEFT
-			x = clientBounds.x;
-		}
-
 		for(int i = 0; i < iBounds.length; i++) {
 			iBounds[i].x = x;
-			x += iBounds[i].width;
-			if((i != iBounds.length-1) || (text.length() > 0)) x += horizontalSpacing;
+			iBounds[i].y = y;
+			x += iBounds[i].width + horizontalSpacing;
 		}
 		
-		tBounds.x = x;
-
-		Point tSize = computeTextSize(clientBounds.width-tBounds.x, bounds.height);
+		// CLIENT_AREA
+		clientArea = new Rectangle(
+				x,
+				y,
+				bounds.x + bounds.width - x - marginRight - marginWidth,
+				height
+				);
+		
+		// CONTROL
+		if(control != null) {
+			layout(control);
+			x += control.getSize().x + horizontalSpacing;
+		}
+		
+		// TEXT
+		int width = (control != null) ? clientArea.width-control.getSize().x-horizontalSpacing : clientArea.width;
+		Point tSize =  computeTextSize(width, height);
 		tBounds.width = tSize.x;
 		tBounds.height = tSize.y;
 
+		if((style & SWT.CENTER) != 0) {
+			tBounds.x = clientArea.x+((width-tBounds.width)/2);
+		} else if((style & SWT.RIGHT) != 0) {
+			tBounds.x = clientArea.x+width-tBounds.width;
+		} else { // defaults to LEFT
+			tBounds.x = clientArea.x;
+		}
+
 		if((open) || (style & SWT.TOP) != 0) {
-			for(int i = 0; i < iBounds.length; i++) {
-				iBounds[i].y = clientBounds.y;
-			}
-			tBounds.y = clientBounds.y;
+			tBounds.y = clientArea.y;
 		} else if((style & SWT.BOTTOM) != 0) {
-			toggleBounds.y = clientBounds.y + clientBounds.height - toggleBounds.height;
-			for(int i = 0; i < iBounds.length; i++) {
-				iBounds[i].y = clientBounds.y + clientBounds.height - iBounds[i].height;
-			}
-			tBounds.y = clientBounds.y + clientBounds.height - tBounds.height;
+			tBounds.y = clientArea.y + clientArea.height - tBounds.height;
 		} else { // defaults to CENTER
-			toggleBounds.y = clientBounds.y + (clientBounds.height-toggleBounds.height)/2;
-			for(int i = 0; i < iBounds.length; i++) {
-				iBounds[i].y = clientBounds.y + (clientBounds.height-iBounds[i].height)/2;
-			}
-			tBounds.y = clientBounds.y + (clientBounds.height-tBounds.height)/2;
+			tBounds.y = clientArea.y + (clientArea.height-tBounds.height)/2;
 		}
 	}
+	
+	protected void layoutChild() {}
+
+	protected void layoutChild(Control childControl) {}
 
 	protected void locate(Control control) {
-		Point scroll = ctree.getScrollPosition();
 		Rectangle area = getClientArea();
-		Point loc = new Point(bounds.x+area.x-scroll.x, bounds.y+area.y-scroll.y);
+		Point loc = new Point(area.x, item.getTop());
 		Point size = control.getSize();
 		if(hAlign == SWT.RIGHT) loc.x += (area.width-size.x);
 		else if(hAlign == SWT.CENTER) loc.x += ((area.width-size.x)/2);
-		if(vAlign == SWT.BOTTOM) loc.y += (area.height-size.y);
-		else if(vAlign == SWT.CENTER) loc.y += ((area.height-size.y)/2);
+//		if(vAlign == SWT.BOTTOM) loc.y += (area.height-size.y);
+//		else if(vAlign == SWT.CENTER) loc.y += ((area.height-size.y)/2);
 		control.setLocation(loc);
 	}
 
-	protected void locateCheck(Button check) {
-		Point scroll = ctree.getScrollPosition();
-		Rectangle area = getClientArea();
-		check.setLocation(
-				bounds.x+area.x-scroll.x,
-				bounds.y+-scroll.y+(bounds.height-check.computeSize(-1, -1).y)/2
-				);
-	}
+//	protected void locateCheck(Button check) {
+//		Point scroll = ctree.getScrollPosition();
+//		Rectangle area = getClientArea();
+//		check.setLocation(
+//				getColumn().getLeft()+area.x-scroll.x,
+//				item.getTop()+-scroll.y+(item.getHeight()-check.computeSize(-1, -1).y)/2
+//				);
+//	}
 
 	//	protected abstract void internalLocateChild(Control control) {}
 	protected void locateChild() {}
 
-	// TODO: map methods?
-	Rectangle mapRectangle(int x, int y, int width, int height) {
-		Rectangle r = new Rectangle(x,y,width,height);
-		r.x += bounds.x;
-		r.y += bounds.y;
-		return r;
-	}
-
-	Rectangle mapRectangle(Rectangle rect) {
-		return mapRectangle(rect.x, rect.y, rect.width, rect.height);
-	}
-
 	/**
 	 * @param gc the GC upon which the cell will be painted
 	 * @param ebounds the bounding rectangle of the Container's paint event
+	 * @return boolean true if there is custom painting, false otherwise
 	 */
 	void paint(GC gc, Rectangle ebounds) {
-		bounds.width = item.getCellColumn(this).getWidth();
-		if(!painted || bounds.isEmpty()) return;
-
 		updateColors();
 
-		if(boundsOld == null) boundsOld = new Rectangle(-1,-1,0,0);
-		if(scrollPos == null) scrollPos = new Point(-1,-1);
+		boolean locate = needsLocate();
+		boolean layout = needsLayout();
+		bounds = getBounds();
 
-		bounds.x = item.getCellColumn(this).getLeft();
-
-		boolean didLayout = false;
-		if(bounds.width != boundsOld.width || bounds.height != boundsOld.height) {
-			layoutInternal();
-			if(check != null) locateCheck(check);
+		if(locate) {
+// TODO: locate currently uses slower layout()
+			layoutCell();
 			layout();
-			if(control != null) layout(control);
-			boundsOld.x = bounds.x;
-			boundsOld.y = bounds.y;
-			boundsOld.width = bounds.width;
-			boundsOld.height = bounds.height;
-			didLayout = true;
 		}
 
-		Point newSPos = ctree.getScrollPosition();
-		if(!didLayout && (bounds.x != boundsOld.x || bounds.y != boundsOld.y || 
-				scrollPos.x != newSPos.x || scrollPos.y != newSPos.y)) {
-			if(!gtk) {
-				if(check != null) locateCheck(check);
-				if(control != null) locate(control);
-			}
-			boundsOld.x = bounds.x;
-			boundsOld.y = bounds.y;
+		if(layout) {
+			layoutCell();
+			layout();
+		} else {
+			if(control != null) layout(control);
 		}
-		if(hasChild && open) {
-			if(childControl == null) childControl = createChildControl(ctree);
-			didLayout = false;
-			if(childBounds.width != childBoundsOld.width || childBounds.height != childBoundsOld.height) {
-				layoutChild();
-				if(childControl != null) layoutChild(childControl);
-				childBoundsOld.x = childBounds.x;
-				childBoundsOld.y = childBounds.y;
-				childBoundsOld.width = childBounds.width;
-				childBoundsOld.height = childBounds.height;
-				didLayout = true;
-			}
-			if(!didLayout && (childBounds.x != childBoundsOld.x || childBounds.y != childBoundsOld.y || 
-					scrollPos.x != newSPos.x || scrollPos.y != newSPos.y)) {
-				locateChild();
-//				if(childControl != null) locateChild(childControl);
-				childBoundsOld.x = childBounds.x;
-				childBoundsOld.y = childBounds.y;
-			}
-		}
-		scrollPos = newSPos;
 
 		if(gtk) {
-			paintCell(gc, new Point(bounds.x-ebounds.x,bounds.y-ebounds.y));
+			paintCell(gc, new Point(-ebounds.x,-ebounds.y));
 		} else {
-			paintCell(gc, new Point(bounds.x-scrollPos.x-ebounds.x,bounds.y-scrollPos.y-ebounds.y));
+			// TODO !gtk offset in paint routine
 		}
 	}
 
-	public void paintCell(GC gc, Point offset) {
+	void paintCell(GC gc, Point offset) {
 		if(activeBackground != null) gc.setBackground(activeBackground);
 		if(activeForeground != null) gc.setForeground(activeForeground);
 
 		// background
 		gc.fillRectangle(
-				offset.x,
-				offset.y,
+				bounds.x+offset.x,
+				bounds.y+offset.y,
 				bounds.width,
 				bounds.height
 		);
@@ -1099,7 +1066,7 @@ public class CTreeCell {
 			gc.drawText(getText(), offset.x+tBounds.x, offset.y+tBounds.y);
 			if(getFont() != null) gc.setFont(bf);
 		}
-
+		
 		if(((CTreeItem) item).getTreeCell() == this) {
 			paintChildLines(gc, offset);
 		}
@@ -1110,6 +1077,35 @@ public class CTreeCell {
 		}
 	}
 
+	private boolean needsLayout() {
+		// TODO: if text changed
+		// TODO: if images changed
+		// TODO: if ??? changed
+		return
+			(
+			bounds == null || 
+			bounds.height != item.getHeight() || bounds.width != getColumn().getWidth()
+			);
+	}
+	
+	private boolean needsLocate() {
+		// TODO: scroll position for when !gtk
+		return
+			(
+			bounds == null || 
+			bounds.y != item.getTop() || bounds.x != getColumn().getLeft()
+			);
+	}
+	
+	public boolean paintClientArea(GC gc, Rectangle area) {
+		// to be implemented by subclasses
+		return false;
+	}
+	
+	protected Display getDisplay() {
+		return ctree.getDisplay();
+	}
+	
 	private void paintChildLines(GC gc, Point offset) {
 		if(win32) {
 			int gline = ctree.getGridLineWidth();
@@ -1202,9 +1198,9 @@ public class CTreeCell {
 		}
 	}
 
-	protected void paintToggle(GC gc, Point offset) {
-		double x = ((toggleBounds.width - pointsWidth) / 2) + offset.x;
-		double y = ((toggleBounds.height - pointsWidth) / 2) + toggleBounds.y + offset.y;
+	private void paintToggle(GC gc, Point offset) {
+		double x = toggleBounds.x + ((toggleBounds.width - pointsWidth) / 2) + offset.x;
+		double y = toggleBounds.y + ((toggleBounds.height - pointsWidth) / 2) + offset.y;
 		int[] data = open ? openPoints : closedPoints;
 		int[] pts = new int[data.length];
 		for (int i = 0; i < data.length; i += 2) {
@@ -1277,7 +1273,7 @@ public class CTreeCell {
 	}
 
 	public void redraw() {
-		ctree.redraw(this);
+		if(painted) ctree.redraw(this);
 	}
 
 	public void removeListener(int eventType, Listener handler) {
@@ -1312,34 +1308,28 @@ public class CTreeCell {
 		// base implementation so subclass do not need to override
 	}
 
-	protected Map retrieveState() {
+	protected Map saveState() {
 		return Collections.EMPTY_MAP;
 	}
+	
 	public void setBackground(Color color) {
 		storedBackground = color;
 		updateColors();
 	}
-	protected void setBounds(int x, int y, int width, int height) {
-		bounds.x = x;
-		bounds.y = y;
-		bounds.width = width;
-		bounds.height = height;
-		snap(bounds);
-	}
+
+//	protected void setBounds(int x, int y, int width, int height) {
+//		bounds.x = x;
+//		bounds.y = y;
+//		bounds.width = width;
+//		bounds.height = height;
+//		snap(bounds);
+//	}
 
 //	public Control getControl() { return control; }
 	
-	protected void setBounds(Rectangle bounds) {
-		setBounds(bounds.x,bounds.y,bounds.width,bounds.height);
-	}
-
-	protected void setCellStateFlag(int flag, boolean on) {
-		if(on) {
-			cellState |= flag;
-		} else {
-			cellState &= ~flag;
-		}
-	}
+//	protected void setBounds(Rectangle bounds) {
+//		setBounds(bounds.x,bounds.y,bounds.width,bounds.height);
+//	}
 
 	public void setCheck(boolean check) {
 		if(isCheck != check) {
@@ -1443,7 +1433,7 @@ public class CTreeCell {
 			}
 			if(doit) this.images = images;
 		}
-		ctree.redraw(this);
+		redraw();
 	}
 	
 	public void setIndent(int indent) {
@@ -1463,41 +1453,27 @@ public class CTreeCell {
 			this.open = open;
 			if(hasChild) {
 				// TODO: setOpen - childArea
-//				if(childArea == null) {
-//				childArea = new SComposite(container, SComposite.NONE);
-//				container.addPaintedItemListener(getPaintedItemListener());
-//				createChildContents(childArea, getStyle());
-//				// TODO: review...
-//				int[] types = ehandler.getEventTypes();
-//				for(int i = 0; i < types.length; i++) {
-//				List controls = getEventManagedControls();
-//				for(Iterator iter = controls.iterator(); iter.hasNext(); ) {
-//				Control control = (Control) iter.next();
-//				control.addListener(types[i], l);
-//				}
-//				}
-//				updateColors();
-//				update();
-//				}
-
 				updateVisibility();
 			}
-			layout(SWT.Resize);
+			if(!isTreeCell()) layout(open ? SWT.Expand : SWT.Collapse);
 		}
 	}
-	
+
 	void setPainted(boolean painted) {
 		if(this.painted != painted) {
 			this.painted = painted;
 			if(painted) {
-				if(check == null) check = createCheck();
+				if(!inited) {
+					initialize();
+				}
+				if(isCheck && check == null) check = createCheck();
 				if(control == null) {
 					control = createControl(ctree.body);
 				} else {
 					control.setVisible(true);
 				}
 			} else {
-				boundsOld = null;
+				bounds = null;
 				scrollPos = null;
 				if(check != null) {
 					check.dispose();
@@ -1535,7 +1511,8 @@ public class CTreeCell {
 	public void setText(String string) {
 		if(string != null && !string.equals(getText())) {
 			text = string;
-			ctree.redraw(this);
+			redraw();
+			redraw();
 		}
 	}
 	

@@ -61,6 +61,9 @@ public class CTreeItem extends Item {
 	 */
 	boolean painted = false;
 	
+	private int top = -1;
+	private int height = -1;
+	
 	private int checkCell;
 	private int treeCell;
 	private CTreeItem parentItem;
@@ -70,6 +73,7 @@ public class CTreeItem extends Item {
 	private CTreeItem next;
 	private CTreeItem previous;
 	int computedHeight = -1;
+	
 	private CTreeItem(CTree parent, CTreeItem parentItem, int style, int index) {
 		super(parent, style);
 		this.ctree = parent;
@@ -86,6 +90,7 @@ public class CTreeItem extends Item {
 			parent.addItem(index, this);
 		}
 	}
+	
 	public CTreeItem(CTree parent, int style) {
 		this(parent, null, style, -1);
 	}
@@ -93,12 +98,15 @@ public class CTreeItem extends Item {
 	public CTreeItem(CTree parent, int style, int index) {
 		this(parent, null, style, index);
 	}
+	
 	public CTreeItem(CTreeItem parent, int style) {
 		this(parent.ctree, parent, style, -1);
 	}
+	
 	public CTreeItem(CTreeItem parent, int style, int index) {
 		this(parent.ctree, parent, style, index);
 	}
+
 	void addItem(int index, CTreeItem item) {
 		if(index < 0 || index > items.size()-1) {
 			items.add(item);
@@ -108,14 +116,16 @@ public class CTreeItem extends Item {
 		ctree.addedItems.add(item);
 		redraw();
 	}
+
 	public void addListener(int eventType, Listener handler) {
 		for(int i = 0; i < cells.length; i++) {
 			cells[i].addListener(eventType, handler);
 		}
 	}
+	
 	protected void checkSubclass() {
-		// TODO Auto-generated method stub
 	}
+	
 	/**
 	 * Computes the size of each cell using the widthHint and heightHint with the same
 	 * index as the cell.
@@ -129,23 +139,34 @@ public class CTreeItem extends Item {
 		}
 		return computedHeight;
 	}
+	
 	boolean contains(Control control) {
 		for(int i = 0; i < cells.length; i++) {
 			if(cells[i].contains(control)) return true;
 		}
 		return false;
 	}
+	
 	/**
 	 * The Cells of a CTreeItem are considered contiguous and unified, therefore
 	 * the contains method is overridden
 	 */
 	public boolean contains(Point pt) {
+		return contains(pt.x,pt.y);
+	}
+	
+	/**
+	 * The Cells of a CTreeItem are considered contiguous and unified, therefore
+	 * the contains method is overridden
+	 */
+	public boolean contains(int x, int y) {
 		Rectangle[] ba = getCellBounds();
 		for(int i = 0; i < ba.length; i++) {
-			if(ba[i].contains(pt)) return true;
+			if(ba[i].contains(x,y)) return true;
 		}
 		return false;
 	}
+
 	/**
 	 * Creates a cell of the default class, as determined by the implementation
 	 * <p>Is used to auto-fill a cell when no specific cell class is provided for the 
@@ -165,7 +186,7 @@ public class CTreeItem extends Item {
 		if(!hasCell(index)) return;
 		
 		Map memento = null;
-		if(cells[index] != null) memento = cells[index].retrieveState();
+		if(cells[index] != null) memento = cells[index].saveState();
 		if(clazz != null) {
 			boolean failed = true;
 			try {
@@ -274,23 +295,18 @@ public class CTreeItem extends Item {
 //	protected abstract void initialize(Object[] params);
 	
 	int getBottom() {
-		return cells[0].bounds.y + cells[0].bounds.height;
+		return top+height;
 	}
 
 	public Rectangle getBounds() {
-		int[] order = ctree.getColumnOrder();
-		Rectangle r1 = cells[order[0]].bounds;
-		Rectangle r2 = cells[order[order.length-1]].bounds;
-		return new Rectangle(
-				r1.x,
-				r1.y,
-				r2.x+r2.width-r1.x,
-				r1.height
-				);
+		return new Rectangle(0,top,ctree.getClientArea().width,height);
 	}
 	
 	public Rectangle getBounds(int index) {
-		if(hasCell(index)) return cells[index].getBounds();
+		if(hasCell(index)) {
+			CTreeColumn column = ctree.getColumn(index);
+			return new Rectangle(column.getLeft(),top,column.getWidth(),height);
+		}
 		return null;
 	}
 	
@@ -302,8 +318,12 @@ public class CTreeItem extends Item {
 	}
 	
 	public CTreeCell getCell(Point pt) {
+		return getCell(pt.x,pt.y);
+	}
+	
+	public CTreeCell getCell(int x, int y) {
 		for(int i = 0; i < cells.length; i++) {
-			if(cells[i].getBounds().contains(pt)) {
+			if(cells[i].getBounds().contains(x,y)) {
 				return cells[i];
 			}
 		}
@@ -319,7 +339,7 @@ public class CTreeItem extends Item {
 	}
 	
 	public CTreeColumn getCellColumn(CTreeCell cell) {
-		return ctree.internalGetColumn(getCellIndex(cell));
+		return ctree.getColumn(getCellIndex(cell));
 	}
 	
 	public int getCellIndex(CTreeCell cell) {
@@ -340,7 +360,7 @@ public class CTreeItem extends Item {
 
 	protected int getCellStyle(int index) {
 		if(hasCell(index)) {
-			int style = ctree.internalGetColumn(index).getStyle();
+			int style = ctree.getColumn(index).getStyle();
 			return style;
 		}
 		return 0;
@@ -454,7 +474,7 @@ public class CTreeItem extends Item {
 	}
 	
 	int getHeight() {
-		return cells[0].bounds.height;
+		return height;
 	}
 	
 	/**
@@ -554,12 +574,7 @@ public class CTreeItem extends Item {
 	}
 
 	public Point getSize() {
-		Rectangle r1 = cells[0].bounds;
-		Rectangle r2 = cells[cells.length-1].bounds;
-		return new Point(
-				r2.x+r2.width-r1.x,
-				r2.height
-				);
+		return new Point(ctree.getClientArea().width, height);
 	}
 	
 	/**
@@ -585,7 +600,7 @@ public class CTreeItem extends Item {
 	}
 	
 	int getTop() {
-		return cells[0].bounds.y;
+		return top;
 	}
 	
 	public CTreeCell getTreeCell() {
@@ -615,12 +630,12 @@ public class CTreeItem extends Item {
 		return 0;
 	}
 
-	public Rectangle getTreeToggleBounds() {
-		if(hasTreeCell() && getTreeCell().getToggleVisible()) {
-			return getTreeCell().getToggleBounds();
-		}
-		return null;
-	}
+//	public Rectangle getTreeToggleBounds() {
+//		if(hasTreeCell() && getTreeCell().getToggleVisible()) {
+//			return getTreeCell().getToggleBounds();
+//		}
+//		return null;
+//	}
 
 	/**
 	 * Returns whether or not this CContainerItem is requesting to be visible.
@@ -645,9 +660,9 @@ public class CTreeItem extends Item {
 	 */
 	public int handleMouseEvent(Event event, boolean selectionActive) {
 		int result = 0;
-		for(int i = 0; i < cells.length; i++) {
-			result |= cells[i].handleMouseEvent(event, selectionActive);
-		}
+//		for(int i = 0; i < cells.length; i++) {
+//			result |= cells[i].handleMouseEvent(event, selectionActive);
+//		}
 		return result;
 	}
 	
@@ -681,20 +696,6 @@ public class CTreeItem extends Item {
 		return items.indexOf(item);
 	}
 
-	protected boolean isCellState(int opcode) {
-		for(int i = 0; i < cells.length; i++) {
-			if(cells[i].isCellState(opcode)) return true;
-		}
-		return false;
-	}
-	
-	protected boolean isCellState(int cell, int opcode) {
-		if(cell >= 0 && cell < cells.length) {
-			return cells[cell].isCellState(opcode);
-		}
-		return false;
-	}
-	
 	/**
 	 * This method returns true if ANY of the cells are open.
 	 * @return
@@ -718,13 +719,9 @@ public class CTreeItem extends Item {
 		return false;
 	}
 	
-//	protected CTreeCell[] createCells(Class[] cellClasses) {
-//		return super.createCells(cellClasses);
-//	}
-	
-	public boolean isOpen(Point pt) {
+	public boolean isOpen(int x, int y) {
 		for(int i = 0; i < cells.length; i++) {
-			if(cells[i].getToggleBounds().contains(pt)) return cells[i].isOpen();
+			if(cells[i].getBounds().contains(x,y)) return cells[i].isOpen();
 		}
 		return false;
 	}
@@ -736,18 +733,16 @@ public class CTreeItem extends Item {
 		return false;
 	}
 	
-	public boolean isTogglePoint(Point pt) {
+	public boolean isToggle(int x, int y) {
 		for(int i = 0; i < cells.length; i++) {
-			if(cells[i].getToggleVisible() && cells[i].getToggleBounds().contains(pt)) 
-				return true;
+			if(cells[i].isToggle(x, y)) return true;
 		}
 		return false;
 	}
 	
-	public boolean isTreeTogglePoint(Point pt) {
-		Rectangle r = getTreeToggleBounds();
-		if(r != null) {
-			return r.contains(pt);
+	public boolean isTreeToggle(int x, int y) {
+		if(hasTreeCell()) {
+			return getTreeCell().isToggle(x, y);
 		}
 		return false;
 	}
@@ -801,7 +796,7 @@ public class CTreeItem extends Item {
 	}
 	
 	public void redraw() {
-		ctree.redraw(this);
+		if(painted) ctree.redraw(this);
 	}
 	
 	void removeItem(CTreeItem item) {
@@ -849,7 +844,12 @@ public class CTreeItem extends Item {
 	public void setExpanded(boolean expanded) {
 		if(hasTreeCell() && getTreeCell().isOpen() != expanded) {
 			getTreeCell().setOpen(expanded);
+			layout(expanded ? SWT.Expand : SWT.Collapse);
 		}
+	}
+	
+	public void layout(int eventType) {
+		ctree.layout(eventType, this);
 	}
 	
 	public boolean setFocus() {
@@ -886,9 +886,8 @@ public class CTreeItem extends Item {
 	}
 	
 	void setHeight(int height) {
-		for(int i = 0; i < cells.length; i++) {
-			cells[i].bounds.height = height;
-		}
+		this.height = height;
+		redraw();
 	}
 	
 	public void setImage(Image image) {
@@ -932,9 +931,9 @@ public class CTreeItem extends Item {
 		}
 	}
 
-	public void setOpen(Point pt, boolean open) {
+	public void setOpen(int x, int y, boolean open) {
 		for(int i = 0; i < cells.length; i++) {
-			if(cells[i].getBounds().contains(pt)) {
+			if(cells[i].getBounds().contains(x,y)) {
 				cells[i].setOpen(open);
 				break;
 			}
@@ -955,55 +954,10 @@ public class CTreeItem extends Item {
 		}
 	}
 
-	void setPrevious(CTreeItem item) { previous = item; }
+	void setPrevious(CTreeItem item) {
+		previous = item;
+	}
 	
-//	void setBounds(int x, int y, int width, int height) {
-//		for(int i = 0; i < cells.length; i++) {
-//			// TODO: container.internalGetColumn(i).getBounds() is too expensive!
-//			if(x>-1 || width>-1) {
-//				if(container.internalTable != null) {
-//					CTreeColumn column = container.internalGetColumn(i);
-//					if(x>-1) cells[i].bounds.x = column.getLeft();
-//					if(width>-1) cells[i].bounds.width = column.getWidth();
-//				} else {
-//					if(x>-1) cells[i].bounds.x = container.getClientArea().x;
-//					if(width>-1) cells[i].bounds.width = container.getClientArea().width;
-//				}
-//			}
-//			if(y>-1) cells[i].bounds.y = y;
-//			if(height>-1) cells[i].bounds.height = height;
-//		}
-//	}
-	
-//	void setWidth(int column, int width) {
-//		if(hasCell(column)) {
-//			getCTreeCell(column).getsneedsLayout = true;
-//		}
-//	}
-	
-//	public void setBounds(Rectangle[] bounds) {
-//		int i = 0, j = 0;
-//		for( ; i < cells.length && j < bounds.length; i++) {
-//			int span = cells[i].colSpan;
-//			if(span > 1) {
-//				Rectangle ub = new Rectangle(bounds[j].x,bounds[j].y,bounds[j].width,bounds[j].height);
-//				for(j++; j < (i + span) && j < bounds.length; j++) {
-//					ub.add(new Rectangle(bounds[j].x,bounds[j].y,bounds[j].width,bounds[j].height));
-//				}
-//				cells[i].setBounds(ub.x, ub.y, ub.width, ub.height);
-//			} else {
-//				cells[i].setBounds(bounds[j].x, bounds[j].y, bounds[j].width, bounds[j].height);
-//				j++;
-//			}
-//		}
-//		if(i < cells.length) {
-//			j = bounds.length-1;
-//			for( ; i < cells.length; i++) {
-//				cells[i].setBounds(bounds[j].x,bounds[j].y,0,0);
-//			}
-//		}
-//	}
-
 	public void setSelected(boolean selected) {
 		if(enabled) {
 			for(int i = 0; i < cells.length; i++) {
@@ -1036,9 +990,7 @@ public class CTreeItem extends Item {
 	}
 
 	void setTop(int top) {
-		for(int i = 0; i < cells.length; i++) {
-			cells[i].bounds.y = top;
-		}
+		this.top = top;
 	}
 
 	public void setTreeIndent(int indent) {
@@ -1071,7 +1023,7 @@ public class CTreeItem extends Item {
 	
 	private void updatePaintedCells() {
 		for(int i = 0; i < cells.length; i++) {
-			cells[i].setPainted(ctree.internalGetColumn(i).isVisible());
+			cells[i].setPainted(ctree.getColumn(i).isVisible());
 		}
 	}	
 }
