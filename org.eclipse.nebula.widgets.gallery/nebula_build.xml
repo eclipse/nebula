@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="org.eclipse.nebula.widgets.gallery" default="doitall" basedir=".">
+
+<target name="doitall">
+	<antcall target="pdebuild"/>
+	<antcall target="javadoc"/>
+	<!-- <antcall target="snippets"/> -->
+	<antcall target="zip"/>
+	<antcall target="sftp"/>	
+</target>
+
+<target name="pdebuild">
+	<pde.exportPlugins plugins="org.eclipse.nebula.widgets.gallery" destination="../../temp" exportType="directory" useJARFormat="true" exportSource="true"/>
+</target>
+
+<target name="javadoc"> 
+	<javadoc destdir="../../temp/javadoc" packagenames="org.eclipse.nebula.widgets.gallery.*" sourcepath="src"/> 
+</target>
+
+<target name="snippets">
+	<cvs cvsRoot=":pserver:anonymous@dev.eclipse.org:/cvsroot/technology"
+	       package="org.eclipse.swt.nebula/org.eclipse.swt.nebula.snippets/src/org/eclipse/swt/nebula/snippets/gallery"
+	       dest="../temp/snippets"
+	  />
+	  
+	  <copy todir="snippets">
+		  <fileset dir="..\..\temp\snippets\org.eclipse.swt.nebula\org.eclipse.swt.nebula.snippets\src\org\eclipse\swt\nebula\snippets\gallery"/>
+	  </copy>
+	  
+	  <delete dir="..\..\temp\snippets\org.eclipse.swt.nebula"/>
+</target>
+
+
+<target name="zip">
+	<tstamp/>
+	<zip destfile="..\..\temp\gallery_1.0_ALPHA_NIGHTLY.zip">
+		<zipfileset dir="src" prefix="src"/>
+		<zipfileset dir="..\..\temp\javadoc" prefix="javadoc"/>
+		<zipfileset dir="..\..\temp\snippets" prefix="snippets"/>
+		<zipfileset dir="." file="..\..\temp\plugins\org.eclipse.nebula.widgets.gallery_1.0.0.jar"/>
+	</zip>
+
+</target>
+
+<target name="sftp">
+
+	<tstamp/>
+	
+	<sshexec host="download1.eclipse.org" username="rnicolas" password="${password}" trust="yes" failonerror="no" command="mkdir downloads/technology/nebula/${DSTAMP}" />
+
+	<scp trust="yes" file="..\..\temp\gallery_1.0_ALPHA_NIGHTLY.zip" todir="rnicolas:${password}@download1.eclipse.org:downloads/technology/nebula/${DSTAMP}/"/>
+	<scp trust="yes" file="..\..\temp\gallery_1.0_ALPHA_NIGHTLY.zip" todir="rnicolas:${password}@download1.eclipse.org:downloads/technology/nebula/"/>
+</target>
+
+
+
+</project>
