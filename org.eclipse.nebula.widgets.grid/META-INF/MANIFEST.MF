@@ -5,3 +5,4 @@ Bundle-SymbolicName: org.eclipse.nebula.widgets.grid
 Bundle-Version: 1.0.0
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
 Require-Bundle: org.eclipse.swt
+Export-Package: org.eclipse.nebula.widgets.grid
