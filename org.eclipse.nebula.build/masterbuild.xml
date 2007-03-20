@@ -1,44 +1,136 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="org.eclipse.nebula.masterbuild" default="buildall" basedir=".">
-
-
-<!--
-
-This is the master build script for Nebula.  
-
-To add your component to the master build:
-1. Create a nebula_build.xml file following the examples in the grid component.
-2. Update the buildall target in this file, duplicate the antcall task specifying
-   your component.
     
-When setting up a machine to run the master build the following are required:
-1.  JDK\bin in the path.
-2.  cvs.exe and zip.exe in the path.
-3.  Eclipse
-4   The jsch-xxx.jar for the ssh and scp optional ant tasks.  This jar must be added to the lib
+    <taskdef resource="net/sf/antcontrib/antlib.xml">
+        <classpath>
+            <pathelement location="bin/ant-contrib-1.0b3.jar"/>
+        </classpath>
+    </taskdef>
+    
+    <property name="nebula.build.temp" value="../../build.temp"/>
+    <property name="nebula.plugins" value="../../org.eclipse.swt.nebula"/>
+    <property name="nebula.build.output" value="../../nebula.build"/>
+    <!--
+    
+    This is the master build script for Nebula.  
+    
+    To add your component to the master build:
+    1. Create a nebula_build.xml file following the examples in the grid component.
+    2. Update the buildall target in this file, duplicate the antcall task specifying
+    your component.
+    
+    When setting up a machine to run the master build the following are required:
+    1.  JDK\bin in the path.
+    2.  cvs.exe and zip.exe in the path.
+    3.  Eclipse
+    4   The jsch-xxx.jar for the ssh and scp optional ant tasks.  This jar must be added to the lib
     directory of the Eclipse Ant plugin and to the classpath of the Ant plugin's MANIFEST.MF.
     (Yes this is kinda hacky but I couldn't get it to work any other way.)
-
--->
-
-<target name="buildall">
-	<antcall target="buildcomponent">
-		<param name="component" value="org.eclipse.nebula.widgets.grid"/>
-	</antcall>
-
-</target>
-
-
-<target name="buildcomponent">
-	<delete dir="temp"/>
-	<mkdir dir="temp"/>
-
-	<cvs command="update" dest="eclipse_workspace/${component}" />
-  
-	<ant antfile="nebula_build.xml" dir="eclipse_workspace/${component}"/>
-
-	<delete dir="temp"/>
-
-</target>
-
+    
+    -->
+    
+    <target name="buildall" depends="init">
+        <antcall target="buildcomponent">
+            <param name="component" value="org.eclipse.nebula.widgets.grid"/>
+        </antcall>
+    </target>
+    
+    <target name="publish" depends="buildall">
+        <tstamp/>
+        <sshexec host="download1.eclipse.org" username="cgross"
+            password="${password}" trust="yes" failonerror="no"
+            command="mkdir downloads/technology/nebula/${DSTAMP}"/>
+        <scp trust="yes"
+            todir="cgross:${password}@download1.eclipse.org:downloads/technology/nebula/${DSTAMP}/">
+            <fileset dir="${nebula.build.output}">
+                <include name="*.jar"/>
+            </fileset>
+        </scp>
+        <scp trust="yes"
+            todir="cgross:${password}@download1.eclipse.org:downloads/technology/nebula/">
+            <fileset dir="${nebula.build.output}">
+                <include name="*.jar"/>
+            </fileset>
+        </scp>
+    </target>
+    
+    <target name="buildcomponent">
+        <delete dir="${nebula.build.temp}"/>
+        <mkdir dir="${nebula.build.temp}"/>
+        <if>
+            <available file="${nebula.plugins}/${component}/nebula_build.xml"
+                property="nebula.build.override"/>
+            <then>
+            	<ant antfile="build.xml" target="build.update.jar"
+            	                    dir="../${component}"/>
+            	            	<echo message="${nebula.plugins}/${component}/nebula.properties"/>
+            	                <loadproperties
+            	                    srcfile="${nebula.plugins}/${component}/nebula.properties"/>
+            	                <antcall target="javadoc" inheritrefs="true">
+            	                    <param name="component" value="${component}"/>
+            	                </antcall>
+            	                <antcall target="snippets" inheritrefs="true"/>
+            	                <antcall target="zip" inheritrefs="true">
+            	                    <param name="component" value="${component}"/>
+            	                </antcall>
+            </then>
+            <else>
+                <ant antfile="build.xml" target="build.update.jar"
+                    dir="../${component}"/>
+            	<echo message="${nebula.plugins}/${component}/nebula.properties"/>
+                <loadproperties
+                    srcfile="${nebula.plugins}/${component}/nebula.properties"/>
+                <antcall target="javadoc" inheritrefs="true">
+                    <param name="component" value="${component}"/>
+                </antcall>
+                <antcall target="snippets" inheritrefs="true"/>
+                <antcall target="zip" inheritrefs="true">
+                    <param name="component" value="${component}"/>
+                </antcall>
+            </else>
+        </if>
+    </target>
+    
+    <target name="javadoc">
+        <javadoc destdir="${nebula.build.temp}/javadoc"
+            packagenames="${javadoc.packages}"
+            excludepackagenames="${javadoc.exclude}"
+            sourcepath="${nebula.plugins}/${component}/src"/>
+    </target>
+    
+    <target name="snippets">
+        <cvs cvsRoot=":pserver:anonymous@dev.eclipse.org:/cvsroot/technology"
+            package="org.eclipse.swt.nebula/org.eclipse.swt.nebula.snippets/src/${snippets.path}"
+            dest="${nebula.build.temp}/temp"/>
+        
+        <copy todir="${nebula.build.temp}/snippets">
+            <fileset
+                dir="${nebula.build.temp}/temp/org.eclipse.swt.nebula/org.eclipse.swt.nebula.snippets/src/${snippets.path}"/>
+        </copy>
+        
+        <delete dir="${nebula.build.temp}/temp"/>
+    </target>
+    
+    <target name="zip">
+        <tstamp/>
+        <zip
+            destfile="${nebula.build.output}/${component}_1.0_ALPHA_NIGHTLY.zip">
+            <zipfileset dir="../${component}/src" prefix="src"/>
+            <zipfileset file="../${component}/${component}_1.0.0.jar"/>
+            <zipfileset dir="${nebula.build.temp}/javadoc" prefix="javadoc"/>
+            <zipfileset dir="${nebula.build.temp}/snippets" prefix="snippets"/>
+        </zip>
+    </target>
+    
+    <target name="init" depends="clean">
+        <mkdir dir="${nebula.build.output}"/>
+        <cvs cvsroot=":pserver:anonymous@dev.eclipse.org:/cvsroot/technology"
+            package="org.eclipse.swt.nebula/"
+            dest="../../"/>
+    </target>
+    
+    <target name="clean">
+        <delete dir="${nebula.build.output}"/>
+        <delete dir="${nebula.build.temp}"/>
+    </target>
 </project>
