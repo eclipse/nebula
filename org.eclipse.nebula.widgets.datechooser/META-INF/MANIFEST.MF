@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Datechooser Plug-in
+Bundle-SymbolicName: org.eclipse.nebula.widgets.datechooser
+Bundle-Version: 1.0.0
+Require-Bundle: org.eclipse.swt,
+ org.eclipse.nebula.widgets.formattedtext
