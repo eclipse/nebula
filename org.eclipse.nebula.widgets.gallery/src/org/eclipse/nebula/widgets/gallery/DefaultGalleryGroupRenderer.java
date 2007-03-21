@@ -12,9 +12,11 @@ package org.eclipse.nebula.widgets.gallery;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * 
@@ -34,9 +36,15 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 
 	private int offset = minMargin + titleHeight;
 
+	private Color titleColor;
+
 	// True if margins have already been calculated. Prevents
 	// margins calculation for each group
 	boolean marginCalculated = false;
+
+	public DefaultGalleryGroupRenderer() {
+		titleColor = Display.getDefault().getSystemColor(SWT.COLOR_TITLE_FOREGROUND);
+	}
 
 	void dispose() {
 
@@ -47,21 +55,27 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 
 		// Title background
 		gc.setBackground(gallery.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND));
-		gc.fillRoundRectangle(x, y, group.width, titleHeight, 10, 10);
+		gc.fillRectangle(x, y, group.width, titleHeight);
 
 		// Color for text
-		gc.setForeground(gallery.getDisplay().getSystemColor(SWT.COLOR_TITLE_FOREGROUND));
+		gc.setForeground(titleColor);
 
 		// Title text
 		String text = "";
 		text += group.getText();
 		text += " (" + group.getItemCount() + ")";
-		gc.drawText(text, x + 2 + 16, y + 2);
+		gc.drawText(text, x + titleHeight + 2, y + 2);
 
 		// Toggle Button
-		text = expanded ? "-" : "+";
-		gc.drawText(text, x + 2, y + 2);
+		AbstractRenderer c = new TreeNodeToggleRenderer();
+		c.setExpanded(expanded);
 
+		int xShift = getShift( titleHeight , c.getSize().x );
+		int yShift = getShift( titleHeight , c.getSize().y );
+		c.setBounds(x + xShift, y + yShift, 100, 100);
+		c.paint(gc, group);
+
+		// Display item
 		if (expanded) {
 			int[] indexes = getVisibleItems(group, x, y, clipX, clipY, clipWidth, clipHeight, offset);
 
@@ -151,6 +165,14 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 			gc.dispose();
 	}
 
+	private int getShift(int totalWidth, int width) {
+		int xShift = totalWidth - width;
+		if (xShift < 0)
+			xShift = 0;
+		xShift = xShift >> 1;
+		return xShift;
+	}
+
 	public GalleryItem getItem(GalleryItem group, Point coords) {
 		return super.getItem(group, coords, offset);
 	}
@@ -159,8 +181,8 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 
 		if (coords.y - group.y <= titleHeight) {
 
-			if (coords.x <= 20) {
-				// Toogle 
+			if (coords.x <= titleHeight) {
+				// Toogle
 				group.setExpanded(!group.isExpanded());
 				if (!group.isExpanded()) {
 					group.deselectAll();
@@ -180,8 +202,16 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 	}
 
 	public Rectangle getSize(GalleryItem item) {
-		Rectangle r =super.getSize(item, offset) ;
-		
+		Rectangle r = super.getSize(item, offset);
+
 		return r;
+	}
+
+	public Color getTitleColor() {
+		return titleColor;
+	}
+
+	public void setTitleColor(Color titleColor) {
+		this.titleColor = titleColor;
 	}
 }
