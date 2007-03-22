@@ -1,3 +1,4 @@
+set HOME=d:\nebula_build
 set ECLIPSE_HOME=d:\nebula_build\eclipse33m5\eclipse
 set JAVA="D:\ibm-jdk5.0-sr3"
 set PATH=%JAVA%\bin;%PATH%;%ECLIPSE_HOME%\plugins\org.apache.ant_1.6.5\lib;.
