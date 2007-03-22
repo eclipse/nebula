@@ -4,6 +4,7 @@ automated nebula build.
 1. Right click on your META-INF\MANIFEST.MF.
 2. Select PDE TOOLS -> Create ANT Build File. This should add a new build.xml file to your project. 
 3. Define a new nebula.properties file. 
+4. Edit masterbuild.xml and add a line to the "buildall" target.
 
 
 nebula.properties file should contain the following properties.
