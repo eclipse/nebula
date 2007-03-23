@@ -29,6 +29,8 @@
 		 javadoc, snippet and zip a nebula widget.  
 	-->
     <target name="javadoc">
+    	<echo message="javadoc packages = ${javadoc.packages}" level="error" />
+
         <javadoc destdir="${nebula.build.temp}/javadoc"
             packagenames="${javadoc.packages}"
             excludepackagenames="${javadoc.exclude}"
