@@ -75,7 +75,7 @@
                 <ant antfile="build.xml" target="build.update.jar"
                     dir="../${component}"/>
                 <loadproperties
-                    srcfile="${nebula.plugins}/${component}/nebula.properties"/>
+                    srcfile="${nebula.plugins}/${component}/build.properties"/>
                 <antcall target="javadoc" inheritrefs="true">
                     <param name="component" value="${component}"/>
                 </antcall>
