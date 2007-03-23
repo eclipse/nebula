@@ -13,7 +13,6 @@
  -->
 <project name="org.eclipse.nebula.masterbuild" default="buildcomponent" basedir=".">
     <target name="buildcomponent">
-        <ant antfile="build.xml" target="build.update.jar" dir="../${component}"/>
         <loadproperties
             srcfile="${nebula.plugins}/${component}/build.properties"/>
         <antcall target="javadoc" inheritrefs="true">
@@ -51,24 +50,12 @@
         <delete dir="${nebula.build.temp}/temp"/>
     </target>
     
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
     <target name="zip">
         <tstamp/>
-        <zip
+        <zip 
             destfile="${nebula.build.output}/${component}_1.0_ALPHA_NIGHTLY.zip">
             <zipfileset dir="${nebula.plugins}/${component}/src" prefix="src"/>
-            <zipfileset includesfile="../${component}/${component}_1.0.0.jar"/>
+            <zipfileset dir="../${component}" includes="${component}_1.0.0.jar"/>
             <zipfileset dir="${nebula.build.temp}/javadoc" prefix="javadoc"/>
             <zipfileset dir="${nebula.build.temp}/snippets" prefix="snippets"/>
         </zip>

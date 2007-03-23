@@ -75,14 +75,15 @@
             	<ant antfile="nebula_build.xml" dir="${nebula.plugins}/${component}"/>
             </then>
             <else>
-                <subant antfile="common.xml" inheritall="true" buildpath="."/>
+            	<ant antfile="build.xml" target="build.update.jar" dir="../${component}"/>
+                <subant antfile="common.xml" inheritall="true" inheritrefs="true" buildpath="." />
             </else>
         </if>
     </target>
     
 	<target name="init" depends="clean">
 	        <mkdir dir="${nebula.build.output}"/>
-	        <cvs cvsroot=":pserver:anonymous@dev.eclipse.org:/cvsroot/technology"
+	        <cvs command="update" cvsroot=":pserver:anonymous@dev.eclipse.org:/cvsroot/technology"
 	            package="org.eclipse.swt.nebula/"
 	            dest="../../"/>
 	</target>
