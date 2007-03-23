@@ -55,7 +55,7 @@
         <tstamp/>
         <zip
             destfile="${nebula.build.output}/${component}_1.0_ALPHA_NIGHTLY.zip">
-            <zipfileset dir="${nebula.plugins}/${component}/src" prefix="src"/>
+            
             <zipfileset includesfile="../${component}/${component}_1.0.0.jar"/>
             <zipfileset dir="${nebula.build.temp}/javadoc" prefix="javadoc"/>
             <zipfileset dir="${nebula.build.temp}/snippets" prefix="snippets"/>
