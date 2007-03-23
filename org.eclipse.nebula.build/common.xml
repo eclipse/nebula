@@ -29,9 +29,6 @@
 		 javadoc, snippet and zip a nebula widget.  
 	-->
     <target name="javadoc">
-    	<echo level="error">javadoc packages = ${javadoc.packages}</echo>
-    	<echo level="error">component = ${component}</echo>
-    	
         <javadoc destdir="${nebula.build.temp}/javadoc"
             packagenames="${javadoc.packages}"
             excludepackagenames="${javadoc.exclude}"
@@ -55,7 +52,7 @@
         <tstamp/>
         <zip
             destfile="${nebula.build.output}/${component}_1.0_ALPHA_NIGHTLY.zip">
-            <zipfileset dir="../${component}/src" prefix="src"/>
+            <zipfileset dir="${nebula.plugins}/${component}/src" prefix="src"/>
             <zipfileset includesfile="../${component}/${component}_1.0.0.jar"/>
             <zipfileset dir="${nebula.build.temp}/javadoc" prefix="javadoc"/>
             <zipfileset dir="${nebula.build.temp}/snippets" prefix="snippets"/>
