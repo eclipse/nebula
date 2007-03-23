@@ -30,7 +30,8 @@
 	-->
     <target name="javadoc">
     	<echo level="error">javadoc packages = ${javadoc.packages}</echo>
-
+    	<echo level="error">component = ${component}</echo>
+    	
         <javadoc destdir="${nebula.build.temp}/javadoc"
             packagenames="${javadoc.packages}"
             excludepackagenames="${javadoc.exclude}"
