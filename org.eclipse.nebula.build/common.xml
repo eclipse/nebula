@@ -29,7 +29,7 @@
 		 javadoc, snippet and zip a nebula widget.  
 	-->
     <target name="javadoc">
-    	<echo message="javadoc packages = ${javadoc.packages}" level="error" />
+    	<echo level="error">javadoc packages = ${javadoc.packages}</echo>
 
         <javadoc destdir="${nebula.build.temp}/javadoc"
             packagenames="${javadoc.packages}"
