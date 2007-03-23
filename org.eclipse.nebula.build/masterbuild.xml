@@ -108,7 +108,7 @@
     <target name="javadoc">
         <javadoc destdir="${nebula.build.temp}/javadoc"
             packagenames="${javadoc.packages}"
-            
+            excludepackagenames="${javadoc.exclude}"
             sourcepath="${nebula.plugins}/${component}/src"/>
     </target>
     
