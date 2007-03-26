@@ -5,3 +5,5 @@ Bundle-SymbolicName: org.eclipse.nebula.widgets.datechooser
 Bundle-Version: 1.0.0
 Require-Bundle: org.eclipse.swt,
  org.eclipse.nebula.widgets.formattedtext
+Export-Package: org.eclipse.nebula.widgets.datechooser
+Bundle-RequiredExecutionEnvironment: J2SE-1.4
