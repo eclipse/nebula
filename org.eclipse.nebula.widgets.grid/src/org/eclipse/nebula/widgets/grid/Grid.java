@@ -3241,7 +3241,26 @@ public class Grid extends Canvas
             }
             else
             {
-                //TODO: code this branch
+                int availableWidth = getClientArea().width - firstVisibleX - col.getWidth();
+                
+                GridColumn prevCol = getPreviousVisibleColumn(col);
+                GridColumn currentScrollTo = col;
+                
+                while (true)
+                {
+                    if (prevCol == null || prevCol.getWidth() > availableWidth)
+                    {
+                        int sel = displayOrderedColumns.indexOf(currentScrollTo);
+                        hScroll.setSelection(sel);
+                        break;
+                    }
+                    else
+                    {
+                        availableWidth -= prevCol.getWidth();
+                        currentScrollTo = prevCol;
+                        prevCol = getPreviousVisibleColumn(prevCol);
+                    }
+                }
             }
         }
 
