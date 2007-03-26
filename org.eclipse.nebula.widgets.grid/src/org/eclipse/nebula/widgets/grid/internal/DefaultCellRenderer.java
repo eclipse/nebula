@@ -269,6 +269,11 @@ public class DefaultCellRenderer extends GridCellRenderer
             {
                 if (overCheck(item, point))
                 {
+                    if (!item.getCheckable(getColumn()))
+                    {
+                        return false;
+                    }
+                    
                     item.setChecked(getColumn(), !item.getChecked(getColumn()));
                     item.getParent().redraw();
 

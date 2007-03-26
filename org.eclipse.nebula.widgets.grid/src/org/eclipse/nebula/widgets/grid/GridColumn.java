@@ -90,11 +90,6 @@ public class GridColumn extends Item
     private boolean tableCheck = false;
 
     /**
-     * Index of column in master table's column list.
-     */
-    private int columnIndex;
-
-    /**
      * Is this column resizable?
      */
     private boolean resizeable = true;
@@ -121,6 +116,8 @@ public class GridColumn extends Item
     private boolean cellSelectionEnabled = true;
 
     private GridColumnGroup group;
+    
+    private boolean checkable = true;
 
     /**
      * Constructs a new instance of this class given its parent (which must be a
@@ -211,7 +208,7 @@ public class GridColumn extends Item
     {
         this.parent = table;
 
-        columnIndex = table.newColumn(this, index);
+        table.newColumn(this, index);
 
         if ((style & SWT.CHECK) == SWT.CHECK)
         {
@@ -250,7 +247,7 @@ public class GridColumn extends Item
 
         cellRenderer.setCheck(check);
         cellRenderer.setTree(tree);
-        cellRenderer.setColumn(columnIndex);
+        cellRenderer.setColumn(parent.indexOf(this));
 
         if ((getStyle() & SWT.RIGHT) == SWT.RIGHT)
         {
@@ -1008,5 +1005,42 @@ public class GridColumn extends Item
     {
         checkWidget();
         return parent;
+    }
+
+    /**
+     * Returns the checkable state.  If false the checkboxes in the column cannot be checked.
+     * 
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
+     */
+    public boolean getCheckable()
+    {
+        checkWidget();
+        return checkable;
+    }
+
+    /**
+     * Sets the checkable state.  If false the checkboxes in the column cannot be checked.
+     * 
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
+     */
+    public void setCheckable(boolean checkable)
+    {
+        checkWidget();
+        this.checkable = checkable;
+    }
+    
+    void setColumnIndex(int newIndex)
+    {
+        cellRenderer.setColumn(newIndex);
     }
 }

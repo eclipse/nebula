@@ -3475,21 +3475,6 @@ public class Grid extends Canvas
     }
 
     /**
-     * Fires the selection listeners.
-     * 
-     * @param item selected item
-     */
-    void fireSelectionListeners(GridItem item)
-    {
-        Event e = new Event();
-        e.display = getDisplay();
-        e.widget = this;
-        e.type = SWT.Selection;
-
-        this.notifyListeners(SWT.Selection, e);
-    }
-
-    /**
      * Returns the x position of the given column. Takes into account scroll
      * position.
      * 
@@ -4740,17 +4725,21 @@ public class Grid extends Canvas
      * 
      * @param item item being selected/unselected
      * @param stateMask key state during selection
+     * 
+     * @return selection event that needs to be fired or null
      */
-    private void updateSelection(GridItem item, int stateMask)
+    private Event updateSelection(GridItem item, int stateMask)
     {
         if (!selectionEnabled)
         {
-            return;
+            return null;
         }
+        
+        Event selectionEvent = null;
         
         if (selectionType == SWT.SINGLE)
         {
-            if (selectedItems.contains(item)) return;
+            if (selectedItems.contains(item)) return null;
             
             selectedItems.clear();
             selectedItems.add(item);
@@ -4758,7 +4747,8 @@ public class Grid extends Canvas
             Rectangle clientArea = getClientArea();
             redraw(clientArea.x,clientArea.y,clientArea.width,clientArea.height,false);
 
-            this.fireSelectionListeners(item);
+            selectionEvent = new Event();
+            selectionEvent.item = item;
         }
         else if (selectionType == SWT.MULTI)
         {
@@ -4777,7 +4767,7 @@ public class Grid extends Canvas
 
             if (!shift && !ctrl)
             {
-                if (selectedItems.size() == 1 && selectedItems.contains(item)) return;
+                if (selectedItems.size() == 1 && selectedItems.contains(item)) return null;
                 
                 selectedItems.clear();
 
@@ -4788,7 +4778,8 @@ public class Grid extends Canvas
 
                 shiftSelectionAnchorItem = null;
 
-                this.fireSelectionListeners(item);
+                selectionEvent = new Event();
+                selectionEvent.item = item;
             }
             else if (shift)
             {
@@ -4855,8 +4846,7 @@ public class Grid extends Canvas
                 Rectangle clientArea = getClientArea();
                 redraw(clientArea.x,clientArea.y,clientArea.width,clientArea.height,false);
 
-                fireSelectionListeners(null);
-
+                selectionEvent = new Event();
             }
             else if (ctrl)
             {
@@ -4873,22 +4863,45 @@ public class Grid extends Canvas
 
                 shiftSelectionAnchorItem = null;
 
-                this.fireSelectionListeners(item);
+                selectionEvent = new Event();
+                selectionEvent.item = item;
             }
         }
         
         Rectangle clientArea = getClientArea();
         redraw(clientArea.x,clientArea.y,clientArea.width,clientArea.height,false);
+        
+        return selectionEvent;
     }
     
-    private void updateCellSelection(Point newCell, int stateMask, boolean dragging, boolean reverseDuplicateSelections)
+    /**
+     * Updates cell selection.
+     * 
+     * @param newCell newly clicked, navigated to cell.
+     * @param stateMask statemask during preceeding mouse or key event.
+     * @param dragging true if the user is dragging.
+     * @param reverseDuplicateSelections true if the user is reversing selection rather than adding to.
+     * 
+     * @return selection event that will need to be fired or null.
+     */
+    private Event updateCellSelection(Point newCell, int stateMask, boolean dragging, boolean reverseDuplicateSelections)
     {
         Vector v = new Vector();
         v.add(newCell);
-        updateCellSelection(v, stateMask, dragging, reverseDuplicateSelections);
+        return updateCellSelection(v, stateMask, dragging, reverseDuplicateSelections);
     }
 
-    private void updateCellSelection(Vector newCells, int stateMask, boolean dragging, boolean reverseDuplicateSelections)
+    /**
+     * Updates cell selection.
+     * 
+     * @param newCell newly clicked, navigated to cells.
+     * @param stateMask statemask during preceeding mouse or key event.
+     * @param dragging true if the user is dragging.
+     * @param reverseDuplicateSelections true if the user is reversing selection rather than adding to.
+     * 
+     * @ @return selection event that will need to be fired or null.
+     */
+    private Event updateCellSelection(Vector newCells, int stateMask, boolean dragging, boolean reverseDuplicateSelections)
     {
         boolean shift = false;
         boolean ctrl = false;
@@ -4910,7 +4923,7 @@ public class Grid extends Canvas
 
         if (!shift && !ctrl)
         {
-            if (newCells.equals(selectedCells)) return;
+            if (newCells.equals(selectedCells)) return null;
             
             selectedCells.clear();            
             for (int i = 0; i < newCells.size(); i++)
@@ -4927,7 +4940,7 @@ public class Grid extends Canvas
             
             if ((focusColumn == null) || (focusItem == null))
             {
-                return;
+                return null;
             }
             
             shiftSelectionAnchorColumn = getColumn(newCell.x);
@@ -5044,11 +5057,11 @@ public class Grid extends Canvas
             e.detail = SWT.DRAG;
             followupCellSelectionEventOwed = true;
         }
-        
-        notifyListeners(SWT.Selection,e);
-        
+
         Rectangle clientArea = getClientArea();
         redraw(clientArea.x,clientArea.y,clientArea.width,clientArea.height,false);
+        
+        return e;
     }
     
     private void addToCellSelection(Point newCell)
@@ -5277,6 +5290,9 @@ public class Grid extends Canvas
             forceFocus();
         }
         
+        //if populated will be fired at end of method.
+        Event selectionEvent = null;
+        
         cellSelectedOnLastMouseDown = false;
         cellRowSelectedOnLastMouseDown = false;
         cellColumnSelectedOnLastMouseDown = false;
@@ -5321,7 +5337,7 @@ public class Grid extends Canvas
                 {
                     if (col != null)
                     {
-                        updateCellSelection(new Point(indexOf(col),indexOf(item)), e.stateMask, false, true);
+                        selectionEvent = updateCellSelection(new Point(indexOf(col),indexOf(item)), e.stateMask, false, true);
                         cellSelectedOnLastMouseDown = (getCellSelectionCount() > 0);
                         
                         if (e.stateMask != SWT.SHIFT)
@@ -5359,7 +5375,7 @@ public class Grid extends Canvas
                             int newStateMask = SWT.NONE;
                             if (ctrl) newStateMask = SWT.CTRL;
                             
-                            updateCellSelection(cells, newStateMask, shift, ctrl);
+                            selectionEvent = updateCellSelection(cells, newStateMask, shift, ctrl);
                             cellRowSelectedOnLastMouseDown = (getCellSelectionCount() > 0);
                             
                             if (!shift)
@@ -5385,7 +5401,7 @@ public class Grid extends Canvas
                         return;
                     }
                 }
-                updateSelection(item, e.stateMask);
+                selectionEvent = updateSelection(item, e.stateMask);
                 
                 focusItem = item;
                 showItem(item);
@@ -5418,7 +5434,7 @@ public class Grid extends Canvas
             
             getCells(col,cells);
             
-            updateCellSelection(cells, e.stateMask, false, true);
+            selectionEvent = updateCellSelection(cells, e.stateMask, false, true);
             cellColumnSelectedOnLastMouseDown = (getCellSelectionCount() > 0);
             
             GridItem newFocusItem = getItem(0);
@@ -5438,6 +5454,10 @@ public class Grid extends Canvas
             redraw();
         }
         
+        if (selectionEvent != null)
+        {
+            notifyListeners(SWT.Selection, selectionEvent);
+        }
     }
 
     /**
@@ -5526,6 +5546,10 @@ public class Grid extends Canvas
      */
     private void onMouseMove(MouseEvent e)
     {
+        //if populated will be fired at end of method.
+        Event selectionEvent = null;
+        
+        
         if ((e.stateMask & SWT.BUTTON1) == 0)
         {
             handleHovering(e.x, e.y);
@@ -5627,7 +5651,7 @@ public class Grid extends Canvas
                     
                     showColumn(intentColumn);
                     showItem(intentItem);
-                    updateCellSelection(new Point(indexOf(intentColumn),indexOf(intentItem)),ctrlFlag | SWT.SHIFT, true, false);
+                    selectionEvent = updateCellSelection(new Point(indexOf(intentColumn),indexOf(intentItem)),ctrlFlag | SWT.SHIFT, true, false);
                 }
                 if (cellRowDragSelectionOccuring && handleCellHover(e.x, e.y))
                 {
@@ -5658,7 +5682,7 @@ public class Grid extends Canvas
                     getCells(intentItem,focusItem,cells);
                                         
                     showItem(intentItem);
-                    updateCellSelection(cells,ctrlFlag, true, false);
+                    selectionEvent = updateCellSelection(cells,ctrlFlag, true, false);
                 }
                 if (cellColumnDragSelectionOccuring && handleCellHover(e.x, e.y))
                 {
@@ -5704,10 +5728,15 @@ public class Grid extends Canvas
    
                     } while (true);                    
                     
-                    updateCellSelection(newSelected, ctrlFlag, true, false);
+                    selectionEvent = updateCellSelection(newSelected, ctrlFlag, true, false);
                 }
                 
             }
+        }
+        
+        if (selectionEvent != null)
+        {
+            notifyListeners(SWT.Selection, selectionEvent);
         }
     }
 
@@ -6093,20 +6122,27 @@ public class Grid extends Canvas
             showItem(newSelection);
             
             if (e.stateMask != SWT.CTRL)
-                updateCellSelection(new Point(indexOf(newColumnFocus),indexOf(newSelection)),e.stateMask, false, false);
+            {
+                Event selEvent = updateCellSelection(new Point(indexOf(newColumnFocus),indexOf(newSelection)),e.stateMask, false, false);
+                notifyListeners(SWT.Selection, selEvent);
+            }
             
             redraw();
         }
         else
         {            
+            Event selectionEvent = null;
             if (selectionType == SWT.SINGLE || e.stateMask != SWT.CTRL)
             {
-                updateSelection(newSelection, e.stateMask);
+                selectionEvent = updateSelection(newSelection, e.stateMask);
             }
             
             focusItem = newSelection;
             showItem(newSelection);            
             redraw();
+            
+            if (selectionEvent != null) 
+                notifyListeners(SWT.Selection, selectionEvent);
         }
     }
     
@@ -6116,7 +6152,9 @@ public class Grid extends Canvas
         {
             selectedItems.add(focusItem);
             redraw();
-            fireSelectionListeners(focusItem);
+            Event e = new Event();
+            e.item = focusItem;
+            notifyListeners(SWT.Selection, e);
         }
         
         if (!cellSelectionEnabled)
@@ -6483,7 +6521,30 @@ public class Grid extends Canvas
      */
     void removeColumn(GridColumn column)
     {
-        //TODO: deal with cell selection changing
+        boolean selectionModified = false; 
+        
+        int index = indexOf(column);
+        
+        if (cellSelectionEnabled)
+        {
+            Vector removeSelectedCells = new Vector();
+            
+            for (Iterator iterator = selectedCells.iterator(); iterator.hasNext();)
+            {
+                Point cell = (Point)iterator.next();
+                if (cell.x == index)
+                {
+                    removeSelectedCells.add(cell);
+                }
+            }
+            
+            if (removeSelectedCells.size() > 0)
+            {
+                selectedCells.removeAll(removeSelectedCells);
+                selectionModified = true;
+            }
+        }
+            
         columns.remove(column);
         displayOrderedColumns.remove(column);
         
@@ -6491,6 +6552,26 @@ public class Grid extends Canvas
         
         scrollValuesObsolete = true;
         redraw();
+        
+        for (Iterator iterator = items.iterator(); iterator.hasNext();)
+        {
+            GridItem item = (GridItem)iterator.next();
+            item.columnRemoved(index);
+        }
+        
+        int i = 0;
+        for (Iterator iterator = columns.iterator(); iterator.hasNext();)
+        {
+            GridColumn col = (GridColumn)iterator.next();
+            col.setColumnIndex(i);
+            i++;
+        }
+        
+        if (selectionModified && !disposing)
+        {
+            notifyListeners(SWT.Selection, new Event());
+            updateColumnSelection();
+        }
     }
     
     /**
@@ -6624,7 +6705,6 @@ public class Grid extends Canvas
      */
     void removeColumnGroup(GridColumnGroup group)
     {
-        //TODO: deal with cell selection changing
         GridColumnGroup[] newColumnGroups = new GridColumnGroup[columnGroups.length - 1];
         int newIndex = 0;
         for (int i = 0; i < columnGroups.length; i++)
@@ -6720,12 +6800,40 @@ public class Grid extends Canvas
     {
         checkWidget();
         //TODO: check and make sure this item is valid for focus
-        if (item != null && (item.isDisposed() || item.getParent() != this))
+        if (item == null || item.isDisposed() || item.getParent() != this)
         {
             SWT.error(SWT.ERROR_INVALID_ARGUMENT);
         }
         focusItem = item;
     }
+
+    /**
+     * Sets the focused item to the given item.  
+     * 
+     * @param item item to focus or null.
+     * @throws IllegalArgumentException
+     * <ul>
+     * <li>ERROR_INVALID_ARGUMENT - if item is disposed</li>
+     * </ul>
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
+     */
+    public void setFocusColumn(GridColumn column)
+    {
+        checkWidget();
+        //TODO: check and make sure this item is valid for focus
+        if (column == null || column.isDisposed() || column.getParent() != this || !column.isVisible())
+        {
+            SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+        }       
+        
+        focusColumn = column;
+    }
+    
 
     /**
      * Returns an array of the columns in their display order.
