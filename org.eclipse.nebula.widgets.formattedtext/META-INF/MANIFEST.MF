@@ -4,3 +4,5 @@ Bundle-Name: Formattedtext Plug-in
 Bundle-SymbolicName: org.eclipse.nebula.widgets.formattedtext
 Bundle-Version: 1.0.0
 Require-Bundle: org.eclipse.swt
+Export-Package: org.eclipse.nebula.widgets.formattedtext
+Bundle-RequiredExecutionEnvironment: J2SE-1.4
