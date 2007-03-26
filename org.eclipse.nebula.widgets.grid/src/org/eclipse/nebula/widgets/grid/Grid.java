@@ -5456,6 +5456,7 @@ public class Grid extends Canvas
         
         if (selectionEvent != null)
         {
+            selectionEvent.stateMask = e.stateMask;
             notifyListeners(SWT.Selection, selectionEvent);
         }
     }
@@ -5736,6 +5737,7 @@ public class Grid extends Canvas
         
         if (selectionEvent != null)
         {
+            selectionEvent.stateMask = e.stateMask;
             notifyListeners(SWT.Selection, selectionEvent);
         }
     }
@@ -5866,7 +5868,7 @@ public class Grid extends Canvas
         
         if (e.character == ' ')
         {
-            handleSpaceBarDown();
+            handleSpaceBarDown(e);
         }
         
         
@@ -6124,6 +6126,7 @@ public class Grid extends Canvas
             if (e.stateMask != SWT.CTRL)
             {
                 Event selEvent = updateCellSelection(new Point(indexOf(newColumnFocus),indexOf(newSelection)),e.stateMask, false, false);
+                selEvent.stateMask = e.stateMask;
                 notifyListeners(SWT.Selection, selEvent);
             }
             
@@ -6135,6 +6138,7 @@ public class Grid extends Canvas
             if (selectionType == SWT.SINGLE || e.stateMask != SWT.CTRL)
             {
                 selectionEvent = updateSelection(newSelection, e.stateMask);
+                selectionEvent.stateMask = e.stateMask;
             }
             
             focusItem = newSelection;
@@ -6146,7 +6150,7 @@ public class Grid extends Canvas
         }
     }
     
-    private void handleSpaceBarDown()
+    private void handleSpaceBarDown(Event event)
     {        
         if (selectionEnabled && !cellSelectionEnabled && !selectedItems.contains(focusItem))
         {
@@ -6154,6 +6158,7 @@ public class Grid extends Canvas
             redraw();
             Event e = new Event();
             e.item = focusItem;
+            e.stateMask = event.stateMask;
             notifyListeners(SWT.Selection, e);
         }
         
