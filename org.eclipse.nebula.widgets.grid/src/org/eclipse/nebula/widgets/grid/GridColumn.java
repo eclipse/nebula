@@ -118,6 +118,8 @@ public class GridColumn extends Item
     private GridColumnGroup group;
     
     private boolean checkable = true;
+    
+    private boolean wordWrap = false;
 
     /**
      * Constructs a new instance of this class given its parent (which must be a
@@ -1042,5 +1044,40 @@ public class GridColumn extends Item
     void setColumnIndex(int newIndex)
     {
         cellRenderer.setColumn(newIndex);
+    }
+
+    /**
+     * Returns the true if the cells in receiver wrap their text.
+     * 
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
+     */
+    public boolean getWordWrap()
+    {
+        checkWidget();
+        return cellRenderer.isWordWrap();
+    }
+
+    /**
+     * If the argument is true, wraps the text in the receiver's cells.  This feature will not cause
+     * the row height to expand to accommodate the wrapped text.  Please use 
+     * <code>Grid#setItemHeight</code> to change the height of each row.
+     * 
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
+     */
+    public void setWordWrap(boolean wordWrap)
+    {
+        checkWidget();
+        cellRenderer.setWordWrap(wordWrap);
+        parent.redraw();
     }
 }

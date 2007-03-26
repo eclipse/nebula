@@ -445,7 +445,7 @@ public class Grid extends Canvas
      * True if the widget is being disposed.  When true, events are not fired.
      */
     private boolean disposing = false;
-    
+
     /**
      * Filters out unnecessary styles, adds mandatory styles and generally
      * manages the style to pass to the super class.
@@ -6457,6 +6457,10 @@ public class Grid extends Canvas
                 
                 if (hoveringItem != null)
                 {
+                    //dont show inplace tooltips for cells with wordwrap
+                    if (col.getWordWrap())
+                        return hoverChange;
+                    
                     cellBounds = col.getCellRenderer().getBounds();
                     textBounds = col.getCellRenderer().getTextBounds(item,false);
                     preferredTextBounds = col.getCellRenderer().getTextBounds(item,true);

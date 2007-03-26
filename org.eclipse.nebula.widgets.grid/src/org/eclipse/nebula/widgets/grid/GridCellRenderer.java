@@ -46,6 +46,8 @@ public abstract class GridCellRenderer extends AbstractInternalWidget
     private boolean cellFocus = false;
     
     private boolean cellSelected = false;
+    
+    private boolean wordWrap = false;
 
     /**
      * @return Returns the row.
@@ -221,5 +223,21 @@ public abstract class GridCellRenderer extends AbstractInternalWidget
     public Rectangle getTextBounds(GridItem item, boolean preferred)
     {
         return null;
+    }
+
+    /**
+     * @return the wordWrap
+     */
+    public boolean isWordWrap()
+    {
+        return wordWrap;
+    }
+
+    /**
+     * @param wordWrap the wordWrap to set
+     */
+    public void setWordWrap(boolean wordWrap)
+    {
+        this.wordWrap = wordWrap;
     }
 }

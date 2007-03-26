@@ -14,11 +14,14 @@ import org.eclipse.nebula.widgets.grid.GridCellRenderer;
 import org.eclipse.nebula.widgets.grid.GridItem;
 import org.eclipse.nebula.widgets.grid.IInternalWidget;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.TextLayout;
 
 public class DefaultCellRenderer extends GridCellRenderer
 {
@@ -36,6 +39,8 @@ public class DefaultCellRenderer extends GridCellRenderer
     private ToggleRenderer toggleRenderer;
 
     private CheckBoxRenderer checkRenderer;
+
+    private TextLayout textLayout;
 
     /**
      * {@inheritDoc}
@@ -141,25 +146,6 @@ public class DefaultCellRenderer extends GridCellRenderer
         
         int width = getBounds().width - x - rightMargin;
 
-        String text = TextUtils.getShortString(gc, item.getText(getColumn()), width);
-
-        if (getAlignment() == SWT.RIGHT)
-        {
-            int len = gc.stringExtent(text).x;
-            if (len < width)
-            {
-                x += width - len;
-            }
-        }
-        else if (getAlignment() == SWT.CENTER)
-        {
-            int len = gc.stringExtent(text).x;
-            if (len < width)
-            {
-                x += (width - len) / 2;
-            }
-        }
-
         if (drawAsSelected)
         {
             gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT));
@@ -168,8 +154,51 @@ public class DefaultCellRenderer extends GridCellRenderer
         {
             gc.setForeground(item.getForeground(getColumn()));
         }
+        
+        if (!isWordWrap())
+        {
+            String text = TextUtils.getShortString(gc, item.getText(getColumn()), width);
 
-        gc.drawString(text, getBounds().x + x, getBounds().y + topMargin, true);
+            if (getAlignment() == SWT.RIGHT)
+            {
+                int len = gc.stringExtent(text).x;
+                if (len < width)
+                {
+                    x += width - len;
+                }
+            }
+            else if (getAlignment() == SWT.CENTER)
+            {
+                int len = gc.stringExtent(text).x;
+                if (len < width)
+                {
+                    x += (width - len) / 2;
+                }
+            }
+
+            gc.drawString(text, getBounds().x + x, getBounds().y + topMargin, true);        
+        }
+        else
+        {
+            if (textLayout == null)
+            {
+                textLayout = new TextLayout(gc.getDevice());
+                item.getParent().addDisposeListener(new DisposeListener()
+                {                
+                    public void widgetDisposed(DisposeEvent e)
+                    {
+                        textLayout.dispose();
+                    }                
+                });
+            }
+            textLayout.setFont(gc.getFont());
+            textLayout.setText(item.getText(getColumn()));
+            textLayout.setAlignment(getAlignment());
+            textLayout.setWidth(width);
+            
+            textLayout.draw(gc, getBounds().x + x, getBounds().y + topMargin);
+        }
+        
 
         if (item.getParent().getLinesVisible())
         {
