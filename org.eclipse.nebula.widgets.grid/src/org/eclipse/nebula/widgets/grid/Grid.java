@@ -567,6 +567,7 @@ public class Grid extends Canvas
      * Returns the background color of column and row headers when a cell in 
      * the row or header is selected.
      * 
+     * @return cell header selection background color 
      * @throws org.eclipse.swt.SWTException
      * <ul>
      * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
@@ -584,6 +585,7 @@ public class Grid extends Canvas
      * Sets the background color of column and row headers displayed when a cell in 
      * the row or header is selected.
      * 
+     * @param cellSelectionBackground color to set.
      * @throws org.eclipse.swt.SWTException
      * <ul>
      * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
@@ -7008,6 +7010,7 @@ public class Grid extends Canvas
     /**
      * Returns true if the cells are selectable in the reciever.
      * 
+     * @return cell selection enablement status. 
      * @throws org.eclipse.swt.SWTException
      * <ul>
      * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
