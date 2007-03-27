@@ -11,6 +11,10 @@
 package org.eclipse.swt.nebula.examples.parts;
 
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.nebula.widgets.grid.Grid;
+import org.eclipse.nebula.widgets.grid.GridColumn;
+import org.eclipse.nebula.widgets.grid.GridColumnGroup;
+import org.eclipse.nebula.widgets.grid.GridItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -20,10 +24,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.nebula.examples.AbstractExampleTab;
 import org.eclipse.swt.nebula.examples.ButtonFactory;
 import org.eclipse.swt.nebula.examples.ExamplesView;
-import org.eclipse.swt.nebula.widgets.grid.Grid;
-import org.eclipse.swt.nebula.widgets.grid.GridColumn;
-import org.eclipse.swt.nebula.widgets.grid.GridColumnGroup;
-import org.eclipse.swt.nebula.widgets.grid.GridItem;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -322,7 +322,8 @@ public class GridExampleTab extends AbstractExampleTab
         item22.setText(1,"second tree");
         item22.setChecked(1,true);
         item22.setGrayed(1,true);
-        item22.setColumnSpan(0,2);
+        item22.setCheckable(1,false);
+        //item22.setColumnSpan(0,2);
 
         final GridItem item55 = new GridItem(grid,SWT.NONE);
         item55.setText("Item #55");
@@ -388,7 +389,7 @@ public class GridExampleTab extends AbstractExampleTab
         {
             this.addEventParticipant(grid.getItem(i));            
         }
-
+        
         return grid;
     }
 
