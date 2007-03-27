@@ -1503,7 +1503,6 @@ public class GridItem extends Item
      * Returns the receiver's row header text.  If the text is <code>null</code> the row header will
      * display the row number.
      * 
-     * @param index the column index
      * @return the text stored at the given column index in the receiver
      * @throws org.eclipse.swt.SWTException
      * <ul>

@@ -20,6 +20,12 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 
+/**
+ * The column group header renderer in Grid.
+ *
+ * @author chris.gross@us.ibm.com
+ * @since 2.0.0
+ */
 public class DefaultColumnGroupHeaderRenderer extends GridHeaderRenderer
 {
     int leftMargin = 6;
@@ -34,6 +40,9 @@ public class DefaultColumnGroupHeaderRenderer extends GridHeaderRenderer
 
     private ExpandToggleRenderer toggleRenderer = new ExpandToggleRenderer();
 
+    /** 
+     * {@inheritDoc}
+     */
     public void paint(GC gc, Object value)
     {
         GridColumnGroup group = (GridColumnGroup)value;
@@ -88,6 +97,9 @@ public class DefaultColumnGroupHeaderRenderer extends GridHeaderRenderer
 
     }
 
+    /** 
+     * {@inheritDoc}
+     */
     public Point computeSize(GC gc, int wHint, int hHint, Object value)
     {
         GridColumnGroup group = (GridColumnGroup)value;
@@ -116,6 +128,9 @@ public class DefaultColumnGroupHeaderRenderer extends GridHeaderRenderer
         return new Point(x, y);
     }
 
+    /** 
+     * {@inheritDoc}
+     */
     public boolean notify(int event, Point point, Object value)
     {
         GridColumnGroup group = (GridColumnGroup)value;

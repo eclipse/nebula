@@ -15,9 +15,18 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 
+/**
+ * The column header sort arrow renderer.
+ *
+ * @author chris.gross@us.ibm.com
+ * @since 2.0.0
+ */
 public class SortArrowRenderer extends AbstractRenderer
 {
 
+    /**
+     * Default constructor.
+     */
     public SortArrowRenderer()
     {
         super();
@@ -25,6 +34,9 @@ public class SortArrowRenderer extends AbstractRenderer
         setSize(7, 4);
     }
 
+    /** 
+     * {@inheritDoc}
+     */
     public void paint(GC gc, Object value)
     {
         gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
@@ -52,6 +64,9 @@ public class SortArrowRenderer extends AbstractRenderer
 
     }
 
+    /** 
+     * {@inheritDoc}
+     */
     public Point computeSize(GC gc, int wHint, int hHint, Object value)
     {
         return new Point(7, 4);

@@ -159,6 +159,11 @@ public class GridEditor extends ControlEditor
         grabVertical = true;
     }
 
+    /**
+     * Returns the bounds of the editor.
+     * 
+     * @return bounds of the editor.
+     */
     protected Rectangle computeBounds()
     {
         if (item == null || column == -1 || item.isDisposed())
@@ -313,6 +318,11 @@ public class GridEditor extends ControlEditor
         layout();
     }
 
+    /**
+     * Sets the item that this editor will function over.
+     * 
+     * @param item editing item.
+     */
     public void setItem(GridItem item)
     {
         this.item = item;
@@ -341,6 +351,9 @@ public class GridEditor extends ControlEditor
         layout();
     }
 
+    /** 
+     * {@inheritDoc}
+     */
     public void layout()
     {
 

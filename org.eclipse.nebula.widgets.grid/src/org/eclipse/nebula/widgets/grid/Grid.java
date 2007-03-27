@@ -4918,7 +4918,7 @@ public class Grid extends Canvas
      * @param dragging true if the user is dragging.
      * @param reverseDuplicateSelections true if the user is reversing selection rather than adding to.
      * 
-     * @ @return selection event that will need to be fired or null.
+     * @return selection event that will need to be fired or null.
      */
     private Event updateCellSelection(Vector newCells, int stateMask, boolean dragging, boolean reverseDuplicateSelections)
     {
@@ -6812,7 +6812,7 @@ public class Grid extends Canvas
     /**
      * Sets the focused item to the given item.  
      * 
-     * @param item item to focus or null.
+     * @param item item to focus.
      * @throws IllegalArgumentException
      * <ul>
      * <li>ERROR_INVALID_ARGUMENT - if item is disposed</li>
@@ -6836,9 +6836,10 @@ public class Grid extends Canvas
     }
 
     /**
-     * Sets the focused item to the given item.  
+     * Sets the focused item to the given column. Column focus is only applicable when cell 
+     * selection is enabled. 
      * 
-     * @param item item to focus or null.
+     * @param column column to focus.
      * @throws IllegalArgumentException
      * <ul>
      * <li>ERROR_INVALID_ARGUMENT - if item is disposed</li>
@@ -7023,7 +7024,7 @@ public class Grid extends Canvas
     /**
      * Sets whether cells are selectable in the receiver.
      * 
-     * @param cellSelectionEnabled the cellSelectionEnabled to set
+     * @param cellSelection the cellSelection to set
      * 
      * @throws org.eclipse.swt.SWTException
      * <ul>
@@ -7053,6 +7054,7 @@ public class Grid extends Canvas
      * Deselects the given cell in the receiver.  If the given cell is already
      * deselected it remains deselected.  Invalid cells are ignored.
      * 
+     * @param cell cell to deselect. 
      * @throws IllegalArgumentException
      * <ul>
      * <li>ERROR_NULL_ARGUMENT - if the cell is null</li>
@@ -7692,6 +7694,11 @@ public class Grid extends Canvas
     /**
      * Shows the inplace tooltip for the given item and column.  The location is the x and y origin 
      * of the text in the cell.
+     * 
+     * @param item the item currently hovered over or null. 
+     * @param column the column currently hovered over or null.
+     * @param group the group currently hovered over or null.
+     * @param location the x,y origin of the text in the hovered object.
      */
     protected void showToolTip(GridItem item, GridColumn column, GridColumnGroup group, Point location)
     {

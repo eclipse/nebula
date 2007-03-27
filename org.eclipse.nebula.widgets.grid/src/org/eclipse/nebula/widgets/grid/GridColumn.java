@@ -118,8 +118,6 @@ public class GridColumn extends Item
     private GridColumnGroup group;
     
     private boolean checkable = true;
-    
-    private boolean wordWrap = false;
 
     /**
      * Constructs a new instance of this class given its parent (which must be a
@@ -183,7 +181,6 @@ public class GridColumn extends Item
      * @param parent an Grid control which will be the parent of the new
      * instance (cannot be null)
      * @param style the style of control to construct
-     * @param index the index to store the receiver in its parent
      * @throws IllegalArgumentException
      * <ul>
      * <li>ERROR_NULL_ARGUMENT - if the parent is null</li>
@@ -996,6 +993,7 @@ public class GridColumn extends Item
     /**
      * Returns the parent grid.
      * 
+     * @return the parent grid. 
      * @throws org.eclipse.swt.SWTException
      * <ul>
      * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
@@ -1012,6 +1010,7 @@ public class GridColumn extends Item
     /**
      * Returns the checkable state.  If false the checkboxes in the column cannot be checked.
      * 
+     * @return true if the column is checkable (only applicable when style is SWT.CHECK). 
      * @throws org.eclipse.swt.SWTException
      * <ul>
      * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
@@ -1028,6 +1027,7 @@ public class GridColumn extends Item
     /**
      * Sets the checkable state.  If false the checkboxes in the column cannot be checked.
      * 
+     * @param checkable the new checkable state. 
      * @throws org.eclipse.swt.SWTException
      * <ul>
      * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
@@ -1049,6 +1049,7 @@ public class GridColumn extends Item
     /**
      * Returns the true if the cells in receiver wrap their text.
      * 
+     * @return true if the cells wrap their text. 
      * @throws org.eclipse.swt.SWTException
      * <ul>
      * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
@@ -1067,6 +1068,7 @@ public class GridColumn extends Item
      * the row height to expand to accommodate the wrapped text.  Please use 
      * <code>Grid#setItemHeight</code> to change the height of each row.
      * 
+     * @param wordWrap true to make cells wrap their text. 
      * @throws org.eclipse.swt.SWTException
      * <ul>
      * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>

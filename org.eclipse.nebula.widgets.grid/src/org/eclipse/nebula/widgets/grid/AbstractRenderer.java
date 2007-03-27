@@ -65,10 +65,9 @@ public abstract class AbstractRenderer implements IRenderer
         setBounds(new Rectangle(x, y, width, height));
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.ibm.mozart.mwt.widgets.table.IRenderer#setBounds(org.eclipse.swt.graphics.Rectangle)
+
+    /** 
+     * {@inheritDoc}
      */
     public void setBounds(Rectangle bounds)
     {
@@ -127,10 +126,8 @@ public abstract class AbstractRenderer implements IRenderer
         return focus;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.ibm.mozart.mwt.widgets.table.IRenderer#setFocus(boolean)
+    /** 
+     * {@inheritDoc}
      */
     public void setFocus(boolean focus)
     {
@@ -147,10 +144,8 @@ public abstract class AbstractRenderer implements IRenderer
         return hover;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.ibm.mozart.mwt.widgets.table.IRenderer#setHover(boolean)
+    /** 
+     * {@inheritDoc}
      */
     public void setHover(boolean hover)
     {
@@ -168,10 +163,8 @@ public abstract class AbstractRenderer implements IRenderer
         return mouseDown;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.ibm.mozart.mwt.widgets.table.IRenderer#setMouseDown(boolean)
+    /** 
+     * {@inheritDoc}
      */
     public void setMouseDown(boolean mouseDown)
     {
@@ -188,10 +181,8 @@ public abstract class AbstractRenderer implements IRenderer
         return selected;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.ibm.mozart.mwt.widgets.table.IRenderer#setSelected(boolean)
+    /** 
+     * {@inheritDoc}
      */
     public void setSelected(boolean selected)
     {

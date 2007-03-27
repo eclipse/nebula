@@ -157,11 +157,17 @@ public class ScrollBarProxyAdapter implements IScrollBarProxy
         //do nothing        
     }
 
+    /** 
+     * {@inheritDoc}
+     */
     public void addSelectionListener(SelectionListener listener)
     {
         scrollBar.addSelectionListener(listener);
     }
 
+    /** 
+     * {@inheritDoc}
+     */
     public void removeSelectionListener(SelectionListener listener)
     {
         scrollBar.removeSelectionListener(listener);

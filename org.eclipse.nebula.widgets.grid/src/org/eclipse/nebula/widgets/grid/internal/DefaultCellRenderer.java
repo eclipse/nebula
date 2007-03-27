@@ -23,6 +23,12 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.TextLayout;
 
+/**
+ * The renderer for a cell in Grid.
+ *
+ * @author chris.gross@us.ibm.com
+ * @since 2.0.0
+ */
 public class DefaultCellRenderer extends GridCellRenderer
 {
 
@@ -238,6 +244,9 @@ public class DefaultCellRenderer extends GridCellRenderer
         }        
     }
 
+    /** 
+     * {@inheritDoc}
+     */
     public Point computeSize(GC gc, int wHint, int hHint, Object value)
     {
         GridItem item = (GridItem)value;
@@ -278,6 +287,9 @@ public class DefaultCellRenderer extends GridCellRenderer
         return new Point(x, y);
     }
 
+    /** 
+     * {@inheritDoc}
+     */
     public boolean notify(int event, Point point, Object value)
     {
 
@@ -403,10 +415,8 @@ public class DefaultCellRenderer extends GridCellRenderer
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.ibm.mozart.mwt.widgets.table.internal.TableCellRenderer#setTree(boolean)
+    /** 
+     * {@inheritDoc}
      */
     public void setTree(boolean tree)
     {
@@ -419,10 +429,8 @@ public class DefaultCellRenderer extends GridCellRenderer
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.ibm.mozart.mwt.widgets.table.internal.TableCellRenderer#setCheck(boolean)
+    /** 
+     * {@inheritDoc}
      */
     public void setCheck(boolean check)
     {
@@ -439,6 +447,9 @@ public class DefaultCellRenderer extends GridCellRenderer
         }
     }
 
+    /** 
+     * {@inheritDoc}
+     */
     public Rectangle getTextBounds(GridItem item, boolean preferred)
     {
         int x = leftMargin;

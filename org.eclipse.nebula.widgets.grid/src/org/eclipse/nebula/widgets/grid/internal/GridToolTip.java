@@ -35,6 +35,11 @@ public class GridToolTip extends Widget
 
     private int xmargin = 3;
 
+    /**
+     * Creates an inplace tooltip.
+     * 
+     * @param parent parent control.
+     */
     public GridToolTip(final Control parent)
     {
         super(parent, SWT.NONE);
@@ -124,6 +129,11 @@ public class GridToolTip extends Widget
         });
     }
 
+    /**
+     * Paints the tooltip.
+     * 
+     * @param gc
+     */
     private void onPaint(GC gc)
     {
         gc.drawRectangle(0, 0, shell.getSize().x - 1, shell.getSize().y - 1);
@@ -131,11 +141,21 @@ public class GridToolTip extends Widget
         gc.drawString(text, xmargin, ymargin, true);
     }
 
+    /**
+     * Sets the location of the tooltip.
+     * 
+     * @param location
+     */
     public void setLocation(Point location)
     {
         shell.setLocation(location.x - xmargin, location.y - ymargin);
     }
 
+    /**
+     * Shows or hides the tooltip.
+     * 
+     * @param visible
+     */
     public void setVisible(boolean visible)
     {
         if (visible && shell.getVisible())
@@ -148,6 +168,9 @@ public class GridToolTip extends Widget
         }
     }
 
+    /**
+     * @param font
+     */
     public void setFont(Font font)
     {
         shell.setFont(font);

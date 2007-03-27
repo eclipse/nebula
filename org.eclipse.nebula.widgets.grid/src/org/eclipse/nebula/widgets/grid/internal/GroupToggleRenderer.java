@@ -16,15 +16,17 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 
 /**
- * 
+ * The renderer for the expand/collapse toggle on a column group header.
+ *
+ * @author chris.gross@us.ibm.com
+ * @since 2.0.0
  */
 public class GroupToggleRenderer extends AbstractRenderer
 {
 
-    public GroupToggleRenderer()
-    {
-    }
-
+    /** 
+     * {@inheritDoc}
+     */
     public void paint(GC gc, Object value)
     {
 
@@ -94,6 +96,9 @@ public class GroupToggleRenderer extends AbstractRenderer
 
     }
 
+    /** 
+     * {@inheritDoc}
+     */
     public Point computeSize(GC gc, int wHint, int hHint, Object value)
     {
         return new Point(0, 0);

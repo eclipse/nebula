@@ -16,16 +16,25 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 
 /**
- * 
+ * The renderer for tree item plus/minus expand/collapse toggle.
+ *
+ * @author chris.gross@us.ibm.com
+ * @since 2.0.0
  */
 public class ToggleRenderer extends AbstractRenderer
 {
 
+    /**
+     * Default constructor.
+     */
     public ToggleRenderer()
     {
         this.setSize(9, 9);
     }
 
+    /** 
+     * {@inheritDoc}
+     */
     public void paint(GC gc, Object value)
     {
 
@@ -49,6 +58,9 @@ public class ToggleRenderer extends AbstractRenderer
 
     }
 
+    /** 
+     * {@inheritDoc}
+     */
     public Point computeSize(GC gc, int wHint, int hHint, Object value)
     {
         return new Point(9, 9);

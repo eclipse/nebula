@@ -18,6 +18,12 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 
+/**
+ * The column header renderer.
+ *
+ * @author chris.gross@us.ibm.com
+ * @since 2.0.0
+ */
 public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
 {
 
@@ -35,6 +41,9 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
 
     private SortArrowRenderer arrowRenderer = new SortArrowRenderer();
 
+    /** 
+     * {@inheritDoc}
+     */
     public Point computeSize(GC gc, int wHint, int hHint, Object value)
     {
         GridColumn column = (GridColumn)value;
@@ -63,13 +72,12 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
         return new Point(x, y);
     }
 
+    /** 
+     * {@inheritDoc}
+     */
     public void paint(GC gc, Object value)
     {
-        paint(gc, (GridColumn)value);
-    }
-
-    public void paint(GC gc, GridColumn column)
-    {
+        GridColumn column = (GridColumn)value;
 
         boolean flat = (column.getParent().getCellSelectionEnabled() && !column.getMoveable());
         
@@ -221,9 +229,11 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
         arrowRenderer.setDisplay(display);
     }
 
+    /** 
+     * {@inheritDoc}
+     */
     public boolean notify(int event, Point point, Object value)
     {
-        // TODO Auto-generated method stub
         return false;
     }
 

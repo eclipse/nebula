@@ -16,9 +16,18 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 
+/**
+ * The empty row header renderer.
+ *
+ * @author chris.gross@us.ibm.com
+ * @since 2.0.0
+ */
 public class DefaultEmptyRowHeaderRenderer extends AbstractRenderer
 {
 
+    /** 
+     * {@inheritDoc}
+     */
     public void paint(GC gc, Object value)
     {
 
@@ -74,6 +83,9 @@ public class DefaultEmptyRowHeaderRenderer extends AbstractRenderer
 
     }
 
+    /** 
+     * {@inheritDoc}
+     */
     public Point computeSize(GC gc, int wHint, int hHint, Object value)
     {
         return new Point(wHint, hHint);

@@ -11,7 +11,6 @@
 package org.eclipse.nebula.widgets.grid;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 
 /**

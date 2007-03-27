@@ -134,7 +134,7 @@ public class GridColumnGroup extends Item
         
     /**
      * Returns the parent grid.
-     * 
+     *  
      * @throws org.eclipse.swt.SWTException
      * <ul>
      * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
@@ -222,7 +222,6 @@ public class GridColumnGroup extends Item
     /**
      * Gets the header renderer.
      * 
-     * @param headerRenderer The headerRenderer to set.
      * @throws org.eclipse.swt.SWTException
      * <ul>
      * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>

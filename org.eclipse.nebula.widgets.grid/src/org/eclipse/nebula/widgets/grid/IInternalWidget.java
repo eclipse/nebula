@@ -49,9 +49,15 @@ public interface IInternalWidget extends IRenderer
      * Returns the hover detail object. This detail is used by the renderer to
      * determine which part or piece of the rendered image is hovered over.
      * 
-     * @return
+     * @return string identifying which part of the image is being hovered over.
      */
     String getHoverDetail();
 
+    /**
+     * Sets a string object that represents which part of the rendered image is currently under the
+     * mouse pointer.
+     * 
+     * @param detail identifying string.
+     */
     void setHoverDetail(String detail);
 }

@@ -65,29 +65,68 @@ public interface IScrollBarProxy
                           int pageIncrement);
 
 
+    /**
+     * @param e
+     */
     public void handleMouseWheel(Event e);
     
+    /**
+     * @param min
+     */
     public void setMinimum(int min);
     
+    /**
+     * @return min
+     */
     public int getMinimum();
     
+    /**
+     * @param max
+     */
     public void setMaximum(int max);
     
+    /**
+     * @return max
+     */
     public int getMaximum();
     
+    /**
+     * @param thumb
+     */
     public void setThumb(int thumb);
     
+    /**
+     * @return thumb
+     */
     public int getThumb();
     
+    /**
+     * @param increment
+     */
     public void setIncrement(int increment);
     
+    /**
+     * @return increment
+     */
     public int getIncrement();
     
+    /**
+     * @param page
+     */
     public void setPageIncrement(int page);
     
+    /**
+     * @return page increment
+     */
     public int getPageIncrement();
     
+    /**
+     * @param listener
+     */
     public void addSelectionListener(SelectionListener listener);
     
+    /**
+     * @param listener
+     */
     public void removeSelectionListener(SelectionListener listener);
 }

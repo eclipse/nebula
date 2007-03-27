@@ -16,9 +16,18 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 
+/**
+ * The focus item renderer - renders over the completely drawn table.
+ *
+ * @author chris.gross@us.ibm.com
+ * @since 2.0.0
+ */
 public class DefaultFocusRenderer extends AbstractRenderer
 {
 
+    /** 
+     * {@inheritDoc}
+     */
     public void paint(GC gc, Object value)
     {
         GridItem item = (GridItem)value;
@@ -38,6 +47,9 @@ public class DefaultFocusRenderer extends AbstractRenderer
 
     }
 
+    /** 
+     * {@inheritDoc}
+     */
     public Point computeSize(GC gc, int wHint, int hHint, Object value)
     {
         return null;

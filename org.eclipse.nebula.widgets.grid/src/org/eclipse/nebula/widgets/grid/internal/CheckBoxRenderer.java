@@ -15,6 +15,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 
+/**
+ * A checkbox renderer.  
+ *
+ * @author chris.gross@us.ibm.com
+ * @since 2.0.0
+ */
 public class CheckBoxRenderer extends AbstractRenderer
 {
 
@@ -22,12 +28,18 @@ public class CheckBoxRenderer extends AbstractRenderer
 
     private boolean grayed = false;
 
+    /**
+     * 
+     */
     public CheckBoxRenderer()
     {
         super();
         this.setSize(13, 13);
     }
 
+    /** 
+     * {@inheritDoc}
+     */
     public void paint(GC gc, Object value)
     {
 
@@ -67,6 +79,9 @@ public class CheckBoxRenderer extends AbstractRenderer
         }
     }
 
+    /** 
+     * {@inheritDoc}
+     */
     public Point computeSize(GC gc, int wHint, int hHint, Object value)
     {
         return getSize();

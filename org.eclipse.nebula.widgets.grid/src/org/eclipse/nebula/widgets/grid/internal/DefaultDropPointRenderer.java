@@ -15,9 +15,18 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 
+/**
+ * A renderer which displays the drop point location affordance when dragging columns.
+ *
+ * @author chris.gross@us.ibm.com
+ * @since 2.0.0
+ */
 public class DefaultDropPointRenderer extends AbstractRenderer
 {
 
+    /** 
+     * {@inheritDoc}
+     */
     public void paint(GC gc, Object value)
     {
         gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
@@ -40,23 +49,12 @@ public class DefaultDropPointRenderer extends AbstractRenderer
 
     }
 
+    /** 
+     * {@inheritDoc}
+     */
     public Point computeSize(GC gc, int wHint, int hHint, Object value)
     {
         return new Point(9, 7);
     }
-
-    // public void paint(GC gc, Object value)
-    // {
-    // gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
-    //
-    // gc.fillPolygon(new int[] {getBounds().x + 0, getBounds().y + 6,
-    // getBounds().x + 5,
-    // getBounds().y + 1, getBounds().x + 9, getBounds().y + 6 });
-    // }
-    //
-    // public Point computeSize(GC gc, int wHint, int hHint, Object value)
-    // {
-    // return new Point(10, 6);
-    // }
 
 }

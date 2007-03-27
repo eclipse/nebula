@@ -17,9 +17,18 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 
+/**
+ * The empty cell renderer.
+ *
+ * @author chris.gross@us.ibm.com
+ * @since 2.0.0
+ */
 public class DefaultEmptyCellRenderer extends GridCellRenderer
 {
 
+    /** 
+     * {@inheritDoc}
+     */
     public void paint(GC gc, Object value)
     {
 
@@ -71,14 +80,19 @@ public class DefaultEmptyCellRenderer extends GridCellRenderer
         }
     }
 
+    /** 
+     * {@inheritDoc}
+     */
     public Point computeSize(GC gc, int wHint, int hHint, Object value)
     {
         return new Point(wHint, hHint);
     }
 
+    /** 
+     * {@inheritDoc}
+     */
     public boolean notify(int event, Point point, Object value)
     {
-        // TODO Auto-generated method stub
         return false;
     }
     

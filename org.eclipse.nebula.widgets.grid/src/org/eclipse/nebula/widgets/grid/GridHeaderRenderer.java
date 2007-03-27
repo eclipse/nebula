@@ -1,9 +1,17 @@
 package org.eclipse.nebula.widgets.grid;
 
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 
+/**
+ * <p>
+ * NOTE:  THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.  THIS IS A PRE-RELEASE ALPHA 
+ * VERSION.  USERS SHOULD EXPECT API CHANGES IN FUTURE VERSIONS.
+ * </p> 
+ * The super class for all grid header renderers.  Contains the properties specific
+ * to a grid header.
+ *
+ * @author chris.gross@us.ibm.com
+ */
 public abstract class GridHeaderRenderer extends AbstractInternalWidget
 {
     /**
