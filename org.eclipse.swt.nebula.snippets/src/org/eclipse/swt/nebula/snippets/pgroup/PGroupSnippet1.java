@@ -11,11 +11,9 @@
 package org.eclipse.swt.nebula.snippets.pgroup;
  
 
+import org.eclipse.nebula.widgets.pgroup.PGroup;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.nebula.widgets.pgroup.FormGroupStrategy;
-import org.eclipse.swt.nebula.widgets.pgroup.PGroup;
-import org.eclipse.swt.nebula.widgets.pgroup.TwisteToggleRenderer;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
