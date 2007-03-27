@@ -11,12 +11,12 @@
 package org.eclipse.swt.nebula.snippets.grid;
  
 
+import org.eclipse.nebula.widgets.grid.Grid;
+import org.eclipse.nebula.widgets.grid.GridColumn;
+import org.eclipse.nebula.widgets.grid.GridColumnGroup;
+import org.eclipse.nebula.widgets.grid.GridItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.nebula.widgets.grid.Grid;
-import org.eclipse.swt.nebula.widgets.grid.GridColumn;
-import org.eclipse.swt.nebula.widgets.grid.GridColumnGroup;
-import org.eclipse.swt.nebula.widgets.grid.GridItem;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
