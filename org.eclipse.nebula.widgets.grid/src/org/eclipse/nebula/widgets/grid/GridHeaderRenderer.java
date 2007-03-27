@@ -29,4 +29,15 @@ public abstract class GridHeaderRenderer extends AbstractInternalWidget
     {
         return null;
     }
+    
+    /**
+     * Returns the bounds of the toggle within the header (typically only group headers have toggles)
+     * or null.
+     * 
+     * @return toggle bounds or null if no toggle exists.
+     */
+    public Rectangle getToggleBounds()
+    {
+        return null;
+    }
 }

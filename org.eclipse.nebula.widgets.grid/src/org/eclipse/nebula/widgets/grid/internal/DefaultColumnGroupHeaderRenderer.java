@@ -167,7 +167,10 @@ public class DefaultColumnGroupHeaderRenderer extends GridHeaderRenderer
         return false;
     }
 
-    private Rectangle getToggleBounds()
+    /** 
+     * {@inheritDoc}
+     */
+    public Rectangle getToggleBounds()
     {
         int x = getBounds().x + getBounds().width - toggleRenderer.getBounds().width - rightMargin;
         int y = getBounds().y + (getBounds().height - toggleRenderer.getBounds().height) / 2;

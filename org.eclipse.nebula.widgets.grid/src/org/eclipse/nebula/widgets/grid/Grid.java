@@ -10,6 +10,7 @@
  *******************************************************************************/ 
 package org.eclipse.nebula.widgets.grid;
 
+import org.eclipse.nebula.widgets.grid.internal.DefaultColumnGroupHeaderRenderer;
 import org.eclipse.nebula.widgets.grid.internal.DefaultDropPointRenderer;
 import org.eclipse.nebula.widgets.grid.internal.DefaultEmptyCellRenderer;
 import org.eclipse.nebula.widgets.grid.internal.DefaultEmptyColumnHeaderRenderer;
@@ -22,6 +23,12 @@ import org.eclipse.nebula.widgets.grid.internal.IScrollBarProxy;
 import org.eclipse.nebula.widgets.grid.internal.NullScrollBarProxy;
 import org.eclipse.nebula.widgets.grid.internal.ScrollBarProxyAdapter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.ACC;
+import org.eclipse.swt.accessibility.Accessible;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleControlAdapter;
+import org.eclipse.swt.accessibility.AccessibleControlEvent;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.MouseEvent;
@@ -33,6 +40,7 @@ import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.events.TreeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -80,6 +88,31 @@ public class Grid extends Canvas
     //TODO: need to alter how column drag selection works to allow selection of spanned cells   
     //TODO: JAVADOC!
     //TODO: column freezing
+    
+    /**
+     * Accessibility default action for column headers and column group headers.
+     */
+    private static final String ACC_COLUMN_DEFAULT_ACTION = "Click";
+
+    /**
+     * Accessibility default action for items.
+     */
+    private static final String ACC_ITEM_DEFAULT_ACTION = "Double Click";
+
+    /**
+     * Accessibility expand action for tree items.
+     */
+    private static final String ACC_ITEM_ACTION_EXPAND = "Expand";
+
+    /**
+     * Accessibility collapse action for tree items.
+     */
+    private static final String ACC_ITEM_ACTION_COLLAPSE = "Collapse";
+
+    /**
+     * Accessibility name for the column group header toggle button.
+     */
+    private static final String ACC_TOGGLE_BUTTON_NAME = "Toggle Button";
     
     /**
      * Alpha blending value used when drawing the dragged column header.
@@ -445,6 +478,12 @@ public class Grid extends Canvas
      * True if the widget is being disposed.  When true, events are not fired.
      */
     private boolean disposing = false;
+    
+    /**
+     * Flag used by accessibility which reports the Grid as either a tree (with children) or a 
+     * regular table.
+     */
+    private boolean accessibleIsTree = false;
 
     /**
      * Filters out unnecessary styles, adds mandatory styles and generally
@@ -527,6 +566,7 @@ public class Grid extends Canvas
         scrollValuesObsolete = true;
 
         initListeners();
+        initAccessible();
 
         
         rowHeight = sizingGC.getFontMetrics().getHeight() + 2;
@@ -6635,6 +6675,14 @@ public class Grid extends Canvas
     int newItem(GridItem item, int index)
     {
         int row = 0;
+        
+        if (!accessibleIsTree)
+        {
+            if (item.getParentItem() != null)
+            {
+                accessibleIsTree = true;
+            }
+        }
 
         if (index == -1 || index >= items.size())
         {
@@ -7793,6 +7841,493 @@ public class Grid extends Canvas
             return 0;
         return rowHeaderWidth;
     }
+    
+    
+    /**
+     * Initialize accessibility.
+     */
+    public void initAccessible()
+    {
+        final Accessible accessible = getAccessible();
+        accessible.addAccessibleListener(new AccessibleAdapter()
+        {
+            public void getDescription(AccessibleEvent e)
+            {
+                int childID = e.childID;
+                if (childID >= 0 && childID < items.size())
+                {
+                    String descrption = "";
+                    for (int i = 0; i < columns.size(); i++)
+                    {
+                        if (i != 0)
+                        {
+                            descrption += ((GridColumn)columns.get(i)).getText() + " : ";
+                            descrption += ((GridItem)items.get(childID)).getText(i) + " ";
+                        }
+                    }
+                    e.result = descrption;
+                }
+            }
+
+            public void getName(AccessibleEvent e)
+            {
+                int childID = e.childID;
+                if (childID >= 0 && childID < items.size())
+                {
+                    // Name of the items
+                    e.result = ((GridItem)items.get(childID)).getText();
+                }
+                else if (childID >= items.size() && childID < items.size() + columns.size())
+                {
+                    // Name of the column headers
+                    e.result = ((GridColumn)columns.get(childID - items.size())).getText();
+                }
+                else if (childID >= items.size() + columns.size()
+                         && childID < items.size() + columns.size() + columnGroups.length)
+                {
+                    // Name of the column group headers
+                    e.result = ((GridColumnGroup)columnGroups[childID - items.size()
+                                                              - columns.size()]).getText();
+                }
+                else if (childID >= items.size() + columns.size() + columnGroups.length
+                         && childID < items.size() + columns.size() + columnGroups.length
+                                      + columnGroups.length)
+                {
+                    // Name of the toggle button for column group headers
+                    e.result = ACC_TOGGLE_BUTTON_NAME;
+                }
+            }
+        });
+
+        accessible.addAccessibleControlListener(new AccessibleControlAdapter()
+        {
+            public void getChildAtPoint(AccessibleControlEvent e)
+            {
+                Point location = toControl(e.x, e.y);
+                e.childID = ACC.CHILDID_SELF;
+
+                // Grid Items
+                GridItem item = getItem(location);
+                if (item != null)
+                {
+                    for (int i = 0; i < getItems().length; i++)
+                    {
+                        if (item.equals(getItem(i)))
+                        {
+                            e.childID = i;
+                            return;
+                        }
+                    }
+                }
+                else
+                {
+                    // Column Headers
+                    GridColumn column = overColumnHeader(location.x, location.y);
+                    if (column != null)
+                    {
+                        for (int i = 0; i < getColumns().length; i++)
+                        {
+                            if (column.equals(getColumn(i)))
+                            {
+                                e.childID = getItems().length + i;
+                                return;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // Column Group headers
+                        GridColumnGroup columnGroup = overColumnGroupHeader(location.x, location.y);
+                        if (columnGroup != null)
+                        {
+                            for (int i = 0; i < getColumnGroups().length; i++)
+                            {
+                                if (columnGroup.equals(getColumnGroup(i)))
+                                {
+                                    Rectangle toggle = ((DefaultColumnGroupHeaderRenderer)columnGroup
+                                        .getHeaderRenderer()).getToggleBounds();
+                                    if (toggle.contains(location.x, location.y))
+                                    {
+                                        // Toggle button for column group
+                                        // header
+                                        e.childID = getItems().length + getColumns().length
+                                                    + getColumnGroups().length + i;
+                                    }
+                                    else
+                                    {
+                                        // Column Group header
+                                        e.childID = getItems().length + getColumns().length + i;
+                                    }
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            public void getChildCount(AccessibleControlEvent e)
+            {
+                if (e.childID == ACC.CHILDID_SELF)
+                {
+                    int length = items.size();
+
+                    if (accessibleIsTree)
+                    {
+                        // Child count for parent. Here if the item parent
+                        // is not an other item,
+                        // it is consider as children of Grid
+                        for (int i = 0; i < items.size(); i++)
+                        {
+                            if (((GridItem)items.get(i)).getParentItem() != null)
+                            {
+                                length--;
+                            }
+                        }
+                    }
+                    e.detail = length;
+                }
+            }
+
+            public void getChildren(AccessibleControlEvent e)
+            {
+                if (e.childID == ACC.CHILDID_SELF)
+                {
+                    int length = items.size();
+                    if (accessibleIsTree)
+                    {
+                        for (int i = 0; i < items.size(); i++)
+                        {
+                            if (((GridItem)items.get(i)).getParentItem() != null)
+                            {
+                                length--;
+                            }
+                        }
+
+                        Object[] children = new Object[length];
+                        int j = 0;
+
+                        for (int i = 0; i < items.size(); i++)
+                        {
+                            if (((GridItem)items.get(i)).getParentItem() == null)
+                            {
+                                children[j] = new Integer(i);
+                                j++;
+                            }
+                        }
+                        e.children = children;
+                    }
+                    else
+                    {
+                        Object[] children = new Object[length];
+                        for (int i = 0; i < items.size(); i++)
+                        {
+                            children[i] = new Integer(i);
+                        }
+                        e.children = children;
+                    }
+                }
+            }
+
+            public void getDefaultAction(AccessibleControlEvent e)
+            {
+                int childID = e.childID;
+                if (childID >= 0 && childID < items.size())
+                {
+                    if (getItem(childID).hasChildren())
+                    {
+                        // Action of tree items
+                        if (getItem(childID).isExpanded())
+                        {
+                            e.result = ACC_ITEM_ACTION_COLLAPSE;
+                        }
+                        else
+                        {
+                            e.result = ACC_ITEM_ACTION_EXPAND;
+                        }
+                    }
+                    else
+                    {
+                        // action of default items
+                        e.result = ACC_ITEM_DEFAULT_ACTION;
+                    }
+                }
+                else if (childID >= items.size()
+                         && childID < items.size() + columns.size() + columnGroups.length)
+                {
+                    // action of column and column group header
+                    e.result = ACC_COLUMN_DEFAULT_ACTION;
+                }
+                else if (childID >= items.size() + columns.size() + columnGroups.length
+                         && childID < items.size() + columns.size() + columnGroups.length
+                                      + columnGroups.length)
+                {
+                    // action of toggle button of column group header
+                    e.result = SWT.getMessage("SWT_Press");
+                }
+            }
+
+            public void getLocation(AccessibleControlEvent e)
+            {
+                // location of parent
+                Rectangle location = getBounds();
+                location.x = 0;
+                location.y = 0;
+                int childID = e.childID;
+
+                if (childID >= 0 && childID < items.size())
+                {
+                    // location of items
+                    GridItem item = getItem(childID);
+                    if (item != null)
+                    {
+                        Point p = getOrigin((GridColumn)columns.get(0), item);
+                        location.y = p.y;
+                        location.height = rowHeight;
+                    }
+                }
+                else if (childID >= items.size() && childID < items.size() + columns.size())
+                {
+                    // location of columns headers
+                    GridColumn column = getColumn(childID - items.size());
+                    if (column != null)
+                    {
+                        location.x = getColumnHeaderXPosition(column);
+                        if (column.getColumnGroup() == null)
+                        {
+                            location.y = 0;
+                        }
+                        else
+                        {
+                            location.y = groupHeaderHeight;
+                        }
+                        location.height = headerHeight;
+                        location.width = column.getWidth();
+                    }
+                }
+                else if (childID >= items.size() + columns.size()
+                         && childID < items.size() + columns.size() + columnGroups.length)
+                {
+                    // location of column group header
+                    GridColumnGroup columnGroup = getColumnGroup(childID - items.size()
+                                                                 - columns.size());
+                    if (columnGroup != null)
+                    {
+                        location.y = 0;
+                        location.height = groupHeaderHeight;
+                        location.x = getColumnHeaderXPosition(columnGroup.getFirstVisibleColumn());
+                        int width = 0;
+                        for (int i = 0; i < columnGroup.getColumns().length; i++)
+                        {
+                            if (columnGroup.getColumns()[i].isVisible())
+                            {
+                                width += columnGroup.getColumns()[i].getWidth();
+                            }
+                        }
+                        location.width = width;
+                    }
+                }
+                else if (childID >= items.size() + columns.size() + columnGroups.length
+                         && childID < items.size() + columns.size() + columnGroups.length
+                                      + columnGroups.length)
+                {
+                    // location of toggle button of column group header
+                    GridColumnGroup columnGroup = getColumnGroup(childID - items.size()
+                                                                 - columns.size()
+                                                                 - columnGroups.length);
+                    location = ((DefaultColumnGroupHeaderRenderer)columnGroup.getHeaderRenderer())
+                        .getToggleBounds();
+                }
+
+                if (location != null)
+                {
+                    Point pt = toDisplay(location.x, location.y);
+                    e.x = pt.x;
+                    e.y = pt.y;
+                    e.width = location.width;
+                    e.height = location.height;
+                }
+            }
+
+            public void getRole(AccessibleControlEvent e)
+            {
+                int childID = e.childID;
+                if (childID >= 0 && childID < items.size())
+                {
+                    // role of items
+                    if (accessibleIsTree)
+                    {
+                        e.detail = ACC.ROLE_TREEITEM;
+                    }
+                    else
+                    {
+                        e.detail = ACC.ROLE_LISTITEM;
+                    }
+                }
+                else if (childID >= items.size()
+                         && childID < items.size() + columns.size() + columnGroups.length)
+                {
+                    // role of columns headers and column group headers
+                    e.detail = ACC.ROLE_TABLECOLUMNHEADER;
+                }
+                else if (childID >= items.size() + columns.size() + columnGroups.length
+                         && childID < items.size() + columns.size() + columnGroups.length
+                                      + columnGroups.length)
+                {
+                    // role of toggle button of column group headers
+                    e.detail = ACC.ROLE_PUSHBUTTON;
+                }
+                else if (childID == ACC.CHILDID_SELF)
+                {
+                    // role of parent
+                    if (accessibleIsTree)
+                    {
+                        e.detail = ACC.ROLE_TREE;
+                    }
+                    else
+                    {
+                        e.detail = ACC.ROLE_TABLE;
+                    }
+                }
+            }
+
+            public void getSelection(AccessibleControlEvent e)
+            {
+                e.childID = ACC.CHILDID_NONE;
+                if (selectedItems.size() == 1)
+                {
+                    // Single selection
+                    e.childID = indexOf(((GridItem)selectedItems.get(0)));
+                }
+                else if (selectedItems.size() > 1)
+                {
+                    // multiple selection
+                    e.childID = ACC.CHILDID_MULTIPLE;
+                    int length = selectedItems.size();
+                    Object[] children = new Object[length];
+
+                    for (int i = 0; i < length; i++)
+                    {
+                        GridItem item = (GridItem)selectedItems.get(i);
+                        children[i] = new Integer(indexOf(item));
+                    }
+                    e.children = children;
+                }
+            }
+
+            public void getState(AccessibleControlEvent e)
+            {
+                int childID = e.childID;
+                if (childID >= 0 && childID < items.size())
+                {
+                    // state of items
+                    e.detail = ACC.STATE_SELECTABLE;
+                    if (getDisplay().getActiveShell() == getParent().getShell())
+                    {
+                        e.detail |= ACC.STATE_FOCUSABLE;
+                    }
+
+                    if (selectedItems.contains(getItem(childID)))
+                    {
+                        e.detail |= ACC.STATE_SELECTED;
+                        if (getDisplay().getActiveShell() == getParent().getShell())
+                        {
+                            e.detail |= ACC.STATE_FOCUSED;
+                        }
+                    }
+
+                    if (getItem(childID).getChecked())
+                    {
+                        e.detail |= ACC.STATE_CHECKED;
+                    }
+
+                    // only for tree type items
+                    if (getItem(childID).hasChildren())
+                    {
+                        if (getItem(childID).isExpanded())
+                        {
+                            e.detail |= ACC.STATE_EXPANDED;
+                        }
+                        else
+                        {
+                            e.detail |= ACC.STATE_COLLAPSED;
+                        }
+                    }
+
+                    if (!getItem(childID).isVisible())
+                    {
+                        e.detail |= ACC.STATE_INVISIBLE;
+                    }
+                }
+                else if (childID >= items.size()
+                         && childID < items.size() + columns.size() + columnGroups.length)
+                {
+                    // state of column headers and column group headers
+                    e.detail = ACC.STATE_READONLY;
+                }
+                else if (childID >= items.size() + columns.size() + columnGroups.length
+                         && childID < items.size() + columns.size() + columnGroups.length
+                                      + columnGroups.length)
+                {
+                    // state of toggle button of column group headers
+                    if (getColumnGroup(
+                                       childID - items.size() - columns.size()
+                                           - columnGroups.length).getExpanded())
+                    {
+                        e.detail = ACC.STATE_EXPANDED;
+                    }
+                    else
+                    {
+                        e.detail = ACC.STATE_COLLAPSED;
+                    }
+                }
+            }
+
+            public void getValue(AccessibleControlEvent e)
+            {
+                int childID = e.childID;
+                if (childID >= 0 && childID < items.size())
+                {
+                    // value for tree items
+                    if (accessibleIsTree)
+                    {
+                        e.result = "" + getItem(childID).getLevel();
+                    }
+                }
+            }
+        });
+
+        addListener(SWT.Selection, new Listener()
+        {
+            public void handleEvent(Event event)
+            {
+                if (selectedItems.size() > 0)
+                {
+                    accessible.setFocus(items.indexOf(selectedItems.get(selectedItems.size() - 1)));
+                }
+            }
+        });
+
+        addTreeListener(new TreeListener()
+        {
+            public void treeCollapsed(TreeEvent e)
+            {
+                if (getFocusItem() != null)
+                {
+                    accessible.setFocus(items.indexOf(getFocusItem()));
+                }
+            }
+
+            public void treeExpanded(TreeEvent e)
+            {
+                if (getFocusItem() != null)
+                {
+                    accessible.setFocus(items.indexOf(getFocusItem()));
+                }
+            }
+        });
+    }
+
 }
 
 
