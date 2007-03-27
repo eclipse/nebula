@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Pgroup Plug-in
+Bundle-SymbolicName: org.eclipse.nebula.widgets.pgroup
+Bundle-Version: 1.0.0
+Bundle-Vendor: Eclipes.org
+Require-Bundle: org.eclipse.swt
+Export-Package: org.eclipse.nebula.widgets.pgroup
