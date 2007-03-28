@@ -37,8 +37,6 @@ import org.eclipse.swt.widgets.Widget;
  * <p>
  * 
  * @author rmcamara@us.ibm.com
- * @since
- * @3.3
  */
 public class GridViewer extends AbstractTableViewer
 {
@@ -263,6 +261,9 @@ public class GridViewer extends AbstractTableViewer
 
     
     
+    /** 
+     * {@inheritDoc}
+     */
     protected void doResetItem(Item item) {
 		GridItem gridItem = (GridItem) item;
 		int columnCount = Math.max(1, grid.getColumnCount());
