@@ -47,7 +47,10 @@
         </antcall>    	
         <antcall target="buildcomponent">
             <param name="component" value="org.eclipse.nebula.widgets.datechooser"/>
-        </antcall>    	
+        </antcall>
+        <antcall target="buildcomponent">
+            <param name="component" value="org.eclipse.nebula.widgets.pgroup"/>
+        </antcall>   
     </target>
     
     <target name="publish" depends="buildall" description="Uploads all build zips to the eclipse server.">
