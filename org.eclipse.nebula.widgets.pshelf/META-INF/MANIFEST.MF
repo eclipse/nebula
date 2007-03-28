@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Pshelf Plug-in
+Bundle-SymbolicName: org.eclipse.nebula.widgets.pshelf
+Bundle-Version: 1.0.0
+Bundle-Vendor: Eclipse.org
+Require-Bundle: org.eclipse.swt
