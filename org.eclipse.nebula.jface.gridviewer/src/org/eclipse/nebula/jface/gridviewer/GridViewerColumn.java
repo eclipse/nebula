@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    rmcamara@us.ibm.com - initial API and implementation
+ *    tom.schindl@bestsolution.at - various significant contributions
  *******************************************************************************/ 
 
 package org.eclipse.nebula.jface.gridviewer;
@@ -22,9 +23,6 @@ import org.eclipse.swt.widgets.Listener;
 
 /**
  * The concrete implementation of the ColumnViewer for the grid.
- *
- * @author rmcamara@us.ibm.com
- * @since 3.3
  */
 public final class GridViewerColumn extends ViewerColumn 
 {

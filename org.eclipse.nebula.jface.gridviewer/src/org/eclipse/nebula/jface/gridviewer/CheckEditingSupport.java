@@ -17,9 +17,6 @@ import org.eclipse.jface.viewers.EditingSupport;
 
 /**
  * .
- *
- * @author chris.gross@us.ibm.com
- * @since 3.3
  */
 public abstract class CheckEditingSupport extends EditingSupport
 {

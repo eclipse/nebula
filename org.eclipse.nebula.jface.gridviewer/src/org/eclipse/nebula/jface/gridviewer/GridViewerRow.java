@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    rmcamara@us.ibm.com - initial API and implementation
+ *    tom.schindl@bestsolution.at - various significant contributions
  *******************************************************************************/ 
 
 package org.eclipse.nebula.jface.gridviewer;
@@ -24,9 +25,6 @@ import org.eclipse.swt.widgets.Item;
 /**
  * GridViewerRow is the concrete implementation of the part that represents items in a
  * Grid.
- *
- * @author rmcamara@us.ibm.com
- * @since 3.3
  */
 public class GridViewerRow extends ViewerRow
 {

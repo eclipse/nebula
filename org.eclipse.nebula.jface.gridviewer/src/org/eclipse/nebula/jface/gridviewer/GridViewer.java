@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    rmcamara@us.ibm.com - initial API and implementation
+ *    tom.schindl@bestsolution.at - various significant contributions
  *******************************************************************************/ 
 
 package org.eclipse.nebula.jface.gridviewer;
@@ -35,8 +36,6 @@ import org.eclipse.swt.widgets.Widget;
  * Content providers for grid viewers must not implement the
  * {@code ITreeContentProvider} interface.
  * <p>
- * 
- * @author rmcamara@us.ibm.com
  */
 public class GridViewer extends AbstractTableViewer
 {
