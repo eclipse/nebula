@@ -12,3 +12,6 @@ automated nebula build.
 	javadoc.exclude -> the comma seperated list of packages that should be ignored by javadoc
 	snippets.path -> the directory/path to the folder of snippets for the widget
 5. Edit masterbuild.xml and add a line to the "buildall" target.
+
+
+..
