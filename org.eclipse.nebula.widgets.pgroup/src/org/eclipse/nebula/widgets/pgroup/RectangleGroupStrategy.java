@@ -53,11 +53,7 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
 
     private Color g2;
 
-    private boolean active = false;
-
     private int titleHeight;
-
-    private int textWidth;
 
     private int fontHeight;
 
@@ -739,8 +735,6 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
         }
 
         fontHeight = gc.getFontMetrics().getHeight();
-
-        textWidth = gc.stringExtent(getGroup().getText()).x;
 
         titleAreaHeight = fontHeight + (2 * titleTextMargin) + (2 * vMargin);
         if (getGroup().getToggleRenderer() != null)
