@@ -6,4 +6,4 @@ set CVSROOT=:pserver:anonymous@dev.eclipse.org:/cvsroot/technology
 d:
 cd\nebula_build\org.eclipse.swt.nebula
 ..\cvs update -C org.eclipse.nebula.build/masterbuild.xml
-java -cp %ECLIPSE_HOME%\startup.jar;bin\jsch-0.1.32.jar;%ECLIPSE_HOME%\plugins\org.eclipse.swt_3.3.0.v3325g.jar;%ECLIPSE_HOME%\plugins\org.eclipse.swt.win32.win32.x86_3.3.0.v3325.jar org.eclipse.core.launcher.Main -application org.eclipse.ant.core.antRunner -buildfile masterbuild.xml -DbaseLocation=%ECLIPSE_HOME% -logfile ../../log.txt -Dpassword=XXXX
+java -cp %ECLIPSE_HOME%\startup.jar;..\..\jsch-0.1.32.jar;%ECLIPSE_HOME%\plugins\org.eclipse.swt_3.3.0.v3325g.jar;%ECLIPSE_HOME%\plugins\org.eclipse.swt.win32.win32.x86_3.3.0.v3325.jar org.eclipse.core.launcher.Main -application org.eclipse.ant.core.antRunner -buildfile masterbuild.xml -DbaseLocation=%ECLIPSE_HOME% -logfile ../../log.txt -Dpassword=XXXX
