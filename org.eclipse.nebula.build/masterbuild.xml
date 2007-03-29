@@ -26,7 +26,10 @@
     <property name="nebula.plugins" value="../../org.eclipse.swt.nebula"/>
     <!-- Location relative to a plugin that build results should be put in. -->
     <property name="nebula.build.output" value="../../nebula.build"/>
-    
+	<!-- Eclipse root directory -->
+	<property name="eclipse.root" value="../../eclipse33m5"/>
+	    
+	
 	<!--
 	    This is the master build script for Nebula.  
 	    
