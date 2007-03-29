@@ -101,10 +101,10 @@
     
 	<target name="init" depends="clean">
 	        <mkdir dir="${nebula.build.output}"/>
-	        <cvs command="checkout -C" cvsroot=":pserver:anonymous@dev.eclipse.org:/cvsroot/technology"
+	        <cvs command="checkout" cvsroot=":pserver:anonymous@dev.eclipse.org:/cvsroot/technology"
 	            package="org.eclipse.swt.nebula"
 	            dest="../../"
-				failonerror="no">
+				failonerror="yes">
 	        </cvs>
 	</target>
 	    
