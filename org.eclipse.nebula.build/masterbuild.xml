@@ -106,8 +106,7 @@
 	            dest="../../"
 				failonerror="Yes">
 	            <commandline>
-	                <argument value="-C"/>
-	            	<argument value="-d"/>
+	                <argument line=" -C -d "/>
 	            </commandline>
 	        </cvs>
 	</target>
