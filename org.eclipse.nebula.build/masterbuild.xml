@@ -104,7 +104,7 @@
 	        <cvs command="checkout" cvsroot=":pserver:anonymous@dev.eclipse.org:/cvsroot/technology"
 	            package="org.eclipse.swt.nebula"
 	            dest="../../"
-				failonerror="yes">
+				failonerror="no">
 	        </cvs>
 	</target>
 	    
