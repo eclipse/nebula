@@ -104,7 +104,7 @@
 	        <cvs command="update -d -C" cvsroot=":pserver:anonymous@dev.eclipse.org:/cvsroot/technology"
 	            package="org.eclipse.swt.nebula"
 	            dest="../../"
-				failonerror="Yes">
+				failonerror="no">
 	        </cvs>
 	</target>
 	    
