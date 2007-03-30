@@ -90,7 +90,7 @@
     	<eclipse.buildScript elements="plugin@${component}"
     	 		buildDirectory="${nebula.plugins}\${component}"
     			baseLocation="${eclipse.root}"
-
+				pluginPath="${eclipse.root}"
     	/>
     	
         <delete dir="${nebula.build.temp}"/>
