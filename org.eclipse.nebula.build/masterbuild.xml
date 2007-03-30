@@ -21,11 +21,11 @@
     </taskdef>
     
     <!-- Location of the scratch directory that can be used be individual builds. -->
-    <property name="nebula.build.temp" value="../../build.temp"/>
+    <property name="nebula.build.temp" value="d:/nebula_build/build.temp"/>
     <!-- root directory of the nebula plugins (cvs root) -->
-    <property name="nebula.plugins" value="../../org.eclipse.swt.nebula"/>
+    <property name="nebula.plugins" value="d:/nebula_build/org.eclipse.swt.nebula"/>
     <!-- Location relative to a plugin that build results should be put in. -->
-    <property name="nebula.build.output" value="../../nebula.build"/>
+    <property name="nebula.build.output" value="d:/nebula_build/nebula.build"/>
 	<!-- Eclipse root directory -->
 	<property name="eclipse.root" value="d:/nebula_build/eclipse33m5/eclipse"/>
 	    
@@ -90,11 +90,12 @@
     	<eclipse.buildScript elements="plugin@${component}"
     	 		buildDirectory="${nebula.plugins}\${component}"
     			baseLocation="${eclipse.root}"
-				pluginPath="${eclipse.root}"
     	/>
     	
         <delete dir="${nebula.build.temp}"/>
         <mkdir dir="${nebula.build.temp}"/>
+    	
+    	
         <if>
             <available file="${nebula.plugins}/${component}/nebula_build.xml"
                 property="nebula.build.override"/>
@@ -102,7 +103,7 @@
             	<ant antfile="nebula_build.xml" dir="${nebula.plugins}/${component}"/>
             </then>
             <else>
-            	<ant antfile="build.xml" target="build.update.jar" dir="../${component}"/>
+            	<ant antfile="build.xml" target="build.update.jar" dir="${nebula.plugins}\${component}"/>
                 <subant antfile="common.xml" inheritall="true" inheritrefs="true" buildpath="." />
             </else>
         </if>
