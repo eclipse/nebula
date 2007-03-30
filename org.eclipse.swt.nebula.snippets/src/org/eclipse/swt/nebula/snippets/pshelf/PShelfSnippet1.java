@@ -11,10 +11,10 @@
 package org.eclipse.swt.nebula.snippets.pshelf;
  
 
+import org.eclipse.nebula.widgets.pshelf.PShelf;
+import org.eclipse.nebula.widgets.pshelf.PShelfItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.nebula.widgets.pshelf.PShelf;
-import org.eclipse.swt.nebula.widgets.pshelf.PShelfItem;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
