@@ -38,7 +38,10 @@
 	    2. Update the buildall target in this file, duplicate the antcall task specifying
 	    your component.	    
 	    -->
-    <target name="buildall" depends="init">
+    <target name="buildall">
+    	
+    	<delete dir="${nebula.build.output}"/>
+    	
         <antcall target="buildcomponent">
             <param name="component" value="org.eclipse.nebula.widgets.grid"/>
         </antcall>
@@ -87,14 +90,20 @@
 	
     <target name="buildcomponent">
     	
-    	<!--<eclipse.buildScript elements="plugin@${component}"
+    	<eclipse.buildScript elements="plugin@${component}"
     	 		buildDirectory="${nebula.plugins}\${component}"
     			baseLocation="${eclipse.root}"
-    	/>-->
+    	/>
     	
         <delete dir="${nebula.build.temp}"/>
         <mkdir dir="${nebula.build.temp}"/>
     	
+    	<delete dir="${nebula.plugins}/${component}"/>
+        <cvs command="checkout" cvsroot=":pserver:anonymous@dev.eclipse.org:/cvsroot/technology"
+            package="org.eclipse.swt.nebula/${component}"
+            dest="${nebula.plugins}"
+			failonerror="yes">
+        </cvs>
     	
         <if>
             <available file="${nebula.plugins}/${component}/nebula_build.xml"
@@ -109,17 +118,4 @@
         </if>
     </target>
     
-	<target name="init" depends="clean">
-	        <mkdir dir="${nebula.build.output}"/>
-	        <cvs command="checkout" cvsroot=":pserver:anonymous@dev.eclipse.org:/cvsroot/technology"
-	            package="org.eclipse.swt.nebula"
-	            dest="../../"
-				failonerror="no">
-	        </cvs>
-	</target>
-	    
-	    <target name="clean">
-	        <delete dir="${nebula.build.output}"/>
-	        <delete dir="${nebula.build.temp}"/>
-	    </target>
 </project>
