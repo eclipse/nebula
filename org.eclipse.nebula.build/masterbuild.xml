@@ -94,8 +94,8 @@
         <mkdir dir="${nebula.build.temp}"/>
     	
     	<delete dir="${nebula.plugins}/${component}"/>
-        <cvs command="checkout" cvsroot=":pserver:anonymous@dev.eclipse.org:/cvsroot/technology"
-            package="org.eclipse.swt.nebula/${component}"
+        <cvs command="checkout" cvsroot=":pserver:anonymous@dev.eclipse.org:/cvsroot/technology/org.eclipse.swt.nebula"
+            package="${component}"
             dest="${nebula.plugins}"
 			failonerror="yes">
         </cvs>
