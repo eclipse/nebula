@@ -200,7 +200,7 @@ public class DefaultCellRenderer extends GridCellRenderer
             textLayout.setFont(gc.getFont());
             textLayout.setText(item.getText(getColumn()));
             textLayout.setAlignment(getAlignment());
-            textLayout.setWidth(width);
+            textLayout.setWidth(width < 1 ? 1 : width);
             
             textLayout.draw(gc, getBounds().x + x, getBounds().y + topMargin);
         }
