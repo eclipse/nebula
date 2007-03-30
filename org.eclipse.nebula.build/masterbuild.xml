@@ -49,7 +49,6 @@
         <antcall target="buildcomponent">
             <param name="component" value="org.eclipse.nebula.jface.gridviewer"/>
         </antcall>
-    	<!--
         <antcall target="buildcomponent">
             <param name="component" value="org.eclipse.nebula.widgets.gallery"/>
         </antcall>    	
@@ -65,7 +64,6 @@
         <antcall target="buildcomponent">
             <param name="component" value="org.eclipse.nebula.widgets.pshelf"/>
         </antcall>  
-        -->
     </target>
     
     <target name="publish" depends="buildall" description="Uploads all build zips to the eclipse server.">
