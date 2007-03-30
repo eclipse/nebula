@@ -21,6 +21,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Widget;
 
 /**
  * GridViewerRow is the concrete implementation of the part that represents items in a
@@ -53,11 +54,6 @@ public class GridViewerRow extends ViewerRow
         return item.getBounds(0);
     }
 
-    /** {@inheritDoc} */
-    public Item getItem()
-    {
-        return item;
-    }
 
     /** {@inheritDoc} */
     public int getColumnCount()
@@ -169,17 +165,20 @@ public class GridViewerRow extends ViewerRow
 		return new TreePath(new Object[] {item.getData()});
 	}
 
-	@Override
 	public Object clone() {
 		return new GridViewerRow(item);
 	}
 
-	@Override
 	public Object getElement() {
 		return item.getData();
 	}
 	
 	void setItem(GridItem item) {
 		this.item = item;
-	}	
+	}
+
+    public Widget getItem()
+    {
+        return item;
+    }	
 }

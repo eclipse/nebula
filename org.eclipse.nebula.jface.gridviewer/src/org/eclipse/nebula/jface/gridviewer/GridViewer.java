@@ -272,7 +272,6 @@ public class GridViewer extends AbstractTableViewer
 		}
 	}
 
-	@Override
 	protected void doSelect(int[] indices) {
 		grid.select(indices);
 	}
