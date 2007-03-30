@@ -41,6 +41,7 @@
     <target name="buildall">
     	
     	<delete dir="${nebula.build.output}"/>
+    	<mkdir dir="${nebula.build.output}"/>
     	
         <antcall target="buildcomponent">
             <param name="component" value="org.eclipse.nebula.widgets.grid"/>
