@@ -27,7 +27,7 @@
     <!-- Location relative to a plugin that build results should be put in. -->
     <property name="nebula.build.output" value="d:/nebula_build/nebula.build"/>
 	<!-- Eclipse root directory -->
-	<property name="eclipse.root" value="d:/nebula_build/eclipse33m5/eclipse"/>
+	<property name="eclipse.root" value="d:/nebula_build/eclipse33m6/eclipse"/>
 	    
 	
 	<!--
