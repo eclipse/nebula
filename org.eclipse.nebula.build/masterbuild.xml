@@ -112,7 +112,7 @@
             	<ant antfile="nebula_build.xml" dir="${nebula.plugins}/${component}"/>
             </then>
             <else>
-            	<ant antfile="build.xml" target="build.update.jar" dir="${nebula.plugins}\${component}" output="d:\nebula_build\${component}.log"/>
+            	<ant antfile="build.xml" target="build.update.jar" dir="${nebula.plugins}\${component}" />
                 <subant antfile="common.xml" inheritall="true" inheritrefs="true" buildpath="." />
             </else>
         </if>
