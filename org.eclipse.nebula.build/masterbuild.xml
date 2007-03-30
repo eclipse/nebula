@@ -115,7 +115,7 @@
             </then>
             <else>
             	<ant antfile="build.xml" target="build.update.jar" dir="${nebula.plugins}\${component}" />
-            	<copy file="${component}_1.0.0.jar" todir="${nebula.build.output}"/>
+            	<copy file="${nebula.plugins}\${component}\${component}_1.0.0.jar" todir="${nebula.build.output}"/>
                 <subant antfile="common.xml" inheritall="true" inheritrefs="true" buildpath="." />
             </else>
         </if>
