@@ -90,11 +90,6 @@
 	
     <target name="buildcomponent">
     	
-    	<eclipse.buildScript elements="plugin@${component}"
-    	 		buildDirectory="${nebula.plugins}\${component}"
-    			baseLocation="${eclipse.root}"
-    	/>
-    	
         <delete dir="${nebula.build.temp}"/>
         <mkdir dir="${nebula.build.temp}"/>
     	
@@ -104,6 +99,11 @@
             dest="${nebula.plugins}"
 			failonerror="yes">
         </cvs>
+    	
+    	<eclipse.buildScript elements="plugin@${component}"
+    	 		buildDirectory="${nebula.plugins}\${component}"
+    			baseLocation="${eclipse.root}"
+    	/>
     	
         <if>
             <available file="${nebula.plugins}/${component}/nebula_build.xml"
