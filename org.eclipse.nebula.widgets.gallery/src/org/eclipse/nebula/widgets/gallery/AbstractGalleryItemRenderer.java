@@ -42,7 +42,7 @@ public abstract class AbstractGalleryItemRenderer {
 
 	abstract void draw(GC gc, GalleryItem item, int index, int x, int y, int width, int height);
 
-	abstract void dispose();
+	public abstract void dispose();
 
 	/**
 	 * This method is called before drawing the first item. It may be used to
