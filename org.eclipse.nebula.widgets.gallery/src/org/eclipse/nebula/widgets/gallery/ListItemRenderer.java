@@ -146,19 +146,33 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 				descriptionFontHeight = gc.getFontMetrics().getHeight();
 			}
 
+			boolean displayText = false;
+			boolean displayDescription = false;
+			int remainingHeight = height - 2 - textFontHeight;
+			if (remainingHeight > 0)
+				displayText = true;
+			remainingHeight -= descriptionFontHeight;
+			if (remainingHeight > 0)
+				displayDescription = true;
+
 			// Background color
 			gc.setBackground(selected ? selectionBackgroundColor : backgroundColor);
 
 			// Draw text
-			gc.setForeground(selected ? this.selectionForegroundColor : this.foregroundColor);
-			gc.setFont(textFont);
-			gc.drawText(text, x + useableHeight + 5, y + ((height - descriptionFontHeight - textFontHeight - 1) >> 1), true);
-
+			if (displayText) {
+				int transY = (height - textFontHeight - 2);
+				if (displayDescription)
+					transY -= descriptionFontHeight;
+				transY = transY >> 1;
+				gc.setForeground(selected ? this.selectionForegroundColor : this.foregroundColor);
+				gc.setFont(textFont);
+				gc.drawText(text, x + useableHeight + 5, y + transY , true);
+			}
 			// Draw description
-			if (description != null) {
+			if (description != null && displayDescription) {
 				gc.setForeground(this.descriptionColor);
 				gc.setFont(descriptionFont);
-				gc.drawText(description, x + useableHeight + 5, y + ((height - descriptionFontHeight - textFontHeight - 1) >> 1) + textFontHeight + 1, true);
+				gc.drawText(description, x + useableHeight + 5, y + ((height - descriptionFontHeight - textFontHeight - 2) >> 1) + textFontHeight + 1, true);
 			}
 		}
 	}
