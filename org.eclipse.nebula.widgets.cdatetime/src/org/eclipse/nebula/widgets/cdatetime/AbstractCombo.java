@@ -112,6 +112,11 @@ public abstract class AbstractCombo extends Composite {
 		}
 	}
 	
+	private static int swtStyle(int style) {
+		if(win32 && ((style & CDT.BORDER) != 0)) return SWT.BORDER;
+		return SWT.NONE;
+	}
+
 	/**
 	 * true if the platform is carbon, false otherwise
 	 */
@@ -147,7 +152,8 @@ public abstract class AbstractCombo extends Composite {
 	Listener listener, filter;
 	
 	public AbstractCombo(Composite parent, int style) {
-		super(parent, SWT.NONE);
+		super(parent, swtStyle(style));
+		setBackgroundMode(SWT.INHERIT_DEFAULT);
 		
 		this.style = style;
 		simple = (style & CDT.SIMPLE) != 0;
@@ -757,6 +763,7 @@ public abstract class AbstractCombo extends Composite {
 		checkWidget();
 		button.setEnabled(enabled);
 		text.setEnabled(enabled);
+		super.setEnabled(enabled);
 	}
 	
 	public boolean setFocus() {
