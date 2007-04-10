@@ -119,8 +119,14 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 			if (Gallery.DEBUG)
 				System.out.println("hCount :  " + hCount + " vCount : " + vCount);
 
-			int posX = index % hCount;
-			int posY = (index - posX) / hCount;
+			int posX, posY;
+			if (gallery.isVertical()) {
+				posX = index % hCount;
+				posY = (index - posX) / hCount;
+			} else {
+				posY = index % vCount;
+				posX = (index - posY) / vCount;
+			}
 
 			Item item = parent.getItem(index);
 
@@ -128,8 +134,14 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 			if (item == null)
 				return;
 
-			int xPixelPos = posX * (itemWidth + margin) + margin;
-			int yPixelPos = posY * (itemHeight + minMargin) - gallery.translate + minMargin + ((parent == null) ? 0 : (parent.y) + offset);
+			int xPixelPos, yPixelPos;
+			if (gallery.isVertical()) {
+				xPixelPos = posX * (itemWidth + margin) + margin;
+				yPixelPos = posY * (itemHeight + minMargin) - gallery.translate + minMargin + ((parent == null) ? 0 : (parent.y) + offset);
+			} else {
+				yPixelPos = posY * (itemHeight + margin) + margin;
+				xPixelPos = posX * (itemWidth + minMargin) - gallery.translate + minMargin + ((parent == null) ? 0 : (parent.x) + offset);
+			}
 
 			GalleryItem gItem = (GalleryItem) item;
 			gItem.x = xPixelPos;
@@ -207,7 +219,6 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 
 		x = (size - minMargin) / (itemSize + minMargin);
 		if (x > 0) {
-
 			y = (int) Math.ceil((double) nbItems / (double) x);
 		} else {
 			// Show at least one item;
@@ -218,21 +229,10 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 		return new Point(x, y);
 	}
 
-	void dispose() {
-	}
-
-	void draw(GC gc, GalleryItem group, int x, int y, int clipX, int clipY, int clipWidth, int clipHeight) {
-		// TODO Auto-generated method stub
-
-	}
-
-	void layout(GC gc, GalleryItem group) {
-		// TODO Auto-generated method stub
-
+	public void dispose() {
 	}
 
 	boolean mouseDown(GalleryItem group, MouseEvent e, Point coords) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -274,33 +274,64 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 		if (Gallery.DEBUG)
 			System.out.println("getitem " + coords.x + " " + coords.y);
 
-		Integer tmp = (Integer) group.getData(H_COUNT);
-		if (tmp == null)
-			return null;
-		int hCount = tmp.intValue();
 
-		// Calculate the "might be" position
-		int posX = (coords.x - minMargin) / (itemWidth + margin);
+		int itemNb;
+		if (gallery.isVertical()) {
+			Integer tmp = (Integer) group.getData(H_COUNT);
+			if (tmp == null)
+				return null;
+			int hCount = tmp.intValue();
 
-		// Check if the users clicked on the X margin.
-		if ((coords.x - minMargin) % (itemWidth + margin) > itemWidth) {
-			return null;
+			// Calculate the "might be" position
+			int posX = (coords.x - minMargin) / (itemWidth + margin);
+
+			// Check if the users clicked on the X margin.
+			if ((coords.x - minMargin) % (itemWidth + margin) > itemWidth) {
+				return null;
+			}
+
+			if (posX >= hCount) // Nothing there
+				return null;
+
+			if (coords.y - group.y - minMargin < offset)
+				return null;
+
+			int posY = (coords.y - group.y - offset - minMargin) / (itemHeight + minMargin);
+
+			// Check if the users clicked on the Y margin.
+			if (((coords.y - group.y - offset - minMargin) % (itemHeight + minMargin)) > itemHeight) {
+				return null;
+			}
+			itemNb = posX + posY * hCount;
 		}
+		else {
+			Integer tmp = (Integer) group.getData(V_COUNT);
+			if (tmp == null)
+				return null;
+			int vCount = tmp.intValue();
 
-		if (posX >= hCount) // Nothing there
-			return null;
+			// Calculate the "might be" position
+			int posY = (coords.y - minMargin) / (itemHeight + margin);
 
-		if (coords.y - group.y - minMargin < offset)
-			return null;
+			// Check if the users clicked on the X margin.
+			if ((coords.y - minMargin) % (itemHeight + margin) > itemHeight) {
+				return null;
+			}
 
-		int posY = (coords.y - group.y - offset - minMargin) / (itemHeight + minMargin);
+			if (posY >= vCount) // Nothing there
+				return null;
 
-		// Check if the users clicked on the Y margin.
-		if (((coords.y - group.y - offset - minMargin) % (itemHeight + minMargin)) > itemHeight) {
-			return null;
+			if (coords.x - group.x - minMargin < offset)
+				return null;
+
+			int posX = (coords.x - group.x - offset - minMargin) / (itemWidth + minMargin);
+
+			// Check if the users clicked on the X margin.
+			if (((coords.x - group.x - offset - minMargin) % (itemWidth + minMargin)) > itemWidth) {
+				return null;
+			}
+			itemNb = posY + posX * vCount;
 		}
-		int itemNb = posX + posY * hCount;
-
 		if (Gallery.DEBUG)
 			System.out.println("Item found : " + itemNb);
 
@@ -365,13 +396,13 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 
 	private GalleryItem getPreviousGroup(GalleryItem group) {
 		int gPos = gallery.indexOf(group);
-		while (gPos > 0){
+		while (gPos > 0) {
 			GalleryItem newGroup = gallery.getItem(gPos - 1);
 			if (newGroup.isExpanded())
 				return newGroup;
 			gPos--;
 		}
-			
+
 		return null;
 	}
 
@@ -392,6 +423,8 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 	private final int START = 1;
 
 	private GalleryItem getFirstItem(GalleryItem group, int from) {
+		if (group == null)
+			return null;
 
 		switch (from) {
 		case END:
@@ -415,6 +448,9 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 	 * @return
 	 */
 	private GalleryItem getItemAt(GalleryItem group, int pos, int from) {
+		if (group == null)
+			return null;
+
 		int hCount = ((Integer) group.getData(H_COUNT)).intValue();
 		int offset = 0;
 		switch (from) {

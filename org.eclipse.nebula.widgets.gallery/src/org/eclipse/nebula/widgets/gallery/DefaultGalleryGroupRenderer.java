@@ -46,10 +46,6 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 		titleColor = Display.getDefault().getSystemColor(SWT.COLOR_TITLE_FOREGROUND);
 	}
 
-	void dispose() {
-
-	}
-
 	void draw(GC gc, GalleryItem group, int x, int y, int clipX, int clipY, int clipWidth, int clipHeight) {
 		// TODO: finish drawing.
 
@@ -70,8 +66,8 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 		AbstractRenderer c = new TreeNodeToggleRenderer();
 		c.setExpanded(expanded);
 
-		int xShift = getShift( titleHeight , c.getSize().x );
-		int yShift = getShift( titleHeight , c.getSize().y );
+		int xShift = getShift(titleHeight, c.getSize().x);
+		int yShift = getShift(titleHeight, c.getSize().y);
 		c.setBounds(x + xShift, y + yShift, 100, 100);
 		c.paint(gc, group);
 

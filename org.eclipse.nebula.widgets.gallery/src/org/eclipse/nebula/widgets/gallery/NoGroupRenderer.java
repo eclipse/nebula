@@ -71,6 +71,24 @@ public class NoGroupRenderer extends AbstractGridGroupRenderer {
 
 			group.setData(H_COUNT, new Integer(hCount));
 			group.setData(V_COUNT, new Integer(vCount));
+		}else {
+			// TODO : implement horizontal mode
+			int sizeY = group.height;
+			group.width = OFFSET;
+
+			Point l = gridLayout(sizeY, countLocal, itemHeight);
+			int vCount = l.x;
+			int hCount = l.y;
+			if (autoMargin) {
+				// Calculate best margins
+				margin = calculateMargins(sizeY, vCount, itemHeight);
+			}
+
+			Point s = this.getSize(hCount, vCount, itemWidth, itemHeight, minMargin, margin);
+			group.width += s.x;
+
+			group.setData(H_COUNT, new Integer(hCount));
+			group.setData(V_COUNT, new Integer(vCount));
 		}
 
 	}

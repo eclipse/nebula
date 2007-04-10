@@ -75,7 +75,7 @@ public abstract class AbstractGalleryGroupRenderer {
 	 */
 	abstract void draw(GC gc, GalleryItem group, int x, int y, int clipX, int clipY, int clipWidth, int clipHeight);
 
-	abstract void dispose();
+	public abstract void dispose();
 
 	/**
 	 * Returns the item that should be selected when the current item is 'item'
