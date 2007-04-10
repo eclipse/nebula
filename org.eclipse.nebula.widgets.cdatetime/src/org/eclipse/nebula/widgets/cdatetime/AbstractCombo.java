@@ -284,7 +284,7 @@ public abstract class AbstractCombo extends Composite {
 	 */
 	public void addModifyListener(ModifyListener listener) {
 		checkWidget();
-		if(text != null) text.addModifyListener(listener);
+		if(checkText()) text.addModifyListener(listener);
 //		if (listener == null) SWT.error (SWT.ERROR_NULL_ARGUMENT);
 //		TypedListener typedListener = new TypedListener (listener);
 //		addListener (SWT.Modify, typedListener);
@@ -292,7 +292,19 @@ public abstract class AbstractCombo extends Composite {
 
 	public void addTraverseListener(TraverseListener listener) {
 		checkWidget();
-		if(text != null) text.addTraverseListener(listener);
+		if(checkText()) text.addTraverseListener(listener);
+	}
+	
+	private boolean checkButton() {
+		return (button != null && !button.isDisposed());
+	}
+
+	private boolean checkContent() {
+		return (content != null && !content.isDisposed());
+	}
+	
+	private boolean checkText() {
+		return (text != null && !text.isDisposed());
 	}
 	
 	/**
@@ -442,11 +454,12 @@ public abstract class AbstractCombo extends Composite {
 	}
 
 	/**
-	 * returns the menu for the Text widget of this DropCombo
+	 * returns the menu for this combo
 	 */
 	public Menu getMenu() {
 		checkWidget();
-		return text.getMenu();
+		if(checkText()) return text.getMenu();
+		return getMenu();
 	}
 
 	protected Composite getParentForContent() {
@@ -470,9 +483,13 @@ public abstract class AbstractCombo extends Composite {
 		return style;
 	}
 	
+	/**
+	 * Returns the text of this combo
+	 * @return
+	 */
 	public String getText() {
 		checkWidget();
-		return text.getText();
+		return checkText() ? text.getText() : "";
 	}
 	
 	/**
@@ -566,7 +583,7 @@ public abstract class AbstractCombo extends Composite {
 			if(!holdOpen) {
 				contentShell.setVisible(false);
 				this.open = false;
-				if(text != null) text.setFocus();
+				if(checkText()) text.setFocus();
 			}
 		} else {
 			contentShell.pack(true);
@@ -671,14 +688,14 @@ public abstract class AbstractCombo extends Composite {
 	 */
 	public void removeModifyListener (ModifyListener listener) {
 		checkWidget();
-		if(text != null) text.addModifyListener(listener);
+		if(checkText()) text.addModifyListener(listener);
 //		if (listener == null) SWT.error (SWT.ERROR_NULL_ARGUMENT);
 //		removeListener(SWT.Modify, listener);
 	}
 
 	public void removeTraverseListener(TraverseListener listener) {
 		checkWidget();
-		if(text != null) text.removeTraverseListener(listener);
+		if(checkText()) text.removeTraverseListener(listener);
 	}
 	/**
 	 * Set the visibility style of the drop button.
@@ -727,7 +744,7 @@ public abstract class AbstractCombo extends Composite {
 			break;
 		}
 		
-		button.setVisible(visible);
+		if(checkButton()) button.setVisible(visible);
 
 		layout(true);
 		update();
@@ -740,7 +757,7 @@ public abstract class AbstractCombo extends Composite {
 	 */
 	protected void setContent(Control contents) {
 		checkWidget();
-		if(this.content != null && !this.content.isDisposed()) {
+		if(checkContent()) {
 			int[] contentsEvents = { SWT.FocusIn };
 			for(int i = 0; i < contentsEvents.length; i++) this.content.removeListener(contentsEvents[i], listener);
 		}
@@ -756,30 +773,32 @@ public abstract class AbstractCombo extends Composite {
 
 	public void setEditable(boolean editable) {
 		checkWidget();
-		text.setEditable(editable);
+		if(checkText()) text.setEditable(editable);
 	}
 	
 	public void setEnabled(boolean enabled) {
 		checkWidget();
-		button.setEnabled(enabled);
-		text.setEnabled(enabled);
+		if(checkButton()) button.setEnabled(enabled);
+		if(checkText()) text.setEnabled(enabled);
+		if(checkContent()) content.setEnabled(enabled);
 		super.setEnabled(enabled);
 	}
 	
 	public boolean setFocus() {
 		if(simple) {
-			if(content != null && !content.isDisposed()) return content.setFocus();
+			if(checkContent()) return content.setFocus();
 			return super.setFocus();
 		} else {
-			return text.setFocus();			
+			if(checkText()) return text.setFocus();
+			return super.setFocus();
 		}
 	}
 
 	public void setFont(Font font) {
 		super.setFont(font);
-		if(button != null && !button.isDisposed()) button.setFont(font);
-		if(text != null && !text.isDisposed()) text.setFont(font);
-		if(content != null && !content.isDisposed()) content.setFont(font);
+		if(checkButton()) button.setFont(font);
+		if(checkText()) text.setFont(font);
+		if(checkContent()) content.setFont(font);
 	}
 	
 	/**
@@ -800,7 +819,8 @@ public abstract class AbstractCombo extends Composite {
 	 */
 	public void setMenu(Menu menu) {
 		checkWidget();
-		text.setMenu(menu);
+		if(checkText()) text.setMenu(menu);
+		else setMenu(menu);
 	}
 
 	protected void setModifyEventProperties(Event e) {	}
@@ -822,9 +842,10 @@ public abstract class AbstractCombo extends Composite {
 
 	public void setRedraw(boolean redraw) {
 		checkWidget();
-		button.setRedraw(redraw);
-		text.setRedraw(redraw);
-		if(contentShell != null) contentShell.setRedraw(redraw);
+//		if(checkButton()) button.setRedraw(redraw);
+//		if(checkText()) text.setRedraw(redraw);
+//		if(checkContent()) contentShell.setRedraw(redraw);
+		super.setRedraw(redraw);
 	}
 
 	/**
