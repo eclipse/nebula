@@ -13,6 +13,8 @@ import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 import org.eclipse.ui.presentations.StackPresentation;
 
+import java.util.Map;
+
 /**
  * 
  *
@@ -39,7 +41,21 @@ public class PresentationFactory extends AbstractPresentationFactory
                                                               IStackPresentationSite site,
                                                               boolean showTitle)
     {
-        return new PShelfStackPresentation(site,parent);
+        if (showTitle)
+        {
+            if ("group".equals(site.getProperty("type")))
+            {
+                return new PGroupStackPresentation(site,parent);
+            }            
+            else
+            {
+                return new ExpandBarStandaloneStackPresentation(site,parent);
+            }            
+        }
+        else
+        {
+            return new EmptyStandaloneStackPresentation(site,parent);
+        }
     }
 
     /** 
@@ -48,6 +64,10 @@ public class PresentationFactory extends AbstractPresentationFactory
     @Override
     public StackPresentation createViewPresentation(Composite parent, IStackPresentationSite site)
     {
+        if ("group".equals(site.getProperty("type")))
+        {
+            return new PGroupStackPresentation(site,parent);
+        }     
         return new PShelfStackPresentation(site,parent);
     }
 

@@ -7,4 +7,6 @@ Bundle-Vendor: eclipse.org
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime
 Bundle-ClassPath: .,
- nebula_pshelf_ALPHA.jar
+ nebula_pshelf_ALPHA.jar,
+ nebula_pgroup_ALPHA.jar
+Export-Package: org.eclipse.swt.nebula.presentations.shelf.tab

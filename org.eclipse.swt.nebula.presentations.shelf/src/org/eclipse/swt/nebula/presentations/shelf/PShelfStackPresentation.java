@@ -244,14 +244,14 @@ public class PShelfStackPresentation extends StackPresentation
                 
         if (part.isBusy() && item.getData(DATAKEY_ANIMATION) == null)
         {
-            BusyAnimation busyAnim = new BusyAnimation(item);
+            BusyItemAnimation busyAnim = new BusyItemAnimation(item);
             busyAnim.setImages(busyImages);
             item.setData(DATAKEY_ANIMATION,busyAnim);
             busyAnim.start();
         }
         else if (!part.isBusy() && item.getData(DATAKEY_ANIMATION) != null)
         {
-            BusyAnimation busyAnim = (BusyAnimation)item.getData(DATAKEY_ANIMATION);
+            BusyItemAnimation busyAnim = (BusyItemAnimation)item.getData(DATAKEY_ANIMATION);
             busyAnim.stop();
             item.setData(DATAKEY_ANIMATION,null);
             item.setImage(part.getTitleImage());
