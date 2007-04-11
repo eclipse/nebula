@@ -274,7 +274,6 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 		if (Gallery.DEBUG)
 			System.out.println("getitem " + coords.x + " " + coords.y);
 
-
 		int itemNb;
 		if (gallery.isVertical()) {
 			Integer tmp = (Integer) group.getData(H_COUNT);
@@ -303,8 +302,7 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 				return null;
 			}
 			itemNb = posX + posY * hCount;
-		}
-		else {
+		} else {
 			Integer tmp = (Integer) group.getData(V_COUNT);
 			if (tmp == null)
 				return null;
@@ -342,6 +340,41 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 		return null;
 	}
 
+	private GalleryItem goLeft(GalleryItem group, int pos) {
+		pos--;
+		if (pos < 0)
+			return this.getFirstItem(this.getPreviousGroup(group), END);
+		else
+			return group.getItem(pos);
+	}
+
+	private GalleryItem goRight(GalleryItem group, int pos) {
+		pos++;
+		if (pos >= group.getItemCount())
+			return this.getFirstItem(this.getNextGroup(group), START);
+		else
+			return group.getItem(pos);
+	}
+
+	private GalleryItem goUp(GalleryItem group, int pos, int hCount) {
+		int colPos = pos % hCount;
+		pos -= hCount;
+		if (pos < 0)
+			return this.getItemAt(this.getPreviousGroup(group), colPos, END);
+		else
+			return group.getItem(pos);
+	}
+
+	private GalleryItem goDown(GalleryItem group, int pos, int hCount) {
+		int colPos = pos % hCount;
+		pos += hCount;
+		if (pos >= group.getItemCount())
+			return this.getItemAt(this.getNextGroup(group), colPos, START);
+		else
+			return group.getItem(pos);
+
+	}
+
 	public GalleryItem getNextItem(GalleryItem item, int key) {
 
 		if (item.getParentItem() == null) {
@@ -351,44 +384,47 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 		GalleryItem group = item.getParentItem();
 		int pos = group.indexOf(item);
 		GalleryItem next = null;
-		int hCount = ((Integer) group.getData(H_COUNT)).intValue();
-		int colPos = -1;
 
-		switch (key) {
-		case SWT.ARROW_LEFT:
-			pos--;
-			if (pos < 0)
-				next = this.getFirstItem(this.getPreviousGroup(group), END);
-			else
-				next = group.getItem(pos);
-			break;
+		if (gallery.isVertical()) {
+			int hCount = ((Integer) group.getData(H_COUNT)).intValue();
+			switch (key) {
+			case SWT.ARROW_LEFT:
+				next = goLeft(group, pos);
+				break;
 
-		case SWT.ARROW_RIGHT:
-			pos++;
-			if (pos >= group.getItemCount())
-				next = this.getFirstItem(this.getNextGroup(group), START);
-			else
-				next = group.getItem(pos);
-			break;
+			case SWT.ARROW_RIGHT:
+				next = goRight(group, pos);
+				break;
 
-		case SWT.ARROW_UP:
-			colPos = pos % hCount;
-			pos -= hCount;
-			if (pos < 0)
-				next = this.getItemAt(this.getPreviousGroup(group), colPos, END);
-			else
-				next = group.getItem(pos);
-			break;
+			case SWT.ARROW_UP:
+				next = goUp(group, pos, hCount);
+				break;
 
-		case SWT.ARROW_DOWN:
-			colPos = pos % hCount;
-			pos += hCount;
-			if (pos >= group.getItemCount())
-				next = this.getItemAt(this.getNextGroup(group), colPos, START);
-			else
-				next = group.getItem(pos);
-			break;
+			case SWT.ARROW_DOWN:
+				next = goDown(group, pos, hCount);
+				break;
 
+			}
+		} else {
+			int vCount = ((Integer) group.getData(V_COUNT)).intValue();
+			switch (key) {
+			case SWT.ARROW_LEFT:
+				next = goUp(group, pos, vCount);
+				break;
+
+			case SWT.ARROW_RIGHT:
+				next = goDown(group, pos, vCount);
+				break;
+
+			case SWT.ARROW_UP:
+				next = goLeft(group, pos);
+				break;
+
+			case SWT.ARROW_DOWN:
+				next = goRight(group, pos);
+				break;
+
+			}
 		}
 
 		return next;
