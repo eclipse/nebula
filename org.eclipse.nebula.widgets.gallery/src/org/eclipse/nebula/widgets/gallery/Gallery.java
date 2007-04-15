@@ -244,19 +244,24 @@ public class Gallery extends Canvas {
 	}
 
 	/**
-	 * Removes the listener from the collection of listeners who will
-	 * be notified when the receiver's selection changes.
-	 *
-	 * @param listener the listener which should no longer be notified
-	 *
-	 * @exception IllegalArgumentException <ul>
-	 *    <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
-	 * </ul>
-	 * @exception SWTException <ul>
-	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 * </ul>
-	 *
+	 * Removes the listener from the collection of listeners who will be
+	 * notified when the receiver's selection changes.
+	 * 
+	 * @param listener
+	 *            the listener which should no longer be notified
+	 * 
+	 * @exception IllegalArgumentException
+	 *                <ul>
+	 *                <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
+	 *                </ul>
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
+	 *                </ul>
+	 * 
 	 * @see SelectionListener
 	 * @see #addSelectionListener(SelectionListener)
 	 */
@@ -533,6 +538,9 @@ public class Gallery extends Canvas {
 
 	private boolean getOrder(GalleryItem before, GalleryItem after) {
 
+		if (before == null || after == null)
+			return true;
+
 		GalleryItem newParent = before.getParentItem();
 		GalleryItem oldParent = after.getParentItem();
 
@@ -704,7 +712,7 @@ public class Gallery extends Canvas {
 			if (item == null)
 				return;
 
-			if ((e.stateMask & SWT.MOD1) > 0) {
+			if ((e.stateMask & SWT.MOD1) > 0 && lastSingleClick != null) {
 				if (item != null) {
 					if (DEBUG)
 						System.out.println("setSelected : inverse");
@@ -712,7 +720,7 @@ public class Gallery extends Canvas {
 					lastSingleClick = item;
 					redraw();
 				}
-			} else if ((e.stateMask & SWT.SHIFT) > 0) {
+			} else if ((e.stateMask & SWT.SHIFT) > 0 && lastSingleClick != null) {
 				_deselectAll();
 
 				if (getOrder(item, lastSingleClick))
