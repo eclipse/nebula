@@ -129,6 +129,24 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 					System.out.println("Hnb" + hCount + "Vnb" + vCount);
 			}
 
+		} else {
+			// Horizontal
+			int sizeY = group.height;
+			group.width = offset;
+
+			Point l = gridLayout(sizeY, countLocal, itemHeight);
+			int vCount = l.x;
+			int hCount = l.y;
+			if (autoMargin) {
+				// Calculate best margins
+				margin = calculateMargins(sizeY, vCount, itemHeight);
+			}
+
+			Point s = this.getSize(hCount, vCount, itemWidth, itemHeight, minMargin, margin);
+			group.width += s.x;
+
+			group.setData(H_COUNT, new Integer(hCount));
+			group.setData(V_COUNT, new Integer(vCount));
 		}
 
 	}
