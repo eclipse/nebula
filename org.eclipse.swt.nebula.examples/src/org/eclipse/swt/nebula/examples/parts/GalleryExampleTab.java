@@ -13,8 +13,10 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.nebula.examples.AbstractExampleTab;
 import org.eclipse.swt.nebula.examples.ExamplesView;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scale;
 
@@ -23,16 +25,34 @@ public class GalleryExampleTab extends AbstractExampleTab {
 
 	Gallery g = null;
 
+	Button bMulti = null;
+
+	Button bHScroll = null;
+
+	Button bVScroll = null;
+
 	DefaultGalleryItemRenderer itemRenderer = null;
 
 	AbstractGridGroupRenderer groupRenderer = null;
 
 	public Control createControl(Composite parent) {
-		int style = SWT.V_SCROLL | SWT.MULTI;
+		int style = SWT.NONE;
+
+		if (bMulti.getSelection())
+			style |= SWT.MULTI;
+
+		if (bHScroll.getSelection())
+			style |= SWT.H_SCROLL;
+
+		if (bVScroll.getSelection())
+			style |= SWT.V_SCROLL;
 
 		g = new Gallery(parent, style);
 		groupRenderer = new DefaultGalleryGroupRenderer();
 		groupRenderer.setAutoMargin(true);
+		groupRenderer.setItemWidth(this.itemWidthScale.getSelection());
+		groupRenderer.setItemHeight(this.itemHeightScale.getSelection());
+		groupRenderer.setMinMargin(this.marginsScale.getSelection());
 		g.setGroupRenderer(groupRenderer);
 
 		itemRenderer = new DefaultGalleryItemRenderer();
@@ -104,11 +124,35 @@ public class GalleryExampleTab extends AbstractExampleTab {
 
 	Scale marginsScale = null;
 
+	class ParamSelectionListener implements SelectionListener {
+
+		public void widgetDefaultSelected(SelectionEvent e) {
+		}
+
+		public void widgetSelected(SelectionEvent e) {
+			recreateExample();
+		}
+
+	}
+
 	public void createParameters(Composite parent) {
 		GridLayoutFactory.swtDefaults().margins(0, 0).numColumns(3).applyTo(parent);
 
+		bMulti = new Button(parent, SWT.CHECK);
+		bMulti.setText("SWT.MULTI");
+		bMulti.addSelectionListener(new ParamSelectionListener());
+
+		bVScroll = new Button(parent, SWT.RADIO);
+		bVScroll.setText("SWT.V_SCROLL");
+		bVScroll.setSelection(true);
+		bVScroll.addSelectionListener(new ParamSelectionListener());
+
+		bHScroll = new Button(parent, SWT.RADIO);
+		bHScroll.setText("SWT.H_SCROLL");
+		bHScroll.addSelectionListener(new ParamSelectionListener());
+
 		// Scale : set item size
-		scale = createScale(parent, "Item size", 16, 512, 16);
+		scale = createScale(parent, "Item size", 16, 512, 16, 64);
 		scale.addSelectionListener(new SelectionListener() {
 
 			public void widgetSelected(SelectionEvent arg0) {
@@ -126,7 +170,7 @@ public class GalleryExampleTab extends AbstractExampleTab {
 		});
 
 		// Scale : set item width
-		this.itemWidthScale = createScale(parent, "Item width", 16, 512, 16);
+		this.itemWidthScale = createScale(parent, "Item width", 16, 512, 16, 64);
 		itemWidthScale.addSelectionListener(new SelectionListener() {
 
 			public void widgetSelected(SelectionEvent arg0) {
@@ -142,7 +186,7 @@ public class GalleryExampleTab extends AbstractExampleTab {
 		});
 
 		// Scale : set item height
-		this.itemHeightScale = createScale(parent, "Item height", 16, 512, 16);
+		this.itemHeightScale = createScale(parent, "Item height", 16, 512, 16, 64);
 		itemHeightScale.addSelectionListener(new SelectionListener() {
 
 			public void widgetSelected(SelectionEvent arg0) {
@@ -158,7 +202,7 @@ public class GalleryExampleTab extends AbstractExampleTab {
 		});
 
 		// Scale : set margins size
-		this.marginsScale = createScale(parent, "Margins", 0, 128, 16);
+		this.marginsScale = createScale(parent, "Margins", 0, 128, 16, 10);
 		marginsScale.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent arg0) {
 				if (g != null) {
@@ -171,9 +215,24 @@ public class GalleryExampleTab extends AbstractExampleTab {
 			}
 		});
 
+		Button b = new Button(parent, SWT.NONE);
+		b.setText("deselectAll");
+		b.addSelectionListener(new SelectionListener() {
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			public void widgetSelected(SelectionEvent e) {
+				g.deselectAll();
+			}
+
+		});
+
 	}
 
-	private Scale createScale(Composite parent, String text, int min, int max, int increment) {
+	private Scale createScale(Composite parent, String text, int min, int max, int increment, int value) {
 		GridData gridData = new GridData();
 
 		Label l = new Label(parent, SWT.NONE);
@@ -191,6 +250,7 @@ public class GalleryExampleTab extends AbstractExampleTab {
 		scale.setMaximum(max);
 		scale.setMinimum(min);
 		scale.setPageIncrement(increment);
+		scale.setSelection(value);
 
 		return scale;
 	}
