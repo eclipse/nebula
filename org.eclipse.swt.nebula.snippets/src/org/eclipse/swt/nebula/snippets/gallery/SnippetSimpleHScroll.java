@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.swt.nebula.snippets.gallery;
 
-import org.eclipse.nebula.widgets.gallery.DefaultGalleryGroupRenderer;
-import org.eclipse.nebula.widgets.gallery.DefaultGalleryItemRenderer;
 import org.eclipse.nebula.widgets.gallery.Gallery;
 import org.eclipse.nebula.widgets.gallery.GalleryItem;
+import org.eclipse.nebula.widgets.gallery.ListItemRenderer;
+import org.eclipse.nebula.widgets.gallery.NoGroupRenderer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.Shell;
  * @author Nicolas Richeton (nicolas.richeton@gmail.com)
  */
 
-public class SnippetSimple {
+public class SnippetSimpleHScroll {
 
 	public static void main(String[] args) {
 		Display display = new Display();
@@ -42,31 +42,27 @@ public class SnippetSimple {
 
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
-		Gallery gallery = new Gallery(shell, SWT.V_SCROLL | SWT.MULTI);
+		Gallery gallery = new Gallery(shell, SWT.H_SCROLL);
 
 		// Renderers
-		DefaultGalleryGroupRenderer gr = new DefaultGalleryGroupRenderer();
+		NoGroupRenderer gr = new NoGroupRenderer();
 		gr.setMinMargin(2);
-		gr.setItemHeight(56);
-		gr.setItemWidth(72);
+		gr.setItemHeight(24);
+		gr.setItemWidth(256);
 		gr.setAutoMargin(true);
 		gallery.setGroupRenderer(gr);
 
-		DefaultGalleryItemRenderer ir = new DefaultGalleryItemRenderer();
+		ListItemRenderer ir = new ListItemRenderer();
 		gallery.setItemRenderer(ir);
 
-		for (int g = 0; g < 2; g++) {
-			GalleryItem group = new GalleryItem(gallery, SWT.NONE);
-			group.setText("Group " + g);
-			group.setExpanded(true);
+		GalleryItem group = new GalleryItem(gallery, SWT.NONE);
 
-			for (int i = 0; i < 50; i++) {
-				GalleryItem item = new GalleryItem(group, SWT.NONE);
-				if (itemImage != null) {
-					item.setImage(itemImage);
-				}
-				item.setText("Item " + i);
+		for (int i = 0; i < 50; i++) {
+			GalleryItem item = new GalleryItem(group, SWT.NONE);
+			if (itemImage != null) {
+				item.setImage(itemImage);
 			}
+			item.setText("Item " + i);
 		}
 
 		shell.pack();
@@ -76,8 +72,7 @@ public class SnippetSimple {
 				display.sleep();
 		}
 
-		if (itemImage != null)
-			itemImage.dispose();
 		display.dispose();
 	}
+
 }
