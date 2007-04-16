@@ -1614,6 +1614,7 @@ public class Grid extends Canvas
         if (height < 1)
             SWT.error(SWT.ERROR_INVALID_ARGUMENT);
         rowHeight = height;
+        userModifiedRowHeight = true;
         setScrollValuesObsolete();
         redraw();
     }
@@ -6503,19 +6504,31 @@ public class Grid extends Canvas
                     if (col.getWordWrap())
                         return hoverChange;
                     
-                    cellBounds = col.getCellRenderer().getBounds();
+                    cellBounds = col.getCellRenderer().getBounds();                    
+                    if (cellBounds.x + cellBounds.width > getSize().x)
+                    {
+                        cellBounds.width = getSize().x - cellBounds.x;
+                    }                    
                     textBounds = col.getCellRenderer().getTextBounds(item,false);
                     preferredTextBounds = col.getCellRenderer().getTextBounds(item,true);
                 }
                 else if (hoveringColumnHeader != null)
                 {
                     cellBounds = hoveringColumnHeader.getHeaderRenderer().getBounds();
+                    if (cellBounds.x + cellBounds.width > getSize().x)
+                    {
+                        cellBounds.width = getSize().x - cellBounds.x;
+                    }
                     textBounds = hoveringColumnHeader.getHeaderRenderer().getTextBounds(col,false);
                     preferredTextBounds = hoveringColumnHeader.getHeaderRenderer().getTextBounds(col,true);
                 }
                 else if (hoverColumnGroupHeader != null)
                 {
                     cellBounds = hoverColumnGroupHeader.getHeaderRenderer().getBounds();
+                    if (cellBounds.x + cellBounds.width > getSize().x)
+                    {
+                        cellBounds.width = getSize().x - cellBounds.x;
+                    }
                     textBounds = hoverColumnGroupHeader.getHeaderRenderer().getTextBounds(hoverColumnGroupHeader,false);
                     preferredTextBounds = hoverColumnGroupHeader.getHeaderRenderer().getTextBounds(hoverColumnGroupHeader,true);
                 }
