@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2006-2007 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Nicolas Richeton (nicolas.richeton@gmail.com) - initial implementation
+ *******************************************************************************/
 package org.eclipse.swt.nebula.examples.parts;
 
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -20,6 +30,11 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scale;
 
+/**
+ * Demonstrates the Gallery widget.
+ * 
+ * @author Nicolas Richeton (nicolas.richeton@gmail.com)
+ */
 public class GalleryExampleTab extends AbstractExampleTab {
 	Image eclipseImage = null;
 
@@ -82,7 +97,7 @@ public class GalleryExampleTab extends AbstractExampleTab {
 	}
 
 	/**
-	 * Add 10 groups containing 50 items each.
+	 * Add 10 groups containing 10 to 100 items each.
 	 * 
 	 * @param g
 	 */
