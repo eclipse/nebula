@@ -590,6 +590,9 @@ public class Gallery extends Canvas {
 	}
 
 	protected void _addSelection(GalleryItem item) {
+		if (this.isSelected(item))
+			return;
+
 		// Deselect all items is multi selection is disabled
 		if (!multi) {
 			_deselectAll();
@@ -643,6 +646,12 @@ public class Gallery extends Canvas {
 	}
 
 	protected boolean isSelected(GalleryItem item) {
+
+		if (item == null)
+			return false;
+		
+		if( selectionIndices == null )
+			return false;
 
 		if (item.getParentItem() != null) {
 			return item.getParentItem().isSelected(item);
