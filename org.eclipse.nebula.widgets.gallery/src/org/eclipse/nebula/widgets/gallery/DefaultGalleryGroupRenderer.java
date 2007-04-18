@@ -205,6 +205,9 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 				gallery.updateScrollBarsProperties();
 
 			} else {
+				if ((e.stateMask & SWT.MOD1) == 0) {
+					gallery.deselectAll();
+				}
 				group.selectAll();
 				gallery.notifySelectionListeners(group, gallery.indexOf(group));
 			}
