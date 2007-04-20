@@ -6652,7 +6652,6 @@ public class Grid extends Canvas
         
         if (selectionModified && !disposing)
         {
-            notifyListeners(SWT.Selection, new Event());
             updateColumnSelection();
         }
     }
@@ -6757,7 +6756,6 @@ public class Grid extends Canvas
 
         if (selectionModified && !disposing)
         {
-            notifyListeners(SWT.Selection, new Event());
             updateColumnSelection();
         }
 
@@ -7859,7 +7857,7 @@ public class Grid extends Canvas
     /**
      * Initialize accessibility.
      */
-    public void initAccessible()
+    private void initAccessible()
     {
         final Accessible accessible = getAccessible();
         accessible.addAccessibleListener(new AccessibleAdapter()
