@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Spinner;
 
 /**
  * Demonstrates the Grid widget.
@@ -62,6 +63,8 @@ public class GridExampleTab extends AbstractExampleTab
     private Button cellSelection;
     private Button selectionEnabled;
     private Button columnCellSelection;
+    private Button columnWordWrap;
+    private Spinner rowHeight;
 
     public GridExampleTab()
     {
@@ -205,6 +208,21 @@ public class GridExampleTab extends AbstractExampleTab
             }
         });
         
+        Composite rowHeightComposite = new Composite(other,SWT.NONE);
+        GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).applyTo(rowHeightComposite);
+        l = new Label(rowHeightComposite,SWT.NONE);
+        l.setText("Item Height:"); 
+        
+        rowHeight = new Spinner(rowHeightComposite,SWT.BORDER);
+        rowHeight.setValues(0,0,1000,0,1,1);
+        rowHeight.addListener(SWT.Selection, new Listener()
+        {
+            public void handleEvent(Event event)
+            {
+                grid.setItemHeight(rowHeight.getSelection());
+            }
+        });
+        
         
         l = new Label(other,SWT.NONE);
         l.setText("Properties for Second Column:");
@@ -219,6 +237,17 @@ public class GridExampleTab extends AbstractExampleTab
                 }
             }
         },true);
+        
+        columnWordWrap = ButtonFactory.create(other, SWT.CHECK, "Word Wrap",new Listener()
+                                             {
+            public void handleEvent(Event event)
+            {
+                for (int i = 0; i < grid.getColumns().length; i++)
+                {
+                    grid.getColumn(1).setWordWrap(columnWordWrap.getSelection());
+                }
+            }
+        },false);
         
     }
 
@@ -319,7 +348,7 @@ public class GridExampleTab extends AbstractExampleTab
 
         GridItem item22 = new GridItem(item2,SWT.NONE);
         item22.setText("second tree");
-        item22.setText(1,"second tree");
+        item22.setText(1,"this is a readonly checkbox (if SWT.CHECK)");
         item22.setChecked(1,true);
         item22.setGrayed(1,true);
         item22.setCheckable(1,false);
@@ -376,6 +405,17 @@ public class GridExampleTab extends AbstractExampleTab
         grid.setSelectionEnabled(selectionEnabled.getSelection());
         grid.setCellSelectionEnabled(cellSelection.getSelection());
         grid.getColumn(1).setCellSelectionEnabled(columnCellSelection.getSelection());
+        grid.getColumn(1).setWordWrap(columnWordWrap.getSelection());
+        
+        
+        if (rowHeight.getSelection() == 0)
+        {
+            rowHeight.setSelection(grid.getItemHeight());
+        }
+        else
+        {
+            grid.setItemHeight(rowHeight.getSelection());
+        }
         
         for (int i = 0; i < grid.getColumns().length; i++)
         {
