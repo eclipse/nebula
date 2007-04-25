@@ -5,16 +5,8 @@ Bundle-SymbolicName: org.eclipse.swt.nebula.snippets
 Bundle-Version: 1.0.0
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.swt,
- org.eclipse.swt.nebula,
- org.eclipse.nebula.widgets.gallery,
- org.eclipse.nebula.widgets.cdatetime,
- org.eclipse.nebula.widgets.ctree,
- org.eclipse.nebula.widgets.datechooser,
- org.eclipse.nebula.widgets.formattedtext,
- org.eclipse.nebula.jface.gridviewer,
- org.eclipse.nebula.widgets.grid,
- org.eclipse.nebula.widgets.pgroup,
  org.eclipse.jface,
  org.eclipse.core.runtime
 Export-Package: org.eclipse.swt.nebula.snippets.ctree,
  org.eclipse.swt.nebula.snippets.grid
+Bundle-ClassPath: .
