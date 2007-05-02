@@ -36,25 +36,28 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 
 	private int offset = minMargin + titleHeight;
 
-	private Color titleColor;
+	private Color titleForeground;
+
+	private Color titleBackground;
 
 	// True if margins have already been calculated. Prevents
 	// margins calculation for each group
 	boolean marginCalculated = false;
 
 	public DefaultGalleryGroupRenderer() {
-		titleColor = Display.getDefault().getSystemColor(SWT.COLOR_TITLE_FOREGROUND);
+		titleForeground = Display.getDefault().getSystemColor(SWT.COLOR_TITLE_FOREGROUND);
+		titleBackground = Display.getDefault().getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
 	}
 
 	void draw(GC gc, GalleryItem group, int x, int y, int clipX, int clipY, int clipWidth, int clipHeight) {
 		// TODO: finish drawing.
 
 		// Title background
-		gc.setBackground(gallery.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND));
+		gc.setBackground(titleBackground);
 		gc.fillRectangle(x, y, group.width, titleHeight);
 
 		// Color for text
-		gc.setForeground(titleColor);
+		gc.setForeground(titleForeground);
 
 		// Title text
 		String text = "";
@@ -188,6 +191,10 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 	}
 
 	public GalleryItem getItem(GalleryItem group, Point coords) {
+		// Cannot select an item if the group is not expanded
+		if (!group.isExpanded())
+			return null;
+
 		return super.getItem(group, coords, offset);
 	}
 
@@ -224,11 +231,19 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 		return r;
 	}
 
-	public Color getTitleColor() {
-		return titleColor;
+	public Color getTitleForeground() {
+		return titleForeground;
 	}
 
-	public void setTitleColor(Color titleColor) {
-		this.titleColor = titleColor;
+	public void setTitleForeground(Color titleColor) {
+		this.titleForeground = titleColor;
+	}
+
+	public Color getTitleBackground() {
+		return titleBackground;
+	}
+
+	public void setTitleBackground(Color titleBackground) {
+		this.titleBackground = titleBackground;
 	}
 }

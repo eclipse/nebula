@@ -649,13 +649,13 @@ public class Gallery extends Canvas {
 
 		if (item == null)
 			return false;
-		
-		if( selectionIndices == null )
-			return false;
 
 		if (item.getParentItem() != null) {
 			return item.getParentItem().isSelected(item);
 		} else {
+			if (selectionIndices == null)
+				return false;
+
 			int index = indexOf(item);
 			for (int i = 0; i < selectionIndices.length; i++) {
 				if (selectionIndices[i] == index)
@@ -689,7 +689,6 @@ public class Gallery extends Canvas {
 			if (items[i] != null)
 				items[i]._deselectAll();
 		}
-
 	}
 
 	private void onMouseDoubleClick(MouseEvent e) {
@@ -699,9 +698,7 @@ public class Gallery extends Canvas {
 		GalleryItem item = getItem(new Point(e.x, e.y));
 		if (item != null) {
 			// TODO: Handle double click.
-
 		}
-
 		mouseClickHandled = true;
 	}
 
@@ -721,35 +718,12 @@ public class Gallery extends Canvas {
 			if (item == null)
 				return;
 
-			if ((e.stateMask & SWT.MOD1) > 0 && lastSingleClick != null) {
-				if (item != null) {
-					if (DEBUG)
-						System.out.println("setSelected : inverse");
-					setSelected(item, !isSelected(item), true);
-					lastSingleClick = item;
-					redraw();
-				}
-			} else if ((e.stateMask & SWT.SHIFT) > 0 && lastSingleClick != null) {
-				_deselectAll();
-
-				if (getOrder(item, lastSingleClick))
-					select(item, lastSingleClick);
-				else
-					select(lastSingleClick, item);
-
+			if ((e.stateMask & SWT.MOD1) > 0) {
+				onMouseHandleLeftMod1(e, item, false, true);
+			} else if ((e.stateMask & SWT.SHIFT) > 0) {
+				onMouseHandleLeftShift(e, item, false, true);
 			} else {
-				if (item == null) {
-					_deselectAll();
-				} else {
-					if (DEBUG)
-						System.out.println("setSelected");
-
-					_deselectAll();
-					setSelected(item, true, lastSingleClick != item);
-					lastSingleClick = item;
-
-				}
-				redraw();
+				onMouseHandleLeft(e, item, false, true);
 			}
 		}
 	}
@@ -765,8 +739,9 @@ public class Gallery extends Canvas {
 			return;
 		}
 
+		GalleryItem item = getItem(new Point(e.x, e.y));
+
 		if (e.button == 1) {
-			GalleryItem item = getItem(new Point(e.x, e.y));
 
 			if (item == null) {
 				_deselectAll();
@@ -774,33 +749,87 @@ public class Gallery extends Canvas {
 				mouseClickHandled = true;
 				lastSingleClick = null;
 			} else {
-				if ((e.stateMask & SWT.MOD1) == 0 && (e.stateMask & SWT.SHIFT) == 0) {
-
-					if (!isSelected(item)) {
-						_deselectAll();
-
-						if (DEBUG)
-							System.out.println("setSelected");
-						setSelected(item, true, true);
-
-						lastSingleClick = item;
-						redraw();
-						mouseClickHandled = true;
-					}
+				if ((e.stateMask & SWT.MOD1) > 0) {
+					onMouseHandleLeftMod1(e, item, true, false);
+				} else if ((e.stateMask & SWT.SHIFT) > 0) {
+					onMouseHandleLeftShift(e, item, true, false);
+				} else {
+					onMouseHandleLeft(e, item, true, false);
 				}
 			}
 		} else if (e.button == 3) {
+			onMouseHandleRight(e, item, true, false);
+		}
+	}
+
+	private void onMouseHandleLeftMod1(MouseEvent e, GalleryItem item, boolean down, boolean up) {
+		if (up) {
+			if (lastSingleClick != null) {
+				if (item != null) {
+					if (DEBUG)
+						System.out.println("setSelected : inverse");
+					setSelected(item, !isSelected(item), true);
+					lastSingleClick = item;
+					redraw();
+				}
+			}
+		}
+	}
+
+	private void onMouseHandleLeftShift(MouseEvent e, GalleryItem item, boolean down, boolean up) {
+		if (up) {
+			if (lastSingleClick != null) {
+				_deselectAll();
+
+				if (getOrder(item, lastSingleClick))
+					select(item, lastSingleClick);
+				else
+					select(lastSingleClick, item);
+			}
+		}
+	}
+
+	private void onMouseHandleLeft(MouseEvent e, GalleryItem item, boolean down, boolean up) {
+		if (down) {
+			if (!isSelected(item)) {
+				_deselectAll();
+
+				if (DEBUG)
+					System.out.println("setSelected");
+				setSelected(item, true, true);
+
+				lastSingleClick = item;
+				redraw();
+				mouseClickHandled = true;
+			}
+		} else if (up) {
+			if (item == null) {
+				_deselectAll();
+			} else {
+				if (DEBUG)
+					System.out.println("setSelected");
+
+				_deselectAll();
+				setSelected(item, true, lastSingleClick != item);
+				lastSingleClick = item;
+			}
+			redraw();
+		}
+	}
+
+	private void onMouseHandleRight(MouseEvent e, GalleryItem item, boolean down, boolean up) {
+		if (down) {
 			if (DEBUG)
 				System.out.println("right clic");
-			GalleryItem item = getItem(new Point(e.x, e.y));
+
 			if (!isSelected(item)) {
 				_deselectAll();
 				setSelected(item, true, true);
 				redraw();
 				mouseClickHandled = true;
 			}
-
 		}
+
 	}
 
 	private void onPaint(GC gc) {
