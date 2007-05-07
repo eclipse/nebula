@@ -1540,4 +1540,14 @@ public class Gallery extends Canvas {
 	protected void _selectAll() {
 		select(0, this.getItemCount() - 1);
 	}
+
+	public void setSelection(GalleryItem[] items) {
+		checkWidget();
+		_deselectAll();
+		for (int i = 0; i < items.length; i++) {
+			this.setSelected(items[i], true, false);
+			_showItem( items[i]);
+		}
+		redraw();
+	}
 }
