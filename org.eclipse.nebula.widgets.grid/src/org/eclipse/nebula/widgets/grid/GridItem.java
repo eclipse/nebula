@@ -144,6 +144,13 @@ public class GridItem extends Item
      */
     private String headerText = null;
     
+    
+    /**
+     * (SWT.VIRTUAL only) Flag that specifies whether the client has already been sent a SWT.SetData
+     * event. 
+     */
+    private boolean hasSetData = false;
+    
     /**
      * Creates a new instance of this class and places the item at the end of
      * the grid.
@@ -189,18 +196,11 @@ public class GridItem extends Item
         super(parent, style, index);
 
         this.parent = parent;
-
-        List roots = parent.getRootItems();
-
-        if (index == -1 || index >= roots.size())
-        {
-            parent.newItem(this, -1);
-        }
-        else
-        {
-            int ix = parent.indexOf((GridItem)roots.get(index));
-            parent.newItem(this, ix);
-        }
+        
+        init();
+        
+        parent.newItem(this, index,true);
+        parent.newRootItem(this, index);        
     }
 
     /**
@@ -251,21 +251,10 @@ public class GridItem extends Item
         parentItem = parent;
         this.parent = parentItem.getParent();
 
-        if (index == -1 || index >= parentItem.getItems().length)
-        {
-            GridItem rightMostDescendent = parent;
+        init();
 
-            while (rightMostDescendent.getItems().length > 0)
-            {
-                rightMostDescendent = rightMostDescendent.getItems()[rightMostDescendent.getItems().length - 1];
-            }
-
-            this.parent.newItem(this, this.parent.indexOf(rightMostDescendent) + 1);
-        }
-        else
-        {
-            this.parent.newItem(this, this.parent.indexOf(parent.getItems()[index]));
-        }
+        this.parent.newItem(this,index, false);
+        
         level = parentItem.getLevel() + 1;
 
         parentItem.newItem(this, index);
@@ -278,7 +267,6 @@ public class GridItem extends Item
         {
             setVisible(false);
         }
-
     }
 
     /**
@@ -286,15 +274,23 @@ public class GridItem extends Item
      */
     public void dispose()
     {
-        parent.removeItem(this);
-        if (parentItem != null)
+        if (!parent.isDisposing())
         {
-            parentItem.remove(this);
-        }
-
-        for (int i = children.size() - 1; i >= 0; i--)
-        {
-            ((GridItem)children.get(i)).dispose();
+            parent.removeItem(this);
+     
+            if (parentItem != null)
+            {
+                parentItem.remove(this);
+            }
+            else
+            {
+                parent.removeRootItem(this);
+            }
+    
+            for (int i = children.size() - 1; i >= 0; i--)
+            {
+                ((GridItem)children.get(i)).dispose();
+            }
         }
         super.dispose();
     }
@@ -393,7 +389,6 @@ public class GridItem extends Item
     public Color getBackground(int index)
     {
         checkWidget();
-        ensureSize(backgrounds);
         Color c = (Color)backgrounds.get(index);
 //        if (c == null)
 //        {
@@ -439,19 +434,30 @@ public class GridItem extends Item
         }
         else
         {
-            for (int i = 1; i < visibleRows; i++)
-            {
-                currentItem = parent.getNextVisibleItem(currentItem);
-                if (currentItem == null) return new Rectangle(0,0,0,0);
-                if (currentItem == this)
+//            if (isTree)
+//            {
+                for (int i = 1; i < visibleRows; i++)
                 {
-                    found = true;
-                    break;
-                }
-            }          
+                    currentItem = parent.getNextVisibleItem(currentItem);
+                    if (currentItem == null) return new Rectangle(0,0,0,0);
+                    if (currentItem == this)
+                    {
+                        found = true;
+                        break;
+                    }
+                }    
+//            }
+//            else
+//            {
+//                if (index < topIndex + visibleRows)
+//                {
+//                    found = true;
+//                }
+//            }
         }    
 
-        if (!found) return new Rectangle(0,0,0,0);
+        if (!found) 
+            return new Rectangle(0,0,0,0);
         
         Point origin = parent.getOrigin(parent.getColumn(columnIndex), this);
 
@@ -504,7 +510,6 @@ public class GridItem extends Item
     public boolean getChecked(int index)
     {
         checkWidget();
-        ensureSize(checks);
         Boolean b = (Boolean)checks.get(index);
         if (b == null)
         {
@@ -528,7 +533,6 @@ public class GridItem extends Item
     public int getColumnSpan(int index)
     {
         checkWidget();
-        ensureSize(columnSpans);
         Integer i = (Integer)columnSpans.get(index);
         if (i == null)
         {
@@ -574,7 +578,6 @@ public class GridItem extends Item
     public Font getFont(int index)
     {
         checkWidget();
-        ensureSize(fonts);
         Font f = (Font)fonts.get(index);
         if (f == null)
         {
@@ -618,7 +621,6 @@ public class GridItem extends Item
     public Color getForeground(int index)
     {
         checkWidget();
-        ensureSize(foregrounds);
         Color c = (Color)foregrounds.get(index);
         if (c == null)
         {
@@ -662,7 +664,6 @@ public class GridItem extends Item
     public boolean getGrayed(int index)
     {
         checkWidget();
-        ensureSize(grayeds);
         Boolean b = (Boolean)grayeds.get(index);
         if (b == null)
         {
@@ -696,7 +697,9 @@ public class GridItem extends Item
     public Image getImage(int index)
     {
         checkWidget();
-        ensureSize(images);
+        
+        handleVirtual();
+        
         return (Image)images.get(index);
     }
 
@@ -866,7 +869,9 @@ public class GridItem extends Item
     public String getText(int index)
     {
         checkWidget();
-        ensureSize(texts);
+        
+        handleVirtual();
+        
         String s = (String)texts.get(index);
         // SWT TableItem returns empty if never set
         // so we return empty to ensure API compatibility
@@ -968,7 +973,6 @@ public class GridItem extends Item
         {
             SWT.error(SWT.ERROR_INVALID_ARGUMENT);
         }
-        ensureSize(backgrounds);
         backgrounds.set(index, background);
         parent.redraw();
     }
@@ -1006,7 +1010,6 @@ public class GridItem extends Item
     public void setChecked(int index, boolean checked)
     {
         checkWidget();
-        ensureSize(checks);
         checks.set(index, new Boolean(checked));
         parent.redraw();
     }
@@ -1027,8 +1030,8 @@ public class GridItem extends Item
     public void setColumnSpan(int index, int span)
     {
         checkWidget();
-        ensureSize(columnSpans);
         columnSpans.set(index, new Integer(span));
+        parent.setHasSpanning(true);
         parent.redraw();
     }
 
@@ -1210,7 +1213,6 @@ public class GridItem extends Item
         {
             SWT.error(SWT.ERROR_INVALID_ARGUMENT);
         }
-        ensureSize(fonts);
         fonts.set(index, font);
         parent.redraw();
     }
@@ -1268,7 +1270,6 @@ public class GridItem extends Item
         {
             SWT.error(SWT.ERROR_INVALID_ARGUMENT);
         }
-        ensureSize(foregrounds);
         foregrounds.set(index, foreground);
         parent.redraw();
     }
@@ -1310,7 +1311,6 @@ public class GridItem extends Item
     public void setGrayed(int index, boolean grayed)
     {
         checkWidget();
-        ensureSize(grayeds);
         grayeds.set(index, new Boolean(grayed));
         parent.redraw();
     }
@@ -1347,7 +1347,6 @@ public class GridItem extends Item
         {
             SWT.error(SWT.ERROR_INVALID_ARGUMENT);
         }
-        ensureSize(images);
         images.set(index, image);
         parent.redraw();
     }
@@ -1375,7 +1374,6 @@ public class GridItem extends Item
         {
             SWT.error(SWT.ERROR_NULL_ARGUMENT);
         }
-        ensureSize(texts);
         texts.set(index, text);
         parent.redraw();
     }
@@ -1574,7 +1572,6 @@ public class GridItem extends Item
         
         if (!parent.getColumn(index).getCheckable()) return false;
         
-        ensureSize(checkable);
         Boolean b = (Boolean)checkable.get(index);
         if (b == null)
         {
@@ -1601,8 +1598,20 @@ public class GridItem extends Item
     public void setCheckable(int index, boolean checked)
     {
         checkWidget();
-        ensureSize(checkable);
         checkable.set(index, new Boolean(checked));
+    }
+    
+    private void init()
+    {
+        ensureSize(backgrounds);
+        ensureSize(checks);
+        ensureSize(checkable);
+        ensureSize(fonts);
+        ensureSize(foregrounds);
+        ensureSize(grayeds);
+        ensureSize(images);
+        ensureSize(texts);    
+        ensureSize(columnSpans);
     }
     
     /**
@@ -1619,8 +1628,33 @@ public class GridItem extends Item
         removeValue(index,foregrounds);
         removeValue(index,grayeds);
         removeValue(index,images);
-        removeValue(index,texts);
-        
+        removeValue(index,texts);  
+        removeValue(index,columnSpans);
+    }
+    
+    void columnAdded(int index)
+    {
+        insertValue(index,backgrounds);
+        insertValue(index,checks);
+        insertValue(index,checkable);
+        insertValue(index,fonts);
+        insertValue(index,foregrounds);
+        insertValue(index,grayeds);
+        insertValue(index,images);
+        insertValue(index,texts);  
+        insertValue(index,columnSpans);
+    }
+    
+    private void insertValue(int index, List list)
+    {
+        if (index == -1)
+        {
+            list.add(null);
+        }
+        else
+        {
+            list.add(index, null);
+        }
     }
     
     private void removeValue(int index, List list)
@@ -1628,6 +1662,18 @@ public class GridItem extends Item
         if (list.size() > index)
         {
             list.remove(index);
+        }
+    }
+    
+    private void handleVirtual()
+    {
+        if ((getParent().getStyle() & SWT.VIRTUAL) != 0 && !hasSetData)
+        {
+            hasSetData = true;
+            Event event = new Event ();
+            event.item = this;
+            //event.index = index;
+            getParent().notifyListeners(SWT.SetData, event);
         }
     }
 }

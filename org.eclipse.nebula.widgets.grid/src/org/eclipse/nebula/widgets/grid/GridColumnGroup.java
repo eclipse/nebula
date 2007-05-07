@@ -210,6 +210,9 @@ public class GridColumnGroup extends Item
     public void dispose()
     {
         super.dispose();
+        
+        if (parent.isDisposing())
+            return;
 
         for (int i = 0; i < columns.length; i++)
         {

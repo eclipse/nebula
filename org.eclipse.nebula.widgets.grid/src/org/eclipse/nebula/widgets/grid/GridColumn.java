@@ -223,9 +223,12 @@ public class GridColumn extends Item
      */
     public void dispose()
     {
-        parent.removeColumn(this);
-        if (group != null)
-            group.removeColumn(this);
+        if (!parent.isDisposing())
+        {
+            parent.removeColumn(this);
+            if (group != null)
+                group.removeColumn(this);
+        }
         super.dispose();
     }
 
@@ -530,9 +533,10 @@ public class GridColumn extends Item
 
         GC gc = new GC(parent);
         int newWidth = getHeaderRenderer().computeSize(gc, SWT.DEFAULT, SWT.DEFAULT, this).x;
-        for (int i = 0; i < parent.getItems().length; i++)
+        GridItem[] items = parent.getItems();
+        for (int i = 0; i < items.length; i++)
         {
-            GridItem item = parent.getItems()[i];
+            GridItem item = items[i];
             if (item.isVisible())
             {
                 newWidth = Math.max(newWidth, getCellRenderer().computeSize(gc, SWT.DEFAULT,
