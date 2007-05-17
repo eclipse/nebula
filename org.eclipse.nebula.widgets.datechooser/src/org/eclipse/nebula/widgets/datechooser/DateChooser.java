@@ -88,8 +88,11 @@ import org.eclipse.swt.widgets.TypedListener;
  * </ul>
  */
 public class DateChooser extends Composite {
+	/** Bundle name constant */
 	public static final String BUNDLE_NAME = "org.eclipse.nebula.widgets.datechooser.resources"; //$NON-NLS-1$
+	/** Header spacing constant */
 	protected static final int HEADER_SPACING = 3;
+	/** Value to use when there is none internal widget having the focus */
 	protected static final int NOFOCUS = -100;
 
 	// ----- Selection -----

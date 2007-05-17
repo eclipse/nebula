@@ -42,6 +42,7 @@ import org.eclipse.swt.widgets.Event;
  * </dl>
  */
 public class DateChooserCombo extends AbstractCombo {
+	/** Default image filename */
 	protected static final String IMAGE = "/org/eclipse/nebula/widgets/datechooser/DateChooserCombo.png";
 
 	/** Default image for the button */
