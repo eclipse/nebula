@@ -11,10 +11,14 @@
 package org.eclipse.nebula.widgets.formattedtext;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 /**
@@ -46,6 +50,10 @@ public class FormattedText {
   protected int caretPos;
   /** Layout */
   protected GridLayout layout;
+  /** Filter for modify events */
+  protected Listener modifyFilter;
+  /** Flag to block modify events */
+  protected boolean blockModify = false;
 
 	/**
 	 * Creates a formatted text on a newly-created text control under the given
@@ -80,22 +88,42 @@ public class FormattedText {
   	text.addFocusListener(new FocusListener() {
       public void focusGained(FocusEvent e) {
         if ( formatter != null && text.getEditable() ) {
+        	blockModify = true;
           formatter.setIgnore(true);
           text.setText(formatter.getEditString());
           text.setSelection(caretPos);
           formatter.setIgnore(false);
+        	blockModify = false;
         }
       }
 
       public void focusLost(FocusEvent e) {
         if ( formatter != null && text.getEditable() ) {
+        	blockModify = true;
           formatter.setIgnore(true);
           caretPos = text.getCaretPosition();
           text.setText(formatter.getDisplayString());
           formatter.setIgnore(false);
+        	blockModify = false;
         }
       }
     });
+
+  	modifyFilter = new Listener() {
+  		public void handleEvent(Event event) {
+  			if ( blockModify ) event.type = SWT.None;
+  		}
+  	};
+  	text.getDisplay().addFilter(SWT.Modify, modifyFilter);
+
+  	text.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				text.getDisplay().removeFilter(SWT.Modify, modifyFilter);
+	      text				 = null;
+	      modifyFilter = null;
+	      formatter		 = null;
+      }
+  	});
   }
 
   /**
