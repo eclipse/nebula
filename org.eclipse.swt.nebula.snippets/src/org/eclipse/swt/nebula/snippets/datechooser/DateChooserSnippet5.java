@@ -26,7 +26,6 @@ public class DateChooserSnippet5 {
     theme.setWeekendForeground(display.getSystemColor(SWT.COLOR_DARK_GREEN));
     DateChooserTheme.setDefaultTheme(theme);
 
-    // Create a CCalendar with all default settings.
     new DateChooser(shell, SWT.BORDER);
 
     shell.open();

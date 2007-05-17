@@ -27,7 +27,6 @@ public class DateChooserSnippet3 {
     Shell shell = new Shell(display);
     shell.setLayout(new GridLayout());
 
-    // Create a CCalendar with all default settings.
     cal = new DateChooser(shell, SWT.BORDER | SWT.MULTI);
     cal.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent event) {
