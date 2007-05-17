@@ -50,7 +50,9 @@ import org.eclipse.swt.widgets.TypedListener;
  * </dl>
  */
 public abstract class AbstractCombo extends Composite {
+	/** GTK platform constant */
 	public static final boolean GTK = "gtk".equals(SWT.getPlatform());
+	/** WIN32 platform constant */
 	public static final boolean WIN32 = "win32".equals(SWT.getPlatform());
 
 	/** Text widget for the input */
@@ -419,7 +421,10 @@ public abstract class AbstractCombo extends Composite {
 		return popup.getVisible();
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Returns <code>true</code> if the receiver has the user-interface focus,
+	 * and <code>false</code> otherwise.
+	 * 
 	 * @see org.eclipse.swt.widgets.Control#isFocusControl()
 	 */
 	public boolean isFocusControl() {
@@ -477,7 +482,11 @@ public abstract class AbstractCombo extends Composite {
 		removeListener(SWT.DefaultSelection,lsnr);	
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Sets the receiver's background color to the color specified by the
+	 * argument, or to the default system color for the control if the argument
+	 * is null.
+	 * 
 	 * @see org.eclipse.swt.widgets.Control#setBackground(org.eclipse.swt.graphics.Color)
 	 */
 	public void setBackground(Color color) {
@@ -497,7 +506,10 @@ public abstract class AbstractCombo extends Composite {
 		text.setEditable(editable);
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Enables the receiver if the argument is <code>true</code>, and disables it
+	 * otherwise.
+	 * 
 	 * @see org.eclipse.swt.widgets.Control#setEnabled(boolean)
 	 */
 	public void setEnabled(boolean enabled) {
@@ -507,7 +519,10 @@ public abstract class AbstractCombo extends Composite {
 		if ( button != null ) button.setEnabled(enabled);
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Causes the receiver to have the keyboard focus, such that all keyboard
+	 * events will be delivered to it.
+	 * 
 	 * @see org.eclipse.swt.widgets.Control#setFocus()
 	 */
 	public boolean setFocus() {
@@ -515,7 +530,11 @@ public abstract class AbstractCombo extends Composite {
 		return text.setFocus();
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Sets the font that the receiver will use to paint textual information to
+	 * the font specified by the argument, or to the default font for that kind
+	 * of control if the argument is null.
+	 * 
 	 * @see org.eclipse.swt.widgets.Control#setFont(org.eclipse.swt.graphics.Font)
 	 */
 	public void setFont(Font font) {
@@ -526,7 +545,11 @@ public abstract class AbstractCombo extends Composite {
   	popup.pack();
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Sets the receiver's foreground color to the color specified by the
+	 * argument, or to the default system color for the control if the argument
+	 * is null.
+	 * 
 	 * @see org.eclipse.swt.widgets.Control#setForeground(org.eclipse.swt.graphics.Color)
 	 */
 	public void setForeground(Color color) {
@@ -556,11 +579,18 @@ public abstract class AbstractCombo extends Composite {
 	 * Called just before than the popup is dropped.
 	 */
 	protected void setPopupLocation() {
+		Display display = Display.getCurrent();
   	Rectangle r = getBounds();
-  	Point p = Display.getCurrent().map(this, null, 0, r.height);
+  	Point p = display.map(this, null, 0, r.height);
+  	Rectangle sb = display.getBounds();
+  	if ( p.y + popup.getSize().y > sb.height ) {
+  		p.y -= r.height + popup.getSize().y + getBorderWidth();
+  	}
+  	if ( p.x + popup.getSize().x > sb.width ) {
+  		p.x -= popup.getSize().x - r.width + getBorderWidth();
+  	}
   	popup.setLocation(p.x, p.y);
   }
-
 
 	/**
 	 * Sets the selection in the receiver's text field to the
@@ -576,7 +606,10 @@ public abstract class AbstractCombo extends Composite {
 		text.setSelection(selection.x, selection.y);
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Marks the receiver as visible if the argument is <code>true</code>, and
+	 * marks it invisible otherwise.
+	 * 
 	 * @see org.eclipse.swt.widgets.Control#setVisible(boolean)
 	 */
 	public void setVisible(boolean visible) {
