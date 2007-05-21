@@ -334,6 +334,7 @@ public class DateChooser extends Composite {
 				Display display = getDisplay();
 				display.removeFilter(SWT.FocusIn, filter);
 				display.removeFilter(SWT.KeyDown, filter);
+				hasFocus = false;
 				break;
 		}
 	}
