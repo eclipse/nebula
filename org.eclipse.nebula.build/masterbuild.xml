@@ -112,7 +112,11 @@
             </then>
             <else>
             	<ant antfile="build.xml" target="build.update.jar" dir="${nebula.plugins}\${component}" />
-            	<copy file="${nebula.plugins}\${component}\${component}_*.jar" todir="${eclipse.root}/plugins"/>
+            	<copy todir="${eclipse.root}/plugins">
+            		<fileset dir="${nebula.plugins}\${component}">
+            		  <include name="${component}_*.jar"/>
+            		</fileset>
+            	</copy>
                 <subant antfile="common.xml" inheritall="true" inheritrefs="true" buildpath="." />
             </else>
         </if>
