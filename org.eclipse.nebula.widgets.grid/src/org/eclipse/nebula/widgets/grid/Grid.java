@@ -4226,7 +4226,6 @@ public class Grid extends Canvas
                 {
 
                     // row header is actually painted later
-
                     x += rowHeaderWidth;
                 }                
 
@@ -6829,8 +6828,8 @@ public class Grid extends Canvas
         if (items.size() == 1 && !userModifiedRowHeight)
             rowHeight = computeRowHeight(sizingGC);
 
-//        rowHeaderWidth = Math.max(rowHeaderWidth,rowHeaderRenderer
-//            .computeSize(sizingGC, SWT.DEFAULT, SWT.DEFAULT, item).x);
+        rowHeaderWidth = Math.max(rowHeaderWidth,rowHeaderRenderer
+            .computeSize(sizingGC, SWT.DEFAULT, SWT.DEFAULT, item).x);
 
         scrollValuesObsolete = true;
         topIndex = -1;
