@@ -1534,7 +1534,7 @@ public class GridItem extends Item
     public void setHeaderText(String text)
     {
         checkWidget();
-        if (text == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
+        
         if (text != headerText)
         {
             GC gc = new GC(parent);
