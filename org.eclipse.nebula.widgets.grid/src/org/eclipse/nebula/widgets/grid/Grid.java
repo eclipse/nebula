@@ -6394,7 +6394,7 @@ public class Grid extends Canvas
             }
             else
             {
-                y += (items.indexOf(item) + (rowHeight + 1));
+                y += (items.indexOf(item) * (rowHeight + 1));
             }
 
             if (vScroll.getVisible())
