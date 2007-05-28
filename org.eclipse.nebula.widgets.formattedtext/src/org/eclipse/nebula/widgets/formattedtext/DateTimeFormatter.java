@@ -341,7 +341,7 @@ public class DateTimeFormatter extends AbstractFormatter {
 			while ( i < e ) {
 				inputCache.deleteCharAt(i);
 				if ( field.curLen == field.minLen ) {
-					inputCache.insert(field.pos, SPACE);
+					inputCache.insert(field.pos + field.minLen - 1, SPACE);
 					i++;
 				} else {
 					inputMask.deleteCharAt(i);
@@ -352,7 +352,7 @@ public class DateTimeFormatter extends AbstractFormatter {
 					break;
 				}
 			}
-			updateFieldValue(field);
+			updateFieldValue(field, false);
 		}
 	}
 
@@ -660,7 +660,7 @@ public class DateTimeFormatter extends AbstractFormatter {
 					beep();
 					return p;
 				}
-				if ( ! updateFieldValue(fd) ) {
+				if ( ! updateFieldValue(fd, p < fd.pos + fd.curLen - 1) ) {
 					if ( o != '#' ) {
 						inputCache.setCharAt(p, o);
 					} else {
@@ -694,7 +694,7 @@ public class DateTimeFormatter extends AbstractFormatter {
 					inputMask.deleteCharAt(p);
 					fd.curLen--;
 				}
-				updateFieldValue(fd);
+				updateFieldValue(fd, false);
 				i++;
 				p = fd.pos + fd.curLen;
 			} else {
@@ -872,10 +872,15 @@ public class DateTimeFormatter extends AbstractFormatter {
 	 * limits, it is rejected. Else the corresponding field is updated in the
 	 * calendar.
 	 * 
+	 * If the checkLimits flag is set to true, we try to replace the last digit
+	 * of the field by 0 (if over max) or a 1 (if under min). If the resulting
+	 * value is valid, then the input cache is updated.
+	 * 
 	 * @param f field descriptor
+	 * @param checkLimits <code>true</code> to check limits, else <code>false</code>
 	 * @return <code>true</code> if calendar has been updated, <code>false</code> if value is rejected
 	 */
-	private boolean updateFieldValue(FieldDesc f) {
+	private boolean updateFieldValue(FieldDesc f, boolean checkLimits) {
 		String s = inputCache.substring(f.pos, f.pos + f.curLen).trim();
 		if ( s.length() == 0 || s.indexOf(SPACE) >= 0 ) {
 			calendar.set(f.field, 0);
@@ -891,24 +896,41 @@ public class DateTimeFormatter extends AbstractFormatter {
 			} catch (ParseException e) {
 				e.printStackTrace(System.err);
 			}
-			if ( v == 0 && f.field <= Calendar.DAY_OF_MONTH ) {
-				if ( s.length() == f.maxLen ) {
-					return false;
-				}
+			if ( v == 0 && f.field <= Calendar.DAY_OF_MONTH && s.length() < f.maxLen) {
 				calendar.set(f.field, 0);
 				f.valid = false;
 			} else {
-				if ( f.field == Calendar.MONTH ) {
-					v--;
-				} else if ( f.field == Calendar.YEAR && f.maxLen <= 2 ) {
+				if ( f.field == Calendar.YEAR && f.maxLen <= 2 ) {
 					v += v >= yearStart ? 1900 : 2000;
 				} else if ( f.field == Calendar.HOUR && v == 12 ) {
 					v = 0;
 				}
-				if ( v < calendar.getActualMinimum(f.field) || v > calendar.getActualMaximum(f.field) ) {
-					return false;
+
+				int min = calendar.getActualMinimum(f.field);
+				int max = calendar.getActualMaximum(f.field);
+				if ( f.field == Calendar.MONTH ) {
+					min++;
+					max++;
 				}
-				calendar.set(f.field, v);
+				if ( v < min || v > max ) {
+					if ( ! checkLimits ) {
+						return false;
+					}
+					if ( v > max ) {
+						v = (v / 10) * 10;
+						if ( v > max ) {
+							return false;
+						}
+						inputCache.setCharAt(f.pos + f.curLen - 1, '0');
+					} else if ( f.curLen == f.maxLen ) {
+						v = (v / 10) * 10 + 1;
+						if ( v < min ) {
+							return false;
+						}
+						inputCache.setCharAt(f.pos + f.curLen - 1, '1');
+					}
+				}
+				calendar.set(f.field, f.field == Calendar.MONTH ? v - 1 : v);
 				f.valid = true;
 			}
 		}
