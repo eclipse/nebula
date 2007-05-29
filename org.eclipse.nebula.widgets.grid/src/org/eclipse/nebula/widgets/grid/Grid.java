@@ -6780,37 +6780,34 @@ public class Grid extends Canvas
 
         //Have to convert indexes, this method needs a flat index, the method is called with indexes
         //that are relative to the level
-        if (index != -1)
+        if (root && index != -1)
         {
-            if (root)
+            if (index >= rootItems.size())
             {
-                if (index >= rootItems.size())
-                {
-                    index = -1;
-                }
-                else
-                {
-                    index = items.indexOf(rootItems.get(index));
-                }
+                index = -1;
             }
             else
             {
-                if (index >= item.getParentItem().getItems().length)
-                {
-                  GridItem rightMostDescendent = item.getParentItem();
+                index = items.indexOf(rootItems.get(index));
+            }
+        }
+        else if (!root)
+        {
+            if (index >= item.getParentItem().getItems().length || index == -1)
+            {
+              GridItem rightMostDescendent = item.getParentItem();
 
-                    while (rightMostDescendent.getItems().length > 0)
-                    {
-                        rightMostDescendent = rightMostDescendent.getItems()[rightMostDescendent
-                            .getItems().length - 1];
-                    }
-
-                    index = indexOf(rightMostDescendent) + 1;               
-                }
-                else
+                while (rightMostDescendent.getItems().length > 0)
                 {
-                    index = indexOf(item.getParentItem().getItems()[index]);
+                    rightMostDescendent = rightMostDescendent.getItems()[rightMostDescendent
+                        .getItems().length - 1];
                 }
+
+                index = indexOf(rightMostDescendent) + 1;               
+            }
+            else
+            {
+                index = indexOf(item.getParentItem().getItems()[index]);
             }
         }
         
