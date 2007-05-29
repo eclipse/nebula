@@ -8504,6 +8504,15 @@ public class Grid extends Canvas
     {
         this.hasSpanning = hasSpanning;
     }
+    
+    /**
+     * Causes the top index to be recomputed during next paint.  This 
+     * method is only necessary for implementations of scrollbar proxies.
+     */
+    protected void invalidateTopIndex()
+    {
+    	topIndex = -1;
+    }
 
 }
 
