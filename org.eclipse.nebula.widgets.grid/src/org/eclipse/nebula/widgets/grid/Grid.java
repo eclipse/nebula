@@ -37,6 +37,7 @@ import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
@@ -2797,24 +2798,35 @@ public class Grid extends Canvas
             return;
         }
         hScroll = scroll;
+        
+        hScroll.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				onScrollSelection();
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
     }
 
     /**
-     * Sets the external vertical scrollbar. Allows the scrolling to be managed
-     * externally from the table. This functionality is only intended when
-     * SWT.V_SCROLL is not given.
-     * <p>
-     * Using this feature, a ScrollBar could be instantiated outside the table,
-     * wrapped in IScrollBar and thus be 'connected' to the table.
-     * 
-     * @param scroll The vertical scrollbar to set.
-     * @throws org.eclipse.swt.SWTException
-     * <ul>
-     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
-     * created the receiver</li>
-     * </ul>
-     */
+	 * Sets the external vertical scrollbar. Allows the scrolling to be managed
+	 * externally from the table. This functionality is only intended when
+	 * SWT.V_SCROLL is not given.
+	 * <p>
+	 * Using this feature, a ScrollBar could be instantiated outside the table,
+	 * wrapped in IScrollBar and thus be 'connected' to the table.
+	 * 
+	 * @param scroll
+	 *            The vertical scrollbar to set.
+	 * @throws org.eclipse.swt.SWTException
+	 *             <ul>
+	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *             disposed</li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
+	 *             </ul>
+	 */
     protected void setlVerticalScrollBarProxy(IScrollBarProxy scroll)
     {
         checkWidget();
@@ -2823,6 +2835,15 @@ public class Grid extends Canvas
             return;
         }
         vScroll = scroll;
+        
+        vScroll.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				onScrollSelection();
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
     }
 
     /**
@@ -8504,16 +8525,6 @@ public class Grid extends Canvas
     {
         this.hasSpanning = hasSpanning;
     }
-    
-    /**
-     * Causes the top index to be recomputed during next paint.  This 
-     * method is only necessary for implementations of scrollbar proxies.
-     */
-    protected void invalidateTopIndex()
-    {
-    	topIndex = -1;
-    }
-
 }
 
 
