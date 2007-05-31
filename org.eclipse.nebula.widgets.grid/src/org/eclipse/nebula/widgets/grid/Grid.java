@@ -5381,12 +5381,14 @@ public class Grid extends Canvas
         if (vScroll.getVisible())
         {
             vScroll.handleMouseWheel(e);
-            e.doit = false;
+            if (getVerticalBar() == null)
+            	e.doit = false;	
         }
         else if (hScroll.getVisible())
         {
             hScroll.handleMouseWheel(e);
-            e.doit = false;
+            if (getHorizontalBar() == null)
+            	e.doit = false;	
         }
     }
 
