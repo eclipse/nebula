@@ -129,11 +129,11 @@ public class DefaultRowHeaderRenderer extends AbstractRenderer
 
         if (isSelected() && !item.getParent().getCellSelectionEnabled())
         {
-            gc.drawString(TextUtils.getShortString(gc, text, width), getBounds().x + x + 1, y + 1);
+            gc.drawString(TextUtils.getShortString(gc, text, width), getBounds().x + x + 1, y + 1, true);
         }
         else
         {
-            gc.drawString(TextUtils.getShortString(gc, text, width), getBounds().x + x, y);
+            gc.drawString(TextUtils.getShortString(gc, text, width), getBounds().x + x, y, true);
         }
 
     }
