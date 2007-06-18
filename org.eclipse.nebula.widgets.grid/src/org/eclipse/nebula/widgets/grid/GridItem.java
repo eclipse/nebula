@@ -10,6 +10,10 @@
  *******************************************************************************/ 
 package org.eclipse.nebula.widgets.grid;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Color;
@@ -20,10 +24,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * <p>
@@ -83,6 +83,11 @@ public class GridItem extends Item
      * Default foreground color.
      */
     private Color defaultForeground;
+
+	/**
+	 * The height of this <code>GridItem</code>.
+	 */
+	private int		height = 1;
 
     /**
      * Is expanded?
@@ -353,6 +358,19 @@ public class GridItem extends Item
     }
 
     /**
+     * Fires resized event.
+     */
+    void fireResized()
+    {
+        Event e = new Event();
+        e.display = this.getDisplay();
+        e.item = this;
+        e.widget = parent;
+
+        this.notifyListeners(SWT.Resize, e);
+    }
+
+    /**
      * Returns the receiver's background color.
      * 
      * @return the background color
@@ -415,50 +433,9 @@ public class GridItem extends Item
         checkWidget();
         
         if (!isVisible()) return new Rectangle(0,0,0,0);
-        
-        int index = parent.indexOf(this);
 
-        int topIndex = parent.getTopIndex();
-        
-        if (index < topIndex) return new Rectangle(0,0,0,0);
-        
-        int visibleRows = parent.getPotentiallyPaintedRows();
-        
-        boolean found = false;
-        
-        GridItem currentItem = parent.getItem(topIndex);
-        
-        if (currentItem == this)
-        {
-            found = true;
-        }
-        else
-        {
-//            if (isTree)
-//            {
-                for (int i = 1; i < visibleRows; i++)
-                {
-                    currentItem = parent.getNextVisibleItem(currentItem);
-                    if (currentItem == null) return new Rectangle(0,0,0,0);
-                    if (currentItem == this)
-                    {
-                        found = true;
-                        break;
-                    }
-                }    
-//            }
-//            else
-//            {
-//                if (index < topIndex + visibleRows)
-//                {
-//                    found = true;
-//                }
-//            }
-        }    
+        if (!parent.isShown(this)) return new Rectangle(0,0,0,0);
 
-        if (!found) 
-            return new Rectangle(0,0,0,0);
-        
         Point origin = parent.getOrigin(parent.getColumn(columnIndex), this);
 
         int width = 0;
@@ -473,9 +450,7 @@ public class GridItem extends Item
             width += parent.getColumn(columnIndex + i).getWidth();
         }
 
-        int height = parent.getItemHeight();
-
-        return new Rectangle(origin.x, origin.y, width - 1, height);
+        return new Rectangle(origin.x, origin.y, width - 1, getHeight());
     }
 
     /**
@@ -672,6 +647,15 @@ public class GridItem extends Item
         return b.booleanValue();
     }
 
+	/**
+	 * Returns the height of this <code>GridItem</code>.
+	 * 
+	 * @return height of this <code>GridItem</code>
+	 */
+	public int getHeight() {
+		checkWidget();
+		return height;
+	}
     /**
      * {@inheritDoc}
      */
@@ -1315,6 +1299,55 @@ public class GridItem extends Item
         parent.redraw();
     }
 
+	/**
+	 * Sets the height of this <code>GridItem</code>.
+	 * 
+	 * @param newHeight new height in pixels
+	 */
+    public void setHeight(int newHeight) {
+		checkWidget();
+		setHeight(newHeight,true);
+	}
+    void setHeight(int newHeight, boolean redraw) {
+        if (newHeight < 1)
+            SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+        height = newHeight;
+        parent.hasDifferingHeights = true;
+        parent.setScrollValuesObsolete();
+        if (redraw)
+        {
+            parent.redraw();
+        }
+    }
+    /**
+     * Sets this <code>GridItem</code> to its preferred height.
+     * 
+     * @param redraw
+     */
+    public void pack(boolean redraw) {
+    	checkWidget();
+    	
+        int maxPrefHeight = 2;
+        GridColumn[] columns = parent.getColumns();
+        GC gc = new GC(parent);
+        for(int cnt=0;cnt<columns.length;cnt++) {
+            GridCellRenderer renderer = columns[cnt].getCellRenderer();
+
+            renderer.setAlignment(columns[cnt].getAlignment());
+            renderer.setCheck(columns[cnt].isCheck());
+            renderer.setColumn(cnt);
+            renderer.setTree(columns[cnt].isTree());
+            renderer.setWordWrap(columns[cnt].getWordWrap());
+
+            Point size = renderer.computeSize(gc, columns[cnt].getWidth(), SWT.DEFAULT, this);
+            if(size!=null)
+                maxPrefHeight = Math.max(maxPrefHeight,size.y);
+        }
+        gc.dispose();
+        
+        setHeight(maxPrefHeight,redraw);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -1612,6 +1645,8 @@ public class GridItem extends Item
         ensureSize(images);
         ensureSize(texts);    
         ensureSize(columnSpans);
+
+        height = parent.getItemHeight();
     }
     
     /**

@@ -280,9 +280,47 @@ public class DefaultCellRenderer extends GridCellRenderer
             x += image.getBounds().width + insideMargin;
         }
 
-        x += gc.stringExtent(item.getText(getColumn())).x + rightMargin;
+// MOPR-DND
+// MOPR: replaced this code (to get correct preferred height for cells in word-wrap columns)
+//
+//        x += gc.stringExtent(item.getText(getColumn())).x + rightMargin;
+//
+//        y = Math.max(y,topMargin + gc.getFontMetrics().getHeight() + bottomMargin);
+//
+// with this code:
 
-        y = Math.max(y,topMargin + gc.getFontMetrics().getHeight() + bottomMargin);
+        int textHeight = 0;
+        if(!isWordWrap())
+        {
+            x += gc.textExtent(item.getText(getColumn())).x + rightMargin;
+
+            textHeight = topMargin + gc.getFontMetrics().getHeight() + bottomMargin;
+        }
+        else
+        {
+        	int plainTextWidth;
+        	if (wHint == SWT.DEFAULT)
+        		plainTextWidth = gc.textExtent(item.getText(getColumn())).x;
+        	else
+        		plainTextWidth = wHint - x - rightMargin;
+        	
+            TextLayout currTextLayout = new TextLayout(gc.getDevice());
+            currTextLayout.setFont(gc.getFont());
+            currTextLayout.setText(item.getText(getColumn()));
+            currTextLayout.setAlignment(getAlignment());
+            currTextLayout.setWidth(plainTextWidth < 1 ? 1 : plainTextWidth);
+
+            x += plainTextWidth + rightMargin;
+        	
+            textHeight += topMargin;
+            for(int cnt=0;cnt<currTextLayout.getLineCount();cnt++)
+                textHeight += currTextLayout.getLineBounds(cnt).height;
+            textHeight += bottomMargin;
+            
+            currTextLayout.dispose();
+        }
+        
+        y = Math.max(y, textHeight);
 
         return new Point(x, y);
     }

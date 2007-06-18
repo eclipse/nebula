@@ -10,12 +10,19 @@
  *******************************************************************************/ 
 package org.eclipse.nebula.widgets.grid;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+
 import org.eclipse.nebula.widgets.grid.internal.DefaultColumnGroupHeaderRenderer;
 import org.eclipse.nebula.widgets.grid.internal.DefaultDropPointRenderer;
 import org.eclipse.nebula.widgets.grid.internal.DefaultEmptyCellRenderer;
 import org.eclipse.nebula.widgets.grid.internal.DefaultEmptyColumnHeaderRenderer;
 import org.eclipse.nebula.widgets.grid.internal.DefaultEmptyRowHeaderRenderer;
 import org.eclipse.nebula.widgets.grid.internal.DefaultFocusRenderer;
+import org.eclipse.nebula.widgets.grid.internal.DefaultInsertMarkRenderer;
 import org.eclipse.nebula.widgets.grid.internal.DefaultRowHeaderRenderer;
 import org.eclipse.nebula.widgets.grid.internal.DefaultTopLeftRenderer;
 import org.eclipse.nebula.widgets.grid.internal.GridToolTip;
@@ -23,12 +30,16 @@ import org.eclipse.nebula.widgets.grid.internal.IScrollBarProxy;
 import org.eclipse.nebula.widgets.grid.internal.NullScrollBarProxy;
 import org.eclipse.nebula.widgets.grid.internal.ScrollBarProxyAdapter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.accessibility.ACC;
 import org.eclipse.swt.accessibility.Accessible;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleControlAdapter;
 import org.eclipse.swt.accessibility.AccessibleControlEvent;
 import org.eclipse.swt.accessibility.AccessibleEvent;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.MouseEvent;
@@ -54,11 +65,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TypedListener;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
 
 /**
  * <p>
@@ -91,7 +97,8 @@ public class Grid extends Canvas
     //TODO: column freezing
     
     //TODO: Performance - need to cache top index
-    
+   
+
     /**
      * Accessibility default action for column headers and column group headers.
      */
@@ -140,9 +147,19 @@ public class Grid extends Canvas
     private static final int COLUMN_RESIZER_THRESHOLD = 4;
 
     /**
+     * @see #COLUMN_RESIZER_THRESHOLD
+     */
+    private static final int ROW_RESIZER_THRESHOLD = 3;
+
+
+    /**
      * The minimum width of a column header.
      */
     private static final int MIN_COLUMN_HEADER_WIDTH = 20;
+    /**
+     * The minimum height of a row header.
+     */
+    private static final int MIN_ROW_HEADER_HEIGHT = 10;
 
     /**
      * The number used when sizing the row header (i.e. size it for '1000')
@@ -287,11 +304,13 @@ public class Grid extends Canvas
     private boolean selectionEnabled = true;
     
     /**
-     * Height of each row.
+     * Default height of items.  This value is used
+     * for <code>GridItem</code>s with a height
+     * of -1.
      */
-    private int rowHeight = 1;
+    private int itemHeight = 1;
     
-    private boolean userModifiedRowHeight = false;
+    private boolean userModifiedItemHeight = false;
 
     /**
      * Width of each row header.
@@ -326,6 +345,11 @@ public class Grid extends Canvas
     private GridColumn columnBeingResized;
 
     /**
+     * Are this <code>Grid</code>'s rows resizeable?
+     */
+    private boolean rowsResizeable = false;
+
+    /**
      * Is the user currently resizing a column?
      */
     private boolean resizingColumn = false;
@@ -340,6 +364,12 @@ public class Grid extends Canvas
      * with the resizingStartX determines the current width during resize.
      */
     private int resizingColumnStartWidth = 0;
+
+    private boolean hoveringOnRowResizer = false;
+    private GridItem rowBeingResized;
+	private boolean resizingRow = false;
+	private int resizingStartY;
+	private int resizingRowStartHeight;
 
     /**
      * Reference to the column whose header is currently in a pushed state.
@@ -436,6 +466,13 @@ public class Grid extends Canvas
 
     /**
      * Vertical scrollbar proxy.
+     * <p>
+     * Note:
+     * <ul>
+     * <li>{@link Grid#getTopIndex()} is the only method allowed to call vScroll.getSelection()
+     * (except #updateScrollbars() of course)</li>
+     * <li>{@link Grid#setTopIndex(int)} is the only method allowed to call vScroll.setSelection(int)</li>
+     * </ul>
      */
     private IScrollBarProxy vScroll;
 
@@ -494,6 +531,13 @@ public class Grid extends Canvas
     private boolean isTree = false;
     
     /**
+     * True if there is at least one <code>GridItem</code> with an individual height.
+     * This value is only set to true in {@link GridItem#setHeight(int,boolean)}
+     * and it is never reset to false.
+     */
+    boolean hasDifferingHeights = false;
+    
+    /**
      * True if three is at least one cell spanning columns.  This is used in various places for
      * optimizatoin.
      */
@@ -503,8 +547,51 @@ public class Grid extends Canvas
      * Index of first visible item.  The value must never be read directly.  It is cached and 
      * updated when appropriate.  #getTopIndex should be called for every client (even internal 
      * callers).  A value of -1 indicates that the value is old and will be recomputed.
+     * 
+     * @see #bottomIndex
      */
     private int topIndex = -1;
+    /**
+     * Index of last visible item.  The value must never be read directly.  It is cached and 
+     * updated when appropriate.  #getBottomIndex() should be called for every client (even internal 
+     * callers).  A value of -1 indicates that the value is old and will be recomputed.
+     * <p>
+     * Note that the item with this index is often only partly visible; maybe only
+     * a single line of pixels is visible. In extreme cases, bottomIndex may be the
+     * same as topIndex.
+     * 
+     * @see #topIndex
+     */
+    private int bottomIndex = -1;
+    /**
+     * True if the last visible item is completely visible.  The value must never be read directly.  It is cached and
+     * updated when appropriate.  #isShown() should be called for every client (even internal 
+     * callers).
+     * 
+     * @see #bottomIndex
+     */
+    private boolean bottomIndexShownCompletely = false;
+    
+    /**
+     * A range of rows in a <code>Grid</code>.
+     * <p>
+     * A row in this sense exists only for visible items
+     * (i.e. items with {@link GridItem#isVisible()} == true).
+     * Therefore, the items at 'startIndex' and 'endIndex'
+     * are always visible.
+     * 
+     * @see Grid#getRowRange(int, int, boolean, boolean)
+     */
+    private static class RowRange {
+        /** index of first item in range */
+        public int startIndex;
+        /** index of last item in range */
+        public int endIndex;
+        /** number of rows (i.e. <em>visible</em> items) in this range */
+        public int rows;
+        /** height in pixels of this range (including horizontal separator between rows) */
+        public int height;
+    }
     
     /**
      * Filters out unnecessary styles, adds mandatory styles and generally
@@ -545,6 +632,7 @@ public class Grid extends Canvas
     public Grid(Composite parent, int style)
     {
         super(parent, checkStyle(style));
+
 
         sizingGC = new GC(this);
         
@@ -590,7 +678,7 @@ public class Grid extends Canvas
         initAccessible();
 
         
-        rowHeight = sizingGC.getFontMetrics().getHeight() + 2;
+        itemHeight = sizingGC.getFontMetrics().getHeight() + 2;
         
         
         RGB sel = getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION).getRGB();
@@ -1528,41 +1616,36 @@ public class Grid extends Canvas
         
         Point p = new Point(point.x, point.y);
 
+        int y2=0;
+
         if (columnHeadersVisible)
         {
             if (p.y <= headerHeight)
             {
                 return null;
             }
-            p.y -= headerHeight;
+            y2 += headerHeight;
         }
 
-        int row = p.y / (rowHeight + 1);
-        
-        int currentIndex = getTopIndex();
-        
-        while (row > 0)
+        int row=getTopIndex();
+        while(row<items.size() && y2<=getClientArea().height)
         {
-            currentIndex ++;
-            if (currentIndex >= items.size())
-                return null;
-            GridItem item = (GridItem)items.get(currentIndex);
-            
-            while (!item.isVisible())
+            GridItem currItem = (GridItem)items.get(row);
+            if (currItem.isVisible())
             {
-                currentIndex ++;
-                if (currentIndex >= items.size())
-                    return null;
-                item = (GridItem)items.get(currentIndex);
+                int currItemHeight = currItem.getHeight();
+
+                if (p.y >= y2 && p.y < y2+currItemHeight+1)
+                {
+                    return currItem;
+                }
+
+                y2 += currItemHeight +1;
             }
-            
-            row --;
+            row++;
         }
-        
-        if (currentIndex >= items.size())
-            return null;
-        
-        return (GridItem)items.get(currentIndex);
+
+        return null;
     }
 
     /**
@@ -1583,26 +1666,41 @@ public class Grid extends Canvas
     }
 
     /**
-     * Returns the height of each row.
+     * Returns the default height of the items
+     * in this <code>Grid</code>. See {@link #setItemHeight(int)}
+     * for details.
      * 
-     * @return height of each row
+     * <p>IMPORTANT: The Grid's items need not all have the
+     * height returned by this method, because an
+     * item's height may have been changed by calling
+     * {@link GridItem#setHeight(int)}.
+     * 
+     * @return default height of items
      * @throws org.eclipse.swt.SWTException
      * <ul>
      * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
      * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
      * created the receiver</li>
      * </ul>
+     * @see #setItemHeight(int)
      */
     public int getItemHeight()
     {
         checkWidget();
-        return rowHeight;
+        return itemHeight;
     }
     
     /**
-     * Sets the height of each row.
+     * Sets the default height for this <code>Grid</code>'s items.  When
+     * this method is called, all existing items are resized
+     * to the specified height and items created afterwards will be
+     * initially sized to this height.
+     * <p>
+     * As long as no default height was set by the client through this method,
+     * the preferred height of the first item in this <code>Grid</code> is
+     * used as a default for all items (and is returned by {@link #getItemHeight()}).
      * 
-     * @param height height of each row
+     * @param height  default height in pixels
      * @throws IllegalArgumentException
      * <ul>
      * <li>ERROR_INVALID_ARGUMENT - if the height is < 1</li> 
@@ -1613,19 +1711,66 @@ public class Grid extends Canvas
      * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
      * created the receiver</li>
      * </ul>
+     * 
+     * @see GridItem#getHeight()
+     * @see GridItem#setHeight(int)
      */
     public void setItemHeight(int height)
     {
+        checkWidget();
         if (height < 1)
             SWT.error(SWT.ERROR_INVALID_ARGUMENT);
-        rowHeight = height;
-        userModifiedRowHeight = true;
+        itemHeight = height;
+        userModifiedItemHeight = true;
+        for(int cnt=0;cnt<items.size();cnt++)
+            ((GridItem)items.get(cnt)).setHeight(height,false);
         setScrollValuesObsolete();
+        hasDifferingHeights=false;
         redraw();
     }
 
     /**
-     * Returns a (possibly empty) array of {@code NGridItem}s which are the
+     * Returns true if the rows are resizable.
+     * 
+     * @return the row resizeable state
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
+     * @see #setRowsResizeable(boolean)
+     */
+    public boolean getRowsResizeable() {
+    	checkWidget();
+    	return rowsResizeable;
+    }
+    /**
+     * Sets the rows resizeable state of this <code>Grid</code>.
+     * The default is 'false'.
+     * <p>
+     * If a row in a <code>Grid</code> is resizeable,
+     * then the user can interactively change its height
+     * by dragging the border of the row header.
+     * <p>
+     * Note that for rows to be resizable the row headers must be visible.
+     * 
+     * @param rowsResizeable true if this <code>Grid</code>'s rows should be resizable
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
+     * @see #setRowHeaderVisible(boolean)
+     */
+    public void setRowsResizeable(boolean rowsResizeable) {
+    	checkWidget();
+    	this.rowsResizeable=rowsResizeable;
+    }
+
+    /**
+     * Returns a (possibly empty) array of {@code GridItem}s which are the
      * items in the receiver.
      * <p>
      * Note: This is not the actual structure used by the receiver to maintain
@@ -2116,37 +2261,336 @@ public class Grid extends Canvas
 
         if (topIndex != -1)
             return topIndex;
-        
-        int firstVisibleIndex = 0;
-        if (vScroll.getVisible())
+
+        if (!vScroll.getVisible())
         {
-            // figure out first visible row and last visible row
-            firstVisibleIndex = vScroll.getSelection();
+        	topIndex = 0;
+        }
+        else
+        {
+        	// figure out first visible row and last visible row
+        	int firstVisibleIndex = vScroll.getSelection();
 
-            int row = firstVisibleIndex + 1;
+        	if (isTree)
+        	{
+        		Iterator itemsIter = items.iterator();
+            	int row = firstVisibleIndex + 1;
 
-            if (isTree)
+        		while (row > 0 && itemsIter.hasNext())
+        		{
+        			GridItem item = (GridItem)itemsIter.next();
+
+        			if (item.isVisible())
+        			{
+        				row--;
+        				if (row == 0)
+        				{
+        					firstVisibleIndex = items.indexOf(item);
+        				}
+        			}
+        		}
+        	}
+
+            topIndex = firstVisibleIndex;
+
+            /*
+             *  MOPR  here lies more potential for increasing performance
+             *  for the case (isTree || hasDifferingHeights)
+             *  the topIndex could be derived from the previous value
+             *  depending on a delta of the vScroll.getSelection()
+             *  instead of being calculated completely anew
+             */
+        }
+
+        return topIndex;
+    }
+    /**
+     * Returns the zero-relative index of the item which is currently at the bottom
+     * of the receiver. This index can change when items are scrolled, expanded
+     * or collapsed or new items are added or removed.
+     * <p>
+     * Note that the item with this index is often only partly visible; maybe only
+     * a single line of pixels is visible. Use {@link #isShown(GridItem)} to find
+     * out.
+     * <p>
+     * In extreme cases, getBottomIndex() may return the same value as
+     * {@link #getTopIndex()}.
+     * 
+     * @return the index of the bottom item
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
+     */
+    int getBottomIndex() {
+        checkWidget();
+
+        if (bottomIndex != -1)
+            return bottomIndex;
+
+        if (items.size() == 0)
+        {
+            bottomIndex = 0;
+        }
+        else
+        {
+            RowRange range = getRowRange(getTopIndex(),getVisibleGridHeight(),false,false);
+
+            bottomIndex = range.endIndex;
+            bottomIndexShownCompletely = range.height <= getVisibleGridHeight();
+        }
+
+        return bottomIndex;
+    }
+    /**
+     * Returns a {@link RowRange} ranging from
+     * the grid item at startIndex to that at endIndex.
+     * <p>
+     * This is primarily used to measure the height
+     * in pixel of such a range and to count the number
+     * of visible grid items within the range.
+     * 
+     * @param startIndex index of the first item in the range or -1 to the first visible item in this grid
+     * @param endIndex index of the last item in the range or -1 to use the last visible item in this grid
+     * @return
+     */
+    private RowRange getRowRange(int startIndex, int endIndex) {
+
+        // parameter preparation
+        if (startIndex == -1)
+        {
+            // search frist visible item
+            do startIndex++; while (startIndex < items.size() && !((GridItem)items.get(startIndex)).isVisible());
+            if (startIndex == items.size()) return null;
+        }
+        if (endIndex == -1)
+        {
+            // search last visible item
+    		endIndex = items.size();
+            do endIndex--; while (endIndex >= 0 && !((GridItem)items.get(endIndex)).isVisible());
+            if (endIndex == -1) return null;
+        }
+
+        // fail fast
+        if (startIndex<0 || endIndex<0 || startIndex>=items.size() || endIndex>=items.size()
+                || endIndex < startIndex
+                || ((GridItem)items.get(startIndex)).isVisible()==false
+                || ((GridItem)items.get(endIndex)).isVisible()==false)
+            SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+        RowRange range = new RowRange();
+        range.startIndex = startIndex;
+        range.endIndex = endIndex;
+
+        if(isTree || hasDifferingHeights)
+        {
+            for (int idx=startIndex ; idx<=endIndex ; idx++ )
             {
-                Iterator itemsIter = items.iterator();
-                while (row > 0 && itemsIter.hasNext())
+                GridItem currItem = (GridItem)items.get(idx);
+
+                if(currItem.isVisible())
                 {
-                    GridItem item = (GridItem)itemsIter.next();
-    
-                    if (item.isVisible())
-                    {
-                        row--;
-                        if (row == 0)
-                        {
-                            firstVisibleIndex = items.indexOf(item);
-                        }
-                    }
+                    if (range.rows>0)
+                        range.height++;		// height of horizontal row separator
+                    range.height += currItem.getHeight();
+                    range.rows++;
                 }
             }
-
         }
-        
-        topIndex = firstVisibleIndex;
-        return topIndex;
+        else
+        {
+            range.rows = range.endIndex - range.startIndex + 1;
+            range.height = ( getItemHeight() + 1 ) * range.rows - 1;
+        }
+
+        return range;
+    }
+    /**
+     * This method can be used to build a range of grid rows
+     * that is allowed to span a certain height in pixels.
+     * <p>
+     * It returns a {@link RowRange} that contains information
+     * about the range, especially the index of the last
+     * element in the range (or if inverse == true, then the
+     * index of the first element).
+     * <p>
+     * Note:  Even if 'forceEndCompletelyInside' is set to
+     * true, the last item will not lie completely within
+     * the availableHeight, if (height of item at startIndex < availableHeight).
+     * 
+     * @param startIndex  index of the first (if inverse==false) or
+     *                    last (if inverse==true) item in the range
+     * @param availableHeight height in pixels
+     * @param forceEndCompletelyInside if true, the last item in the range will lie completely 
+     *        within the availableHeight, otherwise it may lie partly outside this range
+     * @param inverse  if true, then the first item in the range will be searched, not the last
+     * @return range of grid rows
+     * @see RowRange
+     */
+    private RowRange getRowRange(int startIndex, int availableHeight,
+                                 boolean forceEndCompletelyInside, boolean inverse) {
+        // parameter preparation
+        if (startIndex == -1)
+        {
+        	if(!inverse)
+        	{
+                // search frist visible item
+                do startIndex++; while (startIndex < items.size() && !((GridItem)items.get(startIndex)).isVisible());
+                if (startIndex == items.size()) return null;
+        	}
+        	else
+        	{
+                // search last visible item
+        		startIndex = items.size();
+                do startIndex--; while (startIndex >= 0 && !((GridItem)items.get(startIndex)).isVisible());
+                if (startIndex == -1) return null;
+        	}
+        }
+
+        // fail fast
+        if (startIndex < 0 || startIndex >= items.size()
+                || ((GridItem)items.get(startIndex)).isVisible() == false
+                || availableHeight < 0)
+            SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+
+        RowRange range = new RowRange();
+
+        if (availableHeight == 0)
+        {
+        	// special case: empty range
+            range.startIndex = startIndex;
+            range.endIndex = startIndex;
+            range.rows = 0;
+            range.height = 0;
+            return range;
+        }
+
+        if (isTree || hasDifferingHeights)
+        {
+            int otherIndex = startIndex;		// tentative end index
+            int consumedItems = 0;
+            int consumedHeight = 0;
+
+            // consume height for startEnd  (note: no separator pixel added here)
+            consumedItems++;
+            consumedHeight += ((GridItem)items.get(otherIndex)).getHeight();
+
+            // note: we use "+2" in next line, because we only try to add another row if there
+            // is room for the separator line + at least one pixel row for the additional item
+            while (consumedHeight+2 <= availableHeight)
+            {
+                // STEP 1:
+                // try to find a visible item we can add
+
+                int nextIndex = otherIndex;
+                GridItem nextItem;
+
+                do
+                {
+                    if (!inverse)
+                        nextIndex++;
+                    else
+                        nextIndex--;
+
+                    if (nextIndex >= 0 && nextIndex < items.size())
+                        nextItem = (GridItem)items.get(nextIndex);
+                    else
+                        nextItem = null;
+                }
+                while (nextItem != null && !nextItem.isVisible());
+
+
+                if (nextItem == null)
+                {
+                    // no visible item found
+                    break;
+                }
+
+                if (forceEndCompletelyInside)
+                {
+                    // must lie completely within the allowed height
+                    if(!(consumedHeight + 1 + nextItem.getHeight() <= availableHeight))
+                        break;
+                }
+
+                // we found one !!
+
+                // STEP 2:
+                // Consume height for this item
+
+                consumedItems++;
+                consumedHeight += 1;	// height of separator line
+                consumedHeight += nextItem.getHeight();
+            
+                // STEP 3:
+                // make this item it the current guess for the other end
+                otherIndex = nextIndex;
+            }
+
+            range.startIndex = !inverse ? startIndex : otherIndex;
+            range.endIndex   = !inverse ? otherIndex : startIndex;
+            range.rows       = consumedItems;
+            range.height     = consumedHeight;
+        }
+        else
+        {
+            int availableRows = ( availableHeight + 1 ) / ( getItemHeight() + 1 );
+
+            if ((( getItemHeight() + 1 ) * range.rows - 1) + 1 < availableHeight)
+            {
+            	// not all available space used yet
+            	// - so add another row if it need not be completely within availableHeight
+                if (!forceEndCompletelyInside)
+                    availableRows++;
+            }
+
+            int otherIndex = startIndex + ((availableRows - 1) * (!inverse ? 1 : -1));
+            if (otherIndex<0) otherIndex = 0;
+            if (otherIndex>=items.size()) otherIndex = items.size() - 1 ;
+
+            range.startIndex = !inverse ? startIndex : otherIndex;
+            range.endIndex   = !inverse ? otherIndex : startIndex;
+            range.rows       = range.endIndex - range.startIndex + 1;
+            range.height     = ( getItemHeight() + 1 ) * range.rows - 1;
+        }
+
+        return range;
+    }
+    /**
+     * Returns the height of the plain grid in pixels.
+     * <p>
+     * This includes all rows for visible items (i.e. items that return true
+     * on {@link GridItem#isVisible()} ; not only those currently visible on
+     * screen) and the 1 pixel separator between rows.
+     * <p>
+     * This does <em>not</em> include the height of the column headers.
+     * 
+     * @return height of plain grid
+     */
+    int getGridHeight() {
+        RowRange range = getRowRange(-1,-1);
+        return range != null ? range.height : 0;
+        /*
+         *  MOPR  currently this method is only used in #getTableSize() ;
+         *  if it will be used for more important things in the future
+         *  (e.g. the max value for vScroll.setValues() when doing pixel-by-pixel
+         *  vertical scrolling) then this value should at least be cached or
+         *  even updated incrementally when grid items are added/removed or
+         *  expaned/collapsed (similar as #currentVisibleItems).
+         *  (this is only necessary in the case (isTree || hasDifferingHeights))
+         */
+    }
+
+    /**
+     * Returns the height of the on-screen area that is available
+     * for showing the grid's rows, i.e. the client area of the
+     * scrollable minus the height of the column headers (if shown).
+     * 
+     * @return height of visible grid in pixels
+     */
+    int getVisibleGridHeight() {
+        return getClientArea().height - (columnHeadersVisible ? headerHeight : 0);
     }
 
     /**
@@ -3233,6 +3677,8 @@ public class Grid extends Canvas
         }
 
         vScroll.setSelection(vScrollAmount);
+        topIndex = -1;
+        bottomIndex = -1;
         redraw();
     }
 
@@ -3351,6 +3797,43 @@ public class Grid extends Canvas
     }
 
     /**
+     * Returns true if 'item' is currently being <em>completely</em>
+     * shown in this <code>Grid</code>'s visible on-screen area.
+     * 
+     * <p>Here, "completely" only refers to the item's height, not its
+     * width. This means this method returns true also if some cells
+     * are horizontally scrolled away.
+     * 
+     * @param item
+     * @return true if 'item' is shown
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * <li>ERROR_INVALID_ARGUMENT - if 'item' is not contained in the receiver</li>
+     * </ul>
+     */
+    boolean isShown(GridItem item)
+    {
+        checkWidget();
+
+        if(!item.isVisible())
+            return false;
+
+        int itemIndex = items.indexOf(item);
+
+        if (itemIndex == -1)
+            SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+
+        int firstVisibleIndex = getTopIndex();
+        int lastVisibleIndex = getBottomIndex();
+
+        return (itemIndex >= firstVisibleIndex && itemIndex < lastVisibleIndex)
+    	       ||
+    	       (itemIndex == lastVisibleIndex && bottomIndexShownCompletely);
+    }
+    /**
      * Shows the item. If the item is already showing in the receiver, this
      * method simply returns. Otherwise, the items are scrolled until the item
      * is visible.
@@ -3361,11 +3844,18 @@ public class Grid extends Canvas
      * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
      * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
      * created the receiver</li>
+     * <li>ERROR_INVALID_ARGUMENT - if 'item' is not contained in the receiver</li>
      * </ul>
      */
     public void showItem(GridItem item)
     {
         checkWidget();
+
+        // if its visible just return
+        if (isShown(item))
+        {
+            return;
+        }
 
         if (!item.isVisible())
         {
@@ -3384,46 +3874,15 @@ public class Grid extends Canvas
             updateScrollbars();
         }
 
-        int row = items.indexOf(item);
+        int newTopIndex = items.indexOf(item);
 
-        if (isTree)
+        if (newTopIndex >= getBottomIndex())
         {
-            row = 0;
-            for (Iterator itemIterIterator = items.iterator(); itemIterIterator.hasNext(); )
-            {
-                GridItem itemIter = (GridItem) itemIterIterator.next();
-                if (itemIter == item)
-                {
-                    break;
-                }
-    
-                if (itemIter.isVisible())
-                {
-                    row++;
-                }
-            }
+            RowRange range = getRowRange(newTopIndex,getVisibleGridHeight(),true,true);	// note: inverse==true
+            newTopIndex = range.startIndex;		// note: use startIndex because of inverse==true
         }
 
-        int visibleRows = getPotentiallyPaintedRows();
-
-        // if its visible just return
-        if (row >= vScroll.getSelection() && row < vScroll.getSelection() + visibleRows)
-        {
-            return;
-        }
-
-        if (row < vScroll.getSelection())
-        {
-            vScroll.setSelection(row);
-            topIndex = -1;
-        }
-        else
-        {
-            vScroll.setSelection(row - (visibleRows - 1));
-            topIndex = -1;
-        }
-
-        redraw();
+        setTopIndex(newTopIndex);
     }
 
     /**
@@ -3546,15 +4005,15 @@ public class Grid extends Canvas
     }
 
     /**
-     * Returns the computed row height. Currently this method just gets the
+     * Returns the computed default item height. Currently this method just gets the
      * preferred size of all the cells in the first row and returns that (it is
-     * then used as the height of all rows). Future versions of this method
-     * could be more sophisticated.
+     * then used as the height of all rows with items having a height of -1).
+     * Future versions of this method could be more sophisticated.
      * 
      * @param gc GC used to perform font metrics,etc.
      * @return the row height
      */
-    private int computeRowHeight(GC gc)
+    private int computeDefaultItemHeight(GC gc)
     {
         // row height is currently determined by the height of the first row
         // This could eventually be changed to compute the max height for all
@@ -3659,21 +4118,7 @@ public class Grid extends Canvas
             y += headerHeight;
         }
 
-        if (isTree)
-        {
-            for (Iterator itemIterator = items.iterator(); itemIterator.hasNext(); )
-            {
-                GridItem item = (GridItem) itemIterator.next();
-                if (item.isVisible())
-                {
-                    y += rowHeight + 1;
-                }
-            }
-        }
-        else
-        {
-            y = (rowHeight + 1) * items.size();
-        }
+        y += getGridHeight();
 
         if (rowHeaderVisible)
         {
@@ -3690,24 +4135,6 @@ public class Grid extends Canvas
         }
 
         return new Point(x, y);
-    }
-
-    /**
-     * Returns the number of rows that could possibly be visible in the current
-     * client area.
-     * 
-     * @return the number of potentially visible rows
-     */
-    int getPotentiallyPaintedRows()
-    {
-        int visibleRows = getClientArea().height;
-        if (columnHeadersVisible)
-        {
-            visibleRows -= headerHeight;
-        }
-        visibleRows = visibleRows / (rowHeight + 1);
-
-        return visibleRows;
     }
 
     /**
@@ -4084,7 +4511,7 @@ public class Grid extends Canvas
         int newWidth = resizingColumnStartWidth + (x - resizingStartX);
         if (newWidth < MIN_COLUMN_HEADER_WIDTH)
         {
-            return;
+            newWidth = MIN_COLUMN_HEADER_WIDTH;
         }
         
         if (columnScrolling && newWidth > getClientArea().width)
@@ -4110,6 +4537,38 @@ public class Grid extends Canvas
             GridColumn col = (GridColumn)displayOrderedColumns.get(index);
             if (col.isVisible()) col.fireMoved();
         }
+    }
+    /**
+     * Sets the new height of the item of the row being resized and fires the appropriate
+     * listeners.
+     * 
+     * @param x mouse x
+     */
+    private void handleRowResizerDragging(int y)
+    {
+        int newHeight = resizingRowStartHeight + (y - resizingStartY);
+        if (newHeight < MIN_ROW_HEADER_HEIGHT)	// TODO consider using an individual min height per grid item
+        {
+            newHeight = MIN_ROW_HEADER_HEIGHT;
+        }
+
+        if (newHeight > getClientArea().height)	// TODO consider using an individual max height per grid item
+        {
+            newHeight = getClientArea().height;
+        }
+
+        if (newHeight == rowBeingResized.getHeight())
+        {
+            return;
+        }
+
+        rowBeingResized.setHeight(newHeight,false);
+        scrollValuesObsolete = true;
+
+        Rectangle clientArea = getClientArea();
+        redraw(clientArea.x,clientArea.y,clientArea.width,clientArea.height,false);
+
+        rowBeingResized.fireResized();
     }
 
     /**
@@ -4181,6 +4640,113 @@ public class Grid extends Canvas
     }
 
     /**
+     * Determines if the mouse is hovering on a row resizer and changes the
+     * pointer and sets field appropriately.
+     * 
+     * @param x mouse x
+     * @param y mouse y
+     * @return true if this event has been consumed.
+     */
+    private boolean handleHoverOnRowResizer(int x, int y)
+    {
+    	rowBeingResized = null;
+        boolean over = false;
+        if (x <= rowHeaderWidth)
+        {
+            int y2 = 0;
+
+            if (columnHeadersVisible)
+            {
+                y2 += headerHeight;
+            }
+
+            int row=getTopIndex();
+            while(row<items.size() && y2<=getClientArea().height)
+            {
+                GridItem currItem = (GridItem)items.get(row);
+                if (currItem.isVisible())
+                {
+                	y2 += currItem.getHeight() +1;
+
+                	if (y2 >= (y - ROW_RESIZER_THRESHOLD) && y2 <= (y + ROW_RESIZER_THRESHOLD))
+                	{
+//                		if (currItem.isResizeable())
+                		{
+                			over = true;
+                			rowBeingResized = currItem;
+                		}
+                		// do not brake here, because in case of overlapping
+                		// row resizers we need to find the last one
+                	}
+                	else
+                	{
+                		if(rowBeingResized != null)
+                		{
+                			// we have passed all (overlapping) row resizers, so break
+                			break;
+                		}
+                	}
+                }
+                row++;
+            }
+        }
+
+        if (over != hoveringOnRowResizer)
+        {
+            if (over)
+            {
+                setCursor(getDisplay().getSystemCursor(SWT.CURSOR_SIZENS));
+            }
+            else
+            {
+                rowBeingResized = null;
+                setCursor(null);
+            }
+            hoveringOnRowResizer = over;
+        }
+        return over;
+    }
+    
+    /**
+     * Returns the cell at the given point in the receiver or null if no such
+     * cell exists. The point is in the coordinate system of the receiver.
+     * 
+     * @param point the point used to locate the item
+     * @return the cell at the given point
+     * @throws IllegalArgumentException
+     * <ul>
+     * <li>ERROR_NULL_ARGUMENT - if the point is null</li> 
+     * </ul>
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
+     */
+    public Point getCell(Point point)
+    {
+        checkWidget();
+        
+        if (point == null)
+            SWT.error(SWT.ERROR_NULL_ARGUMENT);
+
+        if (point.x < 0 || point.x > getClientArea().width) return null;
+
+        GridItem item = getItem(point);
+        GridColumn column = getColumn(point);
+
+        if (item!=null && column!=null)
+        {
+        	return new Point(columns.indexOf(column),items.indexOf(item));
+        }
+        else
+        {
+        	return null;
+        }
+    }
+    
+    /**
      * Paints.
      * 
      * @param e paint event
@@ -4206,9 +4772,16 @@ public class Grid extends Canvas
         }
 
         int firstVisibleIndex = 0;
-        int visibleRows = getPotentiallyPaintedRows();
-        visibleRows++;
-        visibleRows++;
+        int visibleRows = 0;
+        int availableHeight = getClientArea().height-y;
+        if (items.size()>0)
+        {
+            RowRange range = getRowRange(getTopIndex(),availableHeight,false,false);
+            if (range.height >= availableHeight)
+                visibleRows = range.rows;
+            else
+                visibleRows = range.rows + (availableHeight-range.height) / getItemHeight() + 1;
+        }
 
         firstVisibleIndex = getTopIndex();
 
@@ -4249,7 +4822,6 @@ public class Grid extends Canvas
                     // row header is actually painted later
                     x += rowHeaderWidth;
                 }                
-
 
                 int focusY = y;
 
@@ -4295,9 +4867,9 @@ public class Grid extends Canvas
                             }
                         }
 
-                        column.getCellRenderer().setBounds(x, y, width, rowHeight);
+                        column.getCellRenderer().setBounds(x, y, width, item.getHeight());
 
-                        e.gc.setClipping(new Rectangle(x -1,y -1,width +1,rowHeight + 2));
+                        e.gc.setClipping(new Rectangle(x -1,y -1,width +1,item.getHeight() + 2));
                         
                         column.getCellRenderer().setRow(i + 1);
 
@@ -4329,8 +4901,9 @@ public class Grid extends Canvas
                         }
 
                         column.getCellRenderer().paint(e.gc, item);
-                        
+
                         e.gc.setClipping((Rectangle)null);
+
 
                         x += width;
 
@@ -4348,7 +4921,7 @@ public class Grid extends Canvas
                     emptyCellRenderer.setSelected(selectedItems.contains(item));
                     emptyCellRenderer.setFocus(this.isFocusControl());
                     emptyCellRenderer.setRow(i + 1);
-                    emptyCellRenderer.setBounds(x, y, getClientArea().width - x + 1, rowHeight);
+                    emptyCellRenderer.setBounds(x, y, getClientArea().width - x + 1, item.getHeight());
                     emptyCellRenderer.setColumn(getColumnCount());
                     emptyCellRenderer.paint(e.gc, item);
                 }
@@ -4367,7 +4940,7 @@ public class Grid extends Canvas
                         rowHeaderRenderer.setSelected(cellInRowSelected);
                     }
 
-                    rowHeaderRenderer.setBounds(0, y, rowHeaderWidth, rowHeight + 1);
+                    rowHeaderRenderer.setBounds(0, y, rowHeaderWidth, item.getHeight() + 1);
                     rowHeaderRenderer.paint(e.gc, item);
                     
                     x += rowHeaderWidth;
@@ -4387,12 +4960,13 @@ public class Grid extends Canvas
                             }
                             focusRenderer
                                 .setBounds(focusX, focusY - 1, getClientArea().width - focusX - 1,
-                                           rowHeight + 1);
+                                		item.getHeight() + 1);
                             focusRenderer.paint(e.gc, item);
                         }
                     }
                 }
 
+                y += item.getHeight() + 1;
             }
             else
             {
@@ -4403,7 +4977,7 @@ public class Grid extends Canvas
                     x += rowHeaderWidth;
                 }
 
-                emptyCellRenderer.setBounds(x, y, getClientArea().width - x, rowHeight);
+                emptyCellRenderer.setBounds(x, y, getClientArea().width - x, getItemHeight());
                 emptyCellRenderer.setFocus(false);
                 emptyCellRenderer.setSelected(false);
                 emptyCellRenderer.setRow(i + 1);
@@ -4414,7 +4988,7 @@ public class Grid extends Canvas
                     
                     if (column.isVisible())
                     {
-                        emptyCellRenderer.setBounds(x, y, column.getWidth(), rowHeight);
+                        emptyCellRenderer.setBounds(x, y, column.getWidth(), getItemHeight());
                         emptyCellRenderer.setColumn(indexOf(column));
                         emptyCellRenderer.paint(e.gc, this);
 
@@ -4424,7 +4998,7 @@ public class Grid extends Canvas
                 
                 if (x < getClientArea().width)
                 {
-                    emptyCellRenderer.setBounds(x, y, getClientArea().width - x + 1, rowHeight);
+                    emptyCellRenderer.setBounds(x, y, getClientArea().width - x + 1, getItemHeight());
                     emptyCellRenderer.setColumn(getColumnCount());
                     emptyCellRenderer.paint(e.gc, this);
                 }
@@ -4434,16 +5008,18 @@ public class Grid extends Canvas
                 
                 if (rowHeaderVisible)
                 {
-                    emptyRowHeaderRenderer.setBounds(x, y, rowHeaderWidth, rowHeight + 1);
+                    emptyRowHeaderRenderer.setBounds(x, y, rowHeaderWidth, getItemHeight() + 1);
                     emptyRowHeaderRenderer.paint(e.gc, this);
 
                     x += rowHeaderWidth;
                 }
 
+                y += getItemHeight() + 1;
             }
 
             row++;
-            y += rowHeight + 1;
+// MOPR moved this to if-clause above
+//            y += getRowHeight() + 1;
         }
 
         // draw drop point
@@ -4757,13 +5333,29 @@ public class Grid extends Canvas
         // if the scrollbar is visible set its values
         if (vScroll.getVisible())
         {
+            int max = currentVisibleItems;
+            int thumb = 1;
+
+            if(!hasDifferingHeights)
+            {
+            	// in this case, the number of visible rows on screen is constant,
+            	// so use this as thumb
+                thumb = ( getVisibleGridHeight() + 1 ) / ( getItemHeight() + 1 );
+            }
+            else
+            {
+                // in this case, the number of visible rows on screen is variable,
+            	// so we have to use 1 as thumb and decrease max by the number of
+            	// rows on the last page
+            	RowRange range = getRowRange(-1,getVisibleGridHeight(),true,true);
+            	max -= range.rows - 1;
+            }
+
             // if possible, remember selection, if selection is too large, just
             // make it the max you can
-            int selection = Math.min(vScroll.getSelection(), currentVisibleItems - 1);
+            int selection = Math.min(vScroll.getSelection(), max);
 
-            int visibleRows = getPotentiallyPaintedRows();
-
-            vScroll.setValues(selection, 0, currentVisibleItems, visibleRows, 1, visibleRows);
+            vScroll.setValues(selection, 0, max, thumb, 1, thumb);
         }
 
         // if the scrollbar is visible set its values
@@ -5429,6 +6021,17 @@ public class Grid extends Canvas
             }
             return;
         }
+        if (hoveringOnRowResizer)
+        {
+        	if (e.button == 1)
+        	{
+        		resizingRow = true;
+        		resizingStartY = e.y;
+        		resizingRowStartHeight = rowBeingResized.getHeight();
+        	}
+        	return;
+        }
+
 
         if (e.button == 1 && handleColumnHeaderPush(e.x, e.y))
         {
@@ -5617,7 +6220,26 @@ public class Grid extends Canvas
                 handleHoverOnColumnResizer(e.x, e.y);
                 return;
             }
-            
+            else if (hoveringOnRowResizer) {
+                List sel = Arrays.asList(getSelection());
+                if(sel.contains(rowBeingResized))
+                {
+                	// the user double-clicked a row resizer of a selected row
+                	// so update all selected rows
+                    for(int cnt=0;cnt<sel.size();cnt++)
+                        ((GridItem)sel.get(cnt)).pack(false);
+                    redraw();
+                }
+                else
+                {
+                	// otherwise only update the row the user double-clicked
+                	rowBeingResized.pack(true);
+                }
+
+                resizingRow = false;
+                handleHoverOnRowResizer(e.x, e.y);
+            }
+
             GridItem item = getItem(new Point(e.x, e.y));
             if (item != null)
             {
@@ -5640,6 +6262,13 @@ public class Grid extends Canvas
         {
             resizingColumn = false;
             handleHoverOnColumnResizer(e.x, e.y); // resets cursor if
+            // necessary
+            return;
+        }
+        if (resizingRow)
+        {
+        	resizingRow = false;
+        	handleHoverOnRowResizer(e.x, e.y); // resets cursor if
             // necessary
             return;
         }
@@ -5705,6 +6334,11 @@ public class Grid extends Canvas
             if (resizingColumn)
             {
                 handleColumnResizerDragging(e.x);
+                return;
+            }
+            if (resizingRow)
+            {
+                handleRowResizerDragging(e.y);
                 return;
             }
             if (pushingColumn)
@@ -5892,7 +6526,7 @@ public class Grid extends Canvas
     {
         // TODO: need to clean up and refactor hover code
         handleCellHover(x, y);
-        
+
         if (columnHeadersVisible)
         {
             if (handleHoverOnColumnResizer(x, y))
@@ -5911,6 +6545,13 @@ public class Grid extends Canvas
 //                }
                 return;
             }
+        }
+        if (rowHeaderVisible)
+        {
+        	if (handleHoverOnRowResizer(x, y))
+        	{
+        		return;
+        	}
         }
 
        // handleCellHover(x, y);
@@ -6189,56 +6830,29 @@ public class Grid extends Canvas
                 
                 if (focusItem == newSelection)
                 {
-                    int pageSize = vScroll.getPageIncrement();
-                    for (int i = 0; i < pageSize - 1; i++)
-                    {
-                        GridItem prevItem = getPreviousVisibleItem(newSelection);
-                        if (prevItem == null)
-                        {
-                            break;
-                        }
-                        else
-                        {
-                            newSelection = prevItem;
-                        }
-                    }
+                    RowRange range = getRowRange(getTopIndex(),getVisibleGridHeight(),false,true);
+                    newSelection = (GridItem)items.get(range.startIndex);
                 }
                 
                 newColumnFocus = focusColumn;
                 break;
             case SWT.PAGE_DOWN :
-                int bottomIndex = getTopIndex();
+                int bottomIndex = getBottomIndex();
                 
                 newSelection = (GridItem)items.get(bottomIndex);
 
-                int potentialRows = getPotentiallyPaintedRows() - 1;
-                while (potentialRows > 0)
+                if(!isShown(newSelection))
                 {
-                    GridItem nextItem = getNextVisibleItem(newSelection);
-                    if (nextItem == null)
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        newSelection = nextItem;
-                        potentialRows--;
-                    }
+                	// the item at bottom index is not shown completely
+                	GridItem tmpItem = getPreviousVisibleItem(newSelection);
+                	if(tmpItem!=null)
+                		newSelection = tmpItem;
                 }
+
                 if (focusItem == newSelection)
                 {
-                    for (int i = 0; i < vScroll.getPageIncrement() - 1; i++)
-                    {
-                        GridItem nextItem = getNextVisibleItem(newSelection);
-                        if (nextItem == null)
-                        {
-                            break;
-                        }
-                        else
-                        {
-                            newSelection = nextItem;
-                        }
-                    }
+                    RowRange range = getRowRange(getBottomIndex(),getVisibleGridHeight(),true,false);
+                    newSelection = (GridItem)items.get(range.endIndex);
                 }
                 
                 newColumnFocus = focusColumn;
@@ -6345,6 +6959,7 @@ public class Grid extends Canvas
     private void onResize()
     {
         scrollValuesObsolete = true;
+        topIndex = -1;
     }
 
     /**
@@ -6353,6 +6968,7 @@ public class Grid extends Canvas
     private void onScrollSelection()
     {
         topIndex = -1;
+        bottomIndex = -1;
         refreshHoverState();
         redraw(getClientArea().x, getClientArea().y, getClientArea().width, getClientArea().height,
                false);
@@ -6399,30 +7015,34 @@ public class Grid extends Canvas
                 y += headerHeight;
             }
 
-            if (isTree)
+            int currIndex=getTopIndex();
+            int itemIndex=items.indexOf(item);
+            
+            if (itemIndex == -1)
             {
-                for (Iterator itemIterIterator = items.iterator(); itemIterIterator.hasNext(); )
-                {
-                    GridItem itemIter = (GridItem) itemIterIterator.next();
-                    if (itemIter == item)
-                    {
-                        break;
-                    }
-    
-                    if (itemIter.isVisible())
-                    {
-                        y += rowHeight + 1;
-                    }
-                }
+            	SWT.error(SWT.ERROR_INVALID_ARGUMENT);
             }
-            else
+            
+            while(currIndex!=itemIndex)
             {
-                y += (items.indexOf(item) * (rowHeight + 1));
-            }
-
-            if (vScroll.getVisible())
-            {
-                y -= vScroll.getSelection() * (rowHeight + 1);
+            	if(currIndex<itemIndex)
+            	{
+            		GridItem currItem = (GridItem)items.get(currIndex);
+            		if(currItem.isVisible())
+            		{
+            			y += currItem.getHeight() + 1;
+            		}
+            		currIndex++;
+            	}
+            	else if(currIndex>itemIndex)
+            	{
+            		currIndex--;
+            		GridItem currItem = (GridItem)items.get(currIndex);
+            		if(currItem.isVisible())
+            		{
+            			y -= currItem.getHeight() + 1;
+            		}
+            	}
             }
         }
         else
@@ -6845,14 +7465,15 @@ public class Grid extends Canvas
             row = index;
         }
 
-        if (items.size() == 1 && !userModifiedRowHeight)
-            rowHeight = computeRowHeight(sizingGC);
+        if (items.size() == 1 && !userModifiedItemHeight)
+            itemHeight = computeDefaultItemHeight(sizingGC);
 
         rowHeaderWidth = Math.max(rowHeaderWidth,rowHeaderRenderer
             .computeSize(sizingGC, SWT.DEFAULT, SWT.DEFAULT, item).x);
 
         scrollValuesObsolete = true;
         topIndex = -1;
+        bottomIndex = -1;
 
         currentVisibleItems++;
 
@@ -6893,6 +7514,7 @@ public class Grid extends Canvas
 
         scrollValuesObsolete = true;
         topIndex = -1;
+        bottomIndex = -1;
         if (item.isVisible())
         {
             currentVisibleItems--;
@@ -7085,6 +7707,12 @@ public class Grid extends Canvas
      * rather than pixel-by-pixel.
      * 
      * @return true if the table is scrolled horizontally by column
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
      */
     public boolean getColumnScrolling()
     {
@@ -7098,9 +7726,16 @@ public class Grid extends Canvas
      * 
      * @param columnScrolling true to horizontally scroll by column, false to
      * scroll by pixel
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
      */
     public void setColumnScrolling(boolean columnScrolling)
     {
+    	checkWidget();
         if (rowHeaderVisible && !columnScrolling)
         {
             return;
@@ -8267,7 +8902,7 @@ public class Grid extends Canvas
                     {
                         Point p = getOrigin((GridColumn)columns.get(0), item);
                         location.y = p.y;
-                        location.height = rowHeight;
+                        location.height = item.getHeight();
                     }
                 }
                 else if (childID >= items.size() && childID < items.size() + columns.size())
