@@ -7,7 +7,8 @@
  *
  * Contributors:
  *    rmcamara@us.ibm.com - initial API and implementation
- *    tom.schindl@bestsolution.at - various significant contributions
+ *    Tom Schindl <tom.schindl@bestsolution.at> - various significant contributions
+ *    											  bug fix in: 191216
  *******************************************************************************/ 
 
 package org.eclipse.nebula.jface.gridviewer;
@@ -20,7 +21,6 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
 
 /**
@@ -36,7 +36,7 @@ public class GridViewerRow extends ViewerRow
      * 
      * @param item GridItem source.
      */
-    public GridViewerRow(GridItem item)
+    GridViewerRow(GridItem item)
     {
         this.item = item;
     }

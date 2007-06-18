@@ -37,7 +37,7 @@ import org.eclipse.swt.widgets.Widget;
  * {@code ITreeContentProvider} interface.
  * <p>
  */
-public class GridViewer extends AbstractTableViewer
+public class GridTableViewer extends AbstractTableViewer
 {
     /** This viewer's grid control. */
     private Grid grid;
@@ -53,7 +53,7 @@ public class GridViewer extends AbstractTableViewer
      * 
      * @param parent the parent control
      */
-    public GridViewer(Composite parent)
+    public GridTableViewer(Composite parent)
     {
         this(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
     }
@@ -67,7 +67,7 @@ public class GridViewer extends AbstractTableViewer
      * @param parent the parent control
      * @param style the SWT style bits used to create the grid.
      */
-    public GridViewer(Composite parent, int style)
+    public GridTableViewer(Composite parent, int style)
     {
         this(new Grid(parent, style));
     }
@@ -79,7 +79,7 @@ public class GridViewer extends AbstractTableViewer
      * 
      * @param grid the grid control
      */
-    public GridViewer(Grid grid)
+    public GridTableViewer(Grid grid)
     {
         this.grid = grid;
         hookControl(grid);

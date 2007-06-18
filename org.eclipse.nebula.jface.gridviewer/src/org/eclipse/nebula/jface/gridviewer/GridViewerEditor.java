@@ -6,12 +6,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    rmcamara@us.ibm.com - initial API and implementation
- *    tom.schindl@bestsolution.at - various significant contributions
+ *    rmcamara@us.ibm.com                       - initial API and implementation
+ *    Tom Schindl <tom.schindl@bestsolution.at> - various significant contributions
+ *    											  bug fix in: 191216
  *******************************************************************************/ 
 
 package org.eclipse.nebula.jface.gridviewer;
 
+import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.ColumnViewerEditor;
 import org.eclipse.jface.viewers.ColumnViewerEditorActivationEvent;
 import org.eclipse.jface.viewers.ColumnViewerEditorActivationStrategy;
@@ -30,11 +32,11 @@ public class GridViewerEditor extends ColumnViewerEditor {
 	/** Editor support for tables. */
     private GridEditor gridEditor;
     
-	public GridViewerEditor(GridViewer viewer,
+	GridViewerEditor(ColumnViewer viewer,
 			ColumnViewerEditorActivationStrategy editorActivationStrategy,
 			int feature) {
 		super(viewer, editorActivationStrategy, feature);
-		this.gridEditor = new GridEditor(viewer.getGrid());
+		this.gridEditor = new GridEditor((Grid) viewer.getControl());
 	}
 
 	protected StructuredSelection createSelection(Object element) 
@@ -55,8 +57,7 @@ public class GridViewerEditor extends ColumnViewerEditor {
     }
 
 	public ViewerCell getFocusCell() {
-		GridViewer viewer = (GridViewer) getViewer();
-		Grid grid = viewer.getGrid();
+		Grid grid = (Grid)getViewer().getControl();
 		
 		if( grid.getCellSelectionEnabled() ) {
 			Point p = grid.getFocusCell();
@@ -64,7 +65,7 @@ public class GridViewerEditor extends ColumnViewerEditor {
 			if( p.x >= 0 && p.y >= 0 ) {
 				GridItem item = grid.getItem(p.y);
 				if( item != null ) {
-					ViewerRow row = viewer.getViewerRowFromItem(item);
+					ViewerRow row = getViewerRowFromItem(item);
 					return row.getCell(p.x);
 				}
 			}
@@ -73,7 +74,27 @@ public class GridViewerEditor extends ColumnViewerEditor {
 		return null;
 	}
 
+	private ViewerRow getViewerRowFromItem(GridItem item) {
+		if( getViewer() instanceof GridTableViewer ) {
+			return ((GridTableViewer)getViewer()).getViewerRowFromItem(item);
+		} else {
+			return ((GridTreeViewer)getViewer()).getViewerRowFromItem(item);
+		}
+	}
+	
 	protected void updateFocusCell(ViewerCell focusCell, ColumnViewerEditorActivationEvent event) {
 		// nothing to be done
+	}
+	
+	public static void create(GridTableViewer viewer,
+			ColumnViewerEditorActivationStrategy editorActivationStrategy,
+			int feature) {
+		viewer.setColumnViewerEditor(new GridViewerEditor(viewer,editorActivationStrategy,feature));
+	}
+	
+	public static void create(GridTreeViewer viewer,
+			ColumnViewerEditorActivationStrategy editorActivationStrategy,
+			int feature) {
+		viewer.setColumnViewerEditor(new GridViewerEditor(viewer,editorActivationStrategy,feature));
 	}
 }
