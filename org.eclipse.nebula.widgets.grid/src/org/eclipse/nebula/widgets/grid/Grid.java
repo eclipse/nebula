@@ -1718,7 +1718,7 @@ public class Grid extends Canvas
         itemHeight = height;
         userModifiedItemHeight = true;
         for(int cnt=0;cnt<items.size();cnt++)
-            ((GridItem)items.get(cnt)).setHeight(height,false);
+            ((GridItem)items.get(cnt)).setHeight(height);
         setScrollValuesObsolete();
         hasDifferingHeights=false;
         redraw();
@@ -4542,12 +4542,12 @@ public class Grid extends Canvas
     private void handleRowResizerDragging(int y)
     {
         int newHeight = resizingRowStartHeight + (y - resizingStartY);
-        if (newHeight < MIN_ROW_HEADER_HEIGHT)	// TODO consider using an individual min height per grid item
+        if (newHeight < MIN_ROW_HEADER_HEIGHT)
         {
             newHeight = MIN_ROW_HEADER_HEIGHT;
         }
 
-        if (newHeight > getClientArea().height)	// TODO consider using an individual max height per grid item
+        if (newHeight > getClientArea().height)
         {
             newHeight = getClientArea().height;
         }
@@ -4556,14 +4556,34 @@ public class Grid extends Canvas
         {
             return;
         }
+        
+        Event e = new Event();
+        e.item = rowBeingResized;
+        e.widget = this;
+        e.detail = newHeight;
+        
+        rowBeingResized.notifyListeners(SWT.Resize, e);
+        
+        if (e.doit == false)
+        	return;
 
-        rowBeingResized.setHeight(newHeight,false);
+        newHeight = e.detail;
+        
+        if (newHeight < MIN_ROW_HEADER_HEIGHT)
+        {
+            newHeight = MIN_ROW_HEADER_HEIGHT;
+        }
+
+        if (newHeight > getClientArea().height)
+        {
+            newHeight = getClientArea().height;
+        }
+        
+        rowBeingResized.setHeight(newHeight);
         scrollValuesObsolete = true;
 
         Rectangle clientArea = getClientArea();
         redraw(clientArea.x,clientArea.y,clientArea.width,clientArea.height,false);
-
-        rowBeingResized.fireResized();
     }
 
     /**
@@ -6016,7 +6036,7 @@ public class Grid extends Canvas
             }
             return;
         }
-        if (hoveringOnRowResizer)
+        if (rowsResizeable && hoveringOnRowResizer)
         {
         	if (e.button == 1)
         	{
@@ -6215,20 +6235,20 @@ public class Grid extends Canvas
                 handleHoverOnColumnResizer(e.x, e.y);
                 return;
             }
-            else if (hoveringOnRowResizer) {
+            else if (rowsResizeable && hoveringOnRowResizer) {
                 List sel = Arrays.asList(getSelection());
                 if(sel.contains(rowBeingResized))
                 {
                 	// the user double-clicked a row resizer of a selected row
                 	// so update all selected rows
                     for(int cnt=0;cnt<sel.size();cnt++)
-                        ((GridItem)sel.get(cnt)).pack(false);
+                        ((GridItem)sel.get(cnt)).pack();
                     redraw();
                 }
                 else
                 {
                 	// otherwise only update the row the user double-clicked
-                	rowBeingResized.pack(true);
+                	rowBeingResized.pack();
                 }
 
                 resizingRow = false;
@@ -6541,7 +6561,7 @@ public class Grid extends Canvas
                 return;
             }
         }
-        if (rowHeaderVisible)
+        if (rowsResizeable && rowHeaderVisible)
         {
         	if (handleHoverOnRowResizer(x, y))
         	{

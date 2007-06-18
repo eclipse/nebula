@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
@@ -24,6 +25,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.TypedListener;
 
 /**
  * <p>
@@ -301,6 +303,56 @@ public class GridItem extends Item
     }
 
     /**
+     * Adds the listener to the collection of listeners who will
+     * be notified when the row is resized, by sending
+     * it one of the messages defined in the <code>ControlListener</code>
+     * interface.
+     * <p>
+     * Clients who wish to override the standard row resize logic should use the untyped
+     * listener mechanisms.  The untyped <code>Event</code> object passed to an untyped listener
+     * will have its <code>detail</code> field populated with the new row resize.  Clients may alter this
+     * value to, for example, enfore minimum or maximum row sizes.  Clients may also set the <code>doit</code>
+     * field to false to prevent the entire resize operation.
+     * 
+     * @param listener the listener which should be notified
+     *
+     * @exception IllegalArgumentException <ul>
+     *    <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
+     * </ul>
+     * @exception SWTException <ul>
+     *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+     * </ul>
+     */
+    public void addControlListener(ControlListener listener) {
+    	checkWidget ();
+    	if (listener == null) SWT.error (SWT.ERROR_NULL_ARGUMENT);
+    	TypedListener typedListener = new TypedListener (listener);
+    	addListener (SWT.Resize,typedListener);
+    }
+
+    /**
+     * Removes the listener from the collection of listeners who will
+     * be notified when the row is resized.
+     *
+     * @param listener the listener which should no longer be notified
+     *
+     * @exception IllegalArgumentException <ul>
+     *    <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
+     * </ul>
+     * @exception SWTException <ul>
+     *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+     * </ul>
+     */
+    public void removeControlListener (ControlListener listener) {
+    	checkWidget ();
+    	if (listener == null) SWT.error (SWT.ERROR_NULL_ARGUMENT);
+        removeListener(SWT.Resize, listener);
+    }
+    
+    
+    /**
      * Fires the given event type on the parent Grid instance. This method
      * should only be called from within a cell renderer. Any other use is not
      * intended.
@@ -355,19 +407,6 @@ public class GridItem extends Item
         selectionEvent.index = column;
 
         getParent().notifyListeners(SWT.Selection, selectionEvent);
-    }
-
-    /**
-     * Fires resized event.
-     */
-    void fireResized()
-    {
-        Event e = new Event();
-        e.display = this.getDisplay();
-        e.item = this;
-        e.widget = parent;
-
-        this.notifyListeners(SWT.Resize, e);
     }
 
     /**
@@ -1303,28 +1342,33 @@ public class GridItem extends Item
 	 * Sets the height of this <code>GridItem</code>.
 	 * 
 	 * @param newHeight new height in pixels
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
 	 */
     public void setHeight(int newHeight) {
 		checkWidget();
-		setHeight(newHeight,true);
-	}
-    void setHeight(int newHeight, boolean redraw) {
         if (newHeight < 1)
             SWT.error(SWT.ERROR_INVALID_ARGUMENT);
         height = newHeight;
         parent.hasDifferingHeights = true;
         parent.setScrollValuesObsolete();
-        if (redraw)
-        {
-            parent.redraw();
-        }
+        parent.redraw();
     }
     /**
      * Sets this <code>GridItem</code> to its preferred height.
      * 
-     * @param redraw
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
      */
-    public void pack(boolean redraw) {
+    public void pack() {
     	checkWidget();
     	
         int maxPrefHeight = 2;
@@ -1345,7 +1389,7 @@ public class GridItem extends Item
         }
         gc.dispose();
         
-        setHeight(maxPrefHeight,redraw);
+        setHeight(maxPrefHeight);
     }
 
     /**
