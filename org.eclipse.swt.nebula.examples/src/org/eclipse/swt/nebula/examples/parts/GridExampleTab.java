@@ -65,6 +65,7 @@ public class GridExampleTab extends AbstractExampleTab
     private Button columnCellSelection;
     private Button columnWordWrap;
     private Spinner rowHeight;
+	private Button rowsResizable;
 
     public GridExampleTab()
     {
@@ -221,8 +222,13 @@ public class GridExampleTab extends AbstractExampleTab
             {
                 grid.setItemHeight(rowHeight.getSelection());
             }
-        });
+        });        
         
+        rowsResizable = ButtonFactory.create(other,SWT.CHECK, "Rows Resizable", new Listener() {
+			public void handleEvent(Event event) {
+				grid.setRowsResizeable(rowsResizable.getSelection());
+			}		
+		});
         
         l = new Label(other,SWT.NONE);
         l.setText("Properties for Second Column:");
@@ -342,8 +348,8 @@ public class GridExampleTab extends AbstractExampleTab
         item2.setText(1,"first tree");
         
         
-        item2 = new GridItem(item,SWT.NONE);
-        item2.setText("first tree");
+        item2 = new GridItem(item,SWT.NONE,0);
+        item2.setText("should be 1111");
         item2.setText(1,"first tree");
 
         GridItem item22 = new GridItem(item2,SWT.NONE);
@@ -406,6 +412,7 @@ public class GridExampleTab extends AbstractExampleTab
         grid.setCellSelectionEnabled(cellSelection.getSelection());
         grid.getColumn(1).setCellSelectionEnabled(columnCellSelection.getSelection());
         grid.getColumn(1).setWordWrap(columnWordWrap.getSelection());
+        grid.setRowsResizeable(rowsResizable.getSelection());
         
         
         if (rowHeight.getSelection() == 0)
