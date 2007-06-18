@@ -310,8 +310,8 @@ public class GridItem extends Item
      * <p>
      * Clients who wish to override the standard row resize logic should use the untyped
      * listener mechanisms.  The untyped <code>Event</code> object passed to an untyped listener
-     * will have its <code>detail</code> field populated with the new row resize.  Clients may alter this
-     * value to, for example, enfore minimum or maximum row sizes.  Clients may also set the <code>doit</code>
+     * will have its <code>detail</code> field populated with the new row height.  Clients may alter this
+     * value to, for example, enforce minimum or maximum row sizes.  Clients may also set the <code>doit</code>
      * field to false to prevent the entire resize operation.
      * 
      * @param listener the listener which should be notified
