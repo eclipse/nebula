@@ -33,8 +33,8 @@ import org.eclipse.swt.widgets.Widget;
  * configured with a domain-specific content provider, label provider, element
  * filter (optional), and element sorter (optional).
  * <p>
- * Content providers for grid viewers must not implement the
- * {@code ITreeContentProvider} interface.
+ * Content providers for grid table viewers must not implement the
+ * {@code ITreeContentProvider} interface. Instead a {@link GridTreeViewer} should be used.
  * <p>
  */
 public class GridTableViewer extends AbstractTableViewer
