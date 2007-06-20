@@ -29,6 +29,7 @@ import org.eclipse.nebula.widgets.grid.internal.IScrollBarProxy;
 import org.eclipse.nebula.widgets.grid.internal.NullScrollBarProxy;
 import org.eclipse.nebula.widgets.grid.internal.ScrollBarProxyAdapter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.accessibility.ACC;
 import org.eclipse.swt.accessibility.Accessible;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
@@ -566,6 +567,11 @@ public class Grid extends Canvas
      * @see #bottomIndex
      */
     private boolean bottomIndexShownCompletely = false;
+    
+    /**
+     * Tooltip text - overriden because we have cell specific tooltips
+     */
+    private String toolTipText = null;
     
     /**
      * A range of rows in a <code>Grid</code>.
@@ -7204,7 +7210,7 @@ public class Grid extends Canvas
             hoverChange = true;
         }
         
-        //do inplaceToolTip stuff
+        //do inplace toolTip stuff
         if (hoverChange || hoveringOverText != overText)
         {
             hoveringOverText = overText;
@@ -7269,6 +7275,36 @@ public class Grid extends Canvas
             {                        
                 hideToolTip();
             }
+        }
+        
+        //do normal cell specific tooltip stuff
+        if (hoverChange)
+        {
+        	String oldTip = super.getToolTipText();
+        	String newTip = null;
+        	if (hoveringItem == null || hoveringColumn == null)
+        	{
+        		//we're not over a cell so no cell tooltip - use base one
+        		newTip = getToolTipText();
+        	}
+        	else
+        	{
+        		newTip = hoveringItem.getToolTipText(indexOf(hoveringColumn));
+        		if (newTip == null)
+        		{
+        			//no cell specific tooltip then use base Grid tooltip
+        			newTip = getToolTipText();        			        		
+        		}
+        	}
+        	//Avoid unnecessarily resetting tooltip - this will cause the tooltip to jump around
+        	if (newTip != null && !newTip.equals(oldTip))
+        	{
+        		super.setToolTipText(newTip);
+        	}
+        	else if(newTip == null && oldTip != null)
+        	{
+        		super.setToolTipText(null);
+        	}
         }
         
         return hoverChange;
@@ -9177,6 +9213,39 @@ public class Grid extends Canvas
     {
         this.hasSpanning = hasSpanning;
     }
+
+    /**
+     * Returns the receiver's tool tip text, or null if it has
+     * not been set.
+     *
+     * @return the receiver's tool tip text
+     *
+     * @exception SWTException <ul>
+     *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+     * </ul>
+     */
+	public String getToolTipText() {
+		checkWidget();
+		return toolTipText;
+	}
+
+
+	/**
+	 * Sets the receiver's tool tip text to the argument, which
+	 * may be null indicating that no tool tip text should be shown.
+	 *
+	 * @param string the new tool tip text (or null)
+	 *
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 * </ul>
+	 */
+	public void setToolTipText(String string) {
+		checkWidget();
+		toolTipText = string;
+	}
 }
 
 

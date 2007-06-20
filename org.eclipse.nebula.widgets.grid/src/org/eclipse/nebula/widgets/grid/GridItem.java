@@ -140,6 +140,11 @@ public class GridItem extends Item
      * List of text for each column.
      */
     private ArrayList texts = new ArrayList();
+    
+    /**
+     * List of tooltips for each column.
+     */
+    private ArrayList tooltips = new ArrayList();
 
     /**
      * Is visible?
@@ -446,6 +451,9 @@ public class GridItem extends Item
     public Color getBackground(int index)
     {
         checkWidget();
+        
+        handleVirtual();
+        
         Color c = (Color)backgrounds.get(index);
 //        if (c == null)
 //        {
@@ -524,6 +532,9 @@ public class GridItem extends Item
     public boolean getChecked(int index)
     {
         checkWidget();
+        
+        handleVirtual();
+        
         Boolean b = (Boolean)checks.get(index);
         if (b == null)
         {
@@ -592,6 +603,9 @@ public class GridItem extends Item
     public Font getFont(int index)
     {
         checkWidget();
+        
+        handleVirtual();
+        
         Font f = (Font)fonts.get(index);
         if (f == null)
         {
@@ -635,6 +649,9 @@ public class GridItem extends Item
     public Color getForeground(int index)
     {
         checkWidget();
+        
+        handleVirtual();
+        
         Color c = (Color)foregrounds.get(index);
         if (c == null)
         {
@@ -678,6 +695,9 @@ public class GridItem extends Item
     public boolean getGrayed(int index)
     {
         checkWidget();
+        
+        handleVirtual();
+        
         Boolean b = (Boolean)grayeds.get(index);
         if (b == null)
         {
@@ -1589,6 +1609,9 @@ public class GridItem extends Item
     public String getHeaderText()
     {
         checkWidget();
+        
+        handleVirtual();
+        
         return headerText;
     }
 
@@ -1678,6 +1701,48 @@ public class GridItem extends Item
         checkable.set(index, new Boolean(checked));
     }
     
+    /**
+     * Returns the tooltip for the given cell.
+     * 
+     * @param index the column index
+     * @return the tooltip
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
+     */
+    public String getToolTipText(int index)
+    {
+        checkWidget();
+        
+        handleVirtual();
+        
+        String s = (String)tooltips.get(index);
+
+        return s;
+    }
+    
+    /**
+     * Sets the tooltip for the given column index.
+     * 
+     * @param index the column index
+     * @param tooltip the tooltip text
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
+     */
+    public void setToolTipText(int index, String tooltip)
+    {
+        checkWidget();
+        tooltips.set(index, tooltip);
+    }
+    
+    
     private void init()
     {
         ensureSize(backgrounds);
@@ -1689,6 +1754,7 @@ public class GridItem extends Item
         ensureSize(images);
         ensureSize(texts);    
         ensureSize(columnSpans);
+        ensureSize(tooltips);
 
         height = parent.getItemHeight();
     }
