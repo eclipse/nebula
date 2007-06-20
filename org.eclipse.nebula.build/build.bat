@@ -1,6 +1,7 @@
 set HOME=d:\nebula_build
 set ECLIPSE_HOME=d:\nebula_build\eclipse33m6\eclipse
-set JAVA="D:\ibm-jdk5.0-sr3"
+set JAVA_HOME=c:\Progra~1\Java\jre1.5.0_10
+set JAVA=c:\Progra~1\Java\jre1.5.0_10
 set PATH=%JAVA%\bin;%PATH%;%ECLIPSE_HOME%\plugins\org.apache.ant_1.6.5\lib;.
 set CVSROOT=:pserver:anonymous@dev.eclipse.org:/cvsroot/technology
 d:
