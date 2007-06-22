@@ -633,30 +633,18 @@ public class Gallery extends Canvas {
 	}
 
 	private void _removeSelection(GalleryItem item) {
-		if (selection == null)
+
+		if (item.getParentItem() == null)
+			selectionIndices = _arrayRemoveItem(selectionIndices,
+					_arrayIndexOf(selectionIndices, _indexOf(item)));
+		else
+			_removeSelection(item.getParentItem(), item);
+
+		int index = _arrayIndexOf(selection, item);
+		if (index == -1)
 			return;
-		if (selection.length == 1) {
-			selection = null;
-		} else {
-			int index = -1;
-			for (int i = selection.length - 1; i >= 0; --i) {
-				if (selection[i] == item) {
-					index = i;
-					break;
-				}
-			}
-			if (index == -1)
-				return;
 
-			selection = (GalleryItem[]) _arrayRemoveItem(selection, index);
-
-			if (item.getParentItem() == null)
-				selectionIndices = _arrayRemoveItem(selectionIndices,
-						_arrayIndexOf(selectionIndices, _indexOf(item)));
-			else
-				_removeSelection(item.getParentItem(), item);
-
-		}
+		selection = (GalleryItem[]) _arrayRemoveItem(selection, index);
 
 	}
 
@@ -1590,18 +1578,32 @@ public class Gallery extends Canvas {
 
 	public void remove(int index) {
 		checkWidget();
-		this.items = (GalleryItem[]) this._arrayRemoveItem(this.items, index);
-		updateStructuralValues(false);
-		updateScrollBarsProperties();
-		redraw();
+		if (!virtual) {
+			if (isSelected(items[index])) {
+				setSelected(items[index], false, false);
+			}
+
+			this.items = (GalleryItem[]) this._arrayRemoveItem(this.items,
+					index);
+
+			updateStructuralValues(false);
+			updateScrollBarsProperties();
+			redraw();
+		}
 	}
 
 	protected void _remove(GalleryItem parent, int index) {
-		parent.items = (GalleryItem[]) this._arrayRemoveItem(parent.items,
-				index);
-		updateStructuralValues(false);
-		updateScrollBarsProperties();
-		redraw();
+		if (!virtual) {
+			if (isSelected(parent.items[index])) {
+				setSelected(parent.items[index], false, false);
+			}
+
+			parent.items = (GalleryItem[]) this._arrayRemoveItem(parent.items,
+					index);
+			updateStructuralValues(false);
+			updateScrollBarsProperties();
+			redraw();
+		}
 	}
 
 	protected Object[] _arrayRemoveItem(Object[] array, int index) {
@@ -1612,8 +1614,9 @@ public class Gallery extends Canvas {
 		if (array.length == 1 && index == 0)
 			return null;
 
-		Object[] newArray = (Object[]) Array.newInstance(array[0].getClass(), array.length - 1);
-		
+		Object[] newArray = (Object[]) Array.newInstance(array[0].getClass(),
+				array.length - 1);
+
 		if (index > 0)
 			System.arraycopy(array, 0, newArray, 0, index);
 
@@ -1625,6 +1628,22 @@ public class Gallery extends Canvas {
 	}
 
 	protected int _arrayIndexOf(int[] array, int value) {
+		if( array == null )
+			return -1;
+		
+		for (int i = array.length - 1; i >= 0; --i) {
+			if (array[i] == value) {
+				return i;
+
+			}
+		}
+		return -1;
+	}
+
+	protected int _arrayIndexOf(Object[] array, Object value) {
+		if( array == null )
+			return -1;
+		
 		for (int i = array.length - 1; i >= 0; --i) {
 			if (array[i] == value) {
 				return i;
