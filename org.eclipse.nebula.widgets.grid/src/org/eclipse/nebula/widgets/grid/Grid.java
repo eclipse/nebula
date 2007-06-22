@@ -4292,19 +4292,20 @@ public class Grid extends Canvas
             && (columnGroups.length == 0 || dragDropPointValid))
         {
 
+            int notifyFrom = displayOrderedColumns.indexOf(columnBeingPushed);
+            int notifyTo = notifyFrom;
+            	
             displayOrderedColumns.remove(columnBeingPushed);
-
-            int notifyFrom = 0;
 
             if (dragDropBeforeColumn == null)
             {
                 displayOrderedColumns.add(columnBeingPushed);
-                notifyFrom = displayOrderedColumns.size();
+                notifyTo = displayOrderedColumns.size();
             }
             else if (dragDropAfterColumn == null)
             {
                 displayOrderedColumns.add(0, columnBeingPushed);
-                notifyFrom = 1;
+                notifyFrom = 0;
             }
             else
             {
@@ -4350,10 +4351,11 @@ public class Grid extends Canvas
                     insertAtIndex = displayOrderedColumns.indexOf(dragDropBeforeColumn);
                 }
                 displayOrderedColumns.add(insertAtIndex, columnBeingPushed);
-                notifyFrom = insertAtIndex + 1;
+                notifyFrom = Math.min(notifyFrom, insertAtIndex);
+                notifyTo = Math.max(notifyTo, insertAtIndex);
             }
 
-            for (int i = notifyFrom; i < displayOrderedColumns.size(); i++)
+            for (int i = notifyFrom; i <= notifyTo; i++)
             {
                 ((GridColumn)displayOrderedColumns.get(i)).fireMoved();
             }
