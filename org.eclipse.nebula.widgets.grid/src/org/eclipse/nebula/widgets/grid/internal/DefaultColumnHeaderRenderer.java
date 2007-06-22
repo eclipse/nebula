@@ -123,8 +123,27 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
 
         int y = getBounds().y + getBounds().height - bottomMargin - gc.getFontMetrics().getHeight();
 
-        gc.drawString(TextUtils.getShortString(gc, column.getText(), width), getBounds().x + x
-                                                                             + pushedDrawingOffset,
+        String text = TextUtils.getShortString(gc, column.getText(), width);
+        
+        if (column.getAlignment() == SWT.RIGHT)
+        {
+            int len = gc.stringExtent(text).x;
+            if (len < width)
+            {
+                x += width - len;
+            }
+        }
+        else if (column.getAlignment() == SWT.CENTER)
+        {
+            int len = gc.stringExtent(text).x;
+            if (len < width)
+            {
+                x += (width - len) / 2;
+            }
+        }
+        
+        
+        gc.drawString(text, getBounds().x + x + pushedDrawingOffset,
                       y + pushedDrawingOffset,true);
 
         if (column.getSort() != SWT.NONE)

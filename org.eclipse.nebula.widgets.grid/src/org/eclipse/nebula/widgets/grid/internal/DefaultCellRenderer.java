@@ -120,7 +120,6 @@ public class DefaultCellRenderer extends GridCellRenderer
 
         if (isCheck())
         {
-
             checkRenderer.setChecked(item.getChecked(getColumn()));
             checkRenderer.setGrayed(item.getGrayed(getColumn()));
             if (!item.getParent().isEnabled())
@@ -129,13 +128,25 @@ public class DefaultCellRenderer extends GridCellRenderer
             }
             checkRenderer.setHover(getHoverDetail().equals("check"));
 
-            checkRenderer.setBounds(getBounds().x + x, (getBounds().height - checkRenderer
-                .getBounds().height)
-                                                       / 2 + getBounds().y, checkRenderer
-                .getBounds().width, checkRenderer.getBounds().height);
-            checkRenderer.paint(gc, null);
-
-            x += checkRenderer.getBounds().width + insideMargin;
+        	if (isCenteredCheckBoxOnly(item))
+        	{
+        		//Special logic if this column only has a checkbox and is centered
+                checkRenderer.setBounds(getBounds().x + ((getBounds().width - checkRenderer.getBounds().width) /2),
+                		                (getBounds().height - checkRenderer.getBounds().height)
+                                            / 2 + getBounds().y, checkRenderer
+                                          .getBounds().width, checkRenderer.getBounds().height);	
+        	}
+        	else
+        	{
+                checkRenderer.setBounds(getBounds().x + x, (getBounds().height - checkRenderer
+                        .getBounds().height)
+                                                               / 2 + getBounds().y, checkRenderer
+                        .getBounds().width, checkRenderer.getBounds().height);
+                    
+                    x += checkRenderer.getBounds().width + insideMargin;       		
+        	}
+        	
+        	checkRenderer.paint(gc, null);
         }
 
         Image image = item.getImage(getColumn());
@@ -400,28 +411,44 @@ public class DefaultCellRenderer extends GridCellRenderer
 
     private boolean overCheck(GridItem item, Point point)
     {
-
-        point = new Point(point.x, point.y);
-        point.x -= getBounds().x - 1;
-        point.y -= getBounds().y - 1;
-
-        int x = leftMargin;
-        if (isTree())
-        {
-            x += getToggleIndent(item);
-            x += toggleRenderer.getSize().x + insideMargin;
-        }
-
-        if (point.x >= x && point.x < (x + checkRenderer.getSize().x))
-        {
-            int yStart = ((getBounds().height - checkRenderer.getBounds().height) / 2);
-            if (point.y >= yStart && point.y < yStart + checkRenderer.getSize().y)
-            {
-                return true;
-            }
-        }
-
-        return false;
+    	if (isCenteredCheckBoxOnly(item))
+    	{
+	        point = new Point(point.x, point.y);
+	        point.x -= getBounds().x;
+	        point.y -= getBounds().y;
+	        
+	        Rectangle checkBounds = new Rectangle(0,0,0,0);
+	        checkBounds.x = (getBounds().width - checkRenderer.getBounds().width)/2;
+	        checkBounds.y = ((getBounds().height - checkRenderer.getBounds().height) / 2);
+	        checkBounds.width = checkRenderer.getBounds().width;
+	        checkBounds.height = checkRenderer.getBounds().height;
+	        
+	        return checkBounds.contains(point);	        
+    	}
+    	else
+    	{    	
+	        point = new Point(point.x, point.y);
+	        point.x -= getBounds().x;
+	        point.y -= getBounds().y;
+	
+	        int x = leftMargin;
+	        if (isTree())
+	        {
+	            x += getToggleIndent(item);
+	            x += toggleRenderer.getSize().x + insideMargin;
+	        }
+	
+	        if (point.x >= x && point.x < (x + checkRenderer.getSize().x))
+	        {
+	            int yStart = ((getBounds().height - checkRenderer.getBounds().height) / 2);
+	            if (point.y >= yStart && point.y < yStart + checkRenderer.getSize().y)
+	            {
+	                return true;
+	            }
+	        }
+	
+	        return false;
+    	}
     }
 
     private int getToggleIndent(GridItem item)
@@ -533,4 +560,9 @@ public class DefaultCellRenderer extends GridCellRenderer
         return bounds;
     }
     
+    private boolean isCenteredCheckBoxOnly(GridItem item)
+    {
+    	return !isTree() && item.getImage(getColumn()) == null && item.getText(getColumn()).equals("")
+		&& getAlignment() == SWT.CENTER;
+    }
 }
