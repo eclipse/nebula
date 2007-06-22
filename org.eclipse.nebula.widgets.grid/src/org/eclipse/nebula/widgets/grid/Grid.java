@@ -3399,6 +3399,18 @@ public class Grid extends Canvas
         checkWidget();
         this.rowHeaderVisible = show;
         setColumnScrolling(true);
+        
+        if (show)
+        {
+	        rowHeaderWidth = 1;
+	        
+	        for (Iterator iter = items.iterator(); iter.hasNext();)
+	        {
+	            GridItem iterItem = (GridItem)iter.next();
+	            rowHeaderWidth = Math.max(rowHeaderWidth,rowHeaderRenderer.computeSize(sizingGC, SWT.DEFAULT,SWT.DEFAULT,iterItem).x);
+	        }
+        }
+        
         redraw();
     }
 
@@ -7521,8 +7533,11 @@ public class Grid extends Canvas
         if (items.size() == 1 && !userModifiedItemHeight)
             itemHeight = computeDefaultItemHeight(sizingGC);
 
-        rowHeaderWidth = Math.max(rowHeaderWidth,rowHeaderRenderer
-            .computeSize(sizingGC, SWT.DEFAULT, SWT.DEFAULT, item).x);
+        if (isRowHeaderVisible())
+        {
+	        rowHeaderWidth = Math.max(rowHeaderWidth,rowHeaderRenderer
+	            .computeSize(sizingGC, SWT.DEFAULT, SWT.DEFAULT, item).x);
+        }
 
         scrollValuesObsolete = true;
         topIndex = -1;
