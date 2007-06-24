@@ -9,7 +9,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * Snippet 2 for DateFormatter : fixed mask, no default value.
+ * Snippet 2 for DateFormatter : fixed mask yyyy/MM/dd, no default value.
  */
 public class DateFormatterSnippet2 {
 	public static void main(String[] args) {
@@ -18,7 +18,7 @@ public class DateFormatterSnippet2 {
     shell.setLayout(new GridLayout());
 
     FormattedText text = new FormattedText(shell, SWT.BORDER);
-    text.setFormatter(new DateFormatter("dd/MM/yyyy"));
+    text.setFormatter(new DateFormatter("yyyy/MM/dd"));
     GridData data = new GridData();
     data.widthHint = 70;
     text.getControl().setLayoutData(data);
