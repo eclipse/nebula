@@ -101,6 +101,8 @@ public class NumberFormatter extends AbstractFormatter {
   protected int zeroDecimalLen = 0;
   /** Flag for display of the negative sign */
   protected boolean minus = false;
+  /** Flag indicating that the current value is negative */
+  protected boolean negative = false;
   /** Symboles used to format numbers */
   protected DecimalFormatSymbols symbols;
   /** Flag indicating the use of the 0xAO (no-break space) grouping separator */
@@ -113,6 +115,10 @@ public class NumberFormatter extends AbstractFormatter {
   protected boolean fixedInt = true;
   /** Flag indicating that the decimal part has a fixed length */
   protected boolean fixedDec = true;
+  /** Length of the prefix part in the cache */
+  protected int prefixLen = 0;
+  /** Length of the suffix part in the cache */
+  protected int suffixLen = 0;
 
   /**
    * Constructs a new instance with all defaults :
@@ -182,21 +188,30 @@ public class NumberFormatter extends AbstractFormatter {
   }
 
   /**
-   * Clear a part of the edition cache.
+   * Clear a part of the edition cache. The start and len parameters are
+   * adjusted to avoid clearing in prefix and suffix parts of the cache.
    * 
    * @param start beginning index
    * @param len length of portion to clear
    */
   protected void clearText(int start, int len) {
+  	if ( start < prefixLen ) {
+  		len -= prefixLen - start;
+  		start = prefixLen;
+  	}
+  	if ( start + len >= editValue.length() - suffixLen ) {
+  		len = editValue.length() - suffixLen - start;
+  	}
   	int d = editValue.indexOf(EMPTY + symbols.getDecimalSeparator());
   	boolean decimal = d >= start && d < start + len;
   	for (int i = 0; i < len; i++) {
-  		if ( start + i >= editValue.length() ) break;
   		char c = editValue.charAt(start + i);
   		if ( c >= '0' && c <= '9' ) {
   			if ( d < 0 || start + i < d ) {
   				intCount--;
   			}
+  		} else if ( c == symbols.getMinusSign() ) {
+  			negative = false;
   		}
   	}
   	editValue.delete(start, start + len);
@@ -214,23 +229,23 @@ public class NumberFormatter extends AbstractFormatter {
    * @return New position of the cursor
    */
   protected int format(int curseur) {
-  	int i;
+  	int i = prefixLen + (negative ? 1 : 0);
   	char c;
 
   	// Inserts zeros in the int part
   	while ( intCount < zeroIntLen ) {
-  		editValue.insert(0, '0');
+  		editValue.insert(1, '0');
   		intCount++;
   		curseur++;
   	}
   	while ( intCount > zeroIntLen ) {
-  		if ( editValue.charAt(0) == '0' ) {
+  		if ( editValue.charAt(i) == '0' ) {
     		intCount--;
-  		} else if ( editValue.charAt(0) != symbols.getGroupingSeparator() ) {
+  		} else if ( editValue.charAt(i) != symbols.getGroupingSeparator() ) {
   			break;
   		}
-  		editValue.deleteCharAt(0);
-  		if ( curseur > 0 ) curseur--;
+  		editValue.deleteCharAt(i);
+  		if ( curseur > i ) curseur--;
   	}
 
   	// Recreates the groups in the int part
@@ -239,7 +254,7 @@ public class NumberFormatter extends AbstractFormatter {
     	if ( n == groupLen ) {
     		n = 0;
     	}
-    	for (i = 0; i < editValue.length(); i++) {
+    	for (; i < editValue.length() - suffixLen; i++) {
     		c = editValue.charAt(i);
     		if ( c >= '0' && c <= '9' ) {
     			if ( n == groupLen ) {
@@ -278,13 +293,13 @@ public class NumberFormatter extends AbstractFormatter {
 
   	// Truncates / completes by zeros the decimal part
   	i = editValue.indexOf(EMPTY + symbols.getDecimalSeparator());
-  	if ( i < 0 && zeroDecimalLen > 0 ) {
-  		editValue.append(symbols.getDecimalSeparator());
-  		i = editValue.length() - 1;
+  	if ( i < 0 && (zeroDecimalLen > 0 || alwaysShowDec) ) {
+  		i = editValue.length() - suffixLen;
+  		editValue.insert(i, symbols.getDecimalSeparator());
   	}
   	if ( i >= 0 ) {
   		int j;
-  		for (j = i + 1; j < editValue.length();) {
+  		for (j = i + 1; j < editValue.length() - suffixLen;) {
   			c = editValue.charAt(j);
   			if ( c == symbols.getGroupingSeparator() ) {
   				editValue.deleteCharAt(j);
@@ -345,8 +360,10 @@ public class NumberFormatter extends AbstractFormatter {
    * @see ITextFormatter#getDisplayString()
    */
   public String getDisplayString() {
-    return (getValue() != null
-    			  ? nfDisplay.format(value) : EMPTY);
+    return editValue.substring(0, prefixLen)
+    			 + ((getValue() != null
+    			     ? nfDisplay.format(value) : EMPTY))
+    			 + editValue.substring(editValue.length() - suffixLen);
   }
 
   /**
@@ -375,7 +392,7 @@ public class NumberFormatter extends AbstractFormatter {
   public Object getValue() {
   	if ( modified ) {
       try {
-  			value = nfEdit.parse(editValue.toString());
+  			value = nfEdit.parse(editValue.substring(prefixLen, editValue.length() - suffixLen));
   		} catch (ParseException e1) {
   			if ( zeroIntLen + zeroDecimalLen == 0 
   					 && (editValue.length() == 0
@@ -524,6 +541,44 @@ public class NumberFormatter extends AbstractFormatter {
   }
 
   /**
+   * Sets a prefix to display before the value.<br>
+   * 
+   * To clear the current prefix, call the <code>setPrefix</code> method with a
+   * <code>null</code> parameter.
+   * 
+   * @param prefix prefix to display, or <code>null</code> to clear
+   */
+  protected void setPrefix(String prefix) {
+  	if ( prefixLen > 0 ) {
+  		editValue.delete(0, prefixLen);
+  		prefixLen = 0;
+  	}
+  	if ( prefix != null ) {
+  		editValue.insert(0, prefix);
+  		prefixLen = prefix.length();
+  	}
+  }
+
+  /**
+   * Sets a suffix to display after the value.<br>
+   * 
+   * To clear the current suffix, call the <code>setSuffix</code> method with a
+   * <code>null</code> parameter.
+   * 
+   * @param suffix suffix to display, or <code>null</code> to clear
+   */
+  protected void setSuffix(String suffix) {
+  	if ( suffixLen > 0 ) {
+    	editValue.delete(editValue.length() - suffixLen, editValue.length());
+    	suffixLen = 0;
+  	}
+  	if ( suffix != null ) {
+  		editValue.append(suffix);
+  		suffixLen = suffix.length();
+  	}
+  }
+
+  /**
    * Sets the value to edit. The value provided must be a <code>Number</code>.
    * 
    * @param value number value
@@ -534,10 +589,10 @@ public class NumberFormatter extends AbstractFormatter {
     boolean decimal = false;
     if ( value instanceof Number ) {
       this.value = (Number) value;
-      editValue.setLength(0);
-      editValue.append(nfEdit.format(this.value));
+      editValue.delete(prefixLen, editValue.length() - suffixLen);
+      editValue.insert(prefixLen, nfEdit.format(this.value));
       intCount = 0;
-      for (int i = 0; i < editValue.length(); i++) {
+      for (int i = prefixLen; i < editValue.length() - suffixLen; i++) {
       	char c = editValue.charAt(i);
       	if ( c == symbols.getDecimalSeparator() ) {
       		decimal = true;
@@ -567,7 +622,7 @@ public class NumberFormatter extends AbstractFormatter {
       return;
     }
 
-    int p;
+    int p; // Current insertion position in the edit cache
     e.doit = false;
 
     if ( e.keyCode == SWT.BS || e.keyCode == SWT.DEL ) {
@@ -579,8 +634,9 @@ public class NumberFormatter extends AbstractFormatter {
     	}
     	p = e.start;
 
-    	int d = editValue.indexOf(EMPTY + symbols.getDecimalSeparator());
+    	int d = editValue.indexOf(EMPTY + symbols.getDecimalSeparator()); // Decimal separator position
     	for (int i = 0; i < e.text.length(); i++) {
+    		if ( p < prefixLen || p > editValue.length() - suffixLen ) break;
     		char c = e.text.charAt(i);
     		if ( c >= '0' && c <= '9' ) {
     			// Controls the number of digits by group
@@ -618,15 +674,17 @@ public class NumberFormatter extends AbstractFormatter {
     				p = n + 1;
     			}
     		} else if ( c == symbols.getMinusSign() ) {
-    			if ( p != 0 || ! minus ) {
-    				beep();
+    			if ( p != prefixLen || ! minus ) {
+    				beep(); // Minus sign only possible in first position
     				break;
     			}
-    			if ( editValue.charAt(0) != c ) {
+    			if ( this.editValue.length() == 0 || editValue.charAt(0) != c ) {
       			editValue.insert(p++, c);
+      			negative = true;
       			d++;
     			} else {
     				editValue.deleteCharAt(0);
+      			negative = false;
     				d--;
     			}
     		} else if ( c == symbols.getDecimalSeparator()
