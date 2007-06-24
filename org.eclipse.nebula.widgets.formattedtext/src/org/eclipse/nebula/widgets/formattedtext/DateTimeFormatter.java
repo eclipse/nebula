@@ -325,12 +325,13 @@ public class DateTimeFormatter extends AbstractFormatter {
    * preserved.
    * 
    * @param b beginning index (inclusive)
-   * @param e en index (exclusive)
+   * @param e end index (exclusive)
    */
 	private void clear(int b, int e) {
 		char m;
 		int i = b, from = 0;
 		FieldDesc field;
+
 		while ( i < e ) {
 			m = inputMask.charAt(i);
 			if ( m == '*' ) {
@@ -338,19 +339,18 @@ public class DateTimeFormatter extends AbstractFormatter {
 				continue;
 			}
 			field = getField(i, from);
-			while ( i < e ) {
+			while ( i < e && field.curLen > 0 ) {
 				inputCache.deleteCharAt(i);
-				if ( field.curLen == field.minLen ) {
-					inputCache.insert(field.pos + field.minLen - 1, SPACE);
-					i++;
-				} else {
-					inputMask.deleteCharAt(i);
-					e--;
-					field.curLen--;
-				}
-				if ( i >= e || i >= field.pos + field.curLen ) {
-					break;
-				}
+				inputMask.deleteCharAt(i);
+				e--;
+				field.curLen--;
+			}
+			while ( field.curLen < field.minLen ) {
+				inputCache.insert(field.pos + field.curLen, SPACE);
+				inputMask.insert(field.pos + field.curLen, field.index);
+				i++;
+				e++;
+				field.curLen++;
 			}
 			updateFieldValue(field, false);
 		}
@@ -535,11 +535,11 @@ public class DateTimeFormatter extends AbstractFormatter {
 
 	/**
 	 * Returns the field descriptor corresponding to a given position in the
-	 * <code>inputMask</code>. The current starting position and langth of the
+	 * <code>inputMask</code>. The current starting position and length of the
 	 * field are setted in the descriptor.
 	 * 
 	 * @param p position in mask of the field
-	 * @param from starting position in mask to search for the begin of the field
+	 * @param from starting position in mask to search for the beginning of the field
 	 * @return Field descriptor
 	 */
 	private FieldDesc getField(int p, int from) {
