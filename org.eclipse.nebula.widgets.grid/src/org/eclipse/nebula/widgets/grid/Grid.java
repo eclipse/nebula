@@ -6929,7 +6929,8 @@ public class Grid extends Canvas
             if (selectionType == SWT.SINGLE || e.stateMask != SWT.CTRL)
             {
                 selectionEvent = updateSelection(newSelection, e.stateMask);
-                selectionEvent.stateMask = e.stateMask;
+                if (selectionEvent != null) 
+                	selectionEvent.stateMask = e.stateMask;
             }
             
             focusItem = newSelection;
@@ -8714,6 +8715,7 @@ public class Grid extends Canvas
     public void setItemCount(int count)
     {
         checkWidget();
+        setRedraw(false);
         if (count < 0)
             count = 0;
         
@@ -8727,7 +8729,7 @@ public class Grid extends Canvas
         {
             new GridItem(this,SWT.NONE);
         }
-        
+        setRedraw(true);
     }
     
     /**
