@@ -339,9 +339,19 @@ public class GridExampleTab extends AbstractExampleTab
         item.setColumnSpan(2,1);
         item.setImage(ExamplesView.getImage("icons/eclipse.png"));
         
+        
+        item.setToolTipText(0,"my tooltip 1");
+        item.setToolTipText(1,"tooltip2");
+        item.setToolTipText(2,"test tooltip on 3");
+        
+//        grid.setToolTipText("GRIDDDD");
+        
         GridItem item2 = new GridItem(item,SWT.NONE);
         item2.setText("first tree");
         item2.setText(1,"first tree");
+        
+        item2.setToolTipText(0, "hi");
+        item2.setToolTipText(1,"more tooltips");
         
         item2 = new GridItem(item,SWT.NONE);
         item2.setText("first tree");
@@ -365,6 +375,17 @@ public class GridExampleTab extends AbstractExampleTab
      
         item55.setText(1,"This cell spans over many columns, use setColumnSpan method to achieve this");
         item55.setChecked(1,true);
+        
+//        item55.addListener(SWT.Resize,new Listener() {
+//			public void handleEvent(Event event) {
+//				if (event.detail < 12)
+//					event.detail = 12;
+//				
+//				if (event.detail > 34)
+//					event.detail = 34;
+//				
+//			}		
+//		});
        
         
 //        item55.setForeground(1,Display.getCurrent().getSystemColor(SWT.COLOR_RED));
