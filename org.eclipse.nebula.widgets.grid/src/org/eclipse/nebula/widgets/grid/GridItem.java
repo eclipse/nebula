@@ -1445,6 +1445,9 @@ public class GridItem extends Item
             SWT.error(SWT.ERROR_INVALID_ARGUMENT);
         }
         images.set(index, image);
+        
+        parent.imageSetOnItem(this);
+        
         parent.redraw();
     }
 

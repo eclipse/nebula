@@ -574,6 +574,13 @@ public class Grid extends Canvas
     private String toolTipText = null;
     
     /**
+     * Flag that is set to true as soon as one image is set on any one item.  
+     * This is used to mimic Table behavior that resizes the rows on the first image added.
+     * See imageSetOnItem.
+     */
+    private boolean firstImageSet = false;
+    
+    /**
      * A range of rows in a <code>Grid</code>.
      * <p>
      * A row in this sense exists only for visible items
@@ -4019,22 +4026,15 @@ public class Grid extends Canvas
 
     /**
      * Returns the computed default item height. Currently this method just gets the
-     * preferred size of all the cells in the first row and returns that (it is
+     * preferred size of all the cells in the given row and returns that (it is
      * then used as the height of all rows with items having a height of -1).
-     * Future versions of this method could be more sophisticated.
      * 
+     * @param item item to use for sizing
      * @param gc GC used to perform font metrics,etc.
      * @return the row height
      */
-    private int computeDefaultItemHeight(GC gc)
+    private int computeItemHeight(GridItem item, GC gc)
     {
-        // row height is currently determined by the height of the first row
-        // This could eventually be changed to compute the max height for all
-        // cells and
-        // potentially even variable heights for different rows (though that
-        // would require
-        // changing more than just this method)
-
         int height = 1;
 
         if (columns.size() == 0 || items.size() == 0)
@@ -4047,7 +4047,7 @@ public class Grid extends Canvas
             GridColumn column = (GridColumn) columnsIterator.next();
             height = Math.max(height, column.getCellRenderer().computeSize(gc, SWT.DEFAULT,
                                                                            SWT.DEFAULT,
-                                                                           (GridItem)items.get(0)).y);
+                                                                           item).y);
         }
 
         return height <= 0 ? 16 : height;
@@ -7532,7 +7532,7 @@ public class Grid extends Canvas
         }
 
         if (items.size() == 1 && !userModifiedItemHeight)
-            itemHeight = computeDefaultItemHeight(sizingGC);
+            itemHeight = computeItemHeight(item,sizingGC);
 
         if (isRowHeaderVisible())
         {
@@ -9264,6 +9264,21 @@ public class Grid extends Canvas
 	public void setToolTipText(String string) {
 		checkWidget();
 		toolTipText = string;
+	}
+	
+	/**
+	 * Updates the row height when the first image is set on an item.
+	 * 
+	 * @param item item which images has just been set on.
+	 */
+	void imageSetOnItem(GridItem item)
+	{
+		if (firstImageSet || userModifiedItemHeight) return;
+		
+		int height = computeItemHeight(item,sizingGC);
+		setItemHeight(height);
+		
+		firstImageSet = true;
 	}
 }
 

@@ -387,6 +387,7 @@ public class DefaultCellRenderer extends GridCellRenderer
 
             if (event == IInternalWidget.LeftMouseButtonDown)
             {
+            	//System.out.println(overToggle(item, point));
                 if (overToggle(item, point))
                 {
                     item.setExpanded(!item.isExpanded());
@@ -470,13 +471,14 @@ public class DefaultCellRenderer extends GridCellRenderer
         if (point.x >= x && point.x < (x + toggleRenderer.getSize().x))
         {
             // return true;
+        	System.out.println(getBounds().height);
             int yStart = ((getBounds().height - toggleRenderer.getBounds().height) / 2);
             if (point.y >= yStart && point.y < yStart + toggleRenderer.getSize().y)
             {
                 return true;
             }
         }
-
+        
         return false;
     }
 
