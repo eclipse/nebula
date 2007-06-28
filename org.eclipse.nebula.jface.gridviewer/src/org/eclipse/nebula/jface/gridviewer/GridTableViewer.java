@@ -44,6 +44,13 @@ public class GridTableViewer extends AbstractTableViewer
     
     private GridViewerRow cachedRow;
 
+	/**
+	 * If true, this grid viewer will ensure that the grid's
+	 * rows / GridItems are always sized to their preferred height.
+	 */
+	private boolean autoPreferredHeight = false;
+
+
     /**
      * Creates a grid viewer on a newly-created grid control under the given
      * parent. The grid control is created using the SWT style bits
@@ -274,5 +281,47 @@ public class GridTableViewer extends AbstractTableViewer
 
 	protected void doSelect(int[] indices) {
 		grid.select(indices);
+	}
+	
+	
+	
+	/**
+	 * When set to true, this grid viewer will ensure that each of
+	 * the grid's items is always automatically sized to its preferred
+	 * height. The default is false.
+	 * <p>
+	 * Since this mechanism usually leads to a grid with rows of
+	 * different heights and thus to a grid with decreased performance,
+	 * it should only be applied if that is intended.  To set the
+	 * height of all items to a specific value, use {@link Grid#setItemHeight(int)}
+	 * instead.
+	 * <p>
+	 * When a column with activated word wrapping is resized
+	 * by dragging the column resizer, the items are only auto-resized
+	 * properly if you use {@link GridViewerColumn} to create the
+	 * columns.
+	 * <p>
+	 * When this method is called, existing rows are not resized to their 
+	 * preferred height.  Therefore it is suggested that this method be called
+	 * before rows are populated (i.e. before setInput).
+	 */
+	public void setAutoPreferredHeight(boolean autoPreferredHeight) {
+		this.autoPreferredHeight = autoPreferredHeight;
+	}
+
+	/**
+	 * @return  true if this grid viewer sizes its rows to their
+	 *          preferred height
+	 * @see #setAutoPreferredHeight(boolean)
+	 */
+	public boolean getAutoPreferredHeight() {
+		return autoPreferredHeight;
+	}
+
+	/** {@inheritDoc} */
+	protected void doUpdateItem(Widget widget, Object element, boolean fullMap) {
+		super.doUpdateItem(widget, element, fullMap);
+		if(autoPreferredHeight && !widget.isDisposed())
+			((GridItem)widget).pack();
 	}
 }

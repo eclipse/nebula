@@ -8,7 +8,7 @@
  * Contributors:
  *    rmcamara@us.ibm.com                       - initial API and implementation
  *    Tom Schindl <tom.schindl@bestsolution.at> - various significant contributions
- *    Mark-Oliver Reiser <mopr1@web.de>         - fix in bug 191216
+ *    Mark-Oliver Reiser <mopr1@web.de>         - support for differing row heights ; fix in bug 191216
  *******************************************************************************/ 
 
 package org.eclipse.nebula.jface.gridviewer;
@@ -28,12 +28,18 @@ import org.eclipse.swt.widgets.Listener;
  */
 public final class GridViewerColumn extends ViewerColumn 
 {
+    /** This is either a GridTableViewer or a GridTreeViewer. */
+    private ColumnViewer viewer;
+
     /** The concrete grid column that is being represented by the {@code ViewerColumn}.*/
     private GridColumn column;
-    
+
     /** Editor support for handling check events. */
     private CheckEditingSupport checkEditingSupport;
-    
+
+    protected Listener columnResizeListener = null;
+
+
     /**
      * Create a new column in the {@link GridTableViewer}
      * 
@@ -123,7 +129,9 @@ public final class GridViewerColumn extends ViewerColumn
     
     GridViewerColumn(ColumnViewer viewer, GridColumn column) {
     	super(viewer, column);
+    	this.viewer = viewer;
         this.column = column;
+        hookColumnResizeListener();
     }
     
     private static GridColumn createColumn(Grid table, int style, int index) 
@@ -174,5 +182,42 @@ public final class GridViewerColumn extends ViewerColumn
         {
             super.setEditingSupport(editingSupport);
         }        
+    }
+
+
+    protected void hookColumnResizeListener() {
+        if (columnResizeListener == null)
+        {
+            columnResizeListener = new Listener() {
+                public void handleEvent(Event event)
+                {
+                    boolean autoPreferredSize=false;
+                    if(viewer instanceof GridTableViewer)
+                    	autoPreferredSize = ((GridTableViewer)viewer).getAutoPreferredHeight();
+                    if(viewer instanceof GridTreeViewer)
+                        autoPreferredSize = ((GridTreeViewer)viewer).getAutoPreferredHeight();
+
+                    if(autoPreferredSize && column.getWordWrap())
+                    {
+                        Grid grid = column.getParent();
+                        for(int cnt=0;cnt<grid.getItemCount();cnt++)
+                            grid.getItem(cnt).pack();
+                        grid.redraw();
+                    }
+                }
+            };
+            column.addListener(SWT.Resize, columnResizeListener);
+        }
+    }
+    protected void unhookColumnResizeListener() {
+        if (columnResizeListener != null)
+        {
+            column.removeListener(SWT.Resize, columnResizeListener);
+            columnResizeListener = null;
+        }
+    }
+    protected void handleDispose() {
+        unhookColumnResizeListener();
+        super.handleDispose();
     }
 }
