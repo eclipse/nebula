@@ -36,9 +36,13 @@ public class DefaultCellRenderer extends GridCellRenderer
 
     int rightMargin = 4;
 
-    int topMargin = 2;
+    int topMargin = 0;
 
-    int bottomMargin = 2;
+    int bottomMargin = 0;
+
+    int textTopMargin = 1;
+
+    int textBottomMargin = 2;
 
     private int insideMargin = 3;
 
@@ -193,7 +197,7 @@ public class DefaultCellRenderer extends GridCellRenderer
                 }
             }
 
-            gc.drawString(text, getBounds().x + x, getBounds().y + topMargin, true);        
+            gc.drawString(text, getBounds().x + x, getBounds().y + textTopMargin + topMargin, true);        
         }
         else
         {
@@ -213,7 +217,7 @@ public class DefaultCellRenderer extends GridCellRenderer
             textLayout.setAlignment(getAlignment());
             textLayout.setWidth(width < 1 ? 1 : width);
             
-            textLayout.draw(gc, getBounds().x + x, getBounds().y + topMargin);
+            textLayout.draw(gc, getBounds().x + x, getBounds().y + textTopMargin + topMargin);
         }
         
 
@@ -305,7 +309,7 @@ public class DefaultCellRenderer extends GridCellRenderer
         {
             x += gc.textExtent(item.getText(getColumn())).x + rightMargin;
 
-            textHeight = topMargin + gc.getFontMetrics().getHeight() + bottomMargin;
+            textHeight = topMargin + textTopMargin + gc.getFontMetrics().getHeight() + textBottomMargin + bottomMargin;
         }
         else
         {
@@ -323,10 +327,10 @@ public class DefaultCellRenderer extends GridCellRenderer
 
             x += plainTextWidth + rightMargin;
         	
-            textHeight += topMargin;
+            textHeight += topMargin + textTopMargin;
             for(int cnt=0;cnt<currTextLayout.getLineCount();cnt++)
                 textHeight += currTextLayout.getLineBounds(cnt).height;
-            textHeight += bottomMargin;
+            textHeight += textBottomMargin + bottomMargin;
             
             currTextLayout.dispose();
         }
@@ -538,7 +542,7 @@ public class DefaultCellRenderer extends GridCellRenderer
             x += image.getBounds().width + insideMargin;
         }
         
-        Rectangle bounds = new Rectangle(x,topMargin,0,0);
+        Rectangle bounds = new Rectangle(x,topMargin + textTopMargin,0,0);
         
         GC gc = new GC(item.getParent());
         gc.setFont(item.getFont(getColumn()));
