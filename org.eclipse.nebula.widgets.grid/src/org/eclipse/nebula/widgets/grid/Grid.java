@@ -1732,8 +1732,8 @@ public class Grid extends Canvas
         userModifiedItemHeight = true;
         for(int cnt=0;cnt<items.size();cnt++)
             ((GridItem)items.get(cnt)).setHeight(height);
-        setScrollValuesObsolete();
         hasDifferingHeights=false;
+        setScrollValuesObsolete();
         redraw();
     }
 
@@ -2342,6 +2342,10 @@ public class Grid extends Canvas
         {
             bottomIndex = 0;
         }
+        else if (getVisibleGridHeight()<1)
+        {
+        	bottomIndex = getTopIndex();
+        }
         else
         {
             RowRange range = getRowRange(getTopIndex(),getVisibleGridHeight(),false,false);
@@ -2458,13 +2462,12 @@ public class Grid extends Canvas
 
         // fail fast
         if (startIndex < 0 || startIndex >= items.size()
-                || ((GridItem)items.get(startIndex)).isVisible() == false
-                || availableHeight < 0)
+                || ((GridItem)items.get(startIndex)).isVisible() == false)
             SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 
         RowRange range = new RowRange();
 
-        if (availableHeight == 0)
+        if (availableHeight <= 0)
         {
         	// special case: empty range
             range.startIndex = startIndex;
@@ -3871,6 +3874,12 @@ public class Grid extends Canvas
     {
         checkWidget();
 
+        // if no items are visible on screen then abort
+        if (getVisibleGridHeight()<1)
+        {
+            return;
+        }
+
         // if its visible just return
         if (isShown(item))
         {
@@ -4809,7 +4818,7 @@ public class Grid extends Canvas
         int firstVisibleIndex = 0;
         int visibleRows = 0;
         int availableHeight = getClientArea().height-y;
-        if (items.size()>0)
+        if (items.size()>0 && availableHeight>0)
         {
             RowRange range = getRowRange(getTopIndex(),availableHeight,false,false);
             if (range.height >= availableHeight)
@@ -5382,8 +5391,10 @@ public class Grid extends Canvas
                 // in this case, the number of visible rows on screen is variable,
             	// so we have to use 1 as thumb and decrease max by the number of
             	// rows on the last page
-            	RowRange range = getRowRange(-1,getVisibleGridHeight(),true,true);
-            	max -= range.rows - 1;
+            	if(getVisibleGridHeight()>=1) {
+            		RowRange range = getRowRange(-1,getVisibleGridHeight(),true,true);
+            		max -= range.rows - 1;
+            	}
             }
 
             // if possible, remember selection, if selection is too large, just
