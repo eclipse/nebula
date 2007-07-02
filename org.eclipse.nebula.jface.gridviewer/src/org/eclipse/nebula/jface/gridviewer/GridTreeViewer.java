@@ -128,7 +128,7 @@ public class GridTreeViewer extends AbstractTreeViewer {
 			return ((GridItem) o).getItems();
 		}
 		if (o instanceof Grid) {
-			return ((Grid) o).getItems();
+			return ((Grid) o).getRootItems();
 		}
 		return null;
 	}
