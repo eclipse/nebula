@@ -1376,6 +1376,11 @@ public class GridItem extends Item
             SWT.error(SWT.ERROR_INVALID_ARGUMENT);
         height = newHeight;
         parent.hasDifferingHeights = true;
+        if(isVisible()) {
+            int myIndex = parent.indexOf(this);
+            if(parent.getTopIndex()<=myIndex && myIndex<=parent.getBottomIndex())	// note: cannot use Grid#isShown() here, because that returns false for partially shown items
+                parent.bottomIndex = -1;
+        }
         parent.setScrollValuesObsolete();
         parent.redraw();
     }
