@@ -558,7 +558,7 @@ public class Grid extends Canvas
      * 
      * @see #topIndex
      */
-    private int bottomIndex = -1;
+    int bottomIndex = -1;
     /**
      * True if the last visible item is completely visible.  The value must never be read directly.  It is cached and
      * updated when appropriate.  #isShown() should be called for every client (even internal 
@@ -7007,6 +7007,7 @@ public class Grid extends Canvas
     {
         scrollValuesObsolete = true;
         topIndex = -1;
+        bottomIndex = -1;
     }
 
     /**
