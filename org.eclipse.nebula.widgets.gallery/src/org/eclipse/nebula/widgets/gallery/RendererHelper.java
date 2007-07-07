@@ -1,8 +1,20 @@
+/*******************************************************************************
+ * Copyright (c) 2006-2007 Nicolas Richeton.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors :
+ *    Nicolas Richeton (nicolas.richeton@gmail.com) - initial API and implementation
+ *    Richard Michalsky - bug 195439
+ *******************************************************************************/
+package org.eclipse.nebula.widgets.gallery;
+
+import org.eclipse.swt.graphics.GC;
+
 /**
- * Item drawing with a list style :<br/> Image on the left, text and
- * description on the right.<br/>
- * 
- * Best with bigger width than height.
+ * Renderer Helper
  * <p>
  * NOTE: THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT. THIS IS A
  * PRE-RELEASE ALPHA VERSION. USERS SHOULD EXPECT API CHANGES IN FUTURE
@@ -13,11 +25,6 @@
  * @contributor Richard Michalsky
  * 
  */
-package org.eclipse.nebula.widgets.gallery;
-
-import org.eclipse.swt.graphics.GC;
-
-
 public class RendererHelper {
 	private static final String ELLIPSIS = "...";
 

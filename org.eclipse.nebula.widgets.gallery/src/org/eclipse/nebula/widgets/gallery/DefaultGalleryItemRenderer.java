@@ -7,6 +7,7 @@
  *
  * Contributors :
  *    Nicolas Richeton (nicolas.richeton@gmail.com) - initial API and implementation
+ *    Richard Michalsky - bug 195415
  *******************************************************************************/
 package org.eclipse.nebula.widgets.gallery;
 
@@ -30,7 +31,7 @@ import org.eclipse.swt.widgets.Display;
  * </p>
  * 
  * @author Nicolas Richeton (nicolas.richeton@gmail.com)
- * @contributor Richard Michalsky
+ * @contributor Richard Michalsky (bug 195415)
  */
 public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 
