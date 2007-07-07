@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Display;
  * </p>
  * 
  * @author Nicolas Richeton (nicolas.richeton@gmail.com)
+ * @contributor Richard Michalsky
  */
 public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 
@@ -127,62 +128,21 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 
 		// Draw label
 		if (item.getText() != null && showLabels) {
+			// Set up the GC
 			gc.setBackground(this.backgroundColor);
-			String text = createLabel(item.getText(), gc, width - 10);
-
-			int textWidth = getTextWidth(text, gc);
-			int textxShift = (width - (textWidth > width ? width : textWidth)) >> 1;
-
 			gc.setForeground(selected ? this.selectionForegroundColor : this.foregroundColor);
 			gc.setBackground(selected ? selectionBackgroundColor : this.selectionBackgroundColor);
 
+			// Create label
+			String text = RendererHelper.createLabel(item.getText(), gc, width - 10);
+
+			// Center text
+			int textWidth = gc.textExtent(text).x;
+			int textxShift = (width - (textWidth > width ? width : textWidth)) >> 1;
+
+			// Draw
 			gc.drawText(text, x + textxShift, y + height - fontHeight, true);
 		}
-	}
-
-	private int getTextWidth(String text, GC gc) {
-		int w = 0;
-
-		for (int i = 0; i < text.length(); i++) {
-			w += gc.getCharWidth(text.charAt(i));
-		}
-		if (Gallery.DEBUG)
-			System.out.println("Text width : " + w);
-		return w;
-	}
-
-	private String createLabel(String text, GC gc, int width) {
-		if (Gallery.DEBUG)
-			System.out.println("createLabel " + text);
-
-		int textWidth = getTextWidth(text, gc);
-		if (textWidth <= width) {
-			if (Gallery.DEBUG)
-				System.out.println("createLabel done");
-			return text;
-		}
-
-		float averageWidth = textWidth / text.length();
-
-		if (Gallery.DEBUG)
-			System.out.println("averageWidth " + averageWidth);
-		int bestLength = averageWidth > 0 ? (int) (width / averageWidth) : 0;
-		if (Gallery.DEBUG)
-			System.out.println("bestLength " + bestLength);
-		bestLength = (bestLength - 3 < 0) ? 0 : (bestLength - 3);
-		if (Gallery.DEBUG)
-			System.out.println("bestLength " + bestLength);
-
-		if (bestLength > text.length())
-			bestLength = text.length();
-
-		String result = text.substring(0, bestLength) + "...";
-		if (Gallery.DEBUG)
-			System.out.println("result " + result);
-
-		if (Gallery.DEBUG)
-			System.out.println("createLabel done");
-		return result;
 	}
 
 	public void setDropShadowsSize(int dropShadowsSize) {

@@ -135,14 +135,14 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 
 			// Calculate font height (text and description)
 			gc.setFont(textFont);
-			String text = createLabel(item.getText(), gc, width - useableHeight - 10);
+			String text = RendererHelper.createLabel(item.getText(), gc, width - useableHeight - 10);
 			int textFontHeight = gc.getFontMetrics().getHeight();
 
 			String description = null;
 			int descriptionFontHeight = 0;
 			if (item.getDescription() != null) {
 				gc.setFont(descriptionFont);
-				description = createLabel(item.getDescription(), gc, width - useableHeight - 10);
+				description = RendererHelper.createLabel(item.getDescription(), gc, width - useableHeight - 10);
 				descriptionFontHeight = gc.getFontMetrics().getHeight();
 			}
 
@@ -166,7 +166,7 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 				transY = transY >> 1;
 				gc.setForeground(selected ? this.selectionForegroundColor : this.foregroundColor);
 				gc.setFont(textFont);
-				gc.drawText(text, x + useableHeight + 5, y + transY , true);
+				gc.drawText(text, x + useableHeight + 5, y + transY, true);
 			}
 			// Draw description
 			if (description != null && displayDescription) {
@@ -175,51 +175,6 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 				gc.drawText(description, x + useableHeight + 5, y + ((height - descriptionFontHeight - textFontHeight - 2) >> 1) + textFontHeight + 1, true);
 			}
 		}
-	}
-
-	private int getTextWidth(String text, GC gc) {
-		int w = 0;
-
-		for (int i = 0; i < text.length(); i++) {
-			w += gc.getCharWidth(text.charAt(i));
-		}
-		if (Gallery.DEBUG)
-			System.out.println("Text width : " + w);
-		return w;
-	}
-
-	private String createLabel(String text, GC gc, int width) {
-		if (Gallery.DEBUG)
-			System.out.println("createLabel " + text);
-
-		int textWidth = getTextWidth(text, gc);
-		if (textWidth <= width) {
-			if (Gallery.DEBUG)
-				System.out.println("createLabel done");
-			return text;
-		}
-
-		float averageWidth = textWidth / text.length();
-
-		if (Gallery.DEBUG)
-			System.out.println("averageWidth " + averageWidth);
-		int bestLength = averageWidth > 0 ? (int) (width / averageWidth) : 0;
-		if (Gallery.DEBUG)
-			System.out.println("bestLength " + bestLength);
-		bestLength = (bestLength - 3 < 0) ? 0 : (bestLength - 3);
-		if (Gallery.DEBUG)
-			System.out.println("bestLength " + bestLength);
-
-		if (bestLength > text.length())
-			bestLength = text.length();
-
-		String result = text.substring(0, bestLength) + "...";
-		if (Gallery.DEBUG)
-			System.out.println("result " + result);
-
-		if (Gallery.DEBUG)
-			System.out.println("createLabel done");
-		return result;
 	}
 
 	public void setDropShadowsSize(int dropShadowsSize) {

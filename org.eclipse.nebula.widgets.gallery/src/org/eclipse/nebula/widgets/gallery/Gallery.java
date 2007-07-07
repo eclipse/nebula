@@ -137,7 +137,7 @@ public class Gallery extends Canvas {
 	AbstractGalleryGroupRenderer groupRenderer;
 
 	/**
-	 * Return the number of rooot-level items in the receiver.
+	 * Return the number of root-level items in the receiver.
 	 * 
 	 * @return
 	 */
