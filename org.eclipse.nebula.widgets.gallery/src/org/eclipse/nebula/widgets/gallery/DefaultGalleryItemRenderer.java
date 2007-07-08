@@ -7,7 +7,7 @@
  *
  * Contributors :
  *    Nicolas Richeton (nicolas.richeton@gmail.com) - initial API and implementation
- *    Richard Michalsky - bug 195415
+ *    Richard Michalsky - bugs 195415,  195443
  *******************************************************************************/
 package org.eclipse.nebula.widgets.gallery;
 
@@ -16,6 +16,7 @@ import java.util.Iterator;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -31,7 +32,7 @@ import org.eclipse.swt.widgets.Display;
  * </p>
  * 
  * @author Nicolas Richeton (nicolas.richeton@gmail.com)
- * @contributor Richard Michalsky (bug 195415)
+ * @contributor Richard Michalsky (bugs 195415, 195443)
  */
 public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 
@@ -53,6 +54,8 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 
 	boolean showLabels = true;
 
+	private Font font = null;
+
 	public boolean isShowLabels() {
 		return showLabels;
 	}
@@ -73,6 +76,7 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 
 	public void draw(GC gc, GalleryItem item, int index, int x, int y, int width, int height) {
 		Image itemImage = item.getImage();
+		gc.setFont(font);
 
 		int useableHeight = height;
 		int fontHeight = 0;
@@ -190,6 +194,31 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 
 	public int getDropShadowsSize() {
 		return dropShadowsSize;
+	}
+
+	/**
+	 * Returns the font used for drawing item label or <tt>null</tt> if system
+	 * font is used.
+	 * 
+	 * @return the font
+	 */
+	public Font getFont() {
+		return font;
+	}
+
+	/**
+	 * Set the font for drawing item label or <tt>null</tt> to use system
+	 * font.
+	 * 
+	 * @param font
+	 *            the font to set
+	 */
+	public void setFont(Font font) {
+		if (this.font != font) {
+			this.font = font;
+			if (getGallery() != null)
+				getGallery().redraw();
+		}
 	}
 
 	public void dispose() {

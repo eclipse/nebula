@@ -57,9 +57,9 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 
 	Color descriptionColor;
 
-	Font textFont;
+	Font textFont = null;
 
-	Font descriptionFont;
+	Font descriptionFont = null;
 
 	boolean showLabels = true;
 
@@ -77,9 +77,6 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 		selectionBackgroundColor = Display.getDefault().getSystemColor(SWT.COLOR_LIST_SELECTION);
 		this.selectionForegroundColor = foregroundColor;
 		descriptionColor = Display.getDefault().getSystemColor(SWT.COLOR_DARK_GRAY);
-
-		textFont = Display.getDefault().getSystemFont();
-		descriptionFont = Display.getDefault().getSystemFont();
 	}
 
 	public void draw(GC gc, GalleryItem item, int index, int x, int y, int width, int height) {
@@ -277,5 +274,47 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 
 	public void setSelectionForegroundColor(Color selectionForegroundColor) {
 		this.selectionForegroundColor = selectionForegroundColor;
+	}
+
+	/**
+	 * Returns the font used for drawing item label or <tt>null</tt> if system
+	 * font is used.
+	 * 
+	 * @return the font
+	 */
+	public Font getTextFont() {
+		return textFont;
+	}
+
+	/**
+	 * Set the font for drawing item label or <tt>null</tt> to use system
+	 * font.
+	 * 
+	 * @param font
+	 *            the font to set
+	 */
+	public void setTextFont(Font textFont) {
+		this.textFont = textFont;
+	}
+
+	/**
+	 * Returns the font used for drawing item description or <tt>null</tt> if
+	 * system font is used.
+	 * 
+	 * @return the font
+	 */
+	public Font getDescriptionFont() {
+		return descriptionFont;
+	}
+
+	/**
+	 * Set the font for drawing item description or <tt>null</tt> to use
+	 * system font.
+	 * 
+	 * @param font
+	 *            the font to set
+	 */
+	public void setDescriptionFont(Font descriptionFont) {
+		this.descriptionFont = descriptionFont;
 	}
 }

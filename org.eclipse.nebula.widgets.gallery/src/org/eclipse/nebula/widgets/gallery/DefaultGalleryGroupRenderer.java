@@ -7,12 +7,14 @@
  *
  * Contributors :
  *    Nicolas Richeton (nicolas.richeton@gmail.com) - initial API and implementation
+ *    Richard Michalsky - bug 195443
  *******************************************************************************/
 package org.eclipse.nebula.widgets.gallery;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -27,6 +29,8 @@ import org.eclipse.swt.widgets.Display;
  * </p>
  * 
  * @author Nicolas Richeton (nicolas.richeton@gmail.com)
+ * @contributor Richard Michalsky (bug 195443)
+ * 
  */
 public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 
@@ -43,6 +47,8 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 	// True if margins have already been calculated. Prevents
 	// margins calculation for each group
 	boolean marginCalculated = false;
+
+	private Font font = null;
 
 	public DefaultGalleryGroupRenderer() {
 		titleForeground = Display.getDefault().getSystemColor(SWT.COLOR_TITLE_FOREGROUND);
@@ -169,8 +175,9 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 		if (gc == null) {
 			gc = new GC(gallery, SWT.NONE);
 			gcCreated = true;
-			// gc.setFont(gallery.getDisplay().getSystemFont());
 		}
+
+		gc.setFont(font);
 		// Get font height
 		fontHeight = gc.getFontMetrics().getHeight();
 
@@ -245,5 +252,29 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 
 	public void setTitleBackground(Color titleBackground) {
 		this.titleBackground = titleBackground;
+	}
+
+	/**
+	 * Returns the font used for drawing the group title or <tt>null</tt> if system
+	 * font is used.
+	 *
+	 * @return the font
+	 */
+	public Font getFont() {
+		return font;
+	}
+
+	/**
+	 * Set the font for drawing the group title or <tt>null</tt> to use system
+	 * font.
+	 *
+	 * @param font the font to set
+	 */
+	public void setFont(Font font) {
+		if (this.font != font) {
+			this.font = font;
+			if (getGallery() != null)
+				getGallery().redraw();
+		}
 	}
 }
