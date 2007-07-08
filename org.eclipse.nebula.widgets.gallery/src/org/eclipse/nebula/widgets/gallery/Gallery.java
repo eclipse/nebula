@@ -1576,6 +1576,14 @@ public class Gallery extends Canvas {
 		redraw();
 	}
 
+	public void remove( GalleryItem item ){
+		checkWidget();
+		if (!virtual) {
+			int index = this.indexOf( item );
+			remove( index);
+		}
+	}
+	
 	public void remove(int index) {
 		checkWidget();
 		if (!virtual) {

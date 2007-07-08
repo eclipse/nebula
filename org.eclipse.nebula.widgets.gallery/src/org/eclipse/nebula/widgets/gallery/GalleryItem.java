@@ -176,8 +176,7 @@ public class GalleryItem extends Item {
 				// old one.
 				GalleryItem[] newItems = new GalleryItem[count];
 				if (items != null) {
-					System.arraycopy(items, 0, newItems, 0, Math.min(count,
-							items.length));
+					System.arraycopy(items, 0, newItems, 0, Math.min(count, items.length));
 				}
 				items = newItems;
 			}
@@ -272,8 +271,7 @@ public class GalleryItem extends Item {
 			} else {
 				int[] oldSelection = selectionIndices;
 				selectionIndices = new int[oldSelection.length + 1];
-				System.arraycopy(oldSelection, 0, selectionIndices, 0,
-						oldSelection.length);
+				System.arraycopy(oldSelection, 0, selectionIndices, 0, oldSelection.length);
 			}
 			selectionIndices[selectionIndices.length - 1] = indexOf(item);
 
@@ -342,4 +340,18 @@ public class GalleryItem extends Item {
 		parent._remove(this, index);
 	}
 
+	public void remove(GalleryItem item) {
+		checkWidget();
+		int index = parent._indexOf(this, item);
+		parent._remove(this, index);
+	}
+
+	public void dispose() {
+		if (parentItem != null) {
+			parentItem.remove(this);
+		} else {
+			parent.remove(this);
+		}
+
+	}
 }
