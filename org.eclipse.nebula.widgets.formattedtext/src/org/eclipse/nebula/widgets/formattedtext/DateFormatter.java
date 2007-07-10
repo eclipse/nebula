@@ -114,7 +114,7 @@ public class DateFormatter  extends DateTimeFormatter {
 		if ( loc == null ) {
 			loc = Locale.getDefault();
 		}
-		String key = "DA" + loc.getISO3Language() + loc.getISO3Country();
+		String key = "DA" + loc.toString();
 		String pattern = (String) cachedPatterns.get(key);
 		if ( pattern == null ) {
 			DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, loc);

@@ -485,7 +485,7 @@ public class DateTimeFormatter extends AbstractFormatter {
 		if ( loc == null ) {
 			loc = Locale.getDefault();
 		}
-		String key = "DT" + loc.getISO3Language() + loc.getISO3Country();
+		String key = "DT" + loc.toString();
 		String pattern = (String) cachedPatterns.get(key);
 		if ( pattern == null ) {
 			DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, loc);

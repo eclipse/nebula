@@ -116,7 +116,7 @@ public class TimeFormatter extends DateTimeFormatter {
 		if ( loc == null ) {
 			loc = Locale.getDefault();
 		}
-		String key = "TI" + loc.getISO3Language() + loc.getISO3Country(); //$NON-NLS-1$
+		String key = "TI" + loc.toString(); //$NON-NLS-1$
 		String pattern = (String) cachedPatterns.get(key);
 		if ( pattern == null ) {
 			DateFormat df = DateFormat.getTimeInstance(DateFormat.SHORT, loc);
