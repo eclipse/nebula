@@ -69,6 +69,7 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 		String text = "";
 		text += group.getText();
 		text += " (" + group.getItemCount() + ")";
+		gc.setFont(font);
 		gc.drawText(text, x + titleHeight + 2, y + 2);
 
 		// Toggle Button
@@ -177,8 +178,8 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 			gcCreated = true;
 		}
 
-		gc.setFont(font);
 		// Get font height
+		gc.setFont(font);
 		fontHeight = gc.getFontMetrics().getHeight();
 
 		// Compute title height & grid offset
@@ -255,9 +256,9 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 	}
 
 	/**
-	 * Returns the font used for drawing the group title or <tt>null</tt> if system
-	 * font is used.
-	 *
+	 * Returns the font used for drawing the group title or <tt>null</tt> if
+	 * system font is used.
+	 * 
 	 * @return the font
 	 */
 	public Font getFont() {
@@ -267,8 +268,9 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 	/**
 	 * Set the font for drawing the group title or <tt>null</tt> to use system
 	 * font.
-	 *
-	 * @param font the font to set
+	 * 
+	 * @param font
+	 *            the font to set
 	 */
 	public void setFont(Font font) {
 		if (this.font != font) {
