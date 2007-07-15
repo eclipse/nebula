@@ -32,7 +32,6 @@ public class NoGroupRenderer extends AbstractGridGroupRenderer {
 
 	static int OFFSET = 0;
 
-
 	void draw(GC gc, GalleryItem group, int x, int y, int clipX, int clipY, int clipWidth, int clipHeight) {
 
 		int[] indexes = getVisibleItems(group, x, y, clipX, clipY, clipWidth, clipHeight, OFFSET);
@@ -49,7 +48,6 @@ public class NoGroupRenderer extends AbstractGridGroupRenderer {
 		}
 	}
 
-	
 	void layout(GC gc, GalleryItem group) {
 
 		int countLocal = group.getItemCount();
@@ -71,7 +69,7 @@ public class NoGroupRenderer extends AbstractGridGroupRenderer {
 
 			group.setData(H_COUNT, new Integer(hCount));
 			group.setData(V_COUNT, new Integer(vCount));
-		}else {
+		} else {
 			// TODO : implement horizontal mode
 			int sizeY = group.height;
 			group.width = OFFSET;
@@ -97,13 +95,12 @@ public class NoGroupRenderer extends AbstractGridGroupRenderer {
 		return super.getItem(group, coords, OFFSET);
 	}
 
-
 	boolean mouseDown(GalleryItem group, MouseEvent e, Point coords) {
 		// Do nothing
 		return true;
 	}
 
-	public Rectangle getSize( GalleryItem item){
-		return super.getSize(item, OFFSET);	
-		}
+	public Rectangle getSize(GalleryItem item) {
+		return super.getSize(item, OFFSET);
+	}
 }

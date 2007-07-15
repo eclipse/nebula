@@ -171,7 +171,8 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 	protected int[] getVisibleItems(GalleryItem group, int x, int y, int clipX, int clipY, int clipWidth, int clipHeight, int offset) {
 
 		int hCount = ((Integer) group.getData(H_COUNT)).intValue();
-		int vCount = ((Integer) group.getData(V_COUNT)).intValue();
+		// TODO: Not used ATM
+		// int vCount = ((Integer) group.getData(V_COUNT)).intValue();
 
 		int firstLine = (clipY - y - offset - minMargin) / (itemHeight + minMargin);
 		if (firstLine < 0)

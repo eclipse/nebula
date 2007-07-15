@@ -72,10 +72,11 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 	}
 
 	public ListItemRenderer() {
+		// Set defaults
 		foregroundColor = Display.getDefault().getSystemColor(SWT.COLOR_LIST_FOREGROUND);
 		backgroundColor = Display.getDefault().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 		selectionBackgroundColor = Display.getDefault().getSystemColor(SWT.COLOR_LIST_SELECTION);
-		this.selectionForegroundColor = foregroundColor;
+		selectionForegroundColor = Display.getDefault().getSystemColor(SWT.COLOR_LIST_FOREGROUND);
 		descriptionColor = Display.getDefault().getSystemColor(SWT.COLOR_DARK_GRAY);
 	}
 

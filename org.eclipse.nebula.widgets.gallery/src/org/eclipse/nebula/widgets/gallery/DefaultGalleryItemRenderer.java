@@ -65,9 +65,10 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 	}
 
 	public DefaultGalleryItemRenderer() {
+		// Set defaults
 		foregroundColor = Display.getDefault().getSystemColor(SWT.COLOR_LIST_FOREGROUND);
 		backgroundColor = Display.getDefault().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
-		selectionForegroundColor = foregroundColor;
+		selectionForegroundColor = Display.getDefault().getSystemColor(SWT.COLOR_LIST_FOREGROUND);
 		selectionBackgroundColor = Display.getDefault().getSystemColor(SWT.COLOR_LIST_SELECTION);
 
 		// Create drop shadows

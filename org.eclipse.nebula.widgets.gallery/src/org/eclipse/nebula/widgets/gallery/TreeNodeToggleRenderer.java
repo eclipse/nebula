@@ -18,7 +18,7 @@ import org.eclipse.swt.graphics.Transform;
  * This toggle strategy mimics a Windows tree node. That is, it shows a plus
  * (surrounded by a box) when collapsed and a minus when expanded.
  * 
- * @author chris
+ * @author Chris Gross
  */
 public class TreeNodeToggleRenderer extends AbstractRenderer
 {

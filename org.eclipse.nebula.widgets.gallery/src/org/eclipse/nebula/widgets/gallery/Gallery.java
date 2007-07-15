@@ -43,8 +43,9 @@ import org.eclipse.swt.widgets.TypedListener;
 
 /**
  * <p>
- * SWT Widget that displays a picture gallery<br/> see This widget requires
- * jdk-1.4+
+ * SWT Widget that displays a picture gallery<br/> see
+ * http://www.eclipse.org/nebula/widgets/gallery/gallery.php<br/> This widget
+ * requires jdk-1.4+
  * </p>
  * <p>
  * Style <code>VIRTUAL</code> is used to create a <code>Gallery</code> whose
@@ -78,7 +79,16 @@ import org.eclipse.swt.widgets.TypedListener;
  * </dl>
  * </p>
  * <p>
- * Note: Only one of the styles SINGLE, and MULTI may be specified.
+ * Note: Only one of the styles SINGLE and MULTI may be specified.
+ * </p>
+ * <p>
+ * Note: Only one of the styles V_SCROLL and H_SCROLL may be specified.
+ * </p>
+ * <p>
+ * <dl>
+ * <dt><b>Events:</b></dt>
+ * <dd>Selection, DefaultSelection, SetData, PaintItem</dd>
+ * </dl>
  * </p>
  * <p>
  * NOTE: THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT. THIS IS A
@@ -90,6 +100,9 @@ import org.eclipse.swt.widgets.TypedListener;
  */
 public class Gallery extends Canvas {
 
+	/**
+	 * Used to enable debug the Gallery Widget.
+	 */
 	protected static boolean DEBUG = false;
 
 	GalleryItem[] items = null;
@@ -103,6 +116,9 @@ public class Gallery extends Canvas {
 	 */
 	boolean virtual = false;
 
+	/**
+	 * Scrolling direction flag. True : V_SCROLL, false : H_SCROLL.
+	 */
 	boolean vertical = true;
 
 	/**
@@ -128,6 +144,9 @@ public class Gallery extends Canvas {
 
 	private Color backgroundColor;
 
+	/**
+	 * Current translation. Can be used by renderer during paint.
+	 */
 	protected int translate = 0;
 
 	private boolean mouseClickHandled = false;
@@ -137,7 +156,8 @@ public class Gallery extends Canvas {
 	AbstractGalleryGroupRenderer groupRenderer;
 
 	/**
-	 * Return the number of root-level items in the receiver.
+	 * Return the number of root-level items in the receiver. Does not include
+	 * children.
 	 * 
 	 * @return
 	 */
@@ -173,8 +193,7 @@ public class Gallery extends Canvas {
 				// old one.
 				GalleryItem[] newItems = new GalleryItem[count];
 				if (items != null) {
-					System.arraycopy(items, 0, newItems, 0, Math.min(count,
-							items.length));
+					System.arraycopy(items, 0, newItems, 0, Math.min(count, items.length));
 				}
 				items = newItems;
 			}
@@ -281,13 +300,13 @@ public class Gallery extends Canvas {
 	 * @param x
 	 * @param y
 	 */
-	protected void sendPaintItemEvent(Item item, int index, GC gc, int x,
-			int y, int width, int height) {
+	protected void sendPaintItemEvent(Item item, int index, GC gc, int x, int y, int width, int height) {
 
 		Event e = new Event();
 		e.item = item;
 		e.type = SWT.PaintItem;
 		e.index = index;
+		//TODO: Does clipping need to be set ?
 		// gc.setClipping(x, y, width, height);
 		e.gc = gc;
 		e.x = x;
@@ -335,8 +354,7 @@ public class Gallery extends Canvas {
 		virtual = (style & SWT.VIRTUAL) > 0;
 		vertical = (style & SWT.V_SCROLL) > 0;
 		multi = (style & SWT.MULTI) > 0;
-		backgroundColor = getDisplay()
-				.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+		backgroundColor = getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 
 		// Dispose renderers on dispose
 		this.addDisposeListener(new DisposeListener() {
@@ -427,8 +445,7 @@ public class Gallery extends Canvas {
 				case SWT.ARROW_RIGHT:
 				case SWT.ARROW_UP:
 				case SWT.ARROW_DOWN:
-					GalleryItem newItem = groupRenderer.getNextItem(
-							lastSingleClick, e.keyCode);
+					GalleryItem newItem = groupRenderer.getNextItem(lastSingleClick, e.keyCode);
 
 					if (newItem != null) {
 						_deselectAll();
@@ -575,10 +592,9 @@ public class Gallery extends Canvas {
 	 * @param i
 	 * @param selected
 	 * @param notifyListeners
-	 *            TODO
+	 *            
 	 */
-	protected void setSelected(GalleryItem item, boolean selected,
-			boolean notifyListeners) {
+	protected void setSelected(GalleryItem item, boolean selected, boolean notifyListeners) {
 		if (selected) {
 			if (!isSelected(item)) {
 				_addSelection(item);
@@ -612,8 +628,7 @@ public class Gallery extends Canvas {
 			} else {
 				int[] oldSelection = selectionIndices;
 				selectionIndices = new int[oldSelection.length + 1];
-				System.arraycopy(oldSelection, 0, selectionIndices, 0,
-						oldSelection.length);
+				System.arraycopy(oldSelection, 0, selectionIndices, 0, oldSelection.length);
 			}
 			selectionIndices[selectionIndices.length - 1] = indexOf(item);
 
@@ -624,9 +639,7 @@ public class Gallery extends Canvas {
 		} else {
 			GalleryItem[] oldSelection = selection;
 			selection = new GalleryItem[oldSelection.length + 1];
-			System
-					.arraycopy(oldSelection, 0, selection, 0,
-							oldSelection.length);
+			System.arraycopy(oldSelection, 0, selection, 0, oldSelection.length);
 		}
 		selection[selection.length - 1] = item;
 
@@ -635,8 +648,7 @@ public class Gallery extends Canvas {
 	private void _removeSelection(GalleryItem item) {
 
 		if (item.getParentItem() == null)
-			selectionIndices = _arrayRemoveItem(selectionIndices,
-					_arrayIndexOf(selectionIndices, _indexOf(item)));
+			selectionIndices = _arrayRemoveItem(selectionIndices, _arrayIndexOf(selectionIndices, _indexOf(item)));
 		else
 			_removeSelection(item.getParentItem(), item);
 
@@ -649,8 +661,7 @@ public class Gallery extends Canvas {
 	}
 
 	protected void _removeSelection(GalleryItem parent, GalleryItem item) {
-		parent.selectionIndices = _arrayRemoveItem(parent.selectionIndices,
-				_arrayIndexOf(parent.selectionIndices, _indexOf(parent, item)));
+		parent.selectionIndices = _arrayRemoveItem(parent.selectionIndices, _arrayIndexOf(parent.selectionIndices, _indexOf(parent, item)));
 	}
 
 	protected boolean isSelected(GalleryItem item) {
@@ -705,7 +716,7 @@ public class Gallery extends Canvas {
 
 		GalleryItem item = getItem(new Point(e.x, e.y));
 		if (item != null) {
-			// TODO: Handle double click.
+			// TODO: Handle double click ?
 		}
 		mouseClickHandled = true;
 	}
@@ -770,8 +781,7 @@ public class Gallery extends Canvas {
 		}
 	}
 
-	private void onMouseHandleLeftMod1(MouseEvent e, GalleryItem item,
-			boolean down, boolean up) {
+	private void onMouseHandleLeftMod1(MouseEvent e, GalleryItem item, boolean down, boolean up) {
 		if (up) {
 			// if (lastSingleClick != null) {
 			if (item != null) {
@@ -785,8 +795,7 @@ public class Gallery extends Canvas {
 		}
 	}
 
-	private void onMouseHandleLeftShift(MouseEvent e, GalleryItem item,
-			boolean down, boolean up) {
+	private void onMouseHandleLeftShift(MouseEvent e, GalleryItem item, boolean down, boolean up) {
 		if (up) {
 			if (lastSingleClick != null) {
 				_deselectAll();
@@ -799,8 +808,7 @@ public class Gallery extends Canvas {
 		}
 	}
 
-	private void onMouseHandleLeft(MouseEvent e, GalleryItem item,
-			boolean down, boolean up) {
+	private void onMouseHandleLeft(MouseEvent e, GalleryItem item, boolean down, boolean up) {
 		if (down) {
 			if (!isSelected(item)) {
 				_deselectAll();
@@ -828,8 +836,7 @@ public class Gallery extends Canvas {
 		}
 	}
 
-	private void onMouseHandleRight(MouseEvent e, GalleryItem item,
-			boolean down, boolean up) {
+	private void onMouseHandleRight(MouseEvent e, GalleryItem item, boolean down, boolean up) {
 		if (down) {
 			if (DEBUG)
 				System.out.println("right clic");
@@ -844,7 +851,7 @@ public class Gallery extends Canvas {
 
 	}
 
-	private void onPaint(GC gc) {
+	private synchronized void onPaint(GC gc) {
 		if (DEBUG)
 			System.out.println("paint");
 
@@ -863,8 +870,7 @@ public class Gallery extends Canvas {
 
 			Rectangle clipping = newGC.getClipping();
 			gc.setBackground(backgroundColor);
-			drawBackground(newGC, clipping.x, clipping.y, clipping.width,
-					clipping.height);
+			drawBackground(newGC, clipping.x, clipping.y, clipping.width, clipping.height);
 
 			int[] indexes = getVisibleItems(clipping);
 
@@ -896,11 +902,9 @@ public class Gallery extends Canvas {
 		if (items == null)
 			return null;
 
-		int start = vertical ? (clipping.y + translate)
-				: (clipping.x + translate);
+		int start = vertical ? (clipping.y + translate) : (clipping.x + translate);
 
-		int end = vertical ? (clipping.y + clipping.height + translate)
-				: (clipping.x + clipping.width + translate);
+		int end = vertical ? (clipping.y + clipping.height + translate) : (clipping.x + clipping.width + translate);
 
 		ArrayList al = new ArrayList();
 		int index = 0;
@@ -953,8 +957,7 @@ public class Gallery extends Canvas {
 		int y = this.vertical ? item.y - translate : item.y;
 
 		Rectangle clipping = gc.getClipping();
-		this.groupRenderer.draw(gc, item, x, y, clipping.x, clipping.y,
-				clipping.width, clipping.height);
+		this.groupRenderer.draw(gc, item, x, y, clipping.x, clipping.y, clipping.width, clipping.height);
 	}
 
 	/**
@@ -1015,9 +1018,8 @@ public class Gallery extends Canvas {
 	protected void updateStructuralValues(boolean keepLocation) {
 
 		if (DEBUG)
-			System.out.println("Client Area : " + this.getClientArea().x + " "
-					+ this.getClientArea().y + " " + this.getClientArea().width
-					+ " " + this.getClientArea().height);
+			System.out.println("Client Area : " + this.getClientArea().x + " " + this.getClientArea().y + " " + this.getClientArea().width + " "
+					+ this.getClientArea().height);
 
 		Rectangle area = this.getClientArea();
 		float pos = 0;
@@ -1061,7 +1063,8 @@ public class Gallery extends Canvas {
 		for (int i = 0; i < mainItemCount; i++) {
 			GalleryItem item = this.getItem(i);
 			this.groupRenderer.setExpanded(item.isExpanded());
-			int groupItemCount = item.getItemCount();
+			// TODO: Not used ATM
+			// int groupItemCount = item.getItemCount();
 			if (vertical) {
 				item.y = currentHeight;
 				item.x = getClientArea().x;
@@ -1096,11 +1099,9 @@ public class Gallery extends Canvas {
 	protected void updateScrollBarsProperties() {
 
 		if (vertical) {
-			updateScrollBarProperties(getVerticalBar(), getClientArea().height,
-					gHeight);
+			updateScrollBarProperties(getVerticalBar(), getClientArea().height, gHeight);
 		} else {
-			updateScrollBarProperties(getHorizontalBar(),
-					getClientArea().width, gWidth);
+			updateScrollBarProperties(getHorizontalBar(), getClientArea().width, gWidth);
 		}
 
 	}
@@ -1115,8 +1116,7 @@ public class Gallery extends Canvas {
 	 * @param totalSize -
 	 *            Total Size
 	 */
-	private void updateScrollBarProperties(ScrollBar bar, int clientSize,
-			int totalSize) {
+	private void updateScrollBarProperties(ScrollBar bar, int clientSize, int totalSize) {
 		if (bar == null)
 			return;
 
@@ -1179,12 +1179,13 @@ public class Gallery extends Canvas {
 
 	}
 
-	private void scroll() {
-		if (vertical)
-			scrollVertical();
-		else
-			scrollHorizontal();
-	}
+	// TODO: not used ATM
+	// private void scroll() {
+	// if (vertical)
+	// scrollVertical();
+	// else
+	// scrollHorizontal();
+	// }
 
 	private void scrollVertical() {
 		int areaHeight = getClientArea().height;
@@ -1192,8 +1193,7 @@ public class Gallery extends Canvas {
 		if (gHeight > areaHeight) {
 			// image is higher than client area
 			ScrollBar bar = getVerticalBar();
-			scroll(0, translate - bar.getSelection(), 0, 0,
-					getClientArea().width, areaHeight, false);
+			scroll(0, translate - bar.getSelection(), 0, 0, getClientArea().width, areaHeight, false);
 			translate = bar.getSelection();
 		} else {
 			translate = 0;
@@ -1206,8 +1206,7 @@ public class Gallery extends Canvas {
 		if (gWidth > areaWidth) {
 			// image is higher than client area
 			ScrollBar bar = getHorizontalBar();
-			scroll(translate - bar.getSelection(), 0, 0, 0, areaWidth,
-					getClientArea().height, false);
+			scroll(translate - bar.getSelection(), 0, 0, 0, areaWidth, getClientArea().height, false);
 			translate = bar.getSelection();
 		} else {
 			translate = 0;
@@ -1246,7 +1245,7 @@ public class Gallery extends Canvas {
 	}
 
 	/**
-	 * This method is used by items to implement getItem( index)
+	 * This method is used by items to implement getItem( index )
 	 * 
 	 * @param parent
 	 * @param index
@@ -1255,8 +1254,6 @@ public class Gallery extends Canvas {
 	protected GalleryItem _getItem(GalleryItem parent, int index) {
 
 		if (index < parent.getItemCount()) {
-			// System.out.println( "getItem " + index);
-
 			// Refresh item if it is not set yet
 			updateItem(parent, index);
 			return parent.items[index];
@@ -1299,8 +1296,7 @@ public class Gallery extends Canvas {
 		GalleryItem group = this.getGroup(new Point(e.x, e.y));
 		if (group != null) {
 			int pos = vertical ? (e.y + translate) : (e.x + translate);
-			return groupRenderer.mouseDown(group, e, new Point(vertical ? e.x
-					: pos, vertical ? pos : e.y));
+			return groupRenderer.mouseDown(group, e, new Point(vertical ? e.x : pos, vertical ? pos : e.y));
 		}
 
 		return true;
@@ -1321,8 +1317,7 @@ public class Gallery extends Canvas {
 
 		GalleryItem group = this.getGroup(coords);
 		if (group != null)
-			return groupRenderer.getItem(group, new Point(vertical ? coords.x
-					: pos, vertical ? pos : coords.y));
+			return groupRenderer.getItem(group, new Point(vertical ? coords.x : pos, vertical ? pos : coords.y));
 
 		return null;
 	}
@@ -1353,17 +1348,18 @@ public class Gallery extends Canvas {
 		return null;
 	}
 
-	private void clear() {
-		checkWidget();
-		if (virtual) {
-			setItemCount(0);
-		} else {
-			items = null;
-		}
-
-		updateStructuralValues(true);
-		updateScrollBarsProperties();
-	}
+	// TODO: Not used ATM
+	// private void clear() {
+	// checkWidget();
+	// if (virtual) {
+	// setItemCount(0);
+	// } else {
+	// items = null;
+	// }
+	//
+	// updateStructuralValues(true);
+	// updateScrollBarsProperties();
+	// }
 
 	/**
 	 * Clear all items.<br/>
@@ -1487,8 +1483,7 @@ public class Gallery extends Canvas {
 		int itemCount = parentItem.getItemCount();
 		if (item == null)
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		if (1 <= parentItem.lastIndexOf
-				&& parentItem.lastIndexOf < itemCount - 1) {
+		if (1 <= parentItem.lastIndexOf && parentItem.lastIndexOf < itemCount - 1) {
 			if (parentItem.items[parentItem.lastIndexOf] == item)
 				return parentItem.lastIndexOf;
 			if (parentItem.items[parentItem.lastIndexOf + 1] == item)
@@ -1576,14 +1571,14 @@ public class Gallery extends Canvas {
 		redraw();
 	}
 
-	public void remove( GalleryItem item ){
+	public void remove(GalleryItem item) {
 		checkWidget();
 		if (!virtual) {
-			int index = this.indexOf( item );
-			remove( index);
+			int index = this.indexOf(item);
+			remove(index);
 		}
 	}
-	
+
 	public void remove(int index) {
 		checkWidget();
 		if (!virtual) {
@@ -1591,8 +1586,7 @@ public class Gallery extends Canvas {
 				setSelected(items[index], false, false);
 			}
 
-			this.items = (GalleryItem[]) this._arrayRemoveItem(this.items,
-					index);
+			this.items = (GalleryItem[]) this._arrayRemoveItem(this.items, index);
 
 			updateStructuralValues(false);
 			updateScrollBarsProperties();
@@ -1606,8 +1600,7 @@ public class Gallery extends Canvas {
 				setSelected(parent.items[index], false, false);
 			}
 
-			parent.items = (GalleryItem[]) this._arrayRemoveItem(parent.items,
-					index);
+			parent.items = (GalleryItem[]) this._arrayRemoveItem(parent.items, index);
 			updateStructuralValues(false);
 			updateScrollBarsProperties();
 			redraw();
@@ -1622,23 +1615,21 @@ public class Gallery extends Canvas {
 		if (array.length == 1 && index == 0)
 			return null;
 
-		Object[] newArray = (Object[]) Array.newInstance(array[0].getClass(),
-				array.length - 1);
+		Object[] newArray = (Object[]) Array.newInstance(array[0].getClass(), array.length - 1);
 
 		if (index > 0)
 			System.arraycopy(array, 0, newArray, 0, index);
 
 		if (index + 1 < array.length)
-			System.arraycopy(array, index + 1, newArray, index, newArray.length
-					- index);
+			System.arraycopy(array, index + 1, newArray, index, newArray.length - index);
 
 		return newArray;
 	}
 
 	protected int _arrayIndexOf(int[] array, int value) {
-		if( array == null )
+		if (array == null)
 			return -1;
-		
+
 		for (int i = array.length - 1; i >= 0; --i) {
 			if (array[i] == value) {
 				return i;
@@ -1649,9 +1640,9 @@ public class Gallery extends Canvas {
 	}
 
 	protected int _arrayIndexOf(Object[] array, Object value) {
-		if( array == null )
+		if (array == null)
 			return -1;
-		
+
 		for (int i = array.length - 1; i >= 0; --i) {
 			if (array[i] == value) {
 				return i;
@@ -1675,8 +1666,7 @@ public class Gallery extends Canvas {
 			System.arraycopy(array, 0, newArray, 0, index);
 
 		if (index + 1 < array.length)
-			System.arraycopy(array, index + 1, newArray, index, newArray.length
-					- index);
+			System.arraycopy(array, index + 1, newArray, index, newArray.length - index);
 
 		return newArray;
 	}

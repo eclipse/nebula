@@ -42,9 +42,9 @@ public abstract class AbstractGalleryGroupRenderer {
 	}
 
 	/**
-	 * true is the current group is expanded
+	 * Get the expand/collapse state of the current group
 	 * 
-	 * @return
+	 * @return true is the current group is expanded 
 	 */
 	public boolean isExpanded() {
 		return expanded;
@@ -55,7 +55,7 @@ public abstract class AbstractGalleryGroupRenderer {
 	}
 
 	/**
-	 * This method is called before drawing the first item. It may be used to
+	 * This method is called before drawing the first item. It can be used to
 	 * calculate some values (like font metrics) that will be used for each
 	 * item.
 	 * 
@@ -87,6 +87,12 @@ public abstract class AbstractGalleryGroupRenderer {
 	 */
 	abstract GalleryItem getNextItem(GalleryItem item, int key);
 
+	/**
+	 * This method is called before the layout of the first item. It can be used to
+	 * calculate some values (like font metrics) that will be used for each
+	 * item.
+	 * @param gc
+	 */
 	public void preLayout(GC gc) {
 
 	}

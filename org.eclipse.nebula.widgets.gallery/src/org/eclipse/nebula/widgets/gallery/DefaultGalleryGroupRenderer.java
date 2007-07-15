@@ -51,6 +51,7 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 	private Font font = null;
 
 	public DefaultGalleryGroupRenderer() {
+		// Set defaults
 		titleForeground = Display.getDefault().getSystemColor(SWT.COLOR_TITLE_FOREGROUND);
 		titleBackground = Display.getDefault().getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
 	}
