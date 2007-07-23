@@ -308,14 +308,22 @@ public class PShelf extends Canvas {
 		
 		if (openItem == null){
 			openItem(item,false);
-		}		
+		}	
+		//need to recompute ycoords and heights and such
+		onResize();
 	}
 	
 	void removeItem(PShelfItem item){
         computeItemHeight();
 		items.remove(item);
-		if (openItem == item && items.size() > 0)
-			openItem((PShelfItem) items.get(0),false);
+		if (openItem == item)
+		{
+			openItem = null;
+			if (items.size() > 0)
+			{
+				openItem((PShelfItem) items.get(0),false);
+			}
+		}			
         
         onResize();
 	}
