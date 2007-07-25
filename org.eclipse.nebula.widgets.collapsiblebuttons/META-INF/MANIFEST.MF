@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Collapsiblebuttons Plug-in
+Bundle-SymbolicName: org.eclipse.nebula.widgets.collapsiblebuttons
+Bundle-Version: 1.0.0
