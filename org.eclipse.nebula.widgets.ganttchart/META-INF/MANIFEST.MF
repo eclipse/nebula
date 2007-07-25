@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Ganttchart Plug-in
+Bundle-SymbolicName: org.eclipse.nebula.widgets.ganttchart
+Bundle-Version: 1.0.0
