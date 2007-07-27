@@ -109,7 +109,7 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 	 * @param selected
 	 * @param parent
 	 */
-	protected void drawItem(GC gc, int index, boolean selected, GalleryItem parent, int offset) {
+	protected void drawItem(GC gc, int index, boolean selected, GalleryItem parent, int offsetY) {
 
 		if (Gallery.DEBUG)
 			System.out.println("Draw item ? " + index);
@@ -139,10 +139,10 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 			int xPixelPos, yPixelPos;
 			if (gallery.isVertical()) {
 				xPixelPos = posX * (itemWidth + margin) + margin;
-				yPixelPos = posY * (itemHeight + minMargin) - gallery.translate + minMargin + ((parent == null) ? 0 : (parent.y) + offset);
+				yPixelPos = posY * (itemHeight + minMargin) - gallery.translate + minMargin + ((parent == null) ? 0 : (parent.y) + offsetY);
 			} else {
 				yPixelPos = posY * (itemHeight + margin) + margin;
-				xPixelPos = posX * (itemWidth + minMargin) - gallery.translate + minMargin + ((parent == null) ? 0 : (parent.x) + offset);
+				xPixelPos = posX * (itemWidth + minMargin) - gallery.translate + minMargin + ((parent == null) ? 0 : (parent.x) + offsetY);
 			}
 
 			GalleryItem gItem = (GalleryItem) item;
@@ -170,13 +170,13 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 		}
 	}
 
-	protected int[] getVisibleItems(GalleryItem group, int x, int y, int clipX, int clipY, int clipWidth, int clipHeight, int offset) {
+	protected int[] getVisibleItems(GalleryItem group, int x, int y, int clipX, int clipY, int clipWidth, int clipHeight, int offsetY) {
 
 		int hCount = ((Integer) group.getData(H_COUNT)).intValue();
 		// TODO: Not used ATM
 		// int vCount = ((Integer) group.getData(V_COUNT)).intValue();
 
-		int firstLine = (clipY - y - offset - minMargin) / (itemHeight + minMargin);
+		int firstLine = (clipY - y - offsetY - minMargin) / (itemHeight + minMargin);
 		if (firstLine < 0)
 			firstLine = 0;
 
@@ -184,7 +184,7 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 		if (Gallery.DEBUG)
 			System.out.println("First line : " + firstLine);
 
-		int lastLine = (clipY - y - offset + clipHeight - minMargin) / (itemHeight + minMargin);
+		int lastLine = (clipY - y - offsetY + clipHeight - minMargin) / (itemHeight + minMargin);
 
 		if (lastLine < firstLine)
 			lastLine = firstLine;
@@ -244,7 +244,7 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 		super.preLayout(gc);
 	}
 
-	protected Rectangle getSize(GalleryItem item, int offset) {
+	protected Rectangle getSize(GalleryItem item, int offsetY) {
 
 		GalleryItem parent = item.getParentItem();
 		if (parent != null) {
@@ -260,7 +260,7 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 			int posY = (index - posX) / hCount;
 
 			int xPixelPos = posX * (itemWidth + margin) + margin;
-			int yPixelPos = posY * (itemHeight + minMargin) + minMargin + ((parent == null) ? 0 : (parent.y) + offset);
+			int yPixelPos = posY * (itemHeight + minMargin) + minMargin + ((parent == null) ? 0 : (parent.y) + offsetY);
 
 			return new Rectangle(xPixelPos, yPixelPos, this.itemWidth, this.itemHeight);
 		}
@@ -273,7 +273,7 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 	 * @param coords
 	 * @return
 	 */
-	protected GalleryItem getItem(GalleryItem group, Point coords, int offset) {
+	protected GalleryItem getItem(GalleryItem group, Point coords, int offsetY) {
 		if (Gallery.DEBUG)
 			System.out.println("getitem " + coords.x + " " + coords.y);
 
@@ -296,13 +296,13 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 			if (posX >= hCount) // Nothing there
 				return null;
 
-			if (coords.y - group.y - minMargin < offset)
+			if (coords.y - group.y - minMargin < offsetY)
 				return null;
 
-			int posY = (coords.y - group.y - offset - minMargin) / (itemHeight + minMargin);
+			int posY = (coords.y - group.y - offsetY - minMargin) / (itemHeight + minMargin);
 
 			// Check if the users clicked on the Y margin.
-			if (((coords.y - group.y - offset - minMargin) % (itemHeight + minMargin)) > itemHeight) {
+			if (((coords.y - group.y - offsetY - minMargin) % (itemHeight + minMargin)) > itemHeight) {
 				return null;
 			}
 			itemNb = posX + posY * hCount;
@@ -324,13 +324,13 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 			if (posY >= vCount) // Nothing there
 				return null;
 
-			if (coords.x - group.x - minMargin < offset)
+			if (coords.x - group.x - minMargin < offsetY)
 				return null;
 
-			int posX = (coords.x - group.x - offset - minMargin) / (itemWidth + minMargin);
+			int posX = (coords.x - group.x - offsetY - minMargin) / (itemWidth + minMargin);
 
 			// Check if the users clicked on the X margin.
-			if (((coords.x - group.x - offset - minMargin) % (itemWidth + minMargin)) > itemWidth) {
+			if (((coords.x - group.x - offsetY - minMargin) % (itemWidth + minMargin)) > itemWidth) {
 				return null;
 			}
 			itemNb = posY + posX * vCount;

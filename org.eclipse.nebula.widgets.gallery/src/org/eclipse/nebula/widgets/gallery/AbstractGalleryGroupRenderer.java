@@ -66,7 +66,7 @@ public abstract class AbstractGalleryGroupRenderer {
 	}
 
 	/**
-	 * Group size informations can be retrived from group. Clipping informations
+	 * Group size informations can be retrieved from group. Clipping informations
 	 * 
 	 * @param gc
 	 * @param group

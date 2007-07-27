@@ -34,11 +34,12 @@ public class NoGroupRenderer extends AbstractGridGroupRenderer {
 
 	void draw(GC gc, GalleryItem group, int x, int y, int clipX, int clipY, int clipWidth, int clipHeight) {
 
+		// Get items in the clipping area
 		int[] indexes = getVisibleItems(group, x, y, clipX, clipY, clipWidth, clipHeight, OFFSET);
 
 		if (indexes != null && indexes.length > 0) {
 			for (int i = indexes.length - 1; i >= 0; i--) {
-
+				// Draw item
 				boolean selected = group.isSelected(group.getItem(indexes[i]));
 				if (Gallery.DEBUG)
 					System.out.println("Selected : " + selected + " index : " + indexes[i] + "item : " + group.getItem(indexes[i]));

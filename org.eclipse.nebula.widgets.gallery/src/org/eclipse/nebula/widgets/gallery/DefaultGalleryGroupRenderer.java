@@ -18,6 +18,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -56,31 +57,67 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 		titleBackground = Display.getDefault().getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
 	}
 
-	void draw(GC gc, GalleryItem group, int x, int y, int clipX, int clipY, int clipWidth, int clipHeight) {
+	protected void drawGroup(GC gc, GalleryItem group, int x, int y, int clipX, int clipY, int clipWidth, int clipHeight) {
 		// TODO: finish drawing.
 
-		// Title background
-		gc.setBackground(titleBackground);
-		gc.fillRectangle(x, y, group.width, titleHeight);
+		if (gallery.isVertical()) {
+			// Title background
+			gc.setBackground(titleBackground);
+			gc.fillRectangle(x, y, group.width, titleHeight);
 
-		// Color for text
-		gc.setForeground(titleForeground);
+			// Color for text
+			gc.setForeground(titleForeground);
 
-		// Title text
-		String text = "";
-		text += group.getText();
-		text += " (" + group.getItemCount() + ")";
-		gc.setFont(font);
-		gc.drawText(text, x + titleHeight + 2, y + 2);
+			// Title text
+			String text = "";
+			text += group.getText();
+			text += " (" + group.getItemCount() + ")";
+			gc.setFont(font);
+			gc.drawText(text, x + titleHeight + 2, y + 2);
 
-		// Toggle Button
-		AbstractRenderer c = new TreeNodeToggleRenderer();
-		c.setExpanded(expanded);
+			// Toggle Button
+			AbstractRenderer c = new TreeNodeToggleRenderer();
+			c.setExpanded(expanded);
 
-		int xShift = getShift(titleHeight, c.getSize().x);
-		int yShift = getShift(titleHeight, c.getSize().y);
-		c.setBounds(x + xShift, y + yShift, 100, 100);
-		c.paint(gc, group);
+			int xShift = getShift(titleHeight, c.getSize().x);
+			int yShift = getShift(titleHeight, c.getSize().y);
+			c.setBounds(x + xShift, y + yShift, 100, 100);
+			c.paint(gc, group);
+		} else {
+			// Title background
+			gc.setBackground(titleBackground);
+			gc.fillRectangle(x, y, titleHeight, group.height);
+
+			// Color for text
+			gc.setForeground(titleForeground);
+
+			// Title text
+			String text = "";
+			text += group.getText();
+			text += " (" + group.getItemCount() + ")";
+			gc.setFont(font);
+			Transform transform = new Transform(gc.getDevice());
+			transform.rotate(-90);
+			gc.setTransform(transform);
+			gc.drawText(text, y + titleHeight + 2 - group.height, x + 2);
+
+			// Toggle Button
+			AbstractRenderer c = new TreeNodeToggleRenderer();
+			c.setExpanded(expanded);
+
+			int xShift = getShift(titleHeight, c.getSize().x);
+			int yShift = getShift(titleHeight, c.getSize().y);
+			c.setBounds(x + xShift, y + yShift - titleHeight + group.height, 100, 100);
+			c.paint(gc, group);
+
+			gc.setTransform(null);
+
+		}
+	}
+
+	void draw(GC gc, GalleryItem group, int x, int y, int clipX, int clipY, int clipWidth, int clipHeight) {
+		// Draw group
+		drawGroup(gc, group, x, y, clipX, clipY, clipWidth, clipHeight);
 
 		// Display item
 		if (expanded) {
@@ -145,19 +182,22 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 			int sizeY = group.height;
 			group.width = offset;
 
-			Point l = gridLayout(sizeY, countLocal, itemHeight);
-			int vCount = l.x;
-			int hCount = l.y;
-			if (autoMargin) {
-				// Calculate best margins
-				margin = calculateMargins(sizeY, vCount, itemHeight);
+			if (expanded) {
+
+				Point l = gridLayout(sizeY, countLocal, itemHeight);
+				int vCount = l.x;
+				int hCount = l.y;
+				if (autoMargin) {
+					// Calculate best margins
+					margin = calculateMargins(sizeY, vCount, itemHeight);
+				}
+
+				Point s = this.getSize(hCount, vCount, itemWidth, itemHeight, minMargin, margin);
+				group.width += s.x;
+
+				group.setData(H_COUNT, new Integer(hCount));
+				group.setData(V_COUNT, new Integer(vCount));
 			}
-
-			Point s = this.getSize(hCount, vCount, itemWidth, itemHeight, minMargin, margin);
-			group.width += s.x;
-
-			group.setData(H_COUNT, new Integer(hCount));
-			group.setData(V_COUNT, new Integer(vCount));
 		}
 
 	}
@@ -209,28 +249,52 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 
 	boolean mouseDown(GalleryItem group, MouseEvent e, Point coords) {
 
-		if (coords.y - group.y <= titleHeight) {
+		if (gallery.isVertical()) { // V_SCROLL
+			if (coords.y - group.y <= titleHeight) {
 
-			if (coords.x <= titleHeight) {
-				// Toogle
-				group.setExpanded(!group.isExpanded());
-				if (!group.isExpanded()) {
-					group.deselectAll();
-				}
-				gallery.updateStructuralValues(false);
-				gallery.updateScrollBarsProperties();
+				if (coords.x <= titleHeight) {
+					// Toggle
+					group.setExpanded(!group.isExpanded());
+					if (!group.isExpanded()) {
+						group.deselectAll();
+					}
+					gallery.updateStructuralValues(false);
+					gallery.updateScrollBarsProperties();
 
-			} else {
-				if ((e.stateMask & SWT.MOD1) == 0) {
-					gallery.deselectAll();
+				} else {
+					if ((e.stateMask & SWT.MOD1) == 0) {
+						gallery.deselectAll();
+					}
+					group.selectAll();
+					gallery.notifySelectionListeners(group, gallery.indexOf(group));
 				}
-				group.selectAll();
-				gallery.notifySelectionListeners(group, gallery.indexOf(group));
+				gallery.redraw();
+				return false;
 			}
-			gallery.redraw();
-			return false;
+		} else { // H_SCROLL
+			if (coords.x - group.x <= titleHeight) {
 
+				if (coords.y >= group.height - titleHeight) {
+					// Toggle
+					group.setExpanded(!group.isExpanded());
+					if (!group.isExpanded()) {
+						group.deselectAll();
+					}
+					gallery.updateStructuralValues(false);
+					gallery.updateScrollBarsProperties();
+
+				} else {
+					if ((e.stateMask & SWT.MOD1) == 0) {
+						gallery.deselectAll();
+					}
+					group.selectAll();
+					gallery.notifySelectionListeners(group, gallery.indexOf(group));
+				}
+				gallery.redraw();
+				return false;
+			}
 		}
+
 		return true;
 	}
 
