@@ -7,6 +7,7 @@
  *
  * Contributors :
  *    Nicolas Richeton (nicolas.richeton@gmail.com) - initial API and implementation
+ *    Richard Michalsky - bug 197959
  *******************************************************************************/
 package org.eclipse.nebula.widgets.gallery;
 
@@ -26,6 +27,7 @@ import org.eclipse.swt.widgets.Item;
  * </p>
  * 
  * @author Nicolas Richeton (nicolas.richeton@gmail.com)
+ * @contributor Richard Michalsky (bug 197959)
  */
 
 public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRenderer {
@@ -283,10 +285,11 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 			int hCount = tmp.intValue();
 
 			// Calculate the "might be" position
-			int posX = (coords.x - minMargin) / (itemWidth + margin);
+			int posX = (coords.x - margin) / (itemWidth + margin);
 
 			// Check if the users clicked on the X margin.
-			if ((coords.x - minMargin) % (itemWidth + margin) > itemWidth) {
+			int posOnItem = (coords.x - margin) % (itemWidth + margin);
+			if (posOnItem > itemWidth || posOnItem < 0) {
 				return null;
 			}
 
@@ -310,10 +313,11 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 			int vCount = tmp.intValue();
 
 			// Calculate the "might be" position
-			int posY = (coords.y - minMargin) / (itemHeight + margin);
+			int posY = (coords.y - margin) / (itemHeight + margin);
 
 			// Check if the users clicked on the X margin.
-			if ((coords.y - minMargin) % (itemHeight + margin) > itemHeight) {
+			int posOnItem = (coords.y - margin) % (itemHeight + margin);
+			if (posOnItem > itemHeight || posOnItem < 0) {
 				return null;
 			}
 
