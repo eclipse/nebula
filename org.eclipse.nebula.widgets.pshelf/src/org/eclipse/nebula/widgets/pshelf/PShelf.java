@@ -335,6 +335,7 @@ public class PShelf extends Canvas {
 		
 		item.getBodyParent().setBounds(0,0,0,0);
 		item.getBodyParent().setVisible(true);
+		item.getBody().layout();
 		
 		if (animation && (getStyle() & SWT.SIMPLE) == 0){
 			if (items.indexOf(item) < items.indexOf(previousOpen)){
