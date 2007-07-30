@@ -1329,6 +1329,10 @@ public class Gallery extends Canvas {
 	 * @return
 	 */
 	private GalleryItem getGroup(Point coords) {
+		// If there is no item in the gallery, return asap
+		if( items == null )
+			return null;
+		
 		int pos = vertical ? (coords.y + translate) : (coords.x + translate);
 
 		int index = 0;
