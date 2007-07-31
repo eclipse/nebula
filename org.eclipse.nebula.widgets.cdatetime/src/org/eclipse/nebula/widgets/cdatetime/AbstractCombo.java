@@ -443,7 +443,15 @@ public abstract class AbstractCombo extends Composite {
 	private void createContentShell() {
 		int pstyle = getParent().getShell().getStyle();
 		GridLayout layout = new GridLayout();
-		if(((pstyle & SWT.APPLICATION_MODAL) != 0) ||
+		
+		// Some versions of SWT before 3.3 had a bug where child Shells of modal shells
+		// would not receive events.  This fix creates the popup with modal style, so
+		// that the popup always receives events, but the parent does not.  This is
+		// not ideal, so it is only applied if the SWT version is less than one that
+		// is known to be good.
+		// TODO: find the precise version at which the SWT bug was fixed
+		if(SWT.getVersion() < 3346 &&
+				((pstyle & SWT.APPLICATION_MODAL) != 0) ||
 				((pstyle & SWT.SYSTEM_MODAL) != 0)) {
 			// TODO: find a fix other than setting popup's style to SWT.APPLICATION_MODAL
 			contentShell = new Shell(getShell(), SWT.APPLICATION_MODAL);
