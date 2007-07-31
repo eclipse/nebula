@@ -206,8 +206,9 @@ public abstract class AbstractCombo extends Composite {
 			if(!win32) textStyle |= ((CDT.BORDER & style) != 0) ? SWT.BORDER : 0;
 			if((style & CDT.TEXT_RIGHT) != 0) textStyle |= SWT.RIGHT_TO_LEFT;
 			else if((style & CDT.TEXT_LEFT) != 0) textStyle |= SWT.LEFT_TO_RIGHT;
-	
-			button = new Button(this, SWT.ARROW | SWT.DOWN);
+
+			boolean flat = ((style & SWT.FLAT) != 0);
+			button = new Button(this, SWT.ARROW | SWT.DOWN | (flat? SWT.FLAT: SWT.NONE));
 			text = new Text(this, textStyle);
 
 			setPositionControl(button);
