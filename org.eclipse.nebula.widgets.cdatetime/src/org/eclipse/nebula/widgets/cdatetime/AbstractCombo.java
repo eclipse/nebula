@@ -975,4 +975,15 @@ public abstract class AbstractCombo extends Composite {
 		checkWidget();
 		this.stretchControl = stretch ? this : null;
 	}
+	
+	/**
+	 * Sets the tooltip on the text and button parts of this Composite widget.
+	 * 
+	 * @param tooltip the new tooltip text
+	 */
+	public void setToolTipText(String tooltip) {
+		checkWidget();
+		text.setToolTipText(tooltip);
+		button.setToolTipText(tooltip);
+	}
 }
