@@ -47,6 +47,12 @@ import org.eclipse.swt.widgets.Widget;
 public abstract class AbstractCombo extends Composite {
 
 	/**
+	 * The value of {@link SWT#getVersion()} for the earliest known revision that fixes
+	 * the SWT bug mentioned in bug 185739.
+	 */
+	protected static int SWT_MODAL_FIX_VERSION = 3346;
+
+	/**
 	 * Special layout implementation to position the combo's drop-down Button within
 	 * its Text.
 	 */
@@ -450,7 +456,7 @@ public abstract class AbstractCombo extends Composite {
 		// not ideal, so it is only applied if the SWT version is less than one that
 		// is known to be good.
 		// TODO: find the precise version at which the SWT bug was fixed
-		if(SWT.getVersion() < 3346 &&
+		if(SWT.getVersion() < SWT_MODAL_FIX_VERSION &&
 				((pstyle & SWT.APPLICATION_MODAL) != 0) ||
 				((pstyle & SWT.SYSTEM_MODAL) != 0)) {
 			// TODO: find a fix other than setting popup's style to SWT.APPLICATION_MODAL
