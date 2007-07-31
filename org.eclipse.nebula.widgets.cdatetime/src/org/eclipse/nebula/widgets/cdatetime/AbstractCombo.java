@@ -50,7 +50,7 @@ public abstract class AbstractCombo extends Composite {
 	 * Special layout implementation to position the combo's drop-down Button within
 	 * its Text.
 	 */
-	private class DropComboLayout extends Layout {
+	protected class DropComboLayout extends Layout {
 		protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
 			Point size = text.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			if(button.getVisible()) {  // use "get" rather than "is" so it works even when not actually showing
@@ -192,7 +192,13 @@ public abstract class AbstractCombo extends Composite {
 	private Control stretchControl;
 	
 	Listener listener, filter;
-	
+
+	/**
+	 * Main constructor -- must be called by all subclasses in their own constructors.
+	 * 
+	 * @param parent the visual parent of this widget
+	 * @param style the requested SWT style bitmask for this widget
+	 */
 	public AbstractCombo(Composite parent, int style) {
 		super(parent, swtStyle(style));
 		setBackgroundMode(SWT.INHERIT_DEFAULT);
@@ -374,6 +380,7 @@ public abstract class AbstractCombo extends Composite {
 	/**
 	 * Event handler for the content Composite and its children.<br>
 	 * TODO: re-evaluate
+	 * @param event the original triggering event
 	 */
 	protected void contentControlEvents(Event event) {
 			switch (event.type) {
@@ -386,6 +393,7 @@ public abstract class AbstractCombo extends Composite {
 	/**
 	 * Event handler for the text and button controls.<br>
 	 * TODO: re-evaluate
+	 * @param event the original triggering event
 	 */
 	protected void baseControlEvents(Event event) {
 		if(text == event.widget) {
@@ -415,6 +423,9 @@ public abstract class AbstractCombo extends Composite {
 					handleFocus(event.type, event.widget);
 					break;
 				case SWT.MouseDown:
+					if (!checkButton() || !text.getEditable()) {
+						return;
+					}
 					if(!win32) {
 						if(!dontOpen) {
 							setOpen(!isOpen());
@@ -448,12 +459,17 @@ public abstract class AbstractCombo extends Composite {
 		int [] popupEvents = {SWT.Close, SWT.Deactivate};
 		for (int i = 0; i < popupEvents.length; i++) contentShell.addListener (popupEvents[i], listener);
 	}
-	
+
+	/**
+	 * Event handler for this widget's main Composite.<br>
+	 * TODO: re-evaluate
+	 * @param event the original triggering event
+	 */
 	protected void baseEvents(Event event) {
 		switch (event.type) {
 		case SWT.Dispose:
 			// remember that contentShell will be null if this isSimple
-			if(contentShell != null && !contentShell.isDisposed()) {
+			if (checkContentShell()) {
 				contentShell.dispose();
 			}
 			getShell().removeListener (SWT.Deactivate, listener);
@@ -470,7 +486,7 @@ public abstract class AbstractCombo extends Composite {
 	}
 
 	/**
-	 * returns the Control that was set as this popup shell's content
+	 * @return the Control that was set as this popup shell's content
 	 * with setContent(Control)
 	 */
 	protected Control getContent() {
@@ -478,6 +494,10 @@ public abstract class AbstractCombo extends Composite {
 		return content;
 	}
 	
+	/**
+	 * @return a List<Control> of the children of the content, or if there are none,
+	 * a List containing the content Control itself 
+	 */
 	protected List getContentControls() {
 		if(content instanceof Composite) {
 			return getControls((Composite) content);
@@ -518,6 +538,27 @@ public abstract class AbstractCombo extends Composite {
 	}
 
 	/**
+	 * Returns the editable state.
+	 *
+	 * @return whether or not the receiver is editable
+	 * 
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 * </ul>
+	 */
+	public boolean getEditable() {
+		return checkText()? text.getEditable(): getEnabled();
+	}
+
+	/**
+	 * Fixes bug 181442: [CDateTime] Incorrect getEnabled()
+	 */
+	public boolean getEnabled() {
+		return checkText()? text.getEnabled(): super.getEnabled();
+	}
+
+	/**
 	 * returns the menu for this combo
 	 */
 	public Menu getMenu() {
@@ -553,7 +594,7 @@ public abstract class AbstractCombo extends Composite {
 	 */
 	public String getText() {
 		checkWidget();
-		return checkText() ? text.getText() : "";
+		return checkText() ? text.getText() : ""; //$NON-NLS-1$
 	}
 	
 	/**
@@ -839,6 +880,14 @@ public abstract class AbstractCombo extends Composite {
 	public void setEditable(boolean editable) {
 		checkWidget();
 		if(checkText()) text.setEditable(editable);
+		if(checkButton()) button.setEnabled(editable);
+		
+		if (editable) {
+			setBackground(getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));	
+		}
+		else {
+			setBackground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+		}
 	}
 	
 	public void setEnabled(boolean enabled) {

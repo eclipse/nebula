@@ -224,6 +224,7 @@ public class CDateTime extends AbstractCombo {
 				} else {
 					fieldAdjust(-1);
 				}
+//				event.doit = false;
 				break;
 			case SWT.MouseUp:
 				if(event.button == 1) {
@@ -308,13 +309,34 @@ public class CDateTime extends AbstractCombo {
 			activeField = -5;
 			setActiveField(FIELD_NONE);
 			
-			text.addListener(SWT.KeyDown, textListener);
-			text.addListener(SWT.MouseDown, textListener);
-			text.addListener(SWT.MouseWheel, textListener);
-			text.addListener(SWT.MouseUp, textListener);
-			text.addListener(SWT.Traverse, textListener);
-			text.addListener(SWT.Verify, textListener);
+			addTextListener();
 		}
+	}
+
+	/**
+	 * Adds the textListener for the appropriate SWT events to handle incrementing fields.
+	 */
+	protected void addTextListener() {
+		removeTextListener();
+		
+		text.addListener(SWT.KeyDown, textListener);
+		text.addListener(SWT.MouseDown, textListener);
+		text.addListener(SWT.MouseWheel, textListener);
+		text.addListener(SWT.MouseUp, textListener);
+		text.addListener(SWT.Traverse, textListener);
+		text.addListener(SWT.Verify, textListener);
+	}
+
+	/**
+	 * Adds the textListener for the appropriate SWT events to handle incrementing fields.
+	 */
+	protected void removeTextListener() {
+		text.removeListener(SWT.KeyDown, textListener);
+		text.removeListener(SWT.MouseDown, textListener);
+		text.removeListener(SWT.MouseWheel, textListener);
+		text.removeListener(SWT.MouseUp, textListener);
+		text.removeListener(SWT.Traverse, textListener);
+		text.removeListener(SWT.Verify, textListener);
 	}
 	
 	/**
@@ -778,6 +800,22 @@ public class CDateTime extends AbstractCombo {
 				} else {
 					spinner.setEnabled(false);
 				}
+			}
+		}
+	}
+	
+	/**
+	 * 
+	 */
+	public void setEditable(boolean editable) {
+		super.setEditable(editable);
+		
+		if (checkText()) {
+			if (editable) {
+				addTextListener();
+			}
+			else {
+				removeTextListener();
 			}
 		}
 	}
