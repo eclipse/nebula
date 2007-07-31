@@ -20,6 +20,7 @@ import java.util.List;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
@@ -267,11 +268,12 @@ public abstract class AbstractCombo extends Composite {
 	 * Adds the listener to the collection of listeners who will
 	 * be notified when the receiver's text is modified, by sending
 	 * it one of the messages defined in the <code>ModifyListener</code>
-	 * interface.<br>
-	 *<p>Note: event.data will hold implementation specific data<br>
-	 *ie: CDateTime places its current Date object here</p><br>
+	 * interface.<br/>  Note that this is NOT the correct way to listen
+	 * for changes in the underlying model for the combo.  This should
+	 * be provided by some other mechanism, such as a 
+	 * {@link SelectionListener}.
+	 * 
 	 * @param listener the listener which should be notified
-	 *
 	 * @exception IllegalArgumentException <ul>
 	 *    <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
 	 * </ul>
@@ -285,14 +287,13 @@ public abstract class AbstractCombo extends Composite {
 	 */
 	public void addModifyListener(ModifyListener listener) {
 		checkWidget();
+		if (listener == null) SWT.error (SWT.ERROR_NULL_ARGUMENT);
 		if(checkText()) text.addModifyListener(listener);
-//		if (listener == null) SWT.error (SWT.ERROR_NULL_ARGUMENT);
-//		TypedListener typedListener = new TypedListener (listener);
-//		addListener (SWT.Modify, typedListener);
 	}
 
 	public void addTraverseListener(TraverseListener listener) {
 		checkWidget();
+		if (listener == null) SWT.error (SWT.ERROR_NULL_ARGUMENT);
 		if(checkText()) text.addTraverseListener(listener);
 	}
 	
@@ -689,15 +690,16 @@ public abstract class AbstractCombo extends Composite {
 	 */
 	public void removeModifyListener (ModifyListener listener) {
 		checkWidget();
-		if(checkText()) text.addModifyListener(listener);
-//		if (listener == null) SWT.error (SWT.ERROR_NULL_ARGUMENT);
-//		removeListener(SWT.Modify, listener);
+		if (listener == null) SWT.error (SWT.ERROR_NULL_ARGUMENT);
+		if(checkText()) text.removeModifyListener(listener);
 	}
 
 	public void removeTraverseListener(TraverseListener listener) {
 		checkWidget();
+		if (listener == null) SWT.error (SWT.ERROR_NULL_ARGUMENT);
 		if(checkText()) text.removeTraverseListener(listener);
 	}
+	
 	/**
 	 * Set the visibility style of the drop button.
 	 * <p>The style will be forced to NEVER if the contents are null</p>
