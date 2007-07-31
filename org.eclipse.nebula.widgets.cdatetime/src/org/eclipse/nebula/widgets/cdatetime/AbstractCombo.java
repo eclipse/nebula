@@ -46,6 +46,10 @@ import org.eclipse.swt.widgets.Widget;
  */
 public abstract class AbstractCombo extends Composite {
 
+	/**
+	 * Special layout implementation to position the combo's drop-down Button within
+	 * its Text.
+	 */
 	private class DropComboLayout extends Layout {
 		protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
 			Point size = text.computeSize(SWT.DEFAULT, SWT.DEFAULT);
@@ -112,43 +116,80 @@ public abstract class AbstractCombo extends Composite {
 			}
 		}
 	}
-	
-	private static int swtStyle(int style) {
-		if(win32 && ((style & CDT.BORDER) != 0)) return SWT.BORDER;
-		return SWT.NONE;
-	}
 
 	/**
 	 * true if the platform is carbon, false otherwise
 	 */
-	public static final boolean carbon = "carbon".equals(SWT.getPlatform());
+	protected static final boolean carbon = "carbon".equals(SWT.getPlatform()); //$NON-NLS-1$
+	
 	/**
 	 * true if the platform is gtk, false otherwise
 	 */
-	public static final boolean gtk = "gtk".equals(SWT.getPlatform());
+	protected static final boolean gtk = "gtk".equals(SWT.getPlatform()); //$NON-NLS-1$
+	
 	/**
 	 * true if the platform is win32, false otherwise
 	 */
-	public static final boolean win32 = "win32".equals(SWT.getPlatform());
+	protected static final boolean win32 = "win32".equals(SWT.getPlatform()); //$NON-NLS-1$
 
+	/**
+	 * A constant value used to pad the computed height for this widget, so that the
+	 * combo's Button will fit without clipping its top and bottom borders.
+	 */
 	protected static final int textMarginHeight = win32 ? 4 : 0;
 	
+	/**
+	 * The Button widget of a DROP_DOWN style combo.  This value may be null -- protect
+	 * all references to this field with the checkButton() method. 
+	 */
 	protected Button button = null;
+	
+	/**
+	 * The Text widget of a DROP_DOWN style combo.  This value may be null -- protect
+	 * all references to this field with the checkText() method.
+	 */
 	protected Text text = null;
-	private Shell contentShell = null;
-	private Control content;
+	
+	/**
+	 * The popup Shell widget of a DROP_DOWN style combo.  This value may be null --
+	 * protect all references to this field with the checkContentShell() method.
+	 */
+	protected Shell contentShell = null;
+	
+	/**
+	 * The widget contents of the popup Shell in a DROP_DOWN combo or the full contents
+	 * of a SIMPLE combo.  This value may be null -- protect all references to this field
+	 * with the checkContent() method.
+	 */
+	protected Control content;
+	
+	/**
+	 * The style bits requested.  NOTE: this may not match the value returned by
+	 * {@link #getStyle()} if invalid bits were requested.
+	 */
+	protected int style;
+	
+	/**
+	 * Flag to indicate that this is a SIMPLE style combo.
+	 */
+	protected boolean simple;
+	
+	/**
+	 * Flag to indicate that this combo's BUTTON should be displayed on the left side of
+	 * its Text.
+	 */
+	protected boolean leftAlign = false;
+	
+	private int buttonVisibility;
+	private boolean dropDown;
 
 	private boolean dontOpen = false;
 	private boolean open = false;
 	private boolean holdOpen = false;
+	protected boolean hasFocus;
+	
 	private Control positionControl;
 	private Control stretchControl;
-	protected boolean leftAlign = false;
-	protected boolean hasFocus;
-	private int buttonVisibility;
-	private boolean simple;
-	private boolean dropDown;
-	private int style;
 	
 	Listener listener, filter;
 	
@@ -263,6 +304,11 @@ public abstract class AbstractCombo extends Composite {
 			for(int i = 0; i < textEvents.length; i++) text.addListener(textEvents[i], listener);
 		}
 	}
+	
+	private static int swtStyle(int style) {
+		if(win32 && ((style & CDT.BORDER) != 0)) return SWT.BORDER;
+		return SWT.NONE;
+	}
 
 	/**
 	 * Adds the listener to the collection of listeners who will
@@ -297,16 +343,32 @@ public abstract class AbstractCombo extends Composite {
 		if(checkText()) text.addTraverseListener(listener);
 	}
 	
-	private boolean checkButton() {
+	/**
+	 * @return true iff the {@link #button} field is in a fit state to be used
+	 */
+	protected boolean checkButton() {
 		return (button != null && !button.isDisposed());
 	}
 
-	private boolean checkContent() {
-		return (content != null && !content.isDisposed());
-	}
-	
-	private boolean checkText() {
+	/**
+	 * @return true iff the {@link #text} field is in a fit state to be used
+	 */
+	protected boolean checkText() {
 		return (text != null && !text.isDisposed());
+	}
+
+	/**
+	 * @return true iff the {@link #contentShell} field is in a fit state to be used
+	 */
+	protected boolean checkContentShell() {
+		return (contentShell != null && !contentShell.isDisposed());
+	}
+
+	/**
+	 * @return true iff the {@link #content} field is in a fit state to be used
+	 */
+	protected boolean checkContent() {
+		return (content != null && !content.isDisposed());
 	}
 	
 	/**
