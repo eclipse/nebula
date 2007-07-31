@@ -224,7 +224,7 @@ public class CDateTime extends AbstractCombo {
 				} else {
 					fieldAdjust(-1);
 				}
-//				event.doit = false;
+				event.doit = false;
 				break;
 			case SWT.MouseUp:
 				if(event.button == 1) {
