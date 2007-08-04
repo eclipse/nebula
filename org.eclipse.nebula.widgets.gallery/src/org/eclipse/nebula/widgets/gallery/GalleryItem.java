@@ -347,11 +347,11 @@ public class GalleryItem extends Item {
 	}
 
 	public void dispose() {
+		super.dispose();
 		if (parentItem != null) {
 			parentItem.remove(this);
 		} else {
 			parent.remove(this);
 		}
-
 	}
 }
