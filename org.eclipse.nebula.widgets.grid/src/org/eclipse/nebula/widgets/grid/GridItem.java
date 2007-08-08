@@ -1619,7 +1619,7 @@ public class GridItem extends Item
     {
         checkWidget();
         
-        handleVirtual();
+//        handleVirtual();
         
         return headerText;
     }
@@ -1784,6 +1784,7 @@ public class GridItem extends Item
         removeValue(index,images);
         removeValue(index,texts);  
         removeValue(index,columnSpans);
+        removeValue(index,tooltips);
     }
     
     void columnAdded(int index)
@@ -1797,6 +1798,7 @@ public class GridItem extends Item
         insertValue(index,images);
         insertValue(index,texts);  
         insertValue(index,columnSpans);
+        insertValue(index,tooltips);
     }
     
     private void insertValue(int index, List list)
