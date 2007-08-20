@@ -4320,8 +4320,9 @@ public class Grid extends Canvas
 
             if (dragDropBeforeColumn == null)
             {
-                displayOrderedColumns.add(columnBeingPushed);
+                
                 notifyTo = displayOrderedColumns.size();
+                displayOrderedColumns.add(columnBeingPushed);
             }
             else if (dragDropAfterColumn == null)
             {

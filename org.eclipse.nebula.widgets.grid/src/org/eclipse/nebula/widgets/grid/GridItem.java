@@ -1828,7 +1828,14 @@ public class GridItem extends Item
             hasSetData = true;
             Event event = new Event ();
             event.item = this;
-            //event.index = index;
+            if (parentItem == null)
+            {
+            	event.index = getParent().indexOf(this);
+            }
+            else
+            {
+            	event.index = parentItem.indexOf(this);
+            }
             getParent().notifyListeners(SWT.SetData, event);
         }
     }
