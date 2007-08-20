@@ -4878,6 +4878,9 @@ public class Grid extends Canvas
                 // draw regular cells for each column
                 for (Iterator columnIterator = displayOrderedColumns.iterator(); columnIterator.hasNext(); )
                 {
+                	if (x > getClientArea().width)
+                		break;
+                	
                     GridColumn column = (GridColumn) columnIterator.next();
                                        
                     if (!column.isVisible())
@@ -5062,8 +5065,6 @@ public class Grid extends Canvas
             }
 
             row++;
-// MOPR moved this to if-clause above
-//            y += getRowHeight() + 1;
         }
 
         // draw drop point
@@ -5172,6 +5173,9 @@ public class Grid extends Canvas
 
         for (Iterator columnIterator = displayOrderedColumns.iterator(); columnIterator.hasNext(); )
         {
+        	if (x > getClientArea().width)
+        		break;
+        	
             GridColumn column = (GridColumn) columnIterator.next();
             int height = 0;
             
