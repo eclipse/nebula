@@ -8,13 +8,15 @@
  * Contributors:
  *    rmcamara@us.ibm.com - initial API and implementation
  *    tom.schindl@bestsolution.at - various significant contributions
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.nebula.jface.gridviewer;
 
 import org.eclipse.jface.viewers.AbstractTableViewer;
+import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewerEditor;
 import org.eclipse.jface.viewers.ColumnViewerEditorActivationStrategy;
+import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.viewers.ViewerRow;
 import org.eclipse.nebula.widgets.grid.Grid;
 import org.eclipse.nebula.widgets.grid.GridItem;
@@ -34,78 +36,77 @@ import org.eclipse.swt.widgets.Widget;
  * filter (optional), and element sorter (optional).
  * <p>
  * Content providers for grid table viewers must not implement the
- * {@code ITreeContentProvider} interface. Instead a {@link GridTreeViewer} should be used.
+ * {@code ITreeContentProvider} interface. Instead a {@link GridTreeViewer}
+ * should be used.
  * <p>
  */
-public class GridTableViewer extends AbstractTableViewer
-{
-    /** This viewer's grid control. */
-    private Grid grid;
-    
-    private GridViewerRow cachedRow;
+public class GridTableViewer extends AbstractTableViewer {
+	/** This viewer's grid control. */
+	private Grid grid;
+
+	private GridViewerRow cachedRow;
+
+	private CellLabelProvider rowHeaderLabelProvider;
 
 	/**
-	 * If true, this grid viewer will ensure that the grid's
-	 * rows / GridItems are always sized to their preferred height.
+	 * If true, this grid viewer will ensure that the grid's rows / GridItems
+	 * are always sized to their preferred height.
 	 */
 	private boolean autoPreferredHeight = false;
 
+	/**
+	 * Creates a grid viewer on a newly-created grid control under the given
+	 * parent. The grid control is created using the SWT style bits
+	 * <code>MULTI, H_SCROLL, V_SCROLL,</code> and <code>BORDER</code>. The
+	 * viewer has no input, no content provider, a default label provider, no
+	 * sorter, and no filters.
+	 *
+	 * @param parent
+	 *            the parent control
+	 */
+	public GridTableViewer(Composite parent) {
+		this(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+	}
 
-    /**
-     * Creates a grid viewer on a newly-created grid control under the given
-     * parent. The grid control is created using the SWT style bits
-     * <code>MULTI, H_SCROLL, V_SCROLL,</code> and <code>BORDER</code>. The
-     * viewer has no input, no content provider, a default label provider, no
-     * sorter, and no filters.
-     * 
-     * @param parent the parent control
-     */
-    public GridTableViewer(Composite parent)
-    {
-        this(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-    }
+	/**
+	 * Creates a grid viewer on a newly-created grid control under the given
+	 * parent. The grid control is created using the given SWT style bits. The
+	 * viewer has no input, no content provider, a default label provider, no
+	 * sorter, and no filters.
+	 *
+	 * @param parent
+	 *            the parent control
+	 * @param style
+	 *            the SWT style bits used to create the grid.
+	 */
+	public GridTableViewer(Composite parent, int style) {
+		this(new Grid(parent, style));
+	}
 
-    /**
-     * Creates a grid viewer on a newly-created grid control under the given
-     * parent. The grid control is created using the given SWT style bits. The
-     * viewer has no input, no content provider, a default label provider, no
-     * sorter, and no filters.
-     * 
-     * @param parent the parent control
-     * @param style the SWT style bits used to create the grid.
-     */
-    public GridTableViewer(Composite parent, int style)
-    {
-        this(new Grid(parent, style));
-    }
+	/**
+	 * Creates a grid viewer on the given grid control. The viewer has no input,
+	 * no content provider, a default label provider, no sorter, and no filters.
+	 *
+	 * @param grid
+	 *            the grid control
+	 */
+	public GridTableViewer(Grid grid) {
+		this.grid = grid;
+		hookControl(grid);
+	}
 
-    /**
-     * Creates a grid viewer on the given grid control. The viewer has no
-     * input, no content provider, a default label provider, no sorter, and no
-     * filters.
-     * 
-     * @param grid the grid control
-     */
-    public GridTableViewer(Grid grid)
-    {
-        this.grid = grid;
-        hookControl(grid);
-    }
-    
-    /**
-     * Returns the underlying Grid Control. 
-     * 
-     * @return grid control.
-     */
-    public Grid getGrid()
-    {
-        return grid;
-    }
+	/**
+	 * Returns the underlying Grid Control.
+	 *
+	 * @return grid control.
+	 */
+	public Grid getGrid() {
+		return grid;
+	}
 
-    /** {@inheritDoc} */
-    protected ViewerRow internalCreateNewRowPart(int style, int rowIndex)
-    {
-    	GridItem item;
+	/** {@inheritDoc} */
+	protected ViewerRow internalCreateNewRowPart(int style, int rowIndex) {
+		GridItem item;
 
 		if (rowIndex >= 0) {
 			item = new GridItem(grid, style, rowIndex);
@@ -114,163 +115,139 @@ public class GridTableViewer extends AbstractTableViewer
 		}
 
 		return getViewerRowFromItem(item);
-    }
+	}
 
-    /** {@inheritDoc} */
-    protected ColumnViewerEditor createViewerEditor() 
-    {
-        return new GridViewerEditor(this,new ColumnViewerEditorActivationStrategy(this),ColumnViewerEditor.DEFAULT);
-    }
+	/** {@inheritDoc} */
+	protected ColumnViewerEditor createViewerEditor() {
+		return new GridViewerEditor(this,
+				new ColumnViewerEditorActivationStrategy(this),
+				ColumnViewerEditor.DEFAULT);
+	}
 
-    /** {@inheritDoc} */
-    protected void doClear(int index)
-    {
-        // TODO Fix when grid supports virtual
-    }
+	/** {@inheritDoc} */
+	protected void doClear(int index) {
+		// TODO Fix when grid supports virtual
+	}
 
-    /** {@inheritDoc} */
-    protected void doClearAll()
-    {
-        //TODO Fix when grid supports virtual
-    }
-    
-    /** {@inheritDoc} */
-    protected void doSetItemCount(int count)
-    {
-        //TODO Once grid supports virtual
-    }
+	/** {@inheritDoc} */
+	protected void doClearAll() {
+		// TODO Fix when grid supports virtual
+	}
 
-    /** {@inheritDoc} */
-    protected void doDeselectAll()
-    {
-        grid.deselectAll();
-    }
+	/** {@inheritDoc} */
+	protected void doSetItemCount(int count) {
+		// TODO Once grid supports virtual
+	}
 
-    /** {@inheritDoc} */
-    protected Widget doGetColumn(int index)
-    {
-        return grid.getColumn(index);
-    }
+	/** {@inheritDoc} */
+	protected void doDeselectAll() {
+		grid.deselectAll();
+	}
 
-    /** {@inheritDoc} */
-    protected int doGetColumnCount()
-    {
-        return grid.getColumnCount();
-    }
+	/** {@inheritDoc} */
+	protected Widget doGetColumn(int index) {
+		return grid.getColumn(index);
+	}
 
-    /** {@inheritDoc} */
-    protected Item doGetItem(int index)
-    {
-        return grid.getItem(index);
-    }
+	/** {@inheritDoc} */
+	protected int doGetColumnCount() {
+		return grid.getColumnCount();
+	}
 
-    /** {@inheritDoc} */
-    protected int doGetItemCount()
-    {
-        return grid.getItemCount();
-    }
+	/** {@inheritDoc} */
+	protected Item doGetItem(int index) {
+		return grid.getItem(index);
+	}
 
-    /** {@inheritDoc} */
-    protected Item[] doGetItems()
-    {
-        return grid.getItems();
-    }
+	/** {@inheritDoc} */
+	protected int doGetItemCount() {
+		return grid.getItemCount();
+	}
 
-    /** {@inheritDoc} */
-    protected Item[] doGetSelection()
-    {
-        return grid.getSelection();
-    }
+	/** {@inheritDoc} */
+	protected Item[] doGetItems() {
+		return grid.getItems();
+	}
 
-    /** {@inheritDoc} */
-    protected int[] doGetSelectionIndices()
-    {
-        return grid.getSelectionIndices();
-    }
+	/** {@inheritDoc} */
+	protected Item[] doGetSelection() {
+		return grid.getSelection();
+	}
 
-    /** {@inheritDoc} */
-    protected int doIndexOf(Item item)
-    {
-        return grid.indexOf((GridItem) item);
-    }
+	/** {@inheritDoc} */
+	protected int[] doGetSelectionIndices() {
+		return grid.getSelectionIndices();
+	}
 
-    /** {@inheritDoc} */
-    protected void doRemove(int[] indices)
-    {
-        grid.remove(indices);
-    }
+	/** {@inheritDoc} */
+	protected int doIndexOf(Item item) {
+		return grid.indexOf((GridItem) item);
+	}
 
-    /** {@inheritDoc} */
-    protected void doRemove(int start, int end)
-    {
-        grid.remove(start, end);
-    }
+	/** {@inheritDoc} */
+	protected void doRemove(int[] indices) {
+		grid.remove(indices);
+	}
 
-    /** {@inheritDoc} */
-    protected void doRemoveAll()
-    {
-        grid.removeAll();
-    }
+	/** {@inheritDoc} */
+	protected void doRemove(int start, int end) {
+		grid.remove(start, end);
+	}
 
-    /** {@inheritDoc} */
-    protected void doSetSelection(Item[] items)
-    {
-        GridItem[] items2 = new GridItem[items.length];
-        for (int i = 0; i < items.length; i++)
-        {
-            items2[i] = (GridItem) items[i];
-        }
-        grid.setSelection(items2);
-    }
+	/** {@inheritDoc} */
+	protected void doRemoveAll() {
+		grid.removeAll();
+	}
 
-    /** {@inheritDoc} */
-    protected void doSetSelection(int[] indices)
-    {
-        grid.setSelection(indices);
-    }
+	/** {@inheritDoc} */
+	protected void doSetSelection(Item[] items) {
+		GridItem[] items2 = new GridItem[items.length];
+		for (int i = 0; i < items.length; i++) {
+			items2[i] = (GridItem) items[i];
+		}
+		grid.setSelection(items2);
+	}
 
-    /** {@inheritDoc} */
-    protected void doShowItem(Item item)
-    {
-        grid.showItem((GridItem)item);
-    }
+	/** {@inheritDoc} */
+	protected void doSetSelection(int[] indices) {
+		grid.setSelection(indices);
+	}
 
-    /** {@inheritDoc} */
-    protected void doShowSelection()
-    {
-        grid.showSelection();
-    }
+	/** {@inheritDoc} */
+	protected void doShowItem(Item item) {
+		grid.showItem((GridItem) item);
+	}
 
-    /** {@inheritDoc} */
-    protected Item getItemAt(Point point)
-    {
-        return grid.getItem(point);
-    }
+	/** {@inheritDoc} */
+	protected void doShowSelection() {
+		grid.showSelection();
+	}
 
-    /** {@inheritDoc} */
-    public Control getControl()
-    {
-        return grid;
-    }
-    
-    /** {@inheritDoc} */
-    protected ViewerRow getViewerRowFromItem(Widget item) 
-    {
-    	if( cachedRow == null ) {
+	/** {@inheritDoc} */
+	protected Item getItemAt(Point point) {
+		return grid.getItem(point);
+	}
+
+	/** {@inheritDoc} */
+	public Control getControl() {
+		return grid;
+	}
+
+	/** {@inheritDoc} */
+	protected ViewerRow getViewerRowFromItem(Widget item) {
+		if (cachedRow == null) {
 			cachedRow = new GridViewerRow((GridItem) item);
 		} else {
 			cachedRow.setItem((GridItem) item);
 		}
-		
-		return cachedRow;
-    }
 
-    
-    
-    /** 
-     * {@inheritDoc}
-     */
-    protected void doResetItem(Item item) {
+		return cachedRow;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected void doResetItem(Item item) {
 		GridItem gridItem = (GridItem) item;
 		int columnCount = Math.max(1, grid.getColumnCount());
 		for (int i = 0; i < columnCount; i++) {
@@ -282,27 +259,23 @@ public class GridTableViewer extends AbstractTableViewer
 	protected void doSelect(int[] indices) {
 		grid.select(indices);
 	}
-	
-	
-	
+
 	/**
-	 * When set to true, this grid viewer will ensure that each of
-	 * the grid's items is always automatically sized to its preferred
-	 * height. The default is false.
+	 * When set to true, this grid viewer will ensure that each of the grid's
+	 * items is always automatically sized to its preferred height. The default
+	 * is false.
 	 * <p>
-	 * Since this mechanism usually leads to a grid with rows of
-	 * different heights and thus to a grid with decreased performance,
-	 * it should only be applied if that is intended.  To set the
-	 * height of all items to a specific value, use {@link Grid#setItemHeight(int)}
-	 * instead.
+	 * Since this mechanism usually leads to a grid with rows of different
+	 * heights and thus to a grid with decreased performance, it should only be
+	 * applied if that is intended. To set the height of all items to a specific
+	 * value, use {@link Grid#setItemHeight(int)} instead.
 	 * <p>
-	 * When a column with activated word wrapping is resized
-	 * by dragging the column resizer, the items are only auto-resized
-	 * properly if you use {@link GridViewerColumn} to create the
-	 * columns.
+	 * When a column with activated word wrapping is resized by dragging the
+	 * column resizer, the items are only auto-resized properly if you use
+	 * {@link GridViewerColumn} to create the columns.
 	 * <p>
-	 * When this method is called, existing rows are not resized to their 
-	 * preferred height.  Therefore it is suggested that this method be called
+	 * When this method is called, existing rows are not resized to their
+	 * preferred height. Therefore it is suggested that this method be called
 	 * before rows are populated (i.e. before setInput).
 	 */
 	public void setAutoPreferredHeight(boolean autoPreferredHeight) {
@@ -310,8 +283,7 @@ public class GridTableViewer extends AbstractTableViewer
 	}
 
 	/**
-	 * @return  true if this grid viewer sizes its rows to their
-	 *          preferred height
+	 * @return true if this grid viewer sizes its rows to their preferred height
 	 * @see #setAutoPreferredHeight(boolean)
 	 */
 	public boolean getAutoPreferredHeight() {
@@ -321,7 +293,40 @@ public class GridTableViewer extends AbstractTableViewer
 	/** {@inheritDoc} */
 	protected void doUpdateItem(Widget widget, Object element, boolean fullMap) {
 		super.doUpdateItem(widget, element, fullMap);
-		if(autoPreferredHeight && !widget.isDisposed())
-			((GridItem)widget).pack();
+		updateRowHeader(widget);
+		if (autoPreferredHeight && !widget.isDisposed())
+			((GridItem) widget).pack();
+	}
+
+	private void updateRowHeader(Widget widget) {
+		if (rowHeaderLabelProvider != null) {
+			ViewerCell cell = getViewerRowFromItem(widget).getCell(
+					Integer.MAX_VALUE);
+			rowHeaderLabelProvider.update(cell);
+		}
+	}
+
+	public void setRowHeaderLabelProvider(
+			CellLabelProvider rowHeaderLabelProvider) {
+		this.rowHeaderLabelProvider = rowHeaderLabelProvider;
+	}
+
+	/**
+	 * Refresh row headers only
+	 *
+	 * @param element
+	 *            the element to start or <code>null</code> if all rows should
+	 *            be refreshed
+	 */
+	public void refreshRowHeaders(Object element) {
+		boolean refresh = element == null;
+
+		GridItem[] items = getGrid().getItems();
+		for (int i = 0; i < items.length; i++) {
+			if (refresh || element.equals(items[i].getData())) {
+				refresh = true;
+				updateRowHeader(items[i]);
+			}
+		}
 	}
 }

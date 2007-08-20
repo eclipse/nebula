@@ -9,7 +9,7 @@
  *    rmcamara@us.ibm.com - initial API and implementation
  *    Tom Schindl <tom.schindl@bestsolution.at> - various significant contributions
  *    											  bug fix in: 191216
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.nebula.jface.gridviewer;
 
@@ -33,7 +33,7 @@ public class GridViewerRow extends ViewerRow
 
     /**
      * Create a new instance of the receiver.
-     * 
+     *
      * @param item GridItem source.
      */
     GridViewerRow(GridItem item)
@@ -44,7 +44,12 @@ public class GridViewerRow extends ViewerRow
     /** {@inheritDoc} */
     public Rectangle getBounds(int columnIndex)
     {
-        return item.getBounds(columnIndex);
+    	if( columnIndex == Integer.MAX_VALUE ) {
+    		//TODO Provide implementation for GridItem
+    		return null;
+    	} else {
+    		return item.getBounds(columnIndex);
+    	}
     }
 
     /** {@inheritDoc} */
@@ -64,61 +69,108 @@ public class GridViewerRow extends ViewerRow
     /** {@inheritDoc} */
     public Color getBackground(int columnIndex)
     {
-        return item.getBackground(columnIndex);
+    	if( columnIndex == Integer.MAX_VALUE ) {
+    		//TODO Provide implementation for GridItem
+    		return null;
+    	} else {
+    		return item.getBackground(columnIndex);
+    	}
     }
 
     /** {@inheritDoc} */
     public Font getFont(int columnIndex)
     {
-        return item.getFont(columnIndex);
+    	if( columnIndex == Integer.MAX_VALUE ) {
+    		//TODO Provide implementation for GridItem
+    		return null;
+    	} else {
+    		return item.getFont(columnIndex);
+    	}
     }
 
     /** {@inheritDoc} */
     public Color getForeground(int columnIndex)
     {
-        return item.getForeground(columnIndex);
+    	if( columnIndex == Integer.MAX_VALUE ) {
+    		//TODO Provide implementation for GridItem
+    		return null;
+    	} else {
+    		return item.getForeground(columnIndex);
+    	}
     }
 
     /** {@inheritDoc} */
     public Image getImage(int columnIndex)
     {
-        return item.getImage(columnIndex);
+    	if( columnIndex == Integer.MAX_VALUE ) {
+    		//TODO Provide implementation for GridItem
+    		return null;
+    	} else {
+    		return item.getImage(columnIndex);
+    	}
+
     }
 
     /** {@inheritDoc} */
     public String getText(int columnIndex)
     {
-        return item.getText(columnIndex);
+    	if( columnIndex == Integer.MAX_VALUE ) {
+    		return item.getHeaderText();
+    	} else {
+    		return item.getText(columnIndex);
+    	}
+
     }
 
     /** {@inheritDoc} */
     public void setBackground(int columnIndex, Color color)
     {
-        item.setBackground(columnIndex, color);
+    	if( columnIndex == Integer.MAX_VALUE ) {
+    		//TODO Provide implementation for GridItem
+    	} else {
+    		item.setBackground(columnIndex, color);
+    	}
     }
 
     /** {@inheritDoc} */
     public void setFont(int columnIndex, Font font)
     {
-        item.setFont(columnIndex, font);
+    	if( columnIndex == Integer.MAX_VALUE ) {
+    		//TODO Provide implementation for GridItem
+    	} else {
+    		item.setFont(columnIndex, font);
+    	}
     }
 
     /** {@inheritDoc} */
     public void setForeground(int columnIndex, Color color)
     {
-        item.setForeground(columnIndex, color);
+    	if( columnIndex == Integer.MAX_VALUE ) {
+    		//TODO Provide implementation for GridItem
+    	} else {
+    		item.setForeground(columnIndex, color);
+    	}
     }
 
     /** {@inheritDoc} */
     public void setImage(int columnIndex, Image image)
     {
-        item.setImage(columnIndex, image);
+    	if( columnIndex == Integer.MAX_VALUE ) {
+    		//TODO Provide implementation for GridItem
+    	} else {
+    		item.setImage(columnIndex, image);
+    	}
+
     }
 
     /** {@inheritDoc} */
     public void setText(int columnIndex, String text)
     {
-        item.setText(columnIndex, text == null ? "" : text); //$NON-NLS-1$
+    	if( columnIndex == Integer.MAX_VALUE ) {
+    		item.setHeaderText(text);
+    	} else {
+    		item.setText(columnIndex, text == null ? "" : text); //$NON-NLS-1$
+    	}
     }
 
     /** {@inheritDoc} */
@@ -137,27 +189,27 @@ public class GridViewerRow extends ViewerRow
 		}
 	}
 
-	
+
 	private ViewerRow getRowAbove() {
 		int index = item.getParent().indexOf(item) - 1;
-		
+
 		if( index >= 0 ) {
-			return new GridViewerRow(item.getParent().getItem(index)); 
+			return new GridViewerRow(item.getParent().getItem(index));
 		}
-		
+
 		return null;
 	}
 
 	private ViewerRow getRowBelow() {
 		int index = item.getParent().indexOf(item) + 1;
-		
+
 		if( index < item.getParent().getItemCount() ) {
 			GridItem tmp = item.getParent().getItem(index);
 			if( tmp != null ) {
 				return new GridViewerRow(tmp);
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -172,7 +224,7 @@ public class GridViewerRow extends ViewerRow
 	public Object getElement() {
 		return item.getData();
 	}
-	
+
 	void setItem(GridItem item) {
 		this.item = item;
 	}
@@ -180,5 +232,5 @@ public class GridViewerRow extends ViewerRow
     public Widget getItem()
     {
         return item;
-    }	
+    }
 }
