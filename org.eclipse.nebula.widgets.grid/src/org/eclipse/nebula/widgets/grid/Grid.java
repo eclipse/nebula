@@ -7412,6 +7412,16 @@ public class Grid extends Canvas
                 selectedCells.removeAll(removeSelectedCells);
                 selectionModified = true;
             }
+            
+            for (Iterator iterator = selectedCells.iterator(); iterator.hasNext();)
+            {
+                Point cell = (Point)iterator.next();
+                if (cell.x >= index)
+                {
+                	cell.x--;
+                	selectionModified = true;
+                }
+            }
         }
             
         columns.remove(column);
