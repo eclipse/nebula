@@ -1799,6 +1799,7 @@ public class GridItem extends Item
         insertValue(index,texts);  
         insertValue(index,columnSpans);
         insertValue(index,tooltips);
+        hasSetData = false;
     }
     
     private void insertValue(int index, List list)
