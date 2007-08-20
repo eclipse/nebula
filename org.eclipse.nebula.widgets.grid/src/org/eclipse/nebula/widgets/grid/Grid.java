@@ -6289,15 +6289,23 @@ public class Grid extends Canvas
 
                 resizingRow = false;
                 handleHoverOnRowResizer(e.x, e.y);
+                return;
             }
 
             GridItem item = getItem(new Point(e.x, e.y));
             if (item != null)
             {
+            	if (isListening(SWT.DefaultSelection))
+            	{
                 Event newEvent = new Event();
                 newEvent.item = item;
     
                 notifyListeners(SWT.DefaultSelection, newEvent);
+            	}
+            	else if (item.getItemCount() > 0)
+            	{
+          			item.setExpanded(!item.isExpanded());
+            	}
             }        
         }
     }
