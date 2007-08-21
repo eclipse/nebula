@@ -4879,8 +4879,6 @@ public class Grid extends Canvas
                 // draw regular cells for each column
                 for (Iterator columnIterator = displayOrderedColumns.iterator(); columnIterator.hasNext(); )
                 {
-                	if (x > getClientArea().width)
-                		break;
                 	
                     GridColumn column = (GridColumn) columnIterator.next();
                                        
@@ -4914,43 +4912,47 @@ public class Grid extends Canvas
                                 }
                             }
                         }
-
-                        column.getCellRenderer().setBounds(x, y, width, item.getHeight());
-
-                        e.gc.setClipping(new Rectangle(x -1,y -1,width +1,item.getHeight() + 2));
                         
-                        column.getCellRenderer().setRow(i + 1);
+                    	if (x + width >= 0 && x < getClientArea().width )
+                    	{
 
-                        column.getCellRenderer().setSelected(selectedItems.contains(item));
-                        column.getCellRenderer().setFocus(this.isFocusControl());
-                        column.getCellRenderer().setRowFocus(focusItem == item);
-                        column.getCellRenderer().setCellFocus(cellSelectionEnabled && focusItem == item && focusColumn == column);
-                        
-                        column.getCellRenderer().setRowHover(hoveringItem == item);
-                        column.getCellRenderer().setColumnHover(hoveringColumn == column);
- 
-                        if (selectedCells.contains(new Point(indexOf(column),row)))
-                        {
-                            column.getCellRenderer().setCellSelected(true);
-                            cellInRowSelected = true;
-                        }
-                        else
-                        {
-                            column.getCellRenderer().setCellSelected(false);                            
-                        }
-
-                        if (hoveringItem == item && hoveringColumn == column)
-                        {
-                            column.getCellRenderer().setHoverDetail(hoveringDetail);
-                        }
-                        else
-                        {
-                            column.getCellRenderer().setHoverDetail("");
-                        }
-
-                        column.getCellRenderer().paint(e.gc, item);
-
-                        e.gc.setClipping((Rectangle)null);
+	                        column.getCellRenderer().setBounds(x, y, width, item.getHeight());
+	
+	                        e.gc.setClipping(new Rectangle(x -1,y -1,width +1,item.getHeight() + 2));
+	                        
+	                        column.getCellRenderer().setRow(i + 1);
+	
+	                        column.getCellRenderer().setSelected(selectedItems.contains(item));
+	                        column.getCellRenderer().setFocus(this.isFocusControl());
+	                        column.getCellRenderer().setRowFocus(focusItem == item);
+	                        column.getCellRenderer().setCellFocus(cellSelectionEnabled && focusItem == item && focusColumn == column);
+	                        
+	                        column.getCellRenderer().setRowHover(hoveringItem == item);
+	                        column.getCellRenderer().setColumnHover(hoveringColumn == column);
+	 
+	                        if (selectedCells.contains(new Point(indexOf(column),row)))
+	                        {
+	                            column.getCellRenderer().setCellSelected(true);
+	                            cellInRowSelected = true;
+	                        }
+	                        else
+	                        {
+	                            column.getCellRenderer().setCellSelected(false);                            
+	                        }
+	
+	                        if (hoveringItem == item && hoveringColumn == column)
+	                        {
+	                            column.getCellRenderer().setHoverDetail(hoveringDetail);
+	                        }
+	                        else
+	                        {
+	                            column.getCellRenderer().setHoverDetail("");
+	                        }
+	
+	                        column.getCellRenderer().paint(e.gc, item);
+	
+	                        e.gc.setClipping((Rectangle)null);
+                    	}
 
 
                         x += width;
@@ -5276,7 +5278,10 @@ public class Grid extends Canvas
             if (cellSelectionEnabled)
                 column.getHeaderRenderer().setSelected(selectedColumns.contains(column));
             
-            column.getHeaderRenderer().paint(gc, column);
+            if (x + column.getWidth() >= 0)
+            {
+            	column.getHeaderRenderer().paint(gc, column);	
+            }
 
             x += column.getWidth();
         }
