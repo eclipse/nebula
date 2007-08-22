@@ -1764,8 +1764,6 @@ public class GridItem extends Item
         ensureSize(texts);    
         ensureSize(columnSpans);
         ensureSize(tooltips);
-
-        height = parent.getItemHeight();
     }
     
     /**
@@ -1839,5 +1837,15 @@ public class GridItem extends Item
             }
             getParent().notifyListeners(SWT.SetData, event);
         }
+    }
+    
+    /**
+     * Sets the initial item height for this item.
+     * 
+     * @param height initial height.
+     */
+    void initializeHeight(int height)
+    {
+        this.height = height;
     }
 }

@@ -7574,6 +7574,8 @@ public class Grid extends Canvas
         if (items.size() == 1 && !userModifiedItemHeight)
             itemHeight = computeItemHeight(item,sizingGC);
 
+        item.initializeHeight(itemHeight);
+        
         if (isRowHeaderVisible())
         {
 	        rowHeaderWidth = Math.max(rowHeaderWidth,rowHeaderRenderer
