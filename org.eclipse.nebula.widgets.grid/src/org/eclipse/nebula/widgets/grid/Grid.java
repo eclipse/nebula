@@ -6310,6 +6310,15 @@ public class Grid extends Canvas
             	else if (item.getItemCount() > 0)
             	{
           			item.setExpanded(!item.isExpanded());
+          			
+                    if (item.isExpanded())
+                    {
+                        item.fireEvent(SWT.Expand);
+                    }
+                    else
+                    {
+                        item.fireEvent(SWT.Collapse);
+                    }
             	}
             }        
         }
