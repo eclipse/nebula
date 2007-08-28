@@ -4817,8 +4817,8 @@ public class Grid extends Canvas
         }
 
         int firstVisibleIndex = 0;
-        int visibleRows = 0;
         int availableHeight = getClientArea().height-y;
+        int visibleRows = availableHeight / getItemHeight() + 1;
         if (items.size()>0 && availableHeight>0)
         {
             RowRange range = getRowRange(getTopIndex(),availableHeight,false,false);
