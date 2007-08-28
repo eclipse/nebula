@@ -90,7 +90,11 @@ public class PGroup extends Canvas
      * lists the style constants that are applicable to the class.
      * Style bits are also inherited from superclasses.
      * </p>
-     *
+     * <p>
+     * To ensure that the color of corners is equal to one of the underlying control
+     * invoke the parent composites {@link Composite#setBackgroundMode(int)}
+     * with {@link SWT#INHERIT_DEFAULT} or {@link SWT#INHERIT_DEFAULT}
+     * </p>
      * @param parent a composite control which will be the parent of the new instance (cannot be null)
      * @param style the style of control to construct
      *
@@ -137,8 +141,28 @@ public class PGroup extends Canvas
         return backgroundColor;
     }
 
-    /** 
-     * {@inheritDoc}
+	/**
+ 	 * Sets the receiver's background color to the color specified
+  	 * by the argument, or to the default system color for the control
+     * if the argument is null.
+     * <p>
+     * Note: This operation is a hint and may be overridden by the platform.
+     * For example, on Windows the background of a Button cannot be changed.
+     * </p>
+     * <p>
+     * To ensure that the color of corners is equal to one of the underlying control
+     * invoke the parent composites {@link Composite#setBackgroundMode(int)}
+     * with {@link SWT#INHERIT_DEFAULT} or {@link SWT#INHERIT_DEFAULT}
+     * </p>
+     * @param color the new color (or null)
+     *
+     * @exception IllegalArgumentException <ul>
+     *    <li>ERROR_INVALID_ARGUMENT - if the argument has been disposed</li> 
+     * </ul>
+     * @exception SWTException <ul>
+     *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+     * </ul>
      */
     public void setBackground(Color color)
     {
