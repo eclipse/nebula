@@ -11,8 +11,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * Snippet 1 for NumberFormatter : default Locale US, given fixed mask, no
- * default value.
+ * Snippet 1 for NumberFormatter : default Locale US, given fixed mask with
+ * negative values support, no default value.
  */
 public class NumberFormatterSnippet1 {
 	public static void main(String[] args) {
@@ -22,7 +22,7 @@ public class NumberFormatterSnippet1 {
 
     Locale.setDefault(Locale.US);
     FormattedText text = new FormattedText(shell, SWT.BORDER | SWT.RIGHT);
-    text.setFormatter(new NumberFormatter("###,###,##0.00"));
+    text.setFormatter(new NumberFormatter("-###,###,##0.00"));
     GridData data = new GridData();
     data.widthHint = 100;
     text.getControl().setLayoutData(data);
