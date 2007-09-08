@@ -234,7 +234,7 @@ public class NumberFormatter extends AbstractFormatter {
 
   	// Inserts zeros in the int part
   	while ( intCount < zeroIntLen ) {
-  		editValue.insert(1, '0');
+  		editValue.insert(i, '0');
   		intCount++;
   		curseur++;
   	}
@@ -433,7 +433,7 @@ public class NumberFormatter extends AbstractFormatter {
         editValue.append(symbols.getDecimalSeparator());
       }
     } else {
-      if ( i == editValue.length() - 1 ) {
+      if ( i > -1 && i == editValue.length() - 1 ) {
         editValue.deleteCharAt(i);
       }
     }
