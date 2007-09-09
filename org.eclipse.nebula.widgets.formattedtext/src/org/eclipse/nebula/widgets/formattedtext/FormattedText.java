@@ -17,6 +17,7 @@ import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
@@ -52,10 +53,11 @@ public class FormattedText {
   protected GridLayout layout;
   /** Filter for modify events */
   protected Listener modifyFilter;
-  /** Flag to block modify events */
-  protected boolean blockModify = false;
 
-	/**
+  protected static int count = 0;
+  protected int id = ++count;
+
+  /**
 	 * Creates a formatted text on a newly-created text control under the given
 	 * parent. The text control is created using the SWT style bits
 	 * <code>BORDER</code>.
@@ -88,37 +90,31 @@ public class FormattedText {
   	text.addFocusListener(new FocusListener() {
       public void focusGained(FocusEvent e) {
         if ( formatter != null && text.getEditable() ) {
-        	blockModify = true;
           formatter.setIgnore(true);
-          text.setText(formatter.getEditString());
+          setText(formatter.getEditString());
           text.setSelection(caretPos);
           formatter.setIgnore(false);
-        	blockModify = false;
         }
       }
 
       public void focusLost(FocusEvent e) {
         if ( formatter != null && text.getEditable() ) {
-        	blockModify = true;
           formatter.setIgnore(true);
           caretPos = text.getCaretPosition();
-          text.setText(formatter.getDisplayString());
+          setText(formatter.getDisplayString());
           formatter.setIgnore(false);
-        	blockModify = false;
         }
       }
     });
 
   	modifyFilter = new Listener() {
   		public void handleEvent(Event event) {
-  			if ( blockModify ) event.type = SWT.None;
+  			event.type = SWT.None;
   		}
   	};
-  	text.getDisplay().addFilter(SWT.Modify, modifyFilter);
 
   	text.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
-				text.getDisplay().removeFilter(SWT.Modify, modifyFilter);
 	      text				 = null;
 	      modifyFilter = null;
 	      formatter		 = null;
@@ -185,6 +181,21 @@ public class FormattedText {
     formatter.setIgnore(true);
     text.setText(formatter.getDisplayString());
     formatter.setIgnore(false);
+  }
+
+  /**
+   * Sets the Text widget value, preventing fire of Modify events.
+   * 
+   * @param value The String value to display in the widget
+   */
+  private void setText(String value) {
+  	Display display = text.getDisplay();
+  	try {
+  		display.addFilter(SWT.Modify, modifyFilter);
+  		text.setText(value);
+  	} finally {
+  		display.removeFilter(SWT.Modify, modifyFilter);
+  	}
   }
 
   /**
