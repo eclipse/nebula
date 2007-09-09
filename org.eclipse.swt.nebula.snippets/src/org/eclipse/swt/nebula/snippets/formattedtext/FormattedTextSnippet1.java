@@ -34,6 +34,7 @@ public class FormattedTextSnippet1 {
     data = new GridData();
     data.widthHint = 200;
     lsnrInfo.setLayoutData(data);
+    lsnrInfo.setEditable(false);
 
     text.getControl().addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
