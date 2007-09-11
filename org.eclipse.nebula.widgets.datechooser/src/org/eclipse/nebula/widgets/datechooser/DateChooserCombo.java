@@ -17,6 +17,7 @@ import org.eclipse.nebula.widgets.formattedtext.DateFormatter;
 import org.eclipse.nebula.widgets.formattedtext.DefaultFormatterFactory;
 import org.eclipse.nebula.widgets.formattedtext.FormattedText;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.layout.GridData;
@@ -71,6 +72,20 @@ public class DateChooserCombo extends AbstractCombo {
 		setImage(buttonImage);
 		pack();
 	}
+
+	/**
+	 * Adds the listener to the collection of listeners who will be notified when
+	 * keys are pressed and released on the system keyboard, by sending it one of
+	 * the messages defined in the KeyListener interface.<b>
+	 * The listener is setted on the Text widget, as there is no sense to have it
+	 * on the Composite.
+	 * 
+	 * @param listener the listener which should be notified
+	 */
+	public void addKeyListener(KeyListener listener) {
+		checkWidget();
+		formattedText.getControl().addKeyListener(listener);
+  }
 
 	/**
 	 * Called just before the popup is droppped. The selected date of the
@@ -181,6 +196,17 @@ public class DateChooserCombo extends AbstractCombo {
 		checkWidget();
 		return ((DateChooser) popupContent).isGridVisible();
 	}
+
+	/**
+	 * Removes the listener from the collection of listeners who will
+	 * be notified when keys are pressed and released on the system keyboard.
+	 *
+	 * @param listener the listener which should no longer be notified
+	 */
+	public void removeKeyListener(KeyListener listener) {
+		checkWidget();
+		formattedText.getControl().removeKeyListener(listener);
+  }
 
 	/**
 	 * Sets the footer of popup calendar visible or not. The footer displays the
