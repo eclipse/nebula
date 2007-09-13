@@ -552,7 +552,7 @@ public class DefaultCellRenderer extends GridCellRenderer
         
         if (preferred)
         {
-            bounds.width = size.x;
+            bounds.width = size.x - 1;
         }
         else
         {
