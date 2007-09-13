@@ -48,83 +48,20 @@ public class GridToolTip extends Widget
         shell.setBackground(shell.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
         shell.setForeground(shell.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 
+        parent.addListener(SWT.Dispose, new Listener()
+        {
+			public void handleEvent(Event arg0)
+			{
+				shell.dispose();
+				dispose();
+			}		
+		});
+        
         shell.addListener(SWT.Paint, new Listener()
         {
             public void handleEvent(Event e)
             {
                 onPaint(e.gc);
-            }
-        });
-
-        shell.addListener(SWT.MouseDown, new Listener()
-        {
-            public void handleEvent(Event e)
-            {
-                setVisible(false);
-                Point p = new Point(e.x, e.y);
-                p = shell.getDisplay().map(shell, parent, p);
-                Event newEvent = new Event();
-                newEvent.button = e.button;
-                newEvent.x = p.x;
-                newEvent.y = p.y;
-                newEvent.stateMask = e.stateMask;
-                parent.notifyListeners(SWT.MouseDown, newEvent);
-            }
-        });
-
-        shell.addListener(SWT.MouseMove, new Listener()
-        {
-            public void handleEvent(Event e)
-            {
-                Point p = new Point(e.x, e.y);
-                p = shell.getDisplay().map(shell, parent, p);
-                Event newEvent = new Event();
-                newEvent.x = p.x;
-                newEvent.y = p.y;
-                newEvent.button = e.button;
-                newEvent.stateMask = e.stateMask;
-                parent.notifyListeners(SWT.MouseMove, newEvent);
-            }
-        });
-
-        shell.addListener(SWT.MouseUp, new Listener()
-        {
-            public void handleEvent(Event e)
-            {
-                Point p = new Point(e.x, e.y);
-                p = shell.getDisplay().map(shell, parent, p);
-                Event newEvent = new Event();
-                newEvent.x = p.x;
-                newEvent.y = p.y;
-                newEvent.button = e.button;
-                newEvent.stateMask = e.stateMask;
-                parent.notifyListeners(SWT.MouseUp, newEvent);
-            }
-        });
-
-        shell.addListener(SWT.MouseExit, new Listener()
-        {
-            public void handleEvent(Event e)
-            {
-                Point p = new Point(e.x, e.y);
-                p = shell.getDisplay().map(shell, parent, p);
-
-                Event newEvent = new Event();
-                newEvent.x = p.x;
-                newEvent.y = p.y;
-                newEvent.button = e.button;
-                newEvent.stateMask = e.stateMask;
-
-                if (p.x < 0 || p.y < 0 || p.x > parent.getBounds().width
-                    || p.y > parent.getBounds().height)
-                {
-                    newEvent.detail = SWT.TOOL;
-                    parent.notifyListeners(SWT.MouseExit, newEvent);
-                }
-                else
-                {
-                    parent.notifyListeners(SWT.MouseMove, newEvent);
-                }
             }
         });
     }

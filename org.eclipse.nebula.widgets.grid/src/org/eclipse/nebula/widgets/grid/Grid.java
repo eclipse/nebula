@@ -505,11 +505,6 @@ public class Grid extends Canvas
      * The inplace tooltip.
      */
     private GridToolTip inplaceToolTip;
-
-    /**
-     * True to ignore the mouse exit event (when triggered by the inplace tooltip).
-     */
-    private boolean ignoreMouseExit;
     
     private GC sizingGC;
 
@@ -579,6 +574,13 @@ public class Grid extends Canvas
      * See imageSetOnItem.
      */
     private boolean firstImageSet = false;
+
+    /** 
+     * Mouse capture flag.  Used for inplace tooltips.  This flag must be used to ensure that 
+     * we don't setCapture(false) in situations where we didn't do setCapture(true).  The OS (SWT?)
+     * will automatically capture the mouse for us during a drag operation. 
+     */
+	private boolean captured;
     
     /**
      * A range of rows in a <code>Grid</code>.
@@ -6058,7 +6060,9 @@ public class Grid extends Canvas
         if ((getStyle() & SWT.NO_FOCUS) != SWT.NO_FOCUS)
         {
             forceFocus();
-        }
+        }        
+        
+        hideToolTip();
         
         //if populated will be fired at end of method.
         Event selectionEvent = null;
@@ -6388,6 +6392,17 @@ public class Grid extends Canvas
      */
     private void onMouseMove(MouseEvent e)
     {
+    	//check to see if the mouse is outside the grid
+    	//this should only happen when the mouse is captured for inplace
+    	//tooltips - see bug 203364
+    	if (captured && (e.x < 0 || e.y < 0 || e.x >= getBounds().width || e.y >= getBounds().height))
+    	{
+    		setCapture(false);
+    		captured = false;
+    		return;  //a mouseexit event should occur immediately
+    	}
+
+    	
         //if populated will be fired at end of method.
         Event selectionEvent = null;
         
@@ -6649,15 +6664,12 @@ public class Grid extends Canvas
      */
     private void onMouseExit(MouseEvent e)
     {
-        if (!ignoreMouseExit)
-        {
             hoveringItem = null;
             hoveringDetail = "";
             hoveringColumn = null;
             hoveringOverText = false;
             hideToolTip();
             redraw();
-        }
     }
 
     /**
@@ -7313,16 +7325,8 @@ public class Grid extends Canvas
                 //if we are truncated
                 if (textBounds.width < preferredTextBounds.width)
                 {
-                    ignoreMouseExit = true;
                     showToolTip(item,col, hoverColumnGroupHeader, new Point(cellBounds.x + textBounds.x,cellBounds.y + 
-                                                    textBounds.y));
-                    getDisplay().asyncExec(new Runnable()
-                    {                    
-                        public void run()
-                        {
-                            ignoreMouseExit = false;
-                        }                    
-                    });                    
+                                                    textBounds.y));                   
                 }
             }
             else
@@ -8691,6 +8695,9 @@ public class Grid extends Canvas
         inplaceToolTip.setLocation(p);
         
         inplaceToolTip.setVisible(true);
+        
+        setCapture(true);
+        captured = true;
     }
     
     /**
@@ -8699,7 +8706,14 @@ public class Grid extends Canvas
     protected void hideToolTip()
     {
         if (inplaceToolTip != null)
+        {
             inplaceToolTip.setVisible(false);
+            if (captured) 
+        	{
+            	setCapture(false);
+            	captured = false;
+        	}
+        }
     }
     
     void recalculateRowHeaderWidth(GridItem item,int oldWidth, int newWidth)
