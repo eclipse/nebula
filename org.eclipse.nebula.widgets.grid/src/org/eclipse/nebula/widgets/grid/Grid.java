@@ -580,7 +580,7 @@ public class Grid extends Canvas
      * we don't setCapture(false) in situations where we didn't do setCapture(true).  The OS (SWT?)
      * will automatically capture the mouse for us during a drag operation. 
      */
-	private boolean captured;
+	private boolean inplaceTooltipCapture;
     
     /**
      * A range of rows in a <code>Grid</code>.
@@ -4523,6 +4523,8 @@ public class Grid extends Canvas
 
         startHeaderPushX = x;
         pushingColumn = true;
+        
+        setCapture(true);
 
         return true;
     }
@@ -6395,10 +6397,10 @@ public class Grid extends Canvas
     	//check to see if the mouse is outside the grid
     	//this should only happen when the mouse is captured for inplace
     	//tooltips - see bug 203364
-    	if (captured && (e.x < 0 || e.y < 0 || e.x >= getBounds().width || e.y >= getBounds().height))
+    	if (inplaceTooltipCapture && (e.x < 0 || e.y < 0 || e.x >= getBounds().width || e.y >= getBounds().height))
     	{
     		setCapture(false);
-    		captured = false;
+    		inplaceTooltipCapture = false;
     		return;  //a mouseexit event should occur immediately
     	}
 
@@ -7327,8 +7329,10 @@ public class Grid extends Canvas
                 {
                     showToolTip(item,col, hoverColumnGroupHeader, new Point(cellBounds.x + textBounds.x,cellBounds.y + 
                                                     textBounds.y));
+                    //the following 2 lines are done here rather than in showToolTip to allow
+                    //that method to be overridden yet still capture the mouse.
                     setCapture(true);
-                    captured = true;
+                    inplaceTooltipCapture = true;
                 }
             }
             else
@@ -8713,10 +8717,10 @@ public class Grid extends Canvas
         {
             inplaceToolTip.setVisible(false);
         }
-        if (captured) 
+        if (inplaceTooltipCapture) 
     	{
         	setCapture(false);
-        	captured = false;
+        	inplaceTooltipCapture = false;
     	}
     }
     
