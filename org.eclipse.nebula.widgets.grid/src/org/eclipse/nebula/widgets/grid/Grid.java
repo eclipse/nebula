@@ -7326,7 +7326,9 @@ public class Grid extends Canvas
                 if (textBounds.width < preferredTextBounds.width)
                 {
                     showToolTip(item,col, hoverColumnGroupHeader, new Point(cellBounds.x + textBounds.x,cellBounds.y + 
-                                                    textBounds.y));                   
+                                                    textBounds.y));
+                    setCapture(true);
+                    captured = true;
                 }
             }
             else
@@ -8659,6 +8661,8 @@ public class Grid extends Canvas
     /**
      * Shows the inplace tooltip for the given item and column.  The location is the x and y origin 
      * of the text in the cell.
+     * <p>
+     * This method may be overriden to provide their own custom tooltips.
      * 
      * @param item the item currently hovered over or null. 
      * @param column the column currently hovered over or null.
@@ -8695,25 +8699,25 @@ public class Grid extends Canvas
         inplaceToolTip.setLocation(p);
         
         inplaceToolTip.setVisible(true);
-        
-        setCapture(true);
-        captured = true;
     }
     
     /**
      * Hides the inplace tooltip.
+     * <p>
+     * This method must be overriden when showToolTip is overriden.  Subclasses must 
+     * call super when overriding this method.
      */
     protected void hideToolTip()
     {
         if (inplaceToolTip != null)
         {
             inplaceToolTip.setVisible(false);
-            if (captured) 
-        	{
-            	setCapture(false);
-            	captured = false;
-        	}
         }
+        if (captured) 
+    	{
+        	setCapture(false);
+        	captured = false;
+    	}
     }
     
     void recalculateRowHeaderWidth(GridItem item,int oldWidth, int newWidth)
