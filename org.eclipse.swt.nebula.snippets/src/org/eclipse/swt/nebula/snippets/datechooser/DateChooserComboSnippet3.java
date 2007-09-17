@@ -8,9 +8,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * Snippet 1 for DateChooserCombo : simple combo with border.
+ * Snippet 3 for DateChooserCombo : footer, no lines.
  */
-public class DateChooserComboSnippet1 {
+public class DateChooserComboSnippet3 {
 	public static void main(String[] args) {
 		Display display = new Display();
     Shell shell = new Shell(display);
@@ -21,6 +21,8 @@ public class DateChooserComboSnippet1 {
     GridData data = new GridData();
 		data.widthHint = 110;
 		combo.setLayoutData(data);
+		combo.setFooterVisible(true);
+		combo.setGridVisible(false);
 
     shell.open();
     while ( ! shell.isDisposed() ) {

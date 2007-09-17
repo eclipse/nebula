@@ -8,21 +8,27 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * Snippet 1 for DateChooserCombo : simple combo with border.
+ * Snippet 2 for DateChooserCombo : show button on focus.
  */
-public class DateChooserComboSnippet1 {
+public class DateChooserComboSnippet2 {
 	public static void main(String[] args) {
 		Display display = new Display();
     Shell shell = new Shell(display);
     shell.setLayout(new GridLayout());
     shell.setSize(300, 200);
 
-    DateChooserCombo combo = new DateChooserCombo(shell, SWT.BORDER);
+    DateChooserCombo combo1 = new DateChooserCombo(shell, SWT.BORDER);
     GridData data = new GridData();
 		data.widthHint = 110;
-		combo.setLayoutData(data);
+		combo1.setLayoutData(data);
 
-    shell.open();
+		DateChooserCombo combo2 = new DateChooserCombo(shell, SWT.BORDER);
+		data = new GridData();
+		data.widthHint = 110;
+		combo2.setLayoutData(data);
+		combo2.setShowButtonOnFocus(true);
+
+		shell.open();
     while ( ! shell.isDisposed() ) {
     	if (!display.readAndDispatch()) display.sleep();
     }
