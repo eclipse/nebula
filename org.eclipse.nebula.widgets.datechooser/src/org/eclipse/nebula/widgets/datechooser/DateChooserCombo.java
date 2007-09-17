@@ -18,6 +18,7 @@ import org.eclipse.nebula.widgets.formattedtext.DefaultFormatterFactory;
 import org.eclipse.nebula.widgets.formattedtext.FormattedText;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.layout.GridData;
@@ -51,6 +52,14 @@ public class DateChooserCombo extends AbstractCombo {
 
 	/** FormattedText widget for edition of the date */
 	protected FormattedText formattedText;
+	/** Flag to set footer visible or not in the popup */
+	protected boolean footerVisible = false;
+	/** Flag to set grid visible or not in the popup */
+	protected boolean gridVisible = true;
+	/** Calendar theme */
+	protected DateChooserTheme theme;
+	/** Locale used for localized names and formats */
+	protected Locale locale;
 
 	static {
 		buttonImage = new Image(Display.getCurrent(),
@@ -146,6 +155,14 @@ public class DateChooserCombo extends AbstractCombo {
 	 */
 	protected void createPopupContent() {
 		DateChooser cal = new DateChooser(popup, SWT.NONE);
+		if ( theme != null ) {
+			cal.setTheme(theme);
+		}
+		if ( locale != null ) {
+			cal.setLocale(locale);
+		}
+		cal.setGridVisible(gridVisible);
+		cal.setFooterVisible(footerVisible);
 		cal.setAutoSelectOnFooter(true);
   	popupContent = cal;
 	}
@@ -184,7 +201,7 @@ public class DateChooserCombo extends AbstractCombo {
 	 */
 	public boolean isFooterVisible() {
 		checkWidget();
-		return ((DateChooser) popupContent).isFooterVisible();
+		return footerVisible;
 	}
 
   /**
@@ -194,7 +211,7 @@ public class DateChooserCombo extends AbstractCombo {
 	 */
 	public boolean isGridVisible() {
 		checkWidget();
-		return ((DateChooser) popupContent).isGridVisible();
+		return gridVisible;
 	}
 
 	/**
@@ -209,15 +226,30 @@ public class DateChooserCombo extends AbstractCombo {
   }
 
 	/**
+	 * Sets the font that the receiver will use to paint textual information to
+	 * the font specified by the argument, or to the default font for that kind
+	 * of control if the argument is null.
+	 * 
+	 * @see org.eclipse.swt.widgets.Control#setFont(org.eclipse.swt.graphics.Font)
+	 */
+	public void setFont(Font font) {
+	  super.setFont(font);
+  	if ( ! WIN32 ) {
+	  	GridData textData = (GridData) text.getLayoutData();
+	 		textData.heightHint = Math.max(button.computeSize(SWT.DEFAULT, SWT.DEFAULT).y - 5,
+	 																	 text.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
+  	}
+  }
+
+	/**
 	 * Sets the footer of popup calendar visible or not. The footer displays the
 	 * today date. It is not visible by default.
 	 * 
-	 * @param newVisible <code>true</code> to set footer visible, else <code>false</code>
+	 * @param footerVisible <code>true</code> to set footer visible, else <code>false</code>
 	 */
-	public void setFooterVisible(boolean newVisible) {
+	public void setFooterVisible(boolean footerVisible) {
 		checkWidget();
-		((DateChooser) popupContent).setFooterVisible(newVisible);
-  	popup.pack();
+		this.footerVisible = footerVisible;
 	}
 
 	/**
@@ -239,7 +271,7 @@ public class DateChooserCombo extends AbstractCombo {
 	 */
 	public void setGridVisible(boolean gridVisible) {
 		checkWidget();
-		((DateChooser) popupContent).setGridVisible(gridVisible);
+		this.gridVisible = gridVisible;
 	}
 
 	/**
@@ -249,26 +281,31 @@ public class DateChooserCombo extends AbstractCombo {
    */
   public void setImage(Image image) {
 		checkWidget();
-  	GridData ld = (GridData) button.getLayoutData();
+  	GridData buttonLayout = (GridData) button.getLayoutData();
 		if ( WIN32 ) {
 	  	ImageData id	= image.getImageData();
-	  	ld.widthHint	= id.width + 4;
-	  	ld.heightHint = id.height + 4;
+	  	buttonLayout.widthHint	= id.width + 4;
+	  	buttonLayout.heightHint = id.height + 4;
 		}
-  	ld.grabExcessVerticalSpace = true;
+  	buttonLayout.grabExcessVerticalSpace = true;
   	button.setImage(image);
+
+  	if ( ! WIN32 ) {
+	  	GridData textData = (GridData) text.getLayoutData();
+	 		textData.heightHint = Math.max(button.computeSize(SWT.DEFAULT, SWT.DEFAULT).y - 5,
+	 																	 text.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
+  	}
   }
 
   /**
    * Sets the locale used both by the input mask and the calendar.
    * 
-   * @param loc locale
+   * @param locale locale
    */
-  public void setLocale(Locale loc) {
+  public void setLocale(Locale locale) {
 		checkWidget();
-  	((DateFormatter) formattedText.getFormatter()).setLocale(loc);
-		((DateChooser) popupContent).setLocale(loc);
-		popup.pack();
+		this.locale = locale;
+  	((DateFormatter) formattedText.getFormatter()).setLocale(locale);
   }
 
   /**
@@ -278,8 +315,7 @@ public class DateChooserCombo extends AbstractCombo {
 	 */
 	public void setTheme(DateChooserTheme theme) {
 		checkWidget();
-		((DateChooser) popupContent).setTheme(theme);
-		popup.pack();
+		this.theme = theme;
 	}
 
 	/**

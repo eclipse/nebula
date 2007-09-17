@@ -546,6 +546,18 @@ public class DateChooser extends Composite {
 	}
 
 	/**
+	 * Disposes of the operating system resources associated with the receiver
+	 * and all its descendents.
+	 * 
+	 * @see org.eclipse.swt.widgets.Widget#dispose()
+	 */
+	public void dispose() {
+		getDisplay().removeFilter(SWT.KeyDown, filter);
+		getDisplay().removeFilter(SWT.FocusIn, filter);
+	  super.dispose();
+  }
+
+	/**
 	 * Manages events on the footer label.
 	 * 
 	 * @param event event
@@ -557,6 +569,21 @@ public class DateChooser extends Composite {
 				break;
 		}
 	}
+
+	/**
+	 * Forces the receiver to have the keyboard focus, causing all keyboard events
+	 * to be delivered to it.
+	 * 
+	 * @return <code>true</code> if the control got focus, and <code>false</code> if it was unable to.
+	 */
+	public boolean forceFocus() {
+		checkWidget();
+		if ( super.forceFocus() ) {
+			handleFocus(SWT.FocusIn);
+			return true;
+		}
+		return false;
+  }
 
 	/**
 	 * Returns the cell index corresponding to the given label.

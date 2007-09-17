@@ -69,6 +69,8 @@ public abstract class AbstractCombo extends Composite {
 	protected Listener filter;
 	/** Flag indicating if the widget has focus or not */
 	protected boolean hasFocus;
+	/** Flag to show button only if combo has the focus */
+	protected boolean showButtonOnFocus = false;
 
 	/**
 	 * Constructs a new instance of this class given its parent
@@ -135,9 +137,10 @@ public abstract class AbstractCombo extends Composite {
 
   	this.addListener(SWT.Dispose, listener);
 		this.addListener(SWT.Move, listener);
+		text.addListener(SWT.Modify, listener);
+		text.addListener(SWT.FocusIn, listener);
 		button.addListener(SWT.Selection, listener);
 		button.addListener(SWT.FocusIn, listener);
-		text.addListener(SWT.Modify, listener);
 	}
 
 	/**
@@ -286,11 +289,11 @@ public abstract class AbstractCombo extends Composite {
 	 * @see org.eclipse.swt.widgets.Widget#dispose()
 	 */
 	public void dispose() {
-		if ( ! popupContent.isDisposed() ) {
+		if ( popupContent != null && ! popupContent.isDisposed() ) {
 			popupContent.removeListener(SWT.Dispose, listener);
 			popupContent.dispose();
 		}
-		if ( ! popup.isDisposed() ) popup.dispose();
+		if ( popup != null && ! popup.isDisposed() ) popup.dispose();
 		super.dispose();
 	}
 
@@ -317,9 +320,10 @@ public abstract class AbstractCombo extends Composite {
 			setPopupLocation();
 			beforeDrop();
 			popup.setVisible(true);
-			popupContent.setFocus();
+			popupContent.forceFocus();
 		} else {
 			popupContent.removeListener(SWT.Dispose, listener);
+			popupContent.dispose();
 			popup.dispose();
 			popupContent = null;
 			popup = null;
@@ -397,8 +401,9 @@ public abstract class AbstractCombo extends Composite {
 		switch (type) {
 			case SWT.FocusIn : {
 				if ( hasFocus ) return;
-				if ( getEditable() ) text.selectAll();
+//				if ( getEditable() ) text.selectAll();
 				hasFocus = true;
+				updateButtonDisplay();
 				Shell shell = getShell();
 				shell.removeListener(SWT.Deactivate, listener);
 				shell.addListener(SWT.Deactivate, listener);
@@ -415,6 +420,7 @@ public abstract class AbstractCombo extends Composite {
 						 || (popupContent != null && popupContent.isFocusControl())
 						 || focusControl == text) return;
 				hasFocus = false;
+				updateButtonDisplay();
 				Shell shell = getShell();
 				shell.removeListener(SWT.Deactivate, listener);
 				getDisplay().removeFilter(SWT.FocusIn, filter);
@@ -448,6 +454,16 @@ public abstract class AbstractCombo extends Composite {
 		} 
 		return super.isFocusControl();
 	}
+
+	/**
+	 * Returns <code>true</code> if button is displayed only when the combo has
+	 * has focus and <code>false</code> otherwise.
+	 * 
+	 * @return boolean indicating if combo must show button only on focus
+	 */
+	public boolean isShowButtonOnFocus() {
+  	return showButtonOnFocus;
+  }
 
 	/**
 	 * Manages popup shell events.
@@ -618,6 +634,17 @@ public abstract class AbstractCombo extends Composite {
 	}
 
 	/**
+	 * Sets the flag indicating if the button must be shown only if the combo
+	 * has the focus (<code>true</code>).
+	 * 
+	 * @param showButtonOnFocus <code>true<code> if button must be shown on focus only
+	 */
+	public void setShowButtonOnFocus(boolean showButtonOnFocus) {
+  	this.showButtonOnFocus = showButtonOnFocus;
+  	updateButtonDisplay();
+  }
+
+	/**
 	 * Marks the receiver as visible if the argument is <code>true</code>, and
 	 * marks it invisible otherwise.
 	 * 
@@ -637,11 +664,26 @@ public abstract class AbstractCombo extends Composite {
 	 */
 	protected void textEvent(Event event) {
 		switch (event.type) {
+			case SWT.FocusIn :
+				handleFocus(SWT.FocusIn);
+				break;
 			case SWT.Modify :
 				Event e = new Event ();
 				e.time = event.time;
 				notifyListeners(SWT.Modify, e);
 				break;
+		}
+	}
+
+	/**
+	 * Updates the visibility of the button in function of the flag and the focus.
+	 */
+	protected void updateButtonDisplay() {
+		if ( showButtonOnFocus ) {
+			GridData data = (GridData) button.getLayoutData();
+			data.exclude = ! hasFocus;
+			button.setVisible(hasFocus);
+			super.layout(false);
 		}
 	}
 }
