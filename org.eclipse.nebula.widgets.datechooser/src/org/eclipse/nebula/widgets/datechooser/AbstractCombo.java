@@ -478,6 +478,7 @@ public abstract class AbstractCombo extends Composite {
 			case SWT.Close :
 				event.doit = false;
 				dropDown(false);
+				text.setFocus();
 				break;
 		}
 	}
