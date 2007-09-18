@@ -132,6 +132,8 @@ public class DateChooser extends Composite {
 	protected Composite weeksPanel;
 	/** Weeks numbers cells */
 	protected Cell[] weeks;
+	/** Index in the grid of the first day of displayed month */
+	protected int firstDayIndex;
 
 	// ----- Calendar footer -----
 	/** Footer panel */
@@ -927,6 +929,9 @@ public class DateChooser extends Composite {
 				int w = cal.get(Calendar.WEEK_OF_YEAR);
 				weeks[i / 7 + 1].label.setText(w < 10 ? "0" + w : "" + w);
 			}
+			if ( delta == 0 ) {
+				firstDayIndex = i;
+			}
 			int weekDay = cal.get(Calendar.DAY_OF_WEEK);
 			days[i].weekend	 = weekDay == 1 || weekDay == 7;
 			days[i].adjacent = delta < 0 ? -1 : (delta >= maxDay ? 1 : 0);
@@ -1180,6 +1185,22 @@ public class DateChooser extends Composite {
 		} else {
 			focusIndex = index;
 		}
+	}
+
+	/**
+	 * Sets the focus on the given date. The current displayed month is changed
+	 * if necessary.
+	 * 
+	 * @param date date to set the focus on
+	 */
+	public void setFocusOnDate(Date date) {
+		Calendar dateCal = (Calendar) currentMonthCal.clone();
+		dateCal.setTime(date);
+		if ( dateCal.get(Calendar.MONTH) != currentMonthCal.get(Calendar.MONTH)
+				 || dateCal.get(Calendar.YEAR) != currentMonthCal.get(Calendar.YEAR) ) {
+			setCurrentMonth(date);
+		}
+		focusIndex = firstDayIndex + dateCal.get(Calendar.DAY_OF_MONTH) - 1;
 	}
 
 	/**
