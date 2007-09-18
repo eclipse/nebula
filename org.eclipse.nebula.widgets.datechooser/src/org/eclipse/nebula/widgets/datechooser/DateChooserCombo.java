@@ -107,6 +107,7 @@ public class DateChooserCombo extends AbstractCombo {
 		DateChooser cal = (DateChooser) popupContent;
 		if ( d != null ) {
 			cal.setSelectedDate(d);
+			cal.setFocusOnDate(d);
 		} else {
 			cal.clearSelection();
 			cal.setFocusOnToday(false);
