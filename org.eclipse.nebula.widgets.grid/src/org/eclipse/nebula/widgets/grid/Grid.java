@@ -7289,19 +7289,16 @@ public class Grid extends Canvas
                 Rectangle textBounds = null;
                 Rectangle preferredTextBounds = null;
                 
-                if (hoveringItem != null)
-                {
-                    //dont show inplace tooltips for cells with wordwrap
-                    if (col.getWordWrap())
-                        return hoverChange;
-                    
-                    cellBounds = col.getCellRenderer().getBounds();                    
-                    if (cellBounds.x + cellBounds.width > getSize().x)
-                    {
-                        cellBounds.width = getSize().x - cellBounds.x;
-                    }                    
-                    textBounds = col.getCellRenderer().getTextBounds(item,false);
-                    preferredTextBounds = col.getCellRenderer().getTextBounds(item,true);
+                if (hoveringItem != null && hoveringItem.getToolTipText(indexOf(col)) == null && //no inplace tooltips when regular tooltip
+                		!col.getWordWrap()) //dont show inplace tooltips for cells with wordwrap
+                {                    
+	                cellBounds = col.getCellRenderer().getBounds();                    
+	                if (cellBounds.x + cellBounds.width > getSize().x)
+	                {
+	                    cellBounds.width = getSize().x - cellBounds.x;
+	                }                    
+	                textBounds = col.getCellRenderer().getTextBounds(item,false);
+	                preferredTextBounds = col.getCellRenderer().getTextBounds(item,true);
                 }
                 else if (hoveringColumnHeader != null)
                 {
@@ -7325,7 +7322,7 @@ public class Grid extends Canvas
                 }
                 
                 //if we are truncated
-                if (textBounds.width < preferredTextBounds.width)
+                if (textBounds != null && textBounds.width < preferredTextBounds.width)
                 {
                     showToolTip(item,col, hoverColumnGroupHeader, new Point(cellBounds.x + textBounds.x,cellBounds.y + 
                                                     textBounds.y));
