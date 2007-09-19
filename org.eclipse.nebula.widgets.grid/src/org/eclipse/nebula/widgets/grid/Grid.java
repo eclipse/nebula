@@ -7360,17 +7360,31 @@ public class Grid extends Canvas
         	//Avoid unnecessarily resetting tooltip - this will cause the tooltip to jump around
         	if (newTip != null && !newTip.equals(oldTip))
         	{
-        		super.setToolTipText(newTip);
+        		updateToolTipText(newTip);
         	}
         	else if(newTip == null && oldTip != null)
         	{
-        		super.setToolTipText(null);
+        		updateToolTipText(null);
         	}
         }
         
         return hoverChange;
     }
 
+    /**
+     * Sets the tooltip for the whole Grid to the given text.  This method is made available
+     * for subclasses to override, when a subclass wants to display a different than the standard 
+     * SWT/OS tooltip.  Generally, those subclasses would override this event and use this tooltip 
+     * text in their own tooltip or just override this method to prevent the SWT/OS tooltip from 
+     * displaying.
+     * 
+     * @param text
+     */
+    protected void updateToolTipText(String text)
+    {
+    	super.setToolTipText(text);
+    }
+    
     /**
      * Marks the scroll values obsolete so they will be recalculated.
      */
