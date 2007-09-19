@@ -581,6 +581,12 @@ public class Grid extends Canvas
      * will automatically capture the mouse for us during a drag operation. 
      */
 	private boolean inplaceTooltipCapture;
+
+	/**
+	 * This is the tooltip text currently used.  This could be the tooltip text for the currently
+	 * hovered cell, or the general grid tooltip.  See handleCellHover.
+	 */
+	private String displayedToolTipText;
     
     /**
      * A range of rows in a <code>Grid</code>.
@@ -7340,8 +7346,7 @@ public class Grid extends Canvas
         
         //do normal cell specific tooltip stuff
         if (hoverChange)
-        {
-        	String oldTip = super.getToolTipText();
+        {        	
         	String newTip = null;
         	if (hoveringItem == null || hoveringColumn == null)
         	{
@@ -7358,14 +7363,15 @@ public class Grid extends Canvas
         		}
         	}
         	//Avoid unnecessarily resetting tooltip - this will cause the tooltip to jump around
-        	if (newTip != null && !newTip.equals(oldTip))
+        	if (newTip != null && !newTip.equals(displayedToolTipText))
         	{
         		updateToolTipText(newTip);
         	}
-        	else if(newTip == null && oldTip != null)
+        	else if(newTip == null && displayedToolTipText != null)
         	{
         		updateToolTipText(null);
         	}
+        	displayedToolTipText = newTip;
         }
         
         return hoverChange;
