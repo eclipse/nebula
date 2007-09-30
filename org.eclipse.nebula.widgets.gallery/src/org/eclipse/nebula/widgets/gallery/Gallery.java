@@ -1570,7 +1570,12 @@ public class Gallery extends Canvas {
 		_deselectAll();
 		for (int i = 0; i < items.length; i++) {
 			this.setSelected(items[i], true, false);
+			
+			// Ensure item is visibme
 			_showItem(items[i]);
+			
+			// Simulate mouse click to enable keyboard navigation
+			lastSingleClick = items[i];
 		}
 		redraw();
 	}
@@ -1673,5 +1678,13 @@ public class Gallery extends Canvas {
 			System.arraycopy(array, index + 1, newArray, index, newArray.length - index);
 
 		return newArray;
+	}
+
+	public Color getBackgroundColor() {
+		return backgroundColor;
+	}
+
+	public void setBackgroundColor(Color backgroundColor) {
+		this.backgroundColor = backgroundColor;
 	}
 }
