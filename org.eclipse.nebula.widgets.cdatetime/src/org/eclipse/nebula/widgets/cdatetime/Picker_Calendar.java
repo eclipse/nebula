@@ -752,7 +752,9 @@ class Picker_Calendar extends AbstractPicker {
 				updateDays();
 			}
 		}
-		combo.setSelectionFromPicker(Calendar.DATE, notification == NOTIFY_DEFAULT);
+		if (notification != NOTIFY_NONE) {
+			combo.setSelectionFromPicker(Calendar.DATE, notification == NOTIFY_DEFAULT);
+		}
 	}
 	
 	/**
@@ -763,7 +765,7 @@ class Picker_Calendar extends AbstractPicker {
 	 * @see #scrollCalendar(int)
 	 */
 	void traverseSelection(int keycode) {
-		traverseSelection(keycode, NOTIFY_NONE);
+		traverseSelection(keycode, NOTIFY_REGULAR);
 	}
 
 	/**

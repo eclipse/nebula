@@ -71,9 +71,10 @@ class Picker_Clock_Discrete extends AbstractPicker {
 				public void widgetDefaultSelected(SelectionEvent e) {
 				}
 				public void widgetSelected(SelectionEvent e) {
+					e.doit = false;
 					for(int i = 0; i < hours.length; i++) {
 						hours[i].setSelection(e.widget == hours[i].getButton());
-						updateSelection();
+						internalUpdateSelection();
 					}
 				}
 			});
@@ -93,9 +94,10 @@ class Picker_Clock_Discrete extends AbstractPicker {
 						public void widgetDefaultSelected(SelectionEvent e) {
 						}
 						public void widgetSelected(SelectionEvent e) {
+							e.doit = false;
 							for(int i = 0; i < am_pm.length; i++) {
 								am_pm[i].setSelection(e.widget == am_pm[i].getButton());
-								updateSelection();
+								internalUpdateSelection();
 							}
 						}
 					});
@@ -123,9 +125,10 @@ class Picker_Clock_Discrete extends AbstractPicker {
 				public void widgetDefaultSelected(SelectionEvent e) {
 				}
 				public void widgetSelected(SelectionEvent e) {
+					e.doit = false;
 					for(int i = 0; i < minutes.length; i++) {
 						minutes[i].setSelection(e.widget == minutes[i].getButton());
-						updateSelection();
+						internalUpdateSelection();
 					}
 				}
 			});
@@ -140,9 +143,10 @@ class Picker_Clock_Discrete extends AbstractPicker {
 				public void widgetDefaultSelected(SelectionEvent e) {
 				}
 				public void widgetSelected(SelectionEvent e) {
+					e.doit = false;
 					for(int i = 0; i < am_pm.length; i++) {
 						am_pm[i].setSelection(e.widget == am_pm[i].getButton());
-						updateSelection();
+						internalUpdateSelection();
 					}
 				}
 			});
@@ -158,9 +162,10 @@ class Picker_Clock_Discrete extends AbstractPicker {
 				public void widgetDefaultSelected(SelectionEvent e) {
 				}
 				public void widgetSelected(SelectionEvent e) {
+					e.doit = false;
 					for(int i = 0; i < hours.length; i++) {
 						hours[i].setSelection(e.widget == hours[i].getButton());
-						updateSelection();
+						internalUpdateSelection();
 					}
 				}
 			});
@@ -174,9 +179,10 @@ class Picker_Clock_Discrete extends AbstractPicker {
 					public void widgetDefaultSelected(SelectionEvent e) {
 					}
 					public void widgetSelected(SelectionEvent e) {
+						e.doit = false;
 						for(int i = 0; i < hours.length; i++) {
 							hours[i].setSelection(e.widget == hours[i].getButton());
-							updateSelection();
+							internalUpdateSelection();
 						}
 					}
 				});
@@ -196,9 +202,10 @@ class Picker_Clock_Discrete extends AbstractPicker {
 				public void widgetDefaultSelected(SelectionEvent e) {
 				}
 				public void widgetSelected(SelectionEvent e) {
+					e.doit = false;
 					for(int i = 0; i < minutes.length; i++) {
 						minutes[i].setSelection(e.widget == minutes[i].getButton());
-						updateSelection();
+						internalUpdateSelection();
 					}
 				}
 			});
@@ -220,9 +227,10 @@ class Picker_Clock_Discrete extends AbstractPicker {
 				public void widgetDefaultSelected(SelectionEvent e) {
 				}
 				public void widgetSelected(SelectionEvent e) {
+					e.doit = false;
 					for(int i = 0; i < am_pm.length; i++) {
 						am_pm[i].setSelection(e.widget == am_pm[i].getButton());
-						updateSelection();
+						internalUpdateSelection();
 					}
 				}
 			});
@@ -323,6 +331,10 @@ class Picker_Clock_Discrete extends AbstractPicker {
 	}
 	
 	protected void updateSelection() {
+		clearButtons();
+	}
+	
+	protected void internalUpdateSelection() {
 		Calendar cal = Calendar.getInstance(combo.locale);
 		cal.setTime(selection);
 		boolean hour_set = false;
@@ -347,6 +359,10 @@ class Picker_Clock_Discrete extends AbstractPicker {
 				cal.add(Calendar.HOUR_OF_DAY, 12);
 		}
 		selection = cal.getTime();
-		combo.setSelectionFromPicker(-1, hour_set && min_set && ampm_set);
+		
+		if (hour_set && min_set && ampm_set) {
+			combo.setSelectionFromPicker(-1, true);
+			clearButtons();
+		}
 	}
 }

@@ -93,7 +93,7 @@ abstract class AbstractPicker extends Composite {
 		createContents();
 		layout();
 		updateLabels();
-		updateSelection();
+		updateSelection(combo.getSelection());
 	}
 
 	protected abstract void updateLabels();

@@ -555,7 +555,8 @@ class Picker_Clock_Analog extends AbstractPicker {
 			footerButton.addSelectionListener(footerListener);
 		}
 		dialComposite.redraw();
-		if(notification > 0) {
+		
+		if (notification != NOTIFY_NONE) {
 			combo.setSelectionFromPicker(-1, (notification == NOTIFY_DEFAULT));
 		}
 	}

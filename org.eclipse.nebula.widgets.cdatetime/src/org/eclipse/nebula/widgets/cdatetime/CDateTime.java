@@ -19,6 +19,7 @@ import java.text.DateFormat.Field;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 
 import org.eclipse.swt.SWT;
@@ -247,6 +248,8 @@ public class CDateTime extends AbstractCombo {
 	
 	private boolean isNull = false;
 	
+	private HashMap nullTexts = new HashMap();
+	
 	/**
 	 * Constructs a new instance of this class given its parent and a style value 
 	 * describing its behavior and appearance.  The current date and the system's
@@ -258,10 +261,9 @@ public class CDateTime extends AbstractCombo {
 		super(parent, style);
 
 		this.style = style;
+		tabStops = (style & CDT.TAB_FIELDS) != 0;
 		locale = Locale.getDefault();
 		calendar = Calendar.getInstance(this.locale);
-		calendar.setTime(new Date());
-		tabStops = (style & CDT.TAB_FIELDS) != 0;
 		
 		setFormat(style);
 
@@ -304,10 +306,11 @@ public class CDateTime extends AbstractCombo {
 				}
 			}
 			
-			text.setText(df.format(calendar.getTime()));
-			updateText();
 			activeField = -5;
 			setActiveField(FIELD_NONE);
+			
+			// Always start with a null date
+			setSelection(null);
 			
 			addTextListener();
 		}
@@ -382,7 +385,7 @@ public class CDateTime extends AbstractCombo {
 			cancelDate = null;
 			setOpen(false);
 		}
-		if(isNull) {
+		if (isNull) {
 			isNull = false;
 		}
 		calendar.setTime(getPickerSelection());
@@ -629,7 +632,7 @@ public class CDateTime extends AbstractCombo {
 
 	public String getText() {
 		return isNull ? 
-				Messages.getString("null_text", locale) : //$NON-NLS-1$ 
+				getNullText(locale) :
 					df.format(calendar.getTime());
 	}
 	
@@ -951,7 +954,9 @@ public class CDateTime extends AbstractCombo {
 			calendar.setTime(date);
 		}
 		updateText();
-		updatePickerSelection(date);
+		if (date != null) {
+			updatePickerSelection(date);
+		}
 	}
 	
 	/**
@@ -1104,7 +1109,7 @@ public class CDateTime extends AbstractCombo {
 	 */
 	private void updateText() {
 		String buffer = isNull ? 
-				Messages.getString("null_text", locale) : //$NON-NLS-1$ 
+				getNullText(locale) : 
 					df.format(calendar.getTime());
 
 		int s0 = 0;
@@ -1215,5 +1220,47 @@ public class CDateTime extends AbstractCombo {
 			}
 		}
 		updateText();
+	}
+	
+	/**
+	 * Gets the current value of the text that will be displayed for a null selection.
+	 * 
+	 * @param locale the locale for which to the text will be displayed
+	 * @return the appropriate text for a null selection in the given locale
+	 * @throws NullPointerException if locale == null
+	 */
+	public String getNullText(Locale locale) {
+		if (locale == null) {
+			throw new NullPointerException("Locale must be non-null to request null text");
+		}
+		
+		if (nullTexts.containsKey(locale)) {
+			return (String) nullTexts.get(locale);
+		}
+		else {
+			String nullText = Messages.getString("null_text", locale); //$NON-NLS-1$
+			if ("!null_text!".equals(nullText) && nullTexts.containsKey(null)) { //$NON-NLS-1$
+				return (String) nullTexts.get(null);
+			}
+			else {
+				return nullText;
+			}
+		}
+	}
+	
+	/**
+	 * Overrides the text that will be displayed for a null selection in the given locale.
+	 * If the locale argument is null, the given text will be used for any locale that
+	 * does not have a default value for null text, but it will not override the text
+	 * for locales with a specific default value, such as en_US etc.
+	 * 
+	 * @param text the text to display in this widget for a null selection -- null is treated as an empty string
+	 * @param locale the locale in which the given text should be used, or null
+	 */
+	public void setNullText(String text, Locale locale) {
+		if (text == null) {
+			text = "";  //$NON-NLS-1$
+		}
+		nullTexts.put(locale, text);
 	}
 }
