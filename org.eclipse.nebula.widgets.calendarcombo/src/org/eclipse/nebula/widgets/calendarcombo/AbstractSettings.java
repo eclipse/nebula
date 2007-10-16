@@ -1,0 +1,112 @@
+/*******************************************************************************
+ * Copyright (c) Emil Crumhorn - Hexapixel.com - emil.crumhorn@gmail.com
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    emil.crumhorn@gmail.com - initial API and implementation
+ *******************************************************************************/ 
+
+package org.eclipse.nebula.widgets.calendarcombo;
+
+public abstract class AbstractSettings implements ISettings {
+	public int getArrowLeftSpacing() {
+		return 6;
+	}
+
+	public int getArrowTopSpacing() {
+		return 4;
+	}
+
+	public int getOneDateBoxSize() {
+		return 11;
+	}
+
+	public int getBoxSpacer() {
+		return 6;
+	}
+
+	public int getCalendarHeight() {
+		return 164;
+	}
+
+	public int getCalendarWidth() {
+		return 154; //154?
+	}
+	
+	public int getCalendarWidthMacintosh() {
+		return 154;
+	}
+
+	public int getCalendarHeightMacintosh() {
+		return 184;
+	}
+
+	public int getDatesLeftMargin() {
+		return 15;
+	}
+
+	public int getDatesRightMargin() {
+		return 17;
+	}
+
+	public int getHeaderHeight() {
+		return 16;
+	}
+
+	public int getHeaderLeftMargin() {
+		return 6;
+	}
+
+	public int getHeaderRightMargin() {
+		return 4;
+	}
+
+	public int getHeaderTopMargin() {
+		return 4;
+	}
+
+	public boolean showCalendarInRightCorner() {
+		return true;
+	}
+
+	public String getDateFormat() {
+		return "MM/dd/yyyy";
+	}
+
+	public int getButtonHeight() {
+		return 20;
+	}
+
+	public int getButtonsHorizontalSpace() {
+		return 16;
+	}
+
+	public int getButtonVerticalSpace() {
+		return 133;
+	}
+
+	public int getButtonWidth() {
+		return 45;
+	}
+
+	public String getNoneText() {
+		return "None";
+	}
+
+	public String getTodayText() {
+		return "Today";
+	}
+
+	public String getNoDateSetText() {
+		return "Foo!";
+	}
+
+	public boolean showMonthPickerOnMonthNameMousePress() {
+		return true;
+	}
+	
+	
+}
