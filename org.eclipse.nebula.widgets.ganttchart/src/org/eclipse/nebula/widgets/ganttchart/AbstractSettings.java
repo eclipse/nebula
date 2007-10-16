@@ -220,7 +220,7 @@ abstract class AbstractSettings implements ISettings {
 	}
 	
 	public Image getLockImage() {
-		return ImageCache.getImage("lock_tiny.gif");
+		return ImageCache.getImage("icons/lock_tiny.gif");
 	}
 
 	public String getTextDisplayFormat() {
