@@ -154,6 +154,10 @@ public class PGroup extends Canvas
      * invoke the parent composites {@link Composite#setBackgroundMode(int)}
      * with {@link SWT#INHERIT_DEFAULT} or {@link SWT#INHERIT_DEFAULT}
      * </p>
+     * <p>
+     * Note: If a new strategy is set on the receiver it may overwrite the existing
+     * background color.
+     * </p>
      * @param color the new color (or null)
      *
      * @exception IllegalArgumentException <ul>
@@ -726,5 +730,30 @@ public class PGroup extends Canvas
 
         return new Rectangle(-10, 0, 0, 0);
     }
+
+    /**
+     * Sets the receiver's foreground color to the color specified
+     * by the argument, or to the default system color for the control
+     * if the argument is null.
+     * <p>
+     * Note: This operation is a hint and may be overridden by the platform.
+     * </p>
+     * <p>
+     * Note: If a new strategy is set on the receiver it may overwrite the existing
+     * foreground color.
+     * </p>
+     * @param color the new color (or null)
+     *
+     * @exception IllegalArgumentException <ul>
+     *    <li>ERROR_INVALID_ARGUMENT - if the argument has been disposed</li> 
+     * </ul>
+     * @exception SWTException <ul>
+     *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+     * </ul>
+     */
+	public void setForeground(Color color) {
+		super.setForeground(color);
+	}
 
 }
