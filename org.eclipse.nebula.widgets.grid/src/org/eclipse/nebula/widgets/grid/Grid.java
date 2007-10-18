@@ -7002,6 +7002,9 @@ public class Grid extends Canvas
     
     private void handleSpaceBarDown(Event event)
     {        
+    	if (focusItem == null)
+    		return;
+    	
         if (selectionEnabled && !cellSelectionEnabled && !selectedItems.contains(focusItem))
         {
             selectedItems.add(focusItem);
