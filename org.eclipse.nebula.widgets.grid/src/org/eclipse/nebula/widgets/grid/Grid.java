@@ -22,6 +22,7 @@ import org.eclipse.nebula.widgets.grid.internal.DefaultEmptyCellRenderer;
 import org.eclipse.nebula.widgets.grid.internal.DefaultEmptyColumnHeaderRenderer;
 import org.eclipse.nebula.widgets.grid.internal.DefaultEmptyRowHeaderRenderer;
 import org.eclipse.nebula.widgets.grid.internal.DefaultFocusRenderer;
+import org.eclipse.nebula.widgets.grid.internal.DefaultInsertMarkRenderer;
 import org.eclipse.nebula.widgets.grid.internal.DefaultRowHeaderRenderer;
 import org.eclipse.nebula.widgets.grid.internal.DefaultTopLeftRenderer;
 import org.eclipse.nebula.widgets.grid.internal.GridToolTip;
@@ -36,6 +37,9 @@ import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleControlAdapter;
 import org.eclipse.swt.accessibility.AccessibleControlEvent;
 import org.eclipse.swt.accessibility.AccessibleEvent;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.MouseEvent;
@@ -588,6 +592,26 @@ public class Grid extends Canvas
 	 */
 	private String displayedToolTipText;
     
+	/**
+	 * The height of the area at the top and bottom of the
+	 * visible grid area in which scrolling is initiated
+	 * while dragging over this Grid.
+	 */
+	private static final int DRAG_SCROLL_AREA_HEIGHT = 12;
+
+	/**
+	 * Threshold for the selection border used for drag n drop
+	 * in mode (!{@link #dragOnFullSelection}}.
+	 */
+	private static final int SELECTION_DRAG_BORDER_THRESHOLD = 2;
+
+    private boolean hoveringOnSelectionDragArea = false;
+
+	private GridItem insertMarkItem = null;
+	private GridColumn insertMarkColumn = null;
+	private boolean insertMarkBefore = false;
+    private IRenderer insertMarkRenderer = new DefaultInsertMarkRenderer();
+    
     /**
      * A range of rows in a <code>Grid</code>.
      * <p>
@@ -649,6 +673,10 @@ public class Grid extends Canvas
     {
         super(parent, checkStyle(style));
 
+        // initialize drag & drop support
+        setDragDetect(false);						// disable automatic drag detect in Control
+        setData("DEFAULT_DRAG_SOURCE_EFFECT", new GridDragSourceEffect(this));
+        setData("DEFAULT_DROP_TARGET_EFFECT", new GridDropTargetEffect(this));
 
         sizingGC = new GC(this);
         
@@ -659,6 +687,7 @@ public class Grid extends Canvas
         dropPointRenderer.setDisplay(getDisplay());
         focusRenderer.setDisplay(getDisplay());
         emptyRowHeaderRenderer.setDisplay(getDisplay());
+        insertMarkRenderer.setDisplay(getDisplay());
 
         setForeground(getDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND));
         setLineColor(getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
@@ -4808,6 +4837,11 @@ public class Grid extends Canvas
      */
     private void onPaint(PaintEvent e)
     {
+        int insertMarkPosX1 = -1;		// we will populate these values while drawing the cells
+        int insertMarkPosX2 = -1;
+        int insertMarkPosY = -1;
+        boolean insertMarkPosFound = false;
+    	
         e.gc.setBackground(getBackground());
         this.drawBackground(e.gc,0,0,getSize().x,getSize().y);
         
@@ -4962,6 +4996,35 @@ public class Grid extends Canvas
 	                        column.getCellRenderer().paint(e.gc, item);
 	
 	                        e.gc.setClipping((Rectangle)null);
+	                        
+	                        // collect the insertMark position
+	                        if (!insertMarkPosFound && insertMarkItem == item && (insertMarkColumn == null || insertMarkColumn == column))
+	                        {
+	                            // y-pos
+	                            insertMarkPosY = y - 1;
+	                            if (!insertMarkBefore)
+	                                insertMarkPosY += item.getHeight() + 1;
+	                            // x1-pos
+	                        	insertMarkPosX1 = x;
+	                            if (column.isTree())
+	                            {
+	                                insertMarkPosX1 += Math.min(
+	                                        width,
+	                                        column.getCellRenderer().getTextBounds(item, false).x);
+	                            }
+
+	                            // x2-pos
+	                            if (insertMarkColumn == null)
+	                            {
+	                            	insertMarkPosX2 = getClientArea().x + getClientArea().width;
+	                            }
+	                            else
+	                            {
+	                                insertMarkPosX2 = x + width;
+	                            }
+
+	                            insertMarkPosFound = true;
+	                        }
                     	}
 
 
@@ -4978,6 +5041,10 @@ public class Grid extends Canvas
 
                 if (x < getClientArea().width)
                 {
+                    // insertMarkPos needs correction
+                    if(insertMarkPosFound && insertMarkColumn == null)
+                        insertMarkPosX2 = x;
+                    
                     emptyCellRenderer.setSelected(selectedItems.contains(item));
                     emptyCellRenderer.setFocus(this.isFocusControl());
                     emptyCellRenderer.setRow(i + 1);
@@ -5109,6 +5176,16 @@ public class Grid extends Canvas
             }
         }
 
+        // draw insertion mark
+        if (insertMarkPosFound)
+        {
+            e.gc.setClipping(
+                    rowHeaderVisible ? rowHeaderWidth : 0,
+                    columnHeadersVisible ? headerHeight : 0,
+                    getClientArea().width,
+                    getClientArea().height);
+            insertMarkRenderer.paint(e.gc, new Rectangle(insertMarkPosX1, insertMarkPosY, insertMarkPosX2 - insertMarkPosX1, 0));
+        }
     }
 
     /**
@@ -6118,6 +6195,14 @@ public class Grid extends Canvas
             return;
         }
         
+        if (hoveringOnSelectionDragArea)
+        {
+        	if(dragDetect(e))
+        	{
+        		return;
+        	}
+        }
+        
         if (item != null)
         {
             if (cellSelectionEnabled)
@@ -6622,6 +6707,14 @@ public class Grid extends Canvas
     {
         // TODO: need to clean up and refactor hover code
         handleCellHover(x, y);
+
+        // Is this Grid a DragSource ??
+        if (getData("DragSource") != null) {
+            if (handleHoverOnSelectionDragArea(x, y))
+            {
+                return;
+            }
+        }
 
         if (columnHeadersVisible)
         {
@@ -9373,6 +9466,159 @@ public class Grid extends Canvas
 		
 		firstImageSet = true;
 	}
+
+    /**
+     * Determines if the mouse is hovering on the selection drag area and changes the
+     * pointer and sets field appropriately.
+     * <p>
+     * Note:  The 'selection drag area' is that part of the selection,
+     * on which a drag event can be initiated.  This is either the border
+     * of the selection (i.e. a cell border between a slected and a non-selected
+     * cell) or the complete selection (i.e. anywhere on a selected cell).
+     * What area serves as drag area is determined by {@link #setDragOnFullSelection(boolean)}.
+     * 
+     * @param x
+     * @param y
+     * @return
+     * @see #setDragOnFullSelection(boolean)
+     */
+    private boolean handleHoverOnSelectionDragArea(int x, int y)
+    {
+        boolean over = false;
+//    	Point inSelection = null;
+
+        if ( (!rowHeaderVisible || x > rowHeaderWidth-SELECTION_DRAG_BORDER_THRESHOLD)
+        		&& (!columnHeadersVisible || y > headerHeight-SELECTION_DRAG_BORDER_THRESHOLD) )
+        {
+            // not on a header
+
+//            if(!dragOnFullSelection)
+//            {
+//                // drag area is the border of the selection
+//
+//                if(cellSelectionEnabled)
+//                {
+//                    Point neP = new Point( x-SELECTION_DRAG_BORDER_THRESHOLD, y-SELECTION_DRAG_BORDER_THRESHOLD );
+//                    Point ne = getCell(neP);
+//                    Point nwP = new Point( x+SELECTION_DRAG_BORDER_THRESHOLD, y-SELECTION_DRAG_BORDER_THRESHOLD );
+//                    Point nw = getCell(nwP);
+//                    Point swP = new Point( x+SELECTION_DRAG_BORDER_THRESHOLD, y+SELECTION_DRAG_BORDER_THRESHOLD );
+//                    Point sw = getCell(swP);
+//                    Point seP = new Point( x-SELECTION_DRAG_BORDER_THRESHOLD, y+SELECTION_DRAG_BORDER_THRESHOLD );
+//                    Point se = getCell(seP);
+//
+//                    boolean neSel = ne != null && isCellSelected(ne);
+//                    boolean nwSel = nw != null && isCellSelected(nw);
+//                    boolean swSel = sw != null && isCellSelected(sw);
+//                    boolean seSel = se != null && isCellSelected(se);
+//
+//                    over = (neSel || nwSel || swSel || seSel) && (!neSel || !nwSel || !swSel || !seSel);
+////                    inSelection = neSel ? neP : nwSel ? nwP : swSel ? swP : seSel ? seP : null;
+//                }
+//                else
+//                {
+//                    Point nP = new Point( x, y-SELECTION_DRAG_BORDER_THRESHOLD );
+//                    GridItem n = getItem(nP);
+//                    Point sP = new Point( x, y+SELECTION_DRAG_BORDER_THRESHOLD );
+//                    GridItem s = getItem(sP);
+//
+//                    boolean nSel = n != null && isSelected(n);
+//                    boolean sSel = s != null && isSelected(s);
+//
+//                    over = nSel != sSel;
+////                    inSelection = nSel ? nP : sSel ? sP : null;
+//                }
+//            }
+//            else
+//            {
+                // drag area is the entire selection
+
+                if(cellSelectionEnabled)
+                {
+                	Point p = new Point(x,y);
+                    Point cell = getCell(p);
+                    over = cell !=null && isCellSelected(cell);
+//                    inSelection = over ? p : null;
+                }
+                else
+                {
+                	Point p = new Point(x,y);
+                    GridItem item = getItem(p);
+                    over = item != null && isSelected(item);
+//                    inSelection = over ? p : null;
+                }
+            }
+//        }
+
+        if (over != hoveringOnSelectionDragArea)
+        {
+//            if (over)
+//            {
+//                // use drag cursor only in border mode
+//                if (!dragOnFullSelection)
+//                    setCursor(getDisplay().getSystemCursor(SWT.CURSOR_SIZEALL));
+////                potentialDragStart = inSelection;
+//            }
+//            else
+//            {
+//                setCursor(null);
+////                potentialDragStart = null;
+//            }
+            hoveringOnSelectionDragArea = over;
+        }
+        return over;
+    }
+
+    /**
+     * Display a mark indicating the point at which an item will be inserted.
+     * This is used as a visual hint to show where a dragged item will be
+     * inserted when dropped on the grid.  This method should not be called
+     * directly, instead {@link DND#FEEDBACK_INSERT_BEFORE} or
+     * {@link DND#FEEDBACK_INSERT_AFTER} should be set in
+     * {@link DropTargetEvent#feedback} from within a {@link DropTargetListener}.
+     * 
+     * @param item  the insert item.  Null will clear the insertion mark.
+     * @param column  the column of the cell.  Null will make the insertion mark span all columns.
+     * @param before  true places the insert mark above 'item'. false places 
+     *                the insert mark below 'item'.
+     *
+     * @exception IllegalArgumentException <ul>
+     *    <li>ERROR_INVALID_ARGUMENT - if the item or column has been disposed</li>
+     * </ul>
+     * @exception SWTException <ul>
+     *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+     * </ul>
+     */
+    void setInsertMark (GridItem item, GridColumn column, boolean before) {
+    	checkWidget ();
+    	if (item != null) {
+    		if (item.isDisposed())
+    			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+    	}
+    	if (column != null) {
+    		if (column.isDisposed())
+    			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+    	}
+    	insertMarkItem = item;
+    	insertMarkColumn = column;
+    	insertMarkBefore = before;
+    	redraw();
+    }
+
+    /**
+     * A helper method for {@link GridDropTargetEffect#dragOver(DropTargetEvent)}.
+     * 
+     * @param point
+     * @return true if point is near the top or bottom border of the visible grid area
+     */
+    boolean isInDragScrollArea(Point point) {
+    	int rhw = rowHeaderVisible ? rowHeaderWidth : 0;
+    	int chh = columnHeadersVisible ? headerHeight : 0;
+    	Rectangle top = new Rectangle(rhw, chh, getClientArea().width - rhw, DRAG_SCROLL_AREA_HEIGHT);
+    	Rectangle bottom = new Rectangle(rhw, getClientArea().height - DRAG_SCROLL_AREA_HEIGHT, getClientArea().width - rhw, DRAG_SCROLL_AREA_HEIGHT);
+    	return top.contains(point) || bottom.contains(point);
+    }
 }
 
 

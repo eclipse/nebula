@@ -145,5 +145,4 @@ public interface IRenderer
      * @param display Display.
      */
     void setDisplay(Display display);
-
 }

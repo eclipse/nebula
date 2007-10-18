@@ -47,6 +47,8 @@ public abstract class GridCellRenderer extends AbstractInternalWidget
     private boolean cellSelected = false;
     
     private boolean wordWrap = false;
+    
+    private boolean dragging = false;
 
     /**
      * @return Returns the row.
@@ -238,5 +240,25 @@ public abstract class GridCellRenderer extends AbstractInternalWidget
     public void setWordWrap(boolean wordWrap)
     {
         this.wordWrap = wordWrap;
+    }
+    
+    /**
+     * Gets the dragging state. 
+     *
+     * @return Returns the dragging state.
+     */
+    public boolean isDragging()
+    {
+    	return dragging;
+    }
+
+    /**
+     * Sets the dragging state.
+     *
+     * @param dragging The state to set.
+     */
+    public void setDragging(boolean dragging)
+    {
+    	this.dragging = dragging;
     }
 }

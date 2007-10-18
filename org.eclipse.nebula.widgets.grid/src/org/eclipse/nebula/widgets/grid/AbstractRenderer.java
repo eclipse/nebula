@@ -25,7 +25,6 @@ import org.eclipse.swt.widgets.Display;
  */
 public abstract class AbstractRenderer implements IRenderer
 {
-
     /** Hover state. */
     private boolean hover;
 
@@ -46,6 +45,9 @@ public abstract class AbstractRenderer implements IRenderer
 
     /** Display used to create GC to perform painting. */
     private Display display;
+    
+    /** Dragging state. */
+    private boolean dragging;
 
     /**
      * Returns the bounds.
@@ -226,5 +228,4 @@ public abstract class AbstractRenderer implements IRenderer
     {
         this.display = display;
     }
-
 }
