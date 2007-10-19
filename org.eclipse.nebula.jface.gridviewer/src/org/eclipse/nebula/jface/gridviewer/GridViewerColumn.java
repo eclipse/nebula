@@ -207,6 +207,8 @@ public final class GridViewerColumn extends ViewerColumn
                 }
             };
             column.addListener(SWT.Resize, columnResizeListener);
+            column.addListener(SWT.Hide, columnResizeListener);
+            column.addListener(SWT.Show, columnResizeListener);
         }
     }
     protected void unhookColumnResizeListener() {
