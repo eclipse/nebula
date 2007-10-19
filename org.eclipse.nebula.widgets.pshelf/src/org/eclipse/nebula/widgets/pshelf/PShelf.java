@@ -414,7 +414,12 @@ public class PShelf extends Canvas {
             
             sizeClients();
             redraw();
-            getDisplay().update();
+            update();
+            //workaround for SWT bug 193357
+            if (SWT.getPlatform().equals("carbon"))
+            {
+            	getDisplay().readAndDispatch();
+            }
             percentOfWork += .02;
         } 
         
@@ -468,7 +473,12 @@ public class PShelf extends Canvas {
             
             sizeClients();
             redraw(getClientArea().x,getClientArea().y, getClientArea().width, getClientArea().height, false);
-            getDisplay().update();
+            update();
+            //workaround for SWT bug 193357
+            if (SWT.getPlatform().equals("carbon"))
+            {
+            	getDisplay().readAndDispatch();
+            }
             percentOfWork += .02;
         } 
         
