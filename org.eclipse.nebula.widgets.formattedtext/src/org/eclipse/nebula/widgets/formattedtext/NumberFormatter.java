@@ -713,7 +713,7 @@ public class NumberFormatter extends AbstractFormatter {
     	}
     }
     p = format(p);
-    updateText(getEditString(), p);
     modified = true;
+    updateText(getEditString(), p);
   }
 }
