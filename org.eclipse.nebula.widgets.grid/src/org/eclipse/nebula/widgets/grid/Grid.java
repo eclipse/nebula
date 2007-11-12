@@ -6428,6 +6428,8 @@ public class Grid extends Canvas
      */
     private void onMouseUp(MouseEvent e)
     {
+    	cellSelectedOnLastMouseDown = false;
+    	
         if (resizingColumn)
         {
             resizingColumn = false;
