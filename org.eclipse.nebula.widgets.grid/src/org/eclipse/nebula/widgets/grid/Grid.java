@@ -3908,8 +3908,10 @@ public class Grid extends Canvas
      * </ul>
      */
     public void showItem(GridItem item)
-    {
+    {    	
         checkWidget();
+        
+        updateScrollbars();
 
         // if no items are visible on screen then abort
         if (getVisibleGridHeight()<1)
@@ -3935,9 +3937,7 @@ public class Grid extends Canvas
                 }
                 parent = parent.getParentItem();
             }
-            while (parent != null);
-
-            updateScrollbars();
+            while (parent != null);            
         }
 
         int newTopIndex = items.indexOf(item);
