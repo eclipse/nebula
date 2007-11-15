@@ -28,7 +28,11 @@
     <property name="nebula.build.output" value="d:/nebula_build/nebula.build"/>
 	<!-- Eclipse root directory -->
 	<property name="eclipse.root" value="d:/nebula_build/eclipse33m6/eclipse"/>
-	    
+
+		
+	<property name="javacSource" value="1.5"/>
+	<property name="javaTarget" value="1.5"/>
+	   	    
 	
 	<!--
 	    This is the master build script for Nebula.  
