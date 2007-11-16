@@ -43,7 +43,7 @@
     	<delete dir="${nebula.build.output}"/>
     	<mkdir dir="${nebula.build.output}"/>
     	
-        <!--<antcall target="buildcomponent">
+        <antcall target="buildcomponent">
             <param name="component" value="org.eclipse.nebula.widgets.grid"/>
         </antcall>
     	<antcall target="buildcomponent">
@@ -64,10 +64,10 @@
         <antcall target="buildcomponent">
             <param name="component" value="org.eclipse.nebula.widgets.pshelf"/>
         </antcall>  -->
-    	<antcall target="buildcomponent">
+    	<!--<antcall target="buildcomponent">
     		<param name="component" value="org.eclipse.nebula.widgets.calendarcombo"/>
 		</antcall>
-    	<!-- <antcall target="buildcomponent">
+    	 <antcall target="buildcomponent">
     		<param name="component" value="org.eclipse.nebula.widgets.collapsiblebuttons"/>
 		</antcall>
     	<antcall target="buildcomponent">
