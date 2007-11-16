@@ -667,6 +667,7 @@ public class CDateTime extends AbstractCombo {
 		if(SWT.DEL == e.keyCode) {
 			e.doit = false;
 			setSelection(null);
+			fireSelectionChanged(FIELD_ALL, false);
 		} else if(!hasField(activeField) && !isNull) {
 			e.doit = false;
 		} else {
