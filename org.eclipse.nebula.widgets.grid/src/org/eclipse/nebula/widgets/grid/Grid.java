@@ -8169,6 +8169,7 @@ public class Grid extends Canvas
             SWT.error(SWT.ERROR_NULL_ARGUMENT);
         
         selectedCells.remove(cell);
+        updateColumnSelection();
         redraw();
     }
     
@@ -8206,6 +8207,8 @@ public class Grid extends Canvas
             selectedCells.remove(cells[i]);
         }
         
+        updateColumnSelection();
+        
         redraw();
     }
     
@@ -8223,6 +8226,7 @@ public class Grid extends Canvas
     {
         checkWidget();
         selectedCells.clear();
+        updateColumnSelection();
         redraw();
     }
     
