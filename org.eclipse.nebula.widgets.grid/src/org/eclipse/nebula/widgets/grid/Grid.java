@@ -6054,7 +6054,8 @@ public class Grid extends Canvas
         {
             public void focusGained(FocusEvent e)
             {
-                redraw();
+            	onFocusIn();
+                redraw();                
             }
 
             public void focusLost(FocusEvent e)
@@ -6072,6 +6073,14 @@ public class Grid extends Canvas
                 onMouseWheel(e);
             }
         });
+    }
+    
+    private void onFocusIn()
+    {
+    	if (!items.isEmpty() && focusItem == null)
+    	{
+    		focusItem = (GridItem) items.get(0);
+    	}
     }
     
     private void onDispose(Event event)
