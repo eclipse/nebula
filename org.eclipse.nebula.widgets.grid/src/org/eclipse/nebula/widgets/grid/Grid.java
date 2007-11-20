@@ -8255,6 +8255,7 @@ public class Grid extends Canvas
             SWT.error(SWT.ERROR_NULL_ARGUMENT);
         
         addToCellSelection(cell);
+        updateColumnSelection();
         redraw();
     }
     
@@ -8292,6 +8293,8 @@ public class Grid extends Canvas
         {
             addToCellSelection(cells[i]);
         }
+        
+        updateColumnSelection();
         redraw();
     }
     
@@ -8341,6 +8344,8 @@ public class Grid extends Canvas
         focusColumn = oldFocusColumn;
         focusItem = oldFocusItem;
         
+        updateColumnSelection();
+        
         redraw();
     }
     
@@ -8375,6 +8380,7 @@ public class Grid extends Canvas
         
         selectedCells.clear();
         addToCellSelection(cell);
+        updateColumnSelection();
         redraw();
     }
     
@@ -8418,6 +8424,8 @@ public class Grid extends Canvas
         {
             addToCellSelection(cells[i]);
         }
+        
+        updateColumnSelection();
         redraw();
     }
     
