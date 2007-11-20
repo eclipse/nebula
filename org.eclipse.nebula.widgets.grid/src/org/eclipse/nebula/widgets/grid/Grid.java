@@ -6793,6 +6793,9 @@ public class Grid extends Canvas
     {  
         if (focusColumn == null)
         {
+        	if (columns.size() == 0)
+        		return;
+        	
             focusColumn = getColumn(0);
             intendedFocusColumn = focusColumn;
         }
