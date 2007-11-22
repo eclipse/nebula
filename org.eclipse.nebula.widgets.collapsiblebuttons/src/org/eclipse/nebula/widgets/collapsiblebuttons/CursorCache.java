@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Display;
 
 public class CursorCache {
 
-    private static HashMap<Integer, Cursor> map = new HashMap<Integer, Cursor>();
+    private static HashMap map = new HashMap();
 
     /**
      * Returns a cursor that is also cached as to not create more handles for each time the cursor type is fetched.
@@ -45,7 +45,7 @@ public class CursorCache {
      */
     public static void dispose() {
         if (map != null && map.keySet() != null) {
-            Iterator<Integer> keys = map.keySet().iterator();
+            Iterator keys = map.keySet().iterator();
             while (keys.hasNext()) {
                 Object key = keys.next();
                 ((Cursor) map.get(key)).dispose();

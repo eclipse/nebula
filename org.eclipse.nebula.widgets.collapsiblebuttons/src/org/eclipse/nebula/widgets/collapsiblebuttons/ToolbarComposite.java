@@ -13,7 +13,6 @@ package org.eclipse.nebula.widgets.collapsiblebuttons;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
@@ -35,7 +34,7 @@ import org.eclipse.swt.widgets.MenuItem;
 
 public class ToolbarComposite extends Composite implements MouseListener, MouseMoveListener, MouseTrackListener {
 
-    private List<TBItem> mToolBarItems;
+    private ArrayList mToolBarItems;
     private TBItem mLastHover;
     private CustomButton mSelectedItem;
     private CollapsibleButtons mButtonComposite;
@@ -73,7 +72,7 @@ public class ToolbarComposite extends Composite implements MouseListener, MouseM
         else 
         	mArrowImage = mOutlook2005ArrowsImage;
         
-        mToolBarItems = new ArrayList<TBItem>();
+        mToolBarItems = new ArrayList();
 
         addPaintListener(new PaintListener() {
             public void paintControl(PaintEvent event) {
@@ -176,7 +175,6 @@ public class ToolbarComposite extends Composite implements MouseListener, MouseM
         Collections.sort(mToolBarItems);
     }
         
-    @Override
     public Point getSize() {
     	checkWidget();
         return new Point(super.getSize().x, CustomButton.BUTTON_HEIGHT);
@@ -271,9 +269,9 @@ public class ToolbarComposite extends Composite implements MouseListener, MouseM
             Menu moreMenu = new Menu(more);
             more.setMenu(moreMenu);
             
-            List<CustomButton> cbs = mButtonComposite.getItems();            
+            ArrayList cbs = mButtonComposite.getItems();            
             for (int i = 0; i < cbs.size(); i++) {            	
-            	final CustomButton cb = cbs.get(i);
+            	final CustomButton cb = (CustomButton) cbs.get(i);
             	final MenuItem temp = new MenuItem(moreMenu, SWT.CHECK);
             	temp.setText(cb.getText());
             	temp.setImage(cb.getToolBarImage());
@@ -428,7 +426,7 @@ public class ToolbarComposite extends Composite implements MouseListener, MouseM
         return false;
     }
 
-    class TBItem implements Comparable<TBItem> {
+    class TBItem implements Comparable {
 		private Rectangle bounds;
         private CustomButton button;
         private boolean hovered;
@@ -470,9 +468,14 @@ public class ToolbarComposite extends Composite implements MouseListener, MouseM
         	return "[TBItem " + button.getNumber() + "]";
         }
 
-		public int compareTo(TBItem item) {
-			Integer one = item.getButton().getNumber();
-			Integer two = getButton().getNumber();
+		public int compareTo(Object item) {
+			if (!(item instanceof TBItem))
+				return 0;
+			
+			TBItem tbitem = (TBItem) item;
+			
+ 			Integer one = new Integer(tbitem.getButton().getNumber());
+			Integer two = new Integer(getButton().getNumber());
 			return one.compareTo(two);
 		}        
     }

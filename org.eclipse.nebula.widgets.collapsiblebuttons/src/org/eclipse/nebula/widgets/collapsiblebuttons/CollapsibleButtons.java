@@ -12,7 +12,6 @@
 package org.eclipse.nebula.widgets.collapsiblebuttons;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
@@ -119,7 +118,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
     private Rectangle mBounds;
     private Rectangle mMoveBar;
 
-    private List<CustomButton> mButtons;
+    private ArrayList mButtons;
 
     private int mButtonHeight;
 
@@ -138,13 +137,13 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 
     private int mInvoluntaryButtonLevel = -1;
 
-    private List<CustomButton> mHidden;
+    private ArrayList mHidden;
     private Composite mParent;
     
     private int mColorTheme = IColorManager.SKIN_AUTO_DETECT; 
     
     private IColorManager mColorManager;    
-    private List<IButtonListener> mButtonListeners;
+    private ArrayList mButtonListeners;
     
     private ISettings mSettings;
     
@@ -281,9 +280,9 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
     	
     	mButtonHeight = mSettings.getButtonHeight();
     	
-        mButtons = new ArrayList<CustomButton>();
-        mHidden = new ArrayList<CustomButton>();
-        mButtonListeners = new ArrayList<IButtonListener>();
+        mButtons = new ArrayList();
+        mHidden = new ArrayList();
+        mButtonListeners = new ArrayList();
         
         // this lets us auto-fit the buttons to the aviaiable space when the parent composite is resized.
         // Outlook does the same thing when the buttons don't have enough space. We hide 1 button per call,
@@ -545,7 +544,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
         mHidden.remove(button);
 
         for (int i = 0; i < mButtons.size(); i++) {
-            CustomButton b = mButtons.get(i);
+            CustomButton b = (CustomButton) mButtons.get(i);
 
             if (b == button) {
                 if (!b.isVisible()) {
@@ -573,7 +572,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
     public void hideButton(CustomButton button) {
     	checkWidget();
         for (int i = 0; i < mButtons.size(); i++) {
-            CustomButton b = mButtons.get(i);
+            CustomButton b = (CustomButton) mButtons.get(i);
             if (b == button) {
                 //if (label.isVisible() == true) {
                 b.setVisible(false);
@@ -600,7 +599,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
     public void showButton(CustomButton button) {
     	checkWidget();
         for (int i = 0; i < mButtons.size(); i++) {
-            CustomButton b = mButtons.get(i);
+            CustomButton b = (CustomButton) mButtons.get(i);
 
             if (b == button) {
                 if (!b.isVisible()) {
@@ -643,7 +642,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
         }
 
         for (int i = (mButtons.size() - 1); i >= 0; i--) {
-            CustomButton b = mButtons.get(i);
+            CustomButton b = (CustomButton) mButtons.get(i);
 
             if (mHidden.contains(b)) 
                 continue;
@@ -682,7 +681,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
         }
 
         for (int i = 0; i < mButtons.size(); i++) {
-            CustomButton b = mButtons.get(i);
+            CustomButton b = (CustomButton) mButtons.get(i);
 
             if (mHidden.contains(b)) 
                 continue;
@@ -779,7 +778,6 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
         mMouseIsDown = false;
     }
 
-    @Override
     public Point getSize() {
     	checkWidget();
         int bs = mButtons.size() - mHiddenButtons;
@@ -858,7 +856,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
     public void selectItem(CustomButton button) {
     	checkWidget();
         for (int i = 0; i < mButtons.size(); i++) {
-            CustomButton b = mButtons.get(i);
+            CustomButton b = (CustomButton) mButtons.get(i);
             if (b == button) {
                 selectButton(button);
                 break;
@@ -887,7 +885,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
      * 
      * @return List of buttons
      */
-    public List<CustomButton> getItems() {
+    public ArrayList getItems() {
     	checkWidget();
         return mButtons;
     }
@@ -961,7 +959,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 
                 // calculate where toolbar goes first, causes less ghosting
                 for (int i = 0; i < mButtons.size(); i++) {
-                    CustomButton button = mButtons.get(i);                    
+                    CustomButton button = (CustomButton) mButtons.get(i);                    
                     if (!button.isVisible()) {
                         continue;
                     }
@@ -975,7 +973,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 
             // now set the toolbars
             for (int i = 0; i < mButtons.size(); i++) {
-                CustomButton button = mButtons.get(i);
+                CustomButton button = (CustomButton) mButtons.get(i);
                 if (!button.isVisible()) {
                     continue;
                 }
