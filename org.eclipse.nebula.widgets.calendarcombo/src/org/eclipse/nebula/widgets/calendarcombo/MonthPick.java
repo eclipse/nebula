@@ -12,9 +12,9 @@
 package org.eclipse.nebula.widgets.calendarcombo;
 
 import java.text.DateFormatSymbols;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
-import java.util.Vector;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -50,7 +50,7 @@ class MonthPick extends Canvas implements MouseListener, MouseMoveListener {
 
 	private String[] mMonths = mDFS.getMonths();
 
-	private Vector<MonthEntry> mMonthEntries = new Vector<MonthEntry>();
+	private ArrayList mMonthEntries = new ArrayList();
 
 	private MonthEntry mHoverEntry;
 

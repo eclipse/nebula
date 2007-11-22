@@ -14,7 +14,6 @@ package org.eclipse.nebula.widgets.calendarcombo;
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Locale;
 
 import org.eclipse.swt.SWT;
@@ -75,7 +74,7 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 
 	private boolean mMonthSelectorOpen;
 
-	private List<ICalendarListener> mListeners;
+	private ArrayList mListeners;
 
 	private boolean mNoDayClicked;
 
@@ -135,7 +134,7 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 		int bheight = mSettings.getButtonHeight();
 		int bwidth = mSettings.getButtonWidth();
 		int buttonStyle = SWT.PUSH;
-		mListeners = new ArrayList<ICalendarListener>();
+		mListeners = new ArrayList();
 
 		// Mac buttons need different flag to ook normal
 		if (CalendarCombo.OS_CARBON) {
@@ -662,12 +661,10 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 	
 	class ButtonSectionLayout extends Layout {
 
-		@Override
 		protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
 			return new Point(SWT.DEFAULT, SWT.DEFAULT);
 		}
 
-		@Override
 		protected void layout(Composite composite, boolean flushCache) {
 			int bheight = mSettings.getButtonHeight();
 			int bwidth = mSettings.getButtonWidth();

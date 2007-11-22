@@ -14,7 +14,6 @@ package org.eclipse.nebula.widgets.calendarcombo;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 import org.eclipse.swt.SWT;
@@ -112,7 +111,7 @@ public class CalendarCombo extends Composite {
 
 	private ISettings mSettings;
 
-	private List<ICalendarListener> mListeners;
+	private ArrayList mListeners;
 
 	protected static final boolean OS_CARBON = "carbon".equals(SWT.getPlatform()); //$NON-NLS-1$
 	protected static final boolean OS_GTK = "gtk".equals(SWT.getPlatform()); //$NON-NLS-1$
@@ -269,7 +268,7 @@ public class CalendarCombo extends Composite {
 	
 	// layout everything
 	private void init() {
-		mListeners = new ArrayList<ICalendarListener>();
+		mListeners = new ArrayList();
 
 		if (mColorManager == null)
 			mColorManager = new DefaultColorManager();
@@ -648,8 +647,10 @@ public class CalendarCombo extends Composite {
 
 			// create the calendar composite
 			mCalendarComposite = new CalendarComposite(mCalendarShell, pre, mColorManager, mSettings);
-			for (ICalendarListener listener : mListeners)
+			for (int i = 0; i < mListeners.size(); i++) {
+				ICalendarListener listener = (ICalendarListener) mListeners.get(i);
 				mCalendarComposite.addCalendarListener(listener);
+			}
 
 			mCalendarComposite.addCalendarListener(new ICalendarListener() {
 				public void dateChanged(Calendar date) {					
@@ -749,13 +750,11 @@ public class CalendarCombo extends Composite {
 		return mEditable;
 	}
 
-	@Override
 	public void setEnabled(boolean enabled) {
 		checkWidget();
 		mCombo.setEnabled(enabled);
 	}
 	
-	@Override
 	public boolean isEnabled() {
 		checkWidget();
 		return mCombo.getEnabled();
