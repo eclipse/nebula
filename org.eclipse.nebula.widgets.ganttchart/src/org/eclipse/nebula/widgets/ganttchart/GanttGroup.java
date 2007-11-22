@@ -12,7 +12,6 @@
 package org.eclipse.nebula.widgets.ganttchart;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A GanttGroup is a group of GanttEvents that will all draw on the same horizontal "line"
@@ -22,10 +21,10 @@ import java.util.List;
  */
 public class GanttGroup {
 
-	private List<GanttEvent> mEvents;
+	private ArrayList mEvents;
 	
 	public GanttGroup(GanttChart parent) {
-		mEvents = new ArrayList<GanttEvent>();
+		mEvents = new ArrayList();
 		parent.addGroup(this);
 	}
 	
@@ -47,7 +46,7 @@ public class GanttGroup {
 		return mEvents.contains(event);
 	}
 	
-	public List<GanttEvent> getEventMembers() {
+	public ArrayList getEventMembers() {
 		return mEvents;
 	}
 }

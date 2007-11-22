@@ -13,7 +13,6 @@ package org.eclipse.nebula.widgets.ganttchart;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
@@ -24,7 +23,7 @@ public class ColorCache {
     public static final RGB BLACK = new RGB(0, 0, 0);
     public static final RGB WHITE = new RGB(255, 255, 255);
 
-    private static Map<RGB, Color> mColorTable;
+    private static HashMap mColorTable;
     private static ColorCache mInstance;
 
     /**
@@ -44,15 +43,15 @@ public class ColorCache {
      * Disposes the cached colors only.
      */
     public static void disposeCachedColor() {
-        Iterator<Color> e = mColorTable.values().iterator();
-        while (e.hasNext()) e.next().dispose();
+        Iterator e = mColorTable.values().iterator();
+        while (e.hasNext()) ((Color)e.next()).dispose();
 
         mColorTable.clear();
     }
 
     private ColorCache() {
         if (mColorTable == null) {
-            mColorTable = new HashMap<RGB, Color>();
+            mColorTable = new HashMap();
         }
     }
 
@@ -65,8 +64,8 @@ public class ColorCache {
     private void dispose() {
     	checkInstance();
 
-        Iterator<Color> e = mColorTable.values().iterator();
-        while (e.hasNext()) e.next().dispose();
+        Iterator e = mColorTable.values().iterator();
+        while (e.hasNext()) ((Color)e.next()).dispose();
 
         mColorTable.clear();     
     }

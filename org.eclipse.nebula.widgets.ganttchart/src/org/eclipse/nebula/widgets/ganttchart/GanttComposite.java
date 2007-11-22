@@ -15,7 +15,6 @@ import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 import org.eclipse.swt.SWT;
@@ -165,10 +164,10 @@ public class GanttComposite extends Canvas implements MouseListener, MouseMoveLi
 	private int mDaysVisible;
 
 	// all events
-	private List<GanttEvent> mGanttEvents;
+	private ArrayList mGanttEvents;
 
 	// all connections between events
-	private List<Connection> mGanttConnections;
+	private ArrayList mGanttConnections;
 
 	// various variables for resize & drag n drop
 	private boolean mDragging = false;
@@ -179,7 +178,7 @@ public class GanttComposite extends Canvas implements MouseListener, MouseMoveLi
 
 	private int mCursor;
 
-	private List<GanttEvent> mDragEvents;
+	private ArrayList mDragEvents;
 
 	private boolean mLastLeft = false;
 
@@ -206,7 +205,7 @@ public class GanttComposite extends Canvas implements MouseListener, MouseMoveLi
 	
 	private IPaintManager mPaintManager;
 	
-	private List<IGanttEventListener> mEventListeners;
+	private ArrayList mEventListeners;
 	
 	private boolean mMouseIsDown;
 	
@@ -215,7 +214,7 @@ public class GanttComposite extends Canvas implements MouseListener, MouseMoveLi
 	// parent control
 	private GanttChartScrolledWrapper mParent;
 	
-	private List<GanttGroup> mGanttGroups;
+	private ArrayList mGanttGroups;
 	
 	// menu used at right click events
 	private Menu mRightClickMenu;
@@ -251,11 +250,11 @@ public class GanttComposite extends Canvas implements MouseListener, MouseMoveLi
 		mColorManager = colorManager;
 		mPaintManager = paintManager;
 		
-		mGanttConnections = new ArrayList<Connection>();
-		mDragEvents = new ArrayList<GanttEvent>();
-		mEventListeners = new ArrayList<IGanttEventListener>();
-		mGanttEvents = new ArrayList<GanttEvent>();
-		mGanttGroups = new ArrayList<GanttGroup>();
+		mGanttConnections = new ArrayList();
+		mDragEvents = new ArrayList();
+		mEventListeners = new ArrayList();
+		mGanttEvents = new ArrayList();
+		mGanttGroups = new ArrayList();
 		
 		mCurrentView = mSettings.getInitialView();
 		mZoomLevel = mSettings.getInitialZoomLevel();
@@ -452,7 +451,9 @@ public class GanttComposite extends Canvas implements MouseListener, MouseMoveLi
 			MenuItem[] items = eventMenu.getItems(); 
 			
 			if (items != null) {
-				for (final MenuItem mItem : items) {
+				for (int i = 0; i < items.length; i++) {
+					final MenuItem mItem = items[i];
+				
 					MenuItem copy = new MenuItem(mRightClickMenu, SWT.PUSH);
 					copy.setText(mItem.getText());
 					copy.setImage(mItem.getImage());
@@ -539,10 +540,12 @@ public class GanttComposite extends Canvas implements MouseListener, MouseMoveLi
 			delete.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event e) {
 					if (mSelectedEvent != null) {
-						List<GanttEvent> events = new ArrayList<GanttEvent>();
+						ArrayList events = new ArrayList();
 						events.add(mSelectedEvent);
-						for (IGanttEventListener listener : mEventListeners)
+						for (int i = 0; i < mEventListeners.size(); i++) {
+							IGanttEventListener listener = (IGanttEventListener) mEventListeners.get(i);					
 							listener.eventsDeleteRequest(events, me);
+						}
 					}
 				}
 			});
@@ -556,8 +559,10 @@ public class GanttComposite extends Canvas implements MouseListener, MouseMoveLi
 			properties.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event event) {
 					if (mSelectedEvent != null) {
-						for (IGanttEventListener listener : mEventListeners)
+						for (int i = 0; i < mEventListeners.size(); i++ ) {
+							IGanttEventListener listener = (IGanttEventListener) mEventListeners.get(i);						
 							listener.eventPropertiesSelected(mSelectedEvent);
+						}
 					}
 				}
 			});
@@ -1080,10 +1085,10 @@ public class GanttComposite extends Canvas implements MouseListener, MouseMoveLi
 
 		int yStart = mEventRoot - mYScrollPosition;
 		
-		List<GanttEvent> eventsAlreadyDrawn = new ArrayList<GanttEvent>();
-		List<GanttEvent> allEventsInGroups = new ArrayList<GanttEvent>();
+		ArrayList eventsAlreadyDrawn = new ArrayList();
+		ArrayList allEventsInGroups = new ArrayList();
 		for (int i = 0; i < mGanttGroups.size(); i++) 
-			allEventsInGroups.addAll(mGanttGroups.get(i).getEventMembers());
+			allEventsInGroups.addAll(((GanttGroup)mGanttGroups.get(i)).getEventMembers());
 		
 		boolean lastLoopWasGroup = false;
 		GanttGroup lastGroup = null;
@@ -1110,10 +1115,10 @@ public class GanttComposite extends Canvas implements MouseListener, MouseMoveLi
 			if (allEventsInGroups.contains(ge)) {
 				groupedEvent = true;
 								
-				List<GanttEvent> groupEvents = ge.getGanttGroup().getEventMembers();
+				ArrayList groupEvents = ge.getGanttGroup().getEventMembers();
 				int yToUse = 0;
 				for (int x = 0; x < groupEvents.size(); x++) {
-					yToUse = groupEvents.get(x).getY();
+					yToUse = ((GanttEvent)groupEvents.get(x)).getY();
 					if (yToUse != 0)
 						break;
 				}
@@ -1703,7 +1708,7 @@ public class GanttComposite extends Canvas implements MouseListener, MouseMoveLi
 	public void removeEvent(GanttEvent event) {
 		checkWidget();
 		mGanttEvents.remove(event);
-		List<Connection> toRemove = new ArrayList<Connection>();
+		ArrayList toRemove = new ArrayList();
 		for (int i = 0; i < mGanttConnections.size(); i++) {
 			Connection con = (Connection) mGanttConnections.get(i);
 
@@ -1907,7 +1912,7 @@ public class GanttComposite extends Canvas implements MouseListener, MouseMoveLi
 		
 				if (isInside(me.x, me.y, new Rectangle(event.getX(), event.getY(), event.getWidth(), event.getHeight()))) {	
 					for (int j = 0; j < mEventListeners.size(); j++) 
-						mEventListeners.get(j).eventDoubleClicked(event, me);
+						((IGanttEventListener)mEventListeners.get(j)).eventDoubleClicked(event, me);
 					
 					return;										
 				}
@@ -1938,8 +1943,9 @@ public class GanttComposite extends Canvas implements MouseListener, MouseMoveLi
 
 				// fire selection changed
 				if ((mSelectedEvent != null && !mSelectedEvent.equals(event)) || mSelectedEvent == null) {
-					List<GanttEvent> allSelectedEvents = new ArrayList<GanttEvent>();
-					for (IGanttEventListener listener : mEventListeners) {
+					ArrayList allSelectedEvents = new ArrayList();
+					for (int x = 0; x < mEventListeners.size(); x++) {
+						IGanttEventListener listener = (IGanttEventListener) mEventListeners.get(x);					
 						listener.eventSelected(event, allSelectedEvents, me);
 					}
 				}
@@ -2550,9 +2556,10 @@ public class GanttComposite extends Canvas implements MouseListener, MouseMoveLi
 		}
 		
 		if (modified) {
-			List<GanttEvent> eventsResized = new ArrayList<GanttEvent>();
+			ArrayList eventsResized = new ArrayList();
 			eventsResized.add(event);
-			for (IGanttEventListener listener : mEventListeners) {
+			for (int i = 0; i < mEventListeners.size(); i++) {
+				IGanttEventListener listener = (IGanttEventListener) mEventListeners.get(i);			
 				listener.eventsResized(eventsResized, me);
 			}
 		}
@@ -2743,7 +2750,7 @@ public class GanttComposite extends Canvas implements MouseListener, MouseMoveLi
 		if (i == 0) 
 			return;		
 		
-		List<GanttEvent> eventsMoved = new ArrayList<GanttEvent>();
+		ArrayList eventsMoved = new ArrayList();
 
 		if ((stateMask & SWT.SHIFT) == 0 || !mSettings.moveLinkedEventsWhenEventsAreMoved()) {
 			Calendar cal1 = Calendar.getInstance(Locale.getDefault());
@@ -2761,11 +2768,11 @@ public class GanttComposite extends Canvas implements MouseListener, MouseMoveLi
 		}
 		else {
 			if ((stateMask & SWT.SHIFT) != 0) {
-				List<GanttEvent> conns = getEventsDependingOn(ge, new ArrayList<GanttEvent>());
+				ArrayList conns = getEventsDependingOn(ge, new ArrayList());
 
-				List<GanttEvent> translated = new ArrayList<GanttEvent>();
+				ArrayList translated = new ArrayList();
 				for (int x = 0; x < conns.size(); x++) {
-					GanttEvent md = conns.get(x);
+					GanttEvent md = (GanttEvent) conns.get(x);
 					translated.add(md);
 				}
 
@@ -2800,7 +2807,8 @@ public class GanttComposite extends Canvas implements MouseListener, MouseMoveLi
 			}
 		}
 		
-		for (IGanttEventListener listener : mEventListeners) {
+		for (int x = 0; x < mEventListeners.size(); x++) {
+			IGanttEventListener listener = (IGanttEventListener) mEventListeners.get(x);		
 			listener.eventsMoved(eventsMoved, me);
 		}
 		redrawEventsArea();
@@ -2829,7 +2837,7 @@ public class GanttComposite extends Canvas implements MouseListener, MouseMoveLi
 		redrawCalendar();
 	}
 	
-	public List<GanttEvent> getEvents() {
+	public ArrayList getEvents() {
 		return mGanttEvents;
 	}
 
@@ -2849,17 +2857,17 @@ public class GanttComposite extends Canvas implements MouseListener, MouseMoveLi
 		return buffer;
 	}
 
-	private List<GanttEvent> getEventsDependingOn(GanttEvent ge, List<GanttEvent> ret) {
-		List<GanttEvent> conns = mGmap.get(ge);
+	private ArrayList getEventsDependingOn(GanttEvent ge, ArrayList ret) {
+		ArrayList conns = (ArrayList) mGmap.get(ge);
 		if (conns != null && conns.size() > 0) {
 			for (int i = 0; i < conns.size(); i++) {
-				GanttEvent event = conns.get(i);
+				GanttEvent event = (GanttEvent) conns.get(i);
 				if (ret.contains(event))
 					continue;
 				else
 					ret.add(event);
 
-				List<GanttEvent> more = getEventsDependingOn(event, ret);
+				ArrayList more = getEventsDependingOn(event, ret);
 				if (more.size() > 0) {
 					for (int x = 0; x < more.size(); x++) {
 						if (!ret.contains(more.get(x))) {
@@ -2885,8 +2893,10 @@ public class GanttComposite extends Canvas implements MouseListener, MouseMoveLi
 		updateZoomLevel();
 		redraw();
 		
-		for (IGanttEventListener listener : mEventListeners)
+		for (int i = 0; i < mEventListeners.size(); i++) {
+			IGanttEventListener listener = (IGanttEventListener) mEventListeners.get(i);		
 			listener.zoomedOut(mZoomLevel);
+		}
 	}
 
 	private void updateZoomLevel() {
@@ -2961,8 +2971,10 @@ public class GanttComposite extends Canvas implements MouseListener, MouseMoveLi
 		updateZoomLevel();
 		redraw();
 		
-		for (IGanttEventListener listener : mEventListeners)
+		for (int i = 0; i < mEventListeners.size(); i++) {
+			IGanttEventListener listener = (IGanttEventListener) mEventListeners.get(i);		
 			listener.zoomedOut(mZoomLevel);
+		}
 	}
 
 	public void resetZoom() {
@@ -2974,8 +2986,10 @@ public class GanttComposite extends Canvas implements MouseListener, MouseMoveLi
 		updateZoomLevel();
 		redraw();
 		
-		for (IGanttEventListener listener : mEventListeners)
+		for (int i = 0; i < mEventListeners.size(); i++) {
+			IGanttEventListener listener = (IGanttEventListener) mEventListeners.get(i);		
 			listener.zoomReset();
+		}
 	}	
 	
 	public void addGanttEventListener(IGanttEventListener listener) {

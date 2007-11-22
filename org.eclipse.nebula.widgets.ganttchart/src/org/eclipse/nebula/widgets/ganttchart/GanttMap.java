@@ -13,20 +13,19 @@ package org.eclipse.nebula.widgets.ganttchart;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 class GanttMap {	
-	private List<GanttEvent> mUsedUp;
-	private HashMap<GanttEvent, ArrayList<GanttEvent>> mMap;
+	private ArrayList mUsedUp;
+	private HashMap mMap;
 
     public GanttMap() {
-        mMap = new HashMap<GanttEvent, ArrayList<GanttEvent>>();
-        mUsedUp = new ArrayList<GanttEvent>();
+        mMap = new HashMap();
+        mUsedUp = new ArrayList();
     }
 
     public void put(GanttEvent value, GanttEvent key) {
         if (mUsedUp.contains(value)) {
-            ArrayList<GanttEvent> v = (ArrayList<GanttEvent>) mMap.get(value);
+            ArrayList v = (ArrayList) mMap.get(value);
             if (!v.contains(key)) {
                 v.add(key);
             }
@@ -34,7 +33,7 @@ class GanttMap {
             mMap.put(value, v);
         } 
         else {
-            ArrayList<GanttEvent> v = new ArrayList<GanttEvent>();
+            ArrayList v = new ArrayList();
             v.add(key);
             
             mMap.put(value, v);
@@ -42,8 +41,8 @@ class GanttMap {
         }
     }
     
-    public ArrayList<GanttEvent> get(GanttEvent obj) {
-    	return mMap.get(obj);
+    public ArrayList get(GanttEvent obj) {
+    	return (ArrayList)mMap.get(obj);
     }
 
     public void clear() {

@@ -21,10 +21,10 @@ import org.eclipse.swt.widgets.Display;
 
 public class ImageCache {
 
-    private static HashMap<String, Image> mImageMap;
+    private static HashMap mImageMap;
     
     static {
-    	mImageMap = new HashMap<String, Image>();
+    	mImageMap = new HashMap();
     }
     
     /**
@@ -34,7 +34,7 @@ public class ImageCache {
      * @return Image file or null if it could not be found
      */
     public static Image getImage(String fileName) {
-        Image image = mImageMap.get(fileName);
+        Image image = (Image) mImageMap.get(fileName);
         if (image == null) {
             image = createImage(fileName);
             mImageMap.put(fileName, image);
@@ -78,8 +78,8 @@ public class ImageCache {
      *
      */
     public static void dispose() {
-        Iterator<Image> e = mImageMap.values().iterator();
+        Iterator e = mImageMap.values().iterator();
         while (e.hasNext()) 
-        	e.next().dispose();
+        	((Image)e.next()).dispose();
     }
 }

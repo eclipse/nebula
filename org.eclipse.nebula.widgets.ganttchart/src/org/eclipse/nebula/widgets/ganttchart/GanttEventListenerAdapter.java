@@ -11,7 +11,7 @@
 
 package org.eclipse.nebula.widgets.ganttchart;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import org.eclipse.swt.events.MouseEvent;
 
@@ -23,16 +23,16 @@ public class GanttEventListenerAdapter implements IGanttEventListener {
 	public void eventPropertiesSelected(GanttEvent event) {
 	}
 
-	public void eventsDeleteRequest(List<GanttEvent> events, MouseEvent me) {
+	public void eventsDeleteRequest(ArrayList events, MouseEvent me) {
 	}
 
-	public void eventSelected(GanttEvent event, List<GanttEvent> allSelectedEvents, MouseEvent me) {
+	public void eventSelected(GanttEvent event, ArrayList allSelectedEvents, MouseEvent me) {
 	}
 
-	public void eventsMoved(List<GanttEvent> events, MouseEvent me) {
+	public void eventsMoved(ArrayList events, MouseEvent me) {
 	}
 
-	public void eventsResized(List<GanttEvent> events, MouseEvent me) {
+	public void eventsResized(ArrayList events, MouseEvent me) {
 	}
 
 	public void zoomedIn(int newZoomLevel) {

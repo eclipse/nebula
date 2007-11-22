@@ -11,7 +11,7 @@
 
 package org.eclipse.nebula.widgets.ganttchart;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -267,7 +267,7 @@ public abstract class AbstractPaintManager implements IPaintManager {
 	}
 
 	public void drawScope(GanttComposite ganttComposite, ISettings settings, IColorManager colorManager, GanttEvent ge, GC gc, boolean threeDee, int dayWidth, int x, int y, int eventWidth) {
-		List<GanttEvent> scopeEvents = ge.getScopeEvents();
+		ArrayList scopeEvents = ge.getScopeEvents();
 		
 		// empty scope
 		if (scopeEvents.size() == 0)

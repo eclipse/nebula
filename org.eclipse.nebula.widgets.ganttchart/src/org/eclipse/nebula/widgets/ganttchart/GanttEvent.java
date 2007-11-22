@@ -13,7 +13,6 @@ package org.eclipse.nebula.widgets.ganttchart;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
@@ -77,7 +76,7 @@ public class GanttEvent {
     private Color mGradientStatusColor;    
     private boolean mShowBoldText = true;
     private String mTextDisplayFormat;
-    private List<GanttEvent> mScopeEvents;
+    private ArrayList mScopeEvents;
     private Image mPicture;
     private Menu mMenu;
     private GanttChart mParentChart;
@@ -184,7 +183,7 @@ public class GanttEvent {
     }
     
     private void init() {
-    	mScopeEvents = new ArrayList<GanttEvent>();
+    	mScopeEvents = new ArrayList();
     	mParentChart.getGanttComposite().addEvent(this, true);
     	mMenu = new Menu(mParentChart.getGanttComposite());
     }
@@ -601,7 +600,7 @@ public class GanttEvent {
 	 * 
 	 * @return List of events
 	 */
-	public List<GanttEvent> getScopeEvents() {
+	public ArrayList getScopeEvents() {
 		return mScopeEvents;
 	}
 	
@@ -615,7 +614,9 @@ public class GanttEvent {
 		
 		float percentage = 0f;
 				
-		for (GanttEvent event : mScopeEvents) {
+		for (int i = 0; i < mScopeEvents.size(); i++) {
+			GanttEvent event = (GanttEvent) mScopeEvents.get(i);
+		
 			if (earliest == null) {
 				earliest = event.getStartDate();
 			}
@@ -728,7 +729,7 @@ public class GanttEvent {
 			return;
 		
 		for (int i = 0; i < mScopeEvents.size(); i++) 
-			mScopeEvents.get(i).setHidden(hidden);				
+			((GanttEvent)mScopeEvents.get(i)).setHidden(hidden);				
 	}
 
 	/**
@@ -759,7 +760,7 @@ public class GanttEvent {
 			return false;
 
 		for (int i = 0; i < mScopeEvents.size(); i++) {
-			if (!mScopeEvents.get(i).isHidden())
+			if (!((GanttEvent)mScopeEvents.get(i)).isHidden())
 				return false;
 		}
 		

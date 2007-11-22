@@ -11,7 +11,7 @@
 
 package org.eclipse.nebula.widgets.ganttchart;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import org.eclipse.swt.events.MouseEvent;
 
@@ -23,7 +23,7 @@ public interface IGanttEventListener {
 	 * @param events List of modified events (post modification)
 	 * @param me MouseEvent
 	 */
-	public void eventsMoved(List<GanttEvent> events, MouseEvent me);
+	public void eventsMoved(ArrayList events, MouseEvent me);
 	
 	/**
 	 * Fires when one or more events were resized.
@@ -31,7 +31,7 @@ public interface IGanttEventListener {
 	 * @param events List of modified events (post modification)
 	 * @param me MouseEvent
 	 */
-	public void eventsResized(List<GanttEvent> events, MouseEvent me);
+	public void eventsResized(ArrayList events, MouseEvent me);
 	
 	/**
 	 * Fires when an event is selected.
@@ -40,7 +40,7 @@ public interface IGanttEventListener {
 	 * @param allSelectedEvents All currently selected events.
 	 * @param me MouseEvent
 	 */
-	public void eventSelected(GanttEvent event, List<GanttEvent> allSelectedEvents, MouseEvent me);
+	public void eventSelected(GanttEvent event, ArrayList allSelectedEvents, MouseEvent me);
 	
 	/**
 	 * Fires when the built-in delete action is run on an event.
@@ -48,7 +48,7 @@ public interface IGanttEventListener {
 	 * @param events Events requested to be deleted
 	 * @param me MouseEvent
 	 */
-	public void eventsDeleteRequest(List<GanttEvent> events, MouseEvent me);
+	public void eventsDeleteRequest(ArrayList events, MouseEvent me);
 	
 	/**
 	 * Fires when an event is doubleclicked.

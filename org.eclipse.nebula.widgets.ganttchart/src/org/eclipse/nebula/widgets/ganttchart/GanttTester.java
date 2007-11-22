@@ -11,8 +11,8 @@
 
 package org.eclipse.nebula.widgets.ganttchart;
 
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
@@ -94,19 +94,19 @@ public class GanttTester {
 				System.out.println("Event properties selected " + event);
 			}
 
-			public void eventsDeleteRequest(List<GanttEvent> events, MouseEvent me) {
+			public void eventsDeleteRequest(ArrayList events, MouseEvent me) {
 				System.out.println("Events delete request");
 			}
 
-			public void eventSelected(GanttEvent event, List<GanttEvent> allSelectedEvents, MouseEvent me) {
+			public void eventSelected(GanttEvent event, ArrayList allSelectedEvents, MouseEvent me) {
 				System.out.println("Events selected");
 			}
 
-			public void eventsMoved(List<GanttEvent> events, MouseEvent me) {
+			public void eventsMoved(ArrayList events, MouseEvent me) {
 				System.out.println("Events moved");
 			}
 
-			public void eventsResized(List<GanttEvent> events, MouseEvent me) {
+			public void eventsResized(ArrayList events, MouseEvent me) {
 				System.out.println("Events resized");
 			}
 
