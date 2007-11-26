@@ -7945,6 +7945,7 @@ public class Grid extends Canvas
         }       
         
         focusColumn = column;
+        intendedFocusColumn = column;
     }
     
 
