@@ -63,8 +63,8 @@
         </antcall>
         <antcall target="buildcomponent">
             <param name="component" value="org.eclipse.nebula.widgets.pshelf"/>
-        </antcall>  -->
-    	<!--<antcall target="buildcomponent">
+        </antcall>  
+    	<antcall target="buildcomponent">
     		<param name="component" value="org.eclipse.nebula.widgets.calendarcombo"/>
 		</antcall>
     	 <antcall target="buildcomponent">
@@ -72,7 +72,7 @@
 		</antcall>
     	<antcall target="buildcomponent">
     		<param name="component" value="org.eclipse.nebula.widgets.ganttchart"/>
-		</antcall> -->
+		</antcall>
     </target>
     
     <target name="publish" depends="buildall" description="Uploads all build zips to the eclipse server.">
