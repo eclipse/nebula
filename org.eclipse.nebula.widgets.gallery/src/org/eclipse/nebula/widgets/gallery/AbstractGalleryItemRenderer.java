@@ -40,7 +40,7 @@ public abstract class AbstractGalleryItemRenderer {
 		this.selected = selected;
 	}
 
-	abstract void draw(GC gc, GalleryItem item, int index, int x, int y, int width, int height);
+	public abstract void draw(GC gc, GalleryItem item, int index, int x, int y, int width, int height);
 
 	public abstract void dispose();
 

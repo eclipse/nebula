@@ -612,6 +612,10 @@ public class Gallery extends Canvas {
 	}
 
 	protected void _addSelection(GalleryItem item) {
+		
+		if( item == null )
+			return;
+		
 		if (this.isSelected(item))
 			return;
 

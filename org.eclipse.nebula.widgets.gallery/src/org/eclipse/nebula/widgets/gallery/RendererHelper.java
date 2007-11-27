@@ -44,7 +44,7 @@ public class RendererHelper {
 	 *            the width to shorten the text to, in pixels
 	 * @return the shortened text
 	 */
-	static protected String createLabel(String text, GC gc, int width) {
+	public static String createLabel(String text, GC gc, int width) {
 
 		if (text == null)
 			return null;
