@@ -33,15 +33,10 @@ public class GridViewerEditor extends ColumnViewerEditor {
 	/** Editor support for tables. */
     private GridEditor gridEditor;
 
-    public static final int FOCUS_FOLLOWS_EDITOR = 1 << 25;
-
-    private boolean focusFollowsEditor;
-
 	GridViewerEditor(ColumnViewer viewer,
 			ColumnViewerEditorActivationStrategy editorActivationStrategy,
 			int feature) {
 		super(viewer, editorActivationStrategy, feature);
-		this.focusFollowsEditor = (feature & FOCUS_FOLLOWS_EDITOR) == FOCUS_FOLLOWS_EDITOR;
 		this.gridEditor = new GridEditor((Grid) viewer.getControl());
 	}
 
@@ -89,15 +84,13 @@ public class GridViewerEditor extends ColumnViewerEditor {
 	}
 
 	protected void updateFocusCell(ViewerCell focusCell, ColumnViewerEditorActivationEvent event) {
-		if( focusFollowsEditor ) {
-			if (event.eventType == ColumnViewerEditorActivationEvent.PROGRAMMATIC
-					|| event.eventType == ColumnViewerEditorActivationEvent.TRAVERSAL) {
-				Grid grid = ((Grid)getViewer().getControl());
-				grid.deselectAllCells();
-				grid.setFocusColumn(grid.getColumn(focusCell.getColumnIndex()));
-				grid.setFocusItem((GridItem) focusCell.getItem());
-				grid.setCellSelection(new Point(focusCell.getColumnIndex(),grid.indexOf((GridItem) focusCell.getItem())));
-			}
+		if (event.eventType == ColumnViewerEditorActivationEvent.PROGRAMMATIC
+				|| event.eventType == ColumnViewerEditorActivationEvent.TRAVERSAL) {
+			Grid grid = ((Grid)getViewer().getControl());
+			grid.deselectAllCells();
+			grid.setFocusColumn(grid.getColumn(focusCell.getColumnIndex()));
+			grid.setFocusItem((GridItem) focusCell.getItem());
+			grid.setCellSelection(new Point(focusCell.getColumnIndex(),grid.indexOf((GridItem) focusCell.getItem())));
 		}
 	}
 
