@@ -22,6 +22,7 @@ import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.viewers.ViewerRow;
 import org.eclipse.jface.viewers.CellEditor.LayoutData;
 import org.eclipse.nebula.widgets.grid.Grid;
+import org.eclipse.nebula.widgets.grid.GridColumn;
 import org.eclipse.nebula.widgets.grid.GridEditor;
 import org.eclipse.nebula.widgets.grid.GridItem;
 import org.eclipse.swt.graphics.Point;
@@ -32,7 +33,7 @@ public class GridViewerEditor extends ColumnViewerEditor {
 	/** Editor support for tables. */
     private GridEditor gridEditor;
 
-    public static final int FOCUS_FOLLOWS_EDITOR = 1 << 31;
+    public static final int FOCUS_FOLLOWS_EDITOR = 1 << 25;
 
     private boolean focusFollowsEditor;
 
@@ -94,7 +95,8 @@ public class GridViewerEditor extends ColumnViewerEditor {
 				Grid grid = ((Grid)getViewer().getControl());
 				grid.deselectAllCells();
 				grid.setFocusColumn(grid.getColumn(focusCell.getColumnIndex()));
-				grid.setFocusItem((GridItem) focusCell.getViewerRow().getItem());
+				grid.setFocusItem((GridItem) focusCell.getItem());
+				grid.setCellSelection(new Point(focusCell.getColumnIndex(),grid.indexOf((GridItem) focusCell.getItem())));
 			}
 		}
 	}
