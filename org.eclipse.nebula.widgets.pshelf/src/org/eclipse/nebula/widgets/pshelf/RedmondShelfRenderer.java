@@ -51,6 +51,7 @@ public class RedmondShelfRenderer extends AbstractRenderer {
 	private Color lineColor;
 	
 	private Color selectedForeground;
+	private Color foreground;
 
 	/** 
      * {@inheritDoc}
@@ -92,23 +93,6 @@ public class RedmondShelfRenderer extends AbstractRenderer {
 		//Color back = parent.getBackground();
 		Color fore = parent.getForeground();
         
-        if ((parent.getStyle() & SWT.SIMPLE) == 0)
-        {
-            if (isSelected()){
-                gc.setForeground(gradient1);
-                gc.setBackground(gradient2);
-            } else {
-                if (isHover()){
-                    gc.setForeground(hoverGradient1);
-                    gc.setBackground(hoverGradient2);
-                } else {
-                    gc.setForeground(selectedGradient1);
-                    gc.setBackground(selectedGradient2);
-                }
-            }
-        }
-        else
-        {
             if (isSelected()){
                 gc.setForeground(selectedGradient1);
                 gc.setBackground(selectedGradient2);
@@ -121,8 +105,6 @@ public class RedmondShelfRenderer extends AbstractRenderer {
                     gc.setBackground(gradient2);
                 }
             }
-        }
-		
 
         
 		gc.fillGradientRectangle(getBounds().x,getBounds().y,getBounds().width,getBounds().height,true);		
@@ -165,25 +147,13 @@ public class RedmondShelfRenderer extends AbstractRenderer {
 			
 			x += item.getImage().getBounds().width + spacing;
 		}
-		gc.setForeground(fore);
 		
-        if ((parent.getStyle() & SWT.SIMPLE) == 0)
-        {
-            gc.setFont(font);
-            if (isSelected()){
-                //gc.setForeground(selectedForeground);
-            } else {
-                gc.setForeground(selectedForeground);
-            }
-        }
-        else
-        {
     		if (isSelected()){
     			gc.setFont(selectedFont);
-    			gc.setForeground(selectedForeground);
+			gc.setForeground(selectedForeground != null ? selectedForeground : fore);
     		} else {
     			gc.setFont(font);
-    		}
+			gc.setForeground(foreground != null ? foreground : fore);
         }
 		
 		int y2 = (getBounds().height - gc.getFontMetrics().getHeight())/2;
@@ -219,12 +189,19 @@ public class RedmondShelfRenderer extends AbstractRenderer {
 		//parent.setFont(initialFont);
 		
 		Color baseColor = parent.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT);
-		
-		gradient1 = createNewBlendedColor(baseColor,parent.getDisplay().getSystemColor(SWT.COLOR_WHITE),30);
+		Color color1 = createNewBlendedColor(baseColor,parent.getDisplay().getSystemColor(SWT.COLOR_WHITE),30);
 		
 		baseColor = createNewBlendedColor(parent.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT),parent.getDisplay().getSystemColor(SWT.COLOR_WHITE),80);
 		
-		gradient2 = createNewSaturatedColor(baseColor,.01f);
+		Color color2 = createNewSaturatedColor(baseColor,.01f);
+
+		if ((parent.getStyle() & SWT.SIMPLE) != 0) {
+			gradient1 = color1;
+			gradient2 = color2;
+		} else {
+			selectedGradient1 = color1;
+			selectedGradient2 = color2;
+		}
 		
 		baseColor.dispose();
 		
@@ -233,21 +210,37 @@ public class RedmondShelfRenderer extends AbstractRenderer {
 		
 		baseColor = parent.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION);
 		
-		selectedGradient1 = createNewBlendedColor(baseColor,parent.getDisplay().getSystemColor(SWT.COLOR_WHITE),70);
+		color1 = createNewBlendedColor(baseColor,parent.getDisplay().getSystemColor(SWT.COLOR_WHITE),70);
 		
 		baseColor = createNewBlendedColor(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION),parent.getDisplay().getSystemColor(SWT.COLOR_BLACK),80);
 		
-		selectedGradient2 = createNewSaturatedColor(baseColor,.02f);
+		color2 = createNewSaturatedColor(baseColor,.02f);
+
+		if ((parent.getStyle() & SWT.SIMPLE) != 0) {
+			selectedGradient1 = color1;
+			selectedGradient2 = color2;
+		} else {
+			gradient1 = color1;
+			gradient2 = color2;
+		}
 		
 		baseColor.dispose();
 
 		//initialOpenFont = FontUtils.createFont(parent.getFont(),4,SWT.BOLD);
+		if ((parent.getStyle() & SWT.SIMPLE) != 0)
 		initialOpenFont = new Font(parent.getDisplay(),"Arial",12,SWT.BOLD);
+		else
+			initialOpenFont = new Font(parent.getDisplay(), initialFont.getFontData());
 		
 		font = initialFont;
 		selectedFont = initialOpenFont;
 		
-		selectedForeground = parent.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT);
+		Color inverseColor = parent.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT);
+		if ((parent.getStyle() & SWT.SIMPLE) != 0)
+			selectedForeground = inverseColor;
+		else
+			foreground = inverseColor;
+		// the other color left null, foreground color of the parent will be used for it
 		
 		baseColor = createNewReverseColor(parent.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND));
 		
@@ -340,9 +333,25 @@ public class RedmondShelfRenderer extends AbstractRenderer {
 		return selectedForeground;
 	}
 
+	/** Sets text color for the selected item.
+	 * @param selectedForeground Can be <code>null</code>, foreground color of the parent is used in that case.
+	 */
 	public void setSelectedForeground(Color selectedForeground) {
 		this.selectedForeground = selectedForeground;
 	}
+
+	public Color getForeground() {
+		return foreground;
+	}
+
+
+	/** Sets text color for non-selected items.
+	 * @param foreground Can be <code>null</code>, foreground color of the parent is used in that case.
+	 */
+	public void setForeground(Color foreground) {
+		this.foreground = foreground;
+	}
+
 
 	public Color getSelectedGradient1() {
 		return selectedGradient1;
