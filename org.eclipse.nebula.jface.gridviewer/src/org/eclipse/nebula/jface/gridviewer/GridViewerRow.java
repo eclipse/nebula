@@ -48,7 +48,12 @@ public class GridViewerRow extends ViewerRow
     		//TODO Provide implementation for GridItem
     		return null;
     	} else {
-    		return item.getBounds(columnIndex);
+    		if( ! item.getParent().getColumn(columnIndex).isVisible() ) {
+    			return new Rectangle(0,0,0,0);
+    		} else {
+    			return item.getBounds(columnIndex);
+    		}
+
     	}
     }
 
