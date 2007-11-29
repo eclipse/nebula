@@ -61,7 +61,7 @@ public class Snippet026TreeViewerTabEditing {
 			}
 		};
         GridViewerEditor.create(v, actSupport, ColumnViewerEditor.TABBING_HORIZONTAL | ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR
-                | ColumnViewerEditor.TABBING_VERTICAL | ColumnViewerEditor.KEYBOARD_ACTIVATION | GridViewerEditor.FOCUS_FOLLOWS_EDITOR);
+                | ColumnViewerEditor.TABBING_VERTICAL | ColumnViewerEditor.KEYBOARD_ACTIVATION );
         v.getGrid().setCellSelectionEnabled(true);
 
         final TextCellEditor textCellEditor = new TextCellEditor(v.getGrid());
