@@ -378,14 +378,17 @@ public class GridColumnGroup extends Item
         GridColumn[] cols = parent.getColumnsInOrder();
         for (int i = 0; i < cols.length; i++)
         {
-            if (cols[i].getColumnGroup() == this && cols[i].isVisible())
+            if (cols[i].getColumnGroup() == this)
             {
-                if (!foundFirstColumnInGroup)
-                {
-                    bounds.x = parent.getOrigin(cols[i], null).x;
-                    foundFirstColumnInGroup = true;
-                }
-                bounds.width += cols[i].getWidth();
+            	if  (cols[i].isVisible())
+            	{
+	                if (!foundFirstColumnInGroup)
+	                {
+	                    bounds.x = parent.getOrigin(cols[i], null).x;
+	                    foundFirstColumnInGroup = true;
+	                }
+	                bounds.width += cols[i].getWidth();
+            	}
             }
             else
             {
