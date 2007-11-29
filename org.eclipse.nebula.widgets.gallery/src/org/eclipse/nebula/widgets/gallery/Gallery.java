@@ -481,16 +481,24 @@ public class Gallery extends Canvas {
 		if (vertical) {
 			y = rect.y;
 			height = rect.height;
+			if (y < translate) {
+				translate = y;
+			} else if (translate + this.getClientArea().height < y + height) {
+				translate = y + height - this.getClientArea().height;
+			}
+			
 		} else {
 			y = rect.x;
 			height = rect.width;
+			
+			if (y < translate) {
+				translate = y;
+			} else if (translate + this.getClientArea().width < y + height) {
+				translate = y + height - this.getClientArea().width;
+			}
 		}
 
-		if (y < translate) {
-			translate = y;
-		} else if (translate + this.getClientArea().height < y + height) {
-			translate = y + height - this.getClientArea().height;
-		}
+		
 		this.updateScrollBarsProperties();
 		redraw();
 

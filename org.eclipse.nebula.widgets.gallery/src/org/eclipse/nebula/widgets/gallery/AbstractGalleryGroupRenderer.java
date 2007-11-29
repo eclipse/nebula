@@ -44,7 +44,7 @@ public abstract class AbstractGalleryGroupRenderer {
 	/**
 	 * Get the expand/collapse state of the current group
 	 * 
-	 * @return true is the current group is expanded 
+	 * @return true is the current group is expanded
 	 */
 	public boolean isExpanded() {
 		return expanded;
@@ -66,14 +66,15 @@ public abstract class AbstractGalleryGroupRenderer {
 	}
 
 	/**
-	 * Group size informations can be retrieved from group. Clipping informations
+	 * Group size informations can be retrieved from group. Clipping
+	 * informations
 	 * 
 	 * @param gc
 	 * @param group
 	 * @param x
 	 * @param y
 	 */
-	abstract void draw(GC gc, GalleryItem group, int x, int y, int clipX, int clipY, int clipWidth, int clipHeight);
+	public abstract void draw(GC gc, GalleryItem group, int x, int y, int clipX, int clipY, int clipWidth, int clipHeight);
 
 	public abstract void dispose();
 
@@ -85,25 +86,39 @@ public abstract class AbstractGalleryGroupRenderer {
 	 * @param key
 	 * @return
 	 */
-	abstract GalleryItem getNextItem(GalleryItem item, int key);
+	public abstract GalleryItem getNextItem(GalleryItem item, int key);
 
 	/**
-	 * This method is called before the layout of the first item. It can be used to
-	 * calculate some values (like font metrics) that will be used for each
+	 * This method is called before the layout of the first item. It can be used
+	 * to calculate some values (like font metrics) that will be used for each
 	 * item.
+	 * 
 	 * @param gc
 	 */
 	public void preLayout(GC gc) {
 
 	}
 
-	abstract void layout(GC gc, GalleryItem group);
+	public abstract void layout(GC gc, GalleryItem group);
 
-	abstract GalleryItem getItem(GalleryItem group, Point coords);
-	
-	abstract Rectangle getSize( GalleryItem item );
+	/**
+	 * Returns the item at coords relative to the parent group.
+	 * 
+	 * @param group
+	 * @param coords
+	 * @return
+	 */
+	public abstract GalleryItem getItem(GalleryItem group, Point coords);
 
-	abstract boolean mouseDown(GalleryItem group, MouseEvent e, Point coords);
+	/**
+	 * Returns the size of a group.
+	 * 
+	 * @param item 
+	 * @return
+	 */
+	public abstract Rectangle getSize(GalleryItem item);
+
+	public abstract boolean mouseDown(GalleryItem group, MouseEvent e, Point coords);
 
 	public Gallery getGallery() {
 		return gallery;

@@ -95,9 +95,13 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 	protected Point getSize(int nbx, int nby, int itemSizeX, int itemSizeY, int minMargin, int autoMargin) {
 		int x = 0, y = 0;
 
-		x = nbx * itemSizeX + (nbx - 1) * margin + 2 * minMargin;
-		y = nby * itemSizeY + (nby + 1) * minMargin;
-
+		if (gallery.isVertical()) {
+			x = nbx * itemSizeX + (nbx - 1) * margin + 2 * minMargin;
+			y = nby * itemSizeY + (nby + 1) * minMargin;
+		} else {
+			x = nbx * itemSizeX + (nbx + 1) * minMargin;
+			y = nby * itemSizeY + (nby - 1) * margin + 2 * minMargin;
+		}
 		return new Point(x, y);
 	}
 
@@ -136,18 +140,21 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 			if (item == null)
 				return;
 
+			GalleryItem gItem = (GalleryItem) item;
+
 			int xPixelPos, yPixelPos;
 			if (gallery.isVertical()) {
 				xPixelPos = posX * (itemWidth + margin) + margin;
 				yPixelPos = posY * (itemHeight + minMargin) - gallery.translate + minMargin + ((parent == null) ? 0 : (parent.y) + offsetY);
+				gItem.x = xPixelPos;
+				gItem.y = yPixelPos + gallery.translate;
 			} else {
-				yPixelPos = posY * (itemHeight + margin) + margin;
 				xPixelPos = posX * (itemWidth + minMargin) - gallery.translate + minMargin + ((parent == null) ? 0 : (parent.x) + offsetY);
+				yPixelPos = posY * (itemHeight + margin) + margin;
+				gItem.x = xPixelPos + gallery.translate;
+				gItem.y = yPixelPos;
 			}
 
-			GalleryItem gItem = (GalleryItem) item;
-			gItem.x = xPixelPos;
-			gItem.y = yPixelPos + gallery.translate;
 			gItem.height = itemHeight;
 			gItem.width = itemWidth;
 
@@ -170,40 +177,73 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 		}
 	}
 
-	protected int[] getVisibleItems(GalleryItem group, int x, int y, int clipX, int clipY, int clipWidth, int clipHeight, int offsetY) {
+	protected int[] getVisibleItems(GalleryItem group, int x, int y, int clipX, int clipY, int clipWidth, int clipHeight, int offset) {
 
-		int hCount = ((Integer) group.getData(H_COUNT)).intValue();
-		// TODO: Not used ATM
-		// int vCount = ((Integer) group.getData(V_COUNT)).intValue();
+		if (gallery.isVertical()) {
+			int count = ((Integer) group.getData(H_COUNT)).intValue();
+			// TODO: Not used ATM
+			// int vCount = ((Integer) group.getData(V_COUNT)).intValue();
 
-		int firstLine = (clipY - y - offsetY - minMargin) / (itemHeight + minMargin);
-		if (firstLine < 0)
-			firstLine = 0;
+			int firstLine = (clipY - y - offset - minMargin) / (itemHeight + minMargin);
+			if (firstLine < 0)
+				firstLine = 0;
 
-		int firstItem = firstLine * hCount;
-		if (Gallery.DEBUG)
-			System.out.println("First line : " + firstLine);
+			int firstItem = firstLine * count;
+			if (Gallery.DEBUG)
+				System.out.println("First line : " + firstLine);
 
-		int lastLine = (clipY - y - offsetY + clipHeight - minMargin) / (itemHeight + minMargin);
+			int lastLine = (clipY - y - offset + clipHeight - minMargin) / (itemHeight + minMargin);
 
-		if (lastLine < firstLine)
-			lastLine = firstLine;
+			if (lastLine < firstLine)
+				lastLine = firstLine;
 
-		if (Gallery.DEBUG)
-			System.out.println("Last line : " + lastLine);
+			if (Gallery.DEBUG)
+				System.out.println("Last line : " + lastLine);
 
-		int lastItem = (lastLine + 1) * hCount;
+			int lastItem = (lastLine + 1) * count;
 
-		// exit if no item selected
-		if (lastItem - firstItem == 0)
-			return null;
+			// exit if no item selected
+			if (lastItem - firstItem == 0)
+				return null;
 
-		int[] indexes = new int[lastItem - firstItem];
-		for (int i = 0; i < (lastItem - firstItem); i++) {
-			indexes[i] = firstItem + i;
+			int[] indexes = new int[lastItem - firstItem];
+			for (int i = 0; i < (lastItem - firstItem); i++) {
+				indexes[i] = firstItem + i;
+			}
+
+			return indexes;
+		} else {
+			int count = ((Integer) group.getData(V_COUNT)).intValue();
+
+			int firstLine = (clipX - x - offset - minMargin) / (itemWidth + minMargin);
+			if (firstLine < 0)
+				firstLine = 0;
+
+			int firstItem = firstLine * count;
+			if (Gallery.DEBUG)
+				System.out.println("First line : " + firstLine);
+
+			int lastLine = (clipX - x - offset + clipWidth - minMargin) / (itemWidth + minMargin);
+
+			if (lastLine < firstLine)
+				lastLine = firstLine;
+
+			if (Gallery.DEBUG)
+				System.out.println("Last line : " + lastLine);
+
+			int lastItem = (lastLine + 1) * count;
+
+			// exit if no item selected
+			if (lastItem - firstItem == 0)
+				return null;
+
+			int[] indexes = new int[lastItem - firstItem];
+			for (int i = 0; i < (lastItem - firstItem); i++) {
+				indexes[i] = firstItem + i;
+			}
+
+			return indexes;
 		}
-
-		return indexes;
 	}
 
 	/**
@@ -235,7 +275,7 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 	public void dispose() {
 	}
 
-	boolean mouseDown(GalleryItem group, MouseEvent e, Point coords) {
+	public boolean mouseDown(GalleryItem group, MouseEvent e, Point coords) {
 		return false;
 	}
 
@@ -256,13 +296,23 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 			if (Gallery.DEBUG)
 				System.out.println("hCount :  " + hCount + " vCount : " + vCount);
 
-			int posX = index % hCount;
-			int posY = (index - posX) / hCount;
+			if (gallery.isVertical()) {
+				int posX = index % hCount;
+				int posY = (index - posX) / hCount;
 
-			int xPixelPos = posX * (itemWidth + margin) + margin;
-			int yPixelPos = posY * (itemHeight + minMargin) + minMargin + ((parent == null) ? 0 : (parent.y) + offsetY);
+				int xPixelPos = posX * (itemWidth + margin) + margin;
+				int yPixelPos = posY * (itemHeight + minMargin) + minMargin + ((parent == null) ? 0 : (parent.y) + offsetY);
 
-			return new Rectangle(xPixelPos, yPixelPos, this.itemWidth, this.itemHeight);
+				return new Rectangle(xPixelPos, yPixelPos, this.itemWidth, this.itemHeight);
+			} else {
+				int posY = index % vCount;
+				int posX = (index - posY) / vCount;
+
+				int yPixelPos = posY * (itemHeight + margin) + margin;
+				int xPixelPos = posX * (itemWidth + minMargin) + minMargin + ((parent == null) ? 0 : (parent.x) + offsetY);
+
+				return new Rectangle(xPixelPos, yPixelPos, this.itemWidth, this.itemHeight);
+			}
 		}
 		return null;
 	}

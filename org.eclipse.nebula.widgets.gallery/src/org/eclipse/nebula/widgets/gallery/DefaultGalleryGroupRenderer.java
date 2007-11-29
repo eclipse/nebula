@@ -115,7 +115,7 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 		}
 	}
 
-	void draw(GC gc, GalleryItem group, int x, int y, int clipX, int clipY, int clipWidth, int clipHeight) {
+	public void draw(GC gc, GalleryItem group, int x, int y, int clipX, int clipY, int clipWidth, int clipHeight) {
 		// Draw group
 		drawGroup(gc, group, x, y, clipX, clipY, clipWidth, clipHeight);
 
@@ -136,7 +136,7 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 		}
 	}
 
-	void layout(GC gc, GalleryItem group) {
+	public void layout(GC gc, GalleryItem group) {
 
 		int countLocal = group.getItemCount();
 
@@ -247,7 +247,7 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 		return super.getItem(group, coords, offset);
 	}
 
-	boolean mouseDown(GalleryItem group, MouseEvent e, Point coords) {
+	public boolean mouseDown(GalleryItem group, MouseEvent e, Point coords) {
 
 		if (gallery.isVertical()) { // V_SCROLL
 			if (coords.y - group.y <= titleHeight) {

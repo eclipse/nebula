@@ -40,6 +40,17 @@ public abstract class AbstractGalleryItemRenderer {
 		this.selected = selected;
 	}
 
+	/**
+	 * Draws an item. 
+	 *  
+	 * @param gc
+	 * @param item
+	 * @param index
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 */
 	public abstract void draw(GC gc, GalleryItem item, int index, int x, int y, int width, int height);
 
 	public abstract void dispose();

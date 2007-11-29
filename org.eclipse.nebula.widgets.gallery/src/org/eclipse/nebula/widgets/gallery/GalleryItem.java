@@ -38,9 +38,15 @@ public class GalleryItem extends Item {
 	protected GalleryItem[] items = null;
 
 	/**
-	 * Begining of the item. This value is for vertical or horizontal offset
-	 * depending of the Gallery settings. Only used when groups are enabled.
+	 * Bounds of this items in the current Gallery.
+	 * 
+	 * X and Y values are used for vertical or horizontal offset depending on
+	 * the Gallery settings. Only used when groups are enabled.
+	 * 
+	 * Width and hei
 	 */
+	//protected Rectangle bounds = new Rectangle(0, 0, 0, 0);
+
 	protected int x = 0;
 
 	protected int y = 0;
@@ -307,9 +313,10 @@ public class GalleryItem extends Item {
 	}
 
 	/**
-	 * Return the current bounds of the item.
+	 * Return the current bounds of the item. This method may return negative
+	 * values if it is not visible.
 	 * 
-	 * @return
+	 * @return 
 	 */
 	public Rectangle getBounds() {
 		// The y coords is relative to the client area because it may return
@@ -317,9 +324,11 @@ public class GalleryItem extends Item {
 		// on win32 when using the scroll bars. Instead, I use the absolute
 		// position and make is relative using the current translation.
 
-		// TODO : support horizontal mode.
-		// TODO : handle cases when the item is not on screen.
-		return new Rectangle(x, y - parent.translate, width, height);
+		if (parent.isVertical()) {
+			return new Rectangle(x, y - parent.translate, width, height);
+		} else {
+			return new Rectangle(x - parent.translate, y, width, height);
+		}
 	}
 
 	/**
