@@ -479,9 +479,16 @@ public class GridItem extends Item
     {
         checkWidget();
         
-        if (!isVisible()) return new Rectangle(0,0,0,0);
+        
+        //HACK: The -1000,-1000 xy coordinates below are a hack to deal with GridEditor issues.  In
+        //normal SWT Table, when an editor is created on Table and its positioned in the header area
+        //the header overlays the editor.  Because Grid (header and everything) is drawn on one
+        //composite, when an editor is positioned in the header area the editor overlays the header.
+        //So to fix this, when the editor is anywhere its not supposed to be seen (the editor 
+        //coordinates are determined by this getBounds) we position it out in timbuktu.
+        if (!isVisible()) return new Rectangle(-1000,-1000,0,0);
 
-        if (!parent.isShown(this)) return new Rectangle(0,0,0,0);
+        if (!parent.isShown(this)) return new Rectangle(-1000,-1000,0,0);
 
         Point origin = parent.getOrigin(parent.getColumn(columnIndex), this);
 
