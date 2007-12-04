@@ -22,6 +22,7 @@ import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -997,7 +998,27 @@ public abstract class AbstractCombo extends Composite {
 	 */
 	public void setToolTipText(String tooltip) {
 		checkWidget();
-		text.setToolTipText(tooltip);
-		button.setToolTipText(tooltip);
+		if (checkText())
+			text.setToolTipText(tooltip);
+		if (checkButton())
+			button.setToolTipText(tooltip);
+	}
+	
+	public void setBackground(Color bgcolor) {
+		checkWidget();
+		super.setBackground(bgcolor);
+		if (checkText())
+			text.setBackground(bgcolor);
+		if (checkButton())
+			button.setBackground(bgcolor);
+	}
+	
+	public void setForeground(Color fgcolor) {
+		checkWidget();
+		super.setForeground(fgcolor);
+		if (checkText())
+			text.setForeground(fgcolor);
+		if (checkButton())
+			button.setForeground(fgcolor);
 	}
 }
