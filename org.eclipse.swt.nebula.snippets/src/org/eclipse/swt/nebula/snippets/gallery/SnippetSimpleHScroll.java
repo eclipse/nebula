@@ -65,6 +65,17 @@ public class SnippetSimpleHScroll {
 			item.setText("Item " + i);
 		}
 
+		 group = new GalleryItem(gallery, SWT.NONE);
+
+		for (int i = 0; i < 50; i++) {
+			GalleryItem item = new GalleryItem(group, SWT.NONE);
+			if (itemImage != null) {
+				item.setImage(itemImage);
+			}
+			item.setText("Item " + i);
+		}
+
+		
 		shell.pack();
 		shell.open();
 		while (!shell.isDisposed()) {

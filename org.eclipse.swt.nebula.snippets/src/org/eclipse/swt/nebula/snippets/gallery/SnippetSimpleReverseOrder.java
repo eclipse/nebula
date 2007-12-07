@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Shell;
  * @author Nicolas Richeton (nicolas.richeton@gmail.com)
  */
 
-public class SnippetSimple {
+public class SnippetSimpleReverseOrder {
 
 	public static void main(String[] args) {
 		Display display = new Display();
@@ -63,7 +63,7 @@ public class SnippetSimple {
 			group.setExpanded(true);
 
 			for (int i = 0; i < 50; i++) {
-				GalleryItem item = new GalleryItem(group, SWT.NONE);
+				GalleryItem item = new GalleryItem(group, SWT.NONE, 0);
 				if (itemImage != null) {
 					item.setImage(itemImage);
 				}
