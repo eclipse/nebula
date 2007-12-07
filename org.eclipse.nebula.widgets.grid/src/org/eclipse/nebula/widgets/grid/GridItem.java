@@ -489,9 +489,13 @@ public class GridItem extends Item
         if (!isVisible()) return new Rectangle(-1000,-1000,0,0);
 
         if (!parent.isShown(this)) return new Rectangle(-1000,-1000,0,0);
+              
 
         Point origin = parent.getOrigin(parent.getColumn(columnIndex), this);
 
+        if (origin.x < 0 && parent.isRowHeaderVisible())
+        	return new Rectangle(-1000,-1000,0,0);
+        
         int width = 0;
 
         int span = getColumnSpan(columnIndex);
