@@ -246,6 +246,17 @@ public class GalleryItem extends Item {
 		return parent._getItem(this, index);
 	}
 
+	public GalleryItem[] getItems() {
+		checkWidget();
+		if( items == null )
+			return new GalleryItem[0];
+		
+		GalleryItem[] itemsLocal = new GalleryItem[this.items.length];
+		System.arraycopy(items, 0, itemsLocal, 0, this.items.length);
+
+		return itemsLocal;
+	}
+	
 	/**
 	 * Returns the index of childItem within this item or -1 if childItem is not
 	 * found. The search is only one level deep.
