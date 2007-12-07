@@ -30,6 +30,7 @@ import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.TreeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
@@ -292,6 +293,31 @@ public class Gallery extends Canvas {
 	}
 
 	/**
+	 * Removes the listener from the collection of listeners who will be
+	 * notified when items in the receiver are expanded or collapsed.
+	 * 
+	 * @param listener
+	 */
+	public void removeTreeListener(SelectionListener listener) {
+		checkWidget();
+		removeListener(SWT.Expand, listener);
+	}
+
+	/**
+	 * Adds the listener to the collection of listeners who will be notified
+	 * when an item in the receiver is expanded or collapsed by sending it one
+	 * of the messages defined in the TreeListener interface.
+	 * 
+	 * @param listener
+	 */
+	public void addTreeListener(TreeListener listener) {
+		checkWidget();
+		if (listener == null)
+			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		addListener(SWT.Expand, new TypedListener(listener));
+	}
+
+	/**
 	 * Send SWT.PaintItem for one item.
 	 * 
 	 * @param item
@@ -306,7 +332,7 @@ public class Gallery extends Canvas {
 		e.item = item;
 		e.type = SWT.PaintItem;
 		e.index = index;
-		//TODO: Does clipping need to be set ?
+		// TODO: Does clipping need to be set ?
 		// gc.setClipping(x, y, width, height);
 		e.gc = gc;
 		e.x = x;
@@ -327,10 +353,29 @@ public class Gallery extends Canvas {
 		e.widget = this;
 		e.item = item;
 		e.data = item.getData();
-		// TODO: enable e.index
+		// TODO: report index
 		// e.index = index;
 		try {
 			notifyListeners(SWT.Selection, e);
+		} catch (RuntimeException e1) {
+		}
+	}
+
+	/**
+	 * Send an Expand event for a GalleryItem
+	 * @param item
+	 * @param index
+	 */
+	protected void notifyTreeListeners(GalleryItem item, boolean state) {
+
+		Event e = new Event();
+		e.widget = this;
+		e.item = item;
+		e.data = item.getData();
+		// TODO: report index
+		// e.index = index;
+		try {
+			notifyListeners(SWT.Expand, e);
 		} catch (RuntimeException e1) {
 		}
 	}
@@ -486,11 +531,11 @@ public class Gallery extends Canvas {
 			} else if (translate + this.getClientArea().height < y + height) {
 				translate = y + height - this.getClientArea().height;
 			}
-			
+
 		} else {
 			y = rect.x;
 			height = rect.width;
-			
+
 			if (y < translate) {
 				translate = y;
 			} else if (translate + this.getClientArea().width < y + height) {
@@ -498,7 +543,6 @@ public class Gallery extends Canvas {
 			}
 		}
 
-		
 		this.updateScrollBarsProperties();
 		redraw();
 
@@ -600,7 +644,7 @@ public class Gallery extends Canvas {
 	 * @param i
 	 * @param selected
 	 * @param notifyListeners
-	 *            
+	 * 
 	 */
 	protected void setSelected(GalleryItem item, boolean selected, boolean notifyListeners) {
 		if (selected) {
@@ -620,10 +664,10 @@ public class Gallery extends Canvas {
 	}
 
 	protected void _addSelection(GalleryItem item) {
-		
-		if( item == null )
+
+		if (item == null)
 			return;
-		
+
 		if (this.isSelected(item))
 			return;
 
@@ -1226,20 +1270,28 @@ public class Gallery extends Canvas {
 
 	}
 
-	protected void addItem(GalleryItem i) {
-		checkWidget();
+	protected void addItem(GalleryItem item) {
+		_addItem(item, -1);
+	}
+
+	protected void addItem(GalleryItem item, int position) {
+		if (position < 0 || position >= getItemCount()) {
+			throw new IllegalArgumentException("ERROR_INVALID_RANGE ");
+		}
+		_addItem(item, position);
+	}
+
+	private void _addItem(GalleryItem item, int position) {
+		// Items can only be added in a standard gallery (not using SWT.VIRTUAL)
 		if (!virtual) {
 
-			if (items == null) {
-				items = new GalleryItem[1];
-			} else {
-				Item[] oldItems = items;
-				items = new GalleryItem[oldItems.length + 1];
-				System.arraycopy(oldItems, 0, items, 0, oldItems.length);
-			}
-			items[items.length - 1] = i;
+			// Insert item
+			items = (GalleryItem[]) _arrayAddItem(items, item, position);
+
+			// Update Gallery
 			updateStructuralValues(false);
 			updateScrollBarsProperties();
+
 		}
 	}
 
@@ -1342,9 +1394,9 @@ public class Gallery extends Canvas {
 	 */
 	private GalleryItem getGroup(Point coords) {
 		// If there is no item in the gallery, return asap
-		if( items == null )
+		if (items == null)
 			return null;
-		
+
 		int pos = vertical ? (coords.y + translate) : (coords.x + translate);
 
 		int index = 0;
@@ -1523,6 +1575,9 @@ public class Gallery extends Canvas {
 
 	public GalleryItem[] getItems() {
 		checkWidget();
+		if( items == null )
+			return new GalleryItem[0];
+		
 		GalleryItem[] itemsLocal = new GalleryItem[this.items.length];
 		System.arraycopy(items, 0, itemsLocal, 0, this.items.length);
 
@@ -1582,10 +1637,10 @@ public class Gallery extends Canvas {
 		_deselectAll();
 		for (int i = 0; i < items.length; i++) {
 			this.setSelected(items[i], true, false);
-			
+
 			// Ensure item is visibme
 			_showItem(items[i]);
-			
+
 			// Simulate mouse click to enable keyboard navigation
 			lastSingleClick = items[i];
 		}
@@ -1643,6 +1698,47 @@ public class Gallery extends Canvas {
 
 		if (index + 1 < array.length)
 			System.arraycopy(array, index + 1, newArray, index, newArray.length - index);
+
+		return newArray;
+	}
+
+	/**
+	 * Adds an item to an array.
+	 * 
+	 * @param array
+	 * @param object
+	 * @param index :
+	 *            if index == -1, item is added at the end of the array.
+	 * @return
+	 */
+	protected Object[] _arrayAddItem(Object[] array, Object object, int index) {
+
+		// Get current array length
+		int length = 0;
+		if (array != null)
+			length = array.length;
+
+		// Create new array
+		Object[] newArray = (Object[]) Array.newInstance(object.getClass(), length + 1);
+
+		if (array != null)
+			System.arraycopy(array, 0, newArray, 0, length);
+
+		if (index != -1) {
+			// Move all items
+			for (int i = newArray.length - 2; i >= index; i--) {
+				if (i >= 0) {
+					newArray[i + 1] = newArray[i];
+				}
+			}
+
+			// Insert item at index
+			newArray[index] = object;
+
+		} else {
+			// Insert item at the end
+			newArray[newArray.length - 1] = object;
+		}
 
 		return newArray;
 	}

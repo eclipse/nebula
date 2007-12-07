@@ -11,6 +11,8 @@
 package org.eclipse.nebula.widgets.gallery;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Item;
 
@@ -45,8 +47,7 @@ public class GalleryItem extends Item {
 	 * 
 	 * Width and hei
 	 */
-	//protected Rectangle bounds = new Rectangle(0, 0, 0, 0);
-
+	// protected Rectangle bounds = new Rectangle(0, 0, 0, 0);
 	protected int x = 0;
 
 	protected int y = 0;
@@ -86,6 +87,12 @@ public class GalleryItem extends Item {
 
 	protected int[] selectionIndices = null;
 
+	protected Font font;
+
+	protected Color foreground;
+
+	protected Color background;
+
 	/**
 	 * 
 	 */
@@ -119,6 +126,18 @@ public class GalleryItem extends Item {
 
 	}
 
+	public GalleryItem(Gallery parent, int style, int index) {
+		super(parent, style);
+		this.parent = parent;
+
+		if ((parent.getStyle() & SWT.VIRTUAL) > 0) {
+			virtualGallery = true;
+		} else {
+			parent.addItem(this, index);
+		}
+
+	}
+
 	public GalleryItem(GalleryItem parent, int style) {
 		super(parent, style);
 		this.parent = parent.parent;
@@ -130,21 +149,41 @@ public class GalleryItem extends Item {
 		}
 	}
 
+	public GalleryItem(GalleryItem parent, int style, int index) {
+		super(parent, style);
+		this.parent = parent.parent;
+		this.parentItem = parent;
+		if ((parent.getStyle() & SWT.VIRTUAL) > 0) {
+			virtualGallery = true;
+		} else {
+			parent.addItem(this, index);
+		}
+	}
+
 	/**
-	 * Only work when the table was created with SWT.VIRTUAL
+	 * Only work when the table was not created with SWT.VIRTUAL
 	 * 
 	 * @param item
 	 */
 	protected void addItem(GalleryItem item) {
+		_addItem(item, -1);
+	}
+
+	protected void addItem(GalleryItem item, int position) {
+		if (position < 0 || position > getItemCount()) {
+			throw new IllegalArgumentException("ERROR_INVALID_RANGE ");
+		}
+		_addItem(item, position);
+	}
+
+	private void _addItem(GalleryItem item, int position) {
+		// Items can only be added in a standard gallery (not using SWT.VIRTUAL)
 		if (!virtualGallery) {
-			if (items == null) {
-				items = new GalleryItem[1];
-			} else {
-				GalleryItem[] newItems = new GalleryItem[items.length + 1];
-				System.arraycopy(items, 0, newItems, 0, items.length);
-				items = newItems;
-			}
-			items[items.length - 1] = item;
+
+			// Insert item
+			items = (GalleryItem[]) parent._arrayAddItem(items, item, position);
+
+			// Update Gallery
 			parent.updateStructuralValues(false);
 			parent.updateScrollBarsProperties();
 
@@ -316,7 +355,7 @@ public class GalleryItem extends Item {
 	 * Return the current bounds of the item. This method may return negative
 	 * values if it is not visible.
 	 * 
-	 * @return 
+	 * @return
 	 */
 	public Rectangle getBounds() {
 		// The y coords is relative to the client area because it may return
@@ -329,6 +368,30 @@ public class GalleryItem extends Item {
 		} else {
 			return new Rectangle(x - parent.translate, y, width, height);
 		}
+	}
+
+	public Font getFont() {
+		return font;
+	}
+
+	public void setFont(Font font) {
+		this.font = font;
+	}
+
+	public Color getForeground() {
+		return foreground;
+	}
+
+	public void setForeground(Color foreground) {
+		this.foreground = foreground;
+	}
+
+	public Color getBackground() {
+		return background;
+	}
+
+	public void setBackground(Color background) {
+		this.background = background;
 	}
 
 	/**

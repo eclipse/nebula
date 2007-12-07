@@ -253,11 +253,18 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 			if (coords.y - group.y <= titleHeight) {
 
 				if (coords.x <= titleHeight) {
-					// Toggle
+					// Toggle expand state
 					group.setExpanded(!group.isExpanded());
+
+					// Deselect items if group is collapsed
 					if (!group.isExpanded()) {
 						group.deselectAll();
 					}
+
+					// Notify listeners
+					gallery.notifyTreeListeners(group, group.isExpanded());
+
+					// Update library
 					gallery.updateStructuralValues(false);
 					gallery.updateScrollBarsProperties();
 
@@ -275,11 +282,17 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 			if (coords.x - group.x <= titleHeight) {
 
 				if (coords.y >= group.height - titleHeight) {
-					// Toggle
+					// Toggle expand state
 					group.setExpanded(!group.isExpanded());
+
+					// Deselect items if group is collapsed
 					if (!group.isExpanded()) {
 						group.deselectAll();
 					}
+					// Notify listeners
+					gallery.notifyTreeListeners(group, group.isExpanded());
+
+					// Update library
 					gallery.updateStructuralValues(false);
 					gallery.updateScrollBarsProperties();
 
