@@ -2267,17 +2267,17 @@ public class Grid extends Canvas
         }
         else
         {
-            Vector items = new Vector();
+            Vector selectedRows = new Vector();
             for (Iterator iter = selectedCells.iterator(); iter.hasNext();)
             {
                 Point cell = (Point)iter.next();
                 GridItem item = getItem(cell.y);
-                if (!items.contains(item))
-                    items.add(item);                
+                if (!selectedRows.contains(item))
+                	selectedRows.add(item);                
             }
-            int[] indices = new int[items.size()];
+            int[] indices = new int[selectedRows.size()];
             int i = 0;
-            for (Iterator itemIterator = items.iterator(); itemIterator.hasNext(); )
+            for (Iterator itemIterator = selectedRows.iterator(); itemIterator.hasNext(); )
             {
                 GridItem item = (GridItem) itemIterator.next();
                 indices[i] = items.indexOf(item);
@@ -4578,9 +4578,13 @@ public class Grid extends Canvas
             newWidth = MIN_COLUMN_HEADER_WIDTH;
         }
         
-        if (columnScrolling && newWidth > getClientArea().width)
+        if (columnScrolling)
         {
-        	newWidth = getClientArea().width;
+        	int maxWidth = getClientArea().width;
+        	if (rowHeaderVisible)
+        		maxWidth -= rowHeaderWidth;
+        	if (newWidth > maxWidth)
+        		newWidth = maxWidth;        	
         }
         
         if (newWidth == columnBeingResized.getWidth())
@@ -7162,6 +7166,23 @@ public class Grid extends Canvas
      */
     private void onResize()
     {
+    	
+    	//CGross 1/2/08 - I don't really want to be doing this....
+    	//I shouldn't be changing something you user configured...
+    	//leaving out for now
+//        if (columnScrolling)
+//        {
+//        	int maxWidth = getClientArea().width;
+//        	if (rowHeaderVisible)
+//        		maxWidth -= rowHeaderWidth;
+//        	
+//        	for (Iterator cols = columns.iterator(); cols.hasNext();) {
+//				GridColumn col = (GridColumn) cols.next();
+//				if (col.getWidth() > maxWidth)
+//					col.setWidth(maxWidth);
+//			}
+//        }
+    	
         scrollValuesObsolete = true;
         topIndex = -1;
         bottomIndex = -1;
