@@ -1,5 +1,6 @@
 package org.eclipse.nebula.widgets.grid;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetEffect;
@@ -239,6 +240,16 @@ public class GridDropTargetEffect extends DropTargetEffect {
 					if(hoverColumn.isTree() && !hoverItem.isExpanded())
 					{
 						hoverItem.setExpanded(true);
+						
+						//Manually fire the expand event, otherwise if it hasn't been previously
+						//expanded, you'll see the dummy child node instead of actual contents.
+						//Also, if we don't check hasChildren and just fire the event, then the 
+						//content provider ends up being called and it asks for children of 
+						//something that says it doesn't have children.  
+						if (hoverItem.hasChildren())
+						{
+						    hoverItem.fireEvent(SWT.Expand);
+						}
 					}
 					expandBeginTime = 0;
 					expandItem = null;
