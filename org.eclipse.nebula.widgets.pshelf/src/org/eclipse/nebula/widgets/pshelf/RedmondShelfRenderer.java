@@ -28,6 +28,8 @@ import org.eclipse.swt.widgets.Display;
  */
 public class RedmondShelfRenderer extends AbstractRenderer {
 
+	private Color[] initialColors;	// to dispose created colors
+	
 	private int textMargin = 2;
 	private int margin = 4;
 	private PShelf parent;
@@ -253,22 +255,18 @@ public class RedmondShelfRenderer extends AbstractRenderer {
 		
 		baseColor2.dispose();
 		baseColor.dispose();
+
+		initialColors = new Color[] { gradient1, gradient2, selectedGradient1, selectedGradient2,
+				hoverGradient1, hoverGradient2, lineColor };
 	}
 
 	public void dispose() {
 		initialFont.dispose();
-		gradient1.dispose();
-		gradient2.dispose();
-		lineColor.dispose();
-		
-		selectedGradient1.dispose();
-		selectedGradient2.dispose();
-		
-		initialFont.dispose();
 		initialOpenFont.dispose();
 		
-		hoverGradient1.dispose();
-		hoverGradient2.dispose();
+		for (int i = 0; i < initialColors.length; i++) {
+			initialColors[i].dispose();
+		}
         
         super.dispose();
 	}
