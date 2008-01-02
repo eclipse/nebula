@@ -57,6 +57,8 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 
 	public void setItemWidth(int itemWidth) {
 		this.itemWidth = itemWidth;
+
+		updateGallery();
 	}
 
 	public int getItemHeight() {
@@ -65,15 +67,30 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 
 	public void setItemHeight(int itemHeight) {
 		this.itemHeight = itemHeight;
+
+		updateGallery();
+	}
+
+	private void updateGallery() {
+		// Update gallery
+		if (gallery != null) {
+			gallery.updateStructuralValues(true);
+			gallery.updateScrollBarsProperties();
+			gallery.redraw();
+		}
 	}
 
 	public void setItemSize(int width, int height) {
 		this.itemHeight = height;
 		this.itemWidth = width;
+
+		updateGallery();
 	}
 
 	public void setMinMargin(int minMargin) {
 		this.minMargin = minMargin;
+
+		updateGallery();
 	}
 
 	public boolean isAutoMargin() {
@@ -82,8 +99,8 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 
 	public void setAutoMargin(boolean autoMargin) {
 		this.autoMargin = autoMargin;
-		if (gallery != null)
-			gallery.updateStructuralValues(true);
+
+		updateGallery();
 	}
 
 	protected int calculateMargins(int size, int count, int itemSize) {

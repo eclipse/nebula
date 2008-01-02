@@ -363,6 +363,7 @@ public class Gallery extends Canvas {
 
 	/**
 	 * Send an Expand event for a GalleryItem
+	 * 
 	 * @param item
 	 * @param index
 	 */
@@ -1575,9 +1576,9 @@ public class Gallery extends Canvas {
 
 	public GalleryItem[] getItems() {
 		checkWidget();
-		if( items == null )
+		if (items == null)
 			return new GalleryItem[0];
-		
+
 		GalleryItem[] itemsLocal = new GalleryItem[this.items.length];
 		System.arraycopy(items, 0, itemsLocal, 0, this.items.length);
 
@@ -1609,6 +1610,10 @@ public class Gallery extends Canvas {
 	}
 
 	public GalleryItem[] getSelection() {
+		if (selection == null) {
+			return new GalleryItem[0];
+		}
+
 		return selection;
 	}
 
