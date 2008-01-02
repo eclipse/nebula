@@ -103,8 +103,8 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
 
         if (column.getImage() != null)
         {
-            gc.drawImage(column.getImage(), getBounds().x + x + pushedDrawingOffset,
-                         getBounds().y + topMargin + pushedDrawingOffset);
+                gc.drawImage(column.getImage(), getBounds().x + x + pushedDrawingOffset,
+                        getBounds().y + pushedDrawingOffset + getBounds().height - bottomMargin - column.getImage().getBounds().height);        		
             x += column.getImage().getBounds().width + imageSpacing;
         }
 
