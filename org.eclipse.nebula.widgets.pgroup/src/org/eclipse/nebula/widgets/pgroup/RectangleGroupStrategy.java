@@ -178,7 +178,9 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
             
             if (!getGroup().getExpanded())
             {
-                reg.add(new Rectangle(0,titleHeight,getGroup().getSize().x,getGroup().getSize().y - titleHeight));
+            	int regionHeight = getGroup().getSize().y - titleHeight;
+           	    if( regionHeight < 0 ) regionHeight = 0;
+                reg.add(new Rectangle(0,titleHeight,getGroup().getSize().x,regionHeight));
             }
             
             gc.setClipping(reg);
