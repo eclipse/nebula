@@ -9667,6 +9667,141 @@ public class Grid extends Canvas
     	Rectangle bottom = new Rectangle(rhw, getClientArea().height - DRAG_SCROLL_AREA_HEIGHT, getClientArea().width - rhw, DRAG_SCROLL_AREA_HEIGHT);
     	return top.contains(point) || bottom.contains(point);
     }
+    
+    /**
+     * Clears the item at the given zero-relative index in the receiver.
+     * The text, icon and other attributes of the item are set to the default
+     * value.  If the table was created with the <code>SWT.VIRTUAL</code> style,
+     * these attributes are requested again as needed.
+     *
+     * @param index the index of the item to clear
+     * @param allChildren <code>true</code> if all child items of the indexed item should be
+     * cleared recursively, and <code>false</code> otherwise
+     *
+     * @exception IllegalArgumentException <ul>
+     *    <li>ERROR_INVALID_RANGE - if the index is not between 0 and the number of elements in the list minus 1 (inclusive)</li>
+     * </ul>
+     * @exception SWTException <ul>
+     *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+     * </ul>
+     * 
+     * @see SWT#VIRTUAL
+     * @see SWT#SetData
+     */
+    public void clear(int index, boolean allChildren) {
+    	checkWidget();
+        if (index < 0 || index >= items.size()) {
+            SWT.error(SWT.ERROR_INVALID_RANGE);
+        }
+        
+    	GridItem item = getItem(index);
+		item.clear(allChildren);
+    	redraw();
+    }
+    
+    /**
+     * Clears the items in the receiver which are between the given
+     * zero-relative start and end indices (inclusive).  The text, icon
+     * and other attributes of the items are set to their default values.
+     * If the table was created with the <code>SWT.VIRTUAL</code> style,
+     * these attributes are requested again as needed.
+     *
+     * @param start the start index of the item to clear
+     * @param end the end index of the item to clear
+     * @param allChildren <code>true</code> if all child items of the range of items should be
+     * cleared recursively, and <code>false</code> otherwise
+     *
+     * @exception IllegalArgumentException <ul>
+     *    <li>ERROR_INVALID_RANGE - if either the start or end are not between 0 and the number of elements in the list minus 1 (inclusive)</li>
+     * </ul>
+     * @exception SWTException <ul>
+     *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+     * </ul>
+     * 
+     * @see SWT#VIRTUAL
+     * @see SWT#SetData
+     */
+    public void clear(int start, int end, boolean allChildren) {
+    	checkWidget();
+    	if (start > end) return;
+    	
+    	int count = items.size();
+    	if (!(0 <= start && start <= end && end < count)) {
+    		SWT.error(SWT.ERROR_INVALID_RANGE);
+    	}
+		for (int i=start; i<=end; i++) {
+			GridItem item = (GridItem)items.get(i);
+			item.clear(allChildren);
+		}
+		redraw();
+    }
+    
+    /**
+     * Clears the items at the given zero-relative indices in the receiver.
+     * The text, icon and other attributes of the items are set to their default
+     * values.  If the table was created with the <code>SWT.VIRTUAL</code> style,
+     * these attributes are requested again as needed.
+     *
+     * @param indices the array of indices of the items
+     * @param allChildren <code>true</code> if all child items of the indexed items should be
+     * cleared recursively, and <code>false</code> otherwise
+     *
+     * @exception IllegalArgumentException <ul>
+     *    <li>ERROR_INVALID_RANGE - if the index is not between 0 and the number of elements in the list minus 1 (inclusive)</li>
+     *    <li>ERROR_NULL_ARGUMENT - if the indices array is null</li>
+     * </ul>
+     * @exception SWTException <ul>
+     *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+     * </ul>
+     * 
+     * @see SWT#VIRTUAL
+     * @see SWT#SetData
+     */
+    public void clear(int [] indices, boolean allChildren) {
+    	checkWidget();
+    	if (indices == null) {
+    		SWT.error(SWT.ERROR_NULL_ARGUMENT);
+    	}
+    	if (indices.length == 0) return;
+    	
+    	int count = items.size();
+    	for (int i=0; i<indices.length; i++) {
+    		if (!(0 <= indices[i] && indices[i] < count)) {
+    			SWT.error(SWT.ERROR_INVALID_RANGE);
+    		}
+    	}
+    	for (int i=0; i<indices.length; i++) {
+			GridItem item = (GridItem)items.get(indices[i]);
+			item.clear(allChildren);
+    	}
+		redraw();
+    }
+    
+    /**
+     * Clears all the items in the receiver. The text, icon and other
+     * attributes of the items are set to their default values. If the
+     * table was created with the <code>SWT.VIRTUAL</code> style, these
+     * attributes are requested again as needed.
+     * 
+     * @param allChildren <code>true</code> if all child items of each item should be
+     * cleared recursively, and <code>false</code> otherwise
+     *
+     * @exception SWTException <ul>
+     *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+     * </ul>
+     * 
+     * @see SWT#VIRTUAL
+     * @see SWT#SetData
+     */
+    public void clearAll(boolean allChildren) {
+    	checkWidget();
+    	if (items.size() > 0)
+    		clear(0, items.size()-1, allChildren);
+    }
 }
 
 
