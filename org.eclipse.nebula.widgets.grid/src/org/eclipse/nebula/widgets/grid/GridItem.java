@@ -1138,6 +1138,7 @@ public class GridItem extends Item
             }
         }
 
+        this.getParent().topIndex = -1;
         this.getParent().bottomIndex = -1;
         this.getParent().setScrollValuesObsolete();
 

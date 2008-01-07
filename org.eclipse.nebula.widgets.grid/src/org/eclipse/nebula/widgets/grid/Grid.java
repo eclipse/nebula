@@ -545,7 +545,7 @@ public class Grid extends Canvas
      * 
      * @see #bottomIndex
      */
-    private int topIndex = -1;
+    int topIndex = -1;
     /**
      * Index of last visible item.  The value must never be read directly.  It is cached and 
      * updated when appropriate.  #getBottomIndex() should be called for every client (even internal 
