@@ -10,6 +10,7 @@
  *******************************************************************************/ 
 package org.eclipse.nebula.widgets.grid.internal;
 
+import org.eclipse.nebula.widgets.grid.Grid;
 import org.eclipse.nebula.widgets.grid.GridCellRenderer;
 import org.eclipse.nebula.widgets.grid.GridItem;
 import org.eclipse.nebula.widgets.grid.IInternalWidget;
@@ -32,7 +33,7 @@ import org.eclipse.swt.graphics.TextLayout;
 public class DefaultCellRenderer extends GridCellRenderer
 {
 
-    int leftMargin = 4;
+	int leftMargin = 4;
 
     int rightMargin = 4;
 
@@ -46,7 +47,11 @@ public class DefaultCellRenderer extends GridCellRenderer
 
     private int insideMargin = 3;
 
+    int treeIndent = 20;
+
     private ToggleRenderer toggleRenderer;
+
+	private BranchRenderer branchRenderer;
 
     private CheckBoxRenderer checkRenderer;
 
@@ -106,6 +111,12 @@ public class DefaultCellRenderer extends GridCellRenderer
 
         if (isTree())
         {
+        	branchRenderer.setBranches(getBranches(item));
+        	branchRenderer.setIndent(treeIndent);
+        	branchRenderer.setBounds(
+        			getBounds().x + x, getBounds().y, 
+        			getToggleIndent(item), getBounds().height + 1); // Take into account border
+        	
             x += getToggleIndent(item);
 
             toggleRenderer.setExpanded(item.isExpanded());
@@ -118,6 +129,9 @@ public class DefaultCellRenderer extends GridCellRenderer
             if (item.hasChildren())
                 toggleRenderer.paint(gc, null);
 
+            branchRenderer.setToggleBounds(toggleRenderer.getBounds());
+            branchRenderer.paint(gc, null);
+        	
             x += toggleRenderer.getBounds().width + insideMargin;
 
         }
@@ -259,7 +273,79 @@ public class DefaultCellRenderer extends GridCellRenderer
         }        
     }
 
-    /** 
+    /**
+     * Calculates the sequence of branch lines which should be rendered for the provided item
+     * @param item
+     * @return an array of integers composed using the constants in {@link BranchRenderer}
+     */
+    private int[] getBranches(GridItem item) {
+		int[] branches = new int[item.getLevel() + 1];
+		GridItem[] roots = item.getParent().getRootItems();
+		
+		// Is this a node or a leaf?
+		if (item.getParentItem() == null) {
+			// Add descender if not last item
+			if (!item.isExpanded() && roots[roots.length-1].equals(item)) {
+				if (item.hasChildren())
+					branches[item.getLevel()] = BranchRenderer.LAST_ROOT;
+				else
+					branches[item.getLevel()] = BranchRenderer.SMALL_L;
+			}
+			else {
+				if (item.hasChildren())
+					branches[item.getLevel()] = BranchRenderer.ROOT;
+				else
+					branches[item.getLevel()] = BranchRenderer.SMALL_T;
+			}
+			
+		}
+		else if (item.hasChildren())
+			if (item.isExpanded())
+				branches[item.getLevel()] = BranchRenderer.NODE;
+			else
+				branches[item.getLevel()] = BranchRenderer.NONE;
+		else
+			branches[item.getLevel()] = BranchRenderer.LEAF;
+		
+		// Branch for current item
+		GridItem parent = item.getParentItem();
+		if (parent == null)
+			return branches;
+		
+		// Are there siblings below this item?
+		if (parent.indexOf(item) < parent.getItemCount() - 1)
+			branches[item.getLevel() - 1] = BranchRenderer.T;
+		
+		// Is the next node a root?
+		else if (parent.getParentItem() == null && !parent.equals(roots[roots.length - 1]))
+			branches[item.getLevel() - 1] = BranchRenderer.T;
+		
+		// This must be the last element at this level
+		else
+			branches[item.getLevel() - 1] = BranchRenderer.L;
+
+		Grid grid = item.getParent();
+		item = parent;
+		parent = item.getParentItem();
+		
+		// Branches for parent items
+		while(item.getLevel() > 0) {
+			if (parent.indexOf(item) == parent.getItemCount() - 1) {
+				if (parent.getParentItem() == null && !grid.getRootItem(grid.getRootItemCount() - 1).equals(parent))
+					branches[item.getLevel() - 1] = BranchRenderer.I;
+				else
+					branches[item.getLevel() - 1] = BranchRenderer.NONE;
+			}
+			else
+				branches[item.getLevel() - 1] = BranchRenderer.I;
+			item = parent;
+			parent = item.getParentItem();
+		}
+		// item should be null at this point
+		return branches;
+	}
+
+	/** 
      * {@inheritDoc}
      */
     public Point computeSize(GC gc, int wHint, int hHint, Object value)
@@ -457,7 +543,7 @@ public class DefaultCellRenderer extends GridCellRenderer
 
     private int getToggleIndent(GridItem item)
     {
-        return item.getLevel() * 20;
+        return item.getLevel() * treeIndent;
     }
 
     private boolean overToggle(GridItem item, Point point)
@@ -495,6 +581,9 @@ public class DefaultCellRenderer extends GridCellRenderer
         {
             toggleRenderer = new ToggleRenderer();
             toggleRenderer.setDisplay(getDisplay());
+            
+            branchRenderer = new BranchRenderer();
+            branchRenderer.setDisplay(getDisplay());
         }
     }
 
