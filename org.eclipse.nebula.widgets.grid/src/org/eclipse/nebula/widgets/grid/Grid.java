@@ -3776,13 +3776,22 @@ public class Grid extends Canvas
     public void showColumn(GridColumn col)
     {
         checkWidget();
-
-        if (!hScroll.getVisible())
+        
+        if (!col.isVisible())
         {
-            return;
+        	GridColumnGroup group = col.getColumnGroup();
+        	group.setExpanded(!group.getExpanded());
+            if (group.getExpanded())
+            {
+                group.notifyListeners(SWT.Expand,new Event());
+            }
+            else
+            {
+                group.notifyListeners(SWT.Collapse,new Event());
+            }
         }
 
-        if (!col.isVisible())
+        if (!hScroll.getVisible())
         {
             return;
         }
