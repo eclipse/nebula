@@ -460,6 +460,11 @@ public class Grid extends Canvas
     private boolean linesVisible = true;
 
     /**
+     * Are tree lines visible?
+     */
+	private boolean treeLinesVisible = true;
+
+    /**
      * Grid line color.
      */
     private Color lineColor;
@@ -1869,6 +1874,22 @@ public class Grid extends Canvas
         checkWidget();
         return linesVisible;
     }
+    
+	/**
+	 * Returns true if the tree lines are visible.
+	 * 
+	 * @return Returns the treeLinesVisible.
+	 * @throws org.eclipse.swt.SWTException
+	 * <ul>
+	 * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+	 * created the receiver</li>
+	 * </ul>
+	 */
+	public boolean getTreeLinesVisible() {
+		checkWidget();
+		return treeLinesVisible;
+	}
 
     /**
      * Returns the next visible item in the table.
@@ -3408,6 +3429,23 @@ public class Grid extends Canvas
         this.linesVisible = linesVisible;
         redraw();
     }
+
+	/**
+	 * Sets the tree line visibility.
+	 * 
+	 * @param treeLinesVisible
+	 * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
+	 */
+	public void setTreeLinesVisible(boolean treeLinesVisible) {
+		checkWidget();
+		this.treeLinesVisible = treeLinesVisible;
+        redraw();
+	}
 
     /**
      * Sets the row header renderer.

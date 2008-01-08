@@ -111,11 +111,14 @@ public class DefaultCellRenderer extends GridCellRenderer
 
         if (isTree())
         {
-        	branchRenderer.setBranches(getBranches(item));
-        	branchRenderer.setIndent(treeIndent);
-        	branchRenderer.setBounds(
-        			getBounds().x + x, getBounds().y, 
-        			getToggleIndent(item), getBounds().height + 1); // Take into account border
+        	boolean renderBranches = item.getParent().getTreeLinesVisible();
+        	if(renderBranches) {
+        		branchRenderer.setBranches(getBranches(item));
+        		branchRenderer.setIndent(treeIndent);
+        		branchRenderer.setBounds(
+        				getBounds().x + x, getBounds().y, 
+        				getToggleIndent(item), getBounds().height + 1); // Take into account border
+        	}
         	
             x += getToggleIndent(item);
 
@@ -129,8 +132,10 @@ public class DefaultCellRenderer extends GridCellRenderer
             if (item.hasChildren())
                 toggleRenderer.paint(gc, null);
 
-            branchRenderer.setToggleBounds(toggleRenderer.getBounds());
-            branchRenderer.paint(gc, null);
+            if (renderBranches) {
+                branchRenderer.setToggleBounds(toggleRenderer.getBounds());
+                branchRenderer.paint(gc, null);
+            }
         	
             x += toggleRenderer.getBounds().width + insideMargin;
 
