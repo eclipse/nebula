@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Item;
  * </p>
  * 
  * @author Nicolas Richeton (nicolas.richeton@gmail.com)
+ * @contributor Peter Centgraf (bugs 212071, 212073)
  * 
  */
 
@@ -382,27 +383,45 @@ public class GalleryItem extends Item {
 	}
 
 	public Font getFont() {
+		checkWidget ();
 		return font;
 	}
 
 	public void setFont(Font font) {
+		checkWidget ();
+		if (font != null && font.isDisposed ()) {
+			SWT.error (SWT.ERROR_INVALID_ARGUMENT);
+		}
 		this.font = font;
+		this.parent.redraw(this);
 	}
 
 	public Color getForeground() {
+		checkWidget ();
 		return foreground;
 	}
 
 	public void setForeground(Color foreground) {
+		checkWidget();
+		if (foreground != null && foreground.isDisposed ()) {
+			SWT.error (SWT.ERROR_INVALID_ARGUMENT);
+		}
 		this.foreground = foreground;
+		this.parent.redraw(this);
 	}
 
 	public Color getBackground() {
+		checkWidget ();
 		return background;
 	}
 
 	public void setBackground(Color background) {
+		checkWidget();
+		if (background != null && background.isDisposed ()) {
+			SWT.error (SWT.ERROR_INVALID_ARGUMENT);
+		}
 		this.background = background;
+		this.parent.redraw(this);
 	}
 
 	/**

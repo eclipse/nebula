@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.Display;
  * 
  * @author Nicolas Richeton (nicolas.richeton@gmail.com)
  * @contributor Richard Michalsky (bugs 195415, 195443)
+ * @contributor Peter Centgraf (bugs 212071, 212073)
  */
 public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 
@@ -54,8 +55,6 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 
 	boolean showLabels = true;
 
-	private Font font = null;
-
 	public boolean isShowLabels() {
 		return showLabels;
 	}
@@ -68,6 +67,7 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 		// Set defaults
 		foregroundColor = Display.getDefault().getSystemColor(SWT.COLOR_LIST_FOREGROUND);
 		backgroundColor = Display.getDefault().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+
 		selectionForegroundColor = Display.getDefault().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT);
 		selectionBackgroundColor = Display.getDefault().getSystemColor(SWT.COLOR_LIST_SELECTION);
 
@@ -77,7 +77,10 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 
 	public void draw(GC gc, GalleryItem item, int index, int x, int y, int width, int height) {
 		Image itemImage = item.getImage();
-		gc.setFont(font);
+		Color itemBackgroundColor = item.getBackground();
+		Color itemForegroundColor = item.getForeground();
+		// Set up the GC
+		gc.setFont(getFont(item));
 
 		int useableHeight = height;
 		int fontHeight = 0;
@@ -114,12 +117,32 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 			}
 		}
 
-		// Draw selection background (rounded rectangles)
-		if (selected) {
-			gc.setBackground(selectionBackgroundColor);
-			gc.setForeground(selectionBackgroundColor);
-			gc.fillRoundRectangle(x, y, width, useableHeight, 15, 15);
+		// Set colors
+		// if (selected) {
+		// gc.setBackground(selectionBackgroundColor);
+		// gc.setForeground(selectionBackgroundColor);
+		// } else {
+		// if (itemBackgroundColor != null) {
+		// gc.setBackground(itemBackgroundColor);
+		// }
+		// if (itemForegroungColor != null) {
+		// gc.setForeground(itemForegroungColor);
+		// }
+		// }
 
+		// Draw background (rounded rectangles)
+		if (selected || itemBackgroundColor != null) {
+
+			// Set colors
+			if (selected) {
+				gc.setBackground(selectionBackgroundColor);
+				gc.setForeground(selectionBackgroundColor);
+			} else if (itemBackgroundColor != null) {
+				gc.setBackground(itemBackgroundColor);
+			}
+
+			// Draw
+			gc.fillRoundRectangle(x, y, width, useableHeight, 15, 15);
 			if (item.getText() != null && showLabels) {
 				gc.fillRoundRectangle(x, y + height - fontHeight, width, fontHeight, 15, 15);
 			}
@@ -134,10 +157,28 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 
 		// Draw label
 		if (item.getText() != null && showLabels) {
-			// Set up the GC
-			gc.setBackground(this.backgroundColor);
-			gc.setForeground(selected ? this.selectionForegroundColor : this.foregroundColor);
-			gc.setBackground(selected ? selectionBackgroundColor : this.selectionBackgroundColor);
+			// Set colors
+			if (selected) {
+				// Selected : use selection colors.
+				gc.setForeground(selectionForegroundColor);
+				gc.setBackground(selectionBackgroundColor);
+			} else {
+				// Not selected, use item values or defaults.
+
+				// Background
+				if (itemBackgroundColor != null) {
+					gc.setBackground(itemBackgroundColor);
+				} else {
+					gc.setBackground(backgroundColor);
+				}
+
+				// Foreground
+				if (itemForegroundColor != null) {
+					gc.setForeground(itemForegroundColor);
+				} else {
+					gc.setForeground(foregroundColor);
+				}
+			}
 
 			// Create label
 			String text = RendererHelper.createLabel(item.getText(), gc, width - 10);
@@ -149,6 +190,29 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 			// Draw
 			gc.drawText(text, x + textxShift, y + height - fontHeight, true);
 		}
+	}
+
+	/**
+	 * @param item
+	 * @return the Font to use for this item
+	 */
+	protected Font getFont(GalleryItem item) {
+		// Item font
+		Font itemFont = item.getFont();
+
+		// Parent item font
+		if (itemFont == null) {
+			if (item.getParentItem() != null)
+				itemFont = item.getParentItem().getFont();
+		}
+
+		// Gallery font
+		if (itemFont == null) {
+			if (item.getParentItem() != null)
+				itemFont = item.getParent().getFont();
+		}
+
+		return itemFont;
 	}
 
 	public void setDropShadowsSize(int dropShadowsSize) {
@@ -202,9 +266,13 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 	 * font is used.
 	 * 
 	 * @return the font
+	 * @deprecated Use {@link Gallery#getFont()}
 	 */
 	public Font getFont() {
-		return font;
+		if (gallery != null) {
+			return gallery.getFont();
+		}
+		return null;
 	}
 
 	/**
@@ -213,12 +281,11 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 	 * 
 	 * @param font
 	 *            the font to set
+	 * @deprecated Use {@link Gallery#setFont(Font)}
 	 */
 	public void setFont(Font font) {
-		if (this.font != font) {
-			this.font = font;
-			if (getGallery() != null)
-				getGallery().redraw();
+		if (gallery != null) {
+			gallery.setFont(font);
 		}
 	}
 

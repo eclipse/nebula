@@ -98,6 +98,7 @@ import org.eclipse.swt.widgets.TypedListener;
  * </p>
  * 
  * @author Nicolas Richeton (nicolas.richeton@gmail.com)
+ * @contributor Peter Centgraf (bugs 212071, 212073)
  */
 public class Gallery extends Canvas {
 
@@ -994,6 +995,10 @@ public class Gallery extends Canvas {
 
 	public void redraw(GalleryItem item) {
 		checkWidget();
+
+		// Redraw only the item's bounds
+		Rectangle bounds = item.getBounds();
+		redraw(bounds.x, bounds.y, bounds.width, bounds.height, true);
 	}
 
 	/**
