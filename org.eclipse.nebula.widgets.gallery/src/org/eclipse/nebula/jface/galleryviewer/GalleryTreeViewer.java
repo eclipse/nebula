@@ -1,5 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2007-2008 Peter Centgraf.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors :
+ *    Peter Centgraf - initial implementation
+ *******************************************************************************/
 package org.eclipse.nebula.jface.galleryviewer;
-
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -41,18 +50,18 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 	 * true if we are inside a preservingSelection() call
 	 */
 	protected boolean preservingSelection;
-	
+
 	/**
 	 * The row object reused
 	 */
 	private GalleryViewerRow cachedRow;
 
 	/**
-	 * Creates a gallery viewer on a newly-created gallery control under the given
-	 * parent. The gallery control is created using the SWT style bits
-	 * <code>MULTI, V_SCROLL,</code> and <code>BORDER</code>. The
-	 * viewer has no input, no content provider, a default label provider, no
-	 * sorter, and no filters.
+	 * Creates a gallery viewer on a newly-created gallery control under the
+	 * given parent. The gallery control is created using the SWT style bits
+	 * <code>MULTI, V_SCROLL,</code> and <code>BORDER</code>. The viewer
+	 * has no input, no content provider, a default label provider, no sorter,
+	 * and no filters.
 	 * 
 	 * @param parent
 	 *            the parent control
@@ -62,10 +71,10 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 	}
 
 	/**
-	 * Creates a gallery viewer on a newly-created gallery control under the given
-	 * parent. The gallery control is created using the given SWT style bits. The
-	 * viewer has no input, no content provider, a default label provider, no
-	 * sorter, and no filters.
+	 * Creates a gallery viewer on a newly-created gallery control under the
+	 * given parent. The gallery control is created using the given SWT style
+	 * bits. The viewer has no input, no content provider, a default label
+	 * provider, no sorter, and no filters.
 	 * 
 	 * @param parent
 	 *            the parent control
@@ -82,8 +91,9 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 	}
 
 	/**
-	 * Creates a gallery viewer on the given gallery control. The viewer has no input,
-	 * no content provider, a default label provider, no sorter, and no filters.
+	 * Creates a gallery viewer on the given gallery control. The viewer has no
+	 * input, no content provider, a default label provider, no sorter, and no
+	 * filters.
 	 * 
 	 * @param gallery
 	 *            the gallery control
@@ -92,18 +102,23 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 		super();
 		this.gallery = gallery;
 		super.setAutoExpandLevel(ALL_LEVELS);
-		
+
 		hookControl(gallery);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#addTreeListener(org.eclipse.swt.widgets.Control, org.eclipse.swt.events.TreeListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#addTreeListener(org.eclipse.swt.widgets.Control,
+	 *      org.eclipse.swt.events.TreeListener)
 	 */
 	protected void addTreeListener(Control control, TreeListener listener) {
 		((Gallery) control).addTreeListener(listener);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#getChild(org.eclipse.swt.widgets.Widget,
 	 *      int)
 	 */
@@ -117,7 +132,9 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#getChildren(org.eclipse.swt.widgets.Widget)
 	 */
 	protected Item[] getChildren(Widget widget) {
@@ -128,15 +145,13 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 			Gallery gallery = (Gallery) widget;
 			if (gallery.getItemCount() > 0) {
 				return gallery.getItems();
-			}
-			else {
+			} else {
 				return new GalleryItem[0];
 			}
 		}
 		return null;
 	}
-	
-	
+
 	protected Widget getColumnViewerOwner(int columnIndex) {
 		if (columnIndex == 0) {
 			return getGallery();
@@ -144,28 +159,36 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#getExpanded(org.eclipse.swt.widgets.Item)
 	 */
 	protected boolean getExpanded(Item item) {
-		return ((GalleryItem)item).isExpanded();
+		return ((GalleryItem) item).isExpanded();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#getItemCount(org.eclipse.swt.widgets.Control)
 	 */
 	protected int getItemCount(Control control) {
-		return ((Gallery)control).getItemCount();
+		return ((Gallery) control).getItemCount();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#getItemCount(org.eclipse.swt.widgets.Item)
 	 */
 	protected int getItemCount(Item item) {
-		return ((GalleryItem)item).getItemCount();
+		return ((GalleryItem) item).getItemCount();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#getItems(org.eclipse.swt.widgets.Item)
 	 */
 	protected Item[] getItems(Item item) {
@@ -177,36 +200,41 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 		return items;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#getParentItem(org.eclipse.swt.widgets.Item)
 	 */
 	protected Item getParentItem(Item item) {
-		return ((GalleryItem)item).getParentItem();
+		return ((GalleryItem) item).getParentItem();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#getSelection(org.eclipse.swt.widgets.Control)
 	 */
 	protected Item[] getSelection(Control control) {
-		Item[] selection = ((Gallery)control).getSelection();
+		Item[] selection = ((Gallery) control).getSelection();
 		if (selection == null) {
 			return new GalleryItem[0];
-		}
-		else {
+		} else {
 			return selection;
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#newItem(org.eclipse.swt.widgets.Widget, int, int)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#newItem(org.eclipse.swt.widgets.Widget,
+	 *      int, int)
 	 */
 	protected Item newItem(Widget parent, int style, int index) {
 
 		GalleryItem item;
 
 		if (parent instanceof GalleryItem) {
-			item = (GalleryItem) createNewRowPart(getViewerRowFromItem(parent),
-					style, index).getItem();
+			item = (GalleryItem) createNewRowPart(getViewerRowFromItem(parent), style, index).getItem();
 		} else {
 			item = (GalleryItem) createNewRowPart(null, style, index).getItem();
 		}
@@ -214,58 +242,62 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 		return item;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#removeAll(org.eclipse.swt.widgets.Control)
 	 */
 	protected void removeAll(Control control) {
-		((Gallery)control).clearAll();
+		((Gallery) control).clearAll();
 	}
-	
-	
+
 	public void setAutoExpandLevel(int level) {
 		throw new UnsupportedOperationException("Gallery must be fully expanded.");
 	}
-	
+
 	/**
 	 * <p>
-	 * Gallery expects contents to have exactly 2 levels of hierarchy, with groups
-	 * as the root elements and image thumbnails as direct children of the groups.
-	 * This method accepts ITreeContentProvider and ITreePathContentProvider as-is, and
-	 * relies on the providers to return contents with the correct structure.
+	 * Gallery expects contents to have exactly 2 levels of hierarchy, with
+	 * groups as the root elements and image thumbnails as direct children of
+	 * the groups. This method accepts ITreeContentProvider and
+	 * ITreePathContentProvider as-is, and relies on the providers to return
+	 * contents with the correct structure.
 	 * </p>
 	 * <p>
-	 * This method also accepts IStructuredContentProvider and wraps it in a 
-	 * FlatTreeContentProvider with an empty string as the root node.  If you need a
-	 * different root node, construct your own FlatTreeContentProvider and pass it here.
-	 * If you want the Gallery to suppress the collapsable group header, call
+	 * This method also accepts IStructuredContentProvider and wraps it in a
+	 * FlatTreeContentProvider with an empty string as the root node. If you
+	 * need a different root node, construct your own FlatTreeContentProvider
+	 * and pass it here. If you want the Gallery to suppress the collapsable
+	 * group header, call
 	 * </p>
 	 * <code>getGallery().setGroupRenderer(new NoGroupRenderer());</code>
 	 */
 	public void setContentProvider(IContentProvider provider) {
-		if (provider instanceof IStructuredContentProvider 
-				&& !(provider instanceof ITreeContentProvider
-						|| provider instanceof ITreePathContentProvider)) {
+		if (provider instanceof IStructuredContentProvider && !(provider instanceof ITreeContentProvider || provider instanceof ITreePathContentProvider)) {
 			// Wrap a table-style contents with a single root node.
-			super.setContentProvider(
-					new FlatTreeContentProvider((IStructuredContentProvider) provider));
-		}
-		else {
+			super.setContentProvider(new FlatTreeContentProvider((IStructuredContentProvider) provider));
+		} else {
 			super.setContentProvider(provider);
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#setExpanded(org.eclipse.swt.widgets.Item, boolean)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#setExpanded(org.eclipse.swt.widgets.Item,
+	 *      boolean)
 	 */
 	protected void setExpanded(Item item, boolean expand) {
-		((GalleryItem)item).setExpanded(expand);
-//		if (contentProviderIsLazy) {
-//			// force repaints to happen
-//			getControl().update();
-//		}
+		((GalleryItem) item).setExpanded(expand);
+		// if (contentProviderIsLazy) {
+		// // force repaints to happen
+		// getControl().update();
+		// }
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#setSelection(java.util.List)
 	 */
 	protected void setSelection(List items) {
@@ -281,20 +313,24 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 		getGallery().setSelection(newItems);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#showItem(org.eclipse.swt.widgets.Item)
 	 */
 	protected void showItem(Item item) {
-		gallery.showItem((GalleryItem)item);
+		gallery.showItem((GalleryItem) item);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.Viewer#getControl()
 	 */
 	public Control getControl() {
 		return gallery;
 	}
-	
+
 	/**
 	 * Returns this gallery viewer's gallery.
 	 * 
@@ -304,22 +340,20 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 		return gallery;
 	}
 
-	
 	protected Item getItemAt(Point point) {
 		return gallery.getItem(point);
 	}
-	
-	
+
 	protected ColumnViewerEditor createViewerEditor() {
 		// TODO: implement editing support
 		return null;
 	}
 
 	/**
-	 * For a GalleryViewer with a gallery with the VIRTUAL style bit set, set the
-	 * number of children of the given element or tree path. To set the number
-	 * of children of the invisible root of the gallery, you can pass the input
-	 * object or an empty tree path.
+	 * For a GalleryViewer with a gallery with the VIRTUAL style bit set, set
+	 * the number of children of the given element or tree path. To set the
+	 * number of children of the invisible root of the gallery, you can pass the
+	 * input object or an empty tree path.
 	 * 
 	 * @param elementOrTreePath
 	 *            the element, or tree path
@@ -328,8 +362,8 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 	 * @since 3.2
 	 */
 	public void setChildCount(final Object elementOrTreePath, final int count) {
-//		if (isBusy())
-//			return;
+		// if (isBusy())
+		// return;
 		preservingSelection(new Runnable() {
 			public void run() {
 				if (internalIsInputOrEmptyPath(elementOrTreePath)) {
@@ -351,12 +385,12 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 	 * @see org.eclipse.jface.viewers.ColumnViewer#getRowPartFromItem(org.eclipse.swt.widgets.Widget)
 	 */
 	protected ViewerRow getViewerRowFromItem(Widget item) {
-		if( cachedRow == null ) {
+		if (cachedRow == null) {
 			cachedRow = new GalleryViewerRow((GalleryItem) item);
 		} else {
 			cachedRow.setItem((GalleryItem) item);
 		}
-		
+
 		return cachedRow;
 	}
 
@@ -377,26 +411,27 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 		}
 
 		if (rowIndex >= 0) {
-			return getViewerRowFromItem(new GalleryItem((GalleryItem) parent.getItem(),
-					SWT.NONE, rowIndex));
+			return getViewerRowFromItem(new GalleryItem((GalleryItem) parent.getItem(), SWT.NONE, rowIndex));
 		}
 
-		return getViewerRowFromItem(new GalleryItem((GalleryItem) parent.getItem(),
-				SWT.NONE));
+		return getViewerRowFromItem(new GalleryItem((GalleryItem) parent.getItem(), SWT.NONE));
 	}
 
 	/**
-	 * Removes the element at the specified index of the parent.  The selection is updated if required.
+	 * Removes the element at the specified index of the parent. The selection
+	 * is updated if required.
 	 * 
-	 * @param parentOrTreePath the parent element, the input element, or a tree path to the parent element 
-	 * @param index child index
+	 * @param parentOrTreePath
+	 *            the parent element, the input element, or a tree path to the
+	 *            parent element
+	 * @param index
+	 *            child index
 	 * @since 3.3
 	 */
 	public void remove(final Object parentOrTreePath, final int index) {
-//		if (isBusy())
-//			return;
-		final List oldSelection = new LinkedList(Arrays
-				.asList(((TreeSelection) getSelection()).getPaths()));
+		// if (isBusy())
+		// return;
+		final List oldSelection = new LinkedList(Arrays.asList(((TreeSelection) getSelection()).getPaths()));
 		preservingSelection(new Runnable() {
 			public void run() {
 				TreePath removedPath = null;
@@ -426,8 +461,7 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 				}
 				if (removedPath != null) {
 					boolean removed = false;
-					for (Iterator it = oldSelection.iterator(); it
-							.hasNext();) {
+					for (Iterator it = oldSelection.iterator(); it.hasNext();) {
 						TreePath path = (TreePath) it.next();
 						if (path.startsWith(removedPath, getComparer())) {
 							it.remove();
@@ -435,26 +469,22 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 						}
 					}
 					if (removed) {
-						setSelection(new TreeSelection(
-								(TreePath[]) oldSelection
-										.toArray(new TreePath[oldSelection
-												.size()]), getComparer()),
-								false);
+						setSelection(new TreeSelection((TreePath[]) oldSelection.toArray(new TreePath[oldSelection.size()]), getComparer()), false);
 					}
-					
+
 				}
 			}
 		});
 	}
-	
+
 	public void editElement(Object element, int column) {
-		if( element instanceof TreePath ) {
+		if (element instanceof TreePath) {
 			setSelection(new TreeSelection((TreePath) element));
 			GalleryItem[] items = gallery.getSelection();
-			
-			if( items.length == 1 ) {
+
+			if (items.length == 1) {
 				ViewerRow row = getViewerRowFromItem(items[0]);
-				
+
 				if (row != null) {
 					ViewerCell cell = row.getCell(column);
 					if (cell != null) {
@@ -468,5 +498,5 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 			super.editElement(element, column);
 		}
 	}
-	
+
 }
