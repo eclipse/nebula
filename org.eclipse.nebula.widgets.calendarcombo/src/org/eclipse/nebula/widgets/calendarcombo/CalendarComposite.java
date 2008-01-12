@@ -106,6 +106,8 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 	private IColorManager mColorManager;
 	
 	private ISettings mSettings;
+	
+	private ICalendarListener mMainListener;
 
 	static {
 		String[] weekdays = mDFS.getWeekdays();
@@ -602,6 +604,9 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 	}
 
 	private void notifyClose() {
+		// notify ourselves first or dates will not be equal on the fired event and the getDate() on the combo itself
+		mMainListener.popupClosed();
+		
 		for (int i = 0; i < mListeners.size(); i++) {
 			ICalendarListener l = (ICalendarListener) mListeners.get(i);
 			l.popupClosed();
@@ -609,6 +614,9 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 	}
 
 	private void notifyListeners(Calendar date) {
+		// notify ourselves first
+		mMainListener.dateChanged(date);
+		
 		for (int i = 0; i < mListeners.size(); i++) {
 			ICalendarListener l = (ICalendarListener) mListeners.get(i);
 			l.dateChanged(date);
@@ -616,10 +624,17 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 	}
 
 	private void notifyListeners() {
+		// notify ourselves first
+		mMainListener.dateChanged(mSelectedDay);
+
 		for (int i = 0; i < mListeners.size(); i++) {
 			ICalendarListener l = (ICalendarListener) mListeners.get(i);
 			l.dateChanged(mSelectedDay);
 		}
+	}
+	
+	void addMainCalendarListener(ICalendarListener listener) {
+		mMainListener = listener;
 	}
 
 	public void addCalendarListener(ICalendarListener listener) {

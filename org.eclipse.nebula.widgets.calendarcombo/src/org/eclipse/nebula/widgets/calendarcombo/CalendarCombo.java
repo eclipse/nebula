@@ -652,8 +652,8 @@ public class CalendarCombo extends Composite {
 				mCalendarComposite.addCalendarListener(listener);
 			}
 
-			mCalendarComposite.addCalendarListener(new ICalendarListener() {
-				public void dateChanged(Calendar date) {					
+			mCalendarComposite.addMainCalendarListener(new ICalendarListener() {
+				public void dateChanged(Calendar date) {
 					mAllowTextEntry = true;
 					mCombo.removeAll();
 
@@ -667,7 +667,7 @@ public class CalendarCombo extends Composite {
 					updateDate();
 					mAllowTextEntry = false;
 				}
-
+							
 				public void popupClosed() {
 					kill(14);
 				}
