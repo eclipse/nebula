@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.formattedtext;
 
-import java.awt.Toolkit;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Text;
 
@@ -39,7 +37,9 @@ public abstract class AbstractFormatter implements ITextFormatter {
    * Emits an audio beep.
    */
   protected void beep() {
-    Toolkit.getDefaultToolkit().beep();
+    if ( text != null ) {
+      text.getDisplay().beep();
+    }
   }
 
 	/**
