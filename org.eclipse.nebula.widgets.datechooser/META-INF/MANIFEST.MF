@@ -3,7 +3,11 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Datechooser Plug-in
 Bundle-SymbolicName: org.eclipse.nebula.widgets.datechooser
 Bundle-Version: 1.0.0
-Require-Bundle: org.eclipse.swt,
- org.eclipse.nebula.widgets.formattedtext
 Export-Package: org.eclipse.nebula.widgets.datechooser
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Import-Package: org.eclipse.nebula.widgets.formattedtext,
+ org.eclipse.swt,
+ org.eclipse.swt.events,
+ org.eclipse.swt.graphics,
+ org.eclipse.swt.layout,
+ org.eclipse.swt.widgets
