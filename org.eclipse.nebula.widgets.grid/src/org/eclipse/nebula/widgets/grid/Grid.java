@@ -679,7 +679,6 @@ public class Grid extends Canvas
         super(parent, checkStyle(style));
 
         // initialize drag & drop support
-        setDragDetect(false);						// disable automatic drag detect in Control
         setData("DEFAULT_DRAG_SOURCE_EFFECT", new GridDragSourceEffect(this));
         setData("DEFAULT_DROP_TARGET_EFFECT", new GridDropTargetEffect(this));
 
@@ -6255,7 +6254,7 @@ public class Grid extends Canvas
             return;
         }
         
-        if (hoveringOnSelectionDragArea)
+        if (cellSelectionEnabled && hoveringOnSelectionDragArea)
         {
         	if(dragDetect(e))
         	{
@@ -6771,7 +6770,7 @@ public class Grid extends Canvas
         handleCellHover(x, y);
 
         // Is this Grid a DragSource ??
-        if (getData("DragSource") != null) {
+        if (cellSelectionEnabled && getData("DragSource") != null) {
             if (handleHoverOnSelectionDragArea(x, y))
             {
                 return;
@@ -8215,6 +8214,7 @@ public class Grid extends Canvas
         }
         
         this.cellSelectionEnabled = cellSelection;
+        setDragDetect(!cellSelectionEnabled);
     }
     
     /**
