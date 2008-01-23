@@ -13,6 +13,7 @@ package org.eclipse.nebula.widgets.gallery;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Item;
 
@@ -270,6 +271,16 @@ public class GalleryItem extends Item {
 
 		return parent._indexOf(this, childItem);
 	}
+	
+	public void setText(String text) {
+		super.setText(text);
+		parent.redraw(this);
+	}
+	
+	public void setImage(Image image) {
+		super.setImage(image);
+		parent.redraw(this);
+	}
 
 	/**
 	 * Returns true if the receiver is expanded, and false otherwise.
@@ -287,6 +298,9 @@ public class GalleryItem extends Item {
 	 */
 	public void setExpanded(boolean expanded) {
 		this.expanded = expanded;
+		parent.updateStructuralValues(false);
+		parent.updateScrollBarsProperties();
+		parent.redraw();
 	}
 
 	public String getDescription() {
@@ -295,6 +309,7 @@ public class GalleryItem extends Item {
 
 	public void setDescription(String description) {
 		this.description = description;
+		parent.redraw(this);
 	}
 
 	/**
