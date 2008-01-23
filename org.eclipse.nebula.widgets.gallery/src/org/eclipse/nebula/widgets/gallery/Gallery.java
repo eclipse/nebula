@@ -960,6 +960,7 @@ public class Gallery extends Canvas {
 		if (items == null)
 			return null;
 
+		
 		int start = vertical ? (clipping.y + translate) : (clipping.x + translate);
 
 		int end = vertical ? (clipping.y + clipping.height + translate) : (clipping.x + clipping.width + translate);
@@ -1281,7 +1282,7 @@ public class Gallery extends Canvas {
 	}
 
 	protected void addItem(GalleryItem item, int position) {
-		if (position < 0 || position >= getItemCount()) {
+		if (position < 0 || position > getItemCount()) {
 			throw new IllegalArgumentException("ERROR_INVALID_RANGE ");
 		}
 		_addItem(item, position);
