@@ -6254,12 +6254,16 @@ public class Grid extends Canvas
             return;
         }
         
-        if (cellSelectionEnabled && hoveringOnSelectionDragArea)
+        if (isListening(SWT.DragDetect))
         {
-        	if(dragDetect(e))
-        	{
-        		return;
-        	}
+	        if ((cellSelectionEnabled && hoveringOnSelectionDragArea) ||
+	        	(item != null && !cellSelectionEnabled))
+	        {
+	        	if(dragDetect(e))
+	        	{
+	        		return;
+	        	}
+	        }
         }
         
         if (item != null)
@@ -6514,7 +6518,7 @@ public class Grid extends Canvas
             {
                 columnBeingPushed.fireListeners();
             }
-
+            setCapture(false);
             return;
         }
 
