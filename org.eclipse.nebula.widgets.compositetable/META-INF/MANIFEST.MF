@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Compositetable Plug-in
+Bundle-SymbolicName: org.eclipse.nebula.widgets.compositetable
+Bundle-Version: 1.0.0
+Export-Package: org.eclipse.swt.nebula.widgets.compositetable,
+ org.eclipse.swt.nebula.widgets.compositetable.day,
+ org.eclipse.swt.nebula.widgets.compositetable.month,
+ org.eclipse.swt.nebula.widgets.compositetable.timeeditor
+Require-Bundle: org.eclipse.swt
