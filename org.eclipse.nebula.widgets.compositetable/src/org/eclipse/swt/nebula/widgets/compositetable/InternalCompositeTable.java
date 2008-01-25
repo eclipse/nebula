@@ -1142,9 +1142,11 @@ class InternalCompositeTable extends Composite implements Listener {
 
 			deselectCurrentRowIfVisible();
 
-			int delta = topRow - vSlider.getSelection();
-			int oldCurrentRow = currentRow;
-			currentRow += delta;
+//			int delta = topRow - vSlider.getSelection();
+//			int oldCurrentRow = currentRow;
+//			currentRow += delta;
+            int oldCurrentRow = currentRow;
+            currentRow = vSlider.getSelection();
 			
 			setTopRow(vSlider.getSelection());
 			
