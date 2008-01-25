@@ -674,6 +674,19 @@ public class CompositeTable extends Canvas {
 		}
 	}
 
+    /**
+    * Method refreshRow. Refreshes a row in the CompositeTable
+    * from the original data. Row is an offset from the
+    * top of the table window. In order to get the current row in the
+    * underlying data structure, compute getTopRow() + getCurrentRow().
+    */
+    public void refreshRow(int row) {
+           if (contentPane != null) {
+//              contentPane.updateVisibleRows();
+                contentPane.refreshRow(row);
+            }
+    }
+       
 	/**
 	 * Method getCurrentColumn. Returns the column number of the
 	 * currently-focused column (0-based).

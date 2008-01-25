@@ -696,6 +696,18 @@ class InternalCompositeTable extends Composite implements Listener {
       resetFocus();
 	}
 
+    void refreshRow(int row) {
+        if (topRow > -1) {
+            if (isRowVisible(row)) {
+                fireRefreshEvent(row + topRow, ((TableRow) rows.get(row)).getRowControl());
+            }
+        }
+    }
+    
+    private boolean isRowVisible(int row) {
+        return row >= 0 && row < numRowsVisible;
+    }
+
 	/**
 	 * Make sure that something sane inside the table has focus.
 	 */
