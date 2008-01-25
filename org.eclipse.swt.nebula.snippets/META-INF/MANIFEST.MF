@@ -16,7 +16,7 @@ Require-Bundle: org.eclipse.swt,
  org.eclipse.nebula.widgets.grid,
  org.eclipse.nebula.widgets.pgroup,
  org.eclipse.nebula.widgets.pshelf,
- org.eclipse.swt.nebula
+ org.eclipse.nebula.widgets.compositetable
 Export-Package: org.eclipse.swt.nebula.snippets.ctree,
  org.eclipse.swt.nebula.snippets.grid
 Bundle-ClassPath: .
