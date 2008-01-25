@@ -1203,6 +1203,7 @@ class InternalCompositeTable extends Composite implements Listener {
 	 * Scroll wheel event handling.
 	 */
 	public void handleEvent(Event event) {
+        event.doit = false;
 		if (event.count > 0) {
 			if (topRow > 0) {
 				if (!fireRequestRowChangeEvent()) {
