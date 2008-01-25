@@ -4,6 +4,6 @@ Bundle-Name: Tests Plug-in
 Bundle-SymbolicName: org.eclipse.swt.nebula.tests
 Bundle-Version: 1.0.0
 Bundle-Localization: plugin
-Fragment-Host: org.eclipse.swt.nebula;bundle-version="1.0.0"
+Fragment-Host: org.eclipse.nebula.widgets.compositetable;bundle-version="1.0.0"
 Require-Bundle: org.junit,
- org.eclipse.swt.nebula
+ org.eclipse.nebula.widgets.compositetable
