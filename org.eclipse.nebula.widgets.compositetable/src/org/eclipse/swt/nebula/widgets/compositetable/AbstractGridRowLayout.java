@@ -154,7 +154,7 @@ abstract class AbstractGridRowLayout extends CompositeTableLayout {
             int top = computeTop(maxHeight, desiredHeight);
             
             setBounds(columnObject, leftPos, top, widthIncludingBorderWidth, 
-                    desiredHeight);
+                    desiredHeight - 1);
             widthRemaining -= width;
         }
 
@@ -242,7 +242,7 @@ abstract class AbstractGridRowLayout extends CompositeTableLayout {
     protected abstract void setBounds(Widget columnObject, int left, int top, int width, int height);
     
     private int computeTop(int maxHeight, int desiredHeight) {
-        return maxHeight - desiredHeight - 1;
+        return ((maxHeight - desiredHeight) / 2);
     }
 
     private int[] computeWeights(int[] weights, int numChildren) {
