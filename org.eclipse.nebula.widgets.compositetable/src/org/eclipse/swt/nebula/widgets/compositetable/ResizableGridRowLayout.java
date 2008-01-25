@@ -163,7 +163,9 @@ public class ResizableGridRowLayout extends GridRowLayout {
                         if (row.isDisposed()) return;
                         
                         Control[] children = row.getChildren();
-                        Control resizedColumn = children[savedResizedColNum];
+                        
+                        Control resizedColumn = (Control) getColumnAt(row, savedResizedColNum);
+                        // Control resizedColumn = children[savedResizedColNum];
                         Point resizedColumnSize = resizedColumn.getSize();
                         int adjustedResizedColumnWidth = savedResizedColWidth - 2 * 
                             CELL_BORDER_WIDTH;
@@ -171,7 +173,8 @@ public class ResizableGridRowLayout extends GridRowLayout {
                                 - resizedColumnSize.x;
                         resizedColumn.setSize(adjustedResizedColumnWidth,
                                 resizedColumnSize.y);
-                        Control columnToTheRightOfResizedColumn = children[savedResizedColNum + 1];
+                        Control columnToTheRightOfResizedColumn = (Control) getColumnAt(row, savedResizedColNum+1);
+                        // Control columnToTheRightOfResizedColumn = children[savedResizedColNum + 1];
                         Rectangle rightBounds = columnToTheRightOfResizedColumn.getBounds();
                         columnToTheRightOfResizedColumn.setBounds(rightBounds.x
                                 + resizedColumnWidthChange, rightBounds.y,

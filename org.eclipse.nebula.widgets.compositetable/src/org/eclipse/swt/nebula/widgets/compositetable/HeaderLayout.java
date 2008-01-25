@@ -258,18 +258,22 @@ class HeaderLayout extends AbstractGridRowLayout {
         Table table = resizedColumn.getParent();
         int[] columnOrder = table.getColumnOrder();
         int resizedColumnPosition = 0;
+        
         for (int i = 0; i < columnOrder.length; i++) {
             if (columnOrder[i] == resizedColumnNumber) {
                 resizedColumnPosition = i;
                 break;
             }
-        }
+        } 
         
         if (resizedColumnIsNotTheLastColumn(resizedColumnPosition, resizedColumn.getParent())) {
             // Compute resized column width change and make sure the resized 
             // column's width is sane
             int resizedColumnWidth = resizedColumn.getWidth();
-            int columnWidthChange = lastWidths[resizedColumnPosition] - resizedColumnWidth;
+            
+            // int columnWidthChange = lastWidths[resizedColumnPosition] - resizedColumnWidth;
+            int columnWidthChange = lastWidths[columnOrder[resizedColumnPosition]] - resizedColumnWidth;
+            
             int columnWidthChangeTooFar = MINIMUM_COL_WIDTH - resizedColumnWidth;
             if (columnWidthChangeTooFar > 0) {
                 columnWidthChange -= columnWidthChangeTooFar;
@@ -279,7 +283,11 @@ class HeaderLayout extends AbstractGridRowLayout {
             
             // Fix the width of the column to the right of the resized column
             int columnToTheRightOfResizedColumnWidth = 
-                lastWidths[resizedColumnPosition+1] + columnWidthChange;
+                lastWidths[columnOrder[resizedColumnPosition+1]] + columnWidthChange;
+            
+            // int columnToTheRightOfResizedColumnWidth = 
+            //     lastWidths[resizedColumnPosition+1] + columnWidthChange;
+            
             columnWidthChangeTooFar = MINIMUM_COL_WIDTH - columnToTheRightOfResizedColumnWidth;
             if (columnWidthChangeTooFar > 0) {
                 columnWidthChange += columnWidthChangeTooFar;
