@@ -20,7 +20,7 @@
 
 # ---Configuration variables---
 
-@RELEASE_VERSION='0.9.2.1'
+@RELEASE_VERSION='0.9.3'
 
 @ZIP_EXE='/usr/bin/zip'
 @MV_EXE='/bin/mv'
