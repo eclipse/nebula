@@ -20,20 +20,27 @@
 
 # ---Configuration variables---
 
-@RELEASE_VERSION='0.8.2'
+@RELEASE_VERSION='0.9.2.1'
 
-@JAR_EXE='/cygdrive/C/java/bin/jar'
 @ZIP_EXE='/usr/bin/zip'
-@MV_EXE='/usr/bin/mv'
-@RM_EXE='/usr/bin/rm'
-@MKDIR_EXE='/usr/bin/mkdir'
-@JAVA_EXE='/cygdrive/C/java/bin/java'
-@JAVADOC_EXE='/cygdrive/C/java/bin/javadoc'
+@MV_EXE='/bin/mv'
+@RM_EXE='/bin/rm'
+@MKDIR_EXE='/bin/mkdir'
+
+@JAVA_EXE='/usr/local/java/current/bin/java'
+@JAR_EXE='/usr/local/java/current/bin/jar'
+@JAVADOC_EXE='/usr/local/java/current/bin/javadoc'
+
+@ECLIPSE_HOME='/home/djo/bin/eclipse/current'
+@SEP=':'  # Platform path separator
 
 @COMPOSITETABLE_JAR='nebula_compositetable.jar'
 
-@CLASSPATH="#{@COMPOSITETABLE_JAR};../org.eclipse.swt.nebula.snippets/bin;c:/eclipse/eclipse/plugins/org.eclipse.swt_3.2.1.v3235e.jar;C:/eclipse/eclipse/plugins/org.eclipse.swt.win32.win32.x86_3.2.1.v3235.jar"
-@SWT_LIB_PATH='C:\eclipse\eclipse\configuration\org.eclipse.osgi\bundles\79\1\.cp'
+@SWT='org.eclipse.swt_3.3.2.v3347.jar'
+@SWT_NATIVE='org.eclipse.swt.gtk.linux.x86_3.3.2.v3347.jar'
+
+@CLASSPATH="#{@COMPOSITETABLE_JAR}#{@SEP}../org.eclipse.swt.nebula.snippets/bin#{@SEP}#{@ECLIPSE_HOME}/plugins/#{@SWT}#{@SEP}#{@ECLIPSE_HOME}/plugins/#{@SWT_NATIVE}"
+@SWT_LIB_PATH="#{@ECLIPSE_HOME}/configuration/org.eclipse.osgi/bundles/57/1/.cp"
 
 @DOWNLOAD_ZIP='nebula_compositetable_beta.zip'
 
@@ -90,19 +97,19 @@ print `#{@ZIP_EXE} -r src.zip src#{@ORIG}compositetable`
 # Create snippets zip
 Dir.chdir '../org.eclipse.swt.nebula.snippets/src' do
 	print `#{@ZIP_EXE} -r snippets.zip .#{@SNIPPETS}`
-	print `#{@MV_EXE} snippets.zip ../../org.eclipse.swt.nebula.widgets`
+	print `#{@MV_EXE} snippets.zip ../../org.eclipse.nebula.widgets.compositetable`
 end
 
 # Create README file
 File.open('README', 'w') {|f| f << @README }
 
 # Create JavaDoc
-command="#{@JAVADOC_EXE} -classpath '#{@CLASSPATH};./bin' -d JavaDoc -sourcepath src org.eclipse.swt.nebula.widgets.compositetable"
+command="#{@JAVADOC_EXE} -classpath '#{@CLASSPATH}#{@SEP}./bin' -d JavaDoc -sourcepath src org.eclipse.swt.nebula.widgets.compositetable"
 print command
 print `#{command}`
 
 # Create CompositeTable download zip
-print `#{@ZIP_EXE} #{@DOWNLOAD_ZIP} #{@COMPOSITETABLE_JAR} src.zip snippets.zip JavaDoc README epl-v10.html`
+print `#{@ZIP_EXE} -r #{@DOWNLOAD_ZIP} #{@COMPOSITETABLE_JAR} src.zip snippets.zip JavaDoc README epl-v10.html`
 
 # Make sure we can run using the JAR we just built
 command="#{@JAVA_EXE} -classpath '#{@CLASSPATH}'  -Djava.library.path='#{@SWT_LIB_PATH}' org.eclipse.swt.nebula.snippets.compositetable.CompositeTableSnippet0"
