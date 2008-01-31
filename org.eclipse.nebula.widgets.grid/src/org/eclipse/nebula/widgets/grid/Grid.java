@@ -6257,7 +6257,7 @@ public class Grid extends Canvas
         if (isListening(SWT.DragDetect))
         {
 	        if ((cellSelectionEnabled && hoveringOnSelectionDragArea) ||
-	        	(item != null && !cellSelectionEnabled))
+	        	(!cellSelectionEnabled && item != null && selectedItems.contains(item)))
 	        {
 	        	if(dragDetect(e))
 	        	{
