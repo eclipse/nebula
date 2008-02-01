@@ -736,6 +736,8 @@ public class Grid extends Canvas
         RGB cellSel = blend(sel,white,50);
         
         cellHeaderSelectionBackground = new Color(getDisplay(),cellSel);
+        
+        setDragDetect(false);
     }    
     
     
@@ -6416,7 +6418,17 @@ public class Grid extends Canvas
         {
             selectionEvent.stateMask = e.stateMask;
             notifyListeners(SWT.Selection, selectionEvent);
+            
+            if (!cellSelectionEnabled)
+            {
+                if (isListening(SWT.DragDetect))
+                {
+                	dragDetect(e);
+                }
+            }
         }
+        
+        
     }
 
     /**
@@ -8217,8 +8229,7 @@ public class Grid extends Canvas
             redraw();
         }
         
-        this.cellSelectionEnabled = cellSelection;
-        setDragDetect(!cellSelectionEnabled);
+        this.cellSelectionEnabled = cellSelection;        
     }
     
     /**
