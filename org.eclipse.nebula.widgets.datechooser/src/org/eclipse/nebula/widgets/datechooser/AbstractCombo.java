@@ -534,6 +534,7 @@ public abstract class AbstractCombo extends Composite {
 	public void setEditable(boolean editable) {
 		checkWidget();
 		text.setEditable(editable);
+		button.setEnabled(editable);
 	}
 
 	/**
