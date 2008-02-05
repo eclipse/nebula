@@ -969,14 +969,6 @@ public abstract class AbstractCombo extends Composite {
 		}
 	}
 
-	public void setRedraw(boolean redraw) {
-		checkWidget();
-//		if(checkButton()) button.setRedraw(redraw);
-//		if(checkText()) text.setRedraw(redraw);
-//		if(checkContent()) contentShell.setRedraw(redraw);
-		super.setRedraw(redraw);
-	}
-
 	/**
 	 * If stretch is false, then the width of the popup will be
 	 * set to its preferred width (via computeSize(SWT.DEFAULT, SWT.DEFAULT))
