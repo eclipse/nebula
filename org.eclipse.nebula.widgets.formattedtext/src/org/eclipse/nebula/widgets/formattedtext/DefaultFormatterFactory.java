@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Eric Wuillai.
+ * Copyright (c) 2005, 2008 Eric Wuillai.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,6 +45,7 @@ public abstract class DefaultFormatterFactory {
 
   static {
     formatters = new HashMap();
+    formatters.put(String.class, StringFormatter.class);
     formatters.put(Date.class, DateFormatter.class);
     formatters.put(Number.class, NumberFormatter.class);
   }

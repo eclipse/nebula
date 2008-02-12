@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Eric Wuillai.
+ * Copyright (c) 2005, 2008 Eric Wuillai.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -165,7 +165,11 @@ public class FormattedText {
   }
 
   /**
-   * Associates a formatter to the widget.
+   * Associates a formatter to the widget.<br>
+   * Parameter can not be null. In some situations, the FormattedText component
+   * must not do formatting (eg. when reusing the same object for editing of
+   * different types of values). In this case, use a StringFormatter. This
+   * formatter do no formatting.
    * 
    * @param formatter formatter
    */
