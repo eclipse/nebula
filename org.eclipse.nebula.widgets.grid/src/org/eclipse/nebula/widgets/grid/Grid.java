@@ -6444,6 +6444,12 @@ public class Grid extends Canvas
             if (hoveringOnColumnResizer)
             {
                 columnBeingResized.pack();
+                columnBeingResized.fireResized();
+                for (int index = displayOrderedColumns.indexOf(columnBeingResized) + 1; index < displayOrderedColumns.size(); index ++)
+                {
+                    GridColumn col = (GridColumn)displayOrderedColumns.get(index);
+                    if (col.isVisible()) col.fireMoved();
+                }
                 resizingColumn = false;
                 handleHoverOnColumnResizer(e.x, e.y);
                 return;
