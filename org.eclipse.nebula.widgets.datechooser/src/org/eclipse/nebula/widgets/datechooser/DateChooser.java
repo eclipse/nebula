@@ -301,31 +301,38 @@ public class DateChooser extends Composite {
 				boolean ctrl = (event.stateMask & SWT.CTRL) != 0;
 				switch ( event.keyCode ) {
 					case SWT.ARROW_LEFT :
+					  if ( event.stateMask != 0 ) return;
 						setFocus(focusIndex - 1);
 						break;
 					case SWT.ARROW_RIGHT :
+            if ( event.stateMask != 0 ) return;
 						setFocus(focusIndex + 1);
 						break;
 					case SWT.ARROW_UP :
+            if ( event.stateMask != 0 ) return;
 						setFocus(focusIndex - 7);
 						break;
 					case SWT.ARROW_DOWN :
+            if ( event.stateMask != 0 ) return;
 						setFocus(focusIndex + 7);
 						break;
 					case SWT.PAGE_DOWN :
-						if ( ! navigationEnabled ) return;
+						if ( event.stateMask != 0 || ! navigationEnabled ) return;
 						changeCurrentMonth(ctrl ? 12 : 1);
 						break;
 					case SWT.PAGE_UP :
-						if ( ! navigationEnabled ) return;
+						if ( event.stateMask != 0 || ! navigationEnabled ) return;
 						changeCurrentMonth(ctrl ? -12 : -1);
 						break;
 					case ' ' :
 						select(focusIndex, event.stateMask);
 						break;
 					case SWT.HOME :
+            if ( event.stateMask != 0 ) return;
 						setFocusOnToday(autoSelectOnFooter);
 						break;
+					default :
+					  return;
 				}
 				if ( hasFocus ) {
 					grid.redraw();
