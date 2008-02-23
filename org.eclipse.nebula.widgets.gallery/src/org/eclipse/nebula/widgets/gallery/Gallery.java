@@ -142,7 +142,7 @@ public class Gallery extends Canvas {
 
 	int lastIndexOf = 0;
 
-	private GalleryItem lastSingleClick = null;
+	protected GalleryItem lastSingleClick = null;
 
 	private Color backgroundColor;
 
@@ -909,7 +909,7 @@ public class Gallery extends Canvas {
 
 	}
 
-	private synchronized void onPaint(GC gc) {
+	void onPaint(GC gc) {
 		if (DEBUG)
 			System.out.println("paint");
 
@@ -960,7 +960,6 @@ public class Gallery extends Canvas {
 		if (items == null)
 			return null;
 
-		
 		int start = vertical ? (clipping.y + translate) : (clipping.x + translate);
 
 		int end = vertical ? (clipping.y + clipping.height + translate) : (clipping.x + clipping.width + translate);
@@ -1250,7 +1249,7 @@ public class Gallery extends Canvas {
 	// scrollHorizontal();
 	// }
 
-	private void scrollVertical() {
+	protected void scrollVertical() {
 		int areaHeight = getClientArea().height;
 
 		if (gHeight > areaHeight) {
@@ -1263,7 +1262,7 @@ public class Gallery extends Canvas {
 		}
 	}
 
-	private void scrollHorizontal() {
+	protected void scrollHorizontal() {
 
 		int areaWidth = getClientArea().width;
 		if (gWidth > areaWidth) {
@@ -1446,28 +1445,24 @@ public class Gallery extends Canvas {
 	 * will be created again at their first use.<br/>
 	 * 
 	 */
-	public void clearAll() {
+	public void clearAll(boolean all) {
 		checkWidget();
-		if (items != null) {
-			// Clear items
-			for (int i = 0; i < items.length; i++) {
 
-				// Dispose items if not virtual
-				if (!virtual) {
-					if (items[i] != null) {
-						// TODO: send a dispose event
-						items[i].dispose();
+		if (items == null)
+			return;
+
+		if (virtual) {
+			items = new GalleryItem[items.length];
+		} else {
+			for (int i = 0; i < items.length; i++) {
+				if (items[i] != null) {
+					if (all) {
+						items[i].clearAll(true);
+					} else {
+						items[i].clear();
 					}
 				}
-
-				// Empty item
-				items[i] = null;
 			}
-		}
-
-		// Free array if not virtual
-		if (!virtual) {
-			items = null;
 		}
 
 		// TODO: I'm clearing selection here
@@ -1488,15 +1483,20 @@ public class Gallery extends Canvas {
 	public void clear(int i) {
 		checkWidget();
 
-		// TODO: When a Gallery is not virtual
-		// Item must be removed and a dispose event must be fired.
+		// Item is already cleared, return immediately.
+		if (items[i] == null)
+			return;
 
 		if (virtual) {
+			// Clear item
 			items[i] = null;
-
-			updateStructuralValues(false);
-			updateScrollBarsProperties();
+		} else {
+			// Reset item
+			items[i].clear();
 		}
+
+		updateStructuralValues(false);
+		updateScrollBarsProperties();
 	}
 
 	/**
@@ -1660,14 +1660,49 @@ public class Gallery extends Canvas {
 
 	public void remove(GalleryItem item) {
 		checkWidget();
+
 		if (!virtual) {
 			int index = this.indexOf(item);
-			remove(index);
+			items[index]._dispose();
 		}
+
+		updateStructuralValues(false);
+		updateScrollBarsProperties();
+		redraw();
 	}
 
 	public void remove(int index) {
 		checkWidget();
+	
+		items[index]._dispose();
+
+		updateStructuralValues(false);
+		updateScrollBarsProperties();
+		redraw();
+	}
+
+	public void removeAll() {
+		checkWidget();
+
+		if (items != null) {
+			// Clear items
+
+			GalleryItem[] tmpArray = new GalleryItem[items.length];
+			System.arraycopy(items, 0, tmpArray, 0, items.length);
+
+			for (int i = 0; i < tmpArray.length; i++) {
+
+				// Dispose items if not virtual
+				if (!virtual) {
+					if (tmpArray[i] != null) {
+						tmpArray[i]._dispose();
+					}
+				}
+			}
+		}
+	}
+
+	protected void _remove(int index) {
 		if (!virtual) {
 			if (isSelected(items[index])) {
 				setSelected(items[index], false, false);
@@ -1675,9 +1710,6 @@ public class Gallery extends Canvas {
 
 			this.items = (GalleryItem[]) this._arrayRemoveItem(this.items, index);
 
-			updateStructuralValues(false);
-			updateScrollBarsProperties();
-			redraw();
 		}
 	}
 
@@ -1688,9 +1720,7 @@ public class Gallery extends Canvas {
 			}
 
 			parent.items = (GalleryItem[]) this._arrayRemoveItem(parent.items, index);
-			updateStructuralValues(false);
-			updateScrollBarsProperties();
-			redraw();
+
 		}
 	}
 
@@ -1805,5 +1835,9 @@ public class Gallery extends Canvas {
 
 	public void setBackgroundColor(Color backgroundColor) {
 		this.backgroundColor = backgroundColor;
+	}
+
+	public void _setGalleryItems(GalleryItem[] items) {
+		this.items = items;
 	}
 }

@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.Item;
 
 public class GalleryItem extends Item {
 
+	private static final String EMPTY_STRING = "";
 	private String description = null;
 
 	// This is managed by the Gallery
@@ -250,15 +251,15 @@ public class GalleryItem extends Item {
 
 	public GalleryItem[] getItems() {
 		checkWidget();
-		if( items == null )
+		if (items == null)
 			return new GalleryItem[0];
-		
+
 		GalleryItem[] itemsLocal = new GalleryItem[this.items.length];
 		System.arraycopy(items, 0, itemsLocal, 0, this.items.length);
 
 		return itemsLocal;
 	}
-	
+
 	/**
 	 * Returns the index of childItem within this item or -1 if childItem is not
 	 * found. The search is only one level deep.
@@ -271,12 +272,12 @@ public class GalleryItem extends Item {
 
 		return parent._indexOf(this, childItem);
 	}
-	
+
 	public void setText(String text) {
 		super.setText(text);
 		parent.redraw(this);
 	}
-	
+
 	public void setImage(Image image) {
 		super.setImage(image);
 		parent.redraw(this);
@@ -398,45 +399,78 @@ public class GalleryItem extends Item {
 	}
 
 	public Font getFont() {
-		checkWidget ();
+		checkWidget();
 		return font;
 	}
 
 	public void setFont(Font font) {
-		checkWidget ();
-		if (font != null && font.isDisposed ()) {
-			SWT.error (SWT.ERROR_INVALID_ARGUMENT);
+		checkWidget();
+		if (font != null && font.isDisposed()) {
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 		}
 		this.font = font;
 		this.parent.redraw(this);
 	}
 
 	public Color getForeground() {
-		checkWidget ();
+		checkWidget();
 		return foreground;
 	}
 
 	public void setForeground(Color foreground) {
 		checkWidget();
-		if (foreground != null && foreground.isDisposed ()) {
-			SWT.error (SWT.ERROR_INVALID_ARGUMENT);
+		if (foreground != null && foreground.isDisposed()) {
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 		}
 		this.foreground = foreground;
 		this.parent.redraw(this);
 	}
 
 	public Color getBackground() {
-		checkWidget ();
+		checkWidget();
 		return background;
 	}
 
 	public void setBackground(Color background) {
 		checkWidget();
-		if (background != null && background.isDisposed ()) {
-			SWT.error (SWT.ERROR_INVALID_ARGUMENT);
+		if (background != null && background.isDisposed()) {
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 		}
 		this.background = background;
 		this.parent.redraw(this);
+	}
+
+	/**
+	 * Reset item values to defaults.
+	 */
+	public void clear() {
+		// Clear all attributes
+		super.setText(EMPTY_STRING);
+		super.setImage(null);
+		this.font = null;
+		background = null;
+		foreground = null;
+
+		// Force redraw
+		this.parent.redraw(this);
+	}
+
+	public void clearAll(boolean all) {
+		if (items == null)
+			return;
+
+		if (virtualGallery) {
+			items = new GalleryItem[items.length];
+		} else {
+			for (int i = 0; i < items.length; i++) {
+				if (items[i] != null) {
+					if (all) {
+						items[i].clearAll(true);
+					}
+					items[i].clear();
+				}
+			}
+		}
 	}
 
 	/**
@@ -455,20 +489,60 @@ public class GalleryItem extends Item {
 	public void remove(int index) {
 		checkWidget();
 		parent._remove(this, index);
+
+		parent.updateStructuralValues(false);
+		parent.updateScrollBarsProperties();
+		parent.redraw();
 	}
 
 	public void remove(GalleryItem item) {
 		checkWidget();
 		int index = parent._indexOf(this, item);
 		parent._remove(this, index);
+		parent.updateStructuralValues(false);
+		parent.updateScrollBarsProperties();
+		parent.redraw();
+	}
+
+	/**
+	 * Disposes the gallery Item. This method is call directly by gallery and
+	 * should not be used by a client
+	 */
+	protected void _dispose() {
+		removeFromParent();
+		_disposeChildren();
+		super.dispose();
+	}
+
+	protected void _disposeChildren() {
+		if (items != null) {
+			while (items != null) {
+				if (items[0] != null) {
+					items[0]._dispose();
+				}
+			}
+		}
+	}
+
+	protected void removeFromParent() {
+		if (parentItem != null) {
+			int index = parent._indexOf(parentItem, this);
+			parent._remove(parentItem, index);
+		} else {
+			int index = parent._indexOf(this);
+			parent._remove(index);
+		}
 	}
 
 	public void dispose() {
-		if (parentItem != null) {
-			parentItem.remove(this);
-		} else {
-			parent.remove(this);
-		}
+		checkWidget();
+
+		removeFromParent();
+		_disposeChildren();
 		super.dispose();
+
+		parent.updateStructuralValues(false);
+		parent.updateScrollBarsProperties();
+		parent.redraw();
 	}
 }

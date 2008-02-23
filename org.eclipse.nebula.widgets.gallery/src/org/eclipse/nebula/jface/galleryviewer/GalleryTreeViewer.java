@@ -248,7 +248,7 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#removeAll(org.eclipse.swt.widgets.Control)
 	 */
 	protected void removeAll(Control control) {
-		((Gallery) control).clearAll();
+		((Gallery) control).clearAll(true);
 	}
 
 	public void setAutoExpandLevel(int level) {
