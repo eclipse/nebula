@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Tests Plug-in
+Bundle-SymbolicName: org.eclipse.nebula.widgets.gallery.tests
+Bundle-Version: 1.0.0
+Require-Bundle: org.eclipse.nebula.widgets.gallery,
+ org.junit,
+ org.eclipse.swt,
+ org.eclipse.jface;resolution:=optional,
+ org.eclipse.core.runtime;resolution:=optional
