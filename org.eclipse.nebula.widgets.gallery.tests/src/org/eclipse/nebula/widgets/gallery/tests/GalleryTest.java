@@ -72,6 +72,43 @@ public class GalleryTest extends TestCase {
 
 	}
 
+	public void testClear() {
+		Gallery g = createGallery(SWT.V_SCROLL);
+
+		// Add content
+		GalleryItem items[] = new GalleryItem[3];
+		GalleryItem subItems[][] = new GalleryItem[3][3];
+
+		for (int i = 0; i < 3; i++) {
+			items[i] = new GalleryItem(g, SWT.None);
+			items[i].setText("i" + i);
+			for (int j = 0; j < 3; j++) {
+				subItems[i][j] = new GalleryItem(items[i], SWT.None);
+				subItems[i][j].setText("si" + i + "_" + j);
+			}
+		}
+
+		g.clear(0, true);
+		assertEquals("", items[0].getText() ) ;
+		assertEquals("", subItems[0][0].getText() ) ;
+		assertEquals("", subItems[0][1].getText() ) ;
+		assertEquals("", subItems[0][2].getText() ) ;
+		
+		g.clear(1);
+		assertEquals("", items[1].getText() ) ;
+		assertFalse("".equals( subItems[1][0].getText() )) ;
+		assertFalse("".equals( subItems[1][1].getText() )) ;
+		assertFalse("".equals( subItems[1][2].getText() )) ;
+
+		g.clear(2, false);
+		assertEquals("", items[2].getText() ) ;
+		assertFalse("".equals( subItems[2][0].getText() )) ;
+		assertFalse("".equals( subItems[2][1].getText() )) ;
+		assertFalse("".equals( subItems[2][2].getText() )) ;
+
+		
+	}
+
 	private Gallery createGallery(int flags) {
 		Gallery g = new Gallery(s, flags);
 
