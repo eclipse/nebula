@@ -37,7 +37,7 @@ import org.eclipse.swt.widgets.Display;
  */
 public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 
-	ArrayList dropShadowsColors = new ArrayList();
+	protected ArrayList dropShadowsColors = new ArrayList();
 
 	boolean dropShadows = false;
 

@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.gallery;
 
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Vector;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.Display;
 
 public class ListItemRenderer extends AbstractGalleryItemRenderer {
 
-	Vector dropShadowsColors = new Vector();
+	protected ArrayList dropShadowsColors = new ArrayList();
 
 	boolean dropShadows = false;
 

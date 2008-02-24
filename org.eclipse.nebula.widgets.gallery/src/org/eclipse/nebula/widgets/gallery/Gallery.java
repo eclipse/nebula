@@ -1475,12 +1475,19 @@ public class Gallery extends Canvas {
 
 	}
 
+	public void clearAll() {
+		clearAll(false);
+	}
 	/**
 	 * Clear one item.<br/>
 	 * 
 	 * @param i
 	 */
 	public void clear(int i) {
+		clear(i, false);
+	}
+
+	public void clear(int i, boolean all) {
 		checkWidget();
 
 		// Item is already cleared, return immediately.
@@ -1490,13 +1497,20 @@ public class Gallery extends Canvas {
 		if (virtual) {
 			// Clear item
 			items[i] = null;
+
+			// In virtual mode, clearing an item can change its content, so
+			// force content update
+			updateStructuralValues(false);
+			updateScrollBarsProperties();
 		} else {
 			// Reset item
 			items[i].clear();
+			if (all) {
+				items[i].clearAll(true);
+			}
 		}
 
-		updateStructuralValues(false);
-		updateScrollBarsProperties();
+		redraw();
 	}
 
 	/**
@@ -1655,29 +1669,6 @@ public class Gallery extends Canvas {
 			// Simulate mouse click to enable keyboard navigation
 			lastSingleClick = items[i];
 		}
-		redraw();
-	}
-
-	public void remove(GalleryItem item) {
-		checkWidget();
-
-		if (!virtual) {
-			int index = this.indexOf(item);
-			items[index]._dispose();
-		}
-
-		updateStructuralValues(false);
-		updateScrollBarsProperties();
-		redraw();
-	}
-
-	public void remove(int index) {
-		checkWidget();
-	
-		items[index]._dispose();
-
-		updateStructuralValues(false);
-		updateScrollBarsProperties();
 		redraw();
 	}
 

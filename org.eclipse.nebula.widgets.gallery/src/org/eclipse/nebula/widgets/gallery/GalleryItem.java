@@ -444,6 +444,7 @@ public class GalleryItem extends Item {
 	 * Reset item values to defaults.
 	 */
 	public void clear() {
+		checkWidget();
 		// Clear all attributes
 		super.setText(EMPTY_STRING);
 		super.setImage(null);
@@ -455,7 +456,13 @@ public class GalleryItem extends Item {
 		this.parent.redraw(this);
 	}
 
+	public void clearAll() {
+		clearAll(false);
+	}
+
 	public void clearAll(boolean all) {
+		checkWidget();
+
 		if (items == null)
 			return;
 
@@ -496,12 +503,7 @@ public class GalleryItem extends Item {
 	}
 
 	public void remove(GalleryItem item) {
-		checkWidget();
-		int index = parent._indexOf(this, item);
-		parent._remove(this, index);
-		parent.updateStructuralValues(false);
-		parent.updateScrollBarsProperties();
-		parent.redraw();
+		remove(indexOf(item));
 	}
 
 	/**
