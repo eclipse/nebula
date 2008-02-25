@@ -568,6 +568,14 @@ public class CompositeTable extends Canvas {
 	 *            the line number of the new top row.
 	 */
 	public void setTopRow(int topRow) {
+		if (topRow < 0 || topRow > numRowsInCollection - 1) {
+		    throw new IllegalArgumentException("topRow outside legal range!");
+		}
+		
+		if (topRow + getNumRowsVisible() - 1 > numRowsInCollection) {
+		    topRow = numRowsInCollection - getNumRowsVisible();
+		}
+		
 		this.topRow = topRow;
 		if (contentPane != null) {
 			contentPane.setTopRow(topRow);

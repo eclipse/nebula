@@ -124,6 +124,7 @@ class InternalCompositeTable extends Composite implements Listener {
 		if (numRowsVisible < 1) {
 			createEmptyTablePlaceholer();
 		}
+        currentRow = -1; // initialize to undefined
 	}
 
 	public void setBackground(Color color) {
@@ -869,23 +870,31 @@ class InternalCompositeTable extends Composite implements Listener {
 		refreshAllRows();
 	}
 
-	/**
-	 * Method setTopRow. Set the number of the line that is being displayed in
-	 * the top row of the CompositeTable editor (0-based). If the new top row is
-	 * not equal to the current top row, the table will automatically be
-	 * scrolled to the new position. This number must be greater than 0 and less
-	 * than NumRowsInCollection.
-	 * 
-	 * @param topRow
-	 *            the line number of the new top row.
-	 */
-	public void setTopRow(int topRow) {
-		fireRowDepartEvent();
-		this.topRow = topRow;
-		updateVisibleRows();
-		fireRowArriveEvent();
-	}
+    private void doSetTopRow(int topRow, int currentRow) {
+//      fireRowDepartEvent();
+        this.topRow = topRow;
+        this.currentRow = currentRow;
+        updateVisibleRows();
+//      fireRowArriveEvent();
+    }
 
+    /**
+     * Method setTopRow. Set the number of the line that is being displayed in
+     * the top row of the CompositeTable editor (0-based). If the new top row is
+     * not equal to the current top row, the table will automatically be
+     * scrolled to the new position. This number must be greater than 0 and less
+     * than NumRowsInCollection.
+     * 
+     * @param topRow
+     *            the line number of the new top row.
+     */
+    public void setTopRow(int topRow) {
+        fireRowDepartEvent();
+        int topRowDelta = this.topRow - topRow;
+        doSetTopRow(topRow, currentRow + topRowDelta);
+        fireRowArriveEvent();
+    }
+    
 	/**
 	 * Method getTopRow. Return the number of the line that is being displayed
 	 * in the top row of the CompositeTable editor (0-based).
@@ -923,7 +932,7 @@ class InternalCompositeTable extends Composite implements Listener {
 	public void setSelection(int column, int row) {
 		int topRowDelta = computeTopRowDelta(row);
 		if (topRowDelta != 0) {
-			setTopRow(topRow + topRowDelta);
+            doSetTopRow(topRow + topRowDelta, currentRow);
 			row += -1 * topRowDelta;
 			internalSetSelection(column, row, true);
 		} else {
@@ -1116,9 +1125,9 @@ class InternalCompositeTable extends Composite implements Listener {
 		if (topRowDelta == 0) {
 			return false;
 		}
-		currentRow += -1 * topRowDelta;
+//		currentRow += -1 * topRowDelta;
 		
-		setTopRow(topRow + topRowDelta);
+        doSetTopRow(topRow + topRowDelta, currentRow + (-1 * topRowDelta));
 		Control control = getControl(currentColumn, currentRow);
 		if (control != null) {
 			control.setFocus(); // ?? Can I get away with avoiding asyncExec here ??
@@ -1154,13 +1163,12 @@ class InternalCompositeTable extends Composite implements Listener {
 
 			deselectCurrentRowIfVisible();
 
-//			int delta = topRow - vSlider.getSelection();
-//			int oldCurrentRow = currentRow;
-//			currentRow += delta;
+			int delta = topRow - vSlider.getSelection();
             int oldCurrentRow = currentRow;
             currentRow = vSlider.getSelection();
 			
-			setTopRow(vSlider.getSelection());
+//			setTopRow(vSlider.getSelection());  // Removed as a result of patch
+            doSetTopRow(vSlider.getSelection(), currentRow + delta);
 			
 			// If the focused row just became visible, show the focus
 			if (oldCurrentRow < 0 || oldCurrentRow >= getNumRowsVisible()) {
@@ -1218,31 +1226,54 @@ class InternalCompositeTable extends Composite implements Listener {
 	 */
 	public void handleEvent(Event event) {
         event.doit = false;
-		if (event.count > 0) {
-			if (topRow > 0) {
-				if (!fireRequestRowChangeEvent()) {
-					return;
-				}
-				deselectCurrentRowIfVisible();
-				setTopRow(topRow - 1);
-				++currentRow;
-				if (currentRow == 0) {
-					deferredSetFocus(getControl(currentColumn, currentRow), true);
-				}
-			}
-		} else {
-			if (topRow < numRowsInCollection - numRowsVisible) {
-				if (!fireRequestRowChangeEvent()) {
-					return;
-				}
-				deselectCurrentRowIfVisible();
-				setTopRow(topRow + 1);
-				--currentRow;
-				if (currentRow == getNumRowsVisible()-1) {
-					deferredSetFocus(getControl(currentColumn, currentRow), true);
-				}
-			}
-		}
+        if (event.count > 0) { // scroll up
+            if (topRow > 0) {
+                if (!fireRequestRowChangeEvent()) {
+                    return;
+                }
+                deselectCurrentRowIfVisible();
+                doSetTopRow(topRow - 1, currentRow + 1);
+                if (isRowVisible(currentRow)) {
+                    deferredSetFocus(getControl(currentColumn, currentRow), true);
+                }
+            }
+        } else { // scroll down
+            if (topRow < numRowsInCollection - numRowsVisible) {
+                if (!fireRequestRowChangeEvent()) {
+                    return;
+                }
+                deselectCurrentRowIfVisible();
+                doSetTopRow(topRow + 1, currentRow - 1);
+                if (isRowVisible(currentRow)) {
+                    deferredSetFocus(getControl(currentColumn, currentRow), true);
+                }
+            }
+        }
+//		if (event.count > 0) {    // Old code (before patch)
+//			if (topRow > 0) {
+//				if (!fireRequestRowChangeEvent()) {
+//					return;
+//				}
+//				deselectCurrentRowIfVisible();
+//				setTopRow(topRow - 1);
+//				++currentRow;
+//				if (currentRow == 0) {
+//					deferredSetFocus(getControl(currentColumn, currentRow), true);
+//				}
+//			}
+//		} else {
+//			if (topRow < numRowsInCollection - numRowsVisible) {
+//				if (!fireRequestRowChangeEvent()) {
+//					return;
+//				}
+//				deselectCurrentRowIfVisible();
+//				setTopRow(topRow + 1);
+//				--currentRow;
+//				if (currentRow == getNumRowsVisible()-1) {
+//					deferredSetFocus(getControl(currentColumn, currentRow), true);
+//				}
+//			}
+//		}
 	}
 
 	private void deselectCurrentRowIfVisible() {
@@ -1414,18 +1445,19 @@ class InternalCompositeTable extends Composite implements Listener {
 	 * Indicate to listeners that the focus is arriving on the specified row
 	 */
 	private void fireRowArriveEvent() {
-		if (rows.size() < 1 || currentRow < 0) {
-			return;
-		}
-		for (Iterator rowChangeListenersIter = parent.rowFocusListeners
-				.iterator(); rowChangeListenersIter.hasNext();) {
-			IRowFocusListener listener = 
-				(IRowFocusListener) rowChangeListenersIter.next();
-			// currentRow() can be null if it's scrolled off the top or bottom
-			TableRow row = currentRow();
-			Control control = row != null ? row.getRowControl() : null;
-			listener.arrive(parent, topRow + currentRow, control);
-		}
+        if (rows.size() < 1 || !isRowVisible(currentRow)) {
+            return;
+        }
+        for (Iterator rowChangeListenersIter = parent.rowFocusListeners
+                .iterator(); rowChangeListenersIter.hasNext();) {
+            IRowFocusListener listener = 
+                (IRowFocusListener) rowChangeListenersIter.next();
+            // currentRow() can be null if it's scrolled off the top or bottom
+            TableRow row = currentRow();
+            Control control = row != null ? row.getRowControl() : null;
+            listener.arrive(parent, topRow + currentRow, control);
+        }
+
 	}
 
 	/**
@@ -1433,48 +1465,48 @@ class InternalCompositeTable extends Composite implements Listener {
 	 * 
 	 * @return true if all listeners permit the row change; false otherwise.
 	 */
-	private boolean fireRequestRowChangeEvent() {
-		if (rows.size() < 1 || (currentRow < 1 && topRow != 0)) {
-			return true;
-		}
-		if (currentRow > rows.size() - 1) {
-			// (if the other row is already gone)
-			return true;
-		}
-		for (Iterator rowChangeListenersIter = parent.rowFocusListeners
-				.iterator(); rowChangeListenersIter.hasNext();) {
-			IRowFocusListener listener = (IRowFocusListener) rowChangeListenersIter
-					.next();
-			// currentRow() can be null if it's scrolled off the top or bottom
-			TableRow row = currentRow();
-			Control control = row != null ? row.getRowControl() : null;
-			if (!listener.requestRowChange(parent, topRow + currentRow,
-					control)) {
-				return false;
-			}
-		}
-		fireRowDepartEvent();
-		return true;
-	}
+    private boolean fireRequestRowChangeEvent() {
+        if (rows.size() < 1 || !isRowVisible(currentRow)) {
+            return true;
+        }
+        if (currentRow > rows.size() - 1) {
+            // (if the other row is already gone)
+            return true;
+        }
+        for (Iterator rowChangeListenersIter = parent.rowFocusListeners
+                .iterator(); rowChangeListenersIter.hasNext();) {
+            IRowFocusListener listener = (IRowFocusListener) rowChangeListenersIter
+                    .next();
+            // currentRow() can be null if it's scrolled off the top or bottom
+            TableRow row = currentRow();
+            Control control = row != null ? row.getRowControl() : null;
+            if (!listener.requestRowChange(parent, topRow + currentRow,
+                    control)) {
+                return false;
+            }
+        }
+        fireRowDepartEvent();
+        return true;
+    }
 
 	/**
 	 * Indicate to listeners that the focus is about to leave the current row.
 	 */
-	private void fireRowDepartEvent() {
-		if (rows.size() < 1 || (currentRow < 1 && topRow != 0)) {
-			return;
-		}
-		for (Iterator rowChangeListenersIter = parent.rowFocusListeners
-				.iterator(); rowChangeListenersIter.hasNext();) {
-			IRowFocusListener listener = (IRowFocusListener) rowChangeListenersIter
-					.next();
-			// currentRow() can be null if it's scrolled off the top or bottom
-			TableRow row = currentRow();
-			Control control = row != null ? row.getRowControl() : null;
-			if (control != null)
-				listener.depart(parent, topRow + currentRow, control);
-		}
-	}
+    private void fireRowDepartEvent() {
+        if (rows.size() < 1 || !isRowVisible(currentRow)) {
+            return;
+        }
+        for (Iterator rowChangeListenersIter = parent.rowFocusListeners
+                .iterator(); rowChangeListenersIter.hasNext();) {
+            IRowFocusListener listener = (IRowFocusListener) rowChangeListenersIter
+                    .next();
+            // currentRow() can be null if it's scrolled off the top or bottom
+            TableRow row = currentRow();
+            Control control = row != null ? row.getRowControl() : null;
+            if (control != null)
+                listener.depart(parent, topRow + currentRow, control);
+        }
+    }
 
 	/**
 	 * Request deletion of the current row from the underlying data structure.
@@ -1592,7 +1624,7 @@ class InternalCompositeTable extends Composite implements Listener {
 
 			deselect(getControl(currentColumn, currentRow));
 
-			setTopRow(topRow + 1);
+            doSetTopRow(topRow + 1, currentRow);
 			deferredSetFocus(getControl(0, currentRow), true);
 		}
 	}
@@ -1617,7 +1649,7 @@ class InternalCompositeTable extends Composite implements Listener {
 
 			deselect(getControl(currentColumn, currentRow));
 
-			setTopRow(topRow - 1);
+            doSetTopRow(topRow - 1, currentRow);
 			deferredSetFocus(getControl(row.getNumColumns() - 1, 0), true);
 		} else {
 			if (!fireRequestRowChangeEvent()) {
@@ -1856,7 +1888,7 @@ class InternalCompositeTable extends Composite implements Listener {
             needToArrive = false;
         }
 
-        setTopRow(0);
+        doSetTopRow(0, currentRow);
 
         if (needToArrive) {
             internalSetSelection(currentColumn, 0, true);
@@ -1883,7 +1915,7 @@ class InternalCompositeTable extends Composite implements Listener {
                 needToArrive = false;
             }
 
-            setTopRow(numRowsInCollection - numRowsVisible);
+            doSetTopRow(numRowsInCollection - numRowsVisible, currentRow);
 
             if (needToArrive) {
                 internalSetSelection(currentColumn, numRowsVisible - 1,
@@ -1906,7 +1938,7 @@ class InternalCompositeTable extends Composite implements Listener {
             if (newTopRow < 0) {
                 newTopRow = 0;
             }
-            setTopRow(newTopRow);
+            doSetTopRow(newTopRow, 0);
             internalSetSelection(currentColumn, currentRow, true);
         }
     }
@@ -1922,7 +1954,7 @@ class InternalCompositeTable extends Composite implements Listener {
             if (newTopRow >= numRowsInCollection - 1) {
                 newTopRow = numRowsInCollection - 1;
             }
-            setTopRow(newTopRow);
+            doSetTopRow(newTopRow, numRowsVisible - 1);
             internalSetSelection(currentColumn, currentRow, true);
         }
     }
@@ -1952,7 +1984,7 @@ class InternalCompositeTable extends Composite implements Listener {
             Widget widget = getDisplay().getFocusControl();
             deselect(widget);  // Used to be e.widget
 
-            setTopRow(topRow - 1);
+            doSetTopRow(topRow - 1, currentRow);
             internalSetSelection(currentColumn, currentRow, true);
             return;
         }
@@ -1983,7 +2015,7 @@ class InternalCompositeTable extends Composite implements Listener {
             Widget widget = getDisplay().getFocusControl();
             deselect(widget);  // Used to be e.widget
 
-            setTopRow(topRow + 1);
+            doSetTopRow(topRow + 1, currentRow);
             internalSetSelection(currentColumn, currentRow, true);
             return;
         }
@@ -2035,7 +2067,7 @@ class InternalCompositeTable extends Composite implements Listener {
 
         // If the new row is above us, scroll up to it
         if (newRowPosition < topRow + currentRow) {
-            setTopRow(newRowPosition);
+            doSetTopRow(newRowPosition, currentRow);
             Display.getDefault().asyncExec(new Runnable() {
                 public void run() {
                     updateVisibleRows();
@@ -2061,7 +2093,7 @@ class InternalCompositeTable extends Composite implements Listener {
             } else {
                 // It's somewhere in the middle below us; scroll down to
                 // it
-                setTopRow(newRowPosition - numRowsVisible + 1);
+                doSetTopRow(newRowPosition - numRowsVisible + 1, currentRow);
                 int newRowNumber = numRowsVisible - 1;
                 if (newRowNumber != currentRow) {
                     internalSetSelection(currentColumn, newRowNumber,
@@ -2091,7 +2123,7 @@ class InternalCompositeTable extends Composite implements Listener {
                     if (currentRow < 1) {
                         needToRequestRC = false;
                         deleteRowAt(currentRow);
-                        setTopRow(topRow - 1);
+                        doSetTopRow(topRow - 1, currentRow);
                         internalSetSelection(currentColumn, currentRow,
                                 true);
                     } else {

@@ -51,19 +51,41 @@ class TableRow {
 			columns = new Control[] {row};
 		}
 		
-		addListeners(row);
-		for (int i = 0; i < columns.length; i++) {
-			addListeners(columns[i]);
-		}
+		recursiveAddListeners(row);
 	}
 	
 	/**
 	 * Remove all listeners from each control.
 	 */
 	public void dispose() {
-		removeListeners(row);
-		for (int i = 0; i < columns.length; i++) {
-			removeListeners(columns[i]);
+		recursiveRemoveListeners(row);
+	}
+	
+	/**
+	 * Recursively calls addListeners(c) for c and all its descendants.
+	 * @param c
+	 */
+	private void recursiveAddListeners(Control c) {
+		addListeners(c);
+		if (c instanceof Composite) {
+			Control[] children = ((Composite)c).getChildren();
+			for (int i = 0; i < children.length; i++) {
+				recursiveAddListeners(children[i]);
+			}
+		}
+	}
+	
+	/**
+	 * Recursively calls removeListeners(c) for c and all its descendants.
+	 * @param c
+	 */
+	private void recursiveRemoveListeners(Control c) {
+		removeListeners(c);
+		if (c instanceof Composite) {
+			Control[] children = ((Composite)c).getChildren();
+			for (int i = 0; i < children.length; i++) {
+				recursiveRemoveListeners(children[i]);
+			}
 		}
 	}
 	
