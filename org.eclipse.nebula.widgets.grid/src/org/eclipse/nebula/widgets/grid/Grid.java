@@ -7638,6 +7638,10 @@ public class Grid extends Canvas
         {
             columns.add(index, column);
             displayOrderedColumns.add(index, column);
+
+            for (int i = 0; i < columns.size(); i++) {
+				((GridColumn) columns.get(i)).setColumnIndex(i);
+			}
         }
 
         computeHeaderHeight(sizingGC);
