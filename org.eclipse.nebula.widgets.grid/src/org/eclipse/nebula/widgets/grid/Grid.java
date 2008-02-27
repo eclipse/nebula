@@ -6417,6 +6417,9 @@ public class Grid extends Canvas
         if (selectionEvent != null)
         {
             selectionEvent.stateMask = e.stateMask;
+            selectionEvent.button = e.button;
+            selectionEvent.x = e.x;
+            selectionEvent.y = e.y;
             notifyListeners(SWT.Selection, selectionEvent);
             
             if (!cellSelectionEnabled)
@@ -6555,7 +6558,13 @@ public class Grid extends Canvas
             
             if (followupCellSelectionEventOwed)
             {
-                notifyListeners(SWT.Selection, new Event());
+            	Event se = new Event();
+            	se.button = e.button;
+            	se.stateMask = e.stateMask;
+            	se.x = e.x;
+            	se.y = e.y;
+            	
+                notifyListeners(SWT.Selection, se);
                 followupCellSelectionEventOwed = false;
             }
         }
@@ -6775,6 +6784,9 @@ public class Grid extends Canvas
         if (selectionEvent != null)
         {
             selectionEvent.stateMask = e.stateMask;
+            selectionEvent.button = e.button;
+            selectionEvent.x = e.x;
+            selectionEvent.y = e.y;
             notifyListeners(SWT.Selection, selectionEvent);
         }
     }
@@ -7154,6 +7166,8 @@ public class Grid extends Canvas
                 if (selEvent != null)
                 {
                 	selEvent.stateMask = e.stateMask;
+                	selEvent.character = e.character;
+                	selEvent.keyCode = e.keyCode;
                 	notifyListeners(SWT.Selection, selEvent);
                 }                
             }
@@ -7167,7 +7181,11 @@ public class Grid extends Canvas
             {
                 selectionEvent = updateSelection(newSelection, e.stateMask);
                 if (selectionEvent != null) 
+                {
                 	selectionEvent.stateMask = e.stateMask;
+                	selectionEvent.character = e.character;
+                	selectionEvent.keyCode = e.keyCode;
+                }
             }
             
             focusItem = newSelection;
@@ -7191,6 +7209,8 @@ public class Grid extends Canvas
             Event e = new Event();
             e.item = focusItem;
             e.stateMask = event.stateMask;
+        	e.character = event.character;
+        	e.keyCode = event.keyCode;
             notifyListeners(SWT.Selection, e);
         }
         
