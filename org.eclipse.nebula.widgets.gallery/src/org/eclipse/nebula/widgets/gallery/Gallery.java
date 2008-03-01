@@ -144,8 +144,6 @@ public class Gallery extends Canvas {
 
 	protected GalleryItem lastSingleClick = null;
 
-	private Color backgroundColor;
-
 	/**
 	 * Current translation. Can be used by renderer during paint.
 	 */
@@ -401,7 +399,7 @@ public class Gallery extends Canvas {
 		virtual = (style & SWT.VIRTUAL) > 0;
 		vertical = (style & SWT.V_SCROLL) > 0;
 		multi = (style & SWT.MULTI) > 0;
-		backgroundColor = getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+		this.setBackground(getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 
 		// Dispose renderers on dispose
 		this.addDisposeListener(new DisposeListener() {
@@ -927,7 +925,7 @@ public class Gallery extends Canvas {
 			}
 
 			Rectangle clipping = newGC.getClipping();
-			gc.setBackground(backgroundColor);
+			gc.setBackground(getBackground());
 			drawBackground(newGC, clipping.x, clipping.y, clipping.width, clipping.height);
 
 			int[] indexes = getVisibleItems(clipping);
@@ -1478,6 +1476,7 @@ public class Gallery extends Canvas {
 	public void clearAll() {
 		clearAll(false);
 	}
+
 	/**
 	 * Clear one item.<br/>
 	 * 
@@ -1818,14 +1817,6 @@ public class Gallery extends Canvas {
 			System.arraycopy(array, index + 1, newArray, index, newArray.length - index);
 
 		return newArray;
-	}
-
-	public Color getBackgroundColor() {
-		return backgroundColor;
-	}
-
-	public void setBackgroundColor(Color backgroundColor) {
-		this.backgroundColor = backgroundColor;
 	}
 
 	public void _setGalleryItems(GalleryItem[] items) {
