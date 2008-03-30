@@ -393,9 +393,9 @@ public class GalleryItem extends Item {
 
 		if (parent.isVertical()) {
 			return new Rectangle(x, y - parent.translate, width, height);
-		} else {
-			return new Rectangle(x - parent.translate, y, width, height);
-		}
+		} 
+		
+		return new Rectangle(x - parent.translate, y, width, height);
 	}
 
 	public Font getFont() {

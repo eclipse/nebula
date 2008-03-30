@@ -31,7 +31,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.TreeListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -1111,6 +1110,12 @@ public class Gallery extends Canvas {
 
 	}
 
+	/**
+	 * Calculate full height (or width) of the Gallery. The group renderer is
+	 * used to calculate the size of each group.
+	 * 
+	 * @return
+	 */
 	private int calculateSize() {
 
 		if (groupRenderer != null)
@@ -1690,6 +1695,19 @@ public class Gallery extends Canvas {
 				}
 			}
 		}
+	}
+
+	public void remove(int index) {
+		checkWidget();
+		_remove(index);
+
+		updateStructuralValues(false);
+		updateScrollBarsProperties();
+		redraw();
+	}
+
+	public void remove(GalleryItem item) {
+		remove(indexOf(item));
 	}
 
 	protected void _remove(int index) {
