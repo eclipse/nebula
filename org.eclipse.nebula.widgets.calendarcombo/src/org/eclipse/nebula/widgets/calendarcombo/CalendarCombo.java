@@ -657,14 +657,14 @@ public class CalendarCombo extends Composite {
 					mAllowTextEntry = true;
 					mCombo.removeAll();
 
+					mSetDate = date;
 					if (date == null) {
 						setText(" ");
-						mAllowTextEntry = false;
-						return;
 					}
-
-					mSetDate = date;
-					updateDate();
+					else {
+						updateDate();
+					}
+					
 					mAllowTextEntry = false;
 				}
 							
