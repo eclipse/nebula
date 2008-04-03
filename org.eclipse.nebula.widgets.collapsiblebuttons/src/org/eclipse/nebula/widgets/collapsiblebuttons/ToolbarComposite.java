@@ -164,7 +164,7 @@ public class ToolbarComposite extends Composite implements MouseListener, MouseM
                 tb.setBounds(new Rectangle(right - imBounds.width, verticalLoc, imBounds.width, imBounds.width));
             }
             
-            right -= (imBounds == null ? 0 : imageBounds.width) + mSettings.getToolBarSpacing();
+            right -= (imBounds == null ? 0 : imBounds.width) + mSettings.getToolBarSpacing();
         }
     }
     
