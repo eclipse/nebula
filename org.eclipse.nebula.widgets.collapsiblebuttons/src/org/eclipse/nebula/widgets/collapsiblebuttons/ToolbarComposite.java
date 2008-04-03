@@ -42,8 +42,8 @@ public class ToolbarComposite extends Composite implements MouseListener, MouseM
     private boolean mEnableDoubleBuffering = true;
     private boolean mCreated = false;
 
-    private static Image mOutlook2005ArrowsImage = ImageCache.getImage("arrows.gif");
-    private static Image mOutlook2007ArrowImage = ImageCache.getImage("o2007arrow.gif");
+    private static Image mOutlook2005ArrowsImage = ImageCache.getImage("icons/arrows.gif");
+    private static Image mOutlook2007ArrowImage = ImageCache.getImage("icons/o2007arrow.gif");
     private Rectangle mArrowsBounds;
     private boolean mArrowHover = false;
     
