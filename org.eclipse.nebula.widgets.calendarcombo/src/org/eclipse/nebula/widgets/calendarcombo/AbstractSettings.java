@@ -101,7 +101,7 @@ public abstract class AbstractSettings implements ISettings {
 	}
 
 	public String getNoDateSetText() {
-		return "Foo!";
+		return "";
 	}
 
 	public boolean showMonthPickerOnMonthNameMousePress() {

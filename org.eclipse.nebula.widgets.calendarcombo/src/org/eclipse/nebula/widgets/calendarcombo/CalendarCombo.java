@@ -572,8 +572,12 @@ public class CalendarCombo extends Composite {
 	// shows the calendar area
 	private synchronized void showCalendar() {
 		try {
-			mCombo.setCapture(true);
+			// bug fix: Apr 18, 2008 - if we do various operations prior to actually fetching any newly entered text into the
+			// (non-read only) combo, we'll lose that edit, so fetch the combo text now so that we can check it later down in the code
+			// reported by: B. Haje
+			String comboText = mCombo.getText();
 
+			mCombo.setCapture(true);
 			// some weird bug with opening, selecting, closing, then opening
 			// again, which blanks out the mCombo the first time around..
 			mCombo.select(0);
@@ -586,6 +590,11 @@ public class CalendarCombo extends Composite {
 
 			mCombo.setFocus();
 
+			// bug fix: Apr 18, 2008 (see above)
+			// the (necessary) setFocus call above for some reason screws up any text entered by the user, so we actually have to set the text back
+			// onto the combo, despite the fact we pulled the data just a few lines ago. 
+			mCombo.setText(comboText);
+			
 			Display.getDefault().addFilter(SWT.KeyDown, mKillListener);
 
 			mCalendarShell = new Shell(Display.getDefault().getActiveShell(), SWT.ON_TOP | SWT.NO_TRIM | SWT.NO_FOCUS);
@@ -622,17 +631,20 @@ public class CalendarCombo extends Composite {
 			// if we do have a date set, load it as an object we can actually
 			// use.
 			Calendar pre = null;
-			if (mCombo.getText() != null && mCombo.getText().length() > 1) {
+			if (comboText != null && comboText.length() > 1) {
 				try {
-					Date dat = DateHelper.getDate(mCombo.getText(), mSettings.getDateFormat());
+					Date dat = DateHelper.getDate(comboText, mSettings.getDateFormat());
 					if (dat != null) {
 						pre = Calendar.getInstance(Locale.getDefault());
 						pre.setTime(dat);
 					}
 				}
 				catch (Exception err) {
-					// unparseable date, clear the box
-					mCombo.setText(mSettings.getNoDateSetText());
+					// unparseable date, set the last used date if any, otherwise set nodateset text
+					if (mSetDate != null)
+						setDate(mSetDate);
+					else
+						mCombo.setText(mSettings.getNoDateSetText());
 				}
 			}
 			else {
