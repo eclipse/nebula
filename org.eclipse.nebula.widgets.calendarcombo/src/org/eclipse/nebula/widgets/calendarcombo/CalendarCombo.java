@@ -484,7 +484,7 @@ public class CalendarCombo extends Composite {
 	}
 	
 	private boolean isTextAreaClick(Event event) {
-		// non-read-only combos open on click aywhere
+		// read-only combos open on click anywhere
 		if (isReadOnly)
 			return false;
 		
