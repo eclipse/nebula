@@ -504,7 +504,7 @@ public class CalendarCombo extends Composite {
 			mCalendarShell.setVisible(false);
 			mCalendarShell.dispose();
 		}
-
+				
 		Display.getDefault().removeFilter(SWT.KeyDown, mKillListener);
 
 		if (mCombo != null && !mCombo.isDisposed()) {
@@ -584,10 +584,20 @@ public class CalendarCombo extends Composite {
 
 			// kill any old
 			if (isCalendarVisible()) {
+				// bug fix part #2, apr 23. Repeated klicking open/close will get here, so we need to do the same bug fix as before but somewhat differently
+				// as we need to update the date object as well. This is basically only for non-read-only combos, but the fix is universally applicable.
+				mCombo.setText(comboText);
+				try {
+					Date d = DateHelper.getDate(comboText, mSettings.getDateFormat());
+					setDate(d);
+				}
+				catch (Exception err) {					
+					// we don't care
+				}
 				kill(11);
 				return;
 			}
-
+			
 			mCombo.setFocus();
 
 			// bug fix: Apr 18, 2008 (see above)
@@ -649,7 +659,17 @@ public class CalendarCombo extends Composite {
 			}
 			else {
 				if (mPullDateFrom != null) {
-					Calendar date = mPullDateFrom.getDate();
+					// we need to pull the date from the depending combo's text area as it may be non-read-only, so we can't rely on the date
+					Calendar date = null;
+					try {
+						Date d = DateHelper.getDate(mPullDateFrom.getCombo().getText(), mSettings.getDateFormat());
+						date = Calendar.getInstance();
+						date.setTime(d);
+					}
+					catch (Exception err) {
+						date = mPullDateFrom.getDate();
+					}
+										
 					if (date != null) {
 						pre = Calendar.getInstance(Locale.getDefault());
 						pre.setTime(date.getTime());
