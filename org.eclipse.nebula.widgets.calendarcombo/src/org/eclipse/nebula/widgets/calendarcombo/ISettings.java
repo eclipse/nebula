@@ -191,4 +191,40 @@ public interface ISettings {
 	 * @return true if to show the dialog. Default is true.
 	 */
 	public boolean showMonthPickerOnMonthNameMousePress();
+	
+	/**
+	 * Returns the arrow width of the combo button itself for Windows.
+	 * <br><br>
+	 * IMPORTANT:<br>
+	 * This does not change the combo button size, it is used to determine when the user clicks the arrow button on the combo
+	 * and not the text field. If you notice that there is some area of the button that is either too large or small when clicked
+	 * so that the popup does not show, you will probably need to adjust this.
+	 * 
+	 * @return size that the current OS. Defaults are: OSX: 22, Windows: 19, GTK: 25. 
+	 */
+	public int getWindowsButtonWidth();
+
+	/**
+	 * Returns the arrow width of the combo button itself for Carbon.
+	 * <br><br>
+	 * IMPORTANT:<br>
+	 * This does not change the combo button size, it is used to determine when the user clicks the arrow button on the combo
+	 * and not the text field. If you notice that there is some area of the button that is either too large or small when clicked
+	 * so that the popup does not show, you will probably need to adjust this.
+	 * 
+	 * @return size that the current OS. Defaults are: OSX: 22, Windows: 19, GTK: 25. 
+	 */
+	public int getCarbonButtonWidth();
+	
+	/**
+	 * Returns the arrow width of the combo button itself for GTK.
+	 * <br><br>
+	 * IMPORTANT:<br>
+	 * This does not change the combo button size, it is used to determine when the user clicks the arrow button on the combo
+	 * and not the text field. If you notice that there is some area of the button that is either too large or small when clicked
+	 * so that the popup does not show, you will probably need to adjust this.
+	 * 
+	 * @return size that the current OS. Defaults are: OSX: 22, Windows: 19, GTK: 25. 
+	 */
+	public int getGTKButtonWidth();
 }

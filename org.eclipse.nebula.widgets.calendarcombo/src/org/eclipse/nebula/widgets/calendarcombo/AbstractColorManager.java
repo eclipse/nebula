@@ -80,6 +80,14 @@ public abstract class AbstractColorManager implements IColorManager {
 	public Color getArrowColor() {
 		return ColorCache.getBlack();
 	}
+	
+	public Color getPreviousAndNextMonthForegroundColor() {
+		return ColorCache.getColor(172, 168, 153);
+	}
+	
+	public Color getDisabledDayForegroundColor() {
+		return ColorCache.getColor(172, 168, 153);
+	}
 
 	public void setTheme(int theme) {
 		mTheme = theme;

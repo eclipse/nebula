@@ -4,7 +4,6 @@ import java.util.Calendar;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -24,9 +23,24 @@ public class Tester {
 		GridLayout gl = new GridLayout(1, true);		
 		inner.setLayout(gl);
 
+		Calendar before = Calendar.getInstance();
+		before.add(Calendar.MONTH, -1);
+		before.set(Calendar.DATE, 15);		
+
+		Calendar after = Calendar.getInstance();
+		after.add(Calendar.MONTH, 1);
+		after.set(Calendar.DATE, 15);		
+		
 		Label foo = new Label(inner, SWT.NONE);
 		foo.setText("Whatever date is set on this one...");
-		final CalendarCombo one = new CalendarCombo(inner, SWT.READ_ONLY);
+		final CalendarCombo one = new CalendarCombo(inner, SWT.RIGHT_TO_LEFT);
+		one.setDisallowBeforeDate(before);
+		one.setDisallowAfterDate(after);
+		Calendar too = Calendar.getInstance();
+		//too.set(Calendar.MONTH, 10);
+		//too.set(Calendar.DATE, 1);		
+		
+		one.setDate(too.getTime());
 		Label foo2 = new Label(inner, SWT.NONE);
 		foo2.setText("Will be the start for this one...");
 		CalendarCombo two = new CalendarCombo(inner, SWT.READ_ONLY, "", true, one);

@@ -37,6 +37,8 @@ public interface IColorManager {
 	public Color getSelectedDayColor();
 	public Color getSelectedDayBorderColor();
 	public Color getCalendarBackgroundColor();
+	public Color getDisabledDayForegroundColor();
+	public Color getPreviousAndNextMonthForegroundColor();
 	public Color getTextColor();
 	public Color getArrowColor();
 }

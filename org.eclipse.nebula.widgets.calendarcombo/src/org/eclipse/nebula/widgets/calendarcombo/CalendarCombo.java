@@ -29,6 +29,7 @@ import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -112,6 +113,14 @@ public class CalendarCombo extends Composite {
 	private ISettings mSettings;
 
 	private ArrayList mListeners;
+	
+	private Calendar mDisallowBeforeDate;
+	
+	private Calendar mDisallowAfterDate;
+	
+	private boolean isReadOnly;
+	
+	private int arrowButtonWidth;
 
 	protected static final boolean OS_CARBON = "carbon".equals(SWT.getPlatform()); //$NON-NLS-1$
 	protected static final boolean OS_GTK = "gtk".equals(SWT.getPlatform()); //$NON-NLS-1$
@@ -260,14 +269,16 @@ public class CalendarCombo extends Composite {
 	}
 	
 	private static int checkStyle(int style) {
-		int mask = SWT.BORDER | SWT.LEFT_TO_RIGHT | SWT.RIGHT_TO_LEFT | SWT.H_SCROLL | SWT.V_SCROLL
-        | SWT.SINGLE | SWT.MULTI | SWT.NO_FOCUS | SWT.CHECK | SWT.VIRTUAL;
+		int mask = SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE | SWT.MULTI | SWT.NO_FOCUS | SWT.CHECK | SWT.VIRTUAL;
+		
         int newStyle = style & mask;
         return newStyle;
 	}
 	
 	// layout everything
 	private void init() {
+		isReadOnly = ((mComboStyle ^ SWT.READ_ONLY) == 0);
+		
 		mListeners = new ArrayList();
 
 		if (mColorManager == null)
@@ -276,6 +287,12 @@ public class CalendarCombo extends Composite {
 		if (mSettings == null)
 			mSettings = new DefaultSettings();
 
+		arrowButtonWidth = mSettings.getWindowsButtonWidth();
+		if (OS_CARBON)
+			arrowButtonWidth = mSettings.getCarbonButtonWidth();
+		else if (OS_GTK)
+			arrowButtonWidth = mSettings.getGTKButtonWidth();
+		
 		GridLayout gl = new GridLayout();
 		gl.horizontalSpacing = 0;
 		gl.verticalSpacing = 0;
@@ -288,7 +305,20 @@ public class CalendarCombo extends Composite {
 		mCombo.setLayoutData(new GridData(130, SWT.DEFAULT));
 
 		mCombo.addListener(SWT.MouseDown, new Listener() {
-			public void handleEvent(Event event) {
+			public void handleEvent(Event event) {				
+				// click in the text area? ignore
+				if (isTextAreaClick(event)) {
+					if (isCalendarVisible())
+						kill(16);
+					
+					return;
+				}
+				
+				// kill calendar if visible and do nothing else
+				if (isCalendarVisible()) {
+					kill(15);
+					return;
+				}
 				// a very small time between the close and the open means it was
 				// a click on the
 				// arrow down to close, and we don't open it again in that case.
@@ -452,6 +482,31 @@ public class CalendarCombo extends Composite {
 		if (mDefaultText != null && mDefaultText.length() > 0)
 			setText(mDefaultText);
 	}
+	
+	private boolean isTextAreaClick(Event event) {
+		// non-read-only combos open on click aywhere
+		if (isReadOnly)
+			return false;
+		
+		Point size = mCombo.getSize();
+		int width = size.x;
+		
+		Rectangle rect = null;
+		
+		rect = new Rectangle(0, 0, width-arrowButtonWidth, size.y);		
+		if (isInside(event.x, event.y, rect))				
+			return true;
+		
+		return false;
+	}
+	
+	private boolean isInside(int x, int y, Rectangle rect) {
+		if (rect == null) {
+			return false;
+		}
+
+		return x >= rect.x && y >= rect.y && x <= (rect.x + rect.width) && y <= (rect.y + rect.height);
+	}
 
 	/**
 	 * Sets the current date.
@@ -569,12 +624,24 @@ public class CalendarCombo extends Composite {
 	 * err) { return null; } }
 	 */
 
+	private void setDateBasedOnComboText() {
+		try {
+			Date d = DateHelper.getDate(mCombo.getText(), mSettings.getDateFormat());
+			setDate(d);
+		}
+		catch (Exception err) {					
+			// we don't care
+		}
+	}
+	
 	// shows the calendar area
 	private synchronized void showCalendar() {
 		try {
 			// bug fix: Apr 18, 2008 - if we do various operations prior to actually fetching any newly entered text into the
 			// (non-read only) combo, we'll lose that edit, so fetch the combo text now so that we can check it later down in the code
 			// reported by: B. Haje
+			setDateBasedOnComboText();
+			
 			String comboText = mCombo.getText();
 
 			mCombo.setCapture(true);
@@ -587,13 +654,7 @@ public class CalendarCombo extends Composite {
 				// bug fix part #2, apr 23. Repeated klicking open/close will get here, so we need to do the same bug fix as before but somewhat differently
 				// as we need to update the date object as well. This is basically only for non-read-only combos, but the fix is universally applicable.
 				mCombo.setText(comboText);
-				try {
-					Date d = DateHelper.getDate(comboText, mSettings.getDateFormat());
-					setDate(d);
-				}
-				catch (Exception err) {					
-					// we don't care
-				}
+				setDateBasedOnComboText();
 				kill(11);
 				return;
 			}
@@ -678,7 +739,7 @@ public class CalendarCombo extends Composite {
 			}
 
 			// create the calendar composite
-			mCalendarComposite = new CalendarComposite(mCalendarShell, pre, mColorManager, mSettings);
+			mCalendarComposite = new CalendarComposite(mCalendarShell, pre, mDisallowBeforeDate, mDisallowAfterDate, mColorManager, mSettings);
 			for (int i = 0; i < mListeners.size(); i++) {
 				ICalendarListener listener = (ICalendarListener) mListeners.get(i);
 				mCalendarComposite.addCalendarListener(listener);
@@ -811,4 +872,63 @@ public class CalendarCombo extends Composite {
 		checkWidget();
 		mCombo.removeModifyListener(ml);
 	}
+
+	/**
+	 * The date prior to which selection is not allowed.
+	 * 
+	 * @return Date
+	 */
+	public Calendar getDisallowBeforeDate() {
+		return mDisallowBeforeDate;
+	}
+
+	/**
+	 * Sets the date prior to which selection is not allowed.
+	 * 
+	 * @param disallowBeforeDate Date
+	 */
+	public void setDisallowBeforeDate(Calendar disallowBeforeDate) {
+		mDisallowBeforeDate = disallowBeforeDate;
+	}
+
+	/**
+	 * Sets the date prior to which selection is not allowed.
+	 * 
+	 * @param disallowBeforeDate Date
+	 */
+	public void setDisallowBeforeDate(Date disallowBeforeDate) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(disallowBeforeDate);
+		mDisallowBeforeDate = cal;
+	}
+
+	/**
+	 * The date after which selection is not allowed.
+	 * 
+	 * @return Date
+	 */
+	public Calendar getDisallowAfterDate() {
+		return mDisallowAfterDate;
+	}
+
+	/**
+	 * Sets the date after which selection is not allowed.
+	 * 
+	 * @param disallowAfterDate Date
+	 */
+	public void setDisallowAfterDate(Calendar disallowAfterDate) {
+		mDisallowAfterDate = disallowAfterDate;
+	}
+	
+	/**
+	 * Sets the date after which selection is not allowed.
+	 * 
+	 * @param disallowAfterDate
+	 */
+	public void setDisallowAfterDate(Date disallowAfterDate) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(disallowAfterDate);
+		mDisallowAfterDate = cal;
+	}
+	
 }

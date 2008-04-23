@@ -107,6 +107,18 @@ public abstract class AbstractSettings implements ISettings {
 	public boolean showMonthPickerOnMonthNameMousePress() {
 		return true;
 	}
+
+	public int getCarbonButtonWidth() {
+		return 22;
+	}
+
+	public int getGTKButtonWidth() {
+		return 25;
+	}
+
+	public int getWindowsButtonWidth() {
+		return 19;
+	}
 	
 	
 }

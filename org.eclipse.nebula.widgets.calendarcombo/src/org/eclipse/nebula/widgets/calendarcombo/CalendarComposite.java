@@ -109,6 +109,10 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 	
 	private ICalendarListener mMainListener;
 
+	private Calendar mDisallowBeforeDate;
+	
+	private Calendar mDisallowAfterDate;
+	
 	static {
 		String[] weekdays = mDFS.getWeekdays();
 		mDayTitles = new String[weekdays.length];
@@ -120,12 +124,14 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 		}
 	}
 
-	public CalendarComposite(Composite parent, Calendar selectedDay, IColorManager colorManager, ISettings settings) {
+	public CalendarComposite(Composite parent, Calendar selectedDay, Calendar disallowBeforeDate, Calendar disallowAfterDate, IColorManager colorManager, ISettings settings) {
 		super(parent, SWT.NO_BACKGROUND | SWT.NO_FOCUS | SWT.DOUBLE_BUFFERED);
 		this.mSelectedDay = selectedDay;
 		this.mCalendar = selectedDay;
 		this.mColorManager = colorManager;
 		this.mSettings = settings;
+		this.mDisallowBeforeDate = disallowBeforeDate;
+		this.mDisallowAfterDate = disallowAfterDate;
 		if (this.mCalendar == null)
 			this.mCalendar = Calendar.getInstance(Locale.getDefault());
 		build();
@@ -341,7 +347,21 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 				gc.setForeground(mColorManager.getTextColor());
 			}
 			else {
-				gc.setForeground(mColorManager.getLineColor());
+				gc.setForeground(mColorManager.getPreviousAndNextMonthForegroundColor());
+			}
+			
+			boolean disallowedDate = false;
+			if (mDisallowBeforeDate != null) {
+				if (temp.before(mDisallowBeforeDate)) {
+					disallowedDate = true;
+					gc.setForeground(mColorManager.getDisabledDayForegroundColor());
+				}
+			}
+			if (mDisallowAfterDate != null && !disallowedDate) {
+				if (temp.after(mDisallowAfterDate)) {
+					disallowedDate = true;
+					gc.setForeground(mColorManager.getDisabledDayForegroundColor());
+				}
 			}
 
 			String dateStr = "" + temp.get(Calendar.DATE);
@@ -362,7 +382,7 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 
 			Rectangle dayBounds = new Rectangle(mDayXs[col] - mSettings.getOneDateBoxSize() - 4, mDatesTopY + spacer - 1, mSettings.getOneDateBoxSize() + 5, 14);
 
-			mDays[y] = new CalDay(y, temp, dayBounds);
+			mDays[y] = new CalDay(y, temp, dayBounds, disallowedDate);
 
 			gc.drawString(dateStr, mDayXs[col] - width.x, mDatesTopY + spacer, true);
 
@@ -555,7 +575,11 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 
 		for (int i = 0; i < mDays.length; i++) {
 			if (isInside(x, y, mDays[i].getBounds())) {
-
+				
+				// disabled date? ignore click completely
+				if (mDays[i].isDisabled())
+					return;
+				
 				int dayYear = mDays[i].getDate().get(Calendar.YEAR);
 				int dayMonth = mDays[i].getDate().get(Calendar.MONTH);
 
@@ -715,11 +739,18 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 		private int number;
 
 		private Rectangle bounds;
+		
+		private boolean disabled;
 
-		public CalDay(int number, Calendar date, Rectangle bounds) {
+		public CalDay(int number, Calendar date, Rectangle bounds, boolean disabled) {
 			this.date = (Calendar) date.clone();
 			this.bounds = bounds;
 			this.number = number;
+			this.disabled = disabled;
+		}
+		
+		public boolean isDisabled() {
+			return disabled;
 		}
 
 		public Calendar getDate() {
