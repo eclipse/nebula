@@ -488,12 +488,10 @@ public class CalendarCombo extends Composite {
 		if (isReadOnly)
 			return false;
 		
-		Point size = mCombo.getSize();
-		int width = size.x;
-		
+		Point size = mCombo.getSize();		
 		Rectangle rect = null;
 		
-		rect = new Rectangle(0, 0, width-arrowButtonWidth, size.y);		
+		rect = new Rectangle(0, 0, size.x-arrowButtonWidth, size.y);		
 		if (isInside(event.x, event.y, rect))				
 			return true;
 		
@@ -501,9 +499,8 @@ public class CalendarCombo extends Composite {
 	}
 	
 	private boolean isInside(int x, int y, Rectangle rect) {
-		if (rect == null) {
-			return false;
-		}
+		if (rect == null) 
+			return false;		
 
 		return x >= rect.x && y >= rect.y && x <= (rect.x + rect.width) && y <= (rect.y + rect.height);
 	}
@@ -610,6 +607,9 @@ public class CalendarCombo extends Composite {
 	 */
 	public Calendar getDate() {
 		checkWidget();
+		if (!isReadOnly)
+			setDateBasedOnComboText();
+		
 		return mSetDate;
 	}
 
