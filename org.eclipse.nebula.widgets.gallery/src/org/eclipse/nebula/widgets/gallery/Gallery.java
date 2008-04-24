@@ -650,16 +650,18 @@ public class Gallery extends Canvas {
 			if (!isSelected(item)) {
 				_addSelection(item);
 
-				// Notify listeners if necessary.
-				if (notifyListeners)
-					notifySelectionListeners(item, indexOf(item));
-			}
+				}
 
 		} else {
 			if (isSelected(item)) {
 				_removeSelection(item);
 			}
 		}
+		
+		// Notify listeners if necessary.
+		if (notifyListeners)
+			notifySelectionListeners(item, indexOf(item));
+
 	}
 
 	protected void _addSelection(GalleryItem item) {
@@ -1667,7 +1669,7 @@ public class Gallery extends Canvas {
 		for (int i = 0; i < items.length; i++) {
 			this.setSelected(items[i], true, false);
 
-			// Ensure item is visibme
+			// Ensure item is visible
 			_showItem(items[i]);
 
 			// Simulate mouse click to enable keyboard navigation
