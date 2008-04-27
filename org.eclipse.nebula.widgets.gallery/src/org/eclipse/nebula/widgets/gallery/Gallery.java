@@ -141,10 +141,16 @@ public class Gallery extends Canvas {
 
 	int lastIndexOf = 0;
 
+	/**
+	 * Keeps track of the last selected item. This is necessary to support
+	 * "Shift+Mouse button" where we have to select all items between the
+	 * previous and the current item and keyboard navigation.
+	 */
 	protected GalleryItem lastSingleClick = null;
 
 	/**
-	 * Current translation. Can be used by renderer during paint.
+	 * Current translation (scroll bar position). Can be used by renderer during
+	 * paint.
 	 */
 	protected int translate = 0;
 
@@ -355,7 +361,8 @@ public class Gallery extends Canvas {
 		// e.index = index;
 		try {
 			notifyListeners(SWT.Selection, e);
-		} catch (RuntimeException e1) {
+		} catch (RuntimeException ex) {
+			ex.printStackTrace();
 		}
 	}
 
@@ -375,7 +382,8 @@ public class Gallery extends Canvas {
 		// e.index = index;
 		try {
 			notifyListeners(SWT.Expand, e);
-		} catch (RuntimeException e1) {
+		} catch (RuntimeException ex) {
+			ex.printStackTrace();
 		}
 	}
 
@@ -400,18 +408,8 @@ public class Gallery extends Canvas {
 		multi = (style & SWT.MULTI) > 0;
 		this.setBackground(getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 
-		// Dispose renderers on dispose
-		this.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				if (itemRenderer != null)
-					itemRenderer.dispose();
-
-				if (groupRenderer != null)
-					groupRenderer.dispose();
-			}
-		});
-
 		// Add listeners : redraws, mouse and keyboard
+		_addDisposeListeners();
 		_addResizeListeners();
 		_addPaintListeners();
 		_addScrollBarsListeners();
@@ -422,6 +420,17 @@ public class Gallery extends Canvas {
 		updateStructuralValues(false);
 		updateScrollBarsProperties();
 		redraw();
+	}
+
+	/**
+	 * Add internal dispose listeners to this gallery.
+	 */
+	private void _addDisposeListeners() {
+		this.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				onDispose();
+			}
+		});
 	}
 
 	/**
@@ -504,6 +513,7 @@ public class Gallery extends Canvas {
 			}
 
 			public void keyReleased(KeyEvent e) {
+				// Nothing yet.
 			}
 
 		});
@@ -514,7 +524,7 @@ public class Gallery extends Canvas {
 		this._showItem(item);
 	}
 
-	private void _showItem(GalleryItem item) {
+	void _showItem(GalleryItem item) {
 		int y;
 		int height;
 		Rectangle rect = groupRenderer.getSize(item);
@@ -650,14 +660,14 @@ public class Gallery extends Canvas {
 			if (!isSelected(item)) {
 				_addSelection(item);
 
-				}
+			}
 
 		} else {
 			if (isSelected(item)) {
 				_removeSelection(item);
 			}
 		}
-		
+
 		// Notify listeners if necessary.
 		if (notifyListeners)
 			notifySelectionListeners(item, indexOf(item));
@@ -728,16 +738,17 @@ public class Gallery extends Canvas {
 
 		if (item.getParentItem() != null) {
 			return item.getParentItem().isSelected(item);
-		} else {
-			if (selectionIndices == null)
-				return false;
-
-			int index = indexOf(item);
-			for (int i = 0; i < selectionIndices.length; i++) {
-				if (selectionIndices[i] == index)
-					return true;
-			}
 		}
+
+		if (selectionIndices == null)
+			return false;
+
+		int index = indexOf(item);
+		for (int i = 0; i < selectionIndices.length; i++) {
+			if (selectionIndices[i] == index)
+				return true;
+		}
+
 		return false;
 	}
 
@@ -767,7 +778,7 @@ public class Gallery extends Canvas {
 		}
 	}
 
-	private void onMouseDoubleClick(MouseEvent e) {
+	void onMouseDoubleClick(MouseEvent e) {
 		if (DEBUG)
 			System.out.println("Mouse Double Click");
 
@@ -778,7 +789,7 @@ public class Gallery extends Canvas {
 		mouseClickHandled = true;
 	}
 
-	private void onMouseUp(MouseEvent e) {
+	void onMouseUp(MouseEvent e) {
 		if (DEBUG)
 			System.out.println("onMouseUp");
 
@@ -804,7 +815,21 @@ public class Gallery extends Canvas {
 		}
 	}
 
-	private void onMouseDown(MouseEvent e) {
+	void onDispose() {
+		// Remove items if not Virtual.
+		if (!virtual)
+			removeAll();
+
+		// Dispose Renderers
+		if (itemRenderer != null)
+			itemRenderer.dispose();
+
+		if (groupRenderer != null)
+			groupRenderer.dispose();
+
+	}
+
+	void onMouseDown(MouseEvent e) {
 		if (DEBUG)
 			System.out.println("Mouse down ");
 
@@ -865,7 +890,7 @@ public class Gallery extends Canvas {
 		}
 	}
 
-	private void onMouseHandleLeft(MouseEvent e, GalleryItem item, boolean down, boolean up) {
+	void onMouseHandleLeft(MouseEvent e, GalleryItem item, boolean down, boolean up) {
 		if (down) {
 			if (!isSelected(item)) {
 				_deselectAll();
@@ -893,7 +918,7 @@ public class Gallery extends Canvas {
 		}
 	}
 
-	private void onMouseHandleRight(MouseEvent e, GalleryItem item, boolean down, boolean up) {
+	void onMouseHandleRight(MouseEvent e, GalleryItem item, boolean down, boolean up) {
 		if (down) {
 			if (DEBUG)
 				System.out.println("right clic");
@@ -924,6 +949,7 @@ public class Gallery extends Canvas {
 				newGC.setAntialias(antialias);
 				newGC.setInterpolation(interpolation);
 			}
+			// End of Bug 174932
 
 			Rectangle clipping = newGC.getClipping();
 			gc.setBackground(getBackground());
@@ -1087,7 +1113,7 @@ public class Gallery extends Canvas {
 
 		if (vertical) {
 			if (gHeight > 0 && keepLocation)
-				pos = (float) (translate + 0.5 * area.height) / (float) gHeight;
+				pos = (float) (translate + 0.5 * area.height) / gHeight;
 
 			gWidth = area.width;
 			gHeight = calculateSize();
@@ -1097,7 +1123,7 @@ public class Gallery extends Canvas {
 
 		} else {
 			if (gWidth > 0 && keepLocation)
-				pos = (float) (translate + 0.5 * area.width) / (float) gWidth;
+				pos = (float) (translate + 0.5 * area.width) / gWidth;
 
 			gWidth = calculateSize();
 			gHeight = area.height;
@@ -1246,14 +1272,6 @@ public class Gallery extends Canvas {
 
 	}
 
-	// TODO: not used ATM
-	// private void scroll() {
-	// if (vertical)
-	// scrollVertical();
-	// else
-	// scrollHorizontal();
-	// }
-
 	protected void scrollVertical() {
 		int areaHeight = getClientArea().height;
 
@@ -1341,7 +1359,7 @@ public class Gallery extends Canvas {
 	 * Get the item at index.<br/> If SWT.VIRTUAL is used and the item has not
 	 * been used, the item is created and a SWT.SetData is fired.<br/>
 	 * 
-	 * This is the internat implementation of this method : checkWidget() is not
+	 * This is the internal implementation of this method : checkWidget() is not
 	 * used.
 	 * 
 	 * @param index
@@ -1358,7 +1376,7 @@ public class Gallery extends Canvas {
 	}
 
 	/**
-	 * Forward the mouseDown event to the corresponding group accorrding to the
+	 * Forward the mouseDown event to the corresponding group according to the
 	 * mouse position.
 	 * 
 	 * @param e
@@ -1443,8 +1461,6 @@ public class Gallery extends Canvas {
 	/**
 	 * Clear all items.<br/>
 	 * 
-	 * All items are removed and dispose events are fired if the gallery is not
-	 * virtual.<br/>
 	 * 
 	 * If the Gallery is virtual, the item count is not reseted and all items
 	 * will be created again at their first use.<br/>
@@ -1530,8 +1546,8 @@ public class Gallery extends Canvas {
 		checkWidget();
 		if (item.getParentItem() == null)
 			return _indexOf(item);
-		else
-			return _indexOf(item.getParentItem(), item);
+
+		return _indexOf(item.getParentItem(), item);
 	}
 
 	/**

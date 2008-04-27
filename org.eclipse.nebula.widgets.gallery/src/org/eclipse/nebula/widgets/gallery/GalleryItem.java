@@ -48,7 +48,7 @@ public class GalleryItem extends Item {
 	 * X and Y values are used for vertical or horizontal offset depending on
 	 * the Gallery settings. Only used when groups are enabled.
 	 * 
-	 * Width and hei
+	 * Width and height
 	 */
 	// protected Rectangle bounds = new Rectangle(0, 0, 0, 0);
 	protected int x = 0;
@@ -316,7 +316,7 @@ public class GalleryItem extends Item {
 	/**
 	 * Deselect all children of this item
 	 */
-	protected void deselectAll() {
+	public void deselectAll() {
 		checkWidget();
 		_deselectAll();
 		parent.redraw();
