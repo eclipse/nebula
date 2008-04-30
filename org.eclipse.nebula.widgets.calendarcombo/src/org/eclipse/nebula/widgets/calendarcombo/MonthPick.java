@@ -69,12 +69,15 @@ class MonthPick extends Canvas implements MouseListener, MouseMoveListener {
 	private CalendarComposite mCalendarComposite = null;
 
 	private Calendar mSelectedMonth = null;
+	
+	private Locale mLocale;
 
-	public MonthPick(Composite parent, int style, Calendar start, CalendarComposite cc) {
+	public MonthPick(Composite parent, int style, Calendar start, CalendarComposite cc, Locale locale) {
 		super(parent, style | SWT.NO_BACKGROUND | SWT.NO_REDRAW_RESIZE | SWT.ON_TOP);
-		this.mStart = start;
-		this.mCalendarComposite = cc;
-
+		mStart = start;
+		mCalendarComposite = cc;
+		mLocale = locale;
+		
 		setSize(101, 106);
 		setCapture(true);
 
@@ -160,7 +163,7 @@ class MonthPick extends Canvas implements MouseListener, MouseMoveListener {
 		int y = mTopDateSpacer;
 		int spacer = 2;
 
-		Calendar temp = Calendar.getInstance();
+		Calendar temp = Calendar.getInstance(mLocale);
 		temp.setTime(mStart.getTime());
 
 		temp.add(Calendar.MONTH, -3);

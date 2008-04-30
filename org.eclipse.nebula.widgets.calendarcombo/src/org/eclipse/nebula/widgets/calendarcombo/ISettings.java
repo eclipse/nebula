@@ -11,6 +11,8 @@
 
 package org.eclipse.nebula.widgets.calendarcombo;
 
+import java.util.Locale;
+
 
 public interface ISettings {
 	
@@ -227,4 +229,11 @@ public interface ISettings {
 	 * @return size that the current OS. Defaults are: OSX: 22, Windows: 19, GTK: 25. 
 	 */
 	public int getGTKButtonWidth();
+	
+	/**
+	 * Returns the Locale that the calendar should use when calculating dates etc.
+	 * 
+	 * @return Locale to use. Default is Locale.getDefault().
+	 */
+	public Locale getLocale();
 }

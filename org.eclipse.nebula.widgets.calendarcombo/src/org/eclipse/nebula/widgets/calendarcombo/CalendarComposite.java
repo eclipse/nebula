@@ -14,7 +14,6 @@ package org.eclipse.nebula.widgets.calendarcombo;
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Locale;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -54,9 +53,9 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 
 	private Rectangle mMonthNameBounds;
 
-	private Calendar mCalendar = Calendar.getInstance(Locale.getDefault());
+	private Calendar mCalendar;
 
-	private Calendar mToday = Calendar.getInstance(Locale.getDefault());
+	private Calendar mToday;
 
 	private int mDatesTopY = 0;
 
@@ -66,9 +65,9 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 
 	private Calendar mSelectedDay;
 
-	private static DateFormatSymbols mDFS = new DateFormatSymbols(Locale.getDefault());
+	private static DateFormatSymbols mDFS;
 
-	private String mMonths[] = mDFS.getMonths();
+	private String mMonths[];
 
 	private static String[] mDayTitles = null;
 
@@ -113,17 +112,6 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 	
 	private Calendar mDisallowAfterDate;
 	
-	static {
-		String[] weekdays = mDFS.getWeekdays();
-		mDayTitles = new String[weekdays.length];
-		for (int i = 0; i < weekdays.length; i++) {
-			String weekday = weekdays[i];
-			if (weekday.length() > 0) {
-				mDayTitles[i] = weekday.substring(0, 1).toUpperCase();
-			}
-		}
-	}
-
 	public CalendarComposite(Composite parent, Calendar selectedDay, Calendar disallowBeforeDate, Calendar disallowAfterDate, IColorManager colorManager, ISettings settings) {
 		super(parent, SWT.NO_BACKGROUND | SWT.NO_FOCUS | SWT.DOUBLE_BUFFERED);
 		this.mSelectedDay = selectedDay;
@@ -132,9 +120,30 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 		this.mSettings = settings;
 		this.mDisallowBeforeDate = disallowBeforeDate;
 		this.mDisallowAfterDate = disallowAfterDate;
-		if (this.mCalendar == null)
-			this.mCalendar = Calendar.getInstance(Locale.getDefault());
+
+		init();
+		
 		build();
+	}
+	
+	private void init() {
+		mDFS = new DateFormatSymbols(mSettings.getLocale());
+		mMonths = mDFS.getMonths();;
+		 
+		if (mCalendar == null)
+			mCalendar = Calendar.getInstance(mSettings.getLocale());
+		if (mToday == null)
+			mToday = Calendar.getInstance(mSettings.getLocale());		
+
+		String[] weekdays = mDFS.getWeekdays();
+		mDayTitles = new String[weekdays.length];
+		for (int i = 0; i < weekdays.length; i++) {
+			String weekday = weekdays[i];
+			if (weekday.length() > 0) {
+				mDayTitles[i] = weekday.substring(0, 1).toUpperCase();
+			}
+		}
+
 	}
 
 	private void build() {
@@ -180,8 +189,8 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 	}
 
 	private void clickedTodayButton() {
-		setDate(Calendar.getInstance(Locale.getDefault()));
-		mSelectedDay = Calendar.getInstance(Locale.getDefault());
+		setDate(Calendar.getInstance(mSettings.getLocale()));
+		mSelectedDay = Calendar.getInstance(mSettings.getLocale());
 		notifyListeners();
 	}
 
@@ -232,7 +241,7 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 
 	public void goToToday() {
 		mSelectedDay = null;
-		this.mCalendar = Calendar.getInstance(Locale.getDefault());
+		this.mCalendar = Calendar.getInstance(mSettings.getLocale());
 		redraw();
 	}
 
@@ -264,7 +273,7 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 	}
 
 	private void drawTitleDays(GC gc) {
-		Calendar temp = Calendar.getInstance(Locale.getDefault());
+		Calendar temp = Calendar.getInstance(mSettings.getLocale());
 		// fetch the first day of the week, and draw starting on that day
 		int fdow = temp.getFirstDayOfWeek();
 
@@ -492,7 +501,7 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 		}
 
 		if (mSettings.showMonthPickerOnMonthNameMousePress() && isInside(event.x, event.y, mMonthNameBounds)) {
-			MonthPick mp = new MonthPick(this, SWT.NONE, mCalendar, this);
+			MonthPick mp = new MonthPick(this, SWT.NONE, mCalendar, this, mSettings.getLocale());
 			mp.addDisposeListener(new DisposeListener() {
 				public void widgetDisposed(DisposeEvent e) {
 					mMonthSelectorOpen = false;

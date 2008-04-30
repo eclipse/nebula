@@ -14,7 +14,6 @@ package org.eclipse.nebula.widgets.calendarcombo;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
@@ -324,7 +323,7 @@ public class CalendarCombo extends Composite {
 				// arrow down to close, and we don't open it again in that case.
 				// The next click will open.
 				// this is the expected behavior.
-				mLastShowRequest = Calendar.getInstance().getTimeInMillis();
+				mLastShowRequest = Calendar.getInstance(mSettings.getLocale()).getTimeInMillis();
 
 				long diff = mLastKillRequest - mLastShowRequest;
 				if (diff > -100 && diff < 0)
@@ -372,7 +371,7 @@ public class CalendarCombo extends Composite {
 
 				}
 				else {
-					long now = Calendar.getInstance().getTimeInMillis();
+					long now = Calendar.getInstance(mSettings.getLocale()).getTimeInMillis();
 					long diff = now - mLastShowRequest;
 					if (diff > 0 && diff < 100)
 						return;
@@ -512,7 +511,7 @@ public class CalendarCombo extends Composite {
 	 */
 	public synchronized void setDate(Date date) {
 		checkWidget();
-		Calendar cal = Calendar.getInstance();
+		Calendar cal = Calendar.getInstance(mSettings.getLocale());
 		cal.setTime(date);
 		setDate(cal);
 	}
@@ -552,7 +551,7 @@ public class CalendarCombo extends Composite {
 			return;
 
 		if (mCalendarShell != null && !mCalendarShell.isDisposed()) {
-			mLastKillRequest = Calendar.getInstance().getTimeInMillis();
+			mLastKillRequest = Calendar.getInstance(mSettings.getLocale()).getTimeInMillis();
 			mCalendarShell.setVisible(false);
 			mCalendarShell.dispose();
 		}
@@ -706,7 +705,7 @@ public class CalendarCombo extends Composite {
 				try {
 					Date dat = DateHelper.getDate(comboText, mSettings.getDateFormat());
 					if (dat != null) {
-						pre = Calendar.getInstance(Locale.getDefault());
+						pre = Calendar.getInstance(mSettings.getLocale());
 						pre.setTime(dat);
 					}
 				}
@@ -724,7 +723,7 @@ public class CalendarCombo extends Composite {
 					Calendar date = null;
 					try {
 						Date d = DateHelper.getDate(mPullDateFrom.getCombo().getText(), mSettings.getDateFormat());
-						date = Calendar.getInstance();
+						date = Calendar.getInstance(mSettings.getLocale());
 						date.setTime(d);
 					}
 					catch (Exception err) {
@@ -732,7 +731,7 @@ public class CalendarCombo extends Composite {
 					}
 										
 					if (date != null) {
-						pre = Calendar.getInstance(Locale.getDefault());
+						pre = Calendar.getInstance(mSettings.getLocale());
 						pre.setTime(date.getTime());
 					}
 				}
@@ -897,7 +896,7 @@ public class CalendarCombo extends Composite {
 	 * @param disallowBeforeDate Date
 	 */
 	public void setDisallowBeforeDate(Date disallowBeforeDate) {
-		Calendar cal = Calendar.getInstance();
+		Calendar cal = Calendar.getInstance(mSettings.getLocale());
 		cal.setTime(disallowBeforeDate);
 		mDisallowBeforeDate = cal;
 	}
@@ -926,7 +925,7 @@ public class CalendarCombo extends Composite {
 	 * @param disallowAfterDate
 	 */
 	public void setDisallowAfterDate(Date disallowAfterDate) {
-		Calendar cal = Calendar.getInstance();
+		Calendar cal = Calendar.getInstance(mSettings.getLocale());
 		cal.setTime(disallowAfterDate);
 		mDisallowAfterDate = cal;
 	}

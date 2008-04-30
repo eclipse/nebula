@@ -21,10 +21,10 @@ public class DateHelper {
 
 	private static final long MILLISECONDS_IN_DAY = 24 * 60 * 60 * 1000;
 	
-	public static long daysBetween(Calendar start, Calendar end) {		
+	public static long daysBetween(Calendar start, Calendar end, Locale locale) {		
 		// create copies
-		GregorianCalendar startDate = new GregorianCalendar(Locale.getDefault());
-		GregorianCalendar endDate = new GregorianCalendar(Locale.getDefault());
+		GregorianCalendar startDate = new GregorianCalendar(locale);
+		GregorianCalendar endDate = new GregorianCalendar(locale);
 
 		// switch calendars to pure Julian mode for correct day-between calculation, from the Java API:
 		// - To obtain a pure Julian calendar, set the change date to Date(Long.MAX_VALUE).
@@ -55,23 +55,23 @@ public class DateHelper {
 		return diff;
 	}
 
-	public static long daysBetween(Date start, Date end) {
-		Calendar dEnd = Calendar.getInstance(Locale.getDefault());
-		Calendar dStart = Calendar.getInstance(Locale.getDefault());
+	public static long daysBetween(Date start, Date end, Locale locale) {
+		Calendar dEnd = Calendar.getInstance(locale);
+		Calendar dStart = Calendar.getInstance(locale);
 		dEnd.setTime(end);
 		dStart.setTime(start);
-		return daysBetween(dStart, dEnd);
+		return daysBetween(dStart, dEnd, locale);
 	}
 	
-    public static boolean isToday(Date date) {
-        Calendar cal = Calendar.getInstance();
+    public static boolean isToday(Date date, Locale locale) {
+        Calendar cal = Calendar.getInstance(locale);
         cal.setTime(date);
 
-        return isToday(cal);
+        return isToday(cal, locale);
     }
 
-    public static boolean isToday(Calendar cal) {
-        Calendar today = Calendar.getInstance();
+    public static boolean isToday(Calendar cal, Locale locale) {
+        Calendar today = Calendar.getInstance(locale);
 
         if (today.get(Calendar.YEAR) == cal.get(Calendar.YEAR)) {
             if (today.get(Calendar.DAY_OF_YEAR) == cal.get(Calendar.DAY_OF_YEAR)) {
@@ -91,9 +91,9 @@ public class DateHelper {
         return df.format(cal.getTime());
     }
     
-    public static boolean sameDate(Date date1, Date date2) {
-        Calendar cal1 = Calendar.getInstance();
-        Calendar cal2 = Calendar.getInstance();
+    public static boolean sameDate(Date date1, Date date2, Locale locale) {
+        Calendar cal1 = Calendar.getInstance(locale);
+        Calendar cal2 = Calendar.getInstance(locale);
 
         cal1.setTime(date1);
         cal2.setTime(date2);

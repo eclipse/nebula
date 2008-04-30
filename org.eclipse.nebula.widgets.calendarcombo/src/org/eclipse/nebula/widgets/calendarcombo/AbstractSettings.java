@@ -11,6 +11,8 @@
 
 package org.eclipse.nebula.widgets.calendarcombo;
 
+import java.util.Locale;
+
 public abstract class AbstractSettings implements ISettings {
 	public int getArrowLeftSpacing() {
 		return 6;
@@ -118,6 +120,10 @@ public abstract class AbstractSettings implements ISettings {
 
 	public int getWindowsButtonWidth() {
 		return 19;
+	}
+
+	public Locale getLocale() {
+		return Locale.getDefault();
 	}
 	
 	
