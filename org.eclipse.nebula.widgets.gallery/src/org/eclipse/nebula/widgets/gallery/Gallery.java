@@ -918,12 +918,20 @@ public class Gallery extends Canvas {
 		}
 	}
 
+	/**
+	 * Handle right clic.
+	 * 
+	 * @param e
+	 * @param item : The item which is under the cursor or null
+	 * @param down
+	 * @param up
+	 */
 	void onMouseHandleRight(MouseEvent e, GalleryItem item, boolean down, boolean up) {
 		if (down) {
 			if (DEBUG)
 				System.out.println("right clic");
 
-			if (!isSelected(item)) {
+			if (item != null && !isSelected(item)) {
 				_deselectAll();
 				setSelected(item, true, true);
 				redraw();
@@ -952,8 +960,11 @@ public class Gallery extends Canvas {
 			// End of Bug 174932
 
 			Rectangle clipping = newGC.getClipping();
-			gc.setBackground(getBackground());
-			drawBackground(newGC, clipping.x, clipping.y, clipping.width, clipping.height);
+			newGC.setBackground(getBackground());
+
+			// Not using control's native fillBackground because it's semi
+			// transparent on OSX.
+			newGC.fillRectangle(clipping.x, clipping.y, clipping.width, clipping.height);
 
 			int[] indexes = getVisibleItems(clipping);
 
