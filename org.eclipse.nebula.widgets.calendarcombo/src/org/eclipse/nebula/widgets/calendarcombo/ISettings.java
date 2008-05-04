@@ -233,7 +233,8 @@ public interface ISettings {
 	/**
 	 * Returns the Locale that the calendar should use when calculating dates etc.
 	 * 
-	 * @return Locale to use. Default is Locale.getDefault().
+	 * @return Locale to use. Default is Locale.getDefault(). Return value may not be null.
 	 */
 	public Locale getLocale();
+	
 }

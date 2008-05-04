@@ -126,5 +126,4 @@ public abstract class AbstractSettings implements ISettings {
 		return Locale.getDefault();
 	}
 	
-	
 }

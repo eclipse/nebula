@@ -14,6 +14,7 @@ package org.eclipse.nebula.widgets.calendarcombo;
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -64,6 +65,11 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 	private CalDay[] mDays = new CalDay[7 * 6];
 
 	private Calendar mSelectedDay;
+	
+	// used for date ranges
+	private Calendar mMouseDownDay;
+	
+	private Calendar mMouseUpDay;
 
 	private static DateFormatSymbols mDFS;
 
@@ -112,7 +118,11 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 	
 	private Calendar mDisallowAfterDate;
 	
-	public CalendarComposite(Composite parent, Calendar selectedDay, Calendar disallowBeforeDate, Calendar disallowAfterDate, IColorManager colorManager, ISettings settings) {
+	private boolean mDateRange;
+	
+	private boolean mMouseIsDown;
+	
+	public CalendarComposite(Composite parent, Calendar selectedDay, Calendar disallowBeforeDate, Calendar disallowAfterDate, IColorManager colorManager, ISettings settings, boolean dateRange, Calendar rangeStart, Calendar rangeEnd) {
 		super(parent, SWT.NO_BACKGROUND | SWT.NO_FOCUS | SWT.DOUBLE_BUFFERED);
 		this.mSelectedDay = selectedDay;
 		this.mCalendar = selectedDay;
@@ -120,6 +130,11 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 		this.mSettings = settings;
 		this.mDisallowBeforeDate = disallowBeforeDate;
 		this.mDisallowAfterDate = disallowAfterDate;
+		this.mDateRange = dateRange;
+		if (dateRange) {
+			this.mMouseDownDay = rangeStart;
+			this.mMouseUpDay = rangeEnd;
+		}
 
 		init();
 		
@@ -143,7 +158,6 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 				mDayTitles[i] = weekday.substring(0, 1).toUpperCase();
 			}
 		}
-
 	}
 
 	private void build() {
@@ -153,7 +167,7 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 		int buttonStyle = SWT.PUSH;
 		mListeners = new ArrayList();
 
-		// Mac buttons need different flag to ook normal
+		// Mac buttons need different flag to look normal
 		if (CalendarCombo.OS_CARBON) {
 			buttonStyle = SWT.FLAT;
 		}
@@ -319,14 +333,14 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 
 		Calendar temp = (Calendar) mCalendar.clone();
 		temp.set(Calendar.DAY_OF_MONTH, 1);
+		temp = clearTime(temp);
 
 		int monthToShow = temp.get(Calendar.MONTH);
 
 		int firstDayOfWeek = temp.getFirstDayOfWeek();
 		int firstDay = temp.get(Calendar.DAY_OF_WEEK) - firstDayOfWeek;
-		if (firstDay < 0) {
-			firstDay += 7;
-		}
+		if (firstDay < 0) 
+			firstDay += 7;		
 
 		temp.add(Calendar.DATE, -firstDay);
 		int col = 0;
@@ -338,7 +352,15 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 		gc.setForeground(mColorManager.getLineColor());
 
 		int lastY = 0;
-
+		
+		List betweenDays = null;
+		if (mDateRange && mMouseDownDay != null) {
+			Calendar end = mMouseUpDay == null ? mSelectedDay : mMouseUpDay;
+			// end can be null when month is switching to next
+			if (end != null)
+				betweenDays = getCalendarsBetween(mMouseDownDay, end);
+		}
+		
 		for (int y = 0; y < 42; y++) {
 			// new row
 			if (y % 7 == 0 && y != 0) {
@@ -377,7 +399,7 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 			Point width = gc.stringExtent(dateStr);
 
 			if (mSelectedDay != null) {
-				if (DateHelper.sameDate(mSelectedDay, temp)) {
+				if (DateHelper.sameDate(mSelectedDay, temp) || (mDateRange && betweenDays != null && betweenDays.contains(temp))) {
 					gc.setBackground(mColorManager.getSelectedDayColor());
 					if (CalendarCombo.OS_CARBON) {
 						gc.fillRectangle(mDayXs[col] - mSettings.getOneDateBoxSize() - 4, mDatesTopY + spacer + 1, mSettings.getOneDateBoxSize() + 5, 14);
@@ -419,6 +441,37 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 		gc.drawLine(mSettings.getDatesLeftMargin() + 1, lastY, bounds.width - mSettings.getDatesRightMargin() - 3, lastY);
 	}
 
+	private List getCalendarsBetween(Calendar start, Calendar end) {
+		List ret = new ArrayList();
+		
+		// we have to remember that the end can come before the start, so let's figure that out first
+		Calendar trueStart = end.before(start) ? end : start;
+		Calendar trueEnd = end.after(start) ? end : start;
+		
+		//boolean flip = end.before(start);
+		
+		int days = (int)DateHelper.daysBetween(trueStart, trueEnd, mSettings.getLocale());
+		
+		for (int i = 0; i <= days; i++) {
+			// we need new objects for each day
+			Calendar cal = Calendar.getInstance(mSettings.getLocale());
+			cal.setTime(trueStart.getTime());
+
+			cal.add(Calendar.DATE, i);
+			ret.add(clearTime(cal));
+		}
+		
+		return ret;
+	}
+	
+	private Calendar clearTime(Calendar cal) {
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		return cal;
+	}
+	
 	private void drawArrow(GC gc, int x, int y, int style) {
 		gc.setForeground(mColorManager.getArrowColor());
 		switch (style) {
@@ -480,10 +533,12 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 	public void mouseDoubleClick(MouseEvent event) {
 	}
 
-	// draw the date selection on mouse down to give that flicker of
-	// "response"
-	// to the user
+	// draw the date selection on mouse down to give that flicker of "response" to the user
 	public void mouseDown(MouseEvent event) {
+		mMouseIsDown = true;
+		if (mDateRange)
+			mMouseUpDay = null;
+		
 		if (isInside(event.x, event.y, mLeftArrowBounds)) {
 			prevMonth();
 
@@ -518,8 +573,11 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 			mMonthSelectorOpen = true;
 			return;
 		}
-
+		
 		doDaySelection(event.x, event.y);
+		
+		if (mDateRange)
+			mMouseDownDay = mSelectedDay;
 	}
 
 	private void killArrowThread() {
@@ -623,6 +681,7 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 	}
 
 	public void mouseUp(MouseEvent event) {
+		mMouseIsDown = false;
 		killArrowThread();
 
 		if (mNoDayClicked) {
@@ -630,6 +689,15 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 			return;
 		}
 
+		if (mDateRange) {
+			// this may seem odd but it's not. First we set the "up" date to the current date
+			// then we overwrite it by setting the selected date to when the mouse click was "down". 
+			// that way the date set on the combo will be the date the user clicked first, and not the date when the user
+			// let go of the mouse button, this will be reflected in the listeners as well
+			mMouseUpDay = mSelectedDay;
+			mSelectedDay = mMouseDownDay; 
+		}
+		
 		if (mSelectedDay != null) {
 			notifyListeners();
 			notifyClose();
@@ -648,22 +716,23 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 
 	private void notifyListeners(Calendar date) {
 		// notify ourselves first
-		mMainListener.dateChanged(date);
+		if (mDateRange)
+			mMainListener.dateRangeChanged(mMouseDownDay, mMouseUpDay);
+		else
+			mMainListener.dateChanged(date);
 		
 		for (int i = 0; i < mListeners.size(); i++) {
 			ICalendarListener l = (ICalendarListener) mListeners.get(i);
-			l.dateChanged(date);
+			
+			if (mDateRange) 
+				l.dateRangeChanged(mMouseDownDay, mMouseUpDay);
+			else
+				l.dateChanged(date);
 		}
 	}
 
 	private void notifyListeners() {
-		// notify ourselves first
-		mMainListener.dateChanged(mSelectedDay);
-
-		for (int i = 0; i < mListeners.size(); i++) {
-			ICalendarListener l = (ICalendarListener) mListeners.get(i);
-			l.dateChanged(mSelectedDay);
-		}
+		notifyListeners(mSelectedDay);		
 	}
 	
 	void addMainCalendarListener(ICalendarListener listener) {

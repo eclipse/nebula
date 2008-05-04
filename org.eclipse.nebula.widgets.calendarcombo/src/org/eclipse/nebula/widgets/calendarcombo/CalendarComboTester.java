@@ -39,14 +39,20 @@ public class CalendarComboTester {
 		inner.setLayout(gl);
 
 		Label foo = new Label(inner, SWT.NONE);
-		foo.setText("Whatever date is set on this one...");
-		final CalendarCombo one = new CalendarCombo(inner, SWT.READ_ONLY);
+		foo.setText("Range Start");
+		final CalendarCombo one = new CalendarCombo(inner, SWT.READ_ONLY, true);
 		Label foo2 = new Label(inner, SWT.NONE);
-		foo2.setText("Will be the start for this one...");
-		new CalendarCombo(inner, SWT.READ_ONLY, "", true, one);
+		foo2.setText("Range Recipient");				
+		CalendarCombo two = new CalendarCombo(inner, SWT.READ_ONLY, one);
+		
+		// tell combo one that number two will be the recipient of date changes
+		one.setDependingCombo(two);
+		
 		new Label(inner, SWT.NONE);
 		new CalendarCombo(inner, SWT.NONE);
-		new CalendarCombo(inner, SWT.NONE, "Disabled", false);
+		CalendarCombo disabled = new CalendarCombo(inner, SWT.NONE);
+		disabled.setEnabled(false);
+		disabled.setText("Disabled");
 
 		one.addCalendarListener(new ICalendarListener() {
 			public void popupClosed() {
@@ -57,7 +63,16 @@ public class CalendarComboTester {
 					System.err.println(date.getTime().toString());
 				else
 					System.err.println("null");
+			}
+
+			public void dateRangeChanged(Calendar start, Calendar end) {
+				if (start == null || end == null)
+					System.err.println("Null range selected");
+				else
+					System.err.println("Range selected, from " + start.getTime() + " to " + end.getTime());
 			}			
+			
+			
 		});
 		
 		shell.open();

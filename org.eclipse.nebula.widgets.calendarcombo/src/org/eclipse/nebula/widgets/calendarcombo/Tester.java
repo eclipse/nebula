@@ -43,11 +43,12 @@ public class Tester {
 		one.setDate(too.getTime());
 		Label foo2 = new Label(inner, SWT.NONE);
 		foo2.setText("Will be the start for this one...");
-		CalendarCombo two = new CalendarCombo(inner, SWT.READ_ONLY, "", true, one);
+		CalendarCombo two = new CalendarCombo(inner, SWT.READ_ONLY, one);
 		
 		new Label(inner, SWT.NONE);
 		CalendarCombo three = new CalendarCombo(inner, SWT.NONE);
-		CalendarCombo four = new CalendarCombo(inner, SWT.NONE, "Disabled", false);
+		CalendarCombo four = new CalendarCombo(inner, SWT.NONE);
+		four.setEnabled(false);
 		
 		one.addCalendarListener(new ICalendarListener() {
 			public void popupClosed() {

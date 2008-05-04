@@ -19,6 +19,10 @@ public class CalendarListenerAdapter implements ICalendarListener {
 	}
 	
 
+	public void dateRangeChanged(Calendar start, Calendar end) {
+	}
+
+
 	public void popupClosed() {
 	}
 
