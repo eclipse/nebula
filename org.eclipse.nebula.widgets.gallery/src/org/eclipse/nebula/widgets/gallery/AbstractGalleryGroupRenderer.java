@@ -34,7 +34,7 @@ public abstract class AbstractGalleryGroupRenderer {
 	protected boolean drawVertically;
 
 	public boolean isDrawVertically() {
-		return drawVertically;
+		return this.drawVertically;
 	}
 
 	public void setDrawVertically(boolean drawVertically) {
@@ -47,7 +47,7 @@ public abstract class AbstractGalleryGroupRenderer {
 	 * @return true is the current group is expanded
 	 */
 	public boolean isExpanded() {
-		return expanded;
+		return this.expanded;
 	}
 
 	public void setExpanded(boolean selected) {
@@ -62,7 +62,7 @@ public abstract class AbstractGalleryGroupRenderer {
 	 * @param gc
 	 */
 	public void preDraw(GC gc) {
-
+		// Nothing required here. This method can be overridden when needed.
 	}
 
 	/**
@@ -74,7 +74,8 @@ public abstract class AbstractGalleryGroupRenderer {
 	 * @param x
 	 * @param y
 	 */
-	public abstract void draw(GC gc, GalleryItem group, int x, int y, int clipX, int clipY, int clipWidth, int clipHeight);
+	public abstract void draw(GC gc, GalleryItem group, int x, int y,
+			int clipX, int clipY, int clipWidth, int clipHeight);
 
 	public abstract void dispose();
 
@@ -96,9 +97,19 @@ public abstract class AbstractGalleryGroupRenderer {
 	 * @param gc
 	 */
 	public void preLayout(GC gc) {
-
+		// Nothing required here. This method can be overridden when needed.
 	}
 
+	/**
+	 * This method is called on each root item when the Gallery changes (resize,
+	 * item addition or removal) in order to update the gallery size.
+	 * 
+	 * The implementation must update the item internal size (px) using
+	 * setGroupSize(item, size); before returning.
+	 * 
+	 * @param gc
+	 * @param group
+	 */
 	public abstract void layout(GC gc, GalleryItem group);
 
 	/**
@@ -113,19 +124,64 @@ public abstract class AbstractGalleryGroupRenderer {
 	/**
 	 * Returns the size of a group.
 	 * 
-	 * @param item 
+	 * @param item
 	 * @return
 	 */
 	public abstract Rectangle getSize(GalleryItem item);
 
-	public abstract boolean mouseDown(GalleryItem group, MouseEvent e, Point coords);
+	public abstract boolean mouseDown(GalleryItem group, MouseEvent e,
+			Point coords);
 
 	public Gallery getGallery() {
-		return gallery;
+		return this.gallery;
 	}
 
 	public void setGallery(Gallery gallery) {
 		this.gallery = gallery;
+	}
+
+	protected Point getGroupSize(GalleryItem item) {
+		return new Point(item.width, item.height);
+
+	}
+
+	protected Point getGroupPosition(GalleryItem item) {
+		return new Point(item.x, item.y);
+	}
+
+	protected void setGroupSize(GalleryItem item, Point size) {
+		item.width = size.x;
+		item.height = size.y;
+	}
+
+	/**
+	 * @return true if Debug mode is enabled
+	 */
+	protected boolean isDebugMode() {
+		return Gallery.DEBUG;
+	}
+
+	/**
+	 * Notifies the Gallery that the control expanded/collapsed state has
+	 * changed.
+	 * 
+	 * @param group
+	 */
+	protected void notifyTreeListeners(GalleryItem group) {
+		gallery.notifyTreeListeners(group, group.isExpanded());
+	}
+
+	/**
+	 * Forces an update of
+	 * 
+	 * @param keeplocation
+	 */
+	protected void updateStructuralValues(boolean keeplocation) {
+		gallery.updateStructuralValues(keeplocation);
+	}
+
+	protected void updateScrollBarsProperties() {
+		gallery.updateScrollBarsProperties();
 	}
 
 }

@@ -63,7 +63,7 @@ public abstract class AbstractGalleryItemRenderer {
 	 * @param gc
 	 */
 	public void preDraw(GC gc) {
-
+		// Nothing required here. This method can be overridden when needed.
 	}
 
 	public Gallery getGallery() {

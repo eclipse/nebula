@@ -43,9 +43,13 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 
 	protected int itemHeight = DEFAULT_SIZE;
 
-	static public String H_COUNT = "g.h";
+	public static final String H_COUNT = "g.h"; //$NON-NLS-1$
 
-	static public String V_COUNT = "g.v";
+	public static final String V_COUNT = "g.v"; //$NON-NLS-1$
+
+	private static final int END = 0;
+
+	private static final int START = 1;
 
 	public int getMinMargin() {
 		return minMargin;
@@ -290,6 +294,7 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 	}
 
 	public void dispose() {
+		// Nothing required here. This method can be overridden when needed.
 	}
 
 	public boolean mouseDown(GalleryItem group, MouseEvent e, Point coords) {
@@ -297,7 +302,8 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 	}
 
 	public void preLayout(GC gc) {
-		margin = minMargin;
+		// Reset margin to minimal value before "best fit" calculation 
+		this.margin = this.minMargin;
 		super.preLayout(gc);
 	}
 
@@ -526,9 +532,6 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 		return null;
 	}
 
-	private final int END = 0;
-
-	private final int START = 1;
 
 	private GalleryItem getFirstItem(GalleryItem group, int from) {
 		if (group == null)

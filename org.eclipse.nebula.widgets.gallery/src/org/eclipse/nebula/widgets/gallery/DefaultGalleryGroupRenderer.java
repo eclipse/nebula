@@ -35,6 +35,8 @@ import org.eclipse.swt.widgets.Display;
  */
 public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 
+	private static final String PARENTHESIS_OPEN = " (";
+	private static final String PARENTHESIS_CLOSE = ")";
 	private int fontHeight = 0;
 
 	private int titleHeight = fontHeight + 5;
@@ -43,7 +45,7 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 
 	private Color titleForeground;
 
-	private Color titleBackground;
+	private Color titleBackground = null;
 
 	// True if margins have already been calculated. Prevents
 	// margins calculation for each group
@@ -53,8 +55,10 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 
 	public DefaultGalleryGroupRenderer() {
 		// Set defaults
-		titleForeground = Display.getDefault().getSystemColor(SWT.COLOR_TITLE_FOREGROUND);
-		titleBackground = Display.getDefault().getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
+		titleForeground = Display.getDefault().getSystemColor(
+				SWT.COLOR_TITLE_FOREGROUND);
+		// titleBackground =
+		// Display.getDefault().getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
 	}
 
 	protected void drawGroup(GC gc, GalleryItem group, int x, int y, int clipX, int clipY, int clipWidth, int clipHeight) {
@@ -62,18 +66,25 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 
 		if (gallery.isVertical()) {
 			// Title background
-			gc.setBackground(titleBackground);
-			gc.fillRectangle(x, y, group.width, titleHeight);
+			
+			if( titleBackground != null ){
+				// USer defined background
+				gc.setBackground(titleBackground);
+				gc.fillRectangle(x, y, group.width, titleHeight);
+
+			} else {
+				// Default gradient Background
+				gc.setBackground(gallery.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND));
+				gc.setForeground(gallery.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT));
+				gc.fillGradientRectangle(x, y, group.width, titleHeight, true);
+			}
 
 			// Color for text
 			gc.setForeground(titleForeground);
 
 			// Title text
-			String text = "";
-			text += group.getText();
-			text += " (" + group.getItemCount() + ")";
 			gc.setFont(font);
-			gc.drawText(text, x + titleHeight + 2, y + 2);
+			gc.drawText(getGroupTitle( group ), x + titleHeight + 2, y + 2, true);
 
 			// Toggle Button
 			AbstractRenderer c = new TreeNodeToggleRenderer();
@@ -92,14 +103,11 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 			gc.setForeground(titleForeground);
 
 			// Title text
-			String text = "";
-			text += group.getText();
-			text += " (" + group.getItemCount() + ")";
 			gc.setFont(font);
 			Transform transform = new Transform(gc.getDevice());
 			transform.rotate(-90);
 			gc.setTransform(transform);
-			gc.drawText(text, y + titleHeight + 2 - group.height, x + 2);
+			gc.drawText(getGroupTitle(group), y + titleHeight + 2 - group.height, x + 2);
 
 			// Toggle Button
 			AbstractRenderer c = new TreeNodeToggleRenderer();
@@ -115,20 +123,34 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 		}
 	}
 
-	public void draw(GC gc, GalleryItem group, int x, int y, int clipX, int clipY, int clipWidth, int clipHeight) {
+	String getGroupTitle(GalleryItem group) {
+		StringBuffer titleBuffer = new StringBuffer();
+		titleBuffer.append(group.getText());
+		titleBuffer.append(PARENTHESIS_OPEN);
+		titleBuffer.append(group.getItemCount());
+		titleBuffer.append(PARENTHESIS_CLOSE);
+		return titleBuffer.toString();
+	}
+
+	public void draw(GC gc, GalleryItem group, int x, int y, int clipX,
+			int clipY, int clipWidth, int clipHeight) {
 		// Draw group
 		drawGroup(gc, group, x, y, clipX, clipY, clipWidth, clipHeight);
 
 		// Display item
 		if (expanded) {
-			int[] indexes = getVisibleItems(group, x, y, clipX, clipY, clipWidth, clipHeight, offset);
+			int[] indexes = getVisibleItems(group, x, y, clipX, clipY,
+					clipWidth, clipHeight, offset);
 
 			if (indexes != null && indexes.length > 0) {
 				for (int i = indexes.length - 1; i >= 0; i--) {
 
-					boolean selected = group.isSelected(group.getItem(indexes[i]));
+					boolean selected = group.isSelected(group
+							.getItem(indexes[i]));
 					if (Gallery.DEBUG)
-						System.out.println("Selected : " + selected + " index : " + indexes[i] + "item : " + group.getItem(indexes[i]));
+						System.out.println("Selected : " + selected
+								+ " index : " + indexes[i] + "item : "
+								+ group.getItem(indexes[i]));
 					drawItem(gc, indexes[i], selected, group, offset);
 
 				}
@@ -165,7 +187,8 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 
 				}
 
-				Point s = this.getSize(hCount, vCount, itemWidth, itemHeight, minMargin, margin);
+				Point s = this.getSize(hCount, vCount, itemWidth, itemHeight,
+						minMargin, margin);
 				group.height += s.y;
 
 				if (Gallery.DEBUG)
@@ -192,7 +215,8 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 					margin = calculateMargins(sizeY, vCount, itemHeight);
 				}
 
-				Point s = this.getSize(hCount, vCount, itemWidth, itemHeight, minMargin, margin);
+				Point s = this.getSize(hCount, vCount, itemWidth, itemHeight,
+						minMargin, margin);
 				group.width += s.x;
 
 				group.setData(H_COUNT, new Integer(hCount));
@@ -273,7 +297,8 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 						gallery.deselectAll();
 					}
 					group.selectAll();
-					gallery.notifySelectionListeners(group, gallery.indexOf(group));
+					gallery.notifySelectionListeners(group, gallery
+							.indexOf(group));
 				}
 				gallery.redraw();
 				return false;
@@ -301,7 +326,8 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 						gallery.deselectAll();
 					}
 					group.selectAll();
-					gallery.notifySelectionListeners(group, gallery.indexOf(group));
+					gallery.notifySelectionListeners(group, gallery
+							.indexOf(group));
 				}
 				gallery.redraw();
 				return false;
