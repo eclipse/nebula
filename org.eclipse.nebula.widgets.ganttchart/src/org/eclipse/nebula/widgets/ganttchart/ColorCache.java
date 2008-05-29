@@ -13,6 +13,7 @@ package org.eclipse.nebula.widgets.ganttchart;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Random;
 
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
@@ -120,5 +121,20 @@ public class ColorCache {
     	checkInstance();
         RGB rgb = new RGB(r, g, b);
         return getColor(rgb);
+    }
+    
+    /**
+     * Returns a random color.
+     * 
+     * @return random color
+     */
+    public static Color getRandomColor() {
+    	checkInstance();
+    	Random rand = new Random();
+    	int r = rand.nextInt(255);
+    	int g = rand.nextInt(255);
+    	int b = rand.nextInt(255);
+    	    	
+    	return getColor(r, g, b);
     }
 }

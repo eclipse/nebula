@@ -14,6 +14,7 @@ package org.eclipse.nebula.widgets.ganttchart;
 import java.util.ArrayList;
 
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.graphics.GC;
 
 public interface IGanttEventListener {
 
@@ -85,4 +86,11 @@ public interface IGanttEventListener {
 	 */
 	public void eventPropertiesSelected(GanttEvent event);
 	
+	/**
+	 * This method will be called when the chart has finished drawing. It passes along the GC object for any custom drawing you may
+	 * wish to do on top of the currently drawn chart. 
+	 * 
+	 * @param gc GC graphics object
+	 */
+	public void lastDraw(GC gc);
 }

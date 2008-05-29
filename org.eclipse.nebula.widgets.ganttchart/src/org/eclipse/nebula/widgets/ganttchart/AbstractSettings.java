@@ -14,6 +14,7 @@ package org.eclipse.nebula.widgets.ganttchart;
 import java.util.Calendar;
 import java.util.Locale;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 
@@ -21,6 +22,42 @@ abstract class AbstractSettings implements ISettings {
 
 	public String getDateFormat() {
 		return "MM/dd/yyyy";
+	}
+
+	public String getHourDateFormat() {
+		return "MM/dd/yyyy HH:mm";
+	}
+	
+	public String getWeekHeaderTextDisplayFormatTop() {
+		return "MMM dd, ''yy";
+	}
+	
+	public String getMonthHeaderTextDisplayFormatTop() {
+		return "MMMMM ''yy";
+	}
+	
+	public String getDayHeaderTextDisplayFormatTop() {
+		return "MMM dd, HH:mm";
+	}
+
+	public String getYearHeaderTextDisplayFormatTop() {
+		return "yyyy";
+	}
+	
+	public String getDayHeaderTextDisplayFormatBottom() {
+		return "HH:mm";
+	}
+
+	public String getMonthHeaderTextDisplayFormatBottom() {
+		return "MMM dd";
+	}
+
+	public String getWeekHeaderTextDisplayFormatBottom() {
+		return "E";
+	}
+
+	public String getYearHeaderTextDisplayFormatBottom() {
+		return "MMM";
 	}
 
 	public Color getDefaultEventColor() {
@@ -60,7 +97,7 @@ abstract class AbstractSettings implements ISettings {
 	}
 
 	public int getDayHorizontalSpacing() {
-		return 4;
+		return 3;
 	}
 
 	public int getDayVerticalSpacing() {
@@ -80,11 +117,11 @@ abstract class AbstractSettings implements ISettings {
 	}
 
 	public int getHeaderMonthHeight() {
-		return 20;
+		return 18;
 	}
 
 	public int getHeaderDayHeight() {
-		return 20;
+		return 18;
 	}
 
 	public int getInitialView() {
@@ -103,8 +140,12 @@ abstract class AbstractSettings implements ISettings {
 		return 3;
 	}
 
-	public int getTextSpacer() {
-		return 8;
+	public int getTextSpacerConnected() {
+		return 9;
+	}
+
+	public int getTextSpacerNonConnected() {
+		return 9;
 	}
 
 	public int getYearMonthDayWidth() {
@@ -135,7 +176,7 @@ abstract class AbstractSettings implements ISettings {
 		return false;
 	}
 
-	public boolean showGradientBars() {
+	public boolean showGradientEventBars() {
 		return true;
 	}
 
@@ -154,7 +195,7 @@ abstract class AbstractSettings implements ISettings {
 	public int getEventSpacer() {
 		return 12;
 	}
-
+	
 	public boolean enableDragAndDrop() {
 		return true;
 	}
@@ -208,7 +249,7 @@ abstract class AbstractSettings implements ISettings {
 	}
 
 	public boolean startCalendarOnFirstDayOfWeek() {
-		return false;
+		return true;
 	}
 
 	public int getMoveAreaNegativeSensitivity() {
@@ -224,12 +265,162 @@ abstract class AbstractSettings implements ISettings {
 	}
 
 	public String getTextDisplayFormat() {
-		return "#n# (#p#%)";
+		return "#name# (#pc#%)";
 	}
 
 	public int getRevisedLineSpacer() {
 		return 3;
 	}
+
+	public int getWorkDayStartHour() {
+		return 0;
+	}
+
+	public int getWorkHoursPerDay() {
+		return 24;
+	}	
 	
+	public Image getDefaultAdvandedTooltipHelpImage() {
+		return null;
+	}
+
+	public Image getDefaultAdvandedTooltipImage() {
+		return null;
+	}
+
+	public boolean roundHourlyEventsOffToNearestHour() {
+		return false;
+	}
+		
+	public String getDefaultAdvancedTooltipHelpText() {
+		return null;
+	}
+
+	public String getDefaultAdvancedTooltipTitle() {
+		return "\\b\\c027050082#name#";
+	}
+
+	public String getDefaultAdvancedTooltipTextExtended() {
+		StringBuffer buf = new StringBuffer();
+		buf.append("\\ceRevised: #rs# - #re# (#reviseddays# days)\n");
+		buf.append("\\c100100100Planned: #sd# - #ed# (#days# days)\n");
+		buf.append("#pc#% complete");
+		return buf.toString();//"\\ceStart Date: \\b#sd#\nEnd Date: \\b#ed#\nRevised Start: \\b#rs#\nRevised End: \\b#re#\nDay Span: \\b#days# days\nPercent Complete: \\b#pc#%";
+	}
+
+	public String getDefaultAdvancedTooltipText() {
+		StringBuffer buf = new StringBuffer();
+		buf.append("\\cePlanned: #sd# - #ed# (#days# days)\n");
+		buf.append("\\c100100100#pc#% complete");
+		return buf.toString();
+	}
+
+	public int getTodayLineStyle() {
+		return SWT.LINE_SOLID;
+	}
+
+	public int getTodayLineWidth() {
+		return 2;
+	}
+
+	public int getTodayLineVerticalOffset() {
+		return getHeaderMonthHeight();
+	}
+
+	public int getVerticalTickMarkOffset() {
+		return (getHeaderMonthHeight()-5 > 0 ? getHeaderMonthHeight()-5 : 0);
+	}
+
+	public boolean drawHeader() {
+		return true;
+	}
+
+	public int getEventsTopSpacer() {
+		return 12;
+	}
+
+	public int getEventsBottomSpacer() {
+		return 12;
+	}
+
+	public int getSectionBarDividerHeight() {
+		return 5;
+	}
+
+	public int getSectionBarWidth() {
+		return 20;
+	}
+
+	public int getMinimumSectionHeight() {
+		return 80;
+	}
+
+	public boolean drawFullPercentageBar() {
+		return true;
+	}
+
+	public int getPercentageBarAlpha() {
+		return 255;
+	}
+
+	public int getRemainderPercentageBarAlpha() {
+		return 70;
+	}
+
+	public int getAdvancedTooltipXOffset() {
+		return 15;
+	}
+
+	public int getDragAllModifierKey() {
+		return SWT.SHIFT;
+	}
+
+	public int getZoomWheelModifierKey() {
+		return SWT.MOD1;
+	}
+
+	public Locale getDefaultLocale() {
+		return Locale.getDefault();
+	}
+
+	public boolean getUseAdvancedTooltips() {
+		return true;
+	}
+
+	public boolean enableLastDraw() {
+		return false;
+	}
+
+	public boolean useSplitArrowConnections() {
+		return true;
+	}
+	
+	public int getReverseDependencyLineHorizontalSpacer() {
+		return 2;
+	}
+		
+	public boolean drawVerticalLines() {
+		return true;
+	}
+
+	public boolean drawHorizontalLines() {
+		return false;
+	}
+
+	public boolean useFastDraw() {
+		return true;
+	}
+
+	public int getSectionSide() {
+		return SWT.LEFT;
+	}
+
+	public boolean drawLockedDateMarks() {
+		return false;
+	}
+
+	public boolean showDateTipsOnScrolling() {
+		return true;
+	}
 	
 }

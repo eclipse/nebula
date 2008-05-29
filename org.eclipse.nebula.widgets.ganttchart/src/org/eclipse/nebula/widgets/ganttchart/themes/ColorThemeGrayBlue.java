@@ -1,19 +1,10 @@
-/*******************************************************************************
- * Copyright (c) Emil Crumhorn - Hexapixel.com - emil.crumhorn@gmail.com
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *    emil.crumhorn@gmail.com - initial API and implementation
- *******************************************************************************/ 
+package org.eclipse.nebula.widgets.ganttchart.themes;
 
-package org.eclipse.nebula.widgets.ganttchart;
-
+import org.eclipse.nebula.widgets.ganttchart.ColorCache;
+import org.eclipse.nebula.widgets.ganttchart.IColorManager;
 import org.eclipse.swt.graphics.Color;
 
-public abstract class AbstractColorManager implements IColorManager {
+public class ColorThemeGrayBlue implements IColorManager {
 
 	public Color getArrowColor() {
 		return ColorCache.getColor(0, 0, 0);
@@ -72,35 +63,35 @@ public abstract class AbstractColorManager implements IColorManager {
 	}
 
 	public Color getTodayBackgroundColorTop() {
-		return ColorCache.getColor(238, 232, 170);
+		return ColorCache.getColor(217, 219, 189);
 	}
 	
 	public Color getTodayBackgroundColorBottom() {
-		return ColorCache.getColor(220, 237, 225);
+		return ColorCache.getColor(225, 232, 228);
 	}
 
 	public Color getTextHeaderBackgroundColorTop() {
-		return ColorCache.getColor(150, 192, 234);
+		return ColorCache.getColor(173, 187, 210);
 	}
 	
 	public Color getTextHeaderBackgroundColorBottom() {
-		return ColorCache.getColor(186, 213, 242);
+		return ColorCache.getColor(200, 209, 226);
 	}
 
 	public Color getTimeHeaderBackgroundColorBottom() {
-		return ColorCache.getColor(186, 213, 242);
+		return ColorCache.getColor(173, 187, 210);
 	}
 
 	public Color getTimeHeaderBackgroundColorTop() {
-		return ColorCache.getColor(150, 192, 234);
+		return ColorCache.getColor(200, 209, 226);
 	}
 	
 	public Color getHourTimeDividerColor() {
-		return ColorCache.getColor(110, 152, 194);
+		return ColorCache.getColor(166, 183, 207);
 	}
 
 	public Color getMonthTimeDividerColor() {
-		return ColorCache.getColor(140, 192, 234);
+		return ColorCache.getColor(166, 183, 207);
 	}
 
 	public Color getWeekTimeDividerColor() {
@@ -112,12 +103,11 @@ public abstract class AbstractColorManager implements IColorManager {
 	}
 
 	public Color getWeekdayBackgroundColorTop() {
-		//return getWhite();
-		return ColorCache.getColor(230, 239, 249);
+		return ColorCache.getColor(236, 239, 244);
 	}
 		
 	public Color getWeekdayBackgroundColorBottom() {
-		return ColorCache.getWhite();
+		return getWhite();
 	}
 
 	public Color getWhite() {
@@ -125,12 +115,11 @@ public abstract class AbstractColorManager implements IColorManager {
 	}
 
 	public Color getSaturdayBackgroundColorTop() {
-		//return ColorCache.getColor(240, 240, 240);
-		return ColorCache.getColor(217, 229, 242);
+		return ColorCache.getColor(224, 228, 235);
 	}
 	
 	public Color getSaturdayBackgroundColorBottom() {
-		return getSaturdayBackgroundColorTop();
+		return ColorCache.getColor(224, 228, 235);
 	}
 
 	public Color getSaturdayTextColor() {
@@ -274,20 +263,19 @@ public abstract class AbstractColorManager implements IColorManager {
 	}
 
 	public Color getNonActiveSessionBarColorLeft() {
-		//return ColorCache.getColor(163, 196, 241);
-		return ColorCache.getColor(163, 196, 241);
+		return ColorCache.getColor(185, 195, 219);
 	}
 
 	public Color getNonActiveSessionBarColorRight() {
-		return ColorCache.getColor(185, 212, 241);
+		return ColorCache.getColor(199, 208, 225);
 	}
 
 	public Color getSessionBarDividerColorLeft() {
-		return ColorCache.getColor(153, 191, 236);
+		return ColorCache.getColor(176, 188, 213);
 	}
 
 	public Color getSessionBarDividerColorRight() {
-		return ColorCache.getColor(188, 212, 240);
+		return ColorCache.getColor(202, 210, 225);
 	}	
 	
 	

@@ -14,6 +14,7 @@ package org.eclipse.nebula.widgets.ganttchart;
 import java.util.ArrayList;
 
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.graphics.GC;
 
 public class GanttEventListenerAdapter implements IGanttEventListener {
 
@@ -42,6 +43,9 @@ public class GanttEventListenerAdapter implements IGanttEventListener {
 	}
 
 	public void zoomReset() {
+	}
+
+	public void lastDraw(GC gc) {
 	}
 
 }

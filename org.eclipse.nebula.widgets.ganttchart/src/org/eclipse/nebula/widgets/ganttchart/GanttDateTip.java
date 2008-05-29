@@ -12,12 +12,12 @@
 package org.eclipse.nebula.widgets.ganttchart;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -28,7 +28,7 @@ class GanttDateTip {
 
     private static Shell shell;
     private static int yLoc;
-    private static CLabel label;
+    private static Label label;
 
     public static void makeDialog(IColorManager colorManager, String text, Point location, int marker) {    	
         if (shell != null && shell.isDisposed() == false) {
@@ -48,26 +48,21 @@ class GanttDateTip {
 
         yLoc = marker;
 
-        shell = new Shell(Display.getDefault().getActiveShell(), SWT.ON_TOP);
-        RowLayout rl = new RowLayout(); 
-        rl.marginLeft = 1;
-        rl.marginRight = 1;
-        rl.marginTop = 1;
-        rl.marginBottom = 1;
+        shell = new Shell(Display.getDefault().getActiveShell(), SWT.ON_TOP | SWT.TOOL);
         
-        shell.setBackground(colorManager.getTooltipBackgroundColor());
-        shell.setLayout(rl);
+        //shell.setBackground(colorManager.getTooltipBackgroundColor());
+        shell.setLayout(new FillLayout());
         
-        Composite comp = new Composite(shell, SWT.NULL);
+        Composite comp = new Composite(shell, SWT.NONE);
         comp.setBackground(colorManager.getTooltipBackgroundColor());
 
         GridLayout fl = new GridLayout();
         fl.numColumns = 1;
-        fl.marginHeight = 0;
-        fl.marginWidth = 0;
+        fl.marginHeight = 4;
+        fl.marginWidth = 4;
         comp.setLayout(fl);
 
-        label = new CLabel(comp, SWT.LEFT);
+        label = new Label(comp, SWT.LEFT);
         label.setBackground(colorManager.getTooltipBackgroundColor());
         label.setForeground(colorManager.getTooltipForegroundColor());
         label.setText(text);

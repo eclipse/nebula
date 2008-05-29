@@ -1,0 +1,60 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.eclipse.nebula.widgets.ganttchart</groupId>
+  <artifactId>org.eclipse.nebula.widgets.ganttchart</artifactId>
+  <packaging>jar</packaging>
+  <version>2.0-NIGHTLY</version>
+  <name>GANTT Widget</name>
+  <url>http://www.eclipse.org/nebula</url>
+ <build>
+   <plugins>
+	<plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-jar-plugin</artifactId>
+	<configuration>
+	<archive>
+	<addMavenDescriptor>false</addMavenDescriptor>
+	</archive>
+	</configuration>
+</plugin>
+ <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+    <sourceDirectory>src</sourceDirectory>  
+    <resources>
+      <resource>
+	<targetPath>icons/</targetPath>
+	<directory>icons</directory>
+      </resource>
+    </resources>
+  </build>
+  <dependencies>
+    <dependency>
+      <groupId>org.eclipse</groupId>
+      <artifactId>swt</artifactId>
+      <version>3.3.2.v3349d</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse</groupId>
+      <artifactId>swt.win32</artifactId>
+      <version>3.3.3.v3349</version>
+    </dependency>
+
+  </dependencies>
+</project>
+

@@ -7,20 +7,22 @@
  *
  * Contributors:
  *    emil.crumhorn@gmail.com - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.nebula.widgets.ganttchart;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Menu;
 
 /**
- * One GanttEvent represents one "active" object int the GANTT chart. 
+ * One GanttEvent represents one "active" object int the GANTT chart.
  * <p>
  * This object can take many shapes, here is a list:<br>
  * <ul>
@@ -31,11 +33,13 @@ import org.eclipse.swt.widgets.Menu;
  * </ul>
  * The event may also take revised start and end dates, and can be modified individually to be locked, unmoveable, unresizable and much more.
  * <p>
- * Events <b>may be</b> modified on the fly to become a different object type from the above list. Please do ensure that the ALL parameters are set for it to become the new object before you do so.
+ * Events <b>may be</b> modified on the fly to become a different object type from the above list. Please do ensure that the ALL parameters are set for it to become the new object
+ * before you do so.
  * <p>
  * Once an event has been created, add it onto the GanttChart widget via the addEvent(...) methods available.
  * <p>
- * <b>Sample Code:</b><br><br>
+ * <b>Sample Code:</b><br>
+ * <br>
  * <code>
  * // make a 10 day long event<br>
  * Calendar cStartDate = Calendar.getInstance(Locale.getDefault());<br>
@@ -48,421 +52,502 @@ import org.eclipse.swt.widgets.Menu;
  * <br><br>
  * // add the event to the chart<br>
  * ganttChart.addEvent(ganttEvent);<br>
- * </code>
+ * </code> <br>
+ * <br>
+ * This class may not be subclassed.
  * 
  * @author Emil Crumhorn <a href="mailto:emil.crumhorn@gmail.com">emil.crumhorn@gmail.com</a>
- *
+ * 
  */
-public class GanttEvent {
-	
-	public static final int TYPE_EVENT = 0;
-	public static final int TYPE_CHECKPOINT = 1;
-	public static final int TYPE_IMAGE = 2;
-	public static final int TYPE_SCOPE = 3;
+public final class GanttEvent implements IGanttChartItem {
 
-    private Object mData;
-    private String mName;
-    private Calendar mRevisedStart;
-    private Calendar mRevisedEnd;
-    private Calendar mStartDate;
-    private Calendar mEndDate;
-    private int mPercentComplete;
-    private boolean mCheckpoint;
-    private boolean mScope;
-    private boolean mLocked;
-    private boolean mImage;
-    private int x, y, width, height;
-    private Color mStatusColor;
-    private Color mGradientStatusColor;    
-    private boolean mShowBoldText = true;
-    private String mTextDisplayFormat;
-    private ArrayList mScopeEvents;
-    private Image mPicture;
-    private Menu mMenu;
-    private GanttChart mParentChart;
-    private GanttGroup mGanttGroup;
-    private boolean mHidden;
-    //TODO: Implement. Less constructors, more user power.
-    //private int mEventType = TYPE_EVENT;
+	/*
+	 * public static final int TYPE_EVENT = 0; public static final int TYPE_CHECKPOINT = 1; public static final int TYPE_IMAGE = 2; public static final int TYPE_SCOPE = 3;
+	 */
+	public static final int	FIXED_ROW_HEIGHT_AUTOMATIC	= -1;
 
-    /**
-     * Creates a new GanttEvent object.
-     * 
-     * @param parent
-     * @param data
-     * @param name
-     * @param startDate
-     * @param endDate
-     * @param percentComplete
-     */
-    public GanttEvent(GanttChart parent, Object data, String name, Calendar startDate, Calendar endDate, int percentComplete) {
-    	this.mParentChart = parent;
-        this.mData = data;
-        this.mName = name;
-        this.mStartDate = startDate;
-        this.mEndDate = endDate;
-        this.mPercentComplete = percentComplete;
-        init();
-    }
-    
-    /**
-     * Creates a new GanttEvent object with revised start and end dates.
-     * 
-     * @param parent Parent GanttChart
-     * @param data Data object
-     * @param name Display name
-     * @param startDate Start date
-     * @param endDate End date
-     * @param revisedStart Revised start date
-     * @param revisedEnd Revised end date
-     * @param percentComplete Percentage complete
-     */
-    public GanttEvent(GanttChart parent, Object data, String name, Calendar startDate, Calendar endDate, Calendar revisedStart, Calendar revisedEnd, int percentComplete) {
-    	this.mParentChart = parent;
-        this.mData = data;
-        this.mName = name;
-        this.mStartDate = startDate;
-        this.mEndDate = endDate;
-        this.mRevisedStart = revisedStart;
-        this.mRevisedEnd = revisedEnd;
-        this.mPercentComplete = percentComplete;
-        init();
-    }
+	private Object			mData;
+	private String			mName;
+	private Calendar		mRevisedStart;
+	private Calendar		mRevisedEnd;
+	private Calendar		mStartDate;
+	private Calendar		mEndDate;
+	private int				mPercentComplete;
+	private boolean			mCheckpoint;
+	private boolean			mScope;
+	private boolean			mLocked;
+	private boolean			mImage;
+	private boolean			mResizable					= true;
+	private boolean			mMoveable					= true;
+	private int				x, y, width, height;
+	private Color			mStatusColor;
+	private Color			mGradientStatusColor;
+	private boolean			mShowBoldText;
+	private String			mTextDisplayFormat;
+	private ArrayList		mScopeEvents;
+	private Image			mPicture;
+	private Menu			mMenu;
+	private GanttChart		mParentChart;
+	private GanttGroup		mGanttGroup;
+	private boolean			mHidden;
+	private int				mWidthWithtText;
+	// TODO: Implement. Less constructors, more user power.
+	// private int mEventType = TYPE_EVENT;
+	private AdvancedTooltip	mAdvancedTooltip;
+	private int				mVisibility;
+	private boolean			mBoundsHaveBeenSet;
 
-    /**
-     * Use for scope initializing only.
-     * 
-     * @param parent Parent GanttChart
-     * @param data Data
-     * @param name Display name
-     */
-    public GanttEvent(GanttChart parent, Object data, String name) {
-    	this.mParentChart = parent;
-    	this.mData = data;
-    	this.mName = name;
-    	this.mScope = true;
-    	init();
-    }
-    
-    /**
-     * Use for checkpoint initializing only.
-     * 
-     * @param parent Parent GanttChart
-     * @param data Data
-     * @param name Display name
-     * @param date Start (and end) date
-     */
-    public GanttEvent(GanttChart parent, Object data, String name, Calendar date) {
-    	this.mParentChart = parent;
-    	this.mData = data;
-    	this.mName = name;
-    	this.mStartDate = date;
-    	this.mEndDate = date;
-    	this.mCheckpoint = true;
-    	init();
-    }
-    
-    /**
-     * Use for image initializing only.
-     * 
-     * @param parent Parent GanttChart
-     * @param data Data
-     * @param name Display name
-     * @param date Start (and end) date
-     * @param picture Image to show
-     */
-    public GanttEvent(GanttChart parent, Object data, String name, Calendar date, Image picture) {
-    	this.mParentChart = parent;
-    	this.mData = data;
-    	this.mName = name;
-    	this.mStartDate = date;
-    	this.mEndDate = date;
-    	this.mPicture = picture;
-    	this.mImage = true;
-    	init();
-    }
-    
-    private void init() {
-    	mScopeEvents = new ArrayList();
-    	mParentChart.getGanttComposite().addEvent(this, true);
-    	mMenu = new Menu(mParentChart.getGanttComposite());
-    }
+	private int				mFixedRowHeight				= FIXED_ROW_HEIGHT_AUTOMATIC;
+	private int				mVerticalEventAlignment		= SWT.TOP;
 
-    /**
-     * Returns the currently set data object.
-     * 
-     * @return Data object
-     */
-    public Object getData() {
-        return mData;
-    }
+	private int				mHorizontalLineTopY;
+	private int				mHorizontalLineBottomY;
 
-    /**
-     * Sets the current data object.
-     * 
-     * @param data Data object
-     */
-    public void setData(Object data) {
-        this.mData = data;
-    }
+	private Calendar		mNoMoveBeforeDate;
+	private Calendar		mNoMoveAfterDate;
 
-    /**
-     * Returns the display name of this event.
-     * 
-     * @return Display name
-     */
-    public String getName() {
-        return this.mName;
-    }
+	// private items
+	private boolean			mNameChanged				= true;
+	private Point			mNameExtent;
+	private String			mParsedString;
 
-    /**
-     * Sets the display name of this event.
-     * 
-     * @param name Display name
-     */
-    public void setName(String name) {
-        this.mName = name;
-    }
+	GanttEvent() {
+	}
 
-    /**
-     * Returns the start date of this event.
-     * 
-     * @return Start date
-     */
-    public Calendar getStartDate() {
-        return mStartDate;
-    }
+	/**
+	 * Creates a new GanttEvent.
+	 * 
+	 * @param parent Parent chart
+	 * @param name Name of event
+	 * @param startDate Start date
+	 * @param endDate End date
+	 * @param percentComplete Percent complete
+	 */
+	public GanttEvent(GanttChart parent, String name, Calendar startDate, Calendar endDate, int percentComplete) {
+		this(parent, null, name, startDate, endDate, percentComplete);
+	}
 
-    /**
-     * Sets the end date of this event.
-     * 
-     * @param startDate Start date
-     */
-    public void setStartDate(Calendar startDate) {
-        this.mStartDate = startDate;
-    }
+	/**
+	 * Creates a new GanttEvent object.
+	 * 
+	 * @param parent Parent chart
+	 * @param data Data object
+	 * @param name Name of event
+	 * @param startDate Start date
+	 * @param endDate End date
+	 * @param percentComplete Percent complete
+	 */
+	public GanttEvent(GanttChart parent, Object data, String name, Calendar startDate, Calendar endDate, int percentComplete) {
+		this.mParentChart = parent;
+		this.mData = data;
+		this.mName = name;
+		this.mStartDate = startDate;
+		this.mEndDate = endDate;
+		this.mPercentComplete = percentComplete;
+		init();
+	}
 
-    /**
-     * Returns the end date of this event.
-     * 
-     * @return End date
-     */
-    public Calendar getEndDate() {
-        return mEndDate;
-    }
+	/**
+	 * Creates a new GanttEvent.
+	 * 
+	 * @param parent Parent chart
+	 * @param name Name of event
+	 * @param startDate Start date
+	 * @param endDate End date
+	 * @param revisedStart Revised start
+	 * @param revisedEnd Revised end
+	 * @param percentComplete Percent complete
+	 */
+	public GanttEvent(GanttChart parent, String name, Calendar startDate, Calendar endDate, Calendar revisedStart, Calendar revisedEnd, int percentComplete) {
+		this(parent, null, name, startDate, endDate, revisedStart, revisedEnd, percentComplete);
+	}
 
-    /**
-     * Sets the end date of this event.
-     * 
-     * @param endDate End date
-     */
-    public void setEndDate(Calendar endDate) {
-        this.mEndDate = endDate;
-    }
+	/**
+	 * Creates a new GanttEvent object with revised start and end dates.
+	 * 
+	 * @param parent Parent GanttChart
+	 * @param data Data object
+	 * @param name Display name
+	 * @param startDate Start date
+	 * @param endDate End date
+	 * @param revisedStart Revised start date
+	 * @param revisedEnd Revised end date
+	 * @param percentComplete Percentage complete
+	 */
+	public GanttEvent(GanttChart parent, Object data, String name, Calendar startDate, Calendar endDate, Calendar revisedStart, Calendar revisedEnd, int percentComplete) {
+		this.mParentChart = parent;
+		this.mData = data;
+		this.mName = name;
+		this.mStartDate = startDate;
+		this.mEndDate = endDate;
+		this.mRevisedStart = revisedStart;
+		this.mRevisedEnd = revisedEnd;
+		this.mPercentComplete = percentComplete;
+		init();
+	}
 
-    /**
-     * Returns the percentage complete of this event.
-     * 
-     * @return Percentage complete
-     */
-    public int getPercentComplete() {
-        return mPercentComplete;
-    }
+	/**
+	 * Creates a GanttEvent intended to be a scope.
+	 * 
+	 * @param parent Chart parent
+	 * @param name Name of scope
+	 */
+	public GanttEvent(GanttChart parent, String name) {
+		this(parent, null, name);
+	}
 
-    /**
-     * Sets the percentage complete of this event.
-     * 
-     * @param percentComplete Percentage complete
-     */
-    public void setPercentComplete(int percentComplete) {
-        this.mPercentComplete = percentComplete;
-    }
+	/**
+	 * Creates a GanttEvent intended to be a scope.
+	 * 
+	 * @param parent Chart parent
+	 * @param data Data object
+	 * @param name Name of scope
+	 */
+	public GanttEvent(GanttChart parent, Object data, String name) {
+		this.mParentChart = parent;
+		this.mData = data;
+		this.mName = name;
+		this.mScope = true;
+		init();
+	}
 
-    /**
-     * Returns the individual Menu for this event for which custom events can be created. Custom events will be mixed
-     * with built-in events (if they exist).
-     *  
-     * @return Menu
-     */
-    public Menu getMenu() {
-    	return mMenu;
-    }
-        
-    /**
-     * Sets the bounds of the event. This is done internally.
-     * 
-     * @param x x location
-     * @param y y location
-     * @param width width of event
-     * @param height height of event
-     */
-    public void setBounds(int x, int y, int width, int height) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-    }
+	/**
+	 * Creates a GanttEvent intended to be a checkpoint.
+	 * 
+	 * @param parent Chart parent
+	 * @param name Name of checkpoint
+	 * @param date Checkpoint start (and end) date
+	 */
+	public GanttEvent(GanttChart parent, String name, Calendar date) {
+		this(parent, null, name, date);
+	}
 
-    /**
-     * Whether this is a checkpoint or not.
-     * 
-     * @return true if this is a checkpoint
-     */
-    public boolean isCheckpoint() {
-        return mCheckpoint;
-    }
+	/**
+	 * Creates a GanttEvent intended to be a checkpoint.
+	 * 
+	 * @param parent Chart parent
+	 * @param data Data object
+	 * @param name Name of checkpoint
+	 * @param date Start (and end) date
+	 */
+	public GanttEvent(GanttChart parent, Object data, String name, Calendar date) {
+		this.mParentChart = parent;
+		this.mData = data;
+		this.mName = name;
+		this.mStartDate = date;
+		this.mEndDate = date;
+		this.mCheckpoint = true;
+		init();
+	}
 
-    /**
-     * Sets the event to be a checkpoint.
-     * 
-     * @param checkpoint true if the event should be a checkpoint
-     */
-    public void setCheckpoint(boolean checkpoint) {
-    	this.mScope = false;
-    	this.mImage = false;
-        this.mCheckpoint = checkpoint;
-    }
+	/**
+	 * Creates a GanttChart intended to be an image.
+	 * 
+	 * @param parent Chart parent
+	 * @param name Name of image
+	 * @param date Start (and end) date
+	 * @param picture Image to show
+	 */
+	public GanttEvent(GanttChart parent, String name, Calendar date, Image picture) {
+		this(parent, null, name, date, picture);
+	}
 
-    /**
-     * Returns the x location of this event. 
-     * 
-     * @return x location
-     */
-    public int getX() {
-        return x;
-    }
+	/**
+	 * Creates a GanttChart intended to be an image.
+	 * 
+	 * @param parent Chart parent
+	 * @param data Data object
+	 * @param name Name of image
+	 * @param date Start (and end) date
+	 * @param picture Image to show
+	 */
+	public GanttEvent(GanttChart parent, Object data, String name, Calendar date, Image picture) {
+		this.mParentChart = parent;
+		this.mData = data;
+		this.mName = name;
+		this.mStartDate = date;
+		this.mEndDate = date;
+		this.mPicture = picture;
+		this.mImage = true;
+		init();
+	}
 
-    /**
-     * Sets the x location of this event. This is done internally.
-     * 
-     * @param x x location
-     */
-    public void setX(int x) {
-        this.x = x;
-    }
+	private void init() {
+		mScopeEvents = new ArrayList();
+		mParentChart.getGanttComposite().addEvent(this, true);
+		mMenu = new Menu(mParentChart.getGanttComposite());
+	}
 
-    /**
-     * Returns the y location of this event. 
-     * 
-     * @return y location
-     */
-    public int getY() {
-        return y;
-    }
+	/**
+	 * Returns the currently set data object.
+	 * 
+	 * @return Data object
+	 */
+	public Object getData() {
+		return mData;
+	}
 
-    /**
-     * Sets the y location of this event. This is done internally.
-     * 
-     * @param y y location
-     */
-    public void setY(int y) {
-        this.y = y;
-    }
+	/**
+	 * Sets the current data object.
+	 * 
+	 * @param data Data object
+	 */
+	public void setData(Object data) {
+		this.mData = data;
+	}
 
-    /**
-     * Returns the width of this event. 
-     * 
-     * @return width 
-     */
-    public int getWidth() {
-        return width;
-    }
+	/**
+	 * Returns the display name of this event.
+	 * 
+	 * @return Display name
+	 */
+	public String getName() {
+		return this.mName;
+	}
 
-    /**
-     * Sets the width of this event. This is done internally.
-     * 
-     * @param width Event width
-     */
-   public void setWidth(int width) {
-        this.width = width;
-    }
+	/**
+	 * Sets the display name of this event.
+	 * 
+	 * @param name Display name
+	 */
+	public void setName(String name) {
+		this.mName = name;
+		mNameChanged = true;
+	}
 
-   /**
-    * Returns the height of this event. 
-    * 
-    * @return height
-    */
-    public int getHeight() {
-        return height;
-    }
+	/**
+	 * Returns the start date of this event.
+	 * 
+	 * @return Start date
+	 */
+	public Calendar getStartDate() {
+		return mStartDate;
+	}
 
-    /**
-     * Sets the height of this event. This is done internally.
-     * 
-     * @param height Event height
-     */
-    public void setHeight(int height) {
-        this.height = height;
-    }
+	/**
+	 * Returns the revised start date if set, or the start date if not.
+	 * 
+	 * @return Start date or null
+	 */
+	public Calendar getActualStartDate() {
+		return mRevisedStart != null ? mRevisedStart : mStartDate;
+	}
 
-    /**
-     * Returns the revised start date of this event.
-     * 
-     * @return Revised date
-     */
-    public Calendar getRevisedStart() {
-        return mRevisedStart;
-    }
+	/**
+	 * Returns the revised end date if set, or the end date if not.
+	 * 
+	 * @return End date or null
+	 */
+	public Calendar getActualEndDate() {
+		return mRevisedEnd != null ? mRevisedEnd : mEndDate;
+	}
 
-    /**
-     * Sets the revised start date of this event. 
-     * 
-     * @param revisedStart
-     */
-    public void setRevisedStart(Calendar revisedStart) {
-        this.mRevisedStart = revisedStart;
-    }
+	/**
+	 * Sets the end date of this event.
+	 * 
+	 * @param startDate Start date
+	 */
+	public void setStartDate(Calendar startDate) {
+		this.mStartDate = startDate;
+	}
 
-    /**
-     * Returns the revised end date of this event.
-     * 
-     * @return revised end date
-     */
-    public Calendar getRevisedEnd() {
-        return mRevisedEnd;
-    }
+	/**
+	 * Returns the end date of this event.
+	 * 
+	 * @return End date
+	 */
+	public Calendar getEndDate() {
+		return mEndDate;
+	}
 
-    /**
-     * Sets the revised end date of this event.
-     * 
-     * @param revisedEnd Revised end date
-     */
-    public void setRevisedEnd(Calendar revisedEnd) {
-        this.mRevisedEnd = revisedEnd;
-    }
+	/**
+	 * Sets the end date of this event.
+	 * 
+	 * @param endDate End date
+	 */
+	public void setEndDate(Calendar endDate) {
+		this.mEndDate = endDate;
+	}
 
-    /**
-     * Whether this event can be resized or not.
-     * 
-     * @return true if it can be resized
-     */
-    public boolean canResize() {
-        return canMove();
-    }
+	/**
+	 * Returns the percentage complete of this event.
+	 * 
+	 * @return Percentage complete
+	 */
+	public int getPercentComplete() {
+		return mPercentComplete;
+	}
 
-    /**
-     * Whether this event can be moved or not.
-     * 
-     * @return true if event can be moved.
-     */
-    public boolean canMove() {      
-        return true;
-    }
+	/**
+	 * Sets the percentage complete of this event.
+	 * 
+	 * @param percentComplete Percentage complete
+	 */
+	public void setPercentComplete(int percentComplete) {
+		this.mPercentComplete = percentComplete;
+	}
 
-    /**
-     * Whether this event is locked or not.
-     * 
-     * @return true if event is locked.
-     */
-    public boolean isLocked() {
+	/**
+	 * Returns the individual Menu for this event for which custom events can be created. Custom events will be mixed with built-in events (if they exist).
+	 * 
+	 * @return Menu
+	 */
+	public Menu getMenu() {
+		return mMenu;
+	}
+
+	/**
+	 * Sets the bounds of the event. This is done internally.
+	 * 
+	 * @param x x location
+	 * @param y y location
+	 * @param width width of event
+	 * @param height height of event
+	 */
+	public void setBounds(int x, int y, int width, int height) {
+		mBoundsHaveBeenSet = true;
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
+	}
+
+	public void setBounds(Rectangle bounds) {
+		mBoundsHaveBeenSet = true;
+		this.x = bounds.x;
+		this.y = bounds.y;
+		this.width = bounds.width;
+		this.height = bounds.height;
+	}
+
+	void updateX(int x) {
+		this.x = x;
+	}
+
+	/**
+	 * Whether this is a checkpoint or not.
+	 * 
+	 * @return true if this is a checkpoint
+	 */
+	public boolean isCheckpoint() {
+		return mCheckpoint;
+	}
+
+	/**
+	 * Sets the event to be a checkpoint.
+	 * 
+	 * @param checkpoint true if the event should be a checkpoint
+	 */
+	public void setCheckpoint(boolean checkpoint) {
+		this.mScope = false;
+		this.mImage = false;
+		this.mCheckpoint = checkpoint;
+	}
+
+	/**
+	 * Returns the x location of this event.
+	 * 
+	 * @return x location
+	 */
+	public int getX() {
+		return x;
+	}
+
+	/**
+	 * Returns the ending x location for this event.
+	 * 
+	 * @return x end location
+	 */
+	public int getXEnd() {
+		return x + width;
+	}
+
+	/**
+	 * Returns the y location of this event.
+	 * 
+	 * @return y location
+	 */
+	public int getY() {
+		return y;
+	}
+
+	/**
+	 * Returns the bottom y of this event.
+	 * 
+	 * @return y bottom
+	 */
+	public int getBottomY() {
+		return y + height;
+	}
+
+	/**
+	 * Returns the width of this event.
+	 * 
+	 * @return width
+	 */
+	public int getWidth() {
+		return width;
+	}
+
+	/**
+	 * Returns the height of this event.
+	 * 
+	 * @return height
+	 */
+	public int getHeight() {
+		return height;
+	}
+
+	/**
+	 * Returns the revised start date of this event.
+	 * 
+	 * @return Revised date
+	 */
+	public Calendar getRevisedStart() {
+		return mRevisedStart;
+	}
+
+	/**
+	 * Sets the revised start date of this event.
+	 * 
+	 * @param revisedStart
+	 */
+	public void setRevisedStart(Calendar revisedStart) {
+		this.mRevisedStart = revisedStart;
+	}
+
+	/**
+	 * Returns the revised end date of this event.
+	 * 
+	 * @return revised end date
+	 */
+	public Calendar getRevisedEnd() {
+		return mRevisedEnd;
+	}
+
+	/**
+	 * Sets the revised end date of this event.
+	 * 
+	 * @param revisedEnd Revised end date
+	 */
+	public void setRevisedEnd(Calendar revisedEnd) {
+		this.mRevisedEnd = revisedEnd;
+	}
+
+	/**
+	 * Whether this event is locked or not.
+	 * 
+	 * @return true if event is locked.
+	 */
+	public boolean isLocked() {
 		return mLocked;
 	}
 
-    /**
-     * Sets whether this event is locked or not.
-     * 
-     * @param locked true if locked
-     */
+	/**
+	 * Sets whether this event is locked or not.
+	 * 
+	 * @param locked true if locked
+	 */
 	public void setLocked(boolean locked) {
 		this.mLocked = locked;
 	}
@@ -529,10 +614,10 @@ public class GanttEvent {
 	public Rectangle getBounds() {
 		return new Rectangle(getX(), getY(), getWidth(), getHeight());
 	}
-	
+
 	/**
-	 * Returns the text display format of this event. Please see ISettings.getTextDisplayFormat() for an overview. If this method returns null,
-	 * whatever is set in the settings will be used.
+	 * Returns the text display format of this event. Please see ISettings.getTextDisplayFormat() for an overview. If this method returns null, whatever is set in the settings will
+	 * be used.
 	 * 
 	 * @return Text format or null
 	 * @see ISettings#getTextDisplayFormat()
@@ -540,16 +625,16 @@ public class GanttEvent {
 	public String getTextDisplayFormat() {
 		return mTextDisplayFormat;
 	}
-	
+
 	/**
-	 * Sets the text display format of this event. Please see ISettings.getTextDisplayFormat() for an overview. 
+	 * Sets the text display format of this event. Please see ISettings.getTextDisplayFormat() for an overview.
 	 * 
 	 * @see ISettings#getTextDisplayFormat()
 	 */
 	public void setTextDisplayFormat(String format) {
 		mTextDisplayFormat = format;
 	}
-	
+
 	/**
 	 * Sets this event to be a scope. Don't forget to add events that the scope is supposed to encompass with addScopeEvent(GanttEvent event);
 	 * 
@@ -570,7 +655,7 @@ public class GanttEvent {
 	public boolean isScope() {
 		return mScope;
 	}
-	
+
 	/**
 	 * Adds an event that this event should cover if it has been set to be a scope.
 	 * 
@@ -579,22 +664,22 @@ public class GanttEvent {
 	public void addScopeEvent(GanttEvent event) {
 		if (event == this)
 			return;
-		
+
 		if (mScopeEvents.contains(event))
 			return;
-		
+
 		mScopeEvents.add(event);
 	}
-	
+
 	/**
-	 * Removes event that this event encompasses as a scope. 
+	 * Removes event that this event encompasses as a scope.
 	 * 
 	 * @param event GanttEvent
 	 */
 	public void removeScopeEvent(GanttEvent event) {
 		mScopeEvents.remove(event);
 	}
-	
+
 	/**
 	 * Returns the list of GanttEvents that the scope encompasses.
 	 * 
@@ -603,50 +688,96 @@ public class GanttEvent {
 	public ArrayList getScopeEvents() {
 		return mScopeEvents;
 	}
-	
+
+	private GanttEvent getEarliestOrLatestScopeEvent(boolean earliest) {
+		Calendar ret = null;
+		GanttEvent retEvent = null;
+
+		for (int i = 0; i < mScopeEvents.size(); i++) {
+			GanttEvent ge = (GanttEvent) mScopeEvents.get(i);
+			if (earliest) {
+				if (ret == null) {
+					ret = ge.getActualStartDate();
+					retEvent = ge;
+					continue;
+				}
+
+				if (ge.getActualStartDate().before(ret)) {
+					ret = ge.getActualStartDate();
+					retEvent = ge;
+				}
+			} else {
+				if (ret == null) {
+					ret = ge.getActualEndDate();
+					retEvent = ge;
+					continue;
+				}
+
+				if (ge.getActualEndDate().after(ret)) {
+					ret = ge.getActualEndDate();
+					retEvent = ge;
+				}
+			}
+		}
+
+		return retEvent;
+	}
+
+	public GanttEvent getEarliestScopeEvent() {
+		if (!isScope() || mScopeEvents.size() == 0)
+			return null;
+
+		return getEarliestOrLatestScopeEvent(true);
+	}
+
+	public GanttEvent getLatestScopeEvent() {
+		if (!isScope() || mScopeEvents.size() == 0)
+			return null;
+
+		return getEarliestOrLatestScopeEvent(false);
+	}
+
 	/**
 	 * Internal method for calculating the earliest and latest dates of the scope. Do not call externally.
-	 *
+	 * 
 	 */
-	public void calculateScope() {		
+	void calculateScope() {
 		Calendar earliest = null;
 		Calendar latest = null;
-		
+
 		float percentage = 0f;
-				
+
 		for (int i = 0; i < mScopeEvents.size(); i++) {
 			GanttEvent event = (GanttEvent) mScopeEvents.get(i);
-		
+
 			if (earliest == null) {
-				earliest = event.getStartDate();
+				earliest = event.getActualStartDate();
+			} else {
+				if (event.getActualStartDate().before(earliest))
+					earliest = event.getActualStartDate();
 			}
-			else {
-				if (event.getStartDate().before(earliest))
-					earliest = event.getStartDate();
-			}
-			
+
 			if (latest == null) {
-				latest = event.getEndDate();
+				latest = event.getActualEndDate();
+			} else {
+				if (event.getActualEndDate().after(latest))
+					latest = event.getActualEndDate();
 			}
-			else {
-				if (event.getEndDate().after(latest))
-					latest = event.getEndDate();
-			}
-			
-			percentage += (float)event.getPercentComplete();
+
+			percentage += (float) event.getPercentComplete();
 		}
 
 		percentage /= (mScopeEvents.size() > 0 ? mScopeEvents.size() : 1);
-		
+
 		// allow start/end dates to override if we have zero events
 		if (earliest == null && mStartDate != null)
 			earliest = mStartDate;
 		if (latest == null && mEndDate != null)
-			latest = mEndDate;		
-		
+			latest = mEndDate;
+
 		setStartDate(earliest);
 		setEndDate(latest);
-		setPercentComplete((int)percentage);
+		setPercentComplete((int) percentage);
 	}
 
 	/**
@@ -657,7 +788,7 @@ public class GanttEvent {
 	public Image getPicture() {
 		return mPicture;
 	}
-	
+
 	/**
 	 * Sets the picture image for this event.
 	 * 
@@ -666,7 +797,7 @@ public class GanttEvent {
 	public void setPicture(Image picture) {
 		this.mPicture = picture;
 	}
-	
+
 	/**
 	 * Sets this event to be represented by an image.
 	 * 
@@ -675,10 +806,10 @@ public class GanttEvent {
 	public void setImage(boolean image) {
 		mCheckpoint = false;
 		mScope = false;
-		
+
 		this.mImage = image;
 	}
-	
+
 	/**
 	 * Returns whether this event is an image representation or not.
 	 * 
@@ -691,7 +822,7 @@ public class GanttEvent {
 	/**
 	 * Returns what GanttGroup this event belongs to. Grouped events are drawn on the same line. Set null for no group.
 	 * 
-	 * @return GanttGroup 
+	 * @return GanttGroup
 	 */
 	public GanttGroup getGanttGroup() {
 		return mGanttGroup;
@@ -705,7 +836,7 @@ public class GanttEvent {
 	public void setGanttGroup(GanttGroup group) {
 		mGanttGroup = group;
 	}
-	
+
 	/**
 	 * Sets if this event should be hidden or not. Hidden events are not shown on the chart and the space they normally would occupy is free.
 	 * 
@@ -714,26 +845,27 @@ public class GanttEvent {
 	public void setHidden(boolean hidden) {
 		mHidden = hidden;
 	}
-	
+
 	/**
 	 * Returns whether this event is hidden or not. Hidden events are not shown on the chart and the space they normally would occupy is free.
-	 *  
+	 * 
 	 * @return true if hidden.
 	 */
 	public boolean isHidden() {
 		return mHidden;
 	}
-	
+
 	private void _setAllChildrenHidden(boolean hidden) {
 		if (mScopeEvents == null)
 			return;
-		
-		for (int i = 0; i < mScopeEvents.size(); i++) 
-			((GanttEvent)mScopeEvents.get(i)).setHidden(hidden);				
+
+		for (int i = 0; i < mScopeEvents.size(); i++) {
+			((GanttEvent) mScopeEvents.get(i)).setHidden(hidden);
+		}
 	}
 
 	/**
-	 * Hides all children from view. Children only exist on Scoped events.  
+	 * Hides all children from view. Children only exist on Scoped events.
 	 * 
 	 * @see #isHidden()
 	 */
@@ -742,14 +874,14 @@ public class GanttEvent {
 	}
 
 	/**
-	 * Un-hides all children from view. Children only exist on Scoped events.  
+	 * Un-hides all children from view. Children only exist on Scoped events.
 	 * 
 	 * @see #isHidden()
 	 */
 	public void showAllChildren() {
-		_setAllChildrenHidden(false);		
+		_setAllChildrenHidden(false);
 	}
-	
+
 	/**
 	 * Returns whether all children are hidden or not. Children only exist on Scoped events.
 	 * 
@@ -760,14 +892,233 @@ public class GanttEvent {
 			return false;
 
 		for (int i = 0; i < mScopeEvents.size(); i++) {
-			if (!((GanttEvent)mScopeEvents.get(i)).isHidden())
+			if (!((GanttEvent) mScopeEvents.get(i)).isHidden())
 				return false;
 		}
-		
+
 		return true;
+	}
+
+	/**
+	 * Returns the full right most x value if event has text or images drawn after it.
+	 * 
+	 * @return x position
+	 */
+	public int getWidthWithText() {
+		return mWidthWithtText;
+	}
+
+	/**
+	 * Sets the full width of the event width and the text and images that come after it.
+	 * 
+	 * @param width x width
+	 */
+	public void setWidthWithText(int width) {
+		this.mWidthWithtText = width;
+	}
+
+	/**
+	 * Returns the currently set Advanced tooltip, or null if none is set.
+	 * 
+	 * @return Advanced tooltip
+	 */
+	public AdvancedTooltip getAdvancedTooltip() {
+		return mAdvancedTooltip;
+	}
+
+	/**
+	 * Sets the advanced tooltip. If none is set, a default tooltip will be used.
+	 * 
+	 * @param advancedTooltip
+	 */
+	public void setAdvancedTooltip(AdvancedTooltip advancedTooltip) {
+		this.mAdvancedTooltip = advancedTooltip;
+	}
+
+	/**
+	 * Returns the fixed row height in pixels.
+	 * 
+	 * @return Fixed row height
+	 */
+	public int getFixedRowHeight() {
+		return mFixedRowHeight;
+	}
+
+	/**
+	 * Sets the fixed row height in pixels.
+	 * 
+	 * @param fixedRowHeight Fixed row height
+	 */
+	public void setFixedRowHeight(int fixedRowHeight) {
+		this.mFixedRowHeight = fixedRowHeight;
+	}
+
+	/**
+	 * Whether the row height is calculated automatically or if it's fixed
+	 * 
+	 * @return true if automatic
+	 */
+	public boolean isAutomaticRowHeight() {
+		return (getFixedRowHeight() == FIXED_ROW_HEIGHT_AUTOMATIC);
+	}
+
+	/**
+	 * Resets the row height to be calculated automatically should the row height have been set to a specific value.
+	 */
+	public void setAutomaticRowHeight() {
+		setFixedRowHeight(FIXED_ROW_HEIGHT_AUTOMATIC);
+	}
+
+	/**
+	 * Returns the vertical alignment set. Alignments are only valid if the row height is a fixed value.
+	 * 
+	 * @return Row alignment, one of SWT.TOP, SWT.CENTER, SWT.BOTTOM. Default is SWT.TOP.
+	 */
+	public int getVerticalEventAlignment() {
+		return mVerticalEventAlignment;
+	}
+
+	/**
+	 * Sets the vertical alignment for this event. Alignments are only valid if the row height is a fixed value.
+	 * 
+	 * @param verticalEventAlignment one of SWT.TOP, SWT.CENTER, SWT.BOTTOM
+	 */
+	public void setVerticalEventAlignment(int verticalEventAlignment) {
+		this.mVerticalEventAlignment = verticalEventAlignment;
+	}
+
+	/**
+	 * Whether this event is resizable. If resizing is turned off in the settings this method does nothing.
+	 * 
+	 * @return true if resizable. Default is true.
+	 */
+	public boolean isResizable() {
+		return mResizable;
+	}
+
+	/**
+	 * Sets this event to be resizable or not. If resizing is turned off in the settings this method does nothing.
+	 * 
+	 * @param resizable true to make event resizable.
+	 */
+	public void setResizable(boolean resizable) {
+		mResizable = resizable;
+	}
+
+	/**
+	 * Whether this event is moveable. If moving is turned off in the settings this method does nothing.
+	 * 
+	 * @return true if moveable. Default is true.
+	 */
+	public boolean isMoveable() {
+		return mMoveable;
+	}
+
+	/**
+	 * Sets this event to be moveable or not. If moving is turned off in the settings this method does nothing.
+	 * 
+	 * @param resizable true to make event moveable.
+	 */
+	public void setMoveable(boolean moveable) {
+		mMoveable = moveable;
+	}
+
+	/**
+	 * Returns the date prior to which no moves or resizes are allowed. Any events moved towards or across the date mark will stop at this mark.
+	 * 
+	 * @return Calendar or null.
+	 */
+	public Calendar getNoMoveBeforeDate() {
+		return mNoMoveBeforeDate;
+	}
+
+	/**
+	 * Sets the date prior to which no moves or resizes are allowed. Any events moved towards or across the date mark will stop at this mark.
+	 * 
+	 * @param noMoveBeforeDate Calendar or null.
+	 */
+	public void setNoMoveBeforeDate(Calendar noMoveBeforeDate) {
+		mNoMoveBeforeDate = noMoveBeforeDate;
+	}
+
+	/**
+	 * Returns the date after which no moves or resizes are allowed. Any events moved towards or across the date mark will stop at this mark.
+	 * 
+	 * @return Calendar or null.
+	 */
+	public Calendar getNoMoveAfterDate() {
+		return mNoMoveAfterDate;
+	}
+
+	/**
+	 * Sets the date after which no moves or resizes are allowed. Any events moved towards or across the date mark will stop at this mark.
+	 * 
+	 * @param noMoveAfterDate Calendar or null.
+	 */
+	public void setNoMoveAfterDate(Calendar noMoveAfterDate) {
+		mNoMoveAfterDate = noMoveAfterDate;
+	}
+
+	boolean hasMovementConstraints() {
+		return (mNoMoveAfterDate != null || mNoMoveBeforeDate != null);
+	}
+
+	// internal
+	int getVisibility() {
+		return mVisibility;
+	}
+
+	// internal
+	void setVisibility(int visibility) {
+		this.mVisibility = visibility;
+	}
+
+	// internal
+	boolean isBoundsSet() {
+		return mBoundsHaveBeenSet;
+	}
+
+	void setHorizontalLineTopY(int y) {
+		this.mHorizontalLineTopY = y;
+	}
+
+	int getHorizontalLineTopY() {
+		return mHorizontalLineTopY;
+	}
+
+	int getHorizontalLineBottomY() {
+		return mHorizontalLineBottomY;
+	}
+
+	void setHorizontalLineBottomY(int y) {
+		this.mHorizontalLineBottomY = y;
+	}
+	
+	void setNameChanged(boolean changed) {
+		this.mNameChanged = changed;
+	}
+	
+	boolean isNameChanged() {
+		return mNameChanged;
+	}
+
+	Point getNameExtent() {
+		return mNameExtent;
+	}
+	
+	void setNameExtent(Point extent) {
+		this.mNameExtent = extent;
+	}
+	
+	String getParsedString() {
+		return mParsedString;
+	}
+	
+	void setParsedString(String parsed) {
+		this.mParsedString = parsed;
 	}
 	
 	public String toString() {
-        return mName;
-    }
+		return mName;
+	}
 }

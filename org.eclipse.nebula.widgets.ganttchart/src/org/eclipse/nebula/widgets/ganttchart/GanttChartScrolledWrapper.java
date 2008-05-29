@@ -18,18 +18,24 @@ import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 
-class GanttChartScrolledWrapper extends ScrolledComposite {
+/**
+ * The GanttChartScrolledWrapper is a middle-man between the GanttComposite and the GanttChart. All scrollbar magic is handled by this class so that the GanttComposite
+ * does not have to worry about those things, the only thing it needs to do is to return the correct size when the wrapper asks for it. 
+ *
+ * This class may NOT be subclassed. 
+ */
+final class GanttChartScrolledWrapper extends ScrolledComposite {
 	
 	private GanttComposite mGc;
 	
-	public GanttChartScrolledWrapper(Composite parent, int style, ISettings settings, IColorManager colorManager, IPaintManager paintManager) {
+	public GanttChartScrolledWrapper(Composite parent, int style, ISettings settings, IColorManager colorManager, IPaintManager paintManager, ILanguageManager languageManager) {
 		super(parent, style | SWT.V_SCROLL);
 		setExpandHorizontal(true);
 		setExpandVertical(true);
 		getVerticalBar().setIncrement(15);
-		getVerticalBar().setPageIncrement(50);
+		getVerticalBar().setPageIncrement(160);
 
-		mGc = new GanttComposite(this, SWT.NONE, settings, colorManager, paintManager);
+		mGc = new GanttComposite(this, SWT.NONE, settings, colorManager, paintManager, languageManager);
 		
 		addControlListener(new ControlListener() {
 
@@ -43,6 +49,13 @@ class GanttChartScrolledWrapper extends ScrolledComposite {
 		});
 		
 		setContent(mGc);
+		
+		// force a scrollbar update post-widget creation
+		parent.getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				forceUpdate();
+			}			
+		});
 	}
 		
 	public void scrollingLeft(int diff) {

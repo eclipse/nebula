@@ -1,19 +1,10 @@
-/*******************************************************************************
- * Copyright (c) Emil Crumhorn - Hexapixel.com - emil.crumhorn@gmail.com
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *    emil.crumhorn@gmail.com - initial API and implementation
- *******************************************************************************/ 
+package org.eclipse.nebula.widgets.ganttchart.themes;
 
-package org.eclipse.nebula.widgets.ganttchart;
-
+import org.eclipse.nebula.widgets.ganttchart.ColorCache;
+import org.eclipse.nebula.widgets.ganttchart.IColorManager;
 import org.eclipse.swt.graphics.Color;
 
-public abstract class AbstractColorManager implements IColorManager {
+public class ColorThemeSilver implements IColorManager {
 
 	public Color getArrowColor() {
 		return ColorCache.getColor(0, 0, 0);
@@ -48,15 +39,15 @@ public abstract class AbstractColorManager implements IColorManager {
 	}
 
 	public Color getWeekDividerLineColor() {
-		return ColorCache.getColor(75, 107, 143);
+		return ColorCache.getColor(100, 100, 100);
 	}
 
 	public Color getPercentageBarColorTop() {
-		return ColorCache.getColor(84, 84, 84);
+		return getBlack();
 	}
 		
 	public Color getPercentageBarColorBottom() {
-		return ColorCache.getColor(0, 0, 0);		
+		return ColorCache.getColor(84, 84, 84);		
 	}
 
 	public Color getPercentageBarRemainderColorTop() {
@@ -72,7 +63,7 @@ public abstract class AbstractColorManager implements IColorManager {
 	}
 
 	public Color getTodayBackgroundColorTop() {
-		return ColorCache.getColor(238, 232, 170);
+		return ColorCache.getColor(220, 236, 225);
 	}
 	
 	public Color getTodayBackgroundColorBottom() {
@@ -80,27 +71,27 @@ public abstract class AbstractColorManager implements IColorManager {
 	}
 
 	public Color getTextHeaderBackgroundColorTop() {
-		return ColorCache.getColor(150, 192, 234);
+		return ColorCache.getColor(240, 240, 240);
 	}
 	
 	public Color getTextHeaderBackgroundColorBottom() {
-		return ColorCache.getColor(186, 213, 242);
+		return ColorCache.getColor(200, 200, 200);
 	}
 
 	public Color getTimeHeaderBackgroundColorBottom() {
-		return ColorCache.getColor(186, 213, 242);
+		return ColorCache.getColor(200, 200, 200);
 	}
 
 	public Color getTimeHeaderBackgroundColorTop() {
-		return ColorCache.getColor(150, 192, 234);
+		return getTextHeaderBackgroundColorTop();
 	}
 	
 	public Color getHourTimeDividerColor() {
-		return ColorCache.getColor(110, 152, 194);
+		return ColorCache.getColor(170, 170, 170);
 	}
 
 	public Color getMonthTimeDividerColor() {
-		return ColorCache.getColor(140, 192, 234);
+		return getHourTimeDividerColor();
 	}
 
 	public Color getWeekTimeDividerColor() {
@@ -112,12 +103,11 @@ public abstract class AbstractColorManager implements IColorManager {
 	}
 
 	public Color getWeekdayBackgroundColorTop() {
-		//return getWhite();
-		return ColorCache.getColor(230, 239, 249);
+		return ColorCache.getWhite();
 	}
 		
 	public Color getWeekdayBackgroundColorBottom() {
-		return ColorCache.getWhite();
+		return ColorCache.getColor(240, 240, 240);
 	}
 
 	public Color getWhite() {
@@ -125,12 +115,11 @@ public abstract class AbstractColorManager implements IColorManager {
 	}
 
 	public Color getSaturdayBackgroundColorTop() {
-		//return ColorCache.getColor(240, 240, 240);
-		return ColorCache.getColor(217, 229, 242);
+		return ColorCache.getColor(240, 240, 240);
 	}
 	
 	public Color getSaturdayBackgroundColorBottom() {
-		return getSaturdayBackgroundColorTop();
+		return ColorCache.getColor(210, 210, 210);
 	}
 
 	public Color getSaturdayTextColor() {
@@ -178,7 +167,7 @@ public abstract class AbstractColorManager implements IColorManager {
 	}
 
 	public Color getTooltipBackgroundColor() {
-		return ColorCache.getColor(217, 229, 242);
+		return ColorCache.getColor(217, 217, 217);
 	}
 
 	public Color getTooltipForegroundColor() {
@@ -202,11 +191,11 @@ public abstract class AbstractColorManager implements IColorManager {
 	}
 
 	public Color getTopHorizontalLinesColor() {
-		return ColorCache.getColor(138, 175, 228);
+		return ColorCache.getColor(80, 80, 80);
 	}
 
 	public Color getTodayLineColor() {
-		return ColorCache.getColor(253, 145, 80);
+		return ColorCache.getColor(55, 145, 80);
 	}
 
 	public int getTodayLineAlpha() {
@@ -242,7 +231,7 @@ public abstract class AbstractColorManager implements IColorManager {
 	}
 
 	public Color getAdvancedTooltipInnerFillBottomColor() {
-		return ColorCache.getColor(204, 217, 234);
+		return ColorCache.getColor(204, 204, 204);
 	}
 
 	public Color getAdvancedTooltipInnerFillTopColor() {
@@ -274,21 +263,19 @@ public abstract class AbstractColorManager implements IColorManager {
 	}
 
 	public Color getNonActiveSessionBarColorLeft() {
-		//return ColorCache.getColor(163, 196, 241);
-		return ColorCache.getColor(163, 196, 241);
+		return ColorCache.getColor(255, 255, 255);
 	}
 
 	public Color getNonActiveSessionBarColorRight() {
-		return ColorCache.getColor(185, 212, 241);
+		return ColorCache.getColor(200, 200, 200);
 	}
 
 	public Color getSessionBarDividerColorLeft() {
-		return ColorCache.getColor(153, 191, 236);
+		return ColorCache.getColor(185, 185, 185);
 	}
 
 	public Color getSessionBarDividerColorRight() {
-		return ColorCache.getColor(188, 212, 240);
+		return ColorCache.getColor(255, 255, 245);
 	}	
-	
-	
+		
 }
