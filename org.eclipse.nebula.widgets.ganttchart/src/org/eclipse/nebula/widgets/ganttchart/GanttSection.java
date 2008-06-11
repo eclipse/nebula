@@ -14,6 +14,7 @@ package org.eclipse.nebula.widgets.ganttchart;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -55,6 +56,8 @@ public class GanttSection implements IFillBackgroundColors {
 
 	// private items
 	private Point					mNameExtent;
+
+	private int						mTextOrientation	= SWT.VERTICAL;
 
 	public GanttSection(GanttChart parent, String name) {
 		this.name = name;
@@ -114,7 +117,7 @@ public class GanttSection implements IFillBackgroundColors {
 	boolean needsNameUpdate() {
 		return needsNameUpdate;
 	}
-	
+
 	void setNeedsNameUpdate(boolean need) {
 		needsNameUpdate = need;
 	}
@@ -157,9 +160,8 @@ public class GanttSection implements IFillBackgroundColors {
 	 * GanttGroup lastGroup = null; for (int i = 0; i < ganttEvents.size(); i++) { IGanttChartItem event = (IGanttChartItem) ganttEvents.get(i); if (event instanceof GanttEvent) {
 	 * if (lastGroup != null) height += settings.getEventSpacer();
 	 * 
-	 * GanttEvent ge = (GanttEvent) ganttEvents.get(i); if (!ge.isAutomaticRowHeight()) height += ge.getFixedRowHeight(); else height += settings.getEventHeight();
-	 *  // skip last event check, we need spacing there too height += settings.getEventSpacer(); lastGroup = null; } else if (event instanceof GanttGroup) { GanttGroup gg =
-	 * (GanttGroup) event;
+	 * GanttEvent ge = (GanttEvent) ganttEvents.get(i); if (!ge.isAutomaticRowHeight()) height += ge.getFixedRowHeight(); else height += settings.getEventHeight(); // skip last
+	 * event check, we need spacing there too height += settings.getEventSpacer(); lastGroup = null; } else if (event instanceof GanttGroup) { GanttGroup gg = (GanttGroup) event;
 	 * 
 	 * if (gg != lastGroup) { if (!gg.isAutomaticRowHeight()) { height += gg.getFixedRowHeight(); } else { height += settings.getEventHeight(); //height +=
 	 * settings.getEventHeight(); //height += settings.getEventSpacer()/2; }
@@ -168,8 +170,7 @@ public class GanttSection implements IFillBackgroundColors {
 	 * 
 	 * lastGroup = gg; } }
 	 * 
-	 * if (height < settings.getMinimumSectionHeight()) height = settings.getMinimumSectionHeight();
-	 *  // System.err.println(getName() + " " + height + " " + ganttEvents.size());
+	 * if (height < settings.getMinimumSectionHeight()) height = settings.getMinimumSectionHeight(); // System.err.println(getName() + " " + height + " " + ganttEvents.size());
 	 * 
 	 * return height; }
 	 */
@@ -222,12 +223,30 @@ public class GanttSection implements IFillBackgroundColors {
 		mWeekdayBackgroundColorBottom = weekdayBackgroundColorBottom;
 	}
 
+	/**
+	 * Returns the text orientation of the section. Default is SWT.VERTICAL.
+	 * 
+	 * @return Text orientation.
+	 */
+	public int getTextOrientation() {
+		return mTextOrientation;
+	}
+
+	/**
+	 * Sets the text orientation of the section. One of SWT.HORIZONTAL or SWT.VERTICAL. Default is SWT.VERTICAL.
+	 * 
+	 * @param textOrientation SWT.VERTICAL or SWT.HORIZONTAL
+	 */
+	public void setTextOrientation(int textOrientation) {
+		mTextOrientation = textOrientation;
+	}
+
 	Point getNameExtent() {
 		return mNameExtent;
 	}
-	
+
 	void setNameExtent(Point extent) {
 		this.mNameExtent = extent;
 	}
-	
+
 }

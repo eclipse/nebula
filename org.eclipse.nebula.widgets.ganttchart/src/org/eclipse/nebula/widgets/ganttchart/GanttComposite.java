@@ -52,8 +52,8 @@ import org.eclipse.swt.widgets.MenuItem;
  * There is a serious amount of calculation done in this chart, it's about 80% calculation and 20% drawing. In fact, most of the drawing is delegated to other classes. <br>
  * <br>
  * A lot of settings method calls are set as class variables, but some are called straight off the settings object. The logic isn't that deep, it's mostly just the over-and-over
- * used variables that get class members. Slow stuff is cached, such as the use of gc.stringExtent(), image rotation and so on. Anything that is slow _should_ be cached
- * as it is a slowdown to the chart. A redraw should be as fast as possible and whenever possible should be specific to certain bounds instead of a full redraw.<br>
+ * used variables that get class members. Slow stuff is cached, such as the use of gc.stringExtent(), image rotation and so on. Anything that is slow _should_ be cached as it is a
+ * slowdown to the chart. A redraw should be as fast as possible and whenever possible should be specific to certain bounds instead of a full redraw.<br>
  * <br>
  * This class may not be subclassed.
  * 
@@ -271,12 +271,12 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	private boolean						mReCalculateSectionBounds	= true;
 
 	private HashSet						mAllEventsCombined;														// convenience list for all events regardless if they're in
-																												// sections, in groups, or single
+	// sections, in groups, or single
 
 	private boolean						mUseFastDrawing;
 
 	private List						mVerticalLineLocations;													// fast cache for where the vertical lines go, much much faster than
-																												// re-calculating over and over
+	// re-calculating over and over
 	private List						mVerticalWeekDividerLineLocations;
 
 	// only settings variables we allow direct override on
@@ -607,7 +607,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	// Note: things are in a certain order, as some stuff draws on top of
 	// others, so don't move them around unless you want a different effect
 	private void drawChartOntoGC(GC gc) {
-		//long time1 = System.currentTimeMillis();
+		// long time1 = System.currentTimeMillis();
 
 		boolean drawSections = (mGanttSections.size() > 0);
 
@@ -759,12 +759,12 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		mReCalculateScopes = true;
 		mReCalculateSectionBounds = true;
 
-		//long time2 = System.currentTimeMillis();
-		//String redraw = "redraw: " + (time2 - time1);
+		// long time2 = System.currentTimeMillis();
+		// String redraw = "redraw: " + (time2 - time1);
 
 		redrawCount++;
-		//total += (time2 - time1);
-		//System.err.println(redraw + " avg: " + (float) total / (float) redrawCount);
+		// total += (time2 - time1);
+		// System.err.println(redraw + " avg: " + (float) total / (float) redrawCount);
 	}
 
 	long	total		= 0;
@@ -1115,6 +1115,26 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 	private void drawSectionColumn(GC gc, Rectangle bounds) {
 		int xMax = mSettings.getSectionBarWidth() - 1;
+		
+		int horiSpacer = 3;
+		
+		// calculate max width if any section is horizontal
+		for (int i = 0; i < mGanttSections.size(); i++) {
+			GanttSection gs = (GanttSection) mGanttSections.get(i);
+			if (gs.getTextOrientation() == SWT.HORIZONTAL) {				
+				Point p = null;
+				if (gs.needsNameUpdate() || gs.getNameExtent() == null) {
+					p = gc.stringExtent(gs.getName());
+					gs.setNameExtent(p);
+					gs.setNeedsNameUpdate(false);
+				}
+				else
+					p = gs.getNameExtent();
+				
+				xMax = Math.max(xMax, p.x + (horiSpacer*2));
+			}
+		}		
+		
 		int lineLoc = getHeaderHeight() == 0 ? bounds.y : (bounds.y + getHeaderHeight() - mYScrollPosition);
 		int yStart = lineLoc;
 		int x = 0;
@@ -1152,47 +1172,52 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 			gc.setForeground(mTextColor);
 
-			// draw vertical text (I tried using Transform.rotate stuff here earlier, but it's so incredibly slow that we can't use it)
-			// and not only that, but the kerning on vertical text is completely whacked with letter overlapping, so right now it's unusable
-			Image image = null;
-			int xStart = (xMax / 2);
+			if (gs.getTextOrientation() == SWT.VERTICAL) {
+				// draw vertical text (I tried using Transform.rotate stuff here earlier, but it's so incredibly slow that we can't use it)
+				// and not only that, but the kerning on vertical text is completely whacked with letter overlapping, so right now it's unusable
+				Image image = null;
+				int xStart = (xMax / 2);
 
-			// only create the images if we don't have one from before, or if the name has changed since last time
-			if (gs.getNameImage() == null || gs.needsNameUpdate()) {
+				// only create the images if we don't have one from before, or if the name has changed since last time
+				if (gs.getNameImage() == null || gs.needsNameUpdate()) {
 
-				Point extent = null;
-				if (gs.needsNameUpdate() || gs.getNameExtent() == null) {
-					extent = gc.stringExtent(gs.getName());
-					gs.setNameExtent(extent);
-					gs.setNeedsNameUpdate(false);
+					Point extent = null;
+					if (gs.needsNameUpdate() || gs.getNameExtent() == null) {
+						extent = gc.stringExtent(gs.getName());
+						gs.setNameExtent(extent);
+						gs.setNeedsNameUpdate(false);
+					} else
+						extent = gs.getNameExtent();
+
+					Image textImage = new Image(getDisplay(), extent.x, xMax - 2);
+					GC gcTemp = new GC(textImage);
+
+					if (rightSide) {
+						gcTemp.setForeground(mColorManager.getActiveSessionBarColorRight());
+						gcTemp.setBackground(mColorManager.getActiveSessionBarColorLeft());
+					} else {
+						gcTemp.setForeground(mColorManager.getActiveSessionBarColorLeft());
+						gcTemp.setBackground(mColorManager.getActiveSessionBarColorRight());
+					}
+					gcTemp.fillGradientRectangle(0, 0, extent.x, xMax - 2, true);
+					gcTemp.setForeground(mTextColor);
+					gcTemp.drawString(gs.getName(), 0, 0, true);
+					gcTemp.dispose();
+
+					ImageData id = textImage.getImageData();
+					image = new Image(getDisplay(), rotate(id, rightSide ? SWT.RIGHT : SWT.LEFT));
+					gs.setNameImage(image);
 				} else
-					extent = gs.getNameExtent();
+					image = gs.getNameImage();
 
-				Image textImage = new Image(getDisplay(), extent.x, xMax - 2);
-				GC gcTemp = new GC(textImage);
+				xStart -= (image.getBounds().width / 2) - 2;
+				int textLocY = (gsHeight / 2) - (image.getBounds().height / 2);
 
-				if (rightSide) {
-					gcTemp.setForeground(mColorManager.getActiveSessionBarColorRight());
-					gcTemp.setBackground(mColorManager.getActiveSessionBarColorLeft());
-				} else {
-					gcTemp.setForeground(mColorManager.getActiveSessionBarColorLeft());
-					gcTemp.setBackground(mColorManager.getActiveSessionBarColorRight());
-				}
-				gcTemp.fillGradientRectangle(0, 0, extent.x, xMax - 2, true);
-				gcTemp.setForeground(mTextColor);
-				gcTemp.drawString(gs.getName(), 0, 0, true);
-				gcTemp.dispose();
-
-				ImageData id = textImage.getImageData();
-				image = new Image(getDisplay(), rotate(id, rightSide ? SWT.RIGHT : SWT.LEFT));
-				gs.setNameImage(image);
-			} else
-				image = gs.getNameImage();
-
-			xStart -= (image.getBounds().width / 2) - 2;
-			int textLocY = (gsHeight / 2) - (image.getBounds().height / 2);
-
-			gc.drawImage(image, x + xStart - 1, yStart + textLocY);
+				gc.drawImage(image, x + xStart - 1, yStart + textLocY);
+			}
+			else if (gs.getTextOrientation() == SWT.HORIZONTAL) {
+				gc.drawString(gs.getName(), horiSpacer, lineLoc + (gs.getBounds().height / 2) - (gs.getNameExtent().y/2), true);
+			}
 
 			yStart += gsHeight - 1;
 
@@ -1610,7 +1635,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 				if (!mDayLetterStringExtentMap.containsKey(dayLetter)) {
 					extent = gc.stringExtent(dayLetter);
 					mDayLetterStringExtentMap.put(dayLetter, extent);
-				} else 
+				} else
 					extent = (Point) mDayLetterStringExtentMap.get(dayLetter);
 
 				switch (extent.x) {
@@ -2772,7 +2797,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		// non rounded will return 0,0 which is exactly correct
 		return xy;
 	}
-	
+
 	// draws the dotted line showing where today's date is
 	private void drawTodayLine(GC gc, Rectangle bounds, int xStart, int dayOfWeek) {
 		gc.setForeground(mLineTodayColor);
@@ -3633,10 +3658,10 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		if (e.keyCode == SWT.ESC) {
 			endEverything();
 			mSelectedEvent = null;
-			killDialogs();			
+			killDialogs();
 			redraw();
 			setCursor(CURSOR_NONE);
-			
+
 		}
 	}
 
@@ -3986,7 +4011,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 		return -1;
 	}
-	
+
 	/**
 	 * Gets the date where the current x position is.
 	 * 
@@ -4044,7 +4069,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 		return temp;
 	}
-	
+
 	/**
 	 * Checks whether two dates would overlap or not.
 	 * 
@@ -4074,8 +4099,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 		int x = getXForDate(cal);
 
-		if (x == -1) 
-			return;		
+		if (x == -1)
+			return;
 
 		GC gc = new GC(this);
 		gc.setLineStyle(SWT.LINE_DOT);
@@ -4083,7 +4108,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		gc.setLineStyle(SWT.LINE_SOLID);
 		gc.dispose();
 	}
-	
+
 	/**
 	 * Handles the actual moving of an event.
 	 */

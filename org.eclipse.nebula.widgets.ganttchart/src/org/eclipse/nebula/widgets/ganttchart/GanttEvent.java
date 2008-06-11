@@ -16,6 +16,7 @@ import java.util.Calendar;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -110,6 +111,11 @@ public final class GanttEvent implements IGanttChartItem {
 	private boolean			mNameChanged				= true;
 	private Point			mNameExtent;
 	private String			mParsedString;
+
+	private int				mHorizontalTextLocation		= SWT.RIGHT;
+	private int				mVerticalTextLocation		= SWT.CENTER;
+	
+	private Font			mTextFont;
 
 	GanttEvent() {
 	}
@@ -1059,6 +1065,61 @@ public final class GanttEvent implements IGanttChartItem {
 		mNoMoveAfterDate = noMoveAfterDate;
 	}
 
+	/**
+	 * Returns the location where the event text will be displayed. Default is SWT.RIGHT.
+	 * 
+	 * @return Event text location
+	 */
+	public int getHorizontalTextLocation() {
+		return mHorizontalTextLocation;
+	}
+
+	/**
+	 * Sets the location of where the event text will be displayed. Options are: SWT.LEFT, SWT.CENTER, SWT.RIGHT. Center means the text will be drawn inside the event. Default is
+	 * SWT.RIGHT.
+	 * 
+	 * @param textLocation Text location, one of SWT.LEFT, SWT.CENTER or SWT.RIGHT.
+	 */
+	public void setHorizontalTextLocation(int textLocation) {
+		mHorizontalTextLocation = textLocation;
+	}
+
+	/**
+	 * Returns the lcoation where the event text will be displayed vertically. Default is SWT.CENTER which is right behind the event itself.
+	 * 
+	 * @return Vertical text location.
+	 */
+	public int getVerticalTextLocation() {
+		return mVerticalTextLocation;
+	}
+
+	/**
+	 * Sets the vertical location where the event text will be displayed. Options are: SWT.TOP, SWT.CENTER, SWT.BOTTOM. Default is SWT.CENTER.
+	 * 
+	 * @param verticalTextLocation Vertical text location
+	 */
+	public void setVerticalTextLocation(int verticalTextLocation) {
+		mVerticalTextLocation = verticalTextLocation;
+	}
+
+	/**
+	 * Returns the text font to use when drawing the event text. Default is null. 
+	 * 
+	 * @return Event font
+	 */
+	public Font getTextFont() {
+		return mTextFont;
+	}
+
+	/**
+	 * Sets the text font to use when drawing the event text. Default is null. Setting a font will override any flags for font settings in the Settings implementation.
+	 * 
+	 * @param textFont Font or null.
+	 */
+	public void setTextFont(Font textFont) {
+		mTextFont = textFont;
+	}
+
 	boolean hasMovementConstraints() {
 		return (mNoMoveAfterDate != null || mNoMoveBeforeDate != null);
 	}
@@ -1093,11 +1154,11 @@ public final class GanttEvent implements IGanttChartItem {
 	void setHorizontalLineBottomY(int y) {
 		this.mHorizontalLineBottomY = y;
 	}
-	
+
 	void setNameChanged(boolean changed) {
 		this.mNameChanged = changed;
 	}
-	
+
 	boolean isNameChanged() {
 		return mNameChanged;
 	}
@@ -1105,19 +1166,19 @@ public final class GanttEvent implements IGanttChartItem {
 	Point getNameExtent() {
 		return mNameExtent;
 	}
-	
+
 	void setNameExtent(Point extent) {
 		this.mNameExtent = extent;
 	}
-	
+
 	String getParsedString() {
 		return mParsedString;
 	}
-	
+
 	void setParsedString(String parsed) {
 		this.mParsedString = parsed;
 	}
-	
+
 	public String toString() {
 		return mName;
 	}

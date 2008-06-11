@@ -11,6 +11,7 @@
 
 package org.eclipse.nebula.widgets.ganttchart;
 
+import java.beans.EventSetDescriptor;
 import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
@@ -348,13 +349,44 @@ public abstract class AbstractPaintManager implements IPaintManager {
 			// DISPOSE FONT or we'll run out of handles
 			f.dispose();
 		}
+		
+		// font overrides a bold setting
+		if (ge.getTextFont() != null)
+			gc.setFont(ge.getTextFont());
 
 		Point toDrawExtent = ge.getNameExtent();
-		yTextPos -= (toDrawExtent.y / 2) - 1;
 
 		int textSpacer = ganttComposite.isConnected(ge) ? settings.getTextSpacerConnected() : settings.getTextSpacerNonConnected();
 
-		gc.drawString(toDraw, x + eventWidth + textSpacer, yTextPos, true);
+		int textXStart = 0;
+		
+		// find the horizontal text location
+		switch (ge.getHorizontalTextLocation()) {
+			case SWT.LEFT:
+				textXStart = x - textSpacer - toDrawExtent.x;
+				break;
+			case SWT.CENTER:
+				textXStart = x + (eventWidth/2) - (toDrawExtent.x / 2);
+				break;
+			case SWT.RIGHT:
+				textXStart = x + eventWidth + textSpacer;
+				break;
+		}
+		
+		// find the vertical text location
+		switch (ge.getVerticalTextLocation()) {
+			case SWT.TOP:
+				yTextPos = ge.getY() - toDrawExtent.y;
+				break;
+			case SWT.CENTER:
+				yTextPos -= (toDrawExtent.y / 2) - 1;
+				break;
+			case SWT.BOTTOM:
+				yTextPos = ge.getBottomY();
+				break;
+		}
+		
+		gc.drawString(toDraw, textXStart, yTextPos, true);
 		int extra = textSpacer + toDrawExtent.x;
 		textEndX = x + eventWidth + extra;
 
@@ -367,11 +399,11 @@ public abstract class AbstractPaintManager implements IPaintManager {
 			}
 		}
 
+		// regardless of horizontal alignment, it will still add on, so we can leave this as is
 		ge.setWidthWithText(ge.getWidth() + extra);
 
 		// reset font
-		if (ge.showBoldText())
-			gc.setFont(oldFont);		
+		gc.setFont(oldFont);		
 	}
 
 	public void drawScope(GanttComposite ganttComposite, ISettings settings, IColorManager colorManager, GanttEvent ge, GC gc, boolean threeDee, int dayWidth, int x, int y, int eventWidth, Rectangle bounds) {
