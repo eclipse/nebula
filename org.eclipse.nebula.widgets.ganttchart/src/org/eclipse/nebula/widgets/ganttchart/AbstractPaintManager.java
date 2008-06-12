@@ -11,7 +11,6 @@
 
 package org.eclipse.nebula.widgets.ganttchart;
 
-import java.beans.EventSetDescriptor;
 import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
