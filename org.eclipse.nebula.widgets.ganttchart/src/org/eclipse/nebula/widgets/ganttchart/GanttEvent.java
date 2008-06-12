@@ -49,10 +49,8 @@ import org.eclipse.swt.widgets.Menu;
  * <br><br>
  * // the first parameter is the data object, as this is an example, we'll leave it null<br>
  * // we're also setting the percentage complete to 50%<br>
- * GanttEvent ganttEvent = new GanttEvent(null, "Event Name", cStartDate, cEndDate, 50);
+ * GanttEvent ganttEvent = new GanttEvent(ganttChart, "Event Name", cStartDate, cEndDate, 50);
  * <br><br>
- * // add the event to the chart<br>
- * ganttChart.addEvent(ganttEvent);<br>
  * </code> <br>
  * <br>
  * This class may not be subclassed.
@@ -60,7 +58,7 @@ import org.eclipse.swt.widgets.Menu;
  * @author Emil Crumhorn <a href="mailto:emil.crumhorn@gmail.com">emil.crumhorn@gmail.com</a>
  * 
  */
-public final class GanttEvent implements IGanttChartItem {
+public class GanttEvent implements IGanttChartItem {
 
 	/*
 	 * public static final int TYPE_EVENT = 0; public static final int TYPE_CHECKPOINT = 1; public static final int TYPE_IMAGE = 2; public static final int TYPE_SCOPE = 3;
@@ -114,11 +112,8 @@ public final class GanttEvent implements IGanttChartItem {
 
 	private int				mHorizontalTextLocation		= SWT.RIGHT;
 	private int				mVerticalTextLocation		= SWT.CENTER;
-	
-	private Font			mTextFont;
 
-	GanttEvent() {
-	}
+	private Font			mTextFont;	
 
 	/**
 	 * Creates a new GanttEvent.
@@ -214,7 +209,12 @@ public final class GanttEvent implements IGanttChartItem {
 		this.mData = data;
 		this.mName = name;
 		this.mScope = true;
-		init();
+		try {
+			init();
+		}
+		catch (Exception err) {
+			err.printStackTrace();
+		}		
 	}
 
 	/**
@@ -243,11 +243,16 @@ public final class GanttEvent implements IGanttChartItem {
 		this.mStartDate = date;
 		this.mEndDate = date;
 		this.mCheckpoint = true;
-		init();
+		try {
+			init();
+		}
+		catch (Exception err) {
+			err.printStackTrace();
+		}		
 	}
 
 	/**
-	 * Creates a GanttChart intended to be an image.
+	 * Creates a GanttEvent intended to be an image.
 	 * 
 	 * @param parent Chart parent
 	 * @param name Name of image
@@ -259,7 +264,7 @@ public final class GanttEvent implements IGanttChartItem {
 	}
 
 	/**
-	 * Creates a GanttChart intended to be an image.
+	 * Creates a GanttEvent intended to be an image.
 	 * 
 	 * @param parent Chart parent
 	 * @param data Data object
@@ -275,13 +280,19 @@ public final class GanttEvent implements IGanttChartItem {
 		this.mEndDate = date;
 		this.mPicture = picture;
 		this.mImage = true;
-		init();
+		try {
+			init();
+		}
+		catch (Exception err) {
+			err.printStackTrace();
+		}
 	}
 
 	private void init() {
 		mScopeEvents = new ArrayList();
 		mParentChart.getGanttComposite().addEvent(this, true);
 		mMenu = new Menu(mParentChart.getGanttComposite());
+		checkDates();
 	}
 
 	/**
@@ -355,6 +366,7 @@ public final class GanttEvent implements IGanttChartItem {
 	 */
 	public void setStartDate(Calendar startDate) {
 		this.mStartDate = startDate;
+		checkDates();
 	}
 
 	/**
@@ -373,6 +385,7 @@ public final class GanttEvent implements IGanttChartItem {
 	 */
 	public void setEndDate(Calendar endDate) {
 		this.mEndDate = endDate;
+		checkDates();
 	}
 
 	/**
@@ -424,7 +437,7 @@ public final class GanttEvent implements IGanttChartItem {
 		this.y = bounds.y;
 		this.width = bounds.width;
 		this.height = bounds.height;
-	}
+	}	
 
 	void updateX(int x) {
 		this.x = x;
@@ -520,6 +533,7 @@ public final class GanttEvent implements IGanttChartItem {
 	 */
 	public void setRevisedStart(Calendar revisedStart) {
 		this.mRevisedStart = revisedStart;
+		checkDates();
 	}
 
 	/**
@@ -538,6 +552,7 @@ public final class GanttEvent implements IGanttChartItem {
 	 */
 	public void setRevisedEnd(Calendar revisedEnd) {
 		this.mRevisedEnd = revisedEnd;
+		checkDates();
 	}
 
 	/**
@@ -695,6 +710,20 @@ public final class GanttEvent implements IGanttChartItem {
 		return mScopeEvents;
 	}
 
+	// fixes dates being illogical, such as end date prior to start date which would cause very strange behavior in chart
+	// fix to bugzilla #236840
+	private void checkDates() {
+		if (mStartDate != null && mEndDate != null) {
+			if (mEndDate.before(mStartDate)) 
+				mEndDate = mStartDate; 		
+		}
+		
+		if (mRevisedStart != null && mRevisedEnd != null) {
+			if (mRevisedEnd.before(mRevisedStart)) 
+				mRevisedEnd = mRevisedStart;			
+		}
+	}
+	
 	private GanttEvent getEarliestOrLatestScopeEvent(boolean earliest) {
 		Calendar ret = null;
 		GanttEvent retEvent = null;
@@ -743,10 +772,7 @@ public final class GanttEvent implements IGanttChartItem {
 		return getEarliestOrLatestScopeEvent(false);
 	}
 
-	/**
-	 * Internal method for calculating the earliest and latest dates of the scope. Do not call externally.
-	 * 
-	 */
+	// Internal method for calculating the earliest and latest dates of the scope.
 	void calculateScope() {
 		Calendar earliest = null;
 		Calendar latest = null;
@@ -1103,7 +1129,7 @@ public final class GanttEvent implements IGanttChartItem {
 	}
 
 	/**
-	 * Returns the text font to use when drawing the event text. Default is null. 
+	 * Returns the text font to use when drawing the event text. Default is null.
 	 * 
 	 * @return Event font
 	 */
@@ -1118,6 +1144,14 @@ public final class GanttEvent implements IGanttChartItem {
 	 */
 	public void setTextFont(Font textFont) {
 		mTextFont = textFont;
+	}
+
+	/**
+	 * Removes this item from the chart.
+	 */
+	public void dispose() {
+		mParentChart.getGanttComposite().removeEvent(this);
+		mParentChart.getGanttComposite().redraw();
 	}
 
 	boolean hasMovementConstraints() {

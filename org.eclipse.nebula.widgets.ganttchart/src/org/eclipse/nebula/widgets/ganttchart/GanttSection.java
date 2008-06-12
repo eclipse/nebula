@@ -28,14 +28,10 @@ import org.eclipse.swt.graphics.Rectangle;
  * Header<br>
  * ................................................<br>
  * n<br>
- * a Section<br>
+ * a &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Section<br>
  * m<br>
  * e ................................................<br>
  * <br>
- * Other Section, same deal<br>
- * <br>
- * 
- * 
  */
 public class GanttSection implements IFillBackgroundColors {
 
@@ -59,6 +55,12 @@ public class GanttSection implements IFillBackgroundColors {
 
 	private int						mTextOrientation	= SWT.VERTICAL;
 
+	/**
+	 * Creates a new GanttSection.
+	 * 
+	 * @param parent GanttChart
+	 * @param name GanttSection name
+	 */
 	public GanttSection(GanttChart parent, String name) {
 		this.name = name;
 		this.parent = parent.getGanttComposite();
@@ -67,6 +69,13 @@ public class GanttSection implements IFillBackgroundColors {
 		this.fillColorManager = parent.getColorManager();
 	}
 
+	/**
+	 * Creates a new GanttSection with a fill manager that controls background colors.
+	 *  
+	 * @param parent GanttChart
+	 * @param name GanttSection name
+	 * @param fillManager Fill manager
+	 */
 	public GanttSection(GanttChart parent, String name, IFillBackgroundColors fillManager) {
 		this.name = name;
 		this.parent = parent.getGanttComposite();
@@ -75,79 +84,63 @@ public class GanttSection implements IFillBackgroundColors {
 		this.fillColorManager = fillManager;
 	}
 
+	/**
+	 * Adds a Gantt Chart item (GanttSection, GanttGroup) to this section.
+	 * 
+	 * @param event Item to add
+	 */
 	public void addGanttEvent(IGanttChartItem event) {
 		if (!ganttEvents.contains(event))
 			ganttEvents.add(event);
 	}
 
+	/**
+	 * Removes a Gantt Chart item (GanttSection, GanttGroup) from this section.
+	 * 
+	 * @param event Item to remove
+	 */
 	public void removeGanttEvent(IGanttChartItem event) {
 		ganttEvents.remove(event);
 	}
 
+	/**
+	 * Returns a list of all IGanttChartItems (GanttEvent and GanttGroup) contained in this section.
+	 * 
+	 * @return List of items
+	 */
 	public List getEvents() {
 		return ganttEvents;
 	}
 
+	/**
+	 * Sets the name of this section. This method does not force a redraw.
+	 * 
+	 * @param name GanttSection name
+	 */
 	public void setName(String name) {
 		this.name = name;
 		this.needsNameUpdate = true;
 	}
 
+	/**
+	 * Returns the name of this section. 
+	 * 
+	 * @return GanttSection name
+	 */
 	public String getName() {
 		return name;
 	}
 
+	/**
+	 * Returns the bounds of this GanttSection
+	 * 
+	 * @return Rectangle
+	 */
 	public Rectangle getBounds() {
 		return bounds;
 	}
 
-	public void setBounds(Rectangle bounds) {
-		this.bounds = bounds;
-	}
-
-	Image getNameImage() {
-		return nameImage;
-	}
-
-	void setNameImage(Image nameImage) {
-		this.nameImage = nameImage;
-		this.needsNameUpdate = false;
-	}
-
-	boolean needsNameUpdate() {
-		return needsNameUpdate;
-	}
-
-	void setNeedsNameUpdate(boolean need) {
-		needsNameUpdate = need;
-	}
-
-	int getEventsHeight(ISettings settings) {
-		if (ganttEvents.size() == 0)
-			return settings.getMinimumSectionHeight();
-
-		int height = settings.getEventsTopSpacer();
-
-		for (int i = 0; i < ganttEvents.size(); i++) {
-			IGanttChartItem event = (IGanttChartItem) ganttEvents.get(i);
-
-			if (!event.isAutomaticRowHeight())
-				height += event.getFixedRowHeight();
-			else
-				height += settings.getEventHeight();
-
-			if (i != ganttEvents.size() - 1)
-				height += settings.getEventSpacer();
-		}
-
-		height += settings.getEventsBottomSpacer();
-
-		if (height < settings.getMinimumSectionHeight())
-			height = settings.getMinimumSectionHeight();
-
-		return height;
-	}
-
+	
 	// note to self: this does not take into account the height the name will take up
 	// this method can NOT use the bounds on the events as this method will be called prior to events being drawn and thus have no values for bounds
 	/*
@@ -241,12 +234,68 @@ public class GanttSection implements IFillBackgroundColors {
 		mTextOrientation = textOrientation;
 	}
 
+	/**
+	 * Removes this section from the chart. Do note that all belonging GanttEvents will be orphaned, so you should
+	 * probably deal with that post disposal.
+	 */
+	public void dispose() {
+		parent.removeSection(this);
+		parent.redraw();
+	}
+	
 	Point getNameExtent() {
 		return mNameExtent;
 	}
 
 	void setNameExtent(Point extent) {
 		this.mNameExtent = extent;
+	}
+
+	void setBounds(Rectangle bounds) {
+		this.bounds = bounds;
+	}
+
+	Image getNameImage() {
+		return nameImage;
+	}
+
+	void setNameImage(Image nameImage) {
+		this.nameImage = nameImage;
+		this.needsNameUpdate = false;
+	}
+
+	boolean needsNameUpdate() {
+		return needsNameUpdate;
+	}
+
+	void setNeedsNameUpdate(boolean need) {
+		needsNameUpdate = need;
+	}
+
+	int getEventsHeight(ISettings settings) {
+		if (ganttEvents.size() == 0)
+			return settings.getMinimumSectionHeight();
+
+		int height = settings.getEventsTopSpacer();
+
+		for (int i = 0; i < ganttEvents.size(); i++) {
+			IGanttChartItem event = (IGanttChartItem) ganttEvents.get(i);
+
+			if (!event.isAutomaticRowHeight())
+				height += event.getFixedRowHeight();
+			else
+				height += settings.getEventHeight();
+
+			if (i != ganttEvents.size() - 1)
+				height += settings.getEventSpacer();
+		}
+
+		height += settings.getEventsBottomSpacer();
+
+		if (height < settings.getMinimumSectionHeight())
+			height = settings.getMinimumSectionHeight();
+
+		return height;
 	}
 
 }

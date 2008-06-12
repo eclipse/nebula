@@ -400,9 +400,10 @@ public interface ISettings {
 	public boolean enableResizing();
 	
 	/**
-	 * Whether users can hold down SHIFT to move an event, and all dependent events will move with the selected event.
+	 * Whether users can hold down SHIFT (or whatever the settings say) to move an event, and all dependent events will move with the selected event. 
 	 * 
 	 * @return true if to move all linked events. Default is true.
+	 * @see ISettings#getDragAllModifierKey()
 	 */
 	public boolean moveLinkedEventsWhenEventsAreMoved();
 	
@@ -414,9 +415,10 @@ public interface ISettings {
 	public boolean enableDragAndDrop();
 	
 	/**
-	 * Whether when a user zooms in or out (only via CTRL + Scroll Wheel) to display a box in the bottom left corner that shows the zoom level.
+	 * Whether when a user zooms in or out (only via CTRL (or whatever the settings say) + Scroll Wheel) to display a box in the bottom left corner that shows the zoom level.
 	 * 
 	 * @return true if to show a box when zooming. Default is true.
+	 * @see ISettings#getZoomWheelModifierKey()
 	 */
 	public boolean showZoomLevelBox();
 	
@@ -438,7 +440,7 @@ public interface ISettings {
 	public boolean showResizeDateTipOnBorders();
 	
 	/**
-	 * If true, it lets the move forwards or backwards in time by clicking in a "blank" area and dragging the mouse. Similar to the hand tool in Photoshop.
+	 * If true, it lets the move forwards or backwards in time by clicking in a "blank" area and dragging the mouse. Similar to the hand tool in Photoshop or Acrobat.
 	 *  
 	 * @return true if to allow clear-area drag. Default is true.
 	 */
@@ -460,9 +462,10 @@ public interface ISettings {
 	public boolean drawSelectionMarkerAroundSelectedEvent();
 	
 	/**
-	 * Whether checkpoints can be resized (assuming resizing is on).
+	 * Whether checkpoints can be resized (assuming resizing is on {@link ISettings#enableResizing()}).
 	 * 
 	 * @return true if checkpoints can be resized. Default is false.	 
+	 * @see ISettings#enableResizing()
 	 */
 	public boolean allowCheckpointResizing();
 	
@@ -491,7 +494,7 @@ public interface ISettings {
 	/**
 	 * Returns the position that the calendar should start on when first created.
 	 * 
-	 * If null, the current date will be used. Please remember to use a Locale when you create your Calendar object.
+	 * If null, the current date will be used. Please remember to use a Locale when you create your Calendar object, ideally the same as used in the settings {@link ISettings#getDefaultLocale()}.
 	 * 
 	 * @return Calendar, or null.
 	 */
@@ -506,9 +509,9 @@ public interface ISettings {
 	public int getCalendarStartupDateOffset();
 	
 	/**
-	 * Moves the calendar to start on the first day of the week of the either current date or the date set in <code>getStartupCalendarDate()</code>
+	 * Moves the calendar to start on the first day of the week of the either current date or the date set in {@link ISettings#getStartupCalendarDate()}
 	 * 
-	 * Please note, if the <code>getCalendarStartupDateOffset()</code> is set to other than zero, these two methods will most likely clash.
+	 * Please note, if the {@link ISettings#getCalendarStartupDateOffset()} is set to other than zero, these two methods will most likely clash.
 	 * 
 	 * @return true whether calendar should start on the first day of the week. Default is false.
 	 * @see #getCalendarStartupDateOffset()
@@ -524,9 +527,9 @@ public interface ISettings {
 	public boolean enableZooming();
 	
 	/**
-	 * Returns the image used for displaying something as locked in the gantt chart. 
+	 * Returns the image used for displaying something as locked in the GANTT chart. 
 	 * 
-	 * @return Image or null. Default is the lock_tiny.gif.
+	 * @return Image or null. Default is the lock_tiny.gif image in the package.
 	 */
 	public Image getLockImage();
 	
@@ -768,14 +771,15 @@ public interface ISettings {
 	public boolean getUseAdvancedTooltips();
 	
 	/**
-	 * The keyboard modifier key (also known as a hint) used to determine when it's a drag-all-linked-events event or just a normal drag.
+	 * The keyboard modifier key (also known as a hint) used to determine when it's a drag-all-linked-events {@link ISettings#moveLinkedEventsWhenEventsAreMoved()} event or just a normal drag.
 	 *  
 	 * @return Keyboard modifier. Default is SWT.SHIFT (the shift key)
+	 * @see ISettings#moveLinkedEventsWhenEventsAreMoved()
 	 */
 	public int getDragAllModifierKey();
 	
 	/**
-	 * The keyboard modifier key combined with the scrollwheel to make the chart zoom. 
+	 * The keyboard modifier key combined with the scroll wheel to make the chart zoom. 
 	 * 
 	 * @return Keyboard modifier. Default is SWT.MOD1 (usually the CTRL key)
 	 */
@@ -791,8 +795,8 @@ public interface ISettings {
 	/**
 	 * See IGanttEventListener's lastDraw(GC gc) method method info. 
 	 * 
-	 * @see IGanttEventListener#lastDraw(org.eclipse.swt.graphics.GC)
 	 * @return true whether to enable the last draw functionality. Default is false.
+	 * @see IGanttEventListener#lastDraw(org.eclipse.swt.graphics.GC)
 	 */
 	public boolean enableLastDraw();
 	
@@ -865,4 +869,20 @@ public interface ISettings {
 	 * @return true whether to show date tooltips when scrolling through dates. Default is true.
 	 */
 	public boolean showDateTipsOnScrolling();
+	
+	// fix to bugzilla #236852
+	/**
+	 * Whether the GanttSection bar should draw all the way down or not.
+	 * 
+	 * @return true to draw all the way down. Default is false.
+	 */
+	public boolean drawGanttSectionBarToBottom();
+	
+	// fix to bugzilla #236852
+	/**
+	 * Whether to draw fills and vertical lines etc to the bottom when GanttSections are used.
+	 * 
+	 * @return true to draw everything all the way down. Default is false.
+	 */
+	public boolean drawFillsToBottomWhenUsingGanttSections();
 }

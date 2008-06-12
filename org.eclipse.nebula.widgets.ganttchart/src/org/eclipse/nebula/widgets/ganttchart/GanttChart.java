@@ -22,10 +22,10 @@ import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Slider;
 
 /**
- * <b>GanttChart - SWT Widget - 2005-2008. Version 2.0 &copy; Emil Crumhorn - emil.crumhorn@gmail.com.</b>
+ * <b>GanttChart - SWT Widget - 2005-2008. Version 2.0 &copy; Emil Crumhorn - emil dot crumhorn at gmail dot com.</b>
  * <p>
  * <b>Website</b><br>
- * If you want more info or more documentation, please visit: <a href="http://www.hexapixel.com/">http://www.hexapixel.com</a>
+ * If you want more info or more documentation, please visit: <a href="http://www.hexapixel.com/">http://www.hexapixel.com/</a>
  * <p>
  * <b>Description</b><br>
  * The GANTT widget has taken hints from Microsoft Project as far as arrow styles and overall look and feel goes. There are features such as dependencies, checkpoints, revised
@@ -42,7 +42,7 @@ import org.eclipse.swt.widgets.Slider;
  * <p>
  * <code>
  * GanttChart ganttChart = new GanttChart(parentComposite, SWT.NONE);
- * <p>
+ * <br><br>
  * Calendar calStart = Calendar.getInstance();<br>
  * Calendar calEnd = Calendar.getInstance();<br>
  * calEnd.add(Calendar.DATE, 10);<br>
@@ -291,14 +291,6 @@ public class GanttChart extends Composite {
 	public void removeGanttEventListener(IGanttEventListener listener) {
 		checkWidget();
 		mGanttComposite.removeGanttEventListener(listener);
-	}
-
-	/**
-	 * Clears all events from the chart.
-	 */
-	public void clearEvents() {
-		checkWidget();
-		mGanttComposite.clearEvents();
 	}
 
 	/**

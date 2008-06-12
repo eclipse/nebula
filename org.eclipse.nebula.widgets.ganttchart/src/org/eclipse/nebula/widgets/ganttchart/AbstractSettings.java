@@ -422,5 +422,14 @@ abstract class AbstractSettings implements ISettings {
 	public boolean showDateTipsOnScrolling() {
 		return true;
 	}
+
+	public boolean drawFillsToBottomWhenUsingGanttSections() {
+		return false;
+	}
+
+	public boolean drawGanttSectionBarToBottom() {
+		return false;
+	}
+
 	
 }

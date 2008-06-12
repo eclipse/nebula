@@ -52,7 +52,7 @@ public interface IPaintManager {
 	public void drawEvent(GanttComposite ganttComposite, ISettings settings, IColorManager colorManager, GanttEvent ge, GC gc, boolean isSelected, boolean threeDee, int dayWidth, int x, int y, int eventWidth, Rectangle bounds);
 	
 	/**
-	 * Draws the revised dates.
+	 * Draws the planned dates.
 	 * 
 	 * @param ganttComposite GanttComposite parent
 	 * @param settings ISettings
@@ -65,7 +65,7 @@ public interface IPaintManager {
 	 * @param eventWidth Width of event
 	 * @param bounds full bounds of draw area
 	 */
-	public void drawRevisedDates(GanttComposite ganttComposite, ISettings settings, IColorManager colorManager, GanttEvent ge, GC gc, boolean threeDee, int x, int y, int eventWidth, Rectangle bounds);
+	public void drawPlannedDates(GanttComposite ganttComposite, ISettings settings, IColorManager colorManager, GanttEvent ge, GC gc, boolean threeDee, int x, int y, int eventWidth, Rectangle bounds);
 	
 	/**
 	 * Draws the little plaque showing how many number of days an event spans over.

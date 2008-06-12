@@ -280,7 +280,7 @@ public abstract class AbstractPaintManager implements IPaintManager {
 		}
 	}
 
-	public void drawRevisedDates(GanttComposite ganttComposite, ISettings settings, IColorManager colorManager, GanttEvent ge, GC gc, boolean threeDee, int x, int y, int eventWidth, Rectangle bounds) {
+	public void drawPlannedDates(GanttComposite ganttComposite, ISettings settings, IColorManager colorManager, GanttEvent ge, GC gc, boolean threeDee, int x, int y, int eventWidth, Rectangle bounds) {
 
 		int spacer = settings.getRevisedLineSpacer();
 
