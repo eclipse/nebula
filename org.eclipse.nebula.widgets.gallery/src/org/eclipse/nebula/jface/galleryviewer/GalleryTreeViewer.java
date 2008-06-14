@@ -139,15 +139,10 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 	 */
 	protected Item[] getChildren(Widget widget) {
 		if (widget instanceof GalleryItem) {
-			return getItems((Item) widget);
+			return ((GalleryItem) widget).getItems();
 		}
 		if (widget instanceof Gallery) {
-			Gallery gallery = (Gallery) widget;
-			if (gallery.getItemCount() > 0) {
-				return gallery.getItems();
-			} else {
-				return new GalleryItem[0];
-			}
+			return ((Gallery) widget).getItems();
 		}
 		return null;
 	}
@@ -192,12 +187,7 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#getItems(org.eclipse.swt.widgets.Item)
 	 */
 	protected Item[] getItems(Item item) {
-		GalleryItem gItem = (GalleryItem) item;
-		GalleryItem[] items = new GalleryItem[gItem.getItemCount()];
-		for (int i = 0; i < items.length; i++) {
-			items[i] = gItem.getItem(i);
-		}
-		return items;
+		return 		((GalleryItem)item).getItems();
 	}
 
 	/*
@@ -218,9 +208,9 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 		Item[] selection = ((Gallery) control).getSelection();
 		if (selection == null) {
 			return new GalleryItem[0];
-		} else {
-			return selection;
-		}
+		} 
+		
+		return selection;
 	}
 
 	/*
@@ -248,7 +238,7 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#removeAll(org.eclipse.swt.widgets.Control)
 	 */
 	protected void removeAll(Control control) {
-		((Gallery) control).clearAll(true);
+		((Gallery) control).removeAll();
 	}
 
 	public void setAutoExpandLevel(int level) {
