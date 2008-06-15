@@ -3428,7 +3428,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		// scope checking
 		if (event.isScope()) {
 			GanttEvent earliest = event.getEarliestScopeEvent();
-			GanttEvent latest = event.getEarliestScopeEvent();
+			GanttEvent latest = event.getLatestScopeEvent();
 			if (earliest != null)
 				sCal = earliest.getActualStartDate();
 			if (latest != null)
@@ -3446,13 +3446,13 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 			Calendar temp = Calendar.getInstance(mDefaultLocale);
 			temp.setTime(mCalendar.getTime());
-
+			
 			long calStart = temp.getTimeInMillis();
 			if (mDaysVisible != 0)
 				temp.add(Calendar.DATE, mDaysVisible);
 			else
 				temp.setTime(mEndCalendar.getTime());
-
+			
 			long calEnd = temp.getTimeInMillis();
 
 			if (eStart.getTime() >= calStart && eStart.getTime() <= calEnd)
@@ -3464,7 +3464,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			// event spans entire screen, also fix to Bugzilla bug #236846 - https://bugs.eclipse.org/bugs/show_bug.cgi?id=236846
 			if (eStart.getTime() <= calStart && eEnd.getTime() >= calEnd)
 				return VISIBILITY_VISIBLE;
-
+			
 		} else {
 
 			// int xEnd = getXForDate(eCal);
