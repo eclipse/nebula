@@ -4099,11 +4099,12 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		
 		long days = DateHelper.daysBetween(temp, cal, mSettings.getDefaultLocale());
 
-		return (int)days * dw;
+		//return (int)days * dw;
+		//int x = mBounds.x;
+
+		return mBounds.x + ((int)days*dw);
 		
 		/*
-		
-		int x = mBounds.x;
 		//for (int i = 0; i < mDaysVisible; i++) {
 		while (true) {
 			if (DateHelper.sameDate(temp, temp2)) {
@@ -4112,11 +4113,11 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 			temp.add(Calendar.DATE, 1);
 			x += dw;
-		}
+		}*/
 
 		//return -1;
 		 
-		 */
+		 
 	}
 
 	/**
