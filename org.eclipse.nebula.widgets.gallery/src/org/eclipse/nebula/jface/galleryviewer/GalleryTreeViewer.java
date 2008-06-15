@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.nebula.jface.galleryviewer;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -40,6 +41,7 @@ import org.eclipse.swt.widgets.Widget;
 
 /**
  * @author Peter Centgraf
+ * @contributor Nicolas Richeton
  * @since Dec 5, 2007
  */
 public class GalleryTreeViewer extends AbstractTreeViewer {
@@ -187,7 +189,7 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#getItems(org.eclipse.swt.widgets.Item)
 	 */
 	protected Item[] getItems(Item item) {
-		return 		((GalleryItem)item).getItems();
+		return ((GalleryItem) item).getItems();
 	}
 
 	/*
@@ -208,8 +210,18 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 		Item[] selection = ((Gallery) control).getSelection();
 		if (selection == null) {
 			return new GalleryItem[0];
-		} 
-		
+		}
+
+		List notDisposed = new ArrayList(selection.length);
+		for (int i = 0; i < selection.length; i++) {
+			if (!selection[i].isDisposed()) {
+				notDisposed.add(selection[i]);
+			}else {
+				System.out.println( "GalleryItem was disposed (ignoring)" );
+			}
+		}
+		selection = (GalleryItem[]) notDisposed.toArray(new GalleryItem[notDisposed.size()]);
+
 		return selection;
 	}
 

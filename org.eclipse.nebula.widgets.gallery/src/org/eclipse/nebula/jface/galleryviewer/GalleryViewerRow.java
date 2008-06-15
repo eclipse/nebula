@@ -270,7 +270,10 @@ public class GalleryViewerRow extends ViewerRow {
 	 *      org.eclipse.swt.graphics.Image)
 	 */
 	public void setImage(int columnIndex, Image image) {
-		item.setImage(image);
+		Image oldImage = item.getImage();
+		if (image != oldImage) {
+			item.setImage(image);
+		}
 	}
 
 	/*
@@ -279,7 +282,7 @@ public class GalleryViewerRow extends ViewerRow {
 	 * @see org.eclipse.jface.viewers.ViewerRow#setText(int, java.lang.String)
 	 */
 	public void setText(int columnIndex, String text) {
-		item.setText(text);
+		item.setText(text == null ? "" : text);
 	}
 
 }
