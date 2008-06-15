@@ -283,16 +283,19 @@ public abstract class AbstractPaintManager implements IPaintManager {
 
 		int spacer = settings.getRevisedLineSpacer();
 
-		if (ge.getRevisedStart() != null && !ge.getRevisedStart().equals(ge.getActualStartDate())) {
-			int xe = ganttComposite.getXForDate(ge.getRevisedStart());
+		if (ge.isScope())
+			return;
+		
+		if (ge.getStartDate() != null) {
+			int xe = ganttComposite.getXForDate(ge.getStartDate());
 			int ys = y - spacer;
 			gc.setForeground(colorManager.getRevisedStartColor());
 			gc.drawLine(xe, ys, x, ys);
 			gc.drawLine(xe, ys - 3, xe, ys + 3);
 			gc.drawLine(x, ys - 3, x, ys + 3);
 		}
-		if (ge.getRevisedEnd() != null && !ge.getRevisedEnd().equals(ge.getActualEndDate())) {
-			int xe = ganttComposite.getXForDate(ge.getRevisedEnd());
+		if (ge.getEndDate() != null) {
+			int xe = ganttComposite.getXForDate(ge.getEndDate());			
 			int ys = y + settings.getEventHeight() + spacer;
 			gc.setForeground(colorManager.getRevisedEndColor());
 			gc.drawLine(xe, ys, x + eventWidth, ys);

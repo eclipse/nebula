@@ -237,7 +237,7 @@ public interface ISettings {
 	 * 
 	 * @return true if to draw lines for the revised dates. Default is false.
 	 */
-	public boolean showRevisedDates();
+	public boolean showPlannedDates();
 	
 	/**
 	 * Returns the height of the header section that displays the month names.

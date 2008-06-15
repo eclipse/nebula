@@ -102,7 +102,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	private boolean						mShowNumberOfDaysOnChart;
 
 	// draw the revised dates as a very thin small black |------| on the chart
-	private boolean						mShowRevisedDates;
+	private boolean						mShowPlannedDates;
 
 	// how many days offset to start drawing the calendar at.. useful for not
 	// having the first day be today
@@ -328,7 +328,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		mCurrentView = mSettings.getInitialView();
 		mZoomLevel = mSettings.getInitialZoomLevel();
 		mShowNumberOfDaysOnChart = mSettings.showNumberOfDaysOnBars();
-		mShowRevisedDates = mSettings.showRevisedDates();
+		mShowPlannedDates = mSettings.showPlannedDates();
 		mThreeDee = mSettings.showBarsIn3D();
 		mYearDayWidth = mSettings.getYearMonthDayWidth();
 		mYearMonthWeekWidth = mYearDayWidth * 7;
@@ -920,11 +920,11 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 		final MenuItem showEsts = new MenuItem(mRightClickMenu, SWT.CHECK);
 		showEsts.setText(mLanguageManager.getShowPlannedDatesMenuText());
-		showEsts.setSelection(mShowRevisedDates);
+		showEsts.setSelection(mShowPlannedDates);
 		showEsts.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				mShowRevisedDates = !mShowRevisedDates;
-				showEsts.setSelection(mShowRevisedDates);
+				mShowPlannedDates = !mShowPlannedDates;
+				showEsts.setSelection(mShowPlannedDates);
 				redraw();
 			}
 		});
@@ -2053,7 +2053,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		}
 
 		// draws |---------| lines to show revised dates, if any
-		if (mShowRevisedDates)
+		if (mShowPlannedDates)
 			mPaintManager.drawPlannedDates(this, mSettings, mColorManager, ge, gc, mThreeDee, xStart, yDrawPos, xEventWidth, bounds);
 
 		// draw a little plaque saying how many days that this event is long
@@ -4072,7 +4072,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	}
 
 	/**
-	 * Gets the x position where the given date starts.
+	 * Gets the x position where the given date starts in the current visible area.
 	 * 
 	 * @param cal Calendar
 	 * @return -1 if date was not found
@@ -4096,9 +4096,16 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			temp.set(Calendar.DAY_OF_MONTH, 1);
 			dw = mYearDayWidth;
 		}
+		
+		long days = DateHelper.daysBetween(temp, cal, mSettings.getDefaultLocale());
 
+		return (int)days * dw;
+		
+		/*
+		
 		int x = mBounds.x;
-		for (int i = 0; i < mDaysVisible; i++) {
+		//for (int i = 0; i < mDaysVisible; i++) {
+		while (true) {
 			if (DateHelper.sameDate(temp, temp2)) {
 				return x;
 			}
@@ -4107,7 +4114,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			x += dw;
 		}
 
-		return -1;
+		//return -1;
+		 
+		 */
 	}
 
 	/**

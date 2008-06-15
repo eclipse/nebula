@@ -172,7 +172,7 @@ abstract class AbstractSettings implements ISettings {
 		return true;
 	}
 
-	public boolean showRevisedDates() {
+	public boolean showPlannedDates() {
 		return false;
 	}
 
