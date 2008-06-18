@@ -166,6 +166,13 @@ public class GanttTester {
 				public void eventsResized(ArrayList events, MouseEvent me) {
 					System.out.println("Events resized");
 				}
+				
+
+				public void eventsMoveFinished(ArrayList events, MouseEvent me) {
+				}
+
+				public void eventsResizeFinished(ArrayList events, MouseEvent me) {
+				}
 
 				public void zoomedIn(int newZoomLevel) {
 					System.out.println("Zoomed in to " + newZoomLevel);
