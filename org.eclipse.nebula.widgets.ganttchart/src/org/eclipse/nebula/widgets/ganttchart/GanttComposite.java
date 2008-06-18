@@ -3749,6 +3749,16 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	// button is down and we resize or drag & drop
 	public void mouseUp(MouseEvent event) {
 		mMouseIsDown = false;
+		
+		if (mResizing) {
+			for (int i = 0; i < mEventListeners.size(); i++) 
+				((IGanttEventListener)mEventListeners.get(i)).eventsResizeFinished(mDragEvents, event);			
+		}
+		if (mDragging) {
+			for (int i = 0; i < mEventListeners.size(); i++) 
+				((IGanttEventListener)mEventListeners.get(i)).eventsMoveFinished(mDragEvents, event);												
+		}
+		
 		endEverything();
 	}
 

@@ -35,6 +35,22 @@ public interface IGanttEventListener {
 	public void eventsResized(ArrayList events, MouseEvent me);
 	
 	/**
+	 * Fires when a move has finished (the mouse button is let go).
+	 * 
+	 * @param events List of modified events (post modification)
+	 * @param me MouseEvent
+	 */
+	public void eventsMoveFinished(ArrayList events, MouseEvent me);
+	
+	/**
+	 * Fires when a resize has finished (the mouse button is let go).
+	 * 
+	 * @param events List of modified events (post modification)
+	 * @param me MouseEvent
+	 */
+	public void eventsResizeFinished(ArrayList events, MouseEvent me);
+	
+	/**
 	 * Fires when an event is selected.
 	 * 
 	 * @param event Event that got selected.
