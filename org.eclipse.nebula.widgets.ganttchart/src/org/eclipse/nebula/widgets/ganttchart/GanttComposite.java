@@ -177,11 +177,6 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 	private Calendar					mEndCalendar;
 
-	// OLD CODE. From when vertical scrollbar was attached straight onto
-	// composite. Leaving in as it may be useful for adjusting total draw area
-	// vertically.
-	private int							mYScrollPosition;
-
 	// the number of days that will be visible in the current area. Is set after
 	// we're done drawing the chart
 	private int							mDaysVisible;
@@ -692,40 +687,15 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 		gc.setBackground(ColorCache.getWhite());
 		gc.fillRectangle(bounds);
-
+		
+		// header
 		if (mSettings.drawHeader()) {
-			mVerticalLineLocations.clear();
-			mVerticalWeekDividerLineLocations.clear();
-			if (mCurrentView == ISettings.VIEW_DAY) {
-				// draw the day at the top
-				drawHourTopBoxes(gc, bounds);
-				// draw the hour ticks below
-				drawHourBottomBoxes(gc, bounds);
-			} else if (mCurrentView == ISettings.VIEW_WEEK) {
-				// draw the week boxes
-				drawWeekTopBoxes(gc, bounds);
-				// draw the day boxes
-				drawWeekBottomBoxes(gc, bounds);
-			} else if (mCurrentView == ISettings.VIEW_MONTH) {
-				// draws the month boxes at the top
-				drawMonthTopBoxes(gc, bounds);
-				// draws the monthly "week" boxes
-				drawMonthBottomBoxes(gc, bounds);
-			} else if (mCurrentView == ISettings.VIEW_YEAR) {
-				// draws the years at the top
-				drawYearTopBoxes(gc, bounds);
-				// draws the month boxes
-				drawYearBottomBoxes(gc, bounds);
-			}
-
-			// draws the 2 horizontal (usually black) lines at the top to make
-			// things stand out a little
-			drawTopHorizontalLines(gc, bounds);
+			drawHeader(gc);
 		} else {
 			// we need the mDaysVisible value which is normally calculated when we draw boxes, as the header is not drawn here, we need to calculate it manually
 			calculateDaysVisible(bounds);
 		}
-
+		
 		// section drawing needs special treatment as we need to give sub-bounds to the various drawing methods
 		if (drawSections) {
 			if (!mUseFastDrawing || mReCalculateSectionBounds)
@@ -743,7 +713,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			}
 
 			// start location below header - if any
-			int yStart = getHeaderHeight() == 0 ? bounds.y : (bounds.y + getHeaderHeight() - mYScrollPosition + 1);
+			int yStart = getHeaderHeight() == 0 ? bounds.y : (bounds.y + getHeaderHeight() + 1);
 			for (int i = 0; i < mGanttSections.size(); i++) {
 				GanttSection gs = (GanttSection) mGanttSections.get(i);
 				Rectangle gsBounds = gs.getBounds();
@@ -784,7 +754,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			}
 
 		} else {
-			bounds = new Rectangle(bounds.x, getHeaderHeight() - mYScrollPosition, bounds.width, bounds.height);
+			bounds = new Rectangle(bounds.x, getHeaderHeight(), bounds.width, bounds.height);
 			mBounds = bounds;
 
 			if (mReCalculateScopes)
@@ -818,6 +788,11 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		// zoom
 		if (mShowZoomHelper && mSettings.showZoomLevelBox())
 			drawZoomLevel(gc);
+		
+		// if we lock the header, we unfortunately need to draw it again on top of everything else. Down the road this should be optimized of course,
+		// but there's so many necessary calculations done in the header drawing that we need for later that it's a bit of work
+		if (mSettings.lockHeaderOnVerticalScroll() && mSettings.drawHeader())
+			drawHeader(gc);
 
 		// last draw
 		if (mSettings.enableLastDraw()) {
@@ -827,6 +802,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			}
 		}
 
+	
 		// by default these are on, we flag them off when we know for sure we don't need to recalculate bounds
 		mReCalculateScopes = true;
 		mReCalculateSectionBounds = true;
@@ -837,6 +813,41 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		// mRedrawCount++;
 		// total += (time2 - time1);
 		// System.err.println(redraw + " avg: " + (float) total / (float) redrawCount);
+	}
+	
+	private void drawHeader(GC gc) {
+		mVerticalLineLocations.clear();
+		mVerticalWeekDividerLineLocations.clear();
+		
+		Rectangle headerBounds = mBounds;
+		if (mSettings.lockHeaderOnVerticalScroll())
+			headerBounds.y = mParent.getVerticalScrollY();
+					
+		if (mCurrentView == ISettings.VIEW_DAY) {
+			// draw the day at the top
+			drawHourTopBoxes(gc, headerBounds);
+			// draw the hour ticks below
+			drawHourBottomBoxes(gc, headerBounds);
+		} else if (mCurrentView == ISettings.VIEW_WEEK) {
+			// draw the week boxes
+			drawWeekTopBoxes(gc, headerBounds);
+			// draw the day boxes
+			drawWeekBottomBoxes(gc, headerBounds);
+		} else if (mCurrentView == ISettings.VIEW_MONTH) {
+			// draws the month boxes at the top
+			drawMonthTopBoxes(gc, headerBounds);
+			// draws the monthly "week" boxes
+			drawMonthBottomBoxes(gc, headerBounds);
+		} else if (mCurrentView == ISettings.VIEW_YEAR) {
+			// draws the years at the top
+			drawYearTopBoxes(gc, headerBounds);
+			// draws the month boxes
+			drawYearBottomBoxes(gc, headerBounds);
+		}
+
+		// draws the 2 horizontal (usually black) lines at the top to make
+		// things stand out a little
+		drawTopHorizontalLines(gc, headerBounds);
 	}
 
 	private void showMenu(int x, int y, GanttEvent event, final MouseEvent me) {
@@ -1018,7 +1029,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	}
 
 	private void calculateSectionBounds(GC gc, Rectangle bounds) {
-		int lineLoc = getHeaderHeight() == 0 ? bounds.y : (bounds.y + getHeaderHeight() - mYScrollPosition);
+		int lineLoc = getHeaderHeight() == 0 ? bounds.y : (bounds.y + getHeaderHeight());
 		int yStart = lineLoc;
 
 		for (int i = 0; i < mGanttSections.size(); i++) {
@@ -1203,7 +1214,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			}
 		}
 
-		int lineLoc = getHeaderHeight() == 0 ? bounds.y : (bounds.y + getHeaderHeight() - mYScrollPosition);
+		int lineLoc = getHeaderHeight() == 0 ? bounds.y : (bounds.y + getHeaderHeight());
 		int yStart = lineLoc;
 		int x = 0;
 
@@ -1339,12 +1350,12 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 	// draws vertical lines for separating days, hours, months, years etc
 	private void drawVerticalLines(GC gc, Rectangle bounds) {
-		int xMax = bounds.width + bounds.x;
+		//int xMax = bounds.width + bounds.x;
 		// space it out 1 or more or else it will draw over the bottom horizontal line of the header
 		int yStart = bounds.y;
 		int height = bounds.height + yStart - 1;
 
-		if (mCurrentView == 99) {
+		//if (mCurrentView == 99) {
 			/*
 			 * int current = bounds.x; int workDayEndHour = mSettings.getWorkDayStartHour() + mSettings.getWorkHoursPerDay();
 			 * 
@@ -1368,7 +1379,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			 * 
 			 * if (current > xMax) break; }
 			 */
-		} else if (mCurrentView == ISettings.VIEW_WEEK || mCurrentView == ISettings.VIEW_MONTH || mCurrentView == ISettings.VIEW_DAY) {
+		//} else 
+		if (mCurrentView == ISettings.VIEW_WEEK || mCurrentView == ISettings.VIEW_MONTH || mCurrentView == ISettings.VIEW_DAY) {
 			for (int i = 0; i < mVerticalLineLocations.size(); i++) {
 				Integer inte = (Integer) mVerticalLineLocations.get(i);
 				int current = inte.intValue();
@@ -1426,8 +1438,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	private void drawYearBottomBoxes(GC gc, Rectangle bounds) {
 		int xMax = bounds.width + bounds.x;
 		int current = bounds.x;
-		int topY = bounds.y + mSettings.getHeaderMonthHeight();// - mYScrollPosition;
-		int bottomY = mSettings.getHeaderDayHeight();
+		int topY = bounds.y + mSettings.getHeaderMonthHeight();
+		int heightY = mSettings.getHeaderDayHeight();
 		mDaysVisible = 0;
 
 		Calendar temp = Calendar.getInstance(mDefaultLocale);
@@ -1437,14 +1449,14 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 		gc.setForeground(mTextHeaderBackgroundColorTop);
 		gc.setBackground(mTextHeaderBackgroundColorBottom);
-		gc.fillGradientRectangle(0, topY, xMax, bottomY, true);
+		gc.fillGradientRectangle(0, topY, xMax, heightY, true);
 
 		gc.setBackground(mWeekdayBackgroundColorTop);
 
 		while (true) {
 			if (temp.get(Calendar.DAY_OF_MONTH) == 1) {
 				gc.setForeground(mColorManager.getYearTimeDividerColor());
-				gc.drawLine(current, topY, current, topY + bottomY);
+				gc.drawLine(current, topY, current, topY + heightY);
 				mVerticalLineLocations.add(new Integer(current));
 
 				gc.setForeground(mTextColor);
@@ -1468,7 +1480,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	private void drawYearTopBoxes(GC gc, Rectangle bounds) {
 		int xMax = bounds.width + bounds.x;
 		int current = bounds.x;
-		int topY = bounds.y;// - mYScrollPosition;
+		int topY = bounds.y;
 		int bottomY = mSettings.getHeaderMonthHeight();
 
 		Calendar temp = Calendar.getInstance(mDefaultLocale);
@@ -1507,8 +1519,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	private void drawMonthBottomBoxes(GC gc, Rectangle bounds) {
 		int xMax = bounds.width + bounds.x;
 		int current = bounds.x;
-		int topY = bounds.y + mSettings.getHeaderMonthHeight();// - mYScrollPosition;
-		int bottomY = mSettings.getHeaderDayHeight();
+		int topY = bounds.y + mSettings.getHeaderMonthHeight();
+		int heightY = mSettings.getHeaderDayHeight();
 
 		Calendar temp = Calendar.getInstance(mDefaultLocale);
 		temp.setTime(mCalendar.getTime());
@@ -1534,10 +1546,10 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			if (curDay == temp.getFirstDayOfWeek()) {
 				mVerticalWeekDividerLineLocations.add(new Integer(current));
 				gc.setForeground(mColorManager.getMonthTimeDividerColor());
-				gc.drawRectangle(current, topY, wWidth, bottomY);
+				gc.drawRectangle(current, topY, wWidth, heightY);
 				gc.setForeground(mTextHeaderBackgroundColorTop);
 				gc.setBackground(mTextHeaderBackgroundColorBottom);
-				gc.fillGradientRectangle(current + 1, topY + 1, wWidth - 1, bottomY - 1, true);
+				gc.fillGradientRectangle(current + 1, topY + 1, wWidth - 1, heightY - 1, true);
 				gc.setForeground(mTextColor);
 
 				gc.drawString(getDateString(temp, false), current + 4, topY + 3, true);
@@ -1557,7 +1569,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	private void drawMonthTopBoxes(GC gc, Rectangle bounds) {
 		int xMax = bounds.width + bounds.x;
 		int current = bounds.x;
-		int topY = bounds.y;// - mYScrollPosition;
+		int topY = bounds.y;
 		int bottomY = mSettings.getHeaderMonthHeight();
 		mDaysVisible = 0;
 
@@ -1610,7 +1622,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 		int xMax = bounds.width + bounds.x;
 		int current = bounds.x;
-		int topY = bounds.y;// - mYScrollPosition;
+		int topY = bounds.y;
 		int bottomY = mSettings.getHeaderMonthHeight();
 
 		Calendar temp = Calendar.getInstance(mDefaultLocale);
@@ -1672,8 +1684,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	private void drawWeekBottomBoxes(GC gc, Rectangle bounds) {
 		int xMax = bounds.width + bounds.x;
 		int current = bounds.x;
-		int topY = bounds.y + mSettings.getHeaderMonthHeight();// - mYScrollPosition;
-		int bottomY = bounds.y + mSettings.getHeaderDayHeight();
+		int topY = bounds.y + mSettings.getHeaderMonthHeight();
+		int heightY = mSettings.getHeaderDayHeight();
 
 		int day = mCalendar.get(Calendar.DAY_OF_WEEK);
 		mDaysVisible = 0;
@@ -1684,14 +1696,14 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		while (true) {
 			gc.setForeground(mTimeHeaderBackgroundColorTop);
 			gc.setBackground(mTimeHeaderBackgroundColorBottom);
-			gc.fillGradientRectangle(current + 1, topY + 1, mDayWidth - 1, bottomY - 1, true);
+			gc.fillGradientRectangle(current + 1, topY + 1, mDayWidth - 1, heightY - 1, true);
 
 			mVerticalLineLocations.add(new Integer(current));
 			if (temp.get(Calendar.DAY_OF_WEEK) == mCalendar.getFirstDayOfWeek())
 				mVerticalWeekDividerLineLocations.add(new Integer(current));
 
 			gc.setForeground(mColorManager.getWeekTimeDividerColor());
-			gc.drawRectangle(current, topY, mDayWidth, bottomY);
+			gc.drawRectangle(current, topY, mDayWidth, heightY);
 
 			int hSpacer = mSettings.getDayHorizontalSpacing();
 			int vSpacer = mSettings.getDayVerticalSpacing();
@@ -1808,7 +1820,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		int xMax = bounds.width + bounds.x;
 		int current = bounds.x;
 		int topY = bounds.y + mSettings.getHeaderMonthHeight();
-		int bottomY = bounds.y + mSettings.getHeaderDayHeight();
+		int heightY = mSettings.getHeaderDayHeight();
 
 		Calendar temp = Calendar.getInstance(mDefaultLocale);
 		temp.setTime(mCalendar.getTime());
@@ -1837,14 +1849,14 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			// which makes the section at the top look rather "thick". As we don't want that, we do a quick check and skip the drawing.
 			// the "spacer" does the same thing for the gradient below
 			if (mGanttSections.size() > 0 && first) {
-				gc.drawRectangle(current - 1, topY, mDayWidth + 1, bottomY);
+				gc.drawRectangle(current - 1, topY, mDayWidth + 1, heightY);
 				spacer = 0;
 			} else
-				gc.drawRectangle(current, topY, mDayWidth, bottomY);
+				gc.drawRectangle(current, topY, mDayWidth, heightY);
 
 			gc.setForeground(mTimeHeaderBackgroundColorTop);
 			gc.setBackground(mTimeHeaderBackgroundColorBottom);
-			gc.fillGradientRectangle(current + spacer, topY + 1, mDayWidth - spacer, bottomY - 1, true);
+			gc.fillGradientRectangle(current + spacer, topY + 1, mDayWidth - spacer, heightY - 1, true);
 
 			int hSpacer = mSettings.getDayHorizontalSpacing();
 			int vSpacer = mSettings.getDayVerticalSpacing();
@@ -2326,11 +2338,11 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 	// draws the three top horizontal lines
 	private void drawTopHorizontalLines(GC gc, Rectangle bounds) {
-		int yStart = bounds.y;// - mYScrollPosition;
+		int yStart = bounds.y;
 		int width = bounds.x + bounds.width;
 		int xStart = bounds.x;
 
-		int monthHeight = bounds.y + mSettings.getHeaderMonthHeight() - mYScrollPosition;
+		int monthHeight = bounds.y + mSettings.getHeaderMonthHeight();
 
 		gc.setForeground(mColorManager.getTopHorizontalLinesColor());
 
@@ -2890,7 +2902,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			vOffset = 0;
 		yStart += vOffset;
 		if (!mSettings.drawHeader())
-			yStart = bounds.y + mYScrollPosition;
+			yStart = bounds.y;
 
 		if (mUseAlpha)
 			gc.setAlpha(mColorManager.getTodayLineAlpha());
@@ -3869,6 +3881,14 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 			boolean insideAnyEvent = false;
 
+			// check if the header is locked, if so we check if the mouse is in the header area, and if so, ignore any mouse move event from here on out.
+			if (mSettings.lockHeaderOnVerticalScroll()) {
+				Rectangle headerBounds = new Rectangle(0, mParent.getVerticalScrollY(), super.getBounds().width, getHeaderHeight());
+				if (isInside(me.x, me.y, headerBounds))
+					return;
+			}
+			
+			// check if cursor is inside the area of an event
 			for (int i = 0; i < mGanttEvents.size(); i++) {
 				GanttEvent event = (GanttEvent) mGanttEvents.get(i);
 				if (isInside(me.x, me.y, new Rectangle(event.getX(), event.getY(), event.getWidth(), event.getHeight()))) {
@@ -4696,7 +4716,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	}
 
 	private Rectangle getEventBounds() {
-		int yStart = getHeaderHeight() == 0 ? getHeaderHeight() : (getHeaderHeight() - mYScrollPosition + 1);
+		int yStart = getHeaderHeight() == 0 ? getHeaderHeight() : (getHeaderHeight() + 1);
 		int yEnd = yStart;
 
 		yEnd = mBounds.height + mBounds.y;

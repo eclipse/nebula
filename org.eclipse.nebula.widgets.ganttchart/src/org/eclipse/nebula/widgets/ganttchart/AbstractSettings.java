@@ -431,5 +431,9 @@ abstract class AbstractSettings implements ISettings {
 		return false;
 	}
 
+	public boolean lockHeaderOnVerticalScroll() {
+		return false;
+	}
+
 	
 }

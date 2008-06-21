@@ -287,20 +287,25 @@ public abstract class AbstractPaintManager implements IPaintManager {
 			return;
 		
 		if (ge.getStartDate() != null) {
-			int xe = ganttComposite.getXForDate(ge.getStartDate());
-			int ys = y - spacer;
-			gc.setForeground(colorManager.getRevisedStartColor());
-			gc.drawLine(xe, ys, x, ys);
-			gc.drawLine(xe, ys - 3, xe, ys + 3);
-			gc.drawLine(x, ys - 3, x, ys + 3);
+			int xs = ganttComposite.getXForDate(ge.getStartDate());
+			if (xs != ge.getX()) {				
+				int ys = y - spacer;
+				gc.setForeground(colorManager.getRevisedStartColor());
+				gc.drawLine(xs, ys, x, ys);
+				gc.drawLine(xs, ys - 3, xs, ys + 3);
+				gc.drawLine(x, ys - 3, x, ys + 3);
+			}
 		}
 		if (ge.getEndDate() != null) {
-			int xe = ganttComposite.getXForDate(ge.getEndDate());			
-			int ys = y + settings.getEventHeight() + spacer;
-			gc.setForeground(colorManager.getRevisedEndColor());
-			gc.drawLine(xe, ys, x + eventWidth, ys);
-			gc.drawLine(xe, ys - 3, xe, ys + 3);
-			gc.drawLine(x + eventWidth, ys - 3, x + eventWidth, ys + 3);
+			int xe = ganttComposite.getXForDate(ge.getEndDate());
+			xe += ganttComposite.getDayWidth();
+			if (xe != ge.getXEnd()) {
+				int ys = y + settings.getEventHeight() + spacer;
+				gc.setForeground(colorManager.getRevisedEndColor());
+				gc.drawLine(xe, ys, x + eventWidth, ys);
+				gc.drawLine(xe, ys - 3, xe, ys + 3);
+				gc.drawLine(x + eventWidth, ys - 3, x + eventWidth, ys + 3);
+			}
 		}
 	}
 

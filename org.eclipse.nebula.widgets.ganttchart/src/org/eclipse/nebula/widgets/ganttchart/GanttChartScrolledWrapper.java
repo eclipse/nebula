@@ -15,6 +15,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 
@@ -28,12 +30,24 @@ final class GanttChartScrolledWrapper extends ScrolledComposite {
 	
 	private GanttComposite mGc;
 	
-	public GanttChartScrolledWrapper(Composite parent, int style, ISettings settings, IColorManager colorManager, IPaintManager paintManager, ILanguageManager languageManager) {
+	public GanttChartScrolledWrapper(Composite parent, int style, final ISettings settings, IColorManager colorManager, IPaintManager paintManager, ILanguageManager languageManager) {
 		super(parent, style | SWT.V_SCROLL);
 		setExpandHorizontal(true);
 		setExpandVertical(true);
 		getVerticalBar().setIncrement(15);
 		getVerticalBar().setPageIncrement(160);
+		
+		if (settings.lockHeaderOnVerticalScroll()) {
+			getVerticalBar().addSelectionListener(new SelectionListener() {
+
+				public void widgetDefaultSelected(SelectionEvent e) {
+				}
+
+				public void widgetSelected(SelectionEvent e) {
+					mGc.redraw();
+				}				
+			});
+		}
 
 		mGc = new GanttComposite(this, SWT.NONE, settings, colorManager, paintManager, languageManager);
 		
@@ -56,6 +70,10 @@ final class GanttChartScrolledWrapper extends ScrolledComposite {
 				forceUpdate();
 			}			
 		});
+	}
+	
+	int getVerticalScrollY() {
+		return getVerticalBar().getSelection();
 	}
 		
 	public void scrollingLeft(int diff) {

@@ -885,4 +885,11 @@ public interface ISettings {
 	 * @return true to draw everything all the way down. Default is false.
 	 */
 	public boolean drawFillsToBottomWhenUsingGanttSections();
+	
+	/**
+	 * Whether the header should always be visible regardless of vertical scroll position. Basically a "fixed header" feature.
+	 * 
+	 * @return true whether to lock the header. Default is false.
+	 */
+	public boolean lockHeaderOnVerticalScroll();
 }
