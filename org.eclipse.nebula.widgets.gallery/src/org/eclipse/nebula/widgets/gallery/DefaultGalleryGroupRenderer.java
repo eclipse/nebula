@@ -87,7 +87,7 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 			// Title background
 
 			if (titleBackground != null) {
-				// USer defined background
+				// User defined background
 				gc.setBackground(titleBackground);
 				gc.fillRectangle(x, y, group.width, titleHeight);
 
@@ -116,22 +116,34 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 			c.setBounds(x + xShift, y + yShift, 100, 100);
 			c.paint(gc, group);
 		} else {
+
+			Transform transform = new Transform(gc.getDevice());
+			transform.rotate(-90);
+			gc.setTransform(transform);
+
 			// Title background
 			if (titleBackground != null) {
 				gc.setBackground(titleBackground);
+				gc
+						.fillRectangle(y - group.height, x, group.height,
+								titleHeight);
+			} else {
+				// Default gradient Background
+				gc.setBackground(gallery.getDisplay().getSystemColor(
+						SWT.COLOR_TITLE_BACKGROUND));
+				gc.setForeground(gallery.getDisplay().getSystemColor(
+						SWT.COLOR_TITLE_BACKGROUND_GRADIENT));
+				gc.fillGradientRectangle(y - group.height, x, group.height,
+						titleHeight, true);
 			}
-			gc.fillRectangle(x, y, titleHeight, group.height);
 
 			// Color for text
 			gc.setForeground(titleForeground);
 
 			// Title text
 			gc.setFont(font);
-			Transform transform = new Transform(gc.getDevice());
-			transform.rotate(-90);
-			gc.setTransform(transform);
 			gc.drawText(getGroupTitle(group), y + titleHeight + 2
-					- group.height, x + 2);
+					- group.height, x + 2, true);
 
 			// Toggle Button
 			AbstractRenderer c = new TreeNodeToggleRenderer();
