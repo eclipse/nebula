@@ -11,6 +11,8 @@
 
 package org.eclipse.nebula.widgets.calendarcombo;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import org.eclipse.swt.SWT;
@@ -148,6 +150,10 @@ public abstract class AbstractSettings implements ISettings {
 
 	public Font getCarbonDrawFont() {
 		return new Font(Display.getDefault(), "Arial", 12, SWT.NORMAL);
+	}
+
+	public List getAdditionalDateFormats() {
+		return null;
 	}
 	
 }

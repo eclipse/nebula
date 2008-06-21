@@ -14,6 +14,7 @@ package org.eclipse.nebula.widgets.calendarcombo;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
@@ -41,19 +42,14 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 
 /**
- * <b>CalendarCombo - SWT Widget - 2005-2008. Version 1.0. &copy; Emil Crumhorn -
- * emil dot crumhorn at gmail dot com.</b>
+ * <b>CalendarCombo - SWT Widget - 2005-2008. Version 1.0. &copy; Emil Crumhorn - emil dot crumhorn at gmail dot com.</b>
  * <p>
  * <b>Website</b><br>
- * If you want more info or more documentation, please visit: <a
- * href="http://www.hexapixel.com/">http://www.hexapixel.com</a>
+ * If you want more info or more documentation, please visit: <a href="http://www.hexapixel.com/">http://www.hexapixel.com</a>
  * <p>
  * <b>Description</b><br>
- * CalendarCombo is a widget that opens a calendar when dropped down. The
- * calendar is modelled after Microsoft Outlook's calendar widget and acts and
- * behaves exactly the same (and it is also theme based). The combo is not based
- * on CCombo (as many other custom implementations), but is instead attached to
- * the native Combo box.
+ * CalendarCombo is a widget that opens a calendar when dropped down. The calendar is modelled after Microsoft Outlook's calendar widget and acts and behaves exactly the same (and
+ * it is also theme based). The combo is not based on CCombo (as many other custom implementations), but is instead attached to the native Combo box.
  * <p>
  * <b>Example Creation Code</b><br>
  * <code>
@@ -61,30 +57,24 @@ import org.eclipse.swt.widgets.Widget;
  * ...<br>
  * </code>
  * <p>
- * <b>Another example using depending combos and date range selection on the
- * first combo</b><br>
+ * <b>Another example using depending combos and date range selection on the first combo</b><br>
  * <code>
  * CalendarCombo cComboStart = new CalendarCombo(parentControl, SWT.READ_ONLY, true);<br>
  * CalendarCombo cComboEnd = new CalendarCombo(parentControl, SWT.READ_ONLY);<br>
  * cComboStart.setDependingCombo(cComboEnd);<br>
  * </code> <br>
- * This will cause the end date for the date range selection to be populated in
- * the cComboEnd combo.
+ * This will cause the end date for the date range selection to be populated in the cComboEnd combo.
  * <p>
  * <b>Customizing</b><br>
- * There are two interfaces that are of importance for customizing, one is
- * IColorManager and the other is ISettings. Let's start with the IColorManager.
+ * There are two interfaces that are of importance for customizing, one is IColorManager and the other is ISettings. Let's start with the IColorManager.
  * <p>
  * <b>IColorManager</b><br>
- * If you don't specify a color manager, the DefaultColorManager will be used.
- * The color manager's job is to return colors to the method that is painting
- * all the actual days and months etc. The colors that are returned from the
- * ColorManager will determine everything as far as looks go.
+ * If you don't specify a color manager, the DefaultColorManager will be used. The color manager's job is to return colors to the method that is painting all the actual days and
+ * months etc. The colors that are returned from the ColorManager will determine everything as far as looks go.
  * <p>
  * <b>ISettings</b><br>
- * To control the spacing between dates, various formats and text values, you
- * will want to implement the ISettings interface. If you don't specify one,
- * DefaultSettings will be used.
+ * To control the spacing between dates, various formats and text values, you will want to implement the ISettings interface. If you don't specify one, DefaultSettings will be
+ * used.
  * 
  * @author Emil Crumhorn
  * @version 1.1
@@ -93,74 +83,67 @@ import org.eclipse.swt.widgets.Widget;
 public class CalendarCombo extends Composite {
 
 	// the main combo box
-	private Combo mCombo;
+	private Combo					mCombo;
 
-	private int mComboStyle = SWT.NONE;
+	private int						mComboStyle			= SWT.NONE;
 
 	// the shell holding the CalendarComposite
-	private Shell mCalendarShell;
+	private Shell					mCalendarShell;
 
-	private Listener mKillListener;
+	private Listener				mKillListener;
 
-	private Listener mFilterListenerFocusIn;
+	private Listener				mFilterListenerFocusIn;
 
-	private Composite mParentComposite;
+	private Composite				mParentComposite;
 
 	// values for determining when the last view of the mCalendarShell was.
 	// this is to determine how quick clicks should behave
-	private long mLastShowRequest = 0;
+	private long					mLastShowRequest	= 0;
 
-	private long mLastKillRequest = 0;
+	private long					mLastKillRequest	= 0;
 
-	private boolean mAllowTextEntry;
+	private boolean					mAllowTextEntry;
 
-	private CalendarCombo mDependingCombo;
+	private CalendarCombo			mDependingCombo;
 
-	private CalendarComposite mCalendarComposite;
+	private CalendarComposite		mCalendarComposite;
 
-	private Calendar mStartDate;
+	private Calendar				mStartDate;
 
-	private Calendar mEndDate;
+	private Calendar				mEndDate;
 
-	private IColorManager mColorManager;
+	private IColorManager			mColorManager;
 
-	private ISettings mSettings;
+	private ISettings				mSettings;
 
-	private ArrayList mListeners;
+	private ArrayList				mListeners;
 
-	private Calendar mDisallowBeforeDate;
+	private Calendar				mDisallowBeforeDate;
 
-	private Calendar mDisallowAfterDate;
+	private Calendar				mDisallowAfterDate;
 
-	private boolean isReadOnly;
+	private boolean					isReadOnly;
 
-	private int arrowButtonWidth;
+	private int						arrowButtonWidth;
 
-	private boolean mAllowDateRange;
+	private boolean					mAllowDateRange;
 
-	private Calendar mCarbonPrePopupDate;
+	private Calendar				mCarbonPrePopupDate;
 
-	protected static final boolean OS_CARBON = "carbon".equals(SWT
-			.getPlatform());
-	protected static final boolean OS_GTK = "gtk".equals(SWT.getPlatform());
-	protected static final boolean OS_WINDOWS = "win32".equals(SWT
-			.getPlatform());
+	protected static final boolean	OS_CARBON			= "carbon".equals(SWT.getPlatform());
+	protected static final boolean	OS_GTK				= "gtk".equals(SWT.getPlatform());
+	protected static final boolean	OS_WINDOWS			= "win32".equals(SWT.getPlatform());
 
 	/*
-	 * // Windows JNI Code for making a non-activated canvas, for reference if
-	 * searching MSDN int extStyle = OS.GetWindowLong(canvas.handle,
-	 * OS.GWL_EXSTYLE); extStyle = extStyle | 0x80000;
-	 * OS.SetWindowLong(canvas.handle, OS.GWL_EXSTYLE, extStyle); 0x008000000 =
-	 * WS_EX_NOACTIVATE;
+	 * // Windows JNI Code for making a non-activated canvas, for reference if searching MSDN int extStyle = OS.GetWindowLong(canvas.handle, OS.GWL_EXSTYLE); extStyle = extStyle |
+	 * 0x80000; OS.SetWindowLong(canvas.handle, OS.GWL_EXSTYLE, extStyle); 0x008000000 = WS_EX_NOACTIVATE;
 	 */
 
 	/**
 	 * Creates a new calendar combo box with the given style.
 	 * 
-	 * @param parent
-	 *            Parent control
-	 * @param style
-	 *            Combo style
+	 * @param parent Parent control
+	 * @param style Combo style
 	 */
 	public CalendarCombo(Composite parent, int style) {
 		super(parent, checkStyle(style));
@@ -172,14 +155,9 @@ public class CalendarCombo extends Composite {
 	/**
 	 * Creates a new calendar combo box with the given style.
 	 * 
-	 * @param parent
-	 *            Parent control
-	 * @param style
-	 *            Combo style
-	 * @param allowDateRange
-	 *            Whether to allow date range selection (note that if there is
-	 *            no depending CalendarCombo set you will have to deal with the
-	 *            date range event yourself).
+	 * @param parent Parent control
+	 * @param style Combo style
+	 * @param allowDateRange Whether to allow date range selection (note that if there is no depending CalendarCombo set you will have to deal with the date range event yourself).
 	 */
 	public CalendarCombo(Composite parent, int style, boolean allowDateRange) {
 		super(parent, checkStyle(style));
@@ -190,20 +168,14 @@ public class CalendarCombo extends Composite {
 	}
 
 	/**
-	 * Creates a new calendar mCombo box with the given style, ISettings and
-	 * IColorManager implementations.
+	 * Creates a new calendar mCombo box with the given style, ISettings and IColorManager implementations.
 	 * 
-	 * @param parent
-	 *            Parent control
-	 * @param style
-	 *            Combo style
-	 * @param settings
-	 *            ISettings implementation
-	 * @param colorManager
-	 *            IColorManager implementation
+	 * @param parent Parent control
+	 * @param style Combo style
+	 * @param settings ISettings implementation
+	 * @param colorManager IColorManager implementation
 	 */
-	public CalendarCombo(Composite parent, int style, ISettings settings,
-			IColorManager colorManager) {
+	public CalendarCombo(Composite parent, int style, ISettings settings, IColorManager colorManager) {
 		super(parent, checkStyle(style));
 		this.mComboStyle = style;
 		this.mParentComposite = parent;
@@ -213,24 +185,15 @@ public class CalendarCombo extends Composite {
 	}
 
 	/**
-	 * Creates a new calendar mCombo box with the given style, ISettings and
-	 * IColorManager implementations.
+	 * Creates a new calendar mCombo box with the given style, ISettings and IColorManager implementations.
 	 * 
-	 * @param parent
-	 *            Parent control
-	 * @param style
-	 *            Combo style
-	 * @param settings
-	 *            ISettings implementation
-	 * @param colorManager
-	 *            IColorManager implementation
-	 * @param allowDateRange
-	 *            Whether to allow date range selection (note that if there is
-	 *            no depending CalendarCombo set you will have to deal with the
-	 *            date range event yourself).
+	 * @param parent Parent control
+	 * @param style Combo style
+	 * @param settings ISettings implementation
+	 * @param colorManager IColorManager implementation
+	 * @param allowDateRange Whether to allow date range selection (note that if there is no depending CalendarCombo set you will have to deal with the date range event yourself).
 	 */
-	public CalendarCombo(Composite parent, int style, ISettings settings,
-			IColorManager colorManager, boolean allowDateRange) {
+	public CalendarCombo(Composite parent, int style, ISettings settings, IColorManager colorManager, boolean allowDateRange) {
 		super(parent, checkStyle(style));
 		this.mComboStyle = style;
 		this.mParentComposite = parent;
@@ -241,19 +204,14 @@ public class CalendarCombo extends Composite {
 	}
 
 	/**
-	 * Lets you create a depending CalendarCombo box, which, when no dates are
-	 * set on the current one will set the starting date when popped up to be
-	 * the date of the pullDateFrom CalendarCombo, should that box have a date
-	 * set in it.
+	 * Lets you create a depending CalendarCombo box, which, when no dates are set on the current one will set the starting date when popped up to be the date of the pullDateFrom
+	 * CalendarCombo, should that box have a date set in it.
 	 * 
 	 * @param parent
 	 * @param style
-	 * @param dependingCombo
-	 *            CalendarCombo from where start date is pulled when no date has
-	 *            been set locally.
+	 * @param dependingCombo CalendarCombo from where start date is pulled when no date has been set locally.
 	 */
-	public CalendarCombo(Composite parent, int style,
-			CalendarCombo dependingCombo) {
+	public CalendarCombo(Composite parent, int style, CalendarCombo dependingCombo) {
 		super(parent, checkStyle(style));
 		this.mParentComposite = parent;
 		this.mDependingCombo = dependingCombo;
@@ -262,25 +220,17 @@ public class CalendarCombo extends Composite {
 	}
 
 	/**
-	 * Lets you create a depending CalendarCombo box, which, when no dates are
-	 * set on the current one will set the starting date when popped up to be
-	 * the date of the pullDateFrom CalendarCombo, should that box have a date
-	 * set in it.
+	 * Lets you create a depending CalendarCombo box, which, when no dates are set on the current one will set the starting date when popped up to be the date of the pullDateFrom
+	 * CalendarCombo, should that box have a date set in it.
 	 * 
-	 * When the depending combo is set and the allowDateRange flag is true, the
-	 * depending combo will be the recipient of the end date of any date range
-	 * selection.
+	 * When the depending combo is set and the allowDateRange flag is true, the depending combo will be the recipient of the end date of any date range selection.
 	 * 
 	 * @param parent
 	 * @param style
-	 * @param dependingCombo
-	 *            CalendarCombo from where start date is pulled when no date has
-	 *            been set locally.
-	 * @param allowDateRange
-	 *            Whether to allow date range selection
+	 * @param dependingCombo CalendarCombo from where start date is pulled when no date has been set locally.
+	 * @param allowDateRange Whether to allow date range selection
 	 */
-	public CalendarCombo(Composite parent, int style,
-			CalendarCombo dependingCombo, boolean allowDateRange) {
+	public CalendarCombo(Composite parent, int style, CalendarCombo dependingCombo, boolean allowDateRange) {
 		super(parent, checkStyle(style));
 		this.mParentComposite = parent;
 		this.mDependingCombo = dependingCombo;
@@ -290,24 +240,16 @@ public class CalendarCombo extends Composite {
 	}
 
 	/**
-	 * Lets you create a depending CalendarCombo box, which, when no dates are
-	 * set on the current one will set the starting date when popped up to be
-	 * the date of the pullDateFrom CalendarCombo, should that box have a date
-	 * set in it.
+	 * Lets you create a depending CalendarCombo box, which, when no dates are set on the current one will set the starting date when popped up to be the date of the pullDateFrom
+	 * CalendarCombo, should that box have a date set in it.
 	 * 
 	 * @param parent
 	 * @param style
-	 * @param dependingCombo
-	 *            CalendarCombo from where start date is pulled when no date has
-	 *            been set locally.
-	 * @param settings
-	 *            ISettings implementation
-	 * @param colorManager
-	 *            IColorManager implementation
+	 * @param dependingCombo CalendarCombo from where start date is pulled when no date has been set locally.
+	 * @param settings ISettings implementation
+	 * @param colorManager IColorManager implementation
 	 */
-	public CalendarCombo(Composite parent, int style,
-			CalendarCombo dependingCombo, ISettings settings,
-			IColorManager colorManager) {
+	public CalendarCombo(Composite parent, int style, CalendarCombo dependingCombo, ISettings settings, IColorManager colorManager) {
 		super(parent, checkStyle(style));
 		this.mParentComposite = parent;
 		this.mDependingCombo = dependingCombo;
@@ -318,30 +260,19 @@ public class CalendarCombo extends Composite {
 	}
 
 	/**
-	 * Lets you create a depending CalendarCombo box, which, when no dates are
-	 * set on the current one will set the starting date when popped up to be
-	 * the date of the pullDateFrom CalendarCombo, should that box have a date
-	 * set in it.
+	 * Lets you create a depending CalendarCombo box, which, when no dates are set on the current one will set the starting date when popped up to be the date of the pullDateFrom
+	 * CalendarCombo, should that box have a date set in it.
 	 * 
-	 * When the depending combo is set and the allowDateRange flag is true, the
-	 * depending combo will be the recipient of the end date of any date range
-	 * selection.
+	 * When the depending combo is set and the allowDateRange flag is true, the depending combo will be the recipient of the end date of any date range selection.
 	 * 
 	 * @param parent
 	 * @param style
-	 * @param dependingCombo
-	 *            CalendarCombo from where start date is pulled when no date has
-	 *            been set locally.
-	 * @param settings
-	 *            ISettings implementation
-	 * @param colorManager
-	 *            IColorManager implementation
-	 * @param allowDateRange
-	 *            Whether to allow date range selection
+	 * @param dependingCombo CalendarCombo from where start date is pulled when no date has been set locally.
+	 * @param settings ISettings implementation
+	 * @param colorManager IColorManager implementation
+	 * @param allowDateRange Whether to allow date range selection
 	 */
-	public CalendarCombo(Composite parent, int style,
-			CalendarCombo dependingCombo, ISettings settings,
-			IColorManager colorManager, boolean allowDateRange) {
+	public CalendarCombo(Composite parent, int style, CalendarCombo dependingCombo, ISettings settings, IColorManager colorManager, boolean allowDateRange) {
 		super(parent, checkStyle(style));
 		this.mParentComposite = parent;
 		this.mDependingCombo = dependingCombo;
@@ -353,8 +284,7 @@ public class CalendarCombo extends Composite {
 
 	// remove styles we don't allow
 	private static int checkStyle(int style) {
-		int mask = SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE | SWT.MULTI
-				| SWT.NO_FOCUS | SWT.CHECK | SWT.VIRTUAL;
+		int mask = SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE | SWT.MULTI | SWT.NO_FOCUS | SWT.CHECK | SWT.VIRTUAL;
 
 		int newStyle = style & mask;
 		return newStyle;
@@ -389,6 +319,47 @@ public class CalendarCombo extends Composite {
 		mCombo.setVisibleItemCount(0);
 		mCombo.setLayoutData(new GridData(130, SWT.DEFAULT));
 
+		// when a user types in a date we parse it when they traverse away in any sense or form (focus lost etc)
+		if (!isReadOnly) {
+			Listener traverseListener = new Listener() {
+				public void handleEvent(Event event) {
+					if (event.detail == 16 || event.detail == 8 || event.detail == 4 || event.detail == 0) {
+						String comboText = mCombo.getText();
+						try {
+							Date dat = DateHelper.getDate(comboText, mSettings.getDateFormat());
+						} catch (Exception err) {
+							List otherFormats = mSettings.getAdditionalDateFormats();
+							if (otherFormats != null) {
+								try {
+									for (int i = 0; i < otherFormats.size(); i++) {
+										String format = (String) otherFormats.get(i);
+										Date date = DateHelper.getDate(comboText, format);
+										// success
+										setDate(date);
+										return;
+									}
+								} catch (Exception err2) {
+									// don't care
+									// err2.printStackTrace();
+								}
+							}
+
+							// unparseable date, set the last used date if any,
+							// otherwise set nodateset text
+							if (mStartDate != null)
+								setDate(mStartDate);
+							else
+								mCombo.setText(mSettings.getNoDateSetText());
+						}
+					}
+				}
+			};
+
+			// deal with traverse-away/in/return events to parse dates
+			mCombo.addListener(SWT.Traverse, traverseListener);
+			mCombo.addListener(SWT.FocusOut, traverseListener);
+		}
+
 		mCombo.addListener(SWT.MouseDown, new Listener() {
 			public void handleEvent(Event event) {
 				// click in the text area? ignore
@@ -409,8 +380,7 @@ public class CalendarCombo extends Composite {
 				// arrow down to close, and we don't open it again in that case.
 				// The next click will open.
 				// this is the expected behavior.
-				mLastShowRequest = Calendar.getInstance(mSettings.getLocale())
-						.getTimeInMillis();
+				mLastShowRequest = Calendar.getInstance(mSettings.getLocale()).getTimeInMillis();
 
 				long diff = mLastKillRequest - mLastShowRequest;
 				if (diff > -100 && diff < 0)
@@ -444,8 +414,7 @@ public class CalendarCombo extends Composite {
 						kill(2);
 
 				} else {
-					long now = Calendar.getInstance(mSettings.getLocale())
-							.getTimeInMillis();
+					long now = Calendar.getInstance(mSettings.getLocale()).getTimeInMillis();
 					long diff = now - mLastShowRequest;
 					if (diff > 0 && diff < 100)
 						return;
@@ -477,8 +446,7 @@ public class CalendarCombo extends Composite {
 					// so if the deactivate came from a mouse being over any of
 					// our buttons, that is the same as
 					// if we clicked them.
-					if (mCalendarComposite != null
-							&& mCalendarComposite.isDisposed() == false)
+					if (mCalendarComposite != null && mCalendarComposite.isDisposed() == false)
 						mCalendarComposite.externalClick(mouseLoc);
 
 					kill(6);
@@ -513,8 +481,7 @@ public class CalendarCombo extends Composite {
 		Display.getDefault().addFilter(SWT.FocusIn, mFilterListenerFocusIn);
 		mCombo.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent event) {
-				Display.getDefault().removeFilter(SWT.FocusIn,
-						mFilterListenerFocusIn);
+				Display.getDefault().removeFilter(SWT.FocusIn, mFilterListenerFocusIn);
 			}
 		});
 
@@ -600,16 +567,13 @@ public class CalendarCombo extends Composite {
 		if (rect == null)
 			return false;
 
-		return x >= rect.x && y >= rect.y && x <= (rect.x + rect.width)
-				&& y <= (rect.y + rect.height);
+		return x >= rect.x && y >= rect.y && x <= (rect.x + rect.width) && y <= (rect.y + rect.height);
 	}
 
 	/**
-	 * Sets the current date. Date will be automatically displayed in the text
-	 * area of the combo according to the defined date format (in settings).
+	 * Sets the current date. Date will be automatically displayed in the text area of the combo according to the defined date format (in settings).
 	 * 
-	 * @param date
-	 *            Date to set
+	 * @param date Date to set
 	 */
 	public synchronized void setDate(Date date) {
 		checkWidget();
@@ -619,11 +583,9 @@ public class CalendarCombo extends Composite {
 	}
 
 	/**
-	 * Sets the current date. Date will be automatically displayed in the text
-	 * area of the combo according to the defined date format (in settings).
+	 * Sets the current date. Date will be automatically displayed in the text area of the combo according to the defined date format (in settings).
 	 * 
-	 * @param cal
-	 *            Calendar to set
+	 * @param cal Calendar to set
 	 */
 	public synchronized void setDate(Calendar cal) {
 		checkWidget();
@@ -632,15 +594,11 @@ public class CalendarCombo extends Composite {
 	}
 
 	/**
-	 * Sets the text in the combo area to the given value. Do note that if you
-	 * set a text that is a non-pareseable date string according to the
-	 * currently set date format, that string will be replaced or removed when
-	 * the user opens the popup. This is mainly for disabled combos or combos
-	 * where you need to add additional control to what's displayed in the text
-	 * area.
+	 * Sets the text in the combo area to the given value. Do note that if you set a text that is a non-pareseable date string according to the currently set date format, that
+	 * string will be replaced or removed when the user opens the popup. This is mainly for disabled combos or combos where you need to add additional control to what's displayed
+	 * in the text area.
 	 * 
-	 * @param text
-	 *            Text to display
+	 * @param text Text to display
 	 */
 	public synchronized void setText(final String text) {
 		checkWidget();
@@ -658,13 +616,11 @@ public class CalendarCombo extends Composite {
 	// kills the popup area and unhooks various listeners, takes an integer so
 	// that we can debug where the close comes from easier
 	private synchronized void kill(int debug) {
-		if (mCalendarComposite != null
-				&& mCalendarComposite.isMonthPopupActive())
+		if (mCalendarComposite != null && mCalendarComposite.isMonthPopupActive())
 			return;
 
 		if (mCalendarShell != null && !mCalendarShell.isDisposed()) {
-			mLastKillRequest = Calendar.getInstance(mSettings.getLocale())
-					.getTimeInMillis();
+			mLastKillRequest = Calendar.getInstance(mSettings.getLocale()).getTimeInMillis();
 			mCalendarShell.setVisible(false);
 			mCalendarShell.dispose();
 		}
@@ -722,8 +678,7 @@ public class CalendarCombo extends Composite {
 	}
 
 	/**
-	 * Returns the set date as the raw String representation that is currently
-	 * displayed in the combo.
+	 * Returns the set date as the raw String representation that is currently displayed in the combo.
 	 * 
 	 * @return String date
 	 */
@@ -751,8 +706,7 @@ public class CalendarCombo extends Composite {
 
 	private void setDateBasedOnComboText() {
 		try {
-			Date d = DateHelper.getDate(mCombo.getText(), mSettings
-					.getDateFormat());
+			Date d = DateHelper.getDate(mCombo.getText(), mSettings.getDateFormat());
 			setDate(d);
 		} catch (Exception err) {
 			// we don't care
@@ -766,9 +720,9 @@ public class CalendarCombo extends Composite {
 			// as we remove the date just prior to the popup opening, here, we add it again, so it doesn't look like anything happened to the user
 			// when in fact we removed and added something in the blink of an eye, just so that the combo would not open its own popup. This seems to work
 			// without a hitch -- fix: June 21, 2008
-			if (OS_CARBON && isReadOnly && mCarbonPrePopupDate != null) 
+			if (OS_CARBON && isReadOnly && mCarbonPrePopupDate != null)
 				setDate(mCarbonPrePopupDate);
-			
+
 			// bug fix: Apr 18, 2008 - if we do various operations prior to
 			// actually fetching any newly entered text into the
 			// (non-read only) combo, we'll lose that edit, so fetch the combo
@@ -808,15 +762,12 @@ public class CalendarCombo extends Composite {
 
 			Display.getDefault().addFilter(SWT.KeyDown, mKillListener);
 
-			mCalendarShell = new Shell(Display.getDefault().getActiveShell(),
-					SWT.ON_TOP | SWT.NO_TRIM | SWT.NO_FOCUS);
+			mCalendarShell = new Shell(Display.getDefault().getActiveShell(), SWT.ON_TOP | SWT.NO_TRIM | SWT.NO_FOCUS);
 			mCalendarShell.setLayout(new FillLayout());
 			if (OS_CARBON)
-				mCalendarShell.setSize(mSettings.getCalendarWidthMacintosh(),
-						mSettings.getCalendarHeightMacintosh());
+				mCalendarShell.setSize(mSettings.getCalendarWidthMacintosh(), mSettings.getCalendarHeightMacintosh());
 			else
-				mCalendarShell.setSize(mSettings.getCalendarWidth(), mSettings
-						.getCalendarHeight());
+				mCalendarShell.setSize(mSettings.getCalendarWidth(), mSettings.getCalendarHeight());
 
 			mCalendarShell.addShellListener(new ShellListener() {
 				public void shellActivated(ShellEvent event) {
@@ -848,8 +799,7 @@ public class CalendarCombo extends Composite {
 
 			if (comboText != null && comboText.length() > 1) {
 				try {
-					Date dat = DateHelper.getDate(comboText, mSettings
-							.getDateFormat());
+					Date dat = DateHelper.getDate(comboText, mSettings.getDateFormat());
 					if (dat != null) {
 						pre = Calendar.getInstance(mSettings.getLocale());
 						pre.setTime(dat);
@@ -870,8 +820,7 @@ public class CalendarCombo extends Composite {
 					// date
 					Calendar date = null;
 					try {
-						Date d = DateHelper.getDate(mDependingCombo.getCombo()
-								.getText(), mSettings.getDateFormat());
+						Date d = DateHelper.getDate(mDependingCombo.getCombo().getText(), mSettings.getDateFormat());
 						date = Calendar.getInstance(mSettings.getLocale());
 						date.setTime(d);
 					} catch (Exception err) {
@@ -886,12 +835,9 @@ public class CalendarCombo extends Composite {
 			}
 
 			// create the calendar composite
-			mCalendarComposite = new CalendarComposite(mCalendarShell, pre,
-					mDisallowBeforeDate, mDisallowAfterDate, mColorManager,
-					mSettings, mAllowDateRange, mStartDate, mEndDate);
+			mCalendarComposite = new CalendarComposite(mCalendarShell, pre, mDisallowBeforeDate, mDisallowAfterDate, mColorManager, mSettings, mAllowDateRange, mStartDate, mEndDate);
 			for (int i = 0; i < mListeners.size(); i++) {
-				ICalendarListener listener = (ICalendarListener) mListeners
-						.get(i);
+				ICalendarListener listener = (ICalendarListener) mListeners.get(i);
 				mCalendarComposite.addCalendarListener(listener);
 			}
 
@@ -968,8 +914,7 @@ public class CalendarCombo extends Composite {
 	/**
 	 * Adds a calendar listener.
 	 * 
-	 * @param listener
-	 *            Listener
+	 * @param listener Listener
 	 */
 	public void addCalendarListener(ICalendarListener listener) {
 		checkWidget();
@@ -980,8 +925,7 @@ public class CalendarCombo extends Composite {
 	/**
 	 * Removes a calendar listener.
 	 * 
-	 * @param listener
-	 *            Listener
+	 * @param listener Listener
 	 */
 	public void removeCalendarListener(ICalendarListener listener) {
 		checkWidget();
@@ -991,9 +935,7 @@ public class CalendarCombo extends Composite {
 	/**
 	 * Returns the combo box widget.
 	 * <p>
-	 * <font color="red"><b>NOTE:</b> The Combo box has a lot of listeners on
-	 * it, please be "careful" when using it as you may cause unplanned-for
-	 * things to happen.</font>
+	 * <font color="red"><b>NOTE:</b> The Combo box has a lot of listeners on it, please be "careful" when using it as you may cause unplanned-for things to happen.</font>
 	 * 
 	 * @return Combo widget
 	 */
@@ -1027,8 +969,7 @@ public class CalendarCombo extends Composite {
 	/**
 	 * Adds a modification listener to the combo box.
 	 * 
-	 * @param ml
-	 *            ModifyListener
+	 * @param ml ModifyListener
 	 */
 	public void addModifyListener(ModifyListener ml) {
 		checkWidget();
@@ -1038,8 +979,7 @@ public class CalendarCombo extends Composite {
 	/**
 	 * Removes a modification listener from the combo box.
 	 * 
-	 * @param ml
-	 *            ModifyListener
+	 * @param ml ModifyListener
 	 */
 	public void removeModifyListener(ModifyListener ml) {
 		checkWidget();
@@ -1058,8 +998,7 @@ public class CalendarCombo extends Composite {
 	/**
 	 * Sets the date prior to which selection is not allowed.
 	 * 
-	 * @param disallowBeforeDate
-	 *            Date
+	 * @param disallowBeforeDate Date
 	 */
 	public void setDisallowBeforeDate(Calendar disallowBeforeDate) {
 		mDisallowBeforeDate = disallowBeforeDate;
@@ -1068,8 +1007,7 @@ public class CalendarCombo extends Composite {
 	/**
 	 * Sets the date prior to which selection is not allowed.
 	 * 
-	 * @param disallowBeforeDate
-	 *            Date
+	 * @param disallowBeforeDate Date
 	 */
 	public void setDisallowBeforeDate(Date disallowBeforeDate) {
 		Calendar cal = Calendar.getInstance(mSettings.getLocale());
@@ -1089,8 +1027,7 @@ public class CalendarCombo extends Composite {
 	/**
 	 * Sets the date after which selection is not allowed.
 	 * 
-	 * @param disallowAfterDate
-	 *            Date
+	 * @param disallowAfterDate Date
 	 */
 	public void setDisallowAfterDate(Calendar disallowAfterDate) {
 		mDisallowAfterDate = disallowAfterDate;
@@ -1108,19 +1045,16 @@ public class CalendarCombo extends Composite {
 	}
 
 	/**
-	 * Sets the CalendarCombo that will be the recipient of (end date) date
-	 * range changes as well as date start date that will be used.
+	 * Sets the CalendarCombo that will be the recipient of (end date) date range changes as well as date start date that will be used.
 	 * 
-	 * @param combo
-	 *            CalendarCombo
+	 * @param combo CalendarCombo
 	 */
 	public void setDependingCombo(CalendarCombo combo) {
 		mDependingCombo = combo;
 	}
 
 	/**
-	 * Returns the CalendarCombo that is the recipient of (end date) date range
-	 * changes as well as date start date that will be used.
+	 * Returns the CalendarCombo that is the recipient of (end date) date range changes as well as date start date that will be used.
 	 * 
 	 * @return CalendarCombo
 	 */
