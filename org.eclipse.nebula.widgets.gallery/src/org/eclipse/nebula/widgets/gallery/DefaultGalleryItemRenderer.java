@@ -156,7 +156,7 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 		}
 
 		// Draw label
-		if (item.getText() != null && showLabels) {
+		if ( item.getText() != null && !EMPTY_STRING.equals(item.getText())  && showLabels) {
 			// Set colors
 			if (selected) {
 				// Selected : use selection colors.
@@ -291,18 +291,6 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 
 	public void dispose() {
 		freeDropShadowsColors();
-	}
-
-	protected Point getBestSize(int originalX, int originalY, int maxX, int maxY) {
-		double widthRatio = (double) originalX / (double) maxX;
-		double heightRatio = (double) originalY / (double) maxY;
-
-		double bestRatio = widthRatio > heightRatio ? widthRatio : heightRatio;
-
-		int newWidth = (int) ((double) originalX / bestRatio);
-		int newHeight = (int) ((double) originalY / bestRatio);
-
-		return new Point(newWidth, newHeight);
 	}
 
 	public Color getForegroundColor() {

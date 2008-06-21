@@ -99,6 +99,15 @@ public abstract class AbstractGalleryGroupRenderer {
 	public void preLayout(GC gc) {
 		// Nothing required here. This method can be overridden when needed.
 	}
+	
+	/**
+	 * This method is called after the layout of the last item. 
+	 * 
+	 * @param gc
+	 */
+	public void postLayout(GC gc) {
+		// Nothing required here. This method can be overridden when needed.
+	}
 
 	/**
 	 * This method is called on each root item when the Gallery changes (resize,
@@ -172,9 +181,11 @@ public abstract class AbstractGalleryGroupRenderer {
 	}
 
 	/**
-	 * Forces an update of
+	 * Forces an update of the gallery layout.
 	 * 
 	 * @param keeplocation
+	 * 		if true, the gallery will try to keep the current visible items in
+	 * 		the client area after the new layout has been calculated.
 	 */
 	protected void updateStructuralValues(boolean keeplocation) {
 		gallery.updateStructuralValues(keeplocation);
@@ -184,4 +195,12 @@ public abstract class AbstractGalleryGroupRenderer {
 		gallery.updateScrollBarsProperties();
 	}
 
+	/**
+	 * Returns the preferred Scrollbar increment for the current gallery layout.
+	 * 
+	 * @return
+	 */
+	public int getScrollBarIncrement() {
+		return 16;
+	}
 }

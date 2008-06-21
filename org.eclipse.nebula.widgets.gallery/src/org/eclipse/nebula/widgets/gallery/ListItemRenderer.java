@@ -129,7 +129,7 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 			}
 		}
 
-		if (item.getText() != null && showLabels) {
+		if (item.getText() != null && !EMPTY_STRING.equals(item.getText()) && showLabels) {
 
 			// Calculate font height (text and description)
 			gc.setFont(textFont);
@@ -223,18 +223,6 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 
 	public void dispose() {
 		freeDropShadowsColors();
-	}
-
-	protected Point getBestSize(int originalX, int originalY, int maxX, int maxY) {
-		double widthRatio = (double) originalX / (double) maxX;
-		double heightRatio = (double) originalY / (double) maxY;
-
-		double bestRatio = widthRatio > heightRatio ? widthRatio : heightRatio;
-
-		int newWidth = (int) ((double) originalX / bestRatio);
-		int newHeight = (int) ((double) originalY / bestRatio);
-
-		return new Point(newWidth, newHeight);
 	}
 
 	public Color getSelectionBackgroundColor() {

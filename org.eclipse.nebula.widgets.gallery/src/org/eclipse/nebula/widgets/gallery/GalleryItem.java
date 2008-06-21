@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Item;
 
 public class GalleryItem extends Item {
 
-	private static final String EMPTY_STRING = "";
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	private String description = null;
 
 	// This is managed by the Gallery
@@ -73,11 +73,6 @@ public class GalleryItem extends Item {
 	 */
 	protected int lastIndexOf = 0;
 
-	/**
-	 * itemCount stores the number of children of this group. It is used when
-	 * the Gallery was created with SWT.VIRTUAL
-	 */
-	private int itemCount = 0;
 
 	/**
 	 * True if the Gallery was created wih SWT.VIRTUAL
@@ -118,79 +113,66 @@ public class GalleryItem extends Item {
 	}
 
 	public GalleryItem(Gallery parent, int style) {
-		super(parent, style);
-		this.parent = parent;
-
-		if ((parent.getStyle() & SWT.VIRTUAL) > 0) {
-			virtualGallery = true;
-		} else {
-			parent.addItem(this);
-		}
-
+		this(parent, style, -1, true);
 	}
 
 	public GalleryItem(Gallery parent, int style, int index) {
-		super(parent, style);
-		this.parent = parent;
-
-		if ((parent.getStyle() & SWT.VIRTUAL) > 0) {
-			virtualGallery = true;
-		} else {
-			parent.addItem(this, index);
-		}
-
+		this(parent, style, index, true);
 	}
 
 	public GalleryItem(GalleryItem parent, int style) {
-		super(parent, style);
-		this.parent = parent.parent;
-		this.parentItem = parent;
-		if ((parent.getStyle() & SWT.VIRTUAL) > 0) {
-			virtualGallery = true;
-		} else {
-			parent.addItem(this);
-		}
+		this(parent, style, -1, true);
 	}
 
 	public GalleryItem(GalleryItem parent, int style, int index) {
+		this(parent, style, index, true);
+	}
+
+	protected GalleryItem(GalleryItem parent, int style, int index,
+			boolean create) {
 		super(parent, style);
+
 		this.parent = parent.parent;
 		this.parentItem = parent;
 		if ((parent.getStyle() & SWT.VIRTUAL) > 0) {
 			virtualGallery = true;
-		} else {
-			parent.addItem(this, index);
 		}
+
+		if (create)
+			parent.addItem(this, index);
+
 	}
 
-	/**
-	 * Only work when the table was not created with SWT.VIRTUAL
-	 * 
-	 * @param item
-	 */
-	protected void addItem(GalleryItem item) {
-		_addItem(item, -1);
+	protected GalleryItem(Gallery parent, int style, int index, boolean create) {
+		super(parent, style);
+		this.parent = parent;
+		this.parentItem = null;
+		if ((parent.getStyle() & SWT.VIRTUAL) > 0) {
+			virtualGallery = true;
+		}
+
+		if (create)
+			parent.addItem(this, index);
+
 	}
 
 	protected void addItem(GalleryItem item, int position) {
-		if (position < 0 || position > getItemCount()) {
-			throw new IllegalArgumentException("ERROR_INVALID_RANGE ");
+		if (position != -1 && (position < 0 || position > getItemCount())) {
+			throw new IllegalArgumentException("ERROR_INVALID_RANGE");
 		}
 		_addItem(item, position);
 	}
 
-	private void _addItem(GalleryItem item, int position) {
-		// Items can only be added in a standard gallery (not using SWT.VIRTUAL)
-		if (!virtualGallery) {
+	private void _addItem(GalleryItem item, int position) {		
+		// TODO: ensure that there was no item at this position before using
+		// this item in virtual mode
 
-			// Insert item
-			items = (GalleryItem[]) parent._arrayAddItem(items, item, position);
+		// Insert item
+		items = (GalleryItem[]) parent._arrayAddItem(items, item, position);
 
-			// Update Gallery
-			parent.updateStructuralValues(false);
-			parent.updateScrollBarsProperties();
-
-		}
+		// Update Gallery
+		parent.updateStructuralValues(false);
+		parent.updateScrollBarsProperties();
 	}
 
 	/**
@@ -200,8 +182,6 @@ public class GalleryItem extends Item {
 	 * @return
 	 */
 	public int getItemCount() {
-		if (virtualGallery)
-			return itemCount;
 
 		if (items == null)
 			return 0;
@@ -215,7 +195,6 @@ public class GalleryItem extends Item {
 	 * @param itemCount
 	 */
 	public void setItemCount(int count) {
-		if (virtualGallery) {
 			if (count == 0) {
 				// No items
 				items = null;
@@ -224,14 +203,11 @@ public class GalleryItem extends Item {
 				// old one.
 				GalleryItem[] newItems = new GalleryItem[count];
 				if (items != null) {
-					System.arraycopy(items, 0, newItems, 0, Math.min(count, items.length));
+					System.arraycopy(items, 0, newItems, 0, Math.min(count,
+							items.length));
 				}
 				items = newItems;
 			}
-			this.itemCount = count;
-
-		}
-
 	}
 
 	/**
@@ -240,8 +216,8 @@ public class GalleryItem extends Item {
 	 * that item. <br/> If SWT.VIRTUAL is used and the item has not been used
 	 * yet, the item is created and a SWT.SetData event is fired.
 	 * 
-	 * @param index :
-	 *            index of the item.
+	 * @param index
+	 * 		: index of the item.
 	 * @return : the GalleryItem or null if index is out of bounds
 	 */
 	public GalleryItem getItem(int index) {
@@ -344,7 +320,8 @@ public class GalleryItem extends Item {
 			} else {
 				int[] oldSelection = selectionIndices;
 				selectionIndices = new int[oldSelection.length + 1];
-				System.arraycopy(oldSelection, 0, selectionIndices, 0, oldSelection.length);
+				System.arraycopy(oldSelection, 0, selectionIndices, 0,
+						oldSelection.length);
 			}
 			selectionIndices[selectionIndices.length - 1] = indexOf(item);
 
@@ -393,8 +370,8 @@ public class GalleryItem extends Item {
 
 		if (parent.isVertical()) {
 			return new Rectangle(x, y - parent.translate, width, height);
-		} 
-		
+		}
+
 		return new Rectangle(x - parent.translate, y, width, height);
 	}
 
@@ -519,8 +496,8 @@ public class GalleryItem extends Item {
 	protected void _disposeChildren() {
 		if (items != null) {
 			while (items != null) {
-				if (items[0] != null) {
-					items[0]._dispose();
+				if (items[items.length-1] != null) {
+					items[items.length-1]._dispose();
 				}
 			}
 		}

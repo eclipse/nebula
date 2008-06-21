@@ -185,14 +185,14 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 				// gc.setClipping(xPixelPos, yPixelPos, itemWidth, itemHeight);
 				gallery.getItemRenderer().setSelected(selected);
 				if (Gallery.DEBUG)
-					System.out.println("itemRender.draw");
+					System.out.println("itemRender.draw"); //$NON-NLS-1$
 				Rectangle oldClipping = gc.getClipping();
 
 				gc.setClipping(oldClipping.intersection(new Rectangle(xPixelPos, yPixelPos, itemWidth, itemHeight)));
 				gallery.getItemRenderer().draw(gc, gItem, index, xPixelPos, yPixelPos, itemWidth, itemHeight);
 				gc.setClipping(oldClipping);
 				if (Gallery.DEBUG)
-					System.out.println("itemRender done");
+					System.out.println("itemRender done"); //$NON-NLS-1$
 			}
 
 		}
@@ -307,14 +307,28 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 		super.preLayout(gc);
 	}
 
+	protected Point getLayoutData( GalleryItem item ){
+		Integer hCount = ((Integer) item.getData(H_COUNT));
+		Integer vCount = ((Integer) item.getData(V_COUNT));
+		
+		if( hCount == null || vCount == null)
+			return null;
+		
+		return new Point( hCount.intValue(), vCount.intValue());
+	}
+	
 	protected Rectangle getSize(GalleryItem item, int offsetY) {
 
 		GalleryItem parent = item.getParentItem();
 		if (parent != null) {
 			int index = parent.indexOf(item);
 
-			int hCount = ((Integer) parent.getData(H_COUNT)).intValue();
-			int vCount = ((Integer) parent.getData(V_COUNT)).intValue();
+			Point layoutData = getLayoutData(parent);
+			if( layoutData == null )
+				return null;
+			
+			int hCount = layoutData.x;
+			int vCount = layoutData.y;
 
 			if (Gallery.DEBUG)
 				System.out.println("hCount :  " + hCount + " vCount : " + vCount);

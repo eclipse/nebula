@@ -11,6 +11,7 @@
 package org.eclipse.nebula.widgets.gallery;
 
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
 
 /**
  * 
@@ -23,6 +24,8 @@ import org.eclipse.swt.graphics.GC;
  * @author Nicolas Richeton (nicolas.richeton@gmail.com)
  */
 public abstract class AbstractGalleryItemRenderer {
+	protected static final String EMPTY_STRING = "";
+
 	protected Gallery gallery;
 
 	protected boolean selected;
@@ -74,4 +77,15 @@ public abstract class AbstractGalleryItemRenderer {
 		this.gallery = gallery;
 	}
 
+	protected Point getBestSize(int originalX, int originalY, int maxX, int maxY) {
+		double widthRatio = (double) originalX / (double) maxX;
+		double heightRatio = (double) originalY / (double) maxY;
+
+		double bestRatio = widthRatio > heightRatio ? widthRatio : heightRatio;
+
+		int newWidth = (int) ((double) originalX / bestRatio);
+		int newHeight = (int) ((double) originalY / bestRatio);
+
+		return new Point(newWidth, newHeight);
+	}
 }

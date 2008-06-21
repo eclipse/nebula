@@ -20,6 +20,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Item;
 
 /**
  * 
@@ -35,8 +36,8 @@ import org.eclipse.swt.widgets.Display;
  */
 public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 
-	private static final String PARENTHESIS_OPEN = " (";
-	private static final String PARENTHESIS_CLOSE = ")";
+	private static final String PARENTHESIS_OPEN = " ("; //$NON-NLS-1$
+	private static final String PARENTHESIS_CLOSE = ")"; //$NON-NLS-1$
 	private int fontHeight = 0;
 
 	private int titleHeight = fontHeight + 5;
@@ -47,8 +48,23 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 
 	private Color titleBackground = null;
 
-	// True if margins have already been calculated. Prevents
-	// margins calculation for each group
+	/**
+	 * If true, this flag will enable a special behavior when the items are so
+	 * large that only one can fit in the client area. In this case, items are
+	 * always resized and centered to fit best in the client area.
+	 */
+	private boolean fillIfSingle = false;
+
+	/**
+	 * This flag is set during layout, if fillIfSigle is true, and if there is
+	 * only one column or row
+	 */
+	private boolean fill = false;
+
+	/**
+	 * True if margins have already been calculated. Prevents margins
+	 * calculation for each group
+	 */
 	boolean marginCalculated = false;
 
 	private Font font = null;
@@ -61,21 +77,26 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 		// Display.getDefault().getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
 	}
 
-	protected void drawGroup(GC gc, GalleryItem group, int x, int y, int clipX, int clipY, int clipWidth, int clipHeight) {
-		// TODO: finish drawing.
+	protected void drawGroup(GC gc, GalleryItem group, int x, int y, int clipX,
+			int clipY, int clipWidth, int clipHeight) {
+		// Do not paint group if
+		if (fill)
+			return;
 
 		if (gallery.isVertical()) {
 			// Title background
-			
-			if( titleBackground != null ){
+
+			if (titleBackground != null) {
 				// USer defined background
 				gc.setBackground(titleBackground);
 				gc.fillRectangle(x, y, group.width, titleHeight);
 
 			} else {
 				// Default gradient Background
-				gc.setBackground(gallery.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND));
-				gc.setForeground(gallery.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT));
+				gc.setBackground(gallery.getDisplay().getSystemColor(
+						SWT.COLOR_TITLE_BACKGROUND));
+				gc.setForeground(gallery.getDisplay().getSystemColor(
+						SWT.COLOR_TITLE_BACKGROUND_GRADIENT));
 				gc.fillGradientRectangle(x, y, group.width, titleHeight, true);
 			}
 
@@ -84,7 +105,7 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 
 			// Title text
 			gc.setFont(font);
-			gc.drawText(getGroupTitle( group ), x + titleHeight + 2, y + 2, true);
+			gc.drawText(getGroupTitle(group), x + titleHeight + 2, y + 2, true);
 
 			// Toggle Button
 			AbstractRenderer c = new TreeNodeToggleRenderer();
@@ -96,7 +117,9 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 			c.paint(gc, group);
 		} else {
 			// Title background
-			gc.setBackground(titleBackground);
+			if (titleBackground != null) {
+				gc.setBackground(titleBackground);
+			}
 			gc.fillRectangle(x, y, titleHeight, group.height);
 
 			// Color for text
@@ -107,7 +130,8 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 			Transform transform = new Transform(gc.getDevice());
 			transform.rotate(-90);
 			gc.setTransform(transform);
-			gc.drawText(getGroupTitle(group), y + titleHeight + 2 - group.height, x + 2);
+			gc.drawText(getGroupTitle(group), y + titleHeight + 2
+					- group.height, x + 2);
 
 			// Toggle Button
 			AbstractRenderer c = new TreeNodeToggleRenderer();
@@ -115,7 +139,8 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 
 			int xShift = getShift(titleHeight, c.getSize().x);
 			int yShift = getShift(titleHeight, c.getSize().y);
-			c.setBounds(x + xShift, y + yShift - titleHeight + group.height, 100, 100);
+			c.setBounds(x + xShift, y + yShift - titleHeight + group.height,
+					100, 100);
 			c.paint(gc, group);
 
 			gc.setTransform(null);
@@ -141,6 +166,10 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 		if (expanded) {
 			int[] indexes = getVisibleItems(group, x, y, clipX, clipY,
 					clipWidth, clipHeight, offset);
+
+			if (fill) {
+				indexes = new int[] { indexes[0] };
+			}
 
 			if (indexes != null && indexes.length > 0) {
 				for (int i = indexes.length - 1; i >= 0; i--) {
@@ -198,6 +227,8 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 				group.setData(V_COUNT, new Integer(vCount));
 				if (Gallery.DEBUG)
 					System.out.println("Hnb" + hCount + "Vnb" + vCount);
+
+				fill = (fillIfSingle && hCount == 1);
 			}
 
 		} else {
@@ -221,6 +252,9 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 
 				group.setData(H_COUNT, new Integer(hCount));
 				group.setData(V_COUNT, new Integer(vCount));
+
+				fill = (fillIfSingle && vCount == 1);
+
 			}
 		}
 
@@ -374,7 +408,7 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 	 * font.
 	 * 
 	 * @param font
-	 *            the font to set
+	 * 		the font to set
 	 */
 	public void setFont(Font font) {
 		if (this.font != font) {
@@ -382,5 +416,81 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 			if (getGallery() != null)
 				getGallery().redraw();
 		}
+	}
+
+	protected void drawItem(GC gc, int index, boolean selected,
+			GalleryItem parent, int offsetY) {
+
+		if (fill) {
+			Item item = parent.getItem(index);
+
+			// No item ? return
+			if (item == null)
+				return;
+
+			GalleryItem gItem = (GalleryItem) item;
+
+			Rectangle area = gallery.getClientArea();
+
+			gItem.x = area.x;
+			gItem.y = area.y + gallery.translate;
+			;
+			gItem.height = area.height;
+			gItem.width = area.width;
+
+			gallery.sendPaintItemEvent(item, index, gc, area.x, area.y,
+					area.width, area.height);
+
+			if (gallery.getItemRenderer() != null) {
+				gallery.getItemRenderer().setSelected(selected);
+				gallery.getItemRenderer().draw(gc, gItem, index, area.x,
+						area.y, area.width, area.height);
+			}
+
+			return;
+		}
+
+		super.drawItem(gc, index, selected, parent, offsetY);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.eclipse.nebula.widgets.gallery.AbstractGalleryGroupRenderer#
+	 * getScrollBarIncrement()
+	 */
+	public int getScrollBarIncrement() {
+		if (fill) {
+			if (gallery.isVertical()) {
+				// Vertical fill
+				return gallery.getClientArea().height;
+			}
+
+			// Horizontal fill
+			return gallery.getClientArea().width;
+		}
+
+		// Standard behavior
+		return super.getScrollBarIncrement();
+	}
+
+	public boolean isFillIfSingle() {
+		return fillIfSingle;
+	}
+
+	/**
+	 * <p>
+	 * <b>Experimental feature :</b>
+	 * </p>
+	 * <p>
+	 * If set to true, this will enable a special behavior when the items are so
+	 * large that only one can fit in the client area. In this case, items are
+	 * always resized and centered to fit best in the client area.
+	 * </p>
+	 * 
+	 * @param fillIfSingle
+	 */
+	public void setFillIfSingle(boolean fillIfSingle) {
+		this.fillIfSingle = fillIfSingle;
 	}
 }
