@@ -805,12 +805,43 @@ public class CalendarCombo extends Composite {
 						pre.setTime(dat);
 					}
 				} catch (Exception err) {
-					// unparseable date, set the last used date if any,
-					// otherwise set nodateset text
-					if (mStartDate != null)
-						setDate(mStartDate);
-					else
-						mCombo.setText(mSettings.getNoDateSetText());
+					List otherFormats = mSettings.getAdditionalDateFormats();
+					if (otherFormats != null) {
+						boolean dateSet = false;
+						try {
+							for (int i = 0; i < otherFormats.size(); i++) {
+								String format = (String) otherFormats.get(i);
+								Date date = DateHelper.getDate(comboText, format);
+								// success
+								setDate(date);
+								Calendar cal = Calendar.getInstance(mSettings.getLocale());
+								cal.setTime(date);
+								pre = cal;
+								dateSet = true;
+								break;
+							}
+						} catch (Exception err2) {
+							// don't care
+							// err2.printStackTrace();
+						}
+						
+						if (!dateSet) {
+							// unparseable date, set the last used date if any,
+							// otherwise set nodateset text
+							if (mStartDate != null)
+								setDate(mStartDate);
+							else
+								mCombo.setText(mSettings.getNoDateSetText());
+						}
+					}
+					else {					
+						// unparseable date, set the last used date if any,
+						// otherwise set nodateset text
+						if (mStartDate != null)
+							setDate(mStartDate);
+						else
+							mCombo.setText(mSettings.getNoDateSetText());
+					}
 				}
 
 			} else {
