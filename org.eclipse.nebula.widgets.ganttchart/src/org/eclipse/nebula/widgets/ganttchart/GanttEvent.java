@@ -58,7 +58,7 @@ import org.eclipse.swt.widgets.Menu;
  * @author Emil Crumhorn <a href="mailto:emil.crumhorn@gmail.com">emil.crumhorn@gmail.com</a>
  * 
  */
-public class GanttEvent implements IGanttChartItem {
+public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 
 	/*
 	 * public static final int TYPE_EVENT = 0; public static final int TYPE_CHECKPOINT = 1; public static final int TYPE_IMAGE = 2; public static final int TYPE_SCOPE = 3;
@@ -114,7 +114,7 @@ public class GanttEvent implements IGanttChartItem {
 	private int				mVerticalTextLocation		= SWT.CENTER;
 
 	private Font			mTextFont;	
-
+	
 	/**
 	 * Creates a new GanttEvent.
 	 * 

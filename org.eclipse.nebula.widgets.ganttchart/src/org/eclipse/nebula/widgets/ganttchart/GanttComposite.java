@@ -271,6 +271,11 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	private List						mVerticalLineLocations;													// fast cache for where the vertical lines go, much much faster than
 	// re-calculating over and over
 	private List						mVerticalWeekDividerLineLocations;
+	
+	// keeps track of hidden layers
+	private List						mHiddenLayers;
+	// keeps track of layer opacities
+	private HashMap 					mLayerOpacityMap;
 
 	// debug variables
 	long								mTotal						= 0;
@@ -313,8 +318,11 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		mGanttSections = new ArrayList();
 		mVerticalLineLocations = new ArrayList();
 		mVerticalWeekDividerLineLocations = new ArrayList();
+		mHiddenLayers = new ArrayList();
 		mAllEventsCombined = new HashSet();
 		mDayLetterStringExtentMap = new HashMap();
+		mLayerOpacityMap = new HashMap();
+
 
 		mDefaultLocale = mSettings.getDefaultLocale();
 		mUseAdvancedTooltips = mSettings.getUseAdvancedTooltips();
@@ -430,6 +438,83 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		mUseAlpha = mColorManager.useAlphaDrawing();
 	}
 
+	/**
+	 * Hides all layers of the given value and redraws the event area.
+	 * 
+	 * @param layer Layer to hide.
+	 */
+	public void hideLayer(int layer) {
+		if (!mHiddenLayers.contains(new Integer(layer))) 
+			mHiddenLayers.add(new Integer(layer));					
+	}
+	
+	/**
+	 * Shows all layers of the given value and redraws the event area.
+	 * 
+	 * @param layer Layer to show.
+	 */
+	public void showLayer(int layer) {
+		boolean removed = mHiddenLayers.remove(new Integer(layer));
+		if (removed)
+			redrawEventsArea();		
+	}
+	
+	/**
+	 * Shows all layers and redraws the event area.
+	 */
+	public void showAllLayers() {
+		if (mHiddenLayers.size() == 0)
+			return;
+		
+		mHiddenLayers.clear();
+		redrawEventsArea();
+	}
+	
+	/**
+	 * Hides all layers and redraws the event area.
+	 */
+	public void hideAllLayers() {
+		for (int i = 0; i < mGanttEvents.size(); i++) {
+			GanttEvent ge = (GanttEvent) mGanttEvents.get(i);
+			if (!mHiddenLayers.contains(new Integer(ge.getLayer())))
+				mHiddenLayers.add(new Integer(ge.getLayer()));				
+		}
+		
+		redrawEventsArea();
+	}
+	
+	/**
+	 * Sets the drawing opacity for a layer. Do note that this may reduce the drawing speed of the chart by a lot. The opacity range is from 0 to 255.
+	 * Note that if alpha settings are turned on in settings, those values will still be used, so it may be wise to turn them off if you are doing layer blending.
+	 * 
+	 * @param layer Layer to set opacity on
+	 * @param opacity Opacity between 0 and 255 
+	 */
+	public void setLayerOpacity(int layer, int opacity) {
+		if (opacity >= 255) {
+			mLayerOpacityMap.remove(new Integer(layer));
+			return;
+		}
+		
+		if (opacity < 0)
+			opacity = 0;
+		
+		mLayerOpacityMap.put(new Integer(layer), new Integer(opacity));
+	}
+	
+	/**
+	 * Returns the layer opacity for a layer. 
+	 * 
+	 * @param layer Layer to get opacity for
+	 * @return Layer opacity, -1 if layer has no opacity set.
+	 */
+	public int getLayerOpacity(int layer) {
+		if (mLayerOpacityMap.get(new Integer(layer)) == null)
+			return -1;
+		
+		return ((Integer) mLayerOpacityMap.get(new Integer(layer))).intValue(); 
+	}
+	
 	/**
 	 * Setting a fixed row height override causes all rows to be the set height regardless of individual row heights set on items themselves and all settings.
 	 * 
@@ -2044,6 +2129,12 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		int yDrawPos = ge.getY();
 
 		int dw = getDayWidth();
+		
+		boolean advanced = false;
+		if (getLayerOpacity(ge.getLayer()) != -1) {
+			advanced = true;
+			gc.setAlpha(getLayerOpacity(ge.getLayer()));
+		}
 
 		if (ge.isCheckpoint()) {
 			mPaintManager.drawCheckpoint(this, mSettings, mColorManager, ge, gc, mThreeDee, dw, xStart, yDrawPos, bounds);
@@ -2091,6 +2182,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 		// reset font
 		gc.setFont(oldFont);
+		
+		if (advanced)
+			gc.setAdvanced(false);
 	}
 
 	private void updateEventVisibilities(Rectangle bounds) {
@@ -2419,6 +2513,11 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			// don't draw hidden events
 			if (ge1.isHidden() || ge2.isHidden())
 				continue;
+			
+			if (mHiddenLayers.size() > 0) {
+				if (mHiddenLayers.contains(ge1.getLayerInt()) || mHiddenLayers.contains(ge2.getLayerInt()))
+					continue;
+			}
 
 			// left side to left side means we can't see it, so we can safely ignore it
 			if (ge1.getVisibility() == VISIBILITY_OOB_LEFT && ge2.getVisibility() == VISIBILITY_OOB_LEFT)
@@ -3430,6 +3529,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	// checks whether an event is visible in the current date range that is
 	// displayed on the screen
 	private int getEventVisibility(GanttEvent event, Rectangle bounds) {
+		if (mHiddenLayers.contains(new Integer(event.getLayer())))
+			return VISIBILITY_NOT_VISIBLE;
+		
 		Calendar sCal = event.getActualStartDate();
 		Calendar eCal = event.getActualEndDate();
 		if (sCal == null)
@@ -3895,6 +3997,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 					insideAnyEvent = true;
 
 					if (event.isScope())
+						continue;
+					
+					if (mHiddenLayers.contains(event.getLayerInt()))
 						continue;
 
 					int x = me.x;

@@ -19,7 +19,7 @@ import org.eclipse.swt.SWT;
  * A GanttGroup is a group of GanttEvents that will all draw on the same horizontal "line" in the GanttChart. One GanttEvent may only belong to one GanttGroup, any adding of an
  * event that already has a GanttGroup assigned to it will overwrite the previously set group and thus move it to the new group.
  */
-public class GanttGroup implements IGanttChartItem {
+public class GanttGroup extends AbstractGanttEvent implements IGanttChartItem {
 
 	public static final int	FIXED_ROW_HEIGHT_AUTOMATIC	= -1;
 
