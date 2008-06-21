@@ -25,6 +25,7 @@ import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -169,6 +170,8 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 
 		// Mac buttons need different flag to look normal
 		if (CalendarCombo.OS_CARBON) {
+			bheight = mSettings.getCarbonButtonHeight();
+			bwidth = mSettings.getButtonWidthCarbon();
 			buttonStyle = SWT.FLAT;
 		}
 		
@@ -222,6 +225,14 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 		Rectangle bounds = super.getBounds();
 		gc.setBackground(mColorManager.getCalendarBackgroundColor());
 		gc.fillRectangle(bounds);
+		
+		Font used = null;
+		if (CalendarCombo.OS_CARBON) {			
+			used = mSettings.getCarbonDrawFont();
+			if (used != null)
+				gc.setFont(used);
+		}
+		
 		// header
 		drawHeader(gc);
 		// day titles
@@ -230,7 +241,10 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 		drawDays(gc);
 		// 1 pixel border
 		drawBorder(gc);
+		
 		gc.dispose();
+		if (used != null)
+			used.dispose();
 	}
 
 	public void setDate(Calendar date) {
@@ -401,12 +415,7 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 			if (mSelectedDay != null) {
 				if (DateHelper.sameDate(mSelectedDay, temp) || (mDateRange && betweenDays != null && betweenDays.contains(temp))) {
 					gc.setBackground(mColorManager.getSelectedDayColor());
-					if (CalendarCombo.OS_CARBON) {
-						gc.fillRectangle(mDayXs[col] - mSettings.getOneDateBoxSize() - 4, mDatesTopY + spacer + 1, mSettings.getOneDateBoxSize() + 5, 14);
-					}
-					else {
-						gc.fillRectangle(mDayXs[col] - mSettings.getOneDateBoxSize() - 4, mDatesTopY + spacer - 1, mSettings.getOneDateBoxSize() + 5, 14);
-					}
+					gc.fillRectangle(mDayXs[col] - mSettings.getOneDateBoxSize() - 4, mDatesTopY + spacer - 1, mSettings.getOneDateBoxSize() + 5, 14);
 					gc.setBackground(mColorManager.getCalendarBackgroundColor());
 				}
 			}
@@ -414,18 +423,14 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 			Rectangle dayBounds = new Rectangle(mDayXs[col] - mSettings.getOneDateBoxSize() - 4, mDatesTopY + spacer - 1, mSettings.getOneDateBoxSize() + 5, 14);
 
 			mDays[y] = new CalDay(y, temp, dayBounds, disallowedDate);
+		
 
 			gc.drawString(dateStr, mDayXs[col] - width.x, mDatesTopY + spacer, true);
 
 			if (DateHelper.sameDate(mToday, temp)) {
 				Color old = gc.getForeground();
 				gc.setForeground(mColorManager.getSelectedDayBorderColor());
-				if (CalendarCombo.OS_CARBON) {
-					gc.drawRectangle(mDayXs[col] - mSettings.getOneDateBoxSize() - 4, mDatesTopY + spacer + 1, mSettings.getOneDateBoxSize() + 5, 14);
-				}
-				else {
-					gc.drawRectangle(mDayXs[col] - mSettings.getOneDateBoxSize() - 4, mDatesTopY + spacer - 1, mSettings.getOneDateBoxSize() + 5, 14);
-				}
+				gc.drawRectangle(mDayXs[col] - mSettings.getOneDateBoxSize() - 4, mDatesTopY + spacer - 1, mSettings.getOneDateBoxSize() + 5, 14);
 				gc.setForeground(old);
 			}
 
@@ -556,7 +561,7 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 		}
 
 		if (mSettings.showMonthPickerOnMonthNameMousePress() && isInside(event.x, event.y, mMonthNameBounds)) {
-			MonthPick mp = new MonthPick(this, SWT.NONE, mCalendar, this, mSettings.getLocale());
+			MonthPick mp = new MonthPick(this, SWT.NONE, mCalendar, this, mSettings, mSettings.getLocale());
 			mp.addDisposeListener(new DisposeListener() {
 				public void widgetDisposed(DisposeEvent e) {
 					mMonthSelectorOpen = false;
@@ -787,6 +792,13 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 			int bwidth = mSettings.getButtonWidth();
 			int vspacer = mSettings.getButtonVerticalSpace();
 			int bspacer = mSettings.getButtonsHorizontalSpace();
+			if (CalendarCombo.OS_CARBON) {
+				bwidth = mSettings.getButtonWidthCarbon();
+				bheight = mSettings.getCarbonButtonHeight();
+				vspacer = mSettings.getCarbonButtonVerticalSpace();
+				bspacer = mSettings.getCarbonButtonsHorizontalSpace();
+			}
+
 			
 			// see how much space we put on the left and right sides of the buttons
 			int width = mSettings.getCalendarWidth() - (bwidth*2) - bspacer;
@@ -799,7 +811,8 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 			for (int i = 0; i < children.length; i++) {
 				switch (i) {
 					case 0:
-						children[i].setBounds(button1Left, vspacer, bwidth, bheight);						
+						children[i].setBounds(button1Left, vspacer, bwidth, bheight);		
+					
 						break;
 					case 1:
 						children[i].setBounds(button2Left, vspacer, bwidth, bheight);

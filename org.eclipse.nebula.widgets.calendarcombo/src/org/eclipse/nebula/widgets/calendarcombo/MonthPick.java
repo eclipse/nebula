@@ -33,6 +33,8 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 
 class MonthPick extends Canvas implements MouseListener, MouseMoveListener {
 	// months to show in the popup
@@ -71,12 +73,17 @@ class MonthPick extends Canvas implements MouseListener, MouseMoveListener {
 	private Calendar mSelectedMonth = null;
 	
 	private Locale mLocale;
+	
+	private ISettings mSettings;
 
-	public MonthPick(Composite parent, int style, Calendar start, CalendarComposite cc, Locale locale) {
+	private Listener mDisposeListener;
+	
+	public MonthPick(Composite parent, int style, Calendar start, CalendarComposite cc, ISettings settings, Locale locale) {
 		super(parent, style | SWT.NO_BACKGROUND | SWT.NO_REDRAW_RESIZE | SWT.ON_TOP);
 		mStart = start;
 		mCalendarComposite = cc;
 		mLocale = locale;
+		mSettings = settings;
 		
 		setSize(101, 106);
 		setCapture(true);
@@ -95,11 +102,31 @@ class MonthPick extends Canvas implements MouseListener, MouseMoveListener {
 				paint(event);
 			}
 		});
+		
 
+		// on carbon the shell doesn't die if it's stuck open and the mouse is clicked out of bounds, so we kill it on mouse down (month has time to be set prior)
+		if (CalendarCombo.OS_CARBON) {
+			mDisposeListener = new Listener() {
+				public void handleEvent(Event e) {
+					Display.getDefault().removeFilter(SWT.MouseDown, mDisposeListener);
+					dispose();	
+				}
+			};
+			
+			Display.getDefault().addFilter(SWT.MouseDown, mDisposeListener);
+		}
+		
 	}
 
 	private void paint(PaintEvent event) {
 		GC gc = event.gc;
+		
+		Font used = null;
+		if (CalendarCombo.OS_CARBON) {
+			used = mSettings.getCarbonDrawFont();
+			if (used != null)
+				gc.setFont(used);
+		}
 
 		// this.globalGC = gc;
 
@@ -137,6 +164,9 @@ class MonthPick extends Canvas implements MouseListener, MouseMoveListener {
 			drawOntoGC(gc);
 			mCreated = true;
 		}
+		
+		if (used != null)
+			used.dispose();
 	}
 
 	private void drawOntoGC(GC gc) {
@@ -168,12 +198,16 @@ class MonthPick extends Canvas implements MouseListener, MouseMoveListener {
 
 		temp.add(Calendar.MONTH, -3);
 
-		FontData[] old = getFont().getFontData();
-		old[0].setHeight(8);
-		Font f = new Font(Display.getDefault(), old);
-		gc.setFont(f);
-		// MUST DISPOSE FONT or we'll run out of handles (win XP)
-		f.dispose();
+		if (!CalendarCombo.OS_CARBON) {
+			FontData[] old = getFont().getFontData();
+			old[0].setHeight(8);
+			Font f = new Font(Display.getDefault(), old);
+			gc.setFont(f);
+			// MUST DISPOSE FONT or we'll run out of handles (win XP)
+			f.dispose();
+		}
+		else
+			gc.setFont(mSettings.getCarbonDrawFont());
 
 		gc.setForeground(ColorCache.getBlack());
 

@@ -13,6 +13,10 @@ package org.eclipse.nebula.widgets.calendarcombo;
 
 import java.util.Locale;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.widgets.Display;
+
 public abstract class AbstractSettings implements ISettings {
 	public int getArrowLeftSpacing() {
 		return 6;
@@ -43,7 +47,7 @@ public abstract class AbstractSettings implements ISettings {
 	}
 
 	public int getCalendarHeightMacintosh() {
-		return 184;
+		return 168;
 	}
 
 	public int getDatesLeftMargin() {
@@ -86,12 +90,24 @@ public abstract class AbstractSettings implements ISettings {
 		return 16;
 	}
 
+	public int getCarbonButtonsHorizontalSpace() {
+		return 0;
+	}
+
 	public int getButtonVerticalSpace() {
 		return 133;
 	}
 
+	public int getCarbonButtonVerticalSpace() {
+		return 138;
+	}
+
 	public int getButtonWidth() {
 		return 45;
+	}
+	
+	public int getButtonWidthCarbon() {
+		return 65;
 	}
 
 	public String getNoneText() {
@@ -110,8 +126,12 @@ public abstract class AbstractSettings implements ISettings {
 		return true;
 	}
 
+	public int getCarbonButtonHeight() {
+		return 26;
+	}
+
 	public int getCarbonButtonWidth() {
-		return 22;
+		return 25;
 	}
 
 	public int getGTKButtonWidth() {
@@ -124,6 +144,10 @@ public abstract class AbstractSettings implements ISettings {
 
 	public Locale getLocale() {
 		return Locale.getDefault();
+	}
+
+	public Font getCarbonDrawFont() {
+		return new Font(Display.getDefault(), "Arial", 12, SWT.NORMAL);
 	}
 	
 }

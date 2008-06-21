@@ -13,6 +13,8 @@ package org.eclipse.nebula.widgets.calendarcombo;
 
 import java.util.Locale;
 
+import org.eclipse.swt.graphics.Font;
+
 
 public interface ISettings {
 	
@@ -148,6 +150,21 @@ public interface ISettings {
 	public int getButtonWidth();
 	
 	/**
+	 * Returns the width of the "Today" and "None" buttons for Carbon.
+	 * 
+	 * @return Width
+	 */
+	public int getButtonWidthCarbon();
+	
+	/**
+	 * Returns the height of the "Today" and "None" buttons for Carbon.
+	 * 
+	 * @return Height
+	 */
+	public int getCarbonButtonHeight();
+
+	
+	/**
 	 * Returns the spacing between the bottom of the calendar dates and where the "Today" and "None" buttons are.
 	 * 
 	 * @return Spacer size
@@ -155,11 +172,25 @@ public interface ISettings {
 	public int getButtonVerticalSpace();
 	
 	/**
+	 * Returns the spacing between the bottom of the calendar dates and where the "Today" and "None" buttons are. Used on Carbon only.
+	 * 
+	 * @return Spacer size
+	 */
+	public int getCarbonButtonVerticalSpace();
+	
+	/**
 	 * Returns the horizontal spacing between the "Today" and the "None" button.
 	 * 
 	 * @return Space size
 	 */
 	public int getButtonsHorizontalSpace();
+	
+	/**
+	 * Returns the horizontal spacing between the "Today" and the "None" button. Used on Carbon only.
+	 * 
+	 * @return Space size
+	 */
+	public int getCarbonButtonsHorizontalSpace();
 	
 	/**
 	 * Returns the text written on the "Today" button
@@ -202,7 +233,7 @@ public interface ISettings {
 	 * and not the text field. If you notice that there is some area of the button that is either too large or small when clicked
 	 * so that the popup does not show, you will probably need to adjust this.
 	 * 
-	 * @return size that the current OS. Defaults are: OSX: 22, Windows: 19, GTK: 25. 
+	 * @return size that the current OS. Defaults are: OSX: 25, Windows: 19, GTK: 25. 
 	 */
 	public int getWindowsButtonWidth();
 
@@ -214,7 +245,7 @@ public interface ISettings {
 	 * and not the text field. If you notice that there is some area of the button that is either too large or small when clicked
 	 * so that the popup does not show, you will probably need to adjust this.
 	 * 
-	 * @return size that the current OS. Defaults are: OSX: 22, Windows: 19, GTK: 25. 
+	 * @return size that the current OS. Defaults are: OSX: 25, Windows: 19, GTK: 25. 
 	 */
 	public int getCarbonButtonWidth();
 	
@@ -226,7 +257,7 @@ public interface ISettings {
 	 * and not the text field. If you notice that there is some area of the button that is either too large or small when clicked
 	 * so that the popup does not show, you will probably need to adjust this.
 	 * 
-	 * @return size that the current OS. Defaults are: OSX: 22, Windows: 19, GTK: 25. 
+	 * @return size that the current OS. Defaults are: OSX: 25, Windows: 19, GTK: 25. 
 	 */
 	public int getGTKButtonWidth();
 	
@@ -236,5 +267,12 @@ public interface ISettings {
 	 * @return Locale to use. Default is Locale.getDefault(). Return value may not be null.
 	 */
 	public Locale getLocale();
+	
+	/**
+	 * Returns the font to draw on Carbon. Do note that the drawing does not take font size into account, so change at your own risk.
+	 * 
+	 * @return Font to be used on Carbon.
+	 */
+	public Font getCarbonDrawFont();
 	
 }

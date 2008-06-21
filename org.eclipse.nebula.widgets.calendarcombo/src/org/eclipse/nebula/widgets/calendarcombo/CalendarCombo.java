@@ -138,6 +138,8 @@ public class CalendarCombo extends Composite {
 
 	private boolean mAllowDateRange;
 
+	private Calendar mCarbonPrePopupDate;
+
 	protected static final boolean OS_CARBON = "carbon".equals(SWT
 			.getPlatform());
 	protected static final boolean OS_GTK = "gtk".equals(SWT.getPlatform());
@@ -527,6 +529,28 @@ public class CalendarCombo extends Composite {
 					}
 				}
 			});
+
+			// this is the most messed up thing ever, but it works. Basically,
+			// OSX will pop up a combo of 1 item to let you pick it
+			// even when it's blantantly obvious that you can only pick that one
+			// item.. duh.. Anyway, the Paint event actually fires PRIOR to the
+			// combo
+			// opening, and our "cure" to the popup issue is to quickly remove
+			// the item from the combo before it does open, thus, it doesn't
+			// show the selector list,
+			// but our popup instead. The side effect is that the combo appears
+			// blank while the calendar is open. But as we reset the date when
+			// no selection has been made, it's all good! It ain't pretty, but
+			// it does the job
+			if (isReadOnly) {
+				mCombo.addListener(SWT.Paint, new Listener() {
+					public void handleEvent(Event event) {
+						mCarbonPrePopupDate = getDate();
+						mCombo.removeAll();
+
+					}
+				});
+			}
 		}
 
 		parentShell.addShellListener(new ShellListener() {
@@ -553,7 +577,8 @@ public class CalendarCombo extends Composite {
 
 	}
 
-	// checks whether a click was actually in the text area of a combo and not on the arrow button. This is a hack by all means,
+	// checks whether a click was actually in the text area of a combo and not
+	// on the arrow button. This is a hack by all means,
 	// as there is (currently) no way to get the actual button from a combo.
 	private boolean isTextAreaClick(Event event) {
 		// read-only combos open on click anywhere
@@ -580,7 +605,8 @@ public class CalendarCombo extends Composite {
 	}
 
 	/**
-	 * Sets the current date. Date will be automatically displayed in the text area of the combo according to the defined date format (in settings).
+	 * Sets the current date. Date will be automatically displayed in the text
+	 * area of the combo according to the defined date format (in settings).
 	 * 
 	 * @param date
 	 *            Date to set
@@ -593,7 +619,8 @@ public class CalendarCombo extends Composite {
 	}
 
 	/**
-	 * Sets the current date. Date will be automatically displayed in the text area of the combo according to the defined date format (in settings).
+	 * Sets the current date. Date will be automatically displayed in the text
+	 * area of the combo according to the defined date format (in settings).
 	 * 
 	 * @param cal
 	 *            Calendar to set
@@ -605,9 +632,12 @@ public class CalendarCombo extends Composite {
 	}
 
 	/**
-	 * Sets the text in the combo area to the given value. Do note that if you set a text that is a non-pareseable date string according to the 
-	 * currently set date format, that string will be replaced or removed when the user opens the popup. This is mainly for disabled combos
-	 * or combos where you need to add additional control to what's displayed in the text area.
+	 * Sets the text in the combo area to the given value. Do note that if you
+	 * set a text that is a non-pareseable date string according to the
+	 * currently set date format, that string will be replaced or removed when
+	 * the user opens the popup. This is mainly for disabled combos or combos
+	 * where you need to add additional control to what's displayed in the text
+	 * area.
 	 * 
 	 * @param text
 	 *            Text to display
@@ -625,7 +655,8 @@ public class CalendarCombo extends Composite {
 		mAllowTextEntry = false;
 	}
 
-	// kills the popup area and unhooks various listeners, takes an integer so that we can debug where the close comes from easier
+	// kills the popup area and unhooks various listeners, takes an integer so
+	// that we can debug where the close comes from easier
 	private synchronized void kill(int debug) {
 		if (mCalendarComposite != null
 				&& mCalendarComposite.isMonthPopupActive())
@@ -650,6 +681,15 @@ public class CalendarCombo extends Composite {
 			// setText(DateHelper.getFormattedDate(DateHelper.getDate(getDate(),
 			// mDateFormat), mDateFormat));
 		}
+
+		if (OS_CARBON) {
+			if (mCarbonPrePopupDate != null)
+				setDate(mCarbonPrePopupDate);
+			else {
+				mCombo.removeAll();
+				mCombo.setText(" ");
+			}
+		}
 	}
 
 	private boolean isCalendarVisible() {
@@ -666,7 +706,7 @@ public class CalendarCombo extends Composite {
 		checkWidget();
 		if (isCalendarVisible())
 			return;
-		
+
 		showCalendar();
 	}
 
@@ -677,12 +717,13 @@ public class CalendarCombo extends Composite {
 		checkWidget();
 		if (!isCalendarVisible())
 			return;
-		
+
 		kill(99);
 	}
-	
+
 	/**
-	 * Returns the set date as the raw String representation that is currently displayed in the combo.
+	 * Returns the set date as the raw String representation that is currently
+	 * displayed in the combo.
 	 * 
 	 * @return String date
 	 */
@@ -721,6 +762,13 @@ public class CalendarCombo extends Composite {
 	// shows the calendar area
 	private synchronized void showCalendar() {
 		try {
+			// this is part of the OSX issue where the popup for a combo is shown even if there is only 1 item to select (dumb).
+			// as we remove the date just prior to the popup opening, here, we add it again, so it doesn't look like anything happened to the user
+			// when in fact we removed and added something in the blink of an eye, just so that the combo would not open its own popup. This seems to work
+			// without a hitch -- fix: June 21, 2008
+			if (OS_CARBON && isReadOnly && mCarbonPrePopupDate != null) 
+				setDate(mCarbonPrePopupDate);
+			
 			// bug fix: Apr 18, 2008 - if we do various operations prior to
 			// actually fetching any newly entered text into the
 			// (non-read only) combo, we'll lose that edit, so fetch the combo
@@ -797,6 +845,7 @@ public class CalendarCombo extends Composite {
 			// if we do have a date set, load it as an object we can actually
 			// use.
 			Calendar pre = null;
+
 			if (comboText != null && comboText.length() > 1) {
 				try {
 					Date dat = DateHelper.getDate(comboText, mSettings
@@ -813,6 +862,7 @@ public class CalendarCombo extends Composite {
 					else
 						mCombo.setText(mSettings.getNoDateSetText());
 				}
+
 			} else {
 				if (mDependingCombo != null) {
 					// we need to pull the date from the depending combo's text
@@ -850,6 +900,9 @@ public class CalendarCombo extends Composite {
 					mAllowTextEntry = true;
 					mCombo.removeAll();
 
+					if (OS_CARBON)
+						mCarbonPrePopupDate = date;
+
 					mStartDate = date;
 					if (date == null) {
 						setText(" ");
@@ -865,6 +918,10 @@ public class CalendarCombo extends Composite {
 					mCombo.removeAll();
 
 					mStartDate = start;
+
+					if (OS_CARBON)
+						mCarbonPrePopupDate = start;
+
 					mEndDate = end;
 					if (start == null) {
 						setText(" ");
@@ -893,8 +950,7 @@ public class CalendarCombo extends Composite {
 
 			Point loc = null;
 			if (mSettings.showCalendarInRightCorner())
-				loc = new Point(calLoc.x + size.x - mCalendarShell.getSize().x,
-						calLoc.y + size.y);
+				loc = new Point(calLoc.x + size.x - mCalendarShell.getSize().x, calLoc.y + size.y);
 			else
 				loc = new Point(calLoc.x, calLoc.y + size.y);
 
@@ -971,7 +1027,8 @@ public class CalendarCombo extends Composite {
 	/**
 	 * Adds a modification listener to the combo box.
 	 * 
-	 * @param ml ModifyListener
+	 * @param ml
+	 *            ModifyListener
 	 */
 	public void addModifyListener(ModifyListener ml) {
 		checkWidget();
@@ -981,7 +1038,8 @@ public class CalendarCombo extends Composite {
 	/**
 	 * Removes a modification listener from the combo box.
 	 * 
-	 * @param ml ModifyListener
+	 * @param ml
+	 *            ModifyListener
 	 */
 	public void removeModifyListener(ModifyListener ml) {
 		checkWidget();
