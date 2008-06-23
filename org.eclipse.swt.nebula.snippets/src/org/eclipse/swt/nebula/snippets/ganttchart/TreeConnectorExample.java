@@ -93,13 +93,13 @@ public class TreeConnectorExample {
 		// but as that control needs the chart to operate, we set it here (this is a must or you won't see a thing!)
 		left.setGanttChart(chart);
 
-		// we set the special layout on it that will help put the tree exactly where the GANTT header ends
+		// create the tree. As it goes onto our special composite that will align it, we don't have to do any special settings on it
 		final Tree tree = new Tree(left, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
 		tree.setHeaderVisible(true);
 		tree.setLinesVisible(true);
 
 		// normally a tree item height on XP is 16 pixels. This is rather tight for a GANTT chart as it leaves little space for connecting lines etc.
-		// even 18 is tight, but for this example it's fine. As we want some air, we force each item height to be 18 pixels.
+		// As we want some air, we force each item height to be 24 pixels.
 		tree.addListener(SWT.MeasureItem, new Listener() {
 			public void handleEvent(Event event) {
 				event.height = oneRowHeight;
@@ -124,7 +124,7 @@ public class TreeConnectorExample {
 		GanttEvent scopeEvent = new GanttEvent(chart, "Scope");
 		scopeEvent.setVerticalEventAlignment(SWT.CENTER);
 
-		// create 20 events, dates don't matter
+		// create 20 events, and 20 tree items that go under "root", dates don't really matter as we're an example
 		for (int i = 1; i < 21; i++) {
 			Calendar start = Calendar.getInstance();
 			Calendar end = Calendar.getInstance();
@@ -146,6 +146,7 @@ public class TreeConnectorExample {
 		root.setData(scopeEvent);
 		root.setExpanded(true);
 
+		// sashform sizes
 		sf.setWeights(new int[] { 30, 70 });
 
 		// when the tree scrolls, we want to set the top visible item in the gantt chart to the top most item in the tree
