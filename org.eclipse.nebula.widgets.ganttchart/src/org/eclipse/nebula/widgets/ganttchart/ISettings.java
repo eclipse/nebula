@@ -894,7 +894,7 @@ public interface ISettings {
 	public boolean lockHeaderOnVerticalScroll();
 	
 	/**
-	 * Whether to show the default set of menu items on the right click menus. If false, the menu will be blank allowing you to set all items from scratch.
+	 * Whether to show the default set of menu items on the right click menus of events. If false, the menu will be blank allowing you to set all items from scratch.
 	 * 
 	 * @return true to show default menu items along with custom ones on right click. Default is true.
 	 * @see #showMenuItemsOnRightClick()
@@ -902,7 +902,7 @@ public interface ISettings {
 	 * @see #showDeleteMenuOption()
 	 * @see GanttEvent#getMenu()
 	 */
-	public boolean showDefaultMenuItemsOnRightClick();
+	public boolean showDefaultMenuItemsOnEventRightClick();
 	
 	/**
 	 * Whether scopes can show a right click menu or not. By default scopes are non-active objects that simply draw according to their children. By allowing a menu

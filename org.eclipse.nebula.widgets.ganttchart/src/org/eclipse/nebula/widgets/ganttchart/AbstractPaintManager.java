@@ -548,6 +548,12 @@ public abstract class AbstractPaintManager implements IPaintManager {
 		gc.setLineStyle(SWT.LINE_DASH);
 		gc.setLineWidth(1);
 		if (start != -1 && end != -1) {
+			// no need to draw beyond what we can see, and it's extremely slow to draw dots anyway, so we need this to be as fast as can be
+			if (start < 0)
+				start = -1;
+			if (end > bounds.width)
+				end = bounds.width + 1;
+			
 			gc.drawRectangle(start, topY, end-start+dayWidth, maxY+4);
 		}
  		else {

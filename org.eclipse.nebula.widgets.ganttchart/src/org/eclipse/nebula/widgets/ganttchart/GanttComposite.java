@@ -971,7 +971,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			}
 			
 			// if that's it, show the menu and exit
-			if (!mSettings.showDefaultMenuItemsOnRightClick()) {
+			if (!mSettings.showDefaultMenuItemsOnEventRightClick()) {
 				mRightClickMenu.setLocation(x, y);
 				mRightClickMenu.setVisible(true);
 				return;
@@ -3567,13 +3567,24 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 				return VISIBILITY_NOT_VISIBLE;
 		}
 
+		// if an event has movement constraints we draw a marker around it to display this fact, thus, 
+		// if that marker expands beyond the size of the event, we need to assume that the event visibility is actually
+		// the size between the constraints and not just the event itself. If we were not to do this calculation
+		// the boundary box would not be drawn when the event was not in visible range, which would be very odd to the user
+		// as it would suddenly appear when the event became visible, but they could not view how far it expanded without zooming out.
+		if (event.hasMovementConstraints()) {
+			if (event.getNoMoveBeforeDate() != null && event.getNoMoveBeforeDate().before(sCal))
+				sCal = event.getNoMoveBeforeDate();
+			if (event.getNoMoveAfterDate() != null && event.getNoMoveAfterDate().after(eCal))
+				eCal = event.getNoMoveAfterDate();
+		}
+		
 		// if we don't have width, check using dates, this happens on the
 		// initial draw and when events are outside of the picture
 		if (event.getWidthWithText() == 0) {
 			Date eStart = sCal.getTime();
 			Date eEnd = eCal.getTime();
-
-			Calendar temp = Calendar.getInstance(mDefaultLocale);
+					Calendar temp = Calendar.getInstance(mDefaultLocale);
 			temp.setTime(mCalendar.getTime());
 			
 			long calStart = temp.getTimeInMillis();
@@ -3595,20 +3606,13 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 				return VISIBILITY_VISIBLE;
 			
 		} else {
-
-			// int xEnd = getXForDate(eCal);
-
-			// int eWidth = eWidthX-xStart;//event.getWidth() + event.getWidthWithText();
+		
 			int xStart = getStartingXfor(sCal);
 			int xEnd = getXForDate(eCal);
 
 			int buffer = mSettings.getArrowHeadEventSpacer();
 			xEnd += buffer;
 			xStart -= buffer;
-
-			// if (mCurrentView == ISettings.VIEW_DAY)
-			// System.err.println(event + " = " + xStart + " " + xEnd);
-			// System.err.println("Not visible " + event + " " + event.getWidthWithText() + " " + bounds + " " + xEnd + " " + xStart);
 
 			if (xEnd < 0)
 				return VISIBILITY_OOB_LEFT;

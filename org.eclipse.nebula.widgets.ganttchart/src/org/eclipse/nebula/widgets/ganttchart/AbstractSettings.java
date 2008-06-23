@@ -434,8 +434,8 @@ abstract class AbstractSettings implements ISettings {
 	public boolean lockHeaderOnVerticalScroll() {
 		return false;
 	}
-
-	public boolean showDefaultMenuItemsOnRightClick() {
+	
+	public boolean showDefaultMenuItemsOnEventRightClick() {
 		return true;
 	}
 
