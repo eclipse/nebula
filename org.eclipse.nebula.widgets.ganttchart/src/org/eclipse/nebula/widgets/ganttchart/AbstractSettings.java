@@ -435,5 +435,13 @@ abstract class AbstractSettings implements ISettings {
 		return false;
 	}
 
+	public boolean showDefaultMenuItemsOnRightClick() {
+		return true;
+	}
+
+	public boolean allowScopeMenu() {
+		return false;
+	}
+
 	
 }

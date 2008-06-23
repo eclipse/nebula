@@ -22,17 +22,39 @@ public class AdvancedTooltip {
 	private String mHelpText;
 	private int mExtraTextSpacing;
 	
+	/**
+	 * Creates a new Advanced Tooltip.
+	 * 
+	 * @param title Header
+	 * @param content Content
+	 */
 	public AdvancedTooltip(String title, String content) {
 		mTitle = title;
 		mContent = content;
 	}
 	
+	/**
+	 * Creates a new Advanced Tooltip.
+	 * 
+	 * @param title Header
+	 * @param content Content
+	 * @param image Image
+	 */
 	public AdvancedTooltip(String title, String content, Image image) {
 		mTitle = title;
 		mContent = content;
 		mImage = image;
 	}
 
+	/**
+	 * Creates a new Advanced Tooltip with help image and text.
+	 * 
+	 * @param title Header
+	 * @param content Content
+	 * @param image Image
+	 * @param helpImage Help Image
+	 * @param helpText Help Text
+	 */
 	public AdvancedTooltip(String title, String content, Image image, Image helpImage, String helpText) {
 		mTitle = title;
 		mContent = content;

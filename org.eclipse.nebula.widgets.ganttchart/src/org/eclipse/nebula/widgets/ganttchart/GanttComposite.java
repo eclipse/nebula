@@ -500,6 +500,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			opacity = 0;
 		
 		mLayerOpacityMap.put(new Integer(layer), new Integer(opacity));
+		redrawEventsArea();
 	}
 	
 	/**
@@ -753,7 +754,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	// others, so don't move them around unless you want a different effect
 	private void drawChartOntoGC(GC gc) {
 		// long time1 = System.currentTimeMillis();
-
+//System.err.println(gc.getClipping());
 		boolean drawSections = (mGanttSections.size() > 0);
 
 		Rectangle bounds = super.getClientArea();
@@ -968,6 +969,13 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 					});
 				}
 			}
+			
+			// if that's it, show the menu and exit
+			if (!mSettings.showDefaultMenuItemsOnRightClick()) {
+				mRightClickMenu.setLocation(x, y);
+				mRightClickMenu.setVisible(true);
+				return;
+			}				
 
 			if (items != null && items.length > 0)
 				new MenuItem(mRightClickMenu, SWT.SEPARATOR);
@@ -1409,6 +1417,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 		gc.setForeground(mColorManager.getTopHorizontalLinesColor());
 		// horizontal
+		if (mSettings.drawHeader())
+			gc.drawLine(x, bounds.y, xMax, bounds.y);
+		
 		gc.drawLine(x, lineLoc, xMax, lineLoc);
 
 	}
@@ -3512,6 +3523,10 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	// redraws only the area where the events are, only call when dates aren't changing
 	private void redrawEventsArea() {
 		Rectangle rect = getEventBounds();
+		
+		if (rect == null)
+			return;
+		
 		redraw(rect.x, rect.y, rect.width, rect.height, false);
 	}
 
@@ -3775,12 +3790,19 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		// deal with selection
 		for (int i = 0; i < mGanttEvents.size(); i++) {
 			GanttEvent event = (GanttEvent) mGanttEvents.get(i);
-			if (event.isScope())
-				continue;
+			
+			if (event.isScope() && !mSettings.allowScopeMenu()) 
+				continue;						
 
 			if (isInside(me.x, me.y, new Rectangle(event.getX(), event.getY(), event.getWidth(), event.getHeight()))) {
 				GC gc = new GC(this);
 
+				// if it's a scope and menu is allowed, we can finish right here
+				if (me.button == 3 && event.isScope()) {
+					showMenu(ctrlPoint.x, ctrlPoint.y, event, me);
+					return;
+				}
+				
 				// fire selection changed
 				if ((mSelectedEvent != null && !mSelectedEvent.equals(event)) || mSelectedEvent == null) {
 					ArrayList allSelectedEvents = new ArrayList();
@@ -3792,7 +3814,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 				mSelectedEvent = event;
 
-				if (!mSelectedEvent.isCheckpoint() && !mSelectedEvent.isImage() && mSettings.drawSelectionMarkerAroundSelectedEvent()) {
+				if (!mSelectedEvent.isCheckpoint() && !mSelectedEvent.isScope() && !mSelectedEvent.isImage() && mSettings.drawSelectionMarkerAroundSelectedEvent()) {
 					gc.setForeground(ColorCache.getWhite());
 					drawSelectionAroundEvent(gc, event, event.getX(), event.getY(), event.getWidth(), mBounds);
 				}
@@ -3809,7 +3831,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 				return;
 			}
 		}
-
+		
 		mSelectedEvent = null;
 
 		if (mSettings.showOnlyDependenciesForSelectedItems()) {
@@ -4821,6 +4843,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	}
 
 	private Rectangle getEventBounds() {
+		if (mBounds == null)
+			return null;
+		
 		int yStart = getHeaderHeight() == 0 ? getHeaderHeight() : (getHeaderHeight() + 1);
 		int yEnd = yStart;
 
