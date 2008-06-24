@@ -487,7 +487,9 @@ public class CalendarCombo extends Composite {
 
 		// mac's editable combos behave differently
 		if (OS_CARBON) {
-			mCombo.addVerifyListener(new VerifyListener() {
+			// this code seems obsolete as of June 24th 2008, Allow text input on Mac, we parse it anyways now, which we didn't do prior
+			// leaving code in for a while to remind myself
+			/*mCombo.addVerifyListener(new VerifyListener() {
 				public void verifyText(VerifyEvent event) {
 					if (isCalendarVisible() || mAllowTextEntry) {
 						;
@@ -495,7 +497,7 @@ public class CalendarCombo extends Composite {
 						event.doit = false;
 					}
 				}
-			});
+			});*/
 
 			// this is the most messed up thing ever, but it works. Basically,
 			// OSX will pop up a combo of 1 item to let you pick it
@@ -641,10 +643,6 @@ public class CalendarCombo extends Composite {
 		if (OS_CARBON) {
 			if (mCarbonPrePopupDate != null)
 				setDate(mCarbonPrePopupDate);
-			else {
-				mCombo.removeAll();
-				mCombo.setText(" ");
-			}
 		}
 	}
 
