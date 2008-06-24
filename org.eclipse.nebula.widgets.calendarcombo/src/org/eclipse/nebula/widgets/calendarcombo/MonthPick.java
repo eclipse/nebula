@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    emil.crumhorn@gmail.com - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.nebula.widgets.calendarcombo;
 
@@ -21,7 +21,6 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Font;
@@ -36,7 +35,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
-class MonthPick extends Canvas implements MouseListener, MouseMoveListener {
+class MonthPick extends Canvas implements MouseListener {
 	// months to show in the popup
 	private int mMonthsToShow = 7;
 
@@ -71,29 +70,103 @@ class MonthPick extends Canvas implements MouseListener, MouseMoveListener {
 	private CalendarComposite mCalendarComposite = null;
 
 	private Calendar mSelectedMonth = null;
-	
+
 	private Locale mLocale;
-	
+
 	private ISettings mSettings;
 
 	private Listener mDisposeListener;
+
+	private int sleepTime = 200;
 	
-	public MonthPick(Composite parent, int style, Calendar start, CalendarComposite cc, ISettings settings, Locale locale) {
-		super(parent, style | SWT.NO_BACKGROUND | SWT.NO_REDRAW_RESIZE | SWT.ON_TOP);
+	private Listener mCarbonMouseMoveListener;
+	
+	private Listener mCarbonMouseUpListener;
+	
+	public MonthPick(Composite parent, int style, Calendar start,
+			CalendarComposite cc, ISettings settings, Locale locale) {
+		super(parent, style | SWT.NO_BACKGROUND | SWT.NO_REDRAW_RESIZE
+				| SWT.ON_TOP);
 		mStart = start;
 		mCalendarComposite = cc;
 		mLocale = locale;
 		mSettings = settings;
+
+		if (CalendarCombo.OS_CARBON)
+			setSize(101, 112);
+		else
+			setSize(101, 106);
 		
-		setSize(101, 106);
 		setCapture(true);
 
 		addMouseListener(this);
-		addMouseMoveListener(this);
+		
+		// oh carbon, why art thou so different!
+		// basically we need to do everything as far as listeners go differently on Carbon
+		if (CalendarCombo.OS_CARBON) {
+	
+			mCarbonMouseMoveListener = new Listener() {
+				public void handleEvent(Event event) {
+					// widget mouse movement reporting is really off on Carbon, check if we're actually reporting a mouse move on us
+					if (Display.getDefault().getCursorControl() == MonthPick.this) {
+						mouseMove(event.x, event.y);
+					}
+				}
+			};
+			
+			mCarbonMouseUpListener = new Listener() {
+				public void handleEvent(Event event) {
+					mBelowRun = false;
+					mAboveRun = false;
+				
+					mouseUp(null);		
+				}
+			};
+			
+			Display.getDefault().addFilter(SWT.MouseMove, mCarbonMouseMoveListener);
+			Display.getDefault().addFilter(SWT.MouseUp, mCarbonMouseUpListener);
+
+			addListener(SWT.MouseExit, new Listener() {
+				public void handleEvent(Event event) {
+					// if mouse exited east or west, ignore
+					if (event.x < 0 || event.x > getSize().x)
+						return;
+					
+					// mous exit top or bottom, run thread
+					if (event.y < 0) {
+						mBelowRun = false;
+						runAbove();
+					}
+					else {
+						mAboveRun = false;
+						runBelow();
+					}
+				}
+			});
+
+			addListener(SWT.MouseEnter, new Listener() {
+				public void handleEvent(Event event) {
+					// halt threads
+					mAboveRun = false;
+					mBelowRun = false;
+				}
+			});
+		} else {
+			addListener(SWT.MouseMove, new Listener() {
+				public void handleEvent(Event event) {
+					mouseMove(event.x, event.y);
+				}
+			});
+		}
 
 		addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				setCapture(false);
+				
+				if (CalendarCombo.OS_CARBON) {
+					Display.getDefault().removeFilter(SWT.MouseMove, mCarbonMouseMoveListener);
+					Display.getDefault().removeFilter(SWT.MouseUp, mCarbonMouseUpListener);
+				}
 			}
 		});
 
@@ -102,25 +175,26 @@ class MonthPick extends Canvas implements MouseListener, MouseMoveListener {
 				paint(event);
 			}
 		});
-		
 
-		// on carbon the shell doesn't die if it's stuck open and the mouse is clicked out of bounds, so we kill it on mouse down (month has time to be set prior)
+		// on carbon the shell doesn't die if it's stuck open and the mouse is
+		// clicked out of bounds, so we kill it on mouse down (month has time to
+		// be set prior)
 		if (CalendarCombo.OS_CARBON) {
 			mDisposeListener = new Listener() {
 				public void handleEvent(Event e) {
 					Display.getDefault().removeFilter(SWT.MouseDown, mDisposeListener);
-					dispose();	
+					dispose();
 				}
 			};
-			
+
 			Display.getDefault().addFilter(SWT.MouseDown, mDisposeListener);
 		}
-		
+
 	}
 
 	private void paint(PaintEvent event) {
 		GC gc = event.gc;
-		
+
 		Font used = null;
 		if (CalendarCombo.OS_CARBON) {
 			used = mSettings.getCarbonDrawFont();
@@ -137,7 +211,8 @@ class MonthPick extends Canvas implements MouseListener, MouseMoveListener {
 		// that way there is 0 flicker, which is the desired effect.
 		if (mCreated && mEnableDoubleBuffering) {
 			try {
-				Image buffer = new Image(Display.getDefault(), super.getBounds());
+				Image buffer = new Image(Display.getDefault(), super
+						.getBounds());
 				GC gc2 = new GC(buffer);
 				drawOntoGC(gc2);
 
@@ -145,26 +220,25 @@ class MonthPick extends Canvas implements MouseListener, MouseMoveListener {
 				// just drawImage(buffer, w, h) didn't work, so we do the whole
 				// source transfer call
 				Rectangle b = getBounds();
-				gc.drawImage(buffer, 0, 0, b.width, b.height, 0, 0, b.width, b.height);
+				gc.drawImage(buffer, 0, 0, b.width, b.height, 0, 0, b.width,
+						b.height);
 
 				// dispose the buffer, very important or we'll run out of
 				// address space for buffered images
 				buffer.dispose();
 				gc2.dispose();
-			}
-			catch (IllegalArgumentException iea) {
+			} catch (IllegalArgumentException iea) {
 				// seems to come here for some reason when we switch phases
 				// while the gantt chart is being viewed, I'm not sure why
 				// but no time to figure it out for the demo.. so instead of
 				// buffering, just draw it onto the GC
 				drawOntoGC(gc);
 			}
-		}
-		else {
+		} else {
 			drawOntoGC(gc);
 			mCreated = true;
 		}
-		
+
 		if (used != null)
 			used.dispose();
 	}
@@ -180,13 +254,15 @@ class MonthPick extends Canvas implements MouseListener, MouseMoveListener {
 	private void drawBG(GC gc) {
 		gc.setForeground(ColorCache.getBlack());
 		gc.setBackground(ColorCache.getWhite());
-		gc.fillRectangle(mBounds.x - 50, mBounds.y, mBounds.width + 50, mBounds.height);
+		gc.fillRectangle(mBounds.x - 50, mBounds.y, mBounds.width + 50,
+				mBounds.height);
 	}
 
 	private void drawBorder(GC gc) {
 		Rectangle bounds = getClientArea();
 		gc.setForeground(ColorCache.getBlack());
-		gc.drawRectangle(bounds.x, bounds.y, bounds.width - 1, bounds.height - 1);
+		gc.drawRectangle(bounds.x, bounds.y, bounds.width - 1,
+				bounds.height - 1);
 	}
 
 	private void drawDates(GC gc) {
@@ -205,8 +281,7 @@ class MonthPick extends Canvas implements MouseListener, MouseMoveListener {
 			gc.setFont(f);
 			// MUST DISPOSE FONT or we'll run out of handles (win XP)
 			f.dispose();
-		}
-		else
+		} else
 			gc.setFont(mSettings.getCarbonDrawFont());
 
 		gc.setForeground(ColorCache.getBlack());
@@ -237,8 +312,7 @@ class MonthPick extends Canvas implements MouseListener, MouseMoveListener {
 					// lastHoverRect = hoverEntry.getRect();
 					mSelectedMonth = mHoverEntry.getCalendar();
 				}
-			}
-			else {
+			} else {
 				// draw today
 				if (i == 3) {
 					gc.setBackground(ColorCache.getBlack());
@@ -275,13 +349,14 @@ class MonthPick extends Canvas implements MouseListener, MouseMoveListener {
 		if (mSelectedMonth != null)
 			mCalendarComposite.setDate(mSelectedMonth);
 
-		dispose();
+		this.dispose();
 	}
 
-	public void mouseMove(final MouseEvent me) {
+	public void mouseMove(final int x, final int y) {
+
 		for (int i = 0; i < mMonthEntries.size(); i++) {
 			MonthEntry mEntry = (MonthEntry) mMonthEntries.get(i);
-			if (isInside(me.x, me.y, mEntry.getRect())) {
+			if (isInside(x, y, mEntry.getRect())) {
 				mHoverEntry = mEntry;
 				mAboveRun = false;
 				mBelowRun = false;
@@ -291,74 +366,80 @@ class MonthPick extends Canvas implements MouseListener, MouseMoveListener {
 		}
 		mHoverEntry = null;
 
-		if (me.y < getLocation().y) {
-			if (mAboveThread != null && mAboveThread.isAlive() && mAboveRun) {
-				return;
+		if (!CalendarCombo.OS_CARBON) {
+			if (y < getLocation().y) {
+				runAbove();
+			} else {
+				runBelow();
 			}
-
-			mBelowRun = false;
-
-			mAboveThread = new Thread() {
-				public void run() {
-					while (mAboveRun) {
-						try {
-							sleep(100);
-						}
-						catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-						Display.getDefault().syncExec(new Runnable() {
-							public void run() {
-								if (isDisposed())
-									mAboveThread = null;
-								else
-									scrollOneMonth(true);
-							}
-						});
-					}
-				}
-			};
-			mAboveRun = true;
-			mAboveThread.start();
 		}
-		else {
-			if (mBelowThread != null && mBelowThread.isAlive() && mBelowRun) {
-				return;
+	}
+
+	private void runAbove() {
+		if (mAboveThread != null && mAboveThread.isAlive() && mAboveRun) {
+			return;
+		}
+
+		mBelowRun = false;
+
+		mAboveThread = new Thread() {
+			public void run() {
+				while (mAboveRun) {
+					try {
+						sleep(sleepTime);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					Display.getDefault().asyncExec(new Runnable() {
+						public void run() {
+							if (isDisposed())
+								mAboveThread = null;
+							else
+								scrollOneMonth(true);
+						}
+					});
+				}
 			}
+		};
+		mAboveRun = true;
+		mAboveThread.start();
+	}
 
-			mBelowRun = false;
-
-			mBelowThread = new Thread() {
-				public void run() {
-					while (mBelowRun) {
-						try {
-							sleep(100);
-						}
-						catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-						Display.getDefault().syncExec(new Runnable() {
-							public void run() {
-								if (isDisposed())
-									mBelowThread = null;
-								else
-									scrollOneMonth(false);
-							}
-						});
-					}
-				}
-			};
-			mBelowRun = true;
-			mBelowThread.start();
+	private void runBelow() {
+		if (mBelowThread != null && mBelowThread.isAlive() && mBelowRun) {
+			return;
 		}
+
+		mBelowRun = false;
+
+		mBelowThread = new Thread() {
+			public void run() {
+				while (mBelowRun) {
+					try {
+						sleep(sleepTime);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					Display.getDefault().asyncExec(new Runnable() {
+						public void run() {
+							if (isDisposed())
+								mBelowThread = null;
+							else
+								scrollOneMonth(false);
+						}
+					});
+				}
+			}
+		};
+		mBelowRun = true;
+		mBelowThread.start();
 	}
 
 	private void scrollOneMonth(boolean up) {
 		if (up) {
 			mStart.add(Calendar.MONTH, -1);
 			redraw();
-		}
-		else {
+		} else {
 			mStart.add(Calendar.MONTH, 1);
 			redraw();
 		}
@@ -369,7 +450,8 @@ class MonthPick extends Canvas implements MouseListener, MouseMoveListener {
 			return false;
 		}
 
-		if (x >= rect.x && y >= rect.y && x <= (rect.x + rect.width) && y <= (rect.y + rect.height)) {
+		if (x >= rect.x && y >= rect.y && x <= (rect.x + rect.width)
+				&& y <= (rect.y + rect.height)) {
 			return true;
 		}
 
