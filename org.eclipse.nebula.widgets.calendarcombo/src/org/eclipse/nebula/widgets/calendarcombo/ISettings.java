@@ -277,6 +277,13 @@ public interface ISettings {
 	public Font getCarbonDrawFont();
 	
 	/**
+	 * Returns the font used to draw the month selector text on Windows. It is not advised to change this setting.
+	 * 
+	 * @return Font to be used in the month popup on Windows.
+	 */
+	public Font getWindowsMonthPopupDrawFont();
+	
+	/**
 	 * Returns a list of date formats that can be parsed into a Date. For example, if this list contains "mmddYY" and the user
 	 * types in the date 030508 the date will be parsed into the date and displayed and formatted according to the getDateFormat() value automatically. 
 	 * The order of this list is relevant as the first matched date that "works" will be used as the date.

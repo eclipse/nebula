@@ -26,8 +26,6 @@ import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
-import org.eclipse.swt.events.VerifyEvent;
-import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
@@ -482,6 +480,12 @@ public class CalendarCombo extends Composite {
 		mCombo.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent event) {
 				Display.getDefault().removeFilter(SWT.FocusIn, mFilterListenerFocusIn);
+				
+				if (mSettings.getCarbonDrawFont() != null)
+					mSettings.getCarbonDrawFont().dispose();
+				
+				if (mSettings.getWindowsMonthPopupDrawFont() != null)
+					mSettings.getWindowsMonthPopupDrawFont().dispose();
 			}
 		});
 

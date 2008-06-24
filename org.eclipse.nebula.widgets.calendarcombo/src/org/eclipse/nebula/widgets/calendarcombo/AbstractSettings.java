@@ -7,11 +7,10 @@
  *
  * Contributors:
  *    emil.crumhorn@gmail.com - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.nebula.widgets.calendarcombo;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -20,6 +19,9 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Display;
 
 public abstract class AbstractSettings implements ISettings {
+	private Font	mCarbonFont			= null;
+	private Font	mWindowsPopupFont	= null;
+
 	public int getArrowLeftSpacing() {
 		return 6;
 	}
@@ -41,9 +43,9 @@ public abstract class AbstractSettings implements ISettings {
 	}
 
 	public int getCalendarWidth() {
-		return 154; //154?
+		return 154; // 154?
 	}
-	
+
 	public int getCalendarWidthMacintosh() {
 		return 154;
 	}
@@ -107,7 +109,7 @@ public abstract class AbstractSettings implements ISettings {
 	public int getButtonWidth() {
 		return 45;
 	}
-	
+
 	public int getButtonWidthCarbon() {
 		return 65;
 	}
@@ -149,11 +151,21 @@ public abstract class AbstractSettings implements ISettings {
 	}
 
 	public Font getCarbonDrawFont() {
-		return new Font(Display.getDefault(), "Arial", 12, SWT.NORMAL);
+		if (mCarbonFont == null || mCarbonFont.isDisposed())
+			mCarbonFont = new Font(Display.getDefault(), "Arial", 12, SWT.NORMAL);
+
+		return mCarbonFont;
+	}
+
+	public Font getWindowsMonthPopupDrawFont() {
+		if (mWindowsPopupFont == null || mWindowsPopupFont.isDisposed())
+			mWindowsPopupFont = new Font(Display.getDefault(), "Arial", 8, SWT.NORMAL);
+
+		return mWindowsPopupFont;
 	}
 
 	public List getAdditionalDateFormats() {
 		return null;
 	}
-	
+
 }

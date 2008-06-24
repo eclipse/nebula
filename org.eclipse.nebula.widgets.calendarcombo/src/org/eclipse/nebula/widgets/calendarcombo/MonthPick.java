@@ -24,7 +24,6 @@ import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -92,19 +91,15 @@ class MonthPick extends Canvas implements MouseListener {
 		mLocale = locale;
 		mSettings = settings;
 
-		if (CalendarCombo.OS_CARBON)
-			setSize(101, 112);
-		else
-			setSize(101, 106);
+		setSize(101, 112);
 		
 		setCapture(true);
 
 		addMouseListener(this);
 		
 		// oh carbon, why art thou so different!
-		// basically we need to do everything as far as listeners go differently on Carbon
+		// basically we need to do everything as far as listeners go on Carbon, because everything is fired differently
 		if (CalendarCombo.OS_CARBON) {
-	
 			mCarbonMouseMoveListener = new Listener() {
 				public void handleEvent(Event event) {
 					// widget mouse movement reporting is really off on Carbon, check if we're actually reporting a mouse move on us
@@ -195,14 +190,18 @@ class MonthPick extends Canvas implements MouseListener {
 	private void paint(PaintEvent event) {
 		GC gc = event.gc;
 
+		// fonts are disposed when calendar is disposed
 		Font used = null;
 		if (CalendarCombo.OS_CARBON) {
 			used = mSettings.getCarbonDrawFont();
 			if (used != null)
 				gc.setFont(used);
 		}
-
-		// this.globalGC = gc;
+		else if (CalendarCombo.OS_WINDOWS) {
+			used = mSettings.getWindowsMonthPopupDrawFont();
+			if (used != null)
+				gc.setFont(used);
+		}			
 
 		// double buffering. this could be triple buffering if the platform does
 		// it automatically, windows XP does not seem to however
@@ -238,9 +237,8 @@ class MonthPick extends Canvas implements MouseListener {
 			drawOntoGC(gc);
 			mCreated = true;
 		}
-
-		if (used != null)
-			used.dispose();
+		
+		// don't dispose font, they are disposed when the CalendarCombo are disposed
 	}
 
 	private void drawOntoGC(GC gc) {
@@ -275,12 +273,7 @@ class MonthPick extends Canvas implements MouseListener {
 		temp.add(Calendar.MONTH, -3);
 
 		if (!CalendarCombo.OS_CARBON) {
-			FontData[] old = getFont().getFontData();
-			old[0].setHeight(8);
-			Font f = new Font(Display.getDefault(), old);
-			gc.setFont(f);
-			// MUST DISPOSE FONT or we'll run out of handles (win XP)
-			f.dispose();
+			gc.setFont(mSettings.getWindowsMonthPopupDrawFont());
 		} else
 			gc.setFont(mSettings.getCarbonDrawFont());
 
