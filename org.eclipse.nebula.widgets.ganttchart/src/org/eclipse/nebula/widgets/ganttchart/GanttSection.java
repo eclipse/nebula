@@ -49,6 +49,10 @@ public class GanttSection implements IFillBackgroundColors {
 	private Color					mSundayBackgroundColorBottom;
 	private Color					mWeekdayBackgroundColorTop;
 	private Color					mWeekdayBackgroundColorBottom;
+	private Color					mSelectedBackgroundColorTop;
+	private Color					mSelectedBackgroundColorBottom;
+	private Color					mSelectedBackgroundHeaderColorTop;
+	private Color					mSelectedBackgroundHeaderColorBottom;
 
 	// private items
 	private Point					mNameExtent;
@@ -192,6 +196,22 @@ public class GanttSection implements IFillBackgroundColors {
 		return mWeekdayBackgroundColorTop == null ? fillColorManager.getWeekdayBackgroundColorTop() : mWeekdayBackgroundColorTop;
 	}
 
+	public Color getSelectedDayColorBottom() {
+		return mSelectedBackgroundColorBottom == null ? fillColorManager.getSelectedDayColorBottom() : mSelectedBackgroundColorBottom;
+	}
+
+	public Color getSelectedDayColorTop() {
+		return mSelectedBackgroundColorTop == null ? fillColorManager.getSelectedDayColorTop() : mSelectedBackgroundColorTop;
+	}
+	
+	public Color getSelectedDayHeaderColorBottom() {
+		return mSelectedBackgroundHeaderColorBottom == null ? fillColorManager.getSelectedDayHeaderColorBottom() : mSelectedBackgroundHeaderColorBottom;
+	}
+
+	public Color getSelectedDayHeaderColorTop() {
+		return mSelectedBackgroundHeaderColorTop == null ? fillColorManager.getSelectedDayHeaderColorTop() : mSelectedBackgroundHeaderColorTop;
+	}
+
 	public void setSaturdayBackgroundColorTop(Color saturdayBackgroundColorTop) {
 		mSaturdayBackgroundColorTop = saturdayBackgroundColorTop;
 	}
@@ -214,6 +234,22 @@ public class GanttSection implements IFillBackgroundColors {
 
 	public void setWeekdayBackgroundColorBottom(Color weekdayBackgroundColorBottom) {
 		mWeekdayBackgroundColorBottom = weekdayBackgroundColorBottom;
+	}
+	
+	public void setSelectedBackgroundColorTop(Color selectedBackgroundColorTop) {
+		mSelectedBackgroundColorTop = selectedBackgroundColorTop;
+	}
+
+	public void setSelectedBackgroundColorBottom(Color selectedBackgroundColorBottom) {
+		mSelectedBackgroundColorBottom = selectedBackgroundColorBottom;
+	}
+
+	public void setSelectedBackgroundHeaderColorTop(Color selectedBackgroundHeaderColorTop) {
+		mSelectedBackgroundHeaderColorTop = selectedBackgroundHeaderColorTop;
+	}
+
+	public void setSelectedBackgroundHeaderColorBottom(Color selectedBackgroundHeaderColorBottom) {
+		mSelectedBackgroundHeaderColorBottom = selectedBackgroundHeaderColorBottom;
 	}
 
 	/**

@@ -12,14 +12,10 @@
 package org.eclipse.nebula.widgets.ganttchart;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ScrollBar;
-import org.eclipse.swt.widgets.Slider;
 
 /**
  * <b>GanttChart - SWT Widget - 2005-2008. Version 2.0 &copy; Emil Crumhorn - emil dot crumhorn at gmail dot com.</b>
@@ -64,7 +60,7 @@ import org.eclipse.swt.widgets.Slider;
  * <p>
  * <b>ISettings</b><br>
  * This interface is probably the most likely that you will be implementing on your own. Mainly this interface controls pixel values (widths, heights, multipliers) and various
- * boolean flags (if events can be moved, resized, etc). 
+ * boolean flags (if events can be moved, resized, etc).
  * <p>
  * <b>ILanguageManager</b><br>
  * Should you wish to use a different language than English, this is the interface to implement where you can override all the English text strings with whatever you wish.
@@ -73,72 +69,94 @@ import org.eclipse.swt.widgets.Slider;
  * @version 2.0
  * 
  */
-public class GanttChart extends Composite {
+public class GanttChart extends Composite implements IGanttFlags {
 
-	private GanttChartScrolledWrapper	mGc;
-	private Slider						mSlider;
-	private Composite					mSliderComp;
-	private int							mScrollPosition;
-	private int							mMinScrollRange	= 0;
-	private int							mMaxScrollRange	= 500;
-	private int							mCenter			= mMaxScrollRange / 2;
-	private SelectionListener			mSelectionListener;
+	private GanttComposite				mGanttComposite;
+	private int							mStyle;
 	private ISettings					mSettings;
 	private IColorManager				mColorManager;
 	private IPaintManager				mPaintManager;
 	private ILanguageManager			mLanguageManager;
-	private GanttComposite				mGanttComposite;
 
 	/**
-	 * Constructs a new Gantt chart widget.
+	 * Constructs a new GANTT chart widget.
 	 * 
 	 * @param parent Parent composite
 	 * @param style Widget style
+	 * @throws IllegalArgumentException <ul>
+	 *             <li>ERROR_NULL_ARGUMENT - if the parent is null</li>
+	 *             </ul>
+	 * @throws org.eclipse.swt.SWTException <ul>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the parent</li> <li>ERROR_INVALID_SUBCLASS - if this class is not an allowed
+	 *             subclass</li>
+	 *             </ul>
 	 */
 	public GanttChart(Composite parent, int style) {
-		super(parent, checkStyle(style));
-		init();
+		this(parent, style, null, null, null, null);
 	}
 
 	/**
-	 * Constructs a new Gantt chart widget with custom settings.
+	 * Constructs a new GANTT chart widget with custom settings {@link ISettings}.
 	 * 
 	 * @param parent Parent composite
 	 * @param style Widget style
-	 * @param settings ISettings implementation
+	 * @param settings ISettings implementation or null
+	 * @throws IllegalArgumentException <ul>
+	 *             <li>ERROR_NULL_ARGUMENT - if the parent is null</li>
+	 *             </ul>
+	 * @throws org.eclipse.swt.SWTException <ul>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the parent</li> <li>ERROR_INVALID_SUBCLASS - if this class is not an allowed
+	 *             subclass</li>
+	 *             </ul>
 	 */
 	public GanttChart(Composite parent, int style, ISettings settings) {
-		super(parent, checkStyle(style));
-		mSettings = settings;
-		init();
+		this(parent, style, settings, null, null, null);
 	}
 
 	/**
-	 * Constructs a new Gantt chart widget with custom settings and a custom color manager.
+	 * Constructs a new GANTT chart widget with custom settings and a custom color manager {@link IColorManager}.
 	 * 
 	 * @param parent Parent composite
 	 * @param style Widget style
-	 * @param settings ISettings implementation
+	 * @param settings ISettings implementation or null
 	 * @param colorManager IColorManager implementation
+	 * @throws IllegalArgumentException <ul>
+	 *             <li>ERROR_NULL_ARGUMENT - if the parent is null</li>
+	 *             </ul>
+	 * @throws org.eclipse.swt.SWTException <ul>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the parent</li> <li>ERROR_INVALID_SUBCLASS - if this class is not an allowed
+	 *             subclass</li>
+	 *             </ul>
 	 */
 	public GanttChart(Composite parent, int style, ISettings settings, IColorManager colorManager) {
-		super(parent, checkStyle(style));
-		mSettings = settings;
-		mColorManager = colorManager;
-		init();
+		this(parent, style, settings, colorManager, null, null);
 	}
 
 	/**
-	 * Constructs a new Gantt chart widget with custom settings, custom color manager and a custom paint manager.
+	 * Constructs a new GANTT chart widget with custom settings, custom color manager {@link IColorManager}, a custom paint manager {@link IPaintManager} and a custom language
+	 * manager {@link ILanguageManager}. If any of the managers is set to null the default manager using that implementation will be used.
 	 * 
 	 * @param parent Parent composite
 	 * @param style Widget style
-	 * @param settings ISettings implementation
-	 * @param colorManager IColorManager implementation
-	 * @param paintManager IPaintManager implementation
+	 * @param settings ISettings implementation or null
+	 * @param colorManager IColorManager implementation or null
+	 * @param paintManager IPaintManager implementation or null
+	 * @throws IllegalArgumentException <ul>
+	 *             <li>ERROR_NULL_ARGUMENT - if the parent is null</li>
+	 *             </ul>
+	 * @throws org.eclipse.swt.SWTException <ul>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the parent</li> <li>ERROR_INVALID_SUBCLASS - if this class is not an allowed
+	 *             subclass</li>
+	 *             </ul>
 	 */
 	public GanttChart(Composite parent, int style, ISettings settings, IColorManager colorManager, IPaintManager paintManager, ILanguageManager languageManager) {
-		super(parent, checkStyle(style));
+		super(parent, SWT.NONE);
+		
+		// if no scrollbar is set, set one
+		if ((style & H_SCROLL_FIXED_RANGE) == 0 && (style & H_SCROLL_NONE) == 0 && (style & H_SCROLL_INFINITE) == 0)
+			style = H_SCROLL_INFINITE;
+		
+		mStyle = style;
 		mSettings = settings;
 		mColorManager = colorManager;
 		mPaintManager = paintManager;
@@ -146,14 +164,8 @@ public class GanttChart extends Composite {
 		init();
 	}
 
-	private static int checkStyle(int style) {
-		int mask = SWT.BORDER | SWT.LEFT_TO_RIGHT | SWT.RIGHT_TO_LEFT | SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE | SWT.MULTI | SWT.NO_FOCUS | SWT.CHECK | SWT.VIRTUAL | SWT.READ_ONLY | SWT.RESIZE;
-		int newStyle = style & mask;
-		return newStyle;
-	}
-
 	/**
-	 * Adds a GanttGroup. A Gantt Group represents a collection of events that should all draw on the same line.
+	 * Adds a GanttGroup. A GanttGroup represents a collection of events that should all draw on the same line.
 	 * 
 	 * @param group GanttGroup to add
 	 */
@@ -194,61 +206,8 @@ public class GanttChart extends Composite {
 		if (mLanguageManager == null)
 			mLanguageManager = new DefaultLanguageManager();
 
-		mGc = new GanttChartScrolledWrapper(this, SWT.NONE, mSettings, mColorManager, mPaintManager, mLanguageManager);
-		mGanttComposite = mGc.getGanttComposite();
-		mGc.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-		mSliderComp = new Composite(this, SWT.NONE);
-		mSliderComp.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_END | GridData.FILL_HORIZONTAL));
-
-		// outer bottom composite layout
-		GridLayout gl2 = new GridLayout(2, false);
-		gl2.marginBottom = 0;
-		gl2.marginHeight = 0;
-		gl2.marginLeft = 0;
-		gl2.marginRight = 0;
-		gl2.marginTop = 0;
-		gl2.marginWidth = 0;
-		gl2.verticalSpacing = 0;
-		gl2.horizontalSpacing = 0;
-		mSliderComp.setLayout(gl2);
-
-		// inner bottom layout
-		GridLayout gl3 = new GridLayout(2, false);
-		gl3.marginBottom = 0;
-		gl3.marginHeight = 0;
-		gl3.marginLeft = 0;
-		gl3.marginRight = 0;
-		gl3.marginTop = 0;
-		gl3.marginWidth = 0;
-		gl3.verticalSpacing = 0;
-		gl3.horizontalSpacing = 0;
-
-		mSlider = new Slider(mSliderComp, SWT.NONE);
-		mSlider.setMaximum(mMaxScrollRange);
-		mSlider.setSelection(mCenter);
-		mSlider.setThumb(20);
-		mSlider.setIncrement(1);
-		mSlider.setPageIncrement(10);
-		mSelectionListener = new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-
-			public void widgetSelected(SelectionEvent e) {
-				scrolledHorizontally(e.detail);
-			}
-		};
-		mSlider.addSelectionListener(mSelectionListener);
-
-		Composite filler = new Composite(mSliderComp, SWT.NONE);
-		filler.setLayout(gl3);
-		Composite insideFiller = new Composite(filler, SWT.NONE);
-		Point scSize = mGc.getVerticalBar().getSize();
-		insideFiller.setLayoutData(new GridData(scSize.x, scSize.x));
-
-		mSlider.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
-		filler.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		mScrollPosition = mSlider.getSelection();
+		mGanttComposite = new GanttComposite(this, mStyle, mSettings, mColorManager, mPaintManager, mLanguageManager);
+		mGanttComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 
 	/**
@@ -321,54 +280,10 @@ public class GanttChart extends Composite {
 		mGanttComposite.reindex(ge, newIndex);
 	}
 
-	private synchronized void scrolledHorizontally(int detail) {
-		if (detail == 0) {
-			mScrollPosition = mCenter;
-			mSlider.setSelection(mCenter);
-			return;
-		}
-
-		int cur = mSlider.getSelection();
-		int thumb = mSlider.getThumb();
-
-		int diff = cur - mScrollPosition;
-		if (diff < 0) {
-			diff = mScrollPosition - cur;
-		}
-
-		// far right or far left
-		if (diff == 0 && (mScrollPosition == mMinScrollRange || (mScrollPosition + thumb) == mMaxScrollRange)) {
-			// far right
-			if (mScrollPosition > mMinScrollRange) {
-				mGc.scrollingRight(diff);
-			} else {
-				mGc.scrollingLeft(diff);
-			}
-		} else {
-			// dragged and dropped thumb, we don't want to move any dates
-			if (diff == 0) {
-				return;
-			}
-
-			if (cur > mScrollPosition) {
-				mGc.scrollingRight(diff);
-			} else {
-				mGc.scrollingLeft(diff);
-			}
-		}
-
-		mScrollPosition = mSlider.getSelection();
-		if (detail != 1) {
-			mScrollPosition = mCenter;
-			mSlider.setSelection(mCenter);
-		}
-
-	}
-
 	/**
 	 * Returns the currently set settings implementor.
 	 * 
-	 * @return Settings 
+	 * @return Settings
 	 */
 	public ISettings getSettings() {
 		return mSettings;
@@ -392,13 +307,21 @@ public class GanttChart extends Composite {
 		return mPaintManager;
 	}
 
-	public ScrollBar getHorizontalBar() {
-		return mGc.getHorizontalBar();
+	/**
+	 * Returns the currently set language manager.
+	 * 
+	 * @return Language manager
+	 */
+	public ILanguageManager getLanguageManger() {
+		return mLanguageManager;
 	}
 
 	public ScrollBar getVerticalBar() {
-		return mGc.getVerticalBar();
+		return mGanttComposite.getVerticalBar();
 	}
 
-	
+	public ScrollBar getHorizontalBar() {
+		return mGanttComposite.getHorizontalBar();
+	}
+
 }

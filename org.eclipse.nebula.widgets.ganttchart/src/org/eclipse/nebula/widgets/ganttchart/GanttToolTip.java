@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    emil.crumhorn@gmail.com - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.nebula.widgets.ganttchart;
 
@@ -24,112 +24,115 @@ import org.eclipse.swt.widgets.Shell;
 
 class GanttToolTip {
 
-    private static Shell shell;
-    private static String lastText;
-    private static Point lastLocation;
-    private static boolean SHOW_CODE_HOVER_BELOW = false;
+	private static Shell	shell;
+	private static String	lastText;
+	private static Point	lastLocation;
+	private static boolean	SHOW_CODE_HOVER_BELOW	= false;
 
-    public static void makeDialog(IColorManager colorManager, String name, String text, Point location) {
-        _makeDialog(colorManager, name, text, null, null, null, location);
-    }
+	public static void makeDialog(IColorManager colorManager, String name, String text, Point location) {
+		internalMakeDialog(colorManager, name, text, null, null, null, location);
+	}
 
-    public static void makeDialog(IColorManager colorManager, String name, String text, String text2, Point location) {
-        _makeDialog(colorManager, name, text, text2, null, null, location);
-    }
+	public static void makeDialog(IColorManager colorManager, String name, String text, String text2, Point location) {
+		internalMakeDialog(colorManager, name, text, text2, null, null, location);
+	}
 
-    public static void makeDialog(IColorManager colorManager, String name, String text, String text2, String text3, Point location) {
-        _makeDialog(colorManager, name, text, text2, text3, null, location);
-    }
+	public static void makeDialog(IColorManager colorManager, String name, String text, String text2, String text3, Point location) {
+		internalMakeDialog(colorManager, name, text, text2, text3, null, location);
+	}
 
-    public static void makeDialog(IColorManager colorManager, String name, String text, String text2, String text3, String text4, Point location) {
-        _makeDialog(colorManager, name, text, text2, text3, text4, location);
-    }
+	public static void makeDialog(IColorManager colorManager, String name, String text, String text2, String text3, String text4, Point location) {
+		internalMakeDialog(colorManager, name, text, text2, text3, text4, location);
+	}
 
-    private static void _makeDialog(IColorManager colorManager, String name, String text, String text2, String text3, String text4, Point location) {
-        if (shell != null && !shell.isDisposed()) {
+	private static void internalMakeDialog(IColorManager colorManager, String name, String text, String text2, String text3, String text4, Point loc) {
 
-            if (!SHOW_CODE_HOVER_BELOW) {
-                location = new Point(location.x, location.y - shell.getSize().y - 20);
-            }
+		Point location = new Point(loc.x, loc.y);
 
-            // same text as before, same place as before, let tooltip stand
-            if (lastText != null && lastText.equals(text) && lastLocation != null && lastLocation.equals(location)) {
-                return;
-            }
+		if (shell != null && !shell.isDisposed()) {
 
-            shell.dispose();
-        }
+			if (!SHOW_CODE_HOVER_BELOW) {
+				location = new Point(location.x, location.y - shell.getSize().y - 20);
+			}
 
-        lastText = text;
+			// same text as before, same place as before, let tooltip stand
+			if (lastText != null && lastText.equals(text) && lastLocation != null && lastLocation.equals(location)) {
+				return;
+			}
 
-        shell = new Shell(Display.getDefault().getActiveShell(), SWT.ON_TOP | SWT.TOOL);
+			shell.dispose();
+		}
 
-        RowLayout rl = new RowLayout(); 
-        rl.marginLeft = 1;
-        rl.marginRight = 1;
-        rl.marginTop = 1;
-        rl.marginBottom = 1;
-        shell.setLayout(rl);
-        
-        shell.setBackground(colorManager.getTooltipBackgroundColor());
+		lastText = text;
 
-        Composite comp = new Composite(shell, SWT.NULL);
-        comp.setBackground(colorManager.getTooltipBackgroundColor());
+		shell = new Shell(Display.getDefault().getActiveShell(), SWT.ON_TOP | SWT.TOOL);
 
-        FillLayout fl = new FillLayout();
-        fl.type = SWT.VERTICAL;
-        fl.marginHeight = 0;
-        fl.marginWidth = 0;
-        comp.setLayout(fl);
+		RowLayout rl = new RowLayout();
+		rl.marginLeft = 1;
+		rl.marginRight = 1;
+		rl.marginTop = 1;
+		rl.marginBottom = 1;
+		shell.setLayout(rl);
 
-        CLabel label = new CLabel(comp, SWT.LEFT);
-        label.setBackground(colorManager.getTooltipBackgroundColor());
-        label.setForeground(colorManager.getTooltipForegroundColor());
-        label.setText(name);
-        Font cur = label.getFont();
-        cur = applyBoldFont(cur);
-        label.setFont(cur);
+		shell.setBackground(colorManager.getTooltipBackgroundColor());
 
-        CLabel textLabel = new CLabel(comp, SWT.LEFT);
-        textLabel.setBackground(colorManager.getTooltipBackgroundColor());
-        if (text4 != null) {
-            textLabel.setForeground(colorManager.getTooltipForegroundColorFaded());
-        }
-        textLabel.setText(text);
+		Composite comp = new Composite(shell, SWT.NULL);
+		comp.setBackground(colorManager.getTooltipBackgroundColor());
 
-        if (text2 != null) {
-            CLabel text2Label = new CLabel(comp, SWT.LEFT);
-            text2Label.setBackground(colorManager.getTooltipBackgroundColor());
-            text2Label.setForeground(colorManager.getTooltipForegroundColorFaded());
-            text2Label.setText(text2);
-        }
-        if (text3 != null) {
-            CLabel text3Label = new CLabel(comp, SWT.LEFT);
-            text3Label.setBackground(colorManager.getTooltipBackgroundColor());
-            text3Label.setForeground(colorManager.getTooltipForegroundColorFaded());
-            text3Label.setText(text3);
-        }
+		FillLayout fl = new FillLayout();
+		fl.type = SWT.VERTICAL;
+		fl.marginHeight = 0;
+		fl.marginWidth = 0;
+		comp.setLayout(fl);
 
-        if (text4 != null) {
-            CLabel text4Label = new CLabel(comp, SWT.LEFT);
-            text4Label.setBackground(colorManager.getTooltipBackgroundColor());
-            text4Label.setForeground(colorManager.getTooltipForegroundColorFaded());
-            text4Label.setText(text4);
-        }
+		CLabel label = new CLabel(comp, SWT.LEFT);
+		label.setBackground(colorManager.getTooltipBackgroundColor());
+		label.setForeground(colorManager.getTooltipForegroundColor());
+		label.setText(name);
+		Font cur = label.getFont();
+		cur = applyBoldFont(cur);
+		label.setFont(cur);
 
-        shell.pack();
+		CLabel textLabel = new CLabel(comp, SWT.LEFT);
+		textLabel.setBackground(colorManager.getTooltipBackgroundColor());
+		if (text4 != null) {
+			textLabel.setForeground(colorManager.getTooltipForegroundColorFaded());
+		}
+		textLabel.setText(text);
 
-        // show above code inside, automatically below otherwise
-        if (!SHOW_CODE_HOVER_BELOW) {
-            location = new Point(location.x, location.y - shell.getSize().y - 10);
-        }
+		if (text2 != null) {
+			CLabel text2Label = new CLabel(comp, SWT.LEFT);
+			text2Label.setBackground(colorManager.getTooltipBackgroundColor());
+			text2Label.setForeground(colorManager.getTooltipForegroundColorFaded());
+			text2Label.setText(text2);
+		}
+		if (text3 != null) {
+			CLabel text3Label = new CLabel(comp, SWT.LEFT);
+			text3Label.setBackground(colorManager.getTooltipBackgroundColor());
+			text3Label.setForeground(colorManager.getTooltipForegroundColorFaded());
+			text3Label.setText(text3);
+		}
 
-        shell.setLocation(location);
-        lastLocation = location;
+		if (text4 != null) {
+			CLabel text4Label = new CLabel(comp, SWT.LEFT);
+			text4Label.setBackground(colorManager.getTooltipBackgroundColor());
+			text4Label.setForeground(colorManager.getTooltipForegroundColorFaded());
+			text4Label.setText(text4);
+		}
 
-        shell.setVisible(true);
-    }
-    
+		shell.pack();
+
+		// show above code inside, automatically below otherwise
+		if (!SHOW_CODE_HOVER_BELOW) {
+			location = new Point(location.x, location.y - shell.getSize().y - 10);
+		}
+
+		shell.setLocation(location);
+		lastLocation = location;
+
+		shell.setVisible(true);
+	}
+
 	private static Font applyBoldFont(Font font) {
 		if (font == null)
 			return null;
@@ -146,13 +149,13 @@ class GanttToolTip {
 		return new Font(Display.getDefault(), fontDataArray);
 	}
 
-    public static void kill() {
-        if (shell != null && shell.isDisposed() == false) {
-            shell.dispose();
-        }
-    }
+	public static void kill() {
+		if (shell != null && shell.isDisposed() == false) {
+			shell.dispose();
+		}
+	}
 
-    public static boolean isActive() {
-        return (shell != null && !shell.isDisposed());
-    }
+	public static boolean isActive() {
+		return (shell != null && !shell.isDisposed());
+	}
 }

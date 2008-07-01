@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    emil.crumhorn@gmail.com - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.nebula.widgets.ganttchart;
 
@@ -19,122 +19,124 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
-public class ColorCache {
+public final class ColorCache {
 
-    public static final RGB BLACK = new RGB(0, 0, 0);
-    public static final RGB WHITE = new RGB(255, 255, 255);
+	public static final RGB		BLACK	= new RGB(0, 0, 0);
+	public static final RGB		WHITE	= new RGB(255, 255, 255);
 
-    private static HashMap mColorTable;
-    private static ColorCache mInstance;
+	private static HashMap		mColorTable;
+	private static ColorCache	mInstance;
 
-    /**
-     * Disposes all colors held in the cache and colors created when class is created.
-     * <p>
-     * <b>IMPORTANT: ONLY CALL WHEN YOU WANT TO DISPOSE THE WIDGET USING THIS CLASS!</b>
-     * <p>
-     * If you only wish to dispose colors you have created through the use of the class, please use disposeCachedColors()
-     *
-     * @see #disposeCachedColor()
-     */
-    public static void disposeAll() {
-        mInstance.dispose();
-    }
-    
-    /**
-     * Disposes the cached colors only.
-     */
-    public static void disposeCachedColor() {
-        Iterator e = mColorTable.values().iterator();
-        while (e.hasNext()) ((Color)e.next()).dispose();
+	/**
+	 * Disposes all colors held in the cache and colors created when class is created.
+	 * <p>
+	 * <b>IMPORTANT: ONLY CALL WHEN YOU WANT TO DISPOSE THE WIDGET USING THIS CLASS!</b>
+	 * <p>
+	 * If you only wish to dispose colors you have created through the use of the class, please use disposeCachedColors()
+	 * 
+	 * @see #disposeCachedColor()
+	 */
+	public static void disposeAll() {
+		mInstance.dispose();
+	}
 
-        mColorTable.clear();
-    }
+	/**
+	 * Disposes the cached colors only.
+	 */
+	public static void disposeCachedColor() {
+		Iterator e = mColorTable.values().iterator();
+		while (e.hasNext())
+			((Color) e.next()).dispose();
 
-    private ColorCache() {
-        if (mColorTable == null) {
-            mColorTable = new HashMap();
-        }
-    }
+		mColorTable.clear();
+	}
 
-    private static void checkInstance() {
-        if (mInstance == null) 
-            mInstance = new ColorCache();
-    }
+	private ColorCache() {
+		if (mColorTable == null) {
+			mColorTable = new HashMap();
+		}
+	}
 
-    // see disposeAll();
-    private void dispose() {
-    	checkInstance();
+	private static void checkInstance() {
+		if (mInstance == null)
+			mInstance = new ColorCache();
+	}
 
-        Iterator e = mColorTable.values().iterator();
-        while (e.hasNext()) ((Color)e.next()).dispose();
+	// see disposeAll();
+	private void dispose() {
+		checkInstance();
 
-        mColorTable.clear();     
-    }
+		Iterator e = mColorTable.values().iterator();
+		while (e.hasNext())
+			((Color) e.next()).dispose();
 
-    /**
-     * Returns the color white R255, G255, B255
-     * 
-     * @return White color
-     */
-    public static Color getWhite() {
-    	checkInstance();
-        return getColor(WHITE);
-    }
+		mColorTable.clear();
+	}
 
-    /**
-     * Returns the color black R0, G0, B0
-     * 
-     * @return Black color
-     */
-    public static Color getBlack() {
-    	checkInstance();
-        return getColor(BLACK);
-    }
+	/**
+	 * Returns the color white R255, G255, B255
+	 * 
+	 * @return White color
+	 */
+	public static Color getWhite() {
+		checkInstance();
+		return getColor(WHITE);
+	}
 
-    /**
-     * Returns a color that is also cached if it has not been created before.
-     * 
-     * @param rgb RGB colors
-     * @return Color
-     */
-    public static Color getColor(RGB rgb) {
-    	checkInstance();
-        Color color = (Color) mColorTable.get(rgb);
+	/**
+	 * Returns the color black R0, G0, B0
+	 * 
+	 * @return Black color
+	 */
+	public static Color getBlack() {
+		checkInstance();
+		return getColor(BLACK);
+	}
 
-        if (color == null) {
-            color = new Color(Display.getCurrent(), rgb);
-            mColorTable.put(rgb, color);
-        }
+	/**
+	 * Returns a color that is also cached if it has not been created before.
+	 * 
+	 * @param rgb RGB colors
+	 * @return Color
+	 */
+	public static Color getColor(RGB rgb) {
+		checkInstance();
+		Color color = (Color) mColorTable.get(rgb);
 
-        return color;
-    }
+		if (color == null) {
+			color = new Color(Display.getCurrent(), rgb);
+			mColorTable.put(rgb, color);
+		}
 
-    /**
-     * Returns a color that is also cached if it has not been created before.
-     * 
-     * @param r Red
-     * @param g Green
-     * @param b Blue
-     * @return Color
-     */
-    public static Color getColor(int r, int g, int b) {
-    	checkInstance();
-        RGB rgb = new RGB(r, g, b);
-        return getColor(rgb);
-    }
-    
-    /**
-     * Returns a random color.
-     * 
-     * @return random color
-     */
-    public static Color getRandomColor() {
-    	checkInstance();
-    	Random rand = new Random();
-    	int r = rand.nextInt(255);
-    	int g = rand.nextInt(255);
-    	int b = rand.nextInt(255);
-    	    	
-    	return getColor(r, g, b);
-    }
+		return color;
+	}
+
+	/**
+	 * Returns a color that is also cached if it has not been created before.
+	 * 
+	 * @param r Red
+	 * @param g Green
+	 * @param b Blue
+	 * @return Color
+	 */
+	public static Color getColor(int r, int g, int b) {
+		checkInstance();
+		RGB rgb = new RGB(r, g, b);
+		return getColor(rgb);
+	}
+
+	/**
+	 * Returns a random color.
+	 * 
+	 * @return random color
+	 */
+	public static Color getRandomColor() {
+		checkInstance();
+		Random rand = new Random();
+		int r = rand.nextInt(255);
+		int g = rand.nextInt(255);
+		int b = rand.nextInt(255);
+
+		return getColor(r, g, b);
+	}
 }

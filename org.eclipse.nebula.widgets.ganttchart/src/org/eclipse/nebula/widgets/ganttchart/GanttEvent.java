@@ -113,8 +113,18 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	private int				mHorizontalTextLocation		= SWT.RIGHT;
 	private int				mVerticalTextLocation		= SWT.CENTER;
 
-	private Font			mTextFont;	
-	
+	private Font			mTextFont;
+
+	private int				mDaysBetweenStartAndEnd;
+
+	// cloned holders used for cancelling a move/resize via ESC
+	private Calendar		mPreMoveDateEstiStart;
+	private Calendar		mPreMoveDateEstiEnd;
+	private Calendar		mPreMoveDateRevisedStart;
+	private Calendar		mPreMoveDateRevisedEnd;
+	private Rectangle		mPreMoveBounds;
+	private boolean			mMoving;
+
 	/**
 	 * Creates a new GanttEvent.
 	 * 
@@ -211,10 +221,9 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 		this.mScope = true;
 		try {
 			init();
-		}
-		catch (Exception err) {
+		} catch (Exception err) {
 			err.printStackTrace();
-		}		
+		}
 	}
 
 	/**
@@ -245,10 +254,9 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 		this.mCheckpoint = true;
 		try {
 			init();
-		}
-		catch (Exception err) {
+		} catch (Exception err) {
 			err.printStackTrace();
-		}		
+		}
 	}
 
 	/**
@@ -282,17 +290,16 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 		this.mImage = true;
 		try {
 			init();
-		}
-		catch (Exception err) {
+		} catch (Exception err) {
 			err.printStackTrace();
 		}
 	}
 
-	private void init() {
+	protected final void init() {
 		mScopeEvents = new ArrayList();
 		mParentChart.getGanttComposite().addEvent(this, true);
-		mMenu = new Menu(mParentChart.getGanttComposite());
 		checkDates();
+		updateDaysBetweenStartAndEnd();
 	}
 
 	/**
@@ -367,6 +374,7 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	public void setStartDate(Calendar startDate) {
 		this.mStartDate = startDate;
 		checkDates();
+		updateDaysBetweenStartAndEnd();
 	}
 
 	/**
@@ -386,6 +394,7 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	public void setEndDate(Calendar endDate) {
 		this.mEndDate = endDate;
 		checkDates();
+		updateDaysBetweenStartAndEnd();
 	}
 
 	/**
@@ -407,11 +416,16 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	}
 
 	/**
-	 * Returns the individual Menu for this event for which custom events can be created. Custom events will be mixed with built-in events (if they exist).
+	 * Returns the individual Menu for this event for which custom events can be created. Custom events will be mixed with built-in events (if they exist). The menu will be created
+	 * on the first get call to this method, any subsequent method calls will return the same menu object. Do remember that a menu counts as a handle towards the maximum number of
+	 * handles. If you have very many events, it is probably better to use a different way of creating menus, this is merely meant as a convenience.
 	 * 
 	 * @return Menu
 	 */
 	public Menu getMenu() {
+		if (mMenu == null)
+			mMenu = new Menu(mParentChart.getGanttComposite());
+
 		return mMenu;
 	}
 
@@ -437,10 +451,22 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 		this.y = bounds.y;
 		this.width = bounds.width;
 		this.height = bounds.height;
-	}	
+	}
 
 	void updateX(int x) {
 		this.x = x;
+	}
+
+	void updateY(int y) {
+		this.y = y;
+	}
+
+	void updateHeight(int height) {
+		this.height = height;
+	}
+
+	void updateWidth(int width) {
+		this.width = width;
 	}
 
 	/**
@@ -534,6 +560,7 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	public void setRevisedStart(Calendar revisedStart) {
 		this.mRevisedStart = revisedStart;
 		checkDates();
+		updateDaysBetweenStartAndEnd();
 	}
 
 	/**
@@ -553,6 +580,7 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	public void setRevisedEnd(Calendar revisedEnd) {
 		this.mRevisedEnd = revisedEnd;
 		checkDates();
+		updateDaysBetweenStartAndEnd();
 	}
 
 	/**
@@ -714,16 +742,16 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	// fix to bugzilla #236840
 	private void checkDates() {
 		if (mStartDate != null && mEndDate != null) {
-			if (mEndDate.before(mStartDate)) 
-				mEndDate = mStartDate; 		
+			if (mEndDate.before(mStartDate))
+				mEndDate = mStartDate;
 		}
-		
+
 		if (mRevisedStart != null && mRevisedEnd != null) {
-			if (mRevisedEnd.before(mRevisedStart)) 
-				mRevisedEnd = mRevisedStart;			
+			if (mRevisedEnd.before(mRevisedStart))
+				mRevisedEnd = mRevisedStart;
 		}
 	}
-	
+
 	private GanttEvent getEarliestOrLatestScopeEvent(boolean earliest) {
 		Calendar ret = null;
 		GanttEvent retEvent = null;
@@ -770,6 +798,49 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 			return null;
 
 		return getEarliestOrLatestScopeEvent(false);
+	}
+
+	// this takes any text drawing widths into account and returns the bounds as such
+	Rectangle getActualBounds() {
+		// by default the bounds are the same as normal
+		Rectangle ret = new Rectangle(x, y, width, height);
+
+		// TODO: this should take connected/not connected into account
+		int textSpacer = mParentChart.getSettings().getTextSpacerConnected();
+		if (getNameExtent() != null) {
+			switch (mHorizontalTextLocation) {
+				case SWT.LEFT:
+					ret.x -= getNameExtent().x + textSpacer;
+					break;
+				case SWT.CENTER:
+					int start = width / 2;
+					start += getNameExtent().x + textSpacer;
+					if (start > (x + width))
+						ret.width += (start - (x + width)); // add on the difference
+					break;
+				case SWT.RIGHT:
+					ret.width += getNameExtent().x + textSpacer;
+					break;
+			}
+
+			switch (mVerticalTextLocation) {
+				case SWT.TOP:
+					ret.y -= getNameExtent().y;
+					break;
+				case SWT.CENTER:
+					if (getNameExtent().y > height) {
+						int diff = height - getNameExtent().y;
+						ret.y -= (diff / 2);
+						ret.height += (diff / 2);
+					}
+					break;
+				case SWT.BOTTOM:
+					ret.height += getNameExtent().y;
+					break;
+			}
+		}
+
+		return ret;
 	}
 
 	// Internal method for calculating the earliest and latest dates of the scope.
@@ -887,7 +958,7 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 		return mHidden;
 	}
 
-	private void _setAllChildrenHidden(boolean hidden) {
+	private void internalSetAllChildrenHidden(boolean hidden) {
 		if (mScopeEvents == null)
 			return;
 
@@ -902,7 +973,7 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	 * @see #isHidden()
 	 */
 	public void hideAllChildren() {
-		_setAllChildrenHidden(true);
+		internalSetAllChildrenHidden(true);
 	}
 
 	/**
@@ -911,7 +982,7 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	 * @see #isHidden()
 	 */
 	public void showAllChildren() {
-		_setAllChildrenHidden(false);
+		internalSetAllChildrenHidden(false);
 	}
 
 	/**
@@ -1004,7 +1075,7 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	/**
 	 * Returns the vertical alignment set. Alignments are only valid if the row height is a fixed value.
 	 * 
-	 * @return Row alignment, one of SWT.TOP, SWT.CENTER, SWT.BOTTOM. Default is SWT.TOP.
+	 * @return Row alignment, one of <code>SWT.TOP</code>, <code>SWT.CENTER</code>, <code>SWT.BOTTOM</code>. Default is <code>SWT.TOP</code>.
 	 */
 	public int getVerticalEventAlignment() {
 		return mVerticalEventAlignment;
@@ -1013,7 +1084,7 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	/**
 	 * Sets the vertical alignment for this event. Alignments are only valid if the row height is a fixed value.
 	 * 
-	 * @param verticalEventAlignment one of SWT.TOP, SWT.CENTER, SWT.BOTTOM
+	 * @param verticalEventAlignment one of <code>SWT.TOP</code>, <code>SWT.CENTER</code>, <code>SWT.BOTTOM</code>
 	 */
 	public void setVerticalEventAlignment(int verticalEventAlignment) {
 		this.mVerticalEventAlignment = verticalEventAlignment;
@@ -1101,17 +1172,17 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	}
 
 	/**
-	 * Sets the location of where the event text will be displayed. Options are: SWT.LEFT, SWT.CENTER, SWT.RIGHT. Center means the text will be drawn inside the event. Default is
-	 * SWT.RIGHT.
+	 * Sets the location of where the event text will be displayed. Options are: <code>SWT.LEFT</code>, <code>SWT.CENTER</code>, <code>SWT.RIGHT</code>. Center means the text will
+	 * be drawn inside the event. Default is <code>SWT.RIGHT</code>.
 	 * 
-	 * @param textLocation Text location, one of SWT.LEFT, SWT.CENTER or SWT.RIGHT.
+	 * @param textLocation Text location, one of <code>SWT.LEFT</code>, <code>SWT.CENTER</code>, <code>SWT.RIGHT</code>.
 	 */
 	public void setHorizontalTextLocation(int textLocation) {
 		mHorizontalTextLocation = textLocation;
 	}
 
 	/**
-	 * Returns the lcoation where the event text will be displayed vertically. Default is SWT.CENTER which is right behind the event itself.
+	 * Returns the lcoation where the event text will be displayed vertically. Default is <code>SWT.CENTER</code> which is right behind the event itself.
 	 * 
 	 * @return Vertical text location.
 	 */
@@ -1120,7 +1191,8 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	}
 
 	/**
-	 * Sets the vertical location where the event text will be displayed. Options are: SWT.TOP, SWT.CENTER, SWT.BOTTOM. Default is SWT.CENTER.
+	 * Sets the vertical location where the event text will be displayed. Options are: <code>SWT.TOP</code>, <code>SWT.CENTER</code>, <code>SWT.BOTTOM</code>. Default is
+	 * <code>SWT.CENTER</code>.
 	 * 
 	 * @param verticalTextLocation Vertical text location
 	 */
@@ -1173,6 +1245,10 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 		return mBoundsHaveBeenSet;
 	}
 
+	void setBoundsSet(boolean set) {
+		mBoundsHaveBeenSet = set;
+	}
+
 	void setHorizontalLineTopY(int y) {
 		this.mHorizontalLineTopY = y;
 	}
@@ -1211,6 +1287,65 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 
 	void setParsedString(String parsed) {
 		this.mParsedString = parsed;
+	}
+
+	int getDaysBetweenStartAndEnd() {
+		return this.mDaysBetweenStartAndEnd;
+	}
+
+	void updateDaysBetweenStartAndEnd() {
+		if (getActualStartDate() == null || getActualEndDate() == null) {
+			mDaysBetweenStartAndEnd = -1;
+			return;
+		}
+
+		mDaysBetweenStartAndEnd = (int) DateHelper.daysBetween(getActualStartDate().getTime(), getActualEndDate().getTime(), mParentChart.getSettings().getDefaultLocale());
+	}
+
+	void moveStarted() {
+		if (mMoving)
+			return;
+
+		if (mStartDate != null) {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(mStartDate.getTime());
+			mPreMoveDateEstiStart = cal;
+		}
+		if (mEndDate != null) {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(mEndDate.getTime());
+			mPreMoveDateEstiEnd = cal;
+		}
+		if (mRevisedStart != null) {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(mRevisedStart.getTime());
+			mPreMoveDateRevisedStart = cal;
+		}
+		if (mRevisedEnd != null) {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(mRevisedEnd.getTime());
+			mPreMoveDateRevisedEnd = cal;
+		}
+
+		mPreMoveBounds = new Rectangle(x, y, width, height);
+
+		mMoving = true;
+	}
+
+	void moveCancelled() {
+		mMoving = false;
+		mStartDate = mPreMoveDateEstiStart;
+		mEndDate = mPreMoveDateEstiEnd;
+		mRevisedStart = mPreMoveDateRevisedStart;
+		mRevisedEnd = mPreMoveDateRevisedEnd;
+		x = mPreMoveBounds.x;
+		y = mPreMoveBounds.y;
+		width = mPreMoveBounds.width;
+		height = mPreMoveBounds.height;
+	}
+
+	void moveFinished() {
+		mMoving = false;
 	}
 
 	public String toString() {

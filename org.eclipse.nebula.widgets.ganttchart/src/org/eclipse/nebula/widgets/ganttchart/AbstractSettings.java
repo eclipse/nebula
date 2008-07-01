@@ -11,7 +11,9 @@
 
 package org.eclipse.nebula.widgets.ganttchart;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 import org.eclipse.swt.SWT;
@@ -442,6 +444,30 @@ abstract class AbstractSettings implements ISettings {
 	public boolean allowScopeMenu() {
 		return false;
 	}
+	
+	public boolean allowHeaderSelection() {
+		return true;
+	}
 
+/*	public List getHeaderLevels() {
+		List l = new ArrayList();
+		
+		HeaderSet hs = new HeaderSet();
+		HeaderLevel dayNormalTop = new HeaderLevel(Calendar.DATE, HeaderLevel.OFFSET_DATE, 1, 16*7, "MMM dd, ''yy", HeaderLevel.SEPARATOR_BOTTOM_TICK, Locale.getDefault());
+		HeaderLevel dayNormalBottom = new HeaderLevel(Calendar.DATE, HeaderLevel.OFFSET_DATE, 1, 16, "E", HeaderLevel.SEPARATOR_FULL_LINE, Locale.getDefault());
+		hs.addHeaderLevel(dayNormalTop);
+		hs.addHeaderLevel(dayNormalBottom);
+		l.add(hs);
+
+		hs = new HeaderSet();
+		HeaderLevel hoursNormalTop = new HeaderLevel(Calendar.HOUR_OF_DAY, 1, 32*24, "MMM dd, HH:mm", HeaderLevel.SEPARATOR_BOTTOM_TICK, Locale.getDefault());
+		HeaderLevel hoursNormalBottom = new HeaderLevel(Calendar.HOUR_OF_DAY, 1, 32, "HH:mm", HeaderLevel.SEPARATOR_FULL_LINE, Locale.getDefault());
+		hs.addHeaderLevel(hoursNormalTop);
+		hs.addHeaderLevel(hoursNormalBottom);
+		l.add(hs);
+		
+		return l;
+	}
+*/
 	
 }

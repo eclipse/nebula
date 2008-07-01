@@ -57,5 +57,31 @@ public interface IFillBackgroundColors {
 	 */
 	public Color getWeekdayBackgroundColorTop();
 
+	/**
+	 * The top background gradient color used for drawing selected columns.
+	 * 
+	 * @return
+	 */
+	public Color getSelectedDayColorTop();
+	
+	/**
+	 * The bottom background gradient color used for drawing selected columns.
+	 *  
+	 * @return Color
+	 */
+	public Color getSelectedDayColorBottom();
 
+	/**
+	 * The top background gradient color used for drawing selected columns in the header section.
+	 * 
+	 * @return Color
+	 */
+	public Color getSelectedDayHeaderColorTop();
+
+	/**
+	 * The bottom background gradient color used for drawing selected columns in the header section.
+	 * 
+	 * @return Color
+	 */
+	public Color getSelectedDayHeaderColorBottom();
 }

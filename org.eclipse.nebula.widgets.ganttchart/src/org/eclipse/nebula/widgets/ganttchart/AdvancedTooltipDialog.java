@@ -34,18 +34,6 @@ public class AdvancedTooltipDialog {
 
 	private static Shell shell;
 
-/*	private static Color mDivider = ColorCache.getColor(158, 187, 221);
-	private static Color mDividerShadow = ColorCache.getColor(255, 255, 255);
-
-	private static Color mInnerFillTop = ColorCache.getColor(255, 251, 252);
-	private static Color mInnerFillBottom = ColorCache.getColor(204, 217, 234);
-	private static Color mTextColor = ColorCache.getColor(79, 77, 78);
-
-	private static Color mTooltipBorder = ColorCache.getColor(118, 118, 118);
-	private static Color mTooltipShadowCornerInner = ColorCache.getColor(131, 131, 131);
-	private static Color mTooltipShadowCornerOuter = ColorCache.getColor(148, 148, 148);
-	private static Color mTooltipShadowInnerCorner = ColorCache.getColor(186, 186, 186);*/
-
 	public static void makeDialog(final AdvancedTooltip toolTip, IColorManager colorManager, Point location) {
 		makeDialog(toolTip, colorManager, location, null, null, null);
 	}
@@ -307,36 +295,45 @@ public class AdvancedTooltipDialog {
 					fg = ColorCache.getBlack();
 				} else {
 					int newSize = getSize(token);
-					if (newSize != size)
-						newSize = size;
+					if (newSize != size && newSize != -1) {
+						size = newSize;
+					}
 
 					boolean newBold = isBold(token);
-					if (bold && !isBold(token))
+					if (bold && !newBold) {
 						bold = true;
-					else
+					}
+					else {
 						bold = newBold;
+					}
 
 					boolean newItalic = isItalic(token);
-					if (italic && !isItalic(token))
+					if (italic && !newItalic) {
 						italic = true;
-					else
+					}
+					else {
 						italic = newItalic;
+					}
 
 					Color newColor = getColor(token);
-					if (newColor != fg)
+					if (newColor != fg) {
 						fg = newColor;
+					}
 				}
 
-				if (fg != null)
+				if (fg != null) {
 					gc.setForeground(fg);
+				}
 
 				token = cleanUp(token);
 
 				int style = SWT.NORMAL;
-				if (bold)
+				if (bold) {
 					style |= SWT.BOLD;
-				if (italic)
+				}
+				if (italic) {
 					style |= SWT.ITALIC;
+				}
 
 				used = new Font(Display.getDefault(), oldName, size, style);
 				gc.setFont(used);
@@ -349,8 +346,9 @@ public class AdvancedTooltipDialog {
 				maxWidth = Math.max(maxWidth, curX);
 				maxHeight = Math.max(maxHeight, extY);
 
-				if (used != null)
+				if (used != null) {
 					used.dispose();
+				}
 
 				cnt++;
 			}
@@ -372,7 +370,7 @@ public class AdvancedTooltipDialog {
 
 			str = left + right;
 		}
-		start = str.indexOf("\\c");
+		//start = str.indexOf("\\c");
 		str = str.replaceAll("\\\\ce", "");
 		str = str.replaceAll("\\\\c[0-9]{9}", "");
 		str = str.replaceAll("\\\\x", "");

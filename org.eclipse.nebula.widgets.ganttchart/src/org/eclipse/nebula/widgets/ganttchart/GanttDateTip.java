@@ -30,12 +30,14 @@ class GanttDateTip {
     private static int yLoc;
     private static Label label;
 
-    public static void makeDialog(IColorManager colorManager, String text, Point location, int marker) {    	
+    public static void makeDialog(IColorManager colorManager, String text, Point location, int marker) {    	    	
+    	Point loc = new Point(location.x, location.y);
+    	
         if (shell != null && shell.isDisposed() == false) {
-            location = new Point(location.x, location.y);
+        	loc = new Point(loc.x, loc.y);
 
             // move shell to new location
-            shell.setLocation(location.x, location.y);
+            shell.setLocation(loc.x, loc.y);
 
             // update text
             if (yLoc == marker) {
@@ -70,9 +72,9 @@ class GanttDateTip {
         shell.pack();
 
         // show above code inside, automatically below otherwise
-        location = new Point(location.x, location.y);
+        loc = new Point(loc.x, loc.y);
 
-        shell.setLocation(location);
+        shell.setLocation(loc);
         shell.setVisible(true);
     }
 

@@ -28,11 +28,11 @@ public class CursorCache {
      * @return Cursor
      */
     public static Cursor getCursor(int type) {
-        if (map.get(new Integer(type)) != null) {
-            return (Cursor) map.get(new Integer(type));
+        if (map.get(Integer.valueOf(type)) != null) {
+            return (Cursor) map.get(Integer.valueOf(type));
         } else {
             Cursor c = new Cursor(Display.getDefault(), type);
-            map.put(new Integer(type), c);
+            map.put(Integer.valueOf(type), c);
             return c;
         }
     }

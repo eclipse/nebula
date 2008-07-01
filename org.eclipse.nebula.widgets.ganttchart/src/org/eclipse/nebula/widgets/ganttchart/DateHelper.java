@@ -82,7 +82,7 @@ public class DateHelper {
 		startDate.set(Calendar.MILLISECOND, 0);
 		endDate.set(Calendar.MILLISECOND, 0);
 
-		// now we should be able to do a "safe" millisecond/day caluclation to
+		// now we should be able to do a "safe" millisecond/day calculation to
 		// get the number of days
 		long endMilli = endDate.getTimeInMillis();
 		long startMilli = startDate.getTimeInMillis();

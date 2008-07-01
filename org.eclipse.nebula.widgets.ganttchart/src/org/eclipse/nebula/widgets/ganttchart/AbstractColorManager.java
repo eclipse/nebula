@@ -132,6 +132,14 @@ public abstract class AbstractColorManager implements IColorManager {
 	public Color getSaturdayBackgroundColorBottom() {
 		return getSaturdayBackgroundColorTop();
 	}
+	
+	public Color getSelectedDayColorBottom() {
+		return ColorCache.getColor(200, 212, 222);
+	}
+
+	public Color getSelectedDayColorTop() {
+		return ColorCache.getColor(173, 192, 207);
+	}
 
 	public Color getSaturdayTextColor() {
 		return ColorCache.getColor(92, 75, 29);
@@ -288,6 +296,14 @@ public abstract class AbstractColorManager implements IColorManager {
 
 	public Color getSessionBarDividerColorRight() {
 		return ColorCache.getColor(188, 212, 240);
+	}
+
+	public Color getSelectedDayHeaderColorBottom() {
+		return ColorCache.getColor(222, 236, 250);
+	}
+
+	public Color getSelectedDayHeaderColorTop() {
+		return ColorCache.getColor(195, 218, 242);
 	}	
 	
 	

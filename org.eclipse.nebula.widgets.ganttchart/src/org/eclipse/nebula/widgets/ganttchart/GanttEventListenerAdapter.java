@@ -11,7 +11,9 @@
 
 package org.eclipse.nebula.widgets.ganttchart;
 
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Calendar;
+import java.util.List;
 
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.GC;
@@ -24,22 +26,22 @@ public class GanttEventListenerAdapter implements IGanttEventListener {
 	public void eventPropertiesSelected(GanttEvent event) {
 	}
 
-	public void eventsDeleteRequest(ArrayList events, MouseEvent me) {
+	public void eventsDeleteRequest(List events, MouseEvent me) {
 	}
 
-	public void eventSelected(GanttEvent event, ArrayList allSelectedEvents, MouseEvent me) {
+	public void eventSelected(GanttEvent event, List allSelectedEvents, MouseEvent me) {
 	}
 
-	public void eventsMoved(ArrayList events, MouseEvent me) {
+	public void eventsMoved(List events, MouseEvent me) {
 	}
 
-	public void eventsResized(ArrayList events, MouseEvent me) {
+	public void eventsResized(List events, MouseEvent me) {
 	}
 	
-	public void eventsMoveFinished(ArrayList events, MouseEvent me) {
+	public void eventsMoveFinished(List events, MouseEvent me) {
 	}
 
-	public void eventsResizeFinished(ArrayList events, MouseEvent me) {
+	public void eventsResizeFinished(List events, MouseEvent me) {
 	}
 
 	public void zoomedIn(int newZoomLevel) {
@@ -49,6 +51,9 @@ public class GanttEventListenerAdapter implements IGanttEventListener {
 	}
 
 	public void zoomReset() {
+	}
+	
+	public void eventHeaderSelected(Calendar newlySelectedDate, List allSelectedDates) {
 	}
 
 	public void lastDraw(GC gc) {

@@ -26,9 +26,11 @@ import org.eclipse.swt.widgets.Display;
 
 public abstract class AbstractPaintManager implements IPaintManager {
 
-	public void drawEvent(GanttComposite ganttComposite, ISettings settings, IColorManager colorManager, GanttEvent ge, GC gc, boolean isSelected, boolean threeDee, int dayWidth, int x, int y, int eventWidth, Rectangle bounds) {
+	public void drawEvent(GanttComposite ganttComposite, ISettings settings, IColorManager colorManager, GanttEvent ge, GC gc, boolean isSelected, boolean threeDee, int dayWidth, int xStart, int y, int eventWidth, Rectangle bounds) {
 
 		boolean alpha = colorManager.useAlphaDrawing();
+		
+		int x = xStart;
 		
 		// draw the border
 		gc.setForeground(colorManager.getEventBorderColor());
@@ -471,8 +473,10 @@ public abstract class AbstractPaintManager implements IPaintManager {
 
 	}
 
-	public void drawImage(GanttComposite ganttComposite, ISettings settings, IColorManager colorManager, GanttEvent ge, GC gc, Image image, boolean threeDee, int dayWidth, int x, int y, Rectangle fullBounds) {
+	public void drawImage(GanttComposite ganttComposite, ISettings settings, IColorManager colorManager, GanttEvent ge, GC gc, Image image, boolean threeDee, int dayWidth, int x, int yStart, Rectangle fullBounds) {
 
+		int y = yStart;
+		
 		// draw a cross in a box if image is null
 		if (image == null) {
 			gc.setForeground(colorManager.getBlack());
@@ -543,18 +547,19 @@ public abstract class AbstractPaintManager implements IPaintManager {
 	public void drawLockedDateRangeMarker(GanttComposite ganttComposite, ISettings settings, IColorManager colorManager, GanttEvent ge, GC gc, boolean threeDee, int dayWidth, int y, int start, int end, Rectangle bounds) {		
 		int maxY = settings.getEventHeight();
 		int topY = y - 2;
+		int xEnd = end;
 		
 		gc.setForeground(ColorCache.getColor(188, 188, 188));
 		gc.setLineStyle(SWT.LINE_DASH);
 		gc.setLineWidth(1);
-		if (start != -1 && end != -1) {
+		if (start != -1 && xEnd != -1) {
 			// no need to draw beyond what we can see, and it's extremely slow to draw dots anyway, so we need this to be as fast as can be
 			if (start < 0)
 				start = -1;
-			if (end > bounds.width)
-				end = bounds.width + 1;
+			if (xEnd > bounds.width)
+				xEnd = bounds.width + 1;
 			
-			gc.drawRectangle(start, topY, end-start+dayWidth, maxY+4);
+			gc.drawRectangle(start, topY, xEnd-start+dayWidth, maxY+4);
 		}
  		else {
  			gc.setLineStyle(SWT.LINE_SOLID);
@@ -563,11 +568,11 @@ public abstract class AbstractPaintManager implements IPaintManager {
  				gc.drawLine(start-2, topY+1, start+5, topY+1);
  				gc.drawLine(start-2, topY+4+maxY, start+5, topY+4+maxY);
  			}
- 			if (end != -1) {
- 				end += dayWidth;
- 				gc.drawRectangle(end+2, topY+1, 2, 3+maxY);
- 				gc.drawLine(end+2, topY+1, end-5, topY+1);
- 				gc.drawLine(end+2, topY+4+maxY, end-5, topY+4+maxY); 				
+ 			if (xEnd != -1) {
+ 				xEnd += dayWidth;
+ 				gc.drawRectangle(xEnd+2, topY+1, 2, 3+maxY);
+ 				gc.drawLine(xEnd+2, topY+1, xEnd-5, topY+1);
+ 				gc.drawLine(xEnd+2, topY+4+maxY, xEnd-5, topY+4+maxY); 				
  			}
  		}
 		

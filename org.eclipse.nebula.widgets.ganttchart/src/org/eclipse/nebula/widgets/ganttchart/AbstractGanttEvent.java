@@ -15,7 +15,7 @@ abstract class AbstractGanttEvent {
 	}
 	
 	Integer getLayerInt() {
-		return new Integer(mLayer);
+		return Integer.valueOf(mLayer);
 	}
 	
 	/**

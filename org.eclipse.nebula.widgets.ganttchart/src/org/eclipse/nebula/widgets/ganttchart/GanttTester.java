@@ -11,8 +11,9 @@
 
 package org.eclipse.nebula.widgets.ganttchart;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Calendar;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
@@ -151,27 +152,27 @@ public class GanttTester {
 					System.out.println("Event properties selected " + event);
 				}
 
-				public void eventsDeleteRequest(ArrayList events, MouseEvent me) {
+				public void eventsDeleteRequest(List events, MouseEvent me) {
 					System.out.println("Events delete request");
 				}
 
-				public void eventSelected(GanttEvent event, ArrayList allSelectedEvents, MouseEvent me) {
+				public void eventSelected(GanttEvent event, List allSelectedEvents, MouseEvent me) {
 					System.out.println("Events selected");
 				}
 
-				public void eventsMoved(ArrayList events, MouseEvent me) {
+				public void eventsMoved(List events, MouseEvent me) {
 					// System.out.println("Events moved");
 				}
 
-				public void eventsResized(ArrayList events, MouseEvent me) {
+				public void eventsResized(List events, MouseEvent me) {
 					System.out.println("Events resized");
 				}
 				
 
-				public void eventsMoveFinished(ArrayList events, MouseEvent me) {
+				public void eventsMoveFinished(List events, MouseEvent me) {
 				}
 
-				public void eventsResizeFinished(ArrayList events, MouseEvent me) {
+				public void eventsResizeFinished(List events, MouseEvent me) {
 				}
 
 				public void zoomedIn(int newZoomLevel) {
@@ -187,6 +188,10 @@ public class GanttTester {
 				}
 
 				public void lastDraw(GC gc) {
+				}
+
+				public void eventHeaderSelected(Calendar newlySelectedDate, List allSelectedDates) {
+					System.out.println(newlySelectedDate.getTime() + " " + allSelectedDates);
 				}
 
 			});

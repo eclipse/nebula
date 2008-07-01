@@ -121,27 +121,27 @@ public interface ISettings {
 	/**
 	 * What type of arrow connection to draw. There are three types:
 	 * <ul>
-	 * <li>CONNECTION_ARROW_RIGHT_TO_TOP - 
+	 * <li><code>CONNECTION_ARROW_RIGHT_TO_TOP</code> - 
 	 * 	 Arrow line (and arrow head if turned on) will be drawn into the events top and bottom corners.
 	 * 
-	 * <li>CONNECTION_ARROW_RIGHT_TO_LEFT - 
+	 * <li><code>CONNECTION_ARROW_RIGHT_TO_LEFT</code> - 
 	 *   Arrow line (and arrow head if turned on) will be drawn into the events middle left or right side.
 	 *   
-	 * <li>CONNECTION_MS_PROJECT_STYLE -
+	 * <li><code>CONNECTION_MS_PROJECT_STYLE</code> -
 	 *   Arrow line (and arrow head if turned on) will be drawn as logically as possible from above event to below. Lines are rounded in corners
 	 *   and arrows will go to middle to top of below event or to side depending on where event is situated.
 	 * </ul>
-	 * @return Arrow head type. Default is CONNECTION_ARROW_RIGHT_TO_LEFT.
-	 * @see #CONNECTION_ARROW_RIGHT_TO_LEFT 
+	 * @return Arrow head type. Default is <code>CONNECTION_MS_PROJECT_STYLE</code>.
+	 * @see #CONNECTION_MS_PROJECT_STYLE 
 	 */
 	public int getArrowConnectionType();
 	
 	/**
 	 * What view is used when the chart is initially drawn. Options are:
 	 * <ul>
-	 * <li>VIEW_WEEK
-	 * <li>VIEW_MONTH
-	 * <li>VIEW_YEAR
+	 * <li><code>VIEW_WEEK</code>
+	 * <li><code>VIEW_MONTH</code>
+	 * <li><code>VIEW_YEAR</code>
 	 * </ul>
 	 * 
 	 * @return Initial view. Default is VIEW_WEEK. 
@@ -150,23 +150,24 @@ public interface ISettings {
 	
 	/**
 	 * What initial zoom level is used when the chart is initially drawn. Options are:
+	 * <ul>
+	 * <li><code>ZOOM_HOURS_MAX</code>
+	 * <li><code>ZOOM_HOURS_MEDIUM</code>
+	 * <li><code>ZOOM_HOURS_NORMAL</code>
+	 * <li><code>ZOOM_DAY_MAX</code>
+ 	 * <li><code>ZOOM_DAY_MEDIUM</code>
+	 * <li><code>ZOOM_DAY_NORMAL</code>
+	 * <li><code>ZOOM_MONTH_MAX</code>
+	 * <li><code>ZOOM_MONTH_MEDIUM</code>
+	 * <li><code>ZOOM_MONTH_NORMAL</code>
+	 * <li><code>ZOOM_YEAR_MAX</code>
+	 * <li><code>ZOOM_YEAR_MEDIUM</code>
+	 * <li><code>ZOOM_YEAR_NORMAL</code>
+	 * <li><code>ZOOM_YEAR_SMALL</code>
+	 * <li><code>ZOOM_YEAR_VERY_SMALL</code>
+	 * </ul> 
 	 * 
-	 * ZOOM_HOURS_MAX
-	 * ZOOM_HOURS_MEDIUM
-	 * ZOOM_HOURS_NORMAL
-	 * ZOOM_DAY_MAX
- 	 * ZOOM_DAY_MEDIUM
-	 * ZOOM_DAY_NORMAL
-	 * ZOOM_MONTH_MAX
-	 * ZOOM_MONTH_MEDIUM
-	 * ZOOM_MONTH_NORMAL
-	 * ZOOM_YEAR_MAX
-	 * ZOOM_YEAR_MEDIUM
-	 * ZOOM_YEAR_NORMAL
-	 * ZOOM_YEAR_SMALL
-	 * ZOOM_YEAR_VERY_SMALL 
-	 * 
-	 * @return Zoom level. Default ZOOM_DAY_NORMAL.
+	 * @return Zoom level. Default is <code>ZOOM_DAY_NORMAL</code>.
 	 * @see ISettings#ZOOM_DAY_MAX
 	 */
 	public int getInitialZoomLevel();
@@ -285,7 +286,7 @@ public interface ISettings {
 	
 	/**
 	 * Returns the height of the bar that is drawn inside the events that represents the percentage done.
-	 * <br><br>
+	 * <p>
 	 * Note: If the event height is an even number, this number does best being odd, and vice versa.
 	 * 
 	 * @return Pixel value. Default is 3.
@@ -400,7 +401,7 @@ public interface ISettings {
 	public boolean enableResizing();
 	
 	/**
-	 * Whether users can hold down SHIFT (or whatever the settings say) to move an event, and all dependent events will move with the selected event. 
+	 * Whether users can hold down <code>SHIFT</code> (or whatever the settings say) to move an event, and all dependent events will move with the selected event. 
 	 * 
 	 * @return true if to move all linked events. Default is true.
 	 * @see ISettings#getDragAllModifierKey()
@@ -415,7 +416,7 @@ public interface ISettings {
 	public boolean enableDragAndDrop();
 	
 	/**
-	 * Whether when a user zooms in or out (only via CTRL (or whatever the settings say) + Scroll Wheel) to display a box in the bottom left corner that shows the zoom level.
+	 * Whether when a user zooms in or out (only via <code>CTRL</code> (or whatever the settings say) + <code>Scroll Wheel</code>) to display a box in the bottom left corner that shows the zoom level.
 	 * 
 	 * @return true if to show a box when zooming. Default is true.
 	 * @see ISettings#getZoomWheelModifierKey()
@@ -529,7 +530,7 @@ public interface ISettings {
 	/**
 	 * Returns the image used for displaying something as locked in the GANTT chart. 
 	 * 
-	 * @return Image or null. Default is the lock_tiny.gif image in the package.
+	 * @return Image or null. Default is the <code>lock_tiny.gif</code> image in the package.
 	 */
 	public Image getLockImage();
 	
@@ -746,10 +747,10 @@ public interface ISettings {
 	
 	/**
 	 * Minimum height of sections. Normally the minimum height is calculated by:
-	 * <br><br>
+	 * <p>
 	 * 1. Space the section name takes up vertically<br>
 	 * 2. Space all contained events take up including various event spacers.
-	 * <br><br>
+	 * <p>
 	 * If the two calculations above are smaller than the value returned by this method, the height returned from this method will be used.
 	 * 
 	 * @return minimum section height (larger or equals to zero). Default is 80.
@@ -773,7 +774,7 @@ public interface ISettings {
 	/**
 	 * The keyboard modifier key (also known as a hint) used to determine when it's a drag-all-linked-events {@link ISettings#moveLinkedEventsWhenEventsAreMoved()} event or just a normal drag.
 	 *  
-	 * @return Keyboard modifier. Default is SWT.SHIFT (the shift key)
+	 * @return Keyboard modifier. Default is <code>SWT.SHIFT</code> (the shift key)
 	 * @see ISettings#moveLinkedEventsWhenEventsAreMoved()
 	 */
 	public int getDragAllModifierKey();
@@ -781,7 +782,7 @@ public interface ISettings {
 	/**
 	 * The keyboard modifier key combined with the scroll wheel to make the chart zoom. 
 	 * 
-	 * @return Keyboard modifier. Default is SWT.MOD1 (usually the CTRL key)
+	 * @return Keyboard modifier. Default is <code>SWT.MOD1</code> (usually the <code>CTRL</code> key)
 	 */
 	public int getZoomWheelModifierKey();
 	
@@ -847,10 +848,11 @@ public interface ISettings {
 	public boolean useFastDraw();
 	
 	/**
-	 * Which side the section bar should be drawn on. <br><br>
-	 * You may use one of SWT.LEFT or SWT.RIGHT.
+	 * Which side the section bar should be drawn on. 
+	 * <br><br>
+	 * You may use one of <code>SWT.LEFT</code> or <code>SWT.RIGHT</code>.
 	 * 
-	 * @return section bar side. Default is SWT.LEFT.
+	 * @return section bar side. Default is <code>SWT.LEFT</code>.
 	 */
 	public int getSectionSide();
 	
@@ -863,10 +865,12 @@ public interface ISettings {
 	public boolean drawLockedDateMarks();
 	
 	/**
-	 * Whether to show a date tooltip when scrolling horizontally (changing dates). The tooltip will show just above the bottom horizontal toolbar. Note that if showDateTips()
+	 * Whether to show a date tooltip when scrolling horizontally (changing dates) and vertically. 
+	 * The tooltip will show just above the bottom horizontal toolbar. Note that if showDateTips()
 	 * returns false, this tip will not show.
 	 * 
 	 * @return true whether to show date tooltips when scrolling through dates. Default is true.
+	 * @see #showDateTips()
 	 */
 	public boolean showDateTipsOnScrolling();
 	
@@ -914,5 +918,20 @@ public interface ISettings {
 	 * @see GanttEvent#hideAllChildren()
 	 */
 	public boolean allowScopeMenu();
+
+	/**
+	 * Whether selecting dates in the header is allowed by clicking the date. Events will be fired on selection events. Note that not all views have this feature,
+	 * only those that actually show full dates, as that's where it makes most sense. 
+	 *  
+	 * @return true to allow header selection. Default is true.
+	 */
+	public boolean allowHeaderSelection(); 
+	
+	/*
+	 * DO NOT USE - TESTING ONLY
+	 * 
+	 * @return
+	 */
+	//public List getHeaderLevels();
 	
 }
