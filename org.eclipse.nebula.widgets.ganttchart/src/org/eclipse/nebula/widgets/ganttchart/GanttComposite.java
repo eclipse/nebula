@@ -617,8 +617,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	 * @param layer Layer to hide.
 	 */
 	public void hideLayer(int layer) {
-		if (!mHiddenLayers.contains(Integer.valueOf(layer))) {
-			mHiddenLayers.add(Integer.valueOf(layer));
+		if (!mHiddenLayers.contains(new Integer(layer))) {
+			mHiddenLayers.add(new Integer(layer));
 		}
 	}
 
@@ -628,7 +628,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	 * @param layer Layer to show.
 	 */
 	public void showLayer(int layer) {
-		boolean removed = mHiddenLayers.remove(Integer.valueOf(layer));
+		boolean removed = mHiddenLayers.remove(new Integer(layer));
 		if (removed) {
 			redrawEventsArea();
 		}
@@ -656,8 +656,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	public void hideAllLayers() {
 		for (int i = 0; i < mGanttEvents.size(); i++) {
 			GanttEvent ge = (GanttEvent) mGanttEvents.get(i);
-			if (!mHiddenLayers.contains(Integer.valueOf(ge.getLayer())))
-				mHiddenLayers.add(Integer.valueOf(ge.getLayer()));
+			if (!mHiddenLayers.contains(new Integer(ge.getLayer())))
+				mHiddenLayers.add(new Integer(ge.getLayer()));
 		}
 
 		redrawEventsArea();
@@ -675,14 +675,14 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		int toSet = opacity;
 
 		if (toSet >= 255) {
-			mLayerOpacityMap.remove(Integer.valueOf(layer));
+			mLayerOpacityMap.remove(new Integer(layer));
 			return;
 		}
 
 		if (toSet < 0)
 			toSet = 0;
 
-		mLayerOpacityMap.put(Integer.valueOf(layer), Integer.valueOf(toSet));
+		mLayerOpacityMap.put(new Integer(layer), new Integer(toSet));
 		redrawEventsArea();
 	}
 
@@ -693,10 +693,10 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	 * @return Layer opacity, -1 if layer has no opacity set.
 	 */
 	public int getLayerOpacity(int layer) {
-		if (mLayerOpacityMap.get(Integer.valueOf(layer)) == null)
+		if (mLayerOpacityMap.get(new Integer(layer)) == null)
 			return -1;
 
-		return ((Integer) mLayerOpacityMap.get(Integer.valueOf(layer))).intValue();
+		return ((Integer) mLayerOpacityMap.get(new Integer(layer))).intValue();
 	}
 
 	/**
@@ -1899,7 +1899,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			if (temp.get(Calendar.DAY_OF_MONTH) == 1) {
 				gc.setForeground(mColorManager.getYearTimeDividerColor());
 				gc.drawLine(current, topY, current, topY + heightY);
-				mVerticalLineLocations.add(Integer.valueOf(current));
+				mVerticalLineLocations.add(new Integer(current));
 
 				gc.setForeground(mTextColor);
 				gc.drawString(getDateString(temp, false), current + 4, topY + 3, true);
@@ -1982,11 +1982,11 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		while (true) {
 			int curDay = temp.get(Calendar.DAY_OF_WEEK);
 
-			mVerticalLineLocations.add(Integer.valueOf(current));
+			mVerticalLineLocations.add(new Integer(current));
 			// only change dates when week changes, as we don't change date
 			// string for every different day
 			if (curDay == temp.getFirstDayOfWeek()) {
-				mVerticalWeekDividerLineLocations.add(Integer.valueOf(current));
+				mVerticalWeekDividerLineLocations.add(new Integer(current));
 				gc.setForeground(mColorManager.getMonthTimeDividerColor());
 				gc.drawRectangle(current, topY, wWidth, heightY);
 				gc.setForeground(mTextHeaderBackgroundColorTop);
@@ -2145,9 +2145,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			}
 			gc.fillGradientRectangle(current + 1, topY + 1, mDayWidth - 1, heightY - 1, true);
 
-			mVerticalLineLocations.add(Integer.valueOf(current));
+			mVerticalLineLocations.add(new Integer(current));
 			if (temp.get(Calendar.DAY_OF_WEEK) == mCalendar.getFirstDayOfWeek())
-				mVerticalWeekDividerLineLocations.add(Integer.valueOf(current));
+				mVerticalWeekDividerLineLocations.add(new Integer(current));
 
 			gc.setForeground(mColorManager.getWeekTimeDividerColor());
 			gc.drawRectangle(current, topY, mDayWidth, heightY);
@@ -2293,7 +2293,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			gc.setForeground(mColorManager.getHourTimeDividerColor());
 			int spacer = 1;
 
-			mVerticalLineLocations.add(Integer.valueOf(current));
+			mVerticalLineLocations.add(new Integer(current));
 
 			// this weird code here checks if it's a gantt section on the left and we're drawing the first iteration.
 			// as sections draw their own line on the inner-facing border, and so does this, that'd be two lines in a row
@@ -2329,7 +2329,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			mHoursVisible++;
 			temp.add(Calendar.HOUR_OF_DAY, 1);
 			if (temp.get(Calendar.HOUR_OF_DAY) == 0) {
-				mVerticalWeekDividerLineLocations.add(Integer.valueOf(current));
+				mVerticalWeekDividerLineLocations.add(new Integer(current));
 				// temp.add(Calendar.DATE, 1);
 				// temp.set(Calendar.HOUR_OF_DAY, workDayStartHour);
 			}
@@ -4098,7 +4098,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	// displayed on the screen
 	private int getEventVisibility(GanttEvent event, Rectangle bounds) {
 		// fastest checks come first, if it's not a visible layer, it's not visible
-		if (mHiddenLayers.contains(Integer.valueOf(event.getLayer())))
+		if (mHiddenLayers.contains(new Integer(event.getLayer())))
 			return VISIBILITY_NOT_VISIBLE;
 
 		// our second check is the check whether it's out of bounds vertically, if so we can return right away (and scope calculation
