@@ -5919,6 +5919,39 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	}
 
 	/**
+	 * Sets the zoom level. If the new level is zoomed in from the previous set zoom level a zoom in event will be reported, otherwise a zoom out.
+	 * 
+	 * @param level Level to set
+	 */
+	public void setZoomLevel(int level) {
+		if (level == mZoomLevel)
+			return;
+		
+		int toSet = level;
+	
+		if (toSet < ISettings.MIN_ZOOM_LEVEL) 
+			toSet = ISettings.MIN_ZOOM_LEVEL;
+		if (toSet > ISettings.MAX_ZOOM_LEVEL)
+			toSet = ISettings.MAX_ZOOM_LEVEL;
+		
+		int oldZoomLevel = mZoomLevel;
+		mZoomLevel = toSet;
+		
+		updateZoomLevel();
+		mZoomLevelChanged = true;
+
+		forceFullUpdate();
+
+		for (int i = 0; i < mEventListeners.size(); i++) {
+			IGanttEventListener listener = (IGanttEventListener) mEventListeners.get(i);
+			if (toSet < oldZoomLevel)
+				listener.zoomedOut(mZoomLevel);
+			else
+				listener.zoomedIn(mZoomLevel);
+		}		
+	}
+	
+	/**
 	 * Zooms in. If zooming is disabled, does nothing.
 	 * 
 	 * @param showHelper Whether to show the help area or not.
