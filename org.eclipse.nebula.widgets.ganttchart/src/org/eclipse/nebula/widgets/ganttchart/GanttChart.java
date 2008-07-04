@@ -79,7 +79,7 @@ public class GanttChart extends Composite implements IGanttFlags {
 	private ILanguageManager			mLanguageManager;
 
 	/**
-	 * Constructs a new GANTT chart widget.
+	 * Constructs a new GANTT chart widget. For styles, please see {@link IGanttFlags}.
 	 * 
 	 * @param parent Parent composite
 	 * @param style Widget style
@@ -96,7 +96,7 @@ public class GanttChart extends Composite implements IGanttFlags {
 	}
 
 	/**
-	 * Constructs a new GANTT chart widget with custom settings {@link ISettings}.
+	 * Constructs a new GANTT chart widget with custom settings {@link ISettings}. For styles, please see {@link IGanttFlags}.
 	 * 
 	 * @param parent Parent composite
 	 * @param style Widget style
@@ -114,7 +114,7 @@ public class GanttChart extends Composite implements IGanttFlags {
 	}
 
 	/**
-	 * Constructs a new GANTT chart widget with custom settings and a custom color manager {@link IColorManager}.
+	 * Constructs a new GANTT chart widget with custom settings and a custom color manager {@link IColorManager}. For styles, please see {@link IGanttFlags}.
 	 * 
 	 * @param parent Parent composite
 	 * @param style Widget style
@@ -134,7 +134,7 @@ public class GanttChart extends Composite implements IGanttFlags {
 
 	/**
 	 * Constructs a new GANTT chart widget with custom settings, custom color manager {@link IColorManager}, a custom paint manager {@link IPaintManager} and a custom language
-	 * manager {@link ILanguageManager}. If any of the managers is set to null the default manager using that implementation will be used.
+	 * manager {@link ILanguageManager}. If any of the managers is set to null the default manager using that implementation will be used. For styles, please see {@link IGanttFlags}.
 	 * 
 	 * @param parent Parent composite
 	 * @param style Widget style

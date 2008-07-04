@@ -11,7 +11,6 @@
 
 package org.eclipse.nebula.widgets.ganttchart;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -100,9 +99,9 @@ public interface IGanttEventListener {
 	/**
 	 * Fires when the "properties" menu item is selected on an event (assuming it's visible).
 	 * 
-	 * @param event Event to show properties on.
+	 * @param events Events to show properties on.
 	 */
-	public void eventPropertiesSelected(GanttEvent event);
+	public void eventPropertiesSelected(List events);
 
 	/**
 	 * Fires when a header section becomes selected.

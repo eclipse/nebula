@@ -933,5 +933,4 @@ public interface ISettings {
 	 * @return
 	 */
 	//public List getHeaderLevels();
-	
 }

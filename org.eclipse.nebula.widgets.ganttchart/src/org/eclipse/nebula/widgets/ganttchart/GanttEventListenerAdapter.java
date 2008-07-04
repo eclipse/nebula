@@ -11,7 +11,6 @@
 
 package org.eclipse.nebula.widgets.ganttchart;
 
-import java.util.List;
 import java.util.Calendar;
 import java.util.List;
 
@@ -23,7 +22,7 @@ public class GanttEventListenerAdapter implements IGanttEventListener {
 	public void eventDoubleClicked(GanttEvent event, MouseEvent me) {
 	}
 
-	public void eventPropertiesSelected(GanttEvent event) {
+	public void eventPropertiesSelected(List events) {
 	}
 
 	public void eventsDeleteRequest(List events, MouseEvent me) {

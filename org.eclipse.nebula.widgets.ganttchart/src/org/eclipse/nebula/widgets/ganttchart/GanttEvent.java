@@ -37,7 +37,7 @@ import org.eclipse.swt.widgets.Menu;
  * Events <b>may be</b> modified on the fly to become a different object type from the above list. Please do ensure that the ALL parameters are set for it to become the new object
  * before you do so.
  * <p>
- * Once an event has been created, add it onto the GanttChart widget via the addEvent(...) methods available.
+ * Once an event has been created, add it onto the GanttChart widget via the addScopeEvent(...) methods available.
  * <p>
  * <b>Sample Code:</b><br>
  * <br>
@@ -124,6 +124,8 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	private Calendar		mPreMoveDateRevisedEnd;
 	private Rectangle		mPreMoveBounds;
 	private boolean			mMoving;
+	
+	private GanttEvent		mScopeParent;
 
 	/**
 	 * Creates a new GanttEvent.
@@ -685,7 +687,7 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	}
 
 	/**
-	 * Sets this event to be a scope. Don't forget to add events that the scope is supposed to encompass with addScopeEvent(GanttEvent event);
+	 * Sets this event to be a scope. Don't forget to add events that the scope is supposed to encompass with {@link #addScopeEvent(GanttEvent)}.
 	 * 
 	 * @param scope
 	 * @see #addScopeEvent(GanttEvent)
@@ -694,6 +696,13 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 		mCheckpoint = false;
 		mImage = false;
 		mScope = scope;
+		
+		if (!scope) {
+			for (int i = 0; i < mScopeEvents.size(); i++)
+				((GanttEvent)mScopeEvents.get(i)).setScopeParent(null);
+			
+			mScopeEvents.clear();
+		}
 	}
 
 	/**
@@ -716,8 +725,10 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 
 		if (mScopeEvents.contains(event))
 			return;
-
+		
 		mScopeEvents.add(event);
+		
+		event.setScopeParent(this);
 	}
 
 	/**
@@ -881,6 +892,8 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 		setStartDate(earliest);
 		setEndDate(latest);
 		setPercentComplete((int) percentage);
+		
+		updateDaysBetweenStartAndEnd();
 	}
 
 	/**
@@ -1346,6 +1359,14 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 
 	void moveFinished() {
 		mMoving = false;
+	}
+	
+	GanttEvent getScopeParent() {
+		return mScopeParent;
+	}
+	
+	void setScopeParent(GanttEvent parent) {
+		mScopeParent = parent;
 	}
 
 	public String toString() {

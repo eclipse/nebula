@@ -11,7 +11,6 @@
 
 package org.eclipse.nebula.widgets.ganttchart;
 
-import java.util.List;
 import java.util.Calendar;
 import java.util.List;
 
@@ -148,8 +147,8 @@ public class GanttTester {
 					System.out.println("Event double clicked " + event);
 				}
 
-				public void eventPropertiesSelected(GanttEvent event) {
-					System.out.println("Event properties selected " + event);
+				public void eventPropertiesSelected(List events) {
+					System.out.println("Event properties selected " + events);
 				}
 
 				public void eventsDeleteRequest(List events, MouseEvent me) {

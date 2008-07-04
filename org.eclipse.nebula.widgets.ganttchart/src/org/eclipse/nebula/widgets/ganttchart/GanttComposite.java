@@ -44,6 +44,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ScrollBar;
+import org.eclipse.swt.widgets.Tracker;
 
 /**
  * The GanttComposite is the workhorse of the GANTT chart. It contains a few public methods available for use, but most of the functionality is private. <br>
@@ -202,7 +203,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	private Color						mTodayBGColorBottom;
 
 	// currently selected event
-	private GanttEvent					mSelectedEvent;
+	private List						mSelectedEvents;
 
 	// the calendar that the current view is on, will always be on the first
 	// date of the visible area (the date on the far left)
@@ -344,6 +345,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	private int							mStyle;
 
 	private boolean						mInfiniteHorizontalScrollbar;
+	
+	private Tracker						mTracker;
+	private boolean 					mMultiSelect;
 
 	static {
 		String osProperty = System.getProperty("os.name");
@@ -364,6 +368,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		super(parent, SWT.NO_BACKGROUND | SWT.DOUBLE_BUFFERED | SWT.V_SCROLL | SWT.H_SCROLL);
 
 		mStyle = style;
+		mMultiSelect = (mStyle & SWT.MULTI) != 0;
 
 		mParent = parent;
 		mSettings = settings;
@@ -384,7 +389,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		mDayLetterStringExtentMap = new HashMap();
 		mLayerOpacityMap = new HashMap();
 		mSelectedHeaderDates = new ArrayList();
-
+		mSelectedEvents = new ArrayList();
+		
 		mDefaultLocale = mSettings.getDefaultLocale();
 		mUseAdvancedTooltips = mSettings.getUseAdvancedTooltips();
 		mUseFastDrawing = mSettings.useFastDraw();
@@ -476,6 +482,11 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			}
 
 			public void keyReleased(KeyEvent event) {
+				if (mTracker != null) {
+					mTracker.dispose();
+					mTracker = null;	
+					mMouseIsDown = false;
+				}
 				if (mShowZoomHelper) {
 					mShowZoomHelper = false;
 					// redraw the area where it was
@@ -741,7 +752,23 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	 * @param ge GanttEvent to select
 	 */
 	public void setSelection(GanttEvent ge) {
-		mSelectedEvent = ge;
+		mSelectedEvents.clear();
+		mSelectedEvents.add(ge);
+		redrawEventsArea();
+	}
+	
+	/**
+	 * Sets the selection to be a set of GanttEvents. If the chart is set to <code>SWT.SINGLE</code> you should be using {@link #setSelection(GanttEvent)} as this method
+	 * will do nothing. This method will cause a redraw.
+	 * 
+	 * @param list List of GanttEvents to select
+	 */
+	public void setSelection(ArrayList list) {		
+		if (!mMultiSelect)
+			return;
+		
+		mSelectedEvents.clear();
+		mSelectedEvents.addAll(list);
 		redrawEventsArea();
 	}
 
@@ -1395,29 +1422,27 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			delete.setText(mLanguageManager.getDeleteMenuText());
 			delete.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event e) {
-					if (mSelectedEvent != null) {
-						ArrayList events = new ArrayList();
-						events.add(mSelectedEvent);
+					if (mSelectedEvents.size() > 0) {
 						for (int i = 0; i < mEventListeners.size(); i++) {
 							IGanttEventListener listener = (IGanttEventListener) mEventListeners.get(i);
-							listener.eventsDeleteRequest(events, me);
+							listener.eventsDeleteRequest(mSelectedEvents, me);
 						}
 					}
 				}
 			});
 		}
 
-		if (mSettings.showPropertiesMenuOption() && mSelectedEvent != null) {
+		if (mSettings.showPropertiesMenuOption() && mSelectedEvents.size() > 0) {
 			new MenuItem(mRightClickMenu, SWT.SEPARATOR);
 
 			MenuItem properties = new MenuItem(mRightClickMenu, SWT.PUSH);
 			properties.setText(mLanguageManager.getPropertiesMenuText());
 			properties.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event event) {
-					if (mSelectedEvent != null) {
+					if (mSelectedEvents.size() > 0) {
 						for (int i = 0; i < mEventListeners.size(); i++) {
 							IGanttEventListener listener = (IGanttEventListener) mEventListeners.get(i);
-							listener.eventPropertiesSelected(mSelectedEvent);
+							listener.eventPropertiesSelected(mSelectedEvents);
 						}
 					}
 				}
@@ -1429,13 +1454,13 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	}
 
 	/**
-	 * Returns the currently selected event, or null if none.
+	 * Returns the a list of all currently selected events, or an emtpy list if none.
 	 * 
 	 * @return GanttEvent or null
 	 */
-	public GanttEvent getSelectedEvent() {
+	public List getSelectedEvents() {
 		checkWidget();
-		return mSelectedEvent;
+		return mSelectedEvents;
 	}
 
 	/**
@@ -2510,7 +2535,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		} else if (ge.isScope()) {
 			mPaintManager.drawScope(this, mSettings, mColorManager, ge, gc, mThreeDee, dw, xStart, yDrawPos, xEventWidth, bounds);
 		} else {
-			mPaintManager.drawEvent(this, mSettings, mColorManager, ge, gc, (mSelectedEvent != null && mSelectedEvent.equals(ge)), mThreeDee, dw, xStart, yDrawPos, xEventWidth, bounds);
+			mPaintManager.drawEvent(this, mSettings, mColorManager, ge, gc, (mSelectedEvents.size() > 0 && mSelectedEvents.contains(ge)), mThreeDee, dw, xStart, yDrawPos, xEventWidth, bounds);
 		}
 		if (ge.hasMovementConstraints()) {
 			int startStart = -1, endStart = -1;
@@ -2936,11 +2961,11 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			}
 
 			if (mSettings.showOnlyDependenciesForSelectedItems()) {
-				if (mSelectedEvent == null) {
+				if (mSelectedEvents.size() == 0) {
 					return;
 				}
 
-				if (!mSelectedEvent.equals(c.getGe1())) {
+				if (!mSelectedEvents.contains(c.getGe1())) {
 					continue;
 				}
 			}
@@ -4384,6 +4409,28 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		mSelectedHeaderDates.clear();
 		redraw();
 	}
+	
+	private void doMultiSelect(Rectangle rect, MouseEvent me) {
+		if (rect == null)
+			return;
+		
+		mSelectedEvents.clear();
+		for (int i = 0; i < mGanttEvents.size(); i++) {
+			GanttEvent ge = (GanttEvent) mGanttEvents.get(i);
+			if (ge.isScope())
+				continue;
+			
+			if (ge.getBounds().intersects(rect))
+				mSelectedEvents.add(ge);
+		}
+		
+		for (int x = 0; x < mEventListeners.size(); x++) {
+			IGanttEventListener listener = (IGanttEventListener) mEventListeners.get(x);
+			listener.eventSelected(null, mSelectedEvents, me);
+		}
+		
+		redraw();
+	}
 
 	public void mouseDown(MouseEvent me) {
 		if (me.button == 1)
@@ -4394,14 +4441,18 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			showMenu(ctrlPoint.x, ctrlPoint.y, null, me);
 			return;
 		}
-
+				
 		if (mSettings.allowBlankAreaDragAndDropToMoveDates() && me.button == 1)
 			setCursor(CURSOR_HAND);
 
 		// remove old dotted border, we used to just create a new GC and clear it, but to be honest, it was a bit of a hassle with some calculations
 		// and left over cheese, and a redraw is just faster. It's rare enough anyway, and we don't redraw more than a small area
-		if (mSelectedEvent != null && mSettings.drawSelectionMarkerAroundSelectedEvent())
-			redraw(mSelectedEvent.getX() - 2, mSelectedEvent.getY() - 2, mSelectedEvent.getWidth() + 4, mSelectedEvent.getHeight() + 4, false);
+		if (mSelectedEvents.size() != 0 && mSettings.drawSelectionMarkerAroundSelectedEvent()) {
+			for (int x = 0; x < mSelectedEvents.size(); x++) {
+				GanttEvent selEvent = (GanttEvent) mSelectedEvents.get(x);
+				redraw(selEvent.getX() - 2, selEvent.getY() - 2, selEvent.getWidth() + 4, selEvent.getHeight() + 4, false);
+			}
+		}
 
 		// header clicks, if it's visible
 		if (mSettings.drawHeader() && mSettings.allowHeaderSelection()) {
@@ -4470,24 +4521,40 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 				// if it's a scope and menu is allowed, we can finish right here
 				if (me.button == 3 && event.isScope()) {
-					showMenu(ctrlPoint.x, ctrlPoint.y, event, me);
+					showMenu(ctrlPoint.x, ctrlPoint.y, event, me);					
+					// dispose or we have a memory leak, as we're returning!
+					gc.dispose();
 					return;
 				}
+				
+				if (me.stateMask == 0 || !mMultiSelect)
+					mSelectedEvents.clear();
+
+				// if we're multi selecting
+				if (mMultiSelect) {
+					// ctrl select + deselect
+					if (mSelectedEvents.contains(event) && me.stateMask == SWT.MOD1)
+						mSelectedEvents.remove(event);
+					else
+						mSelectedEvents.add(event);
+				}
+				else
+					mSelectedEvents.add(event);
 
 				// fire selection changed
-				if ((mSelectedEvent != null && !mSelectedEvent.equals(event)) || mSelectedEvent == null) {
-					ArrayList allSelectedEvents = new ArrayList();
+				if ((mSelectedEvents.size() > 0)) {// && !mSelectedEvents.contains(event)) || mSelectedEvents.size() == 0) {
 					for (int x = 0; x < mEventListeners.size(); x++) {
 						IGanttEventListener listener = (IGanttEventListener) mEventListeners.get(x);
-						listener.eventSelected(event, allSelectedEvents, me);
+						listener.eventSelected(event, mSelectedEvents, me);
 					}
 				}
-
-				mSelectedEvent = event;
-
-				if (!mSelectedEvent.isCheckpoint() && !mSelectedEvent.isScope() && !mSelectedEvent.isImage() && mSettings.drawSelectionMarkerAroundSelectedEvent()) {
-					gc.setForeground(ColorCache.getWhite());
-					drawSelectionAroundEvent(gc, event, event.getX(), event.getY(), event.getWidth(), mBounds);
+			
+				for (int x = 0; x < mSelectedEvents.size(); x++) {
+					GanttEvent selEvent = (GanttEvent) mSelectedEvents.get(x);
+					if (!selEvent.isCheckpoint() && !selEvent.isScope() && !selEvent.isImage() && mSettings.drawSelectionMarkerAroundSelectedEvent()) {
+						gc.setForeground(ColorCache.getWhite());
+						drawSelectionAroundEvent(gc, event, event.getX(), event.getY(), event.getWidth(), mBounds);
+					}
 				}
 
 				gc.dispose();
@@ -4496,14 +4563,29 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 					redrawEventsArea();
 				}
 
-				if (me.button == 3)
-					showMenu(ctrlPoint.x, ctrlPoint.y, mSelectedEvent, me);
+				// show menu on the last selected event if there are multiple
+				if (me.button == 3 && mSelectedEvents.size() > 0)
+					showMenu(ctrlPoint.x, ctrlPoint.y, (GanttEvent)mSelectedEvents.get(mSelectedEvents.size()-1), me);
 
 				return;
 			}
 		}
 
-		mSelectedEvent = null;
+		// after selection, we only allow Trackers in blank areas, it's too much of a clash with other listeners and events otherwise
+		if (mMultiSelect && me.button == 1 && me.stateMask == SWT.MOD1) {
+			setCursor(CURSOR_NONE);
+			mTracker = new Tracker(this, SWT.RESIZE);
+			mTracker.setCursor(CURSOR_NONE);
+			mTracker.setStippled(true);
+			mTracker.setRectangles(new Rectangle [] { new Rectangle(me.x, me.y, 1, 1) });
+			// this blocks until the Tracker is disposed, so on success, we multiselect
+			if (mTracker.open()) {
+				doMultiSelect(mTracker.getRectangles()[0], me);
+			}
+			return;
+		}
+
+		mSelectedEvents.clear();
 
 		if (mSettings.showOnlyDependenciesForSelectedItems()) {
 			redrawEventsArea();
@@ -4555,6 +4637,12 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	public void mouseUp(MouseEvent event) {
 		mMouseIsDown = false;
 
+		if (mTracker != null) {
+			//mTracker.close();
+			mTracker.dispose();
+			mTracker = null;
+		}
+		
 		if (mResizing) {
 			for (int i = 0; i < mEventListeners.size(); i++) {
 				((IGanttEventListener) mEventListeners.get(i)).eventsResizeFinished(mDragEvents, event);
@@ -4586,7 +4674,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 			endEverything();
 
-			mSelectedEvent = null;
+			mSelectedEvents.clear();
 			killDialogs();
 			redraw();
 			setCursor(CURSOR_NONE);
@@ -4599,9 +4687,16 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	}
 
 	private void endEverything() {
+		if (mTracker != null) {
+			mTracker.dispose();
+			mTracker = null;
+			mMouseIsDown = false;
+		}
+
 		// oh, not quite yet
 		if (mMouseIsDown)
 			return;
+		
 
 		mInitialHoursDragOffset = 0;
 		mJustStartedMoveOrResize = false;
@@ -4633,6 +4728,10 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			if (me.stateMask == 0)
 				killDialogs();
 
+			if (mTracker != null) {				
+				return;
+			}
+						
 			String dateFormat = (mCurrentView == ISettings.VIEW_DAY ? mSettings.getHourDateFormat() : mSettings.getDateFormat());
 
 			// if we moved mouse back in from out of bounds, kill auto scroll
@@ -4655,14 +4754,15 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 			// move
 			if (mDragging && dndOK) {
-				handleMove(me, mSelectedEvent, TYPE_MOVE);
+				for (int x = 0; x < mSelectedEvents.size(); x++) 
+					handleMove(me, (GanttEvent)mSelectedEvents.get(x), TYPE_MOVE, x == 0);
 				return;
 			}
 
 			// resize
 			if (mResizing && resizeOK && (mCursor == SWT.CURSOR_SIZEE || mCursor == SWT.CURSOR_SIZEW)) {
-				// handleResize(me, mSelectedEvent, mLastLeft);
-				handleMove(me, mSelectedEvent, mLastLeft ? TYPE_RESIZE_LEFT : TYPE_RESIZE_RIGHT);
+				for (int x = 0; x < mSelectedEvents.size(); x++)
+					handleMove(me, (GanttEvent)mSelectedEvents.get(x), mLastLeft ? TYPE_RESIZE_LEFT : TYPE_RESIZE_RIGHT, x == 0);
 				return;
 			}
 
@@ -4671,13 +4771,15 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			// as "isInside()" will not have a chance to see if it's true or not
 			// (below)
 			if (!mResizing && !mDragging && dndOK && resizeOK && me.stateMask != 0 && mCursor != SWT.NONE) {
-				if (mSelectedEvent != null) {
+				if (mSelectedEvents.size() > 0) {
 					if ((mCursor == SWT.CURSOR_SIZEE || mCursor == SWT.CURSOR_SIZEW)) {
 						// handleResize(me, mSelectedEvent, mCursor == SWT.CURSOR_SIZEW);
-						handleMove(me, mSelectedEvent, mCursor == SWT.CURSOR_SIZEW ? TYPE_RESIZE_LEFT : TYPE_RESIZE_RIGHT);
+						for (int x = 0; x < mSelectedEvents.size(); x++)
+							handleMove(me, (GanttEvent)mSelectedEvents.get(x), mCursor == SWT.CURSOR_SIZEW ? TYPE_RESIZE_LEFT : TYPE_RESIZE_RIGHT, x == 0);
 						return;
 					} else if (mCursor == SWT.CURSOR_SIZEALL) {
-						handleMove(me, mSelectedEvent, TYPE_MOVE);
+						for (int x = 0; x < mSelectedEvents.size(); x++)
+							handleMove(me, (GanttEvent)mSelectedEvents.get(x), TYPE_MOVE, x == 0);
 						return;
 					}
 				}
@@ -4748,7 +4850,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 					} else {
 						if ((dndOK || event.isMoveable()) && mCursor == SWT.CURSOR_SIZEALL) {
 							if (isInMoveArea(event, me.x)) {
-								handleMove(me, event, TYPE_MOVE);
+								handleMove(me, event, TYPE_MOVE, true);
 								return;
 							}
 						}
@@ -4756,7 +4858,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 						if (!event.isCheckpoint()) {
 							if ((resizeOK || event.isResizable()) && (mCursor == SWT.CURSOR_SIZEE || mCursor == SWT.CURSOR_SIZEW)) {
 								// handleResize(me, event, onLeftBorder);
-								handleMove(me, event, onLeftBorder ? TYPE_RESIZE_LEFT : TYPE_RESIZE_RIGHT);
+								handleMove(me, event, onLeftBorder ? TYPE_RESIZE_LEFT : TYPE_RESIZE_RIGHT, true);
 								return;
 							}
 						}
@@ -4774,7 +4876,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			}
 
 			// blank area drag and drop
-			if (mMouseIsDown && mSettings.allowBlankAreaDragAndDropToMoveDates()) {
+			if (mMouseIsDown && mSettings.allowBlankAreaDragAndDropToMoveDates()) {				
 				// blank area drag
 				if (mMouseDragStartLocation == null)
 					mMouseDragStartLocation = new Point(me.x, me.y);
@@ -5058,7 +5160,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	/**
 	 * Handles the actual moving of an event.
 	 */
-	private void handleMove(MouseEvent me, GanttEvent event, int type) {
+	private void handleMove(MouseEvent me, GanttEvent event, int type, boolean showToolTip) {
 		if (!mSettings.enableDragAndDrop() && type == TYPE_MOVE)
 			return;
 
@@ -5076,7 +5178,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 		if ((type == TYPE_RESIZE_LEFT || type == TYPE_RESIZE_RIGHT) && !event.isResizable())
 			return;
-
+			
 		String dateFormat = (mCurrentView == ISettings.VIEW_DAY ? mSettings.getHourDateFormat() : mSettings.getDateFormat());
 
 		Calendar mouseDateCal = getDateAt(me.x);
@@ -5169,10 +5271,20 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			}
 		}
 
+		// if the event is part of a scope, force the parent to recalculate it's size etc, thus we don't have to recalculate everything
+		if (event.getScopeParent() != null) {
+			event.getScopeParent().calculateScope();
+			int newStartX = getXForDate(event.getScopeParent().getEarliestScopeEvent().getActualStartDate());
+			int newWidth = getXLengthForEvent(event.getScopeParent());
+			event.getScopeParent().updateX(newStartX);
+			event.getScopeParent().updateWidth(newWidth);
+		}
+
 		// set new last x position to where mouse is now
 		mLastX = me.x;
 
-		if (mSettings.showDateTips() && (mDragging || mResizing)) {
+		// TODO: On multi-drag events, one tooltip is a bit lame, can we do something cooler/nicer/more useful? (20 tooltips != useful, and it's slow)
+		if (mSettings.showDateTips() && (mDragging || mResizing) && showToolTip) {
 			Rectangle eBounds = new Rectangle(event.getX(), event.getY() - 25, event.getWidth(), event.getHeight());
 			Point eventOnDisplay = toDisplay(me.x, eBounds.y);
 			if (event.isCheckpoint()) {
@@ -5308,7 +5420,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		} else {
 			if ((stateMask & mSettings.getDragAllModifierKey()) != 0) {
 				ArrayList conns = getEventsDependingOn(ge, new ArrayList());
-
+				
 				ArrayList translated = new ArrayList();
 				for (int x = 0; x < conns.size(); x++) {
 					GanttEvent md = (GanttEvent) conns.get(x);
@@ -5322,10 +5434,22 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 					translated.add(md);
 				}
-
+				
 				if (!translated.contains(ge))
 					translated.add(ge);
 
+				// add all multiselected events too, if any
+				if (mMultiSelect) {
+					for (int x = 0; x < mSelectedEvents.size(); x++) {
+						GanttEvent selEvent = (GanttEvent) mSelectedEvents.get(x);
+						if (selEvent.isScope())
+							continue;
+						
+						if (!translated.contains(selEvent))
+							translated.add(selEvent);
+					}
+				}
+				
 				mDragEvents.clear();
 				mDragEvents = translated;
 
@@ -5435,7 +5559,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 				listener.eventsResized(eventsMoved, me);
 		}
 
-		// TODO: Granualize
+		// TODO: Granualize, if possible, quite hard with arrow-connections
 		redrawEventsArea();
 	}
 
