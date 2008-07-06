@@ -281,5 +281,19 @@ public class ColorThemeWindowsBlue implements IColorManager {
 		return ColorCache.getColor(188, 212, 240);
 	}	
 	
+	public Color getSelectedDayColorBottom() {
+		return ColorCache.getColor(200, 212, 222);
+	}
+
+	public Color getSelectedDayColorTop() {
+		return ColorCache.getColor(173, 192, 207);
+	}
 	
+	public Color getSelectedDayHeaderColorBottom() {
+		return ColorCache.getColor(195, 218, 242);
+	}
+
+	public Color getSelectedDayHeaderColorTop() {
+		return ColorCache.getColor(222, 236, 250);
+	}	
 }

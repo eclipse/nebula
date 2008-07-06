@@ -277,5 +277,21 @@ public class ColorThemeSilver implements IColorManager {
 	public Color getSessionBarDividerColorRight() {
 		return ColorCache.getColor(255, 255, 245);
 	}	
+
+	public Color getSelectedDayColorBottom() {
+		return ColorCache.getColor(150, 150, 150);
+	}
+
+	public Color getSelectedDayColorTop() {
+		return ColorCache.getColor(197, 197, 197);
+	}
+	
+	public Color getSelectedDayHeaderColorBottom() {
+		return ColorCache.getColor(230, 230, 230);
+	}
+
+	public Color getSelectedDayHeaderColorTop() {
+		return ColorCache.getColor(255, 255, 255);
 		
+	}	
 }

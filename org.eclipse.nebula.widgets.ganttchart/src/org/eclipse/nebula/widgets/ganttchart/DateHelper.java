@@ -17,7 +17,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.WeakHashMap;
 
 public class DateHelper {
 
@@ -83,16 +82,16 @@ public class DateHelper {
 		endDate.set(Calendar.MILLISECOND, 0);
 
 		// now we should be able to do a "safe" millisecond/day calculation to
-		// get the number of days
-		long endMilli = endDate.getTimeInMillis();
-		long startMilli = startDate.getTimeInMillis();
-
+		// get the number of days, note that we need to include the timezone or daylights savings will get lost!! this is a huge issue
+		long endMilli = endDate.getTimeInMillis() + endDate.getTimeZone().getOffset( endDate.getTimeInMillis() );
+		long startMilli = startDate.getTimeInMillis() + startDate.getTimeZone().getOffset( startDate.getTimeInMillis() );
+		
 		// calculate # of days, finally
 		long diff = (endMilli - startMilli) / MILLISECONDS_IN_DAY;
-
+		
 		return diff;
 	}
-
+	
 	public static long daysBetween(Date start, Date end, Locale locale) {
 		Calendar dEnd = Calendar.getInstance(locale);
 		Calendar dStart = Calendar.getInstance(locale);
@@ -139,8 +138,10 @@ public class DateHelper {
 	
 	//private static WeakHashMap fastDateMap = new WeakHashMap(1000, 0.75f);
 
-	public static String getDate(Calendar cal, String dateFormat) {
-		Calendar toUse = (Calendar) cal.clone();
+	public static String getDate(Calendar cal, String dateFormat, Locale locale) {
+		//Calendar toUse = (Calendar) cal.clone();
+		Calendar toUse = Calendar.getInstance(locale);
+		toUse.setTime(cal.getTime());
 		toUse.add(Calendar.MONTH, -1);
 
 /*		HashMap dMap = null;
@@ -157,7 +158,7 @@ public class DateHelper {
 			df = (SimpleDateFormat) dateFormatMap.get(dateFormat);
 		}
 		else {
-			df = new SimpleDateFormat(dateFormat);
+			df = new SimpleDateFormat(dateFormat, locale);
 			dateFormatMap.put(dateFormat, df);
 		}
 		
