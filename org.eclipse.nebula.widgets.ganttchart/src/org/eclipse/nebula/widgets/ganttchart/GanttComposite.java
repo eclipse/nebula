@@ -4643,19 +4643,21 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			mTracker = null;
 		}
 
-		if (mResizing) {
-			for (int i = 0; i < mEventListeners.size(); i++) {
-				((IGanttEventListener) mEventListeners.get(i)).eventsResizeFinished(mDragEvents, event);
+		if (mDragEvents.size() > 0) {
+			if (mResizing) {
+				for (int i = 0; i < mEventListeners.size(); i++) {
+					((IGanttEventListener) mEventListeners.get(i)).eventsResizeFinished(mDragEvents, event);
+				}
 			}
-		}
-		if (mDragging) {
-			for (int i = 0; i < mEventListeners.size(); i++) {
-				((IGanttEventListener) mEventListeners.get(i)).eventsMoveFinished(mDragEvents, event);
+			if (mDragging) {
+				for (int i = 0; i < mEventListeners.size(); i++) {
+					((IGanttEventListener) mEventListeners.get(i)).eventsMoveFinished(mDragEvents, event);
+				}
 			}
-		}
-
-		for (int i = 0; i < mDragEvents.size(); i++) {
-			((GanttEvent) mDragEvents.get(i)).moveFinished();
+			
+			for (int i = 0; i < mDragEvents.size(); i++) {
+				((GanttEvent) mDragEvents.get(i)).moveFinished();
+			}
 		}
 
 		endEverything();
@@ -4685,8 +4687,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 				updateScopeXY(((GanttEvent) scopeEventsToUpdate.get(i)));
 			}
 
+			mDragEvents.clear();
 			endEverything();
-
 			mSelectedEvents.clear();
 			killDialogs();
 			redraw();
@@ -4917,12 +4919,12 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 				else if (ISettings.VIEW_YEAR == mCurrentView) {
 					mMouseDragStartLocation = new Point(me.x, me.y);
 
-					// fast drags get multiple moves.. 
+					// fast drags get multiple moves..
 					// TODO: just do prevMonth(times) instead of looping, less redraw
 					int times = diff / mCalendar.getActualMaximum(Calendar.DATE);
 					if (times == 0)
 						times = 1;
-			
+
 					for (int i = 0; i < times; i++) {
 						if (left)
 							prevMonth();
