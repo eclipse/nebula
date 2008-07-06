@@ -4672,10 +4672,23 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		// an attempt at ending everything
 		if (e.keyCode == SWT.ESC) {
 
+			List scopeEventsToUpdate = new ArrayList();
+			
 			// if we were in the middle of a drag or resize, we cancel the move and reset the dates back to before the move started
 			if (mDragEvents.size() > 0) {
-				for (int i = 0; i < mDragEvents.size(); i++)
-					((GanttEvent) mDragEvents.get(i)).moveCancelled();
+				for (int i = 0; i < mDragEvents.size(); i++) {
+					GanttEvent ge = (GanttEvent) mDragEvents.get(i);
+					ge.moveCancelled();
+					if (ge.getScopeParent() != null) {
+						if (!scopeEventsToUpdate.contains(ge.getScopeParent()))
+							scopeEventsToUpdate.add(ge.getScopeParent());
+					}
+				}
+			}
+			
+			// update any scope events that we found during the cancel or they won't redraw in their right spots
+			for (int i = 0; i < scopeEventsToUpdate.size(); i++) {
+				updateScopeXY(((GanttEvent)scopeEventsToUpdate.get(i)));
 			}
 
 			endEverything();
@@ -5293,12 +5306,13 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 		// if the event is part of a scope, force the parent to recalculate it's size etc, thus we don't have to recalculate everything
 		if (event.getScopeParent() != null) {
-			event.getScopeParent().calculateScope();
+			updateScopeXY(event.getScopeParent());
+/*			event.getScopeParent().calculateScope();
 			int newStartX = getXForDate(event.getScopeParent().getEarliestScopeEvent().getActualStartDate());
 			int newWidth = getXLengthForEvent(event.getScopeParent());
 			event.getScopeParent().updateX(newStartX);
 			event.getScopeParent().updateWidth(newWidth);
-		}
+*/		}
 
 		// set new last x position to where mouse is now
 		mLastX = me.x;
@@ -5328,6 +5342,18 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 				GanttDateTip.makeDialog(mColorManager, buf.toString(), eventOnDisplay, mBounds.y);
 			}
 		}
+	}
+	
+	private void updateScopeXY(GanttEvent ge) {
+		// if the event is part of a scope, force the parent to recalculate it's size etc, thus we don't have to recalculate everything
+		if (ge != null) {
+			ge.calculateScope();
+			int newStartX = getXForDate(ge.getEarliestScopeEvent().getActualStartDate());
+			int newWidth = getXLengthForEvent(ge);
+			ge.updateX(newStartX);
+			ge.updateWidth(newWidth);
+		}
+
 	}
 
 	// moves an event on the canvas. If SHIFT is held and linked events is true,
