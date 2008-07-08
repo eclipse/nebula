@@ -1,5 +1,6 @@
 package org.eclipse.nebula.widgets.ganttchart;
 
+
 /**
  * Valid styles outside of this class are as follows:
  * <p>
@@ -12,7 +13,8 @@ interface IGanttFlags {
 
 	// SWT.MULTI is taken (1 << 1)
 	// SWT.SINGLE is taken (1 << 2)
-
+	// SWT.BORDER is taken (1 << 11)
+	
 	/**
 	 * Creates the chart with an infinite scrollbar. This is the default unless one is set explicitly.
 	 */

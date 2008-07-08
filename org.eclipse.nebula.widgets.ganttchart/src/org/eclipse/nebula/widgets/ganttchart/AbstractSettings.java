@@ -249,7 +249,7 @@ abstract class AbstractSettings implements ISettings {
 	}
 
 	public boolean startCalendarOnFirstDayOfWeek() {
-		return true;
+		return false;
 	}
 
 	public int getMoveAreaNegativeSensitivity() {

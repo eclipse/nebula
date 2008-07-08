@@ -347,7 +347,7 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	 * @return Start date
 	 */
 	public Calendar getStartDate() {
-		return mStartDate;
+		return (Calendar)mStartDate.clone();
 	}
 
 	/**
@@ -356,7 +356,8 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	 * @return Start date or null
 	 */
 	public Calendar getActualStartDate() {
-		return mRevisedStart != null ? mRevisedStart : mStartDate;
+		Calendar ret = mRevisedStart != null ? mRevisedStart : mStartDate;		
+		return ret == null ? null : (Calendar)ret.clone();
 	}
 
 	/**
@@ -365,7 +366,8 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	 * @return End date or null
 	 */
 	public Calendar getActualEndDate() {
-		return mRevisedEnd != null ? mRevisedEnd : mEndDate;
+		Calendar ret = mRevisedEnd != null ? mRevisedEnd : mEndDate;
+		return ret == null ? null : (Calendar)ret.clone();
 	}
 
 	/**
@@ -373,10 +375,29 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	 * 
 	 * @param startDate Start date
 	 */
-	public void setStartDate(Calendar startDate) {
-		this.mStartDate = startDate;
+	public void setStartDate(Calendar startDate) {		
+		if (mNoMoveBeforeDate != null) {
+			if (startDate.before(mNoMoveBeforeDate))
+				return;
+		}
+		
+		if (getActualEndDate() != null) {
+			if (startDate.after(getActualEndDate()))
+				startDate = (Calendar)getActualEndDate().clone();
+		}
+		
+		this.mStartDate = (Calendar)startDate.clone();
 		checkDates();
 		updateDaysBetweenStartAndEnd();
+	}
+	
+	/**
+	 * Forces the chart to recognize that something within this event has changed and that it needs an update. This method will cause a redraw if told to redraw.
+	 * 
+	 * @param redraw if to redraw the chart after notifying of changes.
+	 */
+	public void update(boolean redraw) {
+		mParentChart.getGanttComposite().eventDatesChanged(this, redraw);
 	}
 
 	/**
@@ -385,7 +406,7 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	 * @return End date
 	 */
 	public Calendar getEndDate() {
-		return mEndDate;
+		return (Calendar)mEndDate.clone();
 	}
 
 	/**
@@ -394,7 +415,17 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	 * @param endDate End date
 	 */
 	public void setEndDate(Calendar endDate) {
-		this.mEndDate = endDate;
+		if (mNoMoveAfterDate != null) {
+			if (endDate.after(mNoMoveAfterDate))
+				return;
+		}
+		
+		if (getActualStartDate() != null) {
+			if (endDate.before(getActualStartDate()))
+				endDate = (Calendar)getActualStartDate().clone();
+		}
+		
+		this.mEndDate = (Calendar)endDate.clone();
 		checkDates();
 		updateDaysBetweenStartAndEnd();
 	}
@@ -454,7 +485,7 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 		this.width = bounds.width;
 		this.height = bounds.height;
 	}
-
+	
 	void updateX(int x) {
 		this.x = x;
 	}
@@ -560,9 +591,25 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	 * @param revisedStart
 	 */
 	public void setRevisedStart(Calendar revisedStart) {
+		if (true) {
+			setRevisedDates(revisedStart, null);
+			return;
+		}
+/*
+		if (mNoMoveBeforeDate != null) {
+			if (revisedStart.before(mNoMoveBeforeDate))
+				return;
+		}
+		
+		if (getActualEndDate() != null) {
+			if (revisedStart.after(getActualEndDate()))
+				revisedStart = (Calendar)getActualEndDate().clone();
+		}
+
 		this.mRevisedStart = revisedStart;
 		checkDates();
 		updateDaysBetweenStartAndEnd();
+		mParentChart.getGanttComposite().eventDatesChanged(this);*/
 	}
 
 	/**
@@ -573,15 +620,132 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	public Calendar getRevisedEnd() {
 		return mRevisedEnd;
 	}
-
+	
 	/**
 	 * Sets the revised end date of this event.
 	 * 
 	 * @param revisedEnd Revised end date
 	 */
 	public void setRevisedEnd(Calendar revisedEnd) {
-		this.mRevisedEnd = revisedEnd;
+		if (true) {
+			setRevisedDates(null, revisedEnd);
+			return;
+		}
+		
+	/*	if (mNoMoveAfterDate != null) {
+			if (revisedEnd.after(mNoMoveAfterDate))
+				return;
+		}
+		
+		if (getActualStartDate() != null) {
+			if (revisedEnd.before(getActualStartDate()))
+				revisedEnd = (Calendar)getActualStartDate().clone();
+		}
+		
+		Calendar copy = (Calendar) revisedEnd.clone();
+		this.mRevisedEnd = copy;
 		checkDates();
+		updateDaysBetweenStartAndEnd();
+		mParentChart.getGanttComposite().eventDatesChanged(this);*/
+	}
+	
+	/*
+	 * Sets new revised dates. This is useful when you need to update two dates that move at the same time (such as manually doing a move via setDates). Normally
+	 * each setting of a date would check it against its start date or end date to make sure it doesn't overlap. This does too, but at the same time, thus, no oddity in
+	 * movement will appear. This is rather difficult to explain, but if you experience event-length changes when using individual start and end date sets that appear
+	 * at the same time, you probably want to use this method instead.
+	 * <p>
+	 * Either parameter may be null to set just one, but both may not be null
+	 * 
+	 * @param revisedStart New revised Start date
+	 * @param revisedEnd New revised End date
+	 */
+	private void setRevisedDates(Calendar revisedStart, Calendar revisedEnd) {
+		if (revisedStart == null && revisedEnd == null)
+			return;
+		
+		if (revisedStart != null && getActualEndDate() != null) {
+			if (revisedStart.after(getActualEndDate()))
+				return;			
+		}
+		
+		if (revisedEnd != null && getActualStartDate() != null) {
+			if (revisedEnd.before(getActualStartDate()))// || revisedEnd.equals(revisedStart))
+				return;
+		}
+		
+		if (revisedStart != null)
+			mRevisedStart = (Calendar)revisedStart.clone();
+
+		if (revisedEnd != null)
+			mRevisedEnd = (Calendar)revisedEnd.clone();
+		
+		// check movement constraints
+		if (mNoMoveBeforeDate != null && revisedStart != null) {
+			if (revisedStart.before(mNoMoveBeforeDate))
+				mRevisedStart = (Calendar)mNoMoveBeforeDate.clone();
+		}
+		if (mNoMoveAfterDate != null && revisedEnd != null) {
+			if (revisedEnd.after(mNoMoveAfterDate))
+				mRevisedEnd = (Calendar)mNoMoveAfterDate.clone();
+		}		
+
+		updateDaysBetweenStartAndEnd();
+		//mParentChart.getGanttComposite().eventDatesChanged(this);		
+	}
+	
+	/**
+	 * When you need to move events manually you may run into issues as one date always has to be set before the other. So when you set a new end and start date one
+	 * is checked for overlap before the other and is thus ignored. Sometimes you just want to set the dates and not enforce validation. Do remember, you need to validate
+	 * the dates yourself before setting them. If the start comes after the end or vice versa you will run into serious drawing issues and strange behavior.
+	 * 
+	 * @param revisedStart New revised start date
+	 * @param validate true if to validate the date as normal, false to just set the date as is.
+	 */
+	public void setRevisedStart(Calendar revisedStart, boolean validate) {
+		if (validate)
+			setRevisedStart(revisedStart);
+		else {
+			mRevisedStart = (Calendar)revisedStart.clone();
+			updateDaysBetweenStartAndEnd();
+		}
+	}
+	
+	/**
+	 * When you need to move events manually you may run into issues as one date always has to be set before the other. So when you set a new end and start date one
+	 * is checked for overlap before the other and is thus ignored. Sometimes you just want to set the dates and not enforce validation. Do remember, you need to validate
+	 * the dates yourself before setting them. If the start comes after the end or vice versa you will run into serious drawing issues and strange behavior.
+	 * 
+	 * @param revisedStart New revised start date
+	 * @param validate true if to validate the date as normal, false to just set the date as is.
+	 */
+	public void setRevisedEnd(Calendar revisedEnd, boolean validate) {
+		if (validate)
+			setRevisedEnd(revisedEnd);
+		else {
+			mRevisedEnd = (Calendar)revisedEnd.clone();
+			updateDaysBetweenStartAndEnd();
+		}
+	}
+	
+	/**
+	 * Another utility method for setting new dates but this method enforces the usual validation. The difference here is that you can tell the method in which order
+	 * the new dates should be set. If you say left to right, the start is set first, the end last. 
+	 * 
+	 * @param revisedStart Revised start date
+	 * @param revisedEnd Revised end date
+	 * @param order <code>SWT.LEFT_TO_RIHT</code> or <code>SWT.RIGHT_TO_LEFT</code>
+	 */
+	public void setRevisedDates(Calendar revisedStart, Calendar revisedEnd, int order) {
+		if (order == SWT.LEFT_TO_RIGHT) {
+			setRevisedStart(revisedStart);
+			setRevisedEnd(revisedEnd);
+		}
+		else {
+			setRevisedEnd(revisedEnd);			
+			setRevisedStart(revisedStart);
+		}
+		
 		updateDaysBetweenStartAndEnd();
 	}
 
@@ -752,16 +916,41 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	// fixes dates being illogical, such as end date prior to start date which would cause very strange behavior in chart
 	// fix to bugzilla #236840
 	private void checkDates() {
-		if (mStartDate != null && mEndDate != null) {
-			if (mEndDate.before(mStartDate))
-				mEndDate = mStartDate;
+		/*Calendar end = getActualEndDate();
+		Calendar start = getActualStartDate();
+		*/
+		/*// we will have nothing to check against, so assume it's ok
+		if (start == null || end == null)
+			return true;
+
+		if (mRevisedStart != null) {
+			if (mRevisedStart.after(end))
+				mRevisedStart = (Calendar)end.clone();									
+		}		
+		else {
+			if (mStartDate.after(end))
+				mStartDate = (Calendar)end.clone();						
+		}
+		if (mRevisedEnd != null) {
+			if (mRevisedEnd.before(start))
+				mRevisedEnd = (Calendar)start.clone();									
+		}		
+		else {
+			if (mEndDate.before(start))
+				mEndDate = (Calendar)start.clone();						
+		}
+*/
+
+	
+/*			if (mEndDate.before(mStartDate))
+				mEndDate = (Calendar)mStartDate.clone();
 		}
 
 		if (mRevisedStart != null && mRevisedEnd != null) {
 			if (mRevisedEnd.before(mRevisedStart))
-				mRevisedEnd = mRevisedStart;
+				mRevisedEnd = (Calendar)mRevisedStart.clone();
 		}
-	}
+*/	}
 
 	private GanttEvent getEarliestOrLatestScopeEvent(boolean earliest) {
 		Calendar ret = null;

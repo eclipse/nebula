@@ -4,4 +4,5 @@ Bundle-Name: Ganttchart Plug-in
 Bundle-SymbolicName: org.eclipse.nebula.widgets.ganttchart
 Bundle-Version: 1.0.0
 Require-Bundle: org.eclipse.swt
-Export-Package: org.eclipse.nebula.widgets.ganttchart
+Export-Package: org.eclipse.nebula.widgets.ganttchart,
+ org.eclipse.nebula.widgets.ganttchart.themes

@@ -1091,6 +1091,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	// Note: things are in a certain order, as some stuff draws on top of
 	// others, so don't move them around unless you want a different effect
 	private void drawChartOntoGC(GC gc) {
+		mBottomMostY = 0;
+
 		// long totaltime1 = System.currentTimeMillis();
 		boolean drawSections = (mGanttSections.size() > 0);
 
@@ -1491,21 +1493,28 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	}
 
 	/**
-	 * Sets the top visible item in the chart.
+	 * Sets the top visible item in the chart and scrolls to show it.
 	 * 
 	 * @param ge Event to show
 	 * @param yOffset y offset modifier
+	 * @param side one of <code>SWT.LEFT</code>, <code>SWT.CENTER</code>, <code>SWT.RIGHT</code>
+	 * @deprecated DO NOT USE RIGHT NOW, IT'S BROKEN
+	 * 
 	 */
-	public void setTopItem(GanttEvent ge, int yOffset) {
+	public void setTopItem(GanttEvent ge, int yOffset, int side) {		
 		vScrollToY(ge.getY() + yOffset);
 	}
 
 	/**
-	 * Sets the top visible item in the chart.
+	 * Sets the top visible item in the chart and scrolls to show it.
 	 * 
 	 * @param ge Event to show
+	 * @param side one of <code>SWT.LEFT</code>, <code>SWT.CENTER</code>, <code>SWT.RIGHT</code>
+	 * @deprecated DO NOT USE RIGHT NOW, IT'S BROKEN
 	 */
-	public void setTopItem(GanttEvent ge) {
+	public void setTopItem(GanttEvent ge, int side) {
+		System.err.println(ge + " " + ge.getBounds());
+		//jumpToEvent(ge, true, side);
 		vScrollToY(ge.getY());
 	}
 
@@ -1513,7 +1522,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	 * Scrolls the chart to the selected item regardless if it is visible or not.
 	 * 
 	 * @param ge GanttEvent to scroll to.
-	 * @param side one of <code>SWT.LEFT</code>, <code>SWT.CENTER</code>, <code>SWT.RIGHT</code>,
+	 * @param side one of <code>SWT.LEFT</code>, <code>SWT.CENTER</code>, <code>SWT.RIGHT</code>
+	 * @deprecated DO NOT USE RIGHT NOW, IT'S BROKEN
 	 */
 	public void showEvent(GanttEvent ge, int side) {
 		// TODO: Side doesn't work.. missing something
@@ -1527,16 +1537,29 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		redraw();
 	}
 
+	// moves the chart to the given y position, takes various spacers into account
 	private void vScrollToY(int y) {
-		y -= getHeaderHeight();
+		y -= (mBounds.y - getHeaderHeight());
+
+		int max = mVerticalScrollBar.getMaximum() - mVerticalScrollBar.getThumb();
+
+		if (y < 0)
+			y = 0;
+		if (y > max)
+			y = max;
+
+		System.err.println(y);
+		
 		mVerticalScrollPosition = y;
 		mLastVerticalScrollPosition = mVerticalScrollPosition;
 		mVerticalScrollBar.setSelection(y);
 
-		moveYBounds(y);
+		//moveYBounds(y);
 
 		mReCalculateSectionBounds = true;
+		flagForceFullUpdate();
 		redraw();
+		
 	}
 
 	public Rectangle getBounds() {
@@ -2883,11 +2906,22 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	 * @param target Target event
 	 */
 	public void addDependency(GanttEvent source, GanttEvent target) {
+		addDependency(source, target, null);
+	}
+
+	/**
+	 * Adds a connection between two GanttEvents. ge1 will connect to ge2.
+	 * 
+	 * @param source Source event
+	 * @param target Target event
+	 * @param Color to use to draw connection. Set null to use defaults.
+	 */
+	public void addDependency(GanttEvent source, GanttEvent target, Color color) {
 		checkWidget();
 		mGmap.put(source, target);
 		mGmap.put(target, source);
 		mOGMap.put(source, target);
-		Connection con = new Connection(source, target);
+		Connection con = new Connection(source, target, color);
 		mGanttConnections.add(con);
 	}
 
@@ -2909,7 +2943,19 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	 */
 	public void addConnection(GanttEvent source, GanttEvent target) {
 		checkWidget();
-		addDependency(source, target);
+		addDependency(source, target, null);
+	}
+
+	/**
+	 * Same as addDependency().
+	 * 
+	 * @param source Source event
+	 * @param target Target event
+	 * @param Color to use to draw connection. Set null to use defaults.
+	 */
+	public void addConnection(GanttEvent source, GanttEvent target, Color color) {
+		checkWidget();
+		addDependency(source, target, color);
 	}
 
 	// the stub that is the first section drawn from the end of an event
@@ -2925,15 +2971,17 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 	// draws the lines and arrows between events
 	private void drawConnections(GC gc, Rectangle bounds) {
-		gc.setForeground(mArrowColor);
 
 		int dw = getDayWidth();
 
 		for (int i = 0; i < mGanttConnections.size(); i++) {
-			Connection c = (Connection) mGanttConnections.get(i);
+			Connection connection = (Connection) mGanttConnections.get(i);
 
-			GanttEvent ge1 = c.getGe1();
-			GanttEvent ge2 = c.getGe2();
+			GanttEvent ge1 = connection.getGe1();
+			GanttEvent ge2 = connection.getGe2();
+
+			// use connection color if set, otherwise use arrow color
+			gc.setForeground(connection.getColor() == null ? mArrowColor : connection.getColor());
 
 			if (ge1 == null || ge2 == null)
 				continue;
@@ -2984,7 +3032,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 					return;
 				}
 
-				if (!mSelectedEvents.contains(c.getGe1())) {
+				if (!mSelectedEvents.contains(connection.getGe1())) {
 					continue;
 				}
 			}
@@ -2999,7 +3047,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 				}
 
 				// draw the stub.. [event]-- .. -- is the stub
-				Rectangle rect = getFirstStub(c);
+				Rectangle rect = getFirstStub(connection);
 				gc.drawLine(rect.x + 1, rect.y, rect.x + rect.width - 1, rect.y);
 
 				// draw down some, (start at the end of stub and draw down
@@ -3074,7 +3122,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 				// 3. Arrows connect from event [above] to event [below] to
 				// [below]'s top if [below] is far enough away right-side wise
 				// from [above]
-				Rectangle rect = getFirstStub(c);
+				Rectangle rect = getFirstStub(connection);
 				int x = rect.x;
 				int y = rect.y;
 
@@ -3100,7 +3148,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 				Point xy = null;
 
 				if (belowUs) {
-					gc.setForeground(mArrowColor);
+					gc.setForeground(connection.getColor() == null ? mArrowColor : connection.getColor());
 
 					// draw first stub
 					gc.drawLine(x, y, x + rect.width, y);
@@ -3172,7 +3220,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 					}
 				} else if (aboveUs) {
-					gc.setForeground(mReverseArrowColor);
+					gc.setForeground(connection.getColor() == null ? mReverseArrowColor : connection.getColor());
 
 					// draw first stub
 					gc.drawLine(x, y, x + rect.width, y);
@@ -3256,7 +3304,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 					}
 				} else if (sameRow) {
 					if (targetIsOnLeft || eventsOverlap || targetIsOnRightBorder || targetIsOnLeftBorder) {
-						gc.setForeground(mReverseArrowColor);
+						gc.setForeground(connection.getColor() == null ? mReverseArrowColor : connection.getColor());
 
 						// draw first stub
 						gc.drawLine(x, y, x + rect.width, y);
@@ -3313,7 +3361,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 							mPaintManager.drawArrowHead(x, y, SWT.RIGHT, gc);
 						}
 					} else if (targetIsOnRight) {
-						gc.setForeground(mArrowColor);
+						gc.setForeground(connection.getColor() == null ? mArrowColor : connection.getColor());
 
 						// if distance between left and right is smaller than the width of a day small, we draw it differently or we'll get a funny bend
 						if ((ge2.getX() - ge1.getXEnd()) <= dw) {
@@ -3509,11 +3557,28 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	}
 
 	/**
-	 * Moves calendar to the current date.
+	 * Moves calendar to the current date/time.
 	 */
 	public void jumpToToday() {
+		jumpToToday(SWT.LEFT);
+	}
+	
+	/**
+	 * Moves calendar to the current date/time.
+	 * 
+	 * @param side one of <code>SWT.LEFT</code>, <code>SWT.CENTER</code>, <code>SWT.RIGHT</code>  
+	 */
+	public void jumpToToday(int side) {
 		checkWidget();
-		setDate(Calendar.getInstance(mDefaultLocale), false);
+
+		Calendar cal = Calendar.getInstance(mDefaultLocale);
+		
+		if (mCurrentView == ISettings.VIEW_DAY) {
+			// round it down
+			internalSetDate(cal, side, true);
+		}
+		else
+			setDate(cal, side, false);		
 	}
 
 	/**
@@ -3525,8 +3590,15 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		if (earliest == null)
 			return;
 
+		flagForceFullUpdate();
 		cal.setTime(earliest);
-		setDate(cal, false);
+		
+		if (mCurrentView == ISettings.VIEW_DAY) {
+			// round it down
+			internalSetDate(cal, SWT.LEFT, true);
+		}
+		else
+			setDate(cal, false);
 	}
 
 	/**
@@ -3535,12 +3607,36 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	// Thanks Wim!
 	public void jumpToLatestEvent() {
 		Calendar cal = Calendar.getInstance(mDefaultLocale);
-		Date latest = getEventDate(false);
+		GanttEvent latest = getEvent(false);
 		if (latest == null)
 			return;
 
-		cal.setTime(latest);
-		setDate(cal, false);
+		flagForceFullUpdate();
+		cal.setTime(latest.getActualStartDate().getTime());
+		
+		if (mCurrentView == ISettings.VIEW_DAY) {
+			internalSetDate(cal, SWT.LEFT, true);
+		}
+		else
+			setDate(cal, false);
+	}
+	
+	/**
+	 * Moves the calendar to a particular event date horizontally. To move to an event completely, you may use {@link #setTopItem(GanttEvent)} or {@link #setTopItem(GanttEvent, int)}.
+	 * 
+	 * @param event Event to move to
+	 * @param start true if to jump to the start date, false if to jump to the end date.
+	 * @param side one of <code>SWT.LEFT</code>, <code>SWT.CENTER</code>, <code>SWT.RIGHT</code>
+	 */
+	public void jumpToEvent(GanttEvent event, boolean start, int side) {
+		Calendar cal = Calendar.getInstance(mDefaultLocale);
+		
+		if (start)
+			cal.setTime(event.getActualStartDate().getTime());
+		else
+			cal.setTime(event.getActualEndDate().getTime());
+		
+		internalSetDate(cal, side, true);
 	}
 
 	private GanttEvent getEvent(boolean earliest) {
@@ -3658,10 +3754,14 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 				switch (side) {
 					case SWT.LEFT:
+						if (mCurrentView == ISettings.VIEW_DAY) {
+							copy.set(Calendar.HOUR_OF_DAY, date.get(Calendar.HOUR_OF_DAY));
+						}
 						break;
 					case SWT.CENTER:
 						if (mCurrentView == ISettings.VIEW_DAY) {
 							int middleHours = mHoursVisible / 2;
+							copy.set(Calendar.HOUR_OF_DAY, date.get(Calendar.HOUR_OF_DAY));
 							copy.add(Calendar.HOUR_OF_DAY, -middleHours);
 						} else {
 							int middle = mDaysVisible / 2;
@@ -3670,7 +3770,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 						break;
 					case SWT.RIGHT:
 						if (mCurrentView == ISettings.VIEW_DAY) {
-							copy.add(Calendar.HOUR_OF_DAY, mHoursVisible + 1);
+							System.err.println(mHoursVisible);
+							copy.set(Calendar.HOUR_OF_DAY, date.get(Calendar.HOUR_OF_DAY));
+							copy.add(Calendar.HOUR_OF_DAY, -mHoursVisible);
 						} else {
 							copy.add(Calendar.DATE, -mDaysVisible + 1);
 						}
@@ -3678,11 +3780,11 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 				}
 
 				mCalendar = copy;
+				mReCalculateScopes = true;
+				mReCalculateSectionBounds = true;
 				redraw();
 			}
-
 		});
-
 	}
 
 	/**
@@ -3696,29 +3798,34 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	 */
 	public void setDate(Calendar date, boolean applyOffset) {
 		checkWidget();
-
 		// create a copy, don't modify the original
 		Calendar copy = Calendar.getInstance(mDefaultLocale);
 		copy.setTime(date.getTime());
 
-		if (mSettings.startCalendarOnFirstDayOfWeek() && applyOffset)
+		if (applyOffset)
+			copy.add(Calendar.DATE, mStartCalendarAtOffset);
+
+		if (mSettings.startCalendarOnFirstDayOfWeek())
 			copy.set(Calendar.DAY_OF_WEEK, copy.getFirstDayOfWeek());
 
-		copy.set(Calendar.HOUR_OF_DAY, mSettings.getWorkDayStartHour());
-		copy.set(Calendar.MINUTE, 0);
-		copy.set(Calendar.SECOND, 0);
-		copy.set(Calendar.MILLISECOND, 0);
-
-		if (applyOffset) {
-			copy.add(Calendar.DATE, mStartCalendarAtOffset);
-		}
-
-		if (copy.get(Calendar.DAY_OF_YEAR) > Calendar.getInstance(mDefaultLocale).get(Calendar.DAY_OF_YEAR)) {
-			copy.add(Calendar.DATE, -7);
-		}
-
-		mCalendar = copy;
-		redraw();
+		internalSetDate(copy, SWT.LEFT, true);
+		/*
+		 * checkWidget();
+		 * 
+		 * // create a copy, don't modify the original Calendar copy = Calendar.getInstance(mDefaultLocale); copy.setTime(date.getTime());
+		 * 
+		 * if (mSettings.startCalendarOnFirstDayOfWeek() && applyOffset) copy.set(Calendar.DAY_OF_WEEK, copy.getFirstDayOfWeek());
+		 * 
+		 * copy.set(Calendar.HOUR_OF_DAY, mSettings.getWorkDayStartHour()); copy.set(Calendar.MINUTE, 0); copy.set(Calendar.SECOND, 0); copy.set(Calendar.MILLISECOND, 0);
+		 * 
+		 * if (applyOffset) { copy.add(Calendar.DATE, mStartCalendarAtOffset);
+		 * 
+		 * if (copy.get(Calendar.DAY_OF_YEAR) > Calendar.getInstance(mDefaultLocale).get(Calendar.DAY_OF_YEAR)) copy.add(Calendar.DATE, -7); }
+		 * 
+		 * mCalendar.setTime(copy.getTime());
+		 * 
+		 * mReCalculateScopes = true; mReCalculateSectionBounds = true; redraw();
+		 */
 	}
 
 	/**
@@ -3833,6 +3940,17 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		redrawEventsArea();
 	}
 
+	void eventDatesChanged(GanttEvent ge, boolean redraw) {
+		int newStartX = getXForDate(ge.getActualStartDate());
+		int newEndX = getXForDate(ge.getActualEndDate());
+		newEndX += getDayWidth();
+
+		ge.updateX(newStartX);
+		ge.updateWidth(newEndX - newStartX);
+		if (redraw)
+			redraw();
+	}
+
 	/**
 	 * Clears all GanttEvents events from the chart.
 	 */
@@ -3844,6 +3962,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		mOGMap.clear();
 		eventNumbersChanged();
 		mForceScrollbarsUpdate = true;
+		mVerticalScrollPosition = 0;
+		mLastVerticalScrollPosition = 0;
+		mVerticalScrollBar.setSelection(0);
 		redraw();
 	}
 
@@ -3855,6 +3976,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		mGanttGroups.clear();
 		eventNumbersChanged();
 		mForceScrollbarsUpdate = true;
+		mVerticalScrollPosition = 0;
+		mLastVerticalScrollPosition = 0;
+		mVerticalScrollBar.setSelection(0);
 		redraw();
 	}
 
@@ -3866,6 +3990,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		mGanttSections.clear();
 		eventNumbersChanged();
 		mForceScrollbarsUpdate = true;
+		mVerticalScrollPosition = 0;
+		mLastVerticalScrollPosition = 0;
+		mVerticalScrollBar.setSelection(0);
 		redraw();
 	}
 
@@ -3882,6 +4009,10 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		mOGMap.clear();
 		eventNumbersChanged();
 		mForceScrollbarsUpdate = true;
+		mVerticalScrollPosition = 0;
+		mLastVerticalScrollPosition = 0;
+		mVerticalScrollBar.setSelection(0);
+		flagForceFullUpdate();
 		redraw();
 	}
 
@@ -4415,7 +4546,6 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		if (rect == null)
 			return;
 
-		mSelectedEvents.clear();
 		for (int i = 0; i < mGanttEvents.size(); i++) {
 			GanttEvent ge = (GanttEvent) mGanttEvents.get(i);
 			if (ge.isScope())
@@ -4438,10 +4568,6 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			mMouseIsDown = true;
 
 		Point ctrlPoint = toDisplay(new Point(me.x, me.y));
-		if (me.button == 3) {
-			showMenu(ctrlPoint.x, ctrlPoint.y, null, me);
-			return;
-		}
 
 		if (mSettings.allowBlankAreaDragAndDropToMoveDates() && me.button == 1)
 			setCursor(CURSOR_HAND);
@@ -4528,7 +4654,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 					return;
 				}
 
-				if (me.stateMask == 0 || !mMultiSelect)
+				if ((me.stateMask == 0 || !mMultiSelect) && me.button != 3)
 					mSelectedEvents.clear();
 
 				// if we're multi selecting
@@ -4571,6 +4697,12 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			}
 		}
 
+		if (me.button == 3) {
+			mSelectedEvents.clear();
+			showMenu(ctrlPoint.x, ctrlPoint.y, null, me);
+			return;
+		}
+
 		// after selection, we only allow Trackers in blank areas, it's too much of a clash with other listeners and events otherwise
 		if (mMultiSelect && me.button == 1 && me.stateMask == SWT.MOD1) {
 			setCursor(CURSOR_NONE);
@@ -4585,13 +4717,14 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			return;
 		}
 
-		mSelectedEvents.clear();
+		if (me.stateMask == 0)
+			mSelectedEvents.clear();
 
 		if (mSettings.showOnlyDependenciesForSelectedItems()) {
 			redrawEventsArea();
 		}
 
-	}
+	}	
 
 	private void drawSelectionAroundEvent(GC gc, GanttEvent ge, int x, int y, int eventWidth, Rectangle bounds) {
 		if (!mSettings.drawSelectionMarkerAroundSelectedEvent())
@@ -4654,7 +4787,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 					((IGanttEventListener) mEventListeners.get(i)).eventsMoveFinished(mDragEvents, event);
 				}
 			}
-			
+
 			for (int i = 0; i < mDragEvents.size(); i++) {
 				((GanttEvent) mDragEvents.get(i)).moveFinished();
 			}
@@ -5192,6 +5325,10 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		gc.dispose();
 	}
 
+	private void chartMoved(int x, int y) {
+
+	}
+
 	/**
 	 * Handles the actual moving of an event.
 	 */
@@ -5344,6 +5481,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		}
 	}
 
+	// updates a scope's x/y position (literal scope event) 
 	private void updateScopeXY(GanttEvent ge) {
 		// if the event is part of a scope, force the parent to recalculate it's size etc, thus we don't have to recalculate everything
 		if (ge != null) {
@@ -5353,11 +5491,10 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			ge.updateX(newStartX);
 			ge.updateWidth(newWidth);
 		}
-
 	}
 
-	// moves an event on the canvas. If SHIFT is held and linked events is true,
-	// it moves all events linked to the moved event
+	// moves one event on the canvas. If SHIFT is held and linked events is true,
+	// it moves all events linked to the moved event.
 	private void moveEvent(GanttEvent ge, int diff, int stateMask, MouseEvent me, int type) {
 		if (diff == 0)
 			return;
@@ -5372,9 +5509,175 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		if (mCurrentView == ISettings.VIEW_DAY)
 			calMark = Calendar.MINUTE;
 
+		List toMove = new ArrayList();
+
+		// multi move
+		if ((stateMask & mSettings.getDragAllModifierKey()) != 0) {
+			ArrayList conns = getEventsDependingOn(ge, new ArrayList());
+
+			ArrayList translated = new ArrayList();
+			for (int x = 0; x < conns.size(); x++) {
+				GanttEvent md = (GanttEvent) conns.get(x);
+
+				if (md.isLocked())
+					continue;
+
+				// it's a checkpoint, we're resizing, and settings say checkpoints can't be resized, then we skip them even here
+				if (md.isCheckpoint() && type != TYPE_MOVE && !mSettings.allowCheckpointResizing())
+					continue;
+
+				translated.add(md);
+			}
+
+			if (!translated.contains(ge))
+				translated.add(ge);
+
+			// add all multiselected events too, if any
+			if (mMultiSelect) {
+				for (int x = 0; x < mSelectedEvents.size(); x++) {
+					GanttEvent selEvent = (GanttEvent) mSelectedEvents.get(x);
+					if (selEvent.isScope())
+						continue;
+
+					if (!translated.contains(selEvent))
+						translated.add(selEvent);
+				}
+			}
+
+			toMove.addAll(translated);
+		}
+		
+		if (!toMove.contains(ge))
+			toMove.add(ge);
+
+		mDragEvents.clear();
+		mDragEvents = toMove;
+
+		for (int x = 0; x < toMove.size(); x++) {
+			GanttEvent event = (GanttEvent) toMove.get(x);
+
+			Calendar cal1 = Calendar.getInstance(mDefaultLocale);
+			Calendar cal2 = (Calendar) cal1.clone();
+			cal1.setTime(event.getActualStartDate().getTime());
+			cal2.setTime(event.getActualEndDate().getTime());
+
+			if (type == TYPE_MOVE) {
+				cal1.add(calMark, diff);
+				cal2.add(calMark, diff);
+
+				// check before date move as it's the start date
+				if (event.getNoMoveBeforeDate() != null) {				
+					// for start dates we need to actually set the date or we'll be 1 day short as we did the diff already
+					// if we didn't have this code, a fast move would never move the event to the end date as it would be beyond already
+					if (cal1.before(event.getNoMoveBeforeDate())) {
+  						long millis = event.getNoMoveBeforeDate().getTimeInMillis();
+  						long milliDiff = Math.abs(event.getActualStartDate().getTimeInMillis() - millis);
+  						event.setRevisedStart((Calendar)event.getNoMoveBeforeDate().clone(), false);
+  
+  						// we also move the end date the same amount of time in difference between the no move date and the start date
+  						Calendar end = (Calendar)event.getActualEndDate().clone();
+  						end.add(Calendar.MILLISECOND, (int) -milliDiff);
+  						event.setRevisedEnd(end, false);
+  						event.updateX(getStartingXfor(event.getRevisedStart()));  			
+  						event.moveStarted();
+  						continue;
+					}
+				}
+
+				// remember, we check the start calendar on both occasions, as that's the mark that counts
+				if (event.getNoMoveAfterDate() != null) {
+					if (cal2.after(event.getNoMoveAfterDate())) {						
+						// same deal for end date as for start date
+  						long millis = event.getNoMoveAfterDate().getTimeInMillis();
+  						long milliDiff = Math.abs(event.getActualEndDate().getTimeInMillis() - millis);
+  						event.setRevisedEnd((Calendar)event.getNoMoveAfterDate().clone(), false);
+  
+  						// we also move the end date the same amount of time in difference between the no move date and the start date
+  						Calendar start = (Calendar)event.getActualStartDate().clone();
+  						start.add(Calendar.MILLISECOND, (int) milliDiff);
+  						event.setRevisedStart(start, false);
+  						event.updateX(getStartingXfor(event.getRevisedStart()));
+  						event.moveStarted();
+  						continue;
+					}
+				}
+
+				event.moveStarted();
+
+				// we already validated dates here, so we can just set them (Besides, dual validation is bad, as one date will be validated
+				// before the next one is set, which can cause serious issues when we do drag and drops
+				event.setRevisedStart(cal1, false);
+				event.setRevisedEnd(cal2, false);
+
+				// we move it by updating the x position to its new location
+				event.updateX(getStartingXfor(cal1));
+			} else if (type == TYPE_RESIZE_LEFT) {
+				cal1.add(calMark, diff);
+
+				if (!isNoOverlap(cal1, event.getActualEndDate()))
+					continue;
+
+				// check before date move as it's the start date
+				if (event.getNoMoveBeforeDate() != null) {
+					if (cal1.before(event.getNoMoveBeforeDate())) {
+						// for start dates we need to actually set the date or we'll be 1 day short as we did the diff already
+						event.setRevisedStart(event.getNoMoveBeforeDate());
+						continue;
+					}
+				}
+
+				event.moveStarted();
+
+				event.setRevisedStart(cal1, false);
+
+				// update size + location
+				event.updateX(getStartingXfor(cal1));
+				event.updateWidth(getXLengthForEvent(event));
+			} else if (type == TYPE_RESIZE_RIGHT) {
+				cal2.add(calMark, diff);
+
+				if (!isNoOverlap(event.getActualStartDate(), cal2))
+					continue;
+
+				// remember, we check the start calendar on both occasions, as that's the mark that counts
+				if (event.getNoMoveAfterDate() != null) {
+					if (cal2.after(event.getNoMoveAfterDate()))
+						continue;
+				}
+
+				event.moveStarted();
+
+				event.setRevisedEnd(cal2, false);
+
+				// update size + location
+				event.updateX(getStartingXfor(cal1));
+				event.updateWidth(getXLengthForEvent(event));
+			}
+
+			if (!eventsMoved.contains(event))
+				eventsMoved.add(event);
+		}
+		
+		if (!eventsMoved.contains(ge))
+			eventsMoved.add(ge);
+
+		for (int x = 0; x < mEventListeners.size(); x++) {
+			IGanttEventListener listener = (IGanttEventListener) mEventListeners.get(x);
+			if (type == TYPE_MOVE)
+				listener.eventsMoved(eventsMoved, me);
+			else
+				listener.eventsResized(eventsMoved, me);
+		}
+
+		// TODO: Granualize, if possible, quite hard with arrow-connections
+		redrawEventsArea();
+/*
+		if (true)
+			return;
+
 		if ((stateMask & mSettings.getDragAllModifierKey()) == 0 || !mSettings.moveLinkedEventsWhenEventsAreMoved()) {
 			Calendar cal1 = Calendar.getInstance(mDefaultLocale);
-			Calendar cal2 = Calendar.getInstance(mDefaultLocale);
+			Calendar cal2 = (Calendar) cal1.clone();
 			cal1.setTime(ge.getActualStartDate().getTime());
 			cal2.setTime(ge.getActualEndDate().getTime());
 
@@ -5385,18 +5688,6 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 				// check before date move as it's the start date
 				if (ge.getNoMoveBeforeDate() != null) {
 					if (cal1.before(ge.getNoMoveBeforeDate())) {
-						// for start dates we need to actually set the date or we'll be 1 day short as we did the diff already
-						long millis = ge.getNoMoveBeforeDate().getTimeInMillis();
-						long milliDiff = Math.abs(ge.getRevisedStart().getTimeInMillis() - millis);
-
-						// we also move the end date the same amount of time in difference between the no move date and the start date
-						ge.setRevisedStart(ge.getNoMoveBeforeDate());
-						Calendar end = ge.getRevisedEnd();
-						end.set(Calendar.MILLISECOND, (int) -milliDiff);
-						ge.setRevisedEnd(end);
-						ge.updateX(getStartingXfor(ge.getRevisedStart()));
-
-						redrawEventsArea();
 						return;
 					}
 				}
@@ -5464,6 +5755,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 			eventsMoved.add(ge);
 		} else {
+			// multi move
 			if ((stateMask & mSettings.getDragAllModifierKey()) != 0) {
 				ArrayList conns = getEventsDependingOn(ge, new ArrayList());
 
@@ -5503,7 +5795,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 					GanttEvent event = (GanttEvent) translated.get(x);
 
 					Calendar cal1 = Calendar.getInstance(mDefaultLocale);
-					Calendar cal2 = Calendar.getInstance(mDefaultLocale);
+					Calendar cal2 = (Calendar) cal1.clone();
 					cal1.setTime(event.getActualStartDate().getTime());
 					cal2.setTime(event.getActualEndDate().getTime());
 
@@ -5514,18 +5806,6 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 						// check before date move as it's the start date
 						if (event.getNoMoveBeforeDate() != null) {
 							if (cal1.before(event.getNoMoveBeforeDate())) {
-								// for start dates we need to actually set the date or we'll be 1 day short as we did the diff already
-								long millis = event.getNoMoveBeforeDate().getTimeInMillis();
-								long milliDiff = Math.abs(event.getRevisedStart().getTimeInMillis() - millis);
-
-								// we also move the end date the same amount of time in difference between the no move date and the start date
-								event.setRevisedStart(event.getNoMoveBeforeDate());
-								Calendar end = event.getRevisedEnd();
-								end.set(Calendar.MILLISECOND, (int) -milliDiff);
-								event.setRevisedEnd(end);
-
-								event.setRevisedStart(event.getNoMoveBeforeDate());
-								redrawEventsArea();
 								continue;
 							}
 						}
@@ -5606,7 +5886,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		}
 
 		// TODO: Granualize, if possible, quite hard with arrow-connections
-		redrawEventsArea();
+		redrawEventsArea();*/
 	}
 
 	public void mouseEnter(MouseEvent event) {
@@ -6296,10 +6576,16 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	class Connection {
 		private GanttEvent	ge1;
 		private GanttEvent	ge2;
+		private Color		color;
 
-		public Connection(GanttEvent ge1, GanttEvent ge2) {
+		public Connection(GanttEvent ge1, GanttEvent ge2, Color color) {
 			this.ge1 = ge1;
 			this.ge2 = ge2;
+			this.color = color;
+		}
+
+		public Color getColor() {
+			return color;
 		}
 
 		public GanttEvent getGe1() {

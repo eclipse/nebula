@@ -154,7 +154,7 @@ public class GanttChart extends Composite implements IGanttFlags {
 		
 		// if no scrollbar is set, set one
 		if ((style & H_SCROLL_FIXED_RANGE) == 0 && (style & H_SCROLL_NONE) == 0 && (style & H_SCROLL_INFINITE) == 0)
-			style = H_SCROLL_INFINITE;
+			style |= H_SCROLL_INFINITE;
 		
 		mStyle = style;
 		mSettings = settings;

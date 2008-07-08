@@ -550,8 +550,14 @@ public abstract class AbstractPaintManager implements IPaintManager {
 		int xEnd = end;
 		
 		gc.setForeground(ColorCache.getColor(188, 188, 188));
-		gc.setLineStyle(SWT.LINE_DASH);
+		gc.setLineStyle(SWT.LINE_SOLID);
 		gc.setLineWidth(1);
+		
+		// we don't draw any extras on the hours view, it doesn't behave like the others
+		int extra = dayWidth;
+		if (ganttComposite.getCurrentView() == ISettings.VIEW_DAY)
+			extra = 0;
+		
 		if (start != -1 && xEnd != -1) {
 			// no need to draw beyond what we can see, and it's extremely slow to draw dots anyway, so we need this to be as fast as can be
 			if (start < 0)
@@ -559,25 +565,25 @@ public abstract class AbstractPaintManager implements IPaintManager {
 			if (xEnd > bounds.width)
 				xEnd = bounds.width + 1;
 			
-			gc.drawRectangle(start, topY, xEnd-start+dayWidth, maxY+4);
+			gc.drawRectangle(start, topY, xEnd-start+extra, maxY+4);
 		}
  		else {
- 			gc.setLineStyle(SWT.LINE_SOLID);
+ 			//gc.setLineStyle(SWT.LINE_SOLID);
  			if (start != -1) {
  				gc.drawRectangle(start-4, topY+1, 2, 3+maxY);
  				gc.drawLine(start-2, topY+1, start+5, topY+1);
  				gc.drawLine(start-2, topY+4+maxY, start+5, topY+4+maxY);
  			}
  			if (xEnd != -1) {
- 				xEnd += dayWidth;
+ 				xEnd += extra;
  				gc.drawRectangle(xEnd+2, topY+1, 2, 3+maxY);
  				gc.drawLine(xEnd+2, topY+1, xEnd-5, topY+1);
  				gc.drawLine(xEnd+2, topY+4+maxY, xEnd-5, topY+4+maxY); 				
  			}
  		}
 		
-		gc.setLineWidth(1);
-		gc.setLineStyle(SWT.LINE_SOLID);
+		//gc.setLineWidth(1);
+		//gc.setLineStyle(SWT.LINE_SOLID);
 	}
 
 	
