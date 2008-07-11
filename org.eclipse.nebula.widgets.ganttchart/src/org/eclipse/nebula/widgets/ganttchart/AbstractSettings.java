@@ -447,6 +447,11 @@ abstract class AbstractSettings implements ISettings {
 		return true;
 	}
 
+	public boolean zoomToMousePointerDateOnWheelZooming() {
+		return true;
+	}
+
+	
 /*	public List getHeaderLevels() {
 		List l = new ArrayList();
 		

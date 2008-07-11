@@ -933,4 +933,10 @@ public interface ISettings {
 	 * @return
 	 */
 	//public List getHeaderLevels();
+	
+	/**
+	 * When you zoom in with the mouse, it can either act as a normal zoom (uses leftmost date as start date) or it can zoom in where the mouse pointer is at the
+	 * time of the zoom in. For some the first make more sense than the other and vice versa. Default is that the zoom in is where the mouse pointer is (true).
+	 */
+	public boolean zoomToMousePointerDateOnWheelZooming();
 }

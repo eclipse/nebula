@@ -16,41 +16,93 @@ import java.util.List;
 import java.util.Random;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Spinner;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 
 public class GanttTester {
 
-	private GanttChart _ganttChart;
-	private GanttComposite _ganttComposite;
-	
+	private GanttChart		_ganttChart;
+	private GanttComposite	_ganttComposite;
+
+	private ViewForm		_vfChart;
+
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		new GanttTester();
 	}
-	
+
 	public GanttTester() {
-		Display disp = new Display();
-		Shell shell = new Shell(disp);
+		Display display = new Display();
+		Shell shell = new Shell(display);
 		shell.setText("Gantt Tester");
-		GridLayout lay = new GridLayout();
-		lay.marginHeight = lay.marginWidth = 1;
-		shell.setLayout(lay);
+		shell.setLayout(new FillLayout());
 
-		Composite comp = new Composite(shell, SWT.NONE);
-		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		comp.setLayout(new GridLayout(10, false));
+		SashForm sfVSplit = new SashForm(shell, SWT.VERTICAL);
+		SashForm sfHSplit = new SashForm(sfVSplit, SWT.HORIZONTAL);
 
-		final Combo combo = new Combo(comp, SWT.NONE);
+		ViewForm vfBottom = new ViewForm(sfVSplit, SWT.NONE);
+		_vfChart = new ViewForm(sfHSplit, SWT.NONE);
+		ViewForm vfRight = new ViewForm(sfHSplit, SWT.NONE);
+
+		sfVSplit.setWeights(new int[] { 91, 9 });
+		sfHSplit.setWeights(new int[] { 80, 20 });
+
+		// top left side
+		_ganttChart = new GanttChart(_vfChart, SWT.MULTI);
+		_vfChart.setContent(_ganttChart);
+		_ganttComposite = _ganttChart.getGanttComposite();
+
+		TabFolder tfRight = new TabFolder(vfRight, SWT.BORDER);
+		TabItem tiGeneral = new TabItem(tfRight, SWT.NONE);
+		tiGeneral.setText("Creation");
+		vfRight.setContent(tfRight);
+
+		vfBottom.setContent(createBottom(vfBottom));
+		tiGeneral.setControl(createCreationTab(tfRight));
+
+		// shell.setSize(1800, 1000);
+		// shell.setLocation(new Point(100, 100));
+		shell.setMaximized(true);
+		shell.open();
+		while (!shell.isDisposed()) {
+			if (!display.readAndDispatch())
+				display.sleep();
+		}
+		display.dispose();
+	}
+
+	private Composite createCreationTab(Composite parent) {
+		Composite comp = new Composite(parent, SWT.NONE);
+		comp.setLayout(new GridLayout(1, true));
+
+		Group general = new Group(comp, SWT.NONE);
+		general.setText("General");
+		general.setLayout(new GridLayout(1, true));
+		general.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		Label lEvents = new Label(general, SWT.NONE);
+		lEvents.setText("Number of Events");
+
+		final Combo combo = new Combo(general, SWT.NONE);
 		combo.add("2");
 		combo.add("10");
 		combo.add("20");
@@ -63,29 +115,188 @@ public class GanttTester {
 		combo.add("3000");
 		combo.add("4000");
 		combo.add("5000");
-		combo.select(6);
+		combo.select(3);
+		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		Button button = new Button(comp, SWT.PUSH);
-		button.setText("Create");
-		
-		final Button increase = new Button(comp, SWT.CHECK);
+		Group left = new Group(comp, SWT.NONE);
+		left.setLayout(new GridLayout(1, true));
+		left.setText("Styles and Options");
+		left.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		final Button noHbar = new Button(left, SWT.RADIO);
+		noHbar.setText("No H Scrollbar (H_SCROLL_NONE)");
+
+		final Button fixedHbar = new Button(left, SWT.RADIO);
+		fixedHbar.setText("Fixed H Scrollbar (H_SCROLL_FIXED)");
+
+		final Button infHbar = new Button(left, SWT.RADIO);
+		infHbar.setText("Infinite H Scrollbar (H_SCROLL_INFINITE)");
+		infHbar.setSelection(true);
+
+		final Button increase = new Button(left, SWT.CHECK);
 		increase.setText("Increase Dates");
 		increase.setSelection(true);
 
-		final Button rnd = new Button(comp, SWT.CHECK);
-		rnd.setText("Random Conn Colors");
+		final Button plannedDates = new Button(left, SWT.CHECK);
+		plannedDates.setText("Create Planned Dates");
+		plannedDates.setSelection(true);
+		
+		final Button connEvents = new Button(left, SWT.CHECK);
+		connEvents.setText("Connect events");
+		connEvents.setSelection(true);
+
+		final Spinner connNumber = new Spinner(left, SWT.BORDER);
+		connNumber.setSelection(50);
+		connNumber.setMaximum(4000);
+
+		final Button rnd = new Button(left, SWT.CHECK);
+		rnd.setText("Random Connection Colors");
 		rnd.setSelection(true);
-		
-		Button clear = new Button(comp, SWT.PUSH);
+
+		final Button limits = new Button(left, SWT.CHECK);
+		limits.setText("Create DND range limitations");
+		limits.setSelection(true);
+
+		connEvents.addListener(SWT.Selection, new Listener() {
+
+			public void handleEvent(Event event) {
+				connNumber.setEnabled(connEvents.getSelection());
+				rnd.setEnabled(connEvents.getSelection());
+			}
+
+		});
+
+		Group buttons = new Group(comp, SWT.NONE);
+		buttons.setLayout(new GridLayout(3, true));
+		buttons.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		Button button = new Button(buttons, SWT.PUSH);
+		button.setText("Create");
+		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		Button clear = new Button(buttons, SWT.PUSH);
 		clear.setText("Clear");
-		
-		Button redrawButton = new Button(comp, SWT.PUSH);
+		clear.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		Button redrawButton = new Button(buttons, SWT.PUSH);
 		redrawButton.setText("Redraw");
+		redrawButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		button.addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent e) {
+				int numberEvents = 0;
+				try {
+					numberEvents = Integer.parseInt(combo.getText());
+				} catch (NumberFormatException nfe) {
+					return;
+				}
+
+				// _ganttChart.getGanttComposite().clearChart();
+
+				_ganttChart.dispose();
+				int flags = 0;
+
+				if (noHbar.getSelection())
+					flags |= IGanttFlags.H_SCROLL_NONE;
+				if (fixedHbar.getSelection())
+					flags |= IGanttFlags.H_SCROLL_FIXED_RANGE;
+				if (infHbar.getSelection())
+					flags |= IGanttFlags.H_SCROLL_INFINITE;
+
+				_ganttChart = new GanttChart(_vfChart, flags);
+				_ganttComposite = _ganttChart.getGanttComposite();
+				_vfChart.setContent(_ganttChart);
+
+				for (int i = 0; i < numberEvents; i++) {
+					Calendar cal = Calendar.getInstance();
+					GanttEvent predEvent = null;
+					if (i != 0) {
+						predEvent = ((GanttEvent) _ganttChart.getGanttComposite().getEvents().get(i - 1));
+						cal = predEvent.getActualEndDate();
+					}
+					Calendar cStartDate = cal;
+					Calendar cEndDate = (Calendar) cStartDate.clone();
+					if (increase.getSelection())
+						cEndDate.add(Calendar.DATE, 1);
+
+					GanttEvent ganttEvent = null;
+					if (plannedDates.getSelection()) {
+						Calendar plannedStart = (Calendar) cStartDate.clone();
+						plannedStart.add(Calendar.DATE, -10);
+						Calendar plannedEnd = (Calendar) cEndDate.clone();
+						plannedEnd.add(Calendar.DATE, 10);
+						
+						ganttEvent = new GanttEvent(_ganttChart, null, "Event_" + (i + 1), plannedStart, plannedEnd, cStartDate, cEndDate, 0);
+					}
+					else {
+						ganttEvent = new GanttEvent(_ganttChart, null, "Event_" + (i + 1), cStartDate, cEndDate, 0);
+					}
+
+					if (limits.getSelection()) {
+						Calendar noBefore = Calendar.getInstance();
+						noBefore.setTime(cStartDate.getTime());
+						noBefore.add(Calendar.DATE, -10);
+						if (i % 3 == 0 || i % 5 == 0)
+							ganttEvent.setNoMoveBeforeDate(noBefore);
+
+						Calendar noBeyond = Calendar.getInstance();
+						noBeyond.setTime(cEndDate.getTime());
+						noBeyond.add(Calendar.DATE, 10);
+
+						if (i % 3 == 0 || i % 2 == 0)
+							ganttEvent.setNoMoveAfterDate(noBeyond);
+					}
+
+					if (connEvents.getSelection()) {
+						if (i < connNumber.getSelection()) {
+							if (rnd.getSelection()) {
+								Random r = new Random();
+								_ganttChart.getGanttComposite().addConnection(predEvent, ganttEvent, ColorCache.getColor(r.nextInt(255), r.nextInt(255), r.nextInt(255)));
+							} else {
+								_ganttChart.getGanttComposite().addConnection(predEvent, ganttEvent);
+							}
+						}
+					}
+				}
+
+				moveFocus();
+			}
+
+		});
+
+		clear.addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent e) {
+				_ganttChart.getGanttComposite().clearChart();
+				moveFocus();
+			}
+		});
+
+		redrawButton.addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent e) {
+				_ganttChart.getGanttComposite().refresh();
+				moveFocus();
+			}
+		});
+
+		return comp;
+	}
+
+	private Composite createBottom(Composite parent) {
+		Composite outer = new Composite(parent, SWT.NONE);
+		outer.setLayout(new GridLayout(1, true));
+
+		Group comp = new Group(outer, SWT.NONE);
+		comp.setText("Gantt Chart Operations");
+		comp.setLayoutData(new GridData(GridData.FILL_BOTH));		
+		comp.setLayout(new GridLayout(10, false));
 
 		Button jumpEarliest = new Button(comp, SWT.PUSH);
 		jumpEarliest.setText("Jump to earliest event");
 
-		Button jumpLatest= new Button(comp, SWT.PUSH);
+		Button jumpLatest = new Button(comp, SWT.PUSH);
 		jumpLatest.setText("Jump to latest event");
 
 		Button selectFirstEvent = new Button(comp, SWT.PUSH);
@@ -109,63 +320,16 @@ public class GanttTester {
 		Button moveEventsRight = new Button(comp, SWT.PUSH);
 		moveEventsRight.setText("Move +1");
 
-		_ganttChart = new GanttChart(shell, SWT.MULTI);
-		_ganttChart.setLayoutData(new GridData(GridData.FILL_BOTH));
-		_ganttComposite = _ganttChart.getGanttComposite();
+		Button zIn = new Button(comp, SWT.PUSH);
+		Button zOut = new Button(comp, SWT.PUSH);
+		zIn.setText("Zoom In");
+		zOut.setText("Zoom Out");
 		
+		Button showPlanned = new Button(comp, SWT.PUSH);
+		showPlanned.setText("Toggle Planned Dates");
 
-		button.addSelectionListener(new SelectionAdapter() {
-
-			public void widgetSelected(SelectionEvent e) {
-				int numberEvents = 0;
-				try {
-					numberEvents = Integer.parseInt(combo.getText());
-				} catch (NumberFormatException nfe) {
-					return;
-				}
-
-				_ganttChart.getGanttComposite().clearChart();
-				for (int i = 0; i < numberEvents; i++) {
-					Calendar cal = Calendar.getInstance();
-					GanttEvent predEvent = null;
-					if (i != 0) {
-						predEvent = ((GanttEvent) _ganttChart.getGanttComposite().getEvents().get(i - 1));
-						cal = predEvent.getEndDate();
-					}
-					Calendar cStartDate = cal;
-					Calendar cEndDate = (Calendar) cStartDate.clone();
-					if (increase.getSelection())
-						cEndDate.add(Calendar.DATE, 1);
-
-					GanttEvent ganttEvent = new GanttEvent(_ganttChart, null, "Event_" + i, cStartDate, cEndDate, 0);
-					Calendar noBefore = Calendar.getInstance();
-					noBefore.setTime(cStartDate.getTime());
-					noBefore.add(Calendar.DATE, -20);
-					if (i % 3 == 0 || i % 5 == 0)
-						ganttEvent.setNoMoveBeforeDate(noBefore);
-					
-					Calendar noBeyond = Calendar.getInstance();
-					noBeyond.setTime(cEndDate.getTime());
-					noBeyond.add(Calendar.DATE, 20);
-					
-					if (i % 3 == 0 || i % 2 == 0)
-						ganttEvent.setNoMoveAfterDate(noBeyond);
-
-					if (i != 0) {
-						if (rnd.getSelection()) {
-							Random r = new Random();						
-							_ganttChart.getGanttComposite().addConnection(predEvent, ganttEvent, ColorCache.getColor(r.nextInt(255), r.nextInt(255), r.nextInt(255)));
-						}
-						else {
-							_ganttChart.getGanttComposite().addConnection(predEvent, ganttEvent);
-						}
-					}
-				}
-				
-				moveFocus();
-			}
-
-		});
+		Button showDays = new Button(comp, SWT.PUSH);
+		showDays.setText("Toggle Dates On Events");
 		
 		moveEventsLeft.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -177,22 +341,6 @@ public class GanttTester {
 		moveEventsRight.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				moveAllEvents(Calendar.DATE, 1);
-				moveFocus();
-			}
-		});
-
-		clear.addSelectionListener(new SelectionAdapter() {
-
-			public void widgetSelected(SelectionEvent e) {
-				_ganttChart.getGanttComposite().clearChart();
-				moveFocus();
-			}
-		});
-				
-		redrawButton.addSelectionListener(new SelectionAdapter() {
-
-			public void widgetSelected(SelectionEvent e) {
-				_ganttChart.getGanttComposite().refresh();
 				moveFocus();
 			}
 		});
@@ -244,7 +392,7 @@ public class GanttTester {
 
 			public void widgetSelected(SelectionEvent e) {
 				Calendar currentDate = Calendar.getInstance();
-				
+
 				_ganttChart.getGanttComposite().setDate(currentDate, SWT.LEFT);
 				moveFocus();
 			}
@@ -253,7 +401,7 @@ public class GanttTester {
 
 			public void widgetSelected(SelectionEvent e) {
 				Calendar currentDate = Calendar.getInstance();
-				
+
 				_ganttChart.getGanttComposite().setDate(currentDate, SWT.CENTER);
 				moveFocus();
 			}
@@ -262,27 +410,50 @@ public class GanttTester {
 
 			public void widgetSelected(SelectionEvent e) {
 				Calendar currentDate = Calendar.getInstance();
-				
+
 				_ganttChart.getGanttComposite().setDate(currentDate, SWT.RIGHT);
 				moveFocus();
 			}
 		});
+		
+		zIn.addListener(SWT.Selection, new Listener() {
 
-		//shell.setSize(1800, 1000);		
-		//shell.setLocation(new Point(100, 100));
-		shell.setMaximized(true);
-		shell.open();
-		while (!shell.isDisposed()) {
-			if (!disp.readAndDispatch())
-				disp.sleep();
-		}
-		disp.dispose();
+			public void handleEvent(Event event) {
+				_ganttComposite.zoomIn(true);
+			}
+			
+		});
+
+		zOut.addListener(SWT.Selection, new Listener() {
+
+			public void handleEvent(Event event) {
+				_ganttComposite.zoomOut(true);
+			}
+			
+		});
+		
+		showPlanned.addListener(SWT.Selection, new Listener() {
+
+			public void handleEvent(Event event) {
+				_ganttComposite.setShowPlannedDates(!_ganttComposite.isShowingPlannedDates());
+			}
+			
+		});
+		
+		showDays.addListener(SWT.Selection, new Listener() {
+
+			public void handleEvent(Event event) {
+				_ganttComposite.setShowDaysOnEvents(!_ganttComposite.isShowingDaysOnEvents());
+			}
+			
+		});
+		return outer;
 	}
-	
+
 	private void moveAllEvents(int calendarObj, int amount) {
 		List events = _ganttChart.getGanttComposite().getEvents();
 		for (int i = 0; i < events.size(); i++) {
-			GanttEvent ge = (GanttEvent) events.get(i);					
+			GanttEvent ge = (GanttEvent) events.get(i);
 			Calendar start = ge.getActualStartDate();
 			Calendar end = ge.getActualEndDate();
 
@@ -290,20 +461,19 @@ public class GanttTester {
 				end.add(calendarObj, amount);
 				start.add(calendarObj, amount);
 				ge.setRevisedDates(start, end, SWT.RIGHT_TO_LEFT);
-			}
-			else {
+			} else {
 				start.add(calendarObj, amount);
 				end.add(calendarObj, amount);
 				ge.setRevisedDates(start, end, SWT.LEFT_TO_RIGHT);
 			}
-						
+
 			ge.update(false);
-		}		
-		
+		}
+
 		_ganttComposite.redraw();
-		
+
 	}
-	
+
 	private void moveFocus() {
 		_ganttComposite.setFocus();
 	}

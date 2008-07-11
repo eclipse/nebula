@@ -565,7 +565,8 @@ public abstract class AbstractPaintManager implements IPaintManager {
 			if (xEnd > bounds.width)
 				xEnd = bounds.width + 1;
 			
-			gc.drawRectangle(start, topY, xEnd-start+extra, maxY+4);
+			// space it slightly or we'll draw on top of event borders
+			gc.drawRectangle(start-1, topY, xEnd-start+extra+2, maxY+4);
 		}
  		else {
  			//gc.setLineStyle(SWT.LINE_SOLID);
