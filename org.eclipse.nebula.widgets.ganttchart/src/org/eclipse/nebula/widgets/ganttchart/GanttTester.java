@@ -17,6 +17,7 @@ import java.util.Random;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -94,8 +95,22 @@ public class GanttTester {
 	}
 
 	private Composite createCreationTab(Composite parent) {
-		Composite comp = new Composite(parent, SWT.NONE);
+		final ScrolledComposite sc = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
+	    sc.setExpandHorizontal(true);
+	    sc.setExpandVertical(true);
+
+		final Composite comp = new Composite(sc, SWT.NONE);
+		sc.setContent(comp);
 		comp.setLayout(new GridLayout(1, true));
+				
+		sc.addListener(SWT.Resize, new Listener() {
+
+			public void handleEvent(Event event) {
+				sc.setMinSize(comp.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+			}
+			
+		});
+
 
 		Group gGeneral = new Group(comp, SWT.NONE);
 		gGeneral.setText("General");
@@ -258,7 +273,7 @@ public class GanttTester {
 
 		Group buttons = new Group(comp, SWT.NONE);
 		buttons.setText("Any changes to above requires a new 'Create'");
-		buttons.setLayout(new GridLayout(3, true));
+		buttons.setLayout(new GridLayout(2, true));
 		buttons.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Button bCreate = new Button(buttons, SWT.PUSH);
@@ -507,12 +522,25 @@ public class GanttTester {
 			}
 		});
 
-		return comp;
+		return sc;
 	}
 
 	private Composite createBottom(Composite parent) {
-		Composite outer = new Composite(parent, SWT.NONE);
+		final ScrolledComposite sc = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
+	    sc.setExpandHorizontal(true);
+	    sc.setExpandVertical(true);
+		
+		final Composite outer = new Composite(sc, SWT.NONE);
+		sc.setContent(outer);
 		outer.setLayout(new GridLayout(1, true));
+		
+		sc.addListener(SWT.Resize, new Listener() {
+
+			public void handleEvent(Event event) {
+				sc.setMinSize(outer.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+			}
+			
+		});
 
 		Group comp = new Group(outer, SWT.NONE);
 		comp.setText("Gantt Chart Operations");
@@ -684,7 +712,7 @@ public class GanttTester {
 			}
 
 		});
-		return outer;
+		return sc;
 	}
 
 	private void moveAllEvents(int calendarObj, int amount) {
