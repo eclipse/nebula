@@ -55,12 +55,13 @@ public class AdvancedTooltipDialog {
 		});
 
 		comp.addPaintListener(new PaintListener() {
-
+			
 			public void paintControl(PaintEvent e) {
 				Region region = new Region(shell.getDisplay());
 
 				GC gc = e.gc;
 				Rectangle bounds = comp.getBounds();
+				
 				// draw borders
 				drawBorders(gc, colorManager, bounds);
 
@@ -194,7 +195,12 @@ public class AdvancedTooltipDialog {
 				region.subtract(xMax - 1, yMax - 1, 1, 1);
 				region.subtract(0, yMax - 1, 1, 1);
 				region.subtract(xMax - 1, 0, 1, 1);
-				shell.setRegion(region);
+				
+				// bug fix #240164 - Macs redraw when you set a region, guess OS X will just have
+				// square shells instead, no big deal
+				if (GanttComposite.osType != GanttComposite.OS_MAC) 
+					shell.setRegion(region);
+		
 				Rectangle size = region.getBounds();
 				shell.setSize(size.width, size.height);
 				if (bold != null)
@@ -206,6 +212,22 @@ public class AdvancedTooltipDialog {
 		shell.pack();
 		shell.setLocation(location);
 		shell.setVisible(true);
+		
+		// bug fix #240164 - for some reason the bounds fetched at the beginning are off on Macs,
+		// it seems it calls the redraw much sooner than on windows (before creating the shell, which rather
+		// makes sense, but it's not what we had planned)
+		// which causes things to become only drawn in a corner of the shell, thus, we force a redraw
+		// after displaying the shell, which fixes the issue as it now can fetch the right bounds
+		if (GanttComposite.osType == GanttComposite.OS_MAC) {
+			Display.getDefault().asyncExec(new Runnable() {
+
+				public void run() {
+					shell.redraw();
+					
+				}
+				
+			});
+		}
 	}
 
 	private static void drawBorders(GC gc, IColorManager colorManager, Rectangle bounds) {
