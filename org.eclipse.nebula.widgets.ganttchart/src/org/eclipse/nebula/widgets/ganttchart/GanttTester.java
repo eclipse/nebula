@@ -140,7 +140,7 @@ public class GanttTester {
 		final Button plannedDates = new Button(left, SWT.CHECK);
 		plannedDates.setText("Create Planned Dates");
 		plannedDates.setSelection(true);
-		
+
 		final Button connEvents = new Button(left, SWT.CHECK);
 		connEvents.setText("Connect events");
 		connEvents.setSelection(true);
@@ -156,6 +156,9 @@ public class GanttTester {
 		final Button limits = new Button(left, SWT.CHECK);
 		limits.setText("Create DND range limitations");
 		limits.setSelection(true);
+
+		final Button lockHeader = new Button(left, SWT.CHECK);
+		lockHeader.setText("Lock Header");
 
 		connEvents.addListener(SWT.Selection, new Listener() {
 
@@ -204,7 +207,11 @@ public class GanttTester {
 				if (infHbar.getSelection())
 					flags |= IGanttFlags.H_SCROLL_INFINITE;
 
-				_ganttChart = new GanttChart(_vfChart, flags);
+				ISettings toUse = null;
+				if (lockHeader.getSelection())
+					toUse = new FixedHeaderSettings();
+
+				_ganttChart = new GanttChart(_vfChart, flags, toUse);
 				_ganttComposite = _ganttChart.getGanttComposite();
 				_vfChart.setContent(_ganttChart);
 
@@ -226,10 +233,9 @@ public class GanttTester {
 						plannedStart.add(Calendar.DATE, -10);
 						Calendar plannedEnd = (Calendar) cEndDate.clone();
 						plannedEnd.add(Calendar.DATE, 10);
-						
+
 						ganttEvent = new GanttEvent(_ganttChart, null, "Event_" + (i + 1), plannedStart, plannedEnd, cStartDate, cEndDate, 0);
-					}
-					else {
+					} else {
 						ganttEvent = new GanttEvent(_ganttChart, null, "Event_" + (i + 1), cStartDate, cEndDate, 0);
 					}
 
@@ -290,7 +296,7 @@ public class GanttTester {
 
 		Group comp = new Group(outer, SWT.NONE);
 		comp.setText("Gantt Chart Operations");
-		comp.setLayoutData(new GridData(GridData.FILL_BOTH));		
+		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 		comp.setLayout(new GridLayout(10, false));
 
 		Button jumpEarliest = new Button(comp, SWT.PUSH);
@@ -324,13 +330,13 @@ public class GanttTester {
 		Button zOut = new Button(comp, SWT.PUSH);
 		zIn.setText("Zoom In");
 		zOut.setText("Zoom Out");
-		
+
 		Button showPlanned = new Button(comp, SWT.PUSH);
 		showPlanned.setText("Toggle Planned Dates");
 
 		Button showDays = new Button(comp, SWT.PUSH);
 		showDays.setText("Toggle Dates On Events");
-		
+
 		moveEventsLeft.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				moveAllEvents(Calendar.DATE, -1);
@@ -415,13 +421,13 @@ public class GanttTester {
 				moveFocus();
 			}
 		});
-		
+
 		zIn.addListener(SWT.Selection, new Listener() {
 
 			public void handleEvent(Event event) {
 				_ganttComposite.zoomIn(true);
 			}
-			
+
 		});
 
 		zOut.addListener(SWT.Selection, new Listener() {
@@ -429,23 +435,23 @@ public class GanttTester {
 			public void handleEvent(Event event) {
 				_ganttComposite.zoomOut(true);
 			}
-			
+
 		});
-		
+
 		showPlanned.addListener(SWT.Selection, new Listener() {
 
 			public void handleEvent(Event event) {
 				_ganttComposite.setShowPlannedDates(!_ganttComposite.isShowingPlannedDates());
 			}
-			
+
 		});
-		
+
 		showDays.addListener(SWT.Selection, new Listener() {
 
 			public void handleEvent(Event event) {
 				_ganttComposite.setShowDaysOnEvents(!_ganttComposite.isShowingDaysOnEvents());
 			}
-			
+
 		});
 		return outer;
 	}
@@ -476,5 +482,13 @@ public class GanttTester {
 
 	private void moveFocus() {
 		_ganttComposite.setFocus();
+	}
+
+	class FixedHeaderSettings extends AbstractSettings {
+
+		public boolean lockHeaderOnVerticalScroll() {
+			return true;
+		}
+
 	}
 }

@@ -51,12 +51,12 @@ public class GanttConnection {
 	 * @param parent Gantt Chart parent 
 	 * @param source Source event
 	 * @param target Target event
-	 * @param color Color of line and arrowhead drawn between the events
+	 * @param lineColor Color of line and arrowhead drawn between the events
 	 */
-	public GanttConnection(GanttChart parent, GanttEvent source, GanttEvent target, Color color) {
+	public GanttConnection(GanttChart parent, GanttEvent source, GanttEvent target, Color lineColor) {
 		this._source = source;
 		this._target = target;
-		this._color = color;
+		this._color = lineColor;
 		this._parent = parent.getGanttComposite();
 		_parent.connectionAdded(this);
 	}
@@ -122,7 +122,6 @@ public class GanttConnection {
 		_parent.connectionRemoved(this);
 	}
 	
-
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;

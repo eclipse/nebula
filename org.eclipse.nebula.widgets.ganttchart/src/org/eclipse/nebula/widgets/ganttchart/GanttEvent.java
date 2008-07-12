@@ -346,7 +346,7 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	 * @return Start date
 	 */
 	public Calendar getStartDate() {
-		return mStartDate;//(Calendar) mStartDate.clone();
+		return (Calendar) mStartDate.clone();
 	}
 
 	/**
@@ -356,7 +356,7 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	 */
 	public Calendar getActualStartDate() {
 		Calendar ret = mRevisedStart != null ? mRevisedStart : mStartDate;
-		return ret;// == null ? null : (Calendar) ret.clone();
+		return ret == null ? null : (Calendar) ret.clone();
 	}
 
 	/**
@@ -366,7 +366,7 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	 */
 	public Calendar getActualEndDate() {
 		Calendar ret = mRevisedEnd != null ? mRevisedEnd : mEndDate;
-		return ret;// == null ? null : (Calendar) ret.clone();
+		return ret == null ? null : (Calendar) ret.clone();
 	}
 
 	/**
@@ -404,7 +404,7 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	 * @return End date
 	 */
 	public Calendar getEndDate() {
-		return mEndDate;//(Calendar) mEndDate.clone();
+		return (Calendar) mEndDate.clone();
 	}
 
 	/**
@@ -579,7 +579,7 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	 * @return Revised date
 	 */
 	public Calendar getRevisedStart() {
-		return mRevisedStart;
+		return (Calendar)mRevisedStart.clone();
 	}
 
 	/**
@@ -597,7 +597,7 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	 * @return revised end date
 	 */
 	public Calendar getRevisedEnd() {
-		return mRevisedEnd;
+		return (Calendar)mRevisedEnd.clone();
 	}
 
 	/**
@@ -1260,7 +1260,6 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	 */
 	public void dispose() {
 		mParentChart.getGanttComposite().removeEvent(this);
-		mParentChart.getGanttComposite().redraw();
 	}
 	
 	// internal methods
