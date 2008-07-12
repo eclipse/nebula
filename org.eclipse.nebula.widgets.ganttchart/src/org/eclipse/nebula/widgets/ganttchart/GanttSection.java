@@ -59,6 +59,8 @@ public class GanttSection implements IFillBackgroundColors {
 
 	private int						mTextOrientation	= SWT.VERTICAL;
 
+	private boolean					mInheritBackgroud;
+
 	/**
 	 * Creates a new GanttSection.
 	 * 
@@ -75,7 +77,7 @@ public class GanttSection implements IFillBackgroundColors {
 
 	/**
 	 * Creates a new GanttSection with a fill manager that controls background colors.
-	 *  
+	 * 
 	 * @param parent GanttChart
 	 * @param name GanttSection name
 	 * @param fillManager Fill manager
@@ -127,7 +129,7 @@ public class GanttSection implements IFillBackgroundColors {
 	}
 
 	/**
-	 * Returns the name of this section. 
+	 * Returns the name of this section.
 	 * 
 	 * @return GanttSection name
 	 */
@@ -144,7 +146,6 @@ public class GanttSection implements IFillBackgroundColors {
 		return bounds;
 	}
 
-	
 	// note to self: this does not take into account the height the name will take up
 	// this method can NOT use the bounds on the events as this method will be called prior to events being drawn and thus have no values for bounds
 	/*
@@ -203,7 +204,7 @@ public class GanttSection implements IFillBackgroundColors {
 	public Color getSelectedDayColorTop() {
 		return mSelectedBackgroundColorTop == null ? fillColorManager.getSelectedDayColorTop() : mSelectedBackgroundColorTop;
 	}
-	
+
 	public Color getSelectedDayHeaderColorBottom() {
 		return mSelectedBackgroundHeaderColorBottom == null ? fillColorManager.getSelectedDayHeaderColorBottom() : mSelectedBackgroundHeaderColorBottom;
 	}
@@ -235,7 +236,7 @@ public class GanttSection implements IFillBackgroundColors {
 	public void setWeekdayBackgroundColorBottom(Color weekdayBackgroundColorBottom) {
 		mWeekdayBackgroundColorBottom = weekdayBackgroundColorBottom;
 	}
-	
+
 	public void setSelectedBackgroundColorTop(Color selectedBackgroundColorTop) {
 		mSelectedBackgroundColorTop = selectedBackgroundColorTop;
 	}
@@ -271,14 +272,33 @@ public class GanttSection implements IFillBackgroundColors {
 	}
 
 	/**
-	 * Removes this section from the chart. Do note that all belonging GanttEvents will be orphaned, so you should
-	 * probably deal with that post disposal.
+	 * Whether this section should just inherit the background colors of the main chart.
+	 * 
+	 * @return true if set
+	 * @deprecated IN PROGRESS
+	 */
+	boolean isInheritBackgroud() {
+		return mInheritBackgroud;
+	}
+
+	/**
+	 * Sets whether this section should inherit the background colors of the main chart for drawing date fills.
+	 * 
+	 * @param inheritBackgroud true to inherit. Default is false.
+	 * @deprecated IN PROGRESS
+	 */
+	void setInheritBackgroud(boolean inheritBackgroud) {
+		mInheritBackgroud = inheritBackgroud;
+	}
+
+	/**
+	 * Removes this section from the chart. Do note that all belonging GanttEvents will be orphaned, so you should probably deal with that post disposal.
 	 */
 	public void dispose() {
 		parent.removeSection(this);
 		parent.redraw();
 	}
-	
+
 	Point getNameExtent() {
 		return mNameExtent;
 	}

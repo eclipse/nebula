@@ -272,7 +272,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	private boolean				mUseAlpha;
 
 	private Rectangle			mBounds;
-	
+
 	// bounds that are currently visible (changes when scrolling vertically)
 	private Rectangle			mVisibleBounds;
 
@@ -514,7 +514,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 					killDialogs();
 					return;
 				}
-				
+
 				// this has got to be a SWT bug, a non-visible scrollbar can report scroll events!
 				if (!mVerticalScrollBar.isVisible()) {
 					mVerticalScrollPosition = 0;
@@ -1074,7 +1074,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	// getImage() call uses it on a different GC
 	// Note: things are in a certain order, as some stuff draws on top of
 	// others, so don't move them around unless you want a different effect
-	private void drawChartOntoGC(GC gc) {		
+	private void drawChartOntoGC(GC gc) {
 		// long totaltime1 = System.currentTimeMillis();
 		boolean drawSections = (mGanttSections.size() > 0);
 
@@ -1124,9 +1124,6 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 				drawVerticalLines(gc, extraBounds, false);
 			}
 
-			// start location below header - if any
-			// int yStart = getHeaderHeight() == 0 ? bounds.y : (bounds.y + getHeaderHeight() + 1);
-			// yStart -= mVerticalScrollPosition;
 			for (int i = 0; i < mGanttSections.size(); i++) {
 				GanttSection gs = (GanttSection) mGanttSections.get(i);
 				Rectangle gsBounds = gs.getBounds();
@@ -1146,21 +1143,17 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 				// draw events
 				drawEvents(gc, gsBounds, gs);
-
-				// yStart += gsBounds.height;
-				// yStart += mSettings.getSectionBarDividerHeight();
 			}
 
+			// before we drew connections inside the loop below, which was totally pointless. We only need to draw connections once for the visible area,
+			// not once per section. This is way faster, connection drawing is not 0ms
+			drawConnections(gc, mBounds);
+			
 			// just because I have the feeling some user will want cross-section connections, we allow it by
 			// drawing the connecting lines _last_. Why? because the event bounds are not calculated until the event is drawn, and if we have
 			// a connection to a group/event that hasn't been drawn yet, it would draw an arrow into space..
 			for (int i = 0; i < mGanttSections.size(); i++) {
 				GanttSection gs = (GanttSection) mGanttSections.get(i);
-				Rectangle gsBounds = gs.getBounds();
-				// draw connections
-				// draw the connecting arrows
-				drawConnections(gc, gsBounds);
-
 				mBottomMostY = Math.max(gs.getBounds().y + gs.getBounds().height, mBottomMostY);
 			}
 
@@ -1298,7 +1291,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			headerBounds.y -= mVerticalScrollPosition;
 		else
 			headerBounds.y -= getHeaderHeight();
-				
+
 		if (mCurrentView == ISettings.VIEW_DAY) {
 			// draw the day at the top
 			drawHourTopBoxes(gc, headerBounds);
@@ -1562,7 +1555,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	}
 
 	// moves the chart to the given y position, takes various spacers into account
-	private void vScrollToY(int y, boolean redraw) {		
+	private void vScrollToY(int y, boolean redraw) {
 		if (mSettings.lockHeaderOnVerticalScroll())
 			y -= getHeaderHeight();
 		else
@@ -1570,9 +1563,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 		// we need to take the "previous" scroll location into account
 		y += mVerticalScrollPosition;
-		
-		//y -= mLastVerticalScrollPosition;
-		
+
+		// y -= mLastVerticalScrollPosition;
+
 		int max = mVerticalScrollBar.getMaximum() - mVerticalScrollBar.getThumb();
 
 		if (y < 0)
@@ -1584,11 +1577,11 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		mLastVerticalScrollPosition = mVerticalScrollPosition;
 		mVerticalScrollBar.setSelection(y);
 
-		//moveYBounds(y);
+		// moveYBounds(y);
 
 		mReCalculateSectionBounds = true;
 		flagForceFullUpdate();
-		
+
 		if (redraw)
 			redraw();
 	}
@@ -1681,60 +1674,72 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		int startY = bounds.y - offset;// getHeaderHeight() == 0 ? bounds.y : bounds.y + getHeaderHeight() + 1;
 		int heightY = bounds.height + offset;
 
+		
+		boolean drawFills = true;
+		if (gs != null) {
+			drawFills = !gs.isInheritBackgroud();
+		}
+		
 		// fill all of it, then we just have to worry about weekends, much
 		// faster in terms of drawing time
 		// only two views have weekend colors, week and month view. Hour and
 		// year view don't.
-		switch (mCurrentView) {
-			case ISettings.VIEW_DAY:
-				gc.setForeground(getDayBackgroundGradient(Calendar.MONDAY, true, gs));
-				gc.setBackground(getDayBackgroundGradient(Calendar.MONDAY, false, gs));
+		if (drawFills) {
+			switch (mCurrentView) {
+				case ISettings.VIEW_DAY:
+					gc.setForeground(getDayBackgroundGradient(Calendar.MONDAY, true, gs));
+					gc.setBackground(getDayBackgroundGradient(Calendar.MONDAY, false, gs));
 
-				gc.fillGradientRectangle(startX, startY, maxX, heightY, true);
-				return;
-			case ISettings.VIEW_WEEK:
-				break;
-			case ISettings.VIEW_MONTH:
-				break;
-			case ISettings.VIEW_YEAR:
-				gc.setForeground(getDayBackgroundGradient(Calendar.MONDAY, true, gs));
-				gc.setBackground(getDayBackgroundGradient(Calendar.MONDAY, false, gs));
+					gc.fillGradientRectangle(startX, startY, maxX, heightY, true);
+					return;
+				case ISettings.VIEW_WEEK:
+					break;
+				case ISettings.VIEW_MONTH:
+					break;
+				case ISettings.VIEW_YEAR:
+					gc.setForeground(getDayBackgroundGradient(Calendar.MONDAY, true, gs));
+					gc.setBackground(getDayBackgroundGradient(Calendar.MONDAY, false, gs));
 
-				gc.fillGradientRectangle(startX, startY, maxX, heightY, true);
-				return;
+					gc.fillGradientRectangle(startX, startY, maxX, heightY, true);
+					return;
+			}
 		}
 
 		Calendar temp = Calendar.getInstance(mDefaultLocale);
 		temp.setTime(mCalendar.getTime());
 
 		// fill all of it first, then do weekends
-		gc.setForeground(getDayBackgroundGradient(Calendar.MONDAY, true, gs));
-		gc.setBackground(getDayBackgroundGradient(Calendar.MONDAY, false, gs));
+		if (drawFills) {
+			gc.setForeground(getDayBackgroundGradient(Calendar.MONDAY, true, gs));
+			gc.setBackground(getDayBackgroundGradient(Calendar.MONDAY, false, gs));
 
-		gc.fillGradientRectangle(startX, startY, maxX, heightY, true);
+			gc.fillGradientRectangle(startX, startY, maxX, heightY, true);
+		}
 
 		int dayWidth = (mCurrentView == ISettings.VIEW_WEEK ? mDayWidth : mMonthDayWidth);
 
 		while (true) {
 			int day = temp.get(Calendar.DAY_OF_WEEK);
 
-			if (mSelectedHeaderDates.contains(temp)) {
-				gc.setForeground(mColorManager.getSelectedDayColorTop());
-				gc.setBackground(mColorManager.getSelectedDayColorBottom());
-				gc.fillGradientRectangle(startX, startY, dayWidth, heightY, true);
-			} else {
-				if (day == Calendar.SATURDAY || day == Calendar.SUNDAY) {
-					gc.setForeground(getDayBackgroundGradient(day, true, gs));
-					gc.setBackground(getDayBackgroundGradient(day, false, gs));
-
-					// fill the whole thing all the way down
+			if (drawFills) {
+				if (mSelectedHeaderDates.contains(temp)) {
+					gc.setForeground(mColorManager.getSelectedDayColorTop());
+					gc.setBackground(mColorManager.getSelectedDayColorBottom());
 					gc.fillGradientRectangle(startX, startY, dayWidth, heightY, true);
-				}
+				} else {
+					if (day == Calendar.SATURDAY || day == Calendar.SUNDAY) {
+						gc.setForeground(getDayBackgroundGradient(day, true, gs));
+						gc.setBackground(getDayBackgroundGradient(day, false, gs));
 
-				if (DateHelper.isToday(temp, mDefaultLocale)) {
-					gc.setForeground(mTodayBGColorTop);
-					gc.setBackground(mTodayBGColorBottom);
-					gc.fillGradientRectangle(startX + 1, startY, dayWidth - 1, heightY, true);
+						// fill the whole thing all the way down
+						gc.fillGradientRectangle(startX, startY, dayWidth, heightY, true);
+					}
+
+					if (DateHelper.isToday(temp, mDefaultLocale)) {
+						gc.setForeground(mTodayBGColorTop);
+						gc.setBackground(mTodayBGColorBottom);
+						gc.fillGradientRectangle(startX + 1, startY, dayWidth - 1, heightY, true);
+					}
 				}
 			}
 
@@ -2258,11 +2263,17 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 					extent = (Point) mDayLetterStringExtentMap.get(dayLetter);
 
 				switch (extent.x) {
+					case 1:
+						hSpacer += 5;
+						break;
 					case 2:
 						hSpacer += 5;
 						break;
 					case 3:
 						hSpacer += 4;
+						break;
+					case 4:
+						hSpacer += 3;
 						break;
 					case 5:
 						hSpacer += 3;
@@ -2271,6 +2282,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 						hSpacer += 2;
 						break;
 					case 7:
+						hSpacer += 1;
+						break;
+					case 8:
 						hSpacer += 1;
 						break;
 					case 9:
@@ -3826,57 +3840,56 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		// this may "jump" it on first draw, but there is no workaround. mDaysVisible is calculated on draw, thus the need for it.
 		// (actually, I think this only applies to users calling setDate on a non async thread, which is probably a bit more of a user problem than
 		// our issue. I agree it should be looked at, but it's low priority).
-/*		Display.getDefault().asyncExec(new Runnable() {
+		/*
+		 * Display.getDefault().asyncExec(new Runnable() {
+		 * 
+		 * public void run() { if (isDisposed()) return;
+		 */
+		// create a copy, don't modify the original
+		Calendar copy = Calendar.getInstance(mDefaultLocale);
+		copy.setTime(date.getTime());
 
-			public void run() {
-				if (isDisposed())
-					return;
-*/
-				// create a copy, don't modify the original
-				Calendar copy = Calendar.getInstance(mDefaultLocale);
-				copy.setTime(date.getTime());
+		copy.set(Calendar.HOUR_OF_DAY, mSettings.getWorkDayStartHour());
+		if (clearMinutes) {
+			copy.set(Calendar.MINUTE, 0);
+			copy.set(Calendar.SECOND, 0);
+			copy.set(Calendar.MILLISECOND, 0);
+		}
 
-				copy.set(Calendar.HOUR_OF_DAY, mSettings.getWorkDayStartHour());
-				if (clearMinutes) {
-					copy.set(Calendar.MINUTE, 0);
-					copy.set(Calendar.SECOND, 0);
-					copy.set(Calendar.MILLISECOND, 0);
+		switch (side) {
+			case SWT.LEFT:
+				if (mCurrentView == ISettings.VIEW_DAY) {
+					copy.set(Calendar.HOUR_OF_DAY, date.get(Calendar.HOUR_OF_DAY));
 				}
-
-				switch (side) {
-					case SWT.LEFT:
-						if (mCurrentView == ISettings.VIEW_DAY) {
-							copy.set(Calendar.HOUR_OF_DAY, date.get(Calendar.HOUR_OF_DAY));
-						}
-						break;
-					case SWT.CENTER:
-						if (mCurrentView == ISettings.VIEW_DAY) {
-							int middleHours = mHoursVisible / 2;
-							copy.set(Calendar.HOUR_OF_DAY, date.get(Calendar.HOUR_OF_DAY));
-							copy.add(Calendar.HOUR_OF_DAY, -middleHours);
-						} else {
-							int middle = mDaysVisible / 2;
-							copy.add(Calendar.DATE, -middle);
-						}
-						break;
-					case SWT.RIGHT:
-						if (mCurrentView == ISettings.VIEW_DAY) {
-							copy.set(Calendar.HOUR_OF_DAY, date.get(Calendar.HOUR_OF_DAY));
-							copy.add(Calendar.HOUR_OF_DAY, -mHoursVisible);
-						} else {
-							copy.add(Calendar.DATE, -mDaysVisible + 1);
-						}
-						break;
+				break;
+			case SWT.CENTER:
+				if (mCurrentView == ISettings.VIEW_DAY) {
+					int middleHours = mHoursVisible / 2;
+					copy.set(Calendar.HOUR_OF_DAY, date.get(Calendar.HOUR_OF_DAY));
+					copy.add(Calendar.HOUR_OF_DAY, -middleHours);
+				} else {
+					int middle = mDaysVisible / 2;
+					copy.add(Calendar.DATE, -middle);
 				}
+				break;
+			case SWT.RIGHT:
+				if (mCurrentView == ISettings.VIEW_DAY) {
+					copy.set(Calendar.HOUR_OF_DAY, date.get(Calendar.HOUR_OF_DAY));
+					copy.add(Calendar.HOUR_OF_DAY, -mHoursVisible);
+				} else {
+					copy.add(Calendar.DATE, -mDaysVisible + 1);
+				}
+				break;
+		}
 
-				mCalendar = copy;
-				mReCalculateScopes = true;
-				mReCalculateSectionBounds = true;
+		mCalendar = copy;
+		mReCalculateScopes = true;
+		mReCalculateSectionBounds = true;
 
-				if (redraw)
-					redraw();
-			//}
-		//});
+		if (redraw)
+			redraw();
+		// }
+		// });
 	}
 
 	/**
@@ -4639,7 +4652,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		mSelectedHeaderDates.clear();
 		redraw();
 	}
-	
+
 	/**
 	 * Sets a list of header dates that should be the selected dates. This list must be a list of Calendars.
 	 * 
@@ -6252,6 +6265,16 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			// anything else!
 			mWeekWidth = mDayWidth * mSettings.getWorkHoursPerDay();
 		}
+	}
+
+	/**
+	 * This will cause a full recaclulation of events and a lot of other things. Normally this is used internally when there are zoom changes and/or other events that cause the
+	 * chart to need a full recalculation. It is <b>NOT</b> intended to be used outside of the chart, but is available as a workaround if there is a bug that you can't get around
+	 * and you need to force a full update. See this method as a temporary solution if you need to use it.
+	 */
+	public void heavyRedraw() {
+		mZoomLevelChanged = true;
+		forceFullUpdate();
 	}
 
 	void forceFullUpdate() {
