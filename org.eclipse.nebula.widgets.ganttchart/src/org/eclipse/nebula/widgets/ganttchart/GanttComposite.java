@@ -448,6 +448,13 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 						zoomOut(mSettings.showZoomLevelBox(), true, new Point(event.x, event.y));
 					}
 				}
+				else {
+					// Linux doesn't honor scrollwheel vs. scrollbar in the same way that OS X / Windows does
+					// so we actually need to force it manually. I have no idea why, but it works fine this way.
+					if (osType == OS_LINUX) {
+						vScroll(event);
+					}
+				}
 			}
 		};
 
@@ -511,31 +518,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		mVerticalScrollBar.setVisible(false);
 		mVerticalScrollBar.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
-				// end of drag, kill dialogs
-				if (e.detail == 0) {
-					killDialogs();
-					return;
-				}
-
-				// this has got to be a SWT bug, a non-visible scrollbar can report scroll events!
-				if (!mVerticalScrollBar.isVisible()) {
-					mVerticalScrollPosition = 0;
-					return;
-				}
-
-				int vSelection = mVerticalScrollBar.getSelection();
-
-				mVerticalScrollPosition = vSelection;
-				int diff = mVerticalScrollPosition - mLastVerticalScrollPosition;
-				mLastVerticalScrollPosition = mVerticalScrollPosition;
-
-				// move all events the fast way. There is truly no reason to recalculate bounds for any event, all we need to do is move them
-				// according to the scroll bar, which is way way faster than recalculating.
-				moveYBounds(diff);
-				showVscrollInfo();
-
-				mReCalculateSectionBounds = true;
-				redraw();
+				vScroll(e);
 			}
 		});
 
@@ -548,6 +531,34 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 	}
 
+	private void vScroll(Event e) {
+		// end of drag, kill dialogs
+		if (e.detail == 0) {
+			killDialogs();
+			return;
+		}
+
+		// this has got to be a SWT bug, a non-visible scrollbar can report scroll events!
+		if (!mVerticalScrollBar.isVisible()) {
+			mVerticalScrollPosition = 0;
+			return;
+		}
+
+		int vSelection = mVerticalScrollBar.getSelection();
+
+		mVerticalScrollPosition = vSelection;
+		int diff = mVerticalScrollPosition - mLastVerticalScrollPosition;
+		mLastVerticalScrollPosition = mVerticalScrollPosition;
+
+		// move all events the fast way. There is truly no reason to recalculate bounds for any event, all we need to do is move them
+		// according to the scroll bar, which is way way faster than recalculating.
+		moveYBounds(diff);
+		showVscrollInfo();
+
+		mReCalculateSectionBounds = true;
+		redraw();
+	}
+	
 	void updateVerticalScrollBar() {
 		handleResize();
 	}
@@ -1893,7 +1904,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 				xStart -= (image.getBounds().width / 2) - 2;
 				int textLocY = (gsHeight / 2) - (image.getBounds().height / 2);
-
+				
 				gc.drawImage(image, x + xStart - 1, yStart + textLocY);
 			} else if (gs.getTextOrientation() == SWT.HORIZONTAL) {
 				gc.drawString(gs.getName(), horiSpacer, yStart + (gsHeight / 2) - (gs.getNameExtent().y / 2), true);
@@ -3236,6 +3247,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 				int neg = 8;
 
 				Point xy = null;
+				boolean isLinux = (osType == OS_LINUX);
 
 				if (belowUs) {
 					gc.setForeground(connection.getColor() == null ? mArrowColor : connection.getColor());
@@ -3244,14 +3256,14 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 					gc.drawLine(x, y, x + rect.width, y);
 					x += rect.width;
 
-					xy = drawBend(gc, BEND_RIGHT_DOWN, x, y, true);
+					xy = drawBend(gc, BEND_RIGHT_DOWN, x-(isLinux ? 1 : 0), y, true);
 					x = xy.x;
 					y = xy.y;
 
 					if (targetIsOnRight) {
 						// #1 vert line
 						int yTarget = ge2.getY() + (ge2.getHeight() / 2);
-						gc.drawLine(x, y, x, yTarget - 2); // minus 2 as we need another bend
+						gc.drawLine(x, y, x, yTarget - (isLinux ? 1 : 2)); // minus 2 as we need another bend
 						y = yTarget - 2;
 
 						// #2 bend
@@ -3275,6 +3287,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 						gc.drawLine(x, y, x, yDest);
 						y = yDest;// ge1.getY() + ge1.getHeight() + yDiff - 2;
 
+						if (isLinux)
+							y -= 1;
+						
 						// #2 bend
 						xy = drawBend(gc, BEND_LEFT_DOWN, x, y, true);
 						x = xy.x;
@@ -3291,7 +3306,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 						// #5 vert line
 						int yTarget = ge2.getY() + (ge2.getHeight() / 2);
-						gc.drawLine(x, y, x, yTarget - 2); // minus 2 as we need another bend
+						gc.drawLine(x, y, x, yTarget - (isLinux ? 1 : 2)); // minus 2 as we need another bend
 						y = yTarget - 2;
 
 						// #6 bend
@@ -3528,30 +3543,31 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	}
 
 	private Point drawBend(GC gc, int style, int x, int y, boolean rounded) {
-		Point xy = new Point(0, 0);
-		if (rounded) {
+		Point xy = new Point(0, 0);		
+		int bonus = (osType == OS_LINUX ? 1 : 0);
+		if (rounded) {			
 			switch (style) {
 				case BEND_RIGHT_UP:
-					gc.drawLine(x + 1, y - 1, x + 1, y - 1);
-					gc.drawLine(x + 2, y - 2, x + 2, y - 2);
+					gc.drawLine(x + 1, y - 1, x + 1+bonus, y - 1-bonus);
+					gc.drawLine(x + 2, y - 2, x + 2+bonus, y - 2-bonus);
 					xy.x = x + 2;
 					xy.y = y - 2;
 					break;
 				case BEND_RIGHT_DOWN:
-					gc.drawLine(x + 1, y + 1, x + 1, y + 1);
-					gc.drawLine(x + 2, y + 2, x + 2, y + 2);
+					gc.drawLine(x + 1, y + 1, x + 1+bonus, y + 1+bonus);
+					gc.drawLine(x + 2, y + 2, x + 2+bonus, y + 2+bonus);
 					xy.x = x + 2;
 					xy.y = y + 2;
 					break;
 				case BEND_LEFT_DOWN:
-					gc.drawLine(x - 1, y + 1, x - 1, y + 1);
-					gc.drawLine(x - 2, y + 2, x - 2, y + 2);
+					gc.drawLine(x - 1, y + 1, x - 1+bonus, y + 1+bonus);
+					gc.drawLine(x - 2, y + 2, x - 2+bonus, y + 2+bonus);
 					xy.x = x - 2;
 					xy.y = y + 2;
 					break;
 				case BEND_LEFT_UP:
-					gc.drawLine(x - 1, y - 1, x - 1, y - 1);
-					gc.drawLine(x - 2, y - 2, x - 2, y - 2);
+					gc.drawLine(x - 1, y - 1, x - 1+bonus, y - 1-bonus);
+					gc.drawLine(x - 2, y - 2, x - 2+bonus, y - 2-bonus);
 					xy.x = x - 2;
 					xy.y = y - 2;
 					break;
@@ -6471,42 +6487,49 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		mUseAdvancedTooltips = useAdvancedTooltips;
 	}
 
-	// as from: http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.swt.snippets/src/org/eclipse/swt/snippets/Snippet139.java?view=co
+	// as from:
+	// http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.swt.snippets/src/org/eclipse/swt/snippets/Snippet139.java?view=co
 	static ImageData rotate(ImageData srcData, int direction) {
 		int bytesPerPixel = srcData.bytesPerLine / srcData.width;
-		int destBytesPerLine = (direction == SWT.DOWN) ? srcData.width * bytesPerPixel : srcData.height * bytesPerPixel;
-		byte[] newData = new byte[(direction == SWT.DOWN) ? srcData.height * destBytesPerLine : srcData.width * destBytesPerLine];
+		int destBytesPerLine = (direction == SWT.DOWN) ? srcData.width
+				* bytesPerPixel : srcData.height * bytesPerPixel;
+		byte[] newData = new byte[srcData.data.length];
 		int width = 0, height = 0;
 		for (int srcY = 0; srcY < srcData.height; srcY++) {
 			for (int srcX = 0; srcX < srcData.width; srcX++) {
 				int destX = 0, destY = 0, destIndex = 0, srcIndex = 0;
 				switch (direction) {
-					case SWT.LEFT: // left 90 degrees
-						destX = srcY;
-						destY = srcData.width - srcX - 1;
-						width = srcData.height;
-						height = srcData.width;
-						break;
-					case SWT.RIGHT: // right 90 degrees
-						destX = srcData.height - srcY - 1;
-						destY = srcX;
-						width = srcData.height;
-						height = srcData.width;
-						break;
-					case SWT.DOWN: // 180 degrees
-						destX = srcData.width - srcX - 1;
-						destY = srcData.height - srcY - 1;
-						width = srcData.width;
-						height = srcData.height;
-						break;
+				case SWT.LEFT: // left 90 degrees
+					destX = srcY;
+					destY = srcData.width - srcX - 1;
+					width = srcData.height;
+					height = srcData.width;
+					break;
+				case SWT.RIGHT: // right 90 degrees
+					destX = srcData.height - srcY - 1;
+					destY = srcX;
+					width = srcData.height;
+					height = srcData.width;
+					break;
+				case SWT.DOWN: // 180 degrees
+					destX = srcData.width - srcX - 1;
+					destY = srcData.height - srcY - 1;
+					width = srcData.width;
+					height = srcData.height;
+					break;
 				}
-				destIndex = (destY * destBytesPerLine) + (destX * bytesPerPixel);
-				srcIndex = (srcY * srcData.bytesPerLine) + (srcX * bytesPerPixel);
-				System.arraycopy(srcData.data, srcIndex, newData, destIndex, bytesPerPixel);
+				destIndex = (destY * destBytesPerLine)
+						+ (destX * bytesPerPixel);
+				srcIndex = (srcY * srcData.bytesPerLine)
+						+ (srcX * bytesPerPixel);
+				System.arraycopy(srcData.data, srcIndex, newData, destIndex,
+						bytesPerPixel);
 			}
 		}
-		// destBytesPerLine is used as scanlinePad to ensure that no padding is required
-		return new ImageData(width, height, srcData.depth, srcData.palette, srcData.scanlinePad, newData);
+		// destBytesPerLine is used as scanlinePad to ensure that no padding is
+		// required
+		return new ImageData(width, height, srcData.depth, srcData.palette,
+				destBytesPerLine, newData);
 	}
 
 	static ImageData flip(ImageData srcData, boolean vertical) {
@@ -6523,13 +6546,18 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 					destX = srcData.width - srcX - 1;
 					destY = srcY;
 				}
-				destIndex = (destY * destBytesPerLine) + (destX * bytesPerPixel);
-				srcIndex = (srcY * srcData.bytesPerLine) + (srcX * bytesPerPixel);
-				System.arraycopy(srcData.data, srcIndex, newData, destIndex, bytesPerPixel);
+				destIndex = (destY * destBytesPerLine)
+						+ (destX * bytesPerPixel);
+				srcIndex = (srcY * srcData.bytesPerLine)
+						+ (srcX * bytesPerPixel);
+				System.arraycopy(srcData.data, srcIndex, newData, destIndex,
+						bytesPerPixel);
 			}
 		}
-		// destBytesPerLine is used as scanlinePad to ensure that no padding is required
-		return new ImageData(srcData.width, srcData.height, srcData.depth, srcData.palette, srcData.scanlinePad, newData);
+		// destBytesPerLine is used as scanlinePad to ensure that no padding is
+		// required
+		return new ImageData(srcData.width, srcData.height, srcData.depth,
+				srcData.palette, destBytesPerLine, newData);
 	}
 
 }
