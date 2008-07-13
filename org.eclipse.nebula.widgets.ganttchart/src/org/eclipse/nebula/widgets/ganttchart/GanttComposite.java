@@ -311,6 +311,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	private boolean				mDrawHorizontalLines;
 	// end
 
+	private int					mLockedHeaderY;
+
 	private int					mVerticalScrollPosition;
 	private int					mHorizontalScrollPosition;
 
@@ -615,6 +617,15 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		mUseAlpha = mColorManager.useAlphaDrawing();
 	}
 
+	/**
+	 * Returns the current date (left-most date).
+	 *  
+	 * @return
+	 */
+	public Calendar getDate() {
+		return (Calendar) mCalendar.clone();
+	}
+	
 	/**
 	 * Hides all layers of the given value and redraws the event area.
 	 * 
@@ -1095,8 +1106,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 				bounds = new Rectangle(0, bounds.x, bounds.width - mSettings.getSectionBarWidth(), bounds.height);
 		}
 
-		Rectangle oldBounds = bounds;
 		mBounds = bounds;
+		mLockedHeaderY = mBounds.y;
+		mBounds.y -= mVerticalScrollPosition;
 
 		// header
 		if (mSettings.drawHeader()) {
@@ -1148,7 +1160,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			// before we drew connections inside the loop below, which was totally pointless. We only need to draw connections once for the visible area,
 			// not once per section. This is way faster, connection drawing is not 0ms
 			drawConnections(gc, mBounds);
-			
+
 			// just because I have the feeling some user will want cross-section connections, we allow it by
 			// drawing the connecting lines _last_. Why? because the event bounds are not calculated until the event is drawn, and if we have
 			// a connection to a group/event that hasn't been drawn yet, it would draw an arrow into space..
@@ -1163,11 +1175,11 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		} else {
 			bounds = new Rectangle(bounds.x, getHeaderHeight(), bounds.width, bounds.height);
 			// bounds = new Rectangle(bounds.x, getHeaderHeight(), bounds.width, bounds.height);
-			mBounds = bounds;
+			// mBounds = bounds;
 
 			// long start = System.currentTimeMillis();
 			if (mReCalculateScopes) {
-				calculateAllScopes(mBounds, null);
+				calculateAllScopes(bounds, null);
 			}
 			// long end = System.currentTimeMillis();
 			// System.err.println("Scope calc: " + (end-start));
@@ -1189,13 +1201,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			drawConnections(gc, bounds);
 		}
 
-		// draws the horizontal lines at the top. We draw these last as we might paint over that area accidentally
-		if (mSettings.drawHeader())
-			drawTopHorizontalLines(gc, oldBounds);
-
 		// draw section header last
 		if (drawSections)
-			drawSectionColumn(gc, bounds);
+			drawSectionColumn(gc, bounds, false);
 
 		// zoom
 		if (mShowZoomHelper && mSettings.showZoomLevelBox())
@@ -1203,8 +1211,10 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 		// if we lock the header, we unfortunately need to draw it again on top of everything else. Down the road this should be optimized of course,
 		// but there's so many necessary calculations done in the header drawing that we need for later that it's a bit of work
-		if (mSettings.lockHeaderOnVerticalScroll() && mSettings.drawHeader())
+		if (mSettings.lockHeaderOnVerticalScroll() && mSettings.drawHeader()) {
 			drawHeader(gc);
+			drawSectionColumn(gc, bounds, true);
+		}
 
 		// last draw
 		if (mSettings.enableLastDraw()) {
@@ -1242,6 +1252,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		// total += (time2 - time1);
 		// System.err.println(redraw + " avg: " + (float) total / (float) redrawCount);
 		// System.err.println(redraw);
+
 	}
 
 	/**
@@ -1286,11 +1297,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		mVerticalLineLocations.clear();
 		mVerticalWeekDividerLineLocations.clear();
 
-		Rectangle headerBounds = mBounds;
-		if (!mSettings.lockHeaderOnVerticalScroll())
-			headerBounds.y -= mVerticalScrollPosition;
-		else
-			headerBounds.y -= getHeaderHeight();
+		Rectangle headerBounds = new Rectangle(mBounds.x, mBounds.y, mBounds.width, mBounds.height);
+		if (mSettings.lockHeaderOnVerticalScroll())
+			headerBounds.y = mLockedHeaderY;
 
 		if (mCurrentView == ISettings.VIEW_DAY) {
 			// draw the day at the top
@@ -1648,7 +1657,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		if (!mSettings.drawHeader())
 			return 0;
 
-		return mSettings.getHeaderDayHeight() + mSettings.getHeaderMonthHeight();
+		// we account for the drawTopLines bottom line which is at the bottom of the header, which increases our height by 1 pixel
+		return mSettings.getHeaderDayHeight() + mSettings.getHeaderMonthHeight() + 1;
 	}
 
 	private void drawFills(GC gc, Rectangle bounds, GanttSection gs) {
@@ -1674,12 +1684,11 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		int startY = bounds.y - offset;// getHeaderHeight() == 0 ? bounds.y : bounds.y + getHeaderHeight() + 1;
 		int heightY = bounds.height + offset;
 
-		
 		boolean drawFills = true;
 		if (gs != null) {
 			drawFills = !gs.isInheritBackgroud();
 		}
-		
+
 		// fill all of it, then we just have to worry about weekends, much
 		// faster in terms of drawing time
 		// only two views have weekend colors, week and month view. Hour and
@@ -1786,7 +1795,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	}
 
 	// draws the section column on left or right side
-	private void drawSectionColumn(GC gc, Rectangle bounds) {
+	private void drawSectionColumn(GC gc, Rectangle bounds, boolean columnOnly) {
 		int xMax = mSettings.getSectionBarWidth() - 1;
 
 		int horiSpacer = 3;
@@ -1827,7 +1836,6 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		// top left corner
 		gc.setForeground(mColorManager.getNonActiveSessionBarColorLeft());
 		gc.setBackground(mColorManager.getNonActiveSessionBarColorRight());
-
 		gc.fillGradientRectangle(x, 0, xMax + 1, mSettings.drawGanttSectionBarToBottom() ? mBounds.y + mBounds.height : lineLoc, false);
 
 		gc.setForeground(mColorManager.getTopHorizontalLinesColor());
@@ -1898,20 +1906,22 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 				width = super.getClientArea().width;
 
 			// draw center divider
-			gc.setForeground(mColorManager.getTopHorizontalLinesColor());
-			if (i != mGanttSections.size() - 1 && mSettings.getSectionBarDividerHeight() != 0) {
-				gc.setForeground(mColorManager.getSessionBarDividerColorLeft());
-				gc.setBackground(mColorManager.getSessionBarDividerColorRight());
-				gc.fillGradientRectangle(0, yStart, width, mSettings.getSectionBarDividerHeight(), false);
-
+			if (!columnOnly) {
 				gc.setForeground(mColorManager.getTopHorizontalLinesColor());
-				gc.drawLine(0, yStart, width, yStart);
-				yStart += mSettings.getSectionBarDividerHeight();
-				gc.drawLine(0, yStart - 1, width, yStart - 1);
-			} else {
-				// the last line
-				gc.drawLine(0, yStart, width, yStart);
-				yStart += mSettings.getSectionBarDividerHeight();
+				if (i != mGanttSections.size() - 1 && mSettings.getSectionBarDividerHeight() != 0) {
+					gc.setForeground(mColorManager.getSessionBarDividerColorLeft());
+					gc.setBackground(mColorManager.getSessionBarDividerColorRight());
+					gc.fillGradientRectangle(0, yStart, width, mSettings.getSectionBarDividerHeight(), false);
+
+					gc.setForeground(mColorManager.getTopHorizontalLinesColor());
+					gc.drawLine(0, yStart, width, yStart);
+					yStart += mSettings.getSectionBarDividerHeight();
+					gc.drawLine(0, yStart - 1, width, yStart - 1);
+				} else {
+					// the last line
+					gc.drawLine(0, yStart, width, yStart);
+					yStart += mSettings.getSectionBarDividerHeight();
+				}
 			}
 		}
 
@@ -2593,9 +2603,12 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	}
 
 	// draws one event onto the chart (or rather, delegates to the correct drawing method)
-	private void drawOneEvent(GC gc, GanttEvent ge, Rectangle bounds) {
+	private void drawOneEvent(GC gc, GanttEvent ge, Rectangle boundsToUse) {
 		int xStart = ge.getX();
 		int xEventWidth = ge.getWidth();
+
+		// clone the bounds, we don't want any sub-method messing with them
+		Rectangle bounds = new Rectangle(boundsToUse.x, boundsToUse.y, boundsToUse.width, boundsToUse.height);
 
 		Color cEvent = ge.getStatusColor();
 		Color gradient = ge.getGradientStatusColor();
@@ -4344,12 +4357,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 	// redraws only the area where the events are, only call when dates aren't changing
 	private void redrawEventsArea() {
-		Rectangle rect = getEventBounds();
-
-		if (rect == null)
-			return;
-
-		redraw(rect.x, rect.y, rect.width, rect.height, false);
+		redraw();
 	}
 
 	/**
@@ -4704,7 +4712,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 		// header clicks, if it's visible
 		if (mSettings.drawHeader() && mSettings.allowHeaderSelection()) {
-			Rectangle headerBounds = new Rectangle(mBounds.x, mSettings.getHeaderMonthHeight(), mBounds.width, mSettings.getHeaderDayHeight());
+			Rectangle headerBounds = new Rectangle(mBounds.x, mSettings.getHeaderMonthHeight() + mVerticalScrollPosition, mBounds.width, mSettings.getHeaderDayHeight());
 
 			if (isInside(me.x, me.y, headerBounds)) {
 				// we account for section bar width
@@ -5791,123 +5799,6 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 		// TODO: Granualize, if possible, quite hard with arrow-connections
 		redrawEventsArea();
-		/*
-		 * if (true) return;
-		 * 
-		 * if ((stateMask & mSettings.getDragAllModifierKey()) == 0 || !mSettings.moveLinkedEventsWhenEventsAreMoved()) { Calendar cal1 = Calendar.getInstance(mDefaultLocale);
-		 * Calendar cal2 = (Calendar) cal1.clone(); cal1.setTime(ge.getActualStartDate().getTime()); cal2.setTime(ge.getActualEndDate().getTime());
-		 * 
-		 * if (type == TYPE_MOVE) { cal1.add(calMark, diff); cal2.add(calMark, diff);
-		 * 
-		 * // check before date move as it's the start date if (ge.getNoMoveBeforeDate() != null) { if (cal1.before(ge.getNoMoveBeforeDate())) { return; } }
-		 * 
-		 * // remember, we check the start calendar on both occasions, as that's the mark that counts if (ge.getNoMoveAfterDate() != null) { if
-		 * (cal2.after(ge.getNoMoveAfterDate())) { return; } }
-		 * 
-		 * ge.moveStarted();
-		 * 
-		 * ge.setRevisedStart(cal1); ge.setRevisedEnd(cal2);
-		 * 
-		 * // we move it by updating the x position to its new location ge.updateX(getStartingXfor(cal1));
-		 * 
-		 * } else if (type == TYPE_RESIZE_LEFT) { cal1.add(calMark, diff);
-		 * 
-		 * // ensure event does not collapse onto itself (so we can't make it smaller than the smallest denominator (mins, hours etc)) if (!isNoOverlap(cal1,
-		 * ge.getActualEndDate())) return;
-		 * 
-		 * // check before date move as it's the start date if (ge.getNoMoveBeforeDate() != null) { if (cal1.before(ge.getNoMoveBeforeDate())) { // for start dates we need to
-		 * actually set the date or we'll be 1 day short as we did the diff already ge.setRevisedStart(ge.getNoMoveBeforeDate()); redrawEventsArea(); return; } }
-		 * 
-		 * ge.moveStarted();
-		 * 
-		 * ge.setRevisedStart(cal1);
-		 * 
-		 * // update size + location ge.updateX(getStartingXfor(cal1)); ge.updateWidth(getXLengthForEvent(ge));
-		 * 
-		 * } else { cal2.add(calMark, diff);
-		 * 
-		 * if (!isNoOverlap(ge.getActualStartDate(), cal2)) return;
-		 * 
-		 * // remember, we check the start calendar on both occasions, as that's the mark that counts if (ge.getNoMoveAfterDate() != null) { if
-		 * (cal2.after(ge.getNoMoveAfterDate())) return; }
-		 * 
-		 * ge.moveStarted();
-		 * 
-		 * ge.setRevisedEnd(cal2);
-		 * 
-		 * // update size + location ge.updateX(getStartingXfor(cal1)); ge.updateWidth(getXLengthForEvent(ge)); }
-		 * 
-		 * eventsMoved.add(ge); } else { // multi move if ((stateMask & mSettings.getDragAllModifierKey()) != 0) { ArrayList conns = getEventsDependingOn(ge, new ArrayList());
-		 * 
-		 * ArrayList translated = new ArrayList(); for (int x = 0; x < conns.size(); x++) { GanttEvent md = (GanttEvent) conns.get(x);
-		 * 
-		 * if (md.isLocked()) continue;
-		 * 
-		 * // it's a checkpoint, we're resizing, and settings say checkpoints can't be resized, then we skip them even here if (md.isCheckpoint() && type != TYPE_MOVE &&
-		 * !mSettings.allowCheckpointResizing()) continue;
-		 * 
-		 * translated.add(md); }
-		 * 
-		 * if (!translated.contains(ge)) translated.add(ge);
-		 * 
-		 * // add all multiselected events too, if any if (mMultiSelect) { for (int x = 0; x < mSelectedEvents.size(); x++) { GanttEvent selEvent = (GanttEvent)
-		 * mSelectedEvents.get(x); if (selEvent.isScope()) continue;
-		 * 
-		 * if (!translated.contains(selEvent)) translated.add(selEvent); } }
-		 * 
-		 * mDragEvents.clear(); mDragEvents = translated;
-		 * 
-		 * for (int x = 0; x < translated.size(); x++) { GanttEvent event = (GanttEvent) translated.get(x);
-		 * 
-		 * Calendar cal1 = Calendar.getInstance(mDefaultLocale); Calendar cal2 = (Calendar) cal1.clone(); cal1.setTime(event.getActualStartDate().getTime());
-		 * cal2.setTime(event.getActualEndDate().getTime());
-		 * 
-		 * if (type == TYPE_MOVE) { cal1.add(calMark, diff); cal2.add(calMark, diff);
-		 * 
-		 * // check before date move as it's the start date if (event.getNoMoveBeforeDate() != null) { if (cal1.before(event.getNoMoveBeforeDate())) { continue; } }
-		 * 
-		 * // remember, we check the start calendar on both occasions, as that's the mark that counts if (event.getNoMoveAfterDate() != null) { if
-		 * (cal2.after(event.getNoMoveAfterDate())) { continue; } }
-		 * 
-		 * event.moveStarted();
-		 * 
-		 * event.setRevisedStart(cal1); event.setRevisedEnd(cal2);
-		 * 
-		 * // we move it by updating the x position to its new location event.updateX(getStartingXfor(cal1)); } else if (type == TYPE_RESIZE_LEFT) { cal1.add(calMark, diff);
-		 * 
-		 * if (!isNoOverlap(cal1, event.getActualEndDate())) continue;
-		 * 
-		 * // check before date move as it's the start date if (event.getNoMoveBeforeDate() != null) { if (cal1.before(event.getNoMoveBeforeDate())) { // for start dates we need to
-		 * actually set the date or we'll be 1 day short as we did the diff already event.setRevisedStart(event.getNoMoveBeforeDate()); continue; } }
-		 * 
-		 * event.moveStarted();
-		 * 
-		 * event.setRevisedStart(cal1);
-		 * 
-		 * // update size + location event.updateX(getStartingXfor(cal1)); event.updateWidth(getXLengthForEvent(event)); } else { cal2.add(calMark, diff);
-		 * 
-		 * if (!isNoOverlap(event.getActualStartDate(), cal2)) continue;
-		 * 
-		 * // remember, we check the start calendar on both occasions, as that's the mark that counts if (event.getNoMoveAfterDate() != null) { if
-		 * (cal2.after(event.getNoMoveAfterDate())) continue; }
-		 * 
-		 * event.moveStarted();
-		 * 
-		 * event.setRevisedEnd(cal2);
-		 * 
-		 * // update size + location event.updateX(getStartingXfor(cal1)); event.updateWidth(getXLengthForEvent(event)); }
-		 * 
-		 * if (!eventsMoved.contains(event)) eventsMoved.add(event); }
-		 * 
-		 * if (!eventsMoved.contains(ge)) eventsMoved.add(ge);
-		 * 
-		 * } }
-		 * 
-		 * for (int x = 0; x < mEventListeners.size(); x++) { IGanttEventListener listener = (IGanttEventListener) mEventListeners.get(x); if (type == TYPE_MOVE)
-		 * listener.eventsMoved(eventsMoved, me); else listener.eventsResized(eventsMoved, me); }
-		 * 
-		 * // TODO: Granualize, if possible, quite hard with arrow-connections redrawEventsArea();
-		 */
 	}
 
 	public void mouseEnter(MouseEvent event) {
@@ -6057,25 +5948,13 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		return null;
 	}
 
-	private Rectangle getEventBounds() {
-		if (mBounds == null)
-			return null;
-
-		int yStart = getHeaderHeight() == 0 ? getHeaderHeight() : (getHeaderHeight() + 1);
-		int yEnd = yStart;
-
-		yEnd = mBounds.height + mBounds.y;
-
-		return new Rectangle(mBounds.x, yStart, mBounds.x + mBounds.width, yEnd - yStart);
-	}
-
 	/**
-	 * Returns a rectangle with the bounds of what is actually visible inside the chart (for example, the bottom most Y value would be where the last event ends.
+	 * Returns a rectangle with the bounds of what is actually visible inside the chart.
 	 * 
 	 * @return Rectangle
 	 */
 	public Rectangle getVisibleBounds() {
-		return new Rectangle(0, 0, super.getClientArea().width, mBottomMostY);
+		return mVisibleBounds;
 	}
 
 	/**

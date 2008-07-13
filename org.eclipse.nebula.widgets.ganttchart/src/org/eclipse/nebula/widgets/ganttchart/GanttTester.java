@@ -584,6 +584,10 @@ public class GanttTester {
 
 		Button bShowDays = new Button(comp, SWT.PUSH);
 		bShowDays.setText("Toggle Dates On Events");
+		
+		Button bSetDate = new Button(comp, SWT.PUSH);
+		bSetDate.setText("Set Date Randomly (+-10)");
+		bSetDate.setToolTipText("Sets the date randomly to a date +-10 days from the leftmost date of the chart");
 
 		bMoveEventsLeft.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -712,6 +716,23 @@ public class GanttTester {
 			}
 
 		});
+		
+		bSetDate.addListener(SWT.Selection, new Listener() {
+
+			public void handleEvent(Event event) {
+				Calendar cal = _ganttComposite.getDate();
+				Random r = new Random();
+				int add = r.nextInt(10)+1;
+				if (r.nextInt(2) == 1)
+					add = -add;
+				
+				cal.add(Calendar.DATE, add);
+				_ganttComposite.setDate(cal);
+				moveFocus();
+			}
+		
+		});
+		
 		return sc;
 	}
 
