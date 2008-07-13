@@ -346,6 +346,9 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	 * @return Start date
 	 */
 	public Calendar getStartDate() {
+		if (mStartDate == null)
+			return null;
+		
 		return (Calendar) mStartDate.clone();
 	}
 
@@ -404,6 +407,9 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	 * @return End date
 	 */
 	public Calendar getEndDate() {
+		if (mEndDate == null)
+			return null;
+		
 		return (Calendar) mEndDate.clone();
 	}
 
@@ -579,6 +585,9 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	 * @return Revised date
 	 */
 	public Calendar getRevisedStart() {
+		if (mRevisedStart == null)
+			return null;
+		
 		return (Calendar)mRevisedStart.clone();
 	}
 
@@ -597,6 +606,9 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	 * @return revised end date
 	 */
 	public Calendar getRevisedEnd() {
+		if (mRevisedEnd == null)
+			return null;
+		
 		return (Calendar)mRevisedEnd.clone();
 	}
 

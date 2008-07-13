@@ -1224,7 +1224,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		// but there's so many necessary calculations done in the header drawing that we need for later that it's a bit of work
 		if (mSettings.lockHeaderOnVerticalScroll() && mSettings.drawHeader()) {
 			drawHeader(gc);
-			drawSectionColumn(gc, bounds, true);
+			if (drawSections)
+				drawSectionColumn(gc, bounds, true);
 		}
 
 		// last draw
@@ -5656,7 +5657,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		List toMove = new ArrayList();
 
 		// multi move
-		if ((stateMask & mSettings.getDragAllModifierKey()) != 0) {
+		if ((stateMask & mSettings.getDragAllModifierKey()) != 0 && mSettings.moveLinkedEventsWhenEventsAreMoved()) {
 			List conns = getEventsDependingOn(ge);
 
 			List translated = new ArrayList();
