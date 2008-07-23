@@ -225,8 +225,8 @@ public class Gallery extends Canvas {
 		checkWidget();
 		this.itemRenderer = itemRenderer;
 
-		if (itemRenderer != null)
-			itemRenderer.setGallery(this);
+		if (this.itemRenderer != null)
+			this.itemRenderer.setGallery(this);
 	}
 
 	/**
@@ -239,18 +239,19 @@ public class Gallery extends Canvas {
 	 * </p>
 	 * 
 	 * @param listener
-	 * 		the listener which should be notified
+	 *            the listener which should be notified
 	 * 
 	 * @exception IllegalArgumentException
-	 * 		<ul>
-	 * 		<li>ERROR_NULL_ARGUMENT - if the listener is null</li>
-	 * 		</ul>
+	 *                <ul>
+	 *                <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
+	 *                </ul>
 	 * @exception SWTException
-	 * 		<ul>
-	 * 		<li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 * 		<li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
-	 * 		created the receiver</li>
-	 * 		</ul>
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
+	 *                </ul>
 	 * 
 	 * @see SelectionListener
 	 * @see #removeSelectionListener
@@ -268,18 +269,19 @@ public class Gallery extends Canvas {
 	 * notified when the receiver's selection changes.
 	 * 
 	 * @param listener
-	 * 		the listener which should no longer be notified
+	 *            the listener which should no longer be notified
 	 * 
 	 * @exception IllegalArgumentException
-	 * 		<ul>
-	 * 		<li>ERROR_NULL_ARGUMENT - if the listener is null</li>
-	 * 		</ul>
+	 *                <ul>
+	 *                <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
+	 *                </ul>
 	 * @exception SWTException
-	 * 		<ul>
-	 * 		<li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 * 		<li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
-	 * 		created the receiver</li>
-	 * 		</ul>
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
+	 *                </ul>
 	 * 
 	 * @see SelectionListener
 	 * @see #addSelectionListener(SelectionListener)
@@ -387,12 +389,13 @@ public class Gallery extends Canvas {
 	 * 
 	 * @param parent
 	 * @param style
-	 * 		- SWT.VIRTUAL switches in virtual mode. <br/>SWT.V_SCROLL add
-	 * 		vertical slider and switches to vertical mode. <br/>SWT.H_SCROLL add
-	 * 		horizontal slider and switches to horizontal mode. <br/>if both
-	 * 		V_SCROLL and H_SCROLL are specified, the gallery is in vertical mode
-	 * 		by default. Mode can be changed afterward using setVertical<br/>
-	 * 		SWT.MULTI allows only several items to be selected at the same time.
+	 *            - SWT.VIRTUAL switches in virtual mode. <br/>SWT.V_SCROLL add
+	 *            vertical slider and switches to vertical mode.
+	 *            <br/>SWT.H_SCROLL add horizontal slider and switches to
+	 *            horizontal mode. <br/>if both V_SCROLL and H_SCROLL are
+	 *            specified, the gallery is in vertical mode by default. Mode
+	 *            can be changed afterward using setVertical<br/> SWT.MULTI
+	 *            allows only several items to be selected at the same time.
 	 */
 	public Gallery(Composite parent, int style) {
 		super(parent, style | SWT.NO_BACKGROUND | SWT.DOUBLE_BUFFERED);
@@ -410,10 +413,28 @@ public class Gallery extends Canvas {
 		_addMouseListeners();
 		_addKeyListeners();
 
+		// Set defaults
+		_setDefaultRenderers();
+
 		// Layout
 		updateStructuralValues(false);
 		updateScrollBarsProperties();
 		redraw();
+	}
+
+	private void _setDefaultRenderers() {
+		// Group renderer
+		DefaultGalleryGroupRenderer gr = new DefaultGalleryGroupRenderer();
+		gr.setMinMargin(2);
+		gr.setItemHeight(56);
+		gr.setItemWidth(72);
+		gr.setAutoMargin(true);
+		gr.setGallery(this);
+		this.groupRenderer = gr;
+
+		// Item renderer
+		this.itemRenderer = new DefaultGalleryItemRenderer();
+		itemRenderer.setGallery(this);
 	}
 
 	/**
@@ -927,7 +948,7 @@ public class Gallery extends Canvas {
 	 * 
 	 * @param e
 	 * @param item
-	 * 		: The item which is under the cursor or null
+	 *            : The item which is under the cursor or null
 	 * @param down
 	 * @param up
 	 */
@@ -1119,8 +1140,9 @@ public class Gallery extends Canvas {
 	 * Gallery and item size will be updated.
 	 * 
 	 * @param keepLocation
-	 * 		if true, the current scrollbars position ratio is saved and restored
-	 * 		even if the gallery size has changed. (Visible items stay visible)
+	 *            if true, the current scrollbars position ratio is saved and
+	 *            restored even if the gallery size has changed. (Visible items
+	 *            stay visible)
 	 */
 	protected void updateStructuralValues(boolean keepLocation) {
 
@@ -1229,11 +1251,11 @@ public class Gallery extends Canvas {
 	 * Move the scrollbar to reflect the current visible items position.
 	 * 
 	 * @param bar
-	 * 		- the scroll bar to move
+	 *            - the scroll bar to move
 	 * @param clientSize
-	 * 		- Client (visible) area size
+	 *            - Client (visible) area size
 	 * @param totalSize
-	 * 		- Total Size
+	 *            - Total Size
 	 */
 	private void updateScrollBarProperties(ScrollBar bar, int clientSize,
 			int totalSize) {
@@ -1351,7 +1373,7 @@ public class Gallery extends Canvas {
 	 * been used yet, the item is created and a SWT.SetData event is fired.
 	 * 
 	 * @param index
-	 * 		: index of the item.
+	 *            : index of the item.
 	 * @return : the GalleryItem or null if index is out of bounds
 	 */
 	public GalleryItem getItem(int index) {
@@ -1687,7 +1709,11 @@ public class Gallery extends Canvas {
 
 	public void setGroupRenderer(AbstractGalleryGroupRenderer groupRenderer) {
 		this.groupRenderer = groupRenderer;
-		groupRenderer.setGallery(this);
+
+		if (this.groupRenderer != null) {
+			this.groupRenderer.setGallery(this);
+		}
+		
 		this.updateStructuralValues(true);
 		this.updateScrollBarsProperties();
 		this.redraw();
@@ -1819,7 +1845,7 @@ public class Gallery extends Canvas {
 	 * @param array
 	 * @param object
 	 * @param index
-	 * 		: if index == -1, item is added at the end of the array.
+	 *            : if index == -1, item is added at the end of the array.
 	 * @return
 	 */
 	protected Object[] _arrayAddItem(Object[] array, Object object, int index) {
