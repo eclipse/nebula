@@ -112,6 +112,7 @@ public class GridDragSourceEffect extends DragSourceEffect {
 			}
 		}
 		if(bounds==null) return null;
+		if (bounds.width <= 0 || bounds.height <= 0) return null;
 		
 		dragSourceImage = new Image(display,bounds.width,bounds.height);
 		GC gc = new GC(dragSourceImage);
