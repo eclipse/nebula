@@ -43,9 +43,9 @@ import org.eclipse.swt.widgets.TypedListener;
 
 /**
  * <p>
- * SWT Widget that displays a picture gallery<br/> see
- * http://www.eclipse.org/nebula/widgets/gallery/gallery.php<br/> This widget
- * requires jdk-1.4+
+ * SWT Widget that displays a picture gallery<br/>
+ * see http://www.eclipse.org/nebula/widgets/gallery/gallery.php<br/>
+ * This widget requires jdk-1.4+
  * </p>
  * <p>
  * Style <code>VIRTUAL</code> is used to create a <code>Gallery</code> whose
@@ -352,7 +352,9 @@ public class Gallery extends Canvas {
 		Event e = new Event();
 		e.widget = this;
 		e.item = item;
-		e.data = item.getData();
+		if (item != null) {
+			e.data = item.getData();
+		}
 		// TODO: report index
 		// e.index = index;
 		try {
@@ -389,13 +391,16 @@ public class Gallery extends Canvas {
 	 * 
 	 * @param parent
 	 * @param style
-	 *            - SWT.VIRTUAL switches in virtual mode. <br/>SWT.V_SCROLL add
-	 *            vertical slider and switches to vertical mode.
-	 *            <br/>SWT.H_SCROLL add horizontal slider and switches to
-	 *            horizontal mode. <br/>if both V_SCROLL and H_SCROLL are
-	 *            specified, the gallery is in vertical mode by default. Mode
-	 *            can be changed afterward using setVertical<br/> SWT.MULTI
-	 *            allows only several items to be selected at the same time.
+	 *            - SWT.VIRTUAL switches in virtual mode. <br/>
+	 *            SWT.V_SCROLL add vertical slider and switches to vertical
+	 *            mode. <br/>
+	 *            SWT.H_SCROLL add horizontal slider and switches to horizontal
+	 *            mode. <br/>
+	 *            if both V_SCROLL and H_SCROLL are specified, the gallery is in
+	 *            vertical mode by default. Mode can be changed afterward using
+	 *            setVertical<br/>
+	 *            SWT.MULTI allows only several items to be selected at the same
+	 *            time.
 	 */
 	public Gallery(Composite parent, int style) {
 		super(parent, style | SWT.NO_BACKGROUND | SWT.DOUBLE_BUFFERED);
@@ -1230,8 +1235,8 @@ public class Gallery extends Canvas {
 	}
 
 	/**
-	 * Move the scrollbar to reflect the current visible items position.
-	 * <br/>The bar which is moved depends of the current gallery scrolling :
+	 * Move the scrollbar to reflect the current visible items position. <br/>
+	 * The bar which is moved depends of the current gallery scrolling :
 	 * vertical or horizontal.
 	 * 
 	 */
@@ -1293,7 +1298,8 @@ public class Gallery extends Canvas {
 
 	/**
 	 * Check the current translation value. Must be &gt; 0 and &lt; gallery
-	 * size.<br/> Invalid values are fixed.
+	 * size.<br/>
+	 * Invalid values are fixed.
 	 */
 	private void validateTranslation() {
 		Rectangle area = this.getClientArea();
@@ -1369,8 +1375,9 @@ public class Gallery extends Canvas {
 	}
 
 	/**
-	 * Get the item at index.<br/> If SWT.VIRTUAL is used and the item has not
-	 * been used yet, the item is created and a SWT.SetData event is fired.
+	 * Get the item at index.<br/>
+	 * If SWT.VIRTUAL is used and the item has not been used yet, the item is
+	 * created and a SWT.SetData event is fired.
 	 * 
 	 * @param index
 	 *            : index of the item.
@@ -1400,8 +1407,9 @@ public class Gallery extends Canvas {
 	}
 
 	/**
-	 * Get the item at index.<br/> If SWT.VIRTUAL is used and the item has not
-	 * been used, the item is created and a SWT.SetData is fired.<br/>
+	 * Get the item at index.<br/>
+	 * If SWT.VIRTUAL is used and the item has not been used, the item is
+	 * created and a SWT.SetData is fired.<br/>
 	 * 
 	 * This is the internal implementation of this method : checkWidget() is not
 	 * used.
@@ -1607,6 +1615,8 @@ public class Gallery extends Canvas {
 	 */
 	public int indexOf(GalleryItem item) {
 		checkWidget();
+		if (item == null)
+			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		if (item.getParentItem() == null)
 			return _indexOf(item);
 
@@ -1713,7 +1723,7 @@ public class Gallery extends Canvas {
 		if (this.groupRenderer != null) {
 			this.groupRenderer.setGallery(this);
 		}
-		
+
 		this.updateStructuralValues(true);
 		this.updateScrollBarsProperties();
 		this.redraw();
