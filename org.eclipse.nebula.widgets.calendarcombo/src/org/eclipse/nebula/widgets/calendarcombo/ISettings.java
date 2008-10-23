@@ -293,4 +293,18 @@ public interface ISettings {
 	 * @see ISettings#getDateFormat()
 	 */
 	public List getAdditionalDateFormats();
+	
+	/*
+	 * Accelerator combination for the Today button.
+	 * 
+	 * @return Accelerator, default is CTRL + 't'
+	 */
+	//public int getTodayAccelerator();
+	
+	/*
+	 * Accelerator combination for the None button.
+	 * 
+	 * @return Accelerator, default is CTRL + 'n'
+	 */
+	//public int getNoneAccelerator();
 }

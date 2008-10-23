@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    emil.crumhorn@gmail.com - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.nebula.widgets.calendarcombo;
 
@@ -41,89 +41,91 @@ import org.eclipse.swt.widgets.Listener;
 
 class CalendarComposite extends Canvas implements MouseListener, MouseMoveListener {
 
-	private final int ARROW_LEFT = 1;
+	private final int					ARROW_LEFT					= 1;
 
-	private final int ARROW_RIGHT = 2;
+	private final int					ARROW_RIGHT					= 2;
 
-	private Button mButtonToday;
+	private Button						mButtonToday;
 
-	private Button mButtonNone;
+	private Button						mButtonNone;
 
-	private Rectangle mLeftArrowBounds;
+	private Rectangle					mLeftArrowBounds;
 
-	private Rectangle mRightArrowBounds;
+	private Rectangle					mRightArrowBounds;
 
-	private Rectangle mMonthNameBounds;
+	private Rectangle					mMonthNameBounds;
 
-	private Calendar mCalendar;
+	private Calendar					mCalendar;
 
-	private Calendar mToday;
+	private Calendar					mToday;
 
-	private int mDatesTopY = 0;
+	private int							mDatesTopY					= 0;
 
-	private int mDayXs[] = new int[7];
+	private int							mDayXs[]					= new int[7];
 
-	private CalDay[] mDays = new CalDay[7 * 6];
+	private CalDay[]					mDays						= new CalDay[7 * 6];
 
-	private Calendar mSelectedDay;
-	
+	private Calendar					mSelectedDay;
+
 	// used for date ranges
-	private Calendar mMouseDownDay;
-	
-	private Calendar mMouseUpDay;
+	private Calendar					mMouseDownDay;
 
-	private static DateFormatSymbols mDFS;
+	private Calendar					mMouseUpDay;
 
-	private String mMonths[];
+	private static DateFormatSymbols	mDFS;
 
-	private static String[] mDayTitles = null;
+	private String						mMonths[];
 
-	private boolean mMonthSelectorOpen;
+	private static String[]				mDayTitles					= null;
 
-	private ArrayList mListeners;
+	private boolean						mMonthSelectorOpen;
 
-	private boolean mNoDayClicked;
+	private ArrayList					mListeners;
+
+	private boolean						mNoDayClicked;
 
 	// this thread deals with holding down the mouse over the arrows to jump
 	// months quickly
 
 	// milliseconds
-	private static final int ARROW_SLOW_TIME = 300;
+	private static final int			ARROW_SLOW_TIME				= 300;
 
-	private static final int ARROW_FAST_TIME = 120;
+	private static final int			ARROW_FAST_TIME				= 120;
 
-	// after how many iterations do we switch speed? (after how many months flipped-by)
-	private static final int ARROW_SPEED_SWITCH_COUNT = 10;
+	// after how many iterations do we switch speed? (after how many months
+	// flipped-by)
+	private static final int			ARROW_SPEED_SWITCH_COUNT	= 10;
 
 	// default speed
-	private int mArrowSleepTime = ARROW_SLOW_TIME;
+	private int							mArrowSleepTime				= ARROW_SLOW_TIME;
 
 	// various variables used to keep track
-	private int mArrowIterations = 0;
+	private int							mArrowIterations			= 0;
 
-	private Thread mArrowThread;
+	private Thread						mArrowThread;
 
-	private boolean mArrowRun;
+	private boolean						mArrowRun;
 
-	private boolean mArrowPause;
+	private boolean						mArrowPause;
 
-	private int mArrowThreadDirection = 0;
+	private int							mArrowThreadDirection		= 0;
 
-	private IColorManager mColorManager;
-	
-	private ISettings mSettings;
-	
-	private ICalendarListener mMainListener;
+	private IColorManager				mColorManager;
 
-	private Calendar mDisallowBeforeDate;
-	
-	private Calendar mDisallowAfterDate;
-	
-	private boolean mDateRange;
-	
-	private boolean mMouseIsDown;
-	
-	public CalendarComposite(Composite parent, Calendar selectedDay, Calendar disallowBeforeDate, Calendar disallowAfterDate, IColorManager colorManager, ISettings settings, boolean dateRange, Calendar rangeStart, Calendar rangeEnd) {
+	private ISettings					mSettings;
+
+	private ICalendarListener			mMainListener;
+
+	private Calendar					mDisallowBeforeDate;
+
+	private Calendar					mDisallowAfterDate;
+
+	private boolean						mDateRange;
+
+	private boolean						mMouseIsDown;
+
+	public CalendarComposite(Composite parent, Calendar selectedDay, Calendar disallowBeforeDate, Calendar disallowAfterDate, IColorManager colorManager, ISettings settings,
+			boolean dateRange, Calendar rangeStart, Calendar rangeEnd) {
 		super(parent, SWT.NO_BACKGROUND | SWT.NO_FOCUS | SWT.DOUBLE_BUFFERED);
 		this.mSelectedDay = selectedDay;
 		this.mCalendar = selectedDay;
@@ -138,18 +140,19 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 		}
 
 		init();
-		
+
 		build();
 	}
-	
+
 	private void init() {
 		mDFS = new DateFormatSymbols(mSettings.getLocale());
-		mMonths = mDFS.getMonths();;
-		 
+		mMonths = mDFS.getMonths();
+		;
+
 		if (mCalendar == null)
 			mCalendar = Calendar.getInstance(mSettings.getLocale());
 		if (mToday == null)
-			mToday = Calendar.getInstance(mSettings.getLocale());		
+			mToday = Calendar.getInstance(mSettings.getLocale());
 
 		String[] weekdays = mDFS.getWeekdays();
 		mDayTitles = new String[weekdays.length];
@@ -174,9 +177,9 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 			bwidth = mSettings.getButtonWidthCarbon();
 			buttonStyle = SWT.FLAT;
 		}
-		
+
 		setLayout(new ButtonSectionLayout());
-						
+
 		addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent event) {
 				paint(event);
@@ -185,7 +188,7 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 
 		addMouseListener(this);
 		addMouseMoveListener(this);
-					
+
 		mButtonToday = new Button(this, buttonStyle);
 		mButtonToday.setText(mSettings.getTodayText());
 		mButtonToday.setLayoutData(new GridData(bwidth, bheight));
@@ -225,14 +228,14 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 		Rectangle bounds = super.getBounds();
 		gc.setBackground(mColorManager.getCalendarBackgroundColor());
 		gc.fillRectangle(bounds);
-		
+
 		Font used = null;
-		if (CalendarCombo.OS_CARBON) {			
+		if (CalendarCombo.OS_CARBON) {
 			used = mSettings.getCarbonDrawFont();
 			if (used != null)
 				gc.setFont(used);
 		}
-		
+
 		// header
 		drawHeader(gc);
 		// day titles
@@ -241,7 +244,7 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 		drawDays(gc);
 		// 1 pixel border
 		drawBorder(gc);
-		
+
 		gc.dispose();
 		if (used != null)
 			used.dispose();
@@ -283,16 +286,19 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 
 	private void drawHeader(GC gc) {
 		Rectangle bounds = super.getBounds();
-		Rectangle bgRect = new Rectangle(bounds.x + mSettings.getHeaderLeftMargin(), bounds.y + mSettings.getHeaderTopMargin(), mSettings.getCalendarWidth()-13, bounds.y + mSettings.getHeaderHeight());
+		Rectangle bgRect = new Rectangle(bounds.x + mSettings.getHeaderLeftMargin(), bounds.y + mSettings.getHeaderTopMargin(), mSettings.getCalendarWidth() - 13, bounds.y
+				+ mSettings.getHeaderHeight());
 		gc.setBackground(mColorManager.getCalendarHeaderColor());
 		gc.fillRectangle(bgRect);
-		drawArrow(gc, bounds.x + mSettings.getHeaderLeftMargin() + mSettings.getArrowLeftSpacing() + 1, bounds.y + mSettings.getHeaderTopMargin() + mSettings.getArrowTopSpacing() + 4, ARROW_LEFT);
-		drawArrow(gc, bounds.x + mSettings.getCalendarWidth()-13 - mSettings.getHeaderRightMargin(), bounds.y + mSettings.getHeaderTopMargin() + mSettings.getArrowTopSpacing() + 4, ARROW_RIGHT);
+		drawArrow(gc, bounds.x + mSettings.getHeaderLeftMargin() + mSettings.getArrowLeftSpacing() + 1, bounds.y + mSettings.getHeaderTopMargin() + mSettings.getArrowTopSpacing()
+				+ 4, ARROW_LEFT);
+		drawArrow(gc, bounds.x + mSettings.getCalendarWidth() - 13 - mSettings.getHeaderRightMargin(), bounds.y + mSettings.getHeaderTopMargin() + mSettings.getArrowTopSpacing()
+				+ 4, ARROW_RIGHT);
 
 		String toDraw = mMonths[mCalendar.get(Calendar.MONTH)] + " " + mCalendar.get(Calendar.YEAR);
 		Point strWidth = gc.stringExtent(toDraw);
 
-		int avail = mSettings.getCalendarWidth()-13 - strWidth.x;
+		int avail = mSettings.getCalendarWidth() - 13 - strWidth.x;
 		avail /= 2;
 
 		mMonthNameBounds = new Rectangle(bounds.x + mSettings.getHeaderLeftMargin() + avail, bounds.y + mSettings.getHeaderTopMargin() + 1, strWidth.x, strWidth.y);
@@ -353,8 +359,8 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 
 		int firstDayOfWeek = temp.getFirstDayOfWeek();
 		int firstDay = temp.get(Calendar.DAY_OF_WEEK) - firstDayOfWeek;
-		if (firstDay < 0) 
-			firstDay += 7;		
+		if (firstDay < 0)
+			firstDay += 7;
 
 		temp.add(Calendar.DATE, -firstDay);
 		int col = 0;
@@ -366,7 +372,7 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 		gc.setForeground(mColorManager.getLineColor());
 
 		int lastY = 0;
-		
+
 		List betweenDays = null;
 		if (mDateRange && mMouseDownDay != null) {
 			Calendar end = mMouseUpDay == null ? mSelectedDay : mMouseUpDay;
@@ -374,7 +380,7 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 			if (end != null)
 				betweenDays = getCalendarsBetween(mMouseDownDay, end);
 		}
-		
+
 		for (int y = 0; y < 42; y++) {
 			// new row
 			if (y % 7 == 0 && y != 0) {
@@ -390,11 +396,10 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 
 			if (curMonth == monthToShow) {
 				gc.setForeground(mColorManager.getTextColor());
-			}
-			else {
+			} else {
 				gc.setForeground(mColorManager.getPreviousAndNextMonthForegroundColor());
 			}
-			
+
 			boolean disallowedDate = false;
 			if (mDisallowBeforeDate != null) {
 				if (temp.before(mDisallowBeforeDate)) {
@@ -423,7 +428,6 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 			Rectangle dayBounds = new Rectangle(mDayXs[col] - mSettings.getOneDateBoxSize() - 4, mDatesTopY + spacer - 1, mSettings.getOneDateBoxSize() + 5, 14);
 
 			mDays[y] = new CalDay(y, temp, dayBounds, disallowedDate);
-		
 
 			gc.drawString(dateStr, mDayXs[col] - width.x, mDatesTopY + spacer, true);
 
@@ -448,15 +452,16 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 
 	private List getCalendarsBetween(Calendar start, Calendar end) {
 		List ret = new ArrayList();
-		
-		// we have to remember that the end can come before the start, so let's figure that out first
+
+		// we have to remember that the end can come before the start, so let's
+		// figure that out first
 		Calendar trueStart = end.before(start) ? end : start;
 		Calendar trueEnd = end.after(start) ? end : start;
-		
-		//boolean flip = end.before(start);
-		
-		int days = (int)DateHelper.daysBetween(trueStart, trueEnd, mSettings.getLocale());
-		
+
+		// boolean flip = end.before(start);
+
+		int days = (int) DateHelper.daysBetween(trueStart, trueEnd, mSettings.getLocale());
+
 		for (int i = 0; i <= days; i++) {
 			// we need new objects for each day
 			Calendar cal = Calendar.getInstance(mSettings.getLocale());
@@ -465,10 +470,10 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 			cal.add(Calendar.DATE, i);
 			ret.add(clearTime(cal));
 		}
-		
+
 		return ret;
 	}
-	
+
 	private Calendar clearTime(Calendar cal) {
 		cal.set(Calendar.HOUR_OF_DAY, 0);
 		cal.set(Calendar.MINUTE, 0);
@@ -476,26 +481,26 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 		cal.set(Calendar.MILLISECOND, 0);
 		return cal;
 	}
-	
+
 	private void drawArrow(GC gc, int x, int y, int style) {
 		gc.setForeground(mColorManager.getArrowColor());
 		switch (style) {
-			case ARROW_RIGHT:
-				gc.drawLine(x, y - 4, x, y + 4);
-				gc.drawLine(x + 1, y - 3, x + 1, y + 3);
-				gc.drawLine(x + 2, y - 2, x + 2, y + 2);
-				gc.drawLine(x + 3, y - 1, x + 3, y + 1);
-				gc.drawLine(x + 4, y, x + 4, y);
-				mRightArrowBounds = new Rectangle(x - 4, y - 4, x + 8, y);
-				break;
-			case ARROW_LEFT:
-				gc.drawLine(x - 1, y, x - 1, y);
-				gc.drawLine(x, y - 1, x, y + 1);
-				gc.drawLine(x + 1, y - 2, x + 1, y + 2);
-				gc.drawLine(x + 2, y - 3, x + 2, y + 3);
-				gc.drawLine(x + 3, y - 4, x + 3, y + 4);
-				mLeftArrowBounds = new Rectangle(x - 4, y - 4, x + 8, y);
-				break;
+		case ARROW_RIGHT:
+			gc.drawLine(x, y - 4, x, y + 4);
+			gc.drawLine(x + 1, y - 3, x + 1, y + 3);
+			gc.drawLine(x + 2, y - 2, x + 2, y + 2);
+			gc.drawLine(x + 3, y - 1, x + 3, y + 1);
+			gc.drawLine(x + 4, y, x + 4, y);
+			mRightArrowBounds = new Rectangle(x - 4, y - 4, x + 8, y);
+			break;
+		case ARROW_LEFT:
+			gc.drawLine(x - 1, y, x - 1, y);
+			gc.drawLine(x, y - 1, x, y + 1);
+			gc.drawLine(x + 1, y - 2, x + 1, y + 2);
+			gc.drawLine(x + 2, y - 3, x + 2, y + 3);
+			gc.drawLine(x + 3, y - 4, x + 3, y + 4);
+			mLeftArrowBounds = new Rectangle(x - 4, y - 4, x + 8, y);
+			break;
 		}
 	}
 
@@ -523,8 +528,7 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 				// also pause the speed
 				mArrowIterations = 0;
 				mArrowSleepTime = ARROW_SLOW_TIME;
-			}
-			else {
+			} else {
 				if (isInside(e.x, e.y, mLeftArrowBounds))
 					mArrowThreadDirection = ARROW_LEFT;
 				else
@@ -538,12 +542,13 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 	public void mouseDoubleClick(MouseEvent event) {
 	}
 
-	// draw the date selection on mouse down to give that flicker of "response" to the user
+	// draw the date selection on mouse down to give that flicker of "response"
+	// to the user
 	public void mouseDown(MouseEvent event) {
 		mMouseIsDown = true;
 		if (mDateRange)
 			mMouseUpDay = null;
-		
+
 		if (isInside(event.x, event.y, mLeftArrowBounds)) {
 			prevMonth();
 
@@ -578,9 +583,9 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 			mMonthSelectorOpen = true;
 			return;
 		}
-		
+
 		doDaySelection(event.x, event.y);
-		
+
 		if (mDateRange)
 			mMouseDownDay = mSelectedDay;
 	}
@@ -611,8 +616,7 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 
 						if (mArrowIterations > ARROW_SPEED_SWITCH_COUNT && mArrowSleepTime != ARROW_FAST_TIME)
 							mArrowSleepTime = ARROW_FAST_TIME;
-					}
-					catch (InterruptedException e) {
+					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
 					if (!mArrowPause) {
@@ -621,8 +625,7 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 								if (isDisposed()) {
 									mArrowRun = false;
 									mArrowThread = null;
-								}
-								else {
+								} else {
 									if (mArrowThreadDirection == ARROW_LEFT)
 										prevMonth();
 									else if (mArrowThreadDirection == ARROW_RIGHT)
@@ -647,11 +650,11 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 
 		for (int i = 0; i < mDays.length; i++) {
 			if (isInside(x, y, mDays[i].getBounds())) {
-				
+
 				// disabled date? ignore click completely
 				if (mDays[i].isDisabled())
 					return;
-				
+
 				int dayYear = mDays[i].getDate().get(Calendar.YEAR);
 				int dayMonth = mDays[i].getDate().get(Calendar.MONTH);
 
@@ -659,18 +662,15 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 					if (dayMonth < curMonth) {
 						prevMonth();
 						return;
-					}
-					else if (dayMonth > curMonth) {
+					} else if (dayMonth > curMonth) {
 						nextMonth();
 						return;
 					}
-				}
-				else {
+				} else {
 					if (dayYear < curYear) {
 						prevMonth();
 						return;
-					}
-					else if (dayYear > curYear) {
+					} else if (dayYear > curYear) {
 						nextMonth();
 						return;
 					}
@@ -695,14 +695,18 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 		}
 
 		if (mDateRange) {
-			// this may seem odd but it's not. First we set the "up" date to the current date
-			// then we overwrite it by setting the selected date to when the mouse click was "down". 
-			// that way the date set on the combo will be the date the user clicked first, and not the date when the user
-			// let go of the mouse button, this will be reflected in the listeners as well
+			// this may seem odd but it's not. First we set the "up" date to the
+			// current date
+			// then we overwrite it by setting the selected date to when the
+			// mouse click was "down".
+			// that way the date set on the combo will be the date the user
+			// clicked first, and not the date when the user
+			// let go of the mouse button, this will be reflected in the
+			// listeners as well
 			mMouseUpDay = mSelectedDay;
-			mSelectedDay = mMouseDownDay; 
+			mSelectedDay = mMouseDownDay;
 		}
-		
+
 		if (mSelectedDay != null) {
 			notifyListeners();
 			notifyClose();
@@ -710,9 +714,10 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 	}
 
 	private void notifyClose() {
-		// notify ourselves first or dates will not be equal on the fired event and the getDate() on the combo itself
+		// notify ourselves first or dates will not be equal on the fired event
+		// and the getDate() on the combo itself
 		mMainListener.popupClosed();
-		
+
 		for (int i = 0; i < mListeners.size(); i++) {
 			ICalendarListener l = (ICalendarListener) mListeners.get(i);
 			l.popupClosed();
@@ -725,11 +730,11 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 			mMainListener.dateRangeChanged(mMouseDownDay, mMouseUpDay);
 		else
 			mMainListener.dateChanged(date);
-		
+
 		for (int i = 0; i < mListeners.size(); i++) {
 			ICalendarListener l = (ICalendarListener) mListeners.get(i);
-			
-			if (mDateRange) 
+
+			if (mDateRange)
 				l.dateRangeChanged(mMouseDownDay, mMouseUpDay);
 			else
 				l.dateChanged(date);
@@ -737,9 +742,9 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 	}
 
 	private void notifyListeners() {
-		notifyListeners(mSelectedDay);		
+		notifyListeners(mSelectedDay);
 	}
-	
+
 	void addMainCalendarListener(ICalendarListener listener) {
 		mMainListener = listener;
 	}
@@ -780,7 +785,57 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 	public boolean isMonthPopupActive() {
 		return mMonthSelectorOpen;
 	}
+
+	boolean canJumpPrevMonth = false;
 	
+	void keyPressed(int keyCode, int stateMask) {
+		if (mSelectedDay == null) {
+			mSelectedDay = (Calendar) mCalendar.clone();
+			mSelectedDay.set(Calendar.DATE, 1);
+			canJumpPrevMonth = true;
+			redraw();
+		} else {
+			if (keyCode == SWT.ARROW_RIGHT) {
+				mSelectedDay.add(Calendar.DATE, 1);
+				if (mSelectedDay.get(Calendar.DATE) == 1) {
+					mCalendar.add(Calendar.MONTH, 1);
+					canJumpPrevMonth = true;
+				}
+				redraw();
+			} else if (keyCode == SWT.ARROW_LEFT) {
+				if (mSelectedDay.get(Calendar.DATE) == 1)
+					mCalendar.add(Calendar.MONTH, -1);
+				
+				mSelectedDay.add(Calendar.DATE, -1);
+
+				redraw();
+			} else if (keyCode == SWT.ARROW_UP) {
+				int monthNow = mSelectedDay.get(Calendar.MONTH);				
+				mSelectedDay.add(Calendar.DATE, -7);
+				int monthAfter = mSelectedDay.get(Calendar.MONTH);
+				
+				if (monthAfter != monthNow)
+					mCalendar.add(Calendar.MONTH, -1);
+				
+				redraw();
+			} else if (keyCode == SWT.ARROW_DOWN) {
+				int monthNow = mSelectedDay.get(Calendar.MONTH);				
+				mSelectedDay.add(Calendar.DATE, 7);
+				int monthAfter = mSelectedDay.get(Calendar.MONTH);
+				
+				if (monthAfter != monthNow)
+					mCalendar.add(Calendar.MONTH, 1);				
+				
+				redraw();
+			} else if (keyCode == SWT.CR || keyCode == SWT.LF) {
+				notifyListeners();
+				notifyClose();
+				return;
+			}
+		}
+
+	}
+
 	class ButtonSectionLayout extends Layout {
 
 		protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
@@ -799,39 +854,39 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 				bspacer = mSettings.getCarbonButtonsHorizontalSpace();
 			}
 
-			
-			// see how much space we put on the left and right sides of the buttons
-			int width = mSettings.getCalendarWidth() - (bwidth*2) - bspacer;
+			// see how much space we put on the left and right sides of the
+			// buttons
+			int width = mSettings.getCalendarWidth() - (bwidth * 2) - bspacer;
 			width /= 2;
 
 			int button1Left = width;
-			int button2Left = mSettings.getCalendarWidth() - width - bwidth; 
-			
-			Control [] children = composite.getChildren();
+			int button2Left = mSettings.getCalendarWidth() - width - bwidth;
+
+			Control[] children = composite.getChildren();
 			for (int i = 0; i < children.length; i++) {
 				switch (i) {
-					case 0:
-						children[i].setBounds(button1Left, vspacer, bwidth, bheight);		
-					
-						break;
-					case 1:
-						children[i].setBounds(button2Left, vspacer, bwidth, bheight);
-						break;
+				case 0:
+					children[i].setBounds(button1Left, vspacer, bwidth, bheight);
+
+					break;
+				case 1:
+					children[i].setBounds(button2Left, vspacer, bwidth, bheight);
+					break;
 				}
-				
+
 			}
 		}
-		
+
 	}
-	
+
 	class CalDay {
-		private Calendar date;
+		private Calendar	date;
 
-		private int number;
+		private int			number;
 
-		private Rectangle bounds;
-		
-		private boolean disabled;
+		private Rectangle	bounds;
+
+		private boolean		disabled;
 
 		public CalDay(int number, Calendar date, Rectangle bounds, boolean disabled) {
 			this.date = (Calendar) date.clone();
@@ -839,7 +894,7 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 			this.number = number;
 			this.disabled = disabled;
 		}
-		
+
 		public boolean isDisabled() {
 			return disabled;
 		}

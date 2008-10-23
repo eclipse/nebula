@@ -168,4 +168,12 @@ public abstract class AbstractSettings implements ISettings {
 		return null;
 	}
 
+/*	public int getNoneAccelerator() {		
+		return SWT.CTRL + 'n';
+	}
+
+	public int getTodayAccelerator() {
+		return SWT.CTRL + 't';
+	}
+*/
 }
