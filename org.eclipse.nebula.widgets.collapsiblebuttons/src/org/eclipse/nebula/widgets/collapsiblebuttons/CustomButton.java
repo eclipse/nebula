@@ -85,6 +85,9 @@ public class CustomButton extends Composite {
 	 * @param hover true for hover, false for off
 	 */
 	public void updateHover(boolean hover) {
+		if (isDisposed())
+			return;
+		
 		if (hover && mHover)
 			return;
 		
@@ -101,6 +104,9 @@ public class CustomButton extends Composite {
 	 * @param selected true for selected, false for not
 	 */
 	public void updateSelection(boolean selected) {
+		if (isDisposed())
+			return;
+		
 		if (selected && mSelected)
 			return;
 		
@@ -138,6 +144,51 @@ public class CustomButton extends Composite {
 		return mToolBarImage;
 	}
 	
+	/**
+	 * Sets the visible text 
+	 * 
+	 * @param text
+	 */
+	public void setText(String text) {
+		mText = text;
+	}
+
+	/**
+	 * Sets the toolbar image.
+	 * 
+	 * @param toolBarImage
+	 */
+	public void setToolBarImage(Image toolBarImage) {
+		mToolBarImage = toolBarImage;
+	}
+
+	/**
+	 * Sets the tooltip text.
+	 * 
+	 * @param toolTip
+	 */
+	public void setToolTip(String toolTip) {
+		mToolTip = toolTip;
+	}
+	
+	/**
+	 * Returns the big image.
+	 *  
+	 * @return Image
+	 */
+	public Image getImage() {
+		return mImage;
+	}
+
+	/**
+	 * Sets the big image.
+	 * 
+	 * @param image to set
+	 */
+	public void setImage(Image image) {
+		mImage = image;
+	}
+
 	private void repaint(GC gc) {
 		mBounds = new Rectangle(0, 0, super.getBounds().width, BUTTON_HEIGHT);
 
@@ -174,6 +225,14 @@ public class CustomButton extends Composite {
 	
 	public String toString() {
 		return "[CustomButton '"+mText+"']";
+	}
+	
+	/**
+	 * Disposes this button and removes it from the control.
+	 */
+	public void dispose() {
+		mParent.remove(this, false);
+		super.dispose();
 	}
 	
 }

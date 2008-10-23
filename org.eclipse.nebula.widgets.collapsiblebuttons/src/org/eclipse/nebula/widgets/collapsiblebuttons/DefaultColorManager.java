@@ -13,4 +13,7 @@ package org.eclipse.nebula.widgets.collapsiblebuttons;
 
 public class DefaultColorManager extends AbstractColorManager {
 
+	public DefaultColorManager(int theme) {
+		super(theme);
+	}
 }

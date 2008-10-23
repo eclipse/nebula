@@ -7,12 +7,13 @@
  *
  * Contributors:
  *    emil.crumhorn@gmail.com - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.nebula.widgets.collapsiblebuttons;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
@@ -34,24 +35,25 @@ import org.eclipse.swt.widgets.MenuItem;
 
 public class ToolbarComposite extends Composite implements MouseListener, MouseMoveListener, MouseTrackListener {
 
-    private ArrayList mToolBarItems;
-    private TBItem mLastHover;
-    private CustomButton mSelectedItem;
-    private CollapsibleButtons mButtonComposite;
+	private List					mToolBarItems;
+	private TBItem					mLastHover;
+	private CustomButton			mSelectedItem;
+	private CollapsibleButtons		mButtonComposite;
 
-    private boolean mEnableDoubleBuffering = true;
-    private boolean mCreated = false;
+	private boolean					mEnableDoubleBuffering	= true;
+	private boolean					mCreated				= false;
 
-    private static Image mOutlook2005ArrowsImage = ImageCache.getImage("icons/arrows.gif");
-    private static Image mOutlook2007ArrowImage = ImageCache.getImage("icons/o2007arrow.gif");
-    private Rectangle mArrowsBounds;
-    private boolean mArrowHover = false;
-    
-    private IColorManager mColorManager;
-	private AbstractButtonPainter mButtonPainter;
-	
-	private Image mArrowImage;
-	private ISettings mSettings;
+	private static Image			mOutlook2005ArrowsImage	= ImageCache.getImage("icons/arrows.gif");
+	private static Image			mOutlook2007ArrowImage	= ImageCache.getImage("icons/o2007arrow.gif");
+	private Rectangle				mArrowsBounds;
+	private boolean					mArrowHover				= false;
+
+	private IColorManager			mColorManager;
+	private AbstractButtonPainter	mButtonPainter;
+
+	private Image					mArrowImage;
+	private ISettings				mSettings;
+	private ILanguageSettings		mLanguage;
 
 	/**
 	 * Creates a new toolbar composite.
@@ -59,426 +61,448 @@ public class ToolbarComposite extends Composite implements MouseListener, MouseM
 	 * @param bc ButtonComposite parent
 	 * @param style Composite style
 	 */
-    public ToolbarComposite(CollapsibleButtons bc, int style) {
-        super(bc, style | SWT.NO_BACKGROUND);
+	public ToolbarComposite(CollapsibleButtons bc, int style) {
+		super(bc, style | SWT.NO_BACKGROUND);
 
-        this.mButtonPainter = new AbstractButtonPainter();
-        this.mButtonComposite = bc;
-        this.mColorManager = bc.getColorManager();
-        this.mSettings = bc.getSettings();
-        
-        if (mColorManager.getTheme() == IColorManager.SKIN_OFFICE_2007) 
-        	mArrowImage = mOutlook2007ArrowImage;
-        else 
-        	mArrowImage = mOutlook2005ArrowsImage;
-        
-        mToolBarItems = new ArrayList();
+		this.mLanguage = bc.getLanguageSettings();
+		this.mButtonPainter = new AbstractButtonPainter();
+		this.mButtonComposite = bc;
+		this.mColorManager = bc.getColorManager();
+		this.mSettings = bc.getSettings();
 
-        addPaintListener(new PaintListener() {
-            public void paintControl(PaintEvent event) {
-                repaint(event);
-            }
-        });
+		if (mColorManager.getTheme() == IColorManager.SKIN_OFFICE_2007)
+			mArrowImage = mOutlook2007ArrowImage;
+		else
+			mArrowImage = mOutlook2005ArrowsImage;
 
-        addMouseListener(this);
-        addMouseTrackListener(this);
-        addMouseMoveListener(this);
-    }
+		mToolBarItems = new ArrayList();
 
-    private void repaint(PaintEvent event) {
-        GC gc = event.gc;
-        if (mCreated && mEnableDoubleBuffering) {
-            try {
-                Image buffer = new Image(Display.getDefault(), super.getBounds());
-                GC gc2 = new GC(buffer);
-                drawOntoGC(gc2);
+		addPaintListener(new PaintListener() {
+			public void paintControl(PaintEvent event) {
+				repaint(event);
+			}
+		});
 
-                // transfer the image buffer onto this canvas
-                // just drawImage(buffer, w, h) didn't work, so we do the whole source transfer call
-                Rectangle b = getBounds();
-                gc.drawImage(buffer, 0, 0, b.width, b.height, 0, 0, b.width, b.height);
+		addMouseListener(this);
+		addMouseTrackListener(this);
+		addMouseMoveListener(this);
+	}
 
-                // dispose the buffer, very important or we'll run out of address space for buffered images
-                buffer.dispose();
-                gc2.dispose();
-            }
-            catch (IllegalArgumentException iea) {
-                // seems to come here for some reason when we switch phases while the gantt chart is being viewed, I'm not sure why
-                // but no time to figure it out for the demo.. so instead of buffering, just draw it onto the GC
-                drawOntoGC(gc);
-            }
-        } else {
-            drawOntoGC(gc);
-            mCreated = true;
-        }
+	private void repaint(PaintEvent event) {
+		GC gc = event.gc;
+		if (mCreated && mEnableDoubleBuffering) {
+			try {
+				Image buffer = new Image(Display.getDefault(), super.getBounds());
+				GC gc2 = new GC(buffer);
+				drawOntoGC(gc2);
 
-        gc.dispose();
-    }
+				// transfer the image buffer onto this canvas
+				// just drawImage(buffer, w, h) didn't work, so we do the whole
+				// source transfer call
+				Rectangle b = getBounds();
+				gc.drawImage(buffer, 0, 0, b.width, b.height, 0, 0, b.width, b.height);
 
-    private void drawOntoGC(GC gc) {
-        Rectangle rect = getClientArea();
-        Rectangle imageBounds = (mArrowImage != null ? mArrowImage.getBounds() : new Rectangle(0, 0, 0, 0));
-        int verticalLoc = (getBounds().height/2) - (mArrowImage == null ? 0 : mArrowImage.getBounds().height/2);
-        // move it down just a smidge, the human eye percieves things mis-aligned when exactly centered
-        verticalLoc += 1;
-    	mButtonPainter.paintBackground(gc, mColorManager, mSettings, rect, false, false);
+				// dispose the buffer, very important or we'll run out of
+				// address space for buffered images
+				buffer.dispose();
+				gc2.dispose();
+			} catch (IllegalArgumentException iea) {
+				// seems to come here for some reason when we switch phases
+				// while the gantt chart is being viewed, I'm not sure why
+				// but no time to figure it out for the demo.. so instead of
+				// buffering, just draw it onto the GC
+				drawOntoGC(gc);
+			}
+		} else {
+			drawOntoGC(gc);
+			mCreated = true;
+		}
 
-        int right = rect.width;
-        
-        if (mArrowImage != null)
-        	gc.drawImage(mArrowImage, rect.width - imageBounds.width, verticalLoc);        
-        mArrowsBounds = new Rectangle(rect.width - imageBounds.width, verticalLoc, imageBounds.width, imageBounds.height);
-        right -= imageBounds.width + mSettings.getToolBarSpacing();
+		gc.dispose();
+	}
 
-        // reorganize items if stuff have been hidden/shown (permanently)
-        orderItems();
+	private void drawOntoGC(GC gc) {
+		Rectangle rect = getClientArea();
+		Rectangle imageBounds = (mArrowImage != null ? mArrowImage.getBounds() : new Rectangle(0, 0, 0, 0));
+		int verticalLoc = (getBounds().height / 2) - (mArrowImage == null ? 0 : mArrowImage.getBounds().height / 2);
+		// move it down just a smidge, the human eye percieves things
+		// mis-aligned when exactly centered
+		verticalLoc += 1;
+		mButtonPainter.paintBackground(gc, mColorManager, mSettings, rect, false, false);
 
-        for (int i = 0; i < mToolBarItems.size(); i++) {
-            TBItem tb = (TBItem) mToolBarItems.get(i);
-            if (tb.getHidden())
-            	continue;
+		int right = rect.width;
 
-            if (tb.getButton() == mSelectedItem) {
-            	Rectangle cur = tb.getBounds();
-            	// TODO: Clean up code-repeat
-            	if (cur == null) {
-            		if (tb.getButton().getToolBarImage() != null) {
-	                	Rectangle imBounds = tb.getButton().getToolBarImage().getBounds();
-	            		cur = new Rectangle(right - imBounds.width, verticalLoc, imBounds.width, imBounds.width);
-	            		tb.setBounds(cur);
-            		}
-            		else {
-            			// basically a non-existant button, but no image = no button, so that's fine
-            			tb.setBounds(new Rectangle(right, verticalLoc, 0, 0));
-            		}
-            	}
-            		
-            	Rectangle bounds = new Rectangle(cur.x - mSettings.getToolBarLeftSpacer(), cur.y, cur.width+mSettings.getToolBarRightSpacer(), cur.height);
-            	mButtonPainter.paintBackground(gc, mColorManager, mSettings, bounds, false, true);
-            }
+		if (mArrowImage != null)
+			gc.drawImage(mArrowImage, rect.width - imageBounds.width, verticalLoc);
+		mArrowsBounds = new Rectangle(rect.width - imageBounds.width, verticalLoc, imageBounds.width, imageBounds.height);
+		right -= imageBounds.width + mSettings.getToolBarSpacing();
 
-            Rectangle imBounds = null;
-            if (tb.getButton().getToolBarImage() != null) {
-            	imBounds = tb.getButton().getToolBarImage().getBounds();
-                gc.drawImage(tb.getButton().getToolBarImage(), right - imBounds.width, verticalLoc);
-                tb.setBounds(new Rectangle(right - imBounds.width, verticalLoc, imBounds.width, imBounds.width));
-            }
-            
-            right -= (imBounds == null ? 0 : imBounds.width) + mSettings.getToolBarSpacing();
-        }
-    }
-    
-    private void orderItems() {
-    	if (mToolBarItems.size() == 0)
-    		return;
- 
-        Collections.sort(mToolBarItems);
-    }
-        
-    public Point getSize() {
-    	checkWidget();
-        return new Point(super.getSize().x, CustomButton.BUTTON_HEIGHT);
-    }
+		// reorganize items if stuff have been hidden/shown (permanently)
+		orderItems();
 
-    public void addItem(CustomButton button) {
-    	checkWidget();
-        mToolBarItems.add(new TBItem(button));
-    }
+		for (int i = 0; i < mToolBarItems.size(); i++) {
+			TBItem tb = (TBItem) mToolBarItems.get(i);
+			if (tb.getHidden())
+				continue;
 
-    public void removeItem(CustomButton button) {
-    	checkWidget();
-        for (int i = 0; i < mToolBarItems.size(); i++) {
-            TBItem item = (TBItem) mToolBarItems.get(i);
-            if (item.getButton() == button) {
-                mToolBarItems.remove(item);
-                //redraw();
-                break;
-            }
-        }
-    }
-    
-    public void hideButton(CustomButton button) {
-    	checkWidget();
-        for (int i = 0; i < mToolBarItems.size(); i++) {
-            TBItem item = (TBItem) mToolBarItems.get(i);
-            if (item.getButton() == button) {
-                item.setHidden(true);
-                break;
-            }
-        }    	
-    }
+			if (tb.getButton() == mSelectedItem) {
+				Rectangle cur = tb.getBounds();
+				// TODO: Clean up code-repeat
+				if (cur == null) {
+					if (tb.getButton().getToolBarImage() != null) {
+						Rectangle imBounds = tb.getButton().getToolBarImage().getBounds();
+						cur = new Rectangle(right - imBounds.width, verticalLoc, imBounds.width, imBounds.width);
+						tb.setBounds(cur);
+					} else {
+						// basically a non-existent button, but no image = no
+						// button, so that's fine
+						tb.setBounds(new Rectangle(right, verticalLoc, 0, 0));
+						continue;
+					}
+				}
 
-    public void setSelectedItem(CustomButton button) {
-    	checkWidget();
-        clearHover();
-        clearArrowsHover();
-        clearSelection();
-        mSelectedItem = button;
+				Rectangle bounds = new Rectangle(cur.x - mSettings.getToolBarLeftSpacer(), cur.y, cur.width + mSettings.getToolBarRightSpacer(), cur.height);
+				mButtonPainter.paintBackground(gc, mColorManager, mSettings, bounds, false, true);
+			}
 
-        for (int i = 0; i < mToolBarItems.size(); i++) {
-            TBItem item = (TBItem) mToolBarItems.get(i);
+			Rectangle imBounds = null;
+			if (tb.getButton().getToolBarImage() != null) {
+				imBounds = tb.getButton().getToolBarImage().getBounds();
+				gc.drawImage(tb.getButton().getToolBarImage(), right - imBounds.width, verticalLoc);
+				tb.setBounds(new Rectangle(right - imBounds.width, verticalLoc, imBounds.width, imBounds.width));
+			}
 
-            if (item.getButton() == mSelectedItem) {
-                Rectangle lb = item.getBounds();
-                GC gc = new GC(this);
-                Rectangle rect = new Rectangle(lb.x - mSettings.getToolBarLeftSpacer(), 0, lb.width + mSettings.getToolBarRightSpacer(), CustomButton.BUTTON_HEIGHT);
-                mButtonPainter.paintBackground(gc, mColorManager, mSettings, rect, false, true);
-                gc.drawImage(item.getButton().getToolBarImage(), lb.x, lb.y);
-                gc.dispose();
-            }
-        }
+			right -= (imBounds == null ? 0 : imBounds.width) + mSettings.getToolBarSpacing();
+		}
+	}
 
-    }
+	private void orderItems() {
+		if (mToolBarItems.size() == 0)
+			return;
 
-    public void mouseDoubleClick(MouseEvent event) {
-    	checkWidget();
-    }
+		Collections.sort(mToolBarItems);
+	}
 
-    public void mouseDown(MouseEvent event) {
-    	checkWidget();
-        Rectangle bigArrowsBounds = new Rectangle(mArrowsBounds.x, 0, mArrowsBounds.width, CustomButton.BUTTON_HEIGHT);
-        if (isInside(event.x, event.y, bigArrowsBounds)) {
-            GC gc = new GC(this);
-            Rectangle rect = new Rectangle(mArrowsBounds.x - mSettings.getToolBarLeftSpacer(), 0, mArrowsBounds.width + mSettings.getToolBarRightSpacer(), CustomButton.BUTTON_HEIGHT);
-            mButtonPainter.paintBackground(gc, mColorManager, mSettings, rect, false, true);
-            
-            gc.drawImage(mArrowImage, mArrowsBounds.x, mArrowsBounds.y);        
-            	
-            gc.dispose();
+	public Point getSize() {
+		checkWidget();
+		return new Point(super.getSize().x, CustomButton.BUTTON_HEIGHT);
+	}
 
-            Menu mainMenu = new Menu(Display.getDefault().getActiveShell(), SWT.POP_UP);
-            MenuItem menuShowMoreButtons = new MenuItem(mainMenu, SWT.PUSH);
-            MenuItem menuShowFewerButtons = new MenuItem(mainMenu, SWT.PUSH);
-            menuShowFewerButtons.addListener(SWT.Selection, new Listener() {
+	public void addItem(CustomButton button) {
+		checkWidget();
+		mToolBarItems.add(new TBItem(button));
+	}
+	
+	public void removeAll() {
+		checkWidget();
+		mToolBarItems.clear();		
+	}
+
+	public void removeItem(CustomButton button) {
+		checkWidget();
+		for (int i = 0; i < mToolBarItems.size(); i++) {
+			TBItem item = (TBItem) mToolBarItems.get(i);
+			if (item.getButton() == button) {
+				mToolBarItems.remove(item);
+				// redraw();
+				break;
+			}
+		}
+	}
+
+	public void hideButton(CustomButton button) {
+		checkWidget();
+		for (int i = 0; i < mToolBarItems.size(); i++) {
+			TBItem item = (TBItem) mToolBarItems.get(i);
+			if (item.getButton() == button) {
+				item.setHidden(true);
+				break;
+			}
+		}
+	}
+
+	public void setSelectedItem(CustomButton button) {
+		checkWidget();
+		clearHover();
+		clearArrowsHover();
+		clearSelection();
+		mSelectedItem = button;
+
+		for (int i = 0; i < mToolBarItems.size(); i++) {
+			TBItem item = (TBItem) mToolBarItems.get(i);
+
+			if (item.getButton() == mSelectedItem) {
+				Rectangle lb = item.getBounds();
+				GC gc = new GC(this);
+				Rectangle rect = new Rectangle(lb.x - mSettings.getToolBarLeftSpacer(), 0, lb.width + mSettings.getToolBarRightSpacer(), CustomButton.BUTTON_HEIGHT);
+				mButtonPainter.paintBackground(gc, mColorManager, mSettings, rect, false, true);
+				gc.drawImage(item.getButton().getToolBarImage(), lb.x, lb.y);
+				gc.dispose();
+			}
+		}
+
+	}
+
+	public void mouseDoubleClick(MouseEvent event) {
+		checkWidget();
+	}
+
+	public void mouseDown(MouseEvent event) {
+		checkWidget();
+		Rectangle bigArrowsBounds = new Rectangle(mArrowsBounds.x, 0, mArrowsBounds.width, CustomButton.BUTTON_HEIGHT);
+		if (isInside(event.x, event.y, bigArrowsBounds)) {
+			GC gc = new GC(this);
+			Rectangle rect = new Rectangle(mArrowsBounds.x - mSettings.getToolBarLeftSpacer(), 0, mArrowsBounds.width + mSettings.getToolBarRightSpacer(),
+					CustomButton.BUTTON_HEIGHT);
+			mButtonPainter.paintBackground(gc, mColorManager, mSettings, rect, false, true);
+
+			gc.drawImage(mArrowImage, mArrowsBounds.x, mArrowsBounds.y);
+
+			gc.dispose();
+
+			Menu mainMenu = new Menu(Display.getDefault().getActiveShell(), SWT.POP_UP);
+			
+			List menuListeners = mButtonComposite.getMenuListeners();
+			for (int i = 0; i < menuListeners.size(); i++) {
+				((IMenuListener)menuListeners.get(i)).preMenuItemsCreated(mainMenu);
+			}
+			
+			MenuItem menuShowMoreButtons = new MenuItem(mainMenu, SWT.PUSH);
+			MenuItem menuShowFewerButtons = new MenuItem(mainMenu, SWT.PUSH);
+			menuShowFewerButtons.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event event) {
 					mButtonComposite.hideNextButton();
-				}            	
-            });
-            menuShowMoreButtons.addListener(SWT.Selection, new Listener() {
+				}
+			});
+			menuShowMoreButtons.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event event) {
 					mButtonComposite.showNextButton();
-				}            	
-            });
+				}
+			});
 
-            menuShowMoreButtons.setText("Show More Buttons");
-            menuShowFewerButtons.setText("Show Fewer Buttons");
-            
-            new MenuItem(mainMenu, SWT.SEPARATOR);
-            MenuItem more = new MenuItem(mainMenu, SWT.CASCADE);
-            more.setText("Add or Remove Buttons");
-            Menu moreMenu = new Menu(more);
-            more.setMenu(moreMenu);
-            
-            ArrayList cbs = mButtonComposite.getItems();            
-            for (int i = 0; i < cbs.size(); i++) {            	
-            	final CustomButton cb = (CustomButton) cbs.get(i);
-            	final MenuItem temp = new MenuItem(moreMenu, SWT.CHECK);
-            	temp.setText(cb.getText());
-            	temp.setImage(cb.getToolBarImage());
-            	temp.setSelection(mButtonComposite.isVisible(cb));
-            	temp.addListener(SWT.Selection, new Listener() {
+			menuShowMoreButtons.setText(mLanguage.getShowMoreButtonsText());
+			menuShowFewerButtons.setText(mLanguage.getShowFewerButtonsText());
+
+			new MenuItem(mainMenu, SWT.SEPARATOR);
+			MenuItem more = new MenuItem(mainMenu, SWT.CASCADE);
+			more.setText(mLanguage.getAddOrRemoveButtonsText());
+			Menu moreMenu = new Menu(more);
+			more.setMenu(moreMenu);
+
+			List cbs = mButtonComposite.getItems();
+			for (int i = 0; i < cbs.size(); i++) {
+				final CustomButton cb = (CustomButton) cbs.get(i);
+				final MenuItem temp = new MenuItem(moreMenu, SWT.CHECK);
+				temp.setText(cb.getText());
+				temp.setImage(cb.getToolBarImage());
+				temp.setSelection(mButtonComposite.isVisible(cb));
+				temp.addListener(SWT.Selection, new Listener() {
 					public void handleEvent(Event event) {
 						if (mButtonComposite.isVisible(cb)) {
-			                mButtonComposite.permanentlyHideButton(cb);
-			                temp.setSelection(false);
-			            } else {
-			                mButtonComposite.permanentlyShowButton(cb);
-			                temp.setSelection(true);
-			            }						
-					}            		
-            	});
-            }
-           
-            mainMenu.setVisible(true);
-            return;
-        }
+							mButtonComposite.permanentlyHideButton(cb);
+							temp.setSelection(false);
+						} else {
+							mButtonComposite.permanentlyShowButton(cb);
+							temp.setSelection(true);
+						}
+					}
+				});
+			}
 
-        for (int i = 0; i < mToolBarItems.size(); i++) {
-            TBItem item = (TBItem) mToolBarItems.get(i);
-            if (item.getBounds() != null) {
-                if (isInside(event.x, event.y, item.getBounds())) {
-                    mButtonComposite.selectItemAndLoad(item.getButton());
-                    break;
-                }
-            }
-        }
-    }
+			for (int i = 0; i < menuListeners.size(); i++) {
+				((IMenuListener)menuListeners.get(i)).postMenuItemsCreated(mainMenu);
+			}
+			
+			mainMenu.setVisible(true);
+			return;
+		}
 
-    public void mouseUp(MouseEvent event) {
-    	checkWidget();
-    }
+		for (int i = 0; i < mToolBarItems.size(); i++) {
+			TBItem item = (TBItem) mToolBarItems.get(i);
+			if (item.getBounds() != null) {
+				if (isInside(event.x, event.y, item.getBounds())) {
+					mButtonComposite.selectItemAndLoad(item.getButton());
+					break;
+				}
+			}
+		}
+	}
 
-    public void mouseMove(MouseEvent event) {
-    	checkWidget();
-        TBItem found = null;
+	public void mouseUp(MouseEvent event) {
+		checkWidget();
+	}
 
-        Rectangle bigArrowsBounds = new Rectangle(mArrowsBounds.x, 0, mArrowsBounds.width, CustomButton.BUTTON_HEIGHT);
-        if (isInside(event.x, event.y, bigArrowsBounds)) {
-            setToolTipText(null);
-            GC gc = new GC(this);
-        	Rectangle rect = new Rectangle(mArrowsBounds.x - mSettings.getToolBarLeftSpacer(), 0, mArrowsBounds.width + mSettings.getToolBarRightSpacer(), CustomButton.BUTTON_HEIGHT);
-        	mButtonPainter.paintBackground(gc, mColorManager, mSettings, rect, true, false);
+	public void mouseMove(MouseEvent event) {
+		checkWidget();
+		TBItem found = null;
 
-        	gc.drawImage(mArrowImage, mArrowsBounds.x, mArrowsBounds.y);        
-            gc.dispose();
-            mArrowHover = true;
-            return;
-        }
+		Rectangle bigArrowsBounds = new Rectangle(mArrowsBounds.x, 0, mArrowsBounds.width, CustomButton.BUTTON_HEIGHT);
+		if (isInside(event.x, event.y, bigArrowsBounds)) {
+			setToolTipText(null);
+			GC gc = new GC(this);
+			Rectangle rect = new Rectangle(mArrowsBounds.x - mSettings.getToolBarLeftSpacer(), 0, mArrowsBounds.width + mSettings.getToolBarRightSpacer(),
+					CustomButton.BUTTON_HEIGHT);
+			mButtonPainter.paintBackground(gc, mColorManager, mSettings, rect, true, false);
 
-        clearArrowsHover();
+			gc.drawImage(mArrowImage, mArrowsBounds.x, mArrowsBounds.y);
+			gc.dispose();
+			mArrowHover = true;
+			return;
+		}
 
-        for (int i = 0; i < mToolBarItems.size(); i++) {
-            TBItem item = (TBItem) mToolBarItems.get(i);
-            if (item.getBounds() != null) {
-                if (isInside(event.x, event.y, item.getBounds())) {
-                    found = item;
-                    break;
-                }
-            }
-        }
+		clearArrowsHover();
 
-        if (found == null) {
-            clearHover();
-            return;
-        }
+		for (int i = 0; i < mToolBarItems.size(); i++) {
+			TBItem item = (TBItem) mToolBarItems.get(i);
+			if (item.getBounds() != null) {
+				if (isInside(event.x, event.y, item.getBounds())) {
+					found = item;
+					break;
+				}
+			}
+		}
 
-        setToolTipText(found.getButton().getToolTip());
+		if (found == null) {
+			clearHover();
+			return;
+		}
 
-        if (found.isHovered()) {
-            return;
-        }
+		setToolTipText(found.getButton().getToolTip());
 
-        if (found.getButton() == mSelectedItem) {
-            return;
-        }
+		if (found.isHovered()) {
+			return;
+		}
 
-        clearHover();
+		if (found.getButton() == mSelectedItem) {
+			return;
+		}
 
-        GC gc = new GC(this);
-        Rectangle tbBounds = found.getBounds();
-        Rectangle toUse = new Rectangle(tbBounds.x - mSettings.getToolBarLeftSpacer(), 0, tbBounds.width + mSettings.getToolBarRightSpacer(), CustomButton.BUTTON_HEIGHT);
-        mButtonPainter.paintBackground(gc, mColorManager, mSettings, toUse, true, false);
-        gc.drawImage(found.getButton().getToolBarImage(), tbBounds.x, tbBounds.y);
-        gc.dispose();
-        found.setHovered(true);
-        mLastHover = found;
-    }
+		clearHover();
 
-    public void mouseEnter(MouseEvent event) {
+		GC gc = new GC(this);
+		Rectangle tbBounds = found.getBounds();
+		Rectangle toUse = new Rectangle(tbBounds.x - mSettings.getToolBarLeftSpacer(), 0, tbBounds.width + mSettings.getToolBarRightSpacer(), CustomButton.BUTTON_HEIGHT);
+		mButtonPainter.paintBackground(gc, mColorManager, mSettings, toUse, true, false);
+		gc.drawImage(found.getButton().getToolBarImage(), tbBounds.x, tbBounds.y);
+		gc.dispose();
+		found.setHovered(true);
+		mLastHover = found;
+	}
 
-    }
+	public void mouseEnter(MouseEvent event) {
 
-    public void mouseExit(MouseEvent event) {
-    	checkWidget();
-        clearHover();
-        clearArrowsHover();
-    }
+	}
 
-    public void mouseHover(MouseEvent event) {
+	public void mouseExit(MouseEvent event) {
+		checkWidget();
+		clearHover();
+		clearArrowsHover();
+	}
 
-    }
+	public void mouseHover(MouseEvent event) {
 
-    private void clearSelection() {
-        for (int i = 0; i < mToolBarItems.size(); i++) {
-            TBItem item = (TBItem) mToolBarItems.get(i);
-            if (item.getButton() == mSelectedItem) {
-                GC gc = new GC(this);
-                Rectangle lb = item.getBounds();
-                redraw(lb.x - mSettings.getToolBarLeftSpacer(), 0, lb.width + mSettings.getToolBarRightSpacer(), CustomButton.BUTTON_HEIGHT, false);
-                gc.drawImage(item.getButton().getToolBarImage(), lb.x, lb.y);
-                gc.dispose();
-            }
-        }
-    }
+	}
 
-    private void clearHover() {
-        if (mLastHover != null) {
-            GC gc = new GC(this);
-            Rectangle lb = mLastHover.getBounds();
-            redraw(lb.x - mSettings.getToolBarLeftSpacer(), 0, lb.width + mSettings.getToolBarRightSpacer(), CustomButton.BUTTON_HEIGHT, false);
-            gc.drawImage(mLastHover.getButton().getToolBarImage(), lb.x, lb.y);
-            gc.dispose();
-            mLastHover.setHovered(false);
-            mLastHover = null;
-            setToolTipText(null);
-        }
-    }
+	private void clearSelection() {
+		for (int i = 0; i < mToolBarItems.size(); i++) {
+			TBItem item = (TBItem) mToolBarItems.get(i);
+			if (item.getButton() == mSelectedItem) {
+				GC gc = new GC(this);
+				Rectangle lb = item.getBounds();
+				redraw(lb.x - mSettings.getToolBarLeftSpacer(), 0, lb.width + mSettings.getToolBarRightSpacer(), CustomButton.BUTTON_HEIGHT, false);
+				gc.drawImage(item.getButton().getToolBarImage(), lb.x, lb.y);
+				gc.dispose();
+			}
+		}
+	}
 
-    private void clearArrowsHover() {
-        if (mArrowHover) {
-            GC gc = new GC(this);
-            redraw(mArrowsBounds.x - mSettings.getToolBarLeftSpacer(), 0, mArrowsBounds.width + mSettings.getToolBarRightSpacer(), CustomButton.BUTTON_HEIGHT, false);
-        	gc.drawImage(mArrowImage, mArrowsBounds.x, mArrowsBounds.y);        
-            gc.dispose();
-            mArrowHover = false;
-        }
-    }
+	private void clearHover() {
+		if (mLastHover != null) {
+			GC gc = new GC(this);
+			Rectangle lb = mLastHover.getBounds();
+			redraw(lb.x - mSettings.getToolBarLeftSpacer(), 0, lb.width + mSettings.getToolBarRightSpacer(), CustomButton.BUTTON_HEIGHT, false);
+			gc.drawImage(mLastHover.getButton().getToolBarImage(), lb.x, lb.y);
+			gc.dispose();
+			mLastHover.setHovered(false);
+			mLastHover = null;
+			setToolTipText(null);
+		}
+	}
 
-    private boolean isInside(int x, int y, Rectangle rect) {
-        if (rect == null) {
-            return false;
-        }
+	private void clearArrowsHover() {
+		if (mArrowHover) {
+			GC gc = new GC(this);
+			redraw(mArrowsBounds.x - mSettings.getToolBarLeftSpacer(), 0, mArrowsBounds.width + mSettings.getToolBarRightSpacer(), CustomButton.BUTTON_HEIGHT, false);
+			gc.drawImage(mArrowImage, mArrowsBounds.x, mArrowsBounds.y);
+			gc.dispose();
+			mArrowHover = false;
+		}
+	}
 
-        if (x >= rect.x && y >= rect.y && x <= (rect.x + rect.width) && y <= (rect.y + rect.height)) {
-            return true;
-        }
+	private boolean isInside(int x, int y, Rectangle rect) {
+		if (rect == null) {
+			return false;
+		}
 
-        return false;
-    }
+		if (x >= rect.x && y >= rect.y && x <= (rect.x + rect.width) && y <= (rect.y + rect.height)) {
+			return true;
+		}
 
-    class TBItem implements Comparable {
-		private Rectangle bounds;
-        private CustomButton button;
-        private boolean hovered;
-        private boolean hidden;
+		return false;
+	}
 
-        public TBItem(CustomButton button) {
-            this.button = button;
-        }
+	class TBItem implements Comparable {
+		private Rectangle		bounds;
+		private CustomButton	button;
+		private boolean			hovered;
+		private boolean			hidden;
 
-        public Rectangle getBounds() {
-            return bounds;
-        }
+		public TBItem(CustomButton button) {
+			this.button = button;
+		}
 
-        public void setBounds(Rectangle bounds) {
-            this.bounds = bounds;
-        }
+		public Rectangle getBounds() {
+			return bounds;
+		}
 
-        public CustomButton getButton() {
-            return button;
-        }
+		public void setBounds(Rectangle bounds) {
+			this.bounds = bounds;
+		}
 
-        public boolean isHovered() {
-            return hovered;
-        }
+		public CustomButton getButton() {
+			return button;
+		}
 
-        public void setHovered(boolean hovered) {
-            this.hovered = hovered;
-        }
-        
-        public void setHidden(boolean hidden) {
-        	this.hidden = hidden;
-        }
-        
-        public boolean getHidden() {
-        	return this.hidden;
-        }
-        
-        public String toString() {
-        	return "[TBItem " + button.getNumber() + "]";
-        }
+		public boolean isHovered() {
+			return hovered;
+		}
+
+		public void setHovered(boolean hovered) {
+			this.hovered = hovered;
+		}
+
+		public void setHidden(boolean hidden) {
+			this.hidden = hidden;
+		}
+
+		public boolean getHidden() {
+			return this.hidden;
+		}
+
+		public String toString() {
+			return "[TBItem " + button.getNumber() + "]";
+		}
 
 		public int compareTo(Object item) {
 			if (!(item instanceof TBItem))
 				return 0;
-			
+
 			TBItem tbitem = (TBItem) item;
-			
- 			Integer one = new Integer(tbitem.getButton().getNumber());
+
+			Integer one = new Integer(tbitem.getButton().getNumber());
 			Integer two = new Integer(getButton().getNumber());
 			return one.compareTo(two);
-		}        
-    }
-  
-}
+		}
+	}
 
+}
