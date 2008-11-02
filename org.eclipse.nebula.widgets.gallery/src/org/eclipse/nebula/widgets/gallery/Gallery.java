@@ -261,7 +261,10 @@ public class Gallery extends Canvas {
 		checkWidget();
 		if (listener == null)
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		addListener(SWT.Selection, new TypedListener(listener));
+	
+		TypedListener typedListener = new TypedListener (listener);
+		addListener (SWT.Selection,typedListener);
+		addListener (SWT.DefaultSelection,typedListener);
 	}
 
 	/**
@@ -289,6 +292,7 @@ public class Gallery extends Canvas {
 	public void removeSelectionListener(SelectionListener listener) {
 		checkWidget();
 		removeListener(SWT.Selection, listener);
+		removeListener(SWT.DefaultSelection, listener);
 	}
 
 	/**
@@ -347,7 +351,7 @@ public class Gallery extends Canvas {
 	 * 
 	 * @param item
 	 */
-	protected void notifySelectionListeners(GalleryItem item, int index) {
+	protected void notifySelectionListeners(GalleryItem item, int index, boolean isDefault) {
 
 		Event e = new Event();
 		e.widget = this;
@@ -358,11 +362,17 @@ public class Gallery extends Canvas {
 		// TODO: report index
 		// e.index = index;
 		try {
-			notifyListeners(SWT.Selection, e);
+			if( isDefault) {
+				notifyListeners(SWT.DefaultSelection, e);
+			} else {
+				notifyListeners(SWT.Selection, e);
+			}
 		} catch (RuntimeException ex) {
 			ex.printStackTrace();
 		}
 	}
+	
+	
 
 	/**
 	 * Send an Expand event for a GalleryItem
@@ -375,7 +385,9 @@ public class Gallery extends Canvas {
 		Event e = new Event();
 		e.widget = this;
 		e.item = item;
-		e.data = item.getData();
+		if (item != null) {
+			e.data = item.getData();
+		}
 		// TODO: report index
 		// e.index = index;
 		try {
@@ -530,6 +542,15 @@ public class Gallery extends Canvas {
 					}
 
 					break;
+				case SWT.CR:
+					GalleryItem[] selection = getSelection();
+					GalleryItem item = null;
+					if( selection != null && selection.length > 0 ){
+						item = selection[0];
+					}
+						
+					notifySelectionListeners (item, 0,true);
+					break;
 				}
 			}
 
@@ -636,7 +657,7 @@ public class Gallery extends Canvas {
 			toParent.select(0, toIndex);
 
 		}
-		this.notifySelectionListeners(to, indexOf(to));
+		this.notifySelectionListeners(to, indexOf(to), false);
 		redraw();
 	}
 
@@ -692,7 +713,7 @@ public class Gallery extends Canvas {
 
 		// Notify listeners if necessary.
 		if (notifyListeners)
-			notifySelectionListeners(item, indexOf(item));
+			notifySelectionListeners(item, indexOf(item), false);
 
 	}
 
@@ -811,7 +832,7 @@ public class Gallery extends Canvas {
 
 		GalleryItem item = getItem(new Point(e.x, e.y));
 		if (item != null) {
-			// TODO: Handle double click ?
+			notifySelectionListeners(item, 0, true);
 		}
 		mouseClickHandled = true;
 	}
@@ -949,7 +970,7 @@ public class Gallery extends Canvas {
 	}
 
 	/**
-	 * Handle right clic.
+	 * Handle right click.
 	 * 
 	 * @param e
 	 * @param item

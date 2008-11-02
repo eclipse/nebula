@@ -344,7 +344,7 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 					}
 					group.selectAll();
 					gallery.notifySelectionListeners(group, gallery
-							.indexOf(group));
+							.indexOf(group), false);
 				}
 				gallery.redraw();
 				return false;
@@ -373,7 +373,7 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 					}
 					group.selectAll();
 					gallery.notifySelectionListeners(group, gallery
-							.indexOf(group));
+							.indexOf(group), false);
 				}
 				gallery.redraw();
 				return false;
