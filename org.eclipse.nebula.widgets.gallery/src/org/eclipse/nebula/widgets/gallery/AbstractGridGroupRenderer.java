@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Item;
  * 
  * @author Nicolas Richeton (nicolas.richeton@gmail.com)
  * @contributor Richard Michalsky (bug 197959)
+ * @contributor Robert Handschmann (bug 215817)
  */
 
 public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRenderer {
@@ -474,11 +475,21 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 			return null;
 		}
 		GalleryItem group = item.getParentItem();
+		
+        switch (key) {
+        case SWT.HOME:
+            return getFirstItem(group, START);
+        case SWT.END:
+            return getFirstItem(group, END);
+        }
+
+
 		int pos = group.indexOf(item);
 		GalleryItem next = null;
 
 		if (gallery.isVertical()) {
 			int hCount = ((Integer) group.getData(H_COUNT)).intValue();
+			int maxVisibleRows = gallery.getClientArea().height / itemHeight;
 			switch (key) {
 			case SWT.ARROW_LEFT:
 				next = goLeft(group, pos);
@@ -495,10 +506,18 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 			case SWT.ARROW_DOWN:
 				next = goDown(group, pos, hCount);
 				break;
+				
+			case SWT.PAGE_UP:
+	            next = goUp(group, pos, hCount * Math.max(maxVisibleRows - 1, 1));
+	            break;
 
+	        case SWT.PAGE_DOWN:
+	            next = goDown(group, pos, hCount * Math.max(maxVisibleRows - 1, 1));
+	            break;
 			}
 		} else {
 			int vCount = ((Integer) group.getData(V_COUNT)).intValue();
+			int maxVisibleColumns = gallery.getClientArea().width / itemWidth;
 			switch (key) {
 			case SWT.ARROW_LEFT:
 				next = goUp(group, pos, vCount);
@@ -515,6 +534,14 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 			case SWT.ARROW_DOWN:
 				next = goRight(group, pos);
 				break;
+				
+			case SWT.PAGE_UP:
+	            next = goUp(group, pos, vCount * Math.max(maxVisibleColumns - 1, 1));
+	            break;
+
+	        case SWT.PAGE_DOWN:
+	            next = goDown(group, pos, vCount * Math.max(maxVisibleColumns - 1, 1));
+	            break;
 
 			}
 		}

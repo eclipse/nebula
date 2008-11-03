@@ -98,6 +98,7 @@ import org.eclipse.swt.widgets.TypedListener;
  * 
  * @author Nicolas Richeton (nicolas.richeton@gmail.com)
  * @contributor Peter Centgraf (bugs 212071, 212073)
+ * @contributor Robert Handschmann (bug 215817)
  */
 public class Gallery extends Canvas {
 
@@ -530,6 +531,10 @@ public class Gallery extends Canvas {
 				case SWT.ARROW_RIGHT:
 				case SWT.ARROW_UP:
 				case SWT.ARROW_DOWN:
+				case SWT.PAGE_UP:
+				case SWT.PAGE_DOWN:
+                case SWT.HOME:
+                case SWT.END:
 					GalleryItem newItem = groupRenderer.getNextItem(
 							lastSingleClick, e.keyCode);
 
