@@ -21,6 +21,9 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -29,6 +32,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
@@ -295,7 +299,31 @@ public class GanttTester {
 		bHeavyRedraw.setText("Heavy Redraw");
 		bHeavyRedraw.setToolTipText("You should never have to use a heavy redraw. If you need to because of something not doing what it is supposed to it is most likely a bug\n\nAlso note that the results of using this may not be the same as when the chart calls this method itself");
 		bHeavyRedraw.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		Button bSaveFull = new Button(buttons, SWT.PUSH);
+		bSaveFull.setText("Save Full Image");
+		bSaveFull.setToolTipText("Saves an image of the chart, the entire chart, and nothing but the chart");
+		bSaveFull.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		bSaveFull.addListener(SWT.Selection, new Listener() {
 
+			public void handleEvent(Event event) {
+				Image full = _ganttComposite.getFullImage();
+				
+				FileDialog fd = new FileDialog(Display.getDefault().getActiveShell(), SWT.SAVE);
+				fd.setFilterExtensions(new String [] { ".jpg" });
+				fd.setFilterNames(new String [] { "JPG File" });
+				fd.setFileName("img.jpg");
+				String path = fd.open();
+				if (path == null)
+					return;
+				
+				ImageLoader imageLoader = new ImageLoader();
+				imageLoader.data = new ImageData[] {full.getImageData()};
+				imageLoader.save(path, SWT.IMAGE_JPEG); 
+			}
+			
+		});	
+		
 		Group timerGroup = new Group(comp, SWT.NONE);
 		timerGroup.setLayout(new GridLayout(1, true));
 		timerGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -346,7 +374,19 @@ public class GanttTester {
 				ISettings toUse = null;
 				if (bLockHeader.getSelection())
 					toUse = new FixedHeaderSettings();
+				
+				class Foo extends AbstractSettings {
 
+					public boolean moveLinkedEventsWhenEventsAreMoved() {
+						return true;
+					}
+					
+					
+					
+				}
+
+				toUse = new Foo();
+				
 				_ganttChart = new GanttChart(_vfChart, flags, toUse);
 				_ganttComposite = _ganttChart.getGanttComposite();
 				_vfChart.setContent(_ganttChart);

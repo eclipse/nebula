@@ -1089,14 +1089,14 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	// the repaint event, whenever the composite needs to refresh the contents
 	private void repaint(PaintEvent event) {
 		GC gc = event.gc;
-		drawChartOntoGC(gc);
+		drawChartOntoGC(gc, null);
 	}
 
 	// draws the actual chart.. separated from the repaint event as the
 	// getImage() call uses it on a different GC
 	// Note: things are in a certain order, as some stuff draws on top of
 	// others, so don't move them around unless you want a different effect
-	private void drawChartOntoGC(GC gc) {
+	private void drawChartOntoGC(GC gc, Rectangle boundsOverride) {
 		// long totaltime1 = System.currentTimeMillis();
 		boolean drawSections = (mGanttSections.size() > 0);
 
@@ -1105,7 +1105,10 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			mBottomMostY = 0;
 
 		Rectangle bounds = super.getClientArea();
-
+		if (boundsOverride != null) {
+			bounds = boundsOverride;
+		}
+		
 		// the actual visible bounds counting any vertical scroll offset (includes header height)
 		mVisibleBounds = new Rectangle(bounds.x, bounds.y + mVerticalScrollPosition, bounds.width, bounds.height);
 
@@ -1115,7 +1118,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 				bounds = new Rectangle(mSettings.getSectionBarWidth(), bounds.x, bounds.width - mSettings.getSectionBarWidth() + mSettings.getSectionBarWidth(), bounds.height);
 			else
 				bounds = new Rectangle(0, bounds.x, bounds.width - mSettings.getSectionBarWidth(), bounds.height);
-		}
+		}		
 
 		mBounds = bounds;
 		mLockedHeaderY = mBounds.y;
@@ -1150,6 +1153,10 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			for (int i = 0; i < mGanttSections.size(); i++) {
 				GanttSection gs = (GanttSection) mGanttSections.get(i);
 				Rectangle gsBounds = gs.getBounds();
+				
+				if (boundsOverride != null) {
+					gsBounds.width = boundsOverride.width;
+				}
 
 				if (!mUseFastDrawing || mReCalculateScopes)
 					calculateAllScopes(gsBounds, gs);
@@ -2346,19 +2353,15 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 		Calendar temp = Calendar.getInstance(mDefaultLocale);
 		temp.setTime(mCalendar.getTime());
-		// temp.set(Calendar.HOUR_OF_DAY, mSettings.getWorkDayStartHour());
 
 		// if we're not on hour zero, the box will be shorter, so check how much
-		// shorter
 		int hour = temp.get(Calendar.HOUR_OF_DAY);
-		int startDay = mSettings.getWorkDayStartHour();
-		// int endDay = startDay +
-		// ClientGlobals.getInstance().getModel().getWorkHoursPerDay();
 
-		int toTakeOff = (hour - startDay) * mDayWidth;
+		int toTakeOff = hour * mDayWidth;
+
 
 		int wWidth = mWeekWidth;
-		current -= toTakeOff;
+		current -= toTakeOff;		
 
 		boolean once = false;
 
@@ -2384,7 +2387,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 			// as ranges here can be massive width-wise, always ensure there's a
 			// date visible at the top
-			if (!once && mCalendar.get(Calendar.HOUR_OF_DAY) != startDay) {
+			if (!once && mCalendar.get(Calendar.HOUR_OF_DAY) != 0) {
 				gc.drawString(dString, bounds.x + 4, topY + 3, true);
 				once = true;
 			}
@@ -2407,17 +2410,6 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 		Calendar temp = Calendar.getInstance(mDefaultLocale);
 		temp.setTime(mCalendar.getTime());
-
-		// String startHour =
-		// ClientGlobals.getInstance().getModel().getWorkDayStartHourAsString();
-		// StringTokenizer st = new StringTokenizer(startHour, ":");
-		// int hour = Integer.parseInt(st.nextToken());
-		int workDayStartHour = mSettings.getWorkDayStartHour();
-		// int workDayEndHour = workDayStartHour + mSettings.getWorkHoursPerDay();
-		// temp.set(Calendar.HOUR_OF_DAY, hour);
-
-		int maxHoursPerDay = mSettings.getWorkHoursPerDay();
-		int dayEndHour = workDayStartHour + maxHoursPerDay;
 
 		boolean first = true;
 
@@ -2493,9 +2485,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		// loop it, but take work days/hours into account as usual
 		for (int i = 0; i < totalMinutes; i++) {
 			fakeEnd.add(Calendar.MINUTE, 1);
-			if (temp.get(Calendar.HOUR_OF_DAY) >= dayEndHour) {
+			if (temp.get(Calendar.HOUR_OF_DAY) >= 24) {
 				temp.add(Calendar.DATE, 1);
-				temp.set(Calendar.HOUR_OF_DAY, workDayStartHour);
+				temp.set(Calendar.HOUR_OF_DAY, 0);
 			}
 		}
 
@@ -3879,7 +3871,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		Calendar copy = Calendar.getInstance(mDefaultLocale);
 		copy.setTime(date.getTime());
 
-		copy.set(Calendar.HOUR_OF_DAY, mSettings.getWorkDayStartHour());
+		copy.set(Calendar.HOUR_OF_DAY, 0);
 		if (clearMinutes) {
 			copy.set(Calendar.MINUTE, 0);
 			copy.set(Calendar.SECOND, 0);
@@ -4225,13 +4217,10 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	 * Jumps to the next hour.
 	 */
 	public void nextHour() {
-		int startHour = mSettings.getWorkDayStartHour();
-		int endHour = mSettings.getWorkHoursPerDay();
-
 		mCalendar.add(Calendar.HOUR_OF_DAY, 1);
-		if (mCalendar.get(Calendar.HOUR_OF_DAY) >= endHour) {
+		if (mCalendar.get(Calendar.HOUR_OF_DAY) >= 24) {
 			mCalendar.add(Calendar.DATE, 1);
-			mCalendar.set(Calendar.HOUR_OF_DAY, startHour);
+			mCalendar.set(Calendar.HOUR_OF_DAY, 0);
 		}
 
 		setNoRecalc();
@@ -4245,13 +4234,10 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	public void prevHour() {
 		mCalendar.add(Calendar.HOUR_OF_DAY, -1);
 
-		int startHour = mSettings.getWorkDayStartHour();
-		int endHour = mSettings.getWorkHoursPerDay();
-
-		if (mCalendar.get(Calendar.HOUR_OF_DAY) < startHour) {
+		if (mCalendar.get(Calendar.HOUR_OF_DAY) < 0) {
 			mCalendar.add(Calendar.DATE, -1);
 			// -1 !!
-			mCalendar.set(Calendar.HOUR_OF_DAY, endHour - 1);
+			mCalendar.set(Calendar.HOUR_OF_DAY, 24 - 1);
 		}
 
 		setNoRecalc();
@@ -4265,7 +4251,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	public void nextDay() {
 		checkWidget();
 		mCalendar.add(Calendar.DATE, 1);
-		mCalendar.set(Calendar.HOUR_OF_DAY, mSettings.getWorkDayStartHour());
+		mCalendar.set(Calendar.HOUR_OF_DAY, 0);
 
 		moveXBounds(false);
 		setNoRecalc();
@@ -4279,7 +4265,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	private void prevDay() {
 		checkWidget();
 		mCalendar.add(Calendar.DATE, -1);
-		mCalendar.set(Calendar.HOUR_OF_DAY, mSettings.getWorkDayStartHour());
+		mCalendar.set(Calendar.HOUR_OF_DAY, 0);
 
 		moveXBounds(true);
 		setNoRecalc();
@@ -5407,15 +5393,11 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			Calendar fakeEnd = Calendar.getInstance(mDefaultLocale);
 			fakeEnd.setTime(temp.getTime());
 
-			int workDayStartHour = mSettings.getWorkDayStartHour();
-			int maxHoursPerDay = mSettings.getWorkHoursPerDay();
-			int dayEndHour = workDayStartHour + maxHoursPerDay;
-
 			for (int i = 0; i < totalMinutes; i++) {
 				fakeEnd.add(Calendar.MINUTE, 1);
-				if (temp.get(Calendar.HOUR_OF_DAY) >= dayEndHour) {
+				if (temp.get(Calendar.HOUR_OF_DAY) >= 24) {
 					temp.add(Calendar.DATE, 1);
-					temp.set(Calendar.HOUR_OF_DAY, workDayStartHour);
+					temp.set(Calendar.HOUR_OF_DAY, 0);
 				}
 			}
 
@@ -6011,6 +5993,35 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	public Image getImage() {
 		return getImage(mBounds);
 	}
+	
+	/**
+	 * Returns the image that is the entire chart, regardless of what is currently visible.
+	 * If chart contains no events, getImage() is called from within.
+	 * <p>
+	 * Do note that if the chart is "huge", you may need to up your heap size.
+	 * 
+	 * @return Image  
+	 */
+	public Image getFullImage() {
+		Rectangle fullBounds = new Rectangle(0, 0, 0, 0);
+		GanttEvent geRight = getEvent(false);
+		
+		if (geRight == null)
+			return getImage();
+
+		// remember, we need the bounds here, not the location bounds, just the sizes, the rest will start filling at the right location
+		fullBounds.width = fullBounds.x + geRight.getActualBounds().x + geRight.getActualBounds().width;
+		fullBounds.height = mBottomMostY;
+				
+		Image buffer = new Image(Display.getDefault(), fullBounds);
+
+		GC gc2 = new GC(buffer);
+		drawChartOntoGC(gc2, fullBounds);
+		drawHeader(gc2);
+		gc2.dispose();
+		
+		return buffer;
+	}
 
 	/**
 	 * Returns the chart as an image for the given bounds.
@@ -6023,7 +6034,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		Image buffer = new Image(Display.getDefault(), bounds);
 
 		GC gc2 = new GC(buffer);
-		drawChartOntoGC(gc2);
+		drawChartOntoGC(gc2, null);
 		gc2.dispose();
 
 		return buffer;
@@ -6159,7 +6170,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		if (mZoomLevel == ISettings.ZOOM_HOURS_MAX || mZoomLevel == ISettings.ZOOM_HOURS_MEDIUM || mZoomLevel == ISettings.ZOOM_HOURS_NORMAL) {
 			// how many hours are there really in our work day? we don't show
 			// anything else!
-			mWeekWidth = mDayWidth * mSettings.getWorkHoursPerDay();
+			mWeekWidth = mDayWidth * 24;
 		}
 	}
 
@@ -6261,8 +6272,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 			// we don't need a scrollbar if all events are in the visible area
 			if (extraLeft > 0 && extraRight > 0) {
-
-				mHorizontalScrollBar.setVisible(false);
+				mHorizontalScrollPosition = 0;
+				mHorizontalScrollBar.setMaximum(0);
+				mHorizontalScrollBar.setSelection(0);
 				return;
 			}
 
@@ -6280,12 +6292,24 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 					mHorizontalScrollBar.setMaximum((xEnd - xEarliest) / dayWidth);
 					mHorizontalScrollBar.setSelection(mHorizontalScrollBar.getMaximum());
 				} else if (extraLeft < 0 && extraRight < 0) {
-					// bit o left, bit o right (this needs some good math applied to it... better than mine)
+				/*	// bit o left, bit o right (this needs some good math applied to it... better than mine)
 					int extra = (extraLeft > 0 ? extraLeft : 0) + (extraRight > 0 ? extraRight : 0);
 					int fullRange = xLatest - xEarliest + extra;
 					mHorizontalScrollBar.setMaximum((fullRange / dayWidth) + dayWidth);
 					// from left side works best
+					mHorizontalScrollBar.setSelection((Math.abs(extraLeft) + (dayWidth * 4)) / dayWidth);*/
+					int width = xLatest - xEarliest;			
+					//int cur = getXForDate(mCalendar);
+					
+					width += (extraLeft > 0 ? extraLeft : 0);
+					width += (extraRight > 0 ? extraRight : 0);
+					
+					width /= getDayWidth();
+					//cur /= getDayWidth();
+										
+					mHorizontalScrollBar.setMaximum(width);
 					mHorizontalScrollBar.setSelection((Math.abs(extraLeft) + (dayWidth * 4)) / dayWidth);
+					mHorizontalScrollBar.setVisible(true);
 				}
 
 				mHorizontalScrollPosition = mHorizontalScrollBar.getSelection();

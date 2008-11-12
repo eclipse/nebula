@@ -271,14 +271,6 @@ abstract class AbstractSettings implements ISettings {
 	public int getRevisedLineSpacer() {
 		return 3;
 	}
-
-	public int getWorkDayStartHour() {
-		return 0;
-	}
-
-	public int getWorkHoursPerDay() {
-		return 24;
-	}	
 	
 	public Image getDefaultAdvandedTooltipHelpImage() {
 		return null;

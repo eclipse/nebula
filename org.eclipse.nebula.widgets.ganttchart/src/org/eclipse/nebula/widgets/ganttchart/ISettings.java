@@ -558,24 +558,6 @@ public interface ISettings {
 	 */
 	public int getRevisedLineSpacer();
 	
-	/*
-	 * The number of work hours in a day. Must not be less than 0 or greater than 23.
-	 * <br><br>
-	 * <b><font color="red">THIS FEATURE IS CURRENTLY BEING WORKED ON AND NOT SUPPORTED, PLEASE DO NOT CHANGE!</font></b>
-	 * 
-	 * @return Work hours per day. Default is 0.
-	 */
-	int getWorkHoursPerDay();
-	
-	/*
-	 * The hour when the work days start. A number between 0 and 24.
-	 * <br><br>
-	 * <b><font color="red">THIS FEATURE IS CURRENTLY BEING WORKED ON AND NOT SUPPORTED, PLEASE DO NOT CHANGE!</font></b>
-	 * 
-	 * @return Work day start hour. Default is 24.
-	 */
-	int getWorkDayStartHour();
-	
 	/**
 	 * Whether to round off minutes on events to nearest hour.
 	 * 
