@@ -307,4 +307,13 @@ public interface ISettings {
 	 * @return Accelerator, default is CTRL + 'n'
 	 */
 	//public int getNoneAccelerator();
+
+	/**
+	 * If it returns true, keyboard down key etc will open the calendar and navigate the calendar through the keyboard.
+	 * If it returns false, keyboard will instead navigate the various text parts of the calendar, so if the date in the box is 12/13/2008 and the cursor is on the
+	 * "13" and arrow up/down are pressed, that number will increase. Default is true.
+	 */
+	public boolean keyboardNavigatesCalendar();
+		
+	
 }

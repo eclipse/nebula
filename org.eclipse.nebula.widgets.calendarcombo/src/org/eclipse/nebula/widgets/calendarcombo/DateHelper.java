@@ -11,6 +11,7 @@
 
 package org.eclipse.nebula.widgets.calendarcombo;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -116,5 +117,117 @@ public class DateHelper {
         df.setLenient(false);
         
         return df.parse(str);
+    }
+
+    public static Calendar getDate(String str, String dateFormat, Locale locale) throws Exception {        
+        Date d = getDate(str, dateFormat);
+        Calendar cal = Calendar.getInstance(locale);
+        cal.setTime(d);
+        return cal;
+    }
+
+    public static Calendar parseDate(String str, Locale locale) throws Exception {
+    	Date foo = DateFormat.getDateInstance(DateFormat.SHORT, locale).parse(str);
+    	Calendar cal = Calendar.getInstance(locale);
+    	cal.setTime(foo);
+    	return cal;
+    }
+    
+    private static Calendar calendarize(Date date, Locale locale) {
+    	Calendar cal = Calendar.getInstance(locale);
+    	cal.setTime(date);
+    	return cal;
+    }
+    
+    /**
+     * This method will try its best to parse a date based on the current locale.
+     * 
+     * @param str String to parse
+     * @param locale Current locale
+     * @return Calendar or null on failure
+     * @throws Exception on any unforseen issues or bad parse errors
+     */
+    public static Calendar parseDateHard(String str, Locale locale) throws Exception {
+    	/*    	 
+    	 // this code will potentially give us the format, but it's a bit tricky to make it out and if it's consistent 								
+    	 ResourceBundle r = LocaleData.getDateFormatData(mSettings.getLocale());
+		String [] foo = r.getStringArray("DateTimePatterns"); 
+		for (int i = 0; i < foo.length; i++)
+			System.err.println(foo[i]);
+    	 */
+
+    	try {
+    		Date foo = DateFormat.getDateInstance().parse(str);
+    		return calendarize(foo, locale);
+    	}
+    	catch (Exception err) {
+    		try {
+    			Integer.parseInt(str);
+    			
+    			try {
+	    			DateFormat df = DateFormat.getDateInstance();
+	    			df.setLenient(false);
+	    			Date foo = df.parse(str);
+	    			return calendarize(foo, locale);	    			
+    			}
+    			catch (Exception err2) {
+    				return numericParse(str, locale);
+    			}	    			
+    		}
+    		catch (Exception failedInt) {
+    			// clear the bad chars and try again
+    			StringBuffer buf = new StringBuffer();
+    			for (int i = 0; i < str.length(); i++) {
+    				if (str.charAt(i) >= '0' && str.charAt(i) <= '9')
+    					buf.append(str.charAt(i));
+    			}
+    			
+    			String fixed = buf.toString();
+    			try {
+    				Integer.parseInt(fixed);
+    				return numericParse(fixed, locale);
+    			}
+    			catch (Exception forgetit) {
+    				// mega fail, we can't parse it
+    			}    			
+    		}
+    	}
+    	
+    	return null;
+    }
+    
+    private static Calendar numericParse(String str, Locale locale) throws Exception {
+    	String usFormat6 = "MMddyy";
+		String usFormat8 = "MMddyyyy";
+		String euFormat6 = "ddMMyy";
+		String euFormat8 = "ddMMyyyy";
+
+		Date parsed = null;
+		if (locale.equals(Locale.US)) {
+			if (str.length() == 6) {
+				SimpleDateFormat sdf = new SimpleDateFormat(usFormat6);
+				parsed = sdf.parse(str);
+			}
+			else {
+				SimpleDateFormat sdf = new SimpleDateFormat(usFormat8);
+				parsed = sdf.parse(str);	    					
+			}
+		}
+		else {	    				
+			if (str.length() == 6) {
+				SimpleDateFormat sdf = new SimpleDateFormat(euFormat6);
+				parsed = sdf.parse(str);	
+			}
+			else {
+				SimpleDateFormat sdf = new SimpleDateFormat(euFormat8);
+				parsed = sdf.parse(str);
+			}
+		}	    			
+		
+		if (parsed != null) {
+			return calendarize(parsed, locale);
+		}
+		
+		return null;
     }
 }

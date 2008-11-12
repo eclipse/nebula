@@ -2,13 +2,17 @@ package org.eclipse.nebula.widgets.calendarcombo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 public class Tester {
@@ -22,11 +26,14 @@ public class Tester {
 		// allow other date formats than default
 		class Settings extends DefaultSettings {
 
-			public List getAdditionalDateFormats() {
-				List additional = new ArrayList();
-				additional.add("MMddyy");
-				return additional;
+			public Locale getLocale() {
+				return Locale.GERMAN;
 			}
+
+			public boolean keyboardNavigatesCalendar() {
+				return false;
+			}
+
 			
 		}
 		
@@ -37,7 +44,19 @@ public class Tester {
 
 		Label foo = new Label(inner, SWT.NONE);
 		foo.setText("Test");
-		new CalendarCombo(inner, SWT.NONE, new Settings(), null);
+		final CalendarCombo cc = new CalendarCombo(inner, SWT.NONE, new Settings(), null);
+
+		final CalendarCombo cc2 = new CalendarCombo(inner, SWT.NONE, new Settings(), null);
+
+		Button b = new Button(inner, SWT.PUSH);
+		b.setText("Check date");
+		b.addListener(SWT.Selection, new Listener() {
+
+			public void handleEvent(Event event) {
+				System.err.println(cc.getDate().getTime());
+			}
+			
+		});
 	
 		shell.open();
 

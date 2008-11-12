@@ -168,6 +168,10 @@ public abstract class AbstractSettings implements ISettings {
 		return null;
 	}
 
+	public boolean keyboardNavigatesCalendar() {
+		return true;
+	}
+
 /*	public int getNoneAccelerator() {		
 		return SWT.CTRL + 'n';
 	}
