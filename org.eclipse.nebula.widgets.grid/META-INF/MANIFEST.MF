@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Nebula Grid Plug-in
-Bundle-SymbolicName: org.eclipse.nebula.widgets.grid
+Bundle-SymbolicName: org.eclipse.nebula.incubation.widgets.grid
 Bundle-Version: 1.0.0
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
 Require-Bundle: org.eclipse.swt
