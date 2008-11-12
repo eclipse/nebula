@@ -188,12 +188,10 @@ public class DateHelper {
     				return numericParse(fixed, locale);
     			}
     			catch (Exception forgetit) {
-    				// mega fail, we can't parse it
+    				throw new Exception(forgetit);
     			}    			
     		}
-    	}
-    	
-    	return null;
+    	}    	
     }
     
     private static Calendar numericParse(String str, Locale locale) throws Exception {
