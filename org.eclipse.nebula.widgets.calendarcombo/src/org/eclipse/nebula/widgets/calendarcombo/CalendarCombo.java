@@ -161,6 +161,8 @@ public class CalendarCombo extends Composite {
 	
 	private int mLastFireTime;
 	
+	private Calendar mLastNotificationDate;
+	
 	protected static final boolean OS_CARBON = "carbon".equals(SWT.getPlatform());
 	protected static final boolean OS_GTK = "gtk".equals(SWT.getPlatform());
 	protected static final boolean OS_WINDOWS = "win32".equals(SWT.getPlatform());
@@ -425,15 +427,6 @@ public class CalendarCombo extends Composite {
 
 			mKeyDownListener = new Listener() {
 				public void handleEvent(Event event) {
-					if (OS_GTK) {
-						if (mLastFireTime == event.time) {
-							event.doit = false;
-							return;
-						}
-						
-						mLastFireTime = event.time;
-					}
-					
 					if (mSettings.keyboardNavigatesCalendar()) {
 						
 						if (event.keyCode == SWT.ARROW_DOWN) {
@@ -451,8 +444,7 @@ public class CalendarCombo extends Composite {
 							if (isCalendarVisible()) {
 								mCalendarComposite.keyPressed(event.keyCode, event.stateMask);
 								// eat event or cursor will jump around in combo
-								// as
-								// well
+								// as well
 								event.doit = false;
 							}
 						}
@@ -824,14 +816,7 @@ public class CalendarCombo extends Composite {
 			if (comboText.length() == 0) {
 				mStartDate = null;
 				setText("");
-				for (int i = 0; i < mListeners.size(); i++) {
-					try {
-						((ICalendarListener) mListeners.get(i)).dateChanged(null);
-					}
-					catch (Exception err) {
-						err.printStackTrace();
-					}
-				}
+				notifyDateChanged();
 				return;
 			}
 
@@ -899,6 +884,15 @@ public class CalendarCombo extends Composite {
 	}
 	
 	private void notifyDateChanged() {
+		// don't notify on same dates
+		if (mLastNotificationDate == null && mStartDate == null)
+			return;
+		
+		if (mLastNotificationDate != null && mStartDate != null) {
+			if (DateHelper.sameDate(mLastNotificationDate, mStartDate))
+				return;
+		}
+		
 		for (int i = 0; i < mListeners.size(); i++) {
 			try {
 				((ICalendarListener) mListeners.get(i)).dateChanged(mStartDate);
