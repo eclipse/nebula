@@ -163,6 +163,8 @@ public class CalendarCombo extends Composite {
 	
 	private Calendar mLastNotificationDate;
 	
+	private Listener mOobClickListener;
+	
 	protected static final boolean OS_CARBON = "carbon".equals(SWT.getPlatform());
 	protected static final boolean OS_GTK = "gtk".equals(SWT.getPlatform());
 	protected static final boolean OS_WINDOWS = "win32".equals(SWT.getPlatform());
@@ -379,6 +381,19 @@ public class CalendarCombo extends Composite {
 
 		mListeners = new ArrayList();
 
+		// if click happens on a control that is not us, we kill
+		mOobClickListener = new Listener() {
+			public void handleEvent(Event event) {
+				if (!isCalendarVisible())
+					return;
+				
+				if (Display.getDefault().getCursorControl() != mCalendarComposite) {
+					kill(44);					
+				}
+				
+			}			
+		};
+		
 		if (mColorManager == null)
 			mColorManager = new DefaultColorManager();
 
@@ -1009,6 +1024,7 @@ public class CalendarCombo extends Composite {
 		}
 
 		Display.getDefault().removeFilter(SWT.KeyDown, mKillListener);
+		Display.getDefault().removeFilter(SWT.MouseDown, mOobClickListener);
 
 		if (mComboControl != null && !mComboControl.isDisposed()) {
 			mComboControl.setCapture(false);
@@ -1157,6 +1173,7 @@ public class CalendarCombo extends Composite {
 				mCombo.setText(comboText);
 
 			Display.getDefault().addFilter(SWT.KeyDown, mKillListener);
+			Display.getDefault().addFilter(SWT.MouseDown, mOobClickListener);
 
 			mCalendarShell = new Shell(Display.getDefault().getActiveShell(), SWT.ON_TOP | SWT.NO_TRIM | SWT.NO_FOCUS);
 			mCalendarShell.setLayout(new FillLayout());
