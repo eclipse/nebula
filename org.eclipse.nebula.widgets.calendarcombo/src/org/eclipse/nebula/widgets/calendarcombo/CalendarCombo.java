@@ -159,6 +159,8 @@ public class CalendarCombo extends Composite {
 
 	private boolean mParsingDate;
 	
+	private int mLastFireTime;
+	
 	protected static final boolean OS_CARBON = "carbon".equals(SWT.getPlatform());
 	protected static final boolean OS_GTK = "gtk".equals(SWT.getPlatform());
 	protected static final boolean OS_WINDOWS = "win32".equals(SWT.getPlatform());
@@ -423,7 +425,17 @@ public class CalendarCombo extends Composite {
 
 			mKeyDownListener = new Listener() {
 				public void handleEvent(Event event) {
+					if (OS_GTK) {
+						if (mLastFireTime == event.time) {
+							event.doit = false;
+							return;
+						}
+						
+						mLastFireTime = event.time;
+					}
+					
 					if (mSettings.keyboardNavigatesCalendar()) {
+						
 						if (event.keyCode == SWT.ARROW_DOWN) {
 							Control ctrl = (isFlat ? (Control) mFlatCombo.getTextControl() : mCombo);
 
@@ -446,7 +458,7 @@ public class CalendarCombo extends Composite {
 						}
 					} else {
 						if (event.keyCode == SWT.ARROW_DOWN || event.keyCode == SWT.ARROW_UP) {
-							int cursorLoc = mCombo.getSelection().x;							
+							int cursorLoc = isFlat ? mFlatCombo.getSelection().x : mCombo.getSelection().x;							
 							// first, parse the date, I don't care if it's some fantastic format we can parse, parse it again
 							parseTextDate();
 							// once it's parsed, set it to the default format, that way we KNOW where certain parts of the date are
@@ -458,7 +470,10 @@ public class CalendarCombo extends Composite {
 								}
 																
 								event.doit = false;							
-								mCombo.setSelection(new Point(cursorLoc, cursorLoc));
+								if (isFlat)  
+									mFlatCombo.setSelection(new Point(cursorLoc, cursorLoc));
+								else
+									mCombo.setSelection(new Point(cursorLoc, cursorLoc));
 								
 								if (cursorLoc == mSettings.getDateFormat().length())
 									cursorLoc--;
