@@ -157,6 +157,8 @@ public class CalendarCombo extends Composite {
 
 	private Listener mKeyDownListener;
 
+	private boolean mParsingDate;
+	
 	protected static final boolean OS_CARBON = "carbon".equals(SWT.getPlatform());
 	protected static final boolean OS_GTK = "gtk".equals(SWT.getPlatform());
 	protected static final boolean OS_WINDOWS = "win32".equals(SWT.getPlatform());
@@ -410,7 +412,7 @@ public class CalendarCombo extends Composite {
 			Listener traverseListener = new Listener() {
 				public void handleEvent(Event event) {
 					if (event.detail == 16 || event.detail == 8 || event.detail == 4 || event.detail == 0) {
-						parseTextDate();
+						parseTextDate();						
 					}
 				}
 			};
@@ -796,28 +798,45 @@ public class CalendarCombo extends Composite {
 
 	// parses the date, and really tries
 	private void parseTextDate() {
+		// listeners by users can cause infinite loops as we notify, they set on notify, etc, so don't allow parsing if we haven't finished yet
+		if (mParsingDate)
+			return;
+		
 		try {
+			mParsingDate = true;
+			
 			String comboText = (isFlat ? mFlatCombo.getText() : mCombo.getText());
 			if (comboText.length() == 0) {
 				mStartDate = null;
 				setText("");
 				for (int i = 0; i < mListeners.size(); i++) {
-					((ICalendarListener) mListeners.get(i)).dateChanged(null);
+					try {
+						((ICalendarListener) mListeners.get(i)).dateChanged(null);
+					}
+					catch (Exception err) {
+						err.printStackTrace();
+					}
 				}
 				return;
 			}
 
 			try {
 				mStartDate = DateHelper.getDate(comboText, mSettings.getDateFormat(), mSettings.getLocale());
+				updateDate();
+				notifyDateChanged();
 				// System.err.println("Got here 1 - Settings parse");
 			} catch (Exception err) {
 				// try the locale
 				try {
 					mStartDate = DateHelper.parseDate(comboText, mSettings.getLocale());
+					updateDate();
+					notifyDateChanged();
 					// System.err.println("Got here 2 - Locale parse");
 				} catch (Exception deeper) {
 					try {
 						mStartDate = DateHelper.parseDateHard(comboText, mSettings.getLocale());
+						updateDate();
+						notifyDateChanged();
 						// System.err.println("Got here 3 - Hard parse");
 					} catch (Exception deepest) {
 						// System.err.println("Got here 4 - Failed parse");
@@ -830,6 +849,8 @@ public class CalendarCombo extends Composite {
 										Date date = DateHelper.getDate(comboText, format);
 										// success
 										setDate(date);
+										updateDate();
+										notifyDateChanged();
 										return;
 									}
 									catch (Exception failed) {
@@ -857,8 +878,22 @@ public class CalendarCombo extends Composite {
 		} catch (Exception err) {
 			err.printStackTrace();
 		}
-
+		finally {
+			mParsingDate = false;
+		}
 	}
+	
+	private void notifyDateChanged() {
+		for (int i = 0; i < mListeners.size(); i++) {
+			try {
+				((ICalendarListener) mListeners.get(i)).dateChanged(mStartDate);
+			}
+			catch (Exception err) {
+				err.printStackTrace();
+			}
+		}
+	}
+	
 
 	// checks whether a click was actually in the text area of a combo and not
 	// on the arrow button. This is a hack by all means,
