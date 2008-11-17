@@ -443,8 +443,14 @@ public class CalendarCombo extends Composite {
 			mKeyDownListener = new Listener() {
 				public void handleEvent(Event event) {
 					// if event didn't happen on this combo, ignore it
-					if (event.widget != (isFlat ? mFlatCombo : mCombo)) {
-						return;
+					if (isFlat) {
+						if (event.widget != mFlatCombo.getTextControl())
+							return;
+					}
+					else {
+						if (event.widget != mCombo) {
+							return;
+						}
 					}
 					
 					if (mSettings.keyboardNavigatesCalendar()) {

@@ -8,7 +8,6 @@ public class FlatCalendarCombo extends CustomCombo {
 		super(parent, style = CustomCombo.checkStyle(style));
 	}
 
-	@Override
 	protected void dropDown(boolean drop) {
 		// flat combos on mac don't like empty lists, so we override this to do nothing, which solves the issue, strangely enough
 		if (CalendarCombo.OS_CARBON)
