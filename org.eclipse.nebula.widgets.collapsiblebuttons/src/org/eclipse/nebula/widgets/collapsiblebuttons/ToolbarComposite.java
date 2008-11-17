@@ -410,7 +410,8 @@ public class ToolbarComposite extends Composite implements MouseListener, MouseM
 				GC gc = new GC(this);
 				Rectangle lb = item.getBounds();
 				redraw(lb.x - mSettings.getToolBarLeftSpacer(), 0, lb.width + mSettings.getToolBarRightSpacer(), CustomButton.BUTTON_HEIGHT, false);
-				gc.drawImage(item.getButton().getToolBarImage(), lb.x, lb.y);
+				if (item.getButton().getToolBarImage() != null)
+					gc.drawImage(item.getButton().getToolBarImage(), lb.x, lb.y);
 				gc.dispose();
 			}
 		}

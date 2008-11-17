@@ -987,6 +987,18 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 		}
 	}
 
+	/**
+	 * Deselects all buttons
+	 */
+	public void deselectAll() {
+		if (mSelectedButton != null) {
+			mSelectedButton.updateSelection(false);
+		}
+		mSelectedButton = null;
+		mToolBarComposite.setSelectedItem(null);
+		redraw();
+	}
+	
 	// selects a button
 	private void selectButton(CustomButton button) {
 		if (mSelectedButton != null) {
