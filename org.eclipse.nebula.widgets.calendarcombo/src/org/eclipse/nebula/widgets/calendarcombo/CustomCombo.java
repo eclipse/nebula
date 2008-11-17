@@ -571,7 +571,7 @@ public class CustomCombo extends Composite {
 		list.deselectAll();
 	}
 
-	void dropDown(boolean drop) {
+	protected void dropDown(boolean drop) {
 		if (drop == isDropped() || !isVisible())
 			return;
 		if (!drop) {

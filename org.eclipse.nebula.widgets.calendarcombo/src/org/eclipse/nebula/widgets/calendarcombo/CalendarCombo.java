@@ -442,6 +442,11 @@ public class CalendarCombo extends Composite {
 
 			mKeyDownListener = new Listener() {
 				public void handleEvent(Event event) {
+					// if event didn't happen on this combo, ignore it
+					if (event.widget != (isFlat ? mFlatCombo : mCombo)) {
+						return;
+					}
+					
 					if (mSettings.keyboardNavigatesCalendar()) {
 						
 						if (event.keyCode == SWT.ARROW_DOWN) {
@@ -464,7 +469,16 @@ public class CalendarCombo extends Composite {
 							}
 						}
 					} else {
-						if (event.keyCode == SWT.ARROW_DOWN || event.keyCode == SWT.ARROW_UP) {
+						boolean acceptedEvent = (event.keyCode == SWT.ARROW_DOWN || event.keyCode == SWT.ARROW_UP);
+						if (OS_CARBON) {
+							acceptedEvent = (event.character == '+' || event.character == '-');
+						}
+						
+						if (acceptedEvent) {
+							boolean up = event.keyCode == SWT.ARROW_UP;
+							if (OS_CARBON)
+								up = event.character == '+';
+							
 							int cursorLoc = isFlat ? mFlatCombo.getSelection().x : mCombo.getSelection().x;							
 							// first, parse the date, I don't care if it's some fantastic format we can parse, parse it again
 							parseTextDate();
@@ -576,7 +590,7 @@ public class CalendarCombo extends Composite {
 								}
 																
 								if (calType != -1) {
-									mStartDate.add(calType, event.keyCode == SWT.ARROW_UP ? 1 : -1);
+									mStartDate.add(calType, up ? 1 : -1);
 								
 									if (isFlat) {
 										mFlatCombo.setText(DateHelper.getDate(mStartDate, mSettings.getDateFormat()));
@@ -585,7 +599,7 @@ public class CalendarCombo extends Composite {
 										mCombo.setText(DateHelper.getDate(mStartDate, mSettings.getDateFormat()));
 										mCombo.setSelection(new Point(sectionStart, sectionEnd));
 									}
-
+							
 								}
 							}
 						}
