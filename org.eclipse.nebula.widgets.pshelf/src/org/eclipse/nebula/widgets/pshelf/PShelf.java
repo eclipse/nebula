@@ -579,7 +579,10 @@ public class PShelf extends Canvas {
             if (point.y >= y1 && point.y <= y2 -1){
                 return item;
             }
-            if (item == openItem){
+            
+            y1 += itemHeight;
+            
+            if (item == openItem){            	
                 y1 += openItem.getBodyParent().getSize().y;
                 y2 += openItem.getBodyParent().getSize().y;
             }
