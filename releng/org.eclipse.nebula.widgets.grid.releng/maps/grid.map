@@ -2,4 +2,4 @@
 plugin@org.eclipse.nebula.widgets.grid=v20081121,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.grid
 
 !**** the feature
-plugin@org.eclipse.nebula.widgets.grid.feature=v20081121,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/features/org.eclipse.nebula.widgets.grid.feature
+feature@org.eclipse.nebula.widgets.grid.feature=v20081121,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/features/org.eclipse.nebula.widgets.grid.feature
