@@ -262,6 +262,9 @@ public class GanttTester {
 
 		});
 
+		final Button bUseDDay = new Button(gLeft, SWT.CHECK);
+		bUseDDay.setText("D-Day chart");
+		
 		final Button bLockHeader = new Button(gLeft, SWT.CHECK);
 		bLockHeader.setText("Lock Header");
 		bLockHeader.setToolTipText("Locks the header so that it is always shown regardless of vertical scroll");
@@ -387,6 +390,9 @@ public class GanttTester {
 
 				toUse = new Foo();
 				
+				if (bUseDDay.getSelection())
+					toUse = new DDaySettings();
+								
 				_ganttChart = new GanttChart(_vfChart, flags, toUse);
 				_ganttComposite = _ganttChart.getGanttComposite();
 				_vfChart.setContent(_ganttChart);
@@ -402,6 +408,11 @@ public class GanttTester {
 
 				for (int i = 0; i < numberEvents; i++) {
 					Calendar cal = Calendar.getInstance();
+					
+					if (bUseDDay.getSelection()) {
+						cal = (Calendar)toUse.getDDayRootCalendar().clone();
+					}
+					
 					GanttEvent predEvent = null;
 					if (i != 0) {
 						predEvent = ((GanttEvent) _ganttComposite.getEvents().get(i - 1));
@@ -425,7 +436,7 @@ public class GanttTester {
 					} else {
 						ganttEvent = new GanttEvent(_ganttChart, null, "Event_" + (i + 1), cStartDate, cEndDate, 0);
 					}
-
+					
 					if (bUseSections.getSelection()) {
 						boolean reachedMax = false;
 						if (sMaxSections.getSelection() != 0)
@@ -808,5 +819,19 @@ public class GanttTester {
 		public boolean lockHeaderOnVerticalScroll() {
 			return true;
 		}
+	}
+	
+	class DDaySettings extends AbstractSettings {
+
+		public int getInitialView() {
+			return ISettings.VIEW_D_DAY;
+		}
+
+		public int getHeaderMonthHeight() {
+			return 0;
+		}
+		
+		
+		
 	}
 }

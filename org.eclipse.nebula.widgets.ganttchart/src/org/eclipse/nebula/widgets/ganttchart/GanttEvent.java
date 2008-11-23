@@ -127,6 +127,9 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 
 	private GanttEvent		mScopeParent;
 
+	private int 			mDDayStart;
+	private int 			mDDayEnd;
+	
 	/**
 	 * Creates a new GanttEvent.
 	 * 
@@ -199,6 +202,26 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 		init();
 	}
 
+	/**
+	 * D-day event creation. 
+	 * 
+	 * @param parent Parent chart
+	 * @param dDayStart D day start value (zero based)
+	 * @param dDayEnd D day end value (zero based)
+	 */
+	public GanttEvent(GanttChart parent, int dDayStart, int dDayEnd) {
+		this.mParentChart = parent;			
+		this.mDDayStart = dDayStart;
+		this.mDDayEnd = dDayEnd;
+		
+		mStartDate = (Calendar) mParentChart.getGanttComposite().getDDayCalendar();
+		mEndDate = (Calendar) mParentChart.getGanttComposite().getDDayCalendar();
+		mStartDate.add(Calendar.DATE, mDDayStart);
+		mEndDate.add(Calendar.DATE, mDDayEnd);
+		
+		init();
+	}
+	
 	/**
 	 * Creates a GanttEvent intended to be a scope.
 	 * 
@@ -300,7 +323,8 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	protected final void init() {
 		mScopeEvents = new ArrayList();
 		mParentChart.getGanttComposite().addEvent(this, true);
-		updateDaysBetweenStartAndEnd();
+				
+		updateDaysBetweenStartAndEnd();		
 	}
 
 	/**
@@ -620,6 +644,26 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	public void setRevisedEnd(Calendar revisedEnd) {
 		setRevisedDates(null, revisedEnd);
 	}
+	
+	/**
+	 * Sets the revised D-day start.
+	 * 
+	 * @param dDayStart d-day start.
+	 */
+	public void setRevisedStart(int dDayStart) {
+		mRevisedStart = mParentChart.getGanttComposite().getDDayCalendar();
+		mRevisedStart.add(Calendar.DATE, dDayStart);
+	}
+	
+	/**
+	 * Sets the revised D-day end.
+	 * 
+	 * @param dDayEnd d-day end
+	 */
+	public void setRevisedEnd(int dDayEnd) {
+		mRevisedEnd = mParentChart.getGanttComposite().getDDayCalendar();
+		mRevisedEnd.add(Calendar.DATE, dDayEnd);		
+	}
 
 	/*
 	 * Sets new revised dates. This is useful when you need to update two dates that move at the same time (such as manually doing a move via setDates). Normally each setting of a
@@ -650,7 +694,7 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 
 		if (revisedEnd != null)
 			mRevisedEnd = (Calendar) revisedEnd.clone();
-
+		
 		// check movement constraints
 		if (mNoMoveBeforeDate != null && revisedStart != null) {
 			if (revisedStart.before(mNoMoveBeforeDate))
@@ -1273,6 +1317,70 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	public void dispose() {
 		mParentChart.getGanttComposite().removeEvent(this);
 	}
+
+	public int getActualDDayStart() {
+		return mRevisedStart == null ? getDDayStart() : getDDayRevisedStart();
+	}
+	
+	public int getActualDDayEnd() {
+		return mRevisedEnd == null ? getDDayEnd() : getDDayRevisedEnd();
+	}
+	
+	/**
+	 * Returns the D-day start value.
+	 * 
+	 * @return
+	 */
+	public int getDDayStart() {
+		return mDDayStart;
+	}
+
+	public int getDDayRevisedStart() {
+		if (mRevisedStart == null)
+			return Integer.MAX_VALUE;
+		
+		return (int) DateHelper.daysBetween(mParentChart.getGanttComposite().getDDayCalendar(), mRevisedStart, mParentChart.getSettings().getDefaultLocale());
+	}
+	
+	public int getDDayRevisedEnd() {
+		if (mRevisedEnd == null)
+			return Integer.MAX_VALUE;
+		
+		return (int) DateHelper.daysBetween(mParentChart.getGanttComposite().getDDayCalendar(), mRevisedEnd, mParentChart.getSettings().getDefaultLocale());
+	}
+	
+	/**
+	 * Sets the D-day start value.
+	 * 
+	 * @param day
+	 */
+	public void setDDayStart(int day) {
+		mDDayStart = day;
+		
+		this.mStartDate = mParentChart.getGanttComposite().getDDayCalendar();
+		mStartDate.add(Calendar.DATE, day);
+		updateDaysBetweenStartAndEnd();
+	}
+
+	public int getDDayEnd() {
+		return mDDayEnd;
+	}
+
+	public void setDDayEnd(int day) {
+		mDDayEnd = day;
+		
+		this.mEndDate = mParentChart.getGanttComposite().getDDayCalendar();
+		mEndDate.add(Calendar.DATE, day);
+		updateDaysBetweenStartAndEnd();
+	}
+
+	public int getDDateRange() {
+		return (int) DateHelper.daysBetween(getStartDate(), getEndDate(), mParentChart.getSettings().getDefaultLocale());
+	}
+	
+	public int getRevisedDDateRange() {
+		return (int) DateHelper.daysBetween(getActualStartDate(), getActualEndDate(), mParentChart.getSettings().getDefaultLocale());
+	}
 	
 	// internal methods
 
@@ -1435,6 +1543,13 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 		}
 
 		mDaysBetweenStartAndEnd = (int) DateHelper.daysBetween(getActualStartDate().getTime(), getActualEndDate().getTime(), mParentChart.getSettings().getDefaultLocale());
+		
+		if (mParentChart.getGanttComposite().getCurrentView() == ISettings.VIEW_D_DAY) {
+			mDDayStart = (int) DateHelper.daysBetween(mParentChart.getGanttComposite().getDDayCalendar(), getStartDate(), mParentChart.getSettings().getDefaultLocale());
+			mDDayEnd = (int) DateHelper.daysBetween(mParentChart.getGanttComposite().getDDayCalendar(), getEndDate(), mParentChart.getSettings().getDefaultLocale());
+			mDDayStart--;			
+		}
+
 	}
 
 	void moveStarted() {
@@ -1490,7 +1605,7 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem {
 	void setScopeParent(GanttEvent parent) {
 		mScopeParent = parent;
 	}
-
+	
 	public String toString() {
 		return mName;
 	}

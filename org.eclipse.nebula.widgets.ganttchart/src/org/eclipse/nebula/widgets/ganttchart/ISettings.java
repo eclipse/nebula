@@ -43,6 +43,7 @@ public interface ISettings {
 	public static final int VIEW_WEEK = 2;
 	public static final int VIEW_MONTH = 3;
 	public static final int VIEW_YEAR = 4;
+	public static final int VIEW_D_DAY = 5;
 	
 	// zoom levels
 	public static final int MIN_ZOOM_LEVEL = 0;
@@ -921,4 +922,6 @@ public interface ISettings {
 	 * time of the zoom in. For some the first make more sense than the other and vice versa. Default is that the zoom in is where the mouse pointer is (true).
 	 */
 	public boolean zoomToMousePointerDateOnWheelZooming();
+	
+	public Calendar getDDayRootCalendar();
 }

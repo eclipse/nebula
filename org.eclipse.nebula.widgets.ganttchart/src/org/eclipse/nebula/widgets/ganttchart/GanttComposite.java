@@ -331,6 +331,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	private Tracker				mTracker;
 	private boolean				mMultiSelect;
 
+	private Calendar			mDDayCalendar;
+	
 	static {
 		String osProperty = System.getProperty("os.name");
 		if (osProperty != null) {
@@ -349,6 +351,10 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	public GanttComposite(GanttChart parent, int style, ISettings settings, IColorManager colorManager, IPaintManager paintManager, ILanguageManager languageManager) {
 		super(parent, SWT.NO_BACKGROUND | SWT.DOUBLE_BUFFERED | SWT.V_SCROLL | SWT.H_SCROLL);
 
+		// d-day calendar can be anything, but it needs to be something, and for convenience, lets use 2000 as base year
+		if (settings.getInitialView() == ISettings.VIEW_D_DAY)
+			mDDayCalendar = settings.getDDayRootCalendar();
+	
 		mStyle = style;
 		mMultiSelect = (mStyle & SWT.MULTI) != 0;
 
@@ -399,6 +405,10 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 		updateZoomLevel();
 
+		if (mCurrentView == ISettings.VIEW_D_DAY) {
+			mCalendar = (Calendar)mDDayCalendar.clone();
+		}
+		
 		// by default, set today's date
 		setDate(mCalendar, true);
 
@@ -1340,7 +1350,12 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			drawYearTopBoxes(gc, headerBounds);
 			// draws the month boxes
 			drawYearBottomBoxes(gc, headerBounds);
+		} else if (mCurrentView == ISettings.VIEW_D_DAY) {
+			// draw D-day stuff, for Darren and anyone else who needs it
+			//drawDDayTopBoxes(gc, headerBounds);
+			drawDDayBottomBoxes(gc, headerBounds);
 		}
+		
 
 		// draws the 2 horizontal (usually black) lines at the top to make
 		// things stand out a little
@@ -1744,7 +1759,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			gc.fillGradientRectangle(startX, startY, maxX, heightY, true);
 		}
 
-		int dayWidth = (mCurrentView == ISettings.VIEW_WEEK ? mDayWidth : mMonthDayWidth);
+		int dayWidth = (mCurrentView == ISettings.VIEW_WEEK || mCurrentView == ISettings.VIEW_D_DAY ? mDayWidth : mMonthDayWidth);
 
 		while (true) {
 			int day = temp.get(Calendar.DAY_OF_WEEK);
@@ -1755,7 +1770,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 					gc.setBackground(mColorManager.getSelectedDayColorBottom());
 					gc.fillGradientRectangle(startX, startY, dayWidth, heightY, true);
 				} else {
-					if (day == Calendar.SATURDAY || day == Calendar.SUNDAY) {
+					if ((day == Calendar.SATURDAY || day == Calendar.SUNDAY) && mCurrentView != ISettings.VIEW_D_DAY) {
 						gc.setForeground(getDayBackgroundGradient(day, true, gs));
 						gc.setBackground(getDayBackgroundGradient(day, false, gs));
 
@@ -1980,12 +1995,12 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		int yStart = bounds.y - (applyVscroll ? mVerticalScrollPosition : 0);
 		int height = bounds.height + yStart - 1 + (applyVscroll ? mVerticalScrollPosition : 0);
 
-		if (mCurrentView == ISettings.VIEW_WEEK || mCurrentView == ISettings.VIEW_MONTH || mCurrentView == ISettings.VIEW_DAY) {
+		if (mCurrentView == ISettings.VIEW_WEEK || mCurrentView == ISettings.VIEW_MONTH || mCurrentView == ISettings.VIEW_DAY || mCurrentView == ISettings.VIEW_D_DAY) {
 			for (int i = 0; i < mVerticalLineLocations.size(); i++) {
 				Integer inte = (Integer) mVerticalLineLocations.get(i);
 				int current = inte.intValue();
 
-				if (mVerticalWeekDividerLineLocations.contains(inte)) {
+				if (mVerticalWeekDividerLineLocations.contains(inte) && mCurrentView != ISettings.VIEW_D_DAY) {
 					gc.setForeground(mLineWeekDividerColor);
 					if (mUseAlpha)
 						gc.setAlpha(mColorManager.getWeekDividerAlpha());
@@ -2344,6 +2359,104 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		}
 	}
 
+	// days
+	private void drawDDayBottomBoxes(GC gc, Rectangle bounds) {
+		int xMax = bounds.width + bounds.x;
+		int current = bounds.x;
+		int topY = bounds.y + mSettings.getHeaderMonthHeight();
+		int heightY = mSettings.getHeaderDayHeight();
+
+		int day = mCalendar.get(Calendar.DAY_OF_WEEK);
+		mDaysVisible = 0;
+
+		Calendar temp = Calendar.getInstance(mDefaultLocale);
+		temp.setTime(mCalendar.getTime());
+
+		while (true) {
+			if (mSelectedHeaderDates.contains(temp)) {
+				gc.setForeground(mColorManager.getSelectedDayHeaderColorTop());
+				gc.setBackground(mColorManager.getSelectedDayHeaderColorBottom());
+			} else {
+				gc.setForeground(mTimeHeaderBackgroundColorTop);
+				gc.setBackground(mTimeHeaderBackgroundColorBottom);
+			}
+			gc.fillGradientRectangle(current + 1, topY + 1, mDayWidth - 1, heightY - 1, true);
+
+			mVerticalLineLocations.add(new Integer(current));
+			if (temp.get(Calendar.DAY_OF_WEEK) == mCalendar.getFirstDayOfWeek())
+				mVerticalWeekDividerLineLocations.add(new Integer(current));
+
+			gc.setForeground(mColorManager.getWeekTimeDividerColor());
+			gc.drawRectangle(current, topY, mDayWidth, heightY);
+
+			int hSpacer = mSettings.getDayHorizontalSpacing();
+			int vSpacer = mSettings.getDayVerticalSpacing();
+
+			//String dayLetter = getDateString(temp, false);
+			String dayLetter = ""+DateHelper.daysBetween(mDDayCalendar, temp, mSettings.getDefaultLocale());
+
+			if (mSettings.adjustForLetters()) {
+				Point extent = null;
+				if (!mDayLetterStringExtentMap.containsKey(dayLetter)) {
+					extent = gc.stringExtent(dayLetter);
+					mDayLetterStringExtentMap.put(dayLetter, extent);
+				} else
+					extent = (Point) mDayLetterStringExtentMap.get(dayLetter);
+
+				switch (extent.x) {
+					case 1:
+						hSpacer += 5;
+						break;
+					case 2:
+						hSpacer += 5;
+						break;
+					case 3:
+						hSpacer += 4;
+						break;
+					case 4:
+						hSpacer += 3;
+						break;
+					case 5:
+						hSpacer += 3;
+						break;
+					case 6:
+						hSpacer += 2;
+						break;
+					case 7:
+						hSpacer += 1;
+						break;
+					case 8:
+						hSpacer += 1;
+						break;
+					case 9:
+						hSpacer -= 1;
+						break;
+				}
+			}
+
+			gc.setForeground(getDayTextColor(day));
+			gc.drawString(dayLetter, current + hSpacer, topY + vSpacer, true);
+
+			temp.add(Calendar.DATE, 1);
+			// fixes some odd red line bug, not sure why
+			gc.setForeground(mLineColor);
+
+			current += mDayWidth;
+
+			day++;
+			if (day > 7)
+				day = 1;
+
+			mDaysVisible++;
+
+			if (current > xMax) {
+				mEndCalendar = temp;
+				break;
+			}
+		}
+	}
+
+	
 	// days (hours)
 	private void drawHourTopBoxes(GC gc, Rectangle bounds) {
 		int xMax = bounds.width + bounds.x;
@@ -5178,7 +5291,6 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 				// if it's year view, we wait until the diff matches the number of dates of the month to move
 				if (ISettings.VIEW_YEAR == mCurrentView && diff < mCalendar.getActualMaximum(Calendar.DATE))
 					return;
-
 				// and again if it's year view, and we get here, we do the actual flip
 				else if (ISettings.VIEW_YEAR == mCurrentView) {
 					mMouseDragStartLocation = new Point(me.x, me.y);
@@ -5235,12 +5347,26 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 					temp.setTime(mCalendar.getTime());
 					temp.set(Calendar.DAY_OF_MONTH, 1);
 					GanttDateTip.makeDialog(mColorManager, DateHelper.getDate(temp, dateFormat, mDefaultLocale), toDisplay(loc), mBounds.y);
-				} else
-					GanttDateTip.makeDialog(mColorManager, DateHelper.getDate(mCalendar, dateFormat, mDefaultLocale), toDisplay(loc), mBounds.y);
+				} else {
+					if (mCurrentView == ISettings.VIEW_D_DAY) {
+						GanttDateTip.makeDialog(mColorManager, getCurrentDDate() + "        ", toDisplay(loc), mBounds.y);						
+					}
+					else {
+						GanttDateTip.makeDialog(mColorManager, DateHelper.getDate(mCalendar, dateFormat, mDefaultLocale), toDisplay(loc), mBounds.y);
+					}
+				}
 			}
 		} catch (Exception error) {
 			error.printStackTrace();
 		}
+	}
+	
+	private String getCurrentDDate() {
+		int days = (int)DateHelper.daysBetween(mDDayCalendar, mCalendar, mSettings.getDefaultLocale());
+		if (days > 0)
+			return "+"+days;
+		
+		return ""+days;
 	}
 
 	private boolean isInMoveArea(GanttEvent event, int x) {
@@ -5593,17 +5719,35 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 					GanttDateTip.makeDialog(mColorManager, DateHelper.getDate(event.getActualStartDate(), dateFormat, mDefaultLocale), eventOnDisplay, mBounds.y);
 				} else {
 					StringBuffer buf = new StringBuffer();
+					if (mCurrentView == ISettings.VIEW_D_DAY) {
+						buf.append(event.getActualDDayStart());
+						buf.append(" - ");
+						buf.append(event.getActualDDayEnd());
+						GanttDateTip.makeDialog(mColorManager, buf.toString(), eventOnDisplay, mBounds.y);
+					}
+					else {
+						buf.append(DateHelper.getDate(event.getActualStartDate(), dateFormat, mDefaultLocale));
+						buf.append(" - ");
+						buf.append(DateHelper.getDate(event.getActualEndDate(), dateFormat, mDefaultLocale));
+						GanttDateTip.makeDialog(mColorManager, buf.toString(), eventOnDisplay, mBounds.y);
+					}
+				}
+			} else {
+				if (mCurrentView == ISettings.VIEW_D_DAY) {
+					StringBuffer buf = new StringBuffer();
+					buf.append(event.getActualDDayStart());
+					buf.append(" - ");
+					buf.append(event.getActualDDayEnd());
+					buf.append("       ");
+					GanttDateTip.makeDialog(mColorManager, buf.toString(), eventOnDisplay, mBounds.y);
+				}
+				else {
+					StringBuffer buf = new StringBuffer();
 					buf.append(DateHelper.getDate(event.getActualStartDate(), dateFormat, mDefaultLocale));
 					buf.append(" - ");
 					buf.append(DateHelper.getDate(event.getActualEndDate(), dateFormat, mDefaultLocale));
 					GanttDateTip.makeDialog(mColorManager, buf.toString(), eventOnDisplay, mBounds.y);
 				}
-			} else {
-				StringBuffer buf = new StringBuffer();
-				buf.append(DateHelper.getDate(event.getActualStartDate(), dateFormat, mDefaultLocale));
-				buf.append(" - ");
-				buf.append(DateHelper.getDate(event.getActualEndDate(), dateFormat, mDefaultLocale));
-				GanttDateTip.makeDialog(mColorManager, buf.toString(), eventOnDisplay, mBounds.y);
 			}
 		}
 	}
@@ -5838,7 +5982,12 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		long days = DateHelper.daysBetween(event.getStartDate(), event.getEndDate(), mDefaultLocale);
 		days++;
 		long revisedDays = 0;
-
+		
+		boolean dDay = mCurrentView == ISettings.VIEW_D_DAY;
+		if (dDay) {
+			days = event.getDDateRange();
+		}
+		
 		// as the dialog is slightly bigger in many aspects, push it slightly
 		// off to the right
 		int xPlus = 0;
@@ -5848,7 +5997,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		Point displayLocation = super.toDisplay(new Point(me.x + xPlus, me.y));
 
 		String dateFormat = (mCurrentView == ISettings.VIEW_DAY ? mSettings.getHourDateFormat() : mSettings.getDateFormat());
-
+	
 		String startDate = DateHelper.getDate(event.getStartDate(), dateFormat, mDefaultLocale);
 		String endDate = DateHelper.getDate(event.getEndDate(), dateFormat, mDefaultLocale);
 
@@ -5858,24 +6007,44 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 		String revisedStartText = null;
 		String revisedEndText = null;
+		
+		int dDayStart = 0;
+		int dDayEnd = 0;
+		if (dDay) {
+			dDayStart = event.getDDayStart() + 1;
+			dDayEnd = event.getDDayEnd();
+			startDate = ""+dDayStart;
+			endDate = ""+dDayEnd;			
+		}
+		
+		if (dDay) {
+			if (event.getDDayRevisedStart() == Integer.MAX_VALUE)
+				revisedStart = null;
+			if (event.getDDayRevisedEnd() == Integer.MAX_VALUE)
+				revisedEnd = null;			
+		}
 
 		if (revisedStart != null) {
 			extra.append(mLanguageManager.getRevisedText());
 			extra.append(": ");
-			revisedStartText = DateHelper.getDate(revisedStart, dateFormat, mDefaultLocale);
+			revisedStartText = dDay ? ""+event.getDDayRevisedStart() : DateHelper.getDate(revisedStart, dateFormat, mDefaultLocale);
 			extra.append(revisedStartText);
 		}
 
 		if (revisedEnd != null) {
-			if (revisedStart == null)
+			if (revisedStart == null) {
 				revisedStart = event.getActualStartDate();
+			}
 
-			revisedEndText = DateHelper.getDate(revisedEnd, dateFormat, mDefaultLocale);
+			revisedEndText = dDay ? ""+event.getDDayRevisedEnd() : DateHelper.getDate(revisedEnd, dateFormat, mDefaultLocale);
 			revisedDays = DateHelper.daysBetween(revisedStart, revisedEnd, mDefaultLocale);
 			revisedDays++;
 			extra.append(" - ");
 			extra.append(revisedEndText);
-			extra.append(" (");
+			extra.append(" (");			
+			if (dDay) {
+				revisedDays = event.getRevisedDDateRange();
+			}
 			extra.append(revisedDays);
 			extra.append(" ");
 			if (revisedDays == 1 || revisedDays == -1)
@@ -5885,6 +6054,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			extra.append(")");
 		}
 
+		
 		AdvancedTooltip at = event.getAdvancedTooltip();
 		if (at == null && isUseAdvancedTooltips()) {
 			String ttText = mSettings.getDefaultAdvancedTooltipTextExtended();
@@ -5905,9 +6075,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 				StringBuffer buf = new StringBuffer();
 				buf.append(mLanguageManager.getPlannedText());
 				buf.append(": ");
-				buf.append(startDate);
+				buf.append(dDay ? ""+dDayStart : startDate);
 				buf.append(" - ");
-				buf.append(endDate);
+				buf.append(dDay ? ""+dDayEnd : endDate);
 				buf.append(" (");
 				buf.append(days);
 				buf.append(" ");
@@ -5917,9 +6087,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 				GanttToolTip.makeDialog(mColorManager, event.getName(), extra.toString(), buf.toString(), event.getPercentComplete() + mLanguageManager.getPercentCompleteText(), displayLocation);
 			} else {
 				StringBuffer buf = new StringBuffer();
-				buf.append(startDate);
+				buf.append(dDay ? ""+dDayStart : startDate);
 				buf.append(" - ");
-				buf.append(endDate);
+				buf.append(dDay ? ""+dDayEnd : endDate);
 				buf.append(" (");
 				buf.append(days);
 				buf.append(" ");
@@ -6092,11 +6262,17 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		return ret;
 	}
 
-	private void updateZoomLevel() {
+	private void updateZoomLevel() {				
 		int originalDayWidth = mSettings.getDayWidth();
 		int originalMonthWeekWidth = mSettings.getMonthDayWidth();
 		int originalYearMonthDayWidth = mSettings.getYearMonthDayWidth();
 
+		boolean dDay = false;
+		if (mCurrentView == ISettings.VIEW_D_DAY) {
+			dDay = true;
+			//mZoomLevel = ISettings.ZOOM_DAY_MAX;
+		}
+		
 		switch (mZoomLevel) {
 			// hour
 			case ISettings.ZOOM_HOURS_MAX:
@@ -6171,6 +6347,10 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			// how many hours are there really in our work day? we don't show
 			// anything else!
 			mWeekWidth = mDayWidth * 24;
+		}
+		
+		if (dDay) {
+			mCurrentView = ISettings.VIEW_D_DAY;
 		}
 	}
 
@@ -6390,6 +6570,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		checkWidget();
 		if (!mSettings.enableZooming())
 			return;
+		/*
+		if (mCurrentView == ISettings.VIEW_D_DAY)
+			return;*/
 
 		mZoomLevel--;
 		if (mZoomLevel < ISettings.MIN_ZOOM_LEVEL) {
@@ -6430,11 +6613,18 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		checkWidget();
 		if (!mSettings.enableZooming())
 			return;
-
+		
 		mZoomLevel++;
 		if (mZoomLevel > ISettings.MAX_ZOOM_LEVEL) {
 			mZoomLevel = ISettings.MAX_ZOOM_LEVEL;
 			return;
+		}
+
+		if (mCurrentView == ISettings.VIEW_D_DAY) {
+			if (mZoomLevel > ISettings.ZOOM_DAY_NORMAL) {
+				mZoomLevel = ISettings.ZOOM_DAY_NORMAL;
+				return;
+			}
 		}
 
 		Calendar preZoom = null;
@@ -6512,6 +6702,10 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		mUseAdvancedTooltips = useAdvancedTooltips;
 	}
 
+	public Calendar getDDayCalendar() {
+		return (Calendar) mDDayCalendar.clone();
+	}
+	
 	// as from:
 	// http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.swt.snippets/src/org/eclipse/swt/snippets/Snippet139.java?view=co
 	static ImageData rotate(ImageData srcData, int direction) {

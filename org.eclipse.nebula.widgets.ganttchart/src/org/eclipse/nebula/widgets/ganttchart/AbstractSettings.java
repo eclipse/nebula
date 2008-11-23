@@ -443,6 +443,18 @@ abstract class AbstractSettings implements ISettings {
 		return true;
 	}
 
+	public Calendar getDDayRootCalendar() {
+		Calendar mDDayCalendar = Calendar.getInstance(getDefaultLocale());
+		mDDayCalendar.set(Calendar.YEAR, 2000);
+		mDDayCalendar.set(Calendar.MONTH, Calendar.JANUARY);
+		mDDayCalendar.set(Calendar.DATE, 1);
+		mDDayCalendar.set(Calendar.MINUTE, 0);
+		mDDayCalendar.set(Calendar.SECOND, 0);
+		mDDayCalendar.set(Calendar.MILLISECOND, 0);
+		return mDDayCalendar;
+	}
+
+
 	
 /*	public List getHeaderLevels() {
 		List l = new ArrayList();
