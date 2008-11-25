@@ -6,7 +6,6 @@ Bundle-Version: 1.0.0
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.swt.nebula,
  org.eclipse.nebula.widgets.gallery,
  org.eclipse.nebula.widgets.grid,
  org.eclipse.nebula.widgets.pgroup,

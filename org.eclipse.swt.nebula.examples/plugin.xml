@@ -28,5 +28,39 @@
             class="org.eclipse.swt.nebula.examples.parts.GalleryExampleTab"
             name="Gallery"/>
    </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="org.eclipse.swt.nebula.examples.ExamplesPerspective"
+            fixed="true"
+            id="org.eclipse.swt.nebula.examples.perspective"
+            name="Nebula">
+      </perspective>
+   </extension>
+   <extension
+         id="application"
+         point="org.eclipse.core.runtime.applications">
+      <application
+            cardinality="singleton-global"
+            icon="icons/eclipse.png"
+            thread="main"
+            visible="true">
+         <run
+               class="org.eclipse.swt.nebula.examples.ExamplesApplication">
+         </run>
+      </application>
+   </extension>
+   <extension
+         id="nebula_examples"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="org.eclipse.swt.nebula.examples.application"
+            name="Nebula Examples">
+         <property
+               name="appName"
+               value="Nebula Examples">
+         </property>
+      </product>
+   </extension>
 
 </plugin>
