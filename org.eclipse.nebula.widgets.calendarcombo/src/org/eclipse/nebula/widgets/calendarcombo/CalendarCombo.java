@@ -512,7 +512,9 @@ public class CalendarCombo extends Composite {
 								else
 									mCombo.setSelection(new Point(cursorLoc, cursorLoc));
 
-								// split the date format. we do this as a date format of M/d/yyyy for example can still have 2 digits as M or d .
+								// split the date format. we do this as a date
+								// format of M/d/yyyy for example can still have
+								// 2 digits as M or d .
 								String separatorChar = null;
 								char[] accepted = mSettings.getAcceptedDateSeparatorChars();
 								for (int i = 0; i < accepted.length; i++) {
@@ -520,26 +522,29 @@ public class CalendarCombo extends Composite {
 										separatorChar = String.valueOf(accepted[i]);
 									}
 								}
-								
+
 								int sectionStart = 0;
 								int sectionEnd = 0;
 
 								int splitCount = 0;
-								
+
 								// get the format
 								String oneChar = "";
 								if (separatorChar != null) {
-									// now find how many separator chars we are from the left side of the date in the box to where the cursor is, that will tell us what part of
+									// now find how many separator chars we are
+									// from the left side of the date in the box
+									// to where the cursor is, that will tell us
+									// what part of
 									// the date format we're on
 									String comboText = isFlat ? mFlatCombo.getText() : mCombo.getText();
 									for (int i = 0; i < comboText.length(); i++) {
 										if (i >= cursorLoc)
 											break;
-										
+
 										if (comboText.charAt(i) == separatorChar.charAt(0))
 											splitCount++;
 									}
-									
+
 									StringTokenizer st = new StringTokenizer(df, separatorChar);
 									int count = 0;
 									while (st.hasMoreTokens()) {
@@ -550,12 +555,14 @@ public class CalendarCombo extends Composite {
 										}
 										count++;
 									}
-								} 
+								}
 								else {
 									oneChar = mSettings.getDateFormat().substring(cursorLoc, cursorLoc + 1);
-									
-									// get the whole part, bit tricky I suppose, but
-									// we fetch everything that matches the format
+
+									// get the whole part, bit tricky I suppose,
+									// but
+									// we fetch everything that matches the
+									// format
 									// at the position we're at, easy enough
 									StringBuffer buf = new StringBuffer();
 									int start = cursorLoc;
@@ -583,7 +590,7 @@ public class CalendarCombo extends Composite {
 									sectionStart = mSettings.getDateFormat().indexOf(buf.toString());
 									sectionEnd = sectionStart + buf.toString().length();
 								}
-																							
+
 								// now we now what to increase/decrease, lets do
 								// it
 								int calType = -1;
@@ -645,46 +652,49 @@ public class CalendarCombo extends Composite {
 									mStartDate.add(calType, up ? 1 : -1);
 
 									String newDate = DateHelper.getDate(mStartDate, mSettings.getDateFormat());
-									
+
 									if (isFlat) {
 										mFlatCombo.setText(newDate);
 									}
 									else {
 										mCombo.setText(newDate);
 									}
-									
+
 									if (separatorChar != null) {
-										// we need to update the selection after we've set the date
-										// figure out cursor location, now we have to use the date in the box again
+										// we need to update the selection after
+										// we've set the date
+										// figure out cursor location, now we
+										// have to use the date in the box again
 										StringTokenizer st = new StringTokenizer(newDate, separatorChar);
 										int count = 0;
 										boolean stop = false;
 										while (st.hasMoreTokens()) {
 											String tok = st.nextToken();
-											
+
 											// we found our section
-											if (count == splitCount) {												
+											if (count == splitCount) {
 												sectionEnd = sectionStart + tok.length();
 												stop = true;
 												break;
 											}
-										
+
 											// if we're stopping, break out
 											if (stop)
 												break;
-											
-											// add on separator chars for each loop iteration post 0
+
+											// add on separator chars for each
+											// loop iteration post 0
 											sectionStart += 1;
 											// and token length
 											sectionStart += tok.length();
-											
+
 											count++;
-										}										
+										}
 									}
 
 									// set the selection for us
 									if (isFlat) {
-										mFlatCombo.setSelection(new Point(sectionStart, sectionEnd));											
+										mFlatCombo.setSelection(new Point(sectionStart, sectionEnd));
 									}
 									else {
 										mCombo.setSelection(new Point(sectionStart, sectionEnd));
@@ -785,8 +795,12 @@ public class CalendarCombo extends Composite {
 					if (diff > 0 && diff < 100)
 						return;
 
+					if (!isCalendarVisible())
+						return;
+
+					// don't force focus, user clicked another control, let it grab the focus or it'll be odd behavior
 					if (!isFlat)
-						kill(3);
+						kill(3, true);
 				}
 			}
 		};
@@ -1121,9 +1135,14 @@ public class CalendarCombo extends Composite {
 		mAllowTextEntry = false;
 	}
 
+	private synchronized void kill(int debug) {
+		kill(debug, false);
+	}
+
 	// kills the popup area and unhooks various listeners, takes an integer so
 	// that we can debug where the close comes from easier
-	private synchronized void kill(int debug) {
+	private synchronized void kill(int debug, boolean skipFocus) {
+		System.err.println(debug);
 		if (mCalendarComposite == null)
 			return;
 		if (mCalendarComposite.isDisposed())
@@ -1159,11 +1178,13 @@ public class CalendarCombo extends Composite {
 				setDate(mCarbonPrePopupDate);
 		}
 
-		if (isFlat) {
-			mFlatCombo.getTextControl().setFocus();
-		}
-		else {
-			mCombo.setFocus();
+		if (!skipFocus) {
+			if (isFlat) {
+				mFlatCombo.getTextControl().setFocus();
+			}
+			else {
+				mCombo.setFocus();
+			}
 		}
 	}
 
