@@ -315,5 +315,13 @@ public interface ISettings {
 	 */
 	public boolean keyboardNavigatesCalendar();
 		
-	
+
+	/**
+	 * Returns a list of chars that can be used to separate dates. If your users enter characters other than / - . you will want to override this and add whatever character is missing.
+	 * These are used when parsing the date in the box when the user hits the arrow up/down buttons or + - on mac. Do note that if the default date format returned by the settings has no
+	 * separator characters in them, this method is not called as it would not make sense. 
+	 * 
+	 * @return char array, default is '/', '.', '-'
+	 */
+	public char [] getAcceptedDateSeparatorChars();
 }

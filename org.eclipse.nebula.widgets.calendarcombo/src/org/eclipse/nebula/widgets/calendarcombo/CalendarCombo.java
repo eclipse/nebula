@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
@@ -97,77 +98,77 @@ import org.eclipse.swt.widgets.Widget;
  * DefaultSettings will be used.
  * 
  * @author Emil Crumhorn
- * @version 1.1
+ * @version 1.1.2008.11.25
  * 
  */
 public class CalendarCombo extends Composite {
 
 	// the main combo box
-	private Combo mCombo;
-	private FlatCalendarCombo mFlatCombo;
+	private Combo					mCombo;
+	private FlatCalendarCombo		mFlatCombo;
 
-	private Composite mComboControl;
+	private Composite				mComboControl;
 
-	private int mComboStyle = SWT.NONE;
+	private int						mComboStyle			= SWT.NONE;
 
 	// the shell holding the CalendarComposite
-	private Shell mCalendarShell;
+	private Shell					mCalendarShell;
 
-	private Listener mKillListener;
+	private Listener				mKillListener;
 
-	private Listener mFilterListenerFocusIn;
+	private Listener				mFilterListenerFocusIn;
 
-	private Composite mParentComposite;
+	private Composite				mParentComposite;
 
 	// values for determining when the last view of the mCalendarShell was.
 	// this is to determine how quick clicks should behave
-	private long mLastShowRequest = 0;
+	private long					mLastShowRequest	= 0;
 
-	private long mLastKillRequest = 0;
+	private long					mLastKillRequest	= 0;
 
-	private boolean mAllowTextEntry;
+	private boolean					mAllowTextEntry;
 
-	private CalendarCombo mDependingCombo;
+	private CalendarCombo			mDependingCombo;
 
-	private CalendarComposite mCalendarComposite;
+	private CalendarComposite		mCalendarComposite;
 
-	private Calendar mStartDate;
+	private Calendar				mStartDate;
 
-	private Calendar mEndDate;
+	private Calendar				mEndDate;
 
-	private IColorManager mColorManager;
+	private IColorManager			mColorManager;
 
-	private ISettings mSettings;
+	private ISettings				mSettings;
 
-	private ArrayList mListeners;
+	private ArrayList				mListeners;
 
-	private Calendar mDisallowBeforeDate;
+	private Calendar				mDisallowBeforeDate;
 
-	private Calendar mDisallowAfterDate;
+	private Calendar				mDisallowAfterDate;
 
-	private boolean isReadOnly;
+	private boolean					isReadOnly;
 
-	private boolean isFlat;
+	private boolean					isFlat;
 
-	private int arrowButtonWidth;
+	private int						arrowButtonWidth;
 
-	private boolean mAllowDateRange;
+	private boolean					mAllowDateRange;
 
-	private Calendar mCarbonPrePopupDate;
+	private Calendar				mCarbonPrePopupDate;
 
-	private Listener mKeyDownListener;
+	private Listener				mKeyDownListener;
 
-	private boolean mParsingDate;
-	
-	private int mLastFireTime;
-	
-	private Calendar mLastNotificationDate;
-	
-	private Listener mOobClickListener;
-	
-	protected static final boolean OS_CARBON = "carbon".equals(SWT.getPlatform());
-	protected static final boolean OS_GTK = "gtk".equals(SWT.getPlatform());
-	protected static final boolean OS_WINDOWS = "win32".equals(SWT.getPlatform());
+	private boolean					mParsingDate;
+
+	private int						mLastFireTime;
+
+	private Calendar				mLastNotificationDate;
+
+	private Listener				mOobClickListener;
+
+	protected static final boolean	OS_CARBON			= "carbon".equals(SWT.getPlatform());
+	protected static final boolean	OS_GTK				= "gtk".equals(SWT.getPlatform());
+	protected static final boolean	OS_WINDOWS			= "win32".equals(SWT.getPlatform());
 
 	/*
 	 * // Windows JNI Code for making a non-activated canvas, for reference if
@@ -386,14 +387,14 @@ public class CalendarCombo extends Composite {
 			public void handleEvent(Event event) {
 				if (!isCalendarVisible())
 					return;
-				
+
 				if (Display.getDefault().getCursorControl() != mCalendarComposite) {
-					kill(44);					
+					kill(44);
 				}
-				
-			}			
+
+			}
 		};
-		
+
 		if (mColorManager == null)
 			mColorManager = new DefaultColorManager();
 
@@ -418,7 +419,8 @@ public class CalendarCombo extends Composite {
 			mFlatCombo.setVisibleItemCount(0);
 			mFlatCombo.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 			mComboControl = mFlatCombo;
-		} else {
+		}
+		else {
 			mCombo = new Combo(this, mComboStyle);
 			mCombo.setVisibleItemCount(0);
 			mCombo.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
@@ -431,7 +433,7 @@ public class CalendarCombo extends Composite {
 			Listener traverseListener = new Listener() {
 				public void handleEvent(Event event) {
 					if (event.detail == 16 || event.detail == 8 || event.detail == 4 || event.detail == 0) {
-						parseTextDate();						
+						parseTextDate();
 					}
 				}
 			};
@@ -452,9 +454,9 @@ public class CalendarCombo extends Composite {
 							return;
 						}
 					}
-					
+
 					if (mSettings.keyboardNavigatesCalendar()) {
-						
+
 						if (event.keyCode == SWT.ARROW_DOWN) {
 							Control ctrl = (isFlat ? (Control) mFlatCombo.getTextControl() : mCombo);
 
@@ -466,7 +468,8 @@ public class CalendarCombo extends Composite {
 									event.doit = false;
 								}
 							}
-						} else {
+						}
+						else {
 							if (isCalendarVisible()) {
 								mCalendarComposite.keyPressed(event.keyCode, event.stateMask);
 								// eat event or cursor will jump around in combo
@@ -474,72 +477,115 @@ public class CalendarCombo extends Composite {
 								event.doit = false;
 							}
 						}
-					} else {
+					}
+					else {
 						boolean acceptedEvent = (event.keyCode == SWT.ARROW_DOWN || event.keyCode == SWT.ARROW_UP);
 						if (OS_CARBON) {
 							acceptedEvent = (event.character == '+' || event.character == '-');
 						}
-						
+
 						if (acceptedEvent) {
 							boolean up = event.keyCode == SWT.ARROW_UP;
 							if (OS_CARBON)
 								up = event.character == '+';
-							
-							int cursorLoc = isFlat ? mFlatCombo.getSelection().x : mCombo.getSelection().x;							
-							// first, parse the date, I don't care if it's some fantastic format we can parse, parse it again
+
+							int cursorLoc = isFlat ? mFlatCombo.getSelection().x : mCombo.getSelection().x;
+							// first, parse the date, we don't care if it's some
+							// fantastic format we can parse, parse it again
 							parseTextDate();
-							// once it's parsed, set it to the default format, that way we KNOW where certain parts of the date are
+							// once it's parsed, set it to the default format,
+							// that way we KNOW where certain parts of the date
+							// are
 							if (mStartDate != null) {
 								if (isFlat) {
 									mFlatCombo.setText(DateHelper.getDate(mStartDate, mSettings.getDateFormat()));
-								} else {
+								}
+								else {
 									mCombo.setText(DateHelper.getDate(mStartDate, mSettings.getDateFormat()));
 								}
-																
-								event.doit = false;							
-								if (isFlat)  
+
+								String df = mSettings.getDateFormat();
+
+								event.doit = false;
+								if (isFlat)
 									mFlatCombo.setSelection(new Point(cursorLoc, cursorLoc));
 								else
 									mCombo.setSelection(new Point(cursorLoc, cursorLoc));
-								
-								if (cursorLoc == mSettings.getDateFormat().length())
-									cursorLoc--;
-																
-								String oneChar = mSettings.getDateFormat().substring(cursorLoc, cursorLoc+1);
-								if (oneChar.equals("/") || oneChar.equals("-") || oneChar.equals(".")) {
-									cursorLoc--;
-									oneChar = mSettings.getDateFormat().substring(cursorLoc, cursorLoc+1);
-								}
 
-								// get the whole part, bit tricky I suppose, but we fetch everything that matches the format at the position we're at, easy enough
-								StringBuffer buf = new StringBuffer();
-								int start = cursorLoc;
-																
-								while (start >= 0) {
-									if (mSettings.getDateFormat().charAt(start) == oneChar.charAt(0)) {
-										buf.append(mSettings.getDateFormat().charAt(start));
+								// split the date format. we do this as a date format of M/d/yyyy for example can still have 2 digits as M or d .
+								String separatorChar = null;
+								char[] accepted = mSettings.getAcceptedDateSeparatorChars();
+								for (int i = 0; i < accepted.length; i++) {
+									if (df.indexOf(String.valueOf(accepted[i])) > -1) {
+										separatorChar = String.valueOf(accepted[i]);
 									}
-									else {
-										break;
-									}
-									start--;
-								}
-								start = cursorLoc+1;
-								while (start < mSettings.getDateFormat().length()) {
-									if (mSettings.getDateFormat().charAt(start) == oneChar.charAt(0)) {
-										buf.append(mSettings.getDateFormat().charAt(start));
-									}
-									else {
-										break;									
-									}
-									start++;
 								}
 								
-								int sectionStart = mSettings.getDateFormat().indexOf(buf.toString());
-								int sectionEnd = sectionStart + buf.toString().length();
+								int sectionStart = 0;
+								int sectionEnd = 0;
 
+								int splitCount = 0;
 								
-								// now we now what to increase/decrease, lets do it
+								// get the format
+								String oneChar = "";
+								if (separatorChar != null) {
+									// now find how many separator chars we are from the left side of the date in the box to where the cursor is, that will tell us what part of
+									// the date format we're on
+									String comboText = isFlat ? mFlatCombo.getText() : mCombo.getText();
+									for (int i = 0; i < comboText.length(); i++) {
+										if (i >= cursorLoc)
+											break;
+										
+										if (comboText.charAt(i) == separatorChar.charAt(0))
+											splitCount++;
+									}
+									
+									StringTokenizer st = new StringTokenizer(df, separatorChar);
+									int count = 0;
+									while (st.hasMoreTokens()) {
+										String tok = st.nextToken();
+										if (count == splitCount) {
+											oneChar = tok;
+											break;
+										}
+										count++;
+									}
+								} 
+								else {
+									oneChar = mSettings.getDateFormat().substring(cursorLoc, cursorLoc + 1);
+									
+									// get the whole part, bit tricky I suppose, but
+									// we fetch everything that matches the format
+									// at the position we're at, easy enough
+									StringBuffer buf = new StringBuffer();
+									int start = cursorLoc;
+
+									while (start >= 0) {
+										if (mSettings.getDateFormat().charAt(start) == oneChar.charAt(0)) {
+											buf.append(mSettings.getDateFormat().charAt(start));
+										}
+										else {
+											break;
+										}
+										start--;
+									}
+									start = cursorLoc + 1;
+									while (start < mSettings.getDateFormat().length()) {
+										if (mSettings.getDateFormat().charAt(start) == oneChar.charAt(0)) {
+											buf.append(mSettings.getDateFormat().charAt(start));
+										}
+										else {
+											break;
+										}
+										start++;
+									}
+
+									sectionStart = mSettings.getDateFormat().indexOf(buf.toString());
+									sectionEnd = sectionStart + buf.toString().length();
+								}
+																							
+								// now we now what to increase/decrease, lets do
+								// it
 								int calType = -1;
 								switch (oneChar.charAt(0)) {
 									case 'G':
@@ -592,20 +638,59 @@ public class CalendarCombo extends Composite {
 										break;
 									case 'z':
 										calType = Calendar.ZONE_OFFSET;
-										break;																			
+										break;
 								}
-																
+
 								if (calType != -1) {
 									mStartDate.add(calType, up ? 1 : -1);
-								
+
+									String newDate = DateHelper.getDate(mStartDate, mSettings.getDateFormat());
+									
 									if (isFlat) {
-										mFlatCombo.setText(DateHelper.getDate(mStartDate, mSettings.getDateFormat()));
-										mFlatCombo.setSelection(new Point(sectionStart, sectionEnd));
-									} else {
-										mCombo.setText(DateHelper.getDate(mStartDate, mSettings.getDateFormat()));
-										mCombo.setSelection(new Point(sectionStart, sectionEnd));
+										mFlatCombo.setText(newDate);
 									}
-							
+									else {
+										mCombo.setText(newDate);
+									}
+									
+									if (separatorChar != null) {
+										// we need to update the selection after we've set the date
+										// figure out cursor location, now we have to use the date in the box again
+										StringTokenizer st = new StringTokenizer(newDate, separatorChar);
+										int count = 0;
+										boolean stop = false;
+										while (st.hasMoreTokens()) {
+											String tok = st.nextToken();
+											
+											// we found our section
+											if (count == splitCount) {												
+												sectionEnd = sectionStart + tok.length();
+												stop = true;
+												break;
+											}
+										
+											// if we're stopping, break out
+											if (stop)
+												break;
+											
+											// add on separator chars for each loop iteration post 0
+											sectionStart += 1;
+											// and token length
+											sectionStart += tok.length();
+											
+											count++;
+										}										
+									}
+
+									// set the selection for us
+									if (isFlat) {
+										mFlatCombo.setSelection(new Point(sectionStart, sectionEnd));											
+									}
+									else {
+										mCombo.setSelection(new Point(sectionStart, sectionEnd));
+
+									}
+
 								}
 							}
 						}
@@ -672,12 +757,16 @@ public class CalendarCombo extends Composite {
 			}
 		};
 
-		int[] comboEvents = { SWT.Dispose, SWT.Move, SWT.Resize };
+		int[] comboEvents = {
+				SWT.Dispose, SWT.Move, SWT.Resize
+		};
 		for (int i = 0; i < comboEvents.length; i++) {
 			this.addListener(comboEvents[i], mKillListener);
 		}
 
-		int[] arrowEvents = { SWT.Selection };
+		int[] arrowEvents = {
+			SWT.Selection
+		};
 		for (int i = 0; i < arrowEvents.length; i++) {
 			mComboControl.addListener(arrowEvents[i], mKillListener);
 		}
@@ -689,7 +778,8 @@ public class CalendarCombo extends Composite {
 					if (widget instanceof CalendarComposite == false)
 						kill(2);
 
-				} else {
+				}
+				else {
 					long now = Calendar.getInstance(mSettings.getLocale()).getTimeInMillis();
 					long diff = now - mLastShowRequest;
 					if (diff > 0 && diff < 100)
@@ -802,7 +892,8 @@ public class CalendarCombo extends Composite {
 							// mFlatCombo.removeAll();
 						}
 					});
-				} else {
+				}
+				else {
 					mCombo.addListener(SWT.Paint, new Listener() {
 						public void handleEvent(Event event) {
 							mCarbonPrePopupDate = getDate();
@@ -840,13 +931,14 @@ public class CalendarCombo extends Composite {
 
 	// parses the date, and really tries
 	private void parseTextDate() {
-		// listeners by users can cause infinite loops as we notify, they set on notify, etc, so don't allow parsing if we haven't finished yet
+		// listeners by users can cause infinite loops as we notify, they set on
+		// notify, etc, so don't allow parsing if we haven't finished yet
 		if (mParsingDate)
 			return;
-		
+
 		try {
 			mParsingDate = true;
-			
+
 			String comboText = (isFlat ? mFlatCombo.getText() : mCombo.getText());
 			if (comboText.length() == 0) {
 				mStartDate = null;
@@ -860,20 +952,23 @@ public class CalendarCombo extends Composite {
 				updateDate();
 				notifyDateChanged();
 				// System.err.println("Got here 1 - Settings parse");
-			} catch (Exception err) {
+			}
+			catch (Exception err) {
 				// try the locale
 				try {
 					mStartDate = DateHelper.parseDate(comboText, mSettings.getLocale());
 					updateDate();
 					notifyDateChanged();
 					// System.err.println("Got here 2 - Locale parse");
-				} catch (Exception deeper) {
+				}
+				catch (Exception deeper) {
 					try {
 						mStartDate = DateHelper.parseDateHard(comboText, mSettings.getLocale());
 						updateDate();
 						notifyDateChanged();
 						// System.err.println("Got here 3 - Hard parse");
-					} catch (Exception deepest) {
+					}
+					catch (Exception deepest) {
 						// System.err.println("Got here 4 - Failed parse");
 						List otherFormats = mSettings.getAdditionalDateFormats();
 						if (otherFormats != null) {
@@ -892,7 +987,8 @@ public class CalendarCombo extends Composite {
 										// keep trying
 									}
 								}
-							} catch (Exception err2) {
+							}
+							catch (Exception err2) {
 								// don't care
 							}
 						}
@@ -910,24 +1006,25 @@ public class CalendarCombo extends Composite {
 					}
 				}
 			}
-		} catch (Exception err) {
+		}
+		catch (Exception err) {
 			err.printStackTrace();
 		}
 		finally {
 			mParsingDate = false;
 		}
 	}
-	
+
 	private void notifyDateChanged() {
 		// don't notify on same dates
 		if (mLastNotificationDate == null && mStartDate == null)
 			return;
-		
+
 		if (mLastNotificationDate != null && mStartDate != null) {
 			if (DateHelper.sameDate(mLastNotificationDate, mStartDate))
 				return;
 		}
-		
+
 		for (int i = 0; i < mListeners.size(); i++) {
 			try {
 				((ICalendarListener) mListeners.get(i)).dateChanged(mStartDate);
@@ -937,7 +1034,6 @@ public class CalendarCombo extends Composite {
 			}
 		}
 	}
-	
 
 	// checks whether a click was actually in the text area of a combo and not
 	// on the arrow button. This is a hack by all means,
@@ -1016,7 +1112,8 @@ public class CalendarCombo extends Composite {
 			// mFlatCombo.removeAll();
 			mFlatCombo.setText(text);
 			// mFlatCombo.select(0);
-		} else {
+		}
+		else {
 			mCombo.removeAll();
 			mCombo.add(text);
 			mCombo.select(0);
@@ -1064,7 +1161,8 @@ public class CalendarCombo extends Composite {
 
 		if (isFlat) {
 			mFlatCombo.getTextControl().setFocus();
-		} else {
+		}
+		else {
 			mCombo.setFocus();
 		}
 	}
@@ -1237,7 +1335,8 @@ public class CalendarCombo extends Composite {
 						pre = Calendar.getInstance(mSettings.getLocale());
 						pre.setTime(dat);
 					}
-				} catch (Exception err) {
+				}
+				catch (Exception err) {
 					List otherFormats = mSettings.getAdditionalDateFormats();
 					if (otherFormats != null) {
 						boolean dateSet = false;
@@ -1253,7 +1352,8 @@ public class CalendarCombo extends Composite {
 								dateSet = true;
 								break;
 							}
-						} catch (Exception err2) {
+						}
+						catch (Exception err2) {
 							// don't care
 							// err2.printStackTrace();
 						}
@@ -1270,7 +1370,8 @@ public class CalendarCombo extends Composite {
 									mCombo.setText(mSettings.getNoDateSetText());
 							}
 						}
-					} else {
+					}
+					else {
 						// unparseable date, set the last used date if any,
 						// otherwise set nodateset text
 						if (mStartDate != null)
@@ -1284,7 +1385,8 @@ public class CalendarCombo extends Composite {
 					}
 				}
 
-			} else {
+			}
+			else {
 				if (mDependingCombo != null) {
 					// we need to pull the date from the depending combo's text
 					// area as it may be non-read-only, so we can't rely on the
@@ -1294,7 +1396,8 @@ public class CalendarCombo extends Composite {
 						Date d = DateHelper.getDate(mDependingCombo.getCombo().getText(), mSettings.getDateFormat());
 						date = Calendar.getInstance(mSettings.getLocale());
 						date.setTime(d);
-					} catch (Exception err) {
+					}
+					catch (Exception err) {
 						date = mDependingCombo.getDate();
 					}
 
@@ -1325,7 +1428,8 @@ public class CalendarCombo extends Composite {
 					mStartDate = date;
 					if (date == null) {
 						setText("");
-					} else {
+					}
+					else {
 						updateDate();
 					}
 
@@ -1345,7 +1449,8 @@ public class CalendarCombo extends Composite {
 					mEndDate = end;
 					if (start == null) {
 						setText("");
-					} else {
+					}
+					else {
 						updateDate();
 					}
 
@@ -1379,7 +1484,8 @@ public class CalendarCombo extends Composite {
 			mCalendarShell.setLocation(loc);
 			mCalendarShell.setVisible(true);
 
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			mComboControl.setCapture(false);
 			e.printStackTrace();
 			// don't really care
@@ -1454,7 +1560,8 @@ public class CalendarCombo extends Composite {
 		checkWidget();
 		if (this.isFlat) {
 			return this.getCCombo().getTextControl().setFocus();
-		} else {
+		}
+		else {
 			return this.mCombo.setFocus();
 		}
 	}
@@ -1468,7 +1575,8 @@ public class CalendarCombo extends Composite {
 		checkWidget();
 		if (this.isFlat) {
 			return this.getCCombo().getTextControl().forceFocus();
-		} else {
+		}
+		else {
 			return this.mCombo.forceFocus();
 		}
 	}

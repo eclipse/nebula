@@ -1,7 +1,5 @@
 package org.eclipse.nebula.widgets.calendarcombo;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 import org.eclipse.swt.SWT;
@@ -20,12 +18,12 @@ public class Tester {
 	public static void main(String[] args) {
 		Display display = new Display ();
 		Shell shell = new Shell (display);
-		shell.setText("Button Composite Tester");
+		shell.setText("Calendar Combo Tester");
 		shell.setSize(200, 400);
 		
 		// allow other date formats than default
 		class Settings extends DefaultSettings {
-
+			
 			public Locale getLocale() {
 				return Locale.GERMAN;
 			}

@@ -140,22 +140,37 @@ public class DateHelper {
     }
     
     /**
-     * This method will try its best to parse a date based on the current locale.
+     * This method will try its best to parse a date based on the current Locale.
      * 
      * @param str String to parse
-     * @param locale Current locale
+     * @param locale Current Locale
      * @return Calendar or null on failure
      * @throws Exception on any unforseen issues or bad parse errors
      */
     public static Calendar parseDateHard(String str, Locale locale) throws Exception {
-    	/*    	 
-    	 // this code will potentially give us the format, but it's a bit tricky to make it out and if it's consistent 								
-    	 ResourceBundle r = LocaleData.getDateFormatData(mSettings.getLocale());
-		String [] foo = r.getStringArray("DateTimePatterns"); 
-		for (int i = 0; i < foo.length; i++)
-			System.err.println(foo[i]);
-    	 */
 
+    	try {
+	    	DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, locale);
+			String actualLocalePattern = ((SimpleDateFormat)df).toPattern();
+			try {
+				Date foo = df.parse(str);
+				return calendarize(foo, locale);
+			}
+			catch (Exception err) {
+				actualLocalePattern = actualLocalePattern.replaceAll("yy", "yyyy");
+				try {
+					Date foo = df.parse(str);
+					return calendarize(foo, locale);
+				}
+				catch (Exception err2) {
+					// fall through
+				}
+			}
+    	}
+    	catch (Exception err) {
+    		// fall through 
+    	}
+		
     	try {
     		Date foo = DateFormat.getDateInstance().parse(str);
     		return calendarize(foo, locale);
