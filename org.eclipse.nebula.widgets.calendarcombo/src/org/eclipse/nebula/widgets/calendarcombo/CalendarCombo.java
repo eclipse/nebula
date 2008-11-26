@@ -481,13 +481,13 @@ public class CalendarCombo extends Composite {
 					else {
 						boolean acceptedEvent = (event.keyCode == SWT.ARROW_DOWN || event.keyCode == SWT.ARROW_UP);
 						if (OS_CARBON) {
-							acceptedEvent = (event.character == '+' || event.character == '-');
+							acceptedEvent = (event.character == mSettings.getCarbonArrowDownChar() || event.character == mSettings.getCarbonArrowUpChar());
 						}
 
 						if (acceptedEvent) {
 							boolean up = event.keyCode == SWT.ARROW_UP;
 							if (OS_CARBON)
-								up = event.character == '+';
+								up = event.character == mSettings.getCarbonArrowUpChar();
 
 							int cursorLoc = isFlat ? mFlatCombo.getSelection().x : mCombo.getSelection().x;
 							// first, parse the date, we don't care if it's some
@@ -1142,7 +1142,6 @@ public class CalendarCombo extends Composite {
 	// kills the popup area and unhooks various listeners, takes an integer so
 	// that we can debug where the close comes from easier
 	private synchronized void kill(int debug, boolean skipFocus) {
-		System.err.println(debug);
 		if (mCalendarComposite == null)
 			return;
 		if (mCalendarComposite.isDisposed())

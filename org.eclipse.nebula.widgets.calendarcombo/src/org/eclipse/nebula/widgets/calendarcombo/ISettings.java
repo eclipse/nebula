@@ -324,4 +324,20 @@ public interface ISettings {
 	 * @return char array, default is '/', '.', '-'
 	 */
 	public char [] getAcceptedDateSeparatorChars();
+	
+	/**
+	 * On OSX/Carbon the arrow up/down don't work due to an eclipse bug so they need alternative keys. You may re-define those keys here if you wish. By default Carbon uses + - instead
+	 * of the arrows. Do note that this method only matters if {@link #keyboardNavigatesCalendar()} returns true.
+	 * 
+	 * @return Arrow up replacement for carbon. Default is '-'.
+	 */
+	public char getCarbonArrowUpChar();
+
+	/**
+	 * On OSX/Carbon the arrow up/down don't work due to an eclipse bug so they need alternative keys. You may re-define those keys here if you wish. By default Carbon uses + - instead
+	 * of the arrows. Do note that this method only matters if {@link #keyboardNavigatesCalendar()} returns true.
+	 * 
+	 * @return Arrow down replacement for carbon. Default is '+'.
+	 */
+	public char getCarbonArrowDownChar();
 }

@@ -11,6 +11,8 @@
 
 package org.eclipse.nebula.widgets.calendarcombo;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
@@ -83,7 +85,15 @@ public abstract class AbstractSettings implements ISettings {
 	}
 
 	public String getDateFormat() {
-		return "MM/dd/yyyy";
+		// get the date format from the locale, format it to be 4 digit year
+		DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, getLocale());
+		String pattern = ((SimpleDateFormat)df).toPattern();
+		// some locales (Romanian, Hungarian) have 4 digit years already in their locale, if so, don't do a replacement
+		// or we'll end up with way too many y's
+		if (pattern.toLowerCase().indexOf("yyyy") == -1)
+			pattern = pattern.replaceAll("yy", "yyyy");
+		
+		return pattern;
 	}
 
 	public int getButtonHeight() {
@@ -172,6 +182,18 @@ public abstract class AbstractSettings implements ISettings {
 		return true;
 	}
 
+	public char[] getAcceptedDateSeparatorChars() {
+		return new char [] { '/', '-', '.' };
+	}
+	
+	public char getCarbonArrowUpChar() {
+		return '-';
+	}
+	
+	public char getCarbonArrowDownChar() {
+		return '+';
+	}
+	
 /*	public int getNoneAccelerator() {		
 		return SWT.CTRL + 'n';
 	}

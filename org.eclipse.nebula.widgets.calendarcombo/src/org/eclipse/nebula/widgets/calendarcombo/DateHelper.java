@@ -157,7 +157,10 @@ public class DateHelper {
 				return calendarize(foo, locale);
 			}
 			catch (Exception err) {
-				actualLocalePattern = actualLocalePattern.replaceAll("yy", "yyyy");
+				// some locales already have 4 y's
+				if (actualLocalePattern.indexOf("yyyy") == -1)
+					actualLocalePattern = actualLocalePattern.replaceAll("yy", "yyyy");
+				
 				try {
 					Date foo = df.parse(str);
 					return calendarize(foo, locale);
