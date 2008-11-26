@@ -90,7 +90,7 @@ public abstract class AbstractSettings implements ISettings {
 		String pattern = ((SimpleDateFormat)df).toPattern();
 		// some locales (Romanian, Hungarian) have 4 digit years already in their locale, if so, don't do a replacement
 		// or we'll end up with way too many y's
-		if (pattern.toLowerCase().indexOf("yyyy") == -1)
+		if (pattern.indexOf("yyyy") == -1)
 			pattern = pattern.replaceAll("yy", "yyyy");
 		
 		return pattern;
