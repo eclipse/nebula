@@ -788,8 +788,16 @@ public class CalendarCombo extends Composite {
 					if (widget instanceof CalendarComposite == false)
 						kill(2);
 
-				}
-				else {
+					// on mac, select all text in combo if we are the control that gained focus
+					if (mComboControl == Display.getDefault().getFocusControl()) {
+						if (isFlat) {
+							mFlatCombo.getTextControl().selectAll();
+						}
+						else {
+							mCombo.setSelection(new Point(0, mCombo.getText().length()));
+						}
+					}
+				} else {
 					long now = Calendar.getInstance(mSettings.getLocale()).getTimeInMillis();
 					long diff = now - mLastShowRequest;
 					if (diff > 0 && diff < 100)
