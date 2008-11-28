@@ -12,6 +12,7 @@
 package org.eclipse.nebula.widgets.calendarcombo;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -213,12 +214,51 @@ public class DateHelper {
     }
     
     private static Calendar numericParse(String str, Locale locale) throws Exception {
+    	// we always start with the locale and try to parse that numerically, if that fails we'll try another few possibilities before we give up
+    	DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, locale);
+		String actualLocalePattern = ((SimpleDateFormat)df).toPattern();
+		
+		// remove all non letters which will leave us with a clean date pattern
+		actualLocalePattern = actualLocalePattern.replaceAll("[^a-zA-Z]", "");
+		
+		// parse it into long / short versions where the year is 4 or 2 digits
+		String actualLocaleLong = "";
+		String actualLocaleShort = "";
+		if (actualLocalePattern.indexOf("yyyy") == -1) {
+			actualLocaleShort = actualLocalePattern;
+			actualLocaleLong = actualLocalePattern.replaceAll("yy", "yyyy");
+		}
+		else {
+			actualLocaleLong = actualLocalePattern;
+			actualLocaleShort = actualLocalePattern.replaceAll("yyyy", "yy");	
+		}
+			
+		Date parsed = null;
+		
+		// now parse it according to locale if we can
+		try {
+			if (str.length() == 6) {
+				SimpleDateFormat sdf = new SimpleDateFormat(actualLocaleShort);
+				parsed = sdf.parse(str);
+			}
+			else {
+				SimpleDateFormat sdf = new SimpleDateFormat(actualLocaleLong);
+				parsed = sdf.parse(str);			
+			}
+			
+			if (parsed != null)
+				return calendarize(parsed, locale);
+		}
+		catch (ParseException pe) {
+			// ignore, try more
+		}
+		
+		// try a couple of pre-defined formats, it's highly likely it's either US or European
     	String usFormat6 = "MMddyy";
 		String usFormat8 = "MMddyyyy";
 		String euFormat6 = "ddMMyy";
 		String euFormat8 = "ddMMyyyy";
-
-		Date parsed = null;
+		
 		if (locale.equals(Locale.US)) {
 			if (str.length() == 6) {
 				SimpleDateFormat sdf = new SimpleDateFormat(usFormat6);
