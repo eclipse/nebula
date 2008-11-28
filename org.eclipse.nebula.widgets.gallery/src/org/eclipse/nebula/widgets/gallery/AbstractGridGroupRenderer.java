@@ -470,10 +470,23 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 
 	public GalleryItem getNextItem(GalleryItem item, int key) {
 
-		if (item.getParentItem() == null) {
+		if (item == null) {
+			// No current selection, select the first item
+			if (gallery.getItemCount() > 0) {
+				GalleryItem firstGroup = gallery.getItem(0);
+				if (firstGroup != null && firstGroup.getItemCount() > 0) {
+					return firstGroup.getItem(0);
+				}
+
+			}
+			return null;
+		}
+		
+		if (  item.getParentItem() == null) {
 			// Key navigation is only available for child items ATM
 			return null;
 		}
+		
 		GalleryItem group = item.getParentItem();
 		
         switch (key) {
