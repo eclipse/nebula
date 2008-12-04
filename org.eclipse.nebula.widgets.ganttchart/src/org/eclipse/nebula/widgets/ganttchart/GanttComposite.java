@@ -895,9 +895,15 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 				}
 			}
 
+			// year scrolls so fast that the events actually lose position, this is no good, so we need to break the speed
+			if (mCurrentView == ISettings.VIEW_YEAR) {
+				if (diff > 7)
+					diff = 7;
+			}
+			
 			for (int i = 0; i < diff; i++) {
 				if (mCurrentView == ISettings.VIEW_YEAR) {
-					prevWeek();
+					prevMonth();
 				} else {
 					if (mCurrentView == ISettings.VIEW_DAY) {
 						prevHour();
@@ -944,9 +950,16 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 				}
 			}
 
+			// year scrolls so fast that the events actually lose position, this is no good, so we need to break the speed
+			// TODO: look into this a bit more, as it's quite odd (same for scrollingLeft)
+			if (mCurrentView == ISettings.VIEW_YEAR) {
+				if (diff > 7)
+					diff = 7;
+			}
+
 			for (int i = 0; i < diff; i++) {
 				if (mCurrentView == ISettings.VIEW_YEAR) {
-					nextWeek();
+					nextMonth();
 				} else {
 					if (mCurrentView == ISettings.VIEW_DAY) {
 						nextHour();
@@ -6396,7 +6409,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 		if (diff < 0) {
 			diff = mHorizontalScrollPosition - cur;
 		}
-
+		
 		// far right or far left
 		if (diff == 0 && (mHorizontalScrollPosition == mMinScrollRange || (mHorizontalScrollPosition + thumb) == mMaxScrollRange)) {
 			// far right
