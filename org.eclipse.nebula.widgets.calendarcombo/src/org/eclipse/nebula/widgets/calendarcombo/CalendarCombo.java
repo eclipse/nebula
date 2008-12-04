@@ -537,6 +537,7 @@ public class CalendarCombo extends Composite {
 									// what part of
 									// the date format we're on
 									String comboText = isFlat ? mFlatCombo.getText() : mCombo.getText();
+
 									for (int i = 0; i < comboText.length(); i++) {
 										if (i >= cursorLoc)
 											break;
@@ -591,63 +592,16 @@ public class CalendarCombo extends Composite {
 									sectionEnd = sectionStart + buf.toString().length();
 								}
 
+								// Korean dates and some others have spaces in
+								// them (!?)
+								oneChar = oneChar.replaceAll(" ", "");
+								if (oneChar.length() == 0)
+									return;
+
 								// now we now what to increase/decrease, lets do
 								// it
-								int calType = -1;
-								switch (oneChar.charAt(0)) {
-									case 'G':
-										calType = Calendar.ERA;
-										break;
-									case 'y':
-										calType = Calendar.YEAR;
-										break;
-									case 'M':
-										calType = Calendar.MONTH;
-										break;
-									case 'd':
-										calType = Calendar.DAY_OF_MONTH;
-										break;
-									case 'E':
-										calType = Calendar.DAY_OF_WEEK;
-										break;
-									case 'D':
-										calType = Calendar.DAY_OF_YEAR;
-										break;
-									case 'F':
-										calType = Calendar.DATE;
-										break;
-									case 'h':
-										calType = Calendar.HOUR;
-										break;
-									case 'm':
-										calType = Calendar.MINUTE;
-										break;
-									case 's':
-										calType = Calendar.SECOND;
-										break;
-									case 'S':
-										calType = Calendar.MILLISECOND;
-										break;
-									case 'w':
-										calType = Calendar.WEEK_OF_YEAR;
-										break;
-									case 'W':
-										calType = Calendar.WEEK_OF_MONTH;
-										break;
-									case 'a':
-										calType = Calendar.AM_PM;
-										break;
-									case 'k':
-										calType = Calendar.HOUR_OF_DAY;
-										break;
-									case 'K':
-										// ?
-										break;
-									case 'z':
-										calType = Calendar.ZONE_OFFSET;
-										break;
-								}
-
+								int calType = DateHelper.getCalendarTypeForString(oneChar);
+								
 								if (calType != -1) {
 									mStartDate.add(calType, up ? 1 : -1);
 
@@ -788,7 +742,8 @@ public class CalendarCombo extends Composite {
 					if (widget instanceof CalendarComposite == false)
 						kill(2);
 
-					// on mac, select all text in combo if we are the control that gained focus
+					// on mac, select all text in combo if we are the control
+					// that gained focus
 					if (mComboControl == Display.getDefault().getFocusControl()) {
 						if (isFlat) {
 							mFlatCombo.getTextControl().selectAll();
@@ -797,7 +752,8 @@ public class CalendarCombo extends Composite {
 							mCombo.setSelection(new Point(0, mCombo.getText().length()));
 						}
 					}
-				} else {
+				}
+				else {
 					long now = Calendar.getInstance(mSettings.getLocale()).getTimeInMillis();
 					long diff = now - mLastShowRequest;
 					if (diff > 0 && diff < 100)
@@ -806,7 +762,8 @@ public class CalendarCombo extends Composite {
 					if (!isCalendarVisible())
 						return;
 
-					// don't force focus, user clicked another control, let it grab the focus or it'll be odd behavior
+					// don't force focus, user clicked another control, let it
+					// grab the focus or it'll be odd behavior
 					if (!isFlat)
 						kill(3, true);
 				}
@@ -958,10 +915,13 @@ public class CalendarCombo extends Composite {
 		if (mParsingDate)
 			return;
 
+		String dateFormat = mSettings.getDateFormat();
+
 		try {
 			mParsingDate = true;
 
 			String comboText = (isFlat ? mFlatCombo.getText() : mCombo.getText());
+
 			if (comboText.length() == 0) {
 				mStartDate = null;
 				setText("");
@@ -970,28 +930,46 @@ public class CalendarCombo extends Composite {
 			}
 
 			try {
-				mStartDate = DateHelper.getDate(comboText, mSettings.getDateFormat(), mSettings.getLocale());
+				// start with a hard parse as date format parses can return
+				// false positives on various locales.
+				// false positives may sound good, but they're bad, as they can
+				// cause a year to end up 2000 years off...
+				try {
+					mStartDate = DateHelper.parseDateHard(comboText, mSettings.getLocale());
+					updateDate();
+					notifyDateChanged();
+					mParsingDate = false;
+					return;
+				}
+				catch (Exception err) {
+
+				}
+
+				// try true date format parse
+				mStartDate = DateHelper.getDate(comboText, dateFormat, mSettings.getLocale());
 				updateDate();
 				notifyDateChanged();
-				// System.err.println("Got here 1 - Settings parse");
+				// System.err.println("Got here 2 - Settings parse " +
+				// mStartDate.getTime());
 			}
 			catch (Exception err) {
-				// try the locale
+				// try the locale (this is error prone due to how java parses
+				// dates)
 				try {
 					mStartDate = DateHelper.parseDate(comboText, mSettings.getLocale());
 					updateDate();
 					notifyDateChanged();
-					// System.err.println("Got here 2 - Locale parse");
+					// System.err.println("Got here 3 - Locale parse " +
+					// mStartDate.getTime());
 				}
 				catch (Exception deeper) {
 					try {
-						mStartDate = DateHelper.parseDateHard(comboText, mSettings.getLocale());
+						mStartDate = DateHelper.slashParse(comboText, mSettings.getDateFormat(), mSettings.getAcceptedDateSeparatorChars(), mSettings.getLocale());
 						updateDate();
 						notifyDateChanged();
-						// System.err.println("Got here 3 - Hard parse");
 					}
-					catch (Exception deepest) {
-						// System.err.println("Got here 4 - Failed parse");
+					catch (Exception ohwell) {
+						// System.err.println("Failed parse, trying additional formats");
 						List otherFormats = mSettings.getAdditionalDateFormats();
 						if (otherFormats != null) {
 							try {
@@ -1003,6 +981,8 @@ public class CalendarCombo extends Composite {
 										setDate(date);
 										updateDate();
 										notifyDateChanged();
+										// System.err.println("Got here 4 - Additional date parse "
+										// + mStartDate.getTime());
 										return;
 									}
 									catch (Exception failed) {
@@ -1014,17 +994,17 @@ public class CalendarCombo extends Composite {
 								// don't care
 							}
 						}
-
-						// unparseable date, set the last used date if any,
-						// otherwise set nodateset text
-						if (mStartDate != null)
-							setDate(mStartDate);
-						else {
-							if (isFlat)
-								mFlatCombo.setText(mSettings.getNoDateSetText());
-							else
-								mCombo.setText(mSettings.getNoDateSetText());
-						}
+					}
+					
+					// unparseable date, set the last used date if any,
+					// otherwise set nodateset text
+					if (mStartDate != null)
+						setDate(mStartDate);
+					else {
+						if (isFlat)
+							mFlatCombo.setText(mSettings.getNoDateSetText());
+						else
+							mCombo.setText(mSettings.getNoDateSetText());
 					}
 				}
 			}
@@ -1106,8 +1086,8 @@ public class CalendarCombo extends Composite {
 	 */
 	public synchronized void setDate(Calendar cal) {
 		checkWidget();
-		setText(DateHelper.getDate(cal, mSettings.getDateFormat()));
-		this.mStartDate = cal;
+		mStartDate = cal;
+		updateDate();
 	}
 
 	/**
@@ -1563,7 +1543,8 @@ public class CalendarCombo extends Composite {
 	}
 
 	private void updateDate() {
-		setText(DateHelper.getDate(mStartDate, mSettings.getDateFormat()));
+		String toSet = DateHelper.getDate(mStartDate, DateHelper.dateFormatFix(mSettings.getDateFormat()));
+		setText(toSet);
 	}
 
 	/**

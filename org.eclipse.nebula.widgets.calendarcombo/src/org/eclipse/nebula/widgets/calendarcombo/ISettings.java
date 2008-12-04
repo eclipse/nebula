@@ -286,7 +286,8 @@ public interface ISettings {
 	/**
 	 * Returns a list of date formats that can be parsed into a Date. For example, if this list contains "mmddYY" and the user
 	 * types in the date 030508 the date will be parsed into the date and displayed and formatted according to the getDateFormat() value automatically. 
-	 * The order of this list is relevant as the first matched date that "works" will be used as the date.
+	 * The order of this list is relevant as the first matched date that "works" will be used as the date. This list is only used as a last resort if all
+	 * other date parses failed.
 	 * 
 	 * @return List of dateformats. Default is an empty list.
 	 * @see java.text.DateFormat
