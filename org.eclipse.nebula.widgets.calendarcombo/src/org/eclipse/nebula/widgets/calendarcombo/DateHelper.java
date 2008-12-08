@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
 
@@ -145,6 +146,89 @@ public class DateHelper {
 		return cal;
 	}
 
+	public static Calendar parse(final String comboText, final Locale locale, final String dateFormat, final char[] acceptedSeparatorChars, final List additionalDateFormats) throws Exception {
+		boolean isNumeric = comboText.replaceAll("[^0-9]", "").length() == comboText.length();
+		
+		if (isNumeric) {
+			return numericParse(comboText, locale, false);
+		}
+		else {
+			return slashParse(comboText, dateFormat, acceptedSeparatorChars, locale);
+		}
+		
+				
+				//return null;
+			//}
+			
+			/*if (comboText.length() == 0) {
+				return null;
+			}
+
+			try {
+				// start with a hard parse as date format parses can return
+				// false positives on various locales.
+				// false positives may sound good, but they're bad, as they can
+				// cause a year to end up 2000 years off...
+				try {
+					mStartDate = DateHelper.parseDateHard(comboText, locale);
+					return mStartDate;
+				}
+				catch (Exception err) {
+
+				}
+				
+				// try true date format parse
+				mStartDate = DateHelper.getDate(comboText, dateFormat, locale);
+				return mStartDate;
+				// System.err.println("Got here 2 - Settings parse " +
+				// mStartDate.getTime());
+			}
+			catch (Exception err) {
+				// try the locale (this is error prone due to how java parses
+				// dates)
+				try {
+					mStartDate = DateHelper.parseDate(comboText, locale);
+					return mStartDate;
+					// System.err.println("Got here 3 - Locale parse " +
+					// mStartDate.getTime());
+				}
+				catch (Exception deeper) {
+					try {
+						mStartDate = DateHelper.slashParse(comboText, dateFormat, acceptedSeparatorChars, locale);
+						return mStartDate;
+					}
+					catch (Exception ohwell) {
+						// System.err.println("Failed parse, trying additional formats");
+						if (additionalDateFormats != null) {
+							try {
+								for (int i = 0; i < additionalDateFormats.size(); i++) {
+									try {
+										String format = (String) additionalDateFormats.get(i);
+										Date date = DateHelper.getDate(comboText, format);
+										return mStartDate;
+									}
+									catch (Exception failed) {
+										// keep trying
+									}
+								}
+							}
+							catch (Exception err2) {
+								// don't care
+							}
+						}
+					}
+
+					return mStartDate;
+				}
+			}
+		}
+		catch (Exception err) {
+			err.printStackTrace();
+		}*/
+		
+		//return null;
+	}
+
 	/**
 	 * This method will try its best to parse a date based on the current
 	 * Locale.
@@ -157,14 +241,23 @@ public class DateHelper {
 	 * @throws Exception
 	 *             on any unforseen issues or bad parse errors
 	 */
-	public static Calendar parseDateHard(String str, Locale locale) throws Exception {
-
+	public static Calendar parseDateHard(final String str, final Locale locale) throws Exception {
+		
 		try {
 			DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, locale);
 			String actualLocalePattern = ((SimpleDateFormat) df).toPattern();
+						
+			try {
+				Calendar foo = slashParse(str, actualLocalePattern, new char [] { '/', '-', '.' }, locale);
+				return foo;
+			}
+			catch (Exception err) {
+				
+			}
+
 			try {
 				Date foo = df.parse(str);
-				return calendarize(foo, locale);
+				return calendarize(foo, locale);					
 			}
 			catch (Exception err) {
 				// some locales already have 4 y's
@@ -248,6 +341,7 @@ public class DateHelper {
 
 		// remove all non letters which will leave us with a clean date pattern
 		actualLocalePattern = dateFormatFix(actualLocalePattern.replaceAll("[^a-zA-Z]", ""));
+		actualLocalePattern = actualLocalePattern.replaceAll("G", "");
 
 		// parse it into long / short versions where the year is 4 or 2 digits
 		String actualLocaleLong = "";
@@ -318,11 +412,11 @@ public class DateHelper {
 
 		return null;
 	}
-	
+
 	public static int getCalendarTypeForString(String oneChar) {
-		
+
 		int calType = -1;
-		
+
 		switch (oneChar.charAt(0)) {
 			case 'G':
 				calType = Calendar.ERA;
@@ -376,29 +470,37 @@ public class DateHelper {
 				calType = Calendar.ZONE_OFFSET;
 				break;
 		}
-		
+
 		return calType;
 	}
-	
+
 	/**
-	 * This method assumes the dateFormat has a separator char in it, and that we can use that to determine what the user entered by using that separator
-	 * to split up the user entered date, and then do some logic on it. This is by no means a foolproof method and should not be relied upon returning 100% correct dates all the time.
+	 * This method assumes the dateFormat has a separator char in it, and that
+	 * we can use that to determine what the user entered by using that
+	 * separator to split up the user entered date, and then do some logic on
+	 * it. This is by no means a foolproof method and should not be relied upon
+	 * returning 100% correct dates all the time.
 	 * 
-	 * @param str String to parse
-	 * @param dateFormat DateFormat to use
-	 * @param separators Separator chars that can be encountered
-	 * @param locale Locale
+	 * @param str
+	 *            String to parse
+	 * @param dateFormat
+	 *            DateFormat to use
+	 * @param separators
+	 *            Separator chars that can be encountered
+	 * @param locale
+	 *            Locale
 	 * @return Calendar
-	 * @throws Exception If any step of the parsing failed
+	 * @throws Exception
+	 *             If any step of the parsing failed
 	 */
-	public static Calendar slashParse(final String str, final String dateFormat, final char [] separators, final Locale locale) throws Exception {
+	public static Calendar slashParse(final String str, final String dateFormat, final char[] separators, final Locale locale) throws Exception {
 		int start = -1;
 		String splitter = null;
 		String dateFormatToUse = dateFormat;
-		for (int i = 0; i < separators.length; i++) {			
+		for (int i = 0; i < separators.length; i++) {
 			start = str.indexOf(separators[i]);
 			if (start != -1) {
-				splitter = String.valueOf(separators[i]);				
+				splitter = String.valueOf(separators[i]);
 				break;
 			}
 		}
@@ -409,37 +511,50 @@ public class DateHelper {
 		for (int i = 0; i < separators.length; i++) {
 			if (String.valueOf(separators[i]).equals(splitter))
 				continue;
-						
-			dateFormatToUse = dateFormatToUse.replaceAll("\\"+String.valueOf(separators[i]), splitter);
+
+			dateFormatToUse = dateFormatToUse.replaceAll("\\" + String.valueOf(separators[i]), splitter);
 		}
-		
+
 		Calendar toReturn = Calendar.getInstance(locale);
 		StringTokenizer st = new StringTokenizer(str, splitter);
 		StringTokenizer st2 = new StringTokenizer(dateFormatToUse, splitter);
-		
-		if (st.countTokens() != st2.countTokens()) 
+
+		if (st.countTokens() != st2.countTokens())
 			throw new Exception("Date format does not match date string in terms of splitter character numbers");
 
 		while (st.hasMoreTokens()) {
 			String dateValue = st.nextToken();
 			String dateType = st2.nextToken();
-			
+
 			dateValue = dateValue.replaceAll(" ", "");
 			dateType = dateType.replaceAll(" ", "");
-			
+
 			int calType = getCalendarTypeForString(dateType);
-			if (calType == -1) 
-				throw new Exception("Unknown calendar type for '"+dateValue+"'");
-			
-			toReturn.set(calType, Integer.parseInt(dateValue));			
+			if (calType == -1)
+				throw new Exception("Unknown calendar type for '" + dateValue + "'");
+
+			toReturn.set(calType, Integer.parseInt(dateValue));
 		}
-		
+
 		// month is zero based, dumbest idea ever
 		toReturn.add(Calendar.MONTH, -1);
-		
+
 		if (toReturn.get(Calendar.YEAR) < 100)
-			toReturn.set(Calendar.YEAR, toReturn.get(Calendar.YEAR)+2000);
+			toReturn.set(Calendar.YEAR, toReturn.get(Calendar.YEAR) + 2000);
+
+		toReturn.set(Calendar.HOUR_OF_DAY, 0);
+		toReturn.set(Calendar.MINUTE, 0);
+		toReturn.set(Calendar.SECOND, 0);
+		toReturn.set(Calendar.MILLISECOND, 0);
 		
 		return toReturn;
 	}
+	
+	/*public Calendar smartParse(String dateStr, Locale locale) {
+		
+		// Samples:
+		// 080101 20080101
+		// 08/01/01 2008/01/01
+		return null;
+	}*/
 }

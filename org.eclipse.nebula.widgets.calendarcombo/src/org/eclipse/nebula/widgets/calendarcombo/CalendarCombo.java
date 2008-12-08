@@ -915,11 +915,11 @@ public class CalendarCombo extends Composite {
 		if (mParsingDate)
 			return;
 
-		String dateFormat = mSettings.getDateFormat();
+		//String dateFormat = mSettings.getDateFormat();
 
 		try {
 			mParsingDate = true;
-
+			
 			String comboText = (isFlat ? mFlatCombo.getText() : mCombo.getText());
 
 			if (comboText.length() == 0) {
@@ -929,6 +929,12 @@ public class CalendarCombo extends Composite {
 				return;
 			}
 
+			mStartDate = DateHelper.parse(comboText, mSettings.getLocale(), mSettings.getDateFormat(), mSettings.getAcceptedDateSeparatorChars(), mSettings.getAdditionalDateFormats());
+			updateDate();
+			notifyDateChanged();
+			mParsingDate = false;
+
+			/*
 			try {
 				// start with a hard parse as date format parses can return
 				// false positives on various locales.
@@ -1007,7 +1013,7 @@ public class CalendarCombo extends Composite {
 							mCombo.setText(mSettings.getNoDateSetText());
 					}
 				}
-			}
+			}*/
 		}
 		catch (Exception err) {
 			err.printStackTrace();
