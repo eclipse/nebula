@@ -37,6 +37,8 @@ import org.eclipse.swt.widgets.Display;
  */
 public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 
+	private final static String OVERLAY_BOTTOM_RIGHT = "org.eclipse.nebula.widget.gallery.bottomRightOverlay";
+	
 	protected ArrayList dropShadowsColors = new ArrayList();
 
 	boolean dropShadows = false;
@@ -153,6 +155,8 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 			if (size.x > 0 && size.y > 0) {
 				gc.drawImage(itemImage, 0, 0, imageWidth, imageHeight, x + xShift, y + yShift, size.x, size.y);
 			}
+			
+			drawImageOverlays( gc, item,  x,  y,  size,  xShift,  yShift);	
 		}
 
 		// Draw label
@@ -192,6 +196,26 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 		}
 	}
 
+	
+	/**
+	 * Draw image overlays. Overlays are defined with image.setData using the following keys : 
+	 * <ul>
+	 *    <li>org.eclipse.nebula.widget.gallery.bottomRightOverlay</li>
+	 *</ul> 
+	 * 
+	 */
+	private void drawImageOverlays(GC gc, GalleryItem item, int x, int y, Point imageSize, int xShift, int yShift) {
+		Object bottomRightOverlay = item.getData(OVERLAY_BOTTOM_RIGHT);
+		if (bottomRightOverlay != null && bottomRightOverlay instanceof Image) {
+			Image bottomRightOverlayImage = (Image) bottomRightOverlay;
+			if (bottomRightOverlayImage.getBounds().width < imageSize.x && bottomRightOverlayImage.getBounds().height < imageSize.y) {
+				gc.drawImage(bottomRightOverlayImage, 0, 0, bottomRightOverlayImage.getBounds().width, bottomRightOverlayImage.getBounds().height, x+ xShift+imageSize.x
+						- bottomRightOverlayImage.getBounds().width, y+ yShift+imageSize.y- bottomRightOverlayImage.getBounds().height, bottomRightOverlayImage.getBounds().width,
+						bottomRightOverlayImage.getBounds().height);
+			}
+		}
+	}
+	
 	/**
 	 * @param item
 	 * @return the Font to use for this item
