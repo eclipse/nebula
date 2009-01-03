@@ -31,7 +31,9 @@ import org.eclipse.swt.widgets.Item;
  * @contributor Robert Handschmann (bug 215817)
  */
 
-public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRenderer {
+public abstract class AbstractGridGroupRenderer extends
+		AbstractGalleryGroupRenderer {
+
 	static final int DEFAULT_SIZE = 96;
 
 	protected int minMargin;
@@ -51,6 +53,62 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 	private static final int END = 0;
 
 	private static final int START = 1;
+
+	/**
+	 * If true, groups are always expanded and toggle button is not displayed
+	 */
+	private boolean alwaysExpanded = false;
+
+	public void draw(GC gc, GalleryItem group, int x, int y, int clipX,
+			int clipY, int clipWidth, int clipHeight) {
+	}
+
+	public GalleryItem getItem(GalleryItem group, Point coords) {
+		return null;
+	}
+
+	public Rectangle getSize(GalleryItem item) {
+		return null;
+	}
+
+	public void layout(GC gc, GalleryItem group) {
+	}
+
+	/**
+	 * If true, groups are always expanded and toggle button is not displayed
+	 * 
+	 * @return true if groups are always expanded
+	 */
+	public boolean isAlwaysExpanded() {
+		return alwaysExpanded;
+	}
+
+	/**
+	 * Return item expand state (item.isExpanded()) Returns always true is
+	 * alwaysExpanded is set to true.
+	 * 
+	 * @param item
+	 * @return
+	 */
+	protected boolean isGroupExpanded(GalleryItem item) {
+		if (alwaysExpanded)
+			return true;
+
+		if (item == null)
+			return false;
+
+		return item.isExpanded();
+	}
+
+	/**
+	 * If true, groups are always expanded and toggle button is not displayed if
+	 * false, expand status depends on each item.
+	 * 
+	 * @param alwaysExpanded
+	 */
+	public void setAlwaysExpanded(boolean alwaysExpanded) {
+		this.alwaysExpanded = alwaysExpanded;
+	}
 
 	public int getMinMargin() {
 		return minMargin;
@@ -79,7 +137,7 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 	private void updateGallery() {
 		// Update gallery
 		if (gallery != null) {
-			gallery.updateStructuralValues(true);
+			gallery.updateStructuralValues(null, true);
 			gallery.updateScrollBarsProperties();
 			gallery.redraw();
 		}
@@ -110,11 +168,14 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 
 	protected int calculateMargins(int size, int count, int itemSize) {
 		int margin = this.minMargin;
-		margin += Math.round((float) (size - this.minMargin - (count * (itemSize + this.minMargin))) / (count + 1));
+		margin += Math
+				.round((float) (size - this.minMargin - (count * (itemSize + this.minMargin)))
+						/ (count + 1));
 		return margin;
 	}
 
-	protected Point getSize(int nbx, int nby, int itemSizeX, int itemSizeY, int minMargin, int autoMargin) {
+	protected Point getSize(int nbx, int nby, int itemSizeX, int itemSizeY,
+			int minMargin, int autoMargin) {
 		int x = 0, y = 0;
 
 		if (gallery.isVertical()) {
@@ -135,17 +196,19 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 	 * @param selected
 	 * @param parent
 	 */
-	protected void drawItem(GC gc, int index, boolean selected, GalleryItem parent, int offsetY) {
+	protected void drawItem(GC gc, int index, boolean selected,
+			GalleryItem parent, int offsetY) {
 
 		if (Gallery.DEBUG)
-			System.out.println("Draw item ? " + index);
+			System.out.println("Draw item ? " + index); //$NON-NLS-1$
 
 		if (index < parent.getItemCount()) {
 			int hCount = ((Integer) parent.getData(H_COUNT)).intValue();
 			int vCount = ((Integer) parent.getData(V_COUNT)).intValue();
 
 			if (Gallery.DEBUG)
-				System.out.println("hCount :  " + hCount + " vCount : " + vCount);
+				System.out.println("hCount :  " + hCount + " vCount : " //$NON-NLS-1$//$NON-NLS-2$
+						+ vCount);
 
 			int posX, posY;
 			if (gallery.isVertical()) {
@@ -167,11 +230,15 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 			int xPixelPos, yPixelPos;
 			if (gallery.isVertical()) {
 				xPixelPos = posX * (itemWidth + margin) + margin;
-				yPixelPos = posY * (itemHeight + minMargin) - gallery.translate + minMargin + ((parent == null) ? 0 : (parent.y) + offsetY);
+				yPixelPos = posY * (itemHeight + minMargin) - gallery.translate
+						+ minMargin
+						+ ((parent == null) ? 0 : (parent.y) + offsetY);
 				gItem.x = xPixelPos;
 				gItem.y = yPixelPos + gallery.translate;
 			} else {
-				xPixelPos = posX * (itemWidth + minMargin) - gallery.translate + minMargin + ((parent == null) ? 0 : (parent.x) + offsetY);
+				xPixelPos = posX * (itemWidth + minMargin) - gallery.translate
+						+ minMargin
+						+ ((parent == null) ? 0 : (parent.x) + offsetY);
 				yPixelPos = posY * (itemHeight + margin) + margin;
 				gItem.x = xPixelPos + gallery.translate;
 				gItem.y = yPixelPos;
@@ -180,7 +247,8 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 			gItem.height = itemHeight;
 			gItem.width = itemWidth;
 
-			gallery.sendPaintItemEvent(item, index, gc, xPixelPos, yPixelPos, this.itemWidth, this.itemHeight);
+			gallery.sendPaintItemEvent(item, index, gc, xPixelPos, yPixelPos,
+					this.itemWidth, this.itemHeight);
 
 			if (gallery.getItemRenderer() != null) {
 				// gc.setClipping(xPixelPos, yPixelPos, itemWidth, itemHeight);
@@ -189,8 +257,10 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 					System.out.println("itemRender.draw"); //$NON-NLS-1$
 				Rectangle oldClipping = gc.getClipping();
 
-				gc.setClipping(oldClipping.intersection(new Rectangle(xPixelPos, yPixelPos, itemWidth, itemHeight)));
-				gallery.getItemRenderer().draw(gc, gItem, index, xPixelPos, yPixelPos, itemWidth, itemHeight);
+				gc.setClipping(oldClipping.intersection(new Rectangle(
+						xPixelPos, yPixelPos, itemWidth, itemHeight)));
+				gallery.getItemRenderer().draw(gc, gItem, index, xPixelPos,
+						yPixelPos, itemWidth, itemHeight);
 				gc.setClipping(oldClipping);
 				if (Gallery.DEBUG)
 					System.out.println("itemRender done"); //$NON-NLS-1$
@@ -199,28 +269,32 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 		}
 	}
 
-	protected int[] getVisibleItems(GalleryItem group, int x, int y, int clipX, int clipY, int clipWidth, int clipHeight, int offset) {
+	protected int[] getVisibleItems(GalleryItem group, int x, int y, int clipX,
+			int clipY, int clipWidth, int clipHeight, int offset) {
+		int[] indexes;
 
 		if (gallery.isVertical()) {
 			int count = ((Integer) group.getData(H_COUNT)).intValue();
 			// TODO: Not used ATM
 			// int vCount = ((Integer) group.getData(V_COUNT)).intValue();
 
-			int firstLine = (clipY - y - offset - minMargin) / (itemHeight + minMargin);
+			int firstLine = (clipY - y - offset - minMargin)
+					/ (itemHeight + minMargin);
 			if (firstLine < 0)
 				firstLine = 0;
 
 			int firstItem = firstLine * count;
 			if (Gallery.DEBUG)
-				System.out.println("First line : " + firstLine);
+				System.out.println("First line : " + firstLine); //$NON-NLS-1$
 
-			int lastLine = (clipY - y - offset + clipHeight - minMargin) / (itemHeight + minMargin);
+			int lastLine = (clipY - y - offset + clipHeight - minMargin)
+					/ (itemHeight + minMargin);
 
 			if (lastLine < firstLine)
 				lastLine = firstLine;
 
 			if (Gallery.DEBUG)
-				System.out.println("Last line : " + lastLine);
+				System.out.println("Last line : " + lastLine); //$NON-NLS-1$
 
 			int lastItem = (lastLine + 1) * count;
 
@@ -228,30 +302,31 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 			if (lastItem - firstItem == 0)
 				return null;
 
-			int[] indexes = new int[lastItem - firstItem];
+			indexes = new int[lastItem - firstItem];
 			for (int i = 0; i < (lastItem - firstItem); i++) {
 				indexes[i] = firstItem + i;
 			}
 
-			return indexes;
 		} else {
 			int count = ((Integer) group.getData(V_COUNT)).intValue();
 
-			int firstLine = (clipX - x - offset - minMargin) / (itemWidth + minMargin);
+			int firstLine = (clipX - x - offset - minMargin)
+					/ (itemWidth + minMargin);
 			if (firstLine < 0)
 				firstLine = 0;
 
 			int firstItem = firstLine * count;
 			if (Gallery.DEBUG)
-				System.out.println("First line : " + firstLine);
+				System.out.println("First line : " + firstLine); //$NON-NLS-1$
 
-			int lastLine = (clipX - x - offset + clipWidth - minMargin) / (itemWidth + minMargin);
+			int lastLine = (clipX - x - offset + clipWidth - minMargin)
+					/ (itemWidth + minMargin);
 
 			if (lastLine < firstLine)
 				lastLine = firstLine;
 
 			if (Gallery.DEBUG)
-				System.out.println("Last line : " + lastLine);
+				System.out.println("Last line : " + lastLine); //$NON-NLS-1$
 
 			int lastItem = (lastLine + 1) * count;
 
@@ -259,13 +334,13 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 			if (lastItem - firstItem == 0)
 				return null;
 
-			int[] indexes = new int[lastItem - firstItem];
+			indexes = new int[lastItem - firstItem];
 			for (int i = 0; i < (lastItem - firstItem); i++) {
 				indexes[i] = firstItem + i;
 			}
-
-			return indexes;
 		}
+
+		return indexes;
 	}
 
 	/**
@@ -302,22 +377,29 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.nebula.widgets.gallery.AbstractGalleryGroupRenderer#preLayout
+	 * (org.eclipse.swt.graphics.GC)
+	 */
 	public void preLayout(GC gc) {
-		// Reset margin to minimal value before "best fit" calculation 
+		// Reset margin to minimal value before "best fit" calculation
 		this.margin = this.minMargin;
 		super.preLayout(gc);
 	}
 
-	protected Point getLayoutData( GalleryItem item ){
+	protected Point getLayoutData(GalleryItem item) {
 		Integer hCount = ((Integer) item.getData(H_COUNT));
 		Integer vCount = ((Integer) item.getData(V_COUNT));
-		
-		if( hCount == null || vCount == null)
+
+		if (hCount == null || vCount == null)
 			return null;
-		
-		return new Point( hCount.intValue(), vCount.intValue());
+
+		return new Point(hCount.intValue(), vCount.intValue());
 	}
-	
+
 	protected Rectangle getSize(GalleryItem item, int offsetY) {
 
 		GalleryItem parent = item.getParentItem();
@@ -325,33 +407,40 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 			int index = parent.indexOf(item);
 
 			Point layoutData = getLayoutData(parent);
-			if( layoutData == null )
+			if (layoutData == null)
 				return null;
-			
+
 			int hCount = layoutData.x;
 			int vCount = layoutData.y;
 
 			if (Gallery.DEBUG)
-				System.out.println("hCount :  " + hCount + " vCount : " + vCount);
+				System.out.println("hCount :  " + hCount + " vCount : " //$NON-NLS-1$ //$NON-NLS-2$
+						+ vCount);
 
 			if (gallery.isVertical()) {
 				int posX = index % hCount;
 				int posY = (index - posX) / hCount;
 
 				int xPixelPos = posX * (itemWidth + margin) + margin;
-				int yPixelPos = posY * (itemHeight + minMargin) + minMargin + ((parent == null) ? 0 : (parent.y) + offsetY);
+				int yPixelPos = posY * (itemHeight + minMargin) + minMargin
+						+ ((parent == null) ? 0 : (parent.y) + offsetY);
 
-				return new Rectangle(xPixelPos, yPixelPos, this.itemWidth, this.itemHeight);
-			} else {
-				int posY = index % vCount;
-				int posX = (index - posY) / vCount;
-
-				int yPixelPos = posY * (itemHeight + margin) + margin;
-				int xPixelPos = posX * (itemWidth + minMargin) + minMargin + ((parent == null) ? 0 : (parent.x) + offsetY);
-
-				return new Rectangle(xPixelPos, yPixelPos, this.itemWidth, this.itemHeight);
+				return new Rectangle(xPixelPos, yPixelPos, this.itemWidth,
+						this.itemHeight);
 			}
+
+			// else
+			int posY = index % vCount;
+			int posX = (index - posY) / vCount;
+
+			int yPixelPos = posY * (itemHeight + margin) + margin;
+			int xPixelPos = posX * (itemWidth + minMargin) + minMargin
+					+ ((parent == null) ? 0 : (parent.x) + offsetY);
+
+			return new Rectangle(xPixelPos, yPixelPos, this.itemWidth,
+					this.itemHeight);
 		}
+
 		return null;
 	}
 
@@ -362,8 +451,9 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 	 * @return
 	 */
 	protected GalleryItem getItem(GalleryItem group, Point coords, int offsetY) {
-		if (Gallery.DEBUG)
-			System.out.println("getitem " + coords.x + " " + coords.y);
+		if (Gallery.DEBUG) {
+			System.out.println("getitem " + coords.x + " " + coords.y); //$NON-NLS-1$//$NON-NLS-2$
+		}
 
 		int itemNb;
 		if (gallery.isVertical()) {
@@ -387,7 +477,8 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 			if (coords.y - group.y - minMargin < offsetY)
 				return null;
 
-			int posY = (coords.y - group.y - offsetY - minMargin) / (itemHeight + minMargin);
+			int posY = (coords.y - group.y - offsetY - minMargin)
+					/ (itemHeight + minMargin);
 
 			// Check if the users clicked on the Y margin.
 			if (((coords.y - group.y - offsetY - minMargin) % (itemHeight + minMargin)) > itemHeight) {
@@ -415,7 +506,8 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 			if (coords.x - group.x - minMargin < offsetY)
 				return null;
 
-			int posX = (coords.x - group.x - offsetY - minMargin) / (itemWidth + minMargin);
+			int posX = (coords.x - group.x - offsetY - minMargin)
+					/ (itemWidth + minMargin);
 
 			// Check if the users clicked on the X margin.
 			if (((coords.x - group.x - offsetY - minMargin) % (itemWidth + minMargin)) > itemWidth) {
@@ -423,8 +515,10 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 			}
 			itemNb = posY + posX * vCount;
 		}
-		if (Gallery.DEBUG)
-			System.out.println("Item found : " + itemNb);
+
+		if (Gallery.DEBUG) {
+			System.out.println("Item found : " + itemNb); //$NON-NLS-1$
+		}
 
 		if (itemNb < group.getItemCount()) {
 			return group.getItem(itemNb);
@@ -433,39 +527,46 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 		return null;
 	}
 
-	private GalleryItem goLeft(GalleryItem group, int pos) {
-		pos--;
+	private GalleryItem goLeft(GalleryItem group, int posParam) {
+		int pos = posParam - 1;
+
 		if (pos < 0)
 			return this.getFirstItem(this.getPreviousGroup(group), END);
-		else
-			return group.getItem(pos);
+
+		// else
+		return group.getItem(pos);
 	}
 
-	private GalleryItem goRight(GalleryItem group, int pos) {
-		pos++;
+	private GalleryItem goRight(GalleryItem group, int posParam) {
+		int pos = posParam + 1;
+
 		if (pos >= group.getItemCount())
 			return this.getFirstItem(this.getNextGroup(group), START);
-		else
-			return group.getItem(pos);
+
+		// else
+		return group.getItem(pos);
 	}
 
-	private GalleryItem goUp(GalleryItem group, int pos, int hCount) {
-		int colPos = pos % hCount;
-		pos -= hCount;
+	private GalleryItem goUp(GalleryItem group, int posParam, int hCount) {
+		int colPos = posParam % hCount;
+		int pos = posParam - hCount;
+
 		if (pos < 0)
 			return this.getItemAt(this.getPreviousGroup(group), colPos, END);
-		else
-			return group.getItem(pos);
+
+		// else
+		return group.getItem(pos);
 	}
 
-	private GalleryItem goDown(GalleryItem group, int pos, int hCount) {
-		int colPos = pos % hCount;
-		pos += hCount;
+	private GalleryItem goDown(GalleryItem group, int posParam, int hCount) {
+		int colPos = posParam % hCount;
+		int pos = posParam + hCount;
+
 		if (pos >= group.getItemCount())
 			return this.getItemAt(this.getNextGroup(group), colPos, START);
-		else
-			return group.getItem(pos);
 
+		// else
+		return group.getItem(pos);
 	}
 
 	public GalleryItem getNextItem(GalleryItem item, int key) {
@@ -481,21 +582,20 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 			}
 			return null;
 		}
-		
-		if (  item.getParentItem() == null) {
+
+		if (item.getParentItem() == null) {
 			// Key navigation is only available for child items ATM
 			return null;
 		}
-		
-		GalleryItem group = item.getParentItem();
-		
-        switch (key) {
-        case SWT.HOME:
-            return getFirstItem(group, START);
-        case SWT.END:
-            return getFirstItem(group, END);
-        }
 
+		GalleryItem group = item.getParentItem();
+
+		switch (key) {
+		case SWT.HOME:
+			return getFirstItem(group, START);
+		case SWT.END:
+			return getFirstItem(group, END);
+		}
 
 		int pos = group.indexOf(item);
 		GalleryItem next = null;
@@ -519,14 +619,16 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 			case SWT.ARROW_DOWN:
 				next = goDown(group, pos, hCount);
 				break;
-				
-			case SWT.PAGE_UP:
-	            next = goUp(group, pos, hCount * Math.max(maxVisibleRows - 1, 1));
-	            break;
 
-	        case SWT.PAGE_DOWN:
-	            next = goDown(group, pos, hCount * Math.max(maxVisibleRows - 1, 1));
-	            break;
+			case SWT.PAGE_UP:
+				next = goUp(group, pos, hCount
+						* Math.max(maxVisibleRows - 1, 1));
+				break;
+
+			case SWT.PAGE_DOWN:
+				next = goDown(group, pos, hCount
+						* Math.max(maxVisibleRows - 1, 1));
+				break;
 			}
 		} else {
 			int vCount = ((Integer) group.getData(V_COUNT)).intValue();
@@ -547,14 +649,16 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 			case SWT.ARROW_DOWN:
 				next = goRight(group, pos);
 				break;
-				
-			case SWT.PAGE_UP:
-	            next = goUp(group, pos, vCount * Math.max(maxVisibleColumns - 1, 1));
-	            break;
 
-	        case SWT.PAGE_DOWN:
-	            next = goDown(group, pos, vCount * Math.max(maxVisibleColumns - 1, 1));
-	            break;
+			case SWT.PAGE_UP:
+				next = goUp(group, pos, vCount
+						* Math.max(maxVisibleColumns - 1, 1));
+				break;
+
+			case SWT.PAGE_DOWN:
+				next = goDown(group, pos, vCount
+						* Math.max(maxVisibleColumns - 1, 1));
+				break;
 
 			}
 		}
@@ -566,7 +670,7 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 		int gPos = gallery.indexOf(group);
 		while (gPos > 0) {
 			GalleryItem newGroup = gallery.getItem(gPos - 1);
-			if (newGroup.isExpanded())
+			if (isGroupExpanded(newGroup))
 				return newGroup;
 			gPos--;
 		}
@@ -578,14 +682,13 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 		int gPos = gallery.indexOf(group);
 		while (gPos < gallery.getItemCount() - 1) {
 			GalleryItem newGroup = gallery.getItem(gPos + 1);
-			if (newGroup.isExpanded())
+			if (isGroupExpanded(newGroup))
 				return newGroup;
 			gPos++;
 		}
 
 		return null;
 	}
-
 
 	private GalleryItem getFirstItem(GalleryItem group, int from) {
 		if (group == null)
@@ -636,7 +739,8 @@ public abstract class AbstractGridGroupRenderer extends AbstractGalleryGroupRend
 			}
 
 			// Get the last item.
-			return group.getItem((group.getItemCount() / hCount + offset) * hCount + endPos - 1);
+			return group.getItem((group.getItemCount() / hCount + offset)
+					* hCount + endPos - 1);
 
 		case START:
 		default:

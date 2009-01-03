@@ -23,8 +23,8 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * Item drawing with a list style :<br/> Image on the left, text and
- * description on the right.<br/>
+ * Item drawing with a list style :<br/>
+ * Image on the left, text and description on the right.<br/>
  * 
  * Best with bigger width than height.
  * <p>
@@ -73,14 +73,20 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 
 	public ListItemRenderer() {
 		// Set defaults
-		foregroundColor = Display.getDefault().getSystemColor(SWT.COLOR_LIST_FOREGROUND);
-		backgroundColor = Display.getDefault().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
-		selectionBackgroundColor = Display.getDefault().getSystemColor(SWT.COLOR_LIST_SELECTION);
-		selectionForegroundColor = Display.getDefault().getSystemColor(SWT.COLOR_LIST_FOREGROUND);
-		descriptionColor = Display.getDefault().getSystemColor(SWT.COLOR_DARK_GRAY);
+		foregroundColor = Display.getDefault().getSystemColor(
+				SWT.COLOR_LIST_FOREGROUND);
+		backgroundColor = Display.getDefault().getSystemColor(
+				SWT.COLOR_LIST_BACKGROUND);
+		selectionBackgroundColor = Display.getDefault().getSystemColor(
+				SWT.COLOR_LIST_SELECTION);
+		selectionForegroundColor = Display.getDefault().getSystemColor(
+				SWT.COLOR_LIST_FOREGROUND);
+		descriptionColor = Display.getDefault().getSystemColor(
+				SWT.COLOR_DARK_GRAY);
 	}
 
-	public void draw(GC gc, GalleryItem item, int index, int x, int y, int width, int height) {
+	public void draw(GC gc, GalleryItem item, int index, int x, int y,
+			int width, int height) {
 
 		Image itemImage = item.getImage();
 
@@ -97,7 +103,9 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 			imageWidth = itemImageBounds.width;
 			imageHeight = itemImageBounds.height;
 
-			size = getBestSize(imageWidth, imageHeight, useableHeight - 4 - this.dropShadowsSize, useableHeight - 4 - this.dropShadowsSize);
+			size = RendererHelper.getBestSize(imageWidth, imageHeight,
+					useableHeight - 4 - this.dropShadowsSize, useableHeight - 4
+							- this.dropShadowsSize);
 
 			xShift = ((useableHeight - size.x) >> 1) + 2;
 			yShift = (useableHeight - size.y) >> 1;
@@ -108,10 +116,12 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 					c = (Color) dropShadowsColors.get(i);
 					gc.setForeground(c);
 
-					gc.drawLine(x + useableHeight + i - xShift - 1, y + dropShadowsSize + yShift, x + useableHeight + i - xShift - 1, y + useableHeight + i
-							- yShift);
-					gc.drawLine(x + xShift + dropShadowsSize, y + useableHeight + i - yShift - 1, x + useableHeight + i - xShift, y - 1 + useableHeight + i
-							- yShift);
+					gc.drawLine(x + useableHeight + i - xShift - 1, y
+							+ dropShadowsSize + yShift, x + useableHeight + i
+							- xShift - 1, y + useableHeight + i - yShift);
+					gc.drawLine(x + xShift + dropShadowsSize, y + useableHeight
+							+ i - yShift - 1, x + useableHeight + i - xShift, y
+							- 1 + useableHeight + i - yShift);
 				}
 			}
 		}
@@ -123,24 +133,28 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 			gc.fillRoundRectangle(x, y, width, useableHeight, 15, 15);
 		}
 
-		if (itemImage != null) {
+		if (itemImage != null && size != null) {
 			if (size.x > 0 && size.y > 0) {
-				gc.drawImage(itemImage, 0, 0, imageWidth, imageHeight, x + xShift, y + yShift, size.x, size.y);
+				gc.drawImage(itemImage, 0, 0, imageWidth, imageHeight, x
+						+ xShift, y + yShift, size.x, size.y);
 			}
 		}
 
-		if (item.getText() != null && !EMPTY_STRING.equals(item.getText()) && showLabels) {
+		if (item.getText() != null && !EMPTY_STRING.equals(item.getText())
+				&& showLabels) {
 
 			// Calculate font height (text and description)
 			gc.setFont(textFont);
-			String text = RendererHelper.createLabel(item.getText(), gc, width - useableHeight - 10);
+			String text = RendererHelper.createLabel(item.getText(), gc, width
+					- useableHeight - 10);
 			int textFontHeight = gc.getFontMetrics().getHeight();
 
 			String description = null;
 			int descriptionFontHeight = 0;
-			if (item.getDescription() != null) {
+			if (item.getText(1) != null) {
 				gc.setFont(descriptionFont);
-				description = RendererHelper.createLabel(item.getDescription(), gc, width - useableHeight - 10);
+				description = RendererHelper.createLabel(item.getText(1), gc,
+						width - useableHeight - 10);
 				descriptionFontHeight = gc.getFontMetrics().getHeight();
 			}
 
@@ -154,7 +168,8 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 				displayDescription = true;
 
 			// Background color
-			gc.setBackground(selected ? selectionBackgroundColor : backgroundColor);
+			gc.setBackground(selected ? selectionBackgroundColor
+					: backgroundColor);
 
 			// Draw text
 			if (displayText) {
@@ -162,7 +177,8 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 				if (displayDescription)
 					transY -= descriptionFontHeight;
 				transY = transY >> 1;
-				gc.setForeground(selected ? this.selectionForegroundColor : this.foregroundColor);
+				gc.setForeground(selected ? this.selectionForegroundColor
+						: this.foregroundColor);
 				gc.setFont(textFont);
 				gc.drawText(text, x + useableHeight + 5, y + transY, true);
 			}
@@ -170,14 +186,19 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 			if (description != null && displayDescription) {
 				gc.setForeground(this.descriptionColor);
 				gc.setFont(descriptionFont);
-				gc.drawText(description, x + useableHeight + 5, y + ((height - descriptionFontHeight - textFontHeight - 2) >> 1) + textFontHeight + 1, true);
+				gc.drawText(description, x + useableHeight + 5,
+						y
+								+ ((height - descriptionFontHeight
+										- textFontHeight - 2) >> 1)
+								+ textFontHeight + 1, true);
 			}
 		}
 	}
 
 	public void setDropShadowsSize(int dropShadowsSize) {
 		this.dropShadowsSize = dropShadowsSize;
-		this.dropShadowsAlphaStep = (dropShadowsSize == 0) ? 0 : (200 / dropShadowsSize);
+		this.dropShadowsAlphaStep = (dropShadowsSize == 0) ? 0
+				: (200 / dropShadowsSize);
 
 		freeDropShadowsColors();
 		createColors();
@@ -276,8 +297,7 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 	}
 
 	/**
-	 * Set the font for drawing item label or <tt>null</tt> to use system
-	 * font.
+	 * Set the font for drawing item label or <tt>null</tt> to use system font.
 	 * 
 	 * @param font
 	 *            the font to set
@@ -297,8 +317,8 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 	}
 
 	/**
-	 * Set the font for drawing item description or <tt>null</tt> to use
-	 * system font.
+	 * Set the font for drawing item description or <tt>null</tt> to use system
+	 * font.
 	 * 
 	 * @param font
 	 *            the font to set

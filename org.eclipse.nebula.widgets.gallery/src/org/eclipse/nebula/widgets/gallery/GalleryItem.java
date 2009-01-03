@@ -34,7 +34,8 @@ import org.eclipse.swt.widgets.Item;
 public class GalleryItem extends Item {
 
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
-	private String description = null;
+
+	private String[] text = { null, null, null };
 
 	// This is managed by the Gallery
 	/**
@@ -73,7 +74,6 @@ public class GalleryItem extends Item {
 	 */
 	protected int lastIndexOf = 0;
 
-
 	/**
 	 * True if the Gallery was created wih SWT.VIRTUAL
 	 */
@@ -91,10 +91,20 @@ public class GalleryItem extends Item {
 
 	protected Color background;
 
+	private boolean ultraLazyDummy = false;
+
 	/**
 	 * 
 	 */
 	private boolean expanded;
+
+	protected boolean isUltraLazyDummy() {
+		return ultraLazyDummy;
+	}
+
+	protected void setUltraLazyDummy(boolean ultraLazyDummy) {
+		this.ultraLazyDummy = ultraLazyDummy;
+	}
 
 	public Gallery getParent() {
 		return parent;
@@ -158,12 +168,12 @@ public class GalleryItem extends Item {
 
 	protected void addItem(GalleryItem item, int position) {
 		if (position != -1 && (position < 0 || position > getItemCount())) {
-			throw new IllegalArgumentException("ERROR_INVALID_RANGE");
+			throw new IllegalArgumentException("ERROR_INVALID_RANGE"); //$NON-NLS-1$
 		}
 		_addItem(item, position);
 	}
 
-	private void _addItem(GalleryItem item, int position) {		
+	private void _addItem(GalleryItem item, int position) {
 		// TODO: ensure that there was no item at this position before using
 		// this item in virtual mode
 
@@ -171,7 +181,7 @@ public class GalleryItem extends Item {
 		items = (GalleryItem[]) parent._arrayAddItem(items, item, position);
 
 		// Update Gallery
-		parent.updateStructuralValues(false);
+		parent.updateStructuralValues(null, false);
 		parent.updateScrollBarsProperties();
 	}
 
@@ -195,29 +205,30 @@ public class GalleryItem extends Item {
 	 * @param itemCount
 	 */
 	public void setItemCount(int count) {
-			if (count == 0) {
-				// No items
-				items = null;
-			} else {
-				// At least one item, create a new array and copy data from the
-				// old one.
-				GalleryItem[] newItems = new GalleryItem[count];
-				if (items != null) {
-					System.arraycopy(items, 0, newItems, 0, Math.min(count,
-							items.length));
-				}
-				items = newItems;
+		if (count == 0) {
+			// No items
+			items = null;
+		} else {
+			// At least one item, create a new array and copy data from the
+			// old one.
+			GalleryItem[] newItems = new GalleryItem[count];
+			if (items != null) {
+				System.arraycopy(items, 0, newItems, 0, Math.min(count,
+						items.length));
 			}
+			items = newItems;
+		}
 	}
 
 	/**
 	 * Searches the receiver's list starting at the first item (index 0) until
 	 * an item is found that is equal to the argument, and returns the index of
-	 * that item. <br/> If SWT.VIRTUAL is used and the item has not been used
-	 * yet, the item is created and a SWT.SetData event is fired.
+	 * that item. <br/>
+	 * If SWT.VIRTUAL is used and the item has not been used yet, the item is
+	 * created and a SWT.SetData event is fired.
 	 * 
 	 * @param index
-	 * 		: index of the item.
+	 *            : index of the item.
 	 * @return : the GalleryItem or null if index is out of bounds
 	 */
 	public GalleryItem getItem(int index) {
@@ -249,11 +260,6 @@ public class GalleryItem extends Item {
 		return parent._indexOf(this, childItem);
 	}
 
-	public void setText(String text) {
-		super.setText(text);
-		parent.redraw(this);
-	}
-
 	public void setImage(Image image) {
 		super.setImage(image);
 		parent.redraw(this);
@@ -274,19 +280,34 @@ public class GalleryItem extends Item {
 	 * @param expanded
 	 */
 	public void setExpanded(boolean expanded) {
+		checkWidget();
+		_setExpanded(expanded, true);
+	}
+
+	public void _setExpanded(boolean expanded, boolean redraw) {
 		this.expanded = expanded;
-		parent.updateStructuralValues(false);
+		parent.updateStructuralValues(this, false);
 		parent.updateScrollBarsProperties();
-		parent.redraw();
+
+		if (redraw) {
+			parent.redraw();
+		}
 	}
 
+	/**
+	 * @deprecated
+	 * @return
+	 */
 	public String getDescription() {
-		return description;
+		return getText(1);
 	}
 
+	/**
+	 * @param description
+	 * @deprecated
+	 */
 	public void setDescription(String description) {
-		this.description = description;
-		parent.redraw(this);
+		setText(1, description);
 	}
 
 	/**
@@ -347,7 +368,7 @@ public class GalleryItem extends Item {
 
 	protected void select(int from, int to) {
 		if (Gallery.DEBUG)
-			System.out.println("GalleryItem.select(  " + from + "," + to + ")");
+			System.out.println("GalleryItem.select(  " + from + "," + to + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 		for (int i = from; i <= to; i++) {
 			GalleryItem item = getItem(i);
@@ -474,7 +495,7 @@ public class GalleryItem extends Item {
 		checkWidget();
 		parent._remove(this, index);
 
-		parent.updateStructuralValues(false);
+		parent.updateStructuralValues(null, false);
 		parent.updateScrollBarsProperties();
 		parent.redraw();
 	}
@@ -496,8 +517,8 @@ public class GalleryItem extends Item {
 	protected void _disposeChildren() {
 		if (items != null) {
 			while (items != null) {
-				if (items[items.length-1] != null) {
-					items[items.length-1]._dispose();
+				if (items[items.length - 1] != null) {
+					items[items.length - 1]._dispose();
 				}
 			}
 		}
@@ -520,8 +541,30 @@ public class GalleryItem extends Item {
 		_disposeChildren();
 		super.dispose();
 
-		parent.updateStructuralValues(false);
+		parent.updateStructuralValues(null, false);
 		parent.updateScrollBarsProperties();
 		parent.redraw();
 	}
+
+	public void setText(String string) {
+		setText(0, string);
+	}
+
+	public void setText(int index, String string) {
+		checkWidget();
+		if (string == null)
+			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		text[index] = string;
+		parent.redraw(this);
+	}
+
+	public String getText() {
+		return getText(0);
+	}
+
+	public String getText(int index) {
+		checkWidget();
+		return text[index];
+	}
+
 }

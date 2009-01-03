@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007 Nicolas Richeton.
+ * Copyright (c) 2006-2008 Nicolas Richeton.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 package org.eclipse.nebula.widgets.gallery;
 
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
 
 /**
  * Renderer Helper
@@ -26,7 +27,7 @@ import org.eclipse.swt.graphics.GC;
  * 
  */
 public class RendererHelper {
-	private static final String ELLIPSIS = "...";
+	private static final String ELLIPSIS = "..."; //$NON-NLS-1$
 
 	/**
 	 * Shorten the given text <code>text</code> so that its length doesn't
@@ -82,12 +83,66 @@ public class RendererHelper {
 
 				return text;
 			}
-			String result = text.substring(0, mid) + ELLIPSIS + text.substring(l - mid, l);
+			String result = text.substring(0, mid) + ELLIPSIS
+					+ text.substring(l - mid, l);
 
 			return result;
-		} else {
-			return text;
 		}
+
+		return text;
+
 	}
 
+	/**
+	 * Get best-fit size for an image drawn in an area of maxX, maxY
+	 * 
+	 * @param originalX
+	 * @param originalY
+	 * @param maxX
+	 * @param maxY
+	 * @return
+	 */
+	public static Point getBestSize(int originalX, int originalY, int maxX,
+			int maxY) {
+		double widthRatio = (double) originalX / (double) maxX;
+		double heightRatio = (double) originalY / (double) maxY;
+
+		double bestRatio = widthRatio > heightRatio ? widthRatio : heightRatio;
+
+		int newWidth = (int) (originalX / bestRatio);
+		int newHeight = (int) (originalY / bestRatio);
+
+		return new Point(newWidth, newHeight);
+	}
+
+	/**
+	 * Return both width and height offsets for an image to be centered in a
+	 * given area.
+	 * 
+	 * @param imageWidth
+	 * @param imageHeight
+	 * @param areaWidth
+	 * @param areaHeight
+	 * @return
+	 */
+	public static Point getImageOffset(int imageWidth, int imageHeight,
+			int areaWidth, int areaHeight) {
+		return new Point(getShift(areaWidth, imageWidth), getShift(areaHeight,
+				imageHeight));
+	}
+
+	/**
+	 * Return the offset to use in order to center an object in a given area.
+	 * 
+	 * @param totalSize
+	 * @param size
+	 * @return
+	 */
+	public static int getShift(int totalSize, int size) {
+		int xShift = totalSize - size;
+		if (xShift < 0)
+			xShift = 0;
+		xShift = xShift >> 1;
+		return xShift;
+	}
 }

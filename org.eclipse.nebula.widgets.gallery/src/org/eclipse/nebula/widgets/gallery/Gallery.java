@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007 Nicolas Richeton.
+ * Copyright (c) 2006-2009 Nicolas Richeton.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.ScrollBar;
@@ -102,8 +103,10 @@ import org.eclipse.swt.widgets.TypedListener;
  */
 public class Gallery extends Canvas {
 
+	private static final String BUG_PLATFORM_LINUX_GTK_174932 = "gtk"; //$NON-NLS-1$
+
 	/**
-	 * Used to enable debug the Gallery Widget.
+	 * Used to enable debug logging in the Gallery widget.
 	 */
 	protected static boolean DEBUG = false;
 
@@ -119,17 +122,30 @@ public class Gallery extends Canvas {
 	boolean virtual = false;
 
 	/**
+	 * Ultra virtual : non visible groups are not initialized.
+	 */
+	boolean virtualGroups = false;
+	boolean virtualGroupsCompatibilityMode = false;
+	int virtualGroupDefaultItemCount = 10;
+
+	/**
 	 * Scrolling direction flag. True : V_SCROLL, false : H_SCROLL.
 	 */
 	boolean vertical = true;
 
 	/**
-	 * Multi selection flag
+	 * Multi-selection flag
 	 */
 	boolean multi = false;
 
+	/**
+	 * Image quality : interpolation
+	 */
 	int interpolation = SWT.HIGH;
 
+	/**
+	 * Image quality : antialias
+	 */
 	int antialias = SWT.ON;
 
 	// Internals
@@ -152,6 +168,18 @@ public class Gallery extends Canvas {
 	 * paint.
 	 */
 	protected int translate = 0;
+
+	/**
+	 * Low quality on user action : decrease drawing quality on scrolling or
+	 * resize. (faster)
+	 */
+	boolean lowQualityOnUserAction = false;
+	protected int lastTranslateValue = 0;
+	protected int lastControlWidth = 0;
+	protected int lastControlHeight = 0;
+	protected int lastContentHeight = 0;
+	protected int lastContentWidth = 0;
+	protected int higherQualityDelay = 500;
 
 	private boolean mouseClickHandled = false;
 
@@ -184,7 +212,7 @@ public class Gallery extends Canvas {
 		checkWidget();
 
 		if (DEBUG)
-			System.out.println("setCount" + count);
+			System.out.println("setCount" + count); //$NON-NLS-1$
 
 		if (count == 0) {
 			// No items
@@ -200,7 +228,7 @@ public class Gallery extends Canvas {
 			items = newItems;
 		}
 
-		updateStructuralValues(false);
+		updateStructuralValues(null, false);
 		this.updateScrollBarsProperties();
 		redraw();
 
@@ -262,10 +290,10 @@ public class Gallery extends Canvas {
 		checkWidget();
 		if (listener == null)
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	
-		TypedListener typedListener = new TypedListener (listener);
-		addListener (SWT.Selection,typedListener);
-		addListener (SWT.DefaultSelection,typedListener);
+
+		TypedListener typedListener = new TypedListener(listener);
+		addListener(SWT.Selection, typedListener);
+		addListener(SWT.DefaultSelection, typedListener);
 	}
 
 	/**
@@ -348,11 +376,92 @@ public class Gallery extends Canvas {
 	}
 
 	/**
+	 * #see {@link #setLowQualityOnUserAction(boolean)}
+	 * 
+	 * @return
+	 */
+	public boolean isLowQualityOnUserAction() {
+		return lowQualityOnUserAction;
+	}
+
+	/**
+	 * If set to true, the gallery will disable antialiasing and interpolation
+	 * while the user is resizing or scrolling the gallery. This enables faster
+	 * redraws at the cost of lower image quality. When every redraw is finished
+	 * a last one will be issued using the default (higher) quality.
+	 * 
+	 * @see #setHigherQualityDelay(int)
+	 * @param lowQualityOnUserAction
+	 */
+	public void setLowQualityOnUserAction(boolean lowQualityOnUserAction) {
+		this.lowQualityOnUserAction = lowQualityOnUserAction;
+	}
+
+	/**
+	 * @see #setHigherQualityDelay(int)
+	 * @return
+	 */
+	public int getHigherQualityDelay() {
+		return higherQualityDelay;
+	}
+
+	/**
+	 * Set the delay after the last user action before the redraw at higher
+	 * quality is triggered
+	 * 
+	 * @see #setLowQualityOnUserAction(boolean)
+	 * @param higherQualityDelay
+	 */
+	public void setHigherQualityDelay(int higherQualityDelay) {
+		this.higherQualityDelay = higherQualityDelay;
+	}
+
+	/**
+	 * @see #setInterpolation(int)
+	 * @return
+	 */
+	public int getInterpolation() {
+		return interpolation;
+	}
+
+	/**
+	 * Sets the gallery's interpolation setting to the parameter, which must be
+	 * one of <code>SWT.DEFAULT</code>, <code>SWT.NONE</code>,
+	 * <code>SWT.LOW</code> or <code>SWT.HIGH</code>.
+	 * 
+	 * @param interpolation
+	 */
+	public void setInterpolation(int interpolation) {
+		this.interpolation = interpolation;
+	}
+
+	/**
+	 * @see #setAntialias(int)
+	 * @return
+	 */
+	public int getAntialias() {
+		return antialias;
+	}
+
+	/**
+	 * 
+	 * Sets the gallery's anti-aliasing value to the parameter, which must be
+	 * one of <code>SWT.DEFAULT</code>, <code>SWT.OFF</code> or
+	 * <code>SWT.ON</code>.
+	 * 
+	 * @param antialias
+	 */
+	public void setAntialias(int antialias) {
+		this.antialias = antialias;
+	}
+
+	/**
 	 * Send a selection event for a gallery item
 	 * 
 	 * @param item
 	 */
-	protected void notifySelectionListeners(GalleryItem item, int index, boolean isDefault) {
+	protected void notifySelectionListeners(GalleryItem item, int index,
+			boolean isDefault) {
 
 		Event e = new Event();
 		e.widget = this;
@@ -363,7 +472,7 @@ public class Gallery extends Canvas {
 		// TODO: report index
 		// e.index = index;
 		try {
-			if( isDefault) {
+			if (isDefault) {
 				notifyListeners(SWT.DefaultSelection, e);
 			} else {
 				notifyListeners(SWT.Selection, e);
@@ -372,8 +481,6 @@ public class Gallery extends Canvas {
 			ex.printStackTrace();
 		}
 	}
-	
-	
 
 	/**
 	 * Send an Expand event for a GalleryItem
@@ -435,7 +542,7 @@ public class Gallery extends Canvas {
 		_setDefaultRenderers();
 
 		// Layout
-		updateStructuralValues(false);
+		updateStructuralValues(null, false);
 		updateScrollBarsProperties();
 		redraw();
 	}
@@ -483,7 +590,7 @@ public class Gallery extends Canvas {
 	private void _addResizeListeners() {
 		addControlListener(new ControlAdapter() {
 			public void controlResized(ControlEvent event) {
-				updateStructuralValues(true);
+				updateStructuralValues(null, true);
 				updateScrollBarsProperties();
 				redraw();
 			}
@@ -533,8 +640,8 @@ public class Gallery extends Canvas {
 				case SWT.ARROW_DOWN:
 				case SWT.PAGE_UP:
 				case SWT.PAGE_DOWN:
-                case SWT.HOME:
-                case SWT.END:
+				case SWT.HOME:
+				case SWT.END:
 					GalleryItem newItem = groupRenderer.getNextItem(
 							lastSingleClick, e.keyCode);
 
@@ -550,11 +657,11 @@ public class Gallery extends Canvas {
 				case SWT.CR:
 					GalleryItem[] selection = getSelection();
 					GalleryItem item = null;
-					if( selection != null && selection.length > 0 ){
+					if (selection != null && selection.length > 0) {
 						item = selection[0];
 					}
-						
-					notifySelectionListeners (item, 0,true);
+
+					notifySelectionListeners(item, 0, true);
 					break;
 				}
 			}
@@ -818,7 +925,7 @@ public class Gallery extends Canvas {
 	protected void _deselectAll() {
 
 		if (DEBUG)
-			System.out.println("clear");
+			System.out.println("clear"); //$NON-NLS-1$
 
 		this.selection = null;
 		this.selectionIndices = null;
@@ -833,7 +940,7 @@ public class Gallery extends Canvas {
 
 	void onMouseDoubleClick(MouseEvent e) {
 		if (DEBUG)
-			System.out.println("Mouse Double Click");
+			System.out.println("Mouse Double Click"); //$NON-NLS-1$
 
 		GalleryItem item = getItem(new Point(e.x, e.y));
 		if (item != null) {
@@ -844,11 +951,11 @@ public class Gallery extends Canvas {
 
 	void onMouseUp(MouseEvent e) {
 		if (DEBUG)
-			System.out.println("onMouseUp");
+			System.out.println("onMouseUp"); //$NON-NLS-1$
 
 		if (mouseClickHandled) {
 			if (DEBUG) {
-				System.out.println("onMouseUp : mouse event already handled");
+				System.out.println("onMouseUp : mouse event already handled"); //$NON-NLS-1$
 			}
 			return;
 		}
@@ -922,7 +1029,7 @@ public class Gallery extends Canvas {
 			// if (lastSingleClick != null) {
 			if (item != null) {
 				if (DEBUG)
-					System.out.println("setSelected : inverse");
+					System.out.println("setSelected : inverse"); //$NON-NLS-1$
 				setSelected(item, !isSelected(item), true);
 				lastSingleClick = item;
 				redraw();
@@ -952,7 +1059,7 @@ public class Gallery extends Canvas {
 				_deselectAll();
 
 				if (DEBUG)
-					System.out.println("setSelected");
+					System.out.println("setSelected"); //$NON-NLS-1$
 				setSelected(item, true, true);
 
 				lastSingleClick = item;
@@ -964,7 +1071,7 @@ public class Gallery extends Canvas {
 				_deselectAll();
 			} else {
 				if (DEBUG)
-					System.out.println("setSelected");
+					System.out.println("setSelected"); //$NON-NLS-1$
 
 				_deselectAll();
 				setSelected(item, true, lastSingleClick != item);
@@ -987,7 +1094,7 @@ public class Gallery extends Canvas {
 			boolean up) {
 		if (down) {
 			if (DEBUG)
-				System.out.println("right clic");
+				System.out.println("right click"); //$NON-NLS-1$
 
 			if (item != null && !isSelected(item)) {
 				_deselectAll();
@@ -1001,19 +1108,28 @@ public class Gallery extends Canvas {
 
 	void onPaint(GC gc) {
 		if (DEBUG)
-			System.out.println("paint");
+			System.out.println("paint"); //$NON-NLS-1$
 
+		boolean lowQualityPaint = lowQualityOnUserAction
+				&& (translate != lastTranslateValue || (lastControlWidth != getSize().x
+						|| lastControlHeight != getSize().y
+						|| lastContentHeight != this.gHeight || lastContentWidth != this.gWidth));
 		try {
 			GC newGC = gc;
 
 			// Linux-GTK Bug 174932
-			if (!SWT.getPlatform().equals("gtk")) {
+			if (!SWT.getPlatform().equals(BUG_PLATFORM_LINUX_GTK_174932)) {
 				newGC.setAdvanced(true);
 			}
 
 			if (gc.getAdvanced()) {
-				newGC.setAntialias(antialias);
-				newGC.setInterpolation(interpolation);
+				if (lowQualityPaint) {
+					newGC.setAntialias(SWT.OFF);
+					newGC.setInterpolation(SWT.OFF);
+				} else {
+					newGC.setAntialias(antialias);
+					newGC.setInterpolation(interpolation);
+				}
 			}
 			// End of Bug 174932
 
@@ -1037,7 +1153,7 @@ public class Gallery extends Canvas {
 
 				for (int i = indexes.length - 1; i >= 0; i--) {
 					if (DEBUG)
-						System.out.println("Drawing group " + indexes[i]);
+						System.out.println("Drawing group " + indexes[i]); //$NON-NLS-1$
 
 					_drawGroup(newGC, indexes[i]);
 				}
@@ -1048,6 +1164,29 @@ public class Gallery extends Canvas {
 			e.printStackTrace();
 		}
 
+		// When lowQualityOnUserAction is enabled, keep last state and wait
+		// before updating with a higher quality
+		if (lowQualityOnUserAction) {
+			lastTranslateValue = translate;
+			lastControlWidth = getSize().x;
+			lastControlHeight = getSize().y;
+			lastContentHeight = gHeight;
+			lastContentWidth = gWidth;
+
+			if (lowQualityPaint) {
+				// Calling timerExec with the same object just delays the
+				// execution (doesn't run twice)
+				Display.getCurrent().timerExec(higherQualityDelay, redrawTimer);
+			}
+		}
+	}
+
+	RedrawTimer redrawTimer = new RedrawTimer();
+
+	protected class RedrawTimer implements Runnable {
+		public void run() {
+			redraw();
+		}
 	}
 
 	private int[] getVisibleItems(Rectangle clipping) {
@@ -1065,7 +1204,11 @@ public class Gallery extends Canvas {
 		int index = 0;
 		GalleryItem item = null;
 		while (index < items.length) {
-			item = getItem(index);
+			if (virtualGroups) {
+				item = _getItem(index, false);
+			} else {
+				item = getItem(index);
+			}
 			if ((vertical ? item.y : item.x) > end)
 				break;
 
@@ -1083,6 +1226,11 @@ public class Gallery extends Canvas {
 		return result;
 	}
 
+	/**
+	 * Not implemented
+	 * 
+	 * @param nb
+	 */
 	public void refresh(int nb) {
 		checkWidget();
 		if (nb < getItemCount()) {
@@ -1099,16 +1247,57 @@ public class Gallery extends Canvas {
 	}
 
 	/**
-	 * Draw a group. Used when useGroup is true and for root items.
+	 * Handle the drawing of root items
 	 * 
 	 * @param gc
 	 * @param index
 	 */
 	private void _drawGroup(GC gc, int index) {
-		// Draw group
-		GalleryItem item = getItem(index);
+		GalleryItem item = null;
+
+		if (virtualGroups) {
+			// Ultra virtual : when a group is about to be drawn, initialize it
+			// and update gallery layout according to the new size
+			item = _getItem(index, false);
+			if (item.isUltraLazyDummy()) {
+				boolean updateLocation = (vertical && item.y < translate)
+						|| (!vertical && item.x < translate);
+				int oldSize = item.height;
+				item = _getItem(index, true);
+
+				// Compatibility mode : ensure all previous items are already
+				// initialized
+				if (virtualGroupsCompatibilityMode) {
+					for (int i = 0; i < index; i++) {
+						_getItem(i);
+					}
+				}
+
+				updateStructuralValues(item, false);
+
+				if (DEBUG) {
+					System.out.println("old" + oldSize + " new " + item.height //$NON-NLS-1$//$NON-NLS-2$
+							+ " translate " + translate); //$NON-NLS-1$
+				}
+
+				if (updateLocation) {
+					translate += (item.height - oldSize);
+					if (DEBUG) {
+						System.out.println("updated to : " + translate); //$NON-NLS-1$
+					}
+				}
+				this.updateScrollBarsProperties();
+				redraw();
+			}
+		} else {
+			// Default behavior : get the item with no special handling.
+			item = getItem(index);
+		}
+
 		if (item == null)
 			return;
+
+		// update item attributes
 		this.groupRenderer.setExpanded(item.isExpanded());
 
 		// Drawing area
@@ -1116,8 +1305,16 @@ public class Gallery extends Canvas {
 		int y = this.vertical ? item.y - translate : item.y;
 
 		Rectangle clipping = gc.getClipping();
+		Rectangle previousClipping = new Rectangle(clipping.x, clipping.y,
+				clipping.width, clipping.height);
+
+		clipping.intersect(new Rectangle(x, y, item.width, item.height));
+		gc.setClipping(clipping);
+		// Draw group
 		this.groupRenderer.draw(gc, item, x, y, clipping.x, clipping.y,
 				clipping.width, clipping.height);
+
+		gc.setClipping(previousClipping);
 	}
 
 	/**
@@ -1126,37 +1323,56 @@ public class Gallery extends Canvas {
 	 * 
 	 * @return
 	 */
-	private void updateItem(GalleryItem parentItem, int i) {
+	private void updateItem(GalleryItem parentItem, int i, boolean create) {
+		if (virtual) {
 
-		GalleryItem galleryItem;
-		if (parentItem == null) {
-			// Parent is the Gallery widget
-			galleryItem = items[i];
-			if (galleryItem == null && this.virtual) {
-				if (DEBUG) {
-					System.out.println("Virtual/creating item ");
+			GalleryItem galleryItem;
+			if (parentItem == null) {
+				// Parent is the Gallery widget
+				galleryItem = items[i];
+
+				if (galleryItem == null
+						|| (virtualGroups && galleryItem.isUltraLazyDummy() && create)) {
+
+					if (DEBUG) {
+						System.out.println("Virtual/creating item "); //$NON-NLS-1$
+					}
+
+					galleryItem = new GalleryItem(this, SWT.NONE, i, false);
+					items[i] = galleryItem;
+
+					if (virtualGroups && !create) {
+						galleryItem.setItemCount(virtualGroupDefaultItemCount);
+						galleryItem.setUltraLazyDummy(true);
+						galleryItem.setExpanded(true);
+					} else {
+						setData(galleryItem, i);
+					}
 				}
+			} else {
+				// Parent is another GalleryItem
+				galleryItem = parentItem.items[i];
+				if (galleryItem == null) {
+					if (DEBUG) {
+						System.out.println("Virtual/creating item "); //$NON-NLS-1$
+					}
 
-				galleryItem = new GalleryItem(this, SWT.NONE, i, false);
-				items[i] = galleryItem;
-				setData(galleryItem, i);
-			}
-		} else {
-			// Parent is another GalleryItem
-			galleryItem = parentItem.items[i];
-			if (galleryItem == null && this.virtual) {
-				if (DEBUG) {
-					System.out.println("Virtual/creating item ");
+					galleryItem = new GalleryItem(parentItem, SWT.NONE, i,
+							false);
+					parentItem.items[i] = galleryItem;
+					setData(galleryItem, i);
 				}
-
-				galleryItem = new GalleryItem(parentItem, SWT.NONE, i, false);
-				parentItem.items[i] = galleryItem;
-				setData(galleryItem, i);
 			}
 		}
 
 	}
 
+	/**
+	 * Send setData event. Used if SWT.VIRTUAL
+	 * 
+	 * @param galleryItem
+	 * @param index
+	 */
 	protected void setData(GalleryItem galleryItem, int index) {
 		Item item = galleryItem;
 		Event e = new Event();
@@ -1174,13 +1390,34 @@ public class Gallery extends Canvas {
 	 *            if true, the current scrollbars position ratio is saved and
 	 *            restored even if the gallery size has changed. (Visible items
 	 *            stay visible)
+	 * @deprecated Use {@link #updateStructuralValues(GalleryItem,boolean)}
+	 *             instead
 	 */
 	protected void updateStructuralValues(boolean keepLocation) {
+		updateStructuralValues(null, keepLocation);
+	}
 
-		if (DEBUG)
-			System.out.println("Client Area : " + this.getClientArea().x + " "
-					+ this.getClientArea().y + " " + this.getClientArea().width
-					+ " " + this.getClientArea().height);
+	/**
+	 * Recalculate structural values using the group renderer<br>
+	 * Gallery and item size will be updated.
+	 * 
+	 * @param changedGroup
+	 *            the group that was modified since the last layout. If the
+	 *            group renderer or more that one group have changed, use null
+	 *            as parameter (full update)
+	 * @param keepLocation
+	 *            if true, the current scrollbars position ratio is saved and
+	 *            restored even if the gallery size has changed. (Visible items
+	 *            stay visible)
+	 */
+	protected void updateStructuralValues(GalleryItem changedGroup,
+			boolean keepLocation) {
+
+		if (DEBUG) {
+			System.out.println("Client Area : " + this.getClientArea().x + " " //$NON-NLS-1$//$NON-NLS-2$
+					+ this.getClientArea().y + " " + this.getClientArea().width //$NON-NLS-1$
+					+ " " + this.getClientArea().height); //$NON-NLS-1$
+		}
 
 		Rectangle area = this.getClientArea();
 		float pos = 0;
@@ -1190,7 +1427,7 @@ public class Gallery extends Canvas {
 				pos = (float) (translate + 0.5 * area.height) / gHeight;
 
 			gWidth = area.width;
-			gHeight = calculateSize();
+			gHeight = calculateSize(changedGroup);
 
 			if (keepLocation)
 				translate = (int) (gHeight * pos - 0.5 * area.height);
@@ -1199,7 +1436,7 @@ public class Gallery extends Canvas {
 			if (gWidth > 0 && keepLocation)
 				pos = (float) (translate + 0.5 * area.width) / gWidth;
 
-			gWidth = calculateSize();
+			gWidth = calculateSize(changedGroup);
 			gHeight = area.height;
 
 			if (keepLocation)
@@ -1207,8 +1444,10 @@ public class Gallery extends Canvas {
 		}
 
 		validateTranslation();
-		if (DEBUG)
-			System.out.println("Content Size : " + gWidth + " " + gHeight);
+
+		if (DEBUG) {
+			System.out.println("Content Size : " + gWidth + " " + gHeight); //$NON-NLS-1$//$NON-NLS-2$
+		}
 
 	}
 
@@ -1218,44 +1457,64 @@ public class Gallery extends Canvas {
 	 * 
 	 * @return
 	 */
-	private int calculateSize() {
+	private int calculateSize(GalleryItem onlyUpdateGroup) {
 
-		if (groupRenderer != null)
-			groupRenderer.preLayout(null);
+		if (groupRenderer == null)
+			return 0;
+
+		groupRenderer.preLayout(null);
 
 		int currentHeight = 0;
 
 		int mainItemCount = getItemCount();
 
 		for (int i = 0; i < mainItemCount; i++) {
-			GalleryItem item = this.getItem(i);
-			this.groupRenderer.setExpanded(item.isExpanded());
-			// TODO: Not used ATM
-			// int groupItemCount = item.getItemCount();
-			if (vertical) {
-				item.y = currentHeight;
-				item.x = getClientArea().x;
-				item.width = getClientArea().width;
-				item.height = -1;
-				this.groupRenderer.layout(null, item);
-				currentHeight += item.height;
+			GalleryItem item = null;
+			if (virtualGroups) {
+				item = this._getItem(i, false);
 			} else {
-				item.y = getClientArea().y;
-				item.x = currentHeight;
-				item.width = -1;
-				item.height = getClientArea().height;
-				this.groupRenderer.layout(null, item);
-				currentHeight += item.width;
+				item = this.getItem(i);
 			}
-			// Point s = this.getSize(item.hCount, item.vCount, itemSizeX,
-			// itemSizeY, userMargin, realMargin);
 
-			// item.height = s.y;
+			if (onlyUpdateGroup != null && !onlyUpdateGroup.equals(item)) {
+				// Item has not changed : no layout.
+				if (vertical) {
+					item.y = currentHeight;
+					item.x = getClientArea().x;
+					currentHeight += item.height;
+				} else {
+					item.y = getClientArea().y;
+					item.x = currentHeight;
+					currentHeight += item.width;
+				}
+			} else {
+				this.groupRenderer.setExpanded(item.isExpanded());
+				// TODO: Not used ATM
+				// int groupItemCount = item.getItemCount();
+				if (vertical) {
+					item.y = currentHeight;
+					item.x = getClientArea().x;
+					item.width = getClientArea().width;
+					item.height = -1;
+					this.groupRenderer.layout(null, item);
+					currentHeight += item.height;
+				} else {
+					item.y = getClientArea().y;
+					item.x = currentHeight;
+					item.width = -1;
+					item.height = getClientArea().height;
+					this.groupRenderer.layout(null, item);
+					currentHeight += item.width;
+				}
+				// Point s = this.getSize(item.hCount, item.vCount, itemSizeX,
+				// itemSizeY, userMargin, realMargin);
+
+				// item.height = s.y;
+			}
 
 		}
 
-		if (groupRenderer != null)
-			groupRenderer.postLayout(null);
+		groupRenderer.postLayout(null);
 
 		return currentHeight;
 	}
@@ -1304,7 +1563,7 @@ public class Gallery extends Canvas {
 
 		if (totalSize > clientSize) {
 			if (DEBUG)
-				System.out.println("Enabling scrollbar");
+				System.out.println("Enabling scrollbar"); //$NON-NLS-1$
 
 			bar.setEnabled(true);
 			bar.setSelection(translate);
@@ -1313,7 +1572,7 @@ public class Gallery extends Canvas {
 			validateTranslation();
 		} else {
 			if (DEBUG)
-				System.out.println("Disabling scrollbar");
+				System.out.println("Disabling scrollbar"); //$NON-NLS-1$
 
 			bar.setEnabled(false);
 			bar.setSelection(0);
@@ -1348,10 +1607,12 @@ public class Gallery extends Canvas {
 
 		if (totalSize > clientSize) {
 			// Fix translate too big.
-			if (translate + clientSize > totalSize)
+			if (translate + clientSize > totalSize) {
 				translate = totalSize - clientSize;
-		} else
+			}
+		} else {
 			translate = 0;
+		}
 
 	}
 
@@ -1386,7 +1647,7 @@ public class Gallery extends Canvas {
 
 	protected void addItem(GalleryItem item, int position) {
 		if (position != -1 && (position < 0 || position > getItemCount())) {
-			throw new IllegalArgumentException("ERROR_INVALID_RANGE ");
+			throw new IllegalArgumentException("ERROR_INVALID_RANGE "); //$NON-NLS-1$
 		}
 		_addItem(item, position);
 	}
@@ -1396,7 +1657,7 @@ public class Gallery extends Canvas {
 		items = (GalleryItem[]) _arrayAddItem(items, item, position);
 
 		// Update Gallery
-		updateStructuralValues(false);
+		updateStructuralValues(null, false);
 		updateScrollBarsProperties();
 	}
 
@@ -1425,7 +1686,7 @@ public class Gallery extends Canvas {
 
 		if (index < parent.getItemCount()) {
 			// Refresh item if it is not set yet
-			updateItem(parent, index);
+			updateItem(parent, index, true);
 			return parent.items[index];
 		}
 
@@ -1444,9 +1705,13 @@ public class Gallery extends Canvas {
 	 * @return
 	 */
 	protected GalleryItem _getItem(int index) {
+		return _getItem(index, true);
+	}
+
+	public GalleryItem _getItem(int index, boolean create) {
 
 		if (index < getItemCount()) {
-			updateItem(null, index);
+			updateItem(null, index, create);
 			return items[index];
 		}
 
@@ -1462,7 +1727,7 @@ public class Gallery extends Canvas {
 	 */
 	protected boolean _mouseDown(MouseEvent e) {
 		if (DEBUG)
-			System.out.println("getitem " + e.x + " " + e.y);
+			System.out.println("getitem " + e.x + " " + e.y); //$NON-NLS-1$//$NON-NLS-2$
 
 		GalleryItem group = this._getGroup(new Point(e.x, e.y));
 		if (group != null) {
@@ -1484,7 +1749,8 @@ public class Gallery extends Canvas {
 		checkWidget();
 
 		if (DEBUG)
-			System.out.println("getitem " + coords.x + " " + coords.y);
+			System.out.println("getitem " + coords.x + " " + coords.y); //$NON-NLS-1$ //$NON-NLS-2$
+
 		int pos = vertical ? (coords.y + translate) : (coords.x + translate);
 
 		GalleryItem group = this._getGroup(coords);
@@ -1587,7 +1853,7 @@ public class Gallery extends Canvas {
 		// but we have to check that Table has the same behavior
 		this._deselectAll();
 
-		updateStructuralValues(false);
+		updateStructuralValues(null, false);
 		updateScrollBarsProperties();
 		redraw();
 
@@ -1619,7 +1885,7 @@ public class Gallery extends Canvas {
 
 			// In virtual mode, clearing an item can change its content, so
 			// force content update
-			updateStructuralValues(false);
+			updateStructuralValues(null, false);
 			updateScrollBarsProperties();
 		} else {
 			// Reset item
@@ -1641,8 +1907,11 @@ public class Gallery extends Canvas {
 	 */
 	public int indexOf(GalleryItem item) {
 		checkWidget();
-		if (item == null)
+		if (item == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+			// SWT.error throws an exception
+		}
+
 		if (item.getParentItem() == null)
 			return _indexOf(item);
 
@@ -1732,10 +2001,14 @@ public class Gallery extends Canvas {
 		return vertical;
 	}
 
+	/**
+	 * @deprecated
+	 * @param vertical
+	 */
 	public void setVertical(boolean vertical) {
 		checkWidget();
 		this.vertical = vertical;
-		this.updateStructuralValues(true);
+		this.updateStructuralValues(null, true);
 		redraw();
 	}
 
@@ -1750,7 +2023,7 @@ public class Gallery extends Canvas {
 			this.groupRenderer.setGallery(this);
 		}
 
-		this.updateStructuralValues(true);
+		this.updateStructuralValues(null, true);
 		this.updateScrollBarsProperties();
 		this.redraw();
 	}
@@ -1823,7 +2096,7 @@ public class Gallery extends Canvas {
 		checkWidget();
 		_remove(index);
 
-		updateStructuralValues(false);
+		updateStructuralValues(null, false);
 		updateScrollBarsProperties();
 		redraw();
 	}
@@ -1965,5 +2238,100 @@ public class Gallery extends Canvas {
 
 	public void _setGalleryItems(GalleryItem[] items) {
 		this.items = items;
+	}
+
+	/**
+	 * @see #setVirtualGroups(boolean)
+	 * 
+	 * @return
+	 */
+	public boolean isVirtualGroups() {
+		return virtualGroups;
+	}
+
+	/**
+	 * Enable virtual groups
+	 * 
+	 * <p>
+	 * When a gallery has the SWT.VIRTUAL flag, only items are initialized on
+	 * display. All groups need to be initialized from the beginning to
+	 * calculate the total size of the content.
+	 * </p>
+	 * 
+	 * <p>
+	 * Virtual groups enable creating groups AND items lazily at the cost of a
+	 * poor approximation of the total size of the content.
+	 * </p>
+	 * 
+	 * <p>
+	 * While a group isn't initialized, the item count defined as default item
+	 * count is used.
+	 * </p>
+	 * 
+	 * <p>
+	 * When a group comes into view, it is initialized using the setData event,
+	 * and the size of the gallery content is updated to match the real value.
+	 * </p>
+	 * 
+	 * <p>
+	 * From the developer point of view, virtual groups uses exactly the same
+	 * code as the standard virtual mode of SWT.
+	 * </p>
+	 * 
+	 * <p>
+	 * This mode can create visual glitches with code that automatically scrolls
+	 * the widget such as SAT Smooth Scrolling. In that case, you can enable the
+	 * compatibility mode which is little less lazy that the default virtual
+	 * groups, but still better than the standard virtual mode
+	 * </p>
+	 * 
+	 * @see #setVirtualGroupDefaultItemCount(int)
+	 * @see #setVirtualGroupsCompatibilityMode(boolean)
+	 * 
+	 * @param virtualGroups
+	 */
+	public void setVirtualGroups(boolean virtualGroups) {
+		this.virtualGroups = virtualGroups;
+	}
+
+	/**
+	 * @see #setVirtualGroupDefaultItemCount(int)
+	 * @return
+	 */
+	public int getVirtualGroupDefaultItemCount() {
+		return virtualGroupDefaultItemCount;
+	}
+
+	/**
+	 * @see #setVirtualGroupsCompatibilityMode(boolean)
+	 * @return
+	 */
+	public boolean isVirtualGroupsCompatibilityMode() {
+		return virtualGroupsCompatibilityMode;
+	}
+
+	/**
+	 * Enable the compatibility workaround for problems with the ultra virtual
+	 * mode.
+	 * 
+	 * @see #setVirtualGroups(boolean)
+	 * @param compatibilityMode
+	 */
+	public void setVirtualGroupsCompatibilityMode(boolean compatibilityMode) {
+		this.virtualGroupsCompatibilityMode = compatibilityMode;
+	}
+
+	/**
+	 * Set the item count used when a group is not yet initialized (with virtual
+	 * groups). Since the virtual groups make the size of the gallery change
+	 * while scrolling, a fine tuned item count can improve the accuracy of the
+	 * slider.
+	 * 
+	 * @see #setVirtualGroups(boolean)
+	 * 
+	 * @param defaultItemCount
+	 */
+	public void setVirtualGroupDefaultItemCount(int defaultItemCount) {
+		this.virtualGroupDefaultItemCount = defaultItemCount;
 	}
 }

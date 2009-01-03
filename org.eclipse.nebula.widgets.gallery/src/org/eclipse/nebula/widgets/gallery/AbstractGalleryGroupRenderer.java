@@ -31,16 +31,6 @@ public abstract class AbstractGalleryGroupRenderer {
 
 	protected boolean expanded;
 
-	protected boolean drawVertically;
-
-	public boolean isDrawVertically() {
-		return this.drawVertically;
-	}
-
-	public void setDrawVertically(boolean drawVertically) {
-		this.drawVertically = drawVertically;
-	}
-
 	/**
 	 * Get the expand/collapse state of the current group
 	 * 
@@ -188,7 +178,7 @@ public abstract class AbstractGalleryGroupRenderer {
 	 * 		the client area after the new layout has been calculated.
 	 */
 	protected void updateStructuralValues(boolean keeplocation) {
-		gallery.updateStructuralValues(keeplocation);
+		gallery.updateStructuralValues(null, keeplocation);
 	}
 
 	protected void updateScrollBarsProperties() {

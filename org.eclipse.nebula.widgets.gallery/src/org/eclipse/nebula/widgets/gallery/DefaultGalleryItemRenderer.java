@@ -37,8 +37,6 @@ import org.eclipse.swt.widgets.Display;
  */
 public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 
-	private final static String OVERLAY_BOTTOM_RIGHT = "org.eclipse.nebula.widget.gallery.bottomRightOverlay";
-	
 	protected ArrayList dropShadowsColors = new ArrayList();
 
 	boolean dropShadows = false;
@@ -67,17 +65,22 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 
 	public DefaultGalleryItemRenderer() {
 		// Set defaults
-		foregroundColor = Display.getDefault().getSystemColor(SWT.COLOR_LIST_FOREGROUND);
-		backgroundColor = Display.getDefault().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+		foregroundColor = Display.getDefault().getSystemColor(
+				SWT.COLOR_LIST_FOREGROUND);
+		backgroundColor = Display.getDefault().getSystemColor(
+				SWT.COLOR_LIST_BACKGROUND);
 
-		selectionForegroundColor = Display.getDefault().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT);
-		selectionBackgroundColor = Display.getDefault().getSystemColor(SWT.COLOR_LIST_SELECTION);
+		selectionForegroundColor = Display.getDefault().getSystemColor(
+				SWT.COLOR_LIST_SELECTION_TEXT);
+		selectionBackgroundColor = Display.getDefault().getSystemColor(
+				SWT.COLOR_LIST_SELECTION);
 
 		// Create drop shadows
 		createColors();
 	}
 
-	public void draw(GC gc, GalleryItem item, int index, int x, int y, int width, int height) {
+	public void draw(GC gc, GalleryItem item, int index, int x, int y,
+			int width, int height) {
 		Image itemImage = item.getImage();
 		Color itemBackgroundColor = item.getBackground();
 		Color itemForegroundColor = item.getForeground();
@@ -102,10 +105,12 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 			imageWidth = itemImageBounds.width;
 			imageHeight = itemImageBounds.height;
 
-			size = getBestSize(imageWidth, imageHeight, width - 8 - 2 * this.dropShadowsSize, useableHeight - 8 - 2 * this.dropShadowsSize);
+			size = RendererHelper.getBestSize(imageWidth, imageHeight, width
+					- 8 - 2 * this.dropShadowsSize, useableHeight - 8 - 2
+					* this.dropShadowsSize);
 
-			xShift = (width - size.x) >> 1;
-			yShift = (useableHeight - size.y) >> 1;
+			xShift = RendererHelper.getShift(width, size.x);
+			yShift = RendererHelper.getShift(useableHeight, size.y);
 
 			if (dropShadows) {
 				Color c = null;
@@ -113,8 +118,12 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 					c = (Color) dropShadowsColors.get(i);
 					gc.setForeground(c);
 
-					gc.drawLine(x + width + i - xShift - 1, y + dropShadowsSize + yShift, x + width + i - xShift - 1, y + useableHeight + i - yShift);
-					gc.drawLine(x + xShift + dropShadowsSize, y + useableHeight + i - yShift - 1, x + width + i - xShift, y - 1 + useableHeight + i - yShift);
+					gc.drawLine(x + width + i - xShift - 1, y + dropShadowsSize
+							+ yShift, x + width + i - xShift - 1, y
+							+ useableHeight + i - yShift);
+					gc.drawLine(x + xShift + dropShadowsSize, y + useableHeight
+							+ i - yShift - 1, x + width + i - xShift, y - 1
+							+ useableHeight + i - yShift);
 				}
 			}
 		}
@@ -146,21 +155,24 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 			// Draw
 			gc.fillRoundRectangle(x, y, width, useableHeight, 15, 15);
 			if (item.getText() != null && showLabels) {
-				gc.fillRoundRectangle(x, y + height - fontHeight, width, fontHeight, 15, 15);
+				gc.fillRoundRectangle(x, y + height - fontHeight, width,
+						fontHeight, 15, 15);
 			}
 		}
 
 		// Draw image
-		if (itemImage != null) {
+		if (itemImage != null && size != null) {
 			if (size.x > 0 && size.y > 0) {
-				gc.drawImage(itemImage, 0, 0, imageWidth, imageHeight, x + xShift, y + yShift, size.x, size.y);
+				gc.drawImage(itemImage, 0, 0, imageWidth, imageHeight, x
+						+ xShift, y + yShift, size.x, size.y);
 			}
-			
-			drawImageOverlays( gc, item,  x,  y,  size,  xShift,  yShift);	
+
+			drawImageBottomLeftOverlay(gc, item, x, y, size, xShift, yShift);
 		}
 
 		// Draw label
-		if ( item.getText() != null && !EMPTY_STRING.equals(item.getText())  && showLabels) {
+		if (item.getText() != null && !EMPTY_STRING.equals(item.getText())
+				&& showLabels) {
 			// Set colors
 			if (selected) {
 				// Selected : use selection colors.
@@ -185,37 +197,18 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 			}
 
 			// Create label
-			String text = RendererHelper.createLabel(item.getText(), gc, width - 10);
+			String text = RendererHelper.createLabel(item.getText(), gc,
+					width - 10);
 
 			// Center text
 			int textWidth = gc.textExtent(text).x;
-			int textxShift = (width - (textWidth > width ? width : textWidth)) >> 1;
+			int textxShift = RendererHelper.getShift(width, textWidth);
 
 			// Draw
 			gc.drawText(text, x + textxShift, y + height - fontHeight, true);
 		}
 	}
 
-	
-	/**
-	 * Draw image overlays. Overlays are defined with image.setData using the following keys : 
-	 * <ul>
-	 *    <li>org.eclipse.nebula.widget.gallery.bottomRightOverlay</li>
-	 *</ul> 
-	 * 
-	 */
-	private void drawImageOverlays(GC gc, GalleryItem item, int x, int y, Point imageSize, int xShift, int yShift) {
-		Object bottomRightOverlay = item.getData(OVERLAY_BOTTOM_RIGHT);
-		if (bottomRightOverlay != null && bottomRightOverlay instanceof Image) {
-			Image bottomRightOverlayImage = (Image) bottomRightOverlay;
-			if (bottomRightOverlayImage.getBounds().width < imageSize.x && bottomRightOverlayImage.getBounds().height < imageSize.y) {
-				gc.drawImage(bottomRightOverlayImage, 0, 0, bottomRightOverlayImage.getBounds().width, bottomRightOverlayImage.getBounds().height, x+ xShift+imageSize.x
-						- bottomRightOverlayImage.getBounds().width, y+ yShift+imageSize.y- bottomRightOverlayImage.getBounds().height, bottomRightOverlayImage.getBounds().width,
-						bottomRightOverlayImage.getBounds().height);
-			}
-		}
-	}
-	
 	/**
 	 * @param item
 	 * @return the Font to use for this item
@@ -241,7 +234,8 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 
 	public void setDropShadowsSize(int dropShadowsSize) {
 		this.dropShadowsSize = dropShadowsSize;
-		this.dropShadowsAlphaStep = (dropShadowsSize == 0) ? 0 : (200 / dropShadowsSize);
+		this.dropShadowsAlphaStep = (dropShadowsSize == 0) ? 0
+				: (200 / dropShadowsSize);
 
 		freeDropShadowsColors();
 		createColors();
@@ -300,8 +294,7 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 	}
 
 	/**
-	 * Set the font for drawing item label or <tt>null</tt> to use system
-	 * font.
+	 * Set the font for drawing item label or <tt>null</tt> to use system font.
 	 * 
 	 * @param font
 	 *            the font to set

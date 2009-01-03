@@ -16,9 +16,11 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 
 /**
- * NoGroup Renderer <br/> This group renderer does not draw group decoration.
- * Only items are displayed.<br/> All groups are considered as expanded<br/>
- * The visual aspect is the same as the first version of the gallery widget.<br/><br/>
+ * NoGroup Renderer <br/>
+ * This group renderer does not draw group decoration. Only items are displayed.<br/>
+ * All groups are considered as expanded<br/>
+ * The visual aspect is the same as the first version of the gallery widget.<br/>
+ * <br/>
  * 
  * <p>
  * NOTE: THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT. THIS IS A
@@ -32,17 +34,23 @@ public class NoGroupRenderer extends AbstractGridGroupRenderer {
 
 	static int OFFSET = 0;
 
-	public void draw(GC gc, GalleryItem group, int x, int y, int clipX, int clipY, int clipWidth, int clipHeight) {
+	public void draw(GC gc, GalleryItem group, int x, int y, int clipX,
+			int clipY, int clipWidth, int clipHeight) {
 
 		// Get items in the clipping area
-		int[] indexes = getVisibleItems(group, x, y, clipX, clipY, clipWidth, clipHeight, OFFSET);
+		int[] indexes = getVisibleItems(group, x, y, clipX, clipY, clipWidth,
+				clipHeight, OFFSET);
 
 		if (indexes != null && indexes.length > 0) {
 			for (int i = indexes.length - 1; i >= 0; i--) {
 				// Draw item
 				boolean selected = group.isSelected(group.getItem(indexes[i]));
-				if (Gallery.DEBUG)
-					System.out.println("Selected : " + selected + " index : " + indexes[i] + "item : " + group.getItem(indexes[i]));
+
+				if (Gallery.DEBUG) {
+					System.out
+							.println("Selected : " + selected + " index : " + indexes[i] + "item : " + group.getItem(indexes[i])); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+				}
+
 				drawItem(gc, indexes[i], selected, group, OFFSET);
 
 			}
@@ -65,7 +73,8 @@ public class NoGroupRenderer extends AbstractGridGroupRenderer {
 				margin = calculateMargins(sizeX, hCount, itemWidth);
 			}
 
-			Point s = this.getSize(hCount, vCount, itemWidth, itemHeight, minMargin, margin);
+			Point s = this.getSize(hCount, vCount, itemWidth, itemHeight,
+					minMargin, margin);
 			group.height += s.y;
 
 			group.setData(H_COUNT, new Integer(hCount));
@@ -83,7 +92,8 @@ public class NoGroupRenderer extends AbstractGridGroupRenderer {
 				margin = calculateMargins(sizeY, vCount, itemHeight);
 			}
 
-			Point s = this.getSize(hCount, vCount, itemWidth, itemHeight, minMargin, margin);
+			Point s = this.getSize(hCount, vCount, itemWidth, itemHeight,
+					minMargin, margin);
 			group.width += s.x;
 
 			group.setData(H_COUNT, new Integer(hCount));
