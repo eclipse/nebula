@@ -50,9 +50,9 @@ public class SnippetGalleryViewerTester {
 
 		public GalleryTestContentProvider() {
 			for (int i = 0; i < NUM_GROUPS; i++) {
-				groups[i] = "Group " + (i + 1);
+				groups[i] = "Group " + (i + 1); //$NON-NLS-1$
 				for (int j = 0; j < NUM_ITEMS; j++) {
-					items[i][j] = "Item " + (j + 1);
+					items[i][j] = "Item " + (j + 1); //$NON-NLS-1$
 				}
 			}
 		}
@@ -67,7 +67,7 @@ public class SnippetGalleryViewerTester {
 		}
 
 		public boolean hasChildren(Object element) {
-			return ((String) element).startsWith("Group");
+			return ((String) element).startsWith("Group"); //$NON-NLS-1$
 		}
 
 		public Object[] getElements(Object inputElement) {

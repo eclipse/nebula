@@ -47,6 +47,8 @@ public class SnippetVirtual {
 
 		gallery.setGroupRenderer(gr);
 		gallery.setItemRenderer(ir);
+		
+		gallery.setVirtualGroups(true);
 
 		gallery.addListener(SWT.SetData, new Listener() {
 
@@ -61,9 +63,10 @@ public class SnippetVirtual {
 					item.setItemCount(100);
 				}
 
+				System.out.println( "setData index " + index); //$NON-NLS-1$
 				// Your image here
 				// item.setImage(eclipseImage);
-				item.setText("Item " + index);
+				item.setText("Item " + index); //$NON-NLS-1$
 			}
 
 		});

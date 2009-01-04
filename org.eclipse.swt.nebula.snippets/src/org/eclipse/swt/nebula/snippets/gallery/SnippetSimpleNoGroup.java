@@ -38,7 +38,7 @@ public class SnippetSimpleNoGroup {
 
 	public static void main(String[] args) {
 		Display display = new Display();
-		Image itemImage = new Image(display, Program.findProgram("jpg").getImageData());
+		Image itemImage = new Image(display, Program.findProgram("jpg").getImageData()); //$NON-NLS-1$
 
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
@@ -62,7 +62,7 @@ public class SnippetSimpleNoGroup {
 			if (itemImage != null) {
 				item.setImage(itemImage);
 			}
-			item.setText("Item " + i);
+			item.setText("Item " + i); //$NON-NLS-1$
 		}
 
 		shell.pack();

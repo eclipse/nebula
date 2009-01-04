@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.swt.nebula.snippets.gallery;
 
+import org.eclipse.nebula.widgets.gallery.AbstractGalleryItemRenderer;
 import org.eclipse.nebula.widgets.gallery.DefaultGalleryGroupRenderer;
 import org.eclipse.nebula.widgets.gallery.DefaultGalleryItemRenderer;
 import org.eclipse.nebula.widgets.gallery.Gallery;
@@ -35,12 +36,15 @@ import org.eclipse.swt.widgets.Shell;
  * @author Nicolas Richeton (nicolas.richeton@gmail.com)
  */
 
-public class SnippetSimple {
+public class SnippetSimpleOverlay {
 
 	public static void main(String[] args) {
 		Display display = new Display();
-		Image itemImage = new Image(display, Program
-				.findProgram("jpg").getImageData()); //$NON-NLS-1$
+		Image[] itemImages = {
+				new Image(display, Program.findProgram("jpg").getImageData()), //$NON-NLS-1$
+				new Image(display, Program.findProgram("mov").getImageData()), //$NON-NLS-1$
+				new Image(display, Program.findProgram("mp3").getImageData()), //$NON-NLS-1$
+				new Image(display, Program.findProgram("txt").getImageData()) }; //$NON-NLS-1$
 
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
@@ -49,8 +53,8 @@ public class SnippetSimple {
 		// Renderers
 		DefaultGalleryGroupRenderer gr = new DefaultGalleryGroupRenderer();
 		gr.setMinMargin(2);
-		gr.setItemHeight(56);
-		gr.setItemWidth(72);
+		gr.setItemHeight(106);
+		gr.setItemWidth(82);
 		gr.setAutoMargin(true);
 		gallery.setGroupRenderer(gr);
 
@@ -64,10 +68,22 @@ public class SnippetSimple {
 
 			for (int i = 0; i < 50; i++) {
 				GalleryItem item = new GalleryItem(group, SWT.NONE);
-				if (itemImage != null) {
-					item.setImage(itemImage);
+				if (itemImages[0] != null) {
+					item.setImage(itemImages[0]);
 				}
 				item.setText("Item " + i); //$NON-NLS-1$
+				Image[] over = { itemImages[0] };
+				Image[] over2 = { itemImages[1], itemImages[2] };
+				Image[] over3 = { itemImages[3] };
+				item.setData(AbstractGalleryItemRenderer.OVERLAY_BOTTOM_RIGHT,
+						over3);
+				item.setData(AbstractGalleryItemRenderer.OVERLAY_BOTTOM_LEFT,
+						over);
+				item.setData(AbstractGalleryItemRenderer.OVERLAY_TOP_RIGHT,
+						over);
+				item.setData(AbstractGalleryItemRenderer.OVERLAY_TOP_LEFT,
+						over2);
+
 			}
 		}
 
@@ -78,8 +94,10 @@ public class SnippetSimple {
 				display.sleep();
 		}
 
-		if (itemImage != null)
-			itemImage.dispose();
+		for (int i = 0; i < itemImages.length; i++) {
+			itemImages[i].dispose();
+		}
+		
 		display.dispose();
 	}
 }

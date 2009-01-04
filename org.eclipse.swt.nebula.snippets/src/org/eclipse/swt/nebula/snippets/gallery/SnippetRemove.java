@@ -40,7 +40,7 @@ public class SnippetRemove {
 
 	public static void main(String[] args) {
 		Display display = new Display();
-		Image itemImage = new Image(display, Program.findProgram("jpg")
+		Image itemImage = new Image(display, Program.findProgram("jpg") //$NON-NLS-1$
 				.getImageData());
 
 		Shell shell = new Shell(display);
@@ -60,7 +60,7 @@ public class SnippetRemove {
 
 		for (int g = 0; g < 2; g++) {
 			GalleryItem group = new GalleryItem(gallery, SWT.NONE);
-			group.setText("Group " + g);
+			group.setText("Group " + g); //$NON-NLS-1$
 			group.setExpanded(true);
 
 			for (int i = 0; i < 50; i++) {
@@ -68,7 +68,7 @@ public class SnippetRemove {
 				if (itemImage != null) {
 					item.setImage(itemImage);
 				}
-				item.setText("Item " + i);
+				item.setText("Item " + i); //$NON-NLS-1$
 			}
 		}
 
@@ -89,9 +89,11 @@ public class SnippetRemove {
 			}
 
 			public void mouseDown(MouseEvent e) {
+				// Do nothing
 			}
 
 			public void mouseUp(MouseEvent e) {
+				// Do nothing
 			}
 
 		});

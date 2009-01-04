@@ -22,8 +22,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * This widget displays a simple gallery with some content.<br/> Scrolling is
- * vertical.<br/><br/>
+ * This widget displays a simple gallery with some content.<br/>
+ * Scrolling is vertical.<br/>
+ * <br/>
  * 
  * <p>
  * NOTE: THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT. THIS IS A
@@ -38,7 +39,8 @@ public class SnippetSimpleHScroll {
 
 	public static void main(String[] args) {
 		Display display = new Display();
-		Image itemImage = new Image(display, Program.findProgram("jpg").getImageData());
+		Image itemImage = new Image(display, Program
+				.findProgram("jpg").getImageData()); //$NON-NLS-1$
 
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
@@ -62,20 +64,19 @@ public class SnippetSimpleHScroll {
 			if (itemImage != null) {
 				item.setImage(itemImage);
 			}
-			item.setText("Item " + i);
+			item.setText("Item " + i); //$NON-NLS-1$
 		}
 
-		 group = new GalleryItem(gallery, SWT.NONE);
+		group = new GalleryItem(gallery, SWT.NONE);
 
 		for (int i = 0; i < 50; i++) {
 			GalleryItem item = new GalleryItem(group, SWT.NONE);
 			if (itemImage != null) {
 				item.setImage(itemImage);
 			}
-			item.setText("Item " + i);
+			item.setText("Item " + i); //$NON-NLS-1$
 		}
 
-		
 		shell.pack();
 		shell.open();
 		while (!shell.isDisposed()) {

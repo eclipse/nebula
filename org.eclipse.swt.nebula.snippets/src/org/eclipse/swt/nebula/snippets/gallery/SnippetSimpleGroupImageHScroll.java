@@ -35,16 +35,16 @@ import org.eclipse.swt.widgets.Shell;
  * @author Nicolas Richeton (nicolas.richeton@gmail.com)
  */
 
-public class SnippetSimple {
+public class SnippetSimpleGroupImageHScroll {
 
 	public static void main(String[] args) {
 		Display display = new Display();
-		Image itemImage = new Image(display, Program
-				.findProgram("jpg").getImageData()); //$NON-NLS-1$
+		Image itemImage = new Image(display, Program.findProgram("jpg") //$NON-NLS-1$
+				.getImageData());
 
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
-		Gallery gallery = new Gallery(shell, SWT.V_SCROLL | SWT.MULTI);
+		Gallery gallery = new Gallery(shell, SWT.H_SCROLL | SWT.MULTI);
 
 		// Renderers
 		DefaultGalleryGroupRenderer gr = new DefaultGalleryGroupRenderer();
@@ -52,15 +52,23 @@ public class SnippetSimple {
 		gr.setItemHeight(56);
 		gr.setItemWidth(72);
 		gr.setAutoMargin(true);
+
 		gallery.setGroupRenderer(gr);
 
 		DefaultGalleryItemRenderer ir = new DefaultGalleryItemRenderer();
 		gallery.setItemRenderer(ir);
 
-		for (int g = 0; g < 2; g++) {
+		for (int g = 0; g < 3; g++) {
 			GalleryItem group = new GalleryItem(gallery, SWT.NONE);
 			group.setText("Group " + g); //$NON-NLS-1$
 			group.setExpanded(true);
+			group.setImage(itemImage);
+
+			if (g > 0)
+				group.setText(1, "descr1"); //$NON-NLS-1$
+
+			if (g > 1)
+				group.setText(2, "descr2"); //$NON-NLS-1$
 
 			for (int i = 0; i < 50; i++) {
 				GalleryItem item = new GalleryItem(group, SWT.NONE);

@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Shell;
  * @author Nicolas Richeton (nicolas.richeton@gmail.com)
  */
 
-public class SnippetSimple {
+public class SnippetSimpleAlwaysExpanded {
 
 	public static void main(String[] args) {
 		Display display = new Display();
@@ -44,7 +44,7 @@ public class SnippetSimple {
 
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
-		Gallery gallery = new Gallery(shell, SWT.V_SCROLL | SWT.MULTI);
+		Gallery gallery = new Gallery(shell, SWT.H_SCROLL | SWT.MULTI);
 
 		// Renderers
 		DefaultGalleryGroupRenderer gr = new DefaultGalleryGroupRenderer();
@@ -52,6 +52,7 @@ public class SnippetSimple {
 		gr.setItemHeight(56);
 		gr.setItemWidth(72);
 		gr.setAutoMargin(true);
+		gr.setAlwaysExpanded(true);
 		gallery.setGroupRenderer(gr);
 
 		DefaultGalleryItemRenderer ir = new DefaultGalleryItemRenderer();
@@ -60,7 +61,7 @@ public class SnippetSimple {
 		for (int g = 0; g < 2; g++) {
 			GalleryItem group = new GalleryItem(gallery, SWT.NONE);
 			group.setText("Group " + g); //$NON-NLS-1$
-			group.setExpanded(true);
+			group.setExpanded(false);
 
 			for (int i = 0; i < 50; i++) {
 				GalleryItem item = new GalleryItem(group, SWT.NONE);

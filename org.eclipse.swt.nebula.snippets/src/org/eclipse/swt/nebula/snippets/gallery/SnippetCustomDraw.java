@@ -38,10 +38,10 @@ public class SnippetCustomDraw {
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
 		Gallery gallery = new Gallery(shell, SWT.V_SCROLL);
-		
+
 		// Enable custom drawing
 		gallery.setItemRenderer(null);
-	
+
 		DefaultGalleryGroupRenderer groupRenderer = new DefaultGalleryGroupRenderer();
 		groupRenderer.setMinMargin(3);
 		gallery.setGroupRenderer(groupRenderer);
@@ -50,7 +50,8 @@ public class SnippetCustomDraw {
 
 			public void handleEvent(Event e) {
 				GalleryItem item = (GalleryItem) e.item;
-				e.gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_GRAY));
+				e.gc.setBackground(Display.getDefault().getSystemColor(
+						SWT.COLOR_GRAY));
 				e.gc.fillRectangle(e.x, e.y, e.width, e.height);
 				e.gc.drawText(item.getText(), e.x, e.y);
 			}
@@ -58,22 +59,22 @@ public class SnippetCustomDraw {
 		});
 
 		GalleryItem i1 = new GalleryItem(gallery, SWT.NONE);
-		i1.setText("Group 1");
-		
+		i1.setText("Group 1"); //$NON-NLS-1$
+
 		i1 = new GalleryItem(i1, SWT.NONE);
-		i1.setText("Test1-1");
-		
+		i1.setText("Test1-1"); //$NON-NLS-1$
+
 		i1 = new GalleryItem(gallery, SWT.NONE);
-		i1.setText("Group 2");
-		
+		i1.setText("Group 2"); //$NON-NLS-1$
+
 		i1 = new GalleryItem(i1, SWT.NONE);
-		i1.setText("Test2-1");
-		
+		i1.setText("Test2-1"); //$NON-NLS-1$
+
 		i1 = new GalleryItem(gallery, SWT.NONE);
-		i1.setText("Group 3");
-	
+		i1.setText("Group 3"); //$NON-NLS-1$
+
 		i1 = new GalleryItem(i1, SWT.NONE);
-		i1.setText("Test3-1");
+		i1.setText("Test3-1"); //$NON-NLS-1$
 
 		shell.pack();
 		shell.open();

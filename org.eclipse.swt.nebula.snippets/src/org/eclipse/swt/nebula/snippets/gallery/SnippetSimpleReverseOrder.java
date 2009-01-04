@@ -22,8 +22,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * This widget displays a simple gallery with some content.<br/> Scrolling is
- * vertical.<br/><br/>
+ * This widget displays a simple gallery with some content.<br/>
+ * Scrolling is vertical.<br/>
+ * <br/>
  * 
  * <p>
  * NOTE: THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT. THIS IS A
@@ -38,7 +39,8 @@ public class SnippetSimpleReverseOrder {
 
 	public static void main(String[] args) {
 		Display display = new Display();
-		Image itemImage = new Image(display, Program.findProgram("jpg").getImageData());
+		Image itemImage = new Image(display, Program
+				.findProgram("jpg").getImageData()); //$NON-NLS-1$
 
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
@@ -57,7 +59,7 @@ public class SnippetSimpleReverseOrder {
 
 		for (int g = 0; g < 2; g++) {
 			GalleryItem group = new GalleryItem(gallery, SWT.NONE);
-			group.setText("Group " + g);
+			group.setText("Group " + g); //$NON-NLS-1$
 			group.setExpanded(true);
 
 			for (int i = 0; i < 50; i++) {
@@ -65,7 +67,7 @@ public class SnippetSimpleReverseOrder {
 				if (itemImage != null) {
 					item.setImage(itemImage);
 				}
-				item.setText("Item " + i);
+				item.setText("Item " + i); //$NON-NLS-1$
 			}
 		}
 
@@ -78,6 +80,7 @@ public class SnippetSimpleReverseOrder {
 
 		if (itemImage != null)
 			itemImage.dispose();
+
 		display.dispose();
 	}
 }

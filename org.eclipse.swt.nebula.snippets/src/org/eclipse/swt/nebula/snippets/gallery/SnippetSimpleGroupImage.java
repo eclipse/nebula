@@ -35,12 +35,21 @@ import org.eclipse.swt.widgets.Shell;
  * @author Nicolas Richeton (nicolas.richeton@gmail.com)
  */
 
-public class SnippetSimple {
+public class SnippetSimpleGroupImage {
+
+	private static final String ICON_FILE = "icon.png"; //$NON-NLS-1$
 
 	public static void main(String[] args) {
 		Display display = new Display();
-		Image itemImage = new Image(display, Program
-				.findProgram("jpg").getImageData()); //$NON-NLS-1$
+		Image itemImage;
+		if (SnippetSimpleGroupImage.class.getResource(ICON_FILE) != null) {
+			itemImage = new Image(display, SnippetSimpleGroupImage.class
+					.getResourceAsStream(ICON_FILE));
+
+		} else {
+			itemImage = new Image(display, Program.findProgram("jpg") //$NON-NLS-1$
+					.getImageData());
+		}
 
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
@@ -49,18 +58,30 @@ public class SnippetSimple {
 		// Renderers
 		DefaultGalleryGroupRenderer gr = new DefaultGalleryGroupRenderer();
 		gr.setMinMargin(2);
-		gr.setItemHeight(56);
-		gr.setItemWidth(72);
+		gr.setItemHeight(156);
+		gr.setItemWidth(172);
+
+		gr.setMaxImageHeight(64);
+		gr.setMaxImageWidth(72);
 		gr.setAutoMargin(true);
 		gallery.setGroupRenderer(gr);
+		gallery.setLowQualityOnUserAction(true);
+		gallery.setHigherQualityDelay(500);
 
 		DefaultGalleryItemRenderer ir = new DefaultGalleryItemRenderer();
 		gallery.setItemRenderer(ir);
 
-		for (int g = 0; g < 2; g++) {
+		for (int g = 0; g < 3; g++) {
 			GalleryItem group = new GalleryItem(gallery, SWT.NONE);
 			group.setText("Group " + g); //$NON-NLS-1$
 			group.setExpanded(true);
+			group.setImage(itemImage);
+
+			if (g > 0)
+				group.setText(1, "Description line 1"); //$NON-NLS-1$
+
+			if (g > 1)
+				group.setText(2, "Description line 2"); //$NON-NLS-1$
 
 			for (int i = 0; i < 50; i++) {
 				GalleryItem item = new GalleryItem(group, SWT.NONE);

@@ -11,7 +11,6 @@ package org.eclipse.swt.nebula.snippets.gallery;
  *    Nicolas Richeton (nicolas.richeton@gmail.com) - initial implementation
  *******************************************************************************/
 
-
 import org.eclipse.nebula.widgets.gallery.DefaultGalleryGroupRenderer;
 import org.eclipse.nebula.widgets.gallery.DefaultGalleryItemRenderer;
 import org.eclipse.nebula.widgets.gallery.Gallery;
@@ -24,27 +23,29 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * This widget displays a simple gallery with some content.<br/> Scrolling is
- * vertical.<br/><br/>
- *
+ * This widget displays a simple gallery with some content.<br/>
+ * Scrolling is vertical.<br/>
+ * <br/>
+ * 
  * <p>
  * NOTE: THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT. THIS IS A
  * PRE-RELEASE ALPHA VERSION. USERS SHOULD EXPECT API CHANGES IN FUTURE
  * VERSIONS.
  * </p>
- *
+ * 
  * @author Nicolas Richeton (nicolas.richeton@gmail.com)
  */
 
-public class SnippetVScroll {
+public class SnippetHScroll {
 
 	public static void main(String[] args) {
 		Display display = new Display();
-		Image itemImage = new Image(display, Program.findProgram("jpg").getImageData()); //$NON-NLS-1$
+		Image itemImage = new Image(display, Program
+				.findProgram("jpg").getImageData()); //$NON-NLS-1$
 
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
-		Gallery gallery = new Gallery(shell, SWT.V_SCROLL | SWT.MULTI);
+		Gallery gallery = new Gallery(shell, SWT.H_SCROLL | SWT.MULTI);
 
 		// Renderers
 		DefaultGalleryGroupRenderer gr = new DefaultGalleryGroupRenderer();

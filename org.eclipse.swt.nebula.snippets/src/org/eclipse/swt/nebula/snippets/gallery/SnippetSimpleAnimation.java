@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Shell;
  * @author Nicolas Richeton (nicolas.richeton@gmail.com)
  */
 
-public class SnippetSimple {
+public class SnippetSimpleAnimation {
 
 	public static void main(String[] args) {
 		Display display = new Display();
@@ -52,6 +52,7 @@ public class SnippetSimple {
 		gr.setItemHeight(56);
 		gr.setItemWidth(72);
 		gr.setAutoMargin(true);
+		gr.setAnimation(true);
 		gallery.setGroupRenderer(gr);
 
 		DefaultGalleryItemRenderer ir = new DefaultGalleryItemRenderer();
