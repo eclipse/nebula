@@ -89,6 +89,8 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 			int width, int height) {
 
 		Image itemImage = item.getImage();
+		Color itemBackgroundColor = item.getBackground();
+		Color itemForegroundColor = item.getForeground();
 
 		int useableHeight = height;
 
@@ -127,9 +129,14 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 		}
 
 		// Draw selection background (rounded rectangles)
-		if (selected) {
-			gc.setBackground(selectionBackgroundColor);
-			gc.setForeground(selectionBackgroundColor);
+		if (selected || itemBackgroundColor != null) {
+			if (selected) {
+				gc.setBackground(selectionBackgroundColor);
+				gc.setForeground(selectionBackgroundColor);
+			} else if (itemBackgroundColor != null) {
+				gc.setBackground(itemBackgroundColor);
+			}
+
 			gc.fillRoundRectangle(x, y, width, useableHeight, 15, 15);
 		}
 
@@ -178,8 +185,15 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 				if (displayDescription)
 					transY -= descriptionFontHeight;
 				transY = transY >> 1;
-				gc.setForeground(selected ? this.selectionForegroundColor
-						: this.foregroundColor);
+
+				if (selected) {
+					gc.setForeground(this.selectionForegroundColor);
+				} else if (itemForegroundColor != null) {
+					gc.setForeground(itemForegroundColor);
+				} else {
+					gc.setForeground(this.foregroundColor);
+				}
+				
 				gc.setFont(textFont);
 				gc.drawText(text, x + useableHeight + 5, y + transY, true);
 			}
