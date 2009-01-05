@@ -152,7 +152,7 @@ public abstract class AbstractGalleryItemRenderer {
 	 *</ul>
 	 * 
 	 */
-	protected void drawImageBottomLeftOverlay(GC gc, GalleryItem item, int x,
+	protected void drawAllOverlays(GC gc, GalleryItem item, int x,
 			int y, Point imageSize, int xShift, int yShift) {
 		Image[] imagesBottomLeft = getImageOverlay(item, OVERLAY_BOTTOM_LEFT);
 		Image[] imagesBottomRight = getImageOverlay(item, OVERLAY_BOTTOM_RIGHT);

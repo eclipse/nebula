@@ -165,9 +165,10 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 			if (size.x > 0 && size.y > 0) {
 				gc.drawImage(itemImage, 0, 0, imageWidth, imageHeight, x
 						+ xShift, y + yShift, size.x, size.y);
+				drawAllOverlays(gc, item, x, y, size, xShift, yShift);
 			}
 
-			drawImageBottomLeftOverlay(gc, item, x, y, size, xShift, yShift);
+			
 		}
 
 		// Draw label
