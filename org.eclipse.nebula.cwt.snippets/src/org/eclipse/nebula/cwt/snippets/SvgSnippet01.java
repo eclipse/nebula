@@ -11,6 +11,7 @@
 
 package org.eclipse.nebula.cwt.snippets;
 
+import org.eclipse.nebula.cwt.svg.SvgDocument;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;

@@ -1,11 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: CDateTime Examples
+Bundle-Name: Custom Widget Toolkit Snippets
 Bundle-SymbolicName: org.eclipse.nebula.cwt.snippets
 Bundle-Version: 0.12.2
-Bundle-Vendor: AspenCloud
+Bundle-Vendor: eclipse.org
 Export-Package: org.eclipse.nebula.cwt.snippets
-Require-Bundle: org.eclipse.jface,
- org.eclipse.ui.forms,
- org.eclipse.nebula.widgets.cdatetime
+Require-Bundle: org.eclipse.swt;bundle-version="3.4.0",
+ org.eclipse.nebula.cwt;bundle-version="0.12.2"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
