@@ -1,0 +1,30 @@
+package org.eclipse.nebula.cwt.svg;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
+
+public class SvgStroke extends SvgPaint {
+
+	Float width = null;
+	Integer lineCap = SWT.CAP_FLAT;
+	Integer lineJoin = SWT.JOIN_MITER;
+
+	SvgStroke(SvgGraphic parent) {
+		super(parent);
+	}
+	
+	public void apply() {
+		if(paintServer != null) {
+			paintServer.apply(true);
+		} else {
+			Color c = new Color(gc.getDevice(), color >> 16, (color & 0x00FF00) >> 8, color & 0x0000FF);
+			gc.setForeground(c);
+			c.dispose();
+			gc.setLineWidth((int)Math.ceil(width));
+			gc.setLineCap(lineCap);
+			gc.setLineJoin(lineJoin);
+			gc.setAlpha((int)(255 * opacity));
+		}
+	}
+
+}

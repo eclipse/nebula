@@ -1,0 +1,52 @@
+package org.eclipse.nebula.cwt.svg;
+
+import org.eclipse.swt.graphics.GC;
+
+public class SvgUse extends SvgGraphic {
+
+	String linkId;
+	float x;
+	float y;
+	Float w;
+	Float h;
+	
+	SvgUse(SvgContainer container, String id) {
+		super(container, id);
+	}
+
+	public void apply(GC gc) {
+		SvgGraphic graphic = getGraphic();
+		if(graphic != null) {
+			// TODO: proxy container?
+			SvgContainer c = graphic.getContainer();
+			graphic.setContainer(getContainer());
+			graphic.apply(gc);
+			graphic.setContainer(c);
+		}
+	}
+
+	SvgFill getFill() {
+		SvgGraphic graphic = getGraphic();
+		if(graphic != null) {
+			return graphic.getFill();
+		}
+		return null;
+	}
+	
+	private SvgGraphic getGraphic() {
+		Object def = getFragment().getElement(linkId);
+		if(def instanceof SvgGraphic) {
+			return (SvgGraphic) def;
+		}
+		return null;
+	}
+
+	SvgStroke getStroke() {
+		SvgGraphic graphic = getGraphic();
+		if(graphic != null) {
+			return graphic.getStroke();
+		}
+		return null;
+	}
+
+}
