@@ -1,12 +1,11 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Custom Widget Toolkit Test Plug-in
+Bundle-Name: Custom Widget Toolkit Tests
 Bundle-SymbolicName: org.eclipse.nebula.cwt.tests
 Bundle-Version: 0.12.2
-Bundle-Vendor: AspenCloud
+Bundle-Vendor: eclipse.org
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.swt,
+Require-Bundle: org.eclipse.swt,
  org.eclipse.nebula.cwt;bundle-version="0.12.2";visibility:=reexport,
  org.junit;bundle-version="3.8.2";visibility:=reexport
 Export-Package: org.eclipse.nebula.cwt.test
