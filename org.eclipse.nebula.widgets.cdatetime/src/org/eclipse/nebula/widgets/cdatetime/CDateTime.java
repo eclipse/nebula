@@ -1,30 +1,43 @@
 /****************************************************************************
-* Copyright (c) 2006 Jeremy Dowdall
-* All rights reserved. This program and the accompanying materials
-* are made available under the terms of the Eclipse Public License v1.0
-* which accompanies this distribution, and is available at
-* http://www.eclipse.org/legal/epl-v10.html
-*
-* Contributors:
-*    Jeremy Dowdall <jeremyd@aspencloud.com> - initial API and implementation
-*****************************************************************************/
+ * Copyright (c) 2006-2008 Jeremy Dowdall
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Jeremy Dowdall <jeremyd@aspencloud.com> - initial API and implementation
+ *****************************************************************************/
 
 package org.eclipse.nebula.widgets.cdatetime;
 
 import java.text.AttributedCharacterIterator;
+import java.text.CharacterIterator;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.text.DateFormat.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
+import org.eclipse.nebula.cwt.base.BaseCombo;
+import org.eclipse.nebula.cwt.v.VButton;
+import org.eclipse.nebula.cwt.v.VCanvas;
+import org.eclipse.nebula.cwt.v.VGridLayout;
+import org.eclipse.nebula.cwt.v.VLabel;
+import org.eclipse.nebula.cwt.v.VLayout;
+import org.eclipse.nebula.cwt.v.VNative;
+import org.eclipse.nebula.cwt.v.VPanel;
+import org.eclipse.nebula.cwt.v.VTracker;
+import org.eclipse.nebula.widgets.cdatetime.CDT.PickerPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
-import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -32,94 +45,30 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.TypedListener;
-import org.eclipse.swt.widgets.Widget;
 
 
 /**
  * The CDateTime provides both textual and graphical means for setting
- * the attributes of a java.util.Date class.  As with other components having
- * "combo" in their name, the base of this component is a text box which, if the
- * DROP_DOWN style is set, is complimented by a down-arrow that will open / pop
- * up / drop down a graphical component; for the CDateTime, the drop down
- * component is a CDateTime (automatically set a style appropriate for date
- * format of the text box).  If the style DROP_DOWN is not set, then this combo
- * will NOT show a drop down arrow button, but will instead show a spinner which
- * can be used to increment / decrement the selected date field in the text box.
- * <dt><b>Styles:</b></dt>
- * <dd>BORDER, DROP_DOWN, FOOTER</dd>
- * <dt><b>Events:</b></dt>
- * <dd>Selection</dd>
+ * the fields of a <code>java.util.Calendar</code> class.  As with other combo
+ * type widgets, the base of this component is a text box which, if the
+ * DROP_DOWN style is set, is complimented by a button that will open and close
+ * a drop down graphical selector.
+ * <p>
+ * Styles are set using the constants provided in the CDT class.
+ * </p>
+ * @see CDT
  */
-public class CDateTime extends AbstractCombo {
-
-	/**
-	 * The layout used for a "basic" CDateTime - when it is neither
-	 * of style SIMPLE or DROP_DOWN.
-	 * Note that there is a spinner, but no button for this style.
-	 */
-	private class BasicLayout extends Layout {
-		
-		protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
-			Point size = text.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			size.x += spinner.computeSize(SWT.DEFAULT, SWT.DEFAULT).x - spinner.getClientArea().width;
-
-			size.y += textMarginHeight;
-
-			if(wHint != SWT.DEFAULT) {
-				size.x = Math.min(size.x, wHint);
-			}
-			if(hHint != SWT.DEFAULT) {
-				size.y = Math.min(size.y, hHint);
-			}
-			return size;
-		}
-		
-		protected void layout(Composite composite, boolean flushCache) {
-			Rectangle cRect = composite.getClientArea();
-			if(cRect.isEmpty()) return;
-			
-			Point tSize = text.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			tSize.y += textMarginHeight;
-			
-			Point sSize;
-			sSize = spinner.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
-			sSize.y = Math.min(sSize.y, Math.min(tSize.y, cRect.height));
-			sSize.x = Math.min(sSize.x, cRect.width);
-			
-			spinner.setBounds(
-					cRect.x+cRect.width-sSize.x,
-					cRect.y+((tSize.y-sSize.y) / 2),
-					sSize.x,
-					sSize.y
-					);
-
-			text.setBounds(
-					cRect.x,
-					cRect.y + (win32 ? getBorderWidth() : 0),
-					cRect.width-sSize.x+
-					(win32 ? (sSize.x - button.computeSize(-1, -1).x) : 
-						spinner.getClientArea().width),
-					tSize.y
-					);
-
-			if(win32) {
-				win32Hack.setBounds(
-						cRect.x,
-						cRect.y,
-						cRect.width-button.computeSize(-1, -1).x,
-						sSize.y
-						);
-			}
-		}
-	}
+public class CDateTime extends BaseCombo {
 
 	/**
 	 * A simple class used for editing a field numerically.
@@ -130,14 +79,14 @@ public class CDateTime extends AbstractCombo {
 		private int digits;
 		private int count = 0;
 		
-		public EditField(int digits, int initialValue) {
+		EditField(int digits, int initialValue) {
 			this.digits = digits;
 			buffer = Integer.toString(initialValue);
 		}
 		
 		boolean addChar(char c) {
 			if(Character.isDigit(c)) {
-				buffer = (count > 0) ? buffer : "";
+				buffer = (count > 0) ? buffer : ""; //$NON-NLS-1$
 				buffer += String.valueOf(c);
 				if(buffer.length() > digits) {
 					buffer = buffer.substring(buffer.length()-digits, buffer.length());
@@ -170,49 +119,139 @@ public class CDateTime extends AbstractCombo {
 			return buffer;
 		}
 	}
+
+	/**
+	 * The layout used for a "basic" CDateTime - when it is neither
+	 * of style SIMPLE or DROP_DOWN - with style of SPINNER.<br>
+	 * Note that there is a spinner, but no button for this style.
+	 */
+	class SpinnerLayout extends VLayout {
+		
+		protected Point computeSize(VPanel panel, int wHint, int hHint, boolean flushCache) {
+			Point size = text.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			size.x += 22;
+
+			size.y += textMarginHeight;
+
+			if(wHint != SWT.DEFAULT) {
+				size.x = Math.min(size.x, wHint);
+			}
+			if(hHint != SWT.DEFAULT) {
+				size.y = Math.min(size.y, hHint);
+			}
+			return size;
+		}
+		
+		protected void layout(VPanel panel, boolean flushCache) {
+			Rectangle cRect = panel.getClientArea();
+			if(cRect.isEmpty()) return;
+			
+			Point tSize = text.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			tSize.y += textMarginHeight;
+			
+			Point sSize;
+			sSize = spinner.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
+			sSize.y = Math.min(sSize.y, Math.min(tSize.y, cRect.height));
+			sSize.x = Math.min(sSize.x, cRect.width);
+			
+			spinner.setBounds(
+					cRect.x+cRect.width-sSize.x,
+					cRect.y+((tSize.y-sSize.y) / 2),
+					sSize.x,
+					sSize.y
+					);
+
+			text.setBounds(
+					cRect.x,
+					cRect.y + (win32 ? getBorderWidth() : 0),
+					cRect.width-sSize.x + 22,
+					tSize.y
+					);
+		}
+	}
 	
-	private static final int FIELD_ALL = -2;
 	private static final int FIELD_NONE = -1;
 	
 	private static final int DISCARD		= 0;
 	private static final int WRAP 		= 1;
 	private static final int BLOCK		= 2;
 	
-	private AbstractPicker[] pickers;
-	private SashForm pickerSash;
-	private Composite[] pickerComps;
-	private Spinner spinner;
-	private Composite win32Hack;
+	private static int convertStyle(int style) {
+		int rstyle = SWT.NONE;
+		if((style & CDT.DROP_DOWN) != 0) {
+			rstyle |= SWT.DROP_DOWN;
+		}
+		if((style & CDT.SIMPLE) != 0) {
+			rstyle |= SWT.SIMPLE;
+		}
+		if((style & CDT.READ_ONLY) != 0) {
+			rstyle |= SWT.READ_ONLY;
+		}
+		if((style & CDT.TEXT_LEAD) != 0) {
+			rstyle |= SWT.LEAD;
+		}
+		if((style & CDT.BORDER) != 0) {
+			rstyle |= SWT.BORDER;
+		}
+		if(win32) {
+			rstyle |= SWT.DOUBLE_BUFFERED;
+		}
+		return rstyle;
+	}
+	VPanel picker;
 	
-	private boolean rightClick = false;
-	private Date cancelDate;
+	VNative<Spinner> spinner;
+	boolean rightClick = false;
 
+	private Date cancelDate;
 	private Calendar calendar;
 	private DateFormat df;
 	Locale locale;
 	
+	TimeZone timezone;
 	private Field[] field;
 	private int activeField;
-	private boolean tabStops = false;
 
+	private boolean tabStops = false;
 	// Store these values so that the style can be reset automatically
 	//  to update everything if/when the locale is changed
 	int style;
 	String pattern = null;
+
 	int format = -1;
+
+	private CDateTimePainter painter;
 
 	/**
 	 * Delegates events to their appropriate handler
 	 */
-	private Listener textListener = new Listener() {
+	Listener textListener = new Listener() {
 		public void handleEvent(Event event) {
 			switch (event.type) {
+			case SWT.FocusIn:
+				rightClick = false;
+				if(VTracker.getLastTraverse() == SWT.TRAVERSE_TAB_PREVIOUS) {
+					fieldLast();
+				} else {
+					fieldFirst();
+				}
+				updateText();
+				break;
+			case SWT.FocusOut:
+				if(!rightClick) {
+//					setActiveField(FIELD_NONE); // this messes up the spinner...
+					updateText();
+				}
+				break;
 			case SWT.KeyDown:
-				handleKey(event);
+				// block the arrow keys because they are handled by the traverse listener
+				if((event.keyCode != SWT.ARROW_DOWN) && (event.keyCode != SWT.ARROW_UP)) {
+					handleKey(event);
+				}
 				break;
 			case SWT.MouseDown:
 				if(event.button == 1) {
-					fieldFromSelection();
+					fieldFromTextSelection();
 				} else if(event.button == 2) {
 					fieldNext();
 				} else if(event.button == 3) {
@@ -229,7 +268,7 @@ public class CDateTime extends AbstractCombo {
 				break;
 			case SWT.MouseUp:
 				if(event.button == 1) {
-					fieldFromSelection();
+					fieldFromTextSelection();
 				}
 				break;
 			case SWT.Traverse:
@@ -241,15 +280,29 @@ public class CDateTime extends AbstractCombo {
 			}
 		}
 	};
-
-	private Point selectionOffset = new Point(0,0); // x = selOffset start, y = selOffset amount
+	private Point textSelectionOffset = new Point(0,0); // x = selOffset start, y = selOffset amount
 	private EditField editField;
+	
 	private String[] separator;
+	private int[] calendarFields;
+	private boolean isTime;
+private boolean isDate;
+	//	private boolean isNull = true;
+	private String nullText = null;
+
 	
-	private boolean isNull = false;
+	private boolean defaultNullText = true;
+private boolean singleSelection;
 	
-	private HashMap nullTexts = new HashMap();
+	//	private boolean dragSelection;
+	private Date[] selection = new Date[0];
+
+	private boolean scrollable = true;
 	
+	CDateTimeBuilder builder;
+
+	VPanel pickerPanel;
+
 	/**
 	 * Constructs a new instance of this class given its parent and a style value 
 	 * describing its behavior and appearance.  The current date and the system's
@@ -258,90 +311,10 @@ public class CDateTime extends AbstractCombo {
 	 * @param style the style of widget to construct
 	 */
 	public CDateTime(Composite parent, int style) {
-		super(parent, style);
-
-		this.style = style;
-		tabStops = (style & CDT.TAB_FIELDS) != 0;
-		locale = Locale.getDefault();
-		calendar = Calendar.getInstance(this.locale);
-		
-		setFormat(style);
-
-		if(!isSimple()) {
-			if(isDropDown()) {
-				setButtonVisibility(CDT.BUTTON_ALWAYS);
-			} else {
-				setButtonVisibility(CDT.BUTTON_NEVER);
-				if((style & CDT.SPINNER) != 0) {
-					spinner = new Spinner(this, SWT.VERTICAL);
-					spinner.setMinimum(0);
-					spinner.setMaximum(50);
-					spinner.setDigits(1);
-					spinner.setIncrement(1);
-					spinner.setPageIncrement(1);
-					spinner.setSelection(25);
-					spinner.addFocusListener(new FocusAdapter() {
-						public void focusGained(FocusEvent e) {
-							setFocus();
-						}
-					});
-					spinner.addSelectionListener(new SelectionAdapter() {
-						public void widgetSelected(SelectionEvent e) {
-							text.forceFocus();
-							if(spinner.getSelection() > 25) {
-								fieldAdjust(1);
-							} else {
-								fieldAdjust(-1);
-							}
-							spinner.setSelection(25);
-						}
-					});
-					if(win32) {
-						win32Hack = new Composite(this, SWT.NONE);
-						win32Hack.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
-						win32Hack.moveAbove(null);
-						win32Hack.moveBelow(text);
-					}
-					setLayout(new BasicLayout());
-				}
-			}
-			
-			activeField = -5;
-			setActiveField(FIELD_NONE);
-			
-			// Always start with a null date
-			setSelection(null);
-			
-			addTextListener();
-		}
+		super(parent, convertStyle(style));
+		init(style);
 	}
 
-	/**
-	 * Adds the textListener for the appropriate SWT events to handle incrementing fields.
-	 */
-	protected void addTextListener() {
-		removeTextListener();
-		
-		text.addListener(SWT.KeyDown, textListener);
-		text.addListener(SWT.MouseDown, textListener);
-		text.addListener(SWT.MouseWheel, textListener);
-		text.addListener(SWT.MouseUp, textListener);
-		text.addListener(SWT.Traverse, textListener);
-		text.addListener(SWT.Verify, textListener);
-	}
-
-	/**
-	 * Adds the textListener for the appropriate SWT events to handle incrementing fields.
-	 */
-	protected void removeTextListener() {
-		text.removeListener(SWT.KeyDown, textListener);
-		text.removeListener(SWT.MouseDown, textListener);
-		text.removeListener(SWT.MouseWheel, textListener);
-		text.removeListener(SWT.MouseUp, textListener);
-		text.removeListener(SWT.Traverse, textListener);
-		text.removeListener(SWT.Verify, textListener);
-	}
-	
 	/**
 	 * Adds the listener to the collection of listeners who will be notified when the 
 	 * receiver's selection changes, by sending it one of the messages defined in the 
@@ -365,7 +338,6 @@ public class CDateTime extends AbstractCombo {
 	 * @see SelectionEvent
 	 */
 	public void addSelectionListener(SelectionListener listener) {
-		checkWidget();
 		if(listener != null) {
 			TypedListener typedListener = new TypedListener (listener);
 			addListener (SWT.Selection, typedListener);
@@ -374,23 +346,19 @@ public class CDateTime extends AbstractCombo {
 	}
 
 	/**
-	 * The selection has been set by the graphical selector (picker).  Updates
-	 * the open state, the local calendar time, the text, and then fires
-	 * the appropriate selection event.
-	 * @param field
-	 * @param defaultSelection
+	 * Adds the textListener for the appropriate SWT events to handle incrementing fields.
 	 */
-	void setSelectionFromPicker(int field, boolean defaultSelection) {
-		if(defaultSelection && isOpen()) {
-			cancelDate = null;
-			setOpen(false);
-		}
-		if (isNull) {
-			isNull = false;
-		}
-		calendar.setTime(getPickerSelection());
-		updateText();
-		fireSelectionChanged(field, defaultSelection);
+	protected void addTextListener() {
+		removeTextListener();
+		
+		text.addListener(SWT.FocusIn, textListener);
+		text.addListener(SWT.FocusOut, textListener);
+		text.addListener(SWT.KeyDown, textListener);
+		text.addListener(SWT.MouseDown, textListener);
+		text.addListener(SWT.MouseWheel, textListener);
+		text.addListener(SWT.MouseUp, textListener);
+		text.addListener(SWT.Traverse, textListener);
+		text.addListener(SWT.Verify, textListener);
 	}
 
 	/**
@@ -406,44 +374,161 @@ public class CDateTime extends AbstractCombo {
 			int val = editField.getValue();
 			editField.reset();
 			if(cf == Calendar.MONTH) {
-				val--; // TODO: adjust for zero-based month field?
+				val--;
 			}
 			return fieldSet(cf, val, DISCARD);
 		}
 		return true;
 	}
+
+	/**
+	 * If style is neither SIMPLE or DROP_DOWN, then this method simply returns,
+	 * otherwise it creates the picker.
+	 */
+	private void createPicker() {
+		if(isSimple()) {
+			pickerPanel = panel;
+			setContent(panel.getComposite());
+		} else if(isDropDown()) {
+			disposePicker();
+
+			Shell shell = getContentShell();
+			int style = (isSimple() ? SWT.NONE : SWT.BORDER) | SWT.DOUBLE_BUFFERED;
+			VCanvas canvas = new VCanvas(shell, style);
+			pickerPanel = canvas.getPanel();
+			pickerPanel.setWidget(canvas);
+			VGridLayout layout = new VGridLayout();
+			layout.marginHeight = 0;
+			layout.marginWidth = 0;
+			layout.verticalSpacing = 1;
+			pickerPanel.setLayout(layout);
+			setContent(pickerPanel.getComposite());
+
+			if(field.length > 1) {
+				createPickerToolbar(pickerPanel);
+			}
+		}
+
+		if(isDate) {
+			DatePicker dp = new DatePicker(this);
+			dp.setScrollable(scrollable);
+			dp.setFields(calendarFields);
+			dp.updateView();
+			picker = dp;
+		} else if(isTime) {
+			if((style & CDT.CLOCK_DISCRETE) != 0) {
+				DiscreteTimePicker dtp = new DiscreteTimePicker(this);
+				dtp.setFields(calendarFields);
+				dtp.updateView();
+				picker = dtp;
+			} else {
+				AnalogTimePicker atp = new AnalogTimePicker(this);
+				atp.setFields(calendarFields);
+				atp.updateView();
+				picker = atp;
+			}
+		}
+		
+		if(isDropDown()) {
+			picker.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		}
+	}
 	
-	protected void contentShellEvents(Event event) {
-		if(isOpen()) {
-			if(SWT.Deactivate == event.type) {
-				Point p = Display.getCurrent().getCursorLocation();
-				Rectangle r = Display.getCurrent().map(button.getParent(), null, button.getBounds());
-				if(r.contains(p)) {
-					cancelDate = null;
+	private void createPickerToolbar(VPanel parent) {
+		VPanel tb = new VPanel(parent, SWT.NONE);
+		VGridLayout layout = new VGridLayout(3, false);
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.horizontalSpacing = 2;
+		tb.setLayout(layout);
+		tb.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false));
+		tb.setData(CDT.PickerPart, PickerPart.Toolbar);
+
+		VButton b = new VButton(tb, SWT.OK | SWT.NO_FOCUS);
+		b.setData(CDT.PickerPart, PickerPart.OkButton);
+		b.setToolTipText(Resources.getString("accept.text", locale)); //$NON-NLS-1$
+		b.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		b.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				setOpen(false);
+			}
+		});
+
+		b = new VButton(tb, SWT.CANCEL | SWT.NO_FOCUS);
+		b.setData(CDT.PickerPart, PickerPart.CancelButton);
+		b.setToolTipText(Resources.getString("cancel.text", locale)); //$NON-NLS-1$
+		b.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		b.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				setSelection(cancelDate);
+				setOpen(false);
+			}
+		});
+
+		b = new VButton(tb, SWT.NO_FOCUS);
+		b.setData(CDT.PickerPart, PickerPart.ClearButton);
+		b.setText(Resources.getString("clear.text", locale)); //$NON-NLS-1$
+		b.setToolTipText(Resources.getString("clear.text", locale)); //$NON-NLS-1$
+		b.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		b.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				setOpen(false);
+				deselectAll();
+				fireSelectionChanged();
+			}
+		});
+
+		VLabel sep = new VLabel(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
+		sep.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+	}
+
+	void deselect(Date date) {
+		if(date != null && isSelected(date)) {
+			Date[] tmp = new Date[selection.length - 1];
+			for(int i = 0, j = 0; i < selection.length; i++) {
+				if(!selection[i].equals(date)) {
+					tmp[j++] = selection[i];
+				}
+			}
+			setSelectedDates(tmp);
+		}
+	}
+	
+	public void deselectAll() {
+		setSelectedDates((Date[]) null);
+	}
+	
+	private void disposePicker() {
+		if(content != null) {
+			if(picker != null) {
+				picker.dispose();
+				picker = null;
+			}
+			if(isDropDown()) {
+				Control c = content;
+				setContent(null);
+				c.dispose();
+				if(contentShell != null) {
+					Display.getDefault().asyncExec(new Runnable() {
+						public void run() {
+							if(contentShell != null && !contentShell.isDisposed()) {
+								contentShell.dispose();
+								contentShell = null;
+							}
+						}
+					});
 				}
 			}
 		}
-		super.contentShellEvents(event);
-	}
-	
-	private Date getPickerSelection() {
-		Calendar cal = Calendar.getInstance(locale);
-		for(int i = 0; i < pickers.length; i++) {
-			int[] fa = pickers[i].getFields();
-			int[] va = pickers[i].getFieldValues();
-			for(int j = 0; j < fa.length; j++) {
-				cal.set(fa[j], va[j]);
-			}
-		}
-		return cal.getTime();
 	}
 
 	/**
 	 * Adds the given amount to the active field, if there is one
 	 */
-	private void fieldAdjust(int amount) {
-		if(isNull) {
+	void fieldAdjust(int amount) {
+		if(!hasSelection()) {
 			setSelection(calendar.getTime());
+			fireSelectionChanged();
 		} else {
 			int cf = getCalendarField();
 			if(cf >= 0) {
@@ -452,16 +537,25 @@ public class CDateTime extends AbstractCombo {
 		}
 	}
 
+	void fieldFirst() {
+		if(Calendar.ZONE_OFFSET == getCalendarField(field[0])) {
+			setActiveField(1);
+		} else {
+			setActiveField(0);
+		}
+	}
+	
 	/**
 	 * Sets the active field from the select of the text box
 	 */
-	private void fieldFromSelection() {
-		if(isNull) {
-			setActiveField(FIELD_ALL);
+	void fieldFromTextSelection() {
+		if(!hasSelection()) {
+//			setActiveField(FIELD_ALL);
+			fieldNext();
 		} else {
-			Point sel = text.getSelection();
+			Point sel = text.getControl().getSelection();
 			AttributedCharacterIterator aci = df.formatToCharacterIterator(calendar.getTime());
-			if(sel.x > selectionOffset.x) sel.x += selectionOffset.y;
+			if(sel.x > textSelectionOffset.x) sel.x += textSelectionOffset.y;
 			aci.setIndex(sel.x);
 			Object[] oa = aci.getAttributes().keySet().toArray();
 			if(oa.length == 0 && sel.x > 0) {
@@ -472,7 +566,9 @@ public class CDateTime extends AbstractCombo {
 			if(oa.length > 0) {
 				for(int i = 0; i < field.length; i++) {
 					if(oa[0].equals(field[i])) {
-						setActiveField(i);
+						if(Calendar.ZONE_OFFSET != getCalendarField(field[i])) {
+							setActiveField(i);
+						}
 						break;
 					}
 				}
@@ -480,33 +576,61 @@ public class CDateTime extends AbstractCombo {
 			}
 		}
 	}
-
+	
+	void fieldLast() {
+		if(Calendar.ZONE_OFFSET == getCalendarField(field[field.length-1])) {
+			setActiveField(field.length-2);
+		} else {
+			setActiveField(field.length-1);
+		}
+	}
+	
 	/**
 	 * Sets the active field to the next field; wraps if necessary and sets to last
 	 * field if there is no current active field
 	 */
-	private void fieldNext() {
+	void fieldNext() {
 		if(activeField >= 0 && activeField < field.length - 1) {
-			setActiveField(activeField + 1);
-		} else if(activeField == FIELD_ALL) {
-			setActiveField(field.length - 1);
+			if(Calendar.ZONE_OFFSET == getCalendarField(field[activeField + 1])) {
+				if(activeField < field.length - 2) {
+					setActiveField(activeField + 2);
+				} else {
+					setActiveField(0);
+				}
+			} else {
+				setActiveField(activeField + 1);
+			}
 		} else {
-			setActiveField(0);
+			if(Calendar.ZONE_OFFSET == getCalendarField(field[0])) {
+				setActiveField(1);
+			} else {
+				setActiveField(0);
+			}
 		}
 		updateText();
 	}
-	
+
 	/**
 	 * Sets the active field to the previous field; wraps if necessary and sets to first
 	 * field if there is no current active field
 	 */
 	private void fieldPrev() {
 		if(activeField > 0 && activeField < field.length) {
-			setActiveField(activeField - 1);
-		} else if(activeField == FIELD_ALL) {
-			setActiveField(0);
+			if(Calendar.ZONE_OFFSET == getCalendarField(field[activeField - 1])) {
+				if(activeField > 1) {
+					setActiveField(activeField - 2);
+				} else {
+					setActiveField(field.length - 1);
+				}
+			} else {
+				setActiveField(activeField - 1);
+			}
 		} else {
-			setActiveField(field.length - 1);
+			if(Calendar.ZONE_OFFSET == getCalendarField(field[field.length - 1])) {
+				setActiveField(field.length - 2);
+			} else {
+				setActiveField(field.length - 1);
+			}
 		}
 		updateText();
 	}
@@ -546,44 +670,56 @@ public class CDateTime extends AbstractCombo {
 				}
 			}
 			calendar.set(calendarField, value);
+			selection[0] = calendar.getTime();
 			updateText();
-			updatePickerSelection(calendar.getTime());
-			fireSelectionChanged(calendarField, false);
+			updatePicker();
+			fireSelectionChanged(calendarField);
 		}
 		return true;
 	}
 	
 	/**
-	 * Notifies listeners that the selected date for this CDateTime has changed,
-	 * either by the text box or the drop down CDateTime.
+	 * <p>Notifies listeners that the selection for this CDateTime has changed</p>
+	 * <p>This will fire both a regular selection event, and a default selection event.</p>
+	 * <p>The data field is populated by {@link #getSelectedDates()}.</p>
+	 */
+	void fireSelectionChanged() {
+		if(isOpen()) {
+			setOpen(false);
+		}
+		Event event = new Event();
+		event.data = getSelectedDates();
+		notifyListeners(SWT.Selection, event);
+		notifyListeners(SWT.DefaultSelection, event);
+	}
+	
+	/**
+	 * <p>Notifies listeners that a field of the selected date for this CDateTime has changed</p>
+	 * <p>Note that this is only valid when {@link #singleSelection} is true, and will only
+	 * fire a regular selection event (not a default selection event)</p>
+	 * <p>The data field is populated by {@link #getSelection()} and the detail field holds
+	 * the field which was changed.</p>
 	 * @param field the Calendar Field which caused the change, or -1 if <code>setTime</code>
 	 * was called (thus setting all Calendar Fields)
-	 * @param defaultSelection whether or not this event should be a "default" event, currently
-	 * only set to true if the event is triggered by a Carriage Return.
 	 */
-	private void fireSelectionChanged(int field, boolean defaultSelection) {
+	void fireSelectionChanged(int field) {
 		Event event = new Event();
 		event.data = getSelection();
 		event.detail = field;
-		notifyListeners(defaultSelection ? SWT.DefaultSelection : SWT.Selection, event);
+		if(this.field.length == 1) {
+			if(isOpen()) {
+				setOpen(false);
+			}
+			notifyListeners(SWT.Selection, event);
+			notifyListeners(SWT.DefaultSelection, event);
+		} else {
+			notifyListeners(SWT.Selection, event);
+		}
 	}
 
-//	/**
-//	 * Returns an array of all locales which are fully supported for the given style.
-//	 * If the style is of DROP_DOWN, then the fully supported Locales will be limited by the
-//	 * CDateTime and this method will return the array obtained by calling
-//	 * <code>CDateTime.getAvailableLocales()</code>.  If the style is not of DROP_DOWN then the
-//	 * list of fully supported Locales is limited only by the system and the array returned is from 
-//	 * <code>Calendar.getAvailableLocales()</code>.
-//	 * @return an array of fully supported Locale objects
-//	 * @see CDateTime#getAvailableLocales()
-//	 * @see Calendar#getAvailableLocales()
-//	 */
-//	public Locale[] getAvailableLocales() {
-//		 TODO: picker locales...
-//		if(picker != null) return picker.getAvailableLocales();
-//		return Calendar.getAvailableLocales();
-//	}
+	VButton getButtonWidget() {
+		return button;
+	}
 	
 	/**
 	 * Gets the calendar field corresponding to the active field, if there is one.
@@ -591,6 +727,67 @@ public class CDateTime extends AbstractCombo {
 	 */
 	private int getCalendarField() {
 		return hasField(activeField) ? getCalendarField(field[activeField]) : -1;
+	}
+	
+	private int getCalendarField(Field field) {
+		int cf = field.getCalendarField();
+		if(cf < 0) {
+			if(field.toString().indexOf("hour 1") > -1) { //$NON-NLS-1$
+				cf = Calendar.HOUR;
+			} else if(field.toString().contains("zone")) { //$NON-NLS-1$
+				cf = Calendar.ZONE_OFFSET;
+			}
+		}
+		return cf;
+	}
+
+	public Calendar getCalendarInstance() {
+		return getCalendarInstance(calendar.getTime());
+    }
+
+	public Calendar getCalendarInstance(Date date) {
+        Calendar cal = Calendar.getInstance(timezone, locale);
+        cal.setTime(date);
+    	return cal;
+    }
+
+	public boolean getEditable() {
+		return !panel.hasStyle(SWT.READ_ONLY);
+	}
+	
+	/**
+	 * The locale currently in use by this CDateTime.
+	 * @return the locale
+	 * @see #setLocale(Locale)
+	 */
+	public Locale getLocale() {
+		return locale;
+	}
+	
+	/**
+	 * Get the text which will be shown when the selection is set to null.
+	 * Note that this will be equal to the default null text for the given
+	 * locale unless the null text has been explicitly set using
+	 * {@link #setNullText(String)}
+	 * @return the text shown when the selection is null
+	 * @see #setNullText(String)
+	 */
+	public String getNullText() {
+		if(nullText == null) {
+			if(isDate) {
+				return Resources.getString("null_text.date", locale);
+			} else {
+				return Resources.getString("null_text.time", locale);
+			}
+		}
+		return nullText;
+	}
+
+	CDateTimePainter getPainter() {
+		if(painter == null) {
+			setPainter(new CDateTimePainter());
+		}
+		return painter;
 	}
 
 	/**
@@ -602,76 +799,64 @@ public class CDateTime extends AbstractCombo {
 	 * @see #setPattern(String)
 	 */
 	public String getPattern() {
-		checkWidget();
 		return pattern;
 	}
+
+	public Date[] getSelectedDates() {
+		return selection.clone();
+	}
 	
-	/**
-	 * The locale currently in use by this CDateTime.
-	 * @return the locale
-	 * @see #setLocale(Locale)
-	 * @see CDateTime#setLocale(Locale)
-	 */
-	public Locale getLocale() {
-		checkWidget();
-		return locale;
+	public Date getSelection() {
+		return hasSelection() ? selection[0] : null;
+	}
+
+	public String getText() {
+		return checkText() ? text.getText() : null;
+	}
+
+	VNative<Text> getTextWidget() {
+		return text;
 	}
 	
 	/**
-	 * Get the <code>java.util.Date</code> that is currently selected by this
+	 * Get the <code>java.util.Date</code> that is currently active in this
 	 * CDateTime widget.<br>
 	 * Note that if a field is being edited, and has not yet been committed,
 	 * then this value may not represent what is displayed in the text box.
 	 * @return the date
 	 * @see #setSelection(Date)
 	 */
-	public Date getSelection() {
-		checkWidget();
-		return isNull ? null : calendar.getTime();
+	public Date getTime() {
+		return calendar.getTime();
 	}
 
-	public String getText() {
-		return isNull ? 
-				getNullText(locale) :
-					df.format(calendar.getTime());
+	public long getTimeInMillis() {
+		return calendar.getTimeInMillis();
 	}
 	
-	protected void handleFocus(int type, Widget widget) {
-		if(isDisposed()) return;
-		if(SWT.FocusIn == type) {
-			if(!hasFocus) {
-				rightClick = false;
-				setActiveField(tabStops ? 0 : FIELD_ALL);
-				updateText();
-			}
-		}
-		
-		super.handleFocus(type, widget);
-		
-		if(isDisposed()) return;
-		if(SWT.FocusOut == type) {
-			if(!hasFocus) {
-				if(!rightClick) {
-					setActiveField(FIELD_NONE);
-					updateText();
-				}
-			}
-		}
+	/**
+	 * The timezone currently in use by this CDateTime.
+	 * @return the timezone
+	 * @see #setTimeZone(String)
+	 * @see #setTimeZone(TimeZone)
+	 */
+	public TimeZone getTimeZone() {
+		return timezone;
 	}
-
+	
 	/**
 	 * The Key event handler
-	 * @param e the event
+	 * @param event the event
 	 */
-	private void handleKey(Event e) {
-		if(SWT.DEL == e.keyCode) {
-			e.doit = false;
-			setSelection(null);
-			fireSelectionChanged(FIELD_ALL, false);
-		} else if(!hasField(activeField) && !isNull) {
-			e.doit = false;
+	void handleKey(Event event) {
+		if(SWT.DEL == event.keyCode) {
+			event.doit = false;
+			setSelection((Date) null);
+			fireSelectionChanged();
+		} else if(!hasField(activeField) && !hasSelection()) {
+			event.doit = false;
 		} else {
-			switch (e.keyCode) {
+			switch (event.keyCode) {
 			case '-':
 			case SWT.ARROW_DOWN:
 			case SWT.KEYPAD_SUBTRACT:
@@ -688,54 +873,63 @@ public class CDateTime extends AbstractCombo {
 				break;
 			default:
 				if(hasField(activeField) && activeField + 1 < separator.length &&
-						String.valueOf(e.character).equals(separator[activeField+1])) {
+						String.valueOf(event.character).equals(separator[activeField+1])) {
 					fieldNext();
 				}
 			}
 		}
 	}
-
+	
 	/**
 	 * The Travers event handler.  Note that ARROW_UP and ARROW_DOWN are
 	 * handled in the <code>handleKey</code> method.
-	 * @param e the event
+	 * @param event the event
 	 */
-	private void handleTraverse(Event e) {
-		int cf = getCalendarField();
-		switch (e.keyCode) {
-		case SWT.ARROW_LEFT:
-			fieldPrev();
-			fireSelectionChanged(cf, false);
+	void handleTraverse(Event event) {
+		switch (event.detail) {
+		case SWT.TRAVERSE_ARROW_NEXT:
+			if(event.keyCode == SWT.ARROW_RIGHT) {
+				fieldNext();
+			} else if(event.keyCode == SWT.ARROW_DOWN) {
+				fieldAdjust(-1);
+			}
 			break;
-		case SWT.ARROW_RIGHT:
-			fieldNext();
-			fireSelectionChanged(cf, false);
+		case SWT.TRAVERSE_ARROW_PREVIOUS:
+			if(event.keyCode == SWT.ARROW_LEFT) {
+				fieldPrev();
+			} else if(event.keyCode == SWT.ARROW_UP) {
+				fieldAdjust(1);
+			}
 			break;
 		case SWT.CR:
 			fieldNext();
-			fireSelectionChanged(cf, true);
+			fireSelectionChanged();
 			break;
-		case SWT.TAB:
-			if(tabStops) {
-				if(e.stateMask == SWT.SHIFT) {
-					if(activeField != 0) {
-						e.doit = false;
-						if(activeField < 0) {
-							fieldNext();
-						} else {
-							fieldPrev();
-						}
-						fireSelectionChanged(cf, false);
-					}
+		case SWT.TRAVERSE_TAB_NEXT:
+			if(tabStops && hasSelection()) {
+				if(activeField == field.length - 1
+						|| (activeField == field.length - 2 && Calendar.ZONE_OFFSET == getCalendarField(field[field.length - 1]))) {
+					event.doit = true;
 				} else {
-					if(activeField != field.length-1) {
-						e.doit = false;
-						if(activeField < 0) {
-							fieldPrev();
-						} else {
-							fieldNext();
-						}
-						fireSelectionChanged(cf, false);
+					event.doit = false;
+					if(activeField < 0) {
+						fieldPrev();
+					} else {
+						fieldNext();
+					}
+				}
+			}
+			break;
+		case SWT.TRAVERSE_TAB_PREVIOUS:
+			if(tabStops && hasSelection()) {
+				if(activeField == 0 || (activeField == 1 && Calendar.ZONE_OFFSET == getCalendarField(field[0]))) {
+					event.doit = true;
+				} else {
+					event.doit = false;
+					if(activeField < 0) {
+						fieldNext();
+					} else {
+						fieldPrev();
 					}
 				}
 			}
@@ -743,7 +937,7 @@ public class CDateTime extends AbstractCombo {
 		default:
 		}
 	}
-
+	
 	/**
 	 * Determines if the given field number is backed by a real field.
 	 * @param field the field number to check
@@ -752,10 +946,89 @@ public class CDateTime extends AbstractCombo {
 	private boolean hasField(int field) {
 		return field >= 0 && field <= this.field.length;
 	}
+	
+	public boolean hasSelection() {
+		return selection.length > 0;
+	}
+	
+	private void init(int style) {
+		this.style = style;
+		locale = Locale.getDefault();
+		try {
+			timezone = TimeZone.getDefault();
+		} catch (Exception e) {
+			timezone = TimeZone.getTimeZone("GMT");
+		}
+		calendar = Calendar.getInstance(this.timezone, this.locale);
+		calendar.setTime(new Date());
+		tabStops = (style & CDT.TAB_FIELDS) != 0;
+		singleSelection = ((style & CDT.SIMPLE) == 0) || ((style & CDT.MULTI) == 0);
+		
+		setFormat(style);
 
-//	protected boolean isNull() {
-//		return isNull;
-//	}
+		if(!isSimple()) {
+			if(isDropDown()) {
+				setButtonVisibility(BaseCombo.BUTTON_ALWAYS);
+			} else {
+				setButtonVisibility(BaseCombo.BUTTON_NEVER);
+				if((style & CDT.SPINNER) != 0) {
+					spinner = VNative.create(Spinner.class, panel, SWT.VERTICAL);
+					spinner.getControl().setMinimum(0);
+					spinner.getControl().setMaximum(50);
+					spinner.getControl().setDigits(1);
+					spinner.getControl().setIncrement(1);
+					spinner.getControl().setPageIncrement(1);
+					spinner.getControl().setSelection(25);
+					spinner.getControl().addFocusListener(new FocusAdapter() {
+						public void focusGained(FocusEvent e) {
+							setFocus();
+						}
+					});
+					spinner.getControl().addSelectionListener(new SelectionAdapter() {
+						public void widgetSelected(SelectionEvent e) {
+							if(VTracker.getMouseDownButton() == 2) {
+								fieldNext();
+							} else {
+								if(spinner.getControl().getSelection() > 25) {
+									fieldAdjust(1);
+								} else {
+									fieldAdjust(-1);
+								}
+								spinner.getControl().setSelection(25);
+							}
+						}
+					});
+					panel.setLayout(new SpinnerLayout());
+				}
+			}
+			
+			updateText(true);
+			activeField = -5;
+			setActiveField(FIELD_NONE);
+			
+			if(checkText()) {
+				addTextListener();
+			}
+		}
+	}
+
+	boolean isSelected(Date date) {
+		for(Date d : selection) {
+			if(d.equals(date)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	boolean isSingleSelection() {
+		return singleSelection;
+	}
+	
+	@Override
+	protected void postClose(Shell popup) {
+		disposePicker();
+	}
 	
 	/**
 	 * Removes the listener from the collection of listeners who will
@@ -773,57 +1046,95 @@ public class CDateTime extends AbstractCombo {
 	 * @see #addSelectionListener
 	 */
 	public void removeSelectionListener(SelectionListener listener) {
-		checkWidget ();
 		if(listener != null) {
-			removeListener(SWT.Selection, listener);
-			removeListener(SWT.DefaultSelection, listener);
+			TypedListener l = new TypedListener(listener);
+			removeListener(SWT.Selection, l);
+			removeListener(SWT.DefaultSelection, l);
 		}
 	}
 
 	/**
+	 * Removes the textListener for the appropriate SWT events to handle incrementing fields.
+	 */
+	protected void removeTextListener() {
+		text.removeListener(SWT.KeyDown, textListener);
+		text.removeListener(SWT.MouseDown, textListener);
+		text.removeListener(SWT.MouseWheel, textListener);
+		text.removeListener(SWT.MouseUp, textListener);
+		text.removeListener(SWT.Traverse, textListener);
+		text.removeListener(SWT.Verify, textListener);
+	}
+	
+	void select(Date date) {
+		if(date != null) {
+			Date[] tmp = new Date[selection.length + 1];
+			System.arraycopy(selection, 0, tmp, 1, selection.length);
+			tmp[0] = date;
+			setSelectedDates(tmp);
+		}
+	}
+	
+	void select(Date date1, Date date2, int field, int increment) {
+		if(date1 != null && date2 != null) {
+			Date start = date1.before(date2) ? date1 : date2;
+			Date end   = date1.before(date2) ? date2 : date1;
+			List<Date> tmp = new ArrayList<Date>();
+			Calendar cal = getCalendarInstance(start);
+			while(cal.getTime().before(end)) {
+				tmp.add(cal.getTime());
+				cal.add(field, increment);
+			}
+			tmp.add(cal.getTime());
+			if(start == date2) {
+				Collections.reverse(tmp);
+			}
+			setSelectedDates(tmp.toArray(new Date[tmp.size()]));
+		}
+	}
+	
+	/**
 	 * Sets the active field, which may or may not be a real field (it may also
-	 * be <code>FIELD_ALL</code> or <code>FIELD_NONE</code>
+	 * be <code>FIELD_NONE</code>)
 	 * @param field the field to be set active
 	 * @see CDateTime#hasField(int)
 	 */
 	private void setActiveField(int field) {
-		if(isNull) {
-			activeField = FIELD_ALL;
-		} else if(activeField != field) {
+		if(activeField != field) {
 			commitEditField();
 			editField = null;
 			activeField = field;
-			if(/*!win32 &&*/ spinner != null) {
+			if(spinner != null) {
 				if(hasField(field)) {
-					spinner.setEnabled(true);
-					// TODO: When Spinner's ClientArea is covered, it doesn't show enabled until moused over
-					if(gtk) {
-						spinner.forceFocus();
-						text.forceFocus();
-					}
+					spinner.getControl().setEnabled(true);
+					System.out.println("enable");
 				} else {
-					spinner.setEnabled(false);
+					spinner.getControl().setEnabled(false);
+					System.out.println("disable");
 				}
 			}
 		}
 	}
 	
-	/**
-	 * 
-	 */
-	public void setEditable(boolean editable) {
-		super.setEditable(editable);
-		
-		if (checkText()) {
-			if (editable) {
-				addTextListener();
-			}
-			else {
-				removeTextListener();
-			}
+	public void setBuilder(CDateTimeBuilder builder) {
+		this.builder = builder;
+	}
+	
+	@Override
+	protected boolean setContentFocus() {
+		if(picker != null) {
+			return picker.setFocus();
 		}
+		return false;
 	}
 
+	@Override
+	public void setEditable(boolean editable) {
+		super.setEditable(editable);
+		if(picker != null) {
+			picker.setStyle(SWT.READ_ONLY, !editable);
+		}
+	}
+	
 	/**
 	 * Set the date and time format of this CDateTime uses style constants which correspond
 	 * to the various forms of DateFormat.getXxxInstance(int).
@@ -834,48 +1145,96 @@ public class CDateTime extends AbstractCombo {
 	 * </code>setFormat(CDT.DATE_LONG);</code><br />
 	 * </code>setFormat(CDT.DATE_SHORT | CDT.TIME_MEDIUM);</code><br />
 	 * @param format the bitwise OR'ed Date and Time format to be set
+	 * @throws IllegalArgumentException 
 	 * @see #getPattern()
 	 * @see #setPattern(String)
 	 */
 	public void setFormat(int format) throws IllegalArgumentException {
-		checkWidget();
 		int dateStyle = (format & CDT.DATE_SHORT) != 0 ? DateFormat.SHORT :
 			(format & CDT.DATE_MEDIUM) != 0 ? DateFormat.MEDIUM :
 				(format & CDT.DATE_LONG) != 0 ? DateFormat.LONG : -1;
 		int timeStyle = (format & CDT.TIME_SHORT) != 0 ? DateFormat.SHORT :
 			(format & CDT.TIME_MEDIUM) != 0 ? DateFormat.MEDIUM : -1;
 		String str = null;
-//		try {
 		if(dateStyle != -1 && timeStyle != -1) {
-			str = ((SimpleDateFormat) SimpleDateFormat.getDateTimeInstance(dateStyle, timeStyle, locale)).toPattern();
+			str = ((SimpleDateFormat) DateFormat.getDateTimeInstance(dateStyle, timeStyle, locale)).toPattern();
 		} else if(dateStyle != -1) {
-			str = ((SimpleDateFormat) SimpleDateFormat.getDateInstance(dateStyle, locale)).toPattern();
+			str = ((SimpleDateFormat) DateFormat.getDateInstance(dateStyle, locale)).toPattern();
 		} else if(timeStyle != -1) {
-			str = ((SimpleDateFormat) SimpleDateFormat.getTimeInstance(timeStyle, locale)).toPattern();
+			str = ((SimpleDateFormat) DateFormat.getTimeInstance(timeStyle, locale)).toPattern();
 		} else if(pattern == null) {  // first call, so set to default
 			format = CDT.DATE_SHORT;
-			str = ((SimpleDateFormat) SimpleDateFormat.getDateInstance(DateFormat.SHORT, locale)).toPattern();
+			str = ((SimpleDateFormat) DateFormat.getDateInstance(DateFormat.SHORT, locale)).toPattern();
 		}
-//		} catch (IllegalArgumentException e) {
-//			e.printStackTrace();
-//		}
 		if(str != null) {
 			this.format = format;
 			setPattern(str);
 		}
 	}
-	
-	public void setOpen(boolean open) {
-		checkWidget();
-		if(open) {
-			cancelDate = getSelection();
-			updatePickerSelection(calendar.getTime());
-		} else if(cancelDate != null){
-			setSelection(cancelDate);
-			cancelDate = null;
-			updateText();
+
+	/**
+	 * Sets the Locale to be used by this CDateTime and causes all affected 
+	 * attributes to be updated<br>
+	 * If the provided locale is the same as the current locale then this method simply
+	 * returns.  If the provided Locale is null then this CDateTime will use
+	 * the system's default locale.<br>
+	 * If this <code>CDateTime</code> is of style <code>DROP_DOWN</code>
+	 * then the associated <code>CDateTime</code> will be set to the same locale.
+	 * @param locale the Locale, or null to use the system's default
+	 * @see #getLocale()
+	 */
+	public void setLocale(Locale locale) {
+		if(locale == null) locale = Locale.getDefault();
+		if(!this.locale.equals(locale)) {
+			this.locale = locale;
+			if(format > 0) {
+				setFormat(format);
+			} else {
+				setPattern(pattern);
+			}
+			updateNullText();
 		}
-		super.setOpen(open);
+	}
+	
+	protected void setModifyEventProperties(Event e) {	
+		e.data = calendar.getTime();
+	}
+
+	/**
+	 * Set the text to be shown when the selection is null.
+	 * Passing null into this method will cause the CDateTime widget
+	 * to use a default null text for the given locale.
+	 * @param text
+	 */
+	public void setNullText(String text) {
+		defaultNullText = false;
+		nullText = text;
+		updateText(true);
+	}
+
+	public void setOpen(boolean open) {
+		setOpen(open, null);
+	}
+
+	public void setOpen(boolean open, Runnable callback) {
+		synchronized(busy) {
+			if(busy) return;
+			busy = true;
+			if(open) {
+				cancelDate = getSelection();
+				createPicker();
+			} else {
+				cancelDate = null;
+			}
+			super.setOpen(open, callback);
+		}
+	}
+
+	public void setPainter(CDateTimePainter painter) {
+		if(painter != null) {
+			painter.setCDateTime(this);
+		}
+		this.painter = painter;
 	}
 	
 	/**
@@ -895,163 +1254,140 @@ public class CDateTime extends AbstractCombo {
 	 * @see #setFormat(int)
 	 */
 	public void setPattern(String pattern) throws IllegalArgumentException {
-		checkWidget();
-		if(isOpen()) setOpen(false);
-//		if(pattern != null && pattern.trim().length() > 0) {
-			df = new SimpleDateFormat(pattern, locale);
-			if(updateFields()) {
-				this.pattern = pattern;
-				updateText();
-				updatePickerFormat();
-			} else {
-				throw new IllegalArgumentException("Problem setting pattern: \"" + pattern + "\"");
+		if(isOpen()) {
+			setOpen(false);
+		}
+		df = new SimpleDateFormat(pattern, locale);
+		df.setTimeZone(timezone);
+		if(updateFields()) {
+			this.pattern = pattern;
+			this.format = -1;
+			boolean wasDate = isDate;
+			boolean wasTime = isTime;
+			isDate = isTime = false;
+			calendarFields = new int[field.length];
+			for(int i = 0; i < calendarFields.length; i++) {
+				calendarFields[i] = getCalendarField(field[i]);
+				switch(calendarFields[i]) {
+				case Calendar.AM_PM:
+				case Calendar.HOUR:
+				case Calendar.HOUR_OF_DAY:
+				case Calendar.MILLISECOND:
+				case Calendar.MINUTE:
+				case Calendar.SECOND:
+					isTime = true;
+					break;
+				case Calendar.DAY_OF_MONTH:
+				case Calendar.DAY_OF_WEEK:
+				case Calendar.DAY_OF_WEEK_IN_MONTH:
+				case Calendar.DAY_OF_YEAR:
+				case Calendar.ERA:
+				case Calendar.MONTH:
+				case Calendar.WEEK_OF_MONTH:
+				case Calendar.WEEK_OF_YEAR:
+				case Calendar.YEAR:
+					isDate = true;
+					break;
+				default:
+					break;
+				}
 			}
-//		}
-	}
-	
-	/**
-	 * Sets the Locale to be used by this CDateTime and causes all affected 
-	 * attributes to be updated<br>
-	 * If the provided locale is the same as the current locale then this method simply
-	 * returns.  If the provided Locale is null then this CDateTime will use
-	 * the system's default locale.<br>
-	 * If this <code>CDateTime</code> is of style <code>DROP_DOWN</code>
-	 * then the associated <code>CDateTime</code> will be set to the same locale.
-	 * @param locale the Locale, or null to use the system's default
-	 * @see #getLocale()
-	 */
-	public void setLocale(Locale locale) {
-		checkWidget();
-		if(locale == null) locale = Locale.getDefault();
-		if(!this.locale.equals(locale)) {
-			this.locale = locale;
-			if(format > 0) {
-				setFormat(format);
-			} else {
-				setPattern(pattern);
+			if(checkButton() && ((isDate != wasDate) || (isTime != wasTime))) {
+				if(defaultButtonImage) {
+					if(isDate) {
+						doSetButtonImage(Resources.getIconCalendar());
+					} else {
+						doSetButtonImage(Resources.getIconClock());
+					}
+				}
+				updateNullText();
 			}
+			if(checkText()) {
+				updateText(true);
+			}
+			if(isSimple()) {
+				disposePicker();
+				createPicker();
+			}
+		} else {
+			throw new IllegalArgumentException("Problem setting pattern: \"" + pattern + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
-	protected void setModifyEventProperties(Event e) {	
-		e.data = calendar.getTime();
+	public void setRange(Date from, Date to) {
+		// TODO: implement setRange
+	}
+	
+	public void setScrollable(boolean scrollable) {
+		this.scrollable = scrollable;
+		if(isSimple() && !scrollable) {
+			if(picker != null && picker instanceof DatePicker) {
+				updatePicker();
+			}
+		}
 	}
 
+	public void setSelectedDates(Date[] selectedDates) {
+		if(selectedDates == null) {
+			this.selection = new Date[0];
+		} else {
+			this.selection = selectedDates.clone();
+		}
+		if(singleSelection && this.selection.length > 0) {
+			setTime(selectedDates[0]);
+		} else {
+			updateText(true);
+			updatePicker();
+		}
+	}
+	
 	/**
 	 * Set the selection for this CDateTime to that of the provided
 	 * <code>Date</code> object.<br>
 	 * This method will update the text box and, if the <code>DROP_DOWN</code>
 	 * style is set, the selection of the associated drop down CDateTime.
-	 * @param date the <code>Date</code> object to use for the new selection
-	 * @see #getSelection()
+	 * @param selection the <code>Date</code> object to use for the new selection
+	 * @see #getSelectedDates()
 	 */
-	public void setSelection(Date date) {
-		checkWidget();
-//		if(date != null && calendar.getTime().equals(date)) return;
-		if(date == null) {
-			isNull = true;
+	public void setSelection(Date selection) {
+		if(selection == null) {
+			setSelectedDates((Date[]) null);
 		} else {
-			isNull = false;
+			setSelectedDates(new Date[] { selection });
+		}
+	}
+
+	public void setSelectionMode(int selectionMode) {
+		// TODO implement setSelectionMode
+	}
+	
+	public void setTime(Date date) {
+		if(date == null) {
+			calendar.setTime(new Date());
+		} else {
 			calendar.setTime(date);
 		}
-		updateText();
-		if (date != null) {
-			updatePickerSelection(date);
+		updateText(true);
+		updatePicker();
+	}
+	
+	public void setTimeZone(String zoneID) {
+        setTimeZone(TimeZone.getTimeZone(zoneID));
+    }
+
+	public void setTimeZone(TimeZone zone) {
+		if(zone == null) timezone = TimeZone.getDefault();
+		if(!this.timezone.equals(zone)) {
+			this.timezone = zone;
+			calendar.setTimeZone(this.timezone);
+			df.setTimeZone(this.timezone);
+			updateText(true);
 		}
 	}
 	
-	/**
-	 * If style is neither SIMPLE or DROP_DOWN, then this method simply returns,
-	 * otherwise it sets the format of the picker.
-	 * @see CDateTime#setPattern(int)
-	 */
-	private void updatePickerFormat() {
-		if(!isSimple() && !isDropDown()) return;
-		if(pickerSash != null && !pickerSash.isDisposed()) {
-			pickerSash.dispose();
-		}
-		pickerSash = null;
-		pickerSash = new SashForm(getParentForContent(), SWT.HORIZONTAL);
-		pickerSash.setLayout(new FillLayout());
-		setContent(pickerSash);
-
-		boolean date = false;
-		boolean time = false;
-		int[] fa = new int[field.length];
-		for(int i = 0; i < fa.length; i++) {
-			fa[i] = getCalendarField(field[i]);
-			switch(fa[i]) {
-			case Calendar.AM_PM:
-			case Calendar.HOUR:
-			case Calendar.HOUR_OF_DAY:
-			case Calendar.MILLISECOND:
-			case Calendar.MINUTE:
-			case Calendar.SECOND:
-				time = true;
-				break;
-			case Calendar.DAY_OF_MONTH:
-			case Calendar.DAY_OF_WEEK:
-			case Calendar.DAY_OF_WEEK_IN_MONTH:
-			case Calendar.DAY_OF_YEAR:
-			case Calendar.ERA:
-			case Calendar.MONTH:
-			case Calendar.WEEK_OF_MONTH:
-			case Calendar.WEEK_OF_YEAR:
-			case Calendar.YEAR:
-				date = true;
-				break;
-			default:
-				break;
-			}
-		}
-
-		pickerComps = new Composite[date && time ? 2 : 1];
-		pickers = new AbstractPicker[date && time ? 2 : 1];
-
-		if(date) {
-			pickerComps[0] = new Composite(pickerSash, SWT.NONE);
-			pickerComps[0].setLayout(new FillLayout());
-			pickers[0] = new Picker_Calendar(pickerComps[0], this, calendar.getTime());
-		}
-
-		if(time) {
-			int index = date ? 1 : 0;
-			pickerComps[index] = new Composite(pickerSash, SWT.NONE);
-			pickerComps[index].setLayout(new FillLayout());
-			if((style & CDT.CLOCK_DISCRETE) != 0) {
-				pickers[index] = new Picker_Clock_Discrete(pickerComps[index], this, calendar.getTime());
-				if(date) {
-					int w1 = pickerSash.getSize().x;
-					int w2 = pickers[1].computeSize(-1, -1).x;
-					w1 = (w1 > w2) ? w1-w2 : pickers[0].computeSize(-1, -1).x;
-					pickerSash.setWeights(new int[] { w1, w2 });
-				}
-			} else {
-				pickers[index] = new Picker_Clock_Analog(pickerComps[index], this, calendar.getTime());
-			}
-		}
-		
-		for(int i = 0; i < pickers.length; i++) {
-			pickers[i].setFields(fa);
-		}
-
-		if(pickerComps.length == 1) pickerSash.setMaximizedControl(pickerComps[0]);
-		pickers[0].setFocus();
-		pickerSash.pack(true);
-		if(date && time && (style & CDT.CLOCK_DISCRETE) != 0) {
-			int w1 = pickers[0].computeSize(-1, -1).x;
-			int w2 = pickers[1].computeSize(-1, -1).x;
-			w1 = (w1 > w2) ? w1-w2 : pickers[0].computeSize(-1, -1).x;
-			pickerSash.setWeights(new int[] { w1, w2 });
-		}
-	}
-
-	private int getCalendarField(Field field) {
-		int cf = field.getCalendarField();
-		if(cf < 0 && field.toString().indexOf("hour 1") > -1) {
-			cf = Calendar.HOUR;
-		}
-		return cf;
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + " {" + getTime() + "}";
 	}
 	
 	/**
@@ -1067,10 +1403,10 @@ public class CDateTime extends AbstractCombo {
 		separator = new String[field.length+1]; // there can be a separator before and after
 		int i = 0;
 		Object last = null;
-		for(char c = aci.first(); c != AttributedCharacterIterator.DONE; c = aci.next()) {
+		for(char c = aci.first(); c != CharacterIterator.DONE; c = aci.next()) {
 			Object[] oa = aci.getAttributes().keySet().toArray();
 			if(oa.length > 0) {
-				if(oa[0] != last && i < field.length) { // TODO: fail the update if i >= field.length?
+				if(oa[0] != last && i < field.length) {
 					if(getCalendarField((Field) oa[0]) < 0) {
 						if(bak.length > 0) {
 							field = new Field[bak.length];
@@ -1093,35 +1429,60 @@ public class CDateTime extends AbstractCombo {
 		return true;
 	}
 	
-	/**
-	 * set the pickers' selection with the local calendar time
-	 */
-	private void updatePickerSelection(Date date) {
-		if(pickers == null) return;
-		for(int i = 0; i < pickers.length; i++) {
-			pickers[i].updateSelection(date);
+	private void updateNullText() {
+		if(defaultNullText) {
+			if(isDate) {
+				nullText = Resources.getString("null_text.date", locale);
+			} else {
+				nullText = Resources.getString("null_text.time", locale);
+			}
+			if(!hasSelection()) {
+				updateText(true);
+			}
 		}
+	}
+	
+	/**
+	 * tell the picker to update its view of the selection and reference time
+	 */
+	private void updatePicker() {
+		if(picker != null) {
+			if(picker instanceof DatePicker) {
+				((DatePicker) picker).updateView();
+			} else if(picker instanceof AnalogTimePicker) {
+				((AnalogTimePicker) picker).updateView();
+			} else if(picker instanceof DiscreteTimePicker) {
+				((DiscreteTimePicker) picker).updateView();
+			}
+		}
+	}
+	
+	/**
+	 * Performs an asynchronous text update by calling
+	 * <code>updateText(false)</code>
+	 */
+	private void updateText() {
+		updateText(false);
 	}
 
 	/**
 	 * This is the only way that text is set to the text box.<br>
-	 * The selection is also set here (corresponding to the active field) as well as
-	 * if a field is being edited, it's "edit text" is inserted for display.
+	 * The selection is also set here (corresponding to the active field) as
+	 * well as if a field is being edited, it's "edit text" is inserted for
+	 * display.
 	 */
-	private void updateText() {
-		String buffer = isNull ? 
-				getNullText(locale) : 
-					df.format(calendar.getTime());
+	private void updateText(boolean sync) {
+		String buffer = hasSelection() ? df.format(getSelection()) : getNullText();
 
 		int s0 = 0;
 		int s1 = 0;
 
-		if(activeField == FIELD_ALL || isNull) {
+		if(!hasSelection()) {
 			s0 = 0;
 			s1 = buffer.length();
-		} else if(activeField >= 0 && activeField < field.length){
+		} else if(activeField >= 0 && activeField < field.length) {
 			AttributedCharacterIterator aci = df.formatToCharacterIterator(calendar.getTime());
-			for(char c = aci.first(); c != AttributedCharacterIterator.DONE; c = aci.next()) {
+			for(char c = aci.first(); c != CharacterIterator.DONE; c = aci.next()) {
 				if(aci.getAttribute(field[activeField]) != null) {
 					s0 = aci.getRunStart();
 					s1 = aci.getRunLimit();
@@ -1130,11 +1491,11 @@ public class CDateTime extends AbstractCombo {
 						buffer = buffer.substring(0, s0) + str + buffer.substring(s1);
 						int oldS1 = s1;
 						s1 = s0 +str.length();
-						selectionOffset.x = Math.min(oldS1, s1);
-						selectionOffset.y = (oldS1 - s0) - str.length();
+						textSelectionOffset.x = Math.min(oldS1, s1);
+						textSelectionOffset.y = (oldS1 - s0) - str.length();
 					} else {
-						selectionOffset.x = buffer.length()+1;
-						selectionOffset.y = 0;
+						textSelectionOffset.x = buffer.length()+1;
+						textSelectionOffset.y = 0;
 					}
 					break;
 				}
@@ -1147,7 +1508,7 @@ public class CDateTime extends AbstractCombo {
 		final int selStart = s0;
 		final int selEnd = s1;
 
-		getDisplay().asyncExec(new Runnable() {
+		Runnable r = new Runnable() {
 			public void run() {
 				if((text != null) && (!text.isDisposed())) {
 					if(!string.equals(text.getText())) {
@@ -1155,10 +1516,16 @@ public class CDateTime extends AbstractCombo {
 						text.setText(string);
 						text.addListener(SWT.Verify, textListener);
 					}
-					text.setSelection(selStart, selEnd);
+					text.getControl().setSelection(selStart, selEnd);
 				}
 			}
-		});
+		};
+		
+		if(sync) {
+			getDisplay().syncExec(r);
+		} else {
+			getDisplay().asyncExec(r);
+		}
 	}
 
 	/**
@@ -1169,7 +1536,7 @@ public class CDateTime extends AbstractCombo {
 	 * @param e the event
 	 * @see CDateTime#updateText()
 	 */
-	private void verify(Event e) {
+	void verify(Event e) {
 		e.doit = false;
 		if(field.length == 0 || activeField == FIELD_NONE) return;
 		
@@ -1177,8 +1544,6 @@ public class CDateTime extends AbstractCombo {
 		if(((e.text.length() == 1) && String.valueOf(c).equals(e.text) && Character.isDigit(c)) || 
 				(e.text.length() > 1) ) {
 			if(e.text.length() == 1) {
-				if(isNull) isNull = false;
-				if(activeField == FIELD_ALL) setActiveField(0);
 				if(editField == null) {
 					int cf = getCalendarField();
 					if(cf >= 0) {
@@ -1208,60 +1573,22 @@ public class CDateTime extends AbstractCombo {
 						fieldNext();
 					} else {
 						editField = null;
+						selection[0] = calendar.getTime();
 						updateText();
 					}
 				}
-				updatePickerSelection(calendar.getTime());
+				selection[0] = calendar.getTime();
+				updatePicker();
 			} else {
 				try {
 					setSelection(df.parse(e.text));
-					fireSelectionChanged(-1, false);
+					fireSelectionChanged();
 				} catch (ParseException pe) {
+					// do nothing
 				}
 			}
 		}
 		updateText();
 	}
 	
-	/**
-	 * Gets the current value of the text that will be displayed for a null selection.
-	 * 
-	 * @param locale the locale for which to the text will be displayed
-	 * @return the appropriate text for a null selection in the given locale
-	 * @throws NullPointerException if locale == null
-	 */
-	public String getNullText(Locale locale) {
-		if (locale == null) {
-			throw new NullPointerException("Locale must be non-null to request null text");
-		}
-		
-		if (nullTexts.containsKey(locale)) {
-			return (String) nullTexts.get(locale);
-		}
-		else {
-			String nullText = Messages.getString("null_text", locale); //$NON-NLS-1$
-			if ("!null_text!".equals(nullText) && nullTexts.containsKey(null)) { //$NON-NLS-1$
-				return (String) nullTexts.get(null);
-			}
-			else {
-				return nullText;
-			}
-		}
-	}
-	
-	/**
-	 * Overrides the text that will be displayed for a null selection in the given locale.
-	 * If the locale argument is null, the given text will be used for any locale that
-	 * does not have a default value for null text, but it will not override the text
-	 * for locales with a specific default value, such as en_US etc.
-	 * 
-	 * @param text the text to display in this widget for a null selection -- null is treated as an empty string
-	 * @param locale the locale in which the given text should be used, or null
-	 */
-	public void setNullText(String text, Locale locale) {
-		if (text == null) {
-			text = "";  //$NON-NLS-1$
-		}
-		nullTexts.put(locale, text);
-	}
 }
