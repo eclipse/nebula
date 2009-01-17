@@ -116,238 +116,6 @@ class SwtAdapter {
 		}
 	}
 
-	private static void gdip_Color_delete(int color) {
-		try {
-			gdip_Color_delete.invoke(gdip, color);
-		} catch(IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch(IllegalAccessException e) {
-			e.printStackTrace();
-		} catch(InvocationTargetException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private static int gdip_Color_new(int argb) {
-		try {
-			return (Integer) gdip_Color_new.invoke(gdip, argb);
-		} catch(IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch(IllegalAccessException e) {
-			e.printStackTrace();
-		} catch(InvocationTargetException e) {
-			e.printStackTrace();
-		}
-		return 0;
-	}
-
-	private static void gdip_Matrix_delete(int matrix) {
-		try {
-			gdip_Matrix_delete.invoke(gdip, matrix);
-		} catch(IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch(IllegalAccessException e) {
-			e.printStackTrace();
-		} catch(InvocationTargetException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private static void gdip_Matrix_GetElements(int matrix, float[] m) {
-		try {
-			gdip_Matrix_GetElements.invoke(gdip, matrix, m);
-		} catch(IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch(IllegalAccessException e) {
-			e.printStackTrace();
-		} catch(InvocationTargetException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private static void gdip_Matrix_Multiply(int /* long */matrix, int /* long */matrix1, int order) {
-		try {
-			gdip_Matrix_Multiply.invoke(gdip, matrix, matrix1, order);
-		} catch(IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch(IllegalAccessException e) {
-			e.printStackTrace();
-		} catch(InvocationTargetException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private static int gdip_Matrix_new(float m11, float m12, float m21, float m22, float dx, float dy) {
-		try {
-			return (Integer) gdip_Matrix_new.invoke(gdip, m11, m12, m21, m22, dx, dy);
-		} catch(IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch(IllegalAccessException e) {
-			e.printStackTrace();
-		} catch(InvocationTargetException e) {
-			e.printStackTrace();
-		}
-		return 0;
-	}
-
-	private static void gdip_GraphicsPath_AddArc(int /* long */path, float x, float y, float width, float height, float startAngle,
-			float sweepAngle) {
-		try {
-			gdip_GraphicsPath_AddArc.invoke(gdip, path, x, y, width, height, startAngle, sweepAngle);
-		} catch(IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch(IllegalAccessException e) {
-			e.printStackTrace();
-		} catch(InvocationTargetException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private static void gdip_GraphicsPath_delete(int /* long */path) {
-		try {
-			gdip_GraphicsPath_delete.invoke(gdip, path);
-		} catch(IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch(IllegalAccessException e) {
-			e.printStackTrace();
-		} catch(InvocationTargetException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private static int gdip_GraphicsPath_new(int fillMode) {
-		try {
-			return (Integer) gdip_GraphicsPath_new.invoke(gdip, fillMode);
-		} catch(IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch(IllegalAccessException e) {
-			e.printStackTrace();
-		} catch(InvocationTargetException e) {
-			e.printStackTrace();
-		}
-		return 0;
-	}
-
-	private static void gdip_GraphicsPath_Transform(int /* long */path, int /* long */matrix) {
-		try {
-			gdip_GraphicsPath_Transform.invoke(gdip, path, matrix);
-		} catch(IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch(IllegalAccessException e) {
-			e.printStackTrace();
-		} catch(InvocationTargetException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private static int gdip_PathGradientBrush_new(int /* long */path) {
-		try {
-			return (Integer) gdip_PathGradientBrush_new.invoke(gdip, path);
-		} catch(IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch(IllegalAccessException e) {
-			e.printStackTrace();
-		} catch(InvocationTargetException e) {
-			e.printStackTrace();
-		}
-		return 0;
-	}
-
-	private static void gdip_PathGradientBrush_SetInterpolationColors(int /* long */brush, int /* long */[] presetColors,
-			float[] blendPositions, int count) {
-		try {
-			gdip_PathGradientBrush_SetInterpolationColors.invoke(gdip, brush, presetColors, blendPositions, count);
-		} catch(IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch(IllegalAccessException e) {
-			e.printStackTrace();
-		} catch(InvocationTargetException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private static int gdip_LinearGradientBrush_new(float[] point1, float[] point2, int /* long */color1, int /* long */color2) {
-		try {
-			Object p1 = pointf.newInstance();
-			pointfX.setFloat(p1, point1[0]);
-			pointfY.setFloat(p1, point1[1]);
-			Object p2 = pointf.newInstance();
-			pointfX.setFloat(p2, point2[0]);
-			pointfY.setFloat(p2, point2[1]);
-			return (Integer) gdip_LinearGradientBrush_new.invoke(gdip, p1, p2, color1, color2);
-		} catch(IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch(IllegalAccessException e) {
-			e.printStackTrace();
-		} catch(InvocationTargetException e) {
-			e.printStackTrace();
-		} catch(InstantiationException e) {
-			e.printStackTrace();
-		}
-		return 0;
-	}
-
-	private static void gdip_LinearGradientBrush_TranslateTransform(int /* long */brush, float dx, float dy, int order) {
-		try {
-			gdip_LinearGradientBrush_TranslateTransform.invoke(gdip, brush, dx, dy, order);
-		} catch(IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch(IllegalAccessException e) {
-			e.printStackTrace();
-		} catch(InvocationTargetException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private static void gdip_LinearGradientBrush_ScaleTransform(int /* long */brush, float sx, float sy, int order) {
-		try {
-			gdip_LinearGradientBrush_ScaleTransform.invoke(gdip, brush, sx, sy, order);
-		} catch(IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch(IllegalAccessException e) {
-			e.printStackTrace();
-		} catch(InvocationTargetException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private static void gdip_LinearGradientBrush_SetInterpolationColors(int /* long */brush, int /* long */[] presetColors,
-			float[] blendPositions, int count) {
-		try {
-			gdip_LinearGradientBrush_SetInterpolationColors.invoke(gdip, brush, presetColors, blendPositions, count);
-		} catch(IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch(IllegalAccessException e) {
-			e.printStackTrace();
-		} catch(InvocationTargetException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private static void gdip_LinearGradientBrush_SetWrapMode(int /* long */brush, int wrapMode) {
-		try {
-			gdip_LinearGradientBrush_SetWrapMode.invoke(gdip, brush, wrapMode);
-		} catch(IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch(IllegalAccessException e) {
-			e.printStackTrace();
-		} catch(InvocationTargetException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private static void gdip_SolidBrush_delete(int /* long */brush) {
-		try {
-			gdip_SolidBrush_delete.invoke(gdip, brush);
-		} catch(IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch(IllegalAccessException e) {
-			e.printStackTrace();
-		} catch(InvocationTargetException e) {
-			e.printStackTrace();
-		}
-	}
-
 	private static void cairo_matrix_init(double[] matrix, double xx, double yx, double xy, double yy, double x0, double y0) {
 		try {
 			cairo_matrix_init.invoke(cairo, matrix, xx, yx, xy, yy, x0, y0);
@@ -466,6 +234,238 @@ class SwtAdapter {
 		} else {
 			System.out.println("TODO: createPattern for gradient on " + SWT.getPlatform()); //$NON-NLS-1$
 			return null;
+		}
+	}
+
+	private static void gdip_Color_delete(int color) {
+		try {
+			gdip_Color_delete.invoke(gdip, color);
+		} catch(IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch(IllegalAccessException e) {
+			e.printStackTrace();
+		} catch(InvocationTargetException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static int gdip_Color_new(int argb) {
+		try {
+			return (Integer) gdip_Color_new.invoke(gdip, argb);
+		} catch(IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch(IllegalAccessException e) {
+			e.printStackTrace();
+		} catch(InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	private static void gdip_GraphicsPath_AddArc(int /* long */path, float x, float y, float width, float height, float startAngle,
+			float sweepAngle) {
+		try {
+			gdip_GraphicsPath_AddArc.invoke(gdip, path, x, y, width, height, startAngle, sweepAngle);
+		} catch(IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch(IllegalAccessException e) {
+			e.printStackTrace();
+		} catch(InvocationTargetException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static void gdip_GraphicsPath_delete(int /* long */path) {
+		try {
+			gdip_GraphicsPath_delete.invoke(gdip, path);
+		} catch(IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch(IllegalAccessException e) {
+			e.printStackTrace();
+		} catch(InvocationTargetException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static int gdip_GraphicsPath_new(int fillMode) {
+		try {
+			return (Integer) gdip_GraphicsPath_new.invoke(gdip, fillMode);
+		} catch(IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch(IllegalAccessException e) {
+			e.printStackTrace();
+		} catch(InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	private static void gdip_GraphicsPath_Transform(int /* long */path, int /* long */matrix) {
+		try {
+			gdip_GraphicsPath_Transform.invoke(gdip, path, matrix);
+		} catch(IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch(IllegalAccessException e) {
+			e.printStackTrace();
+		} catch(InvocationTargetException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static int gdip_LinearGradientBrush_new(float[] point1, float[] point2, int /* long */color1, int /* long */color2) {
+		try {
+			Object p1 = pointf.newInstance();
+			pointfX.setFloat(p1, point1[0]);
+			pointfY.setFloat(p1, point1[1]);
+			Object p2 = pointf.newInstance();
+			pointfX.setFloat(p2, point2[0]);
+			pointfY.setFloat(p2, point2[1]);
+			return (Integer) gdip_LinearGradientBrush_new.invoke(gdip, p1, p2, color1, color2);
+		} catch(IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch(IllegalAccessException e) {
+			e.printStackTrace();
+		} catch(InvocationTargetException e) {
+			e.printStackTrace();
+		} catch(InstantiationException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	private static void gdip_LinearGradientBrush_ScaleTransform(int /* long */brush, float sx, float sy, int order) {
+		try {
+			gdip_LinearGradientBrush_ScaleTransform.invoke(gdip, brush, sx, sy, order);
+		} catch(IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch(IllegalAccessException e) {
+			e.printStackTrace();
+		} catch(InvocationTargetException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static void gdip_LinearGradientBrush_SetInterpolationColors(int /* long */brush, int /* long */[] presetColors,
+			float[] blendPositions, int count) {
+		try {
+			gdip_LinearGradientBrush_SetInterpolationColors.invoke(gdip, brush, presetColors, blendPositions, count);
+		} catch(IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch(IllegalAccessException e) {
+			e.printStackTrace();
+		} catch(InvocationTargetException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static void gdip_LinearGradientBrush_SetWrapMode(int /* long */brush, int wrapMode) {
+		try {
+			gdip_LinearGradientBrush_SetWrapMode.invoke(gdip, brush, wrapMode);
+		} catch(IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch(IllegalAccessException e) {
+			e.printStackTrace();
+		} catch(InvocationTargetException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static void gdip_LinearGradientBrush_TranslateTransform(int /* long */brush, float dx, float dy, int order) {
+		try {
+			gdip_LinearGradientBrush_TranslateTransform.invoke(gdip, brush, dx, dy, order);
+		} catch(IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch(IllegalAccessException e) {
+			e.printStackTrace();
+		} catch(InvocationTargetException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static void gdip_Matrix_delete(int matrix) {
+		try {
+			gdip_Matrix_delete.invoke(gdip, matrix);
+		} catch(IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch(IllegalAccessException e) {
+			e.printStackTrace();
+		} catch(InvocationTargetException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static void gdip_Matrix_GetElements(int matrix, float[] m) {
+		try {
+			gdip_Matrix_GetElements.invoke(gdip, matrix, m);
+		} catch(IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch(IllegalAccessException e) {
+			e.printStackTrace();
+		} catch(InvocationTargetException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static void gdip_Matrix_Multiply(int /* long */matrix, int /* long */matrix1, int order) {
+		try {
+			gdip_Matrix_Multiply.invoke(gdip, matrix, matrix1, order);
+		} catch(IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch(IllegalAccessException e) {
+			e.printStackTrace();
+		} catch(InvocationTargetException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static int gdip_Matrix_new(float m11, float m12, float m21, float m22, float dx, float dy) {
+		try {
+			return (Integer) gdip_Matrix_new.invoke(gdip, m11, m12, m21, m22, dx, dy);
+		} catch(IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch(IllegalAccessException e) {
+			e.printStackTrace();
+		} catch(InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	private static int gdip_PathGradientBrush_new(int /* long */path) {
+		try {
+			return (Integer) gdip_PathGradientBrush_new.invoke(gdip, path);
+		} catch(IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch(IllegalAccessException e) {
+			e.printStackTrace();
+		} catch(InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	private static void gdip_PathGradientBrush_SetInterpolationColors(int /* long */brush, int /* long */[] presetColors,
+			float[] blendPositions, int count) {
+		try {
+			gdip_PathGradientBrush_SetInterpolationColors.invoke(gdip, brush, presetColors, blendPositions, count);
+		} catch(IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch(IllegalAccessException e) {
+			e.printStackTrace();
+		} catch(InvocationTargetException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static void gdip_SolidBrush_delete(int /* long */brush) {
+		try {
+			gdip_SolidBrush_delete.invoke(gdip, brush);
+		} catch(IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch(IllegalAccessException e) {
+			e.printStackTrace();
+		} catch(InvocationTargetException e) {
+			e.printStackTrace();
 		}
 	}
 
