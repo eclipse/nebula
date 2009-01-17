@@ -286,13 +286,12 @@ public class CDateTime extends BaseCombo {
 	private String[] separator;
 	private int[] calendarFields;
 	private boolean isTime;
-private boolean isDate;
+	private boolean isDate;
 	//	private boolean isNull = true;
 	private String nullText = null;
 
-	
 	private boolean defaultNullText = true;
-private boolean singleSelection;
+	private boolean singleSelection;
 	
 	//	private boolean dragSelection;
 	private Date[] selection = new Date[0];
