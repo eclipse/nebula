@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2005-2008 Jeremy Dowdall
+ * Copyright (c) 2005-2009 Jeremy Dowdall
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -123,12 +123,12 @@ public abstract class BaseCombo extends Canvas implements VWidget {
 	/**
 	 * true if the platform is winXP, false otherwise
 	 */
-	protected static final boolean winxp = "win32".equals(SWT.getPlatform()) && "5.0".equals(System.getProperty("os.version")); //$NON-NLS-1$ $NON-NLS-2$
+	protected static final boolean winxp = "win32".equals(SWT.getPlatform()) && "5.0".equals(System.getProperty("os.version")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 	/**
 	 * true if the platform is win32, false otherwise
 	 */
-	protected static final boolean vista = "win32".equals(SWT.getPlatform()) && "6.0".equals(System.getProperty("os.version")); //$NON-NLS-1$ $NON-NLS-2$
+	protected static final boolean vista = "win32".equals(SWT.getPlatform()) && "6.0".equals(System.getProperty("os.version")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	
 	/**
 	 * A constant value used to pad the computed height for this widget, so that
@@ -273,7 +273,7 @@ public abstract class BaseCombo extends Canvas implements VWidget {
 				layout(true);
 				break;
 			}
-		};
+		}
 	};
 	
 	private Listener disposeListener = new Listener() {
@@ -287,7 +287,7 @@ public abstract class BaseCombo extends Canvas implements VWidget {
 		}
 	};
 
-	protected Boolean busy = false;
+	protected Boolean busy = Boolean.FALSE;
 
 	/**
 	 * Main constructor -- must be called by all subclasses in their own
@@ -396,7 +396,7 @@ public abstract class BaseCombo extends Canvas implements VWidget {
 				@Override
 				public void paintBackground(VControl control, Event e) {
 					VButton button = (VButton) control;
-					if(button.hasState(VButton.STATE_ACTIVE)) {
+					if(button.hasState(VControl.STATE_ACTIVE)) {
 						Rectangle r = button.getBounds();
 						e.gc.setBackground(e.display.getSystemColor(SWT.COLOR_GRAY));
 						e.gc.fillRoundRectangle(r.x, r.y, r.width-1, r.height-1, 2, 2);
@@ -946,7 +946,7 @@ public abstract class BaseCombo extends Canvas implements VWidget {
 	 */
 	protected void setOpen(boolean open, final Runnable callback) {
 		if(content == null) {
-			busy = false;
+			busy = Boolean.FALSE;
 			return;
 		}
 
@@ -978,7 +978,7 @@ public abstract class BaseCombo extends Canvas implements VWidget {
 						if(checkText())
 							text.setFocus();
 						postClose(contentShell);
-						busy = false;
+						busy = Boolean.FALSE;
 						if(callback != null) {
 							callback.run();
 						}
@@ -1028,7 +1028,7 @@ public abstract class BaseCombo extends Canvas implements VWidget {
 				public void run() {
 					setContentFocus();
 					postOpen(contentShell);
-					busy = false;
+					busy = Boolean.FALSE;
 					if(callback != null) {
 						callback.run();
 					}

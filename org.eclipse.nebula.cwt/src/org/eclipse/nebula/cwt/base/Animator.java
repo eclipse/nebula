@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright (c) 2007-2008 Jeremy Dowdall
+* Copyright (c) 2007-2009 Jeremy Dowdall
 * All rights reserved. This program and the accompanying materials
 * are made available under the terms of the Eclipse Public License v1.0
 * which accompanies this distribution, and is available at
@@ -45,23 +45,15 @@ class Animator extends Thread {
 	
 	/**
 	 * Style constant for a 'blind' style animation (value is 1&lt;&lt;2).
-	 * Used in conjunction with a direction ({@link #UP} or {@link #DOWN})
-	 * and either an {@link #OPEN} or {@link #CLOSE} function. 
-	 * @see #UP
-	 * @see #DOWN
-	 * @see #OPEN
-	 * @see #CLOSE
+	 * Used in conjunction with a direction (UP or DOWN)
+	 * and either an OPEN or CLOSE function. 
 	 */
 	public static final int BLIND	= 1 << 4;
 
 	/**
 	 * Style constant for a 'slide' style animation (value is 1&lt;&lt;2).
-	 * Used in conjunction with a direction ({@link #UP} or {@link #DOWN})
-	 * and either an {@link #OPEN} or {@link #CLOSE} function. 
-	 * @see #UP
-	 * @see #DOWN
-	 * @see #OPEN
-	 * @see #CLOSE
+	 * Used in conjunction with a direction (UP or DOWN)
+	 * and either an OPEN or CLOSE function. 
 	 */
 	public static final int SLIDE	= 1 << 5;
 
@@ -69,12 +61,7 @@ class Animator extends Thread {
      * Style constant for a 'pop' style animation, which really, is not an
      * animation at all, but is included for convenience purposes
      * (value is 1&lt;&lt;2). Used in conjunction with a direction
-     * ({@link #UP} or {@link #DOWN}) and either an {@link #OPEN} or
-     * {@link #CLOSE} function. 
-     * @see #UP
-     * @see #DOWN
-     * @see #OPEN
-     * @see #CLOSE
+     * (UP or DOWN) and either an OPEN or CLOSE function. 
      */
     public static final int POP     = 1 << 6;
 
@@ -112,7 +99,7 @@ class Animator extends Thread {
 		this.type = type(type);
 		if(hasStyle(BLIND) || hasStyle(SLIDE)) {
 		    distance = control.getSize().y - 1;
-			stepSize = (((double) distance * (double) interval) / (double) duration);
+			stepSize = (((double) distance * (double) interval) / duration);
 		} else if(hasStyle(POP)) {
             stepSize = distance = control.getSize().y - 1;
         }
