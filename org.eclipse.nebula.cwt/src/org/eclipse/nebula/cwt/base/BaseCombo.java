@@ -136,9 +136,42 @@ public abstract class BaseCombo extends Canvas implements VWidget {
 	 */
 	protected static final int textMarginHeight = win32 ? 4 : 0;
 
+	/**
+	 * A style constant indicating that this combo will only have a drop down button,
+	 * rather than a button and a text box.
+	 */
 	protected static final int BUTTON_ONLY = 0;
+	
+	/**
+	 * A constant indicating that the drop down button is always visible.
+	 * Valid only when style is DROP_DOWN.
+	 * @see #BUTTON_AUTO
+	 * @see #BUTTON_NEVER
+	 */
 	protected static final int BUTTON_ALWAYS = 1;
+
+	/**
+	 * A constant indicating that the drop down button is never visible.
+	 * Valid only when style is DROP_DOWN.
+	 * <p>
+	 * This setting may be useful if the subclass of this BaseCombo allows
+	 * programmatic opening and closing of the drop down shell via {@link #setOpen(boolean)},
+	 * or a similar method.
+	 * </p>
+	 * @see #BUTTON_AUTO
+	 * @see #BUTTON_ALWAYS
+	 * @see #setOpen(boolean)
+	 * @see #setOpen(boolean, Runnable)
+	 */
 	protected static final int BUTTON_NEVER = 2;
+
+	/**
+	 * A constant indicating that the drop down button is visible when the
+	 * text box has the focus, and is hidden otherwise.
+	 * Valid only when style is DROP_DOWN.
+	 * @see #BUTTON_ALWAYS
+	 * @see #BUTTON_NEVER
+	 */
 	protected static final int BUTTON_AUTO = 3;
 
 	private static int checkStyle(int style) {
@@ -154,6 +187,12 @@ public abstract class BaseCombo extends Canvas implements VWidget {
 		return rstyle;
 	}
 
+	/**
+	 * A recursive method to find out if a composite is an ancestor of a control.
+	 * @param control 
+	 * @param composite
+	 * @return true if the composite is an ancestor, false otherwise.
+	 */
 	protected static boolean containsControl(Control control, Composite composite) {
 		if(composite != null && !composite.isDisposed()) {
 			Control[] children = composite.getChildren();
@@ -170,6 +209,15 @@ public abstract class BaseCombo extends Canvas implements VWidget {
 		return false;
 	}
 
+	/**
+	 * The VPanel that is the base of this widget.  If the style is SIMPLE, this panel
+	 * will be the base of the content area, otherwise, it is the base of the text/button
+	 * area.
+	 * <p>
+	 * This is the VPanel returned by {@link #getPanel()}
+	 * </p>
+	 * @see #getPanel()
+	 */
 	protected VPanel panel = null;
 
 	/**
@@ -179,33 +227,12 @@ public abstract class BaseCombo extends Canvas implements VWidget {
 	protected VButton button = null;
 
 	/**
-	 * The image to be painted on the Button of a DROP_DOWN style combo if the
-	 * BUTTON_IMG style is set.
-	 */
-	protected Image buttonImage = null;
-
-	/**
 	 * True if a default image should be used for the button; false otherwise -
 	 * as is the case when an image is set using {@link #setButtonImage(Image)}
 	 * 
 	 * @see #setButtonImage(Image)
 	 */
 	protected boolean defaultButtonImage = true;
-
-	/**
-	 * True if a default text should be used to represent a null selection;
-	 * false otherwise - as is the case when the null text is set explicitly
-	 * using {@link #set}
-	 * 
-	 * @see #setButtonImage(Image)
-	 */
-	protected boolean defaultNullText = true;
-
-	/**
-	 * The size of the image to be painted on the Button of a DROP_DOWN style
-	 * combo if the BUTTON_IMG style is set.
-	 */
-	protected Point buttonImageSize = null;
 
 	/**
 	 * The Text widget of a DROP_DOWN style combo. This value may be null --
@@ -236,6 +263,7 @@ public abstract class BaseCombo extends Canvas implements VWidget {
 	 * Flag to indicate that this is a SIMPLE style combo.
 	 */
 	protected boolean simple;
+
 	/**
 	 * Flag to indicate that this combo's BUTTON should be displayed on the left
 	 * side of its Text.
@@ -243,14 +271,14 @@ public abstract class BaseCombo extends Canvas implements VWidget {
 	protected boolean leftAlign = false;
 
 	private int buttonVisibility;
+
 	private boolean dropDown;
+	
 	private boolean open = false;
 
 	private boolean holdOpen = false;
-	/**
-	 * 
-	 */
-	protected boolean hasFocus;
+
+	private boolean hasFocus;
 
 	private VControl positionControl;
 
@@ -287,6 +315,10 @@ public abstract class BaseCombo extends Canvas implements VWidget {
 		}
 	};
 
+	/**
+	 * A flag currently used to indicate that the popup shell is busy opening.
+	 * Hopefully to be replaced soon by an animation framework in CWT.
+	 */
 	protected Boolean busy = Boolean.FALSE;
 
 	/**
@@ -547,15 +579,10 @@ public abstract class BaseCombo extends Canvas implements VWidget {
 
 	/**
 	 * Returns the text of this combo
-	 * 
 	 * @return the combo's text
 	 */
 	public String getText() {
 		return checkText() ? text.getText() : ""; //$NON-NLS-1$
-	}
-
-	protected boolean containsControl(Control control) {
-		return containsControl(control, this) || containsControl(control, contentShell);
 	}
 
 	private void init(int style) {
@@ -834,6 +861,11 @@ public abstract class BaseCombo extends Canvas implements VWidget {
 		}
 	}
 
+	/**
+	 * Called when the popup shell has been open, this method provides a
+	 * location for subclasses to set the focus to the content.
+	 * @return true if the focus was set, false otherwise
+	 */
 	protected abstract boolean setContentFocus();
 
 	/**
