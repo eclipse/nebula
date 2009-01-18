@@ -15,9 +15,13 @@ import java.util.List;
 
 import org.eclipse.swt.graphics.GC;
 
+/**
+ * An SvgElement which is capable of containing other SvgElements.
+ * The most commonly accessed container element types are the document, fragment, and group.
+ */
 public class SvgContainer extends SvgGraphic {
 
-	protected List<SvgElement> elements;
+	List<SvgElement> elements;
 	
 	SvgContainer(SvgContainer container, String id) {
 		super(container, id);
@@ -36,10 +40,20 @@ public class SvgContainer extends SvgGraphic {
 		}
 	}
 	
+	/**
+	 * Returns an array of child elements contained by this container element.
+	 * Modifying this array will not affect the underlying element list of this
+	 * container element.
+	 * @return an array of child elements contained by this element.
+	 */
 	public SvgElement[] getElements() {
 		return elements.toArray(new SvgElement[elements.size()]);
 	}
 
+    /**
+     * Returns true if this list contains no elements.
+     * @return true if this list contains no elements.
+     */
 	public boolean isEmpty() {
 		return elements.isEmpty();
 	}

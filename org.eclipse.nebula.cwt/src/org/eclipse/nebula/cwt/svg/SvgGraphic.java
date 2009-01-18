@@ -15,7 +15,11 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Transform;
 
-
+/**
+ * A base abstract class for all types of svg elements which can be
+ * applied (painted) to a graphics context.  These may be shapes which
+ * can be painted directly, or containers which will paint their children.
+ */
 public abstract class SvgGraphic extends SvgElement {
 
 	String title;
@@ -30,8 +34,23 @@ public abstract class SvgGraphic extends SvgElement {
 		stroke = new SvgStroke(this);
 	}
 
+	/**
+	 * Apply this svg graphic to the given graphics context.
+	 * <p>Note that to support the rather abstract structure of svg,
+	 * each time this method is called all transformations and css properties 
+	 * to be calculated and applied.  If this is a shape, it will be
+	 * painted to the graphics context.  Containers will recursively
+	 * make this call on their children.</p>
+	 * @param gc the gc to use in all graphics operations
+	 */
 	public abstract void apply(GC gc);
 	
+	/**
+	 * Returns the value of the <code>desc</code> element that is a child of this svg element.
+	 * If there is no <code>desc</code> element that is a direct decendent of this element, null
+	 * is returned.
+	 * @return the <code>desc</code> of this svg element
+	 */
 	public String getDescription() {
 		return (description == null) ? null : description;
 	}
@@ -152,6 +171,12 @@ public abstract class SvgGraphic extends SvgElement {
 		return t;
 	}
 	
+	/**
+	 * Returns the value of the <code>title</code> element that is a child of this svg element.
+	 * If there is no <code>title</code> element that is a direct decendent of this element, null
+	 * is returned.
+	 * @return the <code>title</code> of this svg element
+	 */
 	public String getTitle() {
 		return (title == null) ? null : title;
 	}

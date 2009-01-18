@@ -101,9 +101,9 @@ class SvgLoader {
 	private static final char[] ELEMENT_USE = new char[] { 'u', 's', 'e' };
 	private static final char[] ELEMENT_XML = new char[] { '?', 'x', 'm', 'l' };
 
-	//	private static final String paramRegex = "[^\\d^\\.^-]+";
-	private static final String paramRegex = "[ ,]+";
-	private static final Matcher urlMatcher = Pattern.compile(" *url\\( *#(\\w+) *\\) *").matcher("");
+	//	private static final String paramRegex = "[^\\d^\\.^-]+"; //$NON-NLS-1$
+	private static final String paramRegex = "[ ,]+"; //$NON-NLS-1$
+	private static final Matcher urlMatcher = Pattern.compile(" *url\\( *#(\\w+) *\\) *").matcher(""); //$NON-NLS-1$  //$NON-NLS-2$
 
 	
 	private static void addArc(String[] sa, int ix, List<Byte> types, List<Float> points, boolean relative) {
@@ -112,8 +112,8 @@ class SvgLoader {
 		float rx = abs(Float.parseFloat(sa[ix++]));
 		float ry = abs(Float.parseFloat(sa[ix++]));
 		float phi = clampAngle(Float.parseFloat(sa[ix++]));
-		boolean largeArc = (!sa[ix++].equals("0"));
-		boolean sweep = (!sa[ix++].equals("0"));
+		boolean largeArc = (!sa[ix++].equals("0")); //$NON-NLS-1$
+		boolean sweep = (!sa[ix++].equals("0")); //$NON-NLS-1$
 		float x2 = Float.parseFloat(sa[ix++]);
 		float y2 = Float.parseFloat(sa[ix++]);
 		if(relative) {
@@ -126,8 +126,8 @@ class SvgLoader {
 		}
 		if(rx == 0 || ry == 0) {
 			types.add((byte) SWT.PATH_LINE_TO);
-			points.add((float) x2);
-			points.add((float) y2);
+			points.add(x2);
+			points.add(y2);
 			return;
 		}
 
@@ -414,9 +414,9 @@ class SvgLoader {
 		String s = getAttrValue(ca, start, end, ATTR_CLASS);
 		if(s != null) {
 			Map<String, String> styles = new HashMap<String, String>();
-			String[] classes = s.trim().split(" +");
+			String[] classes = s.trim().split(" +"); //$NON-NLS-1$
 			for(String c : classes) {
-				Map<String, String> pairs = element.getFragment().getStyles("." + c);
+				Map<String, String> pairs = element.getFragment().getStyles("." + c); //$NON-NLS-1$
 				if(pairs != null) {
 					styles.putAll(pairs);
 				}
@@ -452,7 +452,7 @@ class SvgLoader {
 		String s = element.getId();
 		if(s != null) {
 			Map<String, String> styles = new HashMap<String, String>();
-			Map<String, String> pairs = element.getFragment().getStyles("#" + s);
+			Map<String, String> pairs = element.getFragment().getStyles("#" + s); //$NON-NLS-1$
 			if(pairs != null) {
 				styles.putAll(pairs);
 			}
@@ -498,17 +498,17 @@ class SvgLoader {
 					transform.next = new SvgTransform();
 					transform = transform.next;
 				}
-				if(isEqual(ca, s1, s2 - 1, "matrix".toCharArray())) {
+				if(isEqual(ca, s1, s2 - 1, "matrix".toCharArray())) { //$NON-NLS-1$
 					transform.setData(Type.Matrix, new String(ca, s2 + 1, s3 - s2 - 1).split(paramRegex));
-				} else if(isEqual(ca, s1, s2 - 1, "translate".toCharArray())) {
+				} else if(isEqual(ca, s1, s2 - 1, "translate".toCharArray())) { //$NON-NLS-1$
 					transform.setData(Type.Translate, new String(ca, s2 + 1, s3 - s2 - 1).split(paramRegex));
-				} else if(isEqual(ca, s1, s2 - 1, "scale".toCharArray())) {
+				} else if(isEqual(ca, s1, s2 - 1, "scale".toCharArray())) { //$NON-NLS-1$
 					transform.setData(Type.Scale, new String(ca, s2 + 1, s3 - s2 - 1).split(paramRegex));
-				} else if(isEqual(ca, s1, s2 - 1, "rotate".toCharArray())) {
+				} else if(isEqual(ca, s1, s2 - 1, "rotate".toCharArray())) { //$NON-NLS-1$
 					transform.setData(Type.Rotate, new String(ca, s2 + 1, s3 - s2 - 1).split(paramRegex));
-				} else if(isEqual(ca, s1, s2 - 1, "skewx".toCharArray())) {
+				} else if(isEqual(ca, s1, s2 - 1, "skewx".toCharArray())) { //$NON-NLS-1$
 					transform.setData(Type.SkewX, new String(ca, s2 + 1, s3 - s2 - 1).split(paramRegex));
-				} else if(isEqual(ca, s1, s2 - 1, "skewy".toCharArray())) {
+				} else if(isEqual(ca, s1, s2 - 1, "skewy".toCharArray())) { //$NON-NLS-1$
 					transform.setData(Type.SkewY, new String(ca, s2 + 1, s3 - s2 - 1).split(paramRegex));
 				}
 			}
@@ -654,7 +654,7 @@ class SvgLoader {
 			} else {
 				if(s1 != -1) {
 					int s2 = findAny(ca, s1, end, ' ', '>');
-					System.out.println("dunno: " + new String(ca, s1 + 1, s2 - s1 - 1));
+					System.out.println("dunno: " + new String(ca, s1 + 1, s2 - s1 - 1)); //$NON-NLS-1$
 				}
 				s1 = findClosingTag(ca, s1, end);
 			}
@@ -692,7 +692,7 @@ class SvgLoader {
 			s2 = closer(ca, s, end);
 			if(s2 != -1) {
 				Map<String, String> pairs = parseStyles(ca, s + 1, s2 - 1);
-				for(String name : names.split(" *, *")) {
+				for(String name : names.split(" *, *")) { //$NON-NLS-1$
 					Map<String, String> existing = styles.get(name);
 					if(existing != null) {
 						Map<String, String> m = new HashMap<String, String>();
@@ -716,7 +716,7 @@ class SvgLoader {
 		end = findClosingTag(ca, start, end);
 		if(end != -1) {
 			int endAttrs = closer(ca, start, end);
-			SvgContainer element = new SvgContainer(container, "defs");
+			SvgContainer element = new SvgContainer(container, "defs"); //$NON-NLS-1$
 			element.transform = getTransform(ca, getAttrValueRange(ca, start, endAttrs, ATTR_TRANSFORM));
 			parse(element, ca, endAttrs, end);
 		}
@@ -757,13 +757,13 @@ class SvgLoader {
 		Map<String, String> classStyles = getClassStyles(element, ca, start, end);
 		Map<String, String> attrStyles = parseStyles(getAttrValue(ca, start, end, ATTR_STYLE));
 
-		String s = getValue("fill", idStyles, classStyles, attrStyles, getAttrValue(ca, start, end, ATTR_FILL));
+		String s = getValue("fill", idStyles, classStyles, attrStyles, getAttrValue(ca, start, end, ATTR_FILL)); //$NON-NLS-1$
 		parsePaint(element.fill, s);
 
-		s = getValue("fill-opacity", idStyles, classStyles, attrStyles, getAttrValue(ca, start, end, ATTR_FILL_OPACITY));
+		s = getValue("fill-opacity", idStyles, classStyles, attrStyles, getAttrValue(ca, start, end, ATTR_FILL_OPACITY)); //$NON-NLS-1$
 		element.fill.opacity = parseFloat(s);
 
-		s = getValue("fill-rule", idStyles, classStyles, attrStyles, getAttrValue(ca, start, end, ATTR_FILL_RULE));
+		s = getValue("fill-rule", idStyles, classStyles, attrStyles, getAttrValue(ca, start, end, ATTR_FILL_RULE)); //$NON-NLS-1$
 		element.fill.rule = parseRule(s);
 	}
 
@@ -797,13 +797,13 @@ class SvgLoader {
 			Map<String, String> classStyles = getClassStyles(stop, ca, start, endAttrs);
 			Map<String, String> attrStyles = parseStyles(getAttrValue(ca, start, endAttrs, ATTR_STYLE));
 
-			String s = getValue("offset", idStyles, classStyles, attrStyles, getAttrValue(ca, start, endAttrs, ATTR_OFFSET));
+			String s = getValue("offset", idStyles, classStyles, attrStyles, getAttrValue(ca, start, endAttrs, ATTR_OFFSET)); //$NON-NLS-1$
 			stop.offset = parsePercentage(s, 0f, true);
 
-			s = getValue("stop-color", idStyles, classStyles, attrStyles, getAttrValue(ca, start, endAttrs, ATTR_STOP_COLOR));
+			s = getValue("stop-color", idStyles, classStyles, attrStyles, getAttrValue(ca, start, endAttrs, ATTR_STOP_COLOR)); //$NON-NLS-1$
 			stop.color = getColorAsInt(s);
 
-			s = getValue("stop-opacity", idStyles, classStyles, attrStyles, getAttrValue(ca, start, endAttrs, ATTR_STOP_OPACITY), "1");
+			s = getValue("stop-opacity", idStyles, classStyles, attrStyles, getAttrValue(ca, start, endAttrs, ATTR_STOP_OPACITY), "1"); //$NON-NLS-1$  //$NON-NLS-2$
 			stop.opacity = parseFloat(s);
 
 			gradient.stops.add(stop);
@@ -829,9 +829,9 @@ class SvgLoader {
 		if(s == null) {
 			s = defaultString;
 		}
-		if(s.endsWith("%")) {
-			throw new UnsupportedOperationException("TODO parseLength");
-		} else if(s.endsWith("cm")) {
+		if(s.endsWith("%")) { //$NON-NLS-1$
+			throw new UnsupportedOperationException("TODO parseLength: %"); //$NON-NLS-1$
+		} else if(s.endsWith("cm")) { //$NON-NLS-1$
 			final Point dpi = new Point(0, 0);
 			Display.getDefault().syncExec(new Runnable() {
 				public void run() {
@@ -839,11 +839,11 @@ class SvgLoader {
 				}
 			});
 			return Float.parseFloat(s.substring(0, s.length() - 2)) * dpi.x * 0.393700787f;
-		} else if(s.endsWith("em")) {
-			throw new UnsupportedOperationException("TODO parseLength");
-		} else if(s.endsWith("ex")) {
-			throw new UnsupportedOperationException("TODO parseLength");
-		} else if(s.endsWith("in")) {
+		} else if(s.endsWith("em")) { //$NON-NLS-1$
+			throw new UnsupportedOperationException("TODO parseLength: em"); //$NON-NLS-1$
+		} else if(s.endsWith("ex")) { //$NON-NLS-1$
+			throw new UnsupportedOperationException("TODO parseLength: ex"); //$NON-NLS-1$
+		} else if(s.endsWith("in")) { //$NON-NLS-1$
 			final Point dpi = new Point(0, 0);
 			Display.getDefault().syncExec(new Runnable() {
 				public void run() {
@@ -851,7 +851,7 @@ class SvgLoader {
 				}
 			});
 			return Float.parseFloat(s.substring(0, s.length() - 2)) * dpi.x;
-		} else if(s.endsWith("mm")) {
+		} else if(s.endsWith("mm")) { //$NON-NLS-1$
 			final Point dpi = new Point(0, 0);
 			Display.getDefault().syncExec(new Runnable() {
 				public void run() {
@@ -859,11 +859,11 @@ class SvgLoader {
 				}
 			});
 			return Float.parseFloat(s.substring(0, s.length() - 2)) * dpi.x * 0.0393700787f;
-		} else if(s.endsWith("pc")) {
-			throw new UnsupportedOperationException("TODO parseLength");
-		} else if(s.endsWith("pt")) {
-			throw new UnsupportedOperationException("TODO parseLength");
-		} else if(s.endsWith("px")) {
+		} else if(s.endsWith("pc")) { //$NON-NLS-1$
+			throw new UnsupportedOperationException("TODO parseLength: pc"); //$NON-NLS-1$
+		} else if(s.endsWith("pt")) { //$NON-NLS-1$
+			throw new UnsupportedOperationException("TODO parseLength: pt"); //$NON-NLS-1$
+		} else if(s.endsWith("px")) { //$NON-NLS-1$
 			return Float.parseFloat(s.substring(0, s.length() - 2));
 		} else {
 			return Float.parseFloat(s);
@@ -924,11 +924,11 @@ class SvgLoader {
 
 	private static void parsePaint(SvgPaint paint, String s) {
 		if(s != null) {
-			if("none".equals(s)) {
+			if("none".equals(s)) { //$NON-NLS-1$
 				paint.type = PaintType.None;
-			} else if("currentColor".equals(s)) {
+			} else if("currentColor".equals(s)) { //$NON-NLS-1$
 				paint.type = PaintType.Current;
-			} else if(s.startsWith("url")) {
+			} else if(s.startsWith("url")) { //$NON-NLS-1$
 				paint.type = PaintType.Link;
 				paint.linkId = getLink(s);
 			} else {
@@ -938,7 +938,7 @@ class SvgLoader {
 					paint.color = i;
 				} else {
 					paint.type = PaintType.None;
-					System.out.println("dunno fill " + paint);
+					System.out.println("dunno fill " + paint); //$NON-NLS-1$
 				}
 			}
 		}
@@ -1082,7 +1082,7 @@ class SvgLoader {
 
 	private static String[] parsePathDataStrings(String data) {
 		List<String> strs = new ArrayList<String>();
-		StringBuilder sb = null;
+		StringBuilder sb = new StringBuilder();
 		char[] ca = data.toCharArray();
 		for(int i = 0; i < ca.length; i++) {
 			char c = ca[i];
@@ -1138,7 +1138,7 @@ class SvgLoader {
 
 	private static float[] parsePoints(String s) {
 		if(s != null) {
-			String[] sa = s.trim().split("[ ,]");
+			String[] sa = s.trim().split("[ ,]"); //$NON-NLS-1$
 			float[] points = new float[sa.length];
 			for(int i = 0; i < sa.length; i++) {
 				points[i] = parseFloat(sa[i]);
@@ -1247,9 +1247,9 @@ class SvgLoader {
 
 	private static Integer parseRule(String s) {
 		if(s != null) {
-			if("evenodd".equals(s)) {
+			if("evenodd".equals(s)) { //$NON-NLS-1$
 				return SWT.FILL_EVEN_ODD;
-			} else if("winding".equals(s)) {
+			} else if("winding".equals(s)) { //$NON-NLS-1$
 				return SWT.FILL_WINDING;
 			}
 		}
@@ -1261,29 +1261,29 @@ class SvgLoader {
 		Map<String, String> classStyles = getClassStyles(element, ca, start, end);
 		Map<String, String> attrStyles = parseStyles(getAttrValue(ca, start, end, ATTR_STYLE));
 
-		String s = getValue("stroke", idStyles, classStyles, attrStyles, getAttrValue(ca, start, end, ATTR_STROKE));
+		String s = getValue("stroke", idStyles, classStyles, attrStyles, getAttrValue(ca, start, end, ATTR_STROKE)); //$NON-NLS-1$
 		parsePaint(element.stroke, s);
 
-		s = getValue("stroke-opacity", idStyles, classStyles, attrStyles, getAttrValue(ca, start, end, ATTR_STROKE_OPACITY));
+		s = getValue("stroke-opacity", idStyles, classStyles, attrStyles, getAttrValue(ca, start, end, ATTR_STROKE_OPACITY)); //$NON-NLS-1$
 		element.stroke.opacity = parseFloat(s);
 
-		s = getValue("stroke-width", idStyles, classStyles, attrStyles, getAttrValue(ca, start, end, ATTR_STROKE_WIDTH));
+		s = getValue("stroke-width", idStyles, classStyles, attrStyles, getAttrValue(ca, start, end, ATTR_STROKE_WIDTH)); //$NON-NLS-1$
 		element.stroke.width = parseStrokeWidth(s);
 
-		s = getValue("stroke-linecap", idStyles, classStyles, attrStyles, getAttrValue(ca, start, end, ATTR_STROKE_CAP));
+		s = getValue("stroke-linecap", idStyles, classStyles, attrStyles, getAttrValue(ca, start, end, ATTR_STROKE_CAP)); //$NON-NLS-1$
 		element.stroke.lineCap = parseStrokeLineCap(s);
 
-		s = getValue("stroke-linejoin", idStyles, classStyles, attrStyles, getAttrValue(ca, start, end, ATTR_STROKE_JOIN));
+		s = getValue("stroke-linejoin", idStyles, classStyles, attrStyles, getAttrValue(ca, start, end, ATTR_STROKE_JOIN)); //$NON-NLS-1$
 		element.stroke.lineJoin = parseStrokeLineJoin(s);
 	}
 
 	private static Integer parseStrokeLineCap(String s) {
 		if(s != null) {
-			if("butt".equals(s)) {
+			if("butt".equals(s)) { //$NON-NLS-1$
 				return SWT.CAP_FLAT;
-			} else if("round".equals(s)) {
+			} else if("round".equals(s)) { //$NON-NLS-1$
 				return SWT.CAP_ROUND;
-			} else if("square".equals(s)) {
+			} else if("square".equals(s)) { //$NON-NLS-1$
 				return SWT.CAP_SQUARE;
 			}
 		}
@@ -1292,11 +1292,11 @@ class SvgLoader {
 
 	private static Integer parseStrokeLineJoin(String s) {
 		if(s != null) {
-			if("bevel".equals(s)) {
+			if("bevel".equals(s)) { //$NON-NLS-1$
 				return SWT.JOIN_BEVEL;
-			} else if("miter".equals(s)) {
+			} else if("miter".equals(s)) { //$NON-NLS-1$
 				return SWT.JOIN_MITER;
-			} else if("round".equals(s)) {
+			} else if("round".equals(s)) { //$NON-NLS-1$
 				return SWT.JOIN_ROUND;
 			}
 		}
@@ -1305,7 +1305,7 @@ class SvgLoader {
 
 	private static Float parseStrokeWidth(String s) {
 		if(s != null) {
-			if(s.endsWith("px")) {
+			if(s.endsWith("px")) { //$NON-NLS-1$
 				return new Float(s.substring(0, s.length() - 2));
 			} else {
 				return new Float(s);
@@ -1336,9 +1336,9 @@ class SvgLoader {
 		Map<String, String> styles = new HashMap<String, String>();
 		int len = end - start + 1;
 		if(len > 0 && start + len <= ca.length) {
-			String[] sa = new String(ca, start, end - start + 1).trim().split(" *; *");
+			String[] sa = new String(ca, start, end - start + 1).trim().split(" *; *"); //$NON-NLS-1$
 			for(String s : sa) {
-				String[] sa2 = s.split(" *: *");
+				String[] sa2 = s.split(" *: *"); //$NON-NLS-1$
 				if(sa2.length == 2) {
 					styles.put(sa2[0], sa2[1]);
 				}
@@ -1364,8 +1364,8 @@ class SvgLoader {
 				element.x = parseFloat(getAttrValue(ca, start, endAttrs, ATTR_X));
 				element.y = parseFloat(getAttrValue(ca, start, endAttrs, ATTR_Y));
 			}
-			element.width = parseLength(getAttrValue(ca, start, endAttrs, ATTR_WIDTH), "100%");
-			element.height = parseLength(getAttrValue(ca, start, endAttrs, ATTR_HEIGHT), "100%");
+			element.width = parseLength(getAttrValue(ca, start, endAttrs, ATTR_WIDTH), "100%"); //$NON-NLS-1$
+			element.height = parseLength(getAttrValue(ca, start, endAttrs, ATTR_HEIGHT), "100%"); //$NON-NLS-1$
 			element.viewBox = parseViewBox(getAttrValue(ca, start, endAttrs, ATTR_VIEWBOX));
 			//			TODO element.preserveAspectRatio = 
 			parse(element, ca, endAttrs, end);

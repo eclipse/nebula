@@ -17,7 +17,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Pattern;
 
-public class SvgGradient extends SvgElement {
+class SvgGradient extends SvgElement {
 
 	static final int X1 = 0;
 	static final int Y1 = 1;
@@ -127,25 +127,25 @@ public class SvgGradient extends SvgElement {
 		}
 	}
 	
-	public void setSpreadMethod(String s) {
+	void setSpreadMethod(String s) {
 		if(s != null) {
-			if("pad".equals(s)) {
+			if("pad".equals(s)) { //$NON-NLS-1$
 				spreadMethod = PAD;
-			} else if("reflect".equals(s)) {
+			} else if("reflect".equals(s)) { //$NON-NLS-1$
 				spreadMethod = REFLECT;
-			} else if("repeat".equals(s)) {
+			} else if("repeat".equals(s)) { //$NON-NLS-1$
 				spreadMethod = REPEAT;
 			}
 		}
 	}
 	
-	public void setTransform(SvgTransform transform) {
+	void setTransform(SvgTransform transform) {
 		this.transform = transform;
 	}
 	
-	public void setUnits(String s) {
+	void setUnits(String s) {
 		if(s != null) {
-			boundingBox = "objectBoundingBox".equals(s);
+			boundingBox = "objectBoundingBox".equals(s); //$NON-NLS-1$
 		}
 	}
 	

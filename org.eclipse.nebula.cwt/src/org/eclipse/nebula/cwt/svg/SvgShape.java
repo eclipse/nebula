@@ -20,6 +20,22 @@ import org.eclipse.swt.graphics.Path;
 import org.eclipse.swt.graphics.PathData;
 import org.eclipse.swt.graphics.Transform;
 
+/**
+ * An SvgShape is a graphical svg element which can be directly applied
+ * to a given graphics context.<br>
+ * Shapes consist of:
+ * <ul>
+ * <li>circle</li>
+ * <li>ellipse</li>
+ * <li>line</li>
+ * <li>polygon</li>
+ * <li>polyline</li>
+ * <li>rectangle</li>
+ * <li>path</li>
+ * </ul>
+ * <p>See also:
+ * <a href="http://www.w3.org/TR/SVG/shapes.html">http://www.w3.org/TR/SVG/shapes.html</a></p>
+ */
 public class SvgShape extends SvgGraphic {
 
 	private Path path;
@@ -74,6 +90,15 @@ public class SvgShape extends SvgGraphic {
 		}
 	}
 
+	/**
+	 * Returns whether or not the given point is contained by this shape.
+	 * @param x
+	 * @param y
+	 * @param gc
+	 * @param outline
+	 * @return true if the given point is contained, false otherwise
+	 * @see Path#contains(float, float, GC, boolean)
+	 */
 	public boolean contains(float x, float y, GC gc, boolean outline) {
 		Transform t = new Transform(gc.getDevice());
 		gc.getTransform(t);
@@ -140,7 +165,7 @@ public class SvgShape extends SvgGraphic {
 		}
 	}
 
-	public float[] getBounds() {
+	float[] getBounds() {
 		if(path != null) {
 			// TODO Path#getBounds
 			float minx = Float.POSITIVE_INFINITY;

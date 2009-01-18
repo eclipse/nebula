@@ -11,8 +11,7 @@
 package org.eclipse.nebula.cwt.svg;
 
 
-
-public class SvgGradientStop extends SvgElement {
+class SvgGradientStop extends SvgElement {
 
 	/**
 	 * always a value between 0 and 1

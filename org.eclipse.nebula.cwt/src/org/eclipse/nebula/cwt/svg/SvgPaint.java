@@ -12,9 +12,9 @@ package org.eclipse.nebula.cwt.svg;
 
 import org.eclipse.swt.graphics.GC;
 
-public abstract class SvgPaint {
+abstract class SvgPaint {
 
-	public enum PaintType { None, Current, Color, Link }
+	enum PaintType { None, Current, Color, Link }
 	
 	SvgGraphic parent;
 	GC gc;
@@ -43,7 +43,7 @@ public abstract class SvgPaint {
 				}
 			}
 		} else {
-			throw new UnsupportedOperationException("only shapes can be painted...");
+			throw new UnsupportedOperationException("only shapes can be painted..."); //$NON-NLS-1$
 		}
 	}
 	

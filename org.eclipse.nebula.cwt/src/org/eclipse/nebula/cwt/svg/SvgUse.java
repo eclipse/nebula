@@ -12,6 +12,13 @@ package org.eclipse.nebula.cwt.svg;
 
 import org.eclipse.swt.graphics.GC;
 
+/**
+ * An SvgUse is an svg graphical element that uses another, previously defined
+ * graphical element to paint to the graphics context with its own set of styles
+ * and transforms.
+ * <p>See also:
+ * <a href="http://www.w3.org/TR/SVG/struct.html#UseElement">http://www.w3.org/TR/SVG/struct.html#UseElement</a></p>
+ */
 public class SvgUse extends SvgGraphic {
 
 	String linkId;

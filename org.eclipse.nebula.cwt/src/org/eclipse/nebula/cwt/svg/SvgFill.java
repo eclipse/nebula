@@ -12,7 +12,7 @@ package org.eclipse.nebula.cwt.svg;
 
 import org.eclipse.swt.graphics.Color;
 
-public class SvgFill extends SvgPaint {
+class SvgFill extends SvgPaint {
 
 	Integer rule = null;
 

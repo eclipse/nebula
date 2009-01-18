@@ -13,9 +13,12 @@ package org.eclipse.nebula.cwt.svg;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
-public class SvgElement {
+/**
+ * An svg document is an xml document.  As such, all contained xml elements
+ * are also svg elements.  SvgElement is the base abstract class for all
+ * svg elements in an SvgDocument.
+ */
+public abstract class SvgElement {
 
 	static List<SvgElement> getAncestry(SvgElement element) {
 		List<SvgElement> l = new ArrayList<SvgElement>();
@@ -56,7 +59,11 @@ public class SvgElement {
 		}
 		return null;
 	}
-	
+
+	/**
+	 * Return the id of this SvgElement, if it exists.
+	 * @return the id of the element if it exists, null otherwise.
+	 */
 	public final String getId() {
 		return id;
 	}

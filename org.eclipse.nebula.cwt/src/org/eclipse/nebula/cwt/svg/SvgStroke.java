@@ -13,7 +13,7 @@ package org.eclipse.nebula.cwt.svg;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 
-public class SvgStroke extends SvgPaint {
+class SvgStroke extends SvgPaint {
 
 	Float width = null;
 	Integer lineCap = SWT.CAP_FLAT;

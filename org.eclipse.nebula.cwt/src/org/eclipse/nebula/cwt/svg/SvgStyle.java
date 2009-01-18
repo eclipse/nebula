@@ -12,12 +12,12 @@ package org.eclipse.nebula.cwt.svg;
 
 import java.util.Map;
 
-public class SvgStyle extends SvgElement {
+class SvgStyle extends SvgElement {
 
 	Map<String, Map<String, String>> styles;
 	
 	SvgStyle(SvgContainer container) {
-		super(container, "style");
+		super(container, "style"); //$NON-NLS-1$
 	}
 
 }
