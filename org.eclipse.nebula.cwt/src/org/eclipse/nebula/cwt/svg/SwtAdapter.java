@@ -67,20 +67,21 @@ class SwtAdapter {
 	static {
 		try {
 			if(gtk) {
+				Class<?> handle = Pattern.class.getField("handle").getType(); //$NON-NLS-1$
 				cairo = Class.forName(CAIRO, true, SWT.class.getClassLoader());
 				cairo_matrix_init = cairo.getDeclaredMethod("cairo_matrix_init", double[].class, double.class, double.class, double.class, //$NON-NLS-1$
 						double.class, double.class, double.class);
 				cairo_matrix_invert = cairo.getDeclaredMethod("cairo_matrix_invert", double[].class); //$NON-NLS-1$
 				cairo_matrix_multiply = cairo.getDeclaredMethod("cairo_matrix_multiply", double[].class, double[].class, double[].class); //$NON-NLS-1$
-				cairo_pattern_add_color_stop_rgba = cairo.getDeclaredMethod("cairo_pattern_add_color_stop_rgba", int.class, double.class, //$NON-NLS-1$
+				cairo_pattern_add_color_stop_rgba = cairo.getDeclaredMethod("cairo_pattern_add_color_stop_rgba", handle, double.class, //$NON-NLS-1$
 						double.class, double.class, double.class, double.class);
 				cairo_pattern_create_linear = cairo.getDeclaredMethod("cairo_pattern_create_linear", double.class, double.class, //$NON-NLS-1$
 						double.class, double.class);
 				cairo_pattern_create_radial = cairo.getDeclaredMethod("cairo_pattern_create_radial", double.class, double.class, //$NON-NLS-1$
 						double.class, double.class, double.class, double.class);
-				cairo_pattern_destroy = cairo.getDeclaredMethod("cairo_pattern_destroy", int.class); //$NON-NLS-1$
-				cairo_pattern_set_extend = cairo.getDeclaredMethod("cairo_pattern_set_extend", int.class, int.class); //$NON-NLS-1$
-				cairo_pattern_set_matrix = cairo.getDeclaredMethod("cairo_pattern_set_matrix", int.class, double[].class); //$NON-NLS-1$
+				cairo_pattern_destroy = cairo.getDeclaredMethod("cairo_pattern_destroy", handle); //$NON-NLS-1$
+				cairo_pattern_set_extend = cairo.getDeclaredMethod("cairo_pattern_set_extend", handle, int.class); //$NON-NLS-1$
+				cairo_pattern_set_matrix = cairo.getDeclaredMethod("cairo_pattern_set_matrix", handle, double[].class); //$NON-NLS-1$
 			} else if(win32) {
 				gdip = Class.forName(GDIP, true, SWT.class.getClassLoader());
 				pointf = Class.forName(POINTF, true, SWT.class.getClassLoader());
@@ -152,7 +153,7 @@ class SwtAdapter {
 		}
 	}
 
-	private static void cairo_pattern_add_color_stop_rgba(int pattern, double offset, double red, double green, double blue, double alpha) {
+	private static void cairo_pattern_add_color_stop_rgba(long pattern, double offset, double red, double green, double blue, double alpha) {
 		try {
 			cairo_pattern_add_color_stop_rgba.invoke(cairo, pattern, offset, red, green, blue, alpha);
 		} catch(IllegalArgumentException e) {
@@ -164,9 +165,9 @@ class SwtAdapter {
 		}
 	}
 
-	private static int cairo_pattern_create_linear(double x0, double y0, double x1, double y1) {
+	private static long cairo_pattern_create_linear(double x0, double y0, double x1, double y1) {
 		try {
-			return (Integer) cairo_pattern_create_linear.invoke(cairo, x0, y0, x1, y1);
+			return (Long) cairo_pattern_create_linear.invoke(cairo, x0, y0, x1, y1);
 		} catch(IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch(IllegalAccessException e) {
@@ -177,9 +178,9 @@ class SwtAdapter {
 		return 0;
 	}
 
-	private static int cairo_pattern_create_radial(double cx0, double cy0, double radius0, double cx1, double cy1, double radius1) {
+	private static long cairo_pattern_create_radial(double cx0, double cy0, double radius0, double cx1, double cy1, double radius1) {
 		try {
-			return (Integer) cairo_pattern_create_radial.invoke(cairo, cx0, cy0, radius0, cx1, cy1, radius1);
+			return (Long) cairo_pattern_create_radial.invoke(cairo, cx0, cy0, radius0, cx1, cy1, radius1);
 		} catch(IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch(IllegalAccessException e) {
@@ -190,7 +191,7 @@ class SwtAdapter {
 		return 0;
 	}
 
-	private static void cairo_pattern_destroy(int handle) {
+	private static void cairo_pattern_destroy(long handle) {
 		try {
 			cairo_pattern_destroy.invoke(cairo, handle);
 		} catch(IllegalArgumentException e) {
@@ -202,7 +203,7 @@ class SwtAdapter {
 		}
 	}
 
-	private static void cairo_pattern_set_extend(int pattern, int extend) {
+	private static void cairo_pattern_set_extend(long pattern, int extend) {
 		try {
 			cairo_pattern_set_extend.invoke(cairo, pattern, extend);
 		} catch(IllegalArgumentException e) {
@@ -214,7 +215,7 @@ class SwtAdapter {
 		}
 	}
 
-	private static void cairo_pattern_set_matrix(int pattern, double[] matrix) {
+	private static void cairo_pattern_set_matrix(long pattern, double[] matrix) {
 		try {
 			cairo_pattern_set_matrix.invoke(cairo, pattern, matrix);
 		} catch(IllegalArgumentException e) {
@@ -333,7 +334,7 @@ class SwtAdapter {
 		return 0;
 	}
 
-	private static void gdip_LinearGradientBrush_ScaleTransform(int /* long */brush, float sx, float sy, int order) {
+	private static void gdip_LinearGradientBrush_ScaleTransform(long brush, float sx, float sy, int order) {
 		try {
 			gdip_LinearGradientBrush_ScaleTransform.invoke(gdip, brush, sx, sy, order);
 		} catch(IllegalArgumentException e) {
@@ -345,7 +346,7 @@ class SwtAdapter {
 		}
 	}
 
-	private static void gdip_LinearGradientBrush_SetInterpolationColors(int /* long */brush, int /* long */[] presetColors,
+	private static void gdip_LinearGradientBrush_SetInterpolationColors(long brush, int /* long */[] presetColors,
 			float[] blendPositions, int count) {
 		try {
 			gdip_LinearGradientBrush_SetInterpolationColors.invoke(gdip, brush, presetColors, blendPositions, count);
@@ -358,7 +359,7 @@ class SwtAdapter {
 		}
 	}
 
-	private static void gdip_LinearGradientBrush_SetWrapMode(int /* long */brush, int wrapMode) {
+	private static void gdip_LinearGradientBrush_SetWrapMode(long brush, int wrapMode) {
 		try {
 			gdip_LinearGradientBrush_SetWrapMode.invoke(gdip, brush, wrapMode);
 		} catch(IllegalArgumentException e) {
@@ -370,7 +371,7 @@ class SwtAdapter {
 		}
 	}
 
-	private static void gdip_LinearGradientBrush_TranslateTransform(int /* long */brush, float dx, float dy, int order) {
+	private static void gdip_LinearGradientBrush_TranslateTransform(long brush, float dx, float dy, int order) {
 		try {
 			gdip_LinearGradientBrush_TranslateTransform.invoke(gdip, brush, dx, dy, order);
 		} catch(IllegalArgumentException e) {
@@ -444,7 +445,7 @@ class SwtAdapter {
 		return 0;
 	}
 
-	private static void gdip_PathGradientBrush_SetInterpolationColors(int /* long */brush, int /* long */[] presetColors,
+	private static void gdip_PathGradientBrush_SetInterpolationColors(long brush, int /* long */[] presetColors,
 			float[] blendPositions, int count) {
 		try {
 			gdip_PathGradientBrush_SetInterpolationColors.invoke(gdip, brush, presetColors, blendPositions, count);
@@ -457,7 +458,7 @@ class SwtAdapter {
 		}
 	}
 
-	private static void gdip_SolidBrush_delete(int /* long */brush) {
+	private static void gdip_SolidBrush_delete(long brush) {
 		try {
 			gdip_SolidBrush_delete.invoke(gdip, brush);
 		} catch(IllegalArgumentException e) {
@@ -510,7 +511,7 @@ class SwtAdapter {
 		return pattern;
 	}
 
-	private static void gtk_setSpreadMethod(int handle, int spreadMethod) {
+	private static void gtk_setSpreadMethod(long handle, int spreadMethod) {
 		switch(spreadMethod) {
 		case SvgGradient.REFLECT:
 			cairo_pattern_set_extend(handle, 2);
@@ -616,7 +617,7 @@ class SwtAdapter {
 		return pattern;
 	}
 
-	private static void win32_setSpreadMethod(int handle, int spreadMethod) {
+	private static void win32_setSpreadMethod(long handle, int spreadMethod) {
 		switch(spreadMethod) {
 		case SvgGradient.REFLECT:
 			gdip_LinearGradientBrush_SetWrapMode(handle, 3); // WrapModeTileFlipXY
