@@ -362,7 +362,11 @@ class SwtAdapter {
 
 	private static void gdip_LinearGradientBrush_ScaleTransform(long brush, float sx, float sy, int order) {
 		try {
-			gdip_LinearGradientBrush_ScaleTransform.invoke(gdip, brush, sx, sy, order);
+			if(int.class == handleClass) {
+				gdip_LinearGradientBrush_ScaleTransform.invoke(gdip, (int) brush, sx, sy, order);
+			} else {
+				gdip_LinearGradientBrush_ScaleTransform.invoke(gdip, brush, sx, sy, order);
+			}
 		} catch(IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch(IllegalAccessException e) {
@@ -375,7 +379,11 @@ class SwtAdapter {
 	private static void gdip_LinearGradientBrush_SetInterpolationColors(long brush, int /* long */[] presetColors,
 			float[] blendPositions, int count) {
 		try {
-			gdip_LinearGradientBrush_SetInterpolationColors.invoke(gdip, brush, presetColors, blendPositions, count);
+			if(int.class == handleClass) {
+				gdip_LinearGradientBrush_SetInterpolationColors.invoke(gdip, (int) brush, presetColors, blendPositions, count);
+			} else {
+				gdip_LinearGradientBrush_SetInterpolationColors.invoke(gdip, brush, presetColors, blendPositions, count);
+			}
 		} catch(IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch(IllegalAccessException e) {
@@ -387,7 +395,11 @@ class SwtAdapter {
 
 	private static void gdip_LinearGradientBrush_SetWrapMode(long brush, int wrapMode) {
 		try {
-			gdip_LinearGradientBrush_SetWrapMode.invoke(gdip, brush, wrapMode);
+			if(int.class == handleClass) {
+				gdip_LinearGradientBrush_SetWrapMode.invoke(gdip, (int) brush, wrapMode);
+			} else {
+				gdip_LinearGradientBrush_SetWrapMode.invoke(gdip, brush, wrapMode);
+			}
 		} catch(IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch(IllegalAccessException e) {
@@ -399,7 +411,11 @@ class SwtAdapter {
 
 	private static void gdip_LinearGradientBrush_TranslateTransform(long brush, float dx, float dy, int order) {
 		try {
-			gdip_LinearGradientBrush_TranslateTransform.invoke(gdip, brush, dx, dy, order);
+			if(int.class == handleClass) {
+				gdip_LinearGradientBrush_TranslateTransform.invoke(gdip, (int) brush, dx, dy, order);
+			} else {
+				gdip_LinearGradientBrush_TranslateTransform.invoke(gdip, brush, dx, dy, order);
+			}
 		} catch(IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch(IllegalAccessException e) {
@@ -474,7 +490,11 @@ class SwtAdapter {
 	private static void gdip_PathGradientBrush_SetInterpolationColors(long brush, int /* long */[] presetColors,
 			float[] blendPositions, int count) {
 		try {
-			gdip_PathGradientBrush_SetInterpolationColors.invoke(gdip, brush, presetColors, blendPositions, count);
+			if(int.class == handleClass) {
+				gdip_PathGradientBrush_SetInterpolationColors.invoke(gdip, (int) brush, presetColors, blendPositions, count);
+			} else {
+				gdip_PathGradientBrush_SetInterpolationColors.invoke(gdip, brush, presetColors, blendPositions, count);
+			}
 		} catch(IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch(IllegalAccessException e) {
@@ -486,7 +506,11 @@ class SwtAdapter {
 
 	private static void gdip_SolidBrush_delete(long brush) {
 		try {
-			gdip_SolidBrush_delete.invoke(gdip, brush);
+			if(int.class == handleClass) {
+				gdip_SolidBrush_delete.invoke(gdip, (int) brush);
+			} else {
+				gdip_SolidBrush_delete.invoke(gdip, brush);
+			}
 		} catch(IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch(IllegalAccessException e) {
