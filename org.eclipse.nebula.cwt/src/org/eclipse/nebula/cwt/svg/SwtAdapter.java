@@ -64,24 +64,26 @@ class SwtAdapter {
 	private static Method gdip_LinearGradientBrush_SetWrapMode;
 	private static Method gdip_SolidBrush_delete;
 
+	private static Class<?> handleClass;
+
 	static {
 		try {
+			handleClass = Pattern.class.getField("handle").getType(); //$NON-NLS-1$
 			if(gtk) {
-				Class<?> handle = Pattern.class.getField("handle").getType(); //$NON-NLS-1$
 				cairo = Class.forName(CAIRO, true, SWT.class.getClassLoader());
 				cairo_matrix_init = cairo.getDeclaredMethod("cairo_matrix_init", double[].class, double.class, double.class, double.class, //$NON-NLS-1$
 						double.class, double.class, double.class);
 				cairo_matrix_invert = cairo.getDeclaredMethod("cairo_matrix_invert", double[].class); //$NON-NLS-1$
 				cairo_matrix_multiply = cairo.getDeclaredMethod("cairo_matrix_multiply", double[].class, double[].class, double[].class); //$NON-NLS-1$
-				cairo_pattern_add_color_stop_rgba = cairo.getDeclaredMethod("cairo_pattern_add_color_stop_rgba", handle, double.class, //$NON-NLS-1$
+				cairo_pattern_add_color_stop_rgba = cairo.getDeclaredMethod("cairo_pattern_add_color_stop_rgba", handleClass, double.class, //$NON-NLS-1$
 						double.class, double.class, double.class, double.class);
 				cairo_pattern_create_linear = cairo.getDeclaredMethod("cairo_pattern_create_linear", double.class, double.class, //$NON-NLS-1$
 						double.class, double.class);
 				cairo_pattern_create_radial = cairo.getDeclaredMethod("cairo_pattern_create_radial", double.class, double.class, //$NON-NLS-1$
 						double.class, double.class, double.class, double.class);
-				cairo_pattern_destroy = cairo.getDeclaredMethod("cairo_pattern_destroy", handle); //$NON-NLS-1$
-				cairo_pattern_set_extend = cairo.getDeclaredMethod("cairo_pattern_set_extend", handle, int.class); //$NON-NLS-1$
-				cairo_pattern_set_matrix = cairo.getDeclaredMethod("cairo_pattern_set_matrix", handle, double[].class); //$NON-NLS-1$
+				cairo_pattern_destroy = cairo.getDeclaredMethod("cairo_pattern_destroy", handleClass); //$NON-NLS-1$
+				cairo_pattern_set_extend = cairo.getDeclaredMethod("cairo_pattern_set_extend", handleClass, int.class); //$NON-NLS-1$
+				cairo_pattern_set_matrix = cairo.getDeclaredMethod("cairo_pattern_set_matrix", handleClass, double[].class); //$NON-NLS-1$
 			} else if(win32) {
 				gdip = Class.forName(GDIP, true, SWT.class.getClassLoader());
 				pointf = Class.forName(POINTF, true, SWT.class.getClassLoader());
@@ -155,7 +157,11 @@ class SwtAdapter {
 
 	private static void cairo_pattern_add_color_stop_rgba(long pattern, double offset, double red, double green, double blue, double alpha) {
 		try {
-			cairo_pattern_add_color_stop_rgba.invoke(cairo, pattern, offset, red, green, blue, alpha);
+			if(int.class == handleClass) {
+				cairo_pattern_add_color_stop_rgba.invoke(cairo, (int) pattern, offset, red, green, blue, alpha);
+			} else {
+				cairo_pattern_add_color_stop_rgba.invoke(cairo, pattern, offset, red, green, blue, alpha);
+			}
 		} catch(IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch(IllegalAccessException e) {
@@ -167,7 +173,11 @@ class SwtAdapter {
 
 	private static long cairo_pattern_create_linear(double x0, double y0, double x1, double y1) {
 		try {
-			return (Long) cairo_pattern_create_linear.invoke(cairo, x0, y0, x1, y1);
+			if(int.class == handleClass) {
+				return (Integer) cairo_pattern_create_linear.invoke(cairo, x0, y0, x1, y1);
+			} else {
+				return (Long) cairo_pattern_create_linear.invoke(cairo, x0, y0, x1, y1);
+			}
 		} catch(IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch(IllegalAccessException e) {
@@ -180,7 +190,11 @@ class SwtAdapter {
 
 	private static long cairo_pattern_create_radial(double cx0, double cy0, double radius0, double cx1, double cy1, double radius1) {
 		try {
-			return (Long) cairo_pattern_create_radial.invoke(cairo, cx0, cy0, radius0, cx1, cy1, radius1);
+			if(int.class == handleClass) {
+				return (Integer) cairo_pattern_create_radial.invoke(cairo, cx0, cy0, radius0, cx1, cy1, radius1);
+			} else {
+				return (Long) cairo_pattern_create_radial.invoke(cairo, cx0, cy0, radius0, cx1, cy1, radius1);
+			}
 		} catch(IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch(IllegalAccessException e) {
@@ -193,7 +207,11 @@ class SwtAdapter {
 
 	private static void cairo_pattern_destroy(long handle) {
 		try {
-			cairo_pattern_destroy.invoke(cairo, handle);
+			if(int.class == handleClass) {
+				cairo_pattern_destroy.invoke(cairo, (int) handle);
+			} else {
+				cairo_pattern_destroy.invoke(cairo, handle);
+			}
 		} catch(IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch(IllegalAccessException e) {
@@ -205,7 +223,11 @@ class SwtAdapter {
 
 	private static void cairo_pattern_set_extend(long pattern, int extend) {
 		try {
-			cairo_pattern_set_extend.invoke(cairo, pattern, extend);
+			if(int.class == handleClass) {
+				cairo_pattern_set_extend.invoke(cairo, (int) pattern, extend);
+			} else {
+				cairo_pattern_set_extend.invoke(cairo, pattern, extend);
+			}
 		} catch(IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch(IllegalAccessException e) {
@@ -217,7 +239,11 @@ class SwtAdapter {
 
 	private static void cairo_pattern_set_matrix(long pattern, double[] matrix) {
 		try {
-			cairo_pattern_set_matrix.invoke(cairo, pattern, matrix);
+			if(int.class == handleClass) {
+				cairo_pattern_set_matrix.invoke(cairo, (int) pattern, matrix);
+			} else {
+				cairo_pattern_set_matrix.invoke(cairo, pattern, matrix);
+			}
 		} catch(IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch(IllegalAccessException e) {
@@ -473,13 +499,15 @@ class SwtAdapter {
 	private static Pattern gtk_createPattern(SvgGradient gradient) {
 		Color color = gradient.gc.getDevice().getSystemColor(SWT.COLOR_BLACK);
 		Pattern pattern = new Pattern(gradient.gc.getDevice(), 0, 0, 1, 1, color, color);
-		cairo_pattern_destroy(pattern.handle);
+		long handle = pattern.handle;
+		cairo_pattern_destroy(handle);
 		float[] gdata = gradient.data;
 		if(gdata.length == 5) {
-			pattern.handle = cairo_pattern_create_radial(gdata[0], gdata[1], 0, gdata[2], gdata[3], gdata[4]);
+			handle = cairo_pattern_create_radial(gdata[0], gdata[1], 0, gdata[2], gdata[3], gdata[4]);
 		} else {
-			pattern.handle = cairo_pattern_create_linear(gdata[0], gdata[1], gdata[2], gdata[3]);
+			handle = cairo_pattern_create_linear(gdata[0], gdata[1], gdata[2], gdata[3]);
 		}
+		setPatternHandle(pattern, handle);
 		double[] matrix = new double[6];
 		if(gradient.boundingBox) {
 			float minx = gradient.bounds[0];
@@ -510,7 +538,7 @@ class SwtAdapter {
 		gtk_setSpreadMethod(pattern.handle, gradient.spreadMethod);
 		return pattern;
 	}
-
+	
 	private static void gtk_setSpreadMethod(long handle, int spreadMethod) {
 		switch(spreadMethod) {
 		case SvgGradient.REFLECT:
@@ -522,6 +550,25 @@ class SwtAdapter {
 		default: // PAD
 			cairo_pattern_set_extend(handle, 3);
 			break;
+		}
+	}
+
+	private static void setPatternHandle(Pattern pattern, long handle) {
+		try {
+			Field field = pattern.getClass().getDeclaredField("handle"); //$NON-NLS-1$
+			if(int.class == handleClass) {
+				field.set(pattern, (int) handle);
+			} else {
+				field.set(pattern, handle);
+			}
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (NoSuchFieldException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
 		}
 	}
 
