@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2008 Jeremy Dowdall
+ * Copyright (c) 2008, 2009 Jeremy Dowdall
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,7 @@ public class CDTSnippet04 {
 		shell.setText("CDateTime");
 		shell.setLayout(new GridLayout());
 
-		final CDateTime cdt = new CDateTime(shell, CDT.BORDER | CDT.DROP_DOWN | CDT.TIME_SHORT | CDT.CLOCK_DISCRETE);
+		final CDateTime cdt = new CDateTime(shell, CDT.BORDER | CDT.COMPACT | CDT.SIMPLE);
 		cdt.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
         
 		shell.pack();
