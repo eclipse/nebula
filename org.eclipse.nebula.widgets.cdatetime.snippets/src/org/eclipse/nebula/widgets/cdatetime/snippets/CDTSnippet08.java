@@ -9,7 +9,7 @@
  *    Jeremy Dowdall <jeremyd@aspencloud.com> - initial API and implementation
  *****************************************************************************/
 
-package org.aspencloud.cdatetime.examples;
+package org.eclipse.nebula.widgets.cdatetime.snippets;
 
 import org.eclipse.nebula.widgets.cdatetime.CDT;
 import org.eclipse.nebula.widgets.cdatetime.CDateTime;
@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Shell;
 
 
 
-public class CDTSnippet03 {
+public class CDTSnippet08 {
 
 	/**
 	 * @param args
@@ -32,11 +32,20 @@ public class CDTSnippet03 {
 		final Display display = new Display();
 		final Shell shell = new Shell(display);
 		shell.setText("CDateTime");
-		shell.setLayout(new GridLayout());
+		shell.setLayout(new GridLayout(3, true));
 
-		final CDateTime cdt = new CDateTime(shell, CDT.BORDER | CDT.SIMPLE);
-		cdt.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
-        
+		final CDateTime date = new CDateTime(shell, CDT.BORDER | CDT.DROP_DOWN);
+		date.setPattern("dd");
+		date.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
+
+		final CDateTime month = new CDateTime(shell, CDT.BORDER | CDT.DROP_DOWN);
+		month.setPattern("MMMM");
+		month.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
+
+		final CDateTime year = new CDateTime(shell, CDT.BORDER | CDT.DROP_DOWN);
+		year.setPattern("yyyy");
+		year.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
+
 		shell.pack();
 		Point size = shell.getSize();
 		Rectangle screen = display.getMonitors()[0].getBounds();

@@ -3,8 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: CDateTime Examples
 Bundle-SymbolicName: org.eclipse.nebula.widgets.cdatetime.snippets
 Bundle-Version: 0.12.2
-Bundle-Vendor: AspenCloud
-Export-Package: org.aspencloud.cdatetime.examples
+Bundle-Vendor: Eclipse
+Export-Package: org.eclipse.nebula.widgets.cdatetime.snippets
 Require-Bundle: org.eclipse.jface,
  org.eclipse.ui.forms,
  org.eclipse.nebula.widgets.cdatetime

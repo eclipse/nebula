@@ -9,7 +9,7 @@
  *    Jeremy Dowdall <jeremyd@aspencloud.com> - initial API and implementation
  *****************************************************************************/
 
-package org.aspencloud.cdatetime.examples;
+package org.eclipse.nebula.widgets.cdatetime.snippets;
 
 import org.eclipse.nebula.cwt.base.BaseCombo;
 import org.eclipse.nebula.widgets.cdatetime.CDT;

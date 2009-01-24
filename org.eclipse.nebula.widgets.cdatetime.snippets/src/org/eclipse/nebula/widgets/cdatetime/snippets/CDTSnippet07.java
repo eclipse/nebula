@@ -9,10 +9,12 @@
  *    Jeremy Dowdall <jeremyd@aspencloud.com> - initial API and implementation
  *****************************************************************************/
 
-package org.aspencloud.cdatetime.examples;
+package org.eclipse.nebula.widgets.cdatetime.snippets;
 
 import org.eclipse.nebula.widgets.cdatetime.CDT;
 import org.eclipse.nebula.widgets.cdatetime.CDateTime;
+import org.eclipse.nebula.widgets.cdatetime.CDateTimeBuilder;
+import org.eclipse.nebula.widgets.cdatetime.Footer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -23,7 +25,7 @@ import org.eclipse.swt.widgets.Shell;
 
 
 
-public class CDTSnippet08 {
+public class CDTSnippet07 {
 
 	/**
 	 * @param args
@@ -32,19 +34,17 @@ public class CDTSnippet08 {
 		final Display display = new Display();
 		final Shell shell = new Shell(display);
 		shell.setText("CDateTime");
-		shell.setLayout(new GridLayout(3, true));
+		shell.setLayout(new GridLayout());
 
-		final CDateTime date = new CDateTime(shell, CDT.BORDER | CDT.DROP_DOWN);
-		date.setPattern("dd");
-		date.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
+		final CDateTime cdt1 = new CDateTime(shell, CDT.BORDER | CDT.DROP_DOWN);
+		cdt1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
 
-		final CDateTime month = new CDateTime(shell, CDT.BORDER | CDT.DROP_DOWN);
-		month.setPattern("MMMM");
-		month.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
-
-		final CDateTime year = new CDateTime(shell, CDT.BORDER | CDT.DROP_DOWN);
-		year.setPattern("yyyy");
-		year.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
+		CDateTimeBuilder builder = CDateTimeBuilder.getStandard();
+		builder.setFooter(Footer.Today().align(SWT.RIGHT), Footer.Clear().align(SWT.LEFT));
+		
+		final CDateTime cdt2 = new CDateTime(shell, CDT.BORDER | CDT.SIMPLE);
+		cdt2.setBuilder(builder);
+		cdt2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
 
 		shell.pack();
 		Point size = shell.getSize();

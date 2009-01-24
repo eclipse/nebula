@@ -9,9 +9,12 @@
  *    Jeremy Dowdall <jeremyd@aspencloud.com> - initial API and implementation
  *****************************************************************************/
 
-package org.aspencloud.cdatetime.examples;
+package org.eclipse.nebula.widgets.cdatetime.snippets;
 
-import org.eclipse.nebula.widgets.cdatetime.CDatePanel;
+import java.util.Date;
+
+import org.eclipse.nebula.widgets.cdatetime.CDT;
+import org.eclipse.nebula.widgets.cdatetime.CDateTime;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -22,7 +25,7 @@ import org.eclipse.swt.widgets.Shell;
 
 
 
-public class CDPSnippet01 {
+public class CDTSnippet02 {
 
 	/**
 	 * @param args
@@ -30,13 +33,16 @@ public class CDPSnippet01 {
 	public static void main(String[] args) {
 		final Display display = new Display();
 		final Shell shell = new Shell(display);
-		shell.setText("CDatePanel");
-		shell.setLayout(new GridLayout());
+		shell.setText("CDateTime");
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 25;
+		layout.marginWidth = 25;
+		shell.setLayout(layout);
 
-		final CDatePanel cdp = new CDatePanel(shell, SWT.BORDER);
-		cdp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		cdp.setMonthCount(2);
-        
+		CDateTime cdt = new CDateTime(shell, CDT.BORDER | CDT.COMPACT | CDT.DROP_DOWN | CDT.DATE_LONG | CDT.TIME_MEDIUM);
+		cdt.setSelection(new Date());
+		cdt.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
 		shell.pack();
 		Point size = shell.getSize();
 		Rectangle screen = display.getMonitors()[0].getBounds();

@@ -9,7 +9,7 @@
  *    Jeremy Dowdall <jeremyd@aspencloud.com> - initial API and implementation
  *****************************************************************************/
 
-package org.aspencloud.cdatetime.examples;
+package org.eclipse.nebula.widgets.cdatetime.snippets;
 
 import org.eclipse.nebula.widgets.cdatetime.CDT;
 import org.eclipse.nebula.widgets.cdatetime.CDateTime;
@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Shell;
 
 
 
-public class CDTSnippet05 {
+public class CDTSnippet04 {
 
 	/**
 	 * @param args
@@ -34,7 +34,7 @@ public class CDTSnippet05 {
 		shell.setText("CDateTime");
 		shell.setLayout(new GridLayout());
 
-		final CDateTime cdt = new CDateTime(shell, CDT.BORDER | CDT.DROP_DOWN | CDT.TIME_SHORT | CDT.CLOCK_DISCRETE);
+		final CDateTime cdt = new CDateTime(shell, CDT.BORDER | CDT.COMPACT | CDT.SIMPLE);
 		cdt.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
         
 		shell.pack();
