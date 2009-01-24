@@ -247,7 +247,6 @@ public abstract class VControl {
 				for(Integer eventType : eventTypes) {
 					if(include(keyListeners, eventType)) {
 						composite.addListener(eventType, listener);
-						if(eventType == 31) System.out.println("attach Traverse: " + this);
 					}
 				}
 //			}
@@ -257,7 +256,6 @@ public abstract class VControl {
 			for(Integer eventType : eventTypes) {
 				if(include(keyListeners, eventType)) {
 					composite.removeListener(eventType, listener);
-					if(eventType == 31) System.out.println("detach Traverse: " + this);
 				}
 			}
 		}
