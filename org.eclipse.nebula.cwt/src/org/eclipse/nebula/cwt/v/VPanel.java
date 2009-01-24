@@ -225,7 +225,7 @@ public class VPanel extends VControl {
 	protected boolean setFocus(boolean focus) {
 		if(focus) {
 			for(VControl child : children) {
-				if(child.setFocus(true)) {
+				if(VTracker.instance().setFocusControl(child)) {
 					return true;
 				}
 			}
