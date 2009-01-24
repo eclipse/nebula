@@ -854,7 +854,7 @@ public class CDateTime extends BaseCombo {
 	 * @param event the event
 	 */
 	void handleKey(Event event) {
-		if(SWT.DEL == event.keyCode) {
+		if(SWT.BS == event.keyCode || SWT.DEL == event.keyCode) {
 			event.doit = false;
 			setSelection((Date) null);
 			fireSelectionChanged();
@@ -1124,6 +1124,10 @@ public class CDateTime extends BaseCombo {
 	
 	public void setBuilder(CDateTimeBuilder builder) {
 		this.builder = builder;
+		if(picker != null) {
+			disposePicker();
+			createPicker();
+		}
 	}
 	
 	@Override
