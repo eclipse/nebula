@@ -683,15 +683,21 @@ public class CDateTime extends BaseCombo {
 	 * <p>The data field is populated by {@link #getSelectedDates()}.</p>
 	 */
 	void fireSelectionChanged() {
+		fireSelectionChanged(false);
+	}
+
+	void fireSelectionChanged(boolean defaultSelection) {
 		if(isOpen()) {
 			setOpen(false);
 		}
 		Event event = new Event();
 		event.data = getSelectedDates();
 		notifyListeners(SWT.Selection, event);
-		notifyListeners(SWT.DefaultSelection, event);
+		if(defaultSelection) {
+			notifyListeners(SWT.DefaultSelection, event);
+		}
 	}
-	
+
 	/**
 	 * <p>Notifies listeners that a field of the selected date for this CDateTime has changed</p>
 	 * <p>Note that this is only valid when {@link #singleSelection} is true, and will only
@@ -774,9 +780,9 @@ public class CDateTime extends BaseCombo {
 	public String getNullText() {
 		if(nullText == null) {
 			if(isDate) {
-				return Resources.getString("null_text.date", locale);
+				return Resources.getString("null_text.date", locale); //$NON-NLS-1$
 			} else {
-				return Resources.getString("null_text.time", locale);
+				return Resources.getString("null_text.time", locale); //$NON-NLS-1$
 			}
 		}
 		return nullText;
@@ -946,6 +952,10 @@ public class CDateTime extends BaseCombo {
 		return field >= 0 && field <= this.field.length;
 	}
 	
+	/**
+	 * Return true if this CDateTime has one or more dates selected;
+	 * @return true if a date is selected, false otherwise
+	 */
 	public boolean hasSelection() {
 		return selection.length > 0;
 	}
@@ -956,7 +966,7 @@ public class CDateTime extends BaseCombo {
 		try {
 			timezone = TimeZone.getDefault();
 		} catch (Exception e) {
-			timezone = TimeZone.getTimeZone("GMT");
+			timezone = TimeZone.getTimeZone("GMT"); //$NON-NLS-1$
 		}
 		calendar = Calendar.getInstance(this.timezone, this.locale);
 		calendar.setTime(new Date());
@@ -1105,10 +1115,8 @@ public class CDateTime extends BaseCombo {
 			if(spinner != null) {
 				if(hasField(field)) {
 					spinner.getControl().setEnabled(true);
-					System.out.println("enable");
 				} else {
 					spinner.getControl().setEnabled(false);
-					System.out.println("disable");
 				}
 			}
 		}
@@ -1386,7 +1394,7 @@ public class CDateTime extends BaseCombo {
 	
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + " {" + getTime() + "}";
+		return getClass().getSimpleName() + " {" + getTime() + "}"; //$NON-NLS-1$  //$NON-NLS-2$
 	}
 	
 	/**
@@ -1431,9 +1439,9 @@ public class CDateTime extends BaseCombo {
 	private void updateNullText() {
 		if(defaultNullText) {
 			if(isDate) {
-				nullText = Resources.getString("null_text.date", locale);
+				nullText = Resources.getString("null_text.date", locale); //$NON-NLS-1$
 			} else {
-				nullText = Resources.getString("null_text.time", locale);
+				nullText = Resources.getString("null_text.time", locale); //$NON-NLS-1$
 			}
 			if(!hasSelection()) {
 				updateText(true);
