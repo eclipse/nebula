@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: CDateTime Test Plug-in
 Bundle-SymbolicName: org.eclipse.nebula.widgets.cdatetime.tests
 Bundle-Version: 0.12.2
-Bundle-Vendor: AspenCloud
+Bundle-Vendor: Eclipse Nebula
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.swt,
