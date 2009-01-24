@@ -312,10 +312,16 @@ public class VTracker implements DisposeListener {
 	}
 
 	boolean setFocusControl(VControl control) {
+		if(control == focusControl) {
+			return true;
+		}
 		if(control instanceof VPanel) {
 			return control.setFocus(true);
 		} else {
 			VControl old = focusControl;
+			if(old != null && !old.isDisposed()) {
+				old.setFocus(false);
+			}
 			if(control != null) {
 				if(control.setFocus(true)) {
 					control.getComposite().forceFocus();
@@ -324,9 +330,6 @@ public class VTracker implements DisposeListener {
 				}
 			}
 			focusControl = control;
-			if(old != null && !old.isDisposed()) {
-				old.setFocus(false);
-			}
 			if(control != null) {
 				control.redraw();
 			}

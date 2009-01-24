@@ -222,15 +222,20 @@ public class VPanel extends VControl {
 	}
 
 	@Override
-	boolean setFocus(boolean focus) {
+	protected boolean setFocus(boolean focus) {
 		if(focus) {
 			for(VControl child : children) {
-				if(VTracker.instance().setFocusControl(child)) {
+				if(child.setFocus(true)) {
 					return true;
 				}
 			}
+			return false;
+		} else {
+			for(VControl child : children) {
+				child.setFocus(false);
+			}
+			return true;
 		}
-		return false;
 	}
 	
 	public void setLayout(VLayout layout) {

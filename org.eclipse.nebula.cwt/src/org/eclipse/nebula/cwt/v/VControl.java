@@ -145,8 +145,13 @@ public abstract class VControl {
 
 	private Listener listener = new Listener() {
 		public void handleEvent(Event event) {
+			if(event.type == SWT.FocusIn) {
+				if(VControl.this == VTracker.getFocusControl()) {
+					return;
+				}
+			}
 			_handleEvent(event);
-		};
+		}
 	};
 
 	/**
@@ -194,7 +199,8 @@ public abstract class VControl {
 		event.data = this;
 		handleEvent(event);
 		if(listeners.containsKey(event.type)) {
-			for(Listener listener : listeners.get(event.type).toArray(new Listener[listeners.get(event.type).size()])) {
+			Listener[] la = listeners.get(event.type).toArray(new Listener[listeners.get(event.type).size()]);
+			for(Listener listener : la) {
 				listener.handleEvent(event);
 			}
 		}
@@ -241,6 +247,7 @@ public abstract class VControl {
 				for(Integer eventType : eventTypes) {
 					if(include(keyListeners, eventType)) {
 						composite.addListener(eventType, listener);
+						if(eventType == 31) System.out.println("attach Traverse: " + this);
 					}
 				}
 //			}
@@ -250,6 +257,7 @@ public abstract class VControl {
 			for(Integer eventType : eventTypes) {
 				if(include(keyListeners, eventType)) {
 					composite.removeListener(eventType, listener);
+					if(eventType == 31) System.out.println("detach Traverse: " + this);
 				}
 			}
 		}
@@ -746,7 +754,7 @@ public abstract class VControl {
 		return VTracker.instance().setFocusControl(this);
 	}
 
-	boolean setFocus(boolean focus) {
+	protected boolean setFocus(boolean focus) {
 		if(!hasStyle(SWT.NO_FOCUS)) {
 			if(!focus) {
 				attachListeners(true, false);
