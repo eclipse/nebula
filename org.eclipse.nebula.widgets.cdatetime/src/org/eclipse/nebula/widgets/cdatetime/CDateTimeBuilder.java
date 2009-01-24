@@ -12,6 +12,7 @@
 package org.eclipse.nebula.widgets.cdatetime;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -154,21 +155,6 @@ public class CDateTimeBuilder {
 		activeFooters = new ArrayList<Footer>();
 		
 		boolean found = false;
-		for(Header a : headers) {
-			found = false;
-			for(int cf : calendarFields) {
-				for(int f : a.fields) {
-					if(f == cf) {
-						found = true;
-						break;
-					}
-				}
-				if(found) break;
-			}
-			if(found) {
-				activeHeaders.add(a);
-			}
-		}
 		for(Body a : bodies) {
 			found = false;
 			for(int cf : calendarFields) {
@@ -184,19 +170,40 @@ public class CDateTimeBuilder {
 				activeBodies.add(a);
 			}
 		}
-		for(Footer a : footers) {
-			found = false;
-			for(int cf : calendarFields) {
-				for(int f : a.fields) {
-					if(f == cf) {
-						found = true;
-						break;
+		if(activeBodies.size() > 1 || activeBodies.get(0).type == Body.YEARS) {
+			for(Header a : headers) {
+				if(activeBodies.size() > 1 || a.type == Header.YEAR_NEXT || a.type == Header.YEAR_PREV) {
+					found = false;
+					for(int cf : calendarFields) {
+						for(int f : a.fields) {
+							if(f == cf) {
+								found = true;
+								break;
+							}
+						}
+						if(found) break;
+					}
+					if(found) {
+						activeHeaders.add(a);
 					}
 				}
-				if(found) break;
 			}
-			if(found) {
-				activeFooters.add(a);
+		}
+		if(activeBodies.size() > 1) {
+			for(Footer a : footers) {
+				found = false;
+				for(int cf : calendarFields) {
+					for(int f : a.fields) {
+						if(f == cf) {
+							found = true;
+							break;
+						}
+					}
+					if(found) break;
+				}
+				if(found) {
+					activeFooters.add(a);
+				}
 			}
 		}
 	}

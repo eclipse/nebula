@@ -200,6 +200,11 @@ class DatePicker extends VPanel {
 
 		if(cdt.builder.hasHeader()) {
 			createHeader();
+//			if (cdt.field.length > 1
+//					|| (cdt.getCalendarField(cdt.field[0]) != Calendar.MONTH
+//							&& cdt.getCalendarField(cdt.field[0]) != Calendar.YEAR)) {
+//				createHeader();
+//			}
 		}
 
 		if(cdt.builder.hasHeader() && (cdt.builder.hasBody() || cdt.builder.hasFooter())) {
@@ -601,6 +606,8 @@ class DatePicker extends VPanel {
 						Calendar tmpcal = cdt.getCalendarInstance();
 						if(yearButton != null && yearButton.getSelection()) {
 							tmpcal.add(Calendar.YEAR, 10);
+						} else if(cdt.field.length == 1 && cdt.getCalendarField(cdt.field[0]) == Calendar.YEAR) {
+							tmpcal.add(Calendar.YEAR, 10);
 						} else {
 							tmpcal.add(Calendar.YEAR, 1);
 						}
@@ -618,6 +625,8 @@ class DatePicker extends VPanel {
 					public void handleEvent(Event event) {
 						Calendar tmpcal = cdt.getCalendarInstance();
 						if(yearButton != null && yearButton.getSelection()) {
+							tmpcal.add(Calendar.YEAR, -10);
+						} else if(cdt.field.length == 1 && cdt.getCalendarField(cdt.field[0]) == Calendar.YEAR) {
 							tmpcal.add(Calendar.YEAR, -10);
 						} else {
 							tmpcal.add(Calendar.YEAR, -1);
@@ -662,8 +671,13 @@ class DatePicker extends VPanel {
 					VButton button = (VButton) event.data;
 					Calendar tmpcal = cdt.getCalendarInstance();
 					tmpcal.set(Calendar.MONTH, (Integer) button.getData("Month")); //$NON-NLS-1$
-					cdt.setTime(tmpcal.getTime());
-					handleHeaderSelection(null);
+					if (cdt.field.length == 1 && cdt.getCalendarField(cdt.field[0]) == Calendar.MONTH) {
+						cdt.setSelection(tmpcal.getTime());
+						cdt.fireSelectionChanged();
+					} else {
+						cdt.setTime(tmpcal.getTime());
+						handleHeaderSelection(null);
+					}
 				}
 			});
 		}
@@ -718,8 +732,13 @@ class DatePicker extends VPanel {
 					VButton button = (VButton) event.data;
 					Calendar tmpcal = cdt.getCalendarInstance();
 					tmpcal.set(Calendar.YEAR, Integer.parseInt(button.getText()));
-					cdt.setTime(tmpcal.getTime());
-					handleHeaderSelection(null);
+					if (cdt.field.length == 1 && cdt.getCalendarField(cdt.field[0]) == Calendar.YEAR) {
+						cdt.setSelection(tmpcal.getTime());
+						cdt.fireSelectionChanged();
+					} else {
+						cdt.setTime(tmpcal.getTime());
+						handleHeaderSelection(null);
+					}
 				}
 			});
 		}
@@ -786,7 +805,7 @@ class DatePicker extends VPanel {
 
 	private void init(int style) {
 		if(cdt.builder == null) {
-			if((style & (CDT.COMPACT | CDT.DROP_DOWN)) != 0) {
+			if(cdt.field.length > 1 && (style & (CDT.COMPACT | CDT.DROP_DOWN)) != 0) {
 				cdt.builder = CDateTimeBuilder.getCompact();
 			} else {
 				cdt.builder = CDateTimeBuilder.getStandard();

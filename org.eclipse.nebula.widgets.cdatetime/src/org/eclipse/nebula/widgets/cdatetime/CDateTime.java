@@ -209,8 +209,8 @@ public class CDateTime extends BaseCombo {
 	Locale locale;
 	
 	TimeZone timezone;
-	private Field[] field;
-	private int activeField;
+	Field[] field;
+	int activeField;
 
 	private boolean tabStops = false;
 	// Store these values so that the style can be reset automatically
@@ -730,11 +730,11 @@ public class CDateTime extends BaseCombo {
 	 * Gets the calendar field corresponding to the active field, if there is one.
 	 * @return an int representing the calendar field, -1 if there isn't one.
 	 */
-	private int getCalendarField() {
+	int getCalendarField() {
 		return hasField(activeField) ? getCalendarField(field[activeField]) : -1;
 	}
 	
-	private int getCalendarField(Field field) {
+	int getCalendarField(Field field) {
 		int cf = field.getCalendarField();
 		if(cf < 0) {
 			if(field.toString().indexOf("hour 1") > -1) { //$NON-NLS-1$
