@@ -987,9 +987,14 @@ public abstract class BaseCombo extends Canvas implements VWidget {
 		}
 
 		if(getShell() != contentShell.getParent()) {
+			content.setParent(this);
 			contentShell.dispose();
 			contentShell = null;
 			createContentShell();
+		}
+		
+		if(content.getParent() != contentShell) {
+			content.setParent(contentShell);
 		}
 
 		if(!open) {
