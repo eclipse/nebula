@@ -403,7 +403,7 @@ public class CDateTime extends BaseCombo {
 			pickerPanel.setLayout(layout);
 			setContent(pickerPanel.getComposite());
 
-			if(field.length > 1) {
+			if(field.length > 1 || isTime) {
 				createPickerToolbar(pickerPanel);
 			}
 		}
