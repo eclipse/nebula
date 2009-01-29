@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
-public class VButtonImageBak {
+class VButtonImageBak {
 
 	private class ImageListener implements Listener {
 		private String key;
@@ -73,9 +73,9 @@ public class VButtonImageBak {
 		StringBuilder sb = new StringBuilder();
 		sb.append(button.getState());
 		sb.append(button == VTracker.getFocusControl());
-		sb.append(":");
+		sb.append(":"); //$NON-NLS-1$
 		sb.append(button.bounds.width);
-		sb.append(":");
+		sb.append(":"); //$NON-NLS-1$
 		sb.append(button.bounds.height);
 		return sb.toString();
 	}
@@ -111,6 +111,7 @@ public class VButtonImageBak {
 	private Map<ImageData, Set<VButton>> buttons = new HashMap<ImageData, Set<VButton>>();
 
 	private VButtonImageBak() {
+		// 
 	}
 
 	private void createImage(VButton button) {
@@ -170,7 +171,7 @@ public class VButtonImageBak {
 	}
 
 	private boolean partialImage(String key, ImageData data) {
-		String[] sa = key.split(":");
+		String[] sa = key.split(":"); //$NON-NLS-1$
 		int w = Integer.parseInt(sa[1]);
 		int h = Integer.parseInt(sa[2]);
 		return (data.height != h) || (data.width != w);
