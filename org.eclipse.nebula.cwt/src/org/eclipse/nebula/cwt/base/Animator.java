@@ -17,6 +17,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
+/**
+ * @deprecated use the new animation toolkit when it becomes available
+ */
 class Animator extends Thread {
 
 	/**
