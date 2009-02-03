@@ -10,7 +10,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.nebula.widgets.grid,
  org.eclipse.nebula.widgets.pgroup,
  org.eclipse.nebula.widgets.cdatetime,
- org.eclipse.nebula.widgets.ctree,
  org.eclipse.nebula.widgets.datechooser,
  org.eclipse.nebula.widgets.formattedtext,
  org.eclipse.nebula.widgets.pshelf
