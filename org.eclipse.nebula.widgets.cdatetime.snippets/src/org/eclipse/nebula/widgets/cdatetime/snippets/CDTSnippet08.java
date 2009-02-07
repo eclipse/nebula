@@ -35,14 +35,17 @@ public class CDTSnippet08 {
 		shell.setLayout(new GridLayout(3, true));
 
 		final CDateTime date = new CDateTime(shell, CDT.BORDER | CDT.DROP_DOWN);
+		date.setNullText("<day>");
 		date.setPattern("dd");
 		date.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
 
 		final CDateTime month = new CDateTime(shell, CDT.BORDER | CDT.DROP_DOWN);
+		month.setNullText("<month>");
 		month.setPattern("MMMM");
 		month.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
 
 		final CDateTime year = new CDateTime(shell, CDT.BORDER | CDT.DROP_DOWN);
+		year.setNullText("<year>");
 		year.setPattern("yyyy");
 		year.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
 
