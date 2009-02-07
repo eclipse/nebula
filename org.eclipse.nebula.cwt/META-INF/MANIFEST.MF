@@ -1,9 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Custom Widget Toolkit
 Bundle-SymbolicName: org.eclipse.nebula.cwt
 Bundle-Version: 0.12.2
-Bundle-Vendor: Jeremy Dowdall
+Bundle-Name: %pluginName
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.swt
