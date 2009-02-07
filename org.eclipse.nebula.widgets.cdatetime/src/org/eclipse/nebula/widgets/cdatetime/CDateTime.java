@@ -129,8 +129,11 @@ public class CDateTime extends BaseCombo {
 		
 		protected Point computeSize(VPanel panel, int wHint, int hHint, boolean flushCache) {
 			Point size = text.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			size.x += 22;
-
+			
+			Rectangle sRect = spinner.getControl().computeTrim(0, 0, 0, 0);
+			int sWidth = sRect.x + sRect.width - (2 * spinner.getControl().getBorderWidth()) + 1;
+			
+			size.x += sWidth;
 			size.y += textMarginHeight;
 
 			if(wHint != SWT.DEFAULT) {
@@ -146,25 +149,25 @@ public class CDateTime extends BaseCombo {
 			Rectangle cRect = panel.getClientArea();
 			if(cRect.isEmpty()) return;
 			
-			Point tSize = text.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			Point tSize = text.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			tSize.y += textMarginHeight;
-			
-			Point sSize;
-			sSize = spinner.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
-			sSize.y = Math.min(sSize.y, Math.min(tSize.y, cRect.height));
-			sSize.x = Math.min(sSize.x, cRect.width);
-			
+
 			spinner.setBounds(
-					cRect.x+cRect.width-sSize.x,
-					cRect.y+((tSize.y-sSize.y) / 2),
-					sSize.x,
-					sSize.y
+					cRect.x,
+					cRect.y,
+					cRect.width,
+					tSize.y
 					);
+
+			Rectangle sRect = spinner.getControl().computeTrim(0, 0, 0, 0);
+			int sWidth = sRect.x + sRect.width - (2 * spinner.getControl().getBorderWidth()) + 1;
+
+			tSize.x = cRect.width - sWidth;
 
 			text.setBounds(
 					cRect.x,
-					cRect.y + (win32 ? getBorderWidth() : 0),
-					cRect.width-sSize.x + 22,
+					cRect.y + getBorderWidth(),
+					tSize.x,
 					tSize.y
 					);
 		}
@@ -981,7 +984,14 @@ public class CDateTime extends BaseCombo {
 			} else {
 				setButtonVisibility(BaseCombo.BUTTON_NEVER);
 				if((style & CDT.SPINNER) != 0) {
-					spinner = VNative.create(Spinner.class, panel, SWT.VERTICAL);
+					int sStyle = SWT.VERTICAL;
+					if(gtk && ((style & CDT.BORDER) != 0)) {
+						sStyle |= SWT.BORDER;
+					}
+					spinner = VNative.create(Spinner.class, panel, sStyle);
+					if(win32) {
+						spinner.setBackground(text.getControl().getBackground());
+					}
 					spinner.getControl().setMinimum(0);
 					spinner.getControl().setMaximum(50);
 					spinner.getControl().setDigits(1);
@@ -990,7 +1000,13 @@ public class CDateTime extends BaseCombo {
 					spinner.getControl().setSelection(25);
 					spinner.getControl().addFocusListener(new FocusAdapter() {
 						public void focusGained(FocusEvent e) {
-							setFocus();
+							if(win32) {
+								int af = activeField;
+								text.getControl().setFocus();
+								setActiveField(af);
+							} else {
+								setFocus();
+							}
 						}
 					});
 					spinner.getControl().addSelectionListener(new SelectionAdapter() {
