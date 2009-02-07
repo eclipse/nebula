@@ -34,7 +34,7 @@ public class CDTSnippet01 {
 		shell.setText("CDateTime");
 		shell.setLayout(new GridLayout(2, false));
 
-		CDateTime cdt = new CDateTime(shell, CDT.BORDER);
+		CDateTime cdt = new CDateTime(shell, CDT.BORDER | CDT.SPINNER);
 		cdt.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         
 		shell.pack();
