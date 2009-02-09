@@ -63,6 +63,10 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 
 	boolean showLabels = true;
 
+	boolean showRoundedSelectionCorners = true;
+
+	int selectionRadius = 15;
+
 	public boolean isShowLabels() {
 		return showLabels;
 	}
@@ -137,7 +141,11 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 				gc.setBackground(itemBackgroundColor);
 			}
 
-			gc.fillRoundRectangle(x, y, width, useableHeight, 15, 15);
+			if (showRoundedSelectionCorners)
+				gc.fillRoundRectangle(x, y, width, useableHeight,
+						selectionRadius, selectionRadius);
+			else
+				gc.fillRectangle(x, y, width, useableHeight);
 		}
 
 		if (itemImage != null && size != null) {
@@ -193,7 +201,7 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 				} else {
 					gc.setForeground(this.foregroundColor);
 				}
-				
+
 				gc.setFont(textFont);
 				gc.drawText(text, x + useableHeight + 5, y + transY, true);
 			}
@@ -340,5 +348,14 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 	 */
 	public void setDescriptionFont(Font descriptionFont) {
 		this.descriptionFont = descriptionFont;
+	}
+
+	public boolean isShowRoundedSelectionCorners() {
+		return this.showRoundedSelectionCorners;
+	}
+
+	public void setShowRoundedSelectionCorners(
+			boolean showRoundedSelectionCorners) {
+		this.showRoundedSelectionCorners = showRoundedSelectionCorners;
 	}
 }
