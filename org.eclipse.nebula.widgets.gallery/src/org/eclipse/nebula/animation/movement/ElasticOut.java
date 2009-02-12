@@ -11,7 +11,7 @@
 /*********************************************************************************
  * TERMS OF USE - EASING EQUATIONS 
  * 
- * Copyright © 2001 Robert Penner
+ * Copyright (c) 2001 Robert Penner
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
