@@ -1009,6 +1009,7 @@ public class Gallery extends Canvas {
 				redraw();
 				mouseClickHandled = true;
 				lastSingleClick = null;
+				// notifySelectionListeners(null, -1, false);
 			} else {
 				if ((e.stateMask & SWT.MOD1) > 0) {
 					onMouseHandleLeftMod1(e, item, true, false);
@@ -1687,7 +1688,12 @@ public class Gallery extends Canvas {
 		if (index < parent.getItemCount()) {
 			// Refresh item if it is not set yet
 			updateItem(parent, index, true);
-			return parent.items[index];
+
+			if (parent.items == null) {
+				return null;
+			} else {
+				return parent.items[index];
+			}
 		}
 
 		return null;

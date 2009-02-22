@@ -530,8 +530,15 @@ public abstract class AbstractGridGroupRenderer extends
 	private GalleryItem goLeft(GalleryItem group, int posParam) {
 		int pos = posParam - 1;
 
-		if (pos < 0)
-			return this.getFirstItem(this.getPreviousGroup(group), END);
+		if (pos < 0) {
+			GalleryItem item = null;
+			GalleryItem currentGroup = group;
+			while (item == null && currentGroup != null) {
+				currentGroup = this.getPreviousGroup(currentGroup);
+				item = this.getFirstItem(currentGroup, END);
+			}
+			return item;
+		}
 
 		// else
 		return group.getItem(pos);
@@ -540,8 +547,15 @@ public abstract class AbstractGridGroupRenderer extends
 	private GalleryItem goRight(GalleryItem group, int posParam) {
 		int pos = posParam + 1;
 
-		if (pos >= group.getItemCount())
-			return this.getFirstItem(this.getNextGroup(group), START);
+		if (pos >= group.getItemCount()) {
+			GalleryItem item = null;
+			GalleryItem currentGroup = group;
+			while (item == null && currentGroup != null) {
+				currentGroup = this.getNextGroup(currentGroup);
+				item = this.getFirstItem(currentGroup, START);
+			}
+			return item;
+		}
 
 		// else
 		return group.getItem(pos);
@@ -551,8 +565,15 @@ public abstract class AbstractGridGroupRenderer extends
 		int colPos = posParam % hCount;
 		int pos = posParam - hCount;
 
-		if (pos < 0)
-			return this.getItemAt(this.getPreviousGroup(group), colPos, END);
+		if (pos < 0) {
+			GalleryItem item = null;
+			GalleryItem currentGroup = group;
+			while (item == null && currentGroup != null) {
+				currentGroup = this.getPreviousGroup(currentGroup);
+				item = this.getItemAt(currentGroup, colPos, END);
+			}
+			return item;
+		}
 
 		// else
 		return group.getItem(pos);
@@ -562,8 +583,16 @@ public abstract class AbstractGridGroupRenderer extends
 		int colPos = posParam % hCount;
 		int pos = posParam + hCount;
 
-		if (pos >= group.getItemCount())
-			return this.getItemAt(this.getNextGroup(group), colPos, START);
+		if (pos >= group.getItemCount()) {
+			GalleryItem item = null;
+			GalleryItem currentGroup = group;
+			while (item == null && currentGroup != null) {
+				currentGroup = this.getNextGroup(currentGroup);
+				item = this.getItemAt(currentGroup, colPos, START);
+			}
+			return item;
+
+		}
 
 		// else
 		return group.getItem(pos);
@@ -723,6 +752,9 @@ public abstract class AbstractGridGroupRenderer extends
 		int offset = 0;
 		switch (from) {
 		case END:
+			if (group.getItemCount() == 0)
+				return null;
+
 			// Last item column
 			int endPos = group.getItemCount() % hCount;
 
