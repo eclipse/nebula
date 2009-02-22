@@ -531,6 +531,7 @@ public abstract class AbstractGridGroupRenderer extends
 		int pos = posParam - 1;
 
 		if (pos < 0) {
+			// Look for next non-empty group and get the last item
 			GalleryItem item = null;
 			GalleryItem currentGroup = group;
 			while (item == null && currentGroup != null) {
@@ -548,6 +549,7 @@ public abstract class AbstractGridGroupRenderer extends
 		int pos = posParam + 1;
 
 		if (pos >= group.getItemCount()) {
+			// Look for next non-empty group and get the first item
 			GalleryItem item = null;
 			GalleryItem currentGroup = group;
 			while (item == null && currentGroup != null) {
@@ -566,6 +568,7 @@ public abstract class AbstractGridGroupRenderer extends
 		int pos = posParam - hCount;
 
 		if (pos < 0) {
+			// Look for next non-empty group and get the last item
 			GalleryItem item = null;
 			GalleryItem currentGroup = group;
 			while (item == null && currentGroup != null) {
@@ -584,6 +587,7 @@ public abstract class AbstractGridGroupRenderer extends
 		int pos = posParam + hCount;
 
 		if (pos >= group.getItemCount()) {
+			// Look for next non-empty group and get the first item
 			GalleryItem item = null;
 			GalleryItem currentGroup = group;
 			while (item == null && currentGroup != null) {
