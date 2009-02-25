@@ -75,7 +75,7 @@ public class AnimationRunner {
 		running = true;
 		Display.getCurrent().syncExec(new Runnable() {
 			public void run() {
-				if (!effect.isDone()) {
+				if (effect != null && !effect.isDone()) {
 					Display.getCurrent().timerExec(delay, this);
 					effect.doEffect();
 				} else {
