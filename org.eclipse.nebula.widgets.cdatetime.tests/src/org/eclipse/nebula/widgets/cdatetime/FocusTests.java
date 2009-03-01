@@ -255,6 +255,11 @@ public class FocusTests extends VTestCase {
 	}
 
 	public void testTabFieldsForward_6() {
+		syncExec(new Runnable() {
+			public void run() {
+				button1.setFocus();
+			}
+		});
 		assertTrue(hasFocus(button1));
 
 		keyPress('\t');
@@ -297,6 +302,12 @@ public class FocusTests extends VTestCase {
 	}
 
 	public void testTabFieldsReverse_7() {
+		syncExec(new Runnable() {
+			public void run() {
+				button1.setFocus();
+			}
+		});
+
 		assertTrue(hasFocus(button1));
 
 		keyDown(SWT.SHIFT);
@@ -486,7 +497,6 @@ public class FocusTests extends VTestCase {
 		click(tester.getCDateTime().getTextWidget());
 		keyPress('3');
 		click(button);
-		
 		assertEquals("03", tester.getText());
 		assertFalse("Dates should not equal", date.equals(tester.getTime()));
 
