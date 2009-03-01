@@ -745,12 +745,15 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 
 	/**
 	 * <p>
-	 * <b>Experimental feature :</b>
+	 * <b>Experimental feature.</b>
 	 * </p>
 	 * <p>
 	 * If set to true, this will enable a special behavior when the items are so
 	 * large that only one can fit in the client area. In this case, items are
 	 * always resized and centered to fit best in the client area.
+	 * </p>
+	 * <p>
+	 * See bug 266613 : https://bugs.eclipse.org/266613
 	 * </p>
 	 * 
 	 * @param fillIfSingle
