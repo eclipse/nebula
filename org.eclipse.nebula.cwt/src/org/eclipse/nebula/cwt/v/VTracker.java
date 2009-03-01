@@ -212,20 +212,27 @@ public class VTracker implements DisposeListener {
 			case SWT.Traverse:
 				lastTraverse = event.detail;
 				if(SWT.TRAVERSE_TAB_NEXT == event.detail || SWT.TRAVERSE_TAB_PREVIOUS == event.detail) {
+					event.doit = true;
 					if(focusControl != null) {
-						Composite comp = focusControl.getWidget();
-						if(SWT.TRAVERSE_TAB_NEXT == event.detail) {
-							setFocusToNext(comp);
-						} else {
-							setFocusToPrev(comp);
+						focusControl.handleEvent(event);
+						if(event.doit) {
+							Composite comp = focusControl.getWidget();
+							if(SWT.TRAVERSE_TAB_NEXT == event.detail) {
+								setFocusToNext(comp);
+							} else {
+								setFocusToPrev(comp);
+							}
 						}
 					} else if(event.widget instanceof Control) {
+						System.out.println(event.doit);
 						if(SWT.TRAVERSE_TAB_NEXT == event.detail) {
 							if(setFocusFromPrev((Control) event.widget)){
+								event.type = SWT.None;
 								event.doit = false;
 							}
 						} else {
 							if(setFocusFromNext((Control) event.widget)){
+								event.type = SWT.None;
 								event.doit = false;
 							}
 						}
@@ -324,7 +331,7 @@ public class VTracker implements DisposeListener {
 			}
 			if(control != null) {
 				if(control.setFocus(true)) {
-					control.getComposite().forceFocus();
+					control.getControl().forceFocus();
 				} else {
 					return false;
 				}

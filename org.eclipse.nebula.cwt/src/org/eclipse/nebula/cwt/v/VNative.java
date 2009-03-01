@@ -21,7 +21,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Listener;
 
 public class VNative<T extends Control> extends VControl {
 
@@ -49,11 +48,6 @@ public class VNative<T extends Control> extends VControl {
 				dispose();
 			}
 		};
-	}
-
-	@Override
-	public void addListener(int eventType, Listener listener) {
-		control.addListener(eventType, listener);
 	}
 	
 	@Override
@@ -89,7 +83,7 @@ public class VNative<T extends Control> extends VControl {
 	}
 	
 	public T getControl() {
-		return (T) control;
+		return control;
 	}
 	
 	@Override
@@ -107,11 +101,6 @@ public class VNative<T extends Control> extends VControl {
 		return Type.Native;
 	}
 	
-	@Override
-	public void removeListener(int eventType, Listener listener) {
-		control.removeListener(eventType, listener);
-	}
-
 	@Override
 	public void setBackground(Color color) {
 		super.setBackground(color);
