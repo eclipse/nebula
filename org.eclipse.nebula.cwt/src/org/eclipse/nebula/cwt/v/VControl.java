@@ -150,7 +150,7 @@ public abstract class VControl {
 					return;
 				}
 			}
-			_handleEvent(event);
+			VControl.this.handleEvent(event);
 		}
 	};
 
@@ -195,9 +195,9 @@ public abstract class VControl {
 		}
 	}
 
-	private void _handleEvent(Event event) {
+	void handleEvent(Event event) {
 		event.data = this;
-		handleEvent(event);
+		filterEvent(event);
 		if(listeners.containsKey(event.type)) {
 			Listener[] la = listeners.get(event.type).toArray(new Listener[listeners.get(event.type).size()]);
 			for(Listener listener : la) {
@@ -402,7 +402,7 @@ public abstract class VControl {
 	}
 
 	public Control getControl() {
-		return null;
+		return composite;
 	}
 
 	public Object getData(Enum<?> name) {
@@ -510,7 +510,7 @@ public abstract class VControl {
 		return getParent().getWidget();
 	}
 
-	protected void handleEvent(Event event) {
+	protected void filterEvent(Event event) {
 		// subclasses to implement if necessary
 	}
 
