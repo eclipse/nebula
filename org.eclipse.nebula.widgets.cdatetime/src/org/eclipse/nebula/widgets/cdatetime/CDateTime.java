@@ -134,6 +134,7 @@ public class CDateTime extends BaseCombo {
 			int sWidth = sRect.x + sRect.width - (2 * spinner.getControl().getBorderWidth()) + 1;
 			
 			size.x += sWidth;
+			size.x++;
 			size.y += textMarginHeight;
 
 			if(wHint != SWT.DEFAULT) {
@@ -242,7 +243,7 @@ public class CDateTime extends BaseCombo {
 				break;
 			case SWT.FocusOut:
 				if(!rightClick) {
-//					setActiveField(FIELD_NONE); // this messes up the spinner...
+					setActiveField(FIELD_NONE); // this messes up the spinner...
 					updateText();
 				}
 				break;
@@ -352,15 +353,17 @@ public class CDateTime extends BaseCombo {
 	 */
 	protected void addTextListener() {
 		removeTextListener();
+
+		Text control = text.getControl();
+		control.addListener(SWT.FocusIn, textListener);
+		control.addListener(SWT.FocusOut, textListener);
+		control.addListener(SWT.KeyDown, textListener);
+		control.addListener(SWT.MouseDown, textListener);
+		control.addListener(SWT.MouseWheel, textListener);
+		control.addListener(SWT.MouseUp, textListener);
+		control.addListener(SWT.Verify, textListener);
 		
-		text.addListener(SWT.FocusIn, textListener);
-		text.addListener(SWT.FocusOut, textListener);
-		text.addListener(SWT.KeyDown, textListener);
-		text.addListener(SWT.MouseDown, textListener);
-		text.addListener(SWT.MouseWheel, textListener);
-		text.addListener(SWT.MouseUp, textListener);
 		text.addListener(SWT.Traverse, textListener);
-		text.addListener(SWT.Verify, textListener);
 	}
 
 	/**
@@ -945,7 +948,7 @@ public class CDateTime extends BaseCombo {
 		default:
 		}
 	}
-	
+
 	/**
 	 * Determines if the given field number is backed by a real field.
 	 * @param field the field number to check
@@ -1027,7 +1030,7 @@ public class CDateTime extends BaseCombo {
 				}
 			}
 			
-			updateText(true);
+			updateText();
 			activeField = -5;
 			setActiveField(FIELD_NONE);
 			
@@ -1082,12 +1085,13 @@ public class CDateTime extends BaseCombo {
 	 * Removes the textListener for the appropriate SWT events to handle incrementing fields.
 	 */
 	protected void removeTextListener() {
-		text.removeListener(SWT.KeyDown, textListener);
-		text.removeListener(SWT.MouseDown, textListener);
-		text.removeListener(SWT.MouseWheel, textListener);
-		text.removeListener(SWT.MouseUp, textListener);
+		Text control = text.getControl();
+		control.removeListener(SWT.KeyDown, textListener);
+		control.removeListener(SWT.MouseDown, textListener);
+		control.removeListener(SWT.MouseWheel, textListener);
+		control.removeListener(SWT.MouseUp, textListener);
+		control.removeListener(SWT.Verify, textListener);
 		text.removeListener(SWT.Traverse, textListener);
-		text.removeListener(SWT.Verify, textListener);
 	}
 	
 	void select(Date date) {
@@ -1128,13 +1132,13 @@ public class CDateTime extends BaseCombo {
 			commitEditField();
 			editField = null;
 			activeField = field;
-			if(spinner != null) {
-				if(hasField(field)) {
-					spinner.getControl().setEnabled(true);
-				} else {
-					spinner.getControl().setEnabled(false);
-				}
-			}
+//			if(spinner != null) {
+//				if(hasField(field)) {
+//					spinner.getControl().setEnabled(true);
+//				} else {
+//					spinner.getControl().setEnabled(false);
+//				}
+//			}
 		}
 	}
 	
@@ -1236,7 +1240,7 @@ public class CDateTime extends BaseCombo {
 	public void setNullText(String text) {
 		defaultNullText = false;
 		nullText = text;
-		updateText(true);
+		updateText();
 	}
 
 	public void setOpen(boolean open) {
@@ -1330,7 +1334,7 @@ public class CDateTime extends BaseCombo {
 				updateNullText();
 			}
 			if(checkText()) {
-				updateText(true);
+				updateText();
 			}
 			if(isSimple()) {
 				disposePicker();
@@ -1363,7 +1367,7 @@ public class CDateTime extends BaseCombo {
 		if(singleSelection && this.selection.length > 0) {
 			setTime(selectedDates[0]);
 		} else {
-			updateText(true);
+			updateText();
 			updatePicker();
 		}
 	}
@@ -1394,7 +1398,7 @@ public class CDateTime extends BaseCombo {
 		} else {
 			calendar.setTime(date);
 		}
-		updateText(true);
+		updateText();
 		updatePicker();
 	}
 	
@@ -1408,7 +1412,7 @@ public class CDateTime extends BaseCombo {
 			this.timezone = zone;
 			calendar.setTimeZone(this.timezone);
 			df.setTimeZone(this.timezone);
-			updateText(true);
+			updateText();
 		}
 	}
 	
@@ -1464,7 +1468,7 @@ public class CDateTime extends BaseCombo {
 				nullText = Resources.getString("null_text.time", locale); //$NON-NLS-1$
 			}
 			if(!hasSelection()) {
-				updateText(true);
+				updateText();
 			}
 		}
 	}
@@ -1485,20 +1489,14 @@ public class CDateTime extends BaseCombo {
 	}
 	
 	/**
-	 * Performs an asynchronous text update by calling
-	 * <code>updateText(false)</code>
-	 */
-	private void updateText() {
-		updateText(false);
-	}
-
-	/**
 	 * This is the only way that text is set to the text box.<br>
 	 * The selection is also set here (corresponding to the active field) as
 	 * well as if a field is being edited, it's "edit text" is inserted for
 	 * display.
 	 */
-	private void updateText(boolean sync) {
+	private void updateText() {
+		// TODO: save previous state and only update on changes...?
+		
 		String buffer = hasSelection() ? df.format(getSelection()) : getNullText();
 
 		int s0 = 0;
@@ -1508,7 +1506,7 @@ public class CDateTime extends BaseCombo {
 			s0 = 0;
 			s1 = buffer.length();
 		} else if(activeField >= 0 && activeField < field.length) {
-			AttributedCharacterIterator aci = df.formatToCharacterIterator(calendar.getTime());
+			AttributedCharacterIterator aci = df.formatToCharacterIterator(getSelection());
 			for(char c = aci.first(); c != CharacterIterator.DONE; c = aci.next()) {
 				if(aci.getAttribute(field[activeField]) != null) {
 					s0 = aci.getRunStart();
@@ -1535,24 +1533,19 @@ public class CDateTime extends BaseCombo {
 		final int selStart = s0;
 		final int selEnd = s1;
 
-		Runnable r = new Runnable() {
+		getDisplay().syncExec(new Runnable() {
 			public void run() {
 				if((text != null) && (!text.isDisposed())) {
 					if(!string.equals(text.getText())) {
-						text.removeListener(SWT.Verify, textListener);
+						text.getControl().removeListener(SWT.Verify, textListener);
+						System.out.println(string);
 						text.setText(string);
-						text.addListener(SWT.Verify, textListener);
+						text.getControl().addListener(SWT.Verify, textListener);
 					}
 					text.getControl().setSelection(selStart, selEnd);
 				}
 			}
-		};
-		
-		if(sync) {
-			getDisplay().syncExec(r);
-		} else {
-			getDisplay().asyncExec(r);
-		}
+		});
 	}
 
 	/**
