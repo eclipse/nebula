@@ -734,9 +734,11 @@ public abstract class VControl {
 
 	public void setEnabled(boolean enabled) {
 		if(setState(STATE_ENABLED, enabled)) {
-			Control c = getControl();
-			if(c != null) {
-				c.setEnabled(enabled);
+			if(this instanceof VNative) {
+				Control c = getControl();
+				if(c != null) {
+					c.setEnabled(enabled);
+				}
 			}
 			if(!enabled) {
 				deactivate();
