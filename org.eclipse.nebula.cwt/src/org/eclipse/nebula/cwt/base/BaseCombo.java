@@ -12,6 +12,9 @@
 
 package org.eclipse.nebula.cwt.base;
 
+import org.eclipse.nebula.cwt.animation.AnimationRunner;
+import org.eclipse.nebula.cwt.animation.effects.Resize;
+import org.eclipse.nebula.cwt.animation.movement.LinearInOut;
 import org.eclipse.nebula.cwt.v.VButton;
 import org.eclipse.nebula.cwt.v.VButtonPainter;
 import org.eclipse.nebula.cwt.v.VControl;
@@ -30,7 +33,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -316,12 +318,6 @@ public abstract class BaseCombo extends Canvas implements VWidget {
 	};
 
 	/**
-	 * A flag currently used to indicate that the popup shell is busy opening.
-	 * Hopefully to be replaced soon by an animation framework in CWT.
-	 */
-	protected Boolean busy = Boolean.FALSE;
-
-	/**
 	 * Main constructor -- must be called by all subclasses in their own
 	 * constructors.
 	 * <p>
@@ -440,26 +436,7 @@ public abstract class BaseCombo extends Canvas implements VWidget {
 	}
 
 	private void createContentShell() {
-		int pstyle = getShell().getStyle();
-		GridLayout layout = new GridLayout();
-
-		// Some versions of SWT before 3.3 had a bug where child Shells of modal shells
-		// would not receive events. This fix creates the popup with modal style, so
-		// that the popup always receives events, but the parent does not. This is
-		// not ideal, so it is only applied if the SWT version is less than one that
-		// is known to be good.
-		// TODO: find the precise version at which the SWT bug was fixed
-		if(SWT.getVersion() < SWT_MODAL_FIX_VERSION && ((pstyle & SWT.APPLICATION_MODAL) != 0)
-				|| ((pstyle & SWT.SYSTEM_MODAL) != 0)) {
-			contentShell = new Shell(getShell(), SWT.APPLICATION_MODAL);
-			layout.marginWidth = 0;
-			layout.marginHeight = 0;
-		} else {
-			contentShell = new Shell(getShell(), SWT.NO_TRIM | SWT.ON_TOP);
-			layout.marginWidth = 1;
-			layout.marginHeight = 1;
-		}
-
+		contentShell = new Shell(getShell(), SWT.NO_TRIM | SWT.ON_TOP);
 		contentShell.addListener(SWT.Close, shellListener);
 		contentShell.addListener(SWT.Deactivate, shellListener);
 	}
@@ -886,7 +863,7 @@ public abstract class BaseCombo extends Canvas implements VWidget {
 			text.setEnabled(enabled);
 		}
 		if(checkContent()) {
-			content.setEnabled(enabled);
+//			content.setEnabled(enabled);
 		}
 		super.setEnabled(enabled);
 	}
@@ -976,13 +953,17 @@ public abstract class BaseCombo extends Canvas implements VWidget {
 	 * @param callback a runnable to be run when the operation completes.
 	 * @see BaseCombo#setOpen(boolean)
 	 */
-	protected void setOpen(boolean open, final Runnable callback) {
-		if(content == null) {
-			busy = Boolean.FALSE;
+	protected synchronized void setOpen(boolean open, final Runnable callback) {
+		if(content == null || content.isDisposed()) {
+			if(contentShell != null) {
+				contentShell.dispose();
+				contentShell = null;
+			}
+			this.open = false;
 			return;
 		}
 
-		if(contentShell == null) {
+		if(contentShell == null || contentShell.isDisposed()) {
 			createContentShell();
 		}
 
@@ -1002,29 +983,34 @@ public abstract class BaseCombo extends Canvas implements VWidget {
 				this.open = false;
 
 				preClose(contentShell);
-				int aStyle = Animator.CLOSE | (win32 ? Animator.POP : Animator.SLIDE);
-				Point location = positionControl.getComposite().toDisplay(positionControl.getLocation());
-				Point contentLocation = contentShell.getLocation();
-				if(location.y > contentLocation.y) {
-					aStyle |= Animator.UP;
-				}
+				
+//				Point location = positionControl.getComposite().toDisplay(positionControl.getLocation());
+//				Point contentLocation = contentShell.getLocation();
+//				if(location.y > contentLocation.y) {
+//					aStyle |= Animator.UP;
+//				}
 
-				Animator a = new Animator(content, aStyle);
-				a.setAfterFinish(new Runnable() {
+				Point start = contentShell.getSize();
+				Point end = new Point(start.x, 0);
+				Runnable runnable = new Runnable() {
 					public void run() {
-						if(checkText())
-							text.setFocus();
 						postClose(contentShell);
-						busy = Boolean.FALSE;
 						if(callback != null) {
 							callback.run();
 						}
 					}
-				});
-				a.start();
+				};
+
+				AnimationRunner runner = new AnimationRunner();
+				runner.runEffect(new Resize(contentShell, start, end, 200, new LinearInOut(), runnable, runnable));
+				
+				if(checkText()) {
+					text.setFocus();
+				}
 			}
 		} else {
-			int aStyle = Animator.OPEN | (win32 ? Animator.SLIDE : Animator.SLIDE);
+			this.open = true;
+
 			Point size = content.computeSize(-1, -1);
 			content.setSize(size);
 			Point location = positionControl.getComposite().toDisplay(positionControl.getLocation());
@@ -1032,11 +1018,11 @@ public abstract class BaseCombo extends Canvas implements VWidget {
 			int dHeight = getDisplay().getClientArea().height;
 			if((location.y + size.y) > dHeight) {
 				location.y -= (positionControl.getSize().y + size.y + 4);
-				aStyle |= Animator.UP;
+//				aStyle |= Animator.UP;
 			}
 			if((stretchControl != null) && (size.x < stretchControl.getSize().x)) {
 				size.x = stretchControl.getSize().x;
-				contentShell.setSize(size);
+//				contentShell.setSize(size);
 			}
 
 			if(leftAlign) {
@@ -1053,25 +1039,27 @@ public abstract class BaseCombo extends Canvas implements VWidget {
 				location.y += 8;
 			}
 
-			contentShell.setBounds(location.x, location.y, size.x, size.y);
-
+			contentShell.setBounds(location.x, location.y, size.x, 0);
+			
 			// chance for subclasses to do something before the shell becomes visible
 			preOpen(contentShell);
 
-			this.open = true;
-
-			Animator a = new Animator(content, aStyle);
-			a.setAfterFinish(new Runnable() {
+			Point start = new Point(size.x, 0);
+			Point end = new Point(size.x, size.y);
+			Runnable runnable = new Runnable() {
 				public void run() {
 					setContentFocus();
 					postOpen(contentShell);
-					busy = Boolean.FALSE;
 					if(callback != null) {
 						callback.run();
 					}
 				}
-			});
-			a.start();
+			};
+
+			contentShell.setVisible(true);
+			AnimationRunner runner = new AnimationRunner();
+			runner.runEffect(new Resize(contentShell, start, end, 200, new LinearInOut(), runnable, runnable));
+			contentShell.setRedraw(true);
 		}
 		if(BUTTON_AUTO == buttonVisibility) {
 			setButtonVisible(hasFocus && !open);
