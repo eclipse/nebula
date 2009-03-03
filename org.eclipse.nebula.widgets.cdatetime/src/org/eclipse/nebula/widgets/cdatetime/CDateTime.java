@@ -893,18 +893,24 @@ public class CDateTime extends BaseCombo {
 		} else {
 			switch (event.keyCode) {
 			case '-':
-			case SWT.ARROW_DOWN:
 			case SWT.KEYPAD_SUBTRACT:
 				fieldAdjust(-1);
 				break;
 			case '=':
 			case '+':
-			case SWT.ARROW_UP:
 			case SWT.KEYPAD_ADD:
 				fieldAdjust(1);
 				break;
 			case SWT.BS:
 				if(editField != null) editField.removeLastCharacter();
+				break;
+			case SWT.ARROW_DOWN:
+				fieldAdjust(-1);
+				updateText(true);
+				break;
+			case SWT.ARROW_UP:
+				fieldAdjust(1);
+				updateText(true);
 				break;
 			case SWT.ARROW_LEFT:
 				fieldPrev(true);
