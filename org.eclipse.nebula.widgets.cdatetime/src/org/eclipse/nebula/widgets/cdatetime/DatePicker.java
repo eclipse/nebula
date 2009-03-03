@@ -260,11 +260,13 @@ class DatePicker extends VPanel {
 			public void handleEvent(Event event) {
 				switch(event.type) {
 				case SWT.KeyDown:
-					if(event.keyCode == SWT.KEYPAD_CR || event.character == SWT.CR || event.character == ' ') {
-						setSelectionFromFocusButton(event);
-					} else  if((event.keyCode != SWT.ARROW_DOWN) && (event.keyCode != SWT.ARROW_UP)) {
-						// block the arrow keys because they are handled by the traverse listener
-						scrollCalendar(event.keyCode);
+					if(event.stateMask == 0) {
+						if(event.keyCode == SWT.KEYPAD_CR || event.character == SWT.CR || event.character == ' ') {
+							setSelectionFromFocusButton(event);
+						} else  if((event.keyCode != SWT.ARROW_DOWN) && (event.keyCode != SWT.ARROW_UP)) {
+							// block the arrow keys because they are handled by the traverse listener
+							scrollCalendar(event.keyCode);
+						}
 					}
 					break;
 				case SWT.MouseDown:

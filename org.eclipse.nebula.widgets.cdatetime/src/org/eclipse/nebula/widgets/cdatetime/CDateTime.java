@@ -884,6 +884,9 @@ public class CDateTime extends BaseCombo {
 	 * @param event the event
 	 */
 	void handleKey(Event event) {
+		if(event.stateMask != 0) {
+			return;
+		}
 		if(SWT.BS == event.keyCode || SWT.DEL == event.keyCode) {
 			event.doit = false;
 			setSelection((Date) null);
