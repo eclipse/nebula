@@ -248,10 +248,7 @@ public class CDateTime extends BaseCombo {
 				}
 				break;
 			case SWT.KeyDown:
-				// block the arrow keys because they are handled by the traverse listener
-				if((event.keyCode != SWT.ARROW_DOWN) && (event.keyCode != SWT.ARROW_UP)) {
-					handleKey(event);
-				}
+				handleKey(event);
 				break;
 			case SWT.MouseDown:
 				if(event.button == 1) {
@@ -408,7 +405,16 @@ public class CDateTime extends BaseCombo {
 			layout.verticalSpacing = 1;
 			pickerPanel.setLayout(layout);
 			setContent(pickerPanel.getComposite());
-
+			
+			canvas.addListener(SWT.KeyDown, new Listener() {
+				public void handleEvent(Event event) {
+					if(SWT.ESC == event.keyCode) {
+						event.doit = false;
+						setOpen(false);
+					}
+				}
+			});
+			
 			if(field.length > 1 || isTime) {
 				createPickerToolbar(pickerPanel);
 			}
@@ -595,6 +601,15 @@ public class CDateTime extends BaseCombo {
 	 * field if there is no current active field
 	 */
 	void fieldNext() {
+		fieldNext(false);
+	}
+	
+	/**
+	 * Sets the active field to the next field; wraps if necessary and sets to last
+	 * field if there is no current active field
+	 * @param If true, the text update will be asynchronous (for changes to text selection)
+	 */
+	void fieldNext(boolean async) {
 		if(activeField >= 0 && activeField < field.length - 1) {
 			if(Calendar.ZONE_OFFSET == getCalendarField(field[activeField + 1])) {
 				if(activeField < field.length - 2) {
@@ -612,7 +627,7 @@ public class CDateTime extends BaseCombo {
 				setActiveField(0);
 			}
 		}
-		updateText();
+		updateText(async);
 	}
 
 	/**
@@ -620,6 +635,15 @@ public class CDateTime extends BaseCombo {
 	 * field if there is no current active field
 	 */
 	private void fieldPrev() {
+		fieldPrev(false);
+	}
+	
+	/**
+	 * Sets the active field to the previous field; wraps if necessary and sets to first
+	 * field if there is no current active field
+	 * @param If true, the text update will be asynchronous (for changes to text selection)
+	 */
+	void fieldPrev(boolean async) {
 		if(activeField > 0 && activeField < field.length) {
 			if(Calendar.ZONE_OFFSET == getCalendarField(field[activeField - 1])) {
 				if(activeField > 1) {
@@ -637,7 +661,7 @@ public class CDateTime extends BaseCombo {
 				setActiveField(field.length - 1);
 			}
 		}
-		updateText();
+		updateText(async);
 	}
 	
 	/**
@@ -881,6 +905,12 @@ public class CDateTime extends BaseCombo {
 				break;
 			case SWT.BS:
 				if(editField != null) editField.removeLastCharacter();
+				break;
+			case SWT.ARROW_LEFT:
+				fieldPrev(true);
+				break;
+			case SWT.ARROW_RIGHT:
+				fieldNext(true);
 				break;
 			default:
 				if(hasField(activeField) && activeField + 1 < separator.length &&
@@ -1146,7 +1176,7 @@ public class CDateTime extends BaseCombo {
 	@Override
 	protected boolean setContentFocus() {
 		if(picker != null) {
-			return picker.setFocus();
+			return picker.getWidget().forceFocus();
 		}
 		return false;
 	}
@@ -1484,6 +1514,17 @@ public class CDateTime extends BaseCombo {
 	 * display.
 	 */
 	private void updateText() {
+		updateText(false);
+	}
+	
+	/**
+	 * This is the only way that text is set to the text box.<br>
+	 * The selection is also set here (corresponding to the active field) as
+	 * well as if a field is being edited, it's "edit text" is inserted for
+	 * display.
+	 * @param async If true, this operation will be performed asynchronously (for changes to text selection)
+	 */
+	private void updateText(boolean async) {
 		// TODO: save previous state and only update on changes...?
 		
 		String buffer = hasSelection() ? df.format(getSelection()) : getNullText();
@@ -1522,19 +1563,24 @@ public class CDateTime extends BaseCombo {
 		final int selStart = s0;
 		final int selEnd = s1;
 
-		getDisplay().syncExec(new Runnable() {
+		Runnable runnable = new Runnable() {
 			public void run() {
 				if((text != null) && (!text.isDisposed())) {
 					if(!string.equals(text.getText())) {
 						text.getControl().removeListener(SWT.Verify, textListener);
-						System.out.println(string);
 						text.setText(string);
 						text.getControl().addListener(SWT.Verify, textListener);
 					}
 					text.getControl().setSelection(selStart, selEnd);
 				}
 			}
-		});
+		};
+
+		if(async) {
+			getDisplay().asyncExec(runnable);
+		} else {
+			getDisplay().syncExec(runnable);
+		}
 	}
 
 	/**
