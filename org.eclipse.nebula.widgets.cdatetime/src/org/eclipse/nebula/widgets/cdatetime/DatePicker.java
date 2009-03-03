@@ -261,13 +261,7 @@ class DatePicker extends VPanel {
 				switch(event.type) {
 				case SWT.KeyDown:
 					if(event.keyCode == SWT.KEYPAD_CR || event.character == SWT.CR || event.character == ' ') {
-						int fb = getFocusDayButton();
-						if(fb >= 0 && fb < dayButtons.length) {
-							VButton button = dayButtons[fb];
-							int stateMask = event.stateMask;
-							setSelectionFromButton(button, stateMask);
-							cdt.fireSelectionChanged(event.character != ' ');
-						}
+						setSelectionFromFocusButton(event);
 					} else  if((event.keyCode != SWT.ARROW_DOWN) && (event.keyCode != SWT.ARROW_UP)) {
 						// block the arrow keys because they are handled by the traverse listener
 						scrollCalendar(event.keyCode);
@@ -291,7 +285,7 @@ class DatePicker extends VPanel {
 					break;
 				case SWT.Traverse:
 					if(event.detail == SWT.TRAVERSE_RETURN) {
-						cdt.fireSelectionChanged();
+						setSelectionFromFocusButton(event);
 					} else {
 						traverseSelection(event.keyCode);
 					}
@@ -333,6 +327,16 @@ class DatePicker extends VPanel {
 		}
 	}
 
+	private void setSelectionFromFocusButton(Event event) {
+		int fb = getFocusDayButton();
+		if(fb >= 0 && fb < dayButtons.length) {
+			VButton button = dayButtons[fb];
+			int stateMask = event.stateMask;
+			setSelectionFromButton(button, stateMask);
+			cdt.fireSelectionChanged(event.character != ' ');
+		}
+	}
+	
 	private void setSelectionFromButton(VButton button, int stateMask) {
 		Date date = (Date) button.getData(CDT.Key.Date.name());
 		if(cdt.isSingleSelection()) {
