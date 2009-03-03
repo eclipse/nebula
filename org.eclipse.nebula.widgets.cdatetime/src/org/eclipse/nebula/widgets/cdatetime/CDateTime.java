@@ -1057,7 +1057,7 @@ public class CDateTime extends BaseCombo {
 	protected void postClose(Shell popup) {
 		disposePicker();
 	}
-	
+
 	/**
 	 * Removes the listener from the collection of listeners who will
 	 * be notified when the receiver's selection changes.
@@ -1132,13 +1132,6 @@ public class CDateTime extends BaseCombo {
 			commitEditField();
 			editField = null;
 			activeField = field;
-//			if(spinner != null) {
-//				if(hasField(field)) {
-//					spinner.getControl().setEnabled(true);
-//				} else {
-//					spinner.getControl().setEnabled(false);
-//				}
-//			}
 		}
 	}
 	
@@ -1248,17 +1241,13 @@ public class CDateTime extends BaseCombo {
 	}
 
 	public void setOpen(boolean open, Runnable callback) {
-		synchronized(busy) {
-			if(busy) return;
-			busy = true;
-			if(open) {
-				cancelDate = getSelection();
-				createPicker();
-			} else {
-				cancelDate = null;
-			}
-			super.setOpen(open, callback);
+		if(open) {
+			cancelDate = getSelection();
+			createPicker();
+		} else {
+			cancelDate = null;
 		}
+		super.setOpen(open, callback);
 	}
 
 	public void setPainter(CDateTimePainter painter) {
