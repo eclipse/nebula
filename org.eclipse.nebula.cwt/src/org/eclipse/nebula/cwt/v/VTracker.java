@@ -224,7 +224,6 @@ public class VTracker implements DisposeListener {
 							}
 						}
 					} else if(event.widget instanceof Control) {
-						System.out.println(event.doit);
 						if(SWT.TRAVERSE_TAB_NEXT == event.detail) {
 							if(setFocusFromPrev((Control) event.widget)){
 								event.type = SWT.None;

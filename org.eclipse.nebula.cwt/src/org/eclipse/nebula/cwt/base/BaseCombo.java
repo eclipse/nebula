@@ -447,6 +447,7 @@ public abstract class BaseCombo extends Canvas implements VWidget {
 				switch (event.type){
 				case SWT.KeyDown:
 					if(event.stateMask == SWT.CTRL && event.keyCode == ' ') {
+						event.doit = false;
 						setOpen(true);
 					}
 					break;
@@ -467,8 +468,8 @@ public abstract class BaseCombo extends Canvas implements VWidget {
 		}
 
 		text = VNative.create(Text.class, panel, textStyle);
-		text.addListener(SWT.KeyDown, textListener);
-		text.addListener(SWT.Modify, textListener);
+		text.getControl().addListener(SWT.KeyDown, textListener);
+		text.getControl().addListener(SWT.Modify, textListener);
 	}
 
 	/**
