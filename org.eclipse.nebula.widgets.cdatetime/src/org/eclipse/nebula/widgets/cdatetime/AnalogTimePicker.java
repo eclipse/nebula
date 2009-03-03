@@ -18,6 +18,7 @@ import java.util.Date;
 import org.eclipse.nebula.cwt.v.VButton;
 import org.eclipse.nebula.cwt.v.VLayout;
 import org.eclipse.nebula.cwt.v.VPanel;
+import org.eclipse.nebula.cwt.v.VTracker;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -135,7 +136,7 @@ class AnalogTimePicker extends VPanel {
 		timeAmPm.setText("PM"); //$NON-NLS-1$
 		timeAmPm.setForeground(getDisplay().getSystemColor(SWT.COLOR_DARK_BLUE));
 		timeAmPm.setMargins(4, 4);
-		timeAmPm.setEnabled(dialPanel.hasStyle(SWT.READ_ONLY));
+		timeAmPm.setEnabled(!dialPanel.hasStyle(CDT.READ_ONLY));
 		tapl = new Listener() {
 			public void handleEvent(Event event) {
 				if(event.widget == null) {
@@ -153,6 +154,13 @@ class AnalogTimePicker extends VPanel {
 			public void handleEvent(Event event) {
 				if(cdt.getEditable()) {
 					switch(event.type) {
+					case SWT.Deactivate:
+						if(VTracker.isMouseDown()) {
+							handleMouseUp();
+							overHour = overMin = overSec = false;
+							redraw();
+						}
+						break;
 					case SWT.MouseDown:
 						handleMouseDown();
 						break;
@@ -169,6 +177,8 @@ class AnalogTimePicker extends VPanel {
 				}
 			}
 		};
+
+		dialPanel.addListener(SWT.Deactivate, listener);
 		dialPanel.addListener(SWT.MouseDown, listener);
 		dialPanel.addListener(SWT.MouseMove, listener);
 		dialPanel.addListener(SWT.MouseUp, listener);
@@ -259,8 +269,9 @@ class AnalogTimePicker extends VPanel {
 			setSelection(tmpcal.getTime());
 		} else {
 			boolean rd = false;
-			if(overHour || overMin || overSec)
+			if(overHour || overMin || overSec) {
 				rd = true;
+			}
 			overHour = false;
 			overMin = false;
 			overSec = false;
@@ -340,7 +351,7 @@ class AnalogTimePicker extends VPanel {
 		}
 		timeAmPm.setVisible(am_pm);
 		boolean sepOK = false;
-		pattern = "";
+		pattern = ""; //$NON-NLS-1$
 		String cdtPattern = cdt.getPattern();
 		for(int i = 0; i < cdtPattern.length(); i++) {
 			char c = cdtPattern.charAt(i);
