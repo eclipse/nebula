@@ -17,10 +17,12 @@ import java.util.Locale;
 
 import org.eclipse.nebula.cwt.v.VButton;
 import org.eclipse.nebula.cwt.v.VControl;
+import org.eclipse.nebula.cwt.v.VNative;
 import org.eclipse.nebula.cwt.v.VPanel;
 import org.eclipse.nebula.widgets.cdatetime.CDT.PickerPart;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Text;
 
 public class CdtTester {
 
@@ -58,6 +60,22 @@ public class CdtTester {
 			}
 		});
 		return (String) tmpObj;
+	}
+	
+	public boolean isOpen() {
+		return cdt.isOpen();
+	}
+	
+	public boolean setFocus() {
+		return cdt.setFocus();
+	}
+	
+	public VNative<Text> getTextWidget() {
+		return cdt.getTextWidget();
+	}
+	
+	public VButton getButton() {
+		return cdt.getButtonWidget();
 	}
 
 	public void setFormat(final int format) {
@@ -126,19 +144,15 @@ public class CdtTester {
 	public void setOpen(final boolean open) {
 		display.syncExec(new Runnable() {
 			public void run() {
-				tmpObj = true;
-				cdt.setOpen(open, new Runnable() {
-					public void run() {
-						tmpObj = false;
-					}
-				});
-				while((Boolean) tmpObj) {
-					try {
-						Thread.sleep(100);
-					} catch(InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
+				cdt.setOpen(open);
+			}
+		});
+	}
+
+	public void setOpen(final boolean open, final Runnable callback) {
+		display.syncExec(new Runnable() {
+			public void run() {
+				cdt.setOpen(open, callback);
 			}
 		});
 	}
