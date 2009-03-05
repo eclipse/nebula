@@ -38,7 +38,9 @@ public class VTestCase extends TestCase {
 				}
 			} finally {
 				testing = false;
-				display.wake();
+				if(display != null && !display.isDisposed()) {
+					display.wake();
+				}
 			}
 		}
 	};
