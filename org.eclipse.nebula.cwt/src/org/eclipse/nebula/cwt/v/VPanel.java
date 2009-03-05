@@ -36,7 +36,7 @@ public class VPanel extends VControl {
 	public VPanel(Composite parent, int style) {
 		this((VPanel) null, style & ~SWT.BORDER);
 		if(!(parent instanceof VWidget)) {
-			throw new UnsupportedOperationException("VPanels can only be placed on Composites that implement the VWidget interface");
+			throw new UnsupportedOperationException("VPanels can only be placed on Composites that implement the VWidget interface"); //$NON-NLS-1$
 		}
 		
 		isTopLevel = true;
@@ -47,7 +47,7 @@ public class VPanel extends VControl {
 			public void handleEvent(Event event) {
 				switch(event.type) {
 				case SWT.Dispose:
-					dispose();
+					dispose(false);
 					break;
 //				case SWT.FocusIn:
 //					setFocus();
@@ -56,7 +56,7 @@ public class VPanel extends VControl {
 					paintControl(event);
 					break;
 				}
-			};
+			}
 		};
 		
 		composite.addListener(SWT.Dispose, topLevelListener);
@@ -96,6 +96,17 @@ public class VPanel extends VControl {
 
 	@Override
 	public void dispose() {
+		dispose(true);
+	}
+	
+	/**
+	 * If the dispose request comes from the Composite via the topLevelListener,
+	 * then do not dispose the Composite again - controls recieving the
+	 * Composite's dispose event after this VPanel will be in danger of dealing 
+	 * with a disposed control before they are ready.
+	 * @param disposeComposite
+	 */
+	private void dispose(boolean disposeComposite) {
 		if(isTopLevel) {
 			if(composite != null && !composite.isDisposed()) {
 				composite.removeListener(SWT.Dispose, topLevelListener);
@@ -107,7 +118,7 @@ public class VPanel extends VControl {
 			child.dispose();
 		}
 		super.dispose();
-		if(isTopLevel) {
+		if(isTopLevel && disposeComposite) {
 			if(composite != null && !composite.isDisposed()) {
 				composite.dispose();
 			}
