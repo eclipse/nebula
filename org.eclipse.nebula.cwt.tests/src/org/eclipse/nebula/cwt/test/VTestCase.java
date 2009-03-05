@@ -646,13 +646,23 @@ public class VTestCase extends TestCase {
 		String name = getName();
 		Method method = null;
 
+		// TODO: pick a format and stick to it :)
 		try {
-			String setup = Character.toLowerCase(name.charAt(4)) + name.substring(5) + "Setup";
+			String setup = "setup" + name.substring(4);
 			method = getClass().getMethod(setup, new Class[0]);
 		} catch(NoSuchMethodException e) {
 			// nothing to do
 		}
 
+		if(method == null) {
+			try {
+				String setup = Character.toLowerCase(name.charAt(4)) + name.substring(5) + "Setup";
+				method = getClass().getMethod(setup, new Class[0]);
+			} catch(NoSuchMethodException e) {
+				// nothing to do
+			}
+		}
+		
 		if(method == null) {
 			try {
 				String[] sa = name.split("_");
