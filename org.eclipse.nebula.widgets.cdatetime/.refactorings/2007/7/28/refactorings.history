@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<session version="1.0">
-<refactoring comment="Extract method 'private void addTextListener()' from 'org.eclipse.nebula.widgets.cdatetime.CDateTime.CDateTime()' to 'org.eclipse.nebula.widgets.cdatetime.CDateTime'&#13;&#10;- Original project: 'org.eclipse.nebula.widgets.cdatetime'&#13;&#10;- Method name: 'addTextListener'&#13;&#10;- Destination type: 'org.eclipse.nebula.widgets.cdatetime.CDateTime'&#13;&#10;- Declared visibility: 'private'&#13;&#10;- Generate method comment" comments="true" description="Extract method 'addTextListener'" destination="0" exceptions="false" flags="786434" id="org.eclipse.jdt.ui.extract.method" input="/src&lt;org.eclipse.nebula.widgets.cdatetime{CDateTime.java" name="addTextListener" replace="false" selection="9071 294" stamp="1184087070207" version="1.0" visibility="2"/>
-</session>
