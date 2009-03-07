@@ -40,6 +40,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -205,6 +207,7 @@ public class CDateTime extends BaseCombo {
 	VPanel picker;
 	
 	VNative<Spinner> spinner;
+	boolean internalFocusShift = false;
 	boolean rightClick = false;
 
 	private Date cancelDate;
@@ -234,19 +237,27 @@ public class CDateTime extends BaseCombo {
 			switch (event.type) {
 			case SWT.FocusIn:
 				rightClick = false;
-				if(VTracker.getLastTraverse() == SWT.TRAVERSE_TAB_PREVIOUS) {
-					fieldLast();
+				if(internalFocusShift) {
+					if(activeField < 0) {
+						fieldFirst();
+						updateText();
+					}
 				} else {
-					fieldFirst();
+					if(VTracker.getLastTraverse() == SWT.TRAVERSE_TAB_PREVIOUS) {
+						fieldLast();
+					} else {
+						fieldFirst();
+					}
+					updateText();
 				}
-				updateText();
+				internalFocusShift = false;
 				break;
 			case SWT.FocusOut:
 				if(!rightClick) {
 					if(!VTracker.isFocusControl(CDateTime.this)) {
 						setActiveField(FIELD_NONE);
+						updateText();
 					}
-					updateText();
 				}
 				break;
 			case SWT.KeyDown:
@@ -1044,20 +1055,20 @@ public class CDateTime extends BaseCombo {
 					spinner.getControl().setSelection(25);
 					spinner.getControl().addFocusListener(new FocusAdapter() {
 						public void focusGained(FocusEvent e) {
-							if(win32) {
-								int af = activeField;
-								text.getControl().setFocus();
-								setActiveField(af);
-							} else {
-								setFocus();
+							internalFocusShift = true;
+							setFocus();
+						}
+					});
+					spinner.getControl().addMouseListener(new MouseAdapter() {
+						public void mouseDown(MouseEvent e) {
+							if(e.button == 2) {
+								fieldNext();
 							}
 						}
 					});
 					spinner.getControl().addSelectionListener(new SelectionAdapter() {
 						public void widgetSelected(SelectionEvent e) {
-							if(VTracker.getMouseDownButton() == 2) {
-								fieldNext();
-							} else {
+							if(VTracker.getMouseDownButton() != 2) {
 								if(spinner.getControl().getSelection() > 25) {
 									fieldAdjust(1);
 								} else {
@@ -1186,7 +1197,7 @@ public class CDateTime extends BaseCombo {
 	
 	@Override
 	protected boolean setContentFocus() {
-		if(picker != null) {
+		if(picker != null && !picker.isDisposed()) {
 			return picker.getWidget().forceFocus();
 		}
 		return false;
