@@ -243,7 +243,9 @@ public class CDateTime extends BaseCombo {
 				break;
 			case SWT.FocusOut:
 				if(!rightClick) {
-					setActiveField(FIELD_NONE); // this messes up the spinner...
+					if(!VTracker.isFocusControl(CDateTime.this)) {
+						setActiveField(FIELD_NONE);
+					}
 					updateText();
 				}
 				break;
