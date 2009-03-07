@@ -250,14 +250,11 @@ public class CDateTime extends BaseCombo {
 					}
 					updateText();
 				}
-				internalFocusShift = false;
 				break;
 			case SWT.FocusOut:
-				if(!rightClick) {
-					if(!VTracker.isFocusControl(CDateTime.this)) {
-						setActiveField(FIELD_NONE);
-						updateText();
-					}
+				if(!rightClick && !internalFocusShift) {
+					setActiveField(FIELD_NONE);
+					updateText();
 				}
 				break;
 			case SWT.KeyDown:
@@ -1057,6 +1054,7 @@ public class CDateTime extends BaseCombo {
 						public void focusGained(FocusEvent e) {
 							internalFocusShift = true;
 							setFocus();
+							internalFocusShift = false;
 						}
 					});
 					spinner.getControl().addMouseListener(new MouseAdapter() {
