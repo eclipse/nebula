@@ -44,7 +44,7 @@ import org.eclipse.swt.widgets.TypedListener;
 
 /**
  * <p>
- * SWT Widget that displays a picture gallery<br/>
+ * SWT Widget that displays an image gallery<br/>
  * see http://www.eclipse.org/nebula/widgets/gallery/gallery.php<br/>
  * This widget requires jdk-1.4+
  * </p>
@@ -101,6 +101,7 @@ import org.eclipse.swt.widgets.TypedListener;
  * @contributor Peter Centgraf (bugs 212071, 212073)
  * @contributor Robert Handschmann (bug 215817)
  */
+
 public class Gallery extends Canvas {
 
 	private static final String BUG_PLATFORM_LINUX_GTK_174932 = "gtk"; //$NON-NLS-1$
@@ -181,6 +182,9 @@ public class Gallery extends Canvas {
 	protected int lastContentWidth = 0;
 	protected int higherQualityDelay = 500;
 
+	/**
+	 * Keep track of processing the current mouse event.
+	 */
 	private boolean mouseClickHandled = false;
 
 	AbstractGalleryItemRenderer itemRenderer;
