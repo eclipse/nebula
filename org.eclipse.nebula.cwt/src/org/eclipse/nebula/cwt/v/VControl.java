@@ -87,7 +87,7 @@ public abstract class VControl {
 	public static final int STATE_ENABLED = 1 << 4;
 	public static final int STATE_MOUSE_DOWN = 1 << 5;
 
-	protected static boolean containsControl(Control control, Composite composite) {
+	protected final static boolean containsControl(Control control, Composite composite) {
 		if(composite != null && !composite.isDisposed()) {
 			Control[] children = composite.getChildren();
 			for(Control child : children) {
@@ -102,6 +102,7 @@ public abstract class VControl {
 		}
 		return false;
 	}
+	
 	Composite composite;
 	VPanel parent;
 	private int style;
