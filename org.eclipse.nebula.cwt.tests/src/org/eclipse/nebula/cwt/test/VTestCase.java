@@ -481,6 +481,44 @@ public class VTestCase extends TestCase {
 		pause(delay);
 	}
 
+	public void moveX(final int x) {
+		display.syncExec(new Runnable() {
+			public void run() {
+				Point location = getDisplay().getCursorLocation();
+				
+				Event event = new Event();
+				event.type = SWT.MouseMove;
+				event.stateMask = stateMask;
+				event.x = location.x + x;
+				event.y = location.y;
+				display.post(event);
+
+				event.x += 1;
+				display.post(event);
+			}
+		});
+		pause(delay);
+	}
+
+	public void moveY(final int y) {
+		display.syncExec(new Runnable() {
+			public void run() {
+				Point location = getDisplay().getCursorLocation();
+
+				Event event = new Event();
+				event.type = SWT.MouseMove;
+				event.stateMask = stateMask;
+				event.x = location.x;
+				event.y = location.y + y;
+				display.post(event);
+
+				event.x += 1;
+				display.post(event);
+			}
+		});
+		pause(delay);
+	}
+
 	public void moveTo(final VControl control) {
 		syncExec(new Runnable() {
 			public void run() {
@@ -492,6 +530,72 @@ public class VTestCase extends TestCase {
 				event.stateMask = stateMask;
 				event.x = location.x + (size.x / 2) - 1;
 				event.y = location.y + (size.y / 2);
+				display.post(event);
+				processEvents();
+				event.x += 1;
+				display.post(event);
+			}
+		});
+		processEvents();
+		pause(delay);
+	}
+
+	public void moveToEdge(final Control control, final int edge) {
+		syncExec(new Runnable() {
+			public void run() {
+				Point location = control.toDisplay(control.getLocation());
+				Point size = control.getSize();
+
+				Event event = new Event();
+				event.type = SWT.MouseMove;
+				event.stateMask = stateMask;
+				if((edge & SWT.LEFT) != 0) {
+					event.x = location.x;
+				} else if((edge & SWT.RIGHT) != 0) {
+					event.x = location.x + size.x - 1;
+				} else {
+					event.x = location.x + (size.x / 2) - 1;
+				}
+				if((edge & SWT.TOP) != 0) {
+					event.y = location.y;
+				} else if((edge & SWT.BOTTOM) != 0) {
+					event.y = location.y + size.y - 1;
+				} else {
+					event.y = location.y + (size.y / 2) - 1;
+				}
+				display.post(event);
+				processEvents();
+				event.x += 1;
+				display.post(event);
+			}
+		});
+		processEvents();
+		pause(delay);
+	}
+
+	public void moveToEdge(final VControl control, final int edge) {
+		syncExec(new Runnable() {
+			public void run() {
+				Point location = control.toDisplay(control.getLocation());
+				Point size = control.getSize();
+
+				Event event = new Event();
+				event.type = SWT.MouseMove;
+				event.stateMask = stateMask;
+				if((edge & SWT.LEFT) != 0) {
+					event.x = location.x;
+				} else if((edge & SWT.RIGHT) != 0) {
+					event.x = location.x + size.x - 1;
+				} else {
+					event.x = location.x + (size.x / 2) - 1;
+				}
+				if((edge & SWT.TOP) != 0) {
+					event.y = location.y;
+				} else if((edge & SWT.BOTTOM) != 0) {
+					event.y = location.y + size.y - 1;
+				} else {
+					event.y = location.y + (size.y / 2) - 1;
+				}
 				display.post(event);
 				processEvents();
 				event.x += 1;
