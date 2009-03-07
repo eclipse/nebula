@@ -72,7 +72,12 @@ public class CdtTester {
 	}
 	
 	public boolean setFocus() {
-		return cdt.setFocus();
+		display.syncExec(new Runnable() {
+			public void run() {
+				tmpObj = cdt.setFocus();
+			}
+		});
+		return (Boolean) tmpObj;
 	}
 	
 	public VNative<Text> getTextWidget() {
