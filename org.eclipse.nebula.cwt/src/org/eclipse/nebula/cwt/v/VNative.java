@@ -37,7 +37,7 @@ public class VNative<T extends Control> extends VControl {
 		}
 	}
 	
-	private T control;
+	T control;
 	private DisposeListener disposeListener;
 	
 	
@@ -116,8 +116,12 @@ public class VNative<T extends Control> extends VControl {
 	}
 
 	private void setControl(T control) {
+		if(this.control != null) {
+			throw new UnsupportedOperationException("Can only set a control once"); //$NON-NLS-1$
+		}
 		this.control = control;
 		control.addDisposeListener(disposeListener);
+		VTracker.addNative(this);
 	}
 
 	@Override
@@ -157,6 +161,10 @@ public class VNative<T extends Control> extends VControl {
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		control.setVisible(visible);
+	}
+
+	public String toString() {
+		return getClass().getName() + "@" + Integer.toHexString(hashCode()) + " {" + control.toString() + "}"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 }

@@ -24,13 +24,26 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Widget;
 
 public class VTracker implements DisposeListener {
 
 	private static VTracker tracker;
 
+	static void addNative(VNative<?> n) {
+		VTracker tracker = instance();
+		if(tracker.natives == null) {
+			tracker.natives = new HashMap<Widget, VNative>();
+		}
+		tracker.natives.put(n.control, n);
+		n.control.addDisposeListener(tracker);
+	}
+	
 	static void addTopLevelPanel(VPanel panel) {
-		tracker = instance();
+		VTracker tracker = instance();
+		if(tracker.panels == null) {
+			tracker.panels = new HashMap<Composite, VPanel>();
+		}
 		tracker.panels.put(panel.composite, panel);
 		if(!tracker.listening) {
 			tracker.listening = true;
@@ -208,7 +221,8 @@ public class VTracker implements DisposeListener {
 	}
 
 	private Map<Composite, VPanel> panels;
-
+	private Map<Widget, VNative> natives;
+	
 	private VControl activeControl = null;
 	
 	private Listener filter = new Listener() {
@@ -254,8 +268,19 @@ public class VTracker implements DisposeListener {
 					if(event.widget instanceof VWidget) {
 						setFocusControl(((VWidget) event.widget).getPanel());
 					}
-				} else if(!focusControl.isSameWidgetAs(event.widget)) {
-					setFocusControl(null);
+				} else {
+					if(focusControl.isSameWidgetAs(event.widget)) {
+						if(event.widget instanceof VWidget) {
+							setFocusControl(((VWidget) event.widget).getPanel());
+						} else {
+							VControl control = natives.get(event.widget);
+							if(control != null) {
+								setFocusControl(control);
+							}
+						}
+					} else {
+						setFocusControl(null);
+					}
 				}
 				break;
 			case SWT.MouseDown:
@@ -298,7 +323,7 @@ public class VTracker implements DisposeListener {
 	private int lastTraverse = -1;
 	
 	private VTracker() {
-		panels = new HashMap<Composite, VPanel>();
+		// singleton
 	}
 
 	void activate(VControl vcontrol) {
@@ -352,19 +377,28 @@ public class VTracker implements DisposeListener {
 	}
 	
 	public void widgetDisposed(DisposeEvent e) {
-		instance().panels.remove(e.widget);
-		if(instance().panels.isEmpty()) {
-			Display.getDefault().removeFilter(SWT.FocusIn, tracker.filter);
-			Display.getDefault().removeFilter(SWT.MouseMove, tracker.filter);
-			Display.getDefault().removeFilter(SWT.MouseDown, tracker.filter);
-			Display.getDefault().removeFilter(SWT.MouseUp, tracker.filter);
-			Display.getDefault().removeFilter(SWT.Traverse, tracker.filter);
-			tracker.listening = false;
-			if(activeControl != null) {
-				Control control = activeControl.getControl();
-				if(control != null && !control.isDisposed()) {
-					control.dispose();
+		VTracker tracker = instance();
+		if(tracker.natives != null && tracker.natives.containsKey(e.widget)) {
+			tracker.natives.remove(e.widget);
+			if(tracker.natives.isEmpty()) {
+				tracker.natives = null;
+			}
+		} else if(tracker.panels != null && tracker.panels.containsKey(e.widget)) {
+			tracker.panels.remove(e.widget);
+			if(tracker.panels.isEmpty()) {
+				Display.getDefault().removeFilter(SWT.FocusIn, tracker.filter);
+				Display.getDefault().removeFilter(SWT.MouseMove, tracker.filter);
+				Display.getDefault().removeFilter(SWT.MouseDown, tracker.filter);
+				Display.getDefault().removeFilter(SWT.MouseUp, tracker.filter);
+				Display.getDefault().removeFilter(SWT.Traverse, tracker.filter);
+				tracker.listening = false;
+				if(activeControl != null) {
+					Control control = activeControl.getControl();
+					if(control != null && !control.isDisposed()) {
+						control.dispose();
+					}
 				}
+				tracker.panels = null;
 			}
 		}
 	}
