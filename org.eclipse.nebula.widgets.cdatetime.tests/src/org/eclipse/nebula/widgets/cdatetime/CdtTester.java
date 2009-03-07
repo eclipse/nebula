@@ -22,6 +22,7 @@ import org.eclipse.nebula.cwt.v.VPanel;
 import org.eclipse.nebula.widgets.cdatetime.CDT.PickerPart;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
 public class CdtTester {
@@ -53,6 +54,10 @@ public class CdtTester {
 
 	private Object tmpObj;
 
+	public VNative<Spinner> getSpinner() {
+		return cdt.spinner;
+	}
+	
 	public String getText() {
 		display.syncExec(new Runnable() {
 			public void run() {
