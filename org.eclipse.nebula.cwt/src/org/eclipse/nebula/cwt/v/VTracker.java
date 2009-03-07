@@ -59,6 +59,11 @@ public class VTracker implements DisposeListener {
 		return instance().mouseDown;
 	}
 	
+	public static boolean isFocusControl(Control control) {
+		VControl focusControl = instance().focusControl;
+		return (focusControl != null) && focusControl.isSameWidgetAs(control);
+	}
+
 	public static boolean isMouseDown() {
 		return instance().mouseDown != null;
 	}
