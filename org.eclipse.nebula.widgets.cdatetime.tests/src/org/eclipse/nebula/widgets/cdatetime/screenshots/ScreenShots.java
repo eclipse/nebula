@@ -9,12 +9,14 @@
  *    Jeremy Dowdall <jeremyd@aspencloud.com> - initial API and implementation
  *****************************************************************************/
 
-package org.eclipse.nebula.widgets.cdatetime;
+package org.eclipse.nebula.widgets.cdatetime.screenshots;
 
 import java.io.File;
 import java.util.Date;
 
 import org.eclipse.nebula.cwt.test.VTestCase;
+import org.eclipse.nebula.widgets.cdatetime.CDT;
+import org.eclipse.nebula.widgets.cdatetime.CDateTime;
 import org.eclipse.swt.layout.GridLayout;
 
 public class ScreenShots extends VTestCase {
