@@ -204,6 +204,7 @@ public class CDateTime extends BaseCombo {
 		}
 		return rstyle;
 	}
+	
 	VPanel picker;
 	
 	VNative<Spinner> spinner;
@@ -855,6 +856,10 @@ public class CDateTime extends BaseCombo {
 		return hasSelection() ? selection[0] : null;
 	}
 
+	public int getStyle() {
+		return style;
+	}
+	
 	public String getText() {
 		return checkText() ? text.getText() : null;
 	}
