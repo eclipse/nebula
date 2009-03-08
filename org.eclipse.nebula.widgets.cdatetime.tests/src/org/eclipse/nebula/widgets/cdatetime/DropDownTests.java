@@ -7,6 +7,11 @@ public class DropDownTests extends VTestCase {
 
 	private CdtTester cdt;
 	private boolean running;
+	private Runnable callback = new Runnable() {
+		public void run() {
+			running = false;
+		}
+	};
 	
 	public void setUp() throws Exception {
 		cdt = new CdtTester(getShell(), CDT.BORDER | CDT.DROP_DOWN);
@@ -50,28 +55,20 @@ public class DropDownTests extends VTestCase {
 	public void testOpenAndCloseByCodeWithCallbacks() throws Exception {
 		assertFalse(cdt.isOpen());
 
-		Runnable callback = new Runnable() {
-			public void run() {
-				running = false;
-			}
-		};
-
 		running = true;
 		cdt.setOpen(true, callback);
-
-		while(running) {
-			try {
-				Thread.sleep(100);
-			} catch(InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+		waitForCallback();
 
 		assertTrue(cdt.isOpen());
 
 		running = true;
 		cdt.setOpen(false, callback);
-		
+		waitForCallback();
+
+		assertFalse(cdt.isOpen());
+	}
+
+	private void waitForCallback() {
 		while(running) {
 			try {
 				Thread.sleep(100);
@@ -79,8 +76,6 @@ public class DropDownTests extends VTestCase {
 				e.printStackTrace();
 			}
 		}
-
-		assertFalse(cdt.isOpen());
 	}
 
 }

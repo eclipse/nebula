@@ -58,6 +58,10 @@ public class CdtTester {
 		return cdt.spinner;
 	}
 	
+	public int getStyle() {
+		return cdt.getStyle();
+	}
+	
 	public String getText() {
 		display.syncExec(new Runnable() {
 			public void run() {
@@ -130,6 +134,15 @@ public class CdtTester {
 		return (Date) tmpObj;
 	}
 
+	public Date[] getSelectedDates() {
+		display.syncExec(new Runnable() {
+			public void run() {
+				tmpObj = cdt.getSelectedDates();
+			}
+		});
+		return (Date[]) tmpObj;
+	}
+	
 	public Date getSelection() {
 		display.syncExec(new Runnable() {
 			public void run() {
@@ -141,6 +154,10 @@ public class CdtTester {
 
 	public CDateTime getCDateTime() {
 		return cdt;
+	}
+	
+	public String getPattern() {
+		return cdt.getPattern();
 	}
 	
 	public void setLocale(final Locale locale) {
