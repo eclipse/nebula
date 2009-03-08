@@ -1201,7 +1201,10 @@ public class CDateTime extends BaseCombo {
 	@Override
 	protected boolean setContentFocus() {
 		if(picker != null && !picker.isDisposed()) {
-			return picker.getWidget().forceFocus();
+			internalFocusShift = true;
+			boolean result = picker.getWidget().forceFocus();
+			internalFocusShift = false;
+			return result;
 		}
 		return false;
 	}
@@ -1303,6 +1306,9 @@ public class CDateTime extends BaseCombo {
 			cancelDate = null;
 		}
 		super.setOpen(open, callback);
+		if(hasSelection()) {
+			setTime(getSelection());
+		}
 	}
 
 	public void setPainter(CDateTimePainter painter) {
