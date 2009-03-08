@@ -357,6 +357,7 @@ public class VTracker implements DisposeListener {
 			VControl old = focusControl;
 			if(old != null && !old.isDisposed()) {
 				old.setFocus(false);
+				focusControl = null;
 			}
 			if(control != null) {
 				if(!control.isDisposed() && control.setFocus(true)) {
