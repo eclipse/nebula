@@ -56,7 +56,7 @@ public class CDatePanel extends Composite implements VWidget {
 			CDateTime cdt = (CDateTime) e.widget;
 			for(VNative<CDateTime> picker : pickers) {
 				if(picker.getControl() != e.widget) {
-					picker.getControl().setSelectedDates(cdt.getSelectedDates());
+					picker.getControl().setSelection(cdt.getSelection());
 				}
 			}
 		}
@@ -210,7 +210,7 @@ public class CDatePanel extends Composite implements VWidget {
 		Calendar tmpcal = Calendar.getInstance(timezone, locale);
 		tmpcal.setTime(calendar.getTime());
 		for(VNative<CDateTime> picker : pickers) {
-			picker.getControl().setTime(tmpcal.getTime());
+			picker.getControl().show(tmpcal.getTime());
 			tmpcal.add(Calendar.MONTH, 1);
 		}
 	}

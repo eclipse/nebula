@@ -17,12 +17,9 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.text.DateFormat.Field;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -60,11 +57,13 @@ import org.eclipse.swt.widgets.TypedListener;
 
 
 /**
- * The CDateTime provides both textual and graphical means for setting
- * the fields of a <code>java.util.Calendar</code> class.  As with other combo
- * type widgets, the base of this component is a text box which, if the
- * DROP_DOWN style is set, is complimented by a button that will open and close
- * a drop down graphical selector.
+ * The CDateTime provides both textual and graphical means selecting a date.<br/>
+ * As with other combo type widgets, there are three basic styles:
+ * <ul>
+ *   <li>Text only (default)</li>
+ *   <li>Graphical only (CDT.SIMPLE)</li>
+ *   <li>Combo - a text selector with a drop-down graphical selector (CDT.DROP_DOWN)</li>
+ * </ul>
  * <p>
  * Styles are set using the constants provided in the CDT class.
  * </p>
@@ -495,7 +494,7 @@ public class CDateTime extends BaseCombo {
 		b.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				setOpen(false);
-				deselectAll();
+				setSelection(null);
 				fireSelectionChanged();
 			}
 		});
@@ -504,21 +503,21 @@ public class CDateTime extends BaseCombo {
 		sep.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 	}
 
-	void deselect(Date date) {
-		if(date != null && isSelected(date)) {
-			Date[] tmp = new Date[selection.length - 1];
-			for(int i = 0, j = 0; i < selection.length; i++) {
-				if(!selection[i].equals(date)) {
-					tmp[j++] = selection[i];
-				}
-			}
-			setSelectedDates(tmp);
-		}
-	}
-	
-	public void deselectAll() {
-		setSelectedDates((Date[]) null);
-	}
+//	void deselect(Date date) {
+//		if(date != null && isSelected(date)) {
+//			Date[] tmp = new Date[selection.length - 1];
+//			for(int i = 0, j = 0; i < selection.length; i++) {
+//				if(!selection[i].equals(date)) {
+//					tmp[j++] = selection[i];
+//				}
+//			}
+//			setSelection(tmp);
+//		}
+//	}
+//	
+//	void deselectAll() {
+//		setSelectedDates((Date[]) null);
+//	}
 	
 	private void disposePicker() {
 		if(content != null) {
@@ -732,7 +731,7 @@ public class CDateTime extends BaseCombo {
 			setOpen(false);
 		}
 		Event event = new Event();
-		event.data = getSelectedDates();
+		event.data = getSelection();
 		notifyListeners(SWT.Selection, event);
 		if(defaultSelection) {
 			notifyListeners(SWT.DefaultSelection, event);
@@ -787,16 +786,48 @@ public class CDateTime extends BaseCombo {
 		return cf;
 	}
 
-	public Calendar getCalendarInstance() {
-		return getCalendarInstance(calendar.getTime());
+	Calendar getCalendarInstance() {
+		return getCalendarInstance(calendar.getTimeInMillis());
     }
 
+	/**
+	 * <p><b>WARNING: Experimental API - this method may be removed in future versions</b></p>
+	 * Get a new instance of Calendar that is initialized with
+	 * the timezone and locale of this CDateTime, and set to the 
+	 * given date.
+	 * @param date the date that the Calendar will be set to, or null for the current system time
+	 * @return a new instance of Calendar
+	 */
 	public Calendar getCalendarInstance(Date date) {
+		if(date == null) {
+			return getCalendarInstance(System.currentTimeMillis());
+		} else {
+			return getCalendarInstance(date.getTime());
+		}
+    }
+
+	/**
+	 * <p><b>WARNING: Experimental API - this method may be removed in future versions</b></p>
+	 * Get a new instance of Calendar that is initialized with
+	 * the timezone and locale of this CDateTime, and set to the 
+	 * given date.
+	 * @param date the date, in millis, that the Calendar will be set to
+	 * @return a new instance of Calendar
+	 */
+	public Calendar getCalendarInstance(long date) {
         Calendar cal = Calendar.getInstance(timezone, locale);
-        cal.setTime(date);
+        cal.setTimeInMillis(date);
     	return cal;
     }
 
+	Date getCalendarTime() {
+		return calendar.getTime();
+	}
+
+	long getCalendarTimeInMillis() {
+		return calendar.getTimeInMillis();
+	}
+	
 	public boolean getEditable() {
 		return !panel.hasStyle(SWT.READ_ONLY);
 	}
@@ -848,10 +879,11 @@ public class CDateTime extends BaseCombo {
 		return pattern;
 	}
 
-	public Date[] getSelectedDates() {
-		return selection.clone();
-	}
-	
+	/**
+	 * Get the current selection of this CDateTime widget, or null
+	 * if there is no selection.
+	 * @return the current selection
+	 */
 	public Date getSelection() {
 		return hasSelection() ? selection[0] : null;
 	}
@@ -866,22 +898,6 @@ public class CDateTime extends BaseCombo {
 
 	VNative<Text> getTextWidget() {
 		return text;
-	}
-	
-	/**
-	 * Get the <code>java.util.Date</code> that is currently active in this
-	 * CDateTime widget.<br>
-	 * Note that if a field is being edited, and has not yet been committed,
-	 * then this value may not represent what is displayed in the text box.
-	 * @return the date
-	 * @see #setSelection(Date)
-	 */
-	public Date getTime() {
-		return calendar.getTime();
-	}
-
-	public long getTimeInMillis() {
-		return calendar.getTimeInMillis();
 	}
 	
 	/**
@@ -1149,32 +1165,32 @@ public class CDateTime extends BaseCombo {
 		text.removeListener(SWT.Traverse, textListener);
 	}
 	
-	void select(Date date) {
-		if(date != null) {
-			Date[] tmp = new Date[selection.length + 1];
-			System.arraycopy(selection, 0, tmp, 1, selection.length);
-			tmp[0] = date;
-			setSelectedDates(tmp);
-		}
-	}
-	
-	void select(Date date1, Date date2, int field, int increment) {
-		if(date1 != null && date2 != null) {
-			Date start = date1.before(date2) ? date1 : date2;
-			Date end   = date1.before(date2) ? date2 : date1;
-			List<Date> tmp = new ArrayList<Date>();
-			Calendar cal = getCalendarInstance(start);
-			while(cal.getTime().before(end)) {
-				tmp.add(cal.getTime());
-				cal.add(field, increment);
-			}
-			tmp.add(cal.getTime());
-			if(start == date2) {
-				Collections.reverse(tmp);
-			}
-			setSelectedDates(tmp.toArray(new Date[tmp.size()]));
-		}
-	}
+//	void select(Date date) {
+//		if(date != null) {
+//			Date[] tmp = new Date[selection.length + 1];
+//			System.arraycopy(selection, 0, tmp, 1, selection.length);
+//			tmp[0] = date;
+//			setSelectedDates(tmp);
+//		}
+//	}
+//	
+//	void select(Date date1, Date date2, int field, int increment) {
+//		if(date1 != null && date2 != null) {
+//			Date start = date1.before(date2) ? date1 : date2;
+//			Date end   = date1.before(date2) ? date2 : date1;
+//			List<Date> tmp = new ArrayList<Date>();
+//			Calendar cal = getCalendarInstance(start);
+//			while(cal.getTime().before(end)) {
+//				tmp.add(cal.getTime());
+//				cal.add(field, increment);
+//			}
+//			tmp.add(cal.getTime());
+//			if(start == date2) {
+//				Collections.reverse(tmp);
+//			}
+//			setSelectedDates(tmp.toArray(new Date[tmp.size()]));
+//		}
+//	}
 	
 	/**
 	 * Sets the active field, which may or may not be a real field (it may also
@@ -1190,6 +1206,13 @@ public class CDateTime extends BaseCombo {
 		}
 	}
 	
+	/**
+	 * <p><b>WARNING: Experimental API - this method may be removed in future versions</b></p>
+	 * Sets the builder that this CDateTime widget will use to
+	 * build its graphical selector to the given builder, or to a default
+	 * builder if the given builder is null.
+	 * @param builder the builder to use, or null to use a default builder
+	 */
 	public void setBuilder(CDateTimeBuilder builder) {
 		this.builder = builder;
 		if(picker != null) {
@@ -1307,10 +1330,17 @@ public class CDateTime extends BaseCombo {
 		}
 		super.setOpen(open, callback);
 		if(hasSelection()) {
-			setTime(getSelection());
+			show(getSelection());
 		}
 	}
 
+	/**
+	 * <p><b>WARNING: Experimental API - this method may be removed in future versions</b></p>
+	 * Sets the painter that this CDateTime widget will use to
+	 * paint its graphical selector to the given painter, or to a default
+	 * painter if the given painter is null.
+	 * @param painter the painter to use, or null to use a default painter
+	 */
 	public void setPainter(CDateTimePainter painter) {
 		if(painter != null) {
 			painter.setCDateTime(this);
@@ -1395,11 +1425,7 @@ public class CDateTime extends BaseCombo {
 		}
 	}
 	
-	public void setRange(Date from, Date to) {
-		// TODO: implement setRange
-	}
-	
-	public void setScrollable(boolean scrollable) {
+	void setScrollable(boolean scrollable) {
 		this.scrollable = scrollable;
 		if(isSimple() && !scrollable) {
 			if(picker != null && picker instanceof DatePicker) {
@@ -1408,56 +1434,51 @@ public class CDateTime extends BaseCombo {
 		}
 	}
 
-	public void setSelectedDates(Date[] selectedDates) {
-		if(selectedDates == null) {
+	/**
+	 * Set the selection for this CDateTime to that of the provided
+	 * <code>Date</code> object.<br>
+	 * @param selection the new selection, or null to clear the selection
+	 */
+	public void setSelection(Date selection) {
+		if(selection == null) {
 			this.selection = new Date[0];
 		} else {
-			this.selection = selectedDates.clone();
+			this.selection = new Date[] { selection };
 		}
 		if(singleSelection && this.selection.length > 0) {
-			setTime(selectedDates[0]);
+			show(selection);
 		} else {
 			updateText();
 			updatePicker();
 		}
 	}
-	
-	/**
-	 * Set the selection for this CDateTime to that of the provided
-	 * <code>Date</code> object.<br>
-	 * This method will update the text box and, if the <code>DROP_DOWN</code>
-	 * style is set, the selection of the associated drop down CDateTime.
-	 * @param selection the <code>Date</code> object to use for the new selection
-	 * @see #getSelectedDates()
-	 */
-	public void setSelection(Date selection) {
-		if(selection == null) {
-			setSelectedDates((Date[]) null);
-		} else {
-			setSelectedDates(new Date[] { selection });
-		}
-	}
 
-	public void setSelectionMode(int selectionMode) {
-		// TODO implement setSelectionMode
-	}
-	
-	public void setTime(Date date) {
-		if(date == null) {
-			calendar.setTime(new Date());
-		} else {
-			calendar.setTime(date);
-		}
-		updateText();
-		updatePicker();
-	}
-	
+	/**
+	 * Sets the timezone to the timezone specified by the given zoneID,
+	 * or to the system default if the given zoneID is null.
+	 * If the give zoneID cannot be understood, then the timezone will be
+	 * set to GMT.
+	 * @param zoneID the id of the timezone to use, or null to use the system default
+	 * @see #setTimeZone(TimeZone)
+	 */
 	public void setTimeZone(String zoneID) {
-        setTimeZone(TimeZone.getTimeZone(zoneID));
+		if(zoneID == null) {
+			setTimeZone((TimeZone) null);
+		} else {
+			setTimeZone(TimeZone.getTimeZone(zoneID));
+		}
     }
 
+	/**
+	 * Sets the timezone to the given timezone, or to the
+	 * system's default timezone if the given timezone is null.
+	 * @param zone the timezone to use, or null to use the system default
+	 * @see #setTimeZone(String)
+	 */
 	public void setTimeZone(TimeZone zone) {
-		if(zone == null) timezone = TimeZone.getDefault();
+		if(zone == null) {
+			timezone = TimeZone.getDefault();
+		}
 		if(!this.timezone.equals(zone)) {
 			this.timezone = zone;
 			calendar.setTimeZone(this.timezone);
@@ -1466,9 +1487,36 @@ public class CDateTime extends BaseCombo {
 		}
 	}
 	
+	/**
+	 * Shows the given date if it can be shown by the selector.
+	 * In other words, for graphical selectors such as a calendar, the visible
+	 * range of time is moved so that the given date is visible.
+	 * @param date the date to show
+	 */
+	public void show(Date date) {
+		if(date == null) {
+			calendar.setTime(new Date());
+		} else {
+			calendar.setTime(date);
+		}
+		updateText();
+		updatePicker();
+	}
+
+	/**
+	 * Show the selection if it can be shown by the selector.
+	 * Has no affect if there is no selection.
+	 * @see #show(Date)
+	 */
+	public void showSelection() {
+		if(selection.length > 0) {
+			show(selection[0]);
+		}
+	}
+	
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + " {" + getTime() + "}"; //$NON-NLS-1$  //$NON-NLS-2$
+		return getClass().getSimpleName() + " {" + getCalendarTime() + "}"; //$NON-NLS-1$  //$NON-NLS-2$
 	}
 	
 	/**

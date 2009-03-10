@@ -313,7 +313,7 @@ class AnalogTimePicker extends VPanel {
 	}
 
 	private void handleMouseWheel(int count) {
-		long time = cdt.getTimeInMillis();
+		long time = cdt.getCalendarTimeInMillis();
 		time += (count > 0) ? increment : -increment;
 		setSelection(snap(new Date(time), true));
 		cdt.fireSelectionChanged();
@@ -463,11 +463,11 @@ class AnalogTimePicker extends VPanel {
 
 	void updateView() {
 		if(digitalClock != null) {
-			digitalClock.setSelection(new Date(cdt.getTimeInMillis()));
+			digitalClock.setSelection(new Date(cdt.getCalendarTimeInMillis()));
 		}
 		if(timeAmPm != null) {
 			SimpleDateFormat sdf = new SimpleDateFormat("a"); //$NON-NLS-1$
-			timeAmPm.setText(sdf.format(cdt.getTime()));
+			timeAmPm.setText(sdf.format(cdt.getCalendarTime()));
 		}
 		dialPanel.redraw();
 		dialPanel.update();
