@@ -78,14 +78,14 @@ public static void main (String [] args) {
 								composite.dispose();
 								break;
 							case SWT.DefaultSelection:
-								item.setData("date", cdt.getSelectedDates());
+								item.setData("date", cdt.getSelection());
 								item.setText (cdt.getText ());
 								composite.dispose ();
 								break;
 							case SWT.Traverse:
 								switch (e.detail) {
 									case SWT.TRAVERSE_RETURN:
-										item.setData("date", cdt.getSelectedDates());
+										item.setData("date", cdt.getSelection());
 										item.setText (cdt.getText ());
 										//FALL THROUGH
 									case SWT.TRAVERSE_ESCAPE:
