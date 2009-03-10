@@ -501,14 +501,14 @@ public class FocusTests extends VTestCase {
 		assertFalse("Dates should not equal", date.equals(tester.getSelection()));
 
 		// test focusOut from tab key
-		date = tester.getTime();
+		date = tester.getCalendarTime();
 
 		click(tester.getCDateTime().getTextWidget());
 		keyPress('5');
 		keyPress('\t');
 		
 		assertEquals("05", tester.getText());
-		assertFalse("Dates should not equal", date.equals(tester.getTime()));
+		assertFalse("Dates should not equal", date.equals(tester.getCalendarTime()));
 	}
 
 }

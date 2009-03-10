@@ -125,24 +125,15 @@ public class CdtTester {
 		return (Calendar) tmpObj;
 	}
 
-	public Date getTime() {
+	public Date getCalendarTime() {
 		display.syncExec(new Runnable() {
 			public void run() {
-				tmpObj = cdt.getTime();
+				tmpObj = cdt.getCalendarTime();
 			}
 		});
 		return (Date) tmpObj;
 	}
 
-	public Date[] getSelectedDates() {
-		display.syncExec(new Runnable() {
-			public void run() {
-				tmpObj = cdt.getSelectedDates();
-			}
-		});
-		return (Date[]) tmpObj;
-	}
-	
 	public Date getSelection() {
 		display.syncExec(new Runnable() {
 			public void run() {

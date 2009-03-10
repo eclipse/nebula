@@ -12,8 +12,7 @@ public class SelectionTests extends VTestCase {
 
 	private void singleSelectionTest() {
 		assertNull(tester1.getSelection());
-		assertEquals(0, tester1.getSelectedDates().length);
-		assertNotNull(tester1.getTime());
+		assertNotNull(tester1.getCalendarTime());
 
 		Date date = new Date();
 		tester1.setSelection(date);
@@ -23,9 +22,7 @@ public class SelectionTests extends VTestCase {
 			assertEquals(sdf.format(date), tester1.getText());
 		}
 		assertEquals(date, tester1.getSelection());
-		assertEquals(1, tester1.getSelectedDates().length);
-		assertEquals(date, tester1.getSelectedDates()[0]);
-		assertEquals(date, tester1.getTime());
+		assertEquals(date, tester1.getCalendarTime());
 	}
 
 	private void dualSelectionTest() {
