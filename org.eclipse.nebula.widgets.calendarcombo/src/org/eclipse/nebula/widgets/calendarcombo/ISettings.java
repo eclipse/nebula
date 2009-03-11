@@ -208,9 +208,8 @@ public interface ISettings {
 	public String getNoneText();
 	
 	/**
-	 * TODO: Returns the text shown in the text area of the combo when there is no date selected.
-	 * <b>Not currently used</b>
-	 * 
+	 * Returns the text shown in the text area of the combo when there is no date selected. It's suggested you return a blank string "" (which is the default).
+	 *
 	 * @return String (never null!)
 	 */
 	public String getNoDateSetText();

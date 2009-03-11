@@ -389,7 +389,10 @@ public class CalendarCombo extends Composite {
 					return;
 
 				if (Display.getDefault().getCursorControl() != mCalendarComposite) {
-					kill(44);
+					if (Display.getDefault().getCursorControl() != mCalendarShell && Display.getDefault().getCursorControl() != (isFlat ? mFlatCombo.getTextControl() : mCombo)
+							&& Display.getDefault().getCursorControl() != (isFlat ? mFlatCombo.getArrowButton() : mCombo)) {						
+						kill(44);
+					}
 				}
 
 			}
@@ -497,12 +500,7 @@ public class CalendarCombo extends Composite {
 							// that way we KNOW where certain parts of the date
 							// are
 							if (mStartDate != null) {
-								if (isFlat) {
-									mFlatCombo.setText(DateHelper.getDate(mStartDate, mSettings.getDateFormat()));
-								}
-								else {
-									mCombo.setText(DateHelper.getDate(mStartDate, mSettings.getDateFormat()));
-								}
+								setComboText(DateHelper.getDate(mStartDate, mSettings.getDateFormat()));
 
 								String df = mSettings.getDateFormat();
 
@@ -601,18 +599,13 @@ public class CalendarCombo extends Composite {
 								// now we now what to increase/decrease, lets do
 								// it
 								int calType = DateHelper.getCalendarTypeForString(oneChar);
-								
+
 								if (calType != -1) {
 									mStartDate.add(calType, up ? 1 : -1);
 
 									String newDate = DateHelper.getDate(mStartDate, mSettings.getDateFormat());
 
-									if (isFlat) {
-										mFlatCombo.setText(newDate);
-									}
-									else {
-										mCombo.setText(newDate);
-									}
+									setComboText(newDate);
 
 									if (separatorChar != null) {
 										// we need to update the selection after
@@ -678,13 +671,14 @@ public class CalendarCombo extends Composite {
 				// click in the text area? ignore
 				if (!isFlat) {
 					if (isTextAreaClick(event)) {
-						if (isCalendarVisible())
+						if (isCalendarVisible()) {
 							kill(16);
+						}
 
 						return;
 					}
 				}
-
+								
 				// kill calendar if visible and do nothing else
 				if (isCalendarVisible()) {
 					kill(15);
@@ -698,25 +692,27 @@ public class CalendarCombo extends Composite {
 				mLastShowRequest = Calendar.getInstance(mSettings.getLocale()).getTimeInMillis();
 
 				long diff = mLastKillRequest - mLastShowRequest;
-				if (diff > -100 && diff < 0)
+				if (diff > -100 && diff < 0) {
 					return;
+				}
 
 				showCalendar();
 			}
 		});
 
 		mKillListener = new Listener() {
-			public void handleEvent(Event event) {
+			public void handleEvent(Event event) {				
 				if (event.keyCode == SWT.ESC) {
 					kill(77);
 					return;
 				}
-
+				
 				// ignore arrow down events for killing popup
 				if (event.keyCode == SWT.ARROW_DOWN || event.keyCode == SWT.ARROW_UP || event.keyCode == SWT.ARROW_LEFT || event.keyCode == SWT.ARROW_RIGHT
-						|| event.keyCode == SWT.CR || event.keyCode == SWT.LF)
+						|| event.keyCode == SWT.CR || event.keyCode == SWT.LF) {
 					return;
-
+				}
+				
 				kill(1);
 			}
 		};
@@ -729,7 +725,7 @@ public class CalendarCombo extends Composite {
 		}
 
 		int[] arrowEvents = {
-			SWT.Selection
+			//SWT.Selection
 		};
 		for (int i = 0; i < arrowEvents.length; i++) {
 			mComboControl.addListener(arrowEvents[i], mKillListener);
@@ -919,7 +915,7 @@ public class CalendarCombo extends Composite {
 
 		try {
 			mParsingDate = true;
-			
+
 			String comboText = (isFlat ? mFlatCombo.getText() : mCombo.getText());
 
 			if (comboText.length() == 0) {
@@ -929,7 +925,8 @@ public class CalendarCombo extends Composite {
 				return;
 			}
 
-			mStartDate = DateHelper.parse(comboText, mSettings.getLocale(), mSettings.getDateFormat(), mSettings.getAcceptedDateSeparatorChars(), mSettings.getAdditionalDateFormats());
+			mStartDate = DateHelper.parse(comboText, mSettings.getLocale(), mSettings.getDateFormat(), mSettings.getAcceptedDateSeparatorChars(), mSettings
+					.getAdditionalDateFormats());
 			updateDate();
 			notifyDateChanged();
 			mParsingDate = false;
@@ -1007,10 +1004,7 @@ public class CalendarCombo extends Composite {
 					if (mStartDate != null)
 						setDate(mStartDate);
 					else {
-						if (isFlat)
-							mFlatCombo.setText(mSettings.getNoDateSetText());
-						else
-							mCombo.setText(mSettings.getNoDateSetText());
+						setComboText(mSettings.getNoDateSetText());
 					}
 				}
 			}*/
@@ -1078,9 +1072,14 @@ public class CalendarCombo extends Composite {
 	 */
 	public synchronized void setDate(Date date) {
 		checkWidget();
-		Calendar cal = Calendar.getInstance(mSettings.getLocale());
-		cal.setTime(date);
-		setDate(cal);
+		if (date == null) {
+			clear();
+		}
+		else {
+			Calendar cal = Calendar.getInstance(mSettings.getLocale());
+			cal.setTime(date);
+			setDate(cal);
+		}
 	}
 
 	/**
@@ -1116,6 +1115,12 @@ public class CalendarCombo extends Composite {
 			return;
 
 		mAllowTextEntry = true;
+		setComboText(text);
+		mAllowTextEntry = false;
+	}
+
+	private void setComboText(String text) {
+
 		if (isFlat) {
 			// mFlatCombo.removeAll();
 			mFlatCombo.setText(text);
@@ -1126,7 +1131,6 @@ public class CalendarCombo extends Composite {
 			mCombo.add(text);
 			mCombo.select(0);
 		}
-		mAllowTextEntry = false;
 	}
 
 	private synchronized void kill(int debug) {
@@ -1182,10 +1186,13 @@ public class CalendarCombo extends Composite {
 	}
 
 	private boolean isCalendarVisible() {
-		if (mCalendarShell != null && !mCalendarShell.isDisposed())
-			return true;
-
-		return false;
+/*		try {
+			throw new Exception();
+		}
+		catch (Exception err) {
+			err.printStackTrace();
+		}
+*/		return (mCalendarShell != null && !mCalendarShell.isDisposed());
 	}
 
 	/**
@@ -1193,8 +1200,9 @@ public class CalendarCombo extends Composite {
 	 */
 	public void openCalendar() {
 		checkWidget();
-		if (isCalendarVisible())
+		if (isCalendarVisible()) {
 			return;
+		}
 
 		showCalendar();
 	}
@@ -1204,8 +1212,9 @@ public class CalendarCombo extends Composite {
 	 */
 	public void closeCalendar() {
 		checkWidget();
-		if (!isCalendarVisible())
+		if (!isCalendarVisible()) {
 			return;
+		}
 
 		kill(99);
 	}
@@ -1283,10 +1292,7 @@ public class CalendarCombo extends Composite {
 				// as we need to update the date object as well. This is
 				// basically only for non-read-only combos, but the fix is
 				// universally applicable.
-				if (isFlat)
-					mFlatCombo.setText(comboText);
-				else
-					mCombo.setText(comboText);
+				setComboText(comboText);
 				parseTextDate();
 				kill(11);
 				return;
@@ -1299,10 +1305,7 @@ public class CalendarCombo extends Composite {
 			// text entered by the user, so we actually have to set the text
 			// back onto the combo, despite the fact we pulled the data just a
 			// few lines ago.
-			if (isFlat)
-				mFlatCombo.setText(comboText);
-			else
-				mCombo.setText(comboText);
+			setComboText(comboText);
 
 			Display.getDefault().addFilter(SWT.KeyDown, mKillListener);
 			Display.getDefault().addFilter(SWT.MouseDown, mOobClickListener);
@@ -1378,10 +1381,7 @@ public class CalendarCombo extends Composite {
 							if (mStartDate != null)
 								setDate(mStartDate);
 							else {
-								if (isFlat)
-									mFlatCombo.setText(mSettings.getNoDateSetText());
-								else
-									mCombo.setText(mSettings.getNoDateSetText());
+								setComboText(mSettings.getNoDateSetText());
 							}
 						}
 					}
@@ -1391,10 +1391,7 @@ public class CalendarCombo extends Composite {
 						if (mStartDate != null)
 							setDate(mStartDate);
 						else {
-							if (isFlat)
-								mFlatCombo.setText(mSettings.getNoDateSetText());
-							else
-								mCombo.setText(mSettings.getNoDateSetText());
+							setComboText(mSettings.getNoDateSetText());
 						}
 					}
 				}
@@ -1549,9 +1546,32 @@ public class CalendarCombo extends Composite {
 	}
 
 	private void updateDate() {
+		if (mStartDate == null) {
+			clear();
+			return;
+		}
+
 		String toSet = DateHelper.getDate(mStartDate, DateHelper.dateFormatFix(mSettings.getDateFormat()));
 		setText(toSet);
 	}
+	
+	/**
+	 * Removes date and clears combo, same as setDate(null).
+	 */
+	public void clear() {
+		if (isFlat) {
+			mFlatCombo.removeAll();
+			mFlatCombo.setText(mSettings.getNoDateSetText());
+		}
+		else {
+			mCombo.removeAll();
+			mCombo.setText(mSettings.getNoDateSetText());
+		}
+		
+		mStartDate = null;
+		mEndDate = null;
+	}
+
 
 	/**
 	 * Puts focus on the combo box.
