@@ -388,10 +388,25 @@ public class CalendarCombo extends Composite {
 				if (!isCalendarVisible())
 					return;
 
-				if (Display.getDefault().getCursorControl() != mCalendarComposite) {
-					if (Display.getDefault().getCursorControl() != mCalendarShell && Display.getDefault().getCursorControl() != (isFlat ? mFlatCombo.getTextControl() : mCombo)
-							&& Display.getDefault().getCursorControl() != (isFlat ? mFlatCombo.getArrowButton() : mCombo)) {						
-						kill(44);
+				Control cc = Display.getDefault().getCursorControl();
+				
+				if (cc != mCalendarComposite) {
+					if (cc != mCalendarShell) {
+						boolean killIt = false;
+						if (isFlat) {
+							if (cc != mFlatCombo.getTextControl() && cc != mFlatCombo.getArrowButton()) {
+								killIt = true;
+							}							
+						}
+						else {
+							if (cc != mCombo) {
+								killIt = true;
+							}
+						}
+
+						if (killIt) {
+							kill(44);
+						}
 					}
 				}
 
