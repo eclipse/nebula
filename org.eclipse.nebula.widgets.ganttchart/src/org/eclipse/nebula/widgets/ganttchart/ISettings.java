@@ -923,5 +923,20 @@ public interface ISettings {
 	 */
 	public boolean zoomToMousePointerDateOnWheelZooming();
 	
+	/**
+	 * It's highly suggested you use the default implementation of this method. Basically, this method needs to return a zeroed-down calendar (hours, minutes etc) that
+	 * will be used as the D-day root calendar. As D-days aren't dates (except internally), this Calendar simply needs to be any "stable" date. By default it uses
+	 * January 1st, 2000, 0h 0m 0s 0ms.
+	 * 
+	 * @return Calendar
+	 */
 	public Calendar getDDayRootCalendar();
+	
+	/**
+	 * If this returns true, events are never rounded up to their nearest hour/minute when shown in the chart, but will always show down to the minute even in any mid-zoomed
+	 * and fully-zoomed out view (this does not do anything to the normal minute view). Default is false.
+	 * 
+	 * @return true to draw event location down to the hour and minute
+	 */
+	public boolean drawEventsDownToTheHourAndMinute();
 }

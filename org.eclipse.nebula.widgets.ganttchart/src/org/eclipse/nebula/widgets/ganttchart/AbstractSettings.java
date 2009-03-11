@@ -454,6 +454,10 @@ abstract class AbstractSettings implements ISettings {
 		return mDDayCalendar;
 	}
 
+	public boolean drawEventsDownToTheHourAndMinute() {
+		return false;
+	}
+
 
 	
 /*	public List getHeaderLevels() {

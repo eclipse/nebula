@@ -293,7 +293,7 @@ public class AdvancedTooltipDialog {
 			Font old = gc.getFont();
 			Font used = null;
 			String oldName = old.getFontData()[0].getName();
-			int oldSize = (int) old.getFontData()[0].height;
+			int oldSize = (int) old.getFontData()[0].getHeight();
 
 			int curX = x;
 			boolean bold = false;

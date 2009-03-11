@@ -374,24 +374,23 @@ public class GanttTester {
 				if (bFlagSingle.getSelection())
 					flags |= SWT.SINGLE;
 
-				ISettings toUse = null;
-				if (bLockHeader.getSelection())
-					toUse = new FixedHeaderSettings();
-				
 				class Foo extends AbstractSettings {
 
 					public boolean moveLinkedEventsWhenEventsAreMoved() {
 						return true;
 					}
 					
-					
-					
 				}
 
-				toUse = new Foo();
-				
-				if (bUseDDay.getSelection())
+				ISettings toUse = new Foo();
+
+				if (bLockHeader.getSelection()) {
+					toUse = new FixedHeaderSettings();
+				}
+								
+				if (bUseDDay.getSelection()) {
 					toUse = new DDaySettings();
+				}
 								
 				_ganttChart = new GanttChart(_vfChart, flags, toUse);
 				_ganttComposite = _ganttChart.getGanttComposite();
