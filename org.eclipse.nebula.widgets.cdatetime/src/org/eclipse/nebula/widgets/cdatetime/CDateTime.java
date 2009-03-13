@@ -420,6 +420,9 @@ public class CDateTime extends BaseCombo {
 				public void handleEvent(Event event) {
 					if(SWT.ESC == event.keyCode) {
 						event.doit = false;
+						if(selection.length > 0 && selection[0] != cancelDate) {
+							setSelection(cancelDate);
+						}
 						setOpen(false);
 					}
 				}
@@ -727,7 +730,7 @@ public class CDateTime extends BaseCombo {
 	}
 
 	void fireSelectionChanged(boolean defaultSelection) {
-		if(isOpen()) {
+		if(defaultSelection && isOpen()) {
 			setOpen(false);
 		}
 		Event event = new Event();

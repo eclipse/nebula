@@ -66,7 +66,8 @@ class DatePicker extends VPanel {
 	VButton dayButtons[];
 	VButton today;
 	VButton clear;
-	MenuItem daysMenuItem;
+	MenuItem todayMenuItem;
+	MenuItem showSelMenuItem;
 	MenuItem[] monthItems;
 	MenuItem[] yearItems;
 
@@ -247,10 +248,18 @@ class DatePicker extends VPanel {
 		});
 
 		Menu bodyMenu = dayPanel.createMenu();
-		daysMenuItem = new MenuItem(bodyMenu, SWT.NONE);
-		daysMenuItem.addSelectionListener(new SelectionAdapter() {
+		
+		todayMenuItem = new MenuItem(bodyMenu, SWT.NONE);
+		todayMenuItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				cdt.setSelection(new Date());
+			}
+		});
+
+		showSelMenuItem = new MenuItem(bodyMenu, SWT.NONE);
+		showSelMenuItem.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				cdt.showSelection();
 			}
 		});
 
@@ -261,9 +270,9 @@ class DatePicker extends VPanel {
 					if(event.stateMask == 0) {
 						if(event.keyCode == SWT.KEYPAD_CR || event.character == SWT.CR || event.character == ' ') {
 							setSelectionFromFocusButton(event);
-						} else  if((event.keyCode != SWT.ARROW_DOWN) && (event.keyCode != SWT.ARROW_UP)) {
-							// block the arrow keys because they are handled by the traverse listener
+						} else if(event.keyCode == SWT.HOME || event.keyCode == SWT.END || event.keyCode == SWT.PAGE_DOWN || event.keyCode == SWT.PAGE_UP) {
 							scrollCalendar(event.keyCode);
+							setSelectionFromFocusButton(event);
 						}
 					}
 					break;
@@ -280,7 +289,11 @@ class DatePicker extends VPanel {
 						VButton button = (VButton) event.data;
 						int stateMask = event.stateMask;
 						setSelectionFromButton(button, stateMask);
-						cdt.fireSelectionChanged();
+						if (cdt.field.length == 1 && cdt.getCalendarField(cdt.field[0]) == Calendar.DATE) {
+							cdt.fireSelectionChanged(true);
+						} else {
+							cdt.fireSelectionChanged();
+						}
 					}
 					break;
 				case SWT.Traverse:
@@ -288,6 +301,7 @@ class DatePicker extends VPanel {
 						setSelectionFromFocusButton(event);
 					} else {
 						traverseSelection(event.keyCode);
+						setSelectionFromFocusButton(event);
 					}
 					break;
 				}
@@ -333,7 +347,17 @@ class DatePicker extends VPanel {
 			VButton button = dayButtons[fb];
 			int stateMask = event.stateMask;
 			setSelectionFromButton(button, stateMask);
-			cdt.fireSelectionChanged(event.character != ' ');
+			boolean defaultSelection = false;
+			if(event.type == SWT.KeyDown && event.stateMask == 0) {
+				if(event.keyCode == SWT.KEYPAD_CR || event.character == SWT.CR) {
+					defaultSelection = true;
+				}
+			} else if(event.type == SWT.Traverse && event.stateMask == 0) {
+				if(event.keyCode == SWT.TRAVERSE_RETURN) {
+					defaultSelection = true;
+				}
+			}
+			cdt.fireSelectionChanged(defaultSelection);
 		}
 	}
 	
@@ -677,7 +701,7 @@ class DatePicker extends VPanel {
 					tmpcal.set(Calendar.MONTH, (Integer) button.getData("Month")); //$NON-NLS-1$
 					if (cdt.field.length == 1 && cdt.getCalendarField(cdt.field[0]) == Calendar.MONTH) {
 						cdt.setSelection(tmpcal.getTime());
-						cdt.fireSelectionChanged();
+						cdt.fireSelectionChanged(true);
 					} else {
 						cdt.show(tmpcal.getTime());
 						handleHeaderSelection(null);
@@ -738,7 +762,7 @@ class DatePicker extends VPanel {
 					tmpcal.set(Calendar.YEAR, Integer.parseInt(button.getText()));
 					if (cdt.field.length == 1 && cdt.getCalendarField(cdt.field[0]) == Calendar.YEAR) {
 						cdt.setSelection(tmpcal.getTime());
-						cdt.fireSelectionChanged();
+						cdt.fireSelectionChanged(true);
 					} else {
 						cdt.show(tmpcal.getTime());
 						handleHeaderSelection(null);
@@ -818,54 +842,31 @@ class DatePicker extends VPanel {
 	}
 	
 	/**
-	 * Scroll the Calendar's visible days just as a user would with the keyboard.
-	 * <dt><b>Valid Keys:</b></dt>
-	 * <dd>SWT.ARROW_UP, SWT.ARROW_DOWN, SWT.END, SWT.HOME, SWT.PAGE_DOWN, SWT.PAGE_UP</dd>
-	 * @param keycode a SWT keycode
-	 * @see #traverseSelection(int)
-	 */
-	void scrollCalendar(int keycode) {
-		scrollCalendar(keycode, false);
-	}
-
-	/**
 	 * perform the scroll by making a call to  {@link #adjustDays(int, int)} with the
 	 * <code>field</code> set to Calendar.DATE and the <code>amount</code> 
 	 * corresponding to the keycode.
 	 */
-	private void scrollCalendar(int keycode, boolean notify) {
+	private void scrollCalendar(int keycode) {
 		if(scrollable) {
-			boolean update = false;
 			switch (keycode) {
 			case SWT.ARROW_DOWN:
 				adjustDays(Calendar.DATE, 7);
-				update = true;
 				break;
 			case SWT.ARROW_UP:
 				adjustDays(Calendar.DATE, -7);
-				update = true;
 				break;
 			case SWT.END:
-				adjustDays(Calendar.DATE, 52*7);
-				update = true;
+				adjustDays(Calendar.YEAR, 1);
 				break;
 			case SWT.HOME:
-				adjustDays(Calendar.DATE, -52*7);
-				update = true;
+				adjustDays(Calendar.YEAR, -1);
 				break;
 			case SWT.PAGE_DOWN:
-				adjustDays(Calendar.DATE, 4*7);
-				update = true;
+				adjustDays(Calendar.MONTH, 1);
 				break;
 			case SWT.PAGE_UP:
-				adjustDays(Calendar.DATE, -4*7);
-				update = true;
+				adjustDays(Calendar.MONTH, -1);
 				break;
-			}
-			
-			if(update) {
-				updateHeader();
-				updateDays();
 			}
 		}
 	}
@@ -987,9 +988,9 @@ class DatePicker extends VPanel {
 		this.scrollable = scrollable;
 	}
 	
-	private void setSelectionByFocusButton(int focusButton) {
-		if(focusButton >= 0 && focusButton < dayButtons.length) {
-			VButton button = dayButtons[focusButton];
+	private void setButtonFocus(int index) {
+		if(index >= 0 && index < dayButtons.length) {
+			VButton button = dayButtons[index];
 			button.setFocus();
 		}
 	}
@@ -1006,33 +1007,33 @@ class DatePicker extends VPanel {
 		switch (keyCode) {
 		case SWT.ARROW_UP:
 			if(focusDayButton > DAYS_IN_WEEK) {
-				setSelectionByFocusButton(focusDayButton - DAYS_IN_WEEK);
+				setButtonFocus(focusDayButton - DAYS_IN_WEEK);
 			} else {
 				scrollCalendar(SWT.ARROW_UP);
-				setSelectionByFocusButton(focusDayButton);
+				setButtonFocus(focusDayButton);
 			}
 			break;
 		case SWT.ARROW_DOWN:
 			if(focusDayButton < DAYS_IN_WEEK * (NUM_ROWS-1)) {
-				setSelectionByFocusButton(focusDayButton + DAYS_IN_WEEK);
+				setButtonFocus(focusDayButton + DAYS_IN_WEEK);
 			} else {
 				scrollCalendar(SWT.ARROW_DOWN);
 			}
 			break;
 		case SWT.ARROW_LEFT:
 			if(focusDayButton > 0) {
-				setSelectionByFocusButton(focusDayButton - 1);
+				setButtonFocus(focusDayButton - 1);
 			} else {
 				scrollCalendar(SWT.ARROW_UP);
-				setSelectionByFocusButton(focusDayButton + (DAYS_IN_WEEK-1));
+				setButtonFocus(focusDayButton + (DAYS_IN_WEEK-1));
 			}
 			break;
 		case SWT.ARROW_RIGHT:
 			if(focusDayButton < (DAYS_IN_WEEK * NUM_ROWS - 1)) {
-				setSelectionByFocusButton(focusDayButton + 1);
+				setButtonFocus(focusDayButton + 1);
 			} else {
 				scrollCalendar(SWT.ARROW_DOWN);
-				setSelectionByFocusButton(focusDayButton - (DAYS_IN_WEEK-1));
+				setButtonFocus(focusDayButton - (DAYS_IN_WEEK-1));
 			}
 		}
 	}
@@ -1245,7 +1246,8 @@ class DatePicker extends VPanel {
 		if(yearPrev != null) 		yearPrev.setToolTipText(Resources.getString("nav_prev_year", locale));		//$NON-NLS-1$
 		if(yearNext != null) 		yearNext.setToolTipText(Resources.getString("nav_next_year", locale));		//$NON-NLS-1$
 		if(today != null) 			today.setToolTipText(Resources.getString("nav_current_day", locale));		//$NON-NLS-1$
-		if(daysMenuItem != null) 	daysMenuItem.setText(Resources.getString("nav_current_day", locale));		//$NON-NLS-1$
+		if(todayMenuItem != null) 	todayMenuItem.setText(Resources.getString("nav_current_day", locale));		//$NON-NLS-1$
+		if(showSelMenuItem != null) showSelMenuItem.setText(Resources.getString("show_selection", locale));		//$NON-NLS-1$
 	}
 
 	private void updateMonths() {
