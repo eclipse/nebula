@@ -712,7 +712,9 @@ public class CDateTime extends BaseCombo {
 				}
 			}
 			calendar.set(calendarField, value);
-			selection[0] = calendar.getTime();
+			if(selection.length > 0) {
+				selection[0] = calendar.getTime();
+			}
 			updateText();
 			updatePicker();
 			fireSelectionChanged(calendarField);
@@ -1710,11 +1712,15 @@ public class CDateTime extends BaseCombo {
 						fieldNext();
 					} else {
 						editField = null;
-						selection[0] = calendar.getTime();
+						if(selection.length > 0) {
+							selection[0] = calendar.getTime();
+						}
 						updateText();
 					}
 				}
-				selection[0] = calendar.getTime();
+				if(selection.length > 0) {
+					selection[0] = calendar.getTime();
+				}
 				updatePicker();
 			} else {
 				try {
