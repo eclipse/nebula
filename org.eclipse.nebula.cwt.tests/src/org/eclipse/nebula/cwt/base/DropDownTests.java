@@ -24,7 +24,11 @@ public class DropDownTests extends VTestCase {
 	}
 
 	public void testOpenByKey() throws Exception {
-		combo.setFocus();
+		syncExec(new Runnable() {
+			public void run() {
+				combo.setFocus();
+			}
+		});
 		assertTrue(hasFocus(combo.text));
 		
 		keyDown(SWT.CTRL);
