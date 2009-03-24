@@ -1,1 +1,3 @@
 plugin@org.eclipse.nebula.widgets.gallery=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.gallery
+
+feature@org.eclipse.nebula.widgets.gallery_feature=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/features/org.eclipse.nebula.widgets.gallery_feature
