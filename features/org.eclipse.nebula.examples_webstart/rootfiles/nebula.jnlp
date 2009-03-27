@@ -1,38 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jnlp spec="1.0+" codebase="http://nricheton.homeip.net/public/nebula" href="nebula.jnlp">
+<jnlp spec="1.0+" codebase="http://nricheton.homeip.net/public/nebula"
+	href="nebula.jnlp">
 	<information>
 		<title>Nebula Examples</title>
 		<vendor>Eclipse Nebula Project</vendor>
-	
-		<offline-allowed/>
+
+		<offline-allowed />
 	</information>
 	<security>
-		<all-permissions/>
+		<all-permissions />
 	</security>
 	<application-desc main-class="org.eclipse.equinox.launcher.WebStartMain">
-	<argument>-nosplash</argument>
-	
+		<argument>-nosplash</argument>
+
 	</application-desc>
 	<resources>
-	
-		<jar href="startup.jar"/>
-		<extension name="the feature" href="features/org.eclipse.nebula.examples_feature_1.0.0.jnlp"/>
-		<property name="eclipse.product" value="org.eclipse.swt.nebula.examples.nebula_examples"/>
+		<jar href="plugins/org.eclipse.equinox.launcher_1.0.101.R34x_v20080819.jar" />
+		<extension name="the feature"
+			href="features/org.eclipse.nebula.examples_webstart_1.0.0.jnlp" />
+		<property name="eclipse.product"
+			value="org.eclipse.swt.nebula.examples.nebula_examples" />
 	</resources>
-	
+
 	<resources os="Windows">
-	<j2se version="1.4+"/>
-		<property name="osgi.instance.area" value="@user.home/Application Data/Nebula Examples"/>
-		<property name="osgi.configuration.area" value="@user.home/Application Data/Nebula Examples"/>
+		<j2se version="1.4+" />
+		<property name="osgi.instance.area" value="@user.home/Application Data/Nebula Examples" />
+		<property name="osgi.configuration.area" value="@user.home/Application Data/Nebula Examples" />
 	</resources>
-	
-	 <resources os="Mac">
-    <j2se version="1.5+" java-vm-args="-XstartOnFirstThread"/>
-  </resources>
- 
-  <resources os="Linux">
-    <j2se version="1.4+"/>
-    <property name="osgi.ws" value="gtk"/>
-  </resources>
-	
+
+	<resources os="Mac">
+		<j2se version="1.5+" java-vm-args="-XstartOnFirstThread" />
+		<property name="osgi.instance.area"
+			value="@user.home/Library/Application Support/Nebula Examples" />
+		<property name="osgi.configuration.area"
+			value="@user.home/Library/Application Support/Nebula Examples" />
+	</resources>
+
+	<resources os="Linux">
+		<j2se version="1.4+" />
+		<property name="osgi.ws" value="gtk" />
+			<property name="osgi.instance.area"
+			value="@user.home/.nebula_examples" />
+		<property name="osgi.configuration.area"
+			value="@user.home/.nebula_examples" />
+	</resources>
+
 </jnlp>
