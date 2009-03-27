@@ -34,15 +34,15 @@
 			value="@user.home/Library/Application Support/Nebula Examples" />
 		<property name="osgi.configuration.area"
 			value="@user.home/Library/Application Support/Nebula Examples" />
+		<property name="org.eclipse.swt.internal.carbon.smallFonts"
+			value="" />
 	</resources>
 
 	<resources os="Linux">
 		<j2se version="1.4+" />
 		<property name="osgi.ws" value="gtk" />
-			<property name="osgi.instance.area"
-			value="@user.home/.nebula_examples" />
-		<property name="osgi.configuration.area"
-			value="@user.home/.nebula_examples" />
+		<property name="osgi.instance.area" value="@user.home/.nebula_examples" />
+		<property name="osgi.configuration.area" value="@user.home/.nebula_examples" />
 	</resources>
 
 </jnlp>
