@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?pde version="3.4"?>
+
+<product name="Nebula Examples" id="org.eclipse.swt.nebula.examples.nebula_examples" application="org.eclipse.swt.nebula.examples.application" useFeatures="true">
+
+   <configIni use="default">
+   </configIni>
+
+   <launcherArgs>
+      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
+   </launcherArgs>
+
+   <launcher>
+      <solaris/>
+      <win useIco="false">
+         <bmp/>
+      </win>
+   </launcher>
+
+   <vm>
+   </vm>
+
+   <plugins>
+      <plugin id="com.ibm.icu"/>
+      <plugin id="javax.servlet"/>
+      <plugin id="org.eclipse.core.commands"/>
+      <plugin id="org.eclipse.core.contenttype"/>
+      <plugin id="org.eclipse.core.databinding"/>
+      <plugin id="org.eclipse.core.databinding.beans"/>
+      <plugin id="org.eclipse.core.jobs"/>
+      <plugin id="org.eclipse.core.runtime"/>
+      <plugin id="org.eclipse.core.runtime.compatibility.auth"/>
+      <plugin id="org.eclipse.core.runtime.compatibility.registry" fragment="true"/>
+      <plugin id="org.eclipse.equinox.app"/>
+      <plugin id="org.eclipse.equinox.common"/>
+      <plugin id="org.eclipse.equinox.preferences"/>
+      <plugin id="org.eclipse.equinox.registry"/>
+      <plugin id="org.eclipse.jface"/>
+      <plugin id="org.eclipse.jface.databinding"/>
+      <plugin id="org.eclipse.nebula.widgets.calendarcombo"/>
+      <plugin id="org.eclipse.nebula.widgets.cdatetime"/>
+      <plugin id="org.eclipse.nebula.widgets.collapsiblebuttons"/>
+      <plugin id="org.eclipse.nebula.widgets.compositetable"/>
+      <plugin id="org.eclipse.nebula.widgets.compositetable.tests"/>
+      <plugin id="org.eclipse.nebula.widgets.ctree"/>
+      <plugin id="org.eclipse.nebula.widgets.datechooser"/>
+      <plugin id="org.eclipse.nebula.widgets.formattedtext"/>
+      <plugin id="org.eclipse.nebula.widgets.gallery"/>
+      <plugin id="org.eclipse.nebula.widgets.gallery.tests"/>
+      <plugin id="org.eclipse.nebula.widgets.ganttchart"/>
+      <plugin id="org.eclipse.nebula.widgets.grid"/>
+      <plugin id="org.eclipse.nebula.widgets.pgroup"/>
+      <plugin id="org.eclipse.nebula.widgets.pshelf"/>
+      <plugin id="org.eclipse.osgi"/>
+      <plugin id="org.eclipse.osgi.services"/>
+      <plugin id="org.eclipse.rcp"/>
+      <plugin id="org.eclipse.swt"/>
+      <plugin id="org.eclipse.swt.carbon.macosx" fragment="true"/>
+      <plugin id="org.junit"/>
+   </plugins>
+
+   <features>
+      <feature id="org.eclipse.rcp" version="3.4.100.r341_v20080814-989JESIEdAciFYfkZZsBfSwQ2341"/>
+      <feature id="org.eclipse.nebula.examples_feature" version="1.0.0"/>
+   </features>
+
+</product>
