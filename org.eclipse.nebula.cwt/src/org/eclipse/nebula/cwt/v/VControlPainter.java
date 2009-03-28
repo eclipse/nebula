@@ -26,7 +26,7 @@ public class VControlPainter implements IControlPainter {
 		} else if(control.xAlign == SWT.RIGHT) {
 			x = control.bounds.width - width - control.marginRight;
 		} else { // CENTERED / Default
-			x = ((double)(control.bounds.width - width) / (double)2);
+			x = ((control.bounds.width - width) / 2.0);
 		}
 
 		x += control.bounds.x;
@@ -42,7 +42,7 @@ public class VControlPainter implements IControlPainter {
 		} else if(control.yAlign == SWT.BOTTOM) {
 			y = control.bounds.height - height - control.marginBottom;
 		} else { // CENTERED / Default
-			y = ((double)(control.bounds.height - height) / (double)2);
+			y = ((control.bounds.height - height) / 2.0);
 		}
 
 		y += control.bounds.y;
@@ -69,7 +69,7 @@ public class VControlPainter implements IControlPainter {
 		Rectangle ibounds = control.image.getBounds();
 		Point tsize = e.gc.textExtent(control.text);
 
-		int x = (int)getX(control, (int)(ibounds.width+tsize.x));
+		int x = (int)getX(control, ibounds.width + tsize.x);
 		
 		e.gc.drawImage(control.image, x, (int)getY(control, ibounds.height));
 		
