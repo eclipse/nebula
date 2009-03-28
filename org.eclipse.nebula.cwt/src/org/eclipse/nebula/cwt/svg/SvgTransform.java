@@ -28,28 +28,10 @@ class SvgTransform {
 	}
 
 	float[] apply(float x, float y) {
-		// switch(type) {
-		// case Matrix:
-		// case Translate:
-		// case Scale:
 		float[] v = new float[2];
 		v[0] = data[0] * x + data[2] * y + data[4];
 		v[1] = data[1] * x + data[3] * y + data[5];
 		return v;
-		// break;
-		// case Rotate:
-		// v[0] = (float)(cos(data[0]) * v[0] - sin(data[2]) * v[1] + data[4]);
-		// v[1] = (float)(sin(data[1]) * v[0] + cos(data[3]) * v[1] + data[5]);
-		// break;
-		// case SkewX:
-		// v[0] = (float)(data[0] * v[0] + tan(data[2]) * v[1] + data[4]);
-		// v[1] = data[1] * v[0] + data[3] * v[1] + data[5];
-		// break;
-		// case SkewY:
-		// v[0] = data[0] * v[0] + data[2] * v[1] + data[4];
-		// v[1] = (float)(tan(data[1]) * v[0] + data[3] * v[1] + data[5]);
-		// break;
-		// }
 	}
 
 	boolean isIdentity() {
@@ -66,6 +48,7 @@ class SvgTransform {
 		data[3] = y;
 	}
 
+	
 	void setData(Type type, String[] sa) {
 		data = new float[] { 1, 0, 0, 1, 0, 0 };
 		switch (type) {
@@ -113,4 +96,13 @@ class SvgTransform {
 		}
 	}
 
+	void skew(float x, float y) {
+		data[2] = x;
+		data[1] = y;
+	}
+	
+	void translate(float x, float y) {
+		data[4] = x;
+		data[5] = y;
+	}
 }
