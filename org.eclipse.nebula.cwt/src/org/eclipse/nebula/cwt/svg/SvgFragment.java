@@ -62,6 +62,8 @@ public class SvgFragment extends SvgContainer {
 	 * @param bounds the bounds to which this fragment will be scaled
 	 */
 	public void apply(GC gc, Rectangle bounds) {
+		boundsTransform.translate(bounds.x, bounds.y);
+
 		if(viewBox != null) {
 			float sx = bounds.width / viewBox[2];
 			float sy = bounds.height / viewBox[3];
@@ -71,7 +73,9 @@ public class SvgFragment extends SvgContainer {
 			float sy = bounds.height / height;
 			boundsTransform.scale(sx, sy);
 		}
+		
 		super.apply(gc);
+		
 		boundsTransform.data = new float[] { 1, 0, 0, 1, 0, 0 };
 	}
 	
