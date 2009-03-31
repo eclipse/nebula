@@ -4,8 +4,11 @@ bin.includes = META-INF/,\
                .
 # Athena build infos
 # http://wiki.eclipse.org/Common_Build_Infrastructure
-nebula.productname=org.eclipse.nebula.widgets.gallery
-javadoc.packages=org.eclipse.nebula.widgets.gallery.*
+
+thirdPartyDownloadLicenseAcceptance="I accept"
+
+#nebula.productname=org.eclipse.nebula.widgets.gallery
+#javadoc.packages=org.eclipse.nebula.widgets.gallery.*
 #javadoc.exclude=
 snippets.path=org/eclipse/swt/nebula/snippets/gallery
 src.includes = src/,\
@@ -14,10 +17,10 @@ src.includes = src/,\
                .classpath
 
 
-projectid=org.eclipse.nebula.widgets.gallery
-zipPrefix=nebula
-incubation=incubation
-version=0.0.1
+projectid=technology.nebula
+zipPrefix=nebula-gallery
+incubation=-incubation
+version=0.5.0
 buildType=N
 mainFeatureToBuildID=org.eclipse.nebula.widgets.gallery_feature
 #testFeatureToBuildID=
