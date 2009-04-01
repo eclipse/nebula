@@ -260,6 +260,8 @@ public class Gallery extends Canvas {
 
 		if (this.itemRenderer != null)
 			this.itemRenderer.setGallery(this);
+
+		redraw();
 	}
 
 	/**
