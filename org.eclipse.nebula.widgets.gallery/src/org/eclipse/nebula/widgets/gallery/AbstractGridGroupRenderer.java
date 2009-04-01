@@ -180,9 +180,9 @@ public abstract class AbstractGridGroupRenderer extends
 
 		if (gallery.isVertical()) {
 			x = nbx * itemSizeX + (nbx - 1) * margin + 2 * minMargin;
-			y = nby * itemSizeY + (nby + 1) * minMargin;
+			y = nby * itemSizeY + nby * minMargin;
 		} else {
-			x = nbx * itemSizeX + (nbx + 1) * minMargin;
+			x = nbx * itemSizeX + nbx * minMargin;
 			y = nby * itemSizeY + (nby - 1) * margin + 2 * minMargin;
 		}
 		return new Point(x, y);
@@ -231,14 +231,14 @@ public abstract class AbstractGridGroupRenderer extends
 			if (gallery.isVertical()) {
 				xPixelPos = posX * (itemWidth + margin) + margin;
 				yPixelPos = posY * (itemHeight + minMargin) - gallery.translate
-						+ minMargin
-						+ ((parent == null) ? 0 : (parent.y) + offsetY);
+				/* + minMargin */
+				+ ((parent == null) ? 0 : (parent.y) + offsetY);
 				gItem.x = xPixelPos;
 				gItem.y = yPixelPos + gallery.translate;
 			} else {
 				xPixelPos = posX * (itemWidth + minMargin) - gallery.translate
-						+ minMargin
-						+ ((parent == null) ? 0 : (parent.x) + offsetY);
+				/* + minMargin */
+				+ ((parent == null) ? 0 : (parent.x) + offsetY);
 				yPixelPos = posY * (itemHeight + margin) + margin;
 				gItem.x = xPixelPos + gallery.translate;
 				gItem.y = yPixelPos;
@@ -422,19 +422,19 @@ public abstract class AbstractGridGroupRenderer extends
 				int posY = (index - posX) / hCount;
 
 				int xPixelPos = posX * (itemWidth + margin) + margin;
-				int yPixelPos = posY * (itemHeight + minMargin) + minMargin
+				int yPixelPos = posY * (itemHeight + minMargin)
 						+ ((parent == null) ? 0 : (parent.y) + offsetY);
 
 				return new Rectangle(xPixelPos, yPixelPos, this.itemWidth,
 						this.itemHeight);
 			}
 
-			// else
+			// gallery is horizontal
 			int posY = index % vCount;
 			int posX = (index - posY) / vCount;
 
 			int yPixelPos = posY * (itemHeight + margin) + margin;
-			int xPixelPos = posX * (itemWidth + minMargin) + minMargin
+			int xPixelPos = posX * (itemWidth + minMargin)
 					+ ((parent == null) ? 0 : (parent.x) + offsetY);
 
 			return new Rectangle(xPixelPos, yPixelPos, this.itemWidth,
@@ -462,7 +462,7 @@ public abstract class AbstractGridGroupRenderer extends
 				return null;
 			int hCount = tmp.intValue();
 
-			// Calculate the "might be" position
+			// Calculate where the item should be if it exists
 			int posX = (coords.x - margin) / (itemWidth + margin);
 
 			// Check if the users clicked on the X margin.
@@ -474,14 +474,14 @@ public abstract class AbstractGridGroupRenderer extends
 			if (posX >= hCount) // Nothing there
 				return null;
 
-			if (coords.y - group.y - minMargin < offsetY)
+			if (coords.y - group.y < offsetY)
 				return null;
 
-			int posY = (coords.y - group.y - offsetY - minMargin)
+			int posY = (coords.y - group.y - offsetY)
 					/ (itemHeight + minMargin);
 
 			// Check if the users clicked on the Y margin.
-			if (((coords.y - group.y - offsetY - minMargin) % (itemHeight + minMargin)) > itemHeight) {
+			if (((coords.y - group.y - offsetY) % (itemHeight + minMargin)) > itemHeight) {
 				return null;
 			}
 			itemNb = posX + posY * hCount;
@@ -491,7 +491,7 @@ public abstract class AbstractGridGroupRenderer extends
 				return null;
 			int vCount = tmp.intValue();
 
-			// Calculate the "might be" position
+			// Calculate where the item should be if it exists
 			int posY = (coords.y - margin) / (itemHeight + margin);
 
 			// Check if the users clicked on the X margin.
@@ -503,14 +503,13 @@ public abstract class AbstractGridGroupRenderer extends
 			if (posY >= vCount) // Nothing there
 				return null;
 
-			if (coords.x - group.x - minMargin < offsetY)
+			if (coords.x - group.x < offsetY)
 				return null;
 
-			int posX = (coords.x - group.x - offsetY - minMargin)
-					/ (itemWidth + minMargin);
+			int posX = (coords.x - group.x - offsetY) / (itemWidth + minMargin);
 
 			// Check if the users clicked on the X margin.
-			if (((coords.x - group.x - offsetY - minMargin) % (itemWidth + minMargin)) > itemWidth) {
+			if (((coords.x - group.x - offsetY) % (itemWidth + minMargin)) > itemWidth) {
 				return null;
 			}
 			itemNb = posY + posX * vCount;

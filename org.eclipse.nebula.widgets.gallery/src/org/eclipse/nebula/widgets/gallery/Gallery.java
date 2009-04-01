@@ -1511,6 +1511,7 @@ public class Gallery extends Canvas {
 					this.groupRenderer.layout(null, item);
 					currentHeight += item.width;
 				}
+				// Unused ?
 				// Point s = this.getSize(item.hCount, item.vCount, itemSizeX,
 				// itemSizeY, userMargin, realMargin);
 

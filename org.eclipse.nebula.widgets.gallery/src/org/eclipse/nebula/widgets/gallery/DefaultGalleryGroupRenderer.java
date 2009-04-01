@@ -329,8 +329,18 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 		return titleBuffer.toString();
 	}
 
-	protected int getGroupOffset(GalleryItem group) {
-		return getGroupHeight(group) + minMargin;
+	/**
+	 * Returns a group offset (size of title + margin)
+	 * 
+	 * @param item
+	 * @return group offset or 0 if the item is not a group
+	 */
+	protected int getGroupOffset(GalleryItem item) {
+		if (item.getParentItem() != null) {
+			return 0;
+		}
+
+		return getGroupHeight(item) + minMargin;
 	}
 
 	public void draw(GC gc, GalleryItem group, int x, int y, int clipX,
@@ -390,28 +400,25 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 
 		if (gallery.isVertical()) {
 			int sizeX = group.width;
-			group.height = getGroupOffset(group) + 3 * minMargin;
+			group.height = getGroupOffset(group);
+
+			Point l = gridLayout(sizeX, countLocal, itemWidth);
+			int hCount = l.x;
+			int vCount = l.y;
+
+			if (autoMargin && hCount > 0) {
+				// If margins have not been calculated
+				if (!marginCalculated) {
+					// Calculate best margins
+					margin = calculateMargins(sizeX, hCount, itemWidth);
+					marginCalculated = true;
+
+					if (Gallery.DEBUG)
+						System.out.println("margin " + margin); //$NON-NLS-1$
+				}
+			}
 
 			if (isGroupExpanded(group)) {
-				Point l = gridLayout(sizeX, countLocal, itemWidth);
-				int hCount = l.x;
-				int vCount = l.y;
-
-				if (autoMargin && hCount > 0) {
-
-					// If margins have not been calculated
-					if (!marginCalculated) {
-						// Calculate best margins
-						margin = calculateMargins(sizeX, hCount, itemWidth);
-
-						marginCalculated = true;
-
-						if (Gallery.DEBUG)
-							System.out.println("margin " + margin); //$NON-NLS-1$
-
-					}
-
-				}
 
 				Point s = this.getSize(hCount, vCount, itemWidth, itemHeight,
 						minMargin, margin);
@@ -433,15 +440,19 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 			int sizeY = group.height;
 			group.width = getGroupOffset(group);
 
-			if (isGroupExpanded(group)) {
+			Point l = gridLayout(sizeY, countLocal, itemHeight);
+			int vCount = l.x;
+			int hCount = l.y;
+			if (autoMargin && vCount > 0) {
+				// Calculate best margins
+				margin = calculateMargins(sizeY, vCount, itemHeight);
+				marginCalculated = true;
 
-				Point l = gridLayout(sizeY, countLocal, itemHeight);
-				int vCount = l.x;
-				int hCount = l.y;
-				if (autoMargin) {
-					// Calculate best margins
-					margin = calculateMargins(sizeY, vCount, itemHeight);
-				}
+				if (Gallery.DEBUG)
+					System.out.println("margin " + margin); //$NON-NLS-1$
+			}
+
+			if (isGroupExpanded(group)) {
 
 				Point s = this.getSize(hCount, vCount, itemWidth, itemHeight,
 						minMargin, margin);
@@ -474,6 +485,11 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 		super.preLayout(gc);
 	}
 
+	/**
+	 * Prepare font metrics and title height for both preLayout and preDraw.
+	 * 
+	 * @param myGc
+	 */
 	private void pre(GC myGc) {
 		GC gc = myGc;
 		boolean gcCreated = false;
@@ -562,8 +578,10 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 					}
 
 				} else {
-					// Click on the title bar : Select all children
-					if (isGroupExpanded(group)) {
+					// Click on the title bar : Select all children. Only work
+					// if multiple items can be selected (SWT.MULTI)
+					if (isGroupExpanded(group)
+							&& (this.getGallery().getStyle() & SWT.MULTI) > 0) {
 						// Cancel previous selection
 						if ((e.stateMask & SWT.MOD1) == 0) {
 							gallery.deselectAll();
@@ -610,8 +628,10 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 					}
 
 				} else {
-					// Click on the title bar : Select all children
-					if (isGroupExpanded(group)) {
+					// Click on the title bar : Select all children. Only work
+					// if multiple items can be selected (SWT.MULTI)
+					if (isGroupExpanded(group)
+							&& (this.getGallery().getStyle() & SWT.MULTI) > 0) {
 
 						// Cancel previous selection
 						if ((e.stateMask & SWT.MOD1) == 0) {
@@ -632,10 +652,21 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 		return true;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.nebula.widgets.gallery.AbstractGridGroupRenderer#getSize(
+	 * org.eclipse.nebula.widgets.gallery.GalleryItem)
+	 */
 	public Rectangle getSize(GalleryItem item) {
-		Rectangle r = super.getSize(item, getGroupOffset(item));
+		// If the item is not a group, get its parent
+		GalleryItem group = item.getParentItem();
+		if (group == null) {
+			group = item;
+		}
 
-		return r;
+		return super.getSize(item, getGroupOffset(group));
 	}
 
 	public Color getTitleForeground() {
