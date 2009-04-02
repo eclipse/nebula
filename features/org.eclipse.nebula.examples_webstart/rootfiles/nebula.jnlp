@@ -15,7 +15,7 @@
 
 	</application-desc>
 	<resources>
-		<jar href="plugins/org.eclipse.equinox.launcher_1.0.101.R34x_v20080819.jar" />
+		<jar href="plugins/org.eclipse.equinox.launcher_1.0.200.v20090306-1900.jar" />
 		<extension name="the feature"
 			href="features/org.eclipse.nebula.examples_webstart_1.0.0.jnlp" />
 		<property name="eclipse.product"
