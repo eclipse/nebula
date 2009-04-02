@@ -35,8 +35,8 @@ if [[ -f $buildDir/*.zip ]]; then
       rm $buildDir/*Master*
       rm $buildDir/*ALL*
 
-     rsync -aP --list-only $buildDir ~/downloads/technology/nebula/downloads/drops/
-     rsync -aP --list-only $buildDir/ ~/downloads/technology/nebula/downloads/drops/latest/
+     rsync -aP --list-only $buildDir ~/downloads/technology/nebula/gallery/downloads/drops/
+     rsync -aP --list-only $buildDir/ ~/downloads/technology/nebula/gallery/downloads/drops/latest/
 
 	ls $buildDir/*
   fi
