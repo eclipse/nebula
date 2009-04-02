@@ -206,18 +206,14 @@ public class GalleryExampleTab extends AbstractExampleTab {
 	}
 
 	private void clearAndPopulateGallery(Gallery g) {
-		System.out.println("clearAndPopulateGallery : remove");
-
 		g.removeAll();
-		System.out.println("clearAndPopulateGallery : populate");
-
+	
 		if ((g.getStyle() & SWT.VIRTUAL) == 0) {
 			this.populateGalleryWithGroups(g);
 		} else {
 			// Virtual mode.
 			// TODO: Virtual mode example
 		}
-		System.out.println("clearAndPopulateGallery : done");
 
 	}
 
