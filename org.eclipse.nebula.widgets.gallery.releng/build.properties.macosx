@@ -26,7 +26,7 @@ mainFeatureToBuildID=org.eclipse.nebula.widgets.gallery_feature
 #testFeatureToBuildID=
 
 #what steps should we do? default: build.steps=buildZips,buildTests,generateDigests,test,publish,cleanup
-build.steps=buildZips,buildUpdate,generateDigests,test,cleanup
+build.steps=buildZips,buildUpdate,generateDigests,publish,cleanup
 
 compilerArg=-enableJavadoc -encoding ISO-8859-1
 
