@@ -152,8 +152,8 @@ public abstract class AbstractGalleryItemRenderer {
 	 *</ul>
 	 * 
 	 */
-	protected void drawAllOverlays(GC gc, GalleryItem item, int x,
-			int y, Point imageSize, int xShift, int yShift) {
+	protected void drawAllOverlays(GC gc, GalleryItem item, int x, int y,
+			Point imageSize, int xShift, int yShift) {
 		Image[] imagesBottomLeft = getImageOverlay(item, OVERLAY_BOTTOM_LEFT);
 		Image[] imagesBottomRight = getImageOverlay(item, OVERLAY_BOTTOM_RIGHT);
 		Image[] imagesTopLeft = getImageOverlay(item, OVERLAY_TOP_LEFT);
@@ -170,12 +170,13 @@ public abstract class AbstractGalleryItemRenderer {
 
 		drawOverlayImages(gc, x + xShift, y + yShift, ratio, imagesTopLeft);
 
-		drawOverlayImages(gc,
-				(int) (x + xShift + imageSize.x - overlaySizeBottomRight.x
-						* ratio), y + yShift, ratio, imagesTopRight);
+		drawOverlayImages(
+				gc,
+				(int) (x + xShift + imageSize.x - overlaySizeTopRight.x * ratio),
+				y + yShift, ratio, imagesTopRight);
 
 		drawOverlayImages(gc, x + xShift,
-				(int) (y + yShift + imageSize.y - overlaySizeBottomRight.y
+				(int) (y + yShift + imageSize.y - overlaySizeBottomLeft.y
 						* ratio), ratio, imagesBottomLeft);
 
 		drawOverlayImages(gc,
