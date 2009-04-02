@@ -4,7 +4,7 @@
 projectid="technology.nebula.gallery"
 sub="nebula.gallery"
 version="0.5.0";
-writableBuildRoot="$HOME/Documents/Nebula/build";
+writableBuildRoot="/opt/public/cbi/build";
 buildType="N"
 
 
@@ -35,9 +35,8 @@ if [[ -f $buildDir/*.zip ]]; then
       rm $buildDir/*Master*
       rm $buildDir/*ALL*
 
-
-     rsync -aP $buildDir rnicolas@dev.eclipse.org:/home/data/httpd/download.eclipse.org/technology/nebula/downloads/drops/
-     rsync -aP --list-only $buildDir/ rnicolas@dev.eclipse.org:/home/data/httpd/download.eclipse.org/technology/nebula/downloads/drops/latest/
+     rsync -aP --list-only $buildDir ~/downloads/technology/nebula/downloads/drops/
+     rsync -aP --list-only $buildDir/ ~/downloads/technology/nebula/downloads/drops/latest/
 
 	ls $buildDir/*
   fi
