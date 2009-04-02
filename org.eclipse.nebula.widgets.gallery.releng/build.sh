@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # Parameters
-projectid="nebula.gallery"
+projectid="technology.nebula.gallery"
+sub="nebula.gallery"
 version="0.5.0";
 writableBuildRoot="$HOME/Documents/Nebula/build";
 buildType="N"
@@ -19,12 +20,12 @@ if [[  -f ${writableBuildRoot}/org.eclipse.dash.common.releng/tools/scripts/star
    startPath="${writableBuildRoot}/org.eclipse.dash.common.releng/tools/scripts";
 fi
 
-$startPath/start.sh -projectid $projectid  -version $version  -projRelengRoot ':pserver:anonymous@dev.eclipse.org:/cvsroot/technology'    -projRelengPath 'org.eclipse.swt.nebula/org.eclipse.nebula.widgets.gallery.releng' -javaHome $JAVA_HOME -writableBuildRoot $writableBuildRoot  -buildTimestamp $buildTimestamp
+$startPath/start.sh -projectid $projectid -sub $sub -version $version  -projRelengRoot ':pserver:anonymous@dev.eclipse.org:/cvsroot/technology'    -projRelengPath 'org.eclipse.swt.nebula/org.eclipse.nebula.widgets.gallery.releng' -javaHome $JAVA_HOME -writableBuildRoot $writableBuildRoot  -buildTimestamp $buildTimestamp
 buildResult=$?
 
 ls $buildDir/*
 
-if [ "$buildResult" -ne "0" ]; then
+if [ $buildResult -eq "0" ]; then
 
       rm $buildDir/*Update*
       rm $buildDir/*Master*

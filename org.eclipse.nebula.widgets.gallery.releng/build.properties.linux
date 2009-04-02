@@ -18,6 +18,7 @@ src.includes = src/,\
 
 
 projectid=technology.nebula
+sub=nebula.gallery
 zipPrefix=nebula-gallery
 incubation=-incubation
 version=0.5.0
