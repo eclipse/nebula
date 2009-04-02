@@ -29,13 +29,14 @@
 	</resources>
 
 	<resources os="Mac">
-		<j2se version="1.5+" java-vm-args="-XstartOnFirstThread" />
+		<j2se version="1.6+" java-vm-args="-XstartOnFirstThread" />
 		<property name="osgi.instance.area"
 			value="@user.home/Library/Application Support/Nebula Examples" />
 		<property name="osgi.configuration.area"
 			value="@user.home/Library/Application Support/Nebula Examples" />
 		<property name="org.eclipse.swt.internal.carbon.smallFonts"
 			value="" />
+				<property name="osgi.ws" value="cocoa" />
 	</resources>
 
 	<resources os="Linux">
