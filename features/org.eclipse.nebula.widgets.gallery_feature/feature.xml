@@ -2,18 +2,19 @@
 <feature
       id="org.eclipse.nebula.widgets.gallery_feature"
       label="Nebula Gallery Widget"
-      version="0.0.1">
+      version="0.5.0"
+      provider-name="Eclipse Nebula">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description url="http://www.eclipse.org/nebula/widgets/gallery/gallery.php">
+      Nebula Gallery Widget
    </description>
 
-   <copyright url="http://www.example.com/copyright">
-      [Enter Copyright Description here.]
+   <copyright>
+Copyright
    </copyright>
 
-   <license url="http://www.example.com/license">
-      [Enter License Description here.]
+   <license>
+      EPL
    </license>
 
    <plugin
