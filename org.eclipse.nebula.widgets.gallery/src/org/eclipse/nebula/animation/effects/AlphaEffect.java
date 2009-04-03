@@ -41,9 +41,33 @@ public class AlphaEffect extends AbstractEffect {
 	 * @param shell
 	 * @param duration
 	 * @param easing
+	 * @deprecated Use {@link #fadeOnClose(Shell,int,IMovement,AnimationRunner)}
+	 *             instead
 	 */
 	public static void fadeOnClose(final Shell shell, final int duration,
 			final IMovement easing) {
+		fadeOnClose(shell, duration, easing, null);
+	}
+
+	/**
+	 * Add a listener that will fade the window when it get closed.
+	 * 
+	 * @param shell
+	 * @param duration
+	 * @param easing
+	 * @param runner
+	 *            : The AnimationRunner to use, or null
+	 * 
+	 */
+	public static void fadeOnClose(final Shell shell, final int duration,
+			final IMovement easing, AnimationRunner runner) {
+
+		final AnimationRunner useRunner;
+		if (runner != null) {
+			useRunner = runner;
+		} else {
+			useRunner = new AnimationRunner();
+		}
 
 		final Runnable closeListener = new Runnable() {
 			public void run() {
@@ -67,9 +91,8 @@ public class AlphaEffect extends AbstractEffect {
 
 			public void shellClosed(ShellEvent e) {
 				e.doit = false;
-
-				setAlpha(new AnimationRunner(), shell, 0, duration, easing,
-						closeListener, null);
+				setAlpha(useRunner, shell, 0, duration, easing, closeListener,
+						null);
 			}
 
 			public void shellActivated(ShellEvent e) {
