@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.nebula.widgets.gallery_feature"
       label="Nebula Gallery Widget"
-      version="0.5.0"
+      version="0.5.0.qualifier"
       provider-name="Eclipse Nebula">
 
    <description url="http://www.eclipse.org/nebula/widgets/gallery/gallery.php">
@@ -10,7 +10,7 @@
    </description>
 
    <copyright>
-Copyright
+      Copyright
    </copyright>
 
    <license>
