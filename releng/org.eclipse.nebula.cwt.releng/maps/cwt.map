@@ -1,5 +1,5 @@
 !**** the plugin
-plugin@org.eclipse.nebula.cwt=v20081203,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/org.eclipse.nebula.cwt
+plugin@org.eclipse.nebula.cwt=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/org.eclipse.nebula.cwt
 
 !**** the feature
-feature@org.eclipse.nebula.cwt.feature=v20081203,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/features/org.eclipse.nebula.cwt.feature
+feature@org.eclipse.nebula.cwt.feature=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/features/org.eclipse.nebula.cwt.feature
