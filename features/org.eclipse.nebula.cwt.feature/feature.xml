@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.nebula.cwt.feature"
       label="Feature Feature"
-      version="1.0.0">
+      version="0.9.0">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]
@@ -20,7 +20,7 @@
          id="org.eclipse.nebula.cwt"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="0.9.0.qualifier"
          unpack="false"/>
 
 </feature>
