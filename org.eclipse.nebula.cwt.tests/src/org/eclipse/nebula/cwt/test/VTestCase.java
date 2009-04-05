@@ -315,6 +315,16 @@ public class VTestCase extends TestCase {
 		processEvents();
 	}
 
+	public void keyPress(int keyCode) {
+		final int oldDelay = delay;
+		delay = 0;
+		keyDown(keyCode);
+		delay = oldDelay;
+		processEvents();
+		keyUp(keyCode);
+		processEvents();
+	}
+
 	public void keyPress(char character, int... keyCodes) {
 		for(int keyCode : keyCodes) {
 			keyDown(keyCode);
