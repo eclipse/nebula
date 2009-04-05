@@ -923,7 +923,9 @@ public class CDateTime extends BaseCombo {
 		if(event.stateMask != 0) {
 			return;
 		}
-		if(SWT.BS == event.keyCode || SWT.DEL == event.keyCode) {
+		if('\r' == event.keyCode || SWT.KEYPAD_CR == event.keyCode) {
+			fireSelectionChanged(true);
+		} else if(SWT.BS == event.keyCode || SWT.DEL == event.keyCode) {
 			event.doit = false;
 			setSelection((Date) null);
 			fireSelectionChanged();
