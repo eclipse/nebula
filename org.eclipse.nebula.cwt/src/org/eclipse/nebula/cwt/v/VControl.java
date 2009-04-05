@@ -524,6 +524,9 @@ public abstract class VControl {
 	}
 
 	private boolean include(boolean key, int type) {
+		if(type == SWT.Selection) {
+			return false;
+		}
 		if(key && (type == SWT.KeyDown || type == SWT.KeyUp || type == SWT.Traverse)) {
 			return true;
 		}
