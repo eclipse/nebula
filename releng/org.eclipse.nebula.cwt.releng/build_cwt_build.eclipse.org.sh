@@ -8,7 +8,8 @@ sub="nebula.$nebulaProjectId"
 version="0.9.0";
 writableBuildRoot="$HOME/nebula_builds";
 buildType="N"
-JAVA_HOME="/opt/public/common/jdk-1.5.0_16"
+#JAVA_HOME="/opt/public/common/jdk-1.5.0_16"
+JAVA_HOME="/opt/public/common/ibm-java2-142"
 
 buildTimestamp=`date +%Y%m%d%H%M`
 if [[ ! $downloadsDir ]]; then downloadsDir="${writableBuildRoot}/downloads"; fi
