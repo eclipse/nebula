@@ -8,5 +8,5 @@ Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.swt,
- org.eclipse.nebula.cwt;bundle-version="0.14.0";visibility:=reexport
+ org.eclipse.nebula.cwt;bundle-version="0.9.0";visibility:=reexport
 Export-Package: org.eclipse.nebula.widgets.cdatetime
