@@ -10,6 +10,7 @@
  *****************************************************************************/
 package org.eclipse.nebula.cwt.svg;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -85,7 +86,13 @@ class SvgGradient extends SvgElement {
 		} else {
 			bounds = shape.getViewport();
 		}
-		pattern = SwtAdapter.createPattern(this);
+		try {
+			Class<?> c = Class.forName("org.eclipse.nebula.cwt.SwtAdapter"); //$NON-NLS-1$
+			Method m = c.getMethod("createPattern", SvgGradient.class); //$NON-NLS-1$
+			pattern = (Pattern) m.invoke(c, this);
+		} catch(Exception e) {
+			System.out.println("Could not create pattern - fragment must be missing"); //$NON-NLS-1$
+		}
 	}
 
 	private Color createColor(GC gc, int color) {
