@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # Parameters
-source build_properties.sh
+source $1
+if [[ ! $projectid ]]; then exit(1); fi
 writableBuildRoot="$HOME/Documents/Nebula/build";
 
 
