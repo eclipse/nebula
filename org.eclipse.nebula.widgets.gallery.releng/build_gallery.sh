@@ -1,11 +1,9 @@
 #!/bin/bash
 
 # Parameters
-projectid="technology.nebula.gallery"
-sub="nebula.gallery"
-version="0.5.0";
+source build_properties.sh
 writableBuildRoot="$HOME/Documents/Nebula/build";
-buildType="N"
+
 
 
 buildTimestamp=`date +%Y%m%d%H%M`
@@ -20,7 +18,7 @@ if [[  -f ${writableBuildRoot}/org.eclipse.dash.common.releng/tools/scripts/star
    startPath="${writableBuildRoot}/org.eclipse.dash.common.releng/tools/scripts";
 fi
 
-$startPath/start.sh -projectid $projectid -sub $sub -version $version  -projRelengRoot ':pserver:anonymous@dev.eclipse.org:/cvsroot/technology'    -projRelengPath 'org.eclipse.swt.nebula/org.eclipse.nebula.widgets.gallery.releng' -javaHome $JAVA_HOME -writableBuildRoot $writableBuildRoot  -buildTimestamp $buildTimestamp
+$startPath/start.sh -projectid $projectid -sub $sub -version $version  -projRelengRoot ':pserver:anonymous@dev.eclipse.org:/cvsroot/technology'    -projRelengPath "$relengProjectPath" -javaHome $JAVA_HOME -writableBuildRoot $writableBuildRoot  -buildTimestamp $buildTimestamp
 buildResult=$?
 
 ls $buildDir/*
@@ -36,8 +34,8 @@ if [[ -f $buildDir/*.zip ]]; then
       rm $buildDir/*ALL*
 
 
-     rsync -aP $buildDir rnicolas@dev.eclipse.org:/home/data/httpd/download.eclipse.org/technology/nebula/gallery/downloads/drops/
-     rsync -aP --list-only $buildDir/ rnicolas@dev.eclipse.org:/home/data/httpd/download.eclipse.org/technology/gallery/nebula/downloads/drops/latest/
+     rsync -aP $buildDir rnicolas@dev.eclipse.org:/home/data/httpd/download.eclipse.org/technology/nebula/$nebulaProjectId/downloads/drops/
+     rsync -aP --list-only $buildDir/ rnicolas@dev.eclipse.org:/home/data/httpd/download.eclipse.org/technology/gallery/$nebulaProjectId/downloads/drops/latest/
 
 	ls $buildDir/*
   fi
