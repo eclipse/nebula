@@ -6,7 +6,7 @@ relengProjectPath="org.eclipse.swt.nebula/org.eclipse.nebula.widgets.gallery.rel
 projectid="technology.nebula.$nebulaProjectId"
 sub="nebula.$nebulaProjectId"
 version="0.5.0";
-writableBuildRoot="$HOME/nebula_builds";
+writableBuildRoot="$HOME/nebula-builds";
 buildType="N"
 JAVA_HOME="/opt/public/common/ibm-java2-142"
 
