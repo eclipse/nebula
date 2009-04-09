@@ -1,13 +1,9 @@
 #!/bin/bash
 
 # Parameters
-nebulaProjectId="gallery"
-relengProjectPath="org.eclipse.swt.nebula/org.eclipse.nebula.widgets.gallery.releng"
-projectid="technology.nebula.$nebulaProjectId"
-sub="nebula.$nebulaProjectId"
-version="0.5.0";
+source $1
+if [[ ! $projectid ]]; then exit(1); fi
 writableBuildRoot="$HOME/nebula-builds";
-buildType="N"
 JAVA_HOME="/opt/public/common/ibm-java2-142"
 
 buildTimestamp=`date +%Y%m%d%H%M`

@@ -36,7 +36,7 @@ if [[ -f $buildDir/*.zip ]]; then
 
 
      rsync -aP $buildDir rnicolas@dev.eclipse.org:/home/data/httpd/download.eclipse.org/technology/nebula/$nebulaProjectId/downloads/drops/
-     rsync -aP --list-only $buildDir/ rnicolas@dev.eclipse.org:/home/data/httpd/download.eclipse.org/technology/gallery/$nebulaProjectId/downloads/drops/latest/
+     rsync -aP --list-only $buildDir/ rnicolas@dev.eclipse.org:/home/data/httpd/download.eclipse.org/technology/nebula/$nebulaProjectId/downloads/drops/latest/
 
 	ls $buildDir/*
   fi
