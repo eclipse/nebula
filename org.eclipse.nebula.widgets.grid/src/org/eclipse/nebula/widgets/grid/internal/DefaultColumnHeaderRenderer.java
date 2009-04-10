@@ -68,9 +68,11 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
 
             y = Math.max(y, topMargin + column.getImage().getBounds().height + bottomMargin);
         }
-
-        return new Point(x, y);
-    }
+		
+		y += computeControlSize(column).y;
+		
+		return new Point(x, y);
+	}
 
     /** 
      * {@inheritDoc}
@@ -78,7 +80,6 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
     public void paint(GC gc, Object value)
     {
         GridColumn column = (GridColumn)value;
-
         boolean flat = (column.getParent().getCellSelectionEnabled() && !column.getMoveable());
         
         boolean drawSelected = ((isMouseDown() && isHover()));
@@ -103,8 +104,13 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
 
         if (column.getImage() != null)
         {
-                gc.drawImage(column.getImage(), getBounds().x + x + pushedDrawingOffset,
-                        getBounds().y + pushedDrawingOffset + getBounds().height - bottomMargin - column.getImage().getBounds().height);        		
+        	int y = bottomMargin;
+        	
+        	if( column.getHeaderControl() == null ) {
+        		y = getBounds().y + pushedDrawingOffset + getBounds().height - bottomMargin - column.getImage().getBounds().height;
+        	}
+        	
+            gc.drawImage(column.getImage(), getBounds().x + x + pushedDrawingOffset, y);        		
             x += column.getImage().getBounds().width + imageSpacing;
         }
 
@@ -121,8 +127,13 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
 
         gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
 
-        int y = getBounds().y + getBounds().height - bottomMargin - gc.getFontMetrics().getHeight();
-
+        int y = bottomMargin;
+        		
+        if( column.getHeaderControl() == null ) {
+        	y = getBounds().y + getBounds().height - bottomMargin
+        		- gc.getFontMetrics().getHeight();			
+        }
+        
         String text = TextUtils.getShortString(gc, column.getText(), width);
         
         if (column.getAlignment() == SWT.RIGHT)
@@ -148,25 +159,38 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
 
         if (column.getSort() != SWT.NONE)
         {
+        	if( column.getHeaderControl() == null ) {
+        		y = getBounds().y
+                + ((getBounds().height - arrowRenderer.getBounds().height) / 2)
+                + 1;
+        	} else {
+        		y = getBounds().y
+                + ((getBounds().height - computeControlSize(column).y - arrowRenderer.getBounds().height) / 2)
+                + 1;
+        	}
+        	
             arrowRenderer.setSelected(column.getSort() == SWT.UP);
             if (drawSelected)
             {
                 arrowRenderer
                     .setLocation(
                                  getBounds().x + getBounds().width - arrowMargin
-                                     - arrowRenderer.getBounds().width + 1,
-                                 getBounds().y
-                                     + ((getBounds().height - arrowRenderer.getBounds().height) / 2)
-                                     + 1);
+                                     - arrowRenderer.getBounds().width + 1,y
+                                 );
             }
             else
             {
+            	if( column.getHeaderControl() == null ) {
+            		y = getBounds().y
+                    + ((getBounds().height - arrowRenderer.getBounds().height) / 2);
+            	} else {
+            		y = getBounds().y 
+                    + ((getBounds().height - computeControlSize(column).y - arrowRenderer.getBounds().height) / 2);
+            	}
                 arrowRenderer
                     .setLocation(
                                  getBounds().x + getBounds().width - arrowMargin
-                                     - arrowRenderer.getBounds().width,
-                                 getBounds().y
-                                     + ((getBounds().height - arrowRenderer.getBounds().height) / 2));
+                                     - arrowRenderer.getBounds().width,y);
             }
             arrowRenderer.paint(gc, null);
         }
@@ -305,4 +329,21 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
         
         return bounds;        
     }    
+
+	/**
+	 * @return the bounds reserved for the control
+	 */
+	protected Rectangle getControlBounds(Object value, boolean preferred) {
+		Rectangle bounds = getBounds();
+		GridColumn column = (GridColumn) value;
+		Point controlSize = computeControlSize(column);
+		return new Rectangle(bounds.x+3,bounds.height-bottomMargin-controlSize.y,bounds.width-6,controlSize.y);
+	}
+
+	private Point computeControlSize(GridColumn column) {
+		if( column.getHeaderControl() != null ) {
+			return column.getHeaderControl().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		}
+		return new Point(0,0);
+	}
 }

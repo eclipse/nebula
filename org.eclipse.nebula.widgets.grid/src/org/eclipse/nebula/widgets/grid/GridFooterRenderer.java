@@ -12,7 +12,7 @@ import org.eclipse.swt.graphics.Rectangle;
  *
  * @author chris.gross@us.ibm.com
  */
-public abstract class GridHeaderRenderer extends AbstractInternalWidget
+public abstract class GridFooterRenderer extends AbstractInternalWidget
 {
     /**
      * Returns the bounds of the text in the cell.  This is used when displaying in-place tooltips.
@@ -29,25 +29,4 @@ public abstract class GridHeaderRenderer extends AbstractInternalWidget
     {
         return null;
     }
-    
-    /**
-     * Returns the bounds of the toggle within the header (typically only group headers have toggles)
-     * or null.
-     * 
-     * @return toggle bounds or null if no toggle exists.
-     */
-    public Rectangle getToggleBounds()
-    {
-        return null;
-    }
-
-	/**
-	 * Returns the bounds of the control to display
-	 * 
-	 * @return the bounds for the control or <code>null</code> if no control is
-	 *         rendered
-	 */
-	protected Rectangle getControlBounds(Object value, boolean preferred) {
-		return null;
-	}
 }

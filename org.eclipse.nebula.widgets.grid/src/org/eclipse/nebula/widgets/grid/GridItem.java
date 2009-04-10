@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    chris.gross@us.ibm.com - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.nebula.widgets.grid;
 
 import java.util.ArrayList;
@@ -29,9 +29,9 @@ import org.eclipse.swt.widgets.TypedListener;
 
 /**
  * <p>
- * NOTE:  THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.  THIS IS A PRE-RELEASE ALPHA 
+ * NOTE:  THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.  THIS IS A PRE-RELEASE ALPHA
  * VERSION.  USERS SHOULD EXPECT API CHANGES IN FUTURE VERSIONS.
- * </p> 
+ * </p>
  * Instances of this class represent a selectable user interface object that
  * represents an item in a grid.
  * <p>
@@ -41,7 +41,7 @@ import org.eclipse.swt.widgets.TypedListener;
  * <dt><b>Events:</b></dt>
  * <dd>(none)</dd>
  * </dl>
- * 
+ *
  * @author chris.gross@us.ibm.com
  */
 public class GridItem extends Item
@@ -60,7 +60,7 @@ public class GridItem extends Item
      * Lists of checkable states for each column.
      */
     private ArrayList checkable = new ArrayList();
-    
+
     /**
      * List of children.
      */
@@ -140,7 +140,7 @@ public class GridItem extends Item
      * List of text for each column.
      */
     private ArrayList texts = new ArrayList();
-    
+
     /**
      * List of tooltips for each column.
      */
@@ -155,18 +155,22 @@ public class GridItem extends Item
      * Row header text.
      */
     private String headerText = null;
-    
-    
+
+    /**
+     * Row header image
+     */
+    private Image headerImage = null;
+
     /**
      * (SWT.VIRTUAL only) Flag that specifies whether the client has already been sent a SWT.SetData
-     * event. 
+     * event.
      */
     private boolean hasSetData = false;
-    
+
     /**
      * Creates a new instance of this class and places the item at the end of
      * the grid.
-     * 
+     *
      * @param parent parent grid
      * @param style item style
      * @throws IllegalArgumentException
@@ -188,7 +192,7 @@ public class GridItem extends Item
     /**
      * Creates a new instance of this class and places the item in the grid at
      * the given index.
-     * 
+     *
      * @param parent parent grid
      * @param style item style
      * @param index index where to insert item
@@ -208,17 +212,17 @@ public class GridItem extends Item
         super(parent, style, index);
 
         this.parent = parent;
-        
+
         init();
-        
+
         parent.newItem(this, index,true);
-        parent.newRootItem(this, index);        
+        parent.newRootItem(this, index);
     }
 
     /**
      * Creates a new instance of this class as a child node of the given
      * GridItem and places the item at the end of the parents items.
-     * 
+     *
      * @param parent parent item
      * @param style item style
      * @throws IllegalArgumentException
@@ -241,7 +245,7 @@ public class GridItem extends Item
      * Creates a new instance of this class as a child node of the given
      * Grid and places the item at the given index in the parent items
      * list.
-     * 
+     *
      * @param parent parent item
      * @param style item style
      * @param index index to place item
@@ -266,7 +270,7 @@ public class GridItem extends Item
         init();
 
         this.parent.newItem(this,index, false);
-        
+
         level = parentItem.getLevel() + 1;
 
         parentItem.newItem(this, index);
@@ -289,7 +293,7 @@ public class GridItem extends Item
         if (!parent.isDisposing())
         {
             parent.removeItem(this);
-     
+
             if (parentItem != null)
             {
                 parentItem.remove(this);
@@ -298,7 +302,7 @@ public class GridItem extends Item
             {
                 parent.removeRootItem(this);
             }
-    
+
             for (int i = children.size() - 1; i >= 0; i--)
             {
                 ((GridItem)children.get(i)).dispose();
@@ -318,7 +322,7 @@ public class GridItem extends Item
      * will have its <code>detail</code> field populated with the new row height.  Clients may alter this
      * value to, for example, enforce minimum or maximum row sizes.  Clients may also set the <code>doit</code>
      * field to false to prevent the entire resize operation.
-     * 
+     *
      * @param listener the listener which should be notified
      *
      * @exception IllegalArgumentException <ul>
@@ -355,13 +359,13 @@ public class GridItem extends Item
     	if (listener == null) SWT.error (SWT.ERROR_NULL_ARGUMENT);
         removeListener(SWT.Resize, listener);
     }
-    
-    
+
+
     /**
      * Fires the given event type on the parent Grid instance. This method
      * should only be called from within a cell renderer. Any other use is not
      * intended.
-     * 
+     *
      * @param eventId SWT event constant
      * @throws SWTException
      * <ul>
@@ -390,7 +394,7 @@ public class GridItem extends Item
      * listener (all columns). This method manages that behavior. This method
      * should only be called from within a cell renderer. Any other use is not
      * intended.
-     * 
+     *
      * @param column the column where the checkbox resides
      * @throws SWTException
      * <ul>
@@ -416,7 +420,7 @@ public class GridItem extends Item
 
     /**
      * Returns the receiver's background color.
-     * 
+     *
      * @return the background color
      * @throws SWTException
      * <ul>
@@ -438,7 +442,7 @@ public class GridItem extends Item
 
     /**
      * Returns the background color at the given column index in the receiver.
-     * 
+     *
      * @param index the column index
      * @return the background color
      * @throws org.eclipse.swt.SWTException
@@ -451,9 +455,9 @@ public class GridItem extends Item
     public Color getBackground(int index)
     {
         checkWidget();
-        
+
         handleVirtual();
-        
+
         Color c = (Color)backgrounds.get(index);
 //        if (c == null)
 //        {
@@ -465,7 +469,7 @@ public class GridItem extends Item
     /**
      * Returns a rectangle describing the receiver's size and location relative
      * to its parent at a column in the table.
-     * 
+     *
      * @param columnIndex the index that specifies the column
      * @return the receiver's bounding column rectangle
      * @throws SWTException
@@ -478,24 +482,24 @@ public class GridItem extends Item
     public Rectangle getBounds(int columnIndex)
     {
         checkWidget();
-        
-        
+
+
         //HACK: The -1000,-1000 xy coordinates below are a hack to deal with GridEditor issues.  In
         //normal SWT Table, when an editor is created on Table and its positioned in the header area
         //the header overlays the editor.  Because Grid (header and everything) is drawn on one
         //composite, when an editor is positioned in the header area the editor overlays the header.
-        //So to fix this, when the editor is anywhere its not supposed to be seen (the editor 
+        //So to fix this, when the editor is anywhere its not supposed to be seen (the editor
         //coordinates are determined by this getBounds) we position it out in timbuktu.
         if (!isVisible()) return new Rectangle(-1000,-1000,0,0);
 
         if (!parent.isShown(this)) return new Rectangle(-1000,-1000,0,0);
-              
+
 
         Point origin = parent.getOrigin(parent.getColumn(columnIndex), this);
 
         if (origin.x < 0 && parent.isRowHeaderVisible())
         	return new Rectangle(-1000,-1000,0,0);
-        
+
         int width = 0;
 
         int span = getColumnSpan(columnIndex);
@@ -513,7 +517,7 @@ public class GridItem extends Item
 
     /**
      * Returns the checked state at the first column in the receiver.
-     * 
+     *
      * @return the checked state
      * @throws org.eclipse.swt.SWTException
      * <ul>
@@ -530,7 +534,7 @@ public class GridItem extends Item
 
     /**
      * Returns the checked state at the given column index in the receiver.
-     * 
+     *
      * @param index the column index
      * @return the checked state
      * @throws org.eclipse.swt.SWTException
@@ -543,9 +547,9 @@ public class GridItem extends Item
     public boolean getChecked(int index)
     {
         checkWidget();
-        
+
         handleVirtual();
-        
+
         Boolean b = (Boolean)checks.get(index);
         if (b == null)
         {
@@ -556,7 +560,7 @@ public class GridItem extends Item
 
     /**
      * Returns the column span for the given column index in the receiver.
-     * 
+     *
      * @param index the column index
      * @return the number of columns spanned (0 equals no columns spanned)
      * @throws org.eclipse.swt.SWTException
@@ -580,7 +584,7 @@ public class GridItem extends Item
     /**
      * Returns the font that the receiver will use to paint textual information
      * for this item.
-     * 
+     *
      * @return the receiver's font
      * @throws SWTException
      * <ul>
@@ -601,7 +605,7 @@ public class GridItem extends Item
     /**
      * Returns the font that the receiver will use to paint textual information
      * for the specified cell in this item.
-     * 
+     *
      * @param index the column index
      * @return the receiver's font
      * @throws org.eclipse.swt.SWTException
@@ -614,9 +618,9 @@ public class GridItem extends Item
     public Font getFont(int index)
     {
         checkWidget();
-        
+
         handleVirtual();
-        
+
         Font f = (Font)fonts.get(index);
         if (f == null)
         {
@@ -627,7 +631,7 @@ public class GridItem extends Item
 
     /**
      * Returns the foreground color that the receiver will use to draw.
-     * 
+     *
      * @return the receiver's foreground color
      * @throws SWTException
      * <ul>
@@ -647,7 +651,7 @@ public class GridItem extends Item
 
     /**
      * Returns the foreground color at the given column index in the receiver.
-     * 
+     *
      * @param index the column index
      * @return the foreground color
      * @throws org.eclipse.swt.SWTException
@@ -660,9 +664,9 @@ public class GridItem extends Item
     public Color getForeground(int index)
     {
         checkWidget();
-        
+
         handleVirtual();
-        
+
         Color c = (Color)foregrounds.get(index);
         if (c == null)
         {
@@ -675,7 +679,7 @@ public class GridItem extends Item
      * Returns <code>true</code> if the first column in the receiver is
      * grayed, and false otherwise. When the GridColumn does not have the
      * <code>CHECK</code> style, return false.
-     * 
+     *
      * @return the grayed state of the checkbox
      * @throws org.eclipse.swt.SWTException
      * <ul>
@@ -693,7 +697,7 @@ public class GridItem extends Item
      * Returns <code>true</code> if the column at the given index in the
      * receiver is grayed, and false otherwise. When the GridColumn does not
      * have the <code>CHECK</code> style, return false.
-     * 
+     *
      * @param index the column index
      * @return the grayed state of the checkbox
      * @throws org.eclipse.swt.SWTException
@@ -706,9 +710,9 @@ public class GridItem extends Item
     public boolean getGrayed(int index)
     {
         checkWidget();
-        
+
         handleVirtual();
-        
+
         Boolean b = (Boolean)grayeds.get(index);
         if (b == null)
         {
@@ -719,7 +723,7 @@ public class GridItem extends Item
 
 	/**
 	 * Returns the height of this <code>GridItem</code>.
-	 * 
+	 *
 	 * @return height of this <code>GridItem</code>
 	 */
 	public int getHeight() {
@@ -738,7 +742,7 @@ public class GridItem extends Item
     /**
      * Returns the image stored at the given column index in the receiver, or
      * null if the image has not been set or if the column does not exist.
-     * 
+     *
      * @param index the column index
      * @return the image stored at the given column index in the receiver
      * @throws org.eclipse.swt.SWTException
@@ -751,16 +755,16 @@ public class GridItem extends Item
     public Image getImage(int index)
     {
         checkWidget();
-        
+
         handleVirtual();
-        
+
         return (Image)images.get(index);
     }
 
     /**
      * Returns the item at the given, zero-relative index in the receiver.
      * Throws an exception if the index is out of range.
-     * 
+     *
      * @param index the index of the item to return
      * @return the item at the given index
      * @throws IllegalArgumentException
@@ -780,7 +784,7 @@ public class GridItem extends Item
         checkWidget();
         return (GridItem)children.get(index);
     }
-    
+
     /**
      * Returns the number of items contained in the receiver
      * that are direct item children of the receiver.
@@ -798,10 +802,10 @@ public class GridItem extends Item
         checkWidget();
         return children.size();
     }
-    
+
     /**
      * Searches the receiver's list starting at the first item
-     * (index 0) until an item is found that is equal to the 
+     * (index 0) until an item is found that is equal to the
      * argument, and returns the index of that item. If no item
      * is found, returns -1.
      *
@@ -832,7 +836,7 @@ public class GridItem extends Item
      * Note: This is not the actual structure used by the receiver to maintain
      * its list of items, so modifying the array will not affect the receiver.
      * </p>
-     * 
+     *
      * @return the receiver's items
      * @throws SWTException
      * <ul>
@@ -848,7 +852,7 @@ public class GridItem extends Item
 
     /**
      * Returns the level of this item in the tree.
-     * 
+     *
      * @return the level of the item in the tree
      * @throws org.eclipse.swt.SWTException
      * <ul>
@@ -865,7 +869,7 @@ public class GridItem extends Item
 
     /**
      * Returns the receiver's parent, which must be a <code>Grid</code>.
-     * 
+     *
      * @return the receiver's parent
      * @throws SWTException
      * <ul>
@@ -883,7 +887,7 @@ public class GridItem extends Item
     /**
      * Returns the receiver's parent item, which must be a
      * <code>GridItem</code> or null when the receiver is a root.
-     * 
+     *
      * @return the receiver's parent item
      * @throws SWTException
      * <ul>
@@ -910,7 +914,7 @@ public class GridItem extends Item
     /**
      * Returns the text stored at the given column index in the receiver, or
      * empty string if the text has not been set.
-     * 
+     *
      * @param index the column index
      * @return the text stored at the given column index in the receiver
      * @throws org.eclipse.swt.SWTException
@@ -923,9 +927,9 @@ public class GridItem extends Item
     public String getText(int index)
     {
         checkWidget();
-        
+
         handleVirtual();
-        
+
         String s = (String)texts.get(index);
         // SWT TableItem returns empty if never set
         // so we return empty to ensure API compatibility
@@ -938,7 +942,7 @@ public class GridItem extends Item
 
     /**
      * Returns true if this item has children.
-     * 
+     *
      * @return true if this item has children
      * @throws org.eclipse.swt.SWTException
      * <ul>
@@ -957,7 +961,7 @@ public class GridItem extends Item
      * Returns <code>true</code> if the receiver is expanded, and false
      * otherwise.
      * <p>
-     * 
+     *
      * @return the expanded state
      * @throws SWTException
      * <ul>
@@ -976,7 +980,7 @@ public class GridItem extends Item
      * Sets the receiver's background color to the color specified by the
      * argument, or to the default system color for the item if the argument is
      * null.
-     * 
+     *
      * @param background the new color (or null)
      * @throws IllegalArgumentException
      * <ul>
@@ -1006,7 +1010,7 @@ public class GridItem extends Item
      * Sets the background color at the given column index in the receiver to
      * the color specified by the argument, or to the default system color for
      * the item if the argument is null.
-     * 
+     *
      * @param index the column index
      * @param background the new color (or null)
      * @throws IllegalArgumentException
@@ -1033,7 +1037,7 @@ public class GridItem extends Item
 
     /**
      * Sets the checked state at the first column in the receiver.
-     * 
+     *
      * @param checked the new checked state
      * @throws org.eclipse.swt.SWTException
      * <ul>
@@ -1051,7 +1055,7 @@ public class GridItem extends Item
 
     /**
      * Sets the checked state at the given column index in the receiver.
-     * 
+     *
      * @param index the column index
      * @param checked the new checked state
      * @throws org.eclipse.swt.SWTException
@@ -1071,7 +1075,7 @@ public class GridItem extends Item
     /**
      * Sets the column spanning for the column at the given index to span the
      * given number of subsequent columns.
-     * 
+     *
      * @param index column index that should span
      * @param span number of subsequent columns to span
      * @throws org.eclipse.swt.SWTException
@@ -1092,7 +1096,7 @@ public class GridItem extends Item
     /**
      * Sets the expanded state of the receiver.
      * <p>
-     * 
+     *
      * @param expanded the new expanded state
      * @throws SWTException
      * <ul>
@@ -1122,7 +1126,7 @@ public class GridItem extends Item
                     {
                         unselected = true;
                         getParent().deselect(getParent().indexOf(item));
-                    }                
+                    }
                     if (deselectChildren(item))
                     {
                         unselected = true;
@@ -1152,23 +1156,23 @@ public class GridItem extends Item
         {
             getParent().setFocusItem(this);
         }
-        
+
         if (getParent().getCellSelectionEnabled())
         {
             getParent().updateColumnSelection();
         }
     }
-    
-    
+
+
 
     private boolean deselectCells(GridItem item)
     {
         boolean flag = false;
-        
+
         int index = getParent().indexOf(item);
-        
+
         GridColumn[] columns = getParent().getColumns();
-        
+
         for (int i = 0; i < columns.length; i++)
         {
             Point cell = new Point(getParent().indexOf(columns[i]),index);
@@ -1178,7 +1182,7 @@ public class GridItem extends Item
                 getParent().deselectCell(cell);
             }
         }
-        
+
         GridItem[] kids = item.getItems();
         for (int i = 0; i < kids.length; i++)
         {
@@ -1187,13 +1191,13 @@ public class GridItem extends Item
                 flag = true;
             }
         }
-        
+
         return flag;
     }
-    
+
     /**
      * Deselects the given item's children recursively.
-     * 
+     *
      * @param item item to deselect children.
      * @return true if an item was deselected
      */
@@ -1220,7 +1224,7 @@ public class GridItem extends Item
      * Sets the font that the receiver will use to paint textual information for
      * this item to the font specified by the argument, or to the default font
      * for that kind of control if the argument is null.
-     * 
+     *
      * @param f the new font (or null)
      * @throws IllegalArgumentException
      * <ul>
@@ -1248,7 +1252,7 @@ public class GridItem extends Item
      * Sets the font that the receiver will use to paint textual information for
      * the specified cell in this item to the font specified by the argument, or
      * to the default font for that kind of control if the argument is null.
-     * 
+     *
      * @param index the column index
      * @param font the new font (or null)
      * @throws IllegalArgumentException
@@ -1277,7 +1281,7 @@ public class GridItem extends Item
      * Sets the receiver's foreground color to the color specified by the
      * argument, or to the default system color for the item if the argument is
      * null.
-     * 
+     *
      * @param foreground the new color (or null)
      * @throws IllegalArgumentException
      * <ul>
@@ -1305,7 +1309,7 @@ public class GridItem extends Item
      * Sets the foreground color at the given column index in the receiver to
      * the color specified by the argument, or to the default system color for
      * the item if the argument is null.
-     * 
+     *
      * @param index the column index
      * @param foreground the new color (or null)
      * @throws IllegalArgumentException
@@ -1334,7 +1338,7 @@ public class GridItem extends Item
      * Sets the grayed state of the checkbox for the first column. This state
      * change only applies if the GridColumn was created with the SWT.CHECK
      * style.
-     * 
+     *
      * @param grayed the new grayed state of the checkbox;
      * @throws org.eclipse.swt.SWTException
      * <ul>
@@ -1354,7 +1358,7 @@ public class GridItem extends Item
      * Sets the grayed state of the checkbox for the given column index. This
      * state change only applies if the GridColumn was created with the
      * SWT.CHECK style.
-     * 
+     *
      * @param index the column index
      * @param grayed the new grayed state of the checkbox;
      * @throws org.eclipse.swt.SWTException
@@ -1373,7 +1377,7 @@ public class GridItem extends Item
 
 	/**
 	 * Sets the height of this <code>GridItem</code>.
-	 * 
+	 *
 	 * @param newHeight new height in pixels
      * @throws org.eclipse.swt.SWTException
      * <ul>
@@ -1398,7 +1402,7 @@ public class GridItem extends Item
     }
     /**
      * Sets this <code>GridItem</code> to its preferred height.
-     * 
+     *
      * @throws org.eclipse.swt.SWTException
      * <ul>
      * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
@@ -1408,7 +1412,7 @@ public class GridItem extends Item
      */
     public void pack() {
     	checkWidget();
-    	
+
         int maxPrefHeight = 2;
         GridColumn[] columns = parent.getColumns();
         GC gc = new GC(parent);
@@ -1428,7 +1432,7 @@ public class GridItem extends Item
                 maxPrefHeight = Math.max(maxPrefHeight,size.y);
         }
         gc.dispose();
-        
+
         setHeight(maxPrefHeight);
     }
 
@@ -1443,7 +1447,7 @@ public class GridItem extends Item
 
     /**
      * Sets the receiver's image at a column.
-     * 
+     *
      * @param index the column index
      * @param image the new image
      * @throws IllegalArgumentException
@@ -1465,15 +1469,15 @@ public class GridItem extends Item
             SWT.error(SWT.ERROR_INVALID_ARGUMENT);
         }
         images.set(index, image);
-        
-        parent.imageSetOnItem(this);
-        
+
+        parent.imageSetOnItem(index,this);
+
         parent.redraw();
     }
 
     /**
      * Sets the receiver's text at a column.
-     * 
+     *
      * @param index the column index
      * @param text the new text
      * @throws IllegalArgumentException
@@ -1497,7 +1501,7 @@ public class GridItem extends Item
         texts.set(index, text);
         parent.redraw();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -1510,7 +1514,7 @@ public class GridItem extends Item
     /**
      * Adds items to the given list to ensure the list is large enough to hold a
      * value for each column.
-     * 
+     *
      * @param al list
      */
     private void ensureSize(ArrayList al)
@@ -1525,7 +1529,7 @@ public class GridItem extends Item
 
     /**
      * Removes the given child item from the list of children.
-     * 
+     *
      * @param child child to remove
      */
     private void remove(GridItem child)
@@ -1538,7 +1542,7 @@ public class GridItem extends Item
      * Returns true if the item is visible because its parent items are all
      * expanded. This method does not determine if the item is in the currently
      * visible range.
-     * 
+     *
      * @return Returns the visible.
      */
     boolean isVisible()
@@ -1548,7 +1552,7 @@ public class GridItem extends Item
 
     /**
      * Creates a new child item in this item at the given index.
-     * 
+     *
      * @param item new child item
      * @param index index
      */
@@ -1568,7 +1572,7 @@ public class GridItem extends Item
 
     /**
      * Sets whether this item has children.
-     * 
+     *
      * @param hasChildren true if this item has children
      */
     void setHasChildren(boolean hasChildren)
@@ -1580,7 +1584,7 @@ public class GridItem extends Item
      * Sets the visible state of this item. The visible state is determined by
      * the expansion state of all of its parent items. If all parent items are
      * expanded it is visible.
-     * 
+     *
      * @param visible The visible to set.
      */
     void setVisible(boolean visible)
@@ -1620,8 +1624,8 @@ public class GridItem extends Item
     /**
      * Returns the receiver's row header text.  If the text is <code>null</code> the row header will
      * display the row number.
-     * 
-     * @return the text stored at the given column index in the receiver
+     *
+     * @return the text stored for the row header or code <code>null</code> if the default has to be displayed
      * @throws org.eclipse.swt.SWTException
      * <ul>
      * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
@@ -1632,16 +1636,32 @@ public class GridItem extends Item
     public String getHeaderText()
     {
         checkWidget();
-        
+
 //        handleVirtual();
-        
+
         return headerText;
+    }
+
+    /**
+     * Returns the receiver's row header image.
+     *
+     * @return the image stored for the header or <code>null</code> if none has to be displayed
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
+     */
+    public Image getHeaderImage() {
+        checkWidget();
+    	return headerImage;
     }
 
     /**
      * Sets the receiver's row header text.  If the text is <code>null</code> the row header will
      * display the row number.
-     * 
+     *
      * @param text the new text
      * @throws IllegalArgumentException
      * <ul>
@@ -1661,25 +1681,63 @@ public class GridItem extends Item
         if (text != headerText)
         {
             GC gc = new GC(parent);
-            
+
             int oldWidth = parent.getRowHeaderRenderer().computeSize(gc, SWT.DEFAULT, SWT.DEFAULT, this).x;
-            
+
             this.headerText = text;
-            
+
             int newWidth = parent.getRowHeaderRenderer().computeSize(gc, SWT.DEFAULT, SWT.DEFAULT, this).x;
-            
+
             gc.dispose();
-            
+
             parent.recalculateRowHeaderWidth(this,oldWidth,newWidth);
         }
-        parent.redraw();        
+        parent.redraw();
     }
 
     /**
-     * Returns the checkable state at the given column index in the receiver.  If the column at 
-     * the given index is not checkable then this will return false regardless of the individual 
-     * cell's checkable state.  
-     * 
+     * Sets the receiver's row header image.  If the image is <code>null</code> none is shown in the header
+     *
+     * @param image the new image
+     * @throws IllegalArgumentException
+     * <ul>
+     * <li>ERROR_NULL_ARGUMENT - if the text is null</li>
+     * </ul>
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
+     */
+    public void setHeaderImage(Image image) {
+        checkWidget();
+        //if (text == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
+        if (image != headerImage)
+        {
+            GC gc = new GC(parent);
+
+            int oldWidth = parent.getRowHeaderRenderer().computeSize(gc, SWT.DEFAULT, SWT.DEFAULT, this).x;
+            int oldHeight = parent.getRowHeaderRenderer().computeSize(gc, SWT.DEFAULT, SWT.DEFAULT, this).y;
+
+            this.headerImage = image;
+
+            int newWidth = parent.getRowHeaderRenderer().computeSize(gc, SWT.DEFAULT, SWT.DEFAULT, this).x;
+            int newHeight = parent.getRowHeaderRenderer().computeSize(gc, SWT.DEFAULT, SWT.DEFAULT, this).y;
+
+            gc.dispose();
+
+            parent.recalculateRowHeaderWidth(this,oldWidth,newWidth);
+            parent.recalculateRowHeaderHeight(this,oldHeight,newHeight);
+        }
+        parent.redraw();
+    }
+
+    /**
+     * Returns the checkable state at the given column index in the receiver.  If the column at
+     * the given index is not checkable then this will return false regardless of the individual
+     * cell's checkable state.
+     *
      * @param index the column index
      * @return the checked state
      * @throws org.eclipse.swt.SWTException
@@ -1692,9 +1750,9 @@ public class GridItem extends Item
     public boolean getCheckable(int index)
     {
         checkWidget();
-        
+
         if (!parent.getColumn(index).getCheckable()) return false;
-        
+
         Boolean b = (Boolean)checkable.get(index);
         if (b == null)
         {
@@ -1702,13 +1760,13 @@ public class GridItem extends Item
         }
         return b.booleanValue();
     }
-    
+
     /**
-     * Sets the checkable state at the given column index in the receiver.  A checkbox which is 
-     * uncheckable will not be modifiable by the user but still make be modified programmatically. 
-     * If the column at the given index is not checkable then individual cell will not be checkable 
+     * Sets the checkable state at the given column index in the receiver.  A checkbox which is
+     * uncheckable will not be modifiable by the user but still make be modified programmatically.
+     * If the column at the given index is not checkable then individual cell will not be checkable
      * regardless.
-     * 
+     *
      * @param index the column index
      * @param checked the new checked state
      * @throws org.eclipse.swt.SWTException
@@ -1723,10 +1781,10 @@ public class GridItem extends Item
         checkWidget();
         checkable.set(index, new Boolean(checked));
     }
-    
+
     /**
      * Returns the tooltip for the given cell.
-     * 
+     *
      * @param index the column index
      * @return the tooltip
      * @throws org.eclipse.swt.SWTException
@@ -1739,17 +1797,17 @@ public class GridItem extends Item
     public String getToolTipText(int index)
     {
         checkWidget();
-        
+
         handleVirtual();
-        
+
         String s = (String)tooltips.get(index);
 
         return s;
     }
-    
+
     /**
      * Sets the tooltip for the given column index.
-     * 
+     *
      * @param index the column index
      * @param tooltip the tooltip text
      * @throws org.eclipse.swt.SWTException
@@ -1764,8 +1822,8 @@ public class GridItem extends Item
         checkWidget();
         tooltips.set(index, tooltip);
     }
-    
-    
+
+
     private void init()
     {
         ensureSize(backgrounds);
@@ -1775,14 +1833,14 @@ public class GridItem extends Item
         ensureSize(foregrounds);
         ensureSize(grayeds);
         ensureSize(images);
-        ensureSize(texts);    
+        ensureSize(texts);
         ensureSize(columnSpans);
         ensureSize(tooltips);
     }
-    
+
     /**
      * Notifies the item that a column has been removed.
-     * 
+     *
      * @param index index of column removed.
      */
     void columnRemoved(int index)
@@ -1794,11 +1852,11 @@ public class GridItem extends Item
         removeValue(index,foregrounds);
         removeValue(index,grayeds);
         removeValue(index,images);
-        removeValue(index,texts);  
+        removeValue(index,texts);
         removeValue(index,columnSpans);
         removeValue(index,tooltips);
     }
-    
+
     void columnAdded(int index)
     {
         insertValue(index,backgrounds);
@@ -1808,12 +1866,12 @@ public class GridItem extends Item
         insertValue(index,foregrounds);
         insertValue(index,grayeds);
         insertValue(index,images);
-        insertValue(index,texts);  
+        insertValue(index,texts);
         insertValue(index,columnSpans);
         insertValue(index,tooltips);
         hasSetData = false;
     }
-    
+
     private void insertValue(int index, List list)
     {
         if (index == -1)
@@ -1825,7 +1883,7 @@ public class GridItem extends Item
             list.add(index, null);
         }
     }
-    
+
     private void removeValue(int index, List list)
     {
         if (list.size() > index)
@@ -1833,7 +1891,7 @@ public class GridItem extends Item
             list.remove(index);
         }
     }
-    
+
     private void handleVirtual()
     {
         if ((getParent().getStyle() & SWT.VIRTUAL) != 0 && !hasSetData)
@@ -1852,20 +1910,20 @@ public class GridItem extends Item
             getParent().notifyListeners(SWT.SetData, event);
         }
     }
-    
+
     /**
      * Sets the initial item height for this item.
-     * 
+     *
      * @param height initial height.
      */
     void initializeHeight(int height)
     {
         this.height = height;
     }
-    
+
     /**
      * Clears all properties of this item and resets values to their defaults.
-     * 
+     *
      * @param allChildren <code>true</code> if all child items should be
      * cleared recursively, and <code>false</code> otherwise
      */
@@ -1881,13 +1939,14 @@ public class GridItem extends Item
     	images.clear();
     	texts.clear();
     	tooltips.clear();
-    	
+
     	defaultForeground = null;
     	defaultBackground = null;
     	defaultFont = null;
 
     	hasSetData = false;
     	headerText = null;
+    	headerImage = null;
 
     	// Recursively clear children if requested.
     	if (allChildren)
@@ -1897,7 +1956,7 @@ public class GridItem extends Item
                 ((GridItem)children.get(i)).clear(true);
             }
     	}
-    	
+
     	init();
     }
 }
