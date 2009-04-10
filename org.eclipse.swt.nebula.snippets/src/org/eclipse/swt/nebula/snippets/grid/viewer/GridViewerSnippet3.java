@@ -9,7 +9,7 @@
  *     Tom Schindl - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.nebula.snippets.gridviewer;
+package org.eclipse.swt.nebula.snippets.grid.viewer;
 
 import java.util.ArrayList;
 
@@ -19,16 +19,11 @@ import org.eclipse.jface.viewers.ColumnViewerEditor;
 import org.eclipse.jface.viewers.ColumnViewerEditorActivationStrategy;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.ColumnViewerEditorActivationEvent;
-import org.eclipse.jface.viewers.FocusCellOwnerDrawHighlighter;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.TreePath;
-import org.eclipse.jface.viewers.TreeViewerFocusCellManager;
-import org.eclipse.jface.viewers.TreeViewerEditor;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.nebula.jface.gridviewer.GridTableViewer;
+import org.eclipse.nebula.jface.gridviewer.GridTreeViewer;
 import org.eclipse.nebula.jface.gridviewer.GridViewerColumn;
 import org.eclipse.nebula.jface.gridviewer.GridViewerEditor;
 import org.eclipse.swt.SWT;
@@ -41,16 +36,35 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * A simple TreeViewer to demonstrate usage
- *
+ * 
  * @author Tom Schindl <tom.schindl@bestsolution.at>
- *
+ * 
  */
-public class Snippet026TreeViewerTabEditing {
-	public Snippet026TreeViewerTabEditing(final Shell shell) {
-		final GridTableViewer v = new GridTableViewer(shell, SWT.FULL_SELECTION);
-        v.getGrid().setLinesVisible(true);
-        v.getGrid().setHeaderVisible(true);
+public class GridViewerSnippet3 {
+	public GridViewerSnippet3(final Shell shell) {
+		Button b = new Button(shell,SWT.PUSH);
+		b.setText("BBB");
+		final GridTreeViewer v = new GridTreeViewer(shell, SWT.BORDER
+				| SWT.FULL_SELECTION);
+		v.getGrid().setHeaderVisible(true);
+		v.getGrid().setCellSelectionEnabled(true);
+		
+		b.addSelectionListener(new SelectionListener() {
 
+			public void widgetDefaultSelected(SelectionEvent e) {
+				
+			}
+
+			public void widgetSelected(SelectionEvent e) {
+				MyModel root = (MyModel)v.getInput();
+				TreePath path = new TreePath(new Object[]{root,root.child.get(1), ((MyModel)root.child.get(1)).child.get(0)});
+				v.editElement(path, 0);
+				// v.editElement(root.child.get(0), 0);
+			}
+			
+		});
+		
+		 
 		ColumnViewerEditorActivationStrategy actSupport = new ColumnViewerEditorActivationStrategy(v) {
 			protected boolean isEditorActivationEvent(
 					ColumnViewerEditorActivationEvent event) {
@@ -60,16 +74,17 @@ public class Snippet026TreeViewerTabEditing {
 						|| event.eventType == ColumnViewerEditorActivationEvent.PROGRAMMATIC;
 			}
 		};
-        GridViewerEditor.create(v, actSupport, ColumnViewerEditor.TABBING_HORIZONTAL | ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR
-                | ColumnViewerEditor.TABBING_VERTICAL | ColumnViewerEditor.KEYBOARD_ACTIVATION );
-        v.getGrid().setCellSelectionEnabled(true);
+		
+		GridViewerEditor.create(v, actSupport, ColumnViewerEditor.TABBING_HORIZONTAL
+				| ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR
+				| ColumnViewerEditor.TABBING_VERTICAL | ColumnViewerEditor.KEYBOARD_ACTIVATION);
+		
+		final TextCellEditor textCellEditor = new TextCellEditor(v.getGrid());
 
-        final TextCellEditor textCellEditor = new TextCellEditor(v.getGrid());
-
-        GridViewerColumn column = new GridViewerColumn(v, SWT.NONE);
+		GridViewerColumn column = new GridViewerColumn(v, SWT.NONE);
 		column.getColumn().setWidth(200);
-		column.getColumn().setMoveable(true);
 		column.getColumn().setText("Column 1");
+		column.getColumn().setTree(true);
 		column.setLabelProvider(new ColumnLabelProvider() {
 
 			public String getText(Object element) {
@@ -79,7 +94,7 @@ public class Snippet026TreeViewerTabEditing {
 		});
 		column.setEditingSupport(new EditingSupport(v) {
 			protected boolean canEdit(Object element) {
-				return false;
+				return true;
 			}
 
 			protected CellEditor getCellEditor(Object element) {
@@ -99,7 +114,6 @@ public class Snippet026TreeViewerTabEditing {
 
 		column = new GridViewerColumn(v, SWT.NONE);
 		column.getColumn().setWidth(200);
-		column.getColumn().setMoveable(true);
 		column.getColumn().setText("Column 2");
 		column.setLabelProvider(new ColumnLabelProvider() {
 
@@ -127,38 +141,7 @@ public class Snippet026TreeViewerTabEditing {
 				v.update(element, null);
 			}
 		});
-
-		column = new GridViewerColumn(v, SWT.NONE);
-		column.getColumn().setWidth(200);
-		column.getColumn().setMoveable(true);
-		column.getColumn().setText("Column 3");
-		column.setLabelProvider(new ColumnLabelProvider() {
-
-			public String getText(Object element) {
-				return "Column 3 => " + element.toString();
-			}
-
-		});
-		column.setEditingSupport(new EditingSupport(v) {
-			protected boolean canEdit(Object element) {
-				return true;
-			}
-
-			protected CellEditor getCellEditor(Object element) {
-				return textCellEditor;
-			}
-
-			protected Object getValue(Object element) {
-				return ((MyModel) element).counter + "";
-			}
-
-			protected void setValue(Object element, Object value) {
-				((MyModel) element).counter = Integer
-						.parseInt(value.toString());
-				v.update(element, null);
-			}
-		});
-
+		
 		v.setContentProvider(new MyContentProvider());
 
 		v.setInput(createModel());
@@ -188,7 +171,7 @@ public class Snippet026TreeViewerTabEditing {
 		Display display = new Display();
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
-		new Snippet026TreeViewerTabEditing(shell);
+		new GridViewerSnippet3(shell);
 		shell.open();
 
 		while (!shell.isDisposed()) {

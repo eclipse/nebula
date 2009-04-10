@@ -7,7 +7,6 @@ Bundle-Localization: plugin
 Require-Bundle: org.eclipse.swt,
  org.eclipse.jface,
  org.eclipse.core.runtime,
- org.eclipse.nebula.jface.gridviewer,
  org.eclipse.nebula.widgets.cdatetime,
  org.eclipse.nebula.widgets.ctree,
  org.eclipse.nebula.widgets.datechooser,

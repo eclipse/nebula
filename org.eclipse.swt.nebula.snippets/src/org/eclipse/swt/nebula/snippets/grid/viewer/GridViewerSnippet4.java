@@ -9,34 +9,34 @@
  *     Tom Schindl - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.nebula.snippets.gridviewer;
+package org.eclipse.swt.nebula.snippets.grid.viewer;
 
 import java.util.ArrayList;
 
 import org.eclipse.jface.resource.FontRegistry;
-import org.eclipse.jface.viewers.ITableColorProvider;
-import org.eclipse.jface.viewers.ITableFontProvider;
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.nebula.jface.gridviewer.GridTreeViewer;
-import org.eclipse.nebula.jface.gridviewer.GridViewerColumn;
+import org.eclipse.nebula.widgets.grid.GridColumn;
+import org.eclipse.nebula.widgets.grid.GridItem;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * A simple TreeViewer to demonstrate usage
+ * A simple TreeViewer to demonstrate usage of inline editing
  * 
  * @author Tom Schindl <tom.schindl@bestsolution.at>
  * 
  */
-public class GridViewerSnippet2 {
+public class GridViewerSnippet4 {
 	private class MyContentProvider implements ITreeContentProvider {
 
 		/*
@@ -125,7 +125,7 @@ public class GridViewerSnippet2 {
 	}
 
 	public class MyLabelProvider extends LabelProvider implements
-			ITableLabelProvider, ITableFontProvider, ITableColorProvider {
+			ITableLabelProvider {
 		FontRegistry registry = new FontRegistry();
 
 		public Image getColumnImage(Object element, int columnIndex) {
@@ -135,43 +135,38 @@ public class GridViewerSnippet2 {
 		public String getColumnText(Object element, int columnIndex) {
 			return "Column " + columnIndex + " => " + element.toString();
 		}
-
-		public Font getFont(Object element, int columnIndex) {
-			if (((MyModel) element).counter % 2 == 0) {
-				return registry.getBold(Display.getCurrent().getSystemFont()
-						.getFontData()[0].getName());
-			}
-			return null;
-		}
-
-		public Color getBackground(Object element, int columnIndex) {
-			if (((MyModel) element).counter % 2 == 0) {
-				return Display.getCurrent().getSystemColor(SWT.COLOR_RED);
-			}
-			return null;
-		}
-
-		public Color getForeground(Object element, int columnIndex) {
-			if (((MyModel) element).counter % 2 == 1) {
-				return Display.getCurrent().getSystemColor(SWT.COLOR_RED);
-			}
-			return null;
-		}
-
 	}
 
-	public GridViewerSnippet2(Shell shell) {
-		final GridTreeViewer v = new GridTreeViewer(shell);
+	public GridViewerSnippet4(Shell shell) {
+		final GridTreeViewer v = new GridTreeViewer(shell,SWT.FULL_SELECTION);
 		
-		GridViewerColumn column = new GridViewerColumn(v,SWT.NONE);
-		column.getColumn().setWidth(200);
-		column.getColumn().setText("Column 1");
-		column.getColumn().setTree(true);
+		GridColumn column = new GridColumn(v.getGrid(),SWT.NONE);
+		column.setWidth(200);
+		column.setText("Column 1");
+		column.setTree(true);
 		
-		column = new GridViewerColumn(v,SWT.NONE);
-		column.getColumn().setWidth(200);
-		column.getColumn().setText("Column 2");
+		column = new GridColumn(v.getGrid(),SWT.NONE);
+		column.setWidth(200);
+		column.setText("Column 2");
 		
+		v.setCellEditors(new CellEditor[]{new TextCellEditor(v.getGrid()), new TextCellEditor(v.getGrid())});
+		v.setColumnProperties(new String[]{"col1","col2"});
+		v.setCellModifier(new ICellModifier() {
+
+			public boolean canModify(Object element, String property) {
+				return true;
+			}
+
+			public Object getValue(Object element, String property) {
+				return ((MyModel)element).counter+"";
+			}
+
+			public void modify(Object element, String property, Object value) {
+				((MyModel)((GridItem)element).getData()).counter = Integer.parseInt(value.toString());
+				v.update(((GridItem)element).getData(), null);
+			}
+			
+		});
 		v.setLabelProvider(new MyLabelProvider());
 		v.setContentProvider(new MyContentProvider());
 		v.setInput(createModel());
@@ -198,7 +193,7 @@ public class GridViewerSnippet2 {
 		Display display = new Display();
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
-		new GridViewerSnippet2(shell);
+		new GridViewerSnippet4(shell);
 		shell.open();
 
 		while (!shell.isDisposed()) {

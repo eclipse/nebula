@@ -10,7 +10,7 @@
  *     IBM - Improvement for Bug 159625 [Snippets] Update Snippet011CustomTooltips to reflect new API
  *******************************************************************************/
 
-package org.eclipse.nebula.snippets.gridviewer;
+package org.eclipse.swt.nebula.snippets.grid.viewer;
 
 import java.net.MalformedURLException;
 import java.net.URL;

@@ -9,24 +9,19 @@
  *     Tom Schindl - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.nebula.snippets.gridviewer;
+package org.eclipse.swt.nebula.snippets.grid.viewer;
+
+import java.util.ArrayList;
 
 import org.eclipse.jface.resource.FontRegistry;
-import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.jface.viewers.ColumnViewerEditor;
-import org.eclipse.jface.viewers.ColumnViewerEditorActivationEvent;
-import org.eclipse.jface.viewers.ColumnViewerEditorActivationStrategy;
-import org.eclipse.jface.viewers.ICellModifier;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableColorProvider;
 import org.eclipse.jface.viewers.ITableFontProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.nebula.jface.gridviewer.GridTableViewer;
-import org.eclipse.nebula.jface.gridviewer.GridViewerEditor;
-import org.eclipse.nebula.widgets.grid.GridColumn;
+import org.eclipse.nebula.jface.gridviewer.GridTreeViewer;
+import org.eclipse.nebula.jface.gridviewer.GridViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -36,15 +31,13 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * Example usage of none mandatory interfaces of ITableFontProvider and
- * ITableColorProvider
+ * A simple TreeViewer to demonstrate usage
  * 
  * @author Tom Schindl <tom.schindl@bestsolution.at>
  * 
  */
-public class GridViewerSnippet1 {
-
-	private class MyContentProvider implements IStructuredContentProvider {
+public class GridViewerSnippet2 {
+	private class MyContentProvider implements ITreeContentProvider {
 
 		/*
 		 * (non-Javadoc)
@@ -52,7 +45,7 @@ public class GridViewerSnippet1 {
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
 		public Object[] getElements(Object inputElement) {
-			return (MyModel[]) inputElement;
+			return ((MyModel) inputElement).child.toArray();
 		}
 
 		/*
@@ -74,19 +67,60 @@ public class GridViewerSnippet1 {
 
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
+		 */
+		public Object[] getChildren(Object parentElement) {
+			return getElements(parentElement);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
+		 */
+		public Object getParent(Object element) {
+			if (element == null) {
+				return null;
+			}
+
+			return ((MyModel) element).parent;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
+		 */
+		public boolean hasChildren(Object element) {
+			return ((MyModel) element).child.size() > 0;
+		}
+
 	}
 
-	public static boolean flag = true;
-	
 	public class MyModel {
+		public MyModel parent;
+
+		public ArrayList child = new ArrayList();
+
 		public int counter;
 
-		public MyModel(int counter) {
+		public MyModel(int counter, MyModel parent) {
+			this.parent = parent;
 			this.counter = counter;
 		}
 
 		public String toString() {
-			return "Item " + this.counter;
+			String rv = "Item ";
+			if (parent != null) {
+				rv = parent.toString() + ".";
+			}
+
+			rv += counter;
+
+			return rv;
 		}
 	}
 
@@ -126,77 +160,45 @@ public class GridViewerSnippet1 {
 
 	}
 
-	public GridViewerSnippet1(Shell shell) {
-		final GridTableViewer v = new GridTableViewer(shell, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+	public GridViewerSnippet2(Shell shell) {
+		final GridTreeViewer v = new GridTreeViewer(shell);
+		
+		GridViewerColumn column = new GridViewerColumn(v,SWT.NONE);
+		column.getColumn().setWidth(200);
+		column.getColumn().setText("Column 1");
+		column.getColumn().setTree(true);
+		
+		column = new GridViewerColumn(v,SWT.NONE);
+		column.getColumn().setWidth(200);
+		column.getColumn().setText("Column 2");
+		
 		v.setLabelProvider(new MyLabelProvider());
 		v.setContentProvider(new MyContentProvider());
-		v.getGrid().setCellSelectionEnabled(true);
-				
-		v.setCellEditors(new CellEditor[] { new TextCellEditor(v.getGrid()), new TextCellEditor(v.getGrid()) });
-		v.setCellModifier(new ICellModifier() {
-
-			public boolean canModify(Object element, String property) {
-				return true;
-			}
-
-			public Object getValue(Object element, String property) {
-				return "Column " + property + " => " + element.toString();
-			}
-
-			public void modify(Object element, String property, Object value) {
-				
-			}
-			
-		});
-		
-		v.setColumnProperties(new String[] {"1","2"});
-		
-		ColumnViewerEditorActivationStrategy actSupport = new ColumnViewerEditorActivationStrategy(v) {
-			protected boolean isEditorActivationEvent(
-					ColumnViewerEditorActivationEvent event) {
-				return event.eventType == ColumnViewerEditorActivationEvent.TRAVERSAL
-						|| event.eventType == ColumnViewerEditorActivationEvent.MOUSE_DOUBLE_CLICK_SELECTION
-						|| (event.eventType == ColumnViewerEditorActivationEvent.KEY_PRESSED && event.keyCode == SWT.CR);
-			}
-		};
-		
-		GridViewerEditor.create(v, actSupport, ColumnViewerEditor.TABBING_HORIZONTAL
-				| ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR
-				| ColumnViewerEditor.TABBING_VERTICAL | ColumnViewerEditor.KEYBOARD_ACTIVATION);
-		
-		GridColumn column = new GridColumn(v.getGrid(), SWT.NONE);
-		column.setWidth(200);
-		column.setText("Column 1");
-
-		column = new GridColumn(v.getGrid(), SWT.NONE);
-		column.setWidth(200);
-		column.setText("Column 2");
-
-		MyModel[] model = createModel();
-		v.setInput(model);
-		v.getGrid().setLinesVisible(true);
-		v.getGrid().setHeaderVisible(true);
+		v.setInput(createModel());
 	}
 
-	private MyModel[] createModel() {
-		MyModel[] elements = new MyModel[10];
+	private MyModel createModel() {
 
-		for (int i = 0; i < 10; i++) {
-			elements[i] = new MyModel(i);
+		MyModel root = new MyModel(0, null);
+		root.counter = 0;
+
+		MyModel tmp;
+		for (int i = 1; i < 10; i++) {
+			tmp = new MyModel(i, root);
+			root.child.add(tmp);
+			for (int j = 1; j < i; j++) {
+				tmp.child.add(new MyModel(j, tmp));
+			}
 		}
 
-		return elements;
+		return root;
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Display display = new Display();
-
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
-		new GridViewerSnippet1(shell);
+		new GridViewerSnippet2(shell);
 		shell.open();
 
 		while (!shell.isDisposed()) {
@@ -205,7 +207,5 @@ public class GridViewerSnippet1 {
 		}
 
 		display.dispose();
-
 	}
-
 }
