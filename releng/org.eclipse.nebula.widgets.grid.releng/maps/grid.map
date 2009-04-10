@@ -1,5 +1,5 @@
 !**** the plugin
-plugin@org.eclipse.nebula.widgets.grid=v20081203,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.grid
+plugin@org.eclipse.nebula.widgets.grid=v20090410,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.grid
 
 !**** the feature
-feature@org.eclipse.nebula.widgets.grid.feature=v20081203,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/features/org.eclipse.nebula.widgets.grid.feature
+feature@org.eclipse.nebula.widgets.grid.feature=v20090410,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/features/org.eclipse.nebula.widgets.grid.feature
