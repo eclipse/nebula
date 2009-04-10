@@ -1,0 +1,5 @@
+!**** the plugin
+plugin@org.eclipse.nebula.widgets.pshelf=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.pshelf
+
+!**** the feature
+feature@org.eclipse.nebula.widgets.pshelf.feature=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/features/org.eclipse.nebula.widgets.pshelf.feature

@@ -1,0 +1,18 @@
+# random properties copied out of CBI example
+
+projectid=eclipse.nebula.widgets.pshelf
+mainFeatureToBuildID=org.eclipse.nebula.widgets.pshelf.feature
+#testFeatureToBuildID=org.eclipse.nebula.widgets.pshelf.tests.feature
+#JAVA14_HOME=/opt/local/IBMJava2-142
+#runPackager=true
+
+zipPrefix=nebula-widgets-pshelf
+# when project exits incubation, set blank
+incubation=
+
+configs=*, *, *
+groupConfigurations=true
+outputUpdateJars=true
+archivesFormat=group,group,group-zip
+
+
