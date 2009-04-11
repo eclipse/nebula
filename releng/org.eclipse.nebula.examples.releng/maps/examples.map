@@ -1,0 +1,3 @@
+plugin@org.eclipse.swt.nebula.examples=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/org.eclipse.swt.nebula.examples
+
+feature@org.eclipse.nebula.examples_feature=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/features/org.eclipse.nebula.examples_feature
