@@ -2,7 +2,7 @@
 
 # Parameters
 source $1
-if [[ ! $projectid ]]; then exit(1); fi
+if [[ ! $projectid ]]; then exit 1; fi
 writableBuildRoot="$HOME/nebula-builds";
 JAVA_HOME="/opt/public/common/ibm-java2-142"
 
