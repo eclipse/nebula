@@ -4,7 +4,7 @@ plugin@org.eclipse.nebula.widgets.pgroup=HEAD,:pserver:anonymous@dev.eclipse.org
 plugin@org.eclipse.nebula.widgets.pshelf=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.pshelf
 plugin@org.eclipse.nebula.widgets.cdatetime=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.cdatetime
 plugin@org.eclipse.nebula.widgets.datechooser=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.datechooser
-plugin@org.eclipse.nebula.widgets.formatedtext=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.formatedtext
+plugin@org.eclipse.nebula.widgets.formattedtext=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.formattedtext
 plugin@org.eclipse.nebula.cwt=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/org.eclipse.nebula.cwt
 plugin@org.eclipse.swt.nebula.examples=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/org.eclipse.swt.nebula.examples
 
