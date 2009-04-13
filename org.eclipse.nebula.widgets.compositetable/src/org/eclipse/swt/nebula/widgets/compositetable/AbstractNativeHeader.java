@@ -9,6 +9,7 @@
  * Contributors:
  *     David Orme     - Initial API and implementation
  *     The Pampered Chef - Expanded to handle sorting
+ *     Elias Volanakis   - 267316
  */
 package org.eclipse.swt.nebula.widgets.compositetable;
 
@@ -159,6 +160,62 @@ public abstract class AbstractNativeHeader extends Composite {
         this.columnLabelStrings = columnTextStrings;
         this.columnAlignments = alignments;
         initializeColumns();
+    }
+    
+    public TableColumn[] getColumns() {
+    	return headerTable.getColumns();
+    }
+    
+    /**
+     * Sets the sort indicator onto the specified column.
+     * 
+     * @param index
+     * 
+     * TODO [ev] javadoc
+     * @see #setSortDirection(int)
+     */
+	public void setSortColumn(int index) {
+		if (index == -1) {
+			headerTable.setSortColumn(null);
+		} else {
+			TableColumn column = headerTable.getColumn(index);
+			headerTable.setSortColumn(column);
+		}
+		lastSortColumn = index;
+	}
+    
+    /**
+     * The index of the currently sorted table column
+     * 
+     * @return a 0-based index or -1 if no column is sorted
+     */
+    public int indexOfSortColumn() {
+    	TableColumn column = headerTable.getSortColumn();
+		return column == null ? -1 : headerTable.indexOf(column);
+    }
+    
+    /**
+     * Set the sort direction.
+     * 
+     * @param direct one of SWT.UP, SWT.DOWN, SWT.NONE 
+     * @throws RuntimeException if direction has an invalid value
+     * @see #setSortColumn(int);
+     */
+	public void setSortDirection(int direction) {
+		if (!(direction == SWT.NONE || direction == SWT.UP || direction == SWT.DOWN)) {
+			throw new IllegalArgumentException("direction= " + direction);
+		}
+		headerTable.setSortDirection(direction);
+		sortDirection = direction;
+	}
+    
+    /**
+     * Returns the current sort direction.
+     * 
+     * @return one of SWT.UP, SWT.DOWN, SWT.NONE
+     */
+    public int getSortDirection() {
+    	return headerTable.getSortDirection();
     }
     
     private List columnControlListeners = new ArrayList();

@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     David Orme     - Initial API and implementation
+ *     Elias Volanakis - 267316
  */
 package org.eclipse.swt.nebula.widgets.compositetable;
 
@@ -817,6 +818,15 @@ class InternalCompositeTable extends Composite implements Listener {
 	public Control getHeaderControl() {
 		return headerControl;
 	}
+	
+	/**
+	 * Returns the actual header control (not the prototype). 
+	 * 
+	 * @return a control instance or null, if no header is available
+	 */
+	Control getHeader() {
+		return myHeader;
+	}
 
 	/**
 	 * Method setMaxRowsVisible. Sets the maximum number of rows that will be
@@ -912,10 +922,11 @@ class InternalCompositeTable extends Composite implements Listener {
 	 * getSelection().y + getCurrentRow().
 	 * 
 	 * @return the currently-selected (column, row) pair where the row specifies
-	 *         the offset from the top of the table window.
+	 *         the offset from the top of the table window, or null if no
+	 *         selection is available.
 	 */
 	public Point getSelection() {
-		return new Point(currentColumn, currentRow);
+		return currentRow != -1 ? new Point(currentColumn, currentRow) : null; 
 	}
 
 	/**
@@ -942,6 +953,17 @@ class InternalCompositeTable extends Composite implements Listener {
 				if (fireRequestRowChangeEvent())
 					internalSetSelection(column, row, true);
 			}
+		}
+	}
+	
+	/**
+	 * (non-API) See {@link CompositeTable#clearSelection()} instead.
+	 */
+	public void clearSelection() {
+		Point currentSelection = getSelection();
+		if(currentSelection != null) {
+			fireRowDepartEvent();
+			currentRow = -1;
 		}
 	}
 

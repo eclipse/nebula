@@ -128,14 +128,14 @@ public abstract class AbstractSelectableRow extends Composite implements
 
 	public void depart(CompositeTable sender, int currentObjectOffset,
 			Control row) {
-		// NOOP
+		if(row == this && selected) {
+			deselectRow();
+		}
 	}
 
 	public void arrive(CompositeTable sender, int currentObjectOffset,
 			Control newRow) {
-		if (newRow != this && selected) {
-			deselectRow();
-		}
+		// NO OP
 	}
 
 	public void refresh(CompositeTable sender, int currentObjectOffset,

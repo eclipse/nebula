@@ -9,6 +9,7 @@
  * Contributors:
  *     David Orme                  - Initial API and implementation
  *     Coconut Palm Software, Inc. - API cleanup
+ *     Elias Volanakis             - 267316
  */
 package org.eclipse.swt.nebula.widgets.compositetable;
 
@@ -771,6 +772,15 @@ public class CompositeTable extends Canvas {
 	public Control[] getRowControls() {
 		return contentPane.getRowControls();
 	}
+	
+	/**
+	 * Returns the actual header control (not the prototype). 
+	 * 
+	 * @return a control instance or null if no header is available
+	 */
+	public Control getHeader() {
+		return (contentPane != null) ? contentPane.getHeader() : null;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -805,7 +815,8 @@ public class CompositeTable extends Canvas {
 	 * getSelection().y + getTopRow().
 	 * 
 	 * @return the currently-selected (column, row) pair where the row specifies
-	 *         the offset from the top of the table window.
+	 *         the offset from the top of the table window, or null if no 
+	 *         selection is available
 	 */
 	public Point getSelection() {
 		if (contentPane == null) {
@@ -843,6 +854,15 @@ public class CompositeTable extends Canvas {
 			return;
 		}
 		contentPane.setSelection(column, row);
+	}
+	
+	/**
+	 * Method clearSelection. Deselects the currently-selected (column, row) pair.
+	 */
+	public void clearSelection() {
+		if (contentPane != null) {
+			contentPane.clearSelection();
+		}
 	}
 
 	/**
