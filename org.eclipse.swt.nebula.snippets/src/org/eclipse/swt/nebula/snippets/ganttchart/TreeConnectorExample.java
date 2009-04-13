@@ -155,18 +155,16 @@ public class TreeConnectorExample {
 				TreeItem ti = tree.getTopItem();
 				// this will put the chart right where the event starts. There is also a method call setTopItem(GanttEvent, yOffset) where
 				// you can fine-tune the scroll location if you need to.
-				ganttComposite.setTopItem((GanttEvent) ti.getData());
+				ganttComposite.setTopItem((GanttEvent) ti.getData(), SWT.LEFT);
 			}
 		});
 
 		// when an item is selected in the tree, we highlight it by setting it selected in the chart as well
 		tree.addSelectionListener(new SelectionListener() {
 
-			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 
-			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (tree.getSelectionCount() == 0)
 					return;
