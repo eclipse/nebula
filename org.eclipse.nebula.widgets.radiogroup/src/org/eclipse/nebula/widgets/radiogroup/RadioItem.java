@@ -63,6 +63,20 @@ public class RadioItem extends Item {
 		parent.addListener(SWT.Dispose, disposeListener);
 		button.addListener(SWT.Dispose, disposeListener);
 
+		addListener(SWT.Dispose, new Listener() {
+			public void handleEvent(Event event) {
+				if (parent != null) {
+					parent.removeItem(RadioItem.this);
+				}
+				if (button != null) {
+					button.dispose();
+					if (parent != null && !parent.isDisposed())
+						parent.layout(false);
+				}
+				RadioItem.this.parent = null;
+				button = null;
+			}
+		});
 		parent.addItem(this, index);
 	}
 
@@ -138,19 +152,5 @@ public class RadioItem extends Item {
 		if (font == null)
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		button.setFont(font);
-	}
-
-	public void dispose() {
-		if (parent != null) {
-			parent.removeItem(this);
-		}
-		if (button != null) {
-			button.dispose();
-			if (parent != null && !parent.isDisposed())
-				parent.layout(false);
-		}
-		parent = null;
-		button = null;
-		super.dispose();
 	}
 }
