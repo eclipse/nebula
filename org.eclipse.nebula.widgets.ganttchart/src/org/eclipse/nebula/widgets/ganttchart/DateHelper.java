@@ -28,14 +28,14 @@ public class DateHelper {
 	}
 	
 	public static int hoursBetween(Calendar start, Calendar end, Locale locale, boolean assumeSameDate) {
-		return minutesBetween(start.getTime(), end.getTime(), locale, assumeSameDate) / 60;
+		return minutesBetween(start.getTime(), end.getTime(), locale, assumeSameDate, false) / 60;
 	}
 
 	public static int hoursBetween(Date start, Date end, Locale locale, boolean assumeSameDate) {
-		return minutesBetween(start, end, locale, assumeSameDate) / 60;
+		return minutesBetween(start, end, locale, assumeSameDate, false) / 60;
 	}
 
-	public static int minutesBetween(Date start, Date end, Locale locale, boolean assumeSameDate) {
+	public static int minutesBetween(Date start, Date end, Locale locale, boolean assumeSameDate, boolean assumeSameHour) {
 		Calendar sDate = Calendar.getInstance(locale);
 		Calendar eDate = Calendar.getInstance(locale);
 		sDate.setTime(start);
@@ -47,6 +47,11 @@ public class DateHelper {
 			sDate.set(Calendar.YEAR, 2000);
 			eDate.set(Calendar.DAY_OF_YEAR, 1);
 			sDate.set(Calendar.DAY_OF_YEAR, 1);
+		}
+		
+		if (assumeSameHour) {
+			eDate.set(Calendar.HOUR, 1);
+			sDate.set(Calendar.HOUR, 1);
 		}
 
 		long diff = eDate.getTimeInMillis() - sDate.getTimeInMillis();

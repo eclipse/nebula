@@ -458,27 +458,4 @@ abstract class AbstractSettings implements ISettings {
 		return false;
 	}
 
-
-	
-/*	public List getHeaderLevels() {
-		List l = new ArrayList();
-		
-		HeaderSet hs = new HeaderSet();
-		HeaderLevel dayNormalTop = new HeaderLevel(Calendar.DATE, HeaderLevel.OFFSET_DATE, 1, 16*7, "MMM dd, ''yy", HeaderLevel.SEPARATOR_BOTTOM_TICK, Locale.getDefault());
-		HeaderLevel dayNormalBottom = new HeaderLevel(Calendar.DATE, HeaderLevel.OFFSET_DATE, 1, 16, "E", HeaderLevel.SEPARATOR_FULL_LINE, Locale.getDefault());
-		hs.addHeaderLevel(dayNormalTop);
-		hs.addHeaderLevel(dayNormalBottom);
-		l.add(hs);
-
-		hs = new HeaderSet();
-		HeaderLevel hoursNormalTop = new HeaderLevel(Calendar.HOUR_OF_DAY, 1, 32*24, "MMM dd, HH:mm", HeaderLevel.SEPARATOR_BOTTOM_TICK, Locale.getDefault());
-		HeaderLevel hoursNormalBottom = new HeaderLevel(Calendar.HOUR_OF_DAY, 1, 32, "HH:mm", HeaderLevel.SEPARATOR_FULL_LINE, Locale.getDefault());
-		hs.addHeaderLevel(hoursNormalTop);
-		hs.addHeaderLevel(hoursNormalBottom);
-		l.add(hs);
-		
-		return l;
-	}
-*/
-	
 }

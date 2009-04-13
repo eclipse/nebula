@@ -15,6 +15,9 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 
+import org.eclipse.nebula.widgets.ganttchart.themes.ColorThemeGrayBlue;
+import org.eclipse.nebula.widgets.ganttchart.themes.ColorThemeSilver;
+import org.eclipse.nebula.widgets.ganttchart.themes.ColorThemeWindowsBlue;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -123,7 +126,7 @@ public class GanttTester {
 
 		Label lEvents = new Label(gGeneral, SWT.NONE);
 		lEvents.setText("Number of Events");
-
+		
 		final Combo eventCountCombo = new Combo(gGeneral, SWT.NONE);
 		eventCountCombo.add("2");
 		eventCountCombo.add("10");
@@ -141,6 +144,16 @@ public class GanttTester {
 		eventCountCombo.setToolTipText("Number of events to create");
 		eventCountCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
+		Label lTheme = new Label(gGeneral, SWT.NONE);
+		lTheme.setText("Color Theme");
+
+		final Combo themeCombo = new Combo(gGeneral, SWT.READ_ONLY);
+		themeCombo.add("Blue");
+		themeCombo.add("Silver");
+		themeCombo.add("Gray Blue");
+		themeCombo.select(0);
+
+		
 		Group gLeft = new Group(comp, SWT.NONE);
 		gLeft.setLayout(new GridLayout(1, true));
 		gLeft.setText("Styles and Options");
@@ -391,8 +404,16 @@ public class GanttTester {
 				if (bUseDDay.getSelection()) {
 					toUse = new DDaySettings();
 				}
+				
+				IColorManager color = new ColorThemeWindowsBlue();
+				if (themeCombo.getSelectionIndex() == 1) {
+					color = new ColorThemeSilver();
+				}
+				else if (themeCombo.getSelectionIndex() == 2) {
+					color = new ColorThemeGrayBlue();
+				}
 								
-				_ganttChart = new GanttChart(_vfChart, flags, toUse);
+				_ganttChart = new GanttChart(_vfChart, flags, toUse, color);
 				_ganttComposite = _ganttChart.getGanttComposite();
 				_vfChart.setContent(_ganttChart);
 
