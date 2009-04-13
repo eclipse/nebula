@@ -1,3 +1,5 @@
+package org.eclipse.swt.nebula.snippets.ganttchart;
+
 /*******************************************************************************
  * Copyright (c) Emil Crumhorn - Hexapixel.com - emil.crumhorn@gmail.com
  * All rights reserved. This program and the accompanying materials
