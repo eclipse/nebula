@@ -70,43 +70,31 @@ public class WeekHeader extends Composite {
 		label = new Label(this, SWT.CENTER);
 		label.setBounds(new org.eclipse.swt.graphics.Rectangle(23, 18, 53, 18));
 		label.setLayoutData(gridData6);
-		label.setText("Sunday");
+		label.setText("Monday");
 		label1 = new Label(this, SWT.CENTER);
-		label1
-				.setBounds(new org.eclipse.swt.graphics.Rectangle(98, 18, 79,
-						17));
+		label1.setBounds(new org.eclipse.swt.graphics.Rectangle(98, 18, 79, 17));
 		label1.setLayoutData(gridData5);
-		label1.setText("Monday");
+		label1.setText("Tuesday");
 		label2 = new Label(this, SWT.CENTER);
-		label2
-				.setBounds(new org.eclipse.swt.graphics.Rectangle(187, 18, 47,
-						17));
+		label2.setBounds(new org.eclipse.swt.graphics.Rectangle(187, 18, 47, 17));
 		label2.setLayoutData(gridData4);
-		label2.setText("Tuesday");
+		label2.setText("Wednesday");
 		label3 = new Label(this, SWT.CENTER);
-		label3
-				.setBounds(new org.eclipse.swt.graphics.Rectangle(256, 17, 67,
-						17));
+		label3.setBounds(new org.eclipse.swt.graphics.Rectangle(256, 17, 67, 17));
 		label3.setLayoutData(gridData3);
-		label3.setText("Wednesday");
+		label3.setText("Thursday");
 		label4 = new Label(this, SWT.CENTER);
-		label4
-				.setBounds(new org.eclipse.swt.graphics.Rectangle(338, 17, 62,
-						20));
+		label4.setBounds(new org.eclipse.swt.graphics.Rectangle(338, 17, 62, 20));
 		label4.setLayoutData(gridData2);
-		label4.setText("Thursday");
+		label4.setText("Friday");
 		label5 = new Label(this, SWT.CENTER);
-		label5
-				.setBounds(new org.eclipse.swt.graphics.Rectangle(415, 16, 43,
-						21));
+		label5.setBounds(new org.eclipse.swt.graphics.Rectangle(415, 16, 43, 21));
 		label5.setLayoutData(gridData1);
-		label5.setText("Friday");
+		label5.setText("Saturday");
 		label6 = new Label(this, SWT.CENTER);
-		label6
-				.setBounds(new org.eclipse.swt.graphics.Rectangle(469, 16, 61,
-						23));
+		label6.setBounds(new org.eclipse.swt.graphics.Rectangle(469, 16, 61, 23));
 		label6.setLayoutData(gridData);
-		label6.setText("Saturday");
+		label6.setText("Sunday");
 
 	}
 
