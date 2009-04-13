@@ -1,6 +1,6 @@
 package org.eclipse.nebula.widgets.calendarcombo;
 
-import java.util.Locale;
+import java.util.Calendar;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -24,10 +24,10 @@ public class Tester {
 		// allow other date formats than default
 		class Settings extends DefaultSettings {
 			
-			public Locale getLocale() {
-				return Locale.GERMAN;
+/*			public Locale getLocale() {
+				//return Locale.GERMAN;
 			}
-
+*/
 			public boolean keyboardNavigatesCalendar() {
 				return false;
 			}
@@ -43,8 +43,26 @@ public class Tester {
 		Label foo = new Label(inner, SWT.NONE);
 		foo.setText("Test");
 		final CalendarCombo cc = new CalendarCombo(inner, SWT.NONE, new Settings(), null);
+		cc.addCalendarListener(new ICalendarListener() {
 
-		final CalendarCombo cc2 = new CalendarCombo(inner, SWT.NONE, new Settings(), null);
+			public void dateChanged(Calendar date) {
+				if (date == null) {
+					System.err.println("Date changed to null");
+				}
+				else {
+					System.err.println("Date changed " + date.getTime());
+				}
+			}
+
+			public void dateRangeChanged(Calendar start, Calendar end) {
+			}
+
+			public void popupClosed() {
+			}
+			
+		});
+
+		final CalendarCombo cc2 = new CalendarCombo(inner, SWT.READ_ONLY, new Settings(), null);
 
 		Button b = new Button(inner, SWT.PUSH);
 		b.setText("Check date");

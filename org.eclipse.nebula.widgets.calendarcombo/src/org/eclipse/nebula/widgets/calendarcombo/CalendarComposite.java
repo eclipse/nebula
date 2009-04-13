@@ -729,16 +729,16 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 		if (mDateRange)
 			mMainListener.dateRangeChanged(mMouseDownDay, mMouseUpDay);
 		else
-			mMainListener.dateChanged(date);
-
-		for (int i = 0; i < mListeners.size(); i++) {
+			mMainListener.dateChanged(date);		
+		
+/*		for (int i = 0; i < mListeners.size(); i++) {
 			ICalendarListener l = (ICalendarListener) mListeners.get(i);
 
 			if (mDateRange)
 				l.dateRangeChanged(mMouseDownDay, mMouseUpDay);
 			else
 				l.dateChanged(date);
-		}
+		}*/
 	}
 
 	private void notifyListeners() {

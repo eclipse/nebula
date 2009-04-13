@@ -363,6 +363,16 @@ public class DateHelper {
 				SimpleDateFormat sdf = new SimpleDateFormat(actualLocaleShort);
 				parsed = sdf.parse(str);
 			}
+			else if (str.length() == 5) {
+				// if a user enters a 5-digit date we assume they were clever enough to get the day and month in 2 digit formats, and the last being the year in a 1 digit format.
+				// so we need to 2-digitize the year and re-parse. As any 1900-year would be 2 digit except for early 1900's (we don't care) we assume it's 2000+. As I said, if we
+				// get here the user is really pushing their luck on parsing anyway and we're doing them a favor to begin with
+				StringBuffer buf = new StringBuffer();
+				buf.append(str.substring(0, 4));
+				buf.append("0");
+				buf.append(str.substring(4, 5));
+				return numericParse(buf.toString(), locale, doUsEuParse);
+			}
 			else {
 				SimpleDateFormat sdf = new SimpleDateFormat(actualLocaleLong);
 				parsed = sdf.parse(str);
@@ -534,10 +544,12 @@ public class DateHelper {
 				throw new Exception("Unknown calendar type for '" + dateValue + "'");
 
 			toReturn.set(calType, Integer.parseInt(dateValue));
+			if (calType == Calendar.MONTH) {
+				// set the accurate calendar-month (zero based) now as when we set a date, we might end up
+				// with a bonus month thanks the the calendars very lenient parsing letting you set 32+ days on a month
+				toReturn.add(Calendar.MONTH, -1);
+			}
 		}
-
-		// month is zero based, dumbest idea ever
-		toReturn.add(Calendar.MONTH, -1);
 
 		if (toReturn.get(Calendar.YEAR) < 100)
 			toReturn.set(Calendar.YEAR, toReturn.get(Calendar.YEAR) + 2000);

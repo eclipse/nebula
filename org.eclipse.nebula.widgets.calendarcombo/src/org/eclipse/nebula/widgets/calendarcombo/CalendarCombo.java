@@ -1041,6 +1041,8 @@ public class CalendarCombo extends Composite {
 			if (DateHelper.sameDate(mLastNotificationDate, mStartDate))
 				return;
 		}
+		
+		mLastNotificationDate = (Calendar)mStartDate.clone();
 
 		for (int i = 0; i < mListeners.size(); i++) {
 			try {
@@ -1198,6 +1200,8 @@ public class CalendarCombo extends Composite {
 				mCombo.setFocus();
 			}
 		}
+		
+		notifyDateChanged();
 	}
 
 	private boolean isCalendarVisible() {
