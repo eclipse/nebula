@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Nebula Gallery Plug-in
+Bundle-Name: Nebula Gallery widget (incubation)
 Bundle-SymbolicName: org.eclipse.nebula.widgets.gallery
 Bundle-Version: 0.5.1.qualifier
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
