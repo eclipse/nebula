@@ -23,7 +23,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Transform;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Item;
 
 /**
@@ -93,13 +92,23 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 	protected static final String DATA_ANIMATION = "org.eclipse.nebula.gallery.internal.animation"; //$NON-NLS-1$
 
 	public DefaultGalleryGroupRenderer() {
+	}
+
+	public void setGallery(Gallery gallery) {
+		super.setGallery(gallery);
+
 		// Set defaults
-		titleForeground = Display.getDefault().getSystemColor(
-				SWT.COLOR_TITLE_FOREGROUND);
+		if (titleForeground == null) {
+			titleForeground = gallery.getDisplay().getSystemColor(
+					SWT.COLOR_TITLE_FOREGROUND);
+		}
 		// titleBackground =
 		// Display.getDefault().getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
-		descriptionColor = Display.getDefault().getSystemColor(
-				SWT.COLOR_DARK_BLUE);
+		if (descriptionColor == null) {
+			descriptionColor = gallery.getDisplay().getSystemColor(
+					SWT.COLOR_DARK_BLUE);
+		}
+
 	}
 
 	/**
