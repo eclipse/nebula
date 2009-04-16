@@ -652,7 +652,7 @@ public class Gallery extends Canvas {
 							lastSingleClick, e.keyCode);
 
 					if (newItem != null) {
-						_deselectAll();
+						_deselectAll(false);
 						setSelected(newItem, true, true);
 						lastSingleClick = newItem;
 						_showItem(newItem);
@@ -830,8 +830,25 @@ public class Gallery extends Canvas {
 		}
 
 		// Notify listeners if necessary.
-		if (notifyListeners)
-			notifySelectionListeners(item, indexOf(item), false);
+		if (notifyListeners) {
+
+			GalleryItem notifiedItem = null;
+
+			if (item != null && selected) {
+				notifiedItem = item;
+			} else {
+				if (selection != null && selection.length > 0) {
+					notifiedItem = selection[selection.length - 1];
+				}
+			}
+
+			int index = -1;
+			if (notifiedItem != null) {
+				index = indexOf(notifiedItem);
+			}
+
+			notifySelectionListeners(notifiedItem, index, false);
+		}
 
 	}
 
@@ -845,7 +862,7 @@ public class Gallery extends Canvas {
 
 		// Deselect all items is multi selection is disabled
 		if (!multi) {
-			_deselectAll();
+			_deselectAll(false);
 		}
 
 		if (item.getParentItem() != null) {
@@ -923,12 +940,12 @@ public class Gallery extends Canvas {
 	 */
 	public void deselectAll() {
 		checkWidget();
-		_deselectAll();
+		_deselectAll(false);
 
 		redraw();
 	}
 
-	protected void _deselectAll() {
+	protected void _deselectAll(boolean notifyListeners) {
 
 		if (DEBUG)
 			System.out.println("clear"); //$NON-NLS-1$
@@ -942,6 +959,10 @@ public class Gallery extends Canvas {
 			if (items[i] != null)
 				items[i]._deselectAll();
 		}
+
+		// Notify listeners if necessary.
+		if (notifyListeners)
+			notifySelectionListeners(null, -1, false);
 	}
 
 	void onMouseDoubleClick(MouseEvent e) {
@@ -1011,11 +1032,10 @@ public class Gallery extends Canvas {
 		if (e.button == 1) {
 
 			if (item == null) {
-				_deselectAll();
+				_deselectAll(true);
 				redraw();
 				mouseClickHandled = true;
 				lastSingleClick = null;
-				// notifySelectionListeners(null, -1, false);
 			} else {
 				if ((e.stateMask & SWT.MOD1) > 0) {
 					onMouseHandleLeftMod1(e, item, true, false);
@@ -1049,7 +1069,7 @@ public class Gallery extends Canvas {
 			boolean down, boolean up) {
 		if (up) {
 			if (lastSingleClick != null) {
-				_deselectAll();
+				_deselectAll(false);
 
 				if (getOrder(item, lastSingleClick))
 					select(item, lastSingleClick);
@@ -1063,7 +1083,7 @@ public class Gallery extends Canvas {
 			boolean up) {
 		if (down) {
 			if (!isSelected(item)) {
-				_deselectAll();
+				_deselectAll(false);
 
 				if (DEBUG)
 					System.out.println("setSelected"); //$NON-NLS-1$
@@ -1075,12 +1095,12 @@ public class Gallery extends Canvas {
 			}
 		} else if (up) {
 			if (item == null) {
-				_deselectAll();
+				_deselectAll(true);
 			} else {
 				if (DEBUG)
 					System.out.println("setSelected"); //$NON-NLS-1$
 
-				_deselectAll();
+				_deselectAll(false);
 				setSelected(item, true, lastSingleClick != item);
 				lastSingleClick = item;
 			}
@@ -1104,7 +1124,7 @@ public class Gallery extends Canvas {
 				System.out.println("right click"); //$NON-NLS-1$
 
 			if (item != null && !isSelected(item)) {
-				_deselectAll();
+				_deselectAll(false);
 				setSelected(item, true, true);
 				redraw();
 				mouseClickHandled = true;
@@ -1864,7 +1884,7 @@ public class Gallery extends Canvas {
 
 		// TODO: I'm clearing selection here
 		// but we have to check that Table has the same behavior
-		this._deselectAll();
+		this._deselectAll(false);
 
 		updateStructuralValues(null, false);
 		updateScrollBarsProperties();
@@ -2071,7 +2091,7 @@ public class Gallery extends Canvas {
 
 	public void setSelection(GalleryItem[] items) {
 		checkWidget();
-		_deselectAll();
+		_deselectAll(false);
 		for (int i = 0; i < items.length; i++) {
 			this.setSelected(items[i], true, false);
 
