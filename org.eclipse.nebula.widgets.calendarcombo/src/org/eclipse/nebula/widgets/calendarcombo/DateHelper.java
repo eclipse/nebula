@@ -528,10 +528,11 @@ public class DateHelper {
 		Calendar toReturn = Calendar.getInstance(locale);
 		StringTokenizer st = new StringTokenizer(str, splitter);
 		StringTokenizer st2 = new StringTokenizer(dateFormatToUse, splitter);
-
+		
 		if (st.countTokens() != st2.countTokens())
 			throw new Exception("Date format does not match date string in terms of splitter character numbers");
-
+		
+		// we need to do month first (see comment inside)
 		while (st.hasMoreTokens()) {
 			String dateValue = st.nextToken();
 			String dateType = st2.nextToken();
@@ -543,12 +544,32 @@ public class DateHelper {
 			if (calType == -1)
 				throw new Exception("Unknown calendar type for '" + dateValue + "'");
 
-			toReturn.set(calType, Integer.parseInt(dateValue));
 			if (calType == Calendar.MONTH) {
+				toReturn.set(calType, Integer.parseInt(dateValue));
 				// set the accurate calendar-month (zero based) now as when we set a date, we might end up
 				// with a bonus month thanks the the calendars very lenient parsing letting you set 32+ days on a month
 				toReturn.add(Calendar.MONTH, -1);
 			}
+		}
+
+		// reset, skipping month this time
+		st = new StringTokenizer(str, splitter);
+		st2 = new StringTokenizer(dateFormatToUse, splitter);
+		
+		while (st.hasMoreTokens()) {
+			String dateValue = st.nextToken();
+			String dateType = st2.nextToken();
+
+			dateValue = dateValue.replaceAll(" ", "");
+			dateType = dateType.replaceAll(" ", "");
+
+			int calType = getCalendarTypeForString(dateType);
+			// we already did month
+			if (calType == Calendar.MONTH) {
+				continue;
+			}
+
+			toReturn.set(calType, Integer.parseInt(dateValue));
 		}
 
 		if (toReturn.get(Calendar.YEAR) < 100)
