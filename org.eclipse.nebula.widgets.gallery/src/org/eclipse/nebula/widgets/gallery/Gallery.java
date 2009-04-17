@@ -92,9 +92,7 @@ import org.eclipse.swt.widgets.TypedListener;
  * </dl>
  * </p>
  * <p>
- * NOTE: THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT. THIS IS A
- * PRE-RELEASE ALPHA VERSION. USERS SHOULD EXPECT API CHANGES IN FUTURE
- * VERSIONS.
+ * NOTE: THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.
  * </p>
  * 
  * @author Nicolas Richeton (nicolas.richeton@gmail.com)

@@ -16,17 +16,19 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 
 /**
- * NoGroup Renderer <br/>
- * This group renderer does not draw group decoration. Only items are displayed.<br/>
- * All groups are considered as expanded<br/>
- * The visual aspect is the same as the first version of the gallery widget.<br/>
- * <br/>
- * 
  * <p>
- * NOTE: THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT. THIS IS A
- * PRE-RELEASE ALPHA VERSION. USERS SHOULD EXPECT API CHANGES IN FUTURE
- * VERSIONS.
+ * Alternate group renderer for the Gallery widget. This group renderer does not
+ * draw group titles. Only items are displayed. All groups are considered as
+ * expanded.
  * </p>
+ * <p>
+ * The visual aspect is the same as the first version of the gallery widget.
+ * 
+ * </p>
+ * <p>
+ * NOTE: THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.
+ * </p>
+ * 
  * 
  * @author Nicolas Richeton (nicolas.richeton@gmail.com)
  */

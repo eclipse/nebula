@@ -40,6 +40,22 @@ import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
 
 /**
+ * A concrete viewer based on a Nebula <code>Gallery</code> control.
+ * <p>
+ * This class is not intended to be subclassed outside the viewer framework. It
+ * is designed to be instantiated with a pre-existing Nebula Gallery control and
+ * configured with a domain-specific content provider, label provider, element
+ * filter (optional), and element sorter (optional).
+ * </p>
+ * 
+ * <p>
+ * SWT.VIRTUAL is currently unsupported
+ * </p>
+ * 
+ * <p>
+ * THIS VIEWER SHOULD BE CONSIDERED AS ALPHA
+ * </p>
+ * 
  * @author Peter Centgraf
  * @contributor Nicolas Richeton
  * @since Dec 5, 2007
@@ -61,9 +77,9 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 	/**
 	 * Creates a gallery viewer on a newly-created gallery control under the
 	 * given parent. The gallery control is created using the SWT style bits
-	 * <code>MULTI, V_SCROLL,</code> and <code>BORDER</code>. The viewer
-	 * has no input, no content provider, a default label provider, no sorter,
-	 * and no filters.
+	 * <code>MULTI, V_SCROLL,</code> and <code>BORDER</code>. The viewer has no
+	 * input, no content provider, a default label provider, no sorter, and no
+	 * filters.
 	 * 
 	 * @param parent
 	 *            the parent control
@@ -111,8 +127,9 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#addTreeListener(org.eclipse.swt.widgets.Control,
-	 *      org.eclipse.swt.events.TreeListener)
+	 * @see
+	 * org.eclipse.jface.viewers.AbstractTreeViewer#addTreeListener(org.eclipse
+	 * .swt.widgets.Control, org.eclipse.swt.events.TreeListener)
 	 */
 	protected void addTreeListener(Control control, TreeListener listener) {
 		((Gallery) control).addTreeListener(listener);
@@ -121,8 +138,9 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#getChild(org.eclipse.swt.widgets.Widget,
-	 *      int)
+	 * @see
+	 * org.eclipse.jface.viewers.AbstractTreeViewer#getChild(org.eclipse.swt
+	 * .widgets.Widget, int)
 	 */
 	protected Item getChild(Widget widget, int index) {
 		if (widget instanceof GalleryItem) {
@@ -137,7 +155,9 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#getChildren(org.eclipse.swt.widgets.Widget)
+	 * @see
+	 * org.eclipse.jface.viewers.AbstractTreeViewer#getChildren(org.eclipse.
+	 * swt.widgets.Widget)
 	 */
 	protected Item[] getChildren(Widget widget) {
 		if (widget instanceof GalleryItem) {
@@ -159,7 +179,9 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#getExpanded(org.eclipse.swt.widgets.Item)
+	 * @see
+	 * org.eclipse.jface.viewers.AbstractTreeViewer#getExpanded(org.eclipse.
+	 * swt.widgets.Item)
 	 */
 	protected boolean getExpanded(Item item) {
 		return ((GalleryItem) item).isExpanded();
@@ -168,7 +190,9 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#getItemCount(org.eclipse.swt.widgets.Control)
+	 * @see
+	 * org.eclipse.jface.viewers.AbstractTreeViewer#getItemCount(org.eclipse
+	 * .swt.widgets.Control)
 	 */
 	protected int getItemCount(Control control) {
 		return ((Gallery) control).getItemCount();
@@ -177,7 +201,9 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#getItemCount(org.eclipse.swt.widgets.Item)
+	 * @see
+	 * org.eclipse.jface.viewers.AbstractTreeViewer#getItemCount(org.eclipse
+	 * .swt.widgets.Item)
 	 */
 	protected int getItemCount(Item item) {
 		return ((GalleryItem) item).getItemCount();
@@ -186,7 +212,9 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#getItems(org.eclipse.swt.widgets.Item)
+	 * @see
+	 * org.eclipse.jface.viewers.AbstractTreeViewer#getItems(org.eclipse.swt
+	 * .widgets.Item)
 	 */
 	protected Item[] getItems(Item item) {
 		return ((GalleryItem) item).getItems();
@@ -195,7 +223,9 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#getParentItem(org.eclipse.swt.widgets.Item)
+	 * @see
+	 * org.eclipse.jface.viewers.AbstractTreeViewer#getParentItem(org.eclipse
+	 * .swt.widgets.Item)
 	 */
 	protected Item getParentItem(Item item) {
 		return ((GalleryItem) item).getParentItem();
@@ -204,7 +234,9 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#getSelection(org.eclipse.swt.widgets.Control)
+	 * @see
+	 * org.eclipse.jface.viewers.AbstractTreeViewer#getSelection(org.eclipse
+	 * .swt.widgets.Control)
 	 */
 	protected Item[] getSelection(Control control) {
 		Item[] selection = ((Gallery) control).getSelection();
@@ -216,11 +248,12 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 		for (int i = 0; i < selection.length; i++) {
 			if (!selection[i].isDisposed()) {
 				notDisposed.add(selection[i]);
-			}else {
-				System.out.println( "GalleryItem was disposed (ignoring)" );
+			} else {
+				System.out.println("GalleryItem was disposed (ignoring)");
 			}
 		}
-		selection = (GalleryItem[]) notDisposed.toArray(new GalleryItem[notDisposed.size()]);
+		selection = (GalleryItem[]) notDisposed
+				.toArray(new GalleryItem[notDisposed.size()]);
 
 		return selection;
 	}
@@ -228,15 +261,17 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#newItem(org.eclipse.swt.widgets.Widget,
-	 *      int, int)
+	 * @see
+	 * org.eclipse.jface.viewers.AbstractTreeViewer#newItem(org.eclipse.swt.
+	 * widgets.Widget, int, int)
 	 */
 	protected Item newItem(Widget parent, int style, int index) {
 
 		GalleryItem item;
 
 		if (parent instanceof GalleryItem) {
-			item = (GalleryItem) createNewRowPart(getViewerRowFromItem(parent), style, index).getItem();
+			item = (GalleryItem) createNewRowPart(getViewerRowFromItem(parent),
+					style, index).getItem();
 		} else {
 			item = (GalleryItem) createNewRowPart(null, style, index).getItem();
 		}
@@ -247,14 +282,17 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#removeAll(org.eclipse.swt.widgets.Control)
+	 * @see
+	 * org.eclipse.jface.viewers.AbstractTreeViewer#removeAll(org.eclipse.swt
+	 * .widgets.Control)
 	 */
 	protected void removeAll(Control control) {
 		((Gallery) control).removeAll();
 	}
 
 	public void setAutoExpandLevel(int level) {
-		throw new UnsupportedOperationException("Gallery must be fully expanded.");
+		throw new UnsupportedOperationException(
+				"Gallery must be fully expanded.");
 	}
 
 	/**
@@ -275,9 +313,11 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 	 * <code>getGallery().setGroupRenderer(new NoGroupRenderer());</code>
 	 */
 	public void setContentProvider(IContentProvider provider) {
-		if (provider instanceof IStructuredContentProvider && !(provider instanceof ITreeContentProvider || provider instanceof ITreePathContentProvider)) {
+		if (provider instanceof IStructuredContentProvider
+				&& !(provider instanceof ITreeContentProvider || provider instanceof ITreePathContentProvider)) {
 			// Wrap a table-style contents with a single root node.
-			super.setContentProvider(new FlatTreeContentProvider((IStructuredContentProvider) provider));
+			super.setContentProvider(new FlatTreeContentProvider(
+					(IStructuredContentProvider) provider));
 		} else {
 			super.setContentProvider(provider);
 		}
@@ -286,8 +326,9 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#setExpanded(org.eclipse.swt.widgets.Item,
-	 *      boolean)
+	 * @see
+	 * org.eclipse.jface.viewers.AbstractTreeViewer#setExpanded(org.eclipse.
+	 * swt.widgets.Item, boolean)
 	 */
 	protected void setExpanded(Item item, boolean expand) {
 		((GalleryItem) item).setExpanded(expand);
@@ -300,7 +341,8 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#setSelection(java.util.List)
+	 * @see
+	 * org.eclipse.jface.viewers.AbstractTreeViewer#setSelection(java.util.List)
 	 */
 	protected void setSelection(List items) {
 		Item[] current = getSelection(getGallery());
@@ -318,7 +360,9 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#showItem(org.eclipse.swt.widgets.Item)
+	 * @see
+	 * org.eclipse.jface.viewers.AbstractTreeViewer#showItem(org.eclipse.swt
+	 * .widgets.Item)
 	 */
 	protected void showItem(Item item) {
 		gallery.showItem((GalleryItem) item);
@@ -384,7 +428,9 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.viewers.ColumnViewer#getRowPartFromItem(org.eclipse.swt.widgets.Widget)
+	 * @see
+	 * org.eclipse.jface.viewers.ColumnViewer#getRowPartFromItem(org.eclipse
+	 * .swt.widgets.Widget)
 	 */
 	protected ViewerRow getViewerRowFromItem(Widget item) {
 		if (cachedRow == null) {
@@ -407,16 +453,19 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 	private ViewerRow createNewRowPart(ViewerRow parent, int style, int rowIndex) {
 		if (parent == null) {
 			if (rowIndex >= 0) {
-				return getViewerRowFromItem(new GalleryItem(gallery, style, rowIndex));
+				return getViewerRowFromItem(new GalleryItem(gallery, style,
+						rowIndex));
 			}
 			return getViewerRowFromItem(new GalleryItem(gallery, style));
 		}
 
 		if (rowIndex >= 0) {
-			return getViewerRowFromItem(new GalleryItem((GalleryItem) parent.getItem(), SWT.NONE, rowIndex));
+			return getViewerRowFromItem(new GalleryItem((GalleryItem) parent
+					.getItem(), SWT.NONE, rowIndex));
 		}
 
-		return getViewerRowFromItem(new GalleryItem((GalleryItem) parent.getItem(), SWT.NONE));
+		return getViewerRowFromItem(new GalleryItem((GalleryItem) parent
+				.getItem(), SWT.NONE));
 	}
 
 	/**
@@ -433,7 +482,8 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 	public void remove(final Object parentOrTreePath, final int index) {
 		// if (isBusy())
 		// return;
-		final List oldSelection = new LinkedList(Arrays.asList(((TreeSelection) getSelection()).getPaths()));
+		final List oldSelection = new LinkedList(Arrays
+				.asList(((TreeSelection) getSelection()).getPaths()));
 		preservingSelection(new Runnable() {
 			public void run() {
 				TreePath removedPath = null;
@@ -471,7 +521,11 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 						}
 					}
 					if (removed) {
-						setSelection(new TreeSelection((TreePath[]) oldSelection.toArray(new TreePath[oldSelection.size()]), getComparer()), false);
+						setSelection(new TreeSelection(
+								(TreePath[]) oldSelection
+										.toArray(new TreePath[oldSelection
+												.size()]), getComparer()),
+								false);
 					}
 
 				}
@@ -491,7 +545,8 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 					ViewerCell cell = row.getCell(column);
 					if (cell != null) {
 						getControl().setRedraw(false);
-						triggerEditorActivationEvent(new ColumnViewerEditorActivationEvent(cell));
+						triggerEditorActivationEvent(new ColumnViewerEditorActivationEvent(
+								cell));
 						getControl().setRedraw(true);
 					}
 				}

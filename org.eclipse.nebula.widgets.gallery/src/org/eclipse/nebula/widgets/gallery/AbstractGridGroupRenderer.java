@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Item;
 
 /**
  * <p>
- * Abstract class which provides low-level support for a grid-based group
+ * Abstract class which provides low-level support for a grid-based group.
  * renderer.
  * </p>
  * <p>

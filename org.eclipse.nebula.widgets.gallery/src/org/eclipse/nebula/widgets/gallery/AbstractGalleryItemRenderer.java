@@ -15,11 +15,11 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 
 /**
- * 
  * <p>
- * NOTE: THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT. THIS IS A
- * PRE-RELEASE ALPHA VERSION. USERS SHOULD EXPECT API CHANGES IN FUTURE
- * VERSIONS.
+ * Base class used to implement a custom gallery item renderer.
+ * </p>
+ * <p>
+ * NOTE: THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.
  * </p>
  * 
  * @author Nicolas Richeton (nicolas.richeton@gmail.com)

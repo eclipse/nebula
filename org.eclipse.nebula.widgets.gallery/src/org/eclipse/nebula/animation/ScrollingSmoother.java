@@ -54,6 +54,12 @@ public class ScrollingSmoother {
 	IMovement movement = null;
 
 	/**
+	 * Create a Scrolling Smoother instance over a scrollable widget. This
+	 * effect can then be activated using
+	 * {@link ScrollingSmoother#smoothControl(boolean)}.
+	 * 
+	 * @see ScrollingSmoother#smoothControl(boolean)
+	 * 
 	 * @param c2
 	 * @param movement
 	 */
@@ -112,7 +118,7 @@ public class ScrollingSmoother {
 	};
 
 	/**
-	 * Enable or disable scrolling efeect.
+	 * Enable or disable scrolling effect.
 	 * 
 	 * @param enable
 	 *            true or false.

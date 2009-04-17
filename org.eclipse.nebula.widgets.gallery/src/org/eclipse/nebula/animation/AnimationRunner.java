@@ -15,7 +15,9 @@ import org.eclipse.nebula.animation.effects.IEffect;
 import org.eclipse.swt.widgets.Display;
 
 /**
+ * <p>
  * An animation runner which can run only one effect at the same time.
+ * </p>
  * 
  * @author Nicolas Richeton
  */

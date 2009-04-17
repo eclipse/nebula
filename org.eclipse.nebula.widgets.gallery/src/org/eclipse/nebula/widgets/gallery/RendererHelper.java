@@ -15,11 +15,12 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 
 /**
- * Renderer Helper
  * <p>
- * NOTE: THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT. THIS IS A
- * PRE-RELEASE ALPHA VERSION. USERS SHOULD EXPECT API CHANGES IN FUTURE
- * VERSIONS.
+ * Utility methods for Gallery item and group renderers
+ * </p>
+ * 
+ * <p>
+ * NOTE: THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.
  * </p>
  * 
  * @author Nicolas Richeton (nicolas.richeton@gmail.com)

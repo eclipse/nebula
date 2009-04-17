@@ -23,14 +23,29 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * Item drawing with a list style :<br/>
- * Image on the left, text and description on the right.<br/>
- * 
- * Best with bigger width than height.
  * <p>
- * NOTE: THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT. THIS IS A
- * PRE-RELEASE ALPHA VERSION. USERS SHOULD EXPECT API CHANGES IN FUTURE
- * VERSIONS.
+ * Alternate item renderer for the Gallery widget using a list style. Supports
+ * multi-line text, image, drop shadows and decorators.
+ * </p>
+ * <p>
+ * Best with bigger width than height.
+ * </p>
+ * <p>
+ * Decorator images can be set with {@link GalleryItem#setData(String, Object)}
+ * by using the following keys :
+ * </p>
+ * <ul>
+ * <li>org.eclipse.nebula.widget.gallery.bottomLeftOverlay</li>
+ * <li>org.eclipse.nebula.widget.gallery.bottomRightOverlay</li>
+ * <li>org.eclipse.nebula.widget.gallery.topLeftOverlay</li>
+ * <li>org.eclipse.nebula.widget.gallery.topRightOverlay</li>
+ *</ul>
+ *<p>
+ * Supported types are org.eclipse.swt.Image for one single decorator and
+ * org.eclipse.swt.Image[] for multiple decorators.
+ * </p>
+ * <p>
+ * NOTE: THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.
  * </p>
  * 
  * @author Nicolas Richeton (nicolas.richeton@gmail.com)

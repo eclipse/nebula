@@ -15,12 +15,17 @@ import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.graphics.Image;
 
 /**
+ * <p>
+ * Visual effect for drag and drop operators on GalleryItem. This effect has to
+ * be set in
+ * {@link org.eclipse.swt.dnd.DragSource#setDragSourceEffect(DragSourceEffect)}
+ * </p>
  * 
  * <p>
- * NOTE: THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT. THIS IS A
- * PRE-RELEASE ALPHA VERSION. USERS SHOULD EXPECT API CHANGES IN FUTURE
- * VERSIONS.
+ * NOTE: THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.
  * </p>
+ * 
+ * @see org.eclipse.swt.dnd.DragSource#setDragSourceEffect(DragSourceEffect)
  * 
  * @author Nicolas Richeton (nicolas.richeton@gmail.com)
  */

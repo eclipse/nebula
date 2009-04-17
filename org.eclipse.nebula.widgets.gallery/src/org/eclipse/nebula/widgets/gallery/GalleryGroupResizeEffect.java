@@ -11,9 +11,23 @@
 
 package org.eclipse.nebula.widgets.gallery;
 
+import org.eclipse.nebula.animation.AnimationRunner;
 import org.eclipse.nebula.animation.effects.AbstractEffect;
 import org.eclipse.nebula.animation.movement.IMovement;
 
+/**
+ * <p>
+ * Animation used internally on collapse / expand events. Should not be used
+ * directly.
+ * </p>
+ * <p>
+ * NOTE: THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.
+ * </p>
+ * 
+ * @see AnimationRunner#runEffect(org.eclipse.nebula.animation.effects.IEffect)
+ * 
+ * @author Nicolas Richeton (nicolas.richeton@gmail.com)
+ */
 public class GalleryGroupResizeEffect extends AbstractEffect {
 
 	int src, dest, diff;

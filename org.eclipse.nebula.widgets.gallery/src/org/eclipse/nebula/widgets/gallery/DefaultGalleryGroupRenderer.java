@@ -26,11 +26,12 @@ import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.widgets.Item;
 
 /**
- * 
  * <p>
- * NOTE: THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT. THIS IS A
- * PRE-RELEASE ALPHA VERSION. USERS SHOULD EXPECT API CHANGES IN FUTURE
- * VERSIONS.
+ * Default group renderer used by the Gallery widget. Supports multi-line text,
+ * images, animation and several other features.
+ * </p>
+ * <p>
+ * NOTE: THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.
  * </p>
  * 
  * @author Nicolas Richeton (nicolas.richeton@gmail.com)

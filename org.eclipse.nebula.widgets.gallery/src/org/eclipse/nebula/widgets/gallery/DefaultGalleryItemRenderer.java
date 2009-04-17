@@ -24,11 +24,26 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * 
  * <p>
- * NOTE: THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT. THIS IS A
- * PRE-RELEASE ALPHA VERSION. USERS SHOULD EXPECT API CHANGES IN FUTURE
- * VERSIONS.
+ * Default item renderer used by the Gallery widget. Supports single line text,
+ * image, drop shadows and decorators.
+ * </p>
+ * <p>
+ * Decorator images can be set with {@link GalleryItem#setData(String, Object)}
+ * by using the following keys :
+ * </p>
+ * <ul>
+ * <li>org.eclipse.nebula.widget.gallery.bottomLeftOverlay</li>
+ * <li>org.eclipse.nebula.widget.gallery.bottomRightOverlay</li>
+ * <li>org.eclipse.nebula.widget.gallery.topLeftOverlay</li>
+ * <li>org.eclipse.nebula.widget.gallery.topRightOverlay</li>
+ *</ul>
+ *<p>
+ * Supported types are org.eclipse.swt.Image for one single decorator and
+ * org.eclipse.swt.Image[] for multiple decorators.
+ * </p>
+ * <p>
+ * NOTE: THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.
  * </p>
  * 
  * @author Nicolas Richeton (nicolas.richeton@gmail.com)
