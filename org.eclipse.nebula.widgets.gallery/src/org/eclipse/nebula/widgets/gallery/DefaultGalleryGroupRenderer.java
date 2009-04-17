@@ -198,11 +198,11 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 
 		// Ensure there is enough room to display all text.
 		int lineCount = 1;
-		if (group.getText(1) != null) {
+		if (group.getText(1) != null && !EMPTY_STRING.equals(group.getText(1))) {
 			lineCount++;
 		}
 
-		if (group.getText(2) != null) {
+		if (group.getText(2) != null && !EMPTY_STRING.equals(group.getText(2))) {
 			lineCount++;
 		}
 
@@ -236,7 +236,8 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 
 			int textY = baseY + 2;
 			for (int i = 1; i < 3; i++) {
-				if (group.getText(i) != null) {
+				if (group.getText(i) != null
+						&& !EMPTY_STRING.equals(group.getText(i))) {
 					textY -= fontHeight / 2 + 1;
 				}
 			}
@@ -258,7 +259,8 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 			// Description
 			gc.setForeground(descriptionColor);
 			for (int i = 1; i < 3; i++) {
-				if (group.getText(i) != null) {
+				if (group.getText(i) != null
+						&& !EMPTY_STRING.equals(group.getText(i))) {
 					gc.drawText(group.getText(i), baseX, textY + i
 							* (2 + fontHeight), true);
 				}

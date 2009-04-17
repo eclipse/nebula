@@ -167,7 +167,8 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 
 			String description = null;
 			int descriptionFontHeight = 0;
-			if (item.getText(1) != null) {
+			if (item.getText(1) != null
+					&& !EMPTY_STRING.equals(item.getText(1))) {
 				gc.setFont(descriptionFont);
 				description = RendererHelper.createLabel(item.getText(1), gc,
 						width - useableHeight - 10);

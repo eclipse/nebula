@@ -93,7 +93,8 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 
 		int useableHeight = height;
 		int fontHeight = 0;
-		if (item.getText() != null && this.showLabels) {
+		if (item.getText() != null && !EMPTY_STRING.equals(item.getText())
+				&& this.showLabels) {
 			fontHeight = gc.getFontMetrics().getHeight();
 			useableHeight -= fontHeight + 2;
 		}
@@ -163,7 +164,8 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 			else
 				gc.fillRectangle(x, y, width, height);
 
-			if (item.getText() != null && showLabels) {
+			if (item.getText() != null && !EMPTY_STRING.equals(item.getText())
+					&& showLabels) {
 				gc.fillRoundRectangle(x, y + height - fontHeight, width,
 						fontHeight, selectionRadius, selectionRadius);
 			}

@@ -35,7 +35,7 @@ public class GalleryItem extends Item {
 
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
-	private String[] text = { null, null, null };
+	private String[] text = { EMPTY_STRING, EMPTY_STRING, EMPTY_STRING };
 
 	// This is managed by the Gallery
 	/**
@@ -444,7 +444,9 @@ public class GalleryItem extends Item {
 	public void clear() {
 		checkWidget();
 		// Clear all attributes
-		super.setText(EMPTY_STRING);
+		text[0] = EMPTY_STRING;
+		text[1] = EMPTY_STRING;
+		text[2] = EMPTY_STRING;
 		super.setImage(null);
 		this.font = null;
 		background = null;

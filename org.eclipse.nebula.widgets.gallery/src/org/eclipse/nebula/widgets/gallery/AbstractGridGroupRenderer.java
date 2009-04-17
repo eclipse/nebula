@@ -51,6 +51,8 @@ public abstract class AbstractGridGroupRenderer extends
 
 	public static final String V_COUNT = "g.v"; //$NON-NLS-1$
 
+	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
+
 	private static final int END = 0;
 
 	private static final int START = 1;
