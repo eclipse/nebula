@@ -19,11 +19,12 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Item;
 
 /**
- * 
  * <p>
- * NOTE: THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT. THIS IS A
- * PRE-RELEASE ALPHA VERSION. USERS SHOULD EXPECT API CHANGES IN FUTURE
- * VERSIONS.
+ * Abstract class which provides low-level support for a grid-based group
+ * renderer.
+ * </p>
+ * <p>
+ * NOTE: THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.
  * </p>
  * 
  * @author Nicolas Richeton (nicolas.richeton@gmail.com)
@@ -562,6 +563,81 @@ public abstract class AbstractGridGroupRenderer extends
 		return group.getItem(pos);
 	}
 
+	private GalleryItem goUp(GalleryItem group, int posParam, int hCount,
+			int lineCount) {
+
+		if (lineCount == 0) {
+			return null;
+		}
+
+		// Optimization when only one group involved
+		if (posParam - hCount * lineCount >= 0) {
+			return group.getItem(posParam - hCount * lineCount);
+		}
+
+		// Get next item.
+		GalleryItem next = goUp(group, posParam, hCount);
+		if (next == null) {
+			return null;
+		}
+
+		GalleryItem newItem = null;
+		for (int i = 1; i < lineCount; i++) {
+			newItem = goUp(next.getParentItem(), next.getParentItem().indexOf(
+					next), hCount);
+			if (newItem == next || newItem == null) {
+				break;
+			}
+
+			next = newItem;
+		}
+
+		return next;
+	}
+
+	private GalleryItem goDown(GalleryItem group, int posParam, int hCount,
+			int lineCount) {
+
+		if (lineCount == 0) {
+			return null;
+		}
+
+		// Optimization when only one group involved
+		if (posParam + hCount * lineCount < group.getItemCount()) {
+			return group.getItem(posParam + hCount * lineCount);
+		}
+
+		// Get next item.
+		GalleryItem next = goDown(group, posParam, hCount);
+		if (next == null) {
+			return null;
+		}
+
+		GalleryItem newItem = null;
+		for (int i = 1; i < lineCount; i++) {
+			newItem = goDown(next.getParentItem(), next.getParentItem()
+					.indexOf(next), hCount);
+			if (newItem == next || newItem == null) {
+				break;
+			}
+
+			next = newItem;
+		}
+
+		return next;
+	}
+
+	/**
+	 * Get the next item, when going up.
+	 * 
+	 * @param group
+	 *            current group
+	 * @param posParam
+	 *            index of currently selected item
+	 * @param hCount
+	 *            size of a line
+	 * @return
+	 */
 	private GalleryItem goUp(GalleryItem group, int posParam, int hCount) {
 		int colPos = posParam % hCount;
 		int pos = posParam - hCount;
@@ -581,6 +657,17 @@ public abstract class AbstractGridGroupRenderer extends
 		return group.getItem(pos);
 	}
 
+	/**
+	 * Get the next item, when going down.
+	 * 
+	 * @param group
+	 *            current group
+	 * @param posParam
+	 *            index of currently selected item
+	 * @param hCount
+	 *            size of a line
+	 * @return
+	 */
 	private GalleryItem goDown(GalleryItem group, int posParam, int hCount) {
 		int colPos = posParam % hCount;
 		int pos = posParam + hCount;
@@ -601,8 +688,33 @@ public abstract class AbstractGridGroupRenderer extends
 		return group.getItem(pos);
 	}
 
-	public GalleryItem getNextItem(GalleryItem item, int key) {
+	/**
+	 * Get maximum visible lines.
+	 * 
+	 * @return
+	 */
+	private int getMaxVisibleLines() {
 
+		// TODO: support group titles (fewer lines are visible if one or more
+		// group titles are displayed). This method should probably be
+		// implemented in the group renderer and not in the abstract class.
+
+		// Gallery is vertical
+		if (gallery.isVertical()) {
+			return gallery.getClientArea().height / itemHeight;
+		}
+
+		// Gallery is horizontal
+		return gallery.getClientArea().width / itemWidth;
+	}
+
+	public GalleryItem getNextItem(GalleryItem item, int key) {
+		// Key navigation is useless with an empty gallery
+		if (gallery.getItemCount() == 0) {
+			return null;
+		}
+
+		// Check for current selection
 		if (item == null) {
 			// No current selection, select the first item
 			if (gallery.getItemCount() > 0) {
@@ -615,6 +727,7 @@ public abstract class AbstractGridGroupRenderer extends
 			return null;
 		}
 
+		// Check for groups
 		if (item.getParentItem() == null) {
 			// Key navigation is only available for child items ATM
 			return null;
@@ -622,19 +735,25 @@ public abstract class AbstractGridGroupRenderer extends
 
 		GalleryItem group = item.getParentItem();
 
+		// Handle HOME and END
 		switch (key) {
 		case SWT.HOME:
-			return getFirstItem(group, START);
+			gallery.getItem(0).setExpanded(true);
+			return getFirstItem(gallery.getItem(0), START);
+
 		case SWT.END:
-			return getFirstItem(group, END);
+			gallery.getItem(gallery.getItemCount() - 1).setExpanded(true);
+			return getFirstItem(gallery.getItem(gallery.getItemCount() - 1),
+					END);
 		}
 
 		int pos = group.indexOf(item);
 		GalleryItem next = null;
 
+		// Handle arrows and page up / down
 		if (gallery.isVertical()) {
 			int hCount = ((Integer) group.getData(H_COUNT)).intValue();
-			int maxVisibleRows = gallery.getClientArea().height / itemHeight;
+			int maxVisibleRows = getMaxVisibleLines();
 			switch (key) {
 			case SWT.ARROW_LEFT:
 				next = goLeft(group, pos);
@@ -645,26 +764,25 @@ public abstract class AbstractGridGroupRenderer extends
 				break;
 
 			case SWT.ARROW_UP:
-				next = goUp(group, pos, hCount);
+				next = goUp(group, pos, hCount, 1);
 				break;
 
 			case SWT.ARROW_DOWN:
-				next = goDown(group, pos, hCount);
+				next = goDown(group, pos, hCount, 1);
 				break;
 
 			case SWT.PAGE_UP:
-				next = goUp(group, pos, hCount
-						* Math.max(maxVisibleRows - 1, 1));
+				next = goUp(group, pos, hCount, Math.max(maxVisibleRows - 1, 1));
 				break;
 
 			case SWT.PAGE_DOWN:
-				next = goDown(group, pos, hCount
-						* Math.max(maxVisibleRows - 1, 1));
+				next = goDown(group, pos, hCount, Math.max(maxVisibleRows - 1,
+						1));
 				break;
 			}
 		} else {
 			int vCount = ((Integer) group.getData(V_COUNT)).intValue();
-			int maxVisibleColumns = gallery.getClientArea().width / itemWidth;
+			int maxVisibleColumns = getMaxVisibleLines();
 			switch (key) {
 			case SWT.ARROW_LEFT:
 				next = goUp(group, pos, vCount);
