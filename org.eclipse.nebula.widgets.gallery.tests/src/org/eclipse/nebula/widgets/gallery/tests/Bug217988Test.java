@@ -19,15 +19,22 @@ public class Bug217988Test extends TestCase {
 
 	private Shell s = null;
 	private Display d = null;
+	private boolean createdDisplay = false;
 
 	protected void setUp() throws Exception {
-		d = new Display();
+		d = Display.getCurrent();
+		if( d == null ){
+			d = new Display();
+			createdDisplay = true;
+		}
 		s = new Shell(d, SWT.NONE);
 		super.setUp();
 	}
 
 	protected void tearDown() throws Exception {
+		if( createdDisplay){
 		d.dispose();
+		}
 		super.tearDown();
 	}
 
