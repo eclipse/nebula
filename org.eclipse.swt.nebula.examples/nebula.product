@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?pde version="3.4"?>
+<?pde version="3.5"?>
 
-<product name="Nebula Examples" id="org.eclipse.swt.nebula.examples.nebula_examples" application="org.eclipse.swt.nebula.examples.application" useFeatures="true">
+<product name="Nebula Examples" id="org.eclipse.swt.nebula.examples.nebula_examples" application="org.eclipse.swt.nebula.examples.application" version="1.0.0" useFeatures="true">
 
    <configIni use="default">
    </configIni>
@@ -39,9 +39,9 @@
       <plugin id="org.eclipse.jface.databinding"/>
       <plugin id="org.eclipse.nebula.widgets.calendarcombo"/>
       <plugin id="org.eclipse.nebula.widgets.cdatetime"/>
-      <plugin id="org.eclipse.nebula.widgets.collapsiblebuttons"/>
+      <plugin id="org.eclipse.nebula.widgets.collapsiblebuttons" fragment=""/>
       <plugin id="org.eclipse.nebula.widgets.compositetable"/>
-      <plugin id="org.eclipse.nebula.widgets.compositetable.tests"/>
+      <plugin id="org.eclipse.nebula.widgets.compositetable.tests" fragment=""/>
       <plugin id="org.eclipse.nebula.widgets.ctree"/>
       <plugin id="org.eclipse.nebula.widgets.datechooser"/>
       <plugin id="org.eclipse.nebula.widgets.formattedtext"/>
@@ -60,8 +60,9 @@
    </plugins>
 
    <features>
-      <feature id="org.eclipse.rcp" version="3.4.100.r341_v20080814-989JESIEdAciFYfkZZsBfSwQ2341"/>
+      <feature id="org.eclipse.rcp"/>
       <feature id="org.eclipse.nebula.examples_feature" version="1.0.0"/>
    </features>
+
 
 </product>

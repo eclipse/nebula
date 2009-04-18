@@ -5,10 +5,16 @@
    <extension
          point="org.eclipse.ui.views">
       <view
+            category="org.eclipse.swt.nebula.examples.nebula"
             class="org.eclipse.swt.nebula.examples.ExamplesView"
             icon="icons/eclipse.png"
             id="org.eclipse.swt.nebula.examples.view"
             name="Nebula Examples"/>
+      <category
+            id="org.eclipse.swt.nebula.examples.nebula"
+            name="Nebula" 
+            >
+      </category>
    </extension>
    <extension
          point="org.eclipse.swt.nebula.examples.examples">
@@ -27,6 +33,10 @@
       <tab
             class="org.eclipse.swt.nebula.examples.parts.GalleryExampleTab"
             name="Gallery"/>
+      <tab
+            class="org.eclipse.swt.nebula.examples.parts.AnimationExampleTab"
+            name="Animation"/>
+            
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">
