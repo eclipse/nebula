@@ -20,7 +20,7 @@ fi
 
 echo "Starting in $startPath";
 
-$startPath/start.sh -projectid $projectid -sub $sub -version $version  -antTarget runWithoutTestBuild -projRelengRoot ':pserver:anonymous@dev.eclipse.org:/cvsroot/technology'    -projRelengPath "$relengProjectPath" -javaHome $JAVA_HOME -writableBuildRoot $writableBuildRoot  -buildTimestamp $buildTimestamp
+$startPath/start.sh -projectid $projectid -sub $sub -version $version  $antTargetArgument -projRelengRoot ':pserver:anonymous@dev.eclipse.org:/cvsroot/technology'    -projRelengPath "$relengProjectPath" -javaHome $JAVA_HOME -writableBuildRoot $writableBuildRoot  -buildTimestamp $buildTimestamp
 buildResult=$?
 
 ls $buildDir/*

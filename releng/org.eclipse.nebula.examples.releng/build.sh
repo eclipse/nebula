@@ -2,7 +2,7 @@
 
 # Parameters
 source $1
-if [[ ! $projectid ]]; then exit(1); fi
+if [[ ! $projectid ]]; then exit 1; fi
 writableBuildRoot="$HOME/Documents/Nebula/build";
 
 
@@ -19,7 +19,7 @@ if [[  -f ${writableBuildRoot}/org.eclipse.dash.common.releng/tools/scripts/star
    startPath="${writableBuildRoot}/org.eclipse.dash.common.releng/tools/scripts";
 fi
 
-$startPath/start.sh -projectid $projectid -sub $sub -version $version  -projRelengRoot ':pserver:anonymous@dev.eclipse.org:/cvsroot/technology'    -projRelengPath "$relengProjectPath" -javaHome $JAVA_HOME -writableBuildRoot $writableBuildRoot  -buildTimestamp $buildTimestamp
+$startPath/start.sh $antTargetArgument -projectid $projectid -sub $sub -version $version  -projRelengRoot ':pserver:anonymous@dev.eclipse.org:/cvsroot/technology'    -projRelengPath "$relengProjectPath" -javaHome $JAVA_HOME -writableBuildRoot $writableBuildRoot  -buildTimestamp $buildTimestamp
 buildResult=$?
 
 ls $buildDir/*
@@ -30,13 +30,13 @@ if [[ -f $buildDir/*.zip ]]; then
 
 
 
-      rm $buildDir/*Update*
-      rm $buildDir/*Master*
-      rm $buildDir/*ALL*
+     # rm $buildDir/*Update*
+     # rm $buildDir/*Master*
+     # rm $buildDir/*ALL*
 
 
-     rsync -aP $buildDir rnicolas@dev.eclipse.org:/home/data/httpd/download.eclipse.org/technology/nebula/$nebulaProjectId/downloads/drops/
-     rsync -aP --list-only $buildDir/ rnicolas@dev.eclipse.org:/home/data/httpd/download.eclipse.org/technology/nebula/$nebulaProjectId/downloads/drops/latest/
+     #rsync -aP --list-only $buildDir rnicolas@dev.eclipse.org:/home/data/httpd/download.eclipse.org/technology/nebula/$nebulaProjectId/downloads/drops/
+     # rsync -aP --list-only $buildDir/ rnicolas@dev.eclipse.org:/home/data/httpd/download.eclipse.org/technology/nebula/$nebulaProjectId/downloads/drops/latest/
 
 	ls $buildDir/*
   fi
