@@ -4,7 +4,7 @@
 source $1
 if [[ ! $projectid ]]; then exit 1; fi
 writableBuildRoot="$HOME/nebula-builds";
-JAVA_HOME="/opt/public/common/ibm-java2-142"
+JAVA_HOME="/opt/public/common/ibm-java2-ppc-50"
 
 buildTimestamp=`date +%Y%m%d%H%M`
 if [[ ! $downloadsDir ]]; then downloadsDir="${writableBuildRoot}/downloads"; fi
