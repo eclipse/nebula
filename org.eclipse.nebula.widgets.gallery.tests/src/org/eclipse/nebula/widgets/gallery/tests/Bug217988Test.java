@@ -114,10 +114,9 @@ public class Bug217988Test extends TestCase {
 	}
 
 	public static class GalleryTestLabelProvider extends LabelProvider {
-		protected static Image itemImage = new Image(Display.getCurrent(), Program.findProgram("jpg").getImageData());
-
+		
 		public Image getImage(Object element) {
-			return itemImage;
+			return null;
 		}
 
 	}
