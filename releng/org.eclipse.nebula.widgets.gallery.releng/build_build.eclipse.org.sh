@@ -27,21 +27,27 @@ ls $buildDir/*
 
 if [ $buildResult -eq "0" ]; then
    echo "Build successful";
-
-
+   # Create update site. 
    unzip -o $buildDir/*-Update-*.zip -d ~/downloads/technology/nebula/$nebulaProjectId/update-$buildType/
      
-   rm $buildDir/*Update*
-   rm $buildDir/*Master*
-   rm $buildDir/*ALL*
+   # Create drop
+   mkdir -v ~/downloads/technology/nebula/$nebulaProjectId/downloads/drops/${buildType}${buildTimestamp}
+   cp -v $buildDir/*ALL*.* ~/downloads/technology/nebula/$nebulaProjectId/downloads/drops/${buildType}${buildTimestamp}/
+   cp -v -R $buildDir/compilelogs ~/downloads/technology/nebula/$nebulaProjectId/downloads/drops/${buildType}${buildTimestamp}/
+   cp -v -R $buildDir/testresults ~/downloads/technology/nebula/$nebulaProjectId/downloads/drops/${buildType}${buildTimestamp}/
 
-   rsync -aP $buildDir ~/downloads/technology/nebula/$nebulaProjectId/downloads/drops/
-
-   cd $buildDir
-   for file in *SDK*.zip
-     do
+   # Create latest
+   rm -v -R ~/downloads/technology/nebula/$nebulaProjectId/downloads/drops/latest
+   mkdir -v ~/downloads/technology/nebula/$nebulaProjectId/downloads/drops/latest
+   cp -v $buildDir/*ALL*.* ~/downloads/technology/nebula/$nebulaProjectId/downloads/drops/latest/
+   cp -v -R $buildDir/compilelogs ~/downloads/technology/nebula/$nebulaProjectId/downloads/drops/latest/
+   cp -v -R $buildDir/testresults ~/downloads/technology/nebula/$nebulaProjectId/downloads/drops/latest/
+   
+   # Remove build id
+   cd ~/downloads/technology/nebula/$nebulaProjectId/downloads/drops/latest
+   for file in *ALL*.*
+   do
        mv "$file" `echo "$file" | sed 's/-N[0-9]*//g'`
-     done
-
-     rsync -aP --delete-after $buildDir/ ~/downloads/technology/nebula/$nebulaProjectId/downloads/drops/latest/
+   done
+     
 fi
