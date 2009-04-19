@@ -42,6 +42,7 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -1226,6 +1227,13 @@ public class CDateTime extends BaseCombo {
 			disposePicker();
 			createPicker();
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.nebula.cwt.base.BaseCombo#setButtonImage(org.eclipse.swt.graphics.Image)
+	 */
+	public void setButtonImage(Image image) {
+		super.setButtonImage(image);
 	}
 	
 	@Override
