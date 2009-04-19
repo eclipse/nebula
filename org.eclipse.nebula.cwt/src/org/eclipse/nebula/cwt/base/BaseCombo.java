@@ -363,17 +363,24 @@ public abstract class BaseCombo extends Canvas implements VWidget {
 	 * @see #removeModifyListener
 	 */
 	protected void addModifyListener(ModifyListener listener) {
-		if(listener == null)
+		if(listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		if(checkText())
+		}
+		if(checkText()) {
 			text.getControl().addModifyListener(listener);
+		}
 	}
 
+	/**
+	 * @deprecated this method's visibility will be changed to protected (bug 272822)
+	 */
 	public void addTraverseListener(TraverseListener listener) {
-		if(listener == null)
+		if(listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		if(checkText())
+		}
+		if(checkText()) {
 			text.getControl().addTraverseListener(listener);
+		}
 	}
 
 	/**
@@ -721,6 +728,9 @@ public abstract class BaseCombo extends Canvas implements VWidget {
 		}
 	}
 
+	/**
+	 * @deprecated this method's visibility will be changed to protected (bug 272822)
+	 */
 	public void removeTraverseListener(TraverseListener listener) {
 		if(listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
