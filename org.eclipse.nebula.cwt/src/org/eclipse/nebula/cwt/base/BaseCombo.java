@@ -475,7 +475,7 @@ public abstract class BaseCombo extends Canvas implements VWidget {
 	/**
 	 * @param image
 	 */
-	protected void doSetButtonImage(Image image) {
+	protected final void doSetButtonImage(Image image) {
 		if(checkButton()) {
 			button.setImage(image);
 		}
