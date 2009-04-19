@@ -1,4 +1,5 @@
 Manifest-Version: 1.0
+Eclipse-ExtensibleAPI: true
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.eclipse.nebula.cwt
 Bundle-Version: 0.9.0.qualifier
