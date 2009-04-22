@@ -1159,11 +1159,7 @@ public class Gallery extends Canvas {
 			// End of Bug 174932
 
 			Rectangle clipping = newGC.getClipping();
-			newGC.setBackground(getBackground());
-
-			// Not using control's native fillBackground because it's semi
-			// transparent on OSX.
-			newGC.fillRectangle(clipping.x, clipping.y, clipping.width,
+			drawBackground(newGC, clipping.x, clipping.y, clipping.width,
 					clipping.height);
 
 			int[] indexes = getVisibleItems(clipping);

@@ -148,7 +148,7 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 		}
 
 		// Draw selection background (rounded rectangles)
-		if (selected || itemBackgroundColor != null) {
+		if (selected || itemBackgroundColor != gallery.getBackground()) {
 			if (selected) {
 				gc.setBackground(selectionBackgroundColor);
 				gc.setForeground(selectionBackgroundColor);

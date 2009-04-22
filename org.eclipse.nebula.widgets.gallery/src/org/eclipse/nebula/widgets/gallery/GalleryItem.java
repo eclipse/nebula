@@ -90,9 +90,7 @@ public class GalleryItem extends Item {
 
 	protected Font font;
 
-	protected Color foreground;
-
-	protected Color background;
+	protected Color foreground, background;
 
 	private boolean ultraLazyDummy = false;
 
@@ -415,7 +413,7 @@ public class GalleryItem extends Item {
 
 	public Color getForeground() {
 		checkWidget();
-		return foreground;
+		return foreground != null ? foreground : parent.getForeground();
 	}
 
 	public void setForeground(Color foreground) {
@@ -429,7 +427,7 @@ public class GalleryItem extends Item {
 
 	public Color getBackground() {
 		checkWidget();
-		return background;
+		return background != null ? background : parent.getBackground();
 	}
 
 	public void setBackground(Color background) {

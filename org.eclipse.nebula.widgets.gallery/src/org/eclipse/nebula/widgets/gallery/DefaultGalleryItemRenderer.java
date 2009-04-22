@@ -148,21 +148,8 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 			}
 		}
 
-		// Set colors
-		// if (selected) {
-		// gc.setBackground(selectionBackgroundColor);
-		// gc.setForeground(selectionBackgroundColor);
-		// } else {
-		// if (itemBackgroundColor != null) {
-		// gc.setBackground(itemBackgroundColor);
-		// }
-		// if (itemForegroungColor != null) {
-		// gc.setForeground(itemForegroungColor);
-		// }
-		// }
-
 		// Draw background (rounded rectangles)
-		if (selected || itemBackgroundColor != null) {
+		if (selected || itemBackgroundColor != gallery.getBackground()) {
 
 			// Set colors
 			if (selected) {
