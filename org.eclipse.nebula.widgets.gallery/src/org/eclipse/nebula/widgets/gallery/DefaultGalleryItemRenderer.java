@@ -64,9 +64,7 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 
 	Color selectionBackgroundColor;
 
-	Color foregroundColor;
-
-	Color backgroundColor;
+	Color foregroundColor, backgroundColor;
 
 	boolean showLabels = true;
 
@@ -149,7 +147,9 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 		}
 
 		// Draw background (rounded rectangles)
-		if (selected || itemBackgroundColor != gallery.getBackground()) {
+		if (selected
+				|| RendererHelper.equals(itemBackgroundColor, gallery
+						.getBackground())) {
 
 			// Set colors
 			if (selected) {

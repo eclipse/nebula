@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.gallery;
 
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 
@@ -145,5 +146,25 @@ public class RendererHelper {
 			xShift = 0;
 		xShift = xShift >> 1;
 		return xShift;
+	}
+
+	/**
+	 * Compares 2 Color objects, null proof.
+	 * 
+	 * @param c1
+	 * @param c2
+	 * @return true is colors are equal.
+	 */
+	public static boolean equals(Color c1, Color c2) {
+
+		if (c1 == c2) {
+			return true;
+		}
+
+		if (c1 == null) {
+			return false;
+		}
+
+		return c1.equals(c2);
 	}
 }
