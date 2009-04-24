@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Michael Houston <schmeeky@gmail.com> - initial implementation
+ *    fisherja@gmail.com - bugfix in 269563
  *******************************************************************************/ 
 package org.eclipse.nebula.widgets.grid.internal;
 
@@ -102,8 +103,6 @@ public class BranchRenderer extends AbstractRenderer {
 	 */
 	public void paint(GC gc, Object value) {
 		Rectangle bounds = getBounds();
-		//SWT does not appear to render custom line styles on carbon, so we use solid lines instead
-		boolean isCarbon = SWT.getPlatform().equals("carbon");
 		
 		int xLeft = bounds.x;
 		int yTop = bounds.y - 1;
@@ -124,34 +123,32 @@ public class BranchRenderer extends AbstractRenderer {
 
 		int dy = bounds.y % 2;
 
-		if (!isCarbon) {
-			// Set line style to dotted
-			gc.setLineDash(LINE_STYLE);
-			
-			// Adjust line positions by a few pixels to create correct effect
-			yToggleTop --;
-			yTop ++;
-			yToggleBottom ++;
-			
-			// Adjust full height
-			// If height is even, we shorten to an odd number of pixels, and start at the original y offset
-			if (bounds.height % 2 == 0) {
-				yBottom -= 1;
-			}
-			// If height is odd, we alternate based on the row offset
-			else {
-				yTop += dy;
-				yBottom -= dy;
-			}
-
-			// Adjust ascender and descender
-			yToggleBottom += dy;
-
-			if ((yToggleTop - yTop + 1) % 2 == 0)
-				yToggleTop -= 1;
-			if ((yToggleBottom - yBottom + 1) % 2 == 0)
-				yToggleBottom += dy == 1 ? -1 : 1;
+		// Set line style to dotted
+		gc.setLineDash(LINE_STYLE);
+		
+		// Adjust line positions by a few pixels to create correct effect
+		yToggleTop --;
+		yTop ++;
+		yToggleBottom ++;
+		
+		// Adjust full height
+		// If height is even, we shorten to an odd number of pixels, and start at the original y offset
+		if (bounds.height % 2 == 0) {
+			yBottom -= 1;
 		}
+		// If height is odd, we alternate based on the row offset
+		else {
+			yTop += dy;
+			yBottom -= dy;
+		}
+
+		// Adjust ascender and descender
+		yToggleBottom += dy;
+
+		if ((yToggleTop - yTop + 1) % 2 == 0)
+			yToggleTop -= 1;
+		if ((yToggleBottom - yBottom + 1) % 2 == 0)
+			yToggleBottom += dy == 1 ? -1 : 1;
 		
 		for (int i = 0; i < branches.length; i++) {
 			// Calculate offsets for this branch
@@ -161,19 +158,17 @@ public class BranchRenderer extends AbstractRenderer {
 			int xToggleRight = xLeft + toggleBounds.width;
 
 			int dx = 0;
-			if (!isCarbon) {
-				xRight --;
-				xMiddleBranch += 2;
-				xToggleRight --;
-				
-				if (indent % 2 == 0) {
-					xRight -= 1;
-				}
-				else {
-					dx = xLeft % 2;
-					xLeft += dx;
-					xRight -= dx;
-				}
+			xRight --;
+			xMiddleBranch += 2;
+			xToggleRight --;
+			
+			if (indent % 2 == 0) {
+				xRight -= 1;
+			}
+			else {
+				dx = xLeft % 2;
+				xLeft += dx;
+				xRight -= dx;
 			}
 			
 			// Render line segments
