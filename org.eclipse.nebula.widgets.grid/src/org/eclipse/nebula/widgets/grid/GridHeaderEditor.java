@@ -215,7 +215,10 @@ class GridHeaderEditor extends ControlEditor {
 		if (rect == null || rect.x < 0) {
 			getEditor().setVisible(false);
 			return;
-		} else {
+		} else if(table.getItemHeaderWidth()>0&&table.getItemHeaderWidth()>rect.x){
+			getEditor().setVisible(false);
+		    return;
+		}else {
 			getEditor().setVisible(true);
 		}
 		getEditor().setBounds(rect);
