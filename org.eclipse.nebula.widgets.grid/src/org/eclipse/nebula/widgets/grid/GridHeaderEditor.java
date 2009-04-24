@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2009 BestSolution.at
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    tom.schindl@bestsolution.at - initial API and implementation
+ *    gusten__79@hotmail.com - bugfix in 257923
+ *******************************************************************************/
 package org.eclipse.nebula.widgets.grid;
 
 import org.eclipse.swt.SWT;
