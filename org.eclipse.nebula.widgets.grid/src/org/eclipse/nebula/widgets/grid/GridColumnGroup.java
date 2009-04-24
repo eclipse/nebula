@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    chris.gross@us.ibm.com - initial API and implementation
+ *    mario.winterer@scch.at - bugfix in 244333
  *******************************************************************************/ 
 package org.eclipse.nebula.widgets.grid;
 
@@ -169,6 +170,10 @@ public class GridColumnGroup extends Item
     
     void removeColumn(GridColumn col)
     {
+    	
+    	if (columns.length == 0)
+    		return; // widget is disposing
+    		
         GridColumn[] newAllColumns = new GridColumn[columns.length - 1];
         int x = 0;
         for (int i = 0; i < columns.length; i++)
@@ -214,9 +219,11 @@ public class GridColumnGroup extends Item
         if (parent.isDisposing())
             return;
 
-        for (int i = 0; i < columns.length; i++)
-        {
-            columns[i].dispose();
+        GridColumn[] oldColumns = columns;
+        columns = new GridColumn[0];
+        
+        for (int i = 0; i < oldColumns.length; i++) {
+        	oldColumns[i].dispose();
         }
 
         parent.removeColumnGroup(this);
