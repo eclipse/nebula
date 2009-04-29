@@ -13,33 +13,30 @@ package org.eclipse.swt.nebula.snippets.radiogroup;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.io.InputStream;
 
-import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.core.databinding.observable.map.IObservableMap;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.property.value.IValueProperty;
+import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
-import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.viewers.ViewerProperties;
+import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.window.Window;
 import org.eclipse.nebula.jface.viewer.radiogroup.RadioGroupViewer;
-import org.eclipse.nebula.jface.viewer.radiogroup.RadioGroupViewerUpdater;
-import org.eclipse.nebula.widgets.radiogroup.RadioGroup;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
@@ -53,7 +50,7 @@ public class RadioGroupViewerSnippet01 {
 
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
 			public void run() {
-				Shell shell = createShell(display);
+				Shell shell = createShell();
 
 				shell.open();
 				while (!shell.isDisposed())
@@ -65,7 +62,9 @@ public class RadioGroupViewerSnippet01 {
 		});
 	}
 
-	private static Shell createShell(Display display) {
+	private static Shell createShell() {
+		final IObservableList people = createModel();
+
 		final Shell shell = new Shell();
 		shell.setLayout(new GridLayout(2, false));
 
@@ -77,23 +76,45 @@ public class RadioGroupViewerSnippet01 {
 		rowLayout.fill = true;
 		actionGroup.setLayout(rowLayout);
 
-		final IObservableList people = createModel(display);
+		Button addPerson = new Button(actionGroup, SWT.PUSH);
+		addPerson.setText("Add person");
 
-		final RadioGroupViewer radioGroupViewer = createRadioGroupViewer(shell,
-				people);
+		Button renamePerson = new Button(actionGroup, SWT.PUSH);
+		renamePerson.setText("Rename person");
 
-		createPushButton(actionGroup, "Add person", new Listener() {
+		Button removePerson = new Button(actionGroup, SWT.PUSH);
+		removePerson.setText("Remove person");
+
+		Button refresh = new Button(actionGroup, SWT.PUSH);
+		refresh.setText("Refresh");
+
+		Group group = new Group(shell, SWT.NONE);
+		group.setText(" RadioGroupViewer ");
+		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		group.setLayout(new FillLayout());
+
+		final RadioGroupViewer radioGroupViewer = new RadioGroupViewer(group,
+				SWT.VERTICAL);
+
+		final Label statusLabel = new Label(shell, SWT.NONE);
+		GridData statusLabelData = new GridData(SWT.FILL, SWT.FILL, true, false);
+		statusLabelData.horizontalSpan = 2;
+		statusLabel.setLayoutData(statusLabelData);
+
+		// Bind UI
+
+		addPerson.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				InputDialog dialog = new InputDialog(shell, "Add person",
 						"Enter name", "<name>", null);
 				if (dialog.open() == Window.OK) {
-					Person person = new Person(dialog.getValue(), null);
+					Person person = new Person(dialog.getValue());
 					people.add(person);
 				}
 			}
 		});
 
-		createPushButton(actionGroup, "Rename person", new Listener() {
+		renamePerson.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				IStructuredSelection selection = (IStructuredSelection) radioGroupViewer
 						.getSelection();
@@ -109,7 +130,7 @@ public class RadioGroupViewerSnippet01 {
 			}
 		});
 
-		createPushButton(actionGroup, "Remove person", new Listener() {
+		removePerson.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				IStructuredSelection selection = (IStructuredSelection) radioGroupViewer
 						.getSelection();
@@ -123,87 +144,43 @@ public class RadioGroupViewerSnippet01 {
 			}
 		});
 
-		createPushButton(actionGroup, "Refresh", new Listener() {
+		refresh.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				radioGroupViewer.refresh();
 			}
 		});
 
-		final Label statusLabel = new Label(shell, SWT.NONE);
-		GridData statusLabelData = new GridData(SWT.FILL, SWT.FILL, true, false);
-		statusLabelData.horizontalSpan = 2;
-		statusLabel.setLayoutData(statusLabelData);
+		IValueProperty nameProp = BeanProperties.value(Person.class, "name");
 
-		radioGroupViewer
-				.addSelectionChangedListener(new ISelectionChangedListener() {
-					public void selectionChanged(SelectionChangedEvent event) {
-						statusLabel.setText(event.getSelection().toString());
-					}
-				});
+		ViewerSupport.bind(radioGroupViewer, people, nameProp);
+
+		ISWTObservableValue statusLabelText = WidgetProperties.text().observe(
+				statusLabel);
+		IObservableValue selectionName = ViewerProperties.singleSelection()
+				.value(nameProp).observe(radioGroupViewer);
+
+		DataBindingContext dbc = new DataBindingContext();
+		dbc.bindValue(statusLabelText, selectionName);
 
 		return shell;
 	}
 
-	private static RadioGroupViewer createRadioGroupViewer(Composite parent,
-			IObservableList input) {
-		Group group = new Group(parent, SWT.NONE);
-		group.setText(" RadioGroupViewer ");
-		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		group.setLayout(new FillLayout());
-
-		RadioGroupViewer radioGroupViewer = new RadioGroupViewer(
-				new RadioGroup(group, SWT.VERTICAL));
-
-		ObservableListContentProvider cp = new ObservableListContentProvider(
-				new RadioGroupViewerUpdater(radioGroupViewer));
-
-		radioGroupViewer.setContentProvider(cp);
-		IObservableMap labelMap = BeansObservables.observeMap(cp
-				.getKnownElements(), Person.class, "name");
-		radioGroupViewer.setLabelProvider(new ObservableMapLabelProvider(
-				labelMap) {
-			public Image getImage(Object element) {
-				return ((Person) element).getImage();
-			}
-		});
-
-		radioGroupViewer.setInput(input);
-
-		return radioGroupViewer;
-	}
-
-	private static IObservableList createModel(Display display) {
+	private static IObservableList createModel() {
 		final IObservableList radioItems = new WritableList();
-		radioItems.add(new Person("Tom", loadImage(display, "tom.png")));
-		radioItems.add(new Person("Dick", loadImage(display, "dick.png")));
-		radioItems.add(new Person("Harry", loadImage(display, "harry.png")));
+		radioItems.add(new Person("Tom"));
+		radioItems.add(new Person("Dick"));
+		radioItems.add(new Person("Harry"));
 		return radioItems;
-	}
-
-	private static Button createPushButton(Composite parent, String text,
-			Listener listener) {
-		Button button = new Button(parent, SWT.PUSH);
-		button.setText(text);
-		button.addListener(SWT.Selection, listener);
-		return button;
-	}
-
-	private static Image loadImage(Display display, String filename) {
-		InputStream is = RadioGroupViewerSnippet01.class
-				.getResourceAsStream(filename);
-		return (is == null) ? null : new Image(display, is);
 	}
 
 	static class Person {
 		private String name;
-		private Image image;
 
 		private PropertyChangeSupport changeSupport = new PropertyChangeSupport(
 				this);
 
-		Person(String name, Image image) {
+		Person(String name) {
 			this.name = name;
-			this.image = image;
 		}
 
 		public String getName() {
@@ -213,19 +190,6 @@ public class RadioGroupViewerSnippet01 {
 		public void setName(String name) {
 			changeSupport.firePropertyChange("name", this.name,
 					this.name = name);
-		}
-
-		public Image getImage() {
-			return image;
-		}
-
-		public void setImage(Image image) {
-			changeSupport.firePropertyChange("image", this.image,
-					this.image = image);
-		}
-
-		public String toString() {
-			return "Person { name: " + name + ", image: " + image + " }";
 		}
 
 		public void addPropertyChangeListener(String propertyName,
