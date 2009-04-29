@@ -122,7 +122,7 @@ public class RadioGroup extends Composite {
 
 	private static int checkCompositeStyle(int style) {
 		// V_SCROLL == VERTICAL, H_SCROLL == HORIZONTAL
-		int result = style & (SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+		int result = style & SWT.BORDER;
 		if ((style & SWT.LEFT_TO_RIGHT) != 0)
 			result |= SWT.LEFT_TO_RIGHT;
 		else if ((style & SWT.RIGHT_TO_LEFT) != 0)
@@ -202,7 +202,7 @@ public class RadioGroup extends Composite {
 		}
 		notifyListeners(SWT.Selection, null);
 	}
-	
+
 	public void clear(int i) {
 		checkWidget();
 		RadioItem item = items[i];

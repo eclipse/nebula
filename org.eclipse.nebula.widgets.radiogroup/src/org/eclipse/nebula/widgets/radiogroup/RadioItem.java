@@ -87,7 +87,7 @@ public class RadioItem extends Item {
 			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 		return position;
 	}
-	
+
 	Button getButton() {
 		return button;
 	}
