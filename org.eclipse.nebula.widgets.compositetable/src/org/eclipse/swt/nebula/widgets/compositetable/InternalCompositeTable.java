@@ -142,6 +142,10 @@ class InternalCompositeTable extends Composite implements Listener {
 		gl.verticalSpacing = 0;
 		gl.marginWidth = 0;
 		gl.marginHeight = 0;
+		// borderWidth times two, since border steals pixels from both sides
+		int borderInPixels = getParent().getBorderWidth() * 2;
+		gl.marginRight = borderInPixels;
+		gl.marginBottom = borderInPixels;
 		gl.horizontalSpacing = 0;
 		this.setLayout(gl);
 		createControlHolder();

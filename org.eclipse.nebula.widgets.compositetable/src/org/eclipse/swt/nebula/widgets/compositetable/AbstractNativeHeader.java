@@ -169,9 +169,7 @@ public abstract class AbstractNativeHeader extends Composite {
     /**
      * Sets the sort indicator onto the specified column.
      * 
-     * @param index
-     * 
-     * TODO [ev] javadoc
+     * @param index the 0-based column index or -1 if no column is sorted
      * @see #setSortDirection(int)
      */
 	public void setSortColumn(int index) {
