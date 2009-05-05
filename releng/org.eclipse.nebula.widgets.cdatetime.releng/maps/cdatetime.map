@@ -1,5 +1,7 @@
 !**** the plugin
-plugin@org.eclipse.nebula.widgets.cdatetime=v20081203,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.cdatetime
+plugin@org.eclipse.nebula.widgets.cdatetime=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.cdatetime
+plugin@org.eclipse.nebula.cwt=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/org.eclipse.nebula.cwt
+plugin@org.eclipse.nebula.widgets.cdatetime.tests=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.cdatetime.tests
 
 !**** the feature
-feature@org.eclipse.nebula.widgets.cdatetime.feature=v20081203,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/features/org.eclipse.nebula.widgets.cdatetime.feature
+feature@org.eclipse.nebula.widgets.cdatetime.feature=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/features/org.eclipse.nebula.widgets.cdatetime.feature
