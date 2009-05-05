@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.nebula.widgets.cdatetime.feature"
-      label="Feature Feature"
+      label="Nebula CDateTime Widget"
       version="0.14.0">
 
    <description url="http://www.eclipse.org/nebula/widgets/cdatetime">
@@ -20,14 +20,14 @@
          id="org.eclipse.nebula.cwt"
          download-size="0"
          install-size="0"
-         version="0.14.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.nebula.widgets.cdatetime"
          download-size="0"
          install-size="0"
-         version="0.14.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
 </feature>
