@@ -44,6 +44,13 @@ package org.eclipse.nebula.animation.movement;
 public class BounceOut extends AbstractMovement {
 
 	public double getValue(double step) {
+		// Conversion from Robert Penner's action scripts
+		//
+		// t : time -> step
+		// b: min -> min
+		// c : total increment -> max - min
+		// d: duration -> duration
+
 		double c = max - min;
 		step = step / duration;
 
@@ -66,7 +73,6 @@ public class BounceOut extends AbstractMovement {
 
 			return c * (7.5625 * (step -= (2.625 / 2.75)) * step + .984375)
 					+ min;
-
 		}
 
 	}

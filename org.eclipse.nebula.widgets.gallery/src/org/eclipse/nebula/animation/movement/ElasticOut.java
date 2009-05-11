@@ -58,6 +58,13 @@ public class ElasticOut extends AbstractMovement {
 	}
 
 	public double getValue(double step) {
+		// Conversion from Robert Penner's action scripts
+		//
+		// t : time -> step
+		// b: min -> min
+		// c : total increment -> max - min
+		// d: duration -> duration
+
 		double c = max - min;
 		double s;
 
@@ -85,7 +92,6 @@ public class ElasticOut extends AbstractMovement {
 				* Math.pow(2d, -10d * step)
 				* Math.sin((step * duration - s) * (2d * Math.PI)
 						/ p.doubleValue()) + c + min);
-
 	}
 
 }
