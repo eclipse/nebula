@@ -2129,7 +2129,11 @@ public class Gallery extends Canvas {
 	}
 
 	public void remove(GalleryItem item) {
-		remove(indexOf(item));
+		if (item.getParentItem() == null) {
+			remove(indexOf(item));
+		} else {
+			item.getParentItem().remove(item);
+		}
 	}
 
 	protected void _remove(int index) {
