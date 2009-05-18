@@ -851,7 +851,7 @@ class DatePicker extends VPanel {
 
 	private void init(int style) {
 		if(cdt.builder == null) {
-			if(cdt.field.length > 1 && (style & (CDT.COMPACT | CDT.DROP_DOWN)) != 0) {
+			if(cdt.field.length > 1 && (style & (CDT.COMPACT)) != 0) {
 				cdt.builder = CDateTimeBuilder.getCompact();
 			} else {
 				cdt.builder = CDateTimeBuilder.getStandard();
