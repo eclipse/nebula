@@ -23,7 +23,7 @@ zipPrefix=nebula-collapsiblebuttons
 incubation=-incubation
 version=0.5.0
 buildType=N
-mainFeatureToBuildID=org.eclipse.nebula.widgets.collapsiblebuttons_feature
+mainFeatureToBuildID=org.eclipse.nebula.widgets.collapsiblebuttons.feature
 #testFeatureToBuildID=org.eclipse.nebula.widgets.collapsiblebuttons.test_feature
 
 #what steps should we do? default: build.steps=buildZips,buildTests,generateDigests,test,publish,cleanup
