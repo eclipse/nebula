@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Nebula CalendarCombo Releng
+Bundle-SymbolicName: org.eclipse.nebula.widgets.calendarcombo.releng
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
