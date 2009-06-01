@@ -25,9 +25,6 @@
             class="org.eclipse.swt.nebula.examples.parts.PGroupExampleTab"
             name="PGroup"/>
       <tab
-            class="org.eclipse.swt.nebula.examples.parts.PShelfExampleTab"
-            name="PShelf"/>
-      <tab
             class="org.eclipse.swt.nebula.examples.parts.CDateTimeExampleTab"
             name="CDateTime"/>
       <tab
@@ -36,6 +33,9 @@
       <tab
             class="org.eclipse.swt.nebula.examples.parts.AnimationExampleTab"
             name="Animation"/>
+                  <tab
+            class="org.eclipse.swt.nebula.examples.parts.CollapsibleButtonsExampleTab"
+            name="CollapsibleButtons"/>
             
    </extension>
    <extension
