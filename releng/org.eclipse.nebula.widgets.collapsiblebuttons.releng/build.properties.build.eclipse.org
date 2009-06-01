@@ -27,7 +27,7 @@ mainFeatureToBuildID=org.eclipse.nebula.widgets.collapsiblebuttons.feature
 #testFeatureToBuildID=org.eclipse.nebula.widgets.collapsiblebuttons.test_feature
 
 #what steps should we do? default: build.steps=buildZips,buildTests,generateDigests,test,publish,cleanup
-build.steps=buildZips,buildUpdate,buildTests,generateDigests,test,publish,cleanup
+build.steps=buildZips,buildUpdate,generateDigests,publish,cleanup
 
 compilerArg=-enableJavadoc -encoding ISO-8859-1
 
