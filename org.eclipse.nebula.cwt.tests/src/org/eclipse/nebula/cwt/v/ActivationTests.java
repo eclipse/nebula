@@ -1,7 +1,6 @@
 package org.eclipse.nebula.cwt.v;
 
 import org.eclipse.nebula.cwt.test.VTestCase;
-import org.eclipse.nebula.cwt.test.VTestComposite;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -18,12 +17,12 @@ public class ActivationTests extends VTestCase {
 				Shell shell = getShell();
 				shell.setLayout(new GridLayout());
 				
-				VTestComposite comp = new VTestComposite(shell, SWT.NONE);
+				VCanvas comp = new VCanvas(shell, SWT.NONE);
 				comp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 				comp.getPanel().setLayout(new VGridLayout(3, true));
 				for(int i = 0; i < buttons.length; i++) {
 					if(i == 3) {
-						comp = new VTestComposite(shell, SWT.NONE);
+						comp = new VCanvas(shell, SWT.NONE);
 						comp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 						comp.getPanel().setLayout(new VGridLayout(3, true));
 					}

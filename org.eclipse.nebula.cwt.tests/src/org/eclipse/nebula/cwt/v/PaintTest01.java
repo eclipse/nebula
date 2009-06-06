@@ -1,7 +1,6 @@
 package org.eclipse.nebula.cwt.v;
 
 import org.eclipse.nebula.cwt.test.VTestCase;
-import org.eclipse.nebula.cwt.test.VTestComposite;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Event;
@@ -18,7 +17,7 @@ public class PaintTest01 extends VTestCase {
 				Shell shell = getShell();
 				shell.setLayout(new FillLayout());
 
-				VTestComposite comp = new VTestComposite(shell, SWT.NONE);
+				VCanvas comp = new VCanvas(shell, SWT.NONE);
 				panel = comp.getPanel();
 				panel.setLayout(new VGridLayout(2, true));
 				

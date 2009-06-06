@@ -10,6 +10,7 @@ import junit.framework.TestCase;
 
 import org.eclipse.nebula.cwt.v.VControl;
 import org.eclipse.nebula.cwt.v.VNative;
+import org.eclipse.nebula.cwt.v.VPanel;
 import org.eclipse.nebula.cwt.v.VTracker;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
@@ -262,6 +263,14 @@ public class VTestCase extends TestCase {
 		}
 	}
 
+	public VPanel getPanel(Control control) {
+		Object o = control.getData("cwt_vcontrol");
+		if(o instanceof VPanel) {
+			return (VPanel) o;
+		}
+		return null;
+	}
+	
 	protected Shell getShell() {
 		return shell;
 	}

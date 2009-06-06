@@ -12,7 +12,6 @@
 package org.eclipse.nebula.cwt.v;
 
 import org.eclipse.nebula.cwt.test.VTestCase;
-import org.eclipse.nebula.cwt.test.VTestComposite;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -37,7 +36,7 @@ public class ButtonFocusTests extends VTestCase {
 		button1.setText("B1");
 		button1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-		VTestComposite c1 = new VTestComposite(shell, SWT.NONE);
+		VCanvas c1 = new VCanvas(shell, SWT.NONE);
 		c1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		c1.getPanel().setLayout(new VSimpleLayout());
 		
@@ -49,7 +48,7 @@ public class ButtonFocusTests extends VTestCase {
 		button2.setText("B2");
 		button2.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-		VTestComposite c2 = new VTestComposite(shell, SWT.NONE);
+		VCanvas c2 = new VCanvas(shell, SWT.NONE);
 		c2.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		c2.getPanel().setLayout(new VSimpleLayout());
 
@@ -62,7 +61,7 @@ public class ButtonFocusTests extends VTestCase {
 		shell.setLayout(new GridLayout(2, false));
 
 		// row 1
-		VTestComposite c1 = new VTestComposite(shell, SWT.NONE);
+		VCanvas c1 = new VCanvas(shell, SWT.NONE);
 		c1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		c1.getPanel().setLayout(new VSimpleLayout());
 		
@@ -74,7 +73,7 @@ public class ButtonFocusTests extends VTestCase {
 		button1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		// row 2
-		VTestComposite c2 = new VTestComposite(shell, SWT.NONE);
+		VCanvas c2 = new VCanvas(shell, SWT.NONE);
 		c2.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		c2.getPanel().setLayout(new VSimpleLayout());
 
@@ -90,7 +89,7 @@ public class ButtonFocusTests extends VTestCase {
 		Shell shell = getShell();
 		shell.setLayout(new GridLayout(2, false));
 
-		VTestComposite c1 = new VTestComposite(shell, SWT.NONE);
+		VCanvas c1 = new VCanvas(shell, SWT.NONE);
 		c1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		c1.getPanel().setLayout(new VGridLayout(2, true));
 		
