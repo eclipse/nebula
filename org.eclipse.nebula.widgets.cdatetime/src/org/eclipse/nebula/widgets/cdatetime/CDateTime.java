@@ -1061,7 +1061,11 @@ public class CDateTime extends BaseCombo {
 
 		if(!isSimple()) {
 			if(isDropDown()) {
-				setButtonVisibility(BaseCombo.BUTTON_ALWAYS);
+				if((style & CDT.BUTTON_AUTO) != 0) {
+					setButtonVisibility(BaseCombo.BUTTON_AUTO);
+				} else {
+					setButtonVisibility(BaseCombo.BUTTON_ALWAYS);
+				}
 			} else {
 				setButtonVisibility(BaseCombo.BUTTON_NEVER);
 				if((style & CDT.SPINNER) != 0) {

@@ -24,7 +24,6 @@ import org.eclipse.nebula.cwt.v.VGridLayout;
 import org.eclipse.nebula.cwt.v.VLabel;
 import org.eclipse.nebula.cwt.v.VNative;
 import org.eclipse.nebula.cwt.v.VPanel;
-import org.eclipse.nebula.cwt.v.VWidget;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -34,7 +33,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
-public class CDatePanel extends Composite implements VWidget {
+public class CDatePanel extends Composite {
 
 	private VPanel panel;
 	private VPanel header;

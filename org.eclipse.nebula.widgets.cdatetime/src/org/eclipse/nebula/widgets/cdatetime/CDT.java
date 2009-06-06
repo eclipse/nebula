@@ -59,10 +59,12 @@ public class CDT {
 	 * true if the platform is carbon, false otherwise
 	 */
 	public static final boolean carbon = "carbon".equals(SWT.getPlatform()); //$NON-NLS-1$
+
 	/**
 	 * true if the platform is gtk, false otherwise
 	 */
 	public static final boolean gtk = "gtk".equals(SWT.getPlatform()); //$NON-NLS-1$
+	
 	/**
 	 * true if the platform is win32, false otherwise
 	 */
@@ -101,19 +103,14 @@ public class CDT {
 	 * @see #BUTTON_LEFT
 	 */
 	public static final int BUTTON_RIGHT 	= 1 << 8;
-	
-	/**
-	 * Style constant for a DropCombo with its button NOT set to the SWT.ARROW | SWT.DOWN style (value is 1&lt;&lt;8).
-	 */
-	public static final int BUTTON_CUSTOM 	= 1 << 16;
-	
-	/**
-	 * Style constant for a DropCombo with its button NOT set to the SWT.ARROW | SWT.DOWN style (value is 1&lt;&lt;8).
-	 */
-	public static final int BUTTON_TOGGLE 	= 1 << 17;
 
-	public static final int BUTTON_ONLY 	= 1 << 14;
-
+	/**
+	 * Style constant for a DropCombo with its button visibility set to auto, meaning that it will be
+	 * visible only when the widget has keyboard focus (value is 1&lt;&lt;18).
+	 * @see #BUTTON_LEFT
+	 */
+	public static final int BUTTON_AUTO		= 1 << 18;
+	
 	/**
 	 * Style constant for left aligning the text of a DropCombo (value is 1&lt;&lt;16).
 	 * @see #TEXT_RIGHT
@@ -127,8 +124,6 @@ public class CDT {
 	 * @see SWT#LEAD
 	 */
 	public static final int TEXT_LEAD		 = 1 << 9;
-
-	public static final int TEXT_CENTER		 = 1 << 19;
 
 	/**
 	 * Style constant for right aligning the text of a DropCombo (value is 1&lt;&lt;17).
@@ -232,6 +227,9 @@ public class CDT {
 	 */
 	public static final int CLOCK_24_HOUR	= 1 << 29;
 	
+	/**
+	 * not yet supported
+	 */
 	public static final int MULTI			= 1 << 30;
 	
 }
