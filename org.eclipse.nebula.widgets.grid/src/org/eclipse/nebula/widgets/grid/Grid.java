@@ -10401,6 +10401,24 @@ public class Grid extends Canvas
     void setSizeOnEveryItemImageChange(boolean sizeOnEveryItemImageChange) {
     	this.sizeOnEveryItemImageChange = sizeOnEveryItemImageChange;
     }
+    
+	/**
+	 * Returns the width of the row headers.
+	 * 
+	 * @return width of the column header row
+	 * @throws org.eclipse.swt.SWTException
+	 *             <ul>
+	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
+	 *             </ul>
+	 */
+	public int getRowHeaderWidth() {
+		checkWidget();
+		return rowHeaderWidth;
+	}
+    
     /**
      * Sets the value of the auto-height feature. When enabled, this feature resizes the height of rows to 
      * reflect the content of cells with word-wrapping enabled. Cell word-wrapping is enabled via the GridColumn.setWordWrap(boolean) method.
