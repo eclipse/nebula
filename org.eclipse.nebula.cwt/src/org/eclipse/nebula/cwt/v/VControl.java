@@ -211,7 +211,7 @@ public abstract class VControl {
 		if(hasState(STATE_ENABLED) && setState(STATE_ACTIVE, true)) {
 			setState(STATE_MOUSE_DOWN, VTracker.isMouseDown());
 			setCursor(activeCursor);
-			attachListeners(false, true);
+			attachListeners(false);
 			if(redrawOnActivate()) {
 				redraw();
 			}
@@ -236,8 +236,7 @@ public abstract class VControl {
 		}
 	}
 
-	void attachListeners(boolean keyListeners, boolean set) {
-		if(set) {
+	void attachListeners(boolean keyListeners) {
 //			if(keyListeners && this != VTracker.getFocusControl()) {
 //				System.out.println("this: " + this + ", focusControl: " + VTracker.getFocusControl());
 //				throw new UnsupportedOperationException();
@@ -251,17 +250,18 @@ public abstract class VControl {
 					}
 				}
 //			}
-		} else {
-			Set<Integer> eventTypes = new HashSet<Integer>(this.eventTypes);
-			eventTypes.addAll(listeners.keySet());
-			for(Integer eventType : eventTypes) {
-				if(include(keyListeners, eventType)) {
-					composite.removeListener(eventType, listener);
-				}
+	}
+
+	void detachListeners(boolean keyListeners) {
+		Set<Integer> eventTypes = new HashSet<Integer>(this.eventTypes);
+		eventTypes.addAll(listeners.keySet());
+		for(Integer eventType : eventTypes) {
+			if(include(keyListeners, eventType)) {
+				composite.removeListener(eventType, listener);
 			}
 		}
 	}
-
+	
 	public Point computeSize(int wHint, int hHint) {
 		return computeSize(wHint, hHint, true);
 	}
@@ -334,7 +334,7 @@ public abstract class VControl {
 		if(setState(STATE_ACTIVE, false)) {
 			setState(STATE_MOUSE_DOWN, false);
 			setCursor(inactiveCursor);
-			attachListeners(false, false);
+			detachListeners(false);
 			if(redrawOnDeactivate()) {
 				redraw();
 			}
@@ -355,8 +355,8 @@ public abstract class VControl {
 				VTracker.instance().setFocusControl(null);
 			}
 			if(!composite.isDisposed()) {
-				attachListeners(true, false);
-				attachListeners(false, false);
+				detachListeners(true);
+				detachListeners(false);
 			}
 			setParent(null);
 			if(painter != null) {
@@ -544,6 +544,10 @@ public abstract class VControl {
 		return getEnabled() && ((parent != null) ? parent.isEnabled() : composite.isEnabled());
 	}
 	
+	public boolean isSameWidgetAs(VControl control) {
+		return control != null && getWidget() == control.getWidget();
+	}
+
 	public boolean isSameWidgetAs(Widget widget) {
 		Composite w = getWidget();
 		return w == widget || containsControl((Control) widget, w);
@@ -579,6 +583,9 @@ public abstract class VControl {
 			}
 			event.data = this;
 			event.type = eventType;
+			if(this instanceof VNative && eventType == SWT.FocusOut) {
+				System.out.println("wtf");
+			}
 			for(Listener listener : getListeners(eventType)) {
 				listener.handleEvent(event);
 			}
@@ -760,15 +767,12 @@ public abstract class VControl {
 
 	protected boolean setFocus(boolean focus) {
 		if(!hasStyle(SWT.NO_FOCUS)) {
-			if(!focus) {
-				attachListeners(true, false);
-				notifyListeners(SWT.FocusOut);
-//				redraw();
-			}
 			if(focus) {
-				attachListeners(true, true);
+				attachListeners(true);
 				notifyListeners(SWT.FocusIn);
-//				redraw();
+			} else {
+				notifyListeners(SWT.FocusOut);
+				detachListeners(true);
 			}
 			return true;
 		}

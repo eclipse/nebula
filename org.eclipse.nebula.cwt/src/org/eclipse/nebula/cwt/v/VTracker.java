@@ -30,14 +30,14 @@ public class VTracker implements DisposeListener {
 
 	private static VTracker tracker;
 
-	static void addNative(VNative<?> n) {
-		VTracker tracker = instance();
-		if(tracker.natives == null) {
-			tracker.natives = new HashMap<Widget, VNative>();
-		}
-		tracker.natives.put(n.control, n);
-		n.control.addDisposeListener(tracker);
-	}
+//	static void addNative(VNative<?> n) {
+//		VTracker tracker = instance();
+//		if(tracker.natives == null) {
+//			tracker.natives = new HashMap<Widget, VNative>();
+//		}
+//		tracker.natives.put(n.control, n);
+//		n.control.addDisposeListener(tracker);
+//	}
 	
 	static void addTopLevelPanel(VPanel panel) {
 		VTracker tracker = instance();
@@ -107,13 +107,8 @@ public class VTracker implements DisposeListener {
 				}
 			}
 		}
-		if(control != null) {
-			for(VControl vc : instance().panels.values()) {
-				Composite widget = vc.getWidget();
-				if(widget == c) {
-					return widget.setFocus();
-				}
-			}
+		if(c != null) {
+			c.setFocus();
 		}
 		return false;
 	}
@@ -137,12 +132,7 @@ public class VTracker implements DisposeListener {
 			}
 		}
 		if(c != null) {
-			for(VControl vc : instance().panels.values()) {
-				Composite widget = vc.getWidget();
-				if(widget == c) {
-					return widget.setFocus();
-				}
-			}
+			c.setFocus();
 		}
 		return false;
 	}
@@ -159,7 +149,7 @@ public class VTracker implements DisposeListener {
 							if(i > controls.length-1) {
 								i = 0;
 							}
-							if(controls[i].setFocus()) {
+							if(controls[i].forceFocus()) {
 								return;
 							}
 						}
@@ -169,7 +159,7 @@ public class VTracker implements DisposeListener {
 				for(int i = 0; i < controls.length; i++) {
 					if(controls[i] == comp) {
 						for( ; i < controls.length-1; i++) {
-							if(controls[i+1].setFocus()) {
+							if(controls[i+1].forceFocus()) {
 								return;
 							}
 						}
@@ -192,7 +182,7 @@ public class VTracker implements DisposeListener {
 							if(i < 0) {
 								i = controls.length-1;
 							}
-							if(controls[i].setFocus()) {
+							if(controls[i].forceFocus()) {
 								return;
 							}
 						}
@@ -202,7 +192,7 @@ public class VTracker implements DisposeListener {
 				for(int i = 0; i < controls.length; i++) {
 					if(controls[i] == comp) {
 						for( ; i > 0; i--) {
-							if(controls[i-1].setFocus()) {
+							if(controls[i-1].forceFocus()) {
 								return;
 							}
 						}
@@ -213,15 +203,20 @@ public class VTracker implements DisposeListener {
 		}
 	}
 
+	private static Boolean lock = new Boolean(true);
 	static VTracker instance() {
 		if(tracker == null) {
-			tracker = new VTracker();
+			synchronized (lock) {
+				if(tracker == null) {
+					tracker = new VTracker();
+				}
+			}
 		}
 		return tracker;
 	}
 
 	private Map<Composite, VPanel> panels;
-	private Map<Widget, VNative> natives;
+//	private Map<Widget, VNative> natives;
 	
 	private VControl activeControl = null;
 	
@@ -258,30 +253,8 @@ public class VTracker implements DisposeListener {
 				}
 				break;
 			case SWT.FocusIn:
-				if(event.widget instanceof Shell) {
-					Control[] ca = ((Shell) event.widget).getTabList();
-					if(ca.length > 0 && ca[0] instanceof VWidget) {
-						setFocusControl(((VWidget) ca[0]).getPanel());
-					}
-				}
-				if(focusControl == null) {
-					if(event.widget instanceof VWidget) {
-						setFocusControl(((VWidget) event.widget).getPanel());
-					}
-				} else {
-					if(focusControl.isSameWidgetAs(event.widget)) {
-						if(event.widget instanceof VWidget) {
-							setFocusControl(((VWidget) event.widget).getPanel());
-						} else {
-							VControl control = natives.get(event.widget);
-							if(control != null) {
-								setFocusControl(control);
-							}
-						}
-					} else {
-						setFocusControl(null);
-					}
-				}
+				System.out.println("focusIn: " + event.widget);
+				setFocusControl(getVControl(event.widget));
 				break;
 			case SWT.MouseDown:
 				mouseButton = event.button;
@@ -312,6 +285,20 @@ public class VTracker implements DisposeListener {
 		}
 	};
 
+	public static VControl getVControl(Widget widget) {
+		if(widget instanceof Shell) {
+			Control[] ca = ((Shell) widget).getTabList();
+			if(ca.length > 0) {
+				widget = ca[0];
+			}
+		}
+		Object o = widget.getData("cwt_vcontrol");
+		if(o instanceof VControl) {
+			return (VControl) o;
+		}
+		return null;
+	}
+	
 	private VControl focusControl = null;
 
 	private boolean listening = false;
@@ -347,44 +334,98 @@ public class VTracker implements DisposeListener {
 		}
 	}
 
+	private VControl getNewFocus(VPanel panel) {
+		for(VControl child : panel.getChildren()) {
+			if(!child.hasStyle(SWT.NO_FOCUS)) {
+				if(child instanceof VPanel) {
+					return getNewFocus((VPanel) child);
+				} else {
+					return child;
+				}
+			}
+		}
+		return null;
+	}
+	
 	boolean setFocusControl(VControl control) {
-		if(control == focusControl) {
+		VControl newFocus = control;
+		if(newFocus instanceof VPanel) {
+			newFocus = getNewFocus((VPanel) newFocus);
+		} else if(control != null && control.hasStyle(SWT.NO_FOCUS)) {
+			return false;
+		}
+		
+		if(newFocus == focusControl) {
+			if(newFocus instanceof VNative) {
+				Control c = newFocus.getControl();
+				if(c != Display.getDefault().getFocusControl()) {
+					c.forceFocus();
+				}
+			}
 			return true;
 		}
-		if(control instanceof VPanel) {
-			return control.setFocus(true);
-		} else {
-			VControl old = focusControl;
-			if(old != null && !old.isDisposed()) {
-				old.setFocus(false);
-				focusControl = null;
+
+		try {
+			Display.getDefault().removeFilter(SWT.FocusIn, filter);
+			
+			VControl oldFocus = focusControl;
+			if(oldFocus != null && !oldFocus.isDisposed()) {
+				oldFocus.setFocus(false);
 			}
-			if(control != null) {
-				if(!control.isDisposed() && control.setFocus(true)) {
-					control.getControl().forceFocus();
+			if(newFocus != null) {
+				if(!newFocus.isDisposed() && newFocus.setFocus(true)) {
+					if(newFocus instanceof VNative) {
+						Control c = newFocus.getControl();
+						if(c != Display.getDefault().getFocusControl()) {
+							c.forceFocus();
+						}
+					}
 				} else {
 					return false;
 				}
 			}
-			focusControl = control;
-			if(control != null) {
-				control.redraw();
+			focusControl = newFocus;
+			if(newFocus != null) {
+				newFocus.redraw();
 			}
-			if(old != null && !old.isDisposed()) {
-				old.redraw();
+			if(oldFocus != null && !oldFocus.isDisposed()) {
+				oldFocus.redraw();
 			}
+			notifyWidgetFocusListeners(focusControl, oldFocus);
 			return true;
+		} finally {
+			Display.getDefault().addFilter(SWT.FocusIn, filter);
+		}
+	}
+
+	private void notifyWidgetFocusListeners(VControl newFocus, VControl oldFocus) {
+		if(newFocus != null && !newFocus.isSameWidgetAs(oldFocus)) {
+			Widget widget = newFocus.getWidget();
+			if(widget.getData("cwt_focus") == null) { //$NON-NLS-1$
+				widget.setData("cwt_focus", this); //$NON-NLS-1$
+				Event event = new Event();
+				event.widget = widget;
+				event.data = this;
+				event.type = SWT.FocusIn;
+				event.widget.notifyListeners(SWT.FocusIn, event);
+			}
+		}
+		if(oldFocus != null && !oldFocus.isSameWidgetAs(newFocus)) {
+			Widget widget = oldFocus.getWidget();
+			if(widget.getData("cwt_focus") != null) { //$NON-NLS-1$
+				widget.setData("cwt_focus", null); //$NON-NLS-1$
+				Event event = new Event();
+				event.widget = widget;
+				event.data = this;
+				event.type = SWT.FocusOut;
+				event.widget.notifyListeners(SWT.FocusOut, event);
+			}
 		}
 	}
 	
 	public void widgetDisposed(DisposeEvent e) {
 		VTracker tracker = instance();
-		if(tracker.natives != null && tracker.natives.containsKey(e.widget)) {
-			tracker.natives.remove(e.widget);
-			if(tracker.natives.isEmpty()) {
-				tracker.natives = null;
-			}
-		} else if(tracker.panels != null && tracker.panels.containsKey(e.widget)) {
+		if(tracker.panels != null && tracker.panels.containsKey(e.widget)) {
 			tracker.panels.remove(e.widget);
 			if(tracker.panels.isEmpty()) {
 				Display.getDefault().removeFilter(SWT.FocusIn, tracker.filter);

@@ -22,7 +22,6 @@ import org.eclipse.nebula.cwt.v.VLayout;
 import org.eclipse.nebula.cwt.v.VNative;
 import org.eclipse.nebula.cwt.v.VPanel;
 import org.eclipse.nebula.cwt.v.VSimpleLayout;
-import org.eclipse.nebula.cwt.v.VWidget;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.ModifyListener;
@@ -48,7 +47,7 @@ import org.eclipse.swt.widgets.Text;
  * selects the button the shell is set visible and the SWT Components which have
  * been placed on the "content" Composite will be shown.
  */
-public abstract class BaseCombo extends Canvas implements VWidget {
+public abstract class BaseCombo extends Canvas {
 
 	/**
 	 * Special layout implementation to position the combo's drop-down Button
@@ -215,10 +214,6 @@ public abstract class BaseCombo extends Canvas implements VWidget {
 	 * The VPanel that is the base of this widget.  If the style is SIMPLE, this panel
 	 * will be the base of the content area, otherwise, it is the base of the text/button
 	 * area.
-	 * <p>
-	 * This is the VPanel returned by {@link #getPanel()}
-	 * </p>
-	 * @see #getPanel()
 	 */
 	protected VPanel panel = null;
 
@@ -279,8 +274,6 @@ public abstract class BaseCombo extends Canvas implements VWidget {
 	private boolean open = false;
 
 	private boolean holdOpen = false;
-
-	private boolean hasFocus;
 
 	private VControl positionControl;
 
@@ -547,10 +540,6 @@ public abstract class BaseCombo extends Canvas implements VWidget {
 		return super.getMenu();
 	}
 
-	public VPanel getPanel() {
-		return panel;
-	}
-	
 	/**
 	 * @return the stretch control
 	 */
@@ -805,6 +794,20 @@ public abstract class BaseCombo extends Canvas implements VWidget {
 	protected void setButtonVisibility(int visibility) {
 		buttonVisibility = visibility;
 		setButtonVisible(false);
+		if(buttonVisibility == BUTTON_AUTO) {
+			addListener(SWT.FocusIn, new Listener() {
+				public void handleEvent(Event event) {
+					System.out.println("set button visible: true");
+					setButtonVisible(true);
+				}
+			});
+			addListener(SWT.FocusOut, new Listener() {
+				public void handleEvent(Event event) {
+					System.out.println("set button visible: false");
+					setButtonVisible(false);
+				}
+			});
+		}
 	}
 
 	/**
@@ -1073,7 +1076,7 @@ public abstract class BaseCombo extends Canvas implements VWidget {
 			contentShell.setRedraw(true);
 		}
 		if(BUTTON_AUTO == buttonVisibility) {
-			setButtonVisible(hasFocus && !open);
+			setButtonVisible(!open);
 		}
 	}
 

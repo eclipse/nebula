@@ -51,7 +51,12 @@ public class VNative<T extends Control> extends VControl {
 	}
 	
 	@Override
-	void attachListeners(boolean key, boolean set) {
+	void attachListeners(boolean key) {
+		// skip
+	}
+	
+	@Override
+	void detachListeners(boolean key) {
 		// skip
 	}
 	
@@ -121,7 +126,8 @@ public class VNative<T extends Control> extends VControl {
 		}
 		this.control = control;
 		control.addDisposeListener(disposeListener);
-		VTracker.addNative(this);
+		control.setData("cwt_vcontrol", this);
+//		VTracker.addNative(this);
 	}
 
 	@Override

@@ -35,10 +35,7 @@ public class VPanel extends VControl {
 	
 	public VPanel(Composite parent, int style) {
 		this((VPanel) null, style & ~SWT.BORDER);
-		if(!(parent instanceof VWidget)) {
-			throw new UnsupportedOperationException("VPanels can only be placed on Composites that implement the VWidget interface"); //$NON-NLS-1$
-		}
-		
+
 		isTopLevel = true;
 		
 		composite = parent;
@@ -74,6 +71,7 @@ public class VPanel extends VControl {
 		});
 
 		VTracker.addTopLevelPanel(this);
+		composite.setData("cwt_vcontrol", this);
 	}
 
 	public VPanel(VPanel panel, int style) {
@@ -292,11 +290,11 @@ public class VPanel extends VControl {
 			public void handleEvent(Event event) {
 			}
 		});
-		this.widget.addListener(SWT.FocusIn, new Listener() {
-			public void handleEvent(Event event) {
-				VPanel.this.getWidget().setFocus();
-			}
-		});
+//		this.widget.addListener(SWT.FocusIn, new Listener() {
+//			public void handleEvent(Event event) {
+//				VPanel.this.getWidget().setFocus();
+//			}
+//		});
 	}
 
 	public void sort(Comparator<VControl> comparator) {
