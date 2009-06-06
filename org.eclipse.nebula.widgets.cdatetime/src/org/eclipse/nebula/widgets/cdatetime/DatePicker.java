@@ -501,7 +501,7 @@ class DatePicker extends VPanel {
 								if(SWT.MouseWheel == event.type) {
 									Calendar tmpcal = cdt.getCalendarInstance();
 									tmpcal.add(Calendar.MONTH, (event.count > 0) ? 1 : -1);
-									cdt.show(tmpcal.getTime());
+									cdt.setSelection(tmpcal.getTime());
 								}
 							}
 						});
@@ -524,7 +524,7 @@ class DatePicker extends VPanel {
 								MenuItem item = (MenuItem) e.widget;
 								Calendar tmpcal = cdt.getCalendarInstance();
 								tmpcal.set(Calendar.MONTH, ((Integer) item.getData("Month")).intValue()); //$NON-NLS-1$
-								cdt.show(tmpcal.getTime());
+								cdt.setSelection(tmpcal.getTime());
 							}
 						});
 					}
@@ -544,7 +544,7 @@ class DatePicker extends VPanel {
 						} else {
 							tmpcal.add(Calendar.MONTH, 1);
 						}
-						cdt.show(tmpcal.getTime());
+						cdt.setSelection(tmpcal.getTime());
 					}
 				});
 				break;
@@ -562,7 +562,7 @@ class DatePicker extends VPanel {
 						} else {
 							tmpcal.add(Calendar.MONTH, -1);
 						}
-						cdt.show(tmpcal.getTime());
+						cdt.setSelection(tmpcal.getTime());
 					}
 				});
 				break;
@@ -596,7 +596,7 @@ class DatePicker extends VPanel {
 								if(SWT.MouseWheel == event.type) {
 									Calendar tmpcal = cdt.getCalendarInstance();
 									tmpcal.add(Calendar.YEAR, (event.count > 0) ? 1 : -1);
-									cdt.show(tmpcal.getTime());
+									cdt.setSelection(tmpcal.getTime());
 								}
 							}
 						});
@@ -606,7 +606,7 @@ class DatePicker extends VPanel {
 							handleHeaderSelection((VButton) event.data);
 						}
 					});
-	
+
 					Menu yearMenu = yearButton.createMenu();
 					yearItems = new MenuItem[11];
 					for(int i = 0; i < 11; i++) {
@@ -617,7 +617,7 @@ class DatePicker extends VPanel {
 								MenuItem item = (MenuItem) e.widget;
 								Calendar tmpcal = cdt.getCalendarInstance();
 								tmpcal.add(Calendar.YEAR, ((Integer) item.getData("Year")).intValue() - 5); //$NON-NLS-1$
-								cdt.show(tmpcal.getTime());
+								cdt.setSelection(tmpcal.getTime());
 							}
 						});
 					}
@@ -639,7 +639,7 @@ class DatePicker extends VPanel {
 						} else {
 							tmpcal.add(Calendar.YEAR, 1);
 						}
-						cdt.show(tmpcal.getTime());
+						cdt.setSelection(tmpcal.getTime());
 					}
 				});
 				break;
@@ -659,7 +659,7 @@ class DatePicker extends VPanel {
 						} else {
 							tmpcal.add(Calendar.YEAR, -1);
 						}
-						cdt.show(tmpcal.getTime());
+						cdt.setSelection(tmpcal.getTime());
 					}
 				});
 				break;
@@ -698,21 +698,22 @@ class DatePicker extends VPanel {
 				public void handleEvent(Event event) {
 					if(event.widget == null) {
 						VButton button = (VButton) event.data;
-						Calendar tmpcal = cdt.getCalendarInstance();
-						tmpcal.set(Calendar.MONTH, (Integer) button.getData("Month")); //$NON-NLS-1$
-						if (cdt.field.length == 1 && cdt.getCalendarField(cdt.field[0]) == Calendar.MONTH) {
-							cdt.setSelection(tmpcal.getTime());
-							cdt.fireSelectionChanged(true);
-						} else {
-							cdt.show(tmpcal.getTime());
-							handleHeaderSelection(null);
-						}
 						if(button.hasStyle(SWT.TOGGLE)) {
 							for(VButton b : monthButtons) {
 								if(b != button) {
 									b.setSelection(false);
 								}
 							}
+						}
+						
+						Calendar tmpcal = cdt.getCalendarInstance();
+						tmpcal.set(Calendar.MONTH, (Integer) button.getData("Month")); //$NON-NLS-1$
+						cdt.setSelection(tmpcal.getTime());
+						
+						if (cdt.field.length == 1 && cdt.getCalendarField(cdt.field[0]) == Calendar.MONTH) {
+							cdt.fireSelectionChanged(true);
+						} else {
+							handleHeaderSelection(null);
 						}
 					}
 				}
@@ -768,21 +769,22 @@ class DatePicker extends VPanel {
 				public void handleEvent(Event event) {
 					if(event.widget == null) {
 						VButton button = (VButton) event.data;
-						Calendar tmpcal = cdt.getCalendarInstance();
-						tmpcal.set(Calendar.YEAR, Integer.parseInt(button.getText()));
-						if (cdt.field.length == 1 && cdt.getCalendarField(cdt.field[0]) == Calendar.YEAR) {
-							cdt.setSelection(tmpcal.getTime());
-							cdt.fireSelectionChanged(true);
-						} else {
-							cdt.show(tmpcal.getTime());
-							handleHeaderSelection(null);
-						}
 						if(button.hasStyle(SWT.TOGGLE)) {
 							for(VButton b : yearButtons) {
 								if(b != button) {
 									b.setSelection(false);
 								}
 							}
+						}
+
+						Calendar tmpcal = cdt.getCalendarInstance();
+						tmpcal.set(Calendar.YEAR, Integer.parseInt(button.getText()));
+						cdt.setSelection(tmpcal.getTime());
+
+						if (cdt.field.length == 1 && cdt.getCalendarField(cdt.field[0]) == Calendar.YEAR) {
+							cdt.fireSelectionChanged(true);
+						} else {
+							handleHeaderSelection(null);
 						}
 					}
 				}
