@@ -30,15 +30,6 @@ public class VTracker implements DisposeListener {
 
 	private static VTracker tracker;
 
-//	static void addNative(VNative<?> n) {
-//		VTracker tracker = instance();
-//		if(tracker.natives == null) {
-//			tracker.natives = new HashMap<Widget, VNative>();
-//		}
-//		tracker.natives.put(n.control, n);
-//		n.control.addDisposeListener(tracker);
-//	}
-	
 	static void addTopLevelPanel(VPanel panel) {
 		VTracker tracker = instance();
 		if(tracker.panels == null) {
@@ -216,7 +207,6 @@ public class VTracker implements DisposeListener {
 	}
 
 	private Map<Composite, VPanel> panels;
-//	private Map<Widget, VNative> natives;
 	
 	private VControl activeControl = null;
 	
@@ -253,7 +243,6 @@ public class VTracker implements DisposeListener {
 				}
 				break;
 			case SWT.FocusIn:
-				System.out.println("focusIn: " + event.widget);
 				setFocusControl(getVControl(event.widget));
 				break;
 			case SWT.MouseDown:
