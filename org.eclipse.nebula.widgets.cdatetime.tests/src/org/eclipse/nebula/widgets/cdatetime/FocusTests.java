@@ -350,7 +350,8 @@ public class FocusTests extends VTestCase {
 	}
 
 	public void testTabKeyForward_2() {
-		assertTrue(hasFocus(cdt1.getPanel().getComposite()));
+		
+		assertTrue(hasFocus(getPanel(cdt1).getComposite()));
 
 		keyPress('\t');
 		assertTrue(hasFocus(button1));
@@ -362,14 +363,14 @@ public class FocusTests extends VTestCase {
 		assertTrue(hasFocus(button2));
 
 		keyPress('\t');
-		assertTrue(hasFocus(cdt1.getPanel().getComposite()));
+		assertTrue(hasFocus(getPanel(cdt1).getComposite()));
 	}
 
 	public void testTabKeyForward_3() {
 		assertTrue(hasFocus(button1));
 
 		keyPress('\t');
-		assertTrue(hasFocus(cdt1.getPanel().getComposite()));
+		assertTrue(hasFocus(getPanel(cdt1).getComposite()));
 
 		keyPress('\t');
 		assertTrue(hasFocus(button2));
@@ -418,7 +419,7 @@ public class FocusTests extends VTestCase {
 	}
 	
 	public void testTabKeyReverse_2() {
-		assertTrue(hasFocus(cdt1.getPanel().getComposite()));
+		assertTrue(hasFocus(getPanel(cdt1).getComposite()));
 
 		keyDown(SWT.SHIFT);
 
@@ -432,7 +433,7 @@ public class FocusTests extends VTestCase {
 		assertTrue(hasFocus(button1));
 
 		keyPress('\t');
-		assertTrue(hasFocus(cdt1.getPanel().getComposite()));
+		assertTrue(hasFocus(getPanel(cdt1).getComposite()));
 
 		keyUp(SWT.SHIFT);
 	}
@@ -449,7 +450,7 @@ public class FocusTests extends VTestCase {
 		assertTrue(hasFocus(button2));
 
 		keyPress('\t');
-		assertTrue(hasFocus(cdt1.getPanel().getComposite()));
+		assertTrue(hasFocus(getPanel(cdt1).getComposite()));
 
 		keyPress('\t');
 		assertTrue(hasFocus(button1));

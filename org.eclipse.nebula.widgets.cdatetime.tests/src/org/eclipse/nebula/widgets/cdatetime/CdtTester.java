@@ -187,10 +187,8 @@ public class CdtTester {
 		return null;
 	}
 	
-	
-	
 	public VPanel getPanel() {
-		return (VPanel) cdt.getPanel().getChildren()[0];
+		return (VPanel) ((VPanel) cdt.getData("cwt_vcontrol")).getChildren()[0];
 	}
 	
 	public VPanel getBodyPanel() {
