@@ -6,7 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    chris.gross@us.ibm.com - initial API and implementation
+ *    chris.gross@us.ibm.com    - initial API and implementation
+ *    Chuck.Mastrandrea@sas.com - wordwrapping in bug 222280
+ *    smcduff@hotmail.com       - wordwrapping in bug 222280
  *******************************************************************************/
 package org.eclipse.nebula.widgets.grid;
 
@@ -672,7 +674,9 @@ public class Grid extends Canvas
 	private boolean insertMarkBefore = false;
     private IRenderer insertMarkRenderer = new DefaultInsertMarkRenderer();
     private boolean sizeOnEveryItemImageChange;
-
+    private boolean autoHeight = false;
+    private boolean autoWidth = true;
+    private boolean wordWrapRowHeader = false;
     /**
      * A range of rows in a <code>Grid</code>.
      * <p>
@@ -3653,7 +3657,7 @@ public class Grid extends Canvas
         this.rowHeaderVisible = show;
         setColumnScrolling(true);
 
-        if (show)
+        if (show && isAutoWidth()) 
         {
 	        rowHeaderWidth = 1;
 
@@ -8153,7 +8157,7 @@ public class Grid extends Canvas
 
         item.initializeHeight(itemHeight);
 
-        if (isRowHeaderVisible())
+        if (isRowHeaderVisible() && isAutoWidth())
         {
 	        rowHeaderWidth = Math.max(rowHeaderWidth,rowHeaderRenderer
 	            .computeSize(sizingGC, SWT.DEFAULT, SWT.DEFAULT, item).x);
@@ -9328,6 +9332,9 @@ public class Grid extends Canvas
 
     void recalculateRowHeaderWidth(GridItem item,int oldWidth, int newWidth)
     {
+        if (!isAutoWidth())
+          return;
+        
         if (newWidth > rowHeaderWidth)
         {
             rowHeaderWidth = newWidth;
@@ -9375,7 +9382,20 @@ public class Grid extends Canvas
             return 0;
         return rowHeaderWidth;
     }
-
+    /**
+     * Sets the row header width to the specified value. This automatically disables the auto width feature of the grid.
+     * @param width the width of the row header
+     * @see #getItemHeaderWidth()
+     * @see #setAutoWidth(boolean)
+     */
+    public void setItemHeaderWidth(int width)
+    {
+      checkWidget();
+      rowHeaderWidth = width;
+      setAutoWidth(false);
+      redraw();
+    }
+    
     /**
      * Sets the number of items contained in the receiver.
      *
@@ -10256,10 +10276,17 @@ public class Grid extends Canvas
     		clear(0, items.size()-1, allChildren);
     }
 
-    void recalculateHeader() {
+    /**
+     * Recalculate the height of the header
+     */
+    public void recalculateHeader() {
+    	int previous = getHeaderHeight();
         computeHeaderHeight(sizingGC);
-        scrollValuesObsolete = true;
-        redraw();
+        
+        if( previous != getHeaderHeight() ) {
+        	scrollValuesObsolete = true;
+        	redraw();
+        }
     }
 
     /**
@@ -10374,6 +10401,83 @@ public class Grid extends Canvas
     void setSizeOnEveryItemImageChange(boolean sizeOnEveryItemImageChange) {
     	this.sizeOnEveryItemImageChange = sizeOnEveryItemImageChange;
     }
+    /**
+     * Sets the value of the auto-height feature. When enabled, this feature resizes the height of rows to 
+     * reflect the content of cells with word-wrapping enabled. Cell word-wrapping is enabled via the GridColumn.setWordWrap(boolean) method.
+     * If column headers have word-wrapping enabled, this feature will also resize the height of the column headers as necessary. 
+     * @param enabled Set to true to enable this feature, false (default) otherwise.
+     */
+    public void setAutoHeight(boolean enabled)
+    {
+      if (autoHeight == enabled)
+        return;
+      
+        checkWidget();
+        autoHeight = enabled;
+        setRowsResizeable(false); // turn of resizing of row height since it conflicts with this property
+        redraw();
+    }
+    
+    /**
+     * Returns the value of the auto-height feature, which resizes row heights and column header heights based on word-wrapped content.
+     * @return Returns whether or not the auto-height feature is enabled.
+     * @see #setAutoHeight(boolean)
+     */
+    public boolean isAutoHeight()
+    {
+      return autoHeight;
+    }
+    
+    /**
+     * Sets the value of the auto-width feature. When enabled, this feature resizes the width of the row headers to 
+     * reflect the content of row headers.
+     * @param enabled Set to true to enable this feature, false (default) otherwise.
+     * @see #isAutoWidth()
+     */
+    public void setAutoWidth(boolean enabled)
+    {
+      if (autoWidth == enabled)
+        return;
+      
+        checkWidget();
+        autoWidth = enabled;
+        redraw();
+    }
+    
+    /**
+     * Returns the value of the auto-height feature, which resizes row header width based on content.
+     * @return Returns whether or not the auto-width feature is enabled.
+     * @see #setAutoWidth(boolean)
+     */
+    public boolean isAutoWidth()
+    {
+      return autoWidth;
+    }
+    
+    /**
+     * Sets the value of the word-wrap feature for row headers. When enabled, this feature will word-wrap the contents of row headers.
+     * @param enabled Set to true to enable this feature, false (default) otherwise.
+     * @see #isWordWrapHeader()
+     */
+    public void setWordWrapHeader(boolean enabled)
+    {
+      if (wordWrapRowHeader == enabled)
+        return;
+      
+        checkWidget();
+        wordWrapRowHeader = enabled;
+        redraw();
+    }
+    
+    /**
+     * Returns the value of the row header word-wrap feature, which word-wraps the content of row headers.
+     * @return Returns whether or not the row header word-wrap feature is enabled.
+     * @see #setWordWrapHeader(boolean)
+     */
+    public boolean isWordWrapHeader()
+    {
+      return wordWrapRowHeader;
+    }    
 }
 
 

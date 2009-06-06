@@ -6,16 +6,22 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    chris.gross@us.ibm.com - initial API and implementation
+ *    chris.gross@us.ibm.com    - initial API and implementation
+ *    Chuck.Mastrandrea@sas.com - wordwrapping in bug 222280
+ *    smcduff@hotmail.com       - wordwrapping in bug 222280
  *******************************************************************************/
 package org.eclipse.nebula.widgets.grid.internal;
 
 import org.eclipse.nebula.widgets.grid.AbstractRenderer;
+import org.eclipse.nebula.widgets.grid.GridColumn;
 import org.eclipse.nebula.widgets.grid.GridItem;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.TextLayout;
 
 /**
  * The row header renderer.
@@ -34,6 +40,8 @@ public class DefaultRowHeaderRenderer extends AbstractRenderer
 
     int bottomMargin = 3;
 
+    private TextLayout textLayout;
+    
     /**
      * {@inheritDoc}
      */
@@ -139,15 +147,47 @@ public class DefaultRowHeaderRenderer extends AbstractRenderer
 
         gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
 
-        int y = getBounds().y + (getBounds().height - gc.stringExtent(text).y) / 2;
-
+        
+        int y = getBounds().y;
+        int selectionOffset = 0;
         if (isSelected() && !item.getParent().getCellSelectionEnabled())
         {
-            gc.drawString(TextUtils.getShortString(gc, text, width), getBounds().x + x + 1, y + 1, true);
+            selectionOffset = 1;
+        }
+        
+        if (!item.getParent().isWordWrapHeader())
+        {
+            y += (getBounds().height - gc.stringExtent(text).y) / 2;
+            gc.drawString(TextUtils.getShortString(gc, text, width), getBounds().x + x + selectionOffset, y + selectionOffset, true);
         }
         else
         {
-            gc.drawString(TextUtils.getShortString(gc, text, width), getBounds().x + x, y, true);
+          getTextLayout(gc, item);
+          textLayout.setWidth(width < 1 ? 1 : width);
+          textLayout.setText(text);
+          
+          if (item.getParent().isAutoHeight())
+          {
+            // Look through all columns to get the max height needed for this item
+          int columnCount = item.getParent().getColumnCount();
+          int maxHeight = textLayout.getBounds().height + topMargin + bottomMargin;
+          for (int i=0; i<columnCount; i++)
+          {
+            GridColumn column = item.getParent().getColumn(i);
+            if (column.getWordWrap())
+            {
+              int height = column.getCellRenderer().computeSize(gc, column.getWidth(), SWT.DEFAULT, item).y;
+              maxHeight = Math.max(maxHeight, height);
+            }
+          }
+            
+          if (maxHeight != item.getHeight())
+          {
+            item.setHeight(maxHeight);
+          }
+          }
+          
+          textLayout.draw(gc, getBounds().x + x + selectionOffset, y + selectionOffset);
         }
 
     }
@@ -201,5 +241,19 @@ public class DefaultRowHeaderRenderer extends AbstractRenderer
         }
         return text;
     }
-
+    private void getTextLayout(GC gc, GridItem gridItem)
+    {
+        if (textLayout == null)
+        {
+            textLayout = new TextLayout(gc.getDevice());
+            textLayout.setFont(gc.getFont());
+            gridItem.getParent().addDisposeListener(new DisposeListener()
+            {                
+                public void widgetDisposed(DisposeEvent e)
+                {
+                    textLayout.dispose();
+                }                
+            });
+        }
+    }
 }

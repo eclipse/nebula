@@ -7,15 +7,20 @@
  *
  * Contributors:
  *    chris.gross@us.ibm.com - initial API and implementation
+ *    Chuck.Mastrandrea@sas.com - wordwrapping in bug 222280
+ *    smcduff@hotmail.com       - wordwrapping in bug 222280
  *******************************************************************************/ 
 package org.eclipse.nebula.widgets.grid.internal;
 
 import org.eclipse.nebula.widgets.grid.GridColumn;
 import org.eclipse.nebula.widgets.grid.GridHeaderRenderer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.TextLayout;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -40,6 +45,8 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
     int imageSpacing = 3;
 
     private SortArrowRenderer arrowRenderer = new SortArrowRenderer();
+    
+    private TextLayout textLayout;
 
     /** 
      * {@inheritDoc}
@@ -48,19 +55,9 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
     {
         GridColumn column = (GridColumn)value;
 
-        int x = 0;
+        int x = leftMargin;
+        int y = topMargin + gc.getFontMetrics().getHeight() + bottomMargin;
 
-        x += leftMargin;
-
-        x += gc.stringExtent(column.getText()).x + rightMargin;
-
-        int y = 0;
-
-        y += topMargin;
-
-        y += gc.getFontMetrics().getHeight();
-
-        y += bottomMargin;
 
         if (column.getImage() != null)
         {
@@ -68,6 +65,31 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
 
             y = Math.max(y, topMargin + column.getImage().getBounds().height + bottomMargin);
         }
+        if (!isWordWrap())
+        {
+          x += gc.stringExtent(column.getText()).x + rightMargin;
+        }
+        else
+        {
+          int plainTextWidth;
+          if (wHint == SWT.DEFAULT)
+            plainTextWidth = getBounds().width - x - rightMargin;
+          else
+            plainTextWidth = wHint - x - rightMargin;
+          
+          getTextLayout(gc, column);
+            textLayout.setText(column.getText());
+            textLayout.setWidth(plainTextWidth < 1 ? 1 : plainTextWidth);
+            
+            x += plainTextWidth + rightMargin;
+          
+            int textHeight = topMargin;
+            textHeight += textLayout.getBounds().height;
+            textHeight += bottomMargin;
+            
+            y = Math.max(y, textHeight);
+        }
+        
 		
 		y += computeControlSize(column).y;
 		
@@ -134,8 +156,14 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
         		- gc.getFontMetrics().getHeight();			
         }
         
-        String text = TextUtils.getShortString(gc, column.getText(), width);
+        String text = column.getText();        
         
+        if (!isWordWrap())
+        {
+          text = TextUtils.getShortString(gc, text, width);
+            //y -= gc.getFontMetrics().getHeight();
+        }
+      
         if (column.getAlignment() == SWT.RIGHT)
         {
             int len = gc.stringExtent(text).x;
@@ -154,8 +182,25 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
         }
         
         
-        gc.drawString(text, getBounds().x + x + pushedDrawingOffset,
-                      y + pushedDrawingOffset,true);
+        if (!isWordWrap())
+            {
+          gc.drawString(text, getBounds().x + x + pushedDrawingOffset,
+              y + pushedDrawingOffset,true);
+          }
+          else
+          {
+            getTextLayout(gc, column);
+              textLayout.setWidth(width < 1 ? 1 : width);
+              textLayout.setText(text);
+              y -= textLayout.getBounds().height;
+              
+              if (column.getParent().isAutoHeight())
+              {
+            	  column.getParent().recalculateHeader();
+              }
+              
+              textLayout.draw(gc, getBounds().x + x + pushedDrawingOffset, y + pushedDrawingOffset);
+          }
 
         if (column.getSort() != SWT.NONE)
         {
@@ -346,4 +391,21 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
 		}
 		return new Point(0,0);
 	}
+	
+	 private void getTextLayout(GC gc, GridColumn column)
+   {
+       if (textLayout == null)
+       {
+           textLayout = new TextLayout(gc.getDevice());
+           textLayout.setFont(gc.getFont());
+           column.getParent().addDisposeListener(new DisposeListener()
+           {                
+               public void widgetDisposed(DisposeEvent e)
+               {
+                   textLayout.dispose();
+               }                
+           });
+       }
+       textLayout.setAlignment(column.getAlignment());
+   }
 }

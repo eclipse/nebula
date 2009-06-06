@@ -7,6 +7,8 @@
  *
  * Contributors:
  *    chris.gross@us.ibm.com - initial API and implementation
+ *    Chuck.Mastrandrea@sas.com - wordwrapping in bug 222280
+ *    smcduff@hotmail.com - wordwrapping in bug 222280
  *******************************************************************************/ 
 package org.eclipse.nebula.widgets.grid.internal;
 
@@ -14,9 +16,12 @@ import org.eclipse.nebula.widgets.grid.GridColumnGroup;
 import org.eclipse.nebula.widgets.grid.GridHeaderRenderer;
 import org.eclipse.nebula.widgets.grid.IInternalWidget;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.TextLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 
@@ -39,6 +44,8 @@ public class DefaultColumnGroupHeaderRenderer extends GridHeaderRenderer
     int imageSpacing = 3;
 
     private ExpandToggleRenderer toggleRenderer = new ExpandToggleRenderer();
+    
+    private TextLayout textLayout;
 
     /** 
      * {@inheritDoc}
@@ -74,9 +81,24 @@ public class DefaultColumnGroupHeaderRenderer extends GridHeaderRenderer
         }        
 
         gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
-
-        gc.drawString(TextUtils.getShortString(gc, group.getText(), width), getBounds().x + x,
-                      getBounds().y + topMargin);
+        if (!isWordWrap())
+        {
+          gc.drawString(TextUtils.getShortString(gc, group.getText(), width), getBounds().x + x,
+              getBounds().y + topMargin);
+        }
+        else
+        {
+            getTextLayout(gc, group);
+            textLayout.setWidth(width < 1 ? 1 : width);
+            textLayout.setText(group.getText());
+            
+            if (group.getParent().isAutoHeight())
+            {
+            	group.getParent().recalculateHeader();
+            }
+            
+            textLayout.draw(gc, getBounds().x + x, getBounds().y + topMargin);
+        }
 
         if ((group.getStyle() & SWT.TOGGLE) != 0)
         {
@@ -104,19 +126,9 @@ public class DefaultColumnGroupHeaderRenderer extends GridHeaderRenderer
     {
         GridColumnGroup group = (GridColumnGroup)value;
 
-        int x = 0;
+        int x = leftMargin;
+        int y = topMargin + gc.getFontMetrics().getHeight() + bottomMargin;
 
-        x += leftMargin;
-
-        x += gc.stringExtent(group.getText()).x + rightMargin;
-
-        int y = 0;
-
-        y += topMargin;
-
-        y += gc.getFontMetrics().getHeight();
-
-        y += bottomMargin;
 
         if (group.getImage() != null)
         {
@@ -124,7 +136,35 @@ public class DefaultColumnGroupHeaderRenderer extends GridHeaderRenderer
 
             y = Math.max(y, topMargin + group.getImage().getBounds().height + bottomMargin);
         }
-
+        
+        if (!isWordWrap())
+        {
+          x += gc.stringExtent(group.getText()).x + rightMargin;
+        }
+        else
+        {
+          int toggleWidth = 0;
+            if ((group.getStyle() & SWT.TOGGLE) != 0)
+              toggleWidth = toggleRenderer.getSize().x;
+          
+          int plainTextWidth;
+          if (wHint == SWT.DEFAULT)
+            plainTextWidth = getBounds().width - x - rightMargin - toggleWidth;
+          else
+            plainTextWidth = wHint - x - rightMargin - toggleWidth;
+          
+          getTextLayout(gc, group);
+            textLayout.setText(group.getText());
+            textLayout.setWidth(plainTextWidth < 1 ? 1 : plainTextWidth);
+            
+            x += plainTextWidth + rightMargin;
+          
+            int textHeight = topMargin;
+            textHeight += textLayout.getBounds().height;
+            textHeight += bottomMargin;
+            
+            y = Math.max(y, textHeight);
+        }
         return new Point(x, y);
     }
 
@@ -227,5 +267,21 @@ public class DefaultColumnGroupHeaderRenderer extends GridHeaderRenderer
 
         gc.dispose();
         return bounds;
+    }    
+    
+    private void getTextLayout(GC gc, GridColumnGroup group)
+    {
+        if (textLayout == null)
+        {
+            textLayout = new TextLayout(gc.getDevice());
+            textLayout.setFont(gc.getFont());
+            group.getParent().addDisposeListener(new DisposeListener()
+            {                
+                public void widgetDisposed(DisposeEvent e)
+                {
+                    textLayout.dispose();
+                }                
+            });
+        }
     }    
 }

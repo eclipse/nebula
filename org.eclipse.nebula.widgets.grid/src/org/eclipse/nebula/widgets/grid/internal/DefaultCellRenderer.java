@@ -7,11 +7,14 @@
  *
  * Contributors:
  *    chris.gross@us.ibm.com - initial API and implementation
+ *    Chuck.Mastrandrea@sas.com - wordwrapping in bug 222280
+ *    smcduff@hotmail.com - wordwrapping in bug 222280
  *******************************************************************************/ 
 package org.eclipse.nebula.widgets.grid.internal;
 
 import org.eclipse.nebula.widgets.grid.Grid;
 import org.eclipse.nebula.widgets.grid.GridCellRenderer;
+import org.eclipse.nebula.widgets.grid.GridColumn;
 import org.eclipse.nebula.widgets.grid.GridItem;
 import org.eclipse.nebula.widgets.grid.IInternalWidget;
 import org.eclipse.swt.SWT;
@@ -235,7 +238,33 @@ public class DefaultCellRenderer extends GridCellRenderer
             textLayout.setText(item.getText(getColumn()));
             textLayout.setAlignment(getAlignment());
             textLayout.setWidth(width < 1 ? 1 : width);
+            if (item.getParent().isAutoHeight())
+            {
+              // Look through all columns (except this one) to get the max height needed for this item
+            int columnCount = item.getParent().getColumnCount();
+            int maxHeight = textLayout.getBounds().height + textTopMargin + textBottomMargin;
+            for (int i=0; i<columnCount; i++)
+            {
+              GridColumn column = item.getParent().getColumn(i);
+              if (i != getColumn() && column.getWordWrap())
+              {
+                int height = column.getCellRenderer().computeSize(gc, column.getWidth(), SWT.DEFAULT, item).y;
+                maxHeight = Math.max(maxHeight, height);
+              }
+            }
             
+            // Also look at the row header if necessary
+            if (item.getParent().isWordWrapHeader())
+            {
+            int height = item.getParent().getRowHeaderRenderer().computeSize(gc, SWT.DEFAULT, SWT.DEFAULT, item).y;
+          maxHeight = Math.max(maxHeight, height);
+            }
+              
+            if (maxHeight != item.getHeight())
+            {
+              item.setHeight(maxHeight);
+            }
+            }
             textLayout.draw(gc, getBounds().x + x, getBounds().y + textTopMargin + topMargin);
         }
         
@@ -389,7 +418,7 @@ public class DefaultCellRenderer extends GridCellRenderer
 // MOPR-DND
 // MOPR: replaced this code (to get correct preferred height for cells in word-wrap columns)
 //
-//        x += gc.stringExtent(item.getText(getColumn())).x + rightMargin;
+//       x += gc.stringExtent(item.getText(column)).x + rightMargin;
 //
 //        y = Math.max(y,topMargin + gc.getFontMetrics().getHeight() + bottomMargin);
 //
@@ -406,7 +435,7 @@ public class DefaultCellRenderer extends GridCellRenderer
         {
         	int plainTextWidth;
         	if (wHint == SWT.DEFAULT)
-        		plainTextWidth = gc.textExtent(item.getText(getColumn())).x;
+        	  plainTextWidth = getBounds().width - x - rightMargin;
         	else
         		plainTextWidth = wHint - x - rightMargin;
         	

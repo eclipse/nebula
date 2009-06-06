@@ -408,5 +408,27 @@ public class GridColumnGroup extends Item
 
         return bounds;
     }
+    /**
+     * Sets whether or not text is word-wrapped in the header for this column group. If Grid.setAutoHeight(true) is set, the row height
+     * is adjusted to accommodate word-wrapped text.
+     * @param wordWrap Set to true to wrap the text, false otherwise
+     * @see #getHeaderWordWrap()
+     */
+    public void setHeaderWordWrap(boolean wordWrap)
+    {
+        checkWidget();
+        headerRenderer.setWordWrap(wordWrap);
+        parent.redraw();
+    }
+    /**
+     * Returns whether or not text is word-wrapped in the header for this column group.
+     * @return true if the header wraps its text. 
+     * @see GridColumn#setHeaderWordWrap(boolean)
+     */
+    public boolean getHeaderWordWrap()
+    {
+      checkWidget();
+      return headerRenderer.isWordWrap();
+    }
 
 }

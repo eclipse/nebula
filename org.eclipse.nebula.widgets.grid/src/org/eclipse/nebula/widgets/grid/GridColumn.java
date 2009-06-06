@@ -6,7 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    chris.gross@us.ibm.com - initial API and implementation
+ *    chris.gross@us.ibm.com    - initial API and implementation
+ *    Chuck.Mastrandrea@sas.com - wordwrapping in bug 222280
+ *    smcduff@hotmail.com       - wordwrapping in bug 222280
  *******************************************************************************/
 package org.eclipse.nebula.widgets.grid;
 
@@ -283,11 +285,11 @@ public class GridColumn extends Item {
 	 * 
 	 * @return header renderer
 	 */
-	GridHeaderRenderer getHeaderRenderer() {
+	public GridHeaderRenderer getHeaderRenderer() {
 		return headerRenderer;
 	}
 
-	GridFooterRenderer getFooterRenderer() {
+	 GridFooterRenderer getFooterRenderer() {
 		return footerRenderer;
 	}
 
@@ -296,7 +298,7 @@ public class GridColumn extends Item {
 	 * 
 	 * @return cell renderer.
 	 */
-	GridCellRenderer getCellRenderer() {
+	 public GridCellRenderer getCellRenderer() {
 		return cellRenderer;
 	}
 
@@ -1086,7 +1088,28 @@ public class GridColumn extends Item {
 		cellRenderer.setWordWrap(wordWrap);
 		parent.redraw();
 	}
-
+	 /**
+   * Sets whether or not text is word-wrapped in the header for this column. If Grid.setAutoHeight(true) is set, the row height
+   * is adjusted to accommodate word-wrapped text.
+   * @param wordWrap Set to true to wrap the text, false otherwise
+   * @see #getHeaderWordWrap()
+   */
+  public void setHeaderWordWrap(boolean wordWrap)
+  {
+      checkWidget();
+      headerRenderer.setWordWrap(wordWrap);
+      parent.redraw();
+  }
+  /**
+   * Returns whether or not text is word-wrapped in the header for this column.
+   * @return true if the header wraps its text. 
+   * @see GridColumn#setHeaderWordWrap(boolean)
+   */
+  public boolean getHeaderWordWrap()
+  {
+    checkWidget();
+    return headerRenderer.isWordWrap();
+  }
 	/**
 	 * Set a new editor at the top of the control. If there's an editor already
 	 * set it is disposed.
