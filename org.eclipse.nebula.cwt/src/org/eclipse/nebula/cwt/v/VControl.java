@@ -137,11 +137,8 @@ public abstract class VControl {
 	boolean customToolTip = false;
 
 	IControlPainter painter;
-
 	Map<String, Object> dataMap;
-
 	Map<Integer, List<Listener>> listeners = new HashMap<Integer, List<Listener>>();
-
 	private Set<Integer> eventTypes = new HashSet<Integer>();
 
 	private Listener listener = new Listener() {
@@ -155,6 +152,8 @@ public abstract class VControl {
 		}
 	};
 
+	private boolean activatable = true;
+	
 	/**
 	 * Javadoc out of date // TODO: update javadoc
 	 * @param panel
@@ -208,7 +207,7 @@ public abstract class VControl {
 	}
 	
 	void activate() {
-		if(hasState(STATE_ENABLED) && setState(STATE_ACTIVE, true)) {
+		if(activatable && hasState(STATE_ENABLED) && setState(STATE_ACTIVE, true)) {
 			setState(STATE_MOUSE_DOWN, VTracker.isMouseDown());
 			setCursor(activeCursor);
 			attachListeners(false);
@@ -536,6 +535,10 @@ public abstract class VControl {
 		return false;
 	}
 
+	public boolean isActivatable() {
+		return activatable;
+	}
+	
 	public boolean isDisposed() {
 		return disposed;
 	}
@@ -625,6 +628,12 @@ public abstract class VControl {
 			setAlpha(e.gc);
 			painter.paintBorders(this, e);
 
+			if(!getEnabled()) {
+				setAlpha(e.gc, 25);
+				e.gc.setBackground(e.display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+				e.gc.fillRectangle(fullX, fullY, fullW, fullH);
+			}
+			
 			e.gc.setClipping((Rectangle) null);
 			e.gc.setAlpha(alpha);
 
@@ -666,6 +675,10 @@ public abstract class VControl {
 		}
 	}
 
+	public void setActivatable(boolean activatable) {
+		this.activatable = activatable;
+	}
+	
 	public void setActiveCursor(Cursor cursor) {
 		activeCursor = cursor;
 	}
@@ -754,6 +767,7 @@ public abstract class VControl {
 			if(!enabled) {
 				deactivate();
 			}
+			redraw();
 		}
 	}
 

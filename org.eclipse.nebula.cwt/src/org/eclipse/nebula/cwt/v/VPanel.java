@@ -224,12 +224,26 @@ public class VPanel extends VControl {
 		children.remove(vchild);
 	}
 
+	public void setActivatable(boolean activatable) {
+		super.setActivatable(activatable);
+		for(VControl child : children) {
+			child.setActivatable(activatable);
+		}
+	}
+
 	@Override
 	public void setBounds(int x, int y, int width, int height) {
 		super.setBounds(x, y, width, height);
 		layout();
 	}
 
+	public void setEnabled(boolean enabled) {
+		super.setEnabled(enabled);
+		for(VControl child : children) {
+			child.setEnabled(enabled);
+		}
+	}
+	
 	@Override
 	protected boolean setFocus(boolean focus) {
 		if(focus) {

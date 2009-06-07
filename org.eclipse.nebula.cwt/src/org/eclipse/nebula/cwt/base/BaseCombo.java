@@ -363,6 +363,11 @@ public abstract class BaseCombo extends Canvas {
 		}
 	}
 
+	private void addTextListener() {
+		text.getControl().addListener(SWT.KeyDown, textListener);
+		text.getControl().addListener(SWT.Modify, textListener);
+	}
+
 	/**
 	 * @return true if the {@link #button} field is in a fit state to be used
 	 */
@@ -427,7 +432,7 @@ public abstract class BaseCombo extends Canvas {
 		contentShell.addListener(SWT.Close, shellListener);
 		contentShell.addListener(SWT.Deactivate, shellListener);
 	}
-
+	
 	private void createText(int style) {
 		textListener = new Listener() {
 			public void handleEvent(Event event) {
@@ -455,8 +460,7 @@ public abstract class BaseCombo extends Canvas {
 		}
 
 		text = VNative.create(Text.class, panel, textStyle);
-		text.getControl().addListener(SWT.KeyDown, textListener);
-		text.getControl().addListener(SWT.Modify, textListener);
+		addTextListener();
 	}
 
 	/**
@@ -704,6 +708,11 @@ public abstract class BaseCombo extends Canvas {
 		}
 	}
 
+	private void removeTextListener() {
+		text.getControl().removeListener(SWT.KeyDown, textListener);
+		text.getControl().removeListener(SWT.Modify, textListener);
+	}
+
 	/**
 	 * Set the alignment of the button in relation to the text box.
 	 * Only valid if style is DROP_DOWN.
@@ -842,19 +851,24 @@ public abstract class BaseCombo extends Canvas {
 	 */
 	public void setEditable(boolean editable) {
 		panel.setStyle(SWT.READ_ONLY, !editable);
+		if(checkButton()) {
+			button.setEnabled(editable);
+		}
+		if(checkText()) {
+			if(editable != text.getControl().getEditable()) {
+				text.getControl().setEditable(editable);
+				if(editable) {
+					addTextListener();
+				} else {
+					removeTextListener();
+				}
+			}
+		}
 	}
 
 	public void setEnabled(boolean enabled) {
-		if(checkButton()) {
-			button.setEnabled(enabled);
-		}
-		if(checkText()) {
-			text.setEnabled(enabled);
-		}
-		if(checkContent()) {
-//			content.setEnabled(enabled);
-		}
 		super.setEnabled(enabled);
+		panel.setEnabled(enabled);
 	}
 
 	public boolean setFocus() {
