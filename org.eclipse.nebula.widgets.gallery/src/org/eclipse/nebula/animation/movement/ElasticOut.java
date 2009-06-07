@@ -43,6 +43,17 @@
 
 package org.eclipse.nebula.animation.movement;
 
+/**
+ * 
+ * Behave like an elastic at the end.
+ * 
+ * <p>
+ * Warning : this equation will temporary go further the target value.
+ * </p>
+ * 
+ * @author Nicolas Richeton
+ * 
+ */
 public class ElasticOut extends AbstractMovement {
 
 	Double a = null, p = null;

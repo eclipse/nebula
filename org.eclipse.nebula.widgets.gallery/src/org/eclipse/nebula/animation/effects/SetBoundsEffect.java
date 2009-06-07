@@ -15,6 +15,12 @@ import org.eclipse.nebula.animation.movement.IMovement;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 
+/**
+ * Changes all bounds of a control.
+ * 
+ * @author Nicolas Richeton
+ * 
+ */
 public class SetBoundsEffect extends AbstractEffect {
 
 	Rectangle src, dest, diff;

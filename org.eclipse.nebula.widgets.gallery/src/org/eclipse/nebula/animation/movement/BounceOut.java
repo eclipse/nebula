@@ -41,6 +41,12 @@
 
 package org.eclipse.nebula.animation.movement;
 
+/**
+ * Bounces at the end like a falling ball on the floor.
+ * 
+ * @author Nicolas Richeton
+ * 
+ */
 public class BounceOut extends AbstractMovement {
 
 	public double getValue(double step) {

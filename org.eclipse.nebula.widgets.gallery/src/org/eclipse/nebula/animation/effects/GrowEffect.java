@@ -16,6 +16,12 @@ import org.eclipse.nebula.animation.movement.IMovement;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 
+/**
+ * Resizes a control while keeping it centered.
+ * 
+ * @author Nicolas Richeton
+ * 
+ */
 public class GrowEffect extends AbstractEffect {
 
 	/**

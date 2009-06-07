@@ -43,6 +43,12 @@
 
 package org.eclipse.nebula.animation.movement;
 
+/**
+ * Moves slowly at first then accelerates until it reaches the max value.
+ * 
+ * @author Nicolas Richeton
+ * 
+ */
 public class QuartIn extends AbstractMovement {
 
 	public double getValue(double step) {

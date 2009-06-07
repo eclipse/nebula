@@ -16,6 +16,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.ScrollBar;
 
+/**
+ * Scrolls a control.
+ * 
+ * @author Nicolas Richeton
+ * 
+ */
 public class MoveScrollBarEffect extends AbstractEffect {
 
 	int start, end, step, current;

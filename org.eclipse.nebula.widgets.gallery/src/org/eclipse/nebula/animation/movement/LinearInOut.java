@@ -12,8 +12,7 @@
 package org.eclipse.nebula.animation.movement;
 
 /**
- * Implementation of a linear movement. The object will move at a constant
- * speed.
+ * Moves at a constant speed.
  * 
  * @author Nicolas Richeton
  */

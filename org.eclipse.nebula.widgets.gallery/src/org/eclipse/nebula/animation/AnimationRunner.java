@@ -19,6 +19,17 @@ import org.eclipse.swt.widgets.Display;
  * An animation runner which can run only one effect at the same time.
  * </p>
  * 
+ * <p>
+ * Example :
+ * </p>
+ * <p>
+ * <code>
+ * AnimationRunner runner = new AnimationRunner();<br/>
+ * AlphaEffect effect = new AlphaEffect(shell, 0 , 255 , 4000 , new ExpoOut(), null , null );<br/>
+ * runner.runEffect( effect);
+ * </code>
+ * </p>
+ * 
  * @author Nicolas Richeton
  */
 public class AnimationRunner {

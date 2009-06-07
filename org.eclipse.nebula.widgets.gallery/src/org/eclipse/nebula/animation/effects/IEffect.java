@@ -11,6 +11,11 @@
 
 package org.eclipse.nebula.animation.effects;
 
+/**
+ * All animation effects must implement this interface.
+ * 
+ * @author Nicolas Richeton
+ */
 public interface IEffect {
 	/**
 	 * Apply effect to the target according to the current time.

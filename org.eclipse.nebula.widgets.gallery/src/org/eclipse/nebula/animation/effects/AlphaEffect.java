@@ -17,6 +17,12 @@ import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.widgets.Shell;
 
+/**
+ * Set the alpha value of a Shell
+ * 
+ * @author Nicolas Richeton
+ * 
+ */
 public class AlphaEffect extends AbstractEffect {
 
 	/**

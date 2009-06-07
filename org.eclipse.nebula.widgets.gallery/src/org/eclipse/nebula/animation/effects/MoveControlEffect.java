@@ -16,6 +16,12 @@ import org.eclipse.nebula.animation.movement.IMovement;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
 
+/**
+ * Moves a control.
+ * 
+ * @author Nicolas Richeton
+ * 
+ */
 public class MoveControlEffect extends AbstractEffect {
 
 	/**

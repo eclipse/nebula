@@ -17,7 +17,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
 
 /**
- * Shake effect (like login failure on Mac OSX)
+ * Shake a control (like a login failure on Mac OSX)
  * 
  * @author Nicolas Richeton
  * 

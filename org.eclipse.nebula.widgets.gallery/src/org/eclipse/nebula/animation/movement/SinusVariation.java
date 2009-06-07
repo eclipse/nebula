@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.nebula.animation.movement;
 
-
 /**
- * This is not an easing equation. This movement goes from f(0)=0 to f(t)=0 with
- * intermediate values between -amplitude and amplitude.
+ * This movement goes from 0 to 0 with intermediate values between -amplitude
+ * and amplitude.
+ * 
+ * This is not an easing equation.
  * 
  * @author Nicolas Richeton
  * 
@@ -30,7 +31,8 @@ public class SinusVariation extends AbstractMovement {
 	}
 
 	public double getValue(double step) {
-		return amplitude * Math.sin(step / duration * Math.PI * (double) variations);
+		return amplitude
+				* Math.sin(step / duration * Math.PI * (double) variations);
 	}
 
 }

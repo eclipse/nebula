@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Scrollable;
 
 /**
  * <p>
- * This class replace the default scrolling behavior by an animation effect.
+ * Allows to replace the default scrolling behavior by an animation effect.
  * </p>
  * 
  * <p>
@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.Scrollable;
  * <li>Canvas</li>
  * <li>Gallery</li>
  * </ul>
+ * 
  * 
  * @author Nicolas Richeton
  * 

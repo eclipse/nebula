@@ -12,8 +12,7 @@
 package org.eclipse.nebula.animation.movement;
 
 /**
- * Implementation of an exponential movement. The object will move quickly at
- * first, and slow down until it reaches the max value.
+ * Moves fast at first then slow down until it reaches the max value.
  * 
  * @author Nicolas Richeton
  * 
