@@ -268,6 +268,8 @@ public abstract class BaseCombo extends Canvas {
 
 	private int buttonVisibility;
 
+	private Listener buttonVisibilityListener;
+	
 	private boolean dropDown;
 	
 	private boolean open = false;
@@ -779,18 +781,26 @@ public abstract class BaseCombo extends Canvas {
 		buttonVisibility = visibility;
 		setButtonVisible(false);
 		if(buttonVisibility == BUTTON_AUTO) {
-			addListener(SWT.FocusIn, new Listener() {
+			buttonVisibilityListener = new Listener() {
 				public void handleEvent(Event event) {
-					System.out.println("set button visible: true");
-					setButtonVisible(true);
+					switch(event.type) {
+					case SWT.FocusIn:
+						setButtonVisible(true);
+						break;
+					case SWT.FocusOut:
+						setButtonVisible(false);
+						break;
+					}
 				}
-			});
-			addListener(SWT.FocusOut, new Listener() {
-				public void handleEvent(Event event) {
-					System.out.println("set button visible: false");
-					setButtonVisible(false);
-				}
-			});
+			};
+			addListener(SWT.FocusIn, buttonVisibilityListener);
+			addListener(SWT.FocusOut, buttonVisibilityListener);
+		} else {
+			if(buttonVisibilityListener != null) {
+				removeListener(SWT.FocusIn, buttonVisibilityListener);
+				removeListener(SWT.FocusOut, buttonVisibilityListener);
+				buttonVisibilityListener = null;
+			}
 		}
 	}
 
