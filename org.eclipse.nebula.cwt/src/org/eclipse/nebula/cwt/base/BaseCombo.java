@@ -26,7 +26,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -361,18 +360,6 @@ public abstract class BaseCombo extends Canvas {
 		}
 		if(checkText()) {
 			text.getControl().addModifyListener(listener);
-		}
-	}
-
-	/**
-	 * @deprecated this method's visibility will be changed to protected (bug 272822)
-	 */
-	public void addTraverseListener(TraverseListener listener) {
-		if(listener == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		if(checkText()) {
-			text.getControl().addTraverseListener(listener);
 		}
 	}
 
@@ -714,18 +701,6 @@ public abstract class BaseCombo extends Canvas {
 		}
 		if(checkText()) {
 			text.getControl().removeModifyListener(listener);
-		}
-	}
-
-	/**
-	 * @deprecated this method's visibility will be changed to protected (bug 272822)
-	 */
-	public void removeTraverseListener(TraverseListener listener) {
-		if(listener == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		if(checkText()) {
-			text.getControl().removeTraverseListener(listener);
 		}
 	}
 
