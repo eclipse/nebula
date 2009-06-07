@@ -694,6 +694,9 @@ public class CDateTime extends BaseCombo {
 	 * @return true if the field was set, false otherwise (as is possible with a DISCARD style)
 	 */
 	private boolean fieldSet(int calendarField, int value, int style) {
+		if(!getEditable()) {
+			return false;
+		}
 		if(calendarField >= 0) {
 			if(value > calendar.getActualMaximum(calendarField)) {
 				if(style == DISCARD) {
@@ -1250,15 +1253,25 @@ public class CDateTime extends BaseCombo {
 		}
 		return false;
 	}
-
-	@Override
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.nebula.cwt.base.BaseCombo#setEditable(boolean)
+	 */
 	public void setEditable(boolean editable) {
 		super.setEditable(editable);
-		if(picker != null) {
-			picker.setStyle(SWT.READ_ONLY, !editable);
+		if(checkPicker()) {
+			if(picker instanceof DatePicker) {
+				((DatePicker) picker).setEditable(editable);
+			} else {
+				picker.setActivatable(editable);
+			}
 		}
 	}
 	
+	private boolean checkPicker() {
+		return picker != null && !picker.isDisposed();
+	}
+
 	/**
 	 * Set the date and time format of this CDateTime uses style constants which correspond
 	 * to the various forms of DateFormat.getXxxInstance(int).
@@ -1459,10 +1472,12 @@ public class CDateTime extends BaseCombo {
 	 * @param selection the new selection, or null to clear the selection
 	 */
 	public void setSelection(Date selection) {
-		if(selection == null) {
-			this.selection = new Date[0];
-		} else {
-			this.selection = new Date[] { selection };
+		if(getEditable()) {
+			if(selection == null) {
+				this.selection = new Date[0];
+			} else {
+				this.selection = new Date[] { selection };
+			}
 		}
 		if(singleSelection && this.selection.length > 0) {
 			show(selection);

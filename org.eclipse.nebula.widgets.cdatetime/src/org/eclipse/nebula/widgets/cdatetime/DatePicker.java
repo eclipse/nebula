@@ -341,50 +341,6 @@ class DatePicker extends VPanel {
 		}
 	}
 
-	private void setSelectionFromFocusButton(Event event) {
-		int fb = getFocusDayButton();
-		if(fb >= 0 && fb < dayButtons.length) {
-			VButton button = dayButtons[fb];
-			int stateMask = event.stateMask;
-			setSelectionFromButton(button, stateMask);
-			boolean defaultSelection = false;
-			if(event.type == SWT.KeyDown && event.stateMask == 0) {
-				if(event.keyCode == SWT.KEYPAD_CR || event.character == SWT.CR) {
-					defaultSelection = true;
-				}
-			} else if(event.type == SWT.Traverse && event.stateMask == 0) {
-				if(event.keyCode == SWT.TRAVERSE_RETURN) {
-					defaultSelection = true;
-				}
-			}
-			cdt.fireSelectionChanged(defaultSelection);
-		}
-	}
-	
-	private void setSelectionFromButton(VButton button, int stateMask) {
-		Date date = (Date) button.getData(CDT.Key.Date.name());
-		if(cdt.isSingleSelection()) {
-			if((stateMask & SWT.CTRL) != 0 && cdt.isSelected(date)) {
-				cdt.setSelection(null);
-			} else {
-				cdt.setSelection(date);
-			}
-		} else {
-//			if((stateMask & SWT.CTRL) != 0) {
-//				if(cdt.isSelected(date)) {
-//					cdt.deselect(date);
-//				} else {
-//					cdt.select(date);
-//				}
-//			} else if((stateMask & SWT.SHIFT) != 0 && cdt.hasSelection()) {
-//				cdt.select(cdt.getSelection(), date, Calendar.DATE, 1);
-//			} else {
-				cdt.setSelection(date);
-//			}
-		}
-		setFocus(true);
-	}
-	
 	/**
 	 * create the footer (footerButton) for the Calendar part of this CDateTime<br/>
 	 * there is currently no footer for the Clock part - should there be?  or
@@ -667,7 +623,7 @@ class DatePicker extends VPanel {
 		}
 
 	}
-
+	
 	private void createMonths(Body b) {
 		VPanel bodyPanel = bodyPanels[bodyPanels.length-1];
 
@@ -795,7 +751,7 @@ class DatePicker extends VPanel {
 			yearButton.setData(Key.Panel, yearPanel);
 		}
 	}
-
+	
 	public int[] getFields() {
 		return new int[] { 
 				Calendar.YEAR, 
@@ -829,7 +785,7 @@ class DatePicker extends VPanel {
 		}
 		return ""; //$NON-NLS-1$
 	}
-	
+
 	private void handleHeaderSelection(VButton button) {
 		if(monthButton != null && monthButton != button) {
 			monthButton.setSelection(false);
@@ -891,6 +847,13 @@ class DatePicker extends VPanel {
 		}
 	}
 
+	private void setButtonFocus(int index) {
+		if(index >= 0 && index < dayButtons.length) {
+			VButton button = dayButtons[index];
+			button.setFocus();
+		}
+	}
+	
 	/**
 	 * Set the date for each dayButton by starting with the given <code>firstDate</code>
 	 * and iterating over all the dayButtons, adding 1 day to the date with each iteration.<br>
@@ -920,6 +883,16 @@ class DatePicker extends VPanel {
 		}
 	}
 
+	public void setEditable(boolean editable) {
+		setStyle(SWT.READ_ONLY, !editable);
+		if(dayPanel != null) {
+			dayPanel.setActivatable(false);
+		}
+		if(timePanel != null) {
+			timePanel.setActivatable(false);
+		}
+	}
+	
 	public void setFields(int[] calendarFields) {
 		cdt.builder.setFields(calendarFields);
 		fields = 0;
@@ -992,7 +965,7 @@ class DatePicker extends VPanel {
 			return false;
 		}
 	}
-	
+
 	void setMonthLabelText() {
 		String str = getFormattedDate("MMMM", cdt.getCalendarTime()); //$NON-NLS-1$
 		GC gc = new GC(getDisplay());
@@ -1003,15 +976,52 @@ class DatePicker extends VPanel {
 		gc.dispose();
 		monthButton.setText(str);
 	}
-    
+	
 	public void setScrollable(boolean scrollable) {
 		this.scrollable = scrollable;
 	}
+    
+	private void setSelectionFromButton(VButton button, int stateMask) {
+		Date date = (Date) button.getData(CDT.Key.Date.name());
+		if(cdt.isSingleSelection()) {
+			if((stateMask & SWT.CTRL) != 0 && cdt.isSelected(date)) {
+				cdt.setSelection(null);
+			} else {
+				cdt.setSelection(date);
+			}
+		} else {
+//			if((stateMask & SWT.CTRL) != 0) {
+//				if(cdt.isSelected(date)) {
+//					cdt.deselect(date);
+//				} else {
+//					cdt.select(date);
+//				}
+//			} else if((stateMask & SWT.SHIFT) != 0 && cdt.hasSelection()) {
+//				cdt.select(cdt.getSelection(), date, Calendar.DATE, 1);
+//			} else {
+				cdt.setSelection(date);
+//			}
+		}
+		setFocus(true);
+	}
 	
-	private void setButtonFocus(int index) {
-		if(index >= 0 && index < dayButtons.length) {
-			VButton button = dayButtons[index];
-			button.setFocus();
+	private void setSelectionFromFocusButton(Event event) {
+		int fb = getFocusDayButton();
+		if(fb >= 0 && fb < dayButtons.length) {
+			VButton button = dayButtons[fb];
+			int stateMask = event.stateMask;
+			setSelectionFromButton(button, stateMask);
+			boolean defaultSelection = false;
+			if(event.type == SWT.KeyDown && event.stateMask == 0) {
+				if(event.keyCode == SWT.KEYPAD_CR || event.character == SWT.CR) {
+					defaultSelection = true;
+				}
+			} else if(event.type == SWT.Traverse && event.stateMask == 0) {
+				if(event.keyCode == SWT.TRAVERSE_RETURN) {
+					defaultSelection = true;
+				}
+			}
+			cdt.fireSelectionChanged(defaultSelection);
 		}
 	}
 	
