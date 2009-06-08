@@ -1245,9 +1245,9 @@ public class CDateTime extends BaseCombo {
 	
 	@Override
 	protected boolean setContentFocus() {
-		if(picker != null && !picker.isDisposed()) {
+		if(checkPicker()) {
 			internalFocusShift = true;
-			boolean result = picker.getWidget().forceFocus();
+			boolean result = picker.setFocus();
 			internalFocusShift = false;
 			return result;
 		}

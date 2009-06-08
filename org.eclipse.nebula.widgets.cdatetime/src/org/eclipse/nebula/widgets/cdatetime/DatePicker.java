@@ -228,7 +228,7 @@ class DatePicker extends VPanel {
 	private void createDays(Body b) {
 		VPanel bodyPanel = bodyPanels[bodyPanels.length-1];
 		
-		dayPanel = new VPanel(bodyPanel, SWT.NONE);
+		dayPanel = new VPanel(bodyPanel, SWT.NO_FOCUS);
 		dayPanel.setData(CDT.PickerPart, PickerPart.DayPanel);
 		dayPanel.setPainter(cdt.getPainter());
 		cdt.getPainter().update(dayPanel);
@@ -922,48 +922,51 @@ class DatePicker extends VPanel {
 		}
 	}
 
+	public boolean setFocus() {
+		return setFocusToSelection();
+	}
+	
 	@Override
 	protected boolean setFocus(boolean focus) {
 		if(!focus) {
 			return super.setFocus(focus);
 		} else if(dayPanel != null) {
-			if(cdt.hasSelection()) {
-				Calendar first = cdt.getCalendarInstance((Date) dayButtons[0].getData(CDT.Key.Date));
-				first.set(Calendar.MILLISECOND, 0);
-				first.set(Calendar.SECOND, 0);
-				first.set(Calendar.MINUTE, 0);
-				first.set(Calendar.HOUR_OF_DAY, 0);
-	
-				Calendar last = cdt.getCalendarInstance((Date) dayButtons[dayButtons.length-1].getData(CDT.Key.Date));
-				last.set(Calendar.MILLISECOND, 0);
-				last.set(Calendar.SECOND, 0);
-				last.set(Calendar.MINUTE, 0);
-				last.set(Calendar.HOUR_OF_DAY, 0);
-				last.add(Calendar.DATE, 1);
-				last.add(Calendar.MILLISECOND, -1);
-	
-				Date selection = cdt.getSelection();
-//				Arrays.sort(selection, dayComparator);
-//				for(int i = 0; i < selection.length; i++) {
-//					if(selection[i].after(first.getTime()) && selection[i].before(last.getTime())) {
-						Calendar scal = cdt.getCalendarInstance(selection);
-						for(int j = 0; j < dayButtons.length; j++) {
-							Calendar tmpcal = cdt.getCalendarInstance((Date) dayButtons[j].getData(CDT.Key.Date));
-							if((scal.get(Calendar.DATE) == tmpcal.get(Calendar.DATE)) &&
-									(scal.get(Calendar.MONTH) == tmpcal.get(Calendar.MONTH)) &&
-									(scal.get(Calendar.YEAR) == tmpcal.get(Calendar.YEAR)) ) {
-								return dayButtons[j].setFocus();
-							}
-						}
-//					}
-//				}
-			} else {
-				dayButtons[0].setFocus();
-			}
-			return true;
+			return setFocusToSelection();
 		} else {
 			return false;
 		}
+	}
+	
+	private boolean setFocusToSelection() {
+		if(cdt.hasSelection()) {
+			Calendar first = cdt.getCalendarInstance((Date) dayButtons[0].getData(CDT.Key.Date));
+			first.set(Calendar.MILLISECOND, 0);
+			first.set(Calendar.SECOND, 0);
+			first.set(Calendar.MINUTE, 0);
+			first.set(Calendar.HOUR_OF_DAY, 0);
+
+			Calendar last = cdt.getCalendarInstance((Date) dayButtons[dayButtons.length-1].getData(CDT.Key.Date));
+			last.set(Calendar.MILLISECOND, 0);
+			last.set(Calendar.SECOND, 0);
+			last.set(Calendar.MINUTE, 0);
+			last.set(Calendar.HOUR_OF_DAY, 0);
+			last.add(Calendar.DATE, 1);
+			last.add(Calendar.MILLISECOND, -1);
+
+			Date selection = cdt.getSelection();
+			Calendar scal = cdt.getCalendarInstance(selection);
+			for(int j = 0; j < dayButtons.length; j++) {
+				Calendar tmpcal = cdt.getCalendarInstance((Date) dayButtons[j].getData(CDT.Key.Date));
+				if((scal.get(Calendar.DATE) == tmpcal.get(Calendar.DATE)) &&
+						(scal.get(Calendar.MONTH) == tmpcal.get(Calendar.MONTH)) &&
+						(scal.get(Calendar.YEAR) == tmpcal.get(Calendar.YEAR)) ) {
+					return dayButtons[j].setFocus();
+				}
+			}
+		} else {
+			dayButtons[0].setFocus();
+		}
+		return true;
 	}
 
 	void setMonthLabelText() {
