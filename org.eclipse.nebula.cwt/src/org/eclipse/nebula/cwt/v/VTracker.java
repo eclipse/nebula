@@ -327,7 +327,10 @@ public class VTracker implements DisposeListener {
 		for(VControl child : panel.getChildren()) {
 			if(!child.hasStyle(SWT.NO_FOCUS)) {
 				if(child instanceof VPanel) {
-					return getNewFocus((VPanel) child);
+					VControl newFocus = getNewFocus((VPanel) child);
+					if(newFocus != null) {
+						return newFocus;
+					}
 				} else {
 					return child;
 				}
@@ -345,11 +348,8 @@ public class VTracker implements DisposeListener {
 		}
 		
 		if(newFocus == focusControl) {
-			if(newFocus instanceof VNative) {
-				Control c = newFocus.getControl();
-				if(c != Display.getDefault().getFocusControl()) {
-					c.forceFocus();
-				}
+			if(newFocus != null && !newFocus.isDisposed()) {
+				newFocus.getControl().forceFocus();
 			}
 			return true;
 		}
@@ -363,12 +363,7 @@ public class VTracker implements DisposeListener {
 			}
 			if(newFocus != null) {
 				if(!newFocus.isDisposed() && newFocus.setFocus(true)) {
-					if(newFocus instanceof VNative) {
-						Control c = newFocus.getControl();
-						if(c != Display.getDefault().getFocusControl()) {
-							c.forceFocus();
-						}
-					}
+					newFocus.getControl().forceFocus();
 				} else {
 					return false;
 				}
