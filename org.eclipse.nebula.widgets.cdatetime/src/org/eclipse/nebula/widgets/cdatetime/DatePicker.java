@@ -964,7 +964,9 @@ class DatePicker extends VPanel {
 				}
 			}
 		} else {
-			dayButtons[0].setFocus();
+			if(dayButtons != null) {
+				dayButtons[0].setFocus();
+			}
 		}
 		return true;
 	}
