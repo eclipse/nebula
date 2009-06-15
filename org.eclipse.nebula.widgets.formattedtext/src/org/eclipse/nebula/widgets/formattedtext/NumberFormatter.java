@@ -409,14 +409,29 @@ public class NumberFormatter extends AbstractFormatter {
   }
 
   /**
+   * Returns <code>true</code> if current edited value is empty, else returns
+   * <code>false</code>.<br>
+   * A NumberFormatter is never empty as it contains always a 0 value by
+   * default, even if it displays no characters (when format is like "###" for
+   * example).
+   * 
+   * @return true if empty, else false
+   */
+  public boolean isEmpty() {
+    return false;
+  }
+
+  /**
    * Returns <code>true</code> if current edited value is valid, else returns
-   * <code>false</code>. An empty value is considered as invalid.
+   * <code>false</code>.<br>
+   * A NumberFormatter is always valid as it contains a 0 value by default,
+   * even if it displays no characters.
    * 
    * @return true if valid, else false
    * @see ITextFormatter#isValid()
    */
   public boolean isValid() {
-    return (getValue() != null);
+    return true;
   }
 
   /**
@@ -607,7 +622,7 @@ public class NumberFormatter extends AbstractFormatter {
     	clearText(0, editValue.length());
       updateText(editValue.toString(), format(0));
     } else {
-      throw new IllegalArgumentException("Invalid number value");
+      SWT.error(SWT.ERROR_INVALID_ARGUMENT);
     }
   }
 

@@ -60,6 +60,17 @@ public class StringFormatter extends AbstractFormatter {
   }
 
   /**
+   * Returns <code>true</code> if current edited value is empty, else returns
+   * <code>false</code>.<br>
+   * A string is empty if its length is 0.
+   * 
+   * @return true if empty, else false
+   */
+  public boolean isEmpty() {
+    return text.getText().length() == 0;
+  }
+
+  /**
    * Returns <code>true</code> if current edited value is valid, else returns
    * <code>false</code>.<br>
    * StringFormatter always return true.

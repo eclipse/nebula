@@ -19,10 +19,6 @@ import org.eclipse.swt.widgets.Text;
  * Provide several common fonctionnalities and constants for the formatters. 
  */
 public abstract class AbstractFormatter implements ITextFormatter {
-	/** Exception text for invalid edit masks */
-  protected static final String INVALID_PATTERN = "EditMask is invalid : "; //$NON-NLS-1$
-	/** Exception text for invalid values */
-  protected static final String INVALID_VALUE = "Invalid value"; //$NON-NLS-1$
   /** Space character */
   protected static final char SPACE = ' ';
   /** Empty String */

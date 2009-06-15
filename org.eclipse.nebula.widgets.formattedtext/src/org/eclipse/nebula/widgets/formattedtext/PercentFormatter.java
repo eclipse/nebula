@@ -108,7 +108,7 @@ public class PercentFormatter extends NumberFormatter {
    */
 	protected void setPatterns(String edit, String display, Locale loc) {
 		super.setPatterns(edit, display, loc);
-		setSuffix("" + symbols.getPercent()); //$NON-NLS-1$
+		setSuffix(EMPTY + symbols.getPercent());
 	}
 
 	/**

@@ -43,6 +43,9 @@ import org.eclipse.swt.widgets.Text;
  * </blockquote>
  */
 public class FormattedText {
+  /** The key used to register the FormattedText in its Text widget data */
+  public static final String TEXT_DATA_KEY = "formattedText";
+
   /** Encapsulated Text widget */
   protected Text text;
   /** Formatter */
@@ -85,7 +88,8 @@ public class FormattedText {
 	 * @param t the text control
 	 */
   public FormattedText(Text t) {
-  	this.text = t;
+  	text = t;
+  	text.setData(TEXT_DATA_KEY, this);
 
   	text.addFocusListener(new FocusListener() {
       public void focusGained(FocusEvent e) {
@@ -153,6 +157,21 @@ public class FormattedText {
    */
   public Object getValue() {
     return formatter != null ? formatter.getValue() : text.getText();
+  }
+
+  /**
+   * Returns <code>true</code> if the current value is empty, else
+   * <code>false</code>.<br>
+   * An empty value depends of the formatter applied on the Text widget
+   * and is not just an empty String in the widget. Formatters can use special
+   * formatting characters to format the value. These characters are not
+   * always considered as part of the value. For example, in a DateFormatter
+   * the pattern uses "/" separator and always displays it in the input field.
+   * 
+   * @return <code>true</code> if empty.
+   */
+  public boolean isEmpty() {
+    return formatter != null ? formatter.isEmpty() : text.getText().length() == 0;
   }
 
   /**

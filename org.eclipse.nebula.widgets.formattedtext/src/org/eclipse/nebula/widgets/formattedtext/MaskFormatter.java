@@ -56,9 +56,9 @@ public class MaskFormatter extends AbstractFormatter {
   protected String editPattern;
   /** Buffer for the edit value */
   protected StringBuffer editValue;
-  /** Number of positions if the mask */
-  protected int pos;
-  /** Current number of characters if the buffer (except mask characters) */
+  /** Number of editable positions in the mask */
+  protected int positions;
+  /** Current number of characters in the buffer (except mask characters) */
   protected int count = 0;
 
   /**
@@ -78,7 +78,7 @@ public class MaskFormatter extends AbstractFormatter {
         editValue.append(c);
       } else {
         editValue.append(SPACE);
-        pos++;
+        positions++;
       }
     }
   }
@@ -169,28 +169,28 @@ public class MaskFormatter extends AbstractFormatter {
           if ( Character.isDigit(c) ) {
             editValue.setCharAt(i, c);
           } else {
-            throw new IllegalArgumentException(INVALID_VALUE);
+            SWT.error(SWT.ERROR_INVALID_ARGUMENT);
           }
           break;
         case P_UPPERCASE :
           if ( Character.isLetterOrDigit(c) ) {
             editValue.setCharAt(i, Character.toUpperCase(c));
           } else {
-            throw new IllegalArgumentException(INVALID_VALUE);
+            SWT.error(SWT.ERROR_INVALID_ARGUMENT);
           }
           break;
         case P_LOWERCASE :
           if ( Character.isLetterOrDigit(c) ) {
             editValue.setCharAt(i, Character.toLowerCase(c));
           } else {
-            throw new IllegalArgumentException(INVALID_VALUE);
+            SWT.error(SWT.ERROR_INVALID_ARGUMENT);
           }
           break;
         case P_ALPHANUM :
           if ( Character.isLetterOrDigit(c) ) {
             editValue.setCharAt(i, c);
           } else {
-            throw new IllegalArgumentException(INVALID_VALUE);
+            SWT.error(SWT.ERROR_INVALID_ARGUMENT);
           }
           break;
         default :   // Separator
@@ -199,7 +199,7 @@ public class MaskFormatter extends AbstractFormatter {
               i++;
               continue;
             } else {
-              throw new IllegalArgumentException(INVALID_VALUE);
+              SWT.error(SWT.ERROR_INVALID_ARGUMENT);
             }
           }
           o = '*';
@@ -215,14 +215,26 @@ public class MaskFormatter extends AbstractFormatter {
   }
 
   /**
+   * Returns <code>true</code> if current edited value is empty, else returns
+   * <code>false</code>.<br>
+   * A value is considered as empty in a MaskFormatter if the edit buffer
+   * contains no characters except the mask characters.
+   * 
+   * @return true if empty, else false
+   */
+  public boolean isEmpty() {
+    return count == 0;
+  }
+
+  /**
    * Returns <code>true</code> if current edited value is valid, else returns
-   * <code>false</code>. An empty value is considered as invalid.
+   * <code>false</code>. An empty value is considered as valid.
    * 
    * @return true if valid, else false
    * @see ITextFormatter#isValid()
    */
   public boolean isValid() {
-    return (count == 0 || count == pos);
+    return (count == 0 || count == positions);
   }
 
   /**
@@ -239,7 +251,7 @@ public class MaskFormatter extends AbstractFormatter {
     } else if ( value == null ) {
     	clearText(0, editValue.length());
     } else {
-      throw new IllegalArgumentException(INVALID_VALUE);
+      SWT.error(SWT.ERROR_INVALID_ARGUMENT);
     }
   }
 

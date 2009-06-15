@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 ewuillai.
+ * Copyright (c) 2005, 2008 ewuillai.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -134,6 +134,7 @@ public class DateTimeFormatter extends AbstractFormatter {
   	int field;
   	int minLen;
   	int maxLen;
+    boolean empty;
   	boolean valid;
   	char index;
 
@@ -444,6 +445,7 @@ public class DateTimeFormatter extends AbstractFormatter {
 					}
 					continue;
 			}
+      fields[fi].empty = true;
 			fields[fi].valid = false;
 			char k = (char) ('0' + fi);
 			for (int j = 0; j < fields[fi].minLen; j++) {
@@ -563,7 +565,7 @@ public class DateTimeFormatter extends AbstractFormatter {
 	}
 
 	/**
-	 * Return a string representing the current value of a given field based on
+	 * Returns a string representing the current value of a given field based on
 	 * the content of the calendar.
 	 * 
 	 * @param f field descriptor
@@ -600,7 +602,8 @@ public class DateTimeFormatter extends AbstractFormatter {
 	}
 
 	/**
-   * Returns the current value of the text control if it is a valid <code>Date</code>.<br>
+   * Returns the current value of the text control if it is a valid
+   * <code>Date</code>.<br>
    * The date is valid if all the input fields are setted. If invalid, returns
    * <code>null</code>.
    * 
@@ -712,6 +715,21 @@ public class DateTimeFormatter extends AbstractFormatter {
 		}
 		return p;
 	}
+
+  /**
+   * Returns <code>true</code> if current edited value is empty, else returns
+   * <code>false</code>.<br>
+   * For a datetime, the value is considered empty if each field composing the
+   * datetime pattern contains an empty string.
+   * 
+   * @return true if empty, else false
+   */
+  public boolean isEmpty() {
+    for (int i = 0; i < fieldCount; i++) {
+      if ( ! fields[i].empty ) return false;
+    }
+    return true;
+  }
 
   /**
    * Returns <code>true</code> if current edited value is valid, else returns
@@ -856,12 +874,13 @@ public class DateTimeFormatter extends AbstractFormatter {
 			}
       for (int i = 0; i < fieldCount; i++) {
       	fields[i].valid = (value != null);
+      	fields[i].empty = ! fields[i].valid;
       }
       setInputCache();
 		} else if ( value == null ) {
 			clear(0, inputCache.length());
 		} else {
-      throw new IllegalArgumentException("Invalid date value"); //$NON-NLS-1$
+      SWT.error(SWT.ERROR_INVALID_ARGUMENT);
     }
 	}
 
@@ -882,8 +901,10 @@ public class DateTimeFormatter extends AbstractFormatter {
 	 */
 	private boolean updateFieldValue(FieldDesc f, boolean checkLimits) {
 		String s = inputCache.substring(f.pos, f.pos + f.curLen).trim();
+    f.empty = false;
 		if ( s.length() == 0 || s.indexOf(SPACE) >= 0 ) {
 			calendar.set(f.field, 0);
+      f.empty = true;
 			f.valid = false;
 		} else if ( f.field == Calendar.AM_PM ) {
 			calendar.set(f.field, sdfDisplay.getDateFormatSymbols()

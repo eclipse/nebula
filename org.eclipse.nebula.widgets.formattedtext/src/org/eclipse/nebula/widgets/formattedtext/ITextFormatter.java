@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 ewuillai.
+ * Copyright (c) 2005, 2008 ewuillai.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,6 +54,15 @@ public interface ITextFormatter extends VerifyListener {
    * @return current value
    */
   public Object getValue();
+
+  /**
+   * Returns <code>true</code> if current edited value is empty, else returns
+   * <code>false</code>. An empty value depends of the formatter and is not
+   * just an empty string in the Text widget.
+   * 
+   * @return true if empty, else false
+   */
+  public boolean isEmpty();
 
   /**
    * Returns <code>true</code> if current edited value is valid, else returns
