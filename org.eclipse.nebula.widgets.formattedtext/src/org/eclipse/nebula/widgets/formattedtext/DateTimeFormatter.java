@@ -129,6 +129,8 @@ public class DateTimeFormatter extends AbstractFormatter {
   protected int yearStart;
   /** Key listener */
   protected KeyListener klistener;
+  /** The Locale used by this formatter */
+  protected Locale locale;
 
   private class FieldDesc {
   	int field;
@@ -220,6 +222,7 @@ public class DateTimeFormatter extends AbstractFormatter {
 			displayPattern = editPattern;
 		}
     sdfDisplay = new SimpleDateFormat(displayPattern, loc);
+    locale		 = loc;
 
     // Set the default value
     calendar = Calendar.getInstance(loc);
@@ -602,6 +605,15 @@ public class DateTimeFormatter extends AbstractFormatter {
 	}
 
 	/**
+	 * Returns the current Locale used by this formatter.
+	 * 
+	 * @return Current Locale used
+	 */
+	public Locale getLocale() {
+		return locale;
+	}
+
+	/**
    * Returns the current value of the text control if it is a valid
    * <code>Date</code>.<br>
    * The date is valid if all the input fields are setted. If invalid, returns
@@ -843,6 +855,7 @@ public class DateTimeFormatter extends AbstractFormatter {
 		Calendar newCal = Calendar.getInstance(calendar.getTimeZone(), loc);
 		newCal.setTimeInMillis(calendar.getTimeInMillis());
 		calendar = newCal;
+		locale   = loc;
 	}
 
 	/**
