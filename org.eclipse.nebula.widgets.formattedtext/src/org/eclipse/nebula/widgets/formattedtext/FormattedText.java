@@ -160,6 +160,17 @@ public class FormattedText {
   }
 
   /**
+   * Returns the type of value the {@link ITextFormatter} associated with this
+   * FormattedText handles,
+   * i.e. returns in {@link #getValue()}.
+   * 
+   * @return The value type.
+   */
+  public Class getValueType() {
+  	return formatter != null ? formatter.getValueType() : String.class;
+  }
+
+  /**
    * Returns <code>true</code> if the current value is empty, else
    * <code>false</code>.<br>
    * An empty value depends of the formatter applied on the Text widget

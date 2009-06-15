@@ -60,6 +60,17 @@ public class StringFormatter extends AbstractFormatter {
   }
 
   /**
+   * Returns the type of value this {@link ITextFormatter} handles,
+   * i.e. returns in {@link #getValue()}.<br>
+   * A StringFormatter always returns a String value.
+   * 
+   * @return The value type.
+   */
+  public Class getValueType() {
+		return String.class;
+	}
+
+	/**
    * Returns <code>true</code> if current edited value is empty, else returns
    * <code>false</code>.<br>
    * A string is empty if its length is 0.

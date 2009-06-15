@@ -409,6 +409,17 @@ public class NumberFormatter extends AbstractFormatter {
   }
 
   /**
+   * Returns the type of value this {@link ITextFormatter} handles,
+   * i.e. returns in {@link #getValue()}.<br>
+   * A NumberFormatter always returns a Number value.
+   * 
+   * @return The value type.
+   */
+  public Class getValueType() {
+		return Number.class;
+	}
+
+  /**
    * Returns <code>true</code> if current edited value is empty, else returns
    * <code>false</code>.<br>
    * A NumberFormatter is never empty as it contains always a 0 value by

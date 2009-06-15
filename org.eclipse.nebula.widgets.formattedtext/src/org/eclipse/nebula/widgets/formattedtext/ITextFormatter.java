@@ -56,6 +56,14 @@ public interface ITextFormatter extends VerifyListener {
   public Object getValue();
 
   /**
+   * Returns the type of value this {@link ITextFormatter} handles,
+   * i.e. returns in {@link #getValue()}.
+   * 
+   * @return The value type.
+   */
+  public Class getValueType();
+
+  /**
    * Returns <code>true</code> if current edited value is empty, else returns
    * <code>false</code>. An empty value depends of the formatter and is not
    * just an empty string in the Text widget.

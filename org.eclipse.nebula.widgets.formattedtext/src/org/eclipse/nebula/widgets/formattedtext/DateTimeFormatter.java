@@ -614,6 +614,17 @@ public class DateTimeFormatter extends AbstractFormatter {
 		return isValid() ? calendar.getTime() : null;
 	}
 
+	/**
+   * Returns the type of value this {@link ITextFormatter} handles,
+   * i.e. returns in {@link #getValue()}.<br>
+   * A DateTimeFormatter always returns a Date value.
+   * 
+   * @return The value type.
+   */
+  public Class getValueType() {
+		return Date.class;
+	}
+
   /**
    * Inserts a sequence of characters in the input buffer. The current content
    * of the buffer is overrided. The new position of the cursor is computed and

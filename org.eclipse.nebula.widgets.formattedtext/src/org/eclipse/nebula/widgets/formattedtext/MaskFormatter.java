@@ -148,6 +148,17 @@ public class MaskFormatter extends AbstractFormatter {
   }
 
   /**
+   * Returns the type of value this {@link ITextFormatter} handles,
+   * i.e. returns in {@link #getValue()}.<br>
+   * A MaskFormatter always returns a String value.
+   * 
+   * @return The value type.
+   */
+  public Class getValueType() {
+		return String.class;
+	}
+
+  /**
    * Inserts a sequence of characters in the edit buffer. The current content
    * of the buffer is overrided. The new position of the cursor is computed and
    * returned. Mask characters are preserved in their positions.
