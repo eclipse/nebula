@@ -262,6 +262,7 @@ public class DateChooserCombo extends AbstractCombo {
   public void setFormatter(DateFormatter formatter) {
 		checkWidget();
   	formattedText.setFormatter(formatter);
+  	this.locale = formatter.getLocale();
   }
 
   /**
