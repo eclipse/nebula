@@ -1,0 +1,4 @@
+plugin@org.eclipse.nebula.widgets.datechooser=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.datechooser
+plugin@org.eclipse.nebula.widgets.formattedtext=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.formattedtext
+
+feature@org.eclipse.nebula.widgets.datechooser.feature=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/features/org.eclipse.nebula.widgets.datechooser.feature
