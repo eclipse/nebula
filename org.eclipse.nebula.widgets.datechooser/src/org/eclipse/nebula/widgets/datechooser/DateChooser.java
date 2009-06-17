@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Eric Wuillai.
+ * Copyright (c) 2005, 2009 Eric Wuillai.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1353,6 +1353,9 @@ public class DateChooser extends Composite {
 			f = (f % 7) + 1;
 		}
 
+		// Updates the footer
+		updateTodayLabel();
+
 		refreshDisplay();
 		redrawDec();
 	}
@@ -1480,8 +1483,7 @@ public class DateChooser extends Composite {
 		}
 		todayCal.setTime(today);
 		trunc(todayCal);
-		todayLabel.setText(resources.getString("DateChooser.today")
-		                   + " " + df2.format(todayCal.getTime()));
+		updateTodayLabel();
 		refreshDisplay();
 	}
 
@@ -1515,5 +1517,16 @@ public class DateChooser extends Composite {
 		cal.set(Calendar.MINUTE, 0);
 		cal.set(Calendar.SECOND, 0);
 		cal.set(Calendar.MILLISECOND, 0);
+	}
+
+	/**
+	 * Updates the today label in the footer. Called when the today date or the
+	 * locale is changed. 
+	 */
+	private void updateTodayLabel() {
+		if ( todayCal != null ) {
+			todayLabel.setText(resources.getString("DateChooser.today")
+					 + " " + df2.format(todayCal.getTime()));
+		}
 	}
 }
