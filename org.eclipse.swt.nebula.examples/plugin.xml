@@ -36,6 +36,14 @@
                   <tab
             class="org.eclipse.swt.nebula.examples.parts.CollapsibleButtonsExampleTab"
             name="CollapsibleButtons"/>
+      <tab
+            class="org.eclipse.swt.nebula.examples.parts.DateChooserExampleTab"
+            name="DateChooser">
+      </tab>
+      <tab
+            class="org.eclipse.swt.nebula.examples.parts.DateChooserComboExampleTab"
+            name="DateChooserCombo">
+      </tab>
             
    </extension>
    <extension
