@@ -77,7 +77,9 @@ public abstract class AbstractFormatter implements ITextFormatter {
    * @param t new text
    */
   protected void updateText(String t) {
-    updateText(t, text.getCaretPosition());
+  	if ( text != null ) {
+      updateText(t, text.getCaretPosition());
+  	}
   }
 
   /**
@@ -88,9 +90,11 @@ public abstract class AbstractFormatter implements ITextFormatter {
    * @param pos new cursor's position
    */
   protected void updateText(String t, int pos) {
-    ignore = true;
-    text.setText(t);
-    text.setSelection(pos);
-    ignore = false;
+  	if ( text != null ) {
+	    ignore = true;
+	    text.setText(t);
+	    text.setSelection(pos);
+	    ignore = false;
+  	}
   }
 }
