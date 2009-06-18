@@ -15,6 +15,7 @@ public class AllTests {
 		suite.addTestSuite(Bug217988Test.class);
 		suite.addTestSuite(Bug216204Test.class);
 		suite.addTestSuite(Bug276435Test.class);
+		suite.addTestSuite(Bug280635Test.class);
 		//$JUnit-END$
 		return suite;
 	}
