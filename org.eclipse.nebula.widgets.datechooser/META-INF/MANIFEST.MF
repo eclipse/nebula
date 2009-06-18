@@ -5,6 +5,11 @@ Bundle-SymbolicName: org.eclipse.nebula.widgets.datechooser
 Bundle-Version: 1.0.0.qualifier
 Export-Package: org.eclipse.nebula.widgets.datechooser
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
-Require-Bundle: org.eclipse.swt,
- org.eclipse.nebula.widgets.formattedtext
 Bundle-Vendor: Eclipse.org
+Import-Package: org.eclipse.nebula.widgets.formattedtext,
+ org.eclipse.swt,
+ org.eclipse.swt.events,
+ org.eclipse.swt.graphics,
+ org.eclipse.swt.internal,
+ org.eclipse.swt.layout,
+ org.eclipse.swt.widgets
