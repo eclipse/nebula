@@ -2172,8 +2172,8 @@ public class Gallery extends Canvas {
 		if (array.length == 1 && index == 0)
 			return null;
 
-		Object[] newArray = (Object[]) Array.newInstance(array[0].getClass(),
-				array.length - 1);
+		Object[] newArray = (Object[]) Array.newInstance(array.getClass()
+				.getComponentType(), array.length - 1);
 
 		if (index > 0)
 			System.arraycopy(array, 0, newArray, 0, index);
