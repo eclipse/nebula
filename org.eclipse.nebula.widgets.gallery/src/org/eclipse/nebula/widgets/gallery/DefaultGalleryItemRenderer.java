@@ -52,8 +52,12 @@ import org.eclipse.swt.widgets.Display;
  */
 public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 
+	/**
+	 * Stores colors used in drop shadows
+	 */
 	protected ArrayList dropShadowsColors = new ArrayList();
 
+	// Renderer parameters
 	boolean dropShadows = false;
 
 	int dropShadowsSize = 0;
@@ -72,10 +76,24 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 
 	int selectionRadius = 15;
 
+	/**
+	 * Returns current label state : enabled or disabled
+	 * 
+	 * @return true if labels are enabled.
+	 * @see DefaultGalleryItemRenderer#setShowLabels(boolean)
+	 * 
+	 */
 	public boolean isShowLabels() {
 		return showLabels;
 	}
 
+	/**
+	 * Enables / disables labels at the bottom of each item.
+	 * 
+	 * @param showLabels
+	 * @see DefaultGalleryItemRenderer#isShowLabels()
+	 * 
+	 */
 	public void setShowLabels(boolean showLabels) {
 		this.showLabels = showLabels;
 	}
@@ -96,14 +114,24 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 		createColors();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.nebula.widgets.gallery.AbstractGalleryItemRenderer#draw(org
+	 * .eclipse.swt.graphics.GC, org.eclipse.nebula.widgets.gallery.GalleryItem,
+	 * int, int, int, int, int)
+	 */
 	public void draw(GC gc, GalleryItem item, int index, int x, int y,
 			int width, int height) {
 		Image itemImage = item.getImage();
 		Color itemBackgroundColor = item.getBackground();
 		Color itemForegroundColor = item.getForeground();
+
 		// Set up the GC
 		gc.setFont(getFont(item));
 
+		// Create some room for the label.
 		int useableHeight = height;
 		int fontHeight = 0;
 		if (item.getText() != null && !EMPTY_STRING.equals(item.getText())
@@ -148,8 +176,8 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 
 		// Draw background (rounded rectangles)
 		if (selected
-				|| RendererHelper.equals(itemBackgroundColor, gallery
-						.getBackground())) {
+				|| !RendererHelper.isColorsEquals(itemBackgroundColor,
+						galleryBackgroundColor)) {
 
 			// Set colors
 			if (selected) {
@@ -160,11 +188,12 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 			}
 
 			// Draw
-			if (showRoundedSelectionCorners)
+			if (showRoundedSelectionCorners) {
 				gc.fillRoundRectangle(x, y, width, useableHeight,
 						selectionRadius, selectionRadius);
-			else
+			} else {
 				gc.fillRectangle(x, y, width, height);
+			}
 
 			if (item.getText() != null && !EMPTY_STRING.equals(item.getText())
 					&& showLabels) {
@@ -220,29 +249,6 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 			// Draw
 			gc.drawText(text, x + textxShift, y + height - fontHeight, true);
 		}
-	}
-
-	/**
-	 * @param item
-	 * @return the Font to use for this item
-	 */
-	protected Font getFont(GalleryItem item) {
-		// Item font
-		Font itemFont = item.getFont();
-
-		// Parent item font
-		if (itemFont == null) {
-			if (item.getParentItem() != null)
-				itemFont = item.getParentItem().getFont();
-		}
-
-		// Gallery font
-		if (itemFont == null) {
-			if (item.getParentItem() != null)
-				itemFont = item.getParent().getFont();
-		}
-
-		return itemFont;
 	}
 
 	public void setDropShadowsSize(int dropShadowsSize) {
