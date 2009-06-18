@@ -1284,6 +1284,7 @@ public class DateChooser extends Composite {
 			this.gridVisible = gridVisible;
 			gridHeader.setBackground(gridVisible ? theme.gridLinesColor : theme.gridHeaderBackground);
 			grid.setBackground(gridVisible ? theme.gridLinesColor : theme.dayCellBackground);
+			weeksPanel.setBackground(gridVisible ? theme.gridLinesColor : theme.gridHeaderBackground);
 		}
 	}
 
