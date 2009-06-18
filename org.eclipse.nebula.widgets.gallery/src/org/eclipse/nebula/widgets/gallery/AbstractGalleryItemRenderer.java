@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.gallery;
 
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -62,6 +64,8 @@ public abstract class AbstractGalleryItemRenderer {
 
 	protected Gallery gallery;
 
+	Color galleryBackgroundColor, galleryForegroundColor;
+
 	protected boolean selected;
 
 	/**
@@ -101,17 +105,53 @@ public abstract class AbstractGalleryItemRenderer {
 	 * @param gc
 	 */
 	public void preDraw(GC gc) {
-		// Nothing required here. This method can be overridden when needed.
+		// Cache gallery color since this method is resource intensive.
+		galleryForegroundColor = gallery.getForeground();
+		galleryBackgroundColor = gallery.getBackground();
 	}
 
+	/**
+	 * This method is called after drawing the last item. It may be used to
+	 * cleanup and release resources created in preDraw().
+	 * 
+	 * @param gc
+	 */
+	public void postDraw(GC gc) {
+		galleryForegroundColor = null;
+		galleryBackgroundColor = null;
+	}
+
+	/**
+	 * Get current gallery.
+	 * 
+	 * @return
+	 */
 	public Gallery getGallery() {
 		return gallery;
 	}
 
+	/**
+	 * Set the current gallery. This method is automatically called by
+	 * {@link Gallery#setItemRenderer(AbstractGalleryItemRenderer)}. There is
+	 * not need to call it from user code.
+	 * 
+	 * @param gallery
+	 */
 	public void setGallery(Gallery gallery) {
 		this.gallery = gallery;
 	}
 
+	/**
+	 * Returns the best size ratio for overlay images. This ensure that all
+	 * images can fit without being drawn on top of others.
+	 * 
+	 * @param imageSize
+	 * @param overlaySizeTopLeft
+	 * @param overlaySizeTopRight
+	 * @param overlaySizeBottomLeft
+	 * @param overlaySizeBottomRight
+	 * @return
+	 */
 	protected double getOverlayRatio(Point imageSize, Point overlaySizeTopLeft,
 			Point overlaySizeTopRight, Point overlaySizeBottomLeft,
 			Point overlaySizeBottomRight) {
@@ -186,6 +226,15 @@ public abstract class AbstractGalleryItemRenderer {
 						* ratio), ratio, imagesBottomRight);
 	}
 
+	/**
+	 * Draw overlay images for one corner.
+	 * 
+	 * @param gc
+	 * @param x
+	 * @param y
+	 * @param ratio
+	 * @param images
+	 */
 	protected void drawOverlayImages(GC gc, int x, int y, double ratio,
 			Image[] images) {
 		if (images == null)
@@ -250,4 +299,27 @@ public abstract class AbstractGalleryItemRenderer {
 		return result;
 	}
 
+	/**
+	 * Returns the font to use with this item. If no font is defined for the
+	 * Item, defaults to parent item font then on gallery font.
+	 * 
+	 * @param item
+	 * @return the Font to use for this item
+	 */
+	protected Font getFont(GalleryItem item) {
+		// Item font
+		Font itemFont = item.getFont();
+
+		// Parent item font
+		if (itemFont == null && item.getParentItem() != null) {
+			itemFont = item.getParentItem().getFont();
+		}
+
+		// Gallery font
+		if (itemFont == null && item.getParent() != null) {
+			itemFont = item.getParent().getFont();
+		}
+
+		return itemFont;
+	}
 }
