@@ -522,6 +522,9 @@ public class GalleryItem extends Item {
 			while (items != null) {
 				if (items[items.length - 1] != null) {
 					items[items.length - 1]._dispose();
+				} else {
+					// This is an uninitialized item, just remove the slot
+					parent._remove(this, items.length - 1);
 				}
 			}
 		}
