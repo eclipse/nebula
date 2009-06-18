@@ -102,6 +102,10 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 				SWT.COLOR_DARK_GRAY);
 	}
 
+	public void preDraw(GC gc) {
+		super.preDraw(gc);
+	}
+
 	public void draw(GC gc, GalleryItem item, int index, int x, int y,
 			int width, int height) {
 
@@ -147,7 +151,7 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 
 		// Draw selection background (rounded rectangles)
 		if (selected
-				|| RendererHelper.equals(itemBackgroundColor, gallery
+				|| RendererHelper.isColorsEquals(itemBackgroundColor, gallery
 						.getBackground())) {
 			if (selected) {
 				gc.setBackground(selectionBackgroundColor);
@@ -329,6 +333,8 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 	 * Returns the font used for drawing item label or <tt>null</tt> if system
 	 * font is used.
 	 * 
+	 * @deprecated Use {@link Gallery#setFont(Font)} or
+	 *             {@link GalleryItem#setFont(Font)} instead.
 	 * @return the font
 	 */
 	public Font getTextFont() {
@@ -338,6 +344,8 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 	/**
 	 * Set the font for drawing item label or <tt>null</tt> to use system font.
 	 * 
+	 * @deprecated Use {@link Gallery#setFont(Font)} or
+	 *             {@link GalleryItem#setFont(Font)} instead.
 	 * @param font
 	 *            the font to set
 	 */
