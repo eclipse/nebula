@@ -1178,6 +1178,12 @@ public class Gallery extends Canvas {
 
 					_drawGroup(newGC, indexes[i]);
 				}
+
+				// Call postDraw for optimization / cleanup
+				if (groupRenderer != null)
+					groupRenderer.postDraw(newGC);
+				if (itemRenderer != null)
+					itemRenderer.postDraw(newGC);
 			}
 		} catch (Exception e) {
 			// We can't let onPaint throw an exception because unexpected
