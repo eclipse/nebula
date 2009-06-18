@@ -60,6 +60,16 @@ public abstract class AbstractGalleryGroupRenderer {
 	}
 
 	/**
+	 * This method is called after drawing the last item. It may be used to
+	 * cleanup and release resources created in preDraw().
+	 * 
+	 * @param gc
+	 */
+	public void postDraw(GC gc) {
+		// Nothing required here. This method can be overridden when needed.
+	}
+
+	/**
 	 * Group size informations can be retrieved from group. Clipping
 	 * informations
 	 * 
@@ -158,6 +168,9 @@ public abstract class AbstractGalleryGroupRenderer {
 	}
 
 	/**
+	 * This method can be used as a condition to print trace or debug
+	 * informations in standard output.
+	 * 
 	 * @return true if Debug mode is enabled
 	 */
 	protected boolean isDebugMode() {
