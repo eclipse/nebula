@@ -23,6 +23,8 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
 
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
@@ -107,9 +109,9 @@ public class DateChooser extends Composite {
 	/** If true, the today date is automatically selected on footer selection event */
 	protected boolean autoSelectOnFooter = false;
 
-	// ----- Calendar header -----
-	/** Header panel */
-	protected Composite monthHeader;
+	// ----- Calendar month header -----
+	/** Month header panel */
+	protected Composite monthPanel;
 	/** Navigation button for previous month */
 	protected Button prevMonth;
 	/** Label for the display of current month and year (corresponding to curDate) */
@@ -120,15 +122,17 @@ public class DateChooser extends Composite {
 	protected Menu monthsMenu;
 
 	// Calendar grid -----
-	/** Grid header panel */
-	protected Composite gridHeader;
+	/** Grid panel */
+	protected Composite gridPanel;
+	/** Panel for display of weekday names */
+	protected Composite headersPanel;
 	/** Grid headers, displaying weekday names */
 	protected Label[] headers;
-	/** Grid panel */
-	protected Composite grid;
-	/** Grid cells */
+	/** Panel for display of day numbers */
+	protected Composite daysPanel;
+	/** Days numbers cells */
 	protected Cell[] days;
-	/** Weeks number panels */
+	/** Panel for display of week numbers */
 	protected Composite weeksPanel;
 	/** Weeks numbers cells */
 	protected Cell[] weeks;
@@ -136,8 +140,8 @@ public class DateChooser extends Composite {
 	protected int firstDayIndex;
 
 	// ----- Calendar footer -----
-	/** Footer panel */
-	protected Composite footer;
+	/** Panel for display of today date */
+	protected Composite footerPanel;
 	/** Today label of the footer */
 	protected Label todayLabel;
 
@@ -167,9 +171,9 @@ public class DateChooser extends Composite {
 	/** Flag to set grid visible or not */
 	protected boolean gridVisible = true;
 	/** Flag to set weeks numbers visibles or not */
-	protected boolean weeksVisible = false;
+	protected boolean weeksVisible = true;
 	/** Flag to set footer visible or not */
-	protected boolean footerVisible = false;
+	protected boolean footerVisible = true;
 	/** Flag to set navigation enabled or not */
 	protected boolean navigationEnabled = true;
 	/** If true, change the current month if an adjacent day is clicked */
@@ -182,7 +186,7 @@ public class DateChooser extends Composite {
 	protected Listener filter;
 	/** Flag indixating if the calendar has the focus */
 	protected boolean hasFocus = false;
-	/** Index of the focus in the grid */
+	/** Index of the focus in the days numbers grid */
 	protected int focusIndex = NOFOCUS;
 
 	private boolean resize = false;
@@ -221,11 +225,14 @@ public class DateChooser extends Composite {
 		super(parent, style);
 		multi			= (style & SWT.MULTI) > 0;
 		selection = new ArrayList();
-		initialize();
+		createContent();
 		setLocale(Locale.getDefault());
 		setTheme(DateChooserTheme.getDefaultTheme());
 		setTodayDate(new Date());
 		setCurrentMonth(todayCal.getTime());
+		setWeeksVisible(false);
+		setFooterVisible(false);
+		computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 	}
 
 	/**
@@ -335,7 +342,8 @@ public class DateChooser extends Composite {
 					  return;
 				}
 				if ( hasFocus ) {
-					grid.redraw();
+					gridPanel.redraw();
+					daysPanel.redraw();
 				}
 				break;
 
@@ -394,28 +402,24 @@ public class DateChooser extends Composite {
 	 */
 	public Point computeSize(int wHint, int hHint, boolean changed) {
 		if ( resize ) {
-			GC gc = new GC(currentMonth);
-			int width = 0;
-			int colCount = weeksVisible ? 8 : 7;
-			int linesCount = colCount + 1;
+			GC gc = new GC(days[0].label);
+
+			int headerWidth = 0;
 			String[] months = df1.getDateFormatSymbols().getMonths();
 			for (int i = 0; i < months.length; i++) {
-				width = Math.max(width, gc.textExtent(months[i]).x);
+				headerWidth = Math.max(headerWidth, gc.textExtent(months[i]).x);
 			}
-			width += prevMonth.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed).x * 2
-			 + HEADER_SPACING * 4 + gc.textExtent(" 9999").x; //$NON-NLS-1$
-			width = Math.max(width, (gc.textExtent("99").x + theme.cellPadding * 2)
-			                 				* colCount + linesCount); //$NON-NLS-1$
-			int cw = (width - linesCount) / colCount + 1;
-			width = cw * colCount + linesCount;
-			((GridData) monthHeader.getLayoutData()).widthHint = width;
-			((GridData) footer.getLayoutData()).widthHint = width;
+			headerWidth += prevMonth.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed).x * 2
+										 + HEADER_SPACING * 4 + gc.textExtent(" 9999").x; //$NON-NLS-1$
+
+			int cellWidth = gc.textExtent("99").x + theme.cellPadding * 2;
+			cellWidth = Math.max(cellWidth, (headerWidth - 8) / 7 + 1);
 
 			for (int i = 0; i < 7; i++) {
-				((GridData) headers[i].getLayoutData()).widthHint = cw;
-				((GridData) days[i].label.getLayoutData()).widthHint = cw;
+				((GridData) headers[i].getLayoutData()).widthHint = cellWidth;
+				((GridData) days[i].label.getLayoutData()).widthHint = cellWidth;
 			}
-			((GridData) weeks[0].label.getLayoutData()).widthHint = cw;
+			((GridData) weeks[0].label.getLayoutData()).widthHint = cellWidth;
 
 			gc.dispose();
 			resize = false;
@@ -425,27 +429,57 @@ public class DateChooser extends Composite {
 	}
 
 	/**
-	 * Creates the footer of the calendar. The footer contains the label displaying
-	 * the today date. It is not visible by default and can be made visible with
-	 * setFooterVisible(true).
+	 * Constructs and initializes all the GUI of the calendar.
 	 */
-	private void createFooter() {
-		footer = new Composite(this, SWT.NONE);
-
+	private void createContent() {
 		GridLayout layout = new GridLayout(1, false);
-		layout.marginWidth = 1;
-		layout.marginHeight = 1;
-		footer.setLayout(layout);
+		layout.horizontalSpacing = 0;
+		layout.verticalSpacing = 0;
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		super.setLayout(layout);
 
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;
-		data.exclude = true;
-		footer.setLayoutData(data);
+		listener = new Listener() {
+			public void handleEvent(Event event) {
+				if ( event.type == SWT.MouseDown && ! hasFocus ) {
+					setFocus();
+					return;
+				}
+				if ( DateChooser.this == event.widget && event.type != SWT.KeyDown ) {
+					calendarEvent(event);
+				} else if ( prevMonth == event.widget || nextMonth == event.widget ) {
+					buttonsEvent(event);
+				} else if ( todayLabel == event.widget ) {
+					footerEvent(event);
+				} else if ( daysPanel == event.widget || event.widget instanceof Label ) {
+					gridEvent(event);
+				} else if ( monthsMenu == event.widget || event.widget instanceof MenuItem ) {
+					menuEvent(event);
+				}
+			}
+		};
+		filter = new Listener() {
+			public void handleEvent(Event event) {
+				switch ( event.type ) {
+					case SWT.FocusIn :
+						handleFocus(SWT.FocusOut);
+						break;
+					case SWT.KeyDown :
+						calendarEvent(event);
+						break;
+				}
+			}
+		};
 
-		todayLabel = new Label(footer, SWT.CENTER);
-		todayLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		todayLabel.addListener(SWT.MouseDoubleClick, listener);
-		todayLabel.addListener(SWT.MouseDown, listener);
+		createHeader();
+		createGrid();
+
+		addListener(SWT.Dispose, listener);
+		addListener(SWT.Traverse, listener);
+		addListener(SWT.KeyDown, listener);
+		addListener(SWT.FocusIn, listener);
+
+		resize = true;
 	}
 
 	/**
@@ -455,63 +489,52 @@ public class DateChooser extends Composite {
 	 * locale (for first day of week) and the current displayed month.
 	 */
 	private void createGrid() {
+		// Master grid panel
+		gridPanel = new Composite(this, SWT.NONE);
+		GridLayoutFactory.fillDefaults().numColumns(2).spacing(1, 1).applyTo(gridPanel);
+
 		// Weeks numbers panel
-		weeksPanel = new Composite(this, SWT.NONE);
-		GridLayout layout1 = new GridLayout(1, false);
-		layout1.horizontalSpacing = 1;
-		layout1.marginWidth = 1;
-		layout1.verticalSpacing = 1;
-		layout1.marginTop = 1;
-		layout1.marginBottom = 1;
-		layout1.marginLeft = 1;
-		layout1.marginHeight = 0;
-		layout1.marginWidth = 0;
-		weeksPanel.setLayout(layout1);
+		weeksPanel = new Composite(gridPanel, SWT.NONE);
+		GridLayoutFactory.fillDefaults().spacing(1, 1).extendedMargins(1, 0, 1, 0)
+										 .applyTo(weeksPanel);
+		GridDataFactory.fillDefaults().span(1, 2).applyTo(weeksPanel);
 		weeks = new Cell[7];
 		for (int i = 0; i < 7; i++) {
 			weeks[i] = new Cell(weeksPanel, i);
 		}
-		GridData data1 = new GridData();
-		data1.verticalSpan = 2;
-		data1.exclude = true;
-		weeksPanel.setLayoutData(data1);
 
 		// Grid header panel
-		gridHeader = new Composite(this, SWT.NONE);
-		GridLayout layout2 = new GridLayout(7, true);
-		layout2.horizontalSpacing = 1;
-		layout2.marginWidth = 1;
-		layout2.verticalSpacing = 1;
-		layout2.marginTop = 1;
-		layout2.marginHeight = 0;
-		gridHeader.setLayout(layout2);
+		headersPanel = new Composite(gridPanel, SWT.NONE);
+		GridLayoutFactory.fillDefaults().numColumns(7).spacing(1, 1)
+										 .extendedMargins(0, 1, 1, 0).applyTo(headersPanel);
+		GridDataFactory.fillDefaults().applyTo(headersPanel);
 		headers = new Label[7];
 		for (int i = 0; i < 7; i++) {
-			headers[i] = new Label(gridHeader, SWT.CENTER);
+			headers[i] = new Label(headersPanel, SWT.CENTER);
 			headers[i].setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			headers[i].addListener(SWT.MouseDown, listener);
 		}
-		GridData data2 = new GridData();
-		data2.horizontalSpan = 2;
-		gridHeader.setLayoutData(data2);
 
 		// Grid panel
-		grid = new Composite(this, SWT.NONE);
-		GridLayout layout3 = new GridLayout(7, true);
-		layout3.horizontalSpacing = 1;
-		layout3.marginWidth = 1;
-		layout3.verticalSpacing = 1;
-		layout3.marginHeight = 1;
-		grid.setLayout(layout3);
+		daysPanel = new Composite(gridPanel, SWT.NONE);
+		GridLayoutFactory.fillDefaults().numColumns(7).spacing(1, 1)
+										 .extendedMargins(0, 1, 0, 0).applyTo(daysPanel);
+		GridDataFactory.fillDefaults().applyTo(daysPanel);
 		days = new Cell[42];
 		for (int i = 0; i < 42; i++) {
-			days[i] = new Cell(grid, i);
+			days[i] = new Cell(daysPanel, i);
 			days[i].label.addListener(SWT.MouseUp, listener);
 		}
-		GridData data3 = new GridData();
-		data3.horizontalSpan = 2;
-		grid.setLayoutData(data3);
-		grid.addListener(SWT.Paint, listener);
+		daysPanel.addListener(SWT.Paint, listener);
+
+		// Footer panel
+		footerPanel = new Composite(gridPanel, SWT.NONE);
+		GridLayoutFactory.fillDefaults().numColumns(1).extendedMargins(1, 1, 0, 1).applyTo(footerPanel);
+		GridDataFactory.fillDefaults().span(2, 1).applyTo(footerPanel);
+		todayLabel = new Label(footerPanel, SWT.CENTER);
+		todayLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		todayLabel.addListener(SWT.MouseDoubleClick, listener);
+		todayLabel.addListener(SWT.MouseDown, listener);
 	}
 
 	/**
@@ -520,27 +543,21 @@ public class DateChooser extends Composite {
 	 * previous and next month.
 	 */
 	private void createHeader() {
-		monthHeader = new Composite(this, SWT.NONE);
-		GridLayout layout = new GridLayout(3, false);
-		layout.horizontalSpacing = HEADER_SPACING;
-		layout.marginWidth = HEADER_SPACING;
-		layout.verticalSpacing = 0;
-		layout.marginHeight = 3;
-		monthHeader.setLayout(layout);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;
-		monthHeader.setLayoutData(data);
-		monthHeader.addListener(SWT.MouseDown, listener);
+		monthPanel = new Composite(this, SWT.NONE);
+		GridLayoutFactory.fillDefaults().numColumns(3).spacing(HEADER_SPACING, 0)
+										 .margins(HEADER_SPACING, 3).applyTo(monthPanel);
+		GridDataFactory.fillDefaults().applyTo(monthPanel);
+		monthPanel.addListener(SWT.MouseDown, listener);
 
-		prevMonth = new Button(monthHeader, SWT.ARROW | SWT.LEFT | SWT.FLAT);
+		prevMonth = new Button(monthPanel, SWT.ARROW | SWT.LEFT | SWT.FLAT);
 		prevMonth.addListener(SWT.MouseUp, listener);
 		prevMonth.addListener(SWT.FocusIn, listener);
 
-		currentMonth = new Label(monthHeader, SWT.CENTER);
+		currentMonth = new Label(monthPanel, SWT.CENTER);
 		currentMonth.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		currentMonth.addListener(SWT.MouseDown, listener);
 
-		nextMonth = new Button(monthHeader, SWT.ARROW | SWT.RIGHT | SWT.FLAT);
+		nextMonth = new Button(monthPanel, SWT.ARROW | SWT.RIGHT | SWT.FLAT);
 		nextMonth.addListener(SWT.MouseUp, listener);
 		nextMonth.addListener(SWT.FocusIn, listener);
 
@@ -565,6 +582,38 @@ public class DateChooser extends Composite {
 		getDisplay().removeFilter(SWT.FocusIn, filter);
 	  super.dispose();
   }
+
+	/**
+	 * Draw the focus rectangle on the grid.
+	 * 
+	 * @param gc GC of the daysPanel
+	 */
+	private void drawFocus(GC gc) {
+		if ( hasFocus ) {
+			if ( focusIndex < 0 ) setFocus(-1);
+			Rectangle r = days[focusIndex].label.getBounds();
+			gc.setLineWidth(1);
+			gc.setForeground(theme.focusColor);
+			gc.drawRectangle(r.x - 1, r.y - 1, r.width + 1, r.height + 1);
+
+			int line = focusIndex / 7;
+			int col  = focusIndex % 7;
+			if ( line == 0 || (line == 5 && footerVisible) || (col == 0 && weeksVisible) ) {
+				Rectangle rg = daysPanel.getBounds();
+				GC gridGc = new GC(gridPanel);
+				gridGc.setForeground(theme.focusColor);
+				if ( line == 0 ) {
+					gridGc.drawLine(rg.x + r.x - 1, rg.y - 1, rg.x + r.x + r.width, rg.y - 1);
+				} else if ( line == 5 && footerVisible ) {
+					gridGc.drawLine(rg.x + r.x - 1, rg.y + rg.height, rg.x + r.x + r.width, rg.y + rg.height);
+				}
+				if ( col == 0 && weeksVisible ) {
+					gridGc.drawLine(rg.x + r.x - 1, rg.y + r.y - 1, rg.x + r.x - 1, rg.y + r.y + r.height);
+				}
+				gridGc.dispose();
+			}
+		}
+	}
 
 	/**
 	 * Manages events on the footer label.
@@ -695,13 +744,7 @@ public class DateChooser extends Composite {
 				break;
 			}
 			case SWT.Paint : {
-				if ( hasFocus ) {
-					if ( focusIndex < 0 ) setFocus(-1);
-					Rectangle r = days[focusIndex].label.getBounds();
-					event.gc.setLineWidth (1);
-					event.gc.setForeground(theme.focusColor);
-					event.gc.drawRectangle (r.x - 1, r.y - 1, r.width + 1, r.height + 1);
-				}
+				drawFocus(event.gc);
 				break;
 			}
 		}
@@ -739,62 +782,7 @@ public class DateChooser extends Composite {
 				notifyListeners(SWT.FocusOut, new Event());
 				break;
 		}
-		grid.redraw();
-	}
-
-	/**
-	 * Constructs and initializes all the GUI of the calendar.
-	 */
-	private void initialize() {
-		GridLayout layout = new GridLayout(2, false);
-		layout.horizontalSpacing = 0;
-		layout.marginWidth = 0;
-		layout.verticalSpacing = 0;
-		layout.marginHeight = 0;
-		super.setLayout(layout);
-
-		listener = new Listener() {
-			public void handleEvent(Event event) {
-				if ( event.type == SWT.MouseDown && ! hasFocus ) {
-					setFocus();
-					return;
-				}
-				if ( DateChooser.this == event.widget && event.type != SWT.KeyDown ) {
-					calendarEvent(event);
-				} else if ( prevMonth == event.widget || nextMonth == event.widget ) {
-					buttonsEvent(event);
-				} else if ( todayLabel == event.widget ) {
-					footerEvent(event);
-				} else if ( grid == event.widget || event.widget instanceof Label ) {
-					gridEvent(event);
-				} else if ( monthsMenu == event.widget || event.widget instanceof MenuItem ) {
-					menuEvent(event);
-				}
-			}
-		};
-		filter = new Listener() {
-			public void handleEvent(Event event) {
-				switch ( event.type ) {
-					case SWT.FocusIn :
-						handleFocus(SWT.FocusOut);
-						break;
-					case SWT.KeyDown :
-						calendarEvent(event);
-						break;
-				}
-			}
-		};
-
-		createHeader();
-		createGrid();
-		createFooter();
-
-		addListener(SWT.Dispose, listener);
-		addListener(SWT.Traverse, listener);
-		addListener(SWT.KeyDown, listener);
-		addListener(SWT.FocusIn, listener);
-
-		resize = true;
+		daysPanel.redraw();
 	}
 
 	/**
@@ -919,8 +907,8 @@ public class DateChooser extends Composite {
 	}
 
 	/**
-	 * Refreshes the display of the grid and header. This can be need because of
-	 * a month display, a locale or color model change.
+	 * Refreshes the display of the grid and header. This can be needed because
+	 * of a month display, a locale or color model change.
 	 */
 	private void refreshDisplay() {
 		if ( currentMonthCal == null || theme == null ) return;
@@ -1267,8 +1255,8 @@ public class DateChooser extends Composite {
 		checkWidget();
 		if ( footerVisible != this.footerVisible ) {
 			this.footerVisible = footerVisible;
-			GridData data = (GridData) footer.getLayoutData();
-			data.exclude = ! footerVisible;
+			((GridLayout) daysPanel.getLayout()).marginBottom = footerVisible ? 0 : 1;
+			((GridData) footerPanel.getLayoutData()).exclude = ! footerVisible;
 			layout(true);
 		}
 	}
@@ -1282,8 +1270,8 @@ public class DateChooser extends Composite {
 		checkWidget();
 		if ( gridVisible != this.gridVisible ) {
 			this.gridVisible = gridVisible;
-			gridHeader.setBackground(gridVisible ? theme.gridLinesColor : theme.gridHeaderBackground);
-			grid.setBackground(gridVisible ? theme.gridLinesColor : theme.dayCellBackground);
+			headersPanel.setBackground(gridVisible ? theme.gridLinesColor : theme.gridHeaderBackground);
+			daysPanel.setBackground(gridVisible ? theme.gridLinesColor : theme.dayCellBackground);
 			weeksPanel.setBackground(gridVisible ? theme.gridLinesColor : theme.gridHeaderBackground);
 		}
 	}
@@ -1429,25 +1417,28 @@ public class DateChooser extends Composite {
 		this.gridVisible = theme.gridVisible;
 		redrawInc();
 
-		// Header settings
-		monthHeader.setBackground(theme.headerBackground);
+		// Month header settings
+		monthPanel.setBackground(theme.headerBackground);
 		currentMonth.setBackground(theme.headerBackground);
 		currentMonth.setForeground(theme.headerForeground);
 
-		// Footer settings
-		footer.setBackground(theme.headerBackground);
+		// Master grid panel settings
+		gridPanel.setBackground(gridVisible ? theme.gridLinesColor : theme.gridHeaderBackground);
+
+		// Today footer settings
+		footerPanel.setBackground(theme.headerBackground);
 		todayLabel.setBackground(theme.headerBackground);
 		todayLabel.setForeground(theme.headerForeground);
 
-		// Grid headers settings
-		gridHeader.setBackground(gridVisible ? theme.gridLinesColor : theme.gridHeaderBackground);
+		// Days headers settings
+		headersPanel.setBackground(gridVisible ? theme.gridLinesColor : theme.gridHeaderBackground);
 		for (int i = 0; i < headers.length; i++) {
 			headers[i].setBackground(theme.gridHeaderBackground);
 			headers[i].setForeground(theme.gridHeaderForeground);
 		}
 
-		// Grid day cells settings
-		grid.setBackground(gridVisible ? theme.gridLinesColor : theme.dayCellBackground);
+		// Grid days cells settings
+		daysPanel.setBackground(gridVisible ? theme.gridLinesColor : theme.dayCellBackground);
 		for (int i = 0; i < days.length; i++) {
 			days[i].label.setBackground(theme.dayCellBackground);
 		}
@@ -1498,12 +1489,16 @@ public class DateChooser extends Composite {
 		checkWidget();
 		if ( weeksVisible != this.weeksVisible ) {
 			this.weeksVisible = weeksVisible;
-			GridData data = (GridData) weeksPanel.getLayoutData();
-			data.exclude = ! weeksVisible;
-			data = (GridData) gridHeader.getLayoutData();
-			data.horizontalSpan = weeksVisible ? 1 : 2;
-			data = (GridData) grid.getLayoutData();
-			data.horizontalSpan = weeksVisible ? 1 : 2;
+
+			((GridData) weeksPanel.getLayoutData()).exclude = ! weeksVisible;
+			weeksPanel.setVisible(weeksVisible);
+
+			((GridLayout) headersPanel.getLayout()).marginLeft = weeksVisible ? 0 : 1;
+			((GridData) headersPanel.getLayoutData()).horizontalSpan = weeksVisible ? 1 : 2;
+
+			((GridLayout) daysPanel.getLayout()).marginLeft = weeksVisible ? 0 : 1;
+			((GridData) daysPanel.getLayoutData()).horizontalSpan = weeksVisible ? 1 : 2;
+
 			layout(true);
 		}
 	}
