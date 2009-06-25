@@ -124,6 +124,8 @@ public class DateChooser extends Composite {
 	// Calendar grid -----
 	/** Grid panel */
 	protected Composite gridPanel;
+	/** Layout of the grid */
+	protected DateChooserLayout gridLayout;
 	/** Panel for display of weekday names */
 	protected Composite headersPanel;
 	/** Grid headers, displaying weekday names */
@@ -140,8 +142,6 @@ public class DateChooser extends Composite {
 	protected int firstDayIndex;
 
 	// ----- Calendar footer -----
-	/** Panel for display of today date */
-	protected Composite footerPanel;
 	/** Today label of the footer */
 	protected Label todayLabel;
 
@@ -171,9 +171,9 @@ public class DateChooser extends Composite {
 	/** Flag to set grid visible or not */
 	protected boolean gridVisible = true;
 	/** Flag to set weeks numbers visibles or not */
-	protected boolean weeksVisible = true;
+	protected boolean weeksVisible = false;
 	/** Flag to set footer visible or not */
-	protected boolean footerVisible = true;
+	protected boolean footerVisible = false;
 	/** Flag to set navigation enabled or not */
 	protected boolean navigationEnabled = true;
 	/** If true, change the current month if an adjacent day is clicked */
@@ -189,7 +189,6 @@ public class DateChooser extends Composite {
 	/** Index of the focus in the days numbers grid */
 	protected int focusIndex = NOFOCUS;
 
-	private boolean resize = false;
 	private int redraw = 0;
 
 	/**
@@ -206,9 +205,101 @@ public class DateChooser extends Composite {
 		Cell(Composite parent, int idx) {
 			label = new Label(parent, SWT.CENTER);
 			index = idx;
-			label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			label.addListener(SWT.MouseDown, listener);
 			label.setData(this);
+		}
+	}
+
+	/**
+	 * Calendar grid specific layout.
+	 */
+	protected class DateChooserLayout extends Layout {
+		private Point gridPanelSize = new Point(0, 0);
+		private Point headersPanelSize = new Point(0, 0);
+		private Point weeksPanelSize = new Point(0, 0);
+		private Point daysPanelSize = new Point(0, 0);
+		private Point todayLabelSize = new Point(0, 0);
+		private int cellWidth = 0;
+		private int cellHeight = 0;
+
+		protected void compute() {
+			GC gc = new GC(days[0].label);
+
+			int headerWidth = 0;
+			String[] months = df1.getDateFormatSymbols().getMonths();
+			for (int i = 0; i < months.length; i++) {
+				headerWidth = Math.max(headerWidth, gc.textExtent(months[i]).x);
+			}
+			headerWidth += prevMonth.computeSize(SWT.DEFAULT, SWT.DEFAULT, false).x * 2
+										 + HEADER_SPACING * 4 + gc.textExtent(" 9999").x; //$NON-NLS-1$
+
+			cellWidth = gc.textExtent("99").x + theme.cellPadding * 2;
+			cellWidth = Math.max(cellWidth, (headerWidth - 8) / 7 + 1);
+			cellHeight = days[0].label.computeSize(SWT.DEFAULT, SWT.DEFAULT, false).y;
+
+			weeksPanel.setVisible(weeksVisible);
+			headers[0].setVisible(weeksVisible);
+			if ( weeksVisible ) {
+				gridPanelSize.x = (cellWidth + 1) * 8 + 1;
+				weeksPanelSize.x = cellWidth + 1;
+				weeksPanelSize.y = (cellHeight + 1) * 6 - 1;
+			} else {
+				gridPanelSize.x = (cellWidth + 1) * 7 + 1;
+				headersPanelSize.x += 1;
+			}
+
+			headersPanelSize.x = gridPanelSize.x;
+			headersPanelSize.y = cellHeight + 1;
+			daysPanelSize.x = headersPanelSize.x;
+			daysPanelSize.y = (cellHeight + 1) * 6 - 1;
+			gridPanelSize.y = headersPanelSize.y + daysPanelSize.y + 2;
+
+			todayLabel.setVisible(footerVisible);
+			if ( footerVisible ) {
+				todayLabelSize.x = gridPanelSize.x;
+				todayLabelSize.y = headersPanelSize.y + 1;
+				gridPanelSize.y	 += todayLabelSize.y;
+			}
+
+			gc.dispose();
+		}
+
+		protected Point computeSize(Composite composite, int wHint, int hHint,
+				boolean flushCache) {
+			if ( flushCache ) compute();
+			return gridPanelSize;
+		}
+
+		protected void layout(Composite composite, boolean flushCache) {
+			if ( flushCache ) compute();
+
+			headersPanel.setBounds(0, 0, headersPanelSize.x, headersPanelSize.y);
+
+			if ( weeksVisible ) {
+				for (int i = 0; i < 8; i++) {
+					headers[i].setBounds((cellWidth + 1) * i + 1, 1, cellWidth, cellHeight);
+				}
+				weeksPanel.setBounds(0, headersPanelSize.y + 1, weeksPanelSize.x, weeksPanelSize.y);
+				for (int i = 0; i < 6; i++) {
+					weeks[i].label.setBounds(1, (cellHeight + 1) * i, cellWidth, cellHeight);
+				}
+			} else {
+				for (int i = 0; i < 7; i++) {
+					headers[i + 1].setBounds((cellWidth + 1) * i + 1, 1, cellWidth, cellHeight);
+				}
+			}
+
+			int x  = weeksVisible ? 0 : 1;
+			int px = weeksVisible ? weeksPanelSize.x + 1 : 0;
+
+			daysPanel.setBounds(px, headersPanelSize.y + 1, daysPanelSize.x, daysPanelSize.y);
+			for (int r = 0; r < 6; r++) {
+				for (int c = 0; c < 7; c++) {
+					days[r * 7 + c].label.setBounds(x + (cellWidth + 1) * c, (cellHeight + 1) * r, cellWidth, cellHeight);
+				}
+			}
+
+			todayLabel.setBounds(0, headersPanelSize.y + daysPanelSize.y + 2, todayLabelSize.x, todayLabelSize.y);
 		}
 	}
 
@@ -230,8 +321,6 @@ public class DateChooser extends Composite {
 		setTheme(DateChooserTheme.getDefaultTheme());
 		setTodayDate(new Date());
 		setCurrentMonth(todayCal.getTime());
-		setWeeksVisible(false);
-		setFooterVisible(false);
 		computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 	}
 
@@ -393,42 +482,6 @@ public class DateChooser extends Composite {
 	}
 
 	/**
-	 * Returns the preferred size of the receiver.
-	 * 
-	 * @param wHint the width hint (can be SWT.DEFAULT)
-	 * @param hHint the height hint (can be SWT.DEFAULT)
-	 * @param changed <code>true</code> if the control's contents have changed, and <code>false</code> otherwise
-	 * @return the preferred size of the control.
-	 */
-	public Point computeSize(int wHint, int hHint, boolean changed) {
-		if ( resize ) {
-			GC gc = new GC(days[0].label);
-
-			int headerWidth = 0;
-			String[] months = df1.getDateFormatSymbols().getMonths();
-			for (int i = 0; i < months.length; i++) {
-				headerWidth = Math.max(headerWidth, gc.textExtent(months[i]).x);
-			}
-			headerWidth += prevMonth.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed).x * 2
-										 + HEADER_SPACING * 4 + gc.textExtent(" 9999").x; //$NON-NLS-1$
-
-			int cellWidth = gc.textExtent("99").x + theme.cellPadding * 2;
-			cellWidth = Math.max(cellWidth, (headerWidth - 8) / 7 + 1);
-
-			for (int i = 0; i < 7; i++) {
-				((GridData) headers[i].getLayoutData()).widthHint = cellWidth;
-				((GridData) days[i].label.getLayoutData()).widthHint = cellWidth;
-			}
-			((GridData) weeks[0].label.getLayoutData()).widthHint = cellWidth;
-
-			gc.dispose();
-			resize = false;
-			changed = true;
-		}
-		return super.computeSize(wHint, hHint, changed);
-	}
-
-	/**
 	 * Constructs and initializes all the GUI of the calendar.
 	 */
 	private void createContent() {
@@ -478,8 +531,6 @@ public class DateChooser extends Composite {
 		addListener(SWT.Traverse, listener);
 		addListener(SWT.KeyDown, listener);
 		addListener(SWT.FocusIn, listener);
-
-		resize = true;
 	}
 
 	/**
@@ -491,35 +542,26 @@ public class DateChooser extends Composite {
 	private void createGrid() {
 		// Master grid panel
 		gridPanel = new Composite(this, SWT.NONE);
-		GridLayoutFactory.fillDefaults().numColumns(2).spacing(1, 1).applyTo(gridPanel);
+		gridLayout = new DateChooserLayout();
+		gridPanel.setLayout(gridLayout);
 
 		// Weeks numbers panel
 		weeksPanel = new Composite(gridPanel, SWT.NONE);
-		GridLayoutFactory.fillDefaults().spacing(1, 1).extendedMargins(1, 0, 1, 0)
-										 .applyTo(weeksPanel);
-		GridDataFactory.fillDefaults().span(1, 2).applyTo(weeksPanel);
-		weeks = new Cell[7];
-		for (int i = 0; i < 7; i++) {
+		weeks = new Cell[6];
+		for (int i = 0; i < 6; i++) {
 			weeks[i] = new Cell(weeksPanel, i);
 		}
 
 		// Grid header panel
 		headersPanel = new Composite(gridPanel, SWT.NONE);
-		GridLayoutFactory.fillDefaults().numColumns(7).spacing(1, 1)
-										 .extendedMargins(0, 1, 1, 0).applyTo(headersPanel);
-		GridDataFactory.fillDefaults().applyTo(headersPanel);
-		headers = new Label[7];
-		for (int i = 0; i < 7; i++) {
+		headers = new Label[8];
+		for (int i = 0; i < 8; i++) {
 			headers[i] = new Label(headersPanel, SWT.CENTER);
-			headers[i].setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			headers[i].addListener(SWT.MouseDown, listener);
 		}
 
 		// Grid panel
 		daysPanel = new Composite(gridPanel, SWT.NONE);
-		GridLayoutFactory.fillDefaults().numColumns(7).spacing(1, 1)
-										 .extendedMargins(0, 1, 0, 0).applyTo(daysPanel);
-		GridDataFactory.fillDefaults().applyTo(daysPanel);
 		days = new Cell[42];
 		for (int i = 0; i < 42; i++) {
 			days[i] = new Cell(daysPanel, i);
@@ -528,11 +570,7 @@ public class DateChooser extends Composite {
 		daysPanel.addListener(SWT.Paint, listener);
 
 		// Footer panel
-		footerPanel = new Composite(gridPanel, SWT.NONE);
-		GridLayoutFactory.fillDefaults().numColumns(1).extendedMargins(1, 1, 0, 1).applyTo(footerPanel);
-		GridDataFactory.fillDefaults().span(2, 1).applyTo(footerPanel);
-		todayLabel = new Label(footerPanel, SWT.CENTER);
-		todayLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		todayLabel = new Label(gridPanel, SWT.CENTER);
 		todayLabel.addListener(SWT.MouseDoubleClick, listener);
 		todayLabel.addListener(SWT.MouseDown, listener);
 	}
@@ -922,7 +960,7 @@ public class DateChooser extends Composite {
 		for (int i = 0; i < 42; i++) {
 			if ( i % 7 == 0 ) {
 				int w = cal.get(Calendar.WEEK_OF_YEAR);
-				weeks[i / 7 + 1].label.setText(w < 10 ? "0" + w : "" + w);
+				weeks[i / 7].label.setText(w < 10 ? "0" + w : "" + w);
 			}
 			if ( delta == 0 ) {
 				firstDayIndex = i;
@@ -1241,7 +1279,7 @@ public class DateChooser extends Composite {
 		for (int i = 0; i < weeks.length; i++) {
 			weeks[i].label.setFont(font);
 		}
-		resize = true;
+		todayLabel.setFont(font);
 		redrawDec();
 	}
 
@@ -1255,8 +1293,6 @@ public class DateChooser extends Composite {
 		checkWidget();
 		if ( footerVisible != this.footerVisible ) {
 			this.footerVisible = footerVisible;
-			((GridLayout) daysPanel.getLayout()).marginBottom = footerVisible ? 0 : 1;
-			((GridData) footerPanel.getLayoutData()).exclude = ! footerVisible;
 			layout(true);
 		}
 	}
@@ -1336,7 +1372,7 @@ public class DateChooser extends Composite {
 		String[] sn = symboles.getShortWeekdays();
 		String[] ln = symboles.getWeekdays();
 		int f = firstDayOfWeek;
-		for (int i = 0; i < headers.length; i++) {
+		for (int i = 1; i < headers.length; i++) {
 			headers[i].setText(sn[f].substring(0, 1).toUpperCase());
 			headers[i].setToolTipText(ln[f]);
 			f = (f % 7) + 1;
@@ -1426,7 +1462,6 @@ public class DateChooser extends Composite {
 		gridPanel.setBackground(gridVisible ? theme.gridLinesColor : theme.gridHeaderBackground);
 
 		// Today footer settings
-		footerPanel.setBackground(theme.headerBackground);
 		todayLabel.setBackground(theme.headerBackground);
 		todayLabel.setForeground(theme.headerForeground);
 
@@ -1489,16 +1524,6 @@ public class DateChooser extends Composite {
 		checkWidget();
 		if ( weeksVisible != this.weeksVisible ) {
 			this.weeksVisible = weeksVisible;
-
-			((GridData) weeksPanel.getLayoutData()).exclude = ! weeksVisible;
-			weeksPanel.setVisible(weeksVisible);
-
-			((GridLayout) headersPanel.getLayout()).marginLeft = weeksVisible ? 0 : 1;
-			((GridData) headersPanel.getLayoutData()).horizontalSpan = weeksVisible ? 1 : 2;
-
-			((GridLayout) daysPanel.getLayout()).marginLeft = weeksVisible ? 0 : 1;
-			((GridData) daysPanel.getLayoutData()).horizontalSpan = weeksVisible ? 1 : 2;
-
 			layout(true);
 		}
 	}
