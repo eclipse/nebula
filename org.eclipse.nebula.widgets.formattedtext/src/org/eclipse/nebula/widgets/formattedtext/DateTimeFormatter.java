@@ -22,6 +22,8 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.VerifyEvent;
@@ -127,16 +129,23 @@ public class DateTimeFormatter extends AbstractFormatter {
   protected int fieldCount;
   /** Year limit for 2 digits year field */
   protected int yearStart;
-  /** Key listener */
+  /** Key listener on the Text widget */
   protected KeyListener klistener;
+  /** Focus listener on the Text widget */
+  protected FocusListener flistener;
   /** The Locale used by this formatter */
   protected Locale locale;
 
   private class FieldDesc {
+  	/** Time field in Calendar */
   	int field;
+  	/** Minimum length of the field in chars */
   	int minLen;
+  	/** Maximum length of the field in chars */
   	int maxLen;
+    /** true if the field is empty, else false */
     boolean empty;
+    /** true if the field contains a valid value, else false */
   	boolean valid;
   	char index;
 
@@ -211,6 +220,14 @@ public class DateTimeFormatter extends AbstractFormatter {
    * @param loc locale
    */
 	public DateTimeFormatter(String editPattern, String displayPattern, Locale loc) {
+    // Set the default value
+    calendar = Calendar.getInstance(loc);
+    if ( yearStart == -1 ) {
+    	calendar.setTime(sdfDisplay.get2DigitYearStart());
+    	yearStart = calendar.get(Calendar.YEAR) % 100;
+    }
+    calendar.setTimeInMillis(0);
+
     // Creates the formatter for the edit value
 		if ( editPattern == null ) {
 			editPattern = getDefaultEditPattern(loc);
@@ -223,14 +240,6 @@ public class DateTimeFormatter extends AbstractFormatter {
 		}
     sdfDisplay = new SimpleDateFormat(displayPattern, loc);
     locale		 = loc;
-
-    // Set the default value
-    calendar = Calendar.getInstance(loc);
-    if ( yearStart == -1 ) {
-    	calendar.setTime(sdfDisplay.get2DigitYearStart());
-    	yearStart = calendar.get(Calendar.YEAR) % 100;
-    }
-    calendar.setTimeInMillis(0);
 
     // Instanciate the key listener
     klistener = new KeyListener() {
@@ -249,6 +258,18 @@ public class DateTimeFormatter extends AbstractFormatter {
 			}
 
 			public void keyReleased(KeyEvent e) {
+			}
+    };
+
+    // Instanciate the focus listener
+    flistener = new FocusListener() {
+			public void focusGained(FocusEvent e) {
+				int p = text.getCaretPosition();
+				setInputCache();
+		  	updateText(inputCache.toString(), p);
+			}
+
+			public void focusLost(FocusEvent e) {
 			}
     };
 	}
@@ -307,20 +328,6 @@ public class DateTimeFormatter extends AbstractFormatter {
 		updateText(inputCache.toString(),
 		           Math.min(f.pos + p - b, f.pos + f.curLen - 1));
 		ignore = false;
-	}
-
-	/**
-	 * Returns the count of valid fields. Value returned is between 0 and
-	 * fieldcount.
-	 * 
-	 * @return Count of valid fields
-	 */
-	private int countValid() {
-		int count = 0;
-		for (int i = 0; i < fieldCount; i++) {
-			if ( fields[i].valid ) count++;
-		}
-		return count;
 	}
 
   /**
@@ -450,6 +457,7 @@ public class DateTimeFormatter extends AbstractFormatter {
 			}
       fields[fi].empty = true;
 			fields[fi].valid = false;
+			calendar.clear(fields[fi].field);
 			char k = (char) ('0' + fi);
 			for (int j = 0; j < fields[fi].minLen; j++) {
 				inputMask.append(k);
@@ -462,6 +470,20 @@ public class DateTimeFormatter extends AbstractFormatter {
 	}
 
 	/**
+	 * Returns the count of valid fields. Value returned is between 0 and
+	 * fieldcount.
+	 * 
+	 * @return Count of valid fields
+	 */
+	private int countValid() {
+		int count = 0;
+		for (int i = 0; i < fieldCount; i++) {
+			if ( fields[i].valid ) count++;
+		}
+		return count;
+	}
+
+	/**
 	 * Called when the formatter is replaced by an other one in the <code>FormattedText</code>
 	 * control. Allow to release ressources like additionnal listeners.<p>
 	 * 
@@ -471,6 +493,7 @@ public class DateTimeFormatter extends AbstractFormatter {
 	 */
 	public void detach() {
 		text.removeKeyListener(klistener);
+		text.removeFocusListener(flistener);
 	}
 
 	/**
@@ -686,7 +709,8 @@ public class DateTimeFormatter extends AbstractFormatter {
 					beep();
 					return p;
 				}
-				if ( ! updateFieldValue(fd, p < fd.pos + fd.curLen - 1) ) {
+//				if ( ! updateFieldValue(fd, p < fd.pos + fd.curLen - 1) ) {
+				if ( ! updateFieldValue(fd, true) ) {
 					if ( o != '#' ) {
 						inputCache.setCharAt(p, o);
 					} else {
@@ -853,7 +877,14 @@ public class DateTimeFormatter extends AbstractFormatter {
 	public void setLocale(Locale loc) {
 		sdfDisplay.setDateFormatSymbols(new DateFormatSymbols(loc));
 		Calendar newCal = Calendar.getInstance(calendar.getTimeZone(), loc);
-		newCal.setTimeInMillis(calendar.getTimeInMillis());
+		newCal.setTimeInMillis(0);
+		for (int i = 0; i < fieldCount; i++) {
+			if ( fields[i].valid ) {
+				newCal.set(fields[i].field, calendar.get(fields[i].field));
+			} else {
+				newCal.clear(fields[i].field);
+			}
+		}
 		calendar = newCal;
 		locale   = loc;
 	}
@@ -869,6 +900,7 @@ public class DateTimeFormatter extends AbstractFormatter {
 	public void setText(Text text) {
 		super.setText(text);
 		text.addKeyListener(klistener);
+		text.addFocusListener(flistener);
 	}
 
 	/**
@@ -927,7 +959,7 @@ public class DateTimeFormatter extends AbstractFormatter {
 		String s = inputCache.substring(f.pos, f.pos + f.curLen).trim();
     f.empty = false;
 		if ( s.length() == 0 || s.indexOf(SPACE) >= 0 ) {
-			calendar.set(f.field, 0);
+			calendar.clear(f.field);
       f.empty = true;
 			f.valid = false;
 		} else if ( f.field == Calendar.AM_PM ) {
@@ -942,7 +974,7 @@ public class DateTimeFormatter extends AbstractFormatter {
 				e.printStackTrace(System.err);
 			}
 			if ( v == 0 && f.field <= Calendar.DAY_OF_MONTH && s.length() < f.maxLen) {
-				calendar.set(f.field, 0);
+				calendar.clear(f.field);
 				f.valid = false;
 			} else {
 				if ( f.field == Calendar.YEAR && f.maxLen <= 2 ) {
