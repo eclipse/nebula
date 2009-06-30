@@ -399,10 +399,10 @@ abstract class AbstractSettings implements ISettings {
 		return false;
 	}
 
-	public boolean useFastDraw() {
+/*	public boolean useFastDraw() {
 		return true;
 	}
-
+*/
 	public int getSectionSide() {
 		return SWT.LEFT;
 	}
@@ -454,8 +454,21 @@ abstract class AbstractSettings implements ISettings {
 		return mDDayCalendar;
 	}
 
+	public int getDDaySplitCount() {
+		return 10;
+	}
+
 	public boolean drawEventsDownToTheHourAndMinute() {
 		return false;
 	}
 
+	public boolean moveAndResizeOnlyDependentEventsThatAreLaterThanLinkedMoveEvent() {
+		return false;
+	}
+
+	public boolean forceMouseWheelVerticalScroll() {
+		return false;
+	}
+
+	
 }

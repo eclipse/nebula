@@ -11,6 +11,9 @@
 
 package org.eclipse.nebula.widgets.ganttchart;
 
+import java.util.Calendar;
+import java.util.Random;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -322,6 +325,23 @@ public class GanttChart extends Composite implements IGanttFlags {
 
 	public ScrollBar getHorizontalBar() {
 		return mGanttComposite.getHorizontalBar();
+	}
+	
+	/**
+	 * Returns a random GanttEvent, useful for testing.
+	 * 
+	 * @return GanttEvent
+	 */
+	public GanttEvent getRandomEvent() {
+		Calendar cal = Calendar.getInstance(mSettings.getDefaultLocale());
+		Calendar cal2 = Calendar.getInstance(mSettings.getDefaultLocale());
+		
+		Random r = new Random();
+		cal.add(Calendar.DATE, -r.nextInt(10));
+		cal2.add(Calendar.DATE, r.nextInt(10)+1);
+	
+		GanttEvent ge = new GanttEvent(this, "Random Event", cal, cal2, r.nextInt(100));
+		return ge;
 	}
 
 }

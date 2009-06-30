@@ -11,7 +11,7 @@
 
 package org.eclipse.nebula.widgets.ganttchart;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -121,9 +121,9 @@ public abstract class AbstractPaintManager implements IPaintManager {
 
 			// xEnd is how long the event box is
 			// how much of that in % are we showing?
-			float perc = (float) ge.getPercentComplete() / 100f;
+			float perc = ge.getPercentComplete() / 100f;
 			// and how many pixels is that?
-			float toDraw = (float) eventWidth * perc;
+			float toDraw = eventWidth * perc;
 			// remainder
 			int remainder = eventWidth - (int) toDraw;
 
@@ -165,7 +165,7 @@ public abstract class AbstractPaintManager implements IPaintManager {
 		int height = settings.getEventHeight();
 
 		// draw a special fun thing! (tm)
-		long days = DateHelper.daysBetween(ge.getActualStartDate().getTime(), ge.getActualEndDate().getTime(), settings.getDefaultLocale());
+		long days = DateHelper.daysBetween(ge.getActualStartDate(), ge.getActualEndDate(), settings.getDefaultLocale());
 
 		drawCheckpointMarker(gc, settings, colorManager, ge, threeDee, x, y, dayWidth, height, bounds);
 
@@ -210,10 +210,10 @@ public abstract class AbstractPaintManager implements IPaintManager {
 	}
 
 	private void drawCheckpointMarker(GC gc, ISettings settings, IColorManager colorManager, GanttEvent ge, boolean threeDee, int x, int y, int width, int height, Rectangle bounds) {
-		float fHoriSpacer = (float) width * 0.17f;
+		float fHoriSpacer = width * 0.17f;
 		int hSpacer = (int) fHoriSpacer;
 
-		float fVertiSpacer = (float) height * 0.23f;
+		float fVertiSpacer = height * 0.23f;
 		int vSpacer = (int) fVertiSpacer;
 
 		Rectangle topToBottom = new Rectangle(x + hSpacer, y, width - (hSpacer * 2), height + vSpacer);
@@ -416,7 +416,7 @@ public abstract class AbstractPaintManager implements IPaintManager {
 	}
 
 	public void drawScope(GanttComposite ganttComposite, ISettings settings, IColorManager colorManager, GanttEvent ge, GC gc, boolean threeDee, int dayWidth, int x, int y, int eventWidth, Rectangle bounds) {
-		ArrayList scopeEvents = ge.getScopeEvents();
+		List scopeEvents = ge.getScopeEvents();
 
 		// empty scope
 		if (scopeEvents.size() == 0)

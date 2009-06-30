@@ -60,7 +60,7 @@ public class GanttSection implements IFillBackgroundColors {
 	private int						mTextOrientation	= SWT.VERTICAL;
 
 	private boolean					mInheritBackgroud;
-
+	
 	/**
 	 * Creates a new GanttSection.
 	 * 

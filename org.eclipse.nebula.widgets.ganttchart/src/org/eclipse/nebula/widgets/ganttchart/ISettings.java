@@ -828,7 +828,7 @@ public interface ISettings {
 	 * 
 	 * @return true whether to use "Fast drawing". Default is true.
 	 */
-	public boolean useFastDraw();
+	//public boolean useFastDraw();
 	
 	/**
 	 * Which side the section bar should be drawn on. 
@@ -933,10 +933,33 @@ public interface ISettings {
 	public Calendar getDDayRootCalendar();
 	
 	/**
+	 * The value where D-days have their "weeks" so to speak, this is used to calculate the numbers shown in both headers, where the top header is displaying each "set"
+	 * whereas the bottom one shows numbers from 0 to the number returned by this method.
+	 * 
+	 * @return Split count number. Default is 10 which shows sets from 0 to 9.
+	 */
+	public int getDDaySplitCount();
+	
+	/**
 	 * If this returns true, events are never rounded up to their nearest hour/minute when shown in the chart, but will always show down to the minute even in any mid-zoomed
 	 * and fully-zoomed out view (this does not do anything to the normal minute view). Default is false.
 	 * 
 	 * @return true to draw event location down to the hour and minute
 	 */
 	public boolean drawEventsDownToTheHourAndMinute();
+	
+	/**
+	 * If this returns true, only linked events that come after the source drag event (time/date-wise) will be moved/resized (normally all linked events are moved/resized regardless of time/date).
+	 * 
+	 * @return true to only move/resize "later" events on dependent linked event moves/resizes. Default is false. 
+	 */
+	public boolean moveAndResizeOnlyDependentEventsThatAreLaterThanLinkedMoveEvent();
+
+	/**
+	 * In SWT 3.5 it seems the mousewheel is not interpreted the same as in previous versions. If you notice that when scrolling the mouse wheel the chart does not actually scroll
+	 * vertically, flag this to true to force it to scroll the chart.
+	 * 
+	 * @return true to force the mousewheel to scroll the chart. Default is false.
+	 */
+	public boolean forceMouseWheelVerticalScroll();
 }

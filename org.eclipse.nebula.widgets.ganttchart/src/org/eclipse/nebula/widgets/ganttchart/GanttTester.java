@@ -54,6 +54,9 @@ public class GanttTester {
 
 	private Text			_timerText;
 
+	private Button			_bUseSectionsRight;
+	private Button			_bDrawHorizontalLines;
+
 	/**
 	 * @param args
 	 */
@@ -74,8 +77,12 @@ public class GanttTester {
 		_vfChart = new ViewForm(sfHSplit, SWT.NONE);
 		ViewForm vfRight = new ViewForm(sfHSplit, SWT.NONE);
 
-		sfVSplit.setWeights(new int[] { 91, 9 });
-		sfHSplit.setWeights(new int[] { 80, 20 });
+		sfVSplit.setWeights(new int[] {
+				91, 9
+		});
+		sfHSplit.setWeights(new int[] {
+				80, 20
+		});
 
 		// top left side
 		_ganttChart = new GanttChart(_vfChart, SWT.MULTI);
@@ -90,9 +97,14 @@ public class GanttTester {
 		vfBottom.setContent(createBottom(vfBottom));
 		tiGeneral.setControl(createCreationTab(tfRight));
 
-		// shell.setSize(1800, 1000);
-		// shell.setLocation(new Point(100, 100));
 		shell.setMaximized(true);
+		
+		Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
+				_ganttComposite.getVerticalBar().setPageIncrement(200);				
+			}			
+		});
+		
 		shell.open();
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch())
@@ -103,21 +115,20 @@ public class GanttTester {
 
 	private Composite createCreationTab(Composite parent) {
 		final ScrolledComposite sc = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
-	    sc.setExpandHorizontal(true);
-	    sc.setExpandVertical(true);
+		sc.setExpandHorizontal(true);
+		sc.setExpandVertical(true);
 
 		final Composite comp = new Composite(sc, SWT.NONE);
 		sc.setContent(comp);
 		comp.setLayout(new GridLayout(1, true));
-				
+
 		sc.addListener(SWT.Resize, new Listener() {
 
 			public void handleEvent(Event event) {
 				sc.setMinSize(comp.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 			}
-			
-		});
 
+		});
 
 		Group gGeneral = new Group(comp, SWT.NONE);
 		gGeneral.setText("General");
@@ -126,7 +137,7 @@ public class GanttTester {
 
 		Label lEvents = new Label(gGeneral, SWT.NONE);
 		lEvents.setText("Number of Events");
-		
+
 		final Combo eventCountCombo = new Combo(gGeneral, SWT.NONE);
 		eventCountCombo.add("2");
 		eventCountCombo.add("10");
@@ -153,7 +164,6 @@ public class GanttTester {
 		themeCombo.add("Gray Blue");
 		themeCombo.select(0);
 
-		
 		Group gLeft = new Group(comp, SWT.NONE);
 		gLeft.setLayout(new GridLayout(1, true));
 		gLeft.setText("Styles and Options");
@@ -172,7 +182,8 @@ public class GanttTester {
 
 		final Button bInfHbar = new Button(flagComp0, SWT.RADIO);
 		bInfHbar.setText("Infinite H Scrollbar (H_SCROLL_INFINITE)");
-		bInfHbar.setSelection(true);
+
+		bFixedHbar.setSelection(true);
 
 		Composite flagComp1 = new Composite(gLeft, SWT.NONE);
 		GridLayout gl1 = new GridLayout(1, true);
@@ -210,23 +221,45 @@ public class GanttTester {
 		bCreatePlannedDates.setSelection(true);
 		bCreatePlannedDates.setToolTipText("Creates planned dates for each event");
 
-		final Button bUseSections = new Button(gLeft, SWT.CHECK);
-		bUseSections.setText("Use GanttSections");
-		bUseSections.setToolTipText("Creates GanttSections assigns a random number of events to those sections");
+		_bDrawHorizontalLines = new Button(gLeft, SWT.CHECK);
+		_bDrawHorizontalLines.setText("Draw Horizontal Lines");
+		_bDrawHorizontalLines.setToolTipText("Draws horizontal lines between events");
+
+		final Button bUseSectionsLeft = new Button(gLeft, SWT.CHECK);
+		bUseSectionsLeft.setText("Use GanttSections - Left");
+		bUseSectionsLeft.setToolTipText("Creates GanttSections assigns a random number of events to those sections");
+
+		_bUseSectionsRight = new Button(gLeft, SWT.CHECK);
+		_bUseSectionsRight.setText("Use GanttSections - Right");
+		_bUseSectionsRight.setToolTipText("Creates GanttSections assigns a random number of events to those sections");
+
+		bUseSectionsLeft.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				_bUseSectionsRight.setSelection(false);
+			}
+
+		});
+
+		_bUseSectionsRight.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				bUseSectionsLeft.setSelection(false);
+			}
+
+		});
 
 		Label lMaxSections = new Label(gLeft, SWT.LEFT);
 		lMaxSections.setText("Max number of sections (0 = infinite)");
 
 		final Spinner sMaxSections = new Spinner(gLeft, SWT.BORDER);
 
+		final Button bRandomEventLength = new Button(gLeft, SWT.CHECK);
+		bRandomEventLength.setText("Random event length (+2-10 days)");
+		bRandomEventLength.setToolTipText("Makes events take a random length");
+
 		final Button bConnectEvents = new Button(gLeft, SWT.CHECK);
 		bConnectEvents.setText("Connect events");
 		bConnectEvents.setSelection(true);
 		bConnectEvents.setText("Connects events up to the number defined in the spinner below");
-
-		final Button bRandomEventLength = new Button(gLeft, SWT.CHECK);
-		bRandomEventLength.setText("Random event length (+2-10 days)");
-		bRandomEventLength.setToolTipText("Makes events take a random length");
 
 		final Spinner sConnectionCountNumber = new Spinner(gLeft, SWT.BORDER);
 		sConnectionCountNumber.setSelection(50);
@@ -277,10 +310,15 @@ public class GanttTester {
 
 		final Button bUseDDay = new Button(gLeft, SWT.CHECK);
 		bUseDDay.setText("D-Day chart");
-		
+
 		final Button bLockHeader = new Button(gLeft, SWT.CHECK);
 		bLockHeader.setText("Lock Header");
 		bLockHeader.setToolTipText("Locks the header so that it is always shown regardless of vertical scroll");
+
+		final Button bMoveOnlyLaterLinkedEvents = new Button(gLeft, SWT.CHECK);
+		bMoveOnlyLaterLinkedEvents.setSelection(true);
+		bMoveOnlyLaterLinkedEvents.setText("Move/Resize Only 'Older' Linked Events");
+		bMoveOnlyLaterLinkedEvents.setToolTipText("When moving/resizing linked events, this flag ensures that only older events than the ones being dragged are moved/resized");
 
 		bConnectEvents.addListener(SWT.Selection, new Listener() {
 
@@ -313,9 +351,10 @@ public class GanttTester {
 
 		Button bHeavyRedraw = new Button(buttons, SWT.PUSH);
 		bHeavyRedraw.setText("Heavy Redraw");
-		bHeavyRedraw.setToolTipText("You should never have to use a heavy redraw. If you need to because of something not doing what it is supposed to it is most likely a bug\n\nAlso note that the results of using this may not be the same as when the chart calls this method itself");
+		bHeavyRedraw
+				.setToolTipText("You should never have to use a heavy redraw. If you need to because of something not doing what it is supposed to it is most likely a bug\n\nAlso note that the results of using this may not be the same as when the chart calls this method itself");
 		bHeavyRedraw.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		Button bSaveFull = new Button(buttons, SWT.PUSH);
 		bSaveFull.setText("Save Full Image");
 		bSaveFull.setToolTipText("Saves an image of the chart, the entire chart, and nothing but the chart");
@@ -324,22 +363,28 @@ public class GanttTester {
 
 			public void handleEvent(Event event) {
 				Image full = _ganttComposite.getFullImage();
-				
+
 				FileDialog fd = new FileDialog(Display.getDefault().getActiveShell(), SWT.SAVE);
-				fd.setFilterExtensions(new String [] { ".jpg" });
-				fd.setFilterNames(new String [] { "JPG File" });
+				fd.setFilterExtensions(new String[] {
+					".jpg"
+				});
+				fd.setFilterNames(new String[] {
+					"JPG File"
+				});
 				fd.setFileName("img.jpg");
 				String path = fd.open();
 				if (path == null)
 					return;
-				
+
 				ImageLoader imageLoader = new ImageLoader();
-				imageLoader.data = new ImageData[] {full.getImageData()};
-				imageLoader.save(path, SWT.IMAGE_JPEG); 
+				imageLoader.data = new ImageData[] {
+					full.getImageData()
+				};
+				imageLoader.save(path, SWT.IMAGE_JPEG);
 			}
-			
-		});	
-		
+
+		});
+
 		Group timerGroup = new Group(comp, SWT.NONE);
 		timerGroup.setLayout(new GridLayout(1, true));
 		timerGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -352,8 +397,11 @@ public class GanttTester {
 
 			public void handleEvent(Event event) {
 				long time1 = System.currentTimeMillis();
+				//long nano1 = System.nanoTime();
 				_ganttComposite.heavyRedraw();
 				long time2 = System.currentTimeMillis();
+				//long nano2 = System.nanoTime();
+
 				_timerText.setText("Heavy redraw took " + (time2 - time1) + " ms");
 			}
 
@@ -367,7 +415,8 @@ public class GanttTester {
 				int numberEvents = 0;
 				try {
 					numberEvents = Integer.parseInt(eventCountCombo.getText());
-				} catch (NumberFormatException nfe) {
+				}
+				catch (NumberFormatException nfe) {
 					return;
 				}
 
@@ -392,7 +441,7 @@ public class GanttTester {
 					public boolean moveLinkedEventsWhenEventsAreMoved() {
 						return true;
 					}
-					
+
 				}
 
 				ISettings toUse = new Foo();
@@ -400,11 +449,15 @@ public class GanttTester {
 				if (bLockHeader.getSelection()) {
 					toUse = new FixedHeaderSettings();
 				}
-								
+
 				if (bUseDDay.getSelection()) {
 					toUse = new DDaySettings();
 				}
-				
+
+				if (bMoveOnlyLaterLinkedEvents.getSelection()) {
+					toUse = new OnlyMoveAfterSettings(bLockHeader.getSelection(), bUseDDay.getSelection());
+				}
+
 				IColorManager color = new ColorThemeWindowsBlue();
 				if (themeCombo.getSelectionIndex() == 1) {
 					color = new ColorThemeSilver();
@@ -412,7 +465,7 @@ public class GanttTester {
 				else if (themeCombo.getSelectionIndex() == 2) {
 					color = new ColorThemeGrayBlue();
 				}
-								
+
 				_ganttChart = new GanttChart(_vfChart, flags, toUse, color);
 				_ganttComposite = _ganttChart.getGanttComposite();
 				_vfChart.setContent(_ganttChart);
@@ -422,17 +475,17 @@ public class GanttTester {
 				GanttSection parent = null;
 				int sectionCount = 1;
 				int lastSectionEventCount = 0;
-				if (bUseSections.getSelection()) {
+				if (bUseSectionsLeft.getSelection() || _bUseSectionsRight.getSelection()) {
 					parent = new GanttSection(_ganttChart, "Section " + sectionCount);
 				}
 
 				for (int i = 0; i < numberEvents; i++) {
 					Calendar cal = Calendar.getInstance();
-					
+
 					if (bUseDDay.getSelection()) {
-						cal = (Calendar)toUse.getDDayRootCalendar().clone();
+						cal = (Calendar) toUse.getDDayRootCalendar().clone();
 					}
-					
+
 					GanttEvent predEvent = null;
 					if (i != 0) {
 						predEvent = ((GanttEvent) _ganttComposite.getEvents().get(i - 1));
@@ -453,26 +506,29 @@ public class GanttTester {
 						plannedEnd.add(Calendar.DATE, bRandomEventLength.getSelection() ? (r.nextInt(10) + 1) : 10);
 
 						ganttEvent = new GanttEvent(_ganttChart, null, "Event_" + (i + 1), plannedStart, plannedEnd, cStartDate, cEndDate, 0);
-					} else {
+					}
+					else {
 						ganttEvent = new GanttEvent(_ganttChart, null, "Event_" + (i + 1), cStartDate, cEndDate, 0);
 					}
-					
-					if (bUseSections.getSelection()) {
+
+					if (bUseSectionsLeft.getSelection() || _bUseSectionsRight.getSelection()) {
 						boolean reachedMax = false;
 						if (sMaxSections.getSelection() != 0)
 							reachedMax = sectionCount >= sMaxSections.getSelection();
-						
+
 						if (lastSectionEventCount != 0 && !reachedMax) {
 							if (r.nextInt(2) == 1) {
 								sectionCount++;
 								parent = new GanttSection(_ganttChart, "Section " + sectionCount);
 								parent.addGanttEvent(ganttEvent);
 								lastSectionEventCount = 0;
-							} else {
+							}
+							else {
 								parent.addGanttEvent(ganttEvent);
 								lastSectionEventCount++;
 							}
-						} else {
+						}
+						else {
 							parent.addGanttEvent(ganttEvent);
 							lastSectionEventCount++;
 						}
@@ -485,8 +541,9 @@ public class GanttTester {
 
 					if (bRandomEventHeights.getSelection()) {
 						int height = r.nextInt(100);
-						while (height < _ganttChart.getSettings().getEventHeight())
+						if (height < _ganttChart.getSettings().getEventHeight()) {
 							height = _ganttChart.getSettings().getEventHeight();
+						}
 						ganttEvent.setFixedRowHeight(height);
 
 						if (bRandomEventTextHLocation.getSelection()) {
@@ -559,7 +616,8 @@ public class GanttTester {
 						if (i < sConnectionCountNumber.getSelection()) {
 							if (bRandomColors.getSelection()) {
 								_ganttComposite.addConnection(predEvent, ganttEvent, ColorCache.getColor(r.nextInt(255), r.nextInt(255), r.nextInt(255)));
-							} else {
+							}
+							else {
 								_ganttComposite.addConnection(predEvent, ganttEvent);
 							}
 						}
@@ -570,6 +628,14 @@ public class GanttTester {
 				_timerText.setText("Initial chart creation took " + (time2 - time1) + " ms");
 
 				moveFocus();
+
+				Display.getDefault().asyncExec(new Runnable() {
+
+					public void run() {
+						_ganttChart.getVerticalBar().setPageIncrement(350);
+					}
+
+				});
 			}
 
 		});
@@ -586,8 +652,10 @@ public class GanttTester {
 
 			public void widgetSelected(SelectionEvent e) {
 				long time1 = System.currentTimeMillis();
+				//long nano1 = System.nanoTime();
 				_ganttComposite.refresh();
 				long time2 = System.currentTimeMillis();
+				//long nano2 = System.nanoTime();
 				_timerText.setText("Redraw took " + (time2 - time1) + " ms");
 				moveFocus();
 			}
@@ -598,19 +666,19 @@ public class GanttTester {
 
 	private Composite createBottom(Composite parent) {
 		final ScrolledComposite sc = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
-	    sc.setExpandHorizontal(true);
-	    sc.setExpandVertical(true);
-		
+		sc.setExpandHorizontal(true);
+		sc.setExpandVertical(true);
+
 		final Composite outer = new Composite(sc, SWT.NONE);
 		sc.setContent(outer);
 		outer.setLayout(new GridLayout(1, true));
-		
+
 		sc.addListener(SWT.Resize, new Listener() {
 
 			public void handleEvent(Event event) {
 				sc.setMinSize(outer.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 			}
-			
+
 		});
 
 		Group comp = new Group(outer, SWT.NONE);
@@ -655,7 +723,7 @@ public class GanttTester {
 
 		Button bShowDays = new Button(comp, SWT.PUSH);
 		bShowDays.setText("Toggle Dates On Events");
-		
+
 		Button bSetDate = new Button(comp, SWT.PUSH);
 		bSetDate.setText("Set Date Randomly (+-10)");
 		bSetDate.setToolTipText("Sets the date randomly to a date +-10 days from the leftmost date of the chart");
@@ -787,23 +855,23 @@ public class GanttTester {
 			}
 
 		});
-		
+
 		bSetDate.addListener(SWT.Selection, new Listener() {
 
 			public void handleEvent(Event event) {
 				Calendar cal = _ganttComposite.getDate();
 				Random r = new Random();
-				int add = r.nextInt(10)+1;
+				int add = r.nextInt(10) + 1;
 				if (r.nextInt(2) == 1)
 					add = -add;
-				
+
 				cal.add(Calendar.DATE, add);
 				_ganttComposite.setDate(cal);
 				moveFocus();
 			}
-		
+
 		});
-		
+
 		return sc;
 	}
 
@@ -818,7 +886,8 @@ public class GanttTester {
 				end.add(calendarObj, amount);
 				start.add(calendarObj, amount);
 				ge.setRevisedDates(start, end, SWT.RIGHT_TO_LEFT);
-			} else {
+			}
+			else {
 				start.add(calendarObj, amount);
 				end.add(calendarObj, amount);
 				ge.setRevisedDates(start, end, SWT.LEFT_TO_RIGHT);
@@ -839,19 +908,74 @@ public class GanttTester {
 		public boolean lockHeaderOnVerticalScroll() {
 			return true;
 		}
+
+		public int getSectionSide() {
+			return _bUseSectionsRight.getSelection() ? SWT.RIGHT : SWT.LEFT;
+		}
+
+		public boolean drawHorizontalLines() {
+			return _bDrawHorizontalLines.getSelection();
+		}
+
 	}
-	
+
 	class DDaySettings extends AbstractSettings {
 
 		public int getInitialView() {
 			return ISettings.VIEW_D_DAY;
 		}
 
-		public int getHeaderMonthHeight() {
-			return 0;
+		public int getSectionSide() {
+			return _bUseSectionsRight.getSelection() ? SWT.RIGHT : SWT.LEFT;
+		}
+
+		public boolean drawHorizontalLines() {
+			return _bDrawHorizontalLines.getSelection();
+		}
+
+	}
+
+	class OnlyMoveAfterSettings extends AbstractSettings {
+
+		private boolean	_fixedHeader;
+		private boolean	_dday;
+
+		public OnlyMoveAfterSettings(boolean fixedHeader, boolean dday) {
+			_fixedHeader = fixedHeader;
+			_dday = dday;
+		}
+
+		public boolean moveLinkedEventsWhenEventsAreMoved() {
+			return true;
+		}
+
+		public boolean moveAndResizeOnlyDependentEventsThatAreLaterThanLinkedMoveEvent() {
+			return true;
+		}
+
+		public int getInitialView() {
+			if (_dday) {
+				return ISettings.VIEW_D_DAY;
+			}
+			else {
+				return super.getInitialView();
+			}
+		}
+
+		public boolean lockHeaderOnVerticalScroll() {
+			return _fixedHeader;
+		}
+
+		public int getSectionSide() {
+			return _bUseSectionsRight.getSelection() ? SWT.RIGHT : SWT.LEFT;
+		}
+
+		public boolean drawHorizontalLines() {
+			return _bDrawHorizontalLines.getSelection();
 		}
 		
 		
 		
+
 	}
 }

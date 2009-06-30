@@ -287,102 +287,122 @@ public class AdvancedTooltipDialog {
 	}
 
 	private static Point drawText(GC gc, String text, int x, int y) {
-		try {
-			StringTokenizer sub = new StringTokenizer(text, " ");
+        try {
+            Font old = gc.getFont();
+            Font used = null;
+            String oldName = old.getFontData()[0].getName();
+            int oldSize = (int) old.getFontData()[0].height;
 
-			Font old = gc.getFont();
-			Font used = null;
-			String oldName = old.getFontData()[0].getName();
-			int oldSize = (int) old.getFontData()[0].getHeight();
+            int curX = x;
+            boolean bold = false;
+            boolean italic = false;
+            int size = oldSize;
+            Color fg = ColorCache.getBlack();
 
-			int curX = x;
-			boolean bold = false;
-			boolean italic = false;
-			int size = oldSize;
-			Color fg = ColorCache.getBlack();
+            int maxWidth = 0;
+            int maxHeight = 0;
 
-			int maxWidth = 0;
-			int maxHeight = 0;
+            //int tokens = sub.countTokens();
+            int cnt = 0;
 
-			int tokens = sub.countTokens();
-			int cnt = 0;
+            char[] all = text.toCharArray();
 
-			while (sub.hasMoreElements()) {
-				String token = sub.nextToken();
+            for (int i = 0; i < all.length; i++) {
+                String token = Character.toString(all[i]);
+                if (token.equals("\\")) {
+                    token += Character.toString(all[i + 1]);
+                    i++;
+                }
 
-				if (isNormalize(token)) {
-					bold = false;
-					italic = false;
-					size = oldSize;
-					fg = ColorCache.getBlack();
-				} else {
-					int newSize = getSize(token);
-					if (newSize != size && newSize != -1) {
-						size = newSize;
-					}
+                if (isNormalize(token)) {
+                    bold = false;
+                    italic = false;
+                    size = oldSize;
+                    fg = ColorCache.getBlack();
+                }
+                else {
+                    int newSize = getSize(token);
+                    if (newSize != size && newSize != -1) {
+                        size = newSize;
+                    }
 
-					boolean newBold = isBold(token);
-					if (bold && !newBold) {
-						bold = true;
-					}
-					else {
-						bold = newBold;
-					}
+                    boolean newBold = isBold(token);
+                    if (bold && !newBold) {
+                        bold = true;
+                    }
+                    else {
+                        bold = newBold;
+                    }
 
-					boolean newItalic = isItalic(token);
-					if (italic && !newItalic) {
-						italic = true;
-					}
-					else {
-						italic = newItalic;
-					}
+                    boolean newItalic = isItalic(token);
+                    if (italic && !newItalic) {
+                        italic = true;
+                    }
+                    else {
+                        italic = newItalic;
+                    }
 
-					Color newColor = getColor(token);
-					if (newColor != fg) {
-						fg = newColor;
-					}
-				}
+                    if (text.length() > i + 10) {
+                        if (token.equals("\\c")) {
+                            String colTxt = text.substring(i - 1, i + 10);
+                            Color newColor = getColor(colTxt);
+                            if (newColor != null) {
+                                i += colTxt.length() - 2; // -2 is length of \c
+                                token = colTxt;
+                            }
+                            if (newColor != fg) {
+                                fg = newColor;
+                            }
+                        }
+                    }
+                }
 
-				if (fg != null) {
-					gc.setForeground(fg);
-				}
+                if (fg != null) {
+                    gc.setForeground(fg);
+                }
 
-				token = cleanUp(token);
+                token = cleanUp(token);
 
-				int style = SWT.NORMAL;
-				if (bold) {
-					style |= SWT.BOLD;
-				}
-				if (italic) {
-					style |= SWT.ITALIC;
-				}
+                int style = SWT.NORMAL;
+                if (bold) {
+                    style |= SWT.BOLD;
+                }
+                if (italic) {
+                    style |= SWT.ITALIC;
+                }
 
-				used = new Font(Display.getDefault(), oldName, size, style);
-				gc.setFont(used);
+                if (all[i] == '\t') {
+                    curX += gc.stringExtent(" ").x * 4;
+                    token = " ";
+                }
 
-				gc.drawString(token, curX, y, true);
-				int extX = gc.stringExtent(token).x + ((cnt != tokens - 1) ? gc.stringExtent(" ").x : 0);
-				int extY = gc.stringExtent(token).y;
-				curX += extX;
+                used = new Font(Display.getDefault(), oldName, size, style);
+                gc.setFont(used);
 
-				maxWidth = Math.max(maxWidth, curX);
-				maxHeight = Math.max(maxHeight, extY);
+                if (token.length() != 0) {
+                    gc.drawString(token, curX, y, true);
+                    int extX = gc.stringExtent(token).x;// + ((cnt != all.length - 1) ? gc.stringExtent(token).x : 0);
+                    int extY = gc.stringExtent(token).y;
+                    curX += extX;
 
-				if (used != null) {
-					used.dispose();
-				}
+                    maxWidth = Math.max(maxWidth, curX);
+                    maxHeight = Math.max(maxHeight, extY);
+                }
 
-				cnt++;
-			}
+                used.dispose();
 
-			gc.setFont(old);
-			return new Point(maxWidth - x, maxHeight);
-		} catch (Exception err) {
-			err.printStackTrace();
-		}
+                cnt++;
+            }
 
-		return null;
-	}
+            gc.setFont(old);
+            return new Point(maxWidth - x, maxHeight);
+        }
+        catch (Exception err) {
+            err.printStackTrace();
+        }
+
+        return null;
+    }
 
 	private static String cleanUp(String str) {
 		int start = str.indexOf("\\s");

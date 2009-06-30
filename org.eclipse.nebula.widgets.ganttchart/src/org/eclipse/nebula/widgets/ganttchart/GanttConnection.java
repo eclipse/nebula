@@ -24,6 +24,9 @@ public class GanttConnection {
 	private GanttEvent		_target;
 	private Color			_color;
 	private GanttComposite	_parent;
+	
+	GanttConnection() {
+	}
 
 	GanttConnection(GanttEvent source, GanttEvent target, Color color) {
 		this._source = source;
@@ -122,6 +125,20 @@ public class GanttConnection {
 		_parent.connectionRemoved(this);
 	}
 	
+	/**
+	 * Clones the GanttConnection (and adds the clone to the parent)
+	 */
+	public Object clone() throws CloneNotSupportedException {
+		GanttConnection clone = new GanttConnection();
+		clone._parent = _parent;
+		clone._color = _color;
+		clone._source = _source;
+		clone._target = _target;
+		
+		_parent.connectionAdded(clone);
+		return clone;
+	}
+
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
