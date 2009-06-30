@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Eric Wuillai.
+ * Copyright (c) 2005, 2009 Eric Wuillai.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -182,13 +182,14 @@ public class NumberFormatter extends AbstractFormatter {
    * @param loc locale
    */
   public NumberFormatter(String editPattern, String displayPattern, Locale loc) {
-    this.locale		= loc;
+  	this.locale		= loc;
     alwaysShowDec = false;
     setPatterns(editPattern, displayPattern, loc);
+    setValue(null);
   }
 
   /**
-   * Clear a part of the edition cache. The start and len parameters are
+   * Clears a part of the edition cache. The start and len parameters are
    * adjusted to avoid clearing in prefix and suffix parts of the cache.
    * 
    * @param start beginning index
@@ -325,7 +326,7 @@ public class NumberFormatter extends AbstractFormatter {
   }
 
   /**
-   * Returns the default editt pattern for a given locale.
+   * Returns the default edit pattern for a given locale.
    * 
    * @param loc locale
    * @return Edit pattern
@@ -397,10 +398,9 @@ public class NumberFormatter extends AbstractFormatter {
   			if ( zeroIntLen + zeroDecimalLen == 0 
   					 && (editValue.length() == 0
   							 || editValue.charAt(0) == symbols.getDecimalSeparator()) ) {
-		  		modified = false;
-					value = new Integer(0);
+					value = null;
   			} else {
-  				return null;
+					value = new Integer(0);
   			}
   		}
   		modified = false;
@@ -422,27 +422,23 @@ public class NumberFormatter extends AbstractFormatter {
   /**
    * Returns <code>true</code> if current edited value is empty, else returns
    * <code>false</code>.<br>
-   * A NumberFormatter is never empty as it contains always a 0 value by
-   * default, even if it displays no characters (when format is like "###" for
-   * example).
    * 
-   * @return true if empty, else false
+   * @return <code>true</code> if empty, else <code>false</code>
    */
   public boolean isEmpty() {
-    return false;
+    return ! isValid();
   }
 
   /**
    * Returns <code>true</code> if current edited value is valid, else returns
    * <code>false</code>.<br>
-   * A NumberFormatter is always valid as it contains a 0 value by default,
-   * even if it displays no characters.
+   * A NumberFormatter is valid if the cached value is not null.
    * 
-   * @return true if valid, else false
+   * @return <code>true</code> if valid, else <code>false</code>
    * @see ITextFormatter#isValid()
    */
   public boolean isValid() {
-    return true;
+    return getValue() != null;
   }
 
   /**
@@ -466,8 +462,8 @@ public class NumberFormatter extends AbstractFormatter {
   }
 
   /**
-   * Sets the fixed length flags. By default, int and decimal part of the
-   * pattern have a fixed length.
+   * Sets the fixed length flags.<br>
+   * By default, int and decimal part of the pattern have a fixed length.
    * 
    * @param fixedInt flag for int part
    * @param fixedDec flag for decimal part
@@ -563,7 +559,6 @@ public class NumberFormatter extends AbstractFormatter {
     for (i = 0; i < zeroDecimalLen; i++) {
       editValue.append('0');
     }
-    value = new Long(0L);
   }
 
   /**
@@ -632,6 +627,12 @@ public class NumberFormatter extends AbstractFormatter {
     } else if ( value == null ) {
     	clearText(0, editValue.length());
       updateText(editValue.toString(), format(0));
+      if ( zeroIntLen + zeroDecimalLen > 0 ) {
+      	this.value = new Integer(0);
+      } else {
+      	this.value = null;
+      }
+      modified = false;
     } else {
       SWT.error(SWT.ERROR_INVALID_ARGUMENT);
     }
@@ -686,7 +687,7 @@ public class NumberFormatter extends AbstractFormatter {
     										|| (c == ' ' && nbspSeparator)) ) {
     			/*
     			 * Some locales (eg. french) return a no-break space as the grouping
-    			 * separator. This character is not naturel to use for users. So we
+    			 * separator. This character is not natural to use for users. So we
     			 * recognize too the simple space as the grouping separator.
     			 * 
     			 * Java bug: 4510618
