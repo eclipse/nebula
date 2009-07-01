@@ -677,7 +677,9 @@ public class NumberFormatter extends AbstractFormatter {
     					beep();
     					break;
     				}
-    				d++;
+    				if ( d >= 0 ) {
+      				d++;
+    				}
     				intCount++;
     			}
     			// Insert the char
@@ -736,6 +738,7 @@ public class NumberFormatter extends AbstractFormatter {
           }
     		} else {
   				beep();
+  				break;
     		}
     	}
     }
