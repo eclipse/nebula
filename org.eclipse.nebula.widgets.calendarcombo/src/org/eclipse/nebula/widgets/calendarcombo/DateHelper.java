@@ -12,6 +12,7 @@
 package org.eclipse.nebula.widgets.calendarcombo;
 
 import java.text.DateFormat;
+import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -146,86 +147,86 @@ public class DateHelper {
 		return cal;
 	}
 
-	public static Calendar parse(final String comboText, final Locale locale, final String dateFormat, final char[] acceptedSeparatorChars, final List additionalDateFormats) throws Exception {
+	public static Calendar parse(final String comboText, final Locale locale, final String dateFormat, final char[] acceptedSeparatorChars, final List additionalDateFormats)
+			throws CalendarDateParseException, Exception {
 		boolean isNumeric = comboText.replaceAll("[^0-9]", "").length() == comboText.length();
-		
+
 		if (isNumeric) {
 			return numericParse(comboText, locale, false);
 		}
 		else {
 			return slashParse(comboText, dateFormat, acceptedSeparatorChars, locale);
 		}
-		
-				
-				//return null;
-			//}
-			
-			/*if (comboText.length() == 0) {
-				return null;
-			}
 
+		//return null;
+		//}
+
+		/*if (comboText.length() == 0) {
+			return null;
+		}
+
+		try {
+			// start with a hard parse as date format parses can return
+			// false positives on various locales.
+			// false positives may sound good, but they're bad, as they can
+			// cause a year to end up 2000 years off...
 			try {
-				// start with a hard parse as date format parses can return
-				// false positives on various locales.
-				// false positives may sound good, but they're bad, as they can
-				// cause a year to end up 2000 years off...
-				try {
-					mStartDate = DateHelper.parseDateHard(comboText, locale);
-					return mStartDate;
-				}
-				catch (Exception err) {
-
-				}
-				
-				// try true date format parse
-				mStartDate = DateHelper.getDate(comboText, dateFormat, locale);
+				mStartDate = DateHelper.parseDateHard(comboText, locale);
 				return mStartDate;
-				// System.err.println("Got here 2 - Settings parse " +
-				// mStartDate.getTime());
 			}
 			catch (Exception err) {
-				// try the locale (this is error prone due to how java parses
-				// dates)
-				try {
-					mStartDate = DateHelper.parseDate(comboText, locale);
-					return mStartDate;
-					// System.err.println("Got here 3 - Locale parse " +
-					// mStartDate.getTime());
-				}
-				catch (Exception deeper) {
-					try {
-						mStartDate = DateHelper.slashParse(comboText, dateFormat, acceptedSeparatorChars, locale);
-						return mStartDate;
-					}
-					catch (Exception ohwell) {
-						// System.err.println("Failed parse, trying additional formats");
-						if (additionalDateFormats != null) {
-							try {
-								for (int i = 0; i < additionalDateFormats.size(); i++) {
-									try {
-										String format = (String) additionalDateFormats.get(i);
-										Date date = DateHelper.getDate(comboText, format);
-										return mStartDate;
-									}
-									catch (Exception failed) {
-										// keep trying
-									}
-								}
-							}
-							catch (Exception err2) {
-								// don't care
-							}
-						}
-					}
 
-					return mStartDate;
-				}
 			}
+			
+			// try true date format parse
+			mStartDate = DateHelper.getDate(comboText, dateFormat, locale);
+			return mStartDate;
+			// System.err.println("Got here 2 - Settings parse " +
+			// mStartDate.getTime());
 		}
 		catch (Exception err) {
-			err.printStackTrace();
+			// try the locale (this is error prone due to how java parses
+			// dates)
+			try {
+				mStartDate = DateHelper.parseDate(comboText, locale);
+				return mStartDate;
+				// System.err.println("Got here 3 - Locale parse " +
+				// mStartDate.getTime());
+			}
+			catch (Exception deeper) {
+				try {
+					mStartDate = DateHelper.slashParse(comboText, dateFormat, acceptedSeparatorChars, locale);
+					return mStartDate;
+				}
+				catch (Exception ohwell) {
+					// System.err.println("Failed parse, trying additional formats");
+					if (additionalDateFormats != null) {
+						try {
+							for (int i = 0; i < additionalDateFormats.size(); i++) {
+								try {
+									String format = (String) additionalDateFormats.get(i);
+									Date date = DateHelper.getDate(comboText, format);
+									return mStartDate;
+								}
+								catch (Exception failed) {
+									// keep trying
+								}
+							}
+						}
+						catch (Exception err2) {
+							// don't care
+						}
+					}
+				}
+
+				return mStartDate;
+			}
+		}
+		}
+		catch (Exception err) {
+		err.printStackTrace();
 		}*/
-		
+
 		//return null;
 	}
 
@@ -238,26 +239,30 @@ public class DateHelper {
 	 * @param locale
 	 *            Current Locale
 	 * @return Calendar or null on failure
+	 * @throws CalendarDateParseException
+	 *             If date could not be parsed
 	 * @throws Exception
 	 *             on any unforseen issues or bad parse errors
 	 */
-	public static Calendar parseDateHard(final String str, final Locale locale) throws Exception {
-		
+	public static Calendar parseDateHard(final String str, final Locale locale) throws CalendarDateParseException, Exception {
+
 		try {
 			DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, locale);
 			String actualLocalePattern = ((SimpleDateFormat) df).toPattern();
-						
+
 			try {
-				Calendar foo = slashParse(str, actualLocalePattern, new char [] { '/', '-', '.' }, locale);
+				Calendar foo = slashParse(str, actualLocalePattern, new char[] {
+						'/', '-', '.'
+				}, locale);
 				return foo;
 			}
 			catch (Exception err) {
-				
+
 			}
 
 			try {
 				Date foo = df.parse(str);
-				return calendarize(foo, locale);					
+				return calendarize(foo, locale);
 			}
 			catch (Exception err) {
 				// some locales already have 4 y's
@@ -309,7 +314,7 @@ public class DateHelper {
 					return numericParse(fixed, locale, true);
 				}
 				catch (Exception forgetit) {
-					throw new Exception(forgetit);
+					throw new CalendarDateParseException(forgetit);
 				}
 			}
 		}
@@ -500,10 +505,12 @@ public class DateHelper {
 	 * @param locale
 	 *            Locale
 	 * @return Calendar
+	 * @throws CalendarDateParseException
+	 *             If date could not be parsed
 	 * @throws Exception
 	 *             If any step of the parsing failed
 	 */
-	public static Calendar slashParse(final String str, final String dateFormat, final char[] separators, final Locale locale) throws Exception {
+	public static Calendar slashParse(final String str, final String dateFormat, final char[] separators, final Locale locale) throws CalendarDateParseException, Exception {
 		int start = -1;
 		String splitter = null;
 		String dateFormatToUse = dateFormat;
@@ -515,7 +522,7 @@ public class DateHelper {
 			}
 		}
 		if (start == -1)
-			throw new Exception("Failed to find splitter char");
+			throw new CalendarDateParseException("Failed to find splitter char");
 
 		// replace dateFormat until we have same splitter
 		for (int i = 0; i < separators.length; i++) {
@@ -528,10 +535,10 @@ public class DateHelper {
 		Calendar toReturn = Calendar.getInstance(locale);
 		StringTokenizer st = new StringTokenizer(str, splitter);
 		StringTokenizer st2 = new StringTokenizer(dateFormatToUse, splitter);
-		
+
 		if (st.countTokens() != st2.countTokens())
-			throw new Exception("Date format does not match date string in terms of splitter character numbers");
-		
+			throw new CalendarDateParseException("Date format does not match date string in terms of splitter character numbers");
+
 		// we need to do month first (see comment inside)
 		while (st.hasMoreTokens()) {
 			String dateValue = st.nextToken();
@@ -542,10 +549,21 @@ public class DateHelper {
 
 			int calType = getCalendarTypeForString(dateType);
 			if (calType == -1)
-				throw new Exception("Unknown calendar type for '" + dateValue + "'");
+				throw new CalendarDateParseException("Unknown calendar type for '" + dateValue + "'");
 
 			if (calType == Calendar.MONTH) {
-				toReturn.set(calType, Integer.parseInt(dateValue));
+				try {
+					toReturn.set(calType, Integer.parseInt(dateValue));
+				}
+				catch (NumberFormatException nfe) {
+					// string month
+					int parsedMonth = getMonthForString(dateValue, locale);
+					if (parsedMonth == -1) {
+						throw new CalendarDateParseException("Unable to parse month '" + dateValue + "'");
+					}
+					toReturn.set(calType, parsedMonth);
+
+				}
 				// set the accurate calendar-month (zero based) now as when we set a date, we might end up
 				// with a bonus month thanks the the calendars very lenient parsing letting you set 32+ days on a month
 				toReturn.add(Calendar.MONTH, -1);
@@ -555,7 +573,7 @@ public class DateHelper {
 		// reset, skipping month this time
 		st = new StringTokenizer(str, splitter);
 		st2 = new StringTokenizer(dateFormatToUse, splitter);
-		
+
 		while (st.hasMoreTokens()) {
 			String dateValue = st.nextToken();
 			String dateType = st2.nextToken();
@@ -579,10 +597,32 @@ public class DateHelper {
 		toReturn.set(Calendar.MINUTE, 0);
 		toReturn.set(Calendar.SECOND, 0);
 		toReturn.set(Calendar.MILLISECOND, 0);
-		
+
 		return toReturn;
 	}
-	
+
+	/**
+	 * Parses a string (representing a month) and returns it's corresponding
+	 * value as a Calendar month. This is used to parse MMM month dates
+	 * 
+	 * @param monthStr
+	 *            String to parse
+	 * @param locale
+	 *            Locale to use
+	 * @return Month value or -1 if not found
+	 */
+	private static int getMonthForString(String monthStr, Locale locale) {
+		DateFormatSymbols dfs = new DateFormatSymbols(locale);
+		String[] months = dfs.getMonths();
+		for (int i = 0; i < months.length; i++) {
+			if (months[i].toLowerCase(locale).startsWith(monthStr.toLowerCase(locale))) {
+				return i + 1;
+			}
+		}
+
+		return -1;
+	}
+
 	/*public Calendar smartParse(String dateStr, Locale locale) {
 		
 		// Samples:

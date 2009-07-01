@@ -130,6 +130,7 @@ public interface ISettings {
 
 	/**
 	 * Returns the date format to be used in the text display area.
+	 * Please note that this does not support just any format. You need to stick to Month Day and Year related formats and no others. 
 	 * 
 	 * @return Date format string
 	 * @see java.text.DateFormat
