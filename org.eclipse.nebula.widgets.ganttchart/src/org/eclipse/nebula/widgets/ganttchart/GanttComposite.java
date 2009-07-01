@@ -1144,13 +1144,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
         // header
         if (mSettings.drawHeader()) {
-            // don't draw if it's locked as we will need to draw it last
-            if (!mSettings.lockHeaderOnVerticalScroll()) {
-                drawHeader(gc);
-            } else {
-                // same as below, we need the mEndDate
-                calculateDaysVisible(bounds);
-            }
+            // we need to draw the header regardless of locked state as it updates the location of the 
+            // vertical lines
+            drawHeader(gc);
         } else {
             // we need the mDaysVisible value which is normally calculated when we draw boxes, as the header is not drawn here, we need to calculate it manually
             calculateDaysVisible(bounds);
@@ -1163,10 +1159,6 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             if (!mUseFastDrawing || mReCalculateSectionBounds) {
                 calculateSectionBounds(gc, bounds);
             }
-
-            // if we use fast draw and aren't recalculating scopes, we still need to update event visibility, which is faster than scope updates
-            // if (mUseFastDrawing && !mReCalculateSectionBounds && !mReCalculateScopes)
-            // updateEventVisibilities(bounds);
 
             // if we fill the bottom then fill it!
             if (mSettings.drawFillsToBottomWhenUsingGanttSections()) {
@@ -1220,15 +1212,11 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
         } else {
             bounds = new Rectangle(bounds.x, getHeaderHeight(), bounds.width, bounds.height);
-            // bounds = new Rectangle(bounds.x, getHeaderHeight(), bounds.width, bounds.height);
-            // mBounds = bounds;
 
             // long start = System.currentTimeMillis();
             if (mReCalculateScopes) {
                 calculateAllScopes(bounds, null);
             }
-            // long end = System.currentTimeMillis();
-            // System.err.println("Scope calc: " + (end-start));
 
             // draw fills
             drawFills(gc, bounds);
@@ -1257,8 +1245,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         // but there's so many necessary calculations done in the header drawing that we need for later that it's a bit of work
         if (mSettings.lockHeaderOnVerticalScroll() && mSettings.drawHeader()) {
             drawHeader(gc);
-            // draw corner again
-            drawSectionColumn(gc, bounds, true, false, true);
+            // draw corner again            
+            drawSectionColumn(gc, bounds, true, false, true);           
         }
 
         // zoom
@@ -1348,7 +1336,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         mVerticalWeekDividerLineLocations.clear();
 
         Rectangle headerBounds = new Rectangle(mBounds.x, mBounds.y, mBounds.width, mBounds.height);
-        if (mSettings.lockHeaderOnVerticalScroll()) headerBounds.y = mLockedHeaderY;
+        if (mSettings.lockHeaderOnVerticalScroll()) {
+            headerBounds.y = mLockedHeaderY;
+        }
 
         if (mCurrentView == ISettings.VIEW_DAY) {
             // draw the day at the top
@@ -1586,8 +1576,12 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
     // moves the chart to the given y position, takes various spacers into account
     private void vScrollToY(int y, boolean redraw) {
-        if (mSettings.lockHeaderOnVerticalScroll()) y -= getHeaderHeight();
-        else y -= (mBounds.y - getHeaderHeight());
+        if (mSettings.lockHeaderOnVerticalScroll()) {
+            y -= getHeaderHeight();
+        }
+        else {
+            y -= (mBounds.y - getHeaderHeight());
+        }
 
         // we need to take the "previous" scroll location into account
         y += mVerticalScrollPosition;
@@ -1664,7 +1658,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
             mDaysVisible++;
 
-            if (current > bounds.width) break;
+            if (current > bounds.width) {
+                break;
+            }
         }
     }
 
@@ -2021,22 +2017,29 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         int height = bounds.height + yStart - 1 + (applyVscroll ? mVerticalScrollPosition : 0);
 
         if (mCurrentView == ISettings.VIEW_WEEK || mCurrentView == ISettings.VIEW_MONTH || mCurrentView == ISettings.VIEW_DAY || mCurrentView == ISettings.VIEW_D_DAY) {
+            // normal day lines
+            gc.setForeground(mLineColor);
             for (int i = 0; i < mVerticalLineLocations.size(); i++) {
-                Integer inte = (Integer) mVerticalLineLocations.get(i);
-                int current = inte.intValue();
-
-                if (mVerticalWeekDividerLineLocations.contains(inte)) {
-                    gc.setForeground(mLineWeekDividerColor);
-                    if (mUseAlpha) gc.setAlpha(mColorManager.getWeekDividerAlpha());
-                    gc.drawLine(current, yStart, current, height);
-                    if (mUseAlpha) {
-                        gc.setAlpha(255);
-                        gc.setAdvanced(false);
-                    }
-                } else gc.setForeground(mLineColor);
+                int current = ((Integer) mVerticalLineLocations.get(i)).intValue();
 
                 gc.drawLine(current, yStart, current, height);
             }
+            
+            // "weekend" lines
+            gc.setForeground(mLineWeekDividerColor);
+            Object [] weekLocs = mVerticalWeekDividerLineLocations.toArray();
+
+            if (mUseAlpha) {
+                gc.setAlpha(mColorManager.getWeekDividerAlpha());
+            }
+            for (int i = 0; i < weekLocs.length; i++) {
+                int current = ((Integer)weekLocs[i]).intValue();
+                gc.drawLine(current, yStart, current, height);
+            }
+            if (mUseAlpha) {
+                gc.setAlpha(255);
+                gc.setAdvanced(false);
+            }                
 
             Calendar today = Calendar.getInstance(mDefaultLocale);
             drawTodayLine(gc, bounds, getStartingXfor(today), today.get(Calendar.DAY_OF_WEEK));
@@ -2308,7 +2311,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             gc.fillGradientRectangle(current + 1, topY + 1, mDayWidth - 1, heightY - 1, true);
 
             mVerticalLineLocations.add(new Integer(current));
-            if (temp.get(Calendar.DAY_OF_WEEK) == mCalendar.getFirstDayOfWeek()) mVerticalWeekDividerLineLocations.add(new Integer(current));
+            if (temp.get(Calendar.DAY_OF_WEEK) == mCalendar.getFirstDayOfWeek()) {
+                mVerticalWeekDividerLineLocations.add(new Integer(current));
+            }
 
             gc.setForeground(mColorManager.getWeekTimeDividerColor());
             gc.drawRectangle(current, topY, mDayWidth, heightY);
@@ -2458,6 +2463,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         if (letter >= splitEvery) {
             letter -= splitEvery;
         }
+                
         mDaysVisible = 0;
 
         Calendar temp = Calendar.getInstance(mDefaultLocale);
@@ -2535,7 +2541,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             mDaysVisible++;
 
             letter++;
-            if (letter >= splitEvery) {
+            if (letter % splitEvery == 0) {
                 mVerticalWeekDividerLineLocations.add(new Integer(current));
                 letter = 0;
             }
