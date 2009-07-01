@@ -445,9 +445,10 @@ abstract class AbstractSettings implements ISettings {
 
 	public Calendar getDDayRootCalendar() {
 		Calendar mDDayCalendar = Calendar.getInstance(getDefaultLocale());
-		mDDayCalendar.set(Calendar.YEAR, 2000);
+		mDDayCalendar.set(Calendar.YEAR, mDDayCalendar.get(Calendar.YEAR));
 		mDDayCalendar.set(Calendar.MONTH, Calendar.JANUARY);
 		mDDayCalendar.set(Calendar.DATE, 1);
+		mDDayCalendar.set(Calendar.HOUR, 0);
 		mDDayCalendar.set(Calendar.MINUTE, 0);
 		mDDayCalendar.set(Calendar.SECOND, 0);
 		mDDayCalendar.set(Calendar.MILLISECOND, 0);
@@ -469,6 +470,10 @@ abstract class AbstractSettings implements ISettings {
 	public boolean forceMouseWheelVerticalScroll() {
 		return false;
 	}
+
+    public int getSectionTextSpacer() {
+        return 30;
+    }
 
 	
 }

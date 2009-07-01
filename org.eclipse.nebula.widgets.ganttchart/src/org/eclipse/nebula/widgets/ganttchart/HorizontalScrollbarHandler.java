@@ -193,7 +193,7 @@ class HorizontalScrollbarHandler implements Listener {
 			if (extraRight > 0) {
 				rangeBonus += extraRight;
 			}
-
+			
 			// positive extraLeft means we're manually further to the left of the start event
 			// negative extraLeft means we're to the right of it 
 			// positive extraRight means we're to the right of the last event
