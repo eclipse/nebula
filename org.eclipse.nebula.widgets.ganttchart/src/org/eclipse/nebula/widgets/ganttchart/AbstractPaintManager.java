@@ -25,8 +25,11 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 
 public abstract class AbstractPaintManager implements IPaintManager {
+    
+	public void redrawStarting() {
+    }
 
-	public void drawEvent(GanttComposite ganttComposite, ISettings settings, IColorManager colorManager, GanttEvent ge, GC gc, boolean isSelected, boolean threeDee, int dayWidth, int xStart, int y, int eventWidth, Rectangle bounds) {
+    public void drawEvent(GanttComposite ganttComposite, ISettings settings, IColorManager colorManager, GanttEvent ge, GC gc, boolean isSelected, boolean threeDee, int dayWidth, int xStart, int y, int eventWidth, Rectangle bounds) {
 
 		boolean alpha = colorManager.useAlphaDrawing();
 		
@@ -289,25 +292,27 @@ public abstract class AbstractPaintManager implements IPaintManager {
 			return;
 		
 		if (ge.getStartDate() != null) {
-			int xs = ganttComposite.getXForDate(ge.getStartDate());
-			if (xs != ge.getX()) {				
+			int xs = ganttComposite.getStartingXfor(ge.getStartDate());
+            // commenting this out July 2, 2009, if we draw the marker, draw it regardless if it's same or not
+			// otherwise doesn't make much sense
+			//if (xs != ge.getX()) {				
 				int ys = y - spacer;
 				gc.setForeground(colorManager.getRevisedStartColor());
 				gc.drawLine(xs, ys, x, ys);
 				gc.drawLine(xs, ys - 3, xs, ys + 3);
 				gc.drawLine(x, ys - 3, x, ys + 3);
-			}
+			//}
 		}
 		if (ge.getEndDate() != null) {
-			int xe = ganttComposite.getXForDate(ge.getEndDate());
+			int xe = ganttComposite.getStartingXfor(ge.getEndDate());
 			xe += ganttComposite.getDayWidth();
-			if (xe != ge.getXEnd()) {
+			//if (xe != ge.getXEnd()) {
 				int ys = y + settings.getEventHeight() + spacer;
 				gc.setForeground(colorManager.getRevisedEndColor());
 				gc.drawLine(xe, ys, x + eventWidth, ys);
 				gc.drawLine(xe, ys - 3, xe, ys + 3);
 				gc.drawLine(x + eventWidth, ys - 3, x + eventWidth, ys + 3);
-			}
+			//}
 		}
 	}
 

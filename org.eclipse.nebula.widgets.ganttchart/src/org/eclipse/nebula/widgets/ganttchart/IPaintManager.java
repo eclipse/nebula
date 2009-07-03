@@ -17,6 +17,11 @@ import org.eclipse.swt.graphics.Rectangle;
 
 public interface IPaintManager {
 
+    /**
+     * Notifies a redraw is starting from scratch, so you can zero out variables etc
+     */
+    public void redrawStarting();
+    
 	/**
 	 * Draws one checkpoint.
 	 * 
