@@ -18,6 +18,7 @@ import org.eclipse.nebula.widgets.grid.GridItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -52,8 +53,12 @@ public class DefaultRowHeaderRenderer extends AbstractRenderer
         String text = getHeaderText(item);
 
         gc.setFont(getDisplay().getSystemFont());
-
-        gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+        
+        Color background = getHeaderBackground(item);
+        if( background == null ) {
+        	background = getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
+        }
+        gc.setBackground(background);
 
         if (isSelected() && item.getParent().getCellSelectionEnabled())
         {
@@ -145,7 +150,12 @@ public class DefaultRowHeaderRenderer extends AbstractRenderer
 
         width -= rightMargin;
 
-        gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
+        Color foreground = getHeaderForeground(item);
+        if( foreground == null ) {
+        	foreground = getDisplay().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND);
+        }
+        
+        gc.setForeground(foreground);
 
         
         int y = getBounds().y;
@@ -241,6 +251,15 @@ public class DefaultRowHeaderRenderer extends AbstractRenderer
         }
         return text;
     }
+    
+    private Color getHeaderBackground(GridItem item) {
+    	return item.getHeaderBackground();
+    }
+    
+    private Color getHeaderForeground(GridItem item) {
+    	return item.getHeaderForeground();
+    }
+    
     private void getTextLayout(GC gc, GridItem gridItem)
     {
         if (textLayout == null)

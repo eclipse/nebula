@@ -160,6 +160,16 @@ public class GridItem extends Item
      * Row header image
      */
     private Image headerImage = null;
+    
+    /**
+     * Background color of the header
+     */
+    private Color headerBackground = null;
+    
+    /**
+     * Foreground color of the header
+     */
+    public Color headerForeground = null;
 
     /**
      * (SWT.VIRTUAL only) Flag that specifies whether the client has already been sent a SWT.SetData
@@ -1657,6 +1667,36 @@ public class GridItem extends Item
         checkWidget();
     	return headerImage;
     }
+    
+    /**
+     * Returns the receiver's row header background color
+     * @return the color or <code>null</code> if none
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
+     */
+    public Color getHeaderBackground() {
+    	checkWidget();
+    	return headerBackground;
+    }
+    
+    /**
+     * Returns the receiver's row header foreground color
+     * @return the color or <code>null</code> if none
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
+     */
+    public Color getHeaderForeground() {
+    	checkWidget();
+    	return headerForeground;
+    }
 
     /**
      * Sets the receiver's row header text.  If the text is <code>null</code> the row header will
@@ -1699,10 +1739,6 @@ public class GridItem extends Item
      * Sets the receiver's row header image.  If the image is <code>null</code> none is shown in the header
      *
      * @param image the new image
-     * @throws IllegalArgumentException
-     * <ul>
-     * <li>ERROR_NULL_ARGUMENT - if the text is null</li>
-     * </ul>
      * @throws org.eclipse.swt.SWTException
      * <ul>
      * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
@@ -1731,6 +1767,38 @@ public class GridItem extends Item
             parent.recalculateRowHeaderHeight(this,oldHeight,newHeight);
         }
         parent.redraw();
+    }
+    
+    /**
+     * Set the new header background
+     * @param headerBackground the color or <code>null</code>
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
+     */
+    public void setHeaderBackground(Color headerBackground) {
+    	checkWidget();
+    	this.headerBackground = headerBackground;
+    	parent.redraw();
+    }
+    
+    /**
+     * Set the new header foreground
+     * @param headerForeground the color or <code>null</code>
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
+     */
+    public void setHeaderForeground(Color headerForeground) {
+    	checkWidget();
+    	this.headerForeground = headerForeground;
+    	parent.redraw();
     }
 
     /**
@@ -1947,6 +2015,8 @@ public class GridItem extends Item
     	hasSetData = false;
     	headerText = null;
     	headerImage = null;
+    	headerBackground = null;
+    	headerForeground = null;
 
     	// Recursively clear children if requested.
     	if (allChildren)

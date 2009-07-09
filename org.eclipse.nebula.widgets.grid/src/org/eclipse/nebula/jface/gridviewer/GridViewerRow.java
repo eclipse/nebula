@@ -131,7 +131,7 @@ public class GridViewerRow extends ViewerRow
     public void setBackground(int columnIndex, Color color)
     {
     	if( columnIndex == Integer.MAX_VALUE ) {
-    		//TODO Provide implementation for GridItem
+    		item.setHeaderBackground(color);
     	} else {
     		item.setBackground(columnIndex, color);
     	}
@@ -151,7 +151,7 @@ public class GridViewerRow extends ViewerRow
     public void setForeground(int columnIndex, Color color)
     {
     	if( columnIndex == Integer.MAX_VALUE ) {
-    		//TODO Provide implementation for GridItem
+    		item.setHeaderForeground(color);
     	} else {
     		item.setForeground(columnIndex, color);
     	}
