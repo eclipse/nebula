@@ -154,6 +154,8 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
         if( column.getHeaderControl() == null ) {
         	y = getBounds().y + getBounds().height - bottomMargin
         		- gc.getFontMetrics().getHeight();			
+        } else {
+        	y = getBounds().y + getBounds().height - bottomMargin - gc.getFontMetrics().getHeight() - computeControlSize(column).y;
         }
         
         String text = column.getText();        
@@ -182,25 +184,24 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
         }
         
         
-        if (!isWordWrap())
-            {
-          gc.drawString(text, getBounds().x + x + pushedDrawingOffset,
-              y + pushedDrawingOffset,true);
-          }
-          else
-          {
-            getTextLayout(gc, column);
-              textLayout.setWidth(width < 1 ? 1 : width);
-              textLayout.setText(text);
-              y -= textLayout.getBounds().height;
-              
-              if (column.getParent().isAutoHeight())
-              {
-            	  column.getParent().recalculateHeader();
-              }
-              
-              textLayout.draw(gc, getBounds().x + x + pushedDrawingOffset, y + pushedDrawingOffset);
-          }
+        if (!isWordWrap()) {
+        	gc.drawString(text, getBounds().x + x + pushedDrawingOffset,
+        			y + pushedDrawingOffset,true);
+        }
+        else
+        {
+        	getTextLayout(gc, column);
+        	textLayout.setWidth(width < 1 ? 1 : width);
+        	textLayout.setText(text);
+        	y -= textLayout.getBounds().height;
+
+        	if (column.getParent().isAutoHeight())
+        	{
+        		column.getParent().recalculateHeader();
+        	}
+
+        	textLayout.draw(gc, getBounds().x + x + pushedDrawingOffset, y + pushedDrawingOffset);
+        }
 
         if (column.getSort() != SWT.NONE)
         {
@@ -382,7 +383,10 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
 		Rectangle bounds = getBounds();
 		GridColumn column = (GridColumn) value;
 		Point controlSize = computeControlSize(column);
-		return new Rectangle(bounds.x+3,bounds.height-bottomMargin-controlSize.y,bounds.width-6,controlSize.y);
+		
+		int y = getBounds().y + getBounds().height - bottomMargin - controlSize.y;
+		
+		return new Rectangle(bounds.x+3,y,bounds.width-6,controlSize.y);
 	}
 
 	private Point computeControlSize(GridColumn column) {
