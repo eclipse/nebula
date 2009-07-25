@@ -78,11 +78,11 @@ public abstract class AbstractEffect implements IEffect {
 	/**
 	 * Check if the effect has ended. In that case, start the onStop runnable.
 	 */
-	public void processEnd() {
+	public void processEnd(long time) {
 		if (done)
 			return;
 
-		if (getCurrentTime() == length) {
+		if (time == length) {
 			done = true;
 			doStop();
 		}
@@ -108,7 +108,7 @@ public abstract class AbstractEffect implements IEffect {
 
 		applyEffect(currentTime);
 
-		processEnd();
+		processEnd(currentTime);
 	}
 
 	/*
