@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Releng
+Bundle-SymbolicName: org.eclipse.nebula.widgets.radiogroup.releng
+Bundle-Version: 1.0.0.qualifier

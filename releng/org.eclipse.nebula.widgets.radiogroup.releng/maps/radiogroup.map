@@ -1,0 +1,5 @@
+plugin@org.eclipse.nebula.widgets.radiogroup=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.radiogroup
+#plugin@org.eclipse.nebula.widgets.radiogroup.tests=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.radiogroup.tests
+
+feature@org.eclipse.nebula.widgets.radiogroup_feature=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/features/org.eclipse.nebula.widgets.radiogroup_feature
+#feature@org.eclipse.nebula.widgets.radiogroup.test_feature=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/features/org.eclipse.nebula.widgets.radiogroup.test_feature
