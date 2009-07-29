@@ -14,23 +14,21 @@ package org.eclipse.swt.nebula.snippets.radiogroup;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.value.IValueProperty;
-import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
-import org.eclipse.jface.databinding.viewers.ViewerProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.window.Window;
 import org.eclipse.nebula.jface.viewer.radiogroup.RadioGroupViewer;
+import org.eclipse.nebula.widgets.radiogroup.RadioGroup;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -40,9 +38,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 public class RadioGroupViewerSnippet01 {
 	public static void main(String[] arrrrgs) {
@@ -66,11 +64,11 @@ public class RadioGroupViewerSnippet01 {
 		final IObservableList people = createModel();
 
 		final Shell shell = new Shell();
-		shell.setLayout(new GridLayout(2, false));
+		shell.setLayout(new GridLayout(3, false));
 
 		Group actionGroup = new Group(shell, SWT.NONE);
 		actionGroup
-				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
+				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		actionGroup.setText(" Actions ");
 		RowLayout rowLayout = new RowLayout(SWT.VERTICAL);
 		rowLayout.fill = true;
@@ -89,17 +87,20 @@ public class RadioGroupViewerSnippet01 {
 		refresh.setText("Refresh");
 
 		Group group = new Group(shell, SWT.NONE);
-		group.setText(" RadioGroupViewer ");
-		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		group.setText(" Radio Group Viewer ");
+		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		group.setLayout(new FillLayout());
 
-		final RadioGroupViewer radioGroupViewer = new RadioGroupViewer(group,
-				SWT.VERTICAL);
+		final RadioGroupViewer radioGroupViewer = new RadioGroupViewer(
+				new RadioGroup(group, SWT.VERTICAL));
 
-		final Label statusLabel = new Label(shell, SWT.NONE);
-		GridData statusLabelData = new GridData(SWT.FILL, SWT.FILL, true, false);
-		statusLabelData.horizontalSpan = 2;
-		statusLabel.setLayoutData(statusLabelData);
+		Group eventGroup = new Group(shell, SWT.NONE);
+		eventGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		eventGroup.setText(" Events ");
+		eventGroup.setLayout(new FillLayout());
+
+		final Text events = new Text(eventGroup, SWT.MULTI | SWT.READ_ONLY
+				| SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
 
 		// Bind UI
 
@@ -154,13 +155,15 @@ public class RadioGroupViewerSnippet01 {
 
 		ViewerSupport.bind(radioGroupViewer, people, nameProp);
 
-		ISWTObservableValue statusLabelText = WidgetProperties.text().observe(
-				statusLabel);
-		IObservableValue selectionName = ViewerProperties.singleSelection()
-				.value(nameProp).observe(radioGroupViewer);
-
-		DataBindingContext dbc = new DataBindingContext();
-		dbc.bindValue(statusLabelText, selectionName);
+		radioGroupViewer
+				.addPostSelectionChangedListener(new ISelectionChangedListener() {
+					public void selectionChanged(SelectionChangedEvent event) {
+						events.append(event.toString() + "\n");
+						events.append("\tselection = "
+								+ ((IStructuredSelection) event.getSelection())
+										.getFirstElement() + "\n\n");
+					}
+				});
 
 		return shell;
 	}
@@ -208,6 +211,11 @@ public class RadioGroupViewerSnippet01 {
 
 		public void removePropertyChangeListener(PropertyChangeListener listener) {
 			changeSupport.removePropertyChangeListener(listener);
+		}
+
+		@Override
+		public String toString() {
+			return "Person[name=\"" + name + "\"]";
 		}
 	}
 }
