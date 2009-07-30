@@ -16,7 +16,7 @@ version="0.5.0"
 projRelengRoot=:pserver:anonymous@dev.eclipse.org:/cvsroot/technology
 projRelengPath=org.eclipse.swt.nebula/releng/org.eclipse.nebula.widgets.gallery.releng
 
-# Fake releng project (by Nick for first set up)
+# Fake releng project (by Nick for first setup)
 #projRelengRoot=:pserver:anonymous@dev.eclipse.org:/cvsroot/technology
 #projRelengPath=org.eclipse.dash/athena/org.eclipse.dash.commonbuilder/org.eclipse.nebula.widgets.gallery.releng
 
