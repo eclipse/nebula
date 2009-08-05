@@ -314,7 +314,7 @@ public class DateHelper {
 					return numericParse(fixed, locale, true);
 				}
 				catch (Exception forgetit) {
-					throw new CalendarDateParseException(forgetit);
+					throw new CalendarDateParseException(forgetit, CalendarDateParseException.TYPE_EXCEPTION);
 				}
 			}
 		}
@@ -522,7 +522,7 @@ public class DateHelper {
 			}
 		}
 		if (start == -1)
-			throw new CalendarDateParseException("Failed to find splitter char");
+			throw new CalendarDateParseException("Failed to find splitter char", CalendarDateParseException.TYPE_NO_SLPITTER_CHAR);
 
 		// replace dateFormat until we have same splitter
 		for (int i = 0; i < separators.length; i++) {
@@ -537,7 +537,7 @@ public class DateHelper {
 		StringTokenizer st2 = new StringTokenizer(dateFormatToUse, splitter);
 
 		if (st.countTokens() != st2.countTokens())
-			throw new CalendarDateParseException("Date format does not match date string in terms of splitter character numbers");
+			throw new CalendarDateParseException("Date format does not match date string in terms of splitter character numbers", CalendarDateParseException.TYPE_INSUFFICIENT_SPLITTERS);
 
 		// we need to do month first (see comment inside)
 		while (st.hasMoreTokens()) {
@@ -549,7 +549,7 @@ public class DateHelper {
 
 			int calType = getCalendarTypeForString(dateType);
 			if (calType == -1)
-				throw new CalendarDateParseException("Unknown calendar type for '" + dateValue + "'");
+				throw new CalendarDateParseException("Unknown calendar type for '" + dateValue + "'", CalendarDateParseException.TYPE_UNKNOWN_CALENDAR_TYPE);
 
 			if (calType == Calendar.MONTH) {
 				try {
@@ -559,7 +559,7 @@ public class DateHelper {
 					// string month
 					int parsedMonth = getMonthForString(dateValue, locale);
 					if (parsedMonth == -1) {
-						throw new CalendarDateParseException("Unable to parse month '" + dateValue + "'");
+						throw new CalendarDateParseException("Unable to parse month '" + dateValue + "'", CalendarDateParseException.TYPE_UNABLE_TO_PARSE_MONTH);
 					}
 					toReturn.set(calType, parsedMonth);
 
