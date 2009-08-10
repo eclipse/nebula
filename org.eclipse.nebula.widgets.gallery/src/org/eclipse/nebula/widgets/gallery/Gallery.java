@@ -677,6 +677,12 @@ public class Gallery extends Canvas {
 		});
 	}
 
+	/**
+	 * Scroll the Gallery in order to make 'item' visible.
+	 * 
+	 * @param item
+	 *            Item to show
+	 */
 	public void showItem(GalleryItem item) {
 		this.checkWidget();
 		this._showItem(item);
@@ -808,9 +814,14 @@ public class Gallery extends Canvas {
 	/**
 	 * Toggle item selection status
 	 * 
-	 * @param i
+	 * @param item
+	 *            Item which state is to be changed.
 	 * @param selected
+	 *            true is the item is now selected, false if it is now
+	 *            unselected.
 	 * @param notifyListeners
+	 *            If true, a selection event will be sent to all the current
+	 *            selection listeners.
 	 * 
 	 */
 	protected void setSelected(GalleryItem item, boolean selected,
@@ -934,7 +945,7 @@ public class Gallery extends Canvas {
 	}
 
 	/**
-	 * Deselects the item at the given zero-relative index in the receiver.
+	 * Deselects all items.
 	 */
 	public void deselectAll() {
 		checkWidget();
@@ -943,6 +954,13 @@ public class Gallery extends Canvas {
 		redraw();
 	}
 
+	/**
+	 * Deselects all items and send selection event depending on parameter.
+	 * 
+	 * @param notifyListeners
+	 *            If true, a selection event will be sent to all the current
+	 *            selection listeners.
+	 */
 	protected void _deselectAll(boolean notifyListeners) {
 
 		if (DEBUG)
@@ -1000,12 +1018,15 @@ public class Gallery extends Canvas {
 		}
 	}
 
+	/**
+	 * Clean up the Gallery and renderers on dispose.
+	 */
 	void onDispose() {
 		// Remove items if not Virtual.
 		if (!virtual)
 			removeAll();
 
-		// Dispose Renderers
+		// Dispose renderers
 		if (itemRenderer != null)
 			itemRenderer.dispose();
 
@@ -1234,7 +1255,7 @@ public class Gallery extends Canvas {
 			if (virtualGroups) {
 				item = _getItem(index, false);
 			} else {
-				item = getItem(index);
+				item = _getItem(index);
 			}
 			if ((vertical ? item.y : item.x) > end)
 				break;
@@ -1254,17 +1275,25 @@ public class Gallery extends Canvas {
 	}
 
 	/**
-	 * Not implemented
+	 * Refresh item by firering SWT.SetData.
+	 * <p>
+	 * Currently not implemented.
+	 * </p>
 	 * 
-	 * @param nb
+	 * @param index
 	 */
-	public void refresh(int nb) {
+	public void refresh(int index) {
 		checkWidget();
-		if (nb < getItemCount()) {
+		if (index < getItemCount()) {
 			// TODO: refresh
 		}
 	}
 
+	/**
+	 * Redraw the item given as parameter.
+	 * 
+	 * @param item
+	 */
 	public void redraw(GalleryItem item) {
 		checkWidget();
 
@@ -1395,7 +1424,7 @@ public class Gallery extends Canvas {
 	}
 
 	/**
-	 * Send setData event. Used if SWT.VIRTUAL
+	 * Sends SWT.SetData event. Used if SWT.VIRTUAL
 	 * 
 	 * @param galleryItem
 	 * @param index
@@ -1500,7 +1529,7 @@ public class Gallery extends Canvas {
 			if (virtualGroups) {
 				item = this._getItem(i, false);
 			} else {
-				item = this.getItem(i);
+				item = this._getItem(i);
 			}
 
 			if (onlyUpdateGroup != null && !onlyUpdateGroup.equals(item)) {
@@ -1695,8 +1724,8 @@ public class Gallery extends Canvas {
 	 * created and a SWT.SetData event is fired.
 	 * 
 	 * @param index
-	 *            : index of the item.
-	 * @return : the GalleryItem or null if index is out of bounds
+	 *            index of the item.
+	 * @return the GalleryItem or null if index is out of bounds
 	 */
 	public GalleryItem getItem(int index) {
 		checkWidget();
@@ -1728,20 +1757,30 @@ public class Gallery extends Canvas {
 
 	/**
 	 * Get the item at index.<br/>
-	 * If SWT.VIRTUAL is used and the item has not been used, the item is
+	 * If SWT.VIRTUAL is used and the item has not been used yet, the item is
 	 * created and a SWT.SetData is fired.<br/>
 	 * 
 	 * This is the internal implementation of this method : checkWidget() is not
 	 * used.
 	 * 
 	 * @param index
-	 * @return
+	 * @return The item at 'index' (not null)
 	 */
 	protected GalleryItem _getItem(int index) {
 		return _getItem(index, true);
 	}
 
-	public GalleryItem _getItem(int index, boolean create) {
+	/**
+	 * Get the item at 'index'.<br/>
+	 * If SWT.VIRTUAL is used, 'create' is true and the item has not been used
+	 * yet, the item is created and a SWT.SetData is fired.<br/>
+	 * 
+	 * @param index
+	 * @param create
+	 * @return The item at 'index' or null if there was no item and 'create' was
+	 *         false.
+	 */
+	protected GalleryItem _getItem(int index, boolean create) {
 
 		if (index < getItemCount()) {
 			updateItem(null, index, create);
@@ -1798,7 +1837,7 @@ public class Gallery extends Canvas {
 	 * Get group at pixel position
 	 * 
 	 * @param coords
-	 * @return
+	 * @return GalleryItem or null
 	 */
 	private GalleryItem _getGroup(Point coords) {
 		// If there is no item in the gallery, return asap
@@ -1829,7 +1868,7 @@ public class Gallery extends Canvas {
 	 * Get group at pixel position (relative to client area).
 	 * </p>
 	 * <p>
-	 * This is experimental API which is exposing an internal method, it may
+	 * This is an experimental API which is exposing an internal method, it may
 	 * become deprecated at some point.
 	 * </p>
 	 * 
@@ -1855,12 +1894,15 @@ public class Gallery extends Canvas {
 	// }
 
 	/**
-	 * Clear all items.<br/>
+	 * Clear all Gallery items.<br/>
 	 * 
 	 * 
 	 * If the Gallery is virtual, the item count is not reseted and all items
 	 * will be created again at their first use.<br/>
 	 * 
+	 * @param all
+	 *            If true, all children will be cleared. Only groups are cleared
+	 *            otherwise.
 	 */
 	public void clearAll(boolean all) {
 		checkWidget();
@@ -1892,6 +1934,9 @@ public class Gallery extends Canvas {
 
 	}
 
+	/**
+	 * Clear all GalleryGroups
+	 */
 	public void clearAll() {
 		clearAll(false);
 	}
@@ -1899,22 +1944,28 @@ public class Gallery extends Canvas {
 	/**
 	 * Clear one item.<br/>
 	 * 
-	 * @param i
+	 * @param index
 	 */
-	public void clear(int i) {
-		clear(i, false);
+	public void clear(int index) {
+		clear(index, false);
 	}
 
-	public void clear(int i, boolean all) {
+	/**
+	 * Clear one item and all its children if 'all' is true
+	 * 
+	 * @param index
+	 * @param all
+	 */
+	public void clear(int index, boolean all) {
 		checkWidget();
 
 		// Item is already cleared, return immediately.
-		if (items[i] == null)
+		if (items[index] == null)
 			return;
 
 		if (virtual) {
 			// Clear item
-			items[i] = null;
+			items[index] = null;
 
 			// In virtual mode, clearing an item can change its content, so
 			// force content update
@@ -1922,9 +1973,9 @@ public class Gallery extends Canvas {
 			updateScrollBarsProperties();
 		} else {
 			// Reset item
-			items[i].clear();
+			items[index].clear();
 			if (all) {
-				items[i].clearAll(true);
+				items[index].clearAll(true);
 			}
 		}
 
