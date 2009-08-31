@@ -539,37 +539,11 @@ public class DateHelper {
 		if (st.countTokens() != st2.countTokens())
 			throw new CalendarDateParseException("Date format does not match date string in terms of splitter character numbers", CalendarDateParseException.TYPE_INSUFFICIENT_SPLITTERS);
 
-		// we need to do month first (see comment inside)
-		while (st.hasMoreTokens()) {
-			String dateValue = st.nextToken();
-			String dateType = st2.nextToken();
-
-			dateValue = dateValue.replaceAll(" ", "");
-			dateType = dateType.replaceAll(" ", "");
-
-			int calType = getCalendarTypeForString(dateType);
-			if (calType == -1)
-				throw new CalendarDateParseException("Unknown calendar type for '" + dateValue + "'", CalendarDateParseException.TYPE_UNKNOWN_CALENDAR_TYPE);
-
-			if (calType == Calendar.MONTH) {
-				try {
-					toReturn.set(calType, Integer.parseInt(dateValue));
-				}
-				catch (NumberFormatException nfe) {
-					// string month
-					int parsedMonth = getMonthForString(dateValue, locale);
-					if (parsedMonth == -1) {
-						throw new CalendarDateParseException("Unable to parse month '" + dateValue + "'", CalendarDateParseException.TYPE_UNABLE_TO_PARSE_MONTH);
-					}
-					toReturn.set(calType, parsedMonth);
-
-				}
-				// set the accurate calendar-month (zero based) now as when we set a date, we might end up
-				// with a bonus month thanks the the calendars very lenient parsing letting you set 32+ days on a month
-				toReturn.add(Calendar.MONTH, -1);
-			}
-		}
-
+		// variables we'll be extracting
+		int monthToSet = -1;
+		int dayToSet = -1;
+		int yearToSet = -1;
+	
 		// reset, skipping month this time
 		st = new StringTokenizer(str, splitter);
 		st2 = new StringTokenizer(dateFormatToUse, splitter);
@@ -584,12 +558,39 @@ public class DateHelper {
 			int calType = getCalendarTypeForString(dateType);
 			// we already did month
 			if (calType == Calendar.MONTH) {
+			    monthToSet = Integer.parseInt(dateValue);
 				continue;
 			}
+			if (calType == Calendar.YEAR) {
+			    yearToSet = Integer.parseInt(dateValue);
+			    continue;
+			}
+            if (calType == Calendar.DATE) {
+                dayToSet = Integer.parseInt(dateValue);
+                continue;
+            }
 
 			toReturn.set(calType, Integer.parseInt(dateValue));
 		}
 
+		// set all date parameters at the same time, or else we'll get month-skipping due to setting a value later (such as a date that is too high
+		// for the current month). (-1 for month as Calendar class is month-zero-based).
+		if (monthToSet != -1 && dayToSet != -1 && yearToSet != -1) {
+		    toReturn.set(yearToSet, monthToSet-1, dayToSet);
+		}
+		else {
+		    // set what we know
+		    if (yearToSet != -1) {
+		        toReturn.set(Calendar.YEAR, yearToSet);
+		    }
+		    if (monthToSet != -1) {
+		        toReturn.set(Calendar.MONTH, monthToSet-1);
+		    }
+		    if (dayToSet != -1) {
+		        toReturn.set(Calendar.DATE, dayToSet);
+		    }
+		}
+		
 		if (toReturn.get(Calendar.YEAR) < 100)
 			toReturn.set(Calendar.YEAR, toReturn.get(Calendar.YEAR) + 2000);
 
