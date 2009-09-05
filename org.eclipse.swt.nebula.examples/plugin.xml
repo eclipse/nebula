@@ -44,6 +44,10 @@
             class="org.eclipse.swt.nebula.examples.parts.DateChooserComboExampleTab"
             name="DateChooserCombo">
       </tab>
+      <tab
+            class="org.eclipse.swt.nebula.examples.parts.RadioGroupExampleTab"
+            name="RadioGroup">
+      </tab>
             
    </extension>
    <extension

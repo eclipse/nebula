@@ -13,6 +13,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.nebula.widgets.datechooser,
  org.eclipse.nebula.widgets.formattedtext,
  org.eclipse.nebula.widgets.pshelf,
- org.eclipse.nebula.widgets.collapsiblebuttons
+ org.eclipse.nebula.widgets.collapsiblebuttons,
+ org.eclipse.nebula.widgets.radiogroup
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
 Export-Package: org.eclipse.swt.nebula.examples
