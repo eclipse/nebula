@@ -845,7 +845,9 @@ public class CalendarCombo extends Composite {
             if (comboText.length() == 0 && mStartDate != null) {
                 mStartDate = null;
                 setText("");
-                notifyDateChangedToNull();
+                if (mLastNotificationDate != null) {
+                    notifyDateChangedToNull();
+                }
                 return;
             }
 
@@ -873,6 +875,10 @@ public class CalendarCombo extends Composite {
     }
 
     private void notifyDateChangedToNull() {
+        if (mLastNotificationDate == null) {
+            return;
+        }
+        
         for (int i = 0; i < mListeners.size(); i++) {
             try {
                 ((ICalendarListener) mListeners.get(i)).dateChanged(mStartDate);
@@ -880,11 +886,23 @@ public class CalendarCombo extends Composite {
                 err.printStackTrace();
             }
         }
+        
+        mLastNotificationDate = null;
+    }
+    
+    private void notifyDateRangeChanged() {
+        for (int i = 0; i < mListeners.size(); i++) {
+            try {
+                ((ICalendarListener) mListeners.get(i)).dateRangeChanged(mStartDate, mEndDate);
+            } catch (Exception err) {
+                err.printStackTrace();
+            }
+        }
     }
     
     private void notifyDateChanged() {
-        // don't notify on same dates
-        if (mLastNotificationDate == null && mStartDate == null) {
+        if (mStartDate == null) {
+            notifyDateChangedToNull();
             return;
         }
 
@@ -894,13 +912,8 @@ public class CalendarCombo extends Composite {
             }
         }
 
-        if (mStartDate != null) {
-            mLastNotificationDate = (Calendar) mStartDate.clone();
-        }
-        else {
-            mLastNotificationDate = null;
-        }
-
+        mLastNotificationDate = (Calendar) mStartDate.clone();
+        
         for (int i = 0; i < mListeners.size(); i++) {
             try {
                 ((ICalendarListener) mListeners.get(i)).dateChanged(mStartDate);
@@ -1258,11 +1271,24 @@ public class CalendarCombo extends Composite {
 
             // create the calendar composite
             mCalendarComposite = new CalendarComposite(mCalendarShell, pre, mDisallowBeforeDate, mDisallowAfterDate, mColorManager, mSettings, mAllowDateRange, mStartDate, mEndDate);
-            for (int i = 0; i < mListeners.size(); i++) {
-                ICalendarListener listener = (ICalendarListener) mListeners.get(i);
-                mCalendarComposite.addCalendarListener(listener);
-            }
+     /*       mCalendarComposite.addCalendarListener(new ICalendarListener() {
 
+                public void dateChanged(Calendar date) {
+                    mStartDate = date;
+                    notifyDateChanged();
+                }
+
+                public void dateRangeChanged(Calendar start, Calendar end) {
+                    mStartDate = start;
+                    mEndDate = end;
+                    notifyDateChanged();
+                }
+
+                public void popupClosed() {
+                }
+                
+            });
+*/
             mCalendarComposite.addMainCalendarListener(new ICalendarListener() {
                 public void dateChanged(Calendar date) {
                     if (!isFlat) mCombo.removeAll();
@@ -1274,6 +1300,13 @@ public class CalendarCombo extends Composite {
                         setText("");
                     } else {
                         updateDate();
+                    }
+                    
+                    if (mStartDate == null) {
+                        notifyDateChangedToNull();
+                    }
+                    else {
+                        notifyDateChanged();
                     }
                 }
 
@@ -1292,13 +1325,26 @@ public class CalendarCombo extends Composite {
                     }
 
                     if (mDependingCombo != null) {
-                        if (end != null) mDependingCombo.setDate(end);
-                        else mDependingCombo.setText("");
+                        if (end != null) {
+                            mDependingCombo.setDate(end);
+                        }
+                        else {
+                            mDependingCombo.setText("");
+                        }
+
+                        notifyDateRangeChanged();
                     }
+                    else {
+                        notifyDateChanged();
+                    }
+                    
                 }
 
                 public void popupClosed() {
                     kill(14);
+                    for (int i = 0; i < mListeners.size(); i++) {
+                        ((ICalendarListener)mListeners.get(i)).popupClosed();
+                    }
                 }
             });
 
@@ -1357,7 +1403,9 @@ public class CalendarCombo extends Composite {
      */
     public void addCalendarListener(ICalendarListener listener) {
         checkWidget();
-        if (!mListeners.contains(listener)) mListeners.add(listener);
+        if (!mListeners.contains(listener)) {
+            mListeners.add(listener);
+        }
     }
 
     /**
