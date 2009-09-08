@@ -156,7 +156,7 @@ public class CalendarCombo extends Composite {
     private Calendar               mLastNotificationDate;
 
     private Listener               mOobClickListener;
-    
+
     private List                   mDateParseExceptionListeners;
 
     protected static final boolean OS_CARBON        = "carbon".equals(SWT.getPlatform());
@@ -841,11 +841,11 @@ public class CalendarCombo extends Composite {
             mParsingDate = true;
 
             String comboText = (isFlat ? mFlatCombo.getText() : mCombo.getText());
-
-            if (comboText.length() == 0) {
+            
+            if (comboText.length() == 0 && mStartDate != null) {
                 mStartDate = null;
                 setText("");
-                notifyDateChanged();
+                notifyDateChangedToNull();
                 return;
             }
 
@@ -856,8 +856,7 @@ public class CalendarCombo extends Composite {
         } catch (CalendarDateParseException dpe) {
             if (!mDateParseExceptionListeners.isEmpty()) {
                 notifyDateParseException(dpe);
-            }
-            else {
+            } else {
                 dpe.printStackTrace();
             }
         } catch (Exception err) {
@@ -866,19 +865,40 @@ public class CalendarCombo extends Composite {
             mParsingDate = false;
         }
     }
-    
+
     private void notifyDateParseException(CalendarDateParseException dpe) {
         for (int i = 0; i < mDateParseExceptionListeners.size(); i++) {
-            ((IDateParseExceptionListener)mDateParseExceptionListeners.get(i)).parseExceptionThrown(dpe);
+            ((IDateParseExceptionListener) mDateParseExceptionListeners.get(i)).parseExceptionThrown(dpe);
         }
     }
 
+    private void notifyDateChangedToNull() {
+        for (int i = 0; i < mListeners.size(); i++) {
+            try {
+                ((ICalendarListener) mListeners.get(i)).dateChanged(mStartDate);
+            } catch (Exception err) {
+                err.printStackTrace();
+            }
+        }
+    }
+    
     private void notifyDateChanged() {
         // don't notify on same dates
-        if (mLastNotificationDate == null && mStartDate == null) return;
+        if (mLastNotificationDate == null && mStartDate == null) {
+            return;
+        }
 
         if (mLastNotificationDate != null && mStartDate != null) {
-            if (DateHelper.sameDate(mLastNotificationDate, mStartDate)) return;
+            if (DateHelper.sameDate(mLastNotificationDate, mStartDate)) {
+                return;
+            }
+        }
+
+        if (mStartDate != null) {
+            mLastNotificationDate = (Calendar) mStartDate.clone();
+        }
+        else {
+            mLastNotificationDate = null;
         }
 
         for (int i = 0; i < mListeners.size(); i++) {
@@ -1287,10 +1307,16 @@ public class CalendarCombo extends Composite {
             Point size = mComboControl.getSize();
 
             Point loc = null;
-            if (mSettings.showCalendarInRightCorner()) loc = new Point(calLoc.x + size.x - mCalendarShell.getSize().x, calLoc.y + size.y);
-            else loc = new Point(calLoc.x, calLoc.y + size.y);
-
+            if (mSettings.showCalendarInRightCorner()) {
+                loc = new Point(calLoc.x + size.x - mCalendarShell.getSize().x, calLoc.y + size.y);
+            } else {
+                loc = new Point(calLoc.x, calLoc.y + size.y);
+            }
             loc = toDisplay(loc);
+            // don't let it slip out on the left side of the screen
+            if (loc.x < 0) {
+                loc.x = 0;
+            }
 
             mCalendarShell.setLocation(loc);
             mCalendarShell.setVisible(true);
@@ -1313,7 +1339,7 @@ public class CalendarCombo extends Composite {
             mDateParseExceptionListeners.add(listener);
         }
     }
-    
+
     /**
      * Removes a {@link IDateParseExceptionListener} listener.
      * 
@@ -1323,7 +1349,7 @@ public class CalendarCombo extends Composite {
         checkWidget();
         mDateParseExceptionListeners.remove(listener);
     }
-    
+
     /**
      * Adds a calendar listener.
      * 
@@ -1445,8 +1471,11 @@ public class CalendarCombo extends Composite {
      */
     public void addModifyListener(ModifyListener ml) {
         checkWidget();
-        if (isFlat) mFlatCombo.addModifyListener(ml);
-        else mCombo.addModifyListener(ml);
+        if (isFlat) {
+            mFlatCombo.addModifyListener(ml);
+        } else {
+            mCombo.addModifyListener(ml);
+        }
     }
 
     /**
@@ -1456,8 +1485,11 @@ public class CalendarCombo extends Composite {
      */
     public void removeModifyListener(ModifyListener ml) {
         checkWidget();
-        if (isFlat) mFlatCombo.removeModifyListener(ml);
-        else mCombo.removeModifyListener(ml);
+        if (isFlat) {
+            mFlatCombo.removeModifyListener(ml);
+        } else {
+            mCombo.removeModifyListener(ml);
+        }
     }
 
     /**
