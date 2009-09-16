@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="javadoc">
+    <target name="javadoc">
+        <javadoc access="protected" author="true" classpath="class;C:\Program Files\Eclipse\RCP\3.2\plugins\org.eclipse.swt_3.2.0.v3232o.jar;C:\Program Files\Eclipse\RCP\3.2\plugins\org.eclipse.swt.win32.win32.x86_3.2.0.v3232m.jar" destdir="api" doctitle="PaperClips 1.0.3 API" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="net.sf.paperclips,net.sf.paperclips.decorator,net.sf.paperclips.ui" source="1.4" sourcepath="../net.sf.paperclips.ui/src;src" splitindex="true" use="true" version="true"/>
+    </target>
+</project>

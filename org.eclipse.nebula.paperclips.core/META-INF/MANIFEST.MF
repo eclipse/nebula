@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: PaperClips Core Plug-in
+Bundle-SymbolicName: org.eclipse.nebula.paperclips.core
+Bundle-Version: 2.0.0.qualifier
+Bundle-Vendor: Matthew Hall and others
+Require-Bundle: org.eclipse.swt;bundle-version="[3.2.0,4.0.0)"
+Export-Package: org.eclipse.nebula.paperclips.core,
+ org.eclipse.nebula.paperclips.core.border,
+ org.eclipse.nebula.paperclips.core.grid,
+ org.eclipse.nebula.paperclips.core.internal.util;x-friends:="org.eclipse.nebula.paperclips.tests",
+ org.eclipse.nebula.paperclips.core.page,
+ org.eclipse.nebula.paperclips.core.text
+Bundle-ClassPath: .
+Bundle-RequiredExecutionEnvironment: J2SE-1.4

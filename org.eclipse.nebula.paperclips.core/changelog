@@ -1,0 +1,256 @@
+Version 2.0.0 (Milestone 0)
+* API Changes:
+  * Renamed bundle names as follows:
+      net.sf.paperclips          => org.eclipse.nebula.paperclips
+      net.sf.paperclips.ui       => org.eclipse.nebula.paperclips.widgets
+      net.sf.paperclips.examples => org.eclipse.nebula.paperclips.examples
+      net.sf.paperclips.test     => org.eclipse.nebula.paperclips.tests
+  * Renamed public packages as follows:
+      net.sf.paperclips          => org.eclipse.nebula.paperclips
+      net.sf.paperclips.ui       => org.eclipse.nebula.paperclips.widgets
+  * Removed all classes and methods deprecated in previous releases.
+  * Removed net.sf.paperclips.decorator classes
+
+Version 1.0.4
+* Bugs fixed:
+  * [Mac OSX] Disposing a PrintPreview sends a blank page to the printer.
+  * Autoscaled ScalePrints were not computing minimum sizes correctly
+    which distorted some layouts
+  * PaperClips and PrintPreview now use the first system printer listed if
+    no system default printer has been selected (can be the case on Linux,
+    Mac)
+  * Fixed compiler compliance levels so PaperClips can run in Java 1.4 JREs.
+  * GridColumn's conversion of inches, millimeters and centimeters sizes to
+    points was wrong, causing those columns to be displayed at the wrong size.
+  * Fixed GridColumn's recognition of column sizes with a decimal part.
+* New Features:
+  * Page numbers are internationalized in English, French and German.
+  * TextStyle.create(String) creates a TextPrint
+  * Added DebugPrint helper class for troubleshooting documents that won't
+    print
+* Known issues:
+  * [Linux GTK] Printed text scales up or down depending on what DPI the
+    screen is configured to
+  * [Linux GTK] When a PrintPreview changes printers, print jobs, or is
+    disposed, a blank page is emitted on the printer.  This is due to missing
+    API in GTK for cancelling a print job.
+
+Version 1.0.3
+* Bugs fixed:
+  * Fixed integer overflow error in GridPrint which sometimes caused printing
+    of very long strings to fail.
+  * Fixed column size distribution in GridPrint when paper space is scarce.
+* New Features
+  * PrintPreview now supports lazy layout of print jobs.  This can be used to
+    speed up previews of very large print jobs. 
+* Changes:
+  * Implement equals() and hashCode() in all Print objects.
+  * Performance tuning in text and grid layouts
+  * Snippets no longer implement Print.  This was an unnecessary detail and
+    tends to confuse newcomers.
+* Known issues:
+  * PrintPreview issues a page feed whenever a PrintPreview control is
+    disposed or changes printers.  This is due to missing API in GTK for
+    cancelling a print job.
+
+Version 1.0.2
+* Bugs fixed:
+  * Clipping problems on Mac OS X.
+  * PrintPreview.getPageCount() returns 0 before pages are first drawn.
+  * PrintPreview spits out a blank page on Linux when the window is closed.
+  * BorderPrint sometimes showed an open bottom border even though the target
+    was completely shown.
+  * PrintViewer performance improvements when print document is vertically
+    greedy.
+* New Features:
+  * GridPrint.setCellClippingEnabled() controls whether grid cells may be
+    broken across pages.  See GridPrintCellClippingExample.java.
+  * DefaultGridLook.setCellPadding()
+  * PrintPreview.setHorizontalPageCount() and setVerticalPageCount() controls
+    how many pages are shown on screen.
+  * Experimental PaperClips.setDebug() API helps troubleshoot documents that
+    won't lay out properly ("Unable to layout on page x" errors).
+  * BasicGridLookPainter simplifies implementing custom GridLooks.
+  * StyledTextPrint for mixing text with different font sizes, styles, colors
+    and decorations.  Other printable objects such as ImagePrint may be
+    embedded inline with the text.
+  * TextPrint and StyledTextPrint now support underline and strikeout text.
+  * TextPrint.setWordSplitting() controls whether words may be split between
+    rows.  This feature only applies when space is very limited.
+  * Unified error reporting to PaperClips.error() methods.  Custom Print
+    implementations should use these methods to act uniformly with the rest
+    of the library. 
+* Example snippets:
+  * Changed ImageCaptureExample.java to capture JPG since PNG was not fully
+    supported until SWT version 3.3 (PaperClips is developed against 3.2).
+  * Snippet7 (print preview example):
+    * Support scrolling with the mouse wheel (horizontally with Shift+Wheel)
+    * Support zooming with Ctrl+Wheel
+
+Version 1.0.1
+* Resolved printing problems on Mac OS X.
+* Added public accessor APIs for all Print classes.
+
+Version 1.0.0
+* Vertical cell alignment in GridPrint, including SWT.FILL alignment to allow
+  embedding vertically greedy prints like SWT.VERTICAL LinePrints.
+* SidewaysPrint - a non-greedy version of RotatePrint.  Very handy for putting
+  sideways text in grids.
+* TextPrint's and PageNumberPrint's horizontally greedy behavior had to be
+  removed in order for SidewaysPrint to work correctly.  This will not cause
+  any compilation problems, however you may see some unexpected layout
+  behavior.
+* Updated Snippet7 (print preview example) in examples plug-in to clean up some
+  of the odd behavior when resizing the window in Fit-to-Width or Fit-to-Height
+  mode.  Also added code for scrolling around the page using mouse drag.
+* Bug fix: PaperClips.getPages() throws the wrong exception when a document
+  fails to lay out properly.
+* Bug fix: PrintPreview does not redraw when setScale is called to change the
+  display scale.
+* Bug fix: Headers/footers in a PagePrint do not display any contents after
+  the page number.
+
+Version 0.6.1
+* PrintPreview control:
+  * ComputeSize is now implemented properly, which helps determine the proper
+    sizing of the control depending on the viewing scale.  Snippet7 has been
+    updated to demonstrate this feature.
+  * The performance problems (read: major lags) when zooming in very close are
+    resolved.  Go ahead, zoom to ridiculous levels with confidence!  We
+	  promise not to tell anyone.
+  * Bugfix: page disappears after a call to setPrinterData.
+* ColumnPrint behavior of compressing the last page of content to the minimum
+  possible height can now be disabled using the "compressed" property.
+* GridPrint now has addColumn and addColumns methods supporting column
+  modifications after construction.  Some of the snippets were modified to use
+  this new API.
+
+Version 0.6.0
+* JDK 1.4 compliance.
+* New WYSIWYG (what you see is what you get) PrintPreview control in the
+  net.sf.paperclips.ui plugin.
+* Other existing UI controls (in the net.sf.paperclips.swt package) have been
+  moved to the net.sf.paperclips.ui, into the net.sf.paperclips.ui package.
+* The PrintUtil class has been replaced with the PaperClips and PrintJob
+  classes.
+* The new PrintJob class holds information about the job name, document, page
+  margins, and paper orientation.
+* The new PaperClips class provides a simpler API for printing documents.
+* The new Margins class provides fine control over margins on each edge of the
+  paper.
+* Deprecated package net.sf.paperclips.preview has been removed.
+
+Version 0.5.4
+* Bugfix: GridPrint fails to generate last page if the final row of content
+  finishes on previous page, but there was only enough room to print an open
+  bottom border.  (This bug was discovered while trying to run Snippet4)
+* Added SimplePageDecoration, a simple wrapper for static page headers and
+  footers.  This class can be used in lieu of creating a custom PageDecoration
+  class for simple page numbering.
+* The DefaultPageNumberFormat class (the default PageNumberFormat class used
+  by PageNumberPrint) is now a top-level, public class.
+* Added SimplePageDecoration class, a PageDecoration which displays a Print you
+  provide on each page.
+
+Version 0.5.3
+* TextPrint - partially reversed a change in 0.5.2 which made TextPrints
+  horizontally greedy.  Being horizontally greedy is appropriate for center-
+  and right-alignment, but not for left-alignment (the default).
+
+Version 0.5.2
+* CellBackgroundProvider interface - an interface for programmatic control of
+  the background color in each grid cell.  Default implementation is provided
+  in the DefaultBackgroundProvider class.
+* DefaultGridLook - now supports control of the header, body, and footer
+  background colors using either setHeaderBackground(RGB) or
+  setHeaderBackgroundProvider(CellBackgroundProvider).
+* Prints with greedy layout behavior now have documentation indicating the
+  behavior in the javadocs.
+* Bugfix to GridPrint which sometimes cause grids to overlap with other
+  prints.
+
+Version 0.5.1
+* GridPrint - fixed bug which caused a NullPointerException whenever the cells
+  in a row are not all consumed (completely displayed) on the same page.
+* Added net.sf.paperclips.decorator package to list of exported packages in
+  plugin.
+
+Version 0.5.0
+* ScalePrint - wrapper that scales a print down to fit on the page, or scales
+  larger or smaller depending on a scaling factor.  Requires SWT 3.2M3 or
+  later.
+* RotatePrint - wrapper that rotates the target by 90, 180, or 270 degrees.
+  Since SWT doesn't provide API for setting the page orientation, this will be
+  very useful for landscape layouts.  Requires SWT 3.2M3 or later.
+* BackgroundPrint - wrapper that draws a background color behind it's target.
+* BigPrint - wrapper that splits it's target across multiple pages if it's too
+  large to fit on one.  Use this if you have a document that's too big to
+  print (i.e. a GridPrint with too many columns).
+* Decorator package (net.sf.paperclips.decorator) allows you to create
+  decorator factories which can apply decorations to prints without explicitly
+  calling the decorator print's constructor.  Provided you use the decorator
+  uniformly throughout your document, the style of the document can be changed
+  by substituting another decorator.
+* TextPrint default font is the system default font instead of hard-coded
+  "Times" font.
+* Updated semantics of PrintPiece.dispose() to allow PrintPiece and
+  BorderPainter re-use.  Anybody who writes their own Print classes should
+  check out the javadocs for this method and update their code to comply with
+  the new semantics.
+* GridPrint got a massive overhaul:
+  * Can now add headers and footers that repeat on every page through the
+    addHeader(...) and addFooter(...) methods (they work just like the
+    add(...) methods).
+  * Configure the appearance of your GridPrint using the GridLook interface.
+    A default look, DefaultGridLook, lets you configure the cell spacing, cell
+    border, and background color of grid cells (separate color for header,
+    body, and footer cells).
+  * Public fields horizontalSpacing and verticalSpacing were deprecated.
+  * Fixed bug 1480013: illogical layout of grid rows when they are broken
+    across pages.  Sometimes some content would be on the end of one page and
+    the other content would be at the beginning of the next page.  This led to
+    sometimes confusing printouts.  This fix essentially "glues" the row
+    together so it doesn't get separated like this any more.
+
+Version 0.4.3
+* Bugfix: Whenever the print space available to a GridPrint was smaller than
+  it's calculated minimum size, the grid would print larger than the available
+  space, in certain cases. 
+
+Version 0.4.2
+* NoBreakPrint is a wrapper which prevents it's target print from being broken
+  up between pages (or columns). 
+* BreakPrint adds a page break or column break. 
+* PaperClips sources are now version controlled through Subversion (finally!).
+
+Version 0.4.1
+* Bugfix: if a GridPrint is configured with a cell border and added to a
+  ColumnPrint, an infinite loop will occur when attempting to print. 
+
+Version 0.4.0
+* All public API are documented in javadocs. 
+* Custom cell borders in GridPrint - uses the same Border interface as
+  BorderPrint.
+
+Version 0.3 beta
+* AlignPrint - vertical and horizontal alignment of a child print.
+* ColumnPrint - lays out a child print into multiple columns.
+* GapBorder - a blank border with configurable margin size (see API docs for
+  BorderPrint)
+
+Version 0.2 alpha
+* PagePrint - page headers and footers (including page numbering)
+* BorderPrint - decorating document elements with borders.
+* LayerPrint - a layout element which renders document elements one above the
+  other.
+
+Version 0.1 alpha
+Basic document elements:
+* TextPrint - for printing text
+* ImagePrint - for printing images
+* LinePrint - for printing horizontal and (sometimes) vertical rules.
+* GridPrint - arranges it's child prints into a grid.
+* LayerPrint - displays it's child prints on top of eachother.
+* SeriesPrint - displays multiple prints, one after another, with only one to
+  a page.
+* FactoryPrint - aids in composition of Prints.

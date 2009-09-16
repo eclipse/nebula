@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jardesc>
+<jar path="org.eclipse.nebula.paperclips/build/org.eclipse.nebula.paperclips_1.0.4_javadoc.zip"/>
+<options buildIfNeeded="true" compress="true" descriptionLocation="/org.eclipse.nebula.paperclips/build_javadoc.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="true" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="true"/>
+<storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+<selectedProjects/>
+<selectedElements exportClassFiles="false" exportJavaFiles="true" exportOutputFolder="false">
+<folder path="/org.eclipse.nebula.paperclips/api/"/>
+</selectedElements>
+</jardesc>

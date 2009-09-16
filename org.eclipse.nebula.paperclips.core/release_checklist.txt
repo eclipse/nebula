@@ -1,0 +1,17 @@
+Release checklist
+-----------------
+* Update changelog (version number, latest changes)
+* Update README.txt (version number)
+* Update plug-in manifests (version number)
+* Update ant and jardesc files (version number in filenames).
+* Build binary jars (core, ui)
+* Build source zip (core, ui, examples)
+* Clear existing javadoc
+* Regenerate javadoc
+* Regenerate snippet PDFs
+* Build javadoc zip
+* Upload jars and zips to download server
+* Upload PDFs to web site
+* Upload snippets to web site
+* Post release announcement on nebula newsgroup
+* Post release announcement / update project version on Eclipse Plug-in Central
