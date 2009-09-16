@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jardesc>
+<jar path="org.eclipse.nebula.paperclips/build/org.eclipse.nebula.paperclips.examples_1.0.3_source.zip"/>
+<options buildIfNeeded="true" compress="true" descriptionLocation="/org.eclipse.nebula.paperclips.examples/build_source.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="true" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="true"/>
+<storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+<selectedProjects/>
+<selectedElements exportClassFiles="false" exportJavaFiles="true" exportOutputFolder="false">
+<file path="/org.eclipse.nebula.paperclips.examples/.classpath"/>
+<file path="/org.eclipse.nebula.paperclips.examples/build.properties"/>
+<file path="/org.eclipse.nebula.paperclips.examples/epl-v10.html"/>
+<file path="/org.eclipse.nebula.paperclips.examples/.project"/>
+<folder path="/org.eclipse.nebula.paperclips.examples/META-INF"/>
+<javaElement handleIdentifier="=org.eclipse.nebula.paperclips.examples/src"/>
+<file path="/org.eclipse.nebula.paperclips.examples/README.txt"/>
+</selectedElements>
+</jardesc>
