@@ -15,13 +15,13 @@ import java.text.NumberFormat;
 import org.eclipse.nebula.paperclips.core.PaperClips;
 import org.eclipse.nebula.paperclips.core.Print;
 import org.eclipse.nebula.paperclips.core.PrintJob;
-import org.eclipse.nebula.paperclips.examples.Snippet2;
-import org.eclipse.nebula.paperclips.examples.Snippet3;
-import org.eclipse.nebula.paperclips.examples.Snippet4;
-import org.eclipse.nebula.paperclips.examples.Snippet5;
-import org.eclipse.nebula.paperclips.examples.Snippet6;
-import org.eclipse.nebula.paperclips.examples.Snippet7;
-import org.eclipse.nebula.paperclips.examples.Snippet8;
+import org.eclipse.nebula.paperclips.snippets.Snippet2;
+import org.eclipse.nebula.paperclips.snippets.Snippet3;
+import org.eclipse.nebula.paperclips.snippets.Snippet4;
+import org.eclipse.nebula.paperclips.snippets.Snippet5;
+import org.eclipse.nebula.paperclips.snippets.Snippet6;
+import org.eclipse.nebula.paperclips.snippets.Snippet7;
+import org.eclipse.nebula.paperclips.snippets.Snippet8;
 import org.eclipse.nebula.paperclips.tests.benchmark.Benchmark;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.printing.Printer;
@@ -75,11 +75,11 @@ public class SnippetBenchmarks {
 	}
 
 	static void benchmarkSnippets() {
-		String[] names = { "Snippet2", "Snippet3", "Snippet4", "Snippet5",
-				"Snippet6", "Snippet7" };
-		Print[] documents = { Snippet2.createPrint(), Snippet3.createPrint(),
+		String[] names = {"Snippet2", "Snippet3", "Snippet4", "Snippet5",
+				"Snippet6", "Snippet7"};
+		Print[] documents = {Snippet2.createPrint(), Snippet3.createPrint(),
 				Snippet4.createPrint(), Snippet5.createPrint(),
-				Snippet6.createPrint(), Snippet7.createPrint() };
+				Snippet6.createPrint(), Snippet7.createPrint()};
 		final Printer printer = new Printer();
 		printer.startJob("benchmarkSnippets");
 		final int RUN_COUNT = 100;
