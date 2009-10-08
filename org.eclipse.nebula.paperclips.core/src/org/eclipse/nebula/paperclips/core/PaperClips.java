@@ -56,7 +56,7 @@ public class PaperClips {
 	 *            the SWT error code.
 	 */
 	public static void error(int code) {
-		error(code, null);
+		SWT.error(code, null);
 	}
 
 	/**
@@ -66,7 +66,7 @@ public class PaperClips {
 	 *            more information about error.
 	 */
 	public static void error(String detail) {
-		error(SWT.ERROR_UNSPECIFIED, detail);
+		SWT.error(SWT.ERROR_UNSPECIFIED, null, detail);
 	}
 
 	/**
