@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.eclipse.nebula.widgets.radiogroup
 Bundle-Version: 0.1.0
 Bundle-Vendor: Matthew Hall
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
-Require-Bundle: org.eclipse.equinox.common;bundle-version="3.5.0",
+Require-Bundle: org.eclipse.equinox.common;bundle-version="3.5.0";resolution:=optional,
  org.eclipse.swt;bundle-version="3.5.0",
  org.eclipse.jface;bundle-version="3.5.0";resolution:=optional,
  org.eclipse.core.databinding;bundle-version="1.2.0";resolution:=optional,
