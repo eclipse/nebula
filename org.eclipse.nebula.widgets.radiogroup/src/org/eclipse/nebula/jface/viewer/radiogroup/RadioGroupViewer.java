@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Control;
  * @since 3.5
  */
 public class RadioGroupViewer extends AbstractListViewer {
-	private RadioGroup group;
+	private RadioGroup radioGroup;
 
 	/**
 	 * Creates a radio group viewer on a newly-created {@link RadioGroup}
@@ -65,18 +65,26 @@ public class RadioGroupViewer extends AbstractListViewer {
 	 * viewer has no input, no content provider, a default label provider, no
 	 * sorter, and no filters.
 	 * 
-	 * @param composite
-	 *            the composite control which is the immediate parent of all
-	 *            radio buttons
+	 * @param group
+	 *            the RadioGroup control
 	 */
 	public RadioGroupViewer(RadioGroup group) {
 		Assert.isNotNull(group);
-		this.group = group;
+		this.radioGroup = group;
 		hookControl(group);
 	}
 
 	public Control getControl() {
-		return group;
+		return radioGroup;
+	}
+
+	/**
+	 * Returns this viewer's {@link RadioGroup} control.
+	 * 
+	 * @return the RadioGroup control
+	 */
+	public RadioGroup getRadioGroup() {
+		return radioGroup;
 	}
 
 	/**
@@ -109,7 +117,7 @@ public class RadioGroupViewer extends AbstractListViewer {
 	 */
 	protected void listSetSelection(int[] ixs) {
 		for (int idx = 0; idx < ixs.length; idx++) {
-			group.select(ixs[idx]);
+			radioGroup.select(ixs[idx]);
 		}
 	}
 
@@ -120,7 +128,7 @@ public class RadioGroupViewer extends AbstractListViewer {
 	 *              AbstractListViewer API.
 	 */
 	protected int[] listGetSelectionIndices() {
-		return new int[] { group.getSelectionIndex() };
+		return new int[] { radioGroup.getSelectionIndex() };
 	}
 
 	/**
@@ -130,12 +138,12 @@ public class RadioGroupViewer extends AbstractListViewer {
 	 *              AbstractListViewer API.
 	 */
 	protected void listAdd(String string, int index) {
-		group.setLayoutDeferred(true);
+		radioGroup.setLayoutDeferred(true);
 		try {
-			RadioItem item = new RadioItem(group, SWT.NONE, index);
+			RadioItem item = new RadioItem(radioGroup, SWT.NONE, index);
 			item.setText(string);
 		} finally {
-			group.setLayoutDeferred(false);
+			radioGroup.setLayoutDeferred(false);
 		}
 	}
 
@@ -146,7 +154,7 @@ public class RadioGroupViewer extends AbstractListViewer {
 	 *              AbstractListViewer API.
 	 */
 	protected void listDeselectAll() {
-		group.deselectAll();
+		radioGroup.deselectAll();
 	}
 
 	/**
@@ -156,7 +164,7 @@ public class RadioGroupViewer extends AbstractListViewer {
 	 *              AbstractListViewer API.
 	 */
 	protected int listGetItemCount() {
-		return group.getItemCount();
+		return radioGroup.getItemCount();
 	}
 
 	/**
@@ -166,7 +174,7 @@ public class RadioGroupViewer extends AbstractListViewer {
 	 *              AbstractListViewer API.
 	 */
 	protected void listRemove(int index) {
-		group.remove(index);
+		radioGroup.remove(index);
 	}
 
 	/**
@@ -176,7 +184,7 @@ public class RadioGroupViewer extends AbstractListViewer {
 	 *              AbstractListViewer API.
 	 */
 	protected void listRemoveAll() {
-		group.removeAll();
+		radioGroup.removeAll();
 	}
 
 	/**
@@ -186,7 +194,7 @@ public class RadioGroupViewer extends AbstractListViewer {
 	 *              AbstractListViewer API.
 	 */
 	protected void listSetItem(int index, String string) {
-		RadioItem item = group.getItems()[index];
+		RadioItem item = radioGroup.getItems()[index];
 		item.setText(string);
 	}
 
@@ -197,10 +205,10 @@ public class RadioGroupViewer extends AbstractListViewer {
 	 *              AbstractListViewer API.
 	 */
 	protected void listSetItems(String[] labels) {
-		group.removeAll();
+		radioGroup.removeAll();
 
 		for (int i = 0; i < labels.length; i++) {
-			RadioItem item = new RadioItem(group, SWT.NONE);
+			RadioItem item = new RadioItem(radioGroup, SWT.NONE);
 			item.setText(labels[i]);
 		}
 	}
