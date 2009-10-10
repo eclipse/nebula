@@ -1457,14 +1457,14 @@ public class Grid extends Canvas
 
                 if (currentGroup != null)
                 {
-                    if (col.getColumnGroup() != currentGroup)
+                    if (col.getColumnGroup() != currentGroup && colsInGroup > 0 )
                     {
                         SWT.error(SWT.ERROR_INVALID_ARGUMENT);
                     }
                     else
                     {
                         colsInGroup--;
-                        if (colsInGroup == 0)
+                        if (colsInGroup <= 0)
                         {
                             currentGroup = null;
                         }
@@ -1475,7 +1475,6 @@ public class Grid extends Canvas
                     currentGroup = col.getColumnGroup();
                     colsInGroup = currentGroup.getColumns().length - 1;
                 }
-
             }
         }
 
