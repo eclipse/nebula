@@ -20,182 +20,178 @@ import org.eclipse.swt.widgets.Display;
 
 /**
  * <p>
- * NOTE:  THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.  THIS IS A PRE-RELEASE ALPHA 
- * VERSION.  USERS SHOULD EXPECT API CHANGES IN FUTURE VERSIONS.
- * </p> 
- *
+ * NOTE: THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT. THIS IS A
+ * PRE-RELEASE ALPHA VERSION. USERS SHOULD EXPECT API CHANGES IN FUTURE
+ * VERSIONS.
+ * </p>
+ * 
  * @author cgross
  */
 public class RedmondShelfRenderer extends AbstractRenderer {
 
-	private Color[] initialColors;	// to dispose created colors
-	
+	private Color[] initialColors; // to dispose created colors
+
 	private int textMargin = 2;
 	private int margin = 4;
 	private PShelf parent;
 	private int spacing = 8;
-	
+
 	private Font initialFont;
 	private Font initialOpenFont;
-	
+
 	private Color gradient1;
 	private Color gradient2;
-	
+
 	private Font font;
 	private Font selectedFont;
-	
+
 	private Color selectedGradient1;
 	private Color selectedGradient2;
-	
+
 	private Color hoverGradient1;
 	private Color hoverGradient2;
-	
+
 	private Color lineColor;
-	
+
 	private Color selectedForeground;
+	private Color hoverForeground;
 	private Color foreground;
 
-	/** 
-     * {@inheritDoc}
-     */
-    public Point computeSize(GC gc, int wHint, int hHint, Object value)
-    {
-        PShelfItem item = (PShelfItem)value;
-        
+	/**
+	 * {@inheritDoc}
+	 */
+	public Point computeSize(GC gc, int wHint, int hHint, Object value) {
+		PShelfItem item = (PShelfItem) value;
+
 		int h = 0;
-		
+
 		gc.setFont(font);
-		
-		if (item.getImage() == null){
-			h = gc.getFontMetrics().getHeight() + (2*(textMargin));
+
+		if (item.getImage() == null) {
+			h = gc.getFontMetrics().getHeight() + (2 * (textMargin));
 		} else {
-			h = Math.max(item.getImage().getBounds().height,gc.getFontMetrics().getHeight() + (2*textMargin));
+			h = Math.max(item.getImage().getBounds().height, gc.getFontMetrics().getHeight() + (2 * textMargin));
 		}
-		
+
 		gc.setFont(selectedFont);
-		
-		h = Math.max(h,gc.getFontMetrics().getHeight() + (2*textMargin));
-		
-		h += 2*margin;
-		
+
+		h = Math.max(h, gc.getFontMetrics().getHeight() + (2 * textMargin));
+
+		h += 2 * margin;
+
 		if (h % 2 != 0)
-			h ++;
-		
-		return new Point(wHint,h);
+			h++;
+
+		return new Point(wHint, h);
 	}
 
-    
-	/** 
-     * {@inheritDoc}
-     */
-    public void paint(GC gc, Object value)
-    {
-        PShelfItem item = (PShelfItem)value;
-        
-		//Color back = parent.getBackground();
+	/**
+	 * {@inheritDoc}
+	 */
+	public void paint(GC gc, Object value) {
+		PShelfItem item = (PShelfItem) value;
+
+		// Color back = parent.getBackground();
 		Color fore = parent.getForeground();
-        
-            if (isSelected()){
-                gc.setForeground(selectedGradient1);
-                gc.setBackground(selectedGradient2);
-            } else {
-                if (isHover()){
-                    gc.setForeground(hoverGradient1);
-                    gc.setBackground(hoverGradient2);
-                } else {
-                    gc.setForeground(gradient1);
-                    gc.setBackground(gradient2);
-                }
-            }
 
-        
-		gc.fillGradientRectangle(getBounds().x,getBounds().y,getBounds().width,getBounds().height,true);		
+		if (isSelected()) {
+			gc.setForeground(selectedGradient1);
+			gc.setBackground(selectedGradient2);
+		} else {
+			if (isHover()) {
+				gc.setForeground(hoverGradient1);
+				gc.setBackground(hoverGradient2);
+			} else {
+				gc.setForeground(gradient1);
+				gc.setBackground(gradient2);
+			}
+		}
 
-        if ((parent.getStyle() & SWT.SIMPLE) != 0)
-        {
-    		if (!isSelected()){
-    			gc.setForeground(lineColor);
-    			gc.drawLine(0,getBounds().y,getBounds().width -1,getBounds().y);
-    		}	
-        }
-        else
-        {
-            if (parent.getItems()[0] != item)
-            {
-                gc.setForeground(lineColor);
-                gc.drawLine(0,getBounds().y,getBounds().width -1,getBounds().y);
-            }
-            
-            if (isSelected()){
-                gc.setForeground(lineColor);
-                gc.drawLine(0,getBounds().y + getBounds().height -1,getBounds().width -1,getBounds().y + getBounds().height -1);               
-            }
-        }
-		
-        boolean imageLeft = true;
-        
-        if ((parent.getStyle() & SWT.SIMPLE) != 0)
-        {
-            imageLeft = !isSelected();
-        }
-        
+		gc.fillGradientRectangle(getBounds().x, getBounds().y, getBounds().width, getBounds().height, true);
+
+		if ((parent.getStyle() & SWT.SIMPLE) != 0) {
+			if (!isSelected()) {
+				gc.setForeground(lineColor);
+				gc.drawLine(0, getBounds().y, getBounds().width - 1, getBounds().y);
+			}
+		} else {
+			if (parent.getItems()[0] != item) {
+				gc.setForeground(lineColor);
+				gc.drawLine(0, getBounds().y, getBounds().width - 1, getBounds().y);
+			}
+
+			if (isSelected()) {
+				gc.setForeground(lineColor);
+				gc.drawLine(0, getBounds().y + getBounds().height - 1, getBounds().width - 1, getBounds().y + getBounds().height - 1);
+			}
+		}
+
+		boolean imageLeft = true;
+
+		if ((parent.getStyle() & SWT.SIMPLE) != 0) {
+			imageLeft = !isSelected();
+		}
+
 		int x = 6;
-		if (item.getImage() != null && imageLeft){
-			int y2 = (getBounds().height - item.getImage().getBounds().height)/2;
+		if (item.getImage() != null && imageLeft) {
+			int y2 = (getBounds().height - item.getImage().getBounds().height) / 2;
 			if ((getBounds().height - item.getImage().getBounds().height) % 2 != 0)
-				y2 ++;
-			
-			gc.drawImage(item.getImage(),x,getBounds().y + y2);
-			
+				y2++;
+
+			gc.drawImage(item.getImage(), x, getBounds().y + y2);
+
 			x += item.getImage().getBounds().width + spacing;
 		}
-		
-    		if (isSelected()){
-    			gc.setFont(selectedFont);
+
+		if (isSelected()) {
+			gc.setFont(selectedFont);
 			gc.setForeground(selectedForeground != null ? selectedForeground : fore);
-    		} else {
-    			gc.setFont(font);
+		} else if (isHover()) {
+			gc.setFont(font);
+			gc.setForeground(hoverForeground != null ? hoverForeground : fore);
+		} else {
+			gc.setFont(font);
 			gc.setForeground(foreground != null ? foreground : fore);
-        }
-		
-		int y2 = (getBounds().height - gc.getFontMetrics().getHeight())/2;
+		}
+
+		int y2 = (getBounds().height - gc.getFontMetrics().getHeight()) / 2;
 		if ((getBounds().height - gc.getFontMetrics().getHeight()) % 2 != 0)
-			y2 ++;
-		
+			y2++;
+
 		int textWidth = getBounds().width - 12;
-		if (item.getImage() != null){
+		if (item.getImage() != null) {
 			textWidth -= item.getImage().getBounds().width;
 			textWidth -= 6;
 		}
-		
-		gc.drawString(getShortString(gc,item.getText(),textWidth),x,getBounds().y +y2,true);
-		
-		if (item.getImage() != null && !imageLeft){
-			int y3 = (getBounds().height - item.getImage().getBounds().height)/2;
+
+		gc.drawString(getShortString(gc, item.getText(), textWidth), x, getBounds().y + y2, true);
+
+		if (item.getImage() != null && !imageLeft) {
+			int y3 = (getBounds().height - item.getImage().getBounds().height) / 2;
 			if ((getBounds().height - item.getImage().getBounds().height) % 2 != 0)
-				y3 ++;
-			
-			gc.drawImage(item.getImage(),getBounds().width - 6 - item.getImage().getBounds().width,getBounds().y + y3);
+				y3++;
+
+			gc.drawImage(item.getImage(), getBounds().width - 6 - item.getImage().getBounds().width, getBounds().y + y3);
 		}
-		
-		if (isFocus()){
-			gc.drawFocus(1,1,getBounds().width-2,getBounds().height-1);
+
+		if (isFocus()) {
+			gc.drawFocus(1, 1, getBounds().width - 2, getBounds().height - 1);
 		}
 	}
 
 	public void initialize(Control control) {
-		this.parent = (PShelf)control;
-		
-        FontData fd = parent.getFont().getFontData()[0];
-        initialFont = new Font(parent.getDisplay(), fd.getName(), fd.getHeight(),SWT.BOLD);
-		//parent.setFont(initialFont);
-		
+		this.parent = (PShelf) control;
+
+		FontData fd = parent.getFont().getFontData()[0];
+		initialFont = new Font(parent.getDisplay(), fd.getName(), fd.getHeight(), SWT.BOLD);
+		// parent.setFont(initialFont);
+
 		Color baseColor = parent.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT);
-		Color color1 = createNewBlendedColor(baseColor,parent.getDisplay().getSystemColor(SWT.COLOR_WHITE),30);
-		
-		baseColor = createNewBlendedColor(parent.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT),parent.getDisplay().getSystemColor(SWT.COLOR_WHITE),80);
-		
-		Color color2 = createNewSaturatedColor(baseColor,.01f);
+		Color color1 = createNewBlendedColor(baseColor, parent.getDisplay().getSystemColor(SWT.COLOR_WHITE), 30);
+
+		baseColor = createNewBlendedColor(parent.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT), parent.getDisplay().getSystemColor(SWT.COLOR_WHITE), 80);
+
+		Color color2 = createNewSaturatedColor(baseColor, .01f);
 
 		if ((parent.getStyle() & SWT.SIMPLE) != 0) {
 			gradient1 = color1;
@@ -204,19 +200,18 @@ public class RedmondShelfRenderer extends AbstractRenderer {
 			selectedGradient1 = color1;
 			selectedGradient2 = color2;
 		}
-		
-		baseColor.dispose();
-		
-		lineColor = createNewSaturatedColor(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION),.02f);
 
-		
+		baseColor.dispose();
+
+		lineColor = createNewSaturatedColor(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION), .02f);
+
 		baseColor = parent.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION);
-		
-		color1 = createNewBlendedColor(baseColor,parent.getDisplay().getSystemColor(SWT.COLOR_WHITE),70);
-		
-		baseColor = createNewBlendedColor(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION),parent.getDisplay().getSystemColor(SWT.COLOR_BLACK),80);
-		
-		color2 = createNewSaturatedColor(baseColor,.02f);
+
+		color1 = createNewBlendedColor(baseColor, parent.getDisplay().getSystemColor(SWT.COLOR_WHITE), 70);
+
+		baseColor = createNewBlendedColor(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION), parent.getDisplay().getSystemColor(SWT.COLOR_BLACK), 80);
+
+		color2 = createNewSaturatedColor(baseColor, .02f);
 
 		if ((parent.getStyle() & SWT.SIMPLE) != 0) {
 			selectedGradient1 = color1;
@@ -225,50 +220,49 @@ public class RedmondShelfRenderer extends AbstractRenderer {
 			gradient1 = color1;
 			gradient2 = color2;
 		}
-		
+
 		baseColor.dispose();
 
-		//initialOpenFont = FontUtils.createFont(parent.getFont(),4,SWT.BOLD);
+		// initialOpenFont = FontUtils.createFont(parent.getFont(),4,SWT.BOLD);
 		if ((parent.getStyle() & SWT.SIMPLE) != 0)
-		initialOpenFont = new Font(parent.getDisplay(),"Arial",12,SWT.BOLD);
+			initialOpenFont = new Font(parent.getDisplay(), "Arial", 12, SWT.BOLD);
 		else
 			initialOpenFont = new Font(parent.getDisplay(), initialFont.getFontData());
-		
+
 		font = initialFont;
 		selectedFont = initialOpenFont;
-		
+
 		Color inverseColor = parent.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT);
 		if ((parent.getStyle() & SWT.SIMPLE) != 0)
 			selectedForeground = inverseColor;
 		else
 			foreground = inverseColor;
-		// the other color left null, foreground color of the parent will be used for it
-		
+		// the other color left null, foreground color of the parent will be
+		// used for it
+
 		baseColor = createNewReverseColor(parent.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND));
-		
-		hoverGradient1 = createNewBlendedColor(baseColor,parent.getDisplay().getSystemColor(SWT.COLOR_WHITE),30);
-		
-				
-		Color baseColor2 = createNewBlendedColor(baseColor,parent.getDisplay().getSystemColor(SWT.COLOR_WHITE),99);
-		
-		hoverGradient2 = createNewSaturatedColor(baseColor2,.00f);
-		
+
+		hoverGradient1 = createNewBlendedColor(baseColor, parent.getDisplay().getSystemColor(SWT.COLOR_WHITE), 30);
+
+		Color baseColor2 = createNewBlendedColor(baseColor, parent.getDisplay().getSystemColor(SWT.COLOR_WHITE), 99);
+
+		hoverGradient2 = createNewSaturatedColor(baseColor2, .00f);
+
 		baseColor2.dispose();
 		baseColor.dispose();
 
-		initialColors = new Color[] { gradient1, gradient2, selectedGradient1, selectedGradient2,
-				hoverGradient1, hoverGradient2, lineColor };
+		initialColors = new Color[] { gradient1, gradient2, selectedGradient1, selectedGradient2, hoverGradient1, hoverGradient2, lineColor };
 	}
 
 	public void dispose() {
 		initialFont.dispose();
 		initialOpenFont.dispose();
-		
+
 		for (int i = 0; i < initialColors.length; i++) {
 			initialColors[i].dispose();
 		}
-        
-        super.dispose();
+
+		super.dispose();
 	}
 
 	public Color getLineColor() {
@@ -331,25 +325,46 @@ public class RedmondShelfRenderer extends AbstractRenderer {
 		return selectedForeground;
 	}
 
-	/** Sets text color for the selected item.
-	 * @param selectedForeground Can be <code>null</code>, foreground color of the parent is used in that case.
+	/**
+	 * Sets text color for the selected item.
+	 * 
+	 * @param selectedForeground
+	 *            Can be <code>null</code>, foreground color of the parent is
+	 *            used in that case.
 	 */
 	public void setSelectedForeground(Color selectedForeground) {
 		this.selectedForeground = selectedForeground;
+	}
+
+	public Color getHoverForeground() {
+		return hoverForeground;
+	}
+
+	/**
+	 * Sets text color for the hovered item.
+	 * 
+	 * @param hoverForeground
+	 *            Can be <code>null</code>, foreground color of the parent is
+	 *            used in that case.
+	 */
+	public void setHoverForeground(Color hoverForeground) {
+		this.hoverForeground = hoverForeground;
 	}
 
 	public Color getForeground() {
 		return foreground;
 	}
 
-
-	/** Sets text color for non-selected items.
-	 * @param foreground Can be <code>null</code>, foreground color of the parent is used in that case.
+	/**
+	 * Sets text color for non-selected items.
+	 * 
+	 * @param foreground
+	 *            Can be <code>null</code>, foreground color of the parent is
+	 *            used in that case.
 	 */
 	public void setForeground(Color foreground) {
 		this.foreground = foreground;
 	}
-
 
 	public Color getSelectedGradient1() {
 		return selectedGradient1;
@@ -366,123 +381,96 @@ public class RedmondShelfRenderer extends AbstractRenderer {
 	public void setSelectedGradient2(Color selectedGradient2) {
 		this.selectedGradient2 = selectedGradient2;
 	}
-    
-    private static String getShortString(GC gc, String t, int width)
-    {
 
-        if (t == null)
-        {
-            return null;
-        }
+	private static String getShortString(GC gc, String t, int width) {
 
-        if (t.equals(""))
-        {
-            return "";
-        }
+		if (t == null) {
+			return null;
+		}
 
-        if (width >= gc.stringExtent(t).x)
-        {
-            return t;
-        }
+		if (t.equals("")) {
+			return "";
+		}
 
-        int w = gc.stringExtent("...").x;
-        String text = t;
-        int l = text.length();
-        int pivot = l / 2;
-        int s = pivot;
-        int e = pivot + 1;
-        while (s >= 0 && e < l)
-        {
-            String s1 = text.substring(0, s);
-            String s2 = text.substring(e, l);
-            int l1 = gc.stringExtent(s1).x;
-            int l2 = gc.stringExtent(s2).x;
-            if (l1 + w + l2 < width)
-            {
-                text = s1 + "..." + s2;
-                break;
-            }
-            s--;
-            e++;
-        }
+		if (width >= gc.stringExtent(t).x) {
+			return t;
+		}
 
-        if (s == 0 || e == l)
-        {
-            text = text.substring(0, 1) + "..." + text.substring(l - 1, l);
-        }
+		int w = gc.stringExtent("...").x;
+		String text = t;
+		int l = text.length();
+		int pivot = l / 2;
+		int s = pivot;
+		int e = pivot + 1;
+		while (s >= 0 && e < l) {
+			String s1 = text.substring(0, s);
+			String s2 = text.substring(e, l);
+			int l1 = gc.stringExtent(s1).x;
+			int l2 = gc.stringExtent(s2).x;
+			if (l1 + w + l2 < width) {
+				text = s1 + "..." + s2;
+				break;
+			}
+			s--;
+			e++;
+		}
 
-        return text;
-    }
+		if (s == 0 || e == l) {
+			text = text.substring(0, 1) + "..." + text.substring(l - 1, l);
+		}
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    private static int blend(int v1, int v2, int ratio)
-    {
-        return (ratio * v1 + (100 - ratio) * v2) / 100;
-    }
+		return text;
+	}
 
-    private static RGB blend(RGB c1, RGB c2, int ratio)
-    {
-        int r = blend(c1.red, c2.red, ratio);
-        int g = blend(c1.green, c2.green, ratio);
-        int b = blend(c1.blue, c2.blue, ratio);
-        return new RGB(r, g, b);
-    }
+	private static int blend(int v1, int v2, int ratio) {
+		return (ratio * v1 + (100 - ratio) * v2) / 100;
+	}
 
-    private static Color createNewBlendedColor(Color c1, Color c2, int ratio)
-    {
-        Color newColor = new Color(Display.getCurrent(), blend(c1.getRGB(), c2.getRGB(), ratio));
+	private static RGB blend(RGB c1, RGB c2, int ratio) {
+		int r = blend(c1.red, c2.red, ratio);
+		int g = blend(c1.green, c2.green, ratio);
+		int b = blend(c1.blue, c2.blue, ratio);
+		return new RGB(r, g, b);
+	}
 
-        return newColor;
-    }
+	private static Color createNewBlendedColor(Color c1, Color c2, int ratio) {
+		Color newColor = new Color(Display.getCurrent(), blend(c1.getRGB(), c2.getRGB(), ratio));
 
-    private static Color createNewReverseColor(Color c)
-    {
-        Color newColor = new Color(Display.getCurrent(), 255 - c.getRed(), 255 - c.getGreen(),
-                                   255 - c.getBlue());
-        return newColor;
-    }
+		return newColor;
+	}
 
-    private static RGB saturate(RGB rgb, float saturation)
-    {
-        float[] hsb = rgb.getHSB();
-        
-        hsb[1] += saturation;
-        if(hsb[1] > 1.0f) {
-            hsb[1] = 1.0f;
-        }
-        if(hsb[1] < 0f) {
-            hsb[1] = 0f;
-        }
+	private static Color createNewReverseColor(Color c) {
+		Color newColor = new Color(Display.getCurrent(), 255 - c.getRed(), 255 - c.getGreen(), 255 - c.getBlue());
+		return newColor;
+	}
 
-        // hue is 0.0..360.0, saturation and brightness 0.0..1.0
-        hsb[0] += 360.0 * saturation;
-        if(hsb[0] > 360.0f) {
-            hsb[0] = 360.0f;
-        }
+	private static RGB saturate(RGB rgb, float saturation) {
+		float[] hsb = rgb.getHSB();
 
-        if(hsb[0] < 0f) {
-            hsb[0] = 0f;
-        }
-       
-        return new RGB(hsb[0], hsb[1], hsb[2]);       
-    }
+		hsb[1] += saturation;
+		if (hsb[1] > 1.0f) {
+			hsb[1] = 1.0f;
+		}
+		if (hsb[1] < 0f) {
+			hsb[1] = 0f;
+		}
 
-    private static Color createNewSaturatedColor(Color c, float saturation)
-    {
-        RGB newRGB = saturate(c.getRGB(), saturation);
-        return new Color(Display.getCurrent(), newRGB);
-    }
-    
+		// hue is 0.0..360.0, saturation and brightness 0.0..1.0
+		hsb[0] += 360.0 * saturation;
+		if (hsb[0] > 360.0f) {
+			hsb[0] = 360.0f;
+		}
+
+		if (hsb[0] < 0f) {
+			hsb[0] = 0f;
+		}
+
+		return new RGB(hsb[0], hsb[1], hsb[2]);
+	}
+
+	private static Color createNewSaturatedColor(Color c, float saturation) {
+		RGB newRGB = saturate(c.getRGB(), saturation);
+		return new Color(Display.getCurrent(), newRGB);
+	}
+
 }
