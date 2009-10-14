@@ -12,6 +12,7 @@
 package org.eclipse.nebula.widgets.datechooser;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -510,6 +511,19 @@ public abstract class AbstractCombo extends Composite {
 		if ( lsnr == null ) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		removeListener(SWT.Selection, lsnr);
 		removeListener(SWT.DefaultSelection,lsnr);	
+	}
+
+	/**
+	 * Selects all the text in the receiver.
+	 *
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 * </ul>
+	 */
+	public void selectAll() {
+		checkWidget();
+		text.selectAll();
 	}
 
 	/**
