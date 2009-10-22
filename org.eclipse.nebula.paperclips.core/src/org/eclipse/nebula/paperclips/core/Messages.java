@@ -20,7 +20,7 @@ import java.util.ResourceBundle;
  * @since 1.0.4
  */
 public class Messages {
-	private static final String BUNDLE_NAME = "org.eclipse.nebula.paperclips.messages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.nebula.paperclips.core.messages"; //$NON-NLS-1$
 
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
 			.getBundle(BUNDLE_NAME);
