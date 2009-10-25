@@ -31,6 +31,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.TreeListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -184,6 +185,27 @@ public class Gallery extends Canvas {
 	 * Keep track of processing the current mouse event.
 	 */
 	private boolean mouseClickHandled = false;
+
+	/**
+	 * Background color, if Control#getBackground() is not used.
+	 * 
+	 * @see Gallery#useControlColors
+	 */
+	private Color backgroundColor;
+
+	/**
+	 * Foreground color, if Control#getForeground() is not used.
+	 * 
+	 * @see Gallery#useControlColors
+	 */
+	private Color foregroundColor;
+
+	/**
+	 * If set to true, the gallery will get colors from parent Control. This may
+	 * generate more objects and slightly slow down the application. See Bug
+	 * 279822 : https://bugs.eclipse.org/bugs/show_bug.cgi?id=279822
+	 */
+	private boolean useControlColors = false;
 
 	AbstractGalleryItemRenderer itemRenderer;
 
@@ -527,12 +549,11 @@ public class Gallery extends Canvas {
 	 *            time.
 	 */
 	public Gallery(Composite parent, int style) {
-		super(parent, style | SWT.NO_BACKGROUND | SWT.DOUBLE_BUFFERED);
+		super(parent, style | SWT.DOUBLE_BUFFERED);
 		virtual = (style & SWT.VIRTUAL) > 0;
 		vertical = (style & SWT.V_SCROLL) > 0;
 		multi = (style & SWT.MULTI) > 0;
-		this.setBackground(getDisplay().getSystemColor(
-				SWT.COLOR_LIST_BACKGROUND));
+		setForeground(getDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND));
 
 		// Add listeners : redraws, mouse and keyboard
 		_addDisposeListeners();
@@ -1161,26 +1182,26 @@ public class Gallery extends Canvas {
 						|| lastControlHeight != getSize().y
 						|| lastContentHeight != this.gHeight || lastContentWidth != this.gWidth));
 		try {
-			GC newGC = gc;
-
 			// Linux-GTK Bug 174932
 			if (!SWT.getPlatform().equals(BUG_PLATFORM_LINUX_GTK_174932)) {
-				newGC.setAdvanced(true);
+				gc.setAdvanced(true);
 			}
 
 			if (gc.getAdvanced()) {
 				if (lowQualityPaint) {
-					newGC.setAntialias(SWT.OFF);
-					newGC.setInterpolation(SWT.OFF);
+					gc.setAntialias(SWT.OFF);
+					gc.setInterpolation(SWT.OFF);
 				} else {
-					newGC.setAntialias(antialias);
-					newGC.setInterpolation(interpolation);
+					gc.setAntialias(antialias);
+					gc.setInterpolation(interpolation);
 				}
 			}
 			// End of Bug 174932
 
-			Rectangle clipping = newGC.getClipping();
-			drawBackground(newGC, clipping.x, clipping.y, clipping.width,
+			Rectangle clipping = gc.getClipping();
+
+			gc.setBackground(this.getBackground());
+			drawBackground(gc, clipping.x, clipping.y, clipping.width,
 					clipping.height);
 
 			int[] indexes = getVisibleItems(clipping);
@@ -1189,22 +1210,22 @@ public class Gallery extends Canvas {
 
 				// Call preDraw for optimization
 				if (groupRenderer != null)
-					groupRenderer.preDraw(newGC);
+					groupRenderer.preDraw(gc);
 				if (itemRenderer != null)
-					itemRenderer.preDraw(newGC);
+					itemRenderer.preDraw(gc);
 
 				for (int i = indexes.length - 1; i >= 0; i--) {
 					if (DEBUG)
 						System.out.println("Drawing group " + indexes[i]); //$NON-NLS-1$
 
-					_drawGroup(newGC, indexes[i]);
+					_drawGroup(gc, indexes[i]);
 				}
 
 				// Call postDraw for optimization / cleanup
 				if (groupRenderer != null)
-					groupRenderer.postDraw(newGC);
+					groupRenderer.postDraw(gc);
 				if (itemRenderer != null)
-					itemRenderer.postDraw(newGC);
+					itemRenderer.postDraw(gc);
 			}
 		} catch (Exception e) {
 			// We can't let onPaint throw an exception because unexpected
@@ -1998,8 +2019,9 @@ public class Gallery extends Canvas {
 			// SWT.error throws an exception
 		}
 
-		if (item.getParentItem() == null)
+		if (item.getParentItem() == null) {
 			return _indexOf(item);
+		}
 
 		return _indexOf(item.getParentItem(), item);
 	}
@@ -2082,6 +2104,160 @@ public class Gallery extends Canvas {
 		return itemsLocal;
 	}
 
+	/**
+	 * @see Gallery#setUseControlColors(boolean)
+	 * @return true if Gallery uses parent colors.
+	 */
+	public boolean isUseControlColors() {
+		return useControlColors;
+	}
+
+	/**
+	 * Set useControlColors to true in order to get colors from parent Control
+	 * (SWT default). This may generate more objects on painting and slightly
+	 * slow down the application. See Bug 279822 :
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=279822
+	 * 
+	 * If enabled, you'll get new Color objects each time you call getXXXColor()
+	 * on Gallery or GalleryItem.
+	 * 
+	 * Default is false : colors are stored locally in Gallery, and you'll get
+	 * the same object each time you call getXXXColor() on Gallery
+	 * orGalleryItem. The Gallery may not catch color changes on parent control.
+	 * 
+	 * @param useControlColors
+	 */
+	public void setUseControlColors(boolean useControlColors) {
+		this.useControlColors = useControlColors;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.swt.widgets.Control#getBackground()
+	 */
+	public Color getBackground() {
+		return getBackground(false);
+	}
+
+	/**
+	 * Returns the receiver's background color.
+	 * 
+	 * @param galleryOnly
+	 *            If TRUE, does not try to parent widget or Display defaults to
+	 *            guess the real background color. Note : FALSE is the default
+	 *            behavior.
+	 * 
+	 * @return The background color or null if galleryOnly was used and the
+	 *         gallery has not foreground color set.
+	 * 
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
+	 *                </ul>
+	 * 
+	 */
+	public Color getBackground(boolean galleryOnly) {
+		if (galleryOnly) {
+			return this.backgroundColor;
+		}
+
+		if (useControlColors) {
+			return super.getBackground();
+		}
+
+		return backgroundColor != null ? backgroundColor : getDisplay()
+				.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.swt.widgets.Control#getForeground()
+	 */
+	public Color getForeground() {
+		return getForeground(false);
+	}
+
+	/**
+	 * Returns the receiver's foreground color.
+	 * 
+	 * @param galleryOnly
+	 *            If TRUE, does not try to parent widget or Display defaults to
+	 *            guess the real foreground color. Note : FALSE is the default
+	 *            behavior.
+	 * 
+	 * @return The foreground color or null if galleryOnly was used and the
+	 *         gallery has not foreground color set.
+	 * 
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
+	 *                </ul>
+	 * 
+	 */
+	public Color getForeground(boolean galleryOnly) {
+
+		if (galleryOnly) {
+			return this.foregroundColor;
+		}
+
+		if (useControlColors) {
+			return super.getForeground();
+		}
+
+		return foregroundColor != null ? foregroundColor : getDisplay()
+				.getSystemColor(SWT.COLOR_LIST_FOREGROUND);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.swt.widgets.Control#setBackground(org.eclipse.swt.graphics
+	 * .Color)
+	 */
+	public void setBackground(Color color) {
+		// Cache color locally
+		if (!useControlColors) {
+			this.backgroundColor = color;
+		}
+
+		// Always call Control#setBackground(); Additionally, this will trigger
+		// a redraw.
+		super.setBackground(color);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.swt.widgets.Control#setForeground(org.eclipse.swt.graphics
+	 * .Color)
+	 */
+	public void setForeground(Color color) {
+		// Cache color locally
+		if (!useControlColors) {
+			this.foregroundColor = color;
+		}
+
+		// Always call Control#setForeground(); Additionally, this will trigger
+		// a redraw.
+		super.setForeground(color);
+	}
+
+	/**
+	 * Checks if the Gallery was created with SWT.V_SCROLL (ie has a vertical
+	 * scroll bar).
+	 * 
+	 * @return true if the gallery has the SWT.V_SCROLL style.
+	 */
 	public boolean isVertical() {
 		checkWidget();
 		return vertical;
