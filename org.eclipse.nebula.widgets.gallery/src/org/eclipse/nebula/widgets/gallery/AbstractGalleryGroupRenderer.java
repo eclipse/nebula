@@ -11,6 +11,8 @@
 package org.eclipse.nebula.widgets.gallery;
 
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -211,4 +213,105 @@ public abstract class AbstractGalleryGroupRenderer {
 	public int getScrollBarIncrement() {
 		return 16;
 	}
+
+	/**
+	 * Returns item background color. This method is called by
+	 * {@link GalleryItem#getBackground()} and should be overridden by any group
+	 * renderer which use additional colors.
+	 * 
+	 * Note that item renderer is automatically used for items.
+	 * 
+	 * @param item
+	 *            a GalleryItem
+	 * @return Color The current background color (never null)
+	 */
+	protected Color getBackground(GalleryItem item) {
+		if (item != null) {
+
+			if (item.getParentItem() == null
+					&& gallery.getItemRenderer() != null) {
+				// This is an item, let the renderer decide
+				return gallery.getItemRenderer().getBackground(item);
+			}
+
+			// This is a group, or no item renderer. Use standard SWT behavior :
+
+			// Use item color first
+			if (item.background != null) {
+				return item.background;
+			}
+
+			// Then parent color.
+			return item.getParent().getBackground();
+
+		}
+		return null;
+	}
+
+	/**
+	 * Returns item foreground color. This method is called by
+	 * {@link GalleryItem#getForeground()} and should be overridden by any group
+	 * renderer which use additional colors.
+	 * 
+	 * Note that item renderer is automatically used for items.
+	 * 
+	 * @param item
+	 *            a GalleryItem
+	 * @return The current foreground (never null)
+	 */
+	protected Color getForeground(GalleryItem item) {
+		if (item != null) {
+
+			if (item.getParentItem() != null
+					&& gallery.getItemRenderer() != null) {
+				// This is an item, let the renderer decide
+				return gallery.getItemRenderer().getForeground(item);
+			}
+			// This is a group, or no item renderer. Use standard SWT behavior :
+
+			// Use item color first
+			if (item.foreground != null) {
+				return item.foreground;
+			}
+
+			// Then parent color.
+			return item.getParent().getForeground();
+
+		}
+		return null;
+	}
+
+	/**
+	 * Returns item font. This method is called by {@link GalleryItem#getFont()}
+	 * and should be overridden by any group renderer which use additional
+	 * fonts.
+	 * 
+	 * Note that item renderer is automatically used for items.
+	 * 
+	 * @param item
+	 *            a GalleryItem
+	 * @return The current item Font (never null)
+	 */
+	protected Font getFont(GalleryItem item) {
+		if (item != null) {
+
+			if (item.getParentItem() != null
+					&& gallery.getItemRenderer() != null) {
+				// This is an item, let the renderer decide
+				return gallery.getItemRenderer().getFont(item);
+			}
+			// This is a group, or no item renderer. Use standard SWT behavior :
+
+			// Use item font first
+			if (item.font != null) {
+				return item.font;
+			}
+
+			// Then parent font.
+			return item.getParent().getFont();
+
+		}
+		return null;
+	}
+
 }
