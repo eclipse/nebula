@@ -89,6 +89,8 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 	}
 
 	public ListItemRenderer() {
+		super();
+
 		// Set defaults
 		foregroundColor = Display.getDefault().getSystemColor(
 				SWT.COLOR_LIST_FOREGROUND);
@@ -102,10 +104,25 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 				SWT.COLOR_DARK_GRAY);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.nebula.widgets.gallery.AbstractGalleryItemRenderer#preDraw
+	 * (org.eclipse.swt.graphics.GC)
+	 */
 	public void preDraw(GC gc) {
 		super.preDraw(gc);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.nebula.widgets.gallery.AbstractGalleryItemRenderer#draw(org
+	 * .eclipse.swt.graphics.GC, org.eclipse.nebula.widgets.gallery.GalleryItem,
+	 * int, int, int, int, int)
+	 */
 	public void draw(GC gc, GalleryItem item, int index, int x, int y,
 			int width, int height) {
 
@@ -285,6 +302,12 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 		return dropShadowsSize;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.nebula.widgets.gallery.AbstractGalleryItemRenderer#dispose()
+	 */
 	public void dispose() {
 		freeDropShadowsColors();
 	}
