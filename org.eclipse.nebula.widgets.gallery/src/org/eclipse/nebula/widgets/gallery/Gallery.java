@@ -1623,6 +1623,7 @@ public class Gallery extends Canvas {
 				System.out.println("Enabling scrollbar"); //$NON-NLS-1$
 
 			bar.setEnabled(true);
+			bar.setVisible(true);
 			bar.setSelection(translate);
 
 			// Ensure that translate has a valid value.
@@ -1632,6 +1633,7 @@ public class Gallery extends Canvas {
 				System.out.println("Disabling scrollbar"); //$NON-NLS-1$
 
 			bar.setEnabled(false);
+			bar.setVisible(false);
 			bar.setSelection(0);
 			translate = 0;
 		}
