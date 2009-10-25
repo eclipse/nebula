@@ -300,26 +300,51 @@ public abstract class AbstractGalleryItemRenderer {
 	}
 
 	/**
-	 * Returns the font to use with this item. If no font is defined for the
-	 * Item, defaults to parent item font then on gallery font.
+	 * Check the GalleryItem, Gallery, and Display in order for the active
+	 * background color for the given GalleryItem.
+	 * 
+	 * @param item
+	 * @return the background Color to use for this item
+	 */
+	protected Color getBackground(GalleryItem item) {
+		Color backgroundColor = item.background;
+
+		if (backgroundColor == null) {
+			backgroundColor = item.getParent().getBackground();
+		}
+
+		return backgroundColor;
+	}
+
+	/**
+	 * Check the GalleryItem, Gallery, and Display in order for the active
+	 * foreground color for the given GalleryItem.
+	 * 
+	 * @param item
+	 * @return the foreground Color to use for this item
+	 */
+	protected Color getForeground(GalleryItem item) {
+		Color foregroundColor = item.getForeground(true);
+		if (foregroundColor == null) {
+			foregroundColor = item.getParent().getForeground();
+		}
+
+		return foregroundColor;
+	}
+
+	/**
+	 * Check the GalleryItem, Gallery, and Display in order for the active font
+	 * for the given GalleryItem.
 	 * 
 	 * @param item
 	 * @return the Font to use for this item
 	 */
 	protected Font getFont(GalleryItem item) {
-		// Item font
-		Font itemFont = item.getFont();
-
-		// Parent item font
-		if (itemFont == null && item.getParentItem() != null) {
-			itemFont = item.getParentItem().getFont();
+		Font font = item.getFont(true);
+		if (font == null) {
+			font = item.getParent().getFont();
 		}
-
-		// Gallery font
-		if (itemFont == null && item.getParent() != null) {
-			itemFont = item.getParent().getFont();
-		}
-
-		return itemFont;
+		return font;
 	}
+
 }
