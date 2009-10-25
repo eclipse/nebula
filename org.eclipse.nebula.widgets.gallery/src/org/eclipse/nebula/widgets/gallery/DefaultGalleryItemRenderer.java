@@ -76,6 +76,12 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 
 	int selectionRadius = 15;
 
+	// Vars used during drawing (optimization)
+	private boolean _drawBackground = false;
+	private Color _drawBackgroundColor = null;
+	private Image _drawImage = null;
+	private Color _drawForegroundColor = null;
+
 	/**
 	 * Returns current label state : enabled or disabled
 	 * 
@@ -124,9 +130,8 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 	 */
 	public void draw(GC gc, GalleryItem item, int index, int x, int y,
 			int width, int height) {
-		Image itemImage = item.getImage();
-		Color itemBackgroundColor = item.getBackground();
-		Color itemForegroundColor = item.getForeground();
+		_drawImage = item.getImage();
+		_drawForegroundColor = getForeground(item);
 
 		// Set up the GC
 		gc.setFont(getFont(item));
@@ -146,8 +151,8 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 		int yShift = 0;
 		Point size = null;
 
-		if (itemImage != null) {
-			Rectangle itemImageBounds = itemImage.getBounds();
+		if (_drawImage != null) {
+			Rectangle itemImageBounds = _drawImage.getBounds();
 			imageWidth = itemImageBounds.width;
 			imageHeight = itemImageBounds.height;
 
@@ -175,16 +180,26 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 		}
 
 		// Draw background (rounded rectangles)
-		if (selected
-				|| !RendererHelper.isColorsEquals(itemBackgroundColor,
-						galleryBackgroundColor)) {
 
+		// Checks if background has to be drawn
+		_drawBackground = selected;
+		_drawBackgroundColor = null;
+		if (!_drawBackground && item.getBackground(true) != null) {
+			_drawBackgroundColor = getBackground(item);
+
+			if (!RendererHelper.isColorsEquals(_drawBackgroundColor,
+					galleryBackgroundColor)) {
+				_drawBackground = true;
+			}
+		}
+
+		if (_drawBackground) {
 			// Set colors
 			if (selected) {
 				gc.setBackground(selectionBackgroundColor);
 				gc.setForeground(selectionBackgroundColor);
-			} else if (itemBackgroundColor != null) {
-				gc.setBackground(itemBackgroundColor);
+			} else if (_drawBackgroundColor != null) {
+				gc.setBackground(_drawBackgroundColor);
 			}
 
 			// Draw
@@ -203,9 +218,9 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 		}
 
 		// Draw image
-		if (itemImage != null && size != null) {
+		if (_drawImage != null && size != null) {
 			if (size.x > 0 && size.y > 0) {
-				gc.drawImage(itemImage, 0, 0, imageWidth, imageHeight, x
+				gc.drawImage(_drawImage, 0, 0, imageWidth, imageHeight, x
 						+ xShift, y + yShift, size.x, size.y);
 				drawAllOverlays(gc, item, x, y, size, xShift, yShift);
 			}
@@ -224,15 +239,15 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 				// Not selected, use item values or defaults.
 
 				// Background
-				if (itemBackgroundColor != null) {
-					gc.setBackground(itemBackgroundColor);
+				if (_drawBackgroundColor != null) {
+					gc.setBackground(_drawBackgroundColor);
 				} else {
 					gc.setBackground(backgroundColor);
 				}
 
 				// Foreground
-				if (itemForegroundColor != null) {
-					gc.setForeground(itemForegroundColor);
+				if (_drawForegroundColor != null) {
+					gc.setForeground(_drawForegroundColor);
 				} else {
 					gc.setForeground(foregroundColor);
 				}
@@ -299,11 +314,12 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 	}
 
 	/**
-	 * Returns the font used for drawing item label or <tt>null</tt> if system
-	 * font is used.
+	 * Returns the font used for drawing all item labels or <tt>null</tt> if
+	 * system font is used.
 	 * 
 	 * @return the font
-	 * @deprecated Use {@link Gallery#getFont()}
+	 * @see {@link Gallery#getFont()} for setting font for a specific
+	 *      GalleryItem.
 	 */
 	public Font getFont() {
 		if (gallery != null) {
@@ -313,11 +329,13 @@ public class DefaultGalleryItemRenderer extends AbstractGalleryItemRenderer {
 	}
 
 	/**
-	 * Set the font for drawing item label or <tt>null</tt> to use system font.
+	 * Set the font for drawing all item labels or <tt>null</tt> to use system
+	 * font.
 	 * 
 	 * @param font
 	 *            the font to set
-	 * @deprecated Use {@link Gallery#setFont(Font)}
+	 * @see {@link Gallery#setFont(Font)} for setting font for a specific
+	 *      GalleryItem.
 	 */
 	public void setFont(Font font) {
 		if (gallery != null) {
