@@ -34,8 +34,16 @@ import org.eclipse.swt.graphics.Rectangle;
  */
 public class NoGroupRenderer extends AbstractGridGroupRenderer {
 
-	static int OFFSET = 0;
+	protected static int OFFSET = 0;
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.nebula.widgets.gallery.AbstractGridGroupRenderer#draw(org
+	 * .eclipse.swt.graphics.GC, org.eclipse.nebula.widgets.gallery.GalleryItem,
+	 * int, int, int, int, int, int)
+	 */
 	public void draw(GC gc, GalleryItem group, int x, int y, int clipX,
 			int clipY, int clipWidth, int clipHeight) {
 
@@ -59,6 +67,13 @@ public class NoGroupRenderer extends AbstractGridGroupRenderer {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.nebula.widgets.gallery.AbstractGridGroupRenderer#layout(org
+	 * .eclipse.swt.graphics.GC, org.eclipse.nebula.widgets.gallery.GalleryItem)
+	 */
 	public void layout(GC gc, GalleryItem group) {
 
 		int countLocal = group.getItemCount();
@@ -82,7 +97,6 @@ public class NoGroupRenderer extends AbstractGridGroupRenderer {
 			group.setData(H_COUNT, new Integer(hCount));
 			group.setData(V_COUNT, new Integer(vCount));
 		} else {
-			// TODO : implement horizontal mode
 			int sizeY = group.height;
 			group.width = OFFSET;
 
@@ -104,15 +118,38 @@ public class NoGroupRenderer extends AbstractGridGroupRenderer {
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.nebula.widgets.gallery.AbstractGridGroupRenderer#getItem(
+	 * org.eclipse.nebula.widgets.gallery.GalleryItem,
+	 * org.eclipse.swt.graphics.Point)
+	 */
 	public GalleryItem getItem(GalleryItem group, Point coords) {
 		return super.getItem(group, coords, OFFSET);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.nebula.widgets.gallery.AbstractGridGroupRenderer#mouseDown
+	 * (org.eclipse.nebula.widgets.gallery.GalleryItem,
+	 * org.eclipse.swt.events.MouseEvent, org.eclipse.swt.graphics.Point)
+	 */
 	public boolean mouseDown(GalleryItem group, MouseEvent e, Point coords) {
 		// Do nothing
 		return true;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.nebula.widgets.gallery.AbstractGridGroupRenderer#getSize(
+	 * org.eclipse.nebula.widgets.gallery.GalleryItem)
+	 */
 	public Rectangle getSize(GalleryItem item) {
 		return super.getSize(item, OFFSET);
 	}
