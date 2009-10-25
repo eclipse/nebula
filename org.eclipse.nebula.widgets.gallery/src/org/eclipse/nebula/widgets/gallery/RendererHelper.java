@@ -31,7 +31,6 @@ import org.eclipse.swt.graphics.Point;
 public class RendererHelper {
 	private static final String ELLIPSIS = "..."; //$NON-NLS-1$
 
-
 	/**
 	 * Shorten the given text <code>text</code> so that its length doesn't
 	 * exceed the given width. The default implementation replaces characters in
@@ -149,6 +148,16 @@ public class RendererHelper {
 		return xShift;
 	}
 
+	/**
+	 * Checks if two colors are equals by comparing their RGB values.
+	 * This method is null-proof.
+	 * 
+	 * @param galleryColor
+	 *            First color
+	 * @param itemColor
+	 *            Second color.
+	 * @return true if same object or RGB values are equals.
+	 */
 	public static boolean isColorsEquals(Color galleryColor, Color itemColor) {
 
 		// Default case
