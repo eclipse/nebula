@@ -32,11 +32,22 @@ import org.eclipse.swt.graphics.Image;
 public class GalleryDragSourceEffect extends DragSourceEffect {
 	Gallery g = null;
 
+	/**
+	 * Creates the drag source effect.
+	 * 
+	 * @param gallery
+	 */
 	public GalleryDragSourceEffect(Gallery gallery) {
 		super(gallery);
 		g = gallery;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.eclipse.swt.dnd.DragSourceAdapter#dragStart(org.eclipse.swt.dnd.
+	 * DragSourceEvent)
+	 */
 	public void dragStart(DragSourceEvent event) {
 		GalleryItem[] selection = g.getSelection();
 		if (selection != null) {
