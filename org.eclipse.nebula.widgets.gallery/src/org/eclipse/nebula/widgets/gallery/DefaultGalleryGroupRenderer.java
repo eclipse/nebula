@@ -56,6 +56,11 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 
 	private Color titleBackground = null;
 
+	private boolean titleBackgroundGradient = true;
+
+	// Used for gradient
+	private Color titleBackground2 = null;
+
 	private int maxImageWidth = 32;
 
 	private int maxImageHeight = 32;
@@ -92,19 +97,34 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 
 	protected static final String DATA_ANIMATION = "org.eclipse.nebula.gallery.internal.animation"; //$NON-NLS-1$
 
+	/**
+	 * This group renderer draws a title line, then items in a grid layout.
+	 */
 	public DefaultGalleryGroupRenderer() {
+		super();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.nebula.widgets.gallery.AbstractGalleryGroupRenderer#setGallery
+	 * (org.eclipse.nebula.widgets.gallery.Gallery)
+	 */
 	public void setGallery(Gallery gallery) {
 		super.setGallery(gallery);
 
 		// Set defaults
 		if (titleForeground == null) {
-			titleForeground = gallery.getDisplay().getSystemColor(
-					SWT.COLOR_TITLE_FOREGROUND);
+			// Reset defaults.
+			this.setTitleForeground(null);
 		}
-		// titleBackground =
-		// Display.getDefault().getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
+
+		if (titleBackground == null) {
+			// Reset default gradient.
+			setTitleBackgroundGradient(null, null);
+		}
+
 		if (descriptionColor == null) {
 			descriptionColor = gallery.getDisplay().getSystemColor(
 					SWT.COLOR_DARK_BLUE);
@@ -117,23 +137,25 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 	 * color.
 	 * 
 	 * @param gc
+	 * @param item
+	 *            TODO
 	 * @param x
 	 * @param y
 	 * @param width
 	 * @param height
 	 */
-	protected void drawGroupBackground(GC gc, int x, int y, int width,
-			int height) {
-		if (titleBackground != null) {
+	protected void drawGroupBackground(GC gc, GalleryItem item, int x, int y,
+			int width, int height) {
+		Color itemLocalBackground = item.getBackground(true);
+		if (!titleBackgroundGradient || itemLocalBackground != null) {
 			// User defined background
-			gc.setBackground(titleBackground);
+			gc.setBackground(itemLocalBackground != null ? itemLocalBackground
+					: titleBackground);
 			gc.fillRectangle(x, y, width, height);
 		} else {
 			// Default gradient Background
-			gc.setBackground(gallery.getDisplay().getSystemColor(
-					SWT.COLOR_TITLE_BACKGROUND));
-			gc.setForeground(gallery.getDisplay().getSystemColor(
-					SWT.COLOR_TITLE_BACKGROUND_GRADIENT));
+			gc.setBackground(this.titleBackground);
+			gc.setForeground(this.titleBackground2);
 			gc.fillGradientRectangle(x, y, width, height, true);
 		}
 	}
@@ -245,16 +267,17 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 			textY = Math.max(y + 2, textY);
 
 			// Title background
-			drawGroupBackground(gc, x, y, group.width, groupHeight);
+			drawGroupBackground(gc, group, x, y, group.width, groupHeight);
 
 			baseX += drawGroupToggleButton(gc, baseX, textY - 1, group);
 			baseX += drawGroupImage(gc, group, baseX, y, imageSize);
 
 			// Color for text
-			gc.setForeground(titleForeground);
+			gc.setForeground(group.getForeground(true) != null ? group
+					.getForeground(true) : titleForeground);
 
 			// Title text
-			gc.setFont(font);
+			gc.setFont(getFont(group));
 			gc.drawText(getGroupTitle(group), baseX, textY, true);
 
 			// Description
@@ -290,17 +313,18 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 			textX = Math.max(x + 2, textX);
 
 			// Title background
-			drawGroupBackground(gc, y - group.height, x, group.height,
+			drawGroupBackground(gc, group, y - group.height, x, group.height,
 					groupHeight);
 
 			baseY += drawGroupToggleButton(gc, baseY, textX - 1, group);
 			baseY += drawGroupImage(gc, group, baseY, x, imageSize);
 
 			// Color for text
-			gc.setForeground(titleForeground);
+			gc.setForeground(group.foreground != null ? group.foreground
+					: titleForeground);
 
 			// Title text
-			gc.setFont(font);
+			gc.setFont(getFont(group));
 
 			gc.drawText(getGroupTitle(group), baseY, textX, true);
 
@@ -315,6 +339,38 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 			transform.dispose();
 		}
 	}
+
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see
+	// * org.eclipse.nebula.widgets.gallery.AbstractGalleryGroupRenderer#getFont
+	// * (org.eclipse.nebula.widgets.gallery.GalleryItem)
+	// */
+	// protected Font getFont(GalleryItem item) {
+	// if (item != null) {
+	//
+	// if (item.getParentItem() != null) {
+	// return super.getFont(item);
+	// }
+	//
+	// // This is a group
+	//
+	// // Use item font first
+	// if (item.font != null) {
+	// return item.font;
+	// }
+	//
+	// if (font != null) {
+	// return font;
+	// }
+	//
+	// // Then parent font.
+	// return item.getParent().getFont();
+	// }
+	//
+	// return null;
+	// }
 
 	private int drawGroupImage(GC gc, GalleryItem group, int x, int y,
 			Point imageSize2) {
@@ -355,6 +411,14 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 		return getGroupHeight(item) + minMargin;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.nebula.widgets.gallery.AbstractGridGroupRenderer#draw(org
+	 * .eclipse.swt.graphics.GC, org.eclipse.nebula.widgets.gallery.GalleryItem,
+	 * int, int, int, int, int, int)
+	 */
 	public void draw(GC gc, GalleryItem group, int x, int y, int clipX,
 			int clipY, int clipWidth, int clipHeight) {
 		// Draw group
@@ -522,6 +586,14 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 			gc.dispose();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.nebula.widgets.gallery.AbstractGridGroupRenderer#getItem(
+	 * org.eclipse.nebula.widgets.gallery.GalleryItem,
+	 * org.eclipse.swt.graphics.Point)
+	 */
 	public GalleryItem getItem(GalleryItem group, Point coords) {
 		// Cannot select an item if the group is not expanded
 		if (!isGroupExpanded(group))
@@ -555,6 +627,14 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.nebula.widgets.gallery.AbstractGridGroupRenderer#mouseDown
+	 * (org.eclipse.nebula.widgets.gallery.GalleryItem,
+	 * org.eclipse.swt.events.MouseEvent, org.eclipse.swt.graphics.Point)
+	 */
 	public boolean mouseDown(final GalleryItem group, MouseEvent e, Point coords) {
 
 		if (gallery.isVertical()) { // V_SCROLL
@@ -681,12 +761,32 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 		return super.getSize(item, getGroupOffset(group));
 	}
 
+	/**
+	 * Get group title text color.
+	 * 
+	 * @return current color.
+	 */
 	public Color getTitleForeground() {
 		return titleForeground;
 	}
 
+	/**
+	 * Change group title text color.
+	 * 
+	 * @param titleColor
+	 *            Color or null to revert to default.
+	 */
 	public void setTitleForeground(Color titleColor) {
-		this.titleForeground = titleColor;
+		if (titleColor == null) {
+			if (gallery == null) {
+				throw new IllegalArgumentException(
+						"Please associate this renderer with a Gallery before trying to reset foreground defaults"); //$NON-NLS-1$
+			}
+			titleForeground = gallery.getDisplay().getSystemColor(
+					SWT.COLOR_TITLE_FOREGROUND);
+		} else {
+			this.titleForeground = titleColor;
+		}
 	}
 
 	public Color getTitleBackground() {
@@ -694,7 +794,29 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 	}
 
 	public void setTitleBackground(Color titleBackground) {
+		this.titleBackgroundGradient = false;
 		this.titleBackground = titleBackground;
+	}
+
+	public void setTitleBackgroundGradient(Color gradientBackground,
+			Color gradientForeground) {
+		this.titleBackgroundGradient = true;
+
+		if (gradientBackground != null && gradientForeground != null) {
+			this.titleBackground = gradientBackground;
+			this.titleBackground2 = gradientForeground;
+		} else {
+			if (gallery == null) {
+				throw new IllegalArgumentException(
+						"Please associate this renderer with a Gallery before trying to reset background defaults"); //$NON-NLS-1$
+			}
+
+			// Default gradient Background
+			this.titleBackground = gallery.getDisplay().getSystemColor(
+					SWT.COLOR_TITLE_BACKGROUND);
+			this.titleBackground2 = gallery.getDisplay().getSystemColor(
+					SWT.COLOR_TITLE_BACKGROUND_GRADIENT);
+		}
 	}
 
 	/**
@@ -722,6 +844,14 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.nebula.widgets.gallery.AbstractGridGroupRenderer#drawItem
+	 * (org.eclipse.swt.graphics.GC, int, boolean,
+	 * org.eclipse.nebula.widgets.gallery.GalleryItem, int)
+	 */
 	protected void drawItem(GC gc, int index, boolean selected,
 			GalleryItem parent, int offsetY) {
 
@@ -941,6 +1071,14 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 				return true;
 		}
 		return super.isGroupExpanded(item);
+	}
+
+	public boolean isTitleBackgroundGradient() {
+		return titleBackgroundGradient;
+	}
+
+	public Color getTitleBackground2() {
+		return titleBackground2;
 	}
 
 }
