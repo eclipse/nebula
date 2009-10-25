@@ -11,6 +11,7 @@
 package org.eclipse.nebula.widgets.gallery;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -388,7 +389,7 @@ public class GalleryItem extends Item {
 		// The y coords is relative to the client area because it may return
 		// wrong values
 		// on win32 when using the scroll bars. Instead, I use the absolute
-		// position and make is relative using the current translation.
+		// position and make it relative using the current translation.
 
 		if (parent.isVertical()) {
 			return new Rectangle(x, y - parent.translate, width, height);
@@ -398,8 +399,23 @@ public class GalleryItem extends Item {
 	}
 
 	public Font getFont() {
+		return getFont(false);
+	}
+
+	public Font getFont(boolean itemOnly) {
 		checkWidget();
-		return font;
+
+		if (itemOnly) {
+			return font;
+		}
+
+		// Let the renderer decide the color.
+		if (parent.getGroupRenderer() != null) {
+			return parent.getGroupRenderer().getFont(this);
+		}
+
+		// Default SWT behavior if no renderer.
+		return font != null ? font : parent.getFont();
 	}
 
 	public void setFont(Font font) {
@@ -411,11 +427,81 @@ public class GalleryItem extends Item {
 		this.parent.redraw(this);
 	}
 
+	/**
+	 * Returns the receiver's foreground color.
+	 * 
+	 * @return The foreground color
+	 * 
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
+	 *                </ul>
+	 * 
+	 */
 	public Color getForeground() {
+		return getForeground(false);
+	}
+
+	/**
+	 * Returns the receiver's foreground color.
+	 * 
+	 * @param itemOnly
+	 *            If TRUE, does not try to use renderer or parent widget to
+	 *            guess the real foreground color. Note : FALSE is the default
+	 *            behavior.
+	 * 
+	 * @return The foreground color
+	 * 
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
+	 *                </ul>
+	 * 
+	 */
+	public Color getForeground(boolean itemOnly) {
 		checkWidget();
+
+		if (itemOnly) {
+			return this.foreground;
+		}
+
+		// Let the renderer decide the color.
+		if (parent.getGroupRenderer() != null) {
+			return parent.getGroupRenderer().getForeground(this);
+		}
+
+		// Default SWT behavior if no renderer.
 		return foreground != null ? foreground : parent.getForeground();
 	}
 
+	/**
+	 * Sets the receiver's foreground color to the color specified by the
+	 * argument, or to the default system color for the item if the argument is
+	 * null.
+	 * 
+	 * @param color
+	 *            The new color (or null)
+	 * 
+	 * @exception IllegalArgumentException
+	 *                <ul>
+	 *                <li>ERROR_INVALID_ARGUMENT - if the argument has been
+	 *                disposed</li>
+	 *                </ul>
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
+	 *                </ul>
+	 * 
+	 */
 	public void setForeground(Color foreground) {
 		checkWidget();
 		if (foreground != null && foreground.isDisposed()) {
@@ -425,11 +511,82 @@ public class GalleryItem extends Item {
 		this.parent.redraw(this);
 	}
 
+	/**
+	 * Returns the receiver's background color.
+	 * 
+	 * @return The background color
+	 * 
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
+	 *                </ul>
+	 * 
+	 */
 	public Color getBackground() {
+		return getBackground(false);
+	}
+
+	/**
+	 * Returns the receiver's background color.
+	 * 
+	 * @param itemOnly
+	 *            If TRUE, does not try to use renderer or parent widget to
+	 *            guess the real background color. Note : FALSE is the default
+	 *            behavior.
+	 * 
+	 * @return The background color
+	 * 
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
+	 *                </ul>
+	 * 
+	 */
+	public Color getBackground(boolean itemOnly) {
 		checkWidget();
+
+		// If itemOnly, return this item's color attribute.
+		if (itemOnly) {
+			return this.background;
+		}
+
+		// Let the renderer decide the color.
+		if (parent.getGroupRenderer() != null) {
+			return parent.getGroupRenderer().getBackground(this);
+		}
+
+		// Default SWT behavior if no renderer.
 		return background != null ? background : parent.getBackground();
 	}
 
+	/**
+	 * Sets the receiver's background color to the color specified by the
+	 * argument, or to the default system color for the item if the argument is
+	 * null.
+	 * 
+	 * @param color
+	 *            The new color (or null)
+	 * 
+	 * @exception IllegalArgumentException
+	 *                <ul>
+	 *                <li>ERROR_INVALID_ARGUMENT - if the argument has been
+	 *                disposed</li>
+	 *                </ul>
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
+	 *                </ul>
+	 * 
+	 */
 	public void setBackground(Color background) {
 		checkWidget();
 		if (background != null && background.isDisposed()) {
