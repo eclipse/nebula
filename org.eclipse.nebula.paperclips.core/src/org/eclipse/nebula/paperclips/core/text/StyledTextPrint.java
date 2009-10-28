@@ -249,20 +249,20 @@ class StyledTextIterator implements PrintIterator {
 	}
 
 	private PrintPiece createRowResult(int rowAscent, List rowElements) {
-		int x;
 		if (rowElements.size() == 0)
 			return null;
 
-		x = 0;
+		List entries = new ArrayList();
+		int x = 0;
 		for (int i = 0; i < rowElements.size(); i++) {
 			PrintPiece piece = (PrintPiece) rowElements.get(i);
 			int ascent = getAscent(piece);
-			rowElements.set(i, new CompositeEntry(piece, new Point(x, rowAscent
+			entries.add(new CompositeEntry(piece, new Point(x, rowAscent
 					- ascent)));
 			x += piece.getSize().x;
 		}
 
-		return new CompositePiece(rowElements);
+		return new CompositePiece(entries);
 	}
 
 	private void restoreBackup(final int backupCursor, final List backup) {
