@@ -166,7 +166,10 @@ public class LinePrint implements Print {
 	}
 }
 
-class LineIterator extends AbstractIterator {
+class LineIterator implements PrintIterator {
+	private final Device device;
+	private final GC gc;
+
 	final int orientation;
 	final Point thickness;
 	final RGB rgb;
@@ -174,7 +177,9 @@ class LineIterator extends AbstractIterator {
 	private boolean hasNext = true;
 
 	LineIterator(LinePrint print, Device device, GC gc) {
-		super(device, gc);
+		this.device = device;
+		this.gc = gc;
+
 		this.orientation = print.orientation;
 		this.rgb = print.rgb;
 		Point dpi = device.getDPI();
@@ -186,7 +191,9 @@ class LineIterator extends AbstractIterator {
 	}
 
 	LineIterator(LineIterator that) {
-		super(that);
+		this.device = that.device;
+		this.gc = that.gc;
+
 		this.orientation = that.orientation;
 		this.rgb = that.rgb;
 		this.hasNext = that.hasNext;
@@ -211,7 +218,7 @@ class LineIterator extends AbstractIterator {
 		if (size.x > width || size.y > height)
 			return null;
 
-		PrintPiece result = new LinePiece(this, size);
+		PrintPiece result = new LinePiece(device, size, rgb);
 		hasNext = false;
 
 		return result;
@@ -230,12 +237,19 @@ class LineIterator extends AbstractIterator {
 	}
 }
 
-class LinePiece extends AbstractPiece {
+class LinePiece implements PrintPiece {
+	private final Device device;
+	private final Point size;
 	private final RGB rgb;
 
-	LinePiece(LineIterator iter, Point size) {
-		super(iter, size);
-		this.rgb = iter.rgb;
+	LinePiece(Device device, Point size, RGB rgb) {
+		this.device = device;
+		this.size = size;
+		this.rgb = rgb;
+	}
+
+	public Point getSize() {
+		return new Point(size.x, size.y);
 	}
 
 	public void paint(GC gc, int x, int y) {

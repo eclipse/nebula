@@ -10,8 +10,6 @@
  */
 package org.eclipse.nebula.paperclips.core.page;
 
-import org.eclipse.nebula.paperclips.core.AbstractIterator;
-import org.eclipse.nebula.paperclips.core.AbstractPiece;
 import org.eclipse.nebula.paperclips.core.Print;
 import org.eclipse.nebula.paperclips.core.PrintIterator;
 import org.eclipse.nebula.paperclips.core.PrintPiece;
@@ -304,7 +302,10 @@ public class PageNumberPrint implements Print {
 	}
 }
 
-class PageNumberIterator extends AbstractIterator {
+class PageNumberIterator implements PrintIterator {
+	private final Device device;
+	private final GC gc;
+
 	final PageNumber pageNumber;
 	final TextStyle textStyle;
 	final PageNumberFormat format;
@@ -313,7 +314,8 @@ class PageNumberIterator extends AbstractIterator {
 	boolean hasNext = true;
 
 	PageNumberIterator(PageNumberPrint print, Device device, GC gc) {
-		super(device, gc);
+		this.device = device;
+		this.gc = gc;
 
 		this.pageNumber = print.pageNumber;
 		this.textStyle = print.textStyle;
@@ -340,7 +342,9 @@ class PageNumberIterator extends AbstractIterator {
 	}
 
 	PageNumberIterator(PageNumberIterator that) {
-		super(that);
+		this.device = that.device;
+		this.gc = that.gc;
+
 		this.pageNumber = that.pageNumber;
 		this.textStyle = that.textStyle;
 		this.format = that.format;
@@ -369,7 +373,7 @@ class PageNumberIterator extends AbstractIterator {
 		if (align == SWT.CENTER || align == SWT.RIGHT)
 			size.x = width;
 
-		PageNumberPiece piece = new PageNumberPiece(this, size);
+		PageNumberPiece piece = new PageNumberPiece(this, device, size);
 		hasNext = false;
 
 		return piece;
@@ -380,16 +384,24 @@ class PageNumberIterator extends AbstractIterator {
 	}
 }
 
-class PageNumberPiece extends AbstractPiece {
+class PageNumberPiece implements PrintPiece {
+	private final Device device;
+	private final Point size;
+
 	private final PageNumber pageNumber;
 	private final TextStyle textStyle;
 	private final PageNumberFormat format;
 
-	PageNumberPiece(PageNumberIterator iter, Point size) {
-		super(iter, size);
+	PageNumberPiece(PageNumberIterator iter, Device device, Point size) {
+		this.device = device;
+		this.size = size;
 		this.pageNumber = iter.pageNumber;
 		this.textStyle = iter.textStyle;
 		this.format = iter.format;
+	}
+
+	public Point getSize() {
+		return new Point(size.x, size.y);
 	}
 
 	public void paint(final GC gc, final int x, final int y) {

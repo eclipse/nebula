@@ -13,7 +13,6 @@ package org.eclipse.nebula.paperclips.core.text;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.nebula.paperclips.core.AbstractIterator;
 import org.eclipse.nebula.paperclips.core.PaperClips;
 import org.eclipse.nebula.paperclips.core.Print;
 import org.eclipse.nebula.paperclips.core.PrintIterator;
@@ -344,7 +343,10 @@ public class TextPrint implements Print {
 	}
 }
 
-class TextIterator extends AbstractIterator {
+class TextIterator implements PrintIterator {
+	private final Device device;
+	private final GC gc;
+
 	final String text;
 	final String[] lines;
 	final TextStyle style;
@@ -356,7 +358,9 @@ class TextIterator extends AbstractIterator {
 	int col;
 
 	TextIterator(TextPrint print, Device device, GC gc) {
-		super(device, gc);
+		this.device = device;
+		this.gc = gc;
+
 		this.text = print.text;
 		this.lines = print.text.split("(\r)?\n"); //$NON-NLS-1$
 		this.style = print.style;
@@ -369,7 +373,8 @@ class TextIterator extends AbstractIterator {
 	}
 
 	TextIterator(TextIterator that) {
-		super(that);
+		this.device = that.device;
+		this.gc = that.gc;
 
 		this.text = that.text;
 		this.lines = that.lines;
