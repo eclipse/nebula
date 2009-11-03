@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 eric.
+ * Copyright (c) 2005, 2009 eric.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.Display;
 
 /**
  * Theme for <code>DateChooser</code> widgets. Defines the GUI settings
- * (colors, font...) applied to the differents elements of the calendar.<p>
+ * (colors, font...) applied to the different elements of the calendar.<p>
  * 
  * Some default themes are provided as constants of this class. The GRAY theme
  * is defined as the default for all new calendars. This can be changed with
@@ -40,18 +40,24 @@ public class DateChooserTheme {
 	public static final DateChooserTheme BLUE;
 	/** YELLOW theme */
 	public static final DateChooserTheme YELLOW;
+	/** CLASSIC theme */
+	public static final DateChooserTheme CLASSIC;
+	/** SYSTEM theme */
+	public static final DateChooserTheme SYSTEM;
 
 	/** Default theme */
 	protected static DateChooserTheme defaultTheme;
 
 	// ----- Colors -----
-	/** Color for header background */
+	/** Color for the border */
+	Color borderBackground;
+	/** Color for month header background */
 	Color headerBackground;
-	/** Color for header foreground */
+	/** Color for month header foreground */
 	Color headerForeground;
-	/** Color for grid header background */
+	/** Color for grid days headers background */
 	Color gridHeaderBackground;
-	/** Color for grid header foreground */
+	/** Color for grid days headers foreground */
 	Color gridHeaderForeground;
 	/** Color for grid lines */
 	Color gridLinesColor;
@@ -68,7 +74,7 @@ public class DateChooserTheme {
 	Color todayBackground;
 	/** Color for today cell foreground */
 	Color todayForeground;
-	/** Color for adjascent days foreground */
+	/** Color for adjacent days foreground */
 	Color extraMonthForeground;
 	/** Color for week end foreground */
 	Color weekendForeground;
@@ -76,17 +82,21 @@ public class DateChooserTheme {
 	Color focusColor;
 
 	// ----- Other GUI settings -----
+	/** Border size in pixels (default 0) */
+	int borderSize = 0;
 	/** Flag to set grid visible or not */
-	boolean gridVisible = true;
+	int gridVisible = DateChooser.GRID_FULL;
 	/** Horizontal cell padding */
 	int cellPadding = 2;
 	/** Font */
 	Font font = null;
 
 	static {
-		GRAY	 = new DateChooserTheme();
-		BLUE	 = createBlueTheme();
-		YELLOW = createYellowTheme();
+		GRAY		= new DateChooserTheme();
+		BLUE		= createBlueTheme();
+		YELLOW	= createYellowTheme();
+		CLASSIC = createClassicTheme();
+		SYSTEM  = createSystemTheme();
 		defaultTheme = GRAY;
 	}
 
@@ -96,7 +106,8 @@ public class DateChooserTheme {
 	 */
 	public DateChooserTheme() {
 		Display display = Display.getCurrent();
-		this.headerBackground			= display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
+		this.borderBackground			= display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
+		this.headerBackground			= this.borderBackground;
 		this.headerForeground			= display.getSystemColor(SWT.COLOR_WIDGET_FOREGROUND);
 		this.gridHeaderBackground = this.headerBackground;
 		this.gridHeaderForeground = this.headerForeground;
@@ -108,7 +119,7 @@ public class DateChooserTheme {
 		this.todayBackground			= this.headerBackground;
 		this.todayForeground			= this.headerForeground;
 		this.extraMonthForeground	= this.gridLinesColor;
-		this.weekendForeground		= display.getSystemColor(SWT.COLOR_DARK_RED);
+		this.weekendForeground		= new Color(display, 180, 0, 0);
 		this.focusColor						= display.getSystemColor(SWT.COLOR_RED);
 	}
 
@@ -118,7 +129,7 @@ public class DateChooserTheme {
 	 * @return BLUE theme
 	 */
 	private static DateChooserTheme createBlueTheme() {
-		Display display  = Display.getCurrent();
+		Display display = Display.getCurrent();
 		DateChooserTheme theme = new DateChooserTheme();
 
 		theme.headerBackground		 = new Color(display, 170, 190, 220);
@@ -130,13 +141,63 @@ public class DateChooserTheme {
 
 		return theme;
 	}
+
+	/**
+	 * Creates the CLASSIC theme.
+	 * 
+	 * @return CLASSIC theme
+	 */
+	private static DateChooserTheme createClassicTheme() {
+		Display display = Display.getCurrent();
+		DateChooserTheme theme = new DateChooserTheme();
+
+		theme.borderBackground		 = display.getSystemColor(SWT.COLOR_WHITE);
+		theme.gridHeaderBackground = theme.borderBackground;
+		theme.borderSize  = 3;
+		theme.cellPadding = 3;
+		theme.gridVisible = DateChooser.GRID_LINES;
+
+		return theme;
+	}
+
+	/**
+	 * Creates the SYSTEM theme.
+	 * 
+	 * @return SYSTEM theme
+	 */
+	private static DateChooserTheme createSystemTheme() {
+		Display display = Display.getCurrent();
+		DateChooserTheme theme = new DateChooserTheme();
+
+		theme.borderBackground		 = display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+		theme.headerBackground		 = display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
+		theme.headerForeground		 = display.getSystemColor(SWT.COLOR_WIDGET_FOREGROUND);
+		theme.gridHeaderBackground = theme.borderBackground;
+		theme.gridHeaderForeground = display.getSystemColor(SWT.COLOR_LIST_FOREGROUND);
+		theme.gridLinesColor			 = display.getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
+		theme.dayCellBackground		 = theme.borderBackground;
+		theme.dayCellForeground		 = theme.gridHeaderForeground;
+		theme.selectedBackground	 = display.getSystemColor(SWT.COLOR_LIST_SELECTION);
+		theme.selectedForeground	 = display.getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT);
+		theme.todayBackground			 = theme.borderBackground;
+		theme.todayForeground			 = theme.gridHeaderForeground;
+		theme.extraMonthForeground = theme.gridLinesColor;
+		theme.weekendForeground		 = theme.dayCellForeground;
+		theme.focusColor					 = display.getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
+		theme.borderSize  = 3;
+		theme.cellPadding = 3;
+		theme.gridVisible = DateChooser.GRID_LINES;
+
+		return theme;
+	}
+
 	/**
 	 * Creates the YELLOW theme.
 	 * 
 	 * @return YELLOW theme
 	 */
 	private static DateChooserTheme createYellowTheme() {
-		Display display  = Display.getCurrent();
+		Display display = Display.getCurrent();
 		DateChooserTheme theme = new DateChooserTheme();
 
 		theme.headerBackground		 = new Color(display, 190, 180, 60);
@@ -167,6 +228,14 @@ public class DateChooserTheme {
 	 */
 	public static void setDefaultTheme(DateChooserTheme defaultTheme) {
 		DateChooserTheme.defaultTheme = defaultTheme;
+	}
+
+	public void setBorderBackground(Color borderBackground) {
+		this.borderBackground = borderBackground;
+	}
+
+	public void setBorderSize(int borderSize) {
+		this.borderSize = borderSize;
 	}
 
 	public void setDayCellBackground(Color dayCellBackground) {
@@ -281,7 +350,18 @@ public class DateChooserTheme {
 		this.focusColor = Display.getCurrent().getSystemColor(focusColor);
 	}
 
+	/**
+	 * Sets the grid visible or not in the calendar popup. By default, the grid
+	 * is visible.
+	 * 
+	 * @param gridVisible <code>true</code> to set grid visible, else <code>false</code>
+	 * @deprecated
+	 */
 	public void setGridVisible(boolean gridVisible) {
+		setGridVisible(gridVisible ? DateChooser.GRID_FULL : DateChooser.GRID_NONE);
+	}
+
+	public void setGridVisible(int gridVisible) {
 		this.gridVisible = gridVisible;
 	}
 
