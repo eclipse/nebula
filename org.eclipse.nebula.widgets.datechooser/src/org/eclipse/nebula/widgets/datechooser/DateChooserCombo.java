@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Eric Wuillai.
+ * Copyright (c) 2005, 2009 Eric Wuillai.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,17 +18,19 @@ import org.eclipse.nebula.widgets.formattedtext.DefaultFormatterFactory;
 import org.eclipse.nebula.widgets.formattedtext.FormattedText;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Text;
 
 /**
- * DateChooserCombo widget. This class representes a date field editor that combines
+ * DateChooserCombo widget. This class represents a date field editor that combines
  * a text field and a calendar. Implementation is based on <code>FormattedText</code>
  * and <code>DateChooser</code>.<p>
  * 
@@ -43,6 +45,14 @@ import org.eclipse.swt.widgets.Event;
  * <dd>Selection</dd>
  * </dl>
  */
+/**
+ * @author ewuillai
+ *
+ */
+/**
+ * @author ewuillai
+ *
+ */
 public class DateChooserCombo extends AbstractCombo {
 	/** Default image filename */
 	protected static final String IMAGE = "/org/eclipse/nebula/widgets/datechooser/DateChooserCombo.png";
@@ -55,7 +65,9 @@ public class DateChooserCombo extends AbstractCombo {
 	/** Flag to set footer visible or not in the popup */
 	protected boolean footerVisible = false;
 	/** Flag to set grid visible or not in the popup */
-	protected boolean gridVisible = true;
+	protected int gridVisible = DateChooser.GRID_FULL;
+	/** Flag to set weeks numbers visible or not */
+	protected boolean weeksVisible = false;
 	/** Calendar theme */
 	protected DateChooserTheme theme;
 	/** Locale used for localized names and formats */
@@ -79,6 +91,7 @@ public class DateChooserCombo extends AbstractCombo {
 	public DateChooserCombo(Composite parent, int style) {
     super(parent, style);
 		setImage(buttonImage);
+    setCreateOnDrop(true);
 		pack();
 	}
 
@@ -86,7 +99,7 @@ public class DateChooserCombo extends AbstractCombo {
 	 * Adds the listener to the collection of listeners who will be notified when
 	 * keys are pressed and released on the system keyboard, by sending it one of
 	 * the messages defined in the KeyListener interface.<b>
-	 * The listener is setted on the Text widget, as there is no sense to have it
+	 * The listener is set on the Text widget, as there is no sense to have it
 	 * on the Composite.
 	 * 
 	 * @param listener the listener which should be notified
@@ -97,8 +110,8 @@ public class DateChooserCombo extends AbstractCombo {
   }
 
 	/**
-	 * Called just before the popup is droppped. The selected date of the
-	 * calendar is setted to the current date present in the formatted text.
+	 * Called just before the popup is dropped. The selected date of the
+	 * calendar is set to the current date present in the formatted text.
 	 * 
 	 * @see org.eclipse.nebula.widgets.datechooser.AbstractCombo#beforeDrop()
 	 */
@@ -115,47 +128,61 @@ public class DateChooserCombo extends AbstractCombo {
 	}
 
 	/**
-	 * Manages popup content events. Extend the selection behaviour, adding the
-	 * selected date in the <code>data</code> attribute of the event.
+	 * Returns the preferred size of the receiver.<br>
+	 * If wHint == SWT.DEFAULT, the preferred size is computed to adjust the width
+	 * to display a date in the MM/dd/yyyy format. If a DateFormatter with more
+	 * larger edit or display patterns is used, the width of the combo must be
+	 * set programmatically.
 	 * 
-	 * @param event event
-	 * @see org.eclipse.nebula.widgets.datechooser.AbstractCombo#contentEvent(org.eclipse.swt.widgets.Event)
+	 * @param wHint the width hint (can be SWT.DEFAULT)
+	 * @param hHint the height hint (can be SWT.DEFAULT)
+	 * @param changed <code>true</code> if the control's contents have changed, and <code>false</code> otherwise
+	 * @return the preferred size of the control.
 	 */
-	protected void contentEvent(Event event) {
-		switch (event.type) {
-			case SWT.Selection :
-				super.contentEvent(event);
-				if ( event.doit ) {
-					formattedText.setValue(((DateChooser) popupContent).getSelectedDate());
-					dropDown(false);
-					text.setFocus();
-				}
-				break;
-			default :
-				super.contentEvent(event);
-				break;
+	public Point computeSize(int wHint, int hHint, boolean changed) {
+		checkWidget();
+		Point size = new Point(wHint, hHint);
+		Point textSize = text.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
+		Point buttonSize = button.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
+		int borderWidth = getBorderWidth();
+
+		if ( wHint == SWT.DEFAULT && changed ) {
+			GC gc = new GC(formattedText.getControl());
+			int width = gc.textExtent("01/01/2000 ").x;
+			gc.dispose();
+			size.x = width + buttonSize.x + 2 * borderWidth;
 		}
+		if ( hHint == SWT.DEFAULT && changed ) {
+			if ( WIN32 ) {
+				buttonSize.y = ((GridData) button.getLayoutData()).heightHint;
+			}
+			size.y = Math.max(textSize.y, buttonSize.y) + 2 * borderWidth;
+		}
+
+		return size;
 	}
 
 	/**
-	 * Creates the button widget. The default appearence with an arrow is
+	 * Creates the button widget. The default appearance with an arrow is
 	 * replaced by a button with an image.
 	 * 
 	 * @param style button style
+	 * @return the created Button control
 	 * @see org.eclipse.nebula.widgets.datechooser.AbstractCombo#createButtonControl(int)
 	 */
-	protected void createButtonControl(int style) {
+	protected Button createButtonControl(int style) {
 		style &= ~(SWT.ARROW | SWT.DOWN);
-		button = new Button(this, style | SWT.PUSH);
+		return new Button(this, style | SWT.PUSH);
 	}
 
 	/**
 	 * Creates the popup content. The content is a <code>DateChooser</code>.
 	 * 
-	 * @see org.eclipse.nebula.widgets.datechooser.AbstractCombo#createPopupContent()
+	 * @param parent The parent Composite that will contain the control
+	 * @return The created Control for the popup content 
 	 */
-	protected void createPopupContent() {
-		DateChooser cal = new DateChooser(popup, SWT.NONE);
+	protected Control createPopupContent(Composite parent) {
+		DateChooser cal = new DateChooser(parent, SWT.NONE);
 		if ( theme != null ) {
 			cal.setTheme(theme);
 		}
@@ -164,8 +191,10 @@ public class DateChooserCombo extends AbstractCombo {
 		}
 		cal.setGridVisible(gridVisible);
 		cal.setFooterVisible(footerVisible);
+		cal.setWeeksVisible(weeksVisible);
 		cal.setAutoSelectOnFooter(true);
-  	popupContent = cal;
+		cal.pack();
+  	return cal;
 	}
 
 	/**
@@ -177,12 +206,45 @@ public class DateChooserCombo extends AbstractCombo {
 	 * registering a new formatter for Date class.
 	 * 
 	 * @param style text style
+	 * @return the created Text control
 	 * @see org.eclipse.nebula.widgets.datechooser.AbstractCombo#createTextControl(int)
 	 */
-	protected void createTextControl(int style) {
+	protected Text createTextControl(int style) {
     formattedText = new FormattedText(this, SWT.NONE);
     formattedText.setFormatter(DefaultFormatterFactory.createFormatter(Date.class));
-    text = formattedText.getControl();
+    return formattedText.getControl();
+	}
+
+	/**
+	 * This method is called when a SWT.Selection is notify in the popup content,
+	 * allowing to update the Text widget content.
+	 * 
+	 * @return true if the SWT.Selection event must be propagated, else false
+	 */
+	protected boolean doSelection() {
+		formattedText.setValue(((DateChooser) popupContent).getSelectedDate());
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.nebula.widgets.datechooser.AbstractCombo#dropDown(boolean)
+	 */
+	protected void dropDown(boolean drop) {
+		super.dropDown(drop);
+		if ( drop && GTK ) {
+			popupContent.traverse(SWT.TRAVERSE_TAB_NEXT);
+		}
+	}
+
+	/**
+	 * Returns the grid visibility status.
+	 * 
+	 * @return Returns the grid visible status.
+	 */
+	public int getGridVisible() {
+		checkWidget();
+		return gridVisible;
 	}
 
 	/**
@@ -209,10 +271,21 @@ public class DateChooserCombo extends AbstractCombo {
 	 * Returns true if grid is visible in the calendar popup.
 	 * 
 	 * @return Returns the grid visible status.
+	 * @deprecated
 	 */
 	public boolean isGridVisible() {
 		checkWidget();
-		return gridVisible;
+		return gridVisible == DateChooser.GRID_FULL;
+	}
+
+	/**
+	 * Returns true if weeks numbers are visible.
+	 * 
+	 * @return Returns the weeks numbers visible status.
+	 */
+	public boolean isWeeksVisible() {
+		checkWidget();
+		return weeksVisible;
 	}
 
 	/**
@@ -224,22 +297,6 @@ public class DateChooserCombo extends AbstractCombo {
 	public void removeKeyListener(KeyListener listener) {
 		checkWidget();
 		formattedText.getControl().removeKeyListener(listener);
-  }
-
-	/**
-	 * Sets the font that the receiver will use to paint textual information to
-	 * the font specified by the argument, or to the default font for that kind
-	 * of control if the argument is null.
-	 * 
-	 * @see org.eclipse.swt.widgets.Control#setFont(org.eclipse.swt.graphics.Font)
-	 */
-	public void setFont(Font font) {
-	  super.setFont(font);
-  	if ( ! WIN32 ) {
-	  	GridData textData = (GridData) text.getLayoutData();
-	 		textData.heightHint = Math.max(button.computeSize(SWT.DEFAULT, SWT.DEFAULT).y - 5,
-	 																	 text.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
-  	}
   }
 
 	/**
@@ -270,9 +327,19 @@ public class DateChooserCombo extends AbstractCombo {
 	 * is visible.
 	 * 
 	 * @param gridVisible <code>true</code> to set grid visible, else <code>false</code>
+	 * @deprecated
 	 */
 	public void setGridVisible(boolean gridVisible) {
-		checkWidget();
+		setGridVisible(gridVisible ? DateChooser.GRID_FULL : DateChooser.GRID_NONE);
+	}
+
+	/**
+	 * Sets the grid visible or not. By default, the grid is visible. The
+	 * possible values are GRID_FULL, GRID_LINES and GRID_NONE.
+	 * 
+	 * @param gridVisible grid visibility flag
+	 */
+	public void setGridVisible(int gridVisible) {
 		this.gridVisible = gridVisible;
 	}
 
@@ -287,16 +354,10 @@ public class DateChooserCombo extends AbstractCombo {
 		if ( WIN32 ) {
 	  	ImageData id	= image.getImageData();
 	  	buttonLayout.widthHint	= id.width + 4;
-	  	buttonLayout.heightHint = id.height + 4;
+	  	buttonLayout.heightHint = id.height + 6;
 		}
-  	buttonLayout.grabExcessVerticalSpace = true;
   	button.setImage(image);
-
-  	if ( ! WIN32 ) {
-	  	GridData textData = (GridData) text.getLayoutData();
-	 		textData.heightHint = Math.max(button.computeSize(SWT.DEFAULT, SWT.DEFAULT).y - 5,
-	 																	 text.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
-  	}
+  	pack();
   }
 
   /**
@@ -328,5 +389,16 @@ public class DateChooserCombo extends AbstractCombo {
 	public void setValue(Date value) {
 		checkWidget();
 		formattedText.setValue(value);
+	}
+
+	/**
+	 * Sets the weeks numbers visible or not. By default, the weeks are NOT
+	 * visible.
+	 * 
+	 * @param weeksVisible <code>true</code> to set weeks visible, else <code>false</code>
+	 */
+	public void setWeeksVisible(boolean weeksVisible) {
+		checkWidget();
+		this.weeksVisible = weeksVisible;
 	}
 }
