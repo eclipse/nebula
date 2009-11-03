@@ -14,3 +14,4 @@ Import-Package: org.eclipse.jface.layout,
  org.eclipse.swt.internal,
  org.eclipse.swt.layout,
  org.eclipse.swt.widgets
+Require-Bundle: org.eclipse.jface;resolution:=optional
