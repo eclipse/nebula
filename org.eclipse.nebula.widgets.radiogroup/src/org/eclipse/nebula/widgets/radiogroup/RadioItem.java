@@ -26,13 +26,18 @@ import org.eclipse.swt.widgets.Listener;
  * represents an radio button in a radio group.
  * <dl>
  * <dt><b>Styles:</b></dt>
- * <dd>(none)</dd>
+ * <dd>LEFT, CENTER, RIGHT</dd>
  * <dt><b>Events:</b></dt>
  * <dd>(none)</dd>
  * </dl>
  * <p>
+ * Note: Only one of the styles LEFT, RIGHT, and CENTER may be specified.
+ * </p>
+ * <p>
  * IMPORTANT: This class is <em>not</em> intended to be subclassed.
  * </p>
+ * 
+ * @noextend This class is not intended to be subclassed.
  */
 public class RadioItem extends Item {
 	private RadioGroup parent;
@@ -43,41 +48,33 @@ public class RadioItem extends Item {
 	}
 
 	public RadioItem(final RadioGroup parent, int style, int index) {
-		super(parent, style, checkIndex(parent, index));
+		super(parent, checkStyle(style), checkIndex(parent, index));
 		this.parent = parent;
+		this.button = parent.createButton(getStyle(), index);
 
-		Listener disposeListener = new Listener() {
+		Listener listener = new Listener() {
 			public void handleEvent(Event event) {
-				dispose();
+				if (event.type == SWT.Selection)
+					handleSelection(event);
+				else if (event.type == SWT.Dispose)
+					handleDispose(event);
 			}
 		};
-		Listener selectionListener = new Listener() {
-			public void handleEvent(Event event) {
-				parent.itemSelected(RadioItem.this, event);
-			}
-		};
+		button.addListener(SWT.Selection, listener);
+		addListener(SWT.Dispose, listener);
 
-		button = new Button(parent, parent.buttonStyle);
-
-		button.addListener(SWT.Selection, selectionListener);
-		parent.addListener(SWT.Dispose, disposeListener);
-		button.addListener(SWT.Dispose, disposeListener);
-
-		addListener(SWT.Dispose, new Listener() {
-			public void handleEvent(Event event) {
-				if (parent != null) {
-					parent.removeItem(RadioItem.this);
-				}
-				if (button != null) {
-					button.dispose();
-					if (parent != null && !parent.isDisposed())
-						parent.layout(false);
-				}
-				RadioItem.this.parent = null;
-				button = null;
-			}
-		});
 		parent.addItem(this, index);
+	}
+
+	private static int checkStyle(int style) {
+		int result = 0;
+		if ((style & SWT.LEFT) != 0)
+			result |= SWT.LEFT;
+		else if ((style & SWT.CENTER) != 0)
+			result |= SWT.CENTER;
+		else if ((style & SWT.RIGHT) != 0)
+			result |= SWT.RIGHT;
+		return result;
 	}
 
 	private static int checkIndex(RadioGroup parent, int position) {
@@ -88,8 +85,21 @@ public class RadioItem extends Item {
 		return position;
 	}
 
-	Button getButton() {
-		return button;
+	private void handleSelection(Event event) {
+		parent.itemSelected(this);
+	}
+
+	private void handleDispose(Event event) {
+		if (parent != null) {
+			parent.removeItem(RadioItem.this);
+		}
+		if (button != null) {
+			button.dispose();
+			if (parent != null && !parent.isDisposed())
+				parent.layout(false);
+		}
+		RadioItem.this.parent = null;
+		button = null;
 	}
 
 	public RadioGroup getParent() {
@@ -152,5 +162,31 @@ public class RadioItem extends Item {
 		if (font == null)
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		button.setFont(font);
+	}
+
+	Button getButton() {
+		return button;
+	}
+	
+	boolean isSelected() {
+		return button.getSelection();
+	}
+
+	void select() {
+		button.setSelection(true);
+		parent.itemSelected(this);
+	}
+
+	void deselect() {
+		button.setSelection(false);
+		parent.itemSelected(this);
+	}
+
+	void clear() {
+		setText("");
+		setImage(null);
+		setFont(parent.getFont());
+		setForeground(parent.getForeground());
+		setBackground(parent.getBackground());
 	}
 }
