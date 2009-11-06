@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2009 Matthew Hall and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Matthew Hall - initial API and implementation (bug 293508)
+ *******************************************************************************/
 package org.eclipse.nebula.widgets.radiogroup;
 
 import java.util.ArrayList;
@@ -13,6 +23,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Widget;
 
 import junit.framework.TestCase;
 
@@ -276,5 +287,17 @@ public class RadioGroupTests extends TestCase {
 		Control[] expectedButtons = { item2.getButton(), item1.getButton(),
 				item3.getButton() };
 		assertEquals(Arrays.asList(expectedButtons), Arrays.asList(buttons));
+	}
+
+	public void testConstructor_FlatStyle() {
+		group = new RadioGroup(composite, SWT.FLAT);
+		assertFlatStyle(group);
+
+		createItem();
+		assertFlatStyle(item.getButton());
+	}
+
+	private void assertFlatStyle(Widget widget) {
+		assertTrue((widget.getStyle() & SWT.FLAT) != 0);
 	}
 }
