@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: RadioGroup Tests
+Bundle-SymbolicName: org.eclipse.nebula.widgets.radiogroup.tests
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Matthew Hall
+Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Require-Bundle: org.junit,
+ org.eclipse.swt;bundle-version="3.6.0",
+ org.eclipse.nebula.widgets.radiogroup;bundle-version="0.1.0"
