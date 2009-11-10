@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: TableCombo Plugin
+Bundle-SymbolicName: org.eclipse.nebula.widgets.tablecombo
+Bundle-Version: 1.0.0.qualifier
+Export-Package: org.eclipse.nebula.jface.tablecomboviewer,
+ org.eclipse.nebula.widgets.tablecombo
+Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Import-Package: org.eclipse.core.commands.common,
+ org.eclipse.jface.viewers;resolution:=optional,
+ org.eclipse.swt,
+ org.eclipse.swt.accessibility,
+ org.eclipse.swt.custom,
+ org.eclipse.swt.events,
+ org.eclipse.swt.graphics,
+ org.eclipse.swt.layout,
+ org.eclipse.swt.widgets
