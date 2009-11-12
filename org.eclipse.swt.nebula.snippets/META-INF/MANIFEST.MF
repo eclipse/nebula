@@ -22,7 +22,8 @@ Require-Bundle: org.eclipse.swt,
  org.eclipse.core.databinding.beans;bundle-version="1.2.0";resolution:=optional,
  org.eclipse.core.databinding.property;bundle-version="1.2.0";resolution:=optional,
  org.eclipse.nebula.widgets.collapsiblebuttons;bundle-version="1.0.0";resolution:=optional,
- org.eclipse.nebula.widgets.radiogroup;resolution:=optional
+ org.eclipse.nebula.widgets.radiogroup;resolution:=optional,
+ org.eclipse.nebula.widgets.tablecombo;bundle-version="1.0.0";resolution:=optional
 Export-Package: org.eclipse.swt.nebula.snippets.grid
 Bundle-ClassPath: .
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
