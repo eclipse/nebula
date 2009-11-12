@@ -1296,9 +1296,9 @@ public class TableCombo extends Composite {
 	private void popupEvent(Event event) {
 	    switch (event.type) {
 	        case SWT.Paint:
-	            // draw black rectangle around table
+	            // draw rectangle around table
 	            Rectangle tableRect = table.getBounds();
-	            Color black = getDisplay().getSystemColor(SWT.COLOR_BLACK);
+	            Color black = getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION);
 	            event.gc.setForeground(black);
 	            event.gc.drawRectangle(0, 0, tableRect.width + 1, tableRect.height + 1);
 	            break;
