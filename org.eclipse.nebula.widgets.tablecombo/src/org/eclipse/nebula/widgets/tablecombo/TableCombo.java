@@ -539,7 +539,11 @@ public class TableCombo extends Composite {
 	 * @param drop
 	 */
 	void dropDown (boolean drop) {
+		
+		// if already dropped then return
 	    if (drop == isDropped ()) return;
+	    
+	    // closing the dropDown
 	    if (!drop) {
 	        popup.setVisible (false);
 	        if (!isDisposed() && isFocusControl()) {
@@ -548,8 +552,10 @@ public class TableCombo extends Composite {
 	        return;
 	    }
 	    
+	    // if not visible then return
 	    if (!isVisible()) return;
 	
+	    // create a new popup if needed.
 	    if (getShell() != popup.getParent ()) {
 	        int selectionIndex = table.getSelectionIndex ();
 	        table.removeListener (SWT.Dispose, listener);
@@ -559,12 +565,13 @@ public class TableCombo extends Composite {
 	        createPopup (selectionIndex);
 	    }
 		
-		Point size = getSize ();
+	    // get the size of the TableCombo.
+		Point tableComboSize = getSize ();
 		
-		// determine item height.
+		// calculate the table height.
 		int itemCount = table.getItemCount();
 		itemCount = (itemCount == 0) ? visibleItemCount : Math.min(visibleItemCount, itemCount) - 1;
-		int itemHeight = table.getItemHeight () * itemCount;
+		int itemHeight = (table.getItemHeight () * itemCount) + 1;
 		
 		// add height of header if the header is being displayed.
 	    if (table.getHeaderVisible()) {
@@ -592,24 +599,17 @@ public class TableCombo extends Composite {
 			totalColumnWidth += tableColumns[colIndex].getWidth();
 		}
 		
-	    // get the table size after making adjustments.
+	    // calculate the table size after making adjustments.
 		Point tableSize = table.computeSize (SWT.DEFAULT, itemHeight, false);
 
 		// calculate the table width and table height.
 		double pct = tableWidthPercentage / 100d;
-	    int tableWidth = (int)(Math.max (size.x - 2, tableSize.x) * pct);
+	    int tableWidth = (int)(Math.max (tableComboSize.x - 2, tableSize.x) * pct);
 	    int tableHeight = tableSize.y;
 		
-	    // remove the width of the scrollbar if the number of items in the table is <=
-	    // to the visible number of items.
-	    if (tableWidthPercentage == 100) {
-	    	if (table.getItemCount() <= visibleItemCount) {
-	    		tableWidth = tableWidth - table.getVerticalBar().getSize().x;
-	    	}
-	    }
 	    // add the width of a horizontal scrollbar to the table height if we are
 	    // not viewing the full table.
-	    else if (tableWidthPercentage < 100) {
+	    if (tableWidthPercentage < 100) {
 	    	tableHeight += table.getHorizontalBar().getSize().y;
 	    }
 	    
@@ -633,15 +633,24 @@ public class TableCombo extends Composite {
 		Point comboSize = getSize ();
 		Rectangle displayRect = getMonitor ().getClientArea ();
 		
-		int width = Math.max (comboSize.x, tableRect.width + 2);
-		int height = tableRect.height + 2;
+		int overallWidth = 0;
+		
+		// now set what the overall width should be.
+		if (tableWidthPercentage < 100) {
+			overallWidth = tableRect.width + 2;	
+		}
+		else {
+			overallWidth = Math.max (comboSize.x, tableRect.width + 2);	
+		}
+		
+		int overallHeight = tableRect.height + 2;
 		int x = parentRect.x;
 		int y = parentRect.y + comboSize.y;
-		if (y + height > displayRect.y + displayRect.height) y = parentRect.y - height;
-		if (x + width > displayRect.x + displayRect.width) x = displayRect.x + displayRect.width - tableRect.width;
+		if (y + overallHeight > displayRect.y + displayRect.height) y = parentRect.y - overallHeight;
+		if (x + overallWidth > displayRect.x + displayRect.width) x = displayRect.x + displayRect.width - tableRect.width;
 		
 		// set the bounds of the popup
-		popup.setBounds (x, y, width, height);
+		popup.setBounds (x, y, overallWidth, overallHeight);
 		
 		// set the popup visible
 		popup.setVisible (true);
@@ -1298,8 +1307,7 @@ public class TableCombo extends Composite {
 	        case SWT.Paint:
 	            // draw rectangle around table
 	            Rectangle tableRect = table.getBounds();
-	            Color black = getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION);
-	            event.gc.setForeground(black);
+	            event.gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION));
 	            event.gc.drawRectangle(0, 0, tableRect.width + 1, tableRect.height + 1);
 	            break;
 	        case SWT.Close:
@@ -2137,16 +2145,31 @@ public class TableCombo extends Composite {
 		
 		int totalColumns = (tableColumns == null ? 0 : tableColumns.length);
 		
-		int scrollBarSize = (table.getVerticalBar() == null ? 0 : 
-			table.getVerticalBar().getSize().x);
+        int scrollBarSize = 0;
+        
+        // determine if the vertical scroll bar needs to be taken into account
+        if (table.getItemCount() > visibleItemCount) {
+            scrollBarSize = (table.getVerticalBar() == null ? 0 :
+                table.getVerticalBar().getSize().x);
+        }
 
+        // is there any extra space that the table is not using?
 		if (totalAvailWidth > totalColumnWidthUsage + scrollBarSize) {
 			
-			int totalBufferAmount = (int)Math.floor((totalAvailWidth - totalColumnWidthUsage - scrollBarSize) / totalColumns);
+			int totalAmtToBeAllocated = (totalAvailWidth - totalColumnWidthUsage - scrollBarSize);
+			
+			int totalBufferAmount = (int)Math.floor(totalAmtToBeAllocated / totalColumns);
 			
 			// add the buffer amount to each column 
 			for (int colIndex=0; colIndex < totalColumns; colIndex++) {
 				tableColumns[colIndex].setWidth(tableColumns[colIndex].getWidth() + totalBufferAmount);
+				totalAmtToBeAllocated -= totalBufferAmount;
+			}
+			
+			// allocate any remainder to the last column.
+			if (totalAmtToBeAllocated > 0) {
+				tableColumns[totalColumns - 1].setWidth(
+					tableColumns[totalColumns - 1].getWidth() + totalAmtToBeAllocated);	
 			}
 		}
 	}
