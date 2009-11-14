@@ -446,11 +446,11 @@ public class TableCombo extends Composite {
 		gc.dispose ();
 		Point textSize = text.computeSize (SWT.DEFAULT, SWT.DEFAULT, changed);
 		Point arrowSize = arrow.computeSize (SWT.DEFAULT, SWT.DEFAULT, changed);
-		//Point listSize = table.computeSize (SWT.DEFAULT, SWT.DEFAULT, changed);
+		Point tableSize = table.computeSize (SWT.DEFAULT, SWT.DEFAULT, changed);
 		int borderWidth = getBorderWidth ();
 		
 		height = Math.max (textSize.y, arrowSize.y);
-		overallWidth = textWidth + 2*spacer + arrowSize.x + 2*borderWidth;
+		overallWidth = Math.max (textWidth + 2*spacer + arrowSize.x + 2*borderWidth, tableSize.x);
 		if (wHint != SWT.DEFAULT) overallWidth = wHint;
 		if (hHint != SWT.DEFAULT) height = hHint;
 		
