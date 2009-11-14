@@ -571,7 +571,12 @@ public class TableCombo extends Composite {
 		// calculate the table height.
 		int itemCount = table.getItemCount();
 		itemCount = (itemCount == 0) ? visibleItemCount : Math.min(visibleItemCount, itemCount) - 1;
-		int itemHeight = (table.getItemHeight () * itemCount) + 1;
+		int itemHeight = (table.getItemHeight () * itemCount);
+		
+		// add 1 to the table height if the table item count is less than the visible item count.  
+		if (table.getItemCount() <= visibleItemCount) {
+			itemHeight += 1;
+		}
 		
 		// add height of header if the header is being displayed.
 	    if (table.getHeaderVisible()) {
