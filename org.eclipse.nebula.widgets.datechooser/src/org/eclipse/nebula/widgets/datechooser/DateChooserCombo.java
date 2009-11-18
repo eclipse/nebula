@@ -138,13 +138,13 @@ public class DateChooserCombo extends AbstractCombo {
 		Point buttonSize = button.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
 		int borderWidth = getBorderWidth();
 
-		if ( wHint == SWT.DEFAULT && changed ) {
+		if ( wHint == SWT.DEFAULT ) {
 			GC gc = new GC(formattedText.getControl());
 			int width = gc.textExtent("01/01/2000 ").x;
 			gc.dispose();
 			size.x = width + buttonSize.x + 2 * borderWidth;
 		}
-		if ( hHint == SWT.DEFAULT && changed ) {
+		if ( hHint == SWT.DEFAULT ) {
 			if ( WIN32 ) {
 				buttonSize.y = ((GridData) button.getLayoutData()).heightHint;
 			}
