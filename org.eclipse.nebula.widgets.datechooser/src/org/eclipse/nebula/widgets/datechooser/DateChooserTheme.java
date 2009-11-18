@@ -372,4 +372,28 @@ public class DateChooserTheme {
 	public void setFont(Font font) {
 		this.font = font;
 	}
+
+	public Object clone() {
+		DateChooserTheme theme = new DateChooserTheme();
+		theme.borderBackground		 = this.borderBackground;
+		theme.borderSize					 = this.borderSize;
+		theme.cellPadding					 = this.cellPadding;
+		theme.dayCellBackground		 = this.dayCellBackground;
+		theme.dayCellForeground		 = this.dayCellForeground;
+		theme.extraMonthForeground = this.extraMonthForeground;
+		theme.focusColor					 = this.focusColor;
+		theme.font								 = this.font;
+		theme.gridHeaderBackground = this.gridHeaderBackground;
+		theme.gridHeaderForeground = this.gridHeaderForeground;
+		theme.gridLinesColor			 = this.gridLinesColor;
+		theme.gridVisible					 = this.gridVisible;
+		theme.headerBackground		 = this.headerBackground;
+		theme.headerForeground		 = this.headerForeground;
+		theme.selectedBackground	 = this.selectedBackground;
+		theme.selectedForeground	 = this.selectedForeground;
+		theme.todayBackground			 = this.todayBackground;
+		theme.todayForeground			 = this.todayForeground;
+		theme.weekendForeground		 = this.weekendForeground;
+		return theme;
+	}
 }
