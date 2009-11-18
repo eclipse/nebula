@@ -9,6 +9,7 @@ plugin@org.eclipse.nebula.widgets.compositetable=HEAD,:pserver:anonymous@dev.ecl
 plugin@org.eclipse.nebula.widgets.ctree=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.ctree
 plugin@org.eclipse.nebula.widgets.collapsiblebuttons=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.collapsiblebuttons
 plugin@org.eclipse.nebula.widgets.radiogroup=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.radiogroup
+plugin@org.eclipse.nebula.widgets.tablecombo=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.tablecombo
 plugin@org.eclipse.nebula.cwt=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/org.eclipse.nebula.cwt
 plugin@org.eclipse.swt.nebula.examples=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/org.eclipse.swt.nebula.examples
 
