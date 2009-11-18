@@ -48,6 +48,10 @@
             class="org.eclipse.swt.nebula.examples.parts.RadioGroupExampleTab"
             name="RadioGroup">
       </tab>
+      <tab
+            class="org.eclipse.swt.nebula.examples.parts.TableComboExampleTab"
+            name="TableCombo">
+      </tab>
             
    </extension>
    <extension
