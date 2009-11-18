@@ -14,9 +14,12 @@ package org.eclipse.swt.nebula.examples;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TabFolder;
@@ -34,6 +37,7 @@ public class ExamplesView extends ViewPart
 
     private TabFolder tabFolder;
     private static ImageRegistry imgRegistry = new ImageRegistry();
+    private static FontRegistry  fontRegistry = new FontRegistry();
 
     public ExamplesView()
     {
@@ -108,4 +112,23 @@ public class ExamplesView extends ViewPart
         return i;        
     }
 
+    /**
+     * Returns a Font for the specified lookup key.
+     * @param fontLookupKey
+     * @return
+     */
+    public static Font getFont(String fontLookupKey) {
+    	return fontRegistry.get(fontLookupKey);
+    }
+    
+
+    /**
+     * Sets FontData[] for the specified lookup key.
+     * @param fontLookupKey
+     * @return
+     */
+    public static void setFont(String fontLookupKey, FontData[] fontData) {
+    	fontRegistry.put(fontLookupKey, fontData);
+    }
+    
 }
