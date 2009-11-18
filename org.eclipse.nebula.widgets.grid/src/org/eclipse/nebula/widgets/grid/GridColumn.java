@@ -10,6 +10,7 @@
  *    Chuck.Mastrandrea@sas.com - wordwrapping in bug 222280
  *    smcduff@hotmail.com       - wordwrapping in bug 222280
  *    Marty Jones<martybjones@gmail.com> - custom header/footer font in bug 293743
+ *    Cserveny Tamas <cserveny.tamas@gmail.com> - min width in bug 295468
  *******************************************************************************/
 package org.eclipse.nebula.widgets.grid;
 
@@ -135,9 +136,11 @@ public class GridColumn extends Item {
 
 	private String footerText = "";
 
-    private Font headerFont;
+	private Font headerFont;
 
-    private Font footerFont;
+	private Font footerFont;
+
+	private int minimumWidth = 0;
 
 	/**
 	 * Constructs a new instance of this class given its parent (which must be a
@@ -157,7 +160,8 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
-	 *             thread that created the parent</li> <li>
+	 *             thread that created the parent</li>
+	 *             <li>
 	 *             ERROR_INVALID_SUBCLASS - if this class is not an allowed
 	 *             subclass</li>
 	 *             </ul>
@@ -185,7 +189,8 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
-	 *             thread that created the parent</li> <li>
+	 *             thread that created the parent</li>
+	 *             <li>
 	 *             ERROR_INVALID_SUBCLASS - if this class is not an allowed
 	 *             subclass</li>
 	 *             </ul>
@@ -214,7 +219,8 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
-	 *             thread that created the parent</li> <li>
+	 *             thread that created the parent</li>
+	 *             <li>
 	 *             ERROR_INVALID_SUBCLASS - if this class is not an allowed
 	 *             subclass</li>
 	 *             </ul>
@@ -295,7 +301,7 @@ public class GridColumn extends Item {
 		return headerRenderer;
 	}
 
-	 GridFooterRenderer getFooterRenderer() {
+	GridFooterRenderer getFooterRenderer() {
 		return footerRenderer;
 	}
 
@@ -304,7 +310,7 @@ public class GridColumn extends Item {
 	 *
 	 * @return cell renderer.
 	 */
-	 public GridCellRenderer getCellRenderer() {
+	public GridCellRenderer getCellRenderer() {
 		return cellRenderer;
 	}
 
@@ -315,8 +321,9 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
-	 *             </li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from
-	 *             the thread that created the receiver</li>
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
 	public int getWidth() {
@@ -332,8 +339,9 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
-	 *             </li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from
-	 *             the thread that created the receiver</li>
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
 	public void setWidth(int width) {
@@ -342,7 +350,7 @@ public class GridColumn extends Item {
 	}
 
 	void setWidth(int width, boolean redraw) {
-		this.width = width;
+		this.width = Math.max(minimumWidth, width);
 		if (redraw) {
 			parent.setScrollValuesObsolete();
 			parent.redraw();
@@ -359,8 +367,9 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
-	 *             </li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from
-	 *             the thread that created the receiver</li>
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
 	public void setSort(int style) {
@@ -376,8 +385,9 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
-	 *             </li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from
-	 *             the thread that created the receiver</li>
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
 	public int getSort() {
@@ -399,8 +409,9 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
-	 *             </li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from
-	 *             the thread that created the receiver</li>
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
 	public void addSelectionListener(SelectionListener listener) {
@@ -422,8 +433,9 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
-	 *             </li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from
-	 *             the thread that created the receiver</li>
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
 	public void removeSelectionListener(SelectionListener listener) {
@@ -453,8 +465,9 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
-	 *             </li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from
-	 *             the thread that created the receiver</li>
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
 	public boolean isVisible() {
@@ -475,8 +488,9 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
-	 *             </li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from
-	 *             the thread that created the receiver</li>
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
 	public boolean getVisible() {
@@ -492,8 +506,9 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
-	 *             </li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from
-	 *             the thread that created the receiver</li>
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
 	public void setVisible(boolean visible) {
@@ -532,8 +547,9 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
-	 *             </li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from
-	 *             the thread that created the receiver</li>
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
 	public void pack() {
@@ -562,8 +578,9 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
-	 *             </li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from
-	 *             the thread that created the receiver</li>
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
 	public boolean isTree() {
@@ -578,8 +595,9 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
-	 *             </li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from
-	 *             the thread that created the receiver</li>
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
 	public boolean isCheck() {
@@ -596,8 +614,9 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
-	 *             </li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from
-	 *             the thread that created the receiver</li>
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
 	public void setCellRenderer(GridCellRenderer cellRenderer) {
@@ -615,8 +634,9 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
-	 *             </li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from
-	 *             the thread that created the receiver</li>
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
 	public void setHeaderRenderer(GridHeaderRenderer headerRenderer) {
@@ -633,8 +653,9 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
-	 *             </li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from
-	 *             the thread that created the receiver</li>
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
 	public void setFooterRenderer(GridFooterRenderer footerRenderer) {
@@ -656,8 +677,9 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
-	 *             </li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from
-	 *             the thread that created the receiver</li>
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
 	public void addControlListener(ControlListener listener) {
@@ -682,8 +704,9 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
-	 *             </li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from
-	 *             the thread that created the receiver</li>
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
 	public void removeControlListener(ControlListener listener) {
@@ -727,8 +750,9 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
-	 *             </li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from
-	 *             the thread that created the receiver</li>
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
 	public void setTree(boolean tree) {
@@ -746,8 +770,9 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
-	 *             </li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from
-	 *             the thread that created the receiver</li>
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
 	public int getAlignment() {
@@ -763,8 +788,9 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
-	 *             </li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from
-	 *             the thread that created the receiver</li>
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
 	public void setAlignment(int alignment) {
@@ -779,8 +805,9 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
-	 *             </li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from
-	 *             the thread that created the receiver</li>
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
 	public boolean getMoveable() {
@@ -796,8 +823,9 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
-	 *             </li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from
-	 *             the thread that created the receiver</li>
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
 	public void setMoveable(boolean moveable) {
@@ -813,8 +841,9 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
-	 *             </li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from
-	 *             the thread that created the receiver</li>
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
 	public boolean getResizeable() {
@@ -830,8 +859,9 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
-	 *             </li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from
-	 *             the thread that created the receiver</li>
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
 	public void setResizeable(boolean resizeable) {
@@ -847,8 +877,9 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
-	 *             </li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from
-	 *             the thread that created the receiver</li>
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
 	public GridColumnGroup getColumnGroup() {
@@ -864,8 +895,9 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
-	 *             </li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from
-	 *             the thread that created the receiver</li>
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
 	public boolean isDetail() {
@@ -883,8 +915,9 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
-	 *             </li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from
-	 *             the thread that created the receiver</li>
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
 	public void setDetail(boolean detail) {
@@ -900,8 +933,9 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
-	 *             </li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from
-	 *             the thread that created the receiver</li>
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
 	public boolean isSummary() {
@@ -919,8 +953,9 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
-	 *             </li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from
-	 *             the thread that created the receiver</li>
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
 	public void setSummary(boolean summary) {
@@ -976,8 +1011,9 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
-	 *             </li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from
-	 *             the thread that created the receiver</li>
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
 	public boolean getCellSelectionEnabled() {
@@ -993,8 +1029,9 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
-	 *             </li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from
-	 *             the thread that created the receiver</li>
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
 	public void setCellSelectionEnabled(boolean cellSelectionEnabled) {
@@ -1009,8 +1046,9 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
-	 *             </li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from
-	 *             the thread that created the receiver</li>
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
 	public Grid getParent() {
@@ -1027,8 +1065,9 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
-	 *             </li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from
-	 *             the thread that created the receiver</li>
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
 	public boolean getCheckable() {
@@ -1045,8 +1084,9 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
-	 *             </li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from
-	 *             the thread that created the receiver</li>
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
 	public void setCheckable(boolean checkable) {
@@ -1065,8 +1105,9 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
-	 *             </li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from
-	 *             the thread that created the receiver</li>
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
 	public boolean getWordWrap() {
@@ -1085,8 +1126,9 @@ public class GridColumn extends Item {
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
-	 *             </li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from
-	 *             the thread that created the receiver</li>
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
 	public void setWordWrap(boolean wordWrap) {
@@ -1094,28 +1136,34 @@ public class GridColumn extends Item {
 		cellRenderer.setWordWrap(wordWrap);
 		parent.redraw();
 	}
-	 /**
-   * Sets whether or not text is word-wrapped in the header for this column. If Grid.setAutoHeight(true) is set, the row height
-   * is adjusted to accommodate word-wrapped text.
-   * @param wordWrap Set to true to wrap the text, false otherwise
-   * @see #getHeaderWordWrap()
-   */
-  public void setHeaderWordWrap(boolean wordWrap)
-  {
-      checkWidget();
-      headerRenderer.setWordWrap(wordWrap);
-      parent.redraw();
-  }
-  /**
-   * Returns whether or not text is word-wrapped in the header for this column.
-   * @return true if the header wraps its text.
-   * @see GridColumn#setHeaderWordWrap(boolean)
-   */
-  public boolean getHeaderWordWrap()
-  {
-    checkWidget();
-    return headerRenderer.isWordWrap();
-  }
+
+	/**
+	 * Sets whether or not text is word-wrapped in the header for this column.
+	 * If Grid.setAutoHeight(true) is set, the row height is adjusted to
+	 * accommodate word-wrapped text.
+	 *
+	 * @param wordWrap
+	 *            Set to true to wrap the text, false otherwise
+	 * @see #getHeaderWordWrap()
+	 */
+	public void setHeaderWordWrap(boolean wordWrap) {
+		checkWidget();
+		headerRenderer.setWordWrap(wordWrap);
+		parent.redraw();
+	}
+
+	/**
+	 * Returns whether or not text is word-wrapped in the header for this
+	 * column.
+	 *
+	 * @return true if the header wraps its text.
+	 * @see GridColumn#setHeaderWordWrap(boolean)
+	 */
+	public boolean getHeaderWordWrap() {
+		checkWidget();
+		return headerRenderer.isWordWrap();
+	}
+
 	/**
 	 * Set a new editor at the top of the control. If there's an editor already
 	 * set it is disposed.
@@ -1131,13 +1179,15 @@ public class GridColumn extends Item {
 		this.controlEditor.setEditor(control);
 		getParent().recalculateHeader();
 
-		if( control != null ) {
-			// We need to realign if multiple editors are set it is possible that
+		if (control != null) {
+			// We need to realign if multiple editors are set it is possible
+			// that
 			// a later one needs more space
 			control.getDisplay().asyncExec(new Runnable() {
 
 				public void run() {
-					if( GridColumn.this.controlEditor != null && GridColumn.this.controlEditor.getEditor() != null ) {
+					if (GridColumn.this.controlEditor != null
+							&& GridColumn.this.controlEditor.getEditor() != null) {
 						GridColumn.this.controlEditor.layout();
 					}
 				}
@@ -1171,8 +1221,9 @@ public class GridColumn extends Item {
 	 * @exception SWTException
 	 *                <ul>
 	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
-	 *                disposed</li> <li>ERROR_THREAD_INVALID_ACCESS - if not
-	 *                called from the thread that created the receiver</li>
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
 	 *                </ul>
 	 */
 	public void setFooterImage(Image image) {
@@ -1195,8 +1246,9 @@ public class GridColumn extends Item {
 	 * @exception SWTException
 	 *                <ul>
 	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
-	 *                disposed</li> <li>ERROR_THREAD_INVALID_ACCESS - if not
-	 *                called from the thread that created the receiver</li>
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
 	 *                </ul>
 	 */
 	public void setFooterText(String string) {
@@ -1215,8 +1267,9 @@ public class GridColumn extends Item {
 	 * @exception SWTException
 	 *                <ul>
 	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
-	 *                disposed</li> <li>ERROR_THREAD_INVALID_ACCESS - if not
-	 *                called from the thread that created the receiver</li>
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
 	 *                </ul>
 	 */
 	public Image getFooterImage() {
@@ -1233,8 +1286,9 @@ public class GridColumn extends Item {
 	 * @exception SWTException
 	 *                <ul>
 	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
-	 *                disposed</li> <li>ERROR_THREAD_INVALID_ACCESS - if not
-	 *                called from the thread that created the receiver</li>
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
 	 *                </ul>
 	 */
 	public String getFooterText() {
@@ -1242,63 +1296,87 @@ public class GridColumn extends Item {
 		return footerText;
 	}
 
-    /**
-     * Returns the font that the receiver will use to paint textual information
-     * for the header.
-     *
-     * @return the receiver's font
-     * @throws SWTException
-     * <ul>
-     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
-     * created the receiver</li>
-     * </ul>
-     */
-    public Font getHeaderFont() {
+	/**
+	 * Returns the font that the receiver will use to paint textual information
+	 * for the header.
+	 *
+	 * @return the receiver's font
+	 * @throws SWTException
+	 *             <ul>
+	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
+	 *             </ul>
+	 */
+	public Font getHeaderFont() {
 		checkWidget();
 
-        if (headerFont == null) {
-            return parent.getFont();
-        }
-        return headerFont;
-    }
+		if (headerFont == null) {
+			return parent.getFont();
+		}
+		return headerFont;
+	}
 
-    /**
-     * Sets the Font to be used when displaying the Header text.
-     * @param font
-     */
-    public void setHeaderFont(Font font) {
-    	checkWidget();
-    	headerFont = font;
-    }
+	/**
+	 * Sets the Font to be used when displaying the Header text.
+	 *
+	 * @param font
+	 */
+	public void setHeaderFont(Font font) {
+		checkWidget();
+		headerFont = font;
+	}
 
-    /**
-     * Returns the font that the receiver will use to paint textual information
-     * for the footer.
-     *
-     * @return the receiver's font
-     * @throws SWTException
-     * <ul>
-     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
-     * created the receiver</li>
-     * </ul>
-     */
-    public Font getFooterFont() {
+	/**
+	 * Returns the font that the receiver will use to paint textual information
+	 * for the footer.
+	 *
+	 * @return the receiver's font
+	 * @throws SWTException
+	 *             <ul>
+	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
+	 *             </ul>
+	 */
+	public Font getFooterFont() {
 		checkWidget();
 
-        if (footerFont == null) {
-            return parent.getFont();
-        }
-        return footerFont;
-    }
+		if (footerFont == null) {
+			return parent.getFont();
+		}
+		return footerFont;
+	}
 
-    /**
-     * Sets the Font to be used when displaying the Footer text.
-     * @param font
-     */
-    public void setFooterFont(Font font) {
-    	checkWidget();
-    	footerFont = font;
-    }
+	/**
+	 * Sets the Font to be used when displaying the Footer text.
+	 *
+	 * @param font
+	 */
+	public void setFooterFont(Font font) {
+		checkWidget();
+		footerFont = font;
+	}
+
+	/**
+	 * @return the minimum width
+	 */
+	public int getMinimumWidth() {
+		return minimumWidth;
+	}
+
+	/**
+	 * Set the minimum width of the column
+	 *
+	 * @param minimumWidth
+	 *            the minimum width
+	 */
+	public void setMinimumWidth(int minimumWidth) {
+		this.minimumWidth = Math.max(0, minimumWidth);
+		if( minimumWidth > getWidth() ) {
+			setWidth(minimumWidth, true);
+		}
+	}
 }
