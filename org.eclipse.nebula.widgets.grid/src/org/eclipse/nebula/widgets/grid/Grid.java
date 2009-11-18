@@ -10,6 +10,7 @@
  *    Chuck.Mastrandrea@sas.com - wordwrapping in bug 222280
  *    smcduff@hotmail.com       - wordwrapping in bug 222280
  *    Claes Rosell<claes.rosell@solme.se> - rowspan in bug 272384
+ *    Marco Maccaferri<macca@maccasoft.com> - fixed arrow scrolling in bug 294767
  *******************************************************************************/
 package org.eclipse.nebula.widgets.grid;
 
