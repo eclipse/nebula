@@ -440,8 +440,12 @@ public class TableCombo extends Composite {
 		GC gc = new GC (text);
 		int spacer = gc.stringExtent (" ").x; //$NON-NLS-1$
 		int textWidth = gc.stringExtent (text.getText()).x;
+		int colIndex = getDisplayColumnIndex();
+		
+		// calculate the maximum text width.
 		for (int i = 0; i < tableItems.length; i++) {
-			textWidth = Math.max (gc.stringExtent (tableItems[i].getText(displayColumnIndex)).x, textWidth);
+			textWidth = Math.max (gc.stringExtent (tableItems[i].getText(
+				colIndex)).x, textWidth);
 		}
 		gc.dispose ();
 		Point textSize = text.computeSize (SWT.DEFAULT, SWT.DEFAULT, changed);
@@ -723,7 +727,7 @@ public class TableCombo extends Composite {
 	 */
 	public String getItem (int index) {
 		checkWidget();
-		return table.getItem(index).getText(displayColumnIndex);
+		return table.getItem(index).getText(getDisplayColumnIndex());
 	}
 	
 	/**
@@ -784,9 +788,11 @@ public class TableCombo extends Composite {
 		// create string array to hold the total number of items.
 		String[] stringItems = new String[totalItems];
 		
+		int colIndex = getDisplayColumnIndex();
+
 		// now copy the display string from the tableitems.
 		for (int index=0; index < totalItems; index++) {
-			stringItems[index] = tableItems[index].getText(displayColumnIndex);
+			stringItems[index] = tableItems[index].getText(colIndex);
 		}
 		
 		return stringItems;
@@ -951,10 +957,11 @@ public class TableCombo extends Composite {
 		TableItem[] tableItems = table.getItems();
 		
 		int totalItems = (tableItems == null ? 0 : tableItems.length);
-		
+		int colIndex = getDisplayColumnIndex();
+
 		// now copy the display string from the tableitems.
 		for (int index=0; index < totalItems; index++) {
-			if (string.equals(tableItems[index].getText(displayColumnIndex))) {
+			if (string.equals(tableItems[index].getText(colIndex))) {
 				return index;
 			}
 		}
@@ -991,10 +998,12 @@ public class TableCombo extends Composite {
 		int totalItems = (tableItems == null ? 0 : tableItems.length);
 		
 		if (start < totalItems) {
+			
+			int colIndex = getDisplayColumnIndex();
 		
 			// now copy the display string from the tableitems.
 			for (int index=start; index < totalItems; index++) {
-				if (string.equals(tableItems[index].getText(displayColumnIndex))) {
+				if (string.equals(tableItems[index].getText(colIndex))) {
 					return index;
 				}
 			}
@@ -1573,7 +1582,7 @@ public class TableCombo extends Composite {
 	 * 
 	 * @since 3.4
 	 */
-	public void setListVisible (boolean visible) {
+	public void setTableVisible (boolean visible) {
 		checkWidget ();
 		dropDown(visible);
 	}
@@ -1699,11 +1708,9 @@ public class TableCombo extends Composite {
 	 */
 	public void setVisibleItemCount (int count) {
 	    checkWidget ();
-	    if (count < 0) {
-	    	return;
+	    if (count > 0) {
+		    visibleItemCount = count;
 	    }
-	    
-	    visibleItemCount = count;
 	}
 	
 	/**
@@ -1838,7 +1845,11 @@ public class TableCombo extends Composite {
 	 */
 	public void setTableWidthPercentage(int ddWidthPct) {
 		checkWidget();
-		this.tableWidthPercentage = ddWidthPct;
+		
+		// don't accept invalid input.
+		if (ddWidthPct > 0 && ddWidthPct <= 100) {
+			this.tableWidthPercentage = ddWidthPct;
+		}
 	}
 	
 	/**
@@ -1849,7 +1860,19 @@ public class TableCombo extends Composite {
 	 */
 	public void setDisplayColumnIndex(int displayColumnIndex) {
 		checkWidget();
-		this.displayColumnIndex = displayColumnIndex;
+		
+		if (displayColumnIndex >= 0) {
+			this.displayColumnIndex = displayColumnIndex;
+		}
+	}
+	
+	/**
+	 * returns the column index of the TableColumn to be displayed when selected.
+	 * @return
+	 */
+	private int getDisplayColumnIndex() {
+		// make sure the requested column index is valid.
+		return (displayColumnIndex <= (table.getColumnCount() - 1) ? displayColumnIndex : 0);
 	}
 	
 	
@@ -1876,13 +1899,16 @@ public class TableCombo extends Composite {
 	 */
 	private void refreshText(int index) {
 		
-		// get a reference to the selected item
+		// get a reference to the selected TableItem
 		TableItem tableItem = table.getItem(index);
+		
+		// get the TableItem index to use for displaying the text.
+		int colIndexToUse = getDisplayColumnIndex();
         
 		// set image if requested
         if (showImageWithinSelection) {
     	    // set the selected image
-    	    selectedImage.setImage(tableItem.getImage(displayColumnIndex));
+    	    selectedImage.setImage(tableItem.getImage(colIndexToUse));
 
     	    // refresh the layout of the widget
     	    internalLayout(false);
@@ -1890,17 +1916,17 @@ public class TableCombo extends Composite {
         
         // set color if requested
         if (showColorWithinSelection) {
-        	text.setForeground(tableItem.getForeground(displayColumnIndex));
+        	text.setForeground(tableItem.getForeground(colIndexToUse));
         }
 
         // set font if requested
         if (showFontWithinSelection) {
 	        // set the selected font
-        	text.setFont(tableItem.getFont(displayColumnIndex));
+        	text.setFont(tableItem.getFont(colIndexToUse));
         }
         
         // set the label text.
-        text.setText (tableItem.getText(displayColumnIndex));
+        text.setText (tableItem.getText(colIndexToUse));
         text.selectAll ();
 	}
 
