@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl - initial API and implementation
+ *     Claes Rosell<claes.rosell@solme.se> - rowspan in bug 272384
  *******************************************************************************/
 
 package org.eclipse.nebula.jface.gridviewer;
@@ -28,7 +29,7 @@ public class GridColumnLabelProvider extends ColumnLabelProvider {
 
 	/**
 	 * Returns the row header text for this element.
-	 * 
+	 *
 	 * @param element
 	 *            the model element
 	 * @return the text displayed in the row-header or <code>null</code> if
@@ -38,17 +39,50 @@ public class GridColumnLabelProvider extends ColumnLabelProvider {
 		return null;
 	}
 
-	
+	/**
+	 * Returns the number of columns this element should span
+	 *
+	 * @param element
+	 *            the model element
+	 * @return colSpan
+	 */
+	public int getColumnSpan(Object element)
+	{
+		return 0;
+	}
+
+	/**
+	 * Returns the number of rows this element should span
+	 *
+	 * @param element
+	 *            the model element
+	 * @return rowSpan
+	 */
+	public int getRowSpan(Object element)
+	{
+		return 0;
+	}
+
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public void update(ViewerCell cell) {
 		super.update(cell);
-		String rowText = getRowHeaderText(cell.getElement());
 
+		Object element = cell.getElement();
+
+		String rowText = getRowHeaderText(element);
+		int colSpan = getColumnSpan(element);
+		int rowSpan = getRowSpan(element);
+
+		GridItem gridItem = (GridItem)cell.getViewerRow().getItem();
 		if (rowText != null) {
-			((GridItem) cell.getViewerRow().getItem()).setHeaderText(rowText);
+			gridItem.setHeaderText(rowText);
 		}
+
+		gridItem.setColumnSpan(cell.getColumnIndex(), colSpan);
+		gridItem.setRowSpan(cell.getColumnIndex(), rowSpan);
 	}
 
 }

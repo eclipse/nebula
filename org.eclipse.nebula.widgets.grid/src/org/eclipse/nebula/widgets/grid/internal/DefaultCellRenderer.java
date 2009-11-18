@@ -9,7 +9,8 @@
  *    chris.gross@us.ibm.com - initial API and implementation
  *    Chuck.Mastrandrea@sas.com - wordwrapping in bug 222280
  *    smcduff@hotmail.com - wordwrapping in bug 222280
- *******************************************************************************/ 
+ *    Claes Rosell<claes.rosell@solme.se> - rowspan in bug 272384
+ *******************************************************************************/
 package org.eclipse.nebula.widgets.grid.internal;
 
 import org.eclipse.nebula.widgets.grid.Grid;
@@ -68,14 +69,14 @@ public class DefaultCellRenderer extends GridCellRenderer
         GridItem item = (GridItem)value;
 
         gc.setFont(item.getFont(getColumn()));
-        
+
         boolean drawAsSelected = isSelected();
-        
+
         boolean drawBackground = true;
-        
+
         if (isCellSelected())
         {
-            drawAsSelected = true;//(!isCellFocus());        
+            drawAsSelected = true;//(!isCellFocus());
         }
 
         if (drawAsSelected)
@@ -88,7 +89,7 @@ public class DefaultCellRenderer extends GridCellRenderer
             if (item.getParent().isEnabled())
             {
                 Color back = item.getBackground(getColumn());
-                
+
                 if (back != null)
                 {
                     gc.setBackground(back);
@@ -109,7 +110,7 @@ public class DefaultCellRenderer extends GridCellRenderer
             gc.fillRectangle(getBounds().x, getBounds().y, getBounds().width,
                          getBounds().height);
 
-        
+
         int x = leftMargin;
 
         if (isTree())
@@ -119,10 +120,10 @@ public class DefaultCellRenderer extends GridCellRenderer
         		branchRenderer.setBranches(getBranches(item));
         		branchRenderer.setIndent(treeIndent);
         		branchRenderer.setBounds(
-        				getBounds().x + x, getBounds().y, 
+        				getBounds().x + x, getBounds().y,
         				getToggleIndent(item), getBounds().height + 1); // Take into account border
         	}
-        	
+
             x += getToggleIndent(item);
 
             toggleRenderer.setExpanded(item.isExpanded());
@@ -139,7 +140,7 @@ public class DefaultCellRenderer extends GridCellRenderer
                 branchRenderer.setToggleBounds(toggleRenderer.getBounds());
                 branchRenderer.paint(gc, null);
             }
-        	
+
             x += toggleRenderer.getBounds().width + insideMargin;
 
         }
@@ -160,7 +161,7 @@ public class DefaultCellRenderer extends GridCellRenderer
                 checkRenderer.setBounds(getBounds().x + ((getBounds().width - checkRenderer.getBounds().width) /2),
                 		                (getBounds().height - checkRenderer.getBounds().height)
                                             / 2 + getBounds().y, checkRenderer
-                                          .getBounds().width, checkRenderer.getBounds().height);	
+                                          .getBounds().width, checkRenderer.getBounds().height);
         	}
         	else
         	{
@@ -168,10 +169,10 @@ public class DefaultCellRenderer extends GridCellRenderer
                         .getBounds().height)
                                                                / 2 + getBounds().y, checkRenderer
                         .getBounds().width, checkRenderer.getBounds().height);
-                    
-                    x += checkRenderer.getBounds().width + insideMargin;       		
+
+                    x += checkRenderer.getBounds().width + insideMargin;
         	}
-        	
+
         	checkRenderer.paint(gc, null);
         }
 
@@ -179,14 +180,14 @@ public class DefaultCellRenderer extends GridCellRenderer
         if (image != null)
         {
             int y = getBounds().y;
- 
+
             y += (getBounds().height - image.getBounds().height)/2;
-                            
+
             gc.drawImage(image, getBounds().x + x, y);
-            
+
             x += image.getBounds().width + insideMargin;
         }
-        
+
         int width = getBounds().width - x - rightMargin;
 
         if (drawAsSelected)
@@ -197,7 +198,7 @@ public class DefaultCellRenderer extends GridCellRenderer
         {
             gc.setForeground(item.getForeground(getColumn()));
         }
-        
+
         if (!isWordWrap())
         {
             String text = TextUtils.getShortString(gc, item.getText(getColumn()), width);
@@ -219,7 +220,7 @@ public class DefaultCellRenderer extends GridCellRenderer
                 }
             }
 
-            gc.drawString(text, getBounds().x + x, getBounds().y + textTopMargin + topMargin, true);        
+            gc.drawString(text, getBounds().x + x, getBounds().y + textTopMargin + topMargin, true);
         }
         else
         {
@@ -227,11 +228,11 @@ public class DefaultCellRenderer extends GridCellRenderer
             {
                 textLayout = new TextLayout(gc.getDevice());
                 item.getParent().addDisposeListener(new DisposeListener()
-                {                
+                {
                     public void widgetDisposed(DisposeEvent e)
                     {
                         textLayout.dispose();
-                    }                
+                    }
                 });
             }
             textLayout.setFont(gc.getFont());
@@ -252,14 +253,14 @@ public class DefaultCellRenderer extends GridCellRenderer
                 maxHeight = Math.max(maxHeight, height);
               }
             }
-            
+
             // Also look at the row header if necessary
             if (item.getParent().isWordWrapHeader())
             {
             int height = item.getParent().getRowHeaderRenderer().computeSize(gc, SWT.DEFAULT, SWT.DEFAULT, item).y;
           maxHeight = Math.max(maxHeight, height);
             }
-              
+
             if (maxHeight != item.getHeight())
             {
               item.setHeight(maxHeight);
@@ -267,7 +268,7 @@ public class DefaultCellRenderer extends GridCellRenderer
             }
             textLayout.draw(gc, getBounds().x + x, getBounds().y + textTopMargin + topMargin);
         }
-        
+
 
         if (item.getParent().getLinesVisible())
         {
@@ -283,28 +284,28 @@ public class DefaultCellRenderer extends GridCellRenderer
             gc.drawLine(getBounds().x, getBounds().y + getBounds().height, getBounds().x
                                                                            + getBounds().width -1,
                         getBounds().y + getBounds().height);
-            gc.drawLine(getBounds().x + getBounds().width - 1, getBounds().y, 
+            gc.drawLine(getBounds().x + getBounds().width - 1, getBounds().y,
                         getBounds().x + getBounds().width - 1, getBounds().y + getBounds().height);
         }
-        
+
         if (isCellFocus())
         {
-            Rectangle focusRect = new Rectangle(getBounds().x -1, getBounds().y - 1, getBounds().width,
-                                                getBounds().height + 1);
-            
+            Rectangle focusRect = new Rectangle(getBounds().x, getBounds().y, getBounds().width - 1,
+                                                getBounds().height);
+
             gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND));
             gc.drawRectangle(focusRect);
-      
+
             if (isFocus())
             {
                 focusRect.x ++;
                 focusRect.width -= 2;
                 focusRect.y ++;
                 focusRect.height -= 2;
-                
-                gc.drawRectangle(focusRect);       
+
+                gc.drawRectangle(focusRect);
             }
-        }        
+        }
     }
 
     /**
@@ -315,7 +316,7 @@ public class DefaultCellRenderer extends GridCellRenderer
     private int[] getBranches(GridItem item) {
 		int[] branches = new int[item.getLevel() + 1];
 		GridItem[] roots = item.getParent().getRootItems();
-		
+
 		// Is this a node or a leaf?
 		if (item.getParentItem() == null) {
 			// Add descender if not last item
@@ -331,7 +332,7 @@ public class DefaultCellRenderer extends GridCellRenderer
 				else
 					branches[item.getLevel()] = BranchRenderer.SMALL_T;
 			}
-			
+
 		}
 		else if (item.hasChildren())
 			if (item.isExpanded())
@@ -340,20 +341,20 @@ public class DefaultCellRenderer extends GridCellRenderer
 				branches[item.getLevel()] = BranchRenderer.NONE;
 		else
 			branches[item.getLevel()] = BranchRenderer.LEAF;
-		
+
 		// Branch for current item
 		GridItem parent = item.getParentItem();
 		if (parent == null)
 			return branches;
-		
+
 		// Are there siblings below this item?
 		if (parent.indexOf(item) < parent.getItemCount() - 1)
 			branches[item.getLevel() - 1] = BranchRenderer.T;
-		
+
 		// Is the next node a root?
 		else if (parent.getParentItem() == null && !parent.equals(roots[roots.length - 1]))
 			branches[item.getLevel() - 1] = BranchRenderer.T;
-		
+
 		// This must be the last element at this level
 		else
 			branches[item.getLevel() - 1] = BranchRenderer.L;
@@ -361,7 +362,7 @@ public class DefaultCellRenderer extends GridCellRenderer
 		Grid grid = item.getParent();
 		item = parent;
 		parent = item.getParentItem();
-		
+
 		// Branches for parent items
 		while(item.getLevel() > 0) {
 			if (parent.indexOf(item) == parent.getItemCount() - 1) {
@@ -379,7 +380,7 @@ public class DefaultCellRenderer extends GridCellRenderer
 		return branches;
 	}
 
-	/** 
+	/**
      * {@inheritDoc}
      */
     public Point computeSize(GC gc, int wHint, int hHint, Object value)
@@ -404,14 +405,14 @@ public class DefaultCellRenderer extends GridCellRenderer
         {
             x += checkRenderer.getBounds().width + insideMargin;
         }
-        
+
         int y = 0;
-        
+
         Image image = item.getImage(getColumn());
         if (image != null)
-        {  
+        {
             y = topMargin + image.getBounds().height + bottomMargin;
-            
+
             x += image.getBounds().width + insideMargin;
         }
 
@@ -438,7 +439,7 @@ public class DefaultCellRenderer extends GridCellRenderer
         	  plainTextWidth = getBounds().width - x - rightMargin;
         	else
         		plainTextWidth = wHint - x - rightMargin;
-        	
+
             TextLayout currTextLayout = new TextLayout(gc.getDevice());
             currTextLayout.setFont(gc.getFont());
             currTextLayout.setText(item.getText(getColumn()));
@@ -446,21 +447,21 @@ public class DefaultCellRenderer extends GridCellRenderer
             currTextLayout.setWidth(plainTextWidth < 1 ? 1 : plainTextWidth);
 
             x += plainTextWidth + rightMargin;
-        	
+
             textHeight += topMargin + textTopMargin;
             for(int cnt=0;cnt<currTextLayout.getLineCount();cnt++)
                 textHeight += currTextLayout.getLineBounds(cnt).height;
             textHeight += textBottomMargin + bottomMargin;
-            
+
             currTextLayout.dispose();
         }
-        
+
         y = Math.max(y, textHeight);
 
         return new Point(x, y);
     }
 
-    /** 
+    /**
      * {@inheritDoc}
      */
     public boolean notify(int event, Point point, Object value)
@@ -487,7 +488,7 @@ public class DefaultCellRenderer extends GridCellRenderer
                     {
                         return false;
                     }
-                    
+
                     item.setChecked(getColumn(), !item.getChecked(getColumn()));
                     item.getParent().redraw();
 
@@ -540,28 +541,28 @@ public class DefaultCellRenderer extends GridCellRenderer
 	        point = new Point(point.x, point.y);
 	        point.x -= getBounds().x;
 	        point.y -= getBounds().y;
-	        
+
 	        Rectangle checkBounds = new Rectangle(0,0,0,0);
 	        checkBounds.x = (getBounds().width - checkRenderer.getBounds().width)/2;
 	        checkBounds.y = ((getBounds().height - checkRenderer.getBounds().height) / 2);
 	        checkBounds.width = checkRenderer.getBounds().width;
 	        checkBounds.height = checkRenderer.getBounds().height;
-	        
-	        return checkBounds.contains(point);	        
+
+	        return checkBounds.contains(point);
     	}
     	else
-    	{    	
+    	{
 	        point = new Point(point.x, point.y);
 	        point.x -= getBounds().x;
 	        point.y -= getBounds().y;
-	
+
 	        int x = leftMargin;
 	        if (isTree())
 	        {
 	            x += getToggleIndent(item);
 	            x += toggleRenderer.getSize().x + insideMargin;
 	        }
-	
+
 	        if (point.x >= x && point.x < (x + checkRenderer.getSize().x))
 	        {
 	            int yStart = ((getBounds().height - checkRenderer.getBounds().height) / 2);
@@ -570,7 +571,7 @@ public class DefaultCellRenderer extends GridCellRenderer
 	                return true;
 	            }
 	        }
-	
+
 	        return false;
     	}
     }
@@ -600,11 +601,11 @@ public class DefaultCellRenderer extends GridCellRenderer
                 return true;
             }
         }
-        
+
         return false;
     }
 
-    /** 
+    /**
      * {@inheritDoc}
      */
     public void setTree(boolean tree)
@@ -615,13 +616,13 @@ public class DefaultCellRenderer extends GridCellRenderer
         {
             toggleRenderer = new ToggleRenderer();
             toggleRenderer.setDisplay(getDisplay());
-            
+
             branchRenderer = new BranchRenderer();
             branchRenderer.setDisplay(getDisplay());
         }
     }
 
-    /** 
+    /**
      * {@inheritDoc}
      */
     public void setCheck(boolean check)
@@ -639,7 +640,7 @@ public class DefaultCellRenderer extends GridCellRenderer
         }
     }
 
-    /** 
+    /**
      * {@inheritDoc}
      */
     public Rectangle getTextBounds(GridItem item, boolean preferred)
@@ -664,15 +665,15 @@ public class DefaultCellRenderer extends GridCellRenderer
         {
             x += image.getBounds().width + insideMargin;
         }
-        
+
         Rectangle bounds = new Rectangle(x,topMargin + textTopMargin,0,0);
-        
+
         GC gc = new GC(item.getParent());
         gc.setFont(item.getFont(getColumn()));
         Point size = gc.stringExtent(item.getText(getColumn()));
-        
+
         bounds.height = size.y;
-        
+
         if (preferred)
         {
             bounds.width = size.x - 1;
@@ -681,12 +682,12 @@ public class DefaultCellRenderer extends GridCellRenderer
         {
             bounds.width = getBounds().width - x - rightMargin;
         }
-        
+
         gc.dispose();
-        
+
         return bounds;
     }
-    
+
     private boolean isCenteredCheckBoxOnly(GridItem item)
     {
     	return !isTree() && item.getImage(getColumn()) == null && item.getText(getColumn()).equals("")

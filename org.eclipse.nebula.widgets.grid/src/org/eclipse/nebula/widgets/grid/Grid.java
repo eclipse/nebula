@@ -9,6 +9,7 @@
  *    chris.gross@us.ibm.com    - initial API and implementation
  *    Chuck.Mastrandrea@sas.com - wordwrapping in bug 222280
  *    smcduff@hotmail.com       - wordwrapping in bug 222280
+ *    Claes Rosell<claes.rosell@solme.se> - rowspan in bug 272384
  *******************************************************************************/
 package org.eclipse.nebula.widgets.grid;
 
@@ -1194,6 +1195,29 @@ public class Grid extends Canvas
      */
     public GridColumn getColumn(Point point)
     {
+    	return getColumn(null, point);
+    }
+
+    /**
+     * Returns the column at the given point and a known item in the receiver or null if no such
+     * column exists. The point is in the coordinate system of the receiver.
+     *
+     * @param item a known GridItem
+     * @param point the point used to locate the column
+     * @return the column at the given point
+     * @throws IllegalArgumentException
+     * <ul>
+     * <li>ERROR_NULL_ARGUMENT - if the point is null</li>
+     * </ul>
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
+     */
+    private GridColumn getColumn(GridItem item, Point point)
+    {
         checkWidget();
         if (point == null)
         {
@@ -1242,7 +1266,10 @@ public class Grid extends Canvas
         if (hasSpanning)
         {
             // special logic for column spanning
-            GridItem item = getItem(point);
+        	if(item == null) {
+        		item = getItem(point);
+        	}
+
             if (item != null)
             {
                 int displayColIndex = displayOrderedColumns.indexOf(overThis);
@@ -1786,6 +1813,8 @@ public class Grid extends Canvas
             y2 += headerHeight;
         }
 
+        GridItem itemToReturn = null;
+
         int row=getTopIndex();
         while(row<items.size() && y2<=getClientArea().height)
         {
@@ -1796,7 +1825,8 @@ public class Grid extends Canvas
 
                 if (p.y >= y2 && p.y < y2+currItemHeight+1)
                 {
-                    return currItem;
+                	itemToReturn = currItem;
+                	break;
                 }
 
                 y2 += currItemHeight +1;
@@ -1804,7 +1834,36 @@ public class Grid extends Canvas
             row++;
         }
 
-        return null;
+        if (hasSpanning)
+        {
+            if (itemToReturn != null)
+            {
+            	int itemIndex = this.getIndexOfItem(itemToReturn);
+
+                GridColumn gridColumn = getColumn(itemToReturn, point);
+                int displayColIndex = displayOrderedColumns.indexOf(gridColumn);
+
+
+                // track back all previous columns and check their spanning
+                for (int i = 0; i < itemIndex; i++)
+                {
+                	GridItem gridItem = this.getItem(i);
+                    if (gridItem.isVisible() == false)
+                    {
+                        continue;
+                    }
+                    int span = gridItem.getRowSpan(displayColIndex);
+
+                    if (i + span >= itemIndex)
+                    {
+                        itemToReturn = gridItem;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return itemToReturn;
     }
 
     /**
@@ -1948,6 +2007,18 @@ public class Grid extends Canvas
     {
         checkWidget();
         return (GridItem[])items.toArray(new GridItem[items.size()]);
+    }
+
+    /**
+     *
+     * @param item
+     * @return t
+     */
+    public int getIndexOfItem(GridItem item)
+    {
+    	checkWidget();
+
+    	return items.indexOf(item);
     }
 
     /**
@@ -3656,7 +3727,7 @@ public class Grid extends Canvas
         this.rowHeaderVisible = show;
         setColumnScrolling(true);
 
-        if (show && isAutoWidth()) 
+        if (show && isAutoWidth())
         {
 	        rowHeaderWidth = 1;
 
@@ -5125,6 +5196,8 @@ public class Grid extends Canvas
         int insertMarkPosY = -1;
         boolean insertMarkPosFound = false;
 
+        GridCellSpanManager cellSpanManager = new GridCellSpanManager();
+
         e.gc.setBackground(getBackground());
         this.drawBackground(e.gc,0,0,getSize().x,getSize().y);
 
@@ -5143,7 +5216,6 @@ public class Grid extends Canvas
             y += headerHeight;
         }
 
-        int firstVisibleIndex = 0;
         int availableHeight = getClientArea().height-y;
         int visibleRows = availableHeight / getItemHeight() + 1;
         if (items.size()>0 && availableHeight>0)
@@ -5155,11 +5227,49 @@ public class Grid extends Canvas
                 visibleRows = range.rows + (availableHeight-range.height) / getItemHeight() + 1;
         }
 
-        firstVisibleIndex = getTopIndex();
+        int firstVisibleIndex = getTopIndex();
+        int firstItemToDraw = firstVisibleIndex;
 
-        int row = firstVisibleIndex;
+        if(hasSpanning) {
+        	// We need to find the first Item to draw. An earlier item can row-span the first visible item.
+        	for(int rowIndex = 0; rowIndex < firstVisibleIndex; rowIndex++)
+        	{
+        		GridItem itemForRow = (GridItem)items.get(rowIndex);
+                int colIndex = 0;
 
-        for (int i = 0; i < visibleRows; i++)
+                int maxRowSpanForItem = 0;
+                for (Iterator columnIterator = displayOrderedColumns.iterator(); columnIterator.hasNext(); )
+                {
+                    GridColumn column = (GridColumn) columnIterator.next();
+
+                    if (!column.isVisible())
+                    {
+                        colIndex++;
+                        continue;
+                    }
+
+                    int rowSpan = itemForRow.getRowSpan(colIndex);
+                    maxRowSpanForItem = rowSpan > maxRowSpanForItem ? rowSpan : maxRowSpanForItem;
+                }
+
+                if(rowIndex + maxRowSpanForItem >= firstVisibleIndex) {
+                	firstItemToDraw = rowIndex;
+                	break;
+                } else {
+                	rowIndex += maxRowSpanForItem;
+                }
+        	}
+
+        	for(int rowIndex = firstItemToDraw; rowIndex < firstVisibleIndex; rowIndex++)
+        	{
+        		GridItem itemForRow = (GridItem)items.get(rowIndex);
+        		y = y - itemForRow.getHeight() - 1;
+        	}
+        }
+
+        int row = firstItemToDraw;
+
+        for (int i = 0; i < visibleRows + (firstVisibleIndex - firstItemToDraw); i++)
         {
 
             x = 0;
@@ -5197,10 +5307,6 @@ public class Grid extends Canvas
 
                 int focusY = y;
 
-                // This variable is used to count how many columns are
-                // skipped because the previous column spanned over them
-                int skipBecauseSpanned = 0;
-
                 int colIndex = 0;
 
                 // draw regular cells for each column
@@ -5208,44 +5314,47 @@ public class Grid extends Canvas
                 {
 
                     GridColumn column = (GridColumn) columnIterator.next();
+                    boolean skipCell = cellSpanManager.skipCell(colIndex, row);
 
                     if (!column.isVisible())
                     {
                         colIndex++;
-                        if (skipBecauseSpanned > 0)
+                        if(skipCell)
                         {
-                            skipBecauseSpanned--;
+                        	cellSpanManager.consumeCell(colIndex, row);
                         }
                         continue;
                     }
 
-                    if (skipBecauseSpanned == 0)
+                    int width = item.getCellSize(colIndex).x;
+
+                    if(skipCell == false)
                     {
-                        skipBecauseSpanned = item.getColumnSpan(indexOf(column));
 
-                        int width = column.getWidth();
+                    	int indexOfColumn = indexOf(column);
 
-                        if (skipBecauseSpanned > 0)
-                        {
-                            for (int j = 0; j < skipBecauseSpanned; j++)
-                            {
-                                if (getColumnCount() <= colIndex + j + 1)
-                                {
-                                    break;
-                                }
-                                if (((GridColumn)displayOrderedColumns.get(colIndex + j + 1)).isVisible())
-                                {
-                                    width += ((GridColumn)displayOrderedColumns.get(colIndex + j + 1)).getWidth();
-                                }
-                            }
-                        }
+                    	int nrRowsToSpan = item.getRowSpan(indexOfColumn);
+                    	int nrColumnsToSpan = item.getColumnSpan(indexOfColumn);
+
+                    	if(nrRowsToSpan > 0 || nrColumnsToSpan > 0)
+                    	{
+                    		cellSpanManager.addCellSpanInfo(colIndex, row, nrColumnsToSpan, nrRowsToSpan);
+                    	}
 
                     	if (x + width >= 0 && x < getClientArea().width )
                     	{
+                    		Point sizeOfColumn = item.getCellSize(indexOf(column));
 
-	                        column.getCellRenderer().setBounds(x, y, width, item.getHeight());
-
-	                        e.gc.setClipping(new Rectangle(x -1,y -1,width +1,item.getHeight() + 2));
+	                        column.getCellRenderer().setBounds(x, y, width, sizeOfColumn.y);
+                        	int cellInHeaderDelta = headerHeight - y;
+	                        if(cellInHeaderDelta > 0)
+	                        {
+                        		e.gc.setClipping(new Rectangle(x -1,y + cellInHeaderDelta, width +1, sizeOfColumn.y + 2 - cellInHeaderDelta));
+                        	}
+	                        else
+	                        {
+	                        	e.gc.setClipping(new Rectangle(x -1,y -1,width +1, sizeOfColumn.y + 2));
+	                        }
 
 	                        column.getCellRenderer().setRow(i + 1);
 
@@ -5309,15 +5418,13 @@ public class Grid extends Canvas
 	                            insertMarkPosFound = true;
 	                        }
                     	}
-
-
-                        x += width;
-
                     }
                     else
                     {
-                        skipBecauseSpanned--;
+                    	cellSpanManager.consumeCell(colIndex, row);
                     }
+
+                    x += column.getWidth();
                     colIndex++;
 
                 }
@@ -5349,10 +5456,11 @@ public class Grid extends Canvas
                     {
                         rowHeaderRenderer.setSelected(cellInRowSelected);
                     }
-
-                    rowHeaderRenderer.setBounds(0, y, rowHeaderWidth, item.getHeight() + 1);
-                    rowHeaderRenderer.paint(e.gc, item);
-
+                    if(y >= headerHeight)
+                    {
+	                    rowHeaderRenderer.setBounds(0, y, rowHeaderWidth, item.getHeight() + 1);
+	                    rowHeaderRenderer.paint(e.gc, item);
+                    }
                     x += rowHeaderWidth;
                 }
 
@@ -8761,7 +8869,7 @@ public class Grid extends Canvas
 
         if (columns.size() == 0)
             return;
-        
+
         if(items.size() == 0)
         	return;
 
@@ -9333,7 +9441,7 @@ public class Grid extends Canvas
     {
         if (!isAutoWidth())
           return;
-        
+
         if (newWidth > rowHeaderWidth)
         {
             rowHeaderWidth = newWidth;
@@ -9394,7 +9502,7 @@ public class Grid extends Canvas
       setAutoWidth(false);
       redraw();
     }
-    
+
     /**
      * Sets the number of items contained in the receiver.
      *
@@ -10281,7 +10389,7 @@ public class Grid extends Canvas
     public void recalculateHeader() {
     	int previous = getHeaderHeight();
         computeHeaderHeight(sizingGC);
-        
+
         if( previous != getHeaderHeight() ) {
         	scrollValuesObsolete = true;
         	redraw();
@@ -10400,10 +10508,10 @@ public class Grid extends Canvas
     void setSizeOnEveryItemImageChange(boolean sizeOnEveryItemImageChange) {
     	this.sizeOnEveryItemImageChange = sizeOnEveryItemImageChange;
     }
-    
+
 	/**
 	 * Returns the width of the row headers.
-	 * 
+	 *
 	 * @return width of the column header row
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
@@ -10417,24 +10525,24 @@ public class Grid extends Canvas
 		checkWidget();
 		return rowHeaderWidth;
 	}
-    
+
     /**
-     * Sets the value of the auto-height feature. When enabled, this feature resizes the height of rows to 
+     * Sets the value of the auto-height feature. When enabled, this feature resizes the height of rows to
      * reflect the content of cells with word-wrapping enabled. Cell word-wrapping is enabled via the GridColumn.setWordWrap(boolean) method.
-     * If column headers have word-wrapping enabled, this feature will also resize the height of the column headers as necessary. 
+     * If column headers have word-wrapping enabled, this feature will also resize the height of the column headers as necessary.
      * @param enabled Set to true to enable this feature, false (default) otherwise.
      */
     public void setAutoHeight(boolean enabled)
     {
       if (autoHeight == enabled)
         return;
-      
+
         checkWidget();
         autoHeight = enabled;
         setRowsResizeable(false); // turn of resizing of row height since it conflicts with this property
         redraw();
     }
-    
+
     /**
      * Returns the value of the auto-height feature, which resizes row heights and column header heights based on word-wrapped content.
      * @return Returns whether or not the auto-height feature is enabled.
@@ -10444,9 +10552,9 @@ public class Grid extends Canvas
     {
       return autoHeight;
     }
-    
+
     /**
-     * Sets the value of the auto-width feature. When enabled, this feature resizes the width of the row headers to 
+     * Sets the value of the auto-width feature. When enabled, this feature resizes the width of the row headers to
      * reflect the content of row headers.
      * @param enabled Set to true to enable this feature, false (default) otherwise.
      * @see #isAutoWidth()
@@ -10455,12 +10563,12 @@ public class Grid extends Canvas
     {
       if (autoWidth == enabled)
         return;
-      
+
         checkWidget();
         autoWidth = enabled;
         redraw();
     }
-    
+
     /**
      * Returns the value of the auto-height feature, which resizes row header width based on content.
      * @return Returns whether or not the auto-width feature is enabled.
@@ -10470,7 +10578,7 @@ public class Grid extends Canvas
     {
       return autoWidth;
     }
-    
+
     /**
      * Sets the value of the word-wrap feature for row headers. When enabled, this feature will word-wrap the contents of row headers.
      * @param enabled Set to true to enable this feature, false (default) otherwise.
@@ -10480,12 +10588,12 @@ public class Grid extends Canvas
     {
       if (wordWrapRowHeader == enabled)
         return;
-      
+
         checkWidget();
         wordWrapRowHeader = enabled;
         redraw();
     }
-    
+
     /**
      * Returns the value of the row header word-wrap feature, which word-wraps the content of row headers.
      * @return Returns whether or not the row header word-wrap feature is enabled.
@@ -10494,7 +10602,7 @@ public class Grid extends Canvas
     public boolean isWordWrapHeader()
     {
       return wordWrapRowHeader;
-    }    
+    }
 }
 
 
