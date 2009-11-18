@@ -8,13 +8,15 @@
  * Contributors:
  *    chris.gross@us.ibm.com - initial API and implementation
  *    mario.winterer@scch.at - bugfix in 244333
- *******************************************************************************/ 
+ *    Marty Jones<martybjones@gmail.com> - custom header/footer font in bug 293743
+ *******************************************************************************/
 package org.eclipse.nebula.widgets.grid;
 
 import org.eclipse.nebula.widgets.grid.internal.DefaultColumnGroupHeaderRenderer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.TreeListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Item;
@@ -24,13 +26,13 @@ import java.util.Vector;
 
 /**
  * <p>
- * NOTE:  THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.  THIS IS A PRE-RELEASE ALPHA 
+ * NOTE:  THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.  THIS IS A PRE-RELEASE ALPHA
  * VERSION.  USERS SHOULD EXPECT API CHANGES IN FUTURE VERSIONS.
- * </p> 
- * Instances of this class represent a column group in a grid widget.  A column group header is 
- * displayed above grouped columns.  The column group can optionally be configured to expand and 
- * collapse.  A column group in the expanded state shows {@code GridColumn}s whose detail property 
- * is true.  A column group in the collapsed state shows {@code GridColumn}s whose summary property 
+ * </p>
+ * Instances of this class represent a column group in a grid widget.  A column group header is
+ * displayed above grouped columns.  The column group can optionally be configured to expand and
+ * collapse.  A column group in the expanded state shows {@code GridColumn}s whose detail property
+ * is true.  A column group in the collapsed state shows {@code GridColumn}s whose summary property
  * is true.
  * <p>
  * <dl>
@@ -39,7 +41,7 @@ import java.util.Vector;
  * <dt><b>Events:</b></dt>
  * <dd>Expand, Collapse</dd>
  * </dl>
- * 
+ *
  * @author chris.gross@us.ibm.com
  */
 public class GridColumnGroup extends Item
@@ -51,15 +53,17 @@ public class GridColumnGroup extends Item
 
     private boolean expanded = true;
 
+    private Font headerFont;
+
     /**
      * Header renderer.
      */
     private GridHeaderRenderer headerRenderer = new DefaultColumnGroupHeaderRenderer();
 
     /**
-     * Constructs a new instance of this class given its parent (which must be a Table) and a style 
-     * value describing its behavior and appearance. 
-     * 
+     * Constructs a new instance of this class given its parent (which must be a Table) and a style
+     * value describing its behavior and appearance.
+     *
      * @param parent the parent table
      * @param style the style of the group
      * @throws IllegalArgumentException
@@ -108,7 +112,7 @@ public class GridColumnGroup extends Item
         addListener (SWT.Expand, typedListener);
         addListener (SWT.Collapse, typedListener);
     }
-    
+
     /**
      * Removes the listener from the collection of listeners who will
      * be notified when items in the receiver are expanded or collapsed.
@@ -132,10 +136,10 @@ public class GridColumnGroup extends Item
         removeListener (SWT.Expand, listener);
         removeListener (SWT.Collapse, listener);
     }
-        
+
     /**
      * Returns the parent grid.
-     *  
+     *
      * @throws org.eclipse.swt.SWTException
      * <ul>
      * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
@@ -167,13 +171,13 @@ public class GridColumnGroup extends Item
         newAllColumns[newAllColumns.length - 1] = column;
         columns = newAllColumns;
     }
-    
+
     void removeColumn(GridColumn col)
     {
-    	
+
     	if (columns.length == 0)
     		return; // widget is disposing
-    		
+
         GridColumn[] newAllColumns = new GridColumn[columns.length - 1];
         int x = 0;
         for (int i = 0; i < columns.length; i++)
@@ -215,13 +219,13 @@ public class GridColumnGroup extends Item
     public void dispose()
     {
         super.dispose();
-        
+
         if (parent.isDisposing())
             return;
 
         GridColumn[] oldColumns = columns;
         columns = new GridColumn[0];
-        
+
         for (int i = 0; i < oldColumns.length; i++) {
         	oldColumns[i].dispose();
         }
@@ -231,7 +235,7 @@ public class GridColumnGroup extends Item
 
     /**
      * Gets the header renderer.
-     * 
+     *
      * @throws org.eclipse.swt.SWTException
      * <ul>
      * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
@@ -247,11 +251,11 @@ public class GridColumnGroup extends Item
 
     /**
      * Sets the header renderer.
-     * 
+     *
      * @param headerRenderer The headerRenderer to set.
      * @throws IllegalArgumentException
      * <ul>
-     * <li>ERROR_NULL_ARGUMENT - if the renderer is null</li> 
+     * <li>ERROR_NULL_ARGUMENT - if the renderer is null</li>
      * </ul>
      * @throws org.eclipse.swt.SWTException
      * <ul>
@@ -270,7 +274,7 @@ public class GridColumnGroup extends Item
 
     /**
      * Returns true if the receiver is expanded, false otherwise.
-     * 
+     *
      * @return the expanded attribute
      * @throws org.eclipse.swt.SWTException
      * <ul>
@@ -287,7 +291,7 @@ public class GridColumnGroup extends Item
 
     /**
      * Sets the expanded state of the receiver.
-     * 
+     *
      * @param expanded the expanded to set
      * @throws org.eclipse.swt.SWTException
      * <ul>
@@ -299,9 +303,9 @@ public class GridColumnGroup extends Item
     public void setExpanded(boolean expanded)
     {
         checkWidget();
-        
+
         this.expanded = expanded;
-        
+
         if (!expanded && getParent().getCellSelectionEnabled())
         {
             Vector collapsedCols = new Vector();
@@ -309,9 +313,9 @@ public class GridColumnGroup extends Item
             {
                 if (!columns[j].isSummary())
                 {
-                    collapsedCols.add(new Integer(getParent().indexOf(columns[j])));                    
+                    collapsedCols.add(new Integer(getParent().indexOf(columns[j])));
                 }
-            }   
+            }
             Point[] selection = getParent().getCellSelection();
             for (int i = 0; i < selection.length; i++)
             {
@@ -325,13 +329,13 @@ public class GridColumnGroup extends Item
             {
                 getParent().updateColumnFocus();
             }
-            
+
             parent.updateColumnSelection();
         }
 
         if (parent.getCellSelectionEnabled())
-            
-            
+
+
         parent.refreshHoverState();
         parent.setScrollValuesObsolete();
         parent.redraw();
@@ -339,7 +343,7 @@ public class GridColumnGroup extends Item
 
     /**
      * Returns the first visible column in this column group.
-     * 
+     *
      * @return first visible column
      */
     GridColumn getFirstVisibleColumn()
@@ -357,7 +361,7 @@ public class GridColumnGroup extends Item
 
     /**
      * Returns the last visible column in this column group.
-     * 
+     *
      * @return last visible column
      */
     GridColumn getLastVisibleColumn()
@@ -422,7 +426,7 @@ public class GridColumnGroup extends Item
     }
     /**
      * Returns whether or not text is word-wrapped in the header for this column group.
-     * @return true if the header wraps its text. 
+     * @return true if the header wraps its text.
      * @see GridColumn#setHeaderWordWrap(boolean)
      */
     public boolean getHeaderWordWrap()
@@ -431,4 +435,33 @@ public class GridColumnGroup extends Item
       return headerRenderer.isWordWrap();
     }
 
+    /**
+     * Returns the font that the receiver will use to paint textual information
+     * for the header.
+     *
+     * @return the receiver's font
+     * @throws SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
+     */
+    public Font getHeaderFont() {
+		checkWidget();
+
+        if (headerFont == null) {
+            return parent.getFont();
+        }
+        return headerFont;
+    }
+
+    /**
+     * Sets the Font to be used when displaying the Header text.
+     * @param font
+     */
+    public void setHeaderFont(Font font) {
+    	checkWidget();
+    	this.headerFont = font;
+    }
 }

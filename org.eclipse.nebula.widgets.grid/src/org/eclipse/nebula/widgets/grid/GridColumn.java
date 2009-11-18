@@ -9,6 +9,7 @@
  *    chris.gross@us.ibm.com    - initial API and implementation
  *    Chuck.Mastrandrea@sas.com - wordwrapping in bug 222280
  *    smcduff@hotmail.com       - wordwrapping in bug 222280
+ *    Marty Jones<martybjones@gmail.com> - custom header/footer font in bug 293743
  *******************************************************************************/
 package org.eclipse.nebula.widgets.grid;
 
@@ -19,6 +20,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -42,7 +44,7 @@ import org.eclipse.swt.widgets.TypedListener;
  * <dt><b>Events:</b></dt>
  * <dd>Move, Resize, Selection, Show, Hide</dd>
  * </dl>
- * 
+ *
  * @author chris.gross@us.ibm.com
  */
 public class GridColumn extends Item {
@@ -133,12 +135,16 @@ public class GridColumn extends Item {
 
 	private String footerText = "";
 
+    private Font headerFont;
+
+    private Font footerFont;
+
 	/**
 	 * Constructs a new instance of this class given its parent (which must be a
 	 * <code>Grid</code>) and a style value describing its behavior and
 	 * appearance. The item is added to the end of the items maintained by its
 	 * parent.
-	 * 
+	 *
 	 * @param parent
 	 *            an Grid control which will be the parent of the new instance
 	 *            (cannot be null)
@@ -164,7 +170,7 @@ public class GridColumn extends Item {
 	 * Constructs a new instance of this class given its parent (which must be a
 	 * <code>Grid</code>), a style value describing its behavior and appearance,
 	 * and the index at which to place it in the items maintained by its parent.
-	 * 
+	 *
 	 * @param parent
 	 *            an Grid control which will be the parent of the new instance
 	 *            (cannot be null)
@@ -195,7 +201,7 @@ public class GridColumn extends Item {
 	 * (which must be a <code>GridColumnGroup</code>), a style value describing
 	 * its behavior and appearance, and the index at which to place it in the
 	 * items maintained by its parent.
-	 * 
+	 *
 	 * @param parent
 	 *            an Grid control which will be the parent of the new instance
 	 *            (cannot be null)
@@ -282,7 +288,7 @@ public class GridColumn extends Item {
 
 	/**
 	 * Returns the header renderer.
-	 * 
+	 *
 	 * @return header renderer
 	 */
 	public GridHeaderRenderer getHeaderRenderer() {
@@ -295,7 +301,7 @@ public class GridColumn extends Item {
 
 	/**
 	 * Returns the cell renderer.
-	 * 
+	 *
 	 * @return cell renderer.
 	 */
 	 public GridCellRenderer getCellRenderer() {
@@ -304,7 +310,7 @@ public class GridColumn extends Item {
 
 	/**
 	 * Returns the width of the column.
-	 * 
+	 *
 	 * @return width of column
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
@@ -320,7 +326,7 @@ public class GridColumn extends Item {
 
 	/**
 	 * Sets the width of the column.
-	 * 
+	 *
 	 * @param width
 	 *            new width
 	 * @throws org.eclipse.swt.SWTException
@@ -347,7 +353,7 @@ public class GridColumn extends Item {
 	 * Sets the sort indicator style for the column. This method does not actual
 	 * sort the data in the table. Valid values include: SWT.UP, SWT.DOWN,
 	 * SWT.NONE.
-	 * 
+	 *
 	 * @param style
 	 *            SWT.UP, SWT.DOWN, SWT.NONE
 	 * @throws org.eclipse.swt.SWTException
@@ -365,7 +371,7 @@ public class GridColumn extends Item {
 
 	/**
 	 * Returns the sort indicator value.
-	 * 
+	 *
 	 * @return SWT.UP, SWT.DOWN, SWT.NONE
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
@@ -383,7 +389,7 @@ public class GridColumn extends Item {
 	 * Adds the listener to the collection of listeners who will be notified
 	 * when the receiver's is pushed, by sending it one of the messages defined
 	 * in the <code>SelectionListener</code> interface.
-	 * 
+	 *
 	 * @param listener
 	 *            the listener which should be notified
 	 * @throws IllegalArgumentException
@@ -408,7 +414,7 @@ public class GridColumn extends Item {
 	/**
 	 * Removes the listener from the collection of listeners who will be
 	 * notified when the receiver's selection changes.
-	 * 
+	 *
 	 * @param listener
 	 *            the listener which should no longer be notified
 	 * @see SelectionListener
@@ -441,9 +447,9 @@ public class GridColumn extends Item {
 	 * Returns true if the column is visible, false otherwise. If the column is
 	 * in a group and the group is not expanded and this is a detail column,
 	 * returns false (and vice versa).
-	 * 
+	 *
 	 * @return true if visible, false otherwise
-	 * 
+	 *
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
@@ -464,7 +470,7 @@ public class GridColumn extends Item {
 
 	/**
 	 * Returns the visibility state as set with {@code setVisible}.
-	 * 
+	 *
 	 * @return the visible
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
@@ -480,7 +486,7 @@ public class GridColumn extends Item {
 
 	/**
 	 * Sets the column's visibility.
-	 * 
+	 *
 	 * @param visible
 	 *            the visible to set
 	 * @throws org.eclipse.swt.SWTException
@@ -522,7 +528,7 @@ public class GridColumn extends Item {
 
 	/**
 	 * Causes the receiver to be resized to its preferred size.
-	 * 
+	 *
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
@@ -551,7 +557,7 @@ public class GridColumn extends Item {
 
 	/**
 	 * Returns true if this column includes a tree toggle.
-	 * 
+	 *
 	 * @return true if the column includes the tree toggle.
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
@@ -567,7 +573,7 @@ public class GridColumn extends Item {
 
 	/**
 	 * Returns true if the column includes a check box.
-	 * 
+	 *
 	 * @return true if the column includes a check box.
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
@@ -584,7 +590,7 @@ public class GridColumn extends Item {
 
 	/**
 	 * Sets the cell renderer.
-	 * 
+	 *
 	 * @param cellRenderer
 	 *            The cellRenderer to set.
 	 * @throws org.eclipse.swt.SWTException
@@ -603,7 +609,7 @@ public class GridColumn extends Item {
 
 	/**
 	 * Sets the header renderer.
-	 * 
+	 *
 	 * @param headerRenderer
 	 *            The headerRenderer to set.
 	 * @throws org.eclipse.swt.SWTException
@@ -621,7 +627,7 @@ public class GridColumn extends Item {
 
 	/**
 	 * Sets the header renderer.
-	 * 
+	 *
 	 * @param footerRenderer
 	 *            The footerRenderer to set.
 	 * @throws org.eclipse.swt.SWTException
@@ -640,7 +646,7 @@ public class GridColumn extends Item {
 	/**
 	 * Adds a listener to the list of listeners notified when the column is
 	 * moved or resized.
-	 * 
+	 *
 	 * @param listener
 	 *            listener
 	 * @throws IllegalArgumentException
@@ -666,7 +672,7 @@ public class GridColumn extends Item {
 
 	/**
 	 * Removes the given control listener.
-	 * 
+	 *
 	 * @param listener
 	 *            listener.
 	 * @throws IllegalArgumentException
@@ -715,7 +721,7 @@ public class GridColumn extends Item {
 
 	/**
 	 * Adds or removes the columns tree toggle.
-	 * 
+	 *
 	 * @param tree
 	 *            true to add toggle.
 	 * @throws org.eclipse.swt.SWTException
@@ -735,7 +741,7 @@ public class GridColumn extends Item {
 
 	/**
 	 * Returns the column alignment.
-	 * 
+	 *
 	 * @return SWT.LEFT, SWT.RIGHT, SWT.CENTER
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
@@ -751,7 +757,7 @@ public class GridColumn extends Item {
 
 	/**
 	 * Sets the column alignment.
-	 * 
+	 *
 	 * @param alignment
 	 *            SWT.LEFT, SWT.RIGHT, SWT.CENTER
 	 * @throws org.eclipse.swt.SWTException
@@ -768,7 +774,7 @@ public class GridColumn extends Item {
 
 	/**
 	 * Returns true if this column is moveable.
-	 * 
+	 *
 	 * @return true if moveable.
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
@@ -784,7 +790,7 @@ public class GridColumn extends Item {
 
 	/**
 	 * Sets the column moveable or fixed.
-	 * 
+	 *
 	 * @param moveable
 	 *            true to enable column moving
 	 * @throws org.eclipse.swt.SWTException
@@ -802,7 +808,7 @@ public class GridColumn extends Item {
 
 	/**
 	 * Returns true if the column is resizeable.
-	 * 
+	 *
 	 * @return true if the column is resizeable.
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
@@ -818,7 +824,7 @@ public class GridColumn extends Item {
 
 	/**
 	 * Sets the column resizeable.
-	 * 
+	 *
 	 * @param resizeable
 	 *            true to make the column resizeable
 	 * @throws org.eclipse.swt.SWTException
@@ -836,7 +842,7 @@ public class GridColumn extends Item {
 	/**
 	 * Returns the column group if this column was created inside a group, or
 	 * {@code null} otherwise.
-	 * 
+	 *
 	 * @return the column group.
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
@@ -853,7 +859,7 @@ public class GridColumn extends Item {
 	/**
 	 * Returns true if this column is set as a detail column in a column group.
 	 * Detail columns are shown when the group is expanded.
-	 * 
+	 *
 	 * @return true if the column is a detail column.
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
@@ -871,7 +877,7 @@ public class GridColumn extends Item {
 	 * Sets the column as a detail column in a column group. Detail columns are
 	 * shown when a column group is expanded. If this column was not created in
 	 * a column group, this method has no effect.
-	 * 
+	 *
 	 * @param detail
 	 *            true to show this column when the group is expanded.
 	 * @throws org.eclipse.swt.SWTException
@@ -889,7 +895,7 @@ public class GridColumn extends Item {
 	/**
 	 * Returns true if this column is set as a summary column in a column group.
 	 * Summary columns are shown when the group is collapsed.
-	 * 
+	 *
 	 * @return true if the column is a summary column.
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
@@ -907,7 +913,7 @@ public class GridColumn extends Item {
 	 * Sets the column as a summary column in a column group. Summary columns
 	 * are shown when a column group is collapsed. If this column was not
 	 * created in a column group, this method has no effect.
-	 * 
+	 *
 	 * @param summary
 	 *            true to show this column when the group is collapsed.
 	 * @throws org.eclipse.swt.SWTException
@@ -924,7 +930,7 @@ public class GridColumn extends Item {
 
 	/**
 	 * Returns the bounds of this column's header.
-	 * 
+	 *
 	 * @return bounds of the column header
 	 */
 	Rectangle getBounds() {
@@ -965,7 +971,7 @@ public class GridColumn extends Item {
 
 	/**
 	 * Returns true if cells in the receiver can be selected.
-	 * 
+	 *
 	 * @return the cellSelectionEnabled
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
@@ -981,7 +987,7 @@ public class GridColumn extends Item {
 
 	/**
 	 * Sets whether cells in the receiver can be selected.
-	 * 
+	 *
 	 * @param cellSelectionEnabled
 	 *            the cellSelectionEnabled to set
 	 * @throws org.eclipse.swt.SWTException
@@ -998,7 +1004,7 @@ public class GridColumn extends Item {
 
 	/**
 	 * Returns the parent grid.
-	 * 
+	 *
 	 * @return the parent grid.
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
@@ -1015,7 +1021,7 @@ public class GridColumn extends Item {
 	/**
 	 * Returns the checkable state. If false the checkboxes in the column cannot
 	 * be checked.
-	 * 
+	 *
 	 * @return true if the column is checkable (only applicable when style is
 	 *         SWT.CHECK).
 	 * @throws org.eclipse.swt.SWTException
@@ -1033,7 +1039,7 @@ public class GridColumn extends Item {
 	/**
 	 * Sets the checkable state. If false the checkboxes in the column cannot be
 	 * checked.
-	 * 
+	 *
 	 * @param checkable
 	 *            the new checkable state.
 	 * @throws org.eclipse.swt.SWTException
@@ -1054,7 +1060,7 @@ public class GridColumn extends Item {
 
 	/**
 	 * Returns the true if the cells in receiver wrap their text.
-	 * 
+	 *
 	 * @return true if the cells wrap their text.
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
@@ -1073,7 +1079,7 @@ public class GridColumn extends Item {
 	 * feature will not cause the row height to expand to accommodate the
 	 * wrapped text. Please use <code>Grid#setItemHeight</code> to change the
 	 * height of each row.
-	 * 
+	 *
 	 * @param wordWrap
 	 *            true to make cells wrap their text.
 	 * @throws org.eclipse.swt.SWTException
@@ -1102,7 +1108,7 @@ public class GridColumn extends Item {
   }
   /**
    * Returns whether or not text is word-wrapped in the header for this column.
-   * @return true if the header wraps its text. 
+   * @return true if the header wraps its text.
    * @see GridColumn#setHeaderWordWrap(boolean)
    */
   public boolean getHeaderWordWrap()
@@ -1113,7 +1119,7 @@ public class GridColumn extends Item {
 	/**
 	 * Set a new editor at the top of the control. If there's an editor already
 	 * set it is disposed.
-	 * 
+	 *
 	 * @param control
 	 *            the control to be displayed in the header
 	 */
@@ -1124,7 +1130,7 @@ public class GridColumn extends Item {
 		}
 		this.controlEditor.setEditor(control);
 		getParent().recalculateHeader();
-		
+
 		if( control != null ) {
 			// We need to realign if multiple editors are set it is possible that
 			// a later one needs more space
@@ -1132,10 +1138,10 @@ public class GridColumn extends Item {
 
 				public void run() {
 					if( GridColumn.this.controlEditor != null && GridColumn.this.controlEditor.getEditor() != null ) {
-						GridColumn.this.controlEditor.layout();	
+						GridColumn.this.controlEditor.layout();
 					}
 				}
-				
+
 			});
 		}
 	}
@@ -1153,10 +1159,10 @@ public class GridColumn extends Item {
 	/**
 	 * Sets the receiver's footer image to the argument, which may be null
 	 * indicating that no image should be displayed.
-	 * 
+	 *
 	 * @param image
 	 *            the image to display on the receiver (may be null)
-	 * 
+	 *
 	 * @exception IllegalArgumentException
 	 *                <ul>
 	 *                <li>ERROR_INVALID_ARGUMENT - if the image has been
@@ -1178,10 +1184,10 @@ public class GridColumn extends Item {
 
 	/**
 	 * Sets the receiver's footer text.
-	 * 
+	 *
 	 * @param string
 	 *            the new text
-	 * 
+	 *
 	 * @exception IllegalArgumentException
 	 *                <ul>
 	 *                <li>ERROR_NULL_ARGUMENT - if the text is null</li>
@@ -1203,9 +1209,9 @@ public class GridColumn extends Item {
 	/**
 	 * Returns the receiver's footer image if it has one, or null if it does
 	 * not.
-	 * 
+	 *
 	 * @return the receiver's image
-	 * 
+	 *
 	 * @exception SWTException
 	 *                <ul>
 	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
@@ -1221,9 +1227,9 @@ public class GridColumn extends Item {
 	/**
 	 * Returns the receiver's footer text, which will be an empty string if it
 	 * has never been set.
-	 * 
+	 *
 	 * @return the receiver's text
-	 * 
+	 *
 	 * @exception SWTException
 	 *                <ul>
 	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
@@ -1236,4 +1242,63 @@ public class GridColumn extends Item {
 		return footerText;
 	}
 
+    /**
+     * Returns the font that the receiver will use to paint textual information
+     * for the header.
+     *
+     * @return the receiver's font
+     * @throws SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
+     */
+    public Font getHeaderFont() {
+		checkWidget();
+
+        if (headerFont == null) {
+            return parent.getFont();
+        }
+        return headerFont;
+    }
+
+    /**
+     * Sets the Font to be used when displaying the Header text.
+     * @param font
+     */
+    public void setHeaderFont(Font font) {
+    	checkWidget();
+    	headerFont = font;
+    }
+
+    /**
+     * Returns the font that the receiver will use to paint textual information
+     * for the footer.
+     *
+     * @return the receiver's font
+     * @throws SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
+     */
+    public Font getFooterFont() {
+		checkWidget();
+
+        if (footerFont == null) {
+            return parent.getFont();
+        }
+        return footerFont;
+    }
+
+    /**
+     * Sets the Font to be used when displaying the Footer text.
+     * @param font
+     */
+    public void setFooterFont(Font font) {
+    	checkWidget();
+    	footerFont = font;
+    }
 }
