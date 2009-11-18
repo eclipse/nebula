@@ -6842,6 +6842,7 @@ public class Grid extends Canvas
         {
             selectionEvent.stateMask = e.stateMask;
             selectionEvent.button = e.button;
+            selectionEvent.item = item;
             selectionEvent.x = e.x;
             selectionEvent.y = e.y;
             notifyListeners(SWT.Selection, selectionEvent);
@@ -6984,6 +6985,7 @@ public class Grid extends Canvas
             {
             	Event se = new Event();
             	se.button = e.button;
+            	se.item = getItem(new Point(e.x, e.y));
             	se.stateMask = e.stateMask;
             	se.x = e.x;
             	se.y = e.y;
@@ -7209,6 +7211,7 @@ public class Grid extends Canvas
         {
             selectionEvent.stateMask = e.stateMask;
             selectionEvent.button = e.button;
+            selectionEvent.item = getItem(new Point(e.x, e.y));
             selectionEvent.x = e.x;
             selectionEvent.y = e.y;
             notifyListeners(SWT.Selection, selectionEvent);
