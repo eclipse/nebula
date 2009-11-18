@@ -45,14 +45,6 @@ import org.eclipse.swt.widgets.Text;
  * <dd>Selection</dd>
  * </dl>
  */
-/**
- * @author ewuillai
- *
- */
-/**
- * @author ewuillai
- *
- */
 public class DateChooserCombo extends AbstractCombo {
 	/** Default image filename */
 	protected static final String IMAGE = "/org/eclipse/nebula/widgets/datechooser/DateChooserCombo.png";
@@ -233,6 +225,11 @@ public class DateChooserCombo extends AbstractCombo {
 	protected void dropDown(boolean drop) {
 		super.dropDown(drop);
 		if ( drop && GTK ) {
+			/*
+			 * Bug GTK. When the popup is displayed, the calendar does not gain the
+			 * focus until the user click into it with the mouse. Then the keyboard
+			 * is unusable.
+			 */
 			popupContent.traverse(SWT.TRAVERSE_TAB_NEXT);
 		}
 	}
