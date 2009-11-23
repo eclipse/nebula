@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Eric Wuillai.
+ * Copyright (c) 2005, 2009 Eric Wuillai.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.Text;
 /**
  * Base class of formatters. Formatters can directly implement <code>ITextFormatter</code>,
  * or inherit this abstract class.<p>
- * Provide several common fonctionnalities and constants for the formatters. 
+ * Provide several common functionalities and constants for the formatters. 
  */
 public abstract class AbstractFormatter implements ITextFormatter {
   /** Space character */
@@ -40,7 +40,7 @@ public abstract class AbstractFormatter implements ITextFormatter {
 
 	/**
 	 * Called when the formatter is replaced by an other one in the <code>FormattedText</code>
-	 * control. Allow to release ressources like additionnal listeners.<p>
+	 * control. Allow to release resources like additional listeners.<p>
 	 * 
 	 * By default, do nothing. Override if needed.
 	 * 
@@ -71,8 +71,8 @@ public abstract class AbstractFormatter implements ITextFormatter {
   }
 
   /**
-   * Updates the text in the <code>Text</code> widget. The position of the
-   * cursor in the widget in preserved.
+   * Updates the text in the <code>Text</code> widget. The absolute position
+   * of the cursor in the widget is preserved.
    * 
    * @param t new text
    */
@@ -83,7 +83,7 @@ public abstract class AbstractFormatter implements ITextFormatter {
   }
 
   /**
-   * Updates the text in the <code>Text</code> widget. The cursor is setted to
+   * Updates the text in the <code>Text</code> widget. The cursor is set to
    * the given position.
    * 
    * @param t new text
@@ -91,8 +91,11 @@ public abstract class AbstractFormatter implements ITextFormatter {
    */
   protected void updateText(String t, int pos) {
   	if ( text != null ) {
+  		String oldText = text.getText();
 	    ignore = true;
-	    text.setText(t);
+  		if ( ! oldText.equals(t) ) {
+  			text.setText(t);
+  		}
 	    text.setSelection(pos);
 	    ignore = false;
   	}

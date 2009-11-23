@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ewuillai.
+ * Copyright (c) 2005, 2009 Eric Wuillai.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,9 @@ import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 /**
@@ -133,6 +136,8 @@ public class DateTimeFormatter extends AbstractFormatter {
   protected KeyListener klistener;
   /** Focus listener on the Text widget */
   protected FocusListener flistener;
+  /** Filter for modify events */
+  protected Listener modifyFilter;
   /** The Locale used by this formatter */
   protected Locale locale;
 
@@ -241,9 +246,10 @@ public class DateTimeFormatter extends AbstractFormatter {
     sdfDisplay = new SimpleDateFormat(displayPattern, loc);
     locale		 = loc;
 
-    // Instanciate the key listener
+    // Instantiate the key listener
     klistener = new KeyListener() {
 			public void keyPressed(KeyEvent e) {
+				if ( e.stateMask != 0 ) return;
 		  	switch ( e.keyCode ) {
 		  		case SWT.ARROW_UP :
 		  			arrow(1);
@@ -261,21 +267,40 @@ public class DateTimeFormatter extends AbstractFormatter {
 			}
     };
 
-    // Instanciate the focus listener
+    // Instantiate the focus listener
     flistener = new FocusListener() {
+    	String lastInput;
 			public void focusGained(FocusEvent e) {
 				int p = text.getCaretPosition();
 				setInputCache();
-		  	updateText(inputCache.toString(), p);
+				String t = inputCache.toString();
+				if ( ! t.equals(lastInput ) ) {
+			  	Display display = text.getDisplay();
+			  	try {
+			  		display.addFilter(SWT.Modify, modifyFilter);
+				  	updateText(inputCache.toString(), p);
+			  	} finally {
+			  		display.removeFilter(SWT.Modify, modifyFilter);
+			  	}
+				}
 			}
 
 			public void focusLost(FocusEvent e) {
+				if ( text != null ) {
+					lastInput = text.getText();
+				}
 			}
     };
+
+    modifyFilter = new Listener() {
+  		public void handleEvent(Event event) {
+  			event.type = SWT.None;
+  		}
+  	};
 	}
 
 	/**
-	 * Ajust a field length in the mask to a given length.
+	 * Adjust a field length in the mask to a given length.
 	 * 
 	 * @param b begin position (inclusive)
 	 * @param e end position (exclusive)
@@ -485,7 +510,7 @@ public class DateTimeFormatter extends AbstractFormatter {
 
 	/**
 	 * Called when the formatter is replaced by an other one in the <code>FormattedText</code>
-	 * control. Allow to release ressources like additionnal listeners.<p>
+	 * control. Allow to release resources like additional listeners.<p>
 	 * 
 	 * Removes the <code>KeyListener</code> on the text widget.
 	 * 
@@ -499,7 +524,7 @@ public class DateTimeFormatter extends AbstractFormatter {
 	/**
    * Returns the default edit pattern for the given <code>Locale</code>.<p>
    * 
-   * A <code>DateFormat</code> object is instanciated with SHORT format for
+   * A <code>DateFormat</code> object is instantiated with SHORT format for
    * both date and time parts for the given locale. The corresponding pattern
    * string is then retrieved by calling the <code>toPattern</code>.<p>
    * 
@@ -564,7 +589,7 @@ public class DateTimeFormatter extends AbstractFormatter {
 	/**
 	 * Returns the field descriptor corresponding to a given position in the
 	 * <code>inputMask</code>. The current starting position and length of the
-	 * field are setted in the descriptor.
+	 * field are set in the descriptor.
 	 * 
 	 * @param p position in mask of the field
 	 * @param from starting position in mask to search for the beginning of the field
@@ -639,7 +664,7 @@ public class DateTimeFormatter extends AbstractFormatter {
 	/**
    * Returns the current value of the text control if it is a valid
    * <code>Date</code>.<br>
-   * The date is valid if all the input fields are setted. If invalid, returns
+   * The date is valid if all the input fields are set. If invalid, returns
    * <code>null</code>.
    * 
    * @return current date value if valid, <code>null</code> else
@@ -662,7 +687,7 @@ public class DateTimeFormatter extends AbstractFormatter {
 
   /**
    * Inserts a sequence of characters in the input buffer. The current content
-   * of the buffer is overrided. The new position of the cursor is computed and
+   * of the buffer is override. The new position of the cursor is computed and
    * returned.
    * 
    * @param txt String of characters to insert
@@ -833,7 +858,7 @@ public class DateTimeFormatter extends AbstractFormatter {
 	}
 
 	/**
-	 * Returnd the start position in cache of the next field of a given field.
+	 * Returns the start position in cache of the next field of a given field.
 	 * 
 	 * @param f field descriptor
 	 * @return start position of next field
@@ -892,7 +917,7 @@ public class DateTimeFormatter extends AbstractFormatter {
 	/**
    * Sets the <code>Text</code> widget that will be managed by this formatter.<p>
    * 
-   * The ancestor is overrided to add a key listener on the text widget.
+   * The ancestor is override to add a key listener on the text widget.
    * 
    * @param text Text widget
    * @see ITextFormatter#setText(Text)
