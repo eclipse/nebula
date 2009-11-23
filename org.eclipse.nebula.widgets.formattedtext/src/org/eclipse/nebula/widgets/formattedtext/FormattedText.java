@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 Eric Wuillai.
+ * Copyright (c) 2005, 2009 Eric Wuillai.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Text;
  * 
  * Formatting is delegated to formatter objects implementing the <code>ITextFormatter</code>
  * interface. Each formatter class manages a base class of values (date, number...).<br>
- * Formatters are associated by 2 differents means :
+ * Formatters are associated by 2 different means :
  * <ul>
  * 	 <li>By the <code>setFormatter()</code> method.</li>
  * 	 <li>When <code>setValue()</code> is called and there is currently no formatter,
@@ -148,7 +148,7 @@ public class FormattedText {
    * Returns the current value of the widget.<p>
    * 
    * The returned value is provided by the formatter and is of the type managed
-   * bu the formatter. For exemple a <code>DateFormatter</code> will return a
+   * by the formatter. For example a <code>DateFormatter</code> will return a
    * <code>Date</code> value.<br>
    * If no formatter is associated, the <code>String</code> contained in the
    * <code>Text</code> widget is returned.

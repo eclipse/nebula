@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ewuillai.
+ * Copyright (c) 2005, 2009 Eric Wuillai.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Text;
 public interface ITextFormatter extends VerifyListener {
 	/**
 	 * Called when the formatter is replaced by an other one in the <code>FormattedText</code>
-	 * control. Allow to release ressources like additionnal listeners.
+	 * control. Allow to release resources like additional listeners.
 	 */
 	public void detach();
 

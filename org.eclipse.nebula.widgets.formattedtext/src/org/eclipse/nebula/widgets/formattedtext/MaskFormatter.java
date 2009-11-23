@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Eric Wuillai.
+ * Copyright (c) 2005, 2009 Eric Wuillai.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -160,7 +160,7 @@ public class MaskFormatter extends AbstractFormatter {
 
   /**
    * Inserts a sequence of characters in the edit buffer. The current content
-   * of the buffer is overrided. The new position of the cursor is computed and
+   * of the buffer is override. The new position of the cursor is computed and
    * returned. Mask characters are preserved in their positions.
    * 
    * @param txt String of characters to insert

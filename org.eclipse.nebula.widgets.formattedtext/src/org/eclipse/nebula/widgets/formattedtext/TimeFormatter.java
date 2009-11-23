@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 ewuillai.
+ * Copyright (c) 2005, 2009 Eric Wuillai.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,7 @@ import org.eclipse.swt.SWT;
 
 /**
  * This class provides formatting of <code>Date</code> values in a
- * <code>FormattedText</code>, resticting the edit and display to the time part.
+ * <code>FormattedText</code>, restricting the edit and display to the time part.
  * Supports a subset of time patterns defined in <code>SimpleDateFormat</code>
  * for input.<p>
  * 
@@ -102,7 +102,7 @@ public class TimeFormatter extends DateTimeFormatter {
 	/**
    * Returns the default edit pattern for the given <code>Locale</code>.<p>
    * 
-   * A <code>DateFormat</code> object is instanciated with SHORT format for
+   * A <code>DateFormat</code> object is instantiated with SHORT format for
    * both the time part for the given locale. The corresponding pattern
    * string is then retrieved by calling the <code>toPattern</code>.<p>
    * 
@@ -132,7 +132,7 @@ public class TimeFormatter extends DateTimeFormatter {
 
 	/**
 	 * Checks if a given char is valid for the edit pattern. This method
-	 * overrides the parent method, restricting autorized chars to time patterns.
+	 * overrides the parent method, restricting authorized chars to time patterns.
 	 * 
 	 * @param c pattern char
 	 * @throws IllegalArgumentException if not valid

@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2005, 2009 Eric Wuillai.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Eric Wuillai (eric@wdev91.com) - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.nebula.widgets.formattedtext;
 
 import java.util.Locale;
@@ -79,7 +89,7 @@ public class PercentFormatter extends NumberFormatter {
 
   /**
    * Returns the current value of the text control if it is a valid <code>Number</code>.
-   * If the buffer is flaged as modified, the value is recalculated by parsing
+   * If the buffer is flagged as modified, the value is recalculated by parsing
    * with the <code>nfEdit</code> initialized with the edit pattern. If the
    * number is not valid, returns <code>null</code>.
    * 

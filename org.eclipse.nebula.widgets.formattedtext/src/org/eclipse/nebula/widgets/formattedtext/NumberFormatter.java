@@ -103,7 +103,7 @@ public class NumberFormatter extends AbstractFormatter {
   protected boolean minus = false;
   /** Flag indicating that the current value is negative */
   protected boolean negative = false;
-  /** Symboles used to format numbers */
+  /** Symbols used to format numbers */
   protected DecimalFormatSymbols symbols;
   /** Flag indicating the use of the 0xAO (no-break space) grouping separator */
   protected boolean nbspSeparator;
@@ -383,7 +383,7 @@ public class NumberFormatter extends AbstractFormatter {
 
   /**
    * Returns the current value of the text control if it is a valid <code>Number</code>.
-   * If the buffer is flaged as modified, the value is recalculated by parsing
+   * If the buffer is flagged as modified, the value is recalculated by parsing
    * with the <code>nfEdit</code> initialized with the edit pattern. If the
    * number is not valid, returns <code>null</code>.
    * 
@@ -688,7 +688,7 @@ public class NumberFormatter extends AbstractFormatter {
     								&& (c == symbols.getGroupingSeparator()
     										|| (c == ' ' && nbspSeparator)) ) {
     			/*
-    			 * Some locales (eg. french) return a no-break space as the grouping
+    			 * Some locales (eg. French) return a no-break space as the grouping
     			 * separator. This character is not natural to use for users. So we
     			 * recognize too the simple space as the grouping separator.
     			 * 
