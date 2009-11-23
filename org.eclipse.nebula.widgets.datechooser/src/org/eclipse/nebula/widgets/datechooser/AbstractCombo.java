@@ -1075,7 +1075,7 @@ public abstract class AbstractCombo extends Composite {
 	 * @param event event
 	 */
 	protected void textEvent(Event event) {
-		switch (event.type) {
+		switch ( event.type ) {
 			case SWT.FocusIn :
 				handleFocus(SWT.FocusIn);
 				break;
@@ -1099,7 +1099,7 @@ public abstract class AbstractCombo extends Composite {
 				break;
 			}
 			case SWT.Traverse : {
-				switch (event.detail) {
+				switch ( event.detail ) {
 					case SWT.TRAVERSE_ARROW_PREVIOUS:
 					case SWT.TRAVERSE_ARROW_NEXT:
 						// The enter causes default selection and
@@ -1118,7 +1118,7 @@ public abstract class AbstractCombo extends Composite {
 				e.doit = event.doit;
 				e.character = event.character;
 				e.keyCode = event.keyCode;
-				notifyListeners (SWT.Traverse, e);
+				notifyListeners(SWT.Traverse, e);
 				event.doit = e.doit;
 				event.detail = e.detail;
 				break;
