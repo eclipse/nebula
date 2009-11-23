@@ -98,7 +98,7 @@ public class DateChooserCombo extends AbstractCombo {
 	 */
 	public void addKeyListener(KeyListener listener) {
 		checkWidget();
-		formattedText.getControl().addKeyListener(listener);
+		text.addKeyListener(listener);
   }
 
 	/**
