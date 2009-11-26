@@ -475,5 +475,13 @@ abstract class AbstractSettings implements ISettings {
         return 30;
     }
 
+    public int getPhasesHeaderHeight() {
+        return 18;
+    }
+
+    public boolean allowPhaseOverlap() {
+        return false;
+    }
+
 	
 }

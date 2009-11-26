@@ -304,7 +304,15 @@ public abstract class AbstractColorManager implements IColorManager {
 
 	public Color getSelectedDayHeaderColorTop() {
 		return ColorCache.getColor(195, 218, 242);
-	}	
+	}
+
+    public Color getPhaseHeaderBackgroundColorBottom() {
+        return getTimeHeaderBackgroundColorBottom();
+    }
+
+    public Color getPhaseHeaderBackgroundColorTop() {
+        return getTimeHeaderBackgroundColorTop();
+    }	
 	
 	
 }

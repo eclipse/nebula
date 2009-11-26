@@ -982,4 +982,20 @@ public interface ISettings {
      * @return Default is 30.
      */
     public int getSectionTextSpacer();
+    
+    /**
+     * When drawing {@link GanttPhase}s this is the header height used for displaying the names of these phases.
+     * 
+     * @return Default is 18 
+     */
+    public int getPhasesHeaderHeight();
+    
+    /**
+     * When phases are resized or moved, whether an overlap resize/move should be accepted or not.
+     * If false (default), a resize will simply stop at the next phase border, whereas a move that is dropped
+     * on top of a different phase will be undone (no event is fired for this). 
+     * 
+     * @return Default is false
+     */
+    public boolean allowPhaseOverlap();
 }

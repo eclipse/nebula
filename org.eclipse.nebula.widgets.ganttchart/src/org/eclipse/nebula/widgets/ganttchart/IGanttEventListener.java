@@ -51,6 +51,38 @@ public interface IGanttEventListener {
 	 */
 	public void eventsResizeFinished(List events, MouseEvent me);
 
+    /**
+     * Fires when a GanttPhase was moved.
+     * 
+     * @param phase GanttPhase that was moved
+     * @param me MouseEvent
+     */
+    public void phaseMoved(GanttPhase phase, MouseEvent me);
+
+    /**
+     * Fires when a GanttPhase was resized.
+     * 
+     * @param phase GanttPhase that moved
+     * @param me MouseEvent
+     */
+    public void phaseResized(GanttPhase phase, MouseEvent me);
+
+    /**
+     * Fires when a move has finished on a GanttPhase (the mouse button is let go).
+     * 
+     * @param phase GanttPhase that was moved
+     * @param me MouseEvent
+     */
+    public void phaseMoveFinished(GanttPhase phase, MouseEvent me);
+
+    /**
+     * Fires when a resize has finished on a GanttPhase (the mouse button is let go).
+     * 
+     * @param phase GanttPhase that was resized
+     * @param me MouseEvent
+     */
+    public void phaseResizeFinished(GanttPhase phase, MouseEvent me);
+	
 	/**
 	 * Fires when an event is selected.
 	 * 

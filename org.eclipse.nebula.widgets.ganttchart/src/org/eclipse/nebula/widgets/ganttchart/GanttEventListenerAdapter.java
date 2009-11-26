@@ -58,4 +58,16 @@ public class GanttEventListenerAdapter implements IGanttEventListener {
 	public void lastDraw(GC gc) {
 	}
 
+    public void phaseMoved(GanttPhase phase, MouseEvent me) {
+    }
+
+    public void phaseMoveFinished(GanttPhase phase, MouseEvent me) {
+    }
+
+    public void phaseResized(GanttPhase phase, MouseEvent me) {
+    }
+
+    public void phaseResizeFinished(GanttPhase phase, MouseEvent me) {
+    }
+
 }

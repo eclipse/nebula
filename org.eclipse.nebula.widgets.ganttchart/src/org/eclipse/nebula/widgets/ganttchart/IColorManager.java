@@ -86,7 +86,21 @@ public interface IColorManager extends IFillBackgroundColors {
 	 */
 	public Color getTimeHeaderBackgroundColorBottom();
 	
-	
+	 /**
+     * The top gradient background color used in the header where phases are written.
+     * 
+     * @return Color
+     */
+    public Color getPhaseHeaderBackgroundColorTop();
+
+    /**
+     * The bottom gradient background color used in the header where phases are written.
+     * 
+     * @return Color
+     */
+    public Color getPhaseHeaderBackgroundColorBottom();
+    
+    
 	/**
 	 * The top gradient color of the percentage bar drawn inside an event.
 	 * 

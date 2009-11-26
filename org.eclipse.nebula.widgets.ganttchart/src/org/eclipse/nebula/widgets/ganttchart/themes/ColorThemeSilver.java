@@ -17,292 +17,300 @@ import org.eclipse.swt.graphics.Color;
 
 public class ColorThemeSilver implements IColorManager {
 
-	public Color getArrowColor() {
-		return ColorCache.getColor(0, 0, 0);
-	}
+    public Color getArrowColor() {
+        return ColorCache.getColor(0, 0, 0);
+    }
 
-	public Color getReverseArrowColor() {
-		return ColorCache.getColor(128, 0, 0);
-	}
+    public Color getReverseArrowColor() {
+        return ColorCache.getColor(128, 0, 0);
+    }
 
-	public Color getBlack() {
-		return ColorCache.getColor(0, 0, 0);
-	}
+    public Color getBlack() {
+        return ColorCache.getColor(0, 0, 0);
+    }
 
-	public Color getEventBorderColor() {
-		return ColorCache.getColor(0, 0, 0);
-	}
+    public Color getEventBorderColor() {
+        return ColorCache.getColor(0, 0, 0);
+    }
 
-	public Color getFadeOffColor1() {
-		return ColorCache.getColor(147, 147, 147);
-	}
+    public Color getFadeOffColor1() {
+        return ColorCache.getColor(147, 147, 147);
+    }
 
-	public Color getFadeOffColor2() {
-		return ColorCache.getColor(170, 170, 170);
-	}
+    public Color getFadeOffColor2() {
+        return ColorCache.getColor(170, 170, 170);
+    }
 
-	public Color getFadeOffColor3() {
-		return ColorCache.getColor(230, 230, 230);
-	}
+    public Color getFadeOffColor3() {
+        return ColorCache.getColor(230, 230, 230);
+    }
 
-	public Color getLineColor() {
-		return ColorCache.getColor(220, 220, 220);
-	}
+    public Color getLineColor() {
+        return ColorCache.getColor(220, 220, 220);
+    }
 
-	public Color getWeekDividerLineColor() {
-		return ColorCache.getColor(100, 100, 100);
-	}
+    public Color getWeekDividerLineColor() {
+        return ColorCache.getColor(100, 100, 100);
+    }
 
-	public Color getPercentageBarColorTop() {
-		return getBlack();
-	}
-		
-	public Color getPercentageBarColorBottom() {
-		return ColorCache.getColor(84, 84, 84);		
-	}
+    public Color getPercentageBarColorTop() {
+        return getBlack();
+    }
 
-	public Color getPercentageBarRemainderColorTop() {
-		return ColorCache.getColor(200, 200, 200);	
-	}
+    public Color getPercentageBarColorBottom() {
+        return ColorCache.getColor(84, 84, 84);
+    }
 
-	public Color getPercentageBarRemainderColorBottom() {
-		return ColorCache.getColor(111, 111, 111);
-	}
+    public Color getPercentageBarRemainderColorTop() {
+        return ColorCache.getColor(200, 200, 200);
+    }
 
-	public Color getTextColor() {
-		return ColorCache.getColor(0, 0, 0);
-	}
+    public Color getPercentageBarRemainderColorBottom() {
+        return ColorCache.getColor(111, 111, 111);
+    }
 
-	public Color getTodayBackgroundColorTop() {
-		return ColorCache.getColor(220, 236, 225);
-	}
-	
-	public Color getTodayBackgroundColorBottom() {
-		return ColorCache.getColor(220, 237, 225);
-	}
+    public Color getTextColor() {
+        return ColorCache.getColor(0, 0, 0);
+    }
 
-	public Color getTextHeaderBackgroundColorTop() {
-		return ColorCache.getColor(240, 240, 240);
-	}
-	
-	public Color getTextHeaderBackgroundColorBottom() {
-		return ColorCache.getColor(200, 200, 200);
-	}
+    public Color getTodayBackgroundColorTop() {
+        return ColorCache.getColor(220, 236, 225);
+    }
 
-	public Color getTimeHeaderBackgroundColorBottom() {
-		return ColorCache.getColor(200, 200, 200);
-	}
+    public Color getTodayBackgroundColorBottom() {
+        return ColorCache.getColor(220, 237, 225);
+    }
 
-	public Color getTimeHeaderBackgroundColorTop() {
-		return getTextHeaderBackgroundColorTop();
-	}
-	
-	public Color getHourTimeDividerColor() {
-		return ColorCache.getColor(170, 170, 170);
-	}
+    public Color getTextHeaderBackgroundColorTop() {
+        return ColorCache.getColor(240, 240, 240);
+    }
 
-	public Color getMonthTimeDividerColor() {
-		return getHourTimeDividerColor();
-	}
+    public Color getTextHeaderBackgroundColorBottom() {
+        return ColorCache.getColor(200, 200, 200);
+    }
 
-	public Color getWeekTimeDividerColor() {
-		return getMonthTimeDividerColor();
-	}
+    public Color getTimeHeaderBackgroundColorBottom() {
+        return ColorCache.getColor(200, 200, 200);
+    }
 
-	public Color getYearTimeDividerColor() {
-		return getHourTimeDividerColor();
-	}
+    public Color getTimeHeaderBackgroundColorTop() {
+        return getTextHeaderBackgroundColorTop();
+    }
 
-	public Color getWeekdayBackgroundColorTop() {
-		return ColorCache.getWhite();
-	}
-		
-	public Color getWeekdayBackgroundColorBottom() {
-		return ColorCache.getColor(240, 240, 240);
-	}
+    public Color getHourTimeDividerColor() {
+        return ColorCache.getColor(170, 170, 170);
+    }
 
-	public Color getWhite() {
-		return ColorCache.getWhite();
-	}
+    public Color getMonthTimeDividerColor() {
+        return getHourTimeDividerColor();
+    }
 
-	public Color getSaturdayBackgroundColorTop() {
-		return ColorCache.getColor(240, 240, 240);
-	}
-	
-	public Color getSaturdayBackgroundColorBottom() {
-		return ColorCache.getColor(210, 210, 210);
-	}
+    public Color getWeekTimeDividerColor() {
+        return getMonthTimeDividerColor();
+    }
 
-	public Color getSaturdayTextColor() {
-		return ColorCache.getColor(92, 75, 29);
-	}
+    public Color getYearTimeDividerColor() {
+        return getHourTimeDividerColor();
+    }
 
-	public Color getSundayBackgroundColorTop() {
-		return getSaturdayBackgroundColorTop();
-	}
+    public Color getWeekdayBackgroundColorTop() {
+        return ColorCache.getWhite();
+    }
 
-	public Color getSundayBackgroundColorBottom() {
-		return getSaturdayBackgroundColorBottom();
-	}
-		
-	public Color getWeekdayTextColor() {
-		return getBlack();
-	}
+    public Color getWeekdayBackgroundColorBottom() {
+        return ColorCache.getColor(240, 240, 240);
+    }
 
-	public Color getSundayTextColor() {
-		return getSaturdayTextColor();
-	}
+    public Color getWhite() {
+        return ColorCache.getWhite();
+    }
 
-	public Color getRevisedEndColor() {
-		return ColorCache.getColor(255, 0, 0);
-	}
+    public Color getSaturdayBackgroundColorTop() {
+        return ColorCache.getColor(240, 240, 240);
+    }
 
-	public Color getRevisedStartColor() {
-		return ColorCache.getColor(0, 180, 0);
-	}
+    public Color getSaturdayBackgroundColorBottom() {
+        return ColorCache.getColor(210, 210, 210);
+    }
 
-	public Color getZoomBackgroundColorTop() {
-		return ColorCache.getColor(131, 131, 131);
-	}
-		
-	public Color getZoomBackgroundColorBottom() {
-		return ColorCache.getColor(71, 74, 62);
-	}
+    public Color getSaturdayTextColor() {
+        return ColorCache.getColor(92, 75, 29);
+    }
 
-	public Color getZoomBorderColor() {
-		return ColorCache.getWhite();
-	}
-	
-	public Color getZoomTextColor() {
-		return ColorCache.getWhite();
-	}
+    public Color getSundayBackgroundColorTop() {
+        return getSaturdayBackgroundColorTop();
+    }
 
-	public Color getTooltipBackgroundColor() {
-		return ColorCache.getColor(217, 217, 217);
-	}
+    public Color getSundayBackgroundColorBottom() {
+        return getSaturdayBackgroundColorBottom();
+    }
 
-	public Color getTooltipForegroundColor() {
-		return getBlack();
-	}
+    public Color getWeekdayTextColor() {
+        return getBlack();
+    }
 
-	public Color getTooltipForegroundColorFaded() {
-		return ColorCache.getColor(100, 100, 100);
-	}
+    public Color getSundayTextColor() {
+        return getSaturdayTextColor();
+    }
 
-	public Color getScopeBorderColor() {
-		return getBlack();
-	}
+    public Color getRevisedEndColor() {
+        return ColorCache.getColor(255, 0, 0);
+    }
 
-	public Color getScopeGradientColorBottom() {
-		return ColorCache.getColor(255, 255, 255);
-	}
+    public Color getRevisedStartColor() {
+        return ColorCache.getColor(0, 180, 0);
+    }
 
-	public Color getScopeGradientColorTop() {
-		return ColorCache.getColor(98, 98, 98);
-	}
+    public Color getZoomBackgroundColorTop() {
+        return ColorCache.getColor(131, 131, 131);
+    }
 
-	public Color getTopHorizontalLinesColor() {
-		return ColorCache.getColor(80, 80, 80);
-	}
+    public Color getZoomBackgroundColorBottom() {
+        return ColorCache.getColor(71, 74, 62);
+    }
 
-	public Color getTodayLineColor() {
-		return ColorCache.getColor(55, 145, 80);
-	}
+    public Color getZoomBorderColor() {
+        return ColorCache.getWhite();
+    }
 
-	public int getTodayLineAlpha() {
-		return 125;
-	}
+    public Color getZoomTextColor() {
+        return ColorCache.getWhite();
+    }
 
-	public int getWeekDividerAlpha() {
-		return 50;
-	}
+    public Color getTooltipBackgroundColor() {
+        return ColorCache.getColor(217, 217, 217);
+    }
 
-	public boolean useAlphaDrawing() {
-		return false;
-	}
+    public Color getTooltipForegroundColor() {
+        return getBlack();
+    }
 
-	public boolean useAlphaDrawingOn3DEventDropShadows() {
-		return true;
-	}
+    public Color getTooltipForegroundColorFaded() {
+        return ColorCache.getColor(100, 100, 100);
+    }
 
-	public Color getTickMarkColor() {
-		return ColorCache.getColor(170, 164, 152);
-	}
+    public Color getScopeBorderColor() {
+        return getBlack();
+    }
 
-	public Color getAdvancedTooltipBorderColor() {
-		return ColorCache.getColor(118, 118, 118);
-	}
+    public Color getScopeGradientColorBottom() {
+        return ColorCache.getColor(255, 255, 255);
+    }
 
-	public Color getAdvancedTooltipDividerColor() {
-		return ColorCache.getColor(158, 187, 221);
-	}
+    public Color getScopeGradientColorTop() {
+        return ColorCache.getColor(98, 98, 98);
+    }
 
-	public Color getAdvancedTooltipDividerShadowColor() {
-		return ColorCache.getColor(255, 255, 255);
-	}
+    public Color getTopHorizontalLinesColor() {
+        return ColorCache.getColor(80, 80, 80);
+    }
 
-	public Color getAdvancedTooltipInnerFillBottomColor() {
-		return ColorCache.getColor(204, 204, 204);
-	}
+    public Color getTodayLineColor() {
+        return ColorCache.getColor(55, 145, 80);
+    }
 
-	public Color getAdvancedTooltipInnerFillTopColor() {
-		return ColorCache.getColor(255, 251, 252);
-	}
+    public int getTodayLineAlpha() {
+        return 125;
+    }
 
-	public Color getAdvancedTooltipShadowCornerInnerColor() {
-		return ColorCache.getColor(131, 131, 131);
-	}
+    public int getWeekDividerAlpha() {
+        return 50;
+    }
 
-	public Color getAdvancedTooltipShadowCornerOuterColor() {
-		return ColorCache.getColor(148, 148, 148);
-	}
+    public boolean useAlphaDrawing() {
+        return false;
+    }
 
-	public Color getAdvancedTooltipShadowInnerCornerColor() {
-		return ColorCache.getColor(186, 186, 186);
-	}
+    public boolean useAlphaDrawingOn3DEventDropShadows() {
+        return true;
+    }
 
-	public Color getAdvancedTooltipTextColor() {
-		return ColorCache.getColor(79, 77, 78);
-	}
+    public Color getTickMarkColor() {
+        return ColorCache.getColor(170, 164, 152);
+    }
 
-	public Color getActiveSessionBarColorLeft() {
-		return getTimeHeaderBackgroundColorTop();
-	}
+    public Color getAdvancedTooltipBorderColor() {
+        return ColorCache.getColor(118, 118, 118);
+    }
 
-	public Color getActiveSessionBarColorRight() {
-		return getTimeHeaderBackgroundColorBottom();
-	}
+    public Color getAdvancedTooltipDividerColor() {
+        return ColorCache.getColor(158, 187, 221);
+    }
 
-	public Color getNonActiveSessionBarColorLeft() {
-		return ColorCache.getColor(255, 255, 255);
-	}
+    public Color getAdvancedTooltipDividerShadowColor() {
+        return ColorCache.getColor(255, 255, 255);
+    }
 
-	public Color getNonActiveSessionBarColorRight() {
-		return ColorCache.getColor(200, 200, 200);
-	}
+    public Color getAdvancedTooltipInnerFillBottomColor() {
+        return ColorCache.getColor(204, 204, 204);
+    }
 
-	public Color getSessionBarDividerColorLeft() {
-		return ColorCache.getColor(185, 185, 185);
-	}
+    public Color getAdvancedTooltipInnerFillTopColor() {
+        return ColorCache.getColor(255, 251, 252);
+    }
 
-	public Color getSessionBarDividerColorRight() {
-		return ColorCache.getColor(255, 255, 245);
-	}	
+    public Color getAdvancedTooltipShadowCornerInnerColor() {
+        return ColorCache.getColor(131, 131, 131);
+    }
 
-	public Color getSelectedDayColorBottom() {
-		return ColorCache.getColor(150, 150, 150);
-	}
+    public Color getAdvancedTooltipShadowCornerOuterColor() {
+        return ColorCache.getColor(148, 148, 148);
+    }
 
-	public Color getSelectedDayColorTop() {
-		return ColorCache.getColor(197, 197, 197);
-	}
-	
-	public Color getSelectedDayHeaderColorBottom() {
-		return ColorCache.getColor(230, 230, 230);
-	}
+    public Color getAdvancedTooltipShadowInnerCornerColor() {
+        return ColorCache.getColor(186, 186, 186);
+    }
 
-	public Color getSelectedDayHeaderColorTop() {
-		return ColorCache.getColor(255, 255, 255);
-		
-	}	
+    public Color getAdvancedTooltipTextColor() {
+        return ColorCache.getColor(79, 77, 78);
+    }
+
+    public Color getActiveSessionBarColorLeft() {
+        return getTimeHeaderBackgroundColorTop();
+    }
+
+    public Color getActiveSessionBarColorRight() {
+        return getTimeHeaderBackgroundColorBottom();
+    }
+
+    public Color getNonActiveSessionBarColorLeft() {
+        return ColorCache.getColor(255, 255, 255);
+    }
+
+    public Color getNonActiveSessionBarColorRight() {
+        return ColorCache.getColor(200, 200, 200);
+    }
+
+    public Color getSessionBarDividerColorLeft() {
+        return ColorCache.getColor(185, 185, 185);
+    }
+
+    public Color getSessionBarDividerColorRight() {
+        return ColorCache.getColor(255, 255, 245);
+    }
+
+    public Color getSelectedDayColorBottom() {
+        return ColorCache.getColor(150, 150, 150);
+    }
+
+    public Color getSelectedDayColorTop() {
+        return ColorCache.getColor(197, 197, 197);
+    }
+
+    public Color getSelectedDayHeaderColorBottom() {
+        return ColorCache.getColor(230, 230, 230);
+    }
+
+    public Color getSelectedDayHeaderColorTop() {
+        return ColorCache.getColor(255, 255, 255);
+    }
+
+    public Color getPhaseHeaderBackgroundColorBottom() {
+        return getTimeHeaderBackgroundColorBottom();
+    }
+
+    public Color getPhaseHeaderBackgroundColorTop() {
+        return getTimeHeaderBackgroundColorTop();
+    }
+
 }

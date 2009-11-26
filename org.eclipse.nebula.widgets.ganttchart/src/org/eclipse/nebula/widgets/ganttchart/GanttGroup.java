@@ -141,6 +141,15 @@ public class GanttGroup extends AbstractGanttEvent implements IGanttChartItem {
 		mChart.removeGroup(this);
 		mChart.redraw();
 	}
+	
+	int getTallestEvent() {
+	    int max = 0;
+	    for (int i = 0; i < mEvents.size(); i++) {
+	        GanttEvent ge = ((GanttEvent) mEvents.get(i));
+	        max = Math.max(ge.getHeight(), max);
+	    }
+	    return max;
+	}
 
 	public String toString() {
 		return "[GanttGroup " + mEvents.toString() + "]";

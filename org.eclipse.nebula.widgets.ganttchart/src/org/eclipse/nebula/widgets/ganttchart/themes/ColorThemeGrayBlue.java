@@ -303,5 +303,15 @@ public class ColorThemeGrayBlue implements IColorManager {
 
 	public Color getSelectedDayHeaderColorTop() {
 		return ColorCache.getColor(222, 236, 250);
-	}	
+	}
+
+    public Color getPhaseHeaderBackgroundColorBottom() {
+        return getTimeHeaderBackgroundColorBottom();
+    }
+
+    public Color getPhaseHeaderBackgroundColorTop() {
+        return getTimeHeaderBackgroundColorTop();
+    }
+	
+	
 }
