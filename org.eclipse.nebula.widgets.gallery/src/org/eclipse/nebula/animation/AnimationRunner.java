@@ -60,6 +60,15 @@ public class AnimationRunner {
 	}
 
 	/**
+	 * Get current effect, or null if no effect is currently running.
+	 * 
+	 * @return
+	 */
+	public IEffect getEffect() {
+		return effect;
+	}
+
+	/**
 	 * Start a new effect, cancelling the previous one if any.
 	 * 
 	 * @param effect
