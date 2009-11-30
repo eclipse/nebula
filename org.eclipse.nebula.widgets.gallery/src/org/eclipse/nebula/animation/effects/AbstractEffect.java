@@ -14,7 +14,7 @@ package org.eclipse.nebula.animation.effects;
 import org.eclipse.nebula.animation.movement.IMovement;
 
 /**
- * Abstract implementation for IEffect.
+ * Abstract implementation for an effect.
  * 
  * @author Nicolas Richeton
  * 
@@ -30,6 +30,24 @@ public abstract class AbstractEffect implements IEffect {
 
 	protected IMovement easingFunction;
 
+	/**
+	 * Create a new effect.
+	 * 
+	 * @param lengthMilli
+	 * @param movement
+	 */
+	public AbstractEffect(long lengthMilli, IMovement movement) {
+		this(lengthMilli, movement, null, null);
+	}
+
+	/**
+	 * Create a new effect, with listeners for stop and cancel events.
+	 * 
+	 * @param lengthMilli
+	 * @param movement
+	 * @param onStop
+	 * @param onCancel
+	 */
 	public AbstractEffect(long lengthMilli, IMovement movement,
 			Runnable onStop, Runnable onCancel) {
 		this.length = lengthMilli;
