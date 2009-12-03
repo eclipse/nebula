@@ -15,7 +15,6 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
 
@@ -47,8 +46,6 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
 
     private Color borderColor = null;
 
-    private Color initialBackground;
-
     private Color g1;
 
     private Color g2;
@@ -78,12 +75,6 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
     public void initialize(PGroup sg)
     {
         super.initialize(sg);
-
-        RGB backRGB = GraphicUtils.blend(getGroup().getDisplay()
-            .getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT).getRGB(), getGroup().getDisplay()
-            .getSystemColor(SWT.COLOR_BLACK).getRGB(), 90);
-        initialBackground = new Color(getGroup().getDisplay(), backRGB);
-        // getGroup().setBackground(initialBackground);
 
         getGroup()
             .setForeground(getGroup().getDisplay().getSystemColor(SWT.COLOR_TITLE_FOREGROUND));
@@ -552,7 +543,6 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
      */
     public void dispose()
     {
-        initialBackground.dispose();
         g1.dispose();
         g2.dispose();
     }
