@@ -357,11 +357,13 @@ public class GanttPhase {
         long s = temp.getTimeInMillis();
         long e = tempEnd.getTimeInMillis();
         
+        //System.err.println(tempEnd.getTime() + " >= " + other.getStartDate().getTime());
+        
         if (start) {
             return (s < other.getEnd());
         }
         else {
-            return (e >= other.getStart());
+            return (e >= other.getStart() && other.getStart() >= _startDate.getTimeInMillis());
         }
     }
 
