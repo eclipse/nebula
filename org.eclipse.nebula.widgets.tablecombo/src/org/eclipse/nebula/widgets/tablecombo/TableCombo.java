@@ -7,6 +7,7 @@
  *
  * Contributors:
  *	Marty Jones <martybjones@gmail.com> - initial API and implementation
+ *  Enrico Schnepel <enrico.schnepel@randomice.net> - clear selectedImage bug 297209
  *****************************************************************************/
 
 package org.eclipse.nebula.widgets.tablecombo;
@@ -1456,7 +1457,8 @@ public class TableCombo extends Composite {
 		// deselect if a value of -1 is passed in.
 		if (index == -1) {
 			table.deselectAll ();
-			text.setText (""); //$NON-NLS-1$
+			text.setText ("");
+			selectedImage.setImage(null);
 			return;
 		}
 		
