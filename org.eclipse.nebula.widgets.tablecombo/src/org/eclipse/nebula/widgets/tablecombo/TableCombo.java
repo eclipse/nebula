@@ -1483,6 +1483,7 @@ public class TableCombo extends Composite {
 	    super.setBackground(color);
 	    background = color;
 	    if (text != null) text.setBackground(color);
+	    if (selectedImage != null) selectedImage.setBackground(color);
 	    if (table != null) table.setBackground(color);
 	    if (arrow != null) arrow.setBackground(color);
 	}
@@ -1675,11 +1676,12 @@ public class TableCombo extends Composite {
     /**
      * {@inheritDoc}
      */
-	public void setToolTipText (String string) {
+	public void setToolTipText (String tipText) {
 		checkWidget();
-	    super.setToolTipText(string);
-	    arrow.setToolTipText (string);
-	    text.setToolTipText (string);       
+	    super.setToolTipText(tipText);
+	    if (selectedImage != null) selectedImage.setToolTipText(tipText);	    
+	    if (text != null) text.setToolTipText(tipText);
+	    if (arrow != null) arrow.setToolTipText(tipText);
 	}
 	
     /**
