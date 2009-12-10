@@ -8,6 +8,7 @@
  * Contributors:
  *	Marty Jones <martybjones@gmail.com> - initial API and implementation
  *  Enrico Schnepel <enrico.schnepel@randomice.net> - clear selectedImage bug 297209
+ *  Enrico Schnepel <enrico.schnepel@randomice.net> - disable selectedImage bug 297327
  *****************************************************************************/
 
 package org.eclipse.nebula.widgets.tablecombo;
@@ -1509,6 +1510,7 @@ public class TableCombo extends Composite {
 	public void setEnabled (boolean enabled) {
 		super.setEnabled(enabled);
 	    if (popup != null) popup.setVisible (false);
+	    if (selectedImage != null) selectedImage.setEnabled(enabled);	    
 	    if (text != null) text.setEnabled(enabled);
 	    if (arrow != null) arrow.setEnabled(enabled);
 	}
