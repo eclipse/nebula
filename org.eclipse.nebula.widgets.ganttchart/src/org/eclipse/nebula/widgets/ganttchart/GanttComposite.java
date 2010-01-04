@@ -1678,13 +1678,16 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             } else {
                 extent = gs.getNameExtent();
             }
-
-            int strLen = extent.x;
+            // set the base height depending on the text orientation
+            int strHeight = extent.x;
+            if (gs.getTextOrientation() == SWT.HORIZONTAL){
+            	strHeight = extent.y;
+            }
             int gsHeight = gs.getEventsHeight(mSettings);
-            int height = Math.max(gsHeight, strLen);
+            int height = Math.max(gsHeight, strHeight);
 
             // if the name of the section is so large that it basically defines the size of the section, space out the text slightly
-            if (strLen > gsHeight) {
+            if (strHeight > gsHeight) {
                 height += mSettings.getSectionTextSpacer();
             }
 
