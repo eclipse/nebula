@@ -12,6 +12,7 @@
  *    Claes Rosell<claes.rosell@solme.se> - rowspan in bug 272384
  *    Marco Maccaferri<macca@maccasoft.com> - fixed arrow scrolling in bug 294767
  *    higerinbeijing@gmail.com . fixed selectionEvent.item in bug 286617
+ *    balarkrishnan@yahoo.com - fix in bug 298684
  *******************************************************************************/
 package org.eclipse.nebula.widgets.grid;
 
@@ -5314,6 +5315,7 @@ public class Grid extends Canvas
 
                     GridColumn column = (GridColumn) columnIterator.next();
                     boolean skipCell = cellSpanManager.skipCell(colIndex, row);
+					int indexOfColumn = indexOf(column);
 
                     if (!column.isVisible())
                     {
@@ -5325,12 +5327,10 @@ public class Grid extends Canvas
                         continue;
                     }
 
-                    int width = item.getCellSize(colIndex).x;
+                    int width = item.getCellSize(indexOfColumn).x;
 
                     if(skipCell == false)
                     {
-
-                    	int indexOfColumn = indexOf(column);
 
                     	int nrRowsToSpan = item.getRowSpan(indexOfColumn);
                     	int nrColumnsToSpan = item.getColumnSpan(indexOfColumn);
