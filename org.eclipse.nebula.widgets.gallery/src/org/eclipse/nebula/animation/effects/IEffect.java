@@ -13,22 +13,40 @@ package org.eclipse.nebula.animation.effects;
 
 /**
  * All animation effects must implement this interface.
+ * <p>
+ * Note : an effect should not do initialization in constructor, but at the
+ * first call to doEffect(). For instance, a move effect should not get the
+ * initial position of an object in the constructor, because the object may have
+ * moved between creation and effect start.
+ * </p>
  * 
  * @author Nicolas Richeton
  */
 public interface IEffect {
-	/**
-	 * Apply effect to the target according to the current time.
-	 */
-	public void doEffect();
-
-	/**
-	 * @return true if the effect as already reached its end.
-	 */
-	public boolean isDone();
 
 	/**
 	 * Set the effect as done and run the cancel runnable.
 	 */
 	public void cancel();
+
+	/**
+	 * Apply effect to the target according to the given time.
+	 * 
+	 * @param time
+	 *            - Current time in ms. This value may be larger than the effect
+	 *            length.
+	 */
+	public void doEffect(long time);
+
+	/**
+	 * Get effect length
+	 * 
+	 * @return length (ms)
+	 */
+	public long getLength();
+
+	/**
+	 * @return true if the effect as already reached its end.
+	 */
+	public boolean isDone();
 }
