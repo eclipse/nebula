@@ -40,6 +40,7 @@ public class AnimationRunner {
 	int delay = 20;
 	IEffect effect;
 	boolean running = false;
+	protected long startTime = -1;
 
 	/**
 	 * Create a new animation runner using the default framerate (50 fps)
@@ -76,6 +77,7 @@ public class AnimationRunner {
 	public void runEffect(IEffect effect) {
 		cancel();
 		this.effect = effect;
+		startTime = -1;
 		startEffect();
 	}
 
@@ -90,6 +92,20 @@ public class AnimationRunner {
 		}
 	}
 
+	/**
+	 * Return elapsed time in this animation.
+	 * 
+	 * @return time (ms)
+	 */
+	private long getCurrentTime() {
+		long time = System.currentTimeMillis();
+
+		if (startTime == -1)
+			startTime = time;
+
+		return time - startTime;
+	}
+
 	private void startEffect() {
 		if (running)
 			return;
@@ -99,7 +115,7 @@ public class AnimationRunner {
 			public void run() {
 				if (effect != null && !effect.isDone()) {
 					Display.getCurrent().timerExec(delay, this);
-					effect.doEffect();
+					effect.doEffect(getCurrentTime());
 				} else {
 					running = false;
 				}
