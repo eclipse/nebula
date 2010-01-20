@@ -24,6 +24,7 @@ import org.eclipse.swt.accessibility.AccessibleControlEvent;
 import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.accessibility.AccessibleTextAdapter;
 import org.eclipse.swt.accessibility.AccessibleTextEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -294,6 +295,48 @@ public class TableCombo extends Composite {
 	    TypedListener typedListener = new TypedListener (listener);
 	    addListener (SWT.Selection,typedListener);
 	    addListener (SWT.DefaultSelection,typedListener);
+	}
+	
+	/**
+	 * Adds the listener to the collection of listeners who will
+	 * be notified when the user presses keys in the text field.
+	 * interface.
+	 *
+	 * @param listener the listener which should be notified when the user presses keys in the text control.
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
+	 * </ul>
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 * </ul>
+	 */
+	public void addTextControlKeyListener(KeyListener listener) {
+	    checkWidget();
+	    if (listener == null) SWT.error (SWT.ERROR_NULL_ARGUMENT);
+		text.addKeyListener(listener);
+	}
+
+	/**
+	 * Removes the listener from the collection of listeners who will
+	 * be notified when the user presses keys in the text control.
+	 *
+	 * @param listener the listener which should no longer be notified
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
+	 * </ul>
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 * </ul>
+	 *
+	 */
+	public void removeTextControlKeyListener(KeyListener listener) {
+	    checkWidget();
+	    if (listener == null) SWT.error (SWT.ERROR_NULL_ARGUMENT);
+		text.removeKeyListener(listener);
 	}
 	
 	/**
