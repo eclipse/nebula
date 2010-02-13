@@ -2253,4 +2253,13 @@ public class TableCombo extends Composite {
 			}
 		}
 	}
+	
+	/**
+	 * Returns the Text control reference.
+	 * @return
+	 */
+	public Text getTextControl() {
+		checkWidget();
+		return text;
+	}
 }
