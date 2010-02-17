@@ -11,12 +11,10 @@
 package org.eclipse.nebula.widgets.datechooser;
 
 import java.util.Date;
-import java.util.Locale;
 
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.nebula.widgets.datechooser.DateChooserCombo;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
