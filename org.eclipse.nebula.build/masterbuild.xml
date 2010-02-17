@@ -73,6 +73,9 @@
     	<antcall target="buildcomponent">
     		<param name="component" value="org.eclipse.nebula.widgets.ganttchart"/>
 		</antcall>
+    	<antcall target="buildcomponent">
+    		<param name="component" value="org.eclipse.nebula.widgets.xviewer"/>
+		</antcall>
     </target>
     
     <target name="publish" depends="buildall" description="Uploads all build zips to the eclipse server.">
