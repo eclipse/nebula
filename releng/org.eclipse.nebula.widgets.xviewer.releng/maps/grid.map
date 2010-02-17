@@ -1,0 +1,5 @@
+!**** the plugin
+plugin@org.eclipse.nebula.widgets.xviewer=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.xviewer
+
+!**** the feature
+feature@org.eclipse.nebula.widgets.xviewer.feature=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/features/org.eclipse.nebula.widgets.xviewer.feature
