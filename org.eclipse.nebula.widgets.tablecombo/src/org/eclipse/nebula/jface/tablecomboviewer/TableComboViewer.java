@@ -68,7 +68,7 @@ public class TableComboViewer extends AbstractTableViewer {
 	 */
 	public TableComboViewer(TableCombo tableCombo) {
 		this.tableCombo = tableCombo;
-		hookControl(tableCombo.getTextControl());
+		hookControl(tableCombo);
 	}	
 
     /**
