@@ -211,7 +211,7 @@ public class TableCombo extends Composite {
 	    };
 	    
 	    // set the listeners for this control
-	    int [] comboEvents = {SWT.Dispose, SWT.Move, SWT.Resize};
+	    int [] comboEvents = {SWT.Dispose, SWT.FocusIn, SWT.Move, SWT.Resize};
 	    for (int i=0; i<comboEvents.length; i++) this.addListener (comboEvents [i], listener);
 	    
 		int [] textEvents = {SWT.DefaultSelection, SWT.KeyDown, SWT.KeyUp, SWT.MenuDetect, SWT.Modify, SWT.MouseDown, SWT.MouseUp, SWT.MouseDoubleClick, SWT.MouseWheel, SWT.Traverse, SWT.FocusIn, SWT.Verify};
@@ -453,6 +453,7 @@ public class TableCombo extends Composite {
 	            text = null;  
 	            table = null;  
 	            arrow = null;
+	            selectedImage = null;
 	            break;
 	        case SWT.FocusIn:
 				Control focusControl = getDisplay ().getFocusControl ();
