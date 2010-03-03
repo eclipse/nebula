@@ -159,6 +159,8 @@ public class CalendarCombo extends Composite {
 
     private List                   mDateParseExceptionListeners;
 
+    private Listener               mOobDisplayFilterListener;
+
     protected static final boolean OS_CARBON        = "carbon".equals(SWT.getPlatform());
     protected static final boolean OS_GTK           = "gtk".equals(SWT.getPlatform());
     protected static final boolean OS_WINDOWS       = "win32".equals(SWT.getPlatform());
@@ -739,7 +741,7 @@ public class CalendarCombo extends Composite {
             });
         }
 
-        Display.getDefault().addFilter(SWT.MouseDown, new Listener() {
+        mOobDisplayFilterListener = new Listener() {
             public void handleEvent(Event event) {
                 // This may seem odd, but if the event is the CalendarCombo, we
                 // actually clicked outside the widget and the CalendarComposite
@@ -750,13 +752,16 @@ public class CalendarCombo extends Composite {
                     mComboControl.setFocus();
                 }
             }
-        });
+        };
+        
+        Display.getDefault().addFilter(SWT.MouseDown, mOobDisplayFilterListener); 
 
         // remove listener when mCombo is disposed
         Display.getDefault().addFilter(SWT.FocusIn, mFilterListenerFocusIn);
         mComboControl.addDisposeListener(new DisposeListener() {
             public void widgetDisposed(DisposeEvent event) {
                 Display.getDefault().removeFilter(SWT.FocusIn, mFilterListenerFocusIn);
+                Display.getDefault().removeFilter(SWT.MouseDown, mOobDisplayFilterListener);
                 if (mKeyDownListener != null) Display.getDefault().removeFilter(SWT.KeyDown, mKeyDownListener);
 
                 if (mSettings.getCarbonDrawFont() != null) mSettings.getCarbonDrawFont().dispose();
@@ -841,7 +846,7 @@ public class CalendarCombo extends Composite {
             mParsingDate = true;
 
             String comboText = (isFlat ? mFlatCombo.getText() : mCombo.getText());
-            
+
             if (comboText.length() == 0 && mStartDate != null) {
                 mStartDate = null;
                 setText("");
@@ -875,10 +880,8 @@ public class CalendarCombo extends Composite {
     }
 
     private void notifyDateChangedToNull() {
-        if (mLastNotificationDate == null) {
-            return;
-        }
-        
+        if (mLastNotificationDate == null) { return; }
+
         for (int i = 0; i < mListeners.size(); i++) {
             try {
                 ((ICalendarListener) mListeners.get(i)).dateChanged(mStartDate);
@@ -886,10 +889,10 @@ public class CalendarCombo extends Composite {
                 err.printStackTrace();
             }
         }
-        
+
         mLastNotificationDate = null;
     }
-    
+
     private void notifyDateRangeChanged() {
         for (int i = 0; i < mListeners.size(); i++) {
             try {
@@ -899,7 +902,7 @@ public class CalendarCombo extends Composite {
             }
         }
     }
-    
+
     private void notifyDateChanged() {
         if (mStartDate == null) {
             notifyDateChangedToNull();
@@ -907,13 +910,11 @@ public class CalendarCombo extends Composite {
         }
 
         if (mLastNotificationDate != null && mStartDate != null) {
-            if (DateHelper.sameDate(mLastNotificationDate, mStartDate)) {
-                return;
-            }
+            if (DateHelper.sameDate(mLastNotificationDate, mStartDate)) { return; }
         }
 
         mLastNotificationDate = (Calendar) mStartDate.clone();
-        
+
         for (int i = 0; i < mListeners.size(); i++) {
             try {
                 ((ICalendarListener) mListeners.get(i)).dateChanged(mStartDate);
@@ -1028,7 +1029,8 @@ public class CalendarCombo extends Composite {
 
         Display.getDefault().removeFilter(SWT.KeyDown, mKillListener);
         Display.getDefault().removeFilter(SWT.MouseDown, mOobClickListener);
-
+        Display.getDefault().removeFilter(SWT.MouseDown, mOobDisplayFilterListener);
+        
         if (mComboControl != null && !mComboControl.isDisposed()) {
             mComboControl.setCapture(false);
             // have to traverse escape key after the fake popup is closed or the
@@ -1271,24 +1273,24 @@ public class CalendarCombo extends Composite {
 
             // create the calendar composite
             mCalendarComposite = new CalendarComposite(mCalendarShell, pre, mDisallowBeforeDate, mDisallowAfterDate, mColorManager, mSettings, mAllowDateRange, mStartDate, mEndDate);
-     /*       mCalendarComposite.addCalendarListener(new ICalendarListener() {
+            /*       mCalendarComposite.addCalendarListener(new ICalendarListener() {
 
-                public void dateChanged(Calendar date) {
-                    mStartDate = date;
-                    notifyDateChanged();
-                }
+                       public void dateChanged(Calendar date) {
+                           mStartDate = date;
+                           notifyDateChanged();
+                       }
 
-                public void dateRangeChanged(Calendar start, Calendar end) {
-                    mStartDate = start;
-                    mEndDate = end;
-                    notifyDateChanged();
-                }
+                       public void dateRangeChanged(Calendar start, Calendar end) {
+                           mStartDate = start;
+                           mEndDate = end;
+                           notifyDateChanged();
+                       }
 
-                public void popupClosed() {
-                }
-                
-            });
-*/
+                       public void popupClosed() {
+                       }
+                       
+                   });
+            */
             mCalendarComposite.addMainCalendarListener(new ICalendarListener() {
                 public void dateChanged(Calendar date) {
                     if (!isFlat) mCombo.removeAll();
@@ -1301,11 +1303,10 @@ public class CalendarCombo extends Composite {
                     } else {
                         updateDate();
                     }
-                    
+
                     if (mStartDate == null) {
                         notifyDateChangedToNull();
-                    }
-                    else {
+                    } else {
                         notifyDateChanged();
                     }
                 }
@@ -1327,23 +1328,21 @@ public class CalendarCombo extends Composite {
                     if (mDependingCombo != null) {
                         if (end != null) {
                             mDependingCombo.setDate(end);
-                        }
-                        else {
+                        } else {
                             mDependingCombo.setText("");
                         }
 
                         notifyDateRangeChanged();
-                    }
-                    else {
+                    } else {
                         notifyDateChanged();
                     }
-                    
+
                 }
 
                 public void popupClosed() {
                     kill(14);
                     for (int i = 0; i < mListeners.size(); i++) {
-                        ((ICalendarListener)mListeners.get(i)).popupClosed();
+                        ((ICalendarListener) mListeners.get(i)).popupClosed();
                     }
                 }
             });
