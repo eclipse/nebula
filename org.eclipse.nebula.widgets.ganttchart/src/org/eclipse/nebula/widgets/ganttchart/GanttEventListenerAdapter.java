@@ -70,4 +70,10 @@ public class GanttEventListenerAdapter implements IGanttEventListener {
     public void phaseResizeFinished(GanttPhase phase, MouseEvent me) {
     }
 
+    public void eventMovedToNewSection(GanttEvent ge, GanttSection oldSection, GanttSection newSection) {
+    }
+
+    public void eventReordered(GanttEvent ge) {
+    }
+
 }

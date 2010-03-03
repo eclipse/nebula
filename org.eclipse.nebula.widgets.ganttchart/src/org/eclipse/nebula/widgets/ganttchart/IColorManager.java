@@ -468,4 +468,21 @@ public interface IColorManager extends IFillBackgroundColors {
 	 */
 	public Color getSessionBarDividerColorRight();
 
+	/**
+	 * For vertical drag/drops a box is drawn where the event was prior to the DND started to
+	 * indicate what the original location of the event was (so the user can find their way back).
+	 * This is the color used to draw the indication box.
+	 * 
+	 * @return Color
+	 */
+	public Color getOriginalLocationColor();
+	
+	/**
+	 * This is the color used to draw the vertical insert marker for vertical drag and drop. 
+	 * This is the line drawn between events to show where the DND would take place if the currently DND event
+	 * is dropped.
+	 * 
+	 * @return Color
+	 */
+	public Color getVerticalInsertMarkerColor();
 }

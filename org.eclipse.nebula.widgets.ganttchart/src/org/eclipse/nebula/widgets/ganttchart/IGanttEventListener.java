@@ -136,7 +136,7 @@ public interface IGanttEventListener {
 	public void eventPropertiesSelected(List events);
 
 	/**
-	 * Fires when a header section becomes selected.
+	 * Fires when a header section becomes selected (days in the header are clicked etc).
 	 * 
 	 * @param newlySelectedDate The date that was just clicked
 	 * @param allSelectedDates All dates that were selected previously including the currently added one
@@ -149,4 +149,20 @@ public interface IGanttEventListener {
 	 * @param gc GC graphics object
 	 */
 	public void lastDraw(GC gc);
+	
+	/**
+	 * This is called when an event is moved (vertical DND) from one section to another.
+	 * 
+	 * @param ge Event that was moved 
+	 * @param oldSection Section it used to belong to
+	 * @param newSection Section it belongs to now
+	 */
+	public void eventMovedToNewSection(GanttEvent ge, GanttSection oldSection, GanttSection newSection);
+	
+	/**
+	 * This is called when an event was reordered vertically in the chart (via DND).
+	 * 
+	 * @param ge Event that was reordered
+	 */
+	public void eventReordered(GanttEvent ge);
 }

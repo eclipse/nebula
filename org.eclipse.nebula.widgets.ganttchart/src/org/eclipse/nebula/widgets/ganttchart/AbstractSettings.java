@@ -294,15 +294,15 @@ abstract class AbstractSettings implements ISettings {
 
 	public String getDefaultAdvancedTooltipTextExtended() {
 		StringBuffer buf = new StringBuffer();
-		buf.append("\\ceRevised: #rs# - #re# (#reviseddays# days)\n");
-		buf.append("\\c100100100Planned: #sd# - #ed# (#days# days)\n");
+		buf.append("\\ceRevised: #rs# - #re# (#reviseddays# day(s))\n");
+		buf.append("\\c100100100Planned: #sd# - #ed# (#days# day(s))\n");
 		buf.append("#pc#% complete");
 		return buf.toString();//"\\ceStart Date: \\b#sd#\nEnd Date: \\b#ed#\nRevised Start: \\b#rs#\nRevised End: \\b#re#\nDay Span: \\b#days# days\nPercent Complete: \\b#pc#%";
 	}
 
 	public String getDefaultAdvancedTooltipText() {
 		StringBuffer buf = new StringBuffer();
-		buf.append("\\cePlanned: #sd# - #ed# (#days# days)\n");
+		buf.append("\\cePlanned: #sd# - #ed# (#days# day(s))\n");
 		buf.append("\\c100100100#pc#% complete");
 		return buf.toString();
 	}
@@ -399,10 +399,6 @@ abstract class AbstractSettings implements ISettings {
 		return false;
 	}
 
-/*	public boolean useFastDraw() {
-		return true;
-	}
-*/
 	public int getSectionSide() {
 		return SWT.LEFT;
 	}
@@ -481,6 +477,18 @@ abstract class AbstractSettings implements ISettings {
 
     public boolean allowPhaseOverlap() {
         return false;
+    }
+      
+    public int getVerticalEventDragging() {
+        return IVerticalDragModes.NO_VERTICAL_DRAG;
+    }
+
+    public int getVerticalDragResistance() {
+        return 15;
+    }
+
+    public boolean onVerticalDragDropShowInsertMarker() {
+        return true;
     }
 
 	

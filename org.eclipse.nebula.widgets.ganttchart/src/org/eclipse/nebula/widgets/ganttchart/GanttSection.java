@@ -21,8 +21,8 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 
 /**
- * A GanttSection is a "box" section of the chart. A section will automatically get a left-side border that shows the name, and the background colors drawn for that section can
- * differ from the rest of the chart. Here's an view of it: <br>
+ * A GanttSection is a "box" section of the chart. A section will automatically get a left-side border that shows the
+ * name, and the background colors drawn for that section can differ from the rest of the chart. Here's an view of it: <br>
  * <br>
  * ................................................<br>
  * Header<br>
@@ -35,323 +35,362 @@ import org.eclipse.swt.graphics.Rectangle;
  */
 public class GanttSection implements IFillBackgroundColors {
 
-	private String					name;
-	private GanttComposite			parent;
-	private List					ganttEvents;
-	private Rectangle				bounds;
-	private Image					nameImage;
-	private boolean					needsNameUpdate;
-	private IFillBackgroundColors	fillColorManager;
+    private String                name;
+    private GanttComposite        parent;
+    private List                  ganttEvents;
+    // this list contains events that are being vertically DND'd across the section
+    // and need to be rendered but should not count as actual member-events until (if) they are dropped
+    private List                  dndGanttEvents;
+    private Rectangle             bounds;
+    private Image                 nameImage;
+    private boolean               needsNameUpdate;
+    private IFillBackgroundColors fillColorManager;
 
-	private Color					mSaturdayBackgroundColorTop;
-	private Color					mSaturdayBackgroundColorBottom;
-	private Color					mSundayBackgroundColorTop;
-	private Color					mSundayBackgroundColorBottom;
-	private Color					mWeekdayBackgroundColorTop;
-	private Color					mWeekdayBackgroundColorBottom;
-	private Color					mSelectedBackgroundColorTop;
-	private Color					mSelectedBackgroundColorBottom;
-	private Color					mSelectedBackgroundHeaderColorTop;
-	private Color					mSelectedBackgroundHeaderColorBottom;
+    private Color                 mSaturdayBackgroundColorTop;
+    private Color                 mSaturdayBackgroundColorBottom;
+    private Color                 mSundayBackgroundColorTop;
+    private Color                 mSundayBackgroundColorBottom;
+    private Color                 mWeekdayBackgroundColorTop;
+    private Color                 mWeekdayBackgroundColorBottom;
+    private Color                 mSelectedBackgroundColorTop;
+    private Color                 mSelectedBackgroundColorBottom;
+    private Color                 mSelectedBackgroundHeaderColorTop;
+    private Color                 mSelectedBackgroundHeaderColorBottom;
 
-	// private items
-	private Point					mNameExtent;
+    // private items
+    private Point                 mNameExtent;
 
-	private int						mTextOrientation	= SWT.VERTICAL;
+    private int                   mTextOrientation = SWT.VERTICAL;
 
-	private boolean					mInheritBackgroud;
-	
-	/**
-	 * Creates a new GanttSection.
-	 * 
-	 * @param parent GanttChart
-	 * @param name GanttSection name
-	 */
-	public GanttSection(GanttChart parent, String name) {
-		this.name = name;
-		this.parent = parent.getGanttComposite();
-		this.parent.addSection(this);
-		this.ganttEvents = new ArrayList();
-		this.fillColorManager = parent.getColorManager();
-	}
+    private boolean               mInheritBackgroud;
 
-	/**
-	 * Creates a new GanttSection with a fill manager that controls background colors.
-	 * 
-	 * @param parent GanttChart
-	 * @param name GanttSection name
-	 * @param fillManager Fill manager
-	 */
-	public GanttSection(GanttChart parent, String name, IFillBackgroundColors fillManager) {
-		this.name = name;
-		this.parent = parent.getGanttComposite();
-		this.parent.addSection(this);
-		this.ganttEvents = new ArrayList();
-		this.fillColorManager = fillManager;
-	}
+    private GanttSection() {
+        this.ganttEvents = new ArrayList();
+        this.dndGanttEvents = new ArrayList();
+    }
 
-	/**
-	 * Adds a Gantt Chart item (GanttSection, GanttGroup) to this section.
-	 * 
-	 * @param event Item to add
-	 */
-	public void addGanttEvent(IGanttChartItem event) {
-		if (!ganttEvents.contains(event))
-			ganttEvents.add(event);
-	}
+    /**
+     * Creates a new GanttSection.
+     * 
+     * @param parent GanttChart
+     * @param name GanttSection name
+     */
+    public GanttSection(GanttChart parent, String name) {
+        this();
+        this.name = name;
+        this.parent = parent.getGanttComposite();
+        this.parent.addSection(this);
+        this.fillColorManager = parent.getColorManager();
+    }
 
-	/**
-	 * Removes a Gantt Chart item (GanttSection, GanttGroup) from this section.
-	 * 
-	 * @param event Item to remove
-	 */
-	public void removeGanttEvent(IGanttChartItem event) {
-		ganttEvents.remove(event);
-	}
+    /**
+     * Creates a new GanttSection with a fill manager that controls background colors.
+     * 
+     * @param parent GanttChart
+     * @param name GanttSection name
+     * @param fillManager Fill manager
+     */
+    public GanttSection(GanttChart parent, String name, IFillBackgroundColors fillManager) {
+        this();
+        this.name = name;
+        this.parent = parent.getGanttComposite();
+        this.parent.addSection(this);
+        this.fillColorManager = fillManager;
+    }
 
-	/**
-	 * Returns a list of all IGanttChartItems (GanttEvent and GanttGroup) contained in this section.
-	 * 
-	 * @return List of items
-	 */
-	public List getEvents() {
-		return ganttEvents;
-	}
+    /**
+     * Adds a Gantt Chart item (GanttSection, GanttGroup) to this section.
+     * 
+     * @param event Item to add
+     */
+    public void addGanttEvent(IGanttChartItem event) {
+        addGanttEvent(-1, event);
+    }
 
-	/**
-	 * Sets the name of this section. This method does not force a redraw.
-	 * 
-	 * @param name GanttSection name
-	 */
-	public void setName(String name) {
-		this.name = name;
-		this.needsNameUpdate = true;
-	}
+    public void addGanttEvent(int index, IGanttChartItem event) {
+        if (!ganttEvents.contains(event)) {
+            if (index == -1) {
+                ganttEvents.add(event);
+            } else {
+                if (index > ganttEvents.size()) {
+                    index = ganttEvents.size();
+                }
+                ganttEvents.add(index, event);
+            }
+            if (event instanceof GanttEvent) {
+                ((GanttEvent) event).setGanttSection(this);
+            }
+            
+        }
+    }
 
-	/**
-	 * Returns the name of this section.
-	 * 
-	 * @return GanttSection name
-	 */
-	public String getName() {
-		return name;
-	}
+    /**
+     * Removes a Gantt Chart item (GanttSection, GanttGroup) from this section.
+     * 
+     * @param event Item to remove
+     */
+    public void removeGanttEvent(IGanttChartItem event) {
+        ganttEvents.remove(event);
+    }
 
-	/**
-	 * Returns the bounds of this GanttSection
-	 * 
-	 * @return Rectangle
-	 */
-	public Rectangle getBounds() {
-		return bounds;
-	}
+    /**
+     * Returns a list of all IGanttChartItems (GanttEvent and GanttGroup) contained in this section.
+     * 
+     * @return List of items
+     */
+    public List getEvents() {
+        return ganttEvents;
+    }
 
-	// note to self: this does not take into account the height the name will take up
-	// this method can NOT use the bounds on the events as this method will be called prior to events being drawn and thus have no values for bounds
-	/*
-	 * int _getEventsHeight(ISettings settings) { int height = 0;
-	 * 
-	 * if (ganttEvents.size() == 0) return settings.getMinimumSectionHeight();
-	 * 
-	 * height += settings.getEventsTopSpacer();
-	 * 
-	 * GanttGroup lastGroup = null; for (int i = 0; i < ganttEvents.size(); i++) { IGanttChartItem event = (IGanttChartItem) ganttEvents.get(i); if (event instanceof GanttEvent) {
-	 * if (lastGroup != null) height += settings.getEventSpacer();
-	 * 
-	 * GanttEvent ge = (GanttEvent) ganttEvents.get(i); if (!ge.isAutomaticRowHeight()) height += ge.getFixedRowHeight(); else height += settings.getEventHeight(); // skip last
-	 * event check, we need spacing there too height += settings.getEventSpacer(); lastGroup = null; } else if (event instanceof GanttGroup) { GanttGroup gg = (GanttGroup) event;
-	 * 
-	 * if (gg != lastGroup) { if (!gg.isAutomaticRowHeight()) { height += gg.getFixedRowHeight(); } else { height += settings.getEventHeight(); //height +=
-	 * settings.getEventHeight(); //height += settings.getEventSpacer()/2; }
-	 * 
-	 * if (i != ganttEvents.size()-1) height += settings.getEventSpacer(); }
-	 * 
-	 * lastGroup = gg; } }
-	 * 
-	 * if (height < settings.getMinimumSectionHeight()) height = settings.getMinimumSectionHeight(); // System.err.println(getName() + " " + height + " " + ganttEvents.size());
-	 * 
-	 * return height; }
-	 */
+    /**
+     * Sets the name of this section. This method does not force a redraw.
+     * 
+     * @param name GanttSection name
+     */
+    public void setName(String name) {
+        this.name = name;
+        this.needsNameUpdate = true;
+    }
 
-	public Color getSaturdayBackgroundColorBottom() {
-		return mSaturdayBackgroundColorBottom == null ? fillColorManager.getSaturdayBackgroundColorBottom() : mSaturdayBackgroundColorBottom;
-	}
+    /**
+     * Returns the name of this section.
+     * 
+     * @return GanttSection name
+     */
+    public String getName() {
+        return name;
+    }
 
-	public Color getSaturdayBackgroundColorTop() {
-		return mSaturdayBackgroundColorTop == null ? fillColorManager.getSaturdayBackgroundColorTop() : mSaturdayBackgroundColorTop;
-	}
+    /**
+     * Returns the bounds of this GanttSection
+     * 
+     * @return Rectangle
+     */
+    public Rectangle getBounds() {
+        return bounds;
+    }
 
-	public Color getSundayBackgroundColorBottom() {
-		return mSundayBackgroundColorBottom == null ? fillColorManager.getSundayBackgroundColorBottom() : mSundayBackgroundColorBottom;
-	}
+    // note to self: this does not take into account the height the name will take up
+    // this method can NOT use the bounds on the events as this method will be called prior to events being drawn and thus have no values for bounds
+    /*
+     * int _getEventsHeight(ISettings settings) { int height = 0;
+     * 
+     * if (ganttEvents.size() == 0) return settings.getMinimumSectionHeight();
+     * 
+     * height += settings.getEventsTopSpacer();
+     * 
+     * GanttGroup lastGroup = null; for (int i = 0; i < ganttEvents.size(); i++) { IGanttChartItem event = (IGanttChartItem) ganttEvents.get(i); if (event instanceof GanttEvent) {
+     * if (lastGroup != null) height += settings.getEventSpacer();
+     * 
+     * GanttEvent ge = (GanttEvent) ganttEvents.get(i); if (!ge.isAutomaticRowHeight()) height += ge.getFixedRowHeight(); else height += settings.getEventHeight(); // skip last
+     * event check, we need spacing there too height += settings.getEventSpacer(); lastGroup = null; } else if (event instanceof GanttGroup) { GanttGroup gg = (GanttGroup) event;
+     * 
+     * if (gg != lastGroup) { if (!gg.isAutomaticRowHeight()) { height += gg.getFixedRowHeight(); } else { height += settings.getEventHeight(); //height +=
+     * settings.getEventHeight(); //height += settings.getEventSpacer()/2; }
+     * 
+     * if (i != ganttEvents.size()-1) height += settings.getEventSpacer(); }
+     * 
+     * lastGroup = gg; } }
+     * 
+     * if (height < settings.getMinimumSectionHeight()) height = settings.getMinimumSectionHeight(); // System.err.println(getName() + " " + height + " " + ganttEvents.size());
+     * 
+     * return height; }
+     */
 
-	public Color getSundayBackgroundColorTop() {
-		return mSundayBackgroundColorTop == null ? fillColorManager.getSundayBackgroundColorTop() : mSundayBackgroundColorTop;
-	}
+    public Color getSaturdayBackgroundColorBottom() {
+        return mSaturdayBackgroundColorBottom == null ? fillColorManager.getSaturdayBackgroundColorBottom() : mSaturdayBackgroundColorBottom;
+    }
 
-	public Color getWeekdayBackgroundColorBottom() {
-		return mWeekdayBackgroundColorBottom == null ? fillColorManager.getWeekdayBackgroundColorBottom() : mWeekdayBackgroundColorBottom;
-	}
+    public Color getSaturdayBackgroundColorTop() {
+        return mSaturdayBackgroundColorTop == null ? fillColorManager.getSaturdayBackgroundColorTop() : mSaturdayBackgroundColorTop;
+    }
 
-	public Color getWeekdayBackgroundColorTop() {
-		return mWeekdayBackgroundColorTop == null ? fillColorManager.getWeekdayBackgroundColorTop() : mWeekdayBackgroundColorTop;
-	}
+    public Color getSundayBackgroundColorBottom() {
+        return mSundayBackgroundColorBottom == null ? fillColorManager.getSundayBackgroundColorBottom() : mSundayBackgroundColorBottom;
+    }
 
-	public Color getSelectedDayColorBottom() {
-		return mSelectedBackgroundColorBottom == null ? fillColorManager.getSelectedDayColorBottom() : mSelectedBackgroundColorBottom;
-	}
+    public Color getSundayBackgroundColorTop() {
+        return mSundayBackgroundColorTop == null ? fillColorManager.getSundayBackgroundColorTop() : mSundayBackgroundColorTop;
+    }
 
-	public Color getSelectedDayColorTop() {
-		return mSelectedBackgroundColorTop == null ? fillColorManager.getSelectedDayColorTop() : mSelectedBackgroundColorTop;
-	}
+    public Color getWeekdayBackgroundColorBottom() {
+        return mWeekdayBackgroundColorBottom == null ? fillColorManager.getWeekdayBackgroundColorBottom() : mWeekdayBackgroundColorBottom;
+    }
 
-	public Color getSelectedDayHeaderColorBottom() {
-		return mSelectedBackgroundHeaderColorBottom == null ? fillColorManager.getSelectedDayHeaderColorBottom() : mSelectedBackgroundHeaderColorBottom;
-	}
+    public Color getWeekdayBackgroundColorTop() {
+        return mWeekdayBackgroundColorTop == null ? fillColorManager.getWeekdayBackgroundColorTop() : mWeekdayBackgroundColorTop;
+    }
 
-	public Color getSelectedDayHeaderColorTop() {
-		return mSelectedBackgroundHeaderColorTop == null ? fillColorManager.getSelectedDayHeaderColorTop() : mSelectedBackgroundHeaderColorTop;
-	}
+    public Color getSelectedDayColorBottom() {
+        return mSelectedBackgroundColorBottom == null ? fillColorManager.getSelectedDayColorBottom() : mSelectedBackgroundColorBottom;
+    }
 
-	public void setSaturdayBackgroundColorTop(Color saturdayBackgroundColorTop) {
-		mSaturdayBackgroundColorTop = saturdayBackgroundColorTop;
-	}
+    public Color getSelectedDayColorTop() {
+        return mSelectedBackgroundColorTop == null ? fillColorManager.getSelectedDayColorTop() : mSelectedBackgroundColorTop;
+    }
 
-	public void setSaturdayBackgroundColorBottom(Color saturdayBackgroundColorBottom) {
-		mSaturdayBackgroundColorBottom = saturdayBackgroundColorBottom;
-	}
+    public Color getSelectedDayHeaderColorBottom() {
+        return mSelectedBackgroundHeaderColorBottom == null ? fillColorManager.getSelectedDayHeaderColorBottom() : mSelectedBackgroundHeaderColorBottom;
+    }
 
-	public void setSundayBackgroundColorTop(Color sundayBackgroundColorTop) {
-		mSundayBackgroundColorTop = sundayBackgroundColorTop;
-	}
+    public Color getSelectedDayHeaderColorTop() {
+        return mSelectedBackgroundHeaderColorTop == null ? fillColorManager.getSelectedDayHeaderColorTop() : mSelectedBackgroundHeaderColorTop;
+    }
 
-	public void setSundayBackgroundColorBottom(Color sundayBackgroundColorBottom) {
-		mSundayBackgroundColorBottom = sundayBackgroundColorBottom;
-	}
+    public void setSaturdayBackgroundColorTop(Color saturdayBackgroundColorTop) {
+        mSaturdayBackgroundColorTop = saturdayBackgroundColorTop;
+    }
 
-	public void setWeekdayBackgroundColorTop(Color weekdayBackgroundColorTop) {
-		mWeekdayBackgroundColorTop = weekdayBackgroundColorTop;
-	}
+    public void setSaturdayBackgroundColorBottom(Color saturdayBackgroundColorBottom) {
+        mSaturdayBackgroundColorBottom = saturdayBackgroundColorBottom;
+    }
 
-	public void setWeekdayBackgroundColorBottom(Color weekdayBackgroundColorBottom) {
-		mWeekdayBackgroundColorBottom = weekdayBackgroundColorBottom;
-	}
+    public void setSundayBackgroundColorTop(Color sundayBackgroundColorTop) {
+        mSundayBackgroundColorTop = sundayBackgroundColorTop;
+    }
 
-	public void setSelectedBackgroundColorTop(Color selectedBackgroundColorTop) {
-		mSelectedBackgroundColorTop = selectedBackgroundColorTop;
-	}
+    public void setSundayBackgroundColorBottom(Color sundayBackgroundColorBottom) {
+        mSundayBackgroundColorBottom = sundayBackgroundColorBottom;
+    }
 
-	public void setSelectedBackgroundColorBottom(Color selectedBackgroundColorBottom) {
-		mSelectedBackgroundColorBottom = selectedBackgroundColorBottom;
-	}
+    public void setWeekdayBackgroundColorTop(Color weekdayBackgroundColorTop) {
+        mWeekdayBackgroundColorTop = weekdayBackgroundColorTop;
+    }
 
-	public void setSelectedBackgroundHeaderColorTop(Color selectedBackgroundHeaderColorTop) {
-		mSelectedBackgroundHeaderColorTop = selectedBackgroundHeaderColorTop;
-	}
+    public void setWeekdayBackgroundColorBottom(Color weekdayBackgroundColorBottom) {
+        mWeekdayBackgroundColorBottom = weekdayBackgroundColorBottom;
+    }
 
-	public void setSelectedBackgroundHeaderColorBottom(Color selectedBackgroundHeaderColorBottom) {
-		mSelectedBackgroundHeaderColorBottom = selectedBackgroundHeaderColorBottom;
-	}
+    public void setSelectedBackgroundColorTop(Color selectedBackgroundColorTop) {
+        mSelectedBackgroundColorTop = selectedBackgroundColorTop;
+    }
 
-	/**
-	 * Returns the text orientation of the section. Default is SWT.VERTICAL.
-	 * 
-	 * @return Text orientation.
-	 */
-	public int getTextOrientation() {
-		return mTextOrientation;
-	}
+    public void setSelectedBackgroundColorBottom(Color selectedBackgroundColorBottom) {
+        mSelectedBackgroundColorBottom = selectedBackgroundColorBottom;
+    }
 
-	/**
-	 * Sets the text orientation of the section. One of SWT.HORIZONTAL or SWT.VERTICAL. Default is SWT.VERTICAL.
-	 * 
-	 * @param textOrientation SWT.VERTICAL or SWT.HORIZONTAL
-	 */
-	public void setTextOrientation(int textOrientation) {
-		mTextOrientation = textOrientation;
-	}
+    public void setSelectedBackgroundHeaderColorTop(Color selectedBackgroundHeaderColorTop) {
+        mSelectedBackgroundHeaderColorTop = selectedBackgroundHeaderColorTop;
+    }
 
-	/**
-	 * Whether this section should just inherit the background colors of the main chart.
-	 * 
-	 * @return true if set
-	 * @deprecated IN PROGRESS
-	 */
-	boolean isInheritBackgroud() {
-		return mInheritBackgroud;
-	}
+    public void setSelectedBackgroundHeaderColorBottom(Color selectedBackgroundHeaderColorBottom) {
+        mSelectedBackgroundHeaderColorBottom = selectedBackgroundHeaderColorBottom;
+    }
 
-	/**
-	 * Sets whether this section should inherit the background colors of the main chart for drawing date fills.
-	 * 
-	 * @param inheritBackgroud true to inherit. Default is false.
-	 * @deprecated IN PROGRESS
-	 */
-	void setInheritBackgroud(boolean inheritBackgroud) {
-		mInheritBackgroud = inheritBackgroud;
-	}
+    /**
+     * Returns the text orientation of the section. Default is SWT.VERTICAL.
+     * 
+     * @return Text orientation.
+     */
+    public int getTextOrientation() {
+        return mTextOrientation;
+    }
 
-	/**
-	 * Removes this section from the chart. Do note that all belonging GanttEvents will be orphaned, so you should probably deal with that post disposal.
-	 */
-	public void dispose() {
-		parent.removeSection(this);
-		parent.redraw();
-	}
+    /**
+     * Sets the text orientation of the section. One of SWT.HORIZONTAL or SWT.VERTICAL. Default is SWT.VERTICAL.
+     * 
+     * @param textOrientation SWT.VERTICAL or SWT.HORIZONTAL
+     */
+    public void setTextOrientation(int textOrientation) {
+        mTextOrientation = textOrientation;
+    }
 
-	Point getNameExtent() {
-		return mNameExtent;
-	}
+    /**
+     * Whether this section should just inherit the background colors of the main chart.
+     * 
+     * @return true if set
+     * @deprecated IN PROGRESS
+     */
+    boolean isInheritBackgroud() {
+        return mInheritBackgroud;
+    }
 
-	void setNameExtent(Point extent) {
-		this.mNameExtent = extent;
-	}
+    /**
+     * Sets whether this section should inherit the background colors of the main chart for drawing date fills.
+     * 
+     * @param inheritBackgroud true to inherit. Default is false.
+     * @deprecated IN PROGRESS
+     */
+    void setInheritBackgroud(boolean inheritBackgroud) {
+        mInheritBackgroud = inheritBackgroud;
+    }
 
-	void setBounds(Rectangle bounds) {
-		this.bounds = bounds;
-	}
+    /**
+     * Removes this section from the chart. Do note that all belonging GanttEvents will be orphaned, so you should
+     * probably deal with that post disposal.
+     */
+    public void dispose() {
+        parent.removeSection(this);
+        parent.redraw();
+    }
 
-	Image getNameImage() {
-		return nameImage;
-	}
+    Point getNameExtent() {
+        return mNameExtent;
+    }
 
-	void setNameImage(Image nameImage) {
-		this.nameImage = nameImage;
-		this.needsNameUpdate = false;
-	}
+    void setNameExtent(Point extent) {
+        this.mNameExtent = extent;
+    }
 
-	boolean needsNameUpdate() {
-		return needsNameUpdate;
-	}
+    void setBounds(Rectangle bounds) {
+        this.bounds = bounds;
+    }
 
-	void setNeedsNameUpdate(boolean need) {
-		needsNameUpdate = need;
-	}
+    Image getNameImage() {
+        return nameImage;
+    }
 
-	int getEventsHeight(ISettings settings) {
-		if (ganttEvents.size() == 0)
-			return settings.getMinimumSectionHeight();
+    void setNameImage(Image nameImage) {
+        this.nameImage = nameImage;
+        this.needsNameUpdate = false;
+    }
 
-		int height = settings.getEventsTopSpacer();
+    boolean needsNameUpdate() {
+        return needsNameUpdate;
+    }
 
-		for (int i = 0; i < ganttEvents.size(); i++) {
-			IGanttChartItem event = (IGanttChartItem) ganttEvents.get(i);
+    void setNeedsNameUpdate(boolean need) {
+        needsNameUpdate = need;
+    }
 
-			if (!event.isAutomaticRowHeight())
-				height += event.getFixedRowHeight();
-			else
-				height += settings.getEventHeight();
+    int getEventsHeight(ISettings settings) {
+        if (ganttEvents.size() == 0) return settings.getMinimumSectionHeight();
 
-			if (i != ganttEvents.size() - 1)
-				height += settings.getEventSpacer();
-		}
+        int height = settings.getEventsTopSpacer();
 
-		height += settings.getEventsBottomSpacer();
+        for (int i = 0; i < ganttEvents.size(); i++) {
+            IGanttChartItem event = (IGanttChartItem) ganttEvents.get(i);
 
-		if (height < settings.getMinimumSectionHeight())
-			height = settings.getMinimumSectionHeight();
+            if (!event.isAutomaticRowHeight()) height += event.getFixedRowHeight();
+            else height += settings.getEventHeight();
 
-		return height;
-	}
+            if (i != ganttEvents.size() - 1) height += settings.getEventSpacer();
+        }
 
+        height += settings.getEventsBottomSpacer();
+
+        if (height < settings.getMinimumSectionHeight()) height = settings.getMinimumSectionHeight();
+
+        return height;
+    }
+
+    void addDNDGanttEvent(GanttEvent ge) {
+        if (!dndGanttEvents.contains(ge)) {
+            dndGanttEvents.add(ge);
+        }
+    }
+
+    void clearDNDGanttEvents() {
+        dndGanttEvents.clear();
+    }
+
+    List getDNDGanttEvents() {
+        return dndGanttEvents;
+    }
+
+    public String toString() {
+        return "[GanttSection: " + name + "]";
+    }
+    
+    
 }

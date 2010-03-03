@@ -316,4 +316,12 @@ public class ColorThemeWindowsBlue implements IColorManager {
         return getTimeHeaderBackgroundColorTop();
     }
 
+    public Color getOriginalLocationColor() {
+        return ColorCache.getColor(253, 145, 80);
+    }   
+
+    public Color getVerticalInsertMarkerColor() {   
+        return getOriginalLocationColor();
+    }
+
 }

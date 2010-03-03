@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 
 public class AdvancedTooltipDialog {
@@ -205,12 +206,40 @@ public class AdvancedTooltipDialog {
 				shell.setSize(size.width, size.height);
 				if (bold != null)
 					bold.dispose();
+				
+				Monitor active = Display.getDefault().getActiveShell().getMonitor();
+				int totalXBoundsMonitors = 0;
+				Monitor [] all = Display.getDefault().getMonitors();
+				for (int i = 0; i < all.length; i++) {
+				    if (all[i] == active) {
+				        break;
+				    }
+				    totalXBoundsMonitors += all[i].getBounds().width;
+				}
+				
+				Rectangle maxBounds = active.getBounds();
+		        int shellHeight = shell.getSize().y;
+		        int shellWidth = shell.getSize().x;
+		        
+		        Point location = shell.getLocation();
+		        if ((location.y + shellHeight) > maxBounds.height) {
+		            location.y = maxBounds.height-shellHeight;
+		        }
+		        if ((location.x + shellWidth) > totalXBoundsMonitors) {
+		            location.x = totalXBoundsMonitors - shellWidth;
+		        }
+		        
+                shell.setLocation(location);
+		        
 			}
 
 		});
 
 		shell.pack();
-		shell.setLocation(location);
+		
+		
+        shell.setLocation(location);
+		
 		shell.setVisible(true);
 		
 		// bug fix #240164 - for some reason the bounds fetched at the beginning are off on Macs,

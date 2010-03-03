@@ -312,7 +312,13 @@ public abstract class AbstractColorManager implements IColorManager {
 
     public Color getPhaseHeaderBackgroundColorTop() {
         return getTimeHeaderBackgroundColorTop();
+    }
+
+    public Color getOriginalLocationColor() {
+        return ColorCache.getColor(253, 145, 80);
     }	
 	
-	
+    public Color getVerticalInsertMarkerColor() {	
+        return getOriginalLocationColor();
+    }
 }

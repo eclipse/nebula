@@ -998,4 +998,29 @@ public interface ISettings {
      * @return Default is false
      */
     public boolean allowPhaseOverlap();
+    
+    /**
+     * What style of vertical event dragging that is enabled. For the "resistance" before a vertical drag takes
+     * place you can change this with {@link ISettings#getVerticalDragResistance()}.
+     * 
+     * @return One of the options in {@link IVerticalDragModes}. Default is {@link IVerticalDragModes#NO_VERTICAL_DRAG}
+     */
+    public int getVerticalEventDragging();
+    
+    /**
+     * For events that can be dragged vertically, this is the "resistance" in pixels before the event "lets go"
+     * of it's horizontal location. Once it's let go it will stick to the mouse cursor.
+     * 
+     * @return A pixel range of resistance. Default is 15px.
+     */
+    public int getVerticalDragResistance();
+    
+    /**
+     * Whether an insert marker should be shown for where the dragged event will end up when a vertical drag/drop 
+     * is in progress.
+     * 
+     * @return true to show a marker. Default is true.
+     */
+    public boolean onVerticalDragDropShowInsertMarker();
+    
 }
