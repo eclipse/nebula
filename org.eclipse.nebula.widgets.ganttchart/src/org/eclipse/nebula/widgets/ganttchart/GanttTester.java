@@ -29,6 +29,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -102,7 +103,7 @@ public class GanttTester {
 
         shell.setMaximized(true);
         // uncomment to put on right-hand-side monitor
-        //shell.setLocation(new Point(m.getClientArea().x, 0));
+        shell.setLocation(new Point(m.getClientArea().x, 0));
 
         Display.getDefault().asyncExec(new Runnable() {
             public void run() {
@@ -279,6 +280,11 @@ public class GanttTester {
         bGanttPhases.setText("Gantt Phases");
         bGanttPhases.setToolTipText("Creates some GanttPhase examples");
         bGanttPhases.setSelection(true);
+
+        final Button bSpecialDateRange = new Button(gLeft, SWT.CHECK);
+        bSpecialDateRange.setText("Special Date Range");
+        bSpecialDateRange.setToolTipText("Creates one Special Date Range as Example (with random colors)");
+        bSpecialDateRange.setSelection(false);
 
         Group internal = new Group(gLeft, SWT.CHECK);
         internal.setLayout(new GridLayout(1, false));
@@ -562,6 +568,17 @@ public class GanttTester {
                     x2.add(Calendar.DATE, 30);
                     new GanttPhase(_ganttChart, x, x2, "Something Much Longer");
                 }
+                
+                if (bSpecialDateRange.getSelection()) {
+                    Calendar end = Calendar.getInstance();
+                    end.add(Calendar.DATE, 50);
+                    GanttSpecialDateRange range = new GanttSpecialDateRange(_ganttChart, Calendar.getInstance(), end);
+                    range.setFrequency(GanttSpecialDateRange.REPEAT_WEEKLY);
+                    range.addRecurDay(Calendar.WEDNESDAY);                    
+                    range.setRecurCount(50);
+                    range.setBackgroundColorTop(ColorCache.getRandomColor());
+                    range.setBackgroundColorBottom(ColorCache.getRandomColor());
+                }
 
                 for (int i = 0; i < numberEvents; i++) {
                     Calendar cal = Calendar.getInstance();
@@ -587,9 +604,9 @@ public class GanttTester {
                         Calendar plannedEnd = (Calendar) cEndDate.clone();
                         plannedEnd.add(Calendar.DATE, bRandomEventLength.getSelection() ? (r.nextInt(10) + 1) : 10);
 
-                        ganttEvent = new GanttEvent(_ganttChart, null, "Event_" + (i + 1), plannedStart, plannedEnd, cStartDate, cEndDate, 0);
+                        ganttEvent = new GanttEvent(_ganttChart, null, "Event " + (i + 1), plannedStart, plannedEnd, cStartDate, cEndDate, 0);
                     } else {
-                        ganttEvent = new GanttEvent(_ganttChart, null, "Event_" + (i + 1), cStartDate, cEndDate, 0);
+                        ganttEvent = new GanttEvent(_ganttChart, null, "Event " + (i + 1), cStartDate, cEndDate, 0);
                     }
                     
                     if (bRandomPercentCompletes.getSelection()) {

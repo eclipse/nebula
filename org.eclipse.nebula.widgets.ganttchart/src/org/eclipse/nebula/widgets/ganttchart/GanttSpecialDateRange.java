@@ -49,35 +49,35 @@ import org.eclipse.swt.graphics.Color;
  */
 public class GanttSpecialDateRange {
 
-    public static final int REPEAT_DAILY        = 1;
-    public static final int REPEAT_WEEKLY       = 2;
-    public static final int REPEAT_MONTHLY      = 3;
-    public static final int REPEAT_YEARLY       = 4;
+    public static final int REPEAT_DAILY           = 1;
+    public static final int REPEAT_WEEKLY          = 2;
+    public static final int REPEAT_MONTHLY         = 3;
+    public static final int REPEAT_YEARLY          = 4;
 
-    public static final int NO_END              = -1;
+    public static final int NO_END                 = -1;
 
     private Calendar        _start;
     private Calendar        _end;
-    private Color           _backgroundColorTop;
-    private Color           _backgroundColorBottom;
+    private Color           _backgroundColorTop    = ColorCache.getWhite();
+    private Color           _backgroundColorBottom = ColorCache.getBlack();
     private GanttChart      _parentChart;
     private GanttComposite  _parentComposite;
-    private boolean         _allowEventsOnDates = true;
+    private boolean         _allowEventsOnDates    = true;
 
-    private int             _frequency          = REPEAT_WEEKLY;
-    private int             _recurCount         = 1;
+    private int             _frequency             = REPEAT_WEEKLY;
+    private int             _recurCount            = 1;
     private List            _recurDays;
-    private int             _startHour          = 0;
-    private int             _startMinute        = 0;
-    private int             _startSecond        = 0;
-    private int             _endHour            = 23;
-    private int             _endMinute          = 59;
-    private int             _endSecond          = 59;
-    private int             _endAfter           = NO_END;
+    private int             _startHour             = 0;
+    private int             _startMinute           = 0;
+    private int             _startSecond           = 0;
+    private int             _endHour               = 23;
+    private int             _endMinute             = 59;
+    private int             _endSecond             = 59;
+    private int             _endAfter              = NO_END;
 
     private Calendar        _lastActualEndDate;
 
-    private List            _cachedRanges       = null;
+    private List            _cachedRanges          = null;
 
     GanttSpecialDateRange() {
         this(null, null, null);
@@ -523,12 +523,10 @@ public class GanttSpecialDateRange {
     }
 
     List getBlocks(Calendar start, Calendar end) {
-        if (_cachedRanges != null) {
-            return _cachedRanges;
-        }
-        
+        if (_cachedRanges != null) { return _cachedRanges; }
+
         _cachedRanges = new ArrayList();
-        
+
         Calendar cal = (Calendar) _start.clone();
 
         for (int i = 0; i < _recurCount; i++) {

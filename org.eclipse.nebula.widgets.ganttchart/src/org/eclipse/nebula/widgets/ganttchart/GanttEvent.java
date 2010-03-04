@@ -1840,7 +1840,13 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem, C
         return y != mSavedVerticalDragY;
     }
     
-    void reparentToNewGanttSection(int index, GanttSection newSection) {
+    /**
+     * Reparents this event from the current {@link GanttSection} to a new {@link GanttSection}
+     * 
+     * @param index index to put event at in new section
+     * @param newSection new section to put event in
+     */
+    public void reparentToNewGanttSection(int index, GanttSection newSection) {
         if (mGanttSection != null) {
             mGanttSection.removeGanttEvent(this);
             newSection.addGanttEvent(index, this);

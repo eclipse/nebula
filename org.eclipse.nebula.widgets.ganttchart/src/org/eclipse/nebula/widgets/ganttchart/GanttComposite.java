@@ -69,7 +69,9 @@ import org.eclipse.swt.widgets.Tracker;
 // -- BUGS
 // TODO: if planned dates are showing we need to check event visibilities differently
 // -- FEATURES
-// - Millisecond 
+// TODO: allow zoom-out for D-day charts (we need to flip it from ISettings.D_DAY to a bool as we should draw d-day headers in each respective zoom-level head instead)
+// TODO: millisecond view
+
 public final class GanttComposite extends Canvas implements MouseListener, MouseMoveListener, MouseTrackListener, KeyListener, IGanttFlags {
     private static final Cursor        CURSOR_NONE                  = CursorCache.getCursor(SWT.NONE);
     private static final Cursor        CURSOR_SIZEE                 = CursorCache.getCursor(SWT.CURSOR_SIZEE);
@@ -2709,8 +2711,12 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                 continue;
             }
 
-            gc.setForeground(range.getBackgroundColorTop());
-            gc.setBackground(range.getBackgroundColorBottom());
+            if (range.getBackgroundColorTop() != null) {
+                gc.setForeground(range.getBackgroundColorTop());
+            }
+            if (range.getBackgroundColorBottom() != null) {
+                gc.setBackground(range.getBackgroundColorBottom());
+            }
 
             int offset = 0;
             if (gs == null) {
@@ -3077,8 +3083,12 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         }
         if (ge.hasMovementConstraints()) {
             int startStart = -1, endStart = -1;
-            if (ge.getNoMoveBeforeDate() != null) startStart = getStartingXfor(ge.getNoMoveBeforeDate());
-            if (ge.getNoMoveAfterDate() != null) endStart = getXForDate(ge.getNoMoveAfterDate());
+            if (ge.getNoMoveBeforeDate() != null) {
+                startStart = getStartingXfor(ge.getNoMoveBeforeDate());
+            }
+            if (ge.getNoMoveAfterDate() != null) {
+                endStart = getStartingXfor(ge.getNoMoveAfterDate());
+            }
 
             mPaintManager.drawLockedDateRangeMarker(this, mSettings, mColorManager, ge, gc, mThreeDee, dw, yDrawPos, startStart, endStart, bounds);
         }
@@ -3477,9 +3487,6 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             GanttEvent ge1 = connection.getSource();
             GanttEvent ge2 = connection.getTarget();
 
-            // use connection color if set, otherwise use arrow color
-            gc.setForeground(connection.getColor() == null ? mArrowColor : connection.getColor());
-
             if (ge1 == null || ge2 == null) continue;
 
             if (ge1.equals(ge2)) continue;
@@ -3488,6 +3495,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
             // don't draw hidden events, nor connections to them
             if (ge1.isHidden() || ge2.isHidden()) continue;
+
+            // use connection color if set, otherwise use arrow color
+            gc.setForeground(connection.getColor() == null ? mArrowColor : connection.getColor());
 
             // same deal but with hidden layers
             if (mHiddenLayers.size() > 0) {
@@ -5558,7 +5568,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         for (int i = 0; i < mGanttSections.size(); i++) {
             GanttSection gs = (GanttSection) mGanttSections.get(i);
             
-            if (gs.getBounds().contains(event.getX(), event.getY())) {
+            // must account for scroll position as the event itself has no clue there's a scrollbar and obviously doesn't account for it
+            if (gs.getBounds().contains(event.getX(), event.getY()+mVerticalScrollPosition)) {
                 return gs;
             }
         }
@@ -6626,6 +6637,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
         GanttSection dragOverSection = getSectionForVerticalDND(ge, true);
         
+      //  System.err.println(dragOverSection);
+        
         // get surrounding events of that event
         List surrounding = getSurroundingVerticalEvents(ge, dragOverSection);
         
@@ -6649,16 +6662,11 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
         // first drag event
         GanttEvent ge = (GanttEvent) mDragEvents.get(0);
-
-        //GanttSection dragOverSection = mVerticalDragDropManager.getTargetSection();//getSectionForVerticalDND(ge, true);
-
-        // get surrounding events of that event
-        //List surrounding = getSurroundingVerticalEvents(ge, dragOverSection);
         
         GanttEvent top = mVerticalDragDropManager.getTopEvent();//(GanttEvent) surrounding.get(0);
         GanttEvent bottom = mVerticalDragDropManager.getBottomEvent();//(GanttEvent) surrounding.get(1);
         
-        //System.err.println("Top: " + top + ", Bottom: " + bottom + ", Over section " + dragOverSection);
+        //System.err.println("Top: " + top + ", Bottom: " + bottom);//, Over section " + dragOverSection);
         
         int xDrawStart = 0;
         int xDrawEnd = mBounds.width;
@@ -7791,11 +7799,15 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         }
 
         Calendar preZoom = null;
-        if (fromMouseWheel && mouseLoc != null) preZoom = getDateAt(mouseLoc.x);
+        if (fromMouseWheel && mouseLoc != null) {
+            preZoom = getDateAt(mouseLoc.x);
+        }
 
         updateZoomLevel();
 
-        if (fromMouseWheel && mSettings.zoomToMousePointerDateOnWheelZooming() && mouseLoc != null) internalSetDateAtX(mouseLoc.x, preZoom, true, false, false);
+        if (fromMouseWheel && mSettings.zoomToMousePointerDateOnWheelZooming() && mouseLoc != null) {
+            internalSetDateAtX(mouseLoc.x, preZoom, true, false, false);
+        }
 
         mZoomLevelChanged = true;
         forceFullUpdate();
