@@ -35,38 +35,38 @@ import org.eclipse.swt.graphics.Rectangle;
  */
 public class GanttSection implements IFillBackgroundColors {
 
-    private String                name;
-    private GanttComposite        parent;
-    private List                  ganttEvents;
+    private String                _name;
+    private GanttComposite        _parent;
+    private List                  _ganttEvents;
     // this list contains events that are being vertically DND'd across the section
     // and need to be rendered but should not count as actual member-events until (if) they are dropped
-    private List                  dndGanttEvents;
-    private Rectangle             bounds;
-    private Image                 nameImage;
-    private boolean               needsNameUpdate;
-    private IFillBackgroundColors fillColorManager;
+    private List                  _dndGanttEvents;
+    private Rectangle             _bounds;
+    private Image                 _nameImage;
+    private boolean               _needsNameUpdate;
+    private IFillBackgroundColors _fillColorManager;
 
-    private Color                 mSaturdayBackgroundColorTop;
-    private Color                 mSaturdayBackgroundColorBottom;
-    private Color                 mSundayBackgroundColorTop;
-    private Color                 mSundayBackgroundColorBottom;
-    private Color                 mWeekdayBackgroundColorTop;
-    private Color                 mWeekdayBackgroundColorBottom;
-    private Color                 mSelectedBackgroundColorTop;
-    private Color                 mSelectedBackgroundColorBottom;
-    private Color                 mSelectedBackgroundHeaderColorTop;
-    private Color                 mSelectedBackgroundHeaderColorBottom;
+    private Color                 _saturdayBackgroundColorTop;
+    private Color                 _saturdayBackgroundColorBottom;
+    private Color                 _sundayBackgroundColorTop;
+    private Color                 _sundayBackgroundColorBottom;
+    private Color                 _weekdayBackgroundColorTop;
+    private Color                 _weekdayBackgroundColorBottom;
+    private Color                 _selectedBackgroundColorTop;
+    private Color                 _selectedBackgroundColorBottom;
+    private Color                 _selectedBackgroundHeaderColorTop;
+    private Color                 _selectedBackgroundHeaderColorBottom;
 
     // private items
-    private Point                 mNameExtent;
+    private Point                 _nameExtent;
 
-    private int                   mTextOrientation = SWT.VERTICAL;
+    private int                   _textOrientation = SWT.VERTICAL;
 
-    private boolean               mInheritBackgroud;
+    private boolean               _inheritBackgroud;
 
     private GanttSection() {
-        this.ganttEvents = new ArrayList();
-        this.dndGanttEvents = new ArrayList();
+        this._ganttEvents = new ArrayList();
+        this._dndGanttEvents = new ArrayList();
     }
 
     /**
@@ -77,10 +77,10 @@ public class GanttSection implements IFillBackgroundColors {
      */
     public GanttSection(GanttChart parent, String name) {
         this();
-        this.name = name;
-        this.parent = parent.getGanttComposite();
-        this.parent.addSection(this);
-        this.fillColorManager = parent.getColorManager();
+        this._name = name;
+        this._parent = parent.getGanttComposite();
+        this._parent.addSection(this);
+        this._fillColorManager = parent.getColorManager();
     }
 
     /**
@@ -92,10 +92,10 @@ public class GanttSection implements IFillBackgroundColors {
      */
     public GanttSection(GanttChart parent, String name, IFillBackgroundColors fillManager) {
         this();
-        this.name = name;
-        this.parent = parent.getGanttComposite();
-        this.parent.addSection(this);
-        this.fillColorManager = fillManager;
+        this._name = name;
+        this._parent = parent.getGanttComposite();
+        this._parent.addSection(this);
+        this._fillColorManager = fillManager;
     }
 
     /**
@@ -108,14 +108,14 @@ public class GanttSection implements IFillBackgroundColors {
     }
 
     public void addGanttEvent(int index, IGanttChartItem event) {
-        if (!ganttEvents.contains(event)) {
+        if (!_ganttEvents.contains(event)) {
             if (index == -1) {
-                ganttEvents.add(event);
+                _ganttEvents.add(event);
             } else {
-                if (index > ganttEvents.size()) {
-                    index = ganttEvents.size();
+                if (index > _ganttEvents.size()) {
+                    index = _ganttEvents.size();
                 }
-                ganttEvents.add(index, event);
+                _ganttEvents.add(index, event);
             }
             if (event instanceof GanttEvent) {
                 ((GanttEvent) event).setGanttSection(this);
@@ -130,7 +130,7 @@ public class GanttSection implements IFillBackgroundColors {
      * @param event Item to remove
      */
     public void removeGanttEvent(IGanttChartItem event) {
-        ganttEvents.remove(event);
+        _ganttEvents.remove(event);
     }
 
     /**
@@ -139,7 +139,7 @@ public class GanttSection implements IFillBackgroundColors {
      * @return List of items
      */
     public List getEvents() {
-        return ganttEvents;
+        return _ganttEvents;
     }
 
     /**
@@ -148,8 +148,8 @@ public class GanttSection implements IFillBackgroundColors {
      * @param name GanttSection name
      */
     public void setName(String name) {
-        this.name = name;
-        this.needsNameUpdate = true;
+        this._name = name;
+        this._needsNameUpdate = true;
     }
 
     /**
@@ -158,7 +158,7 @@ public class GanttSection implements IFillBackgroundColors {
      * @return GanttSection name
      */
     public String getName() {
-        return name;
+        return _name;
     }
 
     /**
@@ -167,7 +167,7 @@ public class GanttSection implements IFillBackgroundColors {
      * @return Rectangle
      */
     public Rectangle getBounds() {
-        return bounds;
+        return _bounds;
     }
 
     // note to self: this does not take into account the height the name will take up
@@ -198,83 +198,83 @@ public class GanttSection implements IFillBackgroundColors {
      */
 
     public Color getSaturdayBackgroundColorBottom() {
-        return mSaturdayBackgroundColorBottom == null ? fillColorManager.getSaturdayBackgroundColorBottom() : mSaturdayBackgroundColorBottom;
+        return _saturdayBackgroundColorBottom == null ? _fillColorManager.getSaturdayBackgroundColorBottom() : _saturdayBackgroundColorBottom;
     }
 
     public Color getSaturdayBackgroundColorTop() {
-        return mSaturdayBackgroundColorTop == null ? fillColorManager.getSaturdayBackgroundColorTop() : mSaturdayBackgroundColorTop;
+        return _saturdayBackgroundColorTop == null ? _fillColorManager.getSaturdayBackgroundColorTop() : _saturdayBackgroundColorTop;
     }
 
     public Color getSundayBackgroundColorBottom() {
-        return mSundayBackgroundColorBottom == null ? fillColorManager.getSundayBackgroundColorBottom() : mSundayBackgroundColorBottom;
+        return _sundayBackgroundColorBottom == null ? _fillColorManager.getSundayBackgroundColorBottom() : _sundayBackgroundColorBottom;
     }
 
     public Color getSundayBackgroundColorTop() {
-        return mSundayBackgroundColorTop == null ? fillColorManager.getSundayBackgroundColorTop() : mSundayBackgroundColorTop;
+        return _sundayBackgroundColorTop == null ? _fillColorManager.getSundayBackgroundColorTop() : _sundayBackgroundColorTop;
     }
 
     public Color getWeekdayBackgroundColorBottom() {
-        return mWeekdayBackgroundColorBottom == null ? fillColorManager.getWeekdayBackgroundColorBottom() : mWeekdayBackgroundColorBottom;
+        return _weekdayBackgroundColorBottom == null ? _fillColorManager.getWeekdayBackgroundColorBottom() : _weekdayBackgroundColorBottom;
     }
 
     public Color getWeekdayBackgroundColorTop() {
-        return mWeekdayBackgroundColorTop == null ? fillColorManager.getWeekdayBackgroundColorTop() : mWeekdayBackgroundColorTop;
+        return _weekdayBackgroundColorTop == null ? _fillColorManager.getWeekdayBackgroundColorTop() : _weekdayBackgroundColorTop;
     }
 
     public Color getSelectedDayColorBottom() {
-        return mSelectedBackgroundColorBottom == null ? fillColorManager.getSelectedDayColorBottom() : mSelectedBackgroundColorBottom;
+        return _selectedBackgroundColorBottom == null ? _fillColorManager.getSelectedDayColorBottom() : _selectedBackgroundColorBottom;
     }
 
     public Color getSelectedDayColorTop() {
-        return mSelectedBackgroundColorTop == null ? fillColorManager.getSelectedDayColorTop() : mSelectedBackgroundColorTop;
+        return _selectedBackgroundColorTop == null ? _fillColorManager.getSelectedDayColorTop() : _selectedBackgroundColorTop;
     }
 
     public Color getSelectedDayHeaderColorBottom() {
-        return mSelectedBackgroundHeaderColorBottom == null ? fillColorManager.getSelectedDayHeaderColorBottom() : mSelectedBackgroundHeaderColorBottom;
+        return _selectedBackgroundHeaderColorBottom == null ? _fillColorManager.getSelectedDayHeaderColorBottom() : _selectedBackgroundHeaderColorBottom;
     }
 
     public Color getSelectedDayHeaderColorTop() {
-        return mSelectedBackgroundHeaderColorTop == null ? fillColorManager.getSelectedDayHeaderColorTop() : mSelectedBackgroundHeaderColorTop;
+        return _selectedBackgroundHeaderColorTop == null ? _fillColorManager.getSelectedDayHeaderColorTop() : _selectedBackgroundHeaderColorTop;
     }
 
     public void setSaturdayBackgroundColorTop(Color saturdayBackgroundColorTop) {
-        mSaturdayBackgroundColorTop = saturdayBackgroundColorTop;
+        _saturdayBackgroundColorTop = saturdayBackgroundColorTop;
     }
 
     public void setSaturdayBackgroundColorBottom(Color saturdayBackgroundColorBottom) {
-        mSaturdayBackgroundColorBottom = saturdayBackgroundColorBottom;
+        _saturdayBackgroundColorBottom = saturdayBackgroundColorBottom;
     }
 
     public void setSundayBackgroundColorTop(Color sundayBackgroundColorTop) {
-        mSundayBackgroundColorTop = sundayBackgroundColorTop;
+        _sundayBackgroundColorTop = sundayBackgroundColorTop;
     }
 
     public void setSundayBackgroundColorBottom(Color sundayBackgroundColorBottom) {
-        mSundayBackgroundColorBottom = sundayBackgroundColorBottom;
+        _sundayBackgroundColorBottom = sundayBackgroundColorBottom;
     }
 
     public void setWeekdayBackgroundColorTop(Color weekdayBackgroundColorTop) {
-        mWeekdayBackgroundColorTop = weekdayBackgroundColorTop;
+        _weekdayBackgroundColorTop = weekdayBackgroundColorTop;
     }
 
     public void setWeekdayBackgroundColorBottom(Color weekdayBackgroundColorBottom) {
-        mWeekdayBackgroundColorBottom = weekdayBackgroundColorBottom;
+        _weekdayBackgroundColorBottom = weekdayBackgroundColorBottom;
     }
 
     public void setSelectedBackgroundColorTop(Color selectedBackgroundColorTop) {
-        mSelectedBackgroundColorTop = selectedBackgroundColorTop;
+        _selectedBackgroundColorTop = selectedBackgroundColorTop;
     }
 
     public void setSelectedBackgroundColorBottom(Color selectedBackgroundColorBottom) {
-        mSelectedBackgroundColorBottom = selectedBackgroundColorBottom;
+        _selectedBackgroundColorBottom = selectedBackgroundColorBottom;
     }
 
     public void setSelectedBackgroundHeaderColorTop(Color selectedBackgroundHeaderColorTop) {
-        mSelectedBackgroundHeaderColorTop = selectedBackgroundHeaderColorTop;
+        _selectedBackgroundHeaderColorTop = selectedBackgroundHeaderColorTop;
     }
 
     public void setSelectedBackgroundHeaderColorBottom(Color selectedBackgroundHeaderColorBottom) {
-        mSelectedBackgroundHeaderColorBottom = selectedBackgroundHeaderColorBottom;
+        _selectedBackgroundHeaderColorBottom = selectedBackgroundHeaderColorBottom;
     }
 
     /**
@@ -283,7 +283,7 @@ public class GanttSection implements IFillBackgroundColors {
      * @return Text orientation.
      */
     public int getTextOrientation() {
-        return mTextOrientation;
+        return _textOrientation;
     }
 
     /**
@@ -292,7 +292,7 @@ public class GanttSection implements IFillBackgroundColors {
      * @param textOrientation SWT.VERTICAL or SWT.HORIZONTAL
      */
     public void setTextOrientation(int textOrientation) {
-        mTextOrientation = textOrientation;
+        _textOrientation = textOrientation;
     }
 
     /**
@@ -302,7 +302,7 @@ public class GanttSection implements IFillBackgroundColors {
      * @deprecated IN PROGRESS
      */
     boolean isInheritBackgroud() {
-        return mInheritBackgroud;
+        return _inheritBackgroud;
     }
 
     /**
@@ -312,7 +312,7 @@ public class GanttSection implements IFillBackgroundColors {
      * @deprecated IN PROGRESS
      */
     void setInheritBackgroud(boolean inheritBackgroud) {
-        mInheritBackgroud = inheritBackgroud;
+        _inheritBackgroud = inheritBackgroud;
     }
 
     /**
@@ -320,51 +320,51 @@ public class GanttSection implements IFillBackgroundColors {
      * probably deal with that post disposal.
      */
     public void dispose() {
-        parent.removeSection(this);
-        parent.redraw();
+        _parent.removeSection(this);
+        _parent.redraw();
     }
 
     Point getNameExtent() {
-        return mNameExtent;
+        return _nameExtent;
     }
 
     void setNameExtent(Point extent) {
-        this.mNameExtent = extent;
+        this._nameExtent = extent;
     }
 
     void setBounds(Rectangle bounds) {
-        this.bounds = bounds;
+        this._bounds = bounds;
     }
 
     Image getNameImage() {
-        return nameImage;
+        return _nameImage;
     }
 
     void setNameImage(Image nameImage) {
-        this.nameImage = nameImage;
-        this.needsNameUpdate = false;
+        this._nameImage = nameImage;
+        this._needsNameUpdate = false;
     }
 
     boolean needsNameUpdate() {
-        return needsNameUpdate;
+        return _needsNameUpdate;
     }
 
     void setNeedsNameUpdate(boolean need) {
-        needsNameUpdate = need;
+        _needsNameUpdate = need;
     }
 
     int getEventsHeight(ISettings settings) {
-        if (ganttEvents.size() == 0) return settings.getMinimumSectionHeight();
+        if (_ganttEvents.size() == 0) return settings.getMinimumSectionHeight();
 
         int height = settings.getEventsTopSpacer();
 
-        for (int i = 0; i < ganttEvents.size(); i++) {
-            IGanttChartItem event = (IGanttChartItem) ganttEvents.get(i);
+        for (int i = 0; i < _ganttEvents.size(); i++) {
+            IGanttChartItem event = (IGanttChartItem) _ganttEvents.get(i);
 
             if (!event.isAutomaticRowHeight()) height += event.getFixedRowHeight();
             else height += settings.getEventHeight();
 
-            if (i != ganttEvents.size() - 1) height += settings.getEventSpacer();
+            if (i != _ganttEvents.size() - 1) height += settings.getEventSpacer();
         }
 
         height += settings.getEventsBottomSpacer();
@@ -375,21 +375,21 @@ public class GanttSection implements IFillBackgroundColors {
     }
 
     void addDNDGanttEvent(GanttEvent ge) {
-        if (!dndGanttEvents.contains(ge)) {
-            dndGanttEvents.add(ge);
+        if (!_dndGanttEvents.contains(ge)) {
+            _dndGanttEvents.add(ge);
         }
     }
 
     void clearDNDGanttEvents() {
-        dndGanttEvents.clear();
+        _dndGanttEvents.clear();
     }
 
     List getDNDGanttEvents() {
-        return dndGanttEvents;
+        return _dndGanttEvents;
     }
 
     public String toString() {
-        return "[GanttSection: " + name + "]";
+        return "[GanttSection: " + _name + "]";
     }
     
     

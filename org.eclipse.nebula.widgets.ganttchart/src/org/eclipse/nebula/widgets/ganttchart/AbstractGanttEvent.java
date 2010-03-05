@@ -3,7 +3,7 @@ package org.eclipse.nebula.widgets.ganttchart;
 
 abstract class AbstractGanttEvent {
 
-	private int mLayer;
+	private int _layer;
 	
 	/**
 	 * Returns the layer of this event. By default all events are on layer zero.
@@ -11,11 +11,11 @@ abstract class AbstractGanttEvent {
 	 * @return Layer
 	 */
 	public int getLayer() {
-		return mLayer;
+		return _layer;
 	}
 	
 	Integer getLayerInt() {
-		return new Integer(mLayer);
+		return new Integer(_layer);
 	}
 	
 	/**
@@ -30,7 +30,7 @@ abstract class AbstractGanttEvent {
 	 * @see GanttComposite#setLayerOpacity(int, int)
 	 */
 	public void setLayer(int layer) {
-		mLayer = layer;
+		_layer = layer;
 	}
 
 	

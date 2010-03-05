@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    emil.crumhorn@gmail.com - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.nebula.widgets.ganttchart;
 
@@ -26,36 +26,36 @@ import org.eclipse.swt.widgets.Shell;
  */
 class GanttDateTip {
 
-    private static Shell shell;
-    private static int yLoc;
-    private static Label label;
+    private static Shell _shell;
+    private static int   _yLoc;
+    private static Label _label;
 
-    public static void makeDialog(IColorManager colorManager, String text, Point location, int marker) {    	    	
-    	Point loc = new Point(location.x, location.y);
-    	
-        if (shell != null && shell.isDisposed() == false) {
-        	loc = new Point(loc.x, loc.y);
+    public static void makeDialog(IColorManager colorManager, String text, Point location, int marker) {
+        Point loc = new Point(location.x, location.y);
+
+        if (_shell != null && _shell.isDisposed() == false) {
+            loc = new Point(loc.x, loc.y);
 
             // move shell to new location
-            shell.setLocation(loc.x, loc.y);
+            _shell.setLocation(loc.x, loc.y);
 
             // update text
-            if (yLoc == marker) {
-                label.setText(text);
+            if (_yLoc == marker) {
+                _label.setText(text);
                 return;
             }
 
-            shell.dispose();
+            _shell.dispose();
         }
 
-        yLoc = marker;
+        _yLoc = marker;
 
-        shell = new Shell(Display.getDefault().getActiveShell(), SWT.ON_TOP | SWT.TOOL);
-        
+        _shell = new Shell(Display.getDefault().getActiveShell(), SWT.ON_TOP | SWT.TOOL);
+
         //shell.setBackground(colorManager.getTooltipBackgroundColor());
-        shell.setLayout(new FillLayout());
-        
-        Composite comp = new Composite(shell, SWT.NONE);
+        _shell.setLayout(new FillLayout());
+
+        Composite comp = new Composite(_shell, SWT.NONE);
         comp.setBackground(colorManager.getTooltipBackgroundColor());
 
         GridLayout fl = new GridLayout();
@@ -64,27 +64,27 @@ class GanttDateTip {
         fl.marginWidth = 4;
         comp.setLayout(fl);
 
-        label = new Label(comp, SWT.LEFT);
-        label.setBackground(colorManager.getTooltipBackgroundColor());
-        label.setForeground(colorManager.getTooltipForegroundColor());
-        label.setText(text);
+        _label = new Label(comp, SWT.LEFT);
+        _label.setBackground(colorManager.getTooltipBackgroundColor());
+        _label.setForeground(colorManager.getTooltipForegroundColor());
+        _label.setText(text);
 
-        shell.pack();
+        _shell.pack();
 
         // show above code inside, automatically below otherwise
         loc = new Point(loc.x, loc.y);
 
-        shell.setLocation(loc);
-        shell.setVisible(true);
+        _shell.setLocation(loc);
+        _shell.setVisible(true);
     }
 
     public static void kill() {
-        if (shell != null && shell.isDisposed() == false) {
-            shell.dispose();
+        if (_shell != null && _shell.isDisposed() == false) {
+            _shell.dispose();
         }
     }
 
     public static boolean isActive() {
-        return (shell != null && !shell.isDisposed());
+        return (_shell != null && !_shell.isDisposed());
     }
 }

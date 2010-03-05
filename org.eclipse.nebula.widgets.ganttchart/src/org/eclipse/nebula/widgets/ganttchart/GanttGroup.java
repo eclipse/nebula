@@ -23,10 +23,10 @@ public class GanttGroup extends AbstractGanttEvent implements IGanttChartItem {
 
 	public static final int	FIXED_ROW_HEIGHT_AUTOMATIC	= -1;
 
-	private ArrayList		mEvents;
-	private int				mFixedRowHeight				= FIXED_ROW_HEIGHT_AUTOMATIC;
-	private int				mVerticalEventAlignment		= SWT.TOP;
-	private GanttChart		mChart;
+	private ArrayList		_events;
+	private int				_fixedRowHeight				= FIXED_ROW_HEIGHT_AUTOMATIC;
+	private int				_verticalEventAlignment		= SWT.TOP;
+	private GanttChart		_chart;
 
 	/**
 	 * Creates a new GanttGroup on the given GanttChart.
@@ -34,8 +34,8 @@ public class GanttGroup extends AbstractGanttEvent implements IGanttChartItem {
 	 * @param parent GanttChart parent
 	 */
 	public GanttGroup(GanttChart parent) {
-		mChart = parent;
-		mEvents = new ArrayList();
+		_chart = parent;
+		_events = new ArrayList();
 		parent.addGroup(this);
 	}
 
@@ -45,8 +45,8 @@ public class GanttGroup extends AbstractGanttEvent implements IGanttChartItem {
 	 * @param event GanttEvent to add.
 	 */
 	public void addEvent(GanttEvent event) {
-		if (!mEvents.contains(event))
-			mEvents.add(event);
+		if (!_events.contains(event))
+			_events.add(event);
 
 		event.setGanttGroup(this);
 	}
@@ -60,7 +60,7 @@ public class GanttGroup extends AbstractGanttEvent implements IGanttChartItem {
 		if (event.getGanttGroup() == this)
 			event.setGanttGroup(null);
 
-		mEvents.remove(event);
+		_events.remove(event);
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class GanttGroup extends AbstractGanttEvent implements IGanttChartItem {
 	 * @return true if the event is contained in this group.
 	 */
 	public boolean containsEvent(GanttEvent event) {
-		return mEvents.contains(event);
+		return _events.contains(event);
 	}
 
 	/**
@@ -79,7 +79,7 @@ public class GanttGroup extends AbstractGanttEvent implements IGanttChartItem {
 	 * @return List of GanttEvents.
 	 */
 	public ArrayList getEventMembers() {
-		return mEvents;
+		return _events;
 	}
 
 	/**
@@ -88,7 +88,7 @@ public class GanttGroup extends AbstractGanttEvent implements IGanttChartItem {
 	 * @return Fixed row height.
 	 */
 	public int getFixedRowHeight() {
-		return mFixedRowHeight;
+		return _fixedRowHeight;
 	}
 
 	/**
@@ -97,7 +97,7 @@ public class GanttGroup extends AbstractGanttEvent implements IGanttChartItem {
 	 * @param fixedRowHeight Row height in pixels.
 	 */
 	public void setFixedRowHeight(int fixedRowHeight) {
-		this.mFixedRowHeight = fixedRowHeight;
+		this._fixedRowHeight = fixedRowHeight;
 	}
 
 	/**
@@ -122,7 +122,7 @@ public class GanttGroup extends AbstractGanttEvent implements IGanttChartItem {
 	 * @return Vertical alignment.
 	 */
 	public int getVerticalEventAlignment() {
-		return mVerticalEventAlignment;
+		return _verticalEventAlignment;
 	}
 
 	/**
@@ -131,27 +131,27 @@ public class GanttGroup extends AbstractGanttEvent implements IGanttChartItem {
 	 * @param verticalEventAlignment Vertical alignment. Valid values are: SWT.TOP, SWT.CENTER, SWT.BOTTOM. Default is SWT.TOP.
 	 */
 	public void setVerticalEventAlignment(int verticalEventAlignment) {
-		this.mVerticalEventAlignment = verticalEventAlignment;
+		this._verticalEventAlignment = verticalEventAlignment;
 	}
 
 	/**
 	 * Disposes this event from the chart.
 	 */
 	public void dispose() {
-		mChart.removeGroup(this);
-		mChart.redraw();
+		_chart.removeGroup(this);
+		_chart.redraw();
 	}
 	
 	int getTallestEvent() {
 	    int max = 0;
-	    for (int i = 0; i < mEvents.size(); i++) {
-	        GanttEvent ge = ((GanttEvent) mEvents.get(i));
+	    for (int i = 0; i < _events.size(); i++) {
+	        GanttEvent ge = ((GanttEvent) _events.get(i));
 	        max = Math.max(ge.getHeight(), max);
 	    }
 	    return max;
 	}
 
 	public String toString() {
-		return "[GanttGroup " + mEvents.toString() + "]";
+		return "[GanttGroup " + _events.toString() + "]";
 	}
 }

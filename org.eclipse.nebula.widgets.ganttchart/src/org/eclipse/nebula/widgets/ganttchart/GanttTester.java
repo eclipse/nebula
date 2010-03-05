@@ -110,7 +110,7 @@ public class GanttTester {
 
         shell.setMaximized(true);
         // uncomment to put on right-hand-side monitor
-       // shell.setLocation(new Point(m.getClientArea().x, 0));
+        shell.setLocation(new Point(m.getClientArea().x, 0));
 
         shell.open();
         while (!shell.isDisposed()) {
@@ -273,6 +273,7 @@ public class GanttTester {
         final Button bRandomPercentCompletes = new Button(gLeft, SWT.CHECK);
         bRandomPercentCompletes.setText("Random Percent Completes");
         bRandomPercentCompletes.setToolTipText("Creates random percent completes from 0 to 100 on each event");
+        bRandomPercentCompletes.setSelection(true);
 
         /*        final Button bRandomEventHeights = new Button(gLeft, SWT.CHECK);
                 bRandomEventHeights.setText("Random Event Heights (eventHeight to 100)");
@@ -651,7 +652,6 @@ public class GanttTester {
                     } else {
                         ganttEvent = new GanttEvent(_ganttChart, null, "Event " + (i + 1), cStartDate, cEndDate, 0);
                     }
-                    //ganttEvent.setLocked(true);
 
                     if (bRandomPercentCompletes.getSelection()) {
                         ganttEvent.setPercentComplete(r.nextInt(100));

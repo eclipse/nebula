@@ -24,8 +24,8 @@ public final class ColorCache {
 	public static final RGB		BLACK	= new RGB(0, 0, 0);
 	public static final RGB		WHITE	= new RGB(255, 255, 255);
 
-	private static HashMap		mColorTable;
-	private static ColorCache	mInstance;
+	private static HashMap		_cache;
+	private static ColorCache	_instance;
 
 	/**
 	 * Disposes all colors held in the cache and colors created when class is created.
@@ -37,40 +37,40 @@ public final class ColorCache {
 	 * @see #disposeCachedColor()
 	 */
 	public static void disposeAll() {
-		mInstance.dispose();
+		_instance.dispose();
 	}
 
 	/**
 	 * Disposes the cached colors only.
 	 */
 	public static void disposeCachedColor() {
-		Iterator e = mColorTable.values().iterator();
+		Iterator e = _cache.values().iterator();
 		while (e.hasNext())
 			((Color) e.next()).dispose();
 
-		mColorTable.clear();
+		_cache.clear();
 	}
 
 	private ColorCache() {
-		if (mColorTable == null) {
-			mColorTable = new HashMap();
+		if (_cache == null) {
+			_cache = new HashMap();
 		}
 	}
 
 	private static void checkInstance() {
-		if (mInstance == null)
-			mInstance = new ColorCache();
+		if (_instance == null)
+			_instance = new ColorCache();
 	}
 
 	// see disposeAll();
 	private void dispose() {
 		checkInstance();
 
-		Iterator e = mColorTable.values().iterator();
+		Iterator e = _cache.values().iterator();
 		while (e.hasNext())
 			((Color) e.next()).dispose();
 
-		mColorTable.clear();
+		_cache.clear();
 	}
 
 	/**
@@ -101,11 +101,11 @@ public final class ColorCache {
 	 */
 	public static Color getColor(RGB rgb) {
 		checkInstance();
-		Color color = (Color) mColorTable.get(rgb);
+		Color color = (Color) _cache.get(rgb);
 
 		if (color == null) {
 			color = new Color(Display.getCurrent(), rgb);
-			mColorTable.put(rgb, color);
+			_cache.put(rgb, color);
 		}
 
 		return color;

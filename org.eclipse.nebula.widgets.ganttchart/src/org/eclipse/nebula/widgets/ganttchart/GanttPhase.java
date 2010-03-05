@@ -41,8 +41,8 @@ public class GanttPhase {
     private Rectangle      _headerBounds;
     private Rectangle      _bounds;
 
-    private int            _DDayStart;
-    private int            _DDayEnd;
+    private int            _dDayStart;
+    private int            _dDayEnd;
 
     private GanttChart     _parentChart;
     private GanttComposite _parentComposite;
@@ -250,7 +250,7 @@ public class GanttPhase {
      * @return
      */
     public int getDDayStart() {
-        return _DDayStart;
+        return _dDayStart;
     }
 
     public int getDDayRevisedStart() {
@@ -267,7 +267,7 @@ public class GanttPhase {
      * @param day
      */
     public void setDDayStart(int day) {
-        _DDayStart = day;
+        _dDayStart = day;
 
         _startDate = _parentComposite.getDDayCalendar();
         _startDate.add(Calendar.DATE, day);
@@ -275,11 +275,11 @@ public class GanttPhase {
     }
 
     public int getDDayEnd() {
-        return _DDayEnd;
+        return _dDayEnd;
     }
 
     public void setDDayEnd(int day) {
-        _DDayEnd = day;
+        _dDayEnd = day;
 
         _endDate = _parentComposite.getDDayCalendar();
         _endDate.add(Calendar.DATE, day);
@@ -297,9 +297,9 @@ public class GanttPhase {
         _daysBetweenStartAndEnd = (int) DateHelper.daysBetween(getStartDate(), getEndDate(), _parentChart.getSettings().getDefaultLocale());
 
         if (_parentComposite.getCurrentView() == ISettings.VIEW_D_DAY) {
-            _DDayStart = (int) DateHelper.daysBetween(_parentComposite.getDDayCalendar(), getStartDate(), _parentChart.getSettings().getDefaultLocale());
-            _DDayEnd = (int) DateHelper.daysBetween(_parentComposite.getDDayCalendar(), getEndDate(), _parentChart.getSettings().getDefaultLocale());
-            _DDayStart--;
+            _dDayStart = (int) DateHelper.daysBetween(_parentComposite.getDDayCalendar(), getStartDate(), _parentChart.getSettings().getDefaultLocale());
+            _dDayEnd = (int) DateHelper.daysBetween(_parentComposite.getDDayCalendar(), getEndDate(), _parentChart.getSettings().getDefaultLocale());
+            _dDayStart--;
         }
 
     }

@@ -16,42 +16,42 @@ import java.util.HashMap;
 import java.util.List;
 
 class GanttMap {
-	private HashMap	mMap;
+	private HashMap	_map;
 
 	public GanttMap() {
-		mMap = new HashMap();
+		_map = new HashMap();
 	}
 	
 	public void put(GanttEvent key, List connections) {
-		mMap.put(key, connections);
+		_map.put(key, connections);
 	}
 
 	public void put(GanttEvent value, GanttEvent key) {
-		if (mMap.containsKey(value)) {
-			List v = (List) mMap.get(value);
+		if (_map.containsKey(value)) {
+			List v = (List) _map.get(value);
 			if (!v.contains(key)) {
 				v.add(key);
 			}
 
-			mMap.put(value, v);
+			_map.put(value, v);
 		} else {
 			List v = new ArrayList();
 			v.add(key);
 
-			mMap.put(value, v);
+			_map.put(value, v);
 		}
 	}
 
 	public void remove(GanttEvent key) {
-		mMap.remove(key);
+		_map.remove(key);
 	}
 	
 	public List get(GanttEvent obj) {
-		return (List) mMap.get(obj);
+		return (List) _map.get(obj);
 	}
 
 	public void clear() {
-		mMap.clear();
+		_map.clear();
 	}
 
 }

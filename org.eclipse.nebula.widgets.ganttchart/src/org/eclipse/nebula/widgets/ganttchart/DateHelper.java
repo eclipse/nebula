@@ -20,186 +20,179 @@ import java.util.Locale;
 
 public class DateHelper {
 
-	private static final long	MILLISECONDS_IN_DAY	= 24 * 60 * 60 * 1000;
-	private static HashMap dateFormatMap;
-	
-	static {
-		dateFormatMap = new HashMap();
-	}
-	
-	public static int hoursBetween(Calendar start, Calendar end, Locale locale, boolean assumeSameDate) {
-		return minutesBetween(start.getTime(), end.getTime(), locale, assumeSameDate, false) / 60;
-	}
+    private static final long MILLISECONDS_IN_DAY = 24 * 60 * 60 * 1000;
+    private static HashMap    _dateFormatMap;
 
-	public static int hoursBetween(Date start, Date end, Locale locale, boolean assumeSameDate) {
-		return minutesBetween(start, end, locale, assumeSameDate, false) / 60;
-	}
+    static {
+        _dateFormatMap = new HashMap();
+    }
 
-	public static int minutesBetween(Date start, Date end, Locale locale, boolean assumeSameDate, boolean assumeSameHour) {
-		Calendar sDate = Calendar.getInstance(locale);
-		Calendar eDate = Calendar.getInstance(locale);
-		sDate.setTime(start);
-		eDate.setTime(end);
+    public static int hoursBetween(Calendar start, Calendar end, Locale locale, boolean assumeSameDate) {
+        return minutesBetween(start.getTime(), end.getTime(), locale, assumeSameDate, false) / 60;
+    }
 
-		if (assumeSameDate) {
-			// set same date
-			eDate.set(Calendar.YEAR, 2000);
-			sDate.set(Calendar.YEAR, 2000);
-			eDate.set(Calendar.DAY_OF_YEAR, 1);
-			sDate.set(Calendar.DAY_OF_YEAR, 1);
-		}
-		
-		if (assumeSameHour) {
-			eDate.set(Calendar.HOUR, 1);
-			sDate.set(Calendar.HOUR, 1);
-		}
+    public static int hoursBetween(Date start, Date end, Locale locale, boolean assumeSameDate) {
+        return minutesBetween(start, end, locale, assumeSameDate, false) / 60;
+    }
 
-		long diff = eDate.getTimeInMillis() - sDate.getTimeInMillis();
-		diff /= 1000;
-		diff /= 60;
-		return (int) diff;
-	}
+    public static int minutesBetween(Date start, Date end, Locale locale, boolean assumeSameDate, boolean assumeSameHour) {
+        Calendar sDate = Calendar.getInstance(locale);
+        Calendar eDate = Calendar.getInstance(locale);
+        sDate.setTime(start);
+        eDate.setTime(end);
 
-	public static long daysBetween(Calendar start, Calendar end, Locale locale) {
-		// create copies
-		GregorianCalendar startDate = new GregorianCalendar(locale);
-		GregorianCalendar endDate = new GregorianCalendar(locale);
+        if (assumeSameDate) {
+            // set same date
+            eDate.set(Calendar.YEAR, 2000);
+            sDate.set(Calendar.YEAR, 2000);
+            eDate.set(Calendar.DAY_OF_YEAR, 1);
+            sDate.set(Calendar.DAY_OF_YEAR, 1);
+        }
 
-		// switch calendars to pure Julian mode for correct day-between
-		// calculation, from the Java API:
-		// - To obtain a pure Julian calendar, set the change date to
-		// Date(Long.MAX_VALUE).
-		startDate.setGregorianChange(new Date(Long.MAX_VALUE));
-		endDate.setGregorianChange(new Date(Long.MAX_VALUE));
+        if (assumeSameHour) {
+            eDate.set(Calendar.HOUR, 1);
+            sDate.set(Calendar.HOUR, 1);
+        }
 
-		// set them
-		startDate.setTime(start.getTime());
-		endDate.setTime(end.getTime());
+        long diff = eDate.getTimeInMillis() - sDate.getTimeInMillis();
+        diff /= 1000;
+        diff /= 60;
+        return (int) diff;
+    }
 
-		// force times to be exactly the same
-		startDate.set(Calendar.HOUR_OF_DAY, 12);
-		endDate.set(Calendar.HOUR_OF_DAY, 12);
-		startDate.set(Calendar.MINUTE, 0);
-		endDate.set(Calendar.MINUTE, 0);
-		startDate.set(Calendar.SECOND, 0);
-		endDate.set(Calendar.SECOND, 0);
-		startDate.set(Calendar.MILLISECOND, 0);
-		endDate.set(Calendar.MILLISECOND, 0);
+    public static long daysBetween(Calendar start, Calendar end, Locale locale) {
+        // create copies
+        GregorianCalendar startDate = new GregorianCalendar(locale);
+        GregorianCalendar endDate = new GregorianCalendar(locale);
 
-		// now we should be able to do a "safe" millisecond/day calculation to
-		// get the number of days, note that we need to include the timezone or daylights savings will get lost!! this is a huge issue
-		long endMilli = endDate.getTimeInMillis() + endDate.getTimeZone().getOffset( endDate.getTimeInMillis() );
-		long startMilli = startDate.getTimeInMillis() + startDate.getTimeZone().getOffset( startDate.getTimeInMillis() );
-		
-		// calculate # of days, finally
-		long diff = (endMilli - startMilli) / MILLISECONDS_IN_DAY;
-		
-		return diff;
-	}
-	
-	public static long daysBetween(Date start, Date end, Locale locale) {
-		Calendar dEnd = Calendar.getInstance(locale);
-		Calendar dStart = Calendar.getInstance(locale);
-		dEnd.setTime(end);
-		dStart.setTime(start);
-		return daysBetween(dStart, dEnd, locale);
-	}
+        // switch calendars to pure Julian mode for correct day-between
+        // calculation, from the Java API:
+        // - To obtain a pure Julian calendar, set the change date to
+        // Date(Long.MAX_VALUE).
+        startDate.setGregorianChange(new Date(Long.MAX_VALUE));
+        endDate.setGregorianChange(new Date(Long.MAX_VALUE));
 
-	public static boolean isNow(Calendar cal, Locale locale, boolean minuteCheck) {
-		if (isToday(cal, locale)) {
-			Calendar today = Calendar.getInstance(locale);
+        // set them
+        startDate.setTime(start.getTime());
+        endDate.setTime(end.getTime());
 
-			if (today.get(Calendar.HOUR_OF_DAY) == cal.get(Calendar.HOUR_OF_DAY)) {
+        // force times to be exactly the same
+        startDate.set(Calendar.HOUR_OF_DAY, 12);
+        endDate.set(Calendar.HOUR_OF_DAY, 12);
+        startDate.set(Calendar.MINUTE, 0);
+        endDate.set(Calendar.MINUTE, 0);
+        startDate.set(Calendar.SECOND, 0);
+        endDate.set(Calendar.SECOND, 0);
+        startDate.set(Calendar.MILLISECOND, 0);
+        endDate.set(Calendar.MILLISECOND, 0);
 
-				if (minuteCheck) {
-					if (today.get(Calendar.MINUTE) == cal.get(Calendar.MINUTE))
-						return true;
-				} else
-					return true;
-			}
-		}
+        // now we should be able to do a "safe" millisecond/day calculation to
+        // get the number of days, note that we need to include the timezone or daylights savings will get lost!! this is a huge issue
+        long endMilli = endDate.getTimeInMillis() + endDate.getTimeZone().getOffset(endDate.getTimeInMillis());
+        long startMilli = startDate.getTimeInMillis() + startDate.getTimeZone().getOffset(startDate.getTimeInMillis());
 
-		return false;
-	}
+        // calculate # of days, finally
+        long diff = (endMilli - startMilli) / MILLISECONDS_IN_DAY;
 
-	public static boolean isToday(Date date, Locale locale) {
-		Calendar cal = Calendar.getInstance(locale);
-		cal.setTime(date);
+        return diff;
+    }
 
-		return isToday(cal, locale);
-	}
+    public static long daysBetween(Date start, Date end, Locale locale) {
+        Calendar dEnd = Calendar.getInstance(locale);
+        Calendar dStart = Calendar.getInstance(locale);
+        dEnd.setTime(end);
+        dStart.setTime(start);
+        return daysBetween(dStart, dEnd, locale);
+    }
 
-	public static boolean isToday(Calendar cal, Locale locale) {
-		Calendar today = Calendar.getInstance(locale);
+    public static boolean isNow(Calendar cal, Locale locale, boolean minuteCheck) {
+        if (isToday(cal, locale)) {
+            Calendar today = Calendar.getInstance(locale);
 
-		if (today.get(Calendar.YEAR) == cal.get(Calendar.YEAR)) {
-			if (today.get(Calendar.DAY_OF_YEAR) == cal.get(Calendar.DAY_OF_YEAR)) {
-				return true;
-			}
-		}
+            if (today.get(Calendar.HOUR_OF_DAY) == cal.get(Calendar.HOUR_OF_DAY)) {
 
-		return false;
-	}
-	
-	//private static WeakHashMap fastDateMap = new WeakHashMap(1000, 0.75f);
+                if (minuteCheck) {
+                    if (today.get(Calendar.MINUTE) == cal.get(Calendar.MINUTE)) return true;
+                } else return true;
+            }
+        }
 
-	public static String getDate(Calendar cal, String dateFormat, Locale locale) {
-		//Calendar toUse = (Calendar) cal.clone();
-		Calendar toUse = Calendar.getInstance(locale);
-		toUse.setTime(cal.getTime());
-		toUse.add(Calendar.MONTH, -1);
+        return false;
+    }
 
-/*		HashMap dMap = null;
-		if (fastDateMap.get(cal) != null) {
-			dMap = (HashMap) fastDateMap.get(cal);
-			if (dMap.get(dateFormat) != null) {
-				System.err.println("Returned old");
-				return (String) dMap.get(dateFormat);
-			}
-		}
-*/		
-		SimpleDateFormat df = null;
-		if (dateFormatMap.get(dateFormat) != null) {
-			df = (SimpleDateFormat) dateFormatMap.get(dateFormat);
-		}
-		else {
-			df = new SimpleDateFormat(dateFormat, locale);
-			dateFormatMap.put(dateFormat, df);
-		}
-		
-		df.setLenient(true);
-		//String ret = df.format(cal.getTime());
-		
-/*		// cache it
-		if (dMap == null) 
-			dMap = new HashMap();
-		
-		System.err.println("Created new " + cal.getTime());
-		
-		dMap.put(dateFormat, ret);
-		fastDateMap.put(cal, dMap);
-*/		
-		return df.format(cal.getTime());
-	}
+    public static boolean isToday(Date date, Locale locale) {
+        Calendar cal = Calendar.getInstance(locale);
+        cal.setTime(date);
 
-	public static boolean sameDate(Date date1, Date date2, Locale locale) {
-		Calendar cal1 = Calendar.getInstance(locale);
-		Calendar cal2 = Calendar.getInstance(locale);
+        return isToday(cal, locale);
+    }
 
-		cal1.setTime(date1);
-		cal2.setTime(date2);
+    public static boolean isToday(Calendar cal, Locale locale) {
+        Calendar today = Calendar.getInstance(locale);
 
-		return sameDate(cal1, cal2);
-	}
+        if (today.get(Calendar.YEAR) == cal.get(Calendar.YEAR)) {
+            if (today.get(Calendar.DAY_OF_YEAR) == cal.get(Calendar.DAY_OF_YEAR)) { return true; }
+        }
 
-	public static boolean sameDate(Calendar cal1, Calendar cal2) {
-		if (cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR)) {
-			if (cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)) {
-				return true;
-			}
-		}
+        return false;
+    }
 
-		return false;
-	}
+    //private static WeakHashMap fastDateMap = new WeakHashMap(1000, 0.75f);
+
+    public static String getDate(Calendar cal, String dateFormat, Locale locale) {
+        //Calendar toUse = (Calendar) cal.clone();
+        Calendar toUse = Calendar.getInstance(locale);
+        toUse.setTime(cal.getTime());
+        toUse.add(Calendar.MONTH, -1);
+
+        /*		HashMap dMap = null;
+        		if (fastDateMap.get(cal) != null) {
+        			dMap = (HashMap) fastDateMap.get(cal);
+        			if (dMap.get(dateFormat) != null) {
+        				System.err.println("Returned old");
+        				return (String) dMap.get(dateFormat);
+        			}
+        		}
+        */
+        SimpleDateFormat df = null;
+        if (_dateFormatMap.get(dateFormat) != null) {
+            df = (SimpleDateFormat) _dateFormatMap.get(dateFormat);
+        } else {
+            df = new SimpleDateFormat(dateFormat, locale);
+            _dateFormatMap.put(dateFormat, df);
+        }
+
+        df.setLenient(true);
+        //String ret = df.format(cal.getTime());
+
+        /*		// cache it
+        		if (dMap == null) 
+        			dMap = new HashMap();
+        		
+        		System.err.println("Created new " + cal.getTime());
+        		
+        		dMap.put(dateFormat, ret);
+        		fastDateMap.put(cal, dMap);
+        */
+        return df.format(cal.getTime());
+    }
+
+    public static boolean sameDate(Date date1, Date date2, Locale locale) {
+        Calendar cal1 = Calendar.getInstance(locale);
+        Calendar cal2 = Calendar.getInstance(locale);
+
+        cal1.setTime(date1);
+        cal2.setTime(date2);
+
+        return sameDate(cal1, cal2);
+    }
+
+    public static boolean sameDate(Calendar cal1, Calendar cal2) {
+        if (cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR)) {
+            if (cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)) { return true; }
+        }
+
+        return false;
+    }
 
 }

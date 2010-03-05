@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Shell;
 
 public class AdvancedTooltipDialog {
 
-	private static Shell shell;
+	private static Shell _shell;
 
 	public static void makeDialog(final AdvancedTooltip toolTip, IColorManager colorManager, Point location) {
 		makeDialog(toolTip, colorManager, location, null, null, null);
@@ -41,13 +41,13 @@ public class AdvancedTooltipDialog {
 
 	public static void makeDialog(final AdvancedTooltip toolTip, final IColorManager colorManager, Point location, final String titleOverride, final String contentOverride,
 			final String helpOverride) {
-		if (shell != null && !shell.isDisposed())
-			shell.dispose();
+		if (_shell != null && !_shell.isDisposed())
+			_shell.dispose();
 
-		shell = new Shell(Display.getDefault().getActiveShell(), SWT.ON_TOP | SWT.TOOL | SWT.NO_TRIM | SWT.NO_FOCUS);
-		shell.setLayout(new FillLayout());
+		_shell = new Shell(Display.getDefault().getActiveShell(), SWT.ON_TOP | SWT.TOOL | SWT.NO_TRIM | SWT.NO_FOCUS);
+		_shell.setLayout(new FillLayout());
 
-		final Composite comp = new Composite(shell, SWT.NO_BACKGROUND | SWT.DOUBLE_BUFFERED | SWT.NO_FOCUS);
+		final Composite comp = new Composite(_shell, SWT.NO_BACKGROUND | SWT.DOUBLE_BUFFERED | SWT.NO_FOCUS);
 
 		comp.addListener(SWT.MouseMove, new Listener() {
 			public void handleEvent(Event event) {
@@ -58,7 +58,7 @@ public class AdvancedTooltipDialog {
 		comp.addPaintListener(new PaintListener() {
 			
 			public void paintControl(PaintEvent e) {
-				Region region = new Region(shell.getDisplay());
+				Region region = new Region(_shell.getDisplay());
 
 				GC gc = e.gc;
 				Rectangle bounds = comp.getBounds();
@@ -200,10 +200,10 @@ public class AdvancedTooltipDialog {
 				// bug fix #240164 - Macs redraw when you set a region, guess OS X will just have
 				// square shells instead, no big deal
 				if (GanttComposite.osType != GanttComposite.OS_MAC) 
-					shell.setRegion(region);
+					_shell.setRegion(region);
 		
 				Rectangle size = region.getBounds();
-				shell.setSize(size.width, size.height);
+				_shell.setSize(size.width, size.height);
 				if (bold != null)
 					bold.dispose();
 				
@@ -224,10 +224,10 @@ public class AdvancedTooltipDialog {
 				}
 				
 				Rectangle maxBounds = active.getBounds();
-		        int shellHeight = shell.getSize().y;
-		        int shellWidth = shell.getSize().x;
+		        int shellHeight = _shell.getSize().y;
+		        int shellWidth = _shell.getSize().x;
 		        
-		        Point location = shell.getLocation();
+		        Point location = _shell.getLocation();
 		        if ((location.y + shellHeight) > maxBounds.height) {
 		            location.y = maxBounds.height-shellHeight;
 		        }
@@ -235,18 +235,18 @@ public class AdvancedTooltipDialog {
 		            location.x = totalXBoundsMonitors - shellWidth;
 		        }
 		        
-                shell.setLocation(location);
+                _shell.setLocation(location);
 		        
 			}
 
 		});
 
-		shell.pack();
+		_shell.pack();
 		
 		
-        shell.setLocation(location);
+        _shell.setLocation(location);
 		
-		shell.setVisible(true);
+		_shell.setVisible(true);
 		
 		// bug fix #240164 - for some reason the bounds fetched at the beginning are off on Macs,
 		// it seems it calls the redraw much sooner than on windows (before creating the shell, which rather
@@ -257,7 +257,7 @@ public class AdvancedTooltipDialog {
 			Display.getDefault().asyncExec(new Runnable() {
 
 				public void run() {
-					shell.redraw();
+					_shell.redraw();
 					
 				}
 				
@@ -506,12 +506,12 @@ public class AdvancedTooltipDialog {
 	}
 
 	public static void kill() {
-		if (shell != null && shell.isDisposed() == false) {
-			shell.dispose();
+		if (_shell != null && _shell.isDisposed() == false) {
+			_shell.dispose();
 		}
 	}
 
 	public static boolean isActive() {
-		return (shell != null && !shell.isDisposed());
+		return (_shell != null && !_shell.isDisposed());
 	}
 }
