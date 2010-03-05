@@ -40,6 +40,10 @@ public class ClusteredCommand extends AbstractUndoRedoCommand {
         _commands.remove(command);
     }
     
+    public int size() {
+        return _commands.size();
+    }
+    
     public void dispose() {
         for (int i = 0; i < _commands.size(); i++) {
             ((IUndoRedoCommand)_commands.get(i)).dispose();

@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.eclipse.nebula.widgets.ganttchart.dnd.VerticalDragDropManager;
 import org.eclipse.nebula.widgets.ganttchart.undoredo.GanttUndoRedoManager;
+import org.eclipse.nebula.widgets.ganttchart.undoredo.commands.ClusteredCommand;
 import org.eclipse.nebula.widgets.ganttchart.undoredo.commands.IUndoRedoCommand;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
@@ -5393,13 +5394,19 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             mVerticalDragDropManager.clear();
         }
         
+        // put all undo/redo commands into one command as any user would expect a multi-DND to undo with all events, not just one at a time
+        ClusteredCommand cc = new ClusteredCommand();
+        
         // undo/redo handling
         for (int i = 0; i < mDragEvents.size(); i++) {
             GanttEvent ge = (GanttEvent) mDragEvents.get(i);
             ge.moveFinished();
             // the event knows if it's resized or moved and will return the correct event accordingly
             IUndoRedoCommand undoCommand = ge.getPostMoveOrResizeUndoCommand();
-            _undoRedoManager.record(undoCommand);
+            cc.addCommand(undoCommand);
+        }
+        if (cc.size() > 0) {
+            _undoRedoManager.record(cc);
         }
 
         if (mDragPhase != null) {
