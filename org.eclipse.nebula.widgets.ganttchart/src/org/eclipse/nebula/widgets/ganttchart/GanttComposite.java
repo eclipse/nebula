@@ -114,7 +114,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     public static final int            OS_MAC                       = 2;
     public static final int            OS_LINUX                     = 3;
 
-    public static int                  osType                       = OS_OTHER;
+    public static int                  _osType                       = OS_OTHER;
     
     // current auto scroll direction
     private int                        _autoScrollDirection         = SWT.NULL;
@@ -368,11 +368,11 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             String osName = osProperty.toUpperCase();
 
             if (osName.indexOf("WINDOWS") > -1) {
-                osType = OS_WINDOWS;
+                _osType = OS_WINDOWS;
             } else if (osName.indexOf("MAC") > -1) {
-                osType = OS_MAC;
+                _osType = OS_MAC;
             } else if (osName.indexOf("NIX") > -1 || osName.indexOf("NUX") > -1) {
-                osType = OS_LINUX;
+                _osType = OS_LINUX;
             }
         }
     }
@@ -518,7 +518,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                 } else {
                     // Linux doesn't honor scrollwheel vs. scrollbar in the same way that OS X / Windows does
                     // so we actually need to force it manually. I have no idea why, but it works fine this way.
-                    if (osType == OS_LINUX || _settings.forceMouseWheelVerticalScroll()) {
+                    if (_osType == OS_LINUX || _settings.forceMouseWheelVerticalScroll()) {
                         vScroll(event);
                     }
                 }
@@ -1094,7 +1094,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         }
 
         updateEventVisibilities(_visibleBounds);
-
+        
         // section drawing needs special treatment as we need to give sub-bounds to the various drawing methods
         if (drawSections) {
             if (_reCalculateSectionBounds) {
@@ -1258,7 +1258,15 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
      * @param showPlanned true to show planned dates
      */
     public void setShowPlannedDates(boolean showPlanned) {
+        if (_showPlannedDates == showPlanned) {
+            return;
+        }
+        
         _showPlannedDates = showPlanned;
+        
+        // heavy as scrollbars need to update too
+        _forceScrollbarsUpdate = true;
+        flagForceFullUpdate();
         redraw();
     }
 
@@ -3493,21 +3501,31 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             GanttEvent ge1 = connection.getSource();
             GanttEvent ge2 = connection.getTarget();
 
-            if (ge1 == null || ge2 == null) continue;
+            if (ge1 == null || ge2 == null) {
+                continue;
+            }
 
-            if (ge1.equals(ge2)) continue;
+            if (ge1.equals(ge2)) {
+                continue;
+            }
 
-            if (ge1.getX() == 0 && ge2.getY() == 0) continue;
+            if (ge1.getX() == 0 && ge2.getY() == 0) {
+                continue;
+            }
 
             // don't draw hidden events, nor connections to them
-            if (ge1.isHidden() || ge2.isHidden()) continue;
+            if (ge1.isHidden() || ge2.isHidden()) {
+                continue;
+            }
 
             // use connection color if set, otherwise use arrow color
             gc.setForeground(connection.getColor() == null ? _arrowColor : connection.getColor());
 
             // same deal but with hidden layers
             if (_hiddenLayers.size() > 0) {
-                if (_hiddenLayers.contains(ge1.getLayerInt()) || _hiddenLayers.contains(ge2.getLayerInt())) continue;
+                if (_hiddenLayers.contains(ge1.getLayerInt()) || _hiddenLayers.contains(ge2.getLayerInt())) {
+                    continue;
+                }
             }
 
             boolean sourceIsOutOfBounds = ge1.getVisibility() != VISIBILITY_VISIBLE;
@@ -3515,19 +3533,29 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
             // save precious cycles by not drawing what we don't have to draw (where both events are oob in a way that it's certain no "lines" will cross our view)
             if (sourceIsOutOfBounds && targetIsOutOfBounds) {
-                if (ge1.getVisibility() == VISIBILITY_OOB_LEFT && ge2.getVisibility() == VISIBILITY_OOB_LEFT) continue;
+                if (ge1.getVisibility() == VISIBILITY_OOB_LEFT && ge2.getVisibility() == VISIBILITY_OOB_LEFT) {
+                    continue;
+                }
 
-                if (ge1.getVisibility() == VISIBILITY_OOB_RIGHT && ge2.getVisibility() == VISIBILITY_OOB_RIGHT) continue;
+                if (ge1.getVisibility() == VISIBILITY_OOB_RIGHT && ge2.getVisibility() == VISIBILITY_OOB_RIGHT) {
+                    continue;
+                }
 
-                if (ge1.getVisibility() == VISIBILITY_OOB_HEIGHT_TOP && ge2.getVisibility() == VISIBILITY_OOB_HEIGHT_TOP) continue;
+                if (ge1.getVisibility() == VISIBILITY_OOB_HEIGHT_TOP && ge2.getVisibility() == VISIBILITY_OOB_HEIGHT_TOP) {
+                    continue;
+                }
 
-                if (ge1.getVisibility() == VISIBILITY_OOB_HEIGHT_BOTTOM && ge2.getVisibility() == VISIBILITY_OOB_HEIGHT_BOTTOM) continue;
+                if (ge1.getVisibility() == VISIBILITY_OOB_HEIGHT_BOTTOM && ge2.getVisibility() == VISIBILITY_OOB_HEIGHT_BOTTOM) {
+                    continue;
+                }
             }
 
             // don't draw if we can't see it, this is rather buggy, but that's
             // stated in the feature
             if (_settings.consumeEventWhenOutOfRange()) {
-                if (ge1.getVisibility() == VISIBILITY_NOT_VISIBLE && ge2.getVisibility() == VISIBILITY_NOT_VISIBLE) continue;
+                if (ge1.getVisibility() == VISIBILITY_NOT_VISIBLE && ge2.getVisibility() == VISIBILITY_NOT_VISIBLE) {
+                    continue;
+                }
             }
 
             if (_settings.showOnlyDependenciesForSelectedItems()) {
@@ -3540,8 +3568,12 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
             if (_settings.getArrowConnectionType() != ISettings.CONNECTION_MS_PROJECT_STYLE) {
                 if (_settings.getArrowConnectionType() == ISettings.CONNECTION_BIRDS_FLIGHT_PATH) {
-                    if (ge1.getX() < ge2.getX()) gc.drawLine(ge1.getXEnd(), ge1.getBottomY(), ge2.getX(), ge2.getY());
-                    else gc.drawLine(ge1.getX(), ge1.getY(), ge2.getXEnd(), ge2.getBottomY());
+                    if (ge1.getX() < ge2.getX()) {
+                        gc.drawLine(ge1.getXEnd(), ge1.getBottomY(), ge2.getX(), ge2.getY());
+                    }
+                    else {
+                        gc.drawLine(ge1.getX(), ge1.getY(), ge2.getXEnd(), ge2.getBottomY());
+                    }
                     continue;
                 }
 
@@ -3562,9 +3594,13 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
                 boolean goingUp = false;
                 boolean goingLeft = false;
-                if (rect.y > rGe2.y) goingUp = true;
+                if (rect.y > rGe2.y) {
+                    goingUp = true;
+                }
 
-                if (rect.x > rGe2.x) goingLeft = true;
+                if (rect.x > rGe2.x) {
+                    goingLeft = true;
+                }
 
                 if (_settings.getArrowConnectionType() == ISettings.CONNECTION_ARROW_RIGHT_TO_TOP) {
 
@@ -3640,7 +3676,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                 int neg = 8;
 
                 Point xy = null;
-                boolean isLinux = (osType == OS_LINUX);
+                boolean isLinux = (_osType == OS_LINUX);
 
                 if (belowUs) {
                     gc.setForeground(connection.getColor() == null ? _arrowColor : connection.getColor());
@@ -3936,7 +3972,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
     private Point drawBend(GC gc, int style, int x, int y, boolean rounded) {
         Point xy = new Point(0, 0);
-        int bonus = (osType == OS_LINUX ? 1 : 0);
+        int bonus = (_osType == OS_LINUX ? 1 : 0);
         if (rounded) {
             switch (style) {
                 case BEND_RIGHT_UP:
@@ -4861,10 +4897,25 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             if ((fakeBounds.y + fakeBounds.height) < _visibleBounds.y) { return VISIBILITY_OOB_HEIGHT_TOP; }
         }
 
-        Calendar sCal = event.getActualStartDate();
-        Calendar eCal = event.getActualEndDate();
-        if (sCal == null) sCal = event.getRevisedStart();
-        if (eCal == null) eCal = event.getRevisedEnd();
+        Calendar sCal = null;
+        Calendar eCal = null;
+
+        // bugfix #304819 - If planned dates are showing, visibility needs to take them into account and not just the normal dates
+        // thus, the earliest start and latest end matter instead as we're showing "everything".
+        if (isShowingPlannedDates()) {
+            sCal = event.getEarliestStartDate();
+            eCal = event.getLatestEndDate();        
+        }
+        else {
+            sCal = event.getActualStartDate();
+            eCal = event.getActualEndDate();
+            if (sCal == null) {
+                sCal = event.getRevisedStart();
+            }
+            if (eCal == null) {
+                eCal = event.getRevisedEnd();
+            }            
+        }
 
         // scope checking
         if (event.isScope()) {
@@ -6851,10 +6902,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         // if the event is part of a scope, force the parent to recalculate it's size etc, thus we don't have to recalculate everything
         if (event.getScopeParent() != null) {
             updateScopeXY(event.getScopeParent());
-            /*
-             * event.getScopeParent().calculateScope(); int newStartX = getXForDate(event.getScopeParent().getEarliestScopeEvent().getActualStartDate()); int newWidth =
-             * getXLengthForEvent(event.getScopeParent()); event.getScopeParent().updateX(newStartX); event.getScopeParent().updateWidth(newWidth);
-             */}
+            // above isn't enough, also tell it to recalculate when redrawing
+            _reCalculateScopes = true;    
+        }
 
         // set new last x position to where mouse is now
         _lastX = me.x;

@@ -199,7 +199,7 @@ public class AdvancedTooltipDialog {
 				
 				// bug fix #240164 - Macs redraw when you set a region, guess OS X will just have
 				// square shells instead, no big deal
-				if (GanttComposite.osType != GanttComposite.OS_MAC) 
+				if (GanttComposite._osType != GanttComposite.OS_MAC) 
 					_shell.setRegion(region);
 		
 				Rectangle size = region.getBounds();
@@ -253,7 +253,7 @@ public class AdvancedTooltipDialog {
 		// makes sense, but it's not what we had planned)
 		// which causes things to become only drawn in a corner of the shell, thus, we force a redraw
 		// after displaying the shell, which fixes the issue as it now can fetch the right bounds
-		if (GanttComposite.osType == GanttComposite.OS_MAC) {
+		if (GanttComposite._osType == GanttComposite.OS_MAC) {
 			Display.getDefault().asyncExec(new Runnable() {
 
 				public void run() {

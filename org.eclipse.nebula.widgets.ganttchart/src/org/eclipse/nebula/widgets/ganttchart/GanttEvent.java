@@ -1640,8 +1640,12 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem, C
         percentage /= (_scopeEvents.size() > 0 ? _scopeEvents.size() : 1);
 
         // allow start/end dates to override if we have zero events
-        if (earliest == null && _startDate != null) earliest = _startDate;
-        if (latest == null && _endDate != null) latest = _endDate;
+        if (earliest == null && _startDate != null) {
+            earliest = _startDate;
+        }
+        if (latest == null && _endDate != null) {
+            latest = _endDate;
+        }
 
         setStartDate(earliest);
         setEndDate(latest);
