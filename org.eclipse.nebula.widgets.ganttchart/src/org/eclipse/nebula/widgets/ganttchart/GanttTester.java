@@ -651,7 +651,7 @@ public class GanttTester {
                     } else {
                         ganttEvent = new GanttEvent(_ganttChart, null, "Event " + (i + 1), cStartDate, cEndDate, 0);
                     }
-                    ganttEvent.setLocked(true);
+                    //ganttEvent.setLocked(true);
 
                     if (bRandomPercentCompletes.getSelection()) {
                         ganttEvent.setPercentComplete(r.nextInt(100));
