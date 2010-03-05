@@ -18,6 +18,8 @@ import java.util.Random;
 import org.eclipse.nebula.widgets.ganttchart.themes.ColorThemeGrayBlue;
 import org.eclipse.nebula.widgets.ganttchart.themes.ColorThemeSilver;
 import org.eclipse.nebula.widgets.ganttchart.themes.ColorThemeWindowsBlue;
+import org.eclipse.nebula.widgets.ganttchart.undoredo.IUndoRedoListener;
+import org.eclipse.nebula.widgets.ganttchart.undoredo.commands.IUndoRedoCommand;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -64,6 +66,11 @@ public class GanttTester {
     private Combo          _vDNDCombo;
     private Button         _bCreate;
 
+    private Button         _bUndo;
+    private Button         _bRedo;
+
+    private Listener       _undoRedoListener;
+
     /**
      * @param args
      */
@@ -103,18 +110,14 @@ public class GanttTester {
 
         shell.setMaximized(true);
         // uncomment to put on right-hand-side monitor
-        shell.setLocation(new Point(m.getClientArea().x, 0));
-
-        Display.getDefault().asyncExec(new Runnable() {
-            public void run() {
-                _ganttComposite.getVerticalBar().setPageIncrement(200);
-            }
-        });
+       // shell.setLocation(new Point(m.getClientArea().x, 0));
 
         shell.open();
         while (!shell.isDisposed()) {
             if (!display.readAndDispatch()) display.sleep();
         }
+        display.removeListener(SWT.KeyDown, _undoRedoListener);
+        
         display.dispose();
     }
 
@@ -191,13 +194,13 @@ public class GanttTester {
         selCombo.add("Single select (SWT.SINGLE)");
         selCombo.add("Multi select (SWT.MULTI)");
         selCombo.select(1);
-        
+
         _vDNDCombo = new Combo(flagComp1, SWT.READ_ONLY);
         _vDNDCombo.add("Vertical DND - Off");
         _vDNDCombo.add("Vertical DND - Any");
         _vDNDCombo.add("Vertical DND - Between Sections Only");
         _vDNDCombo.select(1);
-        
+
         final Button bIncreaseDates = new Button(gLeft, SWT.CHECK);
         bIncreaseDates.setText("Increase Dates");
         bIncreaseDates.setSelection(true);
@@ -267,7 +270,6 @@ public class GanttTester {
         bDNDLimits.setSelection(true);
         bDNDLimits.setToolTipText("Creates limits that dates cannot be resized/dragged beyond");
 
-        
         final Button bRandomPercentCompletes = new Button(gLeft, SWT.CHECK);
         bRandomPercentCompletes.setText("Random Percent Completes");
         bRandomPercentCompletes.setToolTipText("Creates random percent completes from 0 to 100 on each event");
@@ -288,11 +290,11 @@ public class GanttTester {
 
         Group internal = new Group(gLeft, SWT.CHECK);
         internal.setLayout(new GridLayout(1, false));
-        
+
         final Button bRandomRowHeights = new Button(internal, SWT.CHECK);
         bRandomRowHeights.setText("Random Row Heights (rowHeight to 100)");
         bRandomRowHeights.setToolTipText("Creates random row heights for each event between the range of [defaultEventHeight] to 100");
-        
+
         final Button bRandomEventVLoc = new Button(internal, SWT.CHECK);
         bRandomEventVLoc.setText("Random Event Vertical Location");
         bRandomEventVLoc.setToolTipText("Creates random location for each event one of (SWT.TOP, SWT.CENTER, SWT.BOTTOM)");
@@ -408,11 +410,29 @@ public class GanttTester {
             }
 
         });
-
+        
+        _undoRedoListener = new Listener() {
+            public void handleEvent(Event event) {
+                if ((event.stateMask & SWT.MOD1) != 0 && (event.keyCode == 'z' || event.keyCode == 'Z')) {
+                    _ganttComposite.getUndoRedoManager().undo();
+                }
+                if ((event.stateMask & SWT.MOD1) != 0 && (event.keyCode == 'y' || event.keyCode == 'Y')) {
+                    _ganttComposite.getUndoRedoManager().redo();
+                }
+            }            
+        };
+        
+        Display.getDefault().addFilter(SWT.KeyDown, _undoRedoListener);
+        
         _bCreate.addSelectionListener(new SelectionAdapter() {
 
             public void widgetSelected(SelectionEvent e) {
                 long time1 = System.currentTimeMillis();
+                
+                _ganttComposite.getVerticalBar().setPageIncrement(200);
+
+
+                _ganttComposite.getUndoRedoManager().clear();
 
                 int numberEvents = 0;
                 try {
@@ -466,6 +486,29 @@ public class GanttTester {
 
                 _ganttChart = new GanttChart(_vfChart, flags, toUse, color);
                 _ganttComposite = _ganttChart.getGanttComposite();
+
+                _ganttComposite.getUndoRedoManager().addUndoRedoListener(new IUndoRedoListener() {
+
+                    public void canRedoChanged(boolean canRedo) {
+                        _bRedo.setEnabled(canRedo);
+                    }
+
+                    public void canUndoChanged(boolean canUndo) {
+                        _bUndo.setEnabled(canUndo);
+                    }
+
+                    public void undoableCommandAdded(IUndoRedoCommand command) {
+
+                    }
+
+                    public void commandRedone(IUndoRedoCommand command) {
+                    }
+
+                    public void commandUndone(IUndoRedoCommand command) {
+                    }
+
+                });
+
                 _vfChart.setContent(_ganttChart);
                 _ganttChart.addGanttEventListener(new IGanttEventListener() {
 
@@ -568,13 +611,13 @@ public class GanttTester {
                     x2.add(Calendar.DATE, 30);
                     new GanttPhase(_ganttChart, x, x2, "Something Much Longer");
                 }
-                
+
                 if (bSpecialDateRange.getSelection()) {
                     Calendar end = Calendar.getInstance();
                     end.add(Calendar.DATE, 50);
                     GanttSpecialDateRange range = new GanttSpecialDateRange(_ganttChart, Calendar.getInstance(), end);
                     range.setFrequency(GanttSpecialDateRange.REPEAT_WEEKLY);
-                    range.addRecurDay(Calendar.WEDNESDAY);                    
+                    range.addRecurDay(Calendar.WEDNESDAY);
                     range.setRecurCount(50);
                     range.setBackgroundColorTop(ColorCache.getRandomColor());
                     range.setBackgroundColorBottom(ColorCache.getRandomColor());
@@ -608,7 +651,8 @@ public class GanttTester {
                     } else {
                         ganttEvent = new GanttEvent(_ganttChart, null, "Event " + (i + 1), cStartDate, cEndDate, 0);
                     }
-                    
+                    ganttEvent.setLocked(true);
+
                     if (bRandomPercentCompletes.getSelection()) {
                         ganttEvent.setPercentComplete(r.nextInt(100));
                     }
@@ -779,10 +823,10 @@ public class GanttTester {
             case 2:
                 return IVerticalDragModes.CROSS_SECTION_VERTICAL_DRAG;
         }
-        
+
         return IVerticalDragModes.NO_VERTICAL_DRAG;
     }
-    
+
     private Composite createBottom(Composite parent) {
         final ScrolledComposite sc = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
         sc.setExpandHorizontal(true);
@@ -847,13 +891,27 @@ public class GanttTester {
         bSetDate.setText("Set Date Randomly (+-10)");
         bSetDate.setToolTipText("Sets the date randomly to a date +-10 days from the leftmost date of the chart");
 
-        Button bUndo = new Button(comp, SWT.PUSH);
-        bUndo.setText("Undo");
-        bUndo.setEnabled(false);
+        _bUndo = new Button(comp, SWT.PUSH);
+        _bUndo.setText("Undo (CTRL+z)");
+        _bUndo.setEnabled(false);
+        _bUndo.addListener(SWT.Selection, new Listener() {
 
-        Button bRedo = new Button(comp, SWT.PUSH);
-        bRedo.setText("Redo");
-        bRedo.setEnabled(false);
+            public void handleEvent(Event event) {
+                _ganttComposite.getUndoRedoManager().undo();
+            }
+
+        });
+
+        _bRedo = new Button(comp, SWT.PUSH);
+        _bRedo.setText("Redo (CTRL+y)");
+        _bRedo.setEnabled(false);
+        _bRedo.addListener(SWT.Selection, new Listener() {
+
+            public void handleEvent(Event event) {
+                _ganttComposite.getUndoRedoManager().redo();
+            }
+
+        });
 
         bMoveEventsLeft.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {

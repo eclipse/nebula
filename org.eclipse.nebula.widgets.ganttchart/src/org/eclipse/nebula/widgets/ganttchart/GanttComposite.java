@@ -24,6 +24,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.eclipse.nebula.widgets.ganttchart.dnd.VerticalDragDropManager;
+import org.eclipse.nebula.widgets.ganttchart.undoredo.GanttUndoRedoManager;
+import org.eclipse.nebula.widgets.ganttchart.undoredo.commands.IUndoRedoCommand;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -71,7 +73,6 @@ import org.eclipse.swt.widgets.Tracker;
 // -- FEATURES
 // TODO: allow zoom-out for D-day charts (we need to flip it from ISettings.D_DAY to a bool as we should draw d-day headers in each respective zoom-level head instead)
 // TODO: millisecond view
-
 public final class GanttComposite extends Canvas implements MouseListener, MouseMoveListener, MouseTrackListener, KeyListener, IGanttFlags {
     private static final Cursor        CURSOR_NONE                  = CursorCache.getCursor(SWT.NONE);
     private static final Cursor        CURSOR_SIZEE                 = CursorCache.getCursor(SWT.CURSOR_SIZEE);
@@ -100,9 +101,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     private static final int           VISIBILITY_OOB_HEIGHT_BOTTOM = 6;
 
     // resize info, internal
-    private static final int           TYPE_RESIZE_LEFT             = 1;
-    private static final int           TYPE_RESIZE_RIGHT            = 2;
-    private static final int           TYPE_MOVE                    = 3;
+    public static final int            TYPE_RESIZE_LEFT             = 1;
+    public static final int            TYPE_RESIZE_RIGHT            = 2;
+    public static final int            TYPE_MOVE                    = 3;
 
     private static final int           TIMER_INTERVAL               = 25;
 
@@ -358,8 +359,10 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
     // the total of all non-hidden events that are GanttEvents 
     private int                        mTotalVisibleGanttEvents;
-    
+
     private VerticalDragDropManager    mVerticalDragDropManager;
+
+    private GanttUndoRedoManager       _undoRedoManager;
 
     static {
         String osProperty = System.getProperty("os.name");
@@ -461,7 +464,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         mDrawVerticalLines = mSettings.drawVerticalLines();
 
         mVerticalDragDropManager = new VerticalDragDropManager();
-        
+        _undoRedoManager = new GanttUndoRedoManager(this, GanttUndoRedoManager.DEFAULT_STACK_SIZE);
+
         updateZoomLevel();
 
         if (mCurrentView == ISettings.VIEW_D_DAY) {
@@ -959,7 +963,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         		}*/
     }
 
-    private GanttEvent _getTopEvent() {
+  /*  private GanttEvent _getTopEvent() {
         for (int i = 0; i < mGanttEvents.size(); i++) {
             GanttEvent ge = (GanttEvent) mGanttEvents.get(i);
             if (ge.isBoundsSet() && ge.getY() - mVerticalScrollPosition >= getHeaderHeight() - mSettings.getEventsTopSpacer()) { return ge; }
@@ -976,7 +980,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
         return null;
     }
-
+*/
     /**
      * Returns the topmost visible event in the current view of the chart.
      * 
@@ -1151,7 +1155,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             // a connection to a group/event that hasn't been drawn yet, it would draw an arrow into space..
             for (int i = 0; i < mGanttSections.size(); i++) {
                 GanttSection gs = (GanttSection) mGanttSections.get(i);
-                mBottomMostY = Math.max(gs.getBounds().y + gs.getBounds().height, mBottomMostY);                
+                mBottomMostY = Math.max(gs.getBounds().y + gs.getBounds().height, mBottomMostY);
             }
 
             // if we zoom in / out in the middle of a scroll we need to add on where we are to the bottom most y
@@ -1580,9 +1584,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
     // calculates all gantt section bounds
     private void calculateSectionBounds(GC gc, Rectangle bounds) {
-        int lineLoc = getHeaderHeight() == 0 ? bounds.y : (bounds.y + getHeaderHeight());        
+        int lineLoc = getHeaderHeight() == 0 ? bounds.y : (bounds.y + getHeaderHeight());
         int yStart = lineLoc;
-        
+
         for (int i = 0; i < mGanttSections.size(); i++) {
             GanttSection gs = (GanttSection) mGanttSections.get(i);
 
@@ -1667,8 +1671,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         if (gs == null) {
             offset = mVerticalScrollPosition;
             if (offset > getHeaderHeight()) offset = getHeaderHeight();
-        }
-        else {
+        } else {
             offset = mVerticalScrollPosition;
         }
 
@@ -1846,7 +1849,15 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         // top corner
         gc.setForeground(mColorManager.getNonActiveSessionBarColorLeft());
         gc.setBackground(mColorManager.getNonActiveSessionBarColorRight());
-        gc.fillGradientRectangle(x, 0, xMax + 1, mSettings.drawGanttSectionBarToBottom() ? mBounds.y + mBounds.height : lineLoc, false);
+        
+        int bottomPos = mSettings.drawGanttSectionBarToBottom() ? mBounds.y + mBounds.height : lineLoc;
+        // if we're only drawing a corner, do not draw to the bottom regardless of settings or we'll paint over the text and section markers etc.
+        // this fix to bugzilla #304804 - Thanks Wim!
+        if (drawCornerOnly) {
+            bottomPos = lineLoc;
+        }
+        
+        gc.fillGradientRectangle(x, 0, xMax + 1, bottomPos, false);
 
         gc.setForeground(mColorManager.getTopHorizontalLinesColor());
         // vertical
@@ -1984,11 +1995,11 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                     usedGroups.add(ge.getGanttGroup());
                 }
             }
-            
+
             if (ge.isAutomaticRowHeight()) {
                 yExtra += (mEventSpacer / 2);
             }
-            
+
             // top line. we don't need to check for fixed row heights as it'll always be correct at the top
             gc.drawLine(bounds.x, ge.getHorizontalLineBottomY() + yExtra, bounds.x + bounds.width, ge.getHorizontalLineBottomY() + yExtra);
 
@@ -2724,8 +2735,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                 if (offset > getHeaderHeight()) {
                     offset = getHeaderHeight();
                 }
-            }
-            else {
+            } else {
                 offset = mVerticalScrollPosition;
             }
 
@@ -2816,8 +2826,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                 if (offset > getHeaderHeight()) {
                     offset = getHeaderHeight();
                 }
-            }
-            else {
+            } else {
                 offset = mVerticalScrollPosition;
             }
 
@@ -3140,7 +3149,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
         int yStart = bounds.y + mSettings.getEventsTopSpacer();// - mVerticalScrollPosition;
         //System.err.println(yStart);
-        
+
         HashSet allEventsInGroups = new HashSet();
         for (int i = 0; i < mGanttGroups.size(); i++) {
             allEventsInGroups.addAll(((GanttGroup) mGanttGroups.get(i)).getEventMembers());
@@ -3295,8 +3304,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             }
 
             mBottomMostY = Math.max(mBottomMostY, yStart + mEventHeight);
-            
-           
+
         }
 
         // take off the last iteration, easier here than an if check for each iteration
@@ -4081,27 +4089,25 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
      */
     // Thanks Wim!
     public void jumpToLatestEvent() {
-/*        Calendar cal = Calendar.getInstance(mDefaultLocale);
-        GanttEvent latest = getEvent(false, false);
-        if (latest == null) return;
+        /*        Calendar cal = Calendar.getInstance(mDefaultLocale);
+                GanttEvent latest = getEvent(false, false);
+                if (latest == null) return;
 
-        flagForceFullUpdate();
-        cal.setTime(latest.getActualStartDate().getTime());
+                flagForceFullUpdate();
+                cal.setTime(latest.getActualStartDate().getTime());
 
-        if (mCurrentView == ISettings.VIEW_DAY) {
-            internalSetDate(cal, SWT.LEFT, true, true);
-        } else {
-            setDate(cal, false);
-        }*/
+                if (mCurrentView == ISettings.VIEW_DAY) {
+                    internalSetDate(cal, SWT.LEFT, true, true);
+                } else {
+                    setDate(cal, false);
+                }*/
         jumpToEvent(false);
     }
-    
+
     private void jumpToEvent(boolean earliestEvent) {
         Calendar cal = Calendar.getInstance(mDefaultLocale);
         Date earliest = getEventDate(earliestEvent);
-        if (earliest == null) {
-            return;
-        }
+        if (earliest == null) { return; }
 
         flagForceFullUpdate();
         cal.setTime(earliest);
@@ -4112,7 +4118,6 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         } else {
             setDate(cal, false);
         }
-        
     }
 
     /**
@@ -5365,10 +5370,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                     ((IGanttEventListener) mEventListeners.get(i)).eventsMoveFinished(mDragEvents, event);
                 }
             }
-
-            for (int i = 0; i < mDragEvents.size(); i++) {
-                ((GanttEvent) mDragEvents.get(i)).moveFinished();
-            }
+           
         }
 
         // vertical dragging "end"
@@ -5382,13 +5384,22 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             // dragging is done
             mFreeFloatDragging = false;
             mVerticalDraggingDirection = SWT.NONE;
-         
+
             // we now need to [potentially] re-align the vertical event so it's not offset by some pixels 
             // this deals with reordering events etc after a DND
             handlePostVerticalDragDrop();
-            
+
             // done with it, clear it
             mVerticalDragDropManager.clear();
+        }
+        
+        // undo/redo handling
+        for (int i = 0; i < mDragEvents.size(); i++) {
+            GanttEvent ge = (GanttEvent) mDragEvents.get(i);
+            ge.moveFinished();
+            // the event knows if it's resized or moved and will return the correct event accordingly
+            IUndoRedoCommand undoCommand = ge.getPostMoveOrResizeUndoCommand();
+            _undoRedoManager.record(undoCommand);
         }
 
         if (mDragPhase != null) {
@@ -5437,14 +5448,15 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     }
 
     /**
-     * This method deals with moving events around so that vertical gaps are filled where they left holes after a vertical drag/drop
+     * This method deals with moving events around so that vertical gaps are filled where they left holes after a
+     * vertical drag/drop
      */
     private void handlePostVerticalDragDrop() {
         if (mDragEvents.size() == 0) {
             redraw();
             return;
-        }                
-        
+        }
+
         int vDragMode = mSettings.getVerticalEventDragging();
 
         // loop all dragged events
@@ -5454,7 +5466,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             GanttEvent top = mVerticalDragDropManager.getTopEvent();
             GanttEvent bottom = mVerticalDragDropManager.getBottomEvent();
             GanttSection targetSection = mVerticalDragDropManager.getTargetSection();
-            
+
             //System.err.println(ge + " is getting retargeted from " + ge.getGanttSection() + " to " + targetSection + " between " + top + " and " + bottom);
 
             // only allow DND across sections?
@@ -5462,25 +5474,24 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                 ge.undoVerticalDragging();
                 continue;
             }
-            
+
             // notify listeners
             if (ge.getGanttSection() != targetSection && hasGanttSections()) {
                 for (int x = 0; x < mEventListeners.size(); x++) {
-                    ((IGanttEventListener)mEventListeners.get(x)).eventMovedToNewSection(ge, ge.getGanttSection(), targetSection);
+                    ((IGanttEventListener) mEventListeners.get(x)).eventMovedToNewSection(ge, ge.getGanttSection(), targetSection);
+                }
+            } else {
+                for (int x = 0; x < mEventListeners.size(); x++) {
+                    ((IGanttEventListener) mEventListeners.get(x)).eventReordered(ge);
                 }
             }
-            else {
-                for (int x = 0; x < mEventListeners.size(); x++) {
-                    ((IGanttEventListener)mEventListeners.get(x)).eventReordered(ge);
-                }                
-            }
-            
+
             if (top == null && bottom == null) {
                 // it'll be alone in a section
                 if (targetSection != null) {
-                    ge.reparentToNewGanttSection(0, targetSection);                    
+                    ge.reparentToNewGanttSection(0, targetSection);
                 }
-                
+
                 continue;
             }
 
@@ -5505,6 +5516,10 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             } else {
                 GanttSection fromSection = ge.getGanttSection();
                 //List fromEvents = fromSection.getEvents();
+                if (targetSection == null) {
+                    // TODO: This seems to happen when user drops event on border between two, uncomment line below and do a drop on border, see if we can handle differently
+                    targetSection = fromSection;
+                }
                 List toEvents = targetSection.getEvents();
 
                 if (top == null) {
@@ -5513,7 +5528,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                 if (bottom == null) {
                     index = toEvents.size();
                 }
-                
+
                 if (top != null && bottom != null) {
                     index = toEvents.indexOf(top);
                 }
@@ -5530,20 +5545,20 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                         index++;
                     }
                 }
-                
+
                 // moved down from one section to another, push it down (unless at the top of the new section, same reasoning as before)
                 if (!ge.wasVerticallyMovedUp() && ge.getGanttSection() != targetSection) {
                     if (top != null) {
                         index++;
-                    }               
+                    }
                 }
-                                           
-                if (index < 0) { 
+
+                if (index < 0) {
                     index = 0;
                 }
-                
+
                 //System.err.println("Index " + index);
-                
+
                 fromSection.removeGanttEvent(ge);
                 targetSection.addGanttEvent(index, ge);
             }
@@ -5552,71 +5567,67 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         // forces vertical re-calculation            
         heavyRedraw();
     }
-    
+
     /**
      * Returns a section that corresponds to where the given event is currently hovering over
      * 
      * @param event Event to check
-     * @param accountForVerticalDragDirection whether to account for if user is dragging up or down when returning section, if user is between two sections this may play a part
+     * @param accountForVerticalDragDirection whether to account for if user is dragging up or down when returning
+     *        section, if user is between two sections this may play a part
      * @return Section it is over or null if none
      */
     private GanttSection getSectionForVerticalDND(GanttEvent event, boolean accountForVerticalDragDirection) {
-        if (!hasGanttSections()) {
-            return null;
-        }
-        
+        if (!hasGanttSections()) { return null; }
+
         for (int i = 0; i < mGanttSections.size(); i++) {
             GanttSection gs = (GanttSection) mGanttSections.get(i);
-            
+
             // must account for scroll position as the event itself has no clue there's a scrollbar and obviously doesn't account for it
-            if (gs.getBounds().contains(event.getX(), event.getY()+mVerticalScrollPosition)) {
-                return gs;
-            }
+            if (gs.getBounds().contains(event.getX(), event.getY() + mVerticalScrollPosition)) { return gs; }
         }
-        
+
         // if we get here, we had a null hit, which means we might be between two sections, make it easy, check if we're oob first
         if (event.getY() < getHeaderHeight()) {
             // we could return null but that's not a good idea, rather, lets tell the target it's still in the same section
             return event.getGanttSection();
         }
-        
+
         // ok, we're not oob at the top, so we're probably between two, easy check
         for (int i = 0; i < mGanttSections.size(); i++) {
             GanttSection gs = (GanttSection) mGanttSections.get(i);
             GanttSection next = null;
-            if (i != mGanttSections.size()-1) {
-                next = (GanttSection) mGanttSections.get(i+1);
-                
+            if (i != mGanttSections.size() - 1) {
+                next = (GanttSection) mGanttSections.get(i + 1);
+
                 if (next != null) {
                     if (event.getY() > (gs.getBounds().y + gs.getBounds().height) && event.getY() < next.getBounds().y) {
                         if (accountForVerticalDragDirection) {
                             if (mVerticalDraggingDirection == SWT.UP) {
                                 return gs;
-                            }
-                            else {
+                            } else {
                                 return next;
                             }
-                        }
-                        else {
+                        } else {
                             return gs;
                         }
                     }
                 }
             }
         }
-                
+
         return null;
     }
-    
+
     /**
-     * Returns a list of all surrounding vertical events to a given event. If a GanttSection is given, only the events in that section will be used in calculating.
+     * Returns a list of all surrounding vertical events to a given event. If a GanttSection is given, only the events
+     * in that section will be used in calculating.
      * 
      * @param event Event to get surrounding events for
-     * @param section GanttSection optional
+     * @param section GanttSection optional (pass null for using all events)
      * @return 2-size array with entry 0 being the top event and entry 1 being the bottom event. Any or all can be null.
      */
     private List getSurroundingVerticalEvents(GanttEvent event, GanttSection section) {
-        
+
         final List allEvents = section == null ? mGanttEvents : section.getEvents();
 
         List ret = new ArrayList();
@@ -5627,7 +5638,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             ret.add(null);
             return ret;
         }
-        
+
         List sorted = new ArrayList();
         for (int i = 0; i < allEvents.size(); i++) {
             IGanttChartItem ge = (IGanttChartItem) allEvents.get(i);
@@ -5656,32 +5667,31 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
         GanttEvent nearestUp = null;
         GanttEvent nearestDown = null;
-        
+
         for (int i = 0; i < sorted.size(); i++) {
             GanttEvent cur = (GanttEvent) sorted.get(i);
             //if (i == sorted.size() - 1) {
-              //  break;
+            //  break;
             //}
             GanttEvent next = null;
-            if (i < sorted.size()-1) {
+            if (i < sorted.size() - 1) {
                 next = (GanttEvent) sorted.get(i + 1);
             }
             //System.err.println("Next: " + next + " " + event.getY());
-/*            if (next != null) {
-                System.err.println(cur + " || - if ("+event.getY()+ " < " + cur.getY()+" && " + next.getY() + " > " + event.getY() + ")");
-            }
-            else {
-                System.err.println(cur + " || - if ("+event.getY()+ " < " + cur.getY()+")");
-            }
-*/
+            /*            if (next != null) {
+                            System.err.println(cur + " || - if ("+event.getY()+ " < " + cur.getY()+" && " + next.getY() + " > " + event.getY() + ")");
+                        }
+                        else {
+                            System.err.println(cur + " || - if ("+event.getY()+ " < " + cur.getY()+")");
+                        }
+            */
             if (event.getY() < cur.getY() && (next == null || (next != null && next.getY() > event.getY()))) {
                 if (nearestDown != null) {
                     // if it's closer to us than the last one we registered, use it, otherwise ignore it
                     if (cur.getY() < nearestDown.getY()) {
                         nearestDown = cur;
                     }
-                }                
-                else {
+                } else {
                     nearestDown = cur;
                 }
 
@@ -5719,45 +5729,31 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             if (section != null) {
                 nearestUp = null;
                 nearestDown = (GanttEvent) allEvents.get(0);
-            }
-            else {
+            } else {
                 nearestUp = null;
             }
         }
         if ((event.getY() + event.getHeight()) > botMostY) {
             if (section != null) {
-                nearestUp = (GanttEvent) allEvents.get(allEvents.size()-1);
+                nearestUp = (GanttEvent) allEvents.get(allEvents.size() - 1);
                 nearestDown = null;
-            }
-            else {
+            } else {
                 nearestDown = null;
             }
         }
-        
-/*        if (section != null) {
-            if (nearestDown == null) {
-                nearestDown = (GanttEvent) allEvents.get(allEvents.size()-1);
-            }
-        }
-*/
+
+        /*        if (section != null) {
+                    if (nearestDown == null) {
+                        nearestDown = (GanttEvent) allEvents.get(allEvents.size()-1);
+                    }
+                }
+        */
         //        System.err.println("Up: " + nearestUp);
         //        System.err.println("Down: " + nearestDown);
-
         ret.add(nearestUp);
         ret.add(nearestDown);
-                
-        return ret;
-    }
 
-    /**
-     * Returns a list of surrounding vertical events to the given event.
-     * 
-     * @param event Event to get surrounding vertical events
-     * @return List of events where entry #1 is the up-surrounding event and #2 is the below-surrounding event. Any of
-     *         these may be null if there are no upper or lower events (dragged to top/bottom).
-     */
-    private List getSurroundingVerticalEvents(GanttEvent event) {
-        return getSurroundingVerticalEvents(event, null); 
+        return ret;
     }
 
     public void keyPressed(KeyEvent e) {
@@ -5789,8 +5785,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             killDialogs();
             if (mFreeFloatDragging) {
                 heavyRedraw();
-            }
-            else {
+            } else {
                 redraw();
             }
             setCursor(CURSOR_NONE);
@@ -5835,7 +5830,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         this.setCursor(CURSOR_NONE);
         mLastX = 0;
         mCursor = SWT.NONE;
-        killDialogs();        
+        killDialogs();
     }
 
     public void mouseMove(final MouseEvent me) {
@@ -5863,13 +5858,13 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             if ((mDragging || mResizing) && mSettings.enableAutoScroll()) {
                 if (me.x < 0 || me.x > mBounds.width) {
                     doAutoScroll(me);
-                }                
+                }
                 if (mFreeFloatDragging) {
                     if (me.y > mBounds.height || me.y < 0) {
                         doAutoScroll(me);
                     }
                 }
-            }            
+            }
 
             // handle cross-section DND's, events need to be temporarily added to whatever
             // section they are being dragged over or they will not be rendered.
@@ -6222,16 +6217,13 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         } else {
             if (mFreeFloatDragging) {
                 if (event.y < 0) {
-                    doAutoScroll(DIRECTION_UP);   
-                }
-                else if (event.y > mBounds.height) {
+                    doAutoScroll(DIRECTION_UP);
+                } else if (event.y > mBounds.height) {
                     doAutoScroll(DIRECTION_DOWN);
-                }
-                else {
+                } else {
                     endAutoScroll();
                 }
-            }
-            else {
+            } else {
                 endAutoScroll();
             }
         }
@@ -6251,8 +6243,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                     if (mAutoScrollDirection == DIRECTION_LEFT) {
                         if (mCurrentView == ISettings.VIEW_DAY) {
                             prevHour();
-                        }
-                        else {
+                        } else {
                             prevDay();
                         }
 
@@ -6266,8 +6257,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                     if (mAutoScrollDirection == DIRECTION_RIGHT) {
                         if (mCurrentView == ISettings.VIEW_DAY) {
                             nextHour();
-                        }
-                        else {
+                        } else {
                             nextDay();
                         }
 
@@ -6275,30 +6265,28 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                     }
                 }
             };
-        }
-        else if (direction == DIRECTION_DOWN) {
+        } else if (direction == DIRECTION_DOWN) {
             timer = new Runnable() {
                 public void run() {
                     if (mAutoScrollDirection == DIRECTION_DOWN) {
-                        mVerticalScrollBar.setSelection(mVerticalScrollBar.getSelection()+10);
+                        mVerticalScrollBar.setSelection(mVerticalScrollBar.getSelection() + 10);
                         vScroll(null);
                         display.timerExec(TIMER_INTERVAL, this);
                     }
-                }                
+                }
             };
-        }
-        else if (direction == DIRECTION_UP) {
+        } else if (direction == DIRECTION_UP) {
             timer = new Runnable() {
                 public void run() {
                     if (mAutoScrollDirection == DIRECTION_UP) {
-                        mVerticalScrollBar.setSelection(mVerticalScrollBar.getSelection()-10);
+                        mVerticalScrollBar.setSelection(mVerticalScrollBar.getSelection() - 10);
                         vScroll(null);
                         display.timerExec(TIMER_INTERVAL, this);
                     }
-                }                
+                }
             };
         }
-        
+
         if (timer != null) {
             mAutoScrollDirection = direction;
             display.timerExec(TIMER_INTERVAL, timer);
@@ -6621,13 +6609,13 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             }
         }
     }
-    
+
     /**
      * Calculates where a vertically DND'd event will end up if dropped
      */
     private void calculateVerticalInsertLocations() {
         mVerticalDragDropManager.clear();
-        
+
         if (!mFreeFloatDragging) { return; }
 
         if (mDragEvents.isEmpty()) { return; }
@@ -6636,15 +6624,15 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         GanttEvent ge = (GanttEvent) mDragEvents.get(0);
 
         GanttSection dragOverSection = getSectionForVerticalDND(ge, true);
-        
-      //  System.err.println(dragOverSection);
-        
+
+        //  System.err.println(dragOverSection);
+
         // get surrounding events of that event
         List surrounding = getSurroundingVerticalEvents(ge, dragOverSection);
-        
+
         GanttEvent top = (GanttEvent) surrounding.get(0);
         GanttEvent bottom = (GanttEvent) surrounding.get(1);
-        
+
         mVerticalDragDropManager.setTopEvent(top);
         mVerticalDragDropManager.setBottomEvent(bottom);
         mVerticalDragDropManager.setTargetSection(dragOverSection);
@@ -6662,19 +6650,19 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
         // first drag event
         GanttEvent ge = (GanttEvent) mDragEvents.get(0);
-        
+
         GanttEvent top = mVerticalDragDropManager.getTopEvent();//(GanttEvent) surrounding.get(0);
         GanttEvent bottom = mVerticalDragDropManager.getBottomEvent();//(GanttEvent) surrounding.get(1);
-        
+
         //System.err.println("Top: " + top + ", Bottom: " + bottom);//, Over section " + dragOverSection);
-        
+
         int xDrawStart = 0;
         int xDrawEnd = mBounds.width;
         if (hasGanttSections() && mSettings.getSectionSide() == SWT.LEFT) {
             xDrawStart = mSettings.getSectionBarWidth();
-            xDrawEnd = mBounds.width+xDrawStart;
+            xDrawEnd = mBounds.width + xDrawStart;
         }
-        
+
         // check if floating event is over a gantt section, if it's in a new section, assume draw line always appears in that section
 
         if (ge.hasMovedVertically()) {
@@ -6690,8 +6678,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                 if (bottom == null) {
                     gc.drawLine(xDrawStart, mBounds.height - 5, xDrawEnd, mBounds.height - 5);
                     return;
-                }
-                else {
+                } else {
                     // since there is no top, draw at the top of the bottom event
                     gc.drawLine(xDrawStart, bottom.getY() - 5, xDrawEnd, bottom.getY() - 5);
                 }
@@ -6712,6 +6699,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
      * Handles the actual moving of an event.
      */
     private void handleMove(MouseEvent me, GanttEvent event, int type, boolean showToolTip) {
+        if (event.isLocked()) { return; }
+        
         if (!mSettings.enableDragAndDrop() && type == TYPE_MOVE) { return; }
 
         if (!mSettings.enableResizing() && (type == TYPE_RESIZE_LEFT || type == TYPE_RESIZE_RIGHT)) { return; }
@@ -6769,12 +6758,11 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                     redraw();
                 }
             }
-            
+
             // check what vertical direction the user is dragging the event in
             if (me.y > mLastY) {
                 mVerticalDraggingDirection = SWT.DOWN;
-            }
-            else if (me.y < mLastY) {
+            } else if (me.y < mLastY) {
                 mVerticalDraggingDirection = SWT.UP;
             }
         }
@@ -7020,6 +7008,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                     // for start dates we need to actually set the date or we'll be 1 day short as we did the diff already
                     // if we didn't have this code, a fast move would never move the event to the end date as it would be beyond already
                     if (cal1.before(event.getNoMoveBeforeDate())) {
+                        // flag first or dates won't be cloned before they changed
+                        event.moveStarted(type);
+
                         long millis = event.getNoMoveBeforeDate().getTimeInMillis();
                         long milliDiff = Math.abs(event.getActualStartDate().getTimeInMillis() - millis);
                         event.setRevisedStart((Calendar) event.getNoMoveBeforeDate().clone(), false);
@@ -7029,7 +7020,6 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                         end.add(Calendar.MILLISECOND, (int) -milliDiff);
                         event.setRevisedEnd(end, false);
                         event.updateX(getStartingXfor(event.getRevisedStart()));
-                        event.moveStarted();
                         continue;
                     }
                 }
@@ -7037,6 +7027,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                 // remember, we check the start calendar on both occasions, as that's the mark that counts
                 if (event.getNoMoveAfterDate() != null) {
                     if (cal2.after(event.getNoMoveAfterDate())) {
+                        // flag first or dates won't be cloned before they changed
+                        event.moveStarted(type);
+
                         // same deal for end date as for start date
                         long millis = event.getNoMoveAfterDate().getTimeInMillis();
                         long milliDiff = Math.abs(event.getActualEndDate().getTimeInMillis() - millis);
@@ -7047,12 +7040,11 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                         start.add(Calendar.MILLISECOND, (int) milliDiff);
                         event.setRevisedStart(start, false);
                         event.updateX(getStartingXfor(event.getRevisedStart()));
-                        event.moveStarted();
                         continue;
                     }
                 }
 
-                event.moveStarted();
+                event.moveStarted(type);
 
                 // we already validated dates here, so we can just set them (Besides, dual validation is bad, as one date will be validated
                 // before the next one is set, which can cause serious issues when we do drag and drops
@@ -7069,6 +7061,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
                 if (!isNoOverlap(cal1, event.getActualEndDate())) continue;
 
+                event.moveStarted(type);
+
                 // check before date move as it's the start date
                 if (event.getNoMoveBeforeDate() != null) {
                     if (cal1.before(event.getNoMoveBeforeDate())) {
@@ -7078,7 +7072,6 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                     }
                 }
 
-                event.moveStarted();
 
                 event.setRevisedStart(cal1, false);
 
@@ -7095,7 +7088,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                     if (cal2.after(event.getNoMoveAfterDate())) continue;
                 }
 
-                event.moveStarted();
+                event.moveStarted(type);
 
                 event.setRevisedEnd(cal2, false);
 
@@ -7222,8 +7215,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             extra.append(" ");
             if (revisedDays == 1 || revisedDays == -1) {
                 extra.append(mLanguageManager.getDaysText());
-            }
-            else {
+            } else {
                 extra.append(mLanguageManager.getDaysPluralText());
             }
             extra.append(")");
@@ -7880,10 +7872,24 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         mUseAdvancedTooltips = useAdvancedTooltips;
     }
 
+    /**
+     * Returns (a clone) of the D-Day calendar
+     * 
+     * @return D-Day calendar
+     */
     public Calendar getDDayCalendar() {
         return (Calendar) mDDayCalendar.clone();
     }
 
+    /**
+     * Returns the Undo/Redo manager.
+     * 
+     * @return
+     */
+    public GanttUndoRedoManager getUndoRedoManager() {
+        return _undoRedoManager;
+    }
+    
     // as from:
     // http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.swt.snippets/src/org/eclipse/swt/snippets/Snippet139.java?view=co
     static ImageData rotate(ImageData srcData, int direction) {
@@ -7955,7 +7961,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     boolean hasGanttSections() {
         return !mGanttSections.isEmpty();
     }
-    
+
     boolean hasSpecialDateRanges() {
         return !mGanttSpecialDateRanges.isEmpty();
     }

@@ -207,7 +207,13 @@ public class AdvancedTooltipDialog {
 				if (bold != null)
 					bold.dispose();
 				
-				Monitor active = Display.getDefault().getActiveShell().getMonitor();
+				Monitor active = null;
+				try {
+				    active = Display.getDefault().getActiveShell().getMonitor();
+				}
+				catch (Exception err) {
+				    active = Display.getDefault().getPrimaryMonitor();
+				}
 				int totalXBoundsMonitors = 0;
 				Monitor [] all = Display.getDefault().getMonitors();
 				for (int i = 0; i < all.length; i++) {

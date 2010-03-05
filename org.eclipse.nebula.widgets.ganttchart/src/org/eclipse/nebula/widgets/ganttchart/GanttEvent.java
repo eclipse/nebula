@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import org.eclipse.nebula.widgets.ganttchart.undoredo.commands.EventMoveCommand;
+import org.eclipse.nebula.widgets.ganttchart.undoredo.commands.EventResizeCommand;
+import org.eclipse.nebula.widgets.ganttchart.undoredo.commands.IUndoRedoCommand;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -128,6 +131,9 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem, C
     private Calendar        mPreMoveDateRevisedEnd;
     private Rectangle       mPreMoveBounds;
     private boolean         mMoving;
+    private int             mMoveType;
+    private int             mPreMoveGanttSectionIndex;
+    private int             mPreMoveGanttSectionEventLocationIndex;
 
     private GanttEvent      mScopeParent;
 
@@ -731,10 +737,13 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem, C
     }
 
     /**
-     * Sets new revised dates. This is useful when you need to update two dates that move at the same time (such as manually doing a move via setDates). Normally each setting of a
-     * date would check it against its start date or end date to make sure it doesn't overlap. This does too, but at the same time, thus, no oddity in movement will appear. This is
-     * rather difficult to explain, but if you experience event-length changes when using individual start and end date sets that appear at the same time, you probably want to use
-     * this method instead. <p> Either parameter may be null to set just one, but both may not be null
+     * Sets new revised dates. This is useful when you need to update two dates that move at the same time (such as
+     * manually doing a move via setDates). Normally each setting of a date would check it against its start date or end
+     * date to make sure it doesn't overlap. This does too, but at the same time, thus, no oddity in movement will
+     * appear. This is rather difficult to explain, but if you experience event-length changes when using individual
+     * start and end date sets that appear at the same time, you probably want to use this method instead.
+     * <p>
+     * Either parameter may be null to set just one, but both may not be null
      * 
      * @param revisedStart New revised Start date
      * @param revisedEnd New revised End date
@@ -962,13 +971,9 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem, C
      * @param event GanttEvent to encompass
      */
     public void addScopeEvent(GanttEvent event) {
-        if (event == this) {
-            return;
-        }
+        if (event == this) { return; }
 
-        if (mScopeEvents.contains(event)) {
-            return;
-        }
+        if (mScopeEvents.contains(event)) { return; }
 
         mScopeEvents.add(event);
 
@@ -1033,9 +1038,7 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem, C
      * @return Earliest event or null if none
      */
     public GanttEvent getEarliestScopeEvent() {
-        if (!isScope() || mScopeEvents.size() == 0) {
-            return null;
-        }
+        if (!isScope() || mScopeEvents.size() == 0) { return null; }
 
         return getEarliestOrLatestScopeEvent(true);
     }
@@ -1046,9 +1049,7 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem, C
      * @return Latest event or null if none
      */
     public GanttEvent getLatestScopeEvent() {
-        if (!isScope() || mScopeEvents.size() == 0) {
-            return null;
-        }
+        if (!isScope() || mScopeEvents.size() == 0) { return null; }
 
         return getEarliestOrLatestScopeEvent(false);
     }
@@ -1099,7 +1100,7 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem, C
      */
     public GanttGroup getGanttGroup() {
         return mGanttGroup;
-    }        
+    }
 
     /**
      * Sets what group this event belongs to. Grouped events are drawn on the same line.
@@ -1109,7 +1110,7 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem, C
     public void setGanttGroup(GanttGroup group) {
         mGanttGroup = group;
     }
-       
+
     /**
      * Returns the {@link GanttSection} that this event belongs to, or null if none.
      * 
@@ -1149,9 +1150,7 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem, C
     }
 
     private void internalSetAllChildrenHidden(boolean hidden) {
-        if (mScopeEvents == null) {
-            return;
-        }
+        if (mScopeEvents == null) { return; }
 
         for (int i = 0; i < mScopeEvents.size(); i++) {
             ((GanttEvent) mScopeEvents.get(i)).setHidden(hidden);
@@ -1734,8 +1733,10 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem, C
 
     }
 
-    void moveStarted() {
+    void moveStarted(int moveType) {
         if (mMoving) return;
+
+        mMoveType = moveType;
 
         if (mStartDate != null) {
             Calendar cal = Calendar.getInstance();
@@ -1760,7 +1761,44 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem, C
 
         mPreMoveBounds = new Rectangle(x, y, width, height);
 
+        mPreMoveGanttSectionIndex = mParentComposite.getGanttSections().indexOf(mGanttSection);
+        if (mGanttSection != null) {
+            mPreMoveGanttSectionEventLocationIndex = mGanttSection.getEvents().indexOf(this);
+        }
+
         mMoving = true;
+    }
+
+    /**
+     * Call after a move/resize is done to get the command to undo/redo the latest move/resize
+     * 
+     * @return Command or null if none of the given move events matched
+     */
+    IUndoRedoCommand getPostMoveOrResizeUndoCommand() {
+        switch (mMoveType) {
+            case GanttComposite.TYPE_MOVE:
+                int indexNow = 0;
+                if (mGanttSection != null) {
+                    indexNow = mGanttSection.getEvents().indexOf(this);
+                }
+                
+                return new EventMoveCommand(this, 
+                        mPreMoveDateEstiStart, mStartDate, 
+                        mPreMoveDateEstiEnd, mEndDate, 
+                        mPreMoveDateRevisedStart, mRevisedStart, 
+                        mPreMoveDateRevisedEnd, mRevisedEnd, 
+                        (GanttSection)mParentComposite.getGanttSections().get(mPreMoveGanttSectionIndex), mGanttSection, mPreMoveGanttSectionEventLocationIndex, indexNow);
+                
+            case GanttComposite.TYPE_RESIZE_LEFT:
+            case GanttComposite.TYPE_RESIZE_RIGHT:
+                return new EventResizeCommand(this, 
+                        mPreMoveDateEstiStart, mStartDate, 
+                        mPreMoveDateEstiEnd, mEndDate, 
+                        mPreMoveDateRevisedStart, mRevisedStart, 
+                        mPreMoveDateRevisedEnd, mRevisedEnd); 
+        }
+
+        return null;
     }
 
     void moveCancelled() {
@@ -1833,13 +1871,13 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem, C
     }
 
     boolean wasVerticallyMovedUp() {
-        return (y < mPreVerticalDragBounds.y); 
+        return (y < mPreVerticalDragBounds.y);
     }
-    
+
     boolean hasMovedVertically() {
         return y != mSavedVerticalDragY;
     }
-    
+
     /**
      * Reparents this event from the current {@link GanttSection} to a new {@link GanttSection}
      * 
@@ -1852,9 +1890,27 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem, C
             newSection.addGanttEvent(index, this);
         }
     }
-    
+
     public String toString() {
         return mName;
+    }
+    
+    /**
+     * Returns the parent {@link GanttChart}
+     * 
+     * @return {@link GanttChart}
+     */
+    public GanttChart getParentChart() {
+        return mParentChart;
+    }   
+    
+    /**
+     * Returns the parent {@link GanttComposite}
+     * 
+     * @return {@link GanttComposite}
+     */
+    public GanttComposite getParentComposite() {
+        return mParentComposite;
     }
 
     /**

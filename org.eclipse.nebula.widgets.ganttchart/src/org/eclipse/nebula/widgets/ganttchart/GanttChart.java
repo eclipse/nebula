@@ -14,6 +14,8 @@ package org.eclipse.nebula.widgets.ganttchart;
 import java.util.Calendar;
 import java.util.Random;
 
+import org.eclipse.nebula.widgets.ganttchart.undoredo.GanttUndoRedoManager;
+import org.eclipse.nebula.widgets.ganttchart.undoredo.IUndoRedoListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -326,6 +328,34 @@ public class GanttChart extends Composite implements IGanttFlags {
 	public ScrollBar getHorizontalBar() {
 		return mGanttComposite.getHorizontalBar();
 	}
+	
+	   /**
+     * Adds a listener to be notified when undo/redo possibilities change
+     * 
+     * @param listener
+     */
+    public void addUndoRedoListener(IUndoRedoListener listener) {
+        mGanttComposite.getUndoRedoManager().addUndoRedoListener(listener);
+    }
+    
+    /**
+     * Removes a listener from being notified when undo/redo possibilities change
+     * 
+     * @param listener
+     */
+    public void removeUndoRedoListener(IUndoRedoListener listener) {
+        mGanttComposite.getUndoRedoManager().removeUndoRedoListener(listener);
+    }
+    
+    /**
+     * Returns the Undo/Redo manager
+     * 
+     * @return {@link GanttUndoRedoManager}
+     */
+    public GanttUndoRedoManager getUndoRedoManager() {
+        return mGanttComposite.getUndoRedoManager();
+    }
+    
 	
 	/**
 	 * Returns a random GanttEvent, useful for testing.
