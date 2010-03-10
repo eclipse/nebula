@@ -10,3 +10,6 @@ Import-Package: org.eclipse.swt,
  org.eclipse.swt.events,
  org.eclipse.swt.layout,
  org.eclipse.swt.widgets
+Require-Bundle: org.eclipse.jface;resolution:=optional,
+ org.eclipse.core.databinding;resolution:=optional,
+ org.eclipse.jface.databinding;resolution:=optional
