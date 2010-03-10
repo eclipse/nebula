@@ -227,6 +227,7 @@ public class DateChooserTheme {
 	 * @param defaultTheme new default theme
 	 */
 	public static void setDefaultTheme(DateChooserTheme defaultTheme) {
+		if ( defaultTheme == null ) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		DateChooserTheme.defaultTheme = defaultTheme;
 	}
 

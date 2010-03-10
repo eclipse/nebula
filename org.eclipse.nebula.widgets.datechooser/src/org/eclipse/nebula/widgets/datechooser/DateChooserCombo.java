@@ -82,6 +82,7 @@ public class DateChooserCombo extends AbstractCombo {
 	 */
 	public DateChooserCombo(Composite parent, int style) {
     super(parent, style);
+		setTheme(DateChooserTheme.getDefaultTheme());
 		setImage(buttonImage);
     setCreateOnDrop(true);
 		pack();
@@ -175,9 +176,7 @@ public class DateChooserCombo extends AbstractCombo {
 	 */
 	protected Control createPopupContent(Composite parent) {
 		DateChooser cal = new DateChooser(parent, SWT.NONE);
-		if ( theme != null ) {
-			cal.setTheme(theme);
-		}
+		cal.setTheme(theme);
 		if ( locale != null ) {
 			cal.setLocale(locale);
 		}
@@ -347,6 +346,7 @@ public class DateChooserCombo extends AbstractCombo {
    */
   public void setImage(Image image) {
 		checkWidget();
+		if ( image == null ) SWT.error(SWT.ERROR_NULL_ARGUMENT);
   	GridData buttonLayout = (GridData) button.getLayoutData();
 		if ( WIN32 ) {
 	  	ImageData id	= image.getImageData();
@@ -375,7 +375,9 @@ public class DateChooserCombo extends AbstractCombo {
 	 */
 	public void setTheme(DateChooserTheme theme) {
 		checkWidget();
+		if ( theme == null ) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		this.theme = theme;
+		this.gridVisible = theme.gridVisible;
 	}
 
 	/**
