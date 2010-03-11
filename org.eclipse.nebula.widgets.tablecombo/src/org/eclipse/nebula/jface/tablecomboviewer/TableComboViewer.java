@@ -7,11 +7,13 @@
  *
  * Contributors:
  *	Marty Jones <martybjones@gmail.com> - initial API and implementation
+ *  Enrico Schnepel <enrico.schnepel@randomice.net> - added logic to fix bug 304353
  *****************************************************************************/
 package org.eclipse.nebula.jface.tablecomboviewer;
 
 import org.eclipse.jface.viewers.AbstractTableViewer;
 import org.eclipse.jface.viewers.ColumnViewerEditor;
+import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.ViewerRow;
 import org.eclipse.nebula.widgets.tablecombo.TableCombo;
 import org.eclipse.swt.SWT;
@@ -288,5 +290,13 @@ public class TableComboViewer extends AbstractTableViewer {
 	 */
 	public TableCombo getTableCombo() {
 		return tableCombo;
+	}
+
+    /**
+     * {@inheritDoc}
+     */
+	protected void handleLabelProviderChanged(LabelProviderChangedEvent event) {
+		super.handleLabelProviderChanged(event);
+		setSelection(getSelection());
 	}
 }
