@@ -41,7 +41,8 @@ public class DateChooserObservableValue extends AbstractObservableValue {
 			if ( ! updating ) {
 				Date newValue = dateChooser.getSelectedDate();
 
-				if ( ! newValue.equals(oldValue) ) {
+				if ( (newValue == null && oldValue != null)
+						 || (newValue != null && ! newValue.equals(oldValue)) ) {
 					fireValueChange(Diffs.createValueDiff(oldValue, newValue));					
 					oldValue = newValue;
 				}
