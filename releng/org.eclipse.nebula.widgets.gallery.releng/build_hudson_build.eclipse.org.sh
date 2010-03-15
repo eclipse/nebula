@@ -69,8 +69,8 @@ mkdir -p ${downloadsDir} ${signingDir} ${buildDir}
 relengBaseBuilderDir="${writableBuildRoot}/org.eclipse.releng.basebuilder"
 relengCommonBuilderDir="${writableBuildRoot}/org.eclipse.dash.common.releng"
 # symlink basebuilder and common.releng; alternatively, if you omit this, they'll be checked out in start.sh
-ln -s ${cvsProjectBaseDir}/org.eclipse.releng.basebuilder ${writableBuildRoot}/
-ln -s ${cvsProjectBaseDir}/org.eclipse.dash.common.releng ${writableBuildRoot}/
+#ln -s ${cvsProjectBaseDir}/org.eclipse.releng.basebuilder ${writableBuildRoot}/
+#ln -s ${cvsProjectBaseDir}/org.eclipse.dash.common.releng ${writableBuildRoot}/
 
 # symlink 3rdPartyJars (reuse existing content on build.eclipse.org for ant-contrib.jar, etc.)
 ln -s ${thirdPartyJarsDir} ${writableBuildRoot}/
