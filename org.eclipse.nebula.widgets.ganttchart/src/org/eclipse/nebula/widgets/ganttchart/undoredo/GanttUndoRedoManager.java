@@ -24,15 +24,15 @@ import org.eclipse.nebula.widgets.ganttchart.undoredo.commands.IUndoRedoCommand;
  */
 public class GanttUndoRedoManager {
 
-    public static final int DEFAULT_STACK_SIZE = 50;
+    public static final int      STACK_SIZE = 50;
 
-    private List            _undoRedoEvents;
-    private int             _currentIndex;
-    private int             _maxStackSize;
-    private GanttComposite  _comp;
-    private List            _listeners;
+    private final List           _undoRedoEvents;
+    private int                  _currentIndex;
+    private int                  _maxStackSize;
+    private final GanttComposite _comp;
+    private final List           _listeners;
 
-    public GanttUndoRedoManager(GanttComposite parent, int maxStackSize) {
+    public GanttUndoRedoManager(final GanttComposite parent, final int maxStackSize) {
         _comp = parent;
 
         _undoRedoEvents = new ArrayList();
@@ -49,7 +49,7 @@ public class GanttUndoRedoManager {
      * 
      * @param listener
      */
-    public void addUndoRedoListener(IUndoRedoListener listener) {
+    public void addUndoRedoListener(final IUndoRedoListener listener) {
         if (!_listeners.contains(listener)) {
             _listeners.add(listener);
         }
@@ -60,7 +60,7 @@ public class GanttUndoRedoManager {
      * 
      * @param listener
      */
-    public void removeUndoRedoListener(IUndoRedoListener listener) {
+    public void removeUndoRedoListener(final IUndoRedoListener listener) {
         _listeners.add(listener);
     }
 
@@ -69,7 +69,7 @@ public class GanttUndoRedoManager {
      * 
      * @param command
      */
-    public void record(IUndoRedoCommand command) {
+    public void record(final IUndoRedoCommand command) {
         // ensure size etc
         fixStack();
 
@@ -79,7 +79,7 @@ public class GanttUndoRedoManager {
 
         // tell listeners a command was added
         for (int i = 0; i < _listeners.size(); i++) {
-            IUndoRedoListener listener = (IUndoRedoListener) _listeners.get(i);
+            final IUndoRedoListener listener = (IUndoRedoListener) _listeners.get(i);
             listener.undoableCommandAdded(command);
         }
 
@@ -89,7 +89,7 @@ public class GanttUndoRedoManager {
     private void updateListeners() {
         // notify listeners
         for (int i = 0; i < _listeners.size(); i++) {
-            IUndoRedoListener listener = (IUndoRedoListener) _listeners.get(i);
+            final IUndoRedoListener listener = (IUndoRedoListener) _listeners.get(i);
             listener.canRedoChanged(canRedo());
             listener.canUndoChanged(canUndo());
         }
@@ -122,7 +122,7 @@ public class GanttUndoRedoManager {
     public boolean undo() {
         if (!canUndo()) { return false; }
 
-        IUndoRedoCommand command = (IUndoRedoCommand) _undoRedoEvents.get(_currentIndex - 1);
+        final IUndoRedoCommand command = (IUndoRedoCommand) _undoRedoEvents.get(_currentIndex - 1);
         command.undo();
 
         _comp.heavyRedraw();
@@ -133,7 +133,7 @@ public class GanttUndoRedoManager {
         }
         updateListeners();
         for (int i = 0; i < _listeners.size(); i++) {
-            IUndoRedoListener listener = (IUndoRedoListener) _listeners.get(i);
+            final IUndoRedoListener listener = (IUndoRedoListener) _listeners.get(i);
             listener.commandUndone(command);
         }
         return true;
@@ -147,7 +147,7 @@ public class GanttUndoRedoManager {
     public boolean redo() {
         if (!canRedo()) { return false; }
 
-        IUndoRedoCommand command = (IUndoRedoCommand) _undoRedoEvents.get(_currentIndex);
+        final IUndoRedoCommand command = (IUndoRedoCommand) _undoRedoEvents.get(_currentIndex);
         command.redo();
 
         _comp.heavyRedraw();
@@ -158,7 +158,7 @@ public class GanttUndoRedoManager {
         }
         updateListeners();
         for (int i = 0; i < _listeners.size(); i++) {
-            IUndoRedoListener listener = (IUndoRedoListener) _listeners.get(i);
+            final IUndoRedoListener listener = (IUndoRedoListener) _listeners.get(i);
             listener.commandRedone(command);
         }
         return true;
@@ -170,10 +170,8 @@ public class GanttUndoRedoManager {
      * @return true if user can Redo
      */
     public boolean canRedo() {
-        if (_undoRedoEvents.isEmpty()) {
-            return false;
-        }
-                
+        if (_undoRedoEvents.isEmpty()) { return false; }
+
         return _currentIndex != _undoRedoEvents.size();
     }
 
@@ -190,19 +188,19 @@ public class GanttUndoRedoManager {
      * Clears up the stack of undo/redo events and keeps its size in check.
      */
     private void fixStack() {
-        List toRemove = new ArrayList();
-                      
+        final List toRemove = new ArrayList();
+
         // first nuke any items past the current index
         for (int i = _currentIndex; i < _undoRedoEvents.size(); i++) {
             toRemove.add(_undoRedoEvents.get(i));
         }
         _undoRedoEvents.removeAll(toRemove);
         for (int i = 0; i < toRemove.size(); i++) {
-            ((IUndoRedoCommand)toRemove.get(i)).dispose();
+            ((IUndoRedoCommand) toRemove.get(i)).dispose();
         }
 
         toRemove.clear();
-        
+
         if (_undoRedoEvents.size() > _maxStackSize) {
             // remove from the front
             for (int i = 0; i < (_maxStackSize - _undoRedoEvents.size()); i++) {
@@ -210,9 +208,9 @@ public class GanttUndoRedoManager {
             }
         }
         for (int i = 0; i < toRemove.size(); i++) {
-            ((IUndoRedoCommand)toRemove.get(i)).dispose();
+            ((IUndoRedoCommand) toRemove.get(i)).dispose();
         }
-        
+
         _undoRedoEvents.removeAll(toRemove);
     }
 
@@ -221,7 +219,7 @@ public class GanttUndoRedoManager {
      * 
      * @param stackSize new max undo/redo stack size
      */
-    public void setMaxStackSize(int stackSize) {
+    public void setMaxStackSize(final int stackSize) {
         if (stackSize <= 0) { return; }
 
         _maxStackSize = stackSize;

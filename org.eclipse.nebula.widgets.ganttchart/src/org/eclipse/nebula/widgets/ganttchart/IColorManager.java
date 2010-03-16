@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright (c) Emil Crumhorn - Hexapixel.com - emil.crumhorn@gmail.com
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
@@ -20,42 +20,42 @@ public interface IColorManager extends IFillBackgroundColors {
 	 * 
 	 * @return Color
 	 */
-	public Color getLineColor();
+	Color getLineColor();
 	
 	/**
 	 * The color used for drawing the vertical line showing where the next week starts (or the previous week ends). 
 	 * 
 	 * @return Color
 	 */
-	public Color getWeekDividerLineColor();
+	Color getWeekDividerLineColor();
 	
 	/**
 	 * The color used for drawing text.
 	 * 
 	 * @return Color
 	 */
-	public Color getTextColor();
+	Color getTextColor();
 	
 	/**
 	 * The foreground color of the letters of the week in the bottom header.
 	 * 
 	 * @return Color
 	 */
-	public Color getWeekdayTextColor();
+	Color getWeekdayTextColor();
 	
 	/**
 	 * The color used for drawing the Saturday letter.
 	 * 
 	 * @return Color
 	 */
-	public Color getSaturdayTextColor();
+	Color getSaturdayTextColor();
 		
 	/**
 	 * The color used for drawing the Sunday letter.
 	 * 
 	 * @return Color
 	 */
-	public Color getSundayTextColor();
+	Color getSundayTextColor();
 		
 	
 	/**
@@ -63,42 +63,42 @@ public interface IColorManager extends IFillBackgroundColors {
 	 * 
 	 * @return Color
 	 */
-	public Color getTextHeaderBackgroundColorTop();
+	Color getTextHeaderBackgroundColorTop();
 	
 	/**
 	 * The bottom gradient background color used in the header where the full date is written.
 	 * 
 	 * @return Color
 	 */
-	public Color getTextHeaderBackgroundColorBottom();
+	Color getTextHeaderBackgroundColorBottom();
 
 	/**
 	 * The top gradient background color used in the header where the days and time is written.
 	 * 
 	 * @return Color
 	 */
-	public Color getTimeHeaderBackgroundColorTop();
+	Color getTimeHeaderBackgroundColorTop();
 
 	/**
 	 * The bottom gradient background color used in the header where the days and time is written.
 	 * 
 	 * @return Color
 	 */
-	public Color getTimeHeaderBackgroundColorBottom();
+	Color getTimeHeaderBackgroundColorBottom();
 	
 	 /**
      * The top gradient background color used in the header where phases are written.
      * 
      * @return Color
      */
-    public Color getPhaseHeaderBackgroundColorTop();
+    Color getPhaseHeaderBackgroundColorTop();
 
     /**
      * The bottom gradient background color used in the header where phases are written.
      * 
      * @return Color
      */
-    public Color getPhaseHeaderBackgroundColorBottom();
+    Color getPhaseHeaderBackgroundColorBottom();
     
     
 	/**
@@ -106,238 +106,238 @@ public interface IColorManager extends IFillBackgroundColors {
 	 * 
 	 * @return Color
 	 */
-	public Color getPercentageBarColorTop();
+	Color getPercentageBarColorTop();
 
 	/**
 	 * The bottom gradient color of the percentage bar drawn inside an event.
 	 * 
 	 * @return Color
 	 */
-	public Color getPercentageBarColorBottom();
+	Color getPercentageBarColorBottom();
 
 	/**
 	 * The top gradient color of the remainder percentage bar drawn inside an event. This only draws if drawFullPercentageBar() in settings returns true.
 	 * 
 	 * @return Color
 	 */
-	public Color getPercentageBarRemainderColorTop();
+	Color getPercentageBarRemainderColorTop();
 
 	/**
 	 * The bottom gradient color of the remainder percentage bar drawn inside an event. This only draws if drawFullPercentageBar() in settings returns true.
 	 * 
 	 * @return Color
 	 */
-	public Color getPercentageBarRemainderColorBottom();
+	Color getPercentageBarRemainderColorBottom();
 
 	/**
 	 * The color used for dependency lines and arrowheads.
 	 * 
 	 * @return Color
 	 */
-	public Color getArrowColor();
+	Color getArrowColor();
 
 	/**
 	 * The color used for reverse dependency lines and arrowheads when the connection type is set to MS PROJECT style. For any other line style it is ignored.
 	 * 
 	 * @return Color
 	 */
-	public Color getReverseArrowColor();
+	Color getReverseArrowColor();
 
 	/**
 	 * The color used to draw the border around an event.
 	 * 
 	 * @return Color
 	 */
-	public Color getEventBorderColor();
+	Color getEventBorderColor();
 	
 	/**
 	 * The top most drop-shadow color vertically.
 	 * 
 	 * @return Color
 	 */
-	public Color getFadeOffColor1();
+	Color getFadeOffColor1();
 	
 	/**
 	 * The middle most drop-shadow color vertically.
 	 * 
 	 * @return Color
 	 */
-	public Color getFadeOffColor2();
+	Color getFadeOffColor2();
 	
 	/**
 	 * The bottom most drop-shadow color vertically.
 	 * 
 	 * @return Color
 	 */
-	public Color getFadeOffColor3();
+	Color getFadeOffColor3();
 	
 	/**
 	 * The top gradient background color used to represent the current day.
 	 * 
 	 * @return Color
 	 */
-	public Color getTodayBackgroundColorTop();
+	Color getTodayBackgroundColorTop();
 	
 	/**
 	 * The bottom gradient background color used to represent the current day.
 	 * 
 	 * @return Color
 	 */
-	public Color getTodayBackgroundColorBottom();
+	Color getTodayBackgroundColorBottom();
 	
 	/**
 	 * The color used to draw the revised start date of an event.
 	 * 
 	 * @return Color
 	 */
-	public Color getRevisedStartColor();
+	Color getRevisedStartColor();
 	
 	/**
 	 * The color used to draw the revised end date of an event.
 	 * 
 	 * @return Color
 	 */
-	public Color getRevisedEndColor();
+	Color getRevisedEndColor();
 
 	/**
 	 * The bottom gradient background color used to draw the zoom box.
 	 * 
 	 * @return Color
 	 */
-	public Color getZoomBackgroundColorBottom();
+	Color getZoomBackgroundColorBottom();
 
 	/**
 	 * The top gradient background color used to draw the zoom box.
 	 * 
 	 * @return Color
 	 */
-	public Color getZoomBackgroundColorTop();
+	Color getZoomBackgroundColorTop();
 	
 	/**
 	 * The color used to draw the zoom level box border.
 	 * 
 	 * @return Color
 	 */
-	public Color getZoomBorderColor();
+	Color getZoomBorderColor();
 	
 	/**
 	 * The color used to draw the text in the zoom box.
 	 * 
 	 * @return Color
 	 */
-	public Color getZoomTextColor();
+	Color getZoomTextColor();
 	
 	/**
 	 * The background color used in all tooltips.
 	 * 
 	 * @return Color
 	 */
-	public Color getTooltipBackgroundColor();
+	Color getTooltipBackgroundColor();
 	
 	/**
 	 * The foreground color used in all tooltips.
 	 * 
 	 * @return Color
 	 */
-	public Color getTooltipForegroundColor();
+	Color getTooltipForegroundColor();
 	
 	/**
 	 * The faded foreground color used in all tooltips (for less important text).
 	 * 
 	 * @return Color
 	 */
-	public Color getTooltipForegroundColorFaded();
+	Color getTooltipForegroundColorFaded();
 	
 	/**
 	 * The border color used for drawing scopes.
 	 * 
 	 * @return Color
 	 */
-	public Color getScopeBorderColor();
+	Color getScopeBorderColor();
 	
 	/**
 	 * One of the gradient colors for drawing scopes.
 	 * 
 	 * @return Color
 	 */
-	public Color getScopeGradientColorTop();
+	Color getScopeGradientColorTop();
 	
 	/**
 	 * One of the gradient colors for drawing scopes.
 	 * 
 	 * @return Color
 	 */
-	public Color getScopeGradientColorBottom();
+	Color getScopeGradientColorBottom();
 	
 	/**
 	 * The color black. Used in few places.
 	 * 
 	 * @return Color
 	 */
-	public Color getBlack();
+	Color getBlack();
 	
 	/**
 	 * The color white. Used in few places.
 	 * 
 	 * @return Color
 	 */
-	public Color getWhite();
+	Color getWhite();
 	
 	/**
 	 * The top horizontal lines are all the horizontal lines that span across the header from the left side to the right.
 	 * 
 	 * @return Color for top horizontal lines.
 	 */
-	public Color getTopHorizontalLinesColor();
+	Color getTopHorizontalLinesColor();
 	
 	/**
 	 * The color for the dividing line between each section of the bottom header in the day view. 
 	 * 
 	 * @return Color
 	 */
-	public Color getHourTimeDividerColor();
+	Color getHourTimeDividerColor();
 
 	/**
 	 * The color for the dividing line between each section of the bottom header in the week view. 
 	 * 
 	 * @return Color
 	 */
-	public Color getWeekTimeDividerColor();
+	Color getWeekTimeDividerColor();
 
 	/**
 	 * The color for the dividing line between each section of the bottom header in the month view. 
 	 * 
 	 * @return Color
 	 */
-	public Color getMonthTimeDividerColor();
+	Color getMonthTimeDividerColor();
 
 	/**
 	 * The color for the dividing line between each section of the bottom header in the year view.
 	 * 
 	 * @return Color
 	 */
-	public Color getYearTimeDividerColor();
+	Color getYearTimeDividerColor();
 
 	/**
 	 * The color used for drawing the vertical "today" line that shows where the todays date is.
 	 * 
 	 * @return Color
 	 */
-	public Color getTodayLineColor();
+	Color getTodayLineColor();
 	
 	/**
 	 * The alpha value of the Today line. 
 	 * 
 	 * @return Alpha value between 0 and 255.
 	 */
-	public int getTodayLineAlpha();
+	int getTodayLineAlpha();
 	
 	/**
 	 * The alpha value of the week divider line.
 	 * 
 	 * @return Alpha value between 0 and 255.
 	 */
-	public int getWeekDividerAlpha();
+	int getWeekDividerAlpha();
 	
 	/**
 	 * Alpha colors can slow down the drawing considerably, only enable on a fast system and you're 100% certain that systems other than yours (3rd party)
@@ -347,126 +347,126 @@ public interface IColorManager extends IFillBackgroundColors {
 	 * 
 	 * @return true if Alpha drawing should be on. Default is false.
 	 */
-	public boolean useAlphaDrawing();
+	boolean useAlphaDrawing();
 	
 	/**
 	 * Separate flag from useAlphaDrawing. If this is set to true drop shadows on 3D events will be drawn using alpha channels.
 	 * 
 	 * @return true if Alpha drawing should be on for drop shadows on 3D events. Default is true.
 	 */
-	public boolean useAlphaDrawingOn3DEventDropShadows();
+	boolean useAlphaDrawingOn3DEventDropShadows();
 	
 	/**
 	 * The tick mark is the small line that separates dates in the top part of the header. 
 	 *  
 	 * @return Tick mark color
 	 */
-	public Color getTickMarkColor();
+	Color getTickMarkColor();
 	
 	/**
 	 * The divider color in the advanced tooltip dialog
 	 * 
 	 * @return Color
 	 */
-	public Color getAdvancedTooltipDividerColor();
+	Color getAdvancedTooltipDividerColor();
 	
 	/**
 	 * The dropshadow color of the divider line in the advanced tooltip dialog.
 	 * 
 	 * @return Color
 	 */
-	public Color getAdvancedTooltipDividerShadowColor();
+	Color getAdvancedTooltipDividerShadowColor();
 	
 	/**
 	 * The top gradient fill color of the background of the advanced tooltip dialog.
 	 * 
 	 * @return Color
 	 */
-	public Color getAdvancedTooltipInnerFillTopColor();
+	Color getAdvancedTooltipInnerFillTopColor();
 
 	/**
 	 * The bottom gradient fill color of the background of the advanced tooltip dialog.
 	 * 
 	 * @return Color
 	 */
-	public Color getAdvancedTooltipInnerFillBottomColor();
+	Color getAdvancedTooltipInnerFillBottomColor();
 	
 	/**
 	 * The default foreground color used for displaying text in the advanced tooltip dialog.
 	 * 
 	 * @return Color
 	 */
-	public Color getAdvancedTooltipTextColor();
+	Color getAdvancedTooltipTextColor();
 	
 	/**
 	 * The border color of the advanced tooltip dialog.
 	 * 
 	 * @return Color
 	 */
-	public Color getAdvancedTooltipBorderColor();
+	Color getAdvancedTooltipBorderColor();
 	
 	/**
 	 * The fadeoff pixels used to make corners more rounded in the advanced tooltip dialog.
 	 * 
 	 * @return Color
 	 */
-	public Color getAdvancedTooltipShadowCornerInnerColor();
+	Color getAdvancedTooltipShadowCornerInnerColor();
 
 	/**
 	 * The fadeoff pixels used to make corners more rounded in the advanced tooltip dialog.
 	 * 
 	 * @return Color
 	 */
-	public Color getAdvancedTooltipShadowCornerOuterColor();
+	Color getAdvancedTooltipShadowCornerOuterColor();
 
 	/**
 	 * The fadeoff shadow pixels used to make corners more rounded in the advanced tooltip dialog.
 	 * 
 	 * @return Color
 	 */
-	public Color getAdvancedTooltipShadowInnerCornerColor();
+	Color getAdvancedTooltipShadowInnerCornerColor();
 	
 	/**
 	 * The left gradient color of a section bar.
 	 * 
 	 * @return Color
 	 */
-	public Color getActiveSessionBarColorLeft();
+	Color getActiveSessionBarColorLeft();
 
 	/**
 	 * The right gradient color of a section bar.
 	 * 
 	 * @return Color
 	 */
-	public Color getActiveSessionBarColorRight();
+	Color getActiveSessionBarColorRight();
 	
 	/**
 	 * The left gradient color of the section bar that is outside of any actual section.
 	 * 
 	 * @return Color
 	 */
-	public Color getNonActiveSessionBarColorLeft();
+	Color getNonActiveSessionBarColorLeft();
 
 	/**
 	 * The right gradient color of the section bar that is outside of any actual section.
 	 * 
 	 * @return Color
 	 */
-	public Color getNonActiveSessionBarColorRight();
+	Color getNonActiveSessionBarColorRight();
 	
 	/**
 	 * The left gradient color of the section divider bar that is drawn between sections.
 	 * 
 	 * @return Color
 	 */
-	public Color getSessionBarDividerColorLeft();
+	Color getSessionBarDividerColorLeft();
 
 	/**
 	 * The right gradient color of the section divider bar that is drawn between sections.
 	 * 
 	 * @return Color
 	 */
-	public Color getSessionBarDividerColorRight();
+	Color getSessionBarDividerColorRight();
 
 	/**
 	 * For vertical drag/drops a box is drawn where the event was prior to the DND started to
@@ -475,7 +475,7 @@ public interface IColorManager extends IFillBackgroundColors {
 	 * 
 	 * @return Color
 	 */
-	public Color getOriginalLocationColor();
+	Color getOriginalLocationColor();
 	
 	/**
 	 * This is the color used to draw the vertical insert marker for vertical drag and drop. 
@@ -484,5 +484,5 @@ public interface IColorManager extends IFillBackgroundColors {
 	 * 
 	 * @return Color
 	 */
-	public Color getVerticalInsertMarkerColor();
+	Color getVerticalInsertMarkerColor();
 }

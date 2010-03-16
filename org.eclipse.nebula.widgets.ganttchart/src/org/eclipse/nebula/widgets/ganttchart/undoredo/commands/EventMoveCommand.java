@@ -54,8 +54,8 @@ public class EventMoveCommand extends AbstractUndoRedoCommand {
      * @param indexBefore Index of event in {@link GanttSection} sectionBefore prior to move
      * @param indexAfter Index of event in {@link GanttSection} sectionAfter after to move
      */
-    public EventMoveCommand(GanttEvent event, Calendar startDateBefore, Calendar startDateAfter, Calendar endDateBefore, Calendar endDateAfter, Calendar revisedStartDateBefore, Calendar revisedStartDateAfter, Calendar revisedEndDateBefore, Calendar revisedEndDateAfter, GanttSection sectionBefore,
-            GanttSection sectionAfter, int indexBefore, int indexAfter) {
+    public EventMoveCommand(final GanttEvent event, final Calendar startDateBefore, final Calendar startDateAfter, final Calendar endDateBefore, final Calendar endDateAfter, final Calendar revisedStartDateBefore, final Calendar revisedStartDateAfter, final Calendar revisedEndDateBefore, final Calendar revisedEndDateAfter, final GanttSection sectionBefore,
+            final GanttSection sectionAfter, final int indexBefore, final int indexAfter) {
         _event = event;
         _startDateBefore = (Calendar) startDateBefore.clone();
         _startDateAfter = (Calendar) startDateAfter.clone();
@@ -79,17 +79,18 @@ public class EventMoveCommand extends AbstractUndoRedoCommand {
         _indexBefore = indexBefore;
         _indexAfter = indexAfter;
         
-        if (sectionBefore != null) {
-            _sectionBefore = _event.getParentComposite().getGanttSections().indexOf(sectionBefore);
-        }
-        else {
+        if (sectionBefore == null) {
             _sectionBefore = -1;
         }
-        if (sectionAfter != null) {
-            _sectionAfter = _event.getParentComposite().getGanttSections().indexOf(sectionAfter);
+        else {
+            _sectionBefore = _event.getParentComposite().getGanttSections().indexOf(sectionBefore);
+        }
+
+        if (sectionAfter == null) {
+            _sectionAfter = -1;
         }
         else {
-            _sectionAfter = -1;
+            _sectionAfter = _event.getParentComposite().getGanttSections().indexOf(sectionAfter);
         }
     }
 
@@ -126,7 +127,7 @@ public class EventMoveCommand extends AbstractUndoRedoCommand {
         return _event;
     }
 
-    public void setEvent(GanttEvent event) {
+    public void setEvent(final GanttEvent event) {
         _event = event;
     }
 
@@ -134,7 +135,7 @@ public class EventMoveCommand extends AbstractUndoRedoCommand {
         return _startDateBefore;
     }
 
-    public void setStartDateBefore(Calendar startDateBefore) {
+    public void setStartDateBefore(final Calendar startDateBefore) {
         _startDateBefore = startDateBefore;
     }
 
@@ -142,7 +143,7 @@ public class EventMoveCommand extends AbstractUndoRedoCommand {
         return _startDateAfter;
     }
 
-    public void setStartDateAfter(Calendar startDateAfter) {
+    public void setStartDateAfter(final Calendar startDateAfter) {
         _startDateAfter = startDateAfter;
     }
 
@@ -150,7 +151,7 @@ public class EventMoveCommand extends AbstractUndoRedoCommand {
         return _endDateBefore;
     }
 
-    public void setEndDateBefore(Calendar endDateBefore) {
+    public void setEndDateBefore(final Calendar endDateBefore) {
         _endDateBefore = endDateBefore;
     }
 
@@ -158,7 +159,7 @@ public class EventMoveCommand extends AbstractUndoRedoCommand {
         return _endDateAfter;
     }
 
-    public void setEndDateAfter(Calendar endDateAfter) {
+    public void setEndDateAfter(final Calendar endDateAfter) {
         _endDateAfter = endDateAfter;
     }
 
@@ -166,7 +167,7 @@ public class EventMoveCommand extends AbstractUndoRedoCommand {
         return _indexBefore;
     }
 
-    public void setIndexBefore(int indexBefore) {
+    public void setIndexBefore(final int indexBefore) {
         _indexBefore = indexBefore;
     }
 
@@ -174,7 +175,7 @@ public class EventMoveCommand extends AbstractUndoRedoCommand {
         return _indexAfter;
     }
 
-    public void setIndexAfter(int indexAfter) {
+    public void setIndexAfter(final int indexAfter) {
         _indexAfter = indexAfter;
     }
 
@@ -182,7 +183,7 @@ public class EventMoveCommand extends AbstractUndoRedoCommand {
         return _sectionBefore;
     }
 
-    public void setSectionBefore(int sectionBefore) {
+    public void setSectionBefore(final int sectionBefore) {
         _sectionBefore = sectionBefore;
     }
 
@@ -190,7 +191,7 @@ public class EventMoveCommand extends AbstractUndoRedoCommand {
         return _sectionAfter;
     }
 
-    public void setSectionAfter(int sectionAfter) {
+    public void setSectionAfter(final int sectionAfter) {
         _sectionAfter = sectionAfter;
     }
 
@@ -198,7 +199,7 @@ public class EventMoveCommand extends AbstractUndoRedoCommand {
         return _revisedStartDateBefore;
     }
 
-    public void setRevisedStartDateBefore(Calendar revisedStartDateBefore) {
+    public void setRevisedStartDateBefore(final Calendar revisedStartDateBefore) {
         _revisedStartDateBefore = revisedStartDateBefore;
     }
 
@@ -227,7 +228,7 @@ public class EventMoveCommand extends AbstractUndoRedoCommand {
     }
 
     public String toString() {
-        StringBuffer buf = new StringBuffer();
+        final StringBuffer buf = new StringBuffer(200);
         buf.append("[EventMove: ");
         buf.append(_event);
         buf.append(" was moved from section ");
@@ -265,7 +266,9 @@ public class EventMoveCommand extends AbstractUndoRedoCommand {
     }
 
     private String quickFormat(Calendar cal) {
-        if (cal == null) return "<null>";
+        if (cal == null) {
+            return "<null>";
+        }
 
         return cal.get(Calendar.YEAR) + "-" + (cal.get(Calendar.MONTH) + 1) + "-" + cal.get(Calendar.DATE);
     }

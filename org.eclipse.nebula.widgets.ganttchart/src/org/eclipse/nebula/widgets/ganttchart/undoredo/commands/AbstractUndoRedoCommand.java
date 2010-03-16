@@ -11,6 +11,6 @@
 
 package org.eclipse.nebula.widgets.ganttchart.undoredo.commands;
 
-public abstract class AbstractUndoRedoCommand implements IUndoRedoCommand {
+public abstract class AbstractUndoRedoCommand implements IUndoRedoCommand { // NOPMD
 
 }

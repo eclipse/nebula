@@ -31,7 +31,7 @@ public class EventResizeCommand extends EventMoveCommand {
      * @param revisedEndDateBefore Revised end date prior to move
      * @param revisedEndDateAfter Revised end date after move
      */
-    public EventResizeCommand(GanttEvent event, Calendar startDateBefore, Calendar startDateAfter, Calendar endDateBefore, Calendar endDateAfter, Calendar revisedStartDateBefore, Calendar revisedStartDateAfter, Calendar revisedEndDateBefore, Calendar revisedEndDateAfter) {
+    public EventResizeCommand(final GanttEvent event, final Calendar startDateBefore, final Calendar startDateAfter, final Calendar endDateBefore, final Calendar endDateAfter, final Calendar revisedStartDateBefore, final Calendar revisedStartDateAfter, final Calendar revisedEndDateBefore, final Calendar revisedEndDateAfter) {
         super(event, startDateBefore, startDateAfter, endDateBefore, endDateAfter, revisedStartDateBefore, revisedStartDateAfter, revisedEndDateBefore, revisedEndDateAfter, null, null, -1, -1);
     }
     

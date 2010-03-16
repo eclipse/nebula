@@ -27,16 +27,17 @@ public class Utils {
 	 * @param font Font to modify
 	 * @return Font with bold typeface 
 	 */
-	public static Font applyBoldFont(Font font) {
-		if (font == null)
+	public static Font applyBoldFont(final Font font) {
+		if (font == null) {
 			return null;
+		}
 
-		FontData[] fontDataArray = font.getFontData();
+		final FontData[] fontDataArray = font.getFontData();
 		if (fontDataArray == null) {
 			return null;
 		}
 		for (int index = 0; index < fontDataArray.length; index++) {
-			FontData fData = fontDataArray[index];
+		    final FontData fData = fontDataArray[index];
 			fData.setStyle(SWT.BOLD);
 		}
 
@@ -50,16 +51,17 @@ public class Utils {
 	 * @param size New font size
 	 * @return Font with new font size
 	 */
-	public static Font applyFontSize(Font font, int size) {
-		if (font == null)
+	public static Font applyFontSize(final Font font, final int size) {
+		if (font == null) {
 			return null;
+		}
 
-		FontData[] fontDataArray = font.getFontData();
+		final FontData[] fontDataArray = font.getFontData();
 		if (fontDataArray == null) {
 			return null;
 		}
 		for (int index = 0; index < fontDataArray.length; index++) {
-			FontData fData = fontDataArray[index];
+		    final FontData fData = fontDataArray[index];
 			fData.setHeight(size);
 		}
 
@@ -72,13 +74,13 @@ public class Utils {
 	 * @param shell Shell to center on screen
 	 * @see Shell
 	 */
-	public static void centerDialogOnScreen(Shell shell) {
+	public static void centerDialogOnScreen(final Shell shell) {
 		// do it by monitor to support dual-head cards and still center things correctly onto the screen people are on.
-		Monitor m = Display.getDefault().getPrimaryMonitor();
-		Rectangle bounds = m.getBounds();
+	    final Monitor monitor = Display.getDefault().getPrimaryMonitor();
+	    final Rectangle bounds = monitor.getBounds();
 
-		int screen_x = bounds.width;
-		int screen_y = bounds.height;
+	    final int screen_x = bounds.width;
+	    final int screen_y = bounds.height;
 
 		shell.setLocation(screen_x / 2 - (shell.getBounds().width / 2), screen_y / 2 - (shell.getBounds().height / 2));
 	}

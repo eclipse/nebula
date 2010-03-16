@@ -23,14 +23,14 @@ public class GanttCheckpoint extends GanttEvent {
 	/**
 	 * {@inheritDoc}
 	 */
-	public GanttCheckpoint(GanttChart parent, String name, Calendar date) {
+	public GanttCheckpoint(final GanttChart parent, final String name, final Calendar date) {
 		super(parent, null, name, date);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public GanttCheckpoint(GanttChart parent, Object data, String name, Calendar date) {
+	public GanttCheckpoint(final GanttChart parent, final Object data, final String name, final Calendar date) {
 		super(parent, data, name, date);
 	}
 	

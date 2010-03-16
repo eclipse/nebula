@@ -11,7 +11,7 @@
 
 package org.eclipse.nebula.widgets.ganttchart;
 
-public interface IVerticalDragModes {
+public class VerticalDragModes {
 
     /**
      * Vertical dragging is disabled

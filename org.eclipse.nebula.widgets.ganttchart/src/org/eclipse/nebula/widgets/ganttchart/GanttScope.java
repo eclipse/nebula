@@ -20,14 +20,14 @@ public final class GanttScope extends GanttEvent {
 	/**
 	 * {@inheritDoc}
 	 */
-	public GanttScope(GanttChart parent, String name) {
+	public GanttScope(final GanttChart parent, final String name) {
 		super(parent, null, name);
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 */
-	public GanttScope(GanttChart parent, Object data, String name) {
+	public GanttScope(final GanttChart parent, final Object data, final String name) {
 		super(parent, data, name);
 	}
 	

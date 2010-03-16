@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) Emil Crumhorn - Hexapixel.com - emil.crumhorn@gmail.com
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    emil.crumhorn@gmail.com - initial API and implementation
+ *******************************************************************************/
+
 package org.eclipse.nebula.widgets.ganttchart;
 
 import java.util.ArrayList;
@@ -45,39 +56,58 @@ import org.eclipse.swt.graphics.Color;
  * blockPost.setAllowEventsOnDates(false);
  * </pre>
  * 
+ * For a D-Day calendar (which does not use actual dates (at least visibily)) a typical creation may look like this:
+ * 
+ * <pre>
+ * Calendar start = (Calendar) _ddayRootCalendar.clone();
+ * Calendar end = (Calendar) start.clone();
+ * end.add(Calendar.DATE, 50);
+ * GanttSpecialDateRange range = new GanttSpecialDateRange(_ganttChart, start, end);
+ * // these need to be set to indicate that the range should adapt to D-Day logic 
+ * range.setFrequency(GanttSpecialDateRange.REPEAT_DDAY);
+ * range.setDDayRepeatInterval(10);
+ * // --  
+ * range.setRecurCount(50);
+ * range.setBackgroundColorTop(ColorCache.getRandomColor());
+ * range.setBackgroundColorBottom(ColorCache.getRandomColor());
+ * </pre>
+ * 
  * @author cre
  */
 public class GanttSpecialDateRange {
 
-    public static final int REPEAT_DAILY           = 1;
-    public static final int REPEAT_WEEKLY          = 2;
-    public static final int REPEAT_MONTHLY         = 3;
-    public static final int REPEAT_YEARLY          = 4;
+    public static final int REPEAT_DAILY        = 1;
+    public static final int REPEAT_WEEKLY       = 2;
+    public static final int REPEAT_MONTHLY      = 3;
+    public static final int REPEAT_YEARLY       = 4;
+    public static final int REPEAT_DDAY         = 5;
 
-    public static final int NO_END                 = -1;
+    public static final int NO_END              = -1;
 
     private Calendar        _start;
     private Calendar        _end;
-    private Color           _backgroundColorTop    = ColorCache.getWhite();
-    private Color           _backgroundColorBottom = ColorCache.getBlack();
+    private Color           _bgColorTop         = ColorCache.getWhite();
+    private Color           _bgColorBottom      = ColorCache.getBlack();
     private GanttChart      _parentChart;
     private GanttComposite  _parentComposite;
-    private boolean         _allowEventsOnDates    = true;
+    private boolean         _allowEventsOnDates = true;
 
-    private int             _frequency             = REPEAT_WEEKLY;
-    private int             _recurCount            = 1;
+    private int             _frequency          = REPEAT_WEEKLY;
+    private int             _recurCount         = 1;
     private List            _recurDays;
-    private int             _startHour             = 0;
-    private int             _startMinute           = 0;
-    private int             _startSecond           = 0;
-    private int             _endHour               = 23;
-    private int             _endMinute             = 59;
-    private int             _endSecond             = 59;
-    private int             _endAfter              = NO_END;
+    private int             _startHour          = 0;
+    private int             _startMinute        = 0;
+    private final int       _startSecond        = 0;
+    private int             _endHour            = 23;
+    private int             _endMinute          = 59;
+    private final int       _endSecond          = 59;
+    private int             _endAfter           = NO_END;
 
     private Calendar        _lastActualEndDate;
 
-    private List            _cachedRanges          = null;
+    private List            _cachedRanges       = null;
+
+    private int             _ddayRepeatInterval = 0;
 
     GanttSpecialDateRange() {
         this(null, null, null);
@@ -88,7 +118,7 @@ public class GanttSpecialDateRange {
      * 
      * @param parent Parent chart
      */
-    public GanttSpecialDateRange(GanttChart parent) {
+    public GanttSpecialDateRange(final GanttChart parent) {
         this(parent, null, null);
     }
 
@@ -99,14 +129,16 @@ public class GanttSpecialDateRange {
      * @param start Start date
      * @param end End date
      */
-    public GanttSpecialDateRange(GanttChart parent, Calendar start, Calendar end) {
+    public GanttSpecialDateRange(final GanttChart parent, final Calendar start, final Calendar end) {
         _recurDays = new ArrayList();
         _parentChart = parent;
         if (parent != null) {
             _parentComposite = parent.getGanttComposite();
         }
-        setStart(start);
-        setEnd(end);
+        
+        _start = (start == null ? null : DateHelper.getNewCalendar(start));
+        _end = (end == null ? null : DateHelper.getNewCalendar(end));
+        
         if (parent != null) {
             _parentComposite.addSpecialDateRange(this);
         }
@@ -127,12 +159,8 @@ public class GanttSpecialDateRange {
      * 
      * @param start Start date
      */
-    public void setStart(Calendar start) {
-        if (start != null) {
-            _start = (Calendar) start.clone();
-        } else {
-            _start = start;
-        }
+    public void setStart(final Calendar start) {
+        _start = (start == null ? null : DateHelper.getNewCalendar(start));
 
         updateCalculations();
     }
@@ -151,12 +179,8 @@ public class GanttSpecialDateRange {
      * 
      * @param end End date
      */
-    public void setEnd(Calendar end) {
-        if (end != null) {
-            _end = (Calendar) end.clone();
-        } else {
-            _end = end;
-        }
+    public void setEnd(final Calendar end) {        
+        _end = (end == null ? null : DateHelper.getNewCalendar(end));
 
         updateCalculations();
     }
@@ -167,7 +191,7 @@ public class GanttSpecialDateRange {
      * @return Top color
      */
     public Color getBackgroundColorTop() {
-        return _backgroundColorTop;
+        return _bgColorTop;
     }
 
     /**
@@ -175,8 +199,8 @@ public class GanttSpecialDateRange {
      * 
      * @param backgroundColorTop Top color or null if none (transparent)
      */
-    public void setBackgroundColorTop(Color backgroundColorTop) {
-        _backgroundColorTop = backgroundColorTop;
+    public void setBackgroundColorTop(final Color backgroundColorTop) {
+        _bgColorTop = backgroundColorTop;
     }
 
     /**
@@ -185,7 +209,7 @@ public class GanttSpecialDateRange {
      * @return Bottom color
      */
     public Color getBackgroundColorBottom() {
-        return _backgroundColorBottom;
+        return _bgColorBottom;
     }
 
     /**
@@ -193,8 +217,8 @@ public class GanttSpecialDateRange {
      * 
      * @param backgroundColorBottom Bottom color or null if none (transparent)
      */
-    public void setBackgroundColorBottom(Color backgroundColorBottom) {
-        _backgroundColorBottom = backgroundColorBottom;
+    public void setBackgroundColorBottom(final Color backgroundColorBottom) {
+        _bgColorBottom = backgroundColorBottom;
     }
 
     /**
@@ -229,7 +253,7 @@ public class GanttSpecialDateRange {
      * 
      * @param allowEventsOnDates true if allowed
      */
-    public void setAllowEventsOnDates(boolean allowEventsOnDates) {
+    public void setAllowEventsOnDates(final boolean allowEventsOnDates) {
         _allowEventsOnDates = allowEventsOnDates;
     }
 
@@ -237,17 +261,19 @@ public class GanttSpecialDateRange {
      * Adds a date that will be always used as a range date. The date is one of the Calendar dates, such as
      * {@link Calendar#MONDAY}. This is purely for convenience instead of having to create multiple special date ranges
      * to cover things such as weekends. Do note if you add specific hours, only the specified hour on the set days will
-     * be covered and not the full day itself.
+     * be covered and not the full day itself. <p /> If the frequency is set to {@value #REPEAT_DDAY} this method does
+     * nothing and you should instead be using {@link #setDDayRepeatInterval(int)} as DDay calendars has no notion of
+     * weekdates.
      * 
      * @param day Calendar weekday to add
      * @return true if added, false if not
      */
-    public boolean addRecurDay(int day) {
+    public boolean addRecurDay(final int day) {
         if (day < Calendar.SUNDAY || day > Calendar.SATURDAY) { return false; }
 
         if (_recurDays.contains(new Integer(day))) { return false; }
 
-        boolean ret = _recurDays.add(new Integer(day));
+        final boolean ret = _recurDays.add(new Integer(day));
         if (ret) {
             updateCalculations();
         }
@@ -260,8 +286,8 @@ public class GanttSpecialDateRange {
      * @param calDate Date to remove
      * @return true if removed
      */
-    public boolean removeRecurDay(int calDate) {
-        boolean ret = _recurDays.remove(new Integer(calDate));
+    public boolean removeRecurDay(final int calDate) {
+        final boolean ret = _recurDays.remove(new Integer(calDate));
         if (ret) {
             updateCalculations();
         }
@@ -279,13 +305,31 @@ public class GanttSpecialDateRange {
 
     /**
      * Sets the repeat frequency. Options are {@link #REPEAT_DAILY}, {@link #REPEAT_MONTHLY}, {@link #REPEAT_WEEKLY},
-     * {@link #REPEAT_YEARLY}.
+     * {@link #REPEAT_YEARLY} or {@link #REPEAT_DDAY} for DDay calendars.
      * 
      * @param frequency Frequency to set
      */
-    public void setFrequency(int frequency) {
+    public void setFrequency(final int frequency) {
         _frequency = frequency;
         updateCalculations();
+    }
+
+    /**
+     * Returns the currently set DDay repeat interval. This is only used if frequency is set to {@link #REPEAT_DDAY}.
+     * 
+     * @return repeat interval
+     */
+    public int getDDayRepeatInterval() {
+        return _ddayRepeatInterval;
+    }
+
+    /**
+     * Sets the custom DDay repeat interval. This is only used if frequency is set to {@link #REPEAT_DDAY}.
+     * 
+     * @param interval Custom repeat interval of n DDays
+     */
+    public void setDDayRepeatInterval(final int interval) {
+        _ddayRepeatInterval = interval;
     }
 
     /**
@@ -303,7 +347,7 @@ public class GanttSpecialDateRange {
      * 
      * @param recurMax Recurrence frequency
      */
-    public void setRecurCount(int recurMax) {
+    public void setRecurCount(final int recurMax) {
         _recurCount = recurMax;
         updateCalculations();
     }
@@ -332,7 +376,7 @@ public class GanttSpecialDateRange {
      * @param startHour start hour
      * @return true if set
      */
-    public boolean setStartHour(int startHour) {
+    public boolean setStartHour(final int startHour) {
         if (startHour < 0 || startHour > 23) { return false; }
 
         _startHour = startHour;
@@ -355,7 +399,7 @@ public class GanttSpecialDateRange {
      * @param startMinute start minute
      * @return true if set
      */
-    public boolean setStartMinute(int startMinute) {
+    public boolean setStartMinute(final int startMinute) {
         if (startMinute < 0 || startMinute > 59) { return false;
 
         }
@@ -380,7 +424,7 @@ public class GanttSpecialDateRange {
      * @param endHour end hour
      * @return true if set
      */
-    public boolean setEndHour(int endHour) {
+    public boolean setEndHour(final int endHour) {
         if (endHour < 0 || endHour > 23) { return false; }
 
         _endHour = endHour;
@@ -403,7 +447,7 @@ public class GanttSpecialDateRange {
      * @param endMinute start minute
      * @return true if set
      */
-    public boolean setEndMinute(int endMinute) {
+    public boolean setEndMinute(final int endMinute) {
         if (endMinute < 0 || endMinute > 59) { return false; }
 
         _endMinute = endMinute;
@@ -426,16 +470,16 @@ public class GanttSpecialDateRange {
      * 
      * @param endAfter After how many re-occurances to stop.
      */
-    public void setEndAfter(int endAfter) {
+    public void setEndAfter(final int endAfter) {
         _endAfter = endAfter;
         updateCalculations();
     }
 
-    public void setParentChart(GanttChart parentChart) {
+    public void setParentChart(final GanttChart parentChart) {
         _parentChart = parentChart;
     }
 
-    public void setParentComposite(GanttComposite parentComposite) {
+    public void setParentComposite(final GanttComposite parentComposite) {
         _parentComposite = parentComposite;
     }
 
@@ -447,26 +491,27 @@ public class GanttSpecialDateRange {
     /*
      * Checks whether this range is visible in the given start/end date range
      */
-    boolean isVisible(Calendar start, Calendar end) {
+    boolean isVisible(final Calendar start, final Calendar end) {
         if (!isUseable()) { return false; }
 
+        // TODO: DDay calendar is fucked here
+
+        //System.err.println(start.getTime() + " # " + end.getTime() + " --- " + _start.getTime() + " # " + _end.getTime() + " -- " + getActualEndDate().getTime() + " + " + _recurCount + " + " + _lastActualEndDate.getTime());
+
         // doesn't recur on any days at all
-        // TODO: This should be possible to be emtpy, then we just use the start / end dates
-        if (_recurDays.isEmpty()) { return false; }
+        // TODO: This should be possible to be empty, then we just use the start / end dates
+        if (_recurDays.isEmpty() && _frequency != REPEAT_DDAY) { return false; }
 
         // doesn't recur, what's the point??
         if (_recurCount <= 0) { return false; }
 
         // ends on specific date which is in the past
-        if (_end != null) {
-            if (_end.before(start)) { return false; }
-        }
+        if (_end != null && _end.before(start)) { return false; }
 
         // same deal
-        Calendar aEnd = getActualEndDate();
-        if (aEnd != null) {
-            if (aEnd.before(start)) { return false; }
-        }
+        final Calendar aEnd = getActualEndDate();
+        //System.err.println(aEnd.getTime() + " "+ end.getTime());
+        if (aEnd != null && aEnd.before(start)) { return false; }
 
         // now it's easy
         if (_start.before(end) && aEnd.after(start)) { return true; }
@@ -481,12 +526,12 @@ public class GanttSpecialDateRange {
     Calendar getActualEndDate() {
         if (_lastActualEndDate != null) { return _lastActualEndDate; }
         if (_end != null) {
-            _lastActualEndDate = (Calendar) _end.clone();
+            _lastActualEndDate = DateHelper.getNewCalendar(_end);
             return _end;
         }
 
         // move calendar to end recurring date
-        Calendar cal = (Calendar) _start.clone();
+        final Calendar cal = DateHelper.getNewCalendar(_start);
         for (int i = 0; i < _recurCount; i++) {
             switch (_frequency) {
                 case REPEAT_DAILY:
@@ -501,11 +546,16 @@ public class GanttSpecialDateRange {
                 case REPEAT_YEARLY:
                     cal.add(Calendar.YEAR, 1);
                     break;
+                case REPEAT_DDAY:
+                    cal.add(Calendar.DATE, _ddayRepeatInterval);
+                    break;
+                default:
+                    break;
             }
         }
 
         // set the end day to the highest day of that week
-        int d = getHighestRecurDate();
+        final int d = getHighestRecurDate();
         cal.set(Calendar.DAY_OF_WEEK, d);
 
         cal.set(Calendar.HOUR_OF_DAY, _endHour);
@@ -513,7 +563,7 @@ public class GanttSpecialDateRange {
         cal.set(Calendar.SECOND, _endSecond);
         cal.set(Calendar.MILLISECOND, 999);
 
-        _lastActualEndDate = (Calendar) cal.clone();
+        _lastActualEndDate = DateHelper.getNewCalendar(cal);
 
         return cal;
     }
@@ -522,46 +572,70 @@ public class GanttSpecialDateRange {
         return getBlocks(null, null);
     }
 
-    List getBlocks(Calendar start, Calendar end) {
-        if (_cachedRanges != null) { return _cachedRanges; }
+    List getBlocks(final Calendar start, final Calendar end) {
+        // if (_cachedRanges != null) { return _cachedRanges; }
 
         _cachedRanges = new ArrayList();
 
-        Calendar cal = (Calendar) _start.clone();
+        final Calendar cal = DateHelper.getNewCalendar(_start);
+
+        final Calendar ourEnd = getActualEndDate();
 
         for (int i = 0; i < _recurCount; i++) {
-            Calendar calEnd = (Calendar) cal.clone();
+            final Calendar calEnd = DateHelper.getNewCalendar(cal);
 
-            for (int x = 0; x < _recurDays.size(); x++) {
-                int day = ((Integer) _recurDays.get(x)).intValue();
-
+            if (_recurDays.isEmpty() && _frequency == REPEAT_DDAY) {
                 cal.set(Calendar.HOUR_OF_DAY, _startHour);
                 cal.set(Calendar.MINUTE, _startMinute);
                 cal.set(Calendar.SECOND, _startSecond);
                 cal.set(Calendar.MILLISECOND, 0);
-                cal.set(Calendar.DAY_OF_WEEK, day);
 
                 calEnd.set(Calendar.HOUR_OF_DAY, _endHour);
                 calEnd.set(Calendar.MINUTE, _endMinute);
                 calEnd.set(Calendar.SECOND, _endSecond);
                 calEnd.set(Calendar.MILLISECOND, 999);
-                calEnd.set(Calendar.DAY_OF_WEEK, day);
 
-                if (start != null) {
-                    if (calEnd.before(start)) {
-                        continue;
-                    }
-                }
-                if (end != null) {
-                    if (cal.after(end)) {
-                        continue;
-                    }
+                if (calEnd.after(end)) {
+                    continue;
                 }
 
-                List foo = new ArrayList();
-                foo.add(cal.clone());
-                foo.add(calEnd.clone());
+                if (ourEnd != null && calEnd.after(ourEnd)) {
+                    continue;
+                }
+
+                final List foo = new ArrayList();
+                foo.add(DateHelper.getNewCalendar(cal));
+                foo.add(DateHelper.getNewCalendar(calEnd));
                 _cachedRanges.add(foo);
+
+            } else {
+                for (int x = 0; x < _recurDays.size(); x++) {
+                    final int day = ((Integer) _recurDays.get(x)).intValue();
+
+                    cal.set(Calendar.HOUR_OF_DAY, _startHour);
+                    cal.set(Calendar.MINUTE, _startMinute);
+                    cal.set(Calendar.SECOND, _startSecond);
+                    cal.set(Calendar.MILLISECOND, 0);
+                    cal.set(Calendar.DAY_OF_WEEK, day);
+
+                    calEnd.set(Calendar.HOUR_OF_DAY, _endHour);
+                    calEnd.set(Calendar.MINUTE, _endMinute);
+                    calEnd.set(Calendar.SECOND, _endSecond);
+                    calEnd.set(Calendar.MILLISECOND, 999);
+                    calEnd.set(Calendar.DAY_OF_WEEK, day);
+
+                    if (start != null && calEnd.before(start)) {
+                        continue;
+                    }
+                    if (end != null && cal.after(end)) {
+                        continue;
+                    }
+
+                    final List foo = new ArrayList();
+                    foo.add(DateHelper.getNewCalendar(cal));
+                    foo.add(DateHelper.getNewCalendar(calEnd));
+                    _cachedRanges.add(foo);
+                }
             }
 
             switch (_frequency) {
@@ -576,6 +650,11 @@ public class GanttSpecialDateRange {
                     break;
                 case REPEAT_YEARLY:
                     cal.add(Calendar.YEAR, 1);
+                    break;
+                case REPEAT_DDAY:
+                    cal.add(Calendar.DATE, _ddayRepeatInterval);
+                    break;
+                default:
                     break;
             }
         }
@@ -586,7 +665,7 @@ public class GanttSpecialDateRange {
     int getHighestRecurDate() {
         int max = 0;
         for (int i = 0; i < _recurDays.size(); i++) {
-            Integer day = (Integer) _recurDays.get(i);
+            final Integer day = (Integer) _recurDays.get(i); // NOPMD
             max = Math.max(max, day.intValue());
         }
         return max;

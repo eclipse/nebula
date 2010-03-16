@@ -28,7 +28,7 @@ public class AdvancedTooltip {
      * @param title Header
      * @param content Content
      */
-    public AdvancedTooltip(String title, String content) {
+    public AdvancedTooltip(final String title, final String content) {
         _title = title;
         _content = content;
     }
@@ -40,7 +40,7 @@ public class AdvancedTooltip {
      * @param content Content
      * @param image Image
      */
-    public AdvancedTooltip(String title, String content, Image image) {
+    public AdvancedTooltip(final String title, final String content, final Image image) {
         _title = title;
         _content = content;
         _image = image;
@@ -55,7 +55,7 @@ public class AdvancedTooltip {
      * @param helpImage Help Image
      * @param helpText Help Text
      */
-    public AdvancedTooltip(String title, String content, Image image, Image helpImage, String helpText) {
+    public AdvancedTooltip(final String title, final String content, final Image image, final Image helpImage, final String helpText) {
         _title = title;
         _content = content;
         _image = image;
@@ -67,7 +67,7 @@ public class AdvancedTooltip {
         return _image;
     }
 
-    public void setImage(Image image) {
+    public void setImage(final Image image) {
         _image = image;
     }
 
@@ -75,7 +75,7 @@ public class AdvancedTooltip {
         return _title;
     }
 
-    public void setTitle(String title) {
+    public void setTitle(final String title) {
         _title = title;
     }
 
@@ -83,7 +83,7 @@ public class AdvancedTooltip {
         return _content;
     }
 
-    public void setContent(String content) {
+    public void setContent(final String content) {
         _content = content;
     }
 
@@ -91,7 +91,7 @@ public class AdvancedTooltip {
         return _helpImage;
     }
 
-    public void setHelpImage(Image helpImage) {
+    public void setHelpImage(final Image helpImage) {
         _helpImage = helpImage;
     }
 
@@ -99,7 +99,7 @@ public class AdvancedTooltip {
         return _helpText;
     }
 
-    public void setHelpText(String helpText) {
+    public void setHelpText(final String helpText) {
         _helpText = helpText;
     }
 
@@ -107,7 +107,7 @@ public class AdvancedTooltip {
         return _extraTextSpacing;
     }
 
-    public void setExtraTextSpacing(int spacing) {
+    public void setExtraTextSpacing(final int spacing) {
         _extraTextSpacing = spacing;
     }
 

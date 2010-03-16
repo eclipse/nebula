@@ -24,35 +24,35 @@ import org.eclipse.swt.widgets.Shell;
 
 class GanttToolTip {
 
-    private static boolean SHOW_CODE_HOVER_BELOW = false;
+    private static boolean _codeHoverBelow = false;
 
     private static Shell   _shell;
     private static String  _lastText;
     private static Point   _lastLocation;
 
-    public static void makeDialog(IColorManager colorManager, String name, String text, Point location) {
+    public static void makeDialog(final IColorManager colorManager, final String name, final String text, final Point location) {
         internalMakeDialog(colorManager, name, text, null, null, null, location);
     }
 
-    public static void makeDialog(IColorManager colorManager, String name, String text, String text2, Point location) {
+    public static void makeDialog(final IColorManager colorManager, final String name, final String text, final String text2, final Point location) {
         internalMakeDialog(colorManager, name, text, text2, null, null, location);
     }
 
-    public static void makeDialog(IColorManager colorManager, String name, String text, String text2, String text3, Point location) {
+    public static void makeDialog(final IColorManager colorManager, final String name, final String text, final String text2, final String text3, final Point location) {
         internalMakeDialog(colorManager, name, text, text2, text3, null, location);
     }
 
-    public static void makeDialog(IColorManager colorManager, String name, String text, String text2, String text3, String text4, Point location) {
+    public static void makeDialog(final IColorManager colorManager, final String name, final String text, final String text2, final String text3, final String text4, final Point location) {
         internalMakeDialog(colorManager, name, text, text2, text3, text4, location);
     }
 
-    private static void internalMakeDialog(IColorManager colorManager, String name, String text, String text2, String text3, String text4, Point loc) {
+    private static void internalMakeDialog(final IColorManager colorManager, final String name, final String text, final String text2, final String text3, final String text4, final Point loc) {
 
         Point location = new Point(loc.x, loc.y);
 
         if (_shell != null && !_shell.isDisposed()) {
 
-            if (!SHOW_CODE_HOVER_BELOW) {
+            if (!_codeHoverBelow) {
                 location = new Point(location.x, location.y - _shell.getSize().y - 20);
             }
 
@@ -66,25 +66,25 @@ class GanttToolTip {
 
         _shell = new Shell(Display.getDefault().getActiveShell(), SWT.ON_TOP | SWT.TOOL);
 
-        RowLayout rl = new RowLayout();
-        rl.marginLeft = 1;
-        rl.marginRight = 1;
-        rl.marginTop = 1;
-        rl.marginBottom = 1;
-        _shell.setLayout(rl);
+        final RowLayout rowLayout = new RowLayout();
+        rowLayout.marginLeft = 1;
+        rowLayout.marginRight = 1;
+        rowLayout.marginTop = 1;
+        rowLayout.marginBottom = 1;
+        _shell.setLayout(rowLayout);
 
         _shell.setBackground(colorManager.getTooltipBackgroundColor());
 
-        Composite comp = new Composite(_shell, SWT.NULL);
+        final Composite comp = new Composite(_shell, SWT.NULL);
         comp.setBackground(colorManager.getTooltipBackgroundColor());
 
-        FillLayout fl = new FillLayout();
-        fl.type = SWT.VERTICAL;
-        fl.marginHeight = 0;
-        fl.marginWidth = 0;
-        comp.setLayout(fl);
+        final FillLayout fillLayout = new FillLayout();
+        fillLayout.type = SWT.VERTICAL;
+        fillLayout.marginHeight = 0;
+        fillLayout.marginWidth = 0;
+        comp.setLayout(fillLayout);
 
-        CLabel label = new CLabel(comp, SWT.LEFT);
+        final CLabel label = new CLabel(comp, SWT.LEFT);
         label.setBackground(colorManager.getTooltipBackgroundColor());
         label.setForeground(colorManager.getTooltipForegroundColor());
         label.setText(name);
@@ -92,7 +92,7 @@ class GanttToolTip {
         cur = applyBoldFont(cur);
         label.setFont(cur);
 
-        CLabel textLabel = new CLabel(comp, SWT.LEFT);
+        final CLabel textLabel = new CLabel(comp, SWT.LEFT);
         textLabel.setBackground(colorManager.getTooltipBackgroundColor());
         if (text4 != null) {
             textLabel.setForeground(colorManager.getTooltipForegroundColorFaded());
@@ -100,20 +100,20 @@ class GanttToolTip {
         textLabel.setText(text);
 
         if (text2 != null) {
-            CLabel text2Label = new CLabel(comp, SWT.LEFT);
+            final CLabel text2Label = new CLabel(comp, SWT.LEFT);
             text2Label.setBackground(colorManager.getTooltipBackgroundColor());
             text2Label.setForeground(colorManager.getTooltipForegroundColorFaded());
             text2Label.setText(text2);
         }
         if (text3 != null) {
-            CLabel text3Label = new CLabel(comp, SWT.LEFT);
+            final CLabel text3Label = new CLabel(comp, SWT.LEFT);
             text3Label.setBackground(colorManager.getTooltipBackgroundColor());
             text3Label.setForeground(colorManager.getTooltipForegroundColorFaded());
             text3Label.setText(text3);
         }
 
         if (text4 != null) {
-            CLabel text4Label = new CLabel(comp, SWT.LEFT);
+            final CLabel text4Label = new CLabel(comp, SWT.LEFT);
             text4Label.setBackground(colorManager.getTooltipBackgroundColor());
             text4Label.setForeground(colorManager.getTooltipForegroundColorFaded());
             text4Label.setText(text4);
@@ -122,7 +122,7 @@ class GanttToolTip {
         _shell.pack();
 
         // show above code inside, automatically below otherwise
-        if (!SHOW_CODE_HOVER_BELOW) {
+        if (!_codeHoverBelow) {
             location = new Point(location.x, location.y - _shell.getSize().y - 10);
         }
 
@@ -132,13 +132,15 @@ class GanttToolTip {
         _shell.setVisible(true);
     }
 
-    private static Font applyBoldFont(Font font) {
-        if (font == null) return null;
+    private static Font applyBoldFont(final Font font) {
+        if (font == null) {
+            return null;
+        }
 
-        FontData[] fontDataArray = font.getFontData();
+        final FontData[] fontDataArray = font.getFontData();
         if (fontDataArray == null) { return null; }
         for (int index = 0; index < fontDataArray.length; index++) {
-            FontData fData = fontDataArray[index];
+            final FontData fData = fontDataArray[index];
             fData.setStyle(SWT.BOLD);
         }
 
@@ -146,7 +148,7 @@ class GanttToolTip {
     }
 
     public static void kill() {
-        if (_shell != null && _shell.isDisposed() == false) {
+        if (_shell != null && !_shell.isDisposed()) {
             _shell.dispose();
         }
     }

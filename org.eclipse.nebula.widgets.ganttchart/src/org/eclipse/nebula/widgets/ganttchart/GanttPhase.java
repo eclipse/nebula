@@ -1,6 +1,7 @@
 package org.eclipse.nebula.widgets.ganttchart;
 
 import java.util.Calendar;
+import java.util.Locale;
 
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -14,14 +15,14 @@ import org.eclipse.swt.graphics.Rectangle;
  * 
  * @author cre
  */
-public class GanttPhase {
+public final class GanttPhase {
 
     private Calendar       _startDate;
     private Calendar       _endDate;
     private String         _title;
     private boolean        _locked;
-    private Color          _headerBackgroundColor;
-    private Color          _headerForegroundColor;
+    private Color          _headerBgColor;
+    private Color          _headerFgColor;
     private Color          _headerTextColor;
     private Color          _bodyTopColor;
     private Color          _bodyBottomColor;
@@ -47,17 +48,17 @@ public class GanttPhase {
     private GanttChart     _parentChart;
     private GanttComposite _parentComposite;
 
-    private int            _daysBetweenStartAndEnd;
+    private int            _daysBtwStartEnd;
 
-    private Calendar       _dragStartCalendar;
-    private Calendar       _dragEndCalendar;
+    private Calendar       _dragStartCal;
+    private Calendar       _dragEndCal;
     private long           _dragStartLong;
     private long           _dragEndLong;
 
     GanttPhase() {
         _headerTextColor = ColorCache.getWhite();
-        _headerForegroundColor = ColorCache.getColor(74, 123, 173);
-        _headerBackgroundColor = ColorCache.getColor(42, 83, 125);
+        _headerFgColor = ColorCache.getColor(74, 123, 173);
+        _headerBgColor = ColorCache.getColor(42, 83, 125);
         _bodyTopColor = ColorCache.getColor(217, 238, 167);
         _bodyBottomColor = ColorCache.getColor(155, 178, 99);
         _alpha = 255;
@@ -65,54 +66,61 @@ public class GanttPhase {
         _borderColor = ColorCache.getColor(19, 50, 81);
     }
 
-    public GanttPhase(GanttChart parent, String title) {
+    public GanttPhase(final GanttChart parent, final String title) {
         this(parent, null, null, title);
     }
 
-    public GanttPhase(GanttChart parent, Calendar start, Calendar end, String title) {
+    public GanttPhase(final GanttChart parent, final Calendar start, final Calendar end, final String title) {
         this();
-        setStartDate(start);
-        setEndDate(end);
-        _title = title;
         _parentChart = parent;
+        _title = title;
         _parentComposite = parent.getGanttComposite();
 
+        setStartDate(start);
+        setEndDate(end);
+
         _parentComposite.addPhase(this);
+        
+        updateDaysBetweenStartAndEnd();
     }
 
     public Calendar getStartDate() {
         return _startDate;
     }
 
-    public void setStartDate(Calendar startDate) {
+    public void setStartDate(final Calendar startDate) {
         if (startDate == null) {
-            _startDate = startDate;
+            _startDate = null;
             _start = -1;
             return;
         }
-        _startDate = (Calendar) startDate.clone();
+        _startDate = DateHelper.getNewCalendar(startDate);
         _start = _startDate.getTimeInMillis();
+        
+        updateDaysBetweenStartAndEnd();
     }
 
     public Calendar getEndDate() {
         return _endDate;
     }
 
-    public void setEndDate(Calendar endDate) {
+    public void setEndDate(final Calendar endDate) {
         if (endDate == null) {
-            _endDate = endDate;
+            _endDate = null;
             _end = -1;
             return;
         }
-        _endDate = (Calendar) endDate.clone();
+        _endDate = DateHelper.getNewCalendar(endDate);
         _end = _endDate.getTimeInMillis();
+        
+        updateDaysBetweenStartAndEnd();
     }
 
     public String getTitle() {
         return _title;
     }
 
-    public void setTitle(String title) {
+    public void setTitle(final String title) {
         _title = title;
     }
 
@@ -120,31 +128,31 @@ public class GanttPhase {
         return _locked;
     }
 
-    public void setLocked(boolean locked) {
+    public void setLocked(final boolean locked) {
         _locked = locked;
     }
 
     public Color getHeaderBackgroundColor() {
-        return _headerBackgroundColor;
+        return _headerBgColor;
     }
 
-    public void setHeaderBackgroundColor(Color headerBackgroundColor) {
-        _headerBackgroundColor = headerBackgroundColor;
+    public void setHeaderBackgroundColor(final Color color) {
+        _headerBgColor = color;
     }
 
     public Color getHeaderForegroundColor() {
-        return _headerForegroundColor;
+        return _headerFgColor;
     }
 
-    public void setHeaderForegroundColor(Color headerForegroundColor) {
-        _headerForegroundColor = headerForegroundColor;
+    public void setHeaderForegroundColor(final Color color) {
+        _headerFgColor = color;
     }
 
     public Color getBodyTopColor() {
         return _bodyTopColor;
     }
 
-    public void setBodyTopColor(Color bodyTopColor) {
+    public void setBodyTopColor(final Color bodyTopColor) {
         _bodyTopColor = bodyTopColor;
     }
 
@@ -152,7 +160,7 @@ public class GanttPhase {
         return _bodyBottomColor;
     }
 
-    public void setBodyBottomColor(Color bodyBottomColor) {
+    public void setBodyBottomColor(final Color bodyBottomColor) {
         _bodyBottomColor = bodyBottomColor;
     }
 
@@ -160,7 +168,7 @@ public class GanttPhase {
         return _alpha;
     }
 
-    public void setAlpha(int alpha) {
+    public void setAlpha(final int alpha) {
         _alpha = alpha;
     }
 
@@ -168,7 +176,7 @@ public class GanttPhase {
         return _data;
     }
 
-    public void setData(Object data) {
+    public void setData(final Object data) {
         _data = data;
     }
 
@@ -176,7 +184,7 @@ public class GanttPhase {
         return _hidden;
     }
 
-    public void setHidden(boolean hidden) {
+    public void setHidden(final boolean hidden) {
         _hidden = hidden;
     }
 
@@ -184,7 +192,7 @@ public class GanttPhase {
         return _resizable;
     }
 
-    public void setResizable(boolean resizable) {
+    public void setResizable(final boolean resizable) {
         _resizable = resizable;
     }
 
@@ -192,7 +200,7 @@ public class GanttPhase {
         return _moveable;
     }
 
-    public void setMoveable(boolean moveable) {
+    public void setMoveable(final boolean moveable) {
         _moveable = moveable;
     }
 
@@ -200,7 +208,7 @@ public class GanttPhase {
         return _headerFont;
     }
 
-    public void setHeaderFont(Font headerFont) {
+    public void setHeaderFont(final Font headerFont) {
         _headerFont = headerFont;
     }
 
@@ -208,7 +216,7 @@ public class GanttPhase {
         return _drawBorders;
     }
 
-    public void setDrawBorders(boolean drawBorders) {
+    public void setDrawBorders(final boolean drawBorders) {
         _drawBorders = drawBorders;
     }
 
@@ -216,7 +224,7 @@ public class GanttPhase {
         return _borderWidth;
     }
 
-    public void setBorderWidth(int borderWidth) {
+    public void setBorderWidth(final int borderWidth) {
         _borderWidth = borderWidth;
     }
 
@@ -224,15 +232,15 @@ public class GanttPhase {
         return _borderColor;
     }
 
-    public void setBorderColor(Color borderColor) {
+    public void setBorderColor(final Color borderColor) {
         _borderColor = borderColor;
     }
 
-    public void setStart(long start) {
+    public void setStart(final long start) {
         _start = start;
     }
 
-    public void setEnd(long end) {
+    public void setEnd(final long end) {
         _end = end;
     }
 
@@ -240,7 +248,7 @@ public class GanttPhase {
         return _headerTextColor;
     }
 
-    public void setHeaderTextColor(Color headerTextColor) {
+    public void setHeaderTextColor(final Color headerTextColor) {
         _headerTextColor = headerTextColor;
     }
 
@@ -254,11 +262,11 @@ public class GanttPhase {
     }
 
     public int getDDayRevisedStart() {
-        return (int) DateHelper.daysBetween(_parentComposite.getDDayCalendar(), _startDate, _parentChart.getSettings().getDefaultLocale());
+        return (int) DateHelper.daysBetween(_parentComposite.getDDayCalendar(), _startDate);
     }
 
     public int getDDayRevisedEnd() {
-        return (int) DateHelper.daysBetween(_parentComposite.getDDayCalendar(), _endDate, _parentChart.getSettings().getDefaultLocale());
+        return (int) DateHelper.daysBetween(_parentComposite.getDDayCalendar(), _endDate);
     }
 
     /**
@@ -266,7 +274,7 @@ public class GanttPhase {
      * 
      * @param day
      */
-    public void setDDayStart(int day) {
+    public void setDDayStart(final int day) {
         _dDayStart = day;
 
         _startDate = _parentComposite.getDDayCalendar();
@@ -278,7 +286,7 @@ public class GanttPhase {
         return _dDayEnd;
     }
 
-    public void setDDayEnd(int day) {
+    public void setDDayEnd(final int day) {
         _dDayEnd = day;
 
         _endDate = _parentComposite.getDDayCalendar();
@@ -288,27 +296,30 @@ public class GanttPhase {
     
     // --------------- PRIVATE METHODS ------------------
 
-    void updateDaysBetweenStartAndEnd() {
-        if (getStartDate() == null || getEndDate() == null) {
-            _daysBetweenStartAndEnd = -1;
+    private void updateDaysBetweenStartAndEnd() {
+        final Calendar start = getStartDate();
+        final Calendar end = getEndDate();
+        
+        if (start == null || end == null) {
+            _daysBtwStartEnd = -1;
             return;
         }
-
-        _daysBetweenStartAndEnd = (int) DateHelper.daysBetween(getStartDate(), getEndDate(), _parentChart.getSettings().getDefaultLocale());
+                
+        _daysBtwStartEnd = (int) DateHelper.daysBetween(start, end);
 
         if (_parentComposite.getCurrentView() == ISettings.VIEW_D_DAY) {
-            _dDayStart = (int) DateHelper.daysBetween(_parentComposite.getDDayCalendar(), getStartDate(), _parentChart.getSettings().getDefaultLocale());
-            _dDayEnd = (int) DateHelper.daysBetween(_parentComposite.getDDayCalendar(), getEndDate(), _parentChart.getSettings().getDefaultLocale());
+            _dDayStart = (int) DateHelper.daysBetween(_parentComposite.getDDayCalendar(), start);
+            _dDayEnd = (int) DateHelper.daysBetween(_parentComposite.getDDayCalendar(), end);
             _dDayStart--;
         }
-
+        
     }
 
     boolean isAllowZeroWidth() {
         return _allowZeroWidth;
     }
 
-    void setAllowZeroWidth(boolean allowZeroWidth) {
+    void setAllowZeroWidth(final boolean allowZeroWidth) {
         _allowZeroWidth = allowZeroWidth;
     }
 
@@ -316,7 +327,7 @@ public class GanttPhase {
         return _headerBounds;
     }
 
-    void setHeaderBounds(Rectangle headerBounds) {
+    void setHeaderBounds(final Rectangle headerBounds) {
         _headerBounds = headerBounds;
     }
 
@@ -324,7 +335,7 @@ public class GanttPhase {
         return _bounds;
     }
 
-    void setBounds(Rectangle bounds) {
+    void setBounds(final Rectangle bounds) {
         _bounds = bounds;
     }
 
@@ -340,30 +351,30 @@ public class GanttPhase {
         return (_startDate != null && _endDate != null);
     }
 
-    boolean overlaps(GanttPhase other) {
+    boolean overlaps(final GanttPhase other) {
         return ((other.getStart() > _start && other.getEnd() < _end) || (other.getStart() < _start && other.getEnd() > _start));
     }
     
-    boolean willOverlapResize(GanttPhase other, int calType, int val, boolean start) {
-        Calendar temp = (Calendar) _startDate.clone();
+    boolean willOverlapResize(final GanttPhase other, final int calType, final int val, final boolean start) {
+        final Calendar temp = DateHelper.getNewCalendar(_startDate);
         if (start) {
             temp.add(calType, val);
         }
-        Calendar tempEnd = (Calendar) _endDate.clone();
+        final Calendar tempEnd = DateHelper.getNewCalendar(_endDate);
         if (!start) {
             temp.add(calType, val);
         }
         
-        long s = temp.getTimeInMillis();
-        long e = tempEnd.getTimeInMillis();
+        final long startMillis = temp.getTimeInMillis();
+        final long endMillis = tempEnd.getTimeInMillis();
         
         //System.err.println(tempEnd.getTime() + " >= " + other.getStartDate().getTime());
         
         if (start) {
-            return (s < other.getEnd());
+            return (startMillis < other.getEnd());
         }
         else {
-            return (e >= other.getStart() && other.getStart() >= _startDate.getTimeInMillis());
+            return (endMillis >= other.getStart() && other.getStart() >= _startDate.getTimeInMillis());
         }
     }
 
@@ -376,9 +387,9 @@ public class GanttPhase {
     }
 
     void moveStart(int calType, int val) {
-        Calendar temp = (Calendar) _startDate.clone();
+        final Calendar temp = DateHelper.getNewCalendar(_startDate);
         temp.add(calType, val);
-        Calendar tempEnd = (Calendar) _endDate.clone();
+        final Calendar tempEnd = DateHelper.getNewCalendar(_endDate);
         if (!isAllowZeroWidth()) {
             tempEnd.add(calType, -1);
         }
@@ -390,9 +401,9 @@ public class GanttPhase {
     }
 
     void moveEnd(int calType, int val) {
-        Calendar temp = (Calendar) _endDate.clone();
+        final Calendar temp = DateHelper.getNewCalendar(_endDate);
         temp.add(calType, val);
-        Calendar tempStart = (Calendar) _startDate.clone();
+        final Calendar tempStart = DateHelper.getNewCalendar(_startDate);
         if (!isAllowZeroWidth()) {
             tempStart.add(calType, 1);
         }
@@ -404,21 +415,21 @@ public class GanttPhase {
     }
 
     int getDaysBetweenStartAndEnd() {
-        return _daysBetweenStartAndEnd;
+        return _daysBtwStartEnd;
     }
 
     void markDragStart() {
         _dragStartLong = _start;
         _dragEndLong = _end;
-        _dragStartCalendar = (Calendar) _startDate.clone();
-        _dragEndCalendar = (Calendar) _endDate.clone();
+        _dragStartCal = DateHelper.getNewCalendar(_startDate);
+        _dragEndCal = DateHelper.getNewCalendar(_endDate);
     }
 
     void undoLastDragDrop() {
         _start = _dragStartLong;
         _end = _dragEndLong;
-        setStartDate(_dragStartCalendar);
-        setEndDate(_dragEndCalendar);
+        setStartDate(_dragStartCal);
+        setEndDate(_dragEndCal);
         updateDaysBetweenStartAndEnd();
     }
 

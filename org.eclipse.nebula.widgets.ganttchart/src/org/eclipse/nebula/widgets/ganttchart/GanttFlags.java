@@ -9,7 +9,7 @@ package org.eclipse.nebula.widgets.ganttchart;
  * <p>
  * Any other styles not listed here will be ignored.
  */
-interface IGanttFlags {
+class GanttFlags {
 
 	// SWT.MULTI is taken (1 << 1)
 	// SWT.SINGLE is taken (1 << 2)

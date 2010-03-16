@@ -33,7 +33,7 @@ public class VerticalDragDropManager {
         return _targetSection;
     }
 
-    public void setTargetSection(GanttSection targetSection) {
+    public void setTargetSection(final GanttSection targetSection) {
         _targetSection = targetSection;
     }
 
@@ -41,7 +41,7 @@ public class VerticalDragDropManager {
         return _topEvent;
     }
 
-    public void setTopEvent(GanttEvent topEvent) {
+    public void setTopEvent(final GanttEvent topEvent) {
         _topEvent = topEvent;
     }
 
@@ -49,7 +49,7 @@ public class VerticalDragDropManager {
         return _bottomEvent;
     }
 
-    public void setBottomEvent(GanttEvent bottomEvent) {
+    public void setBottomEvent(final GanttEvent bottomEvent) {
         _bottomEvent = bottomEvent;
     }
 
@@ -57,7 +57,7 @@ public class VerticalDragDropManager {
         return _surroundingEvents;
     }
 
-    public void setSurroundingEvents(List surroundingEvents) {
+    public void setSurroundingEvents(final List surroundingEvents) {
         _surroundingEvents = surroundingEvents;
     }
 

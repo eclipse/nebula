@@ -30,29 +30,34 @@ public class GanttHeaderSpacedLayout extends Layout {
     private int        _maxX;
 
     public GanttHeaderSpacedLayout() {
-
+        super();
     }
 
-    public GanttHeaderSpacedLayout(GanttChart chart) {
+    public GanttHeaderSpacedLayout(final GanttChart chart) {
+        this();
         _ganttChart = chart;
     }
 
-    public void setGanttChart(GanttChart chart) {
+    public void setGanttChart(final GanttChart chart) {
         _ganttChart = chart;
     }
 
-    private void recalculate(Composite composite) {
-        Control[] children = composite.getChildren();
+    private void recalculate(final Composite composite) {
+        final Control[] children = composite.getChildren();
 
-        if (children == null || children.length == 0) return;
+        if (children == null || children.length == 0) {
+            return;
+        }
 
-        if (_ganttChart == null) return;
+        if (_ganttChart == null) {
+            return;
+        }
 
         int widgetHeaderHeight = 0;
         int borderHeight = 0;
         for (int i = 0; i < children.length; i++) {
-            Control child = children[i];
-            Point wantedSize = child.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+            final Control child = children[i];
+            final Point wantedSize = child.computeSize(SWT.DEFAULT, SWT.DEFAULT);
             _maxY += wantedSize.y;
             _maxX = Math.max(_maxX, wantedSize.x);
             if (child instanceof Tree) {
@@ -64,33 +69,39 @@ public class GanttHeaderSpacedLayout extends Layout {
             }
         }
 
-        ISettings settings = _ganttChart.getSettings();
+        final ISettings settings = _ganttChart.getSettings();
         if (settings.drawHeader()) {
             _ganttHeaderSize = settings.getHeaderDayHeight() + settings.getHeaderMonthHeight() + settings.getEventsTopSpacer() - widgetHeaderHeight - borderHeight;
-        } else _ganttHeaderSize = 0;
+        } else {
+            _ganttHeaderSize = 0;
+        }
 
         _calculated = true;
     }
 
-    protected Point computeSize(Composite composite, int hint, int hint2, boolean flushCache) {
-        if (flushCache || !_calculated) recalculate(composite);
+    protected Point computeSize(final Composite composite, final int hint, final int hint2, final boolean flushCache) {
+        if (flushCache || !_calculated) {
+            recalculate(composite);
+        }
 
         layout(composite, false);
 
         return new Point(_maxX, _maxY);
     }
 
-    protected void layout(Composite composite, boolean flushCache) {
-        if (flushCache || !_calculated) recalculate(composite);
+    protected void layout(final Composite composite, final boolean flushCache) {
+        if (flushCache || !_calculated) {
+            recalculate(composite);
+        }
 
-        Control[] children = composite.getChildren();
+        final Control[] children = composite.getChildren();
 
-        Rectangle bounds = composite.getClientArea();
+        final Rectangle bounds = composite.getClientArea();
 
         int y = _ganttHeaderSize;
         for (int i = 0; i < children.length; i++) {
-            Control child = children[i];
-            Point wantedSize = child.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+            final Control child = children[i];
+            final Point wantedSize = child.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 
             child.setLocation(0, y);
             child.setSize(bounds.width, bounds.height - y);

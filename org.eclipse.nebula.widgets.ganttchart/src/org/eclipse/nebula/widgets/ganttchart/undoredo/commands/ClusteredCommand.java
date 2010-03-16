@@ -22,21 +22,23 @@ import java.util.List;
  */
 public class ClusteredCommand extends AbstractUndoRedoCommand {
 
-    private List _commands;
+    private final List _commands;
     
     public ClusteredCommand() {
+        super();
         _commands = new ArrayList();
     }
     
-    public ClusteredCommand(List commands) {
+    public ClusteredCommand(final List commands) {
+        super();
         _commands = commands;
     }
     
-    public void addCommand(IUndoRedoCommand command) {
+    public void addCommand(final IUndoRedoCommand command) {
         _commands.add(command);
     }
     
-    public void removeCommand(IUndoRedoCommand command) {
+    public void removeCommand(final IUndoRedoCommand command) {
         _commands.remove(command);
     }
     

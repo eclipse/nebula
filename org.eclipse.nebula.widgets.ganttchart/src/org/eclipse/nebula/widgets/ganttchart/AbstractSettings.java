@@ -80,10 +80,6 @@ abstract class AbstractSettings implements ISettings {
 		return true;
 	}
 
-	public boolean consumeEventWhenOutOfRange() {
-		return false;
-	}
-
 	public boolean enableAutoScroll() {
 		return true;
 	}
@@ -404,7 +400,7 @@ abstract class AbstractSettings implements ISettings {
 	}
 
 	public boolean drawLockedDateMarks() {
-		return false;
+		return true;
 	}
 
 	public boolean showDateTipsOnScrolling() {
@@ -480,7 +476,7 @@ abstract class AbstractSettings implements ISettings {
     }
       
     public int getVerticalEventDragging() {
-        return IVerticalDragModes.NO_VERTICAL_DRAG;
+        return VerticalDragModes.NO_VERTICAL_DRAG;
     }
 
     public int getVerticalDragResistance() {

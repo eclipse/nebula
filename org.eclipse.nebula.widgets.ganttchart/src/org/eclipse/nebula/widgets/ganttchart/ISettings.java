@@ -386,17 +386,6 @@ public interface ISettings {
     public boolean showBoldScopeText();
 
     /**
-     * Whether events that are no longer in visible range should "not exist", which means that they aren't counted
-     * vertically. The effect of this will be that visible events might jump around vertically as the chart is scrolled,
-     * as events that are in-between come and go into view.
-     * <p>
-     * This might be useful if there are loads of events, however, it may also be confusing.
-     * 
-     * @return true if to consume events. Default is false.
-     */
-    public boolean consumeEventWhenOutOfRange();
-
-    /**
      * Letters have different width. If turned on, this will try to make all day letters appear centered, whereas if
      * turned off, letter width will be ignored.
      * 
@@ -1003,7 +992,7 @@ public interface ISettings {
      * What style of vertical event dragging that is enabled. For the "resistance" before a vertical drag takes
      * place you can change this with {@link ISettings#getVerticalDragResistance()}.
      * 
-     * @return One of the options in {@link IVerticalDragModes}. Default is {@link IVerticalDragModes#NO_VERTICAL_DRAG}
+     * @return One of the options in {@link VerticalDragModes}. Default is {@link VerticalDragModes#NO_VERTICAL_DRAG}
      */
     public int getVerticalEventDragging();
     

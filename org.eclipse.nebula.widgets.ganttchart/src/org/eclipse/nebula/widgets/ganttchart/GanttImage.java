@@ -23,14 +23,14 @@ public class GanttImage extends GanttEvent {
 	/**
 	 * {@inheritDoc)
 	 */
-	public GanttImage(GanttChart parent, String name, Calendar date, Image picture) {
+	public GanttImage(final GanttChart parent, final String name, final Calendar date, final Image picture) {
 		super(parent, name, date, picture);
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 */
-	public GanttImage(GanttChart parent, Object data, String name, Calendar date, Image picture) {
+	public GanttImage(final GanttChart parent, final Object data, final String name, final Calendar date, final Image picture) {
 		super(parent, data, name, date, picture);
 	}
 }

@@ -21,14 +21,14 @@ public interface IUndoRedoListener {
      * 
      * @param canRedo Whether it is possible to redo or not
      */
-    public void canRedoChanged(boolean canRedo);
+    void canRedoChanged(boolean canRedo);
 
     /**
      * Notified when the undo/redo state has changed.
      * 
      * @param canRedo Whether it is possible to undo or not
      */
-    public void canUndoChanged(boolean canUndo);
+    void canUndoChanged(boolean canUndo);
     
     /**
      * When a command is added to the stack that can be undone this is called. DO NOT call undo() or redo() directly
@@ -37,19 +37,19 @@ public interface IUndoRedoListener {
      * @param command Command added to stack
      * @see GanttChart#getUndoRedoManager()
      */
-    public void undoableCommandAdded(IUndoRedoCommand command);
+    void undoableCommandAdded(IUndoRedoCommand command);
     
     /**
      * Notified when an undo has taken place.
      *  
      * @param command Command that was undone
      */
-    public void commandUndone(IUndoRedoCommand command);
+    void commandUndone(IUndoRedoCommand command);
     
     /**
      * Notified when a redo has taken place.
      * 
      * @param command Command that was redone
      */
-    public void commandRedone(IUndoRedoCommand command);
+    void commandRedone(IUndoRedoCommand command);
 }

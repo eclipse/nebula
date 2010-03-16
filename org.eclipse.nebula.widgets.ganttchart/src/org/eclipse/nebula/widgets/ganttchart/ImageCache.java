@@ -15,13 +15,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
 public class ImageCache {
 
-    private static HashMap mImageMap;
+    private static Map mImageMap;
     
     static {
     	mImageMap = new HashMap();
@@ -33,7 +34,7 @@ public class ImageCache {
      * @param fileName Filename of image to fetch
      * @return Image file or null if it could not be found
      */
-    public static Image getImage(String fileName) {
+    public static Image getImage(final String fileName) {
         Image image = (Image) mImageMap.get(fileName);
         if (image == null) {
             image = createImage(fileName);
@@ -43,19 +44,19 @@ public class ImageCache {
     }
 
     // creates the image, and tries really hard to do so
-    private static Image createImage(String fileName) {
-        ClassLoader classLoader = ImageCache.class.getClassLoader();
-        InputStream is = classLoader.getResourceAsStream(fileName);
-        if (is == null) {
+    private static Image createImage(final String fileName) {
+        final ClassLoader classLoader = ImageCache.class.getClassLoader();
+        InputStream stream = classLoader.getResourceAsStream(fileName);
+        if (stream == null) {
             // the old way didn't have leading slash, so if we can't find the image stream,
             // let's see if the old way works.
-            is = classLoader.getResourceAsStream(fileName.substring(1));
+            stream = classLoader.getResourceAsStream(fileName.substring(1));
 
-            if (is == null) {
-                is = classLoader.getResourceAsStream(fileName);
-                if (is == null) {
-                    is = classLoader.getResourceAsStream(fileName.substring(1));
-                    if (is == null) {
+            if (stream == null) {
+                stream = classLoader.getResourceAsStream(fileName);
+                if (stream == null) { // NOPMD - get over yourself
+                    stream = classLoader.getResourceAsStream(fileName.substring(1));
+                    if (stream == null) {
                         //logger.debug("null input stream for both " + path + " and " + path);
                         return null;
                     }
@@ -63,11 +64,11 @@ public class ImageCache {
             }
         }
 
-        Image img = new Image(Display.getDefault(), is);
+        final Image img = new Image(Display.getDefault(), stream);
         try {
-            is.close();
+            stream.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // NOPMD - we don't truly care that much
         }
 
         return img;
@@ -78,8 +79,9 @@ public class ImageCache {
      *
      */
     public static void dispose() {
-        Iterator e = mImageMap.values().iterator();
-        while (e.hasNext()) 
-        	((Image)e.next()).dispose();
+        final Iterator iterator = mImageMap.values().iterator();
+        while (iterator.hasNext()) {
+        	((Image)iterator.next()).dispose();
+        }
     }
 }

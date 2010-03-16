@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright (c) Emil Crumhorn - Hexapixel.com - emil.crumhorn@gmail.com
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
@@ -13,75 +13,75 @@ package org.eclipse.nebula.widgets.ganttchart;
 
 import org.eclipse.swt.graphics.Color;
 
-public interface IFillBackgroundColors {
+interface IFillBackgroundColors {
 	
 	/**
 	 * The top background gradient color used for drawing the Saturday column.
 	 * 
 	 * @return Color
 	 */
-	public Color getSaturdayBackgroundColorTop();
+	Color getSaturdayBackgroundColorTop();
 	
 	/**
 	 * The bottom background gradient color used for drawing the Saturday column.
 	 * 
 	 * @return Color
 	 */
-	public Color getSaturdayBackgroundColorBottom();
+	Color getSaturdayBackgroundColorBottom();
 	
 	/**
 	 * The top background gradient color used for drawing the Sunday column.
 	 * 
 	 * @return Color
 	 */
-	public Color getSundayBackgroundColorTop();
+	Color getSundayBackgroundColorTop();
 
 	/**
 	 * The bottom background gradient color used for drawing the Sunday column.
 	 * 
 	 * @return Color
 	 */
-	public Color getSundayBackgroundColorBottom();
+	Color getSundayBackgroundColorBottom();
 	
 	/**
 	 * The bottom background gradient color used for drawing the weekday column.
 	 * 
 	 * @return Color
 	 */
-	public Color getWeekdayBackgroundColorBottom();	
+	Color getWeekdayBackgroundColorBottom();	
 
 	/**
 	 * The top background gradient color used for drawing the weekday column.
 	 * 
 	 * @return Color
 	 */
-	public Color getWeekdayBackgroundColorTop();
+	Color getWeekdayBackgroundColorTop();
 
 	/**
 	 * The top background gradient color used for drawing selected columns.
 	 * 
 	 * @return
 	 */
-	public Color getSelectedDayColorTop();
+	Color getSelectedDayColorTop();
 	
 	/**
 	 * The bottom background gradient color used for drawing selected columns.
 	 *  
 	 * @return Color
 	 */
-	public Color getSelectedDayColorBottom();
+	Color getSelectedDayColorBottom();
 
 	/**
 	 * The top background gradient color used for drawing selected columns in the header section.
 	 * 
 	 * @return Color
 	 */
-	public Color getSelectedDayHeaderColorTop();
+	Color getSelectedDayHeaderColorTop();
 
 	/**
 	 * The bottom background gradient color used for drawing selected columns in the header section.
 	 * 
 	 * @return Color
 	 */
-	public Color getSelectedDayHeaderColorBottom();
+	Color getSelectedDayHeaderColorBottom();
 }

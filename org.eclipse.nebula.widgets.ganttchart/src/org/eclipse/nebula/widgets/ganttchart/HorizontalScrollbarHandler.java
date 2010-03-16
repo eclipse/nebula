@@ -29,13 +29,13 @@ class HorizontalScrollbarHandler implements Listener {
 		_vpHandler = _gc.getViewPortHandler();
 		_scrollBar = scrollBar;
 
-		if ((style & IGanttFlags.H_SCROLL_FIXED_RANGE) != 0) {
+		if ((style & GanttFlags.H_SCROLL_FIXED_RANGE) != 0) {
 			_fixed = true;
 		}
-		else if ((style & IGanttFlags.H_SCROLL_INFINITE) != 0) {
+		else if ((style & GanttFlags.H_SCROLL_INFINITE) != 0) {
 			_infinite = true;
 		}
-		else if ((style & IGanttFlags.H_SCROLL_NONE) != 0) {
+		else if ((style & GanttFlags.H_SCROLL_NONE) != 0) {
 			_none = true;
 		}
 

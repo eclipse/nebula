@@ -35,14 +35,16 @@ public class AdvancedTooltipDialog {
 
 	private static Shell _shell;
 
-	public static void makeDialog(final AdvancedTooltip toolTip, IColorManager colorManager, Point location) {
+	public static void makeDialog(final AdvancedTooltip toolTip, final IColorManager colorManager, final Point location) {
 		makeDialog(toolTip, colorManager, location, null, null, null);
 	}
 
-	public static void makeDialog(final AdvancedTooltip toolTip, final IColorManager colorManager, Point location, final String titleOverride, final String contentOverride,
+	public static void makeDialog(final AdvancedTooltip toolTip, final IColorManager colorManager, final Point location, final String titleOverride, final String contentOverride,
 			final String helpOverride) {
-		if (_shell != null && !_shell.isDisposed())
+		
+	    if (_shell != null && !_shell.isDisposed()) {
 			_shell.dispose();
+		}
 
 		_shell = new Shell(Display.getDefault().getActiveShell(), SWT.ON_TOP | SWT.TOOL | SWT.NO_TRIM | SWT.NO_FOCUS);
 		_shell.setLayout(new FillLayout());
@@ -50,18 +52,18 @@ public class AdvancedTooltipDialog {
 		final Composite comp = new Composite(_shell, SWT.NO_BACKGROUND | SWT.DOUBLE_BUFFERED | SWT.NO_FOCUS);
 
 		comp.addListener(SWT.MouseMove, new Listener() {
-			public void handleEvent(Event event) {
+			public void handleEvent(final Event event) {
 				kill();
 			}
 		});
 
 		comp.addPaintListener(new PaintListener() {
 			
-			public void paintControl(PaintEvent e) {
-				Region region = new Region(_shell.getDisplay());
+			public void paintControl(final PaintEvent e) {
+			    final Region region = new Region(_shell.getDisplay());
 
-				GC gc = e.gc;
-				Rectangle bounds = comp.getBounds();
+			    final GC gc = e.gc;
+			    final Rectangle bounds = comp.getBounds();
 				
 				// draw borders
 				drawBorders(gc, colorManager, bounds);
@@ -81,34 +83,35 @@ public class AdvancedTooltipDialog {
 				// == TITLE ==
 				// title is bold
 				Font bold = null;
-				Font old = gc.getFont();
+				final Font old = gc.getFont();
 				bold = Utils.applyBoldFont(old);
 
 				String title = toolTip.getTitle();
-				if (titleOverride != null)
+				if (titleOverride != null) {
 					title = titleOverride;
+				}
 
 				if (title != null && title.length() > 0) {
 					gc.setForeground(colorManager.getAdvancedTooltipTextColor());
 					gc.setFont(bold);
-					Point p = gc.stringExtent(title);
+					final Point point = gc.stringExtent(title);
 					drawText(gc, title, x, y);
 					// gc.drawString(title, x, y, true);
 					gc.setFont(old);
 
-					y += p.y;
-					xMax = Math.max(xMax, x + p.x);
+					y += point.y;
+					xMax = Math.max(xMax, x + point.x);
 					yMax = Math.max(yMax, y);
 				}
 
-				Image bigImage = toolTip.getImage();
+				final Image bigImage = toolTip.getImage();
 				int imageY = y;
 				if (bigImage != null) {
 					// draw the image, as well as tell the normal text where it
 					// will have to go depending on image size
 					// space it first, regardless of size
 					x += 9;
-					Rectangle imBounds = bigImage.getBounds();
+					final Rectangle imBounds = bigImage.getBounds();
 					// we push it down a bit, but these don't add to the overall
 					// y position as the image
 					// is (somewhat) horizontally aligned with the content text
@@ -122,26 +125,29 @@ public class AdvancedTooltipDialog {
 				int textY = y;
 
 				String content = toolTip.getContent();
-				if (contentOverride != null)
+				if (contentOverride != null) {
 					content = contentOverride;
+				}
 
 				if (content != null && content.length() > 0) {
 					// if we had an image, space out this text, otherwise a
 					// little less
-					if (bigImage != null)
-						x += 13;
-					else
+					if (bigImage == null) {
 						x += 8;
+					}
+					else {
+						x += 13;
+					}
 
 					// first we space it vertically
 					textY += 13;
 
-					StringTokenizer st = new StringTokenizer(content, "\n");
+					final StringTokenizer tokenizer = new StringTokenizer(content, "\n");
 
 					int widestLine = 0;
-					while (st.hasMoreTokens()) {
-						String token = st.nextToken();
-						Point extent = drawText(gc, token, x, textY);
+					while (tokenizer.hasMoreTokens()) {
+					    final String token = tokenizer.nextToken();
+					    final Point extent = drawText(gc, token, x, textY);
 						textY += extent.y;
 						widestLine = Math.max(widestLine, extent.x);
 					}
@@ -179,7 +185,7 @@ public class AdvancedTooltipDialog {
 					}
 
 					if (toolTip.getHelpText() != null) {
-						Point helpSize = gc.stringExtent(toolTip.getHelpText());
+					    final Point helpSize = gc.stringExtent(toolTip.getHelpText());
 						gc.drawString(toolTip.getHelpText(), curX, y, true);
 						widthUsed += helpSize.x;
 					}
@@ -199,13 +205,15 @@ public class AdvancedTooltipDialog {
 				
 				// bug fix #240164 - Macs redraw when you set a region, guess OS X will just have
 				// square shells instead, no big deal
-				if (GanttComposite._osType != GanttComposite.OS_MAC) 
+				if (GanttComposite._osType != Constants.OS_MAC) {
 					_shell.setRegion(region);
+				}
 		
-				Rectangle size = region.getBounds();
+				final Rectangle size = region.getBounds();
 				_shell.setSize(size.width, size.height);
-				if (bold != null)
+				if (bold != null) {
 					bold.dispose();
+				}
 				
 				Monitor active = null;
 				try {
@@ -214,25 +222,25 @@ public class AdvancedTooltipDialog {
 				catch (Exception err) {
 				    active = Display.getDefault().getPrimaryMonitor();
 				}
-				int totalXBoundsMonitors = 0;
-				Monitor [] all = Display.getDefault().getMonitors();
+				int totalXBounds = 0;
+				final Monitor [] all = Display.getDefault().getMonitors();
 				for (int i = 0; i < all.length; i++) {
 				    if (all[i] == active) {
 				        break;
 				    }
-				    totalXBoundsMonitors += all[i].getBounds().width;
+				    totalXBounds += all[i].getBounds().width;
 				}
 				
-				Rectangle maxBounds = active.getBounds();
-		        int shellHeight = _shell.getSize().y;
-		        int shellWidth = _shell.getSize().x;
+				final Rectangle maxBounds = active.getBounds();
+				final int shellHeight = _shell.getSize().y;
+				final int shellWidth = _shell.getSize().x;
 		        
-		        Point location = _shell.getLocation();
+				final Point location = _shell.getLocation();
 		        if ((location.y + shellHeight) > maxBounds.height) {
 		            location.y = maxBounds.height-shellHeight;
 		        }
-		        if ((location.x + shellWidth) > totalXBoundsMonitors) {
-		            location.x = totalXBoundsMonitors - shellWidth;
+		        if ((location.x + shellWidth) > totalXBounds) {
+		            location.x = totalXBounds - shellWidth;
 		        }
 		        
                 _shell.setLocation(location);
@@ -253,7 +261,7 @@ public class AdvancedTooltipDialog {
 		// makes sense, but it's not what we had planned)
 		// which causes things to become only drawn in a corner of the shell, thus, we force a redraw
 		// after displaying the shell, which fixes the issue as it now can fetch the right bounds
-		if (GanttComposite._osType == GanttComposite.OS_MAC) {
+		if (GanttComposite._osType == Constants.OS_MAC) {
 			Display.getDefault().asyncExec(new Runnable() {
 
 				public void run() {
@@ -265,7 +273,7 @@ public class AdvancedTooltipDialog {
 		}
 	}
 
-	private static void drawBorders(GC gc, IColorManager colorManager, Rectangle bounds) {
+	private static void drawBorders(final GC gc, final IColorManager colorManager, final Rectangle bounds) {
 		gc.setForeground(colorManager.getAdvancedTooltipInnerFillTopColor());
 		gc.setBackground(colorManager.getAdvancedTooltipInnerFillBottomColor());
 
@@ -321,12 +329,12 @@ public class AdvancedTooltipDialog {
 
 	}
 
-	private static Point drawText(GC gc, String text, int x, int y) {
+	private static Point drawText(final GC gc, final String text, final int x, final int y) {
         try {
-            Font old = gc.getFont();
+            final Font old = gc.getFont();
             Font used = null;
-            String oldName = old.getFontData()[0].getName();
-            int oldSize = (int) old.getFontData()[0].height;
+            final String oldName = old.getFontData()[0].getName();
+            final int oldSize = (int) old.getFontData()[0].height;
 
             int curX = x;
             boolean bold = false;
@@ -338,14 +346,15 @@ public class AdvancedTooltipDialog {
             int maxHeight = 0;
 
             //int tokens = sub.countTokens();
-            int cnt = 0;
-
-            char[] all = text.toCharArray();
+            final char[] all = text.toCharArray();
 
             for (int i = 0; i < all.length; i++) {
                 String token = Character.toString(all[i]);
-                if (token.equals("\\")) {
-                    token += Character.toString(all[i + 1]);
+                
+                if ("\\".equals(token)) {
+                    final StringBuffer buf = new StringBuffer(token); // NOPMD
+                    buf.append(Character.toString(all[i + 1]));
+                    token = buf.toString();
                     i++;
                 }
 
@@ -356,12 +365,12 @@ public class AdvancedTooltipDialog {
                     fg = ColorCache.getBlack();
                 }
                 else {
-                    int newSize = getSize(token);
+                    final int newSize = getSize(token);
                     if (newSize != size && newSize != -1) {
                         size = newSize;
                     }
 
-                    boolean newBold = isBold(token);
+                    final boolean newBold = isBold(token);
                     if (bold && !newBold) {
                         bold = true;
                     }
@@ -369,7 +378,7 @@ public class AdvancedTooltipDialog {
                         bold = newBold;
                     }
 
-                    boolean newItalic = isItalic(token);
+                    final boolean newItalic = isItalic(token);
                     if (italic && !newItalic) {
                         italic = true;
                     }
@@ -377,17 +386,15 @@ public class AdvancedTooltipDialog {
                         italic = newItalic;
                     }
 
-                    if (text.length() > i + 10) {
-                        if (token.equals("\\c")) {
-                            String colTxt = text.substring(i - 1, i + 10);
-                            Color newColor = getColor(colTxt);
-                            if (newColor != null) {
-                                i += colTxt.length() - 2; // -2 is length of \c
-                                token = colTxt;
-                            }
-                            if (newColor != fg) {
-                                fg = newColor;
-                            }
+                    if (text.length() > (i + 10) && "\\c".equals(token)) {
+                        final String colTxt = text.substring(i - 1, i + 10);
+                        final Color newColor = getColor(colTxt);
+                        if (newColor != null) {
+                            i += colTxt.length() - 2; // -2 is length of \c
+                            token = colTxt;
+                        }
+                        if (!newColor.equals(fg)) {
+                            fg = newColor;
                         }
                     }
                 }
@@ -411,13 +418,13 @@ public class AdvancedTooltipDialog {
                     token = " ";
                 }
 
-                used = new Font(Display.getDefault(), oldName, size, style);
+                used = new Font(Display.getDefault(), oldName, size, style); // NOPMD
                 gc.setFont(used);
 
                 if (token.length() != 0) {
                     gc.drawString(token, curX, y, true);
-                    int extX = gc.stringExtent(token).x;// + ((cnt != all.length - 1) ? gc.stringExtent(token).x : 0);
-                    int extY = gc.stringExtent(token).y;
+                    final int extX = gc.stringExtent(token).x;// + ((cnt != all.length - 1) ? gc.stringExtent(token).x : 0);
+                    final int extY = gc.stringExtent(token).y;
                     curX += extX;
 
                     maxWidth = Math.max(maxWidth, curX);
@@ -425,25 +432,24 @@ public class AdvancedTooltipDialog {
                 }
 
                 used.dispose();
-
-                cnt++;
             }
 
             gc.setFont(old);
             return new Point(maxWidth - x, maxHeight);
         }
         catch (Exception err) {
-            err.printStackTrace();
+            SWT.error(SWT.ERROR_UNSPECIFIED, err);
         }
 
         return null;
     }
 
-	private static String cleanUp(String str) {
-		int start = str.indexOf("\\s");
+	private static String cleanUp(final String string) {
+	    String str = string;
+	    final int start = str.indexOf("\\s");
 		if (start != -1) {
-			String left = str.substring(0, start);
-			String right = str.substring(start + 4, str.length());
+		    final String left = str.substring(0, start);
+		    final String right = str.substring(start + 4, str.length());
 
 			str = left + right;
 		}
@@ -455,58 +461,60 @@ public class AdvancedTooltipDialog {
 		return str;
 	}
 
-	private static boolean isNormalize(String str) {
+	private static boolean isNormalize(final String str) {
 		return str.indexOf("\\x") > -1;
 	}
 
-	private static boolean isBold(String str) {
+	private static boolean isBold(final String str) {
 		return str.indexOf("\\b") > -1;
 	}
 
-	private static boolean isItalic(String str) {
+	private static boolean isItalic(final String str) {
 		return str.indexOf("\\i") > -1;
 	}
 
-	private static int getSize(String str) {
-		int start = str.indexOf("\\s");
+	private static int getSize(final String str) {
+	    final int start = str.indexOf("\\s");
 		if (start == -1) {
 			return -1;
 		}
 
-		String size = str.substring(start + 2, start + 4);
+		final String size = str.substring(start + 2, start + 4);
 
 		try {
 			return Integer.parseInt(size);
 		} catch (Exception badParse) {
-			badParse.printStackTrace();
+			SWT.error(SWT.ERROR_UNSPECIFIED, badParse);
 		}
 
 		return -1;
 	}
 
-	private static Color getColor(String str) {
-		int start = str.indexOf("\\c");
-		if (start == -1)
+	private static Color getColor(final String str) {
+	    final int start = str.indexOf("\\c");
+		if (start == -1) {
 			return null;
+		}
 
-		if (str.indexOf("\\ce") != -1)
+		if (str.indexOf("\\ce") != -1) {
 			return ColorCache.getBlack();
+		}
 
 		try {
-			int r = Integer.parseInt(str.substring(start + 2, start + 5));
-			int g = Integer.parseInt(str.substring(start + 5, start + 8));
-			int b = Integer.parseInt(str.substring(start + 8, start + 11));
+		    final int red = Integer.parseInt(str.substring(start + 2, start + 5));
+		    final int green = Integer.parseInt(str.substring(start + 5, start + 8));
+		    final int blue = Integer.parseInt(str.substring(start + 8, start + 11));
 
-			return ColorCache.getColor(r, g, b);
+			return ColorCache.getColor(red, green, blue);
 		} catch (Exception err) {
-			err.printStackTrace();
+			SWT.error(SWT.ERROR_UNSPECIFIED, err);
 		}
 
 		return ColorCache.getBlack();
 	}
 
 	public static void kill() {
-		if (_shell != null && _shell.isDisposed() == false) {
+		if (_shell != null && !_shell.isDisposed()) {
 			_shell.dispose();
 		}
 	}

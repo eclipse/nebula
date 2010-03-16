@@ -18,7 +18,7 @@ import org.eclipse.swt.graphics.Color;
  * {@link GanttChart#addConnection(GanttEvent, GanttEvent)} on the {@link GanttChart}.
  * 
  */
-public class GanttConnection {
+public class GanttConnection implements Cloneable {
 
 	private GanttEvent		_source;
 	private GanttEvent		_target;
@@ -26,12 +26,11 @@ public class GanttConnection {
 	private GanttComposite	_parent;
 	
 	GanttConnection() {
+	    super();
 	}
 
-	GanttConnection(GanttEvent source, GanttEvent target, Color color) {
-		this._source = source;
-		this._target = target;
-		this._color = color;
+	GanttConnection(final GanttEvent source, final GanttEvent target, final Color color) {
+	    this(null, source, target, color);
 	}
 	
 	/**
@@ -41,11 +40,8 @@ public class GanttConnection {
 	 * @param source Source event
 	 * @param target Target event
 	 */
-	public GanttConnection(GanttChart parent, GanttEvent source, GanttEvent target) {
-		this._source = source;
-		this._target = target;
-		this._parent = parent.getGanttComposite();
-		_parent.connectionAdded(this);
+	public GanttConnection(final GanttChart parent, final GanttEvent source, final GanttEvent target) {
+	    this(parent, source, target, null);
 	}
 
 	/**
@@ -56,12 +52,14 @@ public class GanttConnection {
 	 * @param target Target event
 	 * @param lineColor Color of line and arrowhead drawn between the events
 	 */
-	public GanttConnection(GanttChart parent, GanttEvent source, GanttEvent target, Color lineColor) {
-		this._source = source;
-		this._target = target;
-		this._color = lineColor;
-		this._parent = parent.getGanttComposite();
-		_parent.connectionAdded(this);
+	public GanttConnection(final GanttChart parent, final GanttEvent source, final GanttEvent target, final Color lineColor) {
+		_source = source;
+		_target = target;
+		_color = lineColor;
+		if (parent != null) {
+		    _parent = parent.getGanttComposite();
+	        _parent.connectionAdded(this);
+		}
 	}
 
 	/**
@@ -78,7 +76,7 @@ public class GanttConnection {
 	 * 
 	 * @param source Source event
 	 */
-	public void setSource(GanttEvent source) {
+	public void setSource(final GanttEvent source) {
 		this._source = source;
 	}
 
@@ -96,7 +94,7 @@ public class GanttConnection {
 	 * 
 	 * @param target Target event
 	 */
-	public void setTarget(GanttEvent target) {
+	public void setTarget(final GanttEvent target) {
 		this._target = target;
 	}
 
@@ -114,7 +112,7 @@ public class GanttConnection {
 	 * 
 	 * @param color Color or null for default color.
 	 */
-	public void setColor(Color color) {
+	public void setColor(final Color color) {
 		this._color = color;
 	}
 
@@ -128,8 +126,8 @@ public class GanttConnection {
 	/**
 	 * Clones the GanttConnection (and adds the clone to the parent)
 	 */
-	public Object clone() throws CloneNotSupportedException {
-		GanttConnection clone = new GanttConnection();
+	public Object clone() throws CloneNotSupportedException { // NOPMD
+		final GanttConnection clone = new GanttConnection();
 		clone._parent = _parent;
 		clone._color = _color;
 		clone._source = _source;
@@ -139,24 +137,32 @@ public class GanttConnection {
 		return clone;
 	}
 
-	public boolean equals(Object obj) {
-		if (this == obj)
+	public boolean equals(final Object obj) {
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
-		GanttConnection other = (GanttConnection) obj;
+		}
+		final GanttConnection other = (GanttConnection) obj;
 		if (_source == null) {
-			if (other._source != null)
+			if (other._source != null) {
 				return false;
-		} else if (!_source.equals(other._source))
+			}
+		} else if (!_source.equals(other._source)) {
 			return false;
+		}
 		if (_target == null) {
-			if (other._target != null)
+			if (other._target != null) {
 				return false;
-		} else if (!_target.equals(other._target))
+			}
+		} else if (!_target.equals(other._target)) {
 			return false;
+		}
+		
 		return true;
 	}
 

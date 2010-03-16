@@ -4,15 +4,17 @@ import java.util.Calendar;
 
 class ViewPortHandler {
 
-	private GanttComposite _gc;
+	private GanttComposite _ganttComposite;
 	
 	public ViewPortHandler(GanttComposite parent) {
-		_gc = parent;
+		_ganttComposite = parent;
 	}
 	
-	public void scrollingLeft(int diff) {
-		int mCurrentView = _gc.getCurrentView();
-		_gc.showScrollDate();
+	public void scrollingLeft(final int diffCount) {
+	    int diff = diffCount;
+	    
+		int mCurrentView = _ganttComposite.getCurrentView();
+		_ganttComposite.showScrollDate();
 
 		if (diff == 1) {
 			if (mCurrentView == ISettings.VIEW_YEAR) {
@@ -70,9 +72,10 @@ class ViewPortHandler {
 		}
 	}
 
-	public void scrollingRight(int diff) {
-		int mCurrentView = _gc.getCurrentView();
-		_gc.showScrollDate();
+	public void scrollingRight(final int diffCount) {
+	    int diff = diffCount;
+		int mCurrentView = _ganttComposite.getCurrentView();
+		_ganttComposite.showScrollDate();
 
 		if (diff == 1) {
 			if (mCurrentView == ISettings.VIEW_YEAR) {
@@ -136,75 +139,75 @@ class ViewPortHandler {
 	 * Jumps to the next month.
 	 */
 	public void nextMonth() {
-		Calendar mCalendar = _gc.getRootCalendar();
+		Calendar mCalendar = _ganttComposite.getRootCalendar();
 		mCalendar.set(Calendar.DATE, 1);
 		mCalendar.add(Calendar.MONTH, 1);
 
-		_gc.setNoRecalc();
-		_gc.moveXBounds(false);
+		_ganttComposite.setNoRecalc();
+		_ganttComposite.moveXBounds(false);
 
-		_gc.redraw();
+		_ganttComposite.redraw();
 	}
 
 	/**
 	 * Jumps to the previous month.
 	 */
 	public void prevMonth() {
-		Calendar mCalendar = _gc.getRootCalendar();
+		Calendar mCalendar = _ganttComposite.getRootCalendar();
 		mCalendar.set(Calendar.DATE, 1);
 		mCalendar.add(Calendar.MONTH, -1);
 
-		_gc.setNoRecalc();
-		_gc.moveXBounds(true);
+		_ganttComposite.setNoRecalc();
+		_ganttComposite.moveXBounds(true);
 
-		_gc.redraw();
+		_ganttComposite.redraw();
 	}
 
 	/**
 	 * Jumps one week forward.
 	 */
 	public void nextWeek() {
-		Calendar mCalendar = _gc.getRootCalendar();
+		Calendar mCalendar = _ganttComposite.getRootCalendar();
 		mCalendar.add(Calendar.DATE, 7);
 
-		_gc.setNoRecalc();
-		_gc.moveXBounds(false);
-		_gc.redraw();
+		_ganttComposite.setNoRecalc();
+		_ganttComposite.moveXBounds(false);
+		_ganttComposite.redraw();
 	}
 
 	/**
 	 * Jumps one week backwards.
 	 */
 	public void prevWeek() {
-		Calendar mCalendar = _gc.getRootCalendar();
+		Calendar mCalendar = _ganttComposite.getRootCalendar();
 		mCalendar.add(Calendar.DATE, -7);
 
-		_gc.setNoRecalc();
-		_gc.moveXBounds(true);
-		_gc.redraw();
+		_ganttComposite.setNoRecalc();
+		_ganttComposite.moveXBounds(true);
+		_ganttComposite.redraw();
 	}
 
 	/**
 	 * Jumps to the next hour.
 	 */
 	public void nextHour() {
-		Calendar mCalendar = _gc.getRootCalendar();
+		Calendar mCalendar = _ganttComposite.getRootCalendar();
 		mCalendar.add(Calendar.HOUR_OF_DAY, 1);
 		if (mCalendar.get(Calendar.HOUR_OF_DAY) >= 24) {
 			mCalendar.add(Calendar.DATE, 1);
 			mCalendar.set(Calendar.HOUR_OF_DAY, 0);
 		}
 
-		_gc.setNoRecalc();
-		_gc.moveXBounds(false);
-		_gc.redraw();
+		_ganttComposite.setNoRecalc();
+		_ganttComposite.moveXBounds(false);
+		_ganttComposite.redraw();
 	}
 
 	/**
 	 * Jumps to the previous hour.
 	 */
 	public void prevHour() {
-		Calendar mCalendar = _gc.getRootCalendar();
+		Calendar mCalendar = _ganttComposite.getRootCalendar();
 		mCalendar.add(Calendar.HOUR_OF_DAY, -1);
 
 		if (mCalendar.get(Calendar.HOUR_OF_DAY) < 0) {
@@ -213,22 +216,22 @@ class ViewPortHandler {
 			mCalendar.set(Calendar.HOUR_OF_DAY, 24 - 1);
 		}
 
-		_gc.setNoRecalc();
-		_gc.moveXBounds(true);
-		_gc.redraw();
+		_ganttComposite.setNoRecalc();
+		_ganttComposite.moveXBounds(true);
+		_ganttComposite.redraw();
 	}
 
 	/**
 	 * Jumps one day forward.
 	 */
 	public void nextDay() {
-		Calendar mCalendar = _gc.getRootCalendar();
+		Calendar mCalendar = _ganttComposite.getRootCalendar();
 		mCalendar.add(Calendar.DATE, 1);
 		mCalendar.set(Calendar.HOUR_OF_DAY, 0);
 
-		_gc.moveXBounds(false);
-		_gc.setNoRecalc();
-		_gc.redraw();
+		_ganttComposite.moveXBounds(false);
+		_ganttComposite.setNoRecalc();
+		_ganttComposite.redraw();
 
 	}
 
@@ -236,12 +239,12 @@ class ViewPortHandler {
 	 * Jumps one day backwards.
 	 */
 	public void prevDay() {
-		Calendar mCalendar = _gc.getRootCalendar();
+		Calendar mCalendar = _ganttComposite.getRootCalendar();
 		mCalendar.add(Calendar.DATE, -1);
 		mCalendar.set(Calendar.HOUR_OF_DAY, 0);
 
-		_gc.moveXBounds(true);
-		_gc.setNoRecalc();
-		_gc.redraw();
+		_ganttComposite.moveXBounds(true);
+		_ganttComposite.setNoRecalc();
+		_ganttComposite.redraw();
 	}
 }

@@ -20,7 +20,7 @@ public interface IPaintManager {
     /**
      * Notifies a redraw is starting from scratch, so you can zero out variables etc
      */
-    public void redrawStarting();
+    void redrawStarting();
     
 	/**
 	 * Draws one checkpoint.
@@ -36,7 +36,7 @@ public interface IPaintManager {
 	 * @param y y location
 	 * @param bounds full bounds of draw area
 	 */
-	public void drawCheckpoint(GanttComposite ganttComposite, ISettings settings, IColorManager colorManager, GanttEvent ge, GC gc, boolean threeDee, int dayWidth, int x, int y, Rectangle bounds);
+    void drawCheckpoint(GanttComposite ganttComposite, ISettings settings, IColorManager colorManager, GanttEvent ge, GC gc, boolean threeDee, int dayWidth, int x, int y, Rectangle bounds);
 	
 	/**
 	 * Draws one normal event.
@@ -54,7 +54,7 @@ public interface IPaintManager {
 	 * @param eventWidth Width of event
 	 * @param bounds full bounds of draw area
 	 */
-	public void drawEvent(GanttComposite ganttComposite, ISettings settings, IColorManager colorManager, GanttEvent ge, GC gc, boolean isSelected, boolean threeDee, int dayWidth, int x, int y, int eventWidth, Rectangle bounds);
+	void drawEvent(GanttComposite ganttComposite, ISettings settings, IColorManager colorManager, GanttEvent ge, GC gc, boolean isSelected, boolean threeDee, int dayWidth, int x, int y, int eventWidth, Rectangle bounds);
 	
 	/**
 	 * Draws the planned dates.
@@ -70,7 +70,7 @@ public interface IPaintManager {
 	 * @param eventWidth Width of event
 	 * @param bounds full bounds of draw area
 	 */
-	public void drawPlannedDates(GanttComposite ganttComposite, ISettings settings, IColorManager colorManager, GanttEvent ge, GC gc, boolean threeDee, int x, int y, int eventWidth, Rectangle bounds);
+	void drawPlannedDates(GanttComposite ganttComposite, ISettings settings, IColorManager colorManager, GanttEvent ge, GC gc, boolean threeDee, int x, int y, int eventWidth, Rectangle bounds);
 	
 	/**
 	 * Draws the little plaque showing how many number of days an event spans over.
@@ -87,7 +87,7 @@ public interface IPaintManager {
 	 * @param daysNumber Number of days the event encompasses
 	 * @param bounds full bounds of draw area
 	 */
-	public void drawDaysOnChart(GanttComposite ganttComposite, ISettings settings, IColorManager colorManager, GanttEvent ge, GC gc, boolean threeDee, int x, int y, int eventWidth, int daysNumber, Rectangle bounds);
+	void drawDaysOnChart(GanttComposite ganttComposite, ISettings settings, IColorManager colorManager, GanttEvent ge, GC gc, boolean threeDee, int x, int y, int eventWidth, int daysNumber, Rectangle bounds);
 	
 	/**
 	 * Draws a string shown next to an event.
@@ -104,7 +104,7 @@ public interface IPaintManager {
 	 * @param eventWidth Width of event
 	 * @param bounds full bounds of draw area
 	 */
-	public void drawEventString(GanttComposite ganttComposite, ISettings settings, IColorManager colorManager, GanttEvent ge, GC gc, String toDraw, boolean threeDee, int x, int y, int eventWidth, Rectangle bounds);
+	void drawEventString(GanttComposite ganttComposite, ISettings settings, IColorManager colorManager, GanttEvent ge, GC gc, String toDraw, boolean threeDee, int x, int y, int eventWidth, Rectangle bounds);
 	
 	/**
 	 * Draws one scope.
@@ -121,7 +121,7 @@ public interface IPaintManager {
 	 * @param eventWidth Width of event
 	 * @param bounds full bounds of draw area
 	 */
-	public void drawScope(GanttComposite ganttComposite, ISettings settings, IColorManager colorManager, GanttEvent ge, GC gc, boolean threeDee, int dayWidth, int x, int y, int eventWidth, Rectangle bounds);
+	void drawScope(GanttComposite ganttComposite, ISettings settings, IColorManager colorManager, GanttEvent ge, GC gc, boolean threeDee, int dayWidth, int x, int y, int eventWidth, Rectangle bounds);
 
 	/**
 	 * Draws one checkpoint.
@@ -138,7 +138,7 @@ public interface IPaintManager {
 	 * @param y y location
 	 * @param bounds full bounds of draw area
 	 */
-	public void drawImage(GanttComposite ganttComposite, ISettings settings, IColorManager colorManager, GanttEvent ge, GC gc, Image image, boolean threeDee, int dayWidth, int x, int y, Rectangle bounds);
+	void drawImage(GanttComposite ganttComposite, ISettings settings, IColorManager colorManager, GanttEvent ge, GC gc, Image image, boolean threeDee, int dayWidth, int x, int y, Rectangle bounds);
 
 	/**
 	 * Draws the marker that shows what dates an event are locked down to
@@ -155,7 +155,7 @@ public interface IPaintManager {
 	 * @param xEnd where to draw the end marker. Will be -1 if there is no marker to draw.
 	 * @param bounds
 	 */
-	public void drawLockedDateRangeMarker(GanttComposite ganttComposite, ISettings settings, IColorManager colorManager, GanttEvent ge, GC gc, boolean threeDee, int dayWidth, int y, int xStart, int xEnd, Rectangle bounds);
+	void drawLockedDateRangeMarker(GanttComposite ganttComposite, ISettings settings, IColorManager colorManager, GanttEvent ge, GC gc, boolean threeDee, int dayWidth, int y, int xStart, int xEnd, Rectangle bounds);
 	
 	/**
 	 * Draws an arrow head.
@@ -165,5 +165,5 @@ public interface IPaintManager {
 	 * @param face What direction the arrows is in (one of SWT.LEFT, SWT.RIGHT, SWT.UP, SWT.DOWN)
 	 * @param gc GC
 	 */
-	public void drawArrowHead(int x, int y, int face, GC gc);		
+	void drawArrowHead(int x, int y, int face, GC gc);		
 }

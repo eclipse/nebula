@@ -13,12 +13,12 @@ package org.eclipse.nebula.widgets.ganttchart;
 
 public interface IGanttChartItem {
 
-	public boolean isAutomaticRowHeight();
+	boolean isAutomaticRowHeight();
 
-	public int getFixedRowHeight();
+	int getFixedRowHeight();
 	
-	public void setFixedRowHeight(int height);
+	void setFixedRowHeight(int height);
 	
-	public void setAutomaticRowHeight();
+	void setAutomaticRowHeight();
 	
 }
