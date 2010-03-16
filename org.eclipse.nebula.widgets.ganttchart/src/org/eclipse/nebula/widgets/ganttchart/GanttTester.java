@@ -28,6 +28,7 @@ import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
@@ -45,11 +46,15 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
 public class GanttTester {
@@ -99,31 +104,32 @@ public class GanttTester {
 
     private Spinner             _sMaxSections;
     private Spinner             _sConnectionCountNumber;
-    
+
     // advanced tab
-    private Button _bEnableAutoScroll;
-    private Button _bEventResizing;
-    private Button _bEventDND;
-    private Button _bAdjustForLetters;
-    private Combo _bConnectionLineStyle;
-    private Button _bShowArrows;
-    private Button _bShowBoldScopeText;
-    private Button _bShowGradientEventBars;
-    private Button _bShowOnlyDependenciesForSelectedItems;
-    private Button _bShowTooltips;
-    private Button _bShowAdvancedTooltips;
-    private Button _bEnableZooming;
-    private Button _bShowZoomLevelBox;
-    private Button _bAllowBlankAreaDragAndDropToMoveDates;
-    private Button _bFlipBlankAreaDragDirection;
-    private Button _bDrawSelectionMarkerAroundSelectedEvent;
-    private Button _bAllowCheckpointResizing;
-    private Button _bStartCalendarOnFirstDayOfWeek;
-    private Button _bDrawFullPercentageBar;
-    private Button _bDrawLockedDateMarks;
-    private Button _bShowDateTipsOnScrolling;
-    private Button _bZoomToMousePointerDateOnWheelZooming;
-    
+    private Button              _bEnableAutoScroll;
+    private Button              _bEventResizing;
+    private Button              _bEventDND;
+    private Button              _bAdjustForLetters;
+    private Combo               _bConnectionLineStyle;
+    private Button              _bShowArrows;
+    private Button              _bShowBoldScopeText;
+    private Button              _bShowGradientEventBars;
+    private Button              _bShowOnlyDependenciesForSelectedItems;
+    private Button              _bShowTooltips;
+    private Button              _bShowAdvancedTooltips;
+    private Button              _bEnableZooming;
+    private Button              _bShowZoomLevelBox;
+    private Button              _bAllowBlankAreaDragAndDropToMoveDates;
+    private Button              _bFlipBlankAreaDragDirection;
+    private Button              _bDrawSelectionMarkerAroundSelectedEvent;
+    private Button              _bAllowCheckpointResizing;
+    private Button              _bStartCalendarOnFirstDayOfWeek;
+    private Button              _bDrawFullPercentageBar;
+    private Button              _bDrawLockedDateMarks;
+    private Button              _bShowDateTipsOnScrolling;
+    private Button              _bZoomToMousePointerDateOnWheelZooming;
+
+    private Table                _tEventLog;
 
     private Listener            _undoRedoListener;
 
@@ -192,6 +198,9 @@ public class GanttTester {
         final TabItem tiAdvanced = new TabItem(tfRight, SWT.NONE);
         tiAdvanced.setText("Advanced");
 
+        final TabItem tiEventLog = new TabItem(tfRight, SWT.NONE);
+        tiEventLog.setText("Event Log");
+
         final Composite bottom = new Composite(rightComposite, SWT.NONE);
         bottom.setLayout(new GridLayout());
         createCreateButtons(bottom);
@@ -199,6 +208,7 @@ public class GanttTester {
         vfBottom.setContent(createBottom(vfBottom));
         tiGeneral.setControl(createCreationTab(tfRight)); // NOPMD
         tiAdvanced.setControl(createAdvancedTab(tfRight));
+        tiEventLog.setControl(createEventLogTab(tfRight));
 
         shell.setMaximized(true);
         // uncomment to put on right-hand-side monitor
@@ -217,7 +227,51 @@ public class GanttTester {
 
         display.dispose();
     }
-    
+
+    private Composite createEventLogTab(final Composite parent) {
+        final ScrolledComposite sc = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
+        sc.setExpandHorizontal(true);
+        sc.setExpandVertical(true);
+        sc.getHorizontalBar().setPageIncrement(100);
+        sc.getVerticalBar().setPageIncrement(100);
+
+        final Composite comp = new Composite(sc, SWT.NONE);
+        sc.setContent(comp);
+        comp.setLayout(new GridLayout(1, true));
+
+        sc.addListener(SWT.Resize, new Listener() {
+
+            public void handleEvent(final Event event) {
+                sc.setMinSize(comp.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+            }
+
+        });
+
+        final Group group = new Group(comp, SWT.NONE);
+        group.setText("Event Log");
+        group.setLayout(new FillLayout());
+        group.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+        _tEventLog = new Table(group, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.FULL_SELECTION);
+        _tEventLog.setBackground(ColorCache.getWhite());
+        
+        Menu m = new Menu(_tEventLog);
+        MenuItem mClear = new MenuItem(m, SWT.NONE);
+        mClear.setText("Clear Log");
+        mClear.addListener(SWT.Selection, new Listener() {
+
+            public void handleEvent(Event event) {
+                _tEventLog.removeAll();
+            }
+            
+        });
+        
+        _tEventLog.setMenu(m);
+        
+
+        return sc;
+    }
+
     private Composite createAdvancedTab(final Composite parent) {
         final ScrolledComposite sc = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
         sc.setExpandHorizontal(true);
@@ -236,16 +290,16 @@ public class GanttTester {
             }
 
         });
-        
+
         final Group group = new Group(comp, SWT.NONE);
         group.setText("Advanced");
         group.setLayout(new GridLayout(2, true));
         group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        
+
         GridData oneRow = new GridData(GridData.FILL_HORIZONTAL);
         oneRow.horizontalSpan = 2;
         oneRow.grabExcessHorizontalSpace = true;
-        
+
         _bEnableAutoScroll = new Button(group, SWT.CHECK);
         _bEnableAutoScroll.setText("Enable Auto Scroll");
         _bEnableAutoScroll.setToolTipText("Causes chart to auto scroll when using DND. On by default.");
@@ -254,7 +308,7 @@ public class GanttTester {
         _bEnableAutoScroll.setData(KEY, "enableAutoScroll");
         prefLoad(_bEnableAutoScroll);
         prefHook(_bEnableAutoScroll);
-        
+
         _bEventResizing = new Button(group, SWT.CHECK);
         _bEventResizing.setText("Allow Event Resizing");
         _bEventResizing.setToolTipText("Allows for resizing of events. On by default.");
@@ -262,8 +316,8 @@ public class GanttTester {
         _bEventResizing.setLayoutData(oneRow);
         _bEventResizing.setData(KEY, "bEventResizing");
         prefLoad(_bEventResizing);
-        prefHook(_bEventResizing);        
-                
+        prefHook(_bEventResizing);
+
         _bEventDND = new Button(group, SWT.CHECK);
         _bEventDND.setText("Allow Event Drag n Drop (DND)");
         _bEventDND.setToolTipText("Allows for dragging of events. On by default.");
@@ -272,7 +326,7 @@ public class GanttTester {
         _bEventDND.setData(KEY, "bEventDND");
         prefLoad(_bEventDND);
         prefHook(_bEventDND);
-        
+
         _bAdjustForLetters = new Button(group, SWT.CHECK);
         _bAdjustForLetters.setText("Adjust Spacing For Letters");
         _bAdjustForLetters.setToolTipText("When letters are drawn anywhere in the header they are auto-adjusted to fit in nicely. On by default.");
@@ -281,10 +335,10 @@ public class GanttTester {
         _bAdjustForLetters.setData(KEY, "bAdjustForLetters");
         prefLoad(_bAdjustForLetters);
         prefHook(_bAdjustForLetters);
-        
+
         final Label lConn = new Label(group, SWT.NONE);
-        lConn.setText("Connecting Line Style");        
-        
+        lConn.setText("Connecting Line Style");
+
         _bConnectionLineStyle = new Combo(group, SWT.READ_ONLY);
         _bConnectionLineStyle.add("Right to Left");
         _bConnectionLineStyle.add("Left to Top");
@@ -295,7 +349,7 @@ public class GanttTester {
         _bConnectionLineStyle.setToolTipText("How the connecting line is drawn. Default is MS Project Style");
         prefLoad(_bConnectionLineStyle);
         prefHook(_bConnectionLineStyle);
-        
+
         _bShowArrows = new Button(group, SWT.CHECK);
         _bShowArrows.setText("Show Arrows");
         _bShowArrows.setToolTipText("Arrowheads on/off. Default is on.");
@@ -304,7 +358,7 @@ public class GanttTester {
         _bShowArrows.setData(KEY, "bShowArrows");
         prefLoad(_bShowArrows);
         prefHook(_bShowArrows);
-        
+
         _bShowBoldScopeText = new Button(group, SWT.CHECK);
         _bShowBoldScopeText.setText("Show Bold Scope Text");
         _bShowBoldScopeText.setToolTipText("Scope Text is Bold. Default is on.");
@@ -313,7 +367,7 @@ public class GanttTester {
         _bShowBoldScopeText.setData(KEY, "bShowBoldScopeText");
         prefLoad(_bShowBoldScopeText);
         prefHook(_bShowBoldScopeText);
-        
+
         _bShowGradientEventBars = new Button(group, SWT.CHECK);
         _bShowGradientEventBars.setText("Show Gradient Event Bars");
         _bShowGradientEventBars.setToolTipText("Gradient Events On/Off. Default is on. (If off only 1 color is used)");
@@ -322,7 +376,7 @@ public class GanttTester {
         _bShowGradientEventBars.setData(KEY, "bShowGradientEventBars");
         prefLoad(_bShowGradientEventBars);
         prefHook(_bShowGradientEventBars);
-        
+
         _bShowOnlyDependenciesForSelectedItems = new Button(group, SWT.CHECK);
         _bShowOnlyDependenciesForSelectedItems.setText("Show Only Dependencies for Selected Items");
         _bShowOnlyDependenciesForSelectedItems.setToolTipText("Shows only dependency arrows when items are selected and the selected event has connections/dependencies to other events. Default is off.");
@@ -331,7 +385,7 @@ public class GanttTester {
         _bShowOnlyDependenciesForSelectedItems.setData(KEY, "bShowOnlyDependenciesForSelectedItems");
         prefLoad(_bShowOnlyDependenciesForSelectedItems);
         prefHook(_bShowOnlyDependenciesForSelectedItems);
-        
+
         _bShowTooltips = new Button(group, SWT.CHECK);
         _bShowTooltips.setText("Show Tooltips");
         _bShowTooltips.setToolTipText("Tooltips on/off. Default is on.");
@@ -350,7 +404,6 @@ public class GanttTester {
         prefLoad(_bShowAdvancedTooltips);
         prefHook(_bShowAdvancedTooltips);
 
-        
         _bEnableZooming = new Button(group, SWT.CHECK);
         _bEnableZooming.setText("Enable Zooming");
         _bEnableZooming.setToolTipText("Whether chart can be zoomed / zoomed out. Default is on.");
@@ -359,7 +412,7 @@ public class GanttTester {
         _bEnableZooming.setData(KEY, "bEnableZooming");
         prefLoad(_bEnableZooming);
         prefHook(_bEnableZooming);
-        
+
         _bShowZoomLevelBox = new Button(group, SWT.CHECK);
         _bShowZoomLevelBox.setText("Show Zoom-Level Box When Zooming");
         _bShowZoomLevelBox.setToolTipText("Box that shows what zoom level is currently being zoomed to on/off. Default is on.");
@@ -368,7 +421,7 @@ public class GanttTester {
         _bShowZoomLevelBox.setData(KEY, "bShowZoomLevelBox");
         prefLoad(_bShowZoomLevelBox);
         prefHook(_bShowZoomLevelBox);
-                
+
         _bZoomToMousePointerDateOnWheelZooming = new Button(group, SWT.CHECK);
         _bZoomToMousePointerDateOnWheelZooming.setText("Zoom In/Out To Mouse Pointer");
         _bZoomToMousePointerDateOnWheelZooming.setToolTipText("When zooming the chart will try to keep the focus on the date where the mouse pointer is when the zoom happens. Default is on.");
@@ -377,7 +430,7 @@ public class GanttTester {
         _bZoomToMousePointerDateOnWheelZooming.setData(KEY, "bZoomToMousePointerDateOnWheelZooming");
         prefLoad(_bZoomToMousePointerDateOnWheelZooming);
         prefHook(_bZoomToMousePointerDateOnWheelZooming);
-        
+
         _bAllowBlankAreaDragAndDropToMoveDates = new Button(group, SWT.CHECK);
         _bAllowBlankAreaDragAndDropToMoveDates.setText("Allow Blank Area DND to Move Chart");
         _bAllowBlankAreaDragAndDropToMoveDates.setToolTipText("When you grab a blank area of the chart and drag it, the chart will move in the drag direction. Default is on.");
@@ -386,7 +439,7 @@ public class GanttTester {
         _bAllowBlankAreaDragAndDropToMoveDates.setData(KEY, "bAllowBlankAreaDragAndDropToMoveDates");
         prefLoad(_bAllowBlankAreaDragAndDropToMoveDates);
         prefHook(_bAllowBlankAreaDragAndDropToMoveDates);
-        
+
         _bFlipBlankAreaDragDirection = new Button(group, SWT.CHECK);
         _bFlipBlankAreaDragDirection.setText("Flip Blank Area DND Direction");
         _bFlipBlankAreaDragDirection.setToolTipText("This will invert the X-axis of the direction the chart is scrolling when blank-area drag and dropping (natural to most people). Default is on.");
@@ -395,7 +448,7 @@ public class GanttTester {
         _bFlipBlankAreaDragDirection.setData(KEY, "bFlipBlankAreaDragDirection");
         prefLoad(_bFlipBlankAreaDragDirection);
         prefHook(_bFlipBlankAreaDragDirection);
-        
+
         _bDrawSelectionMarkerAroundSelectedEvent = new Button(group, SWT.CHECK);
         _bDrawSelectionMarkerAroundSelectedEvent.setText("Draw Selection Marker Around Selected Events");
         _bDrawSelectionMarkerAroundSelectedEvent.setToolTipText("This will draw a selection marker (dotted line) around selected events. Default is on.");
@@ -404,7 +457,7 @@ public class GanttTester {
         _bDrawSelectionMarkerAroundSelectedEvent.setData(KEY, "bDrawSelectionMarkerAroundSelectedEvent");
         prefLoad(_bDrawSelectionMarkerAroundSelectedEvent);
         prefHook(_bDrawSelectionMarkerAroundSelectedEvent);
-        
+
         _bAllowCheckpointResizing = new Button(group, SWT.CHECK);
         _bAllowCheckpointResizing.setText("Allow Checkpoint Resizing");
         _bAllowCheckpointResizing.setToolTipText("This will allow for resizing of events marked as checkpoints. Default is false.");
@@ -413,7 +466,7 @@ public class GanttTester {
         _bAllowCheckpointResizing.setData(KEY, "bAllowCheckpointResizing");
         prefLoad(_bAllowCheckpointResizing);
         prefHook(_bAllowCheckpointResizing);
-        
+
         _bStartCalendarOnFirstDayOfWeek = new Button(group, SWT.CHECK);
         _bStartCalendarOnFirstDayOfWeek.setText("Start Calendar on First Day of Week");
         _bStartCalendarOnFirstDayOfWeek.setToolTipText("This will force calendar to start on the first day of the week of whatever the root calendar is. Default is false.");
@@ -422,7 +475,7 @@ public class GanttTester {
         _bStartCalendarOnFirstDayOfWeek.setData(KEY, "bStartCalendarOnFirstDayOfWeek");
         prefLoad(_bStartCalendarOnFirstDayOfWeek);
         prefHook(_bStartCalendarOnFirstDayOfWeek);
-        
+
         _bDrawFullPercentageBar = new Button(group, SWT.CHECK);
         _bDrawFullPercentageBar.setText("Draw Full Percentage Bar");
         _bDrawFullPercentageBar.setToolTipText("Percentage bar is filled in beyond the percentage complete value (assuming it's less than 100%) to fill out the entire event. Default is on.");
@@ -431,7 +484,7 @@ public class GanttTester {
         _bDrawFullPercentageBar.setData(KEY, "bDrawFullPercentageBar");
         prefLoad(_bDrawFullPercentageBar);
         prefHook(_bDrawFullPercentageBar);
-                
+
         _bDrawLockedDateMarks = new Button(group, SWT.CHECK);
         _bDrawLockedDateMarks.setText("Draw Locked Date Marks");
         _bDrawLockedDateMarks.setToolTipText("Whether locked date-range events (min / max dates) draw a bounding area or markers showing where the span starts/ends. Default is on.");
@@ -440,7 +493,7 @@ public class GanttTester {
         _bDrawLockedDateMarks.setData(KEY, "bDrawLockedDateMarks");
         prefLoad(_bDrawLockedDateMarks);
         prefHook(_bDrawLockedDateMarks);
-               
+
         _bShowDateTipsOnScrolling = new Button(group, SWT.CHECK);
         _bShowDateTipsOnScrolling.setText("Show Date Tips on Scrolling");
         _bShowDateTipsOnScrolling.setToolTipText("Whether date tips (tooltips) are shown when scrolling around to indicate what dates the user is viewing. Default is on.");
@@ -451,7 +504,7 @@ public class GanttTester {
         prefHook(_bShowDateTipsOnScrolling);
         return sc;
     }
-    
+
     private Composite createCreationTab(final Composite parent) {
         final ScrolledComposite sc = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
         sc.setExpandHorizontal(true);
@@ -546,7 +599,7 @@ public class GanttTester {
         _scrollCombo.setData(KEY, "scrollCombo");
         prefLoad(_scrollCombo);
         prefHook(_scrollCombo);
-        
+
         _selCombo = new Combo(flagComp1, SWT.READ_ONLY);
         _selCombo.add("Single select (SWT.SINGLE)");
         _selCombo.add("Multi select (SWT.MULTI)");
@@ -554,7 +607,7 @@ public class GanttTester {
         _selCombo.setData(KEY, "selCombo");
         prefLoad(_selCombo);
         prefHook(_selCombo);
-        
+
         _vDNDCombo = new Combo(flagComp1, SWT.READ_ONLY);
         _vDNDCombo.add("Vertical DND - Off");
         _vDNDCombo.add("Vertical DND - Any");
@@ -563,7 +616,7 @@ public class GanttTester {
         _vDNDCombo.setData(KEY, "vDNDCombo");
         prefLoad(_vDNDCombo);
         prefHook(_vDNDCombo);
-        
+
         _bIncreaseDates = new Button(gLeft, SWT.CHECK);
         _bIncreaseDates.setText("Increase Dates");
         _bIncreaseDates.setSelection(true);
@@ -571,7 +624,7 @@ public class GanttTester {
         _bIncreaseDates.setData(KEY, "bIncreaseDates");
         prefLoad(_bIncreaseDates);
         prefHook(_bIncreaseDates);
-                
+
         _bCreatePlannedDates = new Button(gLeft, SWT.CHECK);
         _bCreatePlannedDates.setText("Create Planned Dates");
         _bCreatePlannedDates.setSelection(true);
@@ -586,12 +639,12 @@ public class GanttTester {
         _bDrawHorizontalLines.setData(KEY, "bDrawHorizontalLines");
         prefLoad(_bDrawHorizontalLines);
         prefHook(_bDrawHorizontalLines);
-        
+
         final Group sections = new Group(gLeft, SWT.NONE);
         sections.setText("Use GanttSections");
         final GridLayout sectionLayout = new GridLayout(2, true);
         sections.setLayout(sectionLayout);
-        
+
         _bUseSections = new Button(sections, SWT.CHECK);
         _bUseSections.setText("Use GanttSections");
         _bUseSections.setData(KEY, "bUseSections");
@@ -609,14 +662,14 @@ public class GanttTester {
         _bUseSectionsLeft.setData(KEY, "bUseSectionsLeft");
         prefLoad(_bUseSectionsLeft);
         prefHook(_bUseSectionsLeft);
-                
+
         _bUseSectionsRight = new Button(sections, SWT.RADIO);
         _bUseSectionsRight.setText("Right Side");
         _bUseSectionsRight.setToolTipText("Creates the section bar on the right");
         _bUseSectionsRight.setData(KEY, "bUseSectionsRight");
         prefLoad(_bUseSectionsRight);
         prefHook(_bUseSectionsRight);
-             
+
         final Label lMaxSections = new Label(gLeft, SWT.LEFT);
         lMaxSections.setText("Max number of sections (0 = infinite)");
 
@@ -627,7 +680,7 @@ public class GanttTester {
         _bRandomEventLength.setToolTipText("Makes events take a random length");
         _bRandomEventLength.setData(KEY, "bRandomEventLength");
         prefLoad(_bRandomEventLength);
-        prefHook(_bRandomEventLength);        
+        prefHook(_bRandomEventLength);
 
         _bConnectEvents = new Button(gLeft, SWT.CHECK);
         _bConnectEvents.setText("Connect events");
@@ -636,7 +689,7 @@ public class GanttTester {
         _bConnectEvents.setData(KEY, "bConnectEvents");
         prefLoad(_bConnectEvents);
         prefHook(_bConnectEvents);
-        
+
         _sConnectionCountNumber = new Spinner(gLeft, SWT.BORDER);
         _sConnectionCountNumber.setSelection(50);
         _sConnectionCountNumber.setMaximum(10000);
@@ -644,7 +697,7 @@ public class GanttTester {
         _sConnectionCountNumber.setData(KEY, "sConnectionCountNumber");
         prefLoad(_sConnectionCountNumber);
         prefHook(_sConnectionCountNumber);
-        
+
         _bRandomColors = new Button(gLeft, SWT.CHECK);
         _bRandomColors.setText("Random Connection Colors");
         _bRandomColors.setToolTipText("Uses random colors for connecting events");
@@ -658,7 +711,7 @@ public class GanttTester {
         _bRandomEventColors.setData(KEY, "bRandomEventColors");
         prefLoad(_bRandomEventColors);
         prefHook(_bRandomEventColors);
-        
+
         _bDNDLimits = new Button(gLeft, SWT.CHECK);
         _bDNDLimits.setText("Random Date Range Limitations");
         _bDNDLimits.setSelection(true);
@@ -704,7 +757,7 @@ public class GanttTester {
         _bRandomRowHeights.setData(KEY, "bRandomRowHeights");
         prefLoad(_bRandomRowHeights);
         prefHook(_bRandomRowHeights);
-        
+
         _bRandomEventVLoc = new Button(internal, SWT.CHECK);
         _bRandomEventVLoc.setText("Random Event Vertical Location");
         _bRandomEventVLoc.setToolTipText("Creates random location for each event one of (SWT.TOP, SWT.CENTER, SWT.BOTTOM)");
@@ -712,7 +765,7 @@ public class GanttTester {
         _bRandomEventVLoc.setData(KEY, "bRandomEventVLoc");
         prefLoad(_bRandomEventVLoc);
         prefHook(_bRandomEventVLoc);
-        
+
         _bRandomEventTextHLocation = new Button(internal, SWT.CHECK);
         _bRandomEventTextHLocation.setText("Random Event Horizontal Text Location");
         _bRandomEventTextHLocation.setToolTipText("Creates random event Text location for each event one of (SWT.LEFT, SWT.CENTER, SWT.RIGHT)");
@@ -720,7 +773,7 @@ public class GanttTester {
         _bRandomEventTextHLocation.setData(KEY, "bRandomEventTextHLocation");
         prefLoad(_bRandomEventTextHLocation);
         prefHook(_bRandomEventTextHLocation);
-        
+
         _bRandomEventTextVLocation = new Button(internal, SWT.CHECK);
         _bRandomEventTextVLocation.setText("Random Event Vertical Text Location");
         _bRandomEventTextVLocation.setToolTipText("Creates random event Text location for each event one of (SWT.TOP, SWT.CENTER, SWT.BOTTOM)");
@@ -728,7 +781,7 @@ public class GanttTester {
         _bRandomEventTextVLocation.setData(KEY, "bRandomEventTextVLocation");
         prefLoad(_bRandomEventTextVLocation);
         prefHook(_bRandomEventTextVLocation);
-        
+
         _bRandomRowHeights.addListener(SWT.Selection, new Listener() {
 
             public void handleEvent(final Event event) {
@@ -744,14 +797,14 @@ public class GanttTester {
         _bUseDDay.setData(KEY, "bUseDDay");
         prefLoad(_bUseDDay);
         prefHook(_bUseDDay);
-        
+
         _bLockHeader = new Button(gLeft, SWT.CHECK);
         _bLockHeader.setText("Lock Header");
         _bLockHeader.setToolTipText("Locks the header so that it is always shown regardless of vertical scroll");
         _bLockHeader.setData(KEY, "bLockHeader");
         prefLoad(_bLockHeader);
         prefHook(_bLockHeader);
-        
+
         _bMoveOnlyLaterLinkedEvents = new Button(gLeft, SWT.CHECK);
         _bMoveOnlyLaterLinkedEvents.setSelection(true);
         _bMoveOnlyLaterLinkedEvents.setText("Move/Resize Only 'Older' Linked Events");
@@ -759,7 +812,7 @@ public class GanttTester {
         _bMoveOnlyLaterLinkedEvents.setData(KEY, "bMoveOnlyLaterLinkedEvents");
         prefLoad(_bMoveOnlyLaterLinkedEvents);
         prefHook(_bMoveOnlyLaterLinkedEvents);
-        
+
         _bConnectEvents.addListener(SWT.Selection, new Listener() {
 
             public void handleEvent(final Event event) {
@@ -862,8 +915,9 @@ public class GanttTester {
         });
 
         _vfChart.setContent(_ganttChart);
-        _ganttChart.addGanttEventListener(new GanttEventListenerAdapter() {
+        _ganttChart.addGanttEventListener(new IGanttEventListener() {
             public void eventDoubleClicked(final GanttEvent event, final MouseEvent me) {
+                eventLog("Doubleclicked '" + event + "'");
                 final Shell shell = new Shell(Display.getDefault(), SWT.TITLE | SWT.CLOSE | SWT.MIN | SWT.ON_TOP | SWT.APPLICATION_MODAL);
                 shell.setLocation(Display.getDefault().getBounds().width * 1 / 5, Display.getDefault().getBounds().height * 1 / 3);
                 shell.setSize(350, 200);
@@ -871,6 +925,78 @@ public class GanttTester {
                 shell.setText(dialogTitle);
                 shell.open();
             }
+
+            public void eventHeaderSelected(Calendar newlySelectedDate, List allSelectedDates) {
+                eventLog("Header date selected: " + newlySelectedDate.getTime() + ". Now a total of " + allSelectedDates.size() + " header date(s) selected.");
+            }
+
+            public void eventMovedToNewSection(GanttEvent event, GanttSection oldSection, GanttSection newSection) {
+                eventLog("Eveent'" + event + "' was moved from GanttSection '" + oldSection.getName() + "' to '" +newSection.getName() +"'");
+            }
+
+            public void eventPropertiesSelected(List events) {
+                eventLog("Properties was selected on '" + events + "'");
+            }
+
+            public void eventReordered(GanttEvent event) {
+                eventLog("Event '" + event + "' was reordered");
+            }
+
+            public void eventsDeleteRequest(List events, MouseEvent mouseEvent) {
+                eventLog("Events '" + events + "' were requested to be deleted");
+            }
+
+            public void eventSelected(GanttEvent event, List allSelectedEvents, MouseEvent mouseEvent) {
+                eventLog("Event '" + event + "' was selected. " + allSelectedEvents.size() + " event(s) are now selected in total.");
+            }
+
+            public void eventsMoved(List events, MouseEvent mouseEvent) {
+                eventLog("Events '" + events + "' were moved");
+            }
+
+            public void eventsMoveFinished(List events, MouseEvent mouseEvent) {
+                eventLog("Events '" + events + "' were finished moving");
+            }
+
+            public void eventsResized(List events, MouseEvent mouseEvent) {
+                eventLog("Events '" + events + "' were resized");
+            }
+
+            public void eventsResizeFinished(List events, MouseEvent mouseEvent) {
+                eventLog("Events '" + events + "' were finished resizing");
+            }
+
+            public void lastDraw(GC gc) {
+            }
+
+            public void phaseMoved(GanttPhase phase, MouseEvent mouseEvent) {
+                eventLog("Phase '" + phase.getTitle() + "' was moved");
+            }
+
+            public void phaseMoveFinished(GanttPhase phase, MouseEvent mouseEvent) {
+                eventLog("Phase '" + phase.getTitle() + "' finished moving");
+            }
+
+            public void phaseResized(GanttPhase phase, MouseEvent mouseEvent) {
+                eventLog("Phase '" + phase.getTitle() + "' was resized");
+            }
+
+            public void phaseResizeFinished(GanttPhase phase, MouseEvent mouseEvent) {
+                eventLog("Phase '" + phase.getTitle() + "' finished resizing");
+            }
+
+            public void zoomedIn(int newZoomLevel) {
+                eventLog("Zoomed in, zoom level is now: " + newZoomLevel);
+            }
+
+            public void zoomedOut(int newZoomLevel) {
+                eventLog("Zoomed out, zoom level is now: " + newZoomLevel);
+            }
+
+            public void zoomReset() {
+                eventLog("Zoomed level was reset");
+            }
+
         });
 
         final Random r = new Random();
@@ -1075,7 +1201,9 @@ public class GanttTester {
 
         final long time2 = System.currentTimeMillis();
         _timerText.setText("Initial chart creation took " + (time2 - time1) + " ms");
-
+        eventLog("Initial chart creation took " + (time2 - time1) + " ms");
+        
+        
         moveFocus();
 
         Display.getDefault().asyncExec(new Runnable() {
@@ -1149,6 +1277,7 @@ public class GanttTester {
                 //long nano2 = System.nanoTime();
 
                 _timerText.setText("Heavy redraw took " + (time2 - time1) + " ms");
+                eventLog("Heavy redraw took " + (time2 - time1) + " ms");
             }
 
         });
@@ -1178,6 +1307,7 @@ public class GanttTester {
                 final long time2 = System.currentTimeMillis();
                 //long nano2 = System.nanoTime();
                 _timerText.setText("Redraw took " + (time2 - time1) + " ms");
+                eventLog("Redraw took " + (time2 - time1) + " ms");
                 moveFocus();
             }
         });
@@ -1342,6 +1472,7 @@ public class GanttTester {
 
             public void handleEvent(final Event event) {
                 _ganttComposite.getUndoRedoManager().undo();
+                eventLog("Undo was pressed");
             }
 
         });
@@ -1353,6 +1484,7 @@ public class GanttTester {
 
             public void handleEvent(final Event event) {
                 _ganttComposite.getUndoRedoManager().redo();
+                eventLog("Redo was pressed");
             }
 
         });
@@ -1538,6 +1670,11 @@ public class GanttTester {
         return all[_localeCombo.getSelectionIndex()];
     }
 
+    private void eventLog(String txt) {
+        TableItem ti = new TableItem(_tEventLog, SWT.NONE, 0);
+        ti.setText(txt);
+    }
+
     class TestSettings extends AbstractSettings {
         public boolean lockHeaderOnVerticalScroll() {
             return _bLockHeader.getSelection();
@@ -1576,7 +1713,7 @@ public class GanttTester {
         public Locale getDefaultLocale() {
             return getSelectedLocale();
         }
-               
+
         public boolean enableAutoScroll() {
             return _bEnableAutoScroll.getSelection();
         }
@@ -1603,7 +1740,7 @@ public class GanttTester {
                 case 2:
                     return ISettings.CONNECTION_MS_PROJECT_STYLE;
                 case 3:
-                    return ISettings.CONNECTION_BIRDS_FLIGHT_PATH;                        
+                    return ISettings.CONNECTION_BIRDS_FLIGHT_PATH;
             }
         }
 
@@ -1675,8 +1812,6 @@ public class GanttTester {
             return _bZoomToMousePointerDateOnWheelZooming.getSelection();
         }
 
-        
-        
     }
 
 }

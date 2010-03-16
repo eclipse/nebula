@@ -72,7 +72,6 @@ import org.eclipse.swt.widgets.Tracker;
 // -- FEATURES
 // TODO: allow zoom-out for D-day charts (we need to flip it from ISettings.D_DAY to a bool as we should draw d-day headers in each respective zoom-level head instead)
 // TODO: millisecond view
-// BUG: Locked header draws week diving lines in wrong place (!) 
 public final class GanttComposite extends Canvas implements MouseListener, MouseMoveListener, MouseTrackListener, KeyListener {
 
     public static int                     _osType                  = Constants.OS_OTHER;
