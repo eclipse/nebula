@@ -17,6 +17,7 @@ import org.eclipse.nebula.widgets.xviewer.util.internal.CollectionsUtil;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XmlUtil;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.TreeColumn;
 
 /**
  * @author Donald G. Dunne
@@ -264,5 +265,9 @@ public class XViewerColumn {
                ";", exceptions) : "");
       }
       return "Unhandled column type";
+   }
+
+   public boolean is(TreeColumn treeColumn) {
+      return treeColumn.getText().equals(getName());
    }
 }
