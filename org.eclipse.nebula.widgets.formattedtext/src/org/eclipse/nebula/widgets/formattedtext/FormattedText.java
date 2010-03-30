@@ -57,6 +57,9 @@ public class FormattedText {
   /** Filter for modify events */
   protected Listener modifyFilter;
 
+  /** Flag to activate or not beep sound on input errors */
+  protected static boolean beepSound = true;
+
   protected static int count = 0;
   protected int id = ++count;
 
@@ -171,6 +174,15 @@ public class FormattedText {
   }
 
   /**
+   * Returns true if beep sound must be produced on input errors, else false.
+   * 
+   * @return true / false
+   */
+  public static boolean isBeepSound() {
+		return beepSound;
+	}
+
+  /**
    * Returns <code>true</code> if the current value is empty, else
    * <code>false</code>.<br>
    * An empty value depends of the formatter applied on the Text widget
@@ -195,6 +207,17 @@ public class FormattedText {
   }
 
   /**
+   * Set the beep sound to ON or OFF for all the FormattedText fields. Beep
+   * sound are produced by formatters on every input error. Formatter
+   * implementation must check this flag on before to emit a beep sound.
+   * 
+   * @param beepSound true to emit beep sound on errors, else false
+   */
+	public static void setBeepSound(boolean beepSound) {
+		FormattedText.beepSound = beepSound;
+	}
+
+	/**
    * Associates a formatter to the widget.<br>
    * Parameter can not be null. In some situations, the FormattedText component
    * must not do formatting (eg. when reusing the same object for editing of
