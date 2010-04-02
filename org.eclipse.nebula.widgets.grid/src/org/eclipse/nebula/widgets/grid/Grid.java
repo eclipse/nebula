@@ -6396,7 +6396,19 @@ public class Grid extends Canvas
 
         if (getColumn(newCell.x).getCellSelectionEnabled())
         {
-            selectedCells.add(newCell);
+        	Iterator it = selectedCells.iterator();
+        	boolean found = false;
+        	while( it.hasNext() ) {
+        		Point p = (Point) it.next();
+        		if( newCell.equals(p) ) {
+        			found = true;
+        			break;
+        		}
+        	}
+
+        	if( ! found ) {
+        		selectedCells.add(newCell);
+        	}
         }
     }
 
