@@ -2338,12 +2338,16 @@ public class Grid extends Canvas
         else
         {
             Vector items = new Vector();
+            int itemCount = getItemCount();
+
             for (Iterator iter = selectedCells.iterator(); iter.hasNext();)
             {
                 Point cell = (Point)iter.next();
-                GridItem item = getItem(cell.y);
-                if (!items.contains(item))
-                    items.add(item);
+                if (cell.y >= 0 && cell.y < itemCount) {
+                    GridItem item = getItem(cell.y);
+                    if (!items.contains(item))
+                        items.add(item);
+                }
             }
             return (GridItem[])items.toArray(new GridItem[]{});
         }
@@ -3197,6 +3201,7 @@ public class Grid extends Canvas
         {
             ((GridItem)items.get(0)).dispose();
         }
+        deselectAll();
         redraw();
     }
 
@@ -8875,7 +8880,7 @@ public class Grid extends Canvas
      * Selects all cells in the receiver.
      *
      * @return An Event object
-     * 
+     *
      * @throws org.eclipse.swt.SWTException
      * <ul>
      * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
@@ -8928,9 +8933,9 @@ public class Grid extends Canvas
 
     /**
      * Selects all cells in the given column in the receiver.
-     * 
+     *
      * @param col
-     * 
+     *
      * @throws org.eclipse.swt.SWTException
      * <ul>
      * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
@@ -8947,9 +8952,9 @@ public class Grid extends Canvas
 
     /**
      * Selects all cells in the given column group in the receiver.
-     * 
+     *
      * @param colGroup the column group
-     * 
+     *
      * @throws org.eclipse.swt.SWTException
      * <ul>
      * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
@@ -8960,12 +8965,12 @@ public class Grid extends Canvas
     public void selectColumnGroup(int colGroup) {
         selectColumnGroup(getColumnGroup(colGroup));
     }
-    
+
     /**
      * Selects all cells in the given column group in the receiver.
-     * 
+     *
      * @param colGroup the column group
-     * 
+     *
      * @throws org.eclipse.swt.SWTException
      * <ul>
      * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
