@@ -14,6 +14,7 @@
  *    higerinbeijing@gmail.com . fixed selectionEvent.item in bug 286617
  *    balarkrishnan@yahoo.com - fix in bug 298684
  *    Enrico Schnepel<enrico.schnepel@randomice.net> - new API in 238729, bugfix in 294952
+ *    Benjamin Bortfeldt<bbortfeldt@gmail.com> - new tooltip support in 300797
  *******************************************************************************/
 package org.eclipse.nebula.widgets.grid;
 
@@ -7962,7 +7963,7 @@ public class Grid extends Canvas
 	                textBounds = col.getCellRenderer().getTextBounds(item,false);
 	                preferredTextBounds = col.getCellRenderer().getTextBounds(item,true);
                 }
-                else if (hoveringColumnHeader != null)
+                else if (hoveringColumnHeader != null && hoveringColumnHeader.getHeaderTooltip() == null) //no inplace tooltips when regular tooltip
                 {
                     cellBounds = hoveringColumnHeader.getHeaderRenderer().getBounds();
                     if (cellBounds.x + cellBounds.width > getSize().x)
@@ -8004,20 +8005,18 @@ public class Grid extends Canvas
         if (hoverChange)
         {
         	String newTip = null;
-        	if (hoveringItem == null || hoveringColumn == null)
-        	{
-        		//we're not over a cell so no cell tooltip - use base one
-        		newTip = getToolTipText();
-        	}
-        	else
-        	{
-        		newTip = hoveringItem.getToolTipText(indexOf(hoveringColumn));
-        		if (newTip == null)
-        		{
-        			//no cell specific tooltip then use base Grid tooltip
-        			newTip = getToolTipText();
-        		}
-        	}
+			if ((hoveringItem != null) && (hoveringColumn != null)) {
+				// get cell specific tooltip
+				newTip = hoveringItem.getToolTipText(indexOf(hoveringColumn));
+			} else if ((hoveringColumn != null) && (hoveringColumnHeader != null)) {
+				// get column header specific tooltip
+				newTip = hoveringColumn.getHeaderTooltip();
+			}
+
+			if (newTip == null) { // no cell or column header specific tooltip then use base Grid tooltip
+				newTip = getToolTipText();
+			}
+
         	//Avoid unnecessarily resetting tooltip - this will cause the tooltip to jump around
         	if (newTip != null && !newTip.equals(displayedToolTipText))
         	{

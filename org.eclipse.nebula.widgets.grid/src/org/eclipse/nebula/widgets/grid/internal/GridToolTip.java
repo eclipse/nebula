@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    chris.gross@us.ibm.com - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.nebula.widgets.grid.internal;
 
 import org.eclipse.swt.SWT;
@@ -37,7 +37,7 @@ public class GridToolTip extends Widget
 
     /**
      * Creates an inplace tooltip.
-     * 
+     *
      * @param parent parent control.
      */
     public GridToolTip(final Control parent)
@@ -54,9 +54,9 @@ public class GridToolTip extends Widget
 			{
 				shell.dispose();
 				dispose();
-			}		
+			}
 		});
-        
+
         shell.addListener(SWT.Paint, new Listener()
         {
             public void handleEvent(Event e)
@@ -68,7 +68,7 @@ public class GridToolTip extends Widget
 
     /**
      * Paints the tooltip.
-     * 
+     *
      * @param gc
      */
     private void onPaint(GC gc)
@@ -80,7 +80,7 @@ public class GridToolTip extends Widget
 
     /**
      * Sets the location of the tooltip.
-     * 
+     *
      * @param location
      */
     public void setLocation(Point location)
@@ -90,14 +90,15 @@ public class GridToolTip extends Widget
 
     /**
      * Shows or hides the tooltip.
-     * 
+     *
      * @param visible
      */
     public void setVisible(boolean visible)
     {
+    	System.err.println("VISIBLE: " + visible);
         if (visible && shell.getVisible())
         {
-            shell.redraw();
+//            shell.redraw();
         }
         else
         {

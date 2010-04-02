@@ -11,6 +11,7 @@
  *    smcduff@hotmail.com       - wordwrapping in bug 222280
  *    Marty Jones<martybjones@gmail.com> - custom header/footer font in bug 293743
  *    Cserveny Tamas <cserveny.tamas@gmail.com> - min width in bug 295468
+ *    Benjamin Bortfeldt<bbortfeldt@gmail.com> - new tooltip support in 300797
  *******************************************************************************/
 package org.eclipse.nebula.widgets.grid;
 
@@ -141,6 +142,8 @@ public class GridColumn extends Item {
 	private Font footerFont;
 
 	private int minimumWidth = 0;
+
+	private String headerTooltip = null;
 
 	/**
 	 * Constructs a new instance of this class given its parent (which must be a
@@ -1204,6 +1207,27 @@ public class GridColumn extends Item {
 			return this.controlEditor.getEditor();
 		}
 		return null;
+	}
+
+
+	/**
+	 * Returns the tooltip of the column header.
+	 *
+	 * @return the tooltip text
+	 */
+	public String getHeaderTooltip() {
+		checkWidget();
+		return headerTooltip;
+	}
+
+	/**
+	 * Sets the tooltip text of the column header.
+	 *
+	 * @param tooltip the tooltip text
+	 */
+	public void setHeaderTooltip(String tooltip) {
+		checkWidget();
+		this.headerTooltip = tooltip;
 	}
 
 	/**
