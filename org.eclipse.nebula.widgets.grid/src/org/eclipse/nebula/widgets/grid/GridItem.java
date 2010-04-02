@@ -8,6 +8,7 @@
  * Contributors:
  *    chris.gross@us.ibm.com - initial API and implementation
  *    Claes Rosell<claes.rosell@solme.se> - rowspan in bug 272384
+ *    Stefan Widmaier<stefan.widmaier@faktorzehn.de> - rowspan in 304797
  *******************************************************************************/
 package org.eclipse.nebula.widgets.grid;
 
