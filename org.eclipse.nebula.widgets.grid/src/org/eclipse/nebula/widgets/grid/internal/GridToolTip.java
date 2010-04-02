@@ -95,10 +95,9 @@ public class GridToolTip extends Widget
      */
     public void setVisible(boolean visible)
     {
-    	System.err.println("VISIBLE: " + visible);
         if (visible && shell.getVisible())
         {
-//            shell.redraw();
+            shell.redraw();
         }
         else
         {
