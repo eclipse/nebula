@@ -13,7 +13,7 @@
  *    Marco Maccaferri<macca@maccasoft.com> - fixed arrow scrolling in bug 294767
  *    higerinbeijing@gmail.com . fixed selectionEvent.item in bug 286617
  *    balarkrishnan@yahoo.com - fix in bug 298684
- *    Enrico Schnepel<enrico.schnepel@randomice.net> - new API in 238729
+ *    Enrico Schnepel<enrico.schnepel@randomice.net> - new API in 238729, bugfix in 294952
  *******************************************************************************/
 package org.eclipse.nebula.widgets.grid;
 
@@ -6797,7 +6797,7 @@ public class Grid extends Canvas
         	}
 
             //click on the top left corner means select everything
-            selectAllCells();
+            selectionEvent = selectAllCellsInternal();
 
             focusColumn = getColumn(new Point(rowHeaderWidth + 1,1));
             focusItem = getItem(getTopIndex());
@@ -8868,14 +8868,30 @@ public class Grid extends Canvas
     public void selectAllCells()
     {
         checkWidget();
+        selectAllCellsInternal();
+    }
 
-        if (!cellSelectionEnabled) return;
+    /**
+     * Selects all cells in the receiver.
+     *
+     * @return An Event object
+     * 
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
+     */
+    private Event selectAllCellsInternal()
+    {
+        if (!cellSelectionEnabled) return null;
 
         if (columns.size() == 0)
-            return;
+            return null;
 
         if(items.size() == 0)
-        	return;
+        	return null;
 
         int index = 0;
         GridColumn column = (GridColumn)displayOrderedColumns.get(index);
@@ -8885,7 +8901,7 @@ public class Grid extends Canvas
             index ++;
 
             if (index >= columns.size())
-                return;
+                return null;
 
             column = (GridColumn)displayOrderedColumns.get(index);
         }
@@ -8899,7 +8915,7 @@ public class Grid extends Canvas
         GridItem lastItem = getPreviousVisibleItem(null);
         GridColumn lastCol = getVisibleColumn_DegradeLeft(lastItem,(GridColumn)displayOrderedColumns.get(displayOrderedColumns.size() -1));
 
-        updateCellSelection(new Point(indexOf(lastCol),indexOf(lastItem)),SWT.MOD2, true, false);
+        Event event = updateCellSelection(new Point(indexOf(lastCol),indexOf(lastItem)),SWT.MOD2, true, false);
 
         focusColumn = oldFocusColumn;
         focusItem = oldFocusItem;
@@ -8907,6 +8923,7 @@ public class Grid extends Canvas
         updateColumnSelection();
 
         redraw();
+        return event;
     }
 
     /**
