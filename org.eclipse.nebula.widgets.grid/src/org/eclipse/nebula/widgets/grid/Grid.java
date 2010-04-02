@@ -13,6 +13,7 @@
  *    Marco Maccaferri<macca@maccasoft.com> - fixed arrow scrolling in bug 294767
  *    higerinbeijing@gmail.com . fixed selectionEvent.item in bug 286617
  *    balarkrishnan@yahoo.com - fix in bug 298684
+ *    Enrico Schnepel<enrico.schnepel@randomice.net> - new API in 238729
  *******************************************************************************/
 package org.eclipse.nebula.widgets.grid;
 
@@ -6808,16 +6809,17 @@ public class Grid extends Canvas
 
             if (col == null) return;
 
-            if (col.getColumnGroup() != null && e.y < groupHeaderHeight)
-                return;
-
             if (getItemCount() == 0)
                 return;
 
-
             Vector cells = new Vector();
 
-            getCells(col,cells);
+            GridColumnGroup group = col.getColumnGroup();
+            if (group != null && e.y < groupHeaderHeight) {
+                getCells(group, cells);
+            } else {
+                getCells(col, cells);
+            }
 
             selectionEvent = updateCellSelection(cells, e.stateMask, false, true);
             cellColumnSelectedOnLastMouseDown = (getCellSelectionCount() > 0);
@@ -8908,6 +8910,60 @@ public class Grid extends Canvas
     }
 
     /**
+     * Selects all cells in the given column in the receiver.
+     * 
+     * @param col
+     * 
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
+     */
+    public void selectColumn(int col) {
+        checkWidget();
+    	Vector cells = new Vector();
+		getCells(getColumn(col), cells);
+		selectCells((Point[])cells.toArray(new Point[0]));
+    }
+
+    /**
+     * Selects all cells in the given column group in the receiver.
+     * 
+     * @param colGroup the column group
+     * 
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
+     */
+    public void selectColumnGroup(int colGroup) {
+        selectColumnGroup(getColumnGroup(colGroup));
+    }
+    
+    /**
+     * Selects all cells in the given column group in the receiver.
+     * 
+     * @param colGroup the column group
+     * 
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
+     */
+    public void selectColumnGroup(GridColumnGroup colGroup) {
+        checkWidget();
+    	Vector cells = new Vector();
+		getCells(colGroup, cells);
+		selectCells((Point[])cells.toArray(new Point[0]));
+    }
+
+    /**
      * Selects the selection to the given cell.  The existing selection is cleared before
      * selecting the given cell.
      *
@@ -9087,6 +9143,14 @@ public class Grid extends Canvas
 
             item = getNextVisibleItem(item);
         }
+    }
+
+    private void getCells(GridColumnGroup colGroup, Vector cells)
+    {
+        GridColumn[] cols = colGroup.getColumns();
+        for (int i = 0; i < cols.length; i++) {
+			getCells(cols[i], cells);
+		}
     }
 
     private void getCells(GridItem item, Vector cells)
