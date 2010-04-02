@@ -2056,6 +2056,7 @@ public class GridItem extends Item {
 		removeValue(index, images);
 		removeValue(index, texts);
 		removeValue(index, columnSpans);
+		removeValue(index, rowSpans);
 		removeValue(index, tooltips);
 	}
 
@@ -2069,6 +2070,7 @@ public class GridItem extends Item {
 		insertValue(index, images);
 		insertValue(index, texts);
 		insertValue(index, columnSpans);
+		insertValue(index, rowSpans);
 		insertValue(index, tooltips);
 		hasSetData = false;
 	}
