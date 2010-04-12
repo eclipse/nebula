@@ -45,9 +45,6 @@ public abstract class XViewerLabelProvider implements ITableLabelProvider, ITabl
       indexToXViewerColumnMap.clear();
    }
 
-   /**
-    * @param viewer
-    */
    public XViewerLabelProvider(final XViewer viewer) {
       super();
       this.viewer = viewer;
