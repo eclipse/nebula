@@ -4,7 +4,7 @@ Bundle-Name: Xviewer Plug-in
 Bundle-SymbolicName: org.eclipse.nebula.widgets.xviewer;singleton:=true
 Bundle-Version: 0.9.2.qualifier
 Bundle-Activator: org.eclipse.nebula.widgets.xviewer.Activator
-Bundle-Vendor: Eclipse.org
+Bundle-Vendor: Eclipse Nebula
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.nebula.widgets.calendarcombo,
