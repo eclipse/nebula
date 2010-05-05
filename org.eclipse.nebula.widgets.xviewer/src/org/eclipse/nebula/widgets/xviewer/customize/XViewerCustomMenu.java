@@ -84,7 +84,7 @@ public class XViewerCustomMenu {
    protected Action filterByColumn, clearAllSorting, clearAllFilters, tableProperties, viewTableReport,
          columnMultiEdit, removeSelected, removeNonSelected, copySelected, showColumn, addComputedColumn, sumColumn,
          hideColumn, copySelectedCell, viewSelectedCell, uniqueValues;
-   private Boolean headerMouseClick = false;
+   private boolean headerMouseClick = false;
 
    public XViewerCustomMenu() {
    }
@@ -154,9 +154,11 @@ public class XViewerCustomMenu {
       mm.add(filterByColumn);
       mm.add(clearAllFilters);
       mm.add(clearAllSorting);
-      mm.add(new Separator());
-      mm.add(removeSelected);
-      mm.add(removeNonSelected);
+      if (xViewer.isRemoveItemsMenuOptionEnabled()) {
+         mm.add(new Separator());
+         mm.add(removeSelected);
+         mm.add(removeNonSelected);
+      }
       mm.add(new GroupMarker(XViewer.MENU_GROUP_POST));
    }
 

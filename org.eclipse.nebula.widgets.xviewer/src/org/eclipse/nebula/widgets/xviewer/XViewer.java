@@ -282,6 +282,13 @@ public class XViewer extends TreeViewer {
       return (((XViewerColumn) treeColumn.getData()).isMultiColumnEditable());
    }
 
+   /**
+    * If true, "Remove Selected from View" and "Remove Non-Selected from View" menu options will be shown.
+    */
+   public boolean isRemoveItemsMenuOptionEnabled() {
+      return true;
+   }
+
    public XViewerColumn getXTreeColumn(int columnIndex) {
       return (XViewerColumn) getTree().getColumn(columnIndex).getData();
    }
