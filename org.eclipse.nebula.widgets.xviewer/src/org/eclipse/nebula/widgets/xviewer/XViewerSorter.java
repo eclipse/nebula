@@ -126,6 +126,7 @@ public class XViewerSorter extends ViewerSorter {
       return returnInt;
    }
 
+   @SuppressWarnings("unchecked")
    public int getCompareForFloat(String float1, String float2) {
       double float1Float = 0;
       boolean float1Exception = false;
@@ -153,6 +154,7 @@ public class XViewerSorter extends ViewerSorter {
       return toReturn;
    }
 
+   @SuppressWarnings("unchecked")
    public int getCompareForInteger(String int1, String int2) {
       int int1Integer = 0;
       boolean int1Exception = false;
@@ -251,6 +253,7 @@ public class XViewerSorter extends ViewerSorter {
       return date1.compareTo(date2);
    }
 
+   @SuppressWarnings("unchecked")
    public int getCompareForPercent(String percent1, String percent2) {
       int percent1Int = 0;
       boolean percent1Exception = false;
@@ -279,7 +282,6 @@ public class XViewerSorter extends ViewerSorter {
       return toReturn;
    }
 
-   @SuppressWarnings("unchecked")
    public int getCompareForPercent(int percent1, int percent2) {
       int compareInt = 0;
       if (percent1 == percent2) {
