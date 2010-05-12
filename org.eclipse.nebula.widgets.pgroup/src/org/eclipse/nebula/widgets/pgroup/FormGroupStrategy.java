@@ -23,7 +23,7 @@ import org.eclipse.swt.graphics.Region;
 /**
  * FormGroupStrategy makes a PGroup mimic the look and feel of an Eclipse Form
  * Section.
- * 
+ *
  * @since 1.0
  * @author chris
  */
@@ -52,9 +52,11 @@ public class FormGroupStrategy extends AbstractGroupStrategy
 
     private int fontHeight;
 
+    private Rectangle toolItemArea;
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.swtplus.widgets.AbstractGroupStrategy#initialize(com.swtplus.widgets.PGroup)
      */
     public void initialize(PGroup sg)
@@ -76,7 +78,7 @@ public class FormGroupStrategy extends AbstractGroupStrategy
 
     /**
      * Creates a FormGroupStrategy with the given toggle and style.
-     * 
+     *
      * @param toggle
      * @param style
      */
@@ -88,7 +90,7 @@ public class FormGroupStrategy extends AbstractGroupStrategy
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.swtplus.widgets.AbstractGroupStrategy#paintGroup(org.eclipse.swt.graphics.GC)
      */
     public void paint(GC gc)
@@ -97,28 +99,28 @@ public class FormGroupStrategy extends AbstractGroupStrategy
         if (back != null)
         {
             gc.fillRectangle(0,0,getGroup().getSize().x,getGroup().getSize().y);
-            
+
             Region reg = new Region();
             reg.add(0, 0, 5, 1);
             reg.add(0, 1, 3, 1);
             reg.add(0, 2, 2, 1);
             reg.add(0, 3, 1, 1);
             reg.add(0, 4, 1, 1);
-            
+
             reg.add(getGroup().getSize().x - 5, 0, 5, 1);
             reg.add(getGroup().getSize().x - 3, 1, 3, 1);
             reg.add(getGroup().getSize().x - 2, 2, 2, 1);
             reg.add(getGroup().getSize().x - 1, 3, 1, 1);
             reg.add(getGroup().getSize().x - 1, 4, 1, 1);
-            
+
             gc.setClipping(reg);
-            
-            getGroup().drawBackground(gc, 0, 0, getGroup().getSize().x,5); 
-            
+
+            getGroup().drawBackground(gc, 0, 0, getGroup().getSize().x,5);
+
             gc.setClipping((Region)null);
             reg.dispose();
         }
-        
+
         Point imagePoint = new Point(0, 0);
 
         if (getGroup().getToggleRenderer() != null)
@@ -166,17 +168,17 @@ public class FormGroupStrategy extends AbstractGroupStrategy
         gc.fillRectangle(0, 0, getGroup().getSize().x, titleHeight);
         p.dispose();
         gc.setBackgroundPattern(null);
-        
+
         if (getGroup().getExpanded() && getGroup().getSize().x > 1)
-        {            
+        {
             reg.subtract(1,titleHeight -1,getGroup().getSize().x -2,1);
             gc.setClipping(reg);
         }
-        
+
         gc.setForeground(borderColor);
         GraphicUtils.drawRoundRectangle(gc, 0, 0, getGroup().getSize().x - 1, titleHeight, null,
                                         true, false);
-        
+
         reg.dispose();
         gc.setClipping((Region)null);
 
@@ -228,10 +230,58 @@ public class FormGroupStrategy extends AbstractGroupStrategy
         }
 
         Rectangle textBounds = getTextBounds();
+        String shortened = TextUtils.getShortString(gc, getGroup().getText(), textBounds.width);
+
+        if( getGroup().getToolItems().length > 0 && getGroup().getToolItemRenderer() != null ) {
+        	PGroupToolItem[] items = getGroup().getToolItems();
+        	AbstractToolItemRenderer renderer = getGroup().getToolItemRenderer();
+
+        	Point size = new Point(0, 0);
+        	Point minSize = new Point(0, 0);
+
+        	int spacing = 3;
+
+        	for(int i = 0; i < items.length; i++ ) {
+        		PGroupToolItem item = items[i];
+        		Point s0 = renderer.computeSize(gc, item, AbstractToolItemRenderer.DEFAULT);
+        		Point s1 = renderer.computeSize(gc, item, AbstractToolItemRenderer.MIN);
+
+        		size.x += s0.x + spacing;
+    			minSize.x += s1.x + spacing;
+        	}
+
+        	boolean min = false;
+
+        	if( shortened.length() != getGroup().getText().length() ) {
+        		textBounds.width -= minSize.x;
+        		min = true;
+        	} else {
+        		if( ! TextUtils.getShortString(gc, getGroup().getText(), textBounds.width - size.x).equals(getGroup().getText()) ) {
+        			textBounds.width -= minSize.x;
+        			min = true;
+        		} else {
+        			textBounds.width -= size.x;
+        		}
+        	}
+
+        	shortened = TextUtils.getShortString(gc, getGroup().getText(), textBounds.width);
+
+        	int x = textBounds.x + textBounds.width;
+
+        	if( min ) {
+        		toolItemArea = new Rectangle(x, 2, minSize.x, titleHeight - 4);
+        	} else {
+        		toolItemArea = new Rectangle(x, 2, size.x, titleHeight - 4);
+        	}
+        }
 
         gc.drawText(TextUtils.getShortString(gc, getGroup().getText(), textBounds.width),
                     textBounds.x, textBounds.y, true);
 
+    }
+
+    public Rectangle getToolItemArea() {
+    	return toolItemArea;
     }
 
     /**
@@ -318,7 +368,7 @@ public class FormGroupStrategy extends AbstractGroupStrategy
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.swtplus.widgets.IGroupStrategy#dispose()
      */
     public void dispose()

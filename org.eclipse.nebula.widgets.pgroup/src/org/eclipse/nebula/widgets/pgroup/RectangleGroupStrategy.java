@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 Chris Gross. All rights reserved. This program and the
+ * Copyright (c) 2006 Chris Gross.
+ * All rights reserved. This program and the
  * accompanying materials are made available under the terms of the Eclipse
  * Public License v1.0 which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html Contributors: schtoo@schtoo.com
- * (Chris Gross) - initial API and implementation
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * 		schtoo@schtoo.com (Chris Gross) - initial API and implementation
+ * 		Tom Schindl <tom.schindl@bestsolution.at> - added support for PGroupToolItem
  ******************************************************************************/
 
 package org.eclipse.nebula.widgets.pgroup;
@@ -21,7 +25,7 @@ import org.eclipse.swt.graphics.Region;
 /**
  * RectangleGroupStrategy is a very flexible painting strategy that displays a
  * (rounded) rectangle around the PGroup's body.
- * 
+ *
  * @since 1.0
  * @author chris
  */
@@ -56,9 +60,11 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
 
     private int titleAreaHeight;
 
+    private Rectangle toolItemArea;
+
     /**
      * Constructs a RectangleGroupStrategy with the given toggle and style.
-     * 
+     *
      * @param toggleStrategy
      * @param style
      */
@@ -69,7 +75,7 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.swtplus.widgets.AbstractGroupStrategy#initialize(com.swtplus.widgets.PGroup)
      */
     public void initialize(PGroup sg)
@@ -88,7 +94,7 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.swtplus.widgets.AbstractGroupStrategy#paintGroup(org.eclipse.swt.graphics.GC)
      */
     public void paint(GC gc)
@@ -119,31 +125,31 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
                                                                      - hMargin - p.x, toggleY));
             }
         }
-        
+
         Color back = getGroup().internalGetBackground();
         if (back != null)
         {
             gc.fillRectangle(0,0,getGroup().getSize().x,getGroup().getSize().y);
-            
+
             int yOffset = 0;
             if ((getGroup().getImagePosition() & SWT.TOP) != 0 && image != null)
             {
                 yOffset = titleHeight - titleAreaHeight;
             }
-            
+
             Region reg = new Region();
             reg.add(0,yOffset + 0, 5, 1);
             reg.add(0,yOffset + 1, 3, 1);
             reg.add(0,yOffset + 2, 2, 1);
             reg.add(0,yOffset + 3, 1, 1);
             reg.add(0,yOffset + 4, 1, 1);
-            
+
             reg.add(getGroup().getSize().x - 5,yOffset + 0, 5, 1);
             reg.add(getGroup().getSize().x - 3,yOffset + 1, 3, 1);
             reg.add(getGroup().getSize().x - 2,yOffset + 2, 2, 1);
             reg.add(getGroup().getSize().x - 1,yOffset + 3, 1, 1);
             reg.add(getGroup().getSize().x - 1,yOffset + 4, 1, 1);
-            
+
             int height = getGroup().getSize().y;
             if (!getGroup().getExpanded())
             {
@@ -161,29 +167,29 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
             reg.add(getGroup().getSize().x - 2, height - 3, 2, 1);
             reg.add(getGroup().getSize().x - 1, height - 4, 1, 1);
             reg.add(getGroup().getSize().x - 1, height - 5, 1, 1);
-            
+
             if (yOffset != 0)
             {
                 reg.add(0,0,getGroup().getSize().x,yOffset);
             }
-            
+
             if (!getGroup().getExpanded())
             {
             	int regionHeight = getGroup().getSize().y - titleHeight;
            	    if( regionHeight < 0 ) regionHeight = 0;
                 reg.add(new Rectangle(0,titleHeight,getGroup().getSize().x,regionHeight));
             }
-            
+
             gc.setClipping(reg);
-            
-            getGroup().drawBackground(gc, 0, 0, getGroup().getSize().x,getGroup().getSize().y); 
-            
+
+            getGroup().drawBackground(gc, 0, 0, getGroup().getSize().x,getGroup().getSize().y);
+
             gc.setClipping((Region)null);
             reg.dispose();
         }
-        
-        
-        
+
+
+
 
         // Paint rectangle
         int toggleHeight = 0;
@@ -347,10 +353,53 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
         }
 
         Rectangle textBounds = getTextBounds();
+        String shortened = TextUtils.getShortString(gc, getGroup().getText(), textBounds.width);
+
+        if( getGroup().getToolItems().length > 0 && getGroup().getToolItemRenderer() != null ) {
+        	PGroupToolItem[] items = getGroup().getToolItems();
+        	AbstractToolItemRenderer renderer = getGroup().getToolItemRenderer();
+
+        	Point size = new Point(0, 0);
+        	Point minSize = new Point(0, 0);
+
+        	int spacing = 3;
+
+        	for(int i = 0; i < items.length; i++ ) {
+        		PGroupToolItem item = items[i];
+        		Point s0 = renderer.computeSize(gc, item, AbstractToolItemRenderer.DEFAULT);
+        		Point s1 = renderer.computeSize(gc, item, AbstractToolItemRenderer.MIN);
+
+        		size.x += s0.x + spacing;
+    			minSize.x += s1.x + spacing;
+        	}
+
+        	boolean min = false;
+
+        	if( shortened.length() != getGroup().getText().length() ) {
+        		textBounds.width -= minSize.x;
+        		min = true;
+        	} else {
+        		if( ! TextUtils.getShortString(gc, getGroup().getText(), textBounds.width - size.x).equals(getGroup().getText()) ) {
+        			textBounds.width -= minSize.x;
+        			min = true;
+        		} else {
+        			textBounds.width -= size.x;
+        		}
+        	}
+
+        	shortened = TextUtils.getShortString(gc, getGroup().getText(), textBounds.width);
+
+        	int x = textBounds.x + textBounds.width;
+
+        	if( min ) {
+        		toolItemArea = new Rectangle(x, titleHeight - titleAreaHeight + 2, minSize.x, Math.max(titleAreaHeight, toggleHeight)-4);
+        	} else {
+        		toolItemArea = new Rectangle(x, titleHeight - titleAreaHeight + 2, size.x, Math.max(titleAreaHeight, toggleHeight)-4);
+        	}
+        }
 
         gc.setForeground(getGroup().getForeground());
-        gc.drawText(TextUtils.getShortString(gc, getGroup().getText(), textBounds.width),
-                    textBounds.x, textBounds.y, true);
+        gc.drawText(shortened, textBounds.x, textBounds.y, true);
 
         if (!getGroup().getExpanded())
         {
@@ -417,18 +466,27 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
 
     }
 
+    public Rectangle getToolItemArea() {
+    	return toolItemArea;
+    }
+
     /**
      * {@inheritDoc}
      */
     public boolean isToggleLocation(int x, int y)
     {
-        if (y >= titleHeight - titleAreaHeight && y <= titleHeight)
-            return true;
-        return false;
-        
+    	if( getGroup().getToolItems().length == 0 ) {
+            if (y >= titleHeight - titleAreaHeight && y <= titleHeight) {
+                return true;
+            } else {
+            	return false;
+            }
+    	} else {
+    		return super.isToggleLocation(x, y);
+    	}
     }
 
-    private Rectangle getTextBounds()
+    protected Rectangle getTextBounds()
     {
         Point textPoint = new Point(0, 0);
         int textWidth = 0;
@@ -538,7 +596,7 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.swtplus.widgets.IGroupStrategy#dispose()
      */
     public void dispose()
@@ -554,14 +612,14 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
      * then to white and stays white for the right half of the label, use the
      * following call to setBackground:
      * </p>
-     * 
+     *
      * <pre>
      * setBackground(new Color[] {display.getSystemColor(SWT.COLOR_DARK_BLUE),
      *                            display.getSystemColor(SWT.COLOR_BLUE),
      *                            display.getSystemColor(SWT.COLOR_WHITE),
      *                            display.getSystemColor(SWT.COLOR_WHITE) }, new int[] {25, 50, 100 });
      * </pre>
-     * 
+     *
      * @param colors an array of Color that specifies the colors to appear in
      * the gradient in order of appearance from left to right; The value
      * <code>null</code> clears the background gradient; the value
@@ -583,12 +641,12 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
      * For example, to draw a gradient that varies from dark blue to white in
      * the vertical, direction use the following call to setBackground:
      * </p>
-     * 
+     *
      * <pre>
      * setBackground(new Color[] {display.getSystemColor(SWT.COLOR_DARK_BLUE),
      *                            display.getSystemColor(SWT.COLOR_WHITE) }, new int[] {100 }, true);
      * </pre>
-     * 
+     *
      * @param colors an array of Color that specifies the colors to appear in
      * the gradient in order of appearance from left/top to right/bottom; The
      * value <code>null</code> clears the background gradient; the value
@@ -681,7 +739,7 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
     /**
      * Returns the color of the one pixel border drawn around the body when the
      * group is expanded.
-     * 
+     *
      * @return the border color
      */
     public Color getBorderColor()
@@ -692,7 +750,7 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
     /**
      * Sets the border color. The border is the one pixel border drawn around
      * the body when the group is expanded.
-     * 
+     *
      * @param borderColor the border color, or null for no border
      */
     public void setBorderColor(Color borderColor)
@@ -735,7 +793,7 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
                 .getSize().y
                                                         + (2 * vMargin));
         }
-        
+
         gc.dispose();
     }
 }

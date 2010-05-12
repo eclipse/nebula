@@ -2,8 +2,8 @@
  * Copyright (c) 2006 Chris Gross. All rights reserved. This program and the
  * accompanying materials are made available under the terms of the Eclipse
  * Public License v1.0 which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Contributors: schtoo@schtoo.com(Chris Gross) - initial API and implementation
  ******************************************************************************/
 
@@ -18,7 +18,7 @@ import org.eclipse.swt.graphics.Rectangle;
  * <P>
  * The AbstractGroupStrategy handles most behavior for you. All that is required
  * of extending classes, is to implement painting and sizing.
- * 
+ *
  * @author chris
  */
 public abstract class AbstractGroupStrategy
@@ -28,7 +28,7 @@ public abstract class AbstractGroupStrategy
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.swtplus.widgets.IGroupStrategy#initialize(com.swtplus.widgets.PGroup)
      */
     public void initialize(PGroup g)
@@ -55,9 +55,16 @@ public abstract class AbstractGroupStrategy
     }
 
     /**
+     * @return the area where toolitems can be drawn
+     */
+    public Rectangle getToolItemArea() {
+    	return null;
+    }
+
+    /**
      * Paints the actual group widget. This method is to be implemented by
      * extending classes.
-     * 
+     *
      * @param gc
      */
     public abstract void paint(GC gc);
