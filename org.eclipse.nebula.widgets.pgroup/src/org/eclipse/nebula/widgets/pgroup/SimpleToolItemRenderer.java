@@ -37,11 +37,11 @@ public class SimpleToolItemRenderer extends AbstractToolItemRenderer {
 
 		if (item.getText().length() > 0 && item.getImage() != null
 				&& getSizeType() != MIN) {
-			gc.drawImage(item.getImage(), rect.x + padding, rect.y + padding + (int)(rect.height / 2.0 - item.getImage().getImageData().height / 2.0));
+			gc.drawImage(item.getImage(), rect.x + padding, rect.y + (int)(rect.height / 2.0 - item.getImage().getImageData().height / 2.0));
 			Point p = gc.textExtent(item.getText());
 			gc.drawString(item.getText(), rect.x + padding + item.getImage().getImageData().width + 2, rect.y + (int)(rect.height / 2.0 - p.y / 2.0), true);
 		} else if (item.getImage() != null) {
-			gc.drawImage(item.getImage(), rect.x + padding, rect.y + padding + (int)(rect.height / 2.0 - item.getImage().getImageData().height / 2.0));
+			gc.drawImage(item.getImage(), rect.x + padding, rect.y + (int)(rect.height / 2.0 - item.getImage().getImageData().height / 2.0));
 		} else if (item.getText().length() > 0) {
 			Point p = gc.textExtent(item.getText());
 			gc.drawString(item.getText(), rect.x + padding, rect.y + (int)(rect.height / 2.0 - p.y / 2.0), true);
