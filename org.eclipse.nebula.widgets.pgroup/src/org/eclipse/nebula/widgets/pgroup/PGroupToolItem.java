@@ -69,8 +69,8 @@ public class PGroupToolItem extends Item {
 			} else {
 				Event event = new Event();
 				event.detail = SWT.ARROW;
-				event.x = e.x;
-				event.y = e.y;
+				event.x = bounds.x;
+				event.y = bounds.y + bounds.height;
 				notifyListeners(SWT.Selection, event);
 			}
 		}
