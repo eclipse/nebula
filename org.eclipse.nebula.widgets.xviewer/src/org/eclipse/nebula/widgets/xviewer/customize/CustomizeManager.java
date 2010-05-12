@@ -273,7 +273,7 @@ public class CustomizeManager {
          columns.add(xCol);
       }
       // Add all columns that are not visible
-      for (XViewerColumn xCol : xViewer.getXViewerFactory().getDefaultTableCustomizeData().getColumnData().getColumns()) {
+      for (XViewerColumn xCol : xViewer.getCustomizeMgr().getCurrentTableColumns()) {
          if (!columns.contains(xCol)) {
             xCol.setShow(false);
             columns.add(xCol);
@@ -530,7 +530,9 @@ public class CustomizeManager {
                   cols.add(xCol);
                   // If sorter already has this column sorted, reverse the sort
                   List<XViewerColumn> currSortCols = currentCustData.getSortingData().getSortXCols(oldNameToColumnId);
-                  if (currSortCols != null && currSortCols.size() == 1 && currSortCols.iterator().next().equals(xCol)) xCol.reverseSort();
+                  if (currSortCols != null && currSortCols.size() == 1 && currSortCols.iterator().next().equals(xCol)) {
+                     xCol.reverseSort();
+                  }
                   // Set the newly sorted column
                   currentCustData.getSortingData().setSortXCols(cols);
                }

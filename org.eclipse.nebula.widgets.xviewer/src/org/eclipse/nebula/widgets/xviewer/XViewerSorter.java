@@ -207,6 +207,9 @@ public class XViewerSorter extends ViewerSorter {
    }
 
    public int getCompareForDate(String date1, String date2) {
+      if (date1.trim().equals("") && date2.trim().equals("")) {
+         return 0;
+      }
       if (date1.trim().equals("")) {
          return -1;
       }
