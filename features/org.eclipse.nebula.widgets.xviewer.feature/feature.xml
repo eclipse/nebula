@@ -20,16 +20,20 @@
    <includes
          id="org.eclipse.nebula.widgets.xviewer.feature.source"
          version="0.0.0"/>
-         
-   <plugin
-         id="org.eclipse.nebula.widgets.xviewer"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+
+   <includes
+         id="org.eclipse.nebula.widgets.calendarcombo.feature"
+         version="0.0.0"/>
+
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.nebula.widgets.calendarcombo" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.forms"/>
+   </requires>
 
    <plugin
-         id="org.eclipse.nebula.widgets.calendarcombo"
+         id="org.eclipse.nebula.widgets.xviewer"
          download-size="0"
          install-size="0"
          version="0.0.0"
