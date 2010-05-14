@@ -28,19 +28,23 @@ import org.eclipse.nebula.jface.gridviewer.GridTableViewer;
 import org.eclipse.nebula.jface.gridviewer.GridViewerEditor;
 import org.eclipse.nebula.widgets.grid.GridColumn;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /**
  * Example usage of none mandatory interfaces of ITableFontProvider and
  * ITableColorProvider
- * 
+ *
  * @author Tom Schindl <tom.schindl@bestsolution.at>
- * 
+ *
  */
 public class GridViewerSnippet1 {
 
@@ -48,7 +52,7 @@ public class GridViewerSnippet1 {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
 		public Object[] getElements(Object inputElement) {
@@ -57,7 +61,7 @@ public class GridViewerSnippet1 {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
 		public void dispose() {
@@ -66,7 +70,7 @@ public class GridViewerSnippet1 {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
 		 *      java.lang.Object, java.lang.Object)
 		 */
@@ -77,7 +81,7 @@ public class GridViewerSnippet1 {
 	}
 
 	public static boolean flag = true;
-	
+
 	public class MyModel {
 		public int counter;
 
@@ -128,10 +132,12 @@ public class GridViewerSnippet1 {
 
 	public GridViewerSnippet1(Shell shell) {
 		final GridTableViewer v = new GridTableViewer(shell, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+		v.getGrid().setCellSelectionEnabled(true);
+		v.getGrid().setRowHeaderVisible(true);
 		v.setLabelProvider(new MyLabelProvider());
 		v.setContentProvider(new MyContentProvider());
 		v.getGrid().setCellSelectionEnabled(true);
-				
+
 		v.setCellEditors(new CellEditor[] { new TextCellEditor(v.getGrid()), new TextCellEditor(v.getGrid()) });
 		v.setCellModifier(new ICellModifier() {
 
@@ -144,13 +150,13 @@ public class GridViewerSnippet1 {
 			}
 
 			public void modify(Object element, String property, Object value) {
-				
+
 			}
-			
+
 		});
-		
+
 		v.setColumnProperties(new String[] {"1","2"});
-		
+
 		ColumnViewerEditorActivationStrategy actSupport = new ColumnViewerEditorActivationStrategy(v) {
 			protected boolean isEditorActivationEvent(
 					ColumnViewerEditorActivationEvent event) {
@@ -159,12 +165,13 @@ public class GridViewerSnippet1 {
 						|| (event.eventType == ColumnViewerEditorActivationEvent.KEY_PRESSED && event.keyCode == SWT.CR);
 			}
 		};
-		
+
 		GridViewerEditor.create(v, actSupport, ColumnViewerEditor.TABBING_HORIZONTAL
 				| ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR
 				| ColumnViewerEditor.TABBING_VERTICAL | ColumnViewerEditor.KEYBOARD_ACTIVATION);
-		
+
 		GridColumn column = new GridColumn(v.getGrid(), SWT.NONE);
+		column.setHeaderTooltip("Bla Bla Bla");
 		column.setWidth(200);
 		column.setText("Column 1");
 
@@ -176,6 +183,17 @@ public class GridViewerSnippet1 {
 		v.setInput(model);
 		v.getGrid().setLinesVisible(true);
 		v.getGrid().setHeaderVisible(true);
+
+		Button b = new Button(shell, SWT.PUSH);
+		b.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for( Point p : v.getGrid().getCellSelection() ) {
+					System.err.println(p);
+				}
+
+			}
+		});
 	}
 
 	private MyModel[] createModel() {
