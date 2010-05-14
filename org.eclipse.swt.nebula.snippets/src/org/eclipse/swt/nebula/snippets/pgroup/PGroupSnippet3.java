@@ -63,7 +63,7 @@ public class PGroupSnippet3 {
 		button.setText("Contents");
 		Scale scale = new Scale(group, SWT.HORIZONTAL);
 
-		PGroupToolItem toolItem = new PGroupToolItem(group, SWT.NONE);
+		PGroupToolItem toolItem = new PGroupToolItem(group, SWT.PUSH);
 		toolItem.setText("Item 1");
 		toolItem.addSelectionListener(new SelectionAdapter() {
 			@Override
