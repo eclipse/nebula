@@ -15,6 +15,7 @@
  *    balarkrishnan@yahoo.com - fix in bug 298684
  *    Enrico Schnepel<enrico.schnepel@randomice.net> - new API in 238729, bugfix in 294952
  *    Benjamin Bortfeldt<bbortfeldt@gmail.com> - new tooltip support in 300797
+ *    Thomas Halm <thha@fernbach.com> - bugfix in 315397
  *******************************************************************************/
 package org.eclipse.nebula.widgets.grid;
 
@@ -4423,6 +4424,7 @@ public class Grid extends Canvas
         for (Iterator columnsIterator = columns.iterator(); columnsIterator.hasNext(); )
         {
             GridColumn column = (GridColumn) columnsIterator.next();
+            column.getCellRenderer().setColumn(indexOf(column));
             height = Math.max(height, column.getCellRenderer().computeSize(gc, SWT.DEFAULT,
                                                                            SWT.DEFAULT,
                                                                            item).y);
@@ -5349,7 +5351,7 @@ public class Grid extends Canvas
 
                     	if (x + width >= 0 && x < getClientArea().width )
                     	{
-                    		Point sizeOfColumn = item.getCellSize(indexOf(column));
+                    		Point sizeOfColumn = item.getCellSize(indexOfColumn);
 
 	                        column.getCellRenderer().setBounds(x, y, width, sizeOfColumn.y);
                         	int cellInHeaderDelta = headerHeight - y;
@@ -5372,7 +5374,9 @@ public class Grid extends Canvas
 	                        column.getCellRenderer().setRowHover(hoveringItem == item);
 	                        column.getCellRenderer().setColumnHover(hoveringColumn == column);
 
-	                        if (selectedCells.contains(new Point(indexOf(column),row)))
+	                        column.getCellRenderer().setColumn(indexOfColumn);
+	                        
+	                        if (selectedCells.contains(new Point(indexOfColumn,row)))
 	                        {
 	                            column.getCellRenderer().setCellSelected(true);
 	                            cellInRowSelected = true;

@@ -12,6 +12,7 @@
  *    Marty Jones<martybjones@gmail.com> - custom header/footer font in bug 293743
  *    Cserveny Tamas <cserveny.tamas@gmail.com> - min width in bug 295468
  *    Benjamin Bortfeldt<bbortfeldt@gmail.com> - new tooltip support in 300797
+ *    Thomas Halm <thha@fernbach.com> - bugfix in 315397
  *******************************************************************************/
 package org.eclipse.nebula.widgets.grid;
 
@@ -565,6 +566,7 @@ public class GridColumn extends Item {
 		for (int i = 0; i < items.length; i++) {
 			GridItem item = items[i];
 			if (item.isVisible()) {
+				getCellRenderer().setColumn(parent.indexOf(this));
 				newWidth = Math.max(newWidth, getCellRenderer().computeSize(gc,
 						SWT.DEFAULT, SWT.DEFAULT, item).x);
 			}
