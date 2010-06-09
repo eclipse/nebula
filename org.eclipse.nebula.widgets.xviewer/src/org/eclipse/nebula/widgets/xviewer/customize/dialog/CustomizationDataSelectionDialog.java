@@ -128,7 +128,7 @@ public class CustomizationDataSelectionDialog extends ListDialog {
 
    private CustomizeData getSelectedCustomizeData() {
       IStructuredSelection selection = (IStructuredSelection) getTableViewer().getSelection();
-      if (selection.size() == 0) return null;
+      if (selection.isEmpty()) return null;
       Iterator<?> i = selection.iterator();
       return (CustomizeData) i.next();
    }

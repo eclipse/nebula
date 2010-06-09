@@ -296,7 +296,7 @@ public class XViewerCustomMenu {
                   insertXCol.getName() + "(" + insertXCol.getId() + ")") + "\n\nSelect Columns to Add", patternFilter,
                   new ArrayTreeContentProvider(), new XViewerColumnLabelProvider(), new XViewerColumnSorter());
       Collection<XViewerComputedColumn> computedCols = xViewer.getComputedColumns(insertXCol);
-      if (computedCols.size() == 0) {
+      if (computedCols.isEmpty()) {
          XViewerLib.popup("ERROR", "Selected column has no applicable computed columns");
          return;
       }
@@ -434,7 +434,7 @@ public class XViewerCustomMenu {
             performRemoveNonSelectedRows();
          };
       };
-      copySelected = new Action("Copy Selected Row(s)- Ctrl-C") {
+      copySelected = new Action("Copy Selected Row(s) - Ctrl-C") {
          @Override
          public void run() {
             performCopy();
@@ -521,7 +521,7 @@ public class XViewerCustomMenu {
       Set<TreeColumn> visibleColumns = new HashSet<TreeColumn>();
       for (TreeColumn treeCol : xViewer.getTree().getColumns())
          if (treeCol.getWidth() > 0) visibleColumns.add(treeCol);
-      if (visibleColumns.size() == 0) {
+      if (visibleColumns.isEmpty()) {
          XViewerLib.popup("ERROR", "No Columns Are Available");
          return;
       }
@@ -557,7 +557,7 @@ public class XViewerCustomMenu {
       ITableLabelProvider labelProv = (ITableLabelProvider) xViewer.getLabelProvider();
       for (TreeColumn treeCol : xViewer.getTree().getColumns())
          if (treeCol.getWidth() > 0) visibleColumns.add(treeCol);
-      if (visibleColumns.size() == 0) {
+      if (visibleColumns.isEmpty()) {
          XViewerLib.popup("ERROR", "No Columns Are Available");
          return;
       }

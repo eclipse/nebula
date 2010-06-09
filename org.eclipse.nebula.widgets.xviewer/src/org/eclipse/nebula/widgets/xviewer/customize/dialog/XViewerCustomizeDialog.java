@@ -711,7 +711,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
    @SuppressWarnings("unchecked")
    private void moveFromVisibleToHidden(List<XViewerColumn> visibleSelCols) {
       // Remove from visible
-      if (visibleSelCols == null || visibleSelCols.size() == 0) return;
+      if (visibleSelCols == null || visibleSelCols.isEmpty()) return;
       List<XViewerColumn> visibleCols = (List<XViewerColumn>) visibleColTable.getViewer().getInput();
       visibleCols.removeAll(visibleSelCols);
       visibleColTable.getViewer().setInput(visibleCols);
@@ -1037,7 +1037,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
 
    private CustomizeData getCustTableSelection() {
       IStructuredSelection selection = (IStructuredSelection) custTable.getViewer().getSelection();
-      if (selection.size() == 0) return null;
+      if (selection.isEmpty()) return null;
       Iterator<?> i = selection.iterator();
       CustomizeData storedCustData = (CustomizeData) i.next();
       return storedCustData;
@@ -1054,7 +1054,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
    private List<XViewerColumn> getTableSelection(TreeViewer xColTableViewer) {
       List<XViewerColumn> xCols = new ArrayList<XViewerColumn>();
       IStructuredSelection selection = (IStructuredSelection) xColTableViewer.getSelection();
-      if (selection.size() == 0) return null;
+      if (selection.isEmpty()) return null;
       Iterator<?> i = selection.iterator();
       while (i.hasNext())
          xCols.add((XViewerColumn) i.next());

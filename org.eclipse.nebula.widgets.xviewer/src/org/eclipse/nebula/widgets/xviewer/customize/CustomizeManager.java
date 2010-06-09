@@ -366,7 +366,7 @@ public class CustomizeManager {
    public void getSortingStr(StringBuffer sb) {
       if (currentCustData.getSortingData().isSorting()) {
          List<XViewerColumn> cols = getSortXCols();
-         if (cols.size() == 0) return;
+         if (cols.isEmpty()) return;
          sb.append("Sort: ");
          for (XViewerColumn col : getSortXCols()) {
             if (col != null) {

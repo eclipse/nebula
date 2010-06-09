@@ -78,7 +78,7 @@ public class XViewerTextFilter extends ViewerFilter {
 
    @Override
    public boolean select(Viewer viewer, Object parentElement, Object element) {
-      if (textPattern == null && colIdToPattern.size() == 0) return true;
+      if (textPattern == null && colIdToPattern.isEmpty()) return true;
       //      if (labelProv == null) labelProv = (ITableLabelProvider) xViewer.getLabelProvider();
       boolean match = true;
       // Must match all column filters or don't show

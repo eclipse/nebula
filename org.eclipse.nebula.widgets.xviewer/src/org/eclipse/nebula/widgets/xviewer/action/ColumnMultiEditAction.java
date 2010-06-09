@@ -45,7 +45,7 @@ public class ColumnMultiEditAction extends Action {
             editableColumns.add(treeCol);
          }
       }
-      if (editableColumns.size() == 0) {
+      if (editableColumns.isEmpty()) {
          XViewerLib.popup("ERROR", "No Columns Are Multi-Editable");
          return;
       }

@@ -44,7 +44,7 @@ public class XViewerSorter extends ViewerSorter {
          return 0;
       }
       List<XViewerColumn> sortXCols = treeViewer.getCustomizeMgr().getSortXCols();
-      if (sortXCols == null || sortXCols.size() == 0) {
+      if (sortXCols == null || sortXCols.isEmpty()) {
          return 0;
       }
       XViewerColumn sortXCol = sortXCols.get(sortXColIndex);
