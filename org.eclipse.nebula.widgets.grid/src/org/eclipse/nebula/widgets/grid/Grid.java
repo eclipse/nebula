@@ -16,6 +16,7 @@
  *    Enrico Schnepel<enrico.schnepel@randomice.net> - new API in 238729, bugfix in 294952
  *    Benjamin Bortfeldt<bbortfeldt@gmail.com> - new tooltip support in 300797
  *    Thomas Halm <thha@fernbach.com> - bugfix in 315397
+ *    Justin Dolezy <justin@neckdiagrams.com> - bugfix in 316598 
  *******************************************************************************/
 package org.eclipse.nebula.widgets.grid;
 
@@ -5354,7 +5355,7 @@ public class Grid extends Canvas
                     		Point sizeOfColumn = item.getCellSize(indexOfColumn);
 
 	                        column.getCellRenderer().setBounds(x, y, width, sizeOfColumn.y);
-                        	int cellInHeaderDelta = headerHeight - y;
+	                        int cellInHeaderDelta = columnHeadersVisible ? headerHeight - y : 0;
 	                        if(cellInHeaderDelta > 0)
 	                        {
                         		e.gc.setClipping(new Rectangle(x -1,y + cellInHeaderDelta, width +1, sizeOfColumn.y + 2 - cellInHeaderDelta));
