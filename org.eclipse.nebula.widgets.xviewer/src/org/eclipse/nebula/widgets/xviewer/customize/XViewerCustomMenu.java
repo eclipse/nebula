@@ -261,7 +261,7 @@ public class XViewerCustomMenu {
 
    protected void handleShowColumn() {
       TreeColumn insertTreeCol = xViewer.getRightClickSelectedColumn();
-      XViewerColumn insertXCol = (XViewerColumn) insertTreeCol.getData();
+      XViewerColumn insertXCol = insertTreeCol != null ? (XViewerColumn) insertTreeCol.getData() : null;
       XCheckFilteredTreeDialog dialog =
             new XCheckFilteredTreeDialog("Show Column", "Select Columns to Show", patternFilter,
                   new ArrayTreeContentProvider(), new XViewerColumnLabelProvider(), new XViewerColumnSorter());
@@ -272,6 +272,16 @@ public class XViewerCustomMenu {
          CustomizeData custData = xViewer.getCustomizeMgr().generateCustDataFromTable();
          List<XViewerColumn> xCols = custData.getColumnData().getColumns();
          List<XViewerColumn> newXCols = new ArrayList<XViewerColumn>();
+         // if insert col == null; insert new columns at end; set insert col to first non-shown col
+         if (insertXCol == null) {
+            for (XViewerColumn currXCol : xCols) {
+               if (!currXCol.isShow()) {
+                  insertXCol = currXCol;
+                  break;
+               }
+            }
+         }
+         // else insert before selected insert col
          for (XViewerColumn currXCol : xCols) {
             if (currXCol.equals(insertXCol)) {
                for (Object obj : dialog.getChecked()) {
@@ -280,7 +290,9 @@ public class XViewerCustomMenu {
                   newXCols.add(newXCol);
                }
             }
-            newXCols.add(currXCol);
+            if (!dialog.getChecked().contains(currXCol)) {
+               newXCols.add(currXCol);
+            }
          }
          custData.getColumnData().setColumns(newXCols);
          xViewer.getCustomizeMgr().loadCustomization(custData);
