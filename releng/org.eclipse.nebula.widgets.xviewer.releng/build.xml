@@ -1,7 +1,7 @@
 <project default="run" name="org.eclipse.osee.server.releng/build.xml - Run a OSEE build using the Athena CBI">
 
 	<target name="run">
-		<ant antfile="bootstrap.xml" target="init">
+		<ant antfile="${relengCommonBuilderDir}/bootstrap.xml" target="init">
 			<!--<property name="basebuilderTag" value="r35x_v20090811" />
 				<property name="commonrelengTag" value="HEAD" />
 				<property name="ANTCONTRIB_VERSION" value="1.0b2" />
