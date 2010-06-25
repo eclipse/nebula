@@ -44,7 +44,7 @@
 		<property name="writableBuildRoot" value="${WORKSPACE}/build" />
 		<property name="buildDir" value="${writableBuildRoot}/athena" />
 
-		<ant antfile="${relengCommonBuilderDir}/bootstrap.xml" target="init">
+		<ant antfile="${relengCommonBuilderDir}/bootstrap.xml" target="init" inheritall="true" inheritrefs="true">
 			<!--<property name="basebuilderTag" value="r35x_v20090811" />
 				<property name="commonrelengTag" value="HEAD" />
 				<property name="ANTCONTRIB_VERSION" value="1.0b2" />
