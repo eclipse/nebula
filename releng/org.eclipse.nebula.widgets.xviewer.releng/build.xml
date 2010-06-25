@@ -29,7 +29,7 @@
 				</not>
 			</and>
 		</condition>
-		
+
 		<!-- Local default path if WORKSPACE not set -->
 		<condition property="WORKSPACE" value="${java.io.tmpdir}">
 			<and>
@@ -39,13 +39,11 @@
 				</not>
 			</and>
 		</condition>
-		
+
 		<!-- can build in /tmp, eg., in /tmp/build, or in workspace, eg.,	${WORKSPACE}/build -->
 		<property name="writableBuildRoot" value="${WORKSPACE}/build" />
 		<property name="buildDir" value="${writableBuildRoot}/athena" />
-	</target>
-	
-	<target name="run" depends="init">
+
 		<ant antfile="${relengCommonBuilderDir}/bootstrap.xml" target="init">
 			<!--<property name="basebuilderTag" value="r35x_v20090811" />
 				<property name="commonrelengTag" value="HEAD" />
@@ -60,6 +58,12 @@
 
 		<property name="build.properties" value="build.properties" />
 		<property file="${build.properties}" />
+	</target>
+
+	<target name="run" depends="init,build,createSnapshot">
+	</target>
+
+	<target name="build">
 		<ant antfile="${relengCommonBuilderDir}/build.xml" />
 	</target>
 
