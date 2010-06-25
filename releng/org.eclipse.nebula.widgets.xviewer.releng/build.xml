@@ -10,6 +10,25 @@
 				<isset property="forceContextQualifier" />
 			</not>
 		</condition>
+		<!-- set properties from hudson parameters, useful with ant build -->
+		<condition property="isInHudson" value="true">
+			<or>
+				<contains string="${user.dir}" substring="hudson" />
+				<contains string="${user.name}" substring="hudson" />
+				<contains string="${user.home}" substring="hudson" />
+			</or>
+		</condition>
+
+		<!-- Hudson default path if WORKSPACE not set -->
+		<dirname property="user.dir.parent" file="${user.dir}" />
+		<condition property="WORKSPACE" value="${user.dir.parent}">
+			<and>
+				<istrue value="${isInHudson}" />
+				<not>
+					<isset property="WORKSPACE" />
+				</not>
+			</and>
+		</condition>
 	</target>
 	
 	<target name="run" depends="init">
