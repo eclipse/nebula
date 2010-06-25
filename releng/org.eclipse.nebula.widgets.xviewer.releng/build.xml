@@ -5,6 +5,11 @@
 		<tstamp>
 			<format property="buildTimestamp" pattern="yyyyMMddHHmm" />
 		</tstamp>
+		<condition property="forceContextQualifier" value="v${buildTimestamp}">
+			<not>
+				<isset property="forceContextQualifier" />
+			</not>
+		</condition>
 	</target>
 	
 	<target name="run" depends="init">
