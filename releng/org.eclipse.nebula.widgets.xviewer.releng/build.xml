@@ -1,6 +1,13 @@
 <project default="run" name="org.eclipse.osee.server.releng/build.xml - Run a OSEE build using the Athena CBI">
 
-	<target name="run">
+	<target name="init">
+		<property environment="env" />
+		<tstamp>
+			<format property="buildTimestamp" pattern="yyyyMMddHHmm" />
+		</tstamp>
+	</target>
+	
+	<target name="run" depends="init">
 		<ant antfile="${relengCommonBuilderDir}/bootstrap.xml" target="init">
 			<!--<property name="basebuilderTag" value="r35x_v20090811" />
 				<property name="commonrelengTag" value="HEAD" />
@@ -18,7 +25,7 @@
 		<ant antfile="${relengCommonBuilderDir}/build.xml" />
 	</target>
 
-	<target name="createSnapshot">
+	<target name="createSnapshot" depends="init">
 		<echo>Custom post build step CreateSnapshot</echo>
 		<property environment="env" />
 
