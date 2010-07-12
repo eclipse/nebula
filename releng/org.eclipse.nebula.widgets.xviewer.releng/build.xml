@@ -88,7 +88,7 @@
 
 		<available file="${snapshotFolder}" property="containsFile" />
 		<antcall target="doMoveZip" inheritall="true" />
-		<antcall target="promote-nightly" inheritall="true" />
+		<!-- <antcall target="promote-nightly" inheritall="true" /> -->
 	</target>
 
 	<target name="doMoveZip" if="containsFile">
