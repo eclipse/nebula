@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.nebula.widgets.xviewer.feature.test"
+      label="%featureName"
+      version="0.9.5.qualifier"
+      provider-name="%providerName">
+
+   <description url="http://www.eclipse.org/nebula/widgets/xviewer/xviewer.php">
+      %description
+   </description>
+
+   <copyright>
+      %copyright
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <requires>
+      <import feature="org.eclipse.nebula.widgets.xviewer.feature" version="0.9.5.qualifier" match="greaterOrEqual"/>
+   </requires>
+
+   <plugin
+         id="org.eclipse.test"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.ant.optional.junit"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.nebula.widgets.xviewer.tests"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"
+         unpack="false"/>
+
+   <includes
+         id="org.eclipse.nebula.widgets.xviewer.feature.test.source"
+         version="0.0.0"/>
+</feature>
