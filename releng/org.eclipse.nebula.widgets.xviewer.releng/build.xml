@@ -88,6 +88,7 @@
 
 		<available file="${snapshotFolder}" property="containsFile" />
 		<antcall target="doMoveZip" inheritall="true" />
+		<antcall target="promote-nightly" inheritall="true" />
 	</target>
 
 	<target name="doMoveZip" if="containsFile">
@@ -95,5 +96,14 @@
 		<move includeemptydirs="false" tofile="${snapshotFolder}/${zipPrefix}-update${incubation}-${BUILDTYPE}-Snapshot.zip" filtering="true">
 			<fileset dir="${snapshotFolder}" includes="*-Update-*.zip" />
 		</move>
+	</target>
+
+	<target name="promote-nightly">
+		<property name="nebula.xviewer.path" value="/home/data/httpd/download.eclipse.org/technology/nebula/xviewer" />
+		
+		<property name="xviewer.downloads" value="${nebula.xviewer.path}/downloads/drops/latest" />
+		<property name="xviewer.update.site" value="${nebula.xviewer.path}/update-N" />
+		<copy file="${snapshotFolder}/${zipPrefix}-update${incubation}-${BUILDTYPE}-Snapshot.zip" tofile="${xviewer.downloads}/nebula-xviewer-ALL-incubation.zip" />
+		<unzip src="${snapshotFolder}/${zipPrefix}-update${incubation}-${BUILDTYPE}-Snapshot.zip" dest="${xviewer.update.site}" />
 	</target>
 </project>

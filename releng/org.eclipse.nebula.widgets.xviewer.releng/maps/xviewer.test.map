@@ -1,0 +1,5 @@
+plugin@org.eclipse.test=v20080313,:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse,
+fragment@org.eclipse.ant.optional.junit=v20070202,:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse,
+
+feature@org.eclipse.nebula.widgets.xviewer.feature.test=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/features/org.eclipse.nebula.widgets.xviewer.feature.test
+plugin@org.eclipse.nebula.widgets.xviewer.tests=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.xviewer.tests
