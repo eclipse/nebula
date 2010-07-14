@@ -34,6 +34,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.ToolTip;
 import org.eclipse.swt.widgets.TypedListener;
 import org.eclipse.swt.widgets.Widget;
 
@@ -83,6 +84,8 @@ public class PGroup extends Canvas
     private List toolitems = new ArrayList();
 
     private PGroupToolItem activeToolItem;
+
+    private ToolTip toolTip;
 
     private static int checkStyle(int style)
     {
@@ -435,6 +438,8 @@ public class PGroup extends Canvas
         	Iterator it = toolitems.iterator();
         	PGroupToolItem newItem = null;
 
+
+
         	while( it.hasNext() ) {
         		PGroupToolItem item = (PGroupToolItem) it.next();
 
@@ -446,6 +451,17 @@ public class PGroup extends Canvas
 
         	if( newItem != activeToolItem ) {
         		activeToolItem = newItem;
+        		if( toolTip != null ) {
+            		toolTip.dispose ();
+            		toolTip = null;
+            	}
+        		if( newItem != null && newItem.getToolTipText () != null ) {
+        			toolTip = new ToolTip (getShell(), SWT.NONE);
+        			toolTip.setText (newItem.getToolTipText ());
+        			toolTip.setAutoHide (true);
+        			toolTip.setLocation ( getDisplay ().getCursorLocation () );
+        			toolTip.setVisible (true);
+        		}
         		redraw = true;
         	}
         }

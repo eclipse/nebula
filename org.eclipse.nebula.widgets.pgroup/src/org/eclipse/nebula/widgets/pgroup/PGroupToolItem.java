@@ -26,6 +26,7 @@ public class PGroupToolItem extends Item {
 	private boolean selection;
 	private Rectangle dropdownArea;
 	private PGroup parent;
+	private String tooltip;
 
 	public PGroupToolItem(PGroup parent, int style) {
 		super(parent, style);
@@ -101,5 +102,15 @@ public class PGroupToolItem extends Item {
 				notifyListeners(SWT.Selection, event);
 			}
 		}
+	}
+
+	public void setToolTipText (String tooltip)
+	{
+		this.tooltip = tooltip;
+	}
+
+	public String getToolTipText ()
+	{
+		return tooltip;
 	}
 }
