@@ -72,6 +72,7 @@ public class PGroupSnippet4 {
 				box.open();
 			}
 		});
+		toolItem.setToolTipText ("A Test Text");
 
 		toolItem = new PGroupToolItem(group, SWT.RADIO);
 		toolItem.setImage(new Image(display, PGroupSnippet4.class.getResourceAsStream("shield_delete.png")));
