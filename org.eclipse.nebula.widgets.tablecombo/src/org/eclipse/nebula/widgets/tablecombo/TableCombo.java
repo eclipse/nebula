@@ -9,6 +9,7 @@
  *	Marty Jones <martybjones@gmail.com> - initial API and implementation
  *  Enrico Schnepel <enrico.schnepel@randomice.net> - clear selectedImage bug 297209
  *  Enrico Schnepel <enrico.schnepel@randomice.net> - disable selectedImage bug 297327
+ *  Wolfgang Schramm <wschramm@ch.ibm.com> - added vertical alignment of text for selected table item.
  *****************************************************************************/
 
 package org.eclipse.nebula.widgets.tablecombo;
@@ -133,6 +134,9 @@ public class TableCombo extends Composite {
 		int textStyle = SWT.SINGLE;
 		if ((style & SWT.READ_ONLY) != 0) textStyle |= SWT.READ_ONLY;
 		if ((style & SWT.FLAT) != 0) textStyle |= SWT.FLAT;
+		
+		// set control background to white
+		setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 		
 		// create label to hold image if necessary.
 		selectedImage = new Label(this, SWT.NONE);
@@ -478,33 +482,54 @@ public class TableCombo extends Composite {
      */
 	public Point computeSize (int wHint, int hHint, boolean changed) {
 		checkWidget ();
+
 		int overallWidth = 0;
-		int height = 0;
-		
-		TableItem[] tableItems = table.getItems();
-		
-		GC gc = new GC (text);
-		int spacer = gc.stringExtent (" ").x; //$NON-NLS-1$
-		int textWidth = gc.stringExtent (text.getText()).x;
-		int colIndex = getDisplayColumnIndex();
-		
-		// calculate the maximum text width.
-		for (int i = 0; i < tableItems.length; i++) {
-			textWidth = Math.max (gc.stringExtent (tableItems[i].getText(
-				colIndex)).x, textWidth);
-		}
-		gc.dispose ();
-		Point textSize = text.computeSize (SWT.DEFAULT, SWT.DEFAULT, changed);
-		Point arrowSize = arrow.computeSize (SWT.DEFAULT, SWT.DEFAULT, changed);
-		Point tableSize = table.computeSize (SWT.DEFAULT, SWT.DEFAULT, changed);
+		int overallHeight = 0;
 		int borderWidth = getBorderWidth ();
+
+		// use user defined values if they are specified.
+		if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT) {
+			overallWidth = wHint;
+			overallHeight = hHint;
+		}
+		else {
+			TableItem[] tableItems = table.getItems();
+			
+			GC gc = new GC (text);
+			int spacer = gc.stringExtent (" ").x; //$NON-NLS-1$
+			int maxTextWidth = gc.stringExtent (text.getText()).x;
+			int colIndex = getDisplayColumnIndex();
+			int maxImageHeight = 0;
+			int currTextWidth = 0;
+			
+			// calculate the maximum text width and image height.
+			for (int i = 0; i < tableItems.length; i++) {
+				currTextWidth = gc.stringExtent (tableItems[i].getText(colIndex)).x;
+				
+				// take image into account if there is one for the tableitem.
+				if (tableItems[i].getImage() != null) {
+					currTextWidth += tableItems[i].getImage().getBounds().width;
+					maxImageHeight = Math.max (tableItems[i].getImage().getBounds().height, maxImageHeight);
+				}
+				
+				maxTextWidth = Math.max (currTextWidth, maxTextWidth);
+			}
+			
+			gc.dispose ();
+			Point textSize = text.computeSize (SWT.DEFAULT, SWT.DEFAULT, changed);
+			Point arrowSize = arrow.computeSize (SWT.DEFAULT, SWT.DEFAULT, changed);
+			Point tableSize = table.computeSize (SWT.DEFAULT, SWT.DEFAULT, changed);
+			
+			overallHeight = Math.max (textSize.y, arrowSize.y);
+			overallHeight = Math.max (maxImageHeight, overallHeight);
+			overallWidth = Math.max (maxTextWidth + 2*spacer + arrowSize.x + 2*borderWidth, tableSize.x);
+			
+			// use user specified if they were entered.
+			if (wHint != SWT.DEFAULT) overallWidth = wHint;
+			if (hHint != SWT.DEFAULT) overallHeight = hHint;
+		}
 		
-		height = Math.max (textSize.y, arrowSize.y);
-		overallWidth = Math.max (textWidth + 2*spacer + arrowSize.x + 2*borderWidth, tableSize.x);
-		if (wHint != SWT.DEFAULT) overallWidth = wHint;
-		if (hHint != SWT.DEFAULT) height = hHint;
-		
-		return new Point (overallWidth + 2*borderWidth, height + 2*borderWidth);
+		return new Point (overallWidth + 2*borderWidth, overallHeight + 2*borderWidth);
 	}
 
 	/**
@@ -1214,19 +1239,42 @@ public class TableCombo extends Composite {
 	    int height = rect.height;
 	    Point arrowSize = arrow.computeSize (SWT.DEFAULT, height, changed);
 	    
+		// calculate text vertical alignment.
+		int textYPos = 0;
+		Point textSize = text.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		if (textSize.y < height) {
+			textYPos = (height - textSize.y) / 2;
+		}
+	    
+		// does the selected entry have a image associated with it?
 	    if (selectedImage.getImage() == null) {
+	    	// set image, text, and arrow boundaries	    	
 	    	selectedImage.setBounds (0, 0, 0, 0);
-		    text.setBounds (0, 0, width - arrowSize.x, height);
+		    text.setBounds (0, textYPos, width - arrowSize.x, height);
 		    arrow.setBounds (width - arrowSize.x, 0, arrowSize.x, arrowSize.y);
 	    }
 	    else {
+	    	// calculate the amount of width left in the control after taking into account the arrow selector
+	    	int remainingWidth = width - arrowSize.x;
 	    	int imageWidth = selectedImage.computeSize (SWT.DEFAULT, height, changed).x + 2;
-	    	int textWidth = width - imageWidth - arrowSize.x; 
-
-	    	selectedImage.setBounds (0, 0, imageWidth, height);
-		    text.setBounds (imageWidth, 0, textWidth, height);
-		    arrow.setBounds (imageWidth + textWidth, 0, arrowSize.x, arrowSize.y);
-	    }
+	    	
+	    	// handle the case where the image is larger than the available space in the control.
+	    	if (imageWidth > remainingWidth) {
+	    		imageWidth = remainingWidth;
+	    		remainingWidth = 0;
+	    	}
+	    	else {
+	    		remainingWidth = remainingWidth - imageWidth;
+	    	}
+	    	
+	    	// set the width of the text.
+	    	int textWidth = remainingWidth;
+	    	
+	    	// set image, text, and arrow boundaries
+			selectedImage.setBounds(0, 0, imageWidth, height);
+			text.setBounds(imageWidth, textYPos, textWidth, height);
+			arrow.setBounds(imageWidth + textWidth, 0, arrowSize.x, arrowSize.y);
+		}
 	}
 	
 	/**
@@ -1514,8 +1562,7 @@ public class TableCombo extends Composite {
 				refreshText(index);
 				
 				// select the row in the table.
-				table.select (index);
-				table.showSelection ();
+				table.setSelection(index);
 			}
 		}
 	}
