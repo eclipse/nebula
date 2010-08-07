@@ -1250,13 +1250,14 @@ public class TableCombo extends Composite {
 	    if (selectedImage.getImage() == null) {
 	    	// set image, text, and arrow boundaries	    	
 	    	selectedImage.setBounds (0, 0, 0, 0);
-		    text.setBounds (0, textYPos, width - arrowSize.x, height);
+		    text.setBounds (0, textYPos, width - arrowSize.x, textSize.y);
 		    arrow.setBounds (width - arrowSize.x, 0, arrowSize.x, arrowSize.y);
 	    }
 	    else {
 	    	// calculate the amount of width left in the control after taking into account the arrow selector
 	    	int remainingWidth = width - arrowSize.x;
-	    	int imageWidth = selectedImage.computeSize (SWT.DEFAULT, height, changed).x + 2;
+	    	Point imageSize = selectedImage.computeSize (SWT.DEFAULT, height, changed);
+	    	int imageWidth = imageSize.x + 2;
 	    	
 	    	// handle the case where the image is larger than the available space in the control.
 	    	if (imageWidth > remainingWidth) {
@@ -1271,8 +1272,8 @@ public class TableCombo extends Composite {
 	    	int textWidth = remainingWidth;
 	    	
 	    	// set image, text, and arrow boundaries
-			selectedImage.setBounds(0, 0, imageWidth, height);
-			text.setBounds(imageWidth, textYPos, textWidth, height);
+			selectedImage.setBounds(0, 0, imageWidth, imageSize.y);
+			text.setBounds(imageWidth, textYPos, textWidth, textSize.y);
 			arrow.setBounds(imageWidth + textWidth, 0, arrowSize.x, arrowSize.y);
 		}
 	}
