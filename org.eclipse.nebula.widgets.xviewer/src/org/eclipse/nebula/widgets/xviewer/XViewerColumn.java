@@ -36,7 +36,15 @@ public class XViewerColumn {
    private SortDataType sortDataType = SortDataType.String;
    private String toolTip = "";
    public enum SortDataType {
-      Date, Float, Percent, String, String_MultiLine, Boolean, Integer, Paragraph_Number, Check
+      Date,
+      Float,
+      Percent,
+      String,
+      String_MultiLine,
+      Boolean,
+      Integer,
+      Paragraph_Number,
+      Check
    };
 
    public XViewerColumn(String id, String name, int width, int align, boolean show, SortDataType sortDataType, boolean multiColumnEditable, String description) {
@@ -249,7 +257,7 @@ public class XViewerColumn {
             }
          }
          return "Sum: " + XViewerLib.doubleToI18nString(sum) + "\n\nNum Items: " + values.size() + (exceptions.size() > 0 ? "\n\nErrors: " + CollectionsUtil.toString(
-               ";", exceptions) : "");
+            ";", exceptions) : "");
       } else if (sortDataType == SortDataType.Integer) {
          int sum = 0;
          Set<String> exceptions = new HashSet<String>();
@@ -262,7 +270,7 @@ public class XViewerColumn {
             }
          }
          return "Sum: " + sum + "\n\nNum Items: " + values.size() + (exceptions.size() > 0 ? "\n\nErrors: " + CollectionsUtil.toString(
-               ";", exceptions) : "");
+            ";", exceptions) : "");
       }
       return "Unhandled column type";
    }

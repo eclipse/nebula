@@ -36,7 +36,7 @@ public class XViewerValueColumn extends XViewerColumn {
    @Override
    public XViewerValueColumn copy() {
       return new XViewerValueColumn(getId(), getName(), getWidth(), getAlign(), isShow(), getSortDataType(),
-            isMultiColumnEditable(), getDescription());
+         isMultiColumnEditable(), getDescription());
    }
 
    public XViewerValueColumn(String id, String name, int width, int align, boolean show, SortDataType sortDataType, boolean multiColumnEditable, String description) {
@@ -47,18 +47,22 @@ public class XViewerValueColumn extends XViewerColumn {
       super(viewer, xml);
    }
 
+   @SuppressWarnings("unused")
    public Image getColumnImage(Object element, XViewerColumn column, int columnIndex) throws XViewerException {
       return null;
    }
 
+   @SuppressWarnings("unused")
    public String getColumnText(Object element, XViewerColumn column, int columnIndex) throws XViewerException {
       return "unhandled";
    }
 
+   @SuppressWarnings("unused")
    public Color getBackground(Object element, XViewerColumn xCol, int columnIndex) throws XViewerException {
       return null;
    }
 
+   @SuppressWarnings("unused")
    public Color getForeground(Object element, XViewerColumn xCol, int columnIndex) throws XViewerException {
       return null;
    }
@@ -69,6 +73,7 @@ public class XViewerValueColumn extends XViewerColumn {
    }
 
    //This method will only be called be the XViewerStyledTextLabelProvider
+   @SuppressWarnings("unused")
    public Font getFont(Object element, XViewerColumn viewerColumn, int columnIndex) throws XViewerException {
       return null;
    }

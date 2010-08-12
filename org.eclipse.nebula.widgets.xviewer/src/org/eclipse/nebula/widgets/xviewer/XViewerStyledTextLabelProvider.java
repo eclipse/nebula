@@ -14,10 +14,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.ViewerCell;
-import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
@@ -87,16 +87,13 @@ public abstract class XViewerStyledTextLabelProvider extends StyledCellLabelProv
       // no super call required. changes on item will trigger the refresh.
    }
 
-   /**
-    * @param element
-    * @param columnIndex
-    * @return
-    */
    private Font getFont(Object element, int columnIndex) {
       try {
          XViewerColumn xViewerColumn = getTreeColumnOffIndex(columnIndex);
          // If not shown, don't process any further
-         if (!xViewerColumn.isShow()) return null;
+         if (!xViewerColumn.isShow()) {
+            return null;
+         }
          if (xViewerColumn instanceof XViewerValueColumn) {
             return ((XViewerValueColumn) xViewerColumn).getFont(element, xViewerColumn, columnIndex);
          } else {
@@ -112,14 +109,16 @@ public abstract class XViewerStyledTextLabelProvider extends StyledCellLabelProv
       try {
          XViewerColumn xViewerColumn = getTreeColumnOffIndex(columnIndex);
          // If not shown, don't process any further
-         if (!xViewerColumn.isShow()) return null;
-         if (xViewerColumn != null) {
-            if (xViewerColumn instanceof XViewerValueColumn) {
-               Image image = ((XViewerValueColumn) xViewerColumn).getColumnImage(element, xViewerColumn, columnIndex);
-               if (image != null) return image;
-            }
-            return getColumnImage(element, xViewerColumn, columnIndex);
+         if (!xViewerColumn.isShow()) {
+            return null;
          }
+         if (xViewerColumn instanceof XViewerValueColumn) {
+            Image image = ((XViewerValueColumn) xViewerColumn).getColumnImage(element, xViewerColumn, columnIndex);
+            if (image != null) {
+               return image;
+            }
+         }
+         return getColumnImage(element, xViewerColumn, columnIndex);
       } catch (Exception ex) {
          XViewerLog.log(Activator.class, Level.SEVERE, ex);
       }
@@ -130,7 +129,9 @@ public abstract class XViewerStyledTextLabelProvider extends StyledCellLabelProv
       try {
          XViewerColumn xViewerColumn = getTreeColumnOffIndex(columnIndex);
          // If not shown, don't process any further
-         if (!xViewerColumn.isShow()) return new StyledString("");
+         if (!xViewerColumn.isShow()) {
+            return new StyledString("");
+         }
          if (xViewerColumn instanceof XViewerValueColumn) {
             return ((XViewerValueColumn) xViewerColumn).getStyledText(element, xViewerColumn, columnIndex);
          }
@@ -152,7 +153,9 @@ public abstract class XViewerStyledTextLabelProvider extends StyledCellLabelProv
             }
          }
          // If not shown, don't process any further
-         if (!xViewerColumn.isShow()) return null;
+         if (!xViewerColumn.isShow()) {
+            return null;
+         }
          if (xViewerColumn instanceof XViewerValueColumn) {
             return ((XViewerValueColumn) xViewerColumn).getBackground(element, xViewerColumn, columnIndex);
          } else {
@@ -175,7 +178,9 @@ public abstract class XViewerStyledTextLabelProvider extends StyledCellLabelProv
       try {
          XViewerColumn xViewerColumn = getTreeColumnOffIndex(columnIndex);
          // If not shown, don't process any further
-         if (!xViewerColumn.isShow()) return null;
+         if (!xViewerColumn.isShow()) {
+            return null;
+         }
          if (xViewerColumn instanceof XViewerValueColumn) {
             return ((XViewerValueColumn) xViewerColumn).getForeground(element, xViewerColumn, columnIndex);
          } else {

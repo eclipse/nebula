@@ -26,9 +26,6 @@ public abstract class XViewerFactory implements IXViewerFactory {
 
    private String namespace;
 
-   /**
-    * @param namespace the namespace to set
-    */
    public void setNamespace(String namespace) {
       this.namespace = namespace;
    }
@@ -41,7 +38,9 @@ public abstract class XViewerFactory implements IXViewerFactory {
    }
 
    public void registerColumns(XViewerColumn... columns) {
-      if (columns.length == 0) throw new IllegalArgumentException("columns can't be null");
+      if (columns.length == 0) {
+         throw new IllegalArgumentException("columns can't be null");
+      }
       for (XViewerColumn xCol : columns) {
          if (!columnRegistered(xCol)) {
             this.columns.add(xCol);
@@ -76,7 +75,9 @@ public abstract class XViewerFactory implements IXViewerFactory {
    public XViewerColumn getDefaultXViewerColumn(String id) {
       // Return a copy so don't corrupt original definition of column
       XViewerColumn col = idToColumn.get(id);
-      if (col == null) return null;
+      if (col == null) {
+         return null;
+      }
       return col.copy();
    }
 
@@ -95,6 +96,7 @@ public abstract class XViewerFactory implements IXViewerFactory {
       return new XViewerCustomMenu();
    }
 
+   @Override
    public String getNamespace() {
       return namespace;
    }

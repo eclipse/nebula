@@ -49,8 +49,8 @@ public class ViewSelectedCellDataAction extends Action {
          if (treeCol != null) {
             XViewerColumn xCol = (XViewerColumn) treeCol.getData();
             String data =
-                  ((XViewerLabelProvider) xViewer.getLabelProvider()).getColumnText(treeItem.getData(), xCol,
-                        xViewer.getRightClickSelectedColumnNum());
+               ((XViewerLabelProvider) xViewer.getLabelProvider()).getColumnText(treeItem.getData(), xCol,
+                  xViewer.getRightClickSelectedColumnNum());
             if (data != null && !data.equals("")) {
                String html = HtmlUtil.simplePage(HtmlUtil.pre(HtmlUtil.textToHtml(data)));
                new HtmlDialog(treeCol.getText() + " Data", treeCol.getText() + " Data", html).open();

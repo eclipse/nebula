@@ -69,7 +69,7 @@ public class XViewerStyledStringLableProviderTest extends XViewer {
       Shell_1.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.HORIZONTAL_ALIGN_BEGINNING));
 
       XViewerStyledStringLableProviderTest xViewerTest =
-            new XViewerStyledStringLableProviderTest(Shell_1, SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION);
+         new XViewerStyledStringLableProviderTest(Shell_1, SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION);
       xViewerTest.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
       xViewerTest.setContentProvider(new XViewerTestContentProvider());
       xViewerTest.setLabelProvider(new XViewerTestStyledStringLabelProvider(xViewerTest));
@@ -93,33 +93,33 @@ public class XViewerStyledStringLableProviderTest extends XViewer {
    private static List<IXViewerTestTask> getTestTasks() {
       List<IXViewerTestTask> tasks = new ArrayList<IXViewerTestTask>();
       tasks.add(new XViewerTestTask(RunDb.Test_Db, TaskType.Backup, "org.eclipse.osee.test1", "10:03",
-            "run to test this", "Suite A", "mark", 99));
+         "run to test this", "Suite A", "mark", 99));
       tasks.add(new XViewerTestTask(RunDb.Production_Db, TaskType.Data_Exchange, "org.eclipse.osee.test2", "9:22",
-            "run to test that", "Suite B", "john", 50));
+         "run to test that", "Suite B", "john", 50));
       tasks.add(new XViewerTestTask(RunDb.Production_Db, TaskType.Backup, "org.eclipse.osee.test4", "8:23",
-            "in this world", "Suite A", "john", 50));
+         "in this world", "Suite A", "john", 50));
       tasks.add(new XViewerTestTask(RunDb.Test_Db, TaskType.Backup, "org.eclipse.osee.test3", "23:01",
-            "now is the time", "Suite B", "mike", 50));
+         "now is the time", "Suite B", "mike", 50));
       tasks.add(new XViewerTestTask(RunDb.Production_Db, TaskType.Db_Health, "org.eclipse.osee.test5", "7:32",
-            "may be never", "Suite A", "steve", 100));
+         "may be never", "Suite A", "steve", 100));
       tasks.add(new XViewerTestTask(RunDb.Test_Db, TaskType.Data_Exchange, "org.eclipse.osee.test14", "6:11",
-            "how can this solve the problem", "Suite A", "steve", 50));
+         "how can this solve the problem", "Suite A", "steve", 50));
       tasks.add(new XViewerTestTask(RunDb.Production_Db, TaskType.Backup, "org.eclipse.osee.test6", "5:13",
-            "run to test this", "Suite B", "john", 50));
+         "run to test this", "Suite B", "john", 50));
       tasks.add(new XViewerTestTask(RunDb.Test_Db, TaskType.Db_Health, "org.eclipse.osee.test12", "23:15",
-            "run to test this", "Suite A", "mike", 50));
+         "run to test this", "Suite A", "mike", 50));
       tasks.add(new XViewerTestTask(RunDb.Production_Db, TaskType.Backup, "org.eclipse.osee.test13", "4:01",
-            "run to test this", "Suite B", "steve", 50));
+         "run to test this", "Suite B", "steve", 50));
       tasks.add(new XViewerTestTask(RunDb.Production_Db, TaskType.Data_Exchange, "org.eclipse.osee.test11", "3:16",
-            "run to test this", "Suite A", "steve", 70));
+         "run to test this", "Suite A", "steve", 70));
       tasks.add(new XViewerTestTask(RunDb.Test_Db, TaskType.Backup, "org.eclipse.osee.test10", "5:01",
-            "run to test this", "Suite C", "mike", 50));
+         "run to test this", "Suite C", "mike", 50));
       tasks.add(new XViewerTestTask(RunDb.Production_Db, TaskType.Data_Exchange, "org.eclipse.osee.test9", "4:27",
-            "run to test this", "Suite C", "steve", 50));
+         "run to test this", "Suite C", "steve", 50));
       tasks.add(new XViewerTestTask(RunDb.Production_Db, TaskType.Regression, "org.eclipse.osee.test7", "2:37",
-            "run to test this", "Suite C", "john", 50));
+         "run to test this", "Suite C", "john", 50));
       tasks.add(new XViewerTestTask(RunDb.Test_Db, TaskType.Db_Health, "org.eclipse.osee.test8", "24:00",
-            "run to test this", "Suite C", "mike", 20));
+         "run to test this", "Suite C", "mike", 20));
       return tasks;
    }
 }

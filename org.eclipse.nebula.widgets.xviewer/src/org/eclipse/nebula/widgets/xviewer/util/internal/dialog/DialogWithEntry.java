@@ -52,12 +52,12 @@ public class DialogWithEntry extends MessageDialog {
 
    public DialogWithEntry(String dialogTitle, String dialogMessage) {
       super(Display.getCurrent().getActiveShell(), dialogTitle, null, dialogMessage, MessageDialog.QUESTION,
-            new String[] {"OK", "Cancel"}, 0);
+         new String[] {"OK", "Cancel"}, 0);
    }
 
    public DialogWithEntry(Shell parentShell, String dialogTitle, Image dialogTitleImage, String dialogMessage, int dialogImageType, String[] dialogButtonLabels, int defaultIndex) {
       super(parentShell, dialogTitle, dialogTitleImage, dialogMessage, dialogImageType, dialogButtonLabels,
-            defaultIndex);
+         defaultIndex);
    }
 
    @Override
@@ -69,6 +69,7 @@ public class DialogWithEntry extends MessageDialog {
 
       listener = new MouseMoveListener() {
 
+         @Override
          public void mouseMove(MouseEvent e) {
             setInitialButtonState();
          }
@@ -103,8 +104,9 @@ public class DialogWithEntry extends MessageDialog {
                      font = new Font(Display.getCurrent(), "Courier New", 8, SWT.NORMAL);
                   }
                   text.setFont(font);
-               } else
+               } else {
                   text.setFont(null);
+               }
             }
          });
       }
@@ -129,10 +131,13 @@ public class DialogWithEntry extends MessageDialog {
          text.setFont(font);
       }
       text.createWidgets(comp, 2);
-      if (!entryText.equals("")) text.set(entryText);
+      if (!entryText.equals("")) {
+         text.set(entryText);
+      }
 
       ModifyListener modifyListener = new ModifyListener() {
 
+         @Override
          public void modifyText(ModifyEvent e) {
             handleModified();
          }
@@ -151,10 +156,9 @@ public class DialogWithEntry extends MessageDialog {
 
    /**
     * Override to provide other widgets
-    * 
-    * @param parent
     */
    protected void createExtendedArea(Composite parent) {
+      // provided for subclass implementation
    }
 
    public void setInitialButtonState() {
@@ -187,7 +191,9 @@ public class DialogWithEntry extends MessageDialog {
    }
 
    public void setEntry(String entry) {
-      if (text != null) text.set(entry);
+      if (text != null) {
+         text.set(entry);
+      }
       this.entryText = entry;
    }
 

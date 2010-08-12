@@ -19,11 +19,15 @@ import java.util.Date;
  */
 public interface IXViewerTestTask {
    public enum RunDb {
-      Production_Db, Test_Db
+      Production_Db,
+      Test_Db
    };
 
    public enum TaskType {
-      Regression, Db_Health, Data_Exchange, Backup
+      Regression,
+      Db_Health,
+      Data_Exchange,
+      Backup
    }
 
    public String getStartTime();

@@ -50,33 +50,41 @@ public abstract class XViewerLabelProvider implements ITableLabelProvider, ITabl
       this.viewer = viewer;
    }
 
+   @Override
    public Image getColumnImage(Object element, int columnIndex) {
       try {
          XViewerColumn xViewerColumn = getTreeColumnOffIndex(columnIndex);
          // If not shown, don't process any further
-         if (!xViewerColumn.isShow()) return null;
-         if (xViewerColumn != null) {
-            if (xViewerColumn instanceof XViewerValueColumn) {
-               Image image = ((XViewerValueColumn) xViewerColumn).getColumnImage(element, xViewerColumn, columnIndex);
-               if (image != null) return image;
-            }
-            return getColumnImage(element, xViewerColumn, columnIndex);
+         if (!xViewerColumn.isShow()) {
+            return null;
          }
+         if (xViewerColumn instanceof XViewerValueColumn) {
+            Image image = ((XViewerValueColumn) xViewerColumn).getColumnImage(element, xViewerColumn, columnIndex);
+            if (image != null) {
+               return image;
+            }
+         }
+         return getColumnImage(element, xViewerColumn, columnIndex);
       } catch (Exception ex) {
          XViewerLog.log(Activator.class, Level.SEVERE, ex);
       }
       return null;
    }
 
+   @Override
    public String getColumnText(Object element, int columnIndex) {
       try {
          XViewerColumn xViewerColumn = getTreeColumnOffIndex(columnIndex);
          // If not shown, don't process any further
-         if (!xViewerColumn.isShow()) return "";
+         if (!xViewerColumn.isShow()) {
+            return "";
+         }
          // First check value column's methods
          if (xViewerColumn instanceof XViewerValueColumn) {
             String str = ((XViewerValueColumn) xViewerColumn).getColumnText(element, xViewerColumn, columnIndex);
-            if (str != null) return str;
+            if (str != null) {
+               return str;
+            }
             return "";
          }
          // Return label provider's value
@@ -98,10 +106,14 @@ public abstract class XViewerLabelProvider implements ITableLabelProvider, ITabl
 
          XViewerColumn xViewerColumn = getTreeColumnOffIndex(columnIndex);
          // If not shown, don't process any further
-         if (!xViewerColumn.isShow()) return null;
+         if (!xViewerColumn.isShow()) {
+            return null;
+         }
          if (xViewerColumn instanceof XViewerValueColumn) {
             Color color = ((XViewerValueColumn) xViewerColumn).getBackground(element, xViewerColumn, columnIndex);
-            if (color != null) return color;
+            if (color != null) {
+               return color;
+            }
          }
          return getBackground(element, xViewerColumn, columnIndex);
       } catch (Exception ex) {
@@ -115,10 +127,14 @@ public abstract class XViewerLabelProvider implements ITableLabelProvider, ITabl
       try {
          XViewerColumn xViewerColumn = getTreeColumnOffIndex(columnIndex);
          // If not shown, don't process any further
-         if (!xViewerColumn.isShow()) return null;
+         if (!xViewerColumn.isShow()) {
+            return null;
+         }
          if (xViewerColumn instanceof XViewerValueColumn) {
             Color color = ((XViewerValueColumn) xViewerColumn).getForeground(element, xViewerColumn, columnIndex);
-            if (color != null) return color;
+            if (color != null) {
+               return color;
+            }
          }
          return getForeground(element, xViewerColumn, columnIndex);
       } catch (Exception ex) {

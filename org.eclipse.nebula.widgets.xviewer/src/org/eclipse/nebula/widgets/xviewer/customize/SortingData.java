@@ -77,9 +77,9 @@ public class SortingData {
             // Ignore known removed columns
             if (!CustomizeManager.REMOVED_COLUMNS_TO_IGNORE.contains(id)) {
                XViewerLog.log(
-                     Activator.class,
-                     Level.WARNING,
-                     "XViewer Conversion for saved Customization \"" + custData.getName() + "\" dropped unresolved SORTING column Name/Id: \"" + id + "\".  Delete customization and re-save to resolve.");
+                  Activator.class,
+                  Level.WARNING,
+                  "XViewer Conversion for saved Customization \"" + custData.getName() + "\" dropped unresolved SORTING column Name/Id: \"" + id + "\".  Delete customization and re-save to resolve.");
             }
          }
       }

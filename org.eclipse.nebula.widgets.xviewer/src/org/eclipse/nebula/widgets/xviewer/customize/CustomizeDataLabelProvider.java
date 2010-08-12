@@ -28,28 +28,37 @@ public class CustomizeDataLabelProvider implements ILabelProvider {
       this.xViewer = xViewer;
    }
 
+   @Override
    public Image getImage(Object arg0) {
       return ((CustomizeData) arg0).getImage(xViewer.getCustomizeMgr().isCustomizationUserDefault((CustomizeData) arg0));
    }
 
+   @Override
    public String getText(Object arg0) {
       CustomizeData custom = (CustomizeData) arg0;
       String text =
-            (xViewer.getCustomizeMgr().isCustomizationUserDefault(custom) ? "(Default) " : "") + custom.getName();
+         (xViewer.getCustomizeMgr().isCustomizationUserDefault(custom) ? "(Default) " : "") + custom.getName();
       return text;
    }
 
+   @Override
    public void addListener(ILabelProviderListener arg0) {
+      // do nothing
    }
 
+   @Override
    public void dispose() {
+      // do nothing
    }
 
+   @Override
    public boolean isLabelProperty(Object arg0, String arg1) {
       return false;
    }
 
+   @Override
    public void removeListener(ILabelProviderListener arg0) {
+      // do nothing
    }
 
 }

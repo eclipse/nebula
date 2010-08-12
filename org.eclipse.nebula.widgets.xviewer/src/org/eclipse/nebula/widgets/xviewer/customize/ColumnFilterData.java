@@ -59,8 +59,9 @@ public class ColumnFilterData {
    public String getXml() {
       StringBuffer sb = new StringBuffer();
       for (String colId : colIdToFilterText.keySet()) {
-         sb.append(XmlUtil.addTagData(COLUMN_FILTER_TAG, XmlUtil.addTagData(COLUMN_ID_TAG, colId) + XmlUtil.addTagData(
-               FILTER_TEXT_TAG, colIdToFilterText.get(colId))));
+         sb.append(XmlUtil.addTagData(
+            COLUMN_FILTER_TAG,
+            XmlUtil.addTagData(COLUMN_ID_TAG, colId) + XmlUtil.addTagData(FILTER_TEXT_TAG, colIdToFilterText.get(colId))));
       }
       return sb.toString();
    }
@@ -69,8 +70,8 @@ public class ColumnFilterData {
       colIdToFilterText.clear();
       Matcher columnMatch = p.matcher(xml);
       while (columnMatch.find()) {
-         colIdToFilterText.put(XmlUtil.getTagData(columnMatch.group(1), COLUMN_ID_TAG), XmlUtil.getTagData(
-               columnMatch.group(1), FILTER_TEXT_TAG));
+         colIdToFilterText.put(XmlUtil.getTagData(columnMatch.group(1), COLUMN_ID_TAG),
+            XmlUtil.getTagData(columnMatch.group(1), FILTER_TEXT_TAG));
       }
    }
 

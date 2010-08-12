@@ -39,7 +39,9 @@ public class XViewerGradient {
    }
 
    public void setOn(boolean on) {
-      if (this.on == on) return;
+      if (this.on == on) {
+         return;
+      }
       this.on = on;
       if (this.on) {
          this.xViewer.getTree().addListener(SWT.PaintItem, paintListener);
@@ -47,18 +49,23 @@ public class XViewerGradient {
          this.xViewer.getTree().removeListener(SWT.PaintItem, paintListener);
       }
    }
-   private Listener paintListener = new Listener() {
+   private final Listener paintListener = new Listener() {
 
+      @Override
       public void handleEvent(Event event) {
          try {
             XViewerColumn xViewerColumn =
-                  ((XViewerLabelProvider) xViewer.getLabelProvider()).getTreeColumnOffIndex(event.index);
+               ((XViewerLabelProvider) xViewer.getLabelProvider()).getTreeColumnOffIndex(event.index);
             TreeItem item = (TreeItem) event.item;
-            if (item.getData() == null) return;
+            if (item.getData() == null) {
+               return;
+            }
             int percent =
-                  ((XViewerLabelProvider) xViewer.getLabelProvider()).getColumnGradient(item.getData(), xViewerColumn,
-                        event.index);
-            if (percent == 0 || percent > 100 || percent < 0) return;
+               ((XViewerLabelProvider) xViewer.getLabelProvider()).getColumnGradient(item.getData(), xViewerColumn,
+                  event.index);
+            if (percent == 0 || percent > 100 || percent < 0) {
+               return;
+            }
             GC gc = event.gc;
             Color foreground = gc.getForeground();
             Color background = gc.getBackground();
@@ -72,8 +79,8 @@ public class XViewerGradient {
             gc.drawRectangle(rect2);
             gc.setForeground(xViewer.getTree().getDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND));
             String text =
-                  ((XViewerLabelProvider) xViewer.getLabelProvider()).getColumnText(item.getData(), xViewerColumn,
-                        event.index);
+               ((XViewerLabelProvider) xViewer.getLabelProvider()).getColumnText(item.getData(), xViewerColumn,
+                  event.index);
             Point size = event.gc.textExtent(text);
             int offset = Math.max(0, (event.height - size.y) / 2 + 1);
             gc.drawText(text, event.x + 5, event.y + offset, true);

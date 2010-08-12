@@ -20,27 +20,37 @@ import java.util.List;
  */
 public class XViewerCustomizations implements IXViewerCustomizations {
 
+   @Override
    public void deleteCustomization(CustomizeData custData) throws Exception {
+      // provided for subclass implementation
    }
 
+   @Override
    public List<CustomizeData> getSavedCustDatas() {
       return new ArrayList<CustomizeData>();
    }
 
+   @Override
    public CustomizeData getUserDefaultCustData() {
       return null;
    }
 
+   @Override
    public boolean isCustomizationUserDefault(CustomizeData custData) {
       return false;
    }
 
+   @Override
    public void saveCustomization(CustomizeData custData) throws Exception {
+      // provided for subclass implementation
    }
 
+   @Override
    public void setUserDefaultCustData(CustomizeData newCustData, boolean set) {
+      // provided for subclass implementation
    }
 
+   @Override
    public boolean isCustomizationPersistAvailable() {
       return false;
    }

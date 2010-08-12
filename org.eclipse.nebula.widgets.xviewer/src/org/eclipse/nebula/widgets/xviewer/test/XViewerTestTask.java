@@ -46,58 +46,42 @@ public class XViewerTestTask implements IXViewerTestTask {
       this.percentComplete = percentComplete;
    }
 
-   /**
-    * @return the runDb
-    */
+   @Override
    public RunDb getRunDb() {
       return runDb;
    }
 
-   /**
-    * @return the taskType
-    */
+   @Override
    public TaskType getTaskType() {
       return taskType;
    }
 
-   /**
-    * @return the id
-    */
+   @Override
    public String getId() {
       return id;
    }
 
-   /**
-    * @return the startTime
-    */
+   @Override
    public String getStartTime() {
       return startTime;
    }
 
-   /**
-    * @return the description
-    */
+   @Override
    public String getDescription() {
       return description;
    }
 
-   /**
-    * @return the category
-    */
+   @Override
    public String getCategory() {
       return category;
    }
 
-   /**
-    * @return the emailAddress
-    */
+   @Override
    public String getEmailAddress() {
       return emailAddress;
    }
 
-   /**
-    * @return the lastRunDate
-    */
+   @Override
    public Date getLastRunDate() {
       return lastRunDate;
    }
@@ -107,6 +91,7 @@ public class XViewerTestTask implements IXViewerTestTask {
       return new SimpleDateFormat("MM/dd/yyyy hh:mm a").format(getLastRunDate());
    }
 
+   @Override
    public int getPercentComplete() {
       return percentComplete;
    }

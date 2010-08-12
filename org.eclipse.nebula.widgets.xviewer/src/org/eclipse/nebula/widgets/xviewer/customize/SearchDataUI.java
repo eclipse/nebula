@@ -64,9 +64,12 @@ public class SearchDataUI {
       searchText.setLayoutData(gd);
 
       searchText.addKeyListener(new KeyListener() {
+         @Override
          public void keyPressed(KeyEvent e) {
+            // do nothing
          }
 
+         @Override
          public void keyReleased(KeyEvent e) {
             // System.out.println(e.keyCode);
             if (e.keyCode == SWT.CR || e.keyCode == SWT.KEYPAD_CR || searchRealTime) {
@@ -83,8 +86,7 @@ public class SearchDataUI {
                      newText = ".*" + newText + ".*";
                   }
                   match =
-                        Pattern.compile(newText, Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE).matcher(
-                              "");
+                     Pattern.compile(newText, Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE).matcher("");
                   search = true;
                }
                xViewer.refresh();
@@ -101,6 +103,7 @@ public class SearchDataUI {
       regularExpression.setToolTipText("Enable Regular Expression Search");
       regularExpression.setLayoutData(new GridData(SWT.RIGHT, SWT.NONE, false, false));
       searchLabel.addListener(SWT.MouseUp, new Listener() {
+         @Override
          public void handleEvent(Event event) {
             searchText.setText("");
             search = false;
@@ -111,6 +114,7 @@ public class SearchDataUI {
    }
 
    public void dispose() {
+      // provided for subclass implementation
    }
 
    public void clear() {

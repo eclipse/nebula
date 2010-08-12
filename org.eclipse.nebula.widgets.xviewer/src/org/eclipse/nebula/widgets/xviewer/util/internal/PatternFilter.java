@@ -36,13 +36,13 @@ public class PatternFilter extends ViewerFilter {
    /*
     * Cache of filtered elements in the tree
     */
-   @SuppressWarnings( {"unchecked"})
+   @SuppressWarnings({"rawtypes"})
    private final Map cache = new HashMap();
 
    /*
     * Maps parent elements to TRUE or FALSE
     */
-   @SuppressWarnings( {"unchecked"})
+   @SuppressWarnings({"rawtypes"})
    private final Map foundAnyCache = new HashMap();
 
    private boolean useCache = false;
@@ -232,7 +232,7 @@ public class PatternFilter extends ViewerFilter {
     */
    protected boolean isParentMatch(Viewer viewer, Object element) {
       Object[] children =
-            ((ITreeContentProvider) ((AbstractTreeViewer) viewer).getContentProvider()).getChildren(element);
+         ((ITreeContentProvider) ((AbstractTreeViewer) viewer).getContentProvider()).getChildren(element);
 
       if ((children != null) && (children.length > 0)) {
          return isAnyVisible(viewer, element, children);
@@ -263,7 +263,7 @@ public class PatternFilter extends ViewerFilter {
     * @param text
     * @return an array of words
     */
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({"rawtypes", "unchecked"})
    private String[] getWords(String text) {
       List words = new ArrayList();
       // Break the text up into words, separating based on whitespace and

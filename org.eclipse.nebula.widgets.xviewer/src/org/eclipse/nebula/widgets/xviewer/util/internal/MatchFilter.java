@@ -25,6 +25,7 @@ public class MatchFilter implements FilenameFilter {
       this.matcher = Pattern.compile(pattern).matcher("");
    }
 
+   @Override
    public boolean accept(File dir, String fileName) {
       matcher.reset(fileName);
       return matcher.matches();

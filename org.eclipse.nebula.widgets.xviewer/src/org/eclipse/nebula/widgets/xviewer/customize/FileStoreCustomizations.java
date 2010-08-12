@@ -21,24 +21,23 @@ import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
 
 /**
  * @author Andrew M. Finkbeiner
- *
  */
 public class FileStoreCustomizations implements IXViewerCustomizations {
-   
+
    private final File baseStorage;
    private final String prefix;
    private final String postfix;
    private final String defaultCustomizationFileName;
    private final CustomizeData defaultCustomData;
-   
-   public FileStoreCustomizations(File pathToCustomizations, String fileNamePrefix, String fileNamePostfix, String defaultCustomizationFileName, String defaultCustomDataXml){
+
+   public FileStoreCustomizations(File pathToCustomizations, String fileNamePrefix, String fileNamePostfix, String defaultCustomizationFileName, String defaultCustomDataXml) {
       this.baseStorage = pathToCustomizations;
       this.prefix = fileNamePrefix;
       this.postfix = fileNamePostfix;
       this.defaultCustomizationFileName = defaultCustomizationFileName;
       this.defaultCustomData = new CustomizeData(defaultCustomDataXml);
    }
-   
+
    @Override
    public void deleteCustomization(CustomizeData custData) throws Exception {
       File file = new File(getFilename(custData));
@@ -48,10 +47,10 @@ public class FileStoreCustomizations implements IXViewerCustomizations {
    @Override
    public List<CustomizeData> getSavedCustDatas() {
       List<CustomizeData> custDatas = new ArrayList<CustomizeData>();
-      for (String filename : FileUtil.readListFromDir(getCustomDataDir(), new FilenameFilter(){
+      for (String filename : FileUtil.readListFromDir(getCustomDataDir(), new FilenameFilter() {
          @Override
          public boolean accept(File dir, String name) {
-            if(name.endsWith(postfix) && name.startsWith(prefix)){
+            if (name.endsWith(postfix) && name.startsWith(prefix)) {
                return true;
             }
             return false;
@@ -120,8 +119,8 @@ public class FileStoreCustomizations implements IXViewerCustomizations {
    private String getDefaultFilename() {
       return new File(getCustomDataDir(), defaultCustomizationFileName).getAbsolutePath();
    }
-   
-   private File getCustomDataDir(){
+
+   private File getCustomDataDir() {
       return baseStorage;
    }
 

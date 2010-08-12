@@ -138,8 +138,12 @@ public class XViewer extends TreeViewer {
    }
 
    public void dispose() {
-      if (searchDataUI != null) searchDataUI.dispose();
-      if (filterDataUI != null) filterDataUI.dispose();
+      if (searchDataUI != null) {
+         searchDataUI.dispose();
+      }
+      if (filterDataUI != null) {
+         filterDataUI.dispose();
+      }
       columnFilterDataUI.dispose();
    }
 
@@ -156,9 +160,11 @@ public class XViewer extends TreeViewer {
    }
 
    public void updateMenuActionsForTable() {
+      // provided for subclass implementation
    }
 
    public void updateMenuActionsForHeader() {
+      // provided for subclass implementation
    }
 
    public Action getCustomizeAction() {
@@ -203,6 +209,7 @@ public class XViewer extends TreeViewer {
       }
 
       this.addDoubleClickListener(new IDoubleClickListener() {
+         @Override
          public void doubleClick(org.eclipse.jface.viewers.DoubleClickEvent event) {
             handleDoubleClick();
          };
@@ -215,13 +222,12 @@ public class XViewer extends TreeViewer {
       customizeMgr.loadCustomization();
    }
 
-   /**
-    * @param col
-    */
    public void handleDoubleClick(TreeColumn col, TreeItem item) {
+      // provided for subclass implementation
    }
 
    public void handleDoubleClick() {
+      // provided for subclass implementation
    }
 
    public int getCurrentColumnWidth(XViewerColumn xCol) {
@@ -265,20 +271,19 @@ public class XViewer extends TreeViewer {
    /**
     * Will be called when a cell obtains a mouse left-click. This method will be called in addition to
     * handleLeftClickInIconArea if both are true
-    * 
-    * @param treeColumn
-    * @param treeItem
-    * @return true if handled
     */
    public boolean handleLeftClick(TreeColumn treeColumn, TreeItem treeItem) {
       return false;
    }
 
    public void handleColumnMultiEdit(TreeColumn treeColumn, Collection<TreeItem> treeItems) {
+      // provided for subclass implementation
    }
 
    public boolean isColumnMultiEditable(TreeColumn treeColumn, Collection<TreeItem> treeItems) {
-      if (!isColumnMultiEditEnabled()) return false;
+      if (!isColumnMultiEditEnabled()) {
+         return false;
+      }
       return (((XViewerColumn) treeColumn.getData()).isMultiColumnEditable());
    }
 
@@ -310,6 +315,7 @@ public class XViewer extends TreeViewer {
       }
    }
    Listener displayKeysListener = new Listener() {
+      @Override
       public void handleEvent(org.eclipse.swt.widgets.Event event) {
          if (event.keyCode == SWT.CTRL) {
             if (event.type == SWT.KeyDown) {
@@ -365,16 +371,22 @@ public class XViewer extends TreeViewer {
 
    public int getVisibleItemCount(TreeItem items[]) {
       int cnt = items.length;
-      for (TreeItem item : items)
-         if (item.getExpanded()) cnt += getVisibleItemCount(item.getItems());
+      for (TreeItem item : items) {
+         if (item.getExpanded()) {
+            cnt += getVisibleItemCount(item.getItems());
+         }
+      }
       return cnt;
    }
 
    public int getVisibleItemCount() {
       TreeItem[] items = getTree().getItems();
       int cnt = items.length;
-      for (TreeItem item : items)
-         if (item.getExpanded()) cnt += getVisibleItemCount(item.getItems());
+      for (TreeItem item : items) {
+         if (item.getExpanded()) {
+            cnt += getVisibleItemCount(item.getItems());
+         }
+      }
       return cnt;
    }
 
@@ -395,7 +407,9 @@ public class XViewer extends TreeViewer {
 
    @Override
    public void refresh() {
-      if (getTree() == null || getTree().isDisposed()) return;
+      if (getTree() == null || getTree().isDisposed()) {
+         return;
+      }
       super.refresh();
       updateStatusLabel();
    }
@@ -430,8 +444,12 @@ public class XViewer extends TreeViewer {
    }
 
    public void updateStatusLabel() {
-      if (!xViewerFactory.isLoadedStatusLabelAvailable()) return;
-      if (getTree().isDisposed() || statusLabel.isDisposed()) return;
+      if (!xViewerFactory.isLoadedStatusLabelAvailable()) {
+         return;
+      }
+      if (getTree().isDisposed() || statusLabel.isDisposed()) {
+         return;
+      }
       StringBuffer sb = new StringBuffer();
 
       // Status Line 1
@@ -523,7 +541,9 @@ public class XViewer extends TreeViewer {
    }
 
    boolean searchMatch(String text) {
-      if (searchDataUI == null) return false;
+      if (searchDataUI == null) {
+         return false;
+      }
       return searchDataUI.match(text);
    }
 
@@ -532,7 +552,9 @@ public class XViewer extends TreeViewer {
    }
 
    public boolean isSearch() {
-      if (searchDataUI == null) return false;
+      if (searchDataUI == null) {
+         return false;
+      }
       return searchDataUI.isSearch();
    }
 
@@ -562,7 +584,9 @@ public class XViewer extends TreeViewer {
 
    public TreeColumn getColumnUnderMouseClick(Point point) throws ArrayIndexOutOfBoundsException {
       Integer columnNumber = getColumnNumberUnderMouseClick(point);
-      if (columnNumber == null) return null;
+      if (columnNumber == null) {
+         return null;
+      }
       TreeColumn column = getTree().getColumn(columnNumber);
       return column;
    }

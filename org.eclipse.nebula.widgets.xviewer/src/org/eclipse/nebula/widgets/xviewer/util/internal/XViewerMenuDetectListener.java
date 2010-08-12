@@ -26,6 +26,7 @@ public class XViewerMenuDetectListener implements Listener {
       this.xViewer = xViewer;
    }
 
+   @Override
    public void handleEvent(Event event) {
       Point point = Display.getCurrent().map(null, xViewer.getTree(), new Point(event.x, event.y));
       xViewer.processRightClickMouseEvent(point);

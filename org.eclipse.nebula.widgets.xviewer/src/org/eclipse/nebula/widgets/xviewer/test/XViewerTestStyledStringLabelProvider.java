@@ -36,7 +36,9 @@ public class XViewerTestStyledStringLabelProvider extends XViewerStyledTextLabel
 
    @Override
    public void dispose() {
-      if (font != null) font.dispose();
+      if (font != null) {
+         font.dispose();
+      }
       font = null;
    }
 
@@ -47,10 +49,12 @@ public class XViewerTestStyledStringLabelProvider extends XViewerStyledTextLabel
 
    @Override
    public void addListener(ILabelProviderListener listener) {
+      // do nothing
    }
 
    @Override
    public void removeListener(ILabelProviderListener listener) {
+      // do nothing
    }
 
    @Override
@@ -64,47 +68,62 @@ public class XViewerTestStyledStringLabelProvider extends XViewerStyledTextLabel
       return null;
    }
 
+   @SuppressWarnings("unused")
    @Override
    public Color getBackground(Object element, XViewerColumn viewerColumn, int columnIndex) throws XViewerException {
       return null;
    }
 
+   @SuppressWarnings("unused")
    @Override
    public Font getFont(Object element, XViewerColumn viewerColumn, int columnIndex) throws XViewerException {
       return null;
    }
 
+   @SuppressWarnings("unused")
    @Override
    public Color getForeground(Object element, XViewerColumn viewerColumn, int columnIndex) throws XViewerException {
       return null;
    }
 
+   @SuppressWarnings("unused")
    @Override
    public StyledString getStyledText(Object element, XViewerColumn xCol, int columnIndex) throws XViewerException {
       if (element instanceof String) {
-         if (columnIndex == 1)
+         if (columnIndex == 1) {
             return new StyledString((String) element);
-         else
+         } else {
             return new StyledString("");
+         }
       }
       IXViewerTestTask task = ((IXViewerTestTask) element);
-      if (task == null) return new StyledString("");
-      if (xCol.equals(XViewerTestFactory.Run_Col)) return new StyledString(String.valueOf(xViewerTest.isRun(task)),
-            StyledString.COUNTER_STYLER);
-      if (xCol.equals(XViewerTestFactory.Name_Col)) return new StyledString(task.getId(),
-            StyledString.DECORATIONS_STYLER);
-      if (xCol.equals(XViewerTestFactory.Schedule_Time)) return new StyledString(task.getStartTime(),
-            StyledString.QUALIFIER_STYLER);
-      if (xCol.equals(XViewerTestFactory.Run_Db)) return new StyledString(task.getRunDb().name(),
-            StyledString.COUNTER_STYLER);
-      if (xCol.equals(XViewerTestFactory.Task_Type)) return new StyledString(task.getTaskType().name(),
-            StyledString.DECORATIONS_STYLER);
-      if (xCol.equals(XViewerTestFactory.Description)) return new StyledString(task.getDescription(),
-            StyledString.COUNTER_STYLER);
-      if (xCol.equals(XViewerTestFactory.Category)) return new StyledString(task.getCategory(),
-            StyledString.DECORATIONS_STYLER);
-      if (xCol.equals(XViewerTestFactory.Notification)) return new StyledString(task.getEmailAddress(),
-            StyledString.QUALIFIER_STYLER);
+      if (task == null) {
+         return new StyledString("");
+      }
+      if (xCol.equals(XViewerTestFactory.Run_Col)) {
+         return new StyledString(String.valueOf(xViewerTest.isRun(task)), StyledString.COUNTER_STYLER);
+      }
+      if (xCol.equals(XViewerTestFactory.Name_Col)) {
+         return new StyledString(task.getId(), StyledString.DECORATIONS_STYLER);
+      }
+      if (xCol.equals(XViewerTestFactory.Schedule_Time)) {
+         return new StyledString(task.getStartTime(), StyledString.QUALIFIER_STYLER);
+      }
+      if (xCol.equals(XViewerTestFactory.Run_Db)) {
+         return new StyledString(task.getRunDb().name(), StyledString.COUNTER_STYLER);
+      }
+      if (xCol.equals(XViewerTestFactory.Task_Type)) {
+         return new StyledString(task.getTaskType().name(), StyledString.DECORATIONS_STYLER);
+      }
+      if (xCol.equals(XViewerTestFactory.Description)) {
+         return new StyledString(task.getDescription(), StyledString.COUNTER_STYLER);
+      }
+      if (xCol.equals(XViewerTestFactory.Category)) {
+         return new StyledString(task.getCategory(), StyledString.DECORATIONS_STYLER);
+      }
+      if (xCol.equals(XViewerTestFactory.Notification)) {
+         return new StyledString(task.getEmailAddress(), StyledString.QUALIFIER_STYLER);
+      }
       return new StyledString("unhandled column");
    }
 

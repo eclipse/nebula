@@ -56,7 +56,7 @@ public abstract class XViewerWidget {
 
    protected boolean displayLabel = true;
    private final Set<XViewerWidgetModifiedListener> modifiedListeners =
-         new LinkedHashSet<XViewerWidgetModifiedListener>();
+      new LinkedHashSet<XViewerWidgetModifiedListener>();
    private MouseListener mouseLabelListener;
 
    /**
@@ -91,7 +91,9 @@ public abstract class XViewerWidget {
 
    public void setToolTip(String toolTip) {
       this.toolTip = toolTip;
-      if (this.labelWidget != null && !labelWidget.isDisposed()) this.labelWidget.setToolTipText(toolTip);
+      if (this.labelWidget != null && !labelWidget.isDisposed()) {
+         this.labelWidget.setToolTipText(toolTip);
+      }
    }
 
    public void addXModifiedListener(XViewerWidgetModifiedListener listener) {
@@ -99,8 +101,9 @@ public abstract class XViewerWidget {
    }
 
    public void notifyXModifiedListeners() {
-      for (XViewerWidgetModifiedListener listener : modifiedListeners)
+      for (XViewerWidgetModifiedListener listener : modifiedListeners) {
          listener.widgetModified(this);
+      }
    }
 
    public void setLabelError() {
@@ -114,14 +117,19 @@ public abstract class XViewerWidget {
       }
       if (mouseLabelListener == null) {
          mouseLabelListener = new MouseListener() {
+            @Override
             public void mouseDoubleClick(MouseEvent e) {
                openHelp();
             }
 
+            @Override
             public void mouseDown(MouseEvent e) {
+               // do nothing
             }
 
+            @Override
             public void mouseUp(MouseEvent e) {
+               // do nothing
             }
          };
          labelWidget.addMouseListener(mouseLabelListener);
@@ -132,8 +140,10 @@ public abstract class XViewerWidget {
 
    public void openHelp() {
       try {
-         if (toolTip != null && label != null) MessageDialog.openInformation(
-               PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), label + " Tool Tip", toolTip);
+         if (toolTip != null && label != null) {
+            MessageDialog.openInformation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+               label + " Tool Tip", toolTip);
+         }
       } catch (Exception ex) {
          XViewerLog.log(Activator.class, Level.SEVERE, ex);
       }
@@ -151,7 +161,9 @@ public abstract class XViewerWidget {
    }
 
    public void adaptControls(FormToolkit toolkit) {
-      if (getControl() != null) toolkit.adapt(getControl(), true, true);
+      if (getControl() != null) {
+         toolkit.adapt(getControl(), true, true);
+      }
       if (labelWidget != null) {
          toolkit.adapt(labelWidget, true, true);
          toolkit.adapt(labelWidget.getParent(), true, true);
@@ -213,14 +225,16 @@ public abstract class XViewerWidget {
 
    public String toXml(String xmlRoot, String xmlSubRoot) throws Exception {
       String s =
-            "<" + xmlRoot + ">" + "<" + xmlSubRoot + ">" + XmlUtil.textToXml(getXmlData()) + "</" + xmlSubRoot + ">" + "</" + xmlRoot + ">\n";
+         "<" + xmlRoot + ">" + "<" + xmlSubRoot + ">" + XmlUtil.textToXml(getXmlData()) + "</" + xmlSubRoot + ">" + "</" + xmlRoot + ">\n";
       return s;
    }
 
    public void setFromXml(String xml) throws IllegalStateException {
       Matcher m;
       m = Pattern.compile("<" + xmlRoot + ">(.*?)</" + xmlRoot + ">", Pattern.MULTILINE | Pattern.DOTALL).matcher(xml);
-      if (m.find()) setXmlData(XmlUtil.xmlToText(m.group(1)));
+      if (m.find()) {
+         setXmlData(XmlUtil.xmlToText(m.group(1)));
+      }
    }
 
    /**

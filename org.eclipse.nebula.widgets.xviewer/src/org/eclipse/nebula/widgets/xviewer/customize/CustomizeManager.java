@@ -68,9 +68,6 @@ public class CustomizeManager {
    /**
     * Since saved customize data is stored as xml, all the columns need to be resolved to the columns available from the
     * factory
-    * 
-    * @param loadedCustData
-    * @return CustomizeData
     */
    public CustomizeData resolveLoadedCustomizeData(CustomizeData loadedCustData) {
       // Otherwise, have to resolve what was saved with what is valid for this table and available from the factory
@@ -79,8 +76,9 @@ public class CustomizeManager {
       resolvedCustData.setPersonal(loadedCustData.isPersonal());
       resolvedCustData.setGuid(loadedCustData.getGuid());
       resolvedCustData.setNameSpace(loadedCustData.getNameSpace());
-      /* 
-       * Need to resolve columns with what factory has which gets correct class/subclass of XViewerColumn and allows for removal of old and addition of new columns
+      /*
+       * Need to resolve columns with what factory has which gets correct class/subclass of XViewerColumn and allows for
+       * removal of old and addition of new columns
        */
       List<XViewerColumn> resolvedColumns = new ArrayList<XViewerColumn>();
       for (XViewerColumn storedCol : loadedCustData.getColumnData().getColumns()) {
@@ -146,9 +144,9 @@ public class CustomizeManager {
             // Ignore known removed columns
             if (!REMOVED_COLUMNS_TO_IGNORE.contains(storedCol.getName())) {
                XViewerLog.log(
-                     Activator.class,
-                     Level.WARNING,
-                     "XViewer Conversion for saved Customization \"" + loadedCustData.getName() + "\" dropped unresolved column Name: \"" + storedCol.getName() + "\"  Id: \"" + storedCol.getId() + "\".  Delete customization and re-save to resolve.");
+                  Activator.class,
+                  Level.WARNING,
+                  "XViewer Conversion for saved Customization \"" + loadedCustData.getName() + "\" dropped unresolved column Name: \"" + storedCol.getName() + "\"  Id: \"" + storedCol.getId() + "\".  Delete customization and re-save to resolve.");
             }
          }
       }
@@ -346,7 +344,9 @@ public class CustomizeManager {
       for (Integer index : xViewer.getTree().getColumnOrder()) {
          TreeColumn treeCol = xViewer.getTree().getColumn(index);
          XViewerColumn treeXCol = (XViewerColumn) treeCol.getData();
-         if (xCol.equals(treeXCol)) return index;
+         if (xCol.equals(treeXCol)) {
+            return index;
+         }
       }
       return 0;
    }
@@ -366,7 +366,9 @@ public class CustomizeManager {
    public void getSortingStr(StringBuffer sb) {
       if (currentCustData.getSortingData().isSorting()) {
          List<XViewerColumn> cols = getSortXCols();
-         if (cols.isEmpty()) return;
+         if (cols.isEmpty()) {
+            return;
+         }
          sb.append("Sort: ");
          for (XViewerColumn col : getSortXCols()) {
             if (col != null) {
@@ -379,10 +381,11 @@ public class CustomizeManager {
 
    public int getDefaultWidth(String id) {
       XViewerColumn xCol = xViewerFactory.getDefaultXViewerColumn(id);
-      if (xCol == null)
+      if (xCol == null) {
          return 75;
-      else
+      } else {
          return xCol.getWidth();
+      }
    }
 
    public boolean isCustomizationUserDefault(CustomizeData custData) {
@@ -451,7 +454,9 @@ public class CustomizeManager {
          xViewerTextFilter = xViewer.getXViewerTextFilter();
          xViewer.addFilter(xViewerTextFilter);
       }
-      if (xViewer.getTree().isDisposed()) return;
+      if (xViewer.getTree().isDisposed()) {
+         return;
+      }
       currentCustData = newCustData;
       if (currentCustData.getName() == null || currentCustData.getName().equals("")) {
          currentCustData.setName(CURRENT_LABEL);
@@ -467,8 +472,9 @@ public class CustomizeManager {
       }
       xViewerTextFilter.update();
       // Dispose all existing columns
-      for (TreeColumn treeCol : xViewer.getTree().getColumns())
+      for (TreeColumn treeCol : xViewer.getTree().getColumns()) {
          treeCol.dispose();
+      }
       // Create new columns
       addColumns();
       xViewer.updateStatusLabel();
@@ -481,7 +487,9 @@ public class CustomizeManager {
    public void addColumns() {
       for (final XViewerColumn xCol : currentCustData.getColumnData().getColumns()) {
          // Only add visible columns
-         if (!xCol.isShow()) continue;
+         if (!xCol.isShow()) {
+            continue;
+         }
          xCol.setXViewer(xViewer);
          TreeColumn column = new TreeColumn(xViewer.getTree(), xCol.getAlign());
          column.setMoveable(true);
@@ -489,11 +497,11 @@ public class CustomizeManager {
          StringBuffer sb = new StringBuffer();
          sb.append(xCol.getName());
          if (xCol.getDescription() != null && !xCol.getDescription().equals("") && !xCol.getDescription().equals(
-               xCol.getName())) {
+            xCol.getName())) {
             sb.append("\n" + xCol.getDescription());
          }
          if (xCol.getToolTip() != null && !xCol.getToolTip().equals("") && !xCol.getToolTip().equals(xCol.getName()) && !xCol.getToolTip().equals(
-               xCol.getDescription())) {
+            xCol.getDescription())) {
             sb.append("\n" + xCol.getToolTip());
          }
          sb.append("\n" + xCol.getId());
@@ -518,10 +526,14 @@ public class CustomizeManager {
                   } else {
                      // If already selected this item, reverse the sort
                      if (currSortCols.contains(xCol)) {
-                        for (XViewerColumn currXCol : currSortCols)
-                           if (currXCol.equals(xCol)) currXCol.reverseSort();
-                     } else
+                        for (XViewerColumn currXCol : currSortCols) {
+                           if (currXCol.equals(xCol)) {
+                              currXCol.reverseSort();
+                           }
+                        }
+                     } else {
                         currSortCols.add(xCol);
+                     }
                   }
                   currentCustData.getSortingData().setSortXCols(currSortCols);
                } else {

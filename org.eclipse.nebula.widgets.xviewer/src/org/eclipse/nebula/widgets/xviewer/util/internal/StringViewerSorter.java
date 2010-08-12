@@ -19,15 +19,10 @@ import org.eclipse.jface.viewers.ViewerSorter;
  */
 public class StringViewerSorter extends ViewerSorter {
 
-   /**
-    * 
-    */
    public StringViewerSorter() {
+      // do nothing
    }
 
-   /**
-    * @param collator
-    */
    public StringViewerSorter(Collator collator) {
       super(collator);
    }
@@ -35,6 +30,6 @@ public class StringViewerSorter extends ViewerSorter {
    @SuppressWarnings("unchecked")
    @Override
    public int compare(Viewer viewer, Object e1, Object e2) {
-      return getComparator().compare((String) e1, (String) e2);
+      return getComparator().compare(e1, e2);
    }
 }

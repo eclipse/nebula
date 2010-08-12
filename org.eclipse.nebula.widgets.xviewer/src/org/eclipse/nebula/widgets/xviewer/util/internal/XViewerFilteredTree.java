@@ -26,11 +26,6 @@ public class XViewerFilteredTree extends FilteredTreeComposite {
       this(parent, SWT.BORDER | SWT.MULTI, new PatternFilter());
    }
 
-   /**
-    * @param parent
-    * @param treeStyle
-    * @param filter
-    */
    public XViewerFilteredTree(Composite parent, int treeStyle, PatternFilter filter) {
       super(parent, treeStyle, filter);
       setInitialText("");
@@ -52,10 +47,12 @@ public class XViewerFilteredTree extends FilteredTreeComposite {
    protected void createFilterText(Composite parent) {
       super.createFilterText(parent);
       filterText.addKeyListener(new KeyListener() {
+         @Override
          public void keyPressed(KeyEvent e) {
             filterText.setFocus();
          }
 
+         @Override
          public void keyReleased(KeyEvent e) {
             filterText.setFocus();
          }

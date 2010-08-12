@@ -92,6 +92,7 @@ public class CustomizationDataSelectionDialog extends ListDialog {
       custText.setFocus();
       custText.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
       custText.addModifyListener(new ModifyListener() {
+         @Override
          public void modifyText(ModifyEvent e) {
             enteredName = custText.getText();
          }
@@ -115,6 +116,7 @@ public class CustomizationDataSelectionDialog extends ListDialog {
       }
 
       getTableViewer().addSelectionChangedListener(new ISelectionChangedListener() {
+         @Override
          public void selectionChanged(SelectionChangedEvent event) {
             selectedCustData = getSelectedCustomizeData();
             if (saveGlobalCheck != null) {
@@ -128,7 +130,9 @@ public class CustomizationDataSelectionDialog extends ListDialog {
 
    private CustomizeData getSelectedCustomizeData() {
       IStructuredSelection selection = (IStructuredSelection) getTableViewer().getSelection();
-      if (selection.isEmpty()) return null;
+      if (selection.isEmpty()) {
+         return null;
+      }
       Iterator<?> i = selection.iterator();
       return (CustomizeData) i.next();
    }

@@ -39,14 +39,17 @@ public class TableCustomizationDropDownAction extends Action implements IMenuCre
       return "Customize Table";
    }
 
+   @Override
    public Menu getMenu(Control parent) {
-      if (fMenu != null) fMenu.dispose();
+      if (fMenu != null) {
+         fMenu.dispose();
+      }
 
       fMenu = new Menu(parent);
 
       addActionToMenu(fMenu, new TableCustomizationAction(xViewer));
       addActionToMenu(fMenu, new TableCustomizationCustomizeDataAction(xViewer,
-            xViewer.getCustomizeMgr().getTableDefaultCustData()));
+         xViewer.getCustomizeMgr().getTableDefaultCustData()));
       new MenuItem(fMenu, SWT.SEPARATOR);
       try {
          for (CustomizeData custData : xViewer.getCustomizeMgr().getSavedCustDatas()) {
@@ -58,6 +61,7 @@ public class TableCustomizationDropDownAction extends Action implements IMenuCre
       return fMenu;
    }
 
+   @Override
    public void dispose() {
       if (fMenu != null) {
          fMenu.dispose();
@@ -65,6 +69,7 @@ public class TableCustomizationDropDownAction extends Action implements IMenuCre
       }
    }
 
+   @Override
    public Menu getMenu(Menu parent) {
       return null;
    }

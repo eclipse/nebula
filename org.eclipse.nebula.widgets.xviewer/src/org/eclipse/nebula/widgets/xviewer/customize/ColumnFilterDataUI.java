@@ -30,16 +30,18 @@ public class ColumnFilterDataUI {
    }
 
    public void createWidgets() {
+      // provided for subclass implementation
    }
 
    public void dispose() {
+      // provided for subclass implementation
    }
 
    public void promptSetFilter(String colId) {
       DialogWithEntry ed =
-            new DialogWithEntry(Display.getCurrent().getActiveShell(), "Filter Column", null,
-                  "Enter filter string for " + colId + ":\n\nNote: !string negates the match", MessageDialog.QUESTION,
-                  new String[] {"OK", "Clear", "Clear All", "Cancel"}, 0);
+         new DialogWithEntry(Display.getCurrent().getActiveShell(), "Filter Column", null,
+            "Enter filter string for " + colId + ":\n\nNote: !string negates the match", MessageDialog.QUESTION,
+            new String[] {"OK", "Clear", "Clear All", "Cancel"}, 0);
       String str = xViewer.getCustomizeMgr().getColumnFilterData().getFilterText(colId);
       if (str != null && !str.equals("")) {
          ed.setEntry(str);

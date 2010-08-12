@@ -68,12 +68,16 @@ public class XViewerTextWidget extends XViewerWidget {
    public void setSize(int width, int height) {
       this.width = width;
       this.height = height;
-      if (sText != null && !sText.isDisposed()) sText.setSize(width, height);
+      if (sText != null && !sText.isDisposed()) {
+         sText.setSize(width, height);
+      }
    }
 
    public void setHeight(int height) {
       this.height = height;
-      if (sText != null && !sText.isDisposed()) sText.setSize(sText.getSize().x, height);
+      if (sText != null && !sText.isDisposed()) {
+         sText.setSize(sText.getSize().x, height);
+      }
    }
 
    @Override
@@ -106,6 +110,7 @@ public class XViewerTextWidget extends XViewerWidget {
 
       ModifyListener textListener = new ModifyListener() {
 
+         @Override
          public void modifyText(ModifyEvent e) {
             if (sText != null) {
                debug("modifyText");
@@ -147,10 +152,11 @@ public class XViewerTextWidget extends XViewerWidget {
          sText = new StyledText(composite, SWT.BORDER | SWT.SINGLE);
       }
       GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-      if (verticalLabel)
+      if (verticalLabel) {
          gd.horizontalSpan = horizontalSpan;
-      else
+      } else {
          gd.horizontalSpan = horizontalSpan - 1;
+      }
       gd.grabExcessHorizontalSpace = true;
       gd.horizontalAlignment = GridData.FILL;
       if (fillVertically) {
@@ -158,22 +164,32 @@ public class XViewerTextWidget extends XViewerWidget {
          gd.verticalAlignment = GridData.FILL;
       }
       if (fillVertically) {
-         if (height > 0) gd.heightHint = height;
+         if (height > 0) {
+            gd.heightHint = height;
+         }
       }
 
       sText.setLayoutData(gd);
       sText.setMenu(getDefaultMenu());
       sText.addModifyListener(textListener);
-      if (text != null) sText.setText(text);
-      if (width != 0 && height != 0) sText.setSize(width, height);
+      if (text != null) {
+         sText.setText(text);
+      }
+      if (width != 0 && height != 0) {
+         sText.setSize(width, height);
+      }
 
       if (maxTextChars > 0) {
          sText.setTextLimit(maxTextChars);
       }
-      if (fillText) updateTextWidget();
+      if (fillText) {
+         updateTextWidget();
+      }
       setLabelError();
       sText.setEditable(editable);
-      if (font != null) sText.setFont(font);
+      if (font != null) {
+         sText.setFont(font);
+      }
       parent.layout();
    }
 
@@ -190,7 +206,9 @@ public class XViewerTextWidget extends XViewerWidget {
     */
    public void setText(String text) {
       this.text = text;
-      if (sText != null) sText.setText(text);
+      if (sText != null) {
+         sText.setText(text);
+      }
    }
 
    public Menu getDefaultMenu() {
@@ -229,18 +247,26 @@ public class XViewerTextWidget extends XViewerWidget {
 
    @Override
    public void dispose() {
-      if (font != null) font.dispose();
-      if (labelWidget != null) labelWidget.dispose();
+      if (font != null) {
+         font.dispose();
+      }
+      if (labelWidget != null) {
+         labelWidget.dispose();
+      }
       if (sText != null) {
          sText.dispose();
          sText = null;
       }
-      if (parent != null && !parent.isDisposed()) parent.layout();
+      if (parent != null && !parent.isDisposed()) {
+         parent.layout();
+      }
    }
 
    @Override
    public void setFocus() {
-      if (sText != null) sText.setFocus();
+      if (sText != null) {
+         sText.setFocus();
+      }
    }
 
    @Override
@@ -327,24 +353,29 @@ public class XViewerTextWidget extends XViewerWidget {
    }
 
    public void addModifyListener(ModifyListener modifyListener) {
-      if (sText != null) sText.addModifyListener(modifyListener);
+      if (sText != null) {
+         sText.addModifyListener(modifyListener);
+      }
    }
 
    public String get() {
-      if (debug) System.err.println("text set *" + text + "*");
+      if (debug) {
+         System.err.println("text set *" + text + "*");
+      }
       return text;
    }
 
    @Override
    public String getXmlData() {
-      if (sText == null || sText.isDisposed())
+      if (sText == null || sText.isDisposed()) {
          return XmlUtil.textToXml(text);
-      else
+      } else {
          try {
             return XmlUtil.textToXml(sText.getText());
          } catch (SWTException e) {
             return XmlUtil.textToXml(text);
          }
+      }
    }
 
    @Override
@@ -365,14 +396,16 @@ public class XViewerTextWidget extends XViewerWidget {
    @Override
    public String toXml(String xmlRoot, String xmlSubRoot) {
       String s =
-            "<" + xmlRoot + ">" + "<" + xmlSubRoot + ">" + getXmlData() + "</" + xmlSubRoot + ">" + "</" + xmlRoot + ">\n";
+         "<" + xmlRoot + ">" + "<" + xmlSubRoot + ">" + getXmlData() + "</" + xmlSubRoot + ">" + "</" + xmlRoot + ">\n";
       return s;
    }
 
    @Override
    public void setXmlData(String str) {
       set(str);
-      if (debug) System.err.println("setFromXml *" + str + "*");
+      if (debug) {
+         System.err.println("setFromXml *" + str + "*");
+      }
    }
 
    @Override
@@ -382,9 +415,13 @@ public class XViewerTextWidget extends XViewerWidget {
 
       if (m.find()) {
          String xmlStr = m.group(1);
-         if (debug) System.err.println("xmlStr *" + xmlStr + "*");
+         if (debug) {
+            System.err.println("xmlStr *" + xmlStr + "*");
+         }
          String str = XmlUtil.xmlToText(xmlStr);
-         if (debug) System.err.println("str *" + str + "*");
+         if (debug) {
+            System.err.println("str *" + str + "*");
+         }
          setXmlData(str);
       }
    }
@@ -394,25 +431,33 @@ public class XViewerTextWidget extends XViewerWidget {
       try {
          percent = new Integer(text);
       } catch (NumberFormatException e) {
+         // do nothing
       }
       return percent.intValue();
    }
 
    protected void updateTextWidget() {
-      if (sText == null || sText.isDisposed()) return;
-      if (text.equals(sText.getText())) return;
+      if (sText == null || sText.isDisposed()) {
+         return;
+      }
+      if (text.equals(sText.getText())) {
+         return;
+      }
       // Disable Listeners so not to fill Undo List
       sText.setText(text);
-      // Reenable Listeners
+      // Re-enable Listeners
       setLabelError();
    }
 
    public void set(String text) {
-      if (text == null)
+      if (text == null) {
          this.text = "";
-      else
+      } else {
          this.text = text;
-      if (debug) System.err.println("set *" + text + "*");
+      }
+      if (debug) {
+         System.err.println("set *" + text + "*");
+      }
       updateTextWidget();
    }
 
@@ -446,9 +491,13 @@ public class XViewerTextWidget extends XViewerWidget {
 
    public String toHTML(String labelFont, boolean newLineText) {
       String s = HtmlUtil.getLabelStr(labelFont, label + ": ");
-      if (newLineText) s = "<dl><dt>" + s + "<dd>";
+      if (newLineText) {
+         s = "<dl><dt>" + s + "<dd>";
+      }
       s += text;
-      if (newLineText) s += "</dl>";
+      if (newLineText) {
+         s += "</dl>";
+      }
       return s;
    }
 
@@ -458,7 +507,9 @@ public class XViewerTextWidget extends XViewerWidget {
    }
 
    public void debug(String str) {
-      if (debug) System.err.println("AText :" + str);
+      if (debug) {
+         System.err.println("AText :" + str);
+      }
    }
 
    @Override

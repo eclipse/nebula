@@ -34,14 +34,15 @@ public class XViewerDaysTillTodayColumn extends XViewerComputedColumn {
 
    public XViewerDaysTillTodayColumn() {
       super(ID, "Days Till Today", 30, SWT.LEFT, false, SortDataType.Integer, false,
-            "Shows number of days till today for selected column");
+         "Shows number of days till today for selected column");
    }
 
    private XViewerDaysTillTodayColumn(String id) {
       super(id, "Days Till Today", 30, SWT.LEFT, false, SortDataType.Integer, false,
-            "Shows number of days till today for selected column");
+         "Shows number of days till today for selected column");
    }
 
+   @SuppressWarnings("unused")
    @Override
    public String getColumnText(Object element, XViewerColumn column, int columnIndex) throws XViewerException {
       if (sourceXViewerColumn == null) {
@@ -49,8 +50,7 @@ public class XViewerDaysTillTodayColumn extends XViewerComputedColumn {
       }
       try {
          String dateStr =
-               ((XViewerLabelProvider) xViewer.getLabelProvider()).getColumnText(element, sourceXViewerColumn,
-                     columnIndex);
+            ((XViewerLabelProvider) xViewer.getLabelProvider()).getColumnText(element, sourceXViewerColumn, columnIndex);
          if (dateStr == null || dateStr.equals("")) {
             return "";
          }
@@ -58,14 +58,14 @@ public class XViewerDaysTillTodayColumn extends XViewerComputedColumn {
          if (dateStr.length() == 10) {
             format = format10;
          } else {
-            format = SimpleDateFormat.getInstance();
+            format = DateFormat.getInstance();
          }
          Date date1Date = null;
          try {
             date1Date = format.parse(dateStr);
          } catch (ParseException ex) {
             try {
-               date1Date = SimpleDateFormat.getInstance().parse(dateStr);
+               date1Date = DateFormat.getInstance().parse(dateStr);
             } catch (ParseException ex2) {
                XViewerLog.log(Activator.class, Level.SEVERE, ex2);
             }

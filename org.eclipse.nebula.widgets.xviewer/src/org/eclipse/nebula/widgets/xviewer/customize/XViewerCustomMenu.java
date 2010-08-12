@@ -82,11 +82,12 @@ public class XViewerCustomMenu {
    private final Clipboard clipboard = new Clipboard(null);
 
    protected Action filterByColumn, clearAllSorting, clearAllFilters, tableProperties, viewTableReport,
-         columnMultiEdit, removeSelected, removeNonSelected, copySelected, showColumn, addComputedColumn, sumColumn,
-         hideColumn, copySelectedCell, viewSelectedCell, uniqueValues;
+      columnMultiEdit, removeSelected, removeNonSelected, copySelected, showColumn, addComputedColumn, sumColumn,
+      hideColumn, copySelectedCell, viewSelectedCell, uniqueValues;
    private boolean headerMouseClick = false;
 
    public XViewerCustomMenu() {
+      // do nothing
    }
 
    public XViewerCustomMenu(XViewer xViewer) {
@@ -98,11 +99,15 @@ public class XViewerCustomMenu {
       setupActions();
       xViewer.getTree().addKeyListener(new KeySelectedListener());
       xViewer.getTree().addDisposeListener(new DisposeListener() {
+         @Override
          public void widgetDisposed(org.eclipse.swt.events.DisposeEvent e) {
-            if (clipboard != null) clipboard.dispose();
+            if (clipboard != null) {
+               clipboard.dispose();
+            }
          };
       });
       xViewer.getMenuManager().addMenuListener(new IMenuListener() {
+         @Override
          public void menuAboutToShow(IMenuManager manager) {
             if (headerMouseClick) {
                setupMenuForHeader();
@@ -114,6 +119,7 @@ public class XViewerCustomMenu {
          }
       });
       xViewer.getTree().addListener(SWT.MenuDetect, new Listener() {
+         @Override
          public void handleEvent(Event event) {
             Point pt = Display.getCurrent().map(null, xViewer.getTree(), new Point(event.x, event.y));
             Rectangle clientArea = xViewer.getTree().getClientArea();
@@ -263,8 +269,8 @@ public class XViewerCustomMenu {
       TreeColumn insertTreeCol = xViewer.getRightClickSelectedColumn();
       XViewerColumn insertXCol = insertTreeCol != null ? (XViewerColumn) insertTreeCol.getData() : null;
       XCheckFilteredTreeDialog dialog =
-            new XCheckFilteredTreeDialog("Show Column", "Select Columns to Show", patternFilter,
-                  new ArrayTreeContentProvider(), new XViewerColumnLabelProvider(), new XViewerColumnSorter());
+         new XCheckFilteredTreeDialog("Show Column", "Select Columns to Show", patternFilter,
+            new ArrayTreeContentProvider(), new XViewerColumnLabelProvider(), new XViewerColumnSorter());
       dialog.setInput(xViewer.getCustomizeMgr().getCurrentHiddenTableColumns());
       if (dialog.open() == 0) {
          //         System.out.println("Selected " + dialog.getChecked());
@@ -304,9 +310,9 @@ public class XViewerCustomMenu {
       TreeColumn insertTreeCol = xViewer.getRightClickSelectedColumn();
       XViewerColumn insertXCol = (XViewerColumn) insertTreeCol.getData();
       XCheckFilteredTreeDialog dialog =
-            new XCheckFilteredTreeDialog("Add Computed Column", String.format("Column to compute against [%s]",
-                  insertXCol.getName() + "(" + insertXCol.getId() + ")") + "\n\nSelect Columns to Add", patternFilter,
-                  new ArrayTreeContentProvider(), new XViewerColumnLabelProvider(), new XViewerColumnSorter());
+         new XCheckFilteredTreeDialog("Add Computed Column", String.format("Column to compute against [%s]",
+            insertXCol.getName() + "(" + insertXCol.getId() + ")") + "\n\nSelect Columns to Add", patternFilter,
+            new ArrayTreeContentProvider(), new XViewerColumnLabelProvider(), new XViewerColumnSorter());
       Collection<XViewerComputedColumn> computedCols = xViewer.getComputedColumns(insertXCol);
       if (computedCols.isEmpty()) {
          XViewerLib.popup("ERROR", "Selected column has no applicable computed columns");
@@ -364,7 +370,9 @@ public class XViewerCustomMenu {
    protected void handleSumColumn() {
       TreeColumn treeCol = xViewer.getRightClickSelectedColumn();
       XViewerColumn xCol = (XViewerColumn) treeCol.getData();
-      if (!xCol.isSummable()) return;
+      if (!xCol.isSummable()) {
+         return;
+      }
 
       TreeItem[] items = xViewer.getTree().getSelection();
       if (items.length == 0) {
@@ -483,9 +491,12 @@ public class XViewerCustomMenu {
    }
 
    private class KeySelectedListener implements KeyListener {
+      @Override
       public void keyPressed(KeyEvent e) {
+         // do nothing
       }
 
+      @Override
       public void keyReleased(KeyEvent e) {
          if (e.keyCode == 'c' && e.stateMask == (SWT.CONTROL | SWT.SHIFT)) {
             performCopyCell();
@@ -531,8 +542,11 @@ public class XViewerCustomMenu {
 
    private void performFilterByColumn() {
       Set<TreeColumn> visibleColumns = new HashSet<TreeColumn>();
-      for (TreeColumn treeCol : xViewer.getTree().getColumns())
-         if (treeCol.getWidth() > 0) visibleColumns.add(treeCol);
+      for (TreeColumn treeCol : xViewer.getTree().getColumns()) {
+         if (treeCol.getWidth() > 0) {
+            visibleColumns.add(treeCol);
+         }
+      }
       if (visibleColumns.isEmpty()) {
          XViewerLib.popup("ERROR", "No Columns Are Available");
          return;
@@ -551,7 +565,9 @@ public class XViewerCustomMenu {
       ld.setContentProvider(new ArrayContentProvider());
       ld.setTitle("Select Column to Filter");
       int result = ld.open();
-      if (result != 0) return;
+      if (result != 0) {
+         return;
+      }
       TreeColumn treeCol = (TreeColumn) ld.getResult()[0];
       String colId = ((XViewerColumn) treeCol.getData()).getId();
       xViewer.getColumnFilterDataUI().promptSetFilter(colId);
@@ -567,8 +583,11 @@ public class XViewerCustomMenu {
       }
       ArrayList<String> textTransferData = new ArrayList<String>();
       ITableLabelProvider labelProv = (ITableLabelProvider) xViewer.getLabelProvider();
-      for (TreeColumn treeCol : xViewer.getTree().getColumns())
-         if (treeCol.getWidth() > 0) visibleColumns.add(treeCol);
+      for (TreeColumn treeCol : xViewer.getTree().getColumns()) {
+         if (treeCol.getWidth() > 0) {
+            visibleColumns.add(treeCol);
+         }
+      }
       if (visibleColumns.isEmpty()) {
          XViewerLib.popup("ERROR", "No Columns Are Available");
          return;
@@ -587,7 +606,9 @@ public class XViewerCustomMenu {
       ld.setContentProvider(new ArrayContentProvider());
       ld.setTitle("Select Column to Copy");
       int result = ld.open();
-      if (result != 0) return;
+      if (result != 0) {
+         return;
+      }
       TreeColumn treeCol = (TreeColumn) ld.getResult()[0];
       StringBuffer sb = new StringBuffer();
       for (TreeItem item : items) {
@@ -599,8 +620,10 @@ public class XViewerCustomMenu {
       }
       textTransferData.add(sb.toString());
 
-      if (textTransferData.size() > 0) clipboard.setContents(new Object[] {CollectionsUtil.toString(textTransferData,
-            null, ", ", null)}, new Transfer[] {TextTransfer.getInstance()});
+      if (textTransferData.size() > 0) {
+         clipboard.setContents(new Object[] {CollectionsUtil.toString(textTransferData, null, ", ", null)},
+            new Transfer[] {TextTransfer.getInstance()});
+      }
    }
 
    private void performCopy() {
@@ -611,22 +634,26 @@ public class XViewerCustomMenu {
       }
       ArrayList<String> textTransferData = new ArrayList<String>();
       ITableLabelProvider labelProv = (ITableLabelProvider) xViewer.getLabelProvider();
-      if (items != null && items.length > 0) {
+      if (items.length > 0) {
          StringBuffer sb = new StringBuffer();
          for (TreeItem item : items) {
             List<String> strs = new ArrayList<String>();
             for (int x = 0; x < xViewer.getTree().getColumnCount(); x++) {
                if (xViewer.getTree().getColumn(x).getWidth() > 0) {
                   String data = labelProv.getColumnText(item.getData(), x);
-                  if (data != null) strs.add(data);
+                  if (data != null) {
+                     strs.add(data);
+                  }
                }
             }
             sb.append(CollectionsUtil.toString("\t", strs) + "\n");
          }
          textTransferData.add(sb.toString());
 
-         if (textTransferData.size() > 0) clipboard.setContents(new Object[] {CollectionsUtil.toString(
-               textTransferData, null, ", ", null)}, new Transfer[] {TextTransfer.getInstance()});
+         if (textTransferData.size() > 0) {
+            clipboard.setContents(new Object[] {CollectionsUtil.toString(textTransferData, null, ", ", null)},
+               new Transfer[] {TextTransfer.getInstance()});
+         }
       }
    }
 

@@ -44,7 +44,7 @@ public class XCheckFilteredTreeDialog extends MessageDialog {
 
    public XCheckFilteredTreeDialog(String dialogTitle, String dialogMessage, PatternFilter patternFilter, IContentProvider contentProvider, IBaseLabelProvider labelProvider, ViewerSorter viewerSorter) {
       super(Display.getCurrent().getActiveShell(), dialogTitle, null, dialogMessage, MessageDialog.NONE, new String[] {
-            "OK", "Cancel"}, 0);
+         "OK", "Cancel"}, 0);
       this.contentProvider = contentProvider;
       this.labelProvider = labelProvider;
       this.patternFilter = patternFilter;
@@ -53,10 +53,13 @@ public class XCheckFilteredTreeDialog extends MessageDialog {
    }
 
    protected void createPreCustomArea(Composite parent) {
+      // provided for subclass implementation
    }
 
    public Set<Object> getChecked() {
-      if (getTreeViewer() == null) return Collections.emptySet();
+      if (getTreeViewer() == null) {
+         return Collections.emptySet();
+      }
       return getTreeViewer().getChecked();
    }
 
@@ -67,7 +70,9 @@ public class XCheckFilteredTreeDialog extends MessageDialog {
     */
    public final void setInput(Object input) {
       this.input = input;
-      if (treeViewer != null) treeViewer.getViewer().setInput(input);
+      if (treeViewer != null) {
+         treeViewer.getViewer().setInput(input);
+      }
    }
 
    /**
@@ -83,7 +88,9 @@ public class XCheckFilteredTreeDialog extends MessageDialog {
    }
 
    public Object[] getResult() {
-      if (treeViewer == null) return new Object[] {};
+      if (treeViewer == null) {
+         return new Object[] {};
+      }
       return treeViewer.getResult();
    }
 
@@ -101,8 +108,8 @@ public class XCheckFilteredTreeDialog extends MessageDialog {
       aiComp.setLayoutData(new GridData(GridData.FILL_BOTH));
 
       treeViewer =
-            new XCheckedFilteredTree(aiComp,
-                  SWT.MULTI | SWT.CHECK | SWT.READ_ONLY | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER, patternFilter);
+         new XCheckedFilteredTree(aiComp,
+            SWT.MULTI | SWT.CHECK | SWT.READ_ONLY | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER, patternFilter);
       treeViewer.getViewer().getTree().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
       treeViewer.getViewer().setContentProvider(contentProvider);
       treeViewer.getViewer().setLabelProvider(labelProvider);
@@ -111,21 +118,27 @@ public class XCheckFilteredTreeDialog extends MessageDialog {
       gd.heightHint = 400;
       treeViewer.getViewer().getTree().setLayoutData(gd);
       treeViewer.getViewer().addSelectionChangedListener(new ISelectionChangedListener() {
+         @Override
          public void selectionChanged(SelectionChangedEvent event) {
             updateStatusLabel();
          }
       });
-      if (input != null) treeViewer.getViewer().setInput(input);
-      if (initialSelections != null) treeViewer.setInitalChecked(initialSelections);
+      if (input != null) {
+         treeViewer.getViewer().setInput(input);
+      }
+      if (initialSelections != null) {
+         treeViewer.setInitalChecked(initialSelections);
+      }
       return parent;
    }
 
    protected void updateStatusLabel() {
       Result result = isComplete();
-      if (result.isFalse())
+      if (result.isFalse()) {
          statusLabel.setText(result.getText());
-      else
+      } else {
          statusLabel.setText("");
+      }
       statusLabel.getParent().layout();
       updateButtons();
    }
@@ -143,7 +156,9 @@ public class XCheckFilteredTreeDialog extends MessageDialog {
    }
 
    private void updateButtons() {
-      if (okButton != null) okButton.setEnabled(isComplete().isTrue());
+      if (okButton != null) {
+         okButton.setEnabled(isComplete().isTrue());
+      }
    }
 
    /**

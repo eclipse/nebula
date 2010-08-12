@@ -34,7 +34,9 @@ public class EnumStringMultiSelectionDialog extends CheckedTreeSelectionDialog {
    private Button replaceAllRadioButton;
    private Button deleteSelectedRadioButton;
    public static enum Selection {
-      AddSelection, ReplaceAll, DeleteSelected
+      AddSelection,
+      ReplaceAll,
+      DeleteSelected
    };
    private Selection selected = Selection.AddSelection;
    private boolean enableReplace = false;

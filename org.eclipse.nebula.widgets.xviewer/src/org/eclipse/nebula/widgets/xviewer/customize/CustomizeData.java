@@ -17,9 +17,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.eclipse.nebula.widgets.xviewer.Activator;
 import org.eclipse.nebula.widgets.xviewer.util.internal.OverlayUtil;
+import org.eclipse.nebula.widgets.xviewer.util.internal.OverlayUtil.Location;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
-import org.eclipse.nebula.widgets.xviewer.util.internal.OverlayUtil.Location;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -37,9 +37,6 @@ public class CustomizeData {
    protected FilterData filterData = new FilterData();
    protected ColumnFilterData columnFilterData = new ColumnFilterData();
 
-   /**
-    * @return the columnFilterData
-    */
    public ColumnFilterData getColumnFilterData() {
       return columnFilterData;
    }
@@ -48,6 +45,7 @@ public class CustomizeData {
    private final Map<String, Image> imageMap = new HashMap<String, Image>();
 
    public CustomizeData() {
+      // do nothing
    }
 
    public boolean isTableDefaultCustData() {
@@ -72,20 +70,26 @@ public class CustomizeData {
          return XViewerLib.getImage("customize.gif");
       }
       String index = "" + personal + isDefault;
-      if (imageMap.containsKey(index)) return imageMap.get(index);
+      if (imageMap.containsKey(index)) {
+         return imageMap.get(index);
+      }
       Image image = XViewerLib.getImage("customize.gif");
-      if (!personal) image =
+      if (!personal) {
+         image =
             new OverlayUtil(image, XViewerLib.getImageDescriptor("customizeG.gif"), Location.BOT_RIGHT).createImage();
-      if (isDefault) image =
+      }
+      if (isDefault) {
+         image =
             new OverlayUtil(image, XViewerLib.getImageDescriptor("customizeD.gif"), Location.TOP_RIGHT).createImage();
+      }
       imageMap.put(index, image);
       return image;
    }
 
    public String getXml(boolean visibleColumnsOnly) {
       StringBuffer sb =
-            new StringBuffer(
-                  "<XTreeProperties name=\"" + name + "\" namespace=\"" + nameSpace + "\" guid=\"" + guid + "\">");
+         new StringBuffer(
+            "<XTreeProperties name=\"" + name + "\" namespace=\"" + nameSpace + "\" guid=\"" + guid + "\">");
       sb.append(sortingData.getXml());
       sb.append(filterData.getXml());
       sb.append(columnFilterData.getXml());

@@ -29,7 +29,7 @@ public class ColumnData {
    Map<String, XViewerColumn> idToColumn = new HashMap<String, XViewerColumn>();
 
    private static Pattern pattern =
-         Pattern.compile("<" + XViewerColumn.XTREECOLUMN_TAG + ">(.*?)</" + XViewerColumn.XTREECOLUMN_TAG + ">");
+      Pattern.compile("<" + XViewerColumn.XTREECOLUMN_TAG + ">(.*?)</" + XViewerColumn.XTREECOLUMN_TAG + ">");
 
    public List<XViewerColumn> setFromXml(String xml) {
       columns.clear();

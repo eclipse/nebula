@@ -120,40 +120,40 @@ public class XViewerTest extends XViewer {
    private static List<IXViewerTestTask> getTestTasks() {
       List<IXViewerTestTask> tasks = new ArrayList<IXViewerTestTask>();
       tasks.add(new XViewerTestTask(RunDb.Test_Db, TaskType.Backup, getDate(), "org.eclipse.osee.test1", "10:03",
-            "run to test this", "Suite A", "mark@eclipse.com", 50));
+         "run to test this", "Suite A", "mark@eclipse.com", 50));
       tasks.add(new XViewerTestTask(RunDb.Production_Db, TaskType.Data_Exchange, getDate(), "org.eclipse.osee.test2",
-            "9:22", "run to test that", "Suite B", "john@eclipse.com", 0));
+         "9:22", "run to test that", "Suite B", "john@eclipse.com", 0));
       tasks.add(new XViewerTestTask(RunDb.Production_Db, TaskType.Backup, getDate(), "org.eclipse.osee.test4", "8:23",
-            "in this world", "Suite A", "john@eclipse.com", 50));
+         "in this world", "Suite A", "john@eclipse.com", 50));
       tasks.add(new XViewerTestTask(RunDb.Test_Db, TaskType.Backup, getDate(), "org.eclipse.osee.test3", "23:01",
-            "now is the time", "Suite B", "mike@eclipse.com", 30));
+         "now is the time", "Suite B", "mike@eclipse.com", 30));
       tasks.add(new XViewerTestTask(RunDb.Production_Db, TaskType.Db_Health, getDate(), "org.eclipse.osee.test5",
-            "7:32", "may be never", "Suite A", "steve@eclipse.com", 10));
+         "7:32", "may be never", "Suite A", "steve@eclipse.com", 10));
       tasks.add(new XViewerTestTask(RunDb.Test_Db, TaskType.Data_Exchange, getDate(), "org.eclipse.osee.test14",
-            "6:11", "how can this solve the problem", "Suite A", "steve@eclipse.com", 95));
+         "6:11", "how can this solve the problem", "Suite A", "steve@eclipse.com", 95));
       tasks.add(new XViewerTestTask(RunDb.Production_Db, TaskType.Backup, getDate(), "org.eclipse.osee.test6", "5:13",
-            "run to test this", "Suite B", "john@eclipse.com", 80));
+         "run to test this", "Suite B", "john@eclipse.com", 80));
       tasks.add(new XViewerTestTask(RunDb.Test_Db, TaskType.Db_Health, getDate(), "org.eclipse.osee.test12", "23:15",
-            "run to test this", "Suite A", "mike@eclipse.com", 90));
+         "run to test this", "Suite A", "mike@eclipse.com", 90));
       tasks.add(new XViewerTestTask(RunDb.Production_Db, TaskType.Backup, getDate(), "org.eclipse.osee.test13", "4:01",
-            "run to test this", "Suite B", "steve@eclipse.com", 100));
+         "run to test this", "Suite B", "steve@eclipse.com", 100));
       tasks.add(new XViewerTestTask(RunDb.Production_Db, TaskType.Data_Exchange, getDate(), "org.eclipse.osee.test11",
-            "3:16", "run to test this", "Suite A", "steve@eclipse.com", 53));
+         "3:16", "run to test this", "Suite A", "steve@eclipse.com", 53));
       tasks.add(new XViewerTestTask(RunDb.Test_Db, TaskType.Backup, getDate(), "org.eclipse.osee.test10", "5:01",
-            "run to test this", "Suite C", "mike@eclipse.com", 0));
+         "run to test this", "Suite C", "mike@eclipse.com", 0));
       tasks.add(new XViewerTestTask(RunDb.Production_Db, TaskType.Data_Exchange, getDate(), "org.eclipse.osee.test9",
-            "4:27", "run to test this", "Suite C", "steve@eclipse.com", 90));
+         "4:27", "run to test this", "Suite C", "steve@eclipse.com", 90));
       tasks.add(new XViewerTestTask(RunDb.Production_Db, TaskType.Regression, getDate(), "org.eclipse.osee.test7",
-            "2:37", "run to test this", "Suite C", "john@eclipse.com", 20));
+         "2:37", "run to test this", "Suite C", "john@eclipse.com", 20));
       int num = 10;
       for (String str : Arrays.asList("Now", "Cat", "Dog", "Tree", "Bike", "Sun", "Moon", "Grass", "Can", "Car",
-            "Truck", "Block", "Earth", "Mars", "Venus", "Requirements visualization", "Requirements management",
-            "Feature management", "Modeling", "Design", "Project Management", "Change management",
-            "Configuration Management", "Software Information Management", "Build management", "Testing",
-            "Release Management", "Software Deployment", "Issue management", "Monitoring and reporting", "Workflow")) {
+         "Truck", "Block", "Earth", "Mars", "Venus", "Requirements visualization", "Requirements management",
+         "Feature management", "Modeling", "Design", "Project Management", "Change management",
+         "Configuration Management", "Software Information Management", "Build management", "Testing",
+         "Release Management", "Software Deployment", "Issue management", "Monitoring and reporting", "Workflow")) {
          tasks.add(new XViewerTestTask(RunDb.Test_Db, TaskType.Db_Health, getDate(), "org.eclipse.osee." + str,
-               "24:" + num++, str + " will run to test this", "Suite C" + num++,
-               str.toLowerCase().replaceAll(" ", ".") + "@eclipse.com", 20));
+            "24:" + num++, str + " will run to test this", "Suite C" + num++,
+            str.toLowerCase().replaceAll(" ", ".") + "@eclipse.com", 20));
       }
       return tasks;
    }

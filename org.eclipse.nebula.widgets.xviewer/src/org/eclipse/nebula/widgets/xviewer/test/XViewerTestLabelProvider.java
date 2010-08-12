@@ -35,39 +35,70 @@ public class XViewerTestLabelProvider extends XViewerLabelProvider {
    @Override
    public String getColumnText(Object element, XViewerColumn xCol, int columnIndex) {
       if (element instanceof String) {
-         if (columnIndex == 1)
+         if (columnIndex == 1) {
             return (String) element;
-         else
+         } else {
             return "";
+         }
       }
       IXViewerTestTask task = ((IXViewerTestTask) element);
-      if (task == null) return "";
-      if (xCol.equals(XViewerTestFactory.Run_Col)) return String.valueOf(xViewerTest.isRun(task));
-      if (xCol.equals(XViewerTestFactory.Name_Col)) return task.getId();
-      if (xCol.equals(XViewerTestFactory.Schedule_Time)) return task.getStartTime();
-      if (xCol.equals(XViewerTestFactory.Run_Db)) return task.getRunDb().name();
-      if (xCol.equals(XViewerTestFactory.Task_Type)) return task.getTaskType().name();
-      if (xCol.equals(XViewerTestFactory.Description)) return task.getDescription();
-      if (xCol.equals(XViewerTestFactory.Category)) return task.getCategory();
-      if (xCol.equals(XViewerTestFactory.Notification)) return task.getEmailAddress();
-      if (xCol.equals(XViewerTestFactory.Last_Run_Date)) return task.getLastRunDateStr();
-      if (xCol.equals(XViewerTestFactory.Completed_Col)) return String.valueOf(task.getPercentComplete());
+      if (task == null) {
+         return "";
+      }
+      if (xCol.equals(XViewerTestFactory.Run_Col)) {
+         return String.valueOf(xViewerTest.isRun(task));
+      }
+      if (xCol.equals(XViewerTestFactory.Name_Col)) {
+         return task.getId();
+      }
+      if (xCol.equals(XViewerTestFactory.Schedule_Time)) {
+         return task.getStartTime();
+      }
+      if (xCol.equals(XViewerTestFactory.Run_Db)) {
+         return task.getRunDb().name();
+      }
+      if (xCol.equals(XViewerTestFactory.Task_Type)) {
+         return task.getTaskType().name();
+      }
+      if (xCol.equals(XViewerTestFactory.Description)) {
+         return task.getDescription();
+      }
+      if (xCol.equals(XViewerTestFactory.Category)) {
+         return task.getCategory();
+      }
+      if (xCol.equals(XViewerTestFactory.Notification)) {
+         return task.getEmailAddress();
+      }
+      if (xCol.equals(XViewerTestFactory.Last_Run_Date)) {
+         return task.getLastRunDateStr();
+      }
+      if (xCol.equals(XViewerTestFactory.Completed_Col)) {
+         return String.valueOf(task.getPercentComplete());
+      }
       return "unhandled column";
    }
 
+   @Override
    public void dispose() {
-      if (font != null) font.dispose();
+      if (font != null) {
+         font.dispose();
+      }
       font = null;
    }
 
+   @Override
    public boolean isLabelProperty(Object element, String property) {
       return false;
    }
 
+   @Override
    public void addListener(ILabelProviderListener listener) {
+      // do nothing
    }
 
+   @Override
    public void removeListener(ILabelProviderListener listener) {
+      // do nothing
    }
 
    @Override
@@ -88,7 +119,9 @@ public class XViewerTestLabelProvider extends XViewerLabelProvider {
 
    @Override
    public int getColumnGradient(Object element, XViewerColumn xCol, int columnIndex) throws Exception {
-      if (!(element instanceof IXViewerTestTask)) return 0;
+      if (!(element instanceof IXViewerTestTask)) {
+         return 0;
+      }
       IXViewerTestTask task = ((IXViewerTestTask) element);
       if (xCol.equals(XViewerTestFactory.Completed_Col)) {
          return task.getPercentComplete();

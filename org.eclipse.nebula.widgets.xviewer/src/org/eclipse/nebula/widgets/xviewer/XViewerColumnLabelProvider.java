@@ -19,25 +19,36 @@ import org.eclipse.swt.graphics.Image;
  */
 public class XViewerColumnLabelProvider implements ILabelProvider {
 
+   @Override
    public void dispose() {
+      // do nothing
    }
 
+   @Override
    public boolean isLabelProperty(Object element, String property) {
       return false;
    }
 
+   @Override
    public void addListener(ILabelProviderListener listener) {
+      // do nothing
    }
 
+   @Override
    public void removeListener(ILabelProviderListener listener) {
+      // do nothing
    }
 
+   @Override
    public Image getImage(Object element) {
       return null;
    }
 
+   @Override
    public String getText(Object element) {
-      if (!(element instanceof XViewerColumn)) return "";
+      if (!(element instanceof XViewerColumn)) {
+         return "";
+      }
       XViewerColumn xCol = (XViewerColumn) element;
       return xCol.getDisplayName();
    }

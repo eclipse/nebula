@@ -30,20 +30,19 @@ import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
  */
 public class XViewerTestCustomizations extends XViewerCustomizations {
 
-   public XViewerTestCustomizations() {
-   }
-
    @Override
    public void deleteCustomization(CustomizeData custData) throws Exception {
       File file = new File(getFilename(custData));
-      if (file.exists()) file.delete();
+      if (file.exists()) {
+         file.delete();
+      }
    }
 
    @Override
    public List<CustomizeData> getSavedCustDatas() {
       List<CustomizeData> custDatas = new ArrayList<CustomizeData>();
       for (String filename : XViewerLib.readListFromDir(new File("C:/UserData/"), new MatchFilter("CustData_.*\\.xml"),
-            true)) {
+         true)) {
          custDatas.add(new CustomizeData(FileUtil.readFile("C:/UserData/" + filename)));
       }
       return custDatas;
@@ -52,7 +51,9 @@ public class XViewerTestCustomizations extends XViewerCustomizations {
    @Override
    public CustomizeData getUserDefaultCustData() {
       File file = new File(getDefaultFilename());
-      if (!file.exists()) return null;
+      if (!file.exists()) {
+         return null;
+      }
       String defaultGuid = FileUtil.readFile(file).replaceAll("\\s", "");
       if (defaultGuid != null) {
          for (CustomizeData custData : getSavedCustDatas()) {
@@ -72,7 +73,9 @@ public class XViewerTestCustomizations extends XViewerCustomizations {
    @Override
    public boolean isCustomizationUserDefault(CustomizeData custData) {
       File file = new File(getDefaultFilename());
-      if (!file.exists()) return false;
+      if (!file.exists()) {
+         return false;
+      }
       String defaultGuid = FileUtil.readFile(getDefaultFilename()).replaceAll("\\s", "");
       return custData.getGuid().equals(defaultGuid);
    }

@@ -58,9 +58,10 @@ public class XViewerLib {
          XViewerLog.log(Activator.class, Level.SEVERE, message);
       } else {
          ensureInDisplayThread(new Runnable() {
+            @Override
             public void run() {
                MessageDialog.openInformation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), title,
-                     message);
+                  message);
             }
          });
       }
@@ -182,7 +183,9 @@ public class XViewerLib {
    }
 
    public static boolean isDisplayThread() {
-      if (Display.getCurrent() == null) return false;
+      if (Display.getCurrent() == null) {
+         return false;
+      }
 
       return Display.getCurrent().getThread() == Thread.currentThread();
    }

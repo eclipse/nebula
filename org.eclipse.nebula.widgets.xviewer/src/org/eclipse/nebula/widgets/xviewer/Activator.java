@@ -29,12 +29,6 @@ public class Activator extends AbstractUIPlugin {
    protected static final String imagePath = "images/";
    private ImageRegistry imageRegistry;
 
-   /**
-    * The constructor
-    */
-   public Activator() {
-   }
-
    @Override
    public void start(BundleContext context) throws Exception {
       super.start(context);

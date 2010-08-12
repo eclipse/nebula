@@ -21,25 +21,34 @@ import org.eclipse.swt.graphics.Image;
  */
 public class StringLabelProvider implements ILabelProvider {
 
+   @Override
    public Image getImage(Object arg0) {
       return null;
    }
 
+   @Override
    public String getText(Object arg0) {
       return ((String) arg0);
    }
 
+   @Override
    public void addListener(ILabelProviderListener arg0) {
+      // do nothing
    }
 
+   @Override
    public void dispose() {
+      // do nothing
    }
 
+   @Override
    public boolean isLabelProperty(Object arg0, String arg1) {
       return false;
    }
 
+   @Override
    public void removeListener(ILabelProviderListener arg0) {
+      // do nothing
    }
 
 }

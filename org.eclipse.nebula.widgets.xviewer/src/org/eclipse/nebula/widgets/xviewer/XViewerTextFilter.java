@@ -41,7 +41,7 @@ public class XViewerTextFilter extends ViewerFilter {
          textPattern = null;
       } else {
          textPattern =
-               Pattern.compile(xViewer.getCustomizeMgr().getFilterText(), Pattern.LITERAL | Pattern.CASE_INSENSITIVE);
+            Pattern.compile(xViewer.getCustomizeMgr().getFilterText(), Pattern.LITERAL | Pattern.CASE_INSENSITIVE);
       }
       // Update column filter patterns
       colIdToPattern.clear();
@@ -57,8 +57,8 @@ public class XViewerTextFilter extends ViewerFilter {
                if (colFilterText.equals("")) {
                   colIdToPattern.put(colId, NOT_EMPTY_STR_PATTERN);
                } else {
-                  colIdToPattern.put(colId, Pattern.compile("^(.(?<!" + colFilterText + "))*$",
-                        Pattern.CASE_INSENSITIVE));
+                  colIdToPattern.put(colId,
+                     Pattern.compile("^(.(?<!" + colFilterText + "))*$", Pattern.CASE_INSENSITIVE));
                }
             }
             // Handle normal case
@@ -67,7 +67,7 @@ public class XViewerTextFilter extends ViewerFilter {
                   colIdToPattern.put(colId, EMPTY_STR_PATTERN);
                } else {
                   colIdToPattern.put(colId, Pattern.compile(
-                        xViewer.getCustomizeMgr().getColumnFilterData().getFilterText(colId), Pattern.CASE_INSENSITIVE));
+                     xViewer.getCustomizeMgr().getColumnFilterData().getFilterText(colId), Pattern.CASE_INSENSITIVE));
                }
             }
          }
@@ -88,7 +88,7 @@ public class XViewerTextFilter extends ViewerFilter {
             // Check column filters
             if (colIdToPattern.keySet().contains(xCol.getId())) {
                String cellStr =
-                     xViewer.getColumnText(element, xViewer.getCustomizeMgr().getColumnNumFromXViewerColumn(xCol));
+                  xViewer.getColumnText(element, xViewer.getCustomizeMgr().getColumnNumFromXViewerColumn(xCol));
                if (cellStr != null) {
                   matcher = colIdToPattern.get(xCol.getId()).matcher(cellStr);
                   if (!matcher.find()) {
@@ -109,7 +109,7 @@ public class XViewerTextFilter extends ViewerFilter {
             if (xCol.isShow()) {
                // Check text filter
                String cellStr =
-                     xViewer.getColumnText(element, xViewer.getCustomizeMgr().getColumnNumFromXViewerColumn(xCol));
+                  xViewer.getColumnText(element, xViewer.getCustomizeMgr().getColumnNumFromXViewerColumn(xCol));
                if (cellStr != null) {
                   matcher = textPattern.matcher(cellStr);
                   if (matcher.find()) return true;

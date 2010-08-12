@@ -32,11 +32,6 @@ public class XCheckedFilteredTree extends FilteredTree {
 
    private final Set<Object> checked = new HashSet<Object>();
 
-   /**
-    * @param parent
-    * @param treeStyle
-    * @param filter
-    */
    public XCheckedFilteredTree(Composite parent, int treeStyle, PatternFilter filter) {
       super(parent, treeStyle, filter, true);
       setInitialText("");
@@ -46,6 +41,7 @@ public class XCheckedFilteredTree extends FilteredTree {
    protected Control createTreeControl(Composite parent, int style) {
       Control control = super.createTreeControl(parent, style);
       getViewer().addSelectionChangedListener(new ISelectionChangedListener() {
+         @Override
          public void selectionChanged(SelectionChangedEvent event) {
             storeResults(treeViewer.getTree().getItems());
          }

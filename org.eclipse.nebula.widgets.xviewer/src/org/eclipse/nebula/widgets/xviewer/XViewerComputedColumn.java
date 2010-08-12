@@ -66,8 +66,8 @@ public abstract class XViewerComputedColumn extends XViewerValueColumn {
             return;
          }
       }
-      XViewerLog.log(Activator.class, Level.SEVERE, String.format(
-            "Can't resolve sourceColumn for XViewerComputedColumn [%s]", this));
+      XViewerLog.log(Activator.class, Level.SEVERE,
+         String.format("Can't resolve sourceColumn for XViewerComputedColumn [%s]", this));
 
    }
 

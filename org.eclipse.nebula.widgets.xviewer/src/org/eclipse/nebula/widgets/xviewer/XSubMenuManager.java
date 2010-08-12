@@ -20,21 +20,21 @@ public class XSubMenuManager extends MenuManager {
 
    private boolean visible = true;
 
-   /**
-    * @param string
-    */
    public XSubMenuManager(String string) {
       super(string);
    }
 
+   @Override
    public boolean isEnabled() {
       return true;
    }
 
+   @Override
    public boolean isVisible() {
       return visible;
    }
 
+   @Override
    public void setVisible(boolean visible) {
       this.visible = visible;
    }
