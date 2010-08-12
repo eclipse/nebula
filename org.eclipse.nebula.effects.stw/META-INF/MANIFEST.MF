@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Stw
+Bundle-SymbolicName: org.eclipse.nebula.effects.stw
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: org.eclipse.swt;bundle-version="3.6.0"
+Export-Package: org.eclipse.nebula.effects.stw;
+  uses:="org.eclipse.swt.events,
+   org.eclipse.swt.custom,
+   org.eclipse.swt.graphics,
+   org.eclipse.swt.widgets",
+ org.eclipse.nebula.effects.stw.transitions;uses:="org.eclipse.swt.graphics,org.eclipse.nebula.effects.stw"

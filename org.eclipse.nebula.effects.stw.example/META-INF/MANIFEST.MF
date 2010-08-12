@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Example
+Bundle-SymbolicName: org.eclipse.nebula.effects.stw.example
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: org.eclipse.nebula.effects.stw;bundle-version="1.0.0",
+ org.eclipse.swt;bundle-version="3.6.0"
