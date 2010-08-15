@@ -83,6 +83,9 @@ public class DateChooserExampleTab extends AbstractExampleTab {
 		return cb;
 	}
 
+	/**
+	 * @wbp.parser.entryPoint
+	 */
 	public Control createControl(Composite parent) {
 		int style = SWT.None;
 		if ( borderStyle.getSelection() ) {

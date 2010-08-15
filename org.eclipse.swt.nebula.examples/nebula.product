@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Nebula Examples" id="org.eclipse.swt.nebula.examples.nebula_examples" application="org.eclipse.swt.nebula.examples.application" version="1.0.0" useFeatures="true">
+<product name="Nebula Examples" id="org.eclipse.swt.nebula.examples.nebula_examples" application="org.eclipse.swt.nebula.examples.application" version="1.0.0" useFeatures="true" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
@@ -37,17 +37,17 @@
       <plugin id="org.eclipse.equinox.registry"/>
       <plugin id="org.eclipse.jface"/>
       <plugin id="org.eclipse.jface.databinding"/>
-      <plugin id="org.eclipse.nebula.widgets.calendarcombo"/>
+      <plugin id="org.eclipse.nebula.widgets.calendarcombo" fragment=""/>
       <plugin id="org.eclipse.nebula.widgets.cdatetime"/>
-      <plugin id="org.eclipse.nebula.widgets.collapsiblebuttons" fragment=""/>
-      <plugin id="org.eclipse.nebula.widgets.compositetable"/>
+      <plugin id="org.eclipse.nebula.widgets.collapsiblebuttons"/>
+      <plugin id="org.eclipse.nebula.widgets.compositetable" fragment=""/>
       <plugin id="org.eclipse.nebula.widgets.compositetable.tests" fragment=""/>
-      <plugin id="org.eclipse.nebula.widgets.ctree"/>
+      <plugin id="org.eclipse.nebula.widgets.ctree" fragment=""/>
       <plugin id="org.eclipse.nebula.widgets.datechooser"/>
       <plugin id="org.eclipse.nebula.widgets.formattedtext"/>
       <plugin id="org.eclipse.nebula.widgets.gallery"/>
-      <plugin id="org.eclipse.nebula.widgets.gallery.tests"/>
-      <plugin id="org.eclipse.nebula.widgets.ganttchart"/>
+      <plugin id="org.eclipse.nebula.widgets.gallery.tests" fragment=""/>
+      <plugin id="org.eclipse.nebula.widgets.ganttchart" fragment=""/>
       <plugin id="org.eclipse.nebula.widgets.grid"/>
       <plugin id="org.eclipse.nebula.widgets.pgroup"/>
       <plugin id="org.eclipse.nebula.widgets.pshelf"/>
@@ -61,7 +61,7 @@
 
    <features>
       <feature id="org.eclipse.rcp"/>
-      <feature id="org.eclipse.nebula.examples_feature" version="1.0.0"/>
+      <feature id="org.eclipse.nebula.examples_feature"/>
    </features>
 
 

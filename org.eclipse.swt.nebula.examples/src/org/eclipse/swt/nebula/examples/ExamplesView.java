@@ -7,9 +7,15 @@
  *
  * Contributors:
  *    chris.gross@us.ibm.com - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.swt.nebula.examples;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -32,103 +38,114 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * 
  * @author cgross
  */
-public class ExamplesView extends ViewPart
-{
+public class ExamplesView extends ViewPart {
 
-    private TabFolder tabFolder;
-    private static ImageRegistry imgRegistry = new ImageRegistry();
-    private static FontRegistry  fontRegistry = new FontRegistry();
+	private TabFolder tabFolder;
+	private static ImageRegistry imgRegistry = new ImageRegistry();
+	private static FontRegistry fontRegistry = new FontRegistry();
 
-    public ExamplesView()
-    {
-        super();
-        
-    }
+	public ExamplesView() {
+		super();
 
-    public void createPartControl(Composite parent)
-    {
-        
-        tabFolder = new TabFolder(parent,SWT.TOP);
-        IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.swt.nebula.examples.examples");
-        
-        for (int i = 0; i < elements.length; i++) {
-            IConfigurationElement element = elements[i];
-            
-            TabItem item = new TabItem(tabFolder,SWT.NONE);
-            item.setText(element.getAttribute("name"));
-            
-            try {
-                final AbstractExampleTab part = (AbstractExampleTab) element.createExecutableExtension("class");
-                
-                Composite client = new Composite(tabFolder,SWT.NONE);
-                part.create(client);
-                
-                item.setControl(client);
-                
-            } catch (CoreException e) {
-                e.printStackTrace();
-            }
-        }
-        
-        tabFolder.setSelection(tabFolder.getItem(0));
-        
-    }
-    
+	}
 
-    public void setFocus()
-    {
-        tabFolder.setFocus();
-    }
-    
-    /**
-     * Returns an image descriptor for the image file at the given
-     * plug-in relative path.
-     *
-     * @param path the path
-     * @return the image descriptor
-     */
-    public static ImageDescriptor getImageDescriptor(String path) {
-        return AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.swt.nebula.examples", path);
-    }
-    
-    /**
-     * Returns an image for the image file at the given plug-in relative path.  This image is 
-     * maintained in an ImageRegistry and will automatically be disposed.
-     * 
-     * @param path the path
-     * @return the image
-     */
-    public static Image getImage(String path){
-        Image i = imgRegistry.get(path);
-        
-        if (i == null){
-            ImageDescriptor id = getImageDescriptor(path);
-            if (id == null) return null;
-            
-            i = id.createImage();
-            imgRegistry.put(path,i);
-        }
-        
-        return i;        
-    }
+	public void createPartControl(Composite parent) {
 
-    /**
-     * Returns a Font for the specified lookup key.
-     * @param fontLookupKey
-     * @return
-     */
-    public static Font getFont(String fontLookupKey) {
-    	return fontRegistry.get(fontLookupKey);
-    }
-    
+		tabFolder = new TabFolder(parent, SWT.TOP);
+		IConfigurationElement[] elements = Platform.getExtensionRegistry()
+				.getConfigurationElementsFor(
+						"org.eclipse.swt.nebula.examples.examples");
+		HashMap elementsMap = new HashMap();
 
-    /**
-     * Sets FontData[] for the specified lookup key.
-     * @param fontLookupKey
-     * @return
-     */
-    public static void setFont(String fontLookupKey, FontData[] fontData) {
-    	fontRegistry.put(fontLookupKey, fontData);
-    }
-    
+		for (int i = 0; i < elements.length; i++) {
+			elementsMap.put(elements[i].getAttribute("name"), elements[i]);
+		}
+
+		Map sortedElements = new TreeMap(elementsMap);
+		Iterator iter = sortedElements.entrySet().iterator();
+		while (iter.hasNext()) {
+			IConfigurationElement element = (IConfigurationElement) ((Map.Entry) iter
+					.next()).getValue();
+			TabItem item = new TabItem(tabFolder, SWT.NONE);
+			item.setText(element.getAttribute("name"));
+
+			try {
+				final AbstractExampleTab part = (AbstractExampleTab) element
+						.createExecutableExtension("class");
+
+				Composite client = new Composite(tabFolder, SWT.NONE);
+				part.create(client);
+
+				item.setControl(client);
+
+			} catch (CoreException e) {
+				e.printStackTrace();
+			}
+		}
+
+		tabFolder.setSelection(tabFolder.getItem(0));
+
+	}
+
+	public void setFocus() {
+		tabFolder.setFocus();
+	}
+
+	/**
+	 * Returns an image descriptor for the image file at the given plug-in
+	 * relative path.
+	 * 
+	 * @param path
+	 *            the path
+	 * @return the image descriptor
+	 */
+	public static ImageDescriptor getImageDescriptor(String path) {
+		return AbstractUIPlugin.imageDescriptorFromPlugin(
+				"org.eclipse.swt.nebula.examples", path);
+	}
+
+	/**
+	 * Returns an image for the image file at the given plug-in relative path.
+	 * This image is maintained in an ImageRegistry and will automatically be
+	 * disposed.
+	 * 
+	 * @param path
+	 *            the path
+	 * @return the image
+	 */
+	public static Image getImage(String path) {
+		Image i = imgRegistry.get(path);
+
+		if (i == null) {
+			ImageDescriptor id = getImageDescriptor(path);
+			if (id == null)
+				return null;
+
+			i = id.createImage();
+			imgRegistry.put(path, i);
+		}
+
+		return i;
+	}
+
+	/**
+	 * Returns a Font for the specified lookup key.
+	 * 
+	 * @param fontLookupKey
+	 * @return
+	 */
+	public static Font getFont(String fontLookupKey) {
+		return fontRegistry.get(fontLookupKey);
+	}
+
+	/**
+	 * Sets FontData[] for the specified lookup key.
+	 * 
+	 * @param fontLookupKey
+	 * @return
+	 */
+	public static void setFont(String fontLookupKey, FontData[] fontData) {
+		fontRegistry.put(fontLookupKey, fontData);
+	}
+
 }
