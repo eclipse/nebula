@@ -24,10 +24,27 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 
+/**
+ * <i>An oscilloscope (also known as a scope, CRO or, an O-scope) is a type of
+ * electronic test instrument that allows observation of constantly varying
+ * signal voltages, usually as a two-dimensional graph of one or more electrical
+ * potential differences using the vertical or 'Y' axis, plotted as a function
+ * of time, (horizontal or 'x' axis).</i>
+ * <p/>
+ * <a href="http://en.wikipedia.org/wiki/Oscilloscope">http://en.wikipedia.org/
+ * wiki/Oscilloscope<a/>
+ * 
+ * @author Wim.Jongman (@remainsoftware.com)
+ * 
+ */
 public class Oscilloscope extends Canvas {
 
-	public static final int DEFAULT_WIDTH = 60;
-	public static final int DEFAULT_HEIGHT = 40;
+	public static final int DEFAULT_WIDTH = 180;
+	public static final int DEFAULT_HEIGHT = 100;
+
+	/**
+	 * The default amount of tail fading in percentages.
+	 */
 	public static final int DEFAULT_TAILFADE = 25;
 
 	private Color bg;
@@ -52,18 +69,25 @@ public class Oscilloscope extends Canvas {
 	 * This set of values will draw a figure that is similar to the heart beat
 	 * that you see on hospital monitors.
 	 */
-	public static final int[] HEARTBEAT = new int[] { 2, 10, 2, -16, 16, 50,
-			64, 50, 32, 14, -16, -38, -56, -54, -32, -10, 8, 6, 6, -2, 6, 4, 2,
+	public static final int[] HEARTBEAT = new int[] { 2, 10, 2, -16, 16, 44,
+			49, 44, 32, 14, -16, -38, -49, -47, -32, -10, 8, 6, 6, -2, 6, 4, 2,
 			0, 0, 6, 8, 6 };
-	/**
-	 * The default tail size is 75% of the width.
-	 */
-	public static final int TAILSIZE_DEFAULT = -3;
-
 	/**
 	 * Will draw a maximum tail.
 	 */
 	public static final int TAILSIZE_MAX = -1;
+
+	/**
+	 * Will draw a tail from the left border but is only valid if the boolean in
+	 * {@link #setSteady(boolean, int)} was set to true, will default to
+	 * {@link #TAILSIZE_MAX} otherwise.
+	 */
+	public static final int TAILSIZE_FILL = -2;
+
+	/**
+	 * The default tail size is 75% of the width.
+	 */
+	public static final int TAILSIZE_DEFAULT = -3;
 
 	/**
 	 * Steady position @ 75% of graph.
@@ -71,16 +95,9 @@ public class Oscilloscope extends Canvas {
 	public static final int STEADYPOSITION_75PERCENT = -1;
 
 	/**
-	 * Will draw a tail from the left border but is only valid of
-	 * {@link #setSteady(boolean, int)} was set to true, will default to
-	 * {@link #TAILSIZE_MAX} otherwise.
-	 */
-	public static final int TAILSIZE_FILL = -2;
-
-	/**
 	 * The stack will not overflow if you push too many values into it but it
 	 * will rotate and overwrite the older values. Think of the stack as a
-	 * closed loop with one hole to push values in and one that lets them out.
+	 * closed ring with one hole to push values in and one that lets them out.
 	 * 
 	 */
 	public class IntegerFiFoCircularStack {
@@ -247,7 +264,6 @@ public class Oscilloscope extends Canvas {
 	}
 
 	protected void paintControl(PaintEvent e) {
-
 		if (tailSize <= 0) {
 			stack.pop(0);
 			return;
@@ -336,7 +352,7 @@ public class Oscilloscope extends Canvas {
 
 	/**
 	 * @return boolean, true if the tail and the head of the graph must be
-	 *         connected.
+	 *         connected if tail size is {@link #TAILSIZE_MAX} no fading graph.
 	 */
 	public boolean isConnect() {
 		return connect;
@@ -460,6 +476,10 @@ public class Oscilloscope extends Canvas {
 	 * @see #TAILSIZE_MAX
 	 */
 	public void setTailSize(int size) {
+
+		if (size == TAILSIZE_FILL && !isSteady())
+			size = TAILSIZE_MAX;
+
 		if (originalTailSize != size) {
 			tailSizeCheck(size);
 			originalTailSize = size;
@@ -473,10 +493,18 @@ public class Oscilloscope extends Canvas {
 	}
 
 	private void setTailSizeInternal() {
+
 		if (originalTailSize == TAILSIZE_DEFAULT) {
 			tail = new int[(width / 4) * 3];
 			tailSize = (width / 4) * 3;
 			tailSize--;
+		} else if (originalTailSize == TAILSIZE_FILL) {
+			if (isSteady()) {
+				tailSize = originalSteadyPosition - 1;
+			} else { // act as if TAILSIZE_MAX
+				tail = new int[width - 2 + 1];
+				tailSize = width - 2;
+			}
 		} else if (originalTailSize == TAILSIZE_MAX || originalTailSize > width) {
 			tail = new int[width - 2 + 1];
 			tailSize = width - 2;
@@ -490,8 +518,13 @@ public class Oscilloscope extends Canvas {
 
 		if (wHint != SWT.DEFAULT)
 			width = wHint;
+		else
+			width = DEFAULT_WIDTH;
+
 		if (hHint != SWT.DEFAULT)
 			height = hHint;
+		else
+			height = DEFAULT_HEIGHT;
 
 		setSizeInternal(width, height);
 
@@ -522,9 +555,9 @@ public class Oscilloscope extends Canvas {
 	}
 
 	/**
-	 * If set to true then the values are treated as percentages rather than
-	 * absolute values. This will scale the amplitudes if the control is
-	 * resized. Default is false.
+	 * If set to true then the values are treated as percentages of the
+	 * available space rather than absolute values. This will scale the
+	 * amplitudes if the control is resized. Default is false.
 	 * 
 	 * @param boolean percentage
 	 */
@@ -555,6 +588,7 @@ public class Oscilloscope extends Canvas {
 				this.cursor = (int) ((double) width * (double) 0.75);
 			else if (steadyPosition > 0 && steadyPosition < width)
 				this.cursor = steadyPosition;
+		// setTailSizeInternal();
 	}
 
 	/**
