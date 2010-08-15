@@ -11,7 +11,7 @@
  ******************************************************************************/
 package org.eclipse.nebula.widgets.oscilloscope.snippets;
 
-import java.util.Random;
+import java.io.File;
 
 import org.eclipse.nebula.widgets.oscilloscope.Oscilloscope;
 import org.eclipse.nebula.widgets.oscilloscope.OscilloscopeDispatcher;
@@ -30,7 +30,8 @@ public class Snippet3 {
 	final String HEARTBEAT = "74829__jobro__Heartbeat.wav";
 	final String FLATLINE = "Beep EKG Flatline 1.WAV";
 	final String BEEP = "25882__acclivity__Beep1000.wav";
-
+	protected final File BEEPFILE = new File(BEEP);
+	
 	protected Shell shell;
 
 	/**
@@ -102,8 +103,8 @@ public class Snippet3 {
 				scope.setValues(Oscilloscope.HEARTBEAT);
 			}
 
-			public String getActiveSoundfile() {
-				return "74829__jobro__Heartbeat.wav"; // add to classpath
+			public File getActiveSoundfile() {
+				return new File("74829__jobro__Heartbeat.wav"); // add to classpath
 			};
 
 			@Override
@@ -112,7 +113,7 @@ public class Snippet3 {
 			}
 
 			@Override
-			public Oscilloscope getOSGilloscope() {
+			public Oscilloscope getOscilloscope() {
 				return scope;
 			}
 		}.dispatch();

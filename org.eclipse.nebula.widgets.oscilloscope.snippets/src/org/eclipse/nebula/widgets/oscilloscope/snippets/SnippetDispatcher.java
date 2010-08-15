@@ -12,6 +12,7 @@
 package org.eclipse.nebula.widgets.oscilloscope.snippets;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.util.Random;
 
 import org.eclipse.nebula.widgets.oscilloscope.Oscilloscope;
@@ -23,6 +24,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
@@ -93,12 +95,60 @@ public abstract class SnippetDispatcher extends OscilloscopeDispatcher {
 		TabItem tabItem2 = new TabItem(tabFolder, SWT.NONE);
 		tabItem2.setText("Settings");
 
-		ScrolledComposite group2 = new ScrolledComposite(tabFolder,
-				SWT.H_SCROLL | SWT.V_SCROLL);
-		tabItem2.setControl(group2);
+		tabItem2.setControl(getSettings(tabFolder));
+
+		init();
+
+		Runnable runnable = new Runnable() {
+			int pulse = 0;
+
+			public void run() {
+
+				getOscilloscope().setPercentage(isPercentage());
+				getOscilloscope().setTailSize(
+						isTailSizeMax() ? Oscilloscope.TAILSIZE_MAX
+								: getTailSize());
+				getOscilloscope().setSteady(isSteady(), getSteadyPosition());
+				getOscilloscope().setFade(getFade());
+				getOscilloscope().setTailFade(getTailFade());
+				getOscilloscope().setConnect(mustConnect());
+				getOscilloscope().setLineWidth(getLineWidth());
+
+				getOscilloscope().redraw();
+				pulse++;
+
+				if (pulse == getPulse()) {
+					pulse = 0;
+					if (isServiceActive()) {
+						getOscilloscope().setForeground(
+								getOscilloscope().getDisplay().getSystemColor(
+										SWT.COLOR_GREEN));
+						setValue(pulse);
+						if (isSoundRequired())
+							clipper.playClip(getActiveSoundfile(), 0);
+					} else {
+						if (isSoundRequired())
+							clipper.playClip(getInactiveSoundfile(), 0);
+						getOscilloscope().setForeground(
+								getOscilloscope().getDisplay().getSystemColor(
+										SWT.COLOR_RED));
+					}
+				}
+				getOscilloscope().getDisplay().timerExec(getDelayloop(), this);
+			}
+		};
+		getOscilloscope().getDisplay().timerExec(getDelayloop(), runnable);
+
+	}
+
+	private Control getSettings(Composite parent) {
+		ScrolledComposite group2 = new ScrolledComposite(parent, SWT.H_SCROLL
+				| SWT.V_SCROLL);
+
 		group2.setExpandVertical(true);
 		group2.setExpandHorizontal(true);
 
+		;
 		// group2.setShowFocusedControl(true);
 		// group2.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
 		// group2.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
@@ -247,51 +297,11 @@ public abstract class SnippetDispatcher extends OscilloscopeDispatcher {
 		group2.setContent(group2a);
 		group2.setMinSize(group2a.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 
-		init();
-
-		Runnable runnable = new Runnable() {
-			int pulse = 0;
-
-			public void run() {
-
-				getOSGilloscope().setPercentage(isPercentage());
-				getOSGilloscope().setTailSize(
-						isTailSizeMax() ? Oscilloscope.TAILSIZE_MAX
-								: getTailSize());
-				getOSGilloscope().setSteady(isSteady(), getSteadyPosition());
-				getOSGilloscope().setFade(getFade());
-				getOSGilloscope().setTailFade(getTailFade());
-				getOSGilloscope().setConnect(mustConnect());
-				getOSGilloscope().setLineWidth(getLineWidth());
-
-				getOSGilloscope().redraw();
-				pulse++;
-
-				if (pulse == getPulse()) {
-					pulse = 0;
-					if (isServiceActive()) {
-						getOSGilloscope().setForeground(
-								getOSGilloscope().getDisplay().getSystemColor(
-										SWT.COLOR_GREEN));
-						setValue(pulse);
-						if (isSoundRequired())
-							clipper.playClip(getActiveSoundfile(), 0);
-					} else {
-						if (isSoundRequired())
-							clipper.playClip(getInactiveSoundfile(), 0);
-						getOSGilloscope().setForeground(
-								getOSGilloscope().getDisplay().getSystemColor(
-										SWT.COLOR_RED));
-					}
-				}
-				getOSGilloscope().getDisplay().timerExec(getDelayloop(), this);
-			}
-		};
-		getOSGilloscope().getDisplay().timerExec(getDelayloop(), runnable);
+		return group2;
 
 	}
 
-	protected int getLineWidth() {
+	public int getLineWidth() {
 		return lineWidth.getSelection();
 	}
 
@@ -302,20 +312,20 @@ public abstract class SnippetDispatcher extends OscilloscopeDispatcher {
 		return pulse.getSelection();
 	}
 
-	public String getActiveSoundfile() {
-		return "";
+	public File getActiveSoundfile() {
+		return null;
 	}
 
 	public int getDelayloop() {
 		return delay.getSelection();
 	}
 
-	public Oscilloscope getOSGilloscope() {
+	public Oscilloscope getOscilloscope() {
 		return gilloscope;
 	}
 
-	public String getInactiveSoundfile() {
-		return "";
+	public File getInactiveSoundfile() {
+		return null;
 	}
 
 	public boolean isTailSizeMax() {

@@ -11,13 +11,13 @@
  ******************************************************************************/
 package org.eclipse.nebula.widgets.oscilloscope.snippets;
 
+import java.io.File;
 import java.util.Random;
 
 import org.eclipse.nebula.widgets.oscilloscope.Oscilloscope;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-
 
 /**
  * @author jongw
@@ -28,6 +28,7 @@ public class Snippet {
 	final String HEARTBEAT = "74829__jobro__Heartbeat.wav";
 	final String FLATLINE = "Beep EKG Flatline 1.WAV";
 	final String BEEP = "25882__acclivity__Beep1000.wav";
+	protected final File BEEPFILE = new File(BEEP);
 
 	protected Shell shell;
 
@@ -79,18 +80,25 @@ public class Snippet {
 
 			if (dice == 1) {
 				new SnippetDispatcher() {
+					private File HEARTBEATFILE;
+					private File FLATLINEFILE;
+
 					public void setValue(int value) {
-						getOSGilloscope().setValues(Oscilloscope.HEARTBEAT);
+						getOscilloscope().setValues(Oscilloscope.HEARTBEAT);
 					}
 
-					public String getActiveSoundfile() {
-						return HEARTBEAT;
+					public File getActiveSoundfile() {
+						if (HEARTBEATFILE == null)
+							HEARTBEATFILE = new File(HEARTBEAT);
+						return HEARTBEATFILE;
 					}
 
-					public String getInactiveSoundfile() {
-						return FLATLINE;
+					public File getInactiveSoundfile() {
+						if (FLATLINEFILE == null)
+							FLATLINEFILE = new File(FLATLINE);
+						return FLATLINEFILE;
 					};
-					
+
 				}.dispatch(shell);
 			}
 
@@ -115,9 +123,9 @@ public class Snippet {
 						int intValue = (int) (Math.sin(value) * 100);
 						if (intValue == 99)
 							if (sound.getSelection()) {
-								clipper.playClip(BEEP, 0);
+								clipper.playClip(BEEPFILE, 0);
 							}
-						getOSGilloscope().setValue(intValue);
+						getOscilloscope().setValue(intValue);
 					}
 
 					@Override
@@ -156,9 +164,9 @@ public class Snippet {
 						// intValue += ;
 						if (intValue == 99)
 							if (sound.getSelection()) {
-								clipper.playClip(BEEP, 0);
+								clipper.playClip(BEEPFILE, 0);
 							}
-						getOSGilloscope().setValue(intValue);
+						getOscilloscope().setValue(intValue);
 					}
 
 					@Override
@@ -204,9 +212,9 @@ public class Snippet {
 						// intValue += ;
 						if (intValue == 99)
 							if (sound.getSelection()) {
-								clipper.playClip(BEEP, 0);
+								clipper.playClip(BEEPFILE, 0);
 							}
-						getOSGilloscope().setValue(intValue);
+						getOscilloscope().setValue(intValue);
 					}
 
 					@Override

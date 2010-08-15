@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Shell;
  * @author jongw
  * 
  */
-public class Snippet2 {
+public class Snippet1 {
 
 	final String HEARTBEAT = "74829__jobro__Heartbeat.wav";
 	final String FLATLINE = "Beep EKG Flatline 1.WAV";
@@ -39,7 +39,7 @@ public class Snippet2 {
 	 */
 	public static void main(String[] args) {
 		try {
-			Snippet2 window = new Snippet2();
+			Snippet1 window = new Snippet1();
 			window.open();
 			System.exit(0);
 		} catch (Exception e) {
@@ -70,9 +70,9 @@ public class Snippet2 {
 		shell.setImage(null);
 		shell.setSize(600, 800);
 		shell.setText("SWT Application");
-		shell.setLayout(new GridLayout(3, false));
+		shell.setLayout(new GridLayout(1, false));
 
-		int counter = 9;
+		int counter = 1;
 
 		for (int i = 0; i < counter; i++) {
 
@@ -81,6 +81,7 @@ public class Snippet2 {
 			if (dice == 1) {
 				new SnippetDispatcher() {
 					private File HEARTBEATFILE;
+					private File FLATLINEFILE;
 
 					public void setValue(int value) {
 						getOscilloscope().setValues(Oscilloscope.HEARTBEAT);
@@ -91,6 +92,12 @@ public class Snippet2 {
 							HEARTBEATFILE = new File(HEARTBEAT);
 						return HEARTBEATFILE;
 					}
+
+					public File getInactiveSoundfile() {
+						if (FLATLINEFILE == null)
+							FLATLINEFILE = new File(FLATLINE);
+						return FLATLINEFILE;
+					};
 
 				}.dispatch(shell);
 			}
@@ -219,12 +226,8 @@ public class Snippet2 {
 						}
 						return false;
 					}
-
 				}.dispatch(shell);
 			}
-
 		}
-
 	}
-
 }
