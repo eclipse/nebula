@@ -509,7 +509,7 @@ public class GanttTester {
         prefHook(_bShowDateTipsOnScrolling);
         
         _bScaleImageToDay = new Button(group, SWT.CHECK);
-        _bScaleImageToDay.setText("Scale images to the width of one day");
+        _bScaleImageToDay.setText("Scale Images To (Minimum) Width Of One Day");
         _bScaleImageToDay.setToolTipText("Whether images should be scaled to the width of one day or if they can exceed one day. Default is on.");
         _bScaleImageToDay.setSelection(true);
         _bScaleImageToDay.setLayoutData(oneRow);
