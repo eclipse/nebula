@@ -25,14 +25,6 @@ import org.eclipse.swt.graphics.Image;
  * various attributes of the scope.
  * 
  */
-/**
- * @author jongw
- *
- */
-/**
- * @author jongw
- * 
- */
 public abstract class OscilloscopeDispatcher {
 
 	/**
