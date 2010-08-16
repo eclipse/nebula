@@ -199,7 +199,7 @@ public class OscilloscopeExampleTab extends AbstractExampleTab {
 					return getOscilloscope().getForeground();
 				}
 
-				public int getDelayloop() {
+				public int getDelayLoop() {
 					return delay.getSelection();
 				}
 
