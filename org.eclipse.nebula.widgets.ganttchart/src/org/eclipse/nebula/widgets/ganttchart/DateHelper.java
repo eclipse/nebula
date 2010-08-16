@@ -196,7 +196,7 @@ public class DateHelper {
     //private static WeakHashMap fastDateMap = new WeakHashMap(1000, 0.75f);
 
     public static Calendar getNewCalendar(Calendar old) {
-        Calendar ret = Calendar.getInstance(_locale);
+        Calendar ret = _locale == null ? Calendar.getInstance() : Calendar.getInstance(_locale);
         ret.setTime(old.getTime());
         return ret;
     }
