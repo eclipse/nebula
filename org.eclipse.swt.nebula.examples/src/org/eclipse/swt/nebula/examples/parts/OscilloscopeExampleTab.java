@@ -93,9 +93,9 @@ public class OscilloscopeExampleTab extends AbstractExampleTab {
 
 				final String path = FileLocator.getBundleFile(
 						Activator.getBundleObject().getBundle()).getPath();
-				final String HEARTBEAT = path + "/74829__jobro__Heartbeat.wav";
-				final String FLATLINE = path + "/Beep EKG Flatline 1.WAV";
-				final String BEEP = path + "/25882__acclivity__Beep1000.wav";
+				final String HEARTBEAT = path + "/Heartbeat.wav";
+				final String FLATLINE = path + "/Flatline.wav";
+				final String BEEP = path + "/Beep.wav";
 				private Image image;
 				private Image image1;
 
