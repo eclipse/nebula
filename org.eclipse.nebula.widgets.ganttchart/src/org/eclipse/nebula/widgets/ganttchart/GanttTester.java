@@ -18,6 +18,7 @@ import java.util.Random;
 import java.util.prefs.Preferences;
 
 import org.eclipse.nebula.widgets.ganttchart.themes.ColorThemeGrayBlue;
+import org.eclipse.nebula.widgets.ganttchart.themes.ColorThemeHighContrastBlack;
 import org.eclipse.nebula.widgets.ganttchart.themes.ColorThemeSilver;
 import org.eclipse.nebula.widgets.ganttchart.themes.ColorThemeWindowsBlue;
 import org.eclipse.nebula.widgets.ganttchart.undoredo.UndoRedoListenerAdapter;
@@ -574,6 +575,7 @@ public class GanttTester {
         _themeCombo.add("Blue");
         _themeCombo.add("Silver");
         _themeCombo.add("Gray Blue");
+        _themeCombo.add("High Contrast (Black)");
         _themeCombo.select(0);
         _themeCombo.setData(KEY, "themeCombo");
         prefLoad(_themeCombo);
@@ -918,8 +920,13 @@ public class GanttTester {
             color = new ColorThemeSilver();
         } else if (_themeCombo.getSelectionIndex() == 2) {
             color = new ColorThemeGrayBlue();
+        } else if (_themeCombo.getSelectionIndex() == 3) { 
+            color = new ColorThemeHighContrastBlack();
         }
+        	
+        
 
+        
         final ISettings toUse = new TestSettings();
 
         _ganttChart = new GanttChart(_vfChart, flags, toUse, color);
