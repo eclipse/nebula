@@ -70,9 +70,9 @@ public class Snippet {
 		shell.setImage(null);
 		shell.setSize(600, 800);
 		shell.setText("SWT Application");
-		shell.setLayout(new GridLayout(6, false));
+		shell.setLayout(new GridLayout(2, false));
 
-		int counter = 30;
+		int counter = 2;
 
 		for (int i = 0; i < counter; i++) {
 

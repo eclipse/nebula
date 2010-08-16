@@ -81,7 +81,7 @@ public class Snippet3 {
 		new OscilloscopeDispatcher() {
 
 			@Override
-			public int getDelayloop() {
+			public int getDelayLoop() {
 				return 40;
 			}
 
