@@ -191,10 +191,10 @@ public abstract class OscilloscopeDispatcher {
 					}
 				}
 
-				getOscilloscope().getDisplay().timerExec(getDelayloop(), this);
+				getOscilloscope().getDisplay().timerExec(getDelayLoop(), this);
 			}
 		};
-		getOscilloscope().getDisplay().timerExec(getDelayloop(), runnable);
+		getOscilloscope().getDisplay().timerExec(getDelayLoop(), runnable);
 
 	}
 
@@ -260,7 +260,7 @@ public abstract class OscilloscopeDispatcher {
 		return null;
 	}
 
-	public int getDelayloop() {
+	public int getDelayLoop() {
 		return 80;
 	}
 
