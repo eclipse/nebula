@@ -1235,7 +1235,6 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         _showPlannedDates = showPlanned;
 
         // heavy as scrollbars need to update too
-        _forceSBUpdate = true;
         flagForceFullUpdate();
         redraw();
     }
@@ -1462,7 +1461,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         showEsts.setSelection(_showPlannedDates);
         showEsts.addListener(SWT.Selection, new Listener() {
             public void handleEvent(final Event event) {
-                _showPlannedDates = !_showPlannedDates; //NOPMD
+            	setShowPlannedDates(!isShowingPlannedDates());
                 showEsts.setSelection(_showPlannedDates);
                 redraw();
             }
@@ -8266,5 +8265,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
     boolean isDDayCalendar() {
         return _currentView == ISettings.VIEW_D_DAY;
+    }
+    
+    ISettings getSettings() {
+    	return _settings;
     }
 }
