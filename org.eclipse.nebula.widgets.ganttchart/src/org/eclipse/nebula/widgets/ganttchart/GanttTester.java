@@ -1417,7 +1417,7 @@ public class GanttTester {
         } else if (ctrl instanceof Button) {
             String old = _prefs.get(keyName, null);
             if (old == null) { return; }
-            ((Button) ctrl).setSelection(Boolean.parseBoolean(old));
+            ((Button) ctrl).setSelection(Boolean.valueOf(old).booleanValue());
         } else if (ctrl instanceof Text) {
             String old = _prefs.get(keyName, null);
             if (old == null) { return; }
