@@ -27,9 +27,9 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class Snippet3 {
 
-	final String HEARTBEAT = "74829__jobro__Heartbeat.wav";
-	final String FLATLINE = "Beep EKG Flatline 1.WAV";
-	final String BEEP = "25882__acclivity__Beep1000.wav";
+	final String HEARTBEAT = "Heartbeat.wav";
+	final String FLATLINE = "Flatline.wav";
+	final String BEEP = "Beep.wav";
 	protected final File BEEPFILE = new File(BEEP);
 	
 	protected Shell shell;
