@@ -17,6 +17,7 @@
 <project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.collapsiblebuttons,org.eclipse.nebula.widgets.collapsiblebuttons"/>
 <project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.tablecombo,org.eclipse.nebula.widgets.tablecombo"/>
 <project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.ganttchart,org.eclipse.nebula.widgets.ganttchart"/>
+<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.nebulatoolbar,org.eclipse.nebula.widgets.nebulatoolbar"/>
 <project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.swt.nebula/org.eclipse.nebula.cwt,org.eclipse.nebula.cwt"/>
 </provider>
 </psf>
