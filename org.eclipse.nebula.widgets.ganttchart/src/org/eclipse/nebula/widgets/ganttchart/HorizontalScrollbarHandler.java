@@ -50,6 +50,10 @@ class HorizontalScrollbarHandler implements Listener {
 			return;
 		}
 		
+		if (_fixed) {
+			_scrollBar.setPageIncrement(7);
+		}
+		
 		_scrollBar.setMinimum(0);
 		_scrollBar.setIncrement(1);
 
@@ -172,9 +176,22 @@ class HorizontalScrollbarHandler implements Listener {
 			int xLeftMostPixel = _gc.getLeftMostPixel();
 			int xRightMostPixel = _gc.getRightMostPixel();
 
-			int xStart = 0; //_gc.getXForDate(_gc.getRootCalendar());
+			//System.err.println(xLeftMostPixel + " " + xRightMostPixel);
+			
+			int xStart = 0; //_gc.getXForDate(_gc.getRootCalendar());			
 			int xEnd = _gc.getVisibleBounds().width; //_gc.getXForDate(_gc.getRootEndCalendar());
 
+			// take sections into account
+			if (_gc.isShowingGanttSections()) {
+				int sbw = _gc.getSettings().getSectionBarWidth();
+				if (_gc.getSettings().getSectionSide() == SWT.LEFT) {
+					xStart = sbw;
+				}
+				else {
+					xEnd -= sbw;
+				}
+			}
+			
 			//System.err.println(xStart + " : " + xEnd + " " + lastEvent.getActualBounds() + " " + _gc.getVisibleBounds().width + " " + xRightMostPixel);
 
 			int vScrollSize = 0;
@@ -185,7 +202,7 @@ class HorizontalScrollbarHandler implements Listener {
 
 			int extraLeft = xLeftMostPixel - xStart;
 			int extraRight = xEnd - xRightMostPixel;
-
+			
 			int rangeBonus = 0;
 			if (extraLeft > 0) {
 				rangeBonus += extraLeft;
@@ -193,7 +210,7 @@ class HorizontalScrollbarHandler implements Listener {
 			if (extraRight > 0) {
 				rangeBonus += extraRight;
 			}
-			
+						
 			// positive extraLeft means we're manually further to the left of the start event
 			// negative extraLeft means we're to the right of it 
 			// positive extraRight means we're to the right of the last event
@@ -216,9 +233,12 @@ class HorizontalScrollbarHandler implements Listener {
 
 			float pixelRange = (float) (xRightMostPixel - xLeftMostPixel + rangeBonus);
 			pixelRange -= _gc.getVisibleBounds().width;
+			
 
-			if (_gc.getCurrentView() != ISettings.VIEW_YEAR)
+
+			if (_gc.getCurrentView() != ISettings.VIEW_YEAR) {
 				pixelRange /= dayWidth;
+			}			
 			else {
 				pixelRange /= dayWidth;
 				// avg month width is ~30 days, over time it's an ok number, year is rather zoomed out anyway
@@ -226,7 +246,7 @@ class HorizontalScrollbarHandler implements Listener {
 				pixelRange += 1;
 			}
 
-//			System.err.println("RANGE: " + Math.ceil(pixelRange));// + " (debug1: " + debug1 + ", debug2: " + debug2 + "). Bonus: " + rangeBonus);
+			//System.err.println("RANGE: " + Math.ceil(pixelRange));// + " (debug1: " + debug1 + ", debug2: " + debug2 + "). Bonus: " + rangeBonus);
 
 			_scrollBar.setMaximum((int) Math.ceil(pixelRange));
 			_scrollBar.setVisible(true);

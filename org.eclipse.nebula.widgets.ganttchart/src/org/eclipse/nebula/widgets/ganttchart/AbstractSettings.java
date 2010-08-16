@@ -487,5 +487,8 @@ abstract class AbstractSettings implements ISettings {
         return true;
     }
 
+    public boolean scaleImageToDayWidth() {
+    	return true;
+    }
 	
 }

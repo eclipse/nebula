@@ -1011,5 +1011,12 @@ public interface ISettings {
      * @return true to show a marker. Default is true.
      */
     public boolean onVerticalDragDropShowInsertMarker();
-    
+
+    // bugzilla feature request #309808
+   /**
+    * Whether to allow an image to exceed the width of one day when zooming in / out.
+    * 
+    * @return true to keep within day width. Default is true.
+    */
+    public boolean scaleImageToDayWidth();    	   
 }

@@ -1527,11 +1527,14 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem, C
         // if we're showing planned dates, check to see what is further away, the text width or our planned date width
         // we save the values and compare to the bonuses calculated for text widths below
         if (_parentComposite.isShowingPlannedDates()) {
-            if (getStartDate() != null && getRevisedStart() != null && getStartDate().before(getRevisedStart())) {
+        	// note to self: we used to have date checks here, but I can't remember what for, as these checks aren't necessarily valid. Revised vs. Planned
+        	// dates can come before one or another, doesn't matter, we still need offsets, so I took them out as it fixes a reported bug as well (no bugzilla)
+        	
+            if (getStartDate() != null && getRevisedStart() != null) { // && getStartDate().before(getRevisedStart())) {
                 // this is a negative value as it's to the left
                 plannedExtraLeft = getX() - _earliestStartX;
             }
-            if (getEndDate() != null && getRevisedEnd() != null && getEndDate().after(getRevisedEnd())) {
+            if (getEndDate() != null && getRevisedEnd() != null) { // && getEndDate().after(getRevisedEnd())) {
                 plannedExtraRight = _latestEndX - getXEnd() + _parentComposite.getDayWidth();
             }
         }
@@ -1801,7 +1804,12 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem, C
                     indexNow = _ganttSection.getEvents().indexOf(this);
                 }
 
-                return new EventMoveCommand(this, _preMoveDateEstiStart, _startDate, _preMoveDateEstiEnd, _endDate, _preMoveDateRevisedStart, _revisedStart, _preMoveDateRevisedEnd, _revisedEnd, (GanttSection) _parentComposite.getGanttSections().get(_preMoveGanttSectionIndex), _ganttSection,
+                GanttSection gs = null;
+                if (_preMoveGanttSectionIndex > -1) {
+                	gs = (GanttSection) _parentComposite.getGanttSections().get(_preMoveGanttSectionIndex);
+                }
+                
+                return new EventMoveCommand(this, _preMoveDateEstiStart, _startDate, _preMoveDateEstiEnd, _endDate, _preMoveDateRevisedStart, _revisedStart, _preMoveDateRevisedEnd, _revisedEnd, gs, _ganttSection,
                         _preMoveGanttSectionEventLocationIndex, indexNow);
 
             case Constants.TYPE_RESIZE_LEFT:

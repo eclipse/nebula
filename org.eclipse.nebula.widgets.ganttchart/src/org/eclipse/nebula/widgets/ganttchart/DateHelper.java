@@ -72,6 +72,30 @@ public class DateHelper {
         return (int) diff;
     }
 
+    public static int secondsBetween(Date start, Date end, boolean assumeSameDate, boolean assumeSameHour) {
+        Calendar sDate = Calendar.getInstance(_locale);
+        Calendar eDate = Calendar.getInstance(_locale);
+        sDate.setTime(start);
+        eDate.setTime(end);
+
+        if (assumeSameDate) {
+            // set same date
+            eDate.set(Calendar.YEAR, 2000);
+            sDate.set(Calendar.YEAR, 2000);
+            eDate.set(Calendar.DAY_OF_YEAR, 1);
+            sDate.set(Calendar.DAY_OF_YEAR, 1);
+        }
+
+        if (assumeSameHour) {
+            eDate.set(Calendar.HOUR, 1);
+            sDate.set(Calendar.HOUR, 1);
+        }
+
+        long diff = eDate.getTimeInMillis() - sDate.getTimeInMillis();
+        diff /= 1000;
+        return (int) diff;
+    }
+    
     public static long daysBetween(Calendar start, Calendar end) {
         // create copies
         GregorianCalendar startDate = new GregorianCalendar(_locale);

@@ -32,7 +32,10 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
+import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -94,6 +97,7 @@ public class GanttTester {
     private Button              _bRedraw;
     private Button              _bHeavyRedraw;
     private Button              _bSaveFull;
+    private Button				_bRandomImage;
 
     private Combo               _vDNDCombo;
     private Combo               _eventCountCombo;
@@ -128,7 +132,8 @@ public class GanttTester {
     private Button              _bDrawLockedDateMarks;
     private Button              _bShowDateTipsOnScrolling;
     private Button              _bZoomToMousePointerDateOnWheelZooming;
-
+    private Button              _bScaleImageToDay;
+    
     private Table                _tEventLog;
 
     private Listener            _undoRedoListener;
@@ -145,7 +150,7 @@ public class GanttTester {
 
     public GanttTester() {
         final Display display = new Display();
-        final Monitor m = display.getMonitors()[1];
+        final Monitor m = display.getMonitors()[0];
         final Shell shell = new Shell(display);
         shell.setText("GanttChart Test Application");
         shell.setLayout(new FillLayout());
@@ -502,6 +507,16 @@ public class GanttTester {
         _bShowDateTipsOnScrolling.setData(KEY, "bShowDateTipsOnScrolling");
         prefLoad(_bShowDateTipsOnScrolling);
         prefHook(_bShowDateTipsOnScrolling);
+        
+        _bScaleImageToDay = new Button(group, SWT.CHECK);
+        _bScaleImageToDay.setText("Scale images to the width of one day");
+        _bScaleImageToDay.setToolTipText("Whether images should be scaled to the width of one day or if they can exceed one day. Default is on.");
+        _bScaleImageToDay.setSelection(true);
+        _bScaleImageToDay.setLayoutData(oneRow);
+        _bScaleImageToDay.setData(KEY, "bScaleImageToDay");
+        prefLoad(_bScaleImageToDay);
+        prefHook(_bScaleImageToDay);
+
         return sc;
     }
 
@@ -748,6 +763,14 @@ public class GanttTester {
         prefLoad(_bSpecialDateRange);
         prefHook(_bSpecialDateRange);
 
+        _bRandomImage = new Button(gLeft, SWT.CHECK);
+        _bRandomImage.setText("Random Images");
+        _bRandomImage.setToolTipText("Create some events with image");
+        _bRandomImage.setSelection(false);
+        _bRandomImage.setData(KEY, "bRandomImage");
+        prefLoad(_bRandomImage);
+        prefHook(_bRandomImage);
+        
         final Group internal = new Group(gLeft, SWT.CHECK);
         internal.setLayout(new GridLayout(1, false));
 
@@ -1173,6 +1196,22 @@ public class GanttTester {
 
             }
 
+            if (_bRandomImage.getSelection() && r.nextInt(5) == 0) {
+            	PaletteData palette = new PaletteData (new RGB [] {Display.getDefault().getSystemColor(SWT.COLOR_WHITE).getRGB(), Display.getDefault().getSystemColor(SWT.COLOR_BLUE).getRGB()});
+            	ImageData sourceData = new ImageData (16, 16, 1, palette);
+            	sourceData.transparentPixel = 0;
+            	final Image image = new Image(Display.getDefault(), sourceData);
+            	final Rectangle rect = image.getBounds();
+            	GC gc = new GC(image);
+            	gc.setAntialias(SWT.ON);
+            	gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLUE));
+            	gc.fillOval(rect.x, rect.y, rect.width, rect.height);
+            	gc.dispose();
+            	ganttEvent.setImage(true);
+            	ganttEvent.setPicture(image);
+            	ganttEvent.setEndDate(ganttEvent.getStartDate());
+            }            
+            
             if (_bDNDLimits.getSelection()) {
                 final Calendar noBefore = Calendar.getInstance();
                 noBefore.setTime(cStartDate.getTime());
@@ -1810,6 +1849,10 @@ public class GanttTester {
 
         public boolean zoomToMousePointerDateOnWheelZooming() {
             return _bZoomToMousePointerDateOnWheelZooming.getSelection();
+        }
+
+        public boolean scaleImageToDayWidth() {
+        	return _bScaleImageToDay.getSelection();
         }
 
     }

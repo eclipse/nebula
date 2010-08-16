@@ -405,7 +405,16 @@ public abstract class AbstractPaintManager implements IPaintManager {
                 textXStart = x + (eventWidth / 2) - (toDrawExtent.x / 2);
                 break;
             case SWT.RIGHT:
-                textXStart = x + eventWidth + textSpacer;
+                //textXStart = x + eventWidth + textSpacer;
+            	int eventOrPictureWidth = eventWidth;
+
+            	// bugzilla feature request #309808
+            	if (!settings.scaleImageToDayWidth() && event.getPicture() != null) {
+            		// the image is drawn centered, therefore consider only half of its width
+            		eventOrPictureWidth = Math.max(eventOrPictureWidth, event.getPicture().getImageData().width / 2);
+            	}
+            	
+            	textXStart = x + eventOrPictureWidth + textSpacer;
                 break;
             default:
                 break;
@@ -524,7 +533,7 @@ public abstract class AbstractPaintManager implements IPaintManager {
 
         // can it fit?
         final Rectangle bounds = image.getBounds();
-        if (bounds.width > dayWidth) {
+        if (settings.scaleImageToDayWidth() && bounds.width > dayWidth) {
             // shrink image
             ImageData id = image.getImageData();
             final int diff = id.width - dayWidth;
