@@ -11,9 +11,8 @@
  ******************************************************************************/
 package org.eclipse.nebula.widgets.oscilloscope;
 
-import org.eclipse.swt.internal.SWTEventListener;
 
-public abstract class OscilloscopeStackAdapter implements SWTEventListener {
+public abstract class OscilloscopeStackAdapter  {
 
 	public void stackEmpty(Oscilloscope scope) {
 	}
