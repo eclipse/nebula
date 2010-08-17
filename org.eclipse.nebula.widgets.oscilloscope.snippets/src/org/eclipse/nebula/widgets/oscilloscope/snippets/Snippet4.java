@@ -15,6 +15,7 @@ import java.io.File;
 
 import org.eclipse.nebula.widgets.oscilloscope.Oscilloscope;
 import org.eclipse.nebula.widgets.oscilloscope.OscilloscopeDispatcher;
+import org.eclipse.nebula.widgets.oscilloscope.OscilloscopeStackAdapter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -22,16 +23,19 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * @author jongw
+ * Uses the stack listener. Every time the stack is empty, the stack listener is
+ * activated to request more values.
+ * 
+ * @author Wim Jongman
  * 
  */
-public class Snippet3 {
+public class Snippet4 {
 
 	final String HEARTBEAT = "Heartbeat.wav";
 	final String FLATLINE = "Flatline.wav";
 	final String BEEP = "Beep.wav";
 	protected final File BEEPFILE = new File(BEEP);
-	
+
 	protected Shell shell;
 
 	/**
@@ -41,7 +45,7 @@ public class Snippet3 {
 	 */
 	public static void main(String[] args) {
 		try {
-			Snippet3 window = new Snippet3();
+			Snippet4 window = new Snippet4();
 			window.open();
 			System.exit(0);
 		} catch (Exception e) {
@@ -76,6 +80,7 @@ public class Snippet3 {
 		shell.setLayout(new GridLayout(1, false));
 
 		final Oscilloscope scope = new Oscilloscope(shell, SWT.NONE);
+
 		scope.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		new OscilloscopeDispatcher() {
@@ -85,13 +90,39 @@ public class Snippet3 {
 				return 40;
 			}
 
+			public void init() {
+				OscilloscopeStackAdapter listener = new OscilloscopeStackAdapter() {
+					@Override
+					public void stackEmpty(Oscilloscope scope) {
+
+						if (isSoundRequired()) {
+							getClipper().playClip(getActiveSoundfile(), 0);
+						}
+
+						// Calculate a full sine circle
+						double value = 0;
+						while (value < 2 * Math.PI) {
+
+							value += .1;
+
+							int intValue = (int) (Math.sin(value) * 100);
+							getOscilloscope().setValue(intValue);
+						}
+					}
+				};
+
+				scope.addStackListener(listener);
+				scope.removeStackListener(listener);
+				scope.addStackListener(listener);
+			}
+
 			@Override
 			public boolean getFade() {
 				return false;
 			}
 
 			public int getPulse() {
-				return 60;
+				return NO_PULSE;
 			};
 
 			public int getTailSize() {
