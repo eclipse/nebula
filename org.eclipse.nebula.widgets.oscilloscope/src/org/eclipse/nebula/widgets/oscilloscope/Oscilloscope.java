@@ -11,6 +11,8 @@
  ******************************************************************************/
 package org.eclipse.nebula.widgets.oscilloscope;
 
+import java.util.ArrayList;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
@@ -93,6 +95,7 @@ public class Oscilloscope extends Canvas {
 	 * Steady position @ 75% of graph.
 	 */
 	public static final int STEADYPOSITION_75PERCENT = -1;
+	private ArrayList stackListeners;
 
 	/**
 	 * The stack will not overflow if you push too many values into it but it
@@ -245,6 +248,7 @@ public class Oscilloscope extends Canvas {
 	 * 
 	 */
 	public int getTailSize() {
+		checkWidget();
 		return tailSize;
 	}
 
@@ -268,6 +272,9 @@ public class Oscilloscope extends Canvas {
 			stack.pop(0);
 			return;
 		}
+
+		if (stack.isEmpty() && stackListeners != null)
+			notifyListeners();
 
 		GC gc = e.gc;
 		gc.setAntialias(SWT.ON);
@@ -350,11 +357,20 @@ public class Oscilloscope extends Canvas {
 		}
 	}
 
+	private void notifyListeners() {
+		if (stackListeners == null || stackListeners.size() == 0)
+			return;
+		for (int i = 0; i < stackListeners.size(); i++) {
+			((OscilloscopeStackAdapter) stackListeners.get(i)).stackEmpty(this);
+		}
+	}
+
 	/**
 	 * @return boolean, true if the tail and the head of the graph must be
 	 *         connected if tail size is {@link #TAILSIZE_MAX} no fading graph.
 	 */
 	public boolean isConnect() {
+		checkWidget();
 		return connect;
 	}
 
@@ -365,6 +381,7 @@ public class Oscilloscope extends Canvas {
 	 * @param connectHeadAndTail
 	 */
 	public void setConnect(boolean connectHeadAndTail) {
+		checkWidget();
 		this.connect = connectHeadAndTail;
 	}
 
@@ -373,6 +390,7 @@ public class Oscilloscope extends Canvas {
 	 * @return boolean fade
 	 */
 	public boolean isFade() {
+		checkWidget();
 		return fade;
 	}
 
@@ -391,6 +409,7 @@ public class Oscilloscope extends Canvas {
 	 * @see #setTailFade(int)
 	 */
 	public void setFade(boolean fade) {
+		checkWidget();
 		this.fade = fade;
 	}
 
@@ -411,6 +430,7 @@ public class Oscilloscope extends Canvas {
 	 * @see #setFade(boolean)
 	 */
 	public int getTailFade() {
+		checkWidget();
 		return tailFade;
 	}
 
@@ -419,6 +439,7 @@ public class Oscilloscope extends Canvas {
 	 * @see Oscilloscope#setSteady(boolean)
 	 */
 	public boolean isSteady() {
+		checkWidget();
 		return steady;
 	}
 
@@ -430,7 +451,8 @@ public class Oscilloscope extends Canvas {
 	 * 
 	 * @param values
 	 */
-	public void setValues(int[] values) {
+	public synchronized void setValues(int[] values) {
+		checkWidget();
 
 		if (getBounds().width <= 0)
 			return;
@@ -440,6 +462,7 @@ public class Oscilloscope extends Canvas {
 
 		if (stack == null)
 			stack = new IntegerFiFoCircularStack(width);
+
 		for (int i = 0; i < values.length; i++) {
 			stack.push(values[i]);
 		}
@@ -452,6 +475,7 @@ public class Oscilloscope extends Canvas {
 	 * @param value
 	 */
 	public void setValue(int value) {
+		checkWidget();
 		if (getBounds().width <= 0)
 			return;
 
@@ -476,6 +500,7 @@ public class Oscilloscope extends Canvas {
 	 * @see #TAILSIZE_MAX
 	 */
 	public void setTailSize(int size) {
+		checkWidget();
 
 		if (size == TAILSIZE_FILL && !isSteady())
 			size = TAILSIZE_MAX;
@@ -515,6 +540,10 @@ public class Oscilloscope extends Canvas {
 	}
 
 	public Point computeSize(int wHint, int hHint, boolean changed) {
+		checkWidget();
+		System.out.println(changed);
+		int width;
+		int height;
 
 		if (wHint != SWT.DEFAULT)
 			width = wHint;
@@ -526,12 +555,13 @@ public class Oscilloscope extends Canvas {
 		else
 			height = DEFAULT_HEIGHT;
 
-		setSizeInternal(width, height);
+		//setSizeInternal(width, height);
 
 		return new Point(width + 2, height + 2);
 	}
 
 	public boolean needsRedraw() {
+		checkWidget();
 		return isDisposed() ? false : true;
 	}
 
@@ -542,6 +572,7 @@ public class Oscilloscope extends Canvas {
 	 * @param int lineWidth
 	 */
 	public void setLineWidth(int lineWidth) {
+		checkWidget();
 		if (lineWidth > 0)
 			this.lineWidth = lineWidth;
 	}
@@ -551,6 +582,7 @@ public class Oscilloscope extends Canvas {
 	 * @see #setLineWidth(int)
 	 */
 	public int getLineWidth() {
+		checkWidget();
 		return lineWidth;
 	}
 
@@ -562,6 +594,7 @@ public class Oscilloscope extends Canvas {
 	 * @param boolean percentage
 	 */
 	public void setPercentage(boolean percentage) {
+		checkWidget();
 		this.percentage = percentage;
 	}
 
@@ -570,6 +603,7 @@ public class Oscilloscope extends Canvas {
 	 * @see #setPercentage(boolean)
 	 */
 	public boolean isPercentage() {
+		checkWidget();
 		return percentage;
 	}
 
@@ -581,6 +615,7 @@ public class Oscilloscope extends Canvas {
 	 * @param steadyPosition
 	 */
 	public void setSteady(boolean steady, int steadyPosition) {
+		checkWidget();
 		this.steady = steady;
 		this.originalSteadyPosition = steadyPosition;
 		if (steady)
@@ -599,10 +634,41 @@ public class Oscilloscope extends Canvas {
 	 * @param tailFade
 	 */
 	public void setTailFade(int tailFade) {
+		checkWidget();
 		if (tailFade > 100)
 			tailFade = 100;
 		if (tailFade < 1)
 			tailFade = 1;
 		this.tailFade = tailFade;
+	}
+
+	/**
+	 * Adds a new stack listener to the collection of stack listeners. Adding
+	 * the same listener twice will have no effect.
+	 * 
+	 * @param listener
+	 */
+	public synchronized void addStackListener(OscilloscopeStackAdapter listener) {
+		checkWidget();
+		if (stackListeners == null)
+			stackListeners = new ArrayList();
+		if (!stackListeners.contains(listener))
+			stackListeners.add(listener);
+	}
+
+	/**
+	 * Removes a stack listener from the collection of stack listeners.
+	 * 
+	 * @param listener
+	 */
+	public void removeStackListener(OscilloscopeStackAdapter listener) {
+		checkWidget();
+		if (stackListeners != null) {
+			stackListeners.remove(listener);
+			if (stackListeners.size() == 0)
+				synchronized (stackListeners) {
+					stackListeners = null;
+				}
+		}
 	}
 }

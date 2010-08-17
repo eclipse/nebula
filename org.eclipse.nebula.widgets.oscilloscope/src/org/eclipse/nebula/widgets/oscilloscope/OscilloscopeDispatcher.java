@@ -62,7 +62,7 @@ public abstract class OscilloscopeDispatcher {
 
 	public abstract void setValue(int value);
 
-	PlayClip clipper = new PlayClip();
+	private PlayClip clipper = new PlayClip();
 
 	/**
 	 * Contains a small image that can serve as the background of the scope.
@@ -141,6 +141,8 @@ public abstract class OscilloscopeDispatcher {
 			127, 211, 170, 127, 241, 84, 182, 31, 242, 35, 106, 63, 245, 247,
 			111, 255, 0, 160, 203, 88, 213, 143, 41, 162, 143, 153, 255, 217 };
 
+	public static final int NO_PULSE = -1;
+
 	private Image image;
 
 	/**
@@ -174,22 +176,24 @@ public abstract class OscilloscopeDispatcher {
 
 				pulse++;
 
-				if (pulse >= getPulse()) {
-					pulse = 0;
-					if (isServiceActive()) {
-						getOscilloscope().setForeground(
-								getActiveForegoundColor());
+				if (getPulse() != NO_PULSE)
+					if (pulse >= getPulse()) {
+						pulse = 0;
+						if (isServiceActive()) {
+							getOscilloscope().setForeground(
+									getActiveForegoundColor());
 
-						setValue(pulse);
-						if (isSoundRequired())
-							clipper.playClip(getActiveSoundfile(), 0);
-					} else {
-						if (isSoundRequired())
-							clipper.playClip(getInactiveSoundfile(), 0);
-						getOscilloscope().setForeground(
-								getInactiveForegoundColor());
+							setValue(pulse);
+							if (isSoundRequired())
+								getClipper().playClip(getActiveSoundfile(), 0);
+						} else {
+							if (isSoundRequired())
+								getClipper()
+										.playClip(getInactiveSoundfile(), 0);
+							getOscilloscope().setForeground(
+									getInactiveForegoundColor());
+						}
 					}
-				}
 
 				getOscilloscope().getDisplay().timerExec(getDelayLoop(), this);
 			}
@@ -249,6 +253,9 @@ public abstract class OscilloscopeDispatcher {
 		return image;
 	}
 
+	/**
+	 * Will be called only once.
+	 */
 	public void init() {
 	}
 
@@ -314,5 +321,9 @@ public abstract class OscilloscopeDispatcher {
 	protected void finalize() throws Throwable {
 		if (image != null && !image.isDisposed())
 			image.dispose();
+	}
+
+	public PlayClip getClipper() {
+		return clipper;
 	}
 }
