@@ -341,7 +341,7 @@ public class CalendarCombo extends Composite {
             public void handleEvent(Event event) {
                 if (!isCalendarVisible()) return;
 
-                Control cc = Display.getDefault().getCursorControl();
+                Control cc = getDisplay().getCursorControl();
 
                 if (cc != mCalendarComposite) {
                     if (cc != mCalendarShell) {
@@ -426,7 +426,7 @@ public class CalendarCombo extends Composite {
                         if (event.keyCode == SWT.ARROW_DOWN) {
                             Control ctrl = (isFlat ? (Control) mFlatCombo.getTextControl() : mCombo);
 
-                            if (Display.getDefault().getFocusControl() == ctrl) {
+                            if (getDisplay().getFocusControl() == ctrl) {
                                 if (!isCalendarVisible()) showCalendar();
                                 else {
                                     mCalendarComposite.keyPressed(event.keyCode, event.stateMask);
@@ -604,7 +604,7 @@ public class CalendarCombo extends Composite {
                 }
             };
 
-            Display.getDefault().addFilter(SWT.KeyDown, mKeyDownListener);
+            getDisplay().addFilter(SWT.KeyDown, mKeyDownListener);
         }
 
         if (isFlat) {
@@ -681,7 +681,7 @@ public class CalendarCombo extends Composite {
 
                     // on mac, select all text in combo if we are the control
                     // that gained focus
-                    if (mComboControl == Display.getDefault().getFocusControl()) {
+                    if (mComboControl == getDisplay().getFocusControl()) {
                         if (isFlat) {
                             mFlatCombo.getTextControl().selectAll();
                         } else {
@@ -717,7 +717,7 @@ public class CalendarCombo extends Composite {
 
             parentShell.addListener(SWT.Deactivate, new Listener() {
                 public void handleEvent(Event event) {
-                    Point mouseLoc = Display.getDefault().getCursorLocation();
+                    Point mouseLoc = getDisplay().getCursorLocation();
 
                     // with no focus shells, buttons will steal focus, and cause
                     // deactivate events when clicked
@@ -754,15 +754,15 @@ public class CalendarCombo extends Composite {
             }
         };
         
-        Display.getDefault().addFilter(SWT.MouseDown, mOobDisplayFilterListener); 
+        getDisplay().addFilter(SWT.MouseDown, mOobDisplayFilterListener); 
 
         // remove listener when mCombo is disposed
-        Display.getDefault().addFilter(SWT.FocusIn, mFilterListenerFocusIn);
+        getDisplay().addFilter(SWT.FocusIn, mFilterListenerFocusIn);
         mComboControl.addDisposeListener(new DisposeListener() {
             public void widgetDisposed(DisposeEvent event) {
-                Display.getDefault().removeFilter(SWT.FocusIn, mFilterListenerFocusIn);
-                Display.getDefault().removeFilter(SWT.MouseDown, mOobDisplayFilterListener);
-                if (mKeyDownListener != null) Display.getDefault().removeFilter(SWT.KeyDown, mKeyDownListener);
+                getDisplay().removeFilter(SWT.FocusIn, mFilterListenerFocusIn);
+                getDisplay().removeFilter(SWT.MouseDown, mOobDisplayFilterListener);
+                if (mKeyDownListener != null) getDisplay().removeFilter(SWT.KeyDown, mKeyDownListener);
 
                 if (mSettings.getCarbonDrawFont() != null) mSettings.getCarbonDrawFont().dispose();
 
@@ -1027,9 +1027,9 @@ public class CalendarCombo extends Composite {
             mCalendarShell.dispose();
         }
 
-        Display.getDefault().removeFilter(SWT.KeyDown, mKillListener);
-        Display.getDefault().removeFilter(SWT.MouseDown, mOobClickListener);
-        Display.getDefault().removeFilter(SWT.MouseDown, mOobDisplayFilterListener);
+        getDisplay().removeFilter(SWT.KeyDown, mKillListener);
+        getDisplay().removeFilter(SWT.MouseDown, mOobClickListener);
+        getDisplay().removeFilter(SWT.MouseDown, mOobDisplayFilterListener);
         
         if (mComboControl != null && !mComboControl.isDisposed()) {
             mComboControl.setCapture(false);
@@ -1168,10 +1168,10 @@ public class CalendarCombo extends Composite {
             // few lines ago.
             setComboText(comboText);
 
-            Display.getDefault().addFilter(SWT.KeyDown, mKillListener);
-            Display.getDefault().addFilter(SWT.MouseDown, mOobClickListener);
+            getDisplay().addFilter(SWT.KeyDown, mKillListener);
+            getDisplay().addFilter(SWT.MouseDown, mOobClickListener);
 
-            mCalendarShell = new Shell(Display.getDefault().getActiveShell(), SWT.ON_TOP | SWT.NO_TRIM | SWT.NO_FOCUS);
+            mCalendarShell = new Shell(getDisplay().getActiveShell(), SWT.ON_TOP | SWT.NO_TRIM | SWT.NO_FOCUS);
             mCalendarShell.setLayout(new FillLayout());
             if (OS_CARBON) mCalendarShell.setSize(mSettings.getCalendarWidthMacintosh(), mSettings.getCalendarHeightMacintosh());
             else mCalendarShell.setSize(mSettings.getCalendarWidth(), mSettings.getCalendarHeight());
