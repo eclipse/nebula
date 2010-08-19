@@ -68,6 +68,9 @@ public class OscilloscopeExampleTab extends AbstractExampleTab {
 	private Button btnHeartbeatEveryPulse;
 	private Button btnSine;
 	private Button btnSquareWave;
+	private Spinner progressionSpinner;
+	private Button btnFollowProgression;
+	private Button btnFollowProgression_1;
 
 	public String[] createLinks() {
 		String[] links = new String[0];
@@ -99,7 +102,7 @@ public class OscilloscopeExampleTab extends AbstractExampleTab {
 				private Image image;
 				private Image image1;
 
-				public void setValue(int value) {
+				public void hookSetValues(int value) {
 
 					if (btnSine.getSelection())
 						setSineValue(value);
@@ -127,51 +130,66 @@ public class OscilloscopeExampleTab extends AbstractExampleTab {
 				}
 
 				public void setSineValue(int v) {
-					value += counter;
-					if (value > 2 * Math.PI) {
-						value = 0;
-					}
+					for (int i = 0; i < getProgression(); i++) {
 
-					int intValue = (int) (Math.sin(value) * 100);
-					if (intValue == 99)
-						if (sound.getSelection()) {
-							clipper.playClip(getActiveSoundfile(), 0);
+						value += counter;
+						if (value > 2 * Math.PI) {
+							value = 0;
 						}
-					getOscilloscope().setValue(intValue);
+
+						int intValue = (int) (Math.sin(value) * 100);
+						if (intValue == 99)
+							if (sound.getSelection()) {
+								clipper.playClip(getActiveSoundfile(), 0);
+							}
+						getOscilloscope().setValue(intValue);
+						
+						if (!btnFollowProgression.getSelection())
+							return;
+					}
 				}
 
 				public void setSquareValue(int v) {
-					value += counter; // Math.PI /
-										// getOscilloscope().getBounds().width;
-					if (value > 2 * Math.PI) {
-						value = 0;
-					}
+					for (int i = 0; i < getProgression(); i++) {
 
-					int intValue = (int) ((Math.sin(value)
-							+ (Math.sin(3 * value) / 3)
-							+ (Math.sin(5 * value) / 5)
-							+ (Math.sin(7 * value) / 7)
-							+ (Math.sin(9 * value) / 9)
-							+ (Math.sin(11 * value) / 11)
-							+ (Math.sin(13 * value) / 13)
-							+ (Math.sin(15 * value) / 15)
-							+ (Math.sin(17 * value) / 17) + (Math
-							.sin(19 * value) / 19)) * 100);
-					// intValue += ;
-					if (intValue >= 90)
-						if (sound.getSelection()) {
-							clipper.playClip(getActiveSoundfile(), 0);
+						value += counter; // Math.PI /
+											// getOscilloscope().getBounds().width;
+						if (value > 2 * Math.PI) {
+							value = 0;
 						}
-					getOscilloscope().setValue(intValue);
+
+						int intValue = (int) ((Math.sin(value)
+								+ (Math.sin(3 * value) / 3)
+								+ (Math.sin(5 * value) / 5)
+								+ (Math.sin(7 * value) / 7)
+								+ (Math.sin(9 * value) / 9)
+								+ (Math.sin(11 * value) / 11)
+								+ (Math.sin(13 * value) / 13)
+								+ (Math.sin(15 * value) / 15)
+								+ (Math.sin(17 * value) / 17) + (Math
+								.sin(19 * value) / 19)) * 100);
+						// intValue += ;
+						if (intValue >= 90)
+							if (sound.getSelection()) {
+								clipper.playClip(getActiveSoundfile(), 0);
+							}
+						getOscilloscope().setValue(intValue);
+
+						if (!btnFollowProgression_1.getSelection())
+							return;
+					}
 				}
 
 				public Oscilloscope getOscilloscope() {
-					// TODO Auto-generated method stub
 					return oscilloscope;
 				}
 
 				public int getLineWidth() {
 					return lineWidth.getSelection();
+				}
+
+				public int getProgression() {
+					return progressionSpinner.getSelection();
 				}
 
 				public void init() {
@@ -300,7 +318,6 @@ public class OscilloscopeExampleTab extends AbstractExampleTab {
 
 			};
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -382,6 +399,19 @@ public class OscilloscopeExampleTab extends AbstractExampleTab {
 
 			Label lblMs = new Label(grpSpeed, SWT.NONE);
 			lblMs.setText("ms");
+			new Label(grpSpeed, SWT.NONE);
+
+			Label lblProgression = new Label(grpSpeed, SWT.NONE);
+			lblProgression.setText("Progression");
+
+			progressionSpinner = new Spinner(grpSpeed, SWT.BORDER);
+			progressionSpinner.setMaximum(100);
+			progressionSpinner.setMinimum(1);
+			progressionSpinner.setSelection(1);
+
+			Label lblSteps = new Label(grpSpeed, SWT.NONE);
+			lblSteps.setText("steps");
+			new Label(grpSpeed, SWT.NONE);
 		}
 
 		{
@@ -389,10 +419,11 @@ public class OscilloscopeExampleTab extends AbstractExampleTab {
 			grpSignal.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
 					false, 1, 1));
 			grpSignal.setText("Signal");
-			grpSignal.setLayout(new GridLayout(1, false));
+			grpSignal.setLayout(new GridLayout(2, false));
 
 			btnRandomSpikeEvery = new Button(grpSignal, SWT.RADIO);
 			btnRandomSpikeEvery.setText("Random spike every pulse");
+			new Label(grpSignal, SWT.NONE);
 
 			btnHeartbeatEveryPulse = new Button(grpSignal, SWT.RADIO);
 			btnHeartbeatEveryPulse.setSelection(false);
@@ -404,6 +435,7 @@ public class OscilloscopeExampleTab extends AbstractExampleTab {
 					}
 				}
 			});
+			new Label(grpSignal, SWT.NONE);
 
 			btnSine = new Button(grpSignal, SWT.RADIO);
 			btnSine.addSelectionListener(new SelectionAdapter() {
@@ -416,6 +448,9 @@ public class OscilloscopeExampleTab extends AbstractExampleTab {
 			});
 			btnSine.setText("Round Wave (Sine)");
 
+			btnFollowProgression = new Button(grpSignal, SWT.CHECK);
+			btnFollowProgression.setText("follow progression");
+
 			btnSquareWave = new Button(grpSignal, SWT.RADIO);
 			btnSquareWave.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
@@ -426,6 +461,9 @@ public class OscilloscopeExampleTab extends AbstractExampleTab {
 				}
 			});
 			btnSquareWave.setText("Square Wave");
+
+			btnFollowProgression_1 = new Button(grpSignal, SWT.CHECK);
+			btnFollowProgression_1.setText("follow progression");
 		}
 
 		{
