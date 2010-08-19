@@ -2780,7 +2780,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                  continue;
              }
             */
-            // slower check
+            System.err.println(range.getStart().getTime() + " - " + range.getEnd().getTime());
+            
+            // slower check (note to self: this only checks if any date is in range, doesn't mean we fill the entire screen with data)
             if (!range.isVisible(_mainCalendar, _endCalendar)) {
                 continue;
             }
