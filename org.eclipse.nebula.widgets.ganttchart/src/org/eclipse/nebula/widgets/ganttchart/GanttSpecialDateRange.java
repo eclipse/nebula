@@ -627,7 +627,7 @@ public class GanttSpecialDateRange {
                     if (start != null && calEnd.before(start)) {
                         continue;
                     }
-                    if (end != null && cal.after(end)) {
+                    if (end != null && cal.after(end) || cal.after(ourEnd)) {
                         continue;
                     }
 
