@@ -211,6 +211,10 @@ abstract class AbstractSettings implements ISettings {
 	public boolean allowBlankAreaDragAndDropToMoveDates() {
 		return true;
 	}
+	
+	public boolean allowBlankAreaVerticalDragAndDropToMoveChart() {
+		return false;
+	}
 
 	public boolean flipBlankAreaDragDirection() {
 		return true;
@@ -490,5 +494,9 @@ abstract class AbstractSettings implements ISettings {
     public boolean scaleImageToDayWidth() {
     	return true;
     }
-	
+
+    public boolean allowArrowKeysToScrollChart() {
+    	return false;
+    }
+    
 }

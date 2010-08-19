@@ -180,16 +180,20 @@ class HorizontalScrollbarHandler implements Listener {
 			
 			int xStart = 0; //_gc.getXForDate(_gc.getRootCalendar());			
 			int xEnd = _gc.getVisibleBounds().width; //_gc.getXForDate(_gc.getRootEndCalendar());
+			int rangeBonus = 0;
 
 			// take sections into account
-			if (_gc.isShowingGanttSections()) {
-				int sbw = _gc.getSettings().getSectionBarWidth();
+			int gSectionWidth = _gc.getSettings().getSectionBarWidth();
+			if (_gc.isShowingGanttSections()) {			
 				if (_gc.getSettings().getSectionSide() == SWT.LEFT) {
-					xStart = sbw;
+					xStart = gSectionWidth;
 				}
 				else {
-					xEnd -= sbw;
+					xEnd -= gSectionWidth;
 				}
+				
+				// add it to the range too
+				rangeBonus += gSectionWidth;
 			}
 			
 			//System.err.println(xStart + " : " + xEnd + " " + lastEvent.getActualBounds() + " " + _gc.getVisibleBounds().width + " " + xRightMostPixel);
@@ -203,7 +207,6 @@ class HorizontalScrollbarHandler implements Listener {
 			int extraLeft = xLeftMostPixel - xStart;
 			int extraRight = xEnd - xRightMostPixel;
 			
-			int rangeBonus = 0;
 			if (extraLeft > 0) {
 				rangeBonus += extraLeft;
 			}
@@ -222,6 +225,10 @@ class HorizontalScrollbarHandler implements Listener {
 				_scrollBar.setMaximum(0);
 				_scrollBar.setSelection(0);
 				_scrollBar.setThumb(1000000);
+				if (_scrollBar.isVisible()) {
+					// redraw chart as there's now a new area that is not drawn (where the scrollbar was before)
+					_gc.redraw();
+				}
 				_scrollBar.setVisible(false);
 				return;
 			}
@@ -234,8 +241,6 @@ class HorizontalScrollbarHandler implements Listener {
 			float pixelRange = (float) (xRightMostPixel - xLeftMostPixel + rangeBonus);
 			pixelRange -= _gc.getVisibleBounds().width;
 			
-
-
 			if (_gc.getCurrentView() != ISettings.VIEW_YEAR) {
 				pixelRange /= dayWidth;
 			}			

@@ -125,6 +125,7 @@ public class GanttTester {
     private Button              _bEnableZooming;
     private Button              _bShowZoomLevelBox;
     private Button              _bAllowBlankAreaDragAndDropToMoveDates;
+    private Button				_bAllowVerticalBlankDnd;
     private Button              _bFlipBlankAreaDragDirection;
     private Button              _bDrawSelectionMarkerAroundSelectedEvent;
     private Button              _bAllowCheckpointResizing;
@@ -134,6 +135,7 @@ public class GanttTester {
     private Button              _bShowDateTipsOnScrolling;
     private Button              _bZoomToMousePointerDateOnWheelZooming;
     private Button              _bScaleImageToDay;
+    private Button				_bAllowArrowKeysToMoveChart;
     
     private Table                _tEventLog;
 
@@ -167,6 +169,7 @@ public class GanttTester {
         rightForm.setContent(sc);
         sc.setExpandHorizontal(true);
         sc.setExpandVertical(true);
+        sc.getVerticalBar().setPageIncrement(150);
 
         final Composite rightComposite = new Composite(sc, SWT.NONE);
         final GridLayout gl = new GridLayout();
@@ -347,7 +350,7 @@ public class GanttTester {
 
         _bConnectionLineStyle = new Combo(group, SWT.READ_ONLY);
         _bConnectionLineStyle.add("Right to Left");
-        _bConnectionLineStyle.add("Left to Top");
+        _bConnectionLineStyle.add("Right to Top");
         _bConnectionLineStyle.add("MS Project Style");
         _bConnectionLineStyle.add("Birds Path");
         _bConnectionLineStyle.select(2);
@@ -438,13 +441,22 @@ public class GanttTester {
         prefHook(_bZoomToMousePointerDateOnWheelZooming);
 
         _bAllowBlankAreaDragAndDropToMoveDates = new Button(group, SWT.CHECK);
-        _bAllowBlankAreaDragAndDropToMoveDates.setText("Allow Blank Area DND to Move Chart");
-        _bAllowBlankAreaDragAndDropToMoveDates.setToolTipText("When you grab a blank area of the chart and drag it, the chart will move in the drag direction. Default is on.");
+        _bAllowBlankAreaDragAndDropToMoveDates.setText("Allow Horizontal Blank Area DND to Move Chart");
+        _bAllowBlankAreaDragAndDropToMoveDates.setToolTipText("When you grab a blank area of the chart and drag it, the chart will move in the drag direction horizontally. Default is on.");
         _bAllowBlankAreaDragAndDropToMoveDates.setSelection(true);
         _bAllowBlankAreaDragAndDropToMoveDates.setLayoutData(oneRow);
         _bAllowBlankAreaDragAndDropToMoveDates.setData(KEY, "bAllowBlankAreaDragAndDropToMoveDates");
         prefLoad(_bAllowBlankAreaDragAndDropToMoveDates);
         prefHook(_bAllowBlankAreaDragAndDropToMoveDates);
+        
+        _bAllowVerticalBlankDnd = new Button(group, SWT.CHECK);
+        _bAllowVerticalBlankDnd.setText("Allow Vertical Blank Area DND to Move Chart)");
+        _bAllowVerticalBlankDnd.setToolTipText("When you grab a blank area of the chart and drag it, the chart will move in the drag direction vertically. Default is off.");
+        _bAllowVerticalBlankDnd.setSelection(false);
+        _bAllowVerticalBlankDnd.setLayoutData(oneRow);
+        _bAllowVerticalBlankDnd.setData(KEY, "bAllowVerticalBlankDnd");
+        prefLoad(_bAllowVerticalBlankDnd);
+        prefHook(_bAllowVerticalBlankDnd);
 
         _bFlipBlankAreaDragDirection = new Button(group, SWT.CHECK);
         _bFlipBlankAreaDragDirection.setText("Flip Blank Area DND Direction");
@@ -518,6 +530,15 @@ public class GanttTester {
         prefLoad(_bScaleImageToDay);
         prefHook(_bScaleImageToDay);
 
+        _bAllowArrowKeysToMoveChart = new Button(group, SWT.CHECK);
+        _bAllowArrowKeysToMoveChart.setText("Allow Arrow Keys To Scroll Chart");
+        _bAllowArrowKeysToMoveChart.setToolTipText("Whether arrow keys can scroll the chart left/right/up/down (like navigating with scrollbars). Default is off.");
+        _bAllowArrowKeysToMoveChart.setSelection(false);
+        _bAllowArrowKeysToMoveChart.setLayoutData(oneRow);
+        _bAllowArrowKeysToMoveChart.setData(KEY, "bAllowArrowKeysToMoveChart");
+        prefLoad(_bAllowArrowKeysToMoveChart);
+        prefHook(_bAllowArrowKeysToMoveChart);
+        
         return sc;
     }
 
@@ -651,8 +672,8 @@ public class GanttTester {
         prefHook(_bCreatePlannedDates);
 
         _bDrawHorizontalLines = new Button(gLeft, SWT.CHECK);
-        _bDrawHorizontalLines.setText("Draw Horizontal Lines");
-        _bDrawHorizontalLines.setToolTipText("Draws horizontal lines between events");
+        _bDrawHorizontalLines.setText("Draw Horizontal Event Divider Lines");
+        _bDrawHorizontalLines.setToolTipText("Draws horizontal lines between events at the location of the height of the row where the event lives");
         _bDrawHorizontalLines.setData(KEY, "bDrawHorizontalLines");
         prefLoad(_bDrawHorizontalLines);
         prefHook(_bDrawHorizontalLines);
@@ -1858,10 +1879,19 @@ public class GanttTester {
             return _bZoomToMousePointerDateOnWheelZooming.getSelection();
         }
 
-        public boolean scaleImageToDayWidth() {
+        public boolean allowBlankAreaVerticalDragAndDropToMoveChart() {
+			return _bAllowVerticalBlankDnd.getSelection();
+		}
+
+		public boolean scaleImageToDayWidth() {
         	return _bScaleImageToDay.getSelection();
         }
 
+		public boolean allowArrowKeysToScrollChart() {
+			return _bAllowArrowKeysToMoveChart.getSelection();
+		}
+
+		
     }
 
 }

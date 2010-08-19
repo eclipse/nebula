@@ -40,7 +40,7 @@ public interface ISettings {
      */
     public static final int CONNECTION_MS_PROJECT_STYLE    = 3;
     /**
-     * Birds flight path is an arrow-head-less line from the one event to another in the straightest line
+     * Birds flight path is an arrow-head-less line from the one event to another in the straightest line, also known as "as the crow flies".
      */
     public static final int CONNECTION_BIRDS_FLIGHT_PATH   = 4;
     public static final int DEFAULT_CONNECTION_ARROW       = CONNECTION_ARROW_RIGHT_TO_LEFT;
@@ -448,6 +448,16 @@ public interface ISettings {
      * @return true if to allow clear-area drag. Default is true.
      */
     public boolean allowBlankAreaDragAndDropToMoveDates();
+    
+    /**
+     * Relies on {@link #allowBlankAreaDragAndDropToMoveDates()} being true. If so, this will additionally determine if the user
+     * can blank-area drag the chart in a vertical manner to move the chart in that direction as well.
+     * <p />
+     * Holding down the shift key will double the speed of the vertical drag
+     * 
+     * @return true to allow clear-area vertical drag. Default is false (as it can be confusing at first try).
+     */
+    public boolean allowBlankAreaVerticalDragAndDropToMoveChart();
 
     /**
      * If for some reason the drag left vs. drag right directions feel reversed, simply flip this to switch them around.
@@ -1018,5 +1028,12 @@ public interface ISettings {
     * 
     * @return true to keep within day width. Default is true.
     */
-    public boolean scaleImageToDayWidth();    	   
+    public boolean scaleImageToDayWidth();
+    
+    /**
+     * Whether arrow keys are enabled to scroll chart left/right/up/down.
+     * 
+     * @return true to allow arrow keys to move the chart. Default is false.
+     */
+    public boolean allowArrowKeysToScrollChart();
 }

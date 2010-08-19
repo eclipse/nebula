@@ -6069,6 +6069,41 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             }
             setCursor(Constants.CURSOR_NONE);
         }
+        
+        if (_settings.allowArrowKeysToScrollChart()) {
+        	if (e.keyCode == SWT.ARROW_LEFT) {
+        		if (_currentView == ISettings.VIEW_YEAR) {
+        			prevMonth();
+        		}
+        		else {
+	                if (_currentView == ISettings.VIEW_DAY) {
+	                    prevHour();
+	                } else {
+	                    prevDay();
+	                }
+        		}
+        	}
+        	else if (e.keyCode == SWT.ARROW_RIGHT) {
+        		if (_currentView == ISettings.VIEW_YEAR) {
+        			nextMonth();
+        		}
+        		else {
+	                if (_currentView == ISettings.VIEW_DAY) {
+	                    nextHour();
+	                } else {
+	                    nextDay();
+	                }
+        		}
+        	}
+        	else if (e.keyCode == SWT.ARROW_UP) {
+        		_vScrollBar.setSelection(_vScrollBar.getSelection() - 10);
+        		vScroll(null);
+        	}
+        	else if (e.keyCode == SWT.ARROW_DOWN) {
+        		_vScrollBar.setSelection(_vScrollBar.getSelection() + 10);
+        		vScroll(null);        	
+        	}
+        }
     }
 
     public void keyReleased(final KeyEvent e) {
@@ -6362,27 +6397,45 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                     _mouseDragStartLocation = new Point(me.x, me.y);
                 }
 
-                int diff = me.x - _mouseDragStartLocation.x;
+                int xDiff = me.x - _mouseDragStartLocation.x;
+                int yDiff = me.y - _mouseDragStartLocation.y;
 
-                boolean left = false;
-                if (diff < 0) {
-                    left = true;
-                }
+                boolean left = xDiff < 0;
+                boolean up = yDiff < 0;
 
                 if (_settings.flipBlankAreaDragDirection()) {
-                    left = !left; 
+                    left = !left;
                 }
 
-                diff /= getDayWidth();
-
-                diff = Math.abs(diff);
-
-                if (diff > 0 && ISettings.VIEW_YEAR != _currentView) {
+                xDiff /= getDayWidth();
+                xDiff = Math.abs(xDiff);
+                
+                if (xDiff > 0 && ISettings.VIEW_YEAR != _currentView) {
                     _mouseDragStartLocation = new Point(me.x, me.y);
                 }
+                
+                if (_settings.allowBlankAreaVerticalDragAndDropToMoveChart()) {
+                	_mouseDragStartLocation = new Point(me.x, me.y);
+                }
 
+                // do vertical drag first, it's the easiest
+                if (yDiff != 0 && _settings.allowBlankAreaVerticalDragAndDropToMoveChart()) {
+                	yDiff *= 2; // otherwise it's a really small scroll
+                	// double speed if shift is held down
+                	if ((me.stateMask & SWT.SHIFT) != 0) {
+                		yDiff *= 2;
+                	}
+                    if (_settings.flipBlankAreaDragDirection()) {                	
+                    	_vScrollBar.setSelection(_vScrollBar.getSelection() + -yDiff);                    	
+                    }
+                    else {
+                    	_vScrollBar.setSelection(_vScrollBar.getSelection() + yDiff);
+                    }
+                    vScroll(null);
+                }                
+                
                 // if it's year view, we wait until the diff matches the number of dates of the month to move
-                if (ISettings.VIEW_YEAR == _currentView && diff < _mainCalendar.getActualMaximum(Calendar.DATE)) {
+                if (ISettings.VIEW_YEAR == _currentView && xDiff < _mainCalendar.getActualMaximum(Calendar.DATE)) {
                     return;
                 }
                 // and again if it's year view, and we get here, we do the actual flip
@@ -6391,7 +6444,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
                     // fast drags get multiple moves..
                     // TODO: just do prevMonth(times) instead of looping, less redraw
-                    int times = diff / _mainCalendar.getActualMaximum(Calendar.DATE);
+                    int times = xDiff / _mainCalendar.getActualMaximum(Calendar.DATE);
                     if (times == 0) {
                         times = 1;
                     }
@@ -6406,7 +6459,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                     return;
                 }
 
-                for (int i = 0; i < diff; i++) {
+                for (int i = 0; i < xDiff; i++) {
                     if (left) {
                         if (_currentView == ISettings.VIEW_DAY) {
                             prevHour();
@@ -6423,13 +6476,14 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                 }
 
                 updateHorizontalScrollbar();
-
+                
+   
                 // mMouseDragStartLocation = new Point(me.x, me.y);
 
                 // when using fast redraw, it can happen that a really fast drag will not be redrawn correctly due to us flagging it to off
                 // and the next/prev day items don't catch that it's a new month. So, if the diff is big here, that means we're dragging and dropping pretty fast
                 // and we simply force a redraw. The number is just a number, but 7 seems about right, and that's tested on a 1920x resolution at full screen.
-                if (_currentView == ISettings.VIEW_YEAR && diff > 7) {
+                if (_currentView == ISettings.VIEW_YEAR && xDiff > 7) {
                     _recalcScopes = true;
                     _recalcSecBounds = true;
                     redraw();
@@ -6452,6 +6506,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                         GanttDateTip.makeDialog(_colorManager, DateHelper.getDate(_mainCalendar, dateFormat), toDisplay(loc), _mainBounds.y);
                     }
                 }
+                
             }
         } catch (Exception error) {
             SWT.error(SWT.ERROR_UNSPECIFIED, error);
