@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.TabItem;
  */
 public abstract class SnippetDispatcher extends OscilloscopeDispatcher {
 
-	public abstract void setValue(int value);
+	public abstract void hookSetValues(int value);
 
 	PlayClip clipper = new PlayClip();
 	protected Oscilloscope gilloscope;
@@ -123,7 +123,7 @@ public abstract class SnippetDispatcher extends OscilloscopeDispatcher {
 						getOscilloscope().setForeground(
 								getOscilloscope().getDisplay().getSystemColor(
 										SWT.COLOR_GREEN));
-						setValue(pulse);
+						hookSetValues(pulse);
 						if (isSoundRequired())
 							clipper.playClip(getActiveSoundfile(), 0);
 					} else {

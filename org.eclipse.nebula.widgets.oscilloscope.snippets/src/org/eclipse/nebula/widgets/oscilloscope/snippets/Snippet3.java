@@ -99,7 +99,7 @@ public class Snippet3 {
 			};
 
 			@Override
-			public void setValue(int value) {
+			public void hookSetValues(int value) {
 				scope.setValues(Oscilloscope.HEARTBEAT);
 			}
 

@@ -82,7 +82,7 @@ public class Snippet2 {
 				new SnippetDispatcher() {
 					private File HEARTBEATFILE;
 
-					public void setValue(int value) {
+					public void hookSetValues(int value) {
 						getOscilloscope().setValues(Oscilloscope.HEARTBEAT);
 					}
 
@@ -107,7 +107,7 @@ public class Snippet2 {
 					};
 
 					@Override
-					public void setValue(int v) {
+					public void hookSetValues(int v) {
 						value += counter;
 						if (value > 2 * Math.PI) {
 							value = 0;
@@ -146,7 +146,7 @@ public class Snippet2 {
 					};
 
 					@Override
-					public void setValue(int v) {
+					public void hookSetValues(int v) {
 						value += counter;
 						if (value > 2 * Math.PI) {
 							value = 0;
@@ -186,7 +186,7 @@ public class Snippet2 {
 					};
 
 					@Override
-					public void setValue(int v) {
+					public void hookSetValues(int v) {
 						value += Math.PI / gilloscope.getBounds().width;
 						if (value > 2 * Math.PI) {
 							value = 0;
