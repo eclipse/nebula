@@ -96,6 +96,7 @@ public class Oscilloscope extends Canvas {
 	 */
 	public static final int STEADYPOSITION_75PERCENT = -1;
 	private ArrayList stackListeners;
+	private int progression = 1;
 
 	/**
 	 * The stack will not overflow if you push too many values into it but it
@@ -273,57 +274,22 @@ public class Oscilloscope extends Canvas {
 			return;
 		}
 
-		if (stack.isEmpty() && stackListeners != null)
-			notifyListeners();
-
-		GC gc = e.gc;
-		gc.setAntialias(SWT.ON);
-		gc.setLineWidth(getLineWidth());
-
-		if (!isSteady())
-			cursor++;
-		if (cursor >= width)
-			cursor = 0;
-
-		// Draw
-		int tailIndex = 1;
-		int[] line1 = new int[tailSize * 4];
-		int[] line2 = new int[tailSize * 4];
-
-		if (isPercentage())
-			tail[tailSize] = ((getBounds().height / 2) * stack.pop(0) / 100);
-		else
-			tail[tailSize] = stack.pop(0);
-
-		int splitPos = tailSize * 4;
-		for (int i = 0; i < tailSize; i++) {
-
-			int posx = cursor - tailSize + i;
-			int pos = i * 4;
-			if (posx < 0) {
-				posx += width;
-				line1[pos] = posx - 1;
-
-				line1[pos + 1] = base + (isSteady() ? 0 : tail[tailIndex - 1]);
-				line1[pos + 2] = posx;
-				line1[pos + 3] = base + (isSteady() ? 0 : tail[tailIndex]);
-			}
-
-			else {
-				if (splitPos == tailSize * 4)
-					splitPos = pos;
-				line2[pos] = posx - 1;
-				line2[pos + 1] = base + tail[tailIndex - 1];
-				line2[pos + 2] = posx;
-				line2[pos + 3] = (base + tail[tailIndex]);
-			}
-			tail[tailIndex - 1] = tail[tailIndex++];
-		}
+		// Go calculate the line
+		Object[] result = calculate();
+		int[] line1 = (int[]) result[0];
+		int[] line2 = (int[]) result[1];
+		int splitPos = ((Integer) result[2]).intValue();
 
 		int[] l1 = new int[splitPos];
 		System.arraycopy(line1, 0, l1, 0, l1.length);
 		int[] l2 = new int[(tailSize * 4) - splitPos];
 		System.arraycopy(line2, splitPos, l2, 0, l2.length);
+
+
+		// Draw it
+		GC gc = e.gc;
+		gc.setAntialias(SWT.ON);
+		gc.setLineWidth(getLineWidth());
 
 		// Fade tail
 		if (isFade()) {
@@ -355,6 +321,73 @@ public class Oscilloscope extends Canvas {
 				&& !isFade() && isConnect()) {
 			gc.drawLine(l2[l2.length - 2], l2[l2.length - 1], l1[0], l1[1]);
 		}
+	}
+
+	private Object[] calculate() {
+
+		int[] line1 = null;
+		int[] line2 = null;
+		int splitPos = 0;
+
+		for (int progress = 0; progress < getProgression(); progress++) {
+
+			if (stack.isEmpty() && stackListeners != null)
+				notifyListeners();
+
+			splitPos = tailSize * 4;
+
+			if (!isSteady())
+				cursor++;
+			if (cursor >= width)
+				cursor = 0;
+
+			// Draw
+			int tailIndex = 1;
+			line1 = new int[tailSize * 4];
+			line2 = new int[tailSize * 4];
+
+			if (isPercentage())
+				tail[tailSize] = ((getBounds().height / 2) * stack.pop(0) / 100);
+			else
+				tail[tailSize] = stack.pop(0);
+
+			for (int i = 0; i < tailSize; i++) {
+
+				int posx = cursor - tailSize + i;
+				int pos = i * 4;
+				if (posx < 0) {
+					posx += width;
+					line1[pos] = posx - 1;
+
+					line1[pos + 1] = base
+							+ (isSteady() ? 0 : tail[tailIndex - 1]);
+					line1[pos + 2] = posx;
+					line1[pos + 3] = base + (isSteady() ? 0 : tail[tailIndex]);
+				}
+
+				else {
+					if (splitPos == tailSize * 4)
+						splitPos = pos;
+					line2[pos] = posx - 1;
+					line2[pos + 1] = base + tail[tailIndex - 1];
+					line2[pos + 2] = posx;
+					line2[pos + 3] = (base + tail[tailIndex]);
+				}
+				tail[tailIndex - 1] = tail[tailIndex++];
+			}
+		}
+
+		return new Object[] { line1, line2, new Integer(splitPos) };
+	}
+
+	public int getProgression() {
+		return progression;
+	}
+
+	public void setProgression(int progression) {
+		if (progression > 0)
+			this.progression = progression;
+
 	}
 
 	private void notifyListeners() {
@@ -541,7 +574,7 @@ public class Oscilloscope extends Canvas {
 
 	public Point computeSize(int wHint, int hHint, boolean changed) {
 		checkWidget();
-		System.out.println(changed);
+
 		int width;
 		int height;
 
@@ -554,8 +587,6 @@ public class Oscilloscope extends Canvas {
 			height = hHint;
 		else
 			height = DEFAULT_HEIGHT;
-
-		//setSizeInternal(width, height);
 
 		return new Point(width + 2, height + 2);
 	}

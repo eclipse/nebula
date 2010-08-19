@@ -17,25 +17,69 @@ import java.io.File;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageLoader;
+import org.eclipse.swt.graphics.Point;
 
 /**
  * This class keeps the oscilloscope animation running and is used to set
  * various attributes of the scope.
  * 
+ * <p/>
+ * You need to provide an {@link Oscilloscope} widget by overriding the
+ * {@link #getOscilloscope()} method. The {@link Oscilloscope#redraw()} method
+ * will be called every {@link #getDelayLoop()} milliseconds. The higher the
+ * value, the slower the animation will run.
+ * </p>
+ * Just before the redraw and just after the redraw the <code>hook..Draw</code>
+ * methods are called. Don't do any expensive calculations there because this
+ * will slow down the animation.
+ * <p/>
+ * Then a counter is incremented and if the counter reaches the
+ * {@link #getPulse()} value, then the {@link #hookSetValues(int)} method is
+ * called. This is you opportunity to provide a value to the scope by calling
+ * its setValue or setValues method. The hookSetValues method is only called if
+ * the {@link #getPulse()} value is greater than {@link #NO_PULSE}
+ * <p/>
+ * You can also be called back by the widget if it runs out of values by setting
+ * a listener in the
+ * {@link Oscilloscope#addStackListener(OscilloscopeStackAdapter)} method.
+ * 
+ * @author Wim Jongman
+ * 
  */
 public abstract class OscilloscopeDispatcher {
 
 	/**
-	 * Play a sound clip.
+	 * Plays a sound clip.
 	 * 
 	 */
 	public class PlayClip {
 		Clip clip = null;
 		String oldFile = "";
 
-		public void playClip(File file, int loop) {
+		/**
+		 * Returns the clip so you can control it.
+		 * 
+		 * @return
+		 */
+		public Clip getClip() {
+			return clip;
+		}
+
+		/**
+		 * Creates a clip from the passed sound file and plays it. If the clip
+		 * is currently playing then the method returns, get the clip with
+		 * {@link #getClip()} to control it.
+		 * 
+		 * @param file
+		 * @param loopCount
+		 */
+		public void playClip(File file, int loopCount) {
 
 			if (file == null)
 				return;
@@ -52,15 +96,13 @@ public abstract class OscilloscopeDispatcher {
 				// clip.stop(); << Alternative
 
 				clip.setFramePosition(0);
-				clip.loop(loop);
+				clip.loop(loopCount);
 
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 	}
-
-	public abstract void setValue(int value);
 
 	private PlayClip clipper = new PlayClip();
 
@@ -141,16 +183,32 @@ public abstract class OscilloscopeDispatcher {
 			127, 211, 170, 127, 241, 84, 182, 31, 242, 35, 106, 63, 245, 247,
 			111, 255, 0, 160, 203, 88, 213, 143, 41, 162, 143, 153, 255, 217 };
 
-	public static final int NO_PULSE = -1;
+	/**
+	 * This is a special value indicating there is no pulse which means that
+	 * {@link #hookPulse(Oscilloscope, int)} will never be called.
+	 * 
+	 * @see {@link #getPulse()}
+	 */
+	public static final int NO_PULSE = 0;
 
 	private Image image;
 
 	/**
-	 * This class calls all methods to set various attributes of the scope. It
-	 * will redraw the scope and then place a new request in the display thread.
-	 * Please read each method's doc to know how to control the widget.
+	 * This method will get the animation going. It will create a runnable that
+	 * will be dispatched to the user interface thread. The runnable increments
+	 * a counter that leads to the {@link #getPulse()} value and if this is
+	 * reached then the counter is reset. The counter is passed to the hook
+	 * methods so that they can prepare for the next pulse.
+	 * <p/>
+	 * After the hook methods are called, the runnable is placed in the user
+	 * interface thread with a timer of {@link #getDelayLoop()} milliseconds.
+	 * <p/>
+	 * This method is not meant to be overridden, override
+	 * {@link #hookBeforeDraw(Oscilloscope, int)},
+	 * {@link #hookAfterDraw(Oscilloscope, int)} and
+	 * {@link #hookPulse(Oscilloscope, int)}.
 	 * 
-	 * @wbp.parser.entryPoint
+	 * 
 	 */
 	public void dispatch() {
 
@@ -161,49 +219,31 @@ public abstract class OscilloscopeDispatcher {
 			private int pulse;
 
 			public void run() {
+				if (getOscilloscope().isDisposed())
+					return;
 
-				getOscilloscope().setPercentage(isPercentage());
-				getOscilloscope().setTailSize(
-						isTailSizeMax() ? Oscilloscope.TAILSIZE_MAX
-								: getTailSize());
-				getOscilloscope().setSteady(isSteady(), getSteadyPosition());
-				getOscilloscope().setFade(getFade());
-				getOscilloscope().setTailFade(getTailFade());
-				getOscilloscope().setConnect(mustConnect());
-				getOscilloscope().setLineWidth(getLineWidth());
-				getOscilloscope().setBackgroundImage(getBackgroundImage());
+				hookBeforeDraw(getOscilloscope(), pulse);
 				getOscilloscope().redraw();
-
+				hookAfterDraw(getOscilloscope(), pulse);
 				pulse++;
 
-				if (getPulse() != NO_PULSE)
-					if (pulse >= getPulse()) {
-						pulse = 0;
-						if (isServiceActive()) {
-							getOscilloscope().setForeground(
-									getActiveForegoundColor());
-
-							setValue(pulse);
-							if (isSoundRequired())
-								getClipper().playClip(getActiveSoundfile(), 0);
-						} else {
-							if (isSoundRequired())
-								getClipper()
-										.playClip(getInactiveSoundfile(), 0);
-							getOscilloscope().setForeground(
-									getInactiveForegoundColor());
-						}
-					}
+				if (pulse >= getPulse()) {
+					if (getPulse() != NO_PULSE)
+						hookPulse(getOscilloscope(), pulse);
+					pulse = 0;
+				}
 
 				getOscilloscope().getDisplay().timerExec(getDelayLoop(), this);
 			}
 		};
-		getOscilloscope().getDisplay().timerExec(getDelayLoop(), runnable);
+
+		getOscilloscope().getDisplay().syncExec(runnable);
 
 	}
 
-	public int getLineWidth() {
-		return 1;
+	protected void finalize() throws Throwable {
+		if (image != null && !image.isDisposed())
+			image.dispose();
 	}
 
 	/**
@@ -213,13 +253,69 @@ public abstract class OscilloscopeDispatcher {
 	 * of this method will be used in the
 	 * {@link Oscilloscope#setForeground(Color)} method.
 	 * 
-	 * @return the color
+	 * @return the current foreground color of the scope. Override if you want
+	 *         to control the foreground color.
 	 * 
 	 * @see #getInactiveForegoundColor()
 	 * @see Oscilloscope#setForeground(Color)
 	 */
 	public Color getActiveForegoundColor() {
 		return getOscilloscope().getForeground();
+	}
+
+	/**
+	 * Override this to return a soundfile that will be played by the dispatcher
+	 * in the {@link #hookPulse(Oscilloscope, int)} method if the
+	 * {@link #isSoundRequired()} method returns true.
+	 * 
+	 * @return <code>null</code>. Override to return a file that can be played
+	 *         by your sound hardware.
+	 */
+	public File getActiveSoundfile() {
+		return null;
+	}
+
+	/**
+	 * Override this to return the background image for the scope.
+	 * 
+	 * @return the image stored in {@link #BACKGROUND_MONITOR}. Override to
+	 *         supply your own Image.
+	 */
+	public Image getBackgroundImage() {
+
+		if (image == null) {
+			byte[] bytes = new byte[BACKGROUND_MONITOR.length];
+			for (int i = 0; i < BACKGROUND_MONITOR.length; i++)
+				bytes[i] = (byte) BACKGROUND_MONITOR[i];
+			image = new Image(null, new ByteArrayInputStream(bytes));
+		}
+		return image;
+	}
+
+	/**
+	 * Override this to return the Clip player.
+	 * <p/>
+	 * Overriding this method is not expected.
+	 * 
+	 * @return
+	 */
+	public PlayClip getClipper() {
+		return clipper;
+	}
+
+	/**
+	 * Override this to return a draw delay in milliseconds. The scope will
+	 * progress {@link #getProgression()} steps.
+	 * 
+	 * @return 30 milliseconds. Override with a smaller value for more speed.
+	 */
+	public int getDelayLoop() {
+		return 30;
+	}
+
+	public boolean getFade() {
+		return true;
+
 	}
 
 	/**
@@ -238,47 +334,164 @@ public abstract class OscilloscopeDispatcher {
 		return getOscilloscope().getForeground();
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
-	public Image getBackgroundImage() {
-
-		if (image == null) {
-			byte[] bytes = new byte[BACKGROUND_MONITOR.length];
-			for (int i = 0; i < BACKGROUND_MONITOR.length; i++)
-				bytes[i] = (byte) BACKGROUND_MONITOR[i];
-			image = new Image(null, new ByteArrayInputStream(bytes));
-		}
-		return image;
+	public File getInactiveSoundfile() {
+		return null;
 	}
 
-	/**
-	 * Will be called only once.
-	 */
-	public void init() {
+	public int getLineWidth() {
+		return 1;
 	}
+
+	public abstract Oscilloscope getOscilloscope();
 
 	public int getPulse() {
 		return 40;
 	}
 
-	public File getActiveSoundfile() {
-		return null;
+	public int getSteadyPosition() {
+		return 200;
 	}
 
-	public int getDelayLoop() {
-		return 80;
+	public int getTailFade() {
+		return Oscilloscope.DEFAULT_TAILFADE;
 	}
 
-	public abstract Oscilloscope getOscilloscope();
-
-	public File getInactiveSoundfile() {
-		return null;
+	public int getTailSize() {
+		return Oscilloscope.TAILSIZE_MAX;
 	}
 
-	public boolean isTailSizeMax() {
-		return false;
+	/**
+	 * Is called just after the widget is redrawn every {@link #getDelayLoop()}
+	 * milliseconds. The pulse counter will be set to zero when it reaches
+	 * {@link #getPulse()}.
+	 * 
+	 * @param oscilloscope
+	 * @param counter
+	 */
+	public void hookAfterDraw(Oscilloscope oscilloscope, int counter) {
+
+	}
+
+	/**
+	 * Is called just before the widget is redrawn every {@link #getDelayLoop()}
+	 * milliseconds. It will also call the {@link #hookChangeAttributes()}
+	 * method if the number of times this method is called matches the
+	 * {@link #getPulse()} value. The pulse counter will be set to zero when it
+	 * reaches {@link #getPulse()}.
+	 * <p/>
+	 * If you override this method, don't forget to call
+	 * {@link #hookChangeAttributes()} every now and then.
+	 * 
+	 * @param oscilloscope
+	 * @param counter
+	 */
+	public void hookBeforeDraw(Oscilloscope oscilloscope, int counter) {
+
+		if (counter == getPulse() - 1)
+			hookChangeAttributes();
+
+	}
+
+	/**
+	 * This method sets the values in the scope by calling the individual value
+	 * methods in the dispatcher.
+	 */
+	public void hookChangeAttributes() {
+
+		getOscilloscope().setPercentage(isPercentage());
+		getOscilloscope().setTailSize(
+				isTailSizeMax() ? Oscilloscope.TAILSIZE_MAX : getTailSize());
+		getOscilloscope().setSteady(isSteady(), getSteadyPosition());
+		getOscilloscope().setFade(getFade());
+		getOscilloscope().setTailFade(getTailFade());
+		getOscilloscope().setConnect(mustConnect());
+		getOscilloscope().setLineWidth(getLineWidth());
+		getOscilloscope().setBackgroundImage(getBackgroundImage());
+		getOscilloscope().setProgression(getProgression());
+
+	}
+
+	/**
+	 * Override this to set the number of steps that is calculated before it is
+	 * actually drawn on the display. This will make the graphic look more jumpy
+	 * for slower/higher delay rates but you can win speed at faster/lower delay
+	 * rates. There will be {@link #getProgression()} values consumed so make
+	 * sure that the value stack contains enough entries.
+	 * <p/>
+	 * If the {@link #getDelayLoop()} is 10 and the {@link #getPulse()} is 1 and
+	 * the {@link #getProgression()} is 5 then every 10 milliseconds the graph
+	 * will have progressed 5 pixels. If you want to avoid gaps in your graph,
+	 * you need to input 5 values every time you reach
+	 * {@link #hookSetValues(int)}. If the {@link #getPulse()} is 3, you need to
+	 * input 15 values for a gapless graph.
+	 * 
+	 * @return 1. Override and increment for more speed. Must be higher then
+	 *         zero.
+	 */
+	public int getProgression() {
+		return 1;
+	}
+
+	/**
+	 * This method is called every time the dispatcher reaches the getPulse()
+	 * counter. This method plays the active or inactive sound if so required.
+	 * If you do not want the sounds to play, either disable sounds by not
+	 * overriding the {@link #isSoundRequired()} method or override this method.
+	 * 
+	 * @param oscilloscope
+	 * @param pulse
+	 */
+	public void hookPulse(Oscilloscope oscilloscope, int pulse) {
+
+		// Set the color
+		if (isServiceActive()) {
+			getOscilloscope().setForeground(getActiveForegoundColor());
+
+			// Set a v
+			hookSetValues(pulse);
+			if (isSoundRequired())
+				getClipper().playClip(getActiveSoundfile(), 0);
+		} else {
+			if (isSoundRequired())
+				getClipper().playClip(getInactiveSoundfile(), 0);
+			getOscilloscope().setForeground(getInactiveForegoundColor());
+		}
+
+	}
+
+	/**
+	 * This method will be called every {@link #getPulse()} times the scope is
+	 * redrawn which will occur every {@link #getDelayLoop()} milliseconds (if
+	 * your hardware is capable of doing so). The scope will progress one pixel
+	 * every {@link #getDelayLoop()} milliseconds and will draw the next value
+	 * from the queue of the scope. If the scope is out of values it will
+	 * progress one pixel without a value (draw a pixel at his center).
+	 * <p/>
+	 * If the delay loop is 10 and the pulse is 20, you have an opportunity to
+	 * set a value in the scope every 200 milliseconds. In this time the scope
+	 * will have progressed 20 pixels. If you supply 10 values by calling the
+	 * setValue(int) 10 times or if you call the setValues(int[]) with 10 ints
+	 * then you will see 10 pixels of movement and a straight line of 10 pixels.
+	 * <p/>
+	 * If the setPulse method is not overridden or if you supply
+	 * {@link #NO_PULSE} then this method will not be called unless you override
+	 * the dispatch method (not recommended). To still set values in the scope
+	 * you can set a stack listener in the widget that will be called when there
+	 * are no more values in the stack. Alternatively you can set the return
+	 * value of {@link #getPulse()} to 1 so you have the opportunity to provide
+	 * a value every cycle.
+	 * 
+	 * @param pulse
+	 * @see Oscilloscope#setValue(int)
+	 * @see Oscilloscope#setValues(int[])
+	 * @see Oscilloscope#addStackListener(OscilloscopeStackAdapter)
+	 */
+	public abstract void hookSetValues(int pulse);
+
+	/**
+	 * Will be called only once.
+	 */
+	public void init() {
 	}
 
 	public boolean isPercentage() {
@@ -293,37 +506,15 @@ public abstract class OscilloscopeDispatcher {
 		return false;
 	}
 
-	public int getTailSize() {
-		return Oscilloscope.TAILSIZE_MAX;
-	}
-
 	public boolean isSteady() {
 		return false;
 	}
 
-	public int getSteadyPosition() {
-		return 200;
-	}
-
-	public boolean getFade() {
-		return true;
-
-	}
-
-	public int getTailFade() {
-		return Oscilloscope.DEFAULT_TAILFADE;
+	public boolean isTailSizeMax() {
+		return false;
 	}
 
 	public boolean mustConnect() {
 		return false;
-	}
-
-	protected void finalize() throws Throwable {
-		if (image != null && !image.isDisposed())
-			image.dispose();
-	}
-
-	public PlayClip getClipper() {
-		return clipper;
 	}
 }
