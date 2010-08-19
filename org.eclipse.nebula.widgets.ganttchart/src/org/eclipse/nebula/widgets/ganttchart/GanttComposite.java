@@ -415,7 +415,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         initListeners();
 
         // last but not least, update the scrollbars post-first-draw (otherwise we don't know jack about nothing as far as client area etc goes)
-        Display.getDefault().asyncExec(new Runnable() {
+        getDisplay().asyncExec(new Runnable() {
             public void run() {
                 if (isDisposed()) { return; }
 
@@ -535,7 +535,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                 updateHorizontalScrollbar();
 
                 // redraw last
-                Display.getDefault().asyncExec(new Runnable() {
+                getDisplay().asyncExec(new Runnable() {
                     public void run() {
                         if (isDisposed()) { return; }
 
@@ -1375,7 +1375,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             _rightClickMenu.dispose();
         }
 
-        _rightClickMenu = new Menu(Display.getDefault().getActiveShell(), SWT.POP_UP);
+        _rightClickMenu = new Menu(getDisplay().getActiveShell(), SWT.POP_UP);
 
         if (event != null) {
             // We can't use JFace actions.. so we need to make copies.. Dirty
@@ -1705,12 +1705,14 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                 offset = getHeaderHeight();
             }
         } else {
-            offset = _vScrollPos;
+           offset = _vScrollPos;
         }
 
         final int startY = bounds.y - offset;// getHeaderHeight() == 0 ? bounds.y : bounds.y + getHeaderHeight() + 1;
-        final int heightY = bounds.height + offset;
+        final int heightY = gs == null ? bounds.height : gs.getBounds().height;
 
+        //System.err.println(startY + " " + heightY + " " + gs.getName() + " " + gs.getBounds());
+       
         // fill all of it, then we just have to worry about weekends, much
         // faster in terms of drawing time
         // only two views have weekend colors, week and month view. Hour and
@@ -7753,7 +7755,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             // forcing a full update or event visibilities will not change
             flagForceFullUpdate();
 
-            Image buffer = new Image(Display.getDefault(), fullBounds);
+            Image buffer = new Image(getDisplay(), fullBounds);
 
             GC gc2 = new GC(buffer);
             drawChartOntoGC(gc2, fullBounds);
@@ -7778,7 +7780,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             _savingChartImage = false;
             _mainBounds = oldBounds;
             _mainCalendar = currentCalendar;
-            Display.getDefault().asyncExec(new Runnable() {
+            getDisplay().asyncExec(new Runnable() {
                 public void run() {
                     flagForceFullUpdate();
                     // this ensures no event-flicker
@@ -7814,7 +7816,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         int oldVscroll = _vScrollPos;
         _vScrollPos = 0;
         try {
-            Image buffer = new Image(Display.getDefault(), bounds);
+            Image buffer = new Image(getDisplay(), bounds);
 
             GC gc2 = new GC(buffer);
             drawChartOntoGC(gc2, null);
@@ -8239,6 +8241,27 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
      */
     public int getTotalVisibileGanttEvents() {
         return _totVisEventCnt;
+    }
+    
+    /**
+     * Selects all events
+     */
+    public void selectAll() {
+    	_selectedEvents.clear();
+    	Object [] all = _allEventsCombined.toArray();
+    	for (int i = 0; i < all.length; i++) {    	
+    		_selectedEvents.add(all[i]);
+    	}
+    	
+    	redraw();
+    }
+    
+    /**
+     * Clears all selected events
+     */
+    public void deselectAll() {
+    	_selectedEvents.clear();
+    	redraw();
     }
 
     // as from:
