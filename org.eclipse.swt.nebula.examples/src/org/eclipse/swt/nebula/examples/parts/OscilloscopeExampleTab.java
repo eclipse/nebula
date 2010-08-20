@@ -71,6 +71,7 @@ public class OscilloscopeExampleTab extends AbstractExampleTab {
 	private Spinner progressionSpinner;
 	private Button btnFollowProgression;
 	private Button btnFollowProgression_1;
+	private Spinner baseOffsetSpinner;
 
 	public String[] createLinks() {
 		String[] links = new String[0];
@@ -190,8 +191,13 @@ public class OscilloscopeExampleTab extends AbstractExampleTab {
 
 				public int getProgression() {
 					return progressionSpinner.getSelection();
+
 				}
 
+				public int getBaseOffset() {
+					return baseOffsetSpinner.getSelection();
+				}
+				
 				public void init() {
 				}
 
@@ -487,7 +493,7 @@ public class OscilloscopeExampleTab extends AbstractExampleTab {
 			steady.setSelection(false);
 
 			Label lblPosition = new Label(grpGraph, SWT.NONE);
-			lblPosition.setText("Position");
+			lblPosition.setText("Steady Position");
 
 			steadyPosition = new Spinner(grpGraph, SWT.BORDER);
 			steadyPosition.setMaximum(1000);
@@ -495,6 +501,14 @@ public class OscilloscopeExampleTab extends AbstractExampleTab {
 			steadyPosition.setIncrement(10);
 			steadyPosition.setSelection(140);
 			steadyPosition.setToolTipText("steady position");
+			
+			Label lblBaseOffsetIn = new Label(grpGraph, SWT.NONE);
+			lblBaseOffsetIn.setText("Base Offset in %");
+			
+			baseOffsetSpinner = new Spinner(grpGraph, SWT.BORDER);
+			baseOffsetSpinner.setTextLimit(3);
+			baseOffsetSpinner.setSelection(50);
+			baseOffsetSpinner.setPageIncrement(1);
 
 			Label lblScale = new Label(grpGraph, SWT.NONE);
 			lblScale.setText("Scale");
