@@ -24,6 +24,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * This class keeps the oscilloscope animation running and is used to set
@@ -202,6 +203,8 @@ public abstract class OscilloscopeDispatcher {
 	 * <p/>
 	 * After the hook methods are called, the runnable is placed in the user
 	 * interface thread with a timer of {@link #getDelayLoop()} milliseconds.
+	 * However, if the delay loop is set to 1, it will dispatch using
+	 * {@link Display#asyncExec(Runnable)} for maximum speed.
 	 * <p/>
 	 * This method is not meant to be overridden, override
 	 * {@link #hookBeforeDraw(Oscilloscope, int)},
@@ -233,7 +236,12 @@ public abstract class OscilloscopeDispatcher {
 					pulse = 0;
 				}
 
-				getOscilloscope().getDisplay().timerExec(getDelayLoop(), this);
+				if (getDelayLoop() > 1)
+					getOscilloscope().getDisplay().timerExec(getDelayLoop(),
+							this);
+				else
+					getOscilloscope().getDisplay().asyncExec(this);
+
 			}
 		};
 
@@ -408,6 +416,7 @@ public abstract class OscilloscopeDispatcher {
 		getOscilloscope().setLineWidth(getLineWidth());
 		getOscilloscope().setBackgroundImage(getBackgroundImage());
 		getOscilloscope().setProgression(getProgression());
+		getOscilloscope().setBaseOffset(getBaseOffset());
 
 	}
 
@@ -430,6 +439,17 @@ public abstract class OscilloscopeDispatcher {
 	 */
 	public int getProgression() {
 		return 1;
+	}
+
+	/**
+	 * Override this to set the offset of the scope line in percentages where
+	 * 100 is the top of the widget and 0 is the bottom.
+	 * 
+	 * @return {@link Oscilloscope#BASE_CENTER} which positions in the center.
+	 *         Override for other values.
+	 */
+	public int getBaseOffset() {
+		return Oscilloscope.BASE_CENTER;
 	}
 
 	/**

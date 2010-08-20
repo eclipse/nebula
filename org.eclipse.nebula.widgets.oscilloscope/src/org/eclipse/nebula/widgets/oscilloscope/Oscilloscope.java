@@ -39,6 +39,10 @@ import org.eclipse.swt.widgets.Composite;
  * @author Wim.Jongman (@remainsoftware.com)
  * 
  */
+/**
+ * @author jongw
+ * 
+ */
 public class Oscilloscope extends Canvas {
 
 	public static final int DEFAULT_WIDTH = 180;
@@ -95,6 +99,15 @@ public class Oscilloscope extends Canvas {
 	 * Steady position @ 75% of graph.
 	 */
 	public static final int STEADYPOSITION_75PERCENT = -1;
+
+	/**
+	 * The base of the line is positioned at the center of the widget.
+	 * 
+	 * @see #setBaseOffset()
+	 */
+	public static final int BASE_CENTER = 50;
+	private int baseOffset = BASE_CENTER;
+
 	private ArrayList stackListeners;
 	private int progression = 1;
 
@@ -256,11 +269,49 @@ public class Oscilloscope extends Canvas {
 	private void setSizeInternal(int width, int height) {
 		this.width = width;
 		this.height = height;
-		base = height / 2;
+
+		// caluclate the base of the line
+		calculateBase();
+
 		if (stack == null)
 			stack = new IntegerFiFoCircularStack(width);
 		else
 			stack = new IntegerFiFoCircularStack(width, stack);
+	}
+
+	/**
+	 * Gets the relative location where the line is drawn in the widget.
+	 * 
+	 * @return baseOffset
+	 */
+	public int getBaseOffset() {
+		return baseOffset;
+	}
+
+	/**
+	 * Gets the relative location where the line is drawn in the widget, the
+	 * default is <code>BASE_CENTER</code> which is in the middle of the scope.
+	 * 
+	 * @param baseOffset
+	 *            must be between 0 and 0, exceeding values are rounded to the
+	 *            closest allowable value.
+	 */
+	public void setBaseOffset(int baseOffset) {
+
+		if (baseOffset > 100)
+			baseOffset = 100;
+
+		if (baseOffset < -100)
+			baseOffset = -100;
+
+		this.baseOffset = baseOffset;
+
+		calculateBase();
+	}
+
+	private void calculateBase() {
+		if (height > 2)
+			base = (height * +(100 - getBaseOffset())) / 100;
 	}
 
 	protected void widgetDisposed(DisposeEvent e) {
@@ -274,20 +325,18 @@ public class Oscilloscope extends Canvas {
 			return;
 		}
 
+		// long start = System.currentTimeMillis();
+
 		// Go calculate the line
 		Object[] result = calculate();
-		int[] line1 = (int[]) result[0];
-		int[] line2 = (int[]) result[1];
-		int splitPos = ((Integer) result[2]).intValue();
+		int[] l1 = (int[]) result[0];
+		int[] l2 = (int[]) result[1];
 
-		int[] l1 = new int[splitPos];
-		System.arraycopy(line1, 0, l1, 0, l1.length);
-		int[] l2 = new int[(tailSize * 4) - splitPos];
-		System.arraycopy(line2, splitPos, l2, 0, l2.length);
-
+		// System.out.print(System.currentTimeMillis() - start + "-");
 
 		// Draw it
 		GC gc = e.gc;
+		gc.setAdvanced(true);
 		gc.setAntialias(SWT.ON);
 		gc.setLineWidth(getLineWidth());
 
@@ -321,8 +370,16 @@ public class Oscilloscope extends Canvas {
 				&& !isFade() && isConnect()) {
 			gc.drawLine(l2[l2.length - 2], l2[l2.length - 1], l1[0], l1[1]);
 		}
+
+		// System.out.println(System.currentTimeMillis() - start);
+
 	}
 
+	/**
+	 * This method calculates the progression of the line.
+	 * 
+	 * @return
+	 */
 	private Object[] calculate() {
 
 		int[] line1 = null;
@@ -350,7 +407,6 @@ public class Oscilloscope extends Canvas {
 				tail[tailSize] = ((getBounds().height / 2) * stack.pop(0) / 100);
 			else
 				tail[tailSize] = stack.pop(0);
-
 			for (int i = 0; i < tailSize; i++) {
 
 				int posx = cursor - tailSize + i;
@@ -359,31 +415,55 @@ public class Oscilloscope extends Canvas {
 					posx += width;
 					line1[pos] = posx - 1;
 
-					line1[pos + 1] = base
+					line1[pos + 1] = getBase()
 							+ (isSteady() ? 0 : tail[tailIndex - 1]);
 					line1[pos + 2] = posx;
-					line1[pos + 3] = base + (isSteady() ? 0 : tail[tailIndex]);
+					line1[pos + 3] = getBase()
+							+ (isSteady() ? 0 : tail[tailIndex]);
 				}
 
 				else {
 					if (splitPos == tailSize * 4)
 						splitPos = pos;
 					line2[pos] = posx - 1;
-					line2[pos + 1] = base + tail[tailIndex - 1];
+					line2[pos + 1] = getBase() + tail[tailIndex - 1];
 					line2[pos + 2] = posx;
-					line2[pos + 3] = (base + tail[tailIndex]);
+					line2[pos + 3] = (getBase() + tail[tailIndex]);
 				}
 				tail[tailIndex - 1] = tail[tailIndex++];
 			}
 		}
 
-		return new Object[] { line1, line2, new Integer(splitPos) };
+		int[] l1 = new int[splitPos];
+		System.arraycopy(line1, 0, l1, 0, l1.length);
+		int[] l2 = new int[(tailSize * 4) - splitPos];
+		System.arraycopy(line2, splitPos, l2, 0, l2.length);
+
+		return new Object[] { l1, l2 };
 	}
 
+	/**
+	 * @return the base of the line
+	 */
+	public int getBase() {
+		return base;
+	}
+
+	/**
+	 * @return the number of internal calculation steps at each draw request.
+	 * @see #setProgression(int)
+	 */
 	public int getProgression() {
 		return progression;
 	}
 
+	/**
+	 * The number of internal steps that must be made before drawing. Normally
+	 * this will slide the graph one pixel. Setting this to a higher value will
+	 * speed up the animation at the cost of a more jerky motion.
+	 * 
+	 * @param progression
+	 */
 	public void setProgression(int progression) {
 		if (progression > 0)
 			this.progression = progression;
