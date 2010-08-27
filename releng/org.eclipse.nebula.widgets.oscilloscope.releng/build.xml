@@ -1,0 +1,109 @@
+<project default="run" name="org.eclipse.osee.server.releng/build.xml - Run a OSEE build using the Athena CBI">
+
+	<target name="init">
+		<property environment="env" />
+		<tstamp>
+			<format property="buildTimestamp" pattern="yyyyMMddHHmm" />
+		</tstamp>
+		<condition property="forceContextQualifier" value="v${buildTimestamp}">
+			<not>
+				<isset property="forceContextQualifier" />
+			</not>
+		</condition>
+		<!-- set properties from hudson parameters, useful with ant build -->
+		<condition property="isInHudson" value="true">
+			<or>
+				<contains string="${user.dir}" substring="hudson" />
+				<contains string="${user.name}" substring="hudson" />
+				<contains string="${user.home}" substring="hudson" />
+			</or>
+		</condition>
+
+		<!-- Hudson default path if WORKSPACE not set -->
+		<dirname property="user.dir.parent" file="${user.dir}" />
+		<condition property="WORKSPACE" value="${user.dir.parent}">
+			<and>
+				<istrue value="${isInHudson}" />
+				<not>
+					<isset property="WORKSPACE" />
+				</not>
+			</and>
+		</condition>
+
+		<!-- Local default path if WORKSPACE not set -->
+		<condition property="WORKSPACE" value="${java.io.tmpdir}">
+			<and>
+				<isfalse value="${isInHudson}" />
+				<not>
+					<isset property="WORKSPACE" />
+				</not>
+			</and>
+		</condition>
+
+		<!-- can build in /tmp, eg., in /tmp/build, or in workspace, eg.,	${WORKSPACE}/build -->
+		<property name="writableBuildRoot" value="${WORKSPACE}/build" />
+		<property name="buildDir" value="${writableBuildRoot}/athena" />
+
+		<ant antfile="${relengCommonBuilderDir}/bootstrap.xml" target="init" inheritall="true" inheritrefs="true">
+			<!--<property name="basebuilderTag" value="r35x_v20090811" />
+				<property name="commonrelengTag" value="HEAD" />
+				<property name="ANTCONTRIB_VERSION" value="1.0b2" />
+				<property name="ANT4ECLIPSE_VERSION" value="1.0.0.M3" /> -->
+			<property name="build.properties" value="build.properties" />
+		</ant>
+
+		<condition property="JAVA_HOME" value="${java.home}" else="${java.home}/..">
+			<available file="${java.home}/bin/javac" type="file" />
+		</condition>
+
+		<property name="build.properties" value="build.properties" />
+		<property file="${build.properties}" />
+	</target>
+
+	<target name="run" depends="init,build,createSnapshot">
+	</target>
+
+	<target name="build">
+		<ant antfile="${relengCommonBuilderDir}/build.xml" />
+	</target>
+
+	<target name="createSnapshot" depends="init">
+		<echo>Custom post build step CreateSnapshot</echo>
+		<property environment="env" />
+
+		<property name="BUILDTYPE" value="I" />
+		<property name="buildFolder" value="${WORKSPACE}/build" />
+		<property name="snapshotFolder" value="${buildFolder}/../snapshot/" />
+
+		<echo>Build folder: ${buildFolder} </echo>
+		<echo>Snapshot folder: ${snapshotFolder}</echo>
+		<echo>Buildtype: ${BUILDTYPE}</echo>
+		<echo>Job: ${env.JOB_NAME}</echo>
+
+		<delete quiet="true" dir="${snapshotFolder}" />
+
+		<copy flatten="true" toDir="${snapshotFolder}" failonerror="true" includeemptydirs="false">
+			<fileset dir="${buildFolder}" includes="athena/*-Update-*.zip" />
+		</copy>
+
+		<available file="${snapshotFolder}" property="containsFile" />
+		<antcall target="doMoveZip" inheritall="true" />
+		<!-- <antcall target="promote-nightly" inheritall="true" /> -->
+	</target>
+
+	<target name="doMoveZip" if="containsFile">
+		<echo>Renaming file to ${zipPrefix}-update${incubation}-${BUILDTYPE}-Snapshot.zip</echo>
+		<move includeemptydirs="false" tofile="${snapshotFolder}/${zipPrefix}-update${incubation}-${BUILDTYPE}-Snapshot.zip" filtering="true">
+			<fileset dir="${snapshotFolder}" includes="*-Update-*.zip" />
+		</move>
+	</target>
+
+	<target name="promote-nightly">
+		<property name="nebula.oscilloscope.path" value="/home/data/httpd/download.eclipse.org/technology/nebula/oscilloscope" />
+		
+		<property name="oscilloscope.downloads" value="${nebula.oscilloscope.path}/downloads/drops/latest" />
+		<property name="oscilloscope.update.site" value="${nebula.oscilloscope.path}/update-N" />
+		<copy file="${snapshotFolder}/${zipPrefix}-update${incubation}-${BUILDTYPE}-Snapshot.zip" tofile="${oscilloscope.downloads}/nebula-oscilloscope-ALL-incubation.zip" />
+		<unzip src="${snapshotFolder}/${zipPrefix}-update${incubation}-${BUILDTYPE}-Snapshot.zip" dest="${oscilloscope.update.site}" />
+	</target>
+</project>
