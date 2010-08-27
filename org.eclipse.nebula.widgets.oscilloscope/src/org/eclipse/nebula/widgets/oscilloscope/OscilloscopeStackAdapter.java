@@ -11,9 +11,20 @@
  ******************************************************************************/
 package org.eclipse.nebula.widgets.oscilloscope;
 
+/**
+ * Listener for an empty stack. It enables you to input more values only if the
+ * stack runs out of values.
+ * 
+ * @author Wim.Jongman (@remainsoftware.com)
+ * 
+ */
+public abstract class OscilloscopeStackAdapter {
 
-public abstract class OscilloscopeStackAdapter  {
-
+	/**
+	 * Is called when the stack runs out of values.
+	 * 
+	 * @param scope
+	 */
 	public void stackEmpty(Oscilloscope scope) {
 	}
 }

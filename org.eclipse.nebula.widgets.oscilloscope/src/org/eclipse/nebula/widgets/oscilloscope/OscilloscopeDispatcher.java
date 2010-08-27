@@ -17,13 +17,8 @@ import java.io.File;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.ImageLoader;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -66,7 +61,7 @@ public abstract class OscilloscopeDispatcher {
 		/**
 		 * Returns the clip so you can control it.
 		 * 
-		 * @return
+		 * @return the Clip
 		 */
 		public Clip getClip() {
 			return clip;
@@ -188,7 +183,7 @@ public abstract class OscilloscopeDispatcher {
 	 * This is a special value indicating there is no pulse which means that
 	 * {@link #hookPulse(Oscilloscope, int)} will never be called.
 	 * 
-	 * @see {@link #getPulse()}
+	 * @see #getPulse()
 	 */
 	public static final int NO_PULSE = 0;
 
@@ -305,7 +300,7 @@ public abstract class OscilloscopeDispatcher {
 	 * <p/>
 	 * Overriding this method is not expected.
 	 * 
-	 * @return
+	 * @return the PlayClip object
 	 */
 	public PlayClip getClipper() {
 		return clipper;

@@ -27,6 +27,8 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 
 /**
+ * Animated widget that tries to mimic an Oscilloscope.
+ * 
  * <i>An oscilloscope (also known as a scope, CRO or, an O-scope) is a type of
  * electronic test instrument that allows observation of constantly varying
  * signal voltages, usually as a two-dimensional graph of one or more electrical
@@ -39,13 +41,16 @@ import org.eclipse.swt.widgets.Composite;
  * @author Wim.Jongman (@remainsoftware.com)
  * 
  */
-/**
- * @author jongw
- * 
- */
 public class Oscilloscope extends Canvas {
 
+	/**
+	 * The default comfortable widget width.
+	 */
 	public static final int DEFAULT_WIDTH = 180;
+
+	/**
+	 * The default comfortable widget height.
+	 */
 	public static final int DEFAULT_HEIGHT = 100;
 
 	/**
@@ -103,7 +108,7 @@ public class Oscilloscope extends Canvas {
 	/**
 	 * The base of the line is positioned at the center of the widget.
 	 * 
-	 * @see #setBaseOffset()
+	 * @see #setBaseOffset(int)
 	 */
 	public static final int BASE_CENTER = 50;
 	private int baseOffset = BASE_CENTER;
@@ -518,7 +523,8 @@ public class Oscilloscope extends Canvas {
 	 * In addition to this, set the percentage of tail that must be faded out
 	 * {@link #setTailFade(int)}.
 	 * 
-	 * @param boolean fade
+	 * @param fade
+	 *            true or false
 	 * @see #setTailFade(int)
 	 */
 	public void setFade(boolean fade) {
@@ -549,7 +555,7 @@ public class Oscilloscope extends Canvas {
 
 	/**
 	 * @return boolean steady indicator
-	 * @see Oscilloscope#setSteady(boolean)
+	 * @see Oscilloscope#setSteady(boolean, int)
 	 */
 	public boolean isSteady() {
 		checkWidget();
@@ -606,7 +612,8 @@ public class Oscilloscope extends Canvas {
 	 * smaller then the tail size then the tail size will behave like
 	 * TAILSIZE_MAX.
 	 * 
-	 * @param int size
+	 * @param size
+	 *            the size of the tail
 	 * @see #getTailSize()
 	 * @see #TAILSIZE_DEFAULT
 	 * @see #TAILSIZE_FILL
@@ -680,7 +687,7 @@ public class Oscilloscope extends Canvas {
 	 * Sets the line width. A value equal or below zero is ignored. The default
 	 * width is 1.
 	 * 
-	 * @param int lineWidth
+	 * @param lineWidth
 	 */
 	public void setLineWidth(int lineWidth) {
 		checkWidget();
@@ -702,7 +709,8 @@ public class Oscilloscope extends Canvas {
 	 * available space rather than absolute values. This will scale the
 	 * amplitudes if the control is resized. Default is false.
 	 * 
-	 * @param boolean percentage
+	 * @param percentage
+	 *            true if percentages
 	 */
 	public void setPercentage(boolean percentage) {
 		checkWidget();

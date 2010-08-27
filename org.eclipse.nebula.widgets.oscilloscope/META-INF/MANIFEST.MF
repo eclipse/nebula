@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Osgilloscope
-Bundle-SymbolicName: org.eclipse.nebula.widgets.osgilloscope
+Bundle-Name: Oscilloscope
+Bundle-SymbolicName: org.eclipse.nebula.widgets.oscilloscope
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
 Require-Bundle: org.eclipse.swt;bundle-version="3.5.1"
