@@ -152,7 +152,7 @@ public class GanttTester {
     }
 
     public GanttTester() {
-        final Display display = new Display();
+        final Display display = Display.getDefault(); //new Display();
         final Monitor m = display.getMonitors()[0];
         final Shell shell = new Shell(display);
         shell.setText("GanttChart Test Application");
@@ -234,7 +234,7 @@ public class GanttTester {
         }
         display.removeListener(SWT.KeyDown, _undoRedoListener);
 
-        display.dispose();
+        shell.dispose();
     }
 
     private Composite createEventLogTab(final Composite parent) {
