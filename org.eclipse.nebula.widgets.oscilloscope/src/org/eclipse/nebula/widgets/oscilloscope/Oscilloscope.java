@@ -113,7 +113,7 @@ public class Oscilloscope extends Canvas {
 	public static final int BASE_CENTER = 50;
 	private int baseOffset = BASE_CENTER;
 
-	private ArrayList stackListeners;
+	private ArrayList<OscilloscopeStackAdapter> stackListeners;
 	private int progression = 1;
 
 	/**
@@ -770,7 +770,7 @@ public class Oscilloscope extends Canvas {
 	public synchronized void addStackListener(OscilloscopeStackAdapter listener) {
 		checkWidget();
 		if (stackListeners == null)
-			stackListeners = new ArrayList();
+			stackListeners = new ArrayList<OscilloscopeStackAdapter>();
 		if (!stackListeners.contains(listener))
 			stackListeners.add(listener);
 	}
