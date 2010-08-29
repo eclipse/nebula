@@ -1,0 +1,70 @@
+<project default="run" name="org.eclipse.ve.releng/promote.xml - Promote a build from build server to production server">
+	<target name="run">
+		<!--
+			To use this script, you must have configured a promote.properties file.
+			
+			Then, run commandline:
+			
+			ant -f promote.xml
+			
+			If you need to reuse this script with multiple properties files (eg., from 
+			multiple Hudson builds across multiple branches), use the commandline
+			flag -Dpromote.properties:
+			
+			ant -f promote.xml -Dpromote.properties=promote.properties.R2_0_branch
+		-->
+		<property name="promote.properties" value="promote.properties" />
+		<property file="${promote.properties}" />
+
+
+		<condition property="isInHudson" value="true">
+			<or>
+				<contains string="${user.dir}" substring="hudson" />
+				<contains string="${user.name}" substring="hudson" />
+				<contains string="${user.home}" substring="hudson" />
+			</or>
+		</condition>
+
+		<!-- Hudson default path if WORKSPACE not set -->
+		<dirname property="user.dir.parent" file="${user.dir}" />
+		<condition property="WORKSPACE" value="${user.dir.parent}">
+			<and>
+				<istrue value="${isInHudson}" />
+				<not>
+					<isset property="WORKSPACE" />
+				</not>
+			</and>
+		</condition>
+
+		<!-- Local default path if WORKSPACE not set -->
+		<condition property="WORKSPACE" value="${java.io.tmpdir}">
+			<and>
+				<isfalse value="${isInHudson}" />
+				<not>
+					<isset property="WORKSPACE" />
+				</not>
+			</and>
+		</condition>
+
+		<!-- can build in /tmp, eg., in /tmp/build, or in workspace, eg.,	${WORKSPACE}/build -->
+		<property name="writableBuildRoot" value="${WORKSPACE}/build" />
+		<property name="buildDir" value="${writableBuildRoot}/athena" />
+
+		<ant antfile="${relengCommonBuilderDir}/bootstrap.xml" target="init" inheritall="true" inheritrefs="true">
+			<!--<property name="basebuilderTag" value="r35x_v20090811" />
+				<property name="commonrelengTag" value="HEAD" />
+				<property name="ANTCONTRIB_VERSION" value="1.0b2" />
+				<property name="ANT4ECLIPSE_VERSION" value="1.0.0.M3" /> -->
+			<property name="build.properties" value="build.properties" />
+		</ant>
+
+		<!-- calculate workspaceDir as parent of this folder, the project's .releng folder (relengBuilderDir)-->
+		<property name="relengBuilderDir" value="${basedir}" />
+		<dirname file="${relengBuilderDir}" property="workspaceDir" />
+
+
+		<!-- invoke common promotion script -->
+		<property name="relengCommonBuilderDir" value="${workspaceDir}/org.eclipse.dash.common.releng" />
+		<ant antfile="${relengCommonBuilderDir}/promote.xml" dir="${relengCommonBuilderDir}" />
+	</target>
+</project>
