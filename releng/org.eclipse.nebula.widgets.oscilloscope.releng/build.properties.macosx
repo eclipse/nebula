@@ -24,7 +24,7 @@ incubation=-incubation
 version=1.0.0
 buildType=N
 mainFeatureToBuildID=org.eclipse.nebula.widgets.oscilloscope_feature
-testFeatureToBuildID=org.eclipse.nebula.widgets.oscilloscope.test_feature
+#testFeatureToBuildID=org.eclipse.nebula.widgets.oscilloscope.test_feature
 
 #what steps should we do? default: build.steps=buildZips,buildTests,generateDigests,test,publish,cleanup
 build.steps=buildZips,buildUpdate,buildTests,generateDigests,test,publish,cleanup
