@@ -17,6 +17,7 @@ import java.io.File;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
@@ -64,7 +65,7 @@ public abstract class OscilloscopeDispatcher {
 		 * @return the Clip
 		 */
 		public Clip getClip() {
-			return clip;
+			return this.clip;
 		}
 
 		/**
@@ -82,17 +83,18 @@ public abstract class OscilloscopeDispatcher {
 
 			try {
 
-				if (clip == null || !file.getAbsolutePath().equals(oldFile)) {
-					oldFile = file.getAbsolutePath();
-					clip = AudioSystem.getClip();
-					clip.open(AudioSystem.getAudioInputStream(file));
+				if ((this.clip == null)
+						|| !file.getAbsolutePath().equals(this.oldFile)) {
+					this.oldFile = file.getAbsolutePath();
+					this.clip = AudioSystem.getClip();
+					this.clip.open(AudioSystem.getAudioInputStream(file));
 				}
-				if (clip.isActive())
+				if (this.clip.isActive())
 					return;
 				// clip.stop(); << Alternative
 
-				clip.setFramePosition(0);
-				clip.loop(loopCount);
+				this.clip.setFramePosition(0);
+				this.clip.loop(loopCount);
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -100,7 +102,7 @@ public abstract class OscilloscopeDispatcher {
 		}
 	}
 
-	private PlayClip clipper = new PlayClip();
+	private final PlayClip clipper = new PlayClip();
 
 	/**
 	 * Contains a small image that can serve as the background of the scope.
@@ -220,22 +222,24 @@ public abstract class OscilloscopeDispatcher {
 				if (getOscilloscope().isDisposed())
 					return;
 
-				hookBeforeDraw(getOscilloscope(), pulse);
+				hookBeforeDraw(getOscilloscope(), this.pulse);
 				getOscilloscope().redraw();
-				hookAfterDraw(getOscilloscope(), pulse);
-				pulse++;
+				hookAfterDraw(getOscilloscope(), this.pulse);
+				this.pulse++;
 
-				if (pulse >= getPulse()) {
-					if (getPulse() != NO_PULSE)
-						hookPulse(getOscilloscope(), pulse);
-					pulse = 0;
+				if (this.pulse >= getPulse()) {
+					if (getPulse() != OscilloscopeDispatcher.NO_PULSE) {
+						hookPulse(getOscilloscope(), this.pulse);
+					}
+					this.pulse = 0;
 				}
 
-				if (getDelayLoop() > 1)
+				if (getDelayLoop() > 1) {
 					getOscilloscope().getDisplay().timerExec(getDelayLoop(),
 							this);
-				else
+				} else {
 					getOscilloscope().getDisplay().asyncExec(this);
+				}
 
 			}
 		};
@@ -244,9 +248,11 @@ public abstract class OscilloscopeDispatcher {
 
 	}
 
+	@Override
 	protected void finalize() throws Throwable {
-		if (image != null && !image.isDisposed())
-			image.dispose();
+		if ((this.image != null) && !this.image.isDisposed()) {
+			this.image.dispose();
+		}
 	}
 
 	/**
@@ -256,14 +262,14 @@ public abstract class OscilloscopeDispatcher {
 	 * of this method will be used in the
 	 * {@link Oscilloscope#setForeground(Color)} method.
 	 * 
-	 * @return the current foreground color of the scope. Override if you want
-	 *         to control the foreground color.
+	 * @return the system color green. Override if you want to control the
+	 *         foreground color.
 	 * 
 	 * @see #getInactiveForegoundColor()
 	 * @see Oscilloscope#setForeground(Color)
 	 */
 	public Color getActiveForegoundColor() {
-		return getOscilloscope().getForeground();
+		return getOscilloscope().getDisplay().getSystemColor(SWT.COLOR_GREEN);
 	}
 
 	/**
@@ -286,13 +292,25 @@ public abstract class OscilloscopeDispatcher {
 	 */
 	public Image getBackgroundImage() {
 
-		if (image == null) {
-			byte[] bytes = new byte[BACKGROUND_MONITOR.length];
-			for (int i = 0; i < BACKGROUND_MONITOR.length; i++)
-				bytes[i] = (byte) BACKGROUND_MONITOR[i];
-			image = new Image(null, new ByteArrayInputStream(bytes));
+		if (this.image == null) {
+			byte[] bytes = new byte[OscilloscopeDispatcher.BACKGROUND_MONITOR.length];
+			for (int i = 0; i < OscilloscopeDispatcher.BACKGROUND_MONITOR.length; i++) {
+				bytes[i] = (byte) OscilloscopeDispatcher.BACKGROUND_MONITOR[i];
+			}
+			this.image = new Image(null, new ByteArrayInputStream(bytes));
 		}
-		return image;
+		return this.image;
+	}
+
+	/**
+	 * Override this to set the offset of the scope line in percentages where
+	 * 100 is the top of the widget and 0 is the bottom.
+	 * 
+	 * @return {@link Oscilloscope#BASE_CENTER} which positions in the center.
+	 *         Override for other values.
+	 */
+	public int getBaseOffset() {
+		return Oscilloscope.BASE_CENTER;
 	}
 
 	/**
@@ -303,7 +321,7 @@ public abstract class OscilloscopeDispatcher {
 	 * @return the PlayClip object
 	 */
 	public PlayClip getClipper() {
-		return clipper;
+		return this.clipper;
 	}
 
 	/**
@@ -328,13 +346,15 @@ public abstract class OscilloscopeDispatcher {
 	 * of this method will be used in the
 	 * {@link Oscilloscope#setForeground(Color)} method.
 	 * 
-	 * @return the color
+	 * @return the system color red, override if you want to control the
+	 *         inactive foreground color
 	 * 
 	 * @see #getActiveForegoundColor()
 	 * @see Oscilloscope#setForeground(Color)
 	 */
 	public Color getInactiveForegoundColor() {
-		return getOscilloscope().getForeground();
+		return getOscilloscope().getDisplay().getSystemColor(SWT.COLOR_RED);
+
 	}
 
 	public File getInactiveSoundfile() {
@@ -346,6 +366,27 @@ public abstract class OscilloscopeDispatcher {
 	}
 
 	public abstract Oscilloscope getOscilloscope();
+
+	/**
+	 * Override this to set the number of steps that is calculated before it is
+	 * actually drawn on the display. This will make the graphic look more jumpy
+	 * for slower/higher delay rates but you can win speed at faster/lower delay
+	 * rates. There will be {@link #getProgression()} values consumed so make
+	 * sure that the value stack contains enough entries.
+	 * <p/>
+	 * If the {@link #getDelayLoop()} is 10 and the {@link #getPulse()} is 1 and
+	 * the {@link #getProgression()} is 5 then every 10 milliseconds the graph
+	 * will have progressed 5 pixels. If you want to avoid gaps in your graph,
+	 * you need to input 5 values every time you reach
+	 * {@link #hookSetValues(int)}. If the {@link #getPulse()} is 3, you need to
+	 * input 15 values for a gapless graph.
+	 * 
+	 * @return 1. Override and increment for more speed. Must be higher then
+	 *         zero.
+	 */
+	public int getProgression() {
+		return 1;
+	}
 
 	public int getPulse() {
 		return 40;
@@ -390,8 +431,9 @@ public abstract class OscilloscopeDispatcher {
 	 */
 	public void hookBeforeDraw(Oscilloscope oscilloscope, int counter) {
 
-		if (counter == getPulse() - 1)
+		if (counter == getPulse() - 1) {
 			hookChangeAttributes();
+		}
 
 	}
 
@@ -416,38 +458,6 @@ public abstract class OscilloscopeDispatcher {
 	}
 
 	/**
-	 * Override this to set the number of steps that is calculated before it is
-	 * actually drawn on the display. This will make the graphic look more jumpy
-	 * for slower/higher delay rates but you can win speed at faster/lower delay
-	 * rates. There will be {@link #getProgression()} values consumed so make
-	 * sure that the value stack contains enough entries.
-	 * <p/>
-	 * If the {@link #getDelayLoop()} is 10 and the {@link #getPulse()} is 1 and
-	 * the {@link #getProgression()} is 5 then every 10 milliseconds the graph
-	 * will have progressed 5 pixels. If you want to avoid gaps in your graph,
-	 * you need to input 5 values every time you reach
-	 * {@link #hookSetValues(int)}. If the {@link #getPulse()} is 3, you need to
-	 * input 15 values for a gapless graph.
-	 * 
-	 * @return 1. Override and increment for more speed. Must be higher then
-	 *         zero.
-	 */
-	public int getProgression() {
-		return 1;
-	}
-
-	/**
-	 * Override this to set the offset of the scope line in percentages where
-	 * 100 is the top of the widget and 0 is the bottom.
-	 * 
-	 * @return {@link Oscilloscope#BASE_CENTER} which positions in the center.
-	 *         Override for other values.
-	 */
-	public int getBaseOffset() {
-		return Oscilloscope.BASE_CENTER;
-	}
-
-	/**
 	 * This method is called every time the dispatcher reaches the getPulse()
 	 * counter. This method plays the active or inactive sound if so required.
 	 * If you do not want the sounds to play, either disable sounds by not
@@ -464,11 +474,13 @@ public abstract class OscilloscopeDispatcher {
 
 			// Set a v
 			hookSetValues(pulse);
-			if (isSoundRequired())
+			if (isSoundRequired()) {
 				getClipper().playClip(getActiveSoundfile(), 0);
+			}
 		} else {
-			if (isSoundRequired())
+			if (isSoundRequired()) {
 				getClipper().playClip(getInactiveSoundfile(), 0);
+			}
 			getOscilloscope().setForeground(getInactiveForegoundColor());
 		}
 
