@@ -439,7 +439,8 @@ public abstract class OscilloscopeDispatcher {
 
 	/**
 	 * This method sets the values in the scope by calling the individual value
-	 * methods in the dispatcher.
+	 * methods in the dispatcher. Be aware that this method actually calls some
+	 * candy so you might want to call super.
 	 */
 	public void hookChangeAttributes() {
 
