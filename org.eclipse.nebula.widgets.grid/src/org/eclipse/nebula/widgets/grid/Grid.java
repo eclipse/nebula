@@ -13,7 +13,7 @@
  *    Marco Maccaferri<macca@maccasoft.com> - fixed arrow scrolling in bug 294767
  *    higerinbeijing@gmail.com . fixed selectionEvent.item in bug 286617
  *    balarkrishnan@yahoo.com - fix in bug 298684
- *    Enrico Schnepel<enrico.schnepel@randomice.net> - new API in 238729, bugfix in 294952
+ *    Enrico Schnepel<enrico.schnepel@randomice.net> - new API in 238729, bugfix in 294952, 322114
  *    Benjamin Bortfeldt<bbortfeldt@gmail.com> - new tooltip support in 300797
  *    Thomas Halm <thha@fernbach.com> - bugfix in 315397
  *    Justin Dolezy <justin@neckdiagrams.com> - bugfix in 316598 
@@ -6066,8 +6066,15 @@ public class Grid extends Canvas
 
         if (selectionType == SWT.SINGLE)
         {
-            if (selectedItems.contains(item)) return null;
-
+            if (selectedItems.contains(item))
+            {
+            	// Deselect when pressing CTRL
+	            if ((stateMask & SWT.MOD1) == SWT.MOD1)
+	            {
+	                selectedItems.clear();
+	            }
+            	return null;
+            }
             selectedItems.clear();
             selectedItems.add(item);
 
@@ -6812,17 +6819,24 @@ public class Grid extends Canvas
                 redraw();
             }
         }
-        else if (cellSelectionEnabled && e.button == 1 && rowHeaderVisible && e.x <= rowHeaderWidth && e.y < headerHeight)
+        else if (e.button == 1 && rowHeaderVisible && e.x <= rowHeaderWidth && e.y < headerHeight)
         {
         	// Nothing to select
         	if(items.size() == 0) {
         		return;
         	}
+        	if (cellSelectionEnabled)
+	        {
+	            //click on the top left corner means select everything
+	            selectionEvent = selectAllCellsInternal();
 
-            //click on the top left corner means select everything
-            selectionEvent = selectAllCellsInternal();
-
-            focusColumn = getColumn(new Point(rowHeaderWidth + 1,1));
+	            focusColumn = getColumn(new Point(rowHeaderWidth + 1,1));
+	        }
+	        else
+	        {
+	            //click on the top left corner means select everything
+	            selectionEvent = selectAllRowsInternal();
+	        }
             focusItem = getItem(getTopIndex());
         }
         else if (cellSelectionEnabled && e.button == 1 && columnHeadersVisible && e.y <= headerHeight)
@@ -8906,7 +8920,8 @@ public class Grid extends Canvas
      */
     private Event selectAllCellsInternal()
     {
-        if (!cellSelectionEnabled) return null;
+        if (!cellSelectionEnabled)
+        	return selectAllRowsInternal();
 
         if (columns.size() == 0)
             return null;
@@ -8942,6 +8957,47 @@ public class Grid extends Canvas
         focusItem = oldFocusItem;
 
         updateColumnSelection();
+
+        redraw();
+        return event;
+    }
+    
+    /**
+     * Selects rows in the receiver.
+     *
+     * @return An Event object
+     *
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
+     */
+    private Event selectAllRowsInternal()
+    {
+        if (cellSelectionEnabled)
+        	return selectAllCellsInternal();
+
+        if (SWT.MULTI != selectionType)
+        	return null;
+        
+        if(items.size() == 0)
+        	return null;
+
+        deselectAll();
+
+        GridItem oldFocusItem = focusItem;
+
+        GridItem firstItem = getItem(getTopIndex());
+        GridItem lastItem = getPreviousVisibleItem(null);
+
+        setFocusItem(firstItem);
+        updateSelection(firstItem, SWT.NONE);
+        
+        Event event = updateSelection(lastItem, SWT.MOD2);
+
+        setFocusItem(oldFocusItem);
 
         redraw();
         return event;
