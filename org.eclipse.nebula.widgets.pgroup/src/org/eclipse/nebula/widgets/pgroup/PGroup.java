@@ -85,8 +85,6 @@ public class PGroup extends Canvas
 
     private PGroupToolItem activeToolItem;
 
-    private ToolTip toolTip;
-
     private static int checkStyle(int style)
     {
         int mask = SWT.LEFT_TO_RIGHT | SWT.RIGHT_TO_LEFT | SWT.SMOOTH;
@@ -451,16 +449,9 @@ public class PGroup extends Canvas
 
         	if( newItem != activeToolItem ) {
         		activeToolItem = newItem;
-        		if( toolTip != null ) {
-            		toolTip.dispose ();
-            		toolTip = null;
-            	}
+            	setToolTipText(null);
         		if( newItem != null && newItem.getToolTipText () != null ) {
-        			toolTip = new ToolTip (getShell(), SWT.NONE);
-        			toolTip.setText (newItem.getToolTipText ());
-        			toolTip.setAutoHide (true);
-        			toolTip.setLocation ( getDisplay ().getCursorLocation () );
-        			toolTip.setVisible (true);
+        			setToolTipText(newItem.getToolTipText ());
         		}
         		redraw = true;
         	}

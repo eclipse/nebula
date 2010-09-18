@@ -27,7 +27,7 @@ public class SimpleToolItemRenderer extends AbstractToolItemRenderer {
 		int alpha = gc.getAlpha();
 		Color bg = gc.getBackground();
 
-		if( isHover() || item.getSelection() ) {
+		if( isHover() && ! item.getSelection() ) {
 			gc.setBackground(gc.getDevice().getSystemColor(SWT.COLOR_WHITE));
 			gc.setAlpha(100);
 			gc.fillRoundRectangle(rect.x, rect.y,rect.width,rect.height,3,3);
@@ -35,6 +35,17 @@ public class SimpleToolItemRenderer extends AbstractToolItemRenderer {
 			gc.setAlpha(alpha);
 		}
 
+		if( item.getSelection() ) {
+			gc.setBackground(gc.getDevice().getSystemColor(SWT.COLOR_BLACK));
+			gc.setAlpha(100);
+			gc.fillRoundRectangle(rect.x, rect.y,rect.width,rect.height,3,3);
+			gc.setBackground(gc.getDevice().getSystemColor(SWT.COLOR_WHITE));
+			gc.fillRoundRectangle(rect.x+1, rect.y+1,rect.width-2,rect.height-2,3,3);
+			
+			gc.setBackground(bg);
+			gc.setAlpha(alpha);
+		}
+		
 		if (item.getText().length() > 0 && item.getImage() != null
 				&& getSizeType() != MIN) {
 			gc.drawImage(item.getImage(), rect.x + padding, rect.y + (int)(rect.height / 2.0 - item.getImage().getImageData().height / 2.0));
