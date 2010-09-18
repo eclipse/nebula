@@ -17,6 +17,7 @@
  *    Benjamin Bortfeldt<bbortfeldt@gmail.com> - new tooltip support in 300797
  *    Thomas Halm <thha@fernbach.com> - bugfix in 315397
  *    Justin Dolezy <justin@neckdiagrams.com> - bugfix in 316598 
+ *    Cosmin Ghita <cghita@ansis.eu> - bugfix in 323687
  *******************************************************************************/
 package org.eclipse.nebula.widgets.grid;
 
@@ -7342,7 +7343,7 @@ public class Grid extends Canvas
      */
     private void onKeyDown(Event e)
     {
-        if (focusColumn == null)
+        if (focusColumn == null || focusColumn.isDisposed())
         {
         	if (columns.size() == 0)
         		return;
