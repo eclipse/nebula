@@ -18,6 +18,7 @@
  *    Thomas Halm <thha@fernbach.com> - bugfix in 315397
  *    Justin Dolezy <justin@neckdiagrams.com> - bugfix in 316598 
  *    Cosmin Ghita <cghita@ansis.eu> - bugfix in 323687
+ *    Pinard-Legry Guilhaume <guilhaume_pl@yahoo.fr> - bugfix in 267057
  *******************************************************************************/
 package org.eclipse.nebula.widgets.grid;
 
@@ -5718,7 +5719,7 @@ public class Grid extends Canvas
                             || (!nextCol.getColumnGroup().getExpanded() && !nextCol.isSummary()))
                         {
                         }
-                        else
+                        else if( nextCol.isVisible() )
                         {
                             width += nextCol.getWidth();
                         }
