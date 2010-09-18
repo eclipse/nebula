@@ -13,6 +13,7 @@
  *    Cserveny Tamas <cserveny.tamas@gmail.com> - min width in bug 295468
  *    Benjamin Bortfeldt<bbortfeldt@gmail.com> - new tooltip support in 300797
  *    Thomas Halm <thha@fernbach.com> - bugfix in 315397
+ *    Cserveny Tamas <cserveny.tamas@gmail.com> - bugfix in 318984
  *******************************************************************************/
 package org.eclipse.nebula.widgets.grid;
 
@@ -261,7 +262,13 @@ public class GridColumn extends Item {
 			parent.removeColumn(this);
 			if (group != null)
 				group.removeColumn(this);
+
+				if (controlEditor != null ) {
+					controlEditor.dispose();
+				}
 		}
+
+
 		super.dispose();
 	}
 
