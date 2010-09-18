@@ -4888,11 +4888,6 @@ public class Grid extends Canvas
             return false;
         }
 
-        if (cellSelectionEnabled && overThis.getMoveable() == false)
-        {
-            return false;
-        }
-
         columnBeingPushed = overThis;
 
         // draw pushed
