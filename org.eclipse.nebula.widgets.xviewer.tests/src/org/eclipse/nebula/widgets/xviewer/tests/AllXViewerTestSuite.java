@@ -13,5 +13,5 @@ import org.junit.runners.Suite;
 DummyTest.class, //
 })
 public class AllXViewerTestSuite {
-
+   // do nothing
 }
