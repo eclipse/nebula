@@ -206,8 +206,6 @@ public class FilteredTreeComposite extends Composite {
    /**
     * Create the filtered tree's controls. Subclasses should override.
     * 
-    * @param parent
-    * @param treeStyle
     */
    protected void createControl(Composite parent, int treeStyle) {
       GridLayout layout = new GridLayout();
@@ -297,7 +295,6 @@ public class FilteredTreeComposite extends Composite {
    /**
     * Return the first item in the tree that matches the filter pattern.
     * 
-    * @param items
     * @return the first matching TreeItem
     */
    private TreeItem getFirstMatchingItem(TreeItem[] items) {
@@ -405,10 +402,6 @@ public class FilteredTreeComposite extends Composite {
          /**
           * Returns true if the job should be canceled (because of timeout or actual cancellation).
           * 
-          * @param items
-          * @param monitor
-          * @param cancelTime
-          * @param numItemsLeft
           * @return true if canceled
           */
          private boolean recursiveExpand(TreeItem[] items, IProgressMonitor monitor, long cancelTime, int[] numItemsLeft) {
@@ -469,7 +462,6 @@ public class FilteredTreeComposite extends Composite {
          /**
           * Return the number of filtered items
           * 
-          * @return int
           */
          private int getFilteredItemsCount() {
             int total = 0;
@@ -484,8 +476,6 @@ public class FilteredTreeComposite extends Composite {
          /**
           * Return the count of treeItem and it's children to infinite depth.
           * 
-          * @param treeItem
-          * @return int
           */
          private int itemCount(TreeItem treeItem) {
             int count = 1;
@@ -669,7 +659,6 @@ public class FilteredTreeComposite extends Composite {
    /**
     * Set the text in the filter control.
     * 
-    * @param string
     */
    protected void setFilterText(String string) {
       if (filterText != null) {
@@ -739,7 +728,6 @@ public class FilteredTreeComposite extends Composite {
    /**
     * Get the initial text for the receiver.
     * 
-    * @return String
     */
    protected String getInitialText() {
       return initialText;
@@ -785,10 +773,6 @@ public class FilteredTreeComposite extends Composite {
     */
    class NotifyingTreeViewer extends TreeViewer {
 
-      /**
-       * @param parent
-       * @param style
-       */
       public NotifyingTreeViewer(Composite parent, int style) {
          super(parent, style);
       }

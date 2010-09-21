@@ -105,9 +105,6 @@ public class XCheckedFilteredTree extends FilteredTree {
       }
    }
 
-   /**
-    * @return the selected
-    */
    public Set<Object> getChecked() {
       return checked;
    }

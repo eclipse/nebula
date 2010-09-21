@@ -137,9 +137,6 @@ public class CustomizationDataSelectionDialog extends ListDialog {
       return (CustomizeData) i.next();
    }
 
-   /**
-    * @return the selectedCustData
-    */
    public CustomizeData getSelectedCustData() {
       return selectedCustData;
    }

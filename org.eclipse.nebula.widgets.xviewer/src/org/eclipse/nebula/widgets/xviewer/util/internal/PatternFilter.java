@@ -92,8 +92,6 @@ public class PatternFilter extends ViewerFilter {
     * Returns true if any of the elements makes it through the filter. This method uses caching if enabled; the
     * computation is done in computeAnyVisible.
     * 
-    * @param viewer
-    * @param parent
     * @param elements the elements (must not be an empty array)
     * @return true if any of the elements makes it through the filter.
     */
@@ -122,8 +120,6 @@ public class PatternFilter extends ViewerFilter {
    /**
     * Returns true if any of the elements makes it through the filter.
     * 
-    * @param viewer
-    * @param elements
     * @return
     */
    private boolean computeAnyVisible(Viewer viewer, Object[] elements) {
@@ -151,8 +147,6 @@ public class PatternFilter extends ViewerFilter {
 
    /**
     * The pattern string for which this filter should select elements in the viewer.
-    * 
-    * @param patternString
     */
    public void setPattern(String patternString) {
       // these 2 strings allow the PatternFilter to be extended in
@@ -202,7 +196,6 @@ public class PatternFilter extends ViewerFilter {
     * are categorized, the category itself may not be a valid selection since it is used merely to organize the
     * elements.
     * 
-    * @param element
     * @return true if this element is eligible for automatic selection
     */
    public boolean isElementSelectable(Object element) {
@@ -259,9 +252,6 @@ public class PatternFilter extends ViewerFilter {
 
    /**
     * Take the given filter text and break it down into words using a BreakIterator.
-    * 
-    * @param text
-    * @return an array of words
     */
    @SuppressWarnings({"rawtypes", "unchecked"})
    private String[] getWords(String text) {

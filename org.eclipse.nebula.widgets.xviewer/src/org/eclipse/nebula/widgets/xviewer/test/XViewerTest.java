@@ -37,12 +37,6 @@ import org.eclipse.swt.widgets.Shell;
 public class XViewerTest extends XViewer {
    private final Set<IXViewerTestTask> runList = new HashSet<IXViewerTestTask>();
 
-   /**
-    * @param parent
-    * @param style
-    * @param namespace
-    * @param viewerFactory
-    */
    public XViewerTest(Composite parent, int style) {
       super(parent, style, new XViewerTestFactory());
    }
@@ -64,9 +58,6 @@ public class XViewerTest extends XViewer {
 
    private static XViewerTest xViewerTest = null;
 
-   /**
-    * @param args
-    */
    public static void main(String[] args) {
       Display Display_1 = Display.getDefault();
       Shell Shell_1 = new Shell(Display_1, SWT.SHELL_TRIM);

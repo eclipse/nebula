@@ -30,9 +30,6 @@ public class ColumnFilterData {
    private final Map<String, String> colIdToFilterText = new HashMap<String, String>();
    private static Pattern p = Pattern.compile("<" + COLUMN_FILTER_TAG + ">(.*?)</" + COLUMN_FILTER_TAG + ">");
 
-   /**
-    * @return the filterText
-    */
    public String getFilterText(String colId) {
       return colIdToFilterText.get(colId);
    }
@@ -41,9 +38,6 @@ public class ColumnFilterData {
       return colIdToFilterText.keySet();
    }
 
-   /**
-    * @param filterText the filterText to set
-    */
    public void setFilterText(String colId, String filterText) {
       colIdToFilterText.put(colId, filterText);
    }

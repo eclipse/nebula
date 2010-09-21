@@ -30,10 +30,6 @@ public class XmlUtil {
 
    /**
     * Returns <elementName>data</elementName> NOTE: data is not sent through AXml.textToXml
-    * 
-    * @param elementName
-    * @param data
-    * @return String <elementName>data</elementName>
     */
    public static String addTagData(String elementName, String data) {
       return addTagData(elementName, data, false);
@@ -41,10 +37,11 @@ public class XmlUtil {
 
    public static String addTagData(String elementName, String data, boolean newLine) {
       String str = "<" + elementName + ">" + data + "</" + elementName + ">";
-      if (newLine)
+      if (newLine) {
          return str + "\n";
-      else
+      } else {
          return str;
+      }
    }
 
    /**
@@ -58,8 +55,8 @@ public class XmlUtil {
       String[] strs = new String[] {"", ""};
       Matcher m;
       m =
-            Pattern.compile("<" + xmlRoot + " name=\"(.*?)\" value=\"(.*?)\" />", Pattern.MULTILINE | Pattern.DOTALL).matcher(
-                  xmlStr);
+         Pattern.compile("<" + xmlRoot + " name=\"(.*?)\" value=\"(.*?)\" />", Pattern.MULTILINE | Pattern.DOTALL).matcher(
+            xmlStr);
       if (m.find()) {
          strs[0] = m.group(1);
          strs[1] = m.group(2);
@@ -75,8 +72,7 @@ public class XmlUtil {
       Vector<String> v = new Vector<String>();
       Matcher m;
       m =
-            Pattern.compile("<" + xmlRoot + ">(.*?)</" + xmlRoot + ">", Pattern.MULTILINE | Pattern.DOTALL).matcher(
-                  xmlStr);
+         Pattern.compile("<" + xmlRoot + ">(.*?)</" + xmlRoot + ">", Pattern.MULTILINE | Pattern.DOTALL).matcher(xmlStr);
       while (m.find()) {
          v.add(xmlToText(m.group(1)));
       }
@@ -85,10 +81,6 @@ public class XmlUtil {
 
    /**
     * Returns data between <xmlRoot> and </xmlRoot> from xmlStr
-    * 
-    * @param xmlStr
-    * @param xmlRoot
-    * @return Return tag string
     */
    public static String getTagData(String xmlStr, String xmlRoot) {
       String tags[] = getTagDataArray(xmlStr, xmlRoot);
@@ -121,10 +113,11 @@ public class XmlUtil {
     * < => & lt; & => & amp; ' => & apos; " => & quot;
     * 
     * @param text text to be converted to valid XML representation characters
-    * @return String valid xml string
     */
    public static String textToXml(String text) {
-      if (text == null || text.equals("")) return "";
+      if (text == null || text.equals("")) {
+         return "";
+      }
       String str = new String(text);
       str = str.replaceAll("&", "&amp;");
       str = str.replaceAll(">", "&gt;");
@@ -137,12 +130,11 @@ public class XmlUtil {
    /**
     * Given xml strings containing xml reserved characters, replace with displayable characters > <= & gt; < <= & lt; &
     * <= & amp; ' <= & apos; " <= & quot;
-    * 
-    * @param xml
-    * @return displayable string
     */
    public static String xmlToText(String xml) {
-      if (xml == null || xml.equals("")) return "";
+      if (xml == null || xml.equals("")) {
+         return "";
+      }
       String str = new String(xml);
       str = str.replaceAll("&gt;", ">");
       str = str.replaceAll("&lt;", "<");

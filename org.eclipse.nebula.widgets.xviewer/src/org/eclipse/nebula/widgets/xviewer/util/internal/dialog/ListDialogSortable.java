@@ -24,16 +24,10 @@ public class ListDialogSortable extends ListDialog {
 
    private ViewerSorter viewerSorter;
 
-   /**
-    * @param parent
-    */
    public ListDialogSortable(Shell parent) {
       super(parent);
    }
 
-   /**
-    * @param parent
-    */
    public ListDialogSortable(ViewerSorter viewerSorter, Shell parent) {
       super(parent);
       this.viewerSorter = viewerSorter;

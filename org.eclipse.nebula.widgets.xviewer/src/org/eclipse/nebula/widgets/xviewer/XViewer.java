@@ -66,9 +66,6 @@ public class XViewer extends TreeViewer {
    private static boolean ctrlKeyListenersSet = false;
    private XViewerGradient xViewerGradient = null;
 
-   /**
-    * @return the columnFilterDataUI
-    */
    public ColumnFilterDataUI getColumnFilterDataUI() {
       return columnFilterDataUI;
    }
@@ -248,8 +245,6 @@ public class XViewer extends TreeViewer {
    /**
     * Will be called when Alt-Left-Click is done within table cell
     * 
-    * @param treeColumn
-    * @param treeItem
     * @return true if handled
     */
    public boolean handleAltLeftClick(TreeColumn treeColumn, TreeItem treeItem) {
@@ -260,8 +255,6 @@ public class XViewer extends TreeViewer {
     * Will be called when click is within the first 18 pixels of the cell rectangle where the icon would be. This method
     * will be called in addition to handleLeftClick since both are true.
     * 
-    * @param treeColumn
-    * @param treeItem
     * @return true if handled
     */
    public boolean handleLeftClickInIconArea(TreeColumn treeColumn, TreeItem treeItem) {
@@ -340,8 +333,6 @@ public class XViewer extends TreeViewer {
 
    /**
     * Override this method if need to perform other tasks upon remove
-    * 
-    * @param objects
     */
    @SuppressWarnings("unchecked")
    public void remove(Collection<Object> objects) {

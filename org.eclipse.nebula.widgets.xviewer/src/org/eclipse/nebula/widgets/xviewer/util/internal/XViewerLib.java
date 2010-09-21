@@ -117,9 +117,6 @@ public class XViewerLib {
 
    /**
     * Remove the file extension from the file path
-    * 
-    * @param filepath
-    * @return modified file path
     */
    public static String removeExtension(String filepath) {
       String ext = getExtension(filepath);
@@ -131,8 +128,6 @@ public class XViewerLib {
 
    /**
     * Determine is OS is windows
-    * 
-    * @return <b>true</b> if OS is windows
     */
    public static boolean isWindows() {
       return System.getProperty("os.name").indexOf("indows") != -1;
@@ -140,9 +135,6 @@ public class XViewerLib {
 
    /**
     * Get file extension from the file path
-    * 
-    * @param filepath
-    * @return file extension
     */
    public static String getExtension(String filepath) {
       filepath = filepath.trim();

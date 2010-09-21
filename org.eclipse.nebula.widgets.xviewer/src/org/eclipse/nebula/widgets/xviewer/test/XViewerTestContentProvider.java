@@ -69,9 +69,6 @@ public class XViewerTestContentProvider implements ITreeContentProvider {
       // do nothing
    }
 
-   /**
-    * @return the rootSet
-    */
    public Collection<IXViewerTestTask> getRootSet() {
       return rootSet;
    }

@@ -326,8 +326,6 @@ public class CustomizeManager {
     * Return index of XColumn to original column index on creation of table. Since table allows drag re-ordering of
     * columns, this index will provide the map back to the original column index. Used for label providers
     * getColumnText(object, index)
-    * 
-    * @return index
     */
    public Map<XViewerColumn, Integer> getCurrentTableColumnsIndex() {
       int[] index = xViewer.getTree().getColumnOrder();
@@ -351,9 +349,6 @@ public class CustomizeManager {
       return 0;
    }
 
-   /**
-    * @return the defaultCustData
-    */
    public CustomizeData getTableDefaultCustData() {
       CustomizeData custData = xViewer.getXViewerFactory().getDefaultTableCustomizeData();
       if (custData.getName() == null || custData.getName().equals("")) {
@@ -415,9 +410,6 @@ public class CustomizeManager {
 
    /**
     * Set to newName or clear if newName == ""
-    * 
-    * @param xCol
-    * @param newName
     */
    public void customizeColumnName(XViewerColumn xCol, String newName) {
       if (newName == "") {

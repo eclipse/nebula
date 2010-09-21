@@ -32,12 +32,6 @@ import org.eclipse.swt.widgets.Shell;
 public class XViewerStyledStringLableProviderTest extends XViewer {
    private final Set<IXViewerTestTask> runList = new HashSet<IXViewerTestTask>();
 
-   /**
-    * @param parent
-    * @param style
-    * @param namespace
-    * @param viewerFactory
-    */
    public XViewerStyledStringLableProviderTest(Composite parent, int style) {
       super(parent, style, new XViewerTestFactory());
    }
@@ -57,9 +51,6 @@ public class XViewerStyledStringLableProviderTest extends XViewer {
          runList.remove(autoRunTask);
    }
 
-   /**
-    * @param args
-    */
    public static void main(String[] args) {
       Display Display_1 = Display.getDefault();
       Shell Shell_1 = new Shell(Display_1, SWT.SHELL_TRIM);

@@ -96,8 +96,9 @@ public class SortingData {
    public String getXml() {
       StringBuffer sb = new StringBuffer("<" + XTREESORTER_TAG + ">");
       // NOTE: Sorting direction is stored as part of the column data
-      for (String item : sortingIds)
+      for (String item : sortingIds) {
          sb.append(XmlUtil.addTagData(COL_NAME_TAG, item));
+      }
       sb.append("</" + XTREESORTER_TAG + ">");
       return sb.toString();
    }
@@ -119,9 +120,6 @@ public class SortingData {
       }
    }
 
-   /**
-    * @return the sortingNames
-    */
    public List<String> getSortingIds() {
       return sortingIds;
    }
@@ -131,12 +129,11 @@ public class SortingData {
    }
 
    public void addSortingName(String name) {
-      if (!this.sortingIds.contains(name)) this.sortingIds.add(name);
+      if (!this.sortingIds.contains(name)) {
+         this.sortingIds.add(name);
+      }
    }
 
-   /**
-    * @param sortingNames the sortingNames to set
-    */
    public void setSortingNames(String... xViewerColumnId) {
       this.sortingIds.clear();
       for (String id : xViewerColumnId) {

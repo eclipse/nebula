@@ -41,9 +41,6 @@ public class FileUtil {
    /**
     * Use the Lib method directly - the original implementation of this method was not memory efficient and suppressed
     * exceptions
-    * 
-    * @param stream
-    * @return string
     */
    public static String readFile(String filename) {
       return readFile(new File(filename));
@@ -52,9 +49,6 @@ public class FileUtil {
    /**
     * Use the Lib method directly - the original implementation of this method was not memory efficient and suppressed
     * exceptions
-    * 
-    * @param stream
-    * @return string
     */
    public static String readFile(File file) {
       try {
@@ -77,11 +71,6 @@ public class FileUtil {
       return buffer.toString();
    }
 
-   /**
-    * @param guid
-    * @param file
-    * @throws IOException
-    */
    public static void writeStringToFile(String str, File file) throws IOException {
       OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
       char[] chars = str.toCharArray();

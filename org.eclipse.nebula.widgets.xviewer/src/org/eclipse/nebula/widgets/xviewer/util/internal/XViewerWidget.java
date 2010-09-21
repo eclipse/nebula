@@ -47,9 +47,6 @@ public abstract class XViewerWidget {
    protected boolean fillVertically = false;
    protected boolean fillHorizontally = false;
 
-   /**
-    * @return the fillHorizontally
-    */
    public boolean isFillHorizontally() {
       return fillHorizontally;
    }
@@ -195,16 +192,12 @@ public abstract class XViewerWidget {
    /**
     * Called with string found between xml tags Used by setFromXml() String will be sent through AXml.xmlToText() before
     * being sent to setXmlData implementation. Used by: setFromXml
-    * 
-    * @param str - value to set
     */
    public abstract void setXmlData(String str);
 
    /**
     * Return string to save off between xml tags Used by call to toXml() String returned will be sent through
     * AXml.textToXml() before being saved Used by: toXml
-    * 
-    * @return Return Xml data string.
     */
    public abstract String getXmlData();
 
@@ -237,159 +230,94 @@ public abstract class XViewerWidget {
       }
    }
 
-   /**
-    * @return Returns vector of Strings.
-    */
    public Vector<String> getDisplayLabels() {
       Vector<String> l = new Vector<String>();
       l.add(label);
       return l;
    }
 
-   /**
-    * @param displayLabel The displayLabel to set.
-    */
    public void setDisplayLabel(String displayLabel) {
       this.label = displayLabel;
    }
 
-   /**
-    * @return Returns the editable.
-    */
    public boolean isEditable() {
       return editable;
    }
 
-   /**
-    * @param editable The editable to set.
-    */
    public void setEditable(boolean editable) {
       this.editable = editable;
    }
 
-   /**
-    * @return Returns the verticalLabel.
-    */
    public boolean isVerticalLabel() {
       return verticalLabel;
    }
 
-   /**
-    * @param verticalLabel The verticalLabel to set.
-    */
    public void setVerticalLabel(boolean verticalLabel) {
       this.verticalLabel = verticalLabel;
    }
 
-   /**
-    * @return Returns the xmlRoot.
-    */
    public String getXmlRoot() {
       return xmlRoot;
    }
 
-   /**
-    * @param xmlRoot The xmlRoot to set.
-    */
    public void setXmlRoot(String xmlRoot) {
       this.xmlRoot = xmlRoot;
    }
 
-   /**
-    * @return Returns the xmlSubRoot.
-    */
    public String getXmlSubRoot() {
       return xmlSubRoot;
    }
 
-   /**
-    * @param xmlSubRoot The xmlSubRoot to set.
-    */
    public void setXmlSubRoot(String xmlSubRoot) {
       this.xmlSubRoot = xmlSubRoot;
    }
 
-   /**
-    * @return Returns the toolTip.
-    */
    public String getToolTip() {
       return toolTip;
    }
 
-   /**
-    * @return Returns the fillVertically.
-    */
    public boolean isFillVertically() {
       return fillVertically;
    }
 
-   /**
-    * @param fillVertically The fillVertically to set.
-    */
    public void setFillVertically(boolean fillVertically) {
       this.fillVertically = fillVertically;
    }
 
-   /**
-    * @return Returns the label.
-    */
    public String getLabel() {
       return label;
    }
 
-   /**
-    * @param label The label to set.
-    */
    public void setLabel(String label) {
       this.label = label;
    }
 
-   /**
-    * @return Returns the labelWidget.
-    */
    public Label getLabelWidget() {
       return labelWidget;
    }
 
-   /**
-    * @param labelWidget The labelWidget to set.
-    */
    public void setLabelWidget(Label labelWidget) {
       this.labelWidget = labelWidget;
    }
 
-   /**
-    * @return Returns the requiredEntry.
-    */
    public boolean isRequiredEntry() {
       return requiredEntry;
    }
 
-   /**
-    * @param requiredEntry The requiredEntry to set.
-    */
    public void setRequiredEntry(boolean requiredEntry) {
       this.requiredEntry = requiredEntry;
    }
 
-   /**
-    * @return Returns the reportType.
-    */
    public int getReportType() {
       return reportType;
    }
 
-   /**
-    * @param reportType The reportType to set.
-    */
    public void setReportType(int reportType) {
       this.reportType = reportType;
    }
 
    /**
     * Return data for display in Report (without label) NOTE: There should be no newlines at end of String
-    * 
-    * @return Return string.
     */
    public abstract String getReportData();
 
@@ -404,8 +332,6 @@ public abstract class XViewerWidget {
 
    /**
     * RPT_NONE (label: data), RPT_SINGLE_LINE (label: data\n\n), RPT_MULTI_LINE (label:\n data\n\n)
-    * 
-    * @return String report
     */
    public String toReport(int rptType) {
       String s = label + ": ";
@@ -427,8 +353,6 @@ public abstract class XViewerWidget {
 
    /**
     * If set, label will be displayed with entry widget.
-    * 
-    * @param displayLabel The displayLabel to set.
     */
    public void setDisplayLabel(boolean displayLabel) {
       this.displayLabel = displayLabel;
@@ -440,9 +364,6 @@ public abstract class XViewerWidget {
 
    public abstract Object getData();
 
-   /**
-    * @return the displayLabel
-    */
    public boolean isDisplayLabel() {
       return displayLabel;
    }

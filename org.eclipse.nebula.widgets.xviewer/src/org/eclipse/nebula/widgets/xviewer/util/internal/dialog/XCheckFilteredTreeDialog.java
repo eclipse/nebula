@@ -44,7 +44,8 @@ public class XCheckFilteredTreeDialog extends MessageDialog {
 
    public XCheckFilteredTreeDialog(String dialogTitle, String dialogMessage, PatternFilter patternFilter, IContentProvider contentProvider, IBaseLabelProvider labelProvider, ViewerSorter viewerSorter) {
       super(Display.getCurrent().getActiveShell(), dialogTitle, null, dialogMessage, MessageDialog.NONE, new String[] {
-         "OK", "Cancel"}, 0);
+         "OK",
+         "Cancel"}, 0);
       this.contentProvider = contentProvider;
       this.labelProvider = labelProvider;
       this.patternFilter = patternFilter;
@@ -65,8 +66,6 @@ public class XCheckFilteredTreeDialog extends MessageDialog {
 
    /**
     * Sets the input. Convenience method.
-    * 
-    * @param object the input.
     */
    public final void setInput(Object input) {
       this.input = input;
@@ -77,8 +76,6 @@ public class XCheckFilteredTreeDialog extends MessageDialog {
 
    /**
     * Sets the initial selection. Convenience method.
-    * 
-    * @param object the initial selection.
     */
    public void setInitialSelections(Collection<? extends Object> initialSelections) {
       this.initialSelections = initialSelections;
@@ -161,9 +158,6 @@ public class XCheckFilteredTreeDialog extends MessageDialog {
       }
    }
 
-   /**
-    * @return the treeViewer
-    */
    public XCheckedFilteredTree getTreeViewer() {
       return treeViewer;
    }

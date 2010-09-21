@@ -158,8 +158,6 @@ public class XViewerCustomizeDialog extends MessageDialog {
 
    /**
     * Drag should only be from visible table
-    * 
-    * @param event
     */
    public void performHiddenTableDragOver(DropTargetEvent event) {
       if (!TextTransfer.getInstance().isSupportedType(event.currentDataType)) {

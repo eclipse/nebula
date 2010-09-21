@@ -63,8 +63,6 @@ public class XViewerColumn {
    /**
     * XViewer uses copies of column definitions so originals that are registered are not corrupted. Classes extending
     * XViewerColumn need to extend this method to copy extra stored fields
-    * 
-    * @param col
     */
    public XViewerColumn copy() {
       return new XViewerColumn(id, name, width, align, show, sortDataType, multiColumnEditable, description);
@@ -122,21 +120,23 @@ public class XViewerColumn {
    }
 
    public String getAlignStoreName(int align) {
-      if (align == SWT.CENTER)
+      if (align == SWT.CENTER) {
          return "center";
-      else if (align == SWT.RIGHT)
+      } else if (align == SWT.RIGHT) {
          return "right";
-      else
+      } else {
          return "left";
+      }
    }
 
    public int getAlignStoreValue(String str) {
-      if (str.equals("center"))
+      if (str.equals("center")) {
          return SWT.CENTER;
-      else if (str.equals("right"))
+      } else if (str.equals("right")) {
          return SWT.RIGHT;
-      else
+      } else {
          return SWT.LEFT;
+      }
    }
 
    public String getDisplayName() {
@@ -209,7 +209,9 @@ public class XViewerColumn {
    }
 
    public void setToolTip(String toolTip) {
-      if (toolTip != null) this.toolTip = toolTip;
+      if (toolTip != null) {
+         this.toolTip = toolTip;
+      }
    }
 
    public void setName(String name) {
@@ -249,7 +251,9 @@ public class XViewerColumn {
          double sum = 0.0;
          Set<String> exceptions = new HashSet<String>();
          for (String value : values) {
-            if (value == null || value.equals("")) continue;
+            if (value == null || value.equals("")) {
+               continue;
+            }
             try {
                sum += new Double(value);
             } catch (Exception ex) {
@@ -262,7 +266,9 @@ public class XViewerColumn {
          int sum = 0;
          Set<String> exceptions = new HashSet<String>();
          for (String value : values) {
-            if (value == null || value.equals("")) continue;
+            if (value == null || value.equals("")) {
+               continue;
+            }
             try {
                sum += new Integer(value);
             } catch (Exception ex) {

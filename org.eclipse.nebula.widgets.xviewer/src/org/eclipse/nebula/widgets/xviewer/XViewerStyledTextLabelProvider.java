@@ -167,13 +167,6 @@ public abstract class XViewerStyledTextLabelProvider extends StyledCellLabelProv
       return null;
    }
 
-   /**
-    * @param element
-    * @param viewerColumn
-    * @param columnIndex
-    * @return
-    */
-
    private Color getForeground(Object element, int columnIndex) {
       try {
          XViewerColumn xViewerColumn = getTreeColumnOffIndex(columnIndex);

@@ -128,10 +128,6 @@ public class SearchDataUI {
       }
    }
 
-   /**
-    * @param text
-    * @return true if matched
-    */
    public boolean match(String textString) {
       if (search) {
          if (regex) {
@@ -146,9 +142,6 @@ public class SearchDataUI {
       }
    }
 
-   /**
-    * @return true if in search mode
-    */
    public boolean isSearch() {
       return search;
    }

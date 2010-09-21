@@ -25,7 +25,7 @@ import java.util.List;
  */
 public class HtmlUtil {
    private static final String HTTP_CHARSET_ENCODING =
-         "<meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\">";
+      "<meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\">";
    private static final String begin = "<table ";
    public final static String LABEL_FONT = "<font color=\"black\" face=\"Arial\" size=\"-1\">";
 
@@ -205,12 +205,6 @@ public class HtmlUtil {
       return nameTarget("" + num);
    }
 
-   /**
-    * Create target for hyperlink to jump to
-    * 
-    * @param str
-    * @return Return name target string
-    */
    public static String nameTarget(String str) {
       if (str == null) {
          return "";
@@ -218,34 +212,14 @@ public class HtmlUtil {
       return "<A NAME=\"" + str + "\">";
    }
 
-   /**
-    * Create &lt;a href> hyperlink to nameTarget
-    * 
-    * @param num
-    * @param text
-    * @return Return name link string
-    */
    public static String nameLink(int num, String text) {
       return nameLink("" + num, text);
    }
 
-   /**
-    * Create &lt;a href> hyperlink to nameTarget
-    * 
-    * @param name
-    * @param text
-    * @return Return name link string
-    */
    public static String nameLink(String name, String text) {
       return "<A HREF=\"#" + name + "\">" + text + "</A>";
    }
 
-   /**
-    * Create &lt;a href> hyperlink to nameTarget using name as hyperlink tag and display text
-    * 
-    * @param name
-    * @return Return name link string
-    */
    public static String nameLink(String name) {
       return "<A HREF=\"#" + name + "\">" + name + "</A>";
    }
@@ -256,23 +230,14 @@ public class HtmlUtil {
 
    /**
     * Create a table with one row/colum containing str
-    * 
-    * @param str
-    * @param width
-    * @return return simple table string
     */
    public static String simpleTable(String str, int width) {
       return new String(
-            "<table border=\"0\" cellpadding=\"3\" cellspacing=\"0\" width=\"" + width + "%\">" + "<tr><td>" + str + "</td></tr>" + "</table>");
+         "<table border=\"0\" cellpadding=\"3\" cellspacing=\"0\" width=\"" + width + "%\">" + "<tr><td>" + str + "</td></tr>" + "</table>");
    }
 
    /**
     * Create a table with one row/colum containing str
-    * 
-    * @param str
-    * @param width
-    * @param bgcolor
-    * @return Return border table string
     */
    public static String borderTable(String str, int width, String bgcolor, String caption) {
       return startBorderTable(width, bgcolor, caption) + str + endBorderTable();
@@ -280,7 +245,9 @@ public class HtmlUtil {
 
    public static String startBorderTable(int width, String bgcolor, String caption) {
       String capStr = "";
-      if (!caption.equals("")) capStr = "<caption ALIGN=top>" + caption + "</caption>";
+      if (!caption.equals("")) {
+         capStr = "<caption ALIGN=top>" + caption + "</caption>";
+      }
       return "<table border=\"1\" align=\"center\" bgcolor=\"" + bgcolor + "\" cellpadding=\"3\" cellspacing=\"0\" width=\"" + width + "%\">" + capStr + "<tr><td>";
    }
 
@@ -340,13 +307,19 @@ public class HtmlUtil {
 
    public static String addRowMultiColumnTable(String[] str, String[] colOptions, String backgroundColor) {
       String s = "<tr>";
-      if (backgroundColor != null) s = "<tr bgcolor=\"" + backgroundColor + "\">";
+      if (backgroundColor != null) {
+         s = "<tr bgcolor=\"" + backgroundColor + "\">";
+      }
       String show = "";
       for (int i = 0; i < str.length; i++) {
          show = str[i];
-         if (show == null || show.equals("")) show = HtmlUtil.addSpace(1);
+         if (show == null || show.equals("")) {
+            show = HtmlUtil.addSpace(1);
+         }
          String colOptionStr = "";
-         if (colOptions != null) colOptionStr = colOptions[i];
+         if (colOptions != null) {
+            colOptionStr = colOptions[i];
+         }
          s += "<td" + ((colOptionStr != null && !colOptionStr.equals("")) ? colOptionStr : "") + ">" + show + "</td>";
       }
       s += "</tr>";
@@ -376,15 +349,18 @@ public class HtmlUtil {
    public static String addRowMultiColumnTable(Collection<CellItem> items) {
       String s = "<tr>";
       for (CellItem item : items) {
-         if (item.text == null || item.text.equals("")) item.text = ".";
-         if (item.fgColor != null && item.bgColor != null)
+         if (item.text == null || item.text.equals("")) {
+            item.text = ".";
+         }
+         if (item.fgColor != null && item.bgColor != null) {
             s += "<td bgcolor=\"" + item.bgColor + "\">" + HtmlUtil.color(item.fgColor, item.text) + "</td>";
-         else if (item.bgColor != null)
+         } else if (item.bgColor != null) {
             s += "<td bgcolor=\"" + item.bgColor + "\">" + item.text + "</td>";
-         else if (item.fgColor != null)
+         } else if (item.fgColor != null) {
             s += "<td>" + HtmlUtil.color(item.fgColor, item.text) + "</td>";
-         else
+         } else {
             s += "<td>" + item.text + "</td>";
+         }
       }
       s += "</tr>";
       return s;
@@ -398,7 +374,9 @@ public class HtmlUtil {
       String s = "<tr>";
       String widthStr = "";
       for (int i = 0; i < str.length; i++) {
-         if (width != null) widthStr = " width =\"" + width[i] + "\"";
+         if (width != null) {
+            widthStr = " width =\"" + width[i] + "\"";
+         }
          s += "<th" + widthStr + ">" + str[i] + "</th>";
       }
       s += "</tr>";
@@ -430,7 +408,7 @@ public class HtmlUtil {
       }
       if (datas.size() % numColumns != 0) {
          throw new IllegalArgumentException(
-               "The table could not be created becuase the data does not match the column size");
+            "The table could not be created becuase the data does not match the column size");
       }
       if (border > 0) {
          table.append("border=\"" + border + "\"");

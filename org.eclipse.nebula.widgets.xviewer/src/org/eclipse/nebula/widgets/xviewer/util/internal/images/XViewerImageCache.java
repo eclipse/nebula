@@ -24,12 +24,6 @@ public class XViewerImageCache {
    static Map<String, Image> imageCache = new HashMap<String, Image>();
    static Map<String, ImageDescriptor> imageDescriptorCache = new HashMap<String, ImageDescriptor>();
 
-   /**
-    * Return image
-    * 
-    * @param example clear.gif
-    * @return the clearImage
-    */
    public static Image getImage(String imageName) {
       if (!imageCache.containsKey(imageName)) {
          imageCache.put(imageName, getImageDescriptor(imageName).createImage());

@@ -201,9 +201,6 @@ public class XViewerTextWidget extends XViewerWidget {
       return text;
    }
 
-   /**
-    * @param text
-    */
    public void setText(String text) {
       this.text = text;
       if (sText != null) {

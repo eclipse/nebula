@@ -42,10 +42,6 @@ public class EnumStringMultiSelectionDialog extends CheckedTreeSelectionDialog {
    private boolean enableReplace = false;
    private boolean enableDelete = false;
 
-   /**
-    * @param parent
-    * @param artifacts
-    */
    public EnumStringMultiSelectionDialog(String displayName, Collection<String> enums, Collection<String> selEnums) {
       super(Display.getCurrent().getActiveShell(), new StringLabelProvider(), new ArrayTreeContentProvider());
       setTitle("Select " + displayName);

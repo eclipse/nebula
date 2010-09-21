@@ -16,24 +16,14 @@ package org.eclipse.nebula.widgets.xviewer.util;
 public class XViewerException extends Exception {
    private static final long serialVersionUID = 1L;
 
-   /**
-    * @param message
-    */
    public XViewerException(String message) {
       super(message);
    }
 
-   /**
-    * @param message
-    * @param cause
-    */
    public XViewerException(String message, Throwable cause) {
       super(message, cause);
    }
 
-   /**
-    * @param cause
-    */
    public XViewerException(Throwable cause) {
       super(cause);
    }

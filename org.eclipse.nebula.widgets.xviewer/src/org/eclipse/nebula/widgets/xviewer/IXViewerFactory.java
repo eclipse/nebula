@@ -20,60 +20,42 @@ import org.eclipse.nebula.widgets.xviewer.customize.XViewerCustomMenu;
 public interface IXViewerFactory {
    /**
     * Returns the default sorter to use for this xviewer
-    * 
-    * @param viewer
-    * @return XViewerSorter
     */
    XViewerSorter createNewXSorter(XViewer viewer);
 
    /**
     * Returns the default table customization for this viewer including column definitions, sorting and filtering (if
     * any)
-    * 
-    * @return CustomizeData
     */
    CustomizeData getDefaultTableCustomizeData();
 
    /**
     * Returns the default column definition for the given id
-    * 
-    * @param id
-    * @return XViewerColumn
     */
    XViewerColumn getDefaultXViewerColumn(String id);
 
    /**
     * Provides the storage mechanism for save/load of personal/global customizations
-    * 
-    * @return IXViewerCustomizations
     */
    IXViewerCustomizations getXViewerCustomizations();
 
    /**
     * Provides custom menu for XViewer
-    * 
-    * @return XViewerCustomMenu
     */
    XViewerCustomMenu getXViewerCustomMenu();
 
    /**
     * Unique namespace for this viewer
-    * 
-    * @return String
     */
    String getNamespace();
 
    /**
     * Will enable certain extra functionality based on admin validity
-    * 
-    * @return true if admin
     */
    boolean isAdmin();
 
    /**
     * Provides for ability to customize tree report that is provided
-    * 
-    * @return XViewerTreeReport
     */
    XViewerTreeReport getXViewerTreeReport(XViewer xViewer);
 

@@ -67,9 +67,6 @@ public class ColumnData {
       return sb.toString();
    }
 
-   /**
-    * @return the columns
-    */
    public List<XViewerColumn> getColumns() {
       return columns;
    }

@@ -29,7 +29,10 @@ public class OverlayUtil extends CompositeImageDescriptor {
    private Collection<ImageInfo> imageInfo;
 
    public static enum Location {
-      TOP_LEFT, TOP_RIGHT, BOT_LEFT, BOT_RIGHT
+      TOP_LEFT,
+      TOP_RIGHT,
+      BOT_LEFT,
+      BOT_RIGHT
    };
 
    public static class ImageInfo {
@@ -59,8 +62,12 @@ public class OverlayUtil extends CompositeImageDescriptor {
    }
 
    public OverlayUtil(Image baseImage, ImageDescriptor overlayImageDescriptor, int xValue, int yValue) {
-      if (baseImage == null) throw new IllegalArgumentException("baseImage can not be null");
-      if (overlayImageDescriptor == null) throw new IllegalArgumentException("overlayImageDescriptor can not be null");
+      if (baseImage == null) {
+         throw new IllegalArgumentException("baseImage can not be null");
+      }
+      if (overlayImageDescriptor == null) {
+         throw new IllegalArgumentException("overlayImageDescriptor can not be null");
+      }
 
       this.baseImage = baseImage;
       this.overlayImageDescriptor = overlayImageDescriptor;
@@ -70,9 +77,6 @@ public class OverlayUtil extends CompositeImageDescriptor {
 
    /**
     * Set x,y pixel to draw the overlay image eg: 8,8 for bottom right of a 16x16 image 0,0 for top left
-    * 
-    * @param xValue
-    * @param yValue
     */
    public void setXY(int xValue, int yValue) {
       this.xValue = xValue;
@@ -93,13 +97,15 @@ public class OverlayUtil extends CompositeImageDescriptor {
          drawImage(overlayImageDescriptor.getImageData(), xValue, yValue);
       } else {
          for (ImageInfo info : imageInfo) {
-            if (info.location == Location.TOP_LEFT)
+            if (info.location == Location.TOP_LEFT) {
                drawImage(info.descriptor.getImageData(), 0, 0);
-            else if (info.location == Location.BOT_LEFT)
+            } else if (info.location == Location.BOT_LEFT) {
                drawImage(info.descriptor.getImageData(), 0, 8);
-            else if (info.location == Location.TOP_RIGHT)
+            } else if (info.location == Location.TOP_RIGHT) {
                drawImage(info.descriptor.getImageData(), 8, 0);
-            else if (info.location == Location.BOT_RIGHT) drawImage(info.descriptor.getImageData(), 8, 8);
+            } else if (info.location == Location.BOT_RIGHT) {
+               drawImage(info.descriptor.getImageData(), 8, 8);
+            }
          }
       }
    }

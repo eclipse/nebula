@@ -126,58 +126,34 @@ public class CustomizeData {
       return personal;
    }
 
-   /**
-    * @param personal the personal to set
-    */
    public void setPersonal(boolean personal) {
       this.personal = personal;
    }
 
-   /**
-    * @return the columnData
-    */
    public ColumnData getColumnData() {
       return columnData;
    }
 
-   /**
-    * @return the filterData
-    */
    public FilterData getFilterData() {
       return filterData;
    }
 
-   /**
-    * @return the sortingData
-    */
    public SortingData getSortingData() {
       return sortingData;
    }
 
-   /**
-    * @return the name
-    */
    public String getName() {
       return name;
    }
 
-   /**
-    * @param name the name to set
-    */
    public void setName(String name) {
       this.name = name;
    }
 
-   /**
-    * @return the nameSpace
-    */
    public String getNameSpace() {
       return nameSpace;
    }
 
-   /**
-    * @param nameSpace the nameSpace to set
-    */
    public void setNameSpace(String nameSpace) {
       this.nameSpace = nameSpace;
    }
@@ -186,9 +162,6 @@ public class CustomizeData {
       return guid;
    }
 
-   /**
-    * @param guid the guid to set
-    */
    public void setGuid(String guid) {
       this.guid = guid;
    }

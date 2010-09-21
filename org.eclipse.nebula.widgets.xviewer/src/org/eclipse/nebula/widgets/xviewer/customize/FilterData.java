@@ -22,9 +22,6 @@ public class FilterData {
    private String filterText = "";
    private static final String FILTER_TAG = "xFilter";
 
-   /**
-    * @return the filterText
-    */
    public String getFilterText() {
       return filterText;
    }
@@ -33,9 +30,6 @@ public class FilterData {
       return filterText != null && !filterText.equals("");
    }
 
-   /**
-    * @param filterText the filterText to set
-    */
    public void setFilterText(String filterText) {
       this.filterText = filterText;
    }

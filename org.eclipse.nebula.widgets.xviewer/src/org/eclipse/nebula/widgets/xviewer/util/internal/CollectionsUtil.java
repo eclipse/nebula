@@ -77,8 +77,6 @@ public class CollectionsUtil {
 
    /**
     * The resultant set is those elements in superSet which are not in the subSet
-    * 
-    * @return Return complement list reference
     */
    public static <T> List<T> setComplement(Collection<T> superSet, Collection<T> subList) {
       ArrayList<T> complement = new ArrayList<T>(superSet.size());
