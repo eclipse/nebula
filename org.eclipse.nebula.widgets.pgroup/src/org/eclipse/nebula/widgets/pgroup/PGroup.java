@@ -879,7 +879,7 @@ public class PGroup extends Canvas
 		toolitems.remove(toolitem);
 	}
 
-	AbstractToolItemRenderer getToolItemRenderer() {
+	public AbstractToolItemRenderer getToolItemRenderer() {
 		return toolItemRenderer;
 	}
 
