@@ -523,8 +523,11 @@ public class CustomizeManager {
             sb.append("\n");
             sb.append(xCol.getToolTip());
          }
-         sb.append("\n");
-         sb.append(xCol.getId());
+         // Only show id if different from name and non-null
+         if (xCol.getId() != null && !"".equals(xCol.getId()) && !xCol.getName().equals(xCol.getId())) {
+            sb.append("\n");
+            sb.append(xCol.getId());
+         }
          column.setToolTipText(sb.toString());
          column.setText(xCol.getName());
          column.setWidth(xCol.getWidth());

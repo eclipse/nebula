@@ -140,7 +140,11 @@ public class XViewerColumn {
    }
 
    public String getDisplayName() {
-      return name + " - " + id + " - width:" + width + " - show:" + show;
+      if (id != null && !id.equals(name)) {
+         return name + " - " + id + " - width:" + width + " - show:" + show;
+      } else {
+         return name + " - width:" + width + " - show:" + show;
+      }
    }
 
    @Override

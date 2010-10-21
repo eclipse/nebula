@@ -120,11 +120,11 @@ public class XViewerTest extends XViewer {
       tasks.add(new XViewerTestTask(RunDb.Production_Db, TaskType.Db_Health, getDate(), "org.eclipse.osee.test5",
          "7:32", "may be never", "Suite A", "steve@eclipse.com", 10));
       tasks.add(new XViewerTestTask(RunDb.Test_Db, TaskType.Data_Exchange, getDate(), "org.eclipse.osee.test14",
-         "6:11", "how can this solve the problem", "Suite A", "steve@eclipse.com", 95));
+         "6:11", "", "Suite A", "steve@eclipse.com", 95));
       tasks.add(new XViewerTestTask(RunDb.Production_Db, TaskType.Backup, getDate(), "org.eclipse.osee.test6", "5:13",
          "run to test this", "Suite B", "john@eclipse.com", 80));
       tasks.add(new XViewerTestTask(RunDb.Test_Db, TaskType.Db_Health, getDate(), "org.eclipse.osee.test12", "23:15",
-         "run to test this", "Suite A", "mike@eclipse.com", 90));
+         "", "Suite A", "mike@eclipse.com", 90));
       tasks.add(new XViewerTestTask(RunDb.Production_Db, TaskType.Backup, getDate(), "org.eclipse.osee.test13", "4:01",
          "run to test this", "Suite B", "steve@eclipse.com", 100));
       tasks.add(new XViewerTestTask(RunDb.Production_Db, TaskType.Data_Exchange, getDate(), "org.eclipse.osee.test11",
