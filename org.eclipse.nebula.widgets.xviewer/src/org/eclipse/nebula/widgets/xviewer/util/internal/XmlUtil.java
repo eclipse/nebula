@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.xviewer.util.internal;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -69,14 +70,14 @@ public class XmlUtil {
    }
 
    public static String[] getTagDataArray(String xmlStr, String xmlRoot) {
-      Vector<String> v = new Vector<String>();
+      List<String> data = new ArrayList<String>();
       Matcher m;
       m =
          Pattern.compile("<" + xmlRoot + ">(.*?)</" + xmlRoot + ">", Pattern.MULTILINE | Pattern.DOTALL).matcher(xmlStr);
       while (m.find()) {
-         v.add(xmlToText(m.group(1)));
+         data.add(xmlToText(m.group(1)));
       }
-      return v.toArray(new String[v.size()]);
+      return data.toArray(new String[data.size()]);
    }
 
    /**
@@ -94,7 +95,7 @@ public class XmlUtil {
       String tags[] = getTagDataArray(xmlStr, xmlRoot);
       if (tags.length > 0) {
          String intStr = tags[0];
-         return (new Integer(intStr)).intValue();
+         return (Integer.valueOf(intStr)).intValue();
       }
       return 0;
    }
@@ -118,7 +119,7 @@ public class XmlUtil {
       if (text == null || text.equals("")) {
          return "";
       }
-      String str = new String(text);
+      String str = text;
       str = str.replaceAll("&", "&amp;");
       str = str.replaceAll(">", "&gt;");
       str = str.replaceAll("<", "&lt;");
@@ -135,7 +136,7 @@ public class XmlUtil {
       if (xml == null || xml.equals("")) {
          return "";
       }
-      String str = new String(xml);
+      String str = xml;
       str = str.replaceAll("&gt;", ">");
       str = str.replaceAll("&lt;", "<");
       str = str.replaceAll("&apos;", "'");

@@ -18,6 +18,7 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -35,7 +36,7 @@ import org.eclipse.ui.PlatformUI;
 public class XViewerLib {
    static Random random = new Random();
    private static final Date today = new Date();
-   public static int MILLISECS_PER_DAY = (1000 * 60 * 60 * 24);
+   public final static int MILLISECS_PER_DAY = (1000 * 60 * 60 * 24);
 
    public static long daysTillToday(Date date) {
       return (date.getTime() - today.getTime()) / MILLISECS_PER_DAY;
@@ -81,17 +82,17 @@ public class XViewerLib {
       return getZeroMarginLayout(1, false);
    }
 
-   public static ArrayList<String> readListFromDir(File directory, FilenameFilter filter, boolean keepExtension) {
-      ArrayList<String> list = new ArrayList<String>(400);
+   public static List<String> readListFromDir(File directory, FilenameFilter filter, boolean keepExtension) {
+      List<String> list = new ArrayList<String>(400);
 
       if (directory == null) {
-         System.out.println("Invalid path: " + directory);
+         XViewerLog.log(Activator.class, Level.SEVERE, "Invalid directory path");
          return list;
       }
 
       File[] files = directory.listFiles(filter);
       if (files == null) {
-         System.out.println("Invalid path: " + directory);
+         XViewerLog.log(Activator.class, Level.SEVERE, "Invalid path: " + directory);
          return list;
       }
       if (files.length > 0) {
@@ -111,7 +112,7 @@ public class XViewerLib {
       return list;
    }
 
-   public static ArrayList<String> readListFromDir(String directory, FilenameFilter filter) {
+   public static List<String> readListFromDir(String directory, FilenameFilter filter) {
       return readListFromDir(new File(directory), filter, false);
    }
 

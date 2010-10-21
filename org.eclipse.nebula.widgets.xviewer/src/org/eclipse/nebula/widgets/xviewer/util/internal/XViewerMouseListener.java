@@ -53,7 +53,9 @@ public class XViewerMouseListener implements MouseListener {
    @Override
    public void mouseUp(MouseEvent event) {
       TreeItem item = xViewer.getItemUnderMouseClick(new Point(event.x, event.y));
-      if (item == null) return;
+      if (item == null) {
+         return;
+      }
 
       try {
          TreeColumn column = xViewer.getColumnUnderMouseClick(new Point(event.x, event.y));
@@ -78,7 +80,9 @@ public class XViewerMouseListener implements MouseListener {
 
    private boolean clickOccurredInIconArea(MouseEvent event, TreeItem item) {
       Integer columnNumber = xViewer.getColumnNumberUnderMouseClick(new Point(event.x, event.y));
-      if (columnNumber == null) return false;
+      if (columnNumber == null) {
+         return false;
+      }
       Rectangle rect = item.getBounds(columnNumber);
       return (event.x <= (rect.x + 18));
    }

@@ -15,7 +15,6 @@ import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewerLabelProvider;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -24,7 +23,6 @@ import org.eclipse.swt.graphics.Image;
  * @author Donald G. Dunne
  */
 public class XViewerTestLabelProvider extends XViewerLabelProvider {
-   Font font = null;
    private final XViewerTest xViewerTest;
 
    public XViewerTestLabelProvider(XViewerTest xViewerTest) {
@@ -80,10 +78,7 @@ public class XViewerTestLabelProvider extends XViewerLabelProvider {
 
    @Override
    public void dispose() {
-      if (font != null) {
-         font.dispose();
-      }
-      font = null;
+      // do nothing
    }
 
    @Override

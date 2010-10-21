@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.xviewer.util.internal;
 
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.eclipse.nebula.widgets.xviewer.Activator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.StyledText;
@@ -40,7 +42,7 @@ public class XViewerTextWidget extends XViewerWidget {
    protected String text = ""; // Where actual text with xml tags is stored
    private int maxTextChars = 0;
 
-   private final boolean debug = false;
+   private final static boolean debug = false;
    private int width = 0;
    private int height = 0;
    private Font font;
@@ -113,7 +115,6 @@ public class XViewerTextWidget extends XViewerWidget {
          @Override
          public void modifyText(ModifyEvent e) {
             if (sText != null) {
-               debug("modifyText");
                text = sText.getText();
                setLabelError();
                notifyXModifiedListeners();
@@ -163,10 +164,8 @@ public class XViewerTextWidget extends XViewerWidget {
          gd.grabExcessVerticalSpace = true;
          gd.verticalAlignment = GridData.FILL;
       }
-      if (fillVertically) {
-         if (height > 0) {
-            gd.heightHint = height;
-         }
+      if (fillVertically && height > 0) {
+         gd.heightHint = height;
       }
 
       sText.setLayoutData(gd);
@@ -197,8 +196,7 @@ public class XViewerTextWidget extends XViewerWidget {
     * @return text including xml tags replaced for references
     */
    public String getText() {
-      String text = sText.getText();
-      return text;
+      return sText.getText();
    }
 
    public void setText(String text) {
@@ -296,14 +294,9 @@ public class XViewerTextWidget extends XViewerWidget {
       }
    }
 
-   @Override
-   public void setFillVertically(boolean fillVertically) {
-      super.setFillVertically(fillVertically);
-   }
-
    public boolean isInteger() {
       try {
-         new Integer(text);
+         Integer.valueOf(text);
       } catch (NumberFormatException e) {
          return false;
       }
@@ -322,7 +315,7 @@ public class XViewerTextWidget extends XViewerWidget {
    public int getInteger() {
       Integer num;
       try {
-         num = new Integer(text);
+         num = Integer.valueOf(text);
       } catch (NumberFormatException e) {
          return 0;
       }
@@ -357,7 +350,7 @@ public class XViewerTextWidget extends XViewerWidget {
 
    public String get() {
       if (debug) {
-         System.err.println("text set *" + text + "*");
+         XViewerLog.log(Activator.class, Level.SEVERE, "text set *" + text + "*");
       }
       return text;
    }
@@ -386,22 +379,19 @@ public class XViewerTextWidget extends XViewerWidget {
 
    @Override
    public String toXml(String xmlRoot) {
-      String s = "<" + xmlRoot + ">" + getXmlData() + "</" + xmlRoot + ">\n";
-      return s;
+      return "<" + xmlRoot + ">" + getXmlData() + "</" + xmlRoot + ">\n";
    }
 
    @Override
    public String toXml(String xmlRoot, String xmlSubRoot) {
-      String s =
-         "<" + xmlRoot + ">" + "<" + xmlSubRoot + ">" + getXmlData() + "</" + xmlSubRoot + ">" + "</" + xmlRoot + ">\n";
-      return s;
+      return "<" + xmlRoot + ">" + "<" + xmlSubRoot + ">" + getXmlData() + "</" + xmlSubRoot + ">" + "</" + xmlRoot + ">\n";
    }
 
    @Override
    public void setXmlData(String str) {
       set(str);
       if (debug) {
-         System.err.println("setFromXml *" + str + "*");
+         XViewerLog.log(Activator.class, Level.SEVERE, "setFromXml *" + str + "*");
       }
    }
 
@@ -413,20 +403,20 @@ public class XViewerTextWidget extends XViewerWidget {
       if (m.find()) {
          String xmlStr = m.group(1);
          if (debug) {
-            System.err.println("xmlStr *" + xmlStr + "*");
+            XViewerLog.log(Activator.class, Level.SEVERE, "xmlStr *" + xmlStr + "*");
          }
          String str = XmlUtil.xmlToText(xmlStr);
          if (debug) {
-            System.err.println("str *" + str + "*");
+            XViewerLog.log(Activator.class, Level.SEVERE, "str *" + str + "*");
          }
          setXmlData(str);
       }
    }
 
    public int getInt() {
-      Integer percent = new Integer(0);
+      Integer percent = Integer.valueOf(0);
       try {
-         percent = new Integer(text);
+         percent = Integer.valueOf(text);
       } catch (NumberFormatException e) {
          // do nothing
       }
@@ -453,7 +443,7 @@ public class XViewerTextWidget extends XViewerWidget {
          this.text = text;
       }
       if (debug) {
-         System.err.println("set *" + text + "*");
+         XViewerLog.log(Activator.class, Level.SEVERE, "set *" + text + "*");
       }
       updateTextWidget();
    }
@@ -474,16 +464,15 @@ public class XViewerTextWidget extends XViewerWidget {
 
    @Override
    public String getReportData() {
-      String s = "";
-      String textStr = new String(text);
+      StringBuffer sb = new StringBuffer();
+      String textStr = text;
       if (fillVertically) {
-         s = s + "\n";
+         sb.append("\n");
          textStr = textStr.replaceAll("\n", "\n" + "      ");
          textStr = "      " + textStr;
       }
-      s = s + textStr;
-      s = s.replaceAll("\n$", "");
-      return s;
+      sb.append(textStr);
+      return sb.toString().replaceAll("\n$", "");
    }
 
    public String toHTML(String labelFont, boolean newLineText) {
@@ -501,12 +490,6 @@ public class XViewerTextWidget extends XViewerWidget {
    @Override
    public String toHTML(String labelFont) {
       return toHTML(labelFont, false);
-   }
-
-   public void debug(String str) {
-      if (debug) {
-         System.err.println("AText :" + str);
-      }
    }
 
    @Override

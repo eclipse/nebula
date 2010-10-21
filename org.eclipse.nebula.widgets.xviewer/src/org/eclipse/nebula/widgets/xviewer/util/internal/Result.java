@@ -50,7 +50,7 @@ public class Result {
 
    @Override
    public String toString() {
-      return String.valueOf(isTrue()) + (getText().equals("") ? "" : " - \"" + getText() + "\"");
+      return isTrue() + (getText().equals("") ? "" : " - \"" + getText() + "\"");
    }
 
    public void setText(String text) {

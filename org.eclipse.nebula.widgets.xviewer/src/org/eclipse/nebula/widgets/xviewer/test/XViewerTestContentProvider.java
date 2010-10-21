@@ -23,7 +23,7 @@ import org.eclipse.jface.viewers.Viewer;
 public class XViewerTestContentProvider implements ITreeContentProvider {
 
    protected Collection<IXViewerTestTask> rootSet = new HashSet<IXViewerTestTask>();
-   private static Object[] EMPTY_ARRAY = new Object[0];
+   private final static Object[] EMPTY_ARRAY = new Object[0];
 
    public XViewerTestContentProvider() {
       super();

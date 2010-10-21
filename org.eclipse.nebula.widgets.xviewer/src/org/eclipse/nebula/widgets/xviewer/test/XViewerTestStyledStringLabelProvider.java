@@ -26,7 +26,6 @@ import org.eclipse.swt.graphics.Image;
  * @author Andrew M. Finkbeiner
  */
 public class XViewerTestStyledStringLabelProvider extends XViewerStyledTextLabelProvider {
-   Font font = null;
    private final XViewerStyledStringLableProviderTest xViewerTest;
 
    public XViewerTestStyledStringLabelProvider(XViewerStyledStringLableProviderTest xViewerTest) {
@@ -36,10 +35,7 @@ public class XViewerTestStyledStringLabelProvider extends XViewerStyledTextLabel
 
    @Override
    public void dispose() {
-      if (font != null) {
-         font.dispose();
-      }
-      font = null;
+      // do nothing
    }
 
    @Override

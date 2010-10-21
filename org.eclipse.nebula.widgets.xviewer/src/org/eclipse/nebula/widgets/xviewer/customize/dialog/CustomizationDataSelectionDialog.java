@@ -44,7 +44,6 @@ import org.eclipse.ui.dialogs.ListDialog;
 public class CustomizationDataSelectionDialog extends ListDialog {
 
    private Text custText;
-   private Label custTextLabel;
    private String enteredName;
    private boolean saveGlobal = false;
    private Button saveGlobalCheck;
@@ -57,7 +56,7 @@ public class CustomizationDataSelectionDialog extends ListDialog {
    }
 
    public CustomizationDataSelectionDialog(Shell parent, XViewer xViewer, List<CustomizeData> custDatas) {
-      super(Display.getCurrent().getActiveShell());
+      super(parent);
       this.xViewer = xViewer;
       setContentProvider(new ArrayContentProvider());
       setLabelProvider(new CustomizeDataLabelProvider(xViewer));
@@ -85,7 +84,7 @@ public class CustomizationDataSelectionDialog extends ListDialog {
       comp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
       comp.setLayout(new GridLayout(2, true));
 
-      custTextLabel = new Label(comp, SWT.None);
+      Label custTextLabel = new Label(comp, SWT.None);
       custTextLabel.setText("Enter New Customization Name");
 
       custText = new Text(comp, SWT.BORDER);

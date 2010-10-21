@@ -30,7 +30,7 @@ import org.eclipse.swt.SWT;
 public class XViewerDaysTillTodayColumn extends XViewerComputedColumn {
 
    private final static SimpleDateFormat format10 = new SimpleDateFormat("MM/dd/yyyy");
-   private static String ID = "ats.computed.daysTillToday";
+   private final static String ID = "ats.computed.daysTillToday";
 
    public XViewerDaysTillTodayColumn() {
       super(ID, "Days Till Today", 30, SWT.LEFT, false, SortDataType.Integer, false,

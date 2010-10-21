@@ -12,6 +12,7 @@ package org.eclipse.nebula.widgets.xviewer.customize;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.eclipse.nebula.widgets.xviewer.util.XViewerException;
 
 /**
  * Default implementation of IViewerCustomizations interface
@@ -26,17 +27,19 @@ public class XViewerCustomizations implements IXViewerCustomizations {
    }
 
    @Override
-   public List<CustomizeData> getSavedCustDatas() {
+   public List<CustomizeData> getSavedCustDatas() throws Exception {
       return new ArrayList<CustomizeData>();
    }
 
+   @SuppressWarnings("unused")
    @Override
-   public CustomizeData getUserDefaultCustData() {
+   public CustomizeData getUserDefaultCustData() throws XViewerException {
       return null;
    }
 
+   @SuppressWarnings("unused")
    @Override
-   public boolean isCustomizationUserDefault(CustomizeData custData) {
+   public boolean isCustomizationUserDefault(CustomizeData custData) throws XViewerException {
       return false;
    }
 

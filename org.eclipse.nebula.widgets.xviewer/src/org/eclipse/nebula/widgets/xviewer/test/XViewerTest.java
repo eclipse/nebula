@@ -50,10 +50,11 @@ public class XViewerTest extends XViewer {
    }
 
    public void setRun(IXViewerTestTask autoRunTask, boolean run) {
-      if (run)
+      if (run) {
          runList.add(autoRunTask);
-      else
+      } else {
          runList.remove(autoRunTask);
+      }
    }
 
    private static XViewerTest xViewerTest = null;
@@ -75,7 +76,6 @@ public class XViewerTest extends XViewer {
             for (int x = 0; x < 1; x++) {
                tasks.addAll(getTestTasks());
             }
-            System.err.println("Refreshing Input...");
             xViewerTest.setInput(tasks);
          }
       });
@@ -89,7 +89,6 @@ public class XViewerTest extends XViewer {
       for (int x = 0; x < 1; x++) {
          tasks.addAll(getTestTasks());
       }
-      System.err.println("Setting Input...");
       xViewerTest.setInput(tasks);
       Shell_1.open();
       while (!Shell_1.isDisposed()) {

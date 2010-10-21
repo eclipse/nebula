@@ -34,6 +34,7 @@ import org.eclipse.nebula.widgets.xviewer.customize.CustomizeData;
 import org.eclipse.nebula.widgets.xviewer.customize.CustomizeDataLabelProvider;
 import org.eclipse.nebula.widgets.xviewer.customize.CustomizeManager;
 import org.eclipse.nebula.widgets.xviewer.customize.SortingData;
+import org.eclipse.nebula.widgets.xviewer.util.XViewerException;
 import org.eclipse.nebula.widgets.xviewer.util.internal.ArrayTreeContentProvider;
 import org.eclipse.nebula.widgets.xviewer.util.internal.CollectionsUtil;
 import org.eclipse.nebula.widgets.xviewer.util.internal.PatternFilter;
@@ -87,8 +88,8 @@ public class XViewerCustomizeDialog extends MessageDialog {
    Button addItemButton, addAllItemButton, removeItemButton, removeAllItemButton, moveUpButton, moveDownButton;
    // Config Customization Buttons
    Button saveButton, renameButton;
-   private static String SET_AS_DEFAULT = " Set as Default ";
-   private static String REMOVE_DEFAULT = "Remove Default";
+   private final static String SET_AS_DEFAULT = " Set as Default ";
+   private final static String REMOVE_DEFAULT = "Remove Default";
    private CustomizeData defaultTableCustData;
    boolean isFeedbackAfter = false;
 
@@ -324,55 +325,324 @@ public class XViewerCustomizeDialog extends MessageDialog {
 
    @Override
    protected Control createDialogArea(Composite parent) {
-
       if (getShell() != null) {
          getShell().setText(title);
       }
       parent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-      final Composite comp = new Composite(parent, SWT.NONE);
+      Composite comp = new Composite(parent, SWT.NONE);
       GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
       gd.heightHint = 700;
       comp.setLayoutData(gd);
-      final GridLayout gridLayout_2 = new GridLayout();
+      GridLayout gridLayout_2 = new GridLayout();
       gridLayout_2.numColumns = 2;
       comp.setLayout(gridLayout_2);
 
-      final Label namespaceLabel = new Label(comp, SWT.NONE);
+      Label namespaceLabel = new Label(comp, SWT.NONE);
       GridData gridData = new GridData(SWT.CENTER, SWT.CENTER, false, false);
       gridData.horizontalSpan = 2;
       namespaceLabel.setLayoutData(gridData);
       namespaceLabel.setText("Customization Namespace: " + xViewerToCustomize.getXViewerFactory().getNamespace());
 
-      final Label selectCustomizationLabel = new Label(comp, SWT.NONE);
+      Label selectCustomizationLabel = new Label(comp, SWT.NONE);
       selectCustomizationLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
       selectCustomizationLabel.setText("Select Customization");
 
+      createSelectCustomizationSection(comp);
+
       // Column Configuration
-      final Group configureColumnsGroup = new Group(comp, SWT.NONE);
+      Group configureColumnsGroup = new Group(comp, SWT.NONE);
       configureColumnsGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 3));
       configureColumnsGroup.setText("Configure Customization");
-      final GridLayout gridLayout = new GridLayout();
+      GridLayout gridLayout = new GridLayout();
       gridLayout.marginWidth = 3;
       gridLayout.marginHeight = 3;
       gridLayout.numColumns = 3;
       configureColumnsGroup.setLayout(gridLayout);
 
-      final Composite hiddenTableComp = new Composite(configureColumnsGroup, SWT.NONE);
+      createHiddenButtonsComposition(configureColumnsGroup);
+      createMoveButtons(configureColumnsGroup);
+      createVisibleButtonsComposition(configureColumnsGroup);
+
+      gridLayout.numColumns = 3;
+      gridLayout.numColumns = 3;
+
+      // Create Sorter and Filter Blocks
+      final Composite composite_2 = new Composite(configureColumnsGroup, SWT.NONE);
+      composite_2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 3, 1));
+      final GridLayout gridLayout_3 = new GridLayout();
+      gridLayout_3.numColumns = 3;
+      composite_2.setLayout(gridLayout_3);
+
+      createSorterTextBlock(composite_2);
+      createFilterTextBlock(composite_2);
+      createColumnFilterTextBlock(composite_2);
+
+      createConfigCustomizationButtonBar(composite_2);
+
+      try {
+         loadCustomizeTable();
+      } catch (Exception ex) {
+         XViewerLog.logAndPopup(Activator.class, Level.SEVERE, ex);
+      }
+      updateButtonEnablements();
+
+      return comp;
+   }
+
+   private void createSelectCustomizationSection(Composite comp) {
+      // Customization Table and Buttons
+      final Composite custComp = new Composite(comp, SWT.NONE);
+      final GridData gd_composite_6 = new GridData(SWT.FILL, SWT.FILL, true, true);
+      custComp.setLayoutData(gd_composite_6);
+      final GridLayout gridLayout_1 = new GridLayout();
+      gridLayout_1.marginWidth = 0;
+      gridLayout_1.marginHeight = 0;
+      custComp.setLayout(gridLayout_1);
+
+      // Customization Table
+      custTable = new XViewerFilteredTree(custComp, SWT.BORDER, new PatternFilter());
+      final Tree table_2 = custTable.getViewer().getTree();
+      final GridData gd_table_2 = new GridData(SWT.FILL, SWT.FILL, true, true);
+      gd_table_2.heightHint = 270;
+      gd_table_2.widthHint = 200;
+      table_2.setLayoutData(gd_table_2);
+      custTable.getViewer().setLabelProvider(new CustomizeDataLabelProvider(xViewerToCustomize));
+      custTable.getViewer().setContentProvider(new ArrayTreeContentProvider());
+      custTable.getViewer().setSorter(new ViewerSorter() {
+         @SuppressWarnings("unchecked")
+         @Override
+         public int compare(Viewer viewer, Object e1, Object e2) {
+            if (((CustomizeData) e1).getName().startsWith("-")) {
+               return -1;
+            } else if (((CustomizeData) e2).getName().startsWith("-")) {
+               return 1;
+            } else {
+               return getComparator().compare(((CustomizeData) e1).getName(), ((CustomizeData) e2).getName());
+            }
+         }
+      });
+      custTable.getViewer().addSelectionChangedListener(new ISelectionChangedListener() {
+         @Override
+         public void selectionChanged(SelectionChangedEvent event) {
+            handleCustTableSelectionChanged();
+            updateButtonEnablements();
+            storeCustTableSelection();
+         }
+      });
+
+      // Customization Table Buttons
+      final Composite composite = new Composite(comp, SWT.NONE);
+      composite.setLayoutData(new GridData());
+      final GridLayout gridLayout_7 = new GridLayout();
+      gridLayout_7.numColumns = 4;
+      composite.setLayout(gridLayout_7);
+
+      setDefaultButton = new Button(composite, SWT.NONE);
+      setDefaultButton.setLayoutData(new GridData());
+      setDefaultButton.setText(SET_AS_DEFAULT);
+      setDefaultButton.addSelectionListener(new SelectionAdapter() {
+         @Override
+         public void widgetSelected(SelectionEvent e) {
+            super.widgetSelected(e);
+            handleSetDefaultButton();
+            updateButtonEnablements();
+         }
+      });
+
+      deleteButton = new Button(composite, SWT.NONE);
+      deleteButton.setLayoutData(new GridData());
+      deleteButton.setText("Delete");
+      deleteButton.addSelectionListener(new SelectionAdapter() {
+         @Override
+         public void widgetSelected(SelectionEvent e) {
+            super.widgetSelected(e);
+            handleDeleteButton();
+            updateButtonEnablements();
+         }
+      });
+   }
+
+   private void createConfigCustomizationButtonBar(final Composite composite) {
+      // Button block
+      final Composite composite_1 = new Composite(composite, SWT.NONE);
+      composite_1.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
+      final GridLayout gridLayout_10 = new GridLayout();
+      gridLayout_10.numColumns = 5;
+      composite_1.setLayout(gridLayout_10);
+
+      // Customization Buttons
+      renameButton = new Button(composite_1, SWT.NONE);
+      renameButton.setText("Rename Column");
+      renameButton.addSelectionListener(new SelectionAdapter() {
+         @Override
+         public void widgetSelected(SelectionEvent e) {
+            super.widgetSelected(e);
+            handleRenameButton();
+         }
+      });
+
+      saveButton = new Button(composite_1, SWT.NONE);
+      saveButton.setText("Save Customization");
+      saveButton.addSelectionListener(new SelectionAdapter() {
+         @Override
+         public void widgetSelected(SelectionEvent e) {
+            super.widgetSelected(e);
+            handleSaveButton();
+         }
+      });
+   }
+
+   private void createColumnFilterTextBlock(final Composite composite) {
+      // Filter text block
+      final Composite composite_8 = new Composite(composite, SWT.NONE);
+      composite_8.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 3, 1));
+      final GridLayout gridLayout_14 = new GridLayout();
+      gridLayout_14.numColumns = 3;
+      composite_8.setLayout(gridLayout_14);
+
+      final Label columnFilterLabel = new Label(composite_8, SWT.NONE);
+      columnFilterLabel.setText("Column Filter:");
+
+      columnFilterText = new Text(composite_8, SWT.BORDER);
+      columnFilterText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
+      final Label clearColumnFilterLabel = new Label(composite_8, SWT.PUSH);
+      clearColumnFilterLabel.setImage(XViewerLib.getImage("clear.gif"));
+      clearColumnFilterLabel.addMouseListener(new MouseListener() {
+         @Override
+         public void mouseDown(MouseEvent e) {
+            // do nothing
+         }
+
+         @Override
+         public void mouseDoubleClick(MouseEvent e) {
+            // do nothing
+         }
+
+         @Override
+         public void mouseUp(MouseEvent e) {
+            columnFilterText.setText("");
+         }
+      });
+   }
+
+   private void createFilterTextBlock(final Composite composite) {
+      // Filter text block
+      final Composite composite_7 = new Composite(composite, SWT.NONE);
+      composite_7.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 3, 1));
+      final GridLayout gridLayout_13 = new GridLayout();
+      gridLayout_13.numColumns = 3;
+      composite_7.setLayout(gridLayout_13);
+
+      final Label filterLabel = new Label(composite_7, SWT.NONE);
+      filterLabel.setText("Filter Text:");
+
+      filterText = new Text(composite_7, SWT.BORDER);
+      filterText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
+      final Label clearFilterLabel = new Label(composite_7, SWT.PUSH);
+      clearFilterLabel.setImage(XViewerLib.getImage("clear.gif"));
+      clearFilterLabel.addMouseListener(new MouseListener() {
+         @Override
+         public void mouseDown(MouseEvent e) {
+            // do nothing
+         }
+
+         @Override
+         public void mouseDoubleClick(MouseEvent e) {
+            // do nothing
+
+         }
+
+         @Override
+         public void mouseUp(MouseEvent e) {
+            filterText.setText("");
+         }
+      });
+   }
+
+   private void createSorterTextBlock(final Composite composite) {
+      final Label sorterLabel = new Label(composite, SWT.NONE);
+      sorterLabel.setText("Sorter:");
+
+      sorterText = new Text(composite, SWT.BORDER);
+      sorterText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
+      final Label clearSorterLabel = new Label(composite, SWT.PUSH);
+      clearSorterLabel.setImage(XViewerLib.getImage("clear.gif"));
+      clearSorterLabel.addMouseListener(new MouseListener() {
+         @Override
+         public void mouseDown(MouseEvent e) {
+            // do nothing
+         }
+
+         @Override
+         public void mouseDoubleClick(MouseEvent e) {
+            // do nothing
+
+         }
+
+         @Override
+         public void mouseUp(MouseEvent e) {
+            sorterText.setText("");
+         }
+      });
+   }
+
+   private void createVisibleButtonsComposition(Composite parent) {
+      final Composite visibleTableComp = new Composite(parent, SWT.NONE);
+      visibleTableComp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+      final GridLayout gridLayout_6 = new GridLayout();
+      gridLayout_6.marginWidth = 0;
+      gridLayout_6.marginHeight = 0;
+      visibleTableComp.setLayout(gridLayout_6);
+
+      final Label visibleColumnsLabel = new Label(visibleTableComp, SWT.NONE);
+      visibleColumnsLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
+      visibleColumnsLabel.setText("Visible Columns");
+
+      // Visible Column Table
+      visibleColTable = new XViewerFilteredTree(visibleTableComp);
+      final Tree table = visibleColTable.getViewer().getTree();
+      final GridData gd_table = new GridData(SWT.FILL, SWT.FILL, true, true);
+      gd_table.widthHint = 300;
+      table.setLayoutData(gd_table);
+      visibleColTable.getViewer().setLabelProvider(new XViewerColumnLabelProvider());
+      visibleColTable.getViewer().setContentProvider(new ArrayTreeContentProvider());
+      visibleColTable.getViewer().addSelectionChangedListener(new ISelectionChangedListener() {
+         @Override
+         public void selectionChanged(SelectionChangedEvent event) {
+            updateButtonEnablements();
+         }
+      });
+      visibleColTable.getViewer().addDragSupport(DND.DROP_MOVE, new Transfer[] {TextTransfer.getInstance()},
+         visibleTableDragListener);
+      visibleColTable.getViewer().addDropSupport(DND.DROP_MOVE, new Transfer[] {TextTransfer.getInstance()},
+         visibleTableDropListener);
+      hiddenColTable.getViewer().addDragSupport(DND.DROP_MOVE, new Transfer[] {TextTransfer.getInstance()},
+         hiddenTableDragListener);
+      hiddenColTable.getViewer().addDropSupport(DND.DROP_MOVE, new Transfer[] {TextTransfer.getInstance()},
+         hiddenTableDropListener);
+
+   }
+
+   private void createHiddenButtonsComposition(Composite parent) {
+      Composite hiddenTableComp = new Composite(parent, SWT.NONE);
       hiddenTableComp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-      final GridLayout gridLayout_4 = new GridLayout();
+      GridLayout gridLayout_4 = new GridLayout();
       gridLayout_4.marginWidth = 0;
       gridLayout_4.marginHeight = 0;
       hiddenTableComp.setLayout(gridLayout_4);
 
-      final Label hiddenColumnsLabel = new Label(hiddenTableComp, SWT.NONE);
+      Label hiddenColumnsLabel = new Label(hiddenTableComp, SWT.NONE);
       hiddenColumnsLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
       hiddenColumnsLabel.setText("Hidden Columns");
 
       // Hidden Column Table
       hiddenColTable = new XViewerFilteredTree(hiddenTableComp);
-      final Tree table_1 = hiddenColTable.getViewer().getTree();
-      final GridData gd_table_1 = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 2);
+      Tree table_1 = hiddenColTable.getViewer().getTree();
+      GridData gd_table_1 = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 2);
       gd_table_1.widthHint = 300;
       table_1.setLayoutData(gd_table_1);
       hiddenColTable.getViewer().setLabelProvider(new XViewerColumnLabelProvider());
@@ -385,9 +655,12 @@ public class XViewerCustomizeDialog extends MessageDialog {
          }
       });
 
-      final Composite moveButtonComp = new Composite(configureColumnsGroup, SWT.NONE);
+   }
+
+   private void createMoveButtons(Composite parent) {
+      Composite moveButtonComp = new Composite(parent, SWT.NONE);
       moveButtonComp.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
-      final GridLayout gridLayout_5 = new GridLayout();
+      GridLayout gridLayout_5 = new GridLayout();
       gridLayout_5.marginWidth = 0;
       gridLayout_5.marginHeight = 0;
       moveButtonComp.setLayout(gridLayout_5);
@@ -461,249 +734,6 @@ public class XViewerCustomizeDialog extends MessageDialog {
             handleMoveDownButton();
          }
       });
-
-      final Composite visibleTableComp = new Composite(configureColumnsGroup, SWT.NONE);
-      visibleTableComp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-      final GridLayout gridLayout_6 = new GridLayout();
-      gridLayout_6.marginWidth = 0;
-      gridLayout_6.marginHeight = 0;
-      visibleTableComp.setLayout(gridLayout_6);
-
-      final Label visibleColumnsLabel = new Label(visibleTableComp, SWT.NONE);
-      visibleColumnsLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
-      visibleColumnsLabel.setText("Visible Columns");
-
-      // Visible Column Table
-      visibleColTable = new XViewerFilteredTree(visibleTableComp);
-      final Tree table = visibleColTable.getViewer().getTree();
-      final GridData gd_table = new GridData(SWT.FILL, SWT.FILL, true, true);
-      gd_table.widthHint = 300;
-      table.setLayoutData(gd_table);
-      visibleColTable.getViewer().setLabelProvider(new XViewerColumnLabelProvider());
-      visibleColTable.getViewer().setContentProvider(new ArrayTreeContentProvider());
-      visibleColTable.getViewer().addSelectionChangedListener(new ISelectionChangedListener() {
-         @Override
-         public void selectionChanged(SelectionChangedEvent event) {
-            updateButtonEnablements();
-         }
-      });
-      visibleColTable.getViewer().addDragSupport(DND.DROP_MOVE, new Transfer[] {TextTransfer.getInstance()},
-         visibleTableDragListener);
-      visibleColTable.getViewer().addDropSupport(DND.DROP_MOVE, new Transfer[] {TextTransfer.getInstance()},
-         visibleTableDropListener);
-      hiddenColTable.getViewer().addDragSupport(DND.DROP_MOVE, new Transfer[] {TextTransfer.getInstance()},
-         hiddenTableDragListener);
-      hiddenColTable.getViewer().addDropSupport(DND.DROP_MOVE, new Transfer[] {TextTransfer.getInstance()},
-         hiddenTableDropListener);
-
-      gridLayout.numColumns = 3;
-      gridLayout.numColumns = 3;
-
-      // Sorter text block
-      final Composite composite_2 = new Composite(configureColumnsGroup, SWT.NONE);
-      composite_2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 3, 1));
-      final GridLayout gridLayout_3 = new GridLayout();
-      gridLayout_3.numColumns = 3;
-      composite_2.setLayout(gridLayout_3);
-
-      final Label sorterLabel = new Label(composite_2, SWT.NONE);
-      sorterLabel.setText("Sorter:");
-
-      sorterText = new Text(composite_2, SWT.BORDER);
-      sorterText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-
-      final Label clearSorterLabel = new Label(composite_2, SWT.PUSH);
-      clearSorterLabel.setImage(XViewerLib.getImage("clear.gif"));
-      clearSorterLabel.addMouseListener(new MouseListener() {
-         @Override
-         public void mouseDown(MouseEvent e) {
-            // do nothing
-         }
-
-         @Override
-         public void mouseDoubleClick(MouseEvent e) {
-            // do nothing
-
-         }
-
-         @Override
-         public void mouseUp(MouseEvent e) {
-            sorterText.setText("");
-         }
-      });
-
-      // Filter text block
-      final Composite composite_7 = new Composite(composite_2, SWT.NONE);
-      composite_7.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 3, 1));
-      final GridLayout gridLayout_13 = new GridLayout();
-      gridLayout_13.numColumns = 3;
-      composite_7.setLayout(gridLayout_13);
-
-      final Label filterLabel = new Label(composite_7, SWT.NONE);
-      filterLabel.setText("Filter Text:");
-
-      filterText = new Text(composite_7, SWT.BORDER);
-      filterText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-
-      final Label clearFilterLabel = new Label(composite_7, SWT.PUSH);
-      clearFilterLabel.setImage(XViewerLib.getImage("clear.gif"));
-      clearFilterLabel.addMouseListener(new MouseListener() {
-         @Override
-         public void mouseDown(MouseEvent e) {
-            // do nothing
-         }
-
-         @Override
-         public void mouseDoubleClick(MouseEvent e) {
-            // do nothing
-
-         }
-
-         @Override
-         public void mouseUp(MouseEvent e) {
-            filterText.setText("");
-         }
-      });
-
-      // Filter text block
-      final Composite composite_8 = new Composite(composite_2, SWT.NONE);
-      composite_8.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 3, 1));
-      final GridLayout gridLayout_14 = new GridLayout();
-      gridLayout_14.numColumns = 3;
-      composite_8.setLayout(gridLayout_14);
-
-      final Label columnFilterLabel = new Label(composite_8, SWT.NONE);
-      columnFilterLabel.setText("Column Filter:");
-
-      columnFilterText = new Text(composite_8, SWT.BORDER);
-      columnFilterText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-
-      final Label clearColumnFilterLabel = new Label(composite_8, SWT.PUSH);
-      clearColumnFilterLabel.setImage(XViewerLib.getImage("clear.gif"));
-      clearColumnFilterLabel.addMouseListener(new MouseListener() {
-         @Override
-         public void mouseDown(MouseEvent e) {
-            // do nothing
-         }
-
-         @Override
-         public void mouseDoubleClick(MouseEvent e) {
-            // do nothing
-         }
-
-         @Override
-         public void mouseUp(MouseEvent e) {
-            columnFilterText.setText("");
-         }
-      });
-
-      // Button block
-      final Composite composite_1 = new Composite(composite_2, SWT.NONE);
-      composite_1.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
-      final GridLayout gridLayout_10 = new GridLayout();
-      gridLayout_10.numColumns = 5;
-      composite_1.setLayout(gridLayout_10);
-
-      // Customization Buttons
-      renameButton = new Button(composite_1, SWT.NONE);
-      renameButton.setText("Rename Column");
-      renameButton.addSelectionListener(new SelectionAdapter() {
-         @Override
-         public void widgetSelected(SelectionEvent e) {
-            super.widgetSelected(e);
-            handleRenameButton();
-         }
-      });
-
-      saveButton = new Button(composite_1, SWT.NONE);
-      saveButton.setText("Save Customization");
-      saveButton.addSelectionListener(new SelectionAdapter() {
-         @Override
-         public void widgetSelected(SelectionEvent e) {
-            super.widgetSelected(e);
-            handleSaveButton();
-         }
-      });
-
-      // Customization Table and Buttons
-      final Composite custComp = new Composite(comp, SWT.NONE);
-      final GridData gd_composite_6 = new GridData(SWT.FILL, SWT.FILL, true, true);
-      custComp.setLayoutData(gd_composite_6);
-      final GridLayout gridLayout_1 = new GridLayout();
-      gridLayout_1.marginWidth = 0;
-      gridLayout_1.marginHeight = 0;
-      custComp.setLayout(gridLayout_1);
-
-      // Customization Table
-      custTable = new XViewerFilteredTree(custComp, SWT.BORDER, new PatternFilter());
-      final Tree table_2 = custTable.getViewer().getTree();
-      final GridData gd_table_2 = new GridData(SWT.FILL, SWT.FILL, true, true);
-      gd_table_2.heightHint = 270;
-      gd_table_2.widthHint = 200;
-      table_2.setLayoutData(gd_table_2);
-      custTable.getViewer().setLabelProvider(new CustomizeDataLabelProvider(xViewerToCustomize));
-      custTable.getViewer().setContentProvider(new ArrayTreeContentProvider());
-      custTable.getViewer().setSorter(new ViewerSorter() {
-         @SuppressWarnings("unchecked")
-         @Override
-         public int compare(Viewer viewer, Object e1, Object e2) {
-            if (((CustomizeData) e1).getName().startsWith("-")) {
-               return -1;
-            } else if (((CustomizeData) e2).getName().startsWith("-")) {
-               return 1;
-            } else {
-               return getComparator().compare(((CustomizeData) e1).getName(), ((CustomizeData) e2).getName());
-            }
-         }
-      });
-      custTable.getViewer().addSelectionChangedListener(new ISelectionChangedListener() {
-         @Override
-         public void selectionChanged(SelectionChangedEvent event) {
-            handleCustTableSelectionChanged();
-            updateButtonEnablements();
-            storeCustTableSelection();
-         }
-      });
-
-      // Customization Table Buttons
-      final Composite composite = new Composite(comp, SWT.NONE);
-      composite.setLayoutData(new GridData());
-      final GridLayout gridLayout_7 = new GridLayout();
-      gridLayout_7.numColumns = 4;
-      composite.setLayout(gridLayout_7);
-
-      setDefaultButton = new Button(composite, SWT.NONE);
-      setDefaultButton.setLayoutData(new GridData());
-      setDefaultButton.setText(SET_AS_DEFAULT);
-      setDefaultButton.addSelectionListener(new SelectionAdapter() {
-         @Override
-         public void widgetSelected(SelectionEvent e) {
-            super.widgetSelected(e);
-            handleSetDefaultButton();
-            updateButtonEnablements();
-         }
-      });
-
-      deleteButton = new Button(composite, SWT.NONE);
-      deleteButton.setLayoutData(new GridData());
-      deleteButton.setText("Delete");
-      deleteButton.addSelectionListener(new SelectionAdapter() {
-         @Override
-         public void widgetSelected(SelectionEvent e) {
-            super.widgetSelected(e);
-            handleDeleteButton();
-            updateButtonEnablements();
-         }
-      });
-
-      try {
-         loadCustomizeTable();
-      } catch (Exception ex) {
-         XViewerLog.logAndPopup(Activator.class, Level.SEVERE, ex);
-      }
-      updateButtonEnablements();
-
-      return comp;
    }
 
    @SuppressWarnings("unchecked")
@@ -979,7 +1009,6 @@ public class XViewerCustomizeDialog extends MessageDialog {
          if (custData.getName().equals(CustomizeManager.TABLE_DEFAULT_LABEL) || custData.getName().equals(
             CustomizeManager.CURRENT_LABEL)) {
             XViewerLib.popup("ERROR", "Can't set table default or current as default");
-            System.err.println("Can't set table default or current as default");
             return;
          }
          if (xViewerToCustomize.getCustomizeMgr().isCustomizationUserDefault(custData)) {
@@ -1025,7 +1054,11 @@ public class XViewerCustomizeDialog extends MessageDialog {
       setDefaultButton.setEnabled(xViewerToCustomize.getXViewerFactory().getXViewerCustomizations().isCustomizationPersistAvailable() && custTable.getViewer().getTree().isFocusControl() && custData != null && !custData.getName().equals(
          CustomizeManager.TABLE_DEFAULT_LABEL) && !custData.getName().equals(CustomizeManager.CURRENT_LABEL));
       if (custTable.getViewer().getTree().isFocusControl() && custData != null) {
-         setDefaultButton.setText(xViewerToCustomize.getCustomizeMgr().isCustomizationUserDefault(custData) ? REMOVE_DEFAULT : SET_AS_DEFAULT);
+         try {
+            setDefaultButton.setText(xViewerToCustomize.getCustomizeMgr().isCustomizationUserDefault(custData) ? REMOVE_DEFAULT : SET_AS_DEFAULT);
+         } catch (XViewerException ex) {
+            XViewerLog.log(Activator.class, Level.SEVERE, ex);
+         }
          setDefaultButton.getParent().layout();
       }
       deleteButton.setEnabled(xViewerToCustomize.getXViewerFactory().getXViewerCustomizations().isCustomizationPersistAvailable() && custTable.getViewer().getTree().isFocusControl() && custData != null);
@@ -1074,8 +1107,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
          return null;
       }
       Iterator<?> i = selection.iterator();
-      CustomizeData storedCustData = (CustomizeData) i.next();
-      return storedCustData;
+      return (CustomizeData) i.next();
    }
 
    private List<XViewerColumn> getVisibleTableSelection() {

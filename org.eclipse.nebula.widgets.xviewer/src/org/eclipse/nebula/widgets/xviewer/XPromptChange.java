@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Date;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.window.Window;
 import org.eclipse.nebula.widgets.xviewer.util.EnumStringMultiSelectionDialog;
 import org.eclipse.nebula.widgets.xviewer.util.EnumStringSingleSelectionDialog;
 import org.eclipse.nebula.widgets.xviewer.util.internal.dialog.DateSelectionDialog;
@@ -87,18 +88,26 @@ public class XPromptChange {
 
    public static String promptChangeString(String displayName, String currEntry, String validationRegEx, Option option) {
       DialogWithEntry ed = new DialogWithEntry("Enter " + displayName, "Enter " + displayName);
-      if (option == Option.MULTI_LINE) ed.setFillVertically(true);
-      if (currEntry != null && !currEntry.equals("")) ed.setEntry(currEntry);
-      if (validationRegEx != null) ed.setValidationRegularExpression(validationRegEx);
+      if (option == Option.MULTI_LINE) {
+         ed.setFillVertically(true);
+      }
+      if (currEntry != null && !currEntry.equals("")) {
+         ed.setEntry(currEntry);
+      }
+      if (validationRegEx != null) {
+         ed.setValidationRegularExpression(validationRegEx);
+      }
       int result = ed.open();
-      if (result == 0) return ed.getEntry();
+      if (result == 0) {
+         return ed.getEntry();
+      }
       return null;
    }
 
    public static Boolean promptChangeBoolean(String displayName, String toggleMessage, boolean currSelection) {
       MessageDialogWithToggle md =
          new MessageDialogWithToggle(Display.getCurrent().getActiveShell(), displayName, null, displayName,
-            MessageDialog.QUESTION, new String[] {"Ok", "Cancel"}, MessageDialog.OK,
+            MessageDialog.QUESTION, new String[] {"Ok", "Cancel"}, Window.OK,
             (toggleMessage != null ? toggleMessage : displayName), currSelection);
       int result = md.open();
       if (result == 256) {

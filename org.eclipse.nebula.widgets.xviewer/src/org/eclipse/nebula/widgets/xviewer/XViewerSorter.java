@@ -102,8 +102,8 @@ public class XViewerSorter extends ViewerSorter {
 
          int result;
          try {
-            Integer i1 = new Integer(t1);
-            Integer i2 = new Integer(t2);
+            Integer i1 = Integer.valueOf(t1);
+            Integer i2 = Integer.valueOf(t2);
             result = i1.compareTo(i2);
          } catch (NumberFormatException e) {
             result = t1.compareTo(t2);
@@ -143,14 +143,15 @@ public class XViewerSorter extends ViewerSorter {
          float2Exception = true;
       }
       int toReturn = 0;
-      if (float1Exception && float2Exception)
+      if (float1Exception && float2Exception) {
          toReturn = getComparator().compare(float1, float2);
-      else if (float1Exception && !float2Exception)
+      } else if (float1Exception && !float2Exception) {
          toReturn = -1;
-      else if (!float1Exception && float2Exception)
+      } else if (!float1Exception && float2Exception) {
          toReturn = 1;
-      else
+      } else {
          toReturn = getCompareForFloat(float1Float, float2Float);
+      }
       return toReturn;
    }
 
@@ -159,26 +160,27 @@ public class XViewerSorter extends ViewerSorter {
       int int1Integer = 0;
       boolean int1Exception = false;
       try {
-         int1Integer = new Integer(int1).intValue();
+         int1Integer = Integer.valueOf(int1).intValue();
       } catch (NumberFormatException ex) {
          int1Exception = true;
       }
       int int2Integer = 0;
       boolean int2Exception = false;
       try {
-         int2Integer = new Integer(int2).intValue();
+         int2Integer = Integer.valueOf(int2).intValue();
       } catch (NumberFormatException ex) {
          int2Exception = true;
       }
       int toReturn = 0;
-      if (int1Exception && int2Exception)
+      if (int1Exception && int2Exception) {
          toReturn = getComparator().compare(int1, int2);
-      else if (int1Exception && !int2Exception)
+      } else if (int1Exception && !int2Exception) {
          toReturn = -1;
-      else if (!int1Exception && int2Exception)
+      } else if (!int1Exception && int2Exception) {
          toReturn = 1;
-      else
+      } else {
          toReturn = getCompareForInteger(int1Integer, int2Integer);
+      }
 
       return toReturn;
 
@@ -240,7 +242,7 @@ public class XViewerSorter extends ViewerSorter {
          date2Date = format.parse(date2);
       } catch (ParseException ex) {
          try {
-            date2Date = SimpleDateFormat.getInstance().parse(date2);
+            date2Date = DateFormat.getInstance().parse(date2);
          } catch (ParseException ex2) {
             XViewerLog.log(Activator.class, Level.SEVERE, ex2);
             return 0;
@@ -258,26 +260,27 @@ public class XViewerSorter extends ViewerSorter {
       int percent1Int = 0;
       boolean percent1Exception = false;
       try {
-         percent1Int = new Integer(percent1).intValue();
+         percent1Int = Integer.valueOf(percent1).intValue();
       } catch (NumberFormatException ex) {
          percent1Exception = true;
       }
       int percent2Int = 0;
       boolean percent2Exception = false;
       try {
-         percent2Int = new Integer(percent2).intValue();
+         percent2Int = Integer.valueOf(percent2).intValue();
       } catch (NumberFormatException ex) {
          percent2Exception = true;
       }
       int toReturn = 0;
-      if (percent1Exception && percent2Exception)
+      if (percent1Exception && percent2Exception) {
          toReturn = getComparator().compare(percent1, percent2);
-      else if (percent1Exception && !percent2Exception)
+      } else if (percent1Exception && !percent2Exception) {
          toReturn = -1;
-      else if (!percent1Exception && percent2Exception)
+      } else if (!percent1Exception && percent2Exception) {
          toReturn = 1;
-      else
+      } else {
          toReturn = getCompareForPercent(percent1Int, percent2Int);
+      }
 
       return toReturn;
    }

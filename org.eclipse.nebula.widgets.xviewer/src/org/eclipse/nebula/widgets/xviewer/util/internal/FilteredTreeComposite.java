@@ -205,7 +205,6 @@ public class FilteredTreeComposite extends Composite {
 
    /**
     * Create the filtered tree's controls. Subclasses should override.
-    * 
     */
    protected void createControl(Composite parent, int treeStyle) {
       GridLayout layout = new GridLayout();
@@ -454,14 +453,14 @@ public class FilteredTreeComposite extends Composite {
                e.result = initialText;
             } else {
                e.result =
-                  NLS.bind(WorkbenchMessages.FilteredTree_AccessibleListenerFiltered, new String[] {filterTextString,
+                  NLS.bind(WorkbenchMessages.FilteredTree_AccessibleListenerFiltered, new String[] {
+                     filterTextString,
                      String.valueOf(getFilteredItemsCount())});
             }
          }
 
          /**
           * Return the number of filtered items
-          * 
           */
          private int getFilteredItemsCount() {
             int total = 0;
@@ -475,7 +474,6 @@ public class FilteredTreeComposite extends Composite {
 
          /**
           * Return the count of treeItem and it's children to infinite depth.
-          * 
           */
          private int itemCount(TreeItem treeItem) {
             int count = 1;
@@ -499,10 +497,8 @@ public class FilteredTreeComposite extends Composite {
             display.asyncExec(new Runnable() {
                @Override
                public void run() {
-                  if (!filterText.isDisposed()) {
-                     if (getInitialText().equals(filterText.getText().trim())) {
-                        filterText.selectAll();
-                     }
+                  if (!filterText.isDisposed() && getInitialText().equals(filterText.getText().trim())) {
+                     filterText.selectAll();
                   }
                }
             });
@@ -658,7 +654,6 @@ public class FilteredTreeComposite extends Composite {
 
    /**
     * Set the text in the filter control.
-    * 
     */
    protected void setFilterText(String string) {
       if (filterText != null) {
@@ -727,7 +722,6 @@ public class FilteredTreeComposite extends Composite {
 
    /**
     * Get the initial text for the receiver.
-    * 
     */
    protected String getInitialText() {
       return initialText;

@@ -614,7 +614,8 @@ public class XViewerCustomMenu {
       for (TreeItem item : items) {
          for (int x = 0; x < xViewer.getTree().getColumnCount(); x++) {
             if (xViewer.getTree().getColumn(x).equals(treeCol)) {
-               sb.append(labelProv.getColumnText(item.getData(), x) + "\n");
+               sb.append(labelProv.getColumnText(item.getData(), x));
+               sb.append("\n");
             }
          }
       }
@@ -646,7 +647,8 @@ public class XViewerCustomMenu {
                   }
                }
             }
-            sb.append(CollectionsUtil.toString("\t", strs) + "\n");
+            sb.append(CollectionsUtil.toString("\t", strs));
+            sb.append("\n");
          }
          textTransferData.add(sb.toString());
 

@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
+import org.eclipse.nebula.widgets.xviewer.util.XViewerException;
 import org.eclipse.nebula.widgets.xviewer.util.internal.FileUtil;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
 
@@ -41,11 +42,13 @@ public class FileStoreCustomizations implements IXViewerCustomizations {
    @Override
    public void deleteCustomization(CustomizeData custData) throws Exception {
       File file = new File(getFilename(custData));
-      if (file.exists()) file.delete();
+      if (file.exists()) {
+         file.delete();
+      }
    }
 
    @Override
-   public List<CustomizeData> getSavedCustDatas() {
+   public List<CustomizeData> getSavedCustDatas() throws XViewerException {
       List<CustomizeData> custDatas = new ArrayList<CustomizeData>();
       for (String filename : FileUtil.readListFromDir(getCustomDataDir(), new FilenameFilter() {
          @Override
@@ -56,33 +59,25 @@ public class FileStoreCustomizations implements IXViewerCustomizations {
             return false;
          }
       })) {
-         try {
-            custDatas.add(new CustomizeData(FileUtil.fileToString(new File(getCustomDataDir(), filename))));
-         } catch (IOException ex) {
-            XViewerLog.log(FileStoreCustomizations.class, Level.SEVERE, ex.toString(), ex);
-         }
+         custDatas.add(new CustomizeData(FileUtil.fileToString(new File(getCustomDataDir(), filename))));
       }
       return custDatas;
    }
 
    @Override
-   public CustomizeData getUserDefaultCustData() {
+   public CustomizeData getUserDefaultCustData() throws XViewerException {
       File file = new File(getDefaultFilename());
       if (!file.exists()) {
          return defaultCustomData;
       } else {
          String defaultGuid;
-         try {
-            defaultGuid = FileUtil.fileToString(file).replaceAll("\\s", "");
-            if (defaultGuid != null) {
-               for (CustomizeData custData : getSavedCustDatas()) {
-                  if (custData.getGuid().equals(defaultGuid)) {
-                     return custData;
-                  }
+         defaultGuid = FileUtil.fileToString(file).replaceAll("\\s", "");
+         if (defaultGuid != null) {
+            for (CustomizeData custData : getSavedCustDatas()) {
+               if (custData.getGuid().equals(defaultGuid)) {
+                  return custData;
                }
             }
-         } catch (IOException ex) {
-            XViewerLog.log(FileStoreCustomizations.class, Level.SEVERE, ex.toString(), ex);
          }
       }
       return null;
@@ -94,17 +89,14 @@ public class FileStoreCustomizations implements IXViewerCustomizations {
    }
 
    @Override
-   public boolean isCustomizationUserDefault(CustomizeData custData) {
+   public boolean isCustomizationUserDefault(CustomizeData custData) throws XViewerException {
       File file = new File(getDefaultFilename());
-      if (!file.exists()) return false;
-      String defaultGuid;
-      try {
-         defaultGuid = FileUtil.fileToString(new File(getDefaultFilename())).replaceAll("\\s", "");
-         return custData.getGuid().equals(defaultGuid);
-      } catch (IOException ex) {
-         XViewerLog.log(FileStoreCustomizations.class, Level.SEVERE, ex.toString(), ex);
+      if (!file.exists()) {
+         return false;
       }
-      return false;
+      String defaultGuid;
+      defaultGuid = FileUtil.fileToString(new File(getDefaultFilename())).replaceAll("\\s", "");
+      return custData.getGuid().equals(defaultGuid);
    }
 
    @Override

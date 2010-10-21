@@ -23,38 +23,38 @@ public interface IXViewerCustomizations {
    /**
     * Called to have customization saved
     */
-   public void saveCustomization(CustomizeData custData) throws Exception;
+   void saveCustomization(CustomizeData custData) throws Exception;
 
    /**
     * Load and return saved customizations
     */
-   public List<CustomizeData> getSavedCustDatas() throws Exception;
+   List<CustomizeData> getSavedCustDatas() throws Exception;
 
    /**
     * Return customization saved as default
     */
-   public CustomizeData getUserDefaultCustData() throws XViewerException;
+   CustomizeData getUserDefaultCustData() throws XViewerException;
 
    /**
     * Return true if given customization is the default
     * 
     * @return true if default
     */
-   public boolean isCustomizationUserDefault(CustomizeData custData);
+   boolean isCustomizationUserDefault(CustomizeData custData) throws XViewerException;
 
    /**
     * Set given customization as the user default
     */
-   public void setUserDefaultCustData(CustomizeData newCustData, boolean set) throws Exception;
+   void setUserDefaultCustData(CustomizeData newCustData, boolean set) throws Exception;
 
    /**
     * Delete customization
     */
-   public void deleteCustomization(CustomizeData custData) throws Exception;
+   void deleteCustomization(CustomizeData custData) throws Exception;
 
    /**
     * Return true if this XViewer is allowed to save local/global customizations
     */
-   public boolean isCustomizationPersistAvailable();
+   boolean isCustomizationPersistAvailable();
 
 }

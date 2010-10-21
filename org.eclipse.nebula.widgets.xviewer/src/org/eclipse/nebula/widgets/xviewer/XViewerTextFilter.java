@@ -78,27 +78,28 @@ public class XViewerTextFilter extends ViewerFilter {
 
    @Override
    public boolean select(Viewer viewer, Object parentElement, Object element) {
-      if (textPattern == null && colIdToPattern.isEmpty()) return true;
+      if (textPattern == null && colIdToPattern.isEmpty()) {
+         return true;
+      }
       //      if (labelProv == null) labelProv = (ITableLabelProvider) xViewer.getLabelProvider();
       boolean match = true;
       // Must match all column filters or don't show
       for (String filteredColId : xViewer.getCustomizeMgr().getColumnFilterData().getColIds()) {
          XViewerColumn xCol = xViewer.getCustomizeMgr().getCurrentTableColumn(filteredColId);
-         if (xCol.isShow()) {
-            // Check column filters
-            if (colIdToPattern.keySet().contains(xCol.getId())) {
-               String cellStr =
-                  xViewer.getColumnText(element, xViewer.getCustomizeMgr().getColumnNumFromXViewerColumn(xCol));
-               if (cellStr != null) {
-                  matcher = colIdToPattern.get(xCol.getId()).matcher(cellStr);
-                  if (!matcher.find()) {
-                     return false;
-                  }
+         if (xCol.isShow() && colIdToPattern.keySet().contains(xCol.getId())) {
+            String cellStr =
+               xViewer.getColumnText(element, xViewer.getCustomizeMgr().getColumnNumFromXViewerColumn(xCol));
+            if (cellStr != null) {
+               matcher = colIdToPattern.get(xCol.getId()).matcher(cellStr);
+               if (!matcher.find()) {
+                  return false;
                }
             }
          }
       }
-      if (!match) return false;
+      if (!match) {
+         return false;
+      }
 
       // Must match at least one column for filter text
       if (textPattern == null) {
@@ -112,7 +113,9 @@ public class XViewerTextFilter extends ViewerFilter {
                   xViewer.getColumnText(element, xViewer.getCustomizeMgr().getColumnNumFromXViewerColumn(xCol));
                if (cellStr != null) {
                   matcher = textPattern.matcher(cellStr);
-                  if (matcher.find()) return true;
+                  if (matcher.find()) {
+                     return true;
+                  }
                }
             }
          }

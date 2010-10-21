@@ -56,7 +56,9 @@ public class ColumnMultiEditAction extends Action {
       ld.setContentProvider(new ArrayContentProvider());
       ld.setTitle("Select Column to Edit");
       int result = ld.open();
-      if (result != 0) return;
+      if (result != 0) {
+         return;
+      }
       xViewer.handleColumnMultiEdit((TreeColumn) ld.getResult()[0], selectedTreeItems);
    }
 

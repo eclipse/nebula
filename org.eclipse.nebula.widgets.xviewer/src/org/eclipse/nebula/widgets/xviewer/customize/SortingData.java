@@ -28,9 +28,9 @@ import org.eclipse.nebula.widgets.xviewer.util.internal.XmlUtil;
  */
 public class SortingData {
 
-   private static String XTREESORTER_TAG = "xSorter";
-   private static String COL_NAME_TAG = "id";
-   private static String OLD_COL_NAME_TAG = "name";
+   private final static String XTREESORTER_TAG = "xSorter";
+   private final static String COL_NAME_TAG = "id";
+   private final static String OLD_COL_NAME_TAG = "name";
    private final List<String> sortingIds = new ArrayList<String>();
    private final CustomizeData custData;
 
@@ -55,7 +55,8 @@ public class SortingData {
    public String toString() {
       StringBuffer sb = new StringBuffer();
       for (String str : sortingIds) {
-         sb.append(str + ", ");
+         sb.append(str);
+         sb.append(", ");
       }
       return sb.toString().replaceFirst(", $", "");
    }

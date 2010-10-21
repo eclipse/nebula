@@ -31,7 +31,6 @@ import org.eclipse.swt.widgets.Text;
 public class FilterDataUI {
 
    private Text filterText;
-   private Label filterLabel;
    private final XViewer xViewer;
    private final boolean filterRealTime;
 
@@ -67,7 +66,7 @@ public class FilterDataUI {
          }
       });
 
-      filterLabel = new Label(comp, SWT.NONE);
+      Label filterLabel = new Label(comp, SWT.NONE);
       filterLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.NONE, false, false));
       filterLabel.setImage(XViewerLib.getImage("clear.gif"));
       filterLabel.addListener(SWT.MouseUp, new Listener() {

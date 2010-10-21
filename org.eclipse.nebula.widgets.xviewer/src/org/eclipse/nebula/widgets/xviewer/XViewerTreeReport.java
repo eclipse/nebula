@@ -109,7 +109,7 @@ public class XViewerTreeReport {
       return sb.toString();
    }
 
-   private void addRow(TreeItem item, ArrayList<String[]> rowData, XViewerLabelProvider labelProv, List<XViewerColumn> showCols, int level) throws XViewerException {
+   private void addRow(TreeItem item, List<String[]> rowData, XViewerLabelProvider labelProv, List<XViewerColumn> showCols, int level) throws XViewerException {
       List<String> cellData = new ArrayList<String>(showCols.size());
       boolean firstCell = true;
       for (XViewerColumn xCol : showCols) {

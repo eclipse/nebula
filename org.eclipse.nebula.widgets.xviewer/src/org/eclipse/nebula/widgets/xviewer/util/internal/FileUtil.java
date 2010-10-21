@@ -21,6 +21,10 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Level;
+import org.eclipse.nebula.widgets.xviewer.Activator;
+import org.eclipse.nebula.widgets.xviewer.util.XViewerException;
 
 /**
  * @author Donald G. Dunne
@@ -41,34 +45,37 @@ public class FileUtil {
    /**
     * Use the Lib method directly - the original implementation of this method was not memory efficient and suppressed
     * exceptions
+    * 
+    * @throws IOException
     */
-   public static String readFile(String filename) {
+   public static String readFile(String filename) throws XViewerException {
       return readFile(new File(filename));
    }
 
    /**
     * Use the Lib method directly - the original implementation of this method was not memory efficient and suppressed
     * exceptions
+    * 
+    * @throws IOException
     */
-   public static String readFile(File file) {
-      try {
-         return fileToString(file);
-      } catch (IOException ex) {
-         ex.printStackTrace();
-         return null;
-      }
+   public static String readFile(File file) throws XViewerException {
+      return fileToString(file);
    }
 
-   public static String fileToString(File file) throws IOException {
-      StringBuffer buffer = new StringBuffer();
-      Reader inStream = new InputStreamReader(new FileInputStream(file), "UTF-8");
-      Reader in = new BufferedReader(inStream);
-      int ch;
-      while ((ch = in.read()) > -1) {
-         buffer.append((char) ch);
+   public static String fileToString(File file) throws XViewerException {
+      try {
+         StringBuffer buffer = new StringBuffer();
+         Reader inStream = new InputStreamReader(new FileInputStream(file), "UTF-8");
+         Reader in = new BufferedReader(inStream);
+         int ch;
+         while ((ch = in.read()) > -1) {
+            buffer.append((char) ch);
+         }
+         in.close();
+         return buffer.toString();
+      } catch (IOException ex) {
+         throw new XViewerException(ex);
       }
-      in.close();
-      return buffer.toString();
    }
 
    public static void writeStringToFile(String str, File file) throws IOException {
@@ -78,17 +85,17 @@ public class FileUtil {
       out.close();
    }
 
-   public static ArrayList<String> readListFromDir(File directory, FilenameFilter filter) {
-      ArrayList<String> list = new ArrayList<String>(400);
+   public static List<String> readListFromDir(File directory, FilenameFilter filter) {
+      List<String> list = new ArrayList<String>(400);
 
       if (directory == null) {
-         System.out.println("Invalid path: " + directory);
+         XViewerLog.log(Activator.class, Level.SEVERE, "Invalid directory path");
          return list;
       }
 
       File[] files = directory.listFiles(filter);
       if (files == null) {
-         System.out.println("Invalid path: " + directory);
+         XViewerLog.log(Activator.class, Level.SEVERE, "Invalid path: " + directory);
          return list;
       }
       if (files.length > 0) {

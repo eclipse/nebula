@@ -43,11 +43,11 @@ public class CustomizeManager {
    private final XViewer xViewer;
    private XViewerTextFilter xViewerTextFilter;
    private CustomizeData currentCustData;
-   public static String CURRENT_LABEL = "-- Current Table View --";
-   public static String TABLE_DEFAULT_LABEL = "-- Table Default --";
+   public final static String CURRENT_LABEL = "-- Current Table View --";
+   public final static String TABLE_DEFAULT_LABEL = "-- Table Default --";
    // Added to keep filter, sorter from working till finished loading
    public boolean loading = true;
-   public static List<String> REMOVED_COLUMNS_TO_IGNORE = Arrays.asList("Metrics from Tasks");
+   public final static List<String> REMOVED_COLUMNS_TO_IGNORE = Arrays.asList("Metrics from Tasks");
 
    public CustomizeManager(XViewer xViewer, IXViewerFactory xViewerFactory) throws XViewerException {
       this.xViewer = xViewer;
@@ -140,14 +140,12 @@ public class CustomizeManager {
             resolvedCol.setSortForward(storedCol.isSortForward());
             resolvedColumns.add(resolvedCol);
          }
-         if (resolvedCol == null) {
-            // Ignore known removed columns
-            if (!REMOVED_COLUMNS_TO_IGNORE.contains(storedCol.getName())) {
-               XViewerLog.log(
-                  Activator.class,
-                  Level.WARNING,
-                  "XViewer Conversion for saved Customization \"" + loadedCustData.getName() + "\" dropped unresolved column Name: \"" + storedCol.getName() + "\"  Id: \"" + storedCol.getId() + "\".  Delete customization and re-save to resolve.");
-            }
+         // Ignore known removed columns
+         if (resolvedCol == null && !REMOVED_COLUMNS_TO_IGNORE.contains(storedCol.getName())) {
+            XViewerLog.log(
+               Activator.class,
+               Level.WARNING,
+               "XViewer Conversion for saved Customization \"" + loadedCustData.getName() + "\" dropped unresolved column Name: \"" + storedCol.getName() + "\"  Id: \"" + storedCol.getId() + "\".  Delete customization and re-save to resolve.");
          }
       }
       /*
@@ -367,7 +365,8 @@ public class CustomizeManager {
          sb.append("Sort: ");
          for (XViewerColumn col : getSortXCols()) {
             if (col != null) {
-               sb.append("[" + col.getName());
+               sb.append("[");
+               sb.append(col.getName());
                sb.append(col.isSortForward() ? " (FWD)] " : " (REV)] ");
             }
          }
@@ -383,7 +382,7 @@ public class CustomizeManager {
       }
    }
 
-   public boolean isCustomizationUserDefault(CustomizeData custData) {
+   public boolean isCustomizationUserDefault(CustomizeData custData) throws XViewerException {
       return xViewerFactory.getXViewerCustomizations().isCustomizationUserDefault(custData);
    }
 
@@ -412,7 +411,7 @@ public class CustomizeManager {
     * Set to newName or clear if newName == ""
     */
    public void customizeColumnName(XViewerColumn xCol, String newName) {
-      if (newName == "") {
+      if (newName.equals("")) {
          XViewerColumn defaultXCol = xViewerFactory.getDefaultXViewerColumn(xCol.getId());
          if (defaultXCol == null) {
             XViewerLib.popup("ERROR", "Column not defined.  Can't retrieve default name.");
@@ -490,13 +489,16 @@ public class CustomizeManager {
          sb.append(xCol.getName());
          if (xCol.getDescription() != null && !xCol.getDescription().equals("") && !xCol.getDescription().equals(
             xCol.getName())) {
-            sb.append("\n" + xCol.getDescription());
+            sb.append("\n");
+            sb.append(xCol.getDescription());
          }
          if (xCol.getToolTip() != null && !xCol.getToolTip().equals("") && !xCol.getToolTip().equals(xCol.getName()) && !xCol.getToolTip().equals(
             xCol.getDescription())) {
-            sb.append("\n" + xCol.getToolTip());
+            sb.append("\n");
+            sb.append(xCol.getToolTip());
          }
-         sb.append("\n" + xCol.getId());
+         sb.append("\n");
+         sb.append(xCol.getId());
          column.setToolTipText(sb.toString());
          column.setText(xCol.getName());
          column.setWidth(xCol.getWidth());

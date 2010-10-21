@@ -11,9 +11,10 @@
 
 package org.eclipse.nebula.widgets.xviewer.util.internal;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -212,14 +213,11 @@ public abstract class XViewerWidget {
    }
 
    public String toXml(String xmlRoot) throws Exception {
-      String s = "<" + xmlRoot + ">" + XmlUtil.textToXml(getXmlData()) + "</" + xmlRoot + ">\n";
-      return s;
+      return "<" + xmlRoot + ">" + XmlUtil.textToXml(getXmlData()) + "</" + xmlRoot + ">\n";
    }
 
    public String toXml(String xmlRoot, String xmlSubRoot) throws Exception {
-      String s =
-         "<" + xmlRoot + ">" + "<" + xmlSubRoot + ">" + XmlUtil.textToXml(getXmlData()) + "</" + xmlSubRoot + ">" + "</" + xmlRoot + ">\n";
-      return s;
+      return "<" + xmlRoot + ">" + "<" + xmlSubRoot + ">" + XmlUtil.textToXml(getXmlData()) + "</" + xmlSubRoot + ">" + "</" + xmlRoot + ">\n";
    }
 
    public void setFromXml(String xml) throws IllegalStateException {
@@ -230,8 +228,8 @@ public abstract class XViewerWidget {
       }
    }
 
-   public Vector<String> getDisplayLabels() {
-      Vector<String> l = new Vector<String>();
+   public List<String> getDisplayLabels() {
+      List<String> l = new ArrayList<String>();
       l.add(label);
       return l;
    }

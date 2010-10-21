@@ -86,13 +86,13 @@ public class XViewerColumn {
       return getId().hashCode();
    }
 
-   public static String ID = "id";
-   public static String NAME = "name";
-   public static String WIDTH = "wdth";
-   public static String ALIGN = "algn";
-   public static String SORT_FORWARD = "srtFwd";
-   public static String SHOW = "show";
-   public static String XTREECOLUMN_TAG = "xCol";
+   public final static String ID = "id";
+   public final static String NAME = "name";
+   public final static String WIDTH = "wdth";
+   public final static String ALIGN = "algn";
+   public final static String SORT_FORWARD = "srtFwd";
+   public final static String SHOW = "show";
+   public final static String XTREECOLUMN_TAG = "xCol";
 
    public String toXml() {
       StringBuffer sb = new StringBuffer("<" + XTREECOLUMN_TAG + ">");
@@ -270,7 +270,7 @@ public class XViewerColumn {
                continue;
             }
             try {
-               sum += new Integer(value);
+               sum += Integer.valueOf(value);
             } catch (Exception ex) {
                exceptions.add(ex.getLocalizedMessage());
             }

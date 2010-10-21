@@ -11,8 +11,8 @@
 package org.eclipse.nebula.widgets.xviewer.test;
 
 import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
-import org.eclipse.nebula.widgets.xviewer.XViewerFactory;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumn.SortDataType;
+import org.eclipse.nebula.widgets.xviewer.XViewerFactory;
 import org.eclipse.nebula.widgets.xviewer.customize.IXViewerCustomizations;
 import org.eclipse.swt.SWT;
 
@@ -23,7 +23,7 @@ import org.eclipse.swt.SWT;
  */
 public class XViewerTestFactory extends XViewerFactory {
 
-   private static String COLUMN_NAMESPACE = "xviewer.test";
+   private final static String COLUMN_NAMESPACE = "xviewer.test";
    public static XViewerColumn Run_Col = new XViewerColumn(COLUMN_NAMESPACE + ".run", "Run", 50, SWT.LEFT, true,
       SortDataType.String, false, null);
    public static XViewerColumn Name_Col = new XViewerColumn(COLUMN_NAMESPACE + ".name", "Name", 150, SWT.LEFT, true,

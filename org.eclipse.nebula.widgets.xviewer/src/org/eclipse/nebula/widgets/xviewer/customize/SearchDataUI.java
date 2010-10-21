@@ -34,7 +34,6 @@ import org.eclipse.swt.widgets.Text;
 public class SearchDataUI {
 
    private Text searchText;
-   private Label searchLabel;
    private final XViewer xViewer;
    private Matcher match;
    private boolean search = false;
@@ -94,7 +93,7 @@ public class SearchDataUI {
          }
       });
 
-      searchLabel = new Label(bar, SWT.NONE);
+      Label searchLabel = new Label(bar, SWT.NONE);
       searchLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.NONE, false, false));
       searchLabel.setImage(XViewerLib.getImage("clear.gif"));
 

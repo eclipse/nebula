@@ -59,7 +59,7 @@ public class PatternFilter extends ViewerFilter {
 
    private boolean useEarlyReturnIfMatcherIsNull = true;
 
-   private static Object[] EMPTY = new Object[0];
+   private final static Object[] EMPTY = new Object[0];
 
    @SuppressWarnings("unchecked")
    @Override

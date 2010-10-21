@@ -91,7 +91,7 @@ public class CollectionsUtil {
    /**
     * @return The intersection of two sets A and B is the set of elements common to A and B
     */
-   public static <T> ArrayList<T> setIntersection(Collection<T> listA, Collection<T> listB) {
+   public static <T> List<T> setIntersection(Collection<T> listA, Collection<T> listB) {
       ArrayList<T> intersection = new ArrayList<T>(listA.size());
 
       for (T obj : listA) {
@@ -155,7 +155,7 @@ public class CollectionsUtil {
       }
    }
 
-   private static ArrayList<Object> recursiveAggregateTree(List<Object> items, int maxPerList) {
+   private static List<Object> recursiveAggregateTree(List<Object> items, int maxPerList) {
       if (items.size() > maxPerList) {
          ArrayList<Object> aggregateList = new ArrayList<Object>(maxPerList);
          ArrayList<Object> childList = null;
@@ -169,7 +169,7 @@ public class CollectionsUtil {
          }
          childList.trimToSize();
 
-         aggregateList = recursiveAggregateTree(aggregateList, maxPerList);
+         aggregateList.addAll(recursiveAggregateTree(aggregateList, maxPerList));
 
          aggregateList.trimToSize();
 
@@ -177,7 +177,7 @@ public class CollectionsUtil {
       } else {
          // This is a safe blind cast since only subsequent calls of this method will end up here
          // and this method always uses ArrayList<Object>
-         return (ArrayList<Object>) items;
+         return items;
       }
    }
 

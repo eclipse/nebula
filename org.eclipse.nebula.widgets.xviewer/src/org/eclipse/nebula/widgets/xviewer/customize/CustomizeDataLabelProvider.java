@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.xviewer.customize;
 
+import java.util.logging.Level;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.nebula.widgets.xviewer.XViewer;
+import org.eclipse.nebula.widgets.xviewer.util.XViewerException;
+import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -30,15 +33,25 @@ public class CustomizeDataLabelProvider implements ILabelProvider {
 
    @Override
    public Image getImage(Object arg0) {
-      return ((CustomizeData) arg0).getImage(xViewer.getCustomizeMgr().isCustomizationUserDefault((CustomizeData) arg0));
+      try {
+         return ((CustomizeData) arg0).getImage(xViewer.getCustomizeMgr().isCustomizationUserDefault(
+            (CustomizeData) arg0));
+      } catch (XViewerException ex) {
+         return null;
+      }
    }
 
    @Override
    public String getText(Object arg0) {
-      CustomizeData custom = (CustomizeData) arg0;
-      String text =
-         (xViewer.getCustomizeMgr().isCustomizationUserDefault(custom) ? "(Default) " : "") + custom.getName();
-      return text;
+      try {
+         CustomizeData custom = (CustomizeData) arg0;
+         String text =
+            (xViewer.getCustomizeMgr().isCustomizationUserDefault(custom) ? "(Default) " : "") + custom.getName();
+         return text;
+      } catch (XViewerException ex) {
+         XViewerLog.log(CustomizeDataLabelProvider.class, Level.SEVERE, ex.toString(), ex);
+         return "Exception: " + ex.getLocalizedMessage();
+      }
    }
 
    @Override

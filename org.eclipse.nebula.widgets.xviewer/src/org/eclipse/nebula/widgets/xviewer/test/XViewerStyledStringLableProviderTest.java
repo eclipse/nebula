@@ -45,10 +45,11 @@ public class XViewerStyledStringLableProviderTest extends XViewer {
    }
 
    public void setRun(IXViewerTestTask autoRunTask, boolean run) {
-      if (run)
+      if (run) {
          runList.add(autoRunTask);
-      else
+      } else {
          runList.remove(autoRunTask);
+      }
    }
 
    public static void main(String[] args) {
@@ -69,7 +70,6 @@ public class XViewerStyledStringLableProviderTest extends XViewer {
       for (int x = 0; x < 1; x++) {
          tasks.addAll(getTestTasks());
       }
-      System.err.println("Setting Input...");
       xViewerTest.setInput(tasks);
       Shell_1.open();
       while (!Shell_1.isDisposed()) {

@@ -30,7 +30,9 @@ public class EnumStringSingleSelectionDialog extends org.eclipse.ui.dialogs.List
       this.setContentProvider(new ArrayContentProvider());
       setLabelProvider(new StringLabelProvider());
       setInput(options);
-      if (currSelected != null) setInitialSelections(new Object[] {currSelected});
+      if (currSelected != null) {
+         setInitialSelections(new Object[] {currSelected});
+      }
    }
 
    @Override

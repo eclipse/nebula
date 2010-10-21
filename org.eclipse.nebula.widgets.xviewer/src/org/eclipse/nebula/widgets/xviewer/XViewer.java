@@ -114,11 +114,10 @@ public class XViewer extends TreeViewer {
       }
    }
 
-   private static List<XViewerComputedColumn> computedColumns;
+   private static List<XViewerComputedColumn> computedColumns = new ArrayList<XViewerComputedColumn>();
 
    public Collection<XViewerComputedColumn> getComputedColumns() {
-      if (computedColumns == null) {
-         computedColumns = new ArrayList<XViewerComputedColumn>();
+      if (computedColumns.size() == 0) {
          computedColumns.add(new XViewerDaysTillTodayColumn());
       }
       return computedColumns;
@@ -578,8 +577,7 @@ public class XViewer extends TreeViewer {
       if (columnNumber == null) {
          return null;
       }
-      TreeColumn column = getTree().getColumn(columnNumber);
-      return column;
+      return getTree().getColumn(columnNumber);
    }
 
    public Integer getColumnNumberUnderMouseClick(Point point) {
@@ -598,8 +596,7 @@ public class XViewer extends TreeViewer {
       if (columnCount > columnOrder.length - 1) {
          return null;
       }
-      int columnNumber = columnOrder[columnCount];
-      return columnNumber;
+      return columnOrder[columnCount];
    }
 
    public TreeItem getItemUnderMouseClick(Point point) throws ArrayIndexOutOfBoundsException {

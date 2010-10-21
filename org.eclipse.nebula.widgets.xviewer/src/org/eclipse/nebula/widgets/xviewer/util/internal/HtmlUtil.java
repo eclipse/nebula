@@ -19,6 +19,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Level;
+import org.eclipse.nebula.widgets.xviewer.Activator;
 
 /**
  * @author Donald G. Dunne
@@ -71,7 +73,7 @@ public class HtmlUtil {
          rd.close();
          return buffer.toString();
       } catch (Exception ex) {
-         ex.printStackTrace();
+         XViewerLog.log(Activator.class, Level.SEVERE, "Can't getUrlPageHtml");
          return simplePage("Exception opening url " + ex.getLocalizedMessage());
       }
    }
@@ -273,12 +275,16 @@ public class HtmlUtil {
     * @return Return multi-column table string
     */
    public static String multiColumnTable(String[] str, int width) {
-      String s = "<table border=\"0\" cellpadding=\"3\" cellspacing=\"0\" width=\"" + width + "%\"><tr>";
+      StringBuffer sb = new StringBuffer("<table border=\"0\" cellpadding=\"3\" cellspacing=\"0\" width=\"");
+      sb.append(width);
+      sb.append("%\"><tr>");
       for (int i = 0; i < str.length; i++) {
-         s += "<td>" + str[i] + "</td>";
+         sb.append("<td>");
+         sb.append(str[i]);
+         sb.append("</td>");
       }
-      s += "</tr></table>";
-      return s;
+      sb.append("</tr></table>");
+      return sb.toString();
    }
 
    public static String beginMultiColumnTable(int width) {
@@ -306,9 +312,11 @@ public class HtmlUtil {
    }
 
    public static String addRowMultiColumnTable(String[] str, String[] colOptions, String backgroundColor) {
-      String s = "<tr>";
+      StringBuffer sb = new StringBuffer("<tr>");
       if (backgroundColor != null) {
-         s = "<tr bgcolor=\"" + backgroundColor + "\">";
+         sb.append("<tr bgcolor=\"");
+         sb.append(backgroundColor);
+         sb.append("\">");
       }
       String show = "";
       for (int i = 0; i < str.length; i++) {
@@ -320,10 +328,14 @@ public class HtmlUtil {
          if (colOptions != null) {
             colOptionStr = colOptions[i];
          }
-         s += "<td" + ((colOptionStr != null && !colOptionStr.equals("")) ? colOptionStr : "") + ">" + show + "</td>";
+         sb.append("<td");
+         sb.append(((colOptionStr != null && !colOptionStr.equals("")) ? colOptionStr : ""));
+         sb.append(">");
+         sb.append(show);
+         sb.append("</td>");
       }
-      s += "</tr>";
-      return s;
+      sb.append("</tr>");
+      return sb.toString();
    }
 
    public static String addRowSpanMultiColumnTable(String str, int span) {
@@ -347,23 +359,21 @@ public class HtmlUtil {
    }
 
    public static String addRowMultiColumnTable(Collection<CellItem> items) {
-      String s = "<tr>";
+      StringBuilder s = new StringBuilder("<tr>");
       for (CellItem item : items) {
-         if (item.text == null || item.text.equals("")) {
+         if (item.text == null || "".equals(item.text)) {
             item.text = ".";
          }
-         if (item.fgColor != null && item.bgColor != null) {
-            s += "<td bgcolor=\"" + item.bgColor + "\">" + HtmlUtil.color(item.fgColor, item.text) + "</td>";
-         } else if (item.bgColor != null) {
-            s += "<td bgcolor=\"" + item.bgColor + "\">" + item.text + "</td>";
-         } else if (item.fgColor != null) {
-            s += "<td>" + HtmlUtil.color(item.fgColor, item.text) + "</td>";
+         if (item.bgColor != null) {
+            s.append("<td bgcolor=\"" + item.bgColor + "\">");
          } else {
-            s += "<td>" + item.text + "</td>";
+            s.append("<td>");
          }
+         s.append(HtmlUtil.color(item.fgColor, item.text));
+         s.append("</td>");
       }
-      s += "</tr>";
-      return s;
+      s.append("</tr>");
+      return s.toString();
    }
 
    public static String addHeaderRowMultiColumnTable(String[] str) {
@@ -384,20 +394,19 @@ public class HtmlUtil {
    }
 
    public static String addSimpleTableRow(String str) {
-      String s = "<tr><td>" + str + "</td></tr>";
-      return s;
+      return "<tr><td>" + str + "</td></tr>";
    }
 
    public static String beginSimpleTable() {
-      return new String("<table border=\"0\" cellpadding=\"10\" cellspacing=\"0\" width=\"100%\">");
+      return "<table border=\"0\" cellpadding=\"10\" cellspacing=\"0\" width=\"100%\">";
    }
 
    public static String beginSimpleTable(int border, int width) {
-      return new String("<table border=\"" + border + "\" cellpadding=\"10\" cellspacing=\"0\" width=\"+width+%\">");
+      return "<table border=\"" + border + "\" cellpadding=\"10\" cellspacing=\"0\" width=\"+width+%\">";
    }
 
    public static String endSimpleTable() {
-      return new String("</table>");
+      return "</table>";
    }
 
    public static String createTable(List<String> datas, String[] headers, int numColumns, int cellPadding, int border) {

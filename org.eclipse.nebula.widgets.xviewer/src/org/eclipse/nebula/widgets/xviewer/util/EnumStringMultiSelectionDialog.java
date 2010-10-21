@@ -72,7 +72,9 @@ public class EnumStringMultiSelectionDialog extends CheckedTreeSelectionDialog {
          @Override
          public void widgetSelected(SelectionEvent e) {
             super.widgetSelected(e);
-            if (addSelectedRadioButton.getSelection()) selected = Selection.AddSelection;
+            if (addSelectedRadioButton.getSelection()) {
+               selected = Selection.AddSelection;
+            }
          }
       });
 
@@ -84,7 +86,9 @@ public class EnumStringMultiSelectionDialog extends CheckedTreeSelectionDialog {
             @Override
             public void widgetSelected(SelectionEvent e) {
                super.widgetSelected(e);
-               if (replaceAllRadioButton.getSelection()) selected = Selection.ReplaceAll;
+               if (replaceAllRadioButton.getSelection()) {
+                  selected = Selection.ReplaceAll;
+               }
             }
          });
       }
@@ -97,7 +101,9 @@ public class EnumStringMultiSelectionDialog extends CheckedTreeSelectionDialog {
             @Override
             public void widgetSelected(SelectionEvent e) {
                super.widgetSelected(e);
-               if (deleteSelectedRadioButton.getSelection()) selected = Selection.DeleteSelected;
+               if (deleteSelectedRadioButton.getSelection()) {
+                  selected = Selection.DeleteSelected;
+               }
             }
          });
       }

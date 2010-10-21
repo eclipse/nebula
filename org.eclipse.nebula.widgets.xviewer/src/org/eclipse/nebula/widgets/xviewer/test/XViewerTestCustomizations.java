@@ -18,6 +18,7 @@ import java.util.logging.Level;
 import org.eclipse.nebula.widgets.xviewer.Activator;
 import org.eclipse.nebula.widgets.xviewer.customize.CustomizeData;
 import org.eclipse.nebula.widgets.xviewer.customize.XViewerCustomizations;
+import org.eclipse.nebula.widgets.xviewer.util.XViewerException;
 import org.eclipse.nebula.widgets.xviewer.util.internal.FileUtil;
 import org.eclipse.nebula.widgets.xviewer.util.internal.MatchFilter;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
@@ -39,7 +40,7 @@ public class XViewerTestCustomizations extends XViewerCustomizations {
    }
 
    @Override
-   public List<CustomizeData> getSavedCustDatas() {
+   public List<CustomizeData> getSavedCustDatas() throws XViewerException {
       List<CustomizeData> custDatas = new ArrayList<CustomizeData>();
       for (String filename : XViewerLib.readListFromDir(new File("C:/UserData/"), new MatchFilter("CustData_.*\\.xml"),
          true)) {
@@ -49,7 +50,7 @@ public class XViewerTestCustomizations extends XViewerCustomizations {
    }
 
    @Override
-   public CustomizeData getUserDefaultCustData() {
+   public CustomizeData getUserDefaultCustData() throws XViewerException {
       File file = new File(getDefaultFilename());
       if (!file.exists()) {
          return null;
@@ -71,7 +72,7 @@ public class XViewerTestCustomizations extends XViewerCustomizations {
    }
 
    @Override
-   public boolean isCustomizationUserDefault(CustomizeData custData) {
+   public boolean isCustomizationUserDefault(CustomizeData custData) throws XViewerException {
       File file = new File(getDefaultFilename());
       if (!file.exists()) {
          return false;
