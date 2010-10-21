@@ -35,7 +35,10 @@ public class XViewerTestCustomizations extends XViewerCustomizations {
    public void deleteCustomization(CustomizeData custData) throws Exception {
       File file = new File(getFilename(custData));
       if (file.exists()) {
-         file.delete();
+         boolean success = file.delete();
+         if (!success) {
+            throw new XViewerException("Delete Customization Failed");
+         }
       }
    }
 
@@ -96,7 +99,7 @@ public class XViewerTestCustomizations extends XViewerCustomizations {
    }
 
    @Override
-   public void setUserDefaultCustData(CustomizeData newCustData, boolean set) {
+   public void setUserDefaultCustData(CustomizeData newCustData, boolean set) throws XViewerException {
       if (set) {
          try {
             XViewerLib.writeStringToFile(newCustData.getGuid(), new File(getDefaultFilename()));
@@ -106,7 +109,10 @@ public class XViewerTestCustomizations extends XViewerCustomizations {
       } else {
          File file = new File(getDefaultFilename());
          if (file.exists()) {
-            file.delete();
+            boolean success = file.delete();
+            if (!success) {
+               throw new XViewerException("Delete Customization Failed");
+            }
          }
       }
    }

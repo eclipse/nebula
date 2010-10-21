@@ -43,7 +43,10 @@ public class FileStoreCustomizations implements IXViewerCustomizations {
    public void deleteCustomization(CustomizeData custData) throws Exception {
       File file = new File(getFilename(custData));
       if (file.exists()) {
-         file.delete();
+         boolean success = file.delete();
+         if (!success) {
+            throw new XViewerException("Delete Customization Failed");
+         }
       }
    }
 
@@ -117,7 +120,7 @@ public class FileStoreCustomizations implements IXViewerCustomizations {
    }
 
    @Override
-   public void setUserDefaultCustData(CustomizeData newCustData, boolean set) {
+   public void setUserDefaultCustData(CustomizeData newCustData, boolean set) throws XViewerException {
       if (set) {
          try {
             FileUtil.writeStringToFile(newCustData.getGuid(), new File(getDefaultFilename()));
@@ -127,7 +130,10 @@ public class FileStoreCustomizations implements IXViewerCustomizations {
       } else {
          File file = new File(getDefaultFilename());
          if (file.exists()) {
-            file.delete();
+            boolean success = file.delete();
+            if (!success) {
+               throw new XViewerException("Delete Customization Failed");
+            }
          }
       }
    }

@@ -30,8 +30,6 @@ import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
  */
 public class XViewerSorter extends ViewerSorter {
    private final XViewer treeViewer;
-   private final static SimpleDateFormat format10 = new SimpleDateFormat("MM/dd/yyyy");
-   private final static SimpleDateFormat defaultFormat = new SimpleDateFormat();
 
    public XViewerSorter(XViewer treeViewer) {
       super();
@@ -222,16 +220,16 @@ public class XViewerSorter extends ViewerSorter {
       }
       DateFormat format;
       if (date1.length() == 10) {
-         format = format10;
+         format = new SimpleDateFormat("MM/dd/yyyy");
       } else {
-         format = defaultFormat;
+         format = new SimpleDateFormat();
       }
       Date date1Date = null;
       try {
          date1Date = format.parse(date1);
       } catch (ParseException ex) {
          try {
-            date1Date = defaultFormat.parse(date1);
+            date1Date = new SimpleDateFormat().parse(date1);
          } catch (ParseException ex2) {
             XViewerLog.log(Activator.class, Level.SEVERE, ex2);
             return 0;

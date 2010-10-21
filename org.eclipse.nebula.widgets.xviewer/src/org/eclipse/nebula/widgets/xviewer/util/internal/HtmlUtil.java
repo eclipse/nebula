@@ -129,29 +129,32 @@ public class HtmlUtil {
    }
 
    public static String imageBlock(String description, String filenames[]) {
-      String str = "<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><tr><td>";
+      StringBuilder str = new StringBuilder();
+      str.append("<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><tr><td>");
       if (!description.equals("")) {
-         str += description;
-         str += HtmlUtil.newline();
+         str.append(description);
+         str.append(HtmlUtil.newline());
       }
       for (int i = 0; i < filenames.length; i++) {
-         str += "<IMG SRC=\"" + filenames[i] + "\"><br>";
+         str.append("<IMG SRC=\"" + filenames[i] + "\"><br>");
       }
-      str += "</td></tr></table>";
-      return str;
+      str.append("</td></tr></table>");
+      return str.toString();
    }
 
    public static String urlBlock(String description, String urls[]) {
-      String str = "<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\">";
+      StringBuffer str = new StringBuffer("<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\">");
       if (!description.equals("")) {
-         str += description;
-         str += HtmlUtil.newline();
+         str.append(description);
+         str.append(HtmlUtil.newline());
       }
       for (int i = 0; i < urls.length; i++) {
-         str += "<A HREF=\"" + urls[i] + "\">" + urls[i] + "</A><br>";
+         str.append("<A HREF=\"" + urls[i] + "\">");
+         str.append(urls[i]);
+         str.append("</A><br>");
       }
-      str += "</td></tr></table>";
-      return str;
+      str.append("</td></tr></table>");
+      return str.toString();
    }
 
    public static String heading(int heading, String str, String id) {
@@ -163,20 +166,20 @@ public class HtmlUtil {
    }
 
    public static String padSpace(int num, String str) {
-      String out = "";
+      StringBuilder out = new StringBuilder();
       for (int i = 0; i < num; i++) {
-         out += "&nbsp;";
+         out.append("&nbsp;");
       }
-      out += str;
-      return out;
+      out.append(str);
+      return out.toString();
    }
 
    public static String addSpace(int num) {
-      String out = "";
+      StringBuilder out = new StringBuilder();
       for (int i = 0; i < num; i++) {
-         out += "&nbsp;";
+         out.append("&nbsp;");
       }
-      return out;
+      return out.toString();
    }
 
    public static String para(String str) {
@@ -196,9 +199,9 @@ public class HtmlUtil {
    }
 
    public static String newline(int num) {
-      String str = "";
+      StringBuilder str = new StringBuilder();
       for (int i = 0; i < num; i++) {
-         str += "<br>";
+         str.append("<br />");
       }
       return str + "";
    }
@@ -234,8 +237,7 @@ public class HtmlUtil {
     * Create a table with one row/colum containing str
     */
    public static String simpleTable(String str, int width) {
-      return new String(
-         "<table border=\"0\" cellpadding=\"3\" cellspacing=\"0\" width=\"" + width + "%\">" + "<tr><td>" + str + "</td></tr>" + "</table>");
+      return "<table border=\"0\" cellpadding=\"3\" cellspacing=\"0\" width=\"" + width + "%\">" + "<tr><td>" + str + "</td></tr>" + "</table>";
    }
 
    /**
@@ -381,16 +383,20 @@ public class HtmlUtil {
    }
 
    public static String addHeaderRowMultiColumnTable(String[] str, Integer width[]) {
-      String s = "<tr>";
+      StringBuilder s = new StringBuilder("<tr>");
       String widthStr = "";
       for (int i = 0; i < str.length; i++) {
          if (width != null) {
             widthStr = " width =\"" + width[i] + "\"";
          }
-         s += "<th" + widthStr + ">" + str[i] + "</th>";
+         s.append("<th");
+         s.append(widthStr);
+         s.append(">");
+         s.append(str[i]);
+         s.append("</th>");
       }
-      s += "</tr>";
-      return s;
+      s.append("</tr>");
+      return s.toString();
    }
 
    public static String addSimpleTableRow(String str) {

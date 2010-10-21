@@ -113,15 +113,15 @@ public class XViewerTreeReport {
       List<String> cellData = new ArrayList<String>(showCols.size());
       boolean firstCell = true;
       for (XViewerColumn xCol : showCols) {
-         String str = "";
+         StringBuffer str = new StringBuffer();
          if (firstCell) {
             for (int y = 1; y < level; y++) {
-               str += "&nbsp;&nbsp;&nbsp;&nbsp;";
+               str.append("&nbsp;&nbsp;&nbsp;&nbsp;");
             }
             firstCell = false;
          }
-         str += labelProv.getColumnText(item.getData(), xColToColumnIndex.get(xCol));
-         cellData.add(HtmlUtil.textToHtml(str));
+         str.append(labelProv.getColumnText(item.getData(), xColToColumnIndex.get(xCol)));
+         cellData.add(HtmlUtil.textToHtml(str.toString()));
       }
       rowData.add(cellData.toArray(new String[cellData.size()]));
       if (item.getExpanded()) {

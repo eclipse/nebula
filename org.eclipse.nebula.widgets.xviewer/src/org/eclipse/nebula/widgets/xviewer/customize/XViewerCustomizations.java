@@ -48,8 +48,9 @@ public class XViewerCustomizations implements IXViewerCustomizations {
       // provided for subclass implementation
    }
 
+   @SuppressWarnings("unused")
    @Override
-   public void setUserDefaultCustData(CustomizeData newCustData, boolean set) {
+   public void setUserDefaultCustData(CustomizeData newCustData, boolean set) throws XViewerException {
       // provided for subclass implementation
    }
 
