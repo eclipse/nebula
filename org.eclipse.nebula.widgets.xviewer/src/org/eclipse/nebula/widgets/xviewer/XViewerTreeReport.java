@@ -116,12 +116,14 @@ public class XViewerTreeReport {
          StringBuffer str = new StringBuffer();
          if (firstCell) {
             for (int y = 1; y < level; y++) {
-               str.append("&nbsp;&nbsp;&nbsp;&nbsp;");
+               str.append("__INSERT_TAB_HERE__");
             }
             firstCell = false;
          }
          str.append(labelProv.getColumnText(item.getData(), xColToColumnIndex.get(xCol)));
-         cellData.add(HtmlUtil.textToHtml(str.toString()));
+         String html = HtmlUtil.textToHtml(str.toString());
+         html = html.replaceAll("__INSERT_TAB_HERE__", "&nbsp;&nbsp;&nbsp;&nbsp;");
+         cellData.add(html);
       }
       rowData.add(cellData.toArray(new String[cellData.size()]));
       if (item.getExpanded()) {
