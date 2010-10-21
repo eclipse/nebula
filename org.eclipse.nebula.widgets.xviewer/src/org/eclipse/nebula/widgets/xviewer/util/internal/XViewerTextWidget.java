@@ -110,67 +110,33 @@ public class XViewerTextWidget extends XViewerWidget {
       this.parent = parent;
       Composite composite = null;
 
-      ModifyListener textListener = new ModifyListener() {
+      composite = createComposite(parent, horizontalSpan);
 
-         @Override
-         public void modifyText(ModifyEvent e) {
-            if (sText != null) {
-               text = sText.getText();
-               setLabelError();
-               notifyXModifiedListeners();
-            }
-         }
-      };
+      createLabelWidget(composite);
 
-      if (fillVertically) {
-         composite = new Composite(parent, SWT.NONE);
-         GridLayout layout = XViewerLib.getZeroMarginLayout(1, false);
-         layout.verticalSpacing = 4;
-         composite.setLayout(layout);
-         composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-      } else {
-         composite = new Composite(parent, SWT.NONE);
-         GridLayout layout = XViewerLib.getZeroMarginLayout(2, false);
-         layout.verticalSpacing = 4;
-         composite.setLayout(layout);
-         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-         gd.horizontalSpan = horizontalSpan;
-         composite.setLayoutData(gd);
-      }
-      // composite = parent;
-
-      // Create Text Widgets
-      if (displayLabel && !label.equals("")) {
-         labelWidget = new Label(composite, SWT.NONE);
-         labelWidget.setText(label + ":");
-         if (toolTip != null) {
-            labelWidget.setToolTipText(toolTip);
-         }
-      }
       if (fillVertically) {
          sText = new StyledText(composite, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.H_SCROLL | SWT.V_SCROLL);
       } else {
          sText = new StyledText(composite, SWT.BORDER | SWT.SINGLE);
       }
       GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-      if (verticalLabel) {
-         gd.horizontalSpan = horizontalSpan;
-      } else {
-         gd.horizontalSpan = horizontalSpan - 1;
-      }
+      gd.horizontalSpan = verticalLabel ? horizontalSpan : horizontalSpan - 1;
       gd.grabExcessHorizontalSpace = true;
       gd.horizontalAlignment = GridData.FILL;
+
       if (fillVertically) {
          gd.grabExcessVerticalSpace = true;
          gd.verticalAlignment = GridData.FILL;
-      }
-      if (fillVertically && height > 0) {
-         gd.heightHint = height;
+         if (height > 0) {
+            gd.heightHint = height;
+         }
       }
 
       sText.setLayoutData(gd);
       sText.setMenu(getDefaultMenu());
-      sText.addModifyListener(textListener);
+
+      addModificationListener();
+
       if (text != null) {
          sText.setText(text);
       }
@@ -190,6 +156,50 @@ public class XViewerTextWidget extends XViewerWidget {
          sText.setFont(font);
       }
       parent.layout();
+   }
+
+   private void addModificationListener() {
+      sText.addModifyListener(new ModifyListener() {
+
+         @Override
+         public void modifyText(ModifyEvent e) {
+            if (sText != null) {
+               text = sText.getText();
+               setLabelError();
+               notifyXModifiedListeners();
+            }
+         }
+      });
+   }
+
+   private void createLabelWidget(Composite composite) {
+      if (displayLabel && !label.equals("")) {
+         labelWidget = new Label(composite, SWT.NONE);
+         labelWidget.setText(label + ":");
+         if (toolTip != null) {
+            labelWidget.setToolTipText(toolTip);
+         }
+      }
+   }
+
+   private Composite createComposite(Composite parent, int horizontalSpan) {
+      Composite composite;
+      if (fillVertically) {
+         composite = new Composite(parent, SWT.NONE);
+         GridLayout layout = XViewerLib.getZeroMarginLayout(1, false);
+         layout.verticalSpacing = 4;
+         composite.setLayout(layout);
+         composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+      } else {
+         composite = new Composite(parent, SWT.NONE);
+         GridLayout layout = XViewerLib.getZeroMarginLayout(2, false);
+         layout.verticalSpacing = 4;
+         composite.setLayout(layout);
+         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+         gd.horizontalSpan = horizontalSpan;
+         composite.setLayoutData(gd);
+      }
+      return composite;
    }
 
    /**

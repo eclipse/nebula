@@ -90,7 +90,6 @@ public class XViewerCustomizeDialog extends MessageDialog {
    Button saveButton, renameButton;
    private final static String SET_AS_DEFAULT = " Set as Default ";
    private final static String REMOVE_DEFAULT = "Remove Default";
-   private CustomizeData defaultTableCustData;
    boolean isFeedbackAfter = false;
 
    public XViewerCustomizeDialog(XViewer xViewer) {
@@ -1075,7 +1074,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
       List<CustomizeData> custDatas = xViewerToCustomize.getCustomizeMgr().getSavedCustDatas();
 
       // Add table default customization data
-      defaultTableCustData = xViewerToCustomize.getCustomizeMgr().getTableDefaultCustData();
+      CustomizeData defaultTableCustData = xViewerToCustomize.getCustomizeMgr().getTableDefaultCustData();
       defaultTableCustData.setName(CustomizeManager.TABLE_DEFAULT_LABEL);
       custDatas.add(defaultTableCustData);
 

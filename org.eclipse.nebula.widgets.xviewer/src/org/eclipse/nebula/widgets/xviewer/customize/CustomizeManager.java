@@ -86,50 +86,16 @@ public class CustomizeManager {
 
          // Handle known stored values
          if (resolvedCol == null) {
-            String name = storedCol.getName();
-            if (name.equals("Impacted Items")) {
-               resolvedCol = xViewer.getXViewerFactory().getDefaultXViewerColumn("ats.column.actionableItems");
-            } else if (name.equals("State Percent")) {
-               resolvedCol = xViewer.getXViewerFactory().getDefaultXViewerColumn("ats.column.statePercentComplete");
-            }
+            resolvedCol = getKnownStoredValue(storedCol, resolvedCol);
          }
          // if not found, may have been stored without namespace; try to resolve for backward compatibility
          if (resolvedCol == null) {
-            String name = storedCol.getName().replaceAll(" ", "");
-            resolvedCol = oldNameToColumnId.get(name);
-            // First try to match by .<oldname>
-            if (resolvedCol == null) {
-               for (XViewerColumn xCol : xViewer.getXViewerFactory().getDefaultTableCustomizeData().getColumnData().getColumns()) {
-                  String colId = xCol.getId().toLowerCase();
-                  String oldName = "." + name.toLowerCase();
-                  if (colId.endsWith(oldName)) {
-                     resolvedCol = xCol;
-                     oldNameToColumnId.put(name, resolvedCol);
-                     oldNameToColumnId.put(storedCol.getName(), resolvedCol);
-                     break;
-                  }
-               }
-            }
-            // Then try to match by id endswith name 
-            if (resolvedCol == null) {
-               for (XViewerColumn xCol : xViewer.getXViewerFactory().getDefaultTableCustomizeData().getColumnData().getColumns()) {
-                  if (xCol.getId().endsWith(name)) {
-                     resolvedCol = xCol;
-                     oldNameToColumnId.put(name, resolvedCol);
-                     oldNameToColumnId.put(storedCol.getName(), resolvedCol);
-                     break;
-                  }
-               }
-            }
+            resolvedCol = resolveByName(storedCol);
          }
 
          // Resolve computed columns
          if (resolvedCol == null) {
-            for (XViewerComputedColumn xViewerComputedCol : xViewer.getComputedColumns()) {
-               if (xViewerComputedCol.isApplicableFor(storedCol.getId())) {
-                  resolvedCol = xViewerComputedCol.createFromStored(storedCol);
-               }
-            }
+            resolvedCol = resolveComputedColumns(storedCol, resolvedCol);
          }
 
          // Only handle columns that the factory supports and only resolve shown columns (rest will be loaded later)
@@ -148,6 +114,29 @@ public class CustomizeManager {
                "XViewer Conversion for saved Customization \"" + loadedCustData.getName() + "\" dropped unresolved column Name: \"" + storedCol.getName() + "\"  Id: \"" + storedCol.getId() + "\".  Delete customization and re-save to resolve.");
          }
       }
+      addNewlyCreatedColumns(resolvedColumns);
+
+      resolveComputedColumnsAgain(resolvedColumns);
+
+      resolvedCustData.getColumnData().setColumns(resolvedColumns);
+      resolvedCustData.getColumnFilterData().setFromXml(loadedCustData.getColumnFilterData().getXml());
+      resolvedCustData.getFilterData().setFromXml(loadedCustData.getFilterData().getXml());
+      resolvedCustData.getSortingData().setFromXml(loadedCustData.getSortingData().getXml());
+      return resolvedCustData;
+   }
+
+   private void resolveComputedColumnsAgain(List<XViewerColumn> resolvedColumns) {
+      /*
+       * Resolve computed columns, again, to enable source column to get set
+       */
+      for (XViewerColumn resolveCol : resolvedColumns) {
+         if (resolveCol instanceof XViewerComputedColumn) {
+            ((XViewerComputedColumn) resolveCol).setSourceXViewerColumnFromColumns(resolvedColumns);
+         }
+      }
+   }
+
+   private void addNewlyCreatedColumns(List<XViewerColumn> resolvedColumns) {
       /*
        * Add extra columns that were added to the table since storage of this custData
        */
@@ -158,19 +147,56 @@ public class CustomizeManager {
             resolvedColumns.add(extraCol);
          }
       }
-      /*
-       * Resolve computed columns, again, to enable source column to get set
-       */
-      for (XViewerColumn resolveCol : resolvedColumns) {
-         if (resolveCol instanceof XViewerComputedColumn) {
-            ((XViewerComputedColumn) resolveCol).setSourceXViewerColumnFromColumns(resolvedColumns);
+   }
+
+   private XViewerColumn resolveComputedColumns(XViewerColumn storedCol, XViewerColumn resolvedCol) {
+      for (XViewerComputedColumn xViewerComputedCol : xViewer.getComputedColumns()) {
+         if (xViewerComputedCol.isApplicableFor(storedCol.getId())) {
+            resolvedCol = xViewerComputedCol.createFromStored(storedCol);
          }
       }
-      resolvedCustData.getColumnData().setColumns(resolvedColumns);
-      resolvedCustData.getColumnFilterData().setFromXml(loadedCustData.getColumnFilterData().getXml());
-      resolvedCustData.getFilterData().setFromXml(loadedCustData.getFilterData().getXml());
-      resolvedCustData.getSortingData().setFromXml(loadedCustData.getSortingData().getXml());
-      return resolvedCustData;
+      return resolvedCol;
+   }
+
+   private XViewerColumn resolveByName(XViewerColumn storedCol) {
+      XViewerColumn resolvedCol;
+      String name = storedCol.getName().replaceAll(" ", "");
+      resolvedCol = oldNameToColumnId.get(name);
+      // First try to match by .<oldname>
+      if (resolvedCol == null) {
+         for (XViewerColumn xCol : xViewer.getXViewerFactory().getDefaultTableCustomizeData().getColumnData().getColumns()) {
+            String colId = xCol.getId().toLowerCase();
+            String oldName = "." + name.toLowerCase();
+            if (colId.endsWith(oldName)) {
+               resolvedCol = xCol;
+               oldNameToColumnId.put(name, resolvedCol);
+               oldNameToColumnId.put(storedCol.getName(), resolvedCol);
+               break;
+            }
+         }
+      }
+      // Then try to match by id endswith name 
+      if (resolvedCol == null) {
+         for (XViewerColumn xCol : xViewer.getXViewerFactory().getDefaultTableCustomizeData().getColumnData().getColumns()) {
+            if (xCol.getId().endsWith(name)) {
+               resolvedCol = xCol;
+               oldNameToColumnId.put(name, resolvedCol);
+               oldNameToColumnId.put(storedCol.getName(), resolvedCol);
+               break;
+            }
+         }
+      }
+      return resolvedCol;
+   }
+
+   private XViewerColumn getKnownStoredValue(XViewerColumn storedCol, XViewerColumn resolvedCol) {
+      String name = storedCol.getName();
+      if (name.equals("Impacted Items")) {
+         resolvedCol = xViewer.getXViewerFactory().getDefaultXViewerColumn("ats.column.actionableItems");
+      } else if (name.equals("State Percent")) {
+         resolvedCol = xViewer.getXViewerFactory().getDefaultXViewerColumn("ats.column.statePercentComplete");
+      }
+      return resolvedCol;
    }
 
    public void setFilterText(String text) {
