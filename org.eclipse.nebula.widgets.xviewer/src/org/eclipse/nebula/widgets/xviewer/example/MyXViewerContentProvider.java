@@ -8,24 +8,25 @@
  * Contributors:
  *     Boeing - initial API and implementation
  *******************************************************************************/
-package org.eclipse.nebula.widgets.xviewer.test;
+package org.eclipse.nebula.widgets.xviewer.example;
 
 import java.util.Collection;
 import java.util.HashSet;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.nebula.widgets.xviewer.example.model.ISomeTask;
 
 /**
  * Content provider for example XViewer implementation
  * 
  * @author Donald G. Dunne
  */
-public class XViewerTestContentProvider implements ITreeContentProvider {
+public class MyXViewerContentProvider implements ITreeContentProvider {
 
-   protected Collection<IXViewerTestTask> rootSet = new HashSet<IXViewerTestTask>();
+   protected Collection<ISomeTask> rootSet = new HashSet<ISomeTask>();
    private final static Object[] EMPTY_ARRAY = new Object[0];
 
-   public XViewerTestContentProvider() {
+   public MyXViewerContentProvider() {
       super();
    }
 
@@ -69,7 +70,7 @@ public class XViewerTestContentProvider implements ITreeContentProvider {
       // do nothing
    }
 
-   public Collection<IXViewerTestTask> getRootSet() {
+   public Collection<ISomeTask> getRootSet() {
       return rootSet;
    }
 

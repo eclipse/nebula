@@ -8,7 +8,7 @@
  * Contributors:
  *     Boeing - initial API and implementation
  *******************************************************************************/
-package org.eclipse.nebula.widgets.xviewer.test;
+package org.eclipse.nebula.widgets.xviewer.example;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,7 +29,7 @@ import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
  * 
  * @author Donald G. Dunne
  */
-public class XViewerTestCustomizations extends XViewerCustomizations {
+public class MyXViewerCustomizations extends XViewerCustomizations {
 
    @Override
    public void deleteCustomization(CustomizeData custData) throws Exception {

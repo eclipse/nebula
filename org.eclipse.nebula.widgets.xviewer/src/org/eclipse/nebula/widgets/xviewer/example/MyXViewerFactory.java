@@ -8,7 +8,7 @@
  * Contributors:
  *     Boeing - initial API and implementation
  *******************************************************************************/
-package org.eclipse.nebula.widgets.xviewer.test;
+package org.eclipse.nebula.widgets.xviewer.example;
 
 import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumn.SortDataType;
@@ -21,7 +21,7 @@ import org.eclipse.swt.SWT;
  * 
  * @author Donald G. Dunne
  */
-public class XViewerTestFactory extends XViewerFactory {
+public class MyXViewerFactory extends XViewerFactory {
 
    private final static String COLUMN_NAMESPACE = "xviewer.test";
    public static XViewerColumn Run_Col = new XViewerColumn(COLUMN_NAMESPACE + ".run", "Run", 50, SWT.LEFT, true,
@@ -47,7 +47,7 @@ public class XViewerTestFactory extends XViewerFactory {
    public static XViewerColumn Other_Description = new XViewerColumn(COLUMN_NAMESPACE + ".otherDescription",
       "Other Description", 75, SWT.LEFT, false, SortDataType.String, false, null);
 
-   public XViewerTestFactory() {
+   public MyXViewerFactory() {
       super("xviewer.test");
       registerColumns(Run_Col, Name_Col, Schedule_Time, Completed_Col, Run_Db, Task_Type, Last_Run_Date, Category,
          Notification, Description, Other_Description);
@@ -55,7 +55,7 @@ public class XViewerTestFactory extends XViewerFactory {
 
    @Override
    public IXViewerCustomizations getXViewerCustomizations() {
-      return new XViewerTestCustomizations();
+      return new MyXViewerCustomizations();
    }
 
    @Override

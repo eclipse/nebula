@@ -8,15 +8,19 @@
  * Contributors:
  *     Boeing - initial API and implementation
  *******************************************************************************/
-package org.eclipse.nebula.widgets.xviewer.test;
+package org.eclipse.nebula.widgets.xviewer.example.styledExample;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.eclipse.nebula.widgets.xviewer.XViewer;
-import org.eclipse.nebula.widgets.xviewer.test.IXViewerTestTask.RunDb;
-import org.eclipse.nebula.widgets.xviewer.test.IXViewerTestTask.TaskType;
+import org.eclipse.nebula.widgets.xviewer.example.MyXViewerContentProvider;
+import org.eclipse.nebula.widgets.xviewer.example.MyXViewerFactory;
+import org.eclipse.nebula.widgets.xviewer.example.model.ISomeTask;
+import org.eclipse.nebula.widgets.xviewer.example.model.SomeTask;
+import org.eclipse.nebula.widgets.xviewer.example.model.ISomeTask.RunDb;
+import org.eclipse.nebula.widgets.xviewer.example.model.ISomeTask.TaskType;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -30,21 +34,21 @@ import org.eclipse.swt.widgets.Shell;
  * @author Andrew M. Finkbeiner
  */
 public class XViewerStyledStringLableProviderTest extends XViewer {
-   private final Set<IXViewerTestTask> runList = new HashSet<IXViewerTestTask>();
+   private final Set<ISomeTask> runList = new HashSet<ISomeTask>();
 
    public XViewerStyledStringLableProviderTest(Composite parent, int style) {
-      super(parent, style, new XViewerTestFactory());
+      super(parent, style, new MyXViewerFactory());
    }
 
-   public boolean isScheduled(IXViewerTestTask autoRunTask) {
+   public boolean isScheduled(ISomeTask autoRunTask) {
       return true;
    }
 
-   public boolean isRun(IXViewerTestTask autoRunTask) {
+   public boolean isRun(ISomeTask autoRunTask) {
       return runList.contains(autoRunTask);
    }
 
-   public void setRun(IXViewerTestTask autoRunTask, boolean run) {
+   public void setRun(ISomeTask autoRunTask, boolean run) {
       if (run) {
          runList.add(autoRunTask);
       } else {
@@ -63,7 +67,7 @@ public class XViewerStyledStringLableProviderTest extends XViewer {
       XViewerStyledStringLableProviderTest xViewerTest =
          new XViewerStyledStringLableProviderTest(Shell_1, SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION);
       xViewerTest.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
-      xViewerTest.setContentProvider(new XViewerTestContentProvider());
+      xViewerTest.setContentProvider(new MyXViewerContentProvider());
       xViewerTest.setLabelProvider(new XViewerTestStyledStringLabelProvider(xViewerTest));
 
       List<Object> tasks = new ArrayList<Object>();
@@ -81,35 +85,35 @@ public class XViewerStyledStringLableProviderTest extends XViewer {
       Display_1.dispose();
    }
 
-   private static List<IXViewerTestTask> getTestTasks() {
-      List<IXViewerTestTask> tasks = new ArrayList<IXViewerTestTask>();
-      tasks.add(new XViewerTestTask(RunDb.Test_Db, TaskType.Backup, "org.eclipse.osee.test1", "10:03",
+   private static List<ISomeTask> getTestTasks() {
+      List<ISomeTask> tasks = new ArrayList<ISomeTask>();
+      tasks.add(new SomeTask(RunDb.Test_Db, TaskType.Backup, "org.eclipse.osee.test1", "10:03",
          "run to test this", "Suite A", "mark", 99));
-      tasks.add(new XViewerTestTask(RunDb.Production_Db, TaskType.Data_Exchange, "org.eclipse.osee.test2", "9:22",
+      tasks.add(new SomeTask(RunDb.Production_Db, TaskType.Data_Exchange, "org.eclipse.osee.test2", "9:22",
          "run to test that", "Suite B", "john", 50));
-      tasks.add(new XViewerTestTask(RunDb.Production_Db, TaskType.Backup, "org.eclipse.osee.test4", "8:23",
+      tasks.add(new SomeTask(RunDb.Production_Db, TaskType.Backup, "org.eclipse.osee.test4", "8:23",
          "in this world", "Suite A", "john", 50));
-      tasks.add(new XViewerTestTask(RunDb.Test_Db, TaskType.Backup, "org.eclipse.osee.test3", "23:01",
+      tasks.add(new SomeTask(RunDb.Test_Db, TaskType.Backup, "org.eclipse.osee.test3", "23:01",
          "now is the time", "Suite B", "mike", 50));
-      tasks.add(new XViewerTestTask(RunDb.Production_Db, TaskType.Db_Health, "org.eclipse.osee.test5", "7:32",
+      tasks.add(new SomeTask(RunDb.Production_Db, TaskType.Db_Health, "org.eclipse.osee.test5", "7:32",
          "may be never", "Suite A", "steve", 100));
-      tasks.add(new XViewerTestTask(RunDb.Test_Db, TaskType.Data_Exchange, "org.eclipse.osee.test14", "6:11",
+      tasks.add(new SomeTask(RunDb.Test_Db, TaskType.Data_Exchange, "org.eclipse.osee.test14", "6:11",
          "how can this solve the problem", "Suite A", "steve", 50));
-      tasks.add(new XViewerTestTask(RunDb.Production_Db, TaskType.Backup, "org.eclipse.osee.test6", "5:13",
+      tasks.add(new SomeTask(RunDb.Production_Db, TaskType.Backup, "org.eclipse.osee.test6", "5:13",
          "run to test this", "Suite B", "john", 50));
-      tasks.add(new XViewerTestTask(RunDb.Test_Db, TaskType.Db_Health, "org.eclipse.osee.test12", "23:15",
+      tasks.add(new SomeTask(RunDb.Test_Db, TaskType.Db_Health, "org.eclipse.osee.test12", "23:15",
          "run to test this", "Suite A", "mike", 50));
-      tasks.add(new XViewerTestTask(RunDb.Production_Db, TaskType.Backup, "org.eclipse.osee.test13", "4:01",
+      tasks.add(new SomeTask(RunDb.Production_Db, TaskType.Backup, "org.eclipse.osee.test13", "4:01",
          "run to test this", "Suite B", "steve", 50));
-      tasks.add(new XViewerTestTask(RunDb.Production_Db, TaskType.Data_Exchange, "org.eclipse.osee.test11", "3:16",
+      tasks.add(new SomeTask(RunDb.Production_Db, TaskType.Data_Exchange, "org.eclipse.osee.test11", "3:16",
          "run to test this", "Suite A", "steve", 70));
-      tasks.add(new XViewerTestTask(RunDb.Test_Db, TaskType.Backup, "org.eclipse.osee.test10", "5:01",
+      tasks.add(new SomeTask(RunDb.Test_Db, TaskType.Backup, "org.eclipse.osee.test10", "5:01",
          "run to test this", "Suite C", "mike", 50));
-      tasks.add(new XViewerTestTask(RunDb.Production_Db, TaskType.Data_Exchange, "org.eclipse.osee.test9", "4:27",
+      tasks.add(new SomeTask(RunDb.Production_Db, TaskType.Data_Exchange, "org.eclipse.osee.test9", "4:27",
          "run to test this", "Suite C", "steve", 50));
-      tasks.add(new XViewerTestTask(RunDb.Production_Db, TaskType.Regression, "org.eclipse.osee.test7", "2:37",
+      tasks.add(new SomeTask(RunDb.Production_Db, TaskType.Regression, "org.eclipse.osee.test7", "2:37",
          "run to test this", "Suite C", "john", 50));
-      tasks.add(new XViewerTestTask(RunDb.Test_Db, TaskType.Db_Health, "org.eclipse.osee.test8", "24:00",
+      tasks.add(new SomeTask(RunDb.Test_Db, TaskType.Db_Health, "org.eclipse.osee.test8", "24:00",
          "run to test this", "Suite C", "mike", 20));
       return tasks;
    }

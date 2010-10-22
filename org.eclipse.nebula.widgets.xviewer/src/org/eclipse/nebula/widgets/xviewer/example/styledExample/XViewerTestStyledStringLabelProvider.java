@@ -8,12 +8,14 @@
  * Contributors:
  *     Boeing - initial API and implementation
  *******************************************************************************/
-package org.eclipse.nebula.widgets.xviewer.test;
+package org.eclipse.nebula.widgets.xviewer.example.styledExample;
 
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewerStyledTextLabelProvider;
+import org.eclipse.nebula.widgets.xviewer.example.MyXViewerFactory;
+import org.eclipse.nebula.widgets.xviewer.example.model.ISomeTask;
 import org.eclipse.nebula.widgets.xviewer.util.XViewerException;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
 import org.eclipse.swt.graphics.Color;
@@ -55,10 +57,10 @@ public class XViewerTestStyledStringLabelProvider extends XViewerStyledTextLabel
 
    @Override
    public Image getColumnImage(Object element, XViewerColumn xCol, int columnIndex) {
-      if (xCol.equals(XViewerTestFactory.Run_Col)) {
-         return xViewerTest.isRun((IXViewerTestTask) element) ? XViewerLib.getImage("chkbox_enabled.gif") : XViewerLib.getImage("chkbox_disabled.gif");
+      if (xCol.equals(MyXViewerFactory.Run_Col)) {
+         return xViewerTest.isRun((ISomeTask) element) ? XViewerLib.getImage("chkbox_enabled.gif") : XViewerLib.getImage("chkbox_disabled.gif");
       }
-      if (xCol.equals(XViewerTestFactory.Name_Col) && xViewerTest.isScheduled((IXViewerTestTask) element)) {
+      if (xCol.equals(MyXViewerFactory.Name_Col) && xViewerTest.isScheduled((ISomeTask) element)) {
          return XViewerLib.getImage("clock.gif");
       }
       return null;
@@ -92,32 +94,32 @@ public class XViewerTestStyledStringLabelProvider extends XViewerStyledTextLabel
             return new StyledString("");
          }
       }
-      IXViewerTestTask task = ((IXViewerTestTask) element);
+      ISomeTask task = ((ISomeTask) element);
       if (task == null) {
          return new StyledString("");
       }
-      if (xCol.equals(XViewerTestFactory.Run_Col)) {
+      if (xCol.equals(MyXViewerFactory.Run_Col)) {
          return new StyledString(String.valueOf(xViewerTest.isRun(task)), StyledString.COUNTER_STYLER);
       }
-      if (xCol.equals(XViewerTestFactory.Name_Col)) {
+      if (xCol.equals(MyXViewerFactory.Name_Col)) {
          return new StyledString(task.getId(), StyledString.DECORATIONS_STYLER);
       }
-      if (xCol.equals(XViewerTestFactory.Schedule_Time)) {
+      if (xCol.equals(MyXViewerFactory.Schedule_Time)) {
          return new StyledString(task.getStartTime(), StyledString.QUALIFIER_STYLER);
       }
-      if (xCol.equals(XViewerTestFactory.Run_Db)) {
+      if (xCol.equals(MyXViewerFactory.Run_Db)) {
          return new StyledString(task.getRunDb().name(), StyledString.COUNTER_STYLER);
       }
-      if (xCol.equals(XViewerTestFactory.Task_Type)) {
+      if (xCol.equals(MyXViewerFactory.Task_Type)) {
          return new StyledString(task.getTaskType().name(), StyledString.DECORATIONS_STYLER);
       }
-      if (xCol.equals(XViewerTestFactory.Description)) {
+      if (xCol.equals(MyXViewerFactory.Description)) {
          return new StyledString(task.getDescription(), StyledString.COUNTER_STYLER);
       }
-      if (xCol.equals(XViewerTestFactory.Category)) {
+      if (xCol.equals(MyXViewerFactory.Category)) {
          return new StyledString(task.getCategory(), StyledString.DECORATIONS_STYLER);
       }
-      if (xCol.equals(XViewerTestFactory.Notification)) {
+      if (xCol.equals(MyXViewerFactory.Notification)) {
          return new StyledString(task.getEmailAddress(), StyledString.QUALIFIER_STYLER);
       }
       return new StyledString("unhandled column");

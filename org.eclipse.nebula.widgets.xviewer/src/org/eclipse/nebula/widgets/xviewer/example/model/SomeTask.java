@@ -8,7 +8,7 @@
  * Contributors:
  *     Boeing - initial API and implementation
  *******************************************************************************/
-package org.eclipse.nebula.widgets.xviewer.test;
+package org.eclipse.nebula.widgets.xviewer.example.model;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -18,7 +18,7 @@ import java.util.Date;
  * 
  * @author Donald G. Dunne
  */
-public class XViewerTestTask implements IXViewerTestTask {
+public class SomeTask implements ISomeTask {
 
    private final RunDb runDb;
    private final TaskType taskType;
@@ -30,11 +30,11 @@ public class XViewerTestTask implements IXViewerTestTask {
    private final Date lastRunDate;
    private int percentComplete;
 
-   public XViewerTestTask(RunDb runDb, TaskType taskType, String id, String startTime, String description, String category, String emailAddress, int percentComplete) {
+   public SomeTask(RunDb runDb, TaskType taskType, String id, String startTime, String description, String category, String emailAddress, int percentComplete) {
       this(runDb, taskType, new Date(), id, startTime, description, category, emailAddress, percentComplete);
    }
 
-   public XViewerTestTask(RunDb runDb, TaskType taskType, Date lastRunDate, String id, String startTime, String description, String category, String emailAddress, int percentComplete) {
+   public SomeTask(RunDb runDb, TaskType taskType, Date lastRunDate, String id, String startTime, String description, String category, String emailAddress, int percentComplete) {
       this.runDb = runDb;
       this.taskType = taskType;
       this.lastRunDate = lastRunDate;

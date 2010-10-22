@@ -8,11 +8,12 @@
  * Contributors:
  *     Boeing - initial API and implementation
  *******************************************************************************/
-package org.eclipse.nebula.widgets.xviewer.test;
+package org.eclipse.nebula.widgets.xviewer.example;
 
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewerLabelProvider;
+import org.eclipse.nebula.widgets.xviewer.example.model.ISomeTask;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
@@ -22,10 +23,10 @@ import org.eclipse.swt.graphics.Image;
  * 
  * @author Donald G. Dunne
  */
-public class XViewerTestLabelProvider extends XViewerLabelProvider {
-   private final XViewerTest xViewerTest;
+public class MyXViewerLabelProvider extends XViewerLabelProvider {
+   private final MyXViewer xViewerTest;
 
-   public XViewerTestLabelProvider(XViewerTest xViewerTest) {
+   public MyXViewerLabelProvider(MyXViewer xViewerTest) {
       super(xViewerTest);
       this.xViewerTest = xViewerTest;
    }
@@ -39,38 +40,38 @@ public class XViewerTestLabelProvider extends XViewerLabelProvider {
             return "";
          }
       }
-      IXViewerTestTask task = ((IXViewerTestTask) element);
+      ISomeTask task = ((ISomeTask) element);
       if (task == null) {
          return "";
       }
-      if (xCol.equals(XViewerTestFactory.Run_Col)) {
+      if (xCol.equals(MyXViewerFactory.Run_Col)) {
          return String.valueOf(xViewerTest.isRun(task));
       }
-      if (xCol.equals(XViewerTestFactory.Name_Col)) {
+      if (xCol.equals(MyXViewerFactory.Name_Col)) {
          return task.getId();
       }
-      if (xCol.equals(XViewerTestFactory.Schedule_Time)) {
+      if (xCol.equals(MyXViewerFactory.Schedule_Time)) {
          return task.getStartTime();
       }
-      if (xCol.equals(XViewerTestFactory.Run_Db)) {
+      if (xCol.equals(MyXViewerFactory.Run_Db)) {
          return task.getRunDb().name();
       }
-      if (xCol.equals(XViewerTestFactory.Task_Type)) {
+      if (xCol.equals(MyXViewerFactory.Task_Type)) {
          return task.getTaskType().name();
       }
-      if (xCol.equals(XViewerTestFactory.Description)) {
+      if (xCol.equals(MyXViewerFactory.Description)) {
          return task.getDescription();
       }
-      if (xCol.equals(XViewerTestFactory.Category)) {
+      if (xCol.equals(MyXViewerFactory.Category)) {
          return task.getCategory();
       }
-      if (xCol.equals(XViewerTestFactory.Notification)) {
+      if (xCol.equals(MyXViewerFactory.Notification)) {
          return task.getEmailAddress();
       }
-      if (xCol.equals(XViewerTestFactory.Last_Run_Date)) {
+      if (xCol.equals(MyXViewerFactory.Last_Run_Date)) {
          return task.getLastRunDateStr();
       }
-      if (xCol.equals(XViewerTestFactory.Completed_Col)) {
+      if (xCol.equals(MyXViewerFactory.Completed_Col)) {
          return String.valueOf(task.getPercentComplete());
       }
       return "unhandled column";
@@ -98,10 +99,10 @@ public class XViewerTestLabelProvider extends XViewerLabelProvider {
 
    @Override
    public Image getColumnImage(Object element, XViewerColumn xCol, int columnIndex) {
-      if (xCol.equals(XViewerTestFactory.Run_Col)) {
-         return xViewerTest.isRun((IXViewerTestTask) element) ? XViewerLib.getImage("chkbox_enabled.gif") : XViewerLib.getImage("chkbox_disabled.gif");
+      if (xCol.equals(MyXViewerFactory.Run_Col)) {
+         return xViewerTest.isRun((ISomeTask) element) ? XViewerLib.getImage("chkbox_enabled.gif") : XViewerLib.getImage("chkbox_disabled.gif");
       }
-      if (xCol.equals(XViewerTestFactory.Name_Col) && xViewerTest.isScheduled((IXViewerTestTask) element)) {
+      if (xCol.equals(MyXViewerFactory.Name_Col) && xViewerTest.isScheduled((ISomeTask) element)) {
          return XViewerLib.getImage("clock.gif");
       }
       return null;
@@ -114,11 +115,11 @@ public class XViewerTestLabelProvider extends XViewerLabelProvider {
 
    @Override
    public int getColumnGradient(Object element, XViewerColumn xCol, int columnIndex) throws Exception {
-      if (!(element instanceof IXViewerTestTask)) {
+      if (!(element instanceof ISomeTask)) {
          return 0;
       }
-      IXViewerTestTask task = ((IXViewerTestTask) element);
-      if (xCol.equals(XViewerTestFactory.Completed_Col)) {
+      ISomeTask task = ((ISomeTask) element);
+      if (xCol.equals(MyXViewerFactory.Completed_Col)) {
          return task.getPercentComplete();
       }
       return 0;

@@ -8,7 +8,7 @@
  * Contributors:
  *     Boeing - initial API and implementation
  *******************************************************************************/
-package org.eclipse.nebula.widgets.xviewer.test;
+package org.eclipse.nebula.widgets.xviewer.example.model;
 
 import java.util.Date;
 
@@ -17,7 +17,7 @@ import java.util.Date;
  * 
  * @author Donald G. Dunne
  */
-public interface IXViewerTestTask {
+public interface ISomeTask {
    public enum RunDb {
       Production_Db,
       Test_Db
