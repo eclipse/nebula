@@ -22,11 +22,12 @@ import org.eclipse.jface.viewers.ViewerFilter;
  */
 public class XViewerTextFilter extends ViewerFilter {
 
-   private final XViewer xViewer;
-   //   private ITableLabelProvider labelProv;
-   private Pattern textPattern;
-   private Matcher matcher;
-   private final Map<String, Pattern> colIdToPattern = new HashMap<String, Pattern>();
+   protected final XViewer xViewer;
+   protected Pattern textPattern;
+   protected Matcher matcher;
+   protected final Map<String, Pattern> colIdToPattern = new HashMap<String, Pattern>();
+   protected static final Pattern EMPTY_STR_PATTERN = Pattern.compile("");
+   protected static final Pattern NOT_EMPTY_STR_PATTERN = Pattern.compile("^.+$");
 
    public XViewerTextFilter(XViewer xViewer) {
       this.xViewer = xViewer;
@@ -73,15 +74,12 @@ public class XViewerTextFilter extends ViewerFilter {
          }
       }
    }
-   private static final Pattern EMPTY_STR_PATTERN = Pattern.compile("");
-   private static final Pattern NOT_EMPTY_STR_PATTERN = Pattern.compile("^.+$");
 
    @Override
    public boolean select(Viewer viewer, Object parentElement, Object element) {
       if (textPattern == null && colIdToPattern.isEmpty()) {
          return true;
       }
-      //      if (labelProv == null) labelProv = (ITableLabelProvider) xViewer.getLabelProvider();
       boolean match = true;
       // Must match all column filters or don't show
       for (String filteredColId : xViewer.getCustomizeMgr().getColumnFilterData().getColIds()) {
