@@ -52,9 +52,9 @@
 			<property name="build.properties" value="build.properties" />
 		</ant>
 
-<!--		<condition property="JAVA_HOME" value="${java.home}" else="${java.home}/..">
+		<condition property="JAVA_HOME" value="${java.home}" else="${java.home}/..">
 			<available file="${java.home}/bin/javac" type="file" />
-		</condition>-->
+		</condition>
 
 		<property name="build.properties" value="build.properties" />
 		<property file="${build.properties}" />
