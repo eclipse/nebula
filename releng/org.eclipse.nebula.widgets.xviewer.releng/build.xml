@@ -64,7 +64,7 @@
 	</target>
 
 	<target name="build">
-		<ant antfile="${relengCommonBuilderDir}/build.xml" />
+		<ant antfile="${relengCommonBuilderDir}/build.xml" inheritall="true" inheritrefs="true"/>
 	</target>
 
 	<target name="createSnapshot" depends="init">
