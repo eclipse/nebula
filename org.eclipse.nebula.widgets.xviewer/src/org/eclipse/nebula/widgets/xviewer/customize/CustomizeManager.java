@@ -26,6 +26,7 @@ import org.eclipse.nebula.widgets.xviewer.XViewerSorter;
 import org.eclipse.nebula.widgets.xviewer.XViewerTextFilter;
 import org.eclipse.nebula.widgets.xviewer.customize.dialog.XViewerCustomizeDialog;
 import org.eclipse.nebula.widgets.xviewer.util.XViewerException;
+import org.eclipse.nebula.widgets.xviewer.util.internal.Strings;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -513,12 +514,11 @@ public class CustomizeManager {
          column.setData(xCol);
          StringBuffer sb = new StringBuffer();
          sb.append(xCol.getName());
-         if (xCol.getDescription() != null && !xCol.getDescription().equals("") && !xCol.getDescription().equals(
-            xCol.getName())) {
+         if (Strings.isValid(xCol.getDescription()) && !xCol.getDescription().equals(xCol.getName())) {
             sb.append("\n");
             sb.append(xCol.getDescription());
          }
-         if (xCol.getToolTip() != null && !xCol.getToolTip().equals("") && !xCol.getToolTip().equals(xCol.getName()) && !xCol.getToolTip().equals(
+         if (Strings.isValid(xCol.getToolTip()) && !xCol.getToolTip().equals(xCol.getName()) && !xCol.getToolTip().equals(
             xCol.getDescription())) {
             sb.append("\n");
             sb.append(xCol.getToolTip());

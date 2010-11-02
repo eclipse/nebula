@@ -228,11 +228,6 @@ public class XViewerColumn {
 
    public void setDescription(String description) {
       this.description = description;
-      if (getDescription().equals(getName())) {
-         this.toolTip = getName();
-      } else {
-         this.toolTip = getName() + ":\n" + getDescription();
-      }
    }
 
    public boolean isMultiColumnEditable() {
