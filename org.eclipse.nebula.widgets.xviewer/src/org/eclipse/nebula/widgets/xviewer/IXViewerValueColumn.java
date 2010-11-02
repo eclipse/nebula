@@ -1,31 +1,30 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2007 Boeing.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/*
+ * Created on Oct 29, 2010
  *
- * Contributors:
- *     Boeing - initial API and implementation
- *******************************************************************************/
+ * PLACE_YOUR_DISTRIBUTION_STATEMENT_RIGHT_HERE
+ */
 package org.eclipse.nebula.widgets.xviewer;
 
 import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.nebula.widgets.xviewer.util.XViewerException;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 
 public interface IXViewerValueColumn {
 
-   Color getBackground(Object element, XViewerColumn xCol, int columnIndex);
+   Image getColumnImage(Object element, XViewerColumn column, int columnIndex) throws XViewerException;
 
-   Color getForeground(Object element, XViewerColumn xCol, int columnIndex);
+   String getColumnText(Object element, XViewerColumn column, int columnIndex) throws XViewerException;
 
-   StyledString getStyledText(Object element, XViewerColumn viewerColumn, int columnIndex);
+   Color getBackground(Object element, XViewerColumn xCol, int columnIndex) throws XViewerException;
 
-   Font getFont(Object element, XViewerColumn viewerColumn, int columnIndex);
+   Color getForeground(Object element, XViewerColumn xCol, int columnIndex) throws XViewerException;
 
-   Image getColumnImage(Object element, XViewerColumn column, int columnIndex);
+   //This method will only be called be the XViewerStyledTextLabelProvider
+   StyledString getStyledText(Object element, XViewerColumn viewerColumn, int columnIndex) throws XViewerException;
 
-   String getColumnText(Object element, XViewerColumn column, int columnIndex);
+   //This method will only be called be the XViewerStyledTextLabelProvider
+   Font getFont(Object element, XViewerColumn viewerColumn, int columnIndex) throws XViewerException;
+
 }

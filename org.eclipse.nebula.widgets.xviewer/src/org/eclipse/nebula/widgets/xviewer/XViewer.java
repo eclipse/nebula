@@ -247,6 +247,12 @@ public class XViewer extends TreeViewer {
     * @return true if handled
     */
    public boolean handleAltLeftClick(TreeColumn treeColumn, TreeItem treeItem) {
+      if (treeColumn.getData() instanceof XViewerColumn) {
+         if ((XViewerColumn) treeColumn.getData() instanceof IAltLeftClickProvider) {
+            return ((IAltLeftClickProvider) (XViewerColumn) treeColumn.getData()).handleAltLeftClick(treeColumn,
+               treeItem);
+         }
+      }
       return false;
    }
 

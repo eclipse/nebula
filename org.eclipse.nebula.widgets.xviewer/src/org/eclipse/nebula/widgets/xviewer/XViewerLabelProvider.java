@@ -58,8 +58,8 @@ public abstract class XViewerLabelProvider implements ITableLabelProvider, ITabl
          if (!xViewerColumn.isShow()) {
             return null;
          }
-         if (xViewerColumn instanceof XViewerValueColumn) {
-            Image image = ((XViewerValueColumn) xViewerColumn).getColumnImage(element, xViewerColumn, columnIndex);
+         if (xViewerColumn instanceof IXViewerValueColumn) {
+            Image image = ((IXViewerValueColumn) xViewerColumn).getColumnImage(element, xViewerColumn, columnIndex);
             if (image != null) {
                return image;
             }
@@ -80,8 +80,8 @@ public abstract class XViewerLabelProvider implements ITableLabelProvider, ITabl
             return "";
          }
          // First check value column's methods
-         if (xViewerColumn instanceof XViewerValueColumn) {
-            String str = ((XViewerValueColumn) xViewerColumn).getColumnText(element, xViewerColumn, columnIndex);
+         if (xViewerColumn instanceof IXViewerValueColumn) {
+            String str = ((IXViewerValueColumn) xViewerColumn).getColumnText(element, xViewerColumn, columnIndex);
             if (str != null) {
                return str;
             }
@@ -109,8 +109,8 @@ public abstract class XViewerLabelProvider implements ITableLabelProvider, ITabl
          if (!xViewerColumn.isShow()) {
             return null;
          }
-         if (xViewerColumn instanceof XViewerValueColumn) {
-            Color color = ((XViewerValueColumn) xViewerColumn).getBackground(element, xViewerColumn, columnIndex);
+         if (xViewerColumn instanceof IXViewerValueColumn) {
+            Color color = ((IXViewerValueColumn) xViewerColumn).getBackground(element, xViewerColumn, columnIndex);
             if (color != null) {
                return color;
             }
@@ -130,8 +130,8 @@ public abstract class XViewerLabelProvider implements ITableLabelProvider, ITabl
          if (!xViewerColumn.isShow()) {
             return null;
          }
-         if (xViewerColumn instanceof XViewerValueColumn) {
-            Color color = ((XViewerValueColumn) xViewerColumn).getForeground(element, xViewerColumn, columnIndex);
+         if (xViewerColumn instanceof IXViewerValueColumn) {
+            Color color = ((IXViewerValueColumn) xViewerColumn).getForeground(element, xViewerColumn, columnIndex);
             if (color != null) {
                return color;
             }
