@@ -1535,12 +1535,27 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
      * @param side one of <code>SWT.LEFT</code>, <code>SWT.CENTER</code>, <code>SWT.RIGHT</code>
      */
     public void setTopItem(final GanttEvent ge, final int yOffset, final int side) {
-        int takeOff = getHeaderHeight();
+    	
+    	// fix to issue where setting same event would cause chart to jump vertically. Seems we need to handle locked vs. unlocked headers differently
+    	// due to changes made elsewhere
+    	if (_settings.lockHeaderOnVerticalScroll()) {
+    		vScrollToY(ge.getY() + yOffset, false);
+    	}
+    	else {
+    		int takeOff = getHeaderHeight();    	
+    		vScrollToY(ge.getY() - _vScrollPos + yOffset - takeOff, false);
+    	}
+
+    	// NOTE: Old code
+/*        
+		int takeOff = getHeaderHeight();
         if (_settings.lockHeaderOnVerticalScroll()) {
             takeOff = 0;
         }
-
+        
         vScrollToY(ge.getY() - _vScrollPos + yOffset - takeOff, false);
+        */        
+    	
         internalSetDate(ge.getActualStartDate(), side, true, false);
         redraw();
     }
@@ -1585,8 +1600,6 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         // we need to take the "previous" scroll location into account
         y += _vScrollPos;
 
-        // y -= mLastVerticalScrollPosition;
-
         final int max = _vScrollBar.getMaximum() - _vScrollBar.getThumb();
 
         if (y < 0) {
@@ -1600,9 +1613,6 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         _lastVScrollPos = _vScrollPos;
         _vScrollBar.setSelection(y);
 
-        // moveYBounds(y);
-
-        _recalcSecBounds = true;
         flagForceFullUpdate();
 
         if (redraw) {
@@ -7104,9 +7114,10 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                 redraw();
             }
 
-            // there's some math here to calculate how far between the drag
+            // There's some math here to calculate how far between the drag
             // start date and the current mouse x position date we are at.
-            // we move the event the amount of days of difference there is between those two. 
+            // -
+            // We move the event the amount of days of difference there is between those two. 
             // This way we get 2 wanted results:
             // 	1. The position where we grabbed the event will remain the same
             // 	   throughout the move
@@ -7127,8 +7138,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
                     diff = DateHelper.minutesBetween(mouseDateCal.getTime(), cal.getTime(), false, false);
 
-                    // there is some confusing math here that should get explaining.
-                    // When the user starts dragging, we pick the distance from the event start time to the mouse and set that as our
+                    // There is some confusing math here that should be explained.
+                    // - 
+                    // When the user starts dragging, we pick the distance from the event start time to the mouse pointer and set that as our
                     // offset. This offset will be used to move the event regardless of where the mouse was pushed down on the event and
                     // makes the event look likes it sticks to the cursor no matter how fast it's moved.
                     // For every subsequent move event (in the same move, meaning, the mouse hasn't been let go), we use that offset
@@ -7673,19 +7685,14 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
      */
     public Image getImage() {
         return getImage(_mainBounds);
-    }
-
-    public void foo() {
-        setDate(getEvent(true, true).getEarliestStartDate(), false, true);
-        //System.err.println(getEvent(true).getActualBounds());        
-    }
+    }   
 
     /**
      * Returns the image that is the entire chart, regardless of what is currently visible. If chart contains no events,
-     * getImage() is called from within.
+     * {@link #getImage()} is called from within.
      * <p>
      * Do note that if the chart is "huge", you may need to increase your heap size. If you're zoomed in that's also
-     * taken into account and you may need a massive heap to work with hours views as they are simply huge.
+     * taken into account and you may need a massive heap to work with hours views as they are simply huge in a pixel-size sense.
      * 
      * @return Image
      */
