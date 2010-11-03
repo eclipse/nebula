@@ -47,12 +47,12 @@
     <dependency>
       <groupId>org.eclipse</groupId>
       <artifactId>swt</artifactId>
-      <version>3.3.2.v3349d</version>
+      <version>3.3.2.v3346</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse</groupId>
       <artifactId>swt.win32</artifactId>
-      <version>3.3.3.v3349</version>
+      <version>3.3.3.v3346</version>
     </dependency>
 
   </dependencies>
