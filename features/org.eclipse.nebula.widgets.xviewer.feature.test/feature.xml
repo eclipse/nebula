@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.nebula.widgets.xviewer.feature.test"
       label="%featureName"
-      version="0.9.5.qualifier"
+      version="0.9.7.qualifier"
       provider-name="%providerName">
 
    <description url="http://www.eclipse.org/nebula/widgets/xviewer/xviewer.php">
@@ -16,6 +16,10 @@
    <license url="%licenseURL">
       %license
    </license>
+
+   <includes
+         id="org.eclipse.nebula.widgets.xviewer.feature.test.source"
+         version="0.0.0"/>
 
    <requires>
       <import feature="org.eclipse.nebula.widgets.xviewer.feature" version="0.9.5.qualifier" match="greaterOrEqual"/>
@@ -43,7 +47,4 @@
          fragment="true"
          unpack="false"/>
 
-   <includes
-         id="org.eclipse.nebula.widgets.xviewer.feature.test.source"
-         version="0.0.0"/>
 </feature>
