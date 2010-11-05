@@ -12,6 +12,7 @@
 package org.eclipse.nebula.widgets.xviewer.customize;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -151,7 +152,7 @@ public class XViewerCustomMenu {
       mm.add(tableProperties);
       mm.add(viewTableReport);
       if (xViewer.isColumnMultiEditEnabled()) {
-         mm.add(columnMultiEdit);
+         updateEditMenu(mm);
       }
       mm.add(viewSelectedCell);
       mm.add(copySelected);
@@ -166,6 +167,46 @@ public class XViewerCustomMenu {
          mm.add(removeNonSelected);
       }
       mm.add(new GroupMarker(XViewer.MENU_GROUP_POST));
+   }
+
+   public void updateEditMenu(MenuManager mm) {
+      final Collection<TreeItem> selectedTreeItems = Arrays.asList(xViewer.getTree().getSelection());
+      Set<TreeColumn> editableColumns = ColumnMultiEditAction.getEditableTreeColumns(xViewer, selectedTreeItems);
+
+      MenuManager editMenuManager =
+         createEditMenuManager(xViewer, "Column Multi-Edit", selectedTreeItems, editableColumns);
+      mm.add(editMenuManager);
+   }
+
+   public static MenuManager createEditMenuManager(final XViewer xViewer, String name, final Collection<TreeItem> selectedTreeItems, Set<TreeColumn> editableColumns) {
+      MenuManager editMenuManager = new MenuManager(name, "edit");
+      if (editableColumns.isEmpty()) {
+         editMenuManager.add(new Action("No Editable Columns") {
+
+            @Override
+            public void run() {
+               XViewerLib.popup("Error", "No fields in this table are Multi-Column-Editable");
+            }
+
+         });
+      } else {
+         for (final TreeColumn treeColumn : editableColumns) {
+            if (treeColumn.getData() instanceof XViewerColumn) {
+               XViewerColumn xCol = (XViewerColumn) treeColumn.getData();
+               if (xCol.isMultiColumnEditable()) {
+                  editMenuManager.add(new Action("Edit \"" + xCol.getName() + "\"") {
+
+                     @Override
+                     public void run() {
+                        xViewer.handleColumnMultiEdit(treeColumn, selectedTreeItems);
+                     }
+
+                  });
+               }
+            }
+         }
+      }
+      return editMenuManager;
    }
 
    public void createTableCustomizationMenuItem(Menu popupMenu) {

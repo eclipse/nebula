@@ -275,7 +275,12 @@ public class XViewer extends TreeViewer {
    }
 
    public void handleColumnMultiEdit(TreeColumn treeColumn, Collection<TreeItem> treeItems) {
-      // provided for subclass implementation
+      if (treeColumn.getData() instanceof XViewerColumn) {
+         if ((XViewerColumn) treeColumn.getData() instanceof IMultiColumnEditProvider) {
+            ((IMultiColumnEditProvider) (XViewerColumn) treeColumn.getData()).handleColumnMultiEdit(treeColumn,
+               treeItems);
+         }
+      }
    }
 
    public boolean isColumnMultiEditable(TreeColumn treeColumn, Collection<TreeItem> treeItems) {

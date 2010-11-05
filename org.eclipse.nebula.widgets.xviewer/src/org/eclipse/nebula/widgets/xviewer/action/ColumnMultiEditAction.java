@@ -36,15 +36,20 @@ public class ColumnMultiEditAction extends Action {
       this.xViewer = xViewer;
    }
 
-   @Override
-   public void run() {
+   public static Set<TreeColumn> getEditableTreeColumns(XViewer xViewer, Collection<TreeItem> selectedTreeItems) {
       Set<TreeColumn> editableColumns = new HashSet<TreeColumn>();
-      Collection<TreeItem> selectedTreeItems = Arrays.asList(xViewer.getTree().getSelection());
       for (TreeColumn treeCol : xViewer.getTree().getColumns()) {
          if (xViewer.isColumnMultiEditable(treeCol, selectedTreeItems)) {
             editableColumns.add(treeCol);
          }
       }
+      return editableColumns;
+   }
+
+   @Override
+   public void run() {
+      Collection<TreeItem> selectedTreeItems = Arrays.asList(xViewer.getTree().getSelection());
+      Set<TreeColumn> editableColumns = getEditableTreeColumns(xViewer, selectedTreeItems);
       if (editableColumns.isEmpty()) {
          XViewerLib.popup("ERROR", "No Columns Are Multi-Editable");
          return;
