@@ -194,7 +194,7 @@ public class XViewerCustomMenu {
             if (treeColumn.getData() instanceof XViewerColumn) {
                XViewerColumn xCol = (XViewerColumn) treeColumn.getData();
                if (xCol.isMultiColumnEditable()) {
-                  editMenuManager.add(new Action("Edit \"" + xCol.getName() + "\"") {
+                  editMenuManager.add(new Action("Edit " + xCol.getName()) {
 
                      @Override
                      public void run() {
