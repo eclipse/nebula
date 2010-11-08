@@ -172,6 +172,10 @@ public class XViewerColumn {
       return xViewer;
    }
 
+   public XViewer getXViewer() {
+      return xViewer;
+   }
+
    public boolean isSortForward() {
       return sortForward;
    }

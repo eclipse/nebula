@@ -26,20 +26,16 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-/**
- * @author Donald G. Dunne
- */
 public class DateSelectionDialog extends MessageDialog {
 
-   private Date selectedDate;
+   private Date initialDate, selectedDate;
 
    private final String dialogMessage;
-   private boolean noneSelected = false;
 
    public DateSelectionDialog(Shell parentShell, String dialogTitle, Image dialogTitleImage, String dialogMessage, int dialogImageType, String[] dialogButtonLabels, int defaultIndex, Date selectedDate) {
       super(parentShell, dialogTitle, dialogTitleImage, dialogMessage, dialogImageType, dialogButtonLabels,
          defaultIndex);
-      this.selectedDate = selectedDate;
+      this.initialDate = selectedDate;
       this.dialogMessage = dialogMessage;
    }
 
@@ -57,20 +53,20 @@ public class DateSelectionDialog extends MessageDialog {
       filterComp.setLayout(new GridLayout(1, false));
       filterComp.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-      (new Label(filterComp, SWT.None)).setText(dialogMessage);
+      new Label(filterComp, SWT.None).setText(dialogMessage);
 
-      final CalendarCombo dp = new CalendarCombo(filterComp, SWT.SINGLE | SWT.FLAT);
-      if (selectedDate != null) {
-         dp.setDate(selectedDate);
+      final CalendarCombo dp = new CalendarCombo(filterComp, SWT.BORDER | SWT.SINGLE | SWT.FLAT);
+      dp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+      if (initialDate != null) {
+         dp.setDate(initialDate);
       }
       dp.addCalendarListener(new CalendarListenerAdapter() {
          @Override
          public void dateChanged(Calendar date) {
             if (date == null) {
-               noneSelected = true;
+               selectedDate = null;
             } else {
-               noneSelected = false;
-               selectedDate = dp.getDate().getTime();
+               selectedDate = date.getTime();
             }
          }
       });
@@ -79,16 +75,25 @@ public class DateSelectionDialog extends MessageDialog {
       return filterComp;
    }
 
+   /**
+    * @return the selectedDate
+    */
    public Date getSelectedDate() {
       return selectedDate;
    }
 
-   public void setSelectedDate(Date selectedDate) {
-      this.selectedDate = selectedDate;
+   /**
+    * @param selectedDate the selectedDate to set
+    */
+   public void setSelectedDate(Date initialDate) {
+      this.initialDate = initialDate;
    }
 
+   /**
+    * @return the noneSelected
+    */
    public boolean isNoneSelected() {
-      return noneSelected;
+      return selectedDate == null;
    }
 
 }
