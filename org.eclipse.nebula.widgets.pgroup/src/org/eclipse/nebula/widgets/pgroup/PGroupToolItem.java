@@ -92,7 +92,7 @@ public class PGroupToolItem extends Item {
 			setSelection(!getSelection());
 			notifyListeners(SWT.Selection, new Event());
 		} else {
-			if (dropdownArea == null || !dropdownArea.contains(e.x, e.y)) {
+			if ( ((getStyle() & SWT.PUSH) == SWT.PUSH) && ( dropdownArea == null || !dropdownArea.contains(e.x, e.y))) {
 				notifyListeners(SWT.Selection, new Event());
 			} else {
 				Event event = new Event();
