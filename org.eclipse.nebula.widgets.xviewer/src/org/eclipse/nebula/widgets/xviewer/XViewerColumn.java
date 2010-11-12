@@ -47,6 +47,10 @@ public class XViewerColumn {
       Check
    };
 
+   protected XViewerColumn() {
+      super();
+   }
+
    public XViewerColumn(String id, String name, int width, int align, boolean show, SortDataType sortDataType, boolean multiColumnEditable, String description) {
       super();
       this.id = id;
@@ -65,7 +69,21 @@ public class XViewerColumn {
     * XViewerColumn need to extend this method to copy extra stored fields
     */
    public XViewerColumn copy() {
-      return new XViewerColumn(id, name, width, align, show, sortDataType, multiColumnEditable, description);
+      XViewerColumn newXCol = new XViewerColumn();
+      copy(this, newXCol);
+      return newXCol;
+   }
+
+   protected void copy(XViewerColumn fromXCol, XViewerColumn toXCol) {
+      toXCol.setAlign(fromXCol.align);
+      toXCol.setDescription(fromXCol.description);
+      toXCol.setMultiColumnEditable(fromXCol.multiColumnEditable);
+      toXCol.setName(fromXCol.name);
+      toXCol.setSortDataType(fromXCol.sortDataType);
+      toXCol.setToolTip(fromXCol.toolTip);
+      toXCol.setWidth(fromXCol.width);
+      toXCol.setShow(fromXCol.show);
+      toXCol.setId(fromXCol.id);
    }
 
    public XViewerColumn(XViewer xViewer, String xml) {
@@ -290,5 +308,9 @@ public class XViewerColumn {
 
    public boolean is(TreeColumn treeColumn) {
       return treeColumn.getText().equals(getName());
+   }
+
+   public void setId(String id) {
+      this.id = id;
    }
 }
