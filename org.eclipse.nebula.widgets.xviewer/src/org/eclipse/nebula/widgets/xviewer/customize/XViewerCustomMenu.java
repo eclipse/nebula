@@ -42,6 +42,7 @@ import org.eclipse.nebula.widgets.xviewer.XViewerLabelProvider;
 import org.eclipse.nebula.widgets.xviewer.action.ColumnMultiEditAction;
 import org.eclipse.nebula.widgets.xviewer.action.TableCustomizationAction;
 import org.eclipse.nebula.widgets.xviewer.action.ViewSelectedCellDataAction;
+import org.eclipse.nebula.widgets.xviewer.action.ViewSelectedCellDataAction.Option;
 import org.eclipse.nebula.widgets.xviewer.action.ViewTableReportAction;
 import org.eclipse.nebula.widgets.xviewer.util.internal.ArrayTreeContentProvider;
 import org.eclipse.nebula.widgets.xviewer.util.internal.CollectionsUtil;
@@ -86,7 +87,7 @@ public class XViewerCustomMenu {
 
    protected Action filterByColumn, clearAllSorting, clearAllFilters, tableProperties, viewTableReport,
       columnMultiEdit, removeSelected, removeNonSelected, copySelected, showColumn, addComputedColumn, sumColumn,
-      hideColumn, copySelectedCell, viewSelectedCell, uniqueValues;
+      hideColumn, copySelectedColumnCells, viewSelectedCell, copySelectedCell, uniqueValues;
    private boolean headerMouseClick = false;
 
    public XViewerCustomMenu() {
@@ -137,7 +138,7 @@ public class XViewerCustomMenu {
       mm.add(showColumn);
       mm.add(hideColumn);
       mm.add(addComputedColumn);
-      mm.add(copySelectedCell);
+      mm.add(copySelectedColumnCells);
       mm.add(new Separator());
       mm.add(filterByColumn);
       mm.add(clearAllFilters);
@@ -156,9 +157,10 @@ public class XViewerCustomMenu {
       if (xViewer.isColumnMultiEditEnabled()) {
          updateEditMenu(mm);
       }
+      mm.add(copySelectedCell);
       mm.add(viewSelectedCell);
       mm.add(copySelected);
-      mm.add(copySelectedCell);
+      mm.add(copySelectedColumnCells);
       mm.add(new Separator());
       mm.add(filterByColumn);
       mm.add(clearAllFilters);
@@ -295,7 +297,7 @@ public class XViewerCustomMenu {
       item.addSelectionListener(new SelectionAdapter() {
          @Override
          public void widgetSelected(SelectionEvent e) {
-            performCopyCell();
+            performCopyColumnCells();
          }
       });
    }
@@ -303,8 +305,16 @@ public class XViewerCustomMenu {
    public void createViewSelectedCellMenuItem(Menu popupMenu) {
       setupActions();
       final MenuItem item = new MenuItem(popupMenu, SWT.CASCADE);
-      item.setText("View Selected Cell Data");
+      item.setText("Copy Selected Cell Data");
       item.addSelectionListener(new SelectionAdapter() {
+         @Override
+         public void widgetSelected(SelectionEvent e) {
+            copySelectedCell.run();
+         }
+      });
+      final MenuItem item1 = new MenuItem(popupMenu, SWT.CASCADE);
+      item1.setText("View Selected Cell Data");
+      item1.addSelectionListener(new SelectionAdapter() {
          @Override
          public void widgetSelected(SelectionEvent e) {
             viewSelectedCell.run();
@@ -509,11 +519,12 @@ public class XViewerCustomMenu {
             performCopy();
          };
       };
-      viewSelectedCell = new ViewSelectedCellDataAction(xViewer);
-      copySelectedCell = new Action("Copy Selected Column - Ctrl-Shift-C") {
+      viewSelectedCell = new ViewSelectedCellDataAction(xViewer, null, Option.View);
+      copySelectedCell = new ViewSelectedCellDataAction(xViewer, clipboard, Option.Copy);
+      copySelectedColumnCells = new Action("Copy Selected Column - Ctrl-Shift-C") {
          @Override
          public void run() {
-            performCopyCell();
+            performCopyColumnCells();
          };
       };
       clearAllSorting = new Action("Clear All Sorting") {
@@ -548,7 +559,7 @@ public class XViewerCustomMenu {
       @Override
       public void keyReleased(KeyEvent e) {
          if (e.keyCode == 'c' && e.stateMask == (SWT.CONTROL | SWT.SHIFT)) {
-            performCopyCell();
+            performCopyColumnCells();
          } else if (e.keyCode == 'c' && e.stateMask == SWT.CONTROL) {
             performCopy();
          }
@@ -623,7 +634,7 @@ public class XViewerCustomMenu {
 
    }
 
-   private void performCopyCell() {
+   private void performCopyColumnCells() {
       Set<TreeColumn> visibleColumns = new HashSet<TreeColumn>();
       TreeItem[] items = xViewer.getTree().getSelection();
       if (items.length == 0) {
