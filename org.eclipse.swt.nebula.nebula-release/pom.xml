@@ -10,5 +10,7 @@
 		<module>../org.eclipse.nebula.widgets.gallery</module>
 		<module>../org.eclipse.nebula.widgets.gallery.tests</module>
 		<module>../org.eclipse.nebula.widgets.grid</module>
+		<module>../org.eclipse.nebula.widgets.pgroup</module>
+		<module>../org.eclipse.nebula.widgets.pshelf</module>
 	</modules>
 </project>
