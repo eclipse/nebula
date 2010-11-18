@@ -32,12 +32,13 @@
 				<version>${tycho-version}</version>
 				<configuration>
 					<useUIHarness>true</useUIHarness>
-					<argLine>-Xmx512m</argLine>
+					<argLine>-Xmx512m -Djava.awt.headless=true</argLine>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
-		<repositories>
+	
+	<repositories>
 
         <repository>
 
