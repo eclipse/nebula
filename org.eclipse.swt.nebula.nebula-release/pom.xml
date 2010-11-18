@@ -8,6 +8,6 @@
 	<description>	</description>
 	<modules>
 		<module>../org.eclipse.nebula.widgets.gallery</module>
-		<module>../org.eclipse.nebula.widgets.gallery.test</module>
+		<module>../org.eclipse.nebula.widgets.gallery.tests</module>
 	</modules>
 </project>
