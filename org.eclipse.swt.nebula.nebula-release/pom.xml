@@ -9,5 +9,6 @@
 	<modules>
 		<module>../org.eclipse.nebula.widgets.gallery</module>
 		<module>../org.eclipse.nebula.widgets.gallery.tests</module>
+		<module>../org.eclipse.nebula.widgets.grid</module>
 	</modules>
 </project>
