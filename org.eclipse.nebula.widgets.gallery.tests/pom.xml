@@ -13,24 +13,43 @@
 			<plugin>
 				<groupId>org.sonatype.tycho</groupId>
 				<artifactId>tycho-maven-plugin</artifactId>
-				<version>0.10.0</version>
+				<version>${tycho-version}</version>
 				<extensions>true</extensions>
 
 			</plugin>
 			<plugin>
 				<groupId>org.sonatype.tycho</groupId>
+				<artifactId>target-platform-configuration</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<resolver>p2</resolver>
+				</configuration>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.sonatype.tycho</groupId>
 				<artifactId>maven-osgi-test-plugin</artifactId>
-				<version>0.10.0</version>
+				<version>${tycho-version}</version>
 				<configuration>
 					<useUIHarness>true</useUIHarness>
-
-
 					<argLine>-XstartOnFirstThread -Xmx512m</argLine>
-					
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
+		<repositories>
+
+        <repository>
+
+          <id>galileo</id>
+
+          <layout>p2</layout>
+
+          <url>http://download.eclipse.org/releases/helios/</url>
+
+        </repository>
+
+      </repositories>
 	<pluginRepositories>
 		<pluginRepository>
 			<id>sonatype</id>
@@ -38,4 +57,7 @@
 			<url>https://repository.sonatype.org/content/repositories/snapshots</url>
 		</pluginRepository>
 	</pluginRepositories>
+	<properties>
+		<tycho-version>0.10.0</tycho-version>
+	</properties>
 </project>
