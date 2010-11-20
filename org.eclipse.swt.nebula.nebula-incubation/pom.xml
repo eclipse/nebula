@@ -7,7 +7,7 @@
 	<packaging>pom</packaging>
 	<description>	</description>
 	<modules>
-		<module>../org.eclipse.nebula.ctw</module>
 	
+		<module>../org.eclipse.nebula.cwt</module>
 	</modules>
 </project>
