@@ -47,6 +47,7 @@ public class RadioGroupTest extends TestCase {
 	}
 
 	private Display display;
+	private boolean createdDisplay = false;
 	private Composite composite;
 	private RadioGroup group;
 	private RadioItem item;
@@ -55,7 +56,12 @@ public class RadioGroupTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 
-		display = new Display();
+		display = Display.getCurrent();
+		if( display == null ){
+			display = new Display();
+			createdDisplay = true;
+		}
+		
 		composite = new Shell(display);
 		composite.setLayout(new FillLayout());
 
@@ -64,8 +70,11 @@ public class RadioGroupTest extends TestCase {
 
 	protected void tearDown() throws Exception {
 		composite.dispose();
-		display.dispose();
-
+	
+		if( createdDisplay){
+			display.dispose();
+		}
+		
 		super.tearDown();
 	}
 
