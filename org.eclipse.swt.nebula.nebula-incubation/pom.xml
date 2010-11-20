@@ -13,5 +13,6 @@
 		<module>../org.eclipse.nebula.effects.stw</module>
 		<module>../org.eclipse.nebula.widgets.formattedtext</module>
 		<module>../org.eclipse.nebula.widgets.radiogroup</module>
+		<module>../org.eclipse.nebula.widgets.radiogroup.tests</module>
 	</modules>
 </project>
