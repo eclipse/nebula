@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.eclipse.nebula.widgets.radiogroup.tests</groupId>
+	<artifactId>org.eclipse.nebula.widgets.radiogroup.tests</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>eclipse-test-plugin</packaging>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.sonatype.tycho</groupId>
+				<artifactId>tycho-maven-plugin</artifactId>
+				<version>0.10.0</version>
+				<extensions>true</extensions>
+
+			</plugin>
+			<plugin>
+				<groupId>org.sonatype.tycho</groupId>
+				<artifactId>maven-osgi-test-plugin</artifactId>
+				<version>0.10.0</version>
+				<configuration>
+					<useUIHarness>true</useUIHarness>
+
+
+					<argLine>-XstartOnFirstThread -Xmx512m</argLine>
+					
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>sonatype</id>
+			<name>sonatype</name>
+			<url>https://repository.sonatype.org/content/repositories/snapshots</url>
+		</pluginRepository>
+	</pluginRepositories>
+</project>
