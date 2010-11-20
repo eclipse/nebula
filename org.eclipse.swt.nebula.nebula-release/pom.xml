@@ -14,6 +14,6 @@
 		<module>../org.eclipse.nebula.widgets.pshelf</module>
 	
 		<module>../org.eclipse.nebula.widgets.compositetable</module>
-	
+	<module>../org.eclipse.nebula.widgets.oscilloscope</module>
 	</modules>
 </project>
