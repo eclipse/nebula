@@ -7,9 +7,8 @@
 	<packaging>pom</packaging>
 	<description>	</description>
 	<modules>
-	
+		<module>../org.eclipse.nebula.nebula-parent</module>
 		<module>../org.eclipse.nebula.cwt</module>
-		
 		<module>../org.eclipse.nebula.effects.stw</module>
 		<module>../org.eclipse.nebula.widgets.formattedtext</module>
 		<module>../org.eclipse.nebula.widgets.radiogroup</module>
