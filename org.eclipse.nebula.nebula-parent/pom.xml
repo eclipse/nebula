@@ -8,6 +8,7 @@
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<build>
+		<sourceDirectory>src</sourceDirectory>
 		<plugins>
 			<plugin>
 				<groupId>org.sonatype.tycho</groupId>
@@ -33,6 +34,11 @@
 					<useUIHarness>true</useUIHarness>
 					<argLine>-Xmx512m -Djava.awt.headless=true ${tests.vmargs}</argLine>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.7</version>
 			</plugin>
 		</plugins>
 	</build>
