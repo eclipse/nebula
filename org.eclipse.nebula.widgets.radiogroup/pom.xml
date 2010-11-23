@@ -2,50 +2,16 @@
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.eclipse.nebula.widgets.radiogroup</groupId>
+	
+	<parent>
+		<artifactId>nebula-parent</artifactId>
+		<groupId>org.eclipse.nebula</groupId>
+		<version>1.0.0-SNAPSHOT</version>
+		<relativePath>../org.eclipse.nebula.nebula-parent</relativePath>
+	</parent>
+	<groupId>org.eclipse.nebula</groupId>
 	<artifactId>org.eclipse.nebula.widgets.radiogroup</artifactId>
 	<version>0.1.0</version>
 	<packaging>eclipse-plugin</packaging>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.sonatype.tycho</groupId>
-				<artifactId>tycho-maven-plugin</artifactId>
-				<version>${tycho-version}</version>
-				<extensions>true</extensions>
-			</plugin>
-			<plugin>
-				<groupId>org.sonatype.tycho</groupId>
-				<artifactId>target-platform-configuration</artifactId>
-				<version>${tycho-version}</version>
-				<configuration>
-					<resolver>p2</resolver>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
-	<repositories>
-
-        <repository>
-
-          <id>galileo</id>
-
-          <layout>p2</layout>
-
-          <url>http://download.eclipse.org/releases/helios/</url>
-
-        </repository>
-
-      </repositories>
 	
-	<pluginRepositories>
-		<pluginRepository>
-			<id>sonatype</id>
-			<name>sonatype</name>
-			<url>https://repository.sonatype.org/content/repositories/snapshots</url>
-		</pluginRepository>
-	</pluginRepositories>
-	<properties>
-		<tycho-version>0.10.0</tycho-version>
-	</properties>
 </project>
