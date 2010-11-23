@@ -16,6 +16,6 @@
 		<module>../org.eclipse.nebula.widgets.datechooser</module>
 		<module>../org.eclipse.nebula.widgets.tablecombo</module>
 		<module>../org.eclipse.nebula.widgets.radiogroup</module>
-		<module>../org.eclipse.nebula.widgets.radiogroup.tests</module>
+		<!--  <module>../org.eclipse.nebula.widgets.radiogroup.tests</module>-->
 	</modules>
 </project>
