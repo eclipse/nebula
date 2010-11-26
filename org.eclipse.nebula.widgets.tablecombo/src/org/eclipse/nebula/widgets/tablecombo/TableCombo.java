@@ -10,6 +10,7 @@
  *  Enrico Schnepel <enrico.schnepel@randomice.net> - clear selectedImage bug 297209
  *  Enrico Schnepel <enrico.schnepel@randomice.net> - disable selectedImage bug 297327
  *  Wolfgang Schramm <wschramm@ch.ibm.com> - added vertical alignment of text for selected table item.
+ *  Enrico Schnepel <enrico.schnepel@randomice.net> - help event listener bug 326285
  *****************************************************************************/
 
 package org.eclipse.nebula.widgets.tablecombo;
@@ -573,7 +574,7 @@ public class TableCombo extends Composite {
 		if (background != null) table.setBackground (background);
 
 		// Add popup listeners
-		int [] popupEvents = {SWT.Close, SWT.Paint, SWT.Deactivate};
+		int [] popupEvents = {SWT.Close, SWT.Paint, SWT.Deactivate, SWT.Help};
 		for (int i=0; i<popupEvents.length; i++) {
 			popup.addListener (popupEvents [i], listener);
 		}
@@ -679,14 +680,20 @@ public class TableCombo extends Composite {
 			totalColumnWidth += tableColumns[colIndex].getWidth();
 		}
 		
+		// reset the last column's width to the preferred size if it has a explicit value.
+		int lastColIndex = totalColumns - 1;
+		if (wasColumnWidthSpecified(lastColIndex)) {
+			tableColumns[lastColIndex].setWidth(columnWidths[lastColIndex]);
+		}
+		
 	    // calculate the table size after making adjustments.
 		Point tableSize = table.computeSize (SWT.DEFAULT, itemHeight, false);
-
+		
 		// calculate the table width and table height.
 		double pct = tableWidthPercentage / 100d;
 	    int tableWidth = (int)(Math.max (tableComboSize.x - 2, tableSize.x) * pct);
 	    int tableHeight = tableSize.y;
-		
+	    
 	    // add the width of a horizontal scrollbar to the table height if we are
 	    // not viewing the full table.
 	    if (tableWidthPercentage < 100) {
@@ -696,8 +703,19 @@ public class TableCombo extends Composite {
 	    // set the bounds on the table.
 	    table.setBounds (1, 1, tableWidth, tableHeight);
 
-		// adjust any of the columns to make sure that there is no empty space after
-	    // the last column.
+	    // check to see if we can adjust the table width to by the amount the vertical
+	    // scrollbar would have taken since the table auto allocates the space whether
+	    // it is needed or not.
+	    if (!table.getVerticalBar().getVisible() &&
+	    	tableSize.x - table.getVerticalBar().getSize().x >= tableComboSize.x - 2) {
+		    	
+		    tableWidth = tableWidth - table.getVerticalBar().getSize().x;
+		    
+		    // reset the bounds on the table.
+		    table.setBounds (1, 1, tableWidth, tableHeight);
+	    }
+	    
+		// adjust the last column to make sure that there is no empty space.
 		autoAdjustColumnWidthsIfNeeded(tableColumns, tableWidth, totalColumnWidth);
 		
 		// set the table top index if there is a valid selection.
@@ -1441,6 +1459,21 @@ public class TableCombo extends Composite {
 				} else {
 					dropDown(false);
 				}
+	            break;
+	            
+	        case SWT.Help:
+	        	if (isDropped()){
+	        		dropDown(false);
+	        	}
+	        	Composite comp = TableCombo.this;
+	        	do {
+	        		if (comp.getListeners(event.type) != null &&
+        				comp.getListeners(event.type).length > 0) {
+	    	            comp.notifyListeners(event.type, event);
+	        			break;
+	        		}
+        			comp=comp.getParent();
+	        	} while (null != comp);
 	            break;
 	    }
 	}
@@ -2266,39 +2299,28 @@ public class TableCombo extends Composite {
 	}
 	
 	/**
-	 * adjusts the table column widths to fit inside of the table if the table
+	 * adjusts the last table column width to fit inside of the table if the table
 	 * column data does not fill out the table area.
 	 */
 	private void autoAdjustColumnWidthsIfNeeded(TableColumn[] tableColumns, 
 		int totalAvailWidth, int totalColumnWidthUsage) {
 		
+		int scrollBarSize = 0;
 		int totalColumns = (tableColumns == null ? 0 : tableColumns.length);
-		
-        int scrollBarSize = 0;
         
         // determine if the vertical scroll bar needs to be taken into account
-        if (table.getItemCount() > visibleItemCount) {
+        if (table.getVerticalBar().getVisible()) {
             scrollBarSize = (table.getVerticalBar() == null ? 0 :
                 table.getVerticalBar().getSize().x);
         }
 
         // is there any extra space that the table is not using?
 		if (totalAvailWidth > totalColumnWidthUsage + scrollBarSize) {
-			
 			int totalAmtToBeAllocated = (totalAvailWidth - totalColumnWidthUsage - scrollBarSize);
 			
-			int totalBufferAmount = (int)Math.floor(totalAmtToBeAllocated / totalColumns);
-			
-			// add the buffer amount to each column 
-			for (int colIndex=0; colIndex < totalColumns; colIndex++) {
-				tableColumns[colIndex].setWidth(tableColumns[colIndex].getWidth() + totalBufferAmount);
-				totalAmtToBeAllocated -= totalBufferAmount;
-			}
-			
-			// allocate any remainder to the last column.
+			// add unused space to the last column.
 			if (totalAmtToBeAllocated > 0) {
-				tableColumns[totalColumns - 1].setWidth(
-					tableColumns[totalColumns - 1].getWidth() + totalAmtToBeAllocated);	
+				tableColumns[totalColumns - 1].setWidth(tableColumns[totalColumns - 1].getWidth() + totalAmtToBeAllocated);
 			}
 		}
 	}
