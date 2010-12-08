@@ -14,9 +14,12 @@ public class MyDefaultCustomizations {
    public static CustomizeData getCompletionCustomization() {
       CustomizeData data = new CustomizeData();
       data.setName("Name Status");
+      // Each customization must have it's own guid
       data.setGuid(XViewerLib.generateGuidStr());
       data.setNameSpace(MyXViewerFactory.COLUMN_NAMESPACE);
 
+      // Columns must be copied cause they each store their own manipulation data and can be used
+      // across multiple customizations.
       XViewerColumn nameColumn = MyXViewerFactory.Name_Col.copy();
       nameColumn.setSortForward(true);
       nameColumn.setWidth(175);
