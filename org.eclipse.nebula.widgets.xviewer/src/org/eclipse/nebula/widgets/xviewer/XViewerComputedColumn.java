@@ -77,6 +77,7 @@ public abstract class XViewerComputedColumn extends XViewerValueColumn {
 
    public abstract XViewerComputedColumn createFromStored(XViewerColumn storedColumn);
 
+   @Override
    public XViewer getXViewer() {
       return xViewer;
    }

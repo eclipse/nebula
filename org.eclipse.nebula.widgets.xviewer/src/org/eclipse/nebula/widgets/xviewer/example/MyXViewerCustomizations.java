@@ -45,6 +45,8 @@ public class MyXViewerCustomizations extends XViewerCustomizations {
    @Override
    public List<CustomizeData> getSavedCustDatas() throws XViewerException {
       List<CustomizeData> custDatas = new ArrayList<CustomizeData>();
+      custDatas.add(MyDefaultCustomizations.getCompletionCustomization());
+      custDatas.add(MyDefaultCustomizations.getDescriptionCustomization());
       for (String filename : XViewerLib.readListFromDir(new File("C:/UserData/"), new MatchFilter("CustData_.*\\.xml"),
          true)) {
          custDatas.add(new CustomizeData(FileUtil.readFile("C:/UserData/" + filename)));

@@ -23,7 +23,7 @@ import org.eclipse.swt.SWT;
  */
 public class MyXViewerFactory extends XViewerFactory {
 
-   private final static String COLUMN_NAMESPACE = "xviewer.test";
+   public final static String COLUMN_NAMESPACE = "xviewer.test";
    public static XViewerColumn Run_Col = new XViewerColumn(COLUMN_NAMESPACE + ".run", "Run", 50, SWT.LEFT, true,
       SortDataType.String, false, null);
    public static XViewerColumn Name_Col = new XViewerColumn(COLUMN_NAMESPACE + ".name", "Name", 150, SWT.LEFT, true,

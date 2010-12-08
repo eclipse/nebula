@@ -47,6 +47,7 @@ import org.eclipse.nebula.widgets.xviewer.action.ViewTableReportAction;
 import org.eclipse.nebula.widgets.xviewer.util.internal.ArrayTreeContentProvider;
 import org.eclipse.nebula.widgets.xviewer.util.internal.CollectionsUtil;
 import org.eclipse.nebula.widgets.xviewer.util.internal.HtmlUtil;
+import org.eclipse.nebula.widgets.xviewer.util.internal.PatternFilter;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
 import org.eclipse.nebula.widgets.xviewer.util.internal.dialog.HtmlDialog;
@@ -72,7 +73,6 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.dialogs.ListDialog;
-import org.eclipse.ui.dialogs.PatternFilter;
 
 /**
  * Allow for the customization of the xViewer's right-click menus. Full menu can be used or selected Actions accessed

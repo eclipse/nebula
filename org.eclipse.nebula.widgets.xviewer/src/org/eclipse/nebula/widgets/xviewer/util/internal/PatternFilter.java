@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 Boeing.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Boeing - initial API and implementation
+ *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.nebula.widgets.xviewer.util.internal;
 
@@ -25,24 +25,21 @@ import org.eclipse.ui.internal.misc.StringMatcher;
 
 /**
  * A filter used in conjunction with <code>FilteredTree</code>. In order to determine if a node should be filtered it
- * uses the content provider of the tree to do pattern matching on its children. This causes the entire tree structure
- * to be realized.
+ * uses the content and label provider of the tree to do pattern matching on its children. This causes the entire tree
+ * structure to be realized. Note that the label provider must implement ILabelProvider.
  * 
  * @see org.eclipse.ui.dialogs.FilteredTree
  * @since 3.2
  */
-@SuppressWarnings("restriction")
 public class PatternFilter extends ViewerFilter {
    /*
     * Cache of filtered elements in the tree
     */
-   @SuppressWarnings({"rawtypes"})
    private final Map cache = new HashMap();
 
    /*
     * Maps parent elements to TRUE or FALSE
     */
-   @SuppressWarnings({"rawtypes"})
    private final Map foundAnyCache = new HashMap();
 
    private boolean useCache = false;
@@ -59,9 +56,13 @@ public class PatternFilter extends ViewerFilter {
 
    private boolean useEarlyReturnIfMatcherIsNull = true;
 
-   private final static Object[] EMPTY = new Object[0];
+   private static Object[] EMPTY = new Object[0];
 
-   @SuppressWarnings("unchecked")
+   /*
+    * (non-Javadoc)
+    * @see org.eclipse.jface.viewers.ViewerFilter#filter(org.eclipse.jface.viewers.Viewer, java.lang.Object,
+    * java.lang.Object[])
+    */
    @Override
    public final Object[] filter(Viewer viewer, Object parent, Object[] elements) {
       // we don't want to optimize if we've extended the filter ... this
@@ -92,10 +93,11 @@ public class PatternFilter extends ViewerFilter {
     * Returns true if any of the elements makes it through the filter. This method uses caching if enabled; the
     * computation is done in computeAnyVisible.
     * 
+    * @param viewer
+    * @param parent
     * @param elements the elements (must not be an empty array)
     * @return true if any of the elements makes it through the filter.
     */
-   @SuppressWarnings("unchecked")
    private boolean isAnyVisible(Viewer viewer, Object parent, Object[] elements) {
       if (matcher == null) {
          return true;
@@ -120,7 +122,9 @@ public class PatternFilter extends ViewerFilter {
    /**
     * Returns true if any of the elements makes it through the filter.
     * 
-    * @return
+    * @param viewer the viewer
+    * @param elements the elements to test
+    * @return <code>true</code> if any of the elements makes it through the filter
     */
    private boolean computeAnyVisible(Viewer viewer, Object[] elements) {
       boolean elementFound = false;
@@ -131,6 +135,11 @@ public class PatternFilter extends ViewerFilter {
       return elementFound;
    }
 
+   /*
+    * (non-Javadoc)
+    * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object,
+    * java.lang.Object)
+    */
    @Override
    public final boolean select(Viewer viewer, Object parentElement, Object element) {
       return isElementVisible(viewer, element);
@@ -147,6 +156,8 @@ public class PatternFilter extends ViewerFilter {
 
    /**
     * The pattern string for which this filter should select elements in the viewer.
+    * 
+    * @param patternString
     */
    public void setPattern(String patternString) {
       // these 2 strings allow the PatternFilter to be extended in
@@ -173,7 +184,7 @@ public class PatternFilter extends ViewerFilter {
    /**
     * Clears the caches used for optimizing this filter. Needs to be called whenever the tree content changes.
     */
-   /* package */void clearCaches() {
+   public void clearCaches() {
       cache.clear();
       foundAnyCache.clear();
    }
@@ -196,6 +207,7 @@ public class PatternFilter extends ViewerFilter {
     * are categorized, the category itself may not be a valid selection since it is used merely to organize the
     * elements.
     * 
+    * @param element
     * @return true if this element is eligible for automatic selection
     */
    public boolean isElementSelectable(Object element) {
@@ -241,7 +253,7 @@ public class PatternFilter extends ViewerFilter {
     * @param element the tree element to check
     * @return true if the given element's label matches the filter text
     */
-   protected boolean isLeafMatch(Viewer viewer, Object element) {
+   public boolean isLeafMatch(Viewer viewer, Object element) {
       String labelText = ((ILabelProvider) ((StructuredViewer) viewer).getLabelProvider()).getText(element);
 
       if (labelText == null) {
@@ -252,8 +264,10 @@ public class PatternFilter extends ViewerFilter {
 
    /**
     * Take the given filter text and break it down into words using a BreakIterator.
+    * 
+    * @param text
+    * @return an array of words
     */
-   @SuppressWarnings({"rawtypes", "unchecked"})
    private String[] getWords(String text) {
       List words = new ArrayList();
       // Break the text up into words, separating based on whitespace and
@@ -315,7 +329,7 @@ public class PatternFilter extends ViewerFilter {
     * 
     * @param useCache The useCache to set.
     */
-   void setUseCache(boolean useCache) {
+   public void setUseCache(boolean useCache) {
       this.useCache = useCache;
    }
 }

@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.nebula.widgets.xviewer.util.internal.PatternFilter;
 import org.eclipse.nebula.widgets.xviewer.util.internal.Result;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
 import org.eclipse.swt.SWT;
@@ -28,7 +29,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.dialogs.PatternFilter;
 
 public class XCheckFilteredTreeDialog extends MessageDialog {
 
