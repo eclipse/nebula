@@ -18,11 +18,11 @@ import java.util.logging.Level;
 import org.eclipse.nebula.widgets.xviewer.Activator;
 import org.eclipse.nebula.widgets.xviewer.customize.CustomizeData;
 import org.eclipse.nebula.widgets.xviewer.customize.XViewerCustomizations;
-import org.eclipse.nebula.widgets.xviewer.util.FileUtil;
-import org.eclipse.nebula.widgets.xviewer.util.MatchFilter;
+import org.eclipse.nebula.widgets.xviewer.example.util.FileUtil;
+import org.eclipse.nebula.widgets.xviewer.example.util.MatchFilter;
+import org.eclipse.nebula.widgets.xviewer.example.util.MyLib;
+import org.eclipse.nebula.widgets.xviewer.example.util.MyLog;
 import org.eclipse.nebula.widgets.xviewer.util.XViewerException;
-import org.eclipse.nebula.widgets.xviewer.util.XViewerLib;
-import org.eclipse.nebula.widgets.xviewer.util.XViewerLog;
 
 /**
  * Implementation for example XViewer implementation. Saves customizations as files at C:/UserData
@@ -47,8 +47,7 @@ public class MyXViewerCustomizations extends XViewerCustomizations {
       List<CustomizeData> custDatas = new ArrayList<CustomizeData>();
       custDatas.add(MyDefaultCustomizations.getCompletionCustomization());
       custDatas.add(MyDefaultCustomizations.getDescriptionCustomization());
-      for (String filename : XViewerLib.readListFromDir(new File("C:/UserData/"), new MatchFilter("CustData_.*\\.xml"),
-         true)) {
+      for (String filename : MyLib.readListFromDir(new File("C:/UserData/"), new MatchFilter("CustData_.*\\.xml"), true)) {
          custDatas.add(new CustomizeData(FileUtil.readFile("C:/UserData/" + filename)));
       }
       return custDatas;
@@ -88,7 +87,7 @@ public class MyXViewerCustomizations extends XViewerCustomizations {
 
    @Override
    public void saveCustomization(CustomizeData custData) throws Exception {
-      XViewerLib.writeStringToFile(custData.getXml(true), new File(getFilename(custData)));
+      MyLib.writeStringToFile(custData.getXml(true), new File(getFilename(custData)));
       Thread.sleep(2000);
    }
 
@@ -104,9 +103,9 @@ public class MyXViewerCustomizations extends XViewerCustomizations {
    public void setUserDefaultCustData(CustomizeData newCustData, boolean set) throws XViewerException {
       if (set) {
          try {
-            XViewerLib.writeStringToFile(newCustData.getGuid(), new File(getDefaultFilename()));
+            MyLib.writeStringToFile(newCustData.getGuid(), new File(getDefaultFilename()));
          } catch (IOException ex) {
-            XViewerLog.logAndPopup(Activator.class, Level.SEVERE, ex);
+            MyLog.logAndPopup(Activator.class, Level.SEVERE, ex);
          }
       } else {
          File file = new File(getDefaultFilename());

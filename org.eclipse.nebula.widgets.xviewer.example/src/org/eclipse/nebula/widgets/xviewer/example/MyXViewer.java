@@ -15,6 +15,8 @@ import java.util.Set;
 import org.eclipse.nebula.widgets.xviewer.XViewer;
 import org.eclipse.nebula.widgets.xviewer.example.model.ISomeTask;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.TreeColumn;
+import org.eclipse.swt.widgets.TreeItem;
 
 /**
  * Example extension of XViewer.
@@ -41,6 +43,17 @@ public class MyXViewer extends XViewer {
          runList.add(autoRunTask);
       } else {
          runList.remove(autoRunTask);
+      }
+   }
+
+   @Override
+   public boolean handleLeftClickInIconArea(TreeColumn treeColumn, TreeItem treeItem) {
+      if (treeColumn.getData().equals(MyXViewerFactory.Run_Col)) {
+         setRun((ISomeTask) treeItem.getData(), !isRun((ISomeTask) treeItem.getData()));
+         update(treeItem.getData(), null);
+         return true;
+      } else {
+         return super.handleLeftClickInIconArea(treeColumn, treeItem);
       }
    }
 
