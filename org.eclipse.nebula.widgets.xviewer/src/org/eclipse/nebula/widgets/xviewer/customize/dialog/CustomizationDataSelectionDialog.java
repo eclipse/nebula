@@ -20,7 +20,7 @@ import org.eclipse.nebula.widgets.xviewer.XViewer;
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.nebula.widgets.xviewer.customize.CustomizeData;
 import org.eclipse.nebula.widgets.xviewer.customize.CustomizeDataLabelProvider;
-import org.eclipse.nebula.widgets.xviewer.util.XViewerLib;
+import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;

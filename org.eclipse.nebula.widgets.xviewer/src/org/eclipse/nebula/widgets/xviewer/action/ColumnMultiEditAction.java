@@ -19,7 +19,7 @@ import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.nebula.widgets.xviewer.XViewer;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumnSorter;
-import org.eclipse.nebula.widgets.xviewer.util.XViewerLib;
+import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
 import org.eclipse.nebula.widgets.xviewer.util.internal.dialog.ListDialogSortable;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;

@@ -18,7 +18,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.eclipse.nebula.widgets.xviewer.Activator;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
-import org.eclipse.nebula.widgets.xviewer.util.XViewerLog;
+import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XmlUtil;
 
 /**

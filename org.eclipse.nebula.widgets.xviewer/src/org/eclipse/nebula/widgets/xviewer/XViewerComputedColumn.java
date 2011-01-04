@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.eclipse.nebula.widgets.xviewer.util.XViewerLog;
+import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
 
 /**
  * @author Donald G. Dunne

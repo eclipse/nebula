@@ -4,7 +4,7 @@ import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
-import org.eclipse.nebula.widgets.xviewer.util.XViewerLog;
+import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
 
 /**
  * @author Web Performance Inc, Copyright 2010

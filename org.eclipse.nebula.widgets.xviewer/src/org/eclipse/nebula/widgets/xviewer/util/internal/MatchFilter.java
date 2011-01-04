@@ -8,7 +8,7 @@
  * Contributors:
  *     Boeing - initial API and implementation
  *******************************************************************************/
-package org.eclipse.nebula.widgets.xviewer.util;
+package org.eclipse.nebula.widgets.xviewer.util.internal;
 
 import java.io.File;
 import java.io.FilenameFilter;
