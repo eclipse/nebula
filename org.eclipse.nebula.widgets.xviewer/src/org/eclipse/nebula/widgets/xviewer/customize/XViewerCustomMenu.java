@@ -39,17 +39,18 @@ import org.eclipse.nebula.widgets.xviewer.XViewerColumnLabelProvider;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumnSorter;
 import org.eclipse.nebula.widgets.xviewer.XViewerComputedColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewerLabelProvider;
+import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.nebula.widgets.xviewer.action.ColumnMultiEditAction;
 import org.eclipse.nebula.widgets.xviewer.action.TableCustomizationAction;
 import org.eclipse.nebula.widgets.xviewer.action.ViewSelectedCellDataAction;
 import org.eclipse.nebula.widgets.xviewer.action.ViewSelectedCellDataAction.Option;
 import org.eclipse.nebula.widgets.xviewer.action.ViewTableReportAction;
+import org.eclipse.nebula.widgets.xviewer.util.XViewerLib;
+import org.eclipse.nebula.widgets.xviewer.util.XViewerLog;
 import org.eclipse.nebula.widgets.xviewer.util.internal.ArrayTreeContentProvider;
 import org.eclipse.nebula.widgets.xviewer.util.internal.CollectionsUtil;
 import org.eclipse.nebula.widgets.xviewer.util.internal.HtmlUtil;
 import org.eclipse.nebula.widgets.xviewer.util.internal.PatternFilter;
-import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
-import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
 import org.eclipse.nebula.widgets.xviewer.util.internal.dialog.HtmlDialog;
 import org.eclipse.nebula.widgets.xviewer.util.internal.dialog.XCheckFilteredTreeDialog;
 import org.eclipse.swt.SWT;
@@ -108,7 +109,7 @@ public class XViewerCustomMenu {
             if (clipboard != null) {
                clipboard.dispose();
             }
-         };
+         }
       });
       xViewer.getMenuManager().addMenuListener(new IMenuListener() {
          @Override
@@ -226,7 +227,7 @@ public class XViewerCustomMenu {
    public void createViewTableReportMenuItem(Menu popupMenu) {
       setupActions();
       final MenuItem item = new MenuItem(popupMenu, SWT.CASCADE);
-      item.setText("View Table Report");
+      item.setText(XViewerText.get("menu.view_report"));
       item.addSelectionListener(new SelectionAdapter() {
          @Override
          public void widgetSelected(SelectionEvent e) {
@@ -243,7 +244,7 @@ public class XViewerCustomMenu {
 
    public void createFilterByColumnMenuItem(Menu popupMenu) {
       final MenuItem item = new MenuItem(popupMenu, SWT.CASCADE);
-      item.setText("Filter By Column");
+      item.setText(XViewerText.get("menu.filter_column"));
       item.addSelectionListener(new SelectionAdapter() {
          @Override
          public void widgetSelected(SelectionEvent e) {
@@ -254,7 +255,7 @@ public class XViewerCustomMenu {
 
    public void createClearAllFiltersMenuItem(Menu popupMenu) {
       final MenuItem item = new MenuItem(popupMenu, SWT.CASCADE);
-      item.setText("Clear All Filters");
+      item.setText(XViewerText.get("menu.clear_filters"));
       item.addSelectionListener(new SelectionAdapter() {
          @Override
          public void widgetSelected(SelectionEvent e) {
@@ -265,7 +266,7 @@ public class XViewerCustomMenu {
 
    public void createClearAllSortingMenuItem(Menu popupMenu) {
       final MenuItem item = new MenuItem(popupMenu, SWT.CASCADE);
-      item.setText("Clear All Sorting");
+      item.setText(XViewerText.get("menu.clear_sorts"));
       item.addSelectionListener(new SelectionAdapter() {
          @Override
          public void widgetSelected(SelectionEvent e) {
@@ -282,7 +283,7 @@ public class XViewerCustomMenu {
 
    public void createCopyRowsMenuItem(Menu popupMenu) {
       final MenuItem item = new MenuItem(popupMenu, SWT.CASCADE);
-      item.setText("Copy Selected Row(s)- Ctrl-C");
+      item.setText(XViewerText.get("menu.copy_row"));
       item.addSelectionListener(new SelectionAdapter() {
          @Override
          public void widgetSelected(SelectionEvent e) {
@@ -293,7 +294,7 @@ public class XViewerCustomMenu {
 
    public void createCopyCellsMenuItem(Menu popupMenu) {
       final MenuItem item = new MenuItem(popupMenu, SWT.CASCADE);
-      item.setText("Copy Selected Column - Ctrl-Shift-C");
+      item.setText(XViewerText.get("menu.copy_column"));
       item.addSelectionListener(new SelectionAdapter() {
          @Override
          public void widgetSelected(SelectionEvent e) {
@@ -305,7 +306,7 @@ public class XViewerCustomMenu {
    public void createViewSelectedCellMenuItem(Menu popupMenu) {
       setupActions();
       final MenuItem item = new MenuItem(popupMenu, SWT.CASCADE);
-      item.setText("Copy Selected Cell Data");
+      item.setText(XViewerText.get("menu.view_celldata"));
       item.addSelectionListener(new SelectionAdapter() {
          @Override
          public void widgetSelected(SelectionEvent e) {
@@ -328,7 +329,7 @@ public class XViewerCustomMenu {
       TreeColumn insertTreeCol = xViewer.getRightClickSelectedColumn();
       XViewerColumn insertXCol = insertTreeCol != null ? (XViewerColumn) insertTreeCol.getData() : null;
       XCheckFilteredTreeDialog dialog =
-         new XCheckFilteredTreeDialog("Show Column", "Select Columns to Show", patternFilter,
+         new XCheckFilteredTreeDialog(XViewerText.get("dialog.show_columns.title"), XViewerText.get("dialog.show_columns.prompt"), patternFilter,
             new ArrayTreeContentProvider(), new XViewerColumnLabelProvider(), new XViewerColumnSorter());
       dialog.setInput(xViewer.getCustomizeMgr().getCurrentHiddenTableColumns());
       if (dialog.open() == 0) {
@@ -369,12 +370,12 @@ public class XViewerCustomMenu {
       TreeColumn insertTreeCol = xViewer.getRightClickSelectedColumn();
       XViewerColumn insertXCol = (XViewerColumn) insertTreeCol.getData();
       XCheckFilteredTreeDialog dialog =
-         new XCheckFilteredTreeDialog("Add Computed Column", String.format("Column to compute against [%s]",
-            insertXCol.getName() + "(" + insertXCol.getId() + ")") + "\n\nSelect Columns to Add", patternFilter,
+         new XCheckFilteredTreeDialog("", XViewerText.get("dialog.add_column.prompt",
+            insertXCol.getName(), insertXCol.getId()), patternFilter,
             new ArrayTreeContentProvider(), new XViewerColumnLabelProvider(), new XViewerColumnSorter());
       Collection<XViewerComputedColumn> computedCols = xViewer.getComputedColumns(insertXCol);
       if (computedCols.isEmpty()) {
-         XViewerLib.popup("ERROR", "Selected column has no applicable computed columns");
+         XViewerLib.popup("ERROR", XViewerText.get("error.no_computed"));
          return;
       }
       dialog.setInput(computedCols);
@@ -411,7 +412,7 @@ public class XViewerCustomMenu {
          items = xViewer.getTree().getItems();
       }
       if (items.length == 0) {
-         XViewerLib.popup("ERROR", "No items to sum");
+         XViewerLib.popup("ERROR", XViewerText.get("error.no_items.sum"));
          return;
       }
       Set<String> values = new HashSet<String>();
@@ -423,7 +424,7 @@ public class XViewerCustomMenu {
          }
       }
       String html = HtmlUtil.simplePage(HtmlUtil.textToHtml(CollectionsUtil.toString("\n", values)));
-      new HtmlDialog("Unique Values", String.format("Unique Values for column [%s]", xCol.getName()), html).open();
+      new HtmlDialog(XViewerText.get("dialog.unique.title"), XViewerText.get("dialog.unique.prompt", xCol.getName()), html).open();
    }
 
    protected void handleSumColumn() {
@@ -438,7 +439,7 @@ public class XViewerCustomMenu {
          items = xViewer.getTree().getItems();
       }
       if (items.length == 0) {
-         XViewerLib.popup("ERROR", "No items to sum");
+         XViewerLib.popup("ERROR", XViewerText.get("error.no_items.sum"));
          return;
       }
       List<String> values = new ArrayList<String>();
@@ -471,79 +472,79 @@ public class XViewerCustomMenu {
    }
 
    protected void setupActions() {
-      showColumn = new Action("Show Column") {
+      showColumn = new Action(XViewerText.get("menu.show")) {
          @Override
          public void run() {
             handleShowColumn();
-         };
+         }
       };
-      addComputedColumn = new Action("Add Computed Column") {
+      addComputedColumn = new Action(XViewerText.get("menu.add")) {
          @Override
          public void run() {
             handleAddComputedColumn();
-         };
+         }
       };
-      sumColumn = new Action("Sum Selected for Column") {
+      sumColumn = new Action(XViewerText.get("menu.sum")) {
          @Override
          public void run() {
             handleSumColumn();
-         };
+         }
       };
-      uniqueValues = new Action("Unique Values") {
+      uniqueValues = new Action(XViewerText.get("menu.unique")) {
          @Override
          public void run() {
             handleUniqeValuesColumn();
-         };
+         }
       };
-      hideColumn = new Action("Hide Column") {
+      hideColumn = new Action(XViewerText.get("menu.hide")) {
          @Override
          public void run() {
             handleHideColumn();
-         };
+         }
       };
-      removeSelected = new Action("Remove Selected from View") {
+      removeSelected = new Action(XViewerText.get("menu.remove_selected")) {
          @Override
          public void run() {
             performRemoveSelectedRows();
-         };
+         }
       };
-      removeNonSelected = new Action("Remove Non-Selected from View") {
+      removeNonSelected = new Action(XViewerText.get("menu.remove_non_selected")) {
          @Override
          public void run() {
             performRemoveNonSelectedRows();
-         };
+         }
       };
-      copySelected = new Action("Copy Selected Row(s) - Ctrl-C") {
+      copySelected = new Action(XViewerText.get("menu.copy_row")) {
          @Override
          public void run() {
             performCopy();
-         };
+         }
       };
       viewSelectedCell = new ViewSelectedCellDataAction(xViewer, null, Option.View);
       copySelectedCell = new ViewSelectedCellDataAction(xViewer, clipboard, Option.Copy);
-      copySelectedColumnCells = new Action("Copy Selected Column - Ctrl-Shift-C") {
+      copySelectedColumnCells = new Action(XViewerText.get("menu.copy_column")) {
          @Override
          public void run() {
             performCopyColumnCells();
          };
       };
-      clearAllSorting = new Action("Clear All Sorting") {
+      clearAllSorting = new Action(XViewerText.get("menu.clear_sorts")) {
          @Override
          public void run() {
             xViewer.getCustomizeMgr().clearSorter();
-         };
+         }
       };
-      clearAllFilters = new Action("Clear All Filters") {
+      clearAllFilters = new Action(XViewerText.get("menu.clear_filters")) {
          @Override
          public void run() {
             xViewer.getCustomizeMgr().clearFilters();
-         };
+         }
       };
-      filterByColumn = new Action("Filter By Column") {
+      filterByColumn = new Action(XViewerText.get("menu.column_filter")) {
          @Override
          public void run() {
             performFilterByColumn();
-         };
+         }
       };
       tableProperties = new TableCustomizationAction(xViewer);
       viewTableReport = new ViewTableReportAction(xViewer);
@@ -570,7 +571,7 @@ public class XViewerCustomMenu {
       try {
          TreeItem[] items = xViewer.getTree().getSelection();
          if (items.length == 0) {
-            XViewerLib.popup("ERROR", "No items to copy");
+            XViewerLib.popup("ERROR", XViewerText.get("error.no_items"));
             return;
          }
          Set<Object> objs = new HashSet<Object>();
@@ -587,7 +588,7 @@ public class XViewerCustomMenu {
       try {
          TreeItem[] items = xViewer.getTree().getSelection();
          if (items.length == 0) {
-            XViewerLib.popup("ERROR", "No items to copy");
+            XViewerLib.popup("ERROR", XViewerText.get("error.no_items"));
             return;
          }
          Set<Object> keepObjects = new HashSet<Object>();
@@ -608,7 +609,7 @@ public class XViewerCustomMenu {
          }
       }
       if (visibleColumns.isEmpty()) {
-         XViewerLib.popup("ERROR", "No Columns Are Available");
+         XViewerLib.popup("ERROR", XViewerText.get("error.no_columns"));
          return;
       }
       ListDialog ld = new ListDialog(xViewer.getTree().getShell()) {
@@ -619,11 +620,11 @@ public class XViewerCustomMenu {
             return control;
          }
       };
-      ld.setMessage("Select Column to Filter");
+      ld.setMessage(XViewerText.get("dialog.column_filter.title"));
       ld.setInput(visibleColumns);
       ld.setLabelProvider(treeColumnLabelProvider);
       ld.setContentProvider(new ArrayContentProvider());
-      ld.setTitle("Select Column to Filter");
+      ld.setTitle(XViewerText.get("dialog.column_filter.title"));
       int result = ld.open();
       if (result != 0) {
          return;
@@ -638,7 +639,7 @@ public class XViewerCustomMenu {
       Set<TreeColumn> visibleColumns = new HashSet<TreeColumn>();
       TreeItem[] items = xViewer.getTree().getSelection();
       if (items.length == 0) {
-         XViewerLib.popup("ERROR", "Select items to copy");
+         XViewerLib.popup("ERROR", XViewerText.get("error.no_selection"));
          return;
       }
       ArrayList<String> textTransferData = new ArrayList<String>();
@@ -649,7 +650,7 @@ public class XViewerCustomMenu {
          }
       }
       if (visibleColumns.isEmpty()) {
-         XViewerLib.popup("ERROR", "No Columns Are Available");
+         XViewerLib.popup("ERROR", XViewerText.get("error.no_columns"));
          return;
       }
       ListDialog ld = new ListDialog(xViewer.getTree().getShell()) {
@@ -660,11 +661,11 @@ public class XViewerCustomMenu {
             return control;
          }
       };
-      ld.setMessage("Select Column to Copy");
+      ld.setMessage(XViewerText.get("dialog.copy_column.title"));
       ld.setInput(visibleColumns);
       ld.setLabelProvider(treeColumnLabelProvider);
       ld.setContentProvider(new ArrayContentProvider());
-      ld.setTitle("Select Column to Copy");
+      ld.setTitle(XViewerText.get("dialog.copy_column.title"));
       int result = ld.open();
       if (result != 0) {
          return;
@@ -690,7 +691,7 @@ public class XViewerCustomMenu {
    private void performCopy() {
       TreeItem[] items = xViewer.getTree().getSelection();
       if (items.length == 0) {
-         XViewerLib.popup("ERROR", "No items to copy");
+         XViewerLib.popup("ERROR", XViewerText.get("error.no_items"));
          return;
       }
       ArrayList<String> textTransferData = new ArrayList<String>();
@@ -725,7 +726,7 @@ public class XViewerCustomMenu {
          if (element instanceof TreeColumn) {
             return ((TreeColumn) element).getText();
          }
-         return "Unknown element type";
+         return XViewerText.get("error.unknown_element");
       }
    };
 

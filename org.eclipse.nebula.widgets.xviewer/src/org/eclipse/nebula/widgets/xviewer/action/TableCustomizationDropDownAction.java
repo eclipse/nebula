@@ -7,7 +7,7 @@ import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.nebula.widgets.xviewer.XViewer;
 import org.eclipse.nebula.widgets.xviewer.customize.CustomizeData;
-import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
+import org.eclipse.nebula.widgets.xviewer.util.XViewerLog;
 import org.eclipse.nebula.widgets.xviewer.util.internal.images.XViewerImageCache;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;

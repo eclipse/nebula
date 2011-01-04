@@ -13,6 +13,7 @@ package org.eclipse.nebula.widgets.xviewer.customize;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.nebula.widgets.xviewer.XViewer;
+import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.nebula.widgets.xviewer.util.internal.dialog.DialogWithEntry;
 import org.eclipse.swt.widgets.Display;
 
@@ -39,9 +40,9 @@ public class ColumnFilterDataUI {
 
    public void promptSetFilter(String colId) {
       DialogWithEntry ed =
-         new DialogWithEntry(Display.getCurrent().getActiveShell(), "Filter Column", null,
-            "Enter filter string for " + colId + ":\n\nNote: !string negates the match", MessageDialog.QUESTION,
-            new String[] {"OK", "Clear", "Clear All", "Cancel"}, 0);
+         new DialogWithEntry(Display.getCurrent().getActiveShell(), XViewerText.get("ColumnFilterDataUI.title"), null,
+            XViewerText.get("ColumnFilterDataUI.prompt", colId), MessageDialog.QUESTION,
+            new String[] {XViewerText.get("button.ok"), XViewerText.get("button.clear"), XViewerText.get("button.clear_all"), XViewerText.get("button.cancel")}, 0);
       String str = xViewer.getCustomizeMgr().getColumnFilterData().getFilterText(colId);
       if (str != null && !str.equals("")) {
          ed.setEntry(str);

@@ -16,9 +16,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
+import org.eclipse.nebula.widgets.xviewer.util.FileUtil;
 import org.eclipse.nebula.widgets.xviewer.util.XViewerException;
-import org.eclipse.nebula.widgets.xviewer.util.internal.FileUtil;
-import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
+import org.eclipse.nebula.widgets.xviewer.util.XViewerLog;
 
 /**
  * @author Andrew M. Finkbeiner

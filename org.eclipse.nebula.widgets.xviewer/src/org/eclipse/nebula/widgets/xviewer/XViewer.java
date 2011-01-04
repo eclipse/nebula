@@ -11,6 +11,7 @@
 
 package org.eclipse.nebula.widgets.xviewer;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -30,8 +31,8 @@ import org.eclipse.nebula.widgets.xviewer.customize.ColumnFilterDataUI;
 import org.eclipse.nebula.widgets.xviewer.customize.CustomizeManager;
 import org.eclipse.nebula.widgets.xviewer.customize.FilterDataUI;
 import org.eclipse.nebula.widgets.xviewer.customize.SearchDataUI;
-import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
-import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
+import org.eclipse.nebula.widgets.xviewer.util.XViewerLib;
+import org.eclipse.nebula.widgets.xviewer.util.XViewerLog;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerMenuDetectListener;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerMouseListener;
 import org.eclipse.swt.SWT;
@@ -461,9 +462,9 @@ public class XViewer extends TreeViewer {
       }
       boolean allItemsFiltered = loadedNum > 0 && visibleNum == 0;
       if (allItemsFiltered) {
-         sb.append("ALL ITEMS FILTERED - ");
+         sb.append(XViewerText.get("status.all_filtered"));
       }
-      sb.append(" " + loadedNum + " Loaded - " + visibleNum + " Shown - " + ((IStructuredSelection) getSelection()).size() + " Selected - ");
+      sb.append(MessageFormat.format(XViewerText.get("status"), loadedNum, visibleNum, ((IStructuredSelection) getSelection()).size()));
       customizeMgr.appendToStatusLabel(sb);
       if (filterDataUI != null) {
          filterDataUI.appendToStatusLabel(sb);

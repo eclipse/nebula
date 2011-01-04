@@ -14,7 +14,8 @@ package org.eclipse.nebula.widgets.xviewer.customize;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.eclipse.nebula.widgets.xviewer.XViewer;
-import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
+import org.eclipse.nebula.widgets.xviewer.XViewerText;
+import org.eclipse.nebula.widgets.xviewer.util.XViewerLib;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -51,8 +52,8 @@ public class SearchDataUI {
       //	  ExpandBar bar = new ExpandBar(comp, SWT.V_SCROLL);
 
       Label label = new Label(bar, SWT.NONE);
-      label.setText("Search:");
-      label.setToolTipText("Type string and press enter to filter.\nClear field to un-filter.");
+      label.setText(XViewerText.get("SearchDataUI.prompt"));
+      label.setToolTipText(XViewerText.get("SearchDataUI.prompt.tooltip"));
       GridData gd = new GridData(SWT.RIGHT, SWT.NONE, false, false);
       label.setLayoutData(gd);
 
@@ -98,8 +99,8 @@ public class SearchDataUI {
       searchLabel.setImage(XViewerLib.getImage("clear.gif"));
 
       regularExpression = new Button(bar, SWT.CHECK);
-      regularExpression.setText("RE");
-      regularExpression.setToolTipText("Enable Regular Expression Search");
+      regularExpression.setText(XViewerText.get("regex.prompt"));
+      regularExpression.setToolTipText(XViewerText.get("regex.prompt.tooltip"));
       regularExpression.setLayoutData(new GridData(SWT.RIGHT, SWT.NONE, false, false));
       searchLabel.addListener(SWT.MouseUp, new Listener() {
          @Override
@@ -123,7 +124,7 @@ public class SearchDataUI {
 
    public void appendToStatusLabel(StringBuffer sb) {
       if (searchText != null && !searchText.getText().equals("")) {
-         sb.append("[Text Search]");
+         sb.append(XViewerText.get("SearchDataUI.status"));
       }
    }
 

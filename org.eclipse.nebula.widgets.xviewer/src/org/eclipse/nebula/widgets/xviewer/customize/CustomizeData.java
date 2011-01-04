@@ -16,10 +16,10 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.eclipse.nebula.widgets.xviewer.Activator;
+import org.eclipse.nebula.widgets.xviewer.util.XViewerLib;
+import org.eclipse.nebula.widgets.xviewer.util.XViewerLog;
 import org.eclipse.nebula.widgets.xviewer.util.internal.OverlayUtil;
 import org.eclipse.nebula.widgets.xviewer.util.internal.OverlayUtil.Location;
-import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
-import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
 import org.eclipse.swt.graphics.Image;
 
 /**

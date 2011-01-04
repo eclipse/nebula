@@ -8,7 +8,7 @@
  * Contributors:
  *     Boeing - initial API and implementation
  *******************************************************************************/
-package org.eclipse.nebula.widgets.xviewer.util.internal;
+package org.eclipse.nebula.widgets.xviewer.util;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

@@ -23,12 +23,13 @@ import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewerComputedColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewerLabelProvider;
 import org.eclipse.nebula.widgets.xviewer.XViewerSorter;
+import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.nebula.widgets.xviewer.XViewerTextFilter;
 import org.eclipse.nebula.widgets.xviewer.customize.dialog.XViewerCustomizeDialog;
 import org.eclipse.nebula.widgets.xviewer.util.XViewerException;
+import org.eclipse.nebula.widgets.xviewer.util.XViewerLib;
+import org.eclipse.nebula.widgets.xviewer.util.XViewerLog;
 import org.eclipse.nebula.widgets.xviewer.util.internal.Strings;
-import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
-import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.TreeColumn;
@@ -44,8 +45,9 @@ public class CustomizeManager {
    private final XViewer xViewer;
    private XViewerTextFilter xViewerTextFilter;
    private CustomizeData currentCustData;
-   public final static String CURRENT_LABEL = "-- Current Table View --";
-   public final static String TABLE_DEFAULT_LABEL = "-- Table Default --";
+
+   public final static String CURRENT_LABEL = XViewerText.get("label.current");
+   public final static String TABLE_DEFAULT_LABEL = XViewerText.get("label.default");
    // Added to keep filter, sorter from working till finished loading
    public boolean loading = true;
    public final static List<String> REMOVED_COLUMNS_TO_IGNORE = Arrays.asList("Metrics from Tasks");
@@ -276,7 +278,7 @@ public class CustomizeManager {
       !currentCustData.getName().equals(TABLE_DEFAULT_LABEL) &&
       //
       currentCustData.getName() != null) {
-         sb.append("[Custom: " + currentCustData.getName() + "]");
+         sb.append(XViewerText.get("label.custom", currentCustData.getName()));
       }
    }
 
@@ -389,12 +391,12 @@ public class CustomizeManager {
          if (cols.isEmpty()) {
             return;
          }
-         sb.append("Sort: ");
+         sb.append(XViewerText.get("label.status.sort"));
          for (XViewerColumn col : getSortXCols()) {
             if (col != null) {
-               sb.append("[");
+               sb.append(XViewerText.get("label.status.sort.start"));
                sb.append(col.getName());
-               sb.append(col.isSortForward() ? " (FWD)] " : " (REV)] ");
+               sb.append(col.isSortForward() ? XViewerText.get("label.status.sort.fwd") : XViewerText.get("label.status.sort.rev"));
             }
          }
       }
@@ -441,7 +443,7 @@ public class CustomizeManager {
       if (newName.equals("")) {
          XViewerColumn defaultXCol = xViewerFactory.getDefaultXViewerColumn(xCol.getId());
          if (defaultXCol == null) {
-            XViewerLib.popup("ERROR", "Column not defined.  Can't retrieve default name.");
+            XViewerLib.popup("ERROR", XViewerText.get("error.column_undefined"));
             return;
          }
          xCol.setName(xCol.getName());

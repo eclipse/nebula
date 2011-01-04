@@ -12,7 +12,8 @@
 package org.eclipse.nebula.widgets.xviewer.customize;
 
 import org.eclipse.nebula.widgets.xviewer.XViewer;
-import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
+import org.eclipse.nebula.widgets.xviewer.XViewerText;
+import org.eclipse.nebula.widgets.xviewer.util.XViewerLib;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -41,8 +42,8 @@ public class FilterDataUI {
 
    public void createWidgets(Composite comp) {
       Label label = new Label(comp, SWT.NONE);
-      label.setText("Filter:");
-      label.setToolTipText("Type string and press enter to filter.\nClear field to un-filter.");
+      label.setText(XViewerText.get("FilterDataUI.prompt"));
+      label.setToolTipText(XViewerText.get("FilterDataUI.prompt.tooltip"));
       GridData gd = new GridData(SWT.RIGHT, SWT.NONE, false, false);
       label.setLayoutData(gd);
 
@@ -107,7 +108,7 @@ public class FilterDataUI {
 
    public void appendToStatusLabel(StringBuffer sb) {
       if (filterText != null && !filterText.getText().equals("")) {
-         sb.append("[Text Filter]");
+         sb.append(XViewerText.get("status.text_filter"));
       }
    }
 

@@ -8,7 +8,7 @@
  * Contributors:
  *     Boeing - initial API and implementation
  *******************************************************************************/
-package org.eclipse.nebula.widgets.xviewer.util.internal;
+package org.eclipse.nebula.widgets.xviewer.util;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -24,7 +24,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import org.eclipse.nebula.widgets.xviewer.Activator;
-import org.eclipse.nebula.widgets.xviewer.util.XViewerException;
 
 /**
  * @author Donald G. Dunne

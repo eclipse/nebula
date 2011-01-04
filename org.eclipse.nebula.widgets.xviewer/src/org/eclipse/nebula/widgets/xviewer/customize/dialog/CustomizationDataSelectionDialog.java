@@ -17,9 +17,10 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.nebula.widgets.xviewer.XViewer;
+import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.nebula.widgets.xviewer.customize.CustomizeData;
 import org.eclipse.nebula.widgets.xviewer.customize.CustomizeDataLabelProvider;
-import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
+import org.eclipse.nebula.widgets.xviewer.util.XViewerLib;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -47,7 +48,6 @@ public class CustomizationDataSelectionDialog extends ListDialog {
    private String enteredName;
    private boolean saveGlobal = false;
    private Button saveGlobalCheck;
-   private Label saveGlobalCheckLabel;
    private CustomizeData selectedCustData = null;
    private final XViewer xViewer;
 
@@ -62,14 +62,14 @@ public class CustomizationDataSelectionDialog extends ListDialog {
       setLabelProvider(new CustomizeDataLabelProvider(xViewer));
       setInput(custDatas);
       setShellStyle(getShellStyle() | SWT.RESIZE);
-      setTitle("Save Customization");
-      setMessage("Enter name or select customization.");
+      setTitle(XViewerText.get("CustomizationDataSelectionDialog.title"));
+      setMessage(XViewerText.get("CustomizationDataSelectionDialog.message"));
    }
 
    @Override
    protected void okPressed() {
       if (custText.getText().equals("") && getSelectedCustData() == null) {
-         XViewerLib.popup("ERROR", "Must select customization or enter new customization name.");
+         XViewerLib.popup("ERROR", XViewerText.get("error.no_cust_selection"));
          return;
       }
       super.okPressed();
@@ -85,7 +85,7 @@ public class CustomizationDataSelectionDialog extends ListDialog {
       comp.setLayout(new GridLayout(2, true));
 
       Label custTextLabel = new Label(comp, SWT.None);
-      custTextLabel.setText("Enter New Customization Name");
+      custTextLabel.setText(XViewerText.get("CustomizationDataSelectionDialog.prompt"));
 
       custText = new Text(comp, SWT.BORDER);
       custText.setFocus();
@@ -102,8 +102,8 @@ public class CustomizationDataSelectionDialog extends ListDialog {
          comp.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
          comp.setLayout(new GridLayout(2, false));
 
-         saveGlobalCheckLabel = new Label(comp, SWT.None);
-         saveGlobalCheckLabel.setText("Save Global");
+         Label saveGlobalCheckLabel = new Label(comp, SWT.None);
+         saveGlobalCheckLabel.setText(XViewerText.get("checkbox.global"));
 
          saveGlobalCheck = new Button(comp, SWT.CHECK);
          saveGlobalCheck.addSelectionListener(new SelectionAdapter() {
