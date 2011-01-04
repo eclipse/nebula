@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Examples
+Bundle-SymbolicName: org.eclipse.nebula.widgets.xviewer.example
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.eclipse.nebula.widgets.xviewer.example.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.nebula.widgets.xviewer;bundle-version="0.9.7"
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
