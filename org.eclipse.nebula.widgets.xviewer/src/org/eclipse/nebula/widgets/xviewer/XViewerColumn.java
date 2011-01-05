@@ -74,6 +74,9 @@ public class XViewerColumn {
       return newXCol;
    }
 
+   /**
+    * This method should be extended if new column needs to store (and copy) it's own data.
+    */
    protected void copy(XViewerColumn fromXCol, XViewerColumn toXCol) {
       toXCol.setAlign(fromXCol.align);
       toXCol.setDescription(fromXCol.description);
@@ -260,8 +263,8 @@ public class XViewerColumn {
       this.multiColumnEditable = multiColumnEditable;
    }
 
-   public void setWidth(int width) {
-      this.width = width;
+   public void setWidth(int newWidth) {
+      this.width = newWidth;
    }
 
    public boolean isSummable() {

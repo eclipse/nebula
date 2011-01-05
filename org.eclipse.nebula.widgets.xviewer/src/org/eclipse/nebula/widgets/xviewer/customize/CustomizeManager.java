@@ -103,7 +103,9 @@ public class CustomizeManager {
 
          // Only handle columns that the factory supports and only resolve shown columns (rest will be loaded later)
          if (resolvedCol != null && resolvedCol.getWidth() > 0) {
-            resolvedCol.setWidth(storedCol.getWidth());
+            if (storedCol.getWidth() > 0) {
+               resolvedCol.setWidth(storedCol.getWidth());
+            }
             resolvedCol.setName(storedCol.getName());
             resolvedCol.setShow(storedCol.isShow());
             resolvedCol.setSortForward(storedCol.isSortForward());
