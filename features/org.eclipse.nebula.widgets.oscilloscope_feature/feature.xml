@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.nebula.widgets.oscilloscope_feature"
       label="Nebula Oscilloscope Widget"
-      version="1.0.0.qualifier"
+      version="1.0.1.qualifier"
       provider-name="Eclipse Nebula">
 
    <description url="http://www.eclipse.org/nebula/widgets/gallery/gallery.php">
@@ -10,12 +10,15 @@
    </description>
 
    <copyright>
-      Copyright (c) 2006-2007 Nicolas Richeton.
-All rights reserved. This program and the accompanying materials
-are made available under the terms of the Eclipse Public License
-v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/epl-v10.html
+      Copyright (c) 2011 Weltevree Beheer BV, Remain Software &amp; Industrial-TSI
+ 
+All rights reserved. 
+This program and the accompanying materials are made available under the terms of
+the Eclipse Public License v1.0 which accompanies this distribution, and is
+available at http://www.eclipse.org/legal/epl-v10.html
+
+Contributors:
+   Wim S. Jongman - initial API and implementation
    </copyright>
 
    <license url="http://www.eclipse.org/legal/epl-v10.html">
