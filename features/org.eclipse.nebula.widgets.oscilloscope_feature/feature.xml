@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.nebula.widgets.oscilloscope_feature"
       label="Nebula Oscilloscope Widget"
-      version="1.0.1.qualifier"
+      version="1.0.0.qualifier"
       provider-name="Eclipse Nebula">
 
    <description url="http://www.eclipse.org/nebula/widgets/gallery/gallery.php">
