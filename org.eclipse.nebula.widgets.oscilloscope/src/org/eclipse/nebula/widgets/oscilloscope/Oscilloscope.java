@@ -83,7 +83,7 @@ public class Oscilloscope extends Canvas {
 	 * 
 	 * @see Oscilloscope#tail
 	 */
-	private int[] originalTailInput;
+	// private int[] originalTailInput;
 	private int originalTailSize;
 	private boolean steady;
 	private int tailFade = 25;
@@ -130,6 +130,10 @@ public class Oscilloscope extends Canvas {
 
 	private ArrayList<OscilloscopeStackAdapter> stackListeners;
 	private int progression = 1;
+
+	private int heightBeforeResize;
+
+	private int widthBeforeResize;
 
 	/**
 	 * The stack will not overflow if you push too many values into it but it
@@ -278,11 +282,18 @@ public class Oscilloscope extends Canvas {
 	}
 
 	protected void controlResized(ControlEvent e) {
+
+		heightBeforeResize = height;
+		widthBeforeResize = width;
 		setSizeInternal(getSize().x, getSize().y);
+
 		if (getBounds().width > 0) {
 			setSteady(steady, originalSteadyPosition);
 			setTailSizeInternal();
 		}
+
+		heightBeforeResize = height;
+		widthBeforeResize = width;
 	}
 
 	/**
@@ -438,9 +449,8 @@ public class Oscilloscope extends Canvas {
 			line1 = new int[tailSize * 4];
 			line2 = new int[tailSize * 4];
 
-			tail[tailSize] = transform(stack.peek(0));
-			originalTailInput[tailSize] = stack.pop(0);
-			
+			tail[tailSize] = transform(width, height, stack.pop(0));
+
 			for (int i = 0; i < tailSize; i++) {
 
 				int posx = cursor - tailSize + i;
@@ -464,9 +474,7 @@ public class Oscilloscope extends Canvas {
 					line2[pos + 2] = posx;
 					line2[pos + 3] = (getBase() + tail[tailIndex]);
 				}
-				tail[tailIndex - 1] = tail[tailIndex];
-				originalTailInput[tailIndex - 1] = originalTailInput[tailIndex];
-				tailIndex++;
+				tail[tailIndex - 1] = tail[tailIndex++];
 			}
 		}
 
@@ -478,22 +486,22 @@ public class Oscilloscope extends Canvas {
 		return new Object[] { l1, l2 };
 	}
 
-//	private void printTails() {
-//		if (originalTailInput != null) {
-//			System.out.print("x " + tail[0]);
-//			for (int i = 1; i < tail.length; i++) {
-//				System.out.print(", " + tail[i]);
-//			}
-//			System.out.println();
-//			System.out.print("o " + originalTailInput[0]);
-//			for (int i = 1; i < tail.length; i++) {
-//				System.out.print(", " + originalTailInput[i]);
-//			}
-//			System.out.println();
-//			System.out.println("----");
-//			System.out.println();
-//		}
-//	}
+	// private void printTails() {
+	// if (originalTailInput != null) {
+	// System.out.print("x " + tail[0]);
+	// for (int i = 1; i < tail.length; i++) {
+	// System.out.print(", " + tail[i]);
+	// }
+	// System.out.println();
+	// System.out.print("o " + originalTailInput[0]);
+	// for (int i = 1; i < tail.length; i++) {
+	// System.out.print(", " + originalTailInput[i]);
+	// }
+	// System.out.println();
+	// System.out.println("----");
+	// System.out.println();
+	// }
+	// }
 
 	/**
 	 * Transforms the value before it is drawn.
@@ -502,9 +510,21 @@ public class Oscilloscope extends Canvas {
 	 *            the next value to be processed
 	 * @return the transformed value
 	 */
-	private int transform(int value) {
+	private int transform(int vWidth, int vHeight, int value) {
 		if (isPercentage())
-			return ((getBounds().height / 2) * value / 100);
+			return (((vHeight / 2) * value) / 100);
+		return value;
+	}
+
+	private int unTransform(int vWidth, int vHeight, int value) {
+		if (isPercentage()) {
+			if (value > 0)
+				value++;
+			if (value < 0)
+				value--;
+
+			return (value == 0 ? value : (value * 100 / (vHeight / 2)));
+		}
 		return value;
 	}
 
@@ -700,7 +720,6 @@ public class Oscilloscope extends Canvas {
 
 	private void setTailSizeInternal() {
 
-
 		if (originalTailSize == TAILSIZE_DEFAULT) {
 			// tail = new int[(width / 4) * 3];
 			tailSize = (width / 4) * 3;
@@ -722,23 +741,30 @@ public class Oscilloscope extends Canvas {
 
 		// Transform the old tail. This is we want to see sort of the same form
 		// after resize.
-		if (originalTailInput == null) {
+		int[] oldTail = tail;
+		if (oldTail == null) {
 			tail = new int[tailSize + 1];
-			originalTailInput = new int[tailSize + 1];
 		} else {
 			tail = new int[tailSize + 1];
-			if (tail.length >= originalTailInput.length) {
-				for (int i = 0; i < originalTailInput.length; i++) {
-					tail[i] = transform(originalTailInput[i]);
+			if (tail.length >= oldTail.length) {
+				for (int i = 0; i < oldTail.length; i++) {
+
+					tail[i] = transform(
+							width,
+							height,
+							unTransform(widthBeforeResize, heightBeforeResize,
+									oldTail[i]));
 				}
 			} else {
 				for (int i = 0; i < tail.length; i++) {
-					tail[i] = transform(originalTailInput[i]);
+					tail[i] = transform(
+							width,
+							height,
+							unTransform(widthBeforeResize, heightBeforeResize,
+									oldTail[i]));
 				}
 			}
-			originalTailInput = Arrays.copyOf(originalTailInput, tail.length);
 		}
-
 	}
 
 	public Point computeSize(int wHint, int hHint, boolean changed) {
