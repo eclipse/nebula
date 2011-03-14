@@ -12,7 +12,6 @@
 package org.eclipse.nebula.widgets.oscilloscope;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
@@ -135,6 +134,8 @@ public class Oscilloscope extends Canvas {
 
 	private int widthBeforeResize;
 
+	protected boolean paintBlock;
+
 	/**
 	 * The stack will not overflow if you push too many values into it but it
 	 * will rotate and overwrite the older values. Think of the stack as a
@@ -146,6 +147,7 @@ public class Oscilloscope extends Canvas {
 		private int top;
 		private int bottom;
 		private final int capacity;
+		private int storedValues;
 
 		/**
 		 * Creates a stack with the indicated capacity.
@@ -153,6 +155,8 @@ public class Oscilloscope extends Canvas {
 		 * @param capacity
 		 */
 		public IntegerFiFoCircularStack(int capacity) {
+			if (capacity <= 1)
+				throw new RuntimeException("Stack capacity must be > 1");
 			this.capacity = capacity;
 			stack = new int[capacity];
 			top = 0;
@@ -161,7 +165,7 @@ public class Oscilloscope extends Canvas {
 
 		/**
 		 * Creates stack with the indicated capacity and copies the old stack
-		 * into the new stack.
+		 * into the new stack and the old stack will be empty after this action.
 		 * 
 		 * @param capacity
 		 * @param oldStack
@@ -192,9 +196,19 @@ public class Oscilloscope extends Canvas {
 		 * @param value
 		 */
 		public void push(int value) {
-			if (top == capacity - 1)
+			if (storedValues == capacity) {
+				top = bottom;
+				bottom++;
+				if (bottom == capacity) {
+					bottom = 0;
+				}
+			} else
+				storedValues++;
+
+			if (top == capacity)
 				top = 0;
-			stack[top++] = value * -1;
+
+			stack[top++] = value;
 		}
 
 		/**
@@ -205,11 +219,27 @@ public class Oscilloscope extends Canvas {
 		 * @return int
 		 */
 		public int pop(int valueIfEmpty) {
-			if (bottom == top)
-				return bottom = top = valueIfEmpty;
-			if (bottom == capacity - 1)
+			if (isEmpty())
+				return valueIfEmpty;
+
+			storedValues--;
+			int result = stack[bottom++];
+
+			if (bottom == capacity)
 				bottom = 0;
-			return stack[bottom++];
+
+			return result;
+		}
+
+		/**
+		 * Returns the oldest value from the stack and negates the value.
+		 * Returns the supplied entry if the stack is empty.
+		 * 
+		 * @param valueIfEmpty
+		 * @return int
+		 */
+		public int popNegate(int valueIfEmpty) {
+			return pop(valueIfEmpty) * -1;
 		}
 
 		/**
@@ -220,10 +250,6 @@ public class Oscilloscope extends Canvas {
 		 * @return int
 		 */
 		public int peek(int valueIfEmpty) {
-			if (bottom == top)
-				return valueIfEmpty;
-			if (bottom == capacity - 1)
-				return stack[0];
 			return stack[bottom];
 		}
 
@@ -232,7 +258,27 @@ public class Oscilloscope extends Canvas {
 		 * @return boolean
 		 */
 		public boolean isEmpty() {
-			return bottom == top;
+			return storedValues == 0;
+		}
+
+		/**
+		 * 
+		 * @return boolean
+		 */
+		public boolean isFull() {
+			return storedValues == capacity;
+		}
+
+		/**
+		 * 
+		 * @return boolean
+		 */
+		public int getLoad() {
+			return storedValues;
+		}
+
+		public int getCapacity() {
+			return capacity;
 		}
 
 	}
@@ -260,13 +306,17 @@ public class Oscilloscope extends Canvas {
 
 		addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
-				Oscilloscope.this.paintControl(e);
+				if (!paintBlock)
+					Oscilloscope.this.paintControl(e);
+				paintBlock = false;
 			}
 		});
 
 		addControlListener(new ControlListener() {
 			public void controlResized(ControlEvent e) {
+				paintBlock = true;
 				Oscilloscope.this.controlResized(e);
+
 			}
 
 			public void controlMoved(ControlEvent e) {
@@ -318,10 +368,11 @@ public class Oscilloscope extends Canvas {
 		// calculate the base of the line
 		calculateBase();
 
-		if (stack == null)
-			stack = new IntegerFiFoCircularStack(width);
-		else
-			stack = new IntegerFiFoCircularStack(width, stack);
+		if (width > 1)
+			if (stack == null)
+				stack = new IntegerFiFoCircularStack(width);
+			else
+				stack = new IntegerFiFoCircularStack(width, stack);
 	}
 
 	/**
@@ -367,7 +418,7 @@ public class Oscilloscope extends Canvas {
 	protected void paintControl(PaintEvent e) {
 
 		if (tailSize <= 0) {
-			stack.pop(0);
+			stack.popNegate(0);
 			return;
 		}
 
@@ -412,8 +463,8 @@ public class Oscilloscope extends Canvas {
 		}
 
 		// Connects the head with the tail
-		if (originalTailSize == TAILSIZE_MAX && l1.length > 0 && l2.length > 0
-				&& !isFade() && isConnect()) {
+		if (isConnect() && !isFade() && originalTailSize == TAILSIZE_MAX
+				&& l1.length > 0 && l2.length > 0) {
 			gc.drawLine(l2[l2.length - 2], l2[l2.length - 1], l1[0], l1[1]);
 		}
 
@@ -449,7 +500,7 @@ public class Oscilloscope extends Canvas {
 			line1 = new int[tailSize * 4];
 			line2 = new int[tailSize * 4];
 
-			tail[tailSize] = transform(width, height, stack.pop(0));
+			tail[tailSize] = transform(width, height, stack.popNegate(0));
 
 			for (int i = 0; i < tailSize; i++) {
 
@@ -518,11 +569,11 @@ public class Oscilloscope extends Canvas {
 
 	private int unTransform(int vWidth, int vHeight, int value) {
 		if (isPercentage()) {
-			if (value > 0)
+			if (value / 2 != value) {
 				value++;
-			if (value < 0)
-				value--;
-
+				if (value <= 0)
+					value = value - 2;
+			}
 			return (value == 0 ? value : (value * 100 / (vHeight / 2)));
 		}
 		return value;
@@ -749,22 +800,26 @@ public class Oscilloscope extends Canvas {
 			if (tail.length >= oldTail.length) {
 				for (int i = 0; i < oldTail.length; i++) {
 
-					tail[i] = transform(
+					tail[tail.length - 1 - i] = transform(
 							width,
 							height,
 							unTransform(widthBeforeResize, heightBeforeResize,
-									oldTail[i]));
+									oldTail[oldTail.length - 1 - i]));
+
 				}
 			} else {
 				for (int i = 0; i < tail.length; i++) {
-					tail[i] = transform(
+					tail[tail.length - 1 - i] = transform(
 							width,
 							height,
 							unTransform(widthBeforeResize, heightBeforeResize,
-									oldTail[i]));
+									oldTail[oldTail.length - 1 - i]));
 				}
 			}
 		}
+
+		// System.out.println(Arrays.toString(tail));
+		// System.out.println(Arrays.toString(oldTail));
 	}
 
 	public Point computeSize(int wHint, int hHint, boolean changed) {
