@@ -11,7 +11,7 @@
 
 package org.eclipse.nebula.widgets.ganttchart;
 
-interface ILanguageManager {
+public interface ILanguageManager {
 
 	/**
 	 * The text drawn for the zoom level box.

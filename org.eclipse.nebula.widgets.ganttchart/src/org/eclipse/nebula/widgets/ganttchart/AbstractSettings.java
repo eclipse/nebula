@@ -18,7 +18,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 
-abstract class AbstractSettings implements ISettings {
+public abstract class AbstractSettings implements ISettings {
 
 	public String getDateFormat() {
 		return "MM/dd/yyyy";
@@ -498,5 +498,8 @@ abstract class AbstractSettings implements ISettings {
     public boolean allowArrowKeysToScrollChart() {
     	return false;
     }
-    
+
+    public int getNumberOfDaysToAppendForEndOfDay() {
+    	return 1;
+    }
 }

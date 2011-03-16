@@ -17,7 +17,7 @@ import java.util.List;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.GC;
 
-interface IGanttEventListener {
+public interface IGanttEventListener {
 
 	/**
 	 * Fires when one or more events were moved.

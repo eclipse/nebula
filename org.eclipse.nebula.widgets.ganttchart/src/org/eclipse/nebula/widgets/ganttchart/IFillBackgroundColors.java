@@ -13,7 +13,7 @@ package org.eclipse.nebula.widgets.ganttchart;
 
 import org.eclipse.swt.graphics.Color;
 
-interface IFillBackgroundColors {
+public interface IFillBackgroundColors {
 	
 	/**
 	 * The top background gradient color used for drawing the Saturday column.

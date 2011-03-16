@@ -1036,4 +1036,12 @@ public interface ISettings {
      * @return true to allow arrow keys to move the chart. Default is false.
      */
     public boolean allowArrowKeysToScrollChart();
+    
+    /**
+     * Normally a day is calculated as day_starts->day_ends, which means that to make an event that starts and ends on the same day count as "anything", +1 is
+     * added by default to make the event actually show up on the chart. Should you for some reason need to override this, change this number to 0 or whatever you may need. 
+     * 
+     * @return Number of days to count for a start and end date that is the same date. Default is 1.
+     */
+    public int getNumberOfDaysToAppendForEndOfDay();
 }

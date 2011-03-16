@@ -318,6 +318,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
     private boolean                       _drawToMinute;
 
+    private int 						  _daysToAppendForEndOfDay;
+    
     static {
         final String osProperty = System.getProperty("os.name");
         if (osProperty != null) {
@@ -391,6 +393,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         _moveAreaInsets = _settings.getMoveAreaNegativeSensitivity();
         _eventSpacer = _settings.getEventSpacer();
         _eventHeight = _settings.getEventHeight();
+        _daysToAppendForEndOfDay = _settings.getNumberOfDaysToAppendForEndOfDay();
 
         _drawHorizontalLines = _settings.drawHorizontalLines();
         _drawVerticalLines = _settings.drawVerticalLines();
@@ -5319,9 +5322,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     // gets the x position for where the event bar should end
     private int getXLengthForEvent(final GanttEvent event) {
         if (_currentView == ISettings.VIEW_DAY) { return getXLengthForEventHours(event); }
-
-        // +1 as it's the end date and we include the last day
-        return (event.getDaysBetweenStartAndEnd() + 1) * getDayWidth();
+                
+        // +1 as it's the end date and we include the last day (by default anyway, users may override this)
+        return (event.getDaysBetweenStartAndEnd() + _daysToAppendForEndOfDay) * getDayWidth();
     }
 
     /**
