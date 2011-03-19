@@ -45,6 +45,10 @@ import org.eclipse.swt.widgets.Display;
  * You can also be called back by the widget if it runs out of values by setting
  * a listener in the
  * {@link Oscilloscope#addStackListener(OscilloscopeStackAdapter)} method.
+ * <p/>
+ * If you want to speed up the scope, try overriding the
+ * {@link #getProgression()} method. This will draw the scope this number of
+ * times before actually painting.
  * 
  * @author Wim Jongman
  * 
@@ -379,7 +383,9 @@ public abstract class OscilloscopeDispatcher {
 	 * will have progressed 5 pixels. If you want to avoid gaps in your graph,
 	 * you need to input 5 values every time you reach
 	 * {@link #hookSetValues(int)}. If the {@link #getPulse()} is 3, you need to
-	 * input 15 values for a gapless graph.
+	 * input 15 values for a gapless graph. Alternatively, you can implement a
+	 * stack listener in the scope to let it call you in case it runs out of
+	 * values.
 	 * 
 	 * @return 1. Override and increment for more speed. Must be higher then
 	 *         zero.
@@ -455,6 +461,7 @@ public abstract class OscilloscopeDispatcher {
 		getOscilloscope().setBackgroundImage(getBackgroundImage());
 		getOscilloscope().setProgression(getProgression());
 		getOscilloscope().setBaseOffset(getBaseOffset());
+		getOscilloscope().setProgression(getProgression());
 
 	}
 

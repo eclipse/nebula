@@ -130,10 +130,6 @@ public class Oscilloscope extends Canvas {
 	private ArrayList<OscilloscopeStackAdapter> stackListeners;
 	private int progression = 1;
 
-	private int heightBeforeResize;
-
-	private int widthBeforeResize;
-
 	protected boolean paintBlock;
 
 	/**
@@ -250,7 +246,9 @@ public class Oscilloscope extends Canvas {
 		 * @return int
 		 */
 		public int peek(int valueIfEmpty) {
-			return stack[bottom];
+			if (storedValues > 0)
+				return stack[bottom];
+			return valueIfEmpty;
 		}
 
 		/**
@@ -280,7 +278,6 @@ public class Oscilloscope extends Canvas {
 		public int getCapacity() {
 			return capacity;
 		}
-
 	}
 
 	/**
@@ -332,18 +329,12 @@ public class Oscilloscope extends Canvas {
 	}
 
 	protected void controlResized(ControlEvent e) {
-
-		heightBeforeResize = height;
-		widthBeforeResize = width;
 		setSizeInternal(getSize().x, getSize().y);
 
 		if (getBounds().width > 0) {
 			setSteady(steady, originalSteadyPosition);
 			setTailSizeInternal();
 		}
-
-		heightBeforeResize = height;
-		widthBeforeResize = width;
 	}
 
 	/**
@@ -567,18 +558,6 @@ public class Oscilloscope extends Canvas {
 		return value;
 	}
 
-	private int unTransform(int vWidth, int vHeight, int value) {
-		if (isPercentage()) {
-			if (value / 2 != value) {
-				value++;
-				if (value <= 0)
-					value = value - 2;
-			}
-			return (value == 0 ? value : (value * 100 / (vHeight / 2)));
-		}
-		return value;
-	}
-
 	/**
 	 * @return the base of the line
 	 */
@@ -799,21 +778,11 @@ public class Oscilloscope extends Canvas {
 			tail = new int[tailSize + 1];
 			if (tail.length >= oldTail.length) {
 				for (int i = 0; i < oldTail.length; i++) {
-
-					tail[tail.length - 1 - i] = transform(
-							width,
-							height,
-							unTransform(widthBeforeResize, heightBeforeResize,
-									oldTail[oldTail.length - 1 - i]));
-
+					tail[tail.length - 1 - i] = oldTail[oldTail.length - 1 - i];
 				}
 			} else {
 				for (int i = 0; i < tail.length; i++) {
-					tail[tail.length - 1 - i] = transform(
-							width,
-							height,
-							unTransform(widthBeforeResize, heightBeforeResize,
-									oldTail[oldTail.length - 1 - i]));
+					tail[tail.length - 1 - i] = oldTail[oldTail.length - 1 - i];
 				}
 			}
 		}
