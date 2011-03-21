@@ -502,4 +502,8 @@ public abstract class AbstractSettings implements ISettings {
     public int getNumberOfDaysToAppendForEndOfDay() {
     	return 1;
     }
+    
+    public boolean scrollChartVerticallyOnMouseWheel() {
+    	return true;
+    }
 }

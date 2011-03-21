@@ -970,7 +970,9 @@ public interface ISettings {
      * the chart. This is forced to true on *NIX machines (not Mac).
      * 
      * @return true to force the mousewheel to scroll the chart. Default is false.
-     */
+     * @deprecated By default mousewheel now scrolls chart vertically on all platforms. To turn off, flag scrollChartVerticallyOnMouseWheel()
+     * @see #scrollChartVerticallyOnMouseWheel() 
+     */    
     public boolean forceMouseWheelVerticalScroll();
 
     /**
@@ -1044,4 +1046,11 @@ public interface ISettings {
      * @return Number of days to count for a start and end date that is the same date. Default is 1.
      */
     public int getNumberOfDaysToAppendForEndOfDay();
+    
+    /**
+     * Whether the chart should scroll vertically when the mouse wheel is used. If you notice excessive scrolling on SWT versions earlier than 3.5, you may want to turn this off
+     * 
+     * @return true to scroll chart vertically. Default is true.
+     */
+    public boolean scrollChartVerticallyOnMouseWheel();
 }

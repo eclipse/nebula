@@ -482,11 +482,10 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                         zoomOut(true, new Point(event.x, event.y));
                     }
                 } else {
-                    // Linux doesn't honor scrollwheel vs. scrollbar in the same way that OS X / Windows does
-                    // so we actually need to force it manually. I have no idea why, but it works fine this way.
-                    if (_osType == Constants.OS_LINUX || _settings.forceMouseWheelVerticalScroll()) {
-                        vScroll(event);
-                    }
+                	// note to self: on SWT 3.5+ it seems we just force it, older versions may need to turn this off
+                	if (_settings.scrollChartVerticallyOnMouseWheel()) {                	
+                		vScroll(event);
+                	}
                 }
             }
         };
