@@ -5794,10 +5794,12 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
             int index = 0;
 
-            // event was moved nowhere vertically, same place
-            if (ge.getY() == ge.getPreVerticalDragBounds().y) {
-                continue;
-            }
+			// event was moved nowhere vertically, same place
+			if (ge.getPreVerticalDragBounds() != null) {
+				if (ge.getY() == ge.getPreVerticalDragBounds().y) {
+					continue;
+				}
+			}
 
             if (hasGanttSections()) {
                 final GanttSection fromSection = ge.getGanttSection();

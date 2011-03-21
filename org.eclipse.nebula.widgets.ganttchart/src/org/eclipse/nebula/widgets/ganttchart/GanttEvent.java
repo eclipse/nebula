@@ -1893,6 +1893,9 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem, C
     }
 
     boolean wasVerticallyMovedUp() {
+    	if (_preVerticalDragBounds == null) {
+    		return false;
+    	}
         return (_y < _preVerticalDragBounds.y);
     }
 
