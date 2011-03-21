@@ -7040,15 +7040,15 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
      * Handles the actual moving of an event.
      */
     private void handleMove(MouseEvent me, GanttEvent event, int type, boolean showToolTip) {
-        if (event.isLocked()) { return; }
+        if (event == null) { return; }
+
+    	if (event.isLocked()) { return; }
 
         if (!_settings.enableDragAndDrop() && type == Constants.TYPE_MOVE) { return; }
 
         if (!_settings.enableResizing() && (type == Constants.TYPE_RESIZE_LEFT || type == Constants.TYPE_RESIZE_RIGHT)) { return; }
 
         if (!_mouseIsDown) { return; }
-
-        if (event == null) { return; }
 
         if (type == Constants.TYPE_MOVE && !event.isMoveable()) { return; }
 
