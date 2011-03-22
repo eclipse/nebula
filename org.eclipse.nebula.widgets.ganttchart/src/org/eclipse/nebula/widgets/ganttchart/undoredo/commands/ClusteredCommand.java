@@ -35,6 +35,10 @@ public class ClusteredCommand extends AbstractUndoRedoCommand {
     }
     
     public void addCommand(final IUndoRedoCommand command) {
+    	if (command == null) {
+    		return;
+    	}
+    	
         _commands.add(command);
     }
     
