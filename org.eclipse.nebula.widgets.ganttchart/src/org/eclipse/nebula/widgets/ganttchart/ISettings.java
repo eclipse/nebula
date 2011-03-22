@@ -68,7 +68,9 @@ public interface ISettings {
     public static final int ZOOM_YEAR_NORMAL               = 11;
     public static final int ZOOM_YEAR_SMALL                = 12;
     public static final int ZOOM_YEAR_VERY_SMALL           = 13;
-    public static final int MAX_ZOOM_LEVEL                 = 13;
+    public static final int ZOOM_YEAR_SMALLER              = 14;
+    public static final int ZOOM_YEAR_SMALLEST             = 15;
+    public static final int MAX_ZOOM_LEVEL                 = 15;
 
     /**
      * The date format to use when displaying dates in string format.

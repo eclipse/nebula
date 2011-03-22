@@ -244,8 +244,6 @@ class HorizontalScrollbarHandler implements Listener {
 				return;
 			}
 
-			_scrollBar.setVisible(true);
-
 			// always add on a day as text might be cut on half a day
 			rangeBonus += dayWidth;
 
@@ -262,10 +260,11 @@ class HorizontalScrollbarHandler implements Listener {
 				pixelRange += 1;
 			}
 
+			_scrollBar.setVisible(true);
+
 			//System.err.println("RANGE: " + Math.ceil(pixelRange));// + " (debug1: " + debug1 + ", debug2: " + debug2 + "). Bonus: " + rangeBonus);
 
 			_scrollBar.setMaximum((int) Math.ceil(pixelRange));
-			_scrollBar.setVisible(true);
 
 //			System.err.println("extra left: " + extraLeft + " extra right: " + extraRight + " range: " + pixelRange + " " + dayWidth);
 

@@ -1788,6 +1788,9 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem, C
         if (_ganttSection != null) {
             _preMoveGanttSectionEventLocationIndex = _ganttSection.getEvents().indexOf(this);
         }
+        else {
+        	_preMoveGanttSectionEventLocationIndex = _parentComposite.getEvents().indexOf(this);
+        }
 
         _moving = true;
     }
@@ -1803,6 +1806,9 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem, C
                 int indexNow = 0;
                 if (_ganttSection != null) {
                     indexNow = _ganttSection.getEvents().indexOf(this);
+                }
+                else {
+                	indexNow = _parentComposite.getEvents().indexOf(this);
                 }
 
                 GanttSection gs = null;
@@ -1915,7 +1921,7 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem, C
             newSection.addGanttEvent(index, this);
         }
     }
-
+    
     public String toString() {
         return _name;
     }
