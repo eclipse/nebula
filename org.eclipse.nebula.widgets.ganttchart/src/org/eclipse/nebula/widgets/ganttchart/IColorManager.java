@@ -13,6 +13,12 @@ package org.eclipse.nebula.widgets.ganttchart;
 
 import org.eclipse.swt.graphics.Color;
 
+/**
+ * Interface holding all color methods, such as line colors, background fills, etc.
+ *  
+ * @author Emil
+ *
+ */
 public interface IColorManager extends IFillBackgroundColors {
 	
 	/**

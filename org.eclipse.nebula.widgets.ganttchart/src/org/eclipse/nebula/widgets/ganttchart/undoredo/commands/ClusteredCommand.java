@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * One command to handle many sub-commands, such as a multi-drag/drop etc
+ * One command to handle many sub-commands, such as a multi-drag/drop etc. All commands inside a clustered command will be Undone/Redone at the same time.
  * 
  * @author cre
  *
@@ -24,16 +24,27 @@ public class ClusteredCommand extends AbstractUndoRedoCommand {
 
     private final List _commands;
     
+    /**
+     * Creates a new Clustered Command.
+     */
     public ClusteredCommand() {
         super();
         _commands = new ArrayList();
     }
     
+    /**
+     * Creates a new Clustered Command witha list of pre-set commands.
+     */
     public ClusteredCommand(final List commands) {
         super();
         _commands = commands;
     }
     
+    /**
+     * Adds a new command to the cluster.
+     * 
+     * @param command Command to add
+     */
     public void addCommand(final IUndoRedoCommand command) {
     	if (command == null) {
     		return;
@@ -42,10 +53,20 @@ public class ClusteredCommand extends AbstractUndoRedoCommand {
         _commands.add(command);
     }
     
+    /**
+     * Removes a command from the cluster.
+     * 
+     * @param command Command to remove
+     */
     public void removeCommand(final IUndoRedoCommand command) {
         _commands.remove(command);
     }
     
+    /**
+     * Returns the number of commands that are inside the cluster.
+     * 
+     * @return Number of commands
+     */
     public int size() {
         return _commands.size();
     }

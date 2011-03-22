@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ScrollBar;
 
 /**
- * <b>GanttChart - SWT Widget - 2005-2008. Version 2.0 &copy; Emil Crumhorn - emil dot crumhorn at gmail dot com.</b>
+ * <b>GanttChart - SWT Widget - 2005-2011. Version 2.0 &copy; Emil Crumhorn - emil dot crumhorn at gmail dot com.</b>
  * <p>
  * <b>Website</b><br>
  * If you want more info or more documentation, please visit: <a href="http://www.hexapixel.com/">http://www.hexapixel.com/</a>

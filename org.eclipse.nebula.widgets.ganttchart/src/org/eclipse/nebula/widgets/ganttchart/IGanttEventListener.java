@@ -17,6 +17,12 @@ import java.util.List;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.GC;
 
+/**
+ * This interface is used by adding your implementation of it via {@link GanttChart#addGanttEventListener(IGanttEventListener)} to listen to events that happen in the chart.
+ * 
+ * @author Emil
+ *
+ */
 public interface IGanttEventListener {
 
 	/**

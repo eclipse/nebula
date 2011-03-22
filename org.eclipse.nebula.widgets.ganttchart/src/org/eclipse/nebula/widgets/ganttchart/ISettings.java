@@ -21,7 +21,15 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * This class lets you define various settings for the GanttChart.
+ * This interface lets you define various settings for the GanttChart. It's highly advisable that for implementation, {@link AbstractSettings} is extended 
+ * and methods needed to be changed from their defaults are overridden and changed. It would be quite a hassle to implement a full ISettings interface from scratch.
+ * <pre>
+ * public class MySettings extends AbstractSettings {
+ * 	// override your methods here
+ * }
+ * </pre>
+ * <p />
+ * Once you've overridden the settings you wish to change, simply pass an instance of your implementation class to the constructor of GanttChart: {@link GanttChart#GanttChart(org.eclipse.swt.widgets.Composite, int, ISettings)}
  *  
  * @author Emil Crumhorn
  *
@@ -32,17 +40,30 @@ public interface ISettings {
     // --|              ---|
     //   |  <-- type 1  |--|  <-- type 2 .. "type 3" is a mix of 1 and 2 with rounded corners, Project style
     //   V              |->
+	/**
+	 * A connecting line that starts at the right of an event and goes to the top of the connecting event
+	 */
     public static final int CONNECTION_ARROW_RIGHT_TO_TOP  = 1;                             // TODO: Fix flawed drawing
+    
+    /**
+     * A connecting line that starts at the right of an event and goes to the left of the connecting event
+     */
     public static final int CONNECTION_ARROW_RIGHT_TO_LEFT = 2;
+    
     /**
      * A MS Project style connection uses rounded corners and quite a bit of logic to make the line as nice as possible,
      * and also supports reverse connection coloring. This is the suggested style and is also the default.
      */
     public static final int CONNECTION_MS_PROJECT_STYLE    = 3;
+    
     /**
-     * Birds flight path is an arrow-head-less line from the one event to another in the straightest line, also known as "as the crow flies".
+     * Birds flight path is an arrow-head-less line from the one event to another in the straightest line, also known as "how the crow flies".
      */
     public static final int CONNECTION_BIRDS_FLIGHT_PATH   = 4;
+    
+    /**
+     * The default connection which is {@link #CONNECTION_ARROW_RIGHT_TO_LEFT}
+     */
     public static final int DEFAULT_CONNECTION_ARROW       = CONNECTION_ARROW_RIGHT_TO_LEFT;
 
     // gantt view mode
@@ -68,9 +89,9 @@ public interface ISettings {
     public static final int ZOOM_YEAR_NORMAL               = 11;
     public static final int ZOOM_YEAR_SMALL                = 12;
     public static final int ZOOM_YEAR_VERY_SMALL           = 13;
-    public static final int ZOOM_YEAR_SMALLER              = 14;
-    public static final int ZOOM_YEAR_SMALLEST             = 15;
-    public static final int MAX_ZOOM_LEVEL                 = 15;
+    //public static final int ZOOM_YEAR_SMALLER              = 14;
+    //public static final int ZOOM_YEAR_SMALLEST             = 15;
+    public static final int MAX_ZOOM_LEVEL                 = 13;
 
     /**
      * The date format to use when displaying dates in string format.

@@ -15,7 +15,12 @@ import java.util.Calendar;
 
 import org.eclipse.nebula.widgets.ganttchart.GanttEvent;
 
-// same as move just we ignore the section details
+/**
+ * Represents one resize event in the chart that can be done/redone.
+ * 
+ * @author Emil
+ *
+ */
 public class EventResizeCommand extends EventMoveCommand {
 
     /**

@@ -11,6 +11,12 @@
 
 package org.eclipse.nebula.widgets.ganttchart;
 
+/**
+ * Interface that contains methods for returning all string-values used within the chart so that they can be customized to fit different languages easily.
+ * 
+ * @author Emil
+ *
+ */
 public interface ILanguageManager {
 
 	/**

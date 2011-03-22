@@ -13,6 +13,12 @@ package org.eclipse.nebula.widgets.ganttchart.undoredo;
 
 import org.eclipse.nebula.widgets.ganttchart.undoredo.commands.IUndoRedoCommand;
 
+/**
+ * Basic implementation of {@link IUndoRedoListener}.
+ * 
+ * @author Emil
+ *
+ */
 public class UndoRedoListenerAdapter implements IUndoRedoListener {
 
     public void canRedoChanged(boolean canRedo) {

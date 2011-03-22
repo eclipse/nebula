@@ -17,7 +17,7 @@ import org.eclipse.nebula.widgets.ganttchart.GanttEvent;
 import org.eclipse.nebula.widgets.ganttchart.GanttSection;
 
 /**
- * Represents one GanttEvent DND action
+ * Represents one GanttEvent DND action that can be undone/redone.
  * 
  * @author cre
  */

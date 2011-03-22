@@ -13,6 +13,12 @@ package org.eclipse.nebula.widgets.ganttchart;
 
 import org.eclipse.swt.graphics.Color;
 
+/**
+ * Interface representing all methods that use colored fills.
+ *  
+ * @author Emil
+ *
+ */
 public interface IFillBackgroundColors {
 	
 	/**

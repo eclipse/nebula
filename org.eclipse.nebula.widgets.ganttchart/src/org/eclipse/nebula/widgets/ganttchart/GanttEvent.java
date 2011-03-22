@@ -53,8 +53,7 @@ import org.eclipse.swt.widgets.Menu;
  * Calendar cEndDate = Calendar.getInstance(Locale.getDefault());<br>
  * cEndDate.add(Calendar.DATE, 10);
  * <br><br>
- * // the first parameter is the data object, as this is an example, we'll leave it null<br>
- * // we're also setting the percentage complete to 50%<br>
+ * // we're setting the percentage complete to 50%<br>
  * GanttEvent ganttEvent = new GanttEvent(ganttChart, "Event Name", cStartDate, cEndDate, 50);
  * <br><br>
  * </code> <br>
