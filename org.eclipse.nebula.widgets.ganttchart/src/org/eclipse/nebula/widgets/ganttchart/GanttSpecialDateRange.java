@@ -489,7 +489,14 @@ public class GanttSpecialDateRange {
         _cachedRanges = null;
     }
     
-    boolean canEventOccupy(final Calendar start, final Calendar end) {
+    /**
+     * Checks whether a set of dates overlap any of the dates in this range.
+     * 
+     * @param start Start date
+     * @param end End date
+     * @return true if any date is overlapping the dates of this range
+     */
+    public boolean canEventOccupy(final Calendar start, final Calendar end) {
     	if (isAllowEventsOnDates()) {
     		return true;
     	}
