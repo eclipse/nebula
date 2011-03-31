@@ -76,4 +76,7 @@ public class GanttEventListenerAdapter implements IGanttEventListener {
     public void eventReordered(GanttEvent ge) {
     }
 
+	public void eventsDroppedOrResizedOntoUnallowedDateRange(List events, GanttSpecialDateRange range) {		
+	}
+
 }

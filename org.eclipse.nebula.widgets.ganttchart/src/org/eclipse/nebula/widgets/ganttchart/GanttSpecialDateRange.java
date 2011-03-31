@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import org.eclipse.nebula.widgets.ganttchart.utils.DateRange;
 import org.eclipse.swt.graphics.Color;
 
 /**
@@ -487,6 +488,36 @@ public class GanttSpecialDateRange {
         _lastActualEndDate = null;
         _cachedRanges = null;
     }
+    
+    boolean canEventOccupy(final Calendar start, final Calendar end) {
+    	if (isAllowEventsOnDates()) {
+    		return true;
+    	}
+    	
+    	// we're not in range, check this first as it's faster
+    	if (!isVisible(start, end)) {
+    		return true;
+    	}
+    	
+    	// get all blocks that we occupy
+    	List blocks = getBlocks(start, end);
+    	
+    	DateRange us = new DateRange(_start, _end);
+    	
+    	for (int i = 0; i < blocks.size(); i++) {
+    		ArrayList block = (ArrayList) blocks.get(i);
+    		
+    		Calendar blockStart = (Calendar) block.get(0);
+    		Calendar blockEnd = (Calendar) block.get(1);
+    		
+    		DateRange range = new DateRange(blockStart, blockEnd);    		
+    		if (us.Overlaps(range)) {
+    			return false;
+    		}
+    	}
+    	
+    	return true;
+    }
 
     /*
      * Checks whether this range is visible in the given start/end date range
@@ -675,6 +706,31 @@ public class GanttSpecialDateRange {
         if (_start == null) { return false; }
 
         return true;
+    }
+    
+    public String toString() {
+    	String freq = "";
+    	switch (_frequency) {
+	        case REPEAT_DAILY:
+	            freq = "Daily";
+	            break;
+	        case REPEAT_WEEKLY:
+	            freq = "Weekly";
+	            break;
+	        case REPEAT_MONTHLY:
+	            freq = "Monthly";
+	            break;
+	        case REPEAT_YEARLY:
+	            freq = "Yearly";
+	            break;
+	        case REPEAT_DDAY:
+	            freq = "DDay";
+	            break;
+	        default:
+	            break;
+	    }
+    	
+    	return "[GanttSpecialDateRange: "+ (_start == null ? null : _start.getTime()) + " - " + (_end == null ? null : _end.getTime()) + ". Freqency: " + freq + ". Recur Count: " + _recurCount + ". Last actual end date: " + (_lastActualEndDate == null ? null : _lastActualEndDate.getTime()) + "]";
     }
 
 }

@@ -136,6 +136,7 @@ public class GanttTester {
     private Button              _bZoomToMousePointerDateOnWheelZooming;
     private Button              _bScaleImageToDay;
     private Button				_bAllowArrowKeysToMoveChart;
+    private Button				_bCreateSpecialRangesWithAllowNoEvents;
     
     private Table                _tEventLog;
 
@@ -538,7 +539,16 @@ public class GanttTester {
         _bAllowArrowKeysToMoveChart.setData(KEY, "bAllowArrowKeysToMoveChart");
         prefLoad(_bAllowArrowKeysToMoveChart);
         prefHook(_bAllowArrowKeysToMoveChart);
-        
+                        
+        _bCreateSpecialRangesWithAllowNoEvents = new Button(group, SWT.CHECK);
+        _bCreateSpecialRangesWithAllowNoEvents.setText("Don't Allow Events on Special Date Ranges");
+        _bCreateSpecialRangesWithAllowNoEvents.setToolTipText("Whether special date ranges will not allow drag and drop or resizing over them. Default is off.");
+        _bCreateSpecialRangesWithAllowNoEvents.setSelection(false);
+        _bCreateSpecialRangesWithAllowNoEvents.setLayoutData(oneRow);
+        _bCreateSpecialRangesWithAllowNoEvents.setData(KEY, "bCreateSpecialRangesWithAllowNoEvents");
+        prefLoad(_bCreateSpecialRangesWithAllowNoEvents);
+        prefHook(_bCreateSpecialRangesWithAllowNoEvents);
+       
         return sc;
     }
 
@@ -967,7 +977,7 @@ public class GanttTester {
 
         _vfChart.setContent(_ganttChart);
         _ganttChart.addGanttEventListener(new IGanttEventListener() {
-            public void eventDoubleClicked(final GanttEvent event, final MouseEvent me) {
+			public void eventDoubleClicked(final GanttEvent event, final MouseEvent me) {
                 eventLog("Doubleclicked '" + event + "'");
                 final Shell shell = new Shell(Display.getDefault(), SWT.TITLE | SWT.CLOSE | SWT.MIN | SWT.ON_TOP | SWT.APPLICATION_MODAL);
                 shell.setLocation(Display.getDefault().getBounds().width * 1 / 5, Display.getDefault().getBounds().height * 1 / 3);
@@ -1048,6 +1058,10 @@ public class GanttTester {
                 eventLog("Zoomed level was reset");
             }
 
+            public void eventsDroppedOrResizedOntoUnallowedDateRange(List events, GanttSpecialDateRange range) {
+            	eventLog("Events '" + events + "' were dropped or resized over special range '" + range + "' that does not allow events on its dates");
+				
+			}
         });
 
         final Random r = new Random();
@@ -1094,6 +1108,9 @@ public class GanttTester {
             range.setRecurCount(50);
             range.setBackgroundColorTop(ColorCache.getRandomColor());
             range.setBackgroundColorBottom(ColorCache.getRandomColor());
+            if (_bCreateSpecialRangesWithAllowNoEvents.getSelection()) {
+            	range.setAllowEventsOnDates(false);
+            }
         }
 
         for (int i = 0; i < numberEvents; i++) {
@@ -1740,6 +1757,7 @@ public class GanttTester {
     private void eventLog(String txt) {
         TableItem ti = new TableItem(_tEventLog, SWT.NONE, 0);
         ti.setText(txt);
+        System.out.println(txt);
     }
 
     class TestSettings extends AbstractSettings {

@@ -3,3 +3,7 @@ GanttGroupExample.java
 test
 GanttTester3.java
 RecurTest.java
+ScaledGC.java
+NullScale.java
+ZoomScale.java
+IZoomScale.java

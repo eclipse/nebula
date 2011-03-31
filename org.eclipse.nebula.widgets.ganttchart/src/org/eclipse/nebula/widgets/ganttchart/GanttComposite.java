@@ -5650,6 +5650,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     public void mouseUp(final MouseEvent event) {
         _mouseIsDown = false;
 
+        boolean needsRedraw = false;
+        
         if (_tracker != null && !_tracker.isDisposed()) {
             _tracker.dispose();
         }
@@ -5691,6 +5693,36 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         // put all undo/redo commands into one command as any user would expect a multi-DND to undo with all events, not just one at a time
         final ClusteredCommand cc = new ClusteredCommand();
 
+        // as this check is slow-ish, we do this last. If a user resizes or drops an event on top of a range that does not allow events, we undo the drag/resize
+        // NOTE: we also remove it from the undo queue as it was never moved/resized in the first place
+        if (hasSpecialDateRanges()) {           
+        	for (int i = 0; i < _specDateRanges.size(); i++) {
+                final GanttSpecialDateRange range = (GanttSpecialDateRange) _specDateRanges.get(i);
+
+                ArrayList failedMoves = new ArrayList();
+                
+                // check if any of the moved/resized events overlap any of our date ranges
+                for (int x = 0; x < _dragEvents.size(); x++) {
+                	final GanttEvent ge = (GanttEvent) _dragEvents.get(i);
+
+	                // event is not allowed to be on these dates, undo
+	                if (!range.canEventOccupy(ge.getActualStartDate(), ge.getActualEndDate())) {
+	                	ge.moveCancelled();	                	
+	                	_dragEvents.remove(ge);
+	                	needsRedraw = true;
+	                	failedMoves.add(ge);
+	                }                
+                }                
+                
+                if (!failedMoves.isEmpty()) {
+	                // notify listeners that some events didn't make it...
+	                for (int j = 0; j < _eventListeners.size(); j++) {
+	                	((IGanttEventListener)_eventListeners.get(j)).eventsDroppedOrResizedOntoUnallowedDateRange(failedMoves, range);
+	                }
+                }
+            }                                
+        }
+        
         // undo/redo handling
         for (int i = 0; i < _dragEvents.size(); i++) {
             final GanttEvent ge = (GanttEvent) _dragEvents.get(i);
@@ -5736,10 +5768,14 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                     }
                 }
             } else {
-                redraw();
+                needsRedraw = true;
             }
         }
 
+        if (needsRedraw) {
+        	redraw();
+        }
+        
         endEverything();
         updateHorizontalScrollbar();
     }
@@ -7055,7 +7091,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         if (type == Constants.TYPE_MOVE && !event.isMoveable()) { return; }
 
         if ((type == Constants.TYPE_RESIZE_LEFT || type == Constants.TYPE_RESIZE_RIGHT) && !event.isResizable()) { return; }
-
+       
         String dateFormat = (_currentView == ISettings.VIEW_DAY ? _settings.getHourDateFormat() : _settings.getDateFormat());
 
         Calendar mouseDateCal = getDateAt(me.x);
@@ -7387,7 +7423,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                         continue;
                     }
                 }
-
+                
                 // we already validated dates here, so we can just set them (Besides, dual validation is bad, as one date will be validated
                 // before the next one is set, which can cause serious issues when we do drag and drops
                 event.setRevisedStart(cal1, false);
