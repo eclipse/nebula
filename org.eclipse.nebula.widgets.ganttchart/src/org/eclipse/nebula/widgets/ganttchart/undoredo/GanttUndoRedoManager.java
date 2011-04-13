@@ -61,7 +61,7 @@ public class GanttUndoRedoManager {
      * @param listener
      */
     public void removeUndoRedoListener(final IUndoRedoListener listener) {
-        _listeners.add(listener);
+        _listeners.remove(listener);
     }
 
     /**
