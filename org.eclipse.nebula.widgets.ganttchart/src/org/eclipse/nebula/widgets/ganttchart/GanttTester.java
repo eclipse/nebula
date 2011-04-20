@@ -1005,6 +1005,9 @@ public class GanttTester {
 
             public void eventsDeleteRequest(List events, MouseEvent mouseEvent) {
                 eventLog("Events '" + events + "' were requested to be deleted");
+                for (int i = 0; i < events.size(); i++) {
+                	((GanttEvent)events.get(i)).dispose();
+                }
             }
 
             public void eventSelected(GanttEvent event, List allSelectedEvents, MouseEvent mouseEvent) {

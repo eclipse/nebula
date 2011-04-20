@@ -4785,6 +4785,12 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         if (event.getScopeParent() != null) {
         	event.getScopeParent().removeScopeEvent(event);
         }
+        if (event.getGanttSection() != null) {
+        	event.getGanttSection().removeGanttEvent(event);
+        }        
+        if (event.getGanttGroup() != null) {
+        	event.getGanttGroup().removeEvent(event);
+        }
         boolean ret = _ganttEvents.remove(event);
 
         redrawEventsArea();
