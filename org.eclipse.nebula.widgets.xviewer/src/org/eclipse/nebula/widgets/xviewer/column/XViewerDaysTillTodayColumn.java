@@ -19,6 +19,7 @@ import org.eclipse.nebula.widgets.xviewer.Activator;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewerComputedColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewerLabelProvider;
+import org.eclipse.nebula.widgets.xviewer.XViewerSorter;
 import org.eclipse.nebula.widgets.xviewer.util.XViewerException;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
@@ -29,7 +30,6 @@ import org.eclipse.swt.SWT;
  */
 public class XViewerDaysTillTodayColumn extends XViewerComputedColumn {
 
-   private final static SimpleDateFormat format10 = new SimpleDateFormat("MM/dd/yyyy");
    private final static String ID = "ats.computed.daysTillToday";
 
    public XViewerDaysTillTodayColumn() {
@@ -49,16 +49,16 @@ public class XViewerDaysTillTodayColumn extends XViewerComputedColumn {
          return String.format("Source column not found for " + id + ".  Delete column and re-create.");
       }
       try {
-         String dateStr =
-            ((XViewerLabelProvider) xViewer.getLabelProvider()).getColumnText(element, sourceXViewerColumn, columnIndex);
+         int sourceColumnNum = xViewer.getCustomizeMgr().getColumnNumFromXViewerColumn(sourceXViewerColumn);
+         String dateStr = ((XViewerLabelProvider) xViewer.getLabelProvider()).getColumnText(element, sourceColumnNum);
          if (dateStr == null || dateStr.equals("")) {
             return "";
          }
          DateFormat format;
          if (dateStr.length() == 10) {
-            format = format10;
+            format = XViewerSorter.format10;
          } else {
-            format = DateFormat.getInstance();
+            format = new SimpleDateFormat();
          }
          Date date1Date = null;
          try {
