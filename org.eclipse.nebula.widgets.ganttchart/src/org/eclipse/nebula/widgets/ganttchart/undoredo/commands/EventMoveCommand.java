@@ -97,41 +97,55 @@ public class EventMoveCommand extends AbstractUndoRedoCommand {
     public void dispose() {
     }
 
+
     public void redo() {
-        _event.setStartDate(_startDateAfter);
+        _event.setNoUpdatePlannedDates(_startDateAfter, _endDateAfter);
+        _event.setNoUpdateRevisedDates(_revisedStartDateAfter, _revisedEndDateAfter);
+       
+/*        _event.setStartDate(_startDateAfter);
         _event.setEndDate(_endDateAfter);
-
+*/
         // we know we're setting valid dates, so force validation to off or we'll get funky results
-        _event.setRevisedStart(_revisedStartDateAfter, false);
-        _event.setRevisedEnd(_revisedEndDateAfter, false);
-
+/*        if (_revisedStartDateAfter != null) {
+            _event.setRevisedStart(_revisedStartDateAfter, false);
+        }
+        if (_revisedEndDateAfter != null) {
+            _event.setRevisedEnd(_revisedEndDateAfter, false);
+        }
+*/
         if (_sectionAfter != -1 && _indexAfter > -1) {
             _event.reparentToNewGanttSection(_indexAfter, (GanttSection)_event.getParentComposite().getGanttSections().get(_sectionAfter));
         }
-        
+       
         if (_event.getGanttSection() == null && _indexAfter != -1) {
-        	_event.getParentChart().reindex(_event, _indexAfter);
+            _event.getParentChart().reindex(_event, _indexAfter);
         }
     }
 
     public void undo() {
-        _event.setStartDate(_startDateBefore);
-        _event.setEndDate(_endDateBefore);
-
+        _event.setNoUpdatePlannedDates(_startDateBefore, _endDateBefore);
+        _event.setNoUpdateRevisedDates(_revisedStartDateBefore, _revisedEndDateBefore);
+       
         // we know we're setting valid dates, so force validation to off or we'll get funky results
-        _event.setRevisedStart(_revisedStartDateBefore, false);
-        _event.setRevisedEnd(_revisedEndDateBefore, false);
-                
-        if (_sectionBefore != -1 && _indexBefore > -1) {            
+    /*    if (_revisedStartDateBefore != null) {
+            _event.setRevisedStart(_revisedStartDateBefore, false);
+        }
+       
+        if (_revisedEndDateBefore != null) {
+            _event.setRevisedEnd(_revisedEndDateBefore, false);
+        }*/
+               
+        if (_sectionBefore != -1 && _indexBefore > -1) {           
             _event.reparentToNewGanttSection(_indexBefore, (GanttSection)_event.getParentComposite().getGanttSections().get(_sectionBefore));
         }
-        
+       
         // reparent in chart itself as there are no sections
         if (_event.getGanttSection() == null && _indexBefore != -1) {
-        	_event.getParentChart().reindex(_event, _indexBefore);
+            _event.getParentChart().reindex(_event, _indexBefore);
         }
-        
+       
     }
+
 
     public GanttEvent getEvent() {
         return _event;

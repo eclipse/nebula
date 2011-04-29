@@ -1942,6 +1942,37 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem, C
     public GanttComposite getParentComposite() {
         return _parentComposite;
     }
+    
+
+	/**
+	 * Will update planned dates without question or internal checks. This is
+	 * used internally, it's not recommended to be used externally.
+	 * 
+	 * @param start
+	 *            Date or null
+	 * @param end
+	 *            Date or null
+	 */
+	public void setNoUpdatePlannedDates(Calendar start, Calendar end) {
+		_startDate = start == null ? null : (Calendar) start.clone();
+		_endDate = end == null ? null : (Calendar) end.clone();
+		updateDaysBetweenStartAndEnd();
+	}
+
+	/**
+	 * Will update revised dates without question or internal checks. This is
+	 * used internally, it's not recommended to be used externally.
+	 * 
+	 * @param start
+	 *            Date or null
+	 * @param end
+	 *            Date or null
+	 */
+	public void setNoUpdateRevisedDates(Calendar start, Calendar end) {
+		_revisedStart = start == null ? null : (Calendar) start.clone();
+		_revisedEnd = end == null ? null : (Calendar) end.clone();
+		updateDaysBetweenStartAndEnd();
+	}
 
     /**
      * Clones the GanttEvent and all objects of it (assuming they are cloneable). The clone should be exactly like the
