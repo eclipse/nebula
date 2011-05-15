@@ -99,6 +99,7 @@ import org.eclipse.swt.widgets.TypedListener;
  * @author Nicolas Richeton (nicolas.richeton@gmail.com)
  * @contributor Peter Centgraf (bugs 212071, 212073)
  * @contributor Robert Handschmann (bug 215817)
+ * @contributor Berthold Daum (bug 306144 - selection tuning)
  */
 
 public class Gallery extends Canvas {
@@ -114,7 +115,10 @@ public class Gallery extends Canvas {
 
 	private GalleryItem[] selection = null;
 
-	private int[] selectionIndices = null;
+	/**
+	 * Selection bit flags. Each 'int' contains flags for 32 items.
+	 */
+	protected int[] selectionFlags = null;
 
 	/**
 	 * Virtual mode flag.
@@ -246,8 +250,8 @@ public class Gallery extends Canvas {
 			// old one.
 			GalleryItem[] newItems = new GalleryItem[count];
 			if (items != null) {
-				System.arraycopy(items, 0, newItems, 0, Math.min(count,
-						items.length));
+				System.arraycopy(items, 0, newItems, 0,
+						Math.min(count, items.length));
 			}
 			items = newItems;
 		}
@@ -898,15 +902,25 @@ public class Gallery extends Canvas {
 		if (item.getParentItem() != null) {
 			item.getParentItem()._addSelection(item);
 		} else {
-			if (selectionIndices == null) {
-				selectionIndices = new int[1];
-			} else {
-				int[] oldSelection = selectionIndices;
-				selectionIndices = new int[oldSelection.length + 1];
-				System.arraycopy(oldSelection, 0, selectionIndices, 0,
-						oldSelection.length);
+			int index = indexOf(item);
+
+			// Divide position by 32 to get selection bloc for this item.
+			int n = index >> 5;
+			if (selectionFlags == null) {
+				// Create selectionFlag array
+				// Add 31 before dividing by 32 to ensure at least one 'int' is
+				// created if size < 32.
+				selectionFlags = new int[(items.length + 31) >> 5];
+			} else if (n >= selectionFlags.length) {
+				// Expand selectionArray
+				int[] oldFlags = selectionFlags;
+				selectionFlags = new int[n + 1];
+				System.arraycopy(oldFlags, 0, selectionFlags, 0,
+						oldFlags.length);
 			}
-			selectionIndices[selectionIndices.length - 1] = indexOf(item);
+
+			// Get flag position in the 32 bit block and ensure is selected.
+			selectionFlags[n] |= 1 << (index & 0x1f);
 
 		}
 
@@ -915,9 +929,7 @@ public class Gallery extends Canvas {
 		} else {
 			GalleryItem[] oldSelection = selection;
 			selection = new GalleryItem[oldSelection.length + 1];
-			System
-					.arraycopy(oldSelection, 0, selection, 0,
-							oldSelection.length);
+			System.arraycopy(oldSelection, 0, selection, 0, oldSelection.length);
 		}
 		selection[selection.length - 1] = item;
 
@@ -925,10 +937,10 @@ public class Gallery extends Canvas {
 
 	private void _removeSelection(GalleryItem item) {
 
-		if (item.getParentItem() == null)
-			selectionIndices = _arrayRemoveItem(selectionIndices,
-					_arrayIndexOf(selectionIndices, _indexOf(item)));
-		else
+		if (item.getParentItem() == null) {
+			int index = _indexOf(item);
+			selectionFlags[index >> 5] &= ~(1 << (index & 0x1f));
+		} else
 			_removeSelection(item.getParentItem(), item);
 
 		int index = _arrayIndexOf(selection, item);
@@ -940,8 +952,8 @@ public class Gallery extends Canvas {
 	}
 
 	protected void _removeSelection(GalleryItem parent, GalleryItem item) {
-		parent.selectionIndices = _arrayRemoveItem(parent.selectionIndices,
-				_arrayIndexOf(parent.selectionIndices, _indexOf(parent, item)));
+		int index = _indexOf(parent, item);
+		parent.selectionFlags[index >> 5] &= ~(1 << (index & 0x1f));
 	}
 
 	protected boolean isSelected(GalleryItem item) {
@@ -953,16 +965,16 @@ public class Gallery extends Canvas {
 			return item.getParentItem().isSelected(item);
 		}
 
-		if (selectionIndices == null)
+		if (selectionFlags == null)
 			return false;
 
 		int index = indexOf(item);
-		for (int i = 0; i < selectionIndices.length; i++) {
-			if (selectionIndices[i] == index)
-				return true;
-		}
+		int n = index >> 5;
+		if (n >= selectionFlags.length)
+			return false;
+		int flags = selectionFlags[n];
+		return flags != 0 && (flags & 1 << (index & 0x1f)) != 0;
 
-		return false;
 	}
 
 	/**
@@ -988,7 +1000,13 @@ public class Gallery extends Canvas {
 			System.out.println("clear"); //$NON-NLS-1$
 
 		this.selection = null;
-		this.selectionIndices = null;
+		// Deselect groups
+		// We could set selectionFlags to null, but we rather set all values to
+		// 0 to redure garbage collection. On each iteration, we deselect 32
+		// items.
+		if (selectionFlags != null)
+			for (int i = 0; i < selectionFlags.length; i++)
+				selectionFlags[i] = 0;
 
 		if (items == null)
 			return;

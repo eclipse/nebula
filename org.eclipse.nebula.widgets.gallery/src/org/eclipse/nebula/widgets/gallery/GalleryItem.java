@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Item;
  * 
  * @author Nicolas Richeton (nicolas.richeton@gmail.com)
  * @contributor Peter Centgraf (bugs 212071, 212073)
- * 
+ * @contributor Berthold Daum (bug 306144 - selection tuning)
  */
 
 public class GalleryItem extends Item {
@@ -87,7 +87,10 @@ public class GalleryItem extends Item {
 
 	private GalleryItem parentItem;
 
-	protected int[] selectionIndices = null;
+	/**
+	 * Selection bit flags. Each 'int' contains flags for 32 items.
+	 */
+	protected int[] selectionFlags = null;
 
 	protected Font font;
 
@@ -215,8 +218,8 @@ public class GalleryItem extends Item {
 			// old one.
 			GalleryItem[] newItems = new GalleryItem[count];
 			if (items != null) {
-				System.arraycopy(items, 0, newItems, 0, Math.min(count,
-						items.length));
+				System.arraycopy(items, 0, newItems, 0,
+						Math.min(count, items.length));
 			}
 			items = newItems;
 		}
@@ -322,9 +325,19 @@ public class GalleryItem extends Item {
 	}
 
 	protected void _deselectAll() {
-		this.selectionIndices = null;
+
+		// Deselect groups
+		// We could set selectionFlags to null, but we rather set all values to
+		// 0 to redure garbage collection. On each iteration, we deselect 32
+		// items.
+		if (selectionFlags != null)
+			for (int i = 0; i < selectionFlags.length; i++)
+				selectionFlags[i] = 0;
+
 		if (items == null)
 			return;
+
+		// Deselect group content.
 		for (int i = 0; i < items.length; i++) {
 			if (items[i] != null)
 				items[i]._deselectAll();
@@ -338,15 +351,26 @@ public class GalleryItem extends Item {
 		}
 
 		if (item.getParentItem() == this) {
-			if (selectionIndices == null) {
-				selectionIndices = new int[1];
-			} else {
-				int[] oldSelection = selectionIndices;
-				selectionIndices = new int[oldSelection.length + 1];
-				System.arraycopy(oldSelection, 0, selectionIndices, 0,
-						oldSelection.length);
+
+			int index = indexOf(item);
+
+			// Divide position by 32 to get selection bloc for this item.
+			int n = index >> 5;
+			if (selectionFlags == null) {
+				// Create selectionFlag array
+				// Add 31 before dividing by 32 to ensure at least one 'int' is
+				// created if size < 32.
+				selectionFlags = new int[(items.length + 31) >> 5];
+			} else if (n >= selectionFlags.length) {
+				// Expand selectionArray
+				int[] oldFlags = selectionFlags;
+				selectionFlags = new int[n + 1];
+				System.arraycopy(oldFlags, 0, selectionFlags, 0,
+						oldFlags.length);
 			}
-			selectionIndices[selectionIndices.length - 1] = indexOf(item);
+
+			// Get flag position in the 32 bit block and ensure is selected.
+			selectionFlags[n] |= 1 << (index & 0x1f);
 
 		}
 	}
@@ -356,14 +380,15 @@ public class GalleryItem extends Item {
 			return false;
 
 		if (item.getParentItem() == this) {
-			if (selectionIndices == null)
+			if (selectionFlags == null)
 				return false;
 
 			int index = indexOf(item);
-			for (int i = 0; i < selectionIndices.length; i++) {
-				if (selectionIndices[i] == index)
-					return true;
-			}
+			int n = index >> 5;
+			if (n >= selectionFlags.length)
+				return false;
+			int flags = selectionFlags[n];
+			return flags != 0 && (flags & 1 << (index & 0x1f)) != 0;
 		}
 		return false;
 	}
