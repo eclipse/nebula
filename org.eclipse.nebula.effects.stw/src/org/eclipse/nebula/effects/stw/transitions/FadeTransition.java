@@ -17,6 +17,9 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 
 /**
+ * Applies a fade effect. The <i>from</i> control fades out and the the <i>to</i>
+ * control fades in smoothly.
+ * 
  * @author Ahmed Mahran (ahmahran@gmail.com)
  */
 public class FadeTransition extends Transition {
@@ -32,9 +35,9 @@ public class FadeTransition extends Transition {
             , _fadeInStart = 0, _fadeInStop = 100;
     
     /**
-     * This constructor creates a FadeTransition with number of frames per second of 60
-     * and total transition time of 1000 milliseconds. It is similar to 
-     * new FadeTransition(transitionManager, 60, 1000)
+     * This constructor creates a FadeTransition with number of frames per second of {@link Transition#DEFAULT_FPS}
+     * and total transition time of {@link Transition#DEFAULT_T} milliseconds. It is similar to 
+     * new FadeTransition(transitionManager, {@link Transition#DEFAULT_FPS}, {@link Transition#DEFAULT_T})
      * 
      * @param transitionManager the transition manager to be used to manage transitions
      */
@@ -43,6 +46,9 @@ public class FadeTransition extends Transition {
     }
     
     /**
+     * This constructor creates a FadeTransition with <i>fps</i> number of frames per
+     * second and <i>T</i> total transition time in milliseconds.
+     * 
      * @param transitionManager the transition manager to be used to manage transitions 
      * @param fps number of frames per second
      * @param T the total time the transition effect will take in milliseconds

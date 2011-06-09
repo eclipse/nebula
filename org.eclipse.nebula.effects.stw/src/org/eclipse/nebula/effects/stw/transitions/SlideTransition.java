@@ -11,12 +11,16 @@
 
 package org.eclipse.nebula.effects.stw.transitions;
 
+import org.eclipse.nebula.effects.stw.Transition;
 import org.eclipse.nebula.effects.stw.TransitionManager;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 
 /**
+ * Applies a slide effect. The <i>from</i> control slides out and the the <i>to</i>
+ * control slides in smoothly accelerating up then down after a while until it stops.
+ *  
  * @author Ahmed Mahran (ahmahran@gmail.com)
  */
 public class SlideTransition extends org.eclipse.nebula.effects.stw.Transition {
@@ -28,9 +32,9 @@ public class SlideTransition extends org.eclipse.nebula.effects.stw.Transition {
     private long _halfT, _t1;
     
     /**
-     * This constructor creates a SlideTransition with number of frames per second of 60
-     * and total transition time of 1000 milliseconds. It is similar to 
-     * new SlideTransition(transitionManager, 60, 1000)
+     * This constructor creates a SlideTransition with number of frames per second of {@link Transition#DEFAULT_FPS}
+     * and total transition time of {@link Transition#DEFAULT_T} milliseconds. It is similar to 
+     * new SlideTransition(transitionManager, {@link Transition#DEFAULT_FPS}, {@link Transition#DEFAULT_T})
      * 
      * @param transitionManager the transition manager to be used to manage transitions
      */

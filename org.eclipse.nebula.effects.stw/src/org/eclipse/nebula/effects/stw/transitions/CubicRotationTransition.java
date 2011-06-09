@@ -18,6 +18,9 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 
 /**
+ * A cubic rotation effect. Showing two sides of a cube, the cube rotates from one
+ * side to the other side.
+ * 
  * @author Ahmed Mahran (ahmahran@gmail.com)
  */
 public class CubicRotationTransition extends Transition {
@@ -32,14 +35,15 @@ public class CubicRotationTransition extends Transition {
                 , _destHeight, _destWidth
                 , _destHeight0, _destWidth0
                 , _destHeightV0, _destWidthV0
-                , _ratio1, _ratio2;
+                , _ratio1, _ratio2
+                , _remainedSize;
     
     private double _quality = 100;//%
     
     /**
-     * This constructor creates a CubicRotationTransition with number of frames per second of 60
-     * and total transition time of 1000 milliseconds. It is similar to 
-     * new CubicRotationTransition(transitionManager, 60, 1000)
+     * This constructor creates a CubicRotationTransition with number of frames per second of {@link Transition#DEFAULT_FPS}
+     * and total transition time of {@link Transition#DEFAULT_T} milliseconds. It is similar to 
+     * new CubicRotationTransition(transitionManager, {@link Transition#DEFAULT_FPS}, {@link Transition#DEFAULT_T})
      * 
      * @param transitionManager the transition manager to be used to manage transitions
      */
@@ -48,6 +52,9 @@ public class CubicRotationTransition extends Transition {
     }
     
     /**
+     * This constructor creates a CubicRotationTransition with number of frames per second of <code>fps</code>
+     * and total transition time of <code>T</code> milliseconds.
+     * 
      * @param transitionManager the transition manager to be used to manage transitions 
      * @param fps number of frames per second
      * @param T the total time the transition effect will take in milliseconds
@@ -74,6 +81,7 @@ public class CubicRotationTransition extends Transition {
             _x = 0;
             _destHeight = 0;
             _dx1 = _dx2 = _w - _quality * (_w - 1) / 100.0;
+            _remainedSize = _w - ((int)(_w / _dx1) * _dx1);
             break;
         
         case (int)DIR_LEFT:
@@ -82,6 +90,7 @@ public class CubicRotationTransition extends Transition {
             _x = _w;
             _destHeight = _h;
             _dx1 = _dx2 = _w - _quality * (_w - 1) / 100.0;
+            _remainedSize = _w - ((int)(_w / _dx1) * _dx1);
             break;
         
         case (int)DIR_UP:
@@ -90,6 +99,7 @@ public class CubicRotationTransition extends Transition {
             _y = _h;
             _destWidth = _w;
             _dy1 = _dy2 = _h - _quality * (_h - 1) / 100.0;
+            _remainedSize = _h - ((int)(_h / _dy1) * _dy1);
             break;
             
         case (int)DIR_DOWN:
@@ -98,6 +108,7 @@ public class CubicRotationTransition extends Transition {
             _y = 0;
             _destWidth = 0;
             _dy1 = _dy2 = _h - _quality * (_h - 1) / 100.0;
+            _remainedSize = _h - ((int)(_h / _dy1) * _dy1);
             break;
         
         }
@@ -121,7 +132,7 @@ public class CubicRotationTransition extends Transition {
             _dy2 = _dx2 * (_h - _destHeight) / (2.0 * _w);
             _x1 = 0; _y1 = 0; _x2 = 0; _y2 = (_h - _destHeight) / 2.0;
             
-            for (; _x1 <= _w; _x1 += _dx1) {
+            for (; _x1 < _w; _x1 += _dx1) {
                 try {
                     _x2 = _x1;
                     gc.drawImage(from, (int) _x1, 0, (int) _dx1, _h,
@@ -133,6 +144,12 @@ public class CubicRotationTransition extends Transition {
                     _y1 += _dy1;
                     _y2 -= _dy2;
                 } catch (Exception e) {
+                    gc.drawImage(from, (int) _x1, 0, (int) _remainedSize, _h,
+                            (int) (_x + _x1 * _ratio1), (int) _y1
+                            , (int) _remainedSize, (int) (_h - _y1 - _y1));
+                    gc.drawImage(to, (int) _x2, 0, (int) _remainedSize, _h,
+                            (int) (_x2 * _ratio2), (int) _y2
+                            , (int) _remainedSize, (int) (_h - _y2 - _y2));
                 }
             }
             
@@ -170,18 +187,28 @@ public class CubicRotationTransition extends Transition {
             _dy2 = _dx2 * (_destHeight) / (2.0 * _w);
             _x1 = 0; _y1 = (_h - _destHeight) / 2.0; _x2 = 0; _y2 = 0;
             
-            for (; _x1 <= _w; _x1 += _dx1) {
+            for (; _x1 < _w; _x1 += _dx1) {
                 try {
-                    _x2 = _x1;
                     gc.drawImage(from, (int) _x1, 0, (int) _dx1, _h,
                             (int) (_x1 * _ratio1), (int) _y1
                             , (int) _dx1, (int) (_h - _y1 - _y1));
+                    _y1 -= _dy1;
+                } catch (Exception e) {
+                    gc.drawImage(from, (int) _x1, 0, (int) _remainedSize, _h,
+                            (int) (_x1 * _ratio1), (int) _y1
+                            , (int) _remainedSize, (int) (_h - _y1 - _y1));
+                }
+            }
+            for (; _x2 < _w; _x2 += _dx2) {
+                try {
                     gc.drawImage(to, (int) _x2, 0, (int) _dx2, _h,
                             (int) (_x + _x2 * _ratio2), (int) _y2
                             , (int) _dx2, (int) (_h - _y2 - _y2));
-                    _y1 -= _dy1;
                     _y2 += _dy2;
                 } catch (Exception e) {
+                    gc.drawImage(to, (int) _x2, 0, (int) _remainedSize, _h,
+                            (int) (_x + _x2 * _ratio2), (int) _y2
+                            , (int) _remainedSize, (int) (_h - _y2 - _y2));
                 }
             }
         
@@ -219,18 +246,28 @@ public class CubicRotationTransition extends Transition {
             _dx2 = _dy2 * (_destWidth) / (2.0 * _h);
             _y1 = 0; _x1 = (_w - _destWidth) / 2.0; _y2 = 0; _x2 = 0;
             
-            for (; _y1 <= _h; _y1 += _dy1) {
+            for (; _y1 < _h; _y1 += _dy1) {
                 try {
-                    _y2 = _y1;
                     gc.drawImage(from, 0, (int) _y1, _w, (int) _dy1
                             , (int) _x1, (int) (_y1 * _ratio1) 
                             , (int) (_w - _x1 - _x1), (int) _dy1);
+                    _x1 -= _dx1;
+                } catch (Exception e) {
+                    gc.drawImage(from, 0, (int) _y1, _w, (int) _remainedSize
+                            , (int) _x1, (int) (_y1 * _ratio1) 
+                            , (int) (_w - _x1 - _x1), (int) _remainedSize);
+                }
+            }
+            for (; _y2 < _h; _y2 += _dy2) {
+                try {
                     gc.drawImage(to, 0, (int) _y2, _w, (int) _dy2
                             , (int) _x2, (int) (_y + _y2 * _ratio2)
                             , (int) (_w - _x2 - _x2), (int) _dy2);
-                    _x1 -= _dx1;
                     _x2 += _dx2;
                 } catch (Exception e) {
+                    gc.drawImage(to, 0, (int) _y2, _w, (int) _remainedSize
+                            , (int) _x2, (int) (_y + _y2 * _ratio2)
+                            , (int) (_w - _x2 - _x2), (int) _remainedSize);
                 }
             }
         
@@ -268,7 +305,7 @@ public class CubicRotationTransition extends Transition {
             _dx2 = _dy2 * (_w - _destWidth) / (2.0 * _h);
             _y1 = 0; _x1 = 0; _y2 = 0; _x2 = (_w - _destWidth) / 2.0;
             
-            for (; _y1 <= _h; _y1 += _dy1) {
+            for (; _y1 < _h; _y1 += _dy1) {
                 try {
                     _y2 = _y1;
                     gc.drawImage(from, 0, (int) _y1, _w, (int) _dy1
@@ -280,6 +317,12 @@ public class CubicRotationTransition extends Transition {
                     _x1 += _dx1;
                     _x2 -= _dx2;
                 } catch (Exception e) {
+                    gc.drawImage(from, 0, (int) _y1, _w, (int) _remainedSize
+                            , (int) _x1, (int) (_y + _y1 * _ratio1)
+                            , (int) (_w - _x1 - _x1), (int) _remainedSize);
+                    gc.drawImage(to, 0, (int) _y2, _w, (int) _remainedSize
+                            , (int) _x2, (int) (_y2 * _ratio2)
+                            , (int) (_w - _x2 - _x2), (int) _remainedSize);
                 }
             }
             
@@ -330,6 +373,7 @@ public class CubicRotationTransition extends Transition {
     
     
     /**
+     * Returns a percentage representing the quality of image slicing
      * @return a percentage representing the quality of image slicing
      */
     public double getQuality() {
