@@ -12,21 +12,19 @@
 package org.eclipse.nebula.effects.stw.example;
 
 import org.eclipse.nebula.effects.stw.TransitionManager; 
-import org.eclipse.nebula.effects.stw.TransitionListener;
-import org.eclipse.nebula.effects.stw.transitions.CubicRotationTransition;
-import org.eclipse.nebula.effects.stw.transitions.SlideTransition;
+import org.eclipse.nebula.effects.stw.Transitionable;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
@@ -35,50 +33,24 @@ import org.eclipse.swt.widgets.Text;
 /**
  * @author Ahmed Mahran (ahmahran@gmail.com)
  */
-public class TransitionTest1 {
+public class TransitionTest1 extends AbstractSTWDemoFrame {
 
-    private Shell sShell = null;
     private Composite comp1 = null;
     private Composite comp2 = null;
     private Composite comp3 = null;
     
     private Font fntTitle = null;
 
-    public static void main(String[] args) {
-
-        /* Before this is run, be sure to set up the launch configuration (Arguments->VM Arguments)
-         * for the correct SWT library path in order to run with the SWT dlls. 
-         * The dlls are located in the SWT plugin jar.  
-         * For example, on Windows the Eclipse SWT 3.1 plugin jar is:
-         *       installation_directory\plugins\org.eclipse.swt.win32_3.1.0.jar
-         */
-        Display display = Display.getDefault();
-        TransitionTest1 thisClass = new TransitionTest1();
-        thisClass.createSShell();
-        thisClass.sShell.open();
-        while (!thisClass.sShell.isDisposed()) {
-            if (!display.readAndDispatch())
-                display.sleep();
-        }
-        display.dispose();
-    }
-
-    /**
-     * This method initializes sShell
-     */
-    private void createSShell() {
-        sShell = new Shell();
-        sShell.setText("Transition Test 1");
-        sShell.setSize(new Point(800, 600));
-        sShell.setLocation(0, 0);
-        sShell.setLayout(new FillLayout());
+    @Override
+    public void init() {
         
-        TabFolder tf = new TabFolder(sShell, SWT.NONE);
+        _containerComposite.setLayout(new FillLayout());
+        
+        final TabFolder tf = new TabFolder(_containerComposite, SWT.NONE);
         
         TabItem tbi1 = new TabItem(tf, SWT.NONE);
         tbi1.setText("Tab Item 1");
         tbi1.setControl(getComp1(tf));
-        
         
         TabItem tbi2 = new TabItem(tf, SWT.NONE);
         tbi2.setText("Tab Item 2");
@@ -88,15 +60,29 @@ public class TransitionTest1 {
         tbi3.setText("Tab Item 3");
         tbi3.setControl(getComp3(tf));
         
-        TransitionManager tm = new TransitionManager(tf);
-        
-        CubicRotationTransition crt = new CubicRotationTransition(tm, 60, 2000);
-        tm.setTransition(crt);
-        
-        tm.addTransitionListener(new TransitionListener() {
-            public void transitionFinished(TransitionManager transition) {
-                System.out.println("End Of Transition! current item: " 
-                        + transition.getTransitionable().getSelection());
+        _tm = new TransitionManager(new Transitionable(){
+            public void addSelectionListener(SelectionListener listener) {
+                tf.addSelectionListener(listener);
+            }
+            
+            public Control getControl(int index) {
+                return tf.getItem(index).getControl();
+            }
+            
+            public Composite getComposite() {
+                return tf;
+            }
+
+            public int getSelection() {
+                return tf.getSelectionIndex();
+            }
+            
+            public void setSelection(int index) {
+                tf.setSelection(index);
+            }
+            
+            public double getDirection(int toIndex, int fromIndex) {
+                return getSelectedDirection(toIndex, fromIndex);
             }
         });
         
