@@ -17,16 +17,65 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Display;
 
 /**
+ * An abstract class handling the basic actions required for whatever transition effect.
+ * These actions are like the transition loop.<br/><br/>
+ * 
+ * To implement a new transition effect, this class should be extended by the new transition
+ * class and only the three methods {@link Transition#initTransition(Image, Image, GC, double)}
+ * , {@link Transition#stepTransition(long, Image, Image, GC, double)} and 
+ * {@link Transition#endTransition(Image, Image, GC, double)} must be implemented.<br/><br/>
+ * 
+ * The transition loop:
+ * <code><pre>
+ * xitionImgGC.drawImage(from, 0, 0);
+ * initTransition(from, to, xitionImgGC, direction);
+ * render(xitionImgGC);
+ * while(t <= T) {
+ *   if(t <= T) {
+ *     stepTransition(t, from, to, xitionImgGC, direction);
+ *   } else {
+ *     xitionImgGC.drawImage(to, 0, 0);
+ *     endTransition(from, to, xitionImgGC, direction);
+ *   }
+ *   render(xitionImgGC);
+ *   t += dt;
+ * }
+ * </code></pre>
+ * 
+ * The <code>initTransition</code> method initializes the transition variables and draws the initial/first 
+ * frame of the transition effect at time 0. The <code>stepTransition</code>
+ *  method calculates the new transition variables values based on the time parameter <code>t</code>
+ *  and draws the transition effect at time instance t. Finally, the <code>endTransition</code> method
+ *  finalizes the transition and draws the last frame at instance T. 
+ * 
  * @author Ahmed Mahran (ahmahran@gmail.com)
  */
 public abstract class Transition {
 
+    /**
+     * The default fps (frames per second) is 60
+     */
     public static final long DEFAULT_FPS    = 60;
+    /**
+     * The default transition time is 1000 ms
+     */
     public static final long DEFAULT_T      = 1000;
     
+    /**
+     * The Right direction, 0 degrees
+     */
     public static final double DIR_RIGHT    = 0;
+    /**
+     * The Up direction, 90 degrees
+     */
     public static final double DIR_UP       = 90;
+    /**
+     * The Left direction, 180 degrees
+     */
     public static final double DIR_LEFT     = 180;
+    /**
+     * The Down direction, 270 degrees
+     */
     public static final double DIR_DOWN     = 270;
     
     protected TransitionManager _transitionManager;
@@ -38,6 +87,7 @@ public abstract class Transition {
     private long        _t;     //time counter
     
     /**
+     * Constructs a new transition object
      * @param transitionManager the transition manager to be used to manage transitions 
      * @param fps number of frames per second
      * @param T the total time the transition effect will take
@@ -51,7 +101,7 @@ public abstract class Transition {
     }
     
     /**
-     * This constructor is similar to new Transition(transitionManager, 60, 1000)
+     * This constructor is similar to new Transition(transitionManager, {@link Transition#DEFAULT_FPS}, {@link Transition#DEFAULT_T})
      * @param transitionManager the transition manager to be used to manage transitions
      */
     public Transition(TransitionManager transitionManager) {
@@ -71,6 +121,7 @@ public abstract class Transition {
     }
     
     /**
+     * Returns the maximum number of frames per second
      * @return the maximum number of frames per second
      */
     public final long getFPS() {
@@ -88,6 +139,7 @@ public abstract class Transition {
     
     
     /**
+     * Returns the total time of the transition effect in millisecond
      * @return the total time of the transition effect in millisecond
      */
     public final double getTotalTransitionTime() {
@@ -107,7 +159,7 @@ public abstract class Transition {
      */
     public final void start(final Image from, final Image to, final GC gc, final double direction) {
         
-        _transitionManager.isAnyTransitionInProgress = true;
+        //_transitionManager.isAnyTransitionInProgress.setValue(true);
         
         boolean flag = true;
         long t0 = System.currentTimeMillis();
@@ -143,7 +195,9 @@ public abstract class Transition {
         initTransition(from, to, xitionImgGC, direction);
         gc.drawImage(xitionImg, 0, 0);
         
-        while(!_transitionManager.isCurrentTransitionCanceled && _t <= _T) {
+        //while(!_transitionManager.isCurrentTransitionCanceled.get()
+        //        && _t <= _T) {
+        while(_t <= _T) {
             
             ttemp = System.currentTimeMillis() - t0;
             dt = ttemp - _t;
@@ -187,7 +241,7 @@ public abstract class Transition {
         xitionImg.dispose();
         xitionImgGC.dispose();
         
-        _transitionManager.isAnyTransitionInProgress = false;
+        //_transitionManager.isAnyTransitionInProgress.setValue(false);
         
     }
     
