@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
+import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
 
 /**
  * Provides for xml packing/unpacking of columns
@@ -78,7 +79,7 @@ public class ColumnData {
       this.columns = columns;
       idToColumn.clear();
       for (XViewerColumn xCol : columns) {
-         idToColumn.put(xCol.getId(), xCol);
+         idToColumn.put(XViewerLib.intern(xCol.getId()), xCol);
       }
    }
 

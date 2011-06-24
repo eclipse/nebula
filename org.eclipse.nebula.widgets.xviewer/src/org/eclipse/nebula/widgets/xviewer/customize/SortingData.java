@@ -18,6 +18,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.eclipse.nebula.widgets.xviewer.Activator;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
+import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XmlUtil;
 
@@ -90,7 +91,7 @@ public class SortingData {
    public void setSortXCols(List<XViewerColumn> sortXCols) {
       sortingIds.clear();
       for (XViewerColumn xCol : sortXCols) {
-         sortingIds.add(xCol.getId());
+         sortingIds.add(XViewerLib.intern(xCol.getId()));
       }
    }
 
@@ -131,14 +132,14 @@ public class SortingData {
 
    public void addSortingName(String name) {
       if (!this.sortingIds.contains(name)) {
-         this.sortingIds.add(name);
+         this.sortingIds.add(XViewerLib.intern(name));
       }
    }
 
    public void setSortingNames(String... xViewerColumnId) {
       this.sortingIds.clear();
       for (String id : xViewerColumnId) {
-         this.sortingIds.add(id);
+         this.sortingIds.add(XViewerLib.intern(id));
       }
    }
 

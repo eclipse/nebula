@@ -53,15 +53,15 @@ public class XViewerColumn {
 
    public XViewerColumn(String id, String name, int width, int align, boolean show, SortDataType sortDataType, boolean multiColumnEditable, String description) {
       super();
-      this.id = id;
-      this.name = name;
+      setId(id);
+      setName(name);
       this.width = width;
       this.align = align;
       this.show = show;
       this.sortDataType = sortDataType;
       this.multiColumnEditable = multiColumnEditable;
-      this.description = description;
-      this.toolTip = this.name;
+      setDescription(description);
+      setToolTip(this.name);
    }
 
    /**
@@ -128,8 +128,8 @@ public class XViewerColumn {
    }
 
    public void setFromXml(String xml) {
-      id = XmlUtil.getTagData(xml, ID);
-      name = XmlUtil.getTagData(xml, NAME);
+      setId(XmlUtil.getTagData(xml, ID));
+      setName(XmlUtil.getTagData(xml, NAME));
       width = XmlUtil.getTagIntData(xml, WIDTH);
       align = getAlignStoreValue(XmlUtil.getTagData(xml, ALIGN));
       sortForward = XmlUtil.getTagBooleanData(xml, SORT_FORWARD);
@@ -239,12 +239,12 @@ public class XViewerColumn {
 
    public void setToolTip(String toolTip) {
       if (toolTip != null) {
-         this.toolTip = toolTip;
+         this.toolTip = XViewerLib.intern(toolTip);
       }
    }
 
    public void setName(String name) {
-      this.name = name;
+      this.name = XViewerLib.intern(name);
    }
 
    public String getDescription() {
@@ -252,7 +252,7 @@ public class XViewerColumn {
    }
 
    public void setDescription(String description) {
-      this.description = description;
+      this.description = XViewerLib.intern(description);
    }
 
    public boolean isMultiColumnEditable() {
@@ -314,6 +314,6 @@ public class XViewerColumn {
    }
 
    public void setId(String id) {
-      this.id = id;
+      this.id = XViewerLib.intern(id);
    }
 }

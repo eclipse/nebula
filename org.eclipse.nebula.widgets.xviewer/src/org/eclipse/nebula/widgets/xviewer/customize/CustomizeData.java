@@ -17,9 +17,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.eclipse.nebula.widgets.xviewer.Activator;
 import org.eclipse.nebula.widgets.xviewer.util.internal.OverlayUtil;
+import org.eclipse.nebula.widgets.xviewer.util.internal.OverlayUtil.Location;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
-import org.eclipse.nebula.widgets.xviewer.util.internal.OverlayUtil.Location;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -103,11 +103,11 @@ public class CustomizeData {
    public void setFromXml(String xml) {
       Matcher m = pattern.matcher(xml);
       if (m.find()) {
-         name = m.group(1);
-         nameSpace = m.group(2).intern();
+         setName(m.group(1));
+         setNameSpace(m.group(2));
          guid = m.group(3);
       } else {
-         name = "Invalid customize format for " + xml.substring(0, 50);
+         setName("Invalid customize format for " + xml.substring(0, 50));
          XViewerLog.log(Activator.class, Level.SEVERE, new IllegalStateException(name));
          return;
       }
@@ -147,7 +147,7 @@ public class CustomizeData {
    }
 
    public void setName(String name) {
-      this.name = name;
+      this.name = XViewerLib.intern(name);
    }
 
    public String getNameSpace() {
@@ -155,7 +155,7 @@ public class CustomizeData {
    }
 
    public void setNameSpace(String nameSpace) {
-      this.nameSpace = nameSpace;
+      this.nameSpace = XViewerLib.intern(nameSpace);
    }
 
    public String getGuid() {

@@ -42,6 +42,10 @@ public class XViewerLib {
       return (date.getTime() - today.getTime()) / MILLISECS_PER_DAY;
    }
 
+   public static String intern(String str) {
+      return (str == null) ? null : str.intern();
+   }
+
    public static String generateGuidStr() {
       long rand = (random.nextLong() & 0x7FFFFFFFFFFFFFFFL) | 0x4000000000000000L;
       return Long.toString(rand, 32) + Long.toString(System.currentTimeMillis() & 0xFFFFFFFFFFFFFL, 32);
