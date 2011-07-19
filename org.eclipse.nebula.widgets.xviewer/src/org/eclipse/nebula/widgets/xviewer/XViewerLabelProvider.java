@@ -156,6 +156,28 @@ public abstract class XViewerLabelProvider implements ITableLabelProvider, ITabl
    public abstract String getColumnText(Object element, XViewerColumn xCol, int columnIndex) throws Exception;
 
    /**
+    * Returns the backing data object for operations like sorting
+    */
+   public Object getBackingData(Object element, XViewerColumn xViewerColumn, int columnIndex) throws Exception {
+      try {
+         // If not shown, don't process any further
+         if (!xViewerColumn.isShow()) {
+            return "";
+         }
+         // First check value column's methods
+         if (xViewerColumn instanceof IXViewerValueColumn) {
+            Object obj = ((IXViewerValueColumn) xViewerColumn).getBackingData(element, xViewerColumn, columnIndex);
+            if (obj != null) {
+               return obj;
+            }
+         }
+      } catch (Exception ex) {
+         return XViewerCells.getCellExceptionString(ex);
+      }
+      return null;
+   }
+
+   /**
     * Return value between 0..100 and cell will show bar graph shading that portion of the cell
     */
    public int getColumnGradient(Object element, XViewerColumn xCol, int columnIndex) throws Exception {

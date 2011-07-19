@@ -17,6 +17,11 @@ public interface IXViewerValueColumn {
 
    String getColumnText(Object element, XViewerColumn column, int columnIndex) throws XViewerException;
 
+   /**
+    * Returns the backing data object for operations like sorting
+    */
+   Object getBackingData(Object element, XViewerColumn xCol, int columnIndex) throws Exception;
+
    Color getBackground(Object element, XViewerColumn xCol, int columnIndex) throws XViewerException;
 
    Color getForeground(Object element, XViewerColumn xCol, int columnIndex) throws XViewerException;

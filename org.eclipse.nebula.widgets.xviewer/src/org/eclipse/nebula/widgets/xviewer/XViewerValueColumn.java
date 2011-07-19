@@ -82,4 +82,9 @@ public class XViewerValueColumn extends XViewerColumn implements IXViewerValueCo
       return null;
    }
 
+   @Override
+   public Object getBackingData(Object element, XViewerColumn xCol, int columnIndex) throws Exception {
+      return null;
+   }
+
 }

@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumn.SortDataType;
@@ -51,7 +52,15 @@ public class XViewerSorter extends ViewerSorter {
          int columnNum = treeViewer.getCustomizeMgr().getColumnNumFromXViewerColumn(sortXCol);
 
          String o1Str = treeViewer.getColumnText(o1, columnNum);
+         Object obj1 = null;
          String o2Str = treeViewer.getColumnText(o2, columnNum);
+         Object obj2 = null;
+
+         IBaseLabelProvider labelProvider = treeViewer.getLabelProvider();
+         if (labelProvider instanceof XViewerLabelProvider) {
+            obj1 = ((XViewerLabelProvider) labelProvider).getBackingData(o1, sortXCol, columnNum);
+            obj2 = ((XViewerLabelProvider) labelProvider).getBackingData(o2, sortXCol, columnNum);
+         }
 
          // System.out.println("sortForward.get(columnNum) *" +
          // sortXCol.isSortForward() + "*");
@@ -61,7 +70,7 @@ public class XViewerSorter extends ViewerSorter {
          } else if (o2Str == null) {
             compareInt = 1;
          } else if (sortXCol.getSortDataType() == SortDataType.Date) {
-            compareInt = getCompareForDate(o1Str, o2Str);
+            compareInt = getCompareForDate(o1Str, obj1, o2Str, obj2);
          } else if (sortXCol.getSortDataType() == SortDataType.Percent) {
             compareInt = getCompareForPercent(o1Str, o2Str);
          } else if (sortXCol.getSortDataType() == SortDataType.Float) {
@@ -209,7 +218,20 @@ public class XViewerSorter extends ViewerSorter {
       }
    }
 
-   public int getCompareForDate(String date1, String date2) {
+   public int getCompareForDate(String date1, Object obj1, String date2, Object obj2) {
+      Date date1Date = null;
+      if (obj1 != null && obj1 instanceof Date) {
+         date1Date = (Date) obj1;
+      }
+      Date date2Date = null;
+      if (obj2 != null && obj2 instanceof Date) {
+         date2Date = (Date) obj2;
+      }
+      if (date1Date != null && date2Date != null) {
+         SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss:SS a");
+         System.out.println(String.format("Date1 [%s] Date2 [%s]", format.format(date1Date), format.format(date2Date)));
+         return getCompareForDate(date1Date, date2Date);
+      }
       if (date1.trim().equals("") && date2.trim().equals("")) {
          return 0;
       }
@@ -225,7 +247,6 @@ public class XViewerSorter extends ViewerSorter {
       } else {
          format = new SimpleDateFormat();
       }
-      Date date1Date = null;
       try {
          date1Date = format.parse(date1);
       } catch (ParseException ex) {
@@ -236,7 +257,6 @@ public class XViewerSorter extends ViewerSorter {
             return 0;
          }
       }
-      Date date2Date = null;
       try {
          date2Date = format.parse(date2);
       } catch (ParseException ex) {
