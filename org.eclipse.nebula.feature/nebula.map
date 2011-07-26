@@ -1,4 +1,0 @@
-feature@org.eclipse.nebula.feature=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/org.eclipse.nebula.feature
-
-plugin@org.eclipse.nebula.widgets.grid=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.grid
-plugin@org.eclipse.nebula.widgets.gallery=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.gallery
