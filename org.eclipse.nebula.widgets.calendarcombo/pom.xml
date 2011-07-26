@@ -1,58 +1,18 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.eclipse.nebula.widgets.calendarcombo</groupId>
-  <artifactId>org.eclipse.nebula.widgets.calendarcombo</artifactId>
-  <packaging>jar</packaging>
-  <version>1.0-NIGHTLY</version>
-  <name>Calendar Combo Widget</name>
-  <url>http://www.eclipse.org/nebula</url>
-  <build>
-    <sourceDirectory>src</sourceDirectory>
-    <plugins>
-
-	<plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <phase>package</phase>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-  <groupId>org.apache.maven.plugins</groupId>
-  <artifactId>maven-javadoc-plugin</artifactId>
-  <executions>
-    <execution>
-      <id>attach-javadocs</id>
-      <goals>
-        <goal>jar</goal>
-      </goals>
-    </execution>
-  </executions>
-</plugin>
-      
-    </plugins>
-  </build>
-  <dependencies>
-    <dependency>
-      <groupId>org.eclipse</groupId>
-      <artifactId>swt</artifactId>
-      <version>3.6.0.v3650b</version>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse</groupId>
-      <artifactId>swt.win32</artifactId>
-      <version>win32.x86_64_3.6.0.v3650b</version>
-    </dependency>
-
-  </dependencies>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	
+		<parent>
+		<artifactId>nebula-release</artifactId>
+		<groupId>org.eclipse.nebula</groupId>
+		<version>1.0.0-SNAPSHOT</version>
+		<relativePath>../org.eclipse.swt.nebula.nebula-release</relativePath>
+	</parent>
+	
+	<groupId>org.eclipse.nebula</groupId>
+	<artifactId>org.eclipse.nebula.widgets.calendarcombo</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>eclipse-plugin</packaging>
+	
 </project>
-
