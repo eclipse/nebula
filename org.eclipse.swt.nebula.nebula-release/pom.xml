@@ -131,6 +131,8 @@
 		<module>../org.eclipse.nebula.widgets.compositetable</module>
 		<module>../org.eclipse.nebula.widgets.oscilloscope</module>
 		<module>../org.eclipse.nebula.widgets.calendarcombo</module>
+		<module>../org.eclipse.nebula.widgets.tablecombo</module>
+		<module>../org.eclipse.nebula.widgets.xviewer</module>
 		<module>../org.eclipse.nebula.effects.stw</module>
 		<module>../org.eclipse.nebula.feature</module>
 		<module>../org.eclipse.nebula.updatesite</module>
