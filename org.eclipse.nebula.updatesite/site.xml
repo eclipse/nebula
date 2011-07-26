@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.eclipse.nebula.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.feature" version="1.0.0.qualifier">
+      <category name="Nebula"/>
+   </feature>
+   <category-def name="Nebula" label="Eclipse Nebula"/>
+</site>

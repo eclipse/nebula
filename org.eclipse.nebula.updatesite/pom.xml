@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   All rights reserved. This program and the accompanying materials
+   are made available under the terms of the Eclipse Public License v1.0
+   which accompanies this distribution, and is available at
+   http://www.eclipse.org/legal/epl-v10.html
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+		<artifactId>nebula-release</artifactId>
+		<groupId>org.eclipse.nebula</groupId>
+		<version>1.0.0-SNAPSHOT</version>
+		<relativePath>../org.eclipse.swt.nebula.nebula-release</relativePath>
+  </parent>
+
+  <artifactId>org.eclipse.nebula.updatesite</artifactId>
+  <packaging>eclipse-update-site</packaging>
+
+  <name>Eclipse Git Plugin Update Site</name>
+  <!-- see http://issues.sonatype.org/browse/TYCHO-313 -->
+  <version>1.0.0-SNAPSHOT</version>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <descriptors>
+            <descriptor>assembly.xml</descriptor>
+          </descriptors>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-resources</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/target/site</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>.</directory>
+                  <includes>
+                    <include>index.html</include>
+	            <include>web/*</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+     <id>build-server</id>
+     <build>
+       <plugins>
+         <plugin>
+           <groupId>org.eclipse.dash.maven</groupId>
+           <artifactId>eclipse-maven-signing-plugin</artifactId>
+           <executions>
+             <execution>
+               <id>pack</id>
+               <configuration>
+                 <inputFile>${project.build.directory}/org.eclipse.nebula.updatesite-${project.version}-site.zip</inputFile>
+               </configuration>
+               <phase>package</phase>
+               <goals>
+                 <goal>pack</goal>
+               </goals>
+             </execution>
+             <execution>
+               <id>sign</id>
+               <configuration>
+                 <inputFile>${project.build.directory}/org.eclipse.nebula.updatesite-${project.version}-site.zip</inputFile>
+                 <signerInputDirectory>${signer-input-directory}</signerInputDirectory>
+               </configuration>
+               <phase>package</phase>
+               <goals>
+                 <goal>sign</goal>
+               </goals>
+             </execution>
+             <execution>
+               <id>repack</id>
+               <configuration>
+                 <inputFile>${project.build.directory}/signed/site_assembly.zip</inputFile>
+               </configuration>
+               <phase>package</phase>
+               <goals>
+                 <goal>pack</goal>
+               </goals>
+             </execution>
+             <execution>
+               <id>fixCheckSums</id>
+               <phase>package</phase>
+               <goals>
+                 <goal>fixCheckSums</goal>
+               </goals>
+             </execution>
+           </executions>
+         </plugin>
+         <plugin>
+             <artifactId>maven-antrun-plugin</artifactId>
+             <executions>
+               <execution>
+                 <id>deploy</id>
+                 <phase>install</phase>
+                 <goals>
+                   <goal>run</goal>
+                 </goals>
+                 <configuration>
+                   <tasks>
+                     <delete includeemptydirs="false">
+                       <fileset
+                         dir="${download-publish-path}">
+                         <include name="**" />
+                       </fileset>
+                     </delete>
+                     <copy includeemptydirs="false"
+                       todir="${download-publish-path}">
+                       <fileset dir="target/checksumFix">
+                         <include name="**" />
+                       </fileset>
+                     </copy>
+                   </tasks>
+                 </configuration>
+               </execution>
+             </executions>
+           </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+</project>
