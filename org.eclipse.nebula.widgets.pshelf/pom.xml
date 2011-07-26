@@ -3,10 +3,10 @@
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 		<parent>
-		<artifactId>nebula-parent</artifactId>
+		<artifactId>nebula-release</artifactId>
 		<groupId>org.eclipse.nebula</groupId>
 		<version>1.0.0-SNAPSHOT</version>
-		<relativePath>../org.eclipse.nebula.nebula-parent</relativePath>
+		<relativePath>../org.eclipse.swt.nebula.nebula-release</relativePath>
 	</parent>
 	
 	<groupId>org.eclipse.nebula</groupId>
