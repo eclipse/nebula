@@ -21,7 +21,7 @@
   <artifactId>org.eclipse.nebula.updatesite</artifactId>
   <packaging>eclipse-update-site</packaging>
 
-  <name>Eclipse Git Plugin Update Site</name>
+  <name>Eclipse Nebula Plugin Update Site</name>
   <!-- see http://issues.sonatype.org/browse/TYCHO-313 -->
   <version>1.0.0-SNAPSHOT</version>
 
