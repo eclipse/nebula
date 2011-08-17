@@ -407,6 +407,7 @@ public class XFilteredTree extends Composite {
     */
    protected WorkbenchJob doCreateRefreshJob() {
       return new WorkbenchJob("Refresh Filter") {//$NON-NLS-1$
+         @SuppressWarnings("null")
          @Override
          public IStatus runInUIThread(IProgressMonitor monitor) {
             if (treeViewer.getControl().isDisposed()) {
@@ -889,6 +890,7 @@ public class XFilteredTree extends Composite {
 
             @Override
             public void mouseHover(MouseEvent e) {
+               // do nothing
             }
          });
          clearButton.getAccessible().addAccessibleListener(new AccessibleAdapter() {
@@ -1021,6 +1023,7 @@ public class XFilteredTree extends Composite {
     * @param filter PatternFilter which determines a match
     * @return bold font
     */
+   @SuppressWarnings("null")
    public static Font getBoldFont(Object element, XFilteredTree tree, PatternFilter filter) {
       String filterText = tree.getFilterString();
 
