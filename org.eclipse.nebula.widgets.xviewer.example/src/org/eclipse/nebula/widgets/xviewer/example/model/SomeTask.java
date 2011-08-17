@@ -11,7 +11,10 @@
 package org.eclipse.nebula.widgets.xviewer.example.model;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Example object for use of example XViewer implementation
@@ -29,6 +32,7 @@ public class SomeTask implements ISomeTask {
    private final String emailAddress;
    private final Date lastRunDate;
    private int percentComplete;
+   private final List<SomeTask> children = new ArrayList<SomeTask>();
 
    public SomeTask(RunDb runDb, TaskType taskType, String id, String startTime, String description, String category, String emailAddress, int percentComplete) {
       this(runDb, taskType, new Date(), id, startTime, description, category, emailAddress, percentComplete);
@@ -44,6 +48,15 @@ public class SomeTask implements ISomeTask {
       this.category = category;
       this.emailAddress = emailAddress;
       this.percentComplete = percentComplete;
+   }
+
+   public void addChild(SomeTask someTask) {
+      children.add(someTask);
+   }
+
+   public Collection<SomeTask> getChildren() {
+      return children;
+
    }
 
    @Override

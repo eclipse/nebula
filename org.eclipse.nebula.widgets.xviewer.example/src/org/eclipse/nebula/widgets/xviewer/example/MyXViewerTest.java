@@ -135,8 +135,16 @@ public class MyXViewerTest {
 
    private static List<ISomeTask> getTestTasks() {
       List<ISomeTask> tasks = new ArrayList<ISomeTask>();
-      tasks.add(new SomeTask(RunDb.Test_Db, TaskType.Backup, getDate(), "org.eclipse.osee.test1", "10:03",
-         "run to test this", "Suite A", "mark@eclipse.com", 50));
+      SomeTask task =
+         new SomeTask(RunDb.Test_Db, TaskType.Backup, getDate(), "org.eclipse.osee.test1", "10:03", "run to test this",
+            "Suite A", "mark@eclipse.com", 50);
+      tasks.add(task);
+
+      for (int x = 0; x < 5; x++) {
+         task.addChild(new SomeTask(RunDb.Test_Db, TaskType.Backup, getDate(), "org.eclipse.osee.test33", "10:03",
+            "run to test isit this - child " + x, "Suite A", "mark@eclipse.com", 50));
+      }
+
       tasks.add(new SomeTask(RunDb.Production_Db, TaskType.Data_Exchange, getDate(), "org.eclipse.osee.test2", "9:22",
          "run to test that", "Suite B", "john@eclipse.com", 0));
       tasks.add(new SomeTask(RunDb.Production_Db, TaskType.Backup, getDate(), "org.eclipse.osee.test4", "8:23",

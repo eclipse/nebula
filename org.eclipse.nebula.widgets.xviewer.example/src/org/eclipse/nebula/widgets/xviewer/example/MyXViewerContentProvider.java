@@ -15,6 +15,7 @@ import java.util.HashSet;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.nebula.widgets.xviewer.example.model.ISomeTask;
+import org.eclipse.nebula.widgets.xviewer.example.model.SomeTask;
 
 /**
  * Content provider for example XViewer implementation
@@ -39,6 +40,9 @@ public class MyXViewerContentProvider implements ITreeContentProvider {
       if (parentElement instanceof Collection) {
          return ((Collection) parentElement).toArray();
       }
+      if (parentElement instanceof SomeTask) {
+         return ((SomeTask) parentElement).getChildren().toArray();
+      }
       return EMPTY_ARRAY;
    }
 
@@ -49,6 +53,9 @@ public class MyXViewerContentProvider implements ITreeContentProvider {
 
    @Override
    public boolean hasChildren(Object element) {
+      if (element instanceof SomeTask) {
+         return ((SomeTask) element).getChildren().size() > 0;
+      }
       return false;
    }
 
