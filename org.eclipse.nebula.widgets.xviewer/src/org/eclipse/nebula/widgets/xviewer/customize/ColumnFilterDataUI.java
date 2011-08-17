@@ -34,15 +34,14 @@ public class ColumnFilterDataUI {
       // provided for subclass implementation
    }
 
-   public void dispose() {
-      // provided for subclass implementation
-   }
-
    public void promptSetFilter(String colId) {
       DialogWithEntry ed =
          new DialogWithEntry(Display.getCurrent().getActiveShell(), XViewerText.get("ColumnFilterDataUI.title"), null,
-            XViewerText.get("ColumnFilterDataUI.prompt", colId), MessageDialog.QUESTION,
-            new String[] {XViewerText.get("button.ok"), XViewerText.get("button.clear"), XViewerText.get("button.clear_all"), XViewerText.get("button.cancel")}, 0);
+            XViewerText.get("ColumnFilterDataUI.prompt", colId), MessageDialog.QUESTION, new String[] {
+               XViewerText.get("button.ok"),
+               XViewerText.get("button.clear"),
+               XViewerText.get("button.clear_all"),
+               XViewerText.get("button.cancel")}, 0);
       String str = xViewer.getCustomizeMgr().getColumnFilterData().getFilterText(colId);
       if (str != null && !str.equals("")) {
          ed.setEntry(str);

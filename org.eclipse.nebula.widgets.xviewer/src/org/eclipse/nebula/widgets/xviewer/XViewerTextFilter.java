@@ -11,7 +11,9 @@
 package org.eclipse.nebula.widgets.xviewer;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.eclipse.jface.viewers.Viewer;
@@ -29,6 +31,7 @@ public class XViewerTextFilter extends ViewerFilter {
    protected final Map<String, Pattern> colIdToPattern = new HashMap<String, Pattern>();
    protected static final Pattern EMPTY_STR_PATTERN = Pattern.compile("");
    protected static final Pattern NOT_EMPTY_STR_PATTERN = Pattern.compile("^.+$");
+   private final Set<Object> parentMatches = new HashSet<Object>();
 
    public XViewerTextFilter(XViewer xViewer) {
       this.xViewer = xViewer;
@@ -38,6 +41,7 @@ public class XViewerTextFilter extends ViewerFilter {
     * Setup all patterns for text and column text filters
     */
    public void update() {
+      parentMatches.clear();
       // Update text filter pattern
       if (!Strings.isValid(xViewer.getCustomizeMgr().getFilterText())) {
          textPattern = null;
@@ -84,6 +88,13 @@ public class XViewerTextFilter extends ViewerFilter {
       if (textPattern == null && colIdToPattern.isEmpty()) {
          return true;
       }
+      // If element matches, it's parent is added to this collection; it should always match so get full path shown
+      if (parentMatches.contains(element)) {
+         if (parentElement != null) {
+            parentMatches.add(parentElement);
+         }
+         return true;
+      }
       boolean match = true;
       // Must match all column filters or don't show
       for (String filteredColId : xViewer.getCustomizeMgr().getColumnFilterData().getColIds()) {
@@ -105,6 +116,9 @@ public class XViewerTextFilter extends ViewerFilter {
 
       // Must match at least one column for filter text
       if (textPattern == null) {
+         if (match && parentElement != null) {
+            parentMatches.add(parentElement);
+         }
          return match;
       }
       if (textPattern != null) {
@@ -116,13 +130,15 @@ public class XViewerTextFilter extends ViewerFilter {
                if (cellStr != null) {
                   matcher = textPattern.matcher(cellStr);
                   if (matcher.find()) {
+                     if (parentElement != null) {
+                        parentMatches.add(parentElement);
+                     }
                      return true;
                   }
                }
             }
          }
       }
-
       return false;
    }
 

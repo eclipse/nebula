@@ -117,10 +117,6 @@ public class FilterDataUI {
       }
    }
 
-   public void dispose() {
-      // provided for subclass implementation
-   }
-
    public void addFilterTextListener(KeyListener keyListener) {
       if (filterText != null && !filterText.isDisposed()) {
          filterText.addKeyListener(keyListener);

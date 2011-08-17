@@ -135,13 +135,12 @@ public class XViewer extends TreeViewer {
    }
 
    public void dispose() {
-      if (searchDataUI != null) {
-         searchDataUI.dispose();
+      if (statusLabel != null && !statusLabel.isDisposed()) {
+         statusLabel.dispose();
       }
-      if (filterDataUI != null) {
-         filterDataUI.dispose();
+      if (statusComposite != null && !statusComposite.isDisposed()) {
+         statusComposite.dispose();
       }
-      columnFilterDataUI.dispose();
    }
 
    @Override
@@ -176,30 +175,30 @@ public class XViewer extends TreeViewer {
 
       searchColor = Display.getDefault().getSystemColor(SWT.COLOR_YELLOW);
 
-      Composite comp = null;
+      statusComposite = null;
       if (searchDataUI != null || filterDataUI != null || xViewerFactory.isLoadedStatusLabelAvailable()) {
-         comp = new Composite(parent, SWT.NONE);
-         comp.setLayout(XViewerLib.getZeroMarginLayout(11, false));
-         comp.setLayoutData(new GridData(SWT.FILL, SWT.None, true, false));
+         statusComposite = new Composite(parent, SWT.NONE);
+         statusComposite.setLayout(XViewerLib.getZeroMarginLayout(11, false));
+         statusComposite.setLayoutData(new GridData(SWT.FILL, SWT.None, true, false));
 
          if (filterDataUI != null) {
-            filterDataUI.createWidgets(comp);
-            Label sep1 = new Label(comp, SWT.SEPARATOR);
+            filterDataUI.createWidgets(statusComposite);
+            Label sep1 = new Label(statusComposite, SWT.SEPARATOR);
             GridData gd = new GridData(SWT.RIGHT, SWT.NONE, false, false);
             gd.heightHint = 16;
             sep1.setLayoutData(gd);
          }
 
          if (searchDataUI != null) {
-            searchDataUI.createWidgets(comp);
-            Label sep2 = new Label(comp, SWT.SEPARATOR);
+            searchDataUI.createWidgets(statusComposite);
+            Label sep2 = new Label(statusComposite, SWT.SEPARATOR);
             GridData gd = new GridData(SWT.RIGHT, SWT.NONE, false, false);
             gd.heightHint = 16;
             sep2.setLayoutData(gd);
          }
 
          if (xViewerFactory.isLoadedStatusLabelAvailable()) {
-            statusLabel = new Label(comp, SWT.NONE);
+            statusLabel = new Label(statusComposite, SWT.NONE);
             statusLabel.setText(" ");
             statusLabel.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
          }
@@ -337,6 +336,7 @@ public class XViewer extends TreeViewer {
          }
       }
    };
+   private Composite statusComposite;
 
    public void resetDefaultSorter() {
       customizeMgr.resetDefaultSorter();
@@ -464,7 +464,8 @@ public class XViewer extends TreeViewer {
       if (allItemsFiltered) {
          sb.append(XViewerText.get("status.all_filtered"));
       }
-      sb.append(MessageFormat.format(XViewerText.get("status"), loadedNum, visibleNum, ((IStructuredSelection) getSelection()).size()));
+      sb.append(MessageFormat.format(XViewerText.get("status"), loadedNum, visibleNum,
+         ((IStructuredSelection) getSelection()).size()));
       customizeMgr.appendToStatusLabel(sb);
       if (filterDataUI != null) {
          filterDataUI.appendToStatusLabel(sb);

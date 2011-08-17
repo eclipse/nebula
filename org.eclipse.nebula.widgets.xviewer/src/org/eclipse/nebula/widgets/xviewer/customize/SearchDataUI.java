@@ -113,10 +113,6 @@ public class SearchDataUI {
       });
    }
 
-   public void dispose() {
-      // provided for subclass implementation
-   }
-
    public void clear() {
       searchText.setText("");
       xViewer.getCustomizeMgr().setFilterText("", false);
