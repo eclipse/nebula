@@ -329,9 +329,10 @@ public class XViewerCustomMenu {
       TreeColumn insertTreeCol = xViewer.getRightClickSelectedColumn();
       XViewerColumn insertXCol = insertTreeCol != null ? (XViewerColumn) insertTreeCol.getData() : null;
       XCheckFilteredTreeDialog dialog =
-         new XCheckFilteredTreeDialog(XViewerText.get("dialog.show_columns.title"), XViewerText.get("dialog.show_columns.prompt"), patternFilter,
-            new ArrayTreeContentProvider(), new XViewerColumnLabelProvider(), new XViewerColumnSorter());
-      dialog.setInput(xViewer.getCustomizeMgr().getCurrentHiddenTableColumns());
+         new XCheckFilteredTreeDialog(XViewerText.get("dialog.show_columns.title"),
+            XViewerText.get("dialog.show_columns.prompt"), patternFilter, new ArrayTreeContentProvider(),
+            new XViewerColumnLabelProvider(), new XViewerColumnSorter());
+      dialog.setInput(xViewer.getCustomizeMgr().getCurrentTableColumns());
       if (dialog.open() == 0) {
          //         System.out.println("Selected " + dialog.getChecked());
          //         System.out.println("Selected column to add before " + insertXCol);
@@ -370,9 +371,9 @@ public class XViewerCustomMenu {
       TreeColumn insertTreeCol = xViewer.getRightClickSelectedColumn();
       XViewerColumn insertXCol = (XViewerColumn) insertTreeCol.getData();
       XCheckFilteredTreeDialog dialog =
-         new XCheckFilteredTreeDialog("", XViewerText.get("dialog.add_column.prompt",
-            insertXCol.getName(), insertXCol.getId()), patternFilter,
-            new ArrayTreeContentProvider(), new XViewerColumnLabelProvider(), new XViewerColumnSorter());
+         new XCheckFilteredTreeDialog("", XViewerText.get("dialog.add_column.prompt", insertXCol.getName(),
+            insertXCol.getId()), patternFilter, new ArrayTreeContentProvider(), new XViewerColumnLabelProvider(),
+            new XViewerColumnSorter());
       Collection<XViewerComputedColumn> computedCols = xViewer.getComputedColumns(insertXCol);
       if (computedCols.isEmpty()) {
          XViewerLib.popup("ERROR", XViewerText.get("error.no_computed"));
@@ -424,7 +425,8 @@ public class XViewerCustomMenu {
          }
       }
       String html = HtmlUtil.simplePage(HtmlUtil.textToHtml(CollectionsUtil.toString("\n", values)));
-      new HtmlDialog(XViewerText.get("dialog.unique.title"), XViewerText.get("dialog.unique.prompt", xCol.getName()), html).open();
+      new HtmlDialog(XViewerText.get("dialog.unique.title"), XViewerText.get("dialog.unique.prompt", xCol.getName()),
+         html).open();
    }
 
    protected void handleSumColumn() {
