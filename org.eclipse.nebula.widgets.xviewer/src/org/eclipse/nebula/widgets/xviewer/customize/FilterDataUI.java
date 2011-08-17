@@ -17,7 +17,10 @@ import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
@@ -34,6 +37,7 @@ public class FilterDataUI {
    private Text filterText;
    private final XViewer xViewer;
    private final boolean filterRealTime;
+   private Button regularExpression;
 
    public FilterDataUI(XViewer xViewer, boolean filterRealTime) {
       this.xViewer = xViewer;
@@ -60,9 +64,10 @@ public class FilterDataUI {
 
          @Override
          public void keyReleased(KeyEvent e) {
-            // System.out.println(e.keyCode);
             if (e.keyCode == SWT.CR || e.keyCode == SWT.KEYPAD_CR || filterRealTime) {
-               xViewer.getCustomizeMgr().setFilterText(filterText.getText());
+               // System.out.println(e.keyCode);
+               String newText = filterText.getText();
+               xViewer.getCustomizeMgr().setFilterText(newText, isRegularExpression());
             }
          }
       });
@@ -74,9 +79,30 @@ public class FilterDataUI {
          @Override
          public void handleEvent(Event event) {
             filterText.setText("");
-            xViewer.getCustomizeMgr().setFilterText("");
+            xViewer.getCustomizeMgr().setFilterText("", isRegularExpression());
          }
       });
+
+      regularExpression = new Button(comp, SWT.CHECK);
+      regularExpression.setText(XViewerText.get("regex.prompt"));
+      regularExpression.setToolTipText(XViewerText.get("regex.prompt.tooltip"));
+      regularExpression.setLayoutData(new GridData(SWT.RIGHT, SWT.NONE, false, false));
+      regularExpression.addSelectionListener(new SelectionAdapter() {
+
+         @Override
+         public void widgetSelected(SelectionEvent e) {
+            xViewer.getCustomizeMgr().setFilterText(filterText.getText(), isRegularExpression());
+         }
+
+      });
+
+   }
+
+   public boolean isRegularExpression() {
+      if (regularExpression != null && !regularExpression.isDisposed()) {
+         return regularExpression.getSelection();
+      }
+      return false;
    }
 
    public void update() {
@@ -103,7 +129,7 @@ public class FilterDataUI {
 
    public void clear() {
       filterText.setText("");
-      xViewer.getCustomizeMgr().setFilterText("");
+      xViewer.getCustomizeMgr().setFilterText("", isRegularExpression());
    }
 
    public void appendToStatusLabel(StringBuffer sb) {

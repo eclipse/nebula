@@ -16,6 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.nebula.widgets.xviewer.util.internal.Strings;
 
 /**
  * @author Donald G. Dunne
@@ -38,11 +39,14 @@ public class XViewerTextFilter extends ViewerFilter {
     */
    public void update() {
       // Update text filter pattern
-      if (xViewer.getCustomizeMgr().getFilterText() == null || xViewer.getCustomizeMgr().getFilterText().equals("")) {
+      if (!Strings.isValid(xViewer.getCustomizeMgr().getFilterText())) {
          textPattern = null;
       } else {
-         textPattern =
-            Pattern.compile(xViewer.getCustomizeMgr().getFilterText(), Pattern.LITERAL | Pattern.CASE_INSENSITIVE);
+         int flags = Pattern.CASE_INSENSITIVE;
+         if (!xViewer.getCustomizeMgr().isFilterTextRegularExpression()) {
+            flags = Pattern.LITERAL | flags;
+         }
+         textPattern = Pattern.compile(xViewer.getCustomizeMgr().getFilterText(), flags);
       }
       // Update column filter patterns
       colIdToPattern.clear();

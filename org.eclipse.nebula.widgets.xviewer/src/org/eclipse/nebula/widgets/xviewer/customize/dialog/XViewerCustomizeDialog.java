@@ -82,6 +82,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
    protected XViewerFilteredTree visibleColTable;
    private Text sorterText;
    private Text filterText;
+   private Button filterRegExCheckBox;
    private Text columnFilterText;
    // Select Customization Buttons
    Button setDefaultButton, deleteButton;
@@ -534,7 +535,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
       final Composite composite_7 = new Composite(composite, SWT.NONE);
       composite_7.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 3, 1));
       final GridLayout gridLayout_13 = new GridLayout();
-      gridLayout_13.numColumns = 3;
+      gridLayout_13.numColumns = 5;
       composite_7.setLayout(gridLayout_13);
 
       final Label filterLabel = new Label(composite_7, SWT.NONE);
@@ -542,6 +543,12 @@ public class XViewerCustomizeDialog extends MessageDialog {
 
       filterText = new Text(composite_7, SWT.BORDER);
       filterText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
+      Label filterLabel2 = new Label(composite_7, SWT.NONE);
+      filterLabel2.setText("Regular Expression:");
+
+      filterRegExCheckBox = new Button(composite_7, SWT.CHECK);
+      filterRegExCheckBox.setLayoutData(new GridData(SWT.RIGHT, SWT.NONE, false, false));
 
       final Label clearFilterLabel = new Label(composite_7, SWT.PUSH);
       clearFilterLabel.setImage(XViewerLib.getImage("clear.gif"));
@@ -562,6 +569,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
             filterText.setText("");
          }
       });
+
    }
 
    private void createSorterTextBlock(final Composite composite) {
@@ -988,7 +996,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
       custData.setNameSpace(xViewerToCustomize.getXViewerFactory().getNamespace());
       custData.getColumnData().setColumns(getConfigCustXViewerColumns());
       custData.getSortingData().setFromXml(sorterText.getText());
-      custData.getFilterData().setFilterText(filterText.getText());
+      custData.getFilterData().setFilterText(filterText.getText(), filterRegExCheckBox.getSelection());
       custData.getColumnFilterData().setFromXml(columnFilterText.getText());
       return custData;
    }
@@ -1170,6 +1178,8 @@ public class XViewerCustomizeDialog extends MessageDialog {
 
       filterText.setText(custData.getFilterData().getFilterText());
       filterText.setData(custData);
+
+      filterRegExCheckBox.setSelection(custData.getFilterData().isRegularExpression());
 
       columnFilterText.setText(custData.getColumnFilterData().getXml());
       columnFilterText.setData(custData);

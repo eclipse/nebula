@@ -36,6 +36,10 @@ public class XmlUtil {
       return addTagData(elementName, data, false);
    }
 
+   public static String addTagDataBoolean(String elementName, boolean data) {
+      return addTagData(elementName, data ? "true" : "false", false);
+   }
+
    public static String addTagData(String elementName, String data, boolean newLine) {
       String str = "<" + elementName + ">" + data + "</" + elementName + ">";
       if (newLine) {

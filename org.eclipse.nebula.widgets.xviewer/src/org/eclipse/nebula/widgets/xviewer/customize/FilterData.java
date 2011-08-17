@@ -21,6 +21,8 @@ public class FilterData {
 
    private String filterText = "";
    private static final String FILTER_TAG = "xFilter";
+   private static final String FILTER_REGEX_TAG = "xFilterRE";
+   private boolean regularExpression;
 
    public String getFilterText() {
       return filterText;
@@ -30,21 +32,31 @@ public class FilterData {
       return filterText != null && !filterText.equals("");
    }
 
-   public void setFilterText(String filterText) {
+   public void setFilterText(String filterText, boolean regularExpression) {
       this.filterText = filterText;
+      this.regularExpression = regularExpression;
    }
 
    public String getXml() {
-      return XmlUtil.addTagData(FILTER_TAG, filterText);
+      return XmlUtil.addTagData(FILTER_TAG, filterText) + XmlUtil.addTagDataBoolean(FILTER_REGEX_TAG, regularExpression);
    }
 
    public void setFromXml(String xml) {
       filterText = XmlUtil.getTagData(xml, FILTER_TAG);
+      regularExpression = XmlUtil.getTagBooleanData(xml, FILTER_REGEX_TAG);
    }
 
    @Override
    public String toString() {
-      return "filterData:[" + filterText + "]";
+      return "filterData:[" + filterText + "]" + (regularExpression ? "-RE" : "");
+   }
+
+   public boolean isRegularExpression() {
+      return regularExpression;
+   }
+
+   public void setRegularExpression(boolean regularExpression) {
+      this.regularExpression = regularExpression;
    }
 
 }

@@ -204,8 +204,8 @@ public class CustomizeManager {
       return resolvedCol;
    }
 
-   public void setFilterText(String text) {
-      currentCustData.filterData.setFilterText(text);
+   public void setFilterText(String text, boolean regex) {
+      currentCustData.filterData.setFilterText(text, regex);
       try {
          xViewer.getTree().setRedraw(false);
          xViewerTextFilter.update();
@@ -580,5 +580,9 @@ public class CustomizeManager {
             }
          });
       }
+   }
+
+   public boolean isFilterTextRegularExpression() {
+      return currentCustData.getFilterData().isRegularExpression();
    }
 }

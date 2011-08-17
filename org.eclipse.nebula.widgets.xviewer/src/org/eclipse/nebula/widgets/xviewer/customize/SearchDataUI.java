@@ -119,7 +119,7 @@ public class SearchDataUI {
 
    public void clear() {
       searchText.setText("");
-      xViewer.getCustomizeMgr().setFilterText("");
+      xViewer.getCustomizeMgr().setFilterText("", false);
    }
 
    public void appendToStatusLabel(StringBuffer sb) {
