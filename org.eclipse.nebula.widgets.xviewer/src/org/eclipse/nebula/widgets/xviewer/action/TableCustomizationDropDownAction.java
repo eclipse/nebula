@@ -1,5 +1,7 @@
 package org.eclipse.nebula.widgets.xviewer.action;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Level;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -52,7 +54,9 @@ public class TableCustomizationDropDownAction extends Action implements IMenuCre
          xViewer.getCustomizeMgr().getTableDefaultCustData()));
       new MenuItem(fMenu, SWT.SEPARATOR);
       try {
-         for (CustomizeData custData : xViewer.getCustomizeMgr().getSavedCustDatas()) {
+         List<CustomizeData> savedCustDatas = xViewer.getCustomizeMgr().getSavedCustDatas();
+         Collections.sort(savedCustDatas);
+         for (CustomizeData custData : savedCustDatas) {
             addActionToMenu(fMenu, new TableCustomizationCustomizeDataAction(xViewer, custData));
          }
       } catch (Exception ex) {

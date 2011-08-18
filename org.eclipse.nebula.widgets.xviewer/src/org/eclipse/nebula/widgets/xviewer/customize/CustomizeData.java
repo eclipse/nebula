@@ -27,7 +27,7 @@ import org.eclipse.swt.graphics.Image;
  * 
  * @author Donald G. Dunne
  */
-public class CustomizeData {
+public class CustomizeData implements Comparable<CustomizeData> {
 
    private String guid = XViewerLib.generateGuidStr();
    private String name;
@@ -174,5 +174,10 @@ public class CustomizeData {
    @Override
    public int hashCode() {
       return guid.hashCode();
+   }
+
+   @Override
+   public int compareTo(CustomizeData custData) {
+      return getName().compareToIgnoreCase(custData.getName());
    }
 }
