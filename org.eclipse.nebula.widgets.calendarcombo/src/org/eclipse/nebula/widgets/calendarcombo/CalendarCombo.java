@@ -164,6 +164,7 @@ public class CalendarCombo extends Composite {
     protected static final boolean OS_CARBON        = "carbon".equals(SWT.getPlatform());
     protected static final boolean OS_GTK           = "gtk".equals(SWT.getPlatform());
     protected static final boolean OS_WINDOWS       = "win32".equals(SWT.getPlatform());
+	private Listener shellDeactivate;
 
     /*
      * // Windows JNI Code for making a non-activated canvas, for reference if
@@ -702,7 +703,7 @@ public class CalendarCombo extends Composite {
             }
         };
 
-        Shell parentShell = mParentComposite.getShell();
+        final Shell parentShell = mParentComposite.getShell();
 
         if (parentShell != null) {
             parentShell.addControlListener(new ControlListener() {
@@ -715,8 +716,9 @@ public class CalendarCombo extends Composite {
                 }
             });
 
-            parentShell.addListener(SWT.Deactivate, new Listener() {
-                public void handleEvent(Event event) {
+            shellDeactivate = new Listener() {
+				
+				public void handleEvent(Event event) {
                     Point mouseLoc = getDisplay().getCursorLocation();
 
                     // with no focus shells, buttons will steal focus, and cause
@@ -727,8 +729,24 @@ public class CalendarCombo extends Composite {
                     if (mCalendarComposite != null && mCalendarComposite.isDisposed() == false) mCalendarComposite.externalClick(mouseLoc);
 
                     if (!isFlat) kill(6);
-                }
-            });
+				}
+			};
+            
+            parentShell.addListener(SWT.Deactivate, shellDeactivate); 
+//            		new Listener() {
+//                public void handleEvent(Event event) {
+//                    Point mouseLoc = getDisplay().getCursorLocation();
+//
+//                    // with no focus shells, buttons will steal focus, and cause
+//                    // deactivate events when clicked
+//                    // so if the deactivate came from a mouse being over any of
+//                    // our buttons, that is the same as
+//                    // if we clicked them.
+//                    if (mCalendarComposite != null && mCalendarComposite.isDisposed() == false) mCalendarComposite.externalClick(mouseLoc);
+//
+//                    if (!isFlat) kill(6);
+//                }
+//            });
 
             parentShell.addFocusListener(new FocusListener() {
                 public void focusGained(FocusEvent e) {
@@ -760,6 +778,7 @@ public class CalendarCombo extends Composite {
         getDisplay().addFilter(SWT.FocusIn, mFilterListenerFocusIn);
         mComboControl.addDisposeListener(new DisposeListener() {
             public void widgetDisposed(DisposeEvent event) {
+            	parentShell.removeListener(SWT.Deactivate, shellDeactivate);
                 getDisplay().removeFilter(SWT.FocusIn, mFilterListenerFocusIn);
                 getDisplay().removeFilter(SWT.MouseDown, mOobDisplayFilterListener);
                 if (mKeyDownListener != null) getDisplay().removeFilter(SWT.KeyDown, mKeyDownListener);
