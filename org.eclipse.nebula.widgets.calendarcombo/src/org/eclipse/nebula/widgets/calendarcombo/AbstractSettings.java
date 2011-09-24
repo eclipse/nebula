@@ -24,6 +24,10 @@ public abstract class AbstractSettings implements ISettings {
 	private Font	mCarbonFont			= null;
 	private Font	mWindowsPopupFont	= null;
 
+	public boolean isWindows7() {
+		return System.getProperty("os.name").toLowerCase().equals("windows 7");
+	}
+	
 	public int getArrowLeftSpacing() {
 		return 6;
 	}
@@ -41,6 +45,9 @@ public abstract class AbstractSettings implements ISettings {
 	}
 
 	public int getCalendarHeight() {
+		if (isWindows7()) {
+			return 168;
+		}
 		return 164;
 	}
 
@@ -109,6 +116,10 @@ public abstract class AbstractSettings implements ISettings {
 	}
 
 	public int getButtonVerticalSpace() {
+		if (isWindows7()) {
+			return 144;
+		}
+		
 		return 133;
 	}
 
