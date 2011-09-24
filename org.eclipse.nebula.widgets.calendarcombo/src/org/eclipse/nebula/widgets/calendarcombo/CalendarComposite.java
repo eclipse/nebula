@@ -15,6 +15,7 @@ import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -156,10 +157,17 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 
 		String[] weekdays = mDFS.getWeekdays();
 		mDayTitles = new String[weekdays.length];
+		
+		boolean isCNLocale = mSettings.getLocale().equals(Locale.CHINA) || mSettings.getLocale().equals(Locale.TAIWAN);
+		
 		for (int i = 0; i < weekdays.length; i++) {
 			String weekday = weekdays[i];
 			if (weekday.length() > 0) {
-				mDayTitles[i] = weekday.substring(0, 1).toUpperCase();
+				if (isCNLocale) {
+					mDayTitles[i] = weekday.substring(2, 3).toUpperCase();
+                } else {
+                    mDayTitles[i] = weekday.substring(0, 1).toUpperCase();
+                }
 			}
 		}
 	}
