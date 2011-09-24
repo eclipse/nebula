@@ -46,9 +46,9 @@ class MonthPick extends Canvas implements MouseListener {
 
 	private int mInnerWidth = 99;
 
-	private DateFormatSymbols mDFS = new DateFormatSymbols(Locale.getDefault());
+	private DateFormatSymbols mDFS;
 
-	private String[] mMonths = mDFS.getMonths();
+	private String[] mMonths;
 
 	private ArrayList mMonthEntries = new ArrayList();
 
@@ -86,6 +86,10 @@ class MonthPick extends Canvas implements MouseListener {
 			CalendarComposite cc, ISettings settings, Locale locale) {
 		super(parent, style | SWT.NO_BACKGROUND | SWT.NO_REDRAW_RESIZE
 				| SWT.ON_TOP);
+		
+		mDFS = new DateFormatSymbols(locale);
+		mMonths = mDFS.getMonths();
+		
 		mStart = start;
 		mCalendarComposite = cc;
 		mLocale = locale;
