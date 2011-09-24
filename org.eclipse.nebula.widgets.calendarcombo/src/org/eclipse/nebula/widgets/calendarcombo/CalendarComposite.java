@@ -211,6 +211,8 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 	private void clickedTodayButton() {
 		setDate(Calendar.getInstance(mSettings.getLocale()));
 		mSelectedDay = Calendar.getInstance(mSettings.getLocale());
+		mMouseDownDay = mSelectedDay;
+		mMouseUpDay = mSelectedDay;
 		notifyListeners();
 	}
 
@@ -687,6 +689,7 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 
 	public void mouseUp(MouseEvent event) {
 		mMouseIsDown = false;
+		boolean bArrowThread = (mArrowThread!=null);
 		killArrowThread();
 
 		if (mNoDayClicked) {
@@ -694,20 +697,8 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 			return;
 		}
 
-		if (mDateRange) {
-			// this may seem odd but it's not. First we set the "up" date to the
-			// current date
-			// then we overwrite it by setting the selected date to when the
-			// mouse click was "down".
-			// that way the date set on the combo will be the date the user
-			// clicked first, and not the date when the user
-			// let go of the mouse button, this will be reflected in the
-			// listeners as well
-			mMouseUpDay = mSelectedDay;
-			mSelectedDay = mMouseDownDay;
-		}
-
-		if (mSelectedDay != null) {
+		//don't close the popup if they were pressing the arrow!
+		if (mSelectedDay != null && !bArrowThread) {
 			notifyListeners();
 			notifyClose();
 		}
@@ -726,6 +717,19 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 
 	private void notifyListeners(Calendar date) {
 		// notify ourselves first
+        if (mDateRange) {
+            // this may seem odd but it's not. First we set the "up" date to the
+            // current date
+            // then we overwrite it by setting the selected date to when the
+            // mouse click was "down".
+            // that way the date set on the combo will be the date the user
+            // clicked first, and not the date when the user
+            // let go of the mouse button, this will be reflected in the
+            // listeners as well
+            mMouseUpDay = mSelectedDay;
+            mSelectedDay = mMouseDownDay;
+        }
+
 		if (mDateRange)
 			mMainListener.dateRangeChanged(mMouseDownDay, mMouseUpDay);
 		else
@@ -814,21 +818,15 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 				mSelectedDay.add(Calendar.DATE, -7);
 				int monthAfter = mSelectedDay.get(Calendar.MONTH);
 				
-				if (monthAfter != monthNow)
-					mCalendar.add(Calendar.MONTH, -1);
-				
 				redraw();
 			} else if (keyCode == SWT.ARROW_DOWN) {
 				int monthNow = mSelectedDay.get(Calendar.MONTH);				
 				mSelectedDay.add(Calendar.DATE, 7);
 				int monthAfter = mSelectedDay.get(Calendar.MONTH);
 				
-				if (monthAfter != monthNow)
-					mCalendar.add(Calendar.MONTH, 1);				
-				
 				redraw();
 			} else if (keyCode == SWT.CR || keyCode == SWT.LF) {
-				notifyListeners();
+			    notifyListeners();
 				notifyClose();
 				return;
 			}
