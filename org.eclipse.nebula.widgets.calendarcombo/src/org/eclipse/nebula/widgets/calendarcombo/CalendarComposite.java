@@ -148,14 +148,18 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 	private void init() {
 		mDFS = new DateFormatSymbols(mSettings.getLocale());
 		mMonths = mDFS.getMonths();
-		;
 
 		if (mCalendar == null)
 			mCalendar = Calendar.getInstance(mSettings.getLocale());
 		if (mToday == null)
 			mToday = Calendar.getInstance(mSettings.getLocale());
 
-		String[] weekdays = mDFS.getWeekdays();
+		String[] weekdays = mDFS.getWeekdays();		
+		// hebrew needs short weekdays
+		if (mSettings.getLocale().getDisplayLanguage().toLowerCase().equals("hebrew")) {
+			weekdays = mDFS.getShortWeekdays();
+		}
+		
 		mDayTitles = new String[weekdays.length];
 		
 		boolean isCNLocale = mSettings.getLocale().equals(Locale.CHINA) || mSettings.getLocale().equals(Locale.TAIWAN);
