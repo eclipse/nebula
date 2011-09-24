@@ -718,14 +718,14 @@ public class CalendarCombo extends Composite {
             shellDeactivate = new Listener() {
 				
 				public void handleEvent(Event event) {
-                    Point mouseLoc = getDisplay().getCursorLocation();
-
                     // with no focus shells, buttons will steal focus, and cause
                     // deactivate events when clicked
                     // so if the deactivate came from a mouse being over any of
                     // our buttons, that is the same as
                     // if we clicked them.
-                    if (mCalendarComposite != null && mCalendarComposite.isDisposed() == false) mCalendarComposite.externalClick(mouseLoc);
+                    if (mCalendarComposite != null && mCalendarComposite.isDisposed() == false) {
+                    	mCalendarComposite.externalClick(getDisplay().getCursorLocation());
+                    }
 
                     if (!isFlat) kill(6);
 				}
