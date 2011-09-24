@@ -45,7 +45,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
@@ -402,7 +401,7 @@ public class CalendarCombo extends Composite {
                     if (event.time == mLastFireTime) { return; }
 
                     if (event.detail == 16 || event.detail == 8 || event.detail == 4 || event.detail == 0) {
-                        parseTextDate();
+                        parseTextDate(true);
                     }
 
                     mLastFireTime = event.time;
@@ -455,7 +454,7 @@ public class CalendarCombo extends Composite {
                             int cursorLoc = isFlat ? mFlatCombo.getSelection().x : mCombo.getSelection().x;
                             // first, parse the date, we don't care if it's some
                             // fantastic format we can parse, parse it again
-                            parseTextDate();
+                            parseTextDate(true);
                             // once it's parsed, set it to the default format,
                             // that way we KNOW where certain parts of the date
                             // are
@@ -856,7 +855,7 @@ public class CalendarCombo extends Composite {
     }
 
     // parses the date, and really tries
-    private void parseTextDate() {
+    private void parseTextDate(boolean notifyListeners) {
         // listeners by users can cause infinite loops as we notify, they set dates on
         // notify, etc, so don't allow parsing if we haven't finished internally yet.
         if (mParsingDate) { return; }
@@ -869,7 +868,7 @@ public class CalendarCombo extends Composite {
             if (comboText.length() == 0 && mStartDate != null) {
                 mStartDate = null;
                 setText("");
-                if (mLastNotificationDate != null) {
+                if (mLastNotificationDate != null && notifyListeners) {
                     notifyDateChangedToNull();
                 }
                 return;
@@ -877,7 +876,9 @@ public class CalendarCombo extends Composite {
 
             mStartDate = DateHelper.parse(comboText, mSettings.getLocale(), mSettings.getDateFormat(), mSettings.getAcceptedDateSeparatorChars(), mSettings.getAdditionalDateFormats());
             updateDate();
-            notifyDateChanged();
+            if (notifyListeners) {
+            	notifyDateChanged();
+            }
             mParsingDate = false;
         } catch (CalendarDateParseException dpe) {
             if (!mDateParseExceptionListeners.isEmpty()) {
@@ -1124,7 +1125,9 @@ public class CalendarCombo extends Composite {
      */
     public Calendar getDate() {
         checkWidget();
-        if (!isReadOnly) parseTextDate();
+        if (!isReadOnly) {
+        	parseTextDate(false);
+        }
 
         return mStartDate;
     }
@@ -1155,7 +1158,7 @@ public class CalendarCombo extends Composite {
             // (non-read only) combo, we'll lose that edit, so fetch the combo
             // text now so that we can check it later down in the code
             // reported by: B. Haje
-            parseTextDate();
+            parseTextDate(true);
 
             String comboText = isFlat ? mFlatCombo.getText() : mCombo.getText();
 
@@ -1173,7 +1176,7 @@ public class CalendarCombo extends Composite {
                 // basically only for non-read-only combos, but the fix is
                 // universally applicable.
                 setComboText(comboText);
-                parseTextDate();
+                parseTextDate(true);
                 kill(11);
                 return;
             }
