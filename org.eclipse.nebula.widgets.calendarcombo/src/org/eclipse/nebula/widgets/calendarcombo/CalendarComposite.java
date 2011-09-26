@@ -826,15 +826,15 @@ class CalendarComposite extends Canvas implements MouseListener, MouseMoveListen
 
 				redraw();
 			} else if (keyCode == SWT.ARROW_UP) {
-				int monthNow = mSelectedDay.get(Calendar.MONTH);				
+				//int monthNow = mSelectedDay.get(Calendar.MONTH);				
 				mSelectedDay.add(Calendar.DATE, -7);
-				int monthAfter = mSelectedDay.get(Calendar.MONTH);
+				//int monthAfter = mSelectedDay.get(Calendar.MONTH);
 				
 				redraw();
 			} else if (keyCode == SWT.ARROW_DOWN) {
-				int monthNow = mSelectedDay.get(Calendar.MONTH);				
+				//int monthNow = mSelectedDay.get(Calendar.MONTH);				
 				mSelectedDay.add(Calendar.DATE, 7);
-				int monthAfter = mSelectedDay.get(Calendar.MONTH);
+				//int monthAfter = mSelectedDay.get(Calendar.MONTH);
 				
 				redraw();
 			} else if (keyCode == SWT.CR || keyCode == SWT.LF) {
