@@ -306,7 +306,7 @@ public class XViewerCustomMenu {
    public void createViewSelectedCellMenuItem(Menu popupMenu) {
       setupActions();
       final MenuItem item = new MenuItem(popupMenu, SWT.CASCADE);
-      item.setText(XViewerText.get("menu.view_celldata"));
+      item.setText(XViewerText.get("menu.copy_celldata"));
       item.addSelectionListener(new SelectionAdapter() {
          @Override
          public void widgetSelected(SelectionEvent e) {
@@ -314,7 +314,7 @@ public class XViewerCustomMenu {
          }
       });
       final MenuItem item1 = new MenuItem(popupMenu, SWT.CASCADE);
-      item1.setText("View Selected Cell Data");
+      item1.setText(XViewerText.get("menu.view_celldata"));
       item1.addSelectionListener(new SelectionAdapter() {
          @Override
          public void widgetSelected(SelectionEvent e) {
