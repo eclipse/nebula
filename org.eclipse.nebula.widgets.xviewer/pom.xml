@@ -12,7 +12,7 @@
 	
 	<groupId>org.eclipse.nebula</groupId>
 	<artifactId>org.eclipse.nebula.widgets.xviewer</artifactId>
-	<version>0.9.7-SNAPSHOT</version>
+	<version>0.9.9-SNAPSHOT</version>
 	<packaging>eclipse-plugin</packaging>
 	
 </project>
