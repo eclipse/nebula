@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Xviewer Plug-in
 Bundle-SymbolicName: org.eclipse.nebula.widgets.xviewer;singleton:=true
-Bundle-Version: 0.9.7.qualifier
+Bundle-Version: 0.9.9.qualifier
 Bundle-Activator: org.eclipse.nebula.widgets.xviewer.Activator
 Bundle-Vendor: Eclipse Nebula
 Require-Bundle: org.eclipse.ui,
@@ -15,5 +15,6 @@ Export-Package: org.eclipse.nebula.widgets.xviewer,
  org.eclipse.nebula.widgets.xviewer.action,
  org.eclipse.nebula.widgets.xviewer.customize,
  org.eclipse.nebula.widgets.xviewer.customize.dialog,
+ org.eclipse.nebula.widgets.xviewer.edit,
  org.eclipse.nebula.widgets.xviewer.util
 Eclipse-ExtensibleAPI: true

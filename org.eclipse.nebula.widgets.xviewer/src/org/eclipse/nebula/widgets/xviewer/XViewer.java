@@ -31,6 +31,7 @@ import org.eclipse.nebula.widgets.xviewer.customize.ColumnFilterDataUI;
 import org.eclipse.nebula.widgets.xviewer.customize.CustomizeManager;
 import org.eclipse.nebula.widgets.xviewer.customize.FilterDataUI;
 import org.eclipse.nebula.widgets.xviewer.customize.SearchDataUI;
+import org.eclipse.nebula.widgets.xviewer.edit.XViewerEditAdapter;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerMenuDetectListener;
@@ -66,6 +67,7 @@ public class XViewer extends TreeViewer {
    private final ColumnFilterDataUI columnFilterDataUI;
    private static boolean ctrlKeyListenersSet = false;
    private XViewerGradient xViewerGradient = null;
+   private XViewerEditAdapter editAdapter = null;
 
    public ColumnFilterDataUI getColumnFilterDataUI() {
       return columnFilterDataUI;
@@ -644,4 +646,10 @@ public class XViewer extends TreeViewer {
    public void setxViewerGradient(XViewerGradient xViewerGradient) {
       this.xViewerGradient = xViewerGradient;
    }
+
+   public void setXViewerEditAdapter(XViewerEditAdapter editAdapter) {
+      this.editAdapter = editAdapter;
+      this.editAdapter.activate(this);
+   }
+
 }
