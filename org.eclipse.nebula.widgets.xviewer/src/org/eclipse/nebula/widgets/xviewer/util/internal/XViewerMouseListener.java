@@ -59,6 +59,9 @@ public class XViewerMouseListener implements MouseListener {
 
       try {
          TreeColumn column = xViewer.getColumnUnderMouseClick(new Point(event.x, event.y));
+         if (column == null) {
+            return;
+         }
          if (isLeftClick(event) && controlNotBeingHeld(event)) {
             if (altIsBeingHeld(event)) {
                // System.out.println("Column " + colNum);
