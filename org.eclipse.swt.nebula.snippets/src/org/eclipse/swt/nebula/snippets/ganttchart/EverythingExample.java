@@ -78,10 +78,10 @@ public class EverythingExample {
 		buf.append("\\ceRevised: #rs# - #re# (#reviseddays# days)\n");
 		buf.append("\\c100100100Planned: #sd# - #ed# (#days# days)\n");
 		buf.append("\\c100000000Locked start: ");
-		buf.append(DateHelper.getDate(sdEventOneLock, ganttChart.getSettings().getDateFormat(), Locale.getDefault()));
+		buf.append(DateHelper.getDate(sdEventOneLock, ganttChart.getSettings().getDateFormat()));
 		buf.append("\n");
 		buf.append("\\c100000000Locked end: ");
-		buf.append(DateHelper.getDate(edEventOneLock, ganttChart.getSettings().getDateFormat(), Locale.getDefault()));
+		buf.append(DateHelper.getDate(edEventOneLock, ganttChart.getSettings().getDateFormat()));
 		buf.append("\n");
 		buf.append("\\x#pc#% complete");
 
