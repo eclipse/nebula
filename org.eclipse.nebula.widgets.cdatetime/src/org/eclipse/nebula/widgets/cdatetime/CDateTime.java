@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Jeremy Dowdall <jeremyd@aspencloud.com> - initial API and implementation
+ *    Wim Jongman - https://bugs.eclipse.org/bugs/show_bug.cgi?id=362181
  *****************************************************************************/
 
 package org.eclipse.nebula.widgets.cdatetime;
@@ -423,6 +424,7 @@ public class CDateTime extends BaseCombo {
 						event.doit = false;
 						if(selection.length > 0 && selection[0] != cancelDate) {
 							setSelection(cancelDate);
+							fireSelectionChanged();
 						}
 						setOpen(false);
 					}
@@ -486,6 +488,7 @@ public class CDateTime extends BaseCombo {
 		b.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				setSelection(cancelDate);
+				fireSelectionChanged();
 				setOpen(false);
 			}
 		});
