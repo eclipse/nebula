@@ -25,4 +25,6 @@
 
   <name>Eclipse Nebula Feature</name>
 
+  <groupId>org.eclipse.nebula</groupId>
+  <version>1.0.0-SNAPSHOT</version>
 </project>
