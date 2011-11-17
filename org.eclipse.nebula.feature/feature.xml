@@ -17,6 +17,10 @@
    </license>
 
    <includes
+         id="org.eclipse.nebula.widgets.oscilloscope_feature"
+         version="0.0.0"/>
+
+   <includes
          id="org.eclipse.nebula.widgets.calendarcombo.feature"
          version="0.0.0"/>
 
