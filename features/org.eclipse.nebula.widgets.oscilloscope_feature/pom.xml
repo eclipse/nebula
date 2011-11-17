@@ -17,7 +17,7 @@
 		<artifactId>nebula-release</artifactId>
 		<groupId>org.eclipse.nebula</groupId>
 		<version>1.0.0-SNAPSHOT</version>
-		<relativePath>../bundles/org.eclipse.swt.nebula.nebula-release</relativePath>
+		<relativePath>../../org.eclipse.swt.nebula.nebula-release</relativePath>
   </parent>
 
   <artifactId>org.eclipse.nebula.widgets.oscilloscope_feature</artifactId>
