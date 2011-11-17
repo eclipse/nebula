@@ -130,8 +130,8 @@
 		<module>../org.eclipse.nebula.widgets.pshelf</module>
 		<module>../org.eclipse.nebula.widgets.compositetable</module>
 		<module>../org.eclipse.nebula.widgets.oscilloscope</module>
-		<module>../org.eclipse.nebula.widgets.oscilloscope_feature</module>
-		<module>../org.eclipse.nebula.widgets.calendarcombo</module>
+		
+		<module>../features/org.eclipse.nebula.widgets.oscilloscope_feature</module>
 		<module>../org.eclipse.nebula.widgets.tablecombo</module>
 		<module>../org.eclipse.nebula.widgets.xviewer</module>
 		<module>../org.eclipse.nebula.effects.stw</module>
