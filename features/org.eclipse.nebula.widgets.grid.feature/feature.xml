@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.nebula.widgets.grid.feature"
-      label="Feature Feature"
+      label="Nebula Grid Feature"
       version="1.0.0">
 
    <description url="http://www.example.com/description">
