@@ -124,19 +124,26 @@
 
   <modules>
 		<module>../org.eclipse.nebula.widgets.gallery</module>
+		<module>../features/org.eclipse.nebula.widgets.gallery_feature</module>
 		<module>../org.eclipse.nebula.widgets.gallery.tests</module>
 		<module>../org.eclipse.nebula.widgets.grid</module>
+		<module>../features/org.eclipse.nebula.widgets.grid.feature</module>
 		<module>../org.eclipse.nebula.widgets.pgroup</module>
+		<module>../features/org.eclipse.nebula.widgets.pgroup.feature</module>
 		<module>../org.eclipse.nebula.widgets.pshelf</module>
+		<module>../features/org.eclipse.nebula.widgets.pshelf.feature</module>
 		<module>../org.eclipse.nebula.widgets.compositetable</module>
 		<module>../features/org.eclipse.nebula.widgets.compositetable.feature</module>
 		<module>../org.eclipse.nebula.widgets.oscilloscope</module>
 		<module>../features/org.eclipse.nebula.widgets.oscilloscope_feature</module>
 		<module>../org.eclipse.nebula.widgets.tablecombo</module>
+		<module>../features/org.eclipse.nebula.widgets.tablecombo_feature</module>
 		<module>../org.eclipse.nebula.widgets.calendarcombo</module>
 		<module>../features/org.eclipse.nebula.widgets.calendarcombo.feature</module>
 		<module>../org.eclipse.nebula.widgets.xviewer</module>
+		<module>../features/org.eclipse.nebula.widgets.xviewer.feature</module>
 		<module>../org.eclipse.nebula.effects.stw</module>
+		<module>../features/org.eclipse.nebula.effects.stw.feature</module>
 		<module>../org.eclipse.nebula.feature</module>
 		<module>../org.eclipse.nebula.updatesite</module>
    </modules>
