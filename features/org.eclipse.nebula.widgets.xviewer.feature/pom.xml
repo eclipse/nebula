@@ -23,7 +23,7 @@
   <artifactId>org.eclipse.nebula.widgets.xviewer.feature</artifactId>
   <packaging>eclipse-feature</packaging>
 
-  <name>Eclipse Nebula Feature</name>
+  <name>Nebula XViewer Feature</name>
 
   <groupId>org.eclipse.nebula</groupId>
   <version>0.9.9-SNAPSHOT</version>
