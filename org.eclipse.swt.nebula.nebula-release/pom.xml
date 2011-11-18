@@ -129,6 +129,7 @@
 		<module>../org.eclipse.nebula.widgets.pgroup</module>
 		<module>../org.eclipse.nebula.widgets.pshelf</module>
 		<module>../org.eclipse.nebula.widgets.compositetable</module>
+		<module>../features/org.eclipse.nebula.widgets.compositetable.feature</module>
 		<module>../org.eclipse.nebula.widgets.oscilloscope</module>
 		<module>../features/org.eclipse.nebula.widgets.oscilloscope_feature</module>
 		<module>../org.eclipse.nebula.widgets.tablecombo</module>
