@@ -15,9 +15,6 @@
    <feature url="features/org.eclipse.nebula.widgets.tablecombo_feature_1.0.0.qualifer.jar" id="org.eclipse.nebula.widgets.tablecombo_feature" version="1.0.0.qualifer">
       <category name="Nebula Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.collapsiblebuttons.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.collapsiblebuttons.feature" version="1.0.0.qualifier">
-      <category name="Nebula Widgets"/>
-   </feature>
    <feature url="features/org.eclipse.nebula.widgets.gallery_feature_0.5.3.qualifier.jar" id="org.eclipse.nebula.widgets.gallery_feature" version="0.5.3.qualifier">
       <category name="Nebula Widgets"/>
    </feature>
@@ -28,6 +25,12 @@
       <category name="Nebula Widgets"/>
    </feature>
    <feature url="features/org.eclipse.nebula.widgets.xviewer.feature_0.9.9.qualifier.jar" id="org.eclipse.nebula.widgets.xviewer.feature" version="0.9.9.qualifier">
+      <category name="Nebula Widgets"/>
+   </feature>
+   <feature url="features/org.eclipse.nebula.effects.stw.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.effects.stw.feature" version="1.0.0.qualifier">
+      <category name="Nebula Widgets"/>
+   </feature>
+   <feature url="features/org.eclipse.nebula.widgets.grid.feature_1.0.0.jar" id="org.eclipse.nebula.widgets.grid.feature" version="1.0.0">
       <category name="Nebula Widgets"/>
    </feature>
    <category-def name="Nebula All" label="Eclipse Nebula">
