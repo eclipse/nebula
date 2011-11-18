@@ -5,5 +5,5 @@ Bundle-SymbolicName: org.eclipse.nebula.widgets.oscilloscope.tests
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.eclipse.nebula.widgets.oscilloscope;bundle-version="1.0.1",
- org.junit4;bundle-version="4.8.1",
- org.eclipse.ui;bundle-version="3.6.2"
+ org.eclipse.ui;bundle-version="3.6.2",
+ org.junit
