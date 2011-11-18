@@ -23,7 +23,7 @@
   <artifactId>org.eclipse.nebula.widgets.calendarcombo.feature</artifactId>
   <packaging>eclipse-feature</packaging>
 
-  <name>Eclipse Nebula Feature</name>
+  <name>Nebula Calendar Combo Feature</name>
 
   <groupId>org.eclipse.nebula</groupId>
   <version>1.0.0-SNAPSHOT</version>
