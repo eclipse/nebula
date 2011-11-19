@@ -133,6 +133,7 @@
 		<module>../org.eclipse.nebula.widgets.pshelf</module>
 		<module>../features/org.eclipse.nebula.widgets.pshelf.feature</module>
 		<module>../org.eclipse.nebula.widgets.compositetable</module>
+		<module>../org.eclipse.nebula.widgets.compositetable.tests</module>
 		<module>../features/org.eclipse.nebula.widgets.compositetable.feature</module>
 		<module>../org.eclipse.nebula.widgets.oscilloscope</module>
 		<module>../org.eclipse.nebula.widgets.oscilloscope.tests</module>
