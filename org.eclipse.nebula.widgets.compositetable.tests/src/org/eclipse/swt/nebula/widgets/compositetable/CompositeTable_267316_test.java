@@ -10,73 +10,75 @@
  ******************************************************************************/
 package org.eclipse.swt.nebula.widgets.compositetable;
 
-import junit.framework.TestCase;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-public class CompositeTable_267316_test extends TestCase {
+public class CompositeTable_267316_test {
 
-    private static class Header extends AbstractNativeHeader {
-	public Header(Composite parent, int style) {
-	    super(parent, style);
-	    setWeights(new int[] { 100 });
-	    setColumnText(new String[] { "Language" });
-	}
-    }
-
-    private static final class Row extends Composite {
-	private Text text;
-
-	public Row(Composite parent, int style) {
-	    super(parent, style);
-	    setLayout(new ResizableGridRowLayout());
-	    text = new Text(this, SWT.BORDER | SWT.SINGLE);
+	private static class Header extends AbstractNativeHeader {
+		public Header(Composite parent, int style) {
+			super(parent, style);
+			setWeights(new int[] { 100 });
+			setColumnText(new String[] { "Language" });
+		}
 	}
 
-	public String toString() {
-	    return text.getText();
+	private static final class Row extends Composite {
+		private Text text;
+
+		public Row(Composite parent, int style) {
+			super(parent, style);
+			setLayout(new ResizableGridRowLayout());
+			text = new Text(this, SWT.BORDER | SWT.SINGLE);
+		}
+
+		public String toString() {
+			return text.getText();
+		}
 	}
-    }
 
-    private Display display;
-    private Shell shell;
+	private Display display;
+	private Shell shell;
 
-    @Override
-    protected void setUp() throws Exception {
-	display = Display.getDefault();
-	shell = new Shell(display);
-	shell.setLayout(new FillLayout());
-    }
+	@Before
+	protected void setUp() throws Exception {
+		display = Display.getDefault();
+		shell = new Shell(display);
+		shell.setLayout(new FillLayout());
+	}
 
-    @Override
-    protected void tearDown() throws Exception {
-	shell.dispose();
-	display.dispose();
-    }
+	@After
+	protected void tearDown() throws Exception {
+		shell.dispose();
+		display.dispose();
+	}
 
-    // test methods
-    // /////////////
+	// test methods
+	// /////////////
+	@Test
+	public void testGetHeaderControl() {
+		CompositeTable table = new CompositeTable(shell, SWT.NONE);
 
-    public void testGetHeaderControl() {
-	CompositeTable table = new CompositeTable(shell, SWT.NONE);
+		Assert.assertNull(table.getHeader());
 
-	assertNull(table.getHeader());
+		new Header(table, SWT.NONE);
+		new Row(table, SWT.NONE);
 
-	new Header(table, SWT.NONE);
-	new Row(table, SWT.NONE);
+		Assert.assertNull(table.getHeader());
 
-	assertNull(table.getHeader());
+		table.setRunTime(true);
 
-	table.setRunTime(true);
-
-	assertNotNull(table.getHeader());
-	assertTrue(table.getHeader() instanceof Header);
-	assertTrue(table.getHeaderControl() != table.getHeader());
-    }
+		Assert.assertNotNull(table.getHeader());
+		Assert.assertTrue(table.getHeader() instanceof Header);
+		Assert.assertTrue(table.getHeaderControl() != table.getHeader());
+	}
 
 }
