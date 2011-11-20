@@ -10,33 +10,39 @@
  *******************************************************************************/
 package org.eclipse.swt.nebula.examples.parts;
 
+import org.eclipse.nebula.widgets.ganttchart.GanttTester;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.nebula.examples.AbstractExampleTab;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 
-public class GanttExampleTab  // extends AbstractExampleTab {
-{
-//
-//	/**
-//	 * @wbp.parser.entryPoint
-//	 */
-//	public Control createControl(Composite parent) {
-//		int style = SWT.None;
-//		Button button = new Button(parent, style);
-//		button.setText("Run Extended Gantt Example");
-//		button.addSelectionListener(new SelectionAdapter() {
-//			public void widgetSelected(SelectionEvent e) {
-//				new GanttTester();
-//			}
-//		});
-//
-//		return button;
-//	}
-//
-//	public String[] createLinks() {
-//		return null;
-//	}
-//
-//	public void createParameters(Composite parent) {
-//
-//	}
+public class GanttExampleTab extends AbstractExampleTab {
+
+	/**
+	 * @wbp.parser.entryPoint
+	 */
+	public Control createControl(Composite parent) {
+		int style = SWT.None;
+		Button button = new Button(parent, style);
+		button.setText("Run Extended Gantt Example");
+		button.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				new GanttTester();
+			}
+		});
+
+		return button;
+	}
+
+	public String[] createLinks() {
+		return null;
+	}
+
+	public void createParameters(Composite parent) {
+
+	}
 
 }
