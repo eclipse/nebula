@@ -33,9 +33,12 @@
    <feature url="features/org.eclipse.nebula.widgets.gallery_feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.gallery_feature" version="1.0.0.qualifier">
       <category name="Nebula Individual Widgets"/>
    </feature>
-   <category-def name="Nebula All Widgets" label="Nebula All Widgets">
+   <feature url="features/org.eclipse.nebula.examples_feature_1.0.4.qualifier.jar" id="org.eclipse.nebula.examples_feature" version="1.0.4.qualifier">
+      <category name="Nebula Individual Widgets"/>
+   </feature>
+   <category-def name="Nebula All Widgets" label="Nebula All Widgets with Examples View">
       <description>
-         Contains all widgets
+         Contains all widgets including the examples view.
       </description>
    </category-def>
    <category-def name="Nebula Individual Widgets" label="Nebula Individual Widgets">
