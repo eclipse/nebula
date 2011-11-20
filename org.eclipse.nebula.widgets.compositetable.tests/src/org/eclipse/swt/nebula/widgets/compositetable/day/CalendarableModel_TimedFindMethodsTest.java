@@ -24,12 +24,12 @@ import org.eclipse.swt.nebula.widgets.compositetable.timeeditor.CalendarableMode
 /**
  * Test for find methods against timed Calendarables.
  */
-public class CalendarableModel_TestTimedFindMethods extends TestCase {
+public class CalendarableModel_TimedFindMethodsTest extends TestCase {
 	private CalendarableModel cm;
 	private CalendarableModel cm0;
 	private CMTimedEventFixture cmf = new CMTimedEventFixture(events);
 	private CMTimedEventFixture cmf0 = new CMTimedEventFixture(events0);
-
+	
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */

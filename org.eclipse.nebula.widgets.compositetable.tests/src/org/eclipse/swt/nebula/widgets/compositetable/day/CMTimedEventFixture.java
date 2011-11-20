@@ -15,7 +15,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import org.eclipse.swt.nebula.widgets.compositetable.day.CalendarableModel_TestTimedFindMethods.Event;
+import org.eclipse.swt.nebula.widgets.compositetable.day.CalendarableModel_TimedFindMethodsTest.Event;
 import org.eclipse.swt.nebula.widgets.compositetable.timeeditor.CalendarableItem;
 import org.eclipse.swt.nebula.widgets.compositetable.timeeditor.EventContentProvider;
 import org.eclipse.swt.nebula.widgets.compositetable.timeeditor.EventCountProvider;
@@ -25,7 +25,7 @@ import org.eclipse.swt.nebula.widgets.compositetable.timeeditor.EventCountProvid
  */
 public class CMTimedEventFixture {
 	
-	private CalendarableModel_TestTimedFindMethods.Event[][] data;
+	private CalendarableModel_TimedFindMethodsTest.Event[][] data;
 
 	/**
 	 * Hard-code a start date that's easy to do arithmetic with

@@ -21,7 +21,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-public class CompositeTable_test extends TestCase {
+public class CompositeTableTest extends TestCase {
+	private boolean createdDisplay = false;
 
     private static final class Row extends Composite {
 	private Text text;
@@ -43,39 +44,45 @@ public class CompositeTable_test extends TestCase {
     private String[] words;
 
     @Override
-    protected void setUp() throws Exception {
-	display = Display.getDefault();
-	shell = new Shell(display);
-	shell.setLayout(new FillLayout());
-	shell.setSize(200, 200);
+	protected void setUp() throws Exception {
+		display = Display.getCurrent();
+		if (display == null) {
+			display = new Display();
+			createdDisplay = true;
+		}
+		shell = new Shell(display);
+		shell.setLayout(new FillLayout());
+		shell.setSize(200, 200);
 
-	table = new CompositeTable(shell, SWT.NONE);
-	new Row(table, SWT.NONE);
+		table = new CompositeTable(shell, SWT.NONE);
+		new Row(table, SWT.NONE);
 
-	words = new String[] { "Basic", "Bash", "C", "C++", "Clipper", "Cobol",
-		"Java", "ML", "Pascal", "Perl", "Python", "Ruby", "Scheme",
-		"Smalltalk", };
-	table.addRowContentProvider(new IRowContentProvider() {
-	    public void refresh(CompositeTable sender, int currentObjectOffset,
-		    Control rowControl) {
-		Row row = (Row) rowControl;
-		String word = words[currentObjectOffset];
-		// System.out.println("refresh: " + currentObjectOffset + " " +
-		// word);
-		row.text.setText(word);
-	    }
-	});
-	table.setNumRowsInCollection(words.length);
-	table.setRunTime(true);
+		words = new String[] { "Basic", "Bash", "C", "C++", "Clipper", "Cobol",
+				"Java", "ML", "Pascal", "Perl", "Python", "Ruby", "Scheme",
+				"Smalltalk", };
+		table.addRowContentProvider(new IRowContentProvider() {
+			public void refresh(CompositeTable sender, int currentObjectOffset,
+					Control rowControl) {
+				Row row = (Row) rowControl;
+				String word = words[currentObjectOffset];
+				// System.out.println("refresh: " + currentObjectOffset + " " +
+				// word);
+				row.text.setText(word);
+			}
+		});
+		table.setNumRowsInCollection(words.length);
+		table.setRunTime(true);
 
-	shell.open();
-    }
+		shell.open();
+	}
 
     @Override
-    protected void tearDown() throws Exception {
-	shell.dispose();
-	display.dispose();
-    }
+	protected void tearDown() throws Exception {
+		shell.dispose();
+		if (createdDisplay) {
+			display.dispose();
+		}
+	}
 
     // test methods
     // /////////////

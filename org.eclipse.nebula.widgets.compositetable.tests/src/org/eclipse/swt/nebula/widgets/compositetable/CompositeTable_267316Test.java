@@ -21,7 +21,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class CompositeTable_267316_test {
+public class CompositeTable_267316Test {
+
+	private boolean createdDisplay = false;
 
 	private static class Header extends AbstractNativeHeader {
 		public Header(Composite parent, int style) {
@@ -49,16 +51,22 @@ public class CompositeTable_267316_test {
 	private Shell shell;
 
 	@Before
-	protected void setUp() throws Exception {
-		display = Display.getDefault();
+	public void setUp() throws Exception {
+		display = Display.getCurrent();
+		if (display == null) {
+			display = new Display();
+			createdDisplay = true;
+		}
 		shell = new Shell(display);
 		shell.setLayout(new FillLayout());
 	}
 
 	@After
-	protected void tearDown() throws Exception {
+	public void tearDown() throws Exception {
 		shell.dispose();
-		display.dispose();
+		if (createdDisplay) {
+			display.dispose();
+		}
 	}
 
 	// test methods

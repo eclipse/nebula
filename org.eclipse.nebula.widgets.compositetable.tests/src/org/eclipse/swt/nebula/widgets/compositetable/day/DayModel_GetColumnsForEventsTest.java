@@ -28,8 +28,9 @@ import org.eclipse.swt.nebula.widgets.compositetable.timeeditor.IEventEditor;
  * @since 3.2
  *
  */
-public class DayModel_testGetColumnsForEvents extends TestCase {
-	// Fixtures ---------------------------------------------------------------
+public class DayModel_GetColumnsForEventsTest extends TestCase {
+	
+// Fixtures ---------------------------------------------------------------
 
 	private CalendarableItem event(int number) {
 		return (CalendarableItem) expectedEvents.get(number);

@@ -18,7 +18,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-public class NativeHeader_test extends TestCase {
+public class NativeHeaderTest extends TestCase {
+	private boolean createdDisplay = false;
 
     private static class Header extends AbstractNativeHeader {
 	public Header(Composite parent, int style) {
@@ -32,17 +33,23 @@ public class NativeHeader_test extends TestCase {
     private Shell shell;
 
     @Override
-    protected void setUp() throws Exception {
-	display = Display.getDefault();
-	shell = new Shell(display);
-	shell.setLayout(new FillLayout());
-    }
+	protected void setUp() throws Exception {
+		display = Display.getCurrent();
+		if (display == null) {
+			display = new Display();
+			createdDisplay = true;
+		}
+		shell = new Shell(display);
+		shell.setLayout(new FillLayout());
+	}
 
     @Override
-    protected void tearDown() throws Exception {
-	shell.dispose();
-	display.dispose();
-    }
+	protected void tearDown() throws Exception {
+		shell.dispose();
+		if (createdDisplay) {
+			display.dispose();
+		}
+	}
 
     // test methods
     // /////////////

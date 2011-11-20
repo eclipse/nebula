@@ -24,10 +24,10 @@ public class CalendarControlTestSuite {
 		TestSuite suite = new TestSuite(
 				"Test for org.eclipse.swt.nebula.widgets.compositetable.day");
 		//$JUnit-BEGIN$
-		suite.addTestSuite(DayModel_testGetColumnsForEvents.class);
-		suite.addTestSuite(CalendarableModel_testInit.class);
-		suite.addTestSuite(CalendarableModel_testRefreshResults.class);
-		suite.addTestSuite(CalendarableModel_TestTimedFindMethods.class);
+		suite.addTestSuite(DayModel_GetColumnsForEventsTest.class);
+		suite.addTestSuite(CalendarableModel_InitTest.class);
+		suite.addTestSuite(CalendarableModel_RefreshResultsTest.class);
+		suite.addTestSuite(CalendarableModel_TimedFindMethodsTest.class);
 		//$JUnit-END$
 		return suite;
 	}

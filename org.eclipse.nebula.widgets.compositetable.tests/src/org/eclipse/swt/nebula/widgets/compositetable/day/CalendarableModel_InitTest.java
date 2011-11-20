@@ -24,9 +24,10 @@ import org.eclipse.swt.nebula.widgets.compositetable.timeeditor.EventCountProvid
  * @since 3.2
  *
  */
-public class CalendarableModel_testInit extends TestCase {
+public class CalendarableModel_InitTest extends TestCase {
 	final boolean[] initCalled = new boolean[] {false};
 	private CalendarableModel cm;
+
 
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()

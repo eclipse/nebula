@@ -26,7 +26,7 @@ import org.eclipse.swt.nebula.widgets.compositetable.timeeditor.CalendarableMode
  * @since 3.2
  *
  */
-public class CalendarableModel_testRefreshResults extends TestCase {
+public class CalendarableModel_RefreshResultsTest extends TestCase {
 	
 	// Test fixtures ----------------------------------------------------------
 	
