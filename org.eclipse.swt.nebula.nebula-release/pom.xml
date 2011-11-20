@@ -124,7 +124,7 @@
 
   <modules>
 		<module>../org.eclipse.swt.nebula.examples</module>
-		<module>../org.eclipse.swt.nebula.examples_feature</module>
+		<module>../features/org.eclipse.swt.nebula.examples_feature</module>
 		<module>../org.eclipse.nebula.widgets.gallery</module>
 		<module>../features/org.eclipse.nebula.widgets.gallery_feature</module>
 		<module>../org.eclipse.nebula.widgets.gallery.tests</module>
