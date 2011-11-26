@@ -7,7 +7,6 @@ Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.nebula.widgets.gallery,
- org.eclipse.nebula.widgets.grid,
  org.eclipse.nebula.widgets.pgroup,
  org.eclipse.nebula.widgets.cdatetime,
  org.eclipse.nebula.widgets.datechooser,
@@ -15,8 +14,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.nebula.widgets.pshelf,
  org.eclipse.nebula.widgets.collapsiblebuttons,
  org.eclipse.nebula.widgets.radiogroup,
- org.eclipse.nebula.widgets.tablecombo,
- org.eclipse.nebula.widgets.ganttchart;bundle-version="1.0.0"
+ org.eclipse.nebula.widgets.tablecombo
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
 Export-Package: org.eclipse.swt.nebula.examples
 Bundle-ClassPath: ./

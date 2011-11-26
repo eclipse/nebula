@@ -19,9 +19,6 @@
    <extension
          point="org.eclipse.swt.nebula.examples.examples">
       <tab
-            class="org.eclipse.swt.nebula.examples.parts.GridExampleTab"
-            name="Grid"/>
-      <tab
             class="org.eclipse.swt.nebula.examples.parts.PGroupExampleTab"
             name="PGroup"/>
       <tab
@@ -51,10 +48,6 @@
       <tab
             class="org.eclipse.swt.nebula.examples.parts.TableComboExampleTab"
             name="TableCombo">
-      </tab>
-      <tab
-            class="org.eclipse.swt.nebula.examples.parts.GanttExampleTab"
-            name="Gantt">
       </tab>
             
    </extension>

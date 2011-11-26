@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.swt.nebula.examples" id="examples" name="Nebula Example Part"/>
       </appInfo>
       <documentation>
-         [Enter description of this extension point.]
+         Provides an extension point to hook in the Nebula examples.
       </documentation>
    </annotation>
 
@@ -86,7 +86,13 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         [Enter extension point usage example here.]
+            &lt;extension
+         point=&quot;org.eclipse.swt.nebula.examples.examples&quot;&gt;
+      &lt;tab
+            class=&quot;org.eclipse.swt.nebula.widgets.ganttchart.example.GanttExampleTab&quot;
+            name=&quot;Ganttchart&quot;&gt;
+      &lt;/tab&gt;
+   &lt;/extension&gt;
       </documentation>
    </annotation>
 
