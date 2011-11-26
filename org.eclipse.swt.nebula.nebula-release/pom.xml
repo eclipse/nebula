@@ -128,6 +128,8 @@
 		<module>../org.eclipse.nebula.widgets.gallery</module>
 		<module>../features/org.eclipse.nebula.widgets.gallery_feature</module>
 		<module>../org.eclipse.nebula.widgets.gallery.tests</module>
+		<module>../org.eclipse.nebula.widgets.ganttchart</module>
+		<module>../features/org.eclipse.nebula.widgets.ganttchart.feature</module>
 		<module>../org.eclipse.nebula.widgets.grid</module>
 		<module>../features/org.eclipse.nebula.widgets.grid.feature</module>
 		<module>../org.eclipse.nebula.widgets.pgroup</module>
