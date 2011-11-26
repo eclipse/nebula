@@ -53,10 +53,6 @@
             name="TableCombo">
       </tab>
       <tab
-            class="org.eclipse.swt.nebula.examples.parts.OscilloscopeExampleTab"
-            name="Oscilloscope">
-      </tab>
-      <tab
             class="org.eclipse.swt.nebula.examples.parts.GanttExampleTab"
             name="Gantt">
       </tab>
