@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Example
+Bundle-SymbolicName: org.eclipse.nebula.widgets.collapsiblebuttons.example;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.eclipse.nebula.widgets.collapsiblebuttons.example.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.nebula.widgets.collapsiblebuttons;bundle-version="1.0.0",
+ org.eclipse.swt.nebula.examples;bundle-version="1.0.4"
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
