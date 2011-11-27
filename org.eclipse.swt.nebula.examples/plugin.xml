@@ -16,18 +16,11 @@
             >
       </category>
    </extension>
-   <extension
-         point="org.eclipse.swt.nebula.examples.examples">
-      <tab
-            class="org.eclipse.swt.nebula.examples.parts.TableComboExampleTab"
-            name="TableCombo">
-      </tab>
-            
-   </extension>
+
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            class="org.eclipse.swt.nebula.examples.ExamplesPerspective"
+            class="org.eclipse.swt.nebula.examples.internal.ExamplesPerspective"
             fixed="true"
             id="org.eclipse.swt.nebula.examples.perspective"
             name="Nebula">
@@ -42,7 +35,7 @@
             thread="main"
             visible="true">
          <run
-               class="org.eclipse.swt.nebula.examples.ExamplesApplication">
+               class="org.eclipse.swt.nebula.examples.internal.ExamplesApplication">
          </run>
       </application>
    </extension>

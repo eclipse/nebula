@@ -5,9 +5,7 @@ Bundle-SymbolicName: org.eclipse.swt.nebula.examples;singleton:=true
 Bundle-Version: 1.0.4.qualifier
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
- org.eclipse.nebula.widgets.formattedtext,
- org.eclipse.nebula.widgets.tablecombo
+ org.eclipse.core.runtime
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
 Export-Package: org.eclipse.swt.nebula.examples
 Bundle-ClassPath: ./

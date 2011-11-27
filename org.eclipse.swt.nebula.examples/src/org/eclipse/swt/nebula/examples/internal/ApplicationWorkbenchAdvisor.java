@@ -7,23 +7,23 @@
  * Contributors :
  *    Nicolas Richeton (nicolas.richeton@gmail.com) 
  *******************************************************************************/
-package org.eclipse.swt.nebula.examples;
+package org.eclipse.swt.nebula.examples.internal;
 
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
+import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 
-public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
+public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 
-	public ApplicationWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer configurer) {
-		super(configurer);
+	private static final String PERSPECTIVE_ID = "org.eclipse.swt.nebula.examples.perspective";
+
+	public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(
+			IWorkbenchWindowConfigurer configurer) {
+		return new ApplicationWorkbenchWindowAdvisor(configurer);
 	}
 
-	public void preWindowOpen() {
-		IWorkbenchWindowConfigurer configurer = getWindowConfigurer();
-		configurer.setInitialSize(new Point(700, 400));
-		configurer.setShowCoolBar(false);
-		configurer.setShowStatusLine(false);
-		configurer.setTitle("Nebula Examples");
+	public String getInitialWindowPerspectiveId() {
+		return PERSPECTIVE_ID;
 	}
+
 }

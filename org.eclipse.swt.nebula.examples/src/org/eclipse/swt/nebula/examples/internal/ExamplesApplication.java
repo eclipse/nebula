@@ -7,7 +7,7 @@
  * Contributors :
  *    Nicolas Richeton (nicolas.richeton@gmail.com) 
  *******************************************************************************/
-package org.eclipse.swt.nebula.examples;
+package org.eclipse.swt.nebula.examples.internal;
 
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
