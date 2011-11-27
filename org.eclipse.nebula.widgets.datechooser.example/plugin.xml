@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.swt.nebula.examples.examples">
+      <tab
+            class="org.eclipse.nebula.widgets.datechooser.example.DateChooserExampleTab"
+            name="DateChooser">
+      </tab>
+      <tab
+            class="org.eclipse.nebula.widgets.datechooser.example.DateChooserComboExampleTab"
+            name="DateChooserCombo">
+      </tab>
+   </extension>
+</plugin>
