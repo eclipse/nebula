@@ -11,7 +11,7 @@
 	
 	<groupId>org.eclipse.nebula</groupId>
 	<artifactId>org.eclipse.nebula.widgets.gallery.example</artifactId>
-	<version>0.5.3.-SNAPSHOT</version>
+	<version>0.5.3-SNAPSHOT</version>
 	<packaging>eclipse-plugin</packaging>
 	
 </project>
