@@ -1,49 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
    <feature url="features/org.eclipse.nebula.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.feature" version="1.0.0.qualifier">
-      <category name="Nebula All Widgets"/>
+      <category name="Nebula Release All Widgets"/>
    </feature>
    <feature url="features/org.eclipse.nebula.widgets.oscilloscope_feature_1.0.1.qualifier.jar" id="org.eclipse.nebula.widgets.oscilloscope_feature" version="1.0.1.qualifier">
-      <category name="Nebula Individual Widgets"/>
+      <category name="Nebula Release Individual Widgets"/>
    </feature>
    <feature url="features/org.eclipse.nebula.widgets.calendarcombo.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.calendarcombo.feature" version="1.0.0.qualifier">
-      <category name="Nebula Individual Widgets"/>
+      <category name="Nebula Release Individual Widgets"/>
    </feature>
    <feature url="features/org.eclipse.nebula.widgets.compositetable.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.compositetable.feature" version="1.0.0.qualifier">
-      <category name="Nebula Individual Widgets"/>
+      <category name="Nebula Release Individual Widgets"/>
    </feature>
    <feature url="features/org.eclipse.nebula.widgets.tablecombo_feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.tablecombo_feature" version="1.0.0.qualifier">
-      <category name="Nebula Individual Widgets"/>
+      <category name="Nebula Release Individual Widgets"/>
    </feature>
    <feature url="features/org.eclipse.nebula.widgets.pgroup.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.pgroup.feature" version="1.0.0.qualifier">
-      <category name="Nebula Individual Widgets"/>
+      <category name="Nebula Release Individual Widgets"/>
    </feature>
    <feature url="features/org.eclipse.nebula.widgets.pshelf.feature_1.0.0.qualifierjar" id="org.eclipse.nebula.widgets.pshelf.feature" version="1.0.0.qualifier">
-      <category name="Nebula Individual Widgets"/>
+      <category name="Nebula Release Individual Widgets"/>
    </feature>
    <feature url="features/org.eclipse.nebula.widgets.xviewer.feature_0.9.9.qualifier.jar" id="org.eclipse.nebula.widgets.xviewer.feature" version="0.9.9.qualifier">
-      <category name="Nebula Individual Widgets"/>
+      <category name="Nebula Release Individual Widgets"/>
    </feature>
    <feature url="features/org.eclipse.nebula.effects.stw.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.effects.stw.feature" version="1.0.0.qualifier">
-      <category name="Nebula Individual Widgets"/>
+      <category name="Nebula Release Individual Widgets"/>
    </feature>
    <feature url="features/org.eclipse.nebula.widgets.grid.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.grid.feature" version="1.0.0.qualifier">
-      <category name="Nebula Individual Widgets"/>
+      <category name="Nebula Release Individual Widgets"/>
    </feature>
    <feature url="features/org.eclipse.nebula.widgets.gallery_feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.gallery_feature" version="1.0.0.qualifier">
-      <category name="Nebula Individual Widgets"/>
+      <category name="Nebula Release Individual Widgets"/>
    </feature>
    <feature url="features/org.eclipse.nebula.examples.feature_1.0.4.qualifier.jar" id="org.eclipse.nebula.examples.feature" version="1.0.4.qualifier">
-      <category name="Nebula Individual Widgets"/>
+      <category name="Nebula Release Examples"/>
    </feature>
-   <category-def name="Nebula All Widgets" label="Nebula All Widgets with Examples View">
+   <feature url="features/org.eclipse.nebula.widgets.ganttchart.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.ganttchart.feature" version="1.0.0.qualifier">
+      <category name="Nebula Release Individual Widgets"/>
+   </feature>
+   <category-def name="Nebula Release All Widgets" label="Nebula Release All Widgets">
       <description>
-         Contains all widgets including the examples view.
+         Contains all widgets that are part of the combined Nebula release. All these widgets are supported and under development.
       </description>
    </category-def>
-   <category-def name="Nebula Individual Widgets" label="Nebula Individual Widgets">
+   <category-def name="Nebula Release Individual Widgets" label="Nebula Release Individual Widgets">
       <description>
-         Contains individual widgets.
+         Contains all widgets that are part of the combined Nebula release. All these widgets are supported and under development.
+      </description>
+   </category-def>
+   <category-def name="Nebula Release Examples" label="Nebula Release Examples">
+      <description>
+         Contains examples for the Nebula Release widgets.
       </description>
    </category-def>
 </site>
