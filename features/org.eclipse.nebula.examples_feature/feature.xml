@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.nebula.examples_feature"
+      id="org.eclipse.nebula.examples.feature"
       label="Nebula widgets examples"
       version="1.0.4.qualifier"
       provider-name="Eclipse.org">
@@ -17,64 +17,68 @@
       [Enter License Description here.]
    </license>
 
+   <requires>
+      <import feature="org.eclipse.nebula.feature" version="1.0.0.qualifier"/>
+   </requires>
+
    <plugin
-         id="org.eclipse.nebula.widgets.cdatetime"
+         id="org.eclipse.nebula.widgets.grid.example"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.nebula.widgets.compositetable"
+         id="org.eclipse.nebula.widgets.pgroup.example"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.nebula.widgets.ctree"
+         id="org.eclipse.nebula.widgets.pshelf.example"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.nebula.widgets.datechooser"
+         id="org.eclipse.nebula.widgets.gallery.example"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.nebula.widgets.formattedtext"
+         id="org.eclipse.nebula.widgets.compositetable.example"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.nebula.widgets.grid"
+         id="org.eclipse.nebula.widgets.xviewer.example"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.nebula.widgets.pgroup"
+         id="org.eclipse.nebula.widgets.calendarcombo.example"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.nebula.widgets.pshelf"
+         id="org.eclipse.nebula.widgets.tablecombo.example"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.nebula.widgets.gallery"
+         id="org.eclipse.nebula.effects.stw.example"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -82,48 +86,6 @@
 
    <plugin
          id="org.eclipse.swt.nebula.examples"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.nebula.cwt"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.nebula.widgets.collapsiblebuttons"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.nebula.widgets.radiogroup"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.nebula.widgets.tablecombo"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.nebula.widgets.ganttchart"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.nebula.widgets.oscilloscope"
          download-size="0"
          install-size="0"
          version="0.0.0"
