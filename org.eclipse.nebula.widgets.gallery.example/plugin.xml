@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+ <extension
+         point="org.eclipse.swt.nebula.examples.examples">
+      <tab
+            class="org.eclipse.nebula.widgets.gallery.example.GalleryExampleTab"
+            name="Gallery"/>
+
+      <tab
+            class="org.eclipse.nebula.widgets.gallery.example.AnimationExampleTab"
+            name="Animation"/>
+  </extension>
+</plugin>
