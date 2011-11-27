@@ -126,30 +126,42 @@
 		<module>../org.eclipse.swt.nebula.examples</module>
 		<module>../features/org.eclipse.nebula.examples_feature</module>
 		<module>../org.eclipse.nebula.widgets.gallery</module>
+		<module>../org.eclipse.nebula.widgets.gallery.example</module>
 		<module>../features/org.eclipse.nebula.widgets.gallery_feature</module>
 		<module>../org.eclipse.nebula.widgets.gallery.tests</module>
 		<module>../org.eclipse.nebula.widgets.ganttchart</module>
+		<module>../org.eclipse.nebula.widgets.ganttchart.example</module>
 		<module>../features/org.eclipse.nebula.widgets.ganttchart.feature</module>
 		<module>../org.eclipse.nebula.widgets.grid</module>
+		<module>../org.eclipse.nebula.widgets.grid.example</module>
 		<module>../features/org.eclipse.nebula.widgets.grid.feature</module>
 		<module>../org.eclipse.nebula.widgets.pgroup</module>
+		<module>../org.eclipse.nebula.widgets.pgroup.example</module>
 		<module>../features/org.eclipse.nebula.widgets.pgroup.feature</module>
 		<module>../org.eclipse.nebula.widgets.pshelf</module>
+		<module>../org.eclipse.nebula.widgets.pshelf.example</module>
 		<module>../features/org.eclipse.nebula.widgets.pshelf.feature</module>
 		<module>../org.eclipse.nebula.widgets.compositetable</module>
+		<module>../org.eclipse.nebula.widgets.compositetable.example</module>
 <!--  		<module>../org.eclipse.nebula.widgets.compositetable.tests</module> -->
 		<module>../features/org.eclipse.nebula.widgets.compositetable.feature</module>
 		<module>../org.eclipse.nebula.widgets.oscilloscope</module>
+		<module>../org.eclipse.nebula.widgets.oscilloscope.example</module>
 		<module>../org.eclipse.nebula.widgets.oscilloscope.tests</module>
 		<module>../features/org.eclipse.nebula.widgets.oscilloscope_feature</module>
 		<module>../org.eclipse.nebula.widgets.tablecombo</module>
+		<module>../org.eclipse.nebula.widgets.tablecombo.example</module>
 		<module>../features/org.eclipse.nebula.widgets.tablecombo_feature</module>
 		<module>../org.eclipse.nebula.widgets.calendarcombo</module>
+		<module>../org.eclipse.nebula.widgets.calendarcombo.example</module>
 		<module>../features/org.eclipse.nebula.widgets.calendarcombo.feature</module>
 		<module>../org.eclipse.nebula.widgets.xviewer</module>
+		<module>../org.eclipse.nebula.widgets.xviewer.example</module>
 		<module>../org.eclipse.nebula.widgets.xviewer.tests</module>
 		<module>../features/org.eclipse.nebula.widgets.xviewer.feature</module>
 		<module>../org.eclipse.nebula.effects.stw</module>
+		<module>../org.eclipse.nebula.effects.stw.example</module>
+		<module>../features/org.eclipse.nebula.effects.stw.feature</module>
 		<module>../features/org.eclipse.nebula.effects.stw.feature</module>
 		<module>../org.eclipse.nebula.feature</module>
 		<module>../org.eclipse.nebula.updatesite</module>
