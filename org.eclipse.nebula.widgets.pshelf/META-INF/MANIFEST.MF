@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Pshelf Plug-in
+Bundle-Name: Nebula Pshelf Plug-in
 Bundle-SymbolicName: org.eclipse.nebula.widgets.pshelf
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Eclipse.org
