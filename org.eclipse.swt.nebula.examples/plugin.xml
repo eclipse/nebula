@@ -26,10 +26,6 @@
             class="org.eclipse.swt.nebula.examples.parts.TableComboExampleTab"
             name="TableCombo">
       </tab>
-      <tab
-            class="org.eclipse.swt.nebula.examples.parts.PShelfExampleTab"
-            name="PShelf">
-      </tab>
             
    </extension>
    <extension
