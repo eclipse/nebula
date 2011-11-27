@@ -19,20 +19,16 @@
    <extension
          point="org.eclipse.swt.nebula.examples.examples">
       <tab
-            class="org.eclipse.swt.nebula.examples.parts.DateChooserExampleTab"
-            name="DateChooser">
-      </tab>
-      <tab
-            class="org.eclipse.swt.nebula.examples.parts.DateChooserComboExampleTab"
-            name="DateChooserCombo">
-      </tab>
-      <tab
             class="org.eclipse.swt.nebula.examples.parts.RadioGroupExampleTab"
             name="RadioGroup">
       </tab>
       <tab
             class="org.eclipse.swt.nebula.examples.parts.TableComboExampleTab"
             name="TableCombo">
+      </tab>
+      <tab
+            class="org.eclipse.swt.nebula.examples.parts.PShelfExampleTab"
+            name="PShelf">
       </tab>
             
    </extension>
