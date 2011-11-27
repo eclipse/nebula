@@ -7,7 +7,6 @@ Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.nebula.widgets.gallery,
- org.eclipse.nebula.widgets.cdatetime,
  org.eclipse.nebula.widgets.datechooser,
  org.eclipse.nebula.widgets.formattedtext,
  org.eclipse.nebula.widgets.pshelf,
