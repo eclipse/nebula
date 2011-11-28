@@ -123,6 +123,7 @@
   </profiles>
 
   <modules>
+  		<module>../org.eclipse.nebula.nebula-parent</module>
 		<module>../org.eclipse.swt.nebula.examples</module>
 		<module>../features/org.eclipse.nebula.examples_feature</module>
 		<module>../org.eclipse.nebula.widgets.gallery</module>

@@ -9,7 +9,10 @@
 	<description>Parent pom for all incubation widgets in Nebula</description>
 
 	<modules>
+		<!-- Dependencies -->
 		<module>../org.eclipse.nebula.nebula-parent</module>
+		<module>../org.eclipse.swt.nebula.examples</module>
+		
 		<!-- CWT -->
 		<module>../org.eclipse.nebula.cwt</module>
 		<module>../org.eclipse.nebula.cwt.snippets</module>
