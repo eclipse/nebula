@@ -529,7 +529,7 @@ public class OscilloscopeExampleTab extends AbstractExampleTab {
 					.setItems(new String[] { "None", "RASTER", "SMALL RASTER" });
 			imageCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
 					false, 1, 1));
-			imageCombo.select(0);
+			imageCombo.select(1);
 		}
 
 		{
