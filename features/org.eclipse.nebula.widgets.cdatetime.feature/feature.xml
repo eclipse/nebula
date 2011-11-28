@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.nebula.widgets.cdatetime.feature"
       label="Nebula CDateTime Widget"
-      version="0.14.0">
+      version="0.14.0.qualifier">
 
    <description url="http://www.eclipse.org/nebula/widgets/cdatetime">
       A Date and Time selection widgt that can be used in a textual, graphical, or combo mode.

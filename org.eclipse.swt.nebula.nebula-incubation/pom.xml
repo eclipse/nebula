@@ -10,19 +10,38 @@
 
 	<modules>
 		<module>../org.eclipse.nebula.nebula-parent</module>
+		<!-- CWT -->
 		<module>../org.eclipse.nebula.cwt</module>
-
+		<module>../org.eclipse.nebula.cwt.snippets</module>
+		<module>../org.eclipse.nebula.cwt.tests</module>
+		<module>../features/org.eclipse.nebula.cwt.feature</module>
+		<!-- FormattedText -->
 		<module>../org.eclipse.nebula.widgets.formattedtext</module>
+		<module>../features/org.eclipse.nebula.widgets.formattedtext.feature</module>
+		<!-- PaperClips -->
 		<module>../org.eclipse.nebula.paperclips.core</module>
+		<!-- CDateTime -->
 		<module>../org.eclipse.nebula.widgets.cdatetime</module>
+		<module>../org.eclipse.nebula.widgets.cdatetime.example</module>
+		<module>../org.eclipse.nebula.widgets.cdatetime.snippets</module>
+		<module>../org.eclipse.nebula.widgets.cdatetime.tests</module>
+		<module>../features/org.eclipse.nebula.widgets.cdatetime.feature</module>
+		<!-- DateChooser -->
 		<module>../org.eclipse.nebula.widgets.datechooser</module>
-
+		<module>../org.eclipse.nebula.widgets.datechooser.example</module>
+		<module>../features/org.eclipse.nebula.widgets.datechooser.feature</module>
+		<!-- RadioGroup -->
 		<module>../org.eclipse.nebula.widgets.radiogroup</module>
-		<!-- <module>../org.eclipse.nebula.widgets.radiogroup.tests</module> -->
+		<module>../org.eclipse.nebula.widgets.radiogroup.example</module>
+		<module>../org.eclipse.nebula.widgets.radiogroup.tests</module>
+		<module>../features/org.eclipse.nebula.widgets.radiogroup_feature</module>
 		<!-- TreeMapper -->
 		<module>../org.eclipse.nebula.widgets.treemapper</module>
 		<module>../org.eclipse.nebula.widgets.treemapper.examples</module>
 		<module>../features/org.eclipse.nebula.widgets.treemapper.feature</module>
+		
+		<!-- Dist -->
+		<module>../org.eclipse.nebula.updatesite.incubation</module>
 	</modules>
 
 </project>
