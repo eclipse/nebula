@@ -1,21 +1,28 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.eclipse.swt.nebula</groupId>
+	<groupId>org.eclipse.nebula</groupId>
 	<artifactId>nebula-incubation</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<description>	</description>
+	<name>Nebula incubation parent</name>
+	<description>Parent pom for all incubation widgets in Nebula</description>
+
 	<modules>
 		<module>../org.eclipse.nebula.nebula-parent</module>
 		<module>../org.eclipse.nebula.cwt</module>
-		
+
 		<module>../org.eclipse.nebula.widgets.formattedtext</module>
 		<module>../org.eclipse.nebula.paperclips.core</module>
 		<module>../org.eclipse.nebula.widgets.cdatetime</module>
 		<module>../org.eclipse.nebula.widgets.datechooser</module>
-		
+
 		<module>../org.eclipse.nebula.widgets.radiogroup</module>
-		<!--  <module>../org.eclipse.nebula.widgets.radiogroup.tests</module>-->
+		<!-- <module>../org.eclipse.nebula.widgets.radiogroup.tests</module> -->
+		<!-- TreeMapper -->
+		<module>../org.eclipse.nebula.widgets.treemapper</module>
+		<module>../org.eclipse.nebula.widgets.treemapper.examples</module>
+		<module>../features/org.eclipse.nebula.widgets.treemapper.feature</module>
 	</modules>
+
 </project>

@@ -4,10 +4,10 @@
 	<modelVersion>4.0.0</modelVersion>
 	
 	<parent>
-		<artifactId>nebula-release</artifactId>
+		<artifactId>nebula-parent</artifactId>
 		<groupId>org.eclipse.nebula</groupId>
 		<version>1.0.0-SNAPSHOT</version>
-		<relativePath>../org.eclipse.swt.nebula.nebula-release</relativePath>
+		<relativePath>../org.eclipse.nebula.nebula-parent</relativePath>
 	</parent>
 	
 	<groupId>org.eclipse.nebula</groupId>
