@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:org.eclipse.ui.main.menu">
+         <menu
+               label="Test">
+            <command
+                  commandId="org.eclipse.nebula.treemapper.test.openDialogForTestCommand"
+                  style="push">
+            </command>
+         </menu>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="org.eclipse.nebula.widgets.treemapper.examples.TestHandler"
+            id="org.eclipse.nebula.treemapper.test.openDialogForTestCommand"
+            name="Test">
+      </command>
+   </extension>
+
+</plugin>
