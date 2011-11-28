@@ -45,6 +45,7 @@
 		
 		<!-- Dist -->
 		<module>../org.eclipse.nebula.updatesite.incubation</module>
+		<module>../features/org.eclipse.nebula.incubation.feature</module>
 	</modules>
 
 </project>
