@@ -159,7 +159,7 @@
 		<module>../features/org.eclipse.nebula.widgets.xviewer.feature</module>
 		<!-- TreeMapper -->
 		<module>../org.eclipse.nebula.widgets.treemapper</module>
-		<module>../org.eclipse.nebula.widgets.treemapper.example</module>
+		<module>../org.eclipse.nebula.widgets.treemapper.examples</module>
 		<module>../features/org.eclipse.nebula.widgets.treemapper.feature</module>
 		<!-- -->
 		<module>../org.eclipse.nebula.effects.stw</module>
