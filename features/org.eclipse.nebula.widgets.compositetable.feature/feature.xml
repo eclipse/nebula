@@ -8,7 +8,7 @@
       Nebula CompositeTable Widget
    </description>
 
-   <copyright >
+   <copyright>
       Copyright (c) David Orme
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License
@@ -18,7 +18,7 @@ http://www.eclipse.org/legal/epl-v10.html
    </copyright>
 
    <license url="http://www.eclipse.org/legal/epl-v10.html">
-Eclipse Public License - v 1.0
+      Eclipse Public License - v 1.0
 THE ACCOMPANYING PROGRAM IS PROVIDED UNDER THE TERMS OF THIS
 ECLIPSE PUBLIC LICENSE (&quot;AGREEMENT&quot;). ANY USE, REPRODUCTION OR
 DISTRIBUTION OF THE PROGRAM CONSTITUTES RECIPIENT&apos;S ACCEPTANCE
@@ -218,6 +218,13 @@ litigation.
 
    <plugin
          id="org.eclipse.nebula.widgets.compositetable"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.nebula.widgets.compositetable.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
