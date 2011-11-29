@@ -330,6 +330,20 @@ rights to a jury trial in any resulting litigation.</p>
          version="0.0.0"
          unpack="false"/>
 
+	<plugin
+         id="org.eclipse.nebula.widgets.cdatetime"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.nebula.widgets.cdatetime.example"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
    <plugin
          id="org.eclipse.nebula.jface.cdatetime"
          download-size="0"
@@ -337,13 +351,6 @@ rights to a jury trial in any resulting litigation.</p>
          version="0.0.0"
          unpack="false"/>
          
-   <plugin
-         id="org.eclipse.nebula.jface.cdatetime.example"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
    <plugin
          id="org.eclipse.nebula.jface.cdatetime.source"
          download-size="0"
