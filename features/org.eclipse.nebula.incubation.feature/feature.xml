@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.nebula.incubation.feature"
-      label="Nebula Incubation Feature"
+      label="All Nebula incubation Widgets (+ Source)"
       version="1.0.0.qualifier"
       provider-name="Eclipse.org">
 

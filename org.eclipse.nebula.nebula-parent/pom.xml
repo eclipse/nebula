@@ -11,6 +11,11 @@
 	<properties>
 		<tycho-version>0.13.0</tycho-version>
 		<tests.vmargs></tests.vmargs>
+		<!-- Properties to enable jacoco code coverage analysis in Sonar -->
+		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
+		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+		<!-- When running in children tests/* modules, all reports will be in ../target/jacoco.exec -->
+		<sonar.jacoco.itReportPath>../target/jacoco.exec</sonar.jacoco.itReportPath>
 	</properties>
 
 	<build>
@@ -65,13 +70,48 @@
 			</plugin>
 
 			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.5.3.201107060350</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+						<configuration>
+							<!-- Where to put jacoco coverage report -->
+							<destFile>${sonar.jacoco.itReportPath}</destFile>
+							<includes>*.nebula.*</includes>
+							<!-- Append allows all reports from all executions to be stored in 
+								a single file -->
+							<append>true</append>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+
+			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-surefire-plugin</artifactId>
 				<version>${tycho-version}</version>
 				<configuration>
 					<useUIHarness>true</useUIHarness>
-					<argLine>-Xmx512m -Djava.awt.headless=true ${tests.vmargs}</argLine>
+					<argLine>${tycho.testArgLine} -Xmx512m -Djava.awt.headless=true	${tests.vmargs}</argLine>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-source-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<executions>
+					<execution>
+						<id>plugin-source</id>
+						<goals>
+							<goal>plugin-source</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -102,8 +142,8 @@
 			<url>http://download.eclipse.org/releases/indigo/</url>
 		</repository>
 	</repositories>
-	
-	
+
+
 	<!-- Metadata -->
 	<mailingLists>
 		<mailingList>

@@ -15,9 +15,9 @@
 
   <parent>
 		<artifactId>nebula-incubation</artifactId>
-		<groupId>org.eclipse.nebula.incubation</groupId>
+		<groupId>org.eclipse.nebula</groupId>
 		<version>1.0.0-SNAPSHOT</version>
-		<relativePath>../org.eclipse.swt.nebula.nebula-incubation</relativePath>
+		<relativePath>../../org.eclipse.swt.nebula.nebula-incubation</relativePath>
   </parent>
 
   <artifactId>org.eclipse.nebula.incubation.feature</artifactId>

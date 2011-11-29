@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
+   <feature url="features/org.eclipse.nebula.incubation.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.incubation.feature" version="1.0.0.qualifier">
+      <category name="Nebula Incubation Widgets"/>
+   </feature>
    <feature url="features/org.eclipse.nebula.widgets.treemapper.feature_0.1.0.qualifier.jar" id="org.eclipse.nebula.widgets.treemapper.feature" version="0.1.0.qualifier">
       <category name="Nebula Incubation Widgets"/>
    </feature>
    <category-def name="Nebula Incubation Widgets" label="Nebula Incubation Widgets">
       <description>
          Contains all widgets that are part of the Nebula incubator.
-      </description>
-   </category-def>
-   <category-def name="Nebula Release Examples" label="Nebula Release Examples">
-      <description>
-         Contains examples for the Nebula Release widgets.
       </description>
    </category-def>
 </site>
