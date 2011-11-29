@@ -43,7 +43,7 @@
 							<execution>
 								<id>pack</id>
 								<configuration>
-									<inputFile>${project.build.directory}/${project.artifactId}-${project.version}-site.zip</inputFile>
+									<inputFile>${project.build.directory}/${project.artifactId}.zip</inputFile>
 								</configuration>
 								<phase>package</phase>
 								<goals>
@@ -53,7 +53,7 @@
 							<execution>
 								<id>sign</id>
 								<configuration>
-									<inputFile>${project.build.directory}/${project.artifactId}-${project.version}-site.zip</inputFile>
+									<inputFile>${project.build.directory}/${project.artifactId}.zip</inputFile>
 									<signerInputDirectory>${signer-input-directory}</signerInputDirectory>
 								</configuration>
 								<phase>package</phase>
