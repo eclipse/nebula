@@ -23,11 +23,16 @@
 	<profiles>
 		<profile>
 			<id>build-server</id>
+			<properties>
+				<download-publish-path>/home/data/httpd/download.eclipse.org/technology/incubation/snapshots</download-publish-path>
+				<signer-input-directory>/home/data/httpd/download-staging.priv/technology/nebula</signer-input-directory>
+			</properties>
 			<build>
 				<plugins>
 					<plugin>
 						<groupId>org.eclipse.dash.maven</groupId>
-						<artifactId>eclipse-maven-signing-plugin</artifactId>
+						<artifactId>eclipse-signing-maven-plugin</artifactId>
+						<version>1.0.3</version>
 						<executions>
 							<execution>
 								<id>pack</id>
@@ -66,6 +71,34 @@
 								<goals>
 									<goal>fixCheckSums</goal>
 								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>1.7</version>
+						<executions>
+							<execution>
+								<id>deploy</id>
+								<phase>install</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<delete includeemptydirs="false">
+											<fileset dir="${download-publish-path}">
+												<include name="**" />
+											</fileset>
+										</delete>
+										<copy includeemptydirs="false" todir="${download-publish-path}">
+											<fileset dir="target/checksumFix">
+												<include name="**" />
+											</fileset>
+										</copy>
+									</tasks>
+								</configuration>
 							</execution>
 						</executions>
 					</plugin>

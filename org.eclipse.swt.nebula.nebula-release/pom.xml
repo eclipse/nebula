@@ -53,7 +53,7 @@
 		<mockito-version>1.8.4</mockito-version>
 		<junit-version>4.8.1</junit-version>
 		<signer-input-directory>/home/data/httpd/download-staging.priv/technology/nebula</signer-input-directory>
-		<download-publish-path>/home/data/httpd/download.eclipse.org/technology/nebula/updates-nightly</download-publish-path>
+		<download-publish-path>/home/data/httpd/download.eclipse.org/technology/proper/snapshots</download-publish-path>
 	</properties>
 
 	<profiles>
@@ -286,14 +286,6 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-assembly-plugin</artifactId>
 					<version>2.2-beta-4</version>
-				</plugin>
-				<plugin>
-					<groupId>org.eclipse.dash.maven</groupId>
-					<artifactId>eclipse-maven-signing-plugin</artifactId>
-					<!-- TODO: need 1.0.1.2-SNAPSHOT of the signing plugin until bugfix 
-						for https://bugs.eclipse.org/bugs/show_bug.cgi?id=347591 is available in 
-						maven.eclipse.org -->
-					<version>1.0.1.2-SNAPSHOT</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
