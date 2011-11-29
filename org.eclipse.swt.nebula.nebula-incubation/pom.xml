@@ -48,4 +48,10 @@
 		<module>../features/org.eclipse.nebula.incubation.feature</module>
 	</modules>
 
+	<parent>
+		<groupId>org.eclipse.nebula</groupId>
+		<version>1.0.0-SNAPSHOT</version>
+		<artifactId>nebula-parent</artifactId>
+		<relativePath>../org.eclipse.nebula.nebula-parent</relativePath>
+	</parent>
 </project>
