@@ -17,7 +17,6 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.nebula.widgets.treemapper.TreeMapper;
 import org.eclipse.nebula.widgets.treemapper.TreeMapperUIConfigProvider;
 import org.eclipse.nebula.widgets.treemapper.examples.DOMSemanticTreeMapperSupport.DOMMappingBean;
@@ -25,41 +24,37 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.nebula.examples.AbstractExampleTab;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-/**
- * @author istria
- *
- */
-public class TestWizardPage extends WizardPage {
+public class TreeMapperExampleTab extends AbstractExampleTab {
 
-	private static List<DOMMappingBean> mappings = new ArrayList<DOMSemanticTreeMapperSupport.DOMMappingBean>();
-	private static Document xml;
-	static {
+	private List<DOMMappingBean> mappings = new ArrayList<DOMSemanticTreeMapperSupport.DOMMappingBean>();
+	private Document xml;
+	
+	public TreeMapperExampleTab() {
 		InputStream stream = null;
 		try {
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
-			stream = TestWizardPage.class.getResourceAsStream("globalweather.wsdl");
+			stream = this.getClass().getResourceAsStream("globalweather.wsdl");
 			xml = db.parse(stream);
 			stream.close();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
-	
-	
-	/**
-	 * @param pageName
-	 */
-	protected TestWizardPage() {
-		super("Test");
+
+	@Override
+	public void createParameters(Composite parent) {
+
 	}
 
 	@Override
-	public void createControl(Composite parent) {
+	public Control createControl(Composite parent) {
 		Color defaultColor = new Color(parent.getShell().getDisplay(), new RGB(247, 206, 206));
 		Color selectedColor = new Color(parent.getShell().getDisplay(), new RGB(147, 86, 111));
 		TreeMapperUIConfigProvider uiConfig = new TreeMapperUIConfigProvider(defaultColor, 1, selectedColor, 3);
@@ -69,9 +64,13 @@ public class TestWizardPage extends WizardPage {
 		mapper.setContentProviders(new DOMTreeContentProvider(), new DOMTreeContentProvider());
 		mapper.setLabelProviders(new DOMLabelProvider(), new DOMLabelProvider());
 		mapper.setInput(xml, xml, mappings);
-		getShell().setSize(600, 600);
-		setControl(mapper.getControl());
+		
+		return mapper.getControl();
 	}
-	
+
+	@Override
+	public String[] createLinks() {
+		return null;
+	}
 
 }
