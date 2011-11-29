@@ -27,6 +27,12 @@
 				<download-publish-path>/home/data/httpd/download.eclipse.org/technology/incubation/snapshots</download-publish-path>
 				<signer-input-directory>/home/data/httpd/download-staging.priv/technology/nebula</signer-input-directory>
 			</properties>
+			<pluginRepositories>
+				<pluginRepository>
+					<id>eclipse-nexus</id>
+					<url>http://maven.eclipse.org/nexus/content/groups/public/</url>
+				</pluginRepository>
+			</pluginRepositories>
 			<build>
 				<plugins>
 					<plugin>
