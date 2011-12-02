@@ -96,7 +96,7 @@ public class XViewerTreeReport {
       }
       sb.append(HtmlUtil.addHeaderRowMultiColumnTable(headerStrs.toArray(new String[headerStrs.size()])));
       // Get column widths and column name and setup the columns
-      XViewerLabelProvider labelProv = (XViewerLabelProvider) xViewer.getLabelProvider();
+      IXViewerLabelProvider labelProv = (IXViewerLabelProvider) xViewer.getLabelProvider();
       ArrayList<String[]> list = new ArrayList<String[]>();
       for (TreeItem item : items) {
          addRow(item, list, labelProv, showCols, 1);
@@ -109,7 +109,7 @@ public class XViewerTreeReport {
       return sb.toString();
    }
 
-   private void addRow(TreeItem item, List<String[]> rowData, XViewerLabelProvider labelProv, List<XViewerColumn> showCols, int level) throws XViewerException {
+   private void addRow(TreeItem item, List<String[]> rowData, IXViewerLabelProvider labelProv, List<XViewerColumn> showCols, int level) throws XViewerException {
       List<String> cellData = new ArrayList<String>(showCols.size());
       boolean firstCell = true;
       for (XViewerColumn xCol : showCols) {

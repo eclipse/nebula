@@ -82,13 +82,21 @@ public class XViewer extends TreeViewer {
    public XViewer(Composite parent, int style, IXViewerFactory xViewerFactory) {
       this(parent, style, xViewerFactory, false, false);
    }
-
+   
+   public XViewer(Tree tree, IXViewerFactory xViewerFactory) {
+	      this(tree, xViewerFactory, false, false);
+	   }
+   
    public XViewer(Composite parent, int style, IXViewerFactory xViewerFactory, boolean filterRealTime, boolean searchRealTime) {
-      super(parent, style);
+	   this(new Tree(parent, style), xViewerFactory, filterRealTime, searchRealTime);
+   }
+
+   public XViewer(Tree tree, IXViewerFactory xViewerFactory, boolean filterRealTime, boolean searchRealTime) {
+      super(tree);
       this.xViewerFactory = xViewerFactory;
       this.menuManager = new MenuManager();
       this.menuManager.setRemoveAllWhenShown(true);
-      this.menuManager.createContextMenu(parent);
+      this.menuManager.createContextMenu(tree.getParent());
       if (xViewerFactory.isFilterUiAvailable()) {
          this.filterDataUI = new FilterDataUI(this, filterRealTime);
       } else {
@@ -105,9 +113,8 @@ public class XViewer extends TreeViewer {
       } catch (Exception ex) {
          XViewerLog.logAndPopup(Activator.class, Level.SEVERE, ex);
       }
-      createSupportWidgets(parent);
-
-      Tree tree = getTree();
+      createSupportWidgets(tree.getParent());
+      
       tree.setHeaderVisible(true);
       tree.setLinesVisible(true);
       setUseHashlookup(true);
@@ -147,8 +154,8 @@ public class XViewer extends TreeViewer {
 
    @Override
    public void setLabelProvider(IBaseLabelProvider labelProvider) {
-      if (!(labelProvider instanceof XViewerLabelProvider) && !(labelProvider instanceof XViewerStyledTextLabelProvider)) {
-         throw new IllegalArgumentException("Label Provider must extend XViewerLabelProvider");
+      if (!(labelProvider instanceof IXViewerLabelProvider) ) {
+         throw new IllegalArgumentException("Label Provider must extend XViewerLabelProvider or XViewerStyledTextLabelProvider");
       }
       super.setLabelProvider(labelProvider);
    }
@@ -564,13 +571,7 @@ public class XViewer extends TreeViewer {
    }
 
    public String getColumnText(Object element, int col) {
-      String returnVal = "";
-      if (getLabelProvider() instanceof XViewerLabelProvider) {
-         returnVal = ((XViewerLabelProvider) getLabelProvider()).getColumnText(element, col);
-      } else {
-         returnVal = ((XViewerStyledTextLabelProvider) getLabelProvider()).getStyledText(element, col).getString();
-      }
-      return returnVal;
+         return ((IXViewerLabelProvider) getLabelProvider()).getColumnText(element, col);
    }
 
    /**

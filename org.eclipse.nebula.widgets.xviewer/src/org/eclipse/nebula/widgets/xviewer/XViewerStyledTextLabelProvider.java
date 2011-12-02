@@ -27,14 +27,15 @@ import org.eclipse.swt.graphics.Image;
 /**
  * @author Donald G. Dunne
  */
-public abstract class XViewerStyledTextLabelProvider extends StyledCellLabelProvider {
+public abstract class XViewerStyledTextLabelProvider extends StyledCellLabelProvider implements IXViewerLabelProvider {
 
    private final XViewer viewer;
 
    // Store index of columnIndex to XViewerColumns to speed up label providing
    private final Map<Integer, XViewerColumn> indexToXViewerColumnMap = new HashMap<Integer, XViewerColumn>();
 
-   private XViewerColumn getTreeColumnOffIndex(int columnIndex) {
+   @Override
+   public XViewerColumn getTreeColumnOffIndex(int columnIndex) {
       if (!indexToXViewerColumnMap.containsKey(columnIndex)) {
          XViewerColumn xViewerColumn = viewer.getXTreeColumn(columnIndex);
          if (xViewerColumn != null) {
@@ -46,9 +47,29 @@ public abstract class XViewerStyledTextLabelProvider extends StyledCellLabelProv
 
    // When columns get re-ordered, need to clear out this cache so indexing can
    // be re-computed
+   @Override
    public void clearXViewerColumnIndexCache() {
       indexToXViewerColumnMap.clear();
    }
+   
+   public Object getBackingData(Object element, XViewerColumn xViewerColumn, int columnIndex) throws Exception {
+	      try {
+	         // If not shown, don't process any further
+	         if (!xViewerColumn.isShow()) {
+	            return "";
+	         }
+	         // First check value column's methods
+	         if (xViewerColumn instanceof IXViewerValueColumn) {
+	            Object obj = ((IXViewerValueColumn) xViewerColumn).getBackingData(element, xViewerColumn, columnIndex);
+	            if (obj != null) {
+	               return obj;
+	            }
+	         }
+	      } catch (Exception ex) {
+	         return XViewerCells.getCellExceptionString(ex);
+	      }
+	      return null;
+	   }
 
    /**
     * Creates a {@link XViewerStyledTextLabelProvider} that delegates the requests for the styled labels and the images
@@ -86,6 +107,10 @@ public abstract class XViewerStyledTextLabelProvider extends StyledCellLabelProv
 
       // no super call required. changes on item will trigger the refresh.
    }
+   
+   public int getColumnGradient(Object element, XViewerColumn xCol, int columnIndex) throws Exception {
+	      return 0;
+	   }
 
    private Font getFont(Object element, int columnIndex) {
       try {
@@ -184,6 +209,33 @@ public abstract class XViewerStyledTextLabelProvider extends StyledCellLabelProv
       }
       return null;
    }
+   
+   public String getColumnText(Object element, XViewerColumn xCol, int column) throws Exception {
+	   return getStyledText(element, xCol, column).getString();
+   }
+   
+	@Override
+	public String getColumnText(Object element, int columnIndex) {
+		try {
+	         XViewerColumn xViewerColumn = getTreeColumnOffIndex(columnIndex);
+	         // If not shown, don't process any further
+	         if (!xViewerColumn.isShow()) {
+	            return "";
+	         }
+	         // First check value column's methods
+	         if (xViewerColumn instanceof IXViewerValueColumn) {
+	            String str = ((IXViewerValueColumn) xViewerColumn).getColumnText(element, xViewerColumn, columnIndex);
+	            if (str != null) {
+	               return str;
+	            }
+	            return "";
+	         }
+	         // Return label provider's value
+	         return getColumnText(element, xViewerColumn, columnIndex);
+	      } catch (Exception ex) {
+	         return XViewerCells.getCellExceptionString(ex);
+	      }
+	}
 
    public abstract Image getColumnImage(Object element, XViewerColumn xCol, int column) throws Exception;
 

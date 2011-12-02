@@ -18,10 +18,10 @@ import java.util.Map;
 import java.util.logging.Level;
 import org.eclipse.nebula.widgets.xviewer.Activator;
 import org.eclipse.nebula.widgets.xviewer.IXViewerFactory;
+import org.eclipse.nebula.widgets.xviewer.IXViewerLabelProvider;
 import org.eclipse.nebula.widgets.xviewer.XViewer;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewerComputedColumn;
-import org.eclipse.nebula.widgets.xviewer.XViewerLabelProvider;
 import org.eclipse.nebula.widgets.xviewer.XViewerSorter;
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.nebula.widgets.xviewer.XViewerTextFilter;
@@ -500,8 +500,8 @@ public class CustomizeManager {
       // Create new columns
       addColumns();
       xViewer.updateStatusLabel();
-      if (xViewer.getLabelProvider() instanceof XViewerLabelProvider) {
-         ((XViewerLabelProvider) xViewer.getLabelProvider()).clearXViewerColumnIndexCache();
+      if (xViewer.getLabelProvider() instanceof IXViewerLabelProvider) {
+         ((IXViewerLabelProvider) xViewer.getLabelProvider()).clearXViewerColumnIndexCache();
       }
       loading = false;
    }

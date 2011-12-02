@@ -14,10 +14,10 @@ import java.util.logging.Level;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.nebula.widgets.xviewer.Activator;
+import org.eclipse.nebula.widgets.xviewer.IXViewerLabelProvider;
 import org.eclipse.nebula.widgets.xviewer.IXViewerValueColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewer;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
-import org.eclipse.nebula.widgets.xviewer.XViewerLabelProvider;
 import org.eclipse.nebula.widgets.xviewer.util.internal.HtmlUtil;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
 import org.eclipse.nebula.widgets.xviewer.util.internal.dialog.HtmlDialog;
@@ -68,7 +68,7 @@ public class ViewSelectedCellDataAction extends Action {
                      xViewer.getRightClickSelectedColumnNum());
             } else {
                data =
-                  ((XViewerLabelProvider) xViewer.getLabelProvider()).getColumnText(treeItem.getData(), xCol,
+                  ((IXViewerLabelProvider) xViewer.getLabelProvider()).getColumnText(treeItem.getData(), xCol,
                      xViewer.getRightClickSelectedColumnNum());
             }
             if (data != null && !data.equals("")) {

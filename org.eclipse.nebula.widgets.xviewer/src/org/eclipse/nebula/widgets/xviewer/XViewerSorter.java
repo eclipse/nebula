@@ -57,9 +57,9 @@ public class XViewerSorter extends ViewerSorter {
          Object obj2 = null;
 
          IBaseLabelProvider labelProvider = treeViewer.getLabelProvider();
-         if (labelProvider instanceof XViewerLabelProvider) {
-            obj1 = ((XViewerLabelProvider) labelProvider).getBackingData(o1, sortXCol, columnNum);
-            obj2 = ((XViewerLabelProvider) labelProvider).getBackingData(o2, sortXCol, columnNum);
+         if (labelProvider instanceof IXViewerLabelProvider) {
+            obj1 = ((IXViewerLabelProvider) labelProvider).getBackingData(o1, sortXCol, columnNum);
+            obj2 = ((IXViewerLabelProvider) labelProvider).getBackingData(o2, sortXCol, columnNum);
          }
 
          // System.out.println("sortForward.get(columnNum) *" +

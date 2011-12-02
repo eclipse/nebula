@@ -28,17 +28,16 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.nebula.widgets.xviewer.Activator;
+import org.eclipse.nebula.widgets.xviewer.IXViewerLabelProvider;
 import org.eclipse.nebula.widgets.xviewer.XViewer;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumnLabelProvider;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumnSorter;
 import org.eclipse.nebula.widgets.xviewer.XViewerComputedColumn;
-import org.eclipse.nebula.widgets.xviewer.XViewerLabelProvider;
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.nebula.widgets.xviewer.action.ColumnMultiEditAction;
 import org.eclipse.nebula.widgets.xviewer.action.TableCustomizationAction;
@@ -420,7 +419,7 @@ public class XViewerCustomMenu {
       for (TreeItem item : items) {
          for (int x = 0; x < xViewer.getTree().getColumnCount(); x++) {
             if (xViewer.getTree().getColumn(x).equals(treeCol)) {
-               values.add(((XViewerLabelProvider) xViewer.getLabelProvider()).getColumnText(item.getData(), x));
+               values.add(((IXViewerLabelProvider) xViewer.getLabelProvider()).getColumnText(item.getData(), x));
             }
          }
       }
@@ -448,7 +447,7 @@ public class XViewerCustomMenu {
       for (TreeItem item : items) {
          for (int x = 0; x < xViewer.getTree().getColumnCount(); x++) {
             if (xViewer.getTree().getColumn(x).equals(treeCol)) {
-               values.add(((XViewerLabelProvider) xViewer.getLabelProvider()).getColumnText(item.getData(), x));
+               values.add(((IXViewerLabelProvider) xViewer.getLabelProvider()).getColumnText(item.getData(), x));
             }
          }
       }
@@ -645,7 +644,7 @@ public class XViewerCustomMenu {
          return;
       }
       ArrayList<String> textTransferData = new ArrayList<String>();
-      ITableLabelProvider labelProv = (ITableLabelProvider) xViewer.getLabelProvider();
+      IXViewerLabelProvider labelProv = (IXViewerLabelProvider) xViewer.getLabelProvider();
       for (TreeColumn treeCol : xViewer.getTree().getColumns()) {
          if (treeCol.getWidth() > 0) {
             visibleColumns.add(treeCol);
@@ -697,7 +696,7 @@ public class XViewerCustomMenu {
          return;
       }
       ArrayList<String> textTransferData = new ArrayList<String>();
-      ITableLabelProvider labelProv = (ITableLabelProvider) xViewer.getLabelProvider();
+      IXViewerLabelProvider labelProv = (IXViewerLabelProvider) xViewer.getLabelProvider();
       if (items.length > 0) {
          StringBuffer sb = new StringBuffer();
          for (TreeItem item : items) {

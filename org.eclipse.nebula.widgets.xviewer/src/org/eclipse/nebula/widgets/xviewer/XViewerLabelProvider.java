@@ -23,13 +23,14 @@ import org.eclipse.swt.graphics.Image;
 /**
  * @author Donald G. Dunne
  */
-public abstract class XViewerLabelProvider implements ITableLabelProvider, ITableColorProvider {
+public abstract class XViewerLabelProvider implements ITableLabelProvider, ITableColorProvider, IXViewerLabelProvider {
 
    private final XViewer viewer;
 
    // Store index of columnIndex to XViewerColumns to speed up label providing
    private final Map<Integer, XViewerColumn> indexToXViewerColumnMap = new HashMap<Integer, XViewerColumn>();
 
+   @Override
    public XViewerColumn getTreeColumnOffIndex(int columnIndex) {
       if (!indexToXViewerColumnMap.containsKey(columnIndex)) {
          XViewerColumn xViewerColumn = viewer.getXTreeColumn(columnIndex);
@@ -41,6 +42,7 @@ public abstract class XViewerLabelProvider implements ITableLabelProvider, ITabl
    }
 
    // When columns get re-ordered, need to clear out this cache so indexing can be re-computed
+   @Override
    public void clearXViewerColumnIndexCache() {
       indexToXViewerColumnMap.clear();
    }
@@ -153,7 +155,7 @@ public abstract class XViewerLabelProvider implements ITableLabelProvider, ITabl
 
    public abstract Image getColumnImage(Object element, XViewerColumn xCol, int columnIndex) throws Exception;
 
-   public abstract String getColumnText(Object element, XViewerColumn xCol, int columnIndex) throws Exception;
+   public abstract String getColumnText(Object element, XViewerColumn xCol, int columnIndex) throws Exception; 
 
    /**
     * Returns the backing data object for operations like sorting

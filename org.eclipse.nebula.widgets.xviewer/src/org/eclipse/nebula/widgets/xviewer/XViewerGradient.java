@@ -55,13 +55,13 @@ public class XViewerGradient {
       public void handleEvent(Event event) {
          try {
             XViewerColumn xViewerColumn =
-               ((XViewerLabelProvider) xViewer.getLabelProvider()).getTreeColumnOffIndex(event.index);
+               ((IXViewerLabelProvider) xViewer.getLabelProvider()).getTreeColumnOffIndex(event.index);
             TreeItem item = (TreeItem) event.item;
             if (item.getData() == null) {
                return;
             }
             int percent =
-               ((XViewerLabelProvider) xViewer.getLabelProvider()).getColumnGradient(item.getData(), xViewerColumn,
+               ((IXViewerLabelProvider) xViewer.getLabelProvider()).getColumnGradient(item.getData(), xViewerColumn,
                   event.index);
             if (percent == 0 || percent > 100 || percent < 0) {
                return;
@@ -79,7 +79,7 @@ public class XViewerGradient {
             gc.drawRectangle(rect2);
             gc.setForeground(xViewer.getTree().getDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND));
             String text =
-               ((XViewerLabelProvider) xViewer.getLabelProvider()).getColumnText(item.getData(), xViewerColumn,
+               ((IXViewerLabelProvider) xViewer.getLabelProvider()).getColumnText(item.getData(), xViewerColumn,
                   event.index);
             Point size = event.gc.textExtent(text);
             int offset = Math.max(0, (event.height - size.y) / 2 + 1);

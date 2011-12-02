@@ -16,9 +16,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import org.eclipse.nebula.widgets.xviewer.Activator;
+import org.eclipse.nebula.widgets.xviewer.IXViewerLabelProvider;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewerComputedColumn;
-import org.eclipse.nebula.widgets.xviewer.XViewerLabelProvider;
 import org.eclipse.nebula.widgets.xviewer.XViewerSorter;
 import org.eclipse.nebula.widgets.xviewer.util.XViewerException;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
@@ -50,7 +50,7 @@ public class XViewerDaysTillTodayColumn extends XViewerComputedColumn {
       }
       try {
          int sourceColumnNum = xViewer.getCustomizeMgr().getColumnNumFromXViewerColumn(sourceXViewerColumn);
-         String dateStr = ((XViewerLabelProvider) xViewer.getLabelProvider()).getColumnText(element, sourceColumnNum);
+         String dateStr = ((IXViewerLabelProvider) xViewer.getLabelProvider()).getColumnText(element, sourceColumnNum);
          if (dateStr == null || dateStr.equals("")) {
             return "";
          }
