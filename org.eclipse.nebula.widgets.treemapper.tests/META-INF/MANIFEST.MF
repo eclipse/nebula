@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Tests for the TreeMapper widget
+Bundle-SymbolicName: org.eclipse.nebula.widgets.treemapper.tests
+Bundle-Version: 0.1.0.qualifier
+Bundle-Activator: org.eclipse.nebula.widgets.treemapper.tests.Activator
+Bundle-Vendor: Eclipse.org
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.nebula.widgets.treemapper;bundle-version="0.1.0",
+ org.junit;bundle-version="4.0.0",
+ org.eclipse.draw2d
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
