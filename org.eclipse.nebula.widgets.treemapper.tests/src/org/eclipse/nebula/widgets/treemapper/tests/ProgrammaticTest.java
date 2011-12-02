@@ -24,7 +24,7 @@ import org.junit.Test;
  * @author Mickael Istria (PetalsLink)
  *
  */
-public class ProgrammaticTests {
+public class ProgrammaticTest {
 
 	/**
 	 * @param treeContent
