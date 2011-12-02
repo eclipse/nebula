@@ -19,13 +19,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.Figure;
+import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.ImageFigure;
+import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.draw2d.MouseEvent;
 import org.eclipse.draw2d.MouseListener;
 import org.eclipse.draw2d.MouseMotionListener;
+import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.XYLayout;
+import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ISelection;
@@ -36,7 +45,9 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.nebula.widgets.treemapper.internal.Activator;
 import org.eclipse.nebula.widgets.treemapper.internal.LinkFigure;
+import org.eclipse.nebula.widgets.treemapper.internal.Messages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.dnd.DND;
@@ -51,9 +62,11 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.events.TreeListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.TreeItem;
 
 /**
@@ -91,6 +104,7 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 	private LinkFigure selectedFigure;
 	private M selectedMapping;
 	private ISemanticTreeMapperSupport<M, L, R> semanticSupport;
+	private IFigure warningFigure;
 
 	
 	public TreeMapper(Composite parent, ISemanticTreeMapperSupport<M, L, R> semanticSupport, TreeMapperUIConfigProvider uiConfig) {
@@ -223,14 +237,34 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 			return;
 		}
 		
+		boolean everythingOK = true;
 		for (M mapping : this.mappings) {
-			drawMapping(mapping);
+			everythingOK &= drawMapping(mapping);
 			if (mapping == selectedMapping) {
 				LinkFigure newSelectedFigure = mappingsToFigures.get(mapping);
 				applySelectedMappingFeedback(newSelectedFigure);
 				selectedFigure = newSelectedFigure;
 			}
 		}
+		if (everythingOK && warningFigure != null) {
+			linkRootFigure.remove(warningFigure);
+			warningFigure = null;
+		} else if (!everythingOK && warningFigure == null) {
+			warningFigure = createWarningFigure();
+			linkRootFigure.add(warningFigure, new Rectangle(5, 5, SWT.DEFAULT, SWT.DEFAULT));
+		}
+	}
+
+	/**
+	 * @return a newly created figure to alert the end-user of an inconsistency in the widget
+	 */
+	private IFigure createWarningFigure() {
+		Image image = Display.getDefault().getSystemImage(SWT.ICON_WARNING);
+		ImageFigure res = new ImageFigure(image);
+		res.setPreferredSize(10, 10);
+		Label label = new Label(Messages.widgetInconsistency);
+		res.setToolTip(label);
+		return res;
 	}
 
 	/**
@@ -295,10 +329,13 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 	}
 
 	/**
+	 * Draw a mapping and returns whether the operation is successful or not.
+	 * If not, a message is logged to help in debugging.
 	 * @param leftItem
 	 * @param rightItem
+	 * @return true is successful, false if an issue occured
 	 */
-	private void drawMapping(final M mapping) {
+	private boolean drawMapping(final M mapping) {
 		LinkFigure previousFigure = mappingsToFigures.get(mapping);
 		if (previousFigure != null) {
 			previousFigure.deleteFromParent();
@@ -311,6 +348,13 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 		{
 			boolean leftItemVisible = true;
 			TreeItem leftTreeItem = (TreeItem) leftTreeViewer.testFindItem(semanticSupport.resolveLeftItem(mapping));
+			if (leftTreeItem == null) {
+				Activator.getDefault().getLog().log(
+						new Status(IStatus.ERROR,
+								Activator.PLUGIN_ID,
+								"Could not find left entry of mapping " + mapping.toString() + " in left treeViewer."));
+				return false;
+			}
 			TreeItem lastVisibleLeftTreeItem = leftTreeItem;
 			while (leftTreeItem.getParentItem() != null) {
 				if (!leftTreeItem.getParentItem().getExpanded()) {
@@ -326,6 +370,13 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 		{
 			boolean rightItemVisible = true;
 			TreeItem rightTreeItem = (TreeItem) rightTreeViewer.testFindItem(semanticSupport.resolveRightItem(mapping));
+			if (rightTreeItem == null) {
+				Activator.getDefault().getLog().log(
+						new Status(IStatus.ERROR,
+								Activator.PLUGIN_ID,
+								"Could not find right entry of mapping " + mapping.toString() + " in right treeViewer."));
+				return false;
+			}
 			TreeItem lastVisibleRightTreeItem = rightTreeItem;
 			while (rightTreeItem.getParentItem() != null) {
 				if (!rightTreeItem.getParentItem().getExpanded()) {
@@ -374,6 +425,8 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 		// store it
 		figuresToMappings.put(arrowFigure, mapping);
 		mappingsToFigures.put(mapping, arrowFigure);
+	
+		return true;
 	}
 
 	/**
