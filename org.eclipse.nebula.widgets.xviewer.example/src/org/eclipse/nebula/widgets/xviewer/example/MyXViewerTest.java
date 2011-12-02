@@ -62,7 +62,8 @@ public class MyXViewerTest {
       myXviewer.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
       myXviewer.setContentProvider(new MyXViewerContentProvider());
       myXviewer.setLabelProvider(new MyXViewerLabelProvider(myXviewer));
-
+      //myXviewer.setLabelProvider(new MyXViewerStyledTextLabelProvider(myXviewer));
+      
       // XViewerEditAdapter
       XViewerControlFactory cFactory = new DefaultXViewerControlFactory();
       XViewerConverter converter = new MyXViewerConverter();

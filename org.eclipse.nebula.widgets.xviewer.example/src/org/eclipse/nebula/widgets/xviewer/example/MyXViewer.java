@@ -15,6 +15,8 @@ import java.util.Set;
 import org.eclipse.nebula.widgets.xviewer.XViewer;
 import org.eclipse.nebula.widgets.xviewer.example.model.ISomeTask;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 
@@ -26,11 +28,15 @@ import org.eclipse.swt.widgets.TreeItem;
 public class MyXViewer extends XViewer {
    private final Set<ISomeTask> runList = new HashSet<ISomeTask>();
 
-   public MyXViewer(Composite parent, int style) {
-      super(parent, style, new MyXViewerFactory());
+   public MyXViewer(Tree tree) {
+      super(tree,  new MyXViewerFactory());
    }
 
-   public boolean isScheduled(ISomeTask autoRunTask) {
+   public MyXViewer(Shell shell_1, int i) {
+	super(shell_1, i, new MyXViewerFactory());
+}
+
+public boolean isScheduled(ISomeTask autoRunTask) {
       return true;
    }
 
