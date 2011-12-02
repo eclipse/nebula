@@ -49,8 +49,8 @@
 		<!-- TreeMapper -->
 		<module>../org.eclipse.nebula.widgets.treemapper</module>
 		<module>../org.eclipse.nebula.widgets.treemapper.examples</module>
+		<module>../org.eclipse.nebula.widgets.treemapper.tests</module>
 		<module>../features/org.eclipse.nebula.widgets.treemapper.feature</module>
-		
 		<!-- Dist -->
 		<module>../features/org.eclipse.nebula.incubation.feature</module>
 		<module>../org.eclipse.nebula.updatesite.incubation</module>
