@@ -19,6 +19,8 @@
 		<!-- Dependencies -->
 		<module>../org.eclipse.nebula.nebula-parent</module>
 		<module>../org.eclipse.swt.nebula.examples</module>
+		<module>../features/org.eclipse.nebula.examples.incubation.feature</module>
+		<module>../features/org.eclipse.swt.nebula.examples.feature</module>
 		
 		<!-- CWT -->
 		<module>../org.eclipse.nebula.cwt</module>
