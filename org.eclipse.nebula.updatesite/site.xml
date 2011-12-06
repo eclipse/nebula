@@ -39,6 +39,9 @@
    <feature url="features/org.eclipse.nebula.widgets.ganttchart.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.ganttchart.feature" version="1.0.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
+   <feature url="features/org.eclipse.swt.nebula.examples.feature_1.0.4.qualifier.jar" id="org.eclipse.swt.nebula.examples.feature" version="1.0.4.qualifier">
+      <category name="Nebula Release Examples"/>
+   </feature>
    <category-def name="Nebula Release All Widgets" label="Nebula Release All Widgets">
       <description>
          Contains all widgets that are part of the combined Nebula release. All these widgets are supported and under development.
