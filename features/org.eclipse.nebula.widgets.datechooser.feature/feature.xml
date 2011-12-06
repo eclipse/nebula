@@ -218,7 +218,7 @@ litigation.
    </license>
 
    <requires>
-      <import plugin="org.eclipse.nebula.widgets.formattedtext"/>
+      <import feature="org.eclipse.nebula.widgets.formattedtext.feature" version="1.0.0.qualifier"/>
    </requires>
 
    <plugin
@@ -229,7 +229,7 @@ litigation.
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.nebula.widgets.formattedtext"
+         id="org.eclipse.nebula.widgets.datechooser.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
