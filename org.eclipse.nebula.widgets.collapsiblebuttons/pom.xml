@@ -9,65 +9,6 @@
   <version>1.0.0-SNAPSHOT</version>
   <name>Collapsible Buttons Widget</name>
   <url>http://www.eclipse.org/nebula</url>
- <build>
-   <plugins>
-	<plugin>
-	<groupId>org.apache.maven.plugins</groupId>
-	<artifactId>maven-jar-plugin</artifactId>
-	<configuration>
-	<archive>
-	<addMavenDescriptor>false</addMavenDescriptor>
-	</archive>
-	</configuration>
-	</plugin>
-<plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <phase>package</phase>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-  <groupId>org.apache.maven.plugins</groupId>
-  <artifactId>maven-javadoc-plugin</artifactId>
-  <executions>
-    <execution>
-      <id>attach-javadocs</id>
-      <goals>
-        <goal>jar</goal>
-      </goals>
-    </execution>
-  </executions>
-</plugin>
-      
-    </plugins>
-    <sourceDirectory>src</sourceDirectory>  
-    <resources>
-      <resource>
-	<targetPath>icons/</targetPath>
-	<directory>icons</directory>
-      </resource>
-    </resources>
-  </build>
-  <dependencies>
-     <dependency>
-      <groupId>org.eclipse</groupId>
-      <artifactId>swt</artifactId>
-      <version>3.6.0.v3650b</version>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse</groupId>
-      <artifactId>swt.win32</artifactId>
-      <version>win32.x86_64_3.6.0.v3650b</version>
-    </dependency>
-
-  </dependencies>
   <parent>
   	<groupId>org.eclipse.nebula</groupId>
   	<artifactId>nebula-parent</artifactId>
