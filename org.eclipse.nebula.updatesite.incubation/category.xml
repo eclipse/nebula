@@ -6,9 +6,6 @@
    <feature url="features/org.eclipse.swt.nebula.examples.feature_1.0.4.qualifier.jar" id="org.eclipse.swt.nebula.examples.feature" version="1.0.4.qualifier">
       <category name="Nebula Incubation Examples"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.examples.incubation.feature_0.1.0.qualifier.jar" id="org.eclipse.nebula.examples.incubation.feature" version="0.1.0.qualifier">
-      <category name="Nebula Incubation Examples"/>
-   </feature>
    <feature url="features/org.eclipse.nebula.cwt.feature_0.9.0.qualifier.jar" id="org.eclipse.nebula.cwt.feature" version="0.9.0.qualifier">
       <category name="Nebula Individual Incubation Widgets"/>
    </feature>
@@ -32,6 +29,9 @@
    </feature>
    <feature url="features/org.eclipse.nebula.widgets.treemapper.feature_0.1.0.qualifier.jar" id="org.eclipse.nebula.widgets.treemapper.feature" version="0.1.0.qualifier">
       <category name="Nebula Individual Incubation Widgets"/>
+   </feature>
+   <feature url="features/org.eclipse.nebula.examples.incubation.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.examples.incubation.feature" version="1.0.0.qualifier">
+      <category name="Nebula Incubation Examples"/>
    </feature>
    <category-def name="Nebula All Incubation Widgets" label="Nebula All Incubation Widgets">
       <description>
