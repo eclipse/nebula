@@ -22,16 +22,28 @@
 		<module>../features/org.eclipse.nebula.examples.incubation.feature</module>
 		<module>../features/org.eclipse.swt.nebula.examples.feature</module>
 		
+		<!--collapsiblebuttons -->
+		<module>../org.eclipse.nebula.collapbsiblebuttons</module>
+		<module>../org.eclipse.nebula.collapbsiblebuttons.example</module>
+		<module>../features/org.eclipse.nebula.collapbsiblebuttons.feature</module>
+		
 		<!-- CWT -->
 		<module>../org.eclipse.nebula.cwt</module>
 		<module>../org.eclipse.nebula.cwt.snippets</module>
 		<module>../org.eclipse.nebula.cwt.tests</module>
 		<module>../features/org.eclipse.nebula.cwt.feature</module>
+		
 		<!-- FormattedText -->
 		<module>../org.eclipse.nebula.widgets.formattedtext</module>
 		<module>../features/org.eclipse.nebula.widgets.formattedtext.feature</module>
+		
 		<!-- PaperClips -->
 		<module>../org.eclipse.nebula.paperclips.core</module>
+		<module>../org.eclipse.nebula.paperclips.widgets</module>
+		<module>../org.eclipse.nebula.paperclips.tests</module>
+		<module>../org.eclipse.nebula.paperclips.snippets</module>
+		<module>../features/org.eclipse.nebula.widgets.paperclips.feature</module>
+		
 		<!-- CDateTime -->
 		<module>../org.eclipse.nebula.widgets.cdatetime</module>
 		<module>../org.eclipse.nebula.jface.cdatetime</module>
@@ -39,23 +51,28 @@
 		<module>../org.eclipse.nebula.widgets.cdatetime.snippets</module>
 		<module>../org.eclipse.nebula.widgets.cdatetime.tests</module>
 		<module>../features/org.eclipse.nebula.widgets.cdatetime.feature</module>
+		
 		<!-- DateChooser -->
 		<module>../org.eclipse.nebula.widgets.datechooser</module>
 		<module>../org.eclipse.nebula.widgets.datechooser.example</module>
 		<module>../features/org.eclipse.nebula.widgets.datechooser.feature</module>
+		
 		<!-- RadioGroup -->
 		<module>../org.eclipse.nebula.widgets.radiogroup</module>
 		<module>../org.eclipse.nebula.widgets.radiogroup.example</module>
 		<module>../org.eclipse.nebula.widgets.radiogroup.tests</module>
 		<module>../features/org.eclipse.nebula.widgets.radiogroup_feature</module>
+		
 		<!-- TreeMapper -->
 		<module>../org.eclipse.nebula.widgets.treemapper</module>
 		<module>../org.eclipse.nebula.widgets.treemapper.examples</module>
 		<module>../org.eclipse.nebula.widgets.treemapper.tests</module>
 		<module>../features/org.eclipse.nebula.widgets.treemapper.feature</module>
+		
 		<!-- Dist -->
-		<module>../features/org.eclipse.nebula.incubation.feature</module>
 		<module>../org.eclipse.nebula.updatesite.incubation</module>
+		<module>../features/org.eclipse.nebula.incubation.feature</module>
+		
 	</modules>
 
 </project>
