@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: PaperClips Snippets Plug-in
 Bundle-SymbolicName: org.eclipse.nebula.paperclips.snippets
 Bundle-Version: 2.0.0.qualifier
-Bundle-Vendor: Matthew Hall and others
+Bundle-Vendor: Eclipse.org
 Require-Bundle: org.eclipse.nebula.paperclips.core;bundle-version="[2.0.0,3.0.0)",
  org.eclipse.nebula.paperclips.widgets;bundle-version="[2.0.0,3.0.0)",
  org.eclipse.swt;bundle-version="[3.2.0,4.0.0)"
