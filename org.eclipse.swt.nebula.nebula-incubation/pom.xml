@@ -23,9 +23,9 @@
 		<module>../features/org.eclipse.swt.nebula.examples.feature</module>
 		
 		<!--collapsiblebuttons -->
-		<module>../org.eclipse.nebula.collapbsiblebuttons</module>
-		<module>../org.eclipse.nebula.collapbsiblebuttons.example</module>
-		<module>../features/org.eclipse.nebula.collapbsiblebuttons.feature</module>
+		<module>../org.eclipse.nebula.widgets.collapbsiblebuttons</module>
+		<module>../org.eclipse.nebula.widgets.collapbsiblebuttons.example</module>
+		<module>../features/org.eclipse.nebula.widgets.collapbsiblebuttons.feature</module>
 		
 		<!-- CWT -->
 		<module>../org.eclipse.nebula.cwt</module>
