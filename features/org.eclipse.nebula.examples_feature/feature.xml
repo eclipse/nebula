@@ -19,6 +19,7 @@
 
    <requires>
       <import feature="org.eclipse.nebula.feature" version="1.0.0.qualifier"/>
+      <import feature="org.eclipse.swt.nebula.examples.feature" version="1.0.4.qualifier"/>
    </requires>
 
    <plugin
@@ -72,13 +73,6 @@
 
    <plugin
          id="org.eclipse.nebula.effects.stw.example"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.swt.nebula.examples"
          download-size="0"
          install-size="0"
          version="0.0.0"
