@@ -116,6 +116,7 @@
 	<modules>
 		<module>../org.eclipse.swt.nebula.examples</module>
 		<module>../features/org.eclipse.nebula.examples_feature</module>
+		<module>../features/org.eclipse.swt.nebula.examples.feature</module>
 		<module>../org.eclipse.nebula.widgets.gallery</module>
 		<module>../org.eclipse.nebula.widgets.gallery.example</module>
 		<module>../features/org.eclipse.nebula.widgets.gallery_feature</module>
