@@ -2,7 +2,8 @@
 <feature
       id="org.eclipse.nebula.widgets.collapsiblebuttons.feature"
       label="Nebula Collapsible Buttons Widget"
-      version="1.0.0.qualifier">
+      version="1.0.0.qualifier"
+      provider-name="Eclipse.org">
 
    <description url="http://www.eclipse.org/nebula/widgets/collapsible/collapsible.php">
       Nebula Collapsible Buttons Widget
