@@ -351,7 +351,7 @@ public class FocusTests extends VTestCase {
 
 	public void testTabKeyForward_2() {
 		
-		assertTrue(hasFocus(getPanel(cdt1).getComposite()));
+		assertTrue(hasFocus(getComposite(getPanel(cdt1))));
 
 		keyPress('\t');
 		assertTrue(hasFocus(button1));
