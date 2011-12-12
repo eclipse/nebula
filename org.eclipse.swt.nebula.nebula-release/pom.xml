@@ -49,7 +49,7 @@
 	</licenses>
 
 	<properties>
-		<tycho-version>0.13.0</tycho-version>
+		<tycho-version>0.14.0-SNAPSHOT</tycho-version>
 		<mockito-version>1.8.4</mockito-version>
 		<junit-version>4.8.1</junit-version>
 		<signer-input-directory>/home/data/httpd/download-staging.priv/technology/nebula</signer-input-directory>
@@ -159,20 +159,14 @@
 
 	<pluginRepositories>
 		<pluginRepository>
-			<id>maven.eclipse.org</id>
-			<url>http://maven.eclipse.org/nexus/content/repositories/milestone-indigo</url>
-		</pluginRepository>
-		<!-- TODO: need 1.0.1.2-SNAPSHOT of the signing plugin until bugfix for 
-			https://bugs.eclipse.org/bugs/show_bug.cgi?id=347591 is available in maven.eclipse.org -->
-		<pluginRepository>
-			<id>intalio-dash-signing-plugin</id>
-			<url>http://intalio.org/public/maven2</url>
+			<id>tycho-snapshots</id>
+			<url>https://repository.sonatype.org/content/repositories/snapshots/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
 		</pluginRepository>
 	</pluginRepositories>
 

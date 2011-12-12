@@ -9,7 +9,7 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<tycho-version>0.13.0</tycho-version>
+		<tycho-version>0.14.0-SNAPSHOT</tycho-version>
 		<tests.vmargs></tests.vmargs>
 		<!-- Properties to enable jacoco code coverage analysis in Sonar -->
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
@@ -142,6 +142,19 @@
 			<url>http://download.eclipse.org/releases/indigo/</url>
 		</repository>
 	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>tycho-snapshots</id>
+			<url>https://repository.sonatype.org/content/repositories/snapshots/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
 
 
 	<!-- Metadata -->
