@@ -133,6 +133,7 @@
 										<delete includeemptydirs="false">
 											<fileset dir="${download-publish-path}">
 												<include name="**" />
+												<exclude name="incubation/**"/>
 											</fileset>
 										</delete>
 										<copy includeemptydirs="false" todir="${download-publish-path}">
