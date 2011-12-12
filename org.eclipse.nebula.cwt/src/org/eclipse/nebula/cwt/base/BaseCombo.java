@@ -54,18 +54,19 @@ public abstract class BaseCombo extends Canvas {
 	 */
 	protected class DropComboLayout extends VLayout {
 
-		protected Point computeSize(VPanel panel, int wHint, int hHint, boolean flushCache) {
+		protected Point computeSize(VPanel panel, int wHint, int hHint,
+				boolean flushCache) {
 			Point size = text.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			if(button.getVisible()) {
+			if (button.getVisible()) {
 				size.x += size.y;
 			}
 
 			size.y += textMarginHeight;
 
-			if(wHint != SWT.DEFAULT) {
+			if (wHint != SWT.DEFAULT) {
 				size.x = Math.min(size.x, wHint);
 			}
-			if(hHint != SWT.DEFAULT) {
+			if (hHint != SWT.DEFAULT) {
 				size.y = Math.min(size.y, hHint);
 			}
 			return size;
@@ -77,24 +78,23 @@ public abstract class BaseCombo extends Canvas {
 			Point tSize = text.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			tSize.y += textMarginHeight;
 
-			Point bSize = button.getVisible() ? new Point(tSize.y, tSize.y) : new Point(0, 0);
+			Point bSize = button.getVisible() ? new Point(tSize.y, tSize.y)
+					: new Point(0, 0);
 
-			if(leftAlign) {
-				text.setBounds(cRect.x + bSize.x, cRect.y + (win32 ? getBorderWidth() : 0), cRect.width - bSize.x, tSize.y);
+			if (leftAlign) {
+				text.setBounds(cRect.x + bSize.x, cRect.y
+						+ (win32 ? getBorderWidth() : 0),
+						cRect.width - bSize.x, tSize.y);
 				button.setBounds(cRect.x, cRect.y, bSize.x, bSize.y);
 			} else {
-				text.setBounds(
-						cRect.x+(win32 ? 1 : 0), 
-						cRect.y + (win32 ? 1 : 0), 
-						cRect.width-bSize.x-(win32 ? 2 : 0), 
-						tSize.y-(win32 ? 2 : 0)
-					);
+				text.setBounds(cRect.x + (win32 ? 1 : 0), cRect.y
+						+ (win32 ? 1 : 0), cRect.width - bSize.x
+						- (win32 ? 2 : 0), tSize.y - (win32 ? 2 : 0));
 				button.setBounds(
-						win32 ? (cRect.x+cRect.width-cRect.height+1) : (cRect.x+cRect.width-bSize.x),
-						cRect.y,
-						win32 ? (cRect.height-1) : bSize.x,
-						win32 ? cRect.height : bSize.y
-					);
+						win32 ? (cRect.x + cRect.width - cRect.height + 1)
+								: (cRect.x + cRect.width - bSize.x), cRect.y,
+						win32 ? (cRect.height - 1) : bSize.x,
+						win32 ? cRect.height : bSize.y);
 			}
 		}
 	}
@@ -129,7 +129,7 @@ public abstract class BaseCombo extends Canvas {
 	 * true if the platform is win32, false otherwise
 	 */
 	protected static final boolean vista = "win32".equals(SWT.getPlatform()) && "6.0".equals(System.getProperty("os.version")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	
+
 	/**
 	 * A constant value used to pad the computed height for this widget, so that
 	 * the combo's Button will fit without clipping its top and bottom borders.
@@ -137,27 +137,29 @@ public abstract class BaseCombo extends Canvas {
 	protected static final int textMarginHeight = win32 ? 4 : 0;
 
 	/**
-	 * A style constant indicating that this combo will only have a drop down button,
-	 * rather than a button and a text box.
+	 * A style constant indicating that this combo will only have a drop down
+	 * button, rather than a button and a text box.
 	 */
 	protected static final int BUTTON_ONLY = 0;
-	
+
 	/**
-	 * A constant indicating that the drop down button is always visible.
-	 * Valid only when style is DROP_DOWN.
+	 * A constant indicating that the drop down button is always visible. Valid
+	 * only when style is DROP_DOWN.
+	 * 
 	 * @see #BUTTON_AUTO
 	 * @see #BUTTON_NEVER
 	 */
 	protected static final int BUTTON_ALWAYS = 1;
 
 	/**
-	 * A constant indicating that the drop down button is never visible.
-	 * Valid only when style is DROP_DOWN.
+	 * A constant indicating that the drop down button is never visible. Valid
+	 * only when style is DROP_DOWN.
 	 * <p>
 	 * This setting may be useful if the subclass of this BaseCombo allows
-	 * programmatic opening and closing of the drop down shell via {@link #setOpen(boolean)},
-	 * or a similar method.
+	 * programmatic opening and closing of the drop down shell via
+	 * {@link #setOpen(boolean)}, or a similar method.
 	 * </p>
+	 * 
 	 * @see #BUTTON_AUTO
 	 * @see #BUTTON_ALWAYS
 	 * @see #setOpen(boolean)
@@ -166,9 +168,10 @@ public abstract class BaseCombo extends Canvas {
 	protected static final int BUTTON_NEVER = 2;
 
 	/**
-	 * A constant indicating that the drop down button is visible when the
-	 * text box has the focus, and is hidden otherwise.
-	 * Valid only when style is DROP_DOWN.
+	 * A constant indicating that the drop down button is visible when the text
+	 * box has the focus, and is hidden otherwise. Valid only when style is
+	 * DROP_DOWN.
+	 * 
 	 * @see #BUTTON_ALWAYS
 	 * @see #BUTTON_NEVER
 	 */
@@ -176,31 +179,34 @@ public abstract class BaseCombo extends Canvas {
 
 	private static int checkStyle(int style) {
 		int rstyle = SWT.NONE;
-		if((style & SWT.BORDER) != 0) {
-			if(win32 || (style & SWT.SIMPLE) != 0) {
+		if ((style & SWT.BORDER) != 0) {
+			if (win32 || (style & SWT.SIMPLE) != 0) {
 				rstyle |= SWT.BORDER;
 			}
 		}
-		if(win32) {
+		if (win32) {
 			rstyle |= SWT.DOUBLE_BUFFERED;
 		}
 		return rstyle;
 	}
 
 	/**
-	 * A recursive method to find out if a composite is an ancestor of a control.
-	 * @param control 
+	 * A recursive method to find out if a composite is an ancestor of a
+	 * control.
+	 * 
+	 * @param control
 	 * @param composite
 	 * @return true if the composite is an ancestor, false otherwise.
 	 */
-	protected static boolean containsControl(Control control, Composite composite) {
-		if(composite != null && !composite.isDisposed()) {
+	protected static boolean containsControl(Control control,
+			Composite composite) {
+		if (composite != null && !composite.isDisposed()) {
 			Control[] children = composite.getChildren();
-			for(Control child : children) {
-				if(!child.isDisposed()) {
-					if(child == control) {
+			for (Control child : children) {
+				if (!child.isDisposed()) {
+					if (child == control) {
 						return true;
-					} else if(child instanceof Composite){
+					} else if (child instanceof Composite) {
 						return containsControl(control, (Composite) child);
 					}
 				}
@@ -210,9 +216,9 @@ public abstract class BaseCombo extends Canvas {
 	}
 
 	/**
-	 * The VPanel that is the base of this widget.  If the style is SIMPLE, this panel
-	 * will be the base of the content area, otherwise, it is the base of the text/button
-	 * area.
+	 * The VPanel that is the base of this widget. If the style is SIMPLE, this
+	 * panel will be the base of the content area, otherwise, it is the base of
+	 * the text/button area.
 	 */
 	protected VPanel panel = null;
 
@@ -237,8 +243,9 @@ public abstract class BaseCombo extends Canvas {
 	protected VNative<Text> text = null;
 
 	/**
-	 * The popup Shell widget of a DROP_DOWN style combo. This value may be null --
-	 * protect all references to this field with the checkContentShell() method.
+	 * The popup Shell widget of a DROP_DOWN style combo. This value may be null
+	 * -- protect all references to this field with the checkContentShell()
+	 * method.
 	 */
 	protected Shell contentShell = null;
 
@@ -269,9 +276,9 @@ public abstract class BaseCombo extends Canvas {
 	private int buttonVisibility;
 
 	private Listener buttonVisibilityListener;
-	
+
 	private boolean dropDown;
-	
+
 	private boolean open = false;
 
 	private boolean holdOpen = false;
@@ -284,14 +291,14 @@ public abstract class BaseCombo extends Canvas {
 	private Listener shellListener;
 	private Listener comboListener = new Listener() {
 		public void handleEvent(Event event) {
-			switch (event.type){
+			switch (event.type) {
 			case SWT.Move:
-				if(isOpen()) {
+				if (isOpen()) {
 					setOpen(false);
 				}
 				break;
 			case SWT.Resize:
-				if(isOpen()) {
+				if (isOpen()) {
 					setOpen(false);
 				}
 				layout(true);
@@ -299,12 +306,12 @@ public abstract class BaseCombo extends Canvas {
 			}
 		}
 	};
-	
+
 	private Listener disposeListener = new Listener() {
 		public void handleEvent(Event event) {
-			if(!isDisposed()) {
+			if (!isDisposed()) {
 				getShell().removeListener(SWT.Deactivate, comboListener);
-				if(checkContentShell()) {
+				if (checkContentShell()) {
 					contentShell.dispose();
 				}
 			}
@@ -315,8 +322,10 @@ public abstract class BaseCombo extends Canvas {
 	 * Main constructor -- must be called by all subclasses in their own
 	 * constructors.
 	 * <p>
-	 * SWT.TOGGLE, SWT.PUSH, SWT.ARROW, SWT.FLAT, SWT.TRAIL, SWT.LEAD, SWT.BORDER, SWT.SIMPLE, SWT.DROP_DOWN
+	 * SWT.TOGGLE, SWT.PUSH, SWT.ARROW, SWT.FLAT, SWT.TRAIL, SWT.LEAD,
+	 * SWT.BORDER, SWT.SIMPLE, SWT.DROP_DOWN
 	 * </p>
+	 * 
 	 * @param parent
 	 *            the visual parent of this widget
 	 * @param style
@@ -324,7 +333,7 @@ public abstract class BaseCombo extends Canvas {
 	 */
 	public BaseCombo(Composite parent, int style) {
 		super(parent, checkStyle(style));
-		
+
 		panel = new VPanel(this, SWT.NONE);
 		panel.setWidget(this);
 
@@ -334,10 +343,10 @@ public abstract class BaseCombo extends Canvas {
 	/**
 	 * Adds the listener to the collection of listeners who will be notified
 	 * when the receiver's text is modified, by sending it one of the messages
-	 * defined in the <code>ModifyListener</code> interface.<br/> Note that
-	 * this is NOT the correct way to listen for changes in the underlying model
-	 * for the combo. This should be provided by some other mechanism, such as a
-	 * {@link SelectionListener}.
+	 * defined in the <code>ModifyListener</code> interface.<br/>
+	 * Note that this is NOT the correct way to listen for changes in the
+	 * underlying model for the combo. This should be provided by some other
+	 * mechanism, such as a {@link SelectionListener}.
 	 * 
 	 * @param listener
 	 *            the listener which should be notified
@@ -357,10 +366,10 @@ public abstract class BaseCombo extends Canvas {
 	 * @see #removeModifyListener
 	 */
 	protected void addModifyListener(ModifyListener listener) {
-		if(listener == null) {
+		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
-		if(checkText()) {
+		if (checkText()) {
 			text.getControl().addModifyListener(listener);
 		}
 	}
@@ -404,7 +413,7 @@ public abstract class BaseCombo extends Canvas {
 		int buttonStyle = style & mask;
 
 		button = new VButton(panel, buttonStyle | SWT.NO_FOCUS);
-		if((style & BUTTON_ONLY) == 0) {
+		if ((style & BUTTON_ONLY) == 0) {
 			button.setMargins(0, 0);
 		}
 		button.addListener(SWT.Selection, new Listener() {
@@ -412,17 +421,20 @@ public abstract class BaseCombo extends Canvas {
 				setOpen(!isOpen());
 			}
 		});
-		
-		if(win32) {
+
+		if (win32) {
 			button.setPainter(new VButtonPainter() {
 				@Override
 				public void paintBackground(VControl control, Event e) {
 					VButton button = (VButton) control;
-					if(button.hasState(VControl.STATE_ACTIVE)) {
+					if (button.hasState(VControl.STATE_ACTIVE)) {
 						Rectangle r = button.getBounds();
-						e.gc.setBackground(e.display.getSystemColor(SWT.COLOR_GRAY));
-						e.gc.fillRoundRectangle(r.x, r.y, r.width-1, r.height-1, 2, 2);
-						e.gc.drawRoundRectangle(r.x, r.y, r.width-1, r.height-1, 2, 2);
+						e.gc.setBackground(e.display
+								.getSystemColor(SWT.COLOR_GRAY));
+						e.gc.fillRoundRectangle(r.x, r.y, r.width - 1,
+								r.height - 1, 2, 2);
+						e.gc.drawRoundRectangle(r.x, r.y, r.width - 1,
+								r.height - 1, 2, 2);
 					}
 				}
 			});
@@ -434,13 +446,13 @@ public abstract class BaseCombo extends Canvas {
 		contentShell.addListener(SWT.Close, shellListener);
 		contentShell.addListener(SWT.Deactivate, shellListener);
 	}
-	
+
 	private void createText(int style) {
 		textListener = new Listener() {
 			public void handleEvent(Event event) {
-				switch (event.type){
+				switch (event.type) {
 				case SWT.KeyDown:
-					if(event.stateMask == SWT.CTRL && event.keyCode == ' ') {
+					if (event.stateMask == SWT.CTRL && event.keyCode == ' ') {
 						event.doit = false;
 						setOpen(true);
 					}
@@ -457,7 +469,7 @@ public abstract class BaseCombo extends Canvas {
 
 		int mask = SWT.TRAIL | SWT.LEAD;
 		int textStyle = SWT.SINGLE | (style & mask);
-		if(!win32 && (style & SWT.BORDER) != 0) {
+		if (!win32 && (style & SWT.BORDER) != 0) {
 			textStyle |= SWT.BORDER;
 		}
 
@@ -469,7 +481,7 @@ public abstract class BaseCombo extends Canvas {
 	 * @param image
 	 */
 	protected final void doSetButtonImage(Image image) {
-		if(checkButton()) {
+		if (checkButton()) {
 			button.setImage(image);
 		}
 	}
@@ -486,7 +498,7 @@ public abstract class BaseCombo extends Canvas {
 	 * @return the content shell
 	 */
 	protected Shell getContentShell() {
-		if(contentShell == null) {
+		if (contentShell == null) {
 			createContentShell();
 		}
 		return contentShell;
@@ -527,7 +539,7 @@ public abstract class BaseCombo extends Canvas {
 	 * returns the menu for this combo
 	 */
 	public Menu getMenu() {
-		if(checkText()) {
+		if (checkText()) {
 			return text.getMenu();
 		}
 		return super.getMenu();
@@ -546,6 +558,7 @@ public abstract class BaseCombo extends Canvas {
 
 	/**
 	 * Returns the text of this combo
+	 * 
 	 * @return the combo's text
 	 */
 	public String getText() {
@@ -557,13 +570,13 @@ public abstract class BaseCombo extends Canvas {
 		simple = (style & SWT.SIMPLE) != 0;
 		dropDown = (style & (BUTTON_ONLY | SWT.DROP_DOWN)) != 0;
 
-		if(simple) {
+		if (simple) {
 			panel.setLayout(new VSimpleLayout());
-		} else if(dropDown) {
+		} else if (dropDown) {
 			createButton(style);
-			if((style & BUTTON_ONLY) == 0) {
+			if ((style & BUTTON_ONLY) == 0) {
 				createText(style);
-				if(win32) {
+				if (win32) {
 					setPositionControl(panel);
 				} else {
 					setPositionControl(text);
@@ -576,13 +589,14 @@ public abstract class BaseCombo extends Canvas {
 
 			shellListener = new Listener() {
 				public void handleEvent(Event event) {
-					switch (event.type){
+					switch (event.type) {
 					case SWT.Close:
 						event.doit = false;
 						setOpen(false);
 						break;
 					case SWT.Deactivate:
-						if(!checkContent() || content.getMenu() == null || !content.getMenu().isVisible()) {
+						if (!checkContent() || content.getMenu() == null
+								|| !content.getMenu().isVisible()) {
 							setOpen(false);
 						}
 						break;
@@ -702,10 +716,10 @@ public abstract class BaseCombo extends Canvas {
 	 * @see #addModifyListener
 	 */
 	protected void removeModifyListener(ModifyListener listener) {
-		if(listener == null) {
+		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
-		if(checkText()) {
+		if (checkText()) {
 			text.getControl().removeModifyListener(listener);
 		}
 	}
@@ -716,23 +730,26 @@ public abstract class BaseCombo extends Canvas {
 	}
 
 	/**
-	 * Set the alignment of the button in relation to the text box.
-	 * Only valid if style is DROP_DOWN.
-	 * @param alignment can be either SWT.LEFT or SWT.RIGHT.  Other
-	 * values have no effect.
+	 * Set the alignment of the button in relation to the text box. Only valid
+	 * if style is DROP_DOWN.
+	 * 
+	 * @param alignment
+	 *            can be either SWT.LEFT or SWT.RIGHT. Other values have no
+	 *            effect.
 	 */
 	protected void setButtonAlignment(int alignment) {
-		if(SWT.LEFT == alignment) {
+		if (SWT.LEFT == alignment) {
 			leftAlign = true;
-		} else if(SWT.RIGHT == alignment) {
+		} else if (SWT.RIGHT == alignment) {
 			leftAlign = false;
 		}
 		layout(true);
 	}
-	
+
 	/**
 	 * Set the custom image for the drop down button. Only valid if style is
 	 * DROP_DOWN. Passing null in will set the image to its default value.
+	 * 
 	 * @param image
 	 */
 	protected void setButtonImage(Image image) {
@@ -740,12 +757,13 @@ public abstract class BaseCombo extends Canvas {
 	}
 
 	/**
-	 * Set the text for the drop down button.  Only valid if style is DROP_DOWN.
+	 * Set the text for the drop down button. Only valid if style is DROP_DOWN.
 	 * Passing null will clear the text.
+	 * 
 	 * @param text
 	 */
 	protected void setButtonText(String text) {
-		if(checkButton()) {
+		if (checkButton()) {
 			button.setText(text);
 		}
 	}
@@ -764,8 +782,8 @@ public abstract class BaseCombo extends Canvas {
 	 * <dd>Button will always be shown - standard SWT.DROP_DOWN behaviour. The
 	 * method setButtonVisible(boolean) has no affect with this style set</dd>
 	 * <dt><b>Style BUTTON_AUTO:</b></dt>
-	 * <dd>Button visibility will be handled automatically through focus
-	 * events, popup events, as well as programmatically</dd>
+	 * <dd>Button visibility will be handled automatically through focus events,
+	 * popup events, as well as programmatically</dd>
 	 * <dt><b>Style BUTTON_MANUAL:</b></dt>
 	 * <dd>Button visibility will only be handled programmatically</dd>
 	 * <dt><b>Style BUTTON_NEVER:</b></dt>
@@ -780,10 +798,10 @@ public abstract class BaseCombo extends Canvas {
 	protected void setButtonVisibility(int visibility) {
 		buttonVisibility = visibility;
 		setButtonVisible(false);
-		if(buttonVisibility == BUTTON_AUTO) {
+		if (buttonVisibility == BUTTON_AUTO) {
 			buttonVisibilityListener = new Listener() {
 				public void handleEvent(Event event) {
-					switch(event.type) {
+					switch (event.type) {
 					case SWT.FocusIn:
 						setButtonVisible(true);
 						break;
@@ -796,7 +814,7 @@ public abstract class BaseCombo extends Canvas {
 			addListener(SWT.FocusIn, buttonVisibilityListener);
 			addListener(SWT.FocusOut, buttonVisibilityListener);
 		} else {
-			if(buttonVisibilityListener != null) {
+			if (buttonVisibilityListener != null) {
 				removeListener(SWT.FocusIn, buttonVisibilityListener);
 				removeListener(SWT.FocusOut, buttonVisibilityListener);
 				buttonVisibilityListener = null;
@@ -815,15 +833,18 @@ public abstract class BaseCombo extends Canvas {
 	 * @see #setButtonVisibility(int)
 	 */
 	protected void setButtonVisible(boolean visible) {
-		if(BUTTON_ALWAYS == buttonVisibility) {
+
+		// bug 352689
+		if (!checkButton())
+			return;
+
+		if (BUTTON_ALWAYS == buttonVisibility) {
 			visible = true;
-		} else if(BUTTON_NEVER == buttonVisibility) {
+		} else if (BUTTON_NEVER == buttonVisibility) {
 			visible = false;
 		}
 
-		if(checkButton()) {
-			button.setVisible(visible);
-		}
+		button.setVisible(visible);
 
 		layout(true);
 		update();
@@ -839,9 +860,10 @@ public abstract class BaseCombo extends Canvas {
 	 */
 	protected void setContent(Control content) {
 		this.content = content;
-		if(this.content != null) {
-			if(!simple) {
-				this.content.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		if (this.content != null) {
+			if (!simple) {
+				this.content.setLayoutData(new GridData(SWT.FILL, SWT.FILL,
+						true, true));
 			}
 		}
 	}
@@ -849,6 +871,7 @@ public abstract class BaseCombo extends Canvas {
 	/**
 	 * Called when the popup shell has been open, this method provides a
 	 * location for subclasses to set the focus to the content.
+	 * 
 	 * @return true if the focus was set, false otherwise
 	 */
 	protected abstract boolean setContentFocus();
@@ -861,13 +884,13 @@ public abstract class BaseCombo extends Canvas {
 	 */
 	public void setEditable(boolean editable) {
 		panel.setStyle(SWT.READ_ONLY, !editable);
-		if(checkButton()) {
+		if (checkButton()) {
 			button.setEnabled(editable);
 		}
-		if(checkText()) {
-			if(editable != text.getControl().getEditable()) {
+		if (checkText()) {
+			if (editable != text.getControl().getEditable()) {
 				text.getControl().setEditable(editable);
-				if(editable) {
+				if (editable) {
 					addTextListener();
 				} else {
 					removeTextListener();
@@ -887,13 +910,13 @@ public abstract class BaseCombo extends Canvas {
 
 	public void setFont(Font font) {
 		super.setFont(font);
-		if(checkButton()) {
+		if (checkButton()) {
 			button.setFont(font);
 		}
-		if(checkText()) {
+		if (checkText()) {
 			text.setFont(font);
 		}
-		if(checkContent()) {
+		if (checkContent()) {
 			content.setFont(font);
 		}
 	}
@@ -921,7 +944,7 @@ public abstract class BaseCombo extends Canvas {
 	 * </p>
 	 */
 	public void setMenu(Menu menu) {
-		if(checkText()) {
+		if (checkText()) {
 			text.getControl().setMenu(menu);
 		} else {
 			super.setMenu(menu);
@@ -929,14 +952,14 @@ public abstract class BaseCombo extends Canvas {
 	}
 
 	/**
-	 * Provides a chance for subclasses to set the properties of the
-	 * modify event called when the text is modified.  Not valid if style
-	 * is SIMPLE.
+	 * Provides a chance for subclasses to set the properties of the modify
+	 * event called when the text is modified. Not valid if style is SIMPLE.
 	 * <p>
-	 * For example, CDateTime overrides this method to set the data field
-	 * to the current time:<br/>
+	 * For example, CDateTime overrides this method to set the data field to the
+	 * current time:<br/>
 	 * <code style="margin-left:25px">e.data = calendar.getTime();<code>
 	 * </p>
+	 * 
 	 * @param e
 	 */
 	protected void setModifyEventProperties(Event e) {
@@ -947,28 +970,31 @@ public abstract class BaseCombo extends Canvas {
 	 * If pop is true, then opens the popup shell (sets to visible)<br>
 	 * If pop is false, closes the popup shell (sets to not visible)<br>
 	 * If <code>content == null</code> this method simply returns.<br>
-	 * If <code>popup == null</code> then <code>popup</code> will be
-	 * created.
-	 * @param open true to open the popup shell, false to close it.
+	 * If <code>popup == null</code> then <code>popup</code> will be created.
+	 * 
+	 * @param open
+	 *            true to open the popup shell, false to close it.
 	 * @see BaseCombo#setOpen(boolean, Runnable)
 	 */
 	protected void setOpen(boolean open) {
 		setOpen(open, null);
 	}
-	
+
 	/**
 	 * If pop is true, then opens the popup shell (sets to visible)<br>
 	 * If pop is false, closes the popup shell (sets to not visible)<br>
 	 * If <code>content == null</code> this method simply returns.<br>
-	 * If <code>popup == null</code> then <code>popup</code> will be
-	 * created.
-	 * @param open true to open the popup shell, false to close it.
-	 * @param callback a runnable to be run when the operation completes.
+	 * If <code>popup == null</code> then <code>popup</code> will be created.
+	 * 
+	 * @param open
+	 *            true to open the popup shell, false to close it.
+	 * @param callback
+	 *            a runnable to be run when the operation completes.
 	 * @see BaseCombo#setOpen(boolean)
 	 */
 	protected synchronized void setOpen(boolean open, final Runnable callback) {
-		if(content == null || content.isDisposed()) {
-			if(contentShell != null) {
+		if (content == null || content.isDisposed()) {
+			if (contentShell != null) {
 				contentShell.dispose();
 				contentShell = null;
 			}
@@ -976,48 +1002,50 @@ public abstract class BaseCombo extends Canvas {
 			return;
 		}
 
-		if(contentShell == null || contentShell.isDisposed()) {
+		if (contentShell == null || contentShell.isDisposed()) {
 			createContentShell();
 		}
 
-		if(getShell() != contentShell.getParent()) {
+		if (getShell() != contentShell.getParent()) {
 			content.setParent(this);
 			contentShell.dispose();
 			contentShell = null;
 			createContentShell();
 		}
-		
-		if(content.getParent() != contentShell) {
+
+		if (content.getParent() != contentShell) {
 			content.setParent(contentShell);
 		}
 
-		if(!open) {
-			if(!holdOpen) {
+		if (!open) {
+			if (!holdOpen) {
 				this.open = false;
 
 				preClose(contentShell);
-				
-//				Point location = positionControl.getComposite().toDisplay(positionControl.getLocation());
-//				Point contentLocation = contentShell.getLocation();
-//				if(location.y > contentLocation.y) {
-//					aStyle |= Animator.UP;
-//				}
+
+				// Point location =
+				// positionControl.getComposite().toDisplay(positionControl.getLocation());
+				// Point contentLocation = contentShell.getLocation();
+				// if(location.y > contentLocation.y) {
+				// aStyle |= Animator.UP;
+				// }
 
 				Point start = contentShell.getSize();
 				Point end = new Point(start.x, 0);
 				Runnable runnable = new Runnable() {
 					public void run() {
 						postClose(contentShell);
-						if(callback != null) {
+						if (callback != null) {
 							callback.run();
 						}
 					}
 				};
 
 				AnimationRunner runner = new AnimationRunner();
-				runner.runEffect(new Resize(contentShell, start, end, 200, new LinearInOut(), runnable, runnable));
-				
-				if(checkText()) {
+				runner.runEffect(new Resize(contentShell, start, end, 200,
+						new LinearInOut(), runnable, runnable));
+
+				if (checkText()) {
 					text.setFocus();
 				}
 			}
@@ -1026,35 +1054,38 @@ public abstract class BaseCombo extends Canvas {
 
 			Point size = content.computeSize(-1, -1);
 			content.setSize(size);
-			Point location = positionControl.getComposite().toDisplay(positionControl.getLocation());
+			Point location = positionControl.getComposite().toDisplay(
+					positionControl.getLocation());
 			location.y += (positionControl.getSize().y + 2);
 			int dHeight = getDisplay().getClientArea().height;
-			if((location.y + size.y) > dHeight) {
+			if ((location.y + size.y) > dHeight) {
 				location.y -= (positionControl.getSize().y + size.y + 4);
-//				aStyle |= Animator.UP;
+				// aStyle |= Animator.UP;
 			}
-			if((stretchControl != null) && (size.x < stretchControl.getSize().x)) {
+			if ((stretchControl != null)
+					&& (size.x < stretchControl.getSize().x)) {
 				size.x = stretchControl.getSize().x;
-//				contentShell.setSize(size);
+				// contentShell.setSize(size);
 			}
 
-			if(leftAlign) {
+			if (leftAlign) {
 				location.x -= positionControl.getLocation().x;
 			} else {
 				location.x += (positionControl.getSize().x - size.x);
-				if(location.x < 0) {
+				if (location.x < 0) {
 					location.x = 0;
 				}
 			}
-			if(win32) {
+			if (win32) {
 				location.x += 2;
-			} else if(carbon) {
+			} else if (carbon) {
 				location.y += 8;
 			}
 
 			contentShell.setBounds(location.x, location.y, size.x, 0);
-			
-			// chance for subclasses to do something before the shell becomes visible
+
+			// chance for subclasses to do something before the shell becomes
+			// visible
 			preOpen(contentShell);
 
 			Point start = new Point(size.x, 0);
@@ -1063,7 +1094,7 @@ public abstract class BaseCombo extends Canvas {
 				public void run() {
 					setContentFocus();
 					postOpen(contentShell);
-					if(callback != null) {
+					if (callback != null) {
 						callback.run();
 					}
 				}
@@ -1071,10 +1102,11 @@ public abstract class BaseCombo extends Canvas {
 
 			contentShell.setVisible(true);
 			AnimationRunner runner = new AnimationRunner();
-			runner.runEffect(new Resize(contentShell, start, end, 200, new LinearInOut(), runnable, runnable));
+			runner.runEffect(new Resize(contentShell, start, end, 200,
+					new LinearInOut(), runnable, runnable));
 			contentShell.setRedraw(true);
 		}
-		if(BUTTON_AUTO == buttonVisibility) {
+		if (BUTTON_AUTO == buttonVisibility) {
 			setButtonVisible(!open);
 		}
 	}
@@ -1089,7 +1121,7 @@ public abstract class BaseCombo extends Canvas {
 	 * @param positionControl
 	 */
 	protected void setPositionControl(VControl positionControl) {
-		if(positionControl == null) {
+		if (positionControl == null) {
 			this.positionControl = panel;
 		} else {
 			this.positionControl = positionControl;
