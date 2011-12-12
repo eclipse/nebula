@@ -568,7 +568,8 @@ public abstract class BaseCombo extends Canvas {
 	private void init(int style) {
 		this.style = style;
 		simple = (style & SWT.SIMPLE) != 0;
-		dropDown = (style & (BUTTON_ONLY | SWT.DROP_DOWN)) != 0;
+		dropDown = (style & (BUTTON_ONLY | SWT.DROP_DOWN)) != 0;		
+		leftAlign = (style & SWT.LEFT) != 0;		
 
 		if (simple) {
 			panel.setLayout(new VSimpleLayout());
@@ -628,6 +629,13 @@ public abstract class BaseCombo extends Canvas {
 		return open;
 	}
 
+	/**
+	 * @return if Shell style is SWT.RIGHT_TO_LEFT
+	 */
+	protected boolean isRTL() {
+		return (getShell().getStyle() & SWT.RIGHT_TO_LEFT) == SWT.RIGHT_TO_LEFT;
+	}
+	
 	/**
 	 * @return if style is CDT.SIMPLE
 	 */
@@ -1068,8 +1076,13 @@ public abstract class BaseCombo extends Canvas {
 				// contentShell.setSize(size);
 			}
 
-			if (leftAlign) {
+			if (leftAlign || isRTL()) {
 				location.x -= positionControl.getLocation().x;
+				// bug 336853
+				if(isRTL()){
+					location.x -= getBounds().width;
+				}
+					
 			} else {
 				location.x += (positionControl.getSize().x - size.x);
 				if (location.x < 0) {
