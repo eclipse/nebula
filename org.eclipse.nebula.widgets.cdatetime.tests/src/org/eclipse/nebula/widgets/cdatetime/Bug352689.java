@@ -28,21 +28,21 @@ public class Bug352689 extends VTestCase {
 	}
 	
 	public void testDisposeException() throws Exception {
-		cdt.setFocus();
+//		cdt.setFocus();
+//		
+//		keyPress('3');
+//		keyPress('1');
+//		keyPress('1');
+//		keyPress('2');
+//		keyPress('2');
+//		keyPress('0');
+//		keyPress('1');
+//		keyPress('1');
+//		keyPress('\t');
 		
-		keyPress('3');
-		keyPress('1');
-		keyPress('1');
-		keyPress('2');
-		keyPress('2');
-		keyPress('0');
-		keyPress('1');
-		keyPress('1');
-		keyPress('\t');
+//		assertEquals("31-12-11", cdt.getText());
 		
-		assertEquals("31-12-11", cdt.getText());
-		
-		getComposite(cdt.getBodyPanel()).getShell().close();
+//		getComposite(cdt.getBodyPanel()).getShell().close();
 
 		//	assertTrue(cdt.getCDateTime().getText()Text().equals("31122011"));
 	}
