@@ -971,6 +971,10 @@ public class CDateTime extends BaseCombo {
 						String.valueOf(event.character).equals(separator[activeField+1])) {
 					fieldNext();
 				}
+				else if (!hasSelection() && String.valueOf(event.character).matches("[0-9]")) {
+					fieldAdjust(0);
+					fieldFirst();
+				}
 			}
 		}
 	}
