@@ -3,6 +3,7 @@ package org.eclipse.nebula.cwt.test;
 import java.awt.Robot;
 import java.io.File;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,6 +21,7 @@ import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -33,13 +35,13 @@ public class VTestCase extends TestCase {
 		public void run() {
 			try {
 				runTest();
-			} catch(Throwable e) {
-				if(exception == null) {
+			} catch (Throwable e) {
+				if (exception == null) {
 					exception = e;
 				}
 			} finally {
 				testing = false;
-				if(display != null && !display.isDisposed()) {
+				if (display != null && !display.isDisposed()) {
 					display.wake();
 				}
 			}
@@ -91,9 +93,11 @@ public class VTestCase extends TestCase {
 	public void capture(final Control control, final String suffix) {
 		syncExec(new Runnable() {
 			public void run() {
-				Point location = control.getParent().toDisplay(control.getLocation());
+				Point location = control.getParent().toDisplay(
+						control.getLocation());
 				Point size = control.getSize();
-				capture(new Rectangle(location.x, location.y, size.x, size.y), suffix);
+				capture(new Rectangle(location.x, location.y, size.x, size.y),
+						suffix);
 			}
 		});
 	}
@@ -119,23 +123,23 @@ public class VTestCase extends TestCase {
 		il.data = da;
 
 		StringBuilder sb = new StringBuilder();
-		if(capturePath != null && capturePath.length() > 0) {
+		if (capturePath != null && capturePath.length() > 0) {
 			sb.append(capturePath);
 		} else {
 			sb.append(System.getProperty("user.home"));
 		}
 
 		File path = new File(sb.toString());
-		if(!path.exists()) {
+		if (!path.exists()) {
 			path.mkdirs();
 		}
 
 		sb.append(File.separator);
 		sb.append(getName());
-		if(suffix != null && suffix.length() > 0) {
+		if (suffix != null && suffix.length() > 0) {
 			sb.append("-").append(suffix);
 		}
-		switch (captureFormat){
+		switch (captureFormat) {
 		case SWT.IMAGE_BMP:
 			sb.append(".bmp");
 			break;
@@ -172,7 +176,8 @@ public class VTestCase extends TestCase {
 			public void run() {
 				Point location = control.toDisplay(control.getLocation());
 				Point size = control.getSize();
-				capture(new Rectangle(location.x, location.y, size.x, size.y), suffix);
+				capture(new Rectangle(location.x, location.y, size.x, size.y),
+						suffix);
 			}
 		});
 	}
@@ -251,9 +256,9 @@ public class VTestCase extends TestCase {
 	public Display getDisplay() {
 		return display;
 	}
-	
+
 	public Control getFocusControl() {
-		synchronized(this) {
+		synchronized (this) {
 			syncExec(new Runnable() {
 				public void run() {
 					tmpObj = display.getFocusControl();
@@ -263,20 +268,40 @@ public class VTestCase extends TestCase {
 		}
 	}
 
-	public VPanel getPanel(Control control) {
-		Object o = control.getData("cwt_vcontrol");
-		if(o instanceof VPanel) {
-			return (VPanel) o;
-		}
-		return null;
+	public VPanel getPanel(final Control control) {
+		final ArrayList<VPanel> result = new ArrayList<VPanel>();
+		syncExec(new Runnable() {
+			public void run() {
+				Object o = control.getData("cwt_vcontrol");
+				if (o instanceof VPanel)
+					result.add((VPanel) o);
+				else
+					result.add(null);
+			}
+		});
+
+		return result.get(0);
+
 	}
-	
+
+	public Composite getComposite(final VPanel panel) {
+
+		final ArrayList<Composite> result = new ArrayList<Composite>();
+		syncExec(new Runnable() {
+			public void run() {
+				result.add(panel.getComposite());
+			}
+		});
+
+		return result.get(0);
+	}
+
 	protected Shell getShell() {
 		return shell;
 	}
 
 	public boolean hasFocus(Control control) {
-		synchronized(this) {
+		synchronized (this) {
 			processEvents();
 			syncExec(new Runnable() {
 				public void run() {
@@ -335,12 +360,12 @@ public class VTestCase extends TestCase {
 	}
 
 	public void keyPress(char character, int... keyCodes) {
-		for(int keyCode : keyCodes) {
+		for (int keyCode : keyCodes) {
 			keyDown(keyCode);
 		}
 		keyDown(character);
 		keyUp(character);
-		for(int keyCode : keyCodes) {
+		for (int keyCode : keyCodes) {
 			keyUp(keyCode);
 		}
 	}
@@ -366,14 +391,15 @@ public class VTestCase extends TestCase {
 	public void layoutShell() {
 		syncExec(new Runnable() {
 			public void run() {
-				if(defaultSize != null) {
+				if (defaultSize != null) {
 					shell.setSize(defaultSize);
-				} else if(shell.getChildren().length > 0) {
+				} else if (shell.getChildren().length > 0) {
 					shell.pack();
 				}
 				Point size = shell.getSize();
 				Rectangle screen = display.getMonitors()[0].getBounds();
-				shell.setBounds((screen.width - size.x) / 2, (screen.height - size.y) / 2, size.x, size.y);
+				shell.setBounds((screen.width - size.x) / 2,
+						(screen.height - size.y) / 2, size.x, size.y);
 			}
 		});
 	}
@@ -438,7 +464,7 @@ public class VTestCase extends TestCase {
 		try {
 			Robot robot = new Robot();
 			robot.mouseWheel(count);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		pause(delay);
@@ -466,7 +492,8 @@ public class VTestCase extends TestCase {
 	public void moveTo(final Control control) {
 		syncExec(new Runnable() {
 			public void run() {
-				Point location = control.getParent().toDisplay(control.getLocation());
+				Point location = control.getParent().toDisplay(
+						control.getLocation());
 				Point size = control.getSize();
 
 				Event event = new Event();
@@ -504,7 +531,7 @@ public class VTestCase extends TestCase {
 		display.syncExec(new Runnable() {
 			public void run() {
 				Point location = getDisplay().getCursorLocation();
-				
+
 				Event event = new Event();
 				event.type = SWT.MouseMove;
 				event.stateMask = stateMask;
@@ -568,16 +595,16 @@ public class VTestCase extends TestCase {
 				Event event = new Event();
 				event.type = SWT.MouseMove;
 				event.stateMask = stateMask;
-				if((edge & SWT.LEFT) != 0) {
+				if ((edge & SWT.LEFT) != 0) {
 					event.x = location.x;
-				} else if((edge & SWT.RIGHT) != 0) {
+				} else if ((edge & SWT.RIGHT) != 0) {
 					event.x = location.x + size.x - 1;
 				} else {
 					event.x = location.x + (size.x / 2) - 1;
 				}
-				if((edge & SWT.TOP) != 0) {
+				if ((edge & SWT.TOP) != 0) {
 					event.y = location.y;
-				} else if((edge & SWT.BOTTOM) != 0) {
+				} else if ((edge & SWT.BOTTOM) != 0) {
 					event.y = location.y + size.y - 1;
 				} else {
 					event.y = location.y + (size.y / 2) - 1;
@@ -601,16 +628,16 @@ public class VTestCase extends TestCase {
 				Event event = new Event();
 				event.type = SWT.MouseMove;
 				event.stateMask = stateMask;
-				if((edge & SWT.LEFT) != 0) {
+				if ((edge & SWT.LEFT) != 0) {
 					event.x = location.x;
-				} else if((edge & SWT.RIGHT) != 0) {
+				} else if ((edge & SWT.RIGHT) != 0) {
 					event.x = location.x + size.x - 1;
 				} else {
 					event.x = location.x + (size.x / 2) - 1;
 				}
-				if((edge & SWT.TOP) != 0) {
+				if ((edge & SWT.TOP) != 0) {
 					event.y = location.y;
-				} else if((edge & SWT.BOTTOM) != 0) {
+				} else if ((edge & SWT.BOTTOM) != 0) {
 					event.y = location.y + size.y - 1;
 				} else {
 					event.y = location.y + (size.y / 2) - 1;
@@ -631,15 +658,16 @@ public class VTestCase extends TestCase {
 				Point location = control.toDisplay(control.getLocation());
 				Point size = control.getSize();
 				Point start = display.getCursorLocation();
-				Point end = new Point(location.x + (size.x / 2), location.y + (size.y / 2));
+				Point end = new Point(location.x + (size.x / 2), location.y
+						+ (size.y / 2));
 				int x = start.x;
 				int y = start.y;
-				
-				while(x < end.x || y < end.y) {
-					if(x < end.x) {
+
+				while (x < end.x || y < end.y) {
+					if (x < end.x) {
 						x += step;
 					}
-					if(y < end.y) {
+					if (y < end.y) {
 						y += step;
 					}
 					Event event = new Event();
@@ -659,14 +687,14 @@ public class VTestCase extends TestCase {
 	public void pause(long millis) {
 		try {
 			Thread.sleep(millis);
-		} catch(InterruptedException e) {
+		} catch (InterruptedException e) {
 		}
 	}
 
 	public void processEvents() {
 		syncExec(new Runnable() {
 			public void run() {
-				while(display.readAndDispatch()) {
+				while (display.readAndDispatch()) {
 				}
 			}
 		});
@@ -675,7 +703,7 @@ public class VTestCase extends TestCase {
 	public void redraw() {
 		redraw(shell);
 	}
-	
+
 	public void redraw(final Control control) {
 		syncExec(new Runnable() {
 			public void run() {
@@ -687,18 +715,18 @@ public class VTestCase extends TestCase {
 	public void releaseAllEvents() {
 		processEvents();
 		delay = 0;
-		for(Integer button : mouseDowns) {
+		for (Integer button : mouseDowns) {
 			mouseUp(button);
 		}
-		for(Integer keyCode : keyDownMods) {
+		for (Integer keyCode : keyDownMods) {
 			keyUp(keyCode);
 		}
-		for(Character character : keyDownChars) {
+		for (Character character : keyDownChars) {
 			keyUp(character);
 		}
 		processEvents();
 	}
-	
+
 	public void runBare() throws Throwable {
 		String name = getName();
 
@@ -717,14 +745,14 @@ public class VTestCase extends TestCase {
 
 		testing = true;
 
-		if(name.endsWith("_Sync")) {
+		if (name.endsWith("_Sync")) {
 			t.run();
 		} else {
 			t.start();
 		}
 
-		while(testing && !shell.isDisposed()) {
-			if(!display.readAndDispatch()) {
+		while (testing && !shell.isDisposed()) {
+			if (!display.readAndDispatch()) {
 				display.sleep();
 			}
 		}
@@ -734,13 +762,13 @@ public class VTestCase extends TestCase {
 		display.dispose();
 		display = null;
 
-		if(exception != null) {
+		if (exception != null) {
 			throw exception;
 		}
 	}
-	
+
 	public void setCaptureFormat(int format) {
-		switch (captureFormat){
+		switch (captureFormat) {
 		case SWT.IMAGE_BMP:
 		case SWT.IMAGE_GIF:
 		case SWT.IMAGE_ICO:
@@ -775,32 +803,34 @@ public class VTestCase extends TestCase {
 		try {
 			String setup = "setup" + name.substring(4);
 			method = getClass().getMethod(setup, new Class[0]);
-		} catch(NoSuchMethodException e) {
+		} catch (NoSuchMethodException e) {
 			// nothing to do
 		}
 
-		if(method == null) {
+		if (method == null) {
 			try {
-				String setup = Character.toLowerCase(name.charAt(4)) + name.substring(5) + "Setup";
+				String setup = Character.toLowerCase(name.charAt(4))
+						+ name.substring(5) + "Setup";
 				method = getClass().getMethod(setup, new Class[0]);
-			} catch(NoSuchMethodException e) {
-				// nothing to do
-			}
-		}
-		
-		if(method == null) {
-			try {
-				String[] sa = name.split("_");
-				String s = sa[sa.length - 1];
-				method = getClass().getMethod("setUp" + Integer.valueOf(s), new Class[0]);
-			} catch(NoSuchMethodException e) {
-				// nothing to do
-			} catch(NumberFormatException e) {
+			} catch (NoSuchMethodException e) {
 				// nothing to do
 			}
 		}
 
-		if(method != null) {
+		if (method == null) {
+			try {
+				String[] sa = name.split("_");
+				String s = sa[sa.length - 1];
+				method = getClass().getMethod("setUp" + Integer.valueOf(s),
+						new Class[0]);
+			} catch (NoSuchMethodException e) {
+				// nothing to do
+			} catch (NumberFormatException e) {
+				// nothing to do
+			}
+		}
+
+		if (method != null) {
 			method.invoke(this, new Object[0]);
 		}
 	}
