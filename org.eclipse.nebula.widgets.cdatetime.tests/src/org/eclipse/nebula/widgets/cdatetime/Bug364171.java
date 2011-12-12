@@ -13,6 +13,12 @@ package org.eclipse.nebula.widgets.cdatetime;
 import org.eclipse.nebula.cwt.test.VTestCase;
 import org.eclipse.swt.SWT;
 
+/**
+ * Test for https://bugs.eclipse.org/bugs/show_bug.cgi?id=364171
+ * 
+ * @author Wim Jongman
+ * 
+ */
 public class Bug364171 extends VTestCase {
 
 	private CdtTester cdt;
