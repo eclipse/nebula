@@ -194,6 +194,9 @@ public class CDateTime extends BaseCombo {
 		if((style & CDT.READ_ONLY) != 0) {
 			rstyle |= SWT.READ_ONLY;
 		}
+		if((style & CDT.BUTTON_LEFT) != 0) {
+			rstyle |= SWT.LEFT;
+		}
 		if((style & CDT.TEXT_LEAD) != 0) {
 			rstyle |= SWT.LEAD;
 		}
