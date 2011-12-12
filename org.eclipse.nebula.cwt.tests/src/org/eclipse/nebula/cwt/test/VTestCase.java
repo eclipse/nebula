@@ -571,10 +571,13 @@ public class VTestCase extends TestCase {
 				Point location = control.toDisplay(control.getLocation());
 				Point size = control.getSize();
 
+				int multiplier = (control.getShell().getStyle() & SWT.LEFT_TO_RIGHT) == SWT.LEFT_TO_RIGHT ? 1
+						: -1;
+
 				Event event = new Event();
 				event.type = SWT.MouseMove;
 				event.stateMask = stateMask;
-				event.x = location.x + (size.x / 2) - 1;
+				event.x = location.x + ((size.x / 2) * multiplier) - 1;
 				event.y = location.y + (size.y / 2);
 				display.post(event);
 				processEvents();
@@ -731,7 +734,7 @@ public class VTestCase extends TestCase {
 		String name = getName();
 
 		display = new Display();
-		shell = new Shell(display);
+		shell = createShell();
 		shell.setText(name);
 		shell.setLayout(new FillLayout());
 
@@ -765,6 +768,15 @@ public class VTestCase extends TestCase {
 		if (exception != null) {
 			throw exception;
 		}
+	}
+
+	/**
+	 * Creates the {@link Shell}, override for a special shell.
+	 * 
+	 * @return
+	 */
+	public Shell createShell() {
+		return new Shell(display);
 	}
 
 	public void setCaptureFormat(int format) {
