@@ -13,7 +13,7 @@ package org.eclipse.nebula.widgets.cdatetime;
 import org.eclipse.nebula.cwt.test.VTestCase;
 import org.eclipse.swt.SWT;
 
-public class Bug364171 extends VTestCase {
+public class Bug352689 extends VTestCase {
 
 	private CdtTester cdt;
 	private boolean running;
@@ -24,10 +24,10 @@ public class Bug364171 extends VTestCase {
 	};
 	
 	public void setUp() throws Exception {
-		cdt = new CdtTester(getShell(), CDT.BORDER | CDT.DROP_DOWN);
+		cdt = new CdtTester(getShell(), CDT.BUTTON_AUTO| CDT.BORDER | CDT.DROP_DOWN);
 	}
 	
-	public void testStartTyping() throws Exception {
+	public void testDisposeException() throws Exception {
 		cdt.setFocus();
 		
 		keyPress('3');
@@ -41,6 +41,8 @@ public class Bug364171 extends VTestCase {
 		keyPress('\t');
 		
 		assertEquals("31-12-11", cdt.getText());
+		
+		getComposite(cdt.getBodyPanel()).getShell().close();
 
 		//	assertTrue(cdt.getCDateTime().getText()Text().equals("31122011"));
 	}
