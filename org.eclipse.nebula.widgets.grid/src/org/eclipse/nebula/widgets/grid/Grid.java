@@ -19,6 +19,7 @@
  *    Justin Dolezy <justin@neckdiagrams.com> - bugfix in 316598 
  *    Cosmin Ghita <cghita@ansis.eu> - bugfix in 323687
  *    Pinard-Legry Guilhaume <guilhaume_pl@yahoo.fr> - bugfix in 267057
+ *    Thorsten Schenkel <thorsten.schenkel@compeople.de> - bugfix in 356803
  *******************************************************************************/
 package org.eclipse.nebula.widgets.grid;
 
@@ -6070,13 +6071,14 @@ public class Grid extends Canvas
 	            {
 	                selectedItems.clear();
 	            }
-            	return null;
+            } 
+            else 
+            {
+            	selectedItems.clear();
+            	selectedItems.add(item);
             }
-            selectedItems.clear();
-            selectedItems.add(item);
-
-            Rectangle clientArea = getClientArea();
-            redraw(clientArea.x,clientArea.y,clientArea.width,clientArea.height,false);
+           	Rectangle clientArea = getClientArea();
+           	redraw(clientArea.x,clientArea.y,clientArea.width,clientArea.height,false);
 
             selectionEvent = new Event();
             selectionEvent.item = item;
