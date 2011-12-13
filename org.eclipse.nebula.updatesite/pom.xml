@@ -75,7 +75,6 @@
 			<pluginRepositories>
 				<pluginRepository>
 					<id>Eclipse Nexus</id>
-					<layout>p2</layout>
 					<url>http://maven.eclipse.org/nexus/content/repositories/public/</url>
 				</pluginRepository>
 			</pluginRepositories>
