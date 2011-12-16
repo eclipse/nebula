@@ -8,6 +8,6 @@ Bundle-Vendor: Eclipse.org
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.nebula.widgets.treemapper;bundle-version="0.1.0",
- org.eclipse.swt.nebula.examples;bundle-version="1.0.4"
+ org.eclipse.nebula.examples;bundle-version="1.0.4"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy

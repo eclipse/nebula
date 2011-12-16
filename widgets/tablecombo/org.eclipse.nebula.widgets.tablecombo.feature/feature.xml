@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.nebula.widgets.tablecombo_feature"
+      id="org.eclipse.nebula.widgets.tablecombo.feature"
       label="Nebula TableCombo Widget"
       version="1.0.0.qualifier">
 

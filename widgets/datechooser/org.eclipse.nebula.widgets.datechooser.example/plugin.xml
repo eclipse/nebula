@@ -2,7 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="org.eclipse.swt.nebula.examples.examples">
+         point="org.eclipse.nebula.examples.examples">
       <tab
             class="org.eclipse.nebula.widgets.datechooser.example.DateChooserExampleTab"
             name="DateChooser">

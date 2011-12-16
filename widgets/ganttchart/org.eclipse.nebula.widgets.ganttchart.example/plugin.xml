@@ -2,9 +2,9 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="org.eclipse.swt.nebula.examples.examples">
+         point="org.eclipse.nebula.examples.examples">
       <tab
-            class="org.eclipse.swt.nebula.widgets.ganttchart.example.GanttExampleTab"
+            class="org.eclipse.nebula.widgets.ganttchart.example.GanttExampleTab"
             name="Ganttchart">
       </tab>
    </extension>

@@ -6,6 +6,6 @@ Bundle-Version: 1.0.0.qualifier
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.nebula.widgets.radiogroup;bundle-version="0.1.0",
- org.eclipse.swt.nebula.examples;bundle-version="1.0.4"
+ org.eclipse.nebula.examples;bundle-version="1.0.4"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

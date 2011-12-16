@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension point="org.eclipse.swt.nebula.examples.examples">
+   <extension point="org.eclipse.nebula.examples.examples">
       <tab
             class="org.eclipse.nebula.widgets.treemapper.examples.TreeMapperExampleTab"
             name="TreeMapper">

@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.eclipse.nebula.widgets.cdatetime.example;singleton:=tru
 Bundle-Version: 0.14.0.qualifier
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.swt.nebula.examples;bundle-version="1.0.4",
+ org.eclipse.nebula.examples;bundle-version="1.0.4",
  org.eclipse.nebula.widgets.cdatetime;bundle-version="0.14.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

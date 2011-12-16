@@ -11,7 +11,7 @@
 	</parent>
 	
 	<groupId>org.eclipse.nebula</groupId>
-	<artifactId>org.eclipse.nebula.widgets.radiogroup_feature</artifactId>
+	<artifactId>org.eclipse.nebula.widgets.radiogroup.feature</artifactId>
 	<version>0.1.0-SNAPSHOT</version>
 	<packaging>eclipse-feature</packaging>
 	

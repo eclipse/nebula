@@ -39,7 +39,7 @@
 @SWT='org.eclipse.swt_3.3.2.v3347.jar'
 @SWT_NATIVE='org.eclipse.swt.gtk.linux.x86_3.3.2.v3347.jar'
 
-@CLASSPATH="#{@COMPOSITETABLE_JAR}#{@SEP}../org.eclipse.swt.nebula.snippets/bin#{@SEP}#{@ECLIPSE_HOME}/plugins/#{@SWT}#{@SEP}#{@ECLIPSE_HOME}/plugins/#{@SWT_NATIVE}"
+@CLASSPATH="#{@COMPOSITETABLE_JAR}#{@SEP}../org.eclipse.nebula.snippets/bin#{@SEP}#{@ECLIPSE_HOME}/plugins/#{@SWT}#{@SEP}#{@ECLIPSE_HOME}/plugins/#{@SWT_NATIVE}"
 @SWT_LIB_PATH="#{@ECLIPSE_HOME}/configuration/org.eclipse.osgi/bundles/57/1/.cp"
 
 @DOWNLOAD_ZIP='nebula_compositetable_beta.zip'
@@ -95,7 +95,7 @@ end
 print `#{@ZIP_EXE} -r src.zip src#{@ORIG}compositetable`
 
 # Create snippets zip
-Dir.chdir '../org.eclipse.swt.nebula.snippets/src' do
+Dir.chdir '../org.eclipse.nebula.snippets/src' do
 	print `#{@ZIP_EXE} -r snippets.zip .#{@SNIPPETS}`
 	print `#{@MV_EXE} snippets.zip ../../org.eclipse.nebula.widgets.compositetable`
 end
@@ -104,7 +104,7 @@ end
 File.open('README', 'w') {|f| f << @README }
 
 # Create JavaDoc
-command="#{@JAVADOC_EXE} -classpath '#{@CLASSPATH}#{@SEP}./bin' -d JavaDoc -sourcepath src org.eclipse.swt.nebula.widgets.compositetable"
+command="#{@JAVADOC_EXE} -classpath '#{@CLASSPATH}#{@SEP}./bin' -d JavaDoc -sourcepath src org.eclipse.nebula.widgets.compositetable"
 print command
 print `#{command}`
 
@@ -112,7 +112,7 @@ print `#{command}`
 print `#{@ZIP_EXE} -r #{@DOWNLOAD_ZIP} #{@COMPOSITETABLE_JAR} src.zip snippets.zip JavaDoc README epl-v10.html`
 
 # Make sure we can run using the JAR we just built
-command="#{@JAVA_EXE} -classpath '#{@CLASSPATH}'  -Djava.library.path='#{@SWT_LIB_PATH}' org.eclipse.swt.nebula.snippets.compositetable.CompositeTableSnippet0"
+command="#{@JAVA_EXE} -classpath '#{@CLASSPATH}'  -Djava.library.path='#{@SWT_LIB_PATH}' org.eclipse.nebula.snippets.compositetable.CompositeTableSnippet0"
 print command
 print `#{command}`
 
