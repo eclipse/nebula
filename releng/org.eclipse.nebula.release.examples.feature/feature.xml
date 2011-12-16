@@ -19,7 +19,7 @@
 
    <requires>
       <import feature="org.eclipse.nebula.feature" version="1.0.0.qualifier"/>
-      <import feature="org.eclipse.swt.nebula.examples.feature" version="1.0.4.qualifier"/>
+      <import feature="org.eclipse.nebula.examples.feature" version="1.0.4.qualifier"/>
    </requires>
 
    <plugin

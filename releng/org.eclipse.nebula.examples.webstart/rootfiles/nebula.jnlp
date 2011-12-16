@@ -19,7 +19,7 @@
 		<extension name="the feature"
 			href="features/org.eclipse.nebula.examples_webstart_1.0.0.jnlp" />
 		<property name="eclipse.product"
-			value="org.eclipse.swt.nebula.examples.nebula_examples" />
+			value="org.eclipse.nebula.examples.nebula_examples" />
 	</resources>
 
 	<resources os="Windows">

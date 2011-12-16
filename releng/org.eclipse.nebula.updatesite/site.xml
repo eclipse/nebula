@@ -3,7 +3,7 @@
    <feature url="features/org.eclipse.nebula.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.feature" version="1.0.0.qualifier">
       <category name="Nebula Release All Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.oscilloscope_feature_1.0.1.qualifier.jar" id="org.eclipse.nebula.widgets.oscilloscope_feature" version="1.0.1.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.oscilloscope.feature_1.0.1.qualifier.jar" id="org.eclipse.nebula.widgets.oscilloscope.feature" version="1.0.1.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
    <feature url="features/org.eclipse.nebula.widgets.calendarcombo.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.calendarcombo.feature" version="1.0.0.qualifier">
@@ -12,7 +12,7 @@
    <feature url="features/org.eclipse.nebula.widgets.compositetable.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.compositetable.feature" version="1.0.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.tablecombo_feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.tablecombo_feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.tablecombo.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.tablecombo.feature" version="1.0.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
    <feature url="features/org.eclipse.nebula.widgets.pgroup.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.pgroup.feature" version="1.0.0.qualifier">
@@ -30,7 +30,7 @@
    <feature url="features/org.eclipse.nebula.widgets.grid.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.grid.feature" version="1.0.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.gallery_feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.gallery_feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.gallery.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.gallery.feature" version="1.0.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
    <feature url="features/org.eclipse.nebula.examples.feature_1.0.4.qualifier.jar" id="org.eclipse.nebula.examples.feature" version="1.0.4.qualifier">
@@ -39,7 +39,7 @@
    <feature url="features/org.eclipse.nebula.widgets.ganttchart.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.ganttchart.feature" version="1.0.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.swt.nebula.examples.feature_1.0.4.qualifier.jar" id="org.eclipse.swt.nebula.examples.feature" version="1.0.4.qualifier">
+   <feature url="features/org.eclipse.nebula.examples.feature_1.0.4.qualifier.jar" id="org.eclipse.nebula.examples.feature" version="1.0.4.qualifier">
       <category name="Nebula Release Examples"/>
    </feature>
    <category-def name="Nebula Release All Widgets" label="Nebula Release All Widgets">

@@ -26,9 +26,9 @@
 	<modules>
 		<!-- Dependencies -->
 		<module>../org.eclipse.nebula.nebula-parent</module>
-		<module>../org.eclipse.swt.nebula.examples</module>
+		<module>../org.eclipse.nebula.examples</module>
 		<module>../features/org.eclipse.nebula.examples.incubation.feature</module>
-		<module>../features/org.eclipse.swt.nebula.examples.feature</module>
+		<module>../features/org.eclipse.nebula.examples.feature</module>
 		
 		<!--collapsiblebuttons -->
 		<module>../org.eclipse.nebula.widgets.collapsiblebuttons</module>
@@ -69,7 +69,7 @@
 		<module>../org.eclipse.nebula.widgets.radiogroup</module>
 		<module>../org.eclipse.nebula.widgets.radiogroup.example</module>
 		<module>../org.eclipse.nebula.widgets.radiogroup.tests</module>
-		<module>../features/org.eclipse.nebula.widgets.radiogroup_feature</module>
+		<module>../features/org.eclipse.nebula.widgets.radiogroup.feature</module>
 		
 		<!-- TreeMapper -->
 		<module>../org.eclipse.nebula.widgets.treemapper</module>

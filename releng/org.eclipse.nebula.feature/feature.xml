@@ -17,7 +17,7 @@
    </license>
 
    <includes
-         id="org.eclipse.nebula.widgets.oscilloscope_feature"
+         id="org.eclipse.nebula.widgets.oscilloscope.feature"
          version="0.0.0"/>
 
    <includes
@@ -29,7 +29,7 @@
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.nebula.widgets.gallery_feature"
+         id="org.eclipse.nebula.widgets.gallery.feature"
          version="0.0.0"/>
 
    <includes
@@ -45,7 +45,7 @@
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.nebula.widgets.tablecombo_feature"
+         id="org.eclipse.nebula.widgets.tablecombo.feature"
          version="0.0.0"/>
 
    <includes
