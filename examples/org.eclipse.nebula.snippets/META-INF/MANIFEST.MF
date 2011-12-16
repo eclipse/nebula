@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Nebula Snippets Plug-in
-Bundle-SymbolicName: org.eclipse.swt.nebula.snippets
+Bundle-SymbolicName: org.eclipse.nebula.snippets
 Bundle-Version: 1.0.0
 Require-Bundle: org.eclipse.swt,
  org.eclipse.jface,
@@ -24,6 +24,6 @@ Require-Bundle: org.eclipse.swt,
  org.eclipse.nebula.widgets.collapsiblebuttons;bundle-version="1.0.0";resolution:=optional,
  org.eclipse.nebula.widgets.radiogroup;resolution:=optional,
  org.eclipse.nebula.widgets.tablecombo;resolution:=optional
-Export-Package: org.eclipse.swt.nebula.snippets.grid
+Export-Package: org.eclipse.nebula.snippets.grid
 Bundle-ClassPath: .
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

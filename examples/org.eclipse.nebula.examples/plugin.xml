@@ -5,13 +5,13 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            category="org.eclipse.swt.nebula.examples.nebula"
-            class="org.eclipse.swt.nebula.examples.ExamplesView"
+            category="org.eclipse.nebula.examples.nebula"
+            class="org.eclipse.nebula.examples.ExamplesView"
             icon="icons/eclipse.png"
-            id="org.eclipse.swt.nebula.examples.view"
+            id="org.eclipse.nebula.examples.view"
             name="Nebula Examples"/>
       <category
-            id="org.eclipse.swt.nebula.examples.nebula"
+            id="org.eclipse.nebula.examples.nebula"
             name="Nebula" 
             >
       </category>
@@ -20,9 +20,9 @@
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            class="org.eclipse.swt.nebula.examples.internal.ExamplesPerspective"
+            class="org.eclipse.nebula.examples.internal.ExamplesPerspective"
             fixed="true"
-            id="org.eclipse.swt.nebula.examples.perspective"
+            id="org.eclipse.nebula.examples.perspective"
             name="Nebula">
       </perspective>
    </extension>
@@ -35,7 +35,7 @@
             thread="main"
             visible="true">
          <run
-               class="org.eclipse.swt.nebula.examples.internal.ExamplesApplication">
+               class="org.eclipse.nebula.examples.internal.ExamplesApplication">
          </run>
       </application>
    </extension>
@@ -43,7 +43,7 @@
          id="nebula_examples"
          point="org.eclipse.core.runtime.products">
       <product
-            application="org.eclipse.swt.nebula.examples.application"
+            application="org.eclipse.nebula.examples.application"
             name="Nebula Examples">
          <property
                name="appName"

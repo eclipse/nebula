@@ -1,13 +1,13 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Nebula Examples Plug-in
-Bundle-SymbolicName: org.eclipse.swt.nebula.examples;singleton:=true
+Bundle-SymbolicName: org.eclipse.nebula.examples;singleton:=true
 Bundle-Version: 1.0.4.qualifier
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
-Export-Package: org.eclipse.swt.nebula.examples
+Export-Package: org.eclipse.nebula.examples
 Bundle-ClassPath: ./
-Bundle-Activator: org.eclipse.swt.nebula.examples.internal.Activator
+Bundle-Activator: org.eclipse.nebula.examples.internal.Activator
 Bundle-ActivationPolicy: lazy

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Nebula Examples" id="org.eclipse.swt.nebula.examples.nebula_examples" application="org.eclipse.swt.nebula.examples.application" version="1.0.0" useFeatures="true" includeLaunchers="true">
+<product name="Nebula Examples" id="org.eclipse.nebula.examples.nebula_examples" application="org.eclipse.nebula.examples.application" version="1.0.0" useFeatures="true" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
@@ -61,7 +61,7 @@
 
    <features>
       <feature id="org.eclipse.rcp"/>
-      <feature id="org.eclipse.nebula.examples_feature"/>
+      <feature id="org.eclipse.nebula.examples.feature"/>
    </features>
 
 

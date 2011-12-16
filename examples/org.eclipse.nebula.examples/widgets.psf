@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <psf version="2.0">
 <provider id="org.eclipse.team.cvs.core.cvsnature">
-<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.swt.nebula/features/org.eclipse.nebula.examples_feature,org.eclipse.nebula.examples_feature"/>
-<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.swt.nebula/org.eclipse.swt.nebula.examples,org.eclipse.nebula.examples"/>
-<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.oscilloscope.snippets,org.eclipse.nebula.widgets.oscilloscope.snippets"/>
-<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.oscilloscope,org.eclipse.nebula.widgets.oscilloscope"/>
-<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.radiogroup,org.eclipse.nebula.widgets.radiogroup"/>
-<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.cdatetime,org.eclipse.nebula.widgets.cdatetime"/>
-<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.compositetable,org.eclipse.nebula.widgets.compositetable"/>
-<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.ctree,org.eclipse.nebula.widgets.ctree"/>
-<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.datechooser,org.eclipse.nebula.widgets.datechooser"/>
-<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.formattedtext,org.eclipse.nebula.widgets.formattedtext"/>
-<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.grid,org.eclipse.nebula.widgets.grid"/>
-<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.pgroup,org.eclipse.nebula.widgets.pgroup"/>
-<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.pshelf,org.eclipse.nebula.widgets.pshelf"/>
-<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.collapsiblebuttons,org.eclipse.nebula.widgets.collapsiblebuttons"/>
-<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.tablecombo,org.eclipse.nebula.widgets.tablecombo"/>
-<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.ganttchart,org.eclipse.nebula.widgets.ganttchart"/>
-<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.gallery,org.eclipse.nebula.widgets.gallery"/>
-<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.nebulatoolbar,org.eclipse.nebula.widgets.nebulatoolbar"/>
-<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.swt.nebula/org.eclipse.nebula.cwt,org.eclipse.nebula.cwt"/>
+<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.nebula/features/org.eclipse.nebula.examples.feature,org.eclipse.nebula.examples.feature"/>
+<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.nebula/org.eclipse.nebula.examples,org.eclipse.nebula.examples"/>
+<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.nebula/org.eclipse.nebula.widgets.oscilloscope.snippets,org.eclipse.nebula.widgets.oscilloscope.snippets"/>
+<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.nebula/org.eclipse.nebula.widgets.oscilloscope,org.eclipse.nebula.widgets.oscilloscope"/>
+<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.nebula/org.eclipse.nebula.widgets.radiogroup,org.eclipse.nebula.widgets.radiogroup"/>
+<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.nebula/org.eclipse.nebula.widgets.cdatetime,org.eclipse.nebula.widgets.cdatetime"/>
+<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.nebula/org.eclipse.nebula.widgets.compositetable,org.eclipse.nebula.widgets.compositetable"/>
+<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.nebula/org.eclipse.nebula.widgets.ctree,org.eclipse.nebula.widgets.ctree"/>
+<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.nebula/org.eclipse.nebula.widgets.datechooser,org.eclipse.nebula.widgets.datechooser"/>
+<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.nebula/org.eclipse.nebula.widgets.formattedtext,org.eclipse.nebula.widgets.formattedtext"/>
+<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.nebula/org.eclipse.nebula.widgets.grid,org.eclipse.nebula.widgets.grid"/>
+<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.nebula/org.eclipse.nebula.widgets.pgroup,org.eclipse.nebula.widgets.pgroup"/>
+<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.nebula/org.eclipse.nebula.widgets.pshelf,org.eclipse.nebula.widgets.pshelf"/>
+<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.nebula/org.eclipse.nebula.widgets.collapsiblebuttons,org.eclipse.nebula.widgets.collapsiblebuttons"/>
+<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.nebula/org.eclipse.nebula.widgets.tablecombo,org.eclipse.nebula.widgets.tablecombo"/>
+<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.nebula/org.eclipse.nebula.widgets.ganttchart,org.eclipse.nebula.widgets.ganttchart"/>
+<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.nebula/org.eclipse.nebula.widgets.gallery,org.eclipse.nebula.widgets.gallery"/>
+<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.nebula/org.eclipse.nebula.widgets.nebulatoolbar,org.eclipse.nebula.widgets.nebulatoolbar"/>
+<project reference="1.0,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,org.eclipse.nebula/org.eclipse.nebula.cwt,org.eclipse.nebula.cwt"/>
 </provider>
 </psf>
