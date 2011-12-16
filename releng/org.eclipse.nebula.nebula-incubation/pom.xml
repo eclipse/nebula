@@ -26,60 +26,60 @@
 	<modules>
 		<!-- Dependencies -->
 		<module>../org.eclipse.nebula.nebula-parent</module>
-		<module>../org.eclipse.nebula.examples</module>
-		<module>../features/org.eclipse.nebula.examples.incubation.feature</module>
-		<module>../features/org.eclipse.nebula.examples.feature</module>
+		<module>../../examples/org.eclipse.nebula.examples</module>
+		<module>../../examples/org.eclipse.nebula.examples.feature</module>
+		<module>../org.eclipse.nebula.examples.incubation.feature</module>
 		
 		<!--collapsiblebuttons -->
-		<module>../org.eclipse.nebula.widgets.collapsiblebuttons</module>
-		<module>../org.eclipse.nebula.widgets.collapsiblebuttons.example</module>
-		<module>../features/org.eclipse.nebula.widgets.collapsiblebuttons.feature</module>
+		<module>../../widgets/collapsiblebuttons/org.eclipse.nebula.widgets.collapsiblebuttons</module>
+		<module>../../widgets/collapsiblebuttons/org.eclipse.nebula.widgets.collapsiblebuttons.example</module>
+		<module>../../widgets/collapsiblebuttons/org.eclipse.nebula.widgets.collapsiblebuttons.feature</module>
 		
 		<!-- CWT -->
-		<module>../org.eclipse.nebula.cwt</module>
-		<module>../org.eclipse.nebula.cwt.snippets</module>
-		<module>../org.eclipse.nebula.cwt.tests</module>
-		<module>../features/org.eclipse.nebula.cwt.feature</module>
+		<module>../../widgets/cwt/org.eclipse.nebula.cwt</module>
+		<module>../../widgets/cwt/org.eclipse.nebula.cwt.snippets</module>
+		<module>../../widgets/cwt/org.eclipse.nebula.cwt.tests</module>
+		<module>../../widgets/cwt/org.eclipse.nebula.cwt.feature</module>
 		
 		<!-- FormattedText -->
-		<module>../org.eclipse.nebula.widgets.formattedtext</module>
-		<module>../features/org.eclipse.nebula.widgets.formattedtext.feature</module>
+		<module>../../widgets/formattedtext/org.eclipse.nebula.widgets.formattedtext</module>
+		<module>../../widgets/formattedtext/org.eclipse.nebula.widgets.formattedtext.feature</module>
 		
 		<!-- PaperClips -->
-		<module>../org.eclipse.nebula.paperclips.core</module>
-		<module>../org.eclipse.nebula.paperclips.widgets</module>
-		<module>../org.eclipse.nebula.paperclips.tests</module>
-		<module>../org.eclipse.nebula.paperclips.snippets</module>
-		<module>../features/org.eclipse.nebula.widgets.paperclips.feature</module>
+		<module>../../widgets/paperclips/org.eclipse.nebula.paperclips.core</module>
+		<module>../../widgets/paperclips/org.eclipse.nebula.paperclips.widgets</module>
+		<module>../../widgets/paperclips/org.eclipse.nebula.paperclips.tests</module>
+		<module>../../widgets/paperclips/org.eclipse.nebula.paperclips.snippets</module>
+		<module>../../widgets/paperclips/org.eclipse.nebula.widgets.paperclips.feature</module>
 		
 		<!-- CDateTime -->
-		<module>../org.eclipse.nebula.widgets.cdatetime</module>
-		<module>../org.eclipse.nebula.jface.cdatetime</module>
-		<module>../org.eclipse.nebula.widgets.cdatetime.example</module>
-		<module>../org.eclipse.nebula.widgets.cdatetime.snippets</module>
-		<module>../org.eclipse.nebula.widgets.cdatetime.tests</module>
-		<module>../features/org.eclipse.nebula.widgets.cdatetime.feature</module>
+		<module>../../widgets/cdatetime/org.eclipse.nebula.widgets.cdatetime</module>
+		<module>../../widgets/cdatetime/org.eclipse.nebula.jface.cdatetime</module>
+		<module>../../widgets/cdatetime/org.eclipse.nebula.widgets.cdatetime.example</module>
+		<module>../../widgets/cdatetime/org.eclipse.nebula.widgets.cdatetime.snippets</module>
+		<module>../../widgets/cdatetime/org.eclipse.nebula.widgets.cdatetime.tests</module>
+		<module>../../widgets/cdatetime/org.eclipse.nebula.widgets.cdatetime.feature</module>
 		
 		<!-- DateChooser -->
-		<module>../org.eclipse.nebula.widgets.datechooser</module>
-		<module>../org.eclipse.nebula.widgets.datechooser.example</module>
-		<module>../features/org.eclipse.nebula.widgets.datechooser.feature</module>
+		<module>../../widgets/datechooser/org.eclipse.nebula.widgets.datechooser</module>
+		<module>../../widgets/datechooser/org.eclipse.nebula.widgets.datechooser.example</module>
+		<module>../../widgets/datechooser/org.eclipse.nebula.widgets.datechooser.feature</module>
 		
 		<!-- RadioGroup -->
-		<module>../org.eclipse.nebula.widgets.radiogroup</module>
-		<module>../org.eclipse.nebula.widgets.radiogroup.example</module>
-		<module>../org.eclipse.nebula.widgets.radiogroup.tests</module>
-		<module>../features/org.eclipse.nebula.widgets.radiogroup.feature</module>
+		<module>../../widgets/radiogroup/org.eclipse.nebula.widgets.radiogroup</module>
+		<module>../../widgets/radiogroup/org.eclipse.nebula.widgets.radiogroup.example</module>
+		<module>../../widgets/radiogroup/org.eclipse.nebula.widgets.radiogroup.tests</module>
+		<module>../../widgets/radiogroup/org.eclipse.nebula.widgets.radiogroup.feature</module>
 		
 		<!-- TreeMapper -->
-		<module>../org.eclipse.nebula.widgets.treemapper</module>
-		<module>../org.eclipse.nebula.widgets.treemapper.examples</module>
-		<module>../org.eclipse.nebula.widgets.treemapper.tests</module>
-		<module>../features/org.eclipse.nebula.widgets.treemapper.feature</module>
+		<module>../../widgets/treemapper/org.eclipse.nebula.widgets.treemapper</module>
+		<module>../../widgets/treemapper/org.eclipse.nebula.widgets.treemapper.examples</module>
+		<module>../../widgets/treemapper/org.eclipse.nebula.widgets.treemapper.tests</module>
+		<module>../../widgets/treemapper/org.eclipse.nebula.widgets.treemapper.feature</module>
 		
 		<!-- Dist -->
 		<module>../org.eclipse.nebula.updatesite.incubation</module>
-		<module>../features/org.eclipse.nebula.incubation.feature</module>
+		<module>../org.eclipse.nebula.incubation.feature</module>
 		
 	</modules>
 
