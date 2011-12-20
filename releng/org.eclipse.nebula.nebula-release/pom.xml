@@ -49,7 +49,7 @@
 	</licenses>
 
 	<properties>
-		<tycho-version>0.14.0-SNAPSHOT</tycho-version>
+		<tycho-version>0.13.0</tycho-version>
 		<mockito-version>1.8.4</mockito-version>
 		<junit-version>4.8.1</junit-version>
 		<signer-input-directory>/home/data/httpd/download-staging.priv/technology/nebula</signer-input-directory>
