@@ -17,6 +17,10 @@
       [Enter License Description here.]
    </license>
 
+   <includes
+         id="org.eclipse.nebula.examples.feature"
+         version="0.0.0"/>
+
    <requires>
       <import feature="org.eclipse.nebula.feature" version="1.0.0.qualifier"/>
       <import feature="org.eclipse.nebula.examples.feature" version="1.0.4.qualifier"/>
@@ -44,7 +48,21 @@
          unpack="false"/>
 
    <plugin
+         id="org.eclipse.nebula.widgets.pgroup.example.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
          id="org.eclipse.nebula.widgets.pshelf.example"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.nebula.widgets.pshelf.example.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -58,7 +76,21 @@
          unpack="false"/>
 
    <plugin
+         id="org.eclipse.nebula.widgets.gallery.example.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
          id="org.eclipse.nebula.widgets.xviewer.example"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.nebula.widgets.xviewer.example.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -72,6 +104,13 @@
          unpack="false"/>
 
    <plugin
+         id="org.eclipse.nebula.widgets.tablecombo.example.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
          id="org.eclipse.nebula.effects.stw.example"
          download-size="0"
          install-size="0"
@@ -79,7 +118,14 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.nebula.widgets.ganttchart.example"
+         id="org.eclipse.nebula.effects.stw.example.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.nebula.widgets.ganttchart.example.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -87,6 +133,13 @@
 
    <plugin
          id="org.eclipse.nebula.widgets.oscilloscope.example"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.nebula.widgets.oscilloscope.example.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
