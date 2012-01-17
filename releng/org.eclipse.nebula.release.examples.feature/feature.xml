@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.nebula.examples.feature"
+      id="org.eclipse.nebula.release.examples.feature"
       label="Nebula widgets examples"
       version="1.0.4.qualifier"
       provider-name="Eclipse.org">
