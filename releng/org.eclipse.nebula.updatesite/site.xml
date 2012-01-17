@@ -42,6 +42,9 @@
    <feature url="features/org.eclipse.nebula.examples.feature_1.0.4.qualifier.jar" id="org.eclipse.nebula.examples.feature" version="1.0.4.qualifier">
       <category name="Nebula Release Examples"/>
    </feature>
+   <feature url="features/org.eclipse.nebula.release.examples.feature_1.0.4.qualifier.jar" id="org.eclipse.nebula.release.examples.feature" version="1.0.4.qualifier">
+      <category name="Nebula Release All Widgets"/>
+   </feature>
    <category-def name="Nebula Release All Widgets" label="Nebula Release All Widgets">
       <description>
          Contains all widgets that are part of the combined Nebula release. All these widgets are supported and under development.
