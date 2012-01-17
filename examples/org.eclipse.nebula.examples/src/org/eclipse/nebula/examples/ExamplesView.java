@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006 IBM Corporation, Remain Software and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    chris.gross@us.ibm.com - initial API and implementation
+ *    wim.jongman@remainsoftware.com - bug 368889
  *******************************************************************************/
 
 package org.eclipse.nebula.examples;
@@ -14,7 +15,6 @@ package org.eclipse.nebula.examples;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.eclipse.core.runtime.CoreException;
@@ -83,7 +83,9 @@ public class ExamplesView extends ViewPart {
 			}
 		}
 
-		tabFolder.setSelection(tabFolder.getItem(0));
+		// bug 368889
+		if (tabFolder.getItems().length > 0)
+			tabFolder.setSelection(tabFolder.getItem(0));
 
 	}
 
