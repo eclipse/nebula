@@ -20,7 +20,7 @@
 		<relativePath>../../org.eclipse.nebula.nebula-parent</relativePath>
   </parent>
 
-  <artifactId>org.eclipse.nebula.release.examples.feature</artifactId>
+  <artifactId>org.eclipse.nebula.examples.release.feature</artifactId>
   <packaging>eclipse-feature</packaging>
 
   <name>Nebula Examples Feature</name>
