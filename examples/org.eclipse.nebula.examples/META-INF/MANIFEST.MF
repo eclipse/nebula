@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Nebula Examples Plug-in
+Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.nebula.examples;singleton:=true
 Bundle-Version: 1.0.4.qualifier
 Bundle-Localization: plugin
@@ -8,6 +8,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
 Export-Package: org.eclipse.nebula.examples
-Bundle-ClassPath: ./
 Bundle-Activator: org.eclipse.nebula.examples.internal.Activator
 Bundle-ActivationPolicy: lazy
+Bundle-Vendor: %providerName

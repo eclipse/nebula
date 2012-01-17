@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin>
-   <extension-point id="examples" name="Nebula Example Part" schema="schema/examples.exsd"/>
+   <extension-point id="examples" name="%extension-point.name" schema="schema/examples.exsd"/>
    <extension
          point="org.eclipse.ui.views">
       <view
@@ -9,10 +9,10 @@
             class="org.eclipse.nebula.examples.ExamplesView"
             icon="icons/eclipse.png"
             id="org.eclipse.nebula.examples.view"
-            name="Nebula Examples"/>
+            name="%view.name"/>
       <category
             id="org.eclipse.nebula.examples.nebula"
-            name="Nebula" 
+            name="%category.name" 
             >
       </category>
    </extension>
@@ -23,7 +23,7 @@
             class="org.eclipse.nebula.examples.internal.ExamplesPerspective"
             fixed="true"
             id="org.eclipse.nebula.examples.perspective"
-            name="Nebula">
+            name="%perspective.name">
       </perspective>
    </extension>
    <extension
@@ -44,7 +44,7 @@
          point="org.eclipse.core.runtime.products">
       <product
             application="org.eclipse.nebula.examples.application"
-            name="Nebula Examples">
+            name="%product.name">
          <property
                name="appName"
                value="Nebula Examples">
