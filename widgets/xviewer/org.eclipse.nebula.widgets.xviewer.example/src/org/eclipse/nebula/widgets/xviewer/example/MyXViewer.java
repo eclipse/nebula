@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Boeing - initial API and implementation
+ *     Wim jongman <wim.jongman@remainsoftwarte.com> - bug 368889
  *******************************************************************************/
 package org.eclipse.nebula.widgets.xviewer.example;
 
@@ -26,41 +27,47 @@ import org.eclipse.swt.widgets.TreeItem;
  * @author Donald G. Dunne
  */
 public class MyXViewer extends XViewer {
-   private final Set<ISomeTask> runList = new HashSet<ISomeTask>();
+	private final Set<ISomeTask> runList = new HashSet<ISomeTask>();
 
-   public MyXViewer(Tree tree) {
-      super(tree,  new MyXViewerFactory());
-   }
+	public MyXViewer(Tree tree) {
+		super(tree, new MyXViewerFactory());
+	}
 
-   public MyXViewer(Shell shell_1, int i) {
-	super(shell_1, i, new MyXViewerFactory());
-}
+	public MyXViewer(Shell shell_1, int i) {
+		super(shell_1, i, new MyXViewerFactory());
+	}
 
-public boolean isScheduled(ISomeTask autoRunTask) {
-      return true;
-   }
+	public MyXViewer(Composite parent, int i) {
+		super(parent, i, new MyXViewerFactory());
+	}
 
-   public boolean isRun(ISomeTask autoRunTask) {
-      return runList.contains(autoRunTask);
-   }
+	public boolean isScheduled(ISomeTask autoRunTask) {
+		return true;
+	}
 
-   public void setRun(ISomeTask autoRunTask, boolean run) {
-      if (run) {
-         runList.add(autoRunTask);
-      } else {
-         runList.remove(autoRunTask);
-      }
-   }
+	public boolean isRun(ISomeTask autoRunTask) {
+		return runList.contains(autoRunTask);
+	}
 
-   @Override
-   public boolean handleLeftClickInIconArea(TreeColumn treeColumn, TreeItem treeItem) {
-      if (treeColumn.getData().equals(MyXViewerFactory.Run_Col)) {
-         setRun((ISomeTask) treeItem.getData(), !isRun((ISomeTask) treeItem.getData()));
-         update(treeItem.getData(), null);
-         return true;
-      } else {
-         return super.handleLeftClickInIconArea(treeColumn, treeItem);
-      }
-   }
+	public void setRun(ISomeTask autoRunTask, boolean run) {
+		if (run) {
+			runList.add(autoRunTask);
+		} else {
+			runList.remove(autoRunTask);
+		}
+	}
+
+	@Override
+	public boolean handleLeftClickInIconArea(TreeColumn treeColumn,
+			TreeItem treeItem) {
+		if (treeColumn.getData().equals(MyXViewerFactory.Run_Col)) {
+			setRun((ISomeTask) treeItem.getData(),
+					!isRun((ISomeTask) treeItem.getData()));
+			update(treeItem.getData(), null);
+			return true;
+		} else {
+			return super.handleLeftClickInIconArea(treeColumn, treeItem);
+		}
+	}
 
 }
