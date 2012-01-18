@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.nebula.examples" id="examples" name="Nebula Example Part"/>
       </appInfo>
       <documentation>
-         Provides an extension point to hook in the Nebula examples.
+         Provides an extension point to hook in the Nebula Examples View.
       </documentation>
    </annotation>
 
@@ -15,6 +15,9 @@
          <appInfo>
             <meta.element />
          </appInfo>
+         <documentation>
+            This extension point enables extenders to hook into the Nebula Examples view. Each contribution will be displayed in a separate tab in the view.
+         </documentation>
       </annotation>
       <complexType>
          <sequence minOccurs="1" maxOccurs="unbounded">
@@ -48,11 +51,16 @@
    </element>
 
    <element name="tab">
+      <annotation>
+         <documentation>
+            The tab element is used to point to an implementation of AbstractExampleTab
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The name attribute will be used as the title of the tab. Provide a short  name like &quot;ChartTable&quot; which describes the widget that is exposed on the tab.
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -62,7 +70,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  Provide a class that extends org.eclipse.nebula.examples.AbstractExampleTab.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.nebula.examples.AbstractExampleTab"/>
@@ -74,10 +82,19 @@
 
    <annotation>
       <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The value of the class attribute in the describer element must represent an implementor of org.eclipse.nebula.examples.AbstractExampleTab
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         [Enter the first release in which this extension point appears.]
+         1.0
       </documentation>
    </annotation>
 
@@ -86,22 +103,24 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-            &lt;extension
+         &lt;pre&gt;
+&lt;extension 
+  point=&quot;org.eclipse.nebula.examples.examples&quot;&gt;
+  &lt;tab
+  class=&quot;org.eclipse.nebula.widgets.oscilloscope.example.OscilloscopeExampleTab&quot;
+  name=&quot;Oscilloscope&quot;&gt;
+  &lt;/tab&gt;
+&lt;/extension&gt;
+   
+   
+&lt;extension
          point=&quot;org.eclipse.nebula.examples.examples&quot;&gt;
-      &lt;tab
-            class=&quot;org.eclipse.nebula.widgets.ganttchart.example.GanttExampleTab&quot;
-            name=&quot;Ganttchart&quot;&gt;
-      &lt;/tab&gt;
-   &lt;/extension&gt;
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         [Enter API information here.]
+	      &lt;tab
+           class=&quot;org.eclipse.nebula.widgets.ganttchart.example.GanttExampleTab&quot;
+           name=&quot;Ganttchart&quot;&gt;
+	      &lt;/tab&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
       </documentation>
    </annotation>
 
@@ -110,9 +129,26 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         No information is supplied by the provider of this extension point but all Nebula widgets must use this extension point. Please look at any of the Nebula widgets for a variety of implementation examples.
       </documentation>
    </annotation>
 
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2007,2012 IBM, Remain Software and Others
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/epl-v10.html
+
+Contributors:
+    Chris Gross - IBM - Creation
+    Wim jongman &lt;wim.jongman@remainsoftware.com&gt; Documentation
+
+      </documentation>
+   </annotation>
 
 </schema>
