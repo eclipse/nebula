@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.nebula.examples.release.feature"
-      label="Nebula widgets examples"
+      label="Nebula Widgets Examples"
       version="1.0.4.qualifier"
       provider-name="Eclipse.org">
 
@@ -125,6 +125,13 @@
          unpack="false"/>
 
    <plugin
+         id="org.eclipse.nebula.widgets.ganttchart.example"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
          id="org.eclipse.nebula.widgets.ganttchart.example.source"
          download-size="0"
          install-size="0"
@@ -140,13 +147,6 @@
 
    <plugin
          id="org.eclipse.nebula.widgets.oscilloscope.example.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.nebula.widgets.ganttchart"
          download-size="0"
          install-size="0"
          version="0.0.0"
