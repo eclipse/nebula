@@ -1,0 +1,8 @@
+#Ignore all bin folders
+bin/
+target/
+#Ignore all .settings folders
+*/*/.settings/
+#Ignore vi temporary files
+*~
+*.orig
