@@ -47,8 +47,10 @@ public class MyXViewerCustomizations extends XViewerCustomizations {
       List<CustomizeData> custDatas = new ArrayList<CustomizeData>();
       custDatas.add(MyDefaultCustomizations.getCompletionCustomization());
       custDatas.add(MyDefaultCustomizations.getDescriptionCustomization());
-      for (String filename : MyLib.readListFromDir(new File("C:/UserData/"), new MatchFilter("CustData_.*\\.xml"), true)) {
-         custDatas.add(new CustomizeData(FileUtil.readFile("C:/UserData/" + filename)));
+      String userHome = System.getProperty("user.home");
+      for (String filename : MyLib.readListFromDir(new File(userHome), new MatchFilter("XViewer_CustData_.*\\.xml"),
+         true)) {
+         custDatas.add(new CustomizeData(FileUtil.readFile(userHome + "/" + filename)));
       }
       return custDatas;
    }
@@ -92,11 +94,13 @@ public class MyXViewerCustomizations extends XViewerCustomizations {
    }
 
    private String getFilename(CustomizeData custData) {
-      return "C:/UserData/CustData_" + custData.getGuid() + ".xml";
+      String userHome = System.getProperty("user.home");
+      return userHome + "/" + "XViewer_CustData_" + custData.getGuid() + ".xml";
    }
 
    private String getDefaultFilename() {
-      return "C:/UserData/CustDataUserDefault.txt";
+      String userHome = System.getProperty("user.home");
+      return userHome + "/" + "XViewer_CustDataUserDefault.txt";
    }
 
    @Override
