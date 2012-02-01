@@ -85,7 +85,7 @@ public class XViewerCustomMenu {
    protected XViewer xViewer;
    private final Clipboard clipboard = new Clipboard(null);
 
-   protected Action filterByColumn, clearAllSorting, clearAllFilters, tableProperties, viewTableReport,
+   protected Action filterByValue, filterByColumn, clearAllSorting, clearAllFilters, tableProperties, viewTableReport,
       columnMultiEdit, removeSelected, removeNonSelected, copySelected, showColumn, addComputedColumn, sumColumn,
       hideColumn, copySelectedColumnCells, viewSelectedCell, copySelectedCell, uniqueValues;
    private boolean headerMouseClick = false;
@@ -162,6 +162,7 @@ public class XViewerCustomMenu {
       mm.add(copySelected);
       mm.add(copySelectedColumnCells);
       mm.add(new Separator());
+      mm.add(filterByValue);
       mm.add(filterByColumn);
       mm.add(clearAllFilters);
       mm.add(clearAllSorting);
@@ -547,6 +548,12 @@ public class XViewerCustomMenu {
             performFilterByColumn();
          }
       };
+      filterByValue = new Action(XViewerText.get("menu.value_filter")) {
+         @Override
+         public void run() {
+            performFilterByValue();
+         }
+      };
       tableProperties = new TableCustomizationAction(xViewer);
       viewTableReport = new ViewTableReportAction(xViewer);
       columnMultiEdit = new ColumnMultiEditAction(xViewer);
@@ -600,6 +607,15 @@ public class XViewerCustomMenu {
       } catch (Exception ex) {
          XViewerLog.logAndPopup(Activator.class, Level.SEVERE, ex);
       }
+   }
+
+   private void performFilterByValue() {
+      TreeColumn treeCol = xViewer.getRightClickSelectedColumn();
+      String colId = ((XViewerColumn) treeCol.getData()).getId();
+      int colIndex = xViewer.getRightClickSelectedColumnNum();
+      TreeItem treeItem = xViewer.getRightClickSelectedItem();
+      String cellVal = treeItem.getText(colIndex);
+      xViewer.getCustomizeMgr().setColumnFilterText(colId, cellVal);
    }
 
    private void performFilterByColumn() {
