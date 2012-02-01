@@ -21,28 +21,33 @@ import org.eclipse.swt.widgets.Control;
 
 public class ExampleTab extends AbstractExampleTab {
 
-	/**
-	 * @wbp.parser.entryPoint
-	 */
-	public Control createControl(Composite parent) {
-		int style = SWT.None;
-		Button button = new Button(parent, style);
-		button.setText("Run XViewer Example");
-		button.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				new MyXViewerTest().main(new String[0]);
-			}
-		});
+   /**
+    * @wbp.parser.entryPoint
+    */
+   @Override
+   public Control createControl(Composite parent) {
+      int style = SWT.None;
+      Button button = new Button(parent, style);
+      button.setText("Run XViewer Example");
+      button.addSelectionListener(new SelectionAdapter() {
+         @Override
+         public void widgetSelected(SelectionEvent e) {
+            new MyXViewerTest();
+            MyXViewerTest.main(new String[0]);
+         }
+      });
 
-		return button;
-	}
+      return button;
+   }
 
-	public String[] createLinks() {
-		return null;
-	}
+   @Override
+   public String[] createLinks() {
+      return null;
+   }
 
-	public void createParameters(Composite parent) {
-
-	}
+   @Override
+   public void createParameters(Composite parent) {
+      // do nothing
+   }
 
 }
