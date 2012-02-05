@@ -8,7 +8,9 @@
  *    jdowdall - initial API and implementation
  *******************************************************************************/ package org.eclipse.nebula.widgets.cdatetime.example;
 
+import java.util.Arrays;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import org.eclipse.nebula.widgets.cdatetime.CDT;
 import org.eclipse.nebula.widgets.cdatetime.CDateTime;
@@ -287,6 +289,25 @@ public class CDateTimeExampleTab extends AbstractExampleTab {
 			public void widgetSelected(SelectionEvent e) {
 				locale = Locale.getAvailableLocales()[localeCombo.getSelectionIndex()];
 				cdc.setLocale(locale);
+				relayoutExample();
+			}
+		});
+		
+		final Combo tzCombo = new Combo(g, SWT.DROP_DOWN | SWT.READ_ONLY);
+		data = new GridData(SWT.FILL, SWT.FILL, false, false);
+		data.horizontalSpan = 2;
+		tzCombo.setLayoutData(data);
+		String[] tz = TimeZone.getAvailableIDs();
+		Arrays.sort(tz);
+		TimeZone localTz = TimeZone.getDefault();
+		for(int i = 0; i < tz.length; i++) {
+			tzCombo.add(tz[i]);
+			if(tz[i].equals(localTz.getID())) tzCombo.select(i);
+		}
+		tzCombo.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				TimeZone zone = TimeZone.getTimeZone(tzCombo.getText());
+				cdc.setTimeZone(zone);
 				relayoutExample();
 			}
 		});
