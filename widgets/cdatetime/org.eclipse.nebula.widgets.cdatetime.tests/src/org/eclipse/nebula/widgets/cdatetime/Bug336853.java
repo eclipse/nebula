@@ -10,6 +10,8 @@
  *****************************************************************************/
 package org.eclipse.nebula.widgets.cdatetime;
 
+import java.util.Locale;
+
 import org.eclipse.nebula.cwt.test.VTestCase;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
@@ -32,6 +34,8 @@ public class Bug336853 extends VTestCase {
 
 	public void setUp() throws Exception {
 		cdt = new CdtTester(getShell(), CDT.BORDER | CDT.DROP_DOWN);
+		cdt.setLocale(Locale.US);
+		cdt.setFormat(CDT.DATE_SHORT);
 	}
 
 	public void testOpenAndCloseByMouse() throws Exception {
@@ -52,16 +56,16 @@ public class Bug336853 extends VTestCase {
 	public void testStartTyping() throws Exception {
 		cdt.setFocus();
 		
-		keyPress('3');
-		keyPress('1');
 		keyPress('1');
 		keyPress('2');
+		keyPress('3');
+		keyPress('1');
 		keyPress('2');
 		keyPress('0');
 		keyPress('1');
-		keyPress('1');
+		keyPress('2');
 		keyPress('\t');
 		
-		assertEquals("31-12-11", cdt.getText());
+		assertEquals("12/31/12", cdt.getText());
 	}
 }

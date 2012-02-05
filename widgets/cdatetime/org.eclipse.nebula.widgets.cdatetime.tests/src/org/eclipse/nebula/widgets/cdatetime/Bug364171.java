@@ -10,6 +10,8 @@
  *****************************************************************************/
 package org.eclipse.nebula.widgets.cdatetime;
 
+import java.util.Locale;
+
 import org.eclipse.nebula.cwt.test.VTestCase;
 import org.eclipse.swt.SWT;
 
@@ -28,26 +30,37 @@ public class Bug364171 extends VTestCase {
 			running = false;
 		}
 	};
-	
+
 	public void setUp() throws Exception {
-		cdt = new CdtTester(getShell(), CDT.BORDER | CDT.DROP_DOWN);
+		cdt = new CdtTester(getShell(), CDT.BORDER | CDT.DATE_SHORT);
+		cdt.setLocale(Locale.US);
+		cdt.setFormat(CDT.DATE_SHORT);
 	}
-	
+
 	public void testStartTyping() throws Exception {
 		cdt.setFocus();
-		
-		keyPress('3');
-		keyPress('1');
-		keyPress('1');
-		keyPress('2');
-		keyPress('2');
-		keyPress('0');
-		keyPress('1');
-		keyPress('1');
-		keyPress('\t');
-		
-		assertEquals("31-12-11", cdt.getText());
 
-		//	assertTrue(cdt.getCDateTime().getText()Text().equals("31122011"));
+		keyPress('1');
+		// Thread.sleep(500);
+		keyPress('2');
+		// Thread.sleep(1500);
+		keyPress('3');
+		// Thread.sleep(500);
+		keyPress('1');
+		// Thread.sleep(500);
+		keyPress('2');
+		// Thread.sleep(500);
+		keyPress('0');
+		// Thread.sleep(500);
+		keyPress('1');
+		// Thread.sleep(500);
+		keyPress('2');
+		// Thread.sleep(500);
+		keyPress('\t');
+		// Thread.sleep(500);
+
+		assertEquals("12/31/12", cdt.getText());
+
+		// assertTrue(cdt.getCDateTime().getText()Text().equals("31122011"));
 	}
 }
