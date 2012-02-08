@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Jeremy Dowdall <jeremyd@aspencloud.com> - initial API and implementation
+ *    Scott Klein <scott.klein@goldenhour.com> - Bug 370605
  *****************************************************************************/
 
 package org.eclipse.nebula.widgets.cdatetime;
@@ -14,6 +15,7 @@ package org.eclipse.nebula.widgets.cdatetime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import org.eclipse.nebula.cwt.v.VButton;
 import org.eclipse.nebula.cwt.v.VControl;
@@ -108,10 +110,26 @@ public class CdtTester {
 		});
 	}
 
+	public void setPattern(final String pattern, final TimeZone[] allowedTimeZones) {
+		display.syncExec(new Runnable() {
+			public void run() {
+				cdt.setPattern(pattern, allowedTimeZones);
+			}
+		});
+	}
+
 	public void setSelection(final Date date) {
 		display.syncExec(new Runnable() {
 			public void run() {
 				cdt.setSelection(date);
+			}
+		});
+	}
+
+	public void setTimeZone(final TimeZone timezone) {
+		display.syncExec(new Runnable() {
+			public void run() {
+				cdt.setTimeZone(timezone);
 			}
 		});
 	}

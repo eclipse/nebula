@@ -8,6 +8,7 @@
  * Contributors:
  *    Jeremy Dowdall <jeremyd@aspencloud.com> - initial API and implementation
  *    Wim Jongman - https://bugs.eclipse.org/bugs/show_bug.cgi?id=362181
+ *    Scott Klein - https://bugs.eclipse.org/bugs/show_bug.cgi?id=370605
  *****************************************************************************/
 
 package org.eclipse.nebula.widgets.cdatetime;
@@ -318,6 +319,8 @@ public class CDateTime extends BaseCombo {
 
 	VPanel pickerPanel;
 
+	private TimeZone[] allowedTimezones;
+
 	/**
 	 * Constructs a new instance of this class given its parent and a style value 
 	 * describing its behavior and appearance.  The current date and the system's
@@ -563,15 +566,23 @@ public class CDateTime extends BaseCombo {
 		} else {
 			int cf = getCalendarField();
 			if(cf >= 0) {
-				fieldSet(cf, calendar.get(cf) + amount, WRAP);
+				fieldRoll(cf, amount, WRAP);
 			}
 		}
 	}
 
 	void fieldFirst() {
-		if(Calendar.ZONE_OFFSET == getCalendarField(field[0])) {
-			setActiveField(1);
+		// If the user has opted to have the user be able to
+		// change time zones then allow the next field to be the
+		// time zone field
+		if (this.allowedTimezones == null) {
+			if (Calendar.ZONE_OFFSET == getCalendarField(field[0])) {
+				setActiveField(1);
+			} else {
+				setActiveField(0);
+			}
 		} else {
+			// allowed time zones have been set, so let the user edit it
 			setActiveField(0);
 		}
 	}
@@ -594,10 +605,19 @@ public class CDateTime extends BaseCombo {
 				aci.setIndex(sel.x);
 				oa = aci.getAttributes().keySet().toArray();
 			}
-			if(oa.length > 0) {
-				for(int i = 0; i < field.length; i++) {
-					if(oa[0].equals(field[i])) {
-						if(Calendar.ZONE_OFFSET != getCalendarField(field[i])) {
+			if (oa.length > 0) {
+				for (int i = 0; i < field.length; i++) {
+					if (oa[0].equals(field[i])) {
+						// If the user has opted to have the user be able to
+						// change time zones then allow the next field to be the
+						// time zone field
+						if (this.allowedTimezones == null) {
+							if (Calendar.ZONE_OFFSET != getCalendarField(field[i])) {
+								setActiveField(i);
+							}
+						} else {
+							// allowed time zones have been set, so let the user
+							// edit it
 							setActiveField(i);
 						}
 						break;
@@ -609,10 +629,17 @@ public class CDateTime extends BaseCombo {
 	}
 	
 	void fieldLast() {
-		if(Calendar.ZONE_OFFSET == getCalendarField(field[field.length-1])) {
-			setActiveField(field.length-2);
+		// If the user has opted to have the user be able to change
+		// time zones then allow the next field to be the time zone field
+		if (this.allowedTimezones == null) {
+			if (Calendar.ZONE_OFFSET == getCalendarField(field[field.length - 1])) {
+				setActiveField(field.length - 2);
+			} else {
+				setActiveField(field.length - 1);
+			}
 		} else {
-			setActiveField(field.length-1);
+			// allowed time zones have been set, so let the user edit it
+			setActiveField(field.length - 1);
 		}
 	}
 	
@@ -630,20 +657,34 @@ public class CDateTime extends BaseCombo {
 	 * @param If true, the text update will be asynchronous (for changes to text selection)
 	 */
 	void fieldNext(boolean async) {
-		if(activeField >= 0 && activeField < field.length - 1) {
-			if(Calendar.ZONE_OFFSET == getCalendarField(field[activeField + 1])) {
-				if(activeField < field.length - 2) {
-					setActiveField(activeField + 2);
+		if (activeField >= 0 && activeField < field.length - 1) {
+			// If the user has opted to have the user be able to change
+			// time zones then allow the next field to be the time zone field
+			if (this.allowedTimezones == null) {
+				if (Calendar.ZONE_OFFSET == getCalendarField(field[activeField + 1])) {
+					if (activeField < field.length - 2) {
+						setActiveField(activeField + 2);
+					} else {
+						setActiveField(0);
+					}
+				} else {
+					setActiveField(activeField + 1);
+				}
+			} else {
+				// allowed time zones have been set, so let the user edit it
+				setActiveField(activeField + 1);
+			}
+		} else {
+			// If the user has opted to have the user be able to change
+			// time zones then allow the next field to be the time zone field
+			if (this.allowedTimezones == null) {
+				if (Calendar.ZONE_OFFSET == getCalendarField(field[0])) {
+					setActiveField(1);
 				} else {
 					setActiveField(0);
 				}
 			} else {
-				setActiveField(activeField + 1);
-			}
-		} else {
-			if(Calendar.ZONE_OFFSET == getCalendarField(field[0])) {
-				setActiveField(1);
-			} else {
+				// allowed time zones have been set, so let the user edit it
 				setActiveField(0);
 			}
 		}
@@ -664,26 +705,86 @@ public class CDateTime extends BaseCombo {
 	 * @param If true, the text update will be asynchronous (for changes to text selection)
 	 */
 	void fieldPrev(boolean async) {
-		if(activeField > 0 && activeField < field.length) {
-			if(Calendar.ZONE_OFFSET == getCalendarField(field[activeField - 1])) {
-				if(activeField > 1) {
-					setActiveField(activeField - 2);
+		if (activeField > 0 && activeField < field.length) {
+			// If the user has opted to have the user be able to change
+			// time zones then allow the next field to be the time zone field
+			if (this.allowedTimezones == null) {
+				if (Calendar.ZONE_OFFSET == getCalendarField(field[activeField - 1])) {
+					if (activeField > 1) {
+						setActiveField(activeField - 2);
+					} else {
+						setActiveField(field.length - 1);
+					}
+				} else {
+					setActiveField(activeField - 1);
+				}
+			} else {
+				// allowed time zones have been set, so let the user edit it
+				setActiveField(activeField - 1);
+			}
+		} else {
+			// If the user has opted to have the user be able to change
+			// time zones then allow the next field to be the time zone field
+			if (this.allowedTimezones == null) {
+
+				if (Calendar.ZONE_OFFSET == getCalendarField(field[field.length - 1])) {
+					setActiveField(field.length - 2);
 				} else {
 					setActiveField(field.length - 1);
 				}
 			} else {
-				setActiveField(activeField - 1);
-			}
-		} else {
-			if(Calendar.ZONE_OFFSET == getCalendarField(field[field.length - 1])) {
-				setActiveField(field.length - 2);
-			} else {
+				// allowed time zones have been set, so let the user edit it
 				setActiveField(field.length - 1);
 			}
 		}
 		updateText(async);
 	}
-	
+
+	private boolean fieldRoll(final int calendarField, final int rollAmount,
+			final int style) {
+		if (!getEditable()) {
+			return false;
+		}
+
+		if (calendarField == Calendar.ZONE_OFFSET && this.allowedTimezones != null ) {
+			boolean timeZoneSet = false;
+			for( int idx=0; idx<this.allowedTimezones.length; idx++ ) {
+				TimeZone activeTimeZone = this.getTimeZone();
+				if( activeTimeZone.getID() == this.allowedTimezones[idx].getID() ) {
+					if( rollAmount < 0 ) {
+						if( idx == 0 ) {
+							this.setTimeZone( this.allowedTimezones[this.allowedTimezones.length - 1] );
+						} else {
+							this.setTimeZone( this.allowedTimezones[idx-1] );
+						}
+					} else if( rollAmount > 0 ) {
+						if( idx == this.allowedTimezones.length - 1 ) {
+							this.setTimeZone( this.allowedTimezones[0] );
+						} else {
+							this.setTimeZone( this.allowedTimezones[idx+1] );
+						}
+					}
+					timeZoneSet = true;
+					break;
+				}
+			}
+			if( !timeZoneSet ) {
+				this.setTimeZone( this.allowedTimezones[0] );
+			}
+		} else {
+			calendar.roll(calendarField, rollAmount);
+		}
+
+		if (selection.length > 0) {
+			selection[0] = calendar.getTime();
+		}
+		updateText();
+		updatePicker();
+		fireSelectionChanged(calendarField);
+
+		return true;
+	}
+
 	/**
 	 * Sets the given calendar field to the given value.<br>
 	 * <b>NOTE:</b> This is NOT the active field but a field in the
@@ -988,6 +1089,8 @@ public class CDateTime extends BaseCombo {
 	 * @param event the event
 	 */
 	void handleTraverse(Event event) {
+		boolean allowTimeZoneEdit = this.allowedTimezones != null;
+
 		switch (event.detail) {
 		case SWT.TRAVERSE_ARROW_NEXT:
 			if(event.keyCode == SWT.ARROW_RIGHT) {
@@ -1009,8 +1112,13 @@ public class CDateTime extends BaseCombo {
 			break;
 		case SWT.TRAVERSE_TAB_NEXT:
 			if(tabStops && hasSelection()) {
-				if(activeField == field.length - 1
-						|| (activeField == field.length - 2 && Calendar.ZONE_OFFSET == getCalendarField(field[field.length - 1]))) {
+				// if we are at the last field, allow the tab out of the control
+				// the last field is also considered to be the 2nd to last if
+				// the last is a time zone
+				// we now check if the control allows time zone editing
+				if (activeField == field.length - 1
+						|| ((activeField == field.length - 2)
+								&& (Calendar.ZONE_OFFSET == getCalendarField(field[field.length - 1])) && (!allowTimeZoneEdit))) {
 					event.doit = true;
 				} else {
 					event.doit = false;
@@ -1024,7 +1132,12 @@ public class CDateTime extends BaseCombo {
 			break;
 		case SWT.TRAVERSE_TAB_PREVIOUS:
 			if(tabStops && hasSelection()) {
-				if(activeField == 0 || (activeField == 1 && Calendar.ZONE_OFFSET == getCalendarField(field[0]))) {
+				// if we are at the 1st field, allow the tab out of the control
+				// the 1st field is also considered to the the 2nd if the 1st
+				// is a time zone
+				if (activeField == 0
+						|| ((activeField == 1)
+								&& (Calendar.ZONE_OFFSET == getCalendarField(field[0])) && (!allowTimeZoneEdit))) {
 					event.doit = true;
 				} else {
 					event.doit = false;
@@ -1407,6 +1520,7 @@ public class CDateTime extends BaseCombo {
 	 * @see #setFormat(int)
 	 */
 	public void setPattern(String pattern) throws IllegalArgumentException {
+		this.allowedTimezones = null;
 		if(isOpen()) {
 			setOpen(false);
 		}
@@ -1428,6 +1542,7 @@ public class CDateTime extends BaseCombo {
 				case Calendar.MILLISECOND:
 				case Calendar.MINUTE:
 				case Calendar.SECOND:
+				case Calendar.ZONE_OFFSET:
 					isTime = true;
 					break;
 				case Calendar.DAY_OF_MONTH:
@@ -1771,6 +1886,18 @@ public class CDateTime extends BaseCombo {
 			}
 		}
 		updateText();
-	}
+	} 
 	
+	/**
+	 * @param pattern
+	 * @param allowedTimeZones
+	 * @throws IllegalArgumentException
+	 */
+	public void setPattern(final String pattern,
+			final TimeZone[] allowedTimeZones) throws IllegalArgumentException {
+		this.setPattern(pattern);
+		if (pattern.indexOf('z') != -1) {
+			this.allowedTimezones = allowedTimeZones;
+		}
+	}
 }

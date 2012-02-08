@@ -6,7 +6,8 @@
  *
  * Contributors:
  *    jdowdall - initial API and implementation
- *******************************************************************************/ package org.eclipse.nebula.widgets.cdatetime.example;
+ *******************************************************************************/
+package org.eclipse.nebula.widgets.cdatetime.example;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -25,6 +26,8 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 public class CDateTimeExampleTab extends AbstractExampleTab {
 
@@ -37,52 +40,52 @@ public class CDateTimeExampleTab extends AbstractExampleTab {
 	private Button drop;
 	private Button hour12;
 	private Button hour24;
-	
+	private Text tzText;
+
 	public CDateTimeExampleTab() {
 		// TODO Auto-generated constructor stub
 	}
 
 	public Control createControl(Composite parent) {
 		cdc = new CDateTime(parent, style);
-		if(locale != null) {
+		if (locale != null) {
 			cdc.setLocale(locale);
 		}
-		if(format > 0) {
+		if (format > 0) {
 			cdc.setFormat(format);
-		} else if(pattern != null) {
-			cdc.setPattern(pattern);
+		} else if (pattern != null) {
+			setPattern();
 		}
 		return cdc;
 	}
 
 	public String[] createLinks() {
 		return new String[] {
-    		"<a href=\"http://www.eclipse.org/nebula/widgets/cdatetime/cdatetime.php\">CDateTime Home Page</a>",
-    		"<a href=\"http://www.eclipse.org/nebula/widgets/cdatetime/snippets.php\">Snippets</a>",
-    		"<a href=\"https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=&classification=Technology&product=Nebula&component=CDateTime&long_desc_type=allwordssubstr&long_desc=&bug_file_loc_type=allwordssubstr&bug_file_loc=&status_whiteboard_type=allwordssubstr&status_whiteboard=&keywords_type=allwords&keywords=&emailtype1=substring&email1=&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=&chfieldto=Now&chfieldvalue=&cmdtype=doit&order=Reuse+same+sort+as+last+time&field0-0-0=noop&type0-0-0=noop&value0-0-0=\">Bugs</a>"
-    		};
+				"<a href=\"http://www.eclipse.org/nebula/widgets/cdatetime/cdatetime.php\">CDateTime Home Page</a>",
+				"<a href=\"http://www.eclipse.org/nebula/widgets/cdatetime/snippets.php\">Snippets</a>",
+				"<a href=\"https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=&classification=Technology&product=Nebula&component=CDateTime&long_desc_type=allwordssubstr&long_desc=&bug_file_loc_type=allwordssubstr&bug_file_loc=&status_whiteboard_type=allwordssubstr&status_whiteboard=&keywords_type=allwords&keywords=&emailtype1=substring&email1=&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=&chfieldto=Now&chfieldvalue=&cmdtype=doit&order=Reuse+same+sort+as+last+time&field0-0-0=noop&type0-0-0=noop&value0-0-0=\">Bugs</a>" };
 	}
 
 	public void createParameters(Composite parent) {
 		parent.setLayout(new GridLayout());
-		
+
 		Group g = new Group(parent, SWT.BORDER);
 		g.setText("Styles:");
 		g.setLayout(new GridLayout());
 		g.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-		
+
 		simple = new Button(g, SWT.CHECK);
 		simple.setText("Simple");
 		simple.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if(simple.getSelection()) {
+				if (simple.getSelection()) {
 					style |= CDT.SIMPLE;
 					style &= ~CDT.DROP_DOWN;
 					drop.setSelection(false);
 				} else {
 					style &= ~CDT.SIMPLE;
 				}
-                recreateAndLayout();
+				recreateAndLayout();
 			}
 		});
 
@@ -90,14 +93,14 @@ public class CDateTimeExampleTab extends AbstractExampleTab {
 		drop.setText("Drop Down");
 		drop.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if(((Button) e.widget).getSelection()) {
+				if (((Button) e.widget).getSelection()) {
 					style |= CDT.DROP_DOWN;
 					style &= ~CDT.SIMPLE;
 					simple.setSelection(false);
 				} else {
 					style &= ~CDT.DROP_DOWN;
 				}
-                recreateAndLayout();
+				recreateAndLayout();
 			}
 		});
 
@@ -106,12 +109,12 @@ public class CDateTimeExampleTab extends AbstractExampleTab {
 		b.setSelection(true);
 		b.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if(((Button) e.widget).getSelection()) {
+				if (((Button) e.widget).getSelection()) {
 					style |= CDT.BORDER;
 				} else {
 					style &= ~CDT.BORDER;
 				}
-                recreateAndLayout();
+				recreateAndLayout();
 			}
 		});
 
@@ -119,28 +122,28 @@ public class CDateTimeExampleTab extends AbstractExampleTab {
 		b.setText("Compact");
 		b.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if(((Button) e.widget).getSelection()) {
+				if (((Button) e.widget).getSelection()) {
 					style |= CDT.COMPACT;
 				} else {
 					style &= ~CDT.COMPACT;
 				}
-                recreateAndLayout();
+				recreateAndLayout();
 			}
 		});
-		
+
 		b = new Button(g, SWT.CHECK);
 		b.setText("Spinner");
 		b.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if(((Button) e.widget).getSelection()) {
+				if (((Button) e.widget).getSelection()) {
 					style |= CDT.SPINNER;
 				} else {
 					style &= ~CDT.SPINNER;
 				}
-                recreateAndLayout();
+				recreateAndLayout();
 			}
 		});
-		
+
 		b = new Button(g, SWT.RADIO);
 		b.setText("Analog Clock");
 		b.setSelection(true);
@@ -157,7 +160,7 @@ public class CDateTimeExampleTab extends AbstractExampleTab {
 
 		b.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if(((Button) e.widget).getSelection()) {
+				if (((Button) e.widget).getSelection()) {
 					style |= CDT.CLOCK_DISCRETE;
 					((GridData) dc.getLayoutData()).exclude = false;
 					dc.setVisible(true);
@@ -166,8 +169,8 @@ public class CDateTimeExampleTab extends AbstractExampleTab {
 					((GridData) dc.getLayoutData()).exclude = true;
 					dc.setVisible(false);
 				}
-                recreateAndLayout();
-                dc.getParent().getParent().layout(true);
+				recreateAndLayout();
+				dc.getParent().getParent().layout(true);
 			}
 		});
 
@@ -184,14 +187,14 @@ public class CDateTimeExampleTab extends AbstractExampleTab {
 		b.setLayoutData(new GridData());
 		b.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if(((Button) e.widget).getSelection()) {
+				if (((Button) e.widget).getSelection()) {
 					style &= ~CDT.HORIZONTAL;
 					style |= CDT.VERTICAL;
 				} else {
 					style &= ~CDT.VERTICAL;
 					style |= CDT.HORIZONTAL;
 				}
-                recreateAndLayout();
+				recreateAndLayout();
 			}
 		});
 
@@ -199,14 +202,14 @@ public class CDateTimeExampleTab extends AbstractExampleTab {
 		hour12.setText("Force 12 Hour Clock");
 		hour12.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if(hour12.getSelection()) {
+				if (hour12.getSelection()) {
 					style |= CDT.CLOCK_12_HOUR;
 					style &= ~CDT.CLOCK_24_HOUR;
 					hour24.setSelection(false);
 				} else {
 					style &= ~CDT.CLOCK_12_HOUR;
 				}
-                recreateAndLayout();
+				recreateAndLayout();
 			}
 		});
 
@@ -214,14 +217,14 @@ public class CDateTimeExampleTab extends AbstractExampleTab {
 		hour24.setText("Force 24 Hour Clock");
 		hour24.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if(hour24.getSelection()) {
+				if (hour24.getSelection()) {
 					style |= CDT.CLOCK_24_HOUR;
 					style &= ~CDT.CLOCK_12_HOUR;
 					hour12.setSelection(false);
 				} else {
 					style &= ~CDT.CLOCK_24_HOUR;
 				}
-                recreateAndLayout();
+				recreateAndLayout();
 			}
 		});
 
@@ -229,9 +232,12 @@ public class CDateTimeExampleTab extends AbstractExampleTab {
 		g.setText("Settings:");
 		g.setLayout(new GridLayout());
 		g.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-		
+
 		final Combo combo1 = new Combo(g, SWT.BORDER | SWT.RIGHT | SWT.SINGLE);
 		combo1.add("Type in a custom pattern");
+		combo1.add("MM/dd/yyyy HH:mm.ss z");
+		combo1.add("dd/MM/yy HH:mm.ss");
+		combo1.add("DATE_SHORT");
 		combo1.add("DATE_SHORT");
 		combo1.add("DATE_MEDIUM");
 		combo1.add("DATE_LONG");
@@ -253,21 +259,38 @@ public class CDateTimeExampleTab extends AbstractExampleTab {
 		b.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				int index = combo1.getSelectionIndex();
-				if(index < 1) {
+				if (index < 3) {
 					pattern = combo1.getText();
 					format = -1;
-					cdc.setPattern(pattern);
+					setPattern();
+
 				} else {
 					pattern = null;
-					switch(index) {
-					case 1: format = CDT.DATE_SHORT; break;
-					case 2: format = CDT.DATE_MEDIUM; break;
-					case 3: format = CDT.DATE_LONG; break;
-					case 4: format = CDT.TIME_SHORT; break;
-					case 5: format = CDT.TIME_MEDIUM; break;
-					case 6: format = CDT.DATE_SHORT | CDT.TIME_SHORT; break;
-					case 7: format = CDT.DATE_MEDIUM | CDT.TIME_MEDIUM; break;
-					case 8: format = CDT.DATE_LONG | CDT.TIME_MEDIUM; break;
+					switch (index) {
+					case 3:
+						format = CDT.DATE_SHORT;
+						break;
+					case 4:
+						format = CDT.DATE_MEDIUM;
+						break;
+					case 5:
+						format = CDT.DATE_LONG;
+						break;
+					case 6:
+						format = CDT.TIME_SHORT;
+						break;
+					case 7:
+						format = CDT.TIME_MEDIUM;
+						break;
+					case 8:
+						format = CDT.DATE_SHORT | CDT.TIME_SHORT;
+						break;
+					case 9:
+						format = CDT.DATE_MEDIUM | CDT.TIME_MEDIUM;
+						break;
+					case 10:
+						format = CDT.DATE_LONG | CDT.TIME_MEDIUM;
+						break;
 					}
 					cdc.setFormat(format);
 				}
@@ -275,43 +298,8 @@ public class CDateTimeExampleTab extends AbstractExampleTab {
 			}
 		});
 
-		final Combo localeCombo = new Combo(g, SWT.DROP_DOWN | SWT.READ_ONLY);
 		data = new GridData(SWT.FILL, SWT.FILL, false, false);
 		data.horizontalSpan = 2;
-		localeCombo.setLayoutData(data);
-		final Locale[] la = Locale.getAvailableLocales();
-		Locale local = Locale.getDefault();
-		for(int i = 0; i < la.length; i++) {
-			localeCombo.add(la[i].getDisplayName());
-			if(la[i].equals(local)) localeCombo.select(i);
-		}
-		localeCombo.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				locale = Locale.getAvailableLocales()[localeCombo.getSelectionIndex()];
-				cdc.setLocale(locale);
-				relayoutExample();
-			}
-		});
-		
-		final Combo tzCombo = new Combo(g, SWT.DROP_DOWN | SWT.READ_ONLY);
-		data = new GridData(SWT.FILL, SWT.FILL, false, false);
-		data.horizontalSpan = 2;
-		tzCombo.setLayoutData(data);
-		String[] tz = TimeZone.getAvailableIDs();
-		Arrays.sort(tz);
-		TimeZone localTz = TimeZone.getDefault();
-		for(int i = 0; i < tz.length; i++) {
-			tzCombo.add(tz[i]);
-			if(tz[i].equals(localTz.getID())) tzCombo.select(i);
-		}
-		tzCombo.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				TimeZone zone = TimeZone.getTimeZone(tzCombo.getText());
-				cdc.setTimeZone(zone);
-				relayoutExample();
-			}
-		});
-
 		Button clear = new Button(g, SWT.PUSH);
 		clear.setText("Selection to Null");
 		clear.addSelectionListener(new SelectionAdapter() {
@@ -320,6 +308,61 @@ public class CDateTimeExampleTab extends AbstractExampleTab {
 				relayoutExample();
 			}
 		});
+		clear.setLayoutData(data);
+
+		final Combo localeCombo = new Combo(g, SWT.DROP_DOWN | SWT.READ_ONLY);
+		localeCombo.setLayoutData(data);
+		final Locale[] la = Locale.getAvailableLocales();
+		for (int i = 0; i < la.length; i++) {
+			localeCombo.add(la[i].getDisplayName());
+		}
+
+		String[] items = localeCombo.getItems();
+		Arrays.sort(items);
+		localeCombo.setItems(items);
+		Locale local = Locale.getDefault();
+		localeCombo.select(Arrays.binarySearch(items, local.getDisplayName()));
+
+		localeCombo.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				locale = Locale.getAvailableLocales()[localeCombo
+						.getSelectionIndex()];
+				cdc.setLocale(locale);
+				relayoutExample();
+			}
+		});
+
+		String tzResult = "";
+		Label label2 = new Label(g, SWT.NONE);
+		label2.setLayoutData(data);
+		label2.setText("Comma separated timezones to roll");
+
+		tzText = new Text(g, SWT.BORDER);
+		tzText.setLayoutData(data);
+		String[] zones = TimeZone.getAvailableIDs();
+		Arrays.sort(zones);
+		for (int i = 0; i < 5; i++) {
+			tzResult = tzResult + zones[i] + ", ";
+		}
+		tzResult = tzResult + zones[5];
+		tzText.setText(tzResult);
+
+	}
+
+	protected void setPattern() {
+		if (pattern.endsWith("z")) {
+			String[] zones = tzText.getText().split(",");
+			TimeZone[] tZones = new TimeZone[zones.length];
+			for (int i = 0; i < zones.length; i++) {
+				tZones[i] = TimeZone.getTimeZone(zones[i]);
+			}
+			cdc.setPattern(pattern, tZones);
+			cdc.setTimeZone(tZones[0]);
+		} else {
+			cdc.setPattern(pattern);
+			cdc.setTimeZone((String) null);
+		}
+
 	}
 
 	private void recreateAndLayout() {
