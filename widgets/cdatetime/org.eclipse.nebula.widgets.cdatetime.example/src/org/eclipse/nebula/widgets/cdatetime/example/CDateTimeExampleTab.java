@@ -40,7 +40,7 @@ public class CDateTimeExampleTab extends AbstractExampleTab {
 	private Button drop;
 	private Button hour12;
 	private Button hour24;
-	private Text tzText;
+	private Combo tzCombo;
 
 	public CDateTimeExampleTab() {
 		// TODO Auto-generated constructor stub
@@ -332,29 +332,28 @@ public class CDateTimeExampleTab extends AbstractExampleTab {
 			}
 		});
 
-		String tzResult = "";
 		Label label2 = new Label(g, SWT.NONE);
 		label2.setLayoutData(data);
 		label2.setText("Comma separated timezones to roll");
 
-		tzText = new Text(g, SWT.BORDER);
-		tzText.setLayoutData(data);
+		tzCombo = new Combo(g, SWT.BORDER);
+		tzCombo.setLayoutData(data);
 		String[] zones = TimeZone.getAvailableIDs();
 		Arrays.sort(zones);
-		for (int i = 0; i < 5; i++) {
-			tzResult = tzResult + zones[i] + ", ";
+		tzCombo.add("UTC, CET, CAT, EAT");
+		for (int i = 0; i < zones.length; i++) {
+			tzCombo.add(zones[i]);
 		}
-		tzResult = tzResult + zones[5];
-		tzText.setText(tzResult);
+		tzCombo.setText("UTC, CET, CAT, EAT");
 
 	}
 
 	protected void setPattern() {
 		if (pattern.endsWith("z")) {
-			String[] zones = tzText.getText().split(",");
+			String[] zones = tzCombo.getText().split(",");
 			TimeZone[] tZones = new TimeZone[zones.length];
 			for (int i = 0; i < zones.length; i++) {
-				tZones[i] = TimeZone.getTimeZone(zones[i]);
+				tZones[i] = TimeZone.getTimeZone(zones[i].trim());
 			}
 			cdc.setPattern(pattern, tZones);
 			cdc.setTimeZone(tZones[0]);
