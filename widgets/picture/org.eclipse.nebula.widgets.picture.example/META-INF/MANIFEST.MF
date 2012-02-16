@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
+Bundle-SymbolicName: org.eclipse.nebula.widgets.picture.example;singleton:=true
+Bundle-Version: 1.0.1.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: org.eclipse.nebula.examples;bundle-version="1.0.4",
+ org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.nebula.widgets.picture;bundle-version="1.0.0"
