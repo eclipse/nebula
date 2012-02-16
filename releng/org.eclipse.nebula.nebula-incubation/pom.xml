@@ -77,6 +77,19 @@
 		<module>../../widgets/treemapper/org.eclipse.nebula.widgets.treemapper.tests</module>
 		<module>../../widgets/treemapper/org.eclipse.nebula.widgets.treemapper.feature</module>
 		
+		<!-- Pagination Control -->
+		<module>../../widgets/pagination/org.eclipse.nebula.widgets.pagination</module>
+		<module>../../widgets/pagination/org.eclipse.nebula.widgets.pagination.example</module>
+		<module>../../widgets/pagination/org.eclipse.nebula.widgets.pagination.feature</module>
+		<module>../../widgets/pagination/org.eclipse.nebula.widgets.pagination.snippets</module>				
+		<module>../../widgets/pagination/org.eclipse.nebula.widgets.pagination.tests</module>
+
+		<!-- Picture Control -->
+		<module>../../widgets/picture/org.eclipse.nebula.widgets.picture</module>
+		<module>../../widgets/picture/org.eclipse.nebula.widgets.picture.example</module>
+		<module>../../widgets/picture/org.eclipse.nebula.widgets.picture.feature</module>
+		<module>../../widgets/picture/org.eclipse.nebula.widgets.picture.snippets</module>
+				
 		<!-- Dist -->
 		<module>../org.eclipse.nebula.updatesite.incubation</module>
 		<module>../org.eclipse.nebula.incubation.feature</module>
