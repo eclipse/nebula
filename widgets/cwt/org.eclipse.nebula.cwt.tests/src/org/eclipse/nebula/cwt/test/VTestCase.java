@@ -733,7 +733,7 @@ public class VTestCase extends TestCase {
 	public void runBare() throws Throwable {
 		String name = getName();
 
-		display = new Display();
+		display = Display.getDefault();
 		shell = createShell();
 		shell.setText(name);
 		shell.setLayout(new FillLayout());
@@ -841,7 +841,7 @@ public class VTestCase extends TestCase {
 				// nothing to do
 			}
 		}
-
+ 
 		if (method != null) {
 			method.invoke(this, new Object[0]);
 		}
