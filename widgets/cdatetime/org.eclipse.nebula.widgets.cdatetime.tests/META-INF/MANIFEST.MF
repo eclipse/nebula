@@ -1,6 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.eclipse.nebula.widgets.cdatetime.tests
+Fragment-Host: org.eclipse.nebula.widgets.cdatetime
 Bundle-Version: 0.9.0.qualifier
 Bundle-Name: %pluginName
 Bundle-Vendor: %providerName
@@ -8,5 +9,6 @@ Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.swt,
- org.eclipse.nebula.widgets.cdatetime,
  org.eclipse.nebula.cwt.tests;bundle-version="0.9.0"
+
+
