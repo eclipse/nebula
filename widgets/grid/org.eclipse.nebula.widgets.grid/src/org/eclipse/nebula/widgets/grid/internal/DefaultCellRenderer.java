@@ -436,7 +436,7 @@ public class DefaultCellRenderer extends GridCellRenderer
         {
         	int plainTextWidth;
         	if (wHint == SWT.DEFAULT)
-        	  plainTextWidth = getBounds().width - x - rightMargin;
+        		plainTextWidth = gc.textExtent(item.getText(getColumn())).x;
         	else
         		plainTextWidth = wHint - x - rightMargin;
 
