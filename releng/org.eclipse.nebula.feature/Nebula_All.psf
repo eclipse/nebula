@@ -10,8 +10,11 @@
 <project reference="1.0,ssh://wjongman@git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,widgets/effects/org.eclipse.nebula.effects.stw.feature"/>
 <project reference="1.0,ssh://wjongman@git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,examples/org.eclipse.nebula.examples"/>
 <project reference="1.0,ssh://wjongman@git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,examples/org.eclipse.nebula.examples.feature"/>
+<project reference="1.0,ssh://wjongman@git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,releng/org.eclipse.nebula.examples.incubation.feature"/>
 <project reference="1.0,ssh://wjongman@git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,releng/org.eclipse.nebula.examples.release.feature"/>
+<project reference="1.0,ssh://wjongman@git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,releng/org.eclipse.nebula.examples.webstart"/>
 <project reference="1.0,ssh://wjongman@git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,releng/org.eclipse.nebula.feature"/>
+<project reference="1.0,ssh://wjongman@git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,releng/org.eclipse.nebula.incubation.feature"/>
 <project reference="1.0,ssh://wjongman@git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,widgets/cdatetime/org.eclipse.nebula.jface.cdatetime"/>
 <project reference="1.0,ssh://wjongman@git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,widgets/grid/org.eclipse.nebula.jface.gridviewer"/>
 <project reference="1.0,ssh://wjongman@git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,releng/org.eclipse.nebula.nebula-incubation"/>
@@ -85,6 +88,7 @@
 <project reference="1.0,ssh://wjongman@git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,widgets/treemapper/org.eclipse.nebula.widgets.treemapper.tests"/>
 <project reference="1.0,ssh://wjongman@git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,widgets/xviewer/org.eclipse.nebula.widgets.xviewer"/>
 <project reference="1.0,ssh://wjongman@git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,widgets/xviewer/org.eclipse.nebula.widgets.xviewer.example"/>
+<project reference="1.0,ssh://wjongman@git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,widgets/xviewer/org.eclipse.nebula.widgets.xviewer.feature"/>
 <project reference="1.0,ssh://wjongman@git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,widgets/xviewer/org.eclipse.nebula.widgets.xviewer.feature.test"/>
 <project reference="1.0,ssh://wjongman@git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,widgets/xviewer/org.eclipse.nebula.widgets.xviewer.tests"/>
 </provider>
@@ -131,6 +135,8 @@
 <item elementID="=org.eclipse.nebula.examples" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.examples.release.feature" type="4"/>
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.examples.feature" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.examples_webstart" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.examples.incubation.feature" type="4"/>
 </workingSets>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1330704789115_11" label="FormattedText" name="FormattedText">
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.formattedtext.feature" type="4"/>
@@ -152,8 +158,8 @@
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1330708417274_22" label="Grid" name="Grid">
 <item elementID="=org.eclipse.nebula.widgets.grid" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item elementID="=org.eclipse.nebula.widgets.grid.example" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
-<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.grid.feature" type="4"/>
 <item elementID="=org.eclipse.nebula.jface.gridviewer" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.grid.feature" type="4"/>
 </workingSets>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1330708537225_25" label="NebulaToolbar" name="NebulaToolbar">
 <item elementID="=org.eclipse.nebula.widgets.nebulatoolbar" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
@@ -203,6 +209,7 @@
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.updatesite" type="4"/>
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.nebula-parent" type="4"/>
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.nebula-incubation" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.incubation.feature" type="4"/>
 </workingSets>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1330704962274_18" label="TableCombo" name="TableCombo">
 <item elementID="=org.eclipse.nebula.widgets.tablecombo.example" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
@@ -225,5 +232,6 @@
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.xviewer.feature.test" type="4"/>
 <item elementID="=org.eclipse.nebula.widgets.xviewer.tests" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item elementID="=org.eclipse.nebula.widgets.xviewer.example" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.xviewer.feature" type="4"/>
 </workingSets>
 </psf>
