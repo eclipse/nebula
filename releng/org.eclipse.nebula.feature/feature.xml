@@ -27,7 +27,7 @@
    <includes
          id="org.eclipse.nebula.widgets.compositetable.feature"
          version="0.0.0"/>
-
+ 
    <includes
          id="org.eclipse.nebula.widgets.gallery.feature"
          version="0.0.0"/>
@@ -59,5 +59,9 @@
    <includes
          id="org.eclipse.nebula.widgets.ganttchart.feature"
          version="0.0.0"/>
+         
+    <url>
+      <discovery label="Nebula Incubation" url="http://download.eclipse.org/technology/nebula/incubation/snapshot"/>
+   </url>
 
 </feature>
