@@ -11,6 +11,7 @@
  *  Enrico Schnepel <enrico.schnepel@randomice.net> - disable selectedImage bug 297327
  *  Wolfgang Schramm <wschramm@ch.ibm.com> - added vertical alignment of text for selected table item.
  *  Enrico Schnepel <enrico.schnepel@randomice.net> - help event listener bug 326285
+ *  Andreas Ehret <> - patch for bug 334786
  *****************************************************************************/
 
 package org.eclipse.nebula.widgets.tablecombo;
