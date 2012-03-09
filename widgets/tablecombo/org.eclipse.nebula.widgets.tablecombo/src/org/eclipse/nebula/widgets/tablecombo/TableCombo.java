@@ -559,13 +559,6 @@ public class TableCombo extends Composite {
 		// create shell and table
 		popup = new Shell (getShell (), SWT.NO_TRIM | SWT.ON_TOP);
 		
-		// set style
-		int style = getStyle ();
-		int tableStyle = SWT.SINGLE | SWT.V_SCROLL;
-		if ((style & SWT.FLAT) != 0) tableStyle |= SWT.FLAT;
-		if ((style & SWT.RIGHT_TO_LEFT) != 0) tableStyle |= SWT.RIGHT_TO_LEFT;
-		if ((style & SWT.LEFT_TO_RIGHT) != 0) tableStyle |= SWT.LEFT_TO_RIGHT;
-		
 		// create table
 		table = new Table(popup, SWT.SINGLE | SWT.FULL_SELECTION);
 
@@ -646,13 +639,19 @@ public class TableCombo extends Composite {
 		
 		// calculate the table height.
 		int itemCount = table.getItemCount();
-		itemCount = (itemCount == 0) ? visibleItemCount : Math.min(visibleItemCount, itemCount) - 1;
+		itemCount = (itemCount == 0) ? visibleItemCount : Math.min(visibleItemCount, itemCount);
 		int itemHeight = (table.getItemHeight () * itemCount);
 		
 		// add 1 to the table height if the table item count is less than the visible item count.  
 		if (table.getItemCount() <= visibleItemCount) {
 			itemHeight += 1;
 		}
+		
+		if (itemCount <= visibleItemCount) {
+			if (table.getHorizontalBar() != null && !table.getHorizontalBar().isVisible()) {
+				itemHeight -= table.getHorizontalBar().getSize().y;
+			}
+		}		
 		
 		// add height of header if the header is being displayed.
 	    if (table.getHeaderVisible()) {
