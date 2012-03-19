@@ -24,7 +24,6 @@
 		<profile>
 			<id>build-server</id>
 			<properties>
-				<download-publish-path>/home/data/httpd/download.eclipse.org/technology/nebula/incubation/snapshot</download-publish-path>
 				<signer-input-directory>/home/data/httpd/download-staging.priv/technology/nebula</signer-input-directory>
 			</properties>
 			<pluginRepositories>
