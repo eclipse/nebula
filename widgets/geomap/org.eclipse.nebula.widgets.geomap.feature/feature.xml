@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.nebula.widgets.geomap.feature"
+      label="Nebula GeoMap Widget and Viewer"
+      version="0.1.0.qualifier">
+
+   <description url="http://www.eclipse.org/nebula/widgets/geomap">
+      A Date and Time selection widgt that can be used in a textual, graphical, or combo mode.
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <requires>
+      <import feature="org.eclipse.nebula.cwt.feature" version="0.9.0.qualifier"/>
+   </requires>
+
+   <plugin
+         id="org.eclipse.nebula.widgets.geomap"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.nebula.widgets.geomap.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.nebula.jface.geomap.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.nebula.jface.geomap"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>
