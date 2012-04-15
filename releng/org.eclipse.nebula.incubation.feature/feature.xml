@@ -17,7 +17,7 @@
       Eclipse Foundation Software User Agreement\n\
 February 1, 2011\n\
 \n\
-Usage Of Content\n\
+Usage Of Content\n\ 
 \n\
 THE ECLIPSE FOUNDATION MAKES AVAILABLE SOFTWARE, DOCUMENTATION, INFORMATION AND/OR\n\
 OTHER MATERIALS FOR OPEN SOURCE PROJECTS (COLLECTIVELY &quot;CONTENT&quot;).\n\
@@ -178,5 +178,9 @@ Java and all Java-based trademarks are trademarks of Oracle Corporation in the U
    <includes
          id="org.eclipse.nebula.widgets.picture.feature"
          version="0.0.0"/>
+         
+   <url>
+      <discovery label="Nebula Release" url="http://download.eclipse.org/technology/nebula/snapshot"/>
+   </url>
 
 </feature>

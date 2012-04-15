@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -568,8 +569,8 @@ public abstract class BaseCombo extends Canvas {
 	private void init(int style) {
 		this.style = style;
 		simple = (style & SWT.SIMPLE) != 0;
-		dropDown = (style & (BUTTON_ONLY | SWT.DROP_DOWN)) != 0;		
-		leftAlign = (style & SWT.LEFT) != 0;		
+		dropDown = (style & (BUTTON_ONLY | SWT.DROP_DOWN)) != 0;
+		leftAlign = (style & SWT.LEFT) != 0;
 
 		if (simple) {
 			panel.setLayout(new VSimpleLayout());
@@ -635,7 +636,7 @@ public abstract class BaseCombo extends Canvas {
 	protected boolean isRTL() {
 		return (getShell().getStyle() & SWT.RIGHT_TO_LEFT) == SWT.RIGHT_TO_LEFT;
 	}
-	
+
 	/**
 	 * @return if style is CDT.SIMPLE
 	 */
@@ -1079,15 +1080,19 @@ public abstract class BaseCombo extends Canvas {
 			if (leftAlign || isRTL()) {
 				location.x -= positionControl.getLocation().x;
 				// bug 336853
-				if(isRTL()){
+				if (isRTL()) {
 					location.x -= getBounds().width;
 				}
-					
+
 			} else {
+
 				location.x += (positionControl.getSize().x - size.x);
-				if (location.x < 0) {
-					location.x = 0;
-				}
+				
+				// <bug 373946> Edge detection
+				Monitor monitor = positionControl.getControl().getMonitor();
+				Rectangle monitorBounds = monitor.getBounds();
+				location.x = Math.max(monitorBounds.x, location.x); 
+				
 			}
 			if (win32) {
 				location.x += 2;
