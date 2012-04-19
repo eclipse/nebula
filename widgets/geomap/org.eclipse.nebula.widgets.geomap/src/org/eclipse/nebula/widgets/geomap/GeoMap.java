@@ -10,16 +10,14 @@
  *******************************************************************************/
 
 package org.eclipse.nebula.widgets.geomap;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ConcurrentModificationException;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
@@ -32,7 +30,6 @@ import java.util.logging.Logger;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
-import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
@@ -48,13 +45,9 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-
-
 
 /**
  * MapPanel display tiles from openstreetmap as is. This simple minimal viewer supports zoom around mouse-click center and has a simple api.
@@ -96,17 +89,6 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class GeoMap extends Canvas {
     
-    /*
-    wait icon 
-    credits to: RaminusFalcon
-    obtained from: http://commons.wikimedia.org/wiki/File:GreenHourglass_up.svg
-    
-    world icon
-    credits to: Zeus
-    http://commons.wikimedia.org/wiki/File:Gartoon-fs-ftp.png
-     */
-    
-
     private static final Logger log = Logger.getLogger(GeoMap.class.getName());
     
     public static final class TileServer {
@@ -389,7 +371,7 @@ public class GeoMap extends Canvas {
         "\r\n" +
         "Web/Source: <a href=\"http://mappanel.sourceforge.net\">http://mappanel.sourceforge.net</a>\r\n" +
         "Written by stepan.rutz. Contact <a href=\"mailto:stepan.rutz@gmx.de?subject=SWT%20MapWidget\">stepan.rutz@gmx.de</a>\r\n\r\n" +
-        "Tileserver and Namefinder are part of Openstreetmap.org or associated projects.\r\n";
+        "Tileserver and Nominationserver are accessed online and are part of Openstreetmap.org and not of this software.\r\n";
     	//"MapPanel gets all its data the openstreetmap servers.\r\n\r\n" +
         //"Please support the effort at <a href=\"http://www.openstreetmap.org\">http://www.openstreetmap.org/</a>.\r\n";
         //"Please keep in mind this application is just a alternative renderer for swt.\r\n";

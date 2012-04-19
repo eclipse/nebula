@@ -43,8 +43,6 @@ public abstract class AbstractPage implements Page {
 
     private PageContainer container;
     private Composite composite;
-    private Image actionImage;
-    
     
     protected PageContainer getContainer() {
         return container;
@@ -63,7 +61,6 @@ public abstract class AbstractPage implements Page {
                    AbstractPage.this.widgetDisposed(e);
                 }
             });
-            actionImage = new Image(composite.getDisplay(), getClass().getResourceAsStream("resources/action.gif"));
             
             composite.setLayout(new GridLayout(2, false));
             container.adapt(composite);
@@ -114,7 +111,6 @@ public abstract class AbstractPage implements Page {
         
         Label titleImage = new Label(wrap, SWT.WRAP);
         container.adapt(titleImage);
-        titleImage.setImage(actionImage);
         Link link = new Link(wrap, SWT.NONE);
         container.adapt(link);
         link.setText(text);

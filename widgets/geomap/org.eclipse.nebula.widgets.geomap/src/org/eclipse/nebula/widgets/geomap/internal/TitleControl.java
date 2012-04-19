@@ -43,7 +43,7 @@ public class TitleControl extends Canvas {
     private String text = "";
     private Point size = new Point(1, 1);
     
-    public TitleControl(Composite parent) {
+    public TitleControl(Composite parent, Image image) {
         super(parent, SWT.DOUBLE_BUFFERED);
         addPaintListener(new PaintListener() {
             public void paintControl(PaintEvent e) {
@@ -61,7 +61,8 @@ public class TitleControl extends Canvas {
         gradient2Color = new Color(getDisplay(), 205, 224, 244);
         bottomLineColor = new Color(getDisplay(), 200, 195, 216);
         writingColor = new Color(getDisplay(), 60, 60, 60);
-        image = new Image(getDisplay(), getClass().getResourceAsStream("resources/world.png"));
+        this.image = image;
+
         measureSize("M");
     }
     
@@ -70,7 +71,11 @@ public class TitleControl extends Canvas {
         try {
             gc.setFont(font);
             size = gc.stringExtent(s);
-            size.y = Math.max(image.getBounds().height + 1, size.y);
+            if (image != null) {
+            	size.y = Math.max(image.getBounds().height + 1, size.y);
+            } else {
+            	size.y += 16;
+            }
             size.y += TOP_SPACE;
         } finally {
             gc.dispose();
@@ -83,7 +88,8 @@ public class TitleControl extends Canvas {
         gradient2Color.dispose();
         bottomLineColor.dispose();
         writingColor.dispose();
-        image.dispose();
+        if (image != null)
+        	image.dispose();
     }
 
     private void onPaint(PaintEvent e) {
@@ -97,8 +103,11 @@ public class TitleControl extends Canvas {
         gc.fillGradientRectangle(0, 0, w, h - 1, true);
         
         
-        Rectangle imgsize = image.getBounds();
-        gc.drawImage(image, 12, 0);
+        Rectangle imgsize = new Rectangle(0, 0, 0, 0);
+        if (image != null) {
+        	imgsize = image.getBounds();
+        	gc.drawImage(image, 12, 0);
+        }
         gc.setForeground(bottomLineColor);
         gc.drawLine(0, h - 1, w, h - 1);
         
