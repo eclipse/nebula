@@ -68,4 +68,9 @@ public interface IXViewerFactory {
    public boolean isHeaderBarAvailable();
 
    public boolean isCellGradientOn();
+
+   /**
+    * @return true if search/filter should be before the table; false it is located after the table
+    */
+   boolean isSearhTop();
 }

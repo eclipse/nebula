@@ -14,11 +14,14 @@ package org.eclipse.nebula.widgets.xviewer;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.viewers.ColumnViewerEditor;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -68,27 +71,39 @@ public class XViewer extends TreeViewer {
    private static boolean ctrlKeyListenersSet = false;
    private XViewerGradient xViewerGradient = null;
    private XViewerEditAdapter editAdapter = null;
-
-   public ColumnFilterDataUI getColumnFilterDataUI() {
-      return columnFilterDataUI;
-   }
    private boolean columnMultiEditEnabled = false;
    private CustomizeManager customizeMgr;
    private TreeColumn rightClickSelectedColumn = null;
    private Integer rightClickSelectedColumnNum = null;
    private TreeItem rightClickSelectedItem = null;
    private Color searchColor;
+   private static final Map<Composite, Composite> parentToTopComposites = new HashMap<Composite, Composite>();
 
    public XViewer(Composite parent, int style, IXViewerFactory xViewerFactory) {
       this(parent, style, xViewerFactory, false, false);
    }
-   
+
    public XViewer(Tree tree, IXViewerFactory xViewerFactory) {
-	      this(tree, xViewerFactory, false, false);
-	   }
-   
+      this(tree, xViewerFactory, false, false);
+   }
+
    public XViewer(Composite parent, int style, IXViewerFactory xViewerFactory, boolean filterRealTime, boolean searchRealTime) {
-	   this(new Tree(parent, style), xViewerFactory, filterRealTime, searchRealTime);
+      this(new Tree(createTopComposite(xViewerFactory, parent), style), xViewerFactory, filterRealTime, searchRealTime);
+   }
+
+   /**
+    * Create top if search block should be at top; return parent regardless but cache composite to use
+    */
+   private static Composite createTopComposite(IXViewerFactory xViewerFactory, Composite parent) {
+      if (xViewerFactory.isSearhTop()) {
+         Composite topComposite = new Composite(parent, SWT.NONE);
+         topComposite.setLayout(XViewerLib.getZeroMarginLayout(11, false));
+         topComposite.setLayoutData(new GridData(SWT.FILL, SWT.None, true, false));
+         parentToTopComposites.put(parent, topComposite);
+      } else {
+         parentToTopComposites.put(parent, parent);
+      }
+      return parent;
    }
 
    public XViewer(Tree tree, IXViewerFactory xViewerFactory, boolean filterRealTime, boolean searchRealTime) {
@@ -113,8 +128,9 @@ public class XViewer extends TreeViewer {
       } catch (Exception ex) {
          XViewerLog.logAndPopup(Activator.class, Level.SEVERE, ex);
       }
-      createSupportWidgets(tree.getParent());
-      
+      createSupportWidgets(parentToTopComposites.get(tree.getParent()));
+      parentToTopComposites.remove(tree.getParent());
+
       tree.setHeaderVisible(true);
       tree.setLinesVisible(true);
       setUseHashlookup(true);
@@ -124,6 +140,10 @@ public class XViewer extends TreeViewer {
       }
    }
 
+   @Override
+   protected ColumnViewerEditor createViewerEditor() {
+      return super.createViewerEditor();
+   }
    private static List<XViewerComputedColumn> computedColumns = new ArrayList<XViewerComputedColumn>();
 
    public Collection<XViewerComputedColumn> getComputedColumns() {
@@ -147,15 +167,16 @@ public class XViewer extends TreeViewer {
       if (statusLabel != null && !statusLabel.isDisposed()) {
          statusLabel.dispose();
       }
-      if (statusComposite != null && !statusComposite.isDisposed()) {
-         statusComposite.dispose();
+      if (searchComp != null && !searchComp.isDisposed()) {
+         searchComp.dispose();
       }
    }
 
    @Override
    public void setLabelProvider(IBaseLabelProvider labelProvider) {
-      if (!(labelProvider instanceof IXViewerLabelProvider) ) {
-         throw new IllegalArgumentException("Label Provider must extend XViewerLabelProvider or XViewerStyledTextLabelProvider");
+      if (!(labelProvider instanceof IXViewerLabelProvider)) {
+         throw new IllegalArgumentException(
+            "Label Provider must extend XViewerLabelProvider or XViewerStyledTextLabelProvider");
       }
       super.setLabelProvider(labelProvider);
    }
@@ -181,33 +202,31 @@ public class XViewer extends TreeViewer {
    }
 
    protected void createSupportWidgets(Composite parent) {
-
       searchColor = Display.getDefault().getSystemColor(SWT.COLOR_YELLOW);
-
-      statusComposite = null;
+      searchComp = null;
       if (searchDataUI != null || filterDataUI != null || xViewerFactory.isLoadedStatusLabelAvailable()) {
-         statusComposite = new Composite(parent, SWT.NONE);
-         statusComposite.setLayout(XViewerLib.getZeroMarginLayout(11, false));
-         statusComposite.setLayoutData(new GridData(SWT.FILL, SWT.None, true, false));
+         searchComp = new Composite(parent, SWT.NONE);
+         searchComp.setLayout(XViewerLib.getZeroMarginLayout(11, false));
+         searchComp.setLayoutData(new GridData(SWT.FILL, SWT.None, true, false));
 
          if (filterDataUI != null) {
-            filterDataUI.createWidgets(statusComposite);
-            Label sep1 = new Label(statusComposite, SWT.SEPARATOR);
+            filterDataUI.createWidgets(searchComp);
+            Label sep1 = new Label(searchComp, SWT.SEPARATOR);
             GridData gd = new GridData(SWT.RIGHT, SWT.NONE, false, false);
             gd.heightHint = 16;
             sep1.setLayoutData(gd);
          }
 
          if (searchDataUI != null) {
-            searchDataUI.createWidgets(statusComposite);
-            Label sep2 = new Label(statusComposite, SWT.SEPARATOR);
+            searchDataUI.createWidgets(searchComp);
+            Label sep2 = new Label(searchComp, SWT.SEPARATOR);
             GridData gd = new GridData(SWT.RIGHT, SWT.NONE, false, false);
             gd.heightHint = 16;
             sep2.setLayoutData(gd);
          }
 
          if (xViewerFactory.isLoadedStatusLabelAvailable()) {
-            statusLabel = new Label(statusComposite, SWT.NONE);
+            statusLabel = new Label(searchComp, SWT.NONE);
             statusLabel.setText(" ");
             statusLabel.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
          }
@@ -345,7 +364,7 @@ public class XViewer extends TreeViewer {
          }
       }
    };
-   private Composite statusComposite;
+   private Composite searchComp;
 
    public void resetDefaultSorter() {
       customizeMgr.resetDefaultSorter();
@@ -571,7 +590,7 @@ public class XViewer extends TreeViewer {
    }
 
    public String getColumnText(Object element, int col) {
-         return ((IXViewerLabelProvider) getLabelProvider()).getColumnText(element, col);
+      return ((IXViewerLabelProvider) getLabelProvider()).getColumnText(element, col);
    }
 
    /**
@@ -651,6 +670,10 @@ public class XViewer extends TreeViewer {
    public void setXViewerEditAdapter(XViewerEditAdapter editAdapter) {
       this.editAdapter = editAdapter;
       this.editAdapter.activate(this);
+   }
+
+   public ColumnFilterDataUI getColumnFilterDataUI() {
+      return columnFilterDataUI;
    }
 
 }
