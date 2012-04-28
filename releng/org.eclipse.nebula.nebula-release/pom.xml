@@ -114,58 +114,94 @@
 	</profiles>
 
 	<modules>
+		<!-- Examples -->
 		<module>../../examples/org.eclipse.nebula.examples</module>
 		<module>../../examples/org.eclipse.nebula.examples.feature</module>
 		
+		<!-- Gallery -->
 		<module>../../widgets/gallery/org.eclipse.nebula.widgets.gallery</module>
 		<module>../../widgets/gallery/org.eclipse.nebula.widgets.gallery.example</module>
 		<module>../../widgets/gallery/org.eclipse.nebula.widgets.gallery.feature</module>
 		<module>../../widgets/gallery/org.eclipse.nebula.widgets.gallery.tests</module>
 		
+		<!-- Gantt -->
 		<module>../../widgets/ganttchart/org.eclipse.nebula.widgets.ganttchart</module>
 		<module>../../widgets/ganttchart/org.eclipse.nebula.widgets.ganttchart.example</module>
 		<module>../../widgets/ganttchart/org.eclipse.nebula.widgets.ganttchart.feature</module>
 		
+		<!-- Grid -->
 		<module>../../widgets/grid/org.eclipse.nebula.widgets.grid</module>
 		<module>../../widgets/grid/org.eclipse.nebula.widgets.grid.example</module>
 		<module>../../widgets/grid/org.eclipse.nebula.widgets.grid.feature</module>
 		
+		<!-- PGroup -->
 		<module>../../widgets/pgroup/org.eclipse.nebula.widgets.pgroup</module>
 		<module>../../widgets/pgroup/org.eclipse.nebula.widgets.pgroup.example</module>
 		<module>../../widgets/pgroup/org.eclipse.nebula.widgets.pgroup.feature</module>
 		
+		<!-- PShelf -->
 		<module>../../widgets/pshelf/org.eclipse.nebula.widgets.pshelf</module>
 		<module>../../widgets/pshelf/org.eclipse.nebula.widgets.pshelf.example</module>
 		<module>../../widgets/pshelf/org.eclipse.nebula.widgets.pshelf.feature</module>
 		
+		<!-- CompositeTable -->
 		<module>../../widgets/compositetable/org.eclipse.nebula.widgets.compositetable</module>
 		<!-- <module>../../org.eclipse.nebula.widgets.compositetable.tests</module> -->
 		<module>../../widgets/compositetable/org.eclipse.nebula.widgets.compositetable.feature</module>
 
+		<!-- Oscilloscope -->
 		<module>../../widgets/oscilloscope/org.eclipse.nebula.widgets.oscilloscope</module>
 		<module>../../widgets/oscilloscope/org.eclipse.nebula.widgets.oscilloscope.example</module>
 		<module>../../widgets/oscilloscope/org.eclipse.nebula.widgets.oscilloscope.tests</module>
 		<module>../../widgets/oscilloscope/org.eclipse.nebula.widgets.oscilloscope.feature</module>
 
+		<!-- TableCombo -->
 		<module>../../widgets/tablecombo/org.eclipse.nebula.widgets.tablecombo</module>
 		<module>../../widgets/tablecombo/org.eclipse.nebula.widgets.tablecombo.example</module>
 		<module>../../widgets/tablecombo/org.eclipse.nebula.widgets.tablecombo.feature</module>
 
+		<!-- CalendarCombo -->
 		<module>../../widgets/calendarcombo/org.eclipse.nebula.widgets.calendarcombo</module>
 		<module>../../widgets/calendarcombo/org.eclipse.nebula.widgets.calendarcombo.feature</module>
 
+		<!-- XViewer -->
 		<module>../../widgets/xviewer/org.eclipse.nebula.widgets.xviewer</module>
 		<module>../../widgets/xviewer/org.eclipse.nebula.widgets.xviewer.example</module>
 		<module>../../widgets/xviewer/org.eclipse.nebula.widgets.xviewer.tests</module>
 		<module>../../widgets/xviewer/org.eclipse.nebula.widgets.xviewer.feature</module>
-		<!-- -->
+
+		<!-- Effects STW -->
 		<module>../../widgets/effects/org.eclipse.nebula.effects.stw</module>
 		<module>../../widgets/effects/org.eclipse.nebula.effects.stw.example</module>
 		<module>../../widgets/effects/org.eclipse.nebula.effects.stw.feature</module>
 
+		<!-- Releng -->
 		<module>../org.eclipse.nebula.feature</module>
 		<module>../org.eclipse.nebula.updatesite</module>
 		<module>../org.eclipse.nebula.examples.release.feature</module>
+		
+		<!-- PaperClips -->
+		<module>../../widgets/paperclips/org.eclipse.nebula.paperclips.core</module>
+		<module>../../widgets/paperclips/org.eclipse.nebula.paperclips.widgets</module>
+		<module>../../widgets/paperclips/org.eclipse.nebula.paperclips.tests</module>
+		<module>../../widgets/paperclips/org.eclipse.nebula.paperclips.snippets</module>
+		<module>../../widgets/paperclips/org.eclipse.nebula.widgets.paperclips.feature</module>
+				 
+		<!-- CWT -->
+		<module>../../widgets/cwt/org.eclipse.nebula.cwt</module>
+		<module>../../widgets/cwt/org.eclipse.nebula.cwt.snippets</module>
+		<module>../../widgets/cwt/org.eclipse.nebula.cwt.tests</module>
+		<module>../../widgets/cwt/org.eclipse.nebula.cwt.feature</module>
+		
+		<!-- CDateTime -->
+		<module>../../widgets/cdatetime/org.eclipse.nebula.widgets.cdatetime</module>
+		<module>../../widgets/cdatetime/org.eclipse.nebula.jface.cdatetime</module>
+		<module>../../widgets/cdatetime/org.eclipse.nebula.widgets.cdatetime.example</module>
+		<module>../../widgets/cdatetime/org.eclipse.nebula.widgets.cdatetime.snippets</module>
+		<module>../../widgets/cdatetime/org.eclipse.nebula.widgets.cdatetime.tests</module>
+		<module>../../widgets/cdatetime/org.eclipse.nebula.widgets.cdatetime.feature</module>
+		
+		
 	</modules>
 
 	<pluginRepositories>

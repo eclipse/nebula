@@ -23,7 +23,7 @@
 		<relativePath>../org.eclipse.nebula.nebula-parent</relativePath>
 	</parent>
 
-	<modules>
+	<modules> 
 		<!-- Dependencies -->
 		<module>../org.eclipse.nebula.nebula-parent</module>
 		<module>../../examples/org.eclipse.nebula.examples</module>
@@ -35,30 +35,9 @@
 		<module>../../widgets/collapsiblebuttons/org.eclipse.nebula.widgets.collapsiblebuttons.example</module>
 		<module>../../widgets/collapsiblebuttons/org.eclipse.nebula.widgets.collapsiblebuttons.feature</module>
 		
-		<!-- CWT -->
-		<module>../../widgets/cwt/org.eclipse.nebula.cwt</module>
-		<module>../../widgets/cwt/org.eclipse.nebula.cwt.snippets</module>
-		<module>../../widgets/cwt/org.eclipse.nebula.cwt.tests</module>
-		<module>../../widgets/cwt/org.eclipse.nebula.cwt.feature</module>
-		
 		<!-- FormattedText -->
 		<module>../../widgets/formattedtext/org.eclipse.nebula.widgets.formattedtext</module>
 		<module>../../widgets/formattedtext/org.eclipse.nebula.widgets.formattedtext.feature</module>
-		
-		<!-- PaperClips -->
-		<module>../../widgets/paperclips/org.eclipse.nebula.paperclips.core</module>
-		<module>../../widgets/paperclips/org.eclipse.nebula.paperclips.widgets</module>
-		<module>../../widgets/paperclips/org.eclipse.nebula.paperclips.tests</module>
-		<module>../../widgets/paperclips/org.eclipse.nebula.paperclips.snippets</module>
-		<module>../../widgets/paperclips/org.eclipse.nebula.widgets.paperclips.feature</module>
-		
-		<!-- CDateTime -->
-		<module>../../widgets/cdatetime/org.eclipse.nebula.widgets.cdatetime</module>
-		<module>../../widgets/cdatetime/org.eclipse.nebula.jface.cdatetime</module>
-		<module>../../widgets/cdatetime/org.eclipse.nebula.widgets.cdatetime.example</module>
-		<module>../../widgets/cdatetime/org.eclipse.nebula.widgets.cdatetime.snippets</module>
-		<module>../../widgets/cdatetime/org.eclipse.nebula.widgets.cdatetime.tests</module>
-		<module>../../widgets/cdatetime/org.eclipse.nebula.widgets.cdatetime.feature</module>
 		
 		<!-- DateChooser -->
 		<module>../../widgets/datechooser/org.eclipse.nebula.widgets.datechooser</module>
