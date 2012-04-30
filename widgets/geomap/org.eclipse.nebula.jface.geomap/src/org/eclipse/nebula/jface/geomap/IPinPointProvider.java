@@ -10,7 +10,6 @@
  ******************************************************************************/
 package org.eclipse.nebula.jface.geomap;
 
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.graphics.Point;
 
 /**
