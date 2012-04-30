@@ -28,6 +28,7 @@
 <project reference="1.0,http://git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,releng/org.eclipse.nebula.updatesite.incubation"/>
 <project reference="1.0,http://git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,widgets/bidilayout/org.eclipse.nebula.widgets.bidilayout"/>
 <project reference="1.0,http://git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,widgets/calendarcombo/org.eclipse.nebula.widgets.calendarcombo"/>
+<project reference="1.0,http://git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,widgets/calendarcombo/org.eclipse.nebula.widgets.calendarcombo.example"/>
 <project reference="1.0,http://git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,widgets/calendarcombo/org.eclipse.nebula.widgets.calendarcombo.feature"/>
 <project reference="1.0,http://git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,widgets/cdatetime/org.eclipse.nebula.widgets.cdatetime"/>
 <project reference="1.0,http://git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,widgets/cdatetime/org.eclipse.nebula.widgets.cdatetime.example"/>
@@ -98,6 +99,7 @@
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1330704630740_6" label="CalendarCombo" name="CalendarCombo">
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.calendarcombo.feature" type="4"/>
 <item elementID="=org.eclipse.nebula.widgets.calendarcombo" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.calendarcombo.example" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 </workingSets>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1330704597612_5" label="CDateTime" name="CDateTime">
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.cdatetime.feature" type="4"/>

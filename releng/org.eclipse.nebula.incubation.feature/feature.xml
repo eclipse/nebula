@@ -139,16 +139,16 @@ re-export of encryption software, to see if this is permitted.\n\
 Java and all Java-based trademarks are trademarks of Oracle Corporation in the United States, other countries, or both.\n
    </license>
 
+   <url>
+      <discovery label="Nebula Release" url="http://download.eclipse.org/technology/nebula/snapshot"/>
+   </url>
+
    <includes
          id="org.eclipse.nebula.cwt.feature"
          version="0.0.0"/>
 
    <includes
          id="org.eclipse.nebula.widgets.collapsiblebuttons.feature"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.nebula.widgets.cdatetime.feature"
          version="0.0.0"/>
 
    <includes
@@ -168,19 +168,11 @@ Java and all Java-based trademarks are trademarks of Oracle Corporation in the U
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.nebula.widgets.paperclips.feature"
-         version="0.0.0"/>
-
-   <includes
          id="org.eclipse.nebula.widgets.pagination.feature"
          version="0.0.0"/>
 
    <includes
          id="org.eclipse.nebula.widgets.picture.feature"
          version="0.0.0"/>
-         
-   <url>
-      <discovery label="Nebula Release" url="http://download.eclipse.org/technology/nebula/snapshot"/>
-   </url>
 
 </feature>

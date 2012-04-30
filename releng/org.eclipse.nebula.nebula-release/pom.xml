@@ -162,6 +162,7 @@
 
 		<!-- CalendarCombo -->
 		<module>../../widgets/calendarcombo/org.eclipse.nebula.widgets.calendarcombo</module>
+		<module>../../widgets/calendarcombo/org.eclipse.nebula.widgets.calendarcombo.example</module>
 		<module>../../widgets/calendarcombo/org.eclipse.nebula.widgets.calendarcombo.feature</module>
 
 		<!-- XViewer -->

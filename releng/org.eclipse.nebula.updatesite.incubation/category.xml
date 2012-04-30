@@ -9,9 +9,6 @@
    <feature url="features/org.eclipse.nebula.cwt.feature_0.9.0.qualifier.jar" id="org.eclipse.nebula.cwt.feature" version="0.9.0.qualifier">
       <category name="Nebula Individual Incubation Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.cdatetime.feature_0.14.0.qualifier.jar" id="org.eclipse.nebula.widgets.cdatetime.feature" version="0.14.0.qualifier">
-      <category name="Nebula Individual Incubation Widgets"/>
-   </feature>
    <feature url="features/org.eclipse.nebula.widgets.collapsiblebuttons.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.collapsiblebuttons.feature" version="1.0.0.qualifier">
       <category name="Nebula Individual Incubation Widgets"/>
    </feature>
@@ -19,9 +16,6 @@
       <category name="Nebula Individual Incubation Widgets"/>
    </feature>
    <feature url="features/org.eclipse.nebula.widgets.formattedtext.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.formattedtext.feature" version="1.0.0.qualifier">
-      <category name="Nebula Individual Incubation Widgets"/>
-   </feature>
-   <feature url="features/org.eclipse.nebula.widgets.paperclips.feature_2.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.paperclips.feature" version="2.0.0.qualifier">
       <category name="Nebula Individual Incubation Widgets"/>
    </feature>
    <feature url="features/org.eclipse.nebula.widgets.radiogroup.feature_0.1.0.qualifier.jar" id="org.eclipse.nebula.widgets.radiogroup.feature" version="0.1.0.qualifier">
@@ -35,7 +29,7 @@
    </feature>
    <feature url="features/org.eclipse.nebula.widgets.picture.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.picture.feature" version="1.0.0.qualifier">
       <category name="Nebula Individual Incubation Widgets"/>
-   </feature>         
+   </feature>
    <feature url="features/org.eclipse.nebula.examples.incubation.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.examples.incubation.feature" version="1.0.0.qualifier">
       <category name="Nebula All Incubation Widgets"/>
    </feature>

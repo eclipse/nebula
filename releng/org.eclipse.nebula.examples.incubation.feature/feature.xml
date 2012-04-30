@@ -17,32 +17,15 @@
       [Enter License Description here.]
    </license>
 
-   <includes
-         id="org.eclipse.nebula.examples.feature"
-         version="0.0.0"/>
    <url>
       <discovery label="Nebula Release" url="http://download.eclipse.org/technology/nebula/snapshot"/>
       <discovery label="Nebula Incubation" url="http://download.eclipse.org/technology/nebula/incubation/snapshot"/>
    </url>
-   
+
    <requires>
       <import feature="org.eclipse.nebula.examples.feature" version="1.0.4.qualifier"/>
       <import feature="org.eclipse.nebula.incubation.feature" version="1.0.0.qualifier"/>
    </requires>
-
-   <plugin
-         id="org.eclipse.nebula.widgets.cdatetime.example"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.nebula.widgets.cdatetime.example.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
 
    <plugin
          id="org.eclipse.nebula.widgets.datechooser.example"
@@ -113,5 +96,5 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-                  
+
 </feature>
