@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Nebula CalendarCombo Example
+Bundle-SymbolicName: org.eclipse.nebula.widgets.calendarcombo.example;singleton:=true
+Bundle-Version: 0.14.0.qualifier
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.nebula.examples;bundle-version="1.0.4",
+ org.eclipse.nebula.widgets.calendarcombo;bundle-version="0.14.0"
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-Vendor: Eclipse.org
