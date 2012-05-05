@@ -120,12 +120,12 @@ public class SearchPage extends AbstractPage implements Page {
         addInfoText(container, composite, "Toggling the tile-server changes the way " +
         		"the map is rendered. Click on the mapinfos link to see details " +
         		"about the currently rendered part of the map.");
-        
+
         addActionLink(container, composite, "<a>Toggle Rendering</a>", new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                GeoMap mapWidget = mapBrowser.getMapWidget();
-                int next = (Arrays.asList(GeoMap.TILESERVERS).indexOf(mapWidget.getTileServer()) + 1) % GeoMap.TILESERVERS.length;
-                mapWidget.setTileServer(GeoMap.TILESERVERS[next]);
+                GeoMap geoMap = mapBrowser.getGeoMap();
+                int next = (Arrays.asList(GeoMap.TILESERVERS).indexOf(geoMap.getTileServer()) + 1) % GeoMap.TILESERVERS.length;
+                geoMap.setTileServer(GeoMap.TILESERVERS[next]);
             }
         });
 
@@ -136,14 +136,14 @@ public class SearchPage extends AbstractPage implements Page {
         });
         addActionLink(container, composite, "Show <a>Europe</a>", new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                GeoMap mapWidget = mapBrowser.getMapWidget();
-                mapWidget.setZoom(5);
-                Point position = mapWidget.computePosition(new PointD(5.5, 52.2)); 
-                mapWidget.setCenterPosition(position);
-                mapWidget.redraw();
+                GeoMap geoMap = mapBrowser.getGeoMap();
+                geoMap.setZoom(5);
+                Point position = geoMap.computePosition(new PointD(5.5, 52.2));
+                geoMap.setCenterPosition(position);
+                geoMap.redraw();
             }
         });
-        
+
         addHeaderRow(container, composite, "Search location");
         addInfoText(container, composite, "Enter any location or landmark site to search openstreetmap's " +
                 "genuine namefinder database. Hit return to perform the search.");

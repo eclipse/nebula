@@ -33,15 +33,15 @@ import org.eclipse.swt.widgets.TableItem;
 public class InfoPage extends AbstractPage implements Page {
     
     private static final Logger log = Logger.getLogger(InfoPage.class.getName());
-    
+
     private abstract class Spec {
         final String key;
-        final GeoMap mapWidget;
+        final GeoMap geoMap;
         abstract String computeValue();
-        Spec(String key) { this.key = key; this.mapWidget = mapBrowser.getMapWidget(); }
+        Spec(String key) { this.key = key; this.geoMap = mapBrowser.getGeoMap(); }
     }
-    
-    
+
+
     private final GeoMapBrowser mapBrowser;
     private Table table;
     private Spec[] specs;
@@ -49,23 +49,23 @@ public class InfoPage extends AbstractPage implements Page {
     public InfoPage(GeoMapBrowser mapBrowser) {
         this.mapBrowser = mapBrowser;
         specs = new Spec[] {
-                new Spec("Zoom") { public String computeValue() { return Integer.toString(mapWidget.getZoom()); }},
-                new Spec("Map Size") { public String computeValue() { Point size = mapWidget.getSize(); return size.x + ", " + size.y; }},
-                new Spec("Map Position") { public String computeValue() { Point position = mapWidget.getMapPosition(); return position.x + ", " + position.y; }},
-                new Spec("Center Position") { public String computeValue() { Point position = mapWidget.getCenterPosition(); return position.x + ", " + position.y; }},
-                new Spec("Paint time") { public String computeValue() { mapWidget.getStats(); return mapWidget.getStats().dt + " ms"; }},
-                new Spec("Imagefetchers Threads") { public String computeValue() { return Integer.toString(GeoMap.IMAGEFETCHER_THREADS); }},
+                new Spec("Zoom") { public String computeValue() { return Integer.toString(geoMap.getZoom()); }},
+                new Spec("Map Size") { public String computeValue() { Point size = geoMap.getSize(); return size.x + ", " + size.y; }},
+                new Spec("Map Position") { public String computeValue() { Point position = geoMap.getMapPosition(); return position.x + ", " + position.y; }},
+                new Spec("Center Position") { public String computeValue() { Point position = geoMap.getCenterPosition(); return position.x + ", " + position.y; }},
+                new Spec("Paint time") { public String computeValue() { geoMap.getStats(); return geoMap.getStats().dt + " ms"; }},
+                new Spec("Imagefetchers Threads") { public String computeValue() { return Integer.toString(GeoMap.DEFAULT_NUMBER_OF_IMAGEFETCHER_THREADS); }},
                 new Spec("Number painted tiles") {
                     public String computeValue() {
-                        mapWidget.getStats(); 
-                        return mapWidget.getStats().tileCount + " of " + NumberFormat.getIntegerInstance().format((long)mapWidget.getXTileCount() * mapWidget.getYTileCount());
+                        geoMap.getStats();
+                        return geoMap.getStats().tileCount + " of " + NumberFormat.getIntegerInstance().format((long)geoMap.getXTileCount() * geoMap.getYTileCount());
                     }
                 },
-                new Spec("Tilecache") { public String computeValue() { return String.format("%3d / %3d", mapWidget.getCache().getSize(), GeoMap.CACHE_SIZE); }},
+                new Spec("Tilecache") { public String computeValue() { return String.format("%3d / %3d", geoMap.getCache().getSize(), geoMap.getCacheSize()); }},
                 new Spec("Longitude/Latitude") {
                     public String computeValue() {
-                        Point p = mapWidget.getCursorPosition();
-                        int zoom = mapWidget.getZoom();
+                        Point p = geoMap.getCursorPosition();
+                        int zoom = geoMap.getZoom();
                         return GeoMap.format(GeoMap.position2lon(p.x, zoom)) + ", " + GeoMap.format(GeoMap.position2lat(p.y, zoom));
                     }
                 },

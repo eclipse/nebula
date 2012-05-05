@@ -142,11 +142,11 @@ public class ResultsPage extends AbstractPage implements Page {
                 int index = table.indexOf(item);
                 if (index >= 0 && index < results.length) {
                     SearchResult result = results[index];
-                    GeoMap mapWidget = mapBrowser.getMapWidget();
-//                    mapWidget.setZoom(result.getZoom() < 1 || result.getZoom() > mapWidget.getTileServer().getMaxZoom() ? 8 : result.getZoom());
-                    Point position = mapWidget.computePosition(new PointD(result.getLon(), result.getLat())); 
-                    mapWidget.setCenterPosition(position);
-                    mapWidget.redraw();
+                    GeoMap geoMap = mapBrowser.getGeoMap();
+                    //geoMap.setZoom(result.getZoom() < 1 || result.getZoom() > mapWidget.getTileServer().getMaxZoom() ? 8 : result.getZoom());
+                    Point position = geoMap.computePosition(new PointD(result.getLon(), result.getLat()));
+                    geoMap.setCenterPosition(position);
+                    geoMap.redraw();
                 }
             }
         });

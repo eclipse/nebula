@@ -74,6 +74,10 @@ import org.eclipse.swt.widgets.Display;
  * </ul>
  * </p>
  *
+ * <p>For performance tuning the two crucial parameters are the size of the {@link TileCache} and the
+ * number of image-loader threads.
+ * </p>
+ *
  * <p>As mentioned above Longitude/Latitude functionality is available via the method {@link #computePosition(java.awt.geom.Point2D.Double)}.
  * If you have a GIS database you can get this info out of it for a given town/location, invoke {@link #computePosition(java.awt.geom.Point2D.Double)} to
  * translate to a position for the given zoom level and center the view around this position using {@link #setCenterPosition(Point)}.
@@ -88,9 +92,13 @@ import org.eclipse.swt.widgets.Display;
  * @version $Revision$
  */
 public class GeoMap extends Canvas {
-    
+
     private static final Logger log = Logger.getLogger(GeoMap.class.getName());
-    
+
+    /**
+     * This class encapsulates a tileserver, which has the concept
+     * of a baseurl and a maximum zoon level.
+     */
     public static final class TileServer {
         private final String url;
         private final int maxZoom;
@@ -120,7 +128,14 @@ public class GeoMap extends Canvas {
             this.broken = broken;
         }
     }
-    
+
+    /**
+     * Stats class, usefull for debugging caching of tiles,
+     * also makes sure nothing is drawn (and loaded) that is
+     * not displayed.
+     * @since 3.3
+     *
+     */
     public static class Stats {
         public int tileCount;
         public long dt;
@@ -132,7 +147,15 @@ public class GeoMap extends Canvas {
             dt = 0;
         }
     }
-    
+
+    /**
+     * A single tile in the map. A tile has an x and y coordinate, but
+     * both only make sense in the context of a given zoom level. The
+     * tile's zoom level is given by <code>z</code>.
+     *
+     * <p>For caching the tiles support some equals and hashCode behavior
+     * that makes them suitable as key-objects in java-util collections.</p>
+     */
     private static class Tile {
         private final String key;
         public final int x, y, z;
@@ -173,11 +196,19 @@ public class GeoMap extends Canvas {
             return true;
         }
     }
-    
+
+    /**
+     * A tile-cache holds tiles. Instances of {@link Tile} are used as keys for
+     * the cache. The actual data is held in instances of {@link AsyncImage} which
+     * is an image that automatically loads itself with one of the supplied image
+     * loader threads.
+     * @since 3.3
+     *
+     */
     public class TileCache {
-        private LinkedHashMap<Tile,AsyncImage> map = new LinkedHashMap<Tile,AsyncImage>(CACHE_SIZE, 0.75f, true) {
+        private LinkedHashMap<Tile,AsyncImage> map = new LinkedHashMap<Tile,AsyncImage>(cacheSize, 0.75f, true) {
             protected boolean removeEldestEntry(Map.Entry<Tile,AsyncImage> eldest) {
-                boolean remove = size() > CACHE_SIZE;
+                boolean remove = size() > cacheSize;
                 if (remove)
                     eldest.getValue().dispose(getDisplay());
                 return remove;
@@ -196,7 +227,13 @@ public class GeoMap extends Canvas {
             return map.size();
         }
     }
-    
+    /**
+     * An sync image that loads itself in the background on an image-fetcher thread.
+     * Once its loaded it will trigger a redraw. Sometimes redraws that
+     * are not really necessary can be triggered, but that is not relevant in terms of
+     * performance for this swt-component.
+     *
+     */
     public final class AsyncImage implements Runnable {
         private final AtomicReference<ImageData> imageData = new AtomicReference<ImageData>();
         private Image image; // might as well be thread-local
@@ -205,6 +242,13 @@ public class GeoMap extends Canvas {
         private final TileServer tileServer;
         private final int x, y, z;
 
+        /**
+         * Constructs a new <code>AsyncImage</code> instance.
+         * @param tileServer the tileserer, which is used to find out the source location
+         * @param x tile's x coordinate
+         * @param y tile's y coordinate
+         * @param z the zoom level
+         */
         public AsyncImage(TileServer tileServer, int x, int y, int z) {
             this.tileServer = tileServer;
             this.x = x;
@@ -376,12 +420,13 @@ public class GeoMap extends Canvas {
         //"Please support the effort at <a href=\"http://www.openstreetmap.org\">http://www.openstreetmap.org/</a>.\r\n";
         //"Please keep in mind this application is just a alternative renderer for swt.\r\n";
     
-    
+
     /* basically not be changed */
     private static final int TILE_SIZE = 256;
-    public static final int CACHE_SIZE = 256;
-    public static final int IMAGEFETCHER_THREADS = 4;
-    
+
+    public static final int DEFAULT_CACHE_SIZE = 256;
+    public static final int DEFAULT_NUMBER_OF_IMAGEFETCHER_THREADS = 4;
+
     private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private Point mapSize = new Point(0, 0);
     private Point mapPosition = new Point(0, 0);
@@ -402,19 +447,53 @@ public class GeoMap extends Canvas {
             return t;
         }
     };
-    private ThreadPoolExecutor executor = new ThreadPoolExecutor(IMAGEFETCHER_THREADS, 16, 2, TimeUnit.SECONDS, workQueue, threadFactory);
-    
+    private ThreadPoolExecutor executor = new ThreadPoolExecutor(DEFAULT_NUMBER_OF_IMAGEFETCHER_THREADS, 16, 2, TimeUnit.SECONDS, workQueue, threadFactory);
     private Color waitBackground, waitForeground;
-    
+	private final int cacheSize;
+
+
+    /**
+     * Creates a new <code>GeoMap</code> using the {@link GeoMap#DEFAULT_CACHE_SIZE} size
+     * for its internal cache of tiles. The map is showing the position <code>(275091, 180145</code>
+     * at zoom level <code>11</code>. In other words this constructor is best used only in debugging
+     * scenarios.
+     *
+     * @param parent SWT parent <code>Composite</code>
+     * @param style SWT style as in <code>Canvas</code>, since this class inherits from it. Double buffering is always enabed.
+     */
     public GeoMap(Composite parent, int style) {
         this(parent, style, new Point(275091, 180145), 11);
     }
-    
+
+    /**
+     * Creates a new <code>GeoMap</code> using the {@link GeoMap#DEFAULT_CACHE_SIZE} size
+     * for its internal cache of tiles
+     * @param parent SWT parent <code>Composite</code>
+     * @param style SWT style as in <code>Canvas</code>, since this class inherits from it. Double buffering is always enabed.
+     * @param mapPosition initial mapPosition.
+     * @param zoom initial map zoom
+     */
     public GeoMap(Composite parent, int style, Point mapPosition, int zoom) {
+	this(parent, style, mapPosition, zoom, DEFAULT_CACHE_SIZE);
+    }
+
+    /**
+     * Creates a new <code>GeoMap</code> using the {@link GeoMap#DEFAULT_CACHE_SIZE} size
+     * for its internal cache of tiles
+     * @param parent SWT parent <code>Composite</code>
+     * @param style SWT style as in <code>Canvas</code>, since this class inherits from it. Double buffering is always enabed.
+     * @param mapPosition initial mapPosition.
+     * @param zoom initial map zoom
+     * @param cacheSize initial cache size, eg number of tile-images that are kept in cache
+     * to prevent reloading from the network.
+     */
+    public GeoMap(Composite parent, int style, Point mapPosition, int zoom, int cacheSize) {
+
         super(parent, SWT.DOUBLE_BUFFERED | style);
+        this.cacheSize = cacheSize;
         waitBackground = new Color(getDisplay(), 0x88, 0x88, 0x88);
         waitForeground = new Color(getDisplay(), 0x77, 0x77, 0x77);
-        
+
         setZoom(zoom);
         addDisposeListener(new DisposeListener() {
             public void widgetDisposed(DisposeEvent e) {
@@ -433,10 +512,17 @@ public class GeoMap extends Canvas {
         addMouseTrackListener(mouseListener);
         /// TODO: check tileservers
     }
-    
+
+    /**
+	 * @return Returns the cacheSize.
+	 */
+	public int getCacheSize() {
+		return cacheSize;
+	}
+
     protected void paintControl(PaintEvent e) {
         GC gc = e.gc;
-        
+
         getStats().reset();
         long t0 = System.currentTimeMillis();
         Point size = getSize();
@@ -648,23 +734,31 @@ public class GeoMap extends Canvas {
         int y = lat2position(coords.y, getZoom());
         return new Point(x, y);
     }
-    
+
     //-------------------------------------------------------------------------
-    // utils
+    // utils, there are important when using the GeoMap
+
     public static String format(double d) {
         return String.format("%.5f", d);
     }
 
-    public static double getN(int y, int z) {
-        double n = Math.PI - (2.0 * Math.PI * y) / Math.pow(2.0, z);
-        return n;
-    }
-
+    /**
+     * Converts position to longitude.
+     * @param x position x coord (pixels in this swt control)
+     * @param z the current zoom level.
+     * @return the longitude
+     */
     public static double position2lon(int x, int z) {
         double xmax = TILE_SIZE * (1 << z);
         return x / xmax * 360.0 - 180;
     }
 
+    /**
+     * Converts position to latitude.
+     * @param y position y coord (pixels in this swt control)
+     * @param z the current zoom level.
+     * @return the latitude
+     */
     public static double position2lat(int y, int z) {
         double ymax = TILE_SIZE * (1 << z);
         return Math.toDegrees(Math.atan(Math.sinh(Math.PI - (2.0 * Math.PI * y) / ymax)));

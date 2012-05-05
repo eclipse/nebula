@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.Shell;
 public class GeoMapBrowser extends Composite {
     private SashForm sashForm;
     private PageContainer pageContainer;
-    private GeoMap mapWidget;
+    private GeoMap geoMap;
     private SearchPage searchPage;
     private ResultsPage resultsPage;
     private InfoPage infoPage;
@@ -53,37 +53,37 @@ public class GeoMapBrowser extends Composite {
         sashForm.setLayout(new FillLayout());
 
         pageContainer = new PageContainer(sashForm, SWT.NONE);
-        mapWidget = new GeoMap(sashForm, SWT.NONE);
-        
+        geoMap = new GeoMap(sashForm, SWT.NONE);
+
         sashForm.setWeights(new int[] { 100, 200 });
-         
+
         searchPage = new SearchPage(this);
         resultsPage = new ResultsPage(this);
         infoPage = new InfoPage(this);
         pageContainer.setPages(searchPage, resultsPage, infoPage);
         pageContainer.showPage(0);
-        
-        mapWidget.addPropertyChangeListener(new PropertyChangeListener() {
+
+        geoMap.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent event) {
                 infoPage.updateInfos();
             }
         });
-        mapWidget.addControlListener(new ControlAdapter() {
+        geoMap.addControlListener(new ControlAdapter() {
             public void controlResized(ControlEvent e) {
                 infoPage.updateInfos();
             }
         });
-        mapWidget.addMouseMoveListener(new MouseMoveListener() {
+        geoMap.addMouseMoveListener(new MouseMoveListener() {
             public void mouseMove(MouseEvent e) {
                 infoPage.updateInfos();
             }
         });
     }
-    
-    public GeoMap getMapWidget() {
-        return mapWidget;
+
+    public GeoMap getGeoMap() {
+        return geoMap;
     }
-    
+
     public SearchPage getSearchPage() {
         return searchPage;
     }
