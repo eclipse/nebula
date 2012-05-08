@@ -390,7 +390,7 @@ public abstract class AbstractExampleTab {
 
 		final Button hFillB = new Button(parent, SWT.CHECK);
 		hFillB.setText("Horizontal Fill");
-		hFill = getHorizontalFill();
+		hFill = getInitialHorizontalFill();
 		hFillB.setSelection(hFill);
 		hFillB.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
@@ -401,7 +401,7 @@ public abstract class AbstractExampleTab {
 
 		final Button vFillB = new Button(parent, SWT.CHECK);
 		vFillB.setText("Vertical Fill");
-		vFill = getVerticalFill();
+		vFill = getInitialVerticalFill();
 		vFillB.setSelection(vFill);
 		vFillB.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
@@ -412,22 +412,22 @@ public abstract class AbstractExampleTab {
 	}
 
 	/**
-	 * Gets the default value for horizontal fill, subclasses may override.
+	 * Gets the initial value for horizontal fill, subclasses may override.
 	 * 
 	 * @return <code>true</code> if the horizontal fill flag must be set the
 	 *         default is <code>false</code>
 	 */
-	public boolean getHorizontalFill() {
+	public boolean getInitialHorizontalFill() {
 		return false;
 	}
 
 	/**
-	 * Gets the default value for vertical fill, subclasses may override.
+	 * Gets the initial  value for vertical fill, subclasses may override.
 	 * 
 	 * @return <code>true</code> if the vertical fill flag must be set the
 	 *         default is <code>false</code>
 	 */
-	public boolean getVerticalFill() {
+	public boolean getInitialVerticalFill() {
 		return false;
 	}
 
