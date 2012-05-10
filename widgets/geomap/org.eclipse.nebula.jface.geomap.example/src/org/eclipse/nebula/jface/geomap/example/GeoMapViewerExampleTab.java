@@ -11,23 +11,14 @@ package org.eclipse.nebula.jface.geomap.example;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.nebula.examples.AbstractExampleTab;
 import org.eclipse.nebula.jface.geomap.GeoMapViewer;
-import org.eclipse.nebula.jface.geomap.GoogleIconDescriptor;
+import org.eclipse.nebula.jface.geomap.LabelImageProvider;
 import org.eclipse.nebula.jface.geomap.LocationProvider;
-import org.eclipse.nebula.jface.geomap.PinPointProvider;
 import org.eclipse.nebula.widgets.geomap.PointD;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
@@ -40,20 +31,19 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 
 	private GeoMapViewer geoMapViewer;
 
+	private static Options options = new Options();
+	static {
+		options.controlLayoutHorizontalFill = Boolean.TRUE;
+		options.controlLayoutVerticalFill = Boolean.TRUE;
+	}
+
 	public GeoMapViewerExampleTab() {
+		super(options);
 	}
 
 	public Control createControl(Composite parent) {
 		geoMapViewer = new GeoMapViewer(parent, SWT.NONE);
 		configureMapViewer();
-		geoMapViewer.getControl().addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				if (imageRegistry != null) {
-					imageRegistry.dispose();
-				}
-			}
-		});
 		return geoMapViewer.getControl();
 	}
 
@@ -89,23 +79,29 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 		});
 	}
 	
-	private ImageRegistry imageRegistry;
-	
-	private ImageRegistry getImageRegistry() {
-		if (imageRegistry == null) {
-			imageRegistry = new ImageRegistry();
-			imageRegistry.put("Gl¿shaugen", GoogleIconDescriptor.letterPin('G', false, new RGB(180,   0, 0)));
-			imageRegistry.put("Dragvoll", 	GoogleIconDescriptor.letterPin('D', false, new RGB(  0, 180, 0)));
+	private static class ContributorLocation {
+		public final String name;
+		public final PointD location;
+		public final String locationText;
+		public ContributorLocation(String name, PointD location, String locationText) {
+			super();
+			this.name = name;
+			this.location = location;
+			this.locationText = locationText;
 		}
-		return imageRegistry;
 	}
-
-	private String[] locationNames = {"Gl¿shaugen", "Dragvoll"};
-	private PointD[] locationPoints = {new PointD(10.40272, 63.41861), new PointD(10.46976, 63.40857)}; 
+	
+	private ContributorLocation[] contributorLocations = {
+			new ContributorLocation("Hallvard Traetteberg", new PointD(10.33,63.45), 	"Trondheim, Norway"),
+			new ContributorLocation("Stepan Rutz",		 	new PointD(6.78,50.93), 	"Frechen, Germany"),
+			new ContributorLocation("Wim Jongman", 			new PointD(4.61,52.4), 		"Haarlem, Netherlands"),
+			new ContributorLocation("Dirk Fauth", 			new PointD(8.94,48.89), 	"Stuttgart, Germany"),
+			new ContributorLocation("Tom Schindl", 			new PointD(11.36,47.28), 	"Innsbruck, Austria"), 
+	};
 	
 	private int indexOfLocation(Object element) {
-		for (int i = 0; i < locationNames.length; i++) {
-			if (element.equals(locationNames[i])) {
+		for (int i = 0; i < contributorLocations.length; i++) {
+			if (element == contributorLocations[i]) {
 				return i;
 			}
 		}
@@ -113,42 +109,33 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 	}
 	
 	private void configureMapViewer() {
-		geoMapViewer.setContentProvider(new IStructuredContentProvider() {
-			public Object[] getElements(Object inputElement) {
-				return locationNames;
-			}
-			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
-			public void dispose() {}
-		});
-		final ImageRegistry imageRegistry = getImageRegistry();
-		geoMapViewer.setLabelProvider(new PinPointProvider() {
+		geoMapViewer.setLabelProvider(new LabelImageProvider() {
 			@Override
-			public Image getImage(Object element) {
-				return imageRegistry.get(element.toString());
+			public String getText(Object element) {
+				return ((ContributorLocation) element).name;
 			}
 			@Override
-			public Point getPinPoint(Object element) {
-				return getPinPoint(element, 0.5f, 1.0f);
+			public Object getToolTip(Object element) {
+				if (element instanceof ContributorLocation) {
+					ContributorLocation contributorLocation = (ContributorLocation) element;
+					return contributorLocation.name + " @ " + contributorLocation.locationText;
+				}
+				return null;
 			}
 		});
 		geoMapViewer.setLocationProvider(new LocationProvider() {
 			public PointD getLonLat(Object element) {
 				int pos = indexOfLocation(element);
-				return pos >= 0 ? locationPoints[pos] : null;
+				return pos >= 0 ? contributorLocations[pos].location : null;
 			}
 			public boolean setLonLat(Object element, double lon, double lat) {
-				int pos = indexOfLocation(element);
-				if (pos > 0) {
-					locationPoints[pos] = new PointD(lon, lat);
-					return true;
-				}
 				return false;
 			}
 		});
-		geoMapViewer.getGeoMap().setZoom(13);
-		geoMapViewer.getGeoMap().getDisplay().asyncExec(new Runnable() {
+		geoMapViewer.setContentProvider(new ArrayContentProvider());
+		geoMapViewer.getControl().getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				geoMapViewer.setSelection(new StructuredSelection("Gl¿shaugen"), true);
+				geoMapViewer.setInput(contributorLocations);
 			}
 		});
 	}
