@@ -19,11 +19,17 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.window.DefaultToolTip;
+import org.eclipse.jface.window.ToolTip;
 import org.eclipse.nebula.widgets.geomap.GeoMap;
 import org.eclipse.nebula.widgets.geomap.PointD;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
@@ -32,6 +38,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 
 /**
  * A JFace viewer for the GeoMap widget
@@ -55,10 +62,18 @@ public class GeoMapViewer extends ContentViewer {
 	 */
 	public GeoMapViewer(GeoMap geoMap) {
 		this.geoMap = geoMap;
-		setMouseHandler(new MovePinMouseHandler(geoMap));
+		hookControl(geoMap);
+		setMouseHandler(new MovePinMouseHandler(this));
 		geoMap.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
 				paintOverlay(e);
+			}
+		});
+		geoMap.addKeyListener(new KeyAdapter() {
+			public void keyReleased(KeyEvent e) {
+				switch (e.keyCode) {
+				case SWT.ESC: revealAll(); break;
+				}
 			}
 		});
 	}
@@ -85,11 +100,27 @@ public class GeoMapViewer extends ContentViewer {
 	 * @param flags the SWT options
 	 */
 	public GeoMapViewer(Composite parent, int flags) {
-		this(new GeoMap(parent, flags));
+		this(new GeoMap(parent, flags) {
+			@Override
+			public Point computeSize(int wHint, int hHint) {
+				int w = (wHint != SWT.DEFAULT ? wHint : Integer.MAX_VALUE);
+				int h = (hHint != SWT.DEFAULT ? hHint : Integer.MAX_VALUE);
+				return new Point(w, h);
+			}
+		});
 	}
 
 	@Override
 	protected void handleDispose(DisposeEvent event) {
+		setMouseHandler(null);
+		if (lastToolTip != null) {
+			lastToolTip.deactivate();
+			lastToolTip = null;
+		}
+		if (toolTip != null) {
+			toolTip.deactivate();
+			toolTip = null;
+		}
 		super.handleDispose(event);
 	}
 
@@ -124,13 +155,16 @@ public class GeoMapViewer extends ContentViewer {
 		}
 	}
 
-	private Object doContents(GC gc, Rectangle contain, Object selection) {
-		//		System.out.println(mapWidget.getMapPosition() + "/" + mapWidget.getCenterPosition() + "@" + mapWidget.getZoom());
+	private Object[] getElements() {
 		IContentProvider contentProvider = getContentProvider();
-		Object[] contents = (contentProvider instanceof IStructuredContentProvider ? ((IStructuredContentProvider) contentProvider).getElements(getInput()) : null);
-		if (contents != null && getLocationProvider() != null) {
-			for (int i = 0; i < contents.length; i++) {
-				Object element = contents[i];
+		return contentProvider instanceof IStructuredContentProvider ? ((IStructuredContentProvider) contentProvider).getElements(getInput()) : null;
+	}
+	
+	private Object doContents(GC gc, Rectangle contain, Object selection) {
+		Object[] elements = getElements();
+		if (elements != null && getLocationProvider() != null) {
+			for (int i = 0; i < elements.length; i++) {
+				Object element = elements[i];
 				Object found = doContent(element, gc, contain, selection);
 				if (found != null) {
 					return found;
@@ -140,6 +174,10 @@ public class GeoMapViewer extends ContentViewer {
 		return null;
 	}
 
+	public Object getElementAt(int x, int y, int thumbSize) {
+		return doContents(null, new Rectangle(x - thumbSize / 2, y - thumbSize / 2, thumbSize, thumbSize), null);
+	}
+	
 	private Object doContent(Object element, GC gc, Rectangle contain, Object selection) {
 		Point p = getElementPosition(element, null, true, true);
 		if (p == null) {
@@ -237,16 +275,20 @@ public class GeoMapViewer extends ContentViewer {
 		}
 	}
 
-	private int centerOnSelectionMargin = 10;
+	private int revealMargin = 10;
 
-	private void reveal(Object selection, boolean center) {
+	public void reveal(Object selection, boolean center) {
 		Point position = getElementPosition(selection, new Point(0, 0), true, false);
 		Point size = geoMap.getSize();
-		Rectangle insideMargin = new Rectangle(centerOnSelectionMargin, centerOnSelectionMargin, size.x - centerOnSelectionMargin, size.y - centerOnSelectionMargin);
+		Rectangle insideMargin = new Rectangle(revealMargin, revealMargin, size.x - revealMargin, size.y - revealMargin);
 		if (position != null && (center || (! insideMargin.contains(position)))) {
 			Point mapPosition = geoMap.getMapPosition();
 			geoMap.setCenterPosition(new Point(position.x + mapPosition.x, position.y + mapPosition.y));
 		}
+	}
+
+	public void revealAll() {
+		zoomTo(((IStructuredContentProvider) getContentProvider()).getElements(getInput()));
 	}
 
 	private void setSelection(Object selection) {
@@ -271,33 +313,40 @@ public class GeoMapViewer extends ContentViewer {
 		return moveSelectionMode;
 	}
 
+	private ToolTip toolTip, lastToolTip;
+
+	public ToolTip getToolTip() {
+		if (toolTip == null) {
+			toolTip = new DefaultToolTip(getControl());
+		}
+		return toolTip;
+	}
+	
+	private int thumbSize = 7;
+
 	private class MovePinMouseHandler extends DefaultMouseHandler {
 
-		MovePinMouseHandler(GeoMap geoMap) {
-			super(geoMap);
+		
+		MovePinMouseHandler(GeoMapViewer geoMapViewer) {
+			super(geoMapViewer);
 		}
 
-		private int thumbSize = 7;
-
-		private Rectangle createPointRectangle(int x, int y) {
-			return new Rectangle(x - thumbSize / 2, y - thumbSize / 2, thumbSize, thumbSize);
-		}
 
 		protected boolean isPanDownEvent(MouseEvent e) {
-			return super.isPanDownEvent(e) && doContents(null, createPointRectangle(e.x, e.y), null) == null;
+			return super.isPanDownEvent(e) && getElementAt(e.x, e.y, thumbSize) == null;
 		}
 
 		protected boolean handleDown(MouseEvent e) {
 			boolean redraw = super.handleDown(e);
-			Object contains = doContents(null, createPointRectangle(e.x, e.y), null);
-			if (contains != null) {
+			Object element = getElementAt(e.x, e.y, thumbSize);
+			if (element != null) {
 				selectionOffset = new Point(0, 0);
-				PointD lonLat = getLocationProvider().getLonLat(contains);
+				PointD lonLat = getLocationProvider().getLonLat(element);
 				if (moveSelectionMode == MOVE_SELECTION_NONE ||
-					(moveSelectionMode == MOVE_SELECTION_ALLOW_CHECK_IMMEDIATE && (! getLocationProvider().setLonLat(contains, lonLat.x, lonLat.y)))) {
+					(moveSelectionMode == MOVE_SELECTION_ALLOW_CHECK_IMMEDIATE && (! getLocationProvider().setLonLat(element, lonLat.x, lonLat.y)))) {
 					selectionOffset = null;
 				}
-				setSelection(contains);
+				setSelection(element);
 				redraw = true;
 			}
 			return redraw;
@@ -330,4 +379,93 @@ public class GeoMapViewer extends ContentViewer {
 			return redraw;
 		}
 	}
+
+	void handleToolTip(Event e) {		handleToolTip(e.x, e.y);}
+	void handleToolTip(MouseEvent e) {	handleToolTip(e.x, e.y);}
+
+	private void handleToolTip(int x, int y) {
+		if (getLabelProvider() instanceof IToolTipProvider) {
+//			DefaultToolTip toolTip = (DefaultToolTip) getToolTip();
+			Object element = getElementAt(x, y, thumbSize);
+			Object toolTip = ((IToolTipProvider) getLabelProvider()).getToolTip(element);
+			if (toolTip instanceof String) {
+				if (getToolTip() instanceof DefaultToolTip) {
+					DefaultToolTip defaultToolTip = (DefaultToolTip) getToolTip();
+					defaultToolTip.setText((String) toolTip);
+					toolTip = defaultToolTip;
+				}
+			}
+			if (lastToolTip != toolTip) {
+				if (lastToolTip != null) {
+					lastToolTip.deactivate();
+				}
+				lastToolTip = (ToolTip) toolTip;
+				if (lastToolTip != null) {
+					lastToolTip.activate();
+				}
+			}
+		}
+	}
+
+    public void zoomTo(Rectangle rect) {
+    	Rectangle zoomRectangle = new Rectangle(rect.x, rect.y, rect.width, rect.height);
+    	Point mapSize = getGeoMap().getSize();
+    	Point pivot = new Point(0, 0);
+		do {
+			// pivot on center of zoom rectangle
+			getGeoMap().zoomOut(pivot);
+			// scale zoom rectangle down, to match zoom level
+			zoomRectangle.x /= 2;
+			zoomRectangle.y /= 2;
+			zoomRectangle.width /= 2;
+			zoomRectangle.height /= 2;
+		} while (Math.min(mapSize.x / (zoomRectangle.width + revealMargin), mapSize.y / (zoomRectangle.height + revealMargin)) < 1);
+
+		while (Math.min(mapSize.x / (zoomRectangle.width + revealMargin), mapSize.y / (zoomRectangle.height + revealMargin)) > 1) {
+			// pivot on center of zoom rectangle
+			getGeoMap().zoomIn(pivot);
+			// scale zoom rectangle up, to match zoom level
+			zoomRectangle.x *= 2;
+			zoomRectangle.y *= 2;
+			zoomRectangle.width *= 2;
+			zoomRectangle.height *= 2;
+		}
+		getGeoMap().setMapPosition(zoomRectangle.x + (zoomRectangle.width - mapSize.x) / 2, zoomRectangle.y + (zoomRectangle.height - mapSize.y) / 2);
+    }
+    
+    private Rectangle getBounds(Object[] elements) {
+    	Rectangle rect = null;
+    	for (int i = 0; i < elements.length; i++) {
+			PointD location = getLocationProvider().getLonLat(elements[i]);
+			if (location == null) {
+				continue;
+			}
+			Point position = this.geoMap.computePosition(location);
+			if (rect == null) {
+				rect = new Rectangle(position.x, position.y, 1, 1);
+			} else {
+				if (position.x < rect.x) {
+					rect.width += rect.x - position.x;
+					rect.x = position.x;
+				} else if (position.x > rect.x + rect.width) {
+					rect.width = position.x - rect.x;
+				}
+				if (position.y < rect.y) {
+					rect.height += rect.y - position.y;
+					rect.y = position.y;
+				} else if (position.y > rect.y + rect.height) {
+					rect.height = position.y - rect.y;
+				}
+			}
+		}
+    	return rect;
+    }
+    
+    public void zoomTo(Object[] elements) {
+    	Rectangle rect = getBounds(elements);
+    	if (rect == null) {
+    		return;
+    	}
+    	zoomTo(rect);
+    }
 }
