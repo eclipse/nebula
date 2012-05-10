@@ -12,8 +12,10 @@ package org.eclipse.nebula.jface.geomap;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -31,59 +33,82 @@ import org.eclipse.swt.graphics.RGB;
  */
 public class GoogleIconDescriptor extends ImageDescriptor {
 
-	private String iconClass, iconName, style;
-	private boolean hasShadow;
-	private String text;
-	private RGB fillColor = new RGB(0, 255, 0), textColor = new RGB(0, 0, 0);
+	public static class Options {
 
-	public GoogleIconDescriptor(String iconClass, String iconName,
-			String style, boolean hasShadow, String text, RGB fillColor,
-			RGB textColor) {
-		super();
-		this.iconClass = iconClass;
-		this.iconName = iconName;
-		this.style = style;
-		this.hasShadow = hasShadow;
-		this.text = text;
-		this.fillColor = fillColor;
-		this.textColor = textColor;
+		private String iconClass, iconName, style;
+		private boolean hasShadow;
+		private String text;
+		private RGB fillColor, textColor;
+
+		public Options(String iconClass, String iconName,
+				String style, boolean hasShadow, String text, RGB fillColor,
+				RGB textColor) {
+			super();
+			setOptions(iconClass, iconName, style, hasShadow, text, fillColor,
+					textColor);
+		}
+
+		private void setOptions(String iconClass, String iconName,
+				String style, boolean hasShadow, String text, RGB fillColor,
+				RGB textColor) {
+			this.iconClass = iconClass;
+			this.iconName = iconName;
+			this.style = style;
+			this.hasShadow = hasShadow;
+			this.text = text;
+			this.fillColor = fillColor;
+			this.textColor = textColor;
+		}
+
+		public Options(Options options) {
+			setOptions(options.iconClass, options.iconName, options.style, options.hasShadow, options.text, options.fillColor, options.textColor);
+		}
 	}
 	
-	public GoogleIconDescriptor(String iconClass, String iconName,
-			String style, boolean hasShadow, String text) {
-		this.iconClass = iconClass;
-		this.iconName = iconName;
-		this.style = style;
-		this.hasShadow = hasShadow;
-		this.text = text;
-	}
+	private Options options;
 
+	public GoogleIconDescriptor(Options options) {
+		this.options = options;
+	}
+	
 	private static String baseUrl = "https://chart.googleapis.com/chart?";
 	private static String argsSep = "|";
 	
 	@Override
-	public ImageData getImageData() {
-		String chst = this.iconClass;
-		if (hasShadow) {
+	public String toString() {
+		return "[GoogleIconDescriptor @ " + getUrlString() + "]";
+	}
+	
+	public String getUrlString() {
+		String chst = options.iconClass;
+		if (options.hasShadow) {
 			chst += "_withshadow";
 		}
-		Object[] args = {iconName, style, text, toHex(fillColor), toHex(textColor)};
+		Object[] args = {options.iconName, options.style, options.text, toHex(options.fillColor), toHex(options.textColor)};
 		StringBuilder chld = new StringBuilder();
 		for (int i = 0; i < args.length; i++) {
 			if (args[i] != null) {
 				if (chld.length() > 0) {
 					chld.append(argsSep);
 				}
-				chld.append(args[i]);
+				try {
+					chld.append(URLEncoder.encode(args[i].toString(), "utf-8"));
+				} catch (UnsupportedEncodingException e) {
+				}
 			}
 		}
+		return baseUrl + "chst=" + chst + "&chld=" + chld;
+	}
+
+	@Override
+	public ImageData getImageData() {
 		try {
-			return getImageData(baseUrl + "chst=" + chst + "&chld=" + chld);
+			return getImageData(getUrlString());
 		} catch (Exception e) {
 			return null;
 		}
 	}
-
+	
 	private String toHex(RGB rgb) {
 		return String.format("%02x%02x%02x", rgb.red, rgb.green, rgb.blue);
 	}
@@ -91,7 +116,6 @@ public class GoogleIconDescriptor extends ImageDescriptor {
 	public ImageData getImageData(String urlString) {
 		InputStream inputStream = null;
 		try {
-			System.out.println(urlString);
 			inputStream = new URL(urlString).openStream();
 			return new ImageData(inputStream);
 		} catch (MalformedURLException e) {
@@ -139,8 +163,8 @@ public class GoogleIconDescriptor extends ImageDescriptor {
 	public final static String frame_style_edge_rb = "edge_rb";
 	
 	public static GoogleIconDescriptor letterPin(char c, boolean hasShadow, RGB fillColor, RGB textColor)
-	{ return new GoogleIconDescriptor(icon_map_pin_letter, null, null, hasShadow, String.valueOf(c), fillColor, textColor);}
+	{ return new GoogleIconDescriptor(new Options(icon_map_pin_letter, null, null, hasShadow, String.valueOf(c), fillColor, textColor));}
 
-	public static GoogleIconDescriptor letterPin(char c, boolean hasShadow, RGB fillColor)
-	{ return letterPin(c, hasShadow, fillColor, new RGB(0, 0, 0));}
+	public static GoogleIconDescriptor textBubble(String s, boolean hasShadow, RGB fillColor, RGB textColor)
+	{ return new GoogleIconDescriptor(new Options(icon_bubble_text_small, null, frame_style_bb, hasShadow, s, fillColor, textColor));}
 }
