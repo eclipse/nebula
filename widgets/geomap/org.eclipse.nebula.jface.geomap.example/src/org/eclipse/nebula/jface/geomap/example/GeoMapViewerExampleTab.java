@@ -31,16 +31,6 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 
 	private GeoMapViewer geoMapViewer;
 
-	private static Options options = new Options();
-	static {
-		options.controlLayoutHorizontalFill = Boolean.TRUE;
-		options.controlLayoutVerticalFill = Boolean.TRUE;
-	}
-
-	public GeoMapViewerExampleTab() {
-		super(options);
-	}
-
 	public Control createControl(Composite parent) {
 		geoMapViewer = new GeoMapViewer(parent, SWT.NONE);
 		configureMapViewer();
@@ -79,6 +69,16 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 		});
 	}
 	
+	@Override
+	public boolean getInitialHorizontalFill() {
+		return true;
+	}
+
+	@Override
+	public boolean getInitialVerticalFill() {
+		return true;
+	}
+
 	private static class ContributorLocation {
 		public final String name;
 		public final PointD location;
