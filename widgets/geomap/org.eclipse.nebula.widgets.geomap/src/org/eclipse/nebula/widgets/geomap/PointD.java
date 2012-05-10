@@ -35,4 +35,10 @@ public final class PointD {
         this.x = x;
         this.y = y;
     }
+    
+	@Override
+	@SuppressWarnings("nls")
+    public String toString() {
+    	return "PointD {" + x + ", " + y + "}";
+    }
 }
