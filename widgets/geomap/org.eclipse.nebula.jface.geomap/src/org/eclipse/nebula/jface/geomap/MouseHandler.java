@@ -19,6 +19,8 @@ import org.eclipse.swt.events.MouseWheelListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 
 /**
  * Handles mouse interaction, on behalf of a GeoMapViewer. Makes it easier to customize the viewer.
@@ -28,29 +30,38 @@ import org.eclipse.swt.graphics.Point;
  */
 class MouseHandler implements MouseListener, MouseMoveListener, MouseTrackListener, MouseWheelListener, PaintListener {
 
-	protected final GeoMap geoMap;
+	protected final GeoMapViewer geoMapViewer;
 
 	/**
 	 * @param geoMap
 	 */
-	MouseHandler(GeoMap geoMap) {
-		this.geoMap = geoMap;
+	MouseHandler(GeoMapViewer geoMapViewer) {
+		this.geoMapViewer = geoMapViewer;
+	}
+	
+	protected GeoMap getGeoMap() {
+		return this.geoMapViewer.getGeoMap();
 	}
 
     public void mouseEnter(MouseEvent e) {
-        this.geoMap.forceFocus();
+        getGeoMap().forceFocus();
     }
+
     public void mouseExit(MouseEvent e) {
     }
 
     protected Point dragCoords;
     protected Point downCoords;
     
+    protected void redraw() {
+    	getGeoMap().redraw();
+    }
+    
     public final void mouseDown(MouseEvent e) {
     	dragCoords = new Point(e.x, e.y);
     	downCoords = new Point(e.x, e.y);
     	if (handleDown(e)) {
-    		this.geoMap.redraw();
+    		redraw();
     	}
     }
 
@@ -59,14 +70,14 @@ class MouseHandler implements MouseListener, MouseMoveListener, MouseTrackListen
         	dragCoords.x = e.x;
         	dragCoords.y = e.y;
         	if (handleDrag(e)) {
-        		this.geoMap.redraw();
+        		redraw();
         	}
         }
     }
     
     public final void mouseUp(MouseEvent e) {
     	if (handleUp(e)) {
-    		this.geoMap.redraw();
+    		redraw();
     	}
     	downCoords = null;
     	dragCoords = null;
@@ -85,6 +96,7 @@ class MouseHandler implements MouseListener, MouseMoveListener, MouseTrackListen
     // stubs
 
     public void mouseHover(MouseEvent e) {
+    	geoMapViewer.handleToolTip(e);
     }
     
     public void mouseDoubleClick(MouseEvent e) {

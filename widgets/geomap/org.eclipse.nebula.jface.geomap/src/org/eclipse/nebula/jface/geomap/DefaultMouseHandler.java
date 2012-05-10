@@ -10,7 +10,6 @@
  ******************************************************************************/
 package org.eclipse.nebula.jface.geomap;
 
-import org.eclipse.nebula.widgets.geomap.GeoMap;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.PaintEvent;
@@ -19,8 +18,8 @@ import org.eclipse.swt.graphics.Rectangle;
 
 public class DefaultMouseHandler extends MouseHandler {
 
-	public DefaultMouseHandler(GeoMap geoMap) {
-		super(geoMap);
+	public DefaultMouseHandler(GeoMapViewer geoMapViewer) {
+		super(geoMapViewer);
 	}
 
 	private Point downPosition = null;
@@ -28,13 +27,13 @@ public class DefaultMouseHandler extends MouseHandler {
 	
     @Override
     protected boolean handleDown(MouseEvent e) {
-    	downPosition = this.geoMap.getMapPosition();
+    	downPosition = this.getGeoMap().getMapPosition();
         if (isPanning = isPanDownEvent(e)) {
         }
         if (isZooming = isZoomDownEvent(e)) {
         }
         if (isCenterDownEvent(e)) {
-        	this.geoMap.setCenterPosition(this.geoMap.getCursorPosition());
+        	getGeoMap().setCenterPosition(this.getGeoMap().getCursorPosition());
         	return true;
         }
         return false;
@@ -45,18 +44,18 @@ public class DefaultMouseHandler extends MouseHandler {
     @Override
     protected boolean handleDrag(MouseEvent e) {
     	// undo the effect of MapWidget's own panning
-    	this.geoMap.setMapPosition(downPosition.x, downPosition.y);
+    	getGeoMap().setMapPosition(downPosition.x, downPosition.y);
     	// do our own panning
     	if (isPanning && downPosition != null) {
     		int tx = downCoords.x - e.x;
     		int ty = downCoords.y - e.y;
-    		this.geoMap.setMapPosition(downPosition.x + tx, downPosition.y + ty);
+    		getGeoMap().setMapPosition(downPosition.x + tx, downPosition.y + ty);
     		return true;
     	}
     	if (isZooming && downCoords != null && dragCoords != null) {
     		int minX = Math.min(downCoords.x, dragCoords.x), minY = Math.min(downCoords.y, dragCoords.y);
     		int maxX = Math.max(downCoords.x, dragCoords.x), maxY = Math.max(downCoords.y, dragCoords.y);
-    		Point mapPosition = this.geoMap.getMapPosition();
+    		Point mapPosition = getGeoMap().getMapPosition();
     		zoomRectangle = new Rectangle(mapPosition.x + minX, mapPosition.y + minY, maxX - minX, maxY - minY);
     		return true;
     	}
@@ -67,7 +66,7 @@ public class DefaultMouseHandler extends MouseHandler {
 	public void paintControl(PaintEvent e) {
 		super.paintControl(e);
 		if (zoomRectangle != null) {
-			Point mapPosition = this.geoMap.getMapPosition();
+			Point mapPosition = getGeoMap().getMapPosition();
 			e.gc.drawRectangle(zoomRectangle.x - mapPosition.x, zoomRectangle.y - mapPosition.y, zoomRectangle.width, zoomRectangle.height);
 		}
 	}
@@ -77,18 +76,8 @@ public class DefaultMouseHandler extends MouseHandler {
         if (e.count == 1) {
         	handleDrag(e);
         }
-    	if (isZooming && downCoords != null) {
-    		Point mapSize = this.geoMap.getSize();
-    		int diff = Math.min(mapSize.x / zoomRectangle.width, mapSize.y / zoomRectangle.height);
-    		while (diff > 1) {
-    			Point mapPosition = this.geoMap.getMapPosition();
-    			// pivot on center of zoom rectangle
-    			Point pivot = new Point(zoomRectangle.x - mapPosition.x + zoomRectangle.width / 2, zoomRectangle.y - mapPosition.y + zoomRectangle.height / 2);
-				this.geoMap.zoomIn(pivot);
-				// scale zoom rectangle up, to match zoom level
-				zoomRectangle = new Rectangle(zoomRectangle.x * 2, zoomRectangle.y * 2, zoomRectangle.width * 2, zoomRectangle.height * 2);
-    			diff /= 2;
-    		}
+    	if (isZooming && downCoords != null && zoomRectangle.width > 0 && zoomRectangle.height > 0) {
+    		this.geoMapViewer.zoomTo(zoomRectangle);
     	}
         downPosition = null;
         isPanning = false;
