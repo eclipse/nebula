@@ -27,9 +27,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
@@ -100,14 +98,7 @@ public class GeoMapViewer extends ContentViewer {
 	 * @param flags the SWT options
 	 */
 	public GeoMapViewer(Composite parent, int flags) {
-		this(new GeoMap(parent, flags) {
-			@Override
-			public Point computeSize(int wHint, int hHint) {
-				int w = (wHint != SWT.DEFAULT ? wHint : Integer.MAX_VALUE);
-				int h = (hHint != SWT.DEFAULT ? hHint : Integer.MAX_VALUE);
-				return new Point(w, h);
-			}
-		});
+		this(new GeoMap(parent, flags));
 	}
 
 	@Override
@@ -178,10 +169,27 @@ public class GeoMapViewer extends ContentViewer {
 		return doContents(null, new Rectangle(x - thumbSize / 2, y - thumbSize / 2, thumbSize, thumbSize), null);
 	}
 	
+	public static int NO_CLIP = 0, CLIP_ON_ELEMENT_POSITION = 1, CLIP_ON_IMAGE_BOUNDS = 2;
+
+	private int clipRule = CLIP_ON_ELEMENT_POSITION;
+	
+	public void setClipRule(int clipRule) {
+		this.clipRule = clipRule;
+	}
+
 	private Object doContent(Object element, GC gc, Rectangle contain, Object selection) {
-		Point p = getElementPosition(element, null, true, true);
+		Point p = getElementPosition(element, null, true);
 		if (p == null) {
 			return null;
+		}
+		if (gc != null && clipRule == CLIP_ON_ELEMENT_POSITION) {
+			if (p.x < 0 || p.y < 0) {
+				return null;
+			}
+			Point size = geoMap.getSize();
+			if (p.x > size.x || p.y > size.y) {
+				return null;
+			}
 		}
 		IBaseLabelProvider labelProvider = getLabelProvider();
 		Image image = null;
@@ -196,15 +204,29 @@ public class GeoMapViewer extends ContentViewer {
 		Rectangle bounds = image.getBounds();
 		bounds.x = p.x;
 		bounds.y = p.y;
-		if (gc != null) {
-			boolean isSelected = selection != null && element == selection;
-			if (isSelected && selectionOffset != null) {
-				bounds.x += selectionOffset.x;
-				bounds.y += selectionOffset.y;
+		if (labelProvider instanceof IPinPointProvider) {
+			Point pinPoint = ((IPinPointProvider) labelProvider).getPinPoint(element);
+			if (pinPoint != null) {
+				bounds.x -= pinPoint.x;
+				bounds.y -= pinPoint.y;
 			}
-			gc.drawImage(image, bounds.x, bounds.y);
-			if (isSelected) {
-				gc.drawRectangle(bounds.x, bounds.y, bounds.width, bounds.height);
+		}
+		if (gc != null) {
+			boolean shouldClip = false;
+			if (clipRule == CLIP_ON_IMAGE_BOUNDS) {
+				Point size = geoMap.getSize();
+				shouldClip = ! bounds.intersects(0,  0, size.x, size.y);
+			}
+			if (! shouldClip) {
+				boolean isSelected = selection != null && element == selection;
+				if (isSelected && selectionOffset != null) {
+					bounds.x += selectionOffset.x;
+					bounds.y += selectionOffset.y;
+				}
+				gc.drawImage(image, bounds.x, bounds.y);
+				if (isSelected) {
+					gc.drawRectangle(bounds.x, bounds.y, bounds.width, bounds.height);
+				}
 			}
 		}
 		if (contain != null && bounds.contains(contain.x, contain.y) && bounds.contains(contain.x + contain.width, contain.y + contain.height)) {
@@ -213,7 +235,7 @@ public class GeoMapViewer extends ContentViewer {
 		return null;
 	}
 
-	private Point getElementPosition(Object element, Point into, boolean mapRelative, boolean imageRelative) {
+	private Point getElementPosition(Object element, Point into, boolean mapRelative) {
 		PointD lonLat = (element instanceof PointD ? (PointD) element : getLocationProvider().getLonLat(element));
 		if (lonLat == null) {
 			return null;
@@ -224,16 +246,6 @@ public class GeoMapViewer extends ContentViewer {
 			Point p = geoMap.getMapPosition();
 			x -= p.x;
 			y -= p.y;
-		}
-		if (imageRelative) {
-			IBaseLabelProvider labelProvider = getLabelProvider();
-			if (labelProvider instanceof IPinPointProvider) {
-				Point p = ((IPinPointProvider) labelProvider).getPinPoint(element);
-				if (p != null) {
-					x -= p.x;
-					y -= p.y;
-				}
-			}
 		}
 		if (into == null) {
 			into = new Point(x, y);
@@ -278,7 +290,7 @@ public class GeoMapViewer extends ContentViewer {
 	private int revealMargin = 10;
 
 	public void reveal(Object selection, boolean center) {
-		Point position = getElementPosition(selection, new Point(0, 0), true, false);
+		Point position = getElementPosition(selection, new Point(0, 0), true);
 		Point size = geoMap.getSize();
 		Rectangle insideMargin = new Rectangle(revealMargin, revealMargin, size.x - revealMargin, size.y - revealMargin);
 		if (position != null && (center || (! insideMargin.contains(position)))) {
@@ -367,7 +379,7 @@ public class GeoMapViewer extends ContentViewer {
 		protected boolean handleUp(MouseEvent e) {
 			boolean redraw = super.handleUp(e);
 			if (selectionOffset != null) {
-				Point oldPosition = getElementPosition(selection, new Point(0, 0), false, false);
+				Point oldPosition = getElementPosition(selection, new Point(0, 0), false);
 				Point newPosition = new Point(oldPosition.x + selectionOffset.x, oldPosition.y + selectionOffset.y);
 				PointD lonLat = geoMap.getLongitudeLatitude(newPosition);
 				@SuppressWarnings("unused")
