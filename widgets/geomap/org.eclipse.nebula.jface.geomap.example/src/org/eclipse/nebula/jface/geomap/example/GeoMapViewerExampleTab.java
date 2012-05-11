@@ -19,6 +19,8 @@ import org.eclipse.nebula.jface.geomap.LocationProvider;
 import org.eclipse.nebula.widgets.geomap.PointD;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
@@ -57,7 +59,7 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 		Label moveSelectionModeLabel = new Label(group, SWT.NONE);
 		moveSelectionModeLabel.setText("Move selection mode: ");
 		moveSelectionModeLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
-		final Combo moveSelectionModeControl = new Combo(group, SWT.CHECK);
+		final Combo moveSelectionModeControl = new Combo(group, SWT.READ_ONLY);
 		moveSelectionModeControl.setItems(new String[]{"Cannot move selection", "Allow, check readonly on mouse down", "Allow, just try to set new location"});
 		moveSelectionModeControl.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		moveSelectionModeControl.select(1);
@@ -65,6 +67,20 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				geoMapViewer.setMoveSelectionMode(moveSelectionModeControl.getSelectionIndex());
+			}
+		});
+		
+		Label clipRuleLabel = new Label(group, SWT.NONE);
+		clipRuleLabel.setText("Clip rule: ");
+		clipRuleLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		final Combo clipRuleControl = new Combo(group, SWT.READ_ONLY);
+		clipRuleControl.setItems(new String[]{"Don't clip", "Clip on element position", "Clip in image bounds"});
+		clipRuleControl.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		clipRuleControl.select(1);
+		clipRuleControl.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				geoMapViewer.setClipRule(clipRuleControl.getSelectionIndex());
 			}
 		});
 	}
@@ -83,20 +99,25 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 		public final String name;
 		public final PointD location;
 		public final String locationText;
-		public ContributorLocation(String name, PointD location, String locationText) {
+		public final boolean committer;
+		public ContributorLocation(String name, PointD location, String locationText, boolean committer) {
 			super();
 			this.name = name;
 			this.location = location;
 			this.locationText = locationText;
+			this.committer = committer;
+		}
+		public String toString() {
+			return name + ", " + locationText + " @ " + location.x + ", " + location.y;
 		}
 	}
 	
 	private ContributorLocation[] contributorLocations = {
-			new ContributorLocation("Hallvard Traetteberg", new PointD(10.33,63.45), 	"Trondheim, Norway"),
-			new ContributorLocation("Stepan Rutz",		 	new PointD(6.78,50.93), 	"Frechen, Germany"),
-			new ContributorLocation("Wim Jongman", 			new PointD(4.61,52.4), 		"Haarlem, Netherlands"),
-			new ContributorLocation("Dirk Fauth", 			new PointD(8.94,48.89), 	"Stuttgart, Germany"),
-			new ContributorLocation("Tom Schindl", 			new PointD(11.36,47.28), 	"Innsbruck, Austria"), 
+			new ContributorLocation("Hallvard Traetteberg", new PointD(10.33,63.45), 	"Trondheim, Norway", false),
+			new ContributorLocation("Stepan Rutz",		 	new PointD(6.78,50.93), 	"Frechen, Germany", false),
+			new ContributorLocation("Wim Jongman", 			new PointD(4.61,52.4), 		"Haarlem, Netherlands", true),
+			new ContributorLocation("Dirk Fauth", 			new PointD(8.94,48.89), 	"Stuttgart, Germany", true),
+			new ContributorLocation("Tom Schindl", 			new PointD(11.36,47.28), 	"Innsbruck, Austria", true), 
 	};
 	
 	private int indexOfLocation(Object element) {
@@ -110,6 +131,15 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 	
 	private void configureMapViewer() {
 		geoMapViewer.setLabelProvider(new LabelImageProvider() {
+			
+			private RGB contributorColor = new RGB(255, 250, 200);
+			private RGB committerColor = new RGB(200, 255, 200);
+			
+			@Override
+			public Image getImage(Object element) {
+				setFillColor(((ContributorLocation) element).committer ? committerColor : contributorColor);
+				return super.getImage(element);
+			}
 			@Override
 			public String getText(Object element) {
 				return ((ContributorLocation) element).name;
