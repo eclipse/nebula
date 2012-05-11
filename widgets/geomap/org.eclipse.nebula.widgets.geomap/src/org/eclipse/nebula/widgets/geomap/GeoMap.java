@@ -15,6 +15,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -92,43 +93,9 @@ import org.eclipse.swt.widgets.Display;
  * @version $Revision$
  */
 public class GeoMap extends Canvas {
-
+    
     private static final Logger log = Logger.getLogger(GeoMap.class.getName());
-
-    /**
-     * This class encapsulates a tileserver, which has the concept
-     * of a baseurl and a maximum zoon level.
-     */
-    public static final class TileServer {
-        private final String url;
-        private final int maxZoom;
-        private boolean broken;
-
-        private TileServer(String url, int maxZoom) {
-            this.url = url;
-            this.maxZoom = maxZoom;
-        }
-
-        public String toString() {
-            return url;
-        }
-
-        public int getMaxZoom() {
-            return maxZoom;
-        }
-        public String getURL() {
-            return url;
-        }
-
-        public boolean isBroken() {
-            return broken;
-        }
-
-        public void setBroken(boolean broken) {
-            this.broken = broken;
-        }
-    }
-
+    
     /**
      * Stats class, usefull for debugging caching of tiles,
      * also makes sure nothing is drawn (and loaded) that is
@@ -139,6 +106,7 @@ public class GeoMap extends Canvas {
     public static class Stats {
         public int tileCount;
         public long dt;
+
         private Stats() {
             reset();
         }
@@ -147,147 +115,80 @@ public class GeoMap extends Canvas {
             dt = 0;
         }
     }
-
+    
     /**
-     * A single tile in the map. A tile has an x and y coordinate, but
-     * both only make sense in the context of a given zoom level. The
-     * tile's zoom level is given by <code>z</code>.
-     *
-     * <p>For caching the tiles support some equals and hashCode behavior
-     * that makes them suitable as key-objects in java-util collections.</p>
-     */
-    private static class Tile {
-        private final String key;
-        public final int x, y, z;
-        public Tile(String tileServer, int x, int y, int z) {
-            this.key = tileServer;
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((key == null) ? 0 : key.hashCode());
-            result = prime * result + x;
-            result = prime * result + y;
-            result = prime * result + z;
-            return result;
-        }
-        public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
-            Tile other = (Tile) obj;
-            if (key == null) {
-                if (other.key != null)
-                    return false;
-            } else if (!key.equals(other.key))
-                return false;
-            if (x != other.x)
-                return false;
-            if (y != other.y)
-                return false;
-            if (z != other.z)
-                return false;
-            return true;
-        }
-    }
-
-    /**
-     * A tile-cache holds tiles. Instances of {@link Tile} are used as keys for
+     * A tile-cache holds tiles. Instances of {@link TileRef} are used as keys for
      * the cache. The actual data is held in instances of {@link AsyncImage} which
      * is an image that automatically loads itself with one of the supplied image
      * loader threads.
      * @since 3.3
      *
      */
-    public class TileCache {
-        private LinkedHashMap<Tile,AsyncImage> map = new LinkedHashMap<Tile,AsyncImage>(cacheSize, 0.75f, true) {
-            protected boolean removeEldestEntry(Map.Entry<Tile,AsyncImage> eldest) {
-                boolean remove = size() > cacheSize;
-                if (remove)
-                    eldest.getValue().dispose(getDisplay());
-                return remove;
+    
+    @SuppressWarnings("serial")
+	public class TileCache extends LinkedHashMap<TileRef, AsyncImage> {
+
+		private TileCache() {
+			 super(cacheSize, 0.75f, true);
+		}
+
+		protected boolean removeEldestEntry(Map.Entry<TileRef, AsyncImage> eldest) {
+            boolean remove = size() > cacheSize;
+            if (remove) {
+            	eldest.getValue().dispose(getDisplay());
             }
-        };
-        public void put(TileServer tileServer, int x, int y, int z, AsyncImage image) {
-            map.put(new Tile(tileServer.getURL(), x, y, z), image);
-        }
-        public AsyncImage get(TileServer tileServer, int x, int y, int z) {
-            return map.get(new Tile(tileServer.getURL(), x, y, z));
-        }
-        public void remove(TileServer tileServer, int x, int y, int z) {
-            map.remove(new Tile(tileServer.getURL(), x, y, z));
-        }
-        public int getSize() {
-            return map.size();
+            return remove;
         }
     }
+    
     /**
      * An sync image that loads itself in the background on an image-fetcher thread.
-     * Once its loaded it will trigger a redraw. Sometimes redraws that
+     * Once its loaded it will trigger a redraw. Sometimes redraws that 
      * are not really necessary can be triggered, but that is not relevant in terms of
      * performance for this swt-component.
      *
      */
     public final class AsyncImage implements Runnable {
-        private final AtomicReference<ImageData> imageData = new AtomicReference<ImageData>();
-        private Image image; // might as well be thread-local
-        private FutureTask<Boolean> task;
-        private volatile long stamp = zoomStamp.longValue();
-        private final TileServer tileServer;
-        private final int x, y, z;
 
-        /**
-         * Constructs a new <code>AsyncImage</code> instance.
-         * @param tileServer the tileserer, which is used to find out the source location
-         * @param x tile's x coordinate
-         * @param y tile's y coordinate
-         * @param z the zoom level
-         */
-        public AsyncImage(TileServer tileServer, int x, int y, int z) {
-            this.tileServer = tileServer;
-            this.x = x;
-            this.y = y;
-            this.z = z;
-            task = new FutureTask<Boolean>(this, Boolean.TRUE);
-            executor.execute(task);
+    	private final TileRef tile;
+    	private final String tileUrl;
+    	
+    	private volatile long stamp = zoomStamp.longValue();
+        private final AtomicReference<ImageData> imageData = new AtomicReference<ImageData>();
+        private Image image = null; // might as well be thread-local
+
+        public AsyncImage(TileRef tile, String tileUrl) {
+        	this.tile = tile;
+        	this.tileUrl = tileUrl;
+            executor.execute(new FutureTask<Boolean>(this, Boolean.TRUE));
         }
         
         public void run() {
-            String url = getTileString(tileServer, x, y, z);
             if (stamp != zoomStamp.longValue()) {
-                //System.err.println("pending load killed: " + url);
                 try {
                     // here is a race, we just live with.
-                    if (!getDisplay().isDisposed()) {
+                    if (! getDisplay().isDisposed()) {
                         getDisplay().asyncExec(new Runnable() {
                             public void run() {
-                                getCache().remove(tileServer, x, y, z);
+                                cache.remove(tile);
                             }
                         });
                     }
                 } catch (SWTException e) {
                     log.log(Level.INFO, "swt exception during redraw display-race, ignoring");
                 }
-                
                 return;
             }
             try {
-                //System.err.println("fetch " + url);
-                //Thread.sleep(2000);
-                InputStream in = new URL(url).openConnection().getInputStream();
-                imageData.set(new ImageData(in));
+                URLConnection con = new URL(tileUrl).openConnection();
+                con.setRequestProperty("User-Agent", "org.eclipse.nebula.widgets.geomap.GeoMap"); 
+				imageData.set(new ImageData(con.getInputStream()));
                 try {
                     // here is a race, we just live with.
-                    if (!getDisplay().isDisposed()) {
+                    if (! getDisplay().isDisposed()) {
                         getDisplay().asyncExec(new Runnable() {
                             public void run() {
-                                redraw();
+                                redraw(tile);
                             }
                         });
                     }
@@ -295,12 +196,8 @@ public class GeoMap extends Canvas {
                     log.log(Level.INFO, "swt exception during redraw display-race, ignoring");
                 }
             } catch (Exception e) {
-                log.log(Level.SEVERE, "failed to load imagedata from url: " + url, e);
+                log.log(Level.SEVERE, "failed to load imagedata from url: " + tileUrl, e);
             }
-        }
-        
-        public ImageData getImageData(Device device) {
-            return imageData.get();
         }
         
         public Image getImage(Display display) {
@@ -314,8 +211,8 @@ public class GeoMap extends Canvas {
         public void dispose(Display display) {
             checkThread(display);
             if (image != null) {
-                //System.err.println("disposing: " + getTileString(tileServer, x, y, z));
                 image.dispose();
+                image = null;
             }
         }
         
@@ -326,9 +223,14 @@ public class GeoMap extends Canvas {
             }
         }
     }
+
+    private void redraw(TileRef tile) {
+    	redraw();
+    }
    
     private class MapMouseListener implements MouseListener, MouseWheelListener, MouseMoveListener, MouseTrackListener {
-        private Point mouseCoords = new Point(0, 0);
+        
+    	private Point mouseCoords = new Point(0, 0);
         private Point downCoords;
         private Point downPosition;
         
@@ -390,22 +292,6 @@ public class GeoMap extends Canvas {
             }
         }    
     }
-    
-    //-------------------------------------------------------------------------
-    // tile url construction.
-    // change here to support some other tile
-
-    public static String getTileString(TileServer tileServer, int xtile, int ytile, int zoom) {
-        String number = ("" + zoom + "/" + xtile + "/" + ytile);
-        String url = tileServer.getURL() + number + ".png";
-        return url;
-    }
-
-    /* constants ... */
-    public static final TileServer[] TILESERVERS = {
-        new TileServer("http://tile.openstreetmap.org/", 18),
-        new TileServer("http://tah.openstreetmap.org/Tiles/tile/", 17),
-    };
  
     public static final String NAMEFINDER_URL = "http://nominatim.openstreetmap.org/search";
     
@@ -420,25 +306,28 @@ public class GeoMap extends Canvas {
         //"Please support the effort at <a href=\"http://www.openstreetmap.org\">http://www.openstreetmap.org/</a>.\r\n";
         //"Please keep in mind this application is just a alternative renderer for swt.\r\n";
     
-
+    
     /* basically not be changed */
     private static final int TILE_SIZE = 256;
-
+    
     public static final int DEFAULT_CACHE_SIZE = 256;
     public static final int DEFAULT_NUMBER_OF_IMAGEFETCHER_THREADS = 4;
-
+    
     private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    
     private Point mapSize = new Point(0, 0);
     private Point mapPosition = new Point(0, 0);
     private int zoom;
+    
     private AtomicLong zoomStamp = new AtomicLong();
 
-    private TileServer tileServer = TILESERVERS[0];
+    private TileServer tileServer = OsmTileServer.TILESERVERS[0];
     private TileCache cache = new TileCache();
     private Stats stats = new Stats();
     private MapMouseListener mouseListener = new MapMouseListener();
     
     private BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<Runnable>();
+
     private ThreadFactory threadFactory = new ThreadFactory( ) {
         public Thread newThread(Runnable r) {
             Thread t = new Thread(r);
@@ -450,21 +339,20 @@ public class GeoMap extends Canvas {
     private ThreadPoolExecutor executor = new ThreadPoolExecutor(DEFAULT_NUMBER_OF_IMAGEFETCHER_THREADS, 16, 2, TimeUnit.SECONDS, workQueue, threadFactory);
     private Color waitBackground, waitForeground;
 	private final int cacheSize;
-
-
+    
     /**
      * Creates a new <code>GeoMap</code> using the {@link GeoMap#DEFAULT_CACHE_SIZE} size
      * for its internal cache of tiles. The map is showing the position <code>(275091, 180145</code>
      * at zoom level <code>11</code>. In other words this constructor is best used only in debugging
      * scenarios.
-     *
+     * 
      * @param parent SWT parent <code>Composite</code>
      * @param style SWT style as in <code>Canvas</code>, since this class inherits from it. Double buffering is always enabed.
-     */
+     */   
     public GeoMap(Composite parent, int style) {
         this(parent, style, new Point(275091, 180145), 11);
     }
-
+    
     /**
      * Creates a new <code>GeoMap</code> using the {@link GeoMap#DEFAULT_CACHE_SIZE} size
      * for its internal cache of tiles
@@ -474,9 +362,9 @@ public class GeoMap extends Canvas {
      * @param zoom initial map zoom
      */
     public GeoMap(Composite parent, int style, Point mapPosition, int zoom) {
-	this(parent, style, mapPosition, zoom, DEFAULT_CACHE_SIZE);
+    	this(parent, style, mapPosition, zoom, DEFAULT_CACHE_SIZE);
     }
-
+    
     /**
      * Creates a new <code>GeoMap</code> using the {@link GeoMap#DEFAULT_CACHE_SIZE} size
      * for its internal cache of tiles
@@ -488,12 +376,12 @@ public class GeoMap extends Canvas {
      * to prevent reloading from the network.
      */
     public GeoMap(Composite parent, int style, Point mapPosition, int zoom, int cacheSize) {
-
+    
         super(parent, SWT.DOUBLE_BUFFERED | style);
         this.cacheSize = cacheSize;
         waitBackground = new Color(getDisplay(), 0x88, 0x88, 0x88);
         waitForeground = new Color(getDisplay(), 0x77, 0x77, 0x77);
-
+        
         setZoom(zoom);
         addDisposeListener(new DisposeListener() {
             public void widgetDisposed(DisposeEvent e) {
@@ -510,42 +398,56 @@ public class GeoMap extends Canvas {
         addMouseMoveListener(mouseListener);
         addMouseWheelListener(mouseListener);
         addMouseTrackListener(mouseListener);
+
         /// TODO: check tileservers
     }
+    
+	public TileServer getTileServer() {
+		return tileServer;
+	}
 
+	public Stats getStats() {
+		return stats;
+	}
+
+	public TileCache getCache() {
+		return cache;
+	}
+	
     /**
 	 * @return Returns the cacheSize.
 	 */
 	public int getCacheSize() {
 		return cacheSize;
 	}
-
+    
     protected void paintControl(PaintEvent e) {
-        GC gc = e.gc;
 
-        getStats().reset();
+        stats.reset();
         long t0 = System.currentTimeMillis();
-        Point size = getSize();
-        int width = size.x, height = size.y;
         int x0 = (int) Math.floor(((double) mapPosition.x) / TILE_SIZE);
         int y0 = (int) Math.floor(((double) mapPosition.y) / TILE_SIZE);
-        int x1 = (int) Math.ceil(((double) mapPosition.x + width) / TILE_SIZE);
-        int y1 = (int) Math.ceil(((double) mapPosition.y + height) / TILE_SIZE);
+        Point size = getSize();
+        int x1 = (int) Math.ceil(((double) mapPosition.x + size.x) / TILE_SIZE);
+        int y1 = (int) Math.ceil(((double) mapPosition.y + size.y) / TILE_SIZE);
 
         int dy = y0 * TILE_SIZE - mapPosition.y;
-        for (int y = y0; y < y1; ++y) {
-            int dx = x0 * TILE_SIZE - mapPosition.x;
-            for (int x = x0; x < x1; ++x) {
-                paintTile(gc, dx, dy, x, y);
+        for (int y = y0; y < y1; y++) {
+        	int dx = x0 * TILE_SIZE - mapPosition.x;
+            for (int x = x0; x < x1; x++) {
+            	if (dx + TILE_SIZE >= e.x && dy + TILE_SIZE >= e.y && dx <= e.x + e.width && dy <= e.y + e.height) {
+            		paintTile(e.gc, dx, dy, x, y);
+            	} else {
+            		System.out.println(dx + "," + dy + " -> " + e.x + "," + e.y + "-" + e.width + "x" + e.height);
+            	}
                 dx += TILE_SIZE;
-                ++getStats().tileCount;
+                stats.tileCount++;
             }
             dy += TILE_SIZE;
         }
         
         long t1 = System.currentTimeMillis();
         stats.dt = t1 - t0;
-        //gc.drawString("dis ya draw", 20, 50);
     }
     
     private void paintTile(GC gc, int dx, int dy, int x, int y) {
@@ -560,12 +462,11 @@ public class GeoMap extends Canvas {
         boolean tileInBounds = x >= 0 && x < xTileCount && y >= 0 && y < yTileCount;
         boolean drawImage = DRAW_IMAGES && tileInBounds;
         if (drawImage) {
-            TileCache cache = getCache();
-            TileServer tileServer = getTileServer();
-            AsyncImage image = cache.get(tileServer, x, y, zoom);
+            TileRef tileRef = new TileRef(x, y, zoom);
+            AsyncImage image = cache.get(tileRef);
             if (image == null) {
-                image = new AsyncImage(tileServer, x, y, zoom);
-                cache.put(tileServer, x, y, zoom, image);
+                image = new AsyncImage(tileRef, tileServer.getTileURL(tileRef));
+                cache.put(tileRef, image);
             }
             if (image.getImage(getDisplay()) != null) {
                 gc.drawImage(image.getImage(getDisplay()), dx, dy);
@@ -576,7 +477,7 @@ public class GeoMap extends Canvas {
             gc.setBackground(display.getSystemColor(tileInBounds ? SWT.COLOR_GREEN : SWT.COLOR_RED));
             gc.fillRectangle(dx + 4, dy + 4, TILE_SIZE - 8, TILE_SIZE - 8);
             gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
-            String s = "T " + x + ", " + y + (!tileInBounds ? " #" : "");
+            String s = "T " + x + ", " + y + (! tileInBounds ? " #" : "");
             gc.drawString(s, dx + 4+ 8, dy + 4 + 12);
         }  else if (!DEBUG && !imageDrawn && tileInBounds) {
             gc.setBackground(waitBackground);
@@ -612,21 +513,10 @@ public class GeoMap extends Canvas {
         pcs.removePropertyChangeListener(propertyName, listener);
     }
     
-    public TileCache getCache() {
-        return cache;
-    }
-    
-    public TileServer getTileServer() {
-        return tileServer;
-    }
-    
     public void setTileServer(TileServer tileServer) {
         this.tileServer = tileServer;
+        cache.clear();
         redraw();
-    }
-    
-    public Stats getStats() {
-        return stats;
     }
     
     public Point getMapPosition() {
@@ -638,15 +528,14 @@ public class GeoMap extends Canvas {
     }
 
     public void setMapPosition(int x, int y) {
-        if (mapPosition.x == x && mapPosition.y == y)
-            return;
+        if (mapPosition.x == x && mapPosition.y == y) {
+        	return;
+        }
         Point oldMapPosition = getMapPosition();
         mapPosition.x = x;
         mapPosition.y = y;
         pcs.firePropertyChange("mapPosition", oldMapPosition, getMapPosition());
     }
-    
-    
 
     public void translateMapPosition(int tx, int ty) {
         setMapPosition(mapPosition.x + tx, mapPosition.y + ty);
@@ -657,19 +546,21 @@ public class GeoMap extends Canvas {
     }
 
     public void setZoom(int zoom) {
-        if (zoom == this.zoom)
-            return;
+        if (zoom == this.zoom) {
+        	return;
+        }
         zoomStamp.incrementAndGet();
         int oldZoom = this.zoom;
-        this.zoom = Math.min(getTileServer().getMaxZoom(), zoom);
+        this.zoom = Math.min(tileServer.getMaxZoom(), zoom);
         mapSize.x = getXMax();
         mapSize.y = getYMax();
         pcs.firePropertyChange("zoom", oldZoom, zoom);
     }
 
     public void zoomIn(Point pivot) {
-        if (getZoom() >= getTileServer().getMaxZoom())
-            return;
+        if (getZoom() >= tileServer.getMaxZoom()) {
+        	return;
+        }
         Point mapPosition = getMapPosition();
         int dx = pivot.x;
         int dy = pivot.y;
@@ -679,8 +570,9 @@ public class GeoMap extends Canvas {
     }
 
     public void zoomOut(Point pivot) {
-        if (getZoom() <= 1)
-            return;
+        if (getZoom() <= 1) {
+        	return;
+        }
         Point mapPosition = getMapPosition();
         int dx = pivot.x;
         int dy = pivot.y;
@@ -783,8 +675,8 @@ public class GeoMap extends Canvas {
     }
 
     public static String getTileNumber(TileServer tileServer, double lat, double lon, int zoom) {
-        int xtile = (int) Math.floor((lon + 180) / 360 * (1 << zoom));
-        int ytile = (int) Math.floor((1 - Math.log(Math.tan(Math.toRadians(lat)) + 1 / Math.cos(Math.toRadians(lat))) / Math.PI) / 2 * (1 << zoom));
-        return getTileString(tileServer, xtile, ytile, zoom);
+        int x = (int) Math.floor((lon + 180) / 360 * (1 << zoom));
+        int y = (int) Math.floor((1 - Math.log(Math.tan(Math.toRadians(lat)) + 1 / Math.cos(Math.toRadians(lat))) / Math.PI) / 2 * (1 << zoom));
+        return tileServer.getTileURL(new TileRef(x, y, zoom));
     }
 }

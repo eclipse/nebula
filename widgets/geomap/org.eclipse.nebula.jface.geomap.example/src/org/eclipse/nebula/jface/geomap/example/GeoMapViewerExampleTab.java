@@ -16,7 +16,10 @@ import org.eclipse.nebula.examples.AbstractExampleTab;
 import org.eclipse.nebula.jface.geomap.GeoMapViewer;
 import org.eclipse.nebula.jface.geomap.LabelImageProvider;
 import org.eclipse.nebula.jface.geomap.LocationProvider;
+import org.eclipse.nebula.widgets.geomap.GoogleTileServer;
+import org.eclipse.nebula.widgets.geomap.OsmTileServer;
 import org.eclipse.nebula.widgets.geomap.PointD;
+import org.eclipse.nebula.widgets.geomap.TileServer;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -56,6 +59,21 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 		
 		group.setLayout(new GridLayout(2, false));
 
+		Label tileServerLabel = new Label(group, SWT.NONE);
+		tileServerLabel.setText("Tile server: ");
+		tileServerLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		final Combo tileServerControl = new Combo(group, SWT.NONE);
+		tileServerControl.setItems(new String[]{"http://tile.openstreetmap.org/${z}/${x}/${y}.png", "http://mt1.google.com/vt/lyrs=m@129&hl=en&s=Galileo&z=${z}&x=${x}&y=${y}"});
+		tileServerControl.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		tileServerControl.select(0);
+		tileServerControl.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				String selection = tileServerControl.getItem(tileServerControl.getSelectionIndex());
+				geoMapViewer.getGeoMap().setTileServer(new TileServer(selection, 15));
+			}
+		});
+		
 		Label moveSelectionModeLabel = new Label(group, SWT.NONE);
 		moveSelectionModeLabel.setText("Move selection mode: ");
 		moveSelectionModeLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
@@ -97,7 +115,7 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 
 	private static class ContributorLocation {
 		public final String name;
-		public final PointD location;
+		public PointD location;
 		public final String locationText;
 		public final boolean committer;
 		public ContributorLocation(String name, PointD location, String locationText, boolean committer) {
@@ -133,6 +151,8 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 	}
 	
 	private void configureMapViewer() {
+		geoMapViewer.getGeoMap().setTileServer(OsmTileServer.TILESERVERS[0]);
+//		geoMapViewer.getGeoMap().setTileServer(GoogleTileServer.TILESERVERS[0]);
 		geoMapViewer.setLabelProvider(new LabelImageProvider() {
 			
 			private RGB contributorColor = new RGB(255, 250, 200);
@@ -161,7 +181,12 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 				return pos >= 0 ? contributorLocations[pos].location : null;
 			}
 			public boolean setLonLat(Object element, double lon, double lat) {
-				return false;
+				int pos = indexOfLocation(element);
+				if (pos < 0) {
+					return false;
+				}
+				contributorLocations[pos].location = new PointD(lon, lat);
+				return true;
 			}
 		});
 		geoMapViewer.setContentProvider(new ArrayContentProvider());

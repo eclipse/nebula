@@ -20,6 +20,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.eclipse.nebula.widgets.geomap.GeoMap;
 import org.eclipse.nebula.widgets.geomap.GeoMapBrowser;
+import org.eclipse.nebula.widgets.geomap.OsmTileServer;
 import org.eclipse.nebula.widgets.geomap.PointD;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -120,12 +121,12 @@ public class SearchPage extends AbstractPage implements Page {
         addInfoText(container, composite, "Toggling the tile-server changes the way " +
         		"the map is rendered. Click on the mapinfos link to see details " +
         		"about the currently rendered part of the map.");
-
+        
         addActionLink(container, composite, "<a>Toggle Rendering</a>", new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 GeoMap geoMap = mapBrowser.getGeoMap();
-                int next = (Arrays.asList(GeoMap.TILESERVERS).indexOf(geoMap.getTileServer()) + 1) % GeoMap.TILESERVERS.length;
-                geoMap.setTileServer(GeoMap.TILESERVERS[next]);
+                int next = (Arrays.asList(OsmTileServer.TILESERVERS).indexOf(geoMap.getTileServer()) + 1) % OsmTileServer.TILESERVERS.length;
+                geoMap.setTileServer(OsmTileServer.TILESERVERS[next]);
             }
         });
 

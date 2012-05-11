@@ -58,10 +58,10 @@ public class InfoPage extends AbstractPage implements Page {
                 new Spec("Number painted tiles") {
                     public String computeValue() {
                         geoMap.getStats();
-                        return geoMap.getStats().tileCount + " of " + NumberFormat.getIntegerInstance().format((long)geoMap.getXTileCount() * geoMap.getYTileCount());
+                        return geoMap.getStats().tileCount + " of " + NumberFormat.getIntegerInstance().format((long) geoMap.getXTileCount() * geoMap.getYTileCount());
                     }
                 },
-                new Spec("Tilecache") { public String computeValue() { return String.format("%3d / %3d", geoMap.getCache().getSize(), geoMap.getCacheSize()); }},
+                new Spec("Tilecache") { public String computeValue() { return String.format("%3d / %3d", geoMap.getCache().size(), geoMap.getCacheSize()); }},
                 new Spec("Longitude/Latitude") {
                     public String computeValue() {
                         Point p = geoMap.getCursorPosition();
@@ -69,7 +69,6 @@ public class InfoPage extends AbstractPage implements Page {
                         return GeoMap.format(GeoMap.position2lon(p.x, zoom)) + ", " + GeoMap.format(GeoMap.position2lat(p.y, zoom));
                     }
                 },
-                
         };
     }
     
