@@ -113,11 +113,14 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 	}
 	
 	private ContributorLocation[] contributorLocations = {
-			new ContributorLocation("Hallvard Traetteberg", new PointD(10.33,63.45), 	"Trondheim, Norway", false),
-			new ContributorLocation("Stepan Rutz",		 	new PointD(6.78,50.93), 	"Frechen, Germany", false),
-			new ContributorLocation("Wim Jongman", 			new PointD(4.61,52.4), 		"Haarlem, Netherlands", true),
-			new ContributorLocation("Dirk Fauth", 			new PointD(8.94,48.89), 	"Stuttgart, Germany", true),
-			new ContributorLocation("Tom Schindl", 			new PointD(11.36,47.28), 	"Innsbruck, Austria", true), 
+			new ContributorLocation("Hallvard Traetteberg", new PointD(10.4234,63.4242), 	"Trondheim, Norway", 	true),
+			new ContributorLocation("Stepan Rutz",		 	new PointD(6.8222,50.9178), 	"Frechen, Germany", 	false),
+			new ContributorLocation("Wim Jongman", 			new PointD(4.6410,52.3894),		"Haarlem, Netherlands", true),
+			new ContributorLocation("Dirk Fauth", 			new PointD(9.1858,48.7775), 	"Stuttgart, Germany", 	true),
+			new ContributorLocation("Tom Schindl", 			new PointD(11.4000,47.2671), 	"Innsbruck, Austria", 	true),
+			new ContributorLocation("Matthew Hall",			new PointD(-111.97,40.54), 		"Riverton, Utah, USA", 	true),
+			new ContributorLocation("Justin Dolezy",		new PointD(-0.34,51.48), 		"Richmond, Surrey, UK", true),
+			new ContributorLocation("Edwin Park",			new PointD(-74.07,40.76), 		"Hoboken, New Jersey, USA", true),
 	};
 	
 	private int indexOfLocation(Object element) {
@@ -147,8 +150,7 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 			@Override
 			public Object getToolTip(Object element) {
 				if (element instanceof ContributorLocation) {
-					ContributorLocation contributorLocation = (ContributorLocation) element;
-					return contributorLocation.name + " @ " + contributorLocation.locationText;
+					return element.toString();
 				}
 				return null;
 			}
