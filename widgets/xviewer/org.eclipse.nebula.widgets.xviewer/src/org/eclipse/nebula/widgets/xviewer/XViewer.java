@@ -30,6 +30,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.nebula.widgets.xviewer.action.TableCustomizationDropDownAction;
 import org.eclipse.nebula.widgets.xviewer.column.XViewerDaysTillTodayColumn;
+import org.eclipse.nebula.widgets.xviewer.column.XViewerDiffsBetweenColumnsColumn;
 import org.eclipse.nebula.widgets.xviewer.customize.ColumnFilterDataUI;
 import org.eclipse.nebula.widgets.xviewer.customize.CustomizeManager;
 import org.eclipse.nebula.widgets.xviewer.customize.FilterDataUI;
@@ -149,6 +150,7 @@ public class XViewer extends TreeViewer {
    public Collection<XViewerComputedColumn> getComputedColumns() {
       if (computedColumns.size() == 0) {
          computedColumns.add(new XViewerDaysTillTodayColumn());
+         computedColumns.add(new XViewerDiffsBetweenColumnsColumn());
       }
       return computedColumns;
    }
