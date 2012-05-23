@@ -12,6 +12,7 @@
 package org.eclipse.nebula.widgets.geomap;
 
 import java.net.URL;
+import java.text.MessageFormat;
 
 /**
  * This class encapsulates a tileserver, which has the concept
@@ -20,12 +21,12 @@ import java.net.URL;
 public class TileServer {
 
     private String url;
-    private String urlFormat = "${z}/${x}/${y}.png"; // slippy format
+    private String urlFormat = "{0}/{1}/{2}.png"; // slippy format, must match getURLFormatArguments
     private final int maxZoom;
     private boolean broken;
 
     private void parseUrl(String url) {
-		int pos = url.indexOf("${");
+		int pos = url.indexOf("{");
 		if (pos > 0) {
 			this.url = url.substring(0, pos);
 			this.urlFormat = url.substring(pos);
@@ -45,15 +46,16 @@ public class TileServer {
     	this.maxZoom = maxZoom;
     }
 
-    protected String getTileURL(TileRef tile, String urlFormat) {
-    	return url + (urlFormat
-    			.replace("${z}", String.valueOf(tile.z))
-    			.replace("${x}", String.valueOf(tile.x))
-    			.replace("${y}", String.valueOf(tile.y)));
+    protected Object[] getURLFormatArguments(TileRef tile) {
+    	return new Object[]{String.valueOf(tile.z), String.valueOf(tile.x), String.valueOf(tile.y)};
+    }
+    
+    protected String getTileURL(TileRef tile, String urlFormat, Object[] formatArguments) {
+    	return url + MessageFormat.format(urlFormat, formatArguments);
     }
     
     public String getTileURL(TileRef tile) {
-    	return (urlFormat != null ? getTileURL(tile, urlFormat) : null);
+    	return (urlFormat != null ? getTileURL(tile, urlFormat, getURLFormatArguments(tile)) : null);
     }
     
     public String toString() {

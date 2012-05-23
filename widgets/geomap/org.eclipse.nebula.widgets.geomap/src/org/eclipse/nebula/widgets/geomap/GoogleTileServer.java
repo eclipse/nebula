@@ -20,15 +20,8 @@ import java.net.URL;
 public final class GoogleTileServer extends TileServer {
 
     public GoogleTileServer(String url, int maxZoom) {
-    	super(url, maxZoom, "&z=${z}&x=${x}&y=${y}");
+    	super(url, maxZoom, "&z={0}&x={1}&y={2}");
     }
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.nebula.widgets.geomap.AbstractTileServer#getTileURL(org.eclipse.nebula.widgets.geomap.TileRef)
-	 */
-	public String getTileURL(TileRef tile) {
-        return getURL() + "&z=" + tile.z + "&x=" + tile.x + "&y=" + tile.y;
-	}
 
     public static final GoogleTileServer[] TILESERVERS = {
         new GoogleTileServer("http://mt1.google.com/vt/lyrs=m@129&hl=en&s=Galileo", 18),

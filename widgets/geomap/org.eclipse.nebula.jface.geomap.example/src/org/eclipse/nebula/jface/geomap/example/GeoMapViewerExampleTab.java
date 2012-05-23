@@ -63,7 +63,7 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 		tileServerLabel.setText("Tile server: ");
 		tileServerLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		final Combo tileServerControl = new Combo(group, SWT.NONE);
-		tileServerControl.setItems(new String[]{"http://tile.openstreetmap.org/${z}/${x}/${y}.png", "http://mt1.google.com/vt/lyrs=m@129&hl=en&s=Galileo&z=${z}&x=${x}&y=${y}"});
+		tileServerControl.setItems(new String[]{"http://tile.openstreetmap.org/{0}/{1}/{2}.png", "http://mt1.google.com/vt/lyrs=m@129&hl=en&s=Galileo&z={0}&x={1}&y={2}"});
 		tileServerControl.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		tileServerControl.select(0);
 		tileServerControl.addSelectionListener(new SelectionAdapter() {
