@@ -29,6 +29,12 @@ public final class TileRef {
         this.z = z;
     }
     
+	@Override
+	@SuppressWarnings("nls")
+    public String toString() {
+    	return "Tile {" + x + ", " + y + " @ " + z + "}";
+    }
+    
     public int hashCode() {
         final int prime = 31;
         int result = 1;

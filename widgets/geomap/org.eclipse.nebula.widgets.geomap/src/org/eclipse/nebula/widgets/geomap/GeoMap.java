@@ -471,6 +471,13 @@ public class GeoMap extends Canvas {
             if (image.getImage(getDisplay()) != null) {
                 gc.drawImage(image.getImage(getDisplay()), dx, dy);
                 imageDrawn = true;
+            } else {
+                tileRef = new TileRef(x / 2, y / 2, zoom - 1);
+				image = cache.get(tileRef);
+                if (image != null && image.getImage(getDisplay()) != null) {
+                    gc.drawImage(image.getImage(getDisplay()), (x % 2 == 0 ? 0 : TILE_SIZE / 2), (y % 2 == 0 ? 0 : TILE_SIZE / 2), TILE_SIZE / 2, TILE_SIZE / 2, x, y, TILE_SIZE, TILE_SIZE);
+                    imageDrawn = true;
+                }
             }
         }
         if (DEBUG && (!imageDrawn && (tileInBounds || DRAW_OUT_OF_BOUNDS))) {
