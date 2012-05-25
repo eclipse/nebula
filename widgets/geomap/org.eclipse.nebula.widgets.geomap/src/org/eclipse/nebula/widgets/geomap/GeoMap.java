@@ -475,7 +475,7 @@ public class GeoMap extends Canvas {
                 tileRef = new TileRef(x / 2, y / 2, zoom - 1);
 				image = cache.get(tileRef);
                 if (image != null && image.getImage(getDisplay()) != null) {
-                    gc.drawImage(image.getImage(getDisplay()), (x % 2 == 0 ? 0 : TILE_SIZE / 2), (y % 2 == 0 ? 0 : TILE_SIZE / 2), TILE_SIZE / 2, TILE_SIZE / 2, x, y, TILE_SIZE, TILE_SIZE);
+                    gc.drawImage(image.getImage(getDisplay()), (x % 2 == 0 ? 0 : TILE_SIZE / 2), (y % 2 == 0 ? 0 : TILE_SIZE / 2), TILE_SIZE / 2, TILE_SIZE / 2, dx, dy, TILE_SIZE, TILE_SIZE);
                     imageDrawn = true;
                 }
             }
