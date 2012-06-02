@@ -24,6 +24,7 @@
 <project reference="1.0,http://git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,widgets/paperclips/org.eclipse.nebula.paperclips.snippets"/>
 <project reference="1.0,http://git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,widgets/paperclips/org.eclipse.nebula.paperclips.tests"/>
 <project reference="1.0,http://git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,widgets/paperclips/org.eclipse.nebula.paperclips.widgets"/>
+<project reference="1.0,http://git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,examples/org.eclipse.nebula.snippets"/>
 <project reference="1.0,http://git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,releng/org.eclipse.nebula.updatesite"/>
 <project reference="1.0,http://git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,releng/org.eclipse.nebula.updatesite.incubation"/>
 <project reference="1.0,http://git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,widgets/bidilayout/org.eclipse.nebula.widgets.bidilayout"/>
@@ -55,6 +56,10 @@
 <project reference="1.0,http://git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,widgets/ganttchart/org.eclipse.nebula.widgets.ganttchart"/>
 <project reference="1.0,http://git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,widgets/ganttchart/org.eclipse.nebula.widgets.ganttchart.example"/>
 <project reference="1.0,http://git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,widgets/ganttchart/org.eclipse.nebula.widgets.ganttchart.feature"/>
+<project reference="1.0,http://git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,widgets/geomap/org.eclipse.nebula.widgets.geomap"/>
+<project reference="1.0,http://git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,widgets/geomap/org.eclipse.nebula.widgets.geomap.example"/>
+<project reference="1.0,http://git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,widgets/geomap/org.eclipse.nebula.widgets.geomap.feature"/>
+<project reference="1.0,http://git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,widgets/geomap/org.eclipse.nebula.widgets.geomap.snippets"/>
 <project reference="1.0,http://git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,widgets/grid/org.eclipse.nebula.widgets.grid"/>
 <project reference="1.0,http://git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,widgets/grid/org.eclipse.nebula.widgets.grid.example"/>
 <project reference="1.0,http://git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,widgets/grid/org.eclipse.nebula.widgets.grid.feature"/>
@@ -92,6 +97,9 @@
 <project reference="1.0,http://git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,widgets/xviewer/org.eclipse.nebula.widgets.xviewer.feature"/>
 <project reference="1.0,http://git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,widgets/xviewer/org.eclipse.nebula.widgets.xviewer.feature.test"/>
 <project reference="1.0,http://git.eclipse.org/gitroot/nebula/org.eclipse.nebula.git,master,widgets/xviewer/org.eclipse.nebula.widgets.xviewer.tests"/>
+</provider>
+<provider id="org.eclipse.team.cvs.core.cvsnature">
+<project reference="1.0,:extssh:dev.eclipse.org:/cvsroot/org.eclipse,www/nebula,nebula"/>
 </provider>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1330708566440_26" label="BidiLayout" name="BidiLayout">
 <item elementID="=org.eclipse.nebula.widgets.bidilayout" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
@@ -135,15 +143,15 @@
 </workingSets>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1330704548437_4" label="Examples" name="Examples">
 <item elementID="=org.eclipse.nebula.examples" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.snippets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.examples.incubation.feature" type="4"/>
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.examples.release.feature" type="4"/>
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.examples.feature" type="4"/>
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.examples_webstart" type="4"/>
-<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.examples.incubation.feature" type="4"/>
 </workingSets>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1330704789115_11" label="FormattedText" name="FormattedText">
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.formattedtext.feature" type="4"/>
 <item elementID="=org.eclipse.nebula.widgets.formattedtext" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
-<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.paperclips.feature" type="4"/>
 </workingSets>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1330704754683_10" label="Gallery" name="Gallery">
 <item elementID="=org.eclipse.nebula.widgets.gallery.tests" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
@@ -156,6 +164,12 @@
 <item elementID="=org.eclipse.nebula.widgets.ganttchart" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.ganttchart.feature" type="4"/>
 <item elementID="=org.eclipse.nebula.widgets.ganttchart.example" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+</workingSets>
+<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1338661003285_28" label="Geomap" name="Geomap">
+<item elementID="=org.eclipse.nebula.widgets.geomap.example" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.geomap.feature" type="4"/>
+<item elementID="=org.eclipse.nebula.widgets.geomap.snippets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.geomap" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 </workingSets>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1330708417274_22" label="Grid" name="Grid">
 <item elementID="=org.eclipse.nebula.widgets.grid" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
@@ -181,6 +195,7 @@
 <item elementID="=org.eclipse.nebula.paperclips.snippets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item elementID="=org.eclipse.nebula.paperclips.tests" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item elementID="=org.eclipse.nebula.paperclips.widgets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.paperclips.feature" type="4"/>
 <item elementID="=org.eclipse.nebula.paperclips.core" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 </workingSets>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1330704878402_14" label="PGroup" name="PGroup">
@@ -206,12 +221,13 @@
 </workingSets>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1330708517145_24" label="Releng" name="Releng">
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.feature" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/nebula" type="4"/>
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.updatesite.incubation" type="4"/>
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.nebula-release" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.incubation.feature" type="4"/>
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.updatesite" type="4"/>
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.nebula-parent" type="4"/>
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.nebula-incubation" type="4"/>
-<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.incubation.feature" type="4"/>
 </workingSets>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1330704962274_18" label="TableCombo" name="TableCombo">
 <item elementID="=org.eclipse.nebula.widgets.tablecombo.example" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
