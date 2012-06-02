@@ -39,7 +39,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 
 /**
- * A {link {@link Page} that allows searching use the OSM namefinder facility.
+ * A {link {@link Page} that allows searching use the OSM Nominatim tool.
  * The OSM namefinder has its own usage policies. Please check them out before
  * you use it.
  * 
@@ -56,8 +56,6 @@ public class SearchPage extends AbstractPage implements Page {
         private String name;
         private String category;
         private String info;
-        private int zoom;
-        private String description = "";
 
         public SearchResult() {
         }
@@ -97,23 +95,11 @@ public class SearchPage extends AbstractPage implements Page {
         public void setInfo(String info) {
             this.info = info;
         }
-        public int getZoom() {
-            return zoom;
-        }
-        public void setZoom(int zoom) {
-            this.zoom = zoom;
-        }
-        public String getDescription() {
-            return description;
-        }
-        public void setDescription(String description) {
-            this.description = description;
-        }
+
         public String toString() {
             return "SearchResult [category=" + category + ", info=" + info + ", lat=" + lat + ", lon=" + lon
-                    + ", name=" + name + ", type=" + type + ", zoom=" + zoom + ", description=" + description + "]";
+            		+ ", name=" + name + ", type=" + type + "]";
         }
-
     }
 
     private final GeoMapBrowser mapBrowser;
@@ -249,63 +235,33 @@ public class SearchPage extends AbstractPage implements Page {
     private void doSearchInternal(final String newSearch) {
         results.clear();
         try {
-            String args = URLEncoder.encode(newSearch, "UTF-8");
+            String args = URLEncoder.encode(newSearch.trim(), "UTF-8");
             String path = GeoMap.NAMEFINDER_URL + "?format=xml&q=" + args;
             SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setValidating(false);
             factory.newSAXParser().parse(path, new DefaultHandler() {
-                private final ArrayList<String> pathStack = new ArrayList<String>();
-//                private final ArrayList<SearchResult> namedStack = new ArrayList<SearchResult>();
                 private StringBuilder chars;
                 public void startElement(String uri, String localName, String qName, Attributes attributes) {
-                    pathStack.add(qName);
-                    String path = getPath();
-                    if ("place".equals(qName)) {
+                	if ("place".equals(qName)) {
                         SearchResult result = new SearchResult();
                         result.setType(attributes.getValue("type"));
                         result.setLat(tryDouble(attributes.getValue("lat")));
                         result.setLon(tryDouble(attributes.getValue("lon")));
                         result.setName(attributes.getValue("display_name"));
-                        result.setCategory(attributes.getValue("category"));
-                        result.setInfo(attributes.getValue("info"));
-                        result.setZoom(tryInteger(attributes.getValue("zoom")));
-//                        namedStack.add(result);
-                        if (pathStack.size() == 2)
-                            results.add(result);
-//                    } else if ("description".equals(qName)) {
-//                        chars = new StringBuilder();
+                        results.add(result);
                     }
                 }
                 public void endElement(String uri, String localName, String qName) throws SAXException {
-//                    if ("place".equals(qName)) {
-//                        pathStack.remove(pathStack.size() - 1);
-//                    } else if ("description".equals(qName)) {
-//                        namedStack.get(namedStack.size() - 1).setDescription(chars.toString());
-//                    }
-                    pathStack.remove(pathStack.size() - 1);
                 }
                 public void characters(char[] ch, int start, int length) throws SAXException {
-                    if(chars != null)
+                    if (chars != null)
                         chars.append(ch, start, length);
-                }
-                private String getPath() {
-                    StringBuilder sb = new StringBuilder();
-                    for (String p : pathStack)
-                        sb.append("/").append(p);
-                    return sb.toString();
                 }
                 private double tryDouble(String s) {
                     try {
                         return Double.valueOf(s);
                     } catch (Exception e) {
                         return 0d;
-                    }
-                }
-                private int tryInteger(String s) {
-                    try {
-                        return Integer.valueOf(s);
-                    } catch (Exception e) {
-                        return 0;
                     }
                 }
             });

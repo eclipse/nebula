@@ -76,11 +76,10 @@ public class ResultsPage extends AbstractPage implements Page {
             
             String shortName = result.getName();
             shortName = shortName.replaceAll("\\s(.*)$", "");
-            String linkBody = shortName + " [" + result.getCategory() + "]";
+            String linkBody = shortName;
+            if (result.getType() != null && result.getType().length() > 0)
+            	linkBody += " [" + result.getType() + "]";
 
-            String description = result.getDescription();
-            description = description.replaceAll("\\[.*?\\]", "");
-            
             TableItem item = new TableItem(table, SWT.NONE);
             item.setText(0, linkBody);
         }
@@ -122,10 +121,13 @@ public class ResultsPage extends AbstractPage implements Page {
                 int index = table.indexOf(item);
                 if (index >= 0 && index < results.length) {
                     SearchResult result = results[index];
-                    String description = result.getDescription();
-                    description = description.replaceAll("\\[.*?\\]", "");
-                    description = description.replaceAll("<.*?>", "");
-                    descriptionText.setText(description);
+                    String name = result.getName();
+                    name = name.replaceAll("\\[.*?\\]", "");
+                    name = name.replaceAll("<.*?>", "");
+                    if (result.getCategory() != null)
+                    	name += " " + result.getCategory();
+                    descriptionText.setText(name);
+
                     descriptionText.getParent().layout();
                 }
             }
@@ -141,7 +143,7 @@ public class ResultsPage extends AbstractPage implements Page {
                 if (index >= 0 && index < results.length) {
                     SearchResult result = results[index];
                     GeoMap mapWidget = mapBrowser.getMapWidget();
-                    mapWidget.setZoom(result.getZoom() < 1 || result.getZoom() > mapWidget.getTileServer().getMaxZoom() ? 8 : result.getZoom());
+//                    mapWidget.setZoom(result.getZoom() < 1 || result.getZoom() > mapWidget.getTileServer().getMaxZoom() ? 8 : result.getZoom());
                     Point position = mapWidget.computePosition(new PointD(result.getLon(), result.getLat())); 
                     mapWidget.setCenterPosition(position);
                     mapWidget.redraw();

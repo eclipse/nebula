@@ -53,7 +53,7 @@ public class PageContainer extends Composite {
         
         stackLayout = new StackLayout();
 
-        TitleControl title = new TitleControl(this);
+        TitleControl title = new TitleControl(this, null);
         adapt(title);
         title.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false));
         title.setText("SWT MapWidget");
