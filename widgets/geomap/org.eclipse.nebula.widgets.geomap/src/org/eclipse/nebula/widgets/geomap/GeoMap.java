@@ -13,9 +13,9 @@ package org.eclipse.nebula.widgets.geomap;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.EventListener;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -29,6 +29,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.eclipse.nebula.widgets.geomap.internal.DefaultMouseHandler;
+import org.eclipse.nebula.widgets.geomap.internal.DefaultMouseHandler;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.DisposeEvent;
@@ -41,17 +43,17 @@ import org.eclipse.swt.events.MouseWheelListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * MapPanel display tiles from openstreetmap as is. This simple minimal viewer supports zoom around mouse-click center and has a simple api.
+ * GeoMap display tiles from openstreetmap as is. This simple minimal viewer supports zoom around mouse-click center and has a simple api.
  * A number of tiles are cached. See {@link #CACHE_SIZE} constant. If you use this it will create traffic on the tileserver you are
  * using. Please be conscious about this.
  *
@@ -227,72 +229,7 @@ public class GeoMap extends Canvas {
     private void redraw(TileRef tile) {
     	redraw();
     }
-   
-    private class MapMouseListener implements MouseListener, MouseWheelListener, MouseMoveListener, MouseTrackListener {
-        
-    	private Point mouseCoords = new Point(0, 0);
-        private Point downCoords;
-        private Point downPosition;
-        
-        public void mouseEnter(MouseEvent e) {
-            GeoMap.this.forceFocus();
-        }
-        
-        public void mouseExit(MouseEvent e) {
-        }
 
-        public void mouseHover(MouseEvent e) {
-        }
-        
-        public void mouseDoubleClick(MouseEvent e) {
-            if (e.button == 1) 
-                zoomIn(new Point(mouseCoords.x, mouseCoords.y));
-            else if (e.button == 3)
-                zoomOut(new Point(mouseCoords.x, mouseCoords.y));
-        }
-        public void mouseDown(MouseEvent e) {
-            if (e.button == 1 && (e.stateMask & SWT.CTRL) != 0) {
-                setCenterPosition(getCursorPosition());
-                redraw();
-            }
-            if (e.button == 1) {
-                downCoords = new Point(e.x, e.y);
-                downPosition = getMapPosition();
-            }
-        }
-        public void mouseUp(MouseEvent e) {
-            if (e.count == 1) {
-                handleDrag(e);
-            }
-            downCoords = null;
-            downPosition = null;
-        }
-        
-        public void mouseMove(MouseEvent e) {
-            handlePosition(e);
-            handleDrag(e);
-        }
-        public void mouseScrolled(MouseEvent e) {
-            if (e.count == 1)
-                zoomIn(new Point(mouseCoords.x, mouseCoords.y));
-            else if (e.count == -1)
-                zoomOut(new Point(mouseCoords.x, mouseCoords.y));
-        }
-        
-        private void handlePosition(MouseEvent e) {
-            mouseCoords = new Point(e.x, e.y);
-        }
-
-        private void handleDrag(MouseEvent e) {
-            if (downCoords != null) {
-                int tx = downCoords.x - e.x;
-                int ty = downCoords.y - e.y;
-                setMapPosition(downPosition.x + tx, downPosition.y + ty);
-                GeoMap.this.redraw();
-            }
-        }    
-    }
- 
     public static final String NAMEFINDER_URL = "http://nominatim.openstreetmap.org/search";
     
     public static final String ABOUT_MSG =
@@ -324,7 +261,9 @@ public class GeoMap extends Canvas {
     private TileServer tileServer = OsmTileServer.TILESERVERS[0];
     private TileCache cache = new TileCache();
     private Stats stats = new Stats();
-    private MapMouseListener mouseListener = new MapMouseListener();
+    
+    private Point mouseCoords = new Point(0, 0);
+    private DefaultMouseHandler defaultMouseHandler = new DefaultMouseHandler(this);
     
     private BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<Runnable>();
 
@@ -365,6 +304,26 @@ public class GeoMap extends Canvas {
     	this(parent, style, mapPosition, zoom, DEFAULT_CACHE_SIZE);
     }
     
+    private class MouseCoordsHandler implements MouseListener, MouseMoveListener {
+
+    	private void setMouseCoords(MouseEvent e) {
+    		mouseCoords = new Point(e.x, e.y);
+    	}
+
+    	public void mouseDown(MouseEvent e) {
+    		setMouseCoords(e);
+    	}
+    	public void mouseMove(MouseEvent e) {
+    		setMouseCoords(e);
+		}
+		public void mouseUp(MouseEvent e) {
+			setMouseCoords(e);
+		}
+		public void mouseDoubleClick(MouseEvent e) {
+			setMouseCoords(e);
+		}
+    }
+    
     /**
      * Creates a new <code>GeoMap</code> using the {@link GeoMap#DEFAULT_CACHE_SIZE} size
      * for its internal cache of tiles
@@ -393,16 +352,66 @@ public class GeoMap extends Canvas {
                 GeoMap.this.paintControl(e);
             }
         });
+        MouseCoordsHandler mouseCoordsHandler = new MouseCoordsHandler();
+        addMouseListener(mouseCoordsHandler);
+        addMouseMoveListener(mouseCoordsHandler);
         setMapPosition(mapPosition);
-        addMouseListener(mouseListener);
-        addMouseMoveListener(mouseListener);
-        addMouseWheelListener(mouseListener);
-        addMouseTrackListener(mouseListener);
-
-        /// TODO: check tileservers
+        addMouseHandler(defaultMouseHandler);
     }
     
-	public TileServer getTileServer() {
+    /**
+     * Returns the default mouse handler, so it may be configured or removed.
+     * @return the default mouse handler
+     */
+    public DefaultMouseHandler getDefaultMouseHandler() {
+    	return defaultMouseHandler;
+    }
+    
+    /**
+     * Adds listener to appropriate listener lists depending on the listener interfaces that are implemented.
+     * @param listener the listener
+     */
+    public void addMouseHandler(EventListener listener) {
+		if (listener instanceof MouseListener) {
+			addMouseListener((MouseListener) listener);
+		}
+		if (listener instanceof MouseMoveListener) {
+			addMouseMoveListener((MouseMoveListener) listener);
+		}
+		if (listener instanceof MouseTrackListener) {
+			addMouseTrackListener((MouseTrackListener) listener);
+		}
+		if (listener instanceof MouseWheelListener) {
+			addMouseWheelListener((MouseWheelListener) listener);
+		}
+		if (listener instanceof PaintListener) {
+			addPaintListener((PaintListener) listener);
+		}
+    }
+
+    /**
+     * Removes listener from appropriate listener lists depending on the listener interfaces that are implemented.
+     * @param listener the listener
+     */
+    public void removeMouseHandler(EventListener listener) {
+    	if (listener instanceof MouseListener) {
+    		removeMouseListener((MouseListener) listener);
+    	}
+    	if (listener instanceof MouseMoveListener) {
+    		removeMouseMoveListener((MouseMoveListener) listener);
+    	}
+    	if (listener instanceof MouseTrackListener) {
+    		removeMouseTrackListener((MouseTrackListener) listener);
+    	}
+    	if (listener instanceof MouseWheelListener) {
+    		removeMouseWheelListener((MouseWheelListener) listener);
+    	}
+		if (listener instanceof PaintListener) {
+			removePaintListener((PaintListener) listener);
+		}
+    }
+
+    public TileServer getTileServer() {
 		return tileServer;
 	}
 
@@ -588,6 +597,36 @@ public class GeoMap extends Canvas {
         redraw();
     }
 
+    private int zoomMargin = 10;
+    
+    public void zoomTo(Rectangle rect) {
+    	Rectangle zoomRectangle = new Rectangle(rect.x, rect.y, rect.width, rect.height);
+    	Point mapSize = getSize();
+    	Point pivot = new Point(0, 0);
+		do {
+			// pivot on center of zoom rectangle
+			zoomOut(pivot);
+			// scale zoom rectangle down, to match zoom level
+			zoomRectangle.x /= 2;
+			zoomRectangle.y /= 2;
+			zoomRectangle.width /= 2;
+			zoomRectangle.height /= 2;
+		} while (Math.min(mapSize.x / (zoomRectangle.width + zoomMargin), mapSize.y / (zoomRectangle.height + zoomMargin)) < 1);
+
+		while (Math.min(mapSize.x / (zoomRectangle.width + zoomMargin), mapSize.y / (zoomRectangle.height + zoomMargin)) > 1) {
+			// pivot on center of zoom rectangle
+			zoomIn(pivot);
+			// scale zoom rectangle up, to match zoom level
+			zoomRectangle.x *= 2;
+			zoomRectangle.y *= 2;
+			zoomRectangle.width *= 2;
+			zoomRectangle.height *= 2;
+		}
+		setMapPosition(zoomRectangle.x + (zoomRectangle.width - mapSize.x) / 2, zoomRectangle.y + (zoomRectangle.height - mapSize.y) / 2);
+    }
+    
+    //
+    
     public int getXTileCount() {
         return (1 << zoom);
     }
@@ -605,7 +644,7 @@ public class GeoMap extends Canvas {
     }
 
     public Point getCursorPosition() {
-        return new Point(mapPosition.x + mouseListener.mouseCoords.x, mapPosition.y + mouseListener.mouseCoords.y);
+        return new Point(mapPosition.x + mouseCoords.x, mapPosition.y + mouseCoords.y);
     }
 
     public Point getTile(Point position) {
