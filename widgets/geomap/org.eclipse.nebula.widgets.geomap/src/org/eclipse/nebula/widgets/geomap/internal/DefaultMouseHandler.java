@@ -109,6 +109,13 @@ public class DefaultMouseHandler implements MouseListener, MouseWheelListener, M
 	}
 
 	/**
+	 * @param panCenterButtons The panCenterButtons to set.
+	 */
+	public void setPanCenterButtons(int panCenterButtons) {
+		this.panCenterButtons = panCenterButtons;
+	}
+
+	/**
 	 * @return Returns the zoomInClickButtons.
 	 */
 	public int getZoomInClickButtons() {
@@ -212,9 +219,24 @@ public class DefaultMouseHandler implements MouseListener, MouseWheelListener, M
 	public void setZoomScrollButtons(int zoomScrollButtons) {
 		this.zoomScrollButtons = zoomScrollButtons;
 	}
-
-	//
 	
+	/**
+	 * @return Returns the zoomRectangleButtons.
+	 */
+	public int getZoomRectangleButtons() {
+		return zoomRectangleButtons;
+	}
+
+	/**
+	 * Sets the button(s) that triggers a zoom (rectangle).
+	 * @param zoomRectangleButtons The zoomRectangleButtons to set.
+	 */
+	public void setZoomRectangleButtons(int zoomRectangleButtons) {
+		this.zoomRectangleButtons = zoomRectangleButtons;
+	}
+
+	// 
+
 	private Point panStart;
     private Point downPosition;
     
