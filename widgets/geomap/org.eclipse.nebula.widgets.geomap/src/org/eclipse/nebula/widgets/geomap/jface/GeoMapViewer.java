@@ -23,6 +23,7 @@ import org.eclipse.jface.window.DefaultToolTip;
 import org.eclipse.jface.window.ToolTip;
 import org.eclipse.nebula.widgets.geomap.GeoMap;
 import org.eclipse.nebula.widgets.geomap.PointD;
+import org.eclipse.nebula.widgets.geomap.internal.DefaultMouseHandler;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.KeyAdapter;
@@ -52,7 +53,7 @@ public class GeoMapViewer extends ContentViewer {
 	private Object selection = null;
 	private Point selectionOffset = null;
 
-	private MouseHandler mouseHandler;
+	private DefaultMouseHandler mouseHandler;
 
 	/**
 	 * Creates a GeoMapViewer for a specific GeoMap
@@ -62,7 +63,7 @@ public class GeoMapViewer extends ContentViewer {
 		this.geoMap = geoMap;
 		hookControl(geoMap);
 		this.geoMap.removeMouseHandler(this.geoMap.getDefaultMouseHandler());
-		this.geoMap.addMouseHandler(new MovePinMouseHandler(this));
+		this.geoMap.addMouseHandler(mouseHandler = new MovePinMouseHandler(this));
 		geoMap.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
 				paintOverlay(e);
@@ -126,9 +127,6 @@ public class GeoMapViewer extends ContentViewer {
 
 	private void paintOverlay(PaintEvent e) {
 		doContents(e.gc, null, selection);
-		if (mouseHandler != null) {
-			mouseHandler.paintControl(e);
-		}
 	}
 
 	private Object[] getElements() {
