@@ -139,6 +139,7 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 			new ContributorLocation("Matthew Hall",			new PointD(-111.97,40.54), 		"Riverton, Utah, USA", 	true),
 			new ContributorLocation("Justin Dolezy",		new PointD(-0.34,51.48), 		"Richmond, Surrey, UK", true),
 			new ContributorLocation("Edwin Park",			new PointD(-74.07,40.76), 		"Hoboken, New Jersey, USA", true),
+			new ContributorLocation("Mickael Istria",		new PointD(5.7349,45.1872),	 	"Grenoble, France", 	true),
 	};
 	
 	private int indexOfLocation(Object element) {
