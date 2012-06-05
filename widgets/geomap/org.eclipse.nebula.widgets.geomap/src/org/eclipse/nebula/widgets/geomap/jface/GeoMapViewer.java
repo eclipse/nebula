@@ -23,6 +23,7 @@ import org.eclipse.jface.window.DefaultToolTip;
 import org.eclipse.jface.window.ToolTip;
 import org.eclipse.nebula.widgets.geomap.GeoMap;
 import org.eclipse.nebula.widgets.geomap.PointD;
+import org.eclipse.nebula.widgets.geomap.internal.DefaultMouseHandler;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.KeyAdapter;
@@ -52,7 +53,7 @@ public class GeoMapViewer extends ContentViewer {
 	private Object selection = null;
 	private Point selectionOffset = null;
 
-	private MouseHandler mouseHandler;
+	private DefaultMouseHandler mouseHandler;
 
 	/**
 	 * Creates a GeoMapViewer for a specific GeoMap
@@ -61,7 +62,8 @@ public class GeoMapViewer extends ContentViewer {
 	public GeoMapViewer(GeoMap geoMap) {
 		this.geoMap = geoMap;
 		hookControl(geoMap);
-		setMouseHandler(new MovePinMouseHandler(this));
+		this.geoMap.removeMouseHandler(this.geoMap.getDefaultMouseHandler());
+		this.geoMap.addMouseHandler(mouseHandler = new MovePinMouseHandler(this));
 		geoMap.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
 				paintOverlay(e);
@@ -76,22 +78,6 @@ public class GeoMapViewer extends ContentViewer {
 		});
 	}
 
-	private void setMouseHandler(MovePinMouseHandler mouseHandler) {
-		if (this.mouseHandler != null) {
-			geoMap.removeMouseListener(this.mouseHandler);
-			geoMap.removeMouseMoveListener(this.mouseHandler);
-			geoMap.removeMouseTrackListener(this.mouseHandler);
-			geoMap.removeMouseWheelListener(this.mouseHandler);
-		}
-		this.mouseHandler = mouseHandler;
-		if (this.mouseHandler != null) {
-			geoMap.addMouseListener(this.mouseHandler);
-			geoMap.addMouseMoveListener(this.mouseHandler);
-			geoMap.addMouseTrackListener(this.mouseHandler);
-			geoMap.addMouseWheelListener(this.mouseHandler);
-		}
-	}
-
 	/**
 	 * Creates a GeoMapViewer with a default GeoMap inside a specific Composite
 	 * @param parent the parent Composite
@@ -103,7 +89,7 @@ public class GeoMapViewer extends ContentViewer {
 
 	@Override
 	protected void handleDispose(DisposeEvent event) {
-		setMouseHandler(null);
+		this.geoMap.removeMouseHandler(mouseHandler);
 		if (lastToolTip != null) {
 			lastToolTip.deactivate();
 			lastToolTip = null;
@@ -139,11 +125,8 @@ public class GeoMapViewer extends ContentViewer {
 
 	//
 
-	protected void paintOverlay(PaintEvent e) {
+	private void paintOverlay(PaintEvent e) {
 		doContents(e.gc, null, selection);
-		if (mouseHandler != null) {
-			mouseHandler.paintControl(e);
-		}
 	}
 
 	private Object[] getElements() {
@@ -336,22 +319,31 @@ public class GeoMapViewer extends ContentViewer {
 	
 	private int thumbSize = 7;
 
-	private class MovePinMouseHandler extends DefaultMouseHandler {
-
+	private class MovePinMouseHandler extends org.eclipse.nebula.widgets.geomap.internal.DefaultMouseHandler {
 		
 		MovePinMouseHandler(GeoMapViewer geoMapViewer) {
-			super(geoMapViewer);
+			super(geoMapViewer.getGeoMap());
 		}
 
-
-		protected boolean isPanDownEvent(MouseEvent e) {
-			return super.isPanDownEvent(e) && getElementAt(e.x, e.y, thumbSize) == null;
+		@Override
+		protected boolean isPanStart(MouseEvent e) {
+			return super.isPanStart(e) && getElementAt(e.x, e.y, thumbSize) == null;
 		}
 
-		protected boolean handleDown(MouseEvent e) {
-			boolean redraw = super.handleDown(e);
+		private Point selectionStart = null;
+		
+		private boolean isSelecting() {
+			return selectionOffset != null;
+		}
+		
+		public void mouseDown(MouseEvent e) {
+			super.mouseDown(e);
+			if (isPanning() || isZooming()) {
+				return;
+			}
 			Object element = getElementAt(e.x, e.y, thumbSize);
 			if (element != null) {
+				selectionStart = new Point(e.x, e.y);
 				selectionOffset = new Point(0, 0);
 				PointD lonLat = getLocationProvider().getLonLat(element);
 				if (moveSelectionMode == MOVE_SELECTION_NONE ||
@@ -359,37 +351,39 @@ public class GeoMapViewer extends ContentViewer {
 					selectionOffset = null;
 				}
 				setSelection(element);
-				redraw = true;
 			}
-			return redraw;
 		}
 
 		@Override
-		protected boolean handleDrag(MouseEvent e) {
-			boolean redraw = super.handleDrag(e);
-			if (selectionOffset != null) {
-				selectionOffset.x = e.x - downCoords.x;
-				selectionOffset.y = e.y - downCoords.y;
-				return true;
+		public void mouseMove(MouseEvent e) {
+			if (isSelecting()) {
+				selectionOffset.x = e.x - selectionStart.x;
+				selectionOffset.y = e.y - selectionStart.y;
+				refresh();
+			} else {
+				super.mouseMove(e);
 			}
-			return redraw;
 		}
 
 		@Override
-		protected boolean handleUp(MouseEvent e) {
-			boolean redraw = super.handleUp(e);
-			if (selectionOffset != null) {
+		public void mouseUp(MouseEvent e) {
+			if (isSelecting()) {
 				Point oldPosition = getElementPosition(selection, new Point(0, 0), false);
 				Point newPosition = new Point(oldPosition.x + selectionOffset.x, oldPosition.y + selectionOffset.y);
 				PointD lonLat = geoMap.getLongitudeLatitude(newPosition);
 				@SuppressWarnings("unused")
 				boolean changed = getLocationProvider().setLonLat(selection, lonLat.x, lonLat.y);
-				reveal(selection, (e.stateMask & SWT.CTRL) != 0);
+				reveal(selection, checkButtons(e, getPanCenterButtons()));
+				selectionStart = null;
 				selectionOffset = null;
-				redraw = true;
+			} else {
+				super.mouseUp(e);
 			}
-			return redraw;
 		}
+		
+	    public void mouseHover(MouseEvent e) {
+	    	handleToolTip(e);
+	    }
 	}
 
 	void handleToolTip(Event e) {		handleToolTip(e.x, e.y);}
@@ -419,32 +413,6 @@ public class GeoMapViewer extends ContentViewer {
 		}
 	}
 
-    public void zoomTo(Rectangle rect) {
-    	Rectangle zoomRectangle = new Rectangle(rect.x, rect.y, rect.width, rect.height);
-    	Point mapSize = getGeoMap().getSize();
-    	Point pivot = new Point(0, 0);
-		do {
-			// pivot on center of zoom rectangle
-			getGeoMap().zoomOut(pivot);
-			// scale zoom rectangle down, to match zoom level
-			zoomRectangle.x /= 2;
-			zoomRectangle.y /= 2;
-			zoomRectangle.width /= 2;
-			zoomRectangle.height /= 2;
-		} while (Math.min(mapSize.x / (zoomRectangle.width + revealMargin), mapSize.y / (zoomRectangle.height + revealMargin)) < 1);
-
-		while (Math.min(mapSize.x / (zoomRectangle.width + revealMargin), mapSize.y / (zoomRectangle.height + revealMargin)) > 1) {
-			// pivot on center of zoom rectangle
-			getGeoMap().zoomIn(pivot);
-			// scale zoom rectangle up, to match zoom level
-			zoomRectangle.x *= 2;
-			zoomRectangle.y *= 2;
-			zoomRectangle.width *= 2;
-			zoomRectangle.height *= 2;
-		}
-		getGeoMap().setMapPosition(zoomRectangle.x + (zoomRectangle.width - mapSize.x) / 2, zoomRectangle.y + (zoomRectangle.height - mapSize.y) / 2);
-    }
-    
     private Rectangle getBounds(Object[] elements) {
     	Rectangle rect = null;
     	for (int i = 0; i < elements.length; i++) {
@@ -478,6 +446,6 @@ public class GeoMapViewer extends ContentViewer {
     	if (rect == null) {
     		return;
     	}
-    	zoomTo(rect);
+    	getGeoMap().zoomTo(rect);
     }
 }
