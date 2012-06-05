@@ -233,7 +233,7 @@
 				<configuration>
 					<resolver>p2</resolver>
 					<pomDependencies>consider</pomDependencies>
-					<optionalDependencies>require</optionalDependencies>
+		<!--			<optionalDependencies>require</optionalDependencies> -->
 				</configuration>
 			</plugin>
 			<plugin>
