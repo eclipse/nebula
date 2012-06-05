@@ -26,7 +26,7 @@ public class NebulaWidgetServices implements
 		load();
 	}
 
-	@Override
+	//@Override
 	public PageResult<NebulaWidget> loadPage(PageableController controller) {
 		return PageListHelper.createPage(widgets, controller);
 	}
