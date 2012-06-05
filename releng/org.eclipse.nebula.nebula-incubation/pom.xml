@@ -69,6 +69,12 @@
 		<module>../../widgets/picture/org.eclipse.nebula.widgets.picture.feature</module>
 		<module>../../widgets/picture/org.eclipse.nebula.widgets.picture.snippets</module>
 				
+		<!-- GeoMap Control -->
+		<module>../../widgets/geomap/org.eclipse.nebula.widgets.geomap</module>
+		<module>../../widgets/geomap/org.eclipse.nebula.widgets.geomap.example</module>
+		<module>../../widgets/geomap/org.eclipse.nebula.widgets.geomap.feature</module>
+		<module>../../widgets/geomap/org.eclipse.nebula.widgets.geomap.snippets</module>
+				
 		<!-- Dist -->
 		<module>../org.eclipse.nebula.updatesite.incubation</module>
 		<module>../org.eclipse.nebula.incubation.feature</module>
