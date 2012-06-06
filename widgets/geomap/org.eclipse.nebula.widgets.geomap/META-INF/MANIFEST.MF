@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: org.eclipse.nebula.widgets.geomap
+Bundle-Version: 0.1.0.qualifier
+Bundle-Name: %pluginName
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Require-Bundle: org.eclipse.swt,
+ org.eclipse.jface;bundle-version="3.7.0";resolution:=optional
+Export-Package: org.eclipse.nebula.widgets.geomap,
+ org.eclipse.nebula.widgets.geomap.jface

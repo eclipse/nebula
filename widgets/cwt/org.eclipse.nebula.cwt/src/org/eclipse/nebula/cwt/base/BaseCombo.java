@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -1086,9 +1087,12 @@ public abstract class BaseCombo extends Canvas {
 			} else {
 
 				location.x += (positionControl.getSize().x - size.x);
+				
 				// <bug 373946> Edge detection
-				location.x = Math.max(location.x, positionControl.getDisplay()
-						.getBounds().x);
+				Monitor monitor = positionControl.getControl().getMonitor();
+				Rectangle monitorBounds = monitor.getBounds();
+				location.x = Math.max(monitorBounds.x, location.x); 
+				
 			}
 			if (win32) {
 				location.x += 2;

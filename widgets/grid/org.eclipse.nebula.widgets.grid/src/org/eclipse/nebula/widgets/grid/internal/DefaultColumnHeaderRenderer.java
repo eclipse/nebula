@@ -201,7 +201,10 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
         	textLayout.setWidth(width < 1 ? 1 : width);
         	textLayout.setText(text);
         	y -= textLayout.getBounds().height;
-
+        	
+        	// remove the first line shift
+        	y+=gc.getFontMetrics().getHeight();
+        	
         	if (column.getParent().isAutoHeight())
         	{
         		column.getParent().recalculateHeader();

@@ -140,4 +140,9 @@ public abstract class XViewerFactory implements IXViewerFactory {
       return false;
    }
 
+   @Override
+   public boolean isSearhTop() {
+      return false;
+   }
+
 }

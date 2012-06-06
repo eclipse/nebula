@@ -9,7 +9,7 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<tycho-version>0.13.0</tycho-version>
+		<tycho-version>0.15.0</tycho-version>
 		<tests.vmargs></tests.vmargs>
 		<!-- Properties to enable jacoco code coverage analysis in Sonar -->
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
@@ -34,6 +34,8 @@
 				<version>${tycho-version}</version>
 				<configuration>
 					<resolver>p2</resolver>
+					<pomDependencies>consider</pomDependencies>
+			<!--		<optionalDependencies>require</optionalDependencies> -->
 					<environments>
 						<environment>
 							<os>linux</os>
