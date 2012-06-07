@@ -5,5 +5,9 @@ Bundle-SymbolicName: org.eclipse.nebula.widgets.ganttchart
 Bundle-Version: 1.0.0.qualifier
 Require-Bundle: org.eclipse.swt
 Export-Package: org.eclipse.nebula.widgets.ganttchart,
- org.eclipse.nebula.widgets.ganttchart.themes
+ org.eclipse.nebula.widgets.ganttchart.dnd,
+ org.eclipse.nebula.widgets.ganttchart.themes,
+ org.eclipse.nebula.widgets.ganttchart.undoredo,
+ org.eclipse.nebula.widgets.ganttchart.undoredo.commands,
+ org.eclipse.nebula.widgets.ganttchart.utils
 Bundle-Vendor: Eclipse.org
