@@ -12,6 +12,7 @@
 package org.eclipse.nebula.widgets.ganttchart.undoredo.commands;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -88,5 +89,33 @@ public class ClusteredCommand extends AbstractUndoRedoCommand {
             ((IUndoRedoCommand)_commands.get(i)).undo();
         }
     }
+	/**
+	 * Return the individual commands that are clustered in this command.
+	 * 
+	 * @return A unmodifiable list of participating {@link EventMoveCommand}s.
+	 */
+	public List getCommands() {
+		ArrayList result = new ArrayList();
+		for (Object command : _commands) {
+			if (command instanceof EventMoveCommand)
+				result.add((EventMoveCommand) command);
+			else if (command instanceof ClusteredCommand)
+				result.addAll(((ClusteredCommand) command).getCommands());
+		}
+		return Collections.unmodifiableList(result); 
+	}
 
+	/**
+	 * Return the individual events that are clustered in this command.
+	 * 
+	 * @return An unmodifiable list of participating {@link GanttEvent}s.
+	 */
+	public List getEvents() {
+		ArrayList result = new ArrayList();
+		for (Object command : getCommands()) {
+			if (command instanceof EventMoveCommand)
+				result.add(((EventMoveCommand) command).getEvent());
+		}
+		return Collections.unmodifiableList(result);
+	}
 }
