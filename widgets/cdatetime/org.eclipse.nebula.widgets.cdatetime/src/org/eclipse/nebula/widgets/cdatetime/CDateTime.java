@@ -1684,7 +1684,7 @@ public class CDateTime extends BaseCombo {
 			}
 			if (checkButton() && ((isDate != wasDate) || (isTime != wasTime))) {
 				if (defaultButtonImage) {
-					if (isDate && isTime) { 
+					if (isDate && isTime) {
 						doSetButtonImage(Resources.getIconCalendarClock());
 					} else if (isDate) {
 						doSetButtonImage(Resources.getIconCalendar());
@@ -2002,6 +2002,9 @@ public class CDateTime extends BaseCombo {
 						case Calendar.DAY_OF_WEEK:
 						case Calendar.ERA:
 							digits = 1;
+							break;
+						case Calendar.MILLISECOND:
+							digits = 3;
 							break;
 						default:
 							digits = 2;
