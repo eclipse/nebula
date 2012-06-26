@@ -237,6 +237,7 @@ public class CDateTimeExampleTab extends AbstractExampleTab {
 		combo1.add("Type in a custom pattern");
 		combo1.add("MM/dd/yyyy HH:mm.ss z");
 		combo1.add("dd/MM/yy HH:mm.ss");
+		combo1.add("dd/MM/yy HH:mm.ss.SSS");
 		combo1.add("DATE_SHORT");
 		combo1.add("DATE_SHORT");
 		combo1.add("DATE_MEDIUM");
