@@ -13,7 +13,8 @@ Export-Package: org.eclipse.nebula.widgets.pagination,
  org.eclipse.nebula.widgets.pagination.renderers.pagesize,
  org.eclipse.nebula.widgets.pagination.table,
  org.eclipse.nebula.widgets.pagination.table.forms,
- org.eclipse.nebula.widgets.pagination.tree
+ org.eclipse.nebula.widgets.pagination.tree,
+ org.eclipse.nebula.widgets.pagination.tree.forms
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.swt;resolution:=optional,
  org.eclipse.ui.forms;resolution:=optional,
