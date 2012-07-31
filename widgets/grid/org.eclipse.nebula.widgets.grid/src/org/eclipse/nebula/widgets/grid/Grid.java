@@ -5258,6 +5258,7 @@ public class Grid extends Canvas
 
                     int rowSpan = itemForRow.getRowSpan(colIndex);
                     maxRowSpanForItem = rowSpan > maxRowSpanForItem ? rowSpan : maxRowSpanForItem;
+                    colIndex++;
                 }
 
                 if(rowIndex + maxRowSpanForItem >= firstVisibleIndex) {
