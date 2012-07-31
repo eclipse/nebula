@@ -8364,6 +8364,8 @@ public class Grid extends Canvas
         }
 
         redraw();
+        // Need to update the scrollbars see 
+//        updateScrollbars();
     }
 
     /**
