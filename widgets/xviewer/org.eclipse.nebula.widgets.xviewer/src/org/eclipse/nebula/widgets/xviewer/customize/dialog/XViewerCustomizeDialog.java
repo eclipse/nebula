@@ -39,7 +39,6 @@ import org.eclipse.nebula.widgets.xviewer.customize.SortingData;
 import org.eclipse.nebula.widgets.xviewer.util.XViewerException;
 import org.eclipse.nebula.widgets.xviewer.util.internal.ArrayTreeContentProvider;
 import org.eclipse.nebula.widgets.xviewer.util.internal.CollectionsUtil;
-import org.eclipse.nebula.widgets.xviewer.util.internal.PatternFilter;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerFilteredTree;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
@@ -404,7 +403,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
       selectCustomizationLabel.setText(XViewerText.get("XViewerCustomizeDialog.prompt"));
 
       // Customization Table
-      custTable = new XViewerFilteredTree(custComp, SWT.BORDER, new PatternFilter());
+      custTable = new XViewerFilteredTree(custComp, SWT.BORDER);
       final Tree table_2 = custTable.getViewer().getTree();
       final GridData gd_table_2 = new GridData(SWT.FILL, SWT.FILL, true, true);
       gd_table_2.heightHint = 270;
