@@ -35,7 +35,7 @@
 				<configuration>
 					<resolver>p2</resolver>
 					<pomDependencies>consider</pomDependencies>
-			<!--		<optionalDependencies>require</optionalDependencies> -->
+					<optionalDependencies>require</optionalDependencies> 
 					<environments>
 						<environment>
 							<os>linux</os>

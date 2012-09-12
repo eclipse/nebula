@@ -53,7 +53,7 @@ folder of your target platform.
 
 If you are extending PaperClips (or you want the latest bleeding edge
 features), your best bet is to checkout the sources from from
-CVS and import each project into your workspace.
+git and import each project into your workspace.
 
 Import these folders:
   org.eclipse.nebula.paperclips/           # core (required)

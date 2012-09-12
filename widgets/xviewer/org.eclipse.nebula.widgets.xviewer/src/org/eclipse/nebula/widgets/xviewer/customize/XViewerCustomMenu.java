@@ -50,6 +50,7 @@ import org.eclipse.nebula.widgets.xviewer.util.internal.HtmlUtil;
 import org.eclipse.nebula.widgets.xviewer.util.internal.PatternFilter;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
+import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerPatternFilter;
 import org.eclipse.nebula.widgets.xviewer.util.internal.dialog.HtmlDialog;
 import org.eclipse.nebula.widgets.xviewer.util.internal.dialog.XCheckFilteredTreeDialog;
 import org.eclipse.swt.SWT;
@@ -323,7 +324,7 @@ public class XViewerCustomMenu {
       });
    }
 
-   private static PatternFilter patternFilter = new PatternFilter();
+   private static PatternFilter patternFilter = new XViewerPatternFilter();
 
    protected void handleShowColumn() {
       TreeColumn insertTreeCol = xViewer.getRightClickSelectedColumn();

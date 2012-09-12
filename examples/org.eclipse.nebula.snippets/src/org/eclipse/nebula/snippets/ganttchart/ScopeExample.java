@@ -53,7 +53,7 @@ public class ScopeExample {
 		cpDate.add(Calendar.DATE, 16);
 
 		// Create events
-		GanttEvent eventOne = new GanttEvent(ganttChart, "Scope Event 1", sdEventOne, edEventOne, 35);		
+		GanttEvent eventOne = new GanttEvent(ganttChart, "Scope Event 1");		
 		GanttEvent eventTwo = new GanttEvent(ganttChart, "Scope Event 2", sdEventTwo, edEventTwo, 10);		
 		GanttEvent eventThree = new GanttEvent(ganttChart, "Checkpoint", cpDate, cpDate, 75);
 		eventThree.setCheckpoint(true);
@@ -62,6 +62,9 @@ public class ScopeExample {
 		scopeEvent.addScopeEvent(eventOne);
 		scopeEvent.addScopeEvent(eventTwo);
 		scopeEvent.addScopeEvent(eventThree);
+		
+		eventOne.addScopeEvent(eventTwo);
+		eventOne.addScopeEvent(eventThree);
 				
 		// Show chart
 		shell.open();

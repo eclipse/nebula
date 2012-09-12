@@ -80,5 +80,10 @@
 		<module>../org.eclipse.nebula.incubation.feature</module>
 		
 	</modules>
+	<repositories>	
+		<repository>
+			<id>rap incubator</id>
+			<layout>p2</layout>
+			<url>http://download.eclipse.org/rt/rap/1.4/incubator/</url></repository></repositories>
 
 </project>

@@ -17,7 +17,7 @@
 	<artifactId>org.eclipse.nebula.updatesite.incubation</artifactId>
 	<packaging>eclipse-repository</packaging>
 
-	<name>Eclipse Nebula Plugin Update Site</name>
+	<name>Eclipse Nebula Incubation Update Site</name>
 	<version>1.0.0-SNAPSHOT</version>
 
 	<profiles>
@@ -37,12 +37,12 @@
 					<plugin>
 						<groupId>org.eclipse.dash.maven</groupId>
 						<artifactId>eclipse-signing-maven-plugin</artifactId>
-						<version>1.0.3</version>
+						<version>1.0.5</version>
 						<executions>
 							<execution>
 								<id>pack</id>
 								<configuration>
-									<inputFile>${project.build.directory}/${project.artifactId}.zip</inputFile>
+									<inputFile>${project.build.directory}/${project.artifactId}-${project.version}.zip</inputFile>
 								</configuration>
 								<phase>package</phase>
 								<goals>
@@ -52,7 +52,7 @@
 							<execution>
 								<id>sign</id>
 								<configuration>
-									<inputFile>${project.build.directory}/${project.artifactId}.zip</inputFile>
+									<inputFile>${project.build.directory}/${project.artifactId}-${project.version}.zip</inputFile>
 									<signerInputDirectory>${signer-input-directory}</signerInputDirectory>
 								</configuration>
 								<phase>package</phase>

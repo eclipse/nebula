@@ -9,19 +9,19 @@
  *     Angelo ZERR - initial API and implementation
  *     Pascal Leclercq - initial API and implementation
  *******************************************************************************/
-package org.eclipse.nebula.widgets.pagination.table.forms;
+package org.eclipse.nebula.widgets.pagination.tree.forms;
 
 import org.eclipse.nebula.widgets.pagination.IPageContentProvider;
 import org.eclipse.nebula.widgets.pagination.renderers.ICompositeRendererFactory;
-import org.eclipse.nebula.widgets.pagination.table.PageableTable;
+import org.eclipse.nebula.widgets.pagination.tree.PageableTree;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 /**
- * Implementation of the paginated SWT Forms Table {@link PageableTable}.
+ * Implementation of the paginated SWT Forms Tree {@link PageableTree}.
  */
-public class FormPageableTable extends PageableTable {
+public class FormPageableTree extends PageableTree {
 
 	private final FormToolkit toolkit;
 
@@ -34,16 +34,16 @@ public class FormPageableTable extends PageableTable {
 	 *            be null)
 	 * @param style
 	 *            the style of widget to construct
-	 * @param tableStyle
-	 *            the style of table to construct
+	 * @param treeStyle
+	 *            the style of tree to construct
 	 * @param toolkit
-	 *            the {@link FormToolkit} used to create the SWT {@link Table}.
+	 *            the {@link FormToolkit} used to create the SWT {@link Tree}.
 	 */
-	public FormPageableTable(Composite parent, int style, int tableStyle,
+	public FormPageableTree(Composite parent, int style, int treeStyle,
 			FormToolkit toolkit, IPageContentProvider pageContentProvider,
 			ICompositeRendererFactory pageRendererTopFactory,
 			ICompositeRendererFactory pageRendererBottomFactory) {
-		this(parent, style, tableStyle, toolkit, DEFAULT_PAGE_SIZE,
+		this(parent, style, treeStyle, toolkit, DEFAULT_PAGE_SIZE,
 				pageContentProvider, pageRendererTopFactory,
 				pageRendererBottomFactory);
 	}
@@ -57,14 +57,14 @@ public class FormPageableTable extends PageableTable {
 	 *            be null)
 	 * @param style
 	 *            the style of widget to construct
-	 * @param tableStyle
-	 *            the style of table to construct
+	 * @param treeStyle
+	 *            the style of tree to construct
 	 * @param toolkit
-	 *            the {@link FormToolkit} used to create the SWT {@link Table}.
+	 *            the {@link FormToolkit} used to create the SWT {@link Tree}.
 	 */
-	public FormPageableTable(Composite parent, int style, int tableStyle,
+	public FormPageableTree(Composite parent, int style, int treeStyle,
 			FormToolkit toolkit, IPageContentProvider pageContentProvider) {
-		this(parent, style, tableStyle, toolkit, DEFAULT_PAGE_SIZE,
+		this(parent, style, treeStyle, toolkit, DEFAULT_PAGE_SIZE,
 				pageContentProvider, getDefaultPageRendererTopFactory(),
 				getDefaultPageRendererBottomFactory());
 	}
@@ -78,10 +78,10 @@ public class FormPageableTable extends PageableTable {
 	 *            be null)
 	 * @param style
 	 *            the style of widget to construct
-	 * @param tableStyle
-	 *            the style of table to construct
+	 * @param treeStyle
+	 *            the style of tree to construct
 	 * @param toolkit
-	 *            the {@link FormToolkit} used to create the SWT {@link Table}.
+	 *            the {@link FormToolkit} used to create the SWT {@link Tree}.
 	 * @param pageSize
 	 *            size of the page (number items displayed per page).
 	 * 
@@ -94,12 +94,12 @@ public class FormPageableTable extends PageableTable {
 	 *            created.
 	 * 
 	 */
-	public FormPageableTable(Composite parent, int style, int tableStyle,
+	public FormPageableTree(Composite parent, int style, int treeStyle,
 			FormToolkit toolkit, int pageSize,
 			IPageContentProvider pageContentProvider,
 			ICompositeRendererFactory pageRendererTopFactory,
 			ICompositeRendererFactory pageRendererBottomFactory) {
-		super(parent, style, tableStyle, pageSize, pageContentProvider,
+		super(parent, style, treeStyle, pageSize, pageContentProvider,
 				pageRendererTopFactory, pageRendererBottomFactory, false);
 		this.toolkit = toolkit;
 		super.createUI(this);
@@ -107,8 +107,8 @@ public class FormPageableTable extends PageableTable {
 	}
 
 	@Override
-	protected Table createTable(Composite parent, int style) {
-		return toolkit.createTable(parent, style);
+	protected Tree createTree(Composite parent, int style) {
+		return toolkit.createTree(parent, style);
 	}
 
 	@Override

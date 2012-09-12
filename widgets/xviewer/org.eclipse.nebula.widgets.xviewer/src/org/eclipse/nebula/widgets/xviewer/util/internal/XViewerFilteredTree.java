@@ -23,7 +23,11 @@ import org.eclipse.swt.widgets.Label;
 public class XViewerFilteredTree extends FilteredTreeComposite {
 
    public XViewerFilteredTree(Composite parent) {
-      this(parent, SWT.BORDER | SWT.MULTI, new PatternFilter());
+      this(parent, SWT.BORDER | SWT.MULTI);
+   }
+
+   public XViewerFilteredTree(Composite parent, int treeStyle) {
+      this(parent, treeStyle, new XViewerPatternFilter());
    }
 
    public XViewerFilteredTree(Composite parent, int treeStyle, PatternFilter filter) {

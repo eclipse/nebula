@@ -17,14 +17,12 @@ package org.eclipse.nebula.widgets.pagination.snippets.model;
  */
 public class Person {
 
-	private String name;
-	private Address address;
+	private final String name;
+	private final Address address;
 
 	public Person(String name, String addressName) {
 		this.name = name;
-		if (addressName != null) {
-			this.address = new Address(addressName);
-		}
+		this.address = (addressName != null) ? new Address(addressName) : null;
 	}
 
 	public String getName() {
