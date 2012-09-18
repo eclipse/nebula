@@ -173,7 +173,7 @@ class AlignIterator implements PrintIterator {
 		if (vAlign == SWT.CENTER)
 			offset.y = (height - size.y) / 2;
 		else if (vAlign == SWT.BOTTOM)
-			offset.y = height - size.x;
+			offset.y = height - size.y;
 
 		if (vAlign != SWT.TOP)
 			size.y = height;
