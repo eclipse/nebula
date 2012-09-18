@@ -650,6 +650,7 @@ class DatePicker extends VPanel {
 			monthButtons[month].setPainter(cdt.getPainter());
 			cdt.getPainter().update(monthButtons[month]);
 			monthButtons[month].setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		//	monthButtons[month].addListener(SWT.Selection, dayListener);
 			monthButtons[month].addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event event) {
 					if(event.widget == null) {
@@ -669,6 +670,7 @@ class DatePicker extends VPanel {
 						if (cdt.field.length == 1 && cdt.getCalendarField(cdt.field[0]) == Calendar.MONTH) {
 							cdt.fireSelectionChanged(true);
 						} else {
+							cdt.fireSelectionChanged();
 							handleHeaderSelection(null);
 						}
 					}
@@ -740,6 +742,7 @@ class DatePicker extends VPanel {
 						if (cdt.field.length == 1 && cdt.getCalendarField(cdt.field[0]) == Calendar.YEAR) {
 							cdt.fireSelectionChanged(true);
 						} else {
+							cdt.fireSelectionChanged();
 							handleHeaderSelection(null);
 						}
 					}
