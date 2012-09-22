@@ -9,7 +9,7 @@
  * Contributors:
  *   Wim S. Jongman - initial API and implementation
  ******************************************************************************/
-package org.eclipse.nebula.widgets.oscilloscope;
+package org.eclipse.nebula.widgets.oscilloscope.multichannel;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -454,19 +454,26 @@ public abstract class OscilloscopeDispatcher {
 	 * candy so you might want to call super.
 	 */
 	public void hookChangeAttributes() {
-
-		getOscilloscope().setPercentage(isPercentage());
-		getOscilloscope().setTailSize(
-				isTailSizeMax() ? Oscilloscope.TAILSIZE_MAX : getTailSize());
-		getOscilloscope().setSteady(isSteady(), getSteadyPosition());
-		getOscilloscope().setFade(getFade());
-		getOscilloscope().setTailFade(getTailFade());
-		getOscilloscope().setConnect(mustConnect());
-		getOscilloscope().setLineWidth(getLineWidth());
+		//
 		getOscilloscope().setBackgroundImage(getBackgroundImage());
-		getOscilloscope().setProgression(getProgression());
-		getOscilloscope().setBaseOffset(getBaseOffset());
-		getOscilloscope().setProgression(getProgression());
+
+		for (int i = 0; i < getOscilloscope().getChannels(); i++) {
+
+			getOscilloscope().setPercentage(i, isPercentage());
+			getOscilloscope()
+					.setTailSize(
+							i,
+							isTailSizeMax() ? Oscilloscope.TAILSIZE_MAX
+									: getTailSize());
+			getOscilloscope().setSteady(i, isSteady(), getSteadyPosition());
+			getOscilloscope().setFade(i, getFade());
+			getOscilloscope().setTailFade(i, getTailFade());
+			getOscilloscope().setConnect(i, mustConnect());
+			getOscilloscope().setLineWidth(i, getLineWidth());
+			getOscilloscope().setProgression(i, getProgression());
+			getOscilloscope().setBaseOffset(i, getBaseOffset());
+			getOscilloscope().setProgression(i, getProgression());
+		}
 
 	}
 
@@ -527,6 +534,10 @@ public abstract class OscilloscopeDispatcher {
 	 * @see Oscilloscope#addStackListener(OscilloscopeStackAdapter)
 	 */
 	public abstract void hookSetValues(int pulse);
+
+	public void hookSetValues(int channel, int pulse) {
+		hookSetValues(pulse);
+	}
 
 	/**
 	 * Will be called only once.
