@@ -62,6 +62,7 @@ public class Oscilloscope extends Canvas {
 		private int tailSize;
 		private int lineWidth = 1;
 		private boolean percentage = false;
+		private OscilloscopeDispatcher dispatcher;
 
 		/**
 		 * This contains the old or historical input and is used to paint the
@@ -278,19 +279,29 @@ public class Oscilloscope extends Canvas {
 		}
 	}
 
+	public Oscilloscope(Composite parent, int style) {
+		this(1, null, parent, style);
+	}
+
 	/**
 	 * Creates a new Oscilloscope.
 	 * 
 	 * @param parent
 	 * @param style
 	 */
-	public Oscilloscope(int channels, Composite parent, int style) {
+	public Oscilloscope(int channels, OscilloscopeDispatcher dispatcher,
+			Composite parent, int style) {
 		super(parent, SWT.DOUBLE_BUFFERED | style);
 
 		chan = new Data[channels];
 		for (int i = 0; i < chan.length; i++) {
 
 			chan[i] = new Data();
+
+			if (dispatcher == null)
+				chan[i].dispatcher = new OscilloscopeDispatcher(i, this);
+			else
+				chan[i].dispatcher = dispatcher;
 
 			bg = Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
 			setBackground(bg);
@@ -508,7 +519,7 @@ public class Oscilloscope extends Canvas {
 		for (int progress = 0; progress < getProgression(c); progress++) {
 
 			if (chan[c].stack.isEmpty() && chan[c].stackListeners != null)
-				notifyListeners();
+				notifyListeners(c);
 
 			splitPos = chan[c].tailSize * 4;
 
@@ -618,16 +629,13 @@ public class Oscilloscope extends Canvas {
 
 	}
 
-	private void notifyListeners() {
-		for (int channel = 0; channel < chan.length; channel++) {
-
-			if (chan[channel].stackListeners == null
-					|| chan[channel].stackListeners.size() == 0)
-				return;
-			for (int i = 0; i < chan[channel].stackListeners.size(); i++) {
-				((OscilloscopeStackAdapter) chan[channel].stackListeners.get(i))
-						.stackEmpty(this);
-			}
+	private void notifyListeners(int channel) {
+		if (chan[channel].stackListeners == null
+				|| chan[channel].stackListeners.size() == 0)
+			return;
+		for (int i = 0; i < chan[channel].stackListeners.size(); i++) {
+			((OscilloscopeStackAdapter) chan[channel].stackListeners.get(i))
+					.stackEmpty(this);
 		}
 	}
 
@@ -972,5 +980,9 @@ public class Oscilloscope extends Canvas {
 					chan[channel].stackListeners = null;
 				}
 		}
+	}
+
+	public OscilloscopeDispatcher getDispatcher(int channel) {
+		return chan[channel].dispatcher;
 	}
 }
