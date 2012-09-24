@@ -14,6 +14,8 @@ package org.eclipse.nebula.widgets.oscilloscope.multichannel;
 import java.util.Random;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -22,7 +24,7 @@ import org.eclipse.swt.widgets.Shell;
  * This snippet demonstrates how to run the dispatcher in simple mode.
  * 
  */
-public class Snippet2_ScopeWithData {
+public class Snippet5_ScopeWithDataAndProgression2Channels {
 
 	protected static Shell shell;
 
@@ -53,14 +55,59 @@ public class Snippet2_ScopeWithData {
 		shell.setLayout(new FillLayout());
 
 		// Create a single channel scope
-		Oscilloscope scope = new Oscilloscope(shell, SWT.NONE);
-		scope.addStackListener(0, new OscilloscopeStackAdapter() {
+		final Oscilloscope scope = new Oscilloscope(2, shell, SWT.NONE);
+		scope.addControlListener(new ControlAdapter() {
 			@Override
-			public void stackEmpty(Oscilloscope scope, int channel) {
-				scope.setValue(channel, 25 - new Random().nextInt(50));
+			public void controlResized(ControlEvent e) {
+				scope.setProgression(0, ((Oscilloscope) e.widget).getSize().x);
+				scope.setProgression(1, ((Oscilloscope) e.widget).getSize().x);
 			}
 		});
+
+		// scope.setSteady();
+
+	//	OscilloscopeStackAdapter stackAdapter = getStackAdapter();
+		scope.addStackListener(0, getStackAdapter());
+		scope.addStackListener(1, getStackAdapter());
+
 		scope.getDispatcher(0).dispatch();
+
+	}
+
+	private static OscilloscopeStackAdapter getStackAdapter() {
+
+		return new OscilloscopeStackAdapter() {
+			double value = Math.PI;
+			double counter = .1;
+
+			@Override
+			public void stackEmpty(Oscilloscope scope, int channel) {
+
+				if (channel == 0) {
+
+					value += counter;
+					if (value > 2 * Math.PI) {
+						value = 0;
+					}
+
+					int intValue = (int) (Math.sin(value) * 100);
+					scope.setValue(channel, intValue);
+
+				}
+
+				if (channel == 1) {
+					
+					value += counter;
+					if (value > 2 * Math.PI) {
+						value = 0;
+					}
+					
+					int intValue = (int) (Math.cos(value) * 40);
+					scope.setValue(channel, intValue);
+					
+				}
+			}
+		};
 
 	}
 }

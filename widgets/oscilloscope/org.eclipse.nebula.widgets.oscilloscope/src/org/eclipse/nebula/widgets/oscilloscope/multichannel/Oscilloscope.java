@@ -2,7 +2,6 @@ package org.eclipse.nebula.widgets.oscilloscope.multichannel;
 
 import java.util.ArrayList;
 
-import org.eclipse.nebula.widgets.oscilloscope.multichannel.OscilloscopeStackAdapter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
@@ -281,6 +280,10 @@ public class Oscilloscope extends Canvas {
 
 	public Oscilloscope(Composite parent, int style) {
 		this(1, null, parent, style);
+	}
+
+	public Oscilloscope(int channels, Composite parent, int style) {
+		this(channels, null, parent, style);
 	}
 
 	/**
@@ -635,7 +638,7 @@ public class Oscilloscope extends Canvas {
 			return;
 		for (int i = 0; i < chan[channel].stackListeners.size(); i++) {
 			((OscilloscopeStackAdapter) chan[channel].stackListeners.get(i))
-					.stackEmpty(this);
+					.stackEmpty(this, channel);
 		}
 	}
 

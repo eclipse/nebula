@@ -345,7 +345,7 @@ public class OscilloscopeDispatcher {
 	 * @return 30 milliseconds. Override with a smaller value for more speed.
 	 */
 	public int getDelayLoop() {
-		return 30;
+		return 3;
 	}
 
 	public boolean getFade() {
@@ -478,7 +478,7 @@ public class OscilloscopeDispatcher {
 							isTailSizeMax() ? Oscilloscope.TAILSIZE_MAX
 									: getTailSize());
 			getOscilloscope().setSteady(i, isSteady(), getSteadyPosition());
-			getOscilloscope().setFade(i, getFade());
+//			getOscilloscope().setFade(i, getFade());
 			getOscilloscope().setTailFade(i, getTailFade());
 			getOscilloscope().setConnect(i, mustConnect());
 			getOscilloscope().setLineWidth(i, getLineWidth());

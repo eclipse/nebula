@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Shell;
  * This snippet demonstrates how to run the dispatcher in simple mode.
  * 
  */
-public class Snippet3_ScopeWithDataAndProgression {
+public class Snippet4_ScopeWithDataAndProgression2Channels {
 
 	protected static Shell shell;
 
@@ -55,40 +55,78 @@ public class Snippet3_ScopeWithDataAndProgression {
 		shell.setLayout(new FillLayout());
 
 		// Create a single channel scope
-		final Oscilloscope scope = new Oscilloscope(shell, SWT.NONE);
+		final Oscilloscope scope = new Oscilloscope(2, shell, SWT.NONE);
 		scope.addControlListener(new ControlAdapter() {
 			@Override
 			public void controlResized(ControlEvent e) {
 				scope.setProgression(0, ((Oscilloscope) e.widget).getSize().x);
+				scope.setProgression(1, ((Oscilloscope) e.widget).getSize().x);
 			}
 		});
-		scope.addStackListener(0, new OscilloscopeStackAdapter() {
+		
+		//scope.setSteady();
+
+		OscilloscopeStackAdapter stackAdapter = getStackAdapter();
+		scope.addStackListener(0, stackAdapter);
+		scope.addStackListener(1, stackAdapter);
+
+		scope.getDispatcher(0).dispatch();
+
+	}
+
+	private static OscilloscopeStackAdapter getStackAdapter() {
+
+		return new OscilloscopeStackAdapter() {
 			private int oldp;
 			private int[] ints;
 
 			@Override
 			public void stackEmpty(Oscilloscope scope, int channel) {
 				Random random = new Random();
-				if (oldp != scope.getProgression(0)) {
-					oldp = scope.getProgression(0);
-					ints = new int[oldp];
-					for (int i = 0; i < ints.length; i++) {
-						int inti = 10 - random.nextInt(20);
-						ints[i++] = inti;
-					}
-				} else {
-					for (int i = 0; i < ints.length; i++) {
-						int inti = 2 - random.nextInt(5);
-						ints[i] = ints[i++] + inti;
-					}
 
+				if (channel == 0) {
+
+					if (oldp != scope.getProgression(channel)) {
+						oldp = scope.getProgression(channel);
+						ints = new int[oldp];
+						for (int i = 0; i < ints.length - 8; i++) {
+							int inti = 20 - random.nextInt(40);
+							ints[i++] = inti;
+							ints[i++] = inti;
+							ints[i++] = inti;
+							ints[i++] = inti;
+							ints[i++] = inti;
+							ints[i++] = inti;
+							ints[i++] = inti;
+							ints[i++] = inti;
+						}
+					} else {
+						for (int i = 0; i < ints.length - 8; i++) {
+							int inti = 2  - random.nextInt(5);
+							ints[i] = ints[i++] + inti;
+							ints[i] = ints[i++] + inti;
+							ints[i] = ints[i++] + inti;
+							ints[i] = ints[i++] + inti;
+							ints[i] = ints[i++] + inti;
+							ints[i] = ints[i++] + inti;
+							ints[i] = ints[i++] + inti;
+							ints[i] = ints[i++] + inti;
+						}
+
+					}
+					scope.setValues(channel, ints);
 				}
-				
-				scope.setValues(0, ints);
-			}
-		});
-		
-		scope.getDispatcher(0).dispatch();
 
+				else {
+					int[] onts = new int[ints.length];
+					for (int i = 0; i < ints.length; i++) {
+						onts[i] = -1 * ints[i];
+					}
+					scope.setValues(channel, onts);
+				}
+			}
+		};
+
+		// TODO Auto-generated method stub
 	}
 }
