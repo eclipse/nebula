@@ -66,6 +66,7 @@ public class SelectionTests extends VTestCase {
 	}
 	
 	public void testBaseDateSelection() {
+		System.err.println("testBaseDateSelection:" + tester1);
 		singleSelectionTest();
 	}
 	
@@ -74,6 +75,7 @@ public class SelectionTests extends VTestCase {
 	}
 	
 	public void testDropDownDateSelection() {
+		System.err.println("testBaseDateSelection :" + tester1);
 		singleSelectionTest();
 	}
 
@@ -82,6 +84,7 @@ public class SelectionTests extends VTestCase {
 	}
 	
 	public void testSimpleDateSelection() {
+		System.err.println("testSimpleDateSelection :" + tester1);
 		singleSelectionTest();
 	}
 
@@ -90,6 +93,7 @@ public class SelectionTests extends VTestCase {
 	}
 	
 	public void testBaseDateTimeSelection() {
+		System.err.println("testBaseDateTimeSelection :" + tester1);
 		singleSelectionTest();
 	}
 	
@@ -98,6 +102,7 @@ public class SelectionTests extends VTestCase {
 	}
 	
 	public void testDropDownDateTimeSelection() {
+		System.err.println("testDropDownDateTimeSelection :" + tester1);
 		singleSelectionTest();
 	}
 
@@ -106,6 +111,7 @@ public class SelectionTests extends VTestCase {
 	}
 	
 	public void testSimpleDateTimeSelection() {
+		System.err.println("testSimpleDateTimeSelection :" + tester1);
 		singleSelectionTest();
 	}
 
@@ -114,6 +120,7 @@ public class SelectionTests extends VTestCase {
 	}
 	
 	public void testBaseTimeSelection() {
+		System.err.println("testBaseTimeSelection :" + tester1);
 		singleSelectionTest();
 	}
 	
@@ -122,6 +129,7 @@ public class SelectionTests extends VTestCase {
 	}
 	
 	public void testDropDownTimeSelection() {
+		System.err.println("testDropDownTimeSelection :" + tester1);
 		singleSelectionTest();
 	}
 
@@ -130,6 +138,7 @@ public class SelectionTests extends VTestCase {
 	}
 	
 	public void testSimpleTimeSelection() {
+		System.err.println("testSimpleTimeSelection :" + tester1);
 		singleSelectionTest();
 	}
 
