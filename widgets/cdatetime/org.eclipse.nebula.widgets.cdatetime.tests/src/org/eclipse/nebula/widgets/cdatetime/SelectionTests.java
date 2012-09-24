@@ -1,7 +1,6 @@
 package org.eclipse.nebula.widgets.cdatetime;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 import org.eclipse.nebula.cwt.test.VTestCase;
@@ -15,6 +14,9 @@ public class SelectionTests extends VTestCase {
 	private CdtTester tester2;
 
 	private void singleSelectionTest() {
+		
+		System.err.println("Single Selection Test");
+		
 		assertNull(tester1.getSelection());
 		assertNotNull(tester1.getCalendarTime());
 
@@ -30,6 +32,8 @@ public class SelectionTests extends VTestCase {
 	}
 
 	private void dualSelectionTest() {
+		System.err.println("dual Selection Test");
+
 		assertNull(tester1.getSelection());
 		assertNull(tester2.getSelection());
 		
