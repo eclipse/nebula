@@ -31,8 +31,8 @@ public class CdtTester {
 
 	private CDateTime cdt;
 	private Display display;
-	
-	public CdtTester(final Composite shell,final int style) {
+
+	public CdtTester(final Composite shell, final int style) {
 		shell.getDisplay().syncExec(new Runnable() {
 			public void run() {
 				display = shell.getDisplay();
@@ -40,30 +40,30 @@ public class CdtTester {
 			}
 		});
 	}
-	
-//	private CdtHelper(CDateTime cdt) {
-//		this.cdt = cdt;
-//	}
-	
-//	VPanel picker = (VPanel) cdt.panel.getChildren()[0];
-//	VPanel header = (VPanel) picker.getChildren()[0];
-//	VPanel body = (VPanel) picker.getChildren()[2];
-//	VPanel footer = (VPanel) picker.getChildren()[4];
-//	VPanel body1 = (VPanel) body.getChildren()[0];
-//	VPanel days = (VPanel) body1.getChildren()[0];
-//	VPanel months = (VPanel) body1.getChildren()[1];
-//	VPanel years = (VPanel) body1.getChildren()[2];
+
+	// private CdtHelper(CDateTime cdt) {
+	// this.cdt = cdt;
+	// }
+
+	// VPanel picker = (VPanel) cdt.panel.getChildren()[0];
+	// VPanel header = (VPanel) picker.getChildren()[0];
+	// VPanel body = (VPanel) picker.getChildren()[2];
+	// VPanel footer = (VPanel) picker.getChildren()[4];
+	// VPanel body1 = (VPanel) body.getChildren()[0];
+	// VPanel days = (VPanel) body1.getChildren()[0];
+	// VPanel months = (VPanel) body1.getChildren()[1];
+	// VPanel years = (VPanel) body1.getChildren()[2];
 
 	private Object tmpObj;
 
 	public VNative<Spinner> getSpinner() {
 		return cdt.spinner;
 	}
-	
+
 	public int getStyle() {
 		return cdt.getStyle();
 	}
-	
+
 	public String getText() {
 		display.syncExec(new Runnable() {
 			public void run() {
@@ -72,11 +72,11 @@ public class CdtTester {
 		});
 		return (String) tmpObj;
 	}
-	
+
 	public boolean isOpen() {
 		return cdt.isOpen();
 	}
-	
+
 	public boolean setFocus() {
 		display.syncExec(new Runnable() {
 			public void run() {
@@ -85,11 +85,11 @@ public class CdtTester {
 		});
 		return (Boolean) tmpObj;
 	}
-	
+
 	public VNative<Text> getTextWidget() {
 		return cdt.getTextWidget();
 	}
-	
+
 	public VButton getButton() {
 		return cdt.getButtonWidget();
 	}
@@ -110,7 +110,8 @@ public class CdtTester {
 		});
 	}
 
-	public void setPattern(final String pattern, final TimeZone[] allowedTimeZones) {
+	public void setPattern(final String pattern,
+			final TimeZone[] allowedTimeZones) {
 		display.syncExec(new Runnable() {
 			public void run() {
 				cdt.setPattern(pattern, allowedTimeZones);
@@ -119,11 +120,17 @@ public class CdtTester {
 	}
 
 	public void setSelection(final Date date) {
+		System.err.println("Starting setSelection");
+		System.err.println("Getcurrent: " + Display.getCurrent());
+		System.err.println("GetDefault: " + Display.getDefault());
+		System.err.println("Variable: " + display);
+
 		display.syncExec(new Runnable() {
 			public void run() {
 				cdt.setSelection(date);
 			}
 		});
+		System.err.println("ending setSelection");
 	}
 
 	public void setTimeZone(final TimeZone timezone) {
@@ -164,11 +171,11 @@ public class CdtTester {
 	public CDateTime getCDateTime() {
 		return cdt;
 	}
-	
+
 	public String getPattern() {
 		return cdt.getPattern();
 	}
-	
+
 	public void setLocale(final Locale locale) {
 		display.syncExec(new Runnable() {
 			public void run() {
@@ -194,25 +201,25 @@ public class CdtTester {
 	}
 
 	public VButton getClearButton() {
-		if(cdt.pickerPanel != null) {
+		if (cdt.pickerPanel != null) {
 			VPanel panel = (VPanel) cdt.pickerPanel.getChildren()[0];
-			for(VControl child : panel.getChildren()) {
-				if(PickerPart.ClearButton == child.getData(CDT.PickerPart)) {
+			for (VControl child : panel.getChildren()) {
+				if (PickerPart.ClearButton == child.getData(CDT.PickerPart)) {
 					return (VButton) child;
 				}
 			}
 		}
 		return null;
 	}
-	
+
 	public VPanel getPanel() {
 		return (VPanel) ((VPanel) cdt.getData("cwt_vcontrol")).getChildren()[0];
 	}
-	
+
 	public VPanel getBodyPanel() {
 		return (VPanel) getPanel().getChildren()[2];
 	}
-	
+
 	public VPanel getHeaderPanel() {
 		return (VPanel) getPanel().getChildren()[0];
 	}
@@ -220,17 +227,17 @@ public class CdtTester {
 	public VPanel[] getPickerPanels() {
 		return (VPanel[]) getBodyPanel().getChildren();
 	}
-	
+
 	public VPanel getDaysPanel() {
 		return (VPanel) getPickerPanels()[0].getChildren()[0];
-	}	
-	
+	}
+
 	public VPanel getMonthsPanel() {
 		return (VPanel) getPickerPanels()[0].getChildren()[1];
-	}	
-	
+	}
+
 	public VPanel getYearsPanel() {
 		return (VPanel) getPickerPanels()[0].getChildren()[2];
-	}	
-	
+	}
+
 }
