@@ -289,7 +289,10 @@ class DatePicker extends VPanel {
 						VButton button = (VButton) event.data;
 						int stateMask = event.stateMask;
 						setSelectionFromButton(button, stateMask);
-						if (cdt.field.length == 1 && cdt.getCalendarField(cdt.field[0]) == Calendar.DATE) {
+						// Bug 388813
+						// when the date field is the most "precise"
+						// information according to the pattern
+						if (cdt.isClosingField(Calendar.DATE)) {
 							cdt.fireSelectionChanged(true);
 						} else {
 							cdt.fireSelectionChanged();
@@ -590,7 +593,7 @@ class DatePicker extends VPanel {
 						Calendar tmpcal = cdt.getCalendarInstance();
 						if(yearButton != null && yearButton.getSelection()) {
 							tmpcal.add(Calendar.YEAR, 10);
-						} else if(cdt.field.length == 1 && cdt.getCalendarField(cdt.field[0]) == Calendar.YEAR) {
+						} else if ( cdt.isClosingField(Calendar.YEAR)) {
 							tmpcal.add(Calendar.YEAR, 10);
 						} else {
 							tmpcal.add(Calendar.YEAR, 1);
@@ -610,7 +613,7 @@ class DatePicker extends VPanel {
 						Calendar tmpcal = cdt.getCalendarInstance();
 						if(yearButton != null && yearButton.getSelection()) {
 							tmpcal.add(Calendar.YEAR, -10);
-						} else if(cdt.field.length == 1 && cdt.getCalendarField(cdt.field[0]) == Calendar.YEAR) {
+						} else if ( cdt.isClosingField(Calendar.YEAR)) {
 							tmpcal.add(Calendar.YEAR, -10);
 						} else {
 							tmpcal.add(Calendar.YEAR, -1);
@@ -666,9 +669,14 @@ class DatePicker extends VPanel {
 						Calendar tmpcal = cdt.getCalendarInstance();
 						tmpcal.set(Calendar.MONTH, (Integer) button.getData("Month")); //$NON-NLS-1$
 						cdt.setSelection(tmpcal.getTime());
-						
-						if (cdt.field.length == 1 && cdt.getCalendarField(cdt.field[0]) == Calendar.MONTH) {
-							cdt.fireSelectionChanged(true);
+                        /*:
+                         * Bug 388813
+                         * the method cdt.isClosingField checks the "most concrete" portion of the date pattern 
+                         * and returns true if the requested field *is* the one closing the picker panel 
+                         * and false otherwise
+                         */
+                        if (cdt.isClosingField(Calendar.MONTH)) {
+                            cdt.fireSelectionChanged(true);
 						} else {
 							cdt.fireSelectionChanged();
 							handleHeaderSelection(null);
@@ -731,15 +739,16 @@ class DatePicker extends VPanel {
 							for(VButton b : yearButtons) {
 								if(b != button) {
 									b.setSelection(false);
-								}
+								} 
 							}
 						}
 
 						Calendar tmpcal = cdt.getCalendarInstance();
 						tmpcal.set(Calendar.YEAR, Integer.parseInt(button.getText()));
 						cdt.setSelection(tmpcal.getTime());
-
-						if (cdt.field.length == 1 && cdt.getCalendarField(cdt.field[0]) == Calendar.YEAR) {
+						// Bug 388813
+						// when the year field is the most precise field
+						if ( cdt.isClosingField(Calendar.YEAR)) {
 							cdt.fireSelectionChanged(true);
 						} else {
 							cdt.fireSelectionChanged();
@@ -1128,8 +1137,10 @@ class DatePicker extends VPanel {
 							(scal.get(Calendar.MONTH) == tmpcal.get(Calendar.MONTH)) &&
 							(scal.get(Calendar.YEAR) == tmpcal.get(Calendar.YEAR)) ) {
 						dayButtons[j].setSelection(true);
-							focusButton = j;
-							break;
+						// Bug 388813: 
+						// don't catch the focus
+						//focusButton = j;
+						break;
 					}
 				}
 				if(focusButton >= 0) {
