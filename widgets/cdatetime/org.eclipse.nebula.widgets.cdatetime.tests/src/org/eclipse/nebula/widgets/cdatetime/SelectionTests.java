@@ -21,6 +21,8 @@ public class SelectionTests extends VTestCase {
 		assertNotNull(tester1.getCalendarTime());
 
 		Date date = new Date();
+		
+		tester1.setFocus();
 		tester1.setSelection(date);
 
 		if((tester1.getStyle() & CDT.SIMPLE) == 0) {
