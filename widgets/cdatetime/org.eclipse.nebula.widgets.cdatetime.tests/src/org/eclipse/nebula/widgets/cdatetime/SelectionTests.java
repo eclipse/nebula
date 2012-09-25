@@ -15,7 +15,7 @@ public class SelectionTests extends VTestCase {
 
 	private void singleSelectionTest() {
 		
-		System.err.println("Single Selection Test");
+		System.err.println("START - Single Selection Test");
 		
 		assertNull(tester1.getSelection());
 		assertNotNull(tester1.getCalendarTime());
@@ -31,6 +31,9 @@ public class SelectionTests extends VTestCase {
 		}
 		assertEquals(date, tester1.getSelection());
 		assertEquals(date, tester1.getCalendarTime());
+		
+		System.err.println("END - Single Selection Test");
+		System.out.println();
 	}
 
 	private void dualSelectionTest() {
