@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Shell;
  * This snippet demonstrates how to run the dispatcher in simple mode.
  * 
  */
-public class Snippet6_ScopeWithDataAndProgression20Channels {
+public class Snippet6_ScopeWithDataAndProgression10Channels {
 
 	protected static Shell shell;
 
