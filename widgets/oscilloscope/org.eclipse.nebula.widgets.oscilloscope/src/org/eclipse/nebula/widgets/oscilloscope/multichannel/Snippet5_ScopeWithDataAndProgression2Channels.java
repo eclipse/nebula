@@ -66,7 +66,7 @@ public class Snippet5_ScopeWithDataAndProgression2Channels {
 
 		// scope.setSteady();
 
-	//	OscilloscopeStackAdapter stackAdapter = getStackAdapter();
+		// OscilloscopeStackAdapter stackAdapter = getStackAdapter();
 		scope.addStackListener(0, getStackAdapter());
 		scope.addStackListener(1, getStackAdapter());
 
@@ -77,37 +77,38 @@ public class Snippet5_ScopeWithDataAndProgression2Channels {
 	private static OscilloscopeStackAdapter getStackAdapter() {
 
 		return new OscilloscopeStackAdapter() {
-			double value = Math.PI;
-			double counter = .1;
+			double[] value;
+			double[] counter;
+			boolean init = false;
 
 			@Override
 			public void stackEmpty(Oscilloscope scope, int channel) {
 
-				if (channel == 0) {
+				long millis = System.currentTimeMillis();
 
-					value += counter;
-					if (value > 2 * Math.PI) {
-						value = 0;
+				if (!init) {
+					init = true;
+					value = new double[scope.getChannels()];
+					counter = new double[scope.getChannels()];
+					for (int i = 0; i < scope.getChannels(); i++) {
+						counter[i] = (double) (i + 10) / 100;
+						System.out.println(counter[i]);
+						value[i] = new Random().nextInt((int) (200 * Math.PI)) / 100;
 					}
-
-					int intValue = (int) (Math.sin(value) * 100);
-					scope.setValue(channel, intValue);
-
 				}
 
-				if (channel == 1) {
-					
-					value += counter;
-					if (value > 2 * Math.PI) {
-						value = 0;
-					}
-					
-					int intValue = (int) (Math.cos(value) * 40);
-					scope.setValue(channel, intValue);
-					
+				value[channel] += counter[channel];
+				if (value[channel] > 2 * Math.PI) {
+					value[channel] = 0;
 				}
+
+				int intValue = (int) (Math.sin(value[channel]) * 100);
+				scope.setValue(channel, intValue);
+
+		//		System.out.println(System.currentTimeMillis() - millis);
+
 			}
 		};
-
 	}
+
 }

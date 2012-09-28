@@ -44,9 +44,14 @@ public class Oscilloscope extends Canvas {
 	public static final int DEFAULT_HEIGHT = 100;
 
 	/**
-	 * The default amount of tail fading in percentages.
+	 * The default amount of tail fading in percentages (25).
 	 */
-	public static final int DEFAULT_TAILFADE = 25;
+	public static final int TAILFADE_DEFAULT = 25;
+
+	/**
+	 * No tailfade.
+	 */
+	public static final int TAILFADE_NONE = 0;
 
 	private Color bg;
 
@@ -303,9 +308,10 @@ public class Oscilloscope extends Canvas {
 
 			if (dispatcher == null)
 				chan[i].dispatcher = new OscilloscopeDispatcher(i, this);
-			else
+			else {
 				chan[i].dispatcher = dispatcher;
-
+				dispatcher.setOscilloscope(this);
+			}
 			bg = Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
 			setBackground(bg);
 
@@ -987,5 +993,9 @@ public class Oscilloscope extends Canvas {
 
 	public OscilloscopeDispatcher getDispatcher(int channel) {
 		return chan[channel].dispatcher;
+	}
+
+	public void setDispatcher(int channel, OscilloscopeDispatcher dispatcher) {
+		chan[channel].dispatcher = dispatcher;
 	}
 }

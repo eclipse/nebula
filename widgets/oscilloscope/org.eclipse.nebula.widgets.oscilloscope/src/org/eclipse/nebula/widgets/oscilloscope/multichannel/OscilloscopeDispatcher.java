@@ -13,6 +13,7 @@ package org.eclipse.nebula.widgets.oscilloscope.multichannel;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.util.Timer;
 
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -54,7 +55,7 @@ import org.eclipse.swt.widgets.Display;
  * 
  */
 public class OscilloscopeDispatcher {
-	
+
 	/**
 	 * Plays a sound clip.
 	 * 
@@ -200,8 +201,12 @@ public class OscilloscopeDispatcher {
 	private Oscilloscope scope;
 
 	public OscilloscopeDispatcher(int channel, Oscilloscope scope) {
-		this.channel = channel;
+		this(channel);
 		this.scope = scope;
+	}
+
+	public OscilloscopeDispatcher(int channel) {
+		this.channel = channel;
 	}
 
 	/**
@@ -216,8 +221,7 @@ public class OscilloscopeDispatcher {
 	 * However, if the delay loop is set to 1, it will dispatch using
 	 * {@link Display#asyncExec(Runnable)} for maximum speed.
 	 * <p/>
-	 * This method is not meant to be overridden, override
-	 * {@link #init()}
+	 * This method is not meant to be overridden, override {@link #init()}
 	 * {@link #hookBeforeDraw(Oscilloscope, int)},
 	 * {@link #hookAfterDraw(Oscilloscope, int)} and
 	 * {@link #hookPulse(Oscilloscope, int)}.
@@ -264,7 +268,8 @@ public class OscilloscopeDispatcher {
 
 	@Override
 	protected void finalize() throws Throwable {
-		if ((this.backgroundImage != null) && !this.backgroundImage.isDisposed()) {
+		if ((this.backgroundImage != null)
+				&& !this.backgroundImage.isDisposed()) {
 			this.backgroundImage.dispose();
 		}
 	}
@@ -311,7 +316,8 @@ public class OscilloscopeDispatcher {
 			for (int i = 0; i < OscilloscopeDispatcher.BACKGROUND_MONITOR.length; i++) {
 				bytes[i] = (byte) OscilloscopeDispatcher.BACKGROUND_MONITOR[i];
 			}
-			this.backgroundImage = new Image(null, new ByteArrayInputStream(bytes));
+			this.backgroundImage = new Image(null, new ByteArrayInputStream(
+					bytes));
 		}
 		return this.backgroundImage;
 	}
@@ -345,7 +351,7 @@ public class OscilloscopeDispatcher {
 	 * @return 30 milliseconds. Override with a smaller value for more speed.
 	 */
 	public int getDelayLoop() {
-		return 3;
+		return 30;
 	}
 
 	public boolean getFade() {
@@ -389,6 +395,15 @@ public class OscilloscopeDispatcher {
 	}
 
 	/**
+	 * This method sets the {@link Oscilloscope}.
+	 * 
+	 * @param scope
+	 */
+	public void setOscilloscope(Oscilloscope scope) {
+		this.scope = scope;
+	}
+
+	/**
 	 * Override this to set the number of steps that is calculated before it is
 	 * actually drawn on the display. This will make the graphic look more jumpy
 	 * for slower/higher delay rates but you can win speed at faster/lower delay
@@ -420,11 +435,11 @@ public class OscilloscopeDispatcher {
 	}
 
 	public int getTailFade() {
-		return Oscilloscope.DEFAULT_TAILFADE;
+		return Oscilloscope.TAILFADE_DEFAULT;
 	}
 
 	public int getTailSize() {
-		return Oscilloscope.TAILSIZE_MAX;
+		return Oscilloscope.TAILSIZE_FILL;
 	}
 
 	/**
@@ -478,13 +493,13 @@ public class OscilloscopeDispatcher {
 							isTailSizeMax() ? Oscilloscope.TAILSIZE_MAX
 									: getTailSize());
 			getOscilloscope().setSteady(i, isSteady(), getSteadyPosition());
-//			getOscilloscope().setFade(i, getFade());
+			// getOscilloscope().setFade(i, getFade());
 			getOscilloscope().setTailFade(i, getTailFade());
 			getOscilloscope().setConnect(i, mustConnect());
 			getOscilloscope().setLineWidth(i, getLineWidth());
-//			getOscilloscope().setProgression(i, getProgression());
+			// getOscilloscope().setProgression(i, getProgression());
 			getOscilloscope().setBaseOffset(i, getBaseOffset());
-//			getOscilloscope().setProgression(i, getProgression());
+			// getOscilloscope().setProgression(i, getProgression());
 		}
 
 	}
@@ -546,7 +561,7 @@ public class OscilloscopeDispatcher {
 	 * @see Oscilloscope#addStackListener(OscilloscopeStackAdapter)
 	 */
 	public void hookSetValues(int pulse) {
-		
+
 	}
 
 	/**
