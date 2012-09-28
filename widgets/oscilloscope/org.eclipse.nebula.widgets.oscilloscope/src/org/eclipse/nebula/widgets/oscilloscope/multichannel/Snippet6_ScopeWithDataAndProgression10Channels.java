@@ -49,6 +49,7 @@ public class Snippet6_ScopeWithDataAndProgression10Channels {
 	 */
 	protected static void createContents() {
 		shell = new Shell();
+		shell.setSize(400, 800);
 		shell.setText("Nebula Oscilloscope");
 		shell.setLayout(new FillLayout());
 

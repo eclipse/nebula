@@ -13,7 +13,6 @@ package org.eclipse.nebula.widgets.oscilloscope.multichannel;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.util.Timer;
 
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -493,13 +492,11 @@ public class OscilloscopeDispatcher {
 							isTailSizeMax() ? Oscilloscope.TAILSIZE_MAX
 									: getTailSize());
 			getOscilloscope().setSteady(i, isSteady(), getSteadyPosition());
-			// getOscilloscope().setFade(i, getFade());
+			getOscilloscope().setFade(i, getFade());
 			getOscilloscope().setTailFade(i, getTailFade());
 			getOscilloscope().setConnect(i, mustConnect());
 			getOscilloscope().setLineWidth(i, getLineWidth());
-			// getOscilloscope().setProgression(i, getProgression());
 			getOscilloscope().setBaseOffset(i, getBaseOffset());
-			// getOscilloscope().setProgression(i, getProgression());
 		}
 
 	}

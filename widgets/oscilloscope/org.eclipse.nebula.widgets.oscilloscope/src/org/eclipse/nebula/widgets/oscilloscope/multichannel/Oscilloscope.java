@@ -11,6 +11,7 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Path;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
@@ -443,6 +444,8 @@ public class Oscilloscope extends Canvas {
 
 	protected void paintControl(PaintEvent e) {
 
+		long start = System.currentTimeMillis();
+
 		for (int c = 0; c < chan.length; c++) {
 
 			if (chan[c].tailSize <= 0) {
@@ -450,7 +453,6 @@ public class Oscilloscope extends Canvas {
 				continue;
 			}
 
-			// long start = System.currentTimeMillis();
 
 			// Go calculate the line
 			Object[] result = calculate(c);
@@ -487,8 +489,12 @@ public class Oscilloscope extends Canvas {
 				}
 
 			} else {
+				long time = System.nanoTime();
+//				Path path = new Path(gc.getDevice());
+//				path.
 				gc.drawPolyline(l1);
 				gc.drawPolyline(l2);
+				System.out.println(System.nanoTime() - time + " nanoseconds");
 			}
 
 			// Connects the head with the tail
@@ -499,7 +505,7 @@ public class Oscilloscope extends Canvas {
 			}
 		}
 
-		// System.out.println(System.currentTimeMillis() - start);
+		System.out.println(System.currentTimeMillis() - start + " milliseconds for all channels");
 
 	}
 
