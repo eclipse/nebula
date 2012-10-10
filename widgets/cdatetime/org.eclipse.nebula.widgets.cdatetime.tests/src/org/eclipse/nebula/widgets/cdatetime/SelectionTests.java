@@ -1,7 +1,6 @@
 package org.eclipse.nebula.widgets.cdatetime;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 import org.eclipse.nebula.cwt.test.VTestCase;
@@ -15,10 +14,15 @@ public class SelectionTests extends VTestCase {
 	private CdtTester tester2;
 
 	private void singleSelectionTest() {
+		
+		System.err.println("START - Single Selection Test");
+		
 		assertNull(tester1.getSelection());
 		assertNotNull(tester1.getCalendarTime());
 
 		Date date = new Date();
+		
+		tester1.setFocus();
 		tester1.setSelection(date);
 
 		if((tester1.getStyle() & CDT.SIMPLE) == 0) {
@@ -27,9 +31,14 @@ public class SelectionTests extends VTestCase {
 		}
 		assertEquals(date, tester1.getSelection());
 		assertEquals(date, tester1.getCalendarTime());
+		
+		System.err.println("END - Single Selection Test");
+		System.out.println();
 	}
 
 	private void dualSelectionTest() {
+		System.err.println("dual Selection Test");
+
 		assertNull(tester1.getSelection());
 		assertNull(tester2.getSelection());
 		
@@ -62,6 +71,7 @@ public class SelectionTests extends VTestCase {
 	}
 	
 	public void testBaseDateSelection() {
+		System.err.println("testBaseDateSelection:" + tester1);
 		singleSelectionTest();
 	}
 	
@@ -70,6 +80,7 @@ public class SelectionTests extends VTestCase {
 	}
 	
 	public void testDropDownDateSelection() {
+		System.err.println("testBaseDateSelection :" + tester1);
 		singleSelectionTest();
 	}
 
@@ -78,6 +89,7 @@ public class SelectionTests extends VTestCase {
 	}
 	
 	public void testSimpleDateSelection() {
+		System.err.println("testSimpleDateSelection :" + tester1);
 		singleSelectionTest();
 	}
 
@@ -86,6 +98,7 @@ public class SelectionTests extends VTestCase {
 	}
 	
 	public void testBaseDateTimeSelection() {
+		System.err.println("testBaseDateTimeSelection :" + tester1);
 		singleSelectionTest();
 	}
 	
@@ -94,6 +107,7 @@ public class SelectionTests extends VTestCase {
 	}
 	
 	public void testDropDownDateTimeSelection() {
+		System.err.println("testDropDownDateTimeSelection :" + tester1);
 		singleSelectionTest();
 	}
 
@@ -102,6 +116,7 @@ public class SelectionTests extends VTestCase {
 	}
 	
 	public void testSimpleDateTimeSelection() {
+		System.err.println("testSimpleDateTimeSelection :" + tester1);
 		singleSelectionTest();
 	}
 
@@ -110,6 +125,7 @@ public class SelectionTests extends VTestCase {
 	}
 	
 	public void testBaseTimeSelection() {
+		System.err.println("testBaseTimeSelection :" + tester1);
 		singleSelectionTest();
 	}
 	
@@ -118,6 +134,7 @@ public class SelectionTests extends VTestCase {
 	}
 	
 	public void testDropDownTimeSelection() {
+		System.err.println("testDropDownTimeSelection :" + tester1);
 		singleSelectionTest();
 	}
 
@@ -126,6 +143,7 @@ public class SelectionTests extends VTestCase {
 	}
 	
 	public void testSimpleTimeSelection() {
+		System.err.println("testSimpleTimeSelection :" + tester1);
 		singleSelectionTest();
 	}
 

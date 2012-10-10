@@ -182,8 +182,8 @@ public class VTracker implements DisposeListener {
 			} else {
 				for(int i = 0; i < controls.length; i++) {
 					if(controls[i] == comp) {
-						for( ; i > 0; i--) {
-							if(controls[i-1].forceFocus()) {
+						for(int j=i ; j > 0; j--) {
+							if(controls[j-1].forceFocus()) {
 								return;
 							}
 						}

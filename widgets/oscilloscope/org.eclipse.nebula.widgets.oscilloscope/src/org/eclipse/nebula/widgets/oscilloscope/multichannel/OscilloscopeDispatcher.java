@@ -9,7 +9,7 @@
  * Contributors:
  *   Wim S. Jongman - initial API and implementation
  ******************************************************************************/
-package org.eclipse.nebula.widgets.oscilloscope;
+package org.eclipse.nebula.widgets.oscilloscope.multichannel;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -53,13 +53,13 @@ import org.eclipse.swt.widgets.Display;
  * @author Wim Jongman
  * 
  */
-public abstract class OscilloscopeDispatcher {
+public class OscilloscopeDispatcher {
 
 	/**
 	 * Plays a sound clip.
 	 * 
 	 */
-	public class PlayClip {
+	public class SoundClip {
 		Clip clip = null;
 		String oldFile = "";
 
@@ -106,7 +106,9 @@ public abstract class OscilloscopeDispatcher {
 		}
 	}
 
-	private final PlayClip clipper = new PlayClip();
+	private int channel;
+
+	private final SoundClip clipper = new SoundClip();
 
 	/**
 	 * Contains a small image that can serve as the background of the scope.
@@ -193,7 +195,18 @@ public abstract class OscilloscopeDispatcher {
 	 */
 	public static final int NO_PULSE = 0;
 
-	private Image image;
+	private Image backgroundImage;
+
+	private Oscilloscope scope;
+
+	public OscilloscopeDispatcher(int channel, Oscilloscope scope) {
+		this(channel);
+		this.scope = scope;
+	}
+
+	public OscilloscopeDispatcher(int channel) {
+		this.channel = channel;
+	}
 
 	/**
 	 * This method will get the animation going. It will create a runnable that
@@ -207,7 +220,7 @@ public abstract class OscilloscopeDispatcher {
 	 * However, if the delay loop is set to 1, it will dispatch using
 	 * {@link Display#asyncExec(Runnable)} for maximum speed.
 	 * <p/>
-	 * This method is not meant to be overridden, override
+	 * This method is not meant to be overridden, override {@link #init()}
 	 * {@link #hookBeforeDraw(Oscilloscope, int)},
 	 * {@link #hookAfterDraw(Oscilloscope, int)} and
 	 * {@link #hookPulse(Oscilloscope, int)}.
@@ -254,8 +267,9 @@ public abstract class OscilloscopeDispatcher {
 
 	@Override
 	protected void finalize() throws Throwable {
-		if ((this.image != null) && !this.image.isDisposed()) {
-			this.image.dispose();
+		if ((this.backgroundImage != null)
+				&& !this.backgroundImage.isDisposed()) {
+			this.backgroundImage.dispose();
 		}
 	}
 
@@ -296,14 +310,15 @@ public abstract class OscilloscopeDispatcher {
 	 */
 	public Image getBackgroundImage() {
 
-		if (this.image == null) {
+		if (this.backgroundImage == null) {
 			byte[] bytes = new byte[OscilloscopeDispatcher.BACKGROUND_MONITOR.length];
 			for (int i = 0; i < OscilloscopeDispatcher.BACKGROUND_MONITOR.length; i++) {
 				bytes[i] = (byte) OscilloscopeDispatcher.BACKGROUND_MONITOR[i];
 			}
-			this.image = new Image(null, new ByteArrayInputStream(bytes));
+			this.backgroundImage = new Image(null, new ByteArrayInputStream(
+					bytes));
 		}
-		return this.image;
+		return this.backgroundImage;
 	}
 
 	/**
@@ -324,7 +339,7 @@ public abstract class OscilloscopeDispatcher {
 	 * 
 	 * @return the PlayClip object
 	 */
-	public PlayClip getClipper() {
+	public SoundClip getSoundClip() {
 		return this.clipper;
 	}
 
@@ -374,7 +389,18 @@ public abstract class OscilloscopeDispatcher {
 	 * 
 	 * @return the oscilloscope
 	 */
-	public abstract Oscilloscope getOscilloscope();
+	public Oscilloscope getOscilloscope() {
+		return scope;
+	}
+
+	/**
+	 * This method sets the {@link Oscilloscope}.
+	 * 
+	 * @param scope
+	 */
+	public void setOscilloscope(Oscilloscope scope) {
+		this.scope = scope;
+	}
 
 	/**
 	 * Override this to set the number of steps that is calculated before it is
@@ -400,7 +426,7 @@ public abstract class OscilloscopeDispatcher {
 	}
 
 	public int getPulse() {
-		return 40;
+		return 1;
 	}
 
 	public int getSteadyPosition() {
@@ -408,11 +434,11 @@ public abstract class OscilloscopeDispatcher {
 	}
 
 	public int getTailFade() {
-		return Oscilloscope.DEFAULT_TAILFADE;
+		return Oscilloscope.TAILFADE_DEFAULT;
 	}
 
 	public int getTailSize() {
-		return Oscilloscope.TAILSIZE_MAX;
+		return Oscilloscope.TAILSIZE_FILL;
 	}
 
 	/**
@@ -454,19 +480,24 @@ public abstract class OscilloscopeDispatcher {
 	 * candy so you might want to call super.
 	 */
 	public void hookChangeAttributes() {
-
-		getOscilloscope().setPercentage(isPercentage());
-		getOscilloscope().setTailSize(
-				isTailSizeMax() ? Oscilloscope.TAILSIZE_MAX : getTailSize());
-		getOscilloscope().setSteady(isSteady(), getSteadyPosition());
-		getOscilloscope().setFade(getFade());
-		getOscilloscope().setTailFade(getTailFade());
-		getOscilloscope().setConnect(mustConnect());
-		getOscilloscope().setLineWidth(getLineWidth());
+		//
 		getOscilloscope().setBackgroundImage(getBackgroundImage());
-		getOscilloscope().setProgression(getProgression());
-		getOscilloscope().setBaseOffset(getBaseOffset());
-		getOscilloscope().setProgression(getProgression());
+
+		for (int i = 0; i < getOscilloscope().getChannels(); i++) {
+
+			getOscilloscope().setPercentage(i, isPercentage());
+			getOscilloscope()
+					.setTailSize(
+							i,
+							isTailSizeMax() ? Oscilloscope.TAILSIZE_MAX
+									: getTailSize());
+			getOscilloscope().setSteady(i, isSteady(), getSteadyPosition());
+			getOscilloscope().setFade(i, getFade());
+			getOscilloscope().setTailFade(i, getTailFade());
+			getOscilloscope().setConnect(i, mustConnect());
+			getOscilloscope().setLineWidth(i, getLineWidth());
+			getOscilloscope().setBaseOffset(i, getBaseOffset());
+		}
 
 	}
 
@@ -488,11 +519,11 @@ public abstract class OscilloscopeDispatcher {
 			// Set a v
 			hookSetValues(pulse);
 			if (isSoundRequired()) {
-				getClipper().playClip(getActiveSoundfile(), 0);
+				getSoundClip().playClip(getActiveSoundfile(), 0);
 			}
 		} else {
 			if (isSoundRequired()) {
-				getClipper().playClip(getInactiveSoundfile(), 0);
+				getSoundClip().playClip(getInactiveSoundfile(), 0);
 			}
 			getOscilloscope().setForeground(getInactiveForegoundColor());
 		}
@@ -526,7 +557,9 @@ public abstract class OscilloscopeDispatcher {
 	 * @see Oscilloscope#setValues(int[])
 	 * @see Oscilloscope#addStackListener(OscilloscopeStackAdapter)
 	 */
-	public abstract void hookSetValues(int pulse);
+	public void hookSetValues(int pulse) {
+
+	}
 
 	/**
 	 * Will be called only once.

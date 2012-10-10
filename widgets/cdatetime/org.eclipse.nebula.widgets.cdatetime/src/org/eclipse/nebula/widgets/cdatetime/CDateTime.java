@@ -67,7 +67,7 @@ import org.eclipse.swt.widgets.TypedListener;
  * <li>Combo - a text selector with a drop-down graphical selector
  * (CDT.DROP_DOWN)</li>
  * </ul>
- * <p>
+ * <p> 
  * Styles are set using the constants provided in the CDT class.
  * </p>
  * 
@@ -1343,6 +1343,40 @@ public class CDateTime extends BaseCombo {
 
 	boolean isSingleSelection() {
 		return singleSelection;
+	}
+	/**
+	 * Determine whether the provided field is the most
+	 * <b>precise</b> field. According to the used pattern, e.g.  
+	 * <ul>
+	 * <li>dd.mm.yyyy 
+	 * <li>MMMM yyyy
+	 * <li>yyyy
+	 * </ul>
+	 * the date picker provides the panels for selecting a day, month or year 
+	 * respectively. The panel should close itself and set the selection in 
+	 * the CDateTime field when the user selects the most precise field.
+	 * The constants from the {@link Calendar} class may be used to determine
+	 * the most precise field:
+	 * <ul>
+	 * <li>{@link Calendar#YEAR} -> 1
+	 * <li>{@link Calendar#MONTH} -> 2
+	 * <li>{@link Calendar#DATE} -> 5
+	 * </ul>
+	 * e.g. the <i>highest</i> constant is the closing field. 
+	 * @param calendarField The calendar field identifying a pattern field
+	 * @return true if the highest pattern field  
+	 */
+	boolean isClosingField(int calendarField) {
+		// find the "highest" constant in the pattern fields
+		int i = Integer.MIN_VALUE;
+		for (Field f : field) {
+			i = Math.max(i, f.getCalendarField());
+		}
+		// compare the highest constant with the field 
+		if ( i == calendarField) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override
