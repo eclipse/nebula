@@ -526,8 +526,6 @@ public class Oscilloscope extends Canvas {
 
 		int c = channel;
 		
-		System.out.println(getBase(channel));
-
 		int[] line1 = null;
 		int[] line2 = null;
 		int splitPos = 0;
