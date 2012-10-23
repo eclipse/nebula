@@ -15,7 +15,7 @@
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<!-- When running in children tests/* modules, all reports will be in ../target/jacoco.exec -->
-		<sonar.jacoco.itReportPath>../target/jacoco.exec</sonar.jacoco.itReportPath>
+		<sonar.jacoco.reportPath>../target/jacoco.exec</sonar.jacoco.reportPath>
 	</properties>
 
 	<build>
@@ -35,7 +35,7 @@
 				<configuration>
 					<resolver>p2</resolver>
 					<pomDependencies>consider</pomDependencies>
-					<optionalDependencies>require</optionalDependencies> 
+					<optionalDependencies>require</optionalDependencies>
 					<environments>
 						<environment>
 							<os>linux</os>
@@ -82,9 +82,9 @@
 						</goals>
 						<configuration>
 							<!-- Where to put jacoco coverage report -->
-							<destFile>${sonar.jacoco.itReportPath}</destFile>
+							<destFile>${sonar.jacoco.reportPath}</destFile>
 							<includes>*.nebula.*</includes>
-							<!-- Append allows all reports from all executions to be stored in 
+							<!-- Append allows all reports from all executions to be stored in
 								a single file -->
 							<append>true</append>
 						</configuration>
