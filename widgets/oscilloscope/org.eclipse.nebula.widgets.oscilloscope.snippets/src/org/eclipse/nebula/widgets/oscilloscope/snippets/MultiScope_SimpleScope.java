@@ -9,10 +9,9 @@
  * Contributors:
  *   Wim S. Jongman - initial API and implementation
  ******************************************************************************/
-package org.eclipse.nebula.widgets.oscilloscope.multichannel;
+package org.eclipse.nebula.widgets.oscilloscope.snippets;
 
-import java.util.Random;
-
+import org.eclipse.nebula.widgets.oscilloscope.multichannel.Oscilloscope;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
@@ -22,7 +21,7 @@ import org.eclipse.swt.widgets.Shell;
  * This snippet demonstrates how to run the dispatcher in simple mode.
  * 
  */
-public class Snippet2_ScopeWithData {
+public class MultiScope_SimpleScope {
 
 	protected static Shell shell;
 
@@ -54,13 +53,7 @@ public class Snippet2_ScopeWithData {
 
 		// Create a single channel scope
 		Oscilloscope scope = new Oscilloscope(shell, SWT.NONE);
-		scope.addStackListener(0, new OscilloscopeStackAdapter() {
-			@Override
-			public void stackEmpty(Oscilloscope scope, int channel) {
-				scope.setValue(channel, 25 - new Random().nextInt(50));
-			}
-		});
 		scope.getDispatcher(0).dispatch();
-
+		
 	}
 }

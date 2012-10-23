@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2010 Weltevree Beheer BV, Remain Software & Industrial-TSI
+ *  Copyright (c) 2010, 2012 Weltevree Beheer BV, Remain Software & Industrial-TSI
  * 
  * All rights reserved. 
  * This program and the accompanying materials are made available under the terms of
@@ -9,10 +9,12 @@
  * Contributors:
  *   Wim S. Jongman - initial API and implementation
  ******************************************************************************/
-package org.eclipse.nebula.widgets.oscilloscope.multichannel;
+package org.eclipse.nebula.widgets.oscilloscope.snippets;
 
 import java.util.Random;
 
+import org.eclipse.nebula.widgets.oscilloscope.multichannel.Oscilloscope;
+import org.eclipse.nebula.widgets.oscilloscope.multichannel.OscilloscopeStackAdapter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
@@ -24,7 +26,7 @@ import org.eclipse.swt.widgets.Shell;
  * This snippet demonstrates how to run the dispatcher in simple mode.
  * 
  */
-public class Snippet4_ScopeWithDataAndProgression2Channels {
+public class MultiScope_ScopeWithDataAndProgression2Channels_1 {
 
 	protected static Shell shell;
 

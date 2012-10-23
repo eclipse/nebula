@@ -106,8 +106,6 @@ public class OscilloscopeDispatcher {
 		}
 	}
 
-	private int channel;
-
 	private final SoundClip clipper = new SoundClip();
 
 	/**
@@ -199,13 +197,42 @@ public class OscilloscopeDispatcher {
 
 	private Oscilloscope scope;
 
-	public OscilloscopeDispatcher(int channel, Oscilloscope scope) {
-		this(channel);
-		this.scope = scope;
+	private int channel = -1;
+
+	/**
+	 * @param channel
+	 * @see #getChannel()
+	 */
+	public OscilloscopeDispatcher(int channel) {
+		this();
+		this.channel = channel;
 	}
 
-	public OscilloscopeDispatcher(int channel) {
-		this.channel = channel;
+	/**
+	 * The default constructor.
+	 */
+	public OscilloscopeDispatcher() {
+	}
+
+	/**
+	 * @param channel
+	 * @param oscilloscope
+	 * 
+	 * @see OscilloscopeDispatcher#getChannel()
+	 * @see OscilloscopeDispatcher#getOscilloscope()
+	 */
+	public OscilloscopeDispatcher(int channel, Oscilloscope oscilloscope) {
+		this(channel);
+		scope = oscilloscope;
+	}
+
+	/**
+	 * @param oscilloscope
+	 * 
+	 * @see OscilloscopeDispatcher#getOscilloscope()
+	 */
+	public OscilloscopeDispatcher(Oscilloscope oscilloscope) {
+		scope = oscilloscope;
 	}
 
 	/**
@@ -353,6 +380,13 @@ public class OscilloscopeDispatcher {
 		return 30;
 	}
 
+	/**
+	 * Tests if the tail must fade.
+	 * 
+	 * @return this default implementation returns true
+	 * @see Oscilloscope#setTailFade(int, int)
+	 * @see #getTailSize()
+	 */
 	public boolean getFade() {
 		return true;
 
@@ -376,10 +410,16 @@ public class OscilloscopeDispatcher {
 
 	}
 
+	/**
+	 * @return this default implementation returns null
+	 */
 	public File getInactiveSoundfile() {
 		return null;
 	}
 
+	/**
+	 * @return this default implementation returns 1
+	 */
 	public int getLineWidth() {
 		return 1;
 	}
@@ -425,20 +465,53 @@ public class OscilloscopeDispatcher {
 		return 1;
 	}
 
+	/**
+	 * Returns the heart beat of the scope. 
+	 * @return this default implementation returns 1
+	 * 
+	 * @see #dispatch()
+	 * @see #getDelayLoop()
+	 * @see #getProgression()
+	 */
 	public int getPulse() {
 		return 1;
 	}
 
+	/**
+	 * If the scope value must be drawn on a steady position then this method
+	 * can supply a value.
+	 * 
+	 * @return the default implementation returns 200
+	 * @see Oscilloscope#setSteady(int, boolean, int)
+	 */
 	public int getSteadyPosition() {
 		return 200;
 	}
 
+	/**
+	 * @return the percentage of the tail that must fade.
+	 * @see Oscilloscope#setTailFade(int, int)
+	 */
 	public int getTailFade() {
 		return Oscilloscope.TAILFADE_DEFAULT;
 	}
 
+	/**
+	 * @return the tail size
+	 * @see Oscilloscope#setTailSize(int, int)
+	 */
 	public int getTailSize() {
-		return Oscilloscope.TAILSIZE_FILL;
+		return Oscilloscope.TAILSIZE_DEFAULT;
+	}
+
+	/**
+	 * Returns the channel that this scope is the dispatcher for. Please note
+	 * that you do not really need one dispatcher per channel.
+	 * 
+	 * @return the channel for this dispatcher. Can be -1 if not set.
+	 */
+	public int getChannel() {
+		return channel;
 	}
 
 	/**
@@ -467,11 +540,9 @@ public class OscilloscopeDispatcher {
 	 * @param counter
 	 */
 	public void hookBeforeDraw(Oscilloscope oscilloscope, int counter) {
-
 		if (counter == getPulse() - 1) {
 			hookChangeAttributes();
 		}
-
 	}
 
 	/**
@@ -512,19 +583,21 @@ public class OscilloscopeDispatcher {
 	 */
 	public void hookPulse(Oscilloscope oscilloscope, int pulse) {
 
-		// Set the color
 		if (isServiceActive()) {
 			getOscilloscope().setForeground(getActiveForegoundColor());
 
-			// Set a v
 			hookSetValues(pulse);
+
 			if (isSoundRequired()) {
 				getSoundClip().playClip(getActiveSoundfile(), 0);
 			}
+
 		} else {
+			
 			if (isSoundRequired()) {
 				getSoundClip().playClip(getInactiveSoundfile(), 0);
 			}
+			
 			getOscilloscope().setForeground(getInactiveForegoundColor());
 		}
 
@@ -565,28 +638,62 @@ public class OscilloscopeDispatcher {
 	 * Will be called only once.
 	 */
 	public void init() {
+		hookChangeAttributes();
 	}
 
+	/**
+	 * Indicates if the value that comes in from the scope is a percentage
+	 * rather than an absolute value.
+	 * 
+	 * @return the default implementation returns true
+	 * @see Oscilloscope#setPercentage(int, boolean)
+	 */
 	public boolean isPercentage() {
 		return true;
 	}
 
+	/**
+	 * A helper method to indicate if something that you are measuring is
+	 * active. Based on the output of this method things can be done, like
+	 * playing a flat-line sound, changing the foreground color and such.
+	 * 
+	 * @return the default implementation returns true
+	 */
 	public boolean isServiceActive() {
 		return true;
 	}
 
+	/**
+	 * The dispatcher is able to beep and pling and this method helps in
+	 * indicating if this is required.
+	 * 
+	 * @return this default implementation returns false
+	 * @see Oscilloscope#setSteady(int, boolean, int)
+	 */
 	public boolean isSoundRequired() {
 		return false;
 	}
 
+	/**
+	 * @return this default implementation returns false
+	 * @see Oscilloscope#setSteady(int, boolean, int)
+	 */
 	public boolean isSteady() {
 		return false;
 	}
 
+	/**
+	 * @return this default implementation returns false.
+	 * @see Oscilloscope#setTailSize(int, int)
+	 */
 	public boolean isTailSizeMax() {
 		return false;
 	}
 
+	/**
+	 * @return this default implementation returns false
+	 * @see Oscilloscope#setConnect(int, boolean)
+	 */
 	public boolean mustConnect() {
 		return false;
 	}

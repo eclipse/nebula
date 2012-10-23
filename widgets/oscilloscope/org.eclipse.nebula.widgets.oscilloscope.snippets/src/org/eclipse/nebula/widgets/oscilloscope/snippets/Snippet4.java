@@ -91,6 +91,8 @@ public class Snippet4 {
 			}
 
 			public void init() {
+				super.init();
+
 				OscilloscopeStackAdapter listener = new OscilloscopeStackAdapter() {
 					@Override
 					public void stackEmpty(Oscilloscope scope) {
@@ -98,6 +100,7 @@ public class Snippet4 {
 						if (isSoundRequired()) {
 							getClipper().playClip(getActiveSoundfile(), 0);
 						}
+						
 
 						// Calculate a full sine circle
 						double value = 0;
@@ -112,14 +115,13 @@ public class Snippet4 {
 				};
 
 				scope.addStackListener(listener);
-				scope.removeStackListener(listener);
-				scope.addStackListener(listener);
 			}
 
 			@Override
 			public boolean getFade() {
 				return false;
 			}
+			
 
 			public int getPulse() {
 				return NO_PULSE;

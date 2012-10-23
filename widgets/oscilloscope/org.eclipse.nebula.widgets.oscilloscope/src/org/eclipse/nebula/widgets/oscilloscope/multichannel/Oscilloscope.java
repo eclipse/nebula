@@ -1,3 +1,14 @@
+/*******************************************************************************
+ *  Copyright (c) 2010, 2012 Weltevree Beheer BV, Remain Software & Industrial-TSI
+ * 
+ * All rights reserved. 
+ * This program and the accompanying materials are made available under the terms of
+ * the Eclipse Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Wim S. Jongman - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.nebula.widgets.oscilloscope.multichannel;
 
 import java.util.ArrayList;
@@ -11,7 +22,6 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Path;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
@@ -444,8 +454,6 @@ public class Oscilloscope extends Canvas {
 
 	protected void paintControl(PaintEvent e) {
 
-		long start = System.currentTimeMillis();
-
 		for (int c = 0; c < chan.length; c++) {
 
 			if (chan[c].tailSize <= 0) {
@@ -458,8 +466,6 @@ public class Oscilloscope extends Canvas {
 			Object[] result = calculate(c);
 			int[] l1 = (int[]) result[0];
 			int[] l2 = (int[]) result[1];
-
-			// System.out.print(System.currentTimeMillis() - start + "-");
 
 			// Draw it
 			GC gc = e.gc;
@@ -489,12 +495,8 @@ public class Oscilloscope extends Canvas {
 				}
 
 			} else {
-				long time = System.nanoTime();
-//				Path path = new Path(gc.getDevice());
-//				path.
 				gc.drawPolyline(l1);
 				gc.drawPolyline(l2);
-				System.out.println(System.nanoTime() - time + " nanoseconds");
 			}
 
 			// Connects the head with the tail
@@ -504,9 +506,6 @@ public class Oscilloscope extends Canvas {
 				gc.drawLine(l2[l2.length - 2], l2[l2.length - 1], l1[0], l1[1]);
 			}
 		}
-
-		System.out.println(System.currentTimeMillis() - start + " milliseconds for all channels");
-
 	}
 
 	public Color getForeground(int channel) {
@@ -526,11 +525,13 @@ public class Oscilloscope extends Canvas {
 	private Object[] calculate(int channel) {
 
 		int c = channel;
+		
+		System.out.println(getBase(channel));
 
 		int[] line1 = null;
 		int[] line2 = null;
 		int splitPos = 0;
-
+		
 		for (int progress = 0; progress < getProgression(c); progress++) {
 
 			if (chan[c].stack.isEmpty() && chan[c].stackListeners != null)
@@ -858,9 +859,6 @@ public class Oscilloscope extends Canvas {
 				}
 			}
 		}
-
-		// System.out.println(Arrays.toString(tail));
-		// System.out.println(Arrays.toString(oldTail));
 	}
 
 	public Point computeSize(int wHint, int hHint, boolean changed) {

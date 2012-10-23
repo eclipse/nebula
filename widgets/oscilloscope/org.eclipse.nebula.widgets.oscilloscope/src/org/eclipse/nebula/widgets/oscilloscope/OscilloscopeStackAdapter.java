@@ -16,6 +16,9 @@ package org.eclipse.nebula.widgets.oscilloscope;
  * stack runs out of values.
  * 
  * @author Wim.Jongman (@remainsoftware.com)
+ *  * @deprecated use
+ *             {@link org.eclipse.nebula.widgets.oscilloscope.multichannel.OscilloscopeStackAdapter}
+
  * 
  */
 public abstract class OscilloscopeStackAdapter {

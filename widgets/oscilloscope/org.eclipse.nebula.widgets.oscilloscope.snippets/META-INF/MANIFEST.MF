@@ -5,7 +5,8 @@ Bundle-SymbolicName: org.eclipse.nebula.widgets.oscilloscope.snippets
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: REMAINSOFTWARE
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.eclipse.nebula.widgets.oscilloscope
+Import-Package: org.eclipse.nebula.widgets.oscilloscope,
+ org.eclipse.nebula.widgets.oscilloscope.multichannel
 Require-Bundle: org.eclipse.swt;bundle-version="3.5.1"
 Bundle-ClassPath: .
 

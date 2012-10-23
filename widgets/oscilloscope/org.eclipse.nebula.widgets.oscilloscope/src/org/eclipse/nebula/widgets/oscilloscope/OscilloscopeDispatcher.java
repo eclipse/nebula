@@ -52,6 +52,10 @@ import org.eclipse.swt.widgets.Display;
  * 
  * @author Wim Jongman
  * 
+ * @deprecated use
+ *             {@link org.eclipse.nebula.widgets.oscilloscope.multichannel.OscilloscopeDispatcher}
+
+ * 
  */
 public abstract class OscilloscopeDispatcher {
 
@@ -408,7 +412,7 @@ public abstract class OscilloscopeDispatcher {
 	}
 
 	public int getTailFade() {
-		return Oscilloscope.DEFAULT_TAILFADE;
+		return Oscilloscope.TAILFADE_DEFAULT;
 	}
 
 	public int getTailSize() {

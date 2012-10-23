@@ -4,7 +4,7 @@ import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.assertFalse;
 import junit.framework.Assert;
 
-import org.eclipse.nebula.widgets.oscilloscope.Oscilloscope.IntegerFiFoCircularStack;
+import org.eclipse.nebula.widgets.oscilloscope.multichannel.Oscilloscope.IntegerFiFoCircularStack;
 import org.eclipse.swt.widgets.Shell;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -119,8 +119,7 @@ public class OscilloscopeTest {
 		assertTrue(stack2.pop(3) == stack.pop(4));
 		assertTrue(stack2.pop(3) == stack.pop(4));
 		assertFalse(stack2.pop(3) == stack.pop(4));
-		
-		
+
 		assertTrue(stack2.getLoad() == 0);
 		assertTrue(stack2.isEmpty());
 		assertTrue(stack.isEmpty());

@@ -15,8 +15,8 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.Random;
 
-import org.eclipse.nebula.widgets.oscilloscope.Oscilloscope;
-import org.eclipse.nebula.widgets.oscilloscope.OscilloscopeDispatcher;
+import org.eclipse.nebula.widgets.oscilloscope.multichannel.Oscilloscope;
+import org.eclipse.nebula.widgets.oscilloscope.multichannel.OscilloscopeDispatcher;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.Image;
@@ -40,7 +40,7 @@ public abstract class SnippetDispatcher extends OscilloscopeDispatcher {
 
 	public abstract void hookSetValues(int value);
 
-	PlayClip clipper = new PlayClip();
+	SoundClip clipper = new SoundClip();
 	protected Oscilloscope gilloscope;
 	protected Button serviceActive;
 	protected Spinner pulse;
@@ -88,9 +88,9 @@ public abstract class SnippetDispatcher extends OscilloscopeDispatcher {
 				new ByteArrayInputStream(bytes)));
 
 		if (new Random().nextInt(2) == 1)
-			gilloscope.setTailSize(new Random().nextInt(200) + 1);
+			gilloscope.setTailSize(0,new Random().nextInt(200) + 1);
 		else
-			gilloscope.setTailSize(-1);
+			gilloscope.setTailSize(0,-1);
 
 		TabItem tabItem2 = new TabItem(tabFolder, SWT.NONE);
 		tabItem2.setText("Settings");
@@ -104,15 +104,15 @@ public abstract class SnippetDispatcher extends OscilloscopeDispatcher {
 
 			public void run() {
 
-				getOscilloscope().setPercentage(isPercentage());
-				getOscilloscope().setTailSize(
+				getOscilloscope().setPercentage(0, isPercentage());
+				getOscilloscope().setTailSize(0,
 						isTailSizeMax() ? Oscilloscope.TAILSIZE_MAX
 								: getTailSize());
-				getOscilloscope().setSteady(isSteady(), getSteadyPosition());
-				getOscilloscope().setFade(getFade());
-				getOscilloscope().setTailFade(getTailFade());
-				getOscilloscope().setConnect(mustConnect());
-				getOscilloscope().setLineWidth(getLineWidth());
+				getOscilloscope().setSteady(0,isSteady(), getSteadyPosition());
+				getOscilloscope().setFade(0,getFade());
+				getOscilloscope().setTailFade(0,getTailFade());
+				getOscilloscope().setConnect(0,mustConnect());
+				getOscilloscope().setLineWidth(0,getLineWidth());
 
 				getOscilloscope().redraw();
 				pulse++;
@@ -320,7 +320,7 @@ public abstract class SnippetDispatcher extends OscilloscopeDispatcher {
 		return delay.getSelection();
 	}
 
-	public Oscilloscope getOscilloscope() {
+	public org.eclipse.nebula.widgets.oscilloscope.multichannel.Oscilloscope getOscilloscope() {
 		return gilloscope;
 	}
 
