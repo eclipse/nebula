@@ -172,7 +172,7 @@ public class MultiScope_ScopeWithDataAndProgression10Channels {
 						value = 0;
 					}
 
-					values[i] = (int) (Math.sin(value) * 30);
+					values[i] = (int) (Math.sin(value) * 10);
 				}
 
 				scope.setValues(channel, values);

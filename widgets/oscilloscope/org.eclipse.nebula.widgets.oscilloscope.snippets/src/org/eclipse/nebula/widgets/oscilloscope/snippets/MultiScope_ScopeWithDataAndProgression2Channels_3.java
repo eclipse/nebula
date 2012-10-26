@@ -81,6 +81,15 @@ public class MultiScope_ScopeWithDataAndProgression2Channels_3 {
 		scope.setBaseOffset(3, -50);
 
 		scope.setDispatcher(0, new OscilloscopeDispatcher(scope) {
+			
+			@Override
+			public void hookBeforeDraw(Oscilloscope oscilloscope, int counter) {
+			}
+			
+			@Override
+			public void hookAfterDraw(Oscilloscope oscilloscope, int counter) {
+			}
+			
 			@Override
 			public void hookChangeAttributes() {
 				getOscilloscope().setBackgroundImage(getBackgroundImage());
@@ -100,17 +109,22 @@ public class MultiScope_ScopeWithDataAndProgression2Channels_3 {
 					getOscilloscope().setLineWidth(i, getLineWidth());
 					// getOscilloscope().setBaseOffset(i, getBaseOffset());
 
-					
-					if (i < 2){
-				//		getOscilloscope().setBaseOffset(i, 50);
-						getOscilloscope().setForeground(i, Display.getDefault().getSystemColor(SWT.COLOR_BLUE));
-						
-						}
+//					if (i < 2) {
+//						// getOscilloscope().setBaseOffset(i, 50);
+//						getOscilloscope().setForeground(
+//								i,
+//								Display.getDefault().getSystemColor(
+//										SWT.COLOR_BLUE));
+//
+//					}
 
-					else{
-				//		getOscilloscope().setBaseOffset(i, -50);
-					getOscilloscope().setForeground(i, Display.getDefault().getSystemColor(SWT.COLOR_RED));
-					}
+//					else {
+//						// getOscilloscope().setBaseOffset(i, -50);
+//						getOscilloscope().setForeground(
+//								i,
+//								Display.getDefault().getSystemColor(
+//										SWT.COLOR_RED));
+//					}
 				}
 			}
 		});
@@ -130,7 +144,7 @@ public class MultiScope_ScopeWithDataAndProgression2Channels_3 {
 
 				Random random = new Random();
 
-				if (channel == 0 || channel == 2) {
+				if (channel == 0) {
 
 					if (oldp != scope.getProgression(channel)) {
 						oldp = scope.getProgression(channel);
@@ -161,14 +175,16 @@ public class MultiScope_ScopeWithDataAndProgression2Channels_3 {
 
 					}
 					scope.setValues(channel, ints);
+					scope.setValues(channel + 2, ints);
 				}
 
-				else {
+				else if (channel == 1) {
 					int[] onts = new int[ints.length];
 					for (int i = 0; i < ints.length; i++) {
 						onts[i] = -1 * ints[i];
 					}
 					scope.setValues(channel, onts);
+					scope.setValues(channel + 2, onts);
 				}
 			}
 		};
