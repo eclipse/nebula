@@ -20,7 +20,6 @@ import javax.sound.sampled.Clip;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * This class keeps the oscilloscope animation running and is used to set
@@ -54,7 +53,7 @@ import org.eclipse.swt.widgets.Display;
  * 
  * @deprecated use
  *             {@link org.eclipse.nebula.widgets.oscilloscope.multichannel.OscilloscopeDispatcher}
-
+ * 
  * 
  */
 public abstract class OscilloscopeDispatcher {
@@ -64,8 +63,8 @@ public abstract class OscilloscopeDispatcher {
 	 * 
 	 */
 	public class PlayClip {
-		Clip clip = null;
-		String oldFile = "";
+		private Clip clip = null;
+		private String oldFile = "";
 
 		/**
 		 * Returns the clip so you can control it.
@@ -86,8 +85,9 @@ public abstract class OscilloscopeDispatcher {
 		 */
 		public void playClip(File file, int loopCount) {
 
-			if (file == null)
+			if (file == null) {
 				return;
+			}
 
 			try {
 
@@ -97,15 +97,16 @@ public abstract class OscilloscopeDispatcher {
 					this.clip = AudioSystem.getClip();
 					this.clip.open(AudioSystem.getAudioInputStream(file));
 				}
-				if (this.clip.isActive())
+				if (this.clip.isActive()) {
 					return;
+				}
 				// clip.stop(); << Alternative
 
 				this.clip.setFramePosition(0);
 				this.clip.loop(loopCount);
 
 			} catch (Exception e) {
-				e.printStackTrace();
+				// swallow
 			}
 		}
 	}
@@ -115,7 +116,7 @@ public abstract class OscilloscopeDispatcher {
 	/**
 	 * Contains a small image that can serve as the background of the scope.
 	 */
-	final public static int[] BACKGROUND_MONITOR = new int[] { 255, 216, 255,
+	public final static int[] BACKGROUND_MONITOR = new int[] { 255, 216, 255,
 			224, 0, 16, 74, 70, 73, 70, 0, 1, 1, 1, 0, 72, 0, 72, 0, 0, 255,
 			254, 0, 19, 67, 114, 101, 97, 116, 101, 100, 32, 119, 105, 116,
 			104, 32, 71, 73, 77, 80, 255, 219, 0, 67, 0, 5, 3, 4, 4, 4, 3, 5,
@@ -143,7 +144,7 @@ public abstract class OscilloscopeDispatcher {
 	/**
 	 * Contains a small image that can serve as the background of the scope.
 	 */
-	final public static int[] BACKGROUND_MONITOR_SMALL = new int[] { 255, 216,
+	public final static int[] BACKGROUND_MONITOR_SMALL = new int[] { 255, 216,
 			255, 224, 0, 16, 74, 70, 73, 70, 0, 1, 1, 1, 0, 72, 0, 72, 0, 0,
 			255, 254, 0, 20, 67, 114, 101, 97, 116, 101, 100, 32, 119, 105,
 			116, 104, 32, 71, 73, 77, 80, 0, 255, 219, 0, 67, 0, 2, 1, 1, 2, 1,
@@ -209,7 +210,7 @@ public abstract class OscilloscopeDispatcher {
 	 * After the hook methods are called, the runnable is placed in the user
 	 * interface thread with a timer of {@link #getDelayLoop()} milliseconds.
 	 * However, if the delay loop is set to 1, it will dispatch using
-	 * {@link Display#asyncExec(Runnable)} for maximum speed.
+	 * Display.asyncExec(Runnable) for maximum speed.
 	 * <p/>
 	 * This method is not meant to be overridden, override
 	 * {@link #hookBeforeDraw(Oscilloscope, int)},
@@ -227,9 +228,9 @@ public abstract class OscilloscopeDispatcher {
 			private int pulse;
 
 			public void run() {
-				if (getOscilloscope().isDisposed())
+				if (getOscilloscope().isDisposed()) {
 					return;
-
+				}
 				hookBeforeDraw(getOscilloscope(), this.pulse);
 				getOscilloscope().redraw();
 				hookAfterDraw(getOscilloscope(), this.pulse);
@@ -261,6 +262,7 @@ public abstract class OscilloscopeDispatcher {
 		if ((this.image != null) && !this.image.isDisposed()) {
 			this.image.dispose();
 		}
+		super.finalize();
 	}
 
 	/**
@@ -339,7 +341,7 @@ public abstract class OscilloscopeDispatcher {
 	 * @return 30 milliseconds. Override with a smaller value for more speed.
 	 */
 	public int getDelayLoop() {
-		return 30;
+		return Oscilloscope.DEFAULT_DELAY;
 	}
 
 	public boolean getFade() {
@@ -370,7 +372,7 @@ public abstract class OscilloscopeDispatcher {
 	}
 
 	public int getLineWidth() {
-		return 1;
+		return Oscilloscope.DEFAULT_WIDTH;
 	}
 
 	/**
@@ -400,15 +402,15 @@ public abstract class OscilloscopeDispatcher {
 	 *         zero.
 	 */
 	public int getProgression() {
-		return 1;
+		return Oscilloscope.PROGRESSION_DEFAULT;
 	}
 
 	public int getPulse() {
-		return 40;
+		return Oscilloscope.PULSE_DEFAULT;
 	}
 
 	public int getSteadyPosition() {
-		return 200;
+		return Oscilloscope.STEADYPOSITION_75PERCENT;
 	}
 
 	public int getTailFade() {
