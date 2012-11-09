@@ -39,14 +39,21 @@ public class Oscilloscope extends
 		org.eclipse.nebula.widgets.oscilloscope.multichannel.Oscilloscope {
 
 	/**
-	 * The default delay in milliseconds before the dispatcher is asked to redraw.
+	 * The default delay in milliseconds before the dispatcher is asked to
+	 * redraw.
 	 */
 	public static final int DEFAULT_DELAY = 30;
 
 	/**
-	 * The default number of ticks before a new value is asked. 
+	 * The default number of ticks before a new value is asked.
 	 */
 	public static final int PULSE_DEFAULT = 40;
+
+	/**
+	 * @deprecated use
+	 *             {@link org.eclipse.nebula.widgets.oscilloscope.multichannel.Oscilloscope#HEARTBEAT}
+	 */
+	public static final int[] HEARTBEAT = org.eclipse.nebula.widgets.oscilloscope.multichannel.Oscilloscope.HEARTBEAT;
 
 	/**
 	 * The default constructor.
