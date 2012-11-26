@@ -20,24 +20,24 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 
 /**
- * An implementation of the DataBindings IObservableValue interface for the Nebula
- * CDateTime control.
+ * An implementation of the DataBindings IObservableValue interface for the
+ * Nebula CDateTime control.
  * 
  * @author pcentgraf
  * @since Mar 8, 2007
  */
 public class CDateTimeObservableValue extends AbstractObservableValue {
-	
+
 	/**
 	 * The Control being observed here.
 	 */
 	protected final CDateTime dateTime;
-	
+
 	/**
 	 * Flag to prevent infinite recursion in {@link #doSetValue(Object)}.
 	 */
 	protected boolean updating = false;
-	
+
 	/**
 	 * The "old" selection before a selection event is fired.
 	 */
@@ -46,19 +46,30 @@ public class CDateTimeObservableValue extends AbstractObservableValue {
 	private SelectionListener listener = new SelectionListener() {
 		public void widgetDefaultSelected(SelectionEvent e) {
 			if (!updating) {
-				Date newSelection = CDateTimeObservableValue.this.dateTime.getSelection();
-				fireValueChange(Diffs.createValueDiff(currentSelection, newSelection));
+				Date newSelection = CDateTimeObservableValue.this.dateTime
+						.getSelection();
+				fireValueChange(Diffs.createValueDiff(currentSelection,
+						newSelection));
 				currentSelection = newSelection;
 			}
 		}
+
 		public void widgetSelected(SelectionEvent e) {
-			// skip
+			if (!updating) {
+				Date newSelection = CDateTimeObservableValue.this.dateTime
+						.getSelection();
+				fireValueChange(Diffs.createValueDiff(currentSelection,
+						newSelection));
+				currentSelection = newSelection;
+			}
 		}
 	};
-	
+
 	/**
 	 * Observe the selection property of the provided CDateTime control.
-	 * @param dateTime the control to observe
+	 * 
+	 * @param dateTime
+	 *            the control to observe
 	 */
 	public CDateTimeObservableValue(CDateTime dateTime) {
 		this.dateTime = dateTime;
@@ -73,14 +84,14 @@ public class CDateTimeObservableValue extends AbstractObservableValue {
 	}
 
 	protected Object doGetValue() {
-		if(!dateTime.isDisposed()) {
+		if (!dateTime.isDisposed()) {
 			return dateTime.getSelection();
 		}
 		return null;
 	}
-	
+
 	protected void doSetValue(Object value) {
-		if(value instanceof Date && !dateTime.isDisposed()) {
+		if (value instanceof Date && !dateTime.isDisposed()) {
 			Date oldValue;
 			Date newValue;
 			try {
@@ -99,5 +110,5 @@ public class CDateTimeObservableValue extends AbstractObservableValue {
 	public Object getValueType() {
 		return Date.class;
 	}
-	
+
 }
