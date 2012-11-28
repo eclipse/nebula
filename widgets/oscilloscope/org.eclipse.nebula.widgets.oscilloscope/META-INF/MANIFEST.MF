@@ -5,6 +5,6 @@ Bundle-SymbolicName: org.eclipse.nebula.widgets.oscilloscope
 Bundle-Version: 1.1.0.qualifier
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: org.eclipse.swt;bundle-version="3.5.1"
-Export-Package: org.eclipse.nebula.widgets.oscilloscope,
+Export-Package: org.eclipse.nebula.widgets.oscilloscope;x-internal:=true,
  org.eclipse.nebula.widgets.oscilloscope.multichannel
 Bundle-Vendor: Eclipse Nebula
