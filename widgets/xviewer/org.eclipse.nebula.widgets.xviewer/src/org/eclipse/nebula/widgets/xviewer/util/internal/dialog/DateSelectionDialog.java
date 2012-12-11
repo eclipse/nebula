@@ -14,14 +14,16 @@ package org.eclipse.nebula.widgets.xviewer.util.internal.dialog;
 import java.util.Calendar;
 import java.util.Date;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.nebula.widgets.calendarcombo.CalendarCombo;
-import org.eclipse.nebula.widgets.calendarcombo.CalendarListenerAdapter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
@@ -55,19 +57,32 @@ public class DateSelectionDialog extends MessageDialog {
 
       new Label(filterComp, SWT.None).setText(dialogMessage);
 
-      final CalendarCombo dp = new CalendarCombo(filterComp, SWT.BORDER | SWT.SINGLE | SWT.FLAT);
+      final DateTime dp = new DateTime(filterComp, SWT.CALENDAR);
       dp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
       if (initialDate != null) {
-         dp.setDate(initialDate);
+         Calendar cal = Calendar.getInstance();
+         cal.setTime(initialDate);
+
+         dp.setYear(cal.get(Calendar.YEAR));
+         dp.setMonth(cal.get(Calendar.MONTH));
+         dp.setDay(cal.get(Calendar.DAY_OF_YEAR));
       }
-      dp.addCalendarListener(new CalendarListenerAdapter() {
+      dp.addSelectionListener(new SelectionAdapter() {
          @Override
-         public void dateChanged(Calendar date) {
-            if (date == null) {
-               selectedDate = null;
-            } else {
-               selectedDate = date.getTime();
-            }
+         public void widgetSelected(SelectionEvent e) {
+            super.widgetSelected(e);
+            Calendar cal = Calendar.getInstance();
+            cal.set(dp.getYear(), dp.getMonth(), dp.getDay());
+            selectedDate = cal.getTime();
+         }
+      });
+
+      Button clearButton = new Button(filterComp, SWT.PUSH);
+      clearButton.setText("clear");
+      clearButton.addSelectionListener(new SelectionAdapter() {
+         @Override
+         public void widgetSelected(SelectionEvent e) {
+            selectedDate = null;
          }
       });
 

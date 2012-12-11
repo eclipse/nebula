@@ -7,7 +7,6 @@ Bundle-Activator: org.eclipse.nebula.widgets.xviewer.Activator
 Bundle-Vendor: Eclipse Nebula
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.nebula.widgets.calendarcombo,
  org.eclipse.ui.forms
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
