@@ -91,7 +91,7 @@ public class CDateTimeObservableValue extends AbstractObservableValue {
 	}
 
 	protected void doSetValue(Object value) {
-		if (value instanceof Date && !dateTime.isDisposed()) {
+		if ((value instanceof Date || value == null) && !dateTime.isDisposed()) {
 			Date oldValue;
 			Date newValue;
 			try {
