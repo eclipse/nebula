@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.e4.ui.css.core.elementProvider">
+      <provider
+            class="org.eclipse.nebula.widgets.pshelf.css.internal.PShelfElementProvider">
+         <widget
+               class="org.eclipse.nebula.widgets.pshelf.PShelf"></widget>
+      </provider>
+   </extension>
+   <extension
+         point="org.eclipse.e4.ui.css.core.propertyHandler">
+      <handler
+            adapter="org.eclipse.nebula.widgets.pshelf.css.internal.PShelfElement"
+            composite="true"
+            handler="org.eclipse.nebula.widgets.pshelf.css.internal.PShelfPropertyHandler">
+         <property-name
+               name="pshelf-basecolor-selected">
+         </property-name>
+         <property-name
+               name="pshelf-basecolor-unselected">
+         </property-name>
+         <property-name
+               name="pshelf-basecolor-hover">
+         </property-name>
+      </handler>
+   </extension>
+
+</plugin>
