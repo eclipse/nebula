@@ -24,6 +24,27 @@
          <property-name
                name="pshelf-basecolor-hover">
          </property-name>
+         <property-name
+               name="pshelf-selectedcolor-start">
+         </property-name>
+         <property-name
+               name="pshelf-selectedcolor-end">
+         </property-name>
+         <property-name
+               name="pshelf-unselectedcolor-start">
+         </property-name>
+         <property-name
+               name="pshelf-unselectedcolor-end">
+         </property-name>
+         <property-name
+               name="pshelf-hovercolor-start">
+         </property-name>
+         <property-name
+               name="pshelf-hovercolor-end">
+         </property-name>
+         <property-name
+               name="pshelf-foregroundcolor">
+         </property-name>
       </handler>
    </extension>
 

@@ -20,7 +20,7 @@ import org.w3c.dom.css.CSSValue;
 
 @SuppressWarnings("restriction")
 public class PShelfPropertyHandler implements ICSSPropertyHandler {
-	private Map<PShelf, Boolean> scheduled = new HashMap<>();
+	private Map<PShelf, Boolean> scheduled = new HashMap<PShelf,Boolean>();
 	
 	@Override
 	public boolean applyCSSProperty(Object element, String property,

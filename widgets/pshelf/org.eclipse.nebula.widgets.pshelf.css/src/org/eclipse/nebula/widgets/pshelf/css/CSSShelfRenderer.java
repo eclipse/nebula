@@ -202,12 +202,19 @@ public class CSSShelfRenderer extends AbstractRenderer {
 
 		Color tmp = csshelper.getBaseColorSelected();
 		Color baseColor;
-		Color color1 = createNewBlendedColor(tmp, parent.getDisplay().getSystemColor(SWT.COLOR_WHITE), 30);
+		Color color1 = csshelper.getSelectedColorStart();
+		if( color1 == null ) {
+			color1 = createNewBlendedColor(tmp, parent.getDisplay().getSystemColor(SWT.COLOR_WHITE), 30);
+		}
 
 		baseColor = createNewBlendedColor(tmp, parent.getDisplay().getSystemColor(SWT.COLOR_WHITE), 80);
 		tmp.dispose();
 		
-		Color color2 = createNewSaturatedColor(baseColor, .01f);
+		Color color2 = csshelper.getSelectedColorEnd();
+		if( color2 == null ) {
+			color2 = createNewSaturatedColor(baseColor, .01f);
+		}
+		
 
 		if ((parent.getStyle() & SWT.SIMPLE) != 0) {
 			gradient1 = color1;
@@ -222,14 +229,20 @@ public class CSSShelfRenderer extends AbstractRenderer {
 		tmp = csshelper.getBaseColorUnselected();
 		lineColor = createNewSaturatedColor(tmp, .02f);
 
-		color1 = createNewBlendedColor(tmp, parent.getDisplay().getSystemColor(SWT.COLOR_WHITE), 70);
-
+		color1 = csshelper.getUnselectedColorStart(); 
+		if( color1 == null ) {
+			color1 = createNewBlendedColor(tmp, parent.getDisplay().getSystemColor(SWT.COLOR_WHITE), 70);
+		}
+				
 		baseColor = createNewBlendedColor(tmp, parent.getDisplay().getSystemColor(SWT.COLOR_BLACK), 80);
 
 		tmp.dispose();
 		
-		color2 = createNewSaturatedColor(baseColor, .02f);
-
+		color2 = csshelper.getUnselectedColorEnd(); 
+		if( color2 == null ) {
+			color2 = createNewSaturatedColor(baseColor, .02f);
+		}
+				
 		if ((parent.getStyle() & SWT.SIMPLE) != 0) {
 			selectedGradient1 = color1;
 			selectedGradient2 = color2;
@@ -249,7 +262,11 @@ public class CSSShelfRenderer extends AbstractRenderer {
 		font = initialFont;
 		selectedFont = initialOpenFont;
 
-		Color inverseColor = parent.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT);
+		Color inverseColor = csshelper.getForegroundColor();
+		if( inverseColor == null ) {
+			inverseColor = parent.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT);
+		}
+				
 		if ((parent.getStyle() & SWT.SIMPLE) != 0)
 			selectedForeground = inverseColor;
 		else
@@ -261,16 +278,22 @@ public class CSSShelfRenderer extends AbstractRenderer {
 		baseColor = createNewReverseColor(tmp);
 		tmp.dispose();
 
-		hoverGradient1 = createNewBlendedColor(baseColor, parent.getDisplay().getSystemColor(SWT.COLOR_WHITE), 30);
+		hoverGradient1 = csshelper.getHoverColorStart();
+		if( hoverGradient1 == null ) {
+			hoverGradient1 = createNewBlendedColor(baseColor, parent.getDisplay().getSystemColor(SWT.COLOR_WHITE), 30);
+		}
 
 		Color baseColor2 = createNewBlendedColor(baseColor, parent.getDisplay().getSystemColor(SWT.COLOR_WHITE), 99);
 
-		hoverGradient2 = createNewSaturatedColor(baseColor2, .00f);
+		hoverGradient2 = csshelper.getHoverColorEnd(); 
+		if( hoverGradient2 == null ) {
+			hoverGradient2 = createNewSaturatedColor(baseColor2, .00f);
+		}
 
 		baseColor2.dispose();
 		baseColor.dispose();
 
-		initialColors = new Color[] { gradient1, gradient2, selectedGradient1, selectedGradient2, hoverGradient1, hoverGradient2, lineColor };
+		initialColors = new Color[] { gradient1, gradient2, selectedGradient1, selectedGradient2, hoverGradient1, hoverGradient2, lineColor, foreground };
 	}
 
 	public void dispose() {

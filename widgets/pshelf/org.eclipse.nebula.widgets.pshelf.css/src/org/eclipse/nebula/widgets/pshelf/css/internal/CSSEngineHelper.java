@@ -58,6 +58,56 @@ public class CSSEngineHelper {
 		return getColor(style.getPropertyCSSValue("pshelf-basecolor-hover"), control.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND));
 	}
 	
+	public Color getSelectedColorStart() {
+		if( style == null ) {
+			return null;
+		}
+		return getColor(style.getPropertyCSSValue("pshelf-selectedcolor-start"), null);
+	}
+	
+	public Color getSelectedColorEnd() {
+		if( style == null ) {
+			return null;
+		}
+		return getColor(style.getPropertyCSSValue("pshelf-selectedcolor-end"), null);
+	}
+	
+	public Color getUnselectedColorStart() {
+		if( style == null ) {
+			return null;
+		}
+		return getColor(style.getPropertyCSSValue("pshelf-unselectedcolor-start"), null);
+	}
+	
+	public Color getUnselectedColorEnd() {
+		if( style == null ) {
+			return null;
+		}
+		return getColor(style.getPropertyCSSValue("pshelf-unselectedcolor-end"), null);
+	}
+	
+	public Color getHoverColorStart() {
+		if( style == null ) {
+			return null;
+		}
+		return getColor(style.getPropertyCSSValue("pshelf-hovercolor-start"), null);
+	}
+	
+	public Color getHoverColorEnd() {
+		if( style == null ) {
+			return null;
+		}
+		return getColor(style.getPropertyCSSValue("pshelf-hovercolor-end"), null);
+	}
+	
+	public Color getForegroundColor() {
+		if( style == null ) {
+			return null;
+		}
+		return getColor(style.getPropertyCSSValue("pshelf-foregroundcolor"), null);
+	}
+	
+	
 	private Color getColor(CSSValue value, Color defaultValue) {
 		if( value instanceof RGBColor ) {
 			RGBColor rgbValue = (RGBColor) value;
