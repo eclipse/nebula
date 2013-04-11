@@ -45,6 +45,30 @@
          <property-name
                name="pshelf-foregroundcolor">
          </property-name>
+         <property-name
+               name="pshelf-selected-font-size">
+         </property-name>
+         <property-name
+               name="pshelf-selected-font-style">
+         </property-name>
+         <property-name
+               name="pshelf-selected-font-weight">
+         </property-name>
+         <property-name
+               name="pshelf-selected-font">
+         </property-name>
+         <property-name
+               name="pshelf-unselected-font-size">
+         </property-name>
+         <property-name
+               name="pshelf-unselected-font-style">
+         </property-name>
+         <property-name
+               name="pshelf-unselected-font-weight">
+         </property-name>
+         <property-name
+               name="pshelf-unselected-font">
+         </property-name>
       </handler>
    </extension>
 

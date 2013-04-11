@@ -197,7 +197,12 @@ public class CSSShelfRenderer extends AbstractRenderer {
 		this.csshelper = new CSSEngineHelper(engine, control, this);
 
 		FontData fd = parent.getFont().getFontData()[0];
-		initialFont = new Font(parent.getDisplay(), fd.getName(), fd.getHeight(), SWT.BOLD);
+		initialFont = csshelper.getUnselectedFont();
+		
+		if( initialFont == null ) {
+			initialFont = new Font(parent.getDisplay(), fd.getName(), fd.getHeight(), SWT.BOLD);
+		}
+		
 		// parent.setFont(initialFont);
 
 		Color tmp = csshelper.getBaseColorSelected();
@@ -254,10 +259,15 @@ public class CSSShelfRenderer extends AbstractRenderer {
 		baseColor.dispose();
 
 		// initialOpenFont = FontUtils.createFont(parent.getFont(),4,SWT.BOLD);
-		if ((parent.getStyle() & SWT.SIMPLE) != 0)
+		if ((parent.getStyle() & SWT.SIMPLE) != 0) {
 			initialOpenFont = new Font(parent.getDisplay(), "Arial", 12, SWT.BOLD);
-		else
-			initialOpenFont = new Font(parent.getDisplay(), initialFont.getFontData());
+		}
+		else {
+			initialOpenFont = csshelper.getSelectedFont();
+			if( initialOpenFont == null ) {
+				initialOpenFont = new Font(parent.getDisplay(), initialFont.getFontData());	
+			}
+		}
 
 		font = initialFont;
 		selectedFont = initialOpenFont;
