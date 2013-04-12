@@ -279,8 +279,11 @@ public class CSSShelfRenderer extends AbstractRenderer {
 				
 		if ((parent.getStyle() & SWT.SIMPLE) != 0)
 			selectedForeground = inverseColor;
-		else
+		else {
 			foreground = inverseColor;
+			selectedForeground = csshelper.getSelectedForegroundColor();
+		}
+			
 		// the other color left null, foreground color of the parent will be
 		// used for it
 

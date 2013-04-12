@@ -9,7 +9,6 @@
 package org.eclipse.nebula.widgets.pshelf.css.internal;
 
 import org.eclipse.e4.ui.css.core.css2.CSS2FontPropertiesHelpers;
-import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontProperties;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontPropertiesImpl;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
@@ -115,6 +114,13 @@ public class CSSEngineHelper {
 			return null;
 		}
 		return getColor(style.getPropertyCSSValue("pshelf-foregroundcolor"), null);
+	}
+	
+	public Color getSelectedForegroundColor() {
+		if( style == null ) {
+			return null;
+		}
+		return getColor(style.getPropertyCSSValue("pshelf-selected-foregroundcolor"), null);
 	}
 	
 	public Font getSelectedFont() {

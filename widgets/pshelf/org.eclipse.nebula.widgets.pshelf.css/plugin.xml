@@ -46,6 +46,9 @@
                name="pshelf-foregroundcolor">
          </property-name>
          <property-name
+               name="pshelf-selected-foregroundcolor">
+         </property-name>
+         <property-name
                name="pshelf-selected-font-size">
          </property-name>
          <property-name
