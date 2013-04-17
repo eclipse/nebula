@@ -155,11 +155,13 @@ public abstract class XViewerLabelProvider implements ITableLabelProvider, ITabl
 
    public abstract Image getColumnImage(Object element, XViewerColumn xCol, int columnIndex) throws Exception;
 
-   public abstract String getColumnText(Object element, XViewerColumn xCol, int columnIndex) throws Exception; 
+   @Override
+   public abstract String getColumnText(Object element, XViewerColumn xCol, int columnIndex) throws Exception;
 
    /**
     * Returns the backing data object for operations like sorting
     */
+   @Override
    public Object getBackingData(Object element, XViewerColumn xViewerColumn, int columnIndex) throws Exception {
       try {
          // If not shown, don't process any further
@@ -182,6 +184,7 @@ public abstract class XViewerLabelProvider implements ITableLabelProvider, ITabl
    /**
     * Return value between 0..100 and cell will show bar graph shading that portion of the cell
     */
+   @Override
    public int getColumnGradient(Object element, XViewerColumn xCol, int columnIndex) throws Exception {
       return 0;
    }
