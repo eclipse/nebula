@@ -15,6 +15,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.nebula.widgets.pagination.AbstractPaginationWidget;
 import org.eclipse.nebula.widgets.pagination.IPageContentProvider;
 import org.eclipse.nebula.widgets.pagination.PageLoaderStrategyHelper;
+import org.eclipse.nebula.widgets.pagination.PageableController;
 import org.eclipse.nebula.widgets.pagination.collections.PageResultContentProvider;
 import org.eclipse.nebula.widgets.pagination.renderers.ICompositeRendererFactory;
 import org.eclipse.nebula.widgets.pagination.renderers.navigation.ResultAndNavigationPageLinksRendererFactory;
@@ -26,24 +27,44 @@ import org.eclipse.swt.widgets.Tree;
 /**
  * Abstract class SWT {@link Composite} which host a SWT {@link Tree} linked to
  * a pagination controller to display data with pagination. The
- * {@link PageableTree#refreshPage()} must be implemented to load paginated
- * data and update the total element of the controller.
+ * {@link PageableTree#refreshPage()} must be implemented to load paginated data
+ * and update the total element of the controller.
  * 
  * This composite is able to to add another {@link Composite} on the top and on
- * the bottom of the tree. For instance you can display navigation page links
- * on the top of the tree.
+ * the bottom of the tree. For instance you can display navigation page links on
+ * the top of the tree.
  * 
  * @param <T>
  *            the pagination controller.
  */
 public class PageableTree extends AbstractPaginationWidget<Tree> {
 
+	protected static final int DEFAULT_TREE_STYLE = SWT.BORDER | SWT.MULTI
+			| SWT.H_SCROLL | SWT.V_SCROLL;
+
 	/** the tree viewer **/
 	protected TreeViewer viewer;
 
 	/** the tree style **/
-	private int treeStyle = SWT.BORDER | SWT.MULTI | SWT.H_SCROLL
-			| SWT.V_SCROLL;
+	private final int treeStyle;
+
+	/**
+	 * Constructs a new instance of this class given its parent and a style
+	 * value describing its behavior and appearance. Here default page size
+	 * {@link PageableController#DEFAULT_PAGE_SIZE} and default tree style
+	 * SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL are used.
+	 * 
+	 * @param parent
+	 *            a widget which will be the parent of the new instance (cannot
+	 *            be null)
+	 * @param style
+	 *            the style of widget to construct
+	 * 
+	 */
+	public PageableTree(Composite parent, int style) {
+		this(parent, style, DEFAULT_TREE_STYLE,
+				PageableController.DEFAULT_PAGE_SIZE);
+	}
 
 	/**
 	 * Constructs a new instance of this class given its parent and a style
@@ -68,8 +89,7 @@ public class PageableTree extends AbstractPaginationWidget<Tree> {
 				getDefaultPageRendererBottomFactory(), true);
 	}
 
-	public PageableTree(Composite parent, int style, int treeStyle,
-			int pageSize) {
+	public PageableTree(Composite parent, int style, int treeStyle, int pageSize) {
 		this(parent, style, treeStyle, pageSize, PageResultContentProvider
 				.getInstance(), getDefaultPageRendererTopFactory(),
 				getDefaultPageRendererBottomFactory(), true);

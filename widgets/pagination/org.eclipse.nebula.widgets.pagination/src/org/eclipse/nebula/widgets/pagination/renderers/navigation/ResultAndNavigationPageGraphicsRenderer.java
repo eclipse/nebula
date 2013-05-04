@@ -64,7 +64,7 @@ public class ResultAndNavigationPageGraphicsRenderer extends
 	public ResultAndNavigationPageGraphicsRenderer(Composite parent, int style,
 			PageableController controller,
 			INavigationPageGraphicsConfigurator configurator) {
-		super(parent, style, controller, DEFAULT_PAGE_SIZE, null, false);
+		super(parent, style, controller, PageableController.DEFAULT_PAGE_SIZE, null, false);
 		this.configurator = configurator;
 		createUI(this);
 		refreshEnabled(controller);

@@ -12,6 +12,7 @@
 package org.eclipse.nebula.widgets.pagination.tree.forms;
 
 import org.eclipse.nebula.widgets.pagination.IPageContentProvider;
+import org.eclipse.nebula.widgets.pagination.PageableController;
 import org.eclipse.nebula.widgets.pagination.renderers.ICompositeRendererFactory;
 import org.eclipse.nebula.widgets.pagination.tree.PageableTree;
 import org.eclipse.swt.widgets.Composite;
@@ -24,6 +25,24 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 public class FormPageableTree extends PageableTree {
 
 	private final FormToolkit toolkit;
+
+	/**
+	 * Constructs a new instance of this class given its parent and a style
+	 * value describing its behavior and appearance. Here default page size
+	 * {@link PageableController#DEFAULT_PAGE_SIZE} and default tree style
+	 * SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL are used.
+	 * 
+	 * @param parent
+	 *            a widget which will be the parent of the new instance (cannot
+	 *            be null)
+	 * @param style
+	 *            the style of widget to construct
+	 * @param toolkit
+	 *            the {@link FormToolkit} used to create the SWT {@link Tree}.
+	 */
+	public FormPageableTree(Composite parent, int style, FormToolkit toolkit) {
+		this(parent, style, DEFAULT_TREE_STYLE, toolkit, null);
+	}
 
 	/**
 	 * Constructs a new instance of this class given its parent and a style
@@ -43,9 +62,9 @@ public class FormPageableTree extends PageableTree {
 			FormToolkit toolkit, IPageContentProvider pageContentProvider,
 			ICompositeRendererFactory pageRendererTopFactory,
 			ICompositeRendererFactory pageRendererBottomFactory) {
-		this(parent, style, treeStyle, toolkit, DEFAULT_PAGE_SIZE,
-				pageContentProvider, pageRendererTopFactory,
-				pageRendererBottomFactory);
+		this(parent, style, treeStyle, toolkit,
+				PageableController.DEFAULT_PAGE_SIZE, pageContentProvider,
+				pageRendererTopFactory, pageRendererBottomFactory);
 	}
 
 	/**
@@ -64,8 +83,9 @@ public class FormPageableTree extends PageableTree {
 	 */
 	public FormPageableTree(Composite parent, int style, int treeStyle,
 			FormToolkit toolkit, IPageContentProvider pageContentProvider) {
-		this(parent, style, treeStyle, toolkit, DEFAULT_PAGE_SIZE,
-				pageContentProvider, getDefaultPageRendererTopFactory(),
+		this(parent, style, treeStyle, toolkit,
+				PageableController.DEFAULT_PAGE_SIZE, pageContentProvider,
+				getDefaultPageRendererTopFactory(),
 				getDefaultPageRendererBottomFactory());
 	}
 

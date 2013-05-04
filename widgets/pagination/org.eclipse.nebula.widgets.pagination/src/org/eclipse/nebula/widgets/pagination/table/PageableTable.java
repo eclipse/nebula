@@ -15,6 +15,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.nebula.widgets.pagination.AbstractPaginationWidget;
 import org.eclipse.nebula.widgets.pagination.IPageContentProvider;
 import org.eclipse.nebula.widgets.pagination.PageLoaderStrategyHelper;
+import org.eclipse.nebula.widgets.pagination.PageableController;
 import org.eclipse.nebula.widgets.pagination.collections.PageResultContentProvider;
 import org.eclipse.nebula.widgets.pagination.renderers.ICompositeRendererFactory;
 import org.eclipse.nebula.widgets.pagination.renderers.navigation.ResultAndNavigationPageLinksRendererFactory;
@@ -38,17 +39,37 @@ import org.eclipse.swt.widgets.Table;
  */
 public class PageableTable extends AbstractPaginationWidget<Table> {
 
+	/** default table style **/
+	protected static final int DEFAULT_TABLE_STYLE = SWT.BORDER | SWT.MULTI
+			| SWT.H_SCROLL | SWT.V_SCROLL;
+
 	/** the table viewer **/
 	protected TableViewer viewer;
 
 	/** the table style **/
-	private int tableStyle = SWT.BORDER | SWT.MULTI | SWT.H_SCROLL
-			| SWT.V_SCROLL;
+	private final int tableStyle;
 
 	/**
 	 * Constructs a new instance of this class given its parent and a style
-	 * value describing its behavior and appearance. Here defaut page size is
-	 * used.
+	 * value describing its behavior and appearance. Here default page size
+	 * {@link PageableController#DEFAULT_PAGE_SIZE} and default table style
+	 * SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL are used.
+	 * 
+	 * @param parent
+	 *            a widget which will be the parent of the new instance (cannot
+	 *            be null)
+	 * @param style
+	 *            the style of widget to construct
+	 * 
+	 */
+	public PageableTable(Composite parent, int style) {
+		this(parent, style, DEFAULT_TABLE_STYLE,
+				PageableController.DEFAULT_PAGE_SIZE);
+	}
+
+	/**
+	 * Constructs a new instance of this class given its parent and a style
+	 * value describing its behavior and appearance.
 	 * 
 	 * @param parent
 	 *            a widget which will be the parent of the new instance (cannot

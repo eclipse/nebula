@@ -28,8 +28,6 @@ import org.eclipse.swt.widgets.Composite;
 public abstract class AbstractPageControllerComposite extends Composite
 		implements IPageChangedListener {
 
-	public static final int DEFAULT_PAGE_SIZE = 5;
-
 	/** the controller to observe and update according the UI state **/
 	private PageableController controller;
 	/** local used for the resources bundle **/
@@ -69,7 +67,7 @@ public abstract class AbstractPageControllerComposite extends Composite
 	 */
 	public AbstractPageControllerComposite(Composite parent, int style,
 			PageableController controller) {
-		this(parent, style, controller, DEFAULT_PAGE_SIZE, null, true);
+		this(parent, style, controller, PageableController.DEFAULT_PAGE_SIZE, null, true);
 	}
 
 	/**

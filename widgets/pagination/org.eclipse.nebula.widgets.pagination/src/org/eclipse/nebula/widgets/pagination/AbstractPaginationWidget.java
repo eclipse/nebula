@@ -93,7 +93,7 @@ public abstract class AbstractPaginationWidget<W extends Widget> extends
 			IPageContentProvider pageContentProvider,
 			ICompositeRendererFactory pageRendererTopFactory,
 			ICompositeRendererFactory pageRendererBottomFactory) {
-		this(parent, style, DEFAULT_PAGE_SIZE, pageContentProvider,
+		this(parent, style, PageableController.DEFAULT_PAGE_SIZE, pageContentProvider,
 				pageRendererTopFactory, pageRendererBottomFactory, true);
 	}
 
