@@ -188,10 +188,25 @@ public class ResultAndNavigationPageLinksRenderer extends
 	 */
 	public void pageIndexChanged(int oldPageNumber, int newPageNumber,
 			PageableController controller) {
-		// Generate string of links
-		StringBuilder s = new StringBuilder();
 		int[] indexes = PaginationHelper.getPageIndexes(
 				controller.getCurrentPage(), controller.getTotalPages(), 10);
+		// Update SWT page links with the string links
+		pageLinks.setText(rebuildLinks(indexes, newPageNumber));
+		// Update Previous/Next links
+		refreshEnabled(controller);
+	}
+
+	/**
+	 * Returns the string links.
+	 * 
+	 * @param indexes
+	 *            array of indexes.
+	 * @param newPageNumber
+	 *            page number.
+	 * @return
+	 */
+	private String rebuildLinks(int[] indexes, int newPageNumber) {
+		StringBuilder s = new StringBuilder();
 		for (int i = 0; i < indexes.length; i++) {
 			int j = indexes[i];
 			if (i > 0) {
@@ -206,10 +221,7 @@ public class ResultAndNavigationPageLinksRenderer extends
 				addA(String.valueOf(j), String.valueOf(j + 1), s);
 			}
 		}
-		// Update SWT page links with the string links
-		pageLinks.setText(s.toString());
-		// Update Previous/Next links
-		refreshEnabled(controller);
+		return s.toString();
 	}
 
 	/*
@@ -233,6 +245,11 @@ public class ResultAndNavigationPageLinksRenderer extends
 	 */
 	public void totalElementsChanged(long oldTotalElements,
 			long newTotalElements, PageableController controller) {
+		// 1) Compute page indexes
+		int[] indexes = PaginationHelper.getPageIndexes(
+				controller.getCurrentPage(), controller.getTotalPages(), 10);
+		// Update the GC navigation page with page indexes and selected page.
+		pageLinks.setText(rebuildLinks(indexes, 0));
 		refreshEnabled(controller);
 	}
 

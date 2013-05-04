@@ -64,7 +64,8 @@ public class ResultAndNavigationPageGraphicsRenderer extends
 	public ResultAndNavigationPageGraphicsRenderer(Composite parent, int style,
 			PageableController controller,
 			INavigationPageGraphicsConfigurator configurator) {
-		super(parent, style, controller, PageableController.DEFAULT_PAGE_SIZE, null, false);
+		super(parent, style, controller, PageableController.DEFAULT_PAGE_SIZE,
+				null, false);
 		this.configurator = configurator;
 		createUI(this);
 		refreshEnabled(controller);
@@ -166,6 +167,11 @@ public class ResultAndNavigationPageGraphicsRenderer extends
 
 	public void totalElementsChanged(long oldTotalElements,
 			long newTotalElements, PageableController controller) {
+		// 1) Compute page indexes
+		int[] indexes = PaginationHelper.getPageIndexes(
+				controller.getCurrentPage(), controller.getTotalPages(), 10);
+		// Update the GC navigation page with page indexes and selected page.
+		navigationPage.update(indexes, 0, getLocale());
 		refreshEnabled(controller);
 	}
 
