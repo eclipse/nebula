@@ -43,12 +43,16 @@ import org.eclipse.swt.widgets.Display;
  * @author Wim.Jongman (@remainsoftware.com)
  * 
  */
+/**
+ * @author jongw
+ * 
+ */
 public class Oscilloscope extends Canvas {
 
 	/**
 	 * This class holds the data per channel.
 	 * 
-	 * @author jongw
+	 * @author Wim Jongman
 	 * 
 	 */
 	private class Data {
@@ -86,13 +90,14 @@ public class Oscilloscope extends Canvas {
 		private int tailFade = TAILFADE_PERCENTAGE;
 		private int tailSize;
 		private int width = DEFAULT_WIDTH;
+		private boolean antiAlias = false;
 
 	}
 
 	/**
-	 * The stack will not overflow if you push too many values into it but it
-	 * will rotate and overwrite the older values. Think of the stack as a
-	 * closed ring with one hole to push values in and one that lets them out.
+	 * The stack can hold a limited number of values but will never overflow.
+	 * Think of the stack as a tube with a given length. If you push too many
+	 * values in, the oldest will be pushed out at the end.
 	 * 
 	 */
 	public class IntegerFiFoCircularStack {
@@ -106,6 +111,7 @@ public class Oscilloscope extends Canvas {
 		 * Creates a stack with the indicated capacity.
 		 * 
 		 * @param capacity
+		 *            must be greater than 1
 		 */
 		public IntegerFiFoCircularStack(int capacity) {
 			if (capacity <= 1) {
@@ -122,10 +128,10 @@ public class Oscilloscope extends Canvas {
 		 * into the new stack and the old stack will be empty after this action.
 		 * 
 		 * @param capacity
+		 *            must be greater than 1
 		 * @param oldStack
 		 */
-		public IntegerFiFoCircularStack(int capacity,
-				IntegerFiFoCircularStack oldStack) {
+		public IntegerFiFoCircularStack(int capacity, IntegerFiFoCircularStack oldStack) {
 			this(capacity);
 			while (!oldStack.isEmpty()) {
 				push(oldStack.pop(0));
@@ -270,9 +276,8 @@ public class Oscilloscope extends Canvas {
 	 * This set of values will draw a figure that is similar to the heart beat
 	 * that you see on hospital monitors.
 	 */
-	public static final int[] HEARTBEAT = new int[] { 2, 10, 2, -16, 16, 44,
-			49, 44, 32, 14, -16, -38, -49, -47, -32, -10, 8, 6, 6, -2, 6, 4, 2,
-			0, 0, 6, 8, 6 };
+	public static final int[] HEARTBEAT = new int[] { 2, 10, 2, -16, 16, 44, 49, 44, 32, 14, -16, -38, -49, -47, -32, -10, 8, 6, 6, -2, 6,
+			4, 2, 0, 0, 6, 8, 6 };
 
 	/**
 	 * The default line width.
@@ -322,27 +327,45 @@ public class Oscilloscope extends Canvas {
 
 	private Color bg;
 
-	private Data[] chan;
+	private final Data[] chan;
 
 	// Blocks painting if true
 	private boolean paintBlock;
 
+	private int width;
+
+	/**
+	 * Creates a scope with one channel.
+	 * 
+	 * @param parent
+	 * @param style
+	 */
 	public Oscilloscope(Composite parent, int style) {
 		this(1, null, parent, style);
 	}
 
+	/**
+	 * Creates a scope with <code>channels</code> channels.
+	 * 
+	 * @param channels
+	 * @param parent
+	 * @param style
+	 */
 	public Oscilloscope(int channels, Composite parent, int style) {
 		this(channels, null, parent, style);
 	}
 
 	/**
-	 * Creates a new Oscilloscope.
+	 * Creates a new scope with <code>channels</code> channels and adds attaches
+	 * it to the supplied <code>dispatcher</code>.
 	 * 
+	 * @param channels
+	 * @param dispatcher
+	 *            may be null
 	 * @param parent
 	 * @param style
 	 */
-	public Oscilloscope(int channels, OscilloscopeDispatcher dispatcher,
-			Composite parent, int style) {
+	public Oscilloscope(int channels, OscilloscopeDispatcher dispatcher, Composite parent, int style) {
 		super(parent, SWT.DOUBLE_BUFFERED | style);
 
 		chan = new Data[channels];
@@ -396,12 +419,12 @@ public class Oscilloscope extends Canvas {
 	/**
 	 * Adds a new stack listener to the collection of stack listeners. Adding
 	 * the same listener twice will have no effect.
+	 * <p/>
+	 * This method can be called outside of the UI thread.
 	 * 
 	 * @param listener
 	 */
-	public synchronized void addStackListener(int channel,
-			OscilloscopeStackAdapter listener) {
-		checkWidget();
+	public synchronized void addStackListener(int channel, OscilloscopeStackAdapter listener) {
 		if (chan[channel].stackListeners == null) {
 			chan[channel].stackListeners = new ArrayList<OscilloscopeStackAdapter>();
 		}
@@ -443,8 +466,7 @@ public class Oscilloscope extends Canvas {
 			line1 = new int[chan[c].tailSize * 4];
 			line2 = new int[chan[c].tailSize * 4];
 
-			chan[c].tail[chan[c].tailSize] = transform(c, chan[c].width,
-					chan[c].height, chan[c].stack.popNegate(0));
+			chan[c].tail[chan[c].tailSize] = transform(c, chan[c].width, chan[c].height, chan[c].stack.popNegate(0));
 
 			for (int i = 0; i < chan[c].tailSize; i++) {
 
@@ -454,11 +476,9 @@ public class Oscilloscope extends Canvas {
 					posx += chan[c].width;
 					line1[pos] = posx - 1;
 
-					line1[pos + 1] = getBase(c)
-							+ (isSteady(c) ? 0 : chan[c].tail[tailIndex - 1]);
+					line1[pos + 1] = getBase(c) + (isSteady(c) ? 0 : chan[c].tail[tailIndex - 1]);
 					line1[pos + 2] = posx;
-					line1[pos + 3] = getBase(c)
-							+ (isSteady(c) ? 0 : chan[c].tail[tailIndex]);
+					line1[pos + 3] = getBase(c) + (isSteady(c) ? 0 : chan[c].tail[tailIndex]);
 				}
 
 				else {
@@ -516,26 +536,27 @@ public class Oscilloscope extends Canvas {
 
 	protected void controlResized(ControlEvent e) {
 		setSizeInternal(getSize().x, getSize().y);
-
+		width = getBounds().width;
 		if (getBounds().width > 0) {
 			for (int channel = 0; channel < chan.length; channel++) {
-
-				setSteady(channel, chan[channel].steady,
-						chan[channel].originalSteadyPosition);
+				setSteady(channel, chan[channel].steady, chan[channel].originalSteadyPosition);
 				setTailSizeInternal(channel);
 			}
 		}
 	}
 
 	/**
-	 * @return the base of the line
+	 * This method can be called outside of the UI thread.
+	 * 
+	 * @return the base of the line.
 	 */
 	public int getBase(int channel) {
 		return chan[channel].base;
 	}
 
 	/**
-	 * Gets the relative location where the line is drawn in the widget.
+	 * Gets the relative location where the line is drawn in the widget. This
+	 * method can be called outside of the UI thread.
 	 * 
 	 * @return baseOffset
 	 */
@@ -544,32 +565,47 @@ public class Oscilloscope extends Canvas {
 	}
 
 	/**
+	 * This method can be called outside of the UI thread.
+	 * 
 	 * @return int, number of channels.
 	 */
 	public int getChannels() {
-		checkWidget();
 		return chan.length;
 	}
 
+	/**
+	 * This method can be called outside of the UI thread.
+	 * 
+	 * @param channel
+	 * @return the dispatcher associated with this channel.
+	 */
 	public OscilloscopeDispatcher getDispatcher(int channel) {
 		return chan[channel].dispatcher;
 	}
 
+	/**
+	 * This method can be called outside of the UI thread.
+	 * 
+	 * @param channel
+	 * @return the foreground color associated with the supplied channel.
+	 */
 	public Color getForeground(int channel) {
-		checkWidget();
 		return chan[channel].fg;
 	}
 
 	/**
+	 * This method can be called outside of the UI thread.
+	 * 
 	 * @return int, the width of the line.
 	 * @see #setLineWidth(int)
 	 */
 	public int getLineWidth(int channel) {
-		checkWidget();
 		return chan[channel].lineWidth;
 	}
 
 	/**
+	 * This method can be called outside of the UI thread.
+	 * 
 	 * @return the number of internal calculation steps at each draw request.
 	 * @see #setProgression(int)
 	 */
@@ -578,18 +614,19 @@ public class Oscilloscope extends Canvas {
 	}
 
 	/**
-	 * gets the percentage of tail that must be faded out.
+	 * Gets the percentage of tail that must be faded out. This method can be
+	 * called outside of the UI thread.
 	 * 
 	 * @return int percentage
 	 * @see #setFade(boolean)
 	 */
 	public int getTailFade(int channel) {
-		checkWidget();
 		return chan[channel].tailFade;
 	}
 
 	/**
-	 * Returns the size of the tail.
+	 * Returns the size of the tail. This method can be called outside of the UI
+	 * thread.
 	 * 
 	 * @return int
 	 * @see #setTailSize(int)
@@ -599,44 +636,57 @@ public class Oscilloscope extends Canvas {
 	 * 
 	 */
 	public int getTailSize(int channel) {
-		checkWidget();
 		return chan[channel].tailSize;
 	}
 
 	/**
+	 * This method can be called outside of the UI thread.
+	 * 
 	 * @return boolean, true if the tail and the head of the graph must be
 	 *         connected if tail size is {@link #TAILSIZE_MAX} no fading graph.
 	 */
 	public boolean isConnect(int channel) {
-		checkWidget();
 		return chan[channel].connect;
 	}
 
 	/**
+	 * This method can be called outside of the UI thread.
+	 * 
 	 * @see #setFade(boolean)
 	 * @return boolean fade
 	 */
 	public boolean isFade(int channel) {
-		checkWidget();
 		return chan[channel].fade;
 	}
 
 	/**
+	 * This method can be called outside of the UI thread.
+	 * 
 	 * @return boolean
 	 * @see #setPercentage(boolean)
 	 */
 	public boolean isPercentage(int channel) {
-		checkWidget();
 		return chan[channel].percentage;
 	}
 
 	/**
+	 * This method can be called outside of the UI thread.
+	 * 
 	 * @return boolean steady indicator
 	 * @see Oscilloscope#setSteady(boolean, int)
 	 */
 	public boolean isSteady(int channel) {
-		checkWidget();
 		return chan[channel].steady;
+	}
+
+	/**
+	 * This method can be called outside of the UI thread.
+	 * 
+	 * @return boolean anti-alias indicator
+	 * @see Oscilloscope#setAntialias(int, boolean)
+	 */
+	public boolean isAntiAlias(int channel) {
+		return chan[channel].antiAlias;
 	}
 
 	public boolean needsRedraw() {
@@ -645,13 +695,11 @@ public class Oscilloscope extends Canvas {
 	}
 
 	private void notifyListeners(int channel) {
-		if (chan[channel].stackListeners == null
-				|| chan[channel].stackListeners.size() == 0) {
+		if (chan[channel].stackListeners == null || chan[channel].stackListeners.size() == 0) {
 			return;
 		}
 		for (int i = 0; i < chan[channel].stackListeners.size(); i++) {
-			chan[channel].stackListeners.get(i)
-					.stackEmpty(this, channel);
+			chan[channel].stackListeners.get(i).stackEmpty(this, channel);
 		}
 	}
 
@@ -673,15 +721,14 @@ public class Oscilloscope extends Canvas {
 			GC gc = e.gc;
 			gc.setForeground(getForeground(c));
 			gc.setAdvanced(true);
-			gc.setAntialias(SWT.ON);
+			gc.setAntialias(chan[c].antiAlias ? SWT.ON : SWT.OFF);
 			gc.setLineWidth(getLineWidth(c));
 
 			// Fade tail
 			if (isFade(c)) {
 				gc.setAlpha(0);
 				double fade = 0;
-				double fadeOutStep = (double) 125
-						/ (double) ((getTailSize(c) * (getTailFade(c)) / 100));
+				double fadeOutStep = (double) 125 / (double) ((getTailSize(c) * (getTailFade(c)) / 100));
 				for (int i = 0; i < l1.length - 4;) {
 					fade += (fadeOutStep / 2);
 					setAlpha(gc, fade);
@@ -702,22 +749,19 @@ public class Oscilloscope extends Canvas {
 			}
 
 			// Connects the head with the tail
-			if (isConnect(c) && !isFade(c)
-					&& chan[c].originalTailSize == TAILSIZE_MAX
-					&& l1.length > 0 && l2.length > 0) {
+			if (isConnect(c) && !isFade(c) && chan[c].originalTailSize == TAILSIZE_MAX && l1.length > 0 && l2.length > 0) {
 				gc.drawLine(l2[l2.length - 2], l2[l2.length - 1], l1[0], l1[1]);
 			}
 		}
 	}
 
 	/**
-	 * Removes a stack listener from the collection of stack listeners.
+	 * Removes a stack listener from the collection of stack listeners. This
+	 * method can be called outside of the UI thread.
 	 * 
 	 * @param listener
 	 */
-	public void removeStackListener(int channel,
-			OscilloscopeStackAdapter listener) {
-		checkWidget();
+	public void removeStackListener(int channel, OscilloscopeStackAdapter listener) {
 		if (chan[channel].stackListeners != null) {
 			chan[channel].stackListeners.remove(listener);
 			if (chan[channel].stackListeners.size() == 0) {
@@ -743,6 +787,7 @@ public class Oscilloscope extends Canvas {
 	/**
 	 * Gets the relative location where the line is drawn in the widget, the
 	 * default is <code>BASE_CENTER</code> which is in the middle of the scope.
+	 * This method can be called outside of the UI thread.
 	 * 
 	 * @param baseOffset
 	 *            must be between 100 and -100, exceeding values are rounded to
@@ -765,15 +810,33 @@ public class Oscilloscope extends Canvas {
 
 	/**
 	 * Connects head and tail only if tail size is {@link #TAILSIZE_MAX} and no
-	 * fading.
+	 * fading. This method can be called outside of the UI thread.
 	 * 
 	 * @param connectHeadAndTail
 	 */
 	public void setConnect(int channel, boolean connectHeadAndTail) {
-		checkWidget();
 		chan[channel].connect = connectHeadAndTail;
 	}
 
+	/**
+	 * Sets if the line must be anti-aliased which uses more processing power in
+	 * return of a smoother image. The default value is false. This method can
+	 * be called outside of the UI thread.
+	 * 
+	 * @param channel
+	 * @param antialias
+	 */
+	public void setAntialias(int channel, boolean antialias) {
+		chan[channel].antiAlias = antialias;
+	}
+
+	/**
+	 * Sets the dispatcher that is associated with the supplied channel. This
+	 * method can be called outside of the UI thread.
+	 * 
+	 * @param channel
+	 * @param dispatcher
+	 */
 	public void setDispatcher(int channel, OscilloscopeDispatcher dispatcher) {
 		chan[channel].dispatcher = dispatcher;
 	}
@@ -788,28 +851,36 @@ public class Oscilloscope extends Canvas {
 	 * <p>
 	 * In addition to this, set the percentage of tail that must be faded out
 	 * {@link #setTailFade(int)}.
+	 * <p>
+	 * This method can be called outside of the UI thread.
 	 * 
 	 * @param fade
 	 *            true or false
 	 * @see #setTailFade(int)
 	 */
 	public void setFade(int channel, boolean fade) {
-		checkWidget();
 		chan[channel].fade = fade;
 	}
 
+	/**
+	 * Sets the foreground color for the supplied channel.
+	 * <p/>
+	 * This method can be called outside of the UI thread.
+	 * 
+	 * @param channel
+	 * @param color
+	 */
 	public void setForeground(int channel, Color color) {
 		chan[channel].fg = color;
 	}
 
 	/**
 	 * Sets the line width. A value equal or below zero is ignored. The default
-	 * width is 1.
+	 * width is 1. This method can be called outside of the UI thread.
 	 * 
 	 * @param lineWidth
 	 */
 	public void setLineWidth(int channel, int lineWidth) {
-		checkWidget();
 		if (lineWidth > 0) {
 			chan[channel].lineWidth = lineWidth;
 		}
@@ -819,12 +890,13 @@ public class Oscilloscope extends Canvas {
 	 * If set to true then the values are treated as percentages of the
 	 * available space rather than absolute values. This will scale the
 	 * amplitudes if the control is resized. Default is false.
+	 * <p/>
+	 * This method can be called outside of the UI thread.
 	 * 
 	 * @param percentage
 	 *            true if percentages
 	 */
 	public void setPercentage(int channel, boolean percentage) {
-		checkWidget();
 		chan[channel].percentage = percentage;
 	}
 
@@ -832,6 +904,8 @@ public class Oscilloscope extends Canvas {
 	 * The number of internal steps that must be made before drawing. Normally
 	 * this will slide the graph one pixel. Setting this to a higher value will
 	 * speed up the animation at the cost of a more jerky motion.
+	 * <p/>
+	 * This method can be called outside of the UI thread.
 	 * 
 	 * @param progression
 	 */
@@ -856,8 +930,7 @@ public class Oscilloscope extends Canvas {
 				if (chan[c].stack == null) {
 					chan[c].stack = new IntegerFiFoCircularStack(width);
 				} else {
-					chan[c].stack = new IntegerFiFoCircularStack(width,
-							chan[c].stack);
+					chan[c].stack = new IntegerFiFoCircularStack(width, chan[c].stack);
 				}
 			}
 		}
@@ -866,12 +939,13 @@ public class Oscilloscope extends Canvas {
 	/**
 	 * If steady is true the graph will draw on a steady position instead of
 	 * advancing.
+	 * <p/>
+	 * This method can be called outside of the UI thread.
 	 * 
 	 * @param steady
 	 * @param steadyPosition
 	 */
 	public void setSteady(int channel, boolean steady, int steadyPosition) {
-		checkWidget();
 		chan[channel].steady = steady;
 		chan[channel].originalSteadyPosition = steadyPosition;
 		if (steady) {
@@ -887,6 +961,8 @@ public class Oscilloscope extends Canvas {
 	 * Sets the percentage of tail that must be faded out. If you supply 100
 	 * then the tail is faded out all the way to the top. The effect will become
 	 * increasingly less obvious.
+	 * <p/>
+	 * This method can be called outside of the UI thread.
 	 * 
 	 * @param tailFade
 	 */
@@ -941,8 +1017,7 @@ public class Oscilloscope extends Canvas {
 				// act as if TAILSIZE_MAX
 				chan[channel].tailSize = chan[channel].width - 2;
 			}
-		} else if (chan[channel].originalTailSize == TAILSIZE_MAX
-				|| chan[channel].originalTailSize > chan[channel].width) {
+		} else if (chan[channel].originalTailSize == TAILSIZE_MAX || chan[channel].originalTailSize > chan[channel].width) {
 			chan[channel].tailSize = chan[channel].width - 2;
 		} else if (chan[channel].tailSize != chan[channel].originalTailSize) {
 			chan[channel].tailSize = chan[channel].originalTailSize;
@@ -957,65 +1032,57 @@ public class Oscilloscope extends Canvas {
 			chan[channel].tail = new int[chan[channel].tailSize + 1];
 			if (chan[channel].tail.length >= oldTail.length) {
 				for (int i = 0; i < oldTail.length; i++) {
-					chan[channel].tail[chan[channel].tail.length - 1 - i] = oldTail[oldTail.length
-							- 1 - i];
+					chan[channel].tail[chan[channel].tail.length - 1 - i] = oldTail[oldTail.length - 1 - i];
 				}
 			} else {
 				for (int i = 0; i < chan[channel].tail.length; i++) {
-					chan[channel].tail[chan[channel].tail.length - 1 - i] = oldTail[oldTail.length
-							- 1 - i];
+					chan[channel].tail[chan[channel].tail.length - 1 - i] = oldTail[oldTail.length - 1 - i];
 				}
 			}
 		}
 	}
 
 	/**
-	 * Sets a value to be drawn relative to the middle of the widget. Supply a
-	 * positive or negative value.
+	 * Sets a value to be drawn relative to the center of the channel. Supply a
+	 * positive or negative value. This method will only accept values if the
+	 * width of the scope > 0. The values will be stored in a stack and popped
+	 * once a value is needed. The size of the stack is the width of the widget.
+	 * If you resize the widget, the old stack will be copied into a new stack
+	 * with the new capacity.
+	 * <p/>
+	 * This method can be called outside of the UI thread.
 	 * 
+	 * @param channel
 	 * @param value
+	 *            which is an absolute value or a percentage
+	 * 
+	 * @see #isPercentage(int)
+	 * @see #setBaseOffset(int, int)
 	 */
 	public void setValue(int channel, int value) {
-		checkWidget();
-		if (getBounds().width <= 0) {
-			return;
-		}
-
-		if (!super.isVisible()) {
-			return;
-		}
-
-		if (chan[channel].stack.capacity > 0) {
-			chan[channel].stack.push(value);
+		if (width > 0) {
+			if (chan[channel].stack.capacity > 0) {
+				chan[channel].stack.push(value);
+			}
 		}
 	}
 
 	/**
-	 * Set a bunch of values that will be drawn. The values will be stored in a
-	 * stack and popped once a value is needed. The size of the stack is the
-	 * width of the widget. If you resize the widget, the old stack will be
-	 * copied into a new stack with the new capacity.
+	 * Sets a bunch of values that will be drawn. See
+	 * {@link #setValue(int, int)} for details.
+	 * <p/>
+	 * This method can be called outside of the UI thread.
 	 * 
+	 * @param channel
 	 * @param values
+	 * 
+	 * @see #setValue(int, int)
 	 */
 	public synchronized void setValues(int channel, int[] values) {
-		checkWidget();
-
-		if (getBounds().width <= 0) {
-			return;
-		}
-
-		if (!super.isVisible()) {
-			return;
-		}
-
-		if (chan[channel].stack == null) {
-			chan[channel].stack = new IntegerFiFoCircularStack(
-					chan[channel].width);
-		}
-
-		for (int value : values) {
-			chan[channel].stack.push(value);
+		if (width > 0) {
+			for (int value : values) {
+				setValue(channel, value);
+			}
 		}
 	}
 
