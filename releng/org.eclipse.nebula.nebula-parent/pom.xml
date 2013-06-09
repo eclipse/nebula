@@ -9,7 +9,7 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<tycho-version>0.15.0</tycho-version>
+		<tycho-version>0.18.0</tycho-version>
 		<tests.vmargs></tests.vmargs>
 		<!-- Properties to enable jacoco code coverage analysis in Sonar -->
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
@@ -139,9 +139,15 @@
 
 	<repositories>
 		<repository>
-			<id>indigo</id>
+			<id>projects</id>
 			<layout>p2</layout>
-			<url>http://download.eclipse.org/releases/indigo/</url>
+			<url>http://download.eclipse.org/releases/juno/</url>
+		</repository>
+
+		<repository>
+			<id>platform</id>
+			<layout>p2</layout>
+			<url>http://download.eclipse.org/eclipse/updates/4.2/</url>
 		</repository>
 	</repositories>
 
