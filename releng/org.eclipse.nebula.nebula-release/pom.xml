@@ -7,9 +7,9 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<prerequisites>
+<!-- 	<prerequisites>
 		<maven>3.0</maven>
-	</prerequisites>
+	</prerequisites> -->
 
 	<groupId>org.eclipse.nebula</groupId>
 	<artifactId>nebula-release</artifactId>
@@ -49,7 +49,6 @@
 	</licenses>
 
 	<properties>
-		<tycho-version>0.17.0</tycho-version>
 		<mockito-version>1.8.4</mockito-version>
 		<junit-version>4.8.1</junit-version>
 		<signer-input-directory>/home/data/httpd/download-staging.priv/technology/nebula</signer-input-directory>
