@@ -157,6 +157,7 @@
 		<module>../../widgets/pshelf/org.eclipse.nebula.widgets.pshelf.example</module>
 		<module>../../widgets/pshelf/org.eclipse.nebula.widgets.pshelf.css</module>
 		<module>../../widgets/pshelf/org.eclipse.nebula.widgets.pshelf.feature</module>
+		<module>../../widgets/pshelf/org.eclipse.nebula.widgets.pshelf.css.feature</module>
 		
 		<!-- CompositeTable -->
 		<module>../../widgets/compositetable/org.eclipse.nebula.widgets.compositetable</module>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.nebula.widgets.pshelf.feature"
-      label="Nebula PShelf Widget"
+      label="Nebula PShelf Widget Feature"
       version="1.0.0.qualifier">
 
    <description url="http://www.example.com/description">
@@ -211,7 +211,6 @@ Each party waives its rights to a jury trial in any resulting
 litigation.
    </license>
 
-
    <plugin
          id="org.eclipse.nebula.widgets.pshelf"
          download-size="0"
@@ -221,6 +220,20 @@ litigation.
 
    <plugin
          id="org.eclipse.nebula.widgets.pshelf.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.nebula.widgets.pshelf.css"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.nebula.widgets.pshelf.css.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
