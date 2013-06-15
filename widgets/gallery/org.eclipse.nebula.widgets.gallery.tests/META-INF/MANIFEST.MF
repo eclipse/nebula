@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Nebula Gallery Tests Plug-in
 Bundle-SymbolicName: org.eclipse.nebula.widgets.gallery.tests
-Bundle-Version: 0.5.3.qualifier
+Bundle-Version: 0.6.0.qualifier
 Require-Bundle: org.eclipse.nebula.widgets.gallery,
  org.junit,
  org.eclipse.swt,
