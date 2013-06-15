@@ -141,13 +141,13 @@
 		<repository>
 			<id>projects</id>
 			<layout>p2</layout>
-			<url>http://download.eclipse.org/releases/juno/</url>
+			<url>http://download.eclipse.org/releases/kepler/</url>
 		</repository>
 
 		<repository>
 			<id>platform</id>
 			<layout>p2</layout>
-			<url>http://download.eclipse.org/eclipse/updates/4.2/</url>
+			<url>http://download.eclipse.org/eclipse/updates/4.3/</url>
 		</repository>
 	</repositories>
 

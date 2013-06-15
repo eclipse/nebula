@@ -84,6 +84,6 @@
 		<repository>
 			<id>rap incubator</id>
 			<layout>p2</layout>
-			<url>http://download.eclipse.org/rt/rap/1.4/incubator/</url></repository></repositories>
+			<url>http://download.eclipse.org/rt/rap/2.1/incubator/</url></repository></repositories>
 
 </project>
