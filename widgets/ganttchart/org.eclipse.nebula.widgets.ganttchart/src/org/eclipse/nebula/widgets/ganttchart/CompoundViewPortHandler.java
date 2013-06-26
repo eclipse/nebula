@@ -1,0 +1,89 @@
+/*******************************************************************************
+ * Copyright (c) 2013 Dirk Fauth and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Dirk Fauth <dirk.fauth@gmail.com> - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.nebula.widgets.ganttchart;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+public class CompoundViewPortHandler implements IViewPortHandler {
+
+	private List<IViewPortHandler> handler = new ArrayList<IViewPortHandler>();
+	
+	public void addHandler(IViewPortHandler handler) {
+		this.handler.add(handler);
+	}
+	
+	public void removeHandler(IViewPortHandler handler) {
+		this.handler.remove(handler);
+	}
+	
+	public void scrollingLeft(int diffCount) {
+		for (IViewPortHandler vph : this.handler) {
+			vph.scrollingLeft(diffCount);
+		}
+	}
+
+	public void scrollingRight(int diffCount) {
+		for (IViewPortHandler vph : this.handler) {
+			vph.scrollingRight(diffCount);
+		}
+	}
+
+	public void nextMonth() {
+		for (IViewPortHandler vph : this.handler) {
+			vph.nextMonth();
+		}
+	}
+
+	public void prevMonth() {
+		for (IViewPortHandler vph : this.handler) {
+			vph.prevMonth();
+		}
+	}
+
+	public void nextWeek() {
+		for (IViewPortHandler vph : this.handler) {
+			vph.nextWeek();
+		}
+	}
+
+	public void prevWeek() {
+		for (IViewPortHandler vph : this.handler) {
+			vph.prevWeek();
+		}
+	}
+
+	public void nextHour() {
+		for (IViewPortHandler vph : this.handler) {
+			vph.nextHour();
+		}
+	}
+
+	public void prevHour() {
+		for (IViewPortHandler vph : this.handler) {
+			vph.prevHour();
+		}
+	}
+
+	public void nextDay() {
+		for (IViewPortHandler vph : this.handler) {
+			vph.nextDay();
+		}
+	}
+
+	public void prevDay() {
+		for (IViewPortHandler vph : this.handler) {
+			vph.prevDay();
+		}
+	}
+
+}

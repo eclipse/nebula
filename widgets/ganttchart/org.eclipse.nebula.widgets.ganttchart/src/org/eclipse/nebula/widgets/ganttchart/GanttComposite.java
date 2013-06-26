@@ -303,7 +303,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     private Calendar                      _dDayCalendar;
 
     private HorizontalScrollbarHandler    _hScrollHandler;
-    private ViewPortHandler               _viewPortHandler;
+    private IViewPortHandler               _viewPortHandler;
 
     private boolean                       _savingChartImage        = false;
 
@@ -563,6 +563,31 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
     }
 
+    public void vScroll() {
+        // this has got to be a SWT bug, a non-visible scrollbar can report scroll events!
+        if (!_vScrollBar.isVisible()) {
+            _vScrollPos = 0;
+            return;
+        }
+
+        final int vSelection = _vScrollBar.getSelection();
+
+        _vScrollPos = vSelection;
+        final int diff = _vScrollPos - _lastVScrollPos;
+        _lastVScrollPos = _vScrollPos;
+
+        if (diff != 0) {
+            // move all events the fast way. There is truly no reason to recalculate bounds for any event, all we need to do is move them
+            // according to the scroll bar, which is way way faster than recalculating.
+            moveYBounds(diff);
+            //showVscrollInfo();
+
+            _recalcSecBounds = true;
+            redraw();
+        }
+    }
+    
+    
     private void vScroll(final Event event) {
         // end of drag, kill dialogs
         if (event != null && event.detail == 0) {
@@ -579,7 +604,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         final int vSelection = _vScrollBar.getSelection();
 
         _vScrollPos = vSelection;
-        final int diff = _vScrollPos - _lastVScrollPos;
+        int diff = _vScrollPos - _lastVScrollPos;
+        
         _lastVScrollPos = _vScrollPos;
 
         // move all events the fast way. There is truly no reason to recalculate bounds for any event, all we need to do is move them
@@ -8177,10 +8203,14 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         _forceSBUpdate = true;
     }
 
-    ViewPortHandler getViewPortHandler() {
+    public IViewPortHandler getViewPortHandler() {
         return _viewPortHandler;
     }
 
+    public void setViewPortHandler(IViewPortHandler vph) {
+    	this._viewPortHandler = vph;
+    }
+    
     void updateHorizontalScrollbar() {
         _hScrollHandler.recalculate();
     }
