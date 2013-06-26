@@ -223,6 +223,14 @@ public interface ISettings {
     public boolean showToolTips();
 
     /**
+     * Returns the custom tool tip generator which generates the tooltip
+     * out of custom data for a GanttEvent.
+     * 
+     * @return
+     */
+    public IToolTipContentReplacer getToolTipContentReplacer();
+    
+    /**
      * Whether to show date tooltips when events are moved or resized.
      * 
      * @return true if to show tooltips. Default is true.

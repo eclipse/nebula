@@ -507,6 +507,10 @@ public abstract class AbstractSettings implements ISettings {
     	return true;
     }
 
+    public IToolTipContentReplacer getToolTipContentReplacer() {
+    	return null;
+    }
+
     public int getMinZoomLevel() {
     	return ISettings.MIN_ZOOM_LEVEL;
     }

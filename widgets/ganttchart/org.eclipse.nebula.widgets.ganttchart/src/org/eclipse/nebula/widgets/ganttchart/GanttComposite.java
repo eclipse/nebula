@@ -7748,9 +7748,21 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         }
 
         if (at != null) {
-            String title = fixTooltipString(at.getTitle(), event.getName(), startDate, endDate, revisedStartText, revisedEndText, days, revisedDays, event.getPercentComplete());
-            String content = fixTooltipString(at.getContent(), event.getName(), startDate, endDate, revisedStartText, revisedEndText, days, revisedDays, event.getPercentComplete());
-            String help = fixTooltipString(at.getHelpText(), event.getName(), startDate, endDate, revisedStartText, revisedEndText, days, revisedDays, event.getPercentComplete());
+        	String title = null;
+        	String content = null;
+        	String help = null;
+
+        	IToolTipContentReplacer ttcr = _settings.getToolTipContentReplacer();
+        	if (ttcr != null) {
+            	title = ttcr.replaceToolTipPlaceHolder(event, at.getTitle(), dateFormat) ;
+                content = ttcr.replaceToolTipPlaceHolder(event, at.getContent(), dateFormat); 
+                help = ttcr.replaceToolTipPlaceHolder(event, at.getHelpText(), dateFormat); 
+        	}
+        	else {
+            	title = fixTooltipString(at.getTitle(), event.getName(), startDate, endDate, revisedStartText, revisedEndText, days, revisedDays, event.getPercentComplete());
+                content = fixTooltipString(at.getContent(), event.getName(), startDate, endDate, revisedStartText, revisedEndText, days, revisedDays, event.getPercentComplete());
+                help = fixTooltipString(at.getHelpText(), event.getName(), startDate, endDate, revisedStartText, revisedEndText, days, revisedDays, event.getPercentComplete());
+        	}
 
             AdvancedTooltipDialog.makeDialog(at, _colorManager, displayLocation, title, content, help);
         } else {
