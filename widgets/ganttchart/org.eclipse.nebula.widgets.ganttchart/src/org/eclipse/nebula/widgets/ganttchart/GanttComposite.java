@@ -72,7 +72,7 @@ import org.eclipse.swt.widgets.Tracker;
 // -- FEATURES
 // TODO: allow zoom-out for D-day charts (we need to flip it from ISettings.D_DAY to a bool as we should draw d-day headers in each respective zoom-level head instead)
 // TODO: millisecond view
-public final class GanttComposite extends Canvas implements MouseListener, MouseMoveListener, MouseTrackListener, KeyListener {
+public final class GanttComposite extends Canvas implements MouseListener, MouseMoveListener, MouseTrackListener, KeyListener, IZoomHandler {
 
     public static int                     _osType                  = Constants.OS_OTHER;
 
@@ -328,6 +328,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     
     private final Calendar[] holidays;
     
+    private IZoomHandler zoomHandler;
+    
     static {
         final String osProperty = System.getProperty("os.name");
         if (osProperty != null) {
@@ -440,6 +442,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         });
         
         this.holidays = holidays;
+        this.zoomHandler = this;
     }
 
     // midnight "thread" (we need to redraw the screen once at Midnight as the date line will otherwise be incorrect)
@@ -491,9 +494,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                     _showZoomHelper = _settings.showZoomLevelBox();
 
                     if (event.count > 0) {
-                        zoomIn(true, new Point(event.x, event.y));
+                    	zoomHandler.zoomIn(true, new Point(event.x, event.y));
                     } else {
-                        zoomOut(true, new Point(event.x, event.y));
+                    	zoomHandler.zoomOut(true, new Point(event.x, event.y));
                     }
                 } else {
                 	// note to self: on SWT 3.5+ it seems we just force it, older versions may need to turn this off
@@ -1471,17 +1474,17 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
             zoomIn.addListener(SWT.Selection, new Listener() {
                 public void handleEvent(final Event event) {
-                    zoomIn();
+                    zoomHandler.zoomIn();
                 }
             });
             zoomOut.addListener(SWT.Selection, new Listener() {
                 public void handleEvent(final Event event) {
-                    zoomOut();
+                	zoomHandler.zoomOut();
                 }
             });
             zoomReset.addListener(SWT.Selection, new Listener() {
                 public void handleEvent(final Event event) {
-                    resetZoom();
+                	zoomHandler.resetZoom();
                 }
             });
 
@@ -8284,7 +8287,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         zoomIn(false, null);
     }
 
-    private void zoomIn(boolean fromMouseWheel, Point mouseLoc) {
+    public void zoomIn(boolean fromMouseWheel, Point mouseLoc) {
         checkWidget();
         if (!_settings.enableZooming()) return;
         /*
@@ -8292,8 +8295,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         	return;*/
 
         _zoomLevel--;
-        if (_zoomLevel < ISettings.MIN_ZOOM_LEVEL) {
-            _zoomLevel = ISettings.MIN_ZOOM_LEVEL;
+        if (_zoomLevel < _settings.getMinZoomLevel()) {
+            _zoomLevel = _settings.getMinZoomLevel();
             return;
         }
 
@@ -8322,7 +8325,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         zoomOut(false, null);
     }
 
-    private void zoomOut(boolean fromMouseWheel, Point mouseLoc) {
+    public void zoomOut(boolean fromMouseWheel, Point mouseLoc) {
         checkWidget();
         if (!_settings.enableZooming()) return;
 
@@ -8553,5 +8556,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     
     ISettings getSettings() {
     	return _settings;
+    }
+    
+    public void setZoomHandler(IZoomHandler zoomHandler) {
+    	this.zoomHandler = zoomHandler;
     }
 }

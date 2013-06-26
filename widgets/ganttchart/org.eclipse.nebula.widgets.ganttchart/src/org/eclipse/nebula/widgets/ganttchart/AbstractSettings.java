@@ -506,6 +506,11 @@ public abstract class AbstractSettings implements ISettings {
     public boolean scrollChartVerticallyOnMouseWheel() {
     	return true;
     }
+
+    public int getMinZoomLevel() {
+    	return ISettings.MIN_ZOOM_LEVEL;
+    }
+    
     public Calendar getPeriodStart() {
     	return null;
     }

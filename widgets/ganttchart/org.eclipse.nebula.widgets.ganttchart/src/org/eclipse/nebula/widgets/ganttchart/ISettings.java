@@ -1077,6 +1077,13 @@ public interface ISettings {
      */
     public boolean scrollChartVerticallyOnMouseWheel();
     
+    /**
+     * Returns the minimum zoom level.
+     * Default should return {@link ISettings#MIN_ZOOM_LEVEL}
+     * @return
+     */
+    public int getMinZoomLevel();
+    
     public Calendar getPeriodStart();
     
     public Calendar getPeriodEnd();
