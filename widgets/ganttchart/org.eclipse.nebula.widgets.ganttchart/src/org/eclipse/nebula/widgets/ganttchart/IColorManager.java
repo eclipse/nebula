@@ -491,4 +491,13 @@ public interface IColorManager extends IFillBackgroundColors {
 	 * @return Color
 	 */
 	Color getVerticalInsertMarkerColor();
+	
+	/**
+	 * The color used for drawing the vertical period start and end line that shows where the period
+	 * start and end dates are.
+	 * 
+	 * @return Color
+	 */
+	Color getPeriodLineColor();
+
 }

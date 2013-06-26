@@ -132,6 +132,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     // various colors used.. all set in initColors()
     private Color                         _lineTodayColor;
 
+    private Color                         _linePeriodColor;
+
     private Color                         _lineColor;
 
     private Color                         _lineWkDivColor;
@@ -624,6 +626,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
     private void initColors() {
         _lineTodayColor = _colorManager.getTodayLineColor();
+        _linePeriodColor = _colorManager.getPeriodLineColor();
         _lineColor = _colorManager.getLineColor();
         _textColor = _colorManager.getTextColor();
         _satTextColor = _colorManager.getSaturdayTextColor();
@@ -2101,7 +2104,20 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             }
 
             final Calendar today = Calendar.getInstance(_defaultLocale);
-            drawTodayLine(gc, bounds, getStartingXFor(today), today.get(Calendar.DAY_OF_WEEK));
+            drawTodayLine(gc, bounds, getStartingXFor(today), today.get(Calendar.DAY_OF_WEEK), _lineTodayColor);
+            
+            if (_settings.getPeriodStart() != null) {
+                drawTodayLine(gc, bounds, 
+                		getStartingXFor(_settings.getPeriodStart()), 
+                		_settings.getPeriodStart().get(Calendar.DAY_OF_WEEK),
+                		_linePeriodColor);
+            }
+            if (_settings.getPeriodEnd() != null) {
+                drawTodayLine(gc, bounds, 
+                		getStartingXFor(_settings.getPeriodEnd()), 
+                		_settings.getPeriodEnd().get(Calendar.DAY_OF_WEEK),
+                		_linePeriodColor);
+            }
         } else if (_currentView == ISettings.VIEW_YEAR) {
             for (int i = 0; i < _verticalLineLocations.size(); i++) {
                 gc.setForeground(_lineWkDivColor);
@@ -2111,7 +2127,20 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             }
 
             final Calendar today = Calendar.getInstance(_defaultLocale);
-            drawTodayLine(gc, bounds, getStartingXFor(today), today.get(Calendar.DAY_OF_WEEK));
+            drawTodayLine(gc, bounds, getStartingXFor(today), today.get(Calendar.DAY_OF_WEEK), _lineTodayColor);
+            
+            if (_settings.getPeriodStart() != null) {
+                drawTodayLine(gc, bounds, 
+                		getStartingXFor(_settings.getPeriodStart()), 
+                		_settings.getPeriodStart().get(Calendar.DAY_OF_WEEK),
+                		_linePeriodColor);
+            }
+            if (_settings.getPeriodEnd() != null) {
+                drawTodayLine(gc, bounds, 
+                		getStartingXFor(_settings.getPeriodEnd()), 
+                		_settings.getPeriodEnd().get(Calendar.DAY_OF_WEEK),
+                		_linePeriodColor);
+            }
         }
     }
 
@@ -4157,13 +4186,13 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     }
 
     // draws the line showing where today's date is
-    private void drawTodayLine(final GC gc, final Rectangle bounds, final int x, final int dayOfWeek) {
+    private void drawTodayLine(final GC gc, final Rectangle bounds, final int x, final int dayOfWeek, final Color lineColor) {
         // d-day has no today
         if (_currentView == ISettings.VIEW_D_DAY) { return; }
 
         int xStart = x;
 
-        gc.setForeground(_lineTodayColor);
+        gc.setForeground(lineColor);
         gc.setLineWidth(_settings.getTodayLineWidth());
         gc.setLineStyle(_settings.getTodayLineStyle());
 

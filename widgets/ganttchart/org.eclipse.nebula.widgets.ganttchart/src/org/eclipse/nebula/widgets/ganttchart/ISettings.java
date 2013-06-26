@@ -1076,4 +1076,8 @@ public interface ISettings {
      * @return true to scroll chart vertically. Default is true.
      */
     public boolean scrollChartVerticallyOnMouseWheel();
+    
+    public Calendar getPeriodStart();
+    
+    public Calendar getPeriodEnd();
 }

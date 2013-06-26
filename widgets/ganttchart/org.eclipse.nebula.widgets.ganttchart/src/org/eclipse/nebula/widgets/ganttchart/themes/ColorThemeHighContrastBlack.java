@@ -320,4 +320,9 @@ public class ColorThemeHighContrastBlack implements IColorManager {
     public Color getVerticalInsertMarkerColor() {   
         return getOriginalLocationColor();
     }
+    
+	public Color getPeriodLineColor() {
+        return ColorCache.getColor(255, 0, 0);
+	}
+
 }

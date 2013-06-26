@@ -324,4 +324,8 @@ public class ColorThemeWindowsBlue implements IColorManager {
         return getOriginalLocationColor();
     }
 
+	public Color getPeriodLineColor() {
+        return ColorCache.getColor(255, 0, 0);
+	}
+
 }
