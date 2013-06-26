@@ -150,6 +150,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     private Color                         _sunBGColorTop;
     private Color                         _sunBGColorBottom;
 
+    private Color                         _holidayBGColorTop;
+    private Color                         _holidayBGColorBottom;
+
     private Color                         _wkBGColorTop;
     private Color                         _wkBGColorBottom;
 
@@ -322,6 +325,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
     private int 						  _daysToAppendForEndOfDay;
     
+    
+    private final Calendar[] holidays;
+    
     static {
         final String osProperty = System.getProperty("os.name");
         if (osProperty != null) {
@@ -338,6 +344,10 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     }
 
     public GanttComposite(final GanttChart parent, final int style, final ISettings settings, final IColorManager colorManager, final IPaintManager paintManager, final ILanguageManager languageManager) {
+    	this(parent, style, settings, colorManager, paintManager, languageManager, null);
+    }
+    
+    public GanttComposite(final GanttChart parent, final int style, final ISettings settings, final IColorManager colorManager, final IPaintManager paintManager, final ILanguageManager languageManager, final Calendar[] holidays) {
         super(parent, SWT.NO_BACKGROUND | SWT.DOUBLE_BUFFERED | SWT.V_SCROLL | SWT.H_SCROLL);
 
         _parentChart = parent;
@@ -428,6 +438,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                 updateHorizontalScrollbar();
             }
         });
+        
+        this.holidays = holidays;
     }
 
     // midnight "thread" (we need to redraw the screen once at Midnight as the date line will otherwise be incorrect)
@@ -635,6 +647,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         _satBGColorBottom = _colorManager.getSaturdayBackgroundColorBottom();
         _sunBGColorTop = _colorManager.getSundayBackgroundColorTop();
         _sunBGColorBottom = _colorManager.getSundayBackgroundColorBottom();
+        _holidayBGColorTop = _colorManager.getHolidayBackgroundColorTop();
+        _holidayBGColorBottom = _colorManager.getHolidayBackgroundColorBottom();
 
         _weekdayTextColor = _colorManager.getWeekdayTextColor();
         _sunTextColor = _colorManager.getSundayTextColor();
@@ -1779,6 +1793,14 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                         gc.fillGradientRectangle(startX, startY, dayWidth, heightY, true);
                     }
 
+                    if (isHoliday(temp)) {
+                        gc.setForeground(getHolidayBackgroundGradient(true, gs));
+                        gc.setBackground(getHolidayBackgroundGradient(false, gs));
+                        
+                        // fill the whole thing all the way down
+                        gc.fillGradientRectangle(startX, startY, dayWidth, heightY, true);
+                    }
+
                     if (DateHelper.isToday(temp)) {
                         gc.setForeground(_todayBGColorTop);
                         gc.setBackground(_todayBGColorBottom);
@@ -1798,6 +1820,19 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
     }
 
+    
+    private boolean isHoliday(Calendar day) {
+    	if (holidays != null) {
+    		for (Calendar h : holidays) {
+    			if (h.equals(day)) {
+    				return true;
+    			}
+    		}
+    	}
+    	return false;
+    }
+    
+    
     // draws the zoom level box in the corner, only shown when zooming
     private void drawZoomLevel(final GC gc) {
 
@@ -3055,6 +3090,24 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         return internalGetDayBackgroundGradient(day, top, gs);
     }
 
+    private Color getHolidayBackgroundGradient(final boolean top, final GanttSection gs) {
+        Color ret = null;
+        if (top) {
+            if (gs == null) {
+                ret = _holidayBGColorTop;
+            } else {
+                ret = gs.getHolidayBackgroundColorTop();
+            }
+        } else {
+            if (gs == null) {
+                ret = _holidayBGColorBottom;
+            } else {
+                ret = gs.getHolidayBackgroundColorBottom();
+            }
+        }
+        return ret;
+    }
+    
     private Color internalGetDayBackgroundGradient(final int day, final boolean top, final GanttSection gs) {
         Color ret = null;
         switch (day) {

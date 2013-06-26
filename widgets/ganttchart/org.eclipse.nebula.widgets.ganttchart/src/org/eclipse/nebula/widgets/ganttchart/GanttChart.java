@@ -83,6 +83,8 @@ public class GanttChart extends Composite {
 	private IPaintManager				_paintManager;
 	private ILanguageManager			_languageManager;
 
+	private Calendar[] 					_holidays;
+
 	/**
 	 * Constructs a new GANTT chart widget. For styles, please see {@link GanttFlags}.
 	 * 
@@ -146,6 +148,8 @@ public class GanttChart extends Composite {
 	 * @param settings ISettings implementation or null
 	 * @param colorManager IColorManager implementation or null
 	 * @param paintManager IPaintManager implementation or null
+	 * @param languageManager {@link ILanguageManager} implementation or null
+	 * @param holidays Calendar objects specifying holidays
 	 * @throws IllegalArgumentException <ul>
 	 *             <li>ERROR_NULL_ARGUMENT - if the parent is null</li>
 	 *             </ul>
@@ -154,7 +158,7 @@ public class GanttChart extends Composite {
 	 *             subclass</li>
 	 *             </ul>
 	 */
-	public GanttChart(final Composite parent, final int style, final ISettings settings, final IColorManager colorManager, final IPaintManager paintManager, final ILanguageManager languageManager) {
+	public GanttChart(final Composite parent, final int style, final ISettings settings, final IColorManager colorManager, final IPaintManager paintManager, final ILanguageManager languageManager, Calendar... holidays) {
 		super(parent, SWT.NONE);
 		
 		int styleToUse = style;
@@ -169,6 +173,9 @@ public class GanttChart extends Composite {
 		_colorManager = colorManager;
 		_paintManager = paintManager;
 		_languageManager = languageManager;
+		
+		_holidays = holidays;
+		
 		init();
 	}
 
@@ -218,7 +225,7 @@ public class GanttChart extends Composite {
 			_languageManager = new DefaultLanguageManager();
 		}
 
-		_ganttComposite = new GanttComposite(this, _style, _settings, _colorManager, _paintManager, _languageManager);
+		_ganttComposite = new GanttComposite(this, _style, _settings, _colorManager, _paintManager, _languageManager, _holidays);
 		_ganttComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 

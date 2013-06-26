@@ -147,6 +147,14 @@ public class ColorThemeWindowsBlue implements IColorManager {
 		return getSaturdayBackgroundColorBottom();
 	}
 		
+	public Color getHolidayBackgroundColorTop() {
+		return getSaturdayBackgroundColorTop();
+	}
+
+	public Color getHolidayBackgroundColorBottom() {
+		return getSaturdayBackgroundColorBottom();
+	}
+		
 	public Color getWeekdayTextColor() {
 		return getBlack();
 	}

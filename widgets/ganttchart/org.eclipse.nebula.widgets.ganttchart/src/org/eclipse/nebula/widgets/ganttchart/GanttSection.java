@@ -51,6 +51,8 @@ public class GanttSection implements IFillBackgroundColors {
     private Color                 _saturdayBgColorBottom;
     private Color                 _sundayBgColorTop;
     private Color                 _sundayBgColorBottom;
+    private Color                 _holidayBgColorTop;
+    private Color                 _holidayBgColorBottom;
     private Color                 _weekdayBgColorTop;
     private Color                 _weekdayBgColorBottom;
     private Color                 _selectedBgColorTop;
@@ -222,6 +224,14 @@ public class GanttSection implements IFillBackgroundColors {
         return _sundayBgColorTop == null ? _fillColorManager.getSundayBackgroundColorTop() : _sundayBgColorTop;
     }
 
+    public Color getHolidayBackgroundColorBottom() {
+        return _holidayBgColorBottom == null ? _fillColorManager.getHolidayBackgroundColorBottom() : _holidayBgColorBottom;
+    }
+
+    public Color getHolidayBackgroundColorTop() {
+        return _holidayBgColorTop == null ? _fillColorManager.getHolidayBackgroundColorTop() : _holidayBgColorTop;
+    }
+
     public Color getWeekdayBackgroundColorBottom() {
         return _weekdayBgColorBottom == null ? _fillColorManager.getWeekdayBackgroundColorBottom() : _weekdayBgColorBottom;
     }
@@ -260,6 +270,14 @@ public class GanttSection implements IFillBackgroundColors {
 
     public void setSundayBackgroundColorBottom(final Color sundayBackgroundColorBottom) {
         _sundayBgColorBottom = sundayBackgroundColorBottom;
+    }
+
+    public void setHolidayBackgroundColorTop(final Color holidayBackgroundColorTop) {
+        _holidayBgColorTop = holidayBackgroundColorTop;
+    }
+
+    public void setHolidayBackgroundColorBottom(final Color holidayBackgroundColorBottom) {
+        _holidayBgColorBottom = holidayBackgroundColorBottom;
     }
 
     public void setWeekdayBackgroundColorTop(final Color weekdayBackgroundColorTop) {

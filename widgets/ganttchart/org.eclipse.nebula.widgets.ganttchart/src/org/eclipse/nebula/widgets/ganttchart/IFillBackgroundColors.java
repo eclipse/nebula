@@ -50,6 +50,20 @@ public interface IFillBackgroundColors {
 	Color getSundayBackgroundColorBottom();
 	
 	/**
+	 * The top background gradient color used for drawing the holiday column.
+	 * 
+	 * @return Color
+	 */
+	Color getHolidayBackgroundColorTop();
+
+	/**
+	 * The bottom background gradient color used for drawing the holiday column.
+	 * 
+	 * @return Color
+	 */
+	Color getHolidayBackgroundColorBottom();
+	
+	/**
 	 * The bottom background gradient color used for drawing the weekday column.
 	 * 
 	 * @return Color

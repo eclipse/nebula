@@ -145,6 +145,14 @@ public class ColorThemeHighContrastBlack implements IColorManager {
         return getSaturdayBackgroundColorBottom();
     }
 
+	public Color getHolidayBackgroundColorTop() {
+		return getSaturdayBackgroundColorTop();
+	}
+
+	public Color getHolidayBackgroundColorBottom() {
+		return getSaturdayBackgroundColorBottom();
+	}
+		
     public Color getWeekdayTextColor() {
         return getTextColor();
     }
