@@ -201,6 +201,12 @@ public class DateHelper {
         return ret;
     }
 
+    public static String getDate(Date date, String dateFormat) {
+    	Calendar cal = Calendar.getInstance(_locale);
+    	cal.setTime(date);
+    	return getDate(cal, dateFormat);
+    }
+    
     public static String getDate(Calendar cal, String dateFormat) {
         //Calendar toUse = (Calendar) cal.clone();
         Calendar toUse = Calendar.getInstance(_locale);
