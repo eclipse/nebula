@@ -6,5 +6,5 @@ Bundle-Version: 0.9.9.qualifier
 Bundle-Vendor: Eclipse.org
 Fragment-Host: org.eclipse.nebula.widgets.xviewer
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Require-Bundle: org.junit4
+Require-Bundle: org.junit
 Export-Package: org.eclipse.nebula.widgets.xviewer.tests
