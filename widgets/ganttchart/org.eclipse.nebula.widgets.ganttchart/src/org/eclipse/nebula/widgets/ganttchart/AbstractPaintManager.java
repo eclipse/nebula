@@ -554,6 +554,9 @@ public abstract class AbstractPaintManager implements IPaintManager {
         } else {
             // center it x-wise
             x -= (bounds.width - dayWidth) / 2;
+            if (settings.getEventHeight() > bounds.height) {
+            	y += (settings.getEventHeight() - bounds.height);
+            }
         }
 
         gc.drawImage(image, x, y);
