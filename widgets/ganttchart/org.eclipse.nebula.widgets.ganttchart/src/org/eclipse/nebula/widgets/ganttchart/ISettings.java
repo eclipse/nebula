@@ -1095,4 +1095,15 @@ public interface ISettings {
     public Calendar getPeriodStart();
     
     public Calendar getPeriodEnd();
+    
+    /**
+     * If you want to show the event String within the event rectangle by setting the horizontalTextLocation of
+     * the GanttEvent to SWT.CENTER, there are cases that break the visualization. If your event String is longer
+     * than the event in the Gantt, it will look quite strange.
+     * <p>
+     * If this method returns <code>true</code>, the AbstractPaintManager will shift the rendering of the event
+     * String to the right if the String length is greater than the event rectangle.
+     * @return <code>true</code> if the event String should be shifted, <code>false</code> if not
+     */
+    public boolean shiftHorizontalCenteredEventString();
 }

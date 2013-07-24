@@ -522,4 +522,8 @@ public abstract class AbstractSettings implements ISettings {
     public Calendar getPeriodEnd() {
     	return null;
     }
+    
+    public boolean shiftHorizontalCenteredEventString() {
+    	return false;
+    }
 }

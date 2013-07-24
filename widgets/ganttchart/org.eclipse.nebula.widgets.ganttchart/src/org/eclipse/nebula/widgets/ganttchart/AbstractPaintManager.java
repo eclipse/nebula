@@ -402,8 +402,10 @@ public abstract class AbstractPaintManager implements IPaintManager {
                 textXStart = x - textSpacer - toDrawExtent.x;
                 break;
             case SWT.CENTER:
+            	if (!settings.shiftHorizontalCenteredEventString() || toDrawExtent.x < eventWidth) {
                 textXStart = x + (eventWidth / 2) - (toDrawExtent.x / 2);
                 break;
+            	}
             case SWT.RIGHT:
                 //textXStart = x + eventWidth + textSpacer;
             	int eventOrPictureWidth = eventWidth;
