@@ -326,6 +326,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     private int 						  _daysToAppendForEndOfDay;
     
     
+    private IEventFactory				  eventFactory = new DefaultEventFactory();
     private final Calendar[] holidays;
     
     private IZoomHandler zoomHandler;
@@ -1444,6 +1445,31 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
         _rightClickMenu = new Menu(getDisplay().getActiveShell(), SWT.POP_UP);
 
+        
+        //add new event
+        if (event == null && _settings.enableAddEvent()) {
+            final MenuItem addEvent = new MenuItem(_rightClickMenu, SWT.PUSH);
+            addEvent.setText(_languageManager.getAddEventMenuText());
+            addEvent.addListener(SWT.Selection, new Listener() {
+                public void handleEvent(final Event event) {
+                	//add event to chart
+                	Calendar start = getDateAt(me.x);
+                	Calendar end = getDateAt(me.x);
+            		end.add(Calendar.DATE, 1);
+
+            		addEvent(eventFactory.createGanttEvent(
+            				_parentChart, 
+            				getSectionAt(me), 
+            				_languageManager.getNewEventDefaultText(), 
+            				start, 
+            				end));
+                }
+            });
+
+            new MenuItem(_rightClickMenu, SWT.SEPARATOR);
+        }
+        
+        
         if (event != null) {
             // We can't use JFace actions.. so we need to make copies.. Dirty
             // but at least not reinventing a wheel (as much)
@@ -6100,6 +6126,46 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     }
 
     /**
+     * Returns a section that corresponds to where the given MouseEvent is fired
+     * 
+     * @param event MouseEvent to check
+     * @return Section it is over or null if none
+     */
+    public GanttSection getSectionAt(final MouseEvent me) {
+        if (!hasGanttSections()) { return null; }
+
+        for (int i = 0; i < _ganttSections.size(); i++) {
+            final GanttSection gs = (GanttSection) _ganttSections.get(i);
+
+            // must account for scroll position as the event itself has no clue there's a scrollbar and obviously doesn't account for it
+            if (gs.getBounds().contains(me.x, me.y + _vScrollPos)) { return gs; }
+        }
+
+        // if we get here, we had a null hit, which means we might be between two sections, make it easy, check if we're oob first
+        if (me.y < getHeaderHeight()) {
+            // we could return null but that's not a good idea, rather, lets tell the target it's in the first section
+            return (GanttSection) _ganttSections.get(0);
+        }
+
+        // ok, we're not oob at the top, so we're probably between two, easy check
+        for (int i = 0; i < _ganttSections.size(); i++) {
+            final GanttSection gs = (GanttSection) _ganttSections.get(i);
+            GanttSection next = null;
+            if (i != _ganttSections.size() - 1) {
+                next = (GanttSection) _ganttSections.get(i + 1);
+
+                if (next != null) {
+                    if (me.y >= (gs.getBounds().y + gs.getBounds().height) && me.y <= next.getBounds().y) {
+                        return gs;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Returns a list of all surrounding vertical events to a given event. If a GanttSection is given, only the events
      * in that section will be used in calculating.
      * 
@@ -8590,6 +8656,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     	return _settings;
     }
     
+    public void setEventFactory(IEventFactory factory) {
+    	this.eventFactory = factory;
+    }
     public void setZoomHandler(IZoomHandler zoomHandler) {
     	this.zoomHandler = zoomHandler;
     }

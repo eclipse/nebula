@@ -137,4 +137,18 @@ public interface ILanguageManager {
 	 * @return Text
 	 */
 	String getNotAvailableText();
+	
+	/**
+	 * The menu item text for the "Add event" menu item
+	 * 
+	 * @return Text
+	 */
+	String getAddEventMenuText();
+	
+	/**
+	 * The default text for new created events
+	 * 
+	 * @return Text
+	 */
+	String getNewEventDefaultText();
 }

@@ -1107,6 +1107,18 @@ public interface ISettings {
      */
     public boolean shiftHorizontalCenteredEventString();
     
+    /**
+     * @return <code>true</code> to enable the menu action for adding an event to the GanttChart,
+     * 			<code>false</code> if this action should not be available to the user.
+     */
+    public boolean enableAddEvent();
+    
+    /**
+     * Global configuration to specify if the text of GanttEvents should be rendered or not.
+     * It is also possible to configure this per GanttEvent via _showText property.
+     * @return <code>true</code> if the event text should be rendered, <code>false</code>
+     * 			if not.
+     */
     public boolean drawEventString();
     
     /**

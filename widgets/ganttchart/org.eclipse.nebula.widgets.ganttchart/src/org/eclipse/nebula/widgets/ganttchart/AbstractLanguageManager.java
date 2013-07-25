@@ -80,6 +80,12 @@ public abstract class AbstractLanguageManager implements ILanguageManager {
 		return "Reset Zoom Level";
 	}
 
+	public String getAddEventMenuText() {
+		return "Add event";
+	}
 	
+	public String getNewEventDefaultText() {
+		return "Event";
+	}
 
 }
