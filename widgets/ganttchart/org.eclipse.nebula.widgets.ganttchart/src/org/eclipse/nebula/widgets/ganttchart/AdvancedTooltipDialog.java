@@ -12,6 +12,8 @@
 package org.eclipse.nebula.widgets.ganttchart;
 
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
@@ -265,9 +267,8 @@ public class AdvancedTooltipDialog {
 			Display.getDefault().asyncExec(new Runnable() {
 
 				public void run() {
-					if (!_shell.isDisposed()) {
 						_shell.redraw();
-					}
+					
 				}
 				
 			});
@@ -331,6 +332,8 @@ public class AdvancedTooltipDialog {
 	}
 
 	private static Point drawText(final GC gc, final String text, final int x, final int y) {
+		Pattern pattern = Pattern.compile("(\\\\(ce|c[0-9]{9}|s[0-9]{1,3}|[xbi]))*[^\\\\]*");
+
         try {
             final Font old = gc.getFont();
             Font used = null;
@@ -346,18 +349,10 @@ public class AdvancedTooltipDialog {
             int maxWidth = 0;
             int maxHeight = 0;
 
-            //int tokens = sub.countTokens();
-            final char[] all = text.toCharArray();
+    		Matcher matcher = pattern.matcher(text);
 
-            for (int i = 0; i < all.length; i++) {
-                String token = Character.toString(all[i]);
-                
-                if ("\\".equals(token)) {
-                    final StringBuffer buf = new StringBuffer(token); // NOPMD
-                    buf.append(Character.toString(all[i + 1]));
-                    token = buf.toString();
-                    i++;
-                }
+    		while (matcher.find()) {
+    			String token = matcher.group();
 
                 if (isNormalize(token)) {
                     bold = false;
@@ -387,18 +382,11 @@ public class AdvancedTooltipDialog {
                         italic = newItalic;
                     }
 
-                    if (text.length() > (i + 10) && "\\c".equals(token)) {
-                        final String colTxt = text.substring(i - 1, i + 10);
-                        final Color newColor = getColor(colTxt);
-                        if (newColor != null) {
-                            i += colTxt.length() - 2; // -2 is length of \c
-                            token = colTxt;
-                        }
-                        if (!newColor.equals(fg)) {
+                    final Color newColor = getColor(token);
+                    if (newColor != null && !newColor.equals(fg)) {
                             fg = newColor;
                         }
                     }
-                }
 
                 if (fg != null) {
                     gc.setForeground(fg);
@@ -414,18 +402,13 @@ public class AdvancedTooltipDialog {
                     style |= SWT.ITALIC;
                 }
 
-                if (all[i] == '\t') {
-                    curX += gc.stringExtent(" ").x * 4;
-                    token = " ";
-                }
-
                 used = new Font(Display.getDefault(), oldName, size, style); // NOPMD
                 gc.setFont(used);
 
                 if (token.length() != 0) {
-                    gc.drawString(token, curX, y, true);
-                    final int extX = gc.stringExtent(token).x;// + ((cnt != all.length - 1) ? gc.stringExtent(token).x : 0);
-                    final int extY = gc.stringExtent(token).y;
+                    gc.drawText(token, curX, y, true);
+                    final int extX = gc.textExtent(token).x;
+                    final int extY = gc.textExtent(token).y;
                     curX += extX;
 
                     maxWidth = Math.max(maxWidth, curX);
@@ -447,18 +430,12 @@ public class AdvancedTooltipDialog {
 
 	private static String cleanUp(final String string) {
 	    String str = string;
-	    final int start = str.indexOf("\\s");
-		if (start != -1) {
-		    final String left = str.substring(0, start);
-		    final String right = str.substring(start + 4, str.length());
-
-			str = left + right;
-		}
-		//start = str.indexOf("\\c");
 		str = str.replaceAll("\\\\ce", "");
 		str = str.replaceAll("\\\\c[0-9]{9}", "");
+		str = str.replaceAll("\\\\s[0-9]{1,3}", "");
 		str = str.replaceAll("\\\\x", "");
 		str = str.replaceAll("\\\\b", "");
+		str = str.replaceAll("\\\\i", "");
 		return str;
 	}
 
@@ -475,17 +452,17 @@ public class AdvancedTooltipDialog {
 	}
 
 	private static int getSize(final String str) {
-	    final int start = str.indexOf("\\s");
-		if (start == -1) {
-			return -1;
-		}
-
-		final String size = str.substring(start + 2, start + 4);
+		Pattern pattern = Pattern.compile("\\\\s[0-9]{1,3}");
+		Matcher matcher = pattern.matcher(str);
+		if (matcher.find()) {
+			String sizeString = matcher.group();
+			sizeString = sizeString.substring(2);
 
 		try {
-			return Integer.parseInt(size);
+				return Integer.parseInt(sizeString);
 		} catch (Exception badParse) {
 			SWT.error(SWT.ERROR_UNSPECIFIED, badParse);
+		}
 		}
 
 		return -1;
