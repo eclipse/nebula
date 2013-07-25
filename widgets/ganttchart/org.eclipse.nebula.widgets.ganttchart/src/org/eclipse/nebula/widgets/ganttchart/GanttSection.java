@@ -343,6 +343,15 @@ public class GanttSection implements IFillBackgroundColors {
     }
 
     /**
+     * Returns the parent {@link GanttComposite}
+     * 
+     * @return {@link GanttComposite}
+     */
+    public GanttComposite getParentComposite() {
+        return _parent;
+    }
+
+    /**
      * Removes this section from the chart. Do note that all belonging GanttEvents will be orphaned, so you should
      * probably deal with that post disposal.
      */
