@@ -530,4 +530,8 @@ public abstract class AbstractSettings implements ISettings {
     public boolean drawEventString() {
     	return true;
     }
+    
+    public boolean alwaysDragAllEvents() {
+    	return false;
+    }
 }

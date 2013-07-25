@@ -1108,4 +1108,15 @@ public interface ISettings {
     public boolean shiftHorizontalCenteredEventString();
     
     public boolean drawEventString();
+    
+    /**
+     * The default behaviour in GanttChart on moving an event is that only the current dragged
+     * event is moved unless you press the SHIFT key. If there are more events selected, still 
+     * only the dragged one is moved if the SHIFT key is not pressed.
+     * With this configuration it is possible to specify if the old default behavior should be 
+     * used or if all currently selected events should be moved even if the SHIFT key is not pressed.
+     * @return <code>true</code> if all selected events should be moved by dragging on of them
+     * 			<code>false</code> if only the current dragged event should be moved.
+     */
+    public boolean alwaysDragAllEvents();
 }

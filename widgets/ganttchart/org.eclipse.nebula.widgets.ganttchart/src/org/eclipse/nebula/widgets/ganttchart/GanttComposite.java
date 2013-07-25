@@ -7469,7 +7469,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         List toMove = new ArrayList();
 
         // multi move
-        if ((stateMask & _settings.getDragAllModifierKey()) != 0 && _settings.moveLinkedEventsWhenEventsAreMoved()) {
+        if (((stateMask & _settings.getDragAllModifierKey()) != 0 && _settings.moveLinkedEventsWhenEventsAreMoved())
+        		|| _settings.alwaysDragAllEvents()) {
             List conns = getEventsDependingOn(ge);
 
             List translated = new ArrayList();
