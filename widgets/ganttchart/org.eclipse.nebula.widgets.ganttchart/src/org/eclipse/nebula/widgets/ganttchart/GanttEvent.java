@@ -120,6 +120,8 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem, C
     private int             _horizontalTextLocation    = SWT.RIGHT;
     private int             _verticalTextLocation      = SWT.CENTER;
 
+    private boolean 		_showText					= true;
+
     private Font            _textFont;
 
     private int             _daysBetweenStartAndEnd;
@@ -2057,5 +2059,19 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem, C
         clone._savedVerticalDragY = _savedVerticalDragY;
         return clone;
     }
+
+	/**
+	 * @return the _showText
+	 */
+	public boolean isShowText() {
+		return _showText;
+	}
+
+	/**
+	 * @param _showText the _showText to set
+	 */
+	public void setShowText(boolean _showText) {
+		this._showText = _showText;
+	}
 
 }

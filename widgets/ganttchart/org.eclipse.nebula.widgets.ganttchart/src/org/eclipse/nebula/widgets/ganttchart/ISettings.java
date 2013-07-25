@@ -1106,4 +1106,6 @@ public interface ISettings {
      * @return <code>true</code> if the event String should be shifted, <code>false</code> if not
      */
     public boolean shiftHorizontalCenteredEventString();
+    
+    public boolean drawEventString();
 }

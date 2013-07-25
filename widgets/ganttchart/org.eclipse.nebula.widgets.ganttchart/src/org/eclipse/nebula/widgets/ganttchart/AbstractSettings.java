@@ -526,4 +526,8 @@ public abstract class AbstractSettings implements ISettings {
     public boolean shiftHorizontalCenteredEventString() {
     	return false;
     }
+    
+    public boolean drawEventString() {
+    	return true;
+    }
 }
