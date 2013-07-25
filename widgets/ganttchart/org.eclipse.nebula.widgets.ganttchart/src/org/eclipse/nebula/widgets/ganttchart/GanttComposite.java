@@ -1131,6 +1131,25 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                 drawFills(gc, extraBounds);
                 drawVerticalLines(gc, extraBounds, false);
             }
+            else {
+            	//draw the background for the bottom of the gantt chart as on Win7 it would be transparent
+                final int dayWidth = (_currentView == ISettings.VIEW_WEEK || _currentView == ISettings.VIEW_D_DAY ? _dayWidth : _monthDayWidth);
+                final int maxX = bounds.width + dayWidth; // we need to draw beyond 1 day as the days at the edge of the viewport also needs to be filled in case a half-day is visible there
+                int startX = bounds.x;
+
+                int offset = _vScrollPos;
+                if (offset > getHeaderHeight()) {
+                    offset = getHeaderHeight();
+                }
+
+                final int startY = bounds.y - offset;
+                final int heightY = bounds.height;
+
+                gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+                gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+
+                gc.fillRectangle(startX, startY, maxX, heightY);
+            }
 
             for (int i = 0; i < _ganttSections.size(); i++) {
                 final GanttSection section = (GanttSection) _ganttSections.get(i);
