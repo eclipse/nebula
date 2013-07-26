@@ -1766,21 +1766,29 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem, C
             final Calendar cal = Calendar.getInstance();
             cal.setTime(_startDate.getTime());
             _preMoveDateEstiStart = cal;
+        } else {
+        	_preMoveDateEstiStart = null;
         }
         if (_endDate != null) {
             final Calendar cal = Calendar.getInstance();
             cal.setTime(_endDate.getTime());
             _preMoveDateEstiEnd = cal;
+        } else {
+        	_preMoveDateEstiEnd = null;
         }
         if (_revisedStart != null) {
             final Calendar cal = Calendar.getInstance();
             cal.setTime(_revisedStart.getTime());
             _preMoveDateRevisedStart = cal;
+        } else {
+        	_preMoveDateRevisedStart = null;
         }
         if (_revisedEnd != null) {
             final Calendar cal = Calendar.getInstance();
             cal.setTime(_revisedEnd.getTime());
             _preMoveDateRevisedEnd = cal;
+        } else {
+        	_preMoveDateRevisedEnd = null;
         }
 
         _preMoveBounds = new Rectangle(_x, _y, _width, _height);
@@ -1813,7 +1821,8 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem, C
                 }
 
                 GanttSection gs = null;
-                if (_preMoveGanttSectionIndex > -1) {
+                if (_preMoveGanttSectionIndex > -1 
+                		&& _preMoveGanttSectionIndex < _parentComposite.getGanttSections().size() ) {
                 	gs = (GanttSection) _parentComposite.getGanttSections().get(_preMoveGanttSectionIndex);
                 }
                 
