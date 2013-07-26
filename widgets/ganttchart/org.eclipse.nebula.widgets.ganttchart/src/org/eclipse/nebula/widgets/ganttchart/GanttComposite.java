@@ -918,7 +918,17 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
      * @param section Section to add
      */
     public void addSection(final GanttSection section) {
-        internalAddSection(section);
+        internalAddSection(-1, section);
+    }
+
+    /**
+     * Adds a GanttSection to the chart.
+     * 
+     * @param section Section to add
+     * @param index the index to add the Section at
+     */
+    public void addSection(final GanttSection section, int index) {
+        internalAddSection(index, section);
     }
 
     /**
@@ -5177,15 +5187,28 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         flagForceFullUpdate();
     }
 
-    private void internalAddSection(final GanttSection section) {
+    private void internalAddSection(final int index, final GanttSection section) {
         if (!_ganttSections.contains(section)) {
+            if (index == -1) {
             _ganttSections.add(section);
+            } else {
+                _ganttSections.add(index, section);
+            }
+        	//if section is added also add the events that belong to that section
+        	for (Iterator it = section.getEvents().iterator(); it.hasNext();) {
+        		internalAddEvent(-1, (GanttEvent)it.next());
+        	}
         }
 
         flagForceFullUpdate();
     }
 
     private void internalRemoveSection(final GanttSection section) {
+    	//if section is removed also remove the events that belong to that section
+    	for (Iterator it = section.getEvents().iterator(); it.hasNext();) {
+    		internalRemoveEvent((GanttEvent)it.next());
+    	}
+    	
         _ganttSections.remove(section);
 
         flagForceFullUpdate();
