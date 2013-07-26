@@ -6235,6 +6235,10 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                     continue;
                 }
 
+                if (_selectedEvents.contains(ge)) {
+                	continue;
+                }
+                
                 sorted.add(ge);
             }
         }
@@ -6305,39 +6309,39 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         GanttEvent first = null;
         if (!sorted.isEmpty()) {
             first = (GanttEvent) sorted.get(0);
+	        if (first.equals(event) && sorted.size() > 1) {
+	            first = (GanttEvent) sorted.get(1);
+	        }
+	
+	        final int topMostY = first.getY();
+	        final int botMostY = ((GanttEvent) sorted.get(sorted.size() - 1)).getY();
+	
+	        if (event.getY() < topMostY) {
+	            if (section == null) {
+	                nearestUp = null;
+	            } else {
+	                nearestUp = null;
+	                nearestDown = (GanttEvent) allEvents.get(0);
+	            }
+	        }
+	        if ((event.getY() + event.getHeight()) > botMostY) {
+	            if (section == null) {
+	                nearestDown = null;
+	            } else {
+	                nearestUp = (GanttEvent) allEvents.get(allEvents.size() - 1);
+	                nearestDown = null;
+	            }
+	        }
+	
+	        /*        if (section != null) {
+	                    if (nearestDown == null) {
+	                        nearestDown = (GanttEvent) allEvents.get(allEvents.size()-1);
+	                    }
+	                }
+	        */
+	        //        System.err.println("Up: " + nearestUp);
+	        //        System.err.println("Down: " + nearestDown);
         }
-        if (first.equals(event) && sorted.size() > 1) {
-            first = (GanttEvent) sorted.get(1);
-        }
-
-        final int topMostY = first.getY();
-        final int botMostY = ((GanttEvent) sorted.get(sorted.size() - 1)).getY();
-
-        if (event.getY() < topMostY) {
-            if (section == null) {
-                nearestUp = null;
-            } else {
-                nearestUp = null;
-                nearestDown = (GanttEvent) allEvents.get(0);
-            }
-        }
-        if ((event.getY() + event.getHeight()) > botMostY) {
-            if (section == null) {
-                nearestDown = null;
-            } else {
-                nearestUp = (GanttEvent) allEvents.get(allEvents.size() - 1);
-                nearestDown = null;
-            }
-        }
-
-        /*        if (section != null) {
-                    if (nearestDown == null) {
-                        nearestDown = (GanttEvent) allEvents.get(allEvents.size()-1);
-                    }
-                }
-        */
-        //        System.err.println("Up: " + nearestUp);
-        //        System.err.println("Down: " + nearestDown);
         ret.add(nearestUp);
         ret.add(nearestDown);
 
