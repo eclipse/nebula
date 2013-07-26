@@ -327,6 +327,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     
     
     private IEventFactory				  eventFactory = new DefaultEventFactory();
+    private IEventMenuItemFactory		  eventMenuItemFactory;
+    private IMenuItemFactory		  	  menuItemFactory;
+    
     private final Calendar[] holidays;
     
     private IZoomHandler zoomHandler;
@@ -1447,30 +1450,44 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
         
         //add new event
-        if (event == null && _settings.enableAddEvent()) {
-            final MenuItem addEvent = new MenuItem(_rightClickMenu, SWT.PUSH);
-            addEvent.setText(_languageManager.getAddEventMenuText());
-            addEvent.addListener(SWT.Selection, new Listener() {
-                public void handleEvent(final Event event) {
-                	//add event to chart
-                	Calendar start = getDateAt(me.x);
-                	Calendar end = getDateAt(me.x);
-            		end.add(Calendar.DATE, 1);
-
-            		addEvent(eventFactory.createGanttEvent(
-            				_parentChart, 
-            				getSectionAt(me), 
-            				_languageManager.getNewEventDefaultText(), 
-            				start, 
-            				end));
-                }
-            });
-
-            new MenuItem(_rightClickMenu, SWT.SEPARATOR);
+        if (event == null) {
+        	if (_settings.enableAddEvent()) {
+	            final MenuItem addEvent = new MenuItem(_rightClickMenu, SWT.PUSH);
+	            addEvent.setText(_languageManager.getAddEventMenuText());
+	            addEvent.addListener(SWT.Selection, new Listener() {
+	                public void handleEvent(final Event event) {
+	                	//add event to chart
+	                	Calendar start = getDateAt(me.x);
+	                	Calendar end = getDateAt(me.x);
+	            		end.add(Calendar.DATE, 1);
+	
+	            		addEvent(eventFactory.createGanttEvent(
+	            				_parentChart, 
+	            				getSectionAt(me), 
+	            				_languageManager.getNewEventDefaultText(), 
+	            				start, 
+	            				end));
+	                }
+	            });
+	
+	            new MenuItem(_rightClickMenu, SWT.SEPARATOR);
+        	}
+            
+        	// add custom actions
+            if (menuItemFactory != null) {
+            	menuItemFactory.addCustomMenuItems(_rightClickMenu);
+                new MenuItem(_rightClickMenu, SWT.SEPARATOR);        	
+            }
         }
         
         
         if (event != null) {
+        	// add custom actions
+            if (eventMenuItemFactory != null) {
+            	eventMenuItemFactory.addCustomMenuItems(_rightClickMenu, event);
+                new MenuItem(_rightClickMenu, SWT.SEPARATOR);        	
+            }
+        	
             // We can't use JFace actions.. so we need to make copies.. Dirty
             // but at least not reinventing a wheel (as much)
             final Menu eventMenu = event.getMenu();
@@ -8659,6 +8676,15 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     public void setEventFactory(IEventFactory factory) {
     	this.eventFactory = factory;
     }
+    
+    public void setEventMenuItemFactory(IEventMenuItemFactory factory) {
+    	this.eventMenuItemFactory = factory;
+    }
+    
+    public void setMenuItemFactory(IMenuItemFactory factory) {
+    	this.menuItemFactory = factory;
+    }
+    
     public void setZoomHandler(IZoomHandler zoomHandler) {
     	this.zoomHandler = zoomHandler;
     }
