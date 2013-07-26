@@ -951,7 +951,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
     // horizontal scrollbar info
     void showScrollDate() { 
-        if (_settings.showDateTips() && _settings.showDateTipsOnScrolling()) {
+        if (_settings.showDateTips() && _settings.showDateTipsOnScrolling()
+        		&& _mainBounds != null /* security question as in some unknown cases the _mainBounds is null */) {
             final String str = DateHelper.getDate(_mainCalendar, _currentView == ISettings.VIEW_DAY ? _settings.getHourDateFormat() : _settings.getDateFormat());
             final GC gc = new GC(this);
             final Point ext = gc.stringExtent(str);
