@@ -1803,7 +1803,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     }*/
 
     // the height of the header or zero if not visible
-    private int getHeaderHeight() {
+    public int getHeaderHeight() {
         if (!_settings.drawHeader()) { return 0; }
 
         // we account for the drawTopLines bottom line which is at the bottom of the header, which increases our height by 1 pixel
@@ -8693,7 +8693,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         return _currentView == ISettings.VIEW_D_DAY;
     }
     
-    ISettings getSettings() {
+    public ISettings getSettings() {
     	return _settings;
     }
     
