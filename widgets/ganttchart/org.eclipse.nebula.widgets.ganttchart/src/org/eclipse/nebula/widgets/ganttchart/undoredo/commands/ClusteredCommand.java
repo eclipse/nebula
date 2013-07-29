@@ -72,6 +72,21 @@ public class ClusteredCommand extends AbstractUndoRedoCommand {
         return _commands.size();
     }
     
+    /**
+     * Simple getter for the list of commands that are transported by this
+     * ClusteredCommand.
+     * <p>
+     * Note that this will only return the list of commands as is. There is
+     * no transformation made to the list.
+     * 
+     * @return The list of commands that are transported by this ClusteredCommand.
+     * 
+     * @see ClusteredCommand#getFlattenedCommands()
+     */
+    public List getCommandList() {
+    	return _commands;
+    }
+    
     public void dispose() {
         for (int i = 0; i < _commands.size(); i++) {
             ((IUndoRedoCommand)_commands.get(i)).dispose();
@@ -89,18 +104,41 @@ public class ClusteredCommand extends AbstractUndoRedoCommand {
             ((IUndoRedoCommand)_commands.get(i)).undo();
         }
     }
-	/**
+
+    /**
 	 * Return the individual commands that are clustered in this command.
+	 * If this ClusteredCommand also contains other ClusteredCommands,
+	 * they will get unpacked so there will be one flat list of 
+	 * IUndoRedoCommands.
 	 * 
 	 * @return A unmodifiable list of participating {@link EventMoveCommand}s.
+	 * 
+	 * @deprecated Because the name of this method is not unique and might me interpreted wrong.
+	 * 
+	 * @see ClusteredCommand#getCommandList()
+	 * @see ClusteredCommand#getFlattenedCommands()
 	 */
-	public List getCommands() {
+    public List getCommands() {
+    	return this.getFlattenedCommands();
+    }
+    
+    /**
+	 * Return the individual commands that are clustered in this command.
+	 * If this ClusteredCommand also contains other ClusteredCommands,
+	 * they will get unpacked so there will be one flat list of 
+	 * IUndoRedoCommands.
+	 * 
+	 * @return A unmodifiable list of participating {@link EventMoveCommand}s.
+	 * 
+	 * @see ClusteredCommand#getCommandList()
+	 */
+	public List getFlattenedCommands() {
 		ArrayList result = new ArrayList();
 		for (Object command : _commands) {
 			if (command instanceof EventMoveCommand)
 				result.add((EventMoveCommand) command);
 			else if (command instanceof ClusteredCommand)
-				result.addAll(((ClusteredCommand) command).getCommands());
+				result.addAll(((ClusteredCommand) command).getFlattenedCommands());
 		}
 		return Collections.unmodifiableList(result); 
 	}
@@ -112,9 +150,11 @@ public class ClusteredCommand extends AbstractUndoRedoCommand {
 	 */
 	public List getEvents() {
 		ArrayList result = new ArrayList();
-		for (Object command : getCommands()) {
+		for (Object command : getFlattenedCommands()) {
 			if (command instanceof EventMoveCommand)
 				result.add(((EventMoveCommand) command).getEvent());
+			else if (command instanceof EventDeleteCommand)
+				result.add(((EventDeleteCommand) command).getEvent());
 		}
 		return Collections.unmodifiableList(result);
 	}

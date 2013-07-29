@@ -27,6 +27,7 @@ import java.util.Set;
 import org.eclipse.nebula.widgets.ganttchart.dnd.VerticalDragDropManager;
 import org.eclipse.nebula.widgets.ganttchart.undoredo.GanttUndoRedoManager;
 import org.eclipse.nebula.widgets.ganttchart.undoredo.commands.ClusteredCommand;
+import org.eclipse.nebula.widgets.ganttchart.undoredo.commands.EventMoveCommand;
 import org.eclipse.nebula.widgets.ganttchart.undoredo.commands.IUndoRedoCommand;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
@@ -5872,20 +5873,6 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             _tracker.dispose();
         }
 
-        if (!_dragEvents.isEmpty()) {
-            if (_resizing) {
-                for (int i = 0; i < _eventListeners.size(); i++) {
-                    ((IGanttEventListener) _eventListeners.get(i)).eventsResizeFinished(_dragEvents, event);
-                }
-            }
-            if (_dragging) {
-                for (int i = 0; i < _eventListeners.size(); i++) {
-                    ((IGanttEventListener) _eventListeners.get(i)).eventsMoveFinished(_dragEvents, event);
-                }
-            }
-
-        }
-
         // vertical dragging "end"
         if (_freeDragging) {
             // clear any temporary DND events held in the sections
@@ -5906,6 +5893,20 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             _vDNDManager.clear();
         }
 
+        if (!_dragEvents.isEmpty()) {
+        	if (_resizing) {
+        		for (int i = 0; i < _eventListeners.size(); i++) {
+        			((IGanttEventListener) _eventListeners.get(i)).eventsResizeFinished(_dragEvents, event);
+        		}
+        	}
+        	if (_dragging) {
+        		for (int i = 0; i < _eventListeners.size(); i++) {
+        			((IGanttEventListener) _eventListeners.get(i)).eventsMoveFinished(_dragEvents, event);
+        		}
+        	}
+        	needsRedraw = true;
+        }
+        
         // put all undo/redo commands into one command as any user would expect a multi-DND to undo with all events, not just one at a time
         final ClusteredCommand cc = new ClusteredCommand();
 
@@ -5947,6 +5948,20 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             final IUndoRedoCommand undoCommand = ge.getPostMoveOrResizeUndoCommand();
             cc.addCommand(undoCommand);
         }
+        
+        //sort the commands by index before to keep the stair effect 
+        Collections.sort(cc.getCommandList(), new Comparator<IUndoRedoCommand>() {
+
+			public int compare(IUndoRedoCommand o1, IUndoRedoCommand o2) {
+				if (o1 instanceof EventMoveCommand && o2 instanceof EventMoveCommand) {
+					int thisVal = ((EventMoveCommand)o1).getIndexBefore();
+					int anotherVal = ((EventMoveCommand)o2).getIndexBefore();
+					return (thisVal<anotherVal ? -1 : (thisVal==anotherVal ? 0 : 1));
+				}
+				return 0;
+			}
+		});
+        
         if (cc.size() > 0) {
             _undoRedoManager.record(cc);
         }
@@ -6006,109 +6021,136 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             return;
         }
 
+        //sort the events descending dependent on their start date
+        //this is necessary to keep the stair effect correctly on drag and drop
+		Collections.sort(_dragEvents, new Comparator<GanttEvent>() {
+			public int compare(GanttEvent o1, GanttEvent o2) {
+				Calendar compareDate1 = o1.getRevisedStart() != null ? o1.getRevisedStart() : o1.getStartDate();
+				Calendar compareDate2 = o2.getRevisedStart() != null ? o2.getRevisedStart() : o2.getStartDate();
+				return compareDate2.compareTo(compareDate1);
+			}
+		});
+        
         final int vDragMode = _settings.getVerticalEventDragging();
-
-        // loop all dragged events
-        for (int i = 0; i < _dragEvents.size(); i++) {
-            final GanttEvent ge = (GanttEvent) _dragEvents.get(i);
 
             final GanttEvent top = _vDNDManager.getTopEvent();
             final GanttEvent bottom = _vDNDManager.getBottomEvent();
             GanttSection targetSection = _vDNDManager.getTargetSection();
 
-            //System.err.println(ge + " is getting retargeted from " + ge.getGanttSection() + " to " + targetSection + " between " + top + " and " + bottom);
-
             // only allow DND across sections?
-            if (ge.getGanttSection() != null && targetSection != null && ge.getGanttSection() == targetSection && vDragMode == VerticalDragModes.CROSS_SECTION_VERTICAL_DRAG) {
+        List ignoreDrag = new ArrayList();
+        if (vDragMode == VerticalDragModes.CROSS_SECTION_VERTICAL_DRAG) {
+        	for (int i = 0; i < _dragEvents.size(); i++) {
+                final GanttEvent ge = (GanttEvent) _dragEvents.get(i);
+                if (ge.getGanttSection() != null && targetSection != null && ge.getGanttSection() == targetSection) {
                 ge.undoVerticalDragging();
-                continue;
+                	ignoreDrag.add(ge);
             }
-
-            // notify listeners
-            if (ge.getGanttSection() != targetSection && hasGanttSections()) {
-                for (int x = 0; x < _eventListeners.size(); x++) {
-                    ((IGanttEventListener) _eventListeners.get(x)).eventMovedToNewSection(ge, ge.getGanttSection(), targetSection);
-                }
-            } else {
-                for (int x = 0; x < _eventListeners.size(); x++) {
-                    ((IGanttEventListener) _eventListeners.get(x)).eventReordered(ge);
                 }
             }
 
             if (top == null && bottom == null) {
                 // it'll be alone in a section
                 if (targetSection != null) {
+            	for (int i = 0; i < _dragEvents.size(); i++) {
+                    final GanttEvent ge = (GanttEvent) _dragEvents.get(i);
+                    final GanttSection fromSection = ge.getGanttSection();
+                    
                     ge.reparentToNewGanttSection(0, targetSection);
+	
+	                for (int x = 0; x < _eventListeners.size(); x++) {
+	                    ((IGanttEventListener) _eventListeners.get(x)).eventMovedToNewSection(ge, fromSection, targetSection);
+	                }
+            	}
                 }
+        }
+        else {
+	        //if we come here, do further processing
+	        //first remove the dragged events, so we don't have to deal with a changing
+	        //list order when adding them again
+	        for (int i = 0; i < _dragEvents.size(); i++) {
+	            final GanttEvent ge = (GanttEvent) _dragEvents.get(i);
+	            final GanttSection fromSection = ge.getGanttSection();
 
-                continue;
+	            if (hasGanttSections()) {
+	                fromSection.removeGanttEvent(ge);
+
+	            } else {
+	                _ganttEvents.remove(ge);
             }
+	        }        
 
-            int index = 0;
+	        //calculate the insertion index for the event in the drag events that was dragged
+	        //on multi select, only the event that was dragged has information about the drag information
+	        //the others should rely on that index instead of calculating it over and over again
+	        GanttEvent event = null;
+	        for (GanttEvent ev : (List<GanttEvent>) _dragEvents) {
+	        	if (ev.getPreVerticalDragBounds() != null) {
+	        		event = ev;
+	        	}
+	        }
 
-			// event was moved nowhere vertically, same place
-			if (ge.getPreVerticalDragBounds() != null) {
-				if (ge.getY() == ge.getPreVerticalDragBounds().y) {
-					continue;
-				}
+	        if (event == null) {
+	        	//this should never happen, but who knows if there is still some bugs around
+	    		event = (GanttEvent) _dragEvents.get(0);
 			}
 
+	        final GanttSection fromSection = event.getGanttSection();
+	        int index = 0;
+	
             if (hasGanttSections()) {
-                final GanttSection fromSection = ge.getGanttSection();
                 //List fromEvents = fromSection.getEvents();
                 if (targetSection == null) {
                     // TODO: This seems to happen when user drops event on border between two, uncomment line below and do a drop on border, see if we can handle differently
                     targetSection = fromSection;
                 }
                 final List toEvents = targetSection.getEvents();
-
-                if (top == null) {
-                    index = 0;
-                }
-                if (bottom == null) {
-                    index = toEvents.size();
-                }
-
-                if (top != null && bottom != null) {
+	            if (top != null) {
                     index = toEvents.indexOf(top);
+	                index++;
                 }
 
-                // if moved up we need to push the index by 1, unless it was moved to the top of a section, then we don't push it or it'd never go to the top
-                if (ge.wasVerticallyMovedUp() && ge.getGanttSection() == targetSection) {
+	        } else {
                     if (top != null) {
+	                index = _ganttEvents.indexOf(top);
+	            }
+	            if (event.wasVerticallyMovedUp()) {
                         index++;
                     }
                 }
-                // moved up from a section to inbetween two events (not at top)
-                else if (ge.wasVerticallyMovedUp() && ge.getGanttSection() != targetSection && top != null) {
-                    index++;
+
+	        // loop all dragged events
+	        for (int i = 0; i < _dragEvents.size(); i++) {
+	            final GanttEvent ge = (GanttEvent) _dragEvents.get(i);
+	
+	            //if the GanttEvent was moved to a new section, remember the origin section for later use of the listeners
+	            //needed because the event should be fired at the end not at the beginning of the move
+	            GanttSection originSection = (ge.getGanttSection() != targetSection && hasGanttSections()) ? ge.getGanttSection() : null;
+	            
+				// event was moved nowhere vertically, same place
+				if (ge.getPreVerticalDragBounds() != null) {
+					if (ge.getY() == ge.getPreVerticalDragBounds().y) {
+						continue;
+                }
                 }
 
-                // moved down from one section to another, push it down (unless at the top of the new section, same reasoning as before)
-                if (!ge.wasVerticallyMovedUp() && ge.getGanttSection() != targetSection && top != null) {
-                    index++;
-                }
-
-                if (index < 0) {
-                    index = 0;
-                }
-
-                //System.err.println("Index " + index);
-
-                fromSection.removeGanttEvent(ge);
+	            if (hasGanttSections()) {
                 targetSection.addGanttEvent(index, ge);
 
             } else {
-                if (top != null) {
-                    index = _ganttEvents.indexOf(top);
+	                _ganttEvents.add(index, ge);
+	            }
+	            
+	            // notify listeners
+	            if (originSection != null) {
+	                for (int x = 0; x < _eventListeners.size(); x++) {
+	                    ((IGanttEventListener) _eventListeners.get(x)).eventMovedToNewSection(ge, originSection, targetSection);
+	                }
+	            } else {
+	                for (int x = 0; x < _eventListeners.size(); x++) {
+	                    ((IGanttEventListener) _eventListeners.get(x)).eventReordered(ge);
                 }
-                if (ge.wasVerticallyMovedUp()) {
-                    index++;
                 }
-
-                // get the index of the top event
-                _ganttEvents.remove(ge);
-                _ganttEvents.add(index, ge);
             }
         }
 

@@ -34,8 +34,8 @@ public class EventMoveCommand extends AbstractUndoRedoCommand {
     private Calendar   _revisedEndDateAfter;
     private int        _indexBefore;
     private int        _indexAfter;
-    private int        _sectionBefore;
-    private int        _sectionAfter;
+    private GanttSection        _sectionBefore;
+    private GanttSection        _sectionAfter;
 
     /**
      * Creates a new undoable/redoable Move Event.
@@ -79,19 +79,9 @@ public class EventMoveCommand extends AbstractUndoRedoCommand {
         _indexBefore = indexBefore;
         _indexAfter = indexAfter;
         
-        if (sectionBefore == null) {
-            _sectionBefore = -1;
-        }
-        else {
-            _sectionBefore = _event.getParentComposite().getGanttSections().indexOf(sectionBefore);
-        }
+        _sectionBefore = sectionBefore;
+        _sectionAfter = sectionAfter;
 
-        if (sectionAfter == null) {
-            _sectionAfter = -1;
-        }
-        else {
-            _sectionAfter = _event.getParentComposite().getGanttSections().indexOf(sectionAfter);
-        }
     }
 
     public void dispose() {
@@ -102,19 +92,8 @@ public class EventMoveCommand extends AbstractUndoRedoCommand {
         _event.setNoUpdatePlannedDates(_startDateAfter, _endDateAfter);
         _event.setNoUpdateRevisedDates(_revisedStartDateAfter, _revisedEndDateAfter);
        
-/*        _event.setStartDate(_startDateAfter);
-        _event.setEndDate(_endDateAfter);
-*/
-        // we know we're setting valid dates, so force validation to off or we'll get funky results
-/*        if (_revisedStartDateAfter != null) {
-            _event.setRevisedStart(_revisedStartDateAfter, false);
-        }
-        if (_revisedEndDateAfter != null) {
-            _event.setRevisedEnd(_revisedEndDateAfter, false);
-        }
-*/
-        if (_sectionAfter != -1 && _indexAfter > -1) {
-            _event.reparentToNewGanttSection(_indexAfter, (GanttSection)_event.getParentComposite().getGanttSections().get(_sectionAfter));
+        if (_sectionAfter != null && _indexAfter > -1) {
+            _event.reparentToNewGanttSection(_indexAfter, _sectionAfter);
         }
        
         if (_event.getGanttSection() == null && _indexAfter != -1) {
@@ -126,17 +105,8 @@ public class EventMoveCommand extends AbstractUndoRedoCommand {
         _event.setNoUpdatePlannedDates(_startDateBefore, _endDateBefore);
         _event.setNoUpdateRevisedDates(_revisedStartDateBefore, _revisedEndDateBefore);
        
-        // we know we're setting valid dates, so force validation to off or we'll get funky results
-    /*    if (_revisedStartDateBefore != null) {
-            _event.setRevisedStart(_revisedStartDateBefore, false);
-        }
-       
-        if (_revisedEndDateBefore != null) {
-            _event.setRevisedEnd(_revisedEndDateBefore, false);
-        }*/
-               
-        if (_sectionBefore != -1 && _indexBefore > -1) {           
-            _event.reparentToNewGanttSection(_indexBefore, (GanttSection)_event.getParentComposite().getGanttSections().get(_sectionBefore));
+        if (_sectionBefore != null && _indexBefore > -1) {           
+            _event.reparentToNewGanttSection(_indexBefore, _sectionBefore);
         }
        
         // reparent in chart itself as there are no sections
@@ -203,19 +173,19 @@ public class EventMoveCommand extends AbstractUndoRedoCommand {
         _indexAfter = indexAfter;
     }
 
-    public int getSectionBefore() {
+    public GanttSection getSectionBefore() {
         return _sectionBefore;
     }
 
-    public void setSectionBefore(final int sectionBefore) {
+    public void setSectionBefore(final GanttSection sectionBefore) {
         _sectionBefore = sectionBefore;
     }
 
-    public int getSectionAfter() {
+    public GanttSection getSectionAfter() {
         return _sectionAfter;
     }
 
-    public void setSectionAfter(final int sectionAfter) {
+    public void setSectionAfter(final GanttSection sectionAfter) {
         _sectionAfter = sectionAfter;
     }
 

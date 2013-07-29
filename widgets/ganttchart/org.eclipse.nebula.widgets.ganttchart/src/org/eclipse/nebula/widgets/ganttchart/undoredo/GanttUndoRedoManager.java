@@ -185,6 +185,13 @@ public class GanttUndoRedoManager {
     }
 
     /**
+     * @param currentIndex The current index of where the undo/redo marker is
+     */
+    public void setCurrentIndex(int currentIndex) {
+        _currentIndex = currentIndex;
+    }
+
+    /**
      * Clears up the stack of undo/redo events and keeps its size in check.
      */
     private void fixStack() {
