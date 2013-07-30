@@ -6033,25 +6033,25 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         
         final int vDragMode = _settings.getVerticalEventDragging();
 
-            final GanttEvent top = _vDNDManager.getTopEvent();
-            final GanttEvent bottom = _vDNDManager.getBottomEvent();
-            GanttSection targetSection = _vDNDManager.getTargetSection();
+        final GanttEvent top = _vDNDManager.getTopEvent();
+        final GanttEvent bottom = _vDNDManager.getBottomEvent();
+        GanttSection targetSection = _vDNDManager.getTargetSection();
 
-            // only allow DND across sections?
+        // only allow DND across sections?
         List ignoreDrag = new ArrayList();
         if (vDragMode == VerticalDragModes.CROSS_SECTION_VERTICAL_DRAG) {
         	for (int i = 0; i < _dragEvents.size(); i++) {
                 final GanttEvent ge = (GanttEvent) _dragEvents.get(i);
                 if (ge.getGanttSection() != null && targetSection != null && ge.getGanttSection() == targetSection) {
-                ge.undoVerticalDragging();
+                	ge.undoVerticalDragging();
                 	ignoreDrag.add(ge);
-            }
                 }
-            }
+        	}
+        }
 
-            if (top == null && bottom == null) {
-                // it'll be alone in a section
-                if (targetSection != null) {
+        if (top == null && bottom == null) {
+        	// it'll be alone in a section
+        	if (targetSection != null) {
             	for (int i = 0; i < _dragEvents.size(); i++) {
                     final GanttEvent ge = (GanttEvent) _dragEvents.get(i);
                     final GanttSection fromSection = ge.getGanttSection();
@@ -6062,7 +6062,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	                    ((IGanttEventListener) _eventListeners.get(x)).eventMovedToNewSection(ge, fromSection, targetSection);
 	                }
             	}
-                }
+        	}
         }
         else {
 	        //if we come here, do further processing
@@ -6074,10 +6074,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 	            if (hasGanttSections()) {
 	                fromSection.removeGanttEvent(ge);
-
 	            } else {
 	                _ganttEvents.remove(ge);
-            }
+	            }
 	        }        
 
 	        //calculate the insertion index for the event in the drag events that was dragged
@@ -6131,11 +6130,11 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 				if (ge.getPreVerticalDragBounds() != null) {
 					if (ge.getY() == ge.getPreVerticalDragBounds().y) {
 						continue;
-                }
+					}
                 }
 
 	            if (hasGanttSections()) {
-                targetSection.addGanttEvent(index, ge);
+	            	targetSection.addGanttEvent(index, ge);
 
             } else {
 	                _ganttEvents.add(index, ge);
@@ -6535,20 +6534,23 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             // handle cross-section DND's, events need to be temporarily added to whatever
             // section they are being dragged over or they will not be rendered.
             if (_freeDragging && _dragging && !_ganttSections.isEmpty() && !_dragEvents.isEmpty()) {
-                final GanttEvent drag = (GanttEvent) _dragEvents.get(0);
-                for (int i = 0; i < _ganttSections.size(); i++) {
-                    final GanttSection gs = (GanttSection) _ganttSections.get(i);
-                    if (drag.getGanttSection() == gs) {
-                        continue;
-                    }
-
-                    if (gs.getBounds().intersects(drag.getBounds())) {
-                        gs.addDNDGanttEvent(drag);
-                    } else {
-                        // clear any old section events
-                        gs.clearDNDGanttEvents();
-                    }
-                }
+            	
+            	for (Object dragObj : _dragEvents) {
+            		final GanttEvent drag = (GanttEvent) _dragEvents.get(0);
+            		for (int i = 0; i < _ganttSections.size(); i++) {
+            			final GanttSection gs = (GanttSection) _ganttSections.get(i);
+            			if (drag.getGanttSection() == gs) {
+            				continue;
+            			}
+            			
+            			if (gs.getBounds().intersects(drag.getBounds())) {
+            				gs.addDNDGanttEvent(drag);
+            			} else {
+            				// clear any old section events
+            				gs.clearDNDGanttEvents();
+            			}
+            		}
+            	}
             }
 
             // phase move/resize (check first as it's faster than looping events)
@@ -7401,7 +7403,6 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         // drag start event, show cross hair arrow cursor and keep going
         if ((me.stateMask & SWT.BUTTON1) != 0 && !_dragging && !_resizing) {
             if (type == Constants.TYPE_MOVE) {
-                event.flagDragging();
                 _dragging = true;
                 _resizing = false;
                 // save the location where we started the drag, can be used during the drag for calculating 
@@ -7416,6 +7417,10 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             }
 
             _dragEvents.clear();
+            
+            if (_dragging)
+            	event.flagDragging();
+
             _dragEvents.add(event);
             _lastX = me.x;
             _lastY = me.y;

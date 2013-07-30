@@ -1906,8 +1906,9 @@ public class GanttEvent extends AbstractGanttEvent implements IGanttChartItem, C
 
     void undoVerticalDragging() {
         _y = _savedVerticalDragY;
+        _preVerticalDragBounds = null;
     }
-
+    
     boolean wasVerticallyMovedUp() {
     	if (_preVerticalDragBounds == null) {
     		return false;
