@@ -21,6 +21,7 @@ import org.eclipse.nebula.paperclips.core.PrintIterator;
 import org.eclipse.nebula.paperclips.core.PrintPiece;
 import org.eclipse.nebula.paperclips.core.internal.util.PrintSizeStrategy;
 import org.eclipse.nebula.paperclips.core.internal.util.Util;
+import org.eclipse.nebula.paperclips.core.text.internal.TextPrintPiece;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;

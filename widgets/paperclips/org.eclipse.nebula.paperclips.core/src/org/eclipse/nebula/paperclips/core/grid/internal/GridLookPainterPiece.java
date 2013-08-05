@@ -8,9 +8,11 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation
  */
-package org.eclipse.nebula.paperclips.core.grid;
+package org.eclipse.nebula.paperclips.core.grid.internal;
 
 import org.eclipse.nebula.paperclips.core.PrintPiece;
+import org.eclipse.nebula.paperclips.core.grid.GridLookPainter;
+import org.eclipse.nebula.paperclips.core.grid.GridMargins;
 import org.eclipse.nebula.paperclips.core.internal.util.PaperClipsUtil;
 import org.eclipse.nebula.paperclips.core.internal.util.Util;
 import org.eclipse.swt.graphics.GC;

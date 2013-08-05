@@ -8,7 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation
  */
-package org.eclipse.nebula.paperclips.core.grid;
+package org.eclipse.nebula.paperclips.core.grid.internal;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -19,6 +19,11 @@ import org.eclipse.nebula.paperclips.core.CompositePiece;
 import org.eclipse.nebula.paperclips.core.PaperClips;
 import org.eclipse.nebula.paperclips.core.PrintIterator;
 import org.eclipse.nebula.paperclips.core.PrintPiece;
+import org.eclipse.nebula.paperclips.core.grid.GridCell;
+import org.eclipse.nebula.paperclips.core.grid.GridColumn;
+import org.eclipse.nebula.paperclips.core.grid.GridLookPainter;
+import org.eclipse.nebula.paperclips.core.grid.GridMargins;
+import org.eclipse.nebula.paperclips.core.grid.GridPrint;
 import org.eclipse.nebula.paperclips.core.internal.util.PaperClipsUtil;
 import org.eclipse.nebula.paperclips.core.internal.util.PrintSizeStrategy;
 import org.eclipse.swt.SWT;
@@ -26,7 +31,7 @@ import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 
-class GridIterator implements PrintIterator {
+public class GridIterator implements PrintIterator {
 	final Device device;
 	final Point dpi;
 
@@ -54,19 +59,19 @@ class GridIterator implements PrintIterator {
 	// current row.
 	private boolean rowStarted;
 
-	GridIterator(GridPrint grid, Device device, GC gc) {
+	public GridIterator(GridPrint grid, Device device, GC gc) {
 		this.device = device;
 		this.dpi = device.getDPI();
-
-		this.columns = (GridColumn[]) grid.columns
-				.toArray(new GridColumn[grid.columns.size()]);
+		this.columns = new GridColumn[grid.getColumns().length];
+		System.arraycopy(grid.getColumns(), 0, this.columns, 0,
+				grid.getColumns().length);
 		this.columnGroups = grid.getColumnGroups();
 
-		this.header = createGridCellIterators(grid.header, device, gc);
-		this.body = createGridCellIterators(grid.body, device, gc);
-		this.footer = createGridCellIterators(grid.footer, device, gc);
+		this.header = createGridCellIterators(grid.getHeaderCells(), device, gc);
+		this.body = createGridCellIterators(grid.getBodyCells(), device, gc);
+		this.footer = createGridCellIterators(grid.getFooterCells(), device, gc);
 
-		this.cellClippingEnabled = grid.cellClippingEnabled;
+		this.cellClippingEnabled = grid.isCellClippingEnabled();
 
 		this.look = grid.getLook().getPainter(device, gc);
 
@@ -82,20 +87,20 @@ class GridIterator implements PrintIterator {
 		rowStarted = false;
 	}
 
-	private static GridCellIterator[][] createGridCellIterators(List gridCells,
-			Device device, GC gc) {
-		GridCellIterator[][] result = new GridCellIterator[gridCells.size()][];
+	private static GridCellIterator[][] createGridCellIterators(
+			GridCell[][] gridCells, Device device, GC gc) {
+		GridCellIterator[][] result = new GridCellIterator[gridCells.length][];
 		for (int rowIndex = 0; rowIndex < result.length; rowIndex++)
-			result[rowIndex] = createRowCellIterators((List) gridCells
-					.get(rowIndex), device, gc);
+			result[rowIndex] = createRowCellIterators(gridCells[rowIndex],
+					device, gc);
 		return result;
 	}
 
-	private static GridCellIterator[] createRowCellIterators(List rowCells,
-			Device device, GC gc) {
-		GridCellIterator[] result = new GridCellIterator[rowCells.size()];
-		for (int cellIndex = 0; cellIndex < rowCells.size(); cellIndex++)
-			result[cellIndex] = ((GridCell) rowCells.get(cellIndex)).iterator(
+	private static GridCellIterator[] createRowCellIterators(
+			GridCell[] rowCells, Device device, GC gc) {
+		GridCellIterator[] result = new GridCellIterator[rowCells.length];
+		for (int cellIndex = 0; cellIndex < rowCells.length; cellIndex++)
+			result[cellIndex] = ((GridCellImpl) rowCells[cellIndex]).iterator(
 					device, gc);
 		return result;
 	}
@@ -148,9 +153,9 @@ class GridIterator implements PrintIterator {
 	private int computeCellWidth(GridCellIterator entry, GridColumn col,
 			PrintSizeStrategy strategy) {
 		if (col.size == SWT.DEFAULT)
-			return strategy.computeSize(entry.target).x;
+			return strategy.computeSize(entry.getTarget()).x;
 		if (col.size == GridPrint.PREFERRED)
-			return entry.target.preferredSize().x;
+			return entry.getTarget().preferredSize().x;
 		return Math.round(col.size * device.getDPI().x / 72f);
 	}
 
@@ -235,14 +240,14 @@ class GridIterator implements PrintIterator {
 			int columnIndex = 0;
 			for (int cellIndex = 0; cellIndex < row.length; cellIndex++) {
 				GridCellIterator entry = row[cellIndex];
-				int colspan = entry.colspan;
+				int colspan = entry.getColspan();
 				if (colspan > 1) {
 					int currentWidth = PaperClipsUtil.sum(colSizes,
 							columnIndex, colspan);
 
 					// Subtract column spacing so the weighted distribution of
 					// extra width stays proportional.
-					int minimumWidth = strategy.computeSize(entry.target).x
+					int minimumWidth = strategy.computeSize(entry.getTarget()).x
 							- horizontalSpacing * (colspan - 1);
 
 					if (currentWidth < minimumWidth) {
@@ -305,11 +310,11 @@ class GridIterator implements PrintIterator {
 				GridCellIterator entry = row[cellIndex];
 
 				// ignore explicitly sized cols
-				if (entry.colspan == 1 && !isExplicitSize(columns[col])) {
-					colSizes[col] = Math.max(colSizes[col], computeCellWidth(
-							entry, columns[col], strategy));
+				if (entry.getColspan() == 1 && !isExplicitSize(columns[col])) {
+					colSizes[col] = Math.max(colSizes[col],
+							computeCellWidth(entry, columns[col], strategy));
 				}
-				col += entry.colspan;
+				col += entry.getColspan();
 			}
 		}
 	}
@@ -433,16 +438,16 @@ class GridIterator implements PrintIterator {
 		if (header.length > 0)
 			height += computeHeaderHeight(margins, strategy);
 		else
-			height += Math.max(margins.getBodyTop(false, true), margins
-					.getBodyTop(false, false));
+			height += Math.max(margins.getBodyTop(false, true),
+					margins.getBodyTop(false, false));
 
 		height += computeMaxBodyRowHeight(strategy);
 
 		if (footer.length > 0)
 			height += computeFooterHeight(strategy, margins);
 		else
-			height += Math.max(margins.getBodyBottom(false, false), margins
-					.getBodyBottom(false, true));
+			height += Math.max(margins.getBodyBottom(false, false),
+					margins.getBodyBottom(false, true));
 
 		return new Point(width, height);
 	}
@@ -452,8 +457,8 @@ class GridIterator implements PrintIterator {
 		int headerHeight = margins.getHeaderTop()
 				+ margins.getHeaderVerticalSpacing()
 				* (header.length - 1)
-				+ Math.max(margins.getBodyTop(true, true), margins.getBodyTop(
-						true, false));
+				+ Math.max(margins.getBodyTop(true, true),
+						margins.getBodyTop(true, false));
 		for (int rowIndex = 0; rowIndex < header.length; rowIndex++) {
 			GridCellIterator[] row = header[rowIndex];
 			int col = 0;
@@ -461,9 +466,9 @@ class GridIterator implements PrintIterator {
 			for (int cellIndex = 0; cellIndex < row.length; cellIndex++) {
 				GridCellIterator entry = row[cellIndex];
 				// Find tallest cell in row.
-				rowHeight = Math.max(rowHeight, strategy
-						.computeSize(entry.target).y);
-				col += entry.colspan;
+				rowHeight = Math.max(rowHeight,
+						strategy.computeSize(entry.getTarget()).y);
+				col += entry.getColspan();
 			}
 			headerHeight += rowHeight;
 		}
@@ -478,9 +483,9 @@ class GridIterator implements PrintIterator {
 			for (int cellIndex = 0; cellIndex < row.length; cellIndex++) {
 				GridCellIterator entry = row[cellIndex];
 				// Find the greatest height of all cells' calculated sizes.
-				maxBodyRowHeight = Math.max(maxBodyRowHeight, strategy
-						.computeSize(entry.target).y);
-				col += entry.colspan;
+				maxBodyRowHeight = Math.max(maxBodyRowHeight,
+						strategy.computeSize(entry.getTarget()).y);
+				col += entry.getColspan();
 			}
 		}
 		return maxBodyRowHeight;
@@ -488,8 +493,8 @@ class GridIterator implements PrintIterator {
 
 	private int computeFooterHeight(PrintSizeStrategy strategy,
 			final GridMargins margins) {
-		int footerHeight = Math.max(margins.getBodyBottom(true, false), margins
-				.getBodyBottom(true, true))
+		int footerHeight = Math.max(margins.getBodyBottom(true, false),
+				margins.getBodyBottom(true, true))
 				+ margins.getFooterVerticalSpacing()
 				* (footer.length - 1)
 				+ margins.getFooterBottom();
@@ -500,9 +505,9 @@ class GridIterator implements PrintIterator {
 			for (int cellIndex = 0; cellIndex < row.length; cellIndex++) {
 				GridCellIterator entry = row[cellIndex];
 				// Find tallest cell in row.
-				rowHeight = Math.max(rowHeight, strategy
-						.computeSize(entry.target).y);
-				col += entry.colspan;
+				rowHeight = Math.max(rowHeight,
+						strategy.computeSize(entry.getTarget()).y);
+				col += entry.getColspan();
 			}
 			footerHeight += rowHeight;
 		}
@@ -676,7 +681,7 @@ class GridIterator implements PrintIterator {
 	private static boolean rowContainsNonDefaultVertAlignment(
 			final GridCellIterator[] cells) {
 		for (int i = 0; i < cells.length; i++)
-			if (!isDefaultVerticalAlignment(cells[i].vAlignment))
+			if (!isDefaultVerticalAlignment(cells[i].getVerticalAlignment()))
 				return true;
 		return false;
 	}
@@ -691,7 +696,7 @@ class GridIterator implements PrintIterator {
 		final int horzSpacing = look.getMargins().getHorizontalSpacing();
 		int col = 0;
 		for (int cellIndex = 0; cellIndex < cells.length; cellIndex++) {
-			int colspan = cells[cellIndex].colspan;
+			int colspan = cells[cellIndex].getColspan();
 			result[cellIndex] = (colspan - 1) * horzSpacing
 					+ PaperClipsUtil.sum(columnWidths, col, colspan);
 			col += colspan;
@@ -705,11 +710,11 @@ class GridIterator implements PrintIterator {
 		final PrintPiece[] pieces = new PrintPiece[cells.length];
 		for (int cellIndex = 0; cellIndex < cells.length; cellIndex++) {
 			final GridCellIterator cell = cells[cellIndex];
-			final PrintIterator iter = cell.target;
+			final PrintIterator iter = cell.getTarget();
 
 			final int cellWidth = cellWidths[cellIndex];
 
-			if (iter.hasNext() && cell.vAlignment != SWT.FILL) {
+			if (iter.hasNext() && cell.getVerticalAlignment() != SWT.FILL) {
 				PrintPiece piece = pieces[cellIndex] = PaperClips.next(iter,
 						cellWidth, height);
 				if ((piece == null) || (iter.hasNext() && !bottomOpen)) {
@@ -726,8 +731,9 @@ class GridIterator implements PrintIterator {
 		int maxHeight = 0;
 		for (int cellIndex = 0; cellIndex < cells.length; cellIndex++) {
 			GridCellIterator cell = cells[cellIndex];
-			if (cell.vAlignment == SWT.FILL)
-				maxHeight = Math.max(maxHeight, cell.target.minimumSize().y);
+			if (cell.getVerticalAlignment() == SWT.FILL)
+				maxHeight = Math.max(maxHeight,
+						cell.getTarget().minimumSize().y);
 			else if (cellPieces[cellIndex] != null)
 				maxHeight = Math.max(maxHeight,
 						cellPieces[cellIndex].getSize().y);
@@ -740,9 +746,9 @@ class GridIterator implements PrintIterator {
 			final int[] cellWidths, final PrintPiece[] cellPieces) {
 		for (int cellIndex = 0; cellIndex < cells.length; cellIndex++) {
 			GridCellIterator cell = cells[cellIndex];
-			PrintIterator iter = cell.target;
+			PrintIterator iter = cell.getTarget();
 
-			if (cell.vAlignment == SWT.FILL) {
+			if (cell.getVerticalAlignment() == SWT.FILL) {
 				PrintPiece piece = cellPieces[cellIndex] = PaperClips.next(
 						iter, cellWidths[cellIndex], height);
 				if (piece == null || iter.hasNext()) {
@@ -769,16 +775,16 @@ class GridIterator implements PrintIterator {
 			PrintPiece piece = pieces[cellIndex];
 			if (piece != null) {
 				Point size = piece.getSize();
-				int hAlignment = resolveHorzAlignment(cell.hAlignment,
-						columns[col].align);
+				int hAlignment = resolveHorzAlignment(
+						cell.getHorizontalAlignment(), columns[col].align);
 				xOffsets[cellIndex] += getHorzAlignmentOffset(hAlignment,
 						size.x, cellWidths[cellIndex]);
-				yOffsets[cellIndex] += getVertAlignmentOffset(cell.vAlignment,
-						size.y, rowHeight);
+				yOffsets[cellIndex] += getVertAlignmentOffset(
+						cell.getVerticalAlignment(), size.y, rowHeight);
 			}
 
 			x += cellWidths[cellIndex] + horzSpacing;
-			col += cell.colspan;
+			col += cell.getColspan();
 		}
 	}
 
@@ -819,7 +825,7 @@ class GridIterator implements PrintIterator {
 
 	private static boolean hasNext(GridCellIterator[] cells) {
 		for (int i = 0; i < cells.length; i++)
-			if (cells[i].target.hasNext())
+			if (cells[i].getTarget().hasNext())
 				return true;
 		return false;
 	}
@@ -873,10 +879,10 @@ class GridIterator implements PrintIterator {
 		final boolean bottomOpen = rowStarted;
 
 		return createResult(colSizes, headerPiece, headerHeights,
-				headerColSpans, firstRow, topOpen, bodyPiece, PaperClipsUtil
-						.toIntArray(bodyRows), PaperClipsUtil
-						.toIntIntArray(bodyColSpans), bottomOpen, footerPiece,
-				footerHeights, footerColSpans);
+				headerColSpans, firstRow, topOpen, bodyPiece,
+				PaperClipsUtil.toIntArray(bodyRows),
+				PaperClipsUtil.toIntIntArray(bodyColSpans), bottomOpen,
+				footerPiece, footerHeights, footerColSpans);
 	}
 
 	private PrintPiece nextHeaderPiece(final int[] colSizes, final int height,
@@ -901,7 +907,7 @@ class GridIterator implements PrintIterator {
 
 			colSpans[rowIndex] = new int[row.length];
 			for (int cellIndex = 0; cellIndex < row.length; cellIndex++)
-				colSpans[rowIndex][cellIndex] = row[cellIndex].colspan;
+				colSpans[rowIndex][cellIndex] = row[cellIndex].getColspan();
 
 			PrintPiece rowPiece = nextRow(row, colSizes, height - y, false);
 			boolean hasNext = hasNext(row);
@@ -958,7 +964,7 @@ class GridIterator implements PrintIterator {
 
 			final int[] rowColSpans = new int[thisRow.length];
 			for (int cellIndex = 0; cellIndex < rowColSpans.length; cellIndex++)
-				rowColSpans[cellIndex] = thisRow[cellIndex].colspan;
+				rowColSpans[cellIndex] = thisRow[cellIndex].getColspan();
 			colSpans.add(rowColSpans);
 
 			final int rowHeight = rowPiece.getSize().y;

@@ -12,6 +12,7 @@ package org.eclipse.nebula.paperclips.core.grid;
 
 import org.eclipse.nebula.paperclips.core.border.Border;
 import org.eclipse.nebula.paperclips.core.border.GapBorder;
+import org.eclipse.nebula.paperclips.core.grid.internal.DefaultGridLookPainter;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;

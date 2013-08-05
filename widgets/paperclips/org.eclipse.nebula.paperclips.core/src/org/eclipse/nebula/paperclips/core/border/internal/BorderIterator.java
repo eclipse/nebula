@@ -9,29 +9,31 @@
  *     Matthew Hall - initial API and implementation
  */
 
-package org.eclipse.nebula.paperclips.core.border;
+package org.eclipse.nebula.paperclips.core.border.internal;
 
 import org.eclipse.nebula.paperclips.core.PaperClips;
 import org.eclipse.nebula.paperclips.core.PrintIterator;
 import org.eclipse.nebula.paperclips.core.PrintPiece;
+import org.eclipse.nebula.paperclips.core.border.BorderPainter;
+import org.eclipse.nebula.paperclips.core.border.BorderPrint;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 
-class BorderIterator implements PrintIterator {
+public class BorderIterator implements PrintIterator {
 	private final BorderPainter border;
 
 	private PrintIterator target;
 	private boolean opened;
 
-	BorderIterator(BorderPrint print, Device device, GC gc) {
-		this.border = print.border.createPainter(device, gc);
+	public BorderIterator(BorderPrint print, Device device, GC gc) {
+		this.border = print.getBorder().createPainter(device, gc);
 
-		this.target = print.target.iterator(device, gc);
+		this.target = print.getTarget().iterator(device, gc);
 		this.opened = false;
 	}
 
-	BorderIterator(BorderIterator that) {
+	public BorderIterator(BorderIterator that) {
 		this.border = that.border;
 
 		this.target = that.target.copy();

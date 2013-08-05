@@ -9,14 +9,15 @@
  *     Matthew Hall - initial API and implementation
  */
 
-package org.eclipse.nebula.paperclips.core.border;
+package org.eclipse.nebula.paperclips.core.border.internal;
 
 import org.eclipse.nebula.paperclips.core.PrintPiece;
+import org.eclipse.nebula.paperclips.core.border.BorderPainter;
 import org.eclipse.nebula.paperclips.core.internal.util.Util;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 
-class BorderPiece implements PrintPiece {
+public class BorderPiece implements PrintPiece {
 	private final PrintPiece target;
 
 	private final BorderPainter border;
@@ -27,8 +28,8 @@ class BorderPiece implements PrintPiece {
 
 	private final Point size;
 
-	BorderPiece(PrintPiece target, BorderPainter border, boolean topOpen,
-			boolean bottomOpen) {
+	public BorderPiece(PrintPiece target, BorderPainter border,
+			boolean topOpen, boolean bottomOpen) {
 		Util.notNull(target, border);
 		this.target = target;
 		this.border = border;

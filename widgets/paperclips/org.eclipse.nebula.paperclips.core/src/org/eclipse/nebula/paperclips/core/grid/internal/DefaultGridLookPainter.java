@@ -9,9 +9,13 @@
  *     Matthew Hall - initial API and implementation
  */
 
-package org.eclipse.nebula.paperclips.core.grid;
+package org.eclipse.nebula.paperclips.core.grid.internal;
 
 import org.eclipse.nebula.paperclips.core.border.BorderPainter;
+import org.eclipse.nebula.paperclips.core.grid.BasicGridLookPainter;
+import org.eclipse.nebula.paperclips.core.grid.CellBackgroundProvider;
+import org.eclipse.nebula.paperclips.core.grid.DefaultGridLook;
+import org.eclipse.nebula.paperclips.core.grid.GridMargins;
 import org.eclipse.nebula.paperclips.core.internal.util.ResourcePool;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Device;
@@ -20,7 +24,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 
-class DefaultGridLookPainter extends BasicGridLookPainter {
+public class DefaultGridLookPainter extends BasicGridLookPainter {
 	private final Rectangle cellPadding;
 
 	private final BorderPainter border;
@@ -33,52 +37,52 @@ class DefaultGridLookPainter extends BasicGridLookPainter {
 
 	private final ResourcePool resources;
 
-	DefaultGridLookPainter(DefaultGridLook look, Device device, GC gc) {
+	public DefaultGridLookPainter(DefaultGridLook look, Device device, GC gc) {
 		super(device);
 
 		Point dpi = device.getDPI();
 
-		this.border = look.cellBorder.createPainter(device, gc);
+		this.border = look.getCellBorder().createPainter(device, gc);
 		this.cellPadding = calculateCellPadding(look, dpi);
 		this.margins = calculateGridMargins(look, dpi);
 
-		this.bodyBackground = look.bodyBackgroundProvider;
-		this.headerBackground = look.headerBackgroundProvider;
-		this.footerBackground = look.footerBackgroundProvider;
+		this.bodyBackground = look.getBodyBackgroundProvider();
+		this.headerBackground = look.getHeaderBackgroundProvider();
+		this.footerBackground = look.getFooterBackgroundProvider();
 
 		this.resources = ResourcePool.forDevice(device);
 	}
 
 	private Rectangle calculateCellPadding(DefaultGridLook look, Point dpi) {
-		Rectangle cellPadding = new Rectangle(look.cellPadding.x * dpi.x / 72,
-				look.cellPadding.y * dpi.y / 72, look.cellPadding.width * dpi.x
-						/ 72, look.cellPadding.height * dpi.y / 72);
+		Rectangle cellPadding = new Rectangle(look.getCellPadding().x * dpi.x
+				/ 72, look.getCellPadding().y * dpi.y / 72,
+				look.getCellPadding().width * dpi.x / 72,
+				look.getCellPadding().height * dpi.y / 72);
 		return cellPadding;
 	}
 
 	private GridMargins calculateGridMargins(DefaultGridLook look, Point dpi) {
 		final Point cellSpacing = new Point(
 				border.getWidth()
-						+ (look.cellSpacing.x == DefaultGridLook.BORDER_OVERLAP ? -border
-								.getOverlap().x
-								: dpi.x * look.cellSpacing.x / 72),
+						+ (look.getCellSpacing().x == DefaultGridLook.BORDER_OVERLAP ? -border.getOverlap().x
+								: dpi.x * look.getCellSpacing().x / 72),
 				border.getHeight(false, false)
-						+ (look.cellSpacing.y == DefaultGridLook.BORDER_OVERLAP ? -border
-								.getOverlap().y
-								: dpi.y * look.cellSpacing.y / 72));
+						+ (look.getCellSpacing().y == DefaultGridLook.BORDER_OVERLAP ? -border
+								.getOverlap().y : dpi.y
+								* look.getCellSpacing().y / 72));
 
 		final int headerClosedSpacing = border.getHeight(false, false)
-				+ (look.headerGap == DefaultGridLook.BORDER_OVERLAP ? -border
-						.getOverlap().y : dpi.y * look.headerGap / 72);
+				+ (look.getHeaderGap() == DefaultGridLook.BORDER_OVERLAP ? -border
+						.getOverlap().y : dpi.y * look.getHeaderGap() / 72);
 		final int headerOpenSpacing = border.getHeight(true, false)
-				+ (look.headerGap == DefaultGridLook.BORDER_OVERLAP ? dpi.y / 72
-						: dpi.y * look.headerGap / 72);
+				+ (look.getHeaderGap() == DefaultGridLook.BORDER_OVERLAP ? dpi.y / 72
+						: dpi.y * look.getHeaderGap() / 72);
 		final int footerClosedSpacing = border.getHeight(false, false)
-				+ (look.footerGap == DefaultGridLook.BORDER_OVERLAP ? -border
-						.getOverlap().y : dpi.y * look.footerGap / 72);
+				+ (look.getFooterGap() == DefaultGridLook.BORDER_OVERLAP ? -border
+						.getOverlap().y : dpi.y * look.getFooterGap() / 72);
 		final int footerOpenSpacing = border.getHeight(false, true)
-				+ (look.footerGap == DefaultGridLook.BORDER_OVERLAP ? dpi.y / 72
-						: dpi.y * look.footerGap / 72);
+				+ (look.getFooterGap() == DefaultGridLook.BORDER_OVERLAP ? dpi.y / 72
+						: dpi.y * look.getFooterGap() / 72);
 
 		return new DefaultGridMargins(border, cellSpacing, cellPadding,
 				headerClosedSpacing, headerOpenSpacing, footerClosedSpacing,

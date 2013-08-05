@@ -8,11 +8,11 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation
  */
-package org.eclipse.nebula.paperclips.core.text;
+package org.eclipse.nebula.paperclips.core.text.internal;
 
 import org.eclipse.nebula.paperclips.core.PrintPiece;
 
-interface TextPrintPiece extends PrintPiece {
+public interface TextPrintPiece extends PrintPiece {
 	/**
 	 * Returns the ascent of the first line of text, in pixels.
 	 * 
