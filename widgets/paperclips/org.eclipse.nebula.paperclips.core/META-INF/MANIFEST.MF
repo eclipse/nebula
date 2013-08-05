@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: PaperClips Core Plug-in
 Bundle-SymbolicName: org.eclipse.nebula.paperclips.core
 Bundle-Version: 2.1.0.qualifier
-Bundle-Vendor: Matthew Hall and others
+Bundle-Vendor: Eclipse.org
 Require-Bundle: org.eclipse.swt;bundle-version="[3.2.0,4.0.0)"
 Export-Package: org.eclipse.nebula.paperclips.core,
  org.eclipse.nebula.paperclips.core.border,
