@@ -14,6 +14,7 @@ package org.eclipse.nebula.widgets.ganttchart;
 import java.util.Calendar;
 import java.util.Random;
 
+import org.eclipse.nebula.widgets.ganttchart.print.GanttChartPrinter;
 import org.eclipse.nebula.widgets.ganttchart.undoredo.GanttUndoRedoManager;
 import org.eclipse.nebula.widgets.ganttchart.undoredo.IUndoRedoListener;
 import org.eclipse.swt.SWT;
@@ -84,6 +85,8 @@ public class GanttChart extends Composite {
 	private ILanguageManager			_languageManager;
 
 	private Calendar[] 					_holidays;
+	
+	private GanttChartPrinter			_printer;
 
 	/**
 	 * Constructs a new GANTT chart widget. For styles, please see {@link GanttFlags}.
@@ -175,6 +178,8 @@ public class GanttChart extends Composite {
 		_languageManager = languageManager;
 		
 		_holidays = holidays;
+		
+		_printer = new GanttChartPrinter(this);
 		
 		init();
 	}
@@ -384,7 +389,21 @@ public class GanttChart extends Composite {
 		cal.add(Calendar.DATE, -random.nextInt(10));
 		cal2.add(Calendar.DATE, random.nextInt(10)+1);
 	
-		return new GanttEvent(this, "Random Event", cal, cal2, random.nextInt(100));
+		return new GanttEvent(this, "Random Event", cal, cal2, random.nextInt(100)); //$NON-NLS-1$
 	}
 
+	/**
+	 * Set a different GanttChartPrinter that should be used to print this GanttChart.
+	 * @param printer The GanttChartPrinter that should be used to print this GanttChart.
+	 */
+	public void setGanttChartPrinter(GanttChartPrinter printer) {
+		this._printer = printer;
+	}
+	
+	/**
+	 * Will print the GanttChart based on the settings made in the PrintDialog.
+	 */
+	public void print() {
+		_printer.print();
+	}
 }

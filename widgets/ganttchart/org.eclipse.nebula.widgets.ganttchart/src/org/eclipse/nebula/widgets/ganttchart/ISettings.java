@@ -1131,4 +1131,26 @@ public interface ISettings {
      * 			<code>false</code> if only the current dragged event should be moved.
      */
     public boolean alwaysDragAllEvents();
+    
+    /**
+     * On printing a GanttChart it is possible to select to print only the selected area.
+     * For GanttChart this means to print the currently visible area. By default currently
+     * visible means vertically AND horizontally visible. This configuration allows to 
+     * specify whether the vertical part should extend to the whole chart and only the
+     * horizontal area should be limited for the visible part.
+     * @return <code>true</code> if the printed chart should contain the whole chart
+     * 			vertically but only the horizontal visible part of the chart,
+     * 			<code>false</code> if only the visible part of the chart should be printed,
+     * 			horizontally AND vertically
+     */
+    public boolean printSelectedVerticallyComplete();
+    
+    /**
+     * Configure whether a footer should be added to the print pages or not.
+     * The footer contains the page number and the date when the print was
+     * requested.
+     * @return <code>true</code> if a footer should be added to the print pages,
+     * 			<code>false</code> if not
+     */
+    public boolean printFooter();
 }

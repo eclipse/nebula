@@ -538,4 +538,12 @@ public abstract class AbstractSettings implements ISettings {
     public boolean alwaysDragAllEvents() {
     	return false;
     }
+    
+    public boolean printSelectedVerticallyComplete() {
+    	return false;
+    }
+    
+    public boolean printFooter() {
+    	return true;
+    }
 }

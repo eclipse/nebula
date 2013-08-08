@@ -151,4 +151,18 @@ public interface ILanguageManager {
 	 * @return Text
 	 */
 	String getNewEventDefaultText();
+	
+	/**
+	 * The default text of the print job
+	 * 
+	 * @return Text
+	 */
+	String getPrintJobText();
+	
+	/**
+	 * The default text for the page prefix in the print footer
+	 * 
+	 * @return Text
+	 */
+	String getPrintPageText();
 }

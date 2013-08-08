@@ -88,4 +88,11 @@ public abstract class AbstractLanguageManager implements ILanguageManager {
 		return "Event";
 	}
 
+	public String getPrintJobText() {
+		return "GanttChart";
+	}
+	
+	public String getPrintPageText() {
+		return "Page";
+	}
 }
