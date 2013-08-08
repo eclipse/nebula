@@ -12,13 +12,11 @@
 package org.eclipse.nebula.widgets.ganttchart;
 
 import java.util.StringTokenizer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+import org.eclipse.nebula.widgets.ganttchart.utils.TextPainterHelper;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -97,7 +95,7 @@ public class AdvancedTooltipDialog {
 					gc.setForeground(colorManager.getAdvancedTooltipTextColor());
 					gc.setFont(bold);
 					final Point point = gc.stringExtent(title);
-					drawText(gc, title, x, y);
+					TextPainterHelper.drawText(gc, title, x, y);
 					// gc.drawString(title, x, y, true);
 					gc.setFont(old);
 
@@ -144,12 +142,12 @@ public class AdvancedTooltipDialog {
 					// first we space it vertically
 					textY += 13;
 
-					final StringTokenizer tokenizer = new StringTokenizer(content, "\n");
+					final StringTokenizer tokenizer = new StringTokenizer(content, "\n"); //$NON-NLS-1$
 
 					int widestLine = 0;
 					while (tokenizer.hasMoreTokens()) {
 					    final String token = tokenizer.nextToken();
-					    final Point extent = drawText(gc, token, x, textY);
+					    final Point extent = TextPainterHelper.drawText(gc, token, x, textY);
 						textY += extent.y;
 						widestLine = Math.max(widestLine, extent.x);
 					}
@@ -329,166 +327,6 @@ public class AdvancedTooltipDialog {
 		// bottom left
 		gc.drawLine(bounds.x + 1, bounds.y + bounds.height - 2, bounds.x + 1, bounds.y + bounds.height - 2);
 
-	}
-
-	private static Point drawText(final GC gc, final String text, final int x, final int y) {
-		Pattern pattern = Pattern.compile("(\\\\(ce|c[0-9]{9}|s[0-9]{1,3}|[xbi]))*[^\\\\]*");
-
-        try {
-            final Font old = gc.getFont();
-            Font used = null;
-            final String oldName = old.getFontData()[0].getName();
-            final int oldSize = (int) old.getFontData()[0].height;
-
-            int curX = x;
-            boolean bold = false;
-            boolean italic = false;
-            int size = oldSize;
-            Color fg = ColorCache.getBlack();
-
-            int maxWidth = 0;
-            int maxHeight = 0;
-
-    		Matcher matcher = pattern.matcher(text);
-
-    		while (matcher.find()) {
-    			String token = matcher.group();
-
-                if (isNormalize(token)) {
-                    bold = false;
-                    italic = false;
-                    size = oldSize;
-                    fg = ColorCache.getBlack();
-                }
-                else {
-                    final int newSize = getSize(token);
-                    if (newSize != size && newSize != -1) {
-                        size = newSize;
-                    }
-
-                    final boolean newBold = isBold(token);
-                    if (bold && !newBold) {
-                        bold = true;
-                    }
-                    else {
-                        bold = newBold;
-                    }
-
-                    final boolean newItalic = isItalic(token);
-                    if (italic && !newItalic) {
-                        italic = true;
-                    }
-                    else {
-                        italic = newItalic;
-                    }
-
-                    final Color newColor = getColor(token);
-                    if (newColor != null && !newColor.equals(fg)) {
-                            fg = newColor;
-                        }
-                    }
-
-                if (fg != null) {
-                    gc.setForeground(fg);
-                }
-
-                token = cleanUp(token);
-
-                int style = SWT.NORMAL;
-                if (bold) {
-                    style |= SWT.BOLD;
-                }
-                if (italic) {
-                    style |= SWT.ITALIC;
-                }
-
-                used = new Font(Display.getDefault(), oldName, size, style); // NOPMD
-                gc.setFont(used);
-
-                if (token.length() != 0) {
-                    gc.drawText(token, curX, y, true);
-                    final int extX = gc.textExtent(token).x;
-                    final int extY = gc.textExtent(token).y;
-                    curX += extX;
-
-                    maxWidth = Math.max(maxWidth, curX);
-                    maxHeight = Math.max(maxHeight, extY);
-                }
-
-                used.dispose();
-            }
-
-            gc.setFont(old);
-            return new Point(maxWidth - x, maxHeight);
-        }
-        catch (Exception err) {
-            SWT.error(SWT.ERROR_UNSPECIFIED, err);
-        }
-
-        return null;
-    }
-
-	private static String cleanUp(final String string) {
-	    String str = string;
-		str = str.replaceAll("\\\\ce", "");
-		str = str.replaceAll("\\\\c[0-9]{9}", "");
-		str = str.replaceAll("\\\\s[0-9]{1,3}", "");
-		str = str.replaceAll("\\\\x", "");
-		str = str.replaceAll("\\\\b", "");
-		str = str.replaceAll("\\\\i", "");
-		return str;
-	}
-
-	private static boolean isNormalize(final String str) {
-		return str.indexOf("\\x") > -1;
-	}
-
-	private static boolean isBold(final String str) {
-		return str.indexOf("\\b") > -1;
-	}
-
-	private static boolean isItalic(final String str) {
-		return str.indexOf("\\i") > -1;
-	}
-
-	private static int getSize(final String str) {
-		Pattern pattern = Pattern.compile("\\\\s[0-9]{1,3}");
-		Matcher matcher = pattern.matcher(str);
-		if (matcher.find()) {
-			String sizeString = matcher.group();
-			sizeString = sizeString.substring(2);
-
-		try {
-				return Integer.parseInt(sizeString);
-		} catch (Exception badParse) {
-			SWT.error(SWT.ERROR_UNSPECIFIED, badParse);
-		}
-		}
-
-		return -1;
-	}
-
-	private static Color getColor(final String str) {
-	    final int start = str.indexOf("\\c");
-		if (start == -1) {
-			return null;
-		}
-
-		if (str.indexOf("\\ce") != -1) {
-			return ColorCache.getBlack();
-		}
-
-		try {
-		    final int red = Integer.parseInt(str.substring(start + 2, start + 5));
-		    final int green = Integer.parseInt(str.substring(start + 5, start + 8));
-		    final int blue = Integer.parseInt(str.substring(start + 8, start + 11));
-
-			return ColorCache.getColor(red, green, blue);
-		} catch (Exception err) {
-			SWT.error(SWT.ERROR_UNSPECIFIED, err);
-		}
-
-		return ColorCache.getBlack();
 	}
 
 	public static void kill() {

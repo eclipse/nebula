@@ -165,4 +165,12 @@ public interface ILanguageManager {
 	 * @return Text
 	 */
 	String getPrintPageText();
+	
+	/**
+	 * The default text that gets rendered before the plus icon
+	 * in the section detail area.
+	 * 
+	 * @return Text
+	 */
+	String getSectionDetailMoreText();
 }

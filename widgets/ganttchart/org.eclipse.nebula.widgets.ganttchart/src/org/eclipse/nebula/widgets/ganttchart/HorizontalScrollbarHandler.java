@@ -191,7 +191,13 @@ class HorizontalScrollbarHandler implements Listener {
 			int rangeBonus = 0;
 
 			// take sections into account
-			int gSectionWidth = _gc.getSettings().getSectionBarWidth();
+			int gSectionWidth = 0;
+			if (_gc.getSettings().drawSectionBar()) {
+				gSectionWidth += _gc.getSettings().getSectionBarWidth();
+			}
+			if (_gc.getSettings().drawSectionDetails()) {
+				gSectionWidth += _gc.getSettings().getSectionDetailWidth();
+			}
 			if (_gc.isShowingGanttSections()) {			
 				if (_gc.getSettings().getSectionSide() == SWT.LEFT) {
 					xStart = gSectionWidth;

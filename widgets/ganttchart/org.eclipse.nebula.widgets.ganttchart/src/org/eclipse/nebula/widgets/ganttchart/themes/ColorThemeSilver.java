@@ -12,6 +12,7 @@
 package org.eclipse.nebula.widgets.ganttchart.themes;
 
 import org.eclipse.nebula.widgets.ganttchart.ColorCache;
+import org.eclipse.nebula.widgets.ganttchart.GanttSection;
 import org.eclipse.nebula.widgets.ganttchart.IColorManager;
 import org.eclipse.swt.graphics.Color;
 
@@ -331,6 +332,18 @@ public class ColorThemeSilver implements IColorManager {
 
 	public Color getPeriodLineColor() {
         return ColorCache.getColor(255, 0, 0);
+	}
+
+	public Color getSectionDetailAreaForegroundColor(GanttSection section) {
+		return getWeekdayBackgroundColorTop();
+	}
+	
+	public Color getSectionDetailAreaBackgroundColor(GanttSection section) {
+		return getWeekdayBackgroundColorBottom();
+	}
+	
+	public boolean drawSectionDetailGradientTopDown() {
+		return true;
 	}
 
 }

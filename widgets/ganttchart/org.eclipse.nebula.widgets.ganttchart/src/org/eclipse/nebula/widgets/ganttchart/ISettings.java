@@ -1092,8 +1092,20 @@ public interface ISettings {
      */
     public int getMinZoomLevel();
     
+    /**
+     * Specify a period start. Returning another value than <code>null</code> will result in rendering
+     * an additional line to the chart indicating a period start in the gantt itself.
+     * 
+     * @return
+     */
     public Calendar getPeriodStart();
     
+    /**
+     * Specify a period end. Returning another value than <code>null</code> will result in rendering
+     * an additional line to the chart indicating a period end in the gantt itself.
+     * 
+     * @return
+     */
     public Calendar getPeriodEnd();
     
     /**
@@ -1153,4 +1165,57 @@ public interface ISettings {
      * 			<code>false</code> if not
      */
     public boolean printFooter();
+    
+    /**
+     * Configure whether the section bar should be rendered. It only makes sense
+     * to not render the section bar if the section details are enabled.
+     * 
+     * @return <code>true</code> if the section bar should
+     * 			be rendered, <code>false</code> if not
+     */
+    public boolean drawSectionBar();
+    
+    /**
+     * Configure whether there should be an additional area to the section bar
+     * that shows additional section detail information.
+     * 
+     * @return <code>true</code> if additional section detail information should
+     * 			be rendered, <code>false</code> if not
+     */
+    public boolean drawSectionDetails();
+    
+    /**
+     * @return The width of the section detail area.
+     */
+    public int getSectionDetailWidth(); 
+
+    /**
+     * The section detail area title that should be rendered in the section detail area.
+     * 
+     * @return String or null. Default is a bold black text showing the section name.
+     */
+    public String getSectionDetailTitle();
+
+    /**
+     * The detail information that should be rendered in the section detail area.
+     * 
+     * @return String or null. Default is to show the number of events in that section.
+     */
+    public String getSectionDetailText();
+
+    /**
+     * Returns the custom section detail generator which generates the section detail
+     * out of custom data for a GanttSection.
+     * 
+     * @return
+     */
+    public ISectionDetailContentReplacer getSectionDetailContentReplacer();
+
+    /**
+     * 
+     * @return <code>true</code> if there should be a "more [+]" shown in the section
+     * 			detail area which allows to register a listener against to show more
+     * 			informations by e.g. opening a dialog.
+     */
+    public boolean showSectionDetailMore();
 }

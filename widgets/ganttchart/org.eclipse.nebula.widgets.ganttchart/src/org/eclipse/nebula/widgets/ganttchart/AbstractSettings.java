@@ -546,4 +546,32 @@ public abstract class AbstractSettings implements ISettings {
     public boolean printFooter() {
     	return true;
     }
+ 
+    public boolean drawSectionBar() {
+    	return true;
+    }
+    
+    public boolean drawSectionDetails() {
+    	return false;
+    }
+    
+    public int getSectionDetailWidth() {
+    	return 100;
+    }
+    
+    public String getSectionDetailTitle() {
+    	return "\\b\\s8\\ce#name#";
+    }
+    
+    public String getSectionDetailText() {
+		return "\\ceEvents: #ne#";
+    }
+    
+    public ISectionDetailContentReplacer getSectionDetailContentReplacer() {
+    	return null;
+    }
+    
+    public boolean showSectionDetailMore() {
+    	return false;
+    }
 }

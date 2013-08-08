@@ -45,6 +45,32 @@ public class Utils {
 	}
 
 	/**
+	 * Takes a font and gives it the typeface of the given style.
+	 * 
+	 * @param font Font to modify
+	 * @param style the new style for the given font (e.g. SWT.BOLD|SWT.ITALIC)
+	 * @param size New font size
+	 * @return Font with the given typeface and size
+	 */
+	public static Font applyFontData(final Font font, int style, int size) {
+		if (font == null) {
+			return null;
+		}
+
+		final FontData[] fontDataArray = font.getFontData();
+		if (fontDataArray == null) {
+			return null;
+		}
+		for (int index = 0; index < fontDataArray.length; index++) {
+		    final FontData fData = fontDataArray[index];
+			fData.setStyle(style);
+			fData.setHeight(size);
+		}
+
+		return new Font(Display.getDefault(), fontDataArray);
+	}
+
+	/**
 	 * Applies a certain font size to a font.
 	 * 
 	 * @param font Font to modify

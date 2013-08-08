@@ -334,4 +334,15 @@ public abstract class AbstractColorManager implements IColorManager {
         return ColorCache.getColor(255, 0, 0);
 	}
 
+	public Color getSectionDetailAreaForegroundColor(GanttSection section) {
+		return getWeekdayBackgroundColorTop();
+	}
+	
+	public Color getSectionDetailAreaBackgroundColor(GanttSection section) {
+		return getWeekdayBackgroundColorBottom();
+	}
+	
+	public boolean drawSectionDetailGradientTopDown() {
+		return true;
+	}
 }

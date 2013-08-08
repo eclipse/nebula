@@ -23,12 +23,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.eclipse.nebula.widgets.ganttchart.dnd.VerticalDragDropManager;
 import org.eclipse.nebula.widgets.ganttchart.undoredo.GanttUndoRedoManager;
 import org.eclipse.nebula.widgets.ganttchart.undoredo.commands.ClusteredCommand;
 import org.eclipse.nebula.widgets.ganttchart.undoredo.commands.EventMoveCommand;
 import org.eclipse.nebula.widgets.ganttchart.undoredo.commands.IUndoRedoCommand;
+import org.eclipse.nebula.widgets.ganttchart.utils.TextPainterHelper;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -335,6 +337,10 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     
     private IZoomHandler zoomHandler;
     
+    private Map sectionDetailMoreIcons = null;
+    
+    private List sectionDetailMoreClickListener = new ArrayList();
+    
     static {
         final String osProperty = System.getProperty("os.name");
         if (osProperty != null) {
@@ -448,6 +454,11 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         
         this.holidays = holidays;
         this.zoomHandler = this;
+    	
+		if (_settings.showSectionDetailMore()) {
+			this.sectionDetailMoreIcons = new HashMap();
+		}
+
     }
 
     // midnight "thread" (we need to redraw the screen once at Midnight as the date line will otherwise be incorrect)
@@ -1103,10 +1114,17 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
         // if we use sections, our bounds for everything will be the size of the client area minus the section bar on the left
         if (drawSections) {
+        	int sectionWidth = 0;
+        	if (_settings.drawSectionBar()) {
+        		sectionWidth += _settings.getSectionBarWidth();
+        	}
+        	if (_settings.drawSectionDetails()) {
+        		sectionWidth += _settings.getSectionDetailWidth();
+        	}
             if (_settings.getSectionSide() == SWT.LEFT) {
-                bounds = new Rectangle(_settings.getSectionBarWidth(), bounds.y, bounds.width - _settings.getSectionBarWidth(), bounds.height);
+                bounds = new Rectangle(sectionWidth, bounds.y, bounds.width - sectionWidth, bounds.height);
             } else {
-                bounds = new Rectangle(0, bounds.y, bounds.width - _settings.getSectionBarWidth(), bounds.height);
+                bounds = new Rectangle(0, bounds.y, bounds.width - sectionWidth, bounds.height);
             }
         }
 
@@ -1150,7 +1168,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             else {
             	//draw the background for the bottom of the gantt chart as on Win7 it would be transparent
                 final int dayWidth = (_currentView == ISettings.VIEW_WEEK || _currentView == ISettings.VIEW_D_DAY ? _dayWidth : _monthDayWidth);
-                final int maxX = bounds.width + dayWidth; // we need to draw beyond 1 day as the days at the edge of the viewport also needs to be filled in case a half-day is visible there
+                int maxX = bounds.width + dayWidth; // we need to draw beyond 1 day as the days at the edge of the viewport also needs to be filled in case a half-day is visible there
                 int startX = bounds.x;
 
                 int offset = _vScrollPos;
@@ -1158,6 +1176,17 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                     offset = getHeaderHeight();
                 }
 
+                if (hasGanttSections()) {
+                	if (_settings.drawSectionBar()) {
+                		startX -= _settings.getSectionBarWidth();
+                		maxX += _settings.getSectionBarWidth();
+                	}
+                	if (_settings.drawSectionDetails()) {
+                		startX -= _settings.getSectionDetailWidth();
+                		maxX += _settings.getSectionDetailWidth();
+                	}
+                }
+                
                 final int startY = bounds.y - offset;
                 final int heightY = bounds.height;
 
@@ -1757,7 +1786,11 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
             Point extent = null;
             if (gs.needsNameUpdate() || gs.getNameExtent() == null) {
-                extent = gc.textExtent(gs.getName(), SWT.DRAW_DELIMITER);
+                if (_settings.drawSectionBar()) {
+                	extent = gc.textExtent(gs.getName(), SWT.DRAW_DELIMITER);
+                } else {
+                	extent = new Point(0, 0);
+                }
                 gs.setNameExtent(extent);
                 gs.setNeedsNameUpdate(false);
             } else {
@@ -1768,6 +1801,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             if (gs.getTextOrientation() == SWT.HORIZONTAL) {
                 strHeight = extent.y;
             }
+            
             final int gsHeight = gs.getEventsHeight(_settings);
             int height = Math.max(gsHeight, strHeight);
 
@@ -1991,8 +2025,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         // drawing in the middle, also speeds it up as we only draw it once
         if (_savingChartImage && rightSide && !force) { return; }
 
-        int xMax = _settings.getSectionBarWidth() - 1;
-
+        int barWidth = _settings.drawSectionBar() ? _settings.getSectionBarWidth() - 1 : 3;
+        
         final int horiSpacer = 3;
 
         // calculate max width if any section is horizontal
@@ -2001,38 +2035,62 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             if (gs.getTextOrientation() == SWT.HORIZONTAL) {
                 Point p = null;
                 if (gs.needsNameUpdate() || gs.getNameExtent() == null) {
-                	p = gc.textExtent(gs.getName(), SWT.DRAW_DELIMITER);
+                    if (_settings.drawSectionBar()) {
+                    	p = gc.textExtent(gs.getName(), SWT.DRAW_DELIMITER);
+                    } else {
+                    	p = new Point(0, 0);
+                    }
                     gs.setNameExtent(p);
                     gs.setNeedsNameUpdate(false);
                 } else {
                     p = gs.getNameExtent();
                 }
 
-                xMax = Math.max(xMax, p.x + (horiSpacer * 2));
+                barWidth = Math.max(barWidth, p.x + (horiSpacer * 2));
             }
         }
 
-        int lineLoc = getHeaderHeight() == 0 ? bounds.y : (bounds.y + getHeaderHeight());
+        int xMax = barWidth;
+        
+        if (_settings.drawSectionDetails() && rightSide) {
+        	xMax += _settings.getSectionDetailWidth();
+        }
+
+        int lineLoc = getHeaderHeight() == 0 ? bounds.y : (bounds.y + getHeaderHeight()) -1;
         int yStart = lineLoc;
         yStart -= _vScrollPos;
 
-        int x = 0;
+        int sectionBarX = 0;
 
         if (rightSide) {
             if (forceUsageOfBounds) {
-                x = bounds.width - xMax;
+                sectionBarX = bounds.width - xMax;
             } else {
-                x = super.getClientArea().width - xMax;
+                sectionBarX = super.getClientArea().width - xMax;
             }
         } else {
-            x = 0;
+            sectionBarX = 0;
         }
 
         int neg = 0;
         if (rightSide) {
-            neg = -_settings.getSectionBarWidth();
+        	neg = -xMax;
         }
 
+        //take space for section details into account
+        int sectionDetailX = 0;
+        if (_settings.drawSectionDetails()) {
+        	if (rightSide) {
+        		sectionDetailX = sectionBarX + _settings.getSectionBarWidth();
+        	}
+        	else {
+        		sectionDetailX = sectionBarX;
+        		sectionBarX += _settings.getSectionDetailWidth();
+        	}
+        }
+
+        int sectionStartXPos = (rightSide ? sectionBarX : sectionDetailX) - 1;
+        
         final GanttSection bottomSection = (GanttSection) _ganttSections.get(_ganttSections.size() - 1);
 
         if (drawCornerOnly) {
@@ -2044,17 +2102,18 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         gc.setBackground(_colorManager.getNonActiveSessionBarColorRight());
 
         int bottomPos = _settings.drawGanttSectionBarToBottom() ? _mainBounds.y + _mainBounds.height : lineLoc;
+        
         // if we're only drawing a corner, do not draw to the bottom regardless of settings or we'll paint over the text and section markers etc.
         // this fix to bugzilla #304804 - Thanks Wim!
         if (drawCornerOnly) {
             bottomPos = getHeaderHeight();//lineLoc - _vScrollPos;
         }
-
-        gc.fillGradientRectangle(x, 0, xMax + 1, bottomPos, false);
+        
+        gc.fillGradientRectangle(sectionStartXPos, 0, xMax + 1 + sectionBarX, bottomPos, false);
 
         gc.setForeground(_colorManager.getTopHorizontalLinesColor());
         // vertical
-        gc.drawLine(x + xMax + neg, 0, x + xMax + neg, bottomSection.getBounds().y + bottomSection.getBounds().height - 1);
+        gc.drawLine(sectionBarX + xMax + neg, 0, sectionBarX + xMax + neg, bottomSection.getBounds().y + bottomSection.getBounds().height - 1);
 
         if (!drawCornerOnly) {
 
@@ -2065,32 +2124,45 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
                 gc.setForeground(_colorManager.getActiveSessionBarColorLeft());
                 gc.setBackground(_colorManager.getActiveSessionBarColorRight());
-                gc.fillGradientRectangle(x, yStart, xMax, gsHeight, false);
+                gc.fillGradientRectangle(sectionBarX, yStart, xMax, gsHeight, false);
 
+                
+                //draw section details
+                if (_settings.drawSectionDetails()) { 
+                	gc.setForeground(_colorManager.getSectionDetailAreaForegroundColor(gs));
+                	gc.setBackground(_colorManager.getSectionDetailAreaBackgroundColor(gs));
+                	
+                	gc.fillGradientRectangle(sectionDetailX, yStart, sectionDetailX + sectionBarX, gsHeight, _colorManager.drawSectionDetailGradientTopDown());
+            		
+                	drawSectionDetails(gc, sectionDetailX, yStart, gs);
+                }
+                
                 gc.setForeground(_textColor);
+
+                int xStart = (barWidth / 2);
+                
+                Point extent = null;
+                if (gs.needsNameUpdate() || gs.getNameExtent() == null) {
+                	extent = gc.textExtent(gs.getName(), SWT.DRAW_DELIMITER);
+                	gs.setNameExtent(extent);
+                	gs.setNeedsNameUpdate(false);
+                } else {
+                	extent = gs.getNameExtent();
+                }
+                
+                // zero length name causes exceptions, set it to 1
+                if (extent.x == 0) {
+                	extent.x = 1;
+                }
 
                 if (gs.getTextOrientation() == SWT.VERTICAL) {
                     // draw vertical text (I tried using Transform.rotate stuff here earlier, but it's so incredibly slow that we can't use it)
                     // and not only that, but the kerning on vertical text is completely whacked with letter overlapping, so right now it's unusable
                     Image image = null;
-                    int xStart = (xMax / 2);
 
                     // only create the images if we don't have one from before, or if the name has changed since last time
                     if (gs.getNameImage() == null || gs.needsNameUpdate()) {
 
-                        Point extent = null;
-                        if (gs.needsNameUpdate() || gs.getNameExtent() == null) {
-                        	extent = gc.textExtent(gs.getName(), SWT.DRAW_DELIMITER);
-                            gs.setNameExtent(extent);
-                            gs.setNeedsNameUpdate(false);
-                        } else {
-                            extent = gs.getNameExtent();
-                        }
-
-                        // zero length name causes exceptions, set it to 1
-                        if (extent.x == 0) {
-                            extent.x = 1;
-                        }
                         Image textImage = new Image(getDisplay(), extent.x, xMax - 2); 
                         GC gcTemp = new GC(textImage); 
 
@@ -2116,12 +2188,13 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                     xStart -= (image.getBounds().width / 2) - 2;
                     final int textLocY = (gsHeight / 2) - (image.getBounds().height / 2);
 
-                    gc.drawImage(image, x + xStart - 1, yStart + textLocY);
+                    gc.drawImage(image, sectionBarX + xStart - 1, yStart + textLocY);
                 } else if (gs.getTextOrientation() == SWT.HORIZONTAL) {
-                	gc.drawText(gs.getName(), horiSpacer, yStart + (gsHeight / 2) - (gs.getNameExtent().y / 2), true);
+                    xStart -= (extent.x / 2);
+                	gc.drawText(gs.getName(), sectionBarX + xStart, yStart + (gsHeight / 2) - (gs.getNameExtent().y / 2), true);
                 }
 
-                yStart += gsHeight - 1;
+                yStart += gsHeight-1;
 
                 int width = bounds.x + bounds.width;
                 if (rightSide && !forceUsageOfBounds) {
@@ -2131,8 +2204,6 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                 // draw center divider
                 if (!columnOnly) {
                     gc.setForeground(_colorManager.getTopHorizontalLinesColor());
-
-                    //System.out.println(bounds + " " + width);
 
                     if (i != _ganttSections.size() - 1 && _settings.getSectionBarDividerHeight() != 0) { 
                         gc.setForeground(_colorManager.getSessionBarDividerColorLeft());
@@ -2145,6 +2216,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                         gc.drawLine(0, yStart - 1, width, yStart - 1);
                     } else {
                         // the last line
+                    	yStart += 1;
                         gc.drawLine(0, yStart, width, yStart);
                         yStart += _settings.getSectionBarDividerHeight();
                     }
@@ -2156,13 +2228,79 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         gc.setForeground(_colorManager.getTopHorizontalLinesColor());
         // horizontal
         if (_settings.drawHeader()) {
-            gc.drawLine(x, bounds.y, x + xMax, bounds.y);
+            gc.drawLine(sectionStartXPos, bounds.y, sectionBarX + xMax, bounds.y);
         }
 
-        gc.drawLine(x, lineLoc - _vScrollPos, x + xMax, lineLoc - _vScrollPos);
+        gc.drawLine(sectionStartXPos, lineLoc - _vScrollPos, sectionBarX + xMax, lineLoc - _vScrollPos);
 
     }
 
+    
+    private void drawSectionDetails(GC gc, int x, int y, GanttSection section) {
+    	String title = _settings.getSectionDetailTitle();
+    	String content = _settings.getSectionDetailText();
+
+    	ISectionDetailContentReplacer sdcr = _settings.getSectionDetailContentReplacer();
+    	if (sdcr != null) {
+        	title = sdcr.replaceSectionDetailPlaceHolder(section, title) ;
+            content = sdcr.replaceSectionDetailPlaceHolder(section, content); 
+    	}
+    	else {
+        	title = title != null ? title.replaceAll("#name#", section.getName()) : "";
+        	if (content != null) {
+        		content = content.replaceAll("#name#", section.getName());
+        		content = content.replaceAll("#ne#", "" + section.getEvents().size());
+        	}
+    	}
+
+    	int xPos = x + 4;
+    	int yPos = y + 2;
+    	Point titleEndPos = new Point(xPos, yPos);
+    	if (title != null && title.length() > 0) {
+    		titleEndPos = TextPainterHelper.drawText(gc, title, xPos, yPos);
+    	}
+		
+		if (content != null && content.length() > 0) {
+			// first we space it vertically
+			xPos += 8;
+
+			yPos += titleEndPos.y * 1.5;
+
+			final StringTokenizer tokenizer = new StringTokenizer(content, "\n"); //$NON-NLS-1$
+
+			while (tokenizer.hasMoreTokens()) {
+			    final String token = tokenizer.nextToken();
+			    final Point extent = TextPainterHelper.drawText(gc, token, xPos, yPos);
+			    yPos += extent.y;
+			}
+		}
+
+		if (_settings.showSectionDetailMore() && section.getData() != null) {
+			Point moreExtent = gc.textExtent(_languageManager.getSectionDetailMoreText());
+			yPos += moreExtent.y * 0.3;
+			gc.drawText(_languageManager.getSectionDetailMoreText(), xPos, yPos, true);
+			
+			Rectangle plusRectangle = new Rectangle(
+					xPos + moreExtent.x + 8,
+					yPos + (moreExtent.y / 2) - 3,
+					8, 8);
+			
+			this.sectionDetailMoreIcons.put(section, plusRectangle);
+			gc.drawRectangle(plusRectangle);
+			gc.drawLine(
+					plusRectangle.x + 4, 
+					plusRectangle.y + 2, 
+					plusRectangle.x + 4, 
+					plusRectangle.y + 6); 
+			gc.drawLine(
+					plusRectangle.x + 2, 
+					plusRectangle.y + 4, 
+					plusRectangle.x + 6, 
+					plusRectangle.y + 4);
+
+		}
+    }
+    
     private void drawHorizontalLines(final GC gc, final Rectangle bounds) {
         gc.setForeground(_lineColor);
 
@@ -2989,7 +3127,14 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
             int extra = 0;
             if (!_ganttSections.isEmpty() && _settings.getSectionSide() == SWT.LEFT) {
-                extra += _settings.getSectionBarWidth();
+            	int sectionWidth = 0;
+            	if (_settings.drawSectionBar()) {
+            		sectionWidth += _settings.getSectionBarWidth();
+            	}
+            	if (_settings.drawSectionDetails()) {
+            		sectionWidth += _settings.getSectionDetailWidth();
+            	}
+                extra += sectionWidth;
             }
 
             yHeight -= offset;
@@ -3027,7 +3172,14 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
         int extra = 0;
         if (!_ganttSections.isEmpty() && _settings.getSectionSide() == SWT.LEFT) {
-            extra += _settings.getSectionBarWidth();
+        	int sectionWidth = 0;
+        	if (_settings.drawSectionBar()) {
+        		sectionWidth += _settings.getSectionBarWidth();
+        	}
+        	if (_settings.drawSectionDetails()) {
+        		sectionWidth += _settings.getSectionDetailWidth();
+        	}
+            extra += sectionWidth;
         }
 
         int offset = 0;
@@ -3341,7 +3493,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                 // still calculate name extent, we need it to determine correct scrollbars for fixed scrollbars among other things
                 if (ge.getNameExtent() == null || ge.isNameChanged()) {
                     final String toDraw = getStringForEvent(ge);
-                    ge.setNameExtent(gc.stringExtent(toDraw));
+//                    ge.setNameExtent(gc.stringExtent(toDraw));
+                    ge.setNameExtent(gc.textExtent(toDraw));
                     ge.setParsedString(toDraw);
                     ge.setNameChanged(false);
                 }
@@ -3424,7 +3577,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         // if the name has changed, update various cached variables
         if (ge.isNameChanged()) {
             final String toDraw = getStringForEvent(ge);
-            ge.setNameExtent(gc.stringExtent(toDraw));
+//            ge.setNameExtent(gc.stringExtent(toDraw));
+            ge.setNameExtent(gc.textExtent(toDraw));
             ge.setParsedString(toDraw);
             ge.setNameChanged(false);
         }
@@ -6003,6 +6157,18 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             }
         }
 
+        if (this.sectionDetailMoreIcons != null) {
+        	for (Iterator it = this.sectionDetailMoreIcons.entrySet().iterator(); it.hasNext(); ) {
+        		Map.Entry entry = (Map.Entry) it.next();
+        		if (isInside(event.x, event.y, (Rectangle)entry.getValue())) {
+        			for (Iterator listenerIt = this.sectionDetailMoreClickListener.iterator(); listenerIt.hasNext(); ) {
+        				ISectionDetailMoreClickListener listener = (ISectionDetailMoreClickListener) listenerIt.next();
+        				listener.openAdvancedDetails((GanttSection)entry.getKey());
+        			}
+        		}
+        	}
+        }
+       
         if (needsRedraw) {
         	redraw();
         }
@@ -6614,69 +6780,71 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             final int x = me.x;
             final int y = me.y;
 
-            // check if cursor is inside the area of an event
-            for (int i = 0; i < _ganttEvents.size(); i++) {
-                final GanttEvent event = (GanttEvent) _ganttEvents.get(i);
-                if (isInside(me.x, me.y, new Rectangle(event.getX(), event.getY(), event.getWidth(), event.getHeight()))) { 
-                    insideAnyEvent = true;
-
-                    if (event.isScope()) {
-                        continue;
-                    }
-
-                    if (_hiddenLayers.contains(event.getLayerInt())) {
-                        continue;
-                    }
-
-                    final Rectangle rect = new Rectangle(event.getX(), event.getY(), event.getWidth(), event.getHeight());
-
-                    boolean onRightBorder = false;
-                    boolean onLeftBorder = false;
-
-                    // n pixels left or right of either border = show resize
-                    // mouse cursor
-                    if (x >= (rect.x + rect.width - _settings.getResizeBorderSensitivity()) && y >= rect.y && x <= (rect.x + rect.width + _settings.getResizeBorderSensitivity()) && y <= (rect.y + rect.height)) {
-                        onRightBorder = true;
-                    } else if (x >= (rect.x - _settings.getResizeBorderSensitivity()) && y >= rect.y && x <= (rect.x + _settings.getResizeBorderSensitivity()) && y <= (rect.y + rect.height)) {
-                        onLeftBorder = true;
-                    }
-
-                    // right border resize cursor (not images!)
-                    if (me.stateMask == 0 || me.stateMask == _settings.getDragAllModifierKey()) {
-                        if (resizeOK && event.isResizable()) {
-                            if ((event.isCheckpoint() && _settings.allowCheckpointResizing()) || !event.isCheckpoint() && !event.isImage()) {
-                                if (onRightBorder) {
-                                    this.setCursor(Constants.CURSOR_SIZEE);
-                                    _cursor = SWT.CURSOR_SIZEE;
-                                    return;
-                                } else if (onLeftBorder) {
-                                    this.setCursor(Constants.CURSOR_SIZEW);
-                                    _cursor = SWT.CURSOR_SIZEW;
-                                    return;
-                                }
-                            }
-                        }
-
-                        // move cursor
-                        if (dndOK && event.isMoveable()) {
-                            this.setCursor(Constants.CURSOR_SIZEALL);
-                            _cursor = SWT.CURSOR_SIZEALL;
-                            return;
-                        }
-                    } else {
-                        if ((dndOK || event.isMoveable()) && _cursor == SWT.CURSOR_SIZEALL && isInMoveArea(event, me.x)) {
-                            handleMove(me, event, Constants.TYPE_MOVE, true);
-                            return;
-                        }
-
-                        if (!event.isCheckpoint() && (resizeOK || event.isResizable()) && (_cursor == SWT.CURSOR_SIZEE || _cursor == SWT.CURSOR_SIZEW)) {
-                            // handleResize(me, event, onLeftBorder);
-                            handleMove(me, event, onLeftBorder ? Constants.TYPE_RESIZE_LEFT : Constants.TYPE_RESIZE_RIGHT, true);
-                            return;
-                        }
-                    }
-                    break;
-                }
+            if (_mainBounds == null || me.x >= _mainBounds.x) {
+            	// check if cursor is inside the area of an event
+            	for (int i = 0; i < _ganttEvents.size(); i++) {
+            		final GanttEvent event = (GanttEvent) _ganttEvents.get(i);
+            		if (isInside(me.x, me.y, new Rectangle(event.getX(), event.getY(), event.getWidth(), event.getHeight()))) { 
+            			insideAnyEvent = true;
+            			
+            			if (event.isScope()) {
+            				continue;
+            			}
+            			
+            			if (_hiddenLayers.contains(event.getLayerInt())) {
+            				continue;
+            			}
+            			
+            			final Rectangle rect = new Rectangle(event.getX(), event.getY(), event.getWidth(), event.getHeight());
+            			
+            			boolean onRightBorder = false;
+            			boolean onLeftBorder = false;
+            			
+            			// n pixels left or right of either border = show resize
+            			// mouse cursor
+            			if (x >= (rect.x + rect.width - _settings.getResizeBorderSensitivity()) && y >= rect.y && x <= (rect.x + rect.width + _settings.getResizeBorderSensitivity()) && y <= (rect.y + rect.height)) {
+            				onRightBorder = true;
+            			} else if (x >= (rect.x - _settings.getResizeBorderSensitivity()) && y >= rect.y && x <= (rect.x + _settings.getResizeBorderSensitivity()) && y <= (rect.y + rect.height)) {
+            				onLeftBorder = true;
+            			}
+            			
+            			// right border resize cursor (not images!)
+            			if (me.stateMask == 0 || me.stateMask == _settings.getDragAllModifierKey()) {
+            				if (resizeOK && event.isResizable()) {
+            					if ((event.isCheckpoint() && _settings.allowCheckpointResizing()) || !event.isCheckpoint() && !event.isImage()) {
+            						if (onRightBorder) {
+            							this.setCursor(Constants.CURSOR_SIZEE);
+            							_cursor = SWT.CURSOR_SIZEE;
+            							return;
+            						} else if (onLeftBorder) {
+            							this.setCursor(Constants.CURSOR_SIZEW);
+            							_cursor = SWT.CURSOR_SIZEW;
+            							return;
+            						}
+            					}
+            				}
+            				
+            				// move cursor
+            				if (dndOK && event.isMoveable()) {
+            					this.setCursor(Constants.CURSOR_SIZEALL);
+            					_cursor = SWT.CURSOR_SIZEALL;
+            					return;
+            				}
+            			} else {
+            				if ((dndOK || event.isMoveable()) && _cursor == SWT.CURSOR_SIZEALL && isInMoveArea(event, me.x)) {
+            					handleMove(me, event, Constants.TYPE_MOVE, true);
+            					return;
+            				}
+            				
+            				if (!event.isCheckpoint() && (resizeOK || event.isResizable()) && (_cursor == SWT.CURSOR_SIZEE || _cursor == SWT.CURSOR_SIZEW)) {
+            					// handleResize(me, event, onLeftBorder);
+            					handleMove(me, event, onLeftBorder ? Constants.TYPE_RESIZE_LEFT : Constants.TYPE_RESIZE_RIGHT, true);
+            					return;
+            				}
+            			}
+            			break;
+            		}
+            	}
             }
 
             if (hasGanttPhases()) {
@@ -6741,8 +6909,20 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                 }
             }
 
+            boolean isInsideSectionDetailMore = false;
+            if (this.sectionDetailMoreIcons != null) {
+            	for (Iterator it = this.sectionDetailMoreIcons.values().iterator(); it.hasNext(); ) {
+            		Rectangle rect = (Rectangle) it.next();
+            		if (isInside(me.x, me.y, rect)) {
+            			isInsideSectionDetailMore = true;
+                        this.setCursor(Constants.CURSOR_HAND);
+                        _cursor = SWT.CURSOR_HAND;
+            		}
+            	}
+            }
+            
             // clear mouse cursor if need be
-            if (!insideAnyEvent && !_dragging && !_resizing && _cursor != SWT.NONE) {
+            if (!insideAnyEvent && !isInsideSectionDetailMore && !_dragging && !_resizing && _cursor != SWT.NONE) {
                 this.setCursor(Constants.CURSOR_NONE);
                 _cursor = SWT.NONE;
             }
@@ -7342,7 +7522,14 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         int xDrawStart = 0;
         int xDrawEnd = _mainBounds.width;
         if (hasGanttSections() && _settings.getSectionSide() == SWT.LEFT) {
-            xDrawStart = _settings.getSectionBarWidth();
+        	int sectionWidth = 0;
+        	if (_settings.drawSectionBar()) {
+        		sectionWidth += _settings.getSectionBarWidth();
+        	}
+        	if (_settings.drawSectionDetails()) {
+        		sectionWidth += _settings.getSectionDetailWidth();
+        	}
+            xDrawStart = sectionWidth;
             xDrawEnd = _mainBounds.width + xDrawStart;
         }
 
@@ -7826,12 +8013,14 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
         if (me.stateMask != 0) return;
 
-        for (int i = 0; i < _ganttEvents.size(); i++) {
-            GanttEvent event = (GanttEvent) _ganttEvents.get(i);
-            if (isInside(me.x, me.y, new Rectangle(event.getX(), event.getY(), event.getWidth(), event.getHeight()))) {
-                showTooltip(event, me);
-                return;
-            }
+        if (_mainBounds == null || me.x >= _mainBounds.x) {
+        	for (int i = 0; i < _ganttEvents.size(); i++) {
+        		GanttEvent event = (GanttEvent) _ganttEvents.get(i);
+        		if (isInside(me.x, me.y, new Rectangle(event.getX(), event.getY(), event.getWidth(), event.getHeight()))) {
+        			showTooltip(event, me);
+        			return;
+        		}
+        	}
         }
     }
 
@@ -8055,6 +8244,18 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     }   
 
     /**
+     * Returns the chart as an image with the visible horizontal area 
+     * but showing all information in the chart vertically.
+     * 
+     * @return Image of the chart
+     */
+    public Image getVerticallyFullImage() {
+    	Rectangle verticallyFullBounds = new Rectangle(
+    			_visibleBounds.x, 0, _visibleBounds.width, _bottomMostY);
+        return getImage(verticallyFullBounds);    	
+    }   
+    
+    /**
      * Returns the image that is the entire chart, regardless of what is currently visible. If chart contains no events,
      * {@link #getImage()} is called from within.
      * <p>
@@ -8084,44 +8285,56 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
             if (geRight == null || geLeft == null) { return getImage(); }
 
-            /*System.err.println();
-
-            System.err.println("Now:  " + mCalendar.getTime() + " " + getXForDate(mCalendar));
-            System.err.println("Left bounds: " + geLeft.getActualBounds());*/
             // set calendar to earliest date
             final boolean drawSections = hasGanttSections();
             int extraX = 0;
             int extraW = 0;
             if (drawSections) {
-                if (_settings.getSectionSide() == SWT.LEFT) {
-                    extraX = -_settings.getSectionBarWidth();
-                    extraW = _settings.getSectionBarWidth();
-                } else {
-                    extraW = _settings.getSectionBarWidth();
-                }
-
+            	if (_settings.drawSectionBar()) {
+                	if (_settings.getSectionSide() == SWT.LEFT) {
+                        extraX -= _settings.getSectionBarWidth();
+                    }
+                	extraW += _settings.getSectionBarWidth();
+            	}
+            	if (_settings.drawSectionDetails()) {
+                	if (_settings.getSectionSide() == SWT.LEFT) {
+                		extraX -= _settings.getSectionDetailWidth();
+                	}
+                	else {
+                		extraW += _settings.getSectionDetailWidth()/2;
+                	}
+            	}
             }
 
-            _mainCalendar = getDateAt(geLeft.getActualBounds().x + extraX);//(Calendar) geLeft.getEarliestStartDate().clone();
-            //mCalendar.add(Calendar.DATE, -(geLeft.getNameExtent().x + mSettings.getTextSpacerConnected() + getDayWidth()) / getDayWidth());
-            //System.err.println("Post: " + mCalendar.getTime() + " Should be < " + geLeft.getEarliestStartDate().getTime());
-            //System.err.println(" ---- " + geLeft.getEarliestStartX() + " " + geLeft.getActualBounds().x);
+            int leftBound = geLeft.getActualBounds().x;
+            if (_settings.getPeriodStart() != null) {
+            	leftBound = Math.min(leftBound, getStartingXFor(_settings.getPeriodStart()));
+            }
+            
+            //add spacing of 3 days to the left
+            int dw = getDayWidth();
+            extraX -= dw * 3;
+            
+            _mainCalendar = getDateAt(leftBound + extraX);
 
-            //fullBounds.x = geLeft.getActualBounds().x;
             Rectangle rBounds = geRight.getActualBounds();
 
-            //System.err.println(rBounds);
-
-            // space it out 1 day
-            if (drawSections && _settings.getSectionSide() == SWT.RIGHT) {
-                extraW += getDayWidth();
+            int rightBound = rBounds.x + rBounds.width + extraW;
+            if (_settings.getPeriodEnd() != null) {
+            	rightBound = Math.max(rightBound, getStartingXFor(_settings.getPeriodEnd()));
             }
 
-            fullBounds.width = rBounds.x + rBounds.width - geLeft.getActualBounds().x + extraW;
+            //the zoom level has impact on the start position of the gantt rendering
+            //therefore we need to take that into account
+            if (_currentView == ISettings.VIEW_YEAR) {
+                extraW += _mainCalendar.get(Calendar.DAY_OF_MONTH) * dw;
+            }
+            
+            //add spacing of 3 days to the right
+            extraW += dw * 3;
+            
+            fullBounds.width = rightBound - leftBound - extraX + extraW;
             fullBounds.height = _bottomMostY;
-
-            //            System.err.println(fullBounds);
-            //          System.err.println(getRightMostPixel() + " " + getLeftMostPixel());
 
             // set chart bounds to be the fake bounds
             _mainBounds = fullBounds;
@@ -8167,17 +8380,6 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         return null;
     }
 
-    /*private int getFullDrawSpan() {
-        GanttEvent geRight = getEvent(false);
-        GanttEvent geLeft = getEvent(true);
-        
-        if (geRight == null || geLeft == null) {
-            return 0;
-        }
-        
-        return geRight.getActualBounds().x + getRightMostPixel()
-    }
-    */
     /**
      * Returns the chart as an image for the given bounds.
      * 
@@ -8185,16 +8387,6 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
      * @return Image of chart
      */
     public Image getImage(Rectangle bounds) {
-    /*	if (true) {
-    		Image full = getFullImage();
-    		
-    		Image buffer = new Image(getDisplay(), new Rectangle(0, 0, bounds.width, bounds.height));
-    		GC foo = new GC(buffer);
-    		foo.drawImage(full, bounds.x, bounds.y, bounds.width, bounds.height, 0, 0, bounds.width, bounds.height);
-    		foo.dispose();
-    		return buffer;
-    	}
-    	*/
         checkWidget();
         setRedraw(false);
 
@@ -8225,7 +8417,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
         return null;
     }
-
+    
     private List getEventsDependingOn(GanttEvent ge) {
         if (_ganttConnections.isEmpty()) { return new ArrayList(); }
 
@@ -8762,5 +8954,13 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     
     public void setZoomHandler(IZoomHandler zoomHandler) {
     	this.zoomHandler = zoomHandler;
+    }
+    
+    public void addSelectionDetailClickListener(ISectionDetailMoreClickListener listener) {
+    	this.sectionDetailMoreClickListener.add(listener);
+    }
+    
+    public void removeSelectionDetailClickListener(ISectionDetailMoreClickListener listener) {
+    	this.sectionDetailMoreClickListener.remove(listener);
     }
 }

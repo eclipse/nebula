@@ -95,4 +95,8 @@ public abstract class AbstractLanguageManager implements ILanguageManager {
 	public String getPrintPageText() {
 		return "Page";
 	}
+	
+	public String getSectionDetailMoreText() {
+		return "More";
+	}
 }

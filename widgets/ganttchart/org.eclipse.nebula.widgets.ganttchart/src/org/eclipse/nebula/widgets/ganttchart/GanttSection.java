@@ -36,6 +36,7 @@ import org.eclipse.swt.graphics.Rectangle;
  */
 public class GanttSection implements IFillBackgroundColors {
 
+    private Object             	  _data;
     private String                _name;
     private GanttComposite        _parent;
     private List                  _ganttEvents;
@@ -151,6 +152,24 @@ public class GanttSection implements IFillBackgroundColors {
      */
     public List getEvents() {
         return _ganttEvents;
+    }
+
+    /**
+     * Returns the currently set data object.
+     * 
+     * @return Data object
+     */
+    public Object getData() {
+        return _data;
+    }
+
+    /**
+     * Sets the current data object.
+     * 
+     * @param data Data object
+     */
+    public void setData(final Object data) {
+        this._data = data;
     }
 
     /**
