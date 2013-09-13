@@ -16,18 +16,22 @@
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<!-- When running in children tests/* modules, all reports will be in ../target/jacoco.exec -->
 		<sonar.jacoco.reportPath>../target/jacoco.exec</sonar.jacoco.reportPath>
+		<mockito-version>1.8.4</mockito-version>
+		<junit-version>4.8.1</junit-version>
+		<jacoco-version>0.6.3.201306030806</jacoco-version>
+		<signer-input-directory>/home/data/httpd/download-staging.priv/technology/nebula</signer-input-directory>
 	</properties>
 
 	<build>
-		<sourceDirectory>src</sourceDirectory>
 		<plugins>
+
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-maven-plugin</artifactId>
 				<version>${tycho-version}</version>
 				<extensions>true</extensions>
-
 			</plugin>
+
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>target-platform-configuration</artifactId>
@@ -74,7 +78,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.5.3.201107060350</version>
+				<version>${jacoco-version}</version>
 				<executions>
 					<execution>
 						<goals>
@@ -83,8 +87,10 @@
 						<configuration>
 							<!-- Where to put jacoco coverage report -->
 							<destFile>${sonar.jacoco.reportPath}</destFile>
-							<includes>*.nebula.*</includes>
-							<!-- Append allows all reports from all executions to be stored in
+							<includes>
+							<include>*.nebula.*</include>
+							</includes>
+							<!-- Append allows all reports from all executions to be stored in 
 								a single file -->
 							<append>true</append>
 						</configuration>
@@ -99,7 +105,7 @@
 				<version>${tycho-version}</version>
 				<configuration>
 					<useUIHarness>true</useUIHarness>
-					<argLine>${tycho.testArgLine} -Xmx512m -Djava.awt.headless=true	${tests.vmargs}</argLine>
+					<argLine>${tycho.testArgLine} -Xmx512m -Djava.awt.headless=true ${tests.vmargs}</argLine>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -121,6 +127,85 @@
 				<version>2.7</version>
 			</plugin>
 		</plugins>
+
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-compiler-plugin</artifactId>
+					<version>${tycho-version}</version>
+					<configuration>
+						<encoding>UTF-8</encoding>
+					</configuration>
+				</plugin>
+				<plugin>
+					<!-- TODO remove workaround when https://issues.sonatype.org/browse/TYCHO-473 
+						is fixed -->
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-source-plugin</artifactId>
+					<version>${tycho-version}</version>
+					<executions>
+						<execution>
+							<id>attach-source</id>
+							<phase>process-classes</phase>
+							<goals>
+								<goal>plugin-source</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>2.4.1</version>
+					<configuration>
+						<encoding>ISO-8859-1</encoding>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>findbugs-maven-plugin</artifactId>
+					<version>2.3.2</version>
+					<configuration>
+						<findbugsXmlOutput>true</findbugsXmlOutput>
+						<failOnError>false</failOnError>
+					</configuration>
+					<executions>
+						<execution>
+							<goals>
+								<goal>check</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-pmd-plugin</artifactId>
+					<version>2.5</version>
+					<configuration>
+						<sourceEncoding>utf-8</sourceEncoding>
+						<minimumTokens>100</minimumTokens>
+						<targetJdk>1.5</targetJdk>
+						<format>xml</format>
+						<failOnViolation>false</failOnViolation>
+					</configuration>
+					<executions>
+						<execution>
+							<goals>
+								<goal>cpd-check</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>2.2-beta-4</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
+
 	</build>
 
 	<profiles>
@@ -135,21 +220,97 @@
 				<tests.vmargs>-XstartOnFirstThread</tests.vmargs>
 			</properties>
 		</profile>
+
+		<profile>
+			<id>platform-juno</id>
+			<repositories>
+				<repository>
+					<id>eclipse-platform</id>
+					<layout>p2</layout>
+					<url>http://download.eclipse.org/releases/juno</url>
+				</repository>
+
+				<repository>
+					<id>platform</id>
+					<layout>p2</layout>
+					<url>http://download.eclipse.org/eclipse/updates/4.2/</url>
+				</repository>
+			</repositories>
+		</profile>
+
+		<profile>
+			<id>kepler</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<repositories>
+				<repository>
+					<id>projects</id>
+					<layout>p2</layout>
+					<url>http://download.eclipse.org/releases/kepler/</url>
+				</repository>
+
+				<repository>
+					<id>platform</id>
+					<layout>p2</layout>
+					<url>http://download.eclipse.org/eclipse/updates/4.3/</url>
+				</repository>
+			</repositories>
+		</profile>
+
+		<profile>
+			<id>luna</id>
+			<repositories>
+				<repository>
+					<id>projects</id>
+					<layout>p2</layout>
+					<url>http://download.eclipse.org/releases/luna/</url>
+				</repository>
+
+				<repository>
+					<id>platform</id>
+					<layout>p2</layout>
+					<url>http://download.eclipse.org/eclipse/updates/4.4/</url>
+				</repository>
+			</repositories>
+		</profile>
+
+
+		<profile>
+			<id>static-checks</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>findbugs-maven-plugin</artifactId>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-pmd-plugin</artifactId>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
 
-	<repositories>
-		<repository>
-			<id>projects</id>
-			<layout>p2</layout>
-			<url>http://download.eclipse.org/releases/kepler/</url>
-		</repository>
+	<dependencies>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>${mockito-version}</version>
+		</dependency>
+	</dependencies>
 
-		<repository>
-			<id>platform</id>
-			<layout>p2</layout>
-			<url>http://download.eclipse.org/eclipse/updates/4.3/</url>
-		</repository>
-	</repositories>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>${junit-version}</version>
+				<scope>test</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<pluginRepositories>
 		<pluginRepository>
