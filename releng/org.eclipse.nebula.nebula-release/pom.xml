@@ -94,6 +94,7 @@
 		<module>../../widgets/paperclips/org.eclipse.nebula.paperclips.tests</module>
 		<module>../../widgets/paperclips/org.eclipse.nebula.paperclips.snippets</module>
 		<module>../../widgets/paperclips/org.eclipse.nebula.widgets.paperclips.feature</module>
+		<module>../../widgets/paperclips/org.eclipse.nebula.widgets.paperclips.example</module>
 
 		<!-- CWT -->
 		<module>../../widgets/cwt/org.eclipse.nebula.cwt</module>
