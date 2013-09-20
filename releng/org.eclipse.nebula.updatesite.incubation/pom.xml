@@ -1,87 +1,24 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- All rights reserved. This program and the accompanying materials are 
-	made available under the terms of the Eclipse Public License v1.0 which accompanies 
-	this distribution, and is available at http://www.eclipse.org/legal/epl-v10.html -->
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!-- All rights reserved. This program and the accompanying materials are 
+        made available under the terms of the Eclipse Public License v1.0 which accompanies 
+        this distribution, and is available at http://www.eclipse.org/legal/epl-v10.html -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+    <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+        <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<artifactId>nebula-parent</artifactId>
-		<groupId>org.eclipse.nebula</groupId>
-		<version>1.0.0-SNAPSHOT</version>
-		<relativePath>../org.eclipse.nebula.nebula-parent</relativePath>
-	</parent>
+        <parent>
+            <artifactId>nebula-parent</artifactId>
+            <groupId>org.eclipse.nebula</groupId>
+            <version>1.0.0-SNAPSHOT</version>
+            <relativePath>../org.eclipse.nebula.nebula-parent</relativePath>
+        </parent>
 
-	<artifactId>org.eclipse.nebula.updatesite.incubation</artifactId>
-	<packaging>eclipse-repository</packaging>
+        <artifactId>org.eclipse.nebula.updatesite.incubation</artifactId>
+        <packaging>eclipse-repository</packaging>
 
-	<name>Eclipse Nebula Incubation Update Site</name>
-	<version>1.0.0-SNAPSHOT</version>
+        <name>Eclipse Nebula Incubation Update Site</name>
+        <version>1.0.0-SNAPSHOT</version>
 
-	<profiles>
-		<profile>
-			<id>build-server</id>
-			<properties>
-				<signer-input-directory>/home/data/httpd/download-staging.priv/technology/nebula</signer-input-directory>
-			</properties>
-			<pluginRepositories>
-				<pluginRepository>
-					<id>eclipse-nexus</id>
-					<url>http://maven.eclipse.org/nexus/content/groups/public/</url>
-				</pluginRepository>
-			</pluginRepositories>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.eclipse.dash.maven</groupId>
-						<artifactId>eclipse-signing-maven-plugin</artifactId>
-						<version>1.0.5</version>
-						<executions>
-							<execution>
-								<id>pack</id>
-								<configuration>
-									<inputFile>${project.build.directory}/${project.artifactId}-${project.version}.zip</inputFile>
-								</configuration>
-								<phase>package</phase>
-								<goals>
-									<goal>pack</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>sign</id>
-								<configuration>
-									<inputFile>${project.build.directory}/${project.artifactId}-${project.version}.zip</inputFile>
-									<signerInputDirectory>${signer-input-directory}</signerInputDirectory>
-								</configuration>
-								<phase>package</phase>
-								<goals>
-									<goal>sign</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>repack</id>
-								<configuration>
-									<inputFile>${project.build.directory}/signed/site_assembly.zip</inputFile>
-								</configuration>
-								<phase>package</phase>
-								<goals>
-									<goal>pack</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>fixCheckSums</id>
-								<phase>package</phase>
-								<goals>
-									<goal>fixCheckSums</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 
 </project>
