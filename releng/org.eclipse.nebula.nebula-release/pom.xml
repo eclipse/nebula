@@ -7,158 +7,50 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-<!-- 	<prerequisites>
-		<maven>3.0</maven>
-	</prerequisites> -->
+	<!-- <prerequisites> <maven>3.0</maven> </prerequisites> -->
 
 	<groupId>org.eclipse.nebula</groupId>
 	<artifactId>nebula-release</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	<name>Nebula Parent</name>
-
-	<mailingLists>
-		<mailingList>
-			<name>nebula-dev Mailing List</name>
-			<post>nebula-dev@eclipse.org</post>
-			<subscribe>https://dev.eclipse.org/mailman/listinfo/nebula-dev</subscribe>
-			<unsubscribe>https://dev.eclipse.org/mailman/listinfo/nebula-dev</unsubscribe>
-			<archive>http://dev.eclipse.org/mhonarc/lists/nebula-dev</archive>
-		</mailingList>
-
-	</mailingLists>
-
-	<issueManagement>
-		<url>https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced;product=Nebula;classification=Technology</url>
-		<system>Bugzilla</system>
-	</issueManagement>
-
-	<licenses>
-		<license>
-			<name>Eclipse Public License v1.0</name>
-			<comments>
-       All rights reserved.
-
-       This program and the accompanying materials are made
-       available under the terms of the Eclipse Public License v1.0
-       which accompanies this distribution, and is available at
-       http://www.eclipse.org/legal/epl-v10.htm
-      </comments>
-		</license>
-	</licenses>
-
 	<properties>
-		<tycho-version>0.18.0</tycho-version>
-		<mockito-version>1.8.4</mockito-version>
-		<junit-version>4.8.1</junit-version>
-		<signer-input-directory>/home/data/httpd/download-staging.priv/technology/nebula</signer-input-directory>
 		<download-publish-path>/home/data/httpd/download.eclipse.org/technology/nebula/snapshot</download-publish-path>
 	</properties>
-
-	<profiles>
-		<profile>
-			<id>platform-galileo</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<repositories>
-				<repository>
-					<id>eclipse-platform</id>
-					<layout>p2</layout>
-					<url>http://download.eclipse.org/releases/galileo</url>
-				</repository>
-			</repositories>
-		</profile>
-		<profile>
-			<id>platform-helios</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<repositories>
-				<repository>
-					<id>eclipse-platform</id>
-					<layout>p2</layout>
-					<url>http://download.eclipse.org/releases/helios</url>
-				</repository>
-			</repositories>
-		</profile>
-		<profile>
-			<id>platform-indigo</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<repositories>
-				<repository>
-					<id>eclipse-platform</id>
-					<layout>p2</layout>
-					<url>http://download.eclipse.org/releases/indigo</url>
-				</repository>
-			</repositories>
-		</profile>
-		<profile>
-			<id>platform-juno</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<repositories>
-				<repository>
-					<id>eclipse-platform</id>
-					<layout>p2</layout>
-					<url>http://download.eclipse.org/releases/juno</url>
-				</repository>
-			</repositories>
-		</profile>
-		<profile>
-			<id>static-checks</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>findbugs-maven-plugin</artifactId>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-pmd-plugin</artifactId>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 
 	<modules>
 		<!-- Examples -->
 		<module>../../examples/org.eclipse.nebula.examples</module>
 		<module>../../examples/org.eclipse.nebula.examples.feature</module>
-		
+
 		<!-- Gallery -->
 		<module>../../widgets/gallery/org.eclipse.nebula.widgets.gallery</module>
 		<module>../../widgets/gallery/org.eclipse.nebula.widgets.gallery.example</module>
 		<module>../../widgets/gallery/org.eclipse.nebula.widgets.gallery.feature</module>
 		<module>../../widgets/gallery/org.eclipse.nebula.widgets.gallery.tests</module>
-		
+
 		<!-- Gantt -->
 		<module>../../widgets/ganttchart/org.eclipse.nebula.widgets.ganttchart</module>
 		<module>../../widgets/ganttchart/org.eclipse.nebula.widgets.ganttchart.example</module>
 		<module>../../widgets/ganttchart/org.eclipse.nebula.widgets.ganttchart.feature</module>
-		
+
 		<!-- Grid -->
 		<module>../../widgets/grid/org.eclipse.nebula.widgets.grid</module>
 		<module>../../widgets/grid/org.eclipse.nebula.widgets.grid.example</module>
 		<module>../../widgets/grid/org.eclipse.nebula.widgets.grid.feature</module>
-		
+
 		<!-- PGroup -->
 		<module>../../widgets/pgroup/org.eclipse.nebula.widgets.pgroup</module>
 		<module>../../widgets/pgroup/org.eclipse.nebula.widgets.pgroup.example</module>
 		<module>../../widgets/pgroup/org.eclipse.nebula.widgets.pgroup.feature</module>
-		
+
 		<!-- PShelf -->
 		<module>../../widgets/pshelf/org.eclipse.nebula.widgets.pshelf</module>
 		<module>../../widgets/pshelf/org.eclipse.nebula.widgets.pshelf.example</module>
 		<module>../../widgets/pshelf/org.eclipse.nebula.widgets.pshelf.css</module>
 		<module>../../widgets/pshelf/org.eclipse.nebula.widgets.pshelf.feature</module>
 		<module>../../widgets/pshelf/org.eclipse.nebula.widgets.pshelf.css.feature</module>
-		
+
 		<!-- CompositeTable -->
 		<module>../../widgets/compositetable/org.eclipse.nebula.widgets.compositetable</module>
 		<!-- <module>../../org.eclipse.nebula.widgets.compositetable.tests</module> -->
@@ -195,20 +87,21 @@
 		<module>../org.eclipse.nebula.feature</module>
 		<module>../org.eclipse.nebula.updatesite</module>
 		<module>../org.eclipse.nebula.examples.release.feature</module>
-		
+
 		<!-- PaperClips -->
 		<module>../../widgets/paperclips/org.eclipse.nebula.paperclips.core</module>
 		<module>../../widgets/paperclips/org.eclipse.nebula.paperclips.widgets</module>
 		<module>../../widgets/paperclips/org.eclipse.nebula.paperclips.tests</module>
 		<module>../../widgets/paperclips/org.eclipse.nebula.paperclips.snippets</module>
 		<module>../../widgets/paperclips/org.eclipse.nebula.widgets.paperclips.feature</module>
-				 
+		<module>../../widgets/paperclips/org.eclipse.nebula.widgets.paperclips.example</module>
+
 		<!-- CWT -->
 		<module>../../widgets/cwt/org.eclipse.nebula.cwt</module>
 		<module>../../widgets/cwt/org.eclipse.nebula.cwt.snippets</module>
 		<module>../../widgets/cwt/org.eclipse.nebula.cwt.tests</module>
 		<module>../../widgets/cwt/org.eclipse.nebula.cwt.feature</module>
-		
+
 		<!-- CDateTime -->
 		<module>../../widgets/cdatetime/org.eclipse.nebula.widgets.cdatetime</module>
 		<module>../../widgets/cdatetime/org.eclipse.nebula.jface.cdatetime</module>
@@ -216,150 +109,11 @@
 		<module>../../widgets/cdatetime/org.eclipse.nebula.widgets.cdatetime.snippets</module>
 		<module>../../widgets/cdatetime/org.eclipse.nebula.widgets.cdatetime.tests</module>
 		<module>../../widgets/cdatetime/org.eclipse.nebula.widgets.cdatetime.feature</module>
-		
-		
 	</modules>
-
-	<pluginRepositories>
-		<pluginRepository>
-			<id>tycho-snapshots</id>
-			<url>https://oss.sonatype.org/content/groups/public/</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-maven-plugin</artifactId>
-				<version>${tycho-version}</version>
-				<extensions>true</extensions>
-			</plugin>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>target-platform-configuration</artifactId>
-				<version>${tycho-version}</version>
-				<configuration>
-					<resolver>p2</resolver>
-					<pomDependencies>consider</pomDependencies>
-		<!--			<optionalDependencies>require</optionalDependencies> -->
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-source-plugin</artifactId>
-				<version>${tycho-version}</version>
-				<executions>
-					<execution>
-						<id>plugin-source</id>
-						<goals>
-							<goal>plugin-source</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-
-		</plugins>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.eclipse.tycho</groupId>
-					<artifactId>tycho-compiler-plugin</artifactId>
-					<version>${tycho-version}</version>
-					<configuration>
-						<encoding>UTF-8</encoding>
-					</configuration>
-				</plugin>
-				<plugin>
-					<!-- TODO remove workaround when https://issues.sonatype.org/browse/TYCHO-473 
-						is fixed -->
-					<groupId>org.eclipse.tycho</groupId>
-					<artifactId>tycho-source-plugin</artifactId>
-					<version>${tycho-version}</version>
-					<executions>
-						<execution>
-							<id>attach-source</id>
-							<phase>process-classes</phase>
-							<goals>
-								<goal>plugin-source</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-resources-plugin</artifactId>
-					<version>2.4.1</version>
-					<configuration>
-						<encoding>ISO-8859-1</encoding>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>findbugs-maven-plugin</artifactId>
-					<version>2.3.2</version>
-					<configuration>
-						<findbugsXmlOutput>true</findbugsXmlOutput>
-						<failOnError>false</failOnError>
-					</configuration>
-					<executions>
-						<execution>
-							<goals>
-								<goal>check</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-pmd-plugin</artifactId>
-					<version>2.5</version>
-					<configuration>
-						<sourceEncoding>utf-8</sourceEncoding>
-						<minimumTokens>100</minimumTokens>
-						<targetJdk>1.5</targetJdk>
-						<format>xml</format>
-						<failOnViolation>false</failOnViolation>
-					</configuration>
-					<executions>
-						<execution>
-							<goals>
-								<goal>cpd-check</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-assembly-plugin</artifactId>
-					<version>2.2-beta-4</version>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-	</build>
-
-	<dependencies>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
-			<version>${mockito-version}</version>
-		</dependency>
-	</dependencies>
-
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-				<version>${junit-version}</version>
-				<scope>test</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+	<parent>
+		<groupId>org.eclipse.nebula</groupId>
+		<artifactId>nebula-parent</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+		<relativePath>../org.eclipse.nebula.nebula-parent</relativePath>
+	</parent>
 </project>

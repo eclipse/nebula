@@ -8,10 +8,11 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation
  */
-package org.eclipse.nebula.paperclips.core.text;
+package org.eclipse.nebula.paperclips.core.text.internal;
 
 import org.eclipse.nebula.paperclips.core.internal.util.ResourcePool;
 import org.eclipse.nebula.paperclips.core.internal.util.Util;
+import org.eclipse.nebula.paperclips.core.text.TextStyle;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Device;
@@ -20,7 +21,7 @@ import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 
-class TextPiece implements TextPrintPiece {
+public class TextPiece implements TextPrintPiece {
 	private final Point size;
 	private final String[] lines;
 	private final TextStyle style;
@@ -28,7 +29,7 @@ class TextPiece implements TextPrintPiece {
 
 	private final ResourcePool resources;
 
-	TextPiece(Device device, TextStyle style, String[] text, Point size,
+	public TextPiece(Device device, TextStyle style, String[] text, Point size,
 			int ascent) {
 		Util.notNull(device, size, style);
 		Util.noNulls(text);

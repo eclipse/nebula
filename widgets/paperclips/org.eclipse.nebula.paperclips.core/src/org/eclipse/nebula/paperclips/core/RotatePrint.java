@@ -10,6 +10,7 @@
  */
 package org.eclipse.nebula.paperclips.core;
 
+import org.eclipse.nebula.paperclips.core.internal.RotatePiece;
 import org.eclipse.nebula.paperclips.core.internal.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Device;

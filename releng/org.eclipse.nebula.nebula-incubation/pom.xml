@@ -9,10 +9,6 @@
 	<description>Parent pom for all incubation widgets in Nebula</description>
 
 	<properties>
-		<tycho-version>0.18.0</tycho-version>
-		<mockito-version>1.8.4</mockito-version>
-		<junit-version>4.8.1</junit-version>
-		<signer-input-directory>/home/data/httpd/download-staging.priv/technology/nebula</signer-input-directory>
 		<download-publish-path>/home/data/httpd/download.eclipse.org/technology/nebula/incubation/snapshot</download-publish-path>
 	</properties>
 
@@ -78,8 +74,8 @@
 		<!-- Dist -->
 		<module>../org.eclipse.nebula.updatesite.incubation</module>
 		<module>../org.eclipse.nebula.incubation.feature</module>
-
 	</modules>
+
 	<repositories>
 		<repository>
 			<id>rap incubator</id>

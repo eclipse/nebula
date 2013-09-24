@@ -17,6 +17,8 @@ import java.util.List;
 import org.eclipse.nebula.paperclips.core.PaperClips;
 import org.eclipse.nebula.paperclips.core.Print;
 import org.eclipse.nebula.paperclips.core.PrintIterator;
+import org.eclipse.nebula.paperclips.core.grid.internal.GridCellImpl;
+import org.eclipse.nebula.paperclips.core.grid.internal.GridIterator;
 import org.eclipse.nebula.paperclips.core.internal.util.PaperClipsUtil;
 import org.eclipse.nebula.paperclips.core.internal.util.Util;
 import org.eclipse.swt.SWT;
@@ -442,7 +444,7 @@ public final class GridPrint implements Print {
 			int col = 0;
 			for (int cellI = 0; cellI < row.size(); cellI++) {
 				GridCell cell = (GridCell) row.get(cellI);
-				col += cell.colspan;
+				col += cell.getColSpan();
 
 				// Adjust the cell which extends through the insert point, or
 				// whose right side touches the insert
@@ -455,9 +457,10 @@ public final class GridPrint implements Print {
 				// right side touches insert point but is not the final cell.
 						(col == index && (rowI + 1 < rows.size() || cellI + 1 < row
 								.size()))) {
-					row
-							.set(cellI, new GridCell(cell.hAlignment,
-									cell.vAlignment, cell.target, cell.colspan
+					row.set(cellI,
+							new GridCellImpl(cell.getHorizontalAlignment(),
+									cell.getVerticalAlignment(), cell
+											.getContent(), cell.getColSpan()
 											+ count));
 					break;
 				}
@@ -892,7 +895,7 @@ public final class GridPrint implements Print {
 		List row = getOpenRow(rows, startColumn);
 		colspan = convertRemainderToExplicitColSpan(startColumn, colspan);
 
-		GridCell cell = new GridCell(hAlignment, vAlignment, cellContents,
+		GridCell cell = new GridCellImpl(hAlignment, vAlignment, cellContents,
 				colspan);
 		row.add(cell);
 		startColumn += colspan;

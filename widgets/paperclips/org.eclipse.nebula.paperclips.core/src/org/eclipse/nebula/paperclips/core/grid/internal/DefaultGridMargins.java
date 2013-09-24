@@ -9,9 +9,10 @@
  *     Matthew Hall - initial API and implementation
  */
 
-package org.eclipse.nebula.paperclips.core.grid;
+package org.eclipse.nebula.paperclips.core.grid.internal;
 
 import org.eclipse.nebula.paperclips.core.border.BorderPainter;
+import org.eclipse.nebula.paperclips.core.grid.GridMargins;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 

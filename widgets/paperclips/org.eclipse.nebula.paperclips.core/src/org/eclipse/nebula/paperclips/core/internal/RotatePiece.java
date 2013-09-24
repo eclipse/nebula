@@ -9,8 +9,10 @@
  *     Matthew Hall - initial API and implementation
  */
 
-package org.eclipse.nebula.paperclips.core;
+package org.eclipse.nebula.paperclips.core.internal;
 
+import org.eclipse.nebula.paperclips.core.PaperClips;
+import org.eclipse.nebula.paperclips.core.PrintPiece;
 import org.eclipse.nebula.paperclips.core.internal.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Device;
@@ -18,7 +20,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Transform;
 
-final class RotatePiece implements PrintPiece {
+public final class RotatePiece implements PrintPiece {
 	private final Device device;
 	private final PrintPiece target;
 	private final int angle;
@@ -27,7 +29,7 @@ final class RotatePiece implements PrintPiece {
 	private Transform oldTransform;
 	private Transform transform;
 
-	RotatePiece(Device device, PrintPiece target, int angle, Point size) {
+	public RotatePiece(Device device, PrintPiece target, int angle, Point size) {
 		Util.notNull(device, target, size);
 		this.device = device;
 		this.target = target;

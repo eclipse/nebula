@@ -12,6 +12,7 @@ package org.eclipse.nebula.paperclips.core.border;
 
 import org.eclipse.nebula.paperclips.core.Print;
 import org.eclipse.nebula.paperclips.core.PrintIterator;
+import org.eclipse.nebula.paperclips.core.border.internal.BorderIterator;
 import org.eclipse.nebula.paperclips.core.internal.util.Util;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.GC;
