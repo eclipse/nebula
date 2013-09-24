@@ -6,3 +6,6 @@ target/
 #Ignore vi temporary files
 *~
 *.orig
+*.patch
+class/
+*.class
