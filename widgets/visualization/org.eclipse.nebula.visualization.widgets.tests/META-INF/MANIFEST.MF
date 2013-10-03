@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Nebula Visualization Widgets Tests
+Bundle-SymbolicName: org.eclipse.nebula.visualization.widgets.tests
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Eclipse.org
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: org.eclipse.swt,
+ org.eclipse.nebula.visualization.widgets;bundle-version="1.0.0",
+ org.eclipse.nebula.visualization.xygraph;bundle-version="1.0.0",
+ org.eclipse.draw2d,
+ org.junit;bundle-version="4.11.0"
