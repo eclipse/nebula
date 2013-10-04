@@ -23,7 +23,7 @@
   <artifactId>org.eclipse.nebula.visualization.feature</artifactId>
   <packaging>eclipse-feature</packaging>
   <groupId>org.eclipse.nebula</groupId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>0.9.9-SNAPSHOT</version>
   <name>Nebula Visualization</name>
 
 </project>

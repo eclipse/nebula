@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.nebula.visualization.feature"
       label="%featureName"
-      version="1.0.0.qualifier"
+      version="0.9.9.qualifier"
       provider-name="%provider">
 
    <description url="%featureDescriptionURL">
@@ -220,7 +220,21 @@ litigation.
          unpack="false"/>
 
    <plugin
+         id="org.eclipse.nebula.visualization.widgets.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
          id="org.eclipse.nebula.visualization.xygraph"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.nebula.visualization.xygraph.source"
          download-size="0"
          install-size="0"
          version="0.0.0"

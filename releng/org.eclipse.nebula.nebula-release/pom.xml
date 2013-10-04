@@ -109,6 +109,11 @@
 		<module>../../widgets/cdatetime/org.eclipse.nebula.widgets.cdatetime.snippets</module>
 		<module>../../widgets/cdatetime/org.eclipse.nebula.widgets.cdatetime.tests</module>
 		<module>../../widgets/cdatetime/org.eclipse.nebula.widgets.cdatetime.feature</module>
+
+		<!-- Visualization -->
+		<module>../../widgets/visualization/org.eclipse.nebula.visualization.widgets</module>
+		<module>../../widgets/visualization/org.eclipse.nebula.visualization.xygraph</module>
+		<module>../../widgets/visualization/org.eclipse.nebula.visualization.feature</module>
 	</modules>
 	<parent>
 		<groupId>org.eclipse.nebula</groupId>
