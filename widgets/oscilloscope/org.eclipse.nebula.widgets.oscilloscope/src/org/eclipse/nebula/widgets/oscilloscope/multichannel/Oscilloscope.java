@@ -43,10 +43,6 @@ import org.eclipse.swt.widgets.Display;
  * @author Wim.Jongman (@remainsoftware.com)
  * 
  */
-/**
- * @author jongw
- * 
- */
 public class Oscilloscope extends Canvas {
 
 	/**
