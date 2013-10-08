@@ -13,8 +13,8 @@ package org.eclipse.nebula.widgets.oscilloscope.snippets;
 
 import java.io.File;
 
-import org.eclipse.nebula.widgets.oscilloscope.Oscilloscope;
-import org.eclipse.nebula.widgets.oscilloscope.OscilloscopeDispatcher;
+import org.eclipse.nebula.widgets.oscilloscope.multichannel.Oscilloscope;
+import org.eclipse.nebula.widgets.oscilloscope.multichannel.OscilloscopeDispatcher;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -100,7 +100,7 @@ public class Snippet3 {
 
 			@Override
 			public void hookSetValues(int value) {
-				scope.setValues(Oscilloscope.HEARTBEAT);
+				scope.setValues(0,Oscilloscope.HEARTBEAT);
 			}
 
 			public File getActiveSoundfile() {
