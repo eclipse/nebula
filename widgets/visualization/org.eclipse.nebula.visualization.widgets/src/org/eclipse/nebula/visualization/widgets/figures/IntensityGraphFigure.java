@@ -488,12 +488,17 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 					if(inRGBMode){
 						int index = (dataLocation.y) * croppedDataWidth * 3
 								+ dataLocation.x * 3;
+						if(index >= croppedDataArray.getSize()-3)
+							return;
 						valueUnderMouse = (croppedDataArray.get(index)
 								+ croppedDataArray.get(index + 1) + croppedDataArray
 								.get(index + 2)) / 3;
+					} else {
+						int index = (dataLocation.y)*croppedDataWidth + dataLocation.x;
+						if(index >= croppedDataArray.getSize())
+							return;
+						valueUnderMouse = croppedDataArray.get(index);
 					}
-					else
-						valueUnderMouse = croppedDataArray.get((dataLocation.y)*croppedDataWidth + dataLocation.x);
 					String text = "(" + xAxis.format(xCoordinate) + ", " + yAxis.format(yCoordinate) + ", "+ 
 						yAxis.format(valueUnderMouse) + ")";
 					text = text + getPixelInfo(dataLocation.x + cropLeft, dataLocation.y + cropTop,
@@ -646,14 +651,14 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 	
 	private Map<String, ROIFigure> roiMap;
 //	private long startTime = System.nanoTime();
-	private final static Color WHITE_COLOR = XYGraphMediaFactory.getInstance().getColor(
+	private final Color WHITE_COLOR = XYGraphMediaFactory.getInstance().getColor(
 			XYGraphMediaFactory.COLOR_WHITE);
 	
 	
-	private final static Color BLACK_COLOR = XYGraphMediaFactory.getInstance().getColor(
+	private final Color BLACK_COLOR = XYGraphMediaFactory.getInstance().getColor(
 			XYGraphMediaFactory.COLOR_BLACK);
 	
-	private final static Color TRANSPARENT_COLOR = XYGraphMediaFactory.getInstance().getColor(
+	private final Color TRANSPARENT_COLOR = XYGraphMediaFactory.getInstance().getColor(
 			new RGB(123,0,23));
 	
 	private boolean inRGBMode = false;
