@@ -9,7 +9,9 @@ Require-Bundle: org.eclipse.swt,
  org.eclipse.draw2d,
  org.eclipse.jface,
  org.eclipse.core.runtime
-Export-Package: org.eclipse.nebula.visualization.xygraph.dataprovider,
+Export-Package: org.eclipse.nebula.visualization.internal.xygraph.toolbar,
+ org.eclipse.nebula.visualization.internal.xygraph.undo,
+ org.eclipse.nebula.visualization.xygraph.dataprovider,
  org.eclipse.nebula.visualization.xygraph.figures,
  org.eclipse.nebula.visualization.xygraph.linearscale,
  org.eclipse.nebula.visualization.xygraph.util
