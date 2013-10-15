@@ -481,6 +481,9 @@ public class ROIFigure extends Figure {
 		}
 		
 		private void updateROIGeoBounds(){			
+			if(roiDataBounds == null){
+				roiDataBounds = new PrecisionRectangle();
+			}
 			roiGeoBounds = getGeoBoundsFromROI(roiDataBounds);
 		}
 		
