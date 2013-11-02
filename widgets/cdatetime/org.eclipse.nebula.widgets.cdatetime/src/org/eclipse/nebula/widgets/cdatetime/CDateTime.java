@@ -257,7 +257,6 @@ public class CDateTime extends BaseCombo {
 				break;
 			case SWT.FocusOut:
 				if (!rightClick && !internalFocusShift) {
-					setActiveField(FIELD_NONE);
 					updateText();
 				}
 				break;
