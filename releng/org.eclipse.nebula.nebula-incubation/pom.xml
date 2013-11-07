@@ -26,50 +26,14 @@
 		<module>../../examples/org.eclipse.nebula.examples.feature</module>
 		<module>../org.eclipse.nebula.examples.incubation.feature</module>
 
-		<!--collapsiblebuttons -->
-		<module>../../widgets/collapsiblebuttons/org.eclipse.nebula.widgets.collapsiblebuttons</module>
-		<module>../../widgets/collapsiblebuttons/org.eclipse.nebula.widgets.collapsiblebuttons.example</module>
-		<module>../../widgets/collapsiblebuttons/org.eclipse.nebula.widgets.collapsiblebuttons.feature</module>
-
-		<!-- FormattedText -->
-		<module>../../widgets/formattedtext/org.eclipse.nebula.widgets.formattedtext</module>
-		<module>../../widgets/formattedtext/org.eclipse.nebula.widgets.formattedtext.feature</module>
-
-		<!-- DateChooser -->
-		<module>../../widgets/datechooser/org.eclipse.nebula.widgets.datechooser</module>
-		<module>../../widgets/datechooser/org.eclipse.nebula.widgets.datechooser.example</module>
-		<module>../../widgets/datechooser/org.eclipse.nebula.widgets.datechooser.feature</module>
-
-		<!-- RadioGroup -->
-		<module>../../widgets/radiogroup/org.eclipse.nebula.widgets.radiogroup</module>
-		<module>../../widgets/radiogroup/org.eclipse.nebula.widgets.radiogroup.example</module>
-		<module>../../widgets/radiogroup/org.eclipse.nebula.widgets.radiogroup.tests</module>
-		<module>../../widgets/radiogroup/org.eclipse.nebula.widgets.radiogroup.feature</module>
-
-		<!-- TreeMapper -->
-		<module>../../widgets/treemapper/org.eclipse.nebula.widgets.treemapper</module>
-		<module>../../widgets/treemapper/org.eclipse.nebula.widgets.treemapper.examples</module>
-		<module>../../widgets/treemapper/org.eclipse.nebula.widgets.treemapper.tests</module>
-		<module>../../widgets/treemapper/org.eclipse.nebula.widgets.treemapper.feature</module>
-
-		<!-- Pagination Control -->
-		<module>../../widgets/pagination/org.eclipse.nebula.widgets.pagination</module>
-		<module>../../widgets/pagination/org.eclipse.nebula.widgets.pagination.example</module>
-		<module>../../widgets/pagination/org.eclipse.nebula.widgets.pagination.feature</module>
-		<module>../../widgets/pagination/org.eclipse.nebula.widgets.pagination.snippets</module>
-		<module>../../widgets/pagination/org.eclipse.nebula.widgets.pagination.tests</module>
-
-		<!-- Picture Control -->
-		<module>../../widgets/picture/org.eclipse.nebula.widgets.picture</module>
-		<module>../../widgets/picture/org.eclipse.nebula.widgets.picture.example</module>
-		<module>../../widgets/picture/org.eclipse.nebula.widgets.picture.feature</module>
-		<module>../../widgets/picture/org.eclipse.nebula.widgets.picture.snippets</module>
-
-		<!-- GeoMap Control -->
-		<module>../../widgets/geomap/org.eclipse.nebula.widgets.geomap</module>
-		<module>../../widgets/geomap/org.eclipse.nebula.widgets.geomap.example</module>
-		<module>../../widgets/geomap/org.eclipse.nebula.widgets.geomap.feature</module>
-		<module>../../widgets/geomap/org.eclipse.nebula.widgets.geomap.snippets</module>
+		<module>../../widgets/collapsiblebuttons</module>
+		<module>../../widgets/formattedtext</module>
+		<module>../../widgets/datechooser</module>
+		<module>../../widgets/radiogroup</module>
+		<module>../../widgets/treemapper</module>
+		<module>../../widgets/pagination</module>
+		<module>../../widgets/picture</module>
+		<module>../../widgets/geomap</module>
 
 		<!-- Dist -->
 		<module>../org.eclipse.nebula.updatesite.incubation</module>
