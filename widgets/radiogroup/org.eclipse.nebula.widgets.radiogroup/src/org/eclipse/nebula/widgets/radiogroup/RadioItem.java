@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Matthew Hall and others.
+ * Copyright (c) 2008-2013 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 248956)
+ *     Mickael Istria - Made some useful methods public
  *******************************************************************************/
 
 package org.eclipse.nebula.widgets.radiogroup;
@@ -36,7 +37,7 @@ import org.eclipse.swt.widgets.Listener;
  * <p>
  * IMPORTANT: This class is <em>not</em> intended to be subclassed.
  * </p>
- * 
+ *
  * @noextend This class is not intended to be subclassed.
  */
 public class RadioItem extends Item {
@@ -164,11 +165,11 @@ public class RadioItem extends Item {
 		button.setFont(font);
 	}
 
-	Button getButton() {
+	public Button getButton() {
 		return button;
 	}
-	
-	boolean isSelected() {
+
+	public boolean isSelected() {
 		return button.getSelection();
 	}
 
