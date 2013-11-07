@@ -1,11 +1,11 @@
 package org.eclipse.nebula.cwt.v;
 
-import org.eclipse.nebula.cwt.test.VTestCase;
+import org.eclipse.nebula.cwt.test.AbstractVTestCase;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
-public class DisposalTests extends VTestCase {
+public class DisposalTests extends AbstractVTestCase {
 
 	private VCanvas comp;
 	

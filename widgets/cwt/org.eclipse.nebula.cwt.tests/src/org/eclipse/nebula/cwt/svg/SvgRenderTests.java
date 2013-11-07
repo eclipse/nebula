@@ -10,7 +10,7 @@
  *****************************************************************************/
 package org.eclipse.nebula.cwt.svg;
 
-import org.eclipse.nebula.cwt.test.VTestCase;
+import org.eclipse.nebula.cwt.test.AbstractVTestCase;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-public class SvgRenderTests extends VTestCase {
+public class SvgRenderTests extends AbstractVTestCase {
 
 	private Composite imgComposite;
 	private Composite svgComposite;

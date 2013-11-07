@@ -14,12 +14,12 @@ package org.eclipse.nebula.widgets.cdatetime.screenshots;
 import java.io.File;
 import java.util.Date;
 
-import org.eclipse.nebula.cwt.test.VTestCase;
+import org.eclipse.nebula.cwt.test.AbstractVTestCase;
 import org.eclipse.nebula.widgets.cdatetime.CDT;
 import org.eclipse.nebula.widgets.cdatetime.CDateTime;
 import org.eclipse.swt.layout.GridLayout;
 
-public class ScreenShots extends VTestCase {
+public class ScreenShots extends AbstractVTestCase {
 
 	private CDateTime cdt;
 	private int[] style = new int[] { CDT.BORDER | CDT.TIME_MEDIUM | CDT.DATE_LONG, CDT.BORDER | CDT.DATE_LONG, CDT.BORDER | CDT.TIME_MEDIUM };
@@ -31,23 +31,23 @@ public class ScreenShots extends VTestCase {
 		getShell().setLayout(new GridLayout());
 		super.setUp();
 	}
-	
+
 	public void setUp11() {
 		cdt = new CDateTime(getShell(), style[0] | style_ext[0]);
 	}
-	
+
 	public void setUp12() {
 		cdt = new CDateTime(getShell(), style[0] | style_ext[1]);
 	}
-	
+
 	public void setUp13() {
 		cdt = new CDateTime(getShell(), style[0] | style_ext[2]);
 	}
-	
+
 	public void setUp14() {
 		cdt = new CDateTime(getShell(), style[0] | style_ext[3]);
 	}
-	
+
 	private void doScreenShots() {
 		capture(cdt, "null");
 		syncExec(new Runnable() {
@@ -58,7 +58,7 @@ public class ScreenShots extends VTestCase {
 		});
 		pause(500);
 		capture(cdt, "set");
-		
+
 	}
 
 	public void testScreenShot_11() {

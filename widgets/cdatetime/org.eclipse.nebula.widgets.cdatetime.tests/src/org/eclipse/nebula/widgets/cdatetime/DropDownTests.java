@@ -1,9 +1,9 @@
 package org.eclipse.nebula.widgets.cdatetime;
 
-import org.eclipse.nebula.cwt.test.VTestCase;
+import org.eclipse.nebula.cwt.test.AbstractVTestCase;
 import org.eclipse.swt.SWT;
 
-public class DropDownTests extends VTestCase {
+public class DropDownTests extends AbstractVTestCase {
 
 	private CdtTester cdt;
 	private boolean running;
@@ -12,29 +12,29 @@ public class DropDownTests extends VTestCase {
 			running = false;
 		}
 	};
-	
+
 	public void setUp() throws Exception {
 		cdt = new CdtTester(getShell(), CDT.BORDER | CDT.DROP_DOWN);
 	}
-	
+
 	public void testOpenAndCloseByKeys() throws Exception {
 		cdt.setFocus();
 		assertTrue(hasFocus(cdt.getTextWidget()));
-		
+
 		keyDown(SWT.CTRL);
 		keyPress(' ');
 		keyUp(SWT.CTRL);
-		
+
 		assertTrue(cdt.isOpen());
 
 		// TODO should not need pauses!
 		pause(1000);
-		
+
 		keyPress(SWT.ESC);
-		
+
 		assertFalse(cdt.isOpen());
 	}
-	
+
 	public void testOpenAndCloseByMouse() throws Exception {
 		assertFalse(cdt.isOpen());
 		click(cdt.getButton());
@@ -42,7 +42,7 @@ public class DropDownTests extends VTestCase {
 		click(cdt.getButton());
 		assertFalse(cdt.isOpen());
 	}
-	
+
 	public void testOpenAndCloseByCode() throws Exception {
 		assertFalse(cdt.isOpen());
 		cdt.setOpen(true);
@@ -51,7 +51,7 @@ public class DropDownTests extends VTestCase {
 		assertFalse(cdt.isOpen());
 	}
 
-	
+
 	public void testOpenAndCloseByCodeWithCallbacks() throws Exception {
 		assertFalse(cdt.isOpen());
 

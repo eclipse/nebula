@@ -10,16 +10,15 @@
  *****************************************************************************/
 package org.eclipse.nebula.widgets.cdatetime;
 
-import org.eclipse.nebula.cwt.test.VTestCase;
-import org.eclipse.swt.SWT;
+import org.eclipse.nebula.cwt.test.AbstractVTestCase;
 
 /**
  * Test for https://bugs.eclipse.org/bugs/show_bug.cgi?id=352689
- * 
+ *
  * @author Wim Jongman
- * 
+ *
  */
-public class Bug352689 extends VTestCase {
+public class Bug352689 extends AbstractVTestCase {
 
 	private CdtTester cdt;
 	private boolean running;
@@ -28,14 +27,14 @@ public class Bug352689 extends VTestCase {
 			running = false;
 		}
 	};
-	
+
 	public void setUp() throws Exception {
 		cdt = new CdtTester(getShell(), CDT.BUTTON_AUTO| CDT.BORDER | CDT.DROP_DOWN);
 	}
-	
+
 	public void testDisposeException() throws Exception {
 //		cdt.setFocus();
-//		
+//
 //		keyPress('3');
 //		keyPress('1');
 //		keyPress('1');
@@ -45,9 +44,9 @@ public class Bug352689 extends VTestCase {
 //		keyPress('1');
 //		keyPress('1');
 //		keyPress('\t');
-		
+
 //		assertEquals("31-12-11", cdt.getText());
-		
+
 //		getComposite(cdt.getBodyPanel()).getShell().close();
 
 		//	assertTrue(cdt.getCDateTime().getText()Text().equals("31122011"));

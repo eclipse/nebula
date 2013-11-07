@@ -1,10 +1,10 @@
 package org.eclipse.nebula.cwt.base;
 
-import org.eclipse.nebula.cwt.test.VTestCase;
+import org.eclipse.nebula.cwt.test.AbstractVTestCase;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Label;
 
-public class DropDownTests extends VTestCase {
+public class DropDownTests extends AbstractVTestCase {
 
 	private BaseCombo combo;
 	

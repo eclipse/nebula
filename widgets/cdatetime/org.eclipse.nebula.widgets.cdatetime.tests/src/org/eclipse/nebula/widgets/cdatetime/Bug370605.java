@@ -18,10 +18,10 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.TimeZone;
 
-import org.eclipse.nebula.cwt.test.VTestCase;
+import org.eclipse.nebula.cwt.test.AbstractVTestCase;
 import org.eclipse.swt.SWT;
 
-public class Bug370605 extends VTestCase {
+public class Bug370605 extends AbstractVTestCase {
 
 	private static final String FALL_EPOCH = "11/04/2012 00:00.00 PDT";
 
@@ -47,10 +47,10 @@ public class Bug370605 extends VTestCase {
 
 	/**
 	 * Using traverse arrow keys, move through each field of the control
-	 * 
+	 *
 	 * Stop traversing if we have cycled back to the starting field, or we reach
 	 * the time zone field
-	 * 
+	 *
 	 * @return true, if the time zone field has been found. false otherwise.
 	 */
 	private boolean moveToTimeZoneField(int calendarFieldSelection) {
@@ -80,7 +80,7 @@ public class Bug370605 extends VTestCase {
 
 	/**
 	 * This uses a single test with a known DST zone (PST).
-	 * 
+	 *
 	 * <ol>
 	 * Test Plans
 	 * <li>roll over the epoch time and ensure we roll over both 1 AM times
@@ -89,7 +89,7 @@ public class Bug370605 extends VTestCase {
 	 * <li>manually type in the epoch time and ensure we get the Java default
 	 * time</li>
 	 * </ol>
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testDaylightSavingsFallRoll() throws Exception {
@@ -174,7 +174,7 @@ public class Bug370605 extends VTestCase {
 
 		assertEquals(fallEpochCal.get(Calendar.HOUR_OF_DAY),
 				modifiedCal.get(Calendar.HOUR_OF_DAY));
-		
+
 		// VERIFY: Manually type in 1 AM
 		keyPress(SWT.KEYPAD_0);
 		keyPress(SWT.KEYPAD_1);
@@ -185,12 +185,12 @@ public class Bug370605 extends VTestCase {
 		modifiedCal.setTime(modifiedDate);
 
 		assertEquals(1, modifiedCal.get(Calendar.HOUR_OF_DAY));
-		
+
 	}
 
 	/**
 	 * This uses a single test with a known DST zone (PST).
-	 * 
+	 *
 	 * <ol>
 	 * Test Plans
 	 * <li>roll over the epoch time and ensure we roll over 1 AM directly into 3
@@ -199,7 +199,7 @@ public class Bug370605 extends VTestCase {
 	 * <li>manually type in the epoch time and ensure we get the Java default
 	 * time</li>
 	 * </ol>
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testDaylightSavingsSpringRoll() throws Exception {
@@ -238,7 +238,7 @@ public class Bug370605 extends VTestCase {
 
 		assertEquals(springEpochCal.get(Calendar.HOUR_OF_DAY),
 				modifiedCal.get(Calendar.HOUR_OF_DAY));
-		
+
 		// VERIFY: Manully enter 2 AM and verify it reverts to 3 AM
 		keyPress(SWT.KEYPAD_0);
 		keyPress(SWT.KEYPAD_2);
@@ -254,7 +254,7 @@ public class Bug370605 extends VTestCase {
 	/**
 	 * Using a CDateTime that is not configured for altering time zone, verify
 	 * that the time zone field is simply not able to be traversed into.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testNoTimeZoneSelection() throws Exception {
@@ -279,18 +279,18 @@ public class Bug370605 extends VTestCase {
 	 * that our original time zone that we set to the control is still in the
 	 * control on instantiation. Here we use a time zone that is *not* in the
 	 * list to ensure we do no alter the programatic expectation.
-	 * 
+	 *
 	 * We then step over to the time zone field and verify that the controls
 	 * time zone is altered in accordance with our list of time zones that we
 	 * set into the control
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testTimeZoneSelection() throws Exception {
 		tester.setPattern(PATTERN_TIMESTAMP, timezones.toArray(new TimeZone[0]));
 		tester.setTimeZone(TIMEZONE_INITIAL);
 		tester.setSelection(now);
- 
+
 		// VERIFY: TimeZone is set to the initial time zone
 		final TimeZone wtzOriginal = tester.getCDateTime().getTimeZone();
 		assertEquals(TIMEZONE_INITIAL.getDisplayName(),

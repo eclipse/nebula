@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
-public class VTestCase extends TestCase {
+public abstract class AbstractVTestCase extends TestCase {
 
 	private Thread t = new Thread("Test - " + getName()) {
 		@Override
@@ -772,7 +772,7 @@ public class VTestCase extends TestCase {
 
 	/**
 	 * Creates the {@link Shell}, override for a special shell.
-	 * 
+	 *
 	 * @return
 	 */
 	public Shell createShell() {
@@ -841,7 +841,7 @@ public class VTestCase extends TestCase {
 				// nothing to do
 			}
 		}
- 
+
 		if (method != null) {
 			method.invoke(this, new Object[0]);
 		}
