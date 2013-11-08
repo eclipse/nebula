@@ -14,7 +14,7 @@ package org.eclipse.nebula.widgets.cdatetime;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.eclipse.nebula.cwt.test.VTestCase;
+import org.eclipse.nebula.cwt.test.AbstractVTestCase;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
-public class FocusTests extends VTestCase {
+public class FocusTests extends AbstractVTestCase {
 
 	private CdtTester tester;
 	private Button button;
@@ -174,7 +174,7 @@ public class FocusTests extends VTestCase {
 		cdt2.setSelection(new Date());
 		cdt2.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
 	}
-	
+
 	private Listener listener;
 	public void focusListenersSetup() {
 		listener = new Listener() {
@@ -186,7 +186,7 @@ public class FocusTests extends VTestCase {
 				}
 			}
 		};
-		
+
 		cdt1 = new CDateTime(getShell(), CDT.BORDER | CDT.SIMPLE);
 		cdt1.addFocusListener(new FocusListener() {
 			public void focusGained(FocusEvent e) {
@@ -198,7 +198,7 @@ public class FocusTests extends VTestCase {
 		});
 		cdt1.addListener(SWT.FocusIn, listener);
 		cdt1.addListener(SWT.FocusOut, listener);
-		
+
 		cdt2 = new CDateTime(getShell(), CDT.BORDER | CDT.SIMPLE);
 		cdt2.addFocusListener(new FocusListener() {
 			public void focusGained(FocusEvent e) {
@@ -211,7 +211,7 @@ public class FocusTests extends VTestCase {
 		cdt2.addListener(SWT.FocusIn, listener);
 		cdt2.addListener(SWT.FocusOut, listener);
 	}
-	
+
 	public void testFocusListeners() {
 		assertTrue(hasFocus(cdt1));
 
@@ -350,7 +350,7 @@ public class FocusTests extends VTestCase {
 	}
 
 	public void testTabKeyForward_2() {
-		
+
 		assertTrue(hasFocus(getComposite(getPanel(cdt1))));
 
 		keyPress('\t');
@@ -417,7 +417,7 @@ public class FocusTests extends VTestCase {
 
 		keyUp(SWT.SHIFT);
 	}
-	
+
 	public void testTabKeyReverse_2() {
 		assertTrue(hasFocus(getPanel(cdt1).getComposite()));
 
@@ -457,7 +457,7 @@ public class FocusTests extends VTestCase {
 
 		keyUp(SWT.SHIFT);
 	}
-	
+
 	public void testTabKeyReverse_4() {
 		assertTrue(hasFocus(cdt1.getTextWidget()));
 
@@ -488,10 +488,10 @@ public class FocusTests extends VTestCase {
 		button = new Button(getShell(), SWT.PUSH);
 		button.setText("test");
 	}
-	
+
 	public void testDateUpdatedAfterFocusLost() {
 		assertEquals("01", tester.getText());
-		
+
 		// test focusOut from mouse click
 		Date date = tester.getSelection();
 
@@ -507,7 +507,7 @@ public class FocusTests extends VTestCase {
 		click(tester.getCDateTime().getTextWidget());
 		keyPress('5');
 		keyPress('\t');
-		
+
 		assertEquals("05", tester.getText());
 		assertFalse("Dates should not equal", date.equals(tester.getCalendarTime()));
 	}

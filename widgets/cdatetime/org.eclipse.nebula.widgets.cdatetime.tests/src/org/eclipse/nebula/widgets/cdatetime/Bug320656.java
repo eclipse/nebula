@@ -13,12 +13,12 @@ package org.eclipse.nebula.widgets.cdatetime;
 
 import java.util.Date;
 
-import org.eclipse.nebula.cwt.test.VTestCase;
+import org.eclipse.nebula.cwt.test.AbstractVTestCase;
 import org.eclipse.nebula.cwt.v.VNative;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Spinner;
 
-public class Bug320656 extends VTestCase {
+public class Bug320656 extends AbstractVTestCase {
 
 	private CdtTester tester;
 

@@ -12,17 +12,17 @@ package org.eclipse.nebula.widgets.cdatetime;
 
 import java.util.Locale;
 
-import org.eclipse.nebula.cwt.test.VTestCase;
+import org.eclipse.nebula.cwt.test.AbstractVTestCase;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 
 /**
  * Test for https://bugs.eclipse.org/bugs/show_bug.cgi?id=336853
- * 
+ *
  * @author Wim Jongman
- * 
+ *
  */
-public class Bug336853 extends VTestCase {
+public class Bug336853 extends AbstractVTestCase {
 
 	private CdtTester cdt;
 	private boolean running;
@@ -45,8 +45,8 @@ public class Bug336853 extends VTestCase {
 		click(cdt.getButton());
 		assertFalse(cdt.isOpen());
 	}
-	
-	
+
+
 
 	@Override
 	public Shell createShell() {
@@ -55,7 +55,7 @@ public class Bug336853 extends VTestCase {
 
 	public void testStartTyping() throws Exception {
 		cdt.setFocus();
-		
+
 		keyPress('1');
 		keyPress('2');
 		keyPress('3');
@@ -65,7 +65,7 @@ public class Bug336853 extends VTestCase {
 		keyPress('1');
 		keyPress('2');
 		keyPress('\t');
-		
+
 		assertEquals("12/31/12", cdt.getText());
 	}
 }

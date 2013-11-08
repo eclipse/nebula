@@ -11,7 +11,7 @@
 
 package org.eclipse.nebula.cwt.v;
 
-import org.eclipse.nebula.cwt.test.VTestCase;
+import org.eclipse.nebula.cwt.test.AbstractVTestCase;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Shell;
 
 
 
-public class ButtonFocusTests extends VTestCase {
+public class ButtonFocusTests extends AbstractVTestCase {
 
 	private Button button1;
 	private Button button2;
