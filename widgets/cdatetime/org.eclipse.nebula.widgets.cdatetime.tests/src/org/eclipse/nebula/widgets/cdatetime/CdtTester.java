@@ -120,19 +120,19 @@ public class CdtTester {
 	}
 
 	public void setSelection(final Date date) {
-		System.err.println("\t Starting setSelection");
-		System.err.println("\t Getcurrent: " + Display.getCurrent());
-		System.err.println("\t GetDefault: " + Display.getDefault());
-		System.err.println("\t Variable: " + display);
-		
-		new Exception().printStackTrace(System.err);
+//		System.err.println("\t Starting setSelection");
+//		System.err.println("\t Getcurrent: " + Display.getCurrent());
+//		System.err.println("\t GetDefault: " + Display.getDefault());
+//		System.err.println("\t Variable: " + display);
+//		
+//		new Exception().printStackTrace(System.err);
 
 		display.syncExec(new Runnable() {
 			public void run() {
 				cdt.setSelection(date);
 			}
 		});
-		System.err.println("\t Ending setSelection");
+//		System.err.println("\t Ending setSelection");
 	}
 
 	public void setTimeZone(final TimeZone timezone) {
@@ -163,13 +163,13 @@ public class CdtTester {
 
 	public Date getSelection() {
 
-		System.err.println("\t getSelection() - Start");
-		System.err.println("\t Starting setSelection");
-		System.err.println("\t Getcurrent: " + Display.getCurrent());
-		System.err.println("\t GetDefault: " + Display.getDefault());
-		System.err.println("\t Variable: " + display);
+//		System.err.println("\t getSelection() - Start");
+//		System.err.println("\t Starting setSelection");
+//		System.err.println("\t Getcurrent: " + Display.getCurrent());
+//		System.err.println("\t GetDefault: " + Display.getDefault());
+//		System.err.println("\t Variable: " + display);
 		
-		new Exception().printStackTrace(System.err);
+//		new Exception().printStackTrace(System.err);
 		
 		display.syncExec(new Runnable() {
 			public void run() {
@@ -177,7 +177,7 @@ public class CdtTester {
 			}
 		});
 
-		System.err.println("\t getSelection() - end");
+//		System.err.println("\t getSelection() - end");
 		return (Date) tmpObj;
 	}
 
