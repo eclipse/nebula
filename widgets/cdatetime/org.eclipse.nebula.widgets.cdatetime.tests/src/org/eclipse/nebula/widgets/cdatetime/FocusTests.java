@@ -494,10 +494,19 @@ public class FocusTests extends AbstractVTestCase {
 
 		// test focusOut from mouse click
 		Date date = tester.getSelection();
+		delay(1000);
 
 		click(tester.getCDateTime().getTextWidget());
+		delay(1000);
+		keyPress('0');
 		keyPress('3');
+		delay(1000);
 		click(button);
+		delay(1000);
+		System.out.println(tester.getSelection());
+		System.out.println(date);
+		
+		
 		assertEquals("03", tester.getText());
 		assertFalse("Dates should not equal", date.equals(tester.getSelection()));
 
@@ -505,6 +514,7 @@ public class FocusTests extends AbstractVTestCase {
 		date = tester.getCalendarTime();
 
 		click(tester.getCDateTime().getTextWidget());
+		keyPress('0');
 		keyPress('5');
 		keyPress('\t');
 
@@ -512,4 +522,10 @@ public class FocusTests extends AbstractVTestCase {
 		assertFalse("Dates should not equal", date.equals(tester.getCalendarTime()));
 	}
 
+	private void delay(int i) {
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+		}
+	}
 }

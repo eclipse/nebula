@@ -1,7 +1,9 @@
 package org.eclipse.nebula.widgets.cdatetime;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import org.eclipse.nebula.cwt.test.AbstractVTestCase;
 import org.eclipse.swt.SWT;
@@ -15,18 +17,18 @@ public class SelectionTests extends AbstractVTestCase {
 
 	private void singleSelectionTest() {
 
-		System.err.println("START - Single Selection Test");
+		System.err.println("START - Single Selection Test ");
 
 		assertNull(tester1.getSelection());
 		assertNotNull(tester1.getCalendarTime());
-
-		Date date = new Date();
+		
+		Date date = Calendar.getInstance().getTime();
 
 		tester1.setFocus();
 		tester1.setSelection(date);
 
 		if((tester1.getStyle() & CDT.SIMPLE) == 0) {
-			SimpleDateFormat sdf = new SimpleDateFormat(tester1.getPattern());
+			SimpleDateFormat sdf = new SimpleDateFormat(tester1.getPattern(), Locale.getDefault());
 			assertEquals(sdf.format(date), tester1.getText());
 		}
 		assertEquals(date, tester1.getSelection());
