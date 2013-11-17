@@ -93,11 +93,9 @@ public abstract class AbstractVTestCase extends TestCase {
 	public void capture(final Control control, final String suffix) {
 		syncExec(new Runnable() {
 			public void run() {
-				Point location = control.getParent().toDisplay(
-						control.getLocation());
+				Point location = control.getParent().toDisplay(control.getLocation());
 				Point size = control.getSize();
-				capture(new Rectangle(location.x, location.y, size.x, size.y),
-						suffix);
+				capture(new Rectangle(location.x, location.y, size.x, size.y), suffix);
 			}
 		});
 	}
@@ -176,8 +174,7 @@ public abstract class AbstractVTestCase extends TestCase {
 			public void run() {
 				Point location = control.toDisplay(control.getLocation());
 				Point size = control.getSize();
-				capture(new Rectangle(location.x, location.y, size.x, size.y),
-						suffix);
+				capture(new Rectangle(location.x, location.y, size.x, size.y), suffix);
 			}
 		});
 	}
@@ -398,8 +395,7 @@ public abstract class AbstractVTestCase extends TestCase {
 				}
 				Point size = shell.getSize();
 				Rectangle screen = display.getMonitors()[0].getBounds();
-				shell.setBounds((screen.width - size.x) / 2,
-						(screen.height - size.y) / 2, size.x, size.y);
+				shell.setBounds((screen.width - size.x) / 2, (screen.height - size.y) / 2, size.x, size.y);
 			}
 		});
 	}
@@ -492,8 +488,7 @@ public abstract class AbstractVTestCase extends TestCase {
 	public void moveTo(final Control control) {
 		syncExec(new Runnable() {
 			public void run() {
-				Point location = control.getParent().toDisplay(
-						control.getLocation());
+				Point location = control.getParent().toDisplay(control.getLocation());
 				Point size = control.getSize();
 
 				Event event = new Event();
@@ -571,8 +566,7 @@ public abstract class AbstractVTestCase extends TestCase {
 				Point location = control.toDisplay(control.getLocation());
 				Point size = control.getSize();
 
-				int multiplier = (control.getShell().getStyle() & SWT.LEFT_TO_RIGHT) == SWT.LEFT_TO_RIGHT ? 1
-						: -1;
+				int multiplier = (control.getShell().getStyle() & SWT.LEFT_TO_RIGHT) == SWT.LEFT_TO_RIGHT ? 1 : -1;
 
 				Event event = new Event();
 				event.type = SWT.MouseMove;
@@ -661,8 +655,7 @@ public abstract class AbstractVTestCase extends TestCase {
 				Point location = control.toDisplay(control.getLocation());
 				Point size = control.getSize();
 				Point start = display.getCursorLocation();
-				Point end = new Point(location.x + (size.x / 2), location.y
-						+ (size.y / 2));
+				Point end = new Point(location.x + (size.x / 2), location.y + (size.y / 2));
 				int x = start.x;
 				int y = start.y;
 
@@ -731,39 +724,54 @@ public abstract class AbstractVTestCase extends TestCase {
 	}
 
 	public void runBare() throws Throwable {
-		String name = getName();
+		final String name = getName();
 
 		display = Display.getDefault();
-		shell = createShell();
-		shell.setText(name);
-		shell.setLayout(new FillLayout());
 
-		setUp();
+		display.syncExec(new Runnable() {
 
-		layoutShell();
-		shell.open();
+			public void run() {
+				shell = createShell();
+				shell.setText(name);
+				shell.setLayout(new FillLayout());
 
-		pause(500);
-		processEvents();
+				try {
+					setUp();
+				} catch (Exception e) {
+					exception = e;
+				}
 
-		testing = true;
+				layoutShell();
+				shell.open();
 
-		if (name.endsWith("_Sync")) {
-			t.run();
-		} else {
-			t.start();
-		}
+				pause(500);
+				processEvents();
 
-		while (testing && !shell.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
+				testing = true;
+
+				if (name.endsWith("_Sync")) {
+					t.run();
+				} else {
+					t.start();
+				}
+
+				while (testing && !shell.isDisposed()) {
+					if (!display.readAndDispatch()) {
+						display.sleep();
+					}
+				}
+
+				try {
+					tearDown();
+				} catch (Exception e) {
+					exception = e;
+				}
+
+				display.dispose();
+				display = null;
+
 			}
-		}
-
-		tearDown();
-
-		display.dispose();
-		display = null;
+		});
 
 		if (exception != null) {
 			throw exception;
@@ -772,7 +780,7 @@ public abstract class AbstractVTestCase extends TestCase {
 
 	/**
 	 * Creates the {@link Shell}, override for a special shell.
-	 *
+	 * 
 	 * @return
 	 */
 	public Shell createShell() {
@@ -821,8 +829,7 @@ public abstract class AbstractVTestCase extends TestCase {
 
 		if (method == null) {
 			try {
-				String setup = Character.toLowerCase(name.charAt(4))
-						+ name.substring(5) + "Setup";
+				String setup = Character.toLowerCase(name.charAt(4)) + name.substring(5) + "Setup";
 				method = getClass().getMethod(setup, new Class[0]);
 			} catch (NoSuchMethodException e) {
 				// nothing to do
@@ -833,8 +840,7 @@ public abstract class AbstractVTestCase extends TestCase {
 			try {
 				String[] sa = name.split("_");
 				String s = sa[sa.length - 1];
-				method = getClass().getMethod("setUp" + Integer.valueOf(s),
-						new Class[0]);
+				method = getClass().getMethod("setUp" + Integer.valueOf(s), new Class[0]);
 			} catch (NoSuchMethodException e) {
 				// nothing to do
 			} catch (NumberFormatException e) {
