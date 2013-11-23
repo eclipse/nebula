@@ -18,7 +18,7 @@
 		<module>org.eclipse.nebula.jface.cdatetime</module>
 		<module>org.eclipse.nebula.widgets.cdatetime.example</module>
 		<module>org.eclipse.nebula.widgets.cdatetime.snippets</module>
-		<module>org.eclipse.nebula.widgets.cdatetime.tests</module>
+	<!--  	<module>org.eclipse.nebula.widgets.cdatetime.tests</module> -->
 		<module>org.eclipse.nebula.widgets.cdatetime.feature</module>
 
 	</modules>

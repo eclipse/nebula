@@ -16,7 +16,7 @@
 	<modules>
 		<module>org.eclipse.nebula.paperclips.core</module>
 		<module>org.eclipse.nebula.paperclips.widgets</module>
-	<!-- <module>org.eclipse.nebula.paperclips.tests</module>  -->	
+		<module>org.eclipse.nebula.paperclips.tests</module>	
 		<module>org.eclipse.nebula.paperclips.snippets</module>
 		<module>org.eclipse.nebula.widgets.paperclips.feature</module>
 		<module>org.eclipse.nebula.widgets.paperclips.example</module>
