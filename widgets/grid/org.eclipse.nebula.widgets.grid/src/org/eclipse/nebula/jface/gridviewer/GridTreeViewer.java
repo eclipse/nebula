@@ -33,6 +33,8 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
 /**
@@ -342,9 +344,9 @@ public class GridTreeViewer extends AbstractTreeViewer {
 			public void run() {
 				TreePath removedPath = null;
 				if (internalIsInputOrEmptyPath(parentOrTreePath)) {
-					Grid tree = (Grid) getControl();
+					Tree tree = (Tree) getControl();
 					if (index < tree.getItemCount()) {
-						GridItem item = tree.getItem(index);
+						TreeItem item = tree.getItem(index);
 						if (item.getData() != null) {
 							removedPath = getTreePathFromItem(item);
 							disassociate(item);
@@ -354,11 +356,11 @@ public class GridTreeViewer extends AbstractTreeViewer {
 				} else {
 					Widget[] parentItems = internalFindItems(parentOrTreePath);
 					for (int i = 0; i < parentItems.length; i++) {
-						GridItem parentItem = (GridItem) parentItems[i];
+						TreeItem parentItem = (TreeItem) parentItems[i];
 						if (parentItem.isDisposed())
 							continue;
 						if (index < parentItem.getItemCount()) {
-							GridItem item = parentItem.getItem(index);
+							TreeItem item = parentItem.getItem(index);
 							if (item.getData() != null) {
 								removedPath = getTreePathFromItem(item);
 								disassociate(item);
