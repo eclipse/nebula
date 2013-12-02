@@ -382,7 +382,8 @@ public class LinearScaleTickLabels extends Figure {
 			tickLabelPositions.add(scale.getMargin());
 		}
 
-		for (double b = firstPosition; max >= min ? b < max : b > max; b = b + tickStep) {
+		int i = 1;
+		for (double b = firstPosition; max >= min ? b < max : b > max; b = firstPosition + i++ * tickStep) {
 			if (scale.isDateEnabled()) {
 				Date date = new Date((long) b);
 				tickLabels.add(scale.format(date, b == firstPosition && !minDateAdded));
