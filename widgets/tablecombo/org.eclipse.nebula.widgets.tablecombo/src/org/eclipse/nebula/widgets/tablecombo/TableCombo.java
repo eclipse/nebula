@@ -12,6 +12,7 @@
  *  Wolfgang Schramm <wschramm@ch.ibm.com> - added vertical alignment of text for selected table item.
  *  Enrico Schnepel <enrico.schnepel@randomice.net> - help event listener bug 326285
  *  Andreas Ehret <> - patch for bug 334786
+ *  Thorsten Hake <mail@thorsten-hake.com> - fix for bug 415868
  *****************************************************************************/
 
 package org.eclipse.nebula.widgets.tablecombo;
@@ -520,11 +521,10 @@ public class TableCombo extends Composite {
 			gc.dispose ();
 			Point textSize = text.computeSize (SWT.DEFAULT, SWT.DEFAULT, changed);
 			Point arrowSize = arrow.computeSize (SWT.DEFAULT, SWT.DEFAULT, changed);
-			Point tableSize = table.computeSize (SWT.DEFAULT, SWT.DEFAULT, changed);
 			
 			overallHeight = Math.max (textSize.y, arrowSize.y);
 			overallHeight = Math.max (maxImageHeight, overallHeight);
-			overallWidth = Math.max (maxTextWidth + 2*spacer + arrowSize.x + 2*borderWidth, tableSize.x);
+			overallWidth = maxTextWidth + 2*spacer + arrowSize.x + 2*borderWidth;
 			
 			// use user specified if they were entered.
 			if (wHint != SWT.DEFAULT) overallWidth = wHint;
