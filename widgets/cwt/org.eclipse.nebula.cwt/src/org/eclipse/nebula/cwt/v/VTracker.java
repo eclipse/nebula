@@ -7,6 +7,7 @@
 *
 * Contributors:
 *    Jeremy Dowdall <jeremyd@aspencloud.com> - initial API and implementation
+*    Thorsten Hake <mail@thorsten-hake.com> - Fix for https://bugs.eclipse.org/bugs/show_bug.cgi?id=419447
 *****************************************************************************/
 
 package org.eclipse.nebula.cwt.v;
@@ -216,8 +217,8 @@ public class VTracker implements DisposeListener {
 			case SWT.Traverse:
 				lastTraverse = event.detail;
 				if(SWT.TRAVERSE_TAB_NEXT == event.detail || SWT.TRAVERSE_TAB_PREVIOUS == event.detail) {
-					event.doit = true;
 					if(focusControl != null) {
+						event.doit = true;
 						focusControl.handleEvent(event);
 						if(event.doit) {
 							Composite comp = focusControl.getWidget();
@@ -225,18 +226,6 @@ public class VTracker implements DisposeListener {
 								setFocusToNext(comp);
 							} else {
 								setFocusToPrev(comp);
-							}
-						}
-					} else if(event.widget instanceof Control) {
-						if(SWT.TRAVERSE_TAB_NEXT == event.detail) {
-							if(setFocusFromPrev((Control) event.widget)){
-								event.type = SWT.None;
-								event.doit = false;
-							}
-						} else {
-							if(setFocusFromNext((Control) event.widget)){
-								event.type = SWT.None;
-								event.doit = false;
 							}
 						}
 					}
