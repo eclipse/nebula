@@ -104,7 +104,7 @@ public class CircularBufferDataProvider extends AbstractDataProvider{
 	/**
 	 * this indicates if the max and min of the data need to be recalculated.
 	 */
-	private boolean dataRangedirty = false;
+	protected boolean dataRangedirty = false;
 	
 	private UpdateMode updateMode = UpdateMode.X_AND_Y;
 	
