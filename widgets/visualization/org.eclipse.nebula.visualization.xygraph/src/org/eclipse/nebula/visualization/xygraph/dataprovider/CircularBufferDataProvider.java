@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2010, 2013 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *    Xihui Chen - initial API and implementation
+ *    Max Hohenegger - Bug 418168
  ******************************************************************************/
 package org.eclipse.nebula.visualization.xygraph.dataprovider;
 
@@ -107,7 +111,9 @@ public class CircularBufferDataProvider extends AbstractDataProvider{
 	private PlotMode plotMode = PlotMode.LAST_N;
 
 	private Runnable fireUpdate;
-	
+
+	private int clippingWindow = -1;
+
 	public CircularBufferDataProvider(boolean chronological) {
 		super(chronological);
 		traceData = new CircularBuffer<ISample>(100);
@@ -390,16 +396,21 @@ public class CircularBufferDataProvider extends AbstractDataProvider{
 			return;
 		dataRangedirty = false;
 		if(getSize() > 0){
+			int lowerBound = 0;
+			if (getSize() > clippingWindow && clippingWindow > 0) {
+				lowerBound = (getSize() - 1) - clippingWindow;
+			}
 			double xMin;
 			double xMax;
-			xMin = traceData.getHead().getXValue();
+			xMin = getSample(lowerBound).getXValue();
 			xMax = xMin;
 			
 			double yMin;
 			double yMax;
-			yMin = traceData.getHead().getYValue();
+			yMin = getSample(lowerBound).getYValue();
 			yMax = yMin;
-			for(ISample dp : traceData){
+			for (int i = lowerBound + 1; i < getSize(); i++) {
+				ISample dp = getSample(i);
 				if(xMin > dp.getXValue()-dp.getXMinusError())
 					xMin = dp.getXValue()-dp.getXMinusError();
 				if(xMax < dp.getXValue()+dp.getXPlusError())
@@ -475,5 +486,13 @@ public class CircularBufferDataProvider extends AbstractDataProvider{
 		return concatenate_data;
 	}
 	
+	public void setClippingWindow(int clippingWindow) {
+		assert clippingWindow >= 0;
+		assert clippingWindow <= getSize();
+		this.clippingWindow = clippingWindow;
+	}
 
+	public int getClippingWindow() {
+		return clippingWindow;
+	}
 }
