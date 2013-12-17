@@ -228,7 +228,6 @@ public class XViewerSorter extends ViewerSorter {
          date2Date = (Date) obj2;
       }
       if (date1Date != null && date2Date != null) {
-         SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss:SS a");
          return getCompareForDate(date1Date, date2Date);
       }
       if (date1.trim().equals("") && date2.trim().equals("")) {
