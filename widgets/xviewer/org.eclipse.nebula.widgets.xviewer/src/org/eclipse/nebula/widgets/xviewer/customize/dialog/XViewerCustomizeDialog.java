@@ -83,7 +83,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
    private Text filterText;
    private Button filterRegExCheckBox;
    private Text columnFilterText;
-   // Select Customization Buttons
+   // Select Customization Buttons 
    Button setDefaultButton, deleteButton;
    // Config Customization Buttons - Moving items
    Button addItemButton, addAllItemButton, removeItemButton, removeAllItemButton, moveUpButton, moveDownButton;
@@ -93,6 +93,9 @@ public class XViewerCustomizeDialog extends MessageDialog {
    private final static String REMOVE_DEFAULT = XViewerText.get("button.remove_default");
    private String title = XViewerText.get("XViewerCustomizeDialog.title");
    boolean isFeedbackAfter = false;
+   boolean isShowSorterBlock = true;
+   boolean isShowFilterTextBlock = true;
+   boolean isShowColumnFilterTextBlock = true;
 
    public XViewerCustomizeDialog(XViewer xViewer) {
       this(xViewer, Display.getCurrent().getActiveShell());
@@ -372,9 +375,15 @@ public class XViewerCustomizeDialog extends MessageDialog {
       gridLayout_3.numColumns = 3;
       composite_2.setLayout(gridLayout_3);
 
-      createSorterTextBlock(composite_2);
-      createFilterTextBlock(composite_2);
-      createColumnFilterTextBlock(composite_2);
+      if (isShowSorterBlock) {
+         createSorterTextBlock(composite_2);
+      }
+      if (isShowFilterTextBlock) {
+         createFilterTextBlock(composite_2);
+      }
+      if (isShowColumnFilterTextBlock) {
+         createColumnFilterTextBlock(composite_2);
+      }
 
       createConfigCustomizationButtonBar(composite_2);
 
@@ -790,6 +799,9 @@ public class XViewerCustomizeDialog extends MessageDialog {
 
    @SuppressWarnings("unchecked")
    private void updateSortTextField() {
+      if (sorterText == null) {
+         return;
+      }
       // get visible column ids
       List<String> visibleColumnIds = new ArrayList<String>();
       for (XViewerColumn xCol : (List<XViewerColumn>) visibleColTable.getViewer().getInput()) {
@@ -810,6 +822,9 @@ public class XViewerCustomizeDialog extends MessageDialog {
 
    @SuppressWarnings("unchecked")
    private void updateColumnFilterField() {
+      if (columnFilterText == null) {
+         return;
+      }
       // get visible column ids
       List<String> visibleColumnIds = new ArrayList<String>();
       for (XViewerColumn xCol : (List<XViewerColumn>) visibleColTable.getViewer().getInput()) {
@@ -994,9 +1009,15 @@ public class XViewerCustomizeDialog extends MessageDialog {
       custData.resetGuid();
       custData.setNameSpace(xViewerToCustomize.getXViewerFactory().getNamespace());
       custData.getColumnData().setColumns(getConfigCustXViewerColumns());
-      custData.getSortingData().setFromXml(sorterText.getText());
-      custData.getFilterData().setFilterText(filterText.getText(), filterRegExCheckBox.getSelection());
-      custData.getColumnFilterData().setFromXml(columnFilterText.getText());
+      if (sorterText != null) {
+         custData.getSortingData().setFromXml(sorterText.getText());
+      }
+      if (filterText != null && filterRegExCheckBox != null) {
+         custData.getFilterData().setFilterText(filterText.getText(), filterRegExCheckBox.getSelection());
+      }
+      if (columnFilterText != null) {
+         custData.getColumnFilterData().setFromXml(columnFilterText.getText());
+      }
       return custData;
    }
 
@@ -1172,17 +1193,19 @@ public class XViewerCustomizeDialog extends MessageDialog {
       hiddenColTable.getViewer().setInput(hideXCols);
       visibleColTable.getViewer().setInput(showXCols);
 
-      sorterText.setText(custData.getSortingData().getXml());
-      sorterText.setData(custData);
-
-      filterText.setText(custData.getFilterData().getFilterText());
-      filterText.setData(custData);
-
-      filterRegExCheckBox.setSelection(custData.getFilterData().isRegularExpression());
-
-      columnFilterText.setText(custData.getColumnFilterData().getXml());
-      columnFilterText.setData(custData);
-
+      if (sorterText != null) {
+         sorterText.setText(custData.getSortingData().getXml());
+         sorterText.setData(custData);
+      }
+      if (filterText != null && filterRegExCheckBox != null) {
+         filterText.setText(custData.getFilterData().getFilterText());
+         filterText.setData(custData);
+         filterRegExCheckBox.setSelection(custData.getFilterData().isRegularExpression());
+      }
+      if (columnFilterText != null) {
+         columnFilterText.setText(custData.getColumnFilterData().getXml());
+         columnFilterText.setData(custData);
+      }
       updateSortTextField();
       updateColumnFilterField();
    }
@@ -1224,6 +1247,18 @@ public class XViewerCustomizeDialog extends MessageDialog {
 
    public String getTitle() {
       return title;
+   }
+
+   public void setShowSorterBlock(boolean isShowSorterBlock) {
+      this.isShowSorterBlock = isShowSorterBlock;
+   }
+
+   public void setShowFilterTextBlock(boolean isShowFilterTextBlock) {
+      this.isShowFilterTextBlock = isShowFilterTextBlock;
+   }
+
+   public void setShowColumnFilterTextBlock(boolean isShowColumnFilterTextBlock) {
+      this.isShowColumnFilterTextBlock = isShowColumnFilterTextBlock;
    }
 
 }
