@@ -10,10 +10,13 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.xviewer.example;
 
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.nebula.widgets.xviewer.XViewer;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumn.SortDataType;
 import org.eclipse.nebula.widgets.xviewer.XViewerFactory;
 import org.eclipse.nebula.widgets.xviewer.customize.IXViewerCustomizations;
+import org.eclipse.nebula.widgets.xviewer.customize.dialog.XViewerCustomizeDialog;
 import org.eclipse.nebula.widgets.xviewer.edit.CellEditDescriptor;
 import org.eclipse.nebula.widgets.xviewer.edit.ExtendedViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.example.model.SomeTask;
@@ -32,8 +35,8 @@ public class MyXViewerFactory extends XViewerFactory {
       SortDataType.String, false, null);
    public static XViewerColumn Name_Col = new XViewerColumn(COLUMN_NAMESPACE + ".name", "Name", 200, SWT.LEFT, true,
       SortDataType.String, false, null);
-   public static ExtendedViewerColumn Completed_Col = new ExtendedViewerColumn(COLUMN_NAMESPACE + ".complete", "Percent Complete",
-      80, SWT.LEFT, true, SortDataType.Float, false, null);
+   public static ExtendedViewerColumn Completed_Col = new ExtendedViewerColumn(COLUMN_NAMESPACE + ".complete",
+      "Percent Complete", 80, SWT.LEFT, true, SortDataType.Float, false, null);
    public static XViewerColumn Schedule_Time = new XViewerColumn(COLUMN_NAMESPACE + ".startTime", "Start Time", 40,
       SWT.CENTER, true, SortDataType.String, false, "Time this task will run");
    public static XViewerColumn Run_Db = new XViewerColumn(COLUMN_NAMESPACE + ".runDb", "Run DB", 80, SWT.LEFT, true,
@@ -55,8 +58,9 @@ public class MyXViewerFactory extends XViewerFactory {
       super("xviewer.test");
       registerColumns(Name_Col, Run_Col, Schedule_Time, Completed_Col, Run_Db, Task_Type, Last_Run_Date, Category,
          Notification, Description, Other_Description);
-      
-      Completed_Col.addMapEntry(SomeTask.class, new CellEditDescriptor(Text.class, SWT.BORDER, "completed", SomeTask.class)); //$NON-NLS-1$
+
+      Completed_Col.addMapEntry(SomeTask.class, new CellEditDescriptor(Text.class, SWT.BORDER,
+         "completed", SomeTask.class)); //$NON-NLS-1$
    }
 
    @Override
@@ -72,6 +76,11 @@ public class MyXViewerFactory extends XViewerFactory {
    @Override
    public boolean isCellGradientOn() {
       return true;
+   }
+
+   @Override
+   public Dialog getCustomizeDialog(XViewer xViewer) {
+      return new XViewerCustomizeDialog(xViewer);
    }
 
 }

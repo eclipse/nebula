@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.nebula.widgets.xviewer.Activator;
 import org.eclipse.nebula.widgets.xviewer.IXViewerFactory;
 import org.eclipse.nebula.widgets.xviewer.IXViewerLabelProvider;
@@ -25,7 +26,6 @@ import org.eclipse.nebula.widgets.xviewer.XViewerComputedColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewerSorter;
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.nebula.widgets.xviewer.XViewerTextFilter;
-import org.eclipse.nebula.widgets.xviewer.customize.dialog.XViewerCustomizeDialog;
 import org.eclipse.nebula.widgets.xviewer.util.XViewerException;
 import org.eclipse.nebula.widgets.xviewer.util.internal.Strings;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
@@ -269,7 +269,10 @@ public class CustomizeManager {
    }
 
    public void handleTableCustomization() {
-      (new XViewerCustomizeDialog(xViewer)).open();
+      Dialog dialog = xViewerFactory.getCustomizeDialog(xViewer);
+      if (dialog != null) {
+         dialog.open();
+      }
    }
 
    public void appendToStatusLabel(StringBuffer sb) {

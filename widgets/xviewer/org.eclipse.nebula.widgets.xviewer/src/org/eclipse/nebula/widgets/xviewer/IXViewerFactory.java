@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.xviewer;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.nebula.widgets.xviewer.customize.CustomizeData;
 import org.eclipse.nebula.widgets.xviewer.customize.IXViewerCustomizations;
 import org.eclipse.nebula.widgets.xviewer.customize.XViewerCustomMenu;
@@ -73,4 +74,10 @@ public interface IXViewerFactory {
     * @return true if search/filter should be before the table; false it is located after the table
     */
    boolean isSearhTop();
+
+   /**
+    * @return dialog to customize the XViewer. if null, nothing will be opened.
+    */
+   public Dialog getCustomizeDialog(XViewer xViewer);
+
 }
