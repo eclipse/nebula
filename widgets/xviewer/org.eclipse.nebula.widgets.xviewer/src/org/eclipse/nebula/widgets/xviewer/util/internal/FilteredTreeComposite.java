@@ -12,8 +12,8 @@ package org.eclipse.nebula.widgets.xviewer.util.internal;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ToolBarManager;
@@ -22,6 +22,8 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.nebula.widgets.xviewer.util.XViewerUtil;
+import org.eclipse.nebula.widgets.xviewer.util.internal.images.XViewerImageCache;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
@@ -51,7 +53,6 @@ import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * A simple control that provides a text widget and a tree viewer. The contents of the text widget are used to drive a
@@ -100,7 +101,7 @@ public class FilteredTreeComposite extends Composite {
    /**
     * The job used to refresh the tree.
     */
-   private Job refreshJob;
+   private XViewerWorkbenchJob refreshJob;
 
    /**
     * The parent composite of the filtered tree.
@@ -142,7 +143,7 @@ public class FilteredTreeComposite extends Composite {
     */
    static {
       ImageDescriptor descriptor = null;
-      if (PlatformUI.isWorkbenchRunning()) {
+      if (!XViewerUtil.isStandaloneXViewer() && XViewerUtil.isWorkbenchRunning()) {
          descriptor =
             AbstractUIPlugin.imageDescriptorFromPlugin(PlatformUI.PLUGIN_ID, "$nl$/icons/full/etool16/clear_co.gif"); //$NON-NLS-1$
          if (descriptor != null) {
@@ -193,7 +194,7 @@ public class FilteredTreeComposite extends Composite {
    protected void init(int treeStyle, PatternFilter filter) {
       patternFilter = filter;
       showFilterControls = true;
-      if (PlatformUI.isWorkbenchRunning()) {
+      if (!XViewerUtil.isStandaloneXViewer() && XViewerUtil.isWorkbenchRunning()) {
          showFilterControls =
             PlatformUI.getPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_FILTERED_TEXTS);
       }
@@ -321,8 +322,8 @@ public class FilteredTreeComposite extends Composite {
     * @return a workbench job that can be scheduled to refresh the tree
     * @since 3.4
     */
-   protected WorkbenchJob doCreateRefreshJob() {
-      return new WorkbenchJob("Refresh Filter") {//$NON-NLS-1$
+   protected XViewerWorkbenchJob doCreateRefreshJob() {
+      return new XViewerWorkbenchJob("Refresh Filter") {//$NON-NLS-1$
          @Override
          public IStatus runInUIThread(IProgressMonitor monitor) {
             if (treeViewer.getControl().isDisposed()) {
@@ -595,9 +596,13 @@ public class FilteredTreeComposite extends Composite {
    protected void textChanged() {
       narrowingDown = previousFilterText == null || getFilterString().startsWith(previousFilterText);
       previousFilterText = getFilterString();
-      // cancel currently running job first, to prevent unnecessary redraw
-      refreshJob.cancel();
-      refreshJob.schedule(200);
+      if (XViewerUtil.isStandaloneXViewer()) {
+         refreshJob.run(new NullProgressMonitor());
+      } else {
+         // cancel currently running job first, to prevent unnecessary redraw
+         refreshJob.cancel();
+         refreshJob.schedule(200);
+      }
    }
 
    /**
@@ -636,7 +641,7 @@ public class FilteredTreeComposite extends Composite {
             };
 
          clearTextAction.setToolTipText(WorkbenchMessages.FilteredTree_ClearToolTip);
-         clearTextAction.setImageDescriptor(JFaceResources.getImageRegistry().getDescriptor(CLEAR_ICON));
+         clearTextAction.setImageDescriptor(XViewerImageCache.getImageDescriptor("clear.gif"));
          clearTextAction.setDisabledImageDescriptor(JFaceResources.getImageRegistry().getDescriptor(DCLEAR_ICON));
 
          filterToolBar.add(clearTextAction);
