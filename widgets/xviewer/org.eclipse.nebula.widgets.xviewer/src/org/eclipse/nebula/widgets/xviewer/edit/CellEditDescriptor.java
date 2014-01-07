@@ -13,21 +13,56 @@ public class CellEditDescriptor {
    private Class<?> inputType;
    private Class<?> control;
    private Integer swtStyle;
+   private boolean fitInCell = true;
    private IAction action = null;
 
+   /**
+    * @param control - the control to create
+    * @param swtStyle - style of the control
+    * @param inputField - the input field (identifier)
+    * @param inputType - type of the input
+    */
    public CellEditDescriptor(Class<?> control, Integer swtStyle, String inputField, Class<?> inputType) {
-      setControl(control);
-      setSwtStyle(swtStyle);
-      setInputField(inputField);
-      setInputType(inputType);
+      this(control, swtStyle, inputField, inputType, null);
    }
 
+   /**
+    * @param control - the control to create
+    * @param swtStyle - style of the control
+    * @param inputField - the input field (identifier)
+    * @param inputType - type of the input
+    * @param action - action for automatic isEnabled check
+    */
    public CellEditDescriptor(Class<?> control, Integer swtStyle, String inputField, Class<?> inputType, IAction action) {
+      this(control, swtStyle, inputField, inputType, action, true);
+   }
+
+   /**
+    * @param control - the control to create
+    * @param swtStyle - style of the control
+    * @param inputField - the input field (identifier)
+    * @param inputType - type of the input
+    * @param fitInCell - fit control in cell
+    */
+   public CellEditDescriptor(Class<?> control, Integer swtStyle, String inputField, Class<?> inputType, boolean fitInCell) {
+      this(control, swtStyle, inputField, inputType, null, fitInCell);
+   }
+
+   /**
+    * @param control - the control to create
+    * @param swtStyle - style of the control
+    * @param inputField - the input field (identifier)
+    * @param inputType - type of the input
+    * @param action - action for automatic isEnabled check
+    * @param fitInCell - fit control in cell
+    */
+   public CellEditDescriptor(Class<?> control, Integer swtStyle, String inputField, Class<?> inputType, IAction action, boolean fitInCell) {
       setControl(control);
       setSwtStyle(swtStyle);
       setInputField(inputField);
       setInputType(inputType);
       setAction(action);
+      setFitInCell(fitInCell);
    }
 
    public String getInputField() {
@@ -68,6 +103,14 @@ public class CellEditDescriptor {
 
    public IAction getAction() {
       return action;
+   }
+
+   public boolean isFitInCell() {
+      return fitInCell;
+   }
+
+   public void setFitInCell(boolean fitInCell) {
+      this.fitInCell = fitInCell;
    }
 
 }

@@ -19,7 +19,7 @@ import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.nebula.widgets.xviewer.edit.DefaultXViewerControlFactory;
 import org.eclipse.nebula.widgets.xviewer.edit.XViewerControlFactory;
 import org.eclipse.nebula.widgets.xviewer.edit.XViewerConverter;
-import org.eclipse.nebula.widgets.xviewer.edit.XViewerEditAdapter;
+import org.eclipse.nebula.widgets.xviewer.edit.XViewerMultiEditAdapter;
 import org.eclipse.nebula.widgets.xviewer.example.images.MyImageCache;
 import org.eclipse.nebula.widgets.xviewer.example.model.ISomeTask;
 import org.eclipse.nebula.widgets.xviewer.example.model.ISomeTask.RunDb;
@@ -81,7 +81,7 @@ public class MyXViewerTest {
       // XViewerEditAdapter
       XViewerControlFactory cFactory = new DefaultXViewerControlFactory();
       XViewerConverter converter = new MyXViewerConverter();
-      myXviewer.setXViewerEditAdapter(new XViewerEditAdapter(cFactory, converter));
+      myXviewer.setXViewerEditAdapter(new XViewerMultiEditAdapter(cFactory, converter));
 
       createTaskActionBar(toolBarComposite);
 

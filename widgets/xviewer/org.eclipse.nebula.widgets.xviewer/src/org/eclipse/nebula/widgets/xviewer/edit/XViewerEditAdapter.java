@@ -7,6 +7,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -23,12 +24,12 @@ import org.eclipse.swt.widgets.TreeItem;
  */
 public class XViewerEditAdapter {
 
-   private XViewer xv;
-   private ViewerCell klickedCell;
-   private TreeColumn klickedColumn;
+   XViewer xv;
+   ViewerCell klickedCell;
+   TreeColumn klickedColumn;
 
-   private final XViewerControlFactory factory;
-   private final XViewerConverter converter;
+   final XViewerControlFactory factory;
+   final XViewerConverter converter;
 
    /**
     * TODO MouseDoubleClick and MouseUp not implemented yet swtEvent - SWT.MouseDoubleClick or SWT.MouseDown or
@@ -36,7 +37,6 @@ public class XViewerEditAdapter {
     */
    private int swtEvent = 0;
    private MyMouseListener mouseListener = null;
-   private Listener selListener = null;
 
    public XViewerEditAdapter(XViewerControlFactory factory, XViewerConverter converter) {
       this.factory = factory;
@@ -51,8 +51,12 @@ public class XViewerEditAdapter {
       mouseListener = new MyMouseListener(swtEvent);
       xv.getTree().addMouseListener(mouseListener);
 
-      selListener = new MyListener();
-      xv.getTree().addListener(SWT.Selection, selListener);
+      xv.getTree().addListener(SWT.Selection, new Listener() {
+         @Override
+         public void handleEvent(Event event) {
+            handleEditEvent(event);
+         }
+      });
    }
 
    private class MyMouseListener implements MouseListener {
@@ -90,147 +94,143 @@ public class XViewerEditAdapter {
 
    }
 
-   private class MyListener implements Listener {
+   private void doHandleEvent(Event event) {
+      handleEditEvent(event);
+   }
 
-      private void doHandleEvent(Event event) {
-         handleEvent(event);
+   boolean handleEditEvent(Event event) {
+      if (klickedColumn == null || klickedCell == null) {
+         return false;
       }
 
-      @Override
-      public void handleEvent(Event event) {
-         if (klickedColumn == null || klickedCell == null) {
-            return;
-         }
-
-         final Control c;
-         try {
-            XViewerColumn xColumn =
-               xv.getXViewerFactory().getDefaultXViewerColumn(((XViewerColumn) klickedColumn.getData()).getId());
-            if (xColumn instanceof ExtendedViewerColumn) {
-               ExtendedViewerColumn extendedColumn = (ExtendedViewerColumn) xColumn;
-               CellEditDescriptor ced =
-                  extendedColumn.getCellEditDescriptorMap().get(klickedCell.getElement().getClass());
-               if (ced != null) {
-                  if (ced.getControl() == null) {
-                     return;
-                  }
-                  if (ced.getAction() != null) {
-                     if (!ced.getAction().isEnabled()) {
-                        return;
-                     }
-                  }
-                  c = factory.createControl(ced, xv);
-                  if (c == null) {
-                     return;
-                  }
-               } else {
-                  return;
+      final Control c;
+      try {
+         XViewerColumn xColumn =
+            xv.getXViewerFactory().getDefaultXViewerColumn(((XViewerColumn) klickedColumn.getData()).getId());
+         if (xColumn instanceof ExtendedViewerColumn) {
+            ExtendedViewerColumn extendedColumn = (ExtendedViewerColumn) xColumn;
+            CellEditDescriptor ced = extendedColumn.getCellEditDescriptorMap().get(klickedCell.getElement().getClass());
+            if (ced != null) {
+               if (ced.getControl() == null) {
+                  return false;
+               }
+               if (ced.getAction() != null && !ced.getAction().isEnabled()) {
+                  return false;
+               }
+               if (!converter.isValid(ced, klickedCell.getElement())) {
+                  return false;
+               }
+               c = factory.createControl(ced, xv);
+               if (c == null) {
+                  return false;
                }
             } else {
-               return;
-            }
-
-            if (((TreeItem) event.item) != null) {
-               Listener myListener = new Listener() {
-                  @Override
-                  public void handleEvent(final Event e) {
-                     switch (e.type) {
-                        case SWT.FocusOut:
-                           // set new value
-                           getInput(c);
-                           c.dispose();
-                           break;
-                        case SWT.Verify:
-                           c.setBounds(klickedCell.getBounds());
-                           break;
-                        case SWT.Traverse:
-                           boolean neighbor = false;
-                           switch (e.detail) {
-                              case SWT.TRAVERSE_RETURN:
-                                 // set new value
-                                 getInput(c);
-                                 //$FALL-THROUGH$
-                              case SWT.TRAVERSE_ESCAPE:
-                                 c.dispose();
-                                 e.doit = false;
-                                 break;
-                              case SWT.TRAVERSE_TAB_NEXT:
-                                 getInput(c);
-                                 neighbor = getNeighbor(ViewerCell.RIGHT, true);
-                                 e.doit = false;
-                                 c.dispose();
-                                 Event eN = new Event();
-                                 eN.type = SWT.Selection;
-                                 eN.widget = xv.getTree();
-                                 if (neighbor) {
-                                    eN.item = klickedCell.getItem();
-                                 }
-                                 doHandleEvent(eN);
-                                 break;
-                              case SWT.TRAVERSE_TAB_PREVIOUS:
-                                 getInput(c);
-                                 neighbor = getNeighbor(ViewerCell.LEFT, true);
-                                 e.doit = false;
-                                 c.dispose();
-                                 Event eP = new Event();
-                                 eP.type = SWT.Selection;
-                                 eP.widget = xv.getTree();
-                                 if (neighbor) {
-                                    eP.item = klickedCell.getItem();
-                                 }
-                                 doHandleEvent(eP);
-                                 break;
-                           }
-                     }
-                  }
-
-               };
-               c.addListener(SWT.FocusOut, myListener);
-               c.addListener(SWT.Traverse, myListener);
-               c.addListener(SWT.Verify, myListener);
-               // set old value
-               setInput(c);
-               c.setFocus();
-            }
-         } catch (Exception ex) {
-            return;
-         }
-      }
-
-      private boolean getNeighbor(int directionMask, boolean sameLevel) {
-         try {
-            if (klickedCell == null) {
                return false;
             }
-            Point cellPosition = new Point(klickedCell.getBounds().x, klickedCell.getBounds().y);
-            klickedCell = xv.getCell(cellPosition).getNeighbor(directionMask, sameLevel);
-            klickedColumn =
-               xv.getColumnUnderMouseClick(new Point(klickedCell.getBounds().x, klickedCell.getBounds().y));
-            XViewerColumn xColumn =
-               xv.getXViewerFactory().getDefaultXViewerColumn(((XViewerColumn) klickedColumn.getData()).getId());
-            if (xColumn instanceof ExtendedViewerColumn) {
-               ExtendedViewerColumn extendedColumn = (ExtendedViewerColumn) xColumn;
-               CellEditDescriptor ced =
-                  extendedColumn.getCellEditDescriptorMap().get(klickedCell.getElement().getClass());
-               if (ced == null) {
-                  return getNeighbor(directionMask, sameLevel);
-               }
-               if (ced.getControl() == null) {
-                  return getNeighbor(directionMask, sameLevel);
-               }
-            } else {
-               return getNeighbor(directionMask, sameLevel);
-            }
-            return true;
-         } catch (Exception ex) {
+         } else {
             return false;
          }
+
+         if (((TreeItem) event.item) != null) {
+            Listener myListener = new Listener() {
+               @Override
+               public void handleEvent(final Event e) {
+                  switch (e.type) {
+                     case SWT.FocusOut:
+                        // set new value
+                        getInput(c);
+                        c.dispose();
+                        break;
+                     case SWT.Verify:
+                        c.setBounds(klickedCell.getBounds());
+                        break;
+                     case SWT.Traverse:
+                        boolean neighbor = false;
+                        switch (e.detail) {
+                           case SWT.TRAVERSE_RETURN:
+                              // set new value
+                              getInput(c);
+                              //$FALL-THROUGH$
+                           case SWT.TRAVERSE_ESCAPE:
+                              c.dispose();
+                              e.doit = false;
+                              break;
+                           case SWT.TRAVERSE_TAB_NEXT:
+                              getInput(c);
+                              neighbor = getNeighbor(ViewerCell.RIGHT, true);
+                              e.doit = false;
+                              c.dispose();
+                              Event eN = new Event();
+                              eN.type = SWT.Selection;
+                              eN.widget = xv.getTree();
+                              if (neighbor) {
+                                 eN.item = klickedCell.getItem();
+                              }
+                              doHandleEvent(eN);
+                              break;
+                           case SWT.TRAVERSE_TAB_PREVIOUS:
+                              getInput(c);
+                              neighbor = getNeighbor(ViewerCell.LEFT, true);
+                              e.doit = false;
+                              c.dispose();
+                              Event eP = new Event();
+                              eP.type = SWT.Selection;
+                              eP.widget = xv.getTree();
+                              if (neighbor) {
+                                 eP.item = klickedCell.getItem();
+                              }
+                              doHandleEvent(eP);
+                              break;
+                        }
+                  }
+               }
+
+            };
+            c.addListener(SWT.FocusOut, myListener);
+            c.addListener(SWT.Traverse, myListener);
+            c.addListener(SWT.Verify, myListener);
+            // set old value
+            setInput(c);
+            c.setFocus();
+            return true;
+         }
+      } catch (Exception ex) {
+         return false;
+      }
+      return false;
+   }
+
+   private boolean getNeighbor(int directionMask, boolean sameLevel) {
+      try {
+         if (klickedCell == null) {
+            return false;
+         }
+         Point cellPosition = new Point(klickedCell.getBounds().x, klickedCell.getBounds().y);
+         klickedCell = xv.getCell(cellPosition).getNeighbor(directionMask, sameLevel);
+         klickedColumn = xv.getColumnUnderMouseClick(new Point(klickedCell.getBounds().x, klickedCell.getBounds().y));
+         XViewerColumn xColumn =
+            xv.getXViewerFactory().getDefaultXViewerColumn(((XViewerColumn) klickedColumn.getData()).getId());
+         if (xColumn instanceof ExtendedViewerColumn) {
+            ExtendedViewerColumn extendedColumn = (ExtendedViewerColumn) xColumn;
+            CellEditDescriptor ced = extendedColumn.getCellEditDescriptorMap().get(klickedCell.getElement().getClass());
+            if (ced == null) {
+               return getNeighbor(directionMask, sameLevel);
+            }
+            if (ced.getControl() == null) {
+               return getNeighbor(directionMask, sameLevel);
+            }
+         } else {
+            return getNeighbor(directionMask, sameLevel);
+         }
+         return true;
+      } catch (Exception ex) {
+         return false;
       }
    }
 
    private static boolean InInput = false;
 
-   private void getInput(Control c) {
+   void getInput(Control c) {
       if (InInput) {
          return;
       }
@@ -247,19 +247,34 @@ public class XViewerEditAdapter {
          }
          InInput = true;
          try {
-            converter.getInput(c, ced, klickedCell.getElement());
-            xv.refresh(klickedCell.getElement());
+            Object toModify = getInputToModify();
+            Object obj = converter.getInput(c, ced, toModify);
+            if (obj == null) {
+               refreshElement(toModify);
+            } else {
+               refreshElement(obj);
+            }
          } catch (Exception ex) {
+            // do nothing
+         } finally {
             InInput = false;
          }
-         InInput = false;
       }
    }
 
-   private void setInput(Control c) {
+   void refreshElement(Object toRefresh) {
+      xv.refresh(toRefresh);
+   }
+
+   Object getInputToModify() {
+      return klickedCell.getElement();
+   }
+
+   void setInput(Control c) {
       if (klickedCell == null) {
          return;
       }
+      boolean fitInCell = true;
       XViewerColumn xCol =
          xv.getXViewerFactory().getDefaultXViewerColumn(((XViewerColumn) klickedColumn.getData()).getId());
       if (xCol instanceof ExtendedViewerColumn) {
@@ -269,7 +284,16 @@ public class XViewerEditAdapter {
             return;
          }
          converter.setInput(c, ced, klickedCell.getElement());
+         fitInCell = ced.isFitInCell();
       }
-      c.setBounds(klickedCell.getBounds());
+      if (fitInCell) {
+         c.setBounds(klickedCell.getBounds());
+      } else {
+         Rectangle bounds = klickedCell.getBounds();
+         Point point = c.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+         bounds.width = point.x;
+         bounds.height = point.y;
+         c.setBounds(bounds);
+      }
    }
 }

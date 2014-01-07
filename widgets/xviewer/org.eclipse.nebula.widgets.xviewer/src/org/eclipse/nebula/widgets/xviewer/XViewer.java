@@ -172,6 +172,17 @@ public class XViewer extends TreeViewer {
       if (searchComp != null && !searchComp.isDisposed()) {
          searchComp.dispose();
       }
+
+      //Remote Display filter
+      Display.getCurrent().removeFilter(SWT.KeyDown, displayKeysListener);
+      Display.getCurrent().removeFilter(SWT.KeyUp, displayKeysListener);
+      Display.getCurrent().removeFilter(SWT.FocusOut, displayFocusListener);
+
+      //Dispose Menu
+      if (menuManager != null) {
+         menuManager.removeAll();
+         menuManager.dispose();
+      }
    }
 
    @Override
@@ -337,14 +348,7 @@ public class XViewer extends TreeViewer {
          ctrlKeyListenersSet = true;
          Display.getCurrent().addFilter(SWT.KeyDown, displayKeysListener);
          Display.getCurrent().addFilter(SWT.KeyUp, displayKeysListener);
-         Display.getCurrent().addFilter(SWT.FocusOut, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-               // Clear when focus is lost
-               ctrlKeyDown = false;
-               altKeyDown = false;
-            }
-         });
+         Display.getCurrent().addFilter(SWT.FocusOut, displayFocusListener);
       }
    }
    Listener displayKeysListener = new Listener() {
@@ -364,6 +368,14 @@ public class XViewer extends TreeViewer {
                altKeyDown = false;
             }
          }
+      }
+   };
+   Listener displayFocusListener = new Listener() {
+      @Override
+      public void handleEvent(Event event) {
+         // Clear when focus is lost
+         ctrlKeyDown = false;
+         altKeyDown = false;
       }
    };
    private Composite searchComp;
