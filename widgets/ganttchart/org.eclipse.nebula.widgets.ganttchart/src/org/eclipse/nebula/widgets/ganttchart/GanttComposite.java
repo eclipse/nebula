@@ -333,7 +333,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     private IEventMenuItemFactory		  eventMenuItemFactory;
     private IMenuItemFactory		  	  menuItemFactory;
     
-    private final Calendar[] holidays;
+    private Holiday[] holidays;
     
     private IZoomHandler zoomHandler;
     
@@ -360,7 +360,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     	this(parent, style, settings, colorManager, paintManager, languageManager, null);
     }
     
-    public GanttComposite(final GanttChart parent, final int style, final ISettings settings, final IColorManager colorManager, final IPaintManager paintManager, final ILanguageManager languageManager, final Calendar[] holidays) {
+    public GanttComposite(final GanttChart parent, final int style, final ISettings settings, final IColorManager colorManager, final IPaintManager paintManager, final ILanguageManager languageManager, final Holiday[] holidays) {
         super(parent, SWT.NO_BACKGROUND | SWT.DOUBLE_BUFFERED | SWT.V_SCROLL | SWT.H_SCROLL);
 
         _parentChart = parent;
@@ -427,6 +427,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         _undoRedoManager = new GanttUndoRedoManager(this, GanttUndoRedoManager.STACK_SIZE);
         _drawToMinute = _settings.drawEventsDownToTheHourAndMinute();
 
+        this.holidays = holidays;
+        
         updateZoomLevel();
 
         if (_currentView == ISettings.VIEW_D_DAY) {
@@ -452,7 +454,6 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             }
         });
         
-        this.holidays = holidays;
         this.zoomHandler = this;
     	
 		if (_settings.showSectionDetailMore()) {
@@ -1930,12 +1931,15 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                         gc.fillGradientRectangle(startX, startY, dayWidth, heightY, true);
                     }
 
-                    if (isHoliday(temp)) {
+                    Holiday h = getHoliday(temp);
+                    if (h != null) {
                         gc.setForeground(getHolidayBackgroundGradient(true, gs));
                         gc.setBackground(getHolidayBackgroundGradient(false, gs));
                         
                         // fill the whole thing all the way down
                         gc.fillGradientRectangle(startX, startY, dayWidth, heightY, true);
+                        
+                        h.updateBounds(new Rectangle(startX, startY, dayWidth, heightY));
                     }
 
                     if (DateHelper.isToday(temp)) {
@@ -1957,18 +1961,16 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
     }
 
-    
-    private boolean isHoliday(Calendar day) {
+    private Holiday getHoliday(Calendar day) {
     	if (holidays != null) {
-    		for (Calendar h : holidays) {
-    			if (h.equals(day)) {
-    				return true;
+    		for (Holiday h : holidays) {
+    			if (DateHelper.sameDate(day, h.getDate())) {
+    				return h;
     			}
     		}
     	}
-    	return false;
+    	return null;
     }
-    
     
     // draws the zoom level box in the corner, only shown when zooming
     private void drawZoomLevel(final GC gc) {
@@ -5406,6 +5408,13 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             final GanttEvent ge = (GanttEvent) objs[i];
             ge.updateX(ge.getX() + (positive ? dw : -dw));
         }
+        
+        for (int i = 0; i < holidays.length; i++) {
+        	final Holiday holiday = holidays[i];
+        	if(holiday.getBounds() != null) {
+        		holiday.updateX(holiday.getBounds().x + (positive ? dw : -dw));
+        	}
+        }
     }
 
     /*private void moveXBounds(int move) {
@@ -5425,6 +5434,13 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         for (int i = 0; i < objs.length; i++) {
             final GanttEvent ge = (GanttEvent) objs[i];
             ge.updateY(ge.getY() - move);
+        }
+        
+        for (int i = 0; i < holidays.length; i++) {
+        	final Holiday holiday = holidays[i];
+        	if(holiday.getBounds() != null) {
+        		holiday.updateY(holiday.getBounds().y -move);
+        	}
         }
 
         _visibleBounds.y += move;
@@ -8020,6 +8036,15 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         			showTooltip(event, me);
         			return;
         		}
+        		
+        		if (_settings.showHolidayToolTips()) {
+        			for (Holiday holiday : holidays) {
+	            		if (holiday.hasTooltip() && isInside(me.x, me.y, holiday.getBounds())) {
+	            			showTooltip(holiday, me);
+	            			return;
+	            		}
+	    			}
+        		}
         	}
         }
     }
@@ -8195,6 +8220,14 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
         return null;
     }
+    
+    private void showTooltip(Holiday holiday, MouseEvent me) {
+    	int xPlus = 0;
+        
+        Point displayLocation = super.toDisplay(new Point(me.x + xPlus, me.y));
+        GanttToolTip.makeDialog(_colorManager, _languageManager.getHolidayText(), holiday.getTooltip(), displayLocation);
+	}
+
 
     /**
      * Returns a rectangle with the bounds of what is actually visible inside the chart.
@@ -8559,6 +8592,10 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         if (dDay) {
             _currentView = ISettings.VIEW_D_DAY;
         }
+        
+        for (Holiday holiday : holidays) {
+			holiday.resetBounds();
+		}
     }
 
     /**
@@ -8963,4 +9000,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     public void removeSelectionDetailClickListener(ISectionDetailMoreClickListener listener) {
     	this.sectionDetailMoreClickListener.remove(listener);
     }
+    
+	public void setHolidays(Holiday[] holidays) {
+		this.holidays = holidays;
+	}
 }

@@ -173,4 +173,11 @@ public interface ILanguageManager {
 	 * @return Text
 	 */
 	String getSectionDetailMoreText();
+	
+	/**
+	 * The default text that gets rendered in the Tooltip for Holidays
+	 * 
+	 * @return Text
+	 */
+	String getHolidayText();
 }

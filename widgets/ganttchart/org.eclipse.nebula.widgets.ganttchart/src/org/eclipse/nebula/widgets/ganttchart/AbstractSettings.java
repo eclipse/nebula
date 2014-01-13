@@ -574,4 +574,8 @@ public abstract class AbstractSettings implements ISettings {
     public boolean showSectionDetailMore() {
     	return false;
     }
+    
+    public boolean showHolidayToolTips() {
+    	return false;
+    }
 }

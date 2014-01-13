@@ -99,4 +99,8 @@ public abstract class AbstractLanguageManager implements ILanguageManager {
 	public String getSectionDetailMoreText() {
 		return "More";
 	}
+	
+	public String getHolidayText() {
+		return "Holiday";
+	}
 }

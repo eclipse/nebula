@@ -1218,4 +1218,12 @@ public interface ISettings {
      * 			informations by e.g. opening a dialog.
      */
     public boolean showSectionDetailMore();
+    
+    /**
+     * Configure whether a tooltip pops up when hovering the mouse over a holiday 
+     * 
+     * @return <code>true</code> to show a "holiday" popup with the configured name of the holiday,
+     * 			<code>false</code> if not (default)
+     */
+    public boolean showHolidayToolTips();
 }

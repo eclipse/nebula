@@ -84,7 +84,7 @@ public class GanttChart extends Composite {
 	private IPaintManager				_paintManager;
 	private ILanguageManager			_languageManager;
 
-	private Calendar[] 					_holidays;
+	private Holiday[] 					_holidays;
 	
 	private GanttChartPrinter			_printer;
 
@@ -102,7 +102,7 @@ public class GanttChart extends Composite {
 	 *             </ul>
 	 */
 	public GanttChart(final Composite parent, final int style) {
-		this(parent, style, null, null, null, null);
+		this(parent, style, null);
 	}
 
 	/**
@@ -120,7 +120,7 @@ public class GanttChart extends Composite {
 	 *             </ul>
 	 */
 	public GanttChart(final Composite parent, final int style, final ISettings settings) {
-		this(parent, style, settings, null, null, null);
+		this(parent, style, settings, null);
 	}
 
 	/**
@@ -139,7 +139,7 @@ public class GanttChart extends Composite {
 	 *             </ul>
 	 */
 	public GanttChart(final Composite parent, final int style, final ISettings settings, final IColorManager colorManager) {
-		this(parent, style, settings, colorManager, null, null);
+		this(parent, style, settings, colorManager, null, null, new Calendar[]{});
 	}
 
 	/**
@@ -162,6 +162,29 @@ public class GanttChart extends Composite {
 	 *             </ul>
 	 */
 	public GanttChart(final Composite parent, final int style, final ISettings settings, final IColorManager colorManager, final IPaintManager paintManager, final ILanguageManager languageManager, Calendar... holidays) {
+		this(parent, style, settings, colorManager, paintManager, languageManager, convertToHolidays(holidays));
+	}
+
+	/**
+	 * Constructs a new GANTT chart widget with custom settings, custom color manager {@link IColorManager}, a custom paint manager {@link IPaintManager} and a custom language
+	 * manager {@link ILanguageManager}. If any of the managers is set to null the default manager using that implementation will be used. For styles, please see {@link GanttFlags}.
+	 * 
+	 * @param parent Parent composite
+	 * @param style Widget style
+	 * @param settings ISettings implementation or null
+	 * @param colorManager IColorManager implementation or null
+	 * @param paintManager IPaintManager implementation or null
+	 * @param languageManager {@link ILanguageManager} implementation or null
+	 * @param holidays Holiday objects specifying holidays
+	 * @throws IllegalArgumentException <ul>
+	 *             <li>ERROR_NULL_ARGUMENT - if the parent is null</li>
+	 *             </ul>
+	 * @throws org.eclipse.swt.SWTException <ul>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the parent</li> <li>ERROR_INVALID_SUBCLASS - if this class is not an allowed
+	 *             subclass</li>
+	 *             </ul>
+	 */
+	public GanttChart(final Composite parent, final int style, final ISettings settings, final IColorManager colorManager, final IPaintManager paintManager, final ILanguageManager languageManager, Holiday... holidays) {
 		super(parent, SWT.NONE);
 		
 		int styleToUse = style;
@@ -233,6 +256,16 @@ public class GanttChart extends Composite {
 		_ganttComposite = new GanttComposite(this, _style, _settings, _colorManager, _paintManager, _languageManager, _holidays);
 		_ganttComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
+	
+	private static Holiday[] convertToHolidays(Calendar[] holidays) {
+		Holiday[] list = new Holiday[holidays.length];
+		
+		for (int i = 0; i < holidays.length; i++) {
+			list[i] = new Holiday(holidays[i]);
+		}
+		return list;
+	}
+
 
 	/**
 	 * Adds a dependency between two events.
