@@ -20,6 +20,7 @@
  *    Cosmin Ghita <cghita@ansis.eu> - bugfix in 323687
  *    Pinard-Legry Guilhaume <guilhaume_pl@yahoo.fr> - bugfix in 267057
  *    Thorsten Schenkel <thorsten.schenkel@compeople.de> - bugfix in 356803
+ *    Mirko Paturzo <mirko.paturzo@exeura.eu> - improvement (bugfix in 419928)
  *******************************************************************************/
 package org.eclipse.nebula.widgets.grid;
 
@@ -77,6 +78,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TypedListener;
@@ -100,6 +102,10 @@ import org.eclipse.swt.widgets.TypedListener;
  * </dl>
  *
  * @author chris.gross@us.ibm.com
+ * @author Mirko Paturzo <mirko.paturzo@exeura.eu>
+ * 
+ * Mirko modified this widget for improve performace and reduce used memory
+ * fix memory leak and slow disposed object 
  */
 public class Grid extends Canvas
 {
@@ -112,6 +118,13 @@ public class Grid extends Canvas
     //TODO: column freezing
 
     //TODO: Performance - need to cache top index
+
+	/**
+	 * @return {@link DataVisualizer}
+	 */
+	public DataVisualizer getDataVisualizer() {
+		return dataVisualizer;
+	}
 
 	/**
 	 * Object holding the visible range
@@ -133,6 +146,17 @@ public class Grid extends Canvas
 		public GridColumn[] getColumns() {
 			return columns;
 		}
+    }
+	
+	/**
+	 * Clear simply all GridItems
+	 */
+    public void clearItems()
+    {
+        items.clear();
+        rootItems.clear();
+        deselectAll();
+        redraw();
     }
 
     /**
@@ -220,17 +244,17 @@ public class Grid extends Canvas
     /**
      * All items in the table, not just root items.
      */
-    private List items = new ArrayList();
+    private final List items = new ArrayList();
 
     /**
      * All root items.
      */
-    private List rootItems = new ArrayList();
+    private final List rootItems = new ArrayList();
 
     /**
      * List of selected items.
      */
-    private List selectedItems = new ArrayList();
+    private final List selectedItems = new ArrayList();
 
     /**
      * Reference to the item in focus.
@@ -239,8 +263,8 @@ public class Grid extends Canvas
 
     private boolean cellSelectionEnabled = false;
 
-    private List selectedCells = new ArrayList();
-    private List selectedCellsBeforeRangeSelect = new ArrayList();
+    private final List selectedCells = new ArrayList();
+    private final List selectedCellsBeforeRangeSelect = new ArrayList();
 
     private boolean cellDragSelectionOccuring = false;
     private boolean cellRowDragSelectionOccuring = false;
@@ -256,7 +280,7 @@ public class Grid extends Canvas
 
     private GridColumn focusColumn;
 
-    private List selectedColumns = new ArrayList();
+    private final List selectedColumns = new ArrayList();
 
     /**
      * This is the column that the user last navigated to, but may not be the focusColumn because
@@ -271,12 +295,12 @@ public class Grid extends Canvas
     /**
      * List of table columns in creation/index order.
      */
-    private List columns = new ArrayList();
+    private final List columns = new ArrayList();
 
     /**
      * List of the table columns in the order they are displayed.
      */
-    private List displayOrderedColumns = new ArrayList();
+    private final List displayOrderedColumns = new ArrayList();
 
     private GridColumnGroup[] columnGroups = new GridColumnGroup[0];
 
@@ -323,7 +347,7 @@ public class Grid extends Canvas
      * Renderers the UI affordance identifying where the dragged column will be
      * dropped.
      */
-    private IRenderer dropPointRenderer = new DefaultDropPointRenderer();
+    private final IRenderer dropPointRenderer = new DefaultDropPointRenderer();
 
     /**
      * Renderer used to paint on top of an already painted row to denote focus.
@@ -572,7 +596,7 @@ public class Grid extends Canvas
      */
     private GridToolTip inplaceToolTip;
 
-    private GC sizingGC;
+    private final GC sizingGC;
 
     private Color backgroundColor;
 
@@ -683,11 +707,14 @@ public class Grid extends Canvas
 	private GridItem insertMarkItem = null;
 	private GridColumn insertMarkColumn = null;
 	private boolean insertMarkBefore = false;
-    private IRenderer insertMarkRenderer = new DefaultInsertMarkRenderer();
+    private final IRenderer insertMarkRenderer = new DefaultInsertMarkRenderer();
     private boolean sizeOnEveryItemImageChange;
     private boolean autoHeight = false;
     private boolean autoWidth = true;
     private boolean wordWrapRowHeader = false;
+
+	private final DataVisualizer dataVisualizer;
+
     /**
      * A range of rows in a <code>Grid</code>.
      * <p>
@@ -724,12 +751,19 @@ public class Grid extends Canvas
         newStyle |= SWT.DOUBLE_BUFFERED;
         return newStyle;
     }
+    
+    /**
+     * Grid with generic DataVisualizer
+     */
+    public Grid(Composite parent, int style) {
+    	this(new ColumnRowBigDataVisualizer(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE), Display.getCurrent().getSystemColor(SWT.COLOR_BLACK), null), parent, style);
+    }
 
     /**
      * Constructs a new instance of this class given its parent and a style
      * value describing its behavior and appearance.
      * <p>
-     *
+     * @param dataVisualizer manage all data of grid and its items
      * @param parent a composite control which will be the parent of the new
      * instance (cannot be null)
      * @param style the style of control to construct
@@ -745,9 +779,10 @@ public class Grid extends Canvas
      * @see SWT#SINGLE
      * @see SWT#MULTI
      */
-    public Grid(Composite parent, int style)
+    public Grid(DataVisualizer dataVisualizer, Composite parent, int style)
     {
         super(parent, checkStyle(style));
+        this.dataVisualizer = dataVisualizer;
 
         // initialize drag & drop support
         setData("DEFAULT_DRAG_SOURCE_EFFECT", new GridDragSourceEffect(this));
@@ -818,7 +853,8 @@ public class Grid extends Canvas
     /**
      * {@inheritDoc}
      */
-    public Color getBackground()
+    @Override
+	public Color getBackground()
     {
         checkWidget();
         if (backgroundColor == null)
@@ -829,7 +865,8 @@ public class Grid extends Canvas
     /**
      * {@inheritDoc}
      */
-    public void setBackground(Color color)
+    @Override
+	public void setBackground(Color color)
     {
         checkWidget();
         backgroundColor = color;
@@ -939,7 +976,8 @@ public class Grid extends Canvas
     /**
      * {@inheritDoc}
      */
-    public Point computeSize(int wHint, int hHint, boolean changed)
+    @Override
+	public Point computeSize(int wHint, int hHint, boolean changed)
     {
         checkWidget();
 
@@ -3191,14 +3229,16 @@ public class Grid extends Canvas
 
     /**
      * Removes all of the items from the receiver.
-     *
+     * 
      * @throws org.eclipse.swt.SWTException
      * <ul>
      * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
      * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
      * created the receiver</li>
      * </ul>
+     * Call {@link Grid} disposeAllItems and clearItems.. Is faster
      */
+    @Deprecated
     public void removeAll()
     {
         checkWidget();
@@ -3209,6 +3249,21 @@ public class Grid extends Canvas
         }
         deselectAll();
         redraw();
+    }
+    
+    /**
+     * All items needs to call the disposeOnly method
+     */
+    public void disposeAllItems()
+    {
+        checkWidget();
+
+        final GridItem[] items = getItems();
+        for (final GridItem gridItem : items)
+        {
+            gridItem.disposeOnly();
+        }
+        clearItems();
     }
 
     /**
@@ -3551,10 +3606,12 @@ public class Grid extends Canvas
         hScroll = scroll;
 
         hScroll.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				onScrollSelection();
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
@@ -3588,10 +3645,12 @@ public class Grid extends Canvas
         vScroll = scroll;
 
         vScroll.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				onScrollSelection();
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
@@ -3782,7 +3841,7 @@ public class Grid extends Canvas
             if (!cellSelectionEnabled)
             {
                 selectedItems.clear();
-                selectedItems.add((GridItem)items.get(index));
+                selectedItems.add(items.get(index));
                 redraw();
             }
             else
@@ -4382,7 +4441,7 @@ public class Grid extends Canvas
         int groupHeight = 0;
         for (int groupIndex = 0; groupIndex < columnGroups.length; groupIndex++)
         {
-            GridColumnGroup group = (GridColumnGroup) columnGroups[groupIndex];
+            GridColumnGroup group = columnGroups[groupIndex];
             groupHeight = Math.max(group.getHeaderRenderer().computeSize(gc, SWT.DEFAULT,
                                                                          SWT.DEFAULT, group).y,
                                    groupHeight);
@@ -6174,7 +6233,7 @@ public class Grid extends Canvas
                 {
                     if (!selectedItems.contains(items.get(i)) && ((GridItem)items.get(i)).isVisible())
                     {
-                        selectedItems.add((GridItem)items.get(i));
+                        selectedItems.add(items.get(i));
                     }
                 }
                 Rectangle clientArea = getClientArea();
@@ -6446,7 +6505,8 @@ public class Grid extends Canvas
     {
         disposeListener = new Listener()
         {
-            public void handleEvent(Event e)
+            @Override
+			public void handleEvent(Event e)
             {
                 onDispose(e);
             }
@@ -6455,7 +6515,8 @@ public class Grid extends Canvas
 
         addPaintListener(new PaintListener()
         {
-            public void paintControl(PaintEvent e)
+            @Override
+			public void paintControl(PaintEvent e)
             {
                 onPaint(e);
             }
@@ -6463,7 +6524,8 @@ public class Grid extends Canvas
 
         addListener(SWT.Resize, new Listener()
         {
-            public void handleEvent(Event e)
+            @Override
+			public void handleEvent(Event e)
             {
                 onResize();
             }
@@ -6473,7 +6535,8 @@ public class Grid extends Canvas
         {
             getVerticalBar().addListener(SWT.Selection, new Listener()
             {
-                public void handleEvent(Event e)
+                @Override
+				public void handleEvent(Event e)
                 {
                     onScrollSelection();
                 }
@@ -6484,7 +6547,8 @@ public class Grid extends Canvas
         {
             getHorizontalBar().addListener(SWT.Selection, new Listener()
             {
-                public void handleEvent(Event e)
+                @Override
+				public void handleEvent(Event e)
                 {
                     onScrollSelection();
                 }
@@ -6493,7 +6557,8 @@ public class Grid extends Canvas
 
         addListener(SWT.KeyDown, new Listener()
         {
-            public void handleEvent(Event e)
+            @Override
+			public void handleEvent(Event e)
             {
                 onKeyDown(e);
             }
@@ -6501,7 +6566,8 @@ public class Grid extends Canvas
 
         addTraverseListener(new TraverseListener()
         {
-            public void keyTraversed(TraverseEvent e)
+            @Override
+			public void keyTraversed(TraverseEvent e)
             {
                 e.doit = true;
             }
@@ -6509,17 +6575,20 @@ public class Grid extends Canvas
 
         addMouseListener(new MouseListener()
         {
-            public void mouseDoubleClick(MouseEvent e)
+            @Override
+			public void mouseDoubleClick(MouseEvent e)
             {
                 onMouseDoubleClick(e);
             }
 
-            public void mouseDown(MouseEvent e)
+            @Override
+			public void mouseDown(MouseEvent e)
             {
                 onMouseDown(e);
             }
 
-            public void mouseUp(MouseEvent e)
+            @Override
+			public void mouseUp(MouseEvent e)
             {
                 onMouseUp(e);
             }
@@ -6527,7 +6596,8 @@ public class Grid extends Canvas
 
         addMouseMoveListener(new MouseMoveListener()
         {
-            public void mouseMove(MouseEvent e)
+            @Override
+			public void mouseMove(MouseEvent e)
             {
                 onMouseMove(e);
             }
@@ -6535,29 +6605,34 @@ public class Grid extends Canvas
 
         addMouseTrackListener(new MouseTrackListener()
         {
-            public void mouseEnter(MouseEvent e)
+            @Override
+			public void mouseEnter(MouseEvent e)
             {
             }
 
-            public void mouseExit(MouseEvent e)
+            @Override
+			public void mouseExit(MouseEvent e)
             {
                 onMouseExit(e);
             }
 
-            public void mouseHover(MouseEvent e)
+            @Override
+			public void mouseHover(MouseEvent e)
             {
             }
         });
 
         addFocusListener(new FocusListener()
         {
-            public void focusGained(FocusEvent e)
+            @Override
+			public void focusGained(FocusEvent e)
             {
             	onFocusIn();
                 redraw();
             }
 
-            public void focusLost(FocusEvent e)
+            @Override
+			public void focusLost(FocusEvent e)
             {
                 redraw();
             }
@@ -6567,7 +6642,8 @@ public class Grid extends Canvas
         // scroller
         addListener(SWT.MouseWheel, new Listener()
         {
-            public void handleEvent(Event e)
+            @Override
+			public void handleEvent(Event e)
             {
                 onMouseWheel(e);
             }
@@ -9627,7 +9703,8 @@ public class Grid extends Canvas
     /**
      * {@inheritDoc}
      */
-    public void setFont(Font font)
+    @Override
+	public void setFont(Font font)
     {
         super.setFont(font);
         sizingGC.setFont(font);
@@ -9664,6 +9741,8 @@ public class Grid extends Canvas
       setAutoWidth(false);
       redraw();
     }
+    
+    
 
     /**
      * Sets the number of items contained in the receiver.
@@ -9704,7 +9783,8 @@ public class Grid extends Canvas
         final Accessible accessible = getAccessible();
         accessible.addAccessibleListener(new AccessibleAdapter()
         {
-            public void getDescription(AccessibleEvent e)
+            @Override
+			public void getDescription(AccessibleEvent e)
             {
                 int childID = e.childID;
                 if (childID >= 0 && childID < items.size())
@@ -9722,7 +9802,8 @@ public class Grid extends Canvas
                 }
             }
 
-            public void getName(AccessibleEvent e)
+            @Override
+			public void getName(AccessibleEvent e)
             {
                 int childID = e.childID;
                 if (childID >= 0 && childID < items.size())
@@ -9739,8 +9820,8 @@ public class Grid extends Canvas
                          && childID < items.size() + columns.size() + columnGroups.length)
                 {
                     // Name of the column group headers
-                    e.result = ((GridColumnGroup)columnGroups[childID - items.size()
-                                                              - columns.size()]).getText();
+                    e.result = columnGroups[childID - items.size()
+                                                              - columns.size()].getText();
                 }
                 else if (childID >= items.size() + columns.size() + columnGroups.length
                          && childID < items.size() + columns.size() + columnGroups.length
@@ -9754,7 +9835,8 @@ public class Grid extends Canvas
 
         accessible.addAccessibleControlListener(new AccessibleControlAdapter()
         {
-            public void getChildAtPoint(AccessibleControlEvent e)
+            @Override
+			public void getChildAtPoint(AccessibleControlEvent e)
             {
                 Point location = toControl(e.x, e.y);
                 e.childID = ACC.CHILDID_SELF;
@@ -9819,7 +9901,8 @@ public class Grid extends Canvas
                 }
             }
 
-            public void getChildCount(AccessibleControlEvent e)
+            @Override
+			public void getChildCount(AccessibleControlEvent e)
             {
                 if (e.childID == ACC.CHILDID_SELF)
                 {
@@ -9842,7 +9925,8 @@ public class Grid extends Canvas
                 }
             }
 
-            public void getChildren(AccessibleControlEvent e)
+            @Override
+			public void getChildren(AccessibleControlEvent e)
             {
                 if (e.childID == ACC.CHILDID_SELF)
                 {
@@ -9882,7 +9966,8 @@ public class Grid extends Canvas
                 }
             }
 
-            public void getDefaultAction(AccessibleControlEvent e)
+            @Override
+			public void getDefaultAction(AccessibleControlEvent e)
             {
                 int childID = e.childID;
                 if (childID >= 0 && childID < items.size())
@@ -9920,7 +10005,8 @@ public class Grid extends Canvas
                 }
             }
 
-            public void getLocation(AccessibleControlEvent e)
+            @Override
+			public void getLocation(AccessibleControlEvent e)
             {
                 // location of parent
                 Rectangle location = getBounds();
@@ -10002,7 +10088,8 @@ public class Grid extends Canvas
                 }
             }
 
-            public void getRole(AccessibleControlEvent e)
+            @Override
+			public void getRole(AccessibleControlEvent e)
             {
                 int childID = e.childID;
                 if (childID >= 0 && childID < items.size())
@@ -10044,7 +10131,8 @@ public class Grid extends Canvas
                 }
             }
 
-            public void getSelection(AccessibleControlEvent e)
+            @Override
+			public void getSelection(AccessibleControlEvent e)
             {
                 e.childID = ACC.CHILDID_NONE;
                 if (selectedItems.size() == 1)
@@ -10068,7 +10156,8 @@ public class Grid extends Canvas
                 }
             }
 
-            public void getState(AccessibleControlEvent e)
+            @Override
+			public void getState(AccessibleControlEvent e)
             {
                 int childID = e.childID;
                 if (childID >= 0 && childID < items.size())
@@ -10136,7 +10225,8 @@ public class Grid extends Canvas
                 }
             }
 
-            public void getValue(AccessibleControlEvent e)
+            @Override
+			public void getValue(AccessibleControlEvent e)
             {
                 int childID = e.childID;
                 if (childID >= 0 && childID < items.size())
@@ -10152,7 +10242,8 @@ public class Grid extends Canvas
 
         addListener(SWT.Selection, new Listener()
         {
-            public void handleEvent(Event event)
+            @Override
+			public void handleEvent(Event event)
             {
                 if (selectedItems.size() > 0)
                 {
@@ -10163,7 +10254,8 @@ public class Grid extends Canvas
 
         addTreeListener(new TreeListener()
         {
-            public void treeCollapsed(TreeEvent e)
+            @Override
+			public void treeCollapsed(TreeEvent e)
             {
                 if (getFocusItem() != null)
                 {
@@ -10171,7 +10263,8 @@ public class Grid extends Canvas
                 }
             }
 
-            public void treeExpanded(TreeEvent e)
+            @Override
+			public void treeExpanded(TreeEvent e)
             {
                 if (getFocusItem() != null)
                 {
@@ -10208,6 +10301,7 @@ public class Grid extends Canvas
      *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
      * </ul>
      */
+	@Override
 	public String getToolTipText() {
 		checkWidget();
 		return toolTipText;
@@ -10225,6 +10319,7 @@ public class Grid extends Canvas
 	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
 	 * </ul>
 	 */
+	@Override
 	public void setToolTipText(String string) {
 		checkWidget();
 		toolTipText = string;
