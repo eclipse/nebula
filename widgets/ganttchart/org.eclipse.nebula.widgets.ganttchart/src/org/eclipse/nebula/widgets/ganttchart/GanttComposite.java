@@ -1188,7 +1188,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                 	}
                 }
                 
-                final int startY = bounds.y - offset;
+                final int startY = (bounds.y + getHeaderHeight()) - offset;
                 final int heightY = bounds.height;
 
                 gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
