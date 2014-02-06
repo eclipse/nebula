@@ -38,6 +38,11 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
 /**
+ * This class is the main figure for the plotting. It contains
+ * a PlotArea, which contains a space to plot traces, and the axes,
+ * title and legend of the graph.
+ * 
+ *
  * XY-Graph Figure.
  * @author Xihui Chen
  * @author Kay Kasemir (performStagger)
