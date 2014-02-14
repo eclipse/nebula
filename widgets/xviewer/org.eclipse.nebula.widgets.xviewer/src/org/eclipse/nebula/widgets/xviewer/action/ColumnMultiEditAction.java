@@ -14,11 +14,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.nebula.widgets.xviewer.XViewer;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumnSorter;
+import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
 import org.eclipse.nebula.widgets.xviewer.util.internal.dialog.ListDialogSortable;
 import org.eclipse.swt.widgets.TreeColumn;
@@ -32,7 +34,7 @@ public class ColumnMultiEditAction extends Action {
    private final XViewer xViewer;
 
    public ColumnMultiEditAction(XViewer xViewer) {
-      super("Column Multi Edit");
+      super(XViewerText.get("ColumnMultiEditAction.text")); //$NON-NLS-1$
       this.xViewer = xViewer;
    }
 
@@ -51,15 +53,15 @@ public class ColumnMultiEditAction extends Action {
       Collection<TreeItem> selectedTreeItems = Arrays.asList(xViewer.getTree().getSelection());
       Set<TreeColumn> editableColumns = getEditableTreeColumns(xViewer, selectedTreeItems);
       if (editableColumns.isEmpty()) {
-         XViewerLib.popup("ERROR", "No Columns Are Multi-Editable");
+         XViewerLib.popup(XViewerText.get("error"), XViewerText.get("error.no_columns.multi_editable")); //$NON-NLS-1$ //$NON-NLS-2$
          return;
       }
       ListDialogSortable ld = new ListDialogSortable(new XViewerColumnSorter(), xViewer.getTree().getShell());
-      ld.setMessage("Select Column to Edit");
+      ld.setMessage(XViewerText.get("ColumnMultiEditAction.title")); //$NON-NLS-1$
       ld.setInput(editableColumns);
       ld.setLabelProvider(treeColumnLabelProvider);
       ld.setContentProvider(new ArrayContentProvider());
-      ld.setTitle("Select Column to Edit");
+      ld.setTitle(XViewerText.get("ColumnMultiEditAction.title")); //$NON-NLS-1$
       int result = ld.open();
       if (result != 0) {
          return;
@@ -73,7 +75,7 @@ public class ColumnMultiEditAction extends Action {
          if (element instanceof TreeColumn) {
             return ((TreeColumn) element).getText();
          }
-         return "Unknown element type";
+         return "Unknown element type"; //$NON-NLS-1$
       }
    };
 

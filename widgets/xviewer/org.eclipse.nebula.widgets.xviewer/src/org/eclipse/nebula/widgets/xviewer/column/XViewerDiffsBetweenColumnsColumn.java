@@ -13,6 +13,7 @@ package org.eclipse.nebula.widgets.xviewer.column;
 import org.eclipse.nebula.widgets.xviewer.IXViewerLabelProvider;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewerComputedColumn;
+import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.nebula.widgets.xviewer.util.XViewerException;
 import org.eclipse.swt.SWT;
 
@@ -23,23 +24,21 @@ import org.eclipse.swt.SWT;
  */
 public class XViewerDiffsBetweenColumnsColumn extends XViewerComputedColumn {
 
-   private final static String ID = "ats.computed.diffsBetweenColumns";
+   private final static String ID = "ats.computed.diffsBetweenColumns"; //$NON-NLS-1$
 
    public XViewerDiffsBetweenColumnsColumn() {
-      super(ID, "Diffs Between Columns", 30, SWT.LEFT, false, SortDataType.String, false,
-         "Shows if cells of selected column and one to right are different");
+      this(ID);
    }
 
    private XViewerDiffsBetweenColumnsColumn(String id) {
-      super(id, "Diffs Between Columns", 30, SWT.LEFT, false, SortDataType.String, false,
-         "Shows if cells of two columns and one to right are different");
+      super(id, XViewerText.get("column.diffsBetweenColumns.name"), 30, SWT.LEFT, false, SortDataType.String, false, //$NON-NLS-1$
+    		  XViewerText.get("column.diffsBetweenColumns.description")); //$NON-NLS-1$
    }
 
-   @SuppressWarnings("unused")
    @Override
    public String getColumnText(Object element, XViewerColumn column, int columnIndex) throws XViewerException {
       if (sourceXViewerColumn == null) {
-         return String.format("Source column not found for " + id + ".  Delete column and re-create.");
+         return String.format(XViewerText.get("error.no_source_column"), id); //$NON-NLS-1$
       }
       try {
          int sourceColumnNum = xViewer.getCustomizeMgr().getColumnNumFromXViewerColumn(sourceXViewerColumn);
@@ -49,13 +48,13 @@ public class XViewerDiffsBetweenColumnsColumn extends XViewerComputedColumn {
          String nextColumnStr =
             ((IXViewerLabelProvider) xViewer.getLabelProvider()).getColumnText(element, nextColumnNum);
          if (sourceColumnStr == null && nextColumnStr == null) {
-            return "same";
+            return XViewerText.get("same"); //$NON-NLS-1$
          } else if (sourceColumnStr == null) {
-            return "different - left == null";
+            return XViewerText.get("different") + " - " + XViewerText.get("column.diffsBetweenColumns.leftNull"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
          } else if (nextColumnStr == null) {
-            return "different - right == null";
+            return XViewerText.get("different") + " - " + XViewerText.get("column.diffsBetweenColumns.rightNull"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
          }
-         return (sourceColumnStr.equals(nextColumnStr)) ? "same" : String.format("different [%s][%s]", sourceColumnStr,
+         return (sourceColumnStr.equals(nextColumnStr)) ? XViewerText.get("same") : String.format(XViewerText.get("different") + " [%s][%s]", sourceColumnStr, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             nextColumnStr);
       } catch (Exception ex) {
          return ex.getLocalizedMessage();
@@ -70,9 +69,9 @@ public class XViewerDiffsBetweenColumnsColumn extends XViewerComputedColumn {
    @Override
    public String getName() {
       if (sourceXViewerColumn == null) {
-         return "Diffs Between Columns";
+         return XViewerText.get("column.diffsBetweenColumns.name"); //$NON-NLS-1$
       }
-      return "Diffs Between Column " + sourceXViewerColumn.getName() + " and one to right";
+      return String.format(XViewerText.get("column.diffsBetweenColumns.name2"), sourceXViewerColumn.getName()); //$NON-NLS-1$
    }
 
    @Override
@@ -88,7 +87,7 @@ public class XViewerDiffsBetweenColumnsColumn extends XViewerComputedColumn {
       if (sourceXViewerColumn == null) {
          return ID;
       }
-      return ID + "(" + sourceXViewerColumn.getId() + ")";
+      return ID + "(" + sourceXViewerColumn.getId() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
    }
 
    @Override

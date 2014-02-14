@@ -29,9 +29,9 @@ import org.eclipse.nebula.widgets.xviewer.util.internal.XmlUtil;
  */
 public class SortingData {
 
-   private final static String XTREESORTER_TAG = "xSorter";
-   private final static String COL_NAME_TAG = "id";
-   private final static String OLD_COL_NAME_TAG = "name";
+   private final static String XTREESORTER_TAG = "xSorter"; //$NON-NLS-1$
+   private final static String COL_NAME_TAG = "id"; //$NON-NLS-1$
+   private final static String OLD_COL_NAME_TAG = "name"; //$NON-NLS-1$
    private final List<String> sortingIds = new ArrayList<String>();
    private final CustomizeData custData;
 
@@ -57,9 +57,9 @@ public class SortingData {
       StringBuffer sb = new StringBuffer();
       for (String str : sortingIds) {
          sb.append(str);
-         sb.append(", ");
+         sb.append(", "); //$NON-NLS-1$
       }
-      return sb.toString().replaceFirst(", $", "");
+      return sb.toString().replaceFirst(", $", ""); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
    public List<XViewerColumn> getSortXCols(Map<String, XViewerColumn> oldNameToColumnId) {
@@ -96,17 +96,17 @@ public class SortingData {
    }
 
    public String getXml() {
-      StringBuffer sb = new StringBuffer("<" + XTREESORTER_TAG + ">");
+      StringBuffer sb = new StringBuffer("<" + XTREESORTER_TAG + ">"); //$NON-NLS-1$ //$NON-NLS-2$
       // NOTE: Sorting direction is stored as part of the column data
       for (String item : sortingIds) {
          sb.append(XmlUtil.addTagData(COL_NAME_TAG, item));
       }
-      sb.append("</" + XTREESORTER_TAG + ">");
+      sb.append("</" + XTREESORTER_TAG + ">"); //$NON-NLS-1$ //$NON-NLS-2$
       return sb.toString();
    }
 
-   private static Pattern pattern1 = Pattern.compile("<" + COL_NAME_TAG + ">(.*?)</" + COL_NAME_TAG + ">");
-   private static Pattern pattern2 = Pattern.compile("<" + OLD_COL_NAME_TAG + ">(.*?)</" + OLD_COL_NAME_TAG + ">");
+   private static Pattern pattern1 = Pattern.compile("<" + COL_NAME_TAG + ">(.*?)</" + COL_NAME_TAG + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+   private static Pattern pattern2 = Pattern.compile("<" + OLD_COL_NAME_TAG + ">(.*?)</" + OLD_COL_NAME_TAG + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
    public void setFromXml(String xml) {
       // NOTE: Sorting direction is stored as part of the column data

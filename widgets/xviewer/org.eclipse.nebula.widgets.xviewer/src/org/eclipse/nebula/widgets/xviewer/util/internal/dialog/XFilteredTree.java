@@ -12,6 +12,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.nebula.widgets.xviewer.util.internal.PatternFilter;
 import org.eclipse.nebula.widgets.xviewer.util.internal.images.XViewerImageCache;
 import org.eclipse.osgi.util.NLS;
@@ -240,7 +241,7 @@ public class XFilteredTree extends Composite {
       showFilterControls = true;
       createControl(parent, treeStyle);
       createRefreshJob();
-      setInitialText("type filter text");
+      setInitialText(XViewerText.get("XFilteredTree.filter")); //$NON-NLS-1$
       setFont(parent.getFont());
 
    }
@@ -407,7 +408,6 @@ public class XFilteredTree extends Composite {
     */
    protected WorkbenchJob doCreateRefreshJob() {
       return new WorkbenchJob("Refresh Filter") {//$NON-NLS-1$
-         @SuppressWarnings("null")
          @Override
          public IStatus runInUIThread(IProgressMonitor monitor) {
             if (treeViewer.getControl().isDisposed()) {
@@ -422,7 +422,7 @@ public class XFilteredTree extends Composite {
             boolean initial = initialText != null && initialText.equals(text);
             if (initial) {
                patternFilter.setPattern(null);
-            } else if (text != null) {
+            } else {
                patternFilter.setPattern(text);
             }
 
@@ -549,7 +549,8 @@ public class XFilteredTree extends Composite {
                e.result = initialText;
             } else {
                e.result =
-                  NLS.bind("{0} {1} matches.", new String[] {filterTextString, String.valueOf(getFilteredItemsCount())});
+                  NLS.bind(
+                     XViewerText.get("XFilteredTree.matches"), new String[] {filterTextString, String.valueOf(getFilteredItemsCount())}); //$NON-NLS-1$
             }
          }
 
@@ -754,7 +755,7 @@ public class XFilteredTree extends Composite {
     */
    protected void textChanged() {
       narrowingDown =
-         previousFilterText == null || previousFilterText.equals("type filter text") || getFilterString().startsWith(
+         previousFilterText == null || previousFilterText.equals(XViewerText.get("XFilteredTree.filter")) || getFilterString().startsWith( //$NON-NLS-1$
             previousFilterText);
       previousFilterText = getFilterString();
       // cancel currently running job first, to prevent unnecessary redraw
@@ -811,7 +812,7 @@ public class XFilteredTree extends Composite {
                }
             };
 
-         clearTextAction.setToolTipText("Clear");
+         clearTextAction.setToolTipText(XViewerText.get("button.clear")); //$NON-NLS-1$
          clearTextAction.setImageDescriptor(JFaceResources.getImageRegistry().getDescriptor(CLEAR_ICON));
          clearTextAction.setDisabledImageDescriptor(JFaceResources.getImageRegistry().getDescriptor(DISABLED_CLEAR_ICON));
 
@@ -828,7 +829,7 @@ public class XFilteredTree extends Composite {
       // only create the button if the text widget doesn't support one
       // natively
       if ((filterText.getStyle() & SWT.ICON_CANCEL) == 0) {
-         final Image inactiveImage = XViewerImageCache.getImage("clear.gif");
+         final Image inactiveImage = XViewerImageCache.getImage("clear.gif"); //$NON-NLS-1$
          final Image activeImage = inactiveImage;
          final Image pressedImage = inactiveImage;
 
@@ -836,7 +837,7 @@ public class XFilteredTree extends Composite {
          clearButton.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
          clearButton.setImage(inactiveImage);
          clearButton.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-         clearButton.setToolTipText("Clear");
+         clearButton.setToolTipText(XViewerText.get("button.clear")); //$NON-NLS-1$
          clearButton.addMouseListener(new MouseAdapter() {
             private MouseMoveListener fMoveListener;
 
@@ -896,7 +897,7 @@ public class XFilteredTree extends Composite {
          clearButton.getAccessible().addAccessibleListener(new AccessibleAdapter() {
             @Override
             public void getName(AccessibleEvent e) {
-               e.result = "Clear filter field";
+               e.result = XViewerText.get("XFilteredTree.filter.clear"); //$NON-NLS-1$
             }
          });
          clearButton.getAccessible().addAccessibleControlListener(new AccessibleControlAdapter() {
@@ -1023,7 +1024,6 @@ public class XFilteredTree extends Composite {
     * @param filter PatternFilter which determines a match
     * @return bold font
     */
-   @SuppressWarnings("null")
    public static Font getBoldFont(Object element, XFilteredTree tree, PatternFilter filter) {
       String filterText = tree.getFilterString();
 
@@ -1038,7 +1038,7 @@ public class XFilteredTree extends Composite {
             boolean initial = initialText != null && initialText.equals(filterText);
             if (initial) {
                filter.setPattern(null);
-            } else if (filterText != null) {
+            } else {
                filter.setPattern(filterText);
             }
          }

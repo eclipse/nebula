@@ -74,7 +74,7 @@ import org.eclipse.swt.widgets.TreeItem;
  * @author Donald G. Dunne
  */
 public class XViewerCustomizeDialog extends MessageDialog {
-   private static String buttons[] = new String[] {"Ok", "Apply", "Cancel"};
+   private static String buttons[] = new String[] {XViewerText.get("button.ok"), XViewerText.get("button.apply"), XViewerText.get("button.cancel")}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
    private final XViewer xViewerToCustomize;
    private XViewerFilteredTree custTable;
    protected XViewerFilteredTree hiddenColTable;
@@ -89,9 +89,9 @@ public class XViewerCustomizeDialog extends MessageDialog {
    Button addItemButton, addAllItemButton, removeItemButton, removeAllItemButton, moveUpButton, moveDownButton;
    // Config Customization Buttons
    Button saveButton, renameButton;
-   private final static String SET_AS_DEFAULT = XViewerText.get("button.set_default");
-   private final static String REMOVE_DEFAULT = XViewerText.get("button.remove_default");
-   private String title = XViewerText.get("XViewerCustomizeDialog.title");
+   private final static String SET_AS_DEFAULT = XViewerText.get("button.set_default"); //$NON-NLS-1$
+   private final static String REMOVE_DEFAULT = XViewerText.get("button.remove_default"); //$NON-NLS-1$
+   private String title = XViewerText.get("XViewerCustomizeDialog.title"); //$NON-NLS-1$
    boolean isFeedbackAfter = false;
    boolean isShowSorterBlock = true;
    boolean isShowFilterTextBlock = true;
@@ -102,7 +102,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
    }
 
    private XViewerCustomizeDialog(XViewer xViewer, Shell parentShell) {
-      super(parentShell, "", null, "", MessageDialog.NONE, buttons, 0);
+      super(parentShell, "", null, "", MessageDialog.NONE, buttons, 0); //$NON-NLS-1$ //$NON-NLS-2$
       this.xViewerToCustomize = xViewer;
       setShellStyle(getShellStyle() | SWT.RESIZE);
    }
@@ -132,7 +132,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
                ids.add(xCol.getId());
             }
 
-            event.data = CollectionsUtil.toString(ids, null, ", ", null);
+            event.data = CollectionsUtil.toString(ids, null, ", ", null); //$NON-NLS-1$
          }
       }
    };
@@ -214,7 +214,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
                ids.add(xCol.getId());
             }
 
-            event.data = CollectionsUtil.toString(ids, null, ", ", null);
+            event.data = CollectionsUtil.toString(ids, null, ", ", null); //$NON-NLS-1$
          }
       }
    };
@@ -346,7 +346,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
       GridData gridData = new GridData(SWT.CENTER, SWT.CENTER, false, false);
       gridData.horizontalSpan = 2;
       namespaceLabel.setLayoutData(gridData);
-      namespaceLabel.setText(MessageFormat.format(XViewerText.get("namespace"),
+      namespaceLabel.setText(MessageFormat.format(XViewerText.get("namespace"), //$NON-NLS-1$
          xViewerToCustomize.getXViewerFactory().getNamespace()));
 
       createSelectCustomizationSection(comp);
@@ -354,7 +354,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
       // Column Configuration
       Group configureColumnsGroup = new Group(comp, SWT.NONE);
       configureColumnsGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 3));
-      configureColumnsGroup.setText("Configure Customization");
+      configureColumnsGroup.setText(XViewerText.get("XViewerCustomizeDialog.text")); //$NON-NLS-1$
       GridLayout gridLayout = new GridLayout();
       gridLayout.marginWidth = 3;
       gridLayout.marginHeight = 3;
@@ -409,7 +409,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
 
       Label selectCustomizationLabel = new Label(custComp, SWT.NONE);
       selectCustomizationLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
-      selectCustomizationLabel.setText(XViewerText.get("XViewerCustomizeDialog.prompt"));
+      selectCustomizationLabel.setText(XViewerText.get("XViewerCustomizeDialog.prompt")); //$NON-NLS-1$
 
       // Customization Table
       custTable = new XViewerFilteredTree(custComp, SWT.BORDER);
@@ -424,9 +424,9 @@ public class XViewerCustomizeDialog extends MessageDialog {
          @SuppressWarnings("unchecked")
          @Override
          public int compare(Viewer viewer, Object e1, Object e2) {
-            if (((CustomizeData) e1).getName().startsWith("-")) {
+            if (((CustomizeData) e1).getName().startsWith("-")) { //$NON-NLS-1$
                return -1;
-            } else if (((CustomizeData) e2).getName().startsWith("-")) {
+            } else if (((CustomizeData) e2).getName().startsWith("-")) { //$NON-NLS-1$
                return 1;
             } else {
                return getComparator().compare(((CustomizeData) e1).getName(), ((CustomizeData) e2).getName());
@@ -463,7 +463,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
 
       deleteButton = new Button(composite, SWT.NONE);
       deleteButton.setLayoutData(new GridData());
-      deleteButton.setText(XViewerText.get("button.delete"));
+      deleteButton.setText(XViewerText.get("button.delete")); //$NON-NLS-1$
       deleteButton.addSelectionListener(new SelectionAdapter() {
          @Override
          public void widgetSelected(SelectionEvent e) {
@@ -484,7 +484,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
 
       // Customization Buttons
       renameButton = new Button(composite_1, SWT.NONE);
-      renameButton.setText("Rename Column");
+      renameButton.setText(XViewerText.get("button.rename")); //$NON-NLS-1$
       renameButton.addSelectionListener(new SelectionAdapter() {
          @Override
          public void widgetSelected(SelectionEvent e) {
@@ -494,7 +494,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
       });
 
       saveButton = new Button(composite_1, SWT.NONE);
-      saveButton.setText(XViewerText.get("button.save"));
+      saveButton.setText(XViewerText.get("button.save")); //$NON-NLS-1$
       saveButton.addSelectionListener(new SelectionAdapter() {
          @Override
          public void widgetSelected(SelectionEvent e) {
@@ -513,13 +513,13 @@ public class XViewerCustomizeDialog extends MessageDialog {
       composite_8.setLayout(gridLayout_14);
 
       final Label columnFilterLabel = new Label(composite_8, SWT.NONE);
-      columnFilterLabel.setText("Column Filter:");
+      columnFilterLabel.setText(XViewerText.get("XViewerCustomizeDialog.filter.column")); //$NON-NLS-1$
 
       columnFilterText = new Text(composite_8, SWT.BORDER);
       columnFilterText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
       final Label clearColumnFilterLabel = new Label(composite_8, SWT.PUSH);
-      clearColumnFilterLabel.setImage(XViewerLib.getImage("clear.gif"));
+      clearColumnFilterLabel.setImage(XViewerLib.getImage("clear.gif")); //$NON-NLS-1$
       clearColumnFilterLabel.addMouseListener(new MouseListener() {
          @Override
          public void mouseDown(MouseEvent e) {
@@ -533,7 +533,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
 
          @Override
          public void mouseUp(MouseEvent e) {
-            columnFilterText.setText("");
+            columnFilterText.setText(""); //$NON-NLS-1$
          }
       });
    }
@@ -547,19 +547,19 @@ public class XViewerCustomizeDialog extends MessageDialog {
       composite_7.setLayout(gridLayout_13);
 
       final Label filterLabel = new Label(composite_7, SWT.NONE);
-      filterLabel.setText("Filter Text:");
+      filterLabel.setText(XViewerText.get("XViewerCustomizeDialog.filter.text")); //$NON-NLS-1$
 
       filterText = new Text(composite_7, SWT.BORDER);
       filterText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
       Label filterLabel2 = new Label(composite_7, SWT.NONE);
-      filterLabel2.setText("Regular Expression:");
+      filterLabel2.setText(XViewerText.get("XViewerCustomizeDialog.filter.expression")); //$NON-NLS-1$
 
       filterRegExCheckBox = new Button(composite_7, SWT.CHECK);
       filterRegExCheckBox.setLayoutData(new GridData(SWT.RIGHT, SWT.NONE, false, false));
 
       final Label clearFilterLabel = new Label(composite_7, SWT.PUSH);
-      clearFilterLabel.setImage(XViewerLib.getImage("clear.gif"));
+      clearFilterLabel.setImage(XViewerLib.getImage("clear.gif")); //$NON-NLS-1$
       clearFilterLabel.addMouseListener(new MouseListener() {
          @Override
          public void mouseDown(MouseEvent e) {
@@ -574,7 +574,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
 
          @Override
          public void mouseUp(MouseEvent e) {
-            filterText.setText("");
+            filterText.setText(""); //$NON-NLS-1$
          }
       });
 
@@ -582,13 +582,13 @@ public class XViewerCustomizeDialog extends MessageDialog {
 
    private void createSorterTextBlock(final Composite composite) {
       final Label sorterLabel = new Label(composite, SWT.NONE);
-      sorterLabel.setText("Sorter:");
+      sorterLabel.setText(XViewerText.get("XViewerCustomizeDialog.sorter")); //$NON-NLS-1$
 
       sorterText = new Text(composite, SWT.BORDER);
       sorterText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
       final Label clearSorterLabel = new Label(composite, SWT.PUSH);
-      clearSorterLabel.setImage(XViewerLib.getImage("clear.gif"));
+      clearSorterLabel.setImage(XViewerLib.getImage("clear.gif")); //$NON-NLS-1$
       clearSorterLabel.addMouseListener(new MouseListener() {
          @Override
          public void mouseDown(MouseEvent e) {
@@ -603,7 +603,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
 
          @Override
          public void mouseUp(MouseEvent e) {
-            sorterText.setText("");
+            sorterText.setText(""); //$NON-NLS-1$
          }
       });
    }
@@ -618,7 +618,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
 
       final Label visibleColumnsLabel = new Label(visibleTableComp, SWT.NONE);
       visibleColumnsLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
-      visibleColumnsLabel.setText("Visible Columns");
+      visibleColumnsLabel.setText(XViewerText.get("heading.visible")); //$NON-NLS-1$
 
       // Visible Column Table
       visibleColTable = new XViewerFilteredTree(visibleTableComp);
@@ -655,7 +655,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
 
       Label hiddenColumnsLabel = new Label(hiddenTableComp, SWT.NONE);
       hiddenColumnsLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
-      hiddenColumnsLabel.setText("Hidden Columns");
+      hiddenColumnsLabel.setText(XViewerText.get("heading.hidden")); //$NON-NLS-1$
 
       // Hidden Column Table
       hiddenColTable = new XViewerFilteredTree(hiddenTableComp);
@@ -684,8 +684,8 @@ public class XViewerCustomizeDialog extends MessageDialog {
       moveButtonComp.setLayout(gridLayout_5);
 
       addItemButton = new Button(moveButtonComp, SWT.NONE);
-      addItemButton.setText(">");
-      addItemButton.setToolTipText("Add");
+      addItemButton.setText(">"); //$NON-NLS-1$
+      addItemButton.setToolTipText(XViewerText.get("button.add.tip")); //$NON-NLS-1$
       addItemButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
       addItemButton.addSelectionListener(new SelectionAdapter() {
          @Override
@@ -696,8 +696,8 @@ public class XViewerCustomizeDialog extends MessageDialog {
       });
 
       addAllItemButton = new Button(moveButtonComp, SWT.NONE);
-      addAllItemButton.setText(">>");
-      addAllItemButton.setToolTipText("Add All");
+      addAllItemButton.setText(">>"); //$NON-NLS-1$
+      addAllItemButton.setToolTipText(XViewerText.get("button.add_all.tip")); //$NON-NLS-1$
       addAllItemButton.addSelectionListener(new SelectionAdapter() {
          @Override
          public void widgetSelected(SelectionEvent e) {
@@ -707,8 +707,8 @@ public class XViewerCustomizeDialog extends MessageDialog {
       });
 
       removeItemButton = new Button(moveButtonComp, SWT.NONE);
-      removeItemButton.setText("<");
-      removeItemButton.setToolTipText("Remove");
+      removeItemButton.setText("<"); //$NON-NLS-1$
+      removeItemButton.setToolTipText(XViewerText.get("button.remove.tip")); //$NON-NLS-1$
       removeItemButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
       removeItemButton.addSelectionListener(new SelectionAdapter() {
          @Override
@@ -719,8 +719,8 @@ public class XViewerCustomizeDialog extends MessageDialog {
       });
 
       removeAllItemButton = new Button(moveButtonComp, SWT.NONE);
-      removeAllItemButton.setText("<<");
-      removeAllItemButton.setToolTipText("Remove All");
+      removeAllItemButton.setText("<<"); //$NON-NLS-1$
+      removeAllItemButton.setToolTipText(XViewerText.get("button.remove_all.tip")); //$NON-NLS-1$
       removeAllItemButton.addSelectionListener(new SelectionAdapter() {
          @Override
          public void widgetSelected(SelectionEvent e) {
@@ -731,8 +731,8 @@ public class XViewerCustomizeDialog extends MessageDialog {
 
       moveUpButton = new Button(moveButtonComp, SWT.NONE);
       moveUpButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
-      moveUpButton.setText("^");
-      moveUpButton.setToolTipText("Move Up");
+      moveUpButton.setText("^"); //$NON-NLS-1$
+      moveUpButton.setToolTipText(XViewerText.get("button.move_up.tip")); //$NON-NLS-1$
       moveUpButton.addSelectionListener(new SelectionAdapter() {
          @Override
          public void widgetSelected(SelectionEvent e) {
@@ -743,8 +743,8 @@ public class XViewerCustomizeDialog extends MessageDialog {
 
       moveDownButton = new Button(moveButtonComp, SWT.NONE);
       moveDownButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
-      moveDownButton.setText("v");
-      moveDownButton.setToolTipText("Move Down");
+      moveDownButton.setText("v"); //$NON-NLS-1$
+      moveDownButton.setToolTipText(XViewerText.get("button.move_down.tip")); //$NON-NLS-1$
       moveDownButton.addSelectionListener(new SelectionAdapter() {
          @Override
          public void widgetSelected(SelectionEvent e) {
@@ -987,8 +987,8 @@ public class XViewerCustomizeDialog extends MessageDialog {
    private void handleRenameButton() {
       XViewerColumn xCol = getVisibleTableSelection().iterator().next();
       DialogWithEntry ed =
-         new DialogWithEntry(Display.getCurrent().getActiveShell(), "Rename Column", null, "Enter new name",
-            MessageDialog.QUESTION, new String[] {"OK", "Use Default", "Cancel"}, 0);
+         new DialogWithEntry(Display.getCurrent().getActiveShell(), XViewerText.get("button.rename"), null, XViewerText.get("XViewerCustomizeDialog.rename.new"), //$NON-NLS-1$ //$NON-NLS-2$
+            MessageDialog.QUESTION, new String[] {XViewerText.get("button.ok"), XViewerText.get("XViewerCustomizeDialog.rename.default"), XViewerText.get("button.cancel")}, 0);  //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
       int result = ed.open();
       if (result == 2) {
          return;
@@ -996,7 +996,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
       if (result == 0) {
          xViewerToCustomize.getCustomizeMgr().customizeColumnName(xCol, ed.getEntry());
       } else if (result == 1) {
-         xViewerToCustomize.getCustomizeMgr().customizeColumnName(xCol, "");
+         xViewerToCustomize.getCustomizeMgr().customizeColumnName(xCol, ""); //$NON-NLS-1$
       }
       visibleColTable.getViewer().update(xCol, null);
    }
@@ -1038,19 +1038,19 @@ public class XViewerCustomizeDialog extends MessageDialog {
          CustomizeData custData = getCustTableSelection();
          if (custData.getName().equals(CustomizeManager.TABLE_DEFAULT_LABEL) || custData.getName().equals(
             CustomizeManager.CURRENT_LABEL)) {
-            XViewerLib.popup("ERROR", XViewerText.get("error.set_default"));
+            XViewerLib.popup(XViewerText.get("error"), XViewerText.get("error.set_default")); //$NON-NLS-1$ //$NON-NLS-2$
             return;
          }
          if (xViewerToCustomize.getCustomizeMgr().isCustomizationUserDefault(custData)) {
             if (MessageDialog.openConfirm(
                Display.getCurrent().getActiveShell(),
-               XViewerText.get("button.remove_default"),
-               MessageFormat.format(XViewerText.get("XViewerCustomizeDialog.prompt.remove_default"), custData.getName()))) {
+               XViewerText.get("button.remove_default"), //$NON-NLS-1$
+               MessageFormat.format(XViewerText.get("XViewerCustomizeDialog.prompt.remove_default"), custData.getName()))) { //$NON-NLS-1$
                xViewerToCustomize.getCustomizeMgr().setUserDefaultCustData(custData, false);
             }
          } else if (MessageDialog.openConfirm(Display.getCurrent().getActiveShell(),
-            XViewerText.get("button.set_default"),
-            MessageFormat.format(XViewerText.get("XViewerCustomizeDialog.prompt.set_default"), custData.getName()))) {
+            XViewerText.get("button.set_default"), //$NON-NLS-1$
+            MessageFormat.format(XViewerText.get("XViewerCustomizeDialog.prompt.set_default"), custData.getName()))) { //$NON-NLS-1$
             xViewerToCustomize.getCustomizeMgr().setUserDefaultCustData(custData, true);
          }
          loadCustomizeTable();
@@ -1064,18 +1064,18 @@ public class XViewerCustomizeDialog extends MessageDialog {
          CustomizeData custSel = getCustTableSelection();
          if (custSel.getName().equals(CustomizeManager.TABLE_DEFAULT_LABEL) || custSel.getName().equals(
             CustomizeManager.CURRENT_LABEL)) {
-            XViewerLib.popup("ERROR", XViewerText.get("error.delete_default"));
+            XViewerLib.popup(XViewerText.get("error"), XViewerText.get("error.delete_default")); //$NON-NLS-1$ //$NON-NLS-2$
             return;
          }
          if (!custSel.isPersonal() && !xViewerToCustomize.getXViewerFactory().isAdmin()) {
-            XViewerLib.popup("ERROR", XViewerText.get("error.delete_shared"));
+            XViewerLib.popup(XViewerText.get("error"), XViewerText.get("error.delete_global")); //$NON-NLS-1$ //$NON-NLS-2$
             return;
          }
-         String dialogTitle = XViewerText.get("XViewerCustomizeDialog.prompt.delete.title");
-         String dialogMessage = XViewerText.get("XViewerCustomizeDialog.prompt.delete");
+         String dialogTitle = XViewerText.get("XViewerCustomizeDialog.prompt.delete.title"); //$NON-NLS-1$
+         String dialogMessage = XViewerText.get("XViewerCustomizeDialog.prompt.delete"); //$NON-NLS-1$
          if (!custSel.isPersonal()) {
-            dialogTitle = XViewerText.get("XViewerCustomizeDialog.prompt.delete.shared.title");
-            dialogMessage = XViewerText.get("XViewerCustomizeDialog.prompt.delete.shared");
+            dialogTitle = XViewerText.get("XViewerCustomizeDialog.prompt.delete.shared.title"); //$NON-NLS-1$
+            dialogMessage = XViewerText.get("XViewerCustomizeDialog.prompt.delete.shared"); //$NON-NLS-1$
          }
          if (MessageDialog.openConfirm(Display.getCurrent().getActiveShell(), dialogTitle,
             MessageFormat.format(dialogMessage, custSel.getName()))) {
@@ -1181,7 +1181,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
       }
       CustomizeData custData = getCustTableSelection();
       if (custData == null) {
-         XViewerLog.logAndPopup(Activator.class, Level.SEVERE, new IllegalStateException("Can't obtain selection Xml"));
+         XViewerLog.logAndPopup(Activator.class, Level.SEVERE, new IllegalStateException("Can't obtain selection Xml")); //$NON-NLS-1$
          return;
       }
 

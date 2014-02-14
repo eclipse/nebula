@@ -38,7 +38,7 @@ public class FileUtil {
 
    public static String justPath(String filename) {
       File file = new File(filename);
-      filename = filename.replaceAll(file.getName(), "");
+      filename = filename.replaceAll(file.getName(), ""); //$NON-NLS-1$
       return filename;
    }
 
@@ -65,7 +65,7 @@ public class FileUtil {
    public static String fileToString(File file) throws XViewerException {
       try {
          StringBuffer buffer = new StringBuffer();
-         Reader inStream = new InputStreamReader(new FileInputStream(file), "UTF-8");
+         Reader inStream = new InputStreamReader(new FileInputStream(file), "UTF-8"); //$NON-NLS-1$
          Reader in = new BufferedReader(inStream);
          int ch;
          while ((ch = in.read()) > -1) {
@@ -79,7 +79,7 @@ public class FileUtil {
    }
 
    public static void writeStringToFile(String str, File file) throws IOException {
-      OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
+      OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(file), "UTF-8"); //$NON-NLS-1$
       char[] chars = str.toCharArray();
       out.write(chars, 0, chars.length);
       out.close();

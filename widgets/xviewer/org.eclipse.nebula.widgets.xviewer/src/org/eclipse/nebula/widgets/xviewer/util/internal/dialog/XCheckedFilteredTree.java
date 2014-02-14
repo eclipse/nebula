@@ -33,7 +33,7 @@ public class XCheckedFilteredTree extends XFilteredTree {
 
    public XCheckedFilteredTree(Composite parent, int treeStyle, PatternFilter filter) {
       super(parent, treeStyle, filter, true);
-      setInitialText("");
+      setInitialText(""); //$NON-NLS-1$
    }
 
    @Override

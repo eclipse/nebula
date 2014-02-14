@@ -13,7 +13,9 @@ package org.eclipse.nebula.widgets.xviewer.util.internal;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.eclipse.nebula.widgets.xviewer.Activator;
+import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.StyledText;
@@ -39,7 +41,7 @@ public class XViewerTextWidget extends XViewerWidget {
 
    protected StyledText sText; // Contains visable representation of text
    private Composite parent;
-   protected String text = ""; // Where actual text with xml tags is stored
+   protected String text = ""; // Where actual text with xml tags is stored //$NON-NLS-1$
    private int maxTextChars = 0;
 
    private final static boolean debug = false;
@@ -48,15 +50,15 @@ public class XViewerTextWidget extends XViewerWidget {
    private Font font;
 
    public XViewerTextWidget() {
-      super("AText", "text");
+      super("AText", "text");  //$NON-NLS-1$//$NON-NLS-2$
    }
 
    public XViewerTextWidget(String displayLabel) {
-      this(displayLabel, "text");
+      this(displayLabel, "text"); //$NON-NLS-1$
    }
 
    public XViewerTextWidget(String displayLabel, String xmlRoot) {
-      this(displayLabel, xmlRoot, "");
+      this(displayLabel, xmlRoot, ""); //$NON-NLS-1$
    }
 
    public XViewerTextWidget(String displayLabel, String xmlRoot, String xmlSubRoot) {
@@ -84,7 +86,7 @@ public class XViewerTextWidget extends XViewerWidget {
 
    @Override
    public String toString() {
-      return label + ": *" + text + "*";
+      return label + ": *" + text + "*"; //$NON-NLS-1$ //$NON-NLS-2$
    }
 
    @Override
@@ -173,9 +175,9 @@ public class XViewerTextWidget extends XViewerWidget {
    }
 
    private void createLabelWidget(Composite composite) {
-      if (displayLabel && !label.equals("")) {
+      if (displayLabel && !label.equals("")) { //$NON-NLS-1$
          labelWidget = new Label(composite, SWT.NONE);
-         labelWidget.setText(label + ":");
+         labelWidget.setText(label + ":"); //$NON-NLS-1$
          if (toolTip != null) {
             labelWidget.setToolTipText(toolTip);
          }
@@ -219,7 +221,7 @@ public class XViewerTextWidget extends XViewerWidget {
    public Menu getDefaultMenu() {
       Menu menu = new Menu(sText.getShell());
       MenuItem cut = new MenuItem(menu, SWT.NONE);
-      cut.setText("Cut");
+      cut.setText(XViewerText.get("menu.cut")); //$NON-NLS-1$
       cut.addSelectionListener(new SelectionAdapter() {
 
          @Override
@@ -229,7 +231,7 @@ public class XViewerTextWidget extends XViewerWidget {
          }
       });
       MenuItem copy = new MenuItem(menu, SWT.NONE);
-      copy.setText("Copy");
+      copy.setText(XViewerText.get("menu.copy")); //$NON-NLS-1$
       copy.addSelectionListener(new SelectionAdapter() {
 
          @Override
@@ -238,7 +240,7 @@ public class XViewerTextWidget extends XViewerWidget {
          }
       });
       MenuItem paste = new MenuItem(menu, SWT.NONE);
-      paste.setText("Paste");
+      paste.setText(XViewerText.get("menu.paste")); //$NON-NLS-1$
       paste.addSelectionListener(new SelectionAdapter() {
 
          @Override
@@ -360,7 +362,7 @@ public class XViewerTextWidget extends XViewerWidget {
 
    public String get() {
       if (debug) {
-         XViewerLog.log(Activator.class, Level.SEVERE, "text set *" + text + "*");
+         XViewerLog.log(Activator.class, Level.SEVERE, "text set *" + text + "*");  //$NON-NLS-1$//$NON-NLS-2$
       }
       return text;
    }
@@ -380,7 +382,7 @@ public class XViewerTextWidget extends XViewerWidget {
 
    @Override
    public String toXml() {
-      if (xmlSubRoot.equals("")) {
+      if (xmlSubRoot.equals("")) { //$NON-NLS-1$
          return toXml(xmlRoot);
       } else {
          return toXml(xmlRoot, xmlSubRoot);
@@ -389,35 +391,35 @@ public class XViewerTextWidget extends XViewerWidget {
 
    @Override
    public String toXml(String xmlRoot) {
-      return "<" + xmlRoot + ">" + getXmlData() + "</" + xmlRoot + ">\n";
+      return "<" + xmlRoot + ">" + getXmlData() + "</" + xmlRoot + ">\n";  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
    }
 
    @Override
    public String toXml(String xmlRoot, String xmlSubRoot) {
-      return "<" + xmlRoot + ">" + "<" + xmlSubRoot + ">" + getXmlData() + "</" + xmlSubRoot + ">" + "</" + xmlRoot + ">\n";
+      return "<" + xmlRoot + ">" + "<" + xmlSubRoot + ">" + getXmlData() + "</" + xmlSubRoot + ">" + "</" + xmlRoot + ">\n"; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
    }
 
    @Override
    public void setXmlData(String str) {
       set(str);
       if (debug) {
-         XViewerLog.log(Activator.class, Level.SEVERE, "setFromXml *" + str + "*");
+         XViewerLog.log(Activator.class, Level.SEVERE, "setFromXml *" + str + "*"); //$NON-NLS-1$//$NON-NLS-2$ 
       }
    }
 
    @Override
    public void setFromXml(String xml) {
       Matcher m;
-      m = Pattern.compile("<" + xmlRoot + ">(.*?)</" + xmlRoot + ">", Pattern.MULTILINE | Pattern.DOTALL).matcher(xml);
+      m = Pattern.compile("<" + xmlRoot + ">(.*?)</" + xmlRoot + ">", Pattern.MULTILINE | Pattern.DOTALL).matcher(xml); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ 
 
       if (m.find()) {
          String xmlStr = m.group(1);
          if (debug) {
-            XViewerLog.log(Activator.class, Level.SEVERE, "xmlStr *" + xmlStr + "*");
+            XViewerLog.log(Activator.class, Level.SEVERE, "xmlStr *" + xmlStr + "*"); //$NON-NLS-1$//$NON-NLS-2$ 
          }
          String str = XmlUtil.xmlToText(xmlStr);
          if (debug) {
-            XViewerLog.log(Activator.class, Level.SEVERE, "str *" + str + "*");
+            XViewerLog.log(Activator.class, Level.SEVERE, "str *" + str + "*"); //$NON-NLS-1$//$NON-NLS-2$ 
          }
          setXmlData(str);
       }
@@ -448,12 +450,12 @@ public class XViewerTextWidget extends XViewerWidget {
 
    public void set(String text) {
       if (text == null) {
-         this.text = "";
+         this.text = ""; //$NON-NLS-1$
       } else {
          this.text = text;
       }
       if (debug) {
-         XViewerLog.log(Activator.class, Level.SEVERE, "set *" + text + "*");
+         XViewerLog.log(Activator.class, Level.SEVERE, "set *" + text + "*"); //$NON-NLS-1$ //$NON-NLS-2$
       }
       updateTextWidget();
    }
@@ -477,22 +479,22 @@ public class XViewerTextWidget extends XViewerWidget {
       StringBuffer sb = new StringBuffer();
       String textStr = text;
       if (fillVertically) {
-         sb.append("\n");
-         textStr = textStr.replaceAll("\n", "\n" + "      ");
-         textStr = "      " + textStr;
+         sb.append("\n"); //$NON-NLS-1$
+         textStr = textStr.replaceAll("\n", "\n" + "      "); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ 
+         textStr = "      " + textStr; //$NON-NLS-1$
       }
       sb.append(textStr);
-      return sb.toString().replaceAll("\n$", "");
+      return sb.toString().replaceAll("\n$", ""); //$NON-NLS-1$//$NON-NLS-2$ 
    }
 
    public String toHTML(String labelFont, boolean newLineText) {
-      String s = HtmlUtil.getLabelStr(labelFont, label + ": ");
+      String s = HtmlUtil.getLabelStr(labelFont, label + ": "); //$NON-NLS-1$
       if (newLineText) {
-         s = "<dl><dt>" + s + "<dd>";
+         s = "<dl><dt>" + s + "<dd>"; //$NON-NLS-1$//$NON-NLS-2$ 
       }
       s += text;
       if (newLineText) {
-         s += "</dl>";
+         s += "</dl>"; //$NON-NLS-1$
       }
       return s;
    }
@@ -504,7 +506,7 @@ public class XViewerTextWidget extends XViewerWidget {
 
    @Override
    public boolean isValid() {
-      if (isRequiredEntry() && get().equals("")) {
+      if (isRequiredEntry() && get().equals("")) { //$NON-NLS-1$
          return false;
       }
       return true;

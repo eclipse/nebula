@@ -11,6 +11,7 @@
 package org.eclipse.nebula.widgets.xviewer.action;
 
 import java.util.logging.Level;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.nebula.widgets.xviewer.Activator;
@@ -18,6 +19,7 @@ import org.eclipse.nebula.widgets.xviewer.IXViewerLabelProvider;
 import org.eclipse.nebula.widgets.xviewer.IXViewerValueColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewer;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
+import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.nebula.widgets.xviewer.util.internal.HtmlUtil;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
 import org.eclipse.nebula.widgets.xviewer.util.internal.dialog.HtmlDialog;
@@ -42,7 +44,7 @@ public class ViewSelectedCellDataAction extends Action {
    }
 
    public ViewSelectedCellDataAction(XViewer xViewer, Clipboard clipboard, Option option) {
-      super(option.name() + " Selected Cell Data");
+      super(option.equals(Option.View) ? XViewerText.get("action.selectedCellData.view") : XViewerText.get("action.selectedCellData.copy")); //$NON-NLS-1$ //$NON-NLS-2$
       this.xViewer = xViewer;
       this.clipboard = clipboard;
       this.option = option;
@@ -50,7 +52,7 @@ public class ViewSelectedCellDataAction extends Action {
 
    @Override
    public ImageDescriptor getImageDescriptor() {
-      return XViewerImageCache.getImageDescriptor("report.gif");
+      return XViewerImageCache.getImageDescriptor("report.gif"); //$NON-NLS-1$
    }
 
    @Override
@@ -71,10 +73,10 @@ public class ViewSelectedCellDataAction extends Action {
                   ((IXViewerLabelProvider) xViewer.getLabelProvider()).getColumnText(treeItem.getData(), xCol,
                      xViewer.getRightClickSelectedColumnNum());
             }
-            if (data != null && !data.equals("")) {
+            if (data != null && !data.equals("")) { //$NON-NLS-1$
                if (option == Option.View) {
                   String html = HtmlUtil.simplePage(HtmlUtil.pre(HtmlUtil.textToHtml(data)));
-                  new HtmlDialog(treeCol.getText() + " Data", treeCol.getText() + " Data", html).open();
+                  new HtmlDialog(treeCol.getText() + " " + XViewerText.get("data"), treeCol.getText() + " " + XViewerText.get("data"), html).open(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                } else {
                   clipboard.setContents(new Object[] {data}, new Transfer[] {TextTransfer.getInstance()});
                }

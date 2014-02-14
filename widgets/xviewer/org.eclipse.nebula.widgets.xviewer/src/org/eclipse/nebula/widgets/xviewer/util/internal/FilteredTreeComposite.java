@@ -641,7 +641,7 @@ public class FilteredTreeComposite extends Composite {
             };
 
          clearTextAction.setToolTipText(WorkbenchMessages.FilteredTree_ClearToolTip);
-         clearTextAction.setImageDescriptor(XViewerImageCache.getImageDescriptor("clear.gif"));
+         clearTextAction.setImageDescriptor(XViewerImageCache.getImageDescriptor("clear.gif")); //$NON-NLS-1$
          clearTextAction.setDisabledImageDescriptor(JFaceResources.getImageRegistry().getDescriptor(DCLEAR_ICON));
 
          filterToolBar.add(clearTextAction);

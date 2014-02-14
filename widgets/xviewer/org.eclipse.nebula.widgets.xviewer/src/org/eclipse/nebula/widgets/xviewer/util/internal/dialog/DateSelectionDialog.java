@@ -13,7 +13,9 @@ package org.eclipse.nebula.widgets.xviewer.util.internal.dialog;
 
 import java.util.Calendar;
 import java.util.Date;
+
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -43,8 +45,7 @@ public class DateSelectionDialog extends MessageDialog {
 
    public DateSelectionDialog(String dialogTitle, String dialogMessage, Date selectedDate) {
       this(Display.getCurrent().getActiveShell(), dialogTitle, null, dialogMessage, MessageDialog.NONE, new String[] {
-         "Ok",
-         "Cancel"}, 0, selectedDate);
+    	  XViewerText.get("button.ok"), XViewerText.get("button.cancel")}, 0, selectedDate); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
    @Override
@@ -78,7 +79,7 @@ public class DateSelectionDialog extends MessageDialog {
       });
 
       Button clearButton = new Button(filterComp, SWT.PUSH);
-      clearButton.setText("clear");
+      clearButton.setText(XViewerText.get("button.clear")); //$NON-NLS-1$
       clearButton.addSelectionListener(new SelectionAdapter() {
          @Override
          public void widgetSelected(SelectionEvent e) {

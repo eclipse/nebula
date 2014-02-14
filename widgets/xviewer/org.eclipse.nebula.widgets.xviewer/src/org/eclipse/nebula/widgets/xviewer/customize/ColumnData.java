@@ -30,7 +30,7 @@ public class ColumnData {
    Map<String, XViewerColumn> idToColumn = new HashMap<String, XViewerColumn>();
 
    private static Pattern pattern =
-      Pattern.compile("<" + XViewerColumn.XTREECOLUMN_TAG + ">(.*?)</" + XViewerColumn.XTREECOLUMN_TAG + ">");
+      Pattern.compile("<" + XViewerColumn.XTREECOLUMN_TAG + ">(.*?)</" + XViewerColumn.XTREECOLUMN_TAG + ">");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 
    public List<XViewerColumn> setFromXml(String xml) {
       columns.clear();
@@ -46,11 +46,11 @@ public class ColumnData {
 
    @Override
    public String toString() {
-      StringBuffer sb = new StringBuffer("columnData:[");
+      StringBuffer sb = new StringBuffer("columnData:["); //$NON-NLS-1$
       for (XViewerColumn xCol : columns) {
          sb.append(xCol);
       }
-      sb.append("]");
+      sb.append("]"); //$NON-NLS-1$
       return sb.toString();
    }
 

@@ -15,11 +15,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
+
 import org.eclipse.nebula.widgets.xviewer.Activator;
 import org.eclipse.nebula.widgets.xviewer.IXViewerLabelProvider;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewerComputedColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewerSorter;
+import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.nebula.widgets.xviewer.util.XViewerException;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
@@ -30,29 +32,27 @@ import org.eclipse.swt.SWT;
  */
 public class XViewerDaysTillTodayColumn extends XViewerComputedColumn {
 
-   private final static String ID = "ats.computed.daysTillToday";
+   private final static String ID = "ats.computed.daysTillToday"; //$NON-NLS-1$
 
    public XViewerDaysTillTodayColumn() {
-      super(ID, "Days Till Today", 30, SWT.LEFT, false, SortDataType.Integer, false,
-         "Shows number of days till today for selected column");
+      this(ID);
    }
 
    private XViewerDaysTillTodayColumn(String id) {
-      super(id, "Days Till Today", 30, SWT.LEFT, false, SortDataType.Integer, false,
-         "Shows number of days till today for selected column");
+      super(id, XViewerText.get("column.daysTillToday.name"), 30, SWT.LEFT, false, SortDataType.Integer, false, //$NON-NLS-1$
+    		  XViewerText.get("column.daysTillToday.description")); //$NON-NLS-1$
    }
 
-   @SuppressWarnings("unused")
    @Override
    public String getColumnText(Object element, XViewerColumn column, int columnIndex) throws XViewerException {
       if (sourceXViewerColumn == null) {
-         return String.format("Source column not found for " + id + ".  Delete column and re-create.");
+         return String.format(XViewerText.get("error.no_source_column"), id); //$NON-NLS-1$
       }
       try {
          int sourceColumnNum = xViewer.getCustomizeMgr().getColumnNumFromXViewerColumn(sourceXViewerColumn);
          String dateStr = ((IXViewerLabelProvider) xViewer.getLabelProvider()).getColumnText(element, sourceColumnNum);
-         if (dateStr == null || dateStr.equals("")) {
-            return "";
+         if (dateStr == null || dateStr.equals("")) { //$NON-NLS-1$
+            return ""; //$NON-NLS-1$
          }
          DateFormat format;
          if (dateStr.length() == 10) {
@@ -71,7 +71,7 @@ public class XViewerDaysTillTodayColumn extends XViewerComputedColumn {
             }
          }
          if (date1Date == null) {
-            return "Can't parse date";
+            return "Can't parse date"; //$NON-NLS-1$
          }
          return String.valueOf(XViewerLib.daysTillToday(date1Date));
       } catch (Exception ex) {
@@ -87,9 +87,9 @@ public class XViewerDaysTillTodayColumn extends XViewerComputedColumn {
    @Override
    public String getName() {
       if (sourceXViewerColumn == null) {
-         return "Days Till Today";
+         return XViewerText.get("column.daysTillToday.name"); //$NON-NLS-1$
       }
-      return "Days Till Today from " + sourceXViewerColumn.getName() + "";
+      return XViewerText.get("column.daysTillToday.name2") + " " + sourceXViewerColumn.getName();  //$NON-NLS-1$//$NON-NLS-2$
    }
 
    @Override
@@ -105,7 +105,7 @@ public class XViewerDaysTillTodayColumn extends XViewerComputedColumn {
       if (sourceXViewerColumn == null) {
          return ID;
       }
-      return ID + "(" + sourceXViewerColumn.getId() + ")";
+      return ID + "(" + sourceXViewerColumn.getId() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
    }
 
    @Override

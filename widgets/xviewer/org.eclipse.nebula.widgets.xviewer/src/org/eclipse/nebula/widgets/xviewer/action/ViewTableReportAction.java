@@ -13,6 +13,7 @@ package org.eclipse.nebula.widgets.xviewer.action;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.nebula.widgets.xviewer.XViewer;
+import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.nebula.widgets.xviewer.XViewerTreeReport;
 import org.eclipse.nebula.widgets.xviewer.util.internal.images.XViewerImageCache;
 
@@ -24,13 +25,13 @@ public class ViewTableReportAction extends Action {
    private final XViewer xViewer;
 
    public ViewTableReportAction(XViewer xViewer) {
-      super("View Table Report");
+      super(XViewerText.get("action.viewTableReport")); //$NON-NLS-1$
       this.xViewer = xViewer;
    }
 
    @Override
    public ImageDescriptor getImageDescriptor() {
-      return XViewerImageCache.getImageDescriptor("report.gif");
+      return XViewerImageCache.getImageDescriptor("report.gif"); //$NON-NLS-1$
    }
 
    @Override

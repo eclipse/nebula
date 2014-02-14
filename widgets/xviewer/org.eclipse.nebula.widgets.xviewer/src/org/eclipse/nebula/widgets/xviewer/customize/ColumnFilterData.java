@@ -24,11 +24,11 @@ import org.eclipse.nebula.widgets.xviewer.util.internal.XmlUtil;
  */
 public class ColumnFilterData {
 
-   private static final String COLUMN_FILTER_TAG = "xColFilter";
-   private static final String COLUMN_ID_TAG = "id";
-   private static final String FILTER_TEXT_TAG = "str";
+   private static final String COLUMN_FILTER_TAG = "xColFilter"; //$NON-NLS-1$
+   private static final String COLUMN_ID_TAG = "id"; //$NON-NLS-1$
+   private static final String FILTER_TEXT_TAG = "str"; //$NON-NLS-1$
    private final Map<String, String> colIdToFilterText = new HashMap<String, String>();
-   private static Pattern p = Pattern.compile("<" + COLUMN_FILTER_TAG + ">(.*?)</" + COLUMN_FILTER_TAG + ">");
+   private static Pattern p = Pattern.compile("<" + COLUMN_FILTER_TAG + ">(.*?)</" + COLUMN_FILTER_TAG + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
    public String getFilterText(String colId) {
       return colIdToFilterText.get(colId);
@@ -71,7 +71,7 @@ public class ColumnFilterData {
 
    @Override
    public String toString() {
-      return "colFilter:[" + colIdToFilterText.toString() + "]";
+      return "colFilter:[" + colIdToFilterText.toString() + "]";  //$NON-NLS-1$//$NON-NLS-2$
    }
 
    public boolean isFiltered() {

@@ -60,7 +60,7 @@ public class XViewerCustDialogDragDrop {
                ids.add(xCol.getId());
             }
 
-            event.data = CollectionsUtil.toString(ids, null, ", ", null);
+            event.data = CollectionsUtil.toString(ids, null, ", ", null); //$NON-NLS-1$
          }
       }
    };
@@ -143,7 +143,7 @@ public class XViewerCustDialogDragDrop {
                ids.add(xCol.getId());
             }
 
-            event.data = CollectionsUtil.toString(ids, null, ", ", null);
+            event.data = CollectionsUtil.toString(ids, null, ", ", null); //$NON-NLS-1$
          }
       }
    };

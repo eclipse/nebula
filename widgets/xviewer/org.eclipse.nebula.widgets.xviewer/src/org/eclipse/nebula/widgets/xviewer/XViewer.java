@@ -59,8 +59,8 @@ import org.eclipse.ui.part.ViewPart;
  */
 public class XViewer extends TreeViewer {
 
-   public static final String MENU_GROUP_PRE = "XVIEWER MENU GROUP PRE";
-   public static final String MENU_GROUP_POST = "XVIEWER MENU GROUP POST";
+   public static final String MENU_GROUP_PRE = "XVIEWER MENU GROUP PRE"; //$NON-NLS-1$
+   public static final String MENU_GROUP_POST = "XVIEWER MENU GROUP POST"; //$NON-NLS-1$
    private Label statusLabel;
    private final MenuManager menuManager;
    private static boolean ctrlKeyDown = false;
@@ -189,7 +189,7 @@ public class XViewer extends TreeViewer {
    public void setLabelProvider(IBaseLabelProvider labelProvider) {
       if (!(labelProvider instanceof IXViewerLabelProvider)) {
          throw new IllegalArgumentException(
-            "Label Provider must extend XViewerLabelProvider or XViewerStyledTextLabelProvider");
+            "Label Provider must extend XViewerLabelProvider or XViewerStyledTextLabelProvider"); //$NON-NLS-1$
       }
       super.setLabelProvider(labelProvider);
    }
@@ -240,7 +240,7 @@ public class XViewer extends TreeViewer {
 
          if (xViewerFactory.isLoadedStatusLabelAvailable()) {
             statusLabel = new Label(searchComp, SWT.NONE);
-            statusLabel.setText(" ");
+            statusLabel.setText(" "); //$NON-NLS-1$
             statusLabel.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
          }
       }
@@ -484,7 +484,7 @@ public class XViewer extends TreeViewer {
     * Override this to add information to the status string. eg. extra filters etc.
     */
    public String getStatusString() {
-      return "";
+      return ""; //$NON-NLS-1$
    }
 
    public void updateStatusLabel() {
@@ -504,9 +504,9 @@ public class XViewer extends TreeViewer {
       }
       boolean allItemsFiltered = loadedNum > 0 && visibleNum == 0;
       if (allItemsFiltered) {
-         sb.append(XViewerText.get("status.all_filtered"));
+         sb.append(XViewerText.get("status.all_filtered")); //$NON-NLS-1$
       }
-      sb.append(MessageFormat.format(XViewerText.get("status"), loadedNum, visibleNum,
+      sb.append(MessageFormat.format(XViewerText.get("status"), loadedNum, visibleNum, //$NON-NLS-1$
          ((IStructuredSelection) getSelection()).size()));
       customizeMgr.appendToStatusLabel(sb);
       if (filterDataUI != null) {
@@ -515,7 +515,7 @@ public class XViewer extends TreeViewer {
       columnFilterDataUI.appendToStatusLabel(sb);
       sb.append(getStatusString());
       if (sb.length() > 0) {
-         sb.append("\n");
+         sb.append("\n"); //$NON-NLS-1$
       }
 
       // Status Line 2

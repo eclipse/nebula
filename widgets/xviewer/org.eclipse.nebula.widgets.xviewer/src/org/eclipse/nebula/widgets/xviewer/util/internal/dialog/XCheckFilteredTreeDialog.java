@@ -13,12 +13,14 @@ package org.eclipse.nebula.widgets.xviewer.util.internal.dialog;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
+
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.nebula.widgets.xviewer.util.internal.PatternFilter;
 import org.eclipse.nebula.widgets.xviewer.util.internal.Result;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
@@ -44,8 +46,7 @@ public class XCheckFilteredTreeDialog extends MessageDialog {
 
    public XCheckFilteredTreeDialog(String dialogTitle, String dialogMessage, PatternFilter patternFilter, IContentProvider contentProvider, IBaseLabelProvider labelProvider, ViewerSorter viewerSorter) {
       super(Display.getCurrent().getActiveShell(), dialogTitle, null, dialogMessage, MessageDialog.NONE, new String[] {
-         "OK",
-         "Cancel"}, 0);
+    	  XViewerText.get("button.ok"), XViewerText.get("button.cancel")}, 0); //$NON-NLS-1$ //$NON-NLS-2$
       this.contentProvider = contentProvider;
       this.labelProvider = labelProvider;
       this.patternFilter = patternFilter;
@@ -134,7 +135,7 @@ public class XCheckFilteredTreeDialog extends MessageDialog {
       if (result.isFalse()) {
          statusLabel.setText(result.getText());
       } else {
-         statusLabel.setText("");
+         statusLabel.setText(""); //$NON-NLS-1$
       }
       statusLabel.getParent().layout();
       updateButtons();

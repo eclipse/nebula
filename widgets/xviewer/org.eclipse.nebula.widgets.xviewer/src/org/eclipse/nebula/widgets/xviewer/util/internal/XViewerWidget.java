@@ -18,8 +18,10 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.nebula.widgets.xviewer.Activator;
+import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
@@ -38,9 +40,9 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 public abstract class XViewerWidget {
 
    protected Label labelWidget = null;
-   protected String label = "";
-   protected String xmlRoot = "";
-   protected String xmlSubRoot = "";
+   protected String label = ""; //$NON-NLS-1$
+   protected String xmlRoot = ""; //$NON-NLS-1$
+   protected String xmlSubRoot = ""; //$NON-NLS-1$
    protected String toolTip = null;
    protected boolean requiredEntry = false;
    protected boolean editable = true;
@@ -140,7 +142,7 @@ public abstract class XViewerWidget {
       try {
          if (toolTip != null && label != null) {
             MessageDialog.openInformation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-               label + " Tool Tip", toolTip);
+               label + " " + XViewerText.get("tooltip"), toolTip); //$NON-NLS-1$ //$NON-NLS-2$
          }
       } catch (Exception ex) {
          XViewerLog.log(Activator.class, Level.SEVERE, ex);
@@ -205,7 +207,7 @@ public abstract class XViewerWidget {
    public abstract String toHTML(String labelFont);
 
    public String toXml() throws Exception {
-      if (xmlSubRoot.equals("")) {
+      if (xmlSubRoot.equals("")) { //$NON-NLS-1$
          return toXml(xmlRoot);
       } else {
          return toXml(xmlRoot, xmlSubRoot);
@@ -213,16 +215,16 @@ public abstract class XViewerWidget {
    }
 
    public String toXml(String xmlRoot) throws Exception {
-      return "<" + xmlRoot + ">" + XmlUtil.textToXml(getXmlData()) + "</" + xmlRoot + ">\n";
+      return "<" + xmlRoot + ">" + XmlUtil.textToXml(getXmlData()) + "</" + xmlRoot + ">\n"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
    }
 
    public String toXml(String xmlRoot, String xmlSubRoot) throws Exception {
-      return "<" + xmlRoot + ">" + "<" + xmlSubRoot + ">" + XmlUtil.textToXml(getXmlData()) + "</" + xmlSubRoot + ">" + "</" + xmlRoot + ">\n";
+      return "<" + xmlRoot + ">" + "<" + xmlSubRoot + ">" + XmlUtil.textToXml(getXmlData()) + "</" + xmlSubRoot + ">" + "</" + xmlRoot + ">\n"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
    }
 
    public void setFromXml(String xml) throws IllegalStateException {
       Matcher m;
-      m = Pattern.compile("<" + xmlRoot + ">(.*?)</" + xmlRoot + ">", Pattern.MULTILINE | Pattern.DOTALL).matcher(xml);
+      m = Pattern.compile("<" + xmlRoot + ">(.*?)</" + xmlRoot + ">", Pattern.MULTILINE | Pattern.DOTALL).matcher(xml); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       if (m.find()) {
          setXmlData(XmlUtil.xmlToText(m.group(1)));
       }
@@ -332,15 +334,15 @@ public abstract class XViewerWidget {
     * RPT_NONE (label: data), RPT_SINGLE_LINE (label: data\n\n), RPT_MULTI_LINE (label:\n data\n\n)
     */
    public String toReport(int rptType) {
-      String s = label + ": ";
+      String s = label + ": "; //$NON-NLS-1$
       switch (rptType) {
          case RPT_SINGLE_LINE:
-            s += getReportData() + "\n\n";
+            s += getReportData() + "\n\n"; //$NON-NLS-1$
             break;
          case RPT_MULTI_LINE:
             String data = getReportData();
-            data = data.replaceAll("\n", "\n   ");
-            s += "\n" + data + "\n\n";
+            data = data.replaceAll("\n", "\n   "); //$NON-NLS-1$ //$NON-NLS-2$
+            s += "\n" + data + "\n\n"; //$NON-NLS-1$ //$NON-NLS-2$
             break;
          default:
             s += getReportData();

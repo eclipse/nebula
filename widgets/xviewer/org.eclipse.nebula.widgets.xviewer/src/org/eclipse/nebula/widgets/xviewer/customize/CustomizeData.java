@@ -62,25 +62,25 @@ public class CustomizeData implements Comparable<CustomizeData> {
    }
 
    public Image getImage(boolean isDefault) {
-      Image image = XViewerLib.getImage("customize.gif");
+      Image image = XViewerLib.getImage("customize.gif"); //$NON-NLS-1$
       if (!personal && isDefault) {
-         image = XViewerLib.getImage("customizeSharedDefault.gif");
+         image = XViewerLib.getImage("customizeSharedDefault.gif"); //$NON-NLS-1$
       } else if (!personal) {
-         image = XViewerLib.getImage("customizeShared.gif");
+         image = XViewerLib.getImage("customizeShared.gif"); //$NON-NLS-1$
       } else if (isDefault) {
-         image = XViewerLib.getImage("customizeDefault.gif");
+         image = XViewerLib.getImage("customizeDefault.gif"); //$NON-NLS-1$
       }
       return image;
    }
 
    public ImageDescriptor getImageDescriptor(boolean isDefault) {
-      ImageDescriptor image = XViewerLib.getImageDescriptor("customize.gif");
+      ImageDescriptor image = XViewerLib.getImageDescriptor("customize.gif"); //$NON-NLS-1$
       if (!personal && isDefault) {
-         image = XViewerLib.getImageDescriptor("customizeSharedDefault.gif");
+         image = XViewerLib.getImageDescriptor("customizeSharedDefault.gif"); //$NON-NLS-1$
       } else if (!personal) {
-         image = XViewerLib.getImageDescriptor("customizeShared.gif");
+         image = XViewerLib.getImageDescriptor("customizeShared.gif"); //$NON-NLS-1$
       } else if (isDefault) {
-         image = XViewerLib.getImageDescriptor("customizeDefault.gif");
+         image = XViewerLib.getImageDescriptor("customizeDefault.gif"); //$NON-NLS-1$
       }
       return image;
    }
@@ -88,16 +88,16 @@ public class CustomizeData implements Comparable<CustomizeData> {
    public String getXml(boolean visibleColumnsOnly) {
       StringBuffer sb =
          new StringBuffer(
-            "<XTreeProperties name=\"" + name + "\" namespace=\"" + nameSpace + "\" guid=\"" + guid + "\">");
+            "<XTreeProperties name=\"" + name + "\" namespace=\"" + nameSpace + "\" guid=\"" + guid + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
       sb.append(sortingData.getXml());
       sb.append(filterData.getXml());
       sb.append(columnFilterData.getXml());
       sb.append(columnData.getXml(visibleColumnsOnly));
-      sb.append("</XTreeProperties>");
+      sb.append("</XTreeProperties>"); //$NON-NLS-1$
       return sb.toString();
    }
 
-   private static Pattern pattern = Pattern.compile("name=\"(.*?)\".*?namespace=\"(.*?)\".*?guid=\"(.*?)\"");
+   private static Pattern pattern = Pattern.compile("name=\"(.*?)\".*?namespace=\"(.*?)\".*?guid=\"(.*?)\""); //$NON-NLS-1$
 
    public void setFromXml(String xml) {
       Matcher m = pattern.matcher(xml);
@@ -106,7 +106,7 @@ public class CustomizeData implements Comparable<CustomizeData> {
          setNameSpace(m.group(2));
          guid = m.group(3);
       } else {
-         setName("Invalid customize format for " + xml.substring(0, 50));
+         setName("Invalid customize format for " + xml.substring(0, 50)); //$NON-NLS-1$
          XViewerLog.log(Activator.class, Level.SEVERE, new IllegalStateException(name));
          return;
       }
@@ -118,7 +118,7 @@ public class CustomizeData implements Comparable<CustomizeData> {
 
    @Override
    public String toString() {
-      return "[" + name + "][" + nameSpace + "][" + guid + "][" + columnData + "][" + filterData + "][" + columnFilterData + "][" + sortingData + "]";
+      return "[" + name + "][" + nameSpace + "][" + guid + "][" + columnData + "][" + filterData + "][" + columnFilterData + "][" + sortingData + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
    }
 
    public boolean isPersonal() {

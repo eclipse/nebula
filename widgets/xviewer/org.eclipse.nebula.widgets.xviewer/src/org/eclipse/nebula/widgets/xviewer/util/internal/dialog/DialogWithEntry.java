@@ -12,7 +12,9 @@ package org.eclipse.nebula.widgets.xviewer.util.internal.dialog;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerTextWidget;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -40,9 +42,9 @@ public class DialogWithEntry extends MessageDialog {
 
    XViewerTextWidget text;
    Composite comp;
-   String entryText = "";
+   String entryText = ""; //$NON-NLS-1$
    String validationRegularExpression = null;
-   String validationErrorString = "";
+   String validationErrorString = ""; //$NON-NLS-1$
    Button ok;
    MouseMoveListener listener;
    Label errorLabel;
@@ -52,7 +54,7 @@ public class DialogWithEntry extends MessageDialog {
 
    public DialogWithEntry(String dialogTitle, String dialogMessage) {
       super(Display.getCurrent().getActiveShell(), dialogTitle, null, dialogMessage, MessageDialog.QUESTION,
-         new String[] {"OK", "Cancel"}, 0);
+         new String[] {XViewerText.get("button.ok"), XViewerText.get("button.cancel")}, 0); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
    public DialogWithEntry(Shell parentShell, String dialogTitle, Image dialogTitleImage, String dialogMessage, int dialogImageType, String[] dialogButtonLabels, int defaultIndex) {
@@ -84,24 +86,24 @@ public class DialogWithEntry extends MessageDialog {
 
       if (fillVertically) { // Create error label
          Button button = new Button(headerComp, SWT.PUSH);
-         button.setText("Clear");
+         button.setText(XViewerText.get("button.clear")); //$NON-NLS-1$
          button.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                super.widgetSelected(e);
-               text.setText("");
+               text.setText(""); //$NON-NLS-1$
             }
          });
          // Create error label
          fontButton = new Button(headerComp, SWT.CHECK);
-         fontButton.setText("Fixed Font");
+         fontButton.setText(XViewerText.get("DialogWithEntry.button.font")); //$NON-NLS-1$
          fontButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                super.widgetSelected(e);
                if (fontButton.getSelection()) {
                   if (font == null) {
-                     font = new Font(Display.getCurrent(), "Courier New", 8, SWT.NORMAL);
+                     font = new Font(Display.getCurrent(), "Courier New", 8, SWT.NORMAL); //$NON-NLS-1$
                   }
                   text.setFont(font);
                } else {
@@ -114,7 +116,7 @@ public class DialogWithEntry extends MessageDialog {
       // Create error label
       errorLabel = new Label(headerComp, SWT.NONE);
       errorLabel.setSize(errorLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-      errorLabel.setText("");
+      errorLabel.setText(""); //$NON-NLS-1$
       if (!fillVertically) {
          gd = new GridData();
          gd.horizontalSpan = 3;
@@ -131,7 +133,7 @@ public class DialogWithEntry extends MessageDialog {
          text.setFont(font);
       }
       text.createWidgets(comp, 2);
-      if (!entryText.equals("")) {
+      if (!entryText.equals("")) { //$NON-NLS-1$
          text.set(entryText);
       }
 
@@ -179,7 +181,7 @@ public class DialogWithEntry extends MessageDialog {
             comp.layout();
          } else {
             getButton(getDefaultButtonIndex()).setEnabled(true);
-            errorLabel.setText("");
+            errorLabel.setText(""); //$NON-NLS-1$
             errorLabel.update();
             comp.layout();
          }

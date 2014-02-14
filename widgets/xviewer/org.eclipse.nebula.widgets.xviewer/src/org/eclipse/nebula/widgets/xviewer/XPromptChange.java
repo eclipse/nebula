@@ -26,10 +26,10 @@ import org.eclipse.swt.widgets.Display;
  */
 public class XPromptChange {
 
-   private final static String VALID_FLOAT_REG_EX = "^[0-9\\.]+$";
-   private final static String VALID_INTEGER_REG_EX = "^[0-9]+$";
+   private final static String VALID_FLOAT_REG_EX = "^[0-9\\.]+$"; //$NON-NLS-1$
+   private final static String VALID_INTEGER_REG_EX = "^[0-9]+$"; //$NON-NLS-1$
    private final static String VALID_PERCENT_REG_EX =
-      "^(0*100{1,1}\\.?((?<=\\.)0*)?%?$)|(^0*\\d{0,2}\\.?((?<=\\.)\\d*)?%?)$";
+      "^(0*100{1,1}\\.?((?<=\\.)0*)?%?$)|(^0*\\d{0,2}\\.?((?<=\\.)\\d*)?%?)$"; //$NON-NLS-1$
    public static enum Option {
       SINGLE_LINE,
       MULTI_LINE
@@ -38,7 +38,7 @@ public class XPromptChange {
    public static Date promptChangeDate(String displayName, Date currDate) {
       // prompt that current release is (get from attribute); want to change
       DateSelectionDialog diag =
-         new DateSelectionDialog("Select " + displayName, "Select " + displayName, currDate != null ? currDate : null);
+         new DateSelectionDialog(XViewerText.get("XPromptChange.dialog.date_selection") + " " + displayName, XViewerText.get("XPromptChange.dialog.date_selection") + " " + displayName, currDate != null ? currDate : null);  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
       if (diag.open() == 0) {
          return diag.getSelectedDate();
       }
@@ -63,7 +63,7 @@ public class XPromptChange {
    }
 
    public static String promptChangeInteger(String displayName, int currEntry) {
-      return promptChangeInteger(displayName, currEntry == 0 ? "" : String.valueOf(currEntry));
+      return promptChangeInteger(displayName, currEntry == 0 ? "" : String.valueOf(currEntry)); //$NON-NLS-1$
    }
 
    public static String promptChangeInteger(String displayName, String currEntry) {
@@ -75,7 +75,7 @@ public class XPromptChange {
    }
 
    public static String promptChangeFloat(String displayName, double currEntry) {
-      return promptChangeFloat(displayName, currEntry == 0 ? "" : String.valueOf(currEntry));
+      return promptChangeFloat(displayName, currEntry == 0 ? "" : String.valueOf(currEntry)); //$NON-NLS-1$
    }
 
    public static String promptChangeFloat(String displayName, String currEntry) {
@@ -87,11 +87,11 @@ public class XPromptChange {
    }
 
    public static String promptChangeString(String displayName, String currEntry, String validationRegEx, Option option) {
-      DialogWithEntry ed = new DialogWithEntry("Enter " + displayName, "Enter " + displayName);
+      DialogWithEntry ed = new DialogWithEntry(XViewerText.get("XPromptChange.dialog.entry") + " " + displayName, XViewerText.get("XPromptChange.dialog.entry") + " " + displayName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
       if (option == Option.MULTI_LINE) {
          ed.setFillVertically(true);
       }
-      if (currEntry != null && !currEntry.equals("")) {
+      if (currEntry != null && !currEntry.equals("")) { //$NON-NLS-1$
          ed.setEntry(currEntry);
       }
       if (validationRegEx != null) {
@@ -107,7 +107,7 @@ public class XPromptChange {
    public static Boolean promptChangeBoolean(String displayName, String toggleMessage, boolean currSelection) {
       MessageDialogWithToggle md =
          new MessageDialogWithToggle(Display.getCurrent().getActiveShell(), displayName, null, displayName,
-            MessageDialog.QUESTION, new String[] {"Ok", "Cancel"}, Window.OK,
+            MessageDialog.QUESTION, new String[] {XViewerText.get("button.ok"), XViewerText.get("button.cancel")}, Window.OK, //$NON-NLS-1$ //$NON-NLS-2$
             (toggleMessage != null ? toggleMessage : displayName), currSelection);
       int result = md.open();
       if (result == 256) {

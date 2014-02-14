@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.xviewer.util.internal;
 
+import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -32,7 +33,7 @@ public class XViewerFilteredTree extends FilteredTreeComposite {
 
    public XViewerFilteredTree(Composite parent, int treeStyle, PatternFilter filter) {
       super(parent, treeStyle, filter);
-      setInitialText("");
+      setInitialText(""); //$NON-NLS-1$
    }
 
    @Override
@@ -41,7 +42,7 @@ public class XViewerFilteredTree extends FilteredTreeComposite {
       comp.setLayout(XViewerLib.getZeroMarginLayout(3, false));
       comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-      (new Label(comp, SWT.NONE)).setText("Filter: ");
+      (new Label(comp, SWT.NONE)).setText(XViewerText.get("label.filter") + " ");  //$NON-NLS-1$//$NON-NLS-2$
       super.createFilterControls(comp);
 
       return comp;

@@ -41,7 +41,7 @@ public class XViewerTreeReport {
    }
 
    public XViewerTreeReport(XViewer xViewer) {
-      this("Table View Report", xViewer);
+      this(XViewerText.get("XViewerTreeReport.title"), xViewer); //$NON-NLS-1$
    }
 
    public void open() {
@@ -60,12 +60,12 @@ public class XViewerTreeReport {
       try {
          String html = getHtml(items);
          final FileDialog dialog = new FileDialog(Display.getCurrent().getActiveShell().getShell(), SWT.SAVE);
-         dialog.setFilterExtensions(new String[] {"*.html"});
-         if (defaultFilename != null && !defaultFilename.equals("")) {
+         dialog.setFilterExtensions(new String[] {"*.html"}); //$NON-NLS-1$
+         if (defaultFilename != null && !defaultFilename.equals("")) { //$NON-NLS-1$
             dialog.setFileName(defaultFilename);
          }
          String filename = dialog.open();
-         if (filename == null || filename.equals("")) {
+         if (filename == null || filename.equals("")) { //$NON-NLS-1$
             return;
          }
          try {
@@ -82,7 +82,7 @@ public class XViewerTreeReport {
    private Map<XViewerColumn, Integer> xColToColumnIndex = null;
 
    public String getHtml(TreeItem items[]) throws XViewerException {
-      StringBuffer sb = new StringBuffer("<html><body>");
+      StringBuffer sb = new StringBuffer("<html><body>"); //$NON-NLS-1$
       sb.append(HtmlUtil.beginMultiColumnTable(100, 1));
       List<XViewerColumn> columns = xViewer.getCustomizeMgr().getCurrentTableColumnsInOrder();
       List<String> headerStrs = new ArrayList<String>(50);
@@ -105,7 +105,7 @@ public class XViewerTreeReport {
          sb.append(HtmlUtil.addRowMultiColumnTable(strs));
       }
       sb.append(HtmlUtil.endMultiColumnTable());
-      sb.append("</body></html>");
+      sb.append("</body></html>"); //$NON-NLS-1$
       return sb.toString();
    }
 
@@ -116,13 +116,13 @@ public class XViewerTreeReport {
          StringBuffer str = new StringBuffer();
          if (firstCell) {
             for (int y = 1; y < level; y++) {
-               str.append("__INSERT_TAB_HERE__");
+               str.append("__INSERT_TAB_HERE__"); //$NON-NLS-1$
             }
             firstCell = false;
          }
          str.append(labelProv.getColumnText(item.getData(), xColToColumnIndex.get(xCol)));
          String html = HtmlUtil.textToHtml(str.toString());
-         html = html.replaceAll("__INSERT_TAB_HERE__", "&nbsp;&nbsp;&nbsp;&nbsp;");
+         html = html.replaceAll("__INSERT_TAB_HERE__", "&nbsp;&nbsp;&nbsp;&nbsp;"); //$NON-NLS-1$ //$NON-NLS-2$
          cellData.add(html);
       }
       rowData.add(cellData.toArray(new String[cellData.size()]));

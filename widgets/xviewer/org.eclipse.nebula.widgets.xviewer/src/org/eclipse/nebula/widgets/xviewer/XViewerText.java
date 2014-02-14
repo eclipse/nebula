@@ -20,8 +20,8 @@ public class XViewerText {
          // This error isn't necessarily severe, but using SEVERE puts a stack trace in the log - making it much
          // easier to find where the missing resource was used.
          // It would likely be much more severe if we let this exception propogate up.
-         XViewerLog.log(XViewerText.class, Level.SEVERE, "Text not found for key: " + key);  
-         return "!!" + key + "!!";
+         XViewerLog.log(XViewerText.class, Level.SEVERE, "Text not found for key: " + key);   //$NON-NLS-1$
+         return "!!" + key + "!!"; //$NON-NLS-1$ //$NON-NLS-2$
       }
    }
 
@@ -34,8 +34,8 @@ public class XViewerText {
          // This error isn't necessarily severe, but using SEVERE puts a stack trace in the log - making it much
          // easier to find where the missing resource was used.
          // It would likely be much more severe if we let this exception propogate up.
-         XViewerLog.log(XViewerText.class, Level.SEVERE, "Text not found for key: " + key);
-         return "!!" + key + "!!";
+         XViewerLog.log(XViewerText.class, Level.SEVERE, "Text not found for key: " + key); //$NON-NLS-1$
+         return "!!" + key + "!!"; //$NON-NLS-1$ //$NON-NLS-2$
       }
       return MessageFormat.format(string, (Object[]) params);
    }

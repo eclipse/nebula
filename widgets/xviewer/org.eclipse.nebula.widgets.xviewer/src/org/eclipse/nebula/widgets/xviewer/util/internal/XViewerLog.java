@@ -13,6 +13,8 @@ package org.eclipse.nebula.widgets.xviewer.util.internal;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.eclipse.nebula.widgets.xviewer.XViewerText;
+
 /**
  * @author Donald G. Dunne
  */
@@ -22,7 +24,7 @@ public class XViewerLog {
 
    public static void logAndPopup(Class<?> activatorClass, Level level, String message) {
       log(activatorClass, level, message);
-      XViewerLib.popup("ERROR", message);
+      XViewerLib.popup(XViewerText.get("error"), message); //$NON-NLS-1$
    }
 
    public static void log(Class<?> activatorClass, Level level, String message) {
@@ -35,7 +37,7 @@ public class XViewerLog {
 
    public static void logAndPopup(Class<?> activatorClass, Level level, Throwable th) {
       log(activatorClass, level, th.getLocalizedMessage(), th);
-      XViewerLib.popup("ERROR", th.getLocalizedMessage());
+      XViewerLib.popup(XViewerText.get("error"), th.getLocalizedMessage()); //$NON-NLS-1$
    }
 
    public static void log(Class<?> activatorClass, Level level, Throwable th) {

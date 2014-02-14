@@ -62,14 +62,14 @@ public class CustomizationDataSelectionDialog extends ListDialog {
       setLabelProvider(new CustomizeDataLabelProvider(xViewer));
       setInput(custDatas);
       setShellStyle(getShellStyle() | SWT.RESIZE);
-      setTitle(XViewerText.get("CustomizationDataSelectionDialog.title"));
-      setMessage(XViewerText.get("CustomizationDataSelectionDialog.message"));
+      setTitle(XViewerText.get("CustomizationDataSelectionDialog.title")); //$NON-NLS-1$
+      setMessage(XViewerText.get("CustomizationDataSelectionDialog.message")); //$NON-NLS-1$
    }
 
    @Override
    protected void okPressed() {
-      if (custText.getText().equals("") && getSelectedCustData() == null) {
-         XViewerLib.popup("ERROR", XViewerText.get("error.no_cust_selection"));
+      if (custText.getText().equals("") && getSelectedCustData() == null) { //$NON-NLS-1$
+         XViewerLib.popup(XViewerText.get("error"), XViewerText.get("error.no_cust_selection")); //$NON-NLS-1$ //$NON-NLS-2$
          return;
       }
       super.okPressed();
@@ -85,7 +85,7 @@ public class CustomizationDataSelectionDialog extends ListDialog {
       comp.setLayout(new GridLayout(2, true));
 
       Label custTextLabel = new Label(comp, SWT.None);
-      custTextLabel.setText(XViewerText.get("CustomizationDataSelectionDialog.prompt"));
+      custTextLabel.setText(XViewerText.get("CustomizationDataSelectionDialog.prompt")); //$NON-NLS-1$
 
       custText = new Text(comp, SWT.BORDER);
       custText.setFocus();
@@ -103,7 +103,7 @@ public class CustomizationDataSelectionDialog extends ListDialog {
          comp.setLayout(new GridLayout(2, false));
 
          Label saveSharedCheckLabel = new Label(comp, SWT.None);
-         saveSharedCheckLabel.setText(XViewerText.get("checkbox.shared"));
+         saveSharedCheckLabel.setText(XViewerText.get("checkbox.shared")); //$NON-NLS-1$
 
          saveSharedCheck = new Button(comp, SWT.CHECK);
          saveSharedCheck.addSelectionListener(new SelectionAdapter() {

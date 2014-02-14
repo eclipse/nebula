@@ -14,8 +14,10 @@ package org.eclipse.nebula.widgets.xviewer.util.internal.dialog;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
+
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.nebula.widgets.xviewer.Activator;
+import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
 import org.eclipse.swt.SWT;
@@ -40,7 +42,7 @@ public class HtmlDialog extends MessageDialog {
    private final String html;
 
    public HtmlDialog(String title, String message, String html) {
-      super(Display.getCurrent().getActiveShell(), title, null, message, SWT.NONE, new String[] {"OK", "Cancel"}, 0);
+      super(Display.getCurrent().getActiveShell(), title, null, message, SWT.NONE, new String[] {XViewerText.get("button.ok"), XViewerText.get("button.cancel")}, 0); //$NON-NLS-1$ //$NON-NLS-2$
       this.html = html;
    }
 
@@ -75,12 +77,12 @@ public class HtmlDialog extends MessageDialog {
    public Menu pageOverviewGetPopup() {
       Menu menu = new Menu(b.getShell());
       MenuItem item = new MenuItem(menu, SWT.NONE);
-      item.setText("View Source");
+      item.setText(XViewerText.get("HtmlDialog.menu.view_source")); //$NON-NLS-1$
       item.addSelectionListener(new SelectionAdapter() {
 
          @Override
          public void widgetSelected(SelectionEvent e) {
-            String file = System.getProperty("user.home") + File.separator + "out.html";
+            String file = System.getProperty("user.home") + File.separator + "out.html"; //$NON-NLS-1$ //$NON-NLS-2$
             try {
                XViewerLib.writeStringToFile(html, new File(file));
             } catch (IOException ex) {

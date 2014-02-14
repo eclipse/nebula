@@ -11,9 +11,11 @@
 package org.eclipse.nebula.widgets.xviewer.customize;
 
 import java.util.logging.Level;
+
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.nebula.widgets.xviewer.XViewer;
+import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.nebula.widgets.xviewer.util.XViewerException;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
 import org.eclipse.swt.graphics.Image;
@@ -46,12 +48,13 @@ public class CustomizeDataLabelProvider implements ILabelProvider {
       try {
          CustomizeData custom = (CustomizeData) arg0;
          boolean custDefault = xViewer.getCustomizeMgr().isCustomizationUserDefault(custom);
-         String text = (custDefault ? "(Default) " : "") + custom.getName();
-         text = text + (custom.isPersonal() ? "" : " (Shared)");
+         String text = (custDefault ? "(" +XViewerText.get("default") +") " : "") + custom.getName(); //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
+         text = text + (custom.isPersonal() ? "" : " ("+XViewerText.get("shared") +")"); //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
+
          return text;
       } catch (XViewerException ex) {
          XViewerLog.log(CustomizeDataLabelProvider.class, Level.SEVERE, ex.toString(), ex);
-         return "Exception: " + ex.getLocalizedMessage();
+         return "Exception: " + ex.getLocalizedMessage(); //$NON-NLS-1$
       }
    }
 

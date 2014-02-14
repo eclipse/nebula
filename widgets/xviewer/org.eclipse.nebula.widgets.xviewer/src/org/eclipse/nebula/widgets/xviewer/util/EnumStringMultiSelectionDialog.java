@@ -11,6 +11,8 @@
 package org.eclipse.nebula.widgets.xviewer.util;
 
 import java.util.Collection;
+
+import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.nebula.widgets.xviewer.util.internal.ArrayTreeContentProvider;
 import org.eclipse.nebula.widgets.xviewer.util.internal.StringLabelProvider;
 import org.eclipse.nebula.widgets.xviewer.util.internal.StringViewerSorter;
@@ -44,8 +46,8 @@ public class EnumStringMultiSelectionDialog extends CheckedTreeSelectionDialog {
 
    public EnumStringMultiSelectionDialog(String displayName, Collection<String> enums, Collection<String> selEnums) {
       super(Display.getCurrent().getActiveShell(), new StringLabelProvider(), new ArrayTreeContentProvider());
-      setTitle("Select " + displayName);
-      setMessage("Select " + displayName + " to add, delete or replace.");
+      setTitle(XViewerText.get("EnumStringMultiSelectionDialog.title")+ " " + displayName);  //$NON-NLS-1$//$NON-NLS-2$
+      setMessage(String.format(XViewerText.get("EnumStringMultiSelectionDialog.message"), displayName)); //$NON-NLS-1$
       setInput(enums);
       setComparator(new StringViewerSorter());
       setInitialSelections(selEnums.toArray());
@@ -64,7 +66,7 @@ public class EnumStringMultiSelectionDialog extends CheckedTreeSelectionDialog {
       Composite comp = new Composite(container, SWT.NONE);
       comp.setLayout(new GridLayout(2, false));
 
-      (new Label(comp, SWT.None)).setText("Add selected item(s) to existing if not already chosen.");
+      (new Label(comp, SWT.None)).setText(XViewerText.get("EnumStringMultiSelectionDialog.label.add")); //$NON-NLS-1$
 
       addSelectedRadioButton = new Button(comp, SWT.CHECK);
       addSelectedRadioButton.setSelection(true);
@@ -79,7 +81,7 @@ public class EnumStringMultiSelectionDialog extends CheckedTreeSelectionDialog {
       });
 
       if (enableReplace) {
-         (new Label(comp, SWT.None)).setText("Replace all existing with selected item(s).");
+         (new Label(comp, SWT.None)).setText(XViewerText.get("EnumStringMultiSelectionDialog.label.replace")); //$NON-NLS-1$
 
          replaceAllRadioButton = new Button(comp, SWT.CHECK);
          replaceAllRadioButton.addSelectionListener(new SelectionAdapter() {
@@ -94,7 +96,7 @@ public class EnumStringMultiSelectionDialog extends CheckedTreeSelectionDialog {
       }
 
       if (enableDelete) {
-         (new Label(comp, SWT.None)).setText("Remove selected item(s) if already chosen.");
+         (new Label(comp, SWT.None)).setText(XViewerText.get("EnumStringMultiSelectionDialog.label.remove")); //$NON-NLS-1$
 
          deleteSelectedRadioButton = new Button(comp, SWT.CHECK);
          deleteSelectedRadioButton.addSelectionListener(new SelectionAdapter() {

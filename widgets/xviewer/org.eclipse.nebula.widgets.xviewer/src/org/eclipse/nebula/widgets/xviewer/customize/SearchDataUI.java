@@ -52,8 +52,8 @@ public class SearchDataUI {
       //	  ExpandBar bar = new ExpandBar(comp, SWT.V_SCROLL);
 
       Label label = new Label(bar, SWT.NONE);
-      label.setText(XViewerText.get("SearchDataUI.prompt"));
-      label.setToolTipText(XViewerText.get("SearchDataUI.prompt.tooltip"));
+      label.setText(XViewerText.get("SearchDataUI.prompt")); //$NON-NLS-1$
+      label.setToolTipText(XViewerText.get("SearchDataUI.prompt.tooltip")); //$NON-NLS-1$
       GridData gd = new GridData(SWT.RIGHT, SWT.NONE, false, false);
       label.setLayoutData(gd);
 
@@ -77,16 +77,16 @@ public class SearchDataUI {
                String newText = searchText.getText();
                if (newText.trim().length() == 0) {
                   search = false;
-                  match = Pattern.compile(searchText.getText()).matcher("");
+                  match = Pattern.compile(searchText.getText()).matcher(""); //$NON-NLS-1$
                } else {
                   regex = true;
                   if (!regularExpression.getSelection()) {
                      regex = false;
-                     newText = newText.replace("*", ".*");
-                     newText = ".*" + newText + ".*";
+                     newText = newText.replace("*", ".*"); //$NON-NLS-1$ //$NON-NLS-2$
+                     newText = ".*" + newText + ".*"; //$NON-NLS-1$ //$NON-NLS-2$
                   }
                   match =
-                     Pattern.compile(newText, Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE).matcher("");
+                     Pattern.compile(newText, Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE).matcher(""); //$NON-NLS-1$
                   search = true;
                }
                xViewer.refresh();
@@ -96,31 +96,31 @@ public class SearchDataUI {
 
       Label searchLabel = new Label(bar, SWT.NONE);
       searchLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.NONE, false, false));
-      searchLabel.setImage(XViewerLib.getImage("clear.gif"));
+      searchLabel.setImage(XViewerLib.getImage("clear.gif")); //$NON-NLS-1$
 
       regularExpression = new Button(bar, SWT.CHECK);
-      regularExpression.setText(XViewerText.get("regex.prompt"));
-      regularExpression.setToolTipText(XViewerText.get("regex.prompt.tooltip"));
+      regularExpression.setText(XViewerText.get("regex.prompt")); //$NON-NLS-1$
+      regularExpression.setToolTipText(XViewerText.get("regex.prompt.tooltip")); //$NON-NLS-1$
       regularExpression.setLayoutData(new GridData(SWT.RIGHT, SWT.NONE, false, false));
       searchLabel.addListener(SWT.MouseUp, new Listener() {
          @Override
          public void handleEvent(Event event) {
-            searchText.setText("");
+            searchText.setText(""); //$NON-NLS-1$
             search = false;
-            match = Pattern.compile(searchText.getText()).matcher("");
+            match = Pattern.compile(searchText.getText()).matcher(""); //$NON-NLS-1$
             xViewer.refresh();
          }
       });
    }
 
    public void clear() {
-      searchText.setText("");
-      xViewer.getCustomizeMgr().setFilterText("", false);
+      searchText.setText(""); //$NON-NLS-1$
+      xViewer.getCustomizeMgr().setFilterText("", false); //$NON-NLS-1$
    }
 
    public void appendToStatusLabel(StringBuffer sb) {
-      if (searchText != null && !searchText.getText().equals("")) {
-         sb.append(XViewerText.get("SearchDataUI.status"));
+      if (searchText != null && !searchText.getText().equals("")) { //$NON-NLS-1$
+         sb.append(XViewerText.get("SearchDataUI.status")); //$NON-NLS-1$
       }
    }
 

@@ -46,8 +46,8 @@ public class FilterDataUI {
 
    public void createWidgets(Composite comp) {
       Label label = new Label(comp, SWT.NONE);
-      label.setText(XViewerText.get("FilterDataUI.prompt"));
-      label.setToolTipText(XViewerText.get("FilterDataUI.prompt.tooltip"));
+      label.setText(XViewerText.get("label.filter")); //$NON-NLS-1$
+      label.setToolTipText(XViewerText.get("FilterDataUI.prompt.tooltip")); //$NON-NLS-1$
       GridData gd = new GridData(SWT.RIGHT, SWT.NONE, false, false);
       label.setLayoutData(gd);
 
@@ -74,18 +74,18 @@ public class FilterDataUI {
 
       Label filterLabel = new Label(comp, SWT.NONE);
       filterLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.NONE, false, false));
-      filterLabel.setImage(XViewerLib.getImage("clear.gif"));
+      filterLabel.setImage(XViewerLib.getImage("clear.gif")); //$NON-NLS-1$
       filterLabel.addListener(SWT.MouseUp, new Listener() {
          @Override
          public void handleEvent(Event event) {
-            filterText.setText("");
-            xViewer.getCustomizeMgr().setFilterText("", isRegularExpression());
+            filterText.setText(""); //$NON-NLS-1$
+            xViewer.getCustomizeMgr().setFilterText("", isRegularExpression()); //$NON-NLS-1$
          }
       });
 
       regularExpression = new Button(comp, SWT.CHECK);
-      regularExpression.setText(XViewerText.get("regex.prompt"));
-      regularExpression.setToolTipText(XViewerText.get("regex.prompt.tooltip"));
+      regularExpression.setText(XViewerText.get("regex.prompt")); //$NON-NLS-1$
+      regularExpression.setToolTipText(XViewerText.get("regex.prompt.tooltip")); //$NON-NLS-1$
       regularExpression.setLayoutData(new GridData(SWT.RIGHT, SWT.NONE, false, false));
       regularExpression.addSelectionListener(new SelectionAdapter() {
 
@@ -124,13 +124,13 @@ public class FilterDataUI {
    }
 
    public void clear() {
-      filterText.setText("");
-      xViewer.getCustomizeMgr().setFilterText("", isRegularExpression());
+      filterText.setText(""); //$NON-NLS-1$
+      xViewer.getCustomizeMgr().setFilterText("", isRegularExpression()); //$NON-NLS-1$
    }
 
    public void appendToStatusLabel(StringBuffer sb) {
-      if (filterText != null && !filterText.getText().equals("")) {
-         sb.append(XViewerText.get("status.text_filter"));
+      if (filterText != null && !filterText.getText().equals("")) { //$NON-NLS-1$
+         sb.append(XViewerText.get("status.text_filter")); //$NON-NLS-1$
       }
    }
 

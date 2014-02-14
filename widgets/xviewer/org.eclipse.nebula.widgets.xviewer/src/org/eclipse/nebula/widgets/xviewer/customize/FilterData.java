@@ -19,9 +19,9 @@ import org.eclipse.nebula.widgets.xviewer.util.internal.XmlUtil;
  */
 public class FilterData {
 
-   private String filterText = "";
-   private static final String FILTER_TAG = "xFilter";
-   private static final String FILTER_REGEX_TAG = "xFilterRE";
+   private String filterText = ""; //$NON-NLS-1$
+   private static final String FILTER_TAG = "xFilter"; //$NON-NLS-1$
+   private static final String FILTER_REGEX_TAG = "xFilterRE"; //$NON-NLS-1$
    private boolean regularExpression;
 
    public String getFilterText() {
@@ -29,7 +29,7 @@ public class FilterData {
    }
 
    public boolean isFiltering() {
-      return filterText != null && !filterText.equals("");
+      return filterText != null && !filterText.equals(""); //$NON-NLS-1$
    }
 
    public void setFilterText(String filterText, boolean regularExpression) {
@@ -48,7 +48,7 @@ public class FilterData {
 
    @Override
    public String toString() {
-      return "filterData:[" + filterText + "]" + (regularExpression ? "-RE" : "");
+      return "filterData:[" + filterText + "]" + (regularExpression ? "-RE" : ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
    }
 
    public boolean isRegularExpression() {
