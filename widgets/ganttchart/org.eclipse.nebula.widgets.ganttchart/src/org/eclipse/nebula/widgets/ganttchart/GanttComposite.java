@@ -5685,10 +5685,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
         int extra = 0;
         if (_drawToMinute && _currentView != ISettings.VIEW_DAY) {
-            final float ppm = 60f / _dayWidth;
-
-            final int mins = date.get(Calendar.HOUR_OF_DAY);
-            extra = (int) (mins * ppm);
+            extra = calculateMinuteAdjustment(date);
         }
 
         return _mainBounds.x + ((int) daysBetween * dw) + extra;
@@ -5703,7 +5700,13 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         if (_currentView == ISettings.VIEW_DAY) { return getXLengthForEventHours(event); }
                 
         // +1 as it's the end date and we include the last day (by default anyway, users may override this)
-        return (event.getDaysBetweenStartAndEnd() + _daysToAppendForEndOfDay) * getDayWidth();
+        int extra = getDayWidth() * _daysToAppendForEndOfDay;
+        if (_drawToMinute && _currentView != ISettings.VIEW_DAY) {
+        	extra -= calculateMinuteAdjustment(event.getActualEndDate());
+        	//also subtract the shift that comes from the starting point
+        	extra -= calculateMinuteAdjustment(event.getActualStartDate());
+        }
+        return (event.getDaysBetweenStartAndEnd() * getDayWidth()) + extra;
     }
 
     /**
@@ -7215,9 +7218,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
         int extra = 0;
         if (_drawToMinute && _currentView != ISettings.VIEW_DAY) {
-            final float ppm = 60f / _dayWidth;
-            final int mins = cal.get(Calendar.HOUR_OF_DAY);
-            extra = (int) (mins * ppm);
+            extra = calculateMinuteAdjustment(cal);
         }
 
         // return mBounds.x + ((int) days * dw) + extra;
@@ -7228,6 +7229,15 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         return ((int) days * dw) + extra;
     }
 
+    
+    private int calculateMinuteAdjustment(Calendar date) {
+        final float ppm = _dayWidth / (60f * 24f);
+
+        final int mins = (date.get(Calendar.HOUR_OF_DAY) * 60) + date.get(Calendar.MINUTE);
+        
+        return (int) (mins * ppm);
+    }
+    
     /**
      * Gets the date for a given x position.
      * 
