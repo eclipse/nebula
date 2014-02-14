@@ -5149,16 +5149,11 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     }
 
     void eventDatesChanged(final GanttEvent ge, final boolean redraw) {
-        final int newStartX = getXForDate(ge.getActualStartDate());
-        int newEndX = getXForDate(ge.getActualEndDate());
-
-        // if we're zoomed in to see hours, we don't modify the end date
-        if (_currentView != ISettings.VIEW_DAY) {
-            newEndX += getDayWidth();
-        }
+        final int newStartX = getStartingXFor(ge);
+        int newEndX = getXLengthForEvent(ge);
 
         ge.updateX(newStartX);
-        ge.updateWidth(newEndX - newStartX);
+        ge.updateWidth(newEndX);
         if (redraw) {
             redraw();
         }
