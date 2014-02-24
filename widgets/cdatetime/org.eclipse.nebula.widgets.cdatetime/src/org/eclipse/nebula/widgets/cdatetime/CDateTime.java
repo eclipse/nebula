@@ -9,6 +9,7 @@
  *    Jeremy Dowdall <jeremyd@aspencloud.com> - initial API and implementation
  *    Wim Jongman - https://bugs.eclipse.org/bugs/show_bug.cgi?id=362181
  *    Scott Klein - https://bugs.eclipse.org/bugs/show_bug.cgi?id=370605
+ *    Baruch Youssin - https://bugs.eclipse.org/bugs/show_bug.cgi?id=261414
  *****************************************************************************/
 
 package org.eclipse.nebula.widgets.cdatetime;
@@ -89,6 +90,13 @@ public class CDateTime extends BaseCombo {
 			buffer = Integer.toString(initialValue);
 		}
 
+		/**
+		 * Adds a character if it is a digit; in case the field exceeds its capacity, the oldest character is
+		 * dropped from the buffer.  Non-digits are dropped.
+		 * @param c
+		 * @return true if the new character is a digit and with its addition the active field
+		 * reaches or exceeds its capacity, false otherwise
+		 */
 		boolean addChar(char c) {
 			if (Character.isDigit(c)) {
 				buffer = (count > 0) ? buffer : ""; //$NON-NLS-1$
@@ -257,6 +265,7 @@ public class CDateTime extends BaseCombo {
 				break;
 			case SWT.FocusOut:
 				if (!rightClick && !internalFocusShift) {
+					commitEditField();
 					updateText();
 				}
 				break;
@@ -1919,9 +1928,10 @@ public class CDateTime extends BaseCombo {
 
 	/**
 	 * This is the only way that text is set to the text box.<br>
-	 * The selection is also set here (corresponding to the active field) as
+	 * The selection of the text in the text box is also set here (the active field is selected) as
 	 * well as if a field is being edited, it's "edit text" is inserted for
 	 * display.
+	 * The <code>getSelection</code> property of CDateTime remains unchanged.
 	 */
 	private void updateText() {
 		updateText(false);
@@ -1929,9 +1939,10 @@ public class CDateTime extends BaseCombo {
 
 	/**
 	 * This is the only way that text is set to the text box.<br>
-	 * The selection is also set here (corresponding to the active field) as
+	 * The selection of the text in the text box is also set here (the active field is selected) as
 	 * well as if a field is being edited, it's "edit text" is inserted for
 	 * display.
+	 * The <code>getSelection</code> property of CDateTime remains unchanged.
 	 * 
 	 * @param async
 	 *            If true, this operation will be performed asynchronously (for
@@ -2006,6 +2017,24 @@ public class CDateTime extends BaseCombo {
 	 * <b>EVERYTHING</b> is blocked via this handler (Event.doit is set to
 	 * false). Depending upon the input, a course of action is determined and
 	 * the displayed text is updated via the <code>updateText()</code> method.
+	 * <br>
+	 * This method implements the following logic:
+	 * If the event is a paste, the pasted text is parsed for the entire date/time selection;
+	 * if this parse is successful, the result is committed to the selection property and is displayed;
+	 * otherwise, it is discarded.  One-character pastes are discarded without parsing.
+	 * When user types characters one by one, all non-digits are discarded (if they have effects, they
+	 * have already been processed by other event handlers) while digits are added to
+	 * <code>this.editField</code> without affecting the selection.
+	 * Once <code>this.editField</code> reaches its capacity for
+	 * the active field, its contents are attempted to be committed.
+	 * If the commit is successful, focus switches to the next field of CDateTime.
+	 * Otherwise, the contents of <code>this.editField</code>
+	 * are discarded and the previous value of the selection (before user started typing
+	 * in this field) is restored; focus stays in the same field.
+	 * <b>Example:</b> if the seconds field contains "23", and user types 8 in the seconds field,
+	 * "08" is shown on screen while getSelection still returns 23.  If user types 9 after that,
+	 * the field reaches its capacity, the attempt to commit 89 seconds fails, and 23 gets restored
+	 * on screen.
 	 * 
 	 * @param e
 	 *            the event
