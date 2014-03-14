@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.grid;
 
-import java.util.Map;
-
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -29,193 +27,191 @@ public interface DataVisualizer {
 
 	/**
 	 * Method substitute GridItem method
-	 * @param row
+	 * @param gridItem
 	 * @param index
 	 * @return {@link Color}
 	 */
-	Color getBackground(int row, int index);
+	Color getBackground(GridItem gridItem, int index);
 
 	/**
 	 * Method substitute GridItem method
-	 * @param row
+	 * @param gridItem
 	 * @param i
 	 * @return boolean
 	 */
-	boolean getChecked(int row, int i);
+	boolean getChecked(GridItem gridItem, int i);
 
 	/**
 	 * Method substitute GridItem method
-	 * @param row
+	 * @param gridItem
 	 * @param index
 	 * @return int
 	 */
-	int getColumnSpan(int row, int index);
+	int getColumnSpan(GridItem gridItem, int index);
 
 	/**
 	 * Method substitute GridItem method
-	 * @param row
+	 * @param gridItem
 	 * @param index
 	 * @return int
 	 */
-	int getRowSpan(int row, int index);
+	int getRowSpan(GridItem gridItem, int index);
 
 	/**
 	 * Method substitute GridItem method
-	 * @param row
+	 * @param gridItem
 	 * @param index
 	 * @return {@link Font}
 	 */
-	Font getFont(int row, int index);
+	Font getFont(GridItem gridItem, int index);
 
 	/**
 	 * Method substitute GridItem method
-	 * @param row
+	 * @param gridItem
 	 * @param index
 	 * @return {@link Color}
 	 */
-	Color getForeground(int row, int index);
+	Color getForeground(GridItem gridItem, int index);
 
 	/**
 	 * Method substitute GridItem method
-	 * @param row
+	 * @param gridItem
 	 * @param index
 	 * @return boolean
 	 */
-	boolean getGrayed(int row, int index);
+	boolean getGrayed(GridItem gridItem, int index);
 
 	/**
 	 * Method substitute GridItem method
-	 * @param row
+	 * @param gridItem
 	 * @param i
 	 * @return {@link Image}
 	 */
-	Image getImage(int row, int i);
+	Image getImage(GridItem gridItem, int i);
 
 	/**
 	 * Method substitute GridItem method
-	 * @param row
+	 * @param gridItem
 	 * @param i
 	 * @return {@link String}
 	 */
-	String getText(int row, int i);
+	String getText(GridItem gridItem, int i);
 
 	/**
 	 * Method substitute GridItem method
-	 * @param row
+	 * @param gridItem
 	 * @param index
 	 * @param color
 	 */
-	void setBackground(int row, int index, Color color);
+	void setBackground(GridItem gridItem, int index, Color color);
 
 	/**
 	 * Method substitute GridItem method
-	 * @param row
+	 * @param gridItem
 	 * @param column
 	 * @param checked
 	 */
-	void setChecked(int row, int column, boolean checked);
+	void setChecked(GridItem gridItem, int column, boolean checked);
 
 	/**
 	 * Method substitute GridItem method
-	 * @param row
+	 * @param gridItem
 	 * @param index
 	 * @param span
 	 */
-	void setColumnSpan(int row, int index, int span);
+	void setColumnSpan(GridItem gridItem, int index, int span);
 
 	/**
 	 * Method substitute GridItem method
-	 * @param row
+	 * @param gridItem
 	 * @param index
 	 * @param span
 	 */
-	void setRowSpan(int row, int index, int span);
+	void setRowSpan(GridItem gridItem, int index, int span);
 
 	/**
 	 * Method substitute GridItem method
-	 * @param row
+	 * @param gridItem
 	 * @param index
 	 * @param font
 	 */
-	void setFont(int row, int index, Font font);
+	void setFont(GridItem gridItem, int index, Font font);
 
 	/**
 	 * Method substitute GridItem method
-	 * @param row
+	 * @param gridItem
 	 * @param index
 	 * @param foreground
 	 */
-	void setForeground(int row, int index, Color foreground);
+	void setForeground(GridItem gridItem, int index, Color foreground);
 
 	/**
 	 * Method substitute GridItem method
-	 * @param row
+	 * @param gridItem
 	 * @param i
 	 * @param grayed
 	 */
-	void setGrayed(int row, int i, boolean grayed);
+	void setGrayed(GridItem gridItem, int i, boolean grayed);
 
 	/**
 	 * Method substitute GridItem method
-	 * @param row
+	 * @param gridItem
 	 * @param i
 	 * @param image
 	 */
-	void setImage(int row, int i, Image image);
+	void setImage(GridItem gridItem, int i, Image image);
 
 	/**
 	 * Method substitute GridItem method
-	 * @param row
+	 * @param gridItem
 	 * @param i
 	 * @param text
 	 */
-	void setText(int row, int i, String text);
+	void setText(GridItem gridItem, int i, String text);
+
+	/**
+	 * Insert a column on DataVisualizer
+	 * @param column is the column index
+	 */
+	void addColumn(int column);
 
 	/**
 	 * Method substitute GridItem method
-	 * @param row
+	 * @param gridItem
 	 * @param index
 	 * @return boolean
 	 */
-	boolean getCheckable(int row, int index);
+	boolean getCheckable(GridItem gridItem, int index);
 
 	/**
 	 * Method substitute GridItem method
-	 * @param row
+	 * @param gridItem
 	 * @param index
 	 * @param checked
 	 */
-	void setCheckable(int row, int index, boolean checked);
+	void setCheckable(GridItem gridItem, int index, boolean checked);
 
 	/**
 	 * Method substitute GridItem method
-	 * @param row
+	 * @param gridItem
 	 * @param index
 	 * @return String
 	 */
-	String getToolTipText(int row, int index);
+	String getToolTipText(GridItem gridItem, int index);
 
 	/**
 	 * Method substitute GridItem method
-	 * @param row
+	 * @param gridItem
 	 * @param index
 	 * @param tooltip
 	 */
-	void setToolTipText(int row, int index, String tooltip);
-
-	/**
-	 * remove {@link Map} index (key)
-	 * for {@link ColumnRowBigDataVisualizer} index is column
-	 * for {@link RowColumnBigDataVisualizer} index is row
-	 * @param index
-	 */
-	void removeIndex(int index);
+	void setToolTipText(GridItem gridItem, int index, String tooltip);
 
 	/**
 	 * Clear rows dataVisualizer values 
-	 * @param row 
+	 * @param gridItem 
 	 */
-	void clearRow(int row);
+	void clearRow(GridItem gridItem);
 
 	/**
 	 * Clear columns dataVisualizer values
@@ -237,10 +233,20 @@ public interface DataVisualizer {
 	 * @return default font
 	 */
 	Font getDefaultFont();
-	
+
 	/**
-	 * @return GridItem children dataVisualizer.
+	 * set default background
 	 */
-	DataVisualizer createAndGetChildenGridItemDataVisualizer();
+	void setDefaultBackground(Color defaultBackground);
+
+	/**
+	 * set default foreground
+	 */
+	void setDefaultForeground(Color defaultForeground);
+
+	/**
+	 * set default font
+	 */
+	void setDefaultFont(Font defaultFont);
 
 }

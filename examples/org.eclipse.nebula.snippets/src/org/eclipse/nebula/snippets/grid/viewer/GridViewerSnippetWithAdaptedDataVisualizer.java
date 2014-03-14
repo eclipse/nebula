@@ -9,8 +9,8 @@ package org.eclipse.nebula.snippets.grid.viewer;
  *
  * Contributors:
  *     Tom Schindl - initial API and implementation
+ *     Mirko Paturzo - adapt the example for AdaptedDataVisualizer 
  *******************************************************************************/
-
 
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.viewers.CellEditor;
@@ -29,6 +29,7 @@ import org.eclipse.nebula.jface.gridviewer.GridTableViewer;
 import org.eclipse.nebula.jface.gridviewer.GridViewerEditor;
 import org.eclipse.nebula.widgets.grid.AdaptedDataVisualizer;
 import org.eclipse.nebula.widgets.grid.GridColumn;
+import org.eclipse.nebula.widgets.grid.GridItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -84,7 +85,7 @@ public class GridViewerSnippetWithAdaptedDataVisualizer {
 	}
 
 	public static boolean flag = true;
-	
+
 	public class MyModel {
 		public int counter;
 
@@ -98,8 +99,8 @@ public class GridViewerSnippetWithAdaptedDataVisualizer {
 		}
 	}
 
-	public class MyLabelProvider extends LabelProvider implements
-			ITableLabelProvider, ITableFontProvider, ITableColorProvider {
+	public class MyLabelProvider extends LabelProvider implements ITableLabelProvider, ITableFontProvider,
+			ITableColorProvider {
 		FontRegistry registry = new FontRegistry();
 
 		public Image getColumnImage(Object element, int columnIndex) {
@@ -112,8 +113,7 @@ public class GridViewerSnippetWithAdaptedDataVisualizer {
 
 		public Font getFont(Object element, int columnIndex) {
 			if (((MyModel) element).counter % 2 == 0) {
-				return registry.getBold(Display.getCurrent().getSystemFont()
-						.getFontData()[0].getName());
+				return registry.getBold(Display.getCurrent().getSystemFont().getFontData()[0].getName());
 			}
 			return null;
 		}
@@ -133,7 +133,7 @@ public class GridViewerSnippetWithAdaptedDataVisualizer {
 		}
 
 	}
-	
+
 	/**
 	 * Below myown AdaptedDataVisualizer
 	 * @author Mirko Paturzo
@@ -141,43 +141,42 @@ public class GridViewerSnippetWithAdaptedDataVisualizer {
 	 */
 	private static class MyOwnDataVisualizer extends AdaptedDataVisualizer {
 		FontRegistry registry = new FontRegistry();
-		
+
 		private final MyModel models[];
-		
+
 		public MyOwnDataVisualizer(MyModel models[]) {
 			this.models = models;
 		}
-		
+
 		@Override
-		public Image getImage(int row, int columnIndex) {
+		public Image getImage(GridItem gridItem, int columnIndex) {
 			return null;
 		}
 
 		@Override
-		public String getText(int row, int columnIndex) {
-			return "Column " + columnIndex + " => " + models[row].toString();
+		public String getText(GridItem gridItem, int columnIndex) {
+			return "Column " + columnIndex + " => " + models[gridItem.getRowIndex()].toString();
 		}
 
 		@Override
-		public Font getFont(int row, int columnIndex) {
-			if ((models[row]).counter % 2 == 0) {
-				return registry.getBold(Display.getCurrent().getSystemFont()
-						.getFontData()[0].getName());
+		public Font getFont(GridItem gridItem, int columnIndex) {
+			if ((models[gridItem.getRowIndex()]).counter % 2 == 0) {
+				return registry.getBold(Display.getCurrent().getSystemFont().getFontData()[0].getName());
 			}
 			return null;
 		}
 
 		@Override
-		public Color getBackground(int row, int columnIndex) {
-			if ((models[row]).counter % 2 == 0) {
+		public Color getBackground(GridItem gridItem, int columnIndex) {
+			if ((models[gridItem.getRowIndex()]).counter % 2 == 0) {
 				return Display.getCurrent().getSystemColor(SWT.COLOR_RED);
 			}
 			return Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
 		}
-		
+
 		@Override
-		public Color getForeground(int row, int columnIndex) {
-			if ((models[row]).counter % 2 == 1) {
+		public Color getForeground(GridItem gridItem, int columnIndex) {
+			if ((models[gridItem.getRowIndex()]).counter % 2 == 1) {
 				return Display.getCurrent().getSystemColor(SWT.COLOR_RED);
 			}
 			return Display.getCurrent().getSystemColor(SWT.COLOR_BLACK);
@@ -186,11 +185,12 @@ public class GridViewerSnippetWithAdaptedDataVisualizer {
 
 	public GridViewerSnippetWithAdaptedDataVisualizer(Shell shell) {
 		MyModel[] models = createModel();
-		final GridTableViewer v = new GridTableViewer(new MyOwnDataVisualizer(models), shell, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+		final GridTableViewer v = new GridTableViewer(new MyOwnDataVisualizer(models), shell, SWT.BORDER | SWT.V_SCROLL
+				| SWT.H_SCROLL);
 		v.setLabelProvider(new MyLabelProvider());
 		v.setContentProvider(new MyContentProvider());
 		v.getGrid().setCellSelectionEnabled(true);
-				
+
 		v.setCellEditors(new CellEditor[] { new TextCellEditor(v.getGrid()), new TextCellEditor(v.getGrid()) });
 		v.setCellModifier(new ICellModifier() {
 
@@ -203,28 +203,27 @@ public class GridViewerSnippetWithAdaptedDataVisualizer {
 			}
 
 			public void modify(Object element, String property, Object value) {
-				
+
 			}
-			
+
 		});
-		
-		v.setColumnProperties(new String[] {"1","2"});
-		
+
+		v.setColumnProperties(new String[] { "1", "2" });
+
 		ColumnViewerEditorActivationStrategy actSupport = new ColumnViewerEditorActivationStrategy(v) {
 			@Override
-			protected boolean isEditorActivationEvent(
-					ColumnViewerEditorActivationEvent event) {
+			protected boolean isEditorActivationEvent(ColumnViewerEditorActivationEvent event) {
 				return event.eventType == ColumnViewerEditorActivationEvent.TRAVERSAL
 						|| event.eventType == ColumnViewerEditorActivationEvent.MOUSE_DOUBLE_CLICK_SELECTION
 						|| (event.eventType == ColumnViewerEditorActivationEvent.KEY_PRESSED && event.keyCode == SWT.CR);
 			}
 		};
-		
+
 		GridViewerEditor.create(v, actSupport, ColumnViewerEditor.TABBING_HORIZONTAL
-				| ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR
-				| ColumnViewerEditor.TABBING_VERTICAL | ColumnViewerEditor.KEYBOARD_ACTIVATION);
-		
-		for(int i = 0; i < NUM_COLUMNS; i++) {
+				| ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR | ColumnViewerEditor.TABBING_VERTICAL
+				| ColumnViewerEditor.KEYBOARD_ACTIVATION);
+
+		for (int i = 0; i < NUM_COLUMNS; i++) {
 			createColumn(v, "Column " + i);
 		}
 

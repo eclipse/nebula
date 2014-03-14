@@ -14,7 +14,6 @@
 package org.eclipse.nebula.widgets.grid;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -55,9 +54,8 @@ public class GridItem extends Item {
 	/**
 	 * List of children.
 	 */
-	private final ArrayList children = new ArrayList();
+	private final List<GridItem> children = new ArrayList<GridItem>();
 
-	
 	/**
 	 * Default background color.
 	 */
@@ -86,7 +84,6 @@ public class GridItem extends Item {
 	 */
 	private boolean expanded = false;
 
-
 	/**
 	 * True if has children.
 	 */
@@ -106,7 +103,6 @@ public class GridItem extends Item {
 	 * Parent item (if a child item).
 	 */
 	private GridItem parentItem;
-
 
 	/**
 	 * Is visible?
@@ -138,11 +134,6 @@ public class GridItem extends Item {
 	 * been sent a SWT.SetData event.
 	 */
 	private boolean hasSetData = false;
-	
-	/**
-	 * Row GridItem index 
-	 */
-	private final int row;
 
 	/**
 	 * Creates a new instance of this class and places the item at the end of
@@ -194,11 +185,18 @@ public class GridItem extends Item {
 		super(parent, style, index);
 
 		this.parent = parent;
-		
+
 		dataVisualizer = parent.getDataVisualizer();
 
-		row = parent.newItem(this, index, true);
+		parent.newItem(this, index, true);
 		parent.newRootItem(this, index);
+	}
+
+	/**
+	 * @return grid row index
+	 */
+	public int getRowIndex() {
+		return parent.indexOf(this);
 	}
 
 	/**
@@ -224,24 +222,21 @@ public class GridItem extends Item {
 	public GridItem(GridItem parent, int style) {
 		this(parent, style, -1);
 	}
-	
-	
+
 	/**
 	 * The dataVisualizer is used by gridItem children.
 	 */
 	private DataVisualizer gridItemChildrenDataVisualizer;
-	
+
 	/**
 	 * @return GridItem children dataVisualizer.
 	 */
 	protected DataVisualizer getGridItemChildrenDataVisualizer() {
-		if(gridItemChildrenDataVisualizer == null) {
-			gridItemChildrenDataVisualizer = parent.getDataVisualizer().createAndGetChildenGridItemDataVisualizer();
+		if (gridItemChildrenDataVisualizer == null) {
+			gridItemChildrenDataVisualizer = parent.getDataVisualizer();
 		}
 		return gridItemChildrenDataVisualizer;
 	}
-	
-	
 
 	/**
 	 * Creates a new instance of this class as a child node of the given Grid
@@ -270,7 +265,7 @@ public class GridItem extends Item {
 
 		parentItem = parent;
 		this.parent = parentItem.getParent();
-		
+
 		dataVisualizer = this.parentItem.getGridItemChildrenDataVisualizer();
 
 		this.parent.newItem(this, index, false);
@@ -278,12 +273,13 @@ public class GridItem extends Item {
 		level = parentItem.getLevel() + 1;
 
 		parentItem.newItem(this, index);
-		
-		row = parentItem.indexOf(this);
+
+		parentItem.indexOf(this);
 
 		if (parent.isVisible() && parent.isExpanded()) {
 			setVisible(true);
-		} else {
+		}
+		else {
 			setVisible(false);
 		}
 	}
@@ -298,13 +294,18 @@ public class GridItem extends Item {
 
 			if (parentItem != null) {
 				parentItem.remove(this);
-			} else {
+			}
+			else {
 				parent.removeRootItem(this);
 			}
 
 			for (int i = children.size() - 1; i >= 0; i--) {
-				((GridItem) children.get(i)).dispose();
+				children.get(i).dispose();
 			}
+		}
+		if (gridItemChildrenDataVisualizer != null) {
+			gridItemChildrenDataVisualizer.clearRow(this);
+			gridItemChildrenDataVisualizer = null;
 		}
 		super.dispose();
 	}
@@ -467,8 +468,8 @@ public class GridItem extends Item {
 		checkWidget();
 
 		handleVirtual();
-		
-		return dataVisualizer.getBackground(row, index);
+
+		return dataVisualizer.getBackground(this, index);
 
 	}
 
@@ -569,7 +570,7 @@ public class GridItem extends Item {
 	 */
 	public boolean getChecked() {
 		checkWidget();
-		return dataVisualizer.getChecked(row, 0);
+		return dataVisualizer.getChecked(this, 0);
 	}
 
 	/**
@@ -591,7 +592,7 @@ public class GridItem extends Item {
 
 		handleVirtual();
 
-		return dataVisualizer.getChecked(row, index);
+		return dataVisualizer.getChecked(this, index);
 	}
 
 	/**
@@ -610,7 +611,7 @@ public class GridItem extends Item {
 	 */
 	public int getColumnSpan(int index) {
 		checkWidget();
-		return dataVisualizer.getColumnSpan(row, index);
+		return dataVisualizer.getColumnSpan(this, index);
 	}
 
 	/**
@@ -629,8 +630,8 @@ public class GridItem extends Item {
 	 */
 	public int getRowSpan(int index) {
 		checkWidget();
-		
-		return dataVisualizer.getRowSpan(row, index);
+
+		return dataVisualizer.getRowSpan(this, index);
 	}
 
 	/**
@@ -652,7 +653,7 @@ public class GridItem extends Item {
 		}
 		return defaultFont;
 	}
-	
+
 	private final DataVisualizer dataVisualizer;
 
 	/**
@@ -675,7 +676,7 @@ public class GridItem extends Item {
 
 		handleVirtual();
 
-		return dataVisualizer.getFont(row, index);
+		return dataVisualizer.getFont(this, index);
 	}
 
 	/**
@@ -716,7 +717,7 @@ public class GridItem extends Item {
 
 		handleVirtual();
 
-		return dataVisualizer.getForeground(row, index);
+		return dataVisualizer.getForeground(this, index);
 	}
 
 	/**
@@ -758,7 +759,7 @@ public class GridItem extends Item {
 
 		handleVirtual();
 
-		return dataVisualizer.getGrayed(row, index);
+		return dataVisualizer.getGrayed(this, index);
 	}
 
 	/**
@@ -777,7 +778,7 @@ public class GridItem extends Item {
 	@Override
 	public Image getImage() {
 		checkWidget();
-		return dataVisualizer.getImage(row, 0);
+		return dataVisualizer.getImage(this, 0);
 	}
 
 	/**
@@ -800,7 +801,7 @@ public class GridItem extends Item {
 
 		handleVirtual();
 
-		return dataVisualizer.getImage(row, index);
+		return dataVisualizer.getImage(this, index);
 	}
 
 	/**
@@ -825,7 +826,7 @@ public class GridItem extends Item {
 	 */
 	public GridItem getItem(int index) {
 		checkWidget();
-		return (GridItem) children.get(index);
+		return children.get(index);
 	}
 
 	/**
@@ -898,7 +899,7 @@ public class GridItem extends Item {
 	 *             </ul>
 	 */
 	public GridItem[] getItems() {
-		return (GridItem[]) children.toArray(new GridItem[children.size()]);
+		return children.toArray(new GridItem[children.size()]);
 	}
 
 	/**
@@ -959,7 +960,7 @@ public class GridItem extends Item {
 	@Override
 	public String getText() {
 		checkWidget();
-		return dataVisualizer.getText(row, 0);
+		return dataVisualizer.getText(this, 0);
 	}
 
 	/**
@@ -982,7 +983,7 @@ public class GridItem extends Item {
 
 		handleVirtual();
 
-		return dataVisualizer.getText(row, index);
+		return dataVisualizer.getText(this, index);
 	}
 
 	/**
@@ -1078,7 +1079,7 @@ public class GridItem extends Item {
 		if (background != null && background.isDisposed()) {
 			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 		}
-		dataVisualizer.setBackground(row, index, background);
+		dataVisualizer.setBackground(this, index, background);
 		parent.redraw();
 	}
 
@@ -1097,7 +1098,7 @@ public class GridItem extends Item {
 	 */
 	public void setChecked(boolean checked) {
 		checkWidget();
-		dataVisualizer.setChecked(row, 0, checked);
+		dataVisualizer.setChecked(this, 0, checked);
 		parent.redraw();
 	}
 
@@ -1118,7 +1119,7 @@ public class GridItem extends Item {
 	 */
 	public void setChecked(int index, boolean checked) {
 		checkWidget();
-		dataVisualizer.setChecked(row, index, checked);
+		dataVisualizer.setChecked(this, index, checked);
 		parent.redraw();
 	}
 
@@ -1140,7 +1141,7 @@ public class GridItem extends Item {
 	 */
 	public void setColumnSpan(int index, int span) {
 		checkWidget();
-		dataVisualizer.setColumnSpan(row, index, span);
+		dataVisualizer.setColumnSpan(this, index, span);
 		parent.setHasSpanning(true);
 		parent.redraw();
 	}
@@ -1163,7 +1164,7 @@ public class GridItem extends Item {
 	 */
 	public void setRowSpan(int index, int span) {
 		checkWidget();
-		dataVisualizer.setRowSpan(row, index, span);
+		dataVisualizer.setRowSpan(this, index, span);
 		parent.setHasSpanning(true);
 		parent.redraw();
 	}
@@ -1189,9 +1190,7 @@ public class GridItem extends Item {
 		// and thus if we change the selection we have to fire a selection event
 		boolean unselected = false;
 
-		for (Iterator itemIterator = children.iterator(); itemIterator
-				.hasNext();) {
-			GridItem item = (GridItem) itemIterator.next();
+		for (GridItem item : children) {
 			item.setVisible(expanded && visible);
 			if (!expanded) {
 				if (!getParent().getCellSelectionEnabled()) {
@@ -1202,7 +1201,8 @@ public class GridItem extends Item {
 					if (deselectChildren(item)) {
 						unselected = true;
 					}
-				} else {
+				}
+				else {
 					if (deselectCells(item)) {
 						unselected = true;
 					}
@@ -1219,8 +1219,7 @@ public class GridItem extends Item {
 			e.item = this;
 			getParent().notifyListeners(SWT.Selection, e);
 		}
-		if (getParent().getFocusItem() != null
-				&& !getParent().getFocusItem().isVisible()) {
+		if (getParent().getFocusItem() != null && !getParent().getFocusItem().isVisible()) {
 			getParent().setFocusItem(this);
 		}
 
@@ -1332,7 +1331,7 @@ public class GridItem extends Item {
 		if (font != null && font.isDisposed()) {
 			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 		}
-		dataVisualizer.setFont(row,index,font);
+		dataVisualizer.setFont(this, index, font);
 		parent.redraw();
 	}
 
@@ -1392,7 +1391,7 @@ public class GridItem extends Item {
 		if (foreground != null && foreground.isDisposed()) {
 			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 		}
-		dataVisualizer.setForeground(row, index, foreground);
+		dataVisualizer.setForeground(this, index, foreground);
 		parent.redraw();
 	}
 
@@ -1413,7 +1412,7 @@ public class GridItem extends Item {
 	 */
 	public void setGrayed(boolean grayed) {
 		checkWidget();
-		dataVisualizer.setGrayed(row, 0, grayed);
+		dataVisualizer.setGrayed(this, 0, grayed);
 		parent.redraw();
 	}
 
@@ -1436,7 +1435,7 @@ public class GridItem extends Item {
 	 */
 	public void setGrayed(int index, boolean grayed) {
 		checkWidget();
-		dataVisualizer.setGrayed(row, index, grayed);
+		dataVisualizer.setGrayed(this, index, grayed);
 		parent.redraw();
 	}
 
@@ -1461,14 +1460,13 @@ public class GridItem extends Item {
 		parent.hasDifferingHeights = true;
 		if (isVisible()) {
 			int myIndex = parent.indexOf(this);
-			if (parent.getTopIndex() <= myIndex
-					&& myIndex <= parent.getBottomIndex()) // note: cannot use
-															// Grid#isShown()
-															// here, because
-															// that returns
-															// false for
-															// partially shown
-															// items
+			if (parent.getTopIndex() <= myIndex && myIndex <= parent.getBottomIndex()) // note: cannot use
+																						// Grid#isShown()
+																						// here, because
+																						// that returns
+																						// false for
+																						// partially shown
+																						// items
 				parent.bottomIndex = -1;
 		}
 		parent.setScrollValuesObsolete();
@@ -1504,8 +1502,7 @@ public class GridItem extends Item {
 			renderer.setTree(columns[cnt].isTree());
 			renderer.setWordWrap(columns[cnt].getWordWrap());
 
-			Point size = renderer.computeSize(gc, columns[cnt].getWidth(),
-					SWT.DEFAULT, this);
+			Point size = renderer.computeSize(gc, columns[cnt].getWidth(), SWT.DEFAULT, this);
 			if (size != null)
 				maxPrefHeight = Math.max(maxPrefHeight, size.y);
 		}
@@ -1519,7 +1516,7 @@ public class GridItem extends Item {
 	 */
 	@Override
 	public void setImage(Image image) {
-		dataVisualizer.setImage(row, 0, image);
+		dataVisualizer.setImage(this, 0, image);
 		parent.redraw();
 	}
 
@@ -1547,7 +1544,7 @@ public class GridItem extends Item {
 		if (image != null && image.isDisposed()) {
 			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 		}
-		dataVisualizer.setImage(row, index, image);
+		dataVisualizer.setImage(this, index, image);
 
 		parent.imageSetOnItem(index, this);
 
@@ -1578,7 +1575,7 @@ public class GridItem extends Item {
 		if (text == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
-		dataVisualizer.setText(row, index, text);
+		dataVisualizer.setText(this, index, text);
 		parent.redraw();
 	}
 
@@ -1587,23 +1584,8 @@ public class GridItem extends Item {
 	 */
 	@Override
 	public void setText(String string) {
-		dataVisualizer.setText(row, 0, string);
+		dataVisualizer.setText(this, 0, string);
 		parent.redraw();
-	}
-
-	/**
-	 * Adds items to the given list to ensure the list is large enough to hold a
-	 * value for each column.
-	 *
-	 * @param al
-	 *            list
-	 */
-	private void ensureSize(ArrayList al) {
-		int count = Math.max(1, parent.getColumnCount());
-		al.ensureCapacity(count);
-		while (al.size() <= count) {
-			al.add(null);
-		}
 	}
 
 	/**
@@ -1614,7 +1596,8 @@ public class GridItem extends Item {
 	 */
 	private void remove(GridItem child) {
 		children.remove(child);
-		hasChildren = children.size() > 0;
+		gridItemChildrenDataVisualizer.clearRow(child);
+		hasChildren = !children.isEmpty();
 	}
 
 	/**
@@ -1641,7 +1624,8 @@ public class GridItem extends Item {
 
 		if (index == -1) {
 			children.add(item);
-		} else {
+		}
+		else {
 			children.add(index, item);
 		}
 	}
@@ -1673,7 +1657,8 @@ public class GridItem extends Item {
 
 		if (visible) {
 			parent.updateVisibleItems(1);
-		} else {
+		}
+		else {
 			parent.updateVisibleItems(-1);
 		}
 
@@ -1682,10 +1667,7 @@ public class GridItem extends Item {
 			if (visible) {
 				childrenVisible = expanded;
 			}
-			for (Iterator itemIterator = children.iterator(); itemIterator
-					.hasNext();) {
-				GridItem item = (GridItem) itemIterator.next();
-
+			for (GridItem item : children) {
 				item.setVisible(childrenVisible);
 			}
 		}
@@ -1789,13 +1771,11 @@ public class GridItem extends Item {
 		if (text != headerText) {
 			GC gc = new GC(parent);
 
-			int oldWidth = parent.getRowHeaderRenderer().computeSize(gc,
-					SWT.DEFAULT, SWT.DEFAULT, this).x;
+			int oldWidth = parent.getRowHeaderRenderer().computeSize(gc, SWT.DEFAULT, SWT.DEFAULT, this).x;
 
 			this.headerText = text;
 
-			int newWidth = parent.getRowHeaderRenderer().computeSize(gc,
-					SWT.DEFAULT, SWT.DEFAULT, this).x;
+			int newWidth = parent.getRowHeaderRenderer().computeSize(gc, SWT.DEFAULT, SWT.DEFAULT, this).x;
 
 			gc.dispose();
 
@@ -1824,17 +1804,13 @@ public class GridItem extends Item {
 		if (image != headerImage) {
 			GC gc = new GC(parent);
 
-			int oldWidth = parent.getRowHeaderRenderer().computeSize(gc,
-					SWT.DEFAULT, SWT.DEFAULT, this).x;
-			int oldHeight = parent.getRowHeaderRenderer().computeSize(gc,
-					SWT.DEFAULT, SWT.DEFAULT, this).y;
+			int oldWidth = parent.getRowHeaderRenderer().computeSize(gc, SWT.DEFAULT, SWT.DEFAULT, this).x;
+			int oldHeight = parent.getRowHeaderRenderer().computeSize(gc, SWT.DEFAULT, SWT.DEFAULT, this).y;
 
 			this.headerImage = image;
 
-			int newWidth = parent.getRowHeaderRenderer().computeSize(gc,
-					SWT.DEFAULT, SWT.DEFAULT, this).x;
-			int newHeight = parent.getRowHeaderRenderer().computeSize(gc,
-					SWT.DEFAULT, SWT.DEFAULT, this).y;
+			int newWidth = parent.getRowHeaderRenderer().computeSize(gc, SWT.DEFAULT, SWT.DEFAULT, this).x;
+			int newHeight = parent.getRowHeaderRenderer().computeSize(gc, SWT.DEFAULT, SWT.DEFAULT, this).y;
 
 			gc.dispose();
 
@@ -1904,7 +1880,7 @@ public class GridItem extends Item {
 		if (!parent.getColumn(index).getCheckable())
 			return false;
 
-		return dataVisualizer.getCheckable(row, index);
+		return dataVisualizer.getCheckable(this, index);
 	}
 
 	/**
@@ -1927,7 +1903,7 @@ public class GridItem extends Item {
 	 */
 	public void setCheckable(int index, boolean checked) {
 		checkWidget();
-		dataVisualizer.setCheckable(row, index, checked);
+		dataVisualizer.setCheckable(this, index, checked);
 	}
 
 	/**
@@ -1949,7 +1925,7 @@ public class GridItem extends Item {
 
 		handleVirtual();
 
-		return dataVisualizer.getToolTipText(row, index);
+		return dataVisualizer.getToolTipText(this, index);
 	}
 
 	/**
@@ -1969,28 +1945,11 @@ public class GridItem extends Item {
 	 */
 	public void setToolTipText(int index, String tooltip) {
 		checkWidget();
-		dataVisualizer.setToolTipText(row, index, tooltip);
-	}
-
-
-	/**
-	 * Notifies the item that a column has been removed.
-	 *
-	 * @param index
-	 *            index of column removed.
-	 */
-	void columnRemoved(int index) {
-		dataVisualizer.removeIndex(row);
+		dataVisualizer.setToolTipText(this, index, tooltip);
 	}
 
 	void columnAdded(int index) {
 		hasSetData = false;
-	}
-
-	private void removeValue(int index, List list) {
-		if (list.size() > index) {
-			list.remove(index);
-		}
 	}
 
 	private void handleVirtual() {
@@ -2000,7 +1959,8 @@ public class GridItem extends Item {
 			event.item = this;
 			if (parentItem == null) {
 				event.index = getParent().indexOf(this);
-			} else {
+			}
+			else {
 				event.index = parentItem.indexOf(this);
 			}
 			getParent().notifyListeners(SWT.SetData, event);
@@ -2039,7 +1999,7 @@ public class GridItem extends Item {
 		// Recursively clear children if requested.
 		if (allChildren) {
 			for (int i = children.size() - 1; i >= 0; i--) {
-				((GridItem) children.get(i)).clear(true);
+				children.get(i).clear(true);
 			}
 		}
 
@@ -2050,7 +2010,11 @@ public class GridItem extends Item {
 	 */
 	public void disposeOnly() {
 		for (int i = children.size() - 1; i >= 0; i--) {
-			((GridItem) children.get(i)).disposeOnly();
+			children.get(i).disposeOnly();
+		}
+		if (gridItemChildrenDataVisualizer != null) {
+			gridItemChildrenDataVisualizer.clearRow(this);
+			gridItemChildrenDataVisualizer = null;
 		}
 		super.dispose();
 	}

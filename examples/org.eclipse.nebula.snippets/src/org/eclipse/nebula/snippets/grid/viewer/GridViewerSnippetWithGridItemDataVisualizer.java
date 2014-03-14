@@ -47,7 +47,7 @@ import org.eclipse.swt.widgets.Shell;
  * Using {@link ColumnRowBigDataVisualizer}
  * 
  */
-public class GridViewerSnippetWithColumnRowBigDataVisualizer {
+public class GridViewerSnippetWithGridItemDataVisualizer {
 
 	private static final int NUM_COLUMNS = 1000;
 	private static final int NUM_MODELS = 1000;
@@ -143,7 +143,7 @@ public class GridViewerSnippetWithColumnRowBigDataVisualizer {
 
 	}
 
-	public GridViewerSnippetWithColumnRowBigDataVisualizer(Shell shell) {
+	public GridViewerSnippetWithGridItemDataVisualizer(Shell shell) {
 		final GridTableViewer v = new GridTableViewer(shell, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		v.setLabelProvider(new MyLabelProvider());
 		v.setContentProvider(new MyContentProvider());
@@ -219,7 +219,7 @@ public class GridViewerSnippetWithColumnRowBigDataVisualizer {
 
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
-		new GridViewerSnippetWithColumnRowBigDataVisualizer(shell);
+		new GridViewerSnippetWithGridItemDataVisualizer(shell);
 		shell.open();
 
 		while (!shell.isDisposed()) {
