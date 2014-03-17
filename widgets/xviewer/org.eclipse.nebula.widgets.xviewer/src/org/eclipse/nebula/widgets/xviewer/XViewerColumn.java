@@ -43,6 +43,7 @@ public class XViewerColumn {
       String_MultiLine,
       Boolean,
       Integer,
+      Long,
       Paragraph_Number,
       Check
    };
@@ -268,7 +269,7 @@ public class XViewerColumn {
    }
 
    public boolean isSummable() {
-      if (sortDataType == SortDataType.Float || sortDataType == SortDataType.Integer) {
+      if (sortDataType == SortDataType.Float || sortDataType == SortDataType.Integer || sortDataType == SortDataType.Long) {
          return true;
       }
       return false;
@@ -299,6 +300,21 @@ public class XViewerColumn {
             }
             try {
                sum += Integer.valueOf(value);
+            } catch (Exception ex) {
+               exceptions.add(ex.getLocalizedMessage());
+            }
+         }
+         return "Sum: " + sum + "\n\nNum Items: " + values.size() + (exceptions.size() > 0 ? "\n\nErrors: " + CollectionsUtil.toString(
+            ";", exceptions) : "");
+      } else if (sortDataType == SortDataType.Long) {
+         int sum = 0;
+         Set<String> exceptions = new HashSet<String>();
+         for (String value : values) {
+            if (value == null || value.equals("")) {
+               continue;
+            }
+            try {
+               sum += Long.valueOf(value);
             } catch (Exception ex) {
                exceptions.add(ex.getLocalizedMessage());
             }

@@ -74,6 +74,9 @@ public class MyXViewerLabelProvider extends XViewerLabelProvider {
       if (xCol.equals(MyXViewerFactory.Completed_Col)) {
          return String.valueOf(task.getPercentComplete());
       }
+      if (xCol.equals(MyXViewerFactory.Long_Column)) {
+         return String.valueOf(task.getLongValue());
+      }
       return "unhandled column";
    }
 

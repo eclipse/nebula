@@ -49,4 +49,7 @@ public interface ISomeTask {
    public Date getLastRunDate();
 
    public String getLastRunDateStr();
+
+   public long getLongValue();
+
 }

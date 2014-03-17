@@ -53,11 +53,13 @@ public class MyXViewerFactory extends XViewerFactory {
       SWT.LEFT, true, SortDataType.String, false, null);
    public static XViewerColumn Other_Description = new XViewerColumn(COLUMN_NAMESPACE + ".otherDescription",
       "Other Description", 75, SWT.LEFT, false, SortDataType.String, false, null);
+   public static XViewerColumn Long_Column = new XViewerColumn(COLUMN_NAMESPACE + ".longColumn", "Long Values", 50,
+      SWT.LEFT, false, SortDataType.Long, false, null);
 
    public MyXViewerFactory() {
       super("xviewer.test");
       registerColumns(Name_Col, Run_Col, Schedule_Time, Completed_Col, Run_Db, Task_Type, Last_Run_Date, Category,
-         Notification, Description, Other_Description);
+         Notification, Description, Other_Description, Long_Column);
 
       Completed_Col.addMapEntry(SomeTask.class, new CellEditDescriptor(Text.class, SWT.BORDER,
          "completed", SomeTask.class)); //$NON-NLS-1$

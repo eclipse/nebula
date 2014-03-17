@@ -33,12 +33,13 @@ public class SomeTask implements ISomeTask {
    private Date lastRunDate;
    private int percentComplete;
    private final List<SomeTask> children = new ArrayList<SomeTask>();
+   private final long longValue;
 
    public SomeTask(RunDb runDb, TaskType taskType, String id, String startTime, String description, String category, String emailAddress, int percentComplete) {
-      this(runDb, taskType, new Date(), id, startTime, description, category, emailAddress, percentComplete);
+      this(runDb, taskType, new Date(), id, startTime, description, category, emailAddress, percentComplete, 50000);
    }
 
-   public SomeTask(RunDb runDb, TaskType taskType, Date lastRunDate, String id, String startTime, String description, String category, String emailAddress, int percentComplete) {
+   public SomeTask(RunDb runDb, TaskType taskType, Date lastRunDate, String id, String startTime, String description, String category, String emailAddress, int percentComplete, long longValue) {
       this.runDb = runDb;
       this.taskType = taskType;
       this.lastRunDate = lastRunDate;
@@ -48,6 +49,7 @@ public class SomeTask implements ISomeTask {
       this.category = category;
       this.emailAddress = emailAddress;
       this.percentComplete = percentComplete;
+      this.longValue = longValue;
    }
 
    public void addChild(SomeTask someTask) {
@@ -119,6 +121,10 @@ public class SomeTask implements ISomeTask {
 
    public void setLastRunDate(Date lastRunDate) {
       this.lastRunDate = lastRunDate;
+   }
+
+   public long getLongValue() {
+      return longValue;
    }
 
 }

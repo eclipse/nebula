@@ -77,6 +77,8 @@ public class XViewerSorter extends ViewerSorter {
             compareInt = getCompareForFloat(o1Str, o2Str);
          } else if (sortXCol.getSortDataType() == SortDataType.Integer) {
             compareInt = getCompareForInteger(o1Str, o2Str);
+         } else if (sortXCol.getSortDataType() == SortDataType.Long) {
+            compareInt = getCompareForLong(o1Str, o2Str);
          } else if (sortXCol.getSortDataType() == SortDataType.Paragraph_Number) {
             compareInt = paragraphNumberCompare(o1Str, o2Str);
          } else {
@@ -194,6 +196,35 @@ public class XViewerSorter extends ViewerSorter {
 
    }
 
+   @SuppressWarnings("unchecked")
+   public int getCompareForLong(String long1, String long2) {
+      long long1Long = 0;
+      boolean long1Exception = false;
+      try {
+         long1Long = Long.valueOf(long1).longValue();
+      } catch (NumberFormatException ex) {
+         long1Exception = true;
+      }
+      long long2Integer = 0;
+      boolean long2Exception = false;
+      try {
+         long2Integer = Long.valueOf(long2).longValue();
+      } catch (NumberFormatException ex) {
+         long2Exception = true;
+      }
+      int toReturn = 0;
+      if (long1Exception && long2Exception) {
+         toReturn = getComparator().compare(long1, long2);
+      } else if (long1Exception && !long2Exception) {
+         toReturn = -1;
+      } else if (!long1Exception && long2Exception) {
+         toReturn = 1;
+      } else {
+         toReturn = getCompareForLong(long1Long, long2Integer);
+      }
+      return toReturn;
+   }
+
    public static int getCompareForFloat(double float1, double float2) {
       if (float1 == float2) {
          return 0;
@@ -212,6 +243,18 @@ public class XViewerSorter extends ViewerSorter {
       } else if (int1 < int2) {
          return -1;
       } else if (int2 < int1) {
+         return 1;
+      } else {
+         return 0;
+      }
+   }
+
+   public static int getCompareForLong(long long1, long long2) {
+      if (long1 == long2) {
+         return 0;
+      } else if (long1 < long2) {
+         return -1;
+      } else if (long2 < long1) {
          return 1;
       } else {
          return 0;
