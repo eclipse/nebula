@@ -11,6 +11,14 @@ package org.eclipse.nebula.snippets.grid.viewer;
  * 								 defaults properties change
  *******************************************************************************/
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.viewers.CellEditor;
@@ -29,6 +37,7 @@ import org.eclipse.nebula.jface.gridviewer.GridTableViewer;
 import org.eclipse.nebula.jface.gridviewer.GridViewerEditor;
 import org.eclipse.nebula.widgets.grid.GridColumn;
 import org.eclipse.nebula.widgets.grid.GridItem;
+import org.eclipse.nebula.widgets.grid.GridUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -40,6 +49,7 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -56,12 +66,14 @@ import org.eclipse.swt.widgets.Shell;
  *         MemoryAnalyzer
  * 
  */
-public class GridViewerSnippetDisposePerformance {
+public class GridViewerSnippetDisposePerformance
+{
 
 	private static final int NUM_COLUMNS = 10;
 	private static final int NUM_MODELS = 10;
 
-	private class MyContentProvider implements IStructuredContentProvider {
+	private class MyContentProvider implements IStructuredContentProvider
+	{
 
 		/*
 		 * (non-Javadoc)
@@ -70,7 +82,8 @@ public class GridViewerSnippetDisposePerformance {
 		 * java.lang.Object)
 		 */
 
-		public Object[] getElements(Object inputElement) {
+		public Object[] getElements(Object inputElement)
+		{
 			return (MyModel[]) inputElement;
 		}
 
@@ -79,7 +92,8 @@ public class GridViewerSnippetDisposePerformance {
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
 
-		public void dispose() {
+		public void dispose()
+		{
 
 		}
 
@@ -90,7 +104,8 @@ public class GridViewerSnippetDisposePerformance {
 		 * .jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
 
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
+		{
 
 		}
 
@@ -98,15 +113,18 @@ public class GridViewerSnippetDisposePerformance {
 
 	public static boolean flag = true;
 
-	public class MyModel {
+	public class MyModel
+	{
 		public int counter;
 
-		public MyModel(int counter) {
+		public MyModel(int counter)
+		{
 			this.counter = counter;
 		}
 
 		@Override
-		public String toString() {
+		public String toString()
+		{
 			return "Item " + this.counter;
 		}
 	}
@@ -114,32 +132,41 @@ public class GridViewerSnippetDisposePerformance {
 	final FontRegistry registry = new FontRegistry();
 
 	public class MyLabelProvider extends LabelProvider implements ITableLabelProvider, ITableFontProvider,
-			ITableColorProvider {
+			ITableColorProvider
+	{
 
-		public Image getColumnImage(Object element, int columnIndex) {
+		public Image getColumnImage(Object element, int columnIndex)
+		{
 			return null;
 		}
 
-		public String getColumnText(Object element, int columnIndex) {
+		public String getColumnText(Object element, int columnIndex)
+		{
 			return "Column " + columnIndex + " => " + element.toString();
 		}
 
-		public Font getFont(Object element, int columnIndex) {
-			if (((MyModel) element).counter % 2 == 0) {
+		public Font getFont(Object element, int columnIndex)
+		{
+			if (((MyModel) element).counter % 2 == 0)
+			{
 				return registry.getBold(Display.getCurrent().getSystemFont().getFontData()[0].getName());
 			}
 			return null;
 		}
 
-		public Color getBackground(Object element, int columnIndex) {
-			if (((MyModel) element).counter % 2 == 0) {
+		public Color getBackground(Object element, int columnIndex)
+		{
+			if (((MyModel) element).counter % 2 == 0)
+			{
 				return Display.getCurrent().getSystemColor(SWT.COLOR_RED);
 			}
 			return null;
 		}
 
-		public Color getForeground(Object element, int columnIndex) {
-			if (((MyModel) element).counter % 2 == 1) {
+		public Color getForeground(Object element, int columnIndex)
+		{
+			if (((MyModel) element).counter % 2 == 1)
+			{
 				return Display.getCurrent().getSystemColor(SWT.COLOR_RED);
 			}
 			return null;
@@ -147,26 +174,31 @@ public class GridViewerSnippetDisposePerformance {
 
 	}
 
-	public GridViewerSnippetDisposePerformance(final Shell shell, boolean createButtons) {
+	public GridViewerSnippetDisposePerformance(final Shell shell, boolean createButtons)
+	{
 		final GridTableViewer v = new GridTableViewer(shell, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		v.setLabelProvider(new MyLabelProvider());
 		v.setContentProvider(new MyContentProvider());
 		v.getGrid().setCellSelectionEnabled(true);
 
 		v.setCellEditors(new CellEditor[] { new TextCellEditor(v.getGrid()), new TextCellEditor(v.getGrid()) });
-		v.setCellModifier(new ICellModifier() {
+		v.setCellModifier(new ICellModifier()
+		{
 
-			public boolean canModify(Object element, String property) {
+			public boolean canModify(Object element, String property)
+			{
 				return true;
 			}
 
-			public Object getValue(Object element, String property) {
+			public Object getValue(Object element, String property)
+			{
 				if (element == null)
 					return "Element is null";
 				return "Column " + property + " => " + element.toString();
 			}
 
-			public void modify(Object element, String property, Object value) {
+			public void modify(Object element, String property, Object value)
+			{
 
 			}
 
@@ -174,10 +206,12 @@ public class GridViewerSnippetDisposePerformance {
 
 		v.setColumnProperties(new String[] { "1", "2" });
 
-		ColumnViewerEditorActivationStrategy actSupport = new ColumnViewerEditorActivationStrategy(v) {
+		ColumnViewerEditorActivationStrategy actSupport = new ColumnViewerEditorActivationStrategy(v)
+		{
 
 			@Override
-			protected boolean isEditorActivationEvent(ColumnViewerEditorActivationEvent event) {
+			protected boolean isEditorActivationEvent(ColumnViewerEditorActivationEvent event)
+			{
 				return event.eventType == ColumnViewerEditorActivationEvent.TRAVERSAL
 						|| event.eventType == ColumnViewerEditorActivationEvent.MOUSE_DOUBLE_CLICK_SELECTION
 						|| (event.eventType == ColumnViewerEditorActivationEvent.KEY_PRESSED && event.keyCode == SWT.CR);
@@ -188,24 +222,30 @@ public class GridViewerSnippetDisposePerformance {
 				| ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR | ColumnViewerEditor.TABBING_VERTICAL
 				| ColumnViewerEditor.KEYBOARD_ACTIVATION);
 
-		for (int i = 0; i < NUM_COLUMNS; i++) {
+		for (int i = 0; i < NUM_COLUMNS; i++)
+		{
 			createColumn(v, "Column " + i);
 		}
-		if (createButtons) {
+		if (createButtons)
+		{
 			Composite buttons = new Composite(shell, SWT.NONE);
 			buttons.setLayout(new RowLayout());
 
 			final Button remove3 = new Button(buttons, SWT.NONE);
 			remove3.setText("remove row with index 3");
 			final String restore = "restore grid";
-			remove3.addMouseListener(new MouseAdapter() {
+			remove3.addMouseListener(new MouseAdapter()
+			{
 				@Override
-				public void mouseDown(MouseEvent e) {
+				public void mouseDown(MouseEvent e)
+				{
 					//					button.dispose();
-					try {
+					try
+					{
 						v.getGrid().remove(3);
 					}
-					catch (java.lang.IllegalArgumentException ie) {
+					catch (java.lang.IllegalArgumentException ie)
+					{
 						new MessageDialog(shell, "IndexOutOfBound error", null, "Restore the grid with button \""
 								+ restore + "\"", MessageDialog.WARNING, new String[] { "Ok" }, 0).open();
 					}
@@ -216,9 +256,11 @@ public class GridViewerSnippetDisposePerformance {
 
 			final Button add3 = new Button(buttons, SWT.NONE);
 			add3.setText("add row with index 3");
-			add3.addMouseListener(new MouseAdapter() {
+			add3.addMouseListener(new MouseAdapter()
+			{
 				@Override
-				public void mouseDown(MouseEvent e) {
+				public void mouseDown(MouseEvent e)
+				{
 					GridItem gridItem = new GridItem(v.getGrid(), SWT.NONE, 3);
 					gridItem.setText(0, "Added in 3");
 					shell.layout();
@@ -226,25 +268,31 @@ public class GridViewerSnippetDisposePerformance {
 			});
 			final Button addColumn1 = new Button(buttons, SWT.NONE);
 			addColumn1.setText("add column in 1");
-			addColumn1.addMouseListener(new MouseAdapter() {
+			addColumn1.addMouseListener(new MouseAdapter()
+			{
 				@Override
-				public void mouseDown(MouseEvent e) {
+				public void mouseDown(MouseEvent e)
+				{
 					new GridColumn(v.getGrid(), SWT.NONE, 1);
 					shell.layout();
 				}
 			});
 			final Button removeColumn = new Button(buttons, SWT.NONE);
 			removeColumn.setText("remove first column");
-			removeColumn.addMouseListener(new MouseAdapter() {
+			removeColumn.addMouseListener(new MouseAdapter()
+			{
 				@Override
-				public void mouseDown(MouseEvent e) {
+				public void mouseDown(MouseEvent e)
+				{
 					//					button.dispose();
-					try {
+					try
+					{
 						v.getGrid().getColumn(0).dispose();
 						v.getGrid().redraw();
 						v.getGrid().layout();
 					}
-					catch (java.lang.IllegalArgumentException ie) {
+					catch (java.lang.IllegalArgumentException ie)
+					{
 						new MessageDialog(shell, "IndexOutOfBound error", null, "Restore the grid with button \""
 								+ restore + "\"", MessageDialog.WARNING, new String[] { "Ok" }, 0).open();
 					}
@@ -254,14 +302,18 @@ public class GridViewerSnippetDisposePerformance {
 			});
 			final Button addColumn = new Button(buttons, SWT.NONE);
 			addColumn.setText("add column");
-			addColumn.addMouseListener(new MouseAdapter() {
+			addColumn.addMouseListener(new MouseAdapter()
+			{
 				@Override
-				public void mouseDown(MouseEvent e) {
+				public void mouseDown(MouseEvent e)
+				{
 					//					button.dispose();
-					try {
+					try
+					{
 						createColumn(v, "Added");
 					}
-					catch (java.lang.IllegalArgumentException ie) {
+					catch (java.lang.IllegalArgumentException ie)
+					{
 						new MessageDialog(shell, "IndexOutOfBound error", null, "Restore the grid with button \""
 								+ restore + "\"", MessageDialog.WARNING, new String[] { "Ok" }, 0).open();
 					}
@@ -271,9 +323,11 @@ public class GridViewerSnippetDisposePerformance {
 			});
 			final Button changeFont = new Button(buttons, SWT.NONE);
 			changeFont.setText("Change Default");
-			changeFont.addMouseListener(new MouseAdapter() {
+			changeFont.addMouseListener(new MouseAdapter()
+			{
 				@Override
-				public void mouseDown(MouseEvent e) {
+				public void mouseDown(MouseEvent e)
+				{
 					v.getGrid().setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 					v.getGrid().setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
 					v.getGrid().setFont(
@@ -281,16 +335,73 @@ public class GridViewerSnippetDisposePerformance {
 					shell.layout();
 				}
 			});
+			Button exportGrid = new Button(buttons, SWT.NONE);
+			exportGrid.setText("Export Grid");
+			exportGrid.addMouseListener(new MouseAdapter()
+			{
+				@Override
+				public void mouseDown(MouseEvent e)
+				{
+					try
+					{
+						if (v.getGrid().isDisposed())
+							return;
+						FileDialog fileDialog = new FileDialog(shell);
+						fileDialog.setFilterExtensions(new String[] { "*.xml" });
+						String open = fileDialog.open();
+						if (open != null)
+						{
+							open = open.endsWith(".xml") ? open : open + ".xml";
+							FileOutputStream outputStream = new FileOutputStream(new File(open));
+							try
+							{
+								GridUtils.gridToXml(v.getGrid(), outputStream);
+								new MessageDialog(shell, "Success", null, "Exported in " + open,
+										MessageDialog.INFORMATION, new String[] { "Great!" }, 1).open();
+							}
+							catch (ParserConfigurationException e1)
+							{
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+							catch (TransformerException e1)
+							{
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+							finally
+							{
+								try
+								{
+									outputStream.close();
+								}
+								catch (IOException e1)
+								{
+									e1.printStackTrace();
+								}
+							}
+						}
+					}
+					catch (FileNotFoundException e1)
+					{
+						e1.printStackTrace();
+					}
+				}
+			});
 			final Button restoreButton = new Button(buttons, SWT.NONE);
 			restoreButton.setText(restore);
-			restoreButton.addMouseListener(new MouseAdapter() {
+			restoreButton.addMouseListener(new MouseAdapter()
+			{
 				@Override
-				public void mouseDown(MouseEvent e) {
+				public void mouseDown(MouseEvent e)
+				{
 					GridColumn[] columns = v.getGrid().getColumns();
-					for (GridColumn gridColumn : columns) {
+					for (GridColumn gridColumn : columns)
+					{
 						gridColumn.dispose();
 					}
-					for (int i = 0; i < NUM_COLUMNS; i++) {
+					for (int i = 0; i < NUM_COLUMNS; i++)
+					{
 						createColumn(v, "Column " + i);
 					}
 					v.setInput(createModel());
@@ -302,9 +413,11 @@ public class GridViewerSnippetDisposePerformance {
 			});
 			Button gcButton = new Button(buttons, SWT.NONE);
 			gcButton.setText("gc");
-			gcButton.addMouseListener(new MouseAdapter() {
+			gcButton.addMouseListener(new MouseAdapter()
+			{
 				@Override
-				public void mouseDown(MouseEvent e) {
+				public void mouseDown(MouseEvent e)
+				{
 					System.gc();
 				}
 			});
@@ -316,16 +429,19 @@ public class GridViewerSnippetDisposePerformance {
 		v.getGrid().setHeaderVisible(true);
 	}
 
-	private void createColumn(final GridTableViewer v, String name) {
+	private void createColumn(final GridTableViewer v, String name)
+	{
 		GridColumn column = new GridColumn(v.getGrid(), SWT.NONE);
 		column.setWidth(200);
 		column.setText(name);
 	}
 
-	private MyModel[] createModel() {
+	private MyModel[] createModel()
+	{
 		MyModel[] elements = new MyModel[NUM_MODELS];
 
-		for (int i = 0; i < NUM_MODELS; i++) {
+		for (int i = 0; i < NUM_MODELS; i++)
+		{
 			elements[i] = new MyModel(i);
 		}
 
@@ -335,7 +451,8 @@ public class GridViewerSnippetDisposePerformance {
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args)
+	{
 		Display display = new Display();
 
 		Shell shell = new Shell(display);
@@ -343,7 +460,8 @@ public class GridViewerSnippetDisposePerformance {
 		new GridViewerSnippetDisposePerformance(shell, true);
 		shell.open();
 
-		while (!shell.isDisposed()) {
+		while (!shell.isDisposed())
+		{
 			if (!display.readAndDispatch())
 				display.sleep();
 		}
