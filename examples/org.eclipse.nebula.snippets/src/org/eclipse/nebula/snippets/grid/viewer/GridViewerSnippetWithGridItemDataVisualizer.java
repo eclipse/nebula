@@ -9,6 +9,8 @@ package org.eclipse.nebula.snippets.grid.viewer;
  *
  * Contributors:
  *     Tom Schindl - initial API and implementation
+ *     Mirko Paturzo - improve Grid Export, dispose, fonts and background
+ *     				   functional changes
  *******************************************************************************/
 
 
@@ -97,6 +99,7 @@ public class GridViewerSnippetWithGridItemDataVisualizer {
 		}
 
 		
+		@Override
 		public String toString() {
 			return "Item " + this.counter;
 		}
@@ -173,6 +176,7 @@ public class GridViewerSnippetWithGridItemDataVisualizer {
 		
 		ColumnViewerEditorActivationStrategy actSupport = new ColumnViewerEditorActivationStrategy(v) {
 			
+			@Override
 			protected boolean isEditorActivationEvent(
 					ColumnViewerEditorActivationEvent event) {
 				return event.eventType == ColumnViewerEditorActivationEvent.TRAVERSAL

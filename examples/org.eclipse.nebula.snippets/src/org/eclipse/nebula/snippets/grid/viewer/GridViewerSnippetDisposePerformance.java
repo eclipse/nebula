@@ -300,6 +300,33 @@ public class GridViewerSnippetDisposePerformance
 					shell.layout();
 				}
 			});
+			final Button hideColumn = new Button(buttons, SWT.NONE);
+			hideColumn.setText("hide first column");
+			hideColumn.addMouseListener(new MouseAdapter()
+			{
+				@Override
+				public void mouseDown(MouseEvent e)
+				{
+					try
+					{
+						GridColumn[] columns = v.getGrid().getColumns();
+						for (GridColumn gridColumn : columns)
+						{
+							if (gridColumn.isVisible())
+							{
+								gridColumn.setVisible(false);
+								break;
+							}
+						}
+					}
+					catch (java.lang.IllegalArgumentException ie)
+					{
+						new MessageDialog(shell, "IndexOutOfBound error", null, "Restore the grid with button \""
+								+ restore + "\"", MessageDialog.WARNING, new String[] { "Ok" }, 0).open();
+					}
+					shell.layout();
+				}
+			});
 			final Button addColumn = new Button(buttons, SWT.NONE);
 			addColumn.setText("add column");
 			addColumn.addMouseListener(new MouseAdapter()

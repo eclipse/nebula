@@ -6841,6 +6841,11 @@ public class Grid extends Canvas {
 						newColumnFocus = (GridColumn) displayOrderedColumns.get(index - 1);
 
 						newColumnFocus = getVisibleColumn_DegradeLeft(impliedFocusItem, newColumnFocus);
+						
+						if (newColumnFocus == null) {
+							newColumnFocus = impliedFocusColumn;
+						}
+						
 					}
 					else {
 						newColumnFocus = impliedFocusColumn;
