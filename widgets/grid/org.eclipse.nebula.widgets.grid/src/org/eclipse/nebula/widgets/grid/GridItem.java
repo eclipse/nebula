@@ -1607,7 +1607,7 @@ public class GridItem extends Item {
 	 *
 	 * @return Returns the visible.
 	 */
-	boolean isVisible() {
+	public boolean isVisible() {
 		return visible;
 	}
 
