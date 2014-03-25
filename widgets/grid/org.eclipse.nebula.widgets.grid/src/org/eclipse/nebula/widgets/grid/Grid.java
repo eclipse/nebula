@@ -2059,7 +2059,7 @@ public class Grid extends Canvas {
 		}
 		else {
 			index = items.indexOf(item);
-			if (index == 0) {
+			if (index <= 0) {
 				return null;
 			}
 		}
@@ -6782,13 +6782,16 @@ public class Grid extends Canvas {
 		//These two variables are used because the key navigation when the shift key is down is
 		//based, not off the focus item/column, but rather off the implied focus (i.e. where the
 		//keyboard has extended focus to).
-		GridItem impliedFocusItem = focusItem;
-		GridColumn impliedFocusColumn = focusColumn;
+		GridItem impliedFocusItem = (focusItem == null || focusItem.isDisposed()) ? null : focusItem;
+		GridColumn impliedFocusColumn = focusColumn.isDisposed() ? null : focusColumn;
 
 		if (cellSelectionEnabled && e.stateMask == SWT.MOD2) {
 			if (shiftSelectionAnchorColumn != null) {
-				impliedFocusItem = shiftSelectionAnchorItem;
-				impliedFocusColumn = shiftSelectionAnchorColumn;
+				if (shiftSelectionAnchorItem == null || shiftSelectionAnchorItem.isDisposed())
+					impliedFocusItem = focusItem;
+				else
+					impliedFocusItem = shiftSelectionAnchorItem;
+				impliedFocusColumn = shiftSelectionAnchorColumn.isDisposed() ? null : shiftSelectionAnchorColumn;
 			}
 		}
 
@@ -6885,7 +6888,7 @@ public class Grid extends Canvas {
 			}
 
 			if (impliedFocusColumn != null) {
-				if (newSelection != null) {
+				if (newSelection != null && intendedFocusColumn != null) {
 					newColumnFocus = getVisibleColumn_DegradeLeft(newSelection, intendedFocusColumn);
 				}
 				else {

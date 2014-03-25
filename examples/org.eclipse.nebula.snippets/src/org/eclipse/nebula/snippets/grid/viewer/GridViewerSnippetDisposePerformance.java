@@ -35,6 +35,7 @@ import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.nebula.jface.gridviewer.GridTableViewer;
 import org.eclipse.nebula.jface.gridviewer.GridViewerEditor;
+import org.eclipse.nebula.widgets.grid.Grid;
 import org.eclipse.nebula.widgets.grid.GridColumn;
 import org.eclipse.nebula.widgets.grid.GridItem;
 import org.eclipse.nebula.widgets.grid.GridUtils;
@@ -44,6 +45,7 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
@@ -325,6 +327,28 @@ public class GridViewerSnippetDisposePerformance
 								+ restore + "\"", MessageDialog.WARNING, new String[] { "Ok" }, 0).open();
 					}
 					shell.layout();
+				}
+			});
+			final Button manualDeselect = new Button(buttons, SWT.NONE);
+			manualDeselect.setText("Manual Deselect");
+			manualDeselect.addMouseListener(new MouseAdapter()
+			{
+				@Override
+				public void mouseDown(MouseEvent e)
+				{
+					Grid grid = v.getGrid();
+					Point focus = grid.getFocusCell();
+					int[] selected = grid.getSelectionIndices();
+					grid.deselect(selected);
+					grid.remove(selected);
+					while (focus.y >= grid.getItemCount())
+						--focus.y;
+					if (focus.y >= 0)
+					{
+						grid.setFocusItem(grid.getItem(focus.y));
+						grid.setFocusColumn(grid.getColumn(focus.x));
+						grid.setCellSelection(focus);
+					}
 				}
 			});
 			final Button addColumn = new Button(buttons, SWT.NONE);
