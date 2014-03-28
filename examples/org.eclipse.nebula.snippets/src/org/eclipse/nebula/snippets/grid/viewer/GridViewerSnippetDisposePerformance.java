@@ -175,7 +175,10 @@ public class GridViewerSnippetDisposePerformance
 		}
 
 	}
-
+	
+	// field for disable/enable default key listener button
+	private boolean enable = true;
+	
 	public GridViewerSnippetDisposePerformance(final Shell shell, boolean createButtons)
 	{
 		final GridTableViewer v = new GridTableViewer(shell, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
@@ -460,6 +463,29 @@ public class GridViewerSnippetDisposePerformance
 					v.getGrid().redraw();
 					v.getGrid().layout();
 					shell.layout();
+				}
+			});
+			final Button enableDisableKeyListenerButton = new Button(buttons, SWT.NONE);
+			enableDisableKeyListenerButton.setText("Disable default key listener");
+			enableDisableKeyListenerButton.addMouseListener(new MouseAdapter()
+			{
+				
+
+				@Override
+				public void mouseDown(MouseEvent e)
+				{
+					if (enable)
+					{
+						v.getGrid().disableDefaultKeyListener();
+						enable = false;
+						enableDisableKeyListenerButton.setText("Enable default key listener");
+					}
+					else
+					{
+						v.getGrid().enableDefaultKeyListener();
+						enable = true;
+						enableDisableKeyListenerButton.setText("Disable default key listener");
+					}
 				}
 			});
 			Button gcButton = new Button(buttons, SWT.NONE);

@@ -711,6 +711,10 @@ public class Grid extends Canvas {
 
 	private final DataVisualizer dataVisualizer;
 
+	private Listener defaultKeyListener;
+	
+	private boolean defaultKeyListenerEnabled = true;
+
 	/**
 	 * A range of rows in a <code>Grid</code>.
 	 * <p>
@@ -754,6 +758,8 @@ public class Grid extends Canvas {
 		this(new GridItemDataVisualizer(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE), Display.getCurrent()
 				.getSystemColor(SWT.COLOR_BLACK), null), parent, style);
 	}
+	
+	
 
 	/**
 	 * Constructs a new instance of this class given its parent and a style
@@ -777,6 +783,7 @@ public class Grid extends Canvas {
 	 */
 	public Grid(DataVisualizer dataVisualizer, Composite parent, int style) {
 		super(parent, checkStyle(style));
+		
 		this.dataVisualizer = dataVisualizer;
 
 		// initialize drag & drop support
@@ -5988,12 +5995,13 @@ public class Grid extends Canvas {
 			});
 		}
 
-		addListener(SWT.KeyDown, new Listener() {
+		defaultKeyListener = new Listener() {
 			@Override
 			public void handleEvent(Event e) {
 				onKeyDown(e);
 			}
-		});
+		};
+		addListener(SWT.KeyDown, defaultKeyListener);
 
 		addTraverseListener(new TraverseListener() {
 			@Override
@@ -6062,6 +6070,30 @@ public class Grid extends Canvas {
 				onMouseWheel(e);
 			}
 		});
+	}
+	
+	/**
+	 * Disable default key listener
+	 */
+	public void disableDefaultKeyListener()
+	{
+		if (defaultKeyListenerEnabled)
+		{
+			removeListener(SWT.KeyDown, defaultKeyListener);
+		}
+		defaultKeyListenerEnabled = false;
+	}
+
+	/**
+	 * Enable default key listener
+	 */
+	public void enableDefaultKeyListener()
+	{
+		if (!defaultKeyListenerEnabled)
+		{
+			addListener(SWT.KeyDown, defaultKeyListener);
+		}
+		defaultKeyListenerEnabled = true;
 	}
 
 	private void onFocusIn() {
