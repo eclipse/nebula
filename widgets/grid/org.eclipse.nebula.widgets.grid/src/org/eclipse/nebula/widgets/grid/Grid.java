@@ -6755,7 +6755,7 @@ public class Grid extends Canvas {
 	 *
 	 * @param e event
 	 */
-	private void onKeyDown(Event e) {
+	protected void onKeyDown(Event e) {
 		if (focusColumn == null || focusColumn.isDisposed()) {
 			if (columns.size() == 0)
 				return;

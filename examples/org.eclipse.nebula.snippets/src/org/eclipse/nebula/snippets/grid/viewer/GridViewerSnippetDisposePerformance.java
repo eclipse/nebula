@@ -51,6 +51,7 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
@@ -181,7 +182,14 @@ public class GridViewerSnippetDisposePerformance
 	
 	public GridViewerSnippetDisposePerformance(final Shell shell, boolean createButtons)
 	{
-		final GridTableViewer v = new GridTableViewer(shell, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+		final GridTableViewer v = new GridTableViewer(new Grid(shell, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL) {
+			@Override
+			protected void onKeyDown(Event e)
+			{
+				super.onKeyDown(e);
+				System.out.println(e.keyCode + " Called");
+			}
+		});
 		v.setLabelProvider(new MyLabelProvider());
 		v.setContentProvider(new MyContentProvider());
 		v.getGrid().setCellSelectionEnabled(true);
