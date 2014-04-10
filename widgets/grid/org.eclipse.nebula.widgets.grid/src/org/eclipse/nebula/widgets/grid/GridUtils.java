@@ -128,7 +128,7 @@ public class GridUtils
 					Element childrenElement = doc.createElement(CHILDREN_TAG);
 					rowElement.appendChild(childrenElement);
 					writeChildren(doc, childrenElement, columnsList, items,
-							gridItem.getGridItemChildrenDataVisualizer(), level + 1);
+							gridItem.getParent().getDataVisualizer(), level + 1);
 				}
 			}
 		}

@@ -414,4 +414,23 @@ public class GridItemDataVisualizer implements DataVisualizer {
 		this.defaultFont = defaultFont;
 	}
 
+	/**
+	 * @see org.eclipse.nebula.widgets.grid.DataVisualizer#clearAll()
+	 */
+	@Override
+	public void clearAll()
+	{
+		texts.clear();
+		toolTipTexts.clear();
+		foregrounds.clear();
+		backgrounds.clear();
+		images.clear();
+		fonts.clear();
+		rowSpans.clear();
+		columnSpans.clear();
+		grayeds.clear();
+		checkables.clear();
+		checkeds.clear();
+	}
+
 }

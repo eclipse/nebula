@@ -248,5 +248,10 @@ public interface DataVisualizer {
 	 * set default font
 	 */
 	void setDefaultFont(Font defaultFont);
+	
+	/**
+	 * Clear all data on {@link DataVisualizer}
+	 */
+	void clearAll();
 
 }

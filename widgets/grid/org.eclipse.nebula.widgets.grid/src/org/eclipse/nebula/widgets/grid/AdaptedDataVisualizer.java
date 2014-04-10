@@ -344,4 +344,15 @@ public class AdaptedDataVisualizer implements DataVisualizer {
 		 */
 	}
 
+	/**
+	 * @see org.eclipse.nebula.widgets.grid.DataVisualizer#clearAll()
+	 */
+	@Override
+	public void clearAll()
+	{
+		/**
+		 * Is empty
+		 */
+	}
+
 }

@@ -179,19 +179,19 @@ public class GridTableViewer extends AbstractTableViewer {
 	/** {@inheritDoc} */
 	@Override
 	protected void doClear(int index) {
-		// TODO Fix when grid supports virtual
+		grid.getDataVisualizer().clearRow(grid.getItem(index));
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	protected void doClearAll() {
-		// TODO Fix when grid supports virtual
+		grid.getDataVisualizer().clearAll();
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	protected void doSetItemCount(int count) {
-		// TODO Once grid supports virtual
+		grid.setItemCount(count);
 	}
 
 	/** {@inheritDoc} */
