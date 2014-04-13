@@ -32,7 +32,7 @@ public class GridViewerRow extends ViewerRow
     private GridItem item;
 
     /**
-     * Create a new instance of the receiver. Test
+     * Create a new instance of the receiver.
      *
      * @param item GridItem source.
      */
