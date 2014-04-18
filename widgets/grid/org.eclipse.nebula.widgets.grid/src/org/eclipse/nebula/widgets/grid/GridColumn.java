@@ -257,6 +257,7 @@ public class GridColumn extends Item {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void dispose() {
 		if (!parent.isDisposing()) {
 			parent.removeColumn(this);
@@ -569,9 +570,8 @@ public class GridColumn extends Item {
 		GC gc = new GC(parent);
 		int newWidth = getHeaderRenderer().computeSize(gc, SWT.DEFAULT,
 				SWT.DEFAULT, this).x;
-		GridItem[] items = parent.getItems();
-		for (int i = 0; i < items.length; i++) {
-			GridItem item = items[i];
+		for (int i = 0; i < parent.getItemCount(); i++) {
+			GridItem item = parent.getItem(i);
 			if (item.isVisible()) {
 				getCellRenderer().setColumn(parent.indexOf(this));
 				newWidth = Math.max(newWidth, getCellRenderer().computeSize(gc,
@@ -1197,6 +1197,7 @@ public class GridColumn extends Item {
 			// a later one needs more space
 			control.getDisplay().asyncExec(new Runnable() {
 
+				@Override
 				public void run() {
 					if (GridColumn.this.controlEditor != null
 							&& GridColumn.this.controlEditor.getEditor() != null) {

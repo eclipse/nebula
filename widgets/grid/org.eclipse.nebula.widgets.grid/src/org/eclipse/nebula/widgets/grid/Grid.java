@@ -1824,7 +1824,7 @@ public class Grid extends Canvas {
 	 */
 	public int getItemCount() {
 		checkWidget();
-		return getItems().length;
+		return items.size();
 	}
 
 	/**
@@ -1959,7 +1959,7 @@ public class Grid extends Canvas {
 	public int getIndexOfItem(GridItem item) {
 		checkWidget();
 
-		return items.indexOf(item);
+		return item.getRowIndex();
 	}
 
 	/**
@@ -7581,6 +7581,9 @@ public class Grid extends Canvas {
 		else {
 			items.add(index, item);
 			row = index;
+			for(int i = index+1; i < items.size(); i++) {
+				items.get(i).increaseRow();
+			}
 		}
 
 		if (items.size() == 1 && !userModifiedItemHeight)
@@ -7614,12 +7617,18 @@ public class Grid extends Canvas {
 		Point[] cells = getCells(item);
 		boolean selectionModified = false;
 
+		int index = item.getRowIndex();
+		
 		items.remove(item);
 
 		dataVisualizer.clearRow(item);
 
 		if (disposing)
 			return;
+		
+		for(int i = index; i < items.size(); i++) {
+			items.get(i).decreaseRow();
+		}
 
 		if (selectedItems.remove(item))
 			selectionModified = true;
@@ -8933,7 +8942,7 @@ public class Grid extends Canvas {
 				// Grid Items
 				GridItem item = getItem(location);
 				if (item != null) {
-					for (int i = 0; i < getItems().length; i++) {
+					for (int i = 0; i < getItemCount(); i++) {
 						if (item.equals(getItem(i))) {
 							e.childID = i;
 							return;
@@ -8943,10 +8952,11 @@ public class Grid extends Canvas {
 				else {
 					// Column Headers
 					GridColumn column = overColumnHeader(location.x, location.y);
+					int itemCount = getItemCount();
 					if (column != null) {
 						for (int i = 0; i < getColumns().length; i++) {
 							if (column.equals(getColumn(i))) {
-								e.childID = getItems().length + i;
+								e.childID = itemCount + i;
 								return;
 							}
 						}
@@ -8962,12 +8972,12 @@ public class Grid extends Canvas {
 									if (toggle.contains(location.x, location.y)) {
 										// Toggle button for column group
 										// header
-										e.childID = getItems().length + getColumns().length + getColumnGroups().length
+										e.childID = itemCount + getColumns().length + getColumnGroups().length
 												+ i;
 									}
 									else {
 										// Column Group header
-										e.childID = getItems().length + getColumns().length + i;
+										e.childID = itemCount + getColumns().length + i;
 									}
 									return;
 								}

@@ -426,11 +426,10 @@ public class GridTableViewer extends AbstractTableViewer {
 	public void refreshRowHeaders(Object element) {
 		boolean refresh = element == null;
 
-		GridItem[] items = getGrid().getItems();
-		for (int i = 0; i < items.length; i++) {
-			if (refresh || element.equals(items[i].getData())) {
+		for (int i = 0; i < getGrid().getItemCount(); i++) {
+			if (refresh || element.equals(getGrid().getItem(i).getData())) {
 				refresh = true;
-				updateRowHeader(items[i]);
+				updateRowHeader(getGrid().getItem(i));
 			}
 		}
 	}
@@ -469,9 +468,8 @@ public class GridTableViewer extends AbstractTableViewer {
 			if( selection instanceof SelectionWithFocusRow ) {
 				Object el = ((SelectionWithFocusRow)selection).getFocusElement();
 				if( el != null ) {
-					GridItem[] items = grid.getItems();
-					for( int i = 0; i < items.length; i++) {
-						GridItem item = items[i];
+					for( int i = 0; i < grid.getItemCount(); i++) {
+						GridItem item = grid.getItem(i);
 						if( item.getData() == el || item.getData().equals(el) || (getComparer() != null && getComparer().equals(item.getData(), el)) ) {
 							grid.setFocusItem(item);
 							break;
@@ -482,12 +480,11 @@ public class GridTableViewer extends AbstractTableViewer {
 		} else {
 			CellSelection cellSelection = (CellSelection) selection;
 			List l = cellSelection.toList();
-			GridItem[] items = grid.getItems();
 			ArrayList pts = new ArrayList();
 			
-			for( int i = 0; i < items.length; i++ ) {
+			for( int i = 0; i < grid.getItemCount(); i++ ) {
 				Iterator it = l.iterator();
-				Object itemObject = items[i].getData();
+				Object itemObject = grid.getItem(i).getData();
 				while( it.hasNext() ) {
 					Object checkObject = it.next(); 
 					if( itemObject == checkObject || (getComparer() != null && getComparer().equals(itemObject, checkObject) ) ) {
@@ -504,8 +501,8 @@ public class GridTableViewer extends AbstractTableViewer {
 			grid.setCellSelection(tmp);
 			if( cellSelection.getFocusElement() != null ) {
 				Object el = cellSelection.getFocusElement();
-				for( int i = 0; i < items.length; i++) {
-					GridItem item = items[i];
+				for( int i = 0; i < grid.getItemCount(); i++) {
+					GridItem item = grid.getItem(i);
 					if( item.getData() == el || item.getData().equals(el) || (getComparer() != null && getComparer().equals(item.getData(), el)) ) {
 						grid.setFocusItem(item);
 						break;

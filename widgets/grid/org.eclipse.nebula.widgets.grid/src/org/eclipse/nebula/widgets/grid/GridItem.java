@@ -51,6 +51,8 @@ import org.eclipse.swt.widgets.TypedListener;
  * Mirko removed all collections, improve dispose performance, reduce used memory
  */
 public class GridItem extends Item {
+	private static final int NO_ROW = -1;
+
 	/**
 	 * List of children.
 	 */
@@ -135,6 +137,10 @@ public class GridItem extends Item {
 	 */
 	private boolean hasSetData = false;
 
+	private int row = NO_ROW;
+	
+	private final Object ROW_LOCK = new Object();
+
 	/**
 	 * Creates a new instance of this class and places the item at the end of
 	 * the grid.
@@ -156,7 +162,7 @@ public class GridItem extends Item {
 	 *             </ul>
 	 */
 	public GridItem(Grid parent, int style) {
-		this(parent, style, -1);
+		this(parent, style, NO_ROW);
 	}
 
 	/**
@@ -186,8 +192,7 @@ public class GridItem extends Item {
 
 		this.parent = parent;
 
-
-		parent.newItem(this, index, true);
+		row = parent.newItem(this, index, true);
 		parent.newRootItem(this, index);
 	}
 
@@ -195,7 +200,26 @@ public class GridItem extends Item {
 	 * @return grid row index
 	 */
 	public int getRowIndex() {
+		synchronized (ROW_LOCK)
+		{
+			if(row != NO_ROW)
+				return row;
+		}
 		return parent.indexOf(this);
+	}
+	
+	void increaseRow() {
+		synchronized (ROW_LOCK)
+		{
+			row++;
+		}
+	}
+	
+	void decreaseRow() {
+		synchronized (ROW_LOCK)
+		{
+			row--;
+		}
 	}
 
 	/**
@@ -219,7 +243,7 @@ public class GridItem extends Item {
 	 *             </ul>
 	 */
 	public GridItem(GridItem parent, int style) {
-		this(parent, style, -1);
+		this(parent, style, NO_ROW);
 	}
 
 
@@ -251,7 +275,7 @@ public class GridItem extends Item {
 		parentItem = parent;
 		this.parent = parentItem.getParent();
 
-		this.parent.newItem(this, index, false);
+		row = this.parent.newItem(this, index, false);
 
 		level = parentItem.getLevel() + 1;
 
@@ -524,9 +548,11 @@ public class GridItem extends Item {
 		int height = item.getHeight();
 		span = getRowSpan(columnIndex);
 
+		int itemCount = parent.getItemCount();
+		
 		for (int i = 1; i <= span; i++) {
 			/* We will probably need another escape condition here */
-			if (parent.getItems().length <= indexOfCurrentItem + i) {
+			if (itemCount <= indexOfCurrentItem + i) {
 				break;
 			}
 
@@ -1207,8 +1233,8 @@ public class GridItem extends Item {
 				}
 			}
 
-		this.getParent().topIndex = -1;
-		this.getParent().bottomIndex = -1;
+		this.getParent().topIndex = NO_ROW;
+		this.getParent().bottomIndex = NO_ROW;
 		this.getParent().setScrollValuesObsolete();
 
 		if (unselected) {
@@ -1464,7 +1490,7 @@ public class GridItem extends Item {
 																						// false for
 																						// partially shown
 																						// items
-				parent.bottomIndex = -1;
+				parent.bottomIndex = NO_ROW;
 		}
 		parent.setScrollValuesObsolete();
 		parent.redraw();
@@ -1622,7 +1648,7 @@ public class GridItem extends Item {
 		setHasChildren(true);
 		if (children == null)
 			children = new ArrayList<GridItem>();
-		if (index == -1) {
+		if (index == NO_ROW) {
 			children.add(item);
 		}
 		else {
@@ -1659,7 +1685,7 @@ public class GridItem extends Item {
 			parent.updateVisibleItems(1);
 		}
 		else {
-			parent.updateVisibleItems(-1);
+			parent.updateVisibleItems(NO_ROW);
 		}
 
 		if (hasChildren) {

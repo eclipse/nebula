@@ -27,6 +27,9 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class GridVirtualTableViewer {
 
+	private static final int ROWS = 1000000;
+	private static final int COLUMNS = 1000;
+
 	private class MyLazyContentProvider implements ILazyContentProvider {
 		  private final GridTableViewer viewer;
 		  private MyModel[] elements;
@@ -61,13 +64,15 @@ public class GridVirtualTableViewer {
 
 	public GridVirtualTableViewer(Shell shell) {
 		LabelProvider labelProvider = new LabelProvider();
-		final GridTableViewer v = new GridTableViewer(shell, SWT.V_SCROLL | SWT.VIRTUAL);
+		final GridTableViewer v = new GridTableViewer(shell, SWT.V_SCROLL | SWT.H_SCROLL | SWT.VIRTUAL);
 		
 		v.setLabelProvider(labelProvider);
 		v.setContentProvider(new MyLazyContentProvider(v));
 		v.setUseHashlookup(true);
-		
-		createColumn(v, "Column");
+		for (int i = 0; i < COLUMNS; i++)
+		{
+			createColumn(v, "Column");
+		}
 		
 		MyModel[] model = createModel();
 		v.setInput(model);
@@ -82,9 +87,9 @@ public class GridVirtualTableViewer {
 		column.setText(name);
 	}
 	private MyModel[] createModel() {
-		MyModel[] elements = new MyModel[1000000];
+		MyModel[] elements = new MyModel[ROWS];
 
-		for (int i = 0; i < 1000000; i++) {
+		for (int i = 0; i < ROWS; i++) {
 			elements[i] = new MyModel(i);
 		}
 
