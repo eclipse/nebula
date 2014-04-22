@@ -1772,7 +1772,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         }
     }
 
-    public Rectangle getBounds() {
+    @Override
+	public Rectangle getBounds() {
         if (_mainBounds == null) { return super.getBounds(); }
 
         return new Rectangle(0, 0, super.getBounds().width, _bottomMostY);
@@ -5702,11 +5703,15 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         // +1 as it's the end date and we include the last day (by default anyway, users may override this)
         int extra = getDayWidth() * _daysToAppendForEndOfDay;
         if (_drawToMinute && _currentView != ISettings.VIEW_DAY) {
-        	extra -= calculateMinuteAdjustment(event.getActualEndDate());
+        	extra -= (getDayWidth() - calculateMinuteAdjustment(event.getActualEndDate()));
         	//also subtract the shift that comes from the starting point
         	extra -= calculateMinuteAdjustment(event.getActualStartDate());
         }
-        return (event.getDaysBetweenStartAndEnd() * getDayWidth()) + extra;
+
+        //ensure there is never a negative value
+        int result = (event.getDaysBetweenStartAndEnd() * getDayWidth()) + extra;
+
+        return result > 0 ? result : 1;
     }
 
     /**
@@ -7229,15 +7234,15 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         return ((int) days * dw) + extra;
     }
 
-    
+
     private int calculateMinuteAdjustment(Calendar date) {
-        final float ppm = _dayWidth / (60f * 24f);
+        final float ppm = getDayWidth() / (60f * 24f);
 
         final int mins = (date.get(Calendar.HOUR_OF_DAY) * 60) + date.get(Calendar.MINUTE);
-        
+
         return (int) (mins * ppm);
     }
-    
+
     /**
      * Gets the date for a given x position.
      * 
@@ -8807,7 +8812,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     }
 
     // override so we can tell paint manager to reset
-    public void redraw() {
+    @Override
+	public void redraw() {
         _paintManager.redrawStarting();
         super.redraw();
     }
