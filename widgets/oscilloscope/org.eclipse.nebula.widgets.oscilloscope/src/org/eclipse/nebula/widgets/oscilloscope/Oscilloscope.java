@@ -242,7 +242,7 @@ public class Oscilloscope extends
 
 	/**
 	 * This method keeps its own record of listeners but delegates to the
-	 * superclass.
+	 * instance of the superclass.
 	 * 
 	 * @param listener
 	 * @deprecated use
