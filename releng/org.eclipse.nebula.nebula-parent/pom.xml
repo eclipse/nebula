@@ -126,8 +126,7 @@
 				<version>${tycho-version}</version>
 				<configuration>
 					<useUIHarness>true</useUIHarness>
-					<argLine>${tycho.testArgLine} -Xmx512m -Djava.awt.headless=true
-						${tests.vmargs}</argLine>
+					<argLine>${tycho.testArgLine} -Xmx512m -Djava.awt.headless=true ${tests.vmargs}</argLine>
 				</configuration>
 			</plugin>
 			<plugin>
