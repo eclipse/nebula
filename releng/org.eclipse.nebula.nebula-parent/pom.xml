@@ -21,7 +21,7 @@
 		<junit-version>4.8.1</junit-version>
 		<jacoco-version>0.6.3.201306030806</jacoco-version>
 		<signer-input-directory>/home/data/httpd/download-staging.priv/technology/nebula</signer-input-directory>
-		<tycho.scmUrl>scm:git:https://git.eclipse.org/r/p/nebula/nebula.git</tycho.scmUrl>
+		<tycho.scmUrl>scm:git:https://git.eclipse.org/r/p/nebula/org.eclipse.nebula</tycho.scmUrl>
 	</properties>
 
 
