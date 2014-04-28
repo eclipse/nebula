@@ -14,6 +14,7 @@
  *    Benjamin Bortfeldt<bbortfeldt@gmail.com> - new tooltip support in 300797
  *    Thomas Halm <thha@fernbach.com> - bugfix in 315397
  *    Cserveny Tamas <cserveny.tamas@gmail.com> - bugfix in 318984
+ *    Mirko Paturzo <mirko.paturzo@exeura.eu> - bugfix in 248388
  *******************************************************************************/
 package org.eclipse.nebula.widgets.grid;
 
@@ -269,7 +270,18 @@ public class GridColumn extends Item {
 				}
 		}
 
-
+        if(cellRenderer != null)
+        {
+        	cellRenderer.setDisplay(null);
+        	cellRenderer = null;
+        }
+        
+        if(headerRenderer != null)
+        {
+        	headerRenderer.setDisplay(null);
+        	headerRenderer = null;
+        }
+        
 		super.dispose();
 	}
 

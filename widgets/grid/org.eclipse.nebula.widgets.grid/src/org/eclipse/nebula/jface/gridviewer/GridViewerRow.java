@@ -9,6 +9,7 @@
  *    rmcamara@us.ibm.com - initial API and implementation
  *    Tom Schindl <tom.schindl@bestsolution.at> - various significant contributions
  *    											  bug fix in: 191216
+ *    Mirko Paturzo <mirko.paturzo@exeura.eu> - improvement (bugfix in 387366)
  *******************************************************************************/
 
 package org.eclipse.nebula.jface.gridviewer;
@@ -228,9 +229,8 @@ public class GridViewerRow extends ViewerRow
 
 		if( index < item.getParent().getItemCount() ) {
 			GridItem tmp = item.getParent().getItem(index);
-			/**
-			 * Maybe this is a dummy item!!
-			 */
+			// Maybe this is a dummy item!!
+			
 			if(tmp != null && !tmp.isDisposed() && tmp.isVisible() && tmp.getData() != null) {
 				return new GridViewerRow(tmp);
 			}
