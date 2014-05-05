@@ -582,12 +582,20 @@ public class GridColumn extends Item {
 		GC gc = new GC(parent);
 		int newWidth = getHeaderRenderer().computeSize(gc, SWT.DEFAULT,
 				SWT.DEFAULT, this).x;
+		int indexOf = parent.indexOf(this);
+		int bottomIndex = getParent().getBottomIndex() + 1;
+		int topIndex = getParent().getTopIndex();
+		getCellRenderer().setColumn(indexOf);
+		boolean virtual = (getParent().getStyle() & SWT.VIRTUAL) != 0;
 		for (int i = 0; i < parent.getItemCount(); i++) {
 			GridItem item = parent.getItem(i);
 			if (item.isVisible()) {
-				getCellRenderer().setColumn(parent.indexOf(this));
 				newWidth = Math.max(newWidth, getCellRenderer().computeSize(gc,
 						SWT.DEFAULT, SWT.DEFAULT, item).x);
+			}
+			if(virtual && (i > bottomIndex || i < topIndex)) {
+				getParent().getDataVisualizer().clearRow(item);
+				item.setHasSetData(false);
 			}
 		}
 		gc.dispose();

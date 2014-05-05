@@ -1984,7 +1984,7 @@ public class GridItem extends Item {
 			Event event = new Event();
 			event.item = this;
 			if (parentItem == null) {
-				event.index = getParent().indexOf(this);
+				event.index = getRowIndex();
 			}
 			else {
 				event.index = parentItem.indexOf(this);
@@ -2001,6 +2001,11 @@ public class GridItem extends Item {
 	 */
 	void initializeHeight(int height) {
 		this.height = height;
+	}
+	
+	void setHasSetData(boolean hasSetData)
+	{
+		this.hasSetData = hasSetData;
 	}
 
 	/**
