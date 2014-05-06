@@ -80,6 +80,7 @@ public class GridVirtualTableViewer {
 
 		v.getGrid().setLinesVisible(true);
 		v.getGrid().setHeaderVisible(true);
+		v.getGrid().setVisibleLinesColumnPack(true);
 	}
 	private void createColumn(final GridTableViewer v, String name) {
 		GridColumn column = new GridColumn(v.getGrid(), SWT.NONE);

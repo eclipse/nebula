@@ -237,6 +237,12 @@ public class Grid extends Canvas {
 	 * operation when unnecessary.
 	 */
 	private boolean scrollValuesObsolete = false;
+	
+	/**
+	 * When this variable is true, the pack is based only on the visible lines on 
+	 * the screen.  
+	 */
+	private boolean visibleLinesBasedColumnPack = false;
 
 	/**
 	 * All items in the table, not just root items.
@@ -3698,6 +3704,28 @@ public class Grid extends Canvas {
 		}
 		redraw();
 	}
+	
+	/**
+	 * If <code>true</code>, column pack is based only with the visible lines (from topIndex
+	 * to bottomIndex).
+	 * <code>false</code> pack is in default mode.
+	 * @return optimizedColumnPack value
+	 */
+	public boolean isVisibleLinesColumnPack()
+	{
+		return visibleLinesBasedColumnPack;
+	}
+
+	/**
+	 * Set optimizedColumnPack to <code>true</code> for column pack based only with the 
+	 * visible lines.
+	 * @param visibleLinesBasedColumnPack
+	 */
+	public void setVisibleLinesColumnPack(boolean visibleLinesBasedColumnPack)
+	{
+		this.visibleLinesBasedColumnPack = visibleLinesBasedColumnPack;
+	}
+
 
 	/**
 	 * Selects the items at the given zero-relative indices in the receiver. The
