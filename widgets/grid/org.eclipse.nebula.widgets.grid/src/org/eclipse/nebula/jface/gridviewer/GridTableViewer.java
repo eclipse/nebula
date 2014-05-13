@@ -187,6 +187,22 @@ public class GridTableViewer extends AbstractTableViewer {
 	protected void doClearAll() {
 		grid.getDataVisualizer().clearAll();
 	}
+	
+	/**
+	 * @see org.eclipse.jface.viewers.StructuredViewer#refresh()
+	 */
+	@Override
+	public void refresh()
+	{
+		try
+		{
+			super.refresh();
+		}
+		finally
+		{
+			grid.refreshData();
+		}
+	}
 
 	/** {@inheritDoc} */
 	@Override

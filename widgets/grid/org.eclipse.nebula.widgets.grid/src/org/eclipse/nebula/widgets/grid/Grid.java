@@ -7614,8 +7614,12 @@ public class Grid extends Canvas {
 			}
 		}
 
-		if (items.size() == 1 && !userModifiedItemHeight)
+		if (items.size() == 1 && !userModifiedItemHeight) {
 			itemHeight = computeItemHeight(item, sizingGC);
+			// virtual problems here
+			if ((getStyle() & SWT.VIRTUAL) != 0)
+				item.setHasSetData(false);
+		}
 
 		item.initializeHeight(itemHeight);
 
@@ -9886,5 +9890,17 @@ public class Grid extends Canvas {
 	 */
 	public boolean isWordWrapHeader() {
 		return wordWrapRowHeader;
+	}
+
+	/**
+	 * Refresh hasData {@link GridItem} state if {@link Grid} is virtual
+	 */
+	public void refreshData()
+	{
+		if((getStyle() & SWT.VIRTUAL) != 0)
+			for (GridItem item : items)
+			{
+				item.setHasSetData(false);
+			}
 	}
 }
