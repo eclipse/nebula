@@ -46,7 +46,8 @@ public class DefaultRowHeaderRenderer extends AbstractRenderer
     /**
      * {@inheritDoc}
      */
-    public void paint(GC gc, Object value)
+    @Override
+	public void paint(GC gc, Object value)
     {
         GridItem item = (GridItem) value;
 
@@ -205,7 +206,8 @@ public class DefaultRowHeaderRenderer extends AbstractRenderer
     /**
      * {@inheritDoc}
      */
-    public Point computeSize(GC gc, int wHint, int hHint, Object value)
+    @Override
+	public Point computeSize(GC gc, int wHint, int hHint, Object value)
     {
         GridItem item = (GridItem) value;
 
@@ -247,7 +249,7 @@ public class DefaultRowHeaderRenderer extends AbstractRenderer
         String text = item.getHeaderText();
         if (text == null)
         {
-            text = (item.getParent().indexOf(item) + 1) + "";
+            text = (item.getRowIndex() + 1) + "";
         }
         return text;
     }
@@ -268,7 +270,8 @@ public class DefaultRowHeaderRenderer extends AbstractRenderer
             textLayout.setFont(gc.getFont());
             gridItem.getParent().addDisposeListener(new DisposeListener()
             {                
-                public void widgetDisposed(DisposeEvent e)
+                @Override
+				public void widgetDisposed(DisposeEvent e)
                 {
                     textLayout.dispose();
                 }                

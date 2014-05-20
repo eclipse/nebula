@@ -261,7 +261,7 @@ public class GridTableViewer extends AbstractTableViewer {
 	/** {@inheritDoc} */
 	@Override
 	protected int doIndexOf(Item item) {
-		return grid.indexOf((GridItem) item);
+		return ((GridItem) item).getRowIndex();
 	}
 
 	/** {@inheritDoc} */

@@ -1797,7 +1797,7 @@ public class GridItem extends Item {
 		if (text != headerText) {
 			GC gc = new GC(parent);
 
-			int oldWidth = parent.getRowHeaderRenderer().computeSize(gc, SWT.DEFAULT, SWT.DEFAULT, this).x;
+			int oldWidth = headerText == null ? 0 : parent.getRowHeaderRenderer().computeSize(gc, SWT.DEFAULT, SWT.DEFAULT, this).x;
 
 			this.headerText = text;
 
