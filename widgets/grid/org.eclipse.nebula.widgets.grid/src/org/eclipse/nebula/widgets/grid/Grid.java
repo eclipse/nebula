@@ -8909,8 +8909,9 @@ public class Grid extends Canvas {
 			count = 0;
 		
 		if (count < items.size()) {
-			for(int i = count; i < items.size(); i++){
-				dataVisualizer.clearRow(items.get(i));
+			
+			for(int i = items.size() - 1; i >= count; i--){
+				items.get(i).dispose();
 			}
 		}
 
