@@ -714,7 +714,7 @@ public class Grid extends Canvas {
 	private boolean autoHeight = false;
 	private boolean autoWidth = true;
 	private boolean wordWrapRowHeader = false;
-
+	
 	private final DataVisualizer dataVisualizer;
 
 	private Listener defaultKeyListener;
@@ -7646,6 +7646,7 @@ public class Grid extends Canvas {
 	 * @param item item to remove
 	 */
 	void removeItem(GridItem item) {
+		
 		Point[] cells = getCells(item);
 		boolean selectionModified = false;
 
@@ -7684,11 +7685,12 @@ public class Grid extends Canvas {
 		if (selectionModified && !disposing) {
 			updateColumnSelection();
 		}
-
+		
 		redraw();
 		// Need to update the scrollbars see see 375327
 		updateScrollbars();
 	}
+
 
 	/**
 	 * Creates the given column group at the given index. This method is only
@@ -8890,7 +8892,7 @@ public class Grid extends Canvas {
 		setAutoWidth(false);
 		redraw();
 	}
-
+	
 	/**
 	 * Sets the number of items contained in the receiver.
 	 *
@@ -8910,9 +8912,23 @@ public class Grid extends Canvas {
 		
 		if (count < items.size()) {
 			
+			selectedCells.clear();
 			for(int i = items.size() - 1; i >= count; i--){
-				items.get(i).dispose();
+				GridItem removed = items.remove(i);
+				rootItems.remove(i);
+				
+				selectedItems.remove(removed);
+				
+				if(removed.isVisible())
+					currentVisibleItems--;
+				removed.disposeOnly();
 			}
+			if (!disposing) {
+				updateColumnSelection();
+			}
+			scrollValuesObsolete = true;
+			topIndex = -1;
+			bottomIndex = -1;
 		}
 
 		while (count > items.size()) {
