@@ -972,7 +972,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
                   custData.setName(diagSelectedCustomizeData.getName());
                   custData.setGuid(diagSelectedCustomizeData.getGuid());
                }
-               custData.setPersonal(!diag.isSaveGlobal());
+               custData.setPersonal(!diag.isSaveShared());
                xViewerToCustomize.getCustomizeMgr().saveCustomization(custData);
             } catch (Exception ex) {
                XViewerLog.logAndPopup(Activator.class, Level.SEVERE, ex);
@@ -1068,12 +1068,17 @@ public class XViewerCustomizeDialog extends MessageDialog {
             return;
          }
          if (!custSel.isPersonal() && !xViewerToCustomize.getXViewerFactory().isAdmin()) {
-            XViewerLib.popup("ERROR", XViewerText.get("error.delete_global"));
+            XViewerLib.popup("ERROR", XViewerText.get("error.delete_shared"));
             return;
          }
-         if (MessageDialog.openConfirm(Display.getCurrent().getActiveShell(),
-            XViewerText.get("XViewerCustomizeDialog.prompt.delete.title"),
-            MessageFormat.format(XViewerText.get("XViewerCustomizeDialog.prompt.delete"), custSel.getName()))) {
+         String dialogTitle = XViewerText.get("XViewerCustomizeDialog.prompt.delete.title");
+         String dialogMessage = XViewerText.get("XViewerCustomizeDialog.prompt.delete");
+         if (!custSel.isPersonal()) {
+            dialogTitle = XViewerText.get("XViewerCustomizeDialog.prompt.delete.shared.title");
+            dialogMessage = XViewerText.get("XViewerCustomizeDialog.prompt.delete.shared");
+         }
+         if (MessageDialog.openConfirm(Display.getCurrent().getActiveShell(), dialogTitle,
+            MessageFormat.format(dialogMessage, custSel.getName()))) {
             xViewerToCustomize.getCustomizeMgr().deleteCustomization(custSel);
             loadCustomizeTable();
             updateButtonEnablements();

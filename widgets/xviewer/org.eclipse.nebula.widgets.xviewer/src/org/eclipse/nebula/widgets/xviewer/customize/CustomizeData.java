@@ -15,9 +15,8 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.nebula.widgets.xviewer.Activator;
-import org.eclipse.nebula.widgets.xviewer.util.internal.OverlayUtil;
-import org.eclipse.nebula.widgets.xviewer.util.internal.OverlayUtil.Location;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
 import org.eclipse.swt.graphics.Image;
@@ -66,23 +65,26 @@ public class CustomizeData implements Comparable<CustomizeData> {
    }
 
    public Image getImage(boolean isDefault) {
-      if (name.equals(CustomizeManager.TABLE_DEFAULT_LABEL) || name.equals(CustomizeManager.CURRENT_LABEL)) {
-         return XViewerLib.getImage("customize.gif");
-      }
-      String index = "" + personal + isDefault;
-      if (imageMap.containsKey(index)) {
-         return imageMap.get(index);
-      }
       Image image = XViewerLib.getImage("customize.gif");
-      if (!personal) {
-         image =
-            new OverlayUtil(image, XViewerLib.getImageDescriptor("customizeG.gif"), Location.BOT_RIGHT).createImage();
+      if (!personal && isDefault) {
+         image = XViewerLib.getImage("customizeSharedDefault.gif");
+      } else if (!personal) {
+         image = XViewerLib.getImage("customizeShared.gif");
+      } else if (isDefault) {
+         image = XViewerLib.getImage("customizeDefault.gif");
       }
-      if (isDefault) {
-         image =
-            new OverlayUtil(image, XViewerLib.getImageDescriptor("customizeD.gif"), Location.TOP_RIGHT).createImage();
+      return image;
+   }
+
+   public ImageDescriptor getImageDescriptor(boolean isDefault) {
+      ImageDescriptor image = XViewerLib.getImageDescriptor("customize.gif");
+      if (!personal && isDefault) {
+         image = XViewerLib.getImageDescriptor("customizeSharedDefault.gif");
+      } else if (!personal) {
+         image = XViewerLib.getImageDescriptor("customizeShared.gif");
+      } else if (isDefault) {
+         image = XViewerLib.getImageDescriptor("customizeDefault.gif");
       }
-      imageMap.put(index, image);
       return image;
    }
 
@@ -180,4 +182,5 @@ public class CustomizeData implements Comparable<CustomizeData> {
    public int compareTo(CustomizeData custData) {
       return getName().compareToIgnoreCase(custData.getName());
    }
+
 }

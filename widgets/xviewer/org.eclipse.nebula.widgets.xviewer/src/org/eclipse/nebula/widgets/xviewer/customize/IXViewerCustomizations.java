@@ -14,7 +14,7 @@ import java.util.List;
 import org.eclipse.nebula.widgets.xviewer.util.XViewerException;
 
 /**
- * Methods to implement if this XViewer allows the user to save local/global customizations
+ * Methods to implement if this XViewer allows the user to save local/shared customizations
  * 
  * @author Donald G. Dunne
  */
@@ -53,7 +53,7 @@ public interface IXViewerCustomizations {
    void deleteCustomization(CustomizeData custData) throws Exception;
 
    /**
-    * Return true if this XViewer is allowed to save local/global customizations
+    * Return true if this XViewer is allowed to save local/shared customizations
     */
    boolean isCustomizationPersistAvailable();
 

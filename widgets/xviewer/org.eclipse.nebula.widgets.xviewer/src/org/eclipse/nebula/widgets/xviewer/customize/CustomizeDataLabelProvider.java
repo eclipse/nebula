@@ -45,8 +45,9 @@ public class CustomizeDataLabelProvider implements ILabelProvider {
    public String getText(Object arg0) {
       try {
          CustomizeData custom = (CustomizeData) arg0;
-         String text =
-            (xViewer.getCustomizeMgr().isCustomizationUserDefault(custom) ? "(Default) " : "") + custom.getName();
+         boolean custDefault = xViewer.getCustomizeMgr().isCustomizationUserDefault(custom);
+         String text = (custDefault ? "(Default) " : "") + custom.getName();
+         text = text + (custom.isPersonal() ? "" : " (Shared)");
          return text;
       } catch (XViewerException ex) {
          XViewerLog.log(CustomizeDataLabelProvider.class, Level.SEVERE, ex.toString(), ex);

@@ -34,6 +34,11 @@ public class TableCustomizationCustomizeDataAction extends Action {
 
    @Override
    public ImageDescriptor getImageDescriptor() {
+      try {
+         return custData.getImageDescriptor(xViewer.getCustomizeMgr().isCustomizationUserDefault(custData));
+      } catch (Exception ex) {
+         // do nothing
+      }
       return XViewerImageCache.getImageDescriptor("customize.gif");
    }
 

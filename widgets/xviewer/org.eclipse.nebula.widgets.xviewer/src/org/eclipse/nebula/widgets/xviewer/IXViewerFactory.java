@@ -36,7 +36,7 @@ public interface IXViewerFactory {
    XViewerColumn getDefaultXViewerColumn(String id);
 
    /**
-    * Provides the storage mechanism for save/load of personal/global customizations
+    * Provides the storage mechanism for save/load of personal/shared customizations
     */
    IXViewerCustomizations getXViewerCustomizations();
 
