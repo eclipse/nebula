@@ -108,6 +108,13 @@ import org.eclipse.swt.widgets.TypedListener;
  * fix memory leak and slow disposed object 
  */
 public class Grid extends Canvas {
+	
+	
+	/**
+	 * Cached default font of Control.getFont.
+	 */
+	private Font defaultFont;
+	
 	//TODO: figure out better way to allow renderers to trigger events
 	//TODO: scroll as necessary when performing drag select (current strategy ok)
 	//TODO: need to refactor the way the range select remembers older selection
@@ -1642,6 +1649,17 @@ public class Grid extends Canvas {
 	public int getHeaderHeight() {
 		checkWidget();
 		return headerHeight;
+	}
+	
+	/** Cached default font of Control.getFont
+	 * @see org.eclipse.swt.widgets.Control#getFont()
+	 */
+	@Override
+	public Font getFont()
+	{
+		if(defaultFont == null)
+			defaultFont = super.getFont();
+		return defaultFont;
 	}
 
 	/**
@@ -4195,7 +4213,7 @@ public class Grid extends Canvas {
 		for (Iterator columnsIterator = columns.iterator(); columnsIterator.hasNext();) {
 			GridColumn column = (GridColumn) columnsIterator.next();
 			colHeaderHeight = Math.max(
-					column.getHeaderRenderer().computeSize(gc, column.getWidth(), SWT.DEFAULT, column).y,
+					column.getHeaderHeight(gc),
 					colHeaderHeight);
 		}
 
@@ -4216,7 +4234,7 @@ public class Grid extends Canvas {
 		for (Iterator columnsIterator = columns.iterator(); columnsIterator.hasNext();) {
 			GridColumn column = (GridColumn) columnsIterator.next();
 			colFooterHeight = Math.max(
-					column.getFooterRenderer().computeSize(gc, column.getWidth(), SWT.DEFAULT, column).y,
+					column.getFooterHeight(gc),
 					colFooterHeight);
 		}
 

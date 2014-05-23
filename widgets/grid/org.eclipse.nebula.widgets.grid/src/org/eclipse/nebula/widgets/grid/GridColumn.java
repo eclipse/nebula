@@ -77,6 +77,31 @@ public class GridColumn extends Item {
 	 * Cell renderer.
 	 */
 	private GridCellRenderer cellRenderer = new DefaultCellRenderer();
+	
+	private static int NOT_CALCULATED_YET = -1;
+	
+	/**
+	 * Caching of footerHeight
+	 */
+	private int footerHeight = NOT_CALCULATED_YET;
+	
+	private int headerHeight = NOT_CALCULATED_YET;
+
+	int getFooterHeight(GC gc)
+	{
+		if(footerHeight == NOT_CALCULATED_YET) {
+			footerHeight = getFooterRenderer().computeSize(gc, getWidth(), SWT.DEFAULT, this).y;
+		}
+		return footerHeight;
+	}
+
+	int getHeaderHeight(GC gc)
+	{
+		if(headerHeight == NOT_CALCULATED_YET) {
+			headerHeight = getHeaderRenderer().computeSize(gc, getWidth(), SWT.DEFAULT, this).y;
+		}
+		return headerHeight;
+	}
 
 	/**
 	 * Width of column.
@@ -379,6 +404,8 @@ public class GridColumn extends Item {
 			parent.setScrollValuesObsolete();
 			parent.redraw();
 		}
+		footerHeight = NOT_CALCULATED_YET;
+		headerHeight = NOT_CALCULATED_YET;
 	}
 
 	/**
