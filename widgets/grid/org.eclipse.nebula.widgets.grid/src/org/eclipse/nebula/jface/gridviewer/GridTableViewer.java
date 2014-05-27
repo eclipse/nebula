@@ -584,7 +584,7 @@ public class GridTableViewer extends AbstractTableViewer {
 
 		Object focusElement = null;
 
-		if (grid.getFocusItem() != null) {
+		if (grid.getFocusItem() != null && ! grid.getFocusItem().isDisposed()) {
 			focusElement = grid.getFocusItem().getData();
 		}
 
