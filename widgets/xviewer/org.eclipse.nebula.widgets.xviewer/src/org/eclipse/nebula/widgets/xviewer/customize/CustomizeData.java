@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.xviewer.customize;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,7 +39,6 @@ public class CustomizeData implements Comparable<CustomizeData> {
    }
 
    protected ColumnData columnData = new ColumnData();
-   private final Map<String, Image> imageMap = new HashMap<String, Image>();
 
    public CustomizeData() {
       // do nothing

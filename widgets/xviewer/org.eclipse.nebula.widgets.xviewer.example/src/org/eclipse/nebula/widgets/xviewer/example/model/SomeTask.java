@@ -123,6 +123,7 @@ public class SomeTask implements ISomeTask {
       this.lastRunDate = lastRunDate;
    }
 
+   @Override
    public long getLongValue() {
       return longValue;
    }
