@@ -3104,6 +3104,14 @@ public class Grid extends Canvas {
 			gridItem.disposeOnly();
 		}
 		clearItems();
+		scrollValuesObsolete = true;
+		topIndex = -1;
+		bottomIndex = -1;
+		currentVisibleItems = 0;
+		updateColumnSelection();
+		redraw();
+		// Need to update the scrollbars see see 375327
+		updateScrollbars();
 	}
 
 	/**
