@@ -8884,6 +8884,7 @@ public class Grid extends Canvas {
 	@Override
 	public void setFont(Font font) {
 		dataVisualizer.setDefaultFont(font);
+		defaultFont = font;
 		super.setFont(font);
 		sizingGC.setFont(font);
 	}
