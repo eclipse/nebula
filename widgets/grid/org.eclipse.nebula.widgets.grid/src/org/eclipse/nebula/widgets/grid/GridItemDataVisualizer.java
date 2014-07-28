@@ -384,8 +384,12 @@ public class GridItemDataVisualizer implements DataVisualizer {
 
 		if (collections != null) {
 			for (List<T> list : collections) {
-				if (!list.isEmpty())
+				if (!list.isEmpty()) {
+					for(int i = list.size(); i < column; i++) {
+						list.add(i, null);
+					}
 					list.add(column, null);
+				}
 			}
 		}
 	}
