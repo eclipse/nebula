@@ -307,7 +307,7 @@ public class GridItemDataVisualizer implements DataVisualizer {
 	 */
 	@Override
 	public void setToolTipText(GridItem gridItem, int column, String tooltip) {
-		put(texts, gridItem, column, tooltip);
+		put(toolTipTexts, gridItem, column, tooltip);
 	}
 
 	/**
