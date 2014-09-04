@@ -38,7 +38,8 @@ public class XPromptChange {
    public static Date promptChangeDate(String displayName, Date currDate) {
       // prompt that current release is (get from attribute); want to change
       DateSelectionDialog diag =
-         new DateSelectionDialog(XViewerText.get("XPromptChange.dialog.date_selection") + " " + displayName, XViewerText.get("XPromptChange.dialog.date_selection") + " " + displayName, currDate != null ? currDate : null);  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+         new DateSelectionDialog(
+            XViewerText.get("XPromptChange.dialog.date_selection") + " " + displayName, XViewerText.get("XPromptChange.dialog.date_selection") + " " + displayName, currDate != null ? currDate : null); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
       if (diag.open() == 0) {
          return diag.getSelectedDate();
       }
@@ -87,7 +88,9 @@ public class XPromptChange {
    }
 
    public static String promptChangeString(String displayName, String currEntry, String validationRegEx, Option option) {
-      DialogWithEntry ed = new DialogWithEntry(XViewerText.get("XPromptChange.dialog.entry") + " " + displayName, XViewerText.get("XPromptChange.dialog.entry") + " " + displayName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+      DialogWithEntry ed =
+         new DialogWithEntry(
+            XViewerText.get("XPromptChange.dialog.entry") + " " + displayName, XViewerText.get("XPromptChange.dialog.entry") + " " + displayName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
       if (option == Option.MULTI_LINE) {
          ed.setFillVertically(true);
       }
@@ -107,10 +110,11 @@ public class XPromptChange {
    public static Boolean promptChangeBoolean(String displayName, String toggleMessage, boolean currSelection) {
       MessageDialogWithToggle md =
          new MessageDialogWithToggle(Display.getCurrent().getActiveShell(), displayName, null, displayName,
-            MessageDialog.QUESTION, new String[] {XViewerText.get("button.ok"), XViewerText.get("button.cancel")}, Window.OK, //$NON-NLS-1$ //$NON-NLS-2$
+            MessageDialog.QUESTION,
+            new String[] {XViewerText.get("button.ok"), XViewerText.get("button.cancel")}, Window.OK, //$NON-NLS-1$ //$NON-NLS-2$
             (toggleMessage != null ? toggleMessage : displayName), currSelection);
       int result = md.open();
-      if (result == 256) {
+      if (result == Window.OK) {
          return md.getToggleState();
       }
       return null;
