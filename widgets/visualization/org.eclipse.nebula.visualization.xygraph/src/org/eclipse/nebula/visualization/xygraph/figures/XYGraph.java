@@ -469,6 +469,8 @@ public class XYGraph extends Figure{
 			}
 		}
 		plotArea.removeTrace(trace);
+		trace.getXAxis().removeTrace(trace);
+		trace.getYAxis().removeTrace(trace);
 		revalidate();
 		repaint();
 	}
