@@ -352,8 +352,8 @@ public class Axis extends LinearScale{
 		//    it is impossible to determine if maybe _this_ axis
 		//    should suspend auto-zoom.
 		//    -> Just to the auto-zoom, don't second-guess.
-		//(!force && xyGraph.getZoomType() != ZoomType.NONE)
-		//  return false;
+		if(!force && xyGraph.getZoomType() != ZoomType.NONE)
+		  return false;
 
 	    // Get range of data in all traces
         final Range range = getTraceDataRange();
