@@ -84,9 +84,12 @@ public class CircularBuffer<T> extends AbstractCollection<T> {
 	 * clear the buffer;
 	 */
 	public synchronized void clear(){
+		for(int i=0; i<count; i++){
+			buffer[(head+i)%bufferSize] = null;
+		}
 		head = 0;
 		tail = 0;
-		count = 0;
+		count = 0;		
 	}
 
 	/**Set the buffer size.
@@ -136,7 +139,9 @@ public class CircularBuffer<T> extends AbstractCollection<T> {
 					throw new NoSuchElementException();
 				return buffer[(head+index++)%bufferSize];
 			}
-			public void remove() {}			
+			public void remove() {
+				throw new UnsupportedOperationException("Remove is not supported.");
+			}			
 		};
 	}
 
