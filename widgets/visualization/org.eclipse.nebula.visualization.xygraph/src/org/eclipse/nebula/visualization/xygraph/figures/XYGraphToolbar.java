@@ -7,6 +7,11 @@
  ******************************************************************************/
 package org.eclipse.nebula.visualization.xygraph.figures;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.draw2d.ActionEvent;
 import org.eclipse.draw2d.ActionListener;
 import org.eclipse.draw2d.Button;
@@ -52,6 +57,8 @@ public class XYGraphToolbar extends Figure {
     final private XYGraph xyGraph;
 	
 	final private ButtonGroup zoomGroup;
+	
+	final private Map<ZoomType, ToggleModel> zoomButtonModelMap = new HashMap<ZoomType, ToggleModel>();
 	
 	/** Initialize
 	 *  @param xyGraph XYGraph on which this toolbar operates
@@ -250,6 +257,7 @@ public class XYGraphToolbar extends Figure {
 			});
 			
 			button.setModel(model);
+			zoomButtonModelMap.put(zoomType, model);
 			button.setToolTip(tip);
 			addButton(button);
 			zoomGroup.add(model);
@@ -257,6 +265,14 @@ public class XYGraphToolbar extends Figure {
 			if(zoomType == ZoomType.NONE)
 				zoomGroup.setDefault(model);
 		}
+		xyGraph.addPropertyChangeListener(XYGraph.PROPERTY_ZOOMTYPE,
+				new PropertyChangeListener() {
+					@Override
+					public void propertyChange(PropertyChangeEvent evt) {
+						zoomGroup.setSelected(zoomButtonModelMap.get(evt
+								.getNewValue()));
+					}
+				});
 	}
 	
 	public void addButton(Clickable button){

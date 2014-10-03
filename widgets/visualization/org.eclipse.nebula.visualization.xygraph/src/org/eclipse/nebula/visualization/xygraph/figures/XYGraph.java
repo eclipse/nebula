@@ -50,6 +50,12 @@ import org.eclipse.swt.widgets.Display;
  */
 public class XYGraph extends Figure{
 	
+	public static final String PROPERTY_CONFIG = "config"; //$NON-NLS-1$
+
+	public static final String PROPERTY_XY_GRAPH_MEM = "xyGraphMem"; //$NON-NLS-1$
+	
+	public static final String PROPERTY_ZOOMTYPE = "zoomType"; //$NON-NLS-1$
+
 	/**
 	 * Add property change support to XYGraph
 	 * Use for inform listener of xyGraphMem property changed
@@ -81,7 +87,7 @@ public class XYGraph extends Figure{
 	}
 	
 	public void fireConfigChanged() {
-		changeSupport.firePropertyChange("config", null, this);
+		changeSupport.firePropertyChange(PROPERTY_CONFIG, null, this);
 	}
 
 
@@ -99,9 +105,7 @@ public class XYGraph extends Figure{
 	public void setXyGraphMem(XYGraphMemento xyGraphMem) {
 		XYGraphMemento old = this.xyGraphMem;
 		this.xyGraphMem = xyGraphMem;
-		changeSupport.firePropertyChange("xyGraphMem", old, this.xyGraphMem);
-	
-		System.out.println("**** XYGraph.setXyGraphMem() ****");
+		changeSupport.firePropertyChange(PROPERTY_XY_GRAPH_MEM, old, this.xyGraphMem);	
 	}
 
 	private static final int GAP = 2;
@@ -349,12 +353,16 @@ public class XYGraph extends Figure{
 	 * @param zoomType the zoomType to set
 	 */
 	public void setZoomType(ZoomType zoomType) {
-		this.zoomType = zoomType;
+		if(this.zoomType == zoomType){
+			return;
+		}
 		plotArea.setZoomType(zoomType);
 		for(Axis axis : xAxisList)
 			axis.setZoomType(zoomType);
 		for(Axis axis : yAxisList)
 			axis.setZoomType(zoomType);
+		changeSupport.firePropertyChange(PROPERTY_ZOOMTYPE, this.zoomType,
+				this.zoomType = zoomType);
 	}
 
 	/**
