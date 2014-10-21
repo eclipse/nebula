@@ -119,16 +119,20 @@ public class Legend extends RectangleFigure {
 				new Point(hPos + ICON_WIDTH/2, vPos + ICON_WIDTH));
 			trace.drawPoint(graphics, new Point(hPos + ICON_WIDTH/2, vPos+ trace.getPointSize()/2));
 			break;
+		case LINE_AREA:
+			graphics.drawPolyline(new int[]{hPos, vPos + ICON_WIDTH/2,
+					hPos + ICON_WIDTH/2, vPos + trace.getPointSize()/2, 
+					hPos + ICON_WIDTH-1, vPos + ICON_WIDTH/2,
+					});
 		case AREA:
 			graphics.setBackgroundColor(trace.getTraceColor());
-	        if (Preferences.useAdvancedGraphics())
-	            graphics.setAlpha(trace.getAreaAlpha());
+			if (Preferences.useAdvancedGraphics())
+			    graphics.setAlpha(trace.getAreaAlpha());
 			graphics.fillPolygon(new int[]{hPos, vPos + ICON_WIDTH/2,
 					hPos + ICON_WIDTH/2, vPos + trace.getPointSize()/2, 
 					hPos + ICON_WIDTH, vPos + ICON_WIDTH/2,
 					hPos + ICON_WIDTH, vPos + ICON_WIDTH,
-					hPos, vPos + ICON_WIDTH});
-	        if (Preferences.useAdvancedGraphics())
+					hPos, vPos + ICON_WIDTH});	        if (Preferences.useAdvancedGraphics())
 	            graphics.setAlpha(255);
 			trace.drawPoint(graphics, new Point(hPos + ICON_WIDTH/2, vPos+ trace.getPointSize()/2));
 			break;
@@ -145,6 +149,7 @@ public class Legend extends RectangleFigure {
 				FigureUtilities.getTextExtents(trace.getName(), getFont()).height/2);
 		graphics.popState();
 	}
+	
 	
 	@Override
 	public Dimension getPreferredSize(int wHint, int hHint) {
