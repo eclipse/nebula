@@ -14,13 +14,13 @@
 
 package org.eclipse.nebula.jface.gridviewer;
 
+import org.eclipse.jface.viewers.CellEditor.LayoutData;
 import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.ColumnViewerEditor;
 import org.eclipse.jface.viewers.ColumnViewerEditorActivationEvent;
 import org.eclipse.jface.viewers.ColumnViewerEditorActivationStrategy;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.viewers.ViewerRow;
-import org.eclipse.jface.viewers.CellEditor.LayoutData;
 import org.eclipse.nebula.widgets.grid.Grid;
 import org.eclipse.nebula.widgets.grid.GridEditor;
 import org.eclipse.nebula.widgets.grid.GridItem;
@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.Item;
  */
 public class GridViewerEditor extends ColumnViewerEditor {
 	/** Editor support for tables. */
-    private GridEditor gridEditor;
+    private final GridEditor gridEditor;
 
     /**
      * The selection follows the editor
@@ -55,7 +55,8 @@ public class GridViewerEditor extends ColumnViewerEditor {
 	 * FIXME
 	 * {@inheritDoc}
 	 */
-    protected void setEditor(Control w, Item item, int fColumnNumber)
+    @Override
+	protected void setEditor(Control w, Item item, int fColumnNumber)
     {
         gridEditor.setEditor(w, (GridItem) item, fColumnNumber);
     }
@@ -64,7 +65,8 @@ public class GridViewerEditor extends ColumnViewerEditor {
      * FIXME
      * {@inheritDoc}
      */
-    protected void setLayoutData(LayoutData layoutData)
+    @Override
+	protected void setLayoutData(LayoutData layoutData)
     {
         gridEditor.grabHorizontal = layoutData.grabHorizontal;
         gridEditor.horizontalAlignment = layoutData.horizontalAlignment;
@@ -83,6 +85,7 @@ public class GridViewerEditor extends ColumnViewerEditor {
      * FIXME
      * {@inheritDoc}
      */
+	@Override
 	public ViewerCell getFocusCell() {
 		Grid grid = (Grid)getViewer().getControl();
 
@@ -112,6 +115,7 @@ public class GridViewerEditor extends ColumnViewerEditor {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected void updateFocusCell(ViewerCell focusCell, ColumnViewerEditorActivationEvent event) {
 		Grid grid = ((Grid)getViewer().getControl());
 
@@ -121,7 +125,7 @@ public class GridViewerEditor extends ColumnViewerEditor {
 			grid.setFocusItem((GridItem) focusCell.getItem());
 			
 			if( selectionFollowsEditor ) {
-				grid.setCellSelection(new Point(focusCell.getColumnIndex(),grid.indexOf((GridItem)focusCell.getItem())));
+				grid.setCellSelection(new Point(focusCell.getColumnIndex(),((GridItem)focusCell.getItem()).getRowIndex()));
 			}
 		}
 				

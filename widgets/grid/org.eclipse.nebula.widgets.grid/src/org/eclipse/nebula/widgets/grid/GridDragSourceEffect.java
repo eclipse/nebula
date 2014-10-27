@@ -51,6 +51,7 @@ public class GridDragSourceEffect extends DragSourceEffect {
 	 * 
 	 * @param event the information associated with the drag finished event
 	 */
+	@Override
 	public void dragFinished(DragSourceEvent event) {
 		if (dragSourceImage != null) dragSourceImage.dispose();
 		dragSourceImage = null;
@@ -67,6 +68,7 @@ public class GridDragSourceEffect extends DragSourceEffect {
 	 * 
 	 * @param event the information associated with the drag start event
 	 */
+	@Override
 	public void dragStart(DragSourceEvent event) {
 		event.image = getDragSourceImage(event);
 	}
@@ -88,7 +90,7 @@ public class GridDragSourceEffect extends DragSourceEffect {
 			for (int i = 0; i < selItems.length; i++){
 				for (int j = 0; j < grid.getColumnCount() ; j++){
 					if(grid.getColumn(j).isVisible()){
-						l.add(new Point(j,grid.indexOf(selItems[i])));
+						l.add(new Point(j,selItems[i].getRowIndex()));
 					}
 				}
 			}

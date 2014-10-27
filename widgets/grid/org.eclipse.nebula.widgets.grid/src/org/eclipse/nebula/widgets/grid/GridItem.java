@@ -1216,7 +1216,7 @@ public class GridItem extends Item {
 						if (getParent().isSelected(item))
 						{
 							unselected = true;
-							getParent().deselect(getParent().indexOf(item));
+							getParent().deselect(item.getRowIndex());
 						}
 						if (deselectChildren(item))
 						{
@@ -1254,7 +1254,7 @@ public class GridItem extends Item {
 	private boolean deselectCells(GridItem item) {
 		boolean flag = false;
 
-		int index = getParent().indexOf(item);
+		int index = item.getRowIndex();
 
 		GridColumn[] columns = getParent().getColumns();
 
@@ -1290,7 +1290,7 @@ public class GridItem extends Item {
 			if (getParent().isSelected(kids[i])) {
 				flag = true;
 			}
-			getParent().deselect(getParent().indexOf(kids[i]));
+			getParent().deselect(kids[i].getRowIndex());
 			if (deselectChildren(kids[i])) {
 				flag = true;
 			}
@@ -1482,7 +1482,7 @@ public class GridItem extends Item {
 		height = newHeight;
 		parent.hasDifferingHeights = true;
 		if (isVisible()) {
-			int myIndex = parent.indexOf(this);
+			int myIndex = this.getRowIndex();
 			if (parent.getTopIndex() <= myIndex && myIndex <= parent.getBottomIndex()) // note: cannot use
 																						// Grid#isShown()
 																						// here, because

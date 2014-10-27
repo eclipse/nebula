@@ -215,7 +215,7 @@ public class GridViewerRow extends ViewerRow
 
 
 	private ViewerRow getRowAbove() {
-		int index = item.getParent().indexOf(item) - 1;
+		int index = item.getRowIndex() - 1;
 
 		if( index >= 0 ) {
 			return new GridViewerRow(item.getParent().getItem(index));
@@ -225,7 +225,7 @@ public class GridViewerRow extends ViewerRow
 	}
 
 	private ViewerRow getRowBelow() {
-		int index = item.getParent().indexOf(item) + 1;
+		int index = item.getRowIndex() + 1;
 
 		if( index < item.getParent().getItemCount() ) {
 			GridItem tmp = item.getParent().getItem(index);
