@@ -314,6 +314,7 @@ public class GridItem extends Item {
 		if (parent.getDataVisualizer() != null) {
 			parent.getDataVisualizer().clearRow(this);
 		}
+		noRow();
 		super.dispose();
 	}
 
@@ -2050,6 +2051,15 @@ public class GridItem extends Item {
 		if (parent.getDataVisualizer() != null) {
 			parent.getDataVisualizer().clearRow(this);
 		}
+		noRow();
 		super.dispose();
+	}
+
+	private void noRow()
+	{
+		synchronized (ROW_LOCK)
+		{
+			row = NO_ROW;
+		}
 	}
 }

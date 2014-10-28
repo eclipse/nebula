@@ -3109,6 +3109,8 @@ public class Grid extends Canvas {
 		bottomIndex = -1;
 		currentVisibleItems = 0;
 		updateColumnSelection();
+		focusItem  = null;
+		selectedItems.clear();
 		redraw();
 		// Need to update the scrollbars see see 375327
 		updateScrollbars();
