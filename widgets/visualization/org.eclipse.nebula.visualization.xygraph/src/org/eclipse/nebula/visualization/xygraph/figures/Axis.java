@@ -57,7 +57,6 @@ public class Axis extends LinearScale{
 
     @Override
 	public void setFont(Font font) {
-		// TODO Auto-generated method stub
 		super.setFont(font);
 		this.scaleFontData = getFont().getFontData()[0];
 	}
@@ -775,7 +774,6 @@ public class Axis extends LinearScale{
 
 	@Override
 	public void setLogScale(boolean enabled) throws IllegalStateException {
-		// TODO Auto-generated method stub
 		boolean old = isLogScaleEnabled();
 		super.setLogScale(enabled);
 		fireAxisLogScaleChanged(old, logScaleEnabled);

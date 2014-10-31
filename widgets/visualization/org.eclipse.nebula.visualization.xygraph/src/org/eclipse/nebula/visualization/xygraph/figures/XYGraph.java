@@ -555,9 +555,7 @@ public class XYGraph extends Figure{
 	}
 
 
-	/** TODO This allows clients to change the traces via getPlotArea().getTraceList() and then add/remove/clear/...,
-	 *       circumventing the designated addTrace()/removeTrace().
-	 *       Can it be non-public?
+	/** 
 	 * @return the plotArea, which contains all the elements drawn inside it.
 	 */
 	public PlotArea getPlotArea() {

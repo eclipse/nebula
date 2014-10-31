@@ -1115,7 +1115,6 @@ public class Trace extends Figure implements IDataProviderListener,
 		if (!new Range(dp1.getXValue(), dp2.getXValue()).inRange(x)
 				|| !new Range(dp1.getYValue(), dp2.getYValue()).inRange(y))
 			return false;
-		// TODO why the ==dp1,2 test?
 		final ISample dp = new Sample(x, y);
 		if (dp.equals(dp1) || dp.equals(dp2))
 			return false;

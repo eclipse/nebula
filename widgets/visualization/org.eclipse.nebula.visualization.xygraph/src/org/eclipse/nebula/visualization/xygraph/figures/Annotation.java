@@ -488,7 +488,6 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 
 	@Override
 	public void setFont(Font f) {
-		// TODO Auto-generated method stub
 		super.setFont(f);
 
 		if(f != null)

@@ -250,8 +250,7 @@ public final class XYGraphMediaFactory {
 	 * @return The system's default font.
 	 */
 	public Font getDefaultFont(final int style) {
-		// FIXME Die default Schriftart bzw. Schriftgr��e h�ngt vom Betriebssystem ab 
-		return getFont("Arial", 10, style); //$NON-NLS-1$
+		return Display.getDefault().getSystemFont(); 
 	}
 	
 
