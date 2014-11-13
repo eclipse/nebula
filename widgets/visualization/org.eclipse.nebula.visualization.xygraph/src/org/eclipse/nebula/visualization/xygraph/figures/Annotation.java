@@ -38,6 +38,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Annotation Figure. Annotation could be used to indicate the information for a particular
@@ -692,28 +693,35 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 	public void dataChanged(IDataProvider dataProvider) {
 		if(trace == null)
 			return;
-		if(trace.getHotSampleList().contains(currentSnappedSample)){
-			double oldX=xValue;
-			double oldY=yValue;
-			if (yValue != currentSnappedSample.getYValue())
-			{	// When waveform index is changed, Y value of the
-				// snapped sample is also changed. In that case,
-				// the position of this annotation must be updated
-				// accordingly.
-				yValue = currentSnappedSample.getYValue();
+		//run it in next cycle after the trace have been painted.
+		Display.getCurrent().asyncExec(new Runnable(){
+			@Override
+			public void run() {
+				if(trace.getHotSampleList().contains(currentSnappedSample)){
+					double oldX=xValue;
+					double oldY=yValue;
+					if (yValue != currentSnappedSample.getYValue())
+					{	// When waveform index is changed, Y value of the
+						// snapped sample is also changed. In that case,
+						// the position of this annotation must be updated
+						// accordingly.
+						yValue = currentSnappedSample.getYValue();
+					}
+					if (xValue != currentSnappedSample.getXValue())
+					{
+						xValue = currentSnappedSample.getXValue();
+					}
+					currentPosition = new Point(xAxis.getValuePosition(xValue, false),
+						yAxis.getValuePosition(yValue, false));
+					fireAnnotationMoved(oldX, oldY, xValue, yValue);
+				}
+				else if(trace.getHotSampleList().size() > 0){
+					updateToDefaultPosition();
+					pointerDragged = false;
+				}				
 			}
-			if (xValue != currentSnappedSample.getXValue())
-			{
-				xValue = currentSnappedSample.getXValue();
-			}
-			currentPosition = new Point(xAxis.getValuePosition(xValue, false),
-				yAxis.getValuePosition(yValue, false));
-			fireAnnotationMoved(oldX, oldY, xValue, yValue);
-		}
-		else if(trace.getHotSampleList().size() > 0){
-			updateToDefaultPosition();
-			pointerDragged = false;
-		}
+		});
+		
 	}
 
 /**
