@@ -334,15 +334,24 @@ public class CircularBufferDataProvider extends AbstractDataProvider{
 			}
 		}
 		
-			currentXDataChanged = false;
-			currentYDataChanged = false;
+			currentXDataArrayChanged = false;
+			currentYDataArrayChanged = false;
 //			currentYDataTimestampChanged = false;
 			fireDataChange();		
 	}
 	
 
+	/**
+	 * Clear all data on in the data provider.
+	 */
 	public synchronized void clearTrace(){
 		traceData.clear();
+		currentXDataArray=new double[]{};
+		currentYDataArray = new double[]{};
+		currentXDataChanged = false;
+		currentYDataChanged = false;
+		currentXDataArrayChanged = false;
+		currentYDataArrayChanged = false;
 		fireDataChange();
 	}
 	
