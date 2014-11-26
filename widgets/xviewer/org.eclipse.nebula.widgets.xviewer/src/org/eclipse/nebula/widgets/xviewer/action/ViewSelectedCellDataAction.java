@@ -19,6 +19,7 @@ import org.eclipse.nebula.widgets.xviewer.IXViewerValueColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewer;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
+import org.eclipse.nebula.widgets.xviewer.util.XViewerException;
 import org.eclipse.nebula.widgets.xviewer.util.internal.HtmlUtil;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
 import org.eclipse.nebula.widgets.xviewer.util.internal.dialog.HtmlDialog;
@@ -60,31 +61,32 @@ public class ViewSelectedCellDataAction extends Action {
       try {
          TreeColumn treeCol = xViewer.getRightClickSelectedColumn();
          TreeItem treeItem = xViewer.getRightClickSelectedItem();
-         if (treeCol != null) {
-            XViewerColumn xCol = (XViewerColumn) treeCol.getData();
-            String data = null;
-
-            if (xCol instanceof IXViewerValueColumn) {
-               data =
-                  ((IXViewerValueColumn) xCol).getColumnText(treeItem.getData(), xCol,
-                     xViewer.getRightClickSelectedColumnNum());
-            } else {
-               data =
-                  ((IXViewerLabelProvider) xViewer.getLabelProvider()).getColumnText(treeItem.getData(), xCol,
-                     xViewer.getRightClickSelectedColumnNum());
-            }
-            if (data != null && !data.equals("")) { //$NON-NLS-1$
-               if (option == Option.View) {
-                  String html = HtmlUtil.simplePage(getPreData(data));
-                  new HtmlDialog(
-                     treeCol.getText() + " " + XViewerText.get("data"), treeCol.getText() + " " + XViewerText.get("data"), html).open(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-               } else {
-                  clipboard.setContents(new Object[] {data}, new Transfer[] {TextTransfer.getInstance()});
-               }
-            }
-         }
+         run(treeCol, treeItem, xViewer.getRightClickSelectedColumnNum());
       } catch (Exception ex) {
          XViewerLog.logAndPopup(Activator.class, Level.SEVERE, ex);
+      }
+   }
+
+   public void run(TreeColumn treeCol, TreeItem treeItem, int columnNum) throws XViewerException, Exception {
+      if (treeCol != null) {
+         XViewerColumn xCol = (XViewerColumn) treeCol.getData();
+         String data = null;
+
+         if (xCol instanceof IXViewerValueColumn) {
+            data = ((IXViewerValueColumn) xCol).getColumnText(treeItem.getData(), xCol, columnNum);
+         } else {
+            data =
+               ((IXViewerLabelProvider) xViewer.getLabelProvider()).getColumnText(treeItem.getData(), xCol, columnNum);
+         }
+         if (data != null && !data.equals("")) { //$NON-NLS-1$
+            if (option == Option.View) {
+               String html = HtmlUtil.simplePage(getPreData(data));
+               new HtmlDialog(
+                  treeCol.getText() + " " + XViewerText.get("data"), treeCol.getText() + " " + XViewerText.get("data"), html).open(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+            } else {
+               clipboard.setContents(new Object[] {data}, new Transfer[] {TextTransfer.getInstance()});
+            }
+         }
       }
    }
 

@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.TreeItem;
 public class XViewerMouseListener implements MouseListener {
 
    private final XViewer xViewer;
+   private MouseEvent leftClickEvent;
 
    public XViewerMouseListener(XViewer xViewer) {
       this.xViewer = xViewer;
@@ -41,6 +42,9 @@ public class XViewerMouseListener implements MouseListener {
 
    @Override
    public void mouseDown(MouseEvent event) {
+      if (isLeftClick(event)) {
+         leftClickEvent = event;
+      }
       if (isRightClick(event)) {
          xViewer.processRightClickMouseEvent(new Point(event.x, event.y));
       }
@@ -63,6 +67,7 @@ public class XViewerMouseListener implements MouseListener {
             return;
          }
          if (isLeftClick(event) && controlNotBeingHeld(event)) {
+
             if (altIsBeingHeld(event)) {
                // System.out.println("Column " + colNum);
                xViewer.handleAltLeftClick(column, item);
@@ -79,6 +84,10 @@ public class XViewerMouseListener implements MouseListener {
          return;
       }
 
+   }
+
+   private boolean shiftBeingHeld(MouseEvent event) {
+      return ((event.stateMask & SWT.MODIFIER_MASK) == SWT.SHIFT);
    }
 
    private boolean clickOccurredInIconArea(MouseEvent event, TreeItem item) {
@@ -99,7 +108,15 @@ public class XViewerMouseListener implements MouseListener {
    }
 
    private boolean controlNotBeingHeld(MouseEvent event) {
-      return !((event.stateMask & SWT.MODIFIER_MASK) == SWT.CTRL);
+      return !controlBeingHeld(event);
+   }
+
+   private boolean controlBeingHeld(MouseEvent event) {
+      return ((event.stateMask & SWT.MODIFIER_MASK) == SWT.CTRL);
+   }
+
+   public MouseEvent getLeftClickEvent() {
+      return leftClickEvent;
    }
 
 }

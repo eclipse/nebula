@@ -251,7 +251,8 @@ public class XViewer extends TreeViewer {
             handleDoubleClick();
          };
       });
-      getTree().addMouseListener(new XViewerMouseListener(this));
+      mouseListener = new XViewerMouseListener(this);
+      getTree().addMouseListener(mouseListener);
       getTree().addListener(SWT.MenuDetect, new XViewerMenuDetectListener(this));
       getTree().setMenu(getMenuManager().getMenu());
       columnFilterDataUI.createWidgets();
@@ -379,6 +380,7 @@ public class XViewer extends TreeViewer {
       }
    };
    private Composite searchComp;
+   private XViewerMouseListener mouseListener;
 
    public void resetDefaultSorter() {
       customizeMgr.resetDefaultSorter();
@@ -688,6 +690,10 @@ public class XViewer extends TreeViewer {
 
    public ColumnFilterDataUI getColumnFilterDataUI() {
       return columnFilterDataUI;
+   }
+
+   public XViewerMouseListener getMouseListener() {
+      return mouseListener;
    }
 
 }
