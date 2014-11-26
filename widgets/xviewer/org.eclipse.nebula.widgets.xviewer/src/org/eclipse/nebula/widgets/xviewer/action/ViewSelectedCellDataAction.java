@@ -11,7 +11,6 @@
 package org.eclipse.nebula.widgets.xviewer.action;
 
 import java.util.logging.Level;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.nebula.widgets.xviewer.Activator;
@@ -44,7 +43,8 @@ public class ViewSelectedCellDataAction extends Action {
    }
 
    public ViewSelectedCellDataAction(XViewer xViewer, Clipboard clipboard, Option option) {
-      super(option.equals(Option.View) ? XViewerText.get("action.selectedCellData.view") : XViewerText.get("action.selectedCellData.copy")); //$NON-NLS-1$ //$NON-NLS-2$
+      super(
+         option.equals(Option.View) ? XViewerText.get("action.selectedCellData.view") : XViewerText.get("action.selectedCellData.copy")); //$NON-NLS-1$ //$NON-NLS-2$
       this.xViewer = xViewer;
       this.clipboard = clipboard;
       this.option = option;
@@ -75,8 +75,9 @@ public class ViewSelectedCellDataAction extends Action {
             }
             if (data != null && !data.equals("")) { //$NON-NLS-1$
                if (option == Option.View) {
-                  String html = HtmlUtil.simplePage(HtmlUtil.pre(HtmlUtil.textToHtml(data)));
-                  new HtmlDialog(treeCol.getText() + " " + XViewerText.get("data"), treeCol.getText() + " " + XViewerText.get("data"), html).open(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                  String html = HtmlUtil.simplePage(getPreData(data));
+                  new HtmlDialog(
+                     treeCol.getText() + " " + XViewerText.get("data"), treeCol.getText() + " " + XViewerText.get("data"), html).open(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                } else {
                   clipboard.setContents(new Object[] {data}, new Transfer[] {TextTransfer.getInstance()});
                }
@@ -85,6 +86,10 @@ public class ViewSelectedCellDataAction extends Action {
       } catch (Exception ex) {
          XViewerLog.logAndPopup(Activator.class, Level.SEVERE, ex);
       }
+   }
+
+   private String getPreData(String data) {
+      return "<style>pre { white-space: pre-wrap;       /* CSS 3 */ white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */ white-space: -pre-wrap;      /* Opera 4-6 */ white-space: -o-pre-wrap;    /* Opera 7 */ word-wrap: break-word;       /* Internet Explorer 5.5+ */ }</style>" + HtmlUtil.pre(HtmlUtil.textToHtml(data));
    }
 
 }
