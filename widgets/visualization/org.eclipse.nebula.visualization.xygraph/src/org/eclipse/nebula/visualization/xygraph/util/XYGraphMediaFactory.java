@@ -11,10 +11,7 @@
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
-import org.eclipse.draw2d.Cursors;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -62,44 +59,38 @@ public final class XYGraphMediaFactory {
 	 */
 	private FontRegistry _fontRegistry;
 	
-	private Set<Cursor> cursorRegistry;
+	private HashMap<String, Cursor> cursorRegistry;
 
 	/**
 	 * Map that holds the provided image descriptors.
 	 */
 	private HashMap<ImageDescriptor, Image> _imageCache;
 	
-	public enum CURSOR_TYPE {
-		GRABBING;
-	}
+	public final static String CURSOR_GRABBING_PATH = "images/Grabbing.png";
+	public final static String CURSOR_GRABBING_ON_AXIS_PATH = "images/GrabbingOnAxis.png";
 	
-	private volatile static Cursor CURSOR_GRABBING;	
 		
 	public void disposeResources(){
-		if(CURSOR_GRABBING!=null && !CURSOR_GRABBING.isDisposed())
-			CURSOR_GRABBING.dispose();
-		if(cursorRegistry != null)
-			for(Cursor cursor : cursorRegistry){
+
+		if(cursorRegistry != null){
+			for(Cursor cursor : cursorRegistry.values()){
 				if(cursor != null && !cursor.isDisposed())
 				cursor.dispose();
 			}
+			cursorRegistry.clear();
+		}
 		
 	}
 
-	public static Cursor getCursor(CURSOR_TYPE cursorType){
-		switch (cursorType) {
-		case GRABBING:
-			if(CURSOR_GRABBING == null){
-				
-				CURSOR_GRABBING = new Cursor(Display.getDefault(), 
-						getInstance().getImage("images/Grabbing.png").getImageData(), 8,8);		
-			}
-			return CURSOR_GRABBING;
-
-		default:
-			return Cursors.HAND;
-			
+	public Cursor getCursor(String cursorImagePath){
+		Cursor cursor = cursorRegistry.get(cursorImagePath);
+		if(cursor==null){
+			cursor = new Cursor(Display.getDefault(), 
+					getInstance().getImage(cursorImagePath).getImageData(), 8,8);
+			cursorRegistry.put(cursorImagePath, cursor);
 		}
+		return cursor;
+		
 	}
 	
 	/**
@@ -109,7 +100,7 @@ public final class XYGraphMediaFactory {
 		_colorRegistry = new ColorRegistry();
 		_imageRegistry = new ImageRegistry();
 		_fontRegistry = new FontRegistry();
-
+		cursorRegistry = new HashMap<String, Cursor>();
 		_imageCache = new HashMap<ImageDescriptor, Image>();
 
 		// dispose all images from the image cache, when the display is disposed
@@ -307,11 +298,8 @@ public final class XYGraphMediaFactory {
 	/**Register the cursor so it can be disposed when the plugin stopped.
 	 * @param cursor
 	 */
-	public void registerCursor(Cursor cursor){
-		if(cursorRegistry == null){
-			cursorRegistry = new HashSet<Cursor>();
-		}
-		cursorRegistry.add(cursor);
+	public void registerCursor(String key, Cursor cursor){		
+		cursorRegistry.put(key, cursor);
 	}
 	
     /** the color for light blue */

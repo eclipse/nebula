@@ -24,7 +24,6 @@ import org.eclipse.nebula.visualization.internal.xygraph.undo.ZoomCommand;
 import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
 import org.eclipse.nebula.visualization.xygraph.util.SWTConstants;
 import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
-import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory.CURSOR_TYPE;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.RGB;
@@ -97,7 +96,7 @@ public class PlotArea extends Figure {
 		PlotMouseListener zoomer = new PlotMouseListener();
 		addMouseListener(zoomer);
 		addMouseMotionListener(zoomer);
-		grabbing = XYGraphMediaFactory.getCursor(CURSOR_TYPE.GRABBING);
+		grabbing = XYGraphMediaFactory.getInstance().getCursor(XYGraphMediaFactory.CURSOR_GRABBING_PATH);
 		zoomType = ZoomType.NONE;
 	}
 
