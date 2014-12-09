@@ -16,7 +16,7 @@
  *    Enrico Schnepel<enrico.schnepel@randomice.net> - new API in 238729, bugfix in 294952, 322114
  *    Benjamin Bortfeldt<bbortfeldt@gmail.com> - new tooltip support in 300797
  *    Thomas Halm <thha@fernbach.com> - bugfix in 315397
- *    Justin Dolezy <justin@neckdiagrams.com> - bugfix in 316598 
+ *    Justin Dolezy <justin@neckdiagrams.com> - bugfix in 316598
  *    Cosmin Ghita <cghita@ansis.eu> - bugfix in 323687
  *    Pinard-Legry Guilhaume <guilhaume_pl@yahoo.fr> - bugfix in 267057
  *    Thorsten Schenkel <thorsten.schenkel@compeople.de> - bugfix in 356803
@@ -103,18 +103,18 @@ import org.eclipse.swt.widgets.TypedListener;
  *
  * @author chris.gross@us.ibm.com
  * @author Mirko Paturzo <mirko.paturzo@exeura.eu>
- * 
+ *
  * Mirko modified this widget for improve performace and reduce used memory
- * fix memory leak and slow disposed object 
+ * fix memory leak and slow disposed object
  */
 public class Grid extends Canvas {
-	
-	
+
+
 	/**
 	 * Cached default font of Control.getFont.
 	 */
 	private Font defaultFont;
-	
+
 	//TODO: figure out better way to allow renderers to trigger events
 	//TODO: scroll as necessary when performing drag select (current strategy ok)
 	//TODO: need to refactor the way the range select remembers older selection
@@ -244,10 +244,10 @@ public class Grid extends Canvas {
 	 * operation when unnecessary.
 	 */
 	private boolean scrollValuesObsolete = false;
-	
+
 	/**
-	 * When this variable is true, the pack is based only on the visible lines on 
-	 * the screen.  
+	 * When this variable is true, the pack is based only on the visible lines on
+	 * the screen.
 	 */
 	private boolean visibleLinesBasedColumnPack = false;
 
@@ -721,11 +721,11 @@ public class Grid extends Canvas {
 	private boolean autoHeight = false;
 	private boolean autoWidth = true;
 	private boolean wordWrapRowHeader = false;
-	
+
 	private final DataVisualizer dataVisualizer;
 
 	private Listener defaultKeyListener;
-	
+
 	private boolean defaultKeyListenerEnabled = true;
 
 	/**
@@ -771,8 +771,8 @@ public class Grid extends Canvas {
 		this(new GridItemDataVisualizer(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE), Display.getCurrent()
 				.getSystemColor(SWT.COLOR_BLACK), null), parent, style);
 	}
-	
-	
+
+
 
 	/**
 	 * Constructs a new instance of this class given its parent and a style
@@ -796,7 +796,7 @@ public class Grid extends Canvas {
 	 */
 	public Grid(DataVisualizer dataVisualizer, Composite parent, int style) {
 		super(parent, checkStyle(style));
-		
+
 		this.dataVisualizer = dataVisualizer;
 
 		// initialize drag & drop support
@@ -1650,7 +1650,7 @@ public class Grid extends Canvas {
 		checkWidget();
 		return headerHeight;
 	}
-	
+
 	/** Cached default font of Control.getFont
 	 * @see org.eclipse.swt.widgets.Control#getFont()
 	 */
@@ -3073,7 +3073,7 @@ public class Grid extends Canvas {
 
 	/**
 	 * Removes all of the items from the receiver.
-	 * 
+	 *
 	 * @throws org.eclipse.swt.SWTException
 	 * <ul>
 	 * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
@@ -3732,7 +3732,7 @@ public class Grid extends Canvas {
 		}
 		redraw();
 	}
-	
+
 	/**
 	 * If <code>true</code>, column pack is based only with the visible lines (from topIndex
 	 * to bottomIndex).
@@ -3745,7 +3745,7 @@ public class Grid extends Canvas {
 	}
 
 	/**
-	 * Set optimizedColumnPack to <code>true</code> for column pack based only with the 
+	 * Set optimizedColumnPack to <code>true</code> for column pack based only with the
 	 * visible lines.
 	 * @param visibleLinesBasedColumnPack
 	 */
@@ -6127,7 +6127,7 @@ public class Grid extends Canvas {
 			}
 		});
 	}
-	
+
 	/**
 	 * Disable default key listener
 	 */
@@ -6932,11 +6932,11 @@ public class Grid extends Canvas {
 						newColumnFocus = (GridColumn) displayOrderedColumns.get(index - 1);
 
 						newColumnFocus = getVisibleColumn_DegradeLeft(impliedFocusItem, newColumnFocus);
-						
+
 						if (newColumnFocus == null) {
 							newColumnFocus = impliedFocusColumn;
 						}
-						
+
 					}
 					else {
 						newColumnFocus = impliedFocusColumn;
@@ -7541,9 +7541,14 @@ public class Grid extends Canvas {
 		displayOrderedColumns.remove(column);
 		dataVisualizer.clearColumn(index);
 
+		if( focusColumn == column ) {
+			focusColumn = null;
+		}
+
 		updatePrimaryCheckColumn();
 
 		scrollValuesObsolete = true;
+
 		redraw();
 
 		int i = 0;
@@ -7674,19 +7679,19 @@ public class Grid extends Canvas {
 	 * @param item item to remove
 	 */
 	void removeItem(GridItem item) {
-		
+
 		Point[] cells = getCells(item);
 		boolean selectionModified = false;
 
 		int index = item.getRowIndex();
-		
+
 		items.remove(item);
 
 		dataVisualizer.clearRow(item);
 
 		if (disposing)
 			return;
-		
+
 		for(int i = index; i < items.size(); i++) {
 			items.get(i).decreaseRow();
 		}
@@ -7713,7 +7718,7 @@ public class Grid extends Canvas {
 		if (selectionModified && !disposing) {
 			updateColumnSelection();
 		}
-		
+
 		redraw();
 		// Need to update the scrollbars see see 375327
 		updateScrollbars();
@@ -8921,7 +8926,7 @@ public class Grid extends Canvas {
 		setAutoWidth(false);
 		redraw();
 	}
-	
+
 	/**
 	 * Sets the number of items contained in the receiver.
 	 *
@@ -8938,16 +8943,16 @@ public class Grid extends Canvas {
 		setRedraw(false);
 		if (count < 0)
 			count = 0;
-		
+
 		if (count < items.size()) {
-			
+
 			selectedCells.clear();
 			for(int i = items.size() - 1; i >= count; i--){
 				GridItem removed = items.remove(i);
 				rootItems.remove(i);
-				
+
 				selectedItems.remove(removed);
-				
+
 				if(removed.isVisible())
 					currentVisibleItems--;
 				removed.disposeOnly();
@@ -8965,7 +8970,7 @@ public class Grid extends Canvas {
 		}
 		setRedraw(true);
 	}
-	
+
 	/**
 	 * Initialize accessibility.
 	 */
