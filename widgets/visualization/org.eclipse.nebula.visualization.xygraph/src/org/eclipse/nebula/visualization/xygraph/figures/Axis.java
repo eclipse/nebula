@@ -766,7 +766,7 @@ public class Axis extends LinearScale {
 	 * @param factor
 	 *            Zoom factor. Positive to zoom 'in', negative 'out'.
 	 */
-	void zoomInOut(final double center, final double factor) {
+	public void zoomInOut(final double center, final double factor) {
 		final double t1, t2;
 		if (isLogScaleEnabled()) {
 			final double l = Math.log10(getRange().getUpper())

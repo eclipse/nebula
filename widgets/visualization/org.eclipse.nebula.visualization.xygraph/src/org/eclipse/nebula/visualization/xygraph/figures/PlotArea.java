@@ -288,19 +288,24 @@ public class PlotArea extends Figure {
 	 *            along x axes?
 	 * @param vertically
 	 *            along y axes?
+	 * @param mouseX
+	 * 			  absolute X location of the mouse cursor
+	 * @param mouseY
+	 * 			  absolute Y location of the mouse cursor
 	 * @param factor
 	 *            Zoom factor. Positive to zoom 'in', negative 'out'.
 	 */
-	private void zoomInOut(final boolean horizontally,
-			final boolean vertically, final double factor) {
+	public void zoomInOut(final boolean horizontally,
+			final boolean vertically, final int mouseX, final int mouseY, 
+			final double factor) {
 		if (horizontally)
 			for (Axis axis : xyGraph.getXAxisList()) {
-				final double center = axis.getPositionValue(start.x, false);
+				final double center = axis.getPositionValue(mouseX, false);
 				axis.zoomInOut(center, factor);
 			}
 		if (vertically)
 			for (Axis axis : xyGraph.getYAxisList()) {
-				final double center = axis.getPositionValue(start.y, false);
+				final double center = axis.getPositionValue(mouseY, false);
 				axis.zoomInOut(center, factor);
 			}
 	}
@@ -514,22 +519,22 @@ public class PlotArea extends Figure {
 		private void performInOutZoom() {
 			switch (zoomType) {
 			case ZOOM_IN:
-				zoomInOut(true, true, Axis.ZOOM_RATIO);
+				zoomInOut(true, true, start.x, start.y, Axis.ZOOM_RATIO);
 				break;
 			case ZOOM_IN_HORIZONTALLY:
-				zoomInOut(true, false, Axis.ZOOM_RATIO);
+				zoomInOut(true, false, start.x, start.y,  Axis.ZOOM_RATIO);
 				break;
 			case ZOOM_IN_VERTICALLY:
-				zoomInOut(false, true, Axis.ZOOM_RATIO);
+				zoomInOut(false, true, start.x, start.y, Axis.ZOOM_RATIO);
 				break;
 			case ZOOM_OUT:
-				zoomInOut(true, true, -Axis.ZOOM_RATIO);
+				zoomInOut(true, true, start.x, start.y,  -Axis.ZOOM_RATIO);
 				break;
 			case ZOOM_OUT_HORIZONTALLY:
-				zoomInOut(true, false, -Axis.ZOOM_RATIO);
+				zoomInOut(true, false, start.x, start.y, -Axis.ZOOM_RATIO);
 				break;
 			case ZOOM_OUT_VERTICALLY:
-				zoomInOut(false, true, -Axis.ZOOM_RATIO);
+				zoomInOut(false, true, start.x, start.y,  -Axis.ZOOM_RATIO);
 				break;
 			default: // NOP
 			}
