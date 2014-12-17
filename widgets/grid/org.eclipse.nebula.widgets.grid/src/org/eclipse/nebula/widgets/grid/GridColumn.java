@@ -77,14 +77,14 @@ public class GridColumn extends Item {
 	 * Cell renderer.
 	 */
 	private GridCellRenderer cellRenderer = new DefaultCellRenderer();
-	
+
 	private static int NOT_CALCULATED_YET = -1;
-	
+
 	/**
 	 * Caching of footerHeight
 	 */
 	private int footerHeight = NOT_CALCULATED_YET;
-	
+
 	private int headerHeight = NOT_CALCULATED_YET;
 
 	int getFooterHeight(GC gc)
@@ -300,13 +300,13 @@ public class GridColumn extends Item {
         	cellRenderer.setDisplay(null);
         	cellRenderer = null;
         }
-        
+
         if(headerRenderer != null)
         {
         	headerRenderer.setDisplay(null);
         	headerRenderer = null;
         }
-        
+
 		super.dispose();
 	}
 
@@ -403,6 +403,9 @@ public class GridColumn extends Item {
 		if (redraw) {
 			parent.setScrollValuesObsolete();
 			parent.redraw();
+		}
+		if( controlEditor != null ) {
+			controlEditor.layout();
 		}
 		footerHeight = NOT_CALCULATED_YET;
 		headerHeight = NOT_CALCULATED_YET;
@@ -609,7 +612,7 @@ public class GridColumn extends Item {
 		GC gc = new GC(parent);
 		int newWidth = getHeaderRenderer().computeSize(gc, SWT.DEFAULT,
 				SWT.DEFAULT, this).x;
-		
+
 		getCellRenderer().setColumn(parent.indexOf(this));
 		final boolean virtual = (getParent().getStyle() & SWT.VIRTUAL) != 0;
 		final int bottomIndex = getParent().getBottomIndex() + 1;
