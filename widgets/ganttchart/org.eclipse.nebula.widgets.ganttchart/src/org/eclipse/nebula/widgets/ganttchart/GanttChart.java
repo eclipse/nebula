@@ -166,6 +166,49 @@ public class GanttChart extends Composite {
 	}
 
 	/**
+	 * Constructs a new GANTT chart widget with custom settings, custom color manager {@link IColorManager}, a custom paint manager
+	 * {@link IPaintManager} and a custom language manager {@link ILanguageManager}. If any of the managers is set to null the
+	 * default manager using that implementation will be used. For styles, please see {@link GanttFlags}.
+	 * 
+	 * @param parent Parent composite
+	 * @param style Widget style
+	 * @param settings ISettings implementation or null
+	 * @param colorManager IColorManager implementation or null
+	 * @param paintManager IPaintManager implementation or null
+	 * @throws IllegalArgumentException
+	 *             <ul>
+	 *             <li>ERROR_NULL_ARGUMENT - if the parent is null</li>
+	 *             </ul>
+	 * @throws org.eclipse.swt.SWTException
+	 *             <ul>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the parent</li>
+	 *             <li>ERROR_INVALID_SUBCLASS - if this class is not an allowed subclass</li>
+	 *             </ul>
+	 */
+	public GanttChart(final Composite parent, final int style,
+			final ISettings settings, final IColorManager colorManager,
+			final IPaintManager paintManager,
+			final ILanguageManager languageManager) {
+		super(parent, SWT.NONE);
+
+		int styleToUse = style;
+
+		// if no scrollbar is set, set one
+		if ((style & GanttFlags.H_SCROLL_FIXED_RANGE) == 0
+				&& (style & GanttFlags.H_SCROLL_NONE) == 0
+				&& (style & GanttFlags.H_SCROLL_INFINITE) == 0) {
+			styleToUse |= GanttFlags.H_SCROLL_INFINITE;
+		}
+
+		_style = styleToUse;
+		_settings = settings;
+		_colorManager = colorManager;
+		_paintManager = paintManager;
+		_languageManager = languageManager;
+		init();
+	}
+	
+	/**
 	 * Constructs a new GANTT chart widget with custom settings, custom color manager {@link IColorManager}, a custom paint manager {@link IPaintManager} and a custom language
 	 * manager {@link ILanguageManager}. If any of the managers is set to null the default manager using that implementation will be used. For styles, please see {@link GanttFlags}.
 	 * 
