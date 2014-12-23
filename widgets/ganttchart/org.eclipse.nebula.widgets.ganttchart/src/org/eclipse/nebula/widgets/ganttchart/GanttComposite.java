@@ -5360,7 +5360,13 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     private void internalRemoveSection(final GanttSection section) {
     	//if section is removed also remove the events that belong to that section
     	for (Iterator it = section.getEvents().iterator(); it.hasNext();) {
-    		internalRemoveEvent((GanttEvent)it.next());
+    		Object item = it.next();
+    		if (item instanceof GanttEvent) {
+    			internalRemoveEvent((GanttEvent)item);
+    		}
+    		else if (item instanceof GanttGroup) {
+    			internalRemoveGroup((GanttGroup)item);
+    		}
     	}
     	
         _ganttSections.remove(section);
