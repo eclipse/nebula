@@ -4735,6 +4735,19 @@ public class Grid extends Canvas {
 		}
 	}
 
+	void handlePacked(GridColumn column) {
+		int index = 0;
+		if( ! getHorizontalBar().isVisible() ) {
+			index = displayOrderedColumns.indexOf(column);
+		}
+
+		for (; index < displayOrderedColumns.size(); index++) {
+			GridColumn col = (GridColumn) displayOrderedColumns.get(index);
+			if (col.isVisible())
+				col.fireMoved();
+		}
+	}
+
 	/**
 	 * Sets the new height of the item of the row being resized and fires the appropriate
 	 * listeners.

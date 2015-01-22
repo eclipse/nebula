@@ -59,6 +59,13 @@ class GridHeaderEditor extends ControlEditor {
 		columnListener = new ControlListener() {
 			public void controlMoved(ControlEvent e) {
 				layout();
+				e.display.asyncExec(new Runnable() {
+
+					@Override
+					public void run() {
+						layout();
+					}
+				});
 			}
 
 			public void controlResized(ControlEvent e) {

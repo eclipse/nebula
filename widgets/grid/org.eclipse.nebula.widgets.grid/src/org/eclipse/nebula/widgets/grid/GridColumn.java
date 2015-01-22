@@ -404,7 +404,7 @@ public class GridColumn extends Item {
 			parent.setScrollValuesObsolete();
 			parent.redraw();
 		}
-		parent.fireColumnsMoved();
+		parent.handlePacked(this);
 		footerHeight = NOT_CALCULATED_YET;
 		headerHeight = NOT_CALCULATED_YET;
 	}
