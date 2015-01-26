@@ -4737,8 +4737,11 @@ public class Grid extends Canvas {
 
 	void handlePacked(GridColumn column) {
 		int index = 0;
-		if( ! getHorizontalBar().isVisible() ) {
-			index = displayOrderedColumns.indexOf(column);
+
+		if( getHorizontalBar() != null ) {
+			if( ! getHorizontalBar().isVisible() ) {
+				index = displayOrderedColumns.indexOf(column);
+			}
 		}
 
 		for (; index < displayOrderedColumns.size(); index++) {
