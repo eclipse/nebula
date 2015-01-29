@@ -198,7 +198,7 @@ public abstract class VControl {
 	void handleEvent(Event event) {
 		event.data = this;
 		filterEvent(event);
-		if(listeners.containsKey(event.type)) {
+		if(listeners != null && listeners.containsKey(event.type)) {
 			Listener[] la = listeners.get(event.type).toArray(new Listener[listeners.get(event.type).size()]);
 			for(Listener listener : la) {
 				listener.handleEvent(event);
