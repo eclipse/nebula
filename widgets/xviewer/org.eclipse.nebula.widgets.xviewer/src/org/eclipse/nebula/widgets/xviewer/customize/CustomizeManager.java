@@ -579,7 +579,6 @@ public class CustomizeManager {
                   currentCustData.getSortingData().setSortXCols(cols);
                }
                xViewer.refresh();
-               xViewer.updateStatusLabel();
             }
          });
       }

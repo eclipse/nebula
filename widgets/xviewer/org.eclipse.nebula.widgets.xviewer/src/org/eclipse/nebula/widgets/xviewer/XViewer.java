@@ -457,7 +457,7 @@ public class XViewer extends TreeViewer {
          return;
       }
       super.refresh();
-      updateStatusLabel();
+      // do not need to updateStatusLabel cause super.refresh will call refresh(element);
    }
 
    public boolean isFiltered() {
@@ -467,7 +467,7 @@ public class XViewer extends TreeViewer {
    @Override
    public void refresh(boolean updateLabels) {
       super.refresh(updateLabels);
-      updateStatusLabel();
+      // do not need to updateStatusLabel cause super.refresh will call refresh(element, updateLabels);
    }
 
    @Override
