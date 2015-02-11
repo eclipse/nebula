@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Eric Wuillai (eric@wdev91.com) - initial API and implementation
+ *     Peter Schulz (eclipse-ps@kurzepost.de) - fix for bug 459484 
  *******************************************************************************/
 package org.eclipse.nebula.widgets.formattedtext;
 
@@ -108,7 +109,15 @@ public class FormattedText {
         if ( formatter != null && text.getEditable() ) {
           formatter.setIgnore(true);
           caretPos = text.getCaretPosition();
-          setText(formatter.getDisplayString());
+          String editString = formatter.getEditString();
+          String displayString = formatter.getDisplayString();
+          // Detect inconsistency between internal representation, 
+          // for example, a date, and contents of the text control
+          if (!editString.equals(displayString)) {
+              // Update the formatter (caches) so it has a consistent state 
+              formatter.setValue(formatter.getValue());
+          }
+          setText(displayString);
           formatter.setIgnore(false);
         }
       }
