@@ -34,8 +34,6 @@ import org.eclipse.swt.widgets.Composite;
  * 
  * @author Wim.Jongman (@remainsoftware.com)
  * 
- * Test
- * 
  */
 public class Oscilloscope extends
 		org.eclipse.nebula.widgets.oscilloscope.multichannel.Oscilloscope {
