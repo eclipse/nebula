@@ -21,8 +21,7 @@ public abstract class SingleSourceHelper {
 	private static final SingleSourceHelper IMPL;
 
 	static {
-		IMPL = (SingleSourceHelper) ImplementationLoader
-				.newInstance(SingleSourceHelper.class);
+		IMPL = (SingleSourceHelper) ImplementationLoader.newInstance(SingleSourceHelper.class);
 	}
 
 	/**
@@ -34,16 +33,13 @@ public abstract class SingleSourceHelper {
 	 * @return a cursor. The cursor will be automatically disposed when display
 	 *         disposed, so please don't dispose it externally.
 	 */
-	public static Cursor createCursor(Display display, ImageData imageData,
-			int width, int height, int backUpSWTCursorStyle) {
-		return IMPL.createInternalCursor(display, imageData, width, height,
-				backUpSWTCursorStyle);
+	public static Cursor createCursor(Display display, ImageData imageData, int width, int height,
+			int backUpSWTCursorStyle) {
+		return IMPL.createInternalCursor(display, imageData, width, height, backUpSWTCursorStyle);
 	}
 
-	public static Image createVerticalTextImage(String text, Font font,
-			RGB color, boolean upToDown) {
-		return IMPL
-				.createInternalVerticalTextImage(text, font, color, upToDown);
+	public static Image createVerticalTextImage(String text, Font font, RGB color, boolean upToDown) {
+		return IMPL.createInternalVerticalTextImage(text, font, color, upToDown);
 	}
 
 	public static Image getXYGraphSnapShot(XYGraph xyGraph) {
@@ -64,11 +60,10 @@ public abstract class SingleSourceHelper {
 
 	protected abstract String getInternalImageSavePath();
 
-	protected abstract Cursor createInternalCursor(Display display,
-			ImageData imageData, int width, int height, int backUpSWTCursorStyle);
+	protected abstract Cursor createInternalCursor(Display display, ImageData imageData, int width, int height,
+			int backUpSWTCursorStyle);
 
-	protected abstract Image createInternalVerticalTextImage(String text,
-			Font font, RGB color, boolean upToDown);
+	protected abstract Image createInternalVerticalTextImage(String text, Font font, RGB color, boolean upToDown);
 
 	protected abstract Image getInternalXYGraphSnapShot(XYGraph xyGraph);
 

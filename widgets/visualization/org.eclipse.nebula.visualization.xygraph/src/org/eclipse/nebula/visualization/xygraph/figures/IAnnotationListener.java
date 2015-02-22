@@ -7,17 +7,17 @@
  ******************************************************************************/
 package org.eclipse.nebula.visualization.xygraph.figures;
 
-/** 
+/**
  * A listener on an annotation when annotation position was changed.
+ * 
  * @author Xihui Chen
  *
  */
 public interface IAnnotationListener {
-	
-    /**
-     * This event indicates a change in the axis' value range
-     */
-    public void annotationMoved(double oldX, double oldY, double newX, double newY);
-    
+
+	/**
+	 * This event indicates a change in the axis' value range
+	 */
+	public void annotationMoved(double oldX, double oldY, double newX, double newY);
 
 }

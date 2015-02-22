@@ -55,24 +55,21 @@ public class ComprehensiveExample {
 
 			@Override
 			public void mouseScrolled(org.eclipse.swt.events.MouseEvent e) {
-				IFigure figureUnderMouse = toolbarArmedXYGraph.findFigureAt(
-						e.x, e.y, new TreeSearch() {
+				IFigure figureUnderMouse = toolbarArmedXYGraph.findFigureAt(e.x, e.y, new TreeSearch() {
 
-							@Override
-							public boolean prune(IFigure figure) {
-								return false;
-							}
+					@Override
+					public boolean prune(IFigure figure) {
+						return false;
+					}
 
-							@Override
-							public boolean accept(IFigure figure) {
-								return figure instanceof Axis
-										|| figure instanceof PlotArea;
-							}
-						});
+					@Override
+					public boolean accept(IFigure figure) {
+						return figure instanceof Axis || figure instanceof PlotArea;
+					}
+				});
 				if (figureUnderMouse instanceof Axis) {
 					Axis axis = ((Axis) figureUnderMouse);
-					double valuePosition = axis.getPositionValue(
-							axis.isHorizontal() ? e.x : e.y, false);
+					double valuePosition = axis.getPositionValue(axis.isHorizontal() ? e.x : e.y, false);
 					axis.zoomInOut(valuePosition, e.count * 0.1 / 3);
 				} else if (figureUnderMouse instanceof PlotArea) {
 					PlotArea plotArea = (PlotArea) figureUnderMouse;
@@ -100,8 +97,7 @@ public class ComprehensiveExample {
 		final ToolbarArmedXYGraph toolbarArmedXYGraph;
 		xyGraph = new XYGraph();
 		xyGraph.setTitle("XY Graph Test");
-		xyGraph.setFont(XYGraphMediaFactory.getInstance().getFont(
-				XYGraphMediaFactory.FONT_TAHOMA));
+		xyGraph.setFont(XYGraphMediaFactory.getInstance().getFont(XYGraphMediaFactory.FONT_TAHOMA));
 		xyGraph.primaryXAxis.setTitle("Time");
 		xyGraph.primaryYAxis.setTitle("Amplitude");
 		xyGraph.primaryXAxis.setRange(new Range(0, 200));
@@ -121,14 +117,12 @@ public class ComprehensiveExample {
 		y2Axis.setRange(10, 500);
 		y2Axis.setLogScale(true);
 		// y2Axis.setAutoScale(true);
-		y2Axis.setForegroundColor(XYGraphMediaFactory.getInstance().getColor(
-				XYGraphMediaFactory.COLOR_PINK));
+		y2Axis.setForegroundColor(XYGraphMediaFactory.getInstance().getColor(XYGraphMediaFactory.COLOR_PINK));
 		y2Axis.setTickLableSide(LabelSide.Secondary);
 		xyGraph.addAxis(y2Axis);
 
 		Axis y3Axis = new Axis("Y-3", true);
-		y3Axis.setForegroundColor(XYGraphMediaFactory.getInstance().getColor(
-				XYGraphMediaFactory.COLOR_BLUE));
+		y3Axis.setForegroundColor(XYGraphMediaFactory.getInstance().getColor(XYGraphMediaFactory.COLOR_BLUE));
 		y3Axis.setTickLableSide(LabelSide.Secondary);
 		y3Axis.setRange(new Range(-2, 3));
 		y3Axis.setShowMajorGrid(false);
@@ -139,8 +133,7 @@ public class ComprehensiveExample {
 		trace2Provider.setBufferSize(100);
 		trace2Provider.setUpdateDelay(100);
 
-		trace2 = new Trace("Trace 2", xyGraph.primaryXAxis,
-				xyGraph.primaryYAxis, trace2Provider);
+		trace2 = new Trace("Trace 2", xyGraph.primaryXAxis, xyGraph.primaryYAxis, trace2Provider);
 		trace2.setDataProvider(trace2Provider);
 		trace2.setTraceType(TraceType.SOLID_LINE);
 		trace2.setLineWidth(1);
@@ -155,10 +148,8 @@ public class ComprehensiveExample {
 		trace2.setXErrorBarType(ErrorBarType.NONE);
 		trace2.setErrorBarCapWidth(3);
 
-		final CircularBufferDataProvider trace3Provider = new CircularBufferDataProvider(
-				true);
-		trace3 = new Trace("Trace3", xyGraph.primaryXAxis,
-				xyGraph.primaryYAxis, trace3Provider);
+		final CircularBufferDataProvider trace3Provider = new CircularBufferDataProvider(true);
+		trace3 = new Trace("Trace3", xyGraph.primaryXAxis, xyGraph.primaryYAxis, trace3Provider);
 		trace3.setPointStyle(PointStyle.XCROSS);
 		trace3.setTraceType(TraceType.BAR);
 		trace3.setLineWidth(4);
@@ -166,8 +157,7 @@ public class ComprehensiveExample {
 		xyGraph.addTrace(trace3);
 		xyGraph.addTrace(trace2);
 
-		final CircularBufferDataProvider trace4Provider = new CircularBufferDataProvider(
-				false);
+		final CircularBufferDataProvider trace4Provider = new CircularBufferDataProvider(false);
 		trace4 = new Trace("Trace 4-Lissajous", x2Axis, y2Axis, trace4Provider);
 		// trace4.setPointStyle(PointStyle.POINT);
 		trace4.setPointSize(2);
@@ -207,20 +197,16 @@ public class ComprehensiveExample {
 				}
 				if ((ke.getState() == SWT.CONTROL) && (ke.keycode == 's')) {
 					final ImageLoader loader = new ImageLoader();
-					loader.data = new ImageData[] { xyGraph.getImage()
-							.getImageData() };
-					final FileDialog dialog = new FileDialog(Display
-							.getDefault().getShells()[0], SWT.SAVE);
-					dialog.setFilterNames(new String[] { "PNG Files",
-							"All Files (*.*)" });
+					loader.data = new ImageData[] { xyGraph.getImage().getImageData() };
+					final FileDialog dialog = new FileDialog(Display.getDefault().getShells()[0], SWT.SAVE);
+					dialog.setFilterNames(new String[] { "PNG Files", "All Files (*.*)" });
 					dialog.setFilterExtensions(new String[] { "*.png", "*.*" }); // Windows
 					final String path = dialog.open();
 					if ((path != null) && !path.equals("")) {
 						loader.save(path, SWT.IMAGE_PNG);
 					}
 				}
-				if ((ke.getState() == SWT.CONTROL)
-						&& (ke.keycode + 'a' - 97 == 't')) {
+				if ((ke.getState() == SWT.CONTROL) && (ke.keycode + 'a' - 97 == 't')) {
 					switch (xyGraph.getZoomType()) {
 					case RUBBERBAND_ZOOM:
 						xyGraph.setZoomType(ZoomType.HORIZONTAL_ZOOM);
@@ -258,21 +244,17 @@ public class ComprehensiveExample {
 			public void run() {
 				t += 60000;
 				trace3Provider.setCurrentYData(Math.cos(updateIndex), t);
-				if (((updateIndex >= 10) && (updateIndex <= 10.5))
-						|| ((updateIndex >= 20) && (updateIndex <= 20.2))) {
+				if (((updateIndex >= 10) && (updateIndex <= 10.5)) || ((updateIndex >= 20) && (updateIndex <= 20.2))) {
 					trace2Provider.addSample(new Sample(t, Double.NaN));
 					running = false;
 				} else {
-					final Sample sampe = new Sample(t, Math.sin(updateIndex),
-							0.1 * Math.random(), 0.1 * Math.random(), t
-									* 0.0000001 * Math.random(), t * 0.0000001
-									* Math.random(), "sdfsf");
+					final Sample sampe = new Sample(t, Math.sin(updateIndex), 0.1 * Math.random(), 0.1 * Math.random(),
+							t * 0.0000001 * Math.random(), t * 0.0000001 * Math.random(), "sdfsf");
 					trace2Provider.addSample(sampe);
 				}
 
 				trace2Provider.setCurrentYDataTimestamp(t);
-				trace4Provider
-						.setCurrentXData(Math.sin(updateIndex + 10) * 20 + 50);
+				trace4Provider.setCurrentXData(Math.sin(updateIndex + 10) * 20 + 50);
 				trace4Provider.setCurrentYData(Math.cos(updateIndex) * 30 + 50);
 				updateIndex += 0.1;
 

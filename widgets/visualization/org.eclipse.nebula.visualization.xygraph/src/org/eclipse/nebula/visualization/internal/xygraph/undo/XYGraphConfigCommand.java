@@ -9,7 +9,9 @@ package org.eclipse.nebula.visualization.internal.xygraph.undo;
 
 import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 
-/**The command for graph configuration.
+/**
+ * The command for graph configuration.
+ * 
  * @author Xihui Chen
  *
  */
@@ -17,27 +19,27 @@ public class XYGraphConfigCommand implements IUndoableCommand {
 
 	private XYGraph xyGraph;
 	private XYGraphMemento previousXYGraphMem, afterXYGraphMem;
-	
+
 	public XYGraphConfigCommand(XYGraph xyGraph) {
 		this.xyGraph = xyGraph;
-		previousXYGraphMem = new XYGraphMemento();		
+		previousXYGraphMem = new XYGraphMemento();
 		afterXYGraphMem = new XYGraphMemento();
-		
-		for(int i =0; i< xyGraph.getPlotArea().getAnnotationList().size(); i++){
+
+		for (int i = 0; i < xyGraph.getPlotArea().getAnnotationList().size(); i++) {
 			previousXYGraphMem.addAnnotationMemento(new AnnotationMemento());
 			afterXYGraphMem.addAnnotationMemento(new AnnotationMemento());
-		}	
-		
-		for(int i=0; i<xyGraph.getAxisList().size(); i++){
+		}
+
+		for (int i = 0; i < xyGraph.getAxisList().size(); i++) {
 			previousXYGraphMem.addAxisMemento(new AxisMemento());
 			afterXYGraphMem.addAxisMemento(new AxisMemento());
 		}
-		
-		for(int i=0; i<xyGraph.getPlotArea().getTraceList().size(); i++){
+
+		for (int i = 0; i < xyGraph.getPlotArea().getTraceList().size(); i++) {
 			previousXYGraphMem.addTraceMemento(new TraceMemento());
 			afterXYGraphMem.addTraceMemento(new TraceMemento());
 		}
-		
+
 	}
 
 	public void redo() {
@@ -47,12 +49,12 @@ public class XYGraphConfigCommand implements IUndoableCommand {
 	public void undo() {
 		XYGraphMementoUtil.restoreXYGraphPropsFromMemento(xyGraph, previousXYGraphMem);
 	}
-	
-	public void savePreviousStates(){
+
+	public void savePreviousStates() {
 		XYGraphMementoUtil.saveXYGraphPropsToMemento(xyGraph, previousXYGraphMem);
 	}
-	
-	public void saveAfterStates(){
+
+	public void saveAfterStates() {
 		XYGraphMementoUtil.saveXYGraphPropsToMemento(xyGraph, afterXYGraphMem);
 	}
 
@@ -60,5 +62,5 @@ public class XYGraphConfigCommand implements IUndoableCommand {
 	public String toString() {
 		return "Configure XYGraph Settings";
 	}
-	
+
 }

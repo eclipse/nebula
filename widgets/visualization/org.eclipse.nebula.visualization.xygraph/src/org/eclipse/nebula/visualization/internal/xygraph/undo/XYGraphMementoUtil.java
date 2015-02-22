@@ -12,10 +12,10 @@ import org.eclipse.nebula.visualization.xygraph.figures.Axis;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace;
 import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 
-
 /**
- * Utility to manage XYGraphMemento create, save and restore functions
- * These functions are used by XYGraphConfigCommand and XYGraphConfigDialog
+ * Utility to manage XYGraphMemento create, save and restore functions These
+ * functions are used by XYGraphConfigCommand and XYGraphConfigDialog
+ * 
  * @author Laurent PHILIPPE (GANIL)
  */
 public class XYGraphMementoUtil {
@@ -60,8 +60,7 @@ public class XYGraphMementoUtil {
 
 	}
 
-	public static void saveXYGraphPropsToMemento(XYGraph xyGraph,
-			XYGraphMemento memento) {
+	public static void saveXYGraphPropsToMemento(XYGraph xyGraph, XYGraphMemento memento) {
 		memento.setTitle(xyGraph.getTitle());
 		memento.setTitleFont(xyGraph.getTitleFont());
 		memento.setTitleColor(xyGraph.getTitleColor());
@@ -72,20 +71,17 @@ public class XYGraphMementoUtil {
 		memento.setTransparent(xyGraph.isTransparent());
 		int i = 0;
 		for (Annotation sourceAnno : xyGraph.getPlotArea().getAnnotationList())
-			saveAnnotationPropsToMemento(sourceAnno, memento
-					.getAnnotationMementoList().get(i++));
+			saveAnnotationPropsToMemento(sourceAnno, memento.getAnnotationMementoList().get(i++));
 
 		i = 0;
 		for (Axis axis : xyGraph.getAxisList())
 			saveAxisPropsToMemento(axis, memento.getAxisMementoList().get(i++));
 		i = 0;
 		for (Trace trace : xyGraph.getPlotArea().getTraceList())
-			saveTracePropsToMemento(trace,
-					memento.getTraceMementoList().get(i++));
+			saveTracePropsToMemento(trace, memento.getTraceMementoList().get(i++));
 	}
 
-	public static void restoreXYGraphPropsFromMemento(XYGraph xyGraph,
-			XYGraphMemento memento) {
+	public static void restoreXYGraphPropsFromMemento(XYGraph xyGraph, XYGraphMemento memento) {
 
 		if (memento.getTitle() != null)
 			xyGraph.setTitle(memento.getTitle());
@@ -95,30 +91,24 @@ public class XYGraphMementoUtil {
 		xyGraph.setTitleColor(memento.getTitleColor());
 
 		if (memento.getPlotAreaBackColor() != null)
-			xyGraph.getPlotArea().setBackgroundColor(
-					memento.getPlotAreaBackColor());
+			xyGraph.getPlotArea().setBackgroundColor(memento.getPlotAreaBackColor());
 
 		xyGraph.setShowTitle(memento.isShowTitle());
 		xyGraph.setShowLegend(memento.isShowLegend());
 		xyGraph.getPlotArea().setShowBorder(memento.isShowPlotAreaBorder());
 		xyGraph.setTransparent(memento.isTransparent());
 		int i = 0;
-		for (AnnotationMemento annotationMemento : memento
-				.getAnnotationMementoList())
-			restoreAnnotationPropsFromMemento(xyGraph.getPlotArea()
-					.getAnnotationList().get(i++), annotationMemento);
+		for (AnnotationMemento annotationMemento : memento.getAnnotationMementoList())
+			restoreAnnotationPropsFromMemento(xyGraph.getPlotArea().getAnnotationList().get(i++), annotationMemento);
 		i = 0;
 		for (AxisMemento axisMemento : memento.getAxisMementoList())
-			restoreAxisPropsFromMemento(xyGraph.getAxisList().get(i++),
-					axisMemento);
+			restoreAxisPropsFromMemento(xyGraph.getAxisList().get(i++), axisMemento);
 		i = 0;
 		for (TraceMemento traceMemento : memento.getTraceMementoList())
-			restoreTracePropsFromMemento(xyGraph.getPlotArea().getTraceList()
-					.get(i++), traceMemento);
+			restoreTracePropsFromMemento(xyGraph.getPlotArea().getTraceList().get(i++), traceMemento);
 	}
 
-	private static void saveAnnotationPropsToMemento(Annotation annotation,
-			AnnotationMemento memento) {
+	private static void saveAnnotationPropsToMemento(Annotation annotation, AnnotationMemento memento) {
 		memento.setName(annotation.getName());
 		if (annotation.isFree()) {
 			memento.setFree(true);
@@ -136,8 +126,7 @@ public class XYGraphMementoUtil {
 		memento.setShowPosition(annotation.isShowPosition());
 	}
 
-	private static void restoreAnnotationPropsFromMemento(
-			Annotation annotation, AnnotationMemento memento) {
+	private static void restoreAnnotationPropsFromMemento(Annotation annotation, AnnotationMemento memento) {
 		annotation.setName(memento.getName());
 		if (memento.isFree())
 			annotation.setFree(memento.getXAxis(), memento.getYAxis());
@@ -168,11 +157,10 @@ public class XYGraphMementoUtil {
 		memento.setMajorGridColor(axis.getMajorGridColor());
 	}
 
-	private static void restoreAxisPropsFromMemento(Axis axis,
-			AxisMemento memento) {
+	private static void restoreAxisPropsFromMemento(Axis axis, AxisMemento memento) {
 		axis.setTitle(memento.getTitle());
 		axis.setTitleFont(memento.getTitleFont());
-		if(memento.getForegroundColor() != null)
+		if (memento.getForegroundColor() != null)
 			axis.setForegroundColor(memento.getForegroundColor());
 		axis.setPrimarySide(memento.isOnPrimarySide());
 		axis.setLogScale(memento.isLogScaleEnabled());
@@ -187,8 +175,7 @@ public class XYGraphMementoUtil {
 		axis.setMajorGridColor(memento.getMajorGridColor());
 	}
 
-	private static void saveTracePropsToMemento(Trace trace,
-			TraceMemento memento) {
+	private static void saveTracePropsToMemento(Trace trace, TraceMemento memento) {
 		memento.setName(trace.getName());
 		memento.setXAxis(trace.getXAxis());
 		memento.setYAxis(trace.getYAxis());
@@ -208,8 +195,7 @@ public class XYGraphMementoUtil {
 		memento.setDrawYErrorInArea(trace.isDrawYErrorInArea());
 	}
 
-	private static void restoreTracePropsFromMemento(Trace trace,
-			TraceMemento memento) {
+	private static void restoreTracePropsFromMemento(Trace trace, TraceMemento memento) {
 		trace.setName(memento.getName());
 		trace.setXAxis(memento.getXAxis());
 		trace.setYAxis(memento.getYAxis());

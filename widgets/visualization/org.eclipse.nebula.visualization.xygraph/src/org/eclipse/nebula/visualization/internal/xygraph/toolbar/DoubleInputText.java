@@ -13,52 +13,55 @@ import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
-/**A SWT text which only allow double input. It also has the possibility for range check.
+/**
+ * A SWT text which only allow double input. It also has the possibility for
+ * range check.
+ * 
  * @author Xihui Chen
  *
  */
-public class DoubleInputText{
-	
-	private Text text;
-	
-	private String previousText;
-	
-	private Range range;	
+public class DoubleInputText {
 
-	public DoubleInputText(Composite parent, int style) {		
+	private Text text;
+
+	private String previousText;
+
+	private Range range;
+
+	public DoubleInputText(Composite parent, int style) {
 		text = new Text(parent, style);
-		text.addFocusListener(new FocusListener(){
+		text.addFocusListener(new FocusListener() {
 
 			public void focusGained(FocusEvent e) {
 				previousText = text.getText();
 			}
 
 			public void focusLost(FocusEvent e) {
-				try{
+				try {
 					double acceptedValue = Double.parseDouble(text.getText());
-					if(range != null){
+					if (range != null) {
 						if (acceptedValue > range.getUpper()) {
 							acceptedValue = range.getUpper();
 						} else if (acceptedValue < range.getLower()) {
 							acceptedValue = range.getLower();
-						}						
-					}	
+						}
+					}
 					text.setText(String.valueOf(acceptedValue));
-				}catch (Exception exception) {
+				} catch (Exception exception) {
 					text.setText(previousText);
 					return;
-				}	
+				}
 			}
-			
+
 		});
-		
+
 	}
-	
+
 	public DoubleInputText(Composite parent, int style, double max, double min) {
 		this(parent, style);
 		range = new Range(min, max);
-	}	
-	
+	}
+
 	/**
 	 * @return the range
 	 */
@@ -67,12 +70,12 @@ public class DoubleInputText{
 	}
 
 	/**
-	 * @param range the range to set. null for no range check.
+	 * @param range
+	 *            the range to set. null for no range check.
 	 */
 	public void setRange(Range range) {
 		this.range = range;
 	}
-
 
 	/**
 	 * @return the text
@@ -80,10 +83,9 @@ public class DoubleInputText{
 	public Text getText() {
 		return text;
 	}
-	
-	public double getDoubleValue(){
+
+	public double getDoubleValue() {
 		return Double.parseDouble(text.getText());
 	}
-	
 
 }

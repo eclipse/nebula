@@ -7,23 +7,23 @@
  ******************************************************************************/
 package org.eclipse.nebula.visualization.xygraph.util;
 
-
 /**
  * Implementation loader for RAP/RCP single sourcing.
+ * 
  * @author Xihui Chen
  *
  */
 public class ImplementationLoader {
 
-	public static Object newInstance(Class<?> type){
+	public static Object newInstance(Class<?> type) {
 		String name = type.getName();
-		Object result = null;		
+		Object result = null;
 		try {
 			result = type.getClassLoader().loadClass(name + "Impl").newInstance(); //$NON-NLS-1$
 		} catch (Exception e) {
-			
-		} 
+
+		}
 		return result;
 	}
-	
+
 }

@@ -10,38 +10,35 @@ package org.eclipse.nebula.visualization.internal.xygraph.undo;
 import org.eclipse.nebula.visualization.xygraph.figures.Axis;
 import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
 
-/**The undo command for panning or zooming one axis.
+/**
+ * The undo command for panning or zooming one axis.
+ * 
  * @author Xihui Chen
  * @author Kay Kasemir (changed from AxisPanningCommand)
  */
-public class AxisPanOrZoomCommand extends SaveStateCommand
-{
-    final private Axis axis;
-	
+public class AxisPanOrZoomCommand extends SaveStateCommand {
+	final private Axis axis;
+
 	final private Range beforeRange;
-	
+
 	private Range afterRange;
-	
-	public AxisPanOrZoomCommand(final String name, final Axis axis)
-	{
-	    super(name);
+
+	public AxisPanOrZoomCommand(final String name, final Axis axis) {
+		super(name);
 		this.axis = axis;
-        beforeRange = axis.getRange();
+		beforeRange = axis.getRange();
 	}
 
-	public void redo()
-	{
+	public void redo() {
 		axis.setRange(afterRange);
 	}
 
-	public void undo()
-	{
+	public void undo() {
 		axis.setRange(beforeRange);
 	}
-	
+
 	@Override
-    public void saveState()
-	{
+	public void saveState() {
 		afterRange = axis.getRange();
 	}
 }

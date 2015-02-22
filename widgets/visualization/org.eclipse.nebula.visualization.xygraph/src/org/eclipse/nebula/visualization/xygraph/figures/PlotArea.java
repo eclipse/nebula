@@ -39,19 +39,17 @@ import org.eclipse.swt.widgets.Display;
 public class PlotArea extends Figure {
 
 	// Added by Laurent PHILIPPE
-	private PropertyChangeSupport changeSupport = new PropertyChangeSupport(
-			this);
+	private PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		//System.out.println("**** PlotArea.addPropertyChangeListener() ****");
+		// System.out.println("**** PlotArea.addPropertyChangeListener() ****");
 		changeSupport.addPropertyChangeListener(listener);
 	}
 
 	@Override
-	public void addPropertyChangeListener(String property,
-			PropertyChangeListener listener) {
-		//System.out.println("**** PlotArea.addPropertyChangeListener() ****");
+	public void addPropertyChangeListener(String property, PropertyChangeListener listener) {
+		// System.out.println("**** PlotArea.addPropertyChangeListener() ****");
 		changeSupport.addPropertyChangeListener(property, listener);
 	}
 
@@ -61,8 +59,7 @@ public class PlotArea extends Figure {
 	}
 
 	@Override
-	public void removePropertyChangeListener(String property,
-			PropertyChangeListener listener) {
+	public void removePropertyChangeListener(String property, PropertyChangeListener listener) {
 		changeSupport.removePropertyChangeListener(property, listener);
 	}
 
@@ -86,13 +83,12 @@ public class PlotArea extends Figure {
 
 	public PlotArea(final XYGraph xyGraph) {
 		this.xyGraph = xyGraph;
-		setBackgroundColor(XYGraphMediaFactory.getInstance().getColor(255, 255,
-				255));
+		setBackgroundColor(XYGraphMediaFactory.getInstance().getColor(255, 255, 255));
 		setForegroundColor(XYGraphMediaFactory.getInstance().getColor(0, 0, 0));
 		setOpaque(true);
 		RGB backRGB = getBackgroundColor().getRGB();
-		revertBackColor = XYGraphMediaFactory.getInstance().getColor(
-				255 - backRGB.red, 255 - backRGB.green, 255 - backRGB.blue);
+		revertBackColor = XYGraphMediaFactory.getInstance().getColor(255 - backRGB.red, 255 - backRGB.green,
+				255 - backRGB.blue);
 		PlotMouseListener zoomer = new PlotMouseListener();
 		addMouseListener(zoomer);
 		addMouseMotionListener(zoomer);
@@ -102,13 +98,13 @@ public class PlotArea extends Figure {
 
 	@Override
 	public void setBackgroundColor(final Color bg) {
-		//System.out.println("**** PlotArea.setBackgroundColor() ****");
+		// System.out.println("**** PlotArea.setBackgroundColor() ****");
 		RGB backRGB = bg.getRGB();
-		revertBackColor = XYGraphMediaFactory.getInstance().getColor(
-				255 - backRGB.red, 255 - backRGB.green, 255 - backRGB.blue);
+		revertBackColor = XYGraphMediaFactory.getInstance().getColor(255 - backRGB.red, 255 - backRGB.green,
+				255 - backRGB.blue);
 		Color oldColor = getBackgroundColor();
 		super.setBackgroundColor(bg);
-		
+
 		changeSupport.firePropertyChange(BACKGROUND_COLOR, oldColor, bg);
 
 	}
@@ -179,9 +175,9 @@ public class PlotArea extends Figure {
 		annotation.setxyGraph(xyGraph);
 		add(annotation);
 		revalidate();
-		
-		//Laurent PHILIPPE send event
-		changeSupport.firePropertyChange("annotationList", null , annotation);
+
+		// Laurent PHILIPPE send event
+		changeSupport.firePropertyChange("annotationList", null, annotation);
 	}
 
 	/**
@@ -194,13 +190,12 @@ public class PlotArea extends Figure {
 	public boolean removeAnnotation(final Annotation annotation) {
 		final boolean result = annotationList.remove(annotation);
 		if (!annotation.isFree())
-			annotation.getTrace().getDataProvider()
-					.removeDataProviderListener(annotation);
+			annotation.getTrace().getDataProvider().removeDataProviderListener(annotation);
 		if (result) {
 			remove(annotation);
 			revalidate();
-			
-			//Laurent PHILIPPE send event
+
+			// Laurent PHILIPPE send event
 			changeSupport.firePropertyChange("annotationList", annotation, null);
 		}
 		return result;
@@ -232,10 +227,8 @@ public class PlotArea extends Figure {
 		super.paintClientArea(graphics);
 		if (showBorder) {
 			graphics.setLineWidth(2);
-			graphics.drawLine(bounds.x, bounds.y, bounds.x + bounds.width,
-					bounds.y);
-			graphics.drawLine(bounds.x + bounds.width, bounds.y, bounds.x
-					+ bounds.width, bounds.y + bounds.height);
+			graphics.drawLine(bounds.x, bounds.y, bounds.x + bounds.width, bounds.y);
+			graphics.drawLine(bounds.x + bounds.width, bounds.y, bounds.x + bounds.width, bounds.y + bounds.height);
 		}
 		// Show the start/end cursor or the 'rubberband' of a zoom operation?
 		if (armed && end != null && start != null) {
@@ -246,8 +239,7 @@ public class PlotArea extends Figure {
 				graphics.setLineStyle(SWTConstants.LINE_DOT);
 				graphics.setLineWidth(1);
 				graphics.setForegroundColor(revertBackColor);
-				graphics.drawRectangle(start.x, start.y, end.x - start.x, end.y
-						- start.y);
+				graphics.drawRectangle(start.x, start.y, end.x - start.x, end.y - start.y);
 				break;
 
 			default:
@@ -289,14 +281,13 @@ public class PlotArea extends Figure {
 	 * @param vertically
 	 *            along y axes?
 	 * @param mouseX
-	 * 			  absolute X location of the mouse cursor
+	 *            absolute X location of the mouse cursor
 	 * @param mouseY
-	 * 			  absolute Y location of the mouse cursor
+	 *            absolute Y location of the mouse cursor
 	 * @param factor
 	 *            Zoom factor. Positive to zoom 'in', negative 'out'.
 	 */
-	public void zoomInOut(final boolean horizontally,
-			final boolean vertically, final int mouseX, final int mouseY, 
+	public void zoomInOut(final boolean horizontally, final boolean vertically, final int mouseX, final int mouseY,
 			final double factor) {
 		if (horizontally)
 			for (Axis axis : xyGraph.getXAxisList()) {
@@ -329,8 +320,7 @@ public class PlotArea extends Figure {
 	 * to the Axis.AxisMouseListener, but unclear how easy/useful it would be to
 	 * base them on the same code.
 	 */
-	class PlotMouseListener extends MouseMotionListener.Stub implements
-			MouseListener {
+	class PlotMouseListener extends MouseMotionListener.Stub implements MouseListener {
 		final private List<Range> xAxisStartRangeList = new ArrayList<Range>();
 		final private List<Range> yAxisStartRangeList = new ArrayList<Range>();
 
@@ -389,8 +379,7 @@ public class PlotArea extends Figure {
 			}
 
 			// add command for undo operation
-			command = new ZoomCommand(zoomType.getDescription(),
-					xyGraph.getXAxisList(), xyGraph.getYAxisList());
+			command = new ZoomCommand(zoomType.getDescription(), xyGraph.getXAxisList(), xyGraph.getYAxisList());
 			me.consume();
 		}
 
@@ -502,15 +491,13 @@ public class PlotArea extends Figure {
 			List<Axis> axes = xyGraph.getXAxisList();
 			for (int i = 0; i < axes.size(); ++i) {
 				final Axis axis = axes.get(i);
-				axis.pan(xAxisStartRangeList.get(i),
-						axis.getPositionValue(start.x, false),
+				axis.pan(xAxisStartRangeList.get(i), axis.getPositionValue(start.x, false),
 						axis.getPositionValue(end.x, false));
 			}
 			axes = xyGraph.getYAxisList();
 			for (int i = 0; i < axes.size(); ++i) {
 				final Axis axis = axes.get(i);
-				axis.pan(yAxisStartRangeList.get(i),
-						axis.getPositionValue(start.y, false),
+				axis.pan(yAxisStartRangeList.get(i), axis.getPositionValue(start.y, false),
 						axis.getPositionValue(end.y, false));
 			}
 		}
@@ -522,19 +509,19 @@ public class PlotArea extends Figure {
 				zoomInOut(true, true, start.x, start.y, Axis.ZOOM_RATIO);
 				break;
 			case ZOOM_IN_HORIZONTALLY:
-				zoomInOut(true, false, start.x, start.y,  Axis.ZOOM_RATIO);
+				zoomInOut(true, false, start.x, start.y, Axis.ZOOM_RATIO);
 				break;
 			case ZOOM_IN_VERTICALLY:
 				zoomInOut(false, true, start.x, start.y, Axis.ZOOM_RATIO);
 				break;
 			case ZOOM_OUT:
-				zoomInOut(true, true, start.x, start.y,  -Axis.ZOOM_RATIO);
+				zoomInOut(true, true, start.x, start.y, -Axis.ZOOM_RATIO);
 				break;
 			case ZOOM_OUT_HORIZONTALLY:
 				zoomInOut(true, false, start.x, start.y, -Axis.ZOOM_RATIO);
 				break;
 			case ZOOM_OUT_VERTICALLY:
-				zoomInOut(false, true, start.x, start.y,  -Axis.ZOOM_RATIO);
+				zoomInOut(false, true, start.x, start.y, -Axis.ZOOM_RATIO);
 				break;
 			default: // NOP
 			}

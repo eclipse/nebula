@@ -20,8 +20,8 @@ import org.eclipse.swt.graphics.Image;
  * 
  */
 public final class GraphicsUtil {
-	
-	private static boolean isRAP= SWT.getPlatform().startsWith("rap"); //$NON-NLS-1$;
+
+	private static boolean isRAP = SWT.getPlatform().startsWith("rap"); //$NON-NLS-1$;
 
 	/**
 	 * Draw vertical text.
@@ -35,41 +35,33 @@ public final class GraphicsUtil {
 	 * @param y
 	 *            the y coordinate of the text, which is the left upper corner.
 	 */
-	public static final void drawVerticalText(Graphics graphics, String text,
-			int x, int y, boolean upToDown) {
+	public static final void drawVerticalText(Graphics graphics, String text, int x, int y, boolean upToDown) {
 		try {
-			if(SWT.getPlatform().startsWith("rap")) //$NON-NLS-1$
+			if (SWT.getPlatform().startsWith("rap")) //$NON-NLS-1$
 				throw new Exception();
 			try {
 				graphics.pushState();
 				graphics.translate(x, y);
 				if (upToDown) {
 					graphics.rotate(90);
-					graphics.drawText(
-							text,
-							0,
-							-FigureUtilities.getTextExtents(text,
-									graphics.getFont()).height);
+					graphics.drawText(text, 0, -FigureUtilities.getTextExtents(text, graphics.getFont()).height);
 				} else {
 					graphics.rotate(270);
-					graphics.drawText(
-							text,
-							-FigureUtilities.getTextWidth(text, graphics.getFont()),
-							0);
+					graphics.drawText(text, -FigureUtilities.getTextWidth(text, graphics.getFont()), 0);
 				}
-			}finally{
+			} finally {
 				graphics.popState();
 			}
 		} catch (Exception e) {// If rotate is not supported by the graphics.
-//			final Dimension titleSize = FigureUtilities.getTextExtents(text,
-//					graphics.getFont());
+			// final Dimension titleSize = FigureUtilities.getTextExtents(text,
+			// graphics.getFont());
 
-//			final int w = titleSize.height;
-//			final int h = titleSize.width + 1;
+			// final int w = titleSize.height;
+			// final int h = titleSize.width + 1;
 			Image image = null;
 			try {
-				image = SingleSourceHelper.createVerticalTextImage(text,
-						graphics.getFont(), graphics.getForegroundColor().getRGB(), upToDown);
+				image = SingleSourceHelper.createVerticalTextImage(text, graphics.getFont(), graphics
+						.getForegroundColor().getRGB(), upToDown);
 				graphics.drawImage(image, x, y);
 
 			} finally {
@@ -89,12 +81,11 @@ public final class GraphicsUtil {
 	 * @param location
 	 *            the left upper corner coordinates of the text.
 	 */
-	public static final void drawVerticalText(Graphics graphics, String text,
-			Point location, boolean upToDown) {
+	public static final void drawVerticalText(Graphics graphics, String text, Point location, boolean upToDown) {
 		drawVerticalText(graphics, text, location.x, location.y, upToDown);
 	}
-	
-	public static final boolean isRAP(){
+
+	public static final boolean isRAP() {
 		return isRAP;
 	}
 }

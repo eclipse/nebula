@@ -73,7 +73,7 @@ public class LinearScaleTickLabels extends Figure {
 
 		this.scale = linearScale;
 		tickLabels = new ArrayList<String>();
-		tickLabelValues = new ArrayList<Double>();		
+		tickLabelValues = new ArrayList<Double>();
 		tickLabelPositions = new ArrayList<Integer>();
 		tickLabelVisibilities = new ArrayList<Boolean>();
 
@@ -159,8 +159,7 @@ public class LinearScaleTickLabels extends Figure {
 				if (tickLabels.get(0).startsWith(MINUS) && !label.startsWith(MINUS)) {
 					x += FigureUtilities.getTextExtents(MINUS, getFont()).width;
 				}
-				int y = (int) Math.ceil(scale.getLength() - tickLabelPositions.get(i) - fontHeight
-						/ 2.0);
+				int y = (int) Math.ceil(scale.getLength() - tickLabelPositions.get(i) - fontHeight / 2.0);
 				grahpics.drawText(label, x, y);
 			}
 		}
@@ -280,13 +279,12 @@ public class LinearScaleTickLabels extends Figure {
 	}
 
 	/**
-	 * If it has enough space to draw the tick label	
+	 * If it has enough space to draw the tick label
 	 */
-	private boolean hasSpaceToDraw(int previousPosition, int tickLabelPosition,
-			String previousTickLabel, String tickLabel) {
+	private boolean hasSpaceToDraw(int previousPosition, int tickLabelPosition, String previousTickLabel,
+			String tickLabel) {
 		Dimension tickLabelSize = FigureUtilities.getTextExtents(tickLabel, scale.getFont());
-		Dimension previousTickLabelSize = FigureUtilities.getTextExtents(previousTickLabel,
-				scale.getFont());
+		Dimension previousTickLabelSize = FigureUtilities.getTextExtents(previousTickLabel, scale.getFont());
 		int interval = tickLabelPosition - previousPosition;
 		int textLength = (int) (scale.isHorizontal() ? (tickLabelSize.width / 2.0 + previousTickLabelSize.width / 2.0)
 				: tickLabelSize.height);
@@ -296,8 +294,8 @@ public class LinearScaleTickLabels extends Figure {
 		// if it is not the end tick label
 		if (tickLabelPosition != tickLabelPositions.get(tickLabelPositions.size() - 1)) {
 			noLapOnPrevoius = interval > (textLength + TICK_LABEL_GAP);
-			Dimension endTickLabelSize = FigureUtilities.getTextExtents(
-					tickLabels.get(tickLabels.size() - 1), scale.getFont());
+			Dimension endTickLabelSize = FigureUtilities.getTextExtents(tickLabels.get(tickLabels.size() - 1),
+					scale.getFont());
 			interval = tickLabelPositions.get(tickLabelPositions.size() - 1) - tickLabelPosition;
 			textLength = (int) (scale.isHorizontal() ? (tickLabelSize.width / 2.0 + endTickLabelSize.width / 2.0)
 					: tickLabelSize.height);
@@ -455,8 +453,9 @@ public class LinearScaleTickLabels extends Figure {
 		}
 
 		for (int i = minLogDigit; minBigger ? i >= maxLogDigit : i <= maxLogDigit; i += minBigger ? -1 : 1) {
-			if (Math.abs(maxLogDigit - minLogDigit) > 20) {// if the range is too big,
-													// skip minor ticks.
+			if (Math.abs(maxLogDigit - minLogDigit) > 20) {// if the range is
+															// too big,
+				// skip minor ticks.
 				BigDecimal v = pow(10, i);
 				if (v.doubleValue() > max)
 					break;
@@ -468,15 +467,14 @@ public class LinearScaleTickLabels extends Figure {
 				}
 				tickLabelValues.add(v.doubleValue());
 
-				int tickLabelPosition = (int) ((Math.log10(v.doubleValue()) - logMin)
-						/ (Math.log10(max) - logMin) * length)
+				int tickLabelPosition = (int) ((Math.log10(v.doubleValue()) - logMin) / (Math.log10(max) - logMin) * length)
 						+ scale.getMargin();
 				tickLabelPositions.add(tickLabelPosition);
 			} else {
 				// must use BigDecimal because it involves equal comparison
-				for (BigDecimal j = firstPosition; minBigger ? j.doubleValue() >= pow(10, i - 1)
-						.doubleValue() : j.doubleValue() <= pow(10, i).doubleValue(); j = minBigger ? j
-						.subtract(tickStep) : j.add(tickStep)) {
+				for (BigDecimal j = firstPosition; minBigger ? j.doubleValue() >= pow(10, i - 1).doubleValue() : j
+						.doubleValue() <= pow(10, i).doubleValue(); j = minBigger ? j.subtract(tickStep) : j
+						.add(tickStep)) {
 					if (minBigger ? j.doubleValue() < max : j.doubleValue() > max) {
 						break;
 					}
@@ -487,8 +485,7 @@ public class LinearScaleTickLabels extends Figure {
 					} else {
 						tickLabels.add(scale.format(j.doubleValue()));
 					}
-					int position = (int) ((Math.log10(j.doubleValue()) - logMin)
-							/ (Math.log10(max) - logMin) * length)
+					int position = (int) ((Math.log10(j.doubleValue()) - logMin) / (Math.log10(max) - logMin) * length)
 							+ scale.getMargin();
 					tickLabelPositions.add(position);
 					tickLabelValues.add(j.doubleValue());
@@ -499,8 +496,8 @@ public class LinearScaleTickLabels extends Figure {
 		}
 
 		// add max
-		if (minBigger ? max < tickLabelValues.get(tickLabelValues.size() - 1)
-				: max > tickLabelValues.get(tickLabelValues.size() - 1)) {
+		if (minBigger ? max < tickLabelValues.get(tickLabelValues.size() - 1) : max > tickLabelValues
+				.get(tickLabelValues.size() - 1)) {
 			tickLabelValues.add(max);
 			if (scale.isDateEnabled()) {
 				Date date = new Date((long) max);
@@ -541,12 +538,11 @@ public class LinearScaleTickLabels extends Figure {
 		tickLabelVisibilities.clear();
 
 		if (tickLabelPositions.isEmpty())
-			return;		
-		
+			return;
+
 		for (int i = 0; i < tickLabelPositions.size(); i++) {
 			tickLabelVisibilities.add(Boolean.TRUE);
 		}
-
 
 		// set the tick label visibility
 		int previousPosition = 0;
@@ -557,19 +553,17 @@ public class LinearScaleTickLabels extends Figure {
 			String currentLabel = tickLabels.get(i);
 			int currentPosition = tickLabelPositions.get(i);
 			if (i != 0) {
-				hasSpaceToDraw = hasSpaceToDraw(previousPosition, currentPosition,
-						previousLabel, currentLabel);
+				hasSpaceToDraw = hasSpaceToDraw(previousPosition, currentPosition, previousLabel, currentLabel);
 			}
 
-			// check if repeated			
+			// check if repeated
 			boolean isRepeatSameTickAndNotEnd = currentLabel.equals(previousLabel)
 					&& (i != 0 && i != tickLabelPositions.size() - 1);
 
 			// check if it is major tick label
 			boolean isMajorTickOrEnd = true;
 			if (scale.isLogScaleEnabled()) {
-				isMajorTickOrEnd = isMajorTick(tickLabelValues.get(i)) || i == 0
-						|| i == tickLabelPositions.size() - 1;
+				isMajorTickOrEnd = isMajorTick(tickLabelValues.get(i)) || i == 0 || i == tickLabelPositions.size() - 1;
 			}
 
 			if (!hasSpaceToDraw || isRepeatSameTickAndNotEnd || !isMajorTickOrEnd) {

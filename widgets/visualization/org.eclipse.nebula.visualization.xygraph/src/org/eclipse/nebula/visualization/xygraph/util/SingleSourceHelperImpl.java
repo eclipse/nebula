@@ -27,16 +27,14 @@ import org.eclipse.swt.widgets.FileDialog;
 public class SingleSourceHelperImpl extends SingleSourceHelper {
 
 	@Override
-	protected Cursor createInternalCursor(Display display, ImageData imageData,
-			int width, int height, int style) {
+	protected Cursor createInternalCursor(Display display, ImageData imageData, int width, int height, int style) {
 		Cursor cursor = new Cursor(display, imageData, width, height);
 		XYGraphMediaFactory.getInstance().registerCursor(cursor.toString(), cursor);
 		return cursor;
 	}
 
 	@Override
-	protected Image createInternalVerticalTextImage(String text, Font font,
-			RGB color, boolean upToDown) {
+	protected Image createInternalVerticalTextImage(String text, Font font, RGB color, boolean upToDown) {
 		final Dimension titleSize = FigureUtilities.getTextExtents(text, font);
 
 		final int w = titleSize.height;
@@ -47,8 +45,7 @@ public class SingleSourceHelperImpl extends SingleSourceHelper {
 		final Color titleColor = new Color(Display.getCurrent(), color);
 		RGB transparentRGB = new RGB(240, 240, 240);
 
-		gc.setBackground(XYGraphMediaFactory.getInstance().getColor(
-				transparentRGB));
+		gc.setBackground(XYGraphMediaFactory.getInstance().getColor(transparentRGB));
 		gc.fillRectangle(image.getBounds());
 		gc.setForeground(titleColor);
 		gc.setFont(font);
@@ -89,14 +86,13 @@ public class SingleSourceHelperImpl extends SingleSourceHelper {
 
 	@Override
 	protected String getInternalImageSavePath() {
-		FileDialog dialog = new FileDialog(Display.getDefault().getShells()[0],
-				SWT.SAVE);
+		FileDialog dialog = new FileDialog(Display.getDefault().getShells()[0], SWT.SAVE);
 		dialog.setFilterNames(new String[] { "PNG Files", "All Files (*.*)" });
 		dialog.setFilterExtensions(new String[] { "*.png", "*.*" }); // Windows
 		String path = dialog.open();
 		return path;
 	}
-	
+
 	@Override
 	protected GC internalGetImageGC(Image image) {
 		return new GC(image);

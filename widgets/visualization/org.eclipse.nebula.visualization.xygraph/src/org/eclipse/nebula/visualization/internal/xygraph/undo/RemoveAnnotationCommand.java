@@ -10,15 +10,17 @@ package org.eclipse.nebula.visualization.internal.xygraph.undo;
 import org.eclipse.nebula.visualization.xygraph.figures.Annotation;
 import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 
-/**The undoable command to remove an annotation.
+/**
+ * The undoable command to remove an annotation.
+ * 
  * @author Xihui Chen
  *
  */
 public class RemoveAnnotationCommand implements IUndoableCommand {
-	
+
 	private XYGraph xyGraph;
 	private Annotation annotation;
-	
+
 	public RemoveAnnotationCommand(XYGraph xyGraph, Annotation annotation) {
 		this.xyGraph = xyGraph;
 		this.annotation = annotation;
@@ -28,10 +30,10 @@ public class RemoveAnnotationCommand implements IUndoableCommand {
 		xyGraph.removeAnnotation(annotation);
 	}
 
-	public void undo() {		
+	public void undo() {
 		xyGraph.addAnnotation(annotation);
 	}
-	
+
 	@Override
 	public String toString() {
 		return "Remove Annotation";

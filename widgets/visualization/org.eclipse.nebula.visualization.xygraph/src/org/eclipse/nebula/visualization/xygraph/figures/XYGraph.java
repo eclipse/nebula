@@ -7,7 +7,6 @@
  ******************************************************************************/
 package org.eclipse.nebula.visualization.xygraph.figures;
 
-
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
@@ -38,40 +37,39 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * This class is the main figure for the plotting. It contains
- * a PlotArea, which contains a space to plot traces, and the axes,
- * title and legend of the graph.
+ * This class is the main figure for the plotting. It contains a PlotArea, which
+ * contains a space to plot traces, and the axes, title and legend of the graph.
  * 
  *
  * XY-Graph Figure.
+ * 
  * @author Xihui Chen
  * @author Kay Kasemir (performStagger)
  * @author Laurent PHILIPPE (property change support)
  */
-public class XYGraph extends Figure{
-	
+public class XYGraph extends Figure {
+
 	public static final String PROPERTY_CONFIG = "config"; //$NON-NLS-1$
 
 	public static final String PROPERTY_XY_GRAPH_MEM = "xyGraphMem"; //$NON-NLS-1$
-	
+
 	public static final String PROPERTY_ZOOMTYPE = "zoomType"; //$NON-NLS-1$
 
 	/**
-	 * Add property change support to XYGraph
-	 * Use for inform listener of xyGraphMem property changed
+	 * Add property change support to XYGraph Use for inform listener of
+	 * xyGraphMem property changed
+	 * 
 	 * @author L.PHILIPPE (GANIL)
 	 */
 	private PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 
-	
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		changeSupport.addPropertyChangeListener(listener);
 	}
 
 	@Override
-	public void addPropertyChangeListener(String property,
-			PropertyChangeListener listener) {
+	public void addPropertyChangeListener(String property, PropertyChangeListener listener) {
 		changeSupport.addPropertyChangeListener(property, listener);
 	}
 
@@ -81,23 +79,21 @@ public class XYGraph extends Figure{
 	}
 
 	@Override
-	public void removePropertyChangeListener(String property,
-			PropertyChangeListener listener) {
+	public void removePropertyChangeListener(String property, PropertyChangeListener listener) {
 		changeSupport.removePropertyChangeListener(property, listener);
 	}
-	
+
 	public void fireConfigChanged() {
 		changeSupport.firePropertyChange(PROPERTY_CONFIG, null, this);
 	}
 
-
 	/**
-	 * Save the Graph settings
-	 * Send a property changed event when changed
+	 * Save the Graph settings Send a property changed event when changed
+	 * 
 	 * @author L.PHILIPPE (GANIL)
 	 */
 	private XYGraphMemento xyGraphMem;
-	
+
 	public XYGraphMemento getXyGraphMem() {
 		return xyGraphMem;
 	}
@@ -105,33 +101,32 @@ public class XYGraph extends Figure{
 	public void setXyGraphMem(XYGraphMemento xyGraphMem) {
 		XYGraphMemento old = this.xyGraphMem;
 		this.xyGraphMem = xyGraphMem;
-		changeSupport.firePropertyChange(PROPERTY_XY_GRAPH_MEM, old, this.xyGraphMem);	
+		changeSupport.firePropertyChange(PROPERTY_XY_GRAPH_MEM, old, this.xyGraphMem);
 	}
 
 	private static final int GAP = 2;
-//	public final static Color WHITE_COLOR = ColorConstants.white;
-//	public final static Color BLACK_COLOR = ColorConstants.black;
+	// public final static Color WHITE_COLOR = ColorConstants.white;
+	// public final static Color BLACK_COLOR = ColorConstants.black;
 
-    /** Default colors for newly added item, used over when reaching the end.
-     *  <p>
-     *  Very hard to find a long list of distinct colors.
-     *  This list is definitely too short...
-     */
-    final public static RGB[] DEFAULT_TRACES_COLOR =
-    {
-        new RGB( 21,  21, 196), // blue
-        new RGB(242,  26,  26), // red
-        new RGB( 33, 179,  33), // green
-        new RGB(  0,   0,   0), // black
-        new RGB(128,   0, 255), // violett
-        new RGB(255, 170,   0), // (darkish) yellow
-        new RGB(255,   0, 240), // pink
-        new RGB(243, 132, 132), // peachy
-        new RGB(  0, 255,  11), // neon green
-        new RGB(  0, 214, 255), // neon blue
-        new RGB(114,  40,   3), // brown
-        new RGB(219, 128,   4), // orange
-    };
+	/**
+	 * Default colors for newly added item, used over when reaching the end.
+	 * <p>
+	 * Very hard to find a long list of distinct colors. This list is definitely
+	 * too short...
+	 */
+	final public static RGB[] DEFAULT_TRACES_COLOR = { new RGB(21, 21, 196), // blue
+			new RGB(242, 26, 26), // red
+			new RGB(33, 179, 33), // green
+			new RGB(0, 0, 0), // black
+			new RGB(128, 0, 255), // violett
+			new RGB(255, 170, 0), // (darkish) yellow
+			new RGB(255, 0, 240), // pink
+			new RGB(243, 132, 132), // peachy
+			new RGB(0, 255, 11), // neon green
+			new RGB(0, 214, 255), // neon blue
+			new RGB(114, 40, 3), // brown
+			new RGB(219, 128, 4), // orange
+	};
 
 	private int traceNum = 0;
 	private boolean transparent = false;
@@ -139,22 +134,20 @@ public class XYGraph extends Figure{
 
 	private Map<Axis, Legend> legendMap;
 
-	/** Graph title. Should never be <code>null</code> because
-	 *  otherwise the ToolbarArmedXYGraph's GraphConfigPage
-	 *  can crash.
+	/**
+	 * Graph title. Should never be <code>null</code> because otherwise the
+	 * ToolbarArmedXYGraph's GraphConfigPage can crash.
 	 */
 	private String title = "";
-
-
 
 	private Color titleColor;
 
 	private Label titleLabel;
 
-	//ADD BECAUSE OF SWT invalid Thread acess on getTitleColor()
+	// ADD BECAUSE OF SWT invalid Thread acess on getTitleColor()
 	private FontData titleFontData;
-	private RGB titleColorRgb; 
-	
+	private RGB titleColorRgb;
+
 	private List<Axis> xAxisList;
 	private List<Axis> yAxisList;
 	private PlotArea plotArea;
@@ -166,7 +159,6 @@ public class XYGraph extends Figure{
 
 	private ZoomType zoomType = ZoomType.NONE;
 
-
 	/**
 	 * Constructor.
 	 */
@@ -174,12 +166,10 @@ public class XYGraph extends Figure{
 		setOpaque(!transparent);
 		legendMap = new LinkedHashMap<Axis, Legend>();
 		titleLabel = new Label();
-		String sysFontName = 
-				Display.getCurrent().getSystemFont().getFontData()[0].getName();
-		setTitleFont(XYGraphMediaFactory.getInstance().getFont(
-				new FontData(sysFontName, 12, SWT.BOLD)));
+		String sysFontName = Display.getCurrent().getSystemFont().getFontData()[0].getName();
+		setTitleFont(XYGraphMediaFactory.getInstance().getFont(new FontData(sysFontName, 12, SWT.BOLD)));
 		setFont(Display.getCurrent().getSystemFont());
-		//titleLabel.setVisible(false);
+		// titleLabel.setVisible(false);
 		xAxisList = new ArrayList<Axis>();
 		yAxisList = new ArrayList<Axis>();
 		plotArea = new PlotArea(this);
@@ -213,14 +203,14 @@ public class XYGraph extends Figure{
 		boolean hasTopXAxis = false;
 		boolean hasLeftYAxis = false;
 		boolean hasBottomXAxis = false;
-		if(titleLabel != null && titleLabel.isVisible() && !(titleLabel.getText().length() <= 0)){
+		if (titleLabel != null && titleLabel.isVisible() && !(titleLabel.getText().length() <= 0)) {
 			Dimension titleSize = titleLabel.getPreferredSize();
-			titleLabel.setBounds(new Rectangle(clientArea.x + clientArea.width/2 - titleSize.width/2,
-					clientArea.y, titleSize.width, titleSize.height));
+			titleLabel.setBounds(new Rectangle(clientArea.x + clientArea.width / 2 - titleSize.width / 2, clientArea.y,
+					titleSize.width, titleSize.height));
 			clientArea.y += titleSize.height + GAP;
 			clientArea.height -= titleSize.height + GAP;
 		}
-		if(showLegend){
+		if (showLegend) {
 			List<Integer> rowHPosList = new ArrayList<Integer>();
 			List<Dimension> legendSizeList = new ArrayList<Dimension>();
 			List<Integer> rowLegendNumList = new ArrayList<Integer>();
@@ -228,118 +218,109 @@ public class XYGraph extends Figure{
 			Object[] yAxes = legendMap.keySet().toArray();
 			int hPos = 0;
 			int rowLegendNum = 0;
-			for(int i = 0; i< yAxes.length; i++){
+			for (int i = 0; i < yAxes.length; i++) {
 				Legend legend = legendMap.get(yAxes[i]);
-				if(legend != null && legend.isVisible()){
+				if (legend != null && legend.isVisible()) {
 					legendList.add(legend);
 					Dimension legendSize = legend.getPreferredSize(clientArea.width, clientArea.height);
 					legendSizeList.add(legendSize);
-					if((hPos+legendSize.width + GAP) > clientArea.width){
-						if(rowLegendNum ==0)
+					if ((hPos + legendSize.width + GAP) > clientArea.width) {
+						if (rowLegendNum == 0)
 							break;
-						rowHPosList.add(clientArea.x + (clientArea.width-hPos)/2);
+						rowHPosList.add(clientArea.x + (clientArea.width - hPos) / 2);
 						rowLegendNumList.add(rowLegendNum);
 						rowLegendNum = 1;
 						hPos = legendSize.width + GAP;
-						clientArea.height -=legendSize.height +GAP;
-						if(i==yAxes.length-1){
-							hPos =legendSize.width + GAP;
+						clientArea.height -= legendSize.height + GAP;
+						if (i == yAxes.length - 1) {
+							hPos = legendSize.width + GAP;
 							rowLegendNum = 1;
-							rowHPosList.add(clientArea.x + (clientArea.width-hPos)/2);
+							rowHPosList.add(clientArea.x + (clientArea.width - hPos) / 2);
 							rowLegendNumList.add(rowLegendNum);
-							clientArea.height -=legendSize.height +GAP;
+							clientArea.height -= legendSize.height + GAP;
 						}
-					}else{
-						hPos+=legendSize.width + GAP;
+					} else {
+						hPos += legendSize.width + GAP;
 						rowLegendNum++;
-						if(i==yAxes.length-1){
-							rowHPosList.add(clientArea.x + (clientArea.width-hPos)/2);
+						if (i == yAxes.length - 1) {
+							rowHPosList.add(clientArea.x + (clientArea.width - hPos) / 2);
 							rowLegendNumList.add(rowLegendNum);
-							clientArea.height -=legendSize.height +GAP;
+							clientArea.height -= legendSize.height + GAP;
 						}
 					}
 				}
 			}
 			int lm = 0;
 			int vPos = clientArea.y + clientArea.height + GAP;
-			for(int i=0; i<rowLegendNumList.size(); i++){
+			for (int i = 0; i < rowLegendNumList.size(); i++) {
 				hPos = rowHPosList.get(i);
-				for(int j=0; j<rowLegendNumList.get(i); j++){
-					legendList.get(lm).setBounds(new Rectangle(
-							hPos, vPos, legendSizeList.get(lm).width, legendSizeList.get(lm).height));
+				for (int j = 0; j < rowLegendNumList.get(i); j++) {
+					legendList.get(lm).setBounds(
+							new Rectangle(hPos, vPos, legendSizeList.get(lm).width, legendSizeList.get(lm).height));
 					hPos += legendSizeList.get(lm).width + GAP;
 					lm++;
 				}
-				vPos += legendSizeList.get(lm-1).height + GAP;
+				vPos += legendSizeList.get(lm - 1).height + GAP;
 			}
 		}
 
-		for(int i=xAxisList.size()-1; i>=0; i--){
+		for (int i = xAxisList.size() - 1; i >= 0; i--) {
 			Axis xAxis = xAxisList.get(i);
 			Dimension xAxisSize = xAxis.getPreferredSize(clientArea.width, clientArea.height);
-			if(xAxis.getTickLablesSide() == LabelSide.Primary){
-				if(xAxis.isVisible())
+			if (xAxis.getTickLablesSide() == LabelSide.Primary) {
+				if (xAxis.isVisible())
 					hasBottomXAxis = true;
-				xAxis.setBounds(new Rectangle(clientArea.x,
-					clientArea.y + clientArea.height - xAxisSize.height,
-					xAxisSize.width, xAxisSize.height));
+				xAxis.setBounds(new Rectangle(clientArea.x, clientArea.y + clientArea.height - xAxisSize.height,
+						xAxisSize.width, xAxisSize.height));
 				clientArea.height -= xAxisSize.height;
-			}else{
-				if(xAxis.isVisible())
+			} else {
+				if (xAxis.isVisible())
 					hasTopXAxis = true;
-				xAxis.setBounds(new Rectangle(clientArea.x,
-					clientArea.y+1,
-					xAxisSize.width, xAxisSize.height));
-				clientArea.y += xAxisSize.height ;
+				xAxis.setBounds(new Rectangle(clientArea.x, clientArea.y + 1, xAxisSize.width, xAxisSize.height));
+				clientArea.y += xAxisSize.height;
 				clientArea.height -= xAxisSize.height;
 			}
 		}
 
-		for(int i=yAxisList.size()-1; i>=0; i--){
+		for (int i = yAxisList.size() - 1; i >= 0; i--) {
 			Axis yAxis = yAxisList.get(i);
-			int hintHeight = clientArea.height + (hasTopXAxis ? 1 :0) *yAxis.getMargin()
-				+ (hasBottomXAxis ? 1 :0) *yAxis.getMargin();
-			if(hintHeight > getClientArea().height)
+			int hintHeight = clientArea.height + (hasTopXAxis ? 1 : 0) * yAxis.getMargin() + (hasBottomXAxis ? 1 : 0)
+					* yAxis.getMargin();
+			if (hintHeight > getClientArea().height)
 				hintHeight = clientArea.height;
-			Dimension yAxisSize = yAxis.getPreferredSize(clientArea.width,
-					hintHeight);
-			if(yAxis.getTickLablesSide() == LabelSide.Primary){ // on the left
-				if(yAxis.isVisible())
+			Dimension yAxisSize = yAxis.getPreferredSize(clientArea.width, hintHeight);
+			if (yAxis.getTickLablesSide() == LabelSide.Primary) { // on the left
+				if (yAxis.isVisible())
 					hasLeftYAxis = true;
-				yAxis.setBounds(new Rectangle(clientArea.x,
-					clientArea.y - (hasTopXAxis? yAxis.getMargin():0),
-					yAxisSize.width, yAxisSize.height));
+				yAxis.setBounds(new Rectangle(clientArea.x, clientArea.y - (hasTopXAxis ? yAxis.getMargin() : 0),
+						yAxisSize.width, yAxisSize.height));
 				clientArea.x += yAxisSize.width;
 				clientArea.width -= yAxisSize.width;
-			}else{ // on the right
-				if(yAxis.isVisible())
+			} else { // on the right
+				if (yAxis.isVisible())
 					hasRightYAxis = true;
-				yAxis.setBounds(new Rectangle(clientArea.x + clientArea.width - yAxisSize.width -1,
-					clientArea.y- (hasTopXAxis? yAxis.getMargin():0),
-					yAxisSize.width, yAxisSize.height));
+				yAxis.setBounds(new Rectangle(clientArea.x + clientArea.width - yAxisSize.width - 1, clientArea.y
+						- (hasTopXAxis ? yAxis.getMargin() : 0), yAxisSize.width, yAxisSize.height));
 				clientArea.width -= yAxisSize.width;
 			}
 		}
 
-		//re-adjust xAxis boundss
-		for(int i=xAxisList.size()-1; i>=0; i--){
+		// re-adjust xAxis boundss
+		for (int i = xAxisList.size() - 1; i >= 0; i--) {
 			Axis xAxis = xAxisList.get(i);
 			Rectangle r = xAxis.getBounds().getCopy();
-			if(hasLeftYAxis)
-				r.x = clientArea.x - xAxis.getMargin()-1;
-			r.width = clientArea.width + (hasLeftYAxis ? xAxis.getMargin() : -1) +
-					(hasRightYAxis? xAxis.getMargin() : 0);
+			if (hasLeftYAxis)
+				r.x = clientArea.x - xAxis.getMargin() - 1;
+			r.width = clientArea.width + (hasLeftYAxis ? xAxis.getMargin() : -1)
+					+ (hasRightYAxis ? xAxis.getMargin() : 0);
 			xAxis.setBounds(r);
 		}
 
-		if(plotArea != null && plotArea.isVisible()){
+		if (plotArea != null && plotArea.isVisible()) {
 
-			Rectangle plotAreaBound = new Rectangle(
-					primaryXAxis.getBounds().x + primaryXAxis.getMargin()+1,
-					primaryYAxis.getBounds().y + primaryYAxis.getMargin(),
-					primaryXAxis.getBounds().width - 2*primaryXAxis.getMargin(),
-					primaryYAxis.getBounds().height - 2*primaryYAxis.getMargin()
-					);
+			Rectangle plotAreaBound = new Rectangle(primaryXAxis.getBounds().x + primaryXAxis.getMargin() + 1,
+					primaryYAxis.getBounds().y + primaryYAxis.getMargin(), primaryXAxis.getBounds().width - 2
+							* primaryXAxis.getMargin(), primaryYAxis.getBounds().height - 2 * primaryYAxis.getMargin());
 			plotArea.setBounds(plotAreaBound);
 
 		}
@@ -347,22 +328,20 @@ public class XYGraph extends Figure{
 		super.layout();
 	}
 
-
-
 	/**
-	 * @param zoomType the zoomType to set
+	 * @param zoomType
+	 *            the zoomType to set
 	 */
 	public void setZoomType(ZoomType zoomType) {
-		if(this.zoomType == zoomType){
+		if (this.zoomType == zoomType) {
 			return;
 		}
 		plotArea.setZoomType(zoomType);
-		for(Axis axis : xAxisList)
+		for (Axis axis : xAxisList)
 			axis.setZoomType(zoomType);
-		for(Axis axis : yAxisList)
+		for (Axis axis : yAxisList)
 			axis.setZoomType(zoomType);
-		changeSupport.firePropertyChange(PROPERTY_ZOOMTYPE, this.zoomType,
-				this.zoomType = zoomType);
+		changeSupport.firePropertyChange(PROPERTY_ZOOMTYPE, this.zoomType, this.zoomType = zoomType);
 	}
 
 	/**
@@ -373,7 +352,8 @@ public class XYGraph extends Figure{
 	}
 
 	/**
-	 * @param title the title to set
+	 * @param title
+	 *            the title to set
 	 */
 	public void setTitle(String title) {
 		this.title = title.trim();
@@ -381,9 +361,10 @@ public class XYGraph extends Figure{
 	}
 
 	/**
-	 * @param showTitle true if title should be shown; false otherwise.
+	 * @param showTitle
+	 *            true if title should be shown; false otherwise.
 	 */
-	public void setShowTitle(boolean showTitle){
+	public void setShowTitle(boolean showTitle) {
 		titleLabel.setVisible(showTitle);
 		revalidate();
 	}
@@ -391,16 +372,17 @@ public class XYGraph extends Figure{
 	/**
 	 * @return true if title should be shown; false otherwise.
 	 */
-	public boolean isShowTitle(){
+	public boolean isShowTitle() {
 		return titleLabel.isVisible();
 	}
 
 	/**
-	 * @param showLegend true if legend should be shown; false otherwise.
+	 * @param showLegend
+	 *            true if legend should be shown; false otherwise.
 	 */
-	public void setShowLegend(boolean showLegend){
+	public void setShowLegend(boolean showLegend) {
 		this.showLegend = showLegend;
-		for(Axis yAxis : legendMap.keySet()){
+		for (Axis yAxis : legendMap.keySet()) {
 			Legend legend = legendMap.get(yAxis);
 			legend.setVisible(showLegend);
 		}
@@ -414,11 +396,13 @@ public class XYGraph extends Figure{
 		return showLegend;
 	}
 
-	/**Add an axis to the graph
+	/**
+	 * Add an axis to the graph
+	 * 
 	 * @param axis
 	 */
-	public void addAxis(Axis axis){
-		if(axis.isHorizontal())
+	public void addAxis(Axis axis) {
+		if (axis.isHorizontal())
 			xAxisList.add(axis);
 		else
 			yAxisList.add(axis);
@@ -428,33 +412,36 @@ public class XYGraph extends Figure{
 		revalidate();
 	}
 
-	/**Remove an axis from the graph
+	/**
+	 * Remove an axis from the graph
+	 * 
 	 * @param axis
 	 * @return true if this axis exists.
 	 */
-	public boolean removeAxis(Axis axis){
+	public boolean removeAxis(Axis axis) {
 		remove(axis);
 		plotArea.removeGrid(axis.getGrid());
 		revalidate();
-		if(axis.isHorizontal())
+		if (axis.isHorizontal())
 			return xAxisList.remove(axis);
 		else
 			return yAxisList.remove(axis);
 	}
 
-	/**Add a trace
+	/**
+	 * Add a trace
+	 * 
 	 * @param trace
 	 */
-	public void addTrace(Trace trace){
-		if (trace.getTraceColor() == null)
-		{   // Cycle through default colors
-		    trace.setTraceColor(XYGraphMediaFactory.getInstance().getColor(
-		    		DEFAULT_TRACES_COLOR[traceNum % DEFAULT_TRACES_COLOR.length]));
-        	++traceNum;
+	public void addTrace(Trace trace) {
+		if (trace.getTraceColor() == null) { // Cycle through default colors
+			trace.setTraceColor(XYGraphMediaFactory.getInstance().getColor(
+					DEFAULT_TRACES_COLOR[traceNum % DEFAULT_TRACES_COLOR.length]));
+			++traceNum;
 		}
-		if(legendMap.containsKey(trace.getYAxis()))
+		if (legendMap.containsKey(trace.getYAxis()))
 			legendMap.get(trace.getYAxis()).addTrace(trace);
-		else{
+		else {
 			legendMap.put(trace.getYAxis(), new Legend(this));
 			legendMap.get(trace.getYAxis()).addTrace(trace);
 			add(legendMap.get(trace.getYAxis()));
@@ -466,13 +453,15 @@ public class XYGraph extends Figure{
 		repaint();
 	}
 
-	/**Remove a trace.
+	/**
+	 * Remove a trace.
+	 * 
 	 * @param trace
 	 */
-	public void removeTrace(Trace trace){
-		if(legendMap.containsKey(trace.getYAxis())){
+	public void removeTrace(Trace trace) {
+		if (legendMap.containsKey(trace.getYAxis())) {
 			legendMap.get(trace.getYAxis()).removeTrace(trace);
-			if(legendMap.get(trace.getYAxis()).getTraceList().size() <=0){
+			if (legendMap.get(trace.getYAxis()).getTraceList().size() <= 0) {
 				remove(legendMap.remove(trace.getYAxis()));
 			}
 		}
@@ -483,22 +472,27 @@ public class XYGraph extends Figure{
 		repaint();
 	}
 
-	/**Add an annotation
+	/**
+	 * Add an annotation
+	 * 
 	 * @param annotation
 	 */
-	public void addAnnotation(Annotation annotation){
+	public void addAnnotation(Annotation annotation) {
 		plotArea.addAnnotation(annotation);
 	}
 
-	/**Remove an annotation
+	/**
+	 * Remove an annotation
+	 * 
 	 * @param annotation
 	 */
-	public void removeAnnotation(Annotation annotation){
+	public void removeAnnotation(Annotation annotation) {
 		plotArea.removeAnnotation(annotation);
 	}
 
 	/**
-	 * @param titleFont the titleFont to set
+	 * @param titleFont
+	 *            the titleFont to set
 	 */
 	public void setTitleFont(Font titleFont) {
 		titleLabel.setFont(titleFont);
@@ -508,18 +502,17 @@ public class XYGraph extends Figure{
 	/**
 	 * @return the title font.
 	 */
-	public Font getTitleFont(){
+	public Font getTitleFont() {
 		return titleLabel.getFont();
 	}
-	
-	
 
 	public FontData getTitleFontData() {
 		return titleFontData;
 	}
 
 	/**
-	 * @param titleColor the titleColor to set
+	 * @param titleColor
+	 *            the titleColor to set
 	 */
 	public void setTitleColor(Color titleColor) {
 		this.titleColor = titleColor;
@@ -536,16 +529,16 @@ public class XYGraph extends Figure{
 		}
 		super.paintFigure(graphics);
 	}
-	
+
 	/**
-	 * @param transparent the transparent to set
+	 * @param transparent
+	 *            the transparent to set
 	 */
 	public void setTransparent(boolean transparent) {
 		this.transparent = transparent;
 		getPlotArea().setOpaque(!transparent);
 		repaint();
 	}
-
 
 	/**
 	 * @return the transparent
@@ -554,8 +547,7 @@ public class XYGraph extends Figure{
 		return transparent;
 	}
 
-
-	/** 
+	/**
 	 * @return the plotArea, which contains all the elements drawn inside it.
 	 */
 	public PlotArea getPlotArea() {
@@ -563,21 +555,19 @@ public class XYGraph extends Figure{
 	}
 
 	/** @return Image of the XYFigure. Receiver must dispose. */
-	public Image getImage(){
+	public Image getImage() {
 		return SingleSourceHelper.getXYGraphSnapShot(this);
 	}
-
 
 	/**
 	 * @return the titleColor
 	 */
 	public Color getTitleColor() {
-		if(titleColor == null)
+		if (titleColor == null)
 			return getForegroundColor();
 		return titleColor;
 	}
-	
-	
+
 	public RGB getTitleColorRgb() {
 		return titleColorRgb;
 	}
@@ -611,10 +601,10 @@ public class XYGraph extends Figure{
 	}
 
 	/**
-	 * @return the all the axis include xAxes and yAxes.
-	 * yAxisList is appended to xAxisList in the returned list.
+	 * @return the all the axis include xAxes and yAxes. yAxisList is appended
+	 *         to xAxisList in the returned list.
 	 */
-	public List<Axis> getAxisList(){
+	public List<Axis> getAxisList() {
 		List<Axis> list = new ArrayList<Axis>();
 		list.addAll(xAxisList);
 		list.addAll(yAxisList);
@@ -631,83 +621,78 @@ public class XYGraph extends Figure{
 	/**
 	 * Perform forced autoscale to all axes.
 	 */
-	public void performAutoScale(){
-	    final ZoomCommand command = new ZoomCommand("Auto Scale", xAxisList, yAxisList);
-		for(Axis axis : xAxisList){
+	public void performAutoScale() {
+		final ZoomCommand command = new ZoomCommand("Auto Scale", xAxisList, yAxisList);
+		for (Axis axis : xAxisList) {
 			axis.performAutoScale(true);
 		}
-		for(Axis axis : yAxisList){
+		for (Axis axis : yAxisList) {
 			axis.performAutoScale(true);
 		}
 		command.saveState();
 		operationsManager.addCommand(command);
 	}
 
-	/** Stagger all axes: Autoscale each axis so that traces on various
-	 *  axes don't overlap
+	/**
+	 * Stagger all axes: Autoscale each axis so that traces on various axes
+	 * don't overlap
 	 */
-    public void performStagger()
-    {
-        final double GAP = 0.1;
+	public void performStagger() {
+		final double GAP = 0.1;
 
-        final ZoomCommand command = new ZoomCommand("Stagger Axes", null, yAxisList);
+		final ZoomCommand command = new ZoomCommand("Stagger Axes", null, yAxisList);
 
-        // Arrange all axes so they don't overlap by assigning 1/Nth of
-        // the vertical range to each one
-        final int N = yAxisList.size();
-        for (int i=0; i<N; ++i)
-        {
-            final Axis yaxis = yAxisList.get(i);
-            // Does axis handle itself in another way?
-            if (yaxis.isAutoScale())
-                continue;
+		// Arrange all axes so they don't overlap by assigning 1/Nth of
+		// the vertical range to each one
+		final int N = yAxisList.size();
+		for (int i = 0; i < N; ++i) {
+			final Axis yaxis = yAxisList.get(i);
+			// Does axis handle itself in another way?
+			if (yaxis.isAutoScale())
+				continue;
 
-            // Determine range of values on this axis
-            final Range axis_range = yaxis.getTraceDataRange();
-            // Skip axis which for some reason cannot determine its range
-            if (axis_range ==  null)
-                continue;
+			// Determine range of values on this axis
+			final Range axis_range = yaxis.getTraceDataRange();
+			// Skip axis which for some reason cannot determine its range
+			if (axis_range == null)
+				continue;
 
-            double low = axis_range.getLower();
-            double high = axis_range.getUpper();
-            if (low == high)
-            {   // Center trace with constant value (empty range)
-                final double half = Math.abs(low/2);
-                low -= half;
-                high += half;
-            }
+			double low = axis_range.getLower();
+			double high = axis_range.getUpper();
+			if (low == high) { // Center trace with constant value (empty range)
+				final double half = Math.abs(low / 2);
+				low -= half;
+				high += half;
+			}
 
-            if (yaxis.isLogScaleEnabled())
-            {   // Transition into log space
-                low = Log10.log10(low);
-                high = Log10.log10(high);
-            }
+			if (yaxis.isLogScaleEnabled()) { // Transition into log space
+				low = Log10.log10(low);
+				high = Log10.log10(high);
+			}
 
-            double span = high - low;
-            // Make some extra space
-            low -= GAP*span;
-            high += GAP*span;
-            span = high-low;
+			double span = high - low;
+			// Make some extra space
+			low -= GAP * span;
+			high += GAP * span;
+			span = high - low;
 
-            // With N axes, assign 1/Nth of the vertical plot space to this axis
-            // by shifting the span down according to the axis index,
-            // using a total of N*range.
-            low -= (N-i-1)*span;
-            high += i*span;
+			// With N axes, assign 1/Nth of the vertical plot space to this axis
+			// by shifting the span down according to the axis index,
+			// using a total of N*range.
+			low -= (N - i - 1) * span;
+			high += i * span;
 
-            if (yaxis.isLogScaleEnabled())
-            {   // Revert from log space
-                low = Log10.pow10(low);
-                high = Log10.pow10(high);
-            }
+			if (yaxis.isLogScaleEnabled()) { // Revert from log space
+				low = Log10.pow10(low);
+				high = Log10.pow10(high);
+			}
 
-            // Sanity check for empty traces
-            if (low < high  &&
-                !Double.isInfinite(low) && !Double.isInfinite(high))
-                yaxis.setRange(low, high);
-        }
+			// Sanity check for empty traces
+			if (low < high && !Double.isInfinite(low) && !Double.isInfinite(high))
+				yaxis.setRange(low, high);
+		}
 
-        command.saveState();
-        operationsManager.addCommand(command);
-    }
+		command.saveState();
+		operationsManager.addCommand(command);
+	}
 }

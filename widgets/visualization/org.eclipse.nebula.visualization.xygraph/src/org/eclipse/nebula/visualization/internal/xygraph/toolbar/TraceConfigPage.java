@@ -73,19 +73,16 @@ public class TraceConfigPage {
 		composite.setLayout(new GridLayout(2, false));
 
 		Composite traceCompo = new Composite(composite, SWT.NONE);
-		traceCompo.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true,
-				1, 1));
+		traceCompo.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		traceCompo.setLayout(new GridLayout(3, false));
 
 		final Group errorBarGroup = new Group(composite, SWT.NONE);
-		errorBarGroup.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true,
-				false, 1, 1));
+		errorBarGroup.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false, 1, 1));
 		errorBarGroup.setLayout(new GridLayout(2, false));
 		errorBarGroup.setText("Error Bar");
 
 		GridData gd;
-		GridData labelGd = new GridData(SWT.FILL, SWT.CENTER, false, false, 1,
-				1);
+		GridData labelGd = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
 
 		final Label nameLabel = new Label(traceCompo, 0);
 		nameLabel.setText("Name: ");
@@ -200,14 +197,12 @@ public class TraceConfigPage {
 
 		antiAliasing = new Button(traceCompo, SWT.CHECK);
 		antiAliasing.setText("Anti Aliasing Enabled");
-		antiAliasing.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING,
-				false, false, 3, 1));
+		antiAliasing.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, 3, 1));
 
 		// error bar settings...
 		errorBarEnabledButton = new Button(errorBarGroup, SWT.CHECK);
 		errorBarEnabledButton.setText("Error Bar Enabled");
-		errorBarEnabledButton.setLayoutData(new GridData(SWT.BEGINNING,
-				SWT.BEGINNING, false, false, 2, 1));
+		errorBarEnabledButton.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, 2, 1));
 		errorBarEnabledButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -262,8 +257,7 @@ public class TraceConfigPage {
 
 		drawYErrorInAreaButton = new Button(errorBarGroup, SWT.CHECK);
 		drawYErrorInAreaButton.setText("Draw Y Error In Area");
-		drawYErrorInAreaButton.setLayoutData(new GridData(SWT.BEGINNING,
-				SWT.BEGINNING, false, false, 2, 1));
+		drawYErrorInAreaButton.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, 2, 1));
 		initialize();
 	}
 
@@ -276,28 +270,20 @@ public class TraceConfigPage {
 
 	public void applyChanges() {
 		trace.setName(nameText.getText());
-		trace.setXAxis(xyGraph.getXAxisList().get(
-				xAxisCombo.getSelectionIndex()));
-		trace.setYAxis(xyGraph.getYAxisList().get(
-				yAxisCombo.getSelectionIndex()));
-		trace.setTraceColor(XYGraphMediaFactory.getInstance().getColor(
-				traceColorSelector.getColorValue()));
-		trace.setTraceType(TraceType.values()[traceTypeCombo
-				.getSelectionIndex()]);
+		trace.setXAxis(xyGraph.getXAxisList().get(xAxisCombo.getSelectionIndex()));
+		trace.setYAxis(xyGraph.getYAxisList().get(yAxisCombo.getSelectionIndex()));
+		trace.setTraceColor(XYGraphMediaFactory.getInstance().getColor(traceColorSelector.getColorValue()));
+		trace.setTraceType(TraceType.values()[traceTypeCombo.getSelectionIndex()]);
 		trace.setLineWidth(lineWidthSpinner.getSelection());
-		trace.setPointStyle(PointStyle.values()[pointStyleCombo
-				.getSelectionIndex()]);
+		trace.setPointStyle(PointStyle.values()[pointStyleCombo.getSelectionIndex()]);
 		trace.setPointSize(pointSizeSpinner.getSelection());
 		trace.setBaseLine(BaseLine.values()[baseLineCombo.getSelectionIndex()]);
 		trace.setAreaAlpha(areaAlphaSpinner.getSelection());
 		trace.setAntiAliasing(antiAliasing.getSelection());
 		trace.setErrorBarEnabled(errorBarEnabledButton.getSelection());
-		trace.setXErrorBarType(ErrorBarType.values()[xErrorBarTypeCombo
-				.getSelectionIndex()]);
-		trace.setYErrorBarType(ErrorBarType.values()[yErrorBarTypeCombo
-				.getSelectionIndex()]);
-		trace.setErrorBarColor(XYGraphMediaFactory.getInstance().getColor(
-				errorBarColorSelector.getColorValue()));
+		trace.setXErrorBarType(ErrorBarType.values()[xErrorBarTypeCombo.getSelectionIndex()]);
+		trace.setYErrorBarType(ErrorBarType.values()[yErrorBarTypeCombo.getSelectionIndex()]);
+		trace.setErrorBarColor(XYGraphMediaFactory.getInstance().getColor(errorBarColorSelector.getColorValue()));
 		trace.setErrorBarCapWidth(errorBarCapWidthSpinner.getSelection());
 		trace.setDrawYErrorInArea(drawYErrorInAreaButton.getSelection());
 	}
@@ -307,21 +293,16 @@ public class TraceConfigPage {
 		xAxisCombo.select(xyGraph.getXAxisList().indexOf(trace.getXAxis()));
 		yAxisCombo.select(xyGraph.getYAxisList().indexOf(trace.getYAxis()));
 		traceColorSelector.setColorValue(trace.getTraceColor().getRGB());
-		traceTypeCombo.select(Arrays.asList(TraceType.values()).indexOf(
-				trace.getTraceType()));
+		traceTypeCombo.select(Arrays.asList(TraceType.values()).indexOf(trace.getTraceType()));
 		lineWidthSpinner.setSelection(trace.getLineWidth());
-		pointStyleCombo.select(Arrays.asList(PointStyle.values()).indexOf(
-				trace.getPointStyle()));
+		pointStyleCombo.select(Arrays.asList(PointStyle.values()).indexOf(trace.getPointStyle()));
 		pointSizeSpinner.setSelection(trace.getPointSize());
-		baseLineCombo.select(Arrays.asList(BaseLine.values()).indexOf(
-				trace.getBaseLine()));
+		baseLineCombo.select(Arrays.asList(BaseLine.values()).indexOf(trace.getBaseLine()));
 		areaAlphaSpinner.setSelection(trace.getAreaAlpha());
 		antiAliasing.setSelection(trace.isAntiAliasing());
 		errorBarEnabledButton.setSelection(trace.isErrorBarEnabled());
-		xErrorBarTypeCombo.select(Arrays.asList(ErrorBarType.values()).indexOf(
-				trace.getXErrorBarType()));
-		yErrorBarTypeCombo.select(Arrays.asList(ErrorBarType.values()).indexOf(
-				trace.getYErrorBarType()));
+		xErrorBarTypeCombo.select(Arrays.asList(ErrorBarType.values()).indexOf(trace.getXErrorBarType()));
+		yErrorBarTypeCombo.select(Arrays.asList(ErrorBarType.values()).indexOf(trace.getYErrorBarType()));
 		errorBarColorSelector.setColorValue(trace.getErrorBarColor().getRGB());
 		errorBarCapWidthSpinner.setSelection(trace.getErrorBarCapWidth());
 		drawYErrorInAreaButton.setSelection(trace.isDrawYErrorInArea());
@@ -335,14 +316,11 @@ public class TraceConfigPage {
 
 		updateBaseLineComboEnable();
 	}
-	
+
 	private void updateBaseLineComboEnable() {
-		baseLineCombo.setEnabled(traceTypeCombo.getSelectionIndex() == TraceType.BAR
-				.ordinal()
-				|| traceTypeCombo.getSelectionIndex() == TraceType.AREA
-						.ordinal()
-				|| traceTypeCombo.getSelectionIndex() == TraceType.LINE_AREA
-						.ordinal());
+		baseLineCombo.setEnabled(traceTypeCombo.getSelectionIndex() == TraceType.BAR.ordinal()
+				|| traceTypeCombo.getSelectionIndex() == TraceType.AREA.ordinal()
+				|| traceTypeCombo.getSelectionIndex() == TraceType.LINE_AREA.ordinal());
 	}
 
 }

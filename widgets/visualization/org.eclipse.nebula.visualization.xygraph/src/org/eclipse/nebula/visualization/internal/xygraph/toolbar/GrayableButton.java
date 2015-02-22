@@ -14,45 +14,45 @@ import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 
-/**A button with gray image when disabled.
+/**
+ * A button with gray image when disabled.
+ * 
  * @author Xihui Chen
  *
  */
 public class GrayableButton extends Button {
-	
+
 	Image image;
 	Image grayImage;
 	private static final String GRAY_IMAGE = "GrayableButton.GrayImage";
-	
+
 	public GrayableButton(Image image) {
 		this(image, null);
 	}
-	
-	public GrayableButton(Image image, Image grayImage){
+
+	public GrayableButton(Image image, Image grayImage) {
 		super(image);
 		this.image = image;
 		this.grayImage = XYGraphMediaFactory.getInstance().getRegisteredImage(GRAY_IMAGE + image.toString());
-		if( this.grayImage == null){
-			if(SWT.getPlatform().startsWith("rap")) { //$NON-NLS-1$
-				if( grayImage != null)
+		if (this.grayImage == null) {
+			if (SWT.getPlatform().startsWith("rap")) { //$NON-NLS-1$
+				if (grayImage != null)
 					this.grayImage = grayImage;
 				else
 					this.grayImage = image;
-			}
-			else
+			} else
 				this.grayImage = new Image(null, image, SWTConstants.IMAGE_GRAY);
 			XYGraphMediaFactory.getInstance().registerImage(GRAY_IMAGE + image.toString(), this.grayImage);
-		}		
+		}
 	}
-	
+
 	@Override
 	public void setEnabled(boolean value) {
 		super.setEnabled(value);
-		if(value)			
+		if (value)
 			setContents(new ImageFigure(image));
 		else
 			setContents(new ImageFigure(grayImage));
-	}	
-	
-	
+	}
+
 }

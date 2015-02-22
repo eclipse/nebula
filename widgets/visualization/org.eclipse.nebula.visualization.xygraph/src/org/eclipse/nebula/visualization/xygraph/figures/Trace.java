@@ -41,8 +41,7 @@ import org.eclipse.swt.widgets.Display;
  * @author Laurent PHILIPPE (Add trace listeners)
  * @author Takashi Nakamoto @ Cosylab (performance improvement)
  */
-public class Trace extends Figure implements IDataProviderListener,
-		IAxisListener {
+public class Trace extends Figure implements IDataProviderListener, IAxisListener {
 	/** Size of 'markers' used on X axis to indicate non-plottable samples */
 	final private static int MARKER_SIZE = 6;
 
@@ -50,8 +49,7 @@ public class Trace extends Figure implements IDataProviderListener,
 	 * Use advanced graphics? Might not make a real performance difference, but
 	 * since this it called a lot, keep it in variable
 	 */
-	final private boolean use_advanced_graphics = Preferences
-			.useAdvancedGraphics();
+	final private boolean use_advanced_graphics = Preferences.useAdvancedGraphics();
 
 	/**
 	 * The way how the trace will be drawn.
@@ -61,7 +59,7 @@ public class Trace extends Figure implements IDataProviderListener,
 	public enum TraceType {
 		/** Solid Line */
 		SOLID_LINE(Messages.TraceSolid),
-		
+
 		/** Dash Line */
 		DASH_LINE(Messages.TraceDash),
 
@@ -85,12 +83,12 @@ public class Trace extends Figure implements IDataProviderListener,
 		 * areaAlpha.
 		 */
 		AREA(Messages.TraceArea),
-		
+
 		/**
 		 * It also has a solid line in addition to the area.
 		 */
 		LINE_AREA(Messages.TraceLineArea),
-		
+
 		/**
 		 * Solid line in step. It looks like the y value(on vertical direction)
 		 * changed firstly.
@@ -102,15 +100,13 @@ public class Trace extends Figure implements IDataProviderListener,
 		 * direction) changed firstly.
 		 */
 		STEP_HORIZONTALLY(Messages.TraceStepHoriz),
-		
-		
 
 		/** Dashdot Line */
 		DASHDOT_LINE(Messages.TraceDashDot),
-		
+
 		/** Dashdotdot Line */
 		DASHDOTDOT_LINE(Messages.TraceDashDotDot),
-		
+
 		/** Dot Line */
 		DOT_LINE(Messages.TraceDot);
 
@@ -147,12 +143,10 @@ public class Trace extends Figure implements IDataProviderListener,
 	}
 
 	public enum PointStyle {
-		NONE(Messages.PointNone), POINT(Messages.PointPoint), CIRCLE(
-				Messages.PointCircle), TRIANGLE(Messages.PointTriangle), FILLED_TRIANGLE(
-				Messages.PointFilledTriangle), SQUARE(Messages.PointSquare), FILLED_SQUARE(
-				Messages.PointFilledSquare), DIAMOND(Messages.PointDiamond), FILLED_DIAMOND(
-				Messages.PointFilledDiamond), XCROSS(Messages.PointCross), CROSS(
-				Messages.ProintCross2), BAR(Messages.PointBar);
+		NONE(Messages.PointNone), POINT(Messages.PointPoint), CIRCLE(Messages.PointCircle), TRIANGLE(
+				Messages.PointTriangle), FILLED_TRIANGLE(Messages.PointFilledTriangle), SQUARE(Messages.PointSquare), FILLED_SQUARE(
+				Messages.PointFilledSquare), DIAMOND(Messages.PointDiamond), FILLED_DIAMOND(Messages.PointFilledDiamond), XCROSS(
+				Messages.PointCross), CROSS(Messages.ProintCross2), BAR(Messages.PointBar);
 
 		private PointStyle(String description) {
 			this.description = description;
@@ -269,21 +263,17 @@ public class Trace extends Figure implements IDataProviderListener,
 		switch (yErrorBarType) {
 		case BOTH:
 		case MINUS:
-			ep = new Point(xAxis.getValuePosition(dp.getXValue(), false),
-					yAxis.getValuePosition(
-							dp.getYValue() - dp.getYMinusError(), false));
+			ep = new Point(xAxis.getValuePosition(dp.getXValue(), false), yAxis.getValuePosition(
+					dp.getYValue() - dp.getYMinusError(), false));
 			graphics.drawLine(dpPos, ep);
-			graphics.drawLine(ep.x - errorBarCapWidth / 2, ep.y, ep.x
-					+ errorBarCapWidth / 2, ep.y);
+			graphics.drawLine(ep.x - errorBarCapWidth / 2, ep.y, ep.x + errorBarCapWidth / 2, ep.y);
 			if (yErrorBarType != ErrorBarType.BOTH)
 				break;
 		case PLUS:
-			ep = new Point(xAxis.getValuePosition(dp.getXValue(), false),
-					yAxis.getValuePosition(dp.getYValue() + dp.getYPlusError(),
-							false));
+			ep = new Point(xAxis.getValuePosition(dp.getXValue(), false), yAxis.getValuePosition(
+					dp.getYValue() + dp.getYPlusError(), false));
 			graphics.drawLine(dpPos, ep);
-			graphics.drawLine(ep.x - errorBarCapWidth / 2, ep.y, ep.x
-					+ errorBarCapWidth / 2, ep.y);
+			graphics.drawLine(ep.x - errorBarCapWidth / 2, ep.y, ep.x + errorBarCapWidth / 2, ep.y);
 			break;
 		default:
 			break;
@@ -292,21 +282,17 @@ public class Trace extends Figure implements IDataProviderListener,
 		switch (xErrorBarType) {
 		case BOTH:
 		case MINUS:
-			ep = new Point(xAxis.getValuePosition(
-					dp.getXValue() - dp.getXMinusError(), false),
-					yAxis.getValuePosition(dp.getYValue(), false));
+			ep = new Point(xAxis.getValuePosition(dp.getXValue() - dp.getXMinusError(), false), yAxis.getValuePosition(
+					dp.getYValue(), false));
 			graphics.drawLine(dpPos, ep);
-			graphics.drawLine(ep.x, ep.y - errorBarCapWidth / 2, ep.x, ep.y
-					+ errorBarCapWidth / 2);
+			graphics.drawLine(ep.x, ep.y - errorBarCapWidth / 2, ep.x, ep.y + errorBarCapWidth / 2);
 			if (xErrorBarType != ErrorBarType.BOTH)
 				break;
 		case PLUS:
-			ep = new Point(xAxis.getValuePosition(
-					dp.getXValue() + dp.getXPlusError(), false),
-					yAxis.getValuePosition(dp.getYValue(), false));
+			ep = new Point(xAxis.getValuePosition(dp.getXValue() + dp.getXPlusError(), false), yAxis.getValuePosition(
+					dp.getYValue(), false));
 			graphics.drawLine(dpPos, ep);
-			graphics.drawLine(ep.x, ep.y - errorBarCapWidth / 2, ep.x, ep.y
-					+ errorBarCapWidth / 2);
+			graphics.drawLine(ep.x, ep.y - errorBarCapWidth / 2, ep.x, ep.y + errorBarCapWidth / 2);
 			break;
 		default:
 			break;
@@ -315,11 +301,11 @@ public class Trace extends Figure implements IDataProviderListener,
 		graphics.popState();
 	}
 
-	private void drawYErrorArea(final Graphics graphics, final ISample predp,
-			final ISample dp, final Point predpPos, final Point dpPos) {
+	private void drawYErrorArea(final Graphics graphics, final ISample predp, final ISample dp, final Point predpPos,
+			final Point dpPos) {
 		// Shortcut if there is no error area
-		if (predp.getYPlusError() == 0.0 && predp.getYMinusError() == 0.0
-				&& dp.getYPlusError() == 0.0 && dp.getYMinusError() == 0.0)
+		if (predp.getYPlusError() == 0.0 && predp.getYMinusError() == 0.0 && dp.getYPlusError() == 0.0
+				&& dp.getYMinusError() == 0.0)
 			return;
 
 		graphics.pushState();
@@ -329,8 +315,7 @@ public class Trace extends Figure implements IDataProviderListener,
 			graphics.setAlpha(areaAlpha);
 		} else {
 			final float[] hsb = errorBarColor.getRGB().getHSB();
-			lighter = new Color(Display.getCurrent(), new RGB(hsb[0], hsb[1]
-					* areaAlpha / 255, 1.0f));
+			lighter = new Color(Display.getCurrent(), new RGB(hsb[0], hsb[1] * areaAlpha / 255, 1.0f));
 			graphics.setBackgroundColor(lighter);
 		}
 
@@ -340,21 +325,15 @@ public class Trace extends Figure implements IDataProviderListener,
 		switch (yErrorBarType) {
 		case BOTH:
 		case PLUS:
-			preEp = new Point(predp_xpos, yAxis.getValuePosition(
-					predp.getYValue() + predp.getYPlusError(), false));
-			ep = new Point(dp_xpos, yAxis.getValuePosition(
-					dp.getYValue() + dp.getYPlusError(), false));
-			graphics.fillPolygon(new int[] { predpPos.x, predpPos.y, preEp.x,
-					preEp.y, ep.x, ep.y, dpPos.x, dpPos.y });
+			preEp = new Point(predp_xpos, yAxis.getValuePosition(predp.getYValue() + predp.getYPlusError(), false));
+			ep = new Point(dp_xpos, yAxis.getValuePosition(dp.getYValue() + dp.getYPlusError(), false));
+			graphics.fillPolygon(new int[] { predpPos.x, predpPos.y, preEp.x, preEp.y, ep.x, ep.y, dpPos.x, dpPos.y });
 			if (yErrorBarType != ErrorBarType.BOTH)
 				break;
 		case MINUS:
-			preEp = new Point(predp_xpos, yAxis.getValuePosition(
-					predp.getYValue() - predp.getYMinusError(), false));
-			ep = new Point(dp_xpos, yAxis.getValuePosition(
-					dp.getYValue() - dp.getYMinusError(), false));
-			graphics.fillPolygon(new int[] { predpPos.x, predpPos.y, preEp.x,
-					preEp.y, ep.x, ep.y, dpPos.x, dpPos.y });
+			preEp = new Point(predp_xpos, yAxis.getValuePosition(predp.getYValue() - predp.getYMinusError(), false));
+			ep = new Point(dp_xpos, yAxis.getValuePosition(dp.getYValue() - dp.getYMinusError(), false));
+			graphics.fillPolygon(new int[] { predpPos.x, predpPos.y, preEp.x, preEp.y, ep.x, ep.y, dpPos.x, dpPos.y });
 			break;
 		default:
 			break;
@@ -381,56 +360,45 @@ public class Trace extends Figure implements IDataProviderListener,
 		graphics.setLineStyle(SWTConstants.LINE_SOLID);
 		switch (pointStyle) {
 		case POINT:
-			graphics.fillOval(new Rectangle(pos.x - pointSize / 2, pos.y
-					- pointSize / 2, pointSize, pointSize));
+			graphics.fillOval(new Rectangle(pos.x - pointSize / 2, pos.y - pointSize / 2, pointSize, pointSize));
 			break;
 		case CIRCLE:
-			graphics.drawOval(new Rectangle(pos.x - pointSize / 2, pos.y
-					- pointSize / 2, pointSize, pointSize));
+			graphics.drawOval(new Rectangle(pos.x - pointSize / 2, pos.y - pointSize / 2, pointSize, pointSize));
 			break;
 		case TRIANGLE:
-			graphics.drawPolygon(new int[] { pos.x - pointSize / 2,
-					pos.y + pointSize / 2, pos.x, pos.y - pointSize / 2,
-					pos.x + pointSize / 2, pos.y + pointSize / 2 });
+			graphics.drawPolygon(new int[] { pos.x - pointSize / 2, pos.y + pointSize / 2, pos.x,
+					pos.y - pointSize / 2, pos.x + pointSize / 2, pos.y + pointSize / 2 });
 			break;
 		case FILLED_TRIANGLE:
-			graphics.fillPolygon(new int[] { pos.x - pointSize / 2,
-					pos.y + pointSize / 2, pos.x, pos.y - pointSize / 2,
-					pos.x + pointSize / 2, pos.y + pointSize / 2 });
+			graphics.fillPolygon(new int[] { pos.x - pointSize / 2, pos.y + pointSize / 2, pos.x,
+					pos.y - pointSize / 2, pos.x + pointSize / 2, pos.y + pointSize / 2 });
 			break;
 		case SQUARE:
-			graphics.drawRectangle(new Rectangle(pos.x - pointSize / 2, pos.y
-					- pointSize / 2, pointSize, pointSize));
+			graphics.drawRectangle(new Rectangle(pos.x - pointSize / 2, pos.y - pointSize / 2, pointSize, pointSize));
 			break;
 		case FILLED_SQUARE:
-			graphics.fillRectangle(new Rectangle(pos.x - pointSize / 2, pos.y
-					- pointSize / 2, pointSize, pointSize));
+			graphics.fillRectangle(new Rectangle(pos.x - pointSize / 2, pos.y - pointSize / 2, pointSize, pointSize));
 			break;
 		case BAR:
-			graphics.drawLine(pos.x, pos.y - pointSize / 2, pos.x, pos.y
-					+ pointSize / 2);
+			graphics.drawLine(pos.x, pos.y - pointSize / 2, pos.x, pos.y + pointSize / 2);
 			break;
 		case CROSS:
-			graphics.drawLine(pos.x, pos.y - pointSize / 2, pos.x, pos.y
-					+ pointSize / 2);
-			graphics.drawLine(pos.x - pointSize / 2, pos.y, pos.x + pointSize
-					/ 2, pos.y);
+			graphics.drawLine(pos.x, pos.y - pointSize / 2, pos.x, pos.y + pointSize / 2);
+			graphics.drawLine(pos.x - pointSize / 2, pos.y, pos.x + pointSize / 2, pos.y);
 			break;
 		case XCROSS:
-			graphics.drawLine(pos.x - pointSize / 2, pos.y - pointSize / 2,
-					pos.x + pointSize / 2, pos.y + pointSize / 2);
-			graphics.drawLine(pos.x + pointSize / 2, pos.y - pointSize / 2,
-					pos.x - pointSize / 2, pos.y + pointSize / 2);
+			graphics.drawLine(pos.x - pointSize / 2, pos.y - pointSize / 2, pos.x + pointSize / 2, pos.y + pointSize
+					/ 2);
+			graphics.drawLine(pos.x + pointSize / 2, pos.y - pointSize / 2, pos.x - pointSize / 2, pos.y + pointSize
+					/ 2);
 			break;
 		case DIAMOND:
-			graphics.drawPolyline(new int[] { pos.x, pos.y - pointSize / 2,
-					pos.x - pointSize / 2, pos.y, pos.x, pos.y + pointSize / 2,
-					pos.x + pointSize / 2, pos.y, pos.x, pos.y - pointSize / 2 });
+			graphics.drawPolyline(new int[] { pos.x, pos.y - pointSize / 2, pos.x - pointSize / 2, pos.y, pos.x,
+					pos.y + pointSize / 2, pos.x + pointSize / 2, pos.y, pos.x, pos.y - pointSize / 2 });
 			break;
 		case FILLED_DIAMOND:
-			graphics.fillPolygon(new int[] { pos.x, pos.y - pointSize / 2,
-					pos.x - pointSize / 2, pos.y, pos.x, pos.y + pointSize / 2,
-					pos.x + pointSize / 2, pos.y });
+			graphics.fillPolygon(new int[] { pos.x, pos.y - pointSize / 2, pos.x - pointSize / 2, pos.y, pos.x,
+					pos.y + pointSize / 2, pos.x + pointSize / 2, pos.y });
 			break;
 		default:
 			break;
@@ -477,19 +445,17 @@ public class Trace extends Figure implements IDataProviderListener,
 			break;
 		case AREA:
 		case LINE_AREA:
-			if(traceType==TraceType.LINE_AREA){
+			if (traceType == TraceType.LINE_AREA) {
 				graphics.setLineStyle(SWTConstants.LINE_SOLID);
 				graphics.drawLine(p1, p2);
 			}
 			int basey;
 			switch (baseLine) {
 			case NEGATIVE_INFINITY:
-				basey = yAxis.getValuePosition(yAxis.getRange().getLower(),
-						false);
+				basey = yAxis.getValuePosition(yAxis.getRange().getLower(), false);
 				break;
 			case POSITIVE_INFINITY:
-				basey = yAxis.getValuePosition(yAxis.getRange().getUpper(),
-						false);
+				basey = yAxis.getValuePosition(yAxis.getRange().getUpper(), false);
 				break;
 			default:
 				basey = yAxis.getValuePosition(0, false);
@@ -498,8 +464,7 @@ public class Trace extends Figure implements IDataProviderListener,
 			if (use_advanced_graphics)
 				graphics.setAlpha(areaAlpha);
 			graphics.setBackgroundColor(traceColor);
-			graphics.fillPolygon(new int[] { p1.x, p1.y, p1.x, basey, p2.x,
-					basey, p2.x, p2.y });
+			graphics.fillPolygon(new int[] { p1.x, p1.y, p1.x, basey, p2.x, basey, p2.x, p2.y });
 			break;
 		case STEP_HORIZONTALLY:
 			graphics.setLineStyle(SWTConstants.LINE_SOLID);
@@ -517,17 +482,17 @@ public class Trace extends Figure implements IDataProviderListener,
 		}
 		graphics.popState();
 	}
-	
+
 	/**
- 	 * Draw polyline with the line style and line width of the trace.
- 	 * 
+	 * Draw polyline with the line style and line width of the trace.
+	 * 
 	 * @param graphics
 	 * @param pl
 	 */
 	private void drawPolyline(Graphics graphics, PointList pl) {
 		graphics.pushState();
 		graphics.setLineWidth(lineWidth);
-		switch(traceType) {
+		switch (traceType) {
 		case SOLID_LINE:
 		case STEP_HORIZONTALLY:
 		case STEP_VERTICALLY:
@@ -569,8 +534,7 @@ public class Trace extends Figure implements IDataProviderListener,
 		Point dpPos = null;
 		hotSampleist.clear();
 		if (traceDataProvider == null)
-			throw new RuntimeException(
-					"No DataProvider defined for trace: " + name); //$NON-NLS-1$
+			throw new RuntimeException("No DataProvider defined for trace: " + name); //$NON-NLS-1$
 		// Lock data provider to prevent changes while painting
 		synchronized (traceDataProvider) {
 			if (traceDataProvider.getSize() > 0) {
@@ -589,64 +553,55 @@ public class Trace extends Figure implements IDataProviderListener,
 					startIndex = 0;
 					endIndex = traceDataProvider.getSize() - 1;
 				}
-				
+
 				// Set of points which were already drawn
 				HashSet<Point> hsPoint = new HashSet<Point>();
-				
-				// List of points for drawing polyline. 
+
+				// List of points for drawing polyline.
 				PointList plPolyline = new PointList();
-				
+
 				// List of bottom/top point in a certain horizontal
 				// pixel location for the BAR line type.
-				HashMap<Integer,Integer> bottomPoints = new HashMap<Integer,Integer>();
-				HashMap<Integer,Integer> topPoints = new HashMap<Integer,Integer>();
-				
+				HashMap<Integer, Integer> bottomPoints = new HashMap<Integer, Integer>();
+				HashMap<Integer, Integer> topPoints = new HashMap<Integer, Integer>();
+
 				Point maxInRegion = null;
 				Point minInRegion = null;
 				Point lastInRegion = null;
-				
+
 				for (int i = startIndex; i <= endIndex; i++) {
 					ISample dp = traceDataProvider.getSample(i);
-					final boolean dpInXRange = xAxis.getRange().inRange(
-							dp.getXValue());
+					final boolean dpInXRange = xAxis.getRange().inRange(dp.getXValue());
 					// Mark 'NaN' samples on X axis
 					final boolean valueIsNaN = Double.isNaN(dp.getYValue());
 					if (dpInXRange && valueIsNaN) {
-						Point markPos = new Point(
-								xAxis.getValuePosition(dp.getXValue(), false),
-								yAxis.getValuePosition(
-										xAxis.getTickLablesSide() == LabelSide.Primary ? yAxis
-												.getRange().getLower() : yAxis
-												.getRange().getUpper(), false));
+						Point markPos = new Point(xAxis.getValuePosition(dp.getXValue(), false),
+								yAxis.getValuePosition(xAxis.getTickLablesSide() == LabelSide.Primary ? yAxis
+										.getRange().getLower() : yAxis.getRange().getUpper(), false));
 						graphics.setBackgroundColor(traceColor);
-						graphics.fillRectangle(markPos.x - MARKER_SIZE / 2,
-								markPos.y - MARKER_SIZE / 2, MARKER_SIZE,
+						graphics.fillRectangle(markPos.x - MARKER_SIZE / 2, markPos.y - MARKER_SIZE / 2, MARKER_SIZE,
 								MARKER_SIZE);
-						Sample nanSample = new Sample(
-								dp.getXValue(),
-								xAxis.getTickLablesSide() == LabelSide.Primary ? yAxis
-										.getRange().getLower() : yAxis
-										.getRange().getUpper(),
-								dp.getYPlusError(), dp.getYMinusError(),
-								Double.NaN, dp.getXMinusError(), dp.getInfo());
+						Sample nanSample = new Sample(dp.getXValue(),
+								xAxis.getTickLablesSide() == LabelSide.Primary ? yAxis.getRange().getLower() : yAxis
+										.getRange().getUpper(), dp.getYPlusError(), dp.getYMinusError(), Double.NaN,
+								dp.getXMinusError(), dp.getInfo());
 						hotSampleist.add(nanSample);
 					}
 					// Is data point in the plot area?
-					boolean dpInRange = dpInXRange
-							&& yAxis.getRange().inRange(dp.getYValue());
+					boolean dpInRange = dpInXRange && yAxis.getRange().inRange(dp.getYValue());
 					// draw point
 					if (dpInRange) {
-						dpPos = new Point(xAxis.getValuePosition(
-								dp.getXValue(), false), yAxis.getValuePosition(
+						dpPos = new Point(xAxis.getValuePosition(dp.getXValue(), false), yAxis.getValuePosition(
 								dp.getYValue(), false));
 						hotSampleist.add(dp);
-						
-						// Do not draw points in the same place to improve performance
+
+						// Do not draw points in the same place to improve
+						// performance
 						if (!hsPoint.contains(dpPos)) {
 							drawPoint(graphics, dpPos);
 							hsPoint.add(dpPos);
 						}
-						
+
 						if (errorBarEnabled && !drawYErrorInArea)
 							drawErrorBar(graphics, dpPos, dp);
 					}
@@ -657,19 +612,16 @@ public class Trace extends Figure implements IDataProviderListener,
 					if (traceType == TraceType.BAR) {
 						switch (baseLine) {
 						case NEGATIVE_INFINITY:
-							predp = new Sample(dp.getXValue(), yAxis.getRange()
-									.getLower());
+							predp = new Sample(dp.getXValue(), yAxis.getRange().getLower());
 							break;
 						case POSITIVE_INFINITY:
-							predp = new Sample(dp.getXValue(), yAxis.getRange()
-									.getUpper());
+							predp = new Sample(dp.getXValue(), yAxis.getRange().getUpper());
 							break;
 						default:
 							predp = new Sample(dp.getXValue(), 0);
 							break;
 						}
-						predpInRange = xAxis.getRange().inRange(
-								predp.getXValue())
+						predpInRange = xAxis.getRange().inRange(predp.getXValue())
 								&& yAxis.getRange().inRange(predp.getYValue());
 					}
 					if (predp == null) { // No previous data point from which to
@@ -686,8 +638,7 @@ public class Trace extends Figure implements IDataProviderListener,
 
 					// In 'STEP' modes, if there was a value, now there is none,
 					// continue that last value until the NaN location
-					if (valueIsNaN
-							&& !Double.isNaN(predp.getYValue())
+					if (valueIsNaN && !Double.isNaN(predp.getYValue())
 							&& (traceType == TraceType.STEP_HORIZONTALLY || traceType == TraceType.STEP_VERTICALLY)) {
 						// Patch 'y' of dp, re-compute dpInRange for new 'y'
 						dp = new Sample(dp.getXValue(), predp.getYValue());
@@ -732,18 +683,15 @@ public class Trace extends Figure implements IDataProviderListener,
 						}
 					}
 
-					final Point predpPos = new Point(xAxis.getValuePosition(
-							predp.getXValue(), false), yAxis.getValuePosition(
-							predp.getYValue(), false));
-					dpPos = new Point(xAxis.getValuePosition(dp.getXValue(),
-							false), yAxis.getValuePosition(dp.getYValue(),
-							false));
+					final Point predpPos = new Point(xAxis.getValuePosition(predp.getXValue(), false),
+							yAxis.getValuePosition(predp.getYValue(), false));
+					dpPos = new Point(xAxis.getValuePosition(dp.getXValue(), false), yAxis.getValuePosition(
+							dp.getYValue(), false));
 
 					if (!dpPos.equals(predpPos)) {
-						if (errorBarEnabled && drawYErrorInArea
-								&& traceType != TraceType.BAR)
+						if (errorBarEnabled && drawYErrorInArea && traceType != TraceType.BAR)
 							drawYErrorArea(graphics, predp, dp, predpPos, dpPos);
-						
+
 						switch (traceType) {
 						case SOLID_LINE:
 						case DASH_LINE:
@@ -756,32 +704,38 @@ public class Trace extends Figure implements IDataProviderListener,
 								plPolyline.addPoint(predpPos);
 
 							if (traceDataProvider.isChronological()) {
-								// Line drawing optimization is available only when the trace data
-								// is ascending sorted on X axis. 
-								if (!predpPos.equals(plPolyline.getLastPoint()) && predpPos.x != plPolyline.getLastPoint().x) {
-									// The line for this trace is not continuous.
-									// Draw a polylin at this point, and start to reconstruct a new
+								// Line drawing optimization is available only
+								// when the trace data
+								// is ascending sorted on X axis.
+								if (!predpPos.equals(plPolyline.getLastPoint())
+										&& predpPos.x != plPolyline.getLastPoint().x) {
+									// The line for this trace is not
+									// continuous.
+									// Draw a polylin at this point, and start
+									// to reconstruct a new
 									// polyline for the rest of the trace.
-									
+
 									if (lastInRegion != null) {
-										// There were several points which have the same X value.
-										// Draw lines that connect those points at once.
+										// There were several points which have
+										// the same X value.
+										// Draw lines that connect those points
+										// at once.
 										if (minInRegion != null)
 											plPolyline.addPoint(minInRegion);
 										if (maxInRegion != null)
 											plPolyline.addPoint(maxInRegion);
 
 										plPolyline.addPoint(lastInRegion);
-										
+
 										minInRegion = null;
 										maxInRegion = null;
 										lastInRegion = null;
 									}
-									
+
 									drawPolyline(graphics, plPolyline);
 									plPolyline.removeAllPoints();
 									plPolyline.addPoint(predpPos);
-									
+
 									switch (traceType) {
 									case STEP_HORIZONTALLY:
 										plPolyline.addPoint(dpPos.x, predpPos.y);
@@ -792,7 +746,7 @@ public class Trace extends Figure implements IDataProviderListener,
 									default:
 										break;
 									}
-									
+
 									plPolyline.addPoint(dpPos);
 								} else {
 									if (predpPos.x != dpPos.x) {
@@ -807,18 +761,20 @@ public class Trace extends Figure implements IDataProviderListener,
 											default:
 												break;
 											}
-											
+
 											plPolyline.addPoint(dpPos);
 										} else {
-											// There were several points which have the same X value.
-											// Draw lines that connect those points at once.
+											// There were several points which
+											// have the same X value.
+											// Draw lines that connect those
+											// points at once.
 											if (minInRegion != null)
 												plPolyline.addPoint(minInRegion);
 											if (maxInRegion != null)
 												plPolyline.addPoint(maxInRegion);
 
 											plPolyline.addPoint(lastInRegion);
-											
+
 											switch (traceType) {
 											case STEP_HORIZONTALLY:
 												plPolyline.addPoint(dpPos.x, lastInRegion.y);
@@ -830,26 +786,31 @@ public class Trace extends Figure implements IDataProviderListener,
 												break;
 											}
 
-											// The first point of the next region is drawn anyway.
+											// The first point of the next
+											// region is drawn anyway.
 											plPolyline.addPoint(dpPos);
 										}
-										
+
 										minInRegion = null;
 										maxInRegion = null;
 										lastInRegion = null;
 									} else {
-										// The current point has the same X value as the previous point.
+										// The current point has the same X
+										// value as the previous point.
 										if (lastInRegion == null) {
-											// At this moment, there are two points which have the same
+											// At this moment, there are two
+											// points which have the same
 											// X value.
 											lastInRegion = dpPos;
 										} else if (minInRegion == null) {
-											// At this moment, there are three points which have the
+											// At this moment, there are three
+											// points which have the
 											// same X value.
 											minInRegion = lastInRegion;
 											lastInRegion = dpPos;
 										} else if (maxInRegion == null) {
-											// At this moment, there are four points which have the same
+											// At this moment, there are four
+											// points which have the same
 											// X value.
 											if (minInRegion.y > lastInRegion.y) {
 												maxInRegion = minInRegion;
@@ -859,10 +820,11 @@ public class Trace extends Figure implements IDataProviderListener,
 											}
 											lastInRegion = dpPos;
 										} else {
-											// There are more than four points which have the same X
+											// There are more than four points
+											// which have the same X
 											// value.
 											if (lastInRegion.y > maxInRegion.y) {
-												maxInRegion = lastInRegion; 
+												maxInRegion = lastInRegion;
 											} else if (lastInRegion.y < minInRegion.y) {
 												minInRegion = lastInRegion;
 											}
@@ -872,14 +834,16 @@ public class Trace extends Figure implements IDataProviderListener,
 								}
 							} else {
 								if (!predpPos.equals(plPolyline.getLastPoint())) {
-									// The line for this trace may not be continuous.
-									// Draw a polyline at this point, and start to reconstruct a new
+									// The line for this trace may not be
+									// continuous.
+									// Draw a polyline at this point, and start
+									// to reconstruct a new
 									// polyline for the rest of the trace.
 									drawPolyline(graphics, plPolyline);
 									plPolyline.removeAllPoints();
 									plPolyline.addPoint(predpPos);
 								}
-								
+
 								switch (traceType) {
 								case STEP_HORIZONTALLY:
 									plPolyline.addPoint(dpPos.x, predpPos.y);
@@ -890,18 +854,19 @@ public class Trace extends Figure implements IDataProviderListener,
 								default:
 									break;
 								}
-								
+
 								plPolyline.addPoint(dpPos);
 							}
-							
+
 							break;
 						case BAR:
 							if (!use_advanced_graphics && predpPos.x() == dpPos.x()) {
-								// Stores bar line infomration in memory, and draw lines later.
+								// Stores bar line infomration in memory, and
+								// draw lines later.
 								Integer posX = new Integer(predpPos.x());
 								Integer highY;
 								Integer lowY;
-								
+
 								if (dpPos.y() > predpPos.y()) {
 									highY = new Integer(dpPos.y());
 									lowY = new Integer(predpPos.y());
@@ -909,9 +874,9 @@ public class Trace extends Figure implements IDataProviderListener,
 									highY = new Integer(predpPos.y());
 									lowY = new Integer(dpPos.y());
 								}
-								
+
 								if (bottomPoints.containsKey(posX)) {
-									if (lowY.compareTo(bottomPoints.get(posX)) < 0) { 
+									if (lowY.compareTo(bottomPoints.get(posX)) < 0) {
 										bottomPoints.put(posX, lowY);
 									}
 									if (highY.compareTo(topPoints.get(posX)) > 0) {
@@ -922,9 +887,11 @@ public class Trace extends Figure implements IDataProviderListener,
 									topPoints.put(posX, highY);
 								}
 							} else {
-								// If the X value is different for some reason, or the advanced graphics is
-								// turned on, fall back to the original drawing algorithm.
-								drawLine(graphics, predpPos, dpPos);			
+								// If the X value is different for some reason,
+								// or the advanced graphics is
+								// turned on, fall back to the original drawing
+								// algorithm.
+								drawLine(graphics, predpPos, dpPos);
 							}
 							break;
 						default:
@@ -936,7 +903,7 @@ public class Trace extends Figure implements IDataProviderListener,
 					predp = origin_dp;
 					predpInRange = origin_dpInRange;
 				}
-				
+
 				switch (traceType) {
 				case SOLID_LINE:
 				case DASH_LINE:
@@ -951,7 +918,7 @@ public class Trace extends Figure implements IDataProviderListener,
 				case BAR:
 					// Draw bar lines
 					Set<Integer> xSet = bottomPoints.keySet();
-					for (Iterator<Integer> i = xSet.iterator(); i.hasNext(); ) {
+					for (Iterator<Integer> i = xSet.iterator(); i.hasNext();) {
 						Integer posX = (Integer) i.next();
 						Point p1 = new Point(posX.intValue(), bottomPoints.get(posX).intValue());
 						Point p2 = new Point(posX.intValue(), topPoints.get(posX).intValue());
@@ -1045,8 +1012,7 @@ public class Trace extends Figure implements IDataProviderListener,
 	 *         line between the two data points, and the axes. Result could be {
 	 *         null, null }, { point1, null } or { point1, point2 }.
 	 */
-	private ISample[] getStraightLineIntersection(final ISample dp1,
-			final ISample dp2) {
+	private ISample[] getStraightLineIntersection(final ISample dp1, final ISample dp2) {
 		final double x1 = dp1.getXValue();
 		final double y1 = dp1.getYValue();
 		final double x2 = dp2.getXValue();
@@ -1128,8 +1094,7 @@ public class Trace extends Figure implements IDataProviderListener,
 	 * @return true if the point (x,y) is between dp1 and dp2 BUT not equal to
 	 *         either AND within the x/y axes. false otherwise
 	 */
-	private boolean evalDP(final double x, final double y, final ISample dp1,
-			final ISample dp2) {
+	private boolean evalDP(final double x, final double y, final ISample dp1, final ISample dp2) {
 		// First check axis limits
 		if (!xAxis.getRange().inRange(x) || !yAxis.getRange().inRange(y))
 			return false;
@@ -1184,7 +1149,7 @@ public class Trace extends Figure implements IDataProviderListener,
 
 		if (yAxis == axis) {
 			return;
-		} 
+		}
 
 		xyGraph.getLegendMap().get(yAxis).removeTrace(this);
 		if (xyGraph.getLegendMap().get(yAxis).getTraceList().size() <= 0) {
@@ -1368,8 +1333,7 @@ public class Trace extends Figure implements IDataProviderListener,
 	}
 
 	private void fireTraceNameChanged(String oldName, String newName) {
-		if (((oldName == null) && (newName == null))
-				|| ((oldName != null) && oldName.equals(newName)))
+		if (((oldName == null) && (newName == null)) || ((oldName != null) && oldName.equals(newName)))
 			return;
 
 		for (ITraceListener listener : listeners)
@@ -1433,13 +1397,10 @@ public class Trace extends Figure implements IDataProviderListener,
 		Range axisRange = xAxis.getRange();
 		if (traceDataProvider.getSize() <= 0)
 			return null;
-		double min = axisRange.getLower() > axisRange.getUpper() ? axisRange
-				.getUpper() : axisRange.getLower();
-		double max = axisRange.getUpper() > axisRange.getLower() ? axisRange
-				.getUpper() : axisRange.getLower();
+		double min = axisRange.getLower() > axisRange.getUpper() ? axisRange.getUpper() : axisRange.getLower();
+		double max = axisRange.getUpper() > axisRange.getLower() ? axisRange.getUpper() : axisRange.getLower();
 
-		if (min > traceDataProvider.getSample(traceDataProvider.getSize() - 1)
-				.getXValue()
+		if (min > traceDataProvider.getSample(traceDataProvider.getSize() - 1).getXValue()
 				|| max < traceDataProvider.getSample(0).getXValue())
 			return null;
 
@@ -1477,9 +1438,7 @@ public class Trace extends Figure implements IDataProviderListener,
 			}
 
 			if (cmp < 0) {
-				if (mid < traceDataProvider.getSize() - 1
-						&& key < traceDataProvider.getSample(mid + 1)
-								.getXValue()) {
+				if (mid < traceDataProvider.getSize() - 1 && key < traceDataProvider.getSample(mid + 1).getXValue()) {
 					if (left)
 						return mid;
 					else
@@ -1489,9 +1448,7 @@ public class Trace extends Figure implements IDataProviderListener,
 			}
 
 			else if (cmp > 0) {
-				if (mid > 0
-						&& key > traceDataProvider.getSample(mid - 1)
-								.getXValue())
+				if (mid > 0 && key > traceDataProvider.getSample(mid - 1).getXValue())
 					if (left)
 						return mid - 1;
 					else
@@ -1662,8 +1619,7 @@ public class Trace extends Figure implements IDataProviderListener,
 		return xyGraph;
 	}
 
-	public void axisForegroundColorChanged(Axis axis, Color oldColor,
-			Color newColor) {
+	public void axisForegroundColorChanged(Axis axis, Color oldColor, Color newColor) {
 
 	}
 
@@ -1671,13 +1627,12 @@ public class Trace extends Figure implements IDataProviderListener,
 
 	}
 
-	public void axisAutoScaleChanged(Axis axis, boolean oldAutoScale,
-			boolean newAutoScale) {
+	public void axisAutoScaleChanged(Axis axis, boolean oldAutoScale, boolean newAutoScale) {
 
 	}
 
 	public void axisLogScaleChanged(Axis axis, boolean old, boolean logScale) {
-		
+
 	}
 
 }

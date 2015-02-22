@@ -116,16 +116,15 @@ public class LinearScaleTickMarks extends Figure {
 	 * @param gc
 	 *            the graphics context
 	 */
-	private void drawXTickMarks(Graphics gc, ArrayList<Integer> tickLabelPositions,
-			LabelSide tickLabelSide, int width, int height) {
+	private void drawXTickMarks(Graphics gc, ArrayList<Integer> tickLabelPositions, LabelSide tickLabelSide, int width,
+			int height) {
 
 		updateMinorTickParas();
 		// draw tick marks
 		gc.setLineStyle(SWTConstants.LINE_SOLID);
 
 		if (scale.isLogScaleEnabled()) {
-			ArrayList<Boolean> tickLabelVisibilities = scale.getScaleTickLabels()
-					.getTickVisibilities();
+			ArrayList<Boolean> tickLabelVisibilities = scale.getScaleTickLabels().getTickVisibilities();
 			for (int i = 0; i < tickLabelPositions.size(); i++) {
 				int x = tickLabelPositions.get(i);
 				int y = 0;
@@ -156,8 +155,8 @@ public class LinearScaleTickMarks extends Figure {
 						// draw the first grid step which is start from min
 						// value
 						if (i == 1
-								&& (tickLabelPositions.get(1) - tickLabelPositions.get(0)) < scale
-										.getScaleTickLabels().getGridStepInPixel()) {
+								&& (tickLabelPositions.get(1) - tickLabelPositions.get(0)) < scale.getScaleTickLabels()
+										.getGridStepInPixel()) {
 							x = tickLabelPositions.get(1);
 							while ((x - tickLabelPositions.get(0)) > minorGridStepInPixel + 3) {
 								x = x - minorGridStepInPixel;
@@ -175,8 +174,8 @@ public class LinearScaleTickMarks extends Figure {
 						} else { // draw regular steps
 							for (int j = 0; j < minorTicksNumber; j++) {
 								x = tickLabelPositions.get(i - 1)
-										+ (tickLabelPositions.get(i) - tickLabelPositions
-												.get(i - 1)) * j / minorTicksNumber;
+										+ (tickLabelPositions.get(i) - tickLabelPositions.get(i - 1)) * j
+										/ minorTicksNumber;
 								drawXMinorTicks(gc, tickLabelSide, x, y);
 							}
 						}
@@ -219,16 +218,15 @@ public class LinearScaleTickMarks extends Figure {
 	 * @param gc
 	 *            the graphics context
 	 */
-	private void drawYTickMarks(Graphics gc, ArrayList<Integer> tickLabelPositions,
-			LabelSide tickLabelSide, int width, int height) {
+	private void drawYTickMarks(Graphics gc, ArrayList<Integer> tickLabelPositions, LabelSide tickLabelSide, int width,
+			int height) {
 		updateMinorTickParas();
 		// draw tick marks
 		gc.setLineStyle(SWTConstants.LINE_SOLID);
 		int x = 0;
 		int y = 0;
 		if (scale.isLogScaleEnabled()) {
-			ArrayList<Boolean> tickLabelVisibilities = scale.getScaleTickLabels()
-					.getTickVisibilities();
+			ArrayList<Boolean> tickLabelVisibilities = scale.getScaleTickLabels().getTickVisibilities();
 			for (int i = 0; i < tickLabelPositions.size(); i++) {
 
 				int tickLength = 0;
@@ -261,8 +259,8 @@ public class LinearScaleTickMarks extends Figure {
 						// draw the first grid step which is start from min
 						// value
 						if (i == 1
-								&& (tickLabelPositions.get(1) - tickLabelPositions.get(0)) < scale
-										.getScaleTickLabels().getGridStepInPixel()) {
+								&& (tickLabelPositions.get(1) - tickLabelPositions.get(0)) < scale.getScaleTickLabels()
+										.getGridStepInPixel()) {
 							y = tickLabelPositions.get(1);
 							while ((y - tickLabelPositions.get(0)) > minorGridStepInPixel + 3) {
 								y = y - minorGridStepInPixel;
@@ -279,10 +277,9 @@ public class LinearScaleTickMarks extends Figure {
 							}
 						} else { // draw regular steps
 							for (int j = 0; j < minorTicksNumber; j++) {
-								y = height
-										- tickLabelPositions.get(i - 1)
-										- (tickLabelPositions.get(i) - tickLabelPositions
-												.get(i - 1)) * j / minorTicksNumber;
+								y = height - tickLabelPositions.get(i - 1)
+										- (tickLabelPositions.get(i) - tickLabelPositions.get(i - 1)) * j
+										/ minorTicksNumber;
 								drawYMinorTicks(gc, tickLabelSide, x, y);
 							}
 						}
@@ -306,8 +303,7 @@ public class LinearScaleTickMarks extends Figure {
 		// there is a misillumiation
 		int verticalMinorTickLength = MINOR_TICK_LENGTH - 1;
 		if (tickLabelSide == LabelSide.Primary)
-			gc.drawLine(x + MAJOR_TICK_LENGTH - verticalMinorTickLength, y, x + MAJOR_TICK_LENGTH,
-					y);
+			gc.drawLine(x + MAJOR_TICK_LENGTH - verticalMinorTickLength, y, x + MAJOR_TICK_LENGTH, y);
 		else
 			gc.drawLine(x, y, x + verticalMinorTickLength, y);
 	}
