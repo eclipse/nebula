@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    emil.crumhorn@gmail.com - initial API and implementation
+ *    ziogianni@gmail.com - Bug 461333 - https://bugs.eclipse.org/bugs/show_bug.cgi?id=461333
  *******************************************************************************/
 
 package org.eclipse.nebula.widgets.ganttchart;
@@ -263,9 +264,10 @@ public class AdvancedTooltipDialog {
 		// after displaying the shell, which fixes the issue as it now can fetch the right bounds
 		if (GanttComposite._osType == Constants.OS_MAC) {
 			Display.getDefault().asyncExec(new Runnable() {
-
 				public void run() {
-						_shell.redraw();
+			        if (_shell != null && !_shell.isDisposed()) {
+									_shell.redraw();		
+					}
 					
 				}
 				
