@@ -375,7 +375,8 @@ public class DateTimeFormatter extends AbstractFormatter {
 				continue;
 			}
 			field = getField(i, from);
-			while ( i < e && field.curLen > 0 ) {
+			final int numCharsLeftOfRangeToClear= i-field.pos;
+			while ( i < e && field.curLen - numCharsLeftOfRangeToClear > 0 ) {
 				inputCache.deleteCharAt(i);
 				inputMask.deleteCharAt(i);
 				e--;
