@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    emil.crumhorn@gmail.com - initial API and implementation
+ *    ziogiannigmail.com - Bug 462855 - Zoom Minimum Depth increased up to 6 levels deeper than initial implementation (-6,-5,-4,-3,-2,-1)
  *******************************************************************************/
 
 package org.eclipse.nebula.widgets.ganttchart;
@@ -8528,6 +8529,32 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         }
 
         switch (_zoomLevel) {
+        // seconds
+        	case ISettings.ZOOM_SECONDS_MAX:
+            _currentView = ISettings.VIEW_DAY;
+            _dayWidth = originalDayWidth * 18;
+            	break;
+           	case ISettings.ZOOM_SECONDS_MEDIUM:
+            _currentView = ISettings.VIEW_DAY;
+            _dayWidth = originalDayWidth * 16;
+            	break;
+           	case ISettings.ZOOM_SECONDS_NORMAL:
+            _currentView = ISettings.VIEW_DAY;
+            _dayWidth = originalDayWidth * 14;
+            	break;
+            // minutes
+           	case ISettings.ZOOM_MINUTES_MAX:
+            	_currentView = ISettings.VIEW_DAY;
+            	_dayWidth = originalDayWidth * 12;
+            	break;
+           	case ISettings.ZOOM_MINUTES_MEDIUM:
+        	   _currentView = ISettings.VIEW_DAY;
+        	   _dayWidth = originalDayWidth * 10;
+               	break;
+           	case ISettings.ZOOM_MINUTES_NORMAL:
+        	   _currentView = ISettings.VIEW_DAY;
+        	   _dayWidth = originalDayWidth * 8;
+        	   break;
             // hour
             case ISettings.ZOOM_HOURS_MAX:
                 _currentView = ISettings.VIEW_DAY;

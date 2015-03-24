@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    emil.crumhorn@gmail.com - initial API and implementation
+ *    ziogiannigmail.com - Bug 462855 - Zoom Minimum Depth increased up to 6 levels deeper than initial implementation (-6,-5,-4,-3,-2,-1)
  *******************************************************************************/
 
 package org.eclipse.nebula.widgets.ganttchart;
@@ -67,6 +68,7 @@ public interface ISettings {
     public static final int DEFAULT_CONNECTION_ARROW       = CONNECTION_ARROW_RIGHT_TO_LEFT;
 
     // gantt view mode
+    
     public static final int VIEW_DAY                       = 1;
     public static final int VIEW_WEEK                      = 2;
     public static final int VIEW_MONTH                     = 3;
@@ -74,7 +76,13 @@ public interface ISettings {
     public static final int VIEW_D_DAY                     = 5;
 
     // zoom levels
-    public static final int MIN_ZOOM_LEVEL                 = 0;
+    public static final int MIN_ZOOM_LEVEL                 = -6;
+    public static final int ZOOM_SECONDS_MAX      	       = -6;
+    public static final int ZOOM_SECONDS_MEDIUM      	   = -5;
+    public static final int ZOOM_SECONDS_NORMAL      	   = -4;
+    public static final int ZOOM_MINUTES_MAX      	       = -3;
+    public static final int ZOOM_MINUTES_MEDIUM      	   = -2;
+    public static final int ZOOM_MINUTES_NORMAL      	   = -1;
     public static final int ZOOM_HOURS_MAX                 = 0;
     public static final int ZOOM_HOURS_MEDIUM              = 1;
     public static final int ZOOM_HOURS_NORMAL              = 2;
