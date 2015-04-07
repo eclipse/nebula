@@ -8529,31 +8529,31 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         }
 
         switch (_zoomLevel) {
-        // seconds
-        	case ISettings.ZOOM_SECONDS_MAX:
-            _currentView = ISettings.VIEW_DAY;
-            _dayWidth = originalDayWidth * 18;
-            	break;
-           	case ISettings.ZOOM_SECONDS_MEDIUM:
-            _currentView = ISettings.VIEW_DAY;
-            _dayWidth = originalDayWidth * 16;
-            	break;
-           	case ISettings.ZOOM_SECONDS_NORMAL:
-            _currentView = ISettings.VIEW_DAY;
-            _dayWidth = originalDayWidth * 14;
-            	break;
+        //seconds
+           case ISettings.ZOOM_SECONDS_MAX:
+          		_currentView = ISettings.VIEW_DAY;
+          		_dayWidth = originalDayWidth * 18;
+          		break;
+           case ISettings.ZOOM_SECONDS_MEDIUM:
+        	   		_currentView = ISettings.VIEW_DAY;
+        	   		_dayWidth = originalDayWidth * 16;
+        	   		break;
+           case ISettings.ZOOM_SECONDS_NORMAL:
+        	   		_currentView = ISettings.VIEW_DAY;
+        	   		_dayWidth = originalDayWidth * 14;
+        	   		break;
             // minutes
-           	case ISettings.ZOOM_MINUTES_MAX:
-            	_currentView = ISettings.VIEW_DAY;
-            	_dayWidth = originalDayWidth * 12;
-            	break;
-           	case ISettings.ZOOM_MINUTES_MEDIUM:
-        	   _currentView = ISettings.VIEW_DAY;
-        	   _dayWidth = originalDayWidth * 10;
+           case ISettings.ZOOM_MINUTES_MAX:
+            		_currentView = ISettings.VIEW_DAY;
+            		_dayWidth = originalDayWidth * 12;
+            		break;
+           case ISettings.ZOOM_MINUTES_MEDIUM:
+        	   		_currentView = ISettings.VIEW_DAY;
+        	   		_dayWidth = originalDayWidth * 10;
                	break;
-           	case ISettings.ZOOM_MINUTES_NORMAL:
-        	   _currentView = ISettings.VIEW_DAY;
-        	   _dayWidth = originalDayWidth * 8;
+           case ISettings.ZOOM_MINUTES_NORMAL:
+        	   		_currentView = ISettings.VIEW_DAY;
+        	   		_dayWidth = originalDayWidth * 8;
         	   break;
             // hour
             case ISettings.ZOOM_HOURS_MAX:
@@ -8626,7 +8626,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         // not a hack, we just re-use the same parameter name but for a
         // different purpose than the name itself, not exactly great logic
         // but it saves some recoding
-        if (_zoomLevel == ISettings.ZOOM_HOURS_MAX || _zoomLevel == ISettings.ZOOM_HOURS_MEDIUM || _zoomLevel == ISettings.ZOOM_HOURS_NORMAL) {
+        if (_zoomLevel == ISettings.ZOOM_SECONDS_NORMAL || _zoomLevel == ISettings.ZOOM_SECONDS_MEDIUM || _zoomLevel == ISettings.ZOOM_SECONDS_MAX || _zoomLevel == ISettings.ZOOM_MINUTES_NORMAL ||_zoomLevel == ISettings.ZOOM_MINUTES_MEDIUM || _zoomLevel == ISettings.ZOOM_MINUTES_MAX ||_zoomLevel == ISettings.ZOOM_HOURS_MAX || _zoomLevel == ISettings.ZOOM_HOURS_MEDIUM || _zoomLevel == ISettings.ZOOM_HOURS_NORMAL) {
             // how many hours are there really in our work day? we don't show
             // anything else!
             _weekWidth = _dayWidth * 24;

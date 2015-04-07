@@ -187,6 +187,12 @@ public interface ISettings {
     /**
      * What initial zoom level is used when the chart is initially drawn. Options are:
      * <ul>
+     * <li>{@link #ZOOM_SECONDS_MAX}
+     * <li>{@link #ZOOM_SECONDS_MEDIUM}
+     * <li>{@link #ZOOM_SECONDS_NORMAL}
+     * <li>{@link #ZOOM_MINUTES_MAX}
+     * <li>{@link #ZOOM_MINUTES_MEDIUM}
+     * <li>{@link #ZOOM_MINUTES_NORMAL}
      * <li>{@link #ZOOM_HOURS_MAX}
      * <li>{@link #ZOOM_HOURS_MEDIUM}
      * <li>{@link #ZOOM_HOURS_NORMAL}
