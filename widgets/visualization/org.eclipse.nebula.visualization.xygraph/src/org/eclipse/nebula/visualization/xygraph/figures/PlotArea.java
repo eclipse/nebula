@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.Display;
 public class PlotArea extends Figure {
 
 	// Added by Laurent PHILIPPE
-	private PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
+	private final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -76,6 +76,7 @@ public class PlotArea extends Figure {
 	private ZoomType zoomType;
 
 	private Point start;
+	private Point dynamicStart;
 	private Point end;
 	private boolean armed;
 
@@ -234,6 +235,7 @@ public class PlotArea extends Figure {
 		if (armed && end != null && start != null) {
 			switch (zoomType) {
 			case RUBBERBAND_ZOOM:
+			case DYNAMIC_ZOOM:
 			case HORIZONTAL_ZOOM:
 			case VERTICAL_ZOOM:
 				graphics.setLineStyle(SWTConstants.LINE_DOT);
@@ -325,16 +327,28 @@ public class PlotArea extends Figure {
 		final private List<Range> yAxisStartRangeList = new ArrayList<Range>();
 
 		private SaveStateCommand command;
+		private boolean dynamicZoomMode = false;
 
+		@Override
 		public void mousePressed(final MouseEvent me) {
 			// Only react to 'main' mouse button, only react to 'real' zoom
 			if (me.button != 1 || zoomType == ZoomType.NONE)
 				return;
 			armed = true;
+			dynamicZoomMode = false;
 			// get start position
 			switch (zoomType) {
 			case RUBBERBAND_ZOOM:
 				start = me.getLocation();
+				end = null;
+				break;
+			case DYNAMIC_ZOOM:
+				start = me.getLocation();
+				dynamicStart = me.getLocation(); // dynamicStart will save
+													// starting point, start
+													// variable
+													// will be changed according
+													// to zoomType
 				end = null;
 				break;
 			case HORIZONTAL_ZOOM:
@@ -366,6 +380,7 @@ public class PlotArea extends Figure {
 				end = new Point();
 				// Start timer that will zoom while mouse button is pressed
 				Display.getCurrent().timerExec(Axis.ZOOM_SPEED, new Runnable() {
+					@Override
 					public void run() {
 						if (!armed)
 							return;
@@ -383,6 +398,7 @@ public class PlotArea extends Figure {
 			me.consume();
 		}
 
+		@Override
 		public void mouseDoubleClicked(final MouseEvent me) { /* Ignored */
 		}
 
@@ -390,7 +406,25 @@ public class PlotArea extends Figure {
 		public void mouseDragged(final MouseEvent me) {
 			if (!armed)
 				return;
+			if (dynamicZoomMode)
+				zoomType = zoomType.DYNAMIC_ZOOM;
 			switch (zoomType) {
+			case DYNAMIC_ZOOM:
+				dynamicZoomMode = true;
+				if (Math.abs(dynamicStart.x - me.x) < 30) {
+					start = new Point(bounds.x, dynamicStart.y);
+					end = new Point(bounds.x + bounds.width, me.getLocation().y);
+					setZoomType(zoomType.VERTICAL_ZOOM);
+				} else if (Math.abs(dynamicStart.y - me.y) < 30) {
+					start = new Point(dynamicStart.x, bounds.y);
+					end = new Point(me.getLocation().x, bounds.y + bounds.height);
+					setZoomType(zoomType.HORIZONTAL_ZOOM);
+				} else {
+					start = dynamicStart;
+					end = me.getLocation();
+					setZoomType(zoomType.RUBBERBAND_ZOOM);
+				}
+				break;
 			case RUBBERBAND_ZOOM:
 				end = me.getLocation();
 				break;
@@ -425,6 +459,7 @@ public class PlotArea extends Figure {
 			}
 		}
 
+		@Override
 		public void mouseReleased(final MouseEvent me) {
 			if (!armed)
 				return;
@@ -434,47 +469,64 @@ public class PlotArea extends Figure {
 			if (end == null || start == null)
 				return;
 
-			switch (zoomType) {
-			case RUBBERBAND_ZOOM:
-				for (Axis axis : xyGraph.getXAxisList()) {
-					final double t1 = axis.getPositionValue(start.x, false);
-					final double t2 = axis.getPositionValue(end.x, false);
-					axis.setRange(t1, t2, true);
+			// If we are in dynamicZoom mode we will zoom like this, for other
+			// zooms is everything like before
+			if (dynamicZoomMode) {
+				if (zoomType != zoomType.VERTICAL_ZOOM)
+					for (Axis axis : xyGraph.getXAxisList()) {
+						final double t1 = axis.getPositionValue(start.x, false);
+						final double t2 = axis.getPositionValue(end.x, false);
+						axis.setRange(t1, t2, true);
+					}
+				if (zoomType != zoomType.HORIZONTAL_ZOOM)
+					for (Axis axis : xyGraph.getYAxisList()) {
+						final double t1 = axis.getPositionValue(start.y, false);
+						final double t2 = axis.getPositionValue(end.y, false);
+						axis.setRange(t1, t2, true);
+					}
+				setZoomType(zoomType.DYNAMIC_ZOOM);
+			} else
+				switch (zoomType) {
+				case RUBBERBAND_ZOOM:
+					for (Axis axis : xyGraph.getXAxisList()) {
+						final double t1 = axis.getPositionValue(start.x, false);
+						final double t2 = axis.getPositionValue(end.x, false);
+						axis.setRange(t1, t2, true);
+					}
+					for (Axis axis : xyGraph.getYAxisList()) {
+						final double t1 = axis.getPositionValue(start.y, false);
+						final double t2 = axis.getPositionValue(end.y, false);
+						axis.setRange(t1, t2, true);
+					}
+					break;
+				case HORIZONTAL_ZOOM:
+					for (Axis axis : xyGraph.getXAxisList()) {
+						final double t1 = axis.getPositionValue(start.x, false);
+						final double t2 = axis.getPositionValue(end.x, false);
+						axis.setRange(t1, t2, true);
+					}
+					break;
+				case VERTICAL_ZOOM:
+					for (Axis axis : xyGraph.getYAxisList()) {
+						final double t1 = axis.getPositionValue(start.y, false);
+						final double t2 = axis.getPositionValue(end.y, false);
+						axis.setRange(t1, t2, true);
+					}
+					break;
+				case PANNING:
+					pan();
+					break;
+				case ZOOM_IN:
+				case ZOOM_IN_HORIZONTALLY:
+				case ZOOM_IN_VERTICALLY:
+				case ZOOM_OUT:
+				case ZOOM_OUT_HORIZONTALLY:
+				case ZOOM_OUT_VERTICALLY:
+					performInOutZoom();
+					break;
+				default:
+					break;
 				}
-				for (Axis axis : xyGraph.getYAxisList()) {
-					final double t1 = axis.getPositionValue(start.y, false);
-					final double t2 = axis.getPositionValue(end.y, false);
-					axis.setRange(t1, t2, true);
-				}
-				break;
-			case HORIZONTAL_ZOOM:
-				for (Axis axis : xyGraph.getXAxisList()) {
-					final double t1 = axis.getPositionValue(start.x, false);
-					final double t2 = axis.getPositionValue(end.x, false);
-					axis.setRange(t1, t2, true);
-				}
-				break;
-			case VERTICAL_ZOOM:
-				for (Axis axis : xyGraph.getYAxisList()) {
-					final double t1 = axis.getPositionValue(start.y, false);
-					final double t2 = axis.getPositionValue(end.y, false);
-					axis.setRange(t1, t2, true);
-				}
-				break;
-			case PANNING:
-				pan();
-				break;
-			case ZOOM_IN:
-			case ZOOM_IN_HORIZONTALLY:
-			case ZOOM_IN_VERTICALLY:
-			case ZOOM_OUT:
-			case ZOOM_OUT_HORIZONTALLY:
-			case ZOOM_OUT_VERTICALLY:
-				performInOutZoom();
-				break;
-			default:
-				break;
-			}
 
 			if (zoomType != ZoomType.NONE && command != null) {
 				command.saveState();

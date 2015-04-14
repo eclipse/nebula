@@ -30,6 +30,13 @@ public enum ZoomType {
 					.getInstance().getImage("images/VerticalZoomCursorOnYAxis.png"), XYGraphFlags.COMBINED_ZOOM
 					| XYGraphFlags.SEPARATE_ZOOM, SWT.CURSOR_CROSS),
 
+	/** Interactive Dynamic zoom */
+	DYNAMIC_ZOOM(Messages.Zoom_Dynamic, XYGraphMediaFactory.getInstance().getImage("images/RubberbandZoom.png"),
+			XYGraphMediaFactory.getInstance().getImage("images/RubberbandZoomCursor.png"), XYGraphMediaFactory
+					.getInstance().getImage("images/HorizontalZoomCursorOnXAxis.png"), XYGraphMediaFactory
+					.getInstance().getImage("images/VerticalZoomCursorOnYAxis.png"), XYGraphFlags.COMBINED_ZOOM
+					| XYGraphFlags.SEPARATE_ZOOM, SWT.CURSOR_CROSS),
+
 	/** Zoom via 'cursors' for horizontal start/end position */
 	HORIZONTAL_ZOOM(Messages.Zoom_Horiz, XYGraphMediaFactory.getInstance().getImage("images/HorizontalZoom.png"),
 			XYGraphMediaFactory.getInstance().getImage("images/HorizontalZoomCursor.png"), XYGraphMediaFactory

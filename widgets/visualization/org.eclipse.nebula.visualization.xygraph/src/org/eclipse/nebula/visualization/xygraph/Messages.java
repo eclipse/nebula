@@ -67,6 +67,7 @@ public class Messages {
 	public static String Zoom_OutVert = "Zoom Out Vertically";
 	public static String Zoom_Pan = "Panning";
 	public static String Zoom_Rubberband = "Rubberband Zoom";
+	public static String Zoom_Dynamic = "Dynamic Zoom";
 	public static String Zoom_Vert = "Vertical Zoom";
 
 	private Messages() {

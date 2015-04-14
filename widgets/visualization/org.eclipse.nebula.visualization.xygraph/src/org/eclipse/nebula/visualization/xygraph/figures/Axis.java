@@ -93,7 +93,7 @@ public class Axis extends LinearScale {
 	private Point end;
 	private boolean armed;
 	private Range startRange;
-	private Cursor grabbing;
+	private final Cursor grabbing;
 	private Color revertBackColor;
 
 	private RGB colorRGB;
@@ -269,6 +269,7 @@ public class Axis extends LinearScale {
 			case RUBBERBAND_ZOOM:
 			case HORIZONTAL_ZOOM:
 			case VERTICAL_ZOOM:
+			case DYNAMIC_ZOOM:
 				graphics.setLineStyle(SWTConstants.LINE_DOT);
 				graphics.setLineWidth(1);
 				graphics.setForegroundColor(revertBackColor);
@@ -636,6 +637,7 @@ public class Axis extends LinearScale {
 	private boolean isValidZoomType(final ZoomType zoom) {
 		return zoom == ZoomType.PANNING
 				|| zoom == ZoomType.RUBBERBAND_ZOOM
+				|| zoom == ZoomType.DYNAMIC_ZOOM
 				|| zoom == ZoomType.ZOOM_IN
 				|| zoom == ZoomType.ZOOM_OUT
 				|| (isHorizontal() && (zoom == ZoomType.HORIZONTAL_ZOOM || zoom == ZoomType.ZOOM_IN_HORIZONTALLY || zoom == ZoomType.ZOOM_OUT_HORIZONTALLY))
@@ -805,6 +807,7 @@ public class Axis extends LinearScale {
 	class AxisMouseListener extends MouseMotionListener.Stub implements MouseListener {
 		private SaveStateCommand command;
 
+		@Override
 		public void mousePressed(final MouseEvent me) {
 			// Only react to 'main' mouse button, only react to 'real' zoom
 			if (me.button != 1 || !isValidZoomType(zoomType))
@@ -813,6 +816,7 @@ public class Axis extends LinearScale {
 			// get start position
 			switch (zoomType) {
 			case RUBBERBAND_ZOOM:
+			case DYNAMIC_ZOOM:
 				if (isHorizontal())
 					start = new Point(me.getLocation().x, bounds.y);
 				else
@@ -843,6 +847,7 @@ public class Axis extends LinearScale {
 				end = new Point();
 				// Start timer that will zoom while mouse button is pressed
 				Display.getCurrent().timerExec(ZOOM_SPEED, new Runnable() {
+					@Override
 					public void run() {
 						if (!armed)
 							return;
@@ -860,6 +865,7 @@ public class Axis extends LinearScale {
 			me.consume();
 		}
 
+		@Override
 		public void mouseDoubleClicked(final MouseEvent me) { /* Ignored */
 		}
 
@@ -869,6 +875,7 @@ public class Axis extends LinearScale {
 				return;
 			switch (zoomType) {
 			case RUBBERBAND_ZOOM:
+			case DYNAMIC_ZOOM:
 				// Treat rubberband zoom on axis like horiz/vert. zoom
 				if (isHorizontal())
 					end = new Point(me.getLocation().x, bounds.y + bounds.height);
@@ -906,6 +913,7 @@ public class Axis extends LinearScale {
 			}
 		}
 
+		@Override
 		public void mouseReleased(final MouseEvent me) {
 			if (!armed)
 				return;
@@ -917,6 +925,7 @@ public class Axis extends LinearScale {
 
 			switch (zoomType) {
 			case RUBBERBAND_ZOOM:
+			case DYNAMIC_ZOOM:
 			case HORIZONTAL_ZOOM:
 			case VERTICAL_ZOOM:
 				performStartEndZoom();
