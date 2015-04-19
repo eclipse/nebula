@@ -7,13 +7,16 @@
  *
  * Contributors:
  *    emil.crumhorn@gmail.com - initial API and implementation
+ *    ziogiannigmail.com - Bug 464509 - Minute View Implementation
  *******************************************************************************/
 
 package org.eclipse.nebula.widgets.ganttchart;
 
 import java.util.Calendar;
 
-class ViewPortHandler implements IViewPortHandler {
+import org.eclipse.swt.widgets.Display;
+
+class ViewPortHandler implements IViewPortHandler2 {
 
 	private GanttComposite _ganttComposite;
 	
@@ -36,6 +39,10 @@ class ViewPortHandler implements IViewPortHandler {
 				if (mCurrentView == ISettings.VIEW_DAY) {
 					prevHour();
 					return;
+				}else
+				if (mCurrentView == ISettings.VIEW_MINUTE) {
+					prevMinute();
+					return;
 				}
 				else {
 					prevDay();
@@ -52,6 +59,10 @@ class ViewPortHandler implements IViewPortHandler {
 				else {
 					if (mCurrentView == ISettings.VIEW_DAY) {
 						prevHour();
+						return;
+					}else
+					if (mCurrentView == ISettings.VIEW_MINUTE) {
+						prevMinute();
 						return;
 					}
 					else {
@@ -74,6 +85,10 @@ class ViewPortHandler implements IViewPortHandler {
 				else {
 					if (mCurrentView == ISettings.VIEW_DAY) {
 						prevHour();
+					}else
+					if (mCurrentView == ISettings.VIEW_MINUTE) {
+						prevMinute();
+						return;
 					}
 					else {
 						prevDay();
@@ -98,6 +113,11 @@ class ViewPortHandler implements IViewPortHandler {
 					nextHour();
 					return;
 				}
+				else
+				if (mCurrentView == ISettings.VIEW_MINUTE) {
+					nextMinute();
+					return;
+				}
 				else {
 					nextDay();
 					return;
@@ -114,6 +134,10 @@ class ViewPortHandler implements IViewPortHandler {
 				else {
 					if (mCurrentView == ISettings.VIEW_DAY) {
 						nextHour();
+						return;
+					}else
+					if (mCurrentView == ISettings.VIEW_MINUTE) {
+						nextMinute();
 						return;
 					}
 					else {
@@ -137,6 +161,10 @@ class ViewPortHandler implements IViewPortHandler {
 				else {
 					if (mCurrentView == ISettings.VIEW_DAY) {
 						nextHour();
+					}else
+					if (mCurrentView == ISettings.VIEW_MINUTE) {
+						nextMinute();
+						return;
 					}
 					else {
 						nextDay();
@@ -199,6 +227,63 @@ class ViewPortHandler implements IViewPortHandler {
 	}
 
 	/**
+	 * Jumps to the next minute.
+	 */
+	public void nextMinute() {
+		Display.getDefault().asyncExec(new Runnable(){
+            public void run(){
+		try {
+		Calendar mCalendar = _ganttComposite.getRootCalendar();
+		mCalendar.add(Calendar.MINUTE, 1);
+
+        if (mCalendar.get(Calendar.MINUTE) >= 60) {
+			mCalendar.add(Calendar.HOUR_OF_DAY, 1);
+			mCalendar.set(Calendar.MINUTE, 0);
+		}
+        Thread.sleep(50);
+        if (_ganttComposite != null && !_ganttComposite.isDisposed()){
+		_ganttComposite.setNoRecalc();
+		_ganttComposite.moveXBounds(false);
+		_ganttComposite.redraw();
+		} 
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+            }
+        });
+           }
+            
+            
+
+	/**
+	 * Jumps to the previous hour.
+	 */
+	public void prevMinute() {
+		Display.getDefault().asyncExec(new Runnable(){
+            public void run(){
+            	try {
+            		Calendar mCalendar = _ganttComposite.getRootCalendar();
+            		mCalendar.add(Calendar.MINUTE, -1);
+            		
+            	   if (mCalendar.get(Calendar.MINUTE) < 0) {
+            			mCalendar.add(Calendar.HOUR_OF_DAY, -1);
+            			mCalendar.set(Calendar.MINUTE, 60 - 1);
+            		}
+            	   Thread.sleep(50);
+            	   if (_ganttComposite != null && !_ganttComposite.isDisposed()){
+            		_ganttComposite.setNoRecalc();
+            		_ganttComposite.moveXBounds(true);
+            		_ganttComposite.redraw();
+            		} 
+            	} catch (Exception e) {
+            			// TODO Auto-generated catch block
+            			e.printStackTrace();
+            		}
+            }
+        });
+            }
+	/**
 	 * Jumps to the next hour.
 	 */
 	public void nextHour() {
@@ -218,6 +303,7 @@ class ViewPortHandler implements IViewPortHandler {
 	 * Jumps to the previous hour.
 	 */
 	public void prevHour() {
+
 		Calendar mCalendar = _ganttComposite.getRootCalendar();
 		mCalendar.add(Calendar.HOUR_OF_DAY, -1);
 

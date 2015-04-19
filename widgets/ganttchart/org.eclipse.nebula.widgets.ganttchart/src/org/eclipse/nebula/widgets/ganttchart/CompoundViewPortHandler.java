@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Dirk Fauth <dirk.fauth@gmail.com> - initial API and implementation
+ *    ziogiannigmail.com - Bug 464509 - Minute View Implementation
  *******************************************************************************/
 package org.eclipse.nebula.widgets.ganttchart;
 
@@ -14,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class CompoundViewPortHandler implements IViewPortHandler {
+public class CompoundViewPortHandler implements IViewPortHandler2 {
 
 	private List<IViewPortHandler> handler = new ArrayList<IViewPortHandler>();
 	
@@ -71,6 +72,20 @@ public class CompoundViewPortHandler implements IViewPortHandler {
 	public void prevHour() {
 		for (IViewPortHandler vph : this.handler) {
 			vph.prevHour();
+		}
+	}
+	
+	public void nextMinute() {
+		for (IViewPortHandler vph : this.handler) {
+			if(vph instanceof IViewPortHandler2)
+				  ((IViewPortHandler2) vph).nextMinute();
+		}
+	}
+
+	public void prevMinute() {
+		for (IViewPortHandler vph : this.handler) {
+			if(vph instanceof IViewPortHandler2)
+				  ((IViewPortHandler2) vph).prevMinute();
 		}
 	}
 

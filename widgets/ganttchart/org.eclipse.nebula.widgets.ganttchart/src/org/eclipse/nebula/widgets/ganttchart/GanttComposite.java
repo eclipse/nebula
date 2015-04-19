@@ -8,6 +8,7 @@
  * Contributors:
  *    emil.crumhorn@gmail.com - initial API and implementation
  *    ziogiannigmail.com - Bug 462855 - Zoom Minimum Depth increased up to 6 levels deeper than initial implementation (-6,-5,-4,-3,-2,-1)
+ *    ziogiannigmail.com - Bug 464509 - Minute View Implementation
  *******************************************************************************/
 
 package org.eclipse.nebula.widgets.ganttchart;
@@ -123,6 +124,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     private int                           _monthDayWidth;
 
     private int                           _monthWeekWidth;
+    
+    private int							  _minuteDayWidth;
 
     // day stuff
     // width of one day
@@ -307,7 +310,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     private Calendar                      _dDayCalendar;
 
     private HorizontalScrollbarHandler    _hScrollHandler;
-    private IViewPortHandler               _viewPortHandler;
+    private IViewPortHandler2               _viewPortHandler;
 
     private boolean                       _savingChartImage        = false;
 
@@ -414,6 +417,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         _monthWeekWidth = _monthDayWidth * 7;
         _dayWidth = _settings.getDayWidth();
         _weekWidth = _dayWidth * 7;
+        _minuteDayWidth = _dayWidth * 1440; 
         _calStartOffset = _settings.getCalendarStartupDateOffset();
         _mainCalendar = _settings.getStartupCalendarDate();
         _moveAreaInsets = _settings.getMoveAreaNegativeSensitivity();
@@ -455,6 +459,33 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             }
         });
         
+        Thread t = new Thread() {//TodayLine is too sleepy, not updated properly by GUI, then it forces its update every X seconds
+        	volatile int delay = 2000;
+            @Override
+            public void run() {
+            	while (!isDisposed()) {
+            		try {
+            			Thread.sleep(delay);
+            			if (isDisposed()) { return; }
+            			if (_currentView == ISettings.VIEW_DAY || _currentView == ISettings.VIEW_MINUTE)
+                        _parentChart.getDisplay().asyncExec(new Runnable(){ 
+                         public void run(){
+            	          if (!isDisposed())
+            	           refresh();
+                         }
+                       });
+            	} catch (Exception e) {
+        			// TODO Auto-generated catch block
+        		e.printStackTrace();
+        	}
+           }
+          }
+        };
+        
+        if (_settings instanceof ISettings2 && ((ISettings2) _settings).enableTodayLineUpdater()){
+         t.start();
+        }
+
         this.zoomHandler = this;
     	
 		if (_settings.showSectionDetailMore()) {
@@ -967,7 +998,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     void showScrollDate() { 
         if (_settings.showDateTips() && _settings.showDateTipsOnScrolling()
         		&& _mainBounds != null /* security question as in some unknown cases the _mainBounds is null */) {
-            final String str = DateHelper.getDate(_mainCalendar, _currentView == ISettings.VIEW_DAY ? _settings.getHourDateFormat() : _settings.getDateFormat());
+            final String str = DateHelper.getDate(_mainCalendar, _currentView == ISettings.VIEW_MINUTE || _currentView == ISettings.VIEW_DAY ? _settings.getHourDateFormat() : _settings.getDateFormat());
             final GC gc = new GC(this);
             final Point ext = gc.stringExtent(str);
             gc.dispose();
@@ -1079,7 +1110,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     }
 
     void killDialogs() {
-        if (_settings.showToolTips()) {
+       if (_settings.showToolTips()) {
             GanttToolTip.kill();
             GanttDateTip.kill();
             AdvancedTooltipDialog.kill();
@@ -1435,7 +1466,14 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             drawGanttPhases(gc, headerBounds, true, null);
         }
 
-        if (_currentView == ISettings.VIEW_DAY) {
+        if (_currentView == ISettings.VIEW_MINUTE) {
+            // draw the day at the top
+            if (!calculateOnly) {
+                drawMinuteTopBoxes(gc, headerBounds);
+            }
+            // draw the hour ticks below
+            drawMinuteBottomBoxes(gc, headerBounds, calculateOnly);
+        } else if (_currentView == ISettings.VIEW_DAY) {
             // draw the day at the top
             if (!calculateOnly) {
                 drawHourTopBoxes(gc, headerBounds);
@@ -1888,6 +1926,12 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         // year view don't.
         switch (_currentView) {
             case ISettings.VIEW_DAY:
+                gc.setForeground(getDayBackgroundGradient(Calendar.MONDAY, true, gs));
+                gc.setBackground(getDayBackgroundGradient(Calendar.MONDAY, false, gs));
+
+                gc.fillGradientRectangle(startX, startY, maxX, heightY, true);
+                return;
+            case ISettings.VIEW_MINUTE:
                 gc.setForeground(getDayBackgroundGradient(Calendar.MONDAY, true, gs));
                 gc.setBackground(getDayBackgroundGradient(Calendar.MONDAY, false, gs));
 
@@ -2358,12 +2402,11 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         final int yStart = bounds.y - (applyVscroll ? _vScrollPos : 0);
         final int height = bounds.height + yStart - 1 + (applyVscroll ? _vScrollPos : 0);
 
-        if (_currentView == ISettings.VIEW_WEEK || _currentView == ISettings.VIEW_MONTH || _currentView == ISettings.VIEW_DAY || _currentView == ISettings.VIEW_D_DAY) {
+        if (_currentView == ISettings.VIEW_MINUTE || _currentView == ISettings.VIEW_WEEK || _currentView == ISettings.VIEW_MONTH || _currentView == ISettings.VIEW_DAY || _currentView == ISettings.VIEW_D_DAY) {
             // normal day lines
             gc.setForeground(_lineColor);
             for (int i = 0; i < _verticalLineLocations.size(); i++) {
                 final int current = ((Integer) _verticalLineLocations.get(i)).intValue();
-
                 gc.drawLine(current, yStart, current, height);
             }
 
@@ -2384,6 +2427,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             }
 
             final Calendar today = Calendar.getInstance(_defaultLocale);
+ 
             drawTodayLine(gc, bounds, getStartingXFor(today), today.get(Calendar.DAY_OF_WEEK), _lineTodayColor);
             
             if (_settings.getPeriodStart() != null) {
@@ -2393,7 +2437,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                 		_linePeriodColor);
             }
             if (_settings.getPeriodEnd() != null) {
-                drawTodayLine(gc, bounds, 
+               drawTodayLine(gc, bounds, 
                 		getStartingXFor(_settings.getPeriodEnd()), 
                 		_settings.getPeriodEnd().get(Calendar.DAY_OF_WEEK),
                 		_linePeriodColor);
@@ -3093,6 +3137,159 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         // what we're left with is the exact end date down to the minute
         _endCalendar = fakeEnd;
     }
+    
+ // minutes 
+    private void drawMinuteTopBoxes(final GC gc, final Rectangle bounds) {
+    	final int xMax = bounds.width + bounds.x;
+        int current = bounds.x;
+        final int topY = bounds.y;
+        final int bottomY = _settings.getHeaderMonthHeight();
+
+        final Calendar temp = Calendar.getInstance(_defaultLocale);
+        temp.setTime(_mainCalendar.getTime());
+        
+        // if we're not on hour zero, the box will be shorter, so check how much
+        final int hour = temp.get(Calendar.HOUR_OF_DAY);
+
+        final int toTakeOff = hour * _dayWidth;
+
+        final int wWidth = _weekWidth;
+        current -= toTakeOff;
+
+        boolean once = false;
+
+        while (true) {
+            gc.setForeground(_txtHeaderBGColorTop);
+            gc.setBackground(_txtHeaderBGColorBottom);
+            gc.fillGradientRectangle(current, topY + 1, wWidth, bottomY - 1, true);
+
+            gc.setForeground(_colorManager.getTickMarkColor());
+            gc.drawLine(current, topY + _settings.getVerticalTickMarkOffset(), current, topY + _settings.getHeaderDayHeight());
+
+            gc.setForeground(_textColor);
+
+            final String dString = getDateString(temp, true);
+
+            // TODO: This needs to be a different fetch for dates that are not
+            // right now, so to speak.
+            // so if the leftmost date is a full date/time, the "next" date
+            // needs to be without the time
+            // should make it a method call
+           if (current >= bounds.x) {
+                gc.drawString(dString, current + 4, topY + 3, true);
+           }
+            // as ranges here can be massive width-wise, always ensure there's a
+            // date visible at the top
+            if (!once) {
+                gc.drawString(dString, bounds.x + 4, topY + 3, true);
+                once = true;
+            }
+
+            temp.add(Calendar.MINUTE, 1);
+            current += _weekWidth;
+
+            if (current > xMax) {
+                break;
+            }
+        }
+    }
+
+    // minutes
+    private void drawMinuteBottomBoxes(final GC gc, final Rectangle bounds, boolean calculateOnly) {
+        final int xMax = bounds.width + bounds.x;
+        int current = bounds.x;
+        final int topY = bounds.y + _settings.getHeaderMonthHeight();
+        final int heightY = _settings.getHeaderDayHeight();
+
+        final Calendar temp = Calendar.getInstance(_defaultLocale);
+        temp.setTime(_mainCalendar.getTime());
+
+        boolean first = true;
+
+        _hoursVisible = 0;
+
+        while (true) {
+            gc.setForeground(_colorManager.getHourTimeDividerColor());
+            int spacer = 1;
+
+            _verticalLineLocations.add(new Integer(current)); 
+
+            if (!calculateOnly) {
+                // this weird code here checks if it's a gantt section on the left and we're drawing the first iteration.
+                // as sections draw their own line on the inner-facing border, and so does this, that'd be two lines in a row
+                // which makes the section at the top look rather "thick". As we don't want that, we do a quick check and skip the drawing.
+                // the "spacer" does the same thing for the gradient below
+                if (!_ganttSections.isEmpty() && first) {
+                    gc.drawRectangle(current - 1, topY, _dayWidth + 1, heightY);
+                    spacer = 0;
+                } else {
+                    gc.drawRectangle(current, topY, _dayWidth, heightY);
+                }
+
+                gc.setForeground(_timeHeaderBGColorTop);
+                gc.setBackground(_timeHeaderBGColorBottom);
+                gc.fillGradientRectangle(current + spacer, topY + 1, _dayWidth - spacer, heightY - 1, true);
+
+                final int hSpacer = _settings.getDayHorizontalSpacing();
+                final int vSpacer = _settings.getDayVerticalSpacing();
+
+                gc.setForeground(_textColor);
+                gc.drawString(getDateString(temp, false), current + hSpacer, topY + vSpacer, true);
+
+                // fixes some odd red line bug, not sure why
+                // gc.setForeground(mLineColor);
+            }
+
+            current += _dayWidth;
+
+            if (current > xMax) {
+                current -= _dayWidth;
+                _endCalendar = temp;
+                break;
+            }
+
+            _hoursVisible++;
+            temp.add(Calendar.MINUTE, 1);
+            if (temp.get(Calendar.MINUTE) == 0) {
+                _verticalWeekDividerLineLocations.add(new Integer(current)); 
+                // temp.add(Calendar.DATE, 1);
+                // temp.set(Calendar.HOUR_OF_DAY, workDayStartHour);
+            }
+
+            first = false;
+        }
+
+        // calculate the exact end time down to the minute
+
+        // hours in the day
+        final int hr = (_mainBounds.width - _mainBounds.x) / _dayWidth;
+
+        // hour pixels visible
+        final int total = hr * _dayWidth;
+        final float ppm = 60f / _dayWidth;
+
+        // whatever pixels don't account for a full hour that are left over
+        final int extra = _mainBounds.width - _mainBounds.x - total;
+
+        // total visible minutes
+        final int totalMinutes = (int) (((float) total + (float) extra) * ppm);
+
+        // set our temporary end calendar to the start date of the calendar
+        final Calendar fakeEnd = Calendar.getInstance(_defaultLocale);
+        fakeEnd.setTime(_mainCalendar.getTime());
+
+        // loop it, but take work days/hours into account as usual
+        for (int i = 0; i < totalMinutes; i++) {
+            fakeEnd.add(Calendar.MINUTE, 1);
+            if (temp.get(Calendar.MINUTE) >= 60) {
+                temp.add(Calendar.HOUR_OF_DAY, 1);
+                temp.set(Calendar.MINUTE, 0);
+            }
+        }
+
+        // what we're left with is the exact end date down to the minute
+        _endCalendar = fakeEnd;
+    }
 
     private void drawGanttSpecialDateRanges(final GC gc, final Rectangle bounds, final GanttSection gs) {
         for (int i = 0; i < _specDateRanges.size(); i++) {
@@ -3151,7 +3348,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                 final Calendar eEnd = (Calendar) cals.get(1);
 
                 // push it over the edge to the next day or we'll have a gap of ~1px as we deal with nearly-next-day timestamps
-                if (_currentView == ISettings.VIEW_DAY) {
+                if (_currentView == ISettings.VIEW_MINUTE || _currentView == ISettings.VIEW_DAY) {
                     eEnd.add(Calendar.MILLISECOND, 1);
                 }
 
@@ -3758,7 +3955,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             }
 
             // set event bounds
-            ge.setBounds(new Rectangle(xStart, yDrawPos, xEventWidth, _eventHeight)); 
+            ge.setBounds(new Rectangle(xStart, yDrawPos, xEventWidth, _eventHeight));
 
             // update the actual width of the event
             ge.updateActualWidth();
@@ -3791,7 +3988,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         }
         if (toUse == null) { return ""; }
 
-        final String dateFormat = (_currentView == ISettings.VIEW_DAY ? _settings.getHourDateFormat() : _settings.getDateFormat());
+        final String dateFormat = (_currentView == ISettings.VIEW_MINUTE || _currentView == ISettings.VIEW_DAY ? _settings.getHourDateFormat() : _settings.getDateFormat());
 
         String toReturn = toUse;
 
@@ -4546,6 +4743,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     private String getDateString(final Calendar cal, final boolean top) {
         if (top) {
             switch (_currentView) {
+            case ISettings.VIEW_MINUTE:
+                return DateHelper.getDate(cal, ((ISettings2) _settings).getMinuteHeaderTextDisplayFormatTop());
                 case ISettings.VIEW_WEEK:
                     return DateHelper.getDate(cal, _settings.getWeekHeaderTextDisplayFormatTop());
                 case ISettings.VIEW_MONTH:
@@ -4559,6 +4758,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             }
         } else {
             switch (_currentView) {
+            case ISettings.VIEW_MINUTE:
+                return DateHelper.getDate(cal, ((ISettings2) _settings).getMinuteHeaderTextDisplayFormatBottom());
                 case ISettings.VIEW_WEEK:
                     return DateHelper.getDate(cal, _settings.getWeekHeaderTextDisplayFormatBottom()).substring(0, 1);
                 case ISettings.VIEW_MONTH:
@@ -4605,7 +4806,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
         final Calendar cal = Calendar.getInstance(_defaultLocale);
 
-        if (_currentView == ISettings.VIEW_DAY) {
+        if (_currentView == ISettings.VIEW_MINUTE || _currentView == ISettings.VIEW_DAY) {
             // round it down
             internalSetDate(cal, side, true, true);
         } else {
@@ -4648,7 +4849,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         flagForceFullUpdate();
         cal.setTime(earliest);
 
-        if (_currentView == ISettings.VIEW_DAY) {
+        if (_currentView == ISettings.VIEW_MINUTE || _currentView == ISettings.VIEW_DAY) {
             // round it down
             internalSetDate(cal, SWT.LEFT, true, true);
         } else {
@@ -4786,7 +4987,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     private void internalSetDateAtX(final int x, final Calendar preZoomDate, final boolean clearMinutes, final boolean redraw, final boolean zoomIn) {
         final Calendar target = getDateAt(x);
 
-        if (_currentView == ISettings.VIEW_DAY) {
+        if (_currentView == ISettings.VIEW_MINUTE || _currentView == ISettings.VIEW_DAY) {
             int hours = DateHelper.hoursBetween(target, preZoomDate, false);
             final Calendar toSet = DateHelper.getNewCalendar(_mainCalendar);
             if (zoomIn) {
@@ -4833,9 +5034,19 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             case SWT.LEFT:
                 if (_currentView == ISettings.VIEW_DAY) {
                     copy.set(Calendar.HOUR_OF_DAY, date.get(Calendar.HOUR_OF_DAY));
+                }else
+                if (_currentView == ISettings.VIEW_MINUTE) {
+                    copy.set(Calendar.HOUR_OF_DAY, date.get(Calendar.HOUR_OF_DAY));
+                    copy.set(Calendar.MINUTE, date.get(Calendar.MINUTE));
                 }
                 break;
             case SWT.CENTER:
+            	if (_currentView == ISettings.VIEW_MINUTE) {
+            		final int middleMinutes = _hoursVisible / 2 ;
+                    copy.set(Calendar.HOUR_OF_DAY, date.get(Calendar.HOUR_OF_DAY));
+                    copy.set(Calendar.MINUTE, date.get(Calendar.MINUTE));
+                    copy.add(Calendar.MINUTE, -middleMinutes);
+            	} else
                 if (_currentView == ISettings.VIEW_DAY) {
                     final int middleHours = _hoursVisible / 2;
                     copy.set(Calendar.HOUR_OF_DAY, date.get(Calendar.HOUR_OF_DAY));
@@ -4846,7 +5057,12 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                 }
                 break;
             case SWT.RIGHT:
-                if (_currentView == ISettings.VIEW_DAY) {
+            	if (_currentView == ISettings.VIEW_MINUTE) {
+                    copy.set(Calendar.HOUR_OF_DAY, date.get(Calendar.HOUR_OF_DAY));
+                    copy.set(Calendar.MINUTE, date.get(Calendar.MINUTE));
+                    copy.add(Calendar.MINUTE, -_hoursVisible);
+                } else 
+                if ( _currentView == ISettings.VIEW_DAY) {
                     copy.set(Calendar.HOUR_OF_DAY, date.get(Calendar.HOUR_OF_DAY));
                     copy.add(Calendar.HOUR_OF_DAY, -_hoursVisible);
                 } else {
@@ -5273,6 +5489,19 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     }
 
     /**
+     * Jumps to the previous minute.
+     */
+    public void prevMinute() {
+        _viewPortHandler.prevMinute();
+    }
+    /**
+     * Jumps to the next hour.
+     */
+    public void nextMinute() {
+        _viewPortHandler.nextMinute();
+    }
+
+    /**
      * Jumps to the previous hour.
      */
     public void prevHour() {
@@ -5617,7 +5846,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
     // gets the x position for where the event bar should start
     private int getStartingXFor(final GanttEvent event) {
-        if (_currentView == ISettings.VIEW_DAY) {
+        if ( _currentView == ISettings.VIEW_MINUTE || _currentView == ISettings.VIEW_DAY) {
             return getStartingXForEventHours(event);
         } else {
             return getStartingXFor(event.getActualStartDate());
@@ -5648,10 +5877,28 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
         final int dw = getDayWidth();
         final int daysBetween = (int) DateHelper.daysBetween(temp, start);
-        int ret = daysBetween * _weekWidth;
-        ret += _mainBounds.x;
+        final int minsBetween = (int) DateHelper.minutesBetween(temp.getTime(), start.getTime(), true,false);
+        int ret = 0;
+        if (_currentView == ISettings.VIEW_MINUTE) { //TodayLine for View_Minute
+        	 ret = (daysBetween) * _minuteDayWidth;
+        	 ret += _mainBounds.x;
+        	 final float minutesBetween = DateHelper.minutesBetween(temp.getTime(), start.getTime(), true, false);
+             final float secondsBetween = DateHelper.secondsBetween(temp.getTime(), start.getTime(), true, false);
 
+             float minPixels = 0;
+
+                 final float remainderMins = secondsBetween - (minutesBetween * 60);
+                 final float oneMinWidth = ((float) dw) / 60;
+                 minPixels = oneMinWidth * remainderMins;
+
+             ret += (minutesBetween * dw) + minPixels;
+             
+             return ret;	
+        }
+        else {
         // days is ok, now deal with hours
+        ret = daysBetween * _weekWidth;
+        ret += _mainBounds.x;
         final float hoursBetween = DateHelper.hoursBetween(temp, start, true);
         final float minutesBetween = DateHelper.minutesBetween(temp.getTime(), start.getTime(), true, false);
 
@@ -5665,10 +5912,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         }
 
         ret += (hoursBetween * dw) + minPixels;
-
+        }
         return ret;
     }
-
     /**
      * Returns the starting x for a given date.
      * 
@@ -5680,6 +5926,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
         if (_currentView == ISettings.VIEW_DAY) { return getStartingXForEventHours(date); }
 
+        if (_currentView == ISettings.VIEW_MINUTE ) return getStartingXForEventHours(date);
+        
         if (date == null) { return _mainBounds.x; }
 
         final Calendar temp = DateHelper.getNewCalendar(_mainCalendar);
@@ -5692,7 +5940,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         final int dw = getDayWidth();
 
         int extra = 0;
-        if (_drawToMinute && _currentView != ISettings.VIEW_DAY) {
+        if (_drawToMinute && (_currentView != ISettings.VIEW_DAY || _currentView != ISettings.VIEW_MINUTE)) {
             extra = calculateMinuteAdjustment(date);
         }
 
@@ -5705,11 +5953,11 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
     // gets the x position for where the event bar should end
     private int getXLengthForEvent(final GanttEvent event) {
-        if (_currentView == ISettings.VIEW_DAY) { return getXLengthForEventHours(event); }
+        if (_currentView == ISettings.VIEW_DAY || _currentView == ISettings.VIEW_MINUTE) { return getXLengthForEventHours(event); }
                 
         // +1 as it's the end date and we include the last day (by default anyway, users may override this)
         int extra = getDayWidth() * _daysToAppendForEndOfDay;
-        if (_drawToMinute && _currentView != ISettings.VIEW_DAY) {
+        if (_drawToMinute && (_currentView != ISettings.VIEW_DAY || _currentView != ISettings.VIEW_MINUTE)) {
         	extra -= (getDayWidth() - calculateMinuteAdjustment(event.getActualEndDate()));
         	//also subtract the shift that comes from the starting point
         	extra -= calculateMinuteAdjustment(event.getActualStartDate());
@@ -5733,6 +5981,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             dw = _monthDayWidth;
         } else if (_currentView == ISettings.VIEW_YEAR) {
             dw = _yearDayWidth;
+        }
+             if (_currentView == ISettings.VIEW_MINUTE) {
+                dw = _dayWidth;
         }
 
         return dw;
@@ -6624,6 +6875,8 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         		else {
 	                if (_currentView == ISettings.VIEW_DAY) {
 	                    prevHour();
+	                } else if (_currentView == ISettings.VIEW_MINUTE) {
+	                    prevMinute();
 	                } else {
 	                    prevDay();
 	                }
@@ -6636,6 +6889,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         		else {
 	                if (_currentView == ISettings.VIEW_DAY) {
 	                    nextHour();
+	                } 
+	                else if (_currentView == ISettings.VIEW_MINUTE) {          	
+	                    nextMinute();
 	                } else {
 	                    nextDay();
 	                }
@@ -6700,9 +6956,10 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                 killDialogs();
             }
 
-            if (_tracker != null && !_tracker.isDisposed()) { return; }
+            //resize and move disabled for VIEW_MINUTE, left for a future enhancement
+            if (_currentView == ISettings.VIEW_MINUTE || _tracker != null && !_tracker.isDisposed()) { return; }
 
-            final String dateFormat = (_currentView == ISettings.VIEW_DAY ? _settings.getHourDateFormat() : _settings.getDateFormat());
+            final String dateFormat = (_currentView == ISettings.VIEW_MINUTE ||_currentView == ISettings.VIEW_DAY ? _settings.getHourDateFormat() : _settings.getDateFormat());
 
             // if we moved mouse back in from out of bounds, kill auto scroll
             final Rectangle area = super.getClientArea();
@@ -6763,7 +7020,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                 AdvancedTooltipDialog.kill();
                 GanttToolTip.kill();
                 for (int x = 0; x < _selectedEvents.size(); x++) {
-                    handleMove(me, (GanttEvent) _selectedEvents.get(x), Constants.TYPE_MOVE, x == 0);
+                     handleMove(me, (GanttEvent) _selectedEvents.get(x), Constants.TYPE_MOVE, x == 0);
                 }
                 return;
             }
@@ -6771,7 +7028,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             // resize
             if (_resizing && resizeOK && (_cursor == SWT.CURSOR_SIZEE || _cursor == SWT.CURSOR_SIZEW)) {
                 for (int x = 0; x < _selectedEvents.size(); x++) {
-                    handleMove(me, (GanttEvent) _selectedEvents.get(x), _lastLeft ? Constants.TYPE_RESIZE_LEFT : Constants.TYPE_RESIZE_RIGHT, x == 0);
+                     handleMove(me, (GanttEvent) _selectedEvents.get(x), _lastLeft ? Constants.TYPE_RESIZE_LEFT : Constants.TYPE_RESIZE_RIGHT, x == 0);
                 }
                 return;
             }
@@ -7026,13 +7283,17 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                     if (left) {
                         if (_currentView == ISettings.VIEW_DAY) {
                             prevHour();
-                        } else {
+                        }else if (_currentView == ISettings.VIEW_MINUTE) {
+    	                    prevMinute();
+    	                } else {
                             prevDay();
                         }
                     } else {
                         if (_currentView == ISettings.VIEW_DAY) {
                             nextHour();
-                        } else {
+                        } else if (_currentView == ISettings.VIEW_MINUTE) {
+    	                    nextMinute();
+    	                } else {
                             nextDay();
                         }
                     }
@@ -7134,7 +7395,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                     if (_autoScrollDir == Constants.DIRECTION_LEFT) {
                         if (_currentView == ISettings.VIEW_DAY) {
                             prevHour();
-                        } else {
+                        } else if (_currentView == ISettings.VIEW_MINUTE) {
+    	                    prevMinute();
+    	                } else {
                             prevDay();
                         }
 
@@ -7148,7 +7411,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                     if (_autoScrollDir == Constants.DIRECTION_RIGHT) {
                         if (_currentView == ISettings.VIEW_DAY) {
                             nextHour();
-                        } else {
+                        } else if (_currentView == ISettings.VIEW_MINUTE) {
+    	                   nextMinute();
+    	                } else {
                             nextDay();
                         }
 
@@ -7215,7 +7480,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     public int getXForDate(final Calendar cal) {
         checkWidget();
 
-        if (_currentView == ISettings.VIEW_DAY) { return getStartingXForEventHours(cal); }
+        if (_currentView == ISettings.VIEW_MINUTE || _currentView == ISettings.VIEW_DAY) { return getStartingXForEventHours(cal); }
 
         // clone the "root" calendar (our leftmost date)
         final Calendar temp = DateHelper.getNewCalendar(_mainCalendar);
@@ -7229,7 +7494,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         final long days = DateHelper.daysBetween(temp, cal);
 
         int extra = 0;
-        if (_drawToMinute && _currentView != ISettings.VIEW_DAY) {
+        if (_drawToMinute && (_currentView != ISettings.VIEW_DAY || _currentView != ISettings.VIEW_MINUTE)) {
             extra = calculateMinuteAdjustment(cal);
         }
 
@@ -7266,7 +7531,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         final int dw = getDayWidth();
         if (_currentView == ISettings.VIEW_YEAR) {
             temp.set(Calendar.DAY_OF_MONTH, 1);
-        } else if (_currentView == ISettings.VIEW_DAY) {
+        } else if ( _currentView == ISettings.VIEW_MINUTE ||_currentView == ISettings.VIEW_DAY) {
 
             // pixels per minute
             final float ppm = 60f / dw;
@@ -7328,7 +7593,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     }
 
     private boolean isNoOverlap(final Calendar dat1, final Calendar dat2) {
-        if (_currentView == ISettings.VIEW_DAY) {
+        if (_currentView == ISettings.VIEW_MINUTE || _currentView == ISettings.VIEW_DAY) {
             return DateHelper.minutesBetween(dat1.getTime(), dat2.getTime(), false, false) >= 0;
         } else {
             return DateHelper.daysBetween(dat1, dat2) >= 0;
@@ -7358,7 +7623,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     }
 
     private void handlePhaseMove(final MouseEvent me, final GanttPhase phase, final int type, final boolean showToolTip) {
-        final String dateFormat = (_currentView == ISettings.VIEW_DAY ? _settings.getHourDateFormat() : _settings.getDateFormat());
+        final String dateFormat = (_currentView == ISettings.VIEW_MINUTE || _currentView == ISettings.VIEW_DAY ? _settings.getHourDateFormat() : _settings.getDateFormat());
 
         final Calendar mouseDateCal = getDateAt(me.x);
 
@@ -7390,7 +7655,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         // if we're dragging, with left mouse held down..
         if ((me.stateMask & SWT.BUTTON1) != 0 && (_dragging || _resizing) && me.x > _lastX || me.x < _lastX) {
             int diff = 0;
-            if (_currentView == ISettings.VIEW_DAY) {
+            if (_currentView == ISettings.VIEW_MINUTE || _currentView == ISettings.VIEW_DAY) {
                 Calendar cal = _dragPhase.getStartDate();
                 if (_resizing && !_lastLeft) {
                     cal = _dragPhase.getEndDate();
@@ -7431,7 +7696,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
             int calMark = Calendar.DATE;
 
-            if (_currentView == ISettings.VIEW_DAY) {
+            if (_currentView == ISettings.VIEW_MINUTE || _currentView == ISettings.VIEW_DAY) {
                 calMark = Calendar.MINUTE;
             }
 
@@ -7616,7 +7881,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
         if ((type == Constants.TYPE_RESIZE_LEFT || type == Constants.TYPE_RESIZE_RIGHT) && !event.isResizable()) { return; }
        
-        String dateFormat = (_currentView == ISettings.VIEW_DAY ? _settings.getHourDateFormat() : _settings.getDateFormat());
+        String dateFormat = (_currentView == ISettings.VIEW_MINUTE || _currentView == ISettings.VIEW_DAY ? _settings.getHourDateFormat() : _settings.getDateFormat());
 
         Calendar mouseDateCal = getDateAt(me.x);
 
@@ -7697,7 +7962,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             // left or right drag
             if (me.x > _lastX || me.x < _lastX) {
                 int diff = 0;
-                if (_currentView == ISettings.VIEW_DAY) {
+                if (_currentView == ISettings.VIEW_MINUTE || _currentView == ISettings.VIEW_DAY) {
                     Calendar cal = event.getActualStartDate();
                     if (_resizing && !_lastLeft) {
                         cal = event.getActualEndDate();
@@ -7842,6 +8107,10 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
         if (_currentView == ISettings.VIEW_DAY) {
             calMark = Calendar.MINUTE;
+        }
+        
+        if (_currentView == ISettings.VIEW_MINUTE) {
+            calMark = Calendar.MILLISECOND;
         }
 
         List toMove = new ArrayList();
@@ -8085,7 +8354,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
         Point displayLocation = super.toDisplay(new Point(me.x + xPlus, me.y));
 
-        String dateFormat = (_currentView == ISettings.VIEW_DAY ? _settings.getHourDateFormat() : _settings.getDateFormat());
+        String dateFormat = (_currentView ==  ISettings.VIEW_DAY ? _settings.getHourDateFormat() : _currentView ==  ISettings.VIEW_MINUTE ? ((ISettings2) _settings).getMinuteDateFormat() : _settings.getDateFormat());
 
         String startDate = DateHelper.getDate(event.getStartDate(), dateFormat);
         String endDate = DateHelper.getDate(event.getEndDate(), dateFormat);
@@ -8529,31 +8798,31 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         }
 
         switch (_zoomLevel) {
-        //seconds
-           case ISettings.ZOOM_SECONDS_MAX:
-          		_currentView = ISettings.VIEW_DAY;
-          		_dayWidth = originalDayWidth * 18;
-          		break;
-           case ISettings.ZOOM_SECONDS_MEDIUM:
-        	   		_currentView = ISettings.VIEW_DAY;
-        	   		_dayWidth = originalDayWidth * 16;
-        	   		break;
-           case ISettings.ZOOM_SECONDS_NORMAL:
-        	   		_currentView = ISettings.VIEW_DAY;
-        	   		_dayWidth = originalDayWidth * 14;
-        	   		break;
+        // seconds
+        	case ISettings.ZOOM_SECONDS_MAX:
+            _currentView = ISettings.VIEW_MINUTE;
+            _dayWidth = originalDayWidth * 18;
+            	break;
+           	case ISettings.ZOOM_SECONDS_MEDIUM:
+            _currentView = ISettings.VIEW_MINUTE;
+            _dayWidth = originalDayWidth * 16;
+            	break;
+           	case ISettings.ZOOM_SECONDS_NORMAL:
+            _currentView = ISettings.VIEW_MINUTE;
+            _dayWidth = originalDayWidth * 14;
+            	break;
             // minutes
-           case ISettings.ZOOM_MINUTES_MAX:
-            		_currentView = ISettings.VIEW_DAY;
-            		_dayWidth = originalDayWidth * 12;
-            		break;
-           case ISettings.ZOOM_MINUTES_MEDIUM:
-        	   		_currentView = ISettings.VIEW_DAY;
-        	   		_dayWidth = originalDayWidth * 10;
+           	case ISettings.ZOOM_MINUTES_MAX:
+            	_currentView = ISettings.VIEW_MINUTE;
+            	_dayWidth = originalDayWidth * 12;
+            	break;
+           	case ISettings.ZOOM_MINUTES_MEDIUM:
+        	   _currentView = ISettings.VIEW_MINUTE;
+        	   _dayWidth = originalDayWidth * 10;
                	break;
-           case ISettings.ZOOM_MINUTES_NORMAL:
-        	   		_currentView = ISettings.VIEW_DAY;
-        	   		_dayWidth = originalDayWidth * 8;
+           	case ISettings.ZOOM_MINUTES_NORMAL:
+        	   _currentView = ISettings.VIEW_MINUTE;
+        	   _dayWidth = originalDayWidth * 8;
         	   break;
             // hour
             case ISettings.ZOOM_HOURS_MAX:
@@ -8617,6 +8886,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
                 break;
         }
 
+        _minuteDayWidth = _dayWidth * 1440  ;
         _weekWidth = _dayWidth * 7;
         _monthWeekWidth = _monthDayWidth * 7;
 
@@ -8626,7 +8896,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         // not a hack, we just re-use the same parameter name but for a
         // different purpose than the name itself, not exactly great logic
         // but it saves some recoding
-        if (_zoomLevel == ISettings.ZOOM_SECONDS_NORMAL || _zoomLevel == ISettings.ZOOM_SECONDS_MEDIUM || _zoomLevel == ISettings.ZOOM_SECONDS_MAX || _zoomLevel == ISettings.ZOOM_MINUTES_NORMAL ||_zoomLevel == ISettings.ZOOM_MINUTES_MEDIUM || _zoomLevel == ISettings.ZOOM_MINUTES_MAX ||_zoomLevel == ISettings.ZOOM_HOURS_MAX || _zoomLevel == ISettings.ZOOM_HOURS_MEDIUM || _zoomLevel == ISettings.ZOOM_HOURS_NORMAL) {
+        if (_zoomLevel == ISettings.ZOOM_SECONDS_MAX ||_zoomLevel == ISettings.ZOOM_SECONDS_MEDIUM || _zoomLevel == ISettings.ZOOM_SECONDS_NORMAL || _zoomLevel == ISettings.ZOOM_MINUTES_MAX || _zoomLevel == ISettings.ZOOM_MINUTES_MEDIUM || _zoomLevel == ISettings.ZOOM_MINUTES_NORMAL ||_zoomLevel == ISettings.ZOOM_HOURS_MAX || _zoomLevel == ISettings.ZOOM_HOURS_MEDIUM || _zoomLevel == ISettings.ZOOM_HOURS_NORMAL) {
             // how many hours are there really in our work day? we don't show
             // anything else!
             _weekWidth = _dayWidth * 24;
@@ -8672,7 +8942,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         return _viewPortHandler;
     }
 
-    public void setViewPortHandler(IViewPortHandler vph) {
+    public void setViewPortHandler(IViewPortHandler2 vph) {
     	this._viewPortHandler = vph;
     }
     
@@ -8807,6 +9077,12 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         Calendar preZoom = null;
         if (fromMouseWheel && mouseLoc != null) {
             preZoom = getDateAt(mouseLoc.x);
+        }
+        
+        if (_zoomLevel >= ISettings.ZOOM_HOURS_MAX) {
+         final Calendar toSet = DateHelper.getNewCalendar(_mainCalendar);
+         toSet.set(Calendar.MINUTE, 0);
+         _mainCalendar = toSet;
         }
 
         updateZoomLevel();

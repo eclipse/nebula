@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    emil.crumhorn@gmail.com - initial API and implementation
+ *    ziogiannigmail.com - Bug 464509 - Minute View Implementation
  *******************************************************************************/
 
 package org.eclipse.nebula.widgets.ganttchart;
@@ -1619,15 +1620,29 @@ public class GanttTester {
 
         bMoveEventsLeft.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(final SelectionEvent e) {
-                moveAllEvents(Calendar.DATE, -1);
-                moveFocus();
+            	if (_ganttComposite.getCurrentView() == ISettings.VIEW_MINUTE){
+            		moveAllEvents(Calendar.MINUTE, -1);
+                    moveFocus();
+            	}
+            		
+            	else {
+                 moveAllEvents(Calendar.DATE, -1);
+                 moveFocus();
+            	}
             }
         });
 
         bMoveEventsRight.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(final SelectionEvent e) {
-                moveAllEvents(Calendar.DATE, 1);
-                moveFocus();
+            	if (_ganttComposite.getCurrentView() == ISettings.VIEW_MINUTE){
+            		moveAllEvents(Calendar.MINUTE, 1);
+                    moveFocus();
+            	}
+            		
+            	else {
+                 moveAllEvents(Calendar.DATE, 1);
+                 moveFocus();
+            	}
             }
         });
 

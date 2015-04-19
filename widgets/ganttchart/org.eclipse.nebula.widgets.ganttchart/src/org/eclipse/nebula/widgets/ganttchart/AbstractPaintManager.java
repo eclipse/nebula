@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    emil.crumhorn@gmail.com - initial API and implementation
+ *    ziogiannigmail.com - Bug 464509 - Minute View Implementation
  *******************************************************************************/
 
 package org.eclipse.nebula.widgets.ganttchart;
@@ -47,10 +48,12 @@ public abstract class AbstractPaintManager implements IPaintManager {
             if (oobLeft || oobRight) {
                 if (!oobLeft || !oobRight) { //NOPMD
                     if (oobLeft) {
-                        // left side out of bounds
+                    	if (ganttComposite.getCurrentView() != ISettings.VIEW_MINUTE) {//Control added since this part was leading a deadlock with minute_view
+                        // left side out of bounds 
                         gc.drawLine(xLoc, y, xLoc + eventWidth, y);
                         gc.drawLine(xLoc + eventWidth, y, xLoc + eventWidth, y + event.getHeight());
                         gc.drawLine(xLoc, y + event.getHeight(), xLoc + eventWidth, y + event.getHeight());
+                    	}
                     } else {
                         // right side out of bounds
                         gc.drawLine(xLoc, y, bounds.width, y);

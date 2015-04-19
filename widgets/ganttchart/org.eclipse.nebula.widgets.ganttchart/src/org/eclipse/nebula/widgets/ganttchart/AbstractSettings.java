@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    emil.crumhorn@gmail.com - initial API and implementation
+ *    ziogiannigmail.com - Bug 464509 - Minute View Implementation
  *******************************************************************************/ 
 
 package org.eclipse.nebula.widgets.ganttchart;
@@ -18,7 +19,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 
-public abstract class AbstractSettings implements ISettings {
+public abstract class AbstractSettings implements ISettings2 {
 
 	public String getDateFormat() {
 		return "MM/dd/yyyy";
@@ -26,6 +27,10 @@ public abstract class AbstractSettings implements ISettings {
 
 	public String getHourDateFormat() {
 		return "MM/dd/yyyy HH:mm";
+	}
+	
+	public String getMinuteDateFormat() {
+		return "MM/dd/yyyy HH:mm:ss";
 	}
 	
 	public String getWeekHeaderTextDisplayFormatTop() {
@@ -39,12 +44,18 @@ public abstract class AbstractSettings implements ISettings {
 	public String getDayHeaderTextDisplayFormatTop() {
 		return "MMM dd, HH:mm";
 	}
+	public String getMinuteHeaderTextDisplayFormatTop() {
+		return "MMM dd, HH:mm";
+	}
 
 	public String getYearHeaderTextDisplayFormatTop() {
 		return "yyyy";
 	}
 	
 	public String getDayHeaderTextDisplayFormatBottom() {
+		return "HH:mm";
+	}
+	public String getMinuteHeaderTextDisplayFormatBottom() {
 		return "HH:mm";
 	}
 
@@ -577,5 +588,8 @@ public abstract class AbstractSettings implements ISettings {
     
     public boolean showHolidayToolTips() {
     	return false;
+    }
+    public boolean enableTodayLineUpdater() {
+    	return true; 
     }
 }

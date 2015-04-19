@@ -24,6 +24,8 @@ import org.eclipse.swt.graphics.Image;
 /**
  * This interface lets you define various settings for the GanttChart. It's highly advisable that for implementation, {@link AbstractSettings} is extended 
  * and methods needed to be changed from their defaults are overridden and changed. It would be quite a hassle to implement a full ISettings interface from scratch.
+ * In order to preserve binary compatibility, after the MinuteView implementation, this interface has been extended by {@link ISettings2}
+ * Please refer both to {@link ISettings} and {@link ISettings2} for any setting change.
  * <pre>
  * public class MySettings extends AbstractSettings {
  * 	// override your methods here
@@ -32,7 +34,7 @@ import org.eclipse.swt.graphics.Image;
  * <p />
  * Once you've overridden the settings you wish to change, simply pass an instance of your implementation class to the constructor of GanttChart: {@link GanttChart#GanttChart(org.eclipse.swt.widgets.Composite, int, ISettings)}
  *  
- * @author Emil Crumhorn
+ * @author Emil Crumhorn and Giovanni Cimmino
  *
  */
 public interface ISettings {
@@ -69,6 +71,7 @@ public interface ISettings {
 
     // gantt view mode
     
+    public static final int VIEW_MINUTE					   = 0;
     public static final int VIEW_DAY                       = 1;
     public static final int VIEW_WEEK                      = 2;
     public static final int VIEW_MONTH                     = 3;
@@ -100,6 +103,8 @@ public interface ISettings {
     //public static final int ZOOM_YEAR_SMALLER              = 14;
     //public static final int ZOOM_YEAR_SMALLEST             = 15;
     public static final int MAX_ZOOM_LEVEL                 = 13;
+
+	
 
     /**
      * The date format to use when displaying dates in string format.
