@@ -6957,7 +6957,14 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             }
 
             //resize and move disabled for VIEW_MINUTE, left for a future enhancement
-            if (_currentView == ISettings.VIEW_MINUTE || _tracker != null && !_tracker.isDisposed()) { return; }
+            if (_currentView == ISettings.VIEW_MINUTE || _tracker != null && !_tracker.isDisposed()) { 
+            	if (_mouseIsDown && _settings.allowBlankAreaDragAndDropToMoveDates()) {
+            		final String dateFormat = ((ISettings2) _settings).getMinuteDateFormat();
+            	    mouseMoveMinutes(dateFormat, me);
+            	}
+            	
+            	return; 
+            }
 
             final String dateFormat = (_currentView == ISettings.VIEW_MINUTE ||_currentView == ISettings.VIEW_DAY ? _settings.getHourDateFormat() : _settings.getDateFormat());
 
@@ -7336,6 +7343,48 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             SWT.error(SWT.ERROR_UNSPECIFIED, error);
         }
     }
+    
+   private void mouseMoveMinutes (String dateFormat, MouseEvent me) {
+       // Date Scrolling + DateTip on VIEW_MINUTE
+       if (_mouseIsDown && _settings.allowBlankAreaDragAndDropToMoveDates()) {
+           // blank area drag
+           if (_mouseDragStartLocation == null) {
+               _mouseDragStartLocation = new Point(me.x, me.y);
+           }
+
+           int xDiff = me.x - _mouseDragStartLocation.x;
+           int yDiff = me.y - _mouseDragStartLocation.y;
+
+           boolean left = xDiff < 0;
+           boolean up = yDiff < 0;
+
+           if (_settings.flipBlankAreaDragDirection()) {
+               left = !left;
+           }
+
+           xDiff /= getDayWidth();
+           xDiff = Math.abs(xDiff);
+                          
+
+           for (int i = 0; i < xDiff; i++) {
+               if (left) {
+                  if (_currentView == ISettings.VIEW_MINUTE) {
+	                    prevMinute();
+                   }
+               } else {
+                    if (_currentView == ISettings.VIEW_MINUTE) {
+	                    nextMinute();
+	                } 
+               }
+           }
+
+           updateHorizontalScrollbar();
+
+           final Point loc = new Point(_mouseDragStartLocation.x + 10, _mouseDragStartLocation.y - 20);
+           GanttDateTip.makeDialog(_colorManager, DateHelper.getDate(_mainCalendar, dateFormat), toDisplay(loc), _mainBounds.y);
+           
+       }
+   }
 
     public int getDaysVisible() {
         return _daysVisible;
@@ -9108,6 +9157,12 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         if (!_settings.enableZooming()) return;
 
         _zoomLevel = _settings.getInitialZoomLevel();
+        
+        if (_zoomLevel >= ISettings.ZOOM_HOURS_MAX) {
+            final Calendar toSet = DateHelper.getNewCalendar(_mainCalendar);
+            toSet.set(Calendar.MINUTE, 0);
+            _mainCalendar = toSet;
+           }
 
         updateZoomLevel();
 

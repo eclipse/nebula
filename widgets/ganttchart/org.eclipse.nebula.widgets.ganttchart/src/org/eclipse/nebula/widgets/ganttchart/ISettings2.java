@@ -16,9 +16,8 @@ import java.text.SimpleDateFormat;
 
 /**
  * This interface is an extension of ISettings which lets you define various settings for the GanttChart. 
- * Its initial implementation has been defined because of MinuteView, in order to preserve the binary code compatibility and to do not amend the pre-existent ISettings interface.
- * If any other setting has to be added, it's advisable to use this interface rather than ISettings.
- * In turn, the abstract class {@link AbstractSettings} implements this interface.
+ * Its initial implementation has been defined because of MinuteView, in order to both preserve the binary code compatibility and to do not amend the pre-existent ISettings interface.
+ * In turn, the abstract class {@link AbstractSettings} is now implementing this interface.
  * 
  * You can change some settings by creating your own class and overriding your desired methods, instructions as follows:
  * <pre>
