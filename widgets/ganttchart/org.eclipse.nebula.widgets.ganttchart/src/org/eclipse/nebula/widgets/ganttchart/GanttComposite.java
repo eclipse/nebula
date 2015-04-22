@@ -7346,8 +7346,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     
    private void mouseMoveMinutes (String dateFormat, MouseEvent me) {
        // Date Scrolling + DateTip on VIEW_MINUTE
-       if (_mouseIsDown && _settings.allowBlankAreaDragAndDropToMoveDates()) {
-           // blank area drag
+	   
            if (_mouseDragStartLocation == null) {
                _mouseDragStartLocation = new Point(me.x, me.y);
            }
@@ -7383,7 +7382,6 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
            final Point loc = new Point(_mouseDragStartLocation.x + 10, _mouseDragStartLocation.y - 20);
            GanttDateTip.makeDialog(_colorManager, DateHelper.getDate(_mainCalendar, dateFormat), toDisplay(loc), _mainBounds.y);
            
-       }
    }
 
     public int getDaysVisible() {
@@ -9045,6 +9043,12 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
         int oldZoomLevel = _zoomLevel;
         _zoomLevel = toSet;
+        
+        if (_zoomLevel >= ISettings.ZOOM_HOURS_MAX) {
+            final Calendar datetoSet = DateHelper.getNewCalendar(_mainCalendar);
+            datetoSet.set(Calendar.MINUTE, 0);
+            _mainCalendar = datetoSet;
+           }
 
         updateZoomLevel();
         _zoomLevelChanged = true;
