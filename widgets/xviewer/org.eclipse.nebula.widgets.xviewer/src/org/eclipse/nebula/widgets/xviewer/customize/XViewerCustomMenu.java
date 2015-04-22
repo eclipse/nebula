@@ -255,6 +255,17 @@ public class XViewerCustomMenu {
       });
    }
 
+   public void createFilterByValueMenuItem(Menu popupMenu) {
+      final MenuItem item = new MenuItem(popupMenu, SWT.CASCADE);
+      item.setText(XViewerText.get("menu.value_filter")); //$NON-NLS-1$
+      item.addSelectionListener(new SelectionAdapter() {
+         @Override
+         public void widgetSelected(SelectionEvent e) {
+            performFilterByValue();
+         }
+      });
+   }
+
    public void createClearAllFiltersMenuItem(Menu popupMenu) {
       final MenuItem item = new MenuItem(popupMenu, SWT.CASCADE);
       item.setText(XViewerText.get("menu.clear_filters")); //$NON-NLS-1$
