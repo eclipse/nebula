@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            name="org.eclipse.nebula.widgets.richtext.example.e4"
+            application="org.eclipse.e4.ui.workbench.swt.E4Application">
+         <property
+               name="applicationCSS"
+               value="platform:/plugin/org.eclipse.nebula.widgets.richtext.example.e4/css/default.css">
+         </property>
+         <property
+               name="appName"
+               value="org.eclipse.nebula.widgets.richtext.example.e4">
+         </property>
+      </product>
+   </extension>
+
+</plugin>

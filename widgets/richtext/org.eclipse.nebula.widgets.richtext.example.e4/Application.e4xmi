@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmi:id="_auZSIPgNEeSRvPOI_bKvtQ" elementId="org.eclipse.e4.ide.application" bindingContexts="_auZSKfgNEeSRvPOI_bKvtQ">
+  <children xsi:type="basic:TrimmedWindow" xmi:id="_auZSIfgNEeSRvPOI_bKvtQ" label="Rich Text Control Examples" width="800" height="600">
+    <children xsi:type="basic:PartStack" xmi:id="_kYbHcPgNEeSRvPOI_bKvtQ" elementId="org.eclipse.nebula.widgets.richtext.example.e4.partstack.0">
+      <children xsi:type="basic:Part" xmi:id="_ui9BwPgNEeSRvPOI_bKvtQ" elementId="org.eclipse.nebula.widgets.richtext.example.e4.part.richTextEditorExample" contributionURI="bundleclass://org.eclipse.nebula.widgets.richtext.example.e4/org.eclipse.nebula.widgets.richtext.example.e4.part.RichTextEditorExamplePart" label="Rich Text Editor Example"/>
+      <children xsi:type="basic:Part" xmi:id="_c2jmkPgPEeSRvPOI_bKvtQ" elementId="org.eclipse.nebula.widgets.richtext.example.e4.part.richTextViewerExample" contributionURI="bundleclass://org.eclipse.nebula.widgets.richtext.example.e4/org.eclipse.nebula.widgets.richtext.example.e4.part.RichTextViewerExamplePart" label="Rich Text Viewer Example"/>
+      <children xsi:type="basic:Part" xmi:id="_D09U4PgQEeSRvPOI_bKvtQ" elementId="org.eclipse.nebula.widgets.richtext.example.e4.part.jfaceViewerIntegrationExample" contributionURI="bundleclass://org.eclipse.nebula.widgets.richtext.example.e4/org.eclipse.nebula.widgets.richtext.example.e4.part.JFaceViewerIntegrationExamplePart" label="JFace Viewer Integration Example"/>
+      <children xsi:type="basic:Part" xmi:id="_Q9q3kPgQEeSRvPOI_bKvtQ" elementId="org.eclipse.nebula.widgets.richtext.example.e4.part.nattableIntegrationExample" contributionURI="bundleclass://org.eclipse.nebula.widgets.richtext.example.e4/org.eclipse.nebula.widgets.richtext.example.e4.part.NatTableIntegrationExamplePart" label="NatTable Integration Example"/>
+    </children>
+  </children>
+  <rootContext xmi:id="_auZSKfgNEeSRvPOI_bKvtQ" elementId="org.eclipse.ui.contexts.dialogAndWindow" name="In Dialog and Windows">
+    <children xmi:id="_auZSKvgNEeSRvPOI_bKvtQ" elementId="org.eclipse.ui.contexts.window" name="In Windows"/>
+    <children xmi:id="_auZSK_gNEeSRvPOI_bKvtQ" elementId="org.eclipse.ui.contexts.dialog" name="In Dialogs"/>
+  </rootContext>
+  <addons xmi:id="_auZSIvgNEeSRvPOI_bKvtQ" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
+  <addons xmi:id="_auZSI_gNEeSRvPOI_bKvtQ" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
+  <addons xmi:id="_auZSJPgNEeSRvPOI_bKvtQ" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>
+  <addons xmi:id="_auZSJfgNEeSRvPOI_bKvtQ" elementId="org.eclipse.e4.ui.workbench.commands.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.CommandProcessingAddon"/>
+  <addons xmi:id="_auZSJvgNEeSRvPOI_bKvtQ" elementId="org.eclipse.e4.ui.workbench.handler.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.HandlerProcessingAddon"/>
+  <addons xmi:id="_auZSJ_gNEeSRvPOI_bKvtQ" elementId="org.eclipse.e4.ui.workbench.contexts.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.ContextProcessingAddon"/>
+  <addons xmi:id="_auZSKPgNEeSRvPOI_bKvtQ" elementId="org.eclipse.e4.ui.workbench.bindings.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.swt.util.BindingProcessingAddon"/>
+</application:Application>

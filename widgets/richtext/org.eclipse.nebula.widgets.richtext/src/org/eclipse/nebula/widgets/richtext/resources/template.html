@@ -1,0 +1,307 @@
+<!-- 
+/*****************************************************************************
+ * Copyright (c) 2015 CEA LIST.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *		Dirk Fauth <dirk.fauth@googlemail.com> - Initial API and implementation
+ *
+ *****************************************************************************/
+ -->
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <style type="text/css"> 
+        	body { 
+        		margin: 0; 
+        		padding: 0; 
+        	}
+        	
+        	#moveAnchor {
+        		position: absolute;
+        		top: 0;
+        		left: 0;
+        		width: 10px;
+        		height: 10px;
+        	}
+        </style>
+        
+        <script src="ckeditor/jquery.js"></script>
+        <script src="ckeditor/ckeditor.js"></script>
+        <script src="ckeditor/adapters/jquery.js"></script>
+        
+        <script type="text/javascript">
+        	
+        	function getCKEditorALT() {
+        		return CKEDITOR.ALT;
+        	}
+        	
+        	function getCKEditorCTRL() {
+        		return CKEDITOR.CTRL;
+        	}
+        	
+        	function getCKEditorSHIFT() {
+        		return CKEDITOR.SHIFT;
+        	}
+        
+        	function getText() {
+        		return CKEDITOR.instances.editor.getData();
+        	}
+        
+        	function setText(value) {
+        		CKEDITOR.instances.editor.setData(value);
+        	}
+        	
+        	function insertText(value) {
+        		CKEDITOR.instances.editor.insertText(value);
+        	}
+        	
+        	function insertHTML(value) {
+        		CKEDITOR.instances.editor.insertHtml(value);
+        	}
+        	
+        	function getSelectedText() {
+        		var selection = CKEDITOR.instances.editor.getSelection();
+        		return selection.getSelectedText();
+        	}
+        	
+			function getSelectedHTML() {
+				var selection = CKEDITOR.instances.editor.getSelection();
+				
+				//if nothing is selected return an empty string
+				if (selection.getSelectedText() == "") {
+					return "";
+				}
+				
+				var clonedContents = selection.getNative().getRangeAt(0).cloneContents();
+				return $("<div></div>").append(clonedContents).html();
+			}
+
+        	function maximizeEditorHeight() {
+        		CKEDITOR.instances.editor.resize('100%', window.innerHeight, false);
+        	}
+        	
+        	function isEditable() {
+        		return CKEDITOR.instances.editor.readOnly;
+        	}
+        	
+        	function setReadOnly(readOnly) {
+        		CKEDITOR.instances.editor.setReadOnly(readOnly);
+        	}
+        	
+        	function setFocus() {
+        		CKEDITOR.instances.editor.focus();
+        	}
+        	
+        	function hasFocus() {
+        		return CKEDITOR.instances.editor.focusManager.hasFocus;
+        	}
+        	
+        	function setResizeEnabled(resizeEnabled, minWidth, minHeight) {
+        		CKEDITOR.config.resize_enabled = resizeEnabled;
+        		
+        		if (resizeEnabled) {
+    				//if resizing is enabled via styling, ensure resizing is possible horizontally and vertically
+    				CKEDITOR.config.resize_dir = 'both';
+    				
+    				CKEDITOR.config.resize_minWidth = minWidth;
+   					CKEDITOR.config.resize_minHeight = minHeight;
+        		}
+        	}
+        	
+        	function setToolbarCollapsible(collapsible) {
+        		CKEDITOR.config.toolbarCanCollapse = collapsible;
+        	}
+        	
+        	function setToolbarInitialExpanded(expanded) {
+        		CKEDITOR.config.toolbarStartupExpanded = expanded;
+        	}
+        	
+        	function updateToolbar() {
+        		// TODO 
+        		// waiting for feedback if there is a more elegant way for dynamic toolbar updates
+        		// http://stackoverflow.com/questions/29500050/ckeditor-dynamically-update-toolbar
+
+        		// CKEDITOR.instances.editor.reloadToolbar();
+        		
+        		CKEDITOR.instances.editor.destroy(false);
+        		initEditor();
+        	}
+        	
+        	/*
+        	 * Variable to store the previous height on resizing.
+        	 * Necessary for maximizing again on editor resize on toolbar
+        	 * expand/collapse, because there is an issue in ckeditor that
+        	 * does not resize to the maximum correctly.
+        	 */
+        	var prevHeight;
+        	
+        	/*
+        	 * Boolean flag that is set to true for triggering an update of the parent SWT container
+        	 */
+        	var resizeCallbackEnabled;
+        	
+        	/*
+        	 * Enable the callback to resize the SWT Browser on resizing the ckeditor.
+        	 * Will be enabled for inline editor usage of the RichTextEditor to allow resizing
+        	 * via ckeditor resize handler.
+        	 */
+        	function enableResizeCallback() {
+				resizeCallbackEnabled = true;
+        	}
+        	
+        	/*
+        	 * Callback to Java on inline usage of the RichTextEditor to update the SWT Browser
+        	 * dimensions to the dimensions of the ckeditor after manual resize.
+        	 */
+        	function resizeParentContainer() {
+        		var height = CKEDITOR.instances.editor.container.$.clientHeight;
+				var width = CKEDITOR.instances.editor.container.$.clientWidth;
+				updateDimensions(width, height);
+        	}
+        	
+        	function initEditor() {
+                // Replace the <textarea id="editor"> with a CKEditor instance
+                CKEDITOR.replace( 'editor', 
+                		{
+                			startupFocus : true,
+                			on: {
+                				'instanceReady' 	: function(event) { 
+	                				//maximize the editor after the editor instance is ready
+                					maximizeEditorHeight(); 
+                					
+                					event.editor.on('resize', function(resizeEvent) { 
+										if ((prevHeight == null) || prevHeight != resizeEvent.editor.container.$.clientHeight) {
+											prevHeight = CKEDITOR.instances.editor.container.$.clientHeight;
+											
+											if (!mouseDown) {
+												// if the resize is trigger by an external event, 
+												// e.g. toolbar expand/collapse
+												maximizeEditorHeight();
+											}
+											
+											if (resizeCallbackEnabled) {
+												resizeParentContainer();
+											}
+										}
+										else if (prevHeight == CKEDITOR.instances.editor.container.$.clientHeight) {
+											prevHeight = null;
+										}
+									});
+                				},
+                				//notify the FocusListener
+                				'focus'				: function() { focusIn(); },
+                				'blur'				: function() { focusOut(); },
+                				//notify the ModifyListener
+                				'change' 			: function() { textModified(); },
+                				//ensure the key pressed event is fired if Enter is pressed
+                				'key'				: function(event) { event.data.preventDefault(false); },
+                				//notify the KeyListener
+                				'contentDom'		: function() {
+                				    this.document.on('keydown', function(evt) {
+                				    	if (evt.data.$.ctrlKey && evt.data.getKey() == 70) {
+                				    		//prevent opening of browser find dialog on CTRL + F
+                				    		evt.data.preventDefault(false);
+                				    		//open the ckeditor find and replace dialog
+                				    		CKEDITOR.instances.editor.execCommand('find')
+                				    	}
+                				    	else if (evt.data.$.ctrlKey && evt.data.getKey() == 72) {
+                				    		evt.data.preventDefault(false);
+                				    		//open the ckeditor find and replace dialog
+                				    		CKEDITOR.instances.editor.execCommand('replace')
+                				    	}
+                				    	
+                				        keyPressed(evt.data.getKey(), evt.data.getKeystroke());
+                				    });
+                				    this.document.on('keyup', function(evt) {
+                				        keyReleased(evt.data.getKey(), evt.data.getKeystroke());
+                				    });
+                				}
+                			}
+                		});
+                
+                // Callback to configure the toolbar via ToolbarConfiguration
+                configureToolbar();
+                
+                // Add the Javascript method reloadToolbar() that allows to 
+                // update the toolbar without needing to destroy the current
+                // editor instance
+                // TODO not used at the moment because of a bug with changing the enabled state after an update
+                CKEDITOR.editor.prototype.reloadToolbar = function() {
+            		if (!this._.events.themeSpace) {
+            		  CKEDITOR.plugins.registered.toolbar.init(this);
+            		}
+            		
+            		//According to CKEditor documentation
+            		var obj = this.fire( 'uiSpace', { space: 'top', html: '' } ).html;
+            		// Replace the toolbar HTML 
+            		var tbEleId = this.id +"_" + this.config.toolbarLocation;
+            		var tbEle = document.getElementById(tbEleId);
+            		tbEle.innerHTML = obj;
+                }
+                
+        	}
+        	
+        	var moveShellActivated = false;
+        	
+        	function addMoveAnchor() {
+        		$('body').append($('<div/>', {
+        	        id: 'moveAnchor',
+        	        style: 'cursor:move;',
+        	        mousedown:	function(e) {
+        	        	moveShellActivated = true;
+        	        	event.preventDefault();
+        	        	activateShellDragMode(e.clientX, e.clientY); 
+        	        },
+        	        mouseup: 	function(e) { 
+        	        	moveShellActivated = false;
+        	        	event.preventDefault();
+        	        	deactivateShellDragMode(); 
+       	        	},
+       	        	mouseleave: function(e) { 
+        	        	if (moveShellActivated) {
+	        	        	event.preventDefault();
+	        	        	moveShell(5.0, 5.0);
+        	        	}
+        	        },
+        	        mousemove: function(e) {
+        	        	if (moveShellActivated) {
+	        	        	event.preventDefault();
+	        	        	moveShell(e.clientX, e.clientY);
+        	        	}
+        	        }
+        	    }));
+        	}
+        </script>
+    </head>
+    <body onResize="maximizeEditorHeight()">
+        <form style="padding:0;">
+            <textarea name="editor" id="editor">
+            </textarea>
+            <script>
+				//initially disable the ability to manually resize the editor within the browser
+				setResizeEnabled(false, 0, 0);
+				
+				//remove the bottom bar that shows the applied tags
+				CKEDITOR.config.removePlugins = 'elementspath';
+				
+				/*
+				 * Track mouseDown state to be able to distinguish 
+				 * whether a resize is triggered via resize handle
+				 * or by expand/collapse the toolbar.
+				 */
+	        	var mouseDown = false;
+				
+				$(document).mousedown(function(e) { mouseDown = true; });
+				$(document).mouseup(function(e) { mouseDown = false; })
+				$(document).mouseleave(function(e) { mouseDown = false; });
+            </script>
+        </form>
+    </body>
+</html>
