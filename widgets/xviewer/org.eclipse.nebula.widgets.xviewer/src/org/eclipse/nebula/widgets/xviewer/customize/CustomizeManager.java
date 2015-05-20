@@ -288,7 +288,7 @@ public class CustomizeManager {
    }
 
    /**
-    * @return the currentCustData
+    * @return the currentCustData; makes a copy of columns so they don't collide with each other
     */
    public CustomizeData generateCustDataFromTable() {
       CustomizeData custData = new CustomizeData();
@@ -298,15 +298,17 @@ public class CustomizeManager {
       for (Integer index : xViewer.getTree().getColumnOrder()) {
          TreeColumn treeCol = xViewer.getTree().getColumn(index);
          XViewerColumn xCol = (XViewerColumn) treeCol.getData();
-         xCol.setWidth(treeCol.getWidth());
-         xCol.setShow(treeCol.getWidth() > 0);
-         columns.add(xCol);
+         XViewerColumn newXCol = xCol.copy();
+         newXCol.setWidth(treeCol.getWidth());
+         newXCol.setShow(treeCol.getWidth() > 0);
+         columns.add(newXCol);
       }
       // Add all columns that are not visible
       for (XViewerColumn xCol : xViewer.getCustomizeMgr().getCurrentTableColumns()) {
          if (!columns.contains(xCol)) {
-            xCol.setShow(false);
-            columns.add(xCol);
+            XViewerColumn newXCol = xCol.copy();
+            newXCol.setShow(false);
+            columns.add(newXCol);
          }
       }
       custData.columnData.setColumns(columns);
