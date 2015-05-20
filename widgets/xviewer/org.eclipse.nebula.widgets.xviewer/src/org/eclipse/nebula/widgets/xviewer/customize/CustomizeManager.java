@@ -26,6 +26,7 @@ import org.eclipse.nebula.widgets.xviewer.XViewerComputedColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewerSorter;
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.nebula.widgets.xviewer.XViewerTextFilter;
+import org.eclipse.nebula.widgets.xviewer.util.Pair;
 import org.eclipse.nebula.widgets.xviewer.util.XViewerException;
 import org.eclipse.nebula.widgets.xviewer.util.internal.Strings;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
@@ -36,7 +37,7 @@ import org.eclipse.swt.widgets.TreeColumn;
 
 /**
  * This manages the default table column definitions versus the user modified column data, sorter and filters.
- * 
+ *
  * @author Donald G. Dunne
  */
 public class CustomizeManager {
@@ -180,7 +181,7 @@ public class CustomizeManager {
             }
          }
       }
-      // Then try to match by id endswith name 
+      // Then try to match by id endswith name
       if (resolvedCol == null) {
          for (XViewerColumn xCol : xViewer.getXViewerFactory().getDefaultTableCustomizeData().getColumnData().getColumns()) {
             if (xCol.getId().endsWith(name)) {
@@ -277,12 +278,12 @@ public class CustomizeManager {
 
    public void appendToStatusLabel(StringBuffer sb) {
       if (currentCustData != null && currentCustData.getName() != null &&
-      //
-      !currentCustData.getName().equals(CURRENT_LABEL) &&
-      // 
-      !currentCustData.getName().equals(TABLE_DEFAULT_LABEL) &&
-      //
-      currentCustData.getName() != null) {
+         //
+         !currentCustData.getName().equals(CURRENT_LABEL) &&
+         //
+         !currentCustData.getName().equals(TABLE_DEFAULT_LABEL) &&
+         //
+         currentCustData.getName() != null) {
          sb.append(XViewerText.get("label.custom", currentCustData.getName())); //$NON-NLS-1$
       }
    }
@@ -381,6 +382,19 @@ public class CustomizeManager {
          }
       }
       return 0;
+   }
+
+   public Pair<XViewerColumn, Integer> getColumnNumFromXViewerColumn(String columnId) {
+      if (!xViewer.getTree().isDisposed()) {
+         for (Integer index : xViewer.getTree().getColumnOrder()) {
+            TreeColumn treeCol = xViewer.getTree().getColumn(index);
+            XViewerColumn treeXCol = (XViewerColumn) treeCol.getData();
+            if (treeXCol.getId().equals(columnId)) {
+               return new Pair<XViewerColumn, Integer>(treeXCol, index);
+            }
+         }
+      }
+      return null;
    }
 
    public CustomizeData getTableDefaultCustData() {

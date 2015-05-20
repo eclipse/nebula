@@ -24,7 +24,7 @@ import java.util.List;
 public class SomeTask implements ISomeTask {
 
    private final RunDb runDb;
-   private final TaskType taskType;
+   private TaskType taskType;
    private final String id;
    private final String startTime;
    private final String description;
@@ -126,6 +126,10 @@ public class SomeTask implements ISomeTask {
    @Override
    public long getLongValue() {
       return longValue;
+   }
+
+   public void setTaskType(TaskType taskType) {
+      this.taskType = taskType;
    }
 
 }

@@ -151,8 +151,25 @@ public class MyXViewerTest {
          }
       });
 
-   }
+      ToolItem refreshSingleColumn = new ToolItem(toolBar, SWT.PUSH);
+      refreshSingleColumn.setImage(MyImageCache.getImage("columnRefresh.gif"));
+      refreshSingleColumn.setToolTipText("Example of Refreshing a Single Column");
+      refreshSingleColumn.addSelectionListener(new SelectionAdapter() {
+         @Override
+         public void widgetSelected(SelectionEvent e) {
+            @SuppressWarnings("unchecked")
+            List<Object> items = (List<Object>) myXviewer.getInput();
+            for (Object item : items) {
+               SomeTask task = (SomeTask) item;
+               task.setTaskType(TaskType.Refreshed);
+            }
 
+            String columnId = MyXViewerFactory.Task_Type.getId();
+            myXviewer.refreshColumn(columnId);
+         }
+      });
+
+   }
    private static Date date = new Date();
 
    private static Date getDate() {

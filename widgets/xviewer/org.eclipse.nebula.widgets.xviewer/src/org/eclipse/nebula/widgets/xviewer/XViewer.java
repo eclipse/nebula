@@ -15,9 +15,16 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
@@ -27,6 +34,8 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.ViewerCell;
+import org.eclipse.jface.viewers.ViewerRow;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.nebula.widgets.xviewer.action.TableCustomizationDropDownAction;
 import org.eclipse.nebula.widgets.xviewer.column.XViewerDaysTillTodayColumn;
@@ -36,6 +45,7 @@ import org.eclipse.nebula.widgets.xviewer.customize.CustomizeManager;
 import org.eclipse.nebula.widgets.xviewer.customize.FilterDataUI;
 import org.eclipse.nebula.widgets.xviewer.customize.SearchDataUI;
 import org.eclipse.nebula.widgets.xviewer.edit.XViewerEditAdapter;
+import org.eclipse.nebula.widgets.xviewer.util.Pair;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerMenuDetectListener;
@@ -279,13 +289,76 @@ public class XViewer extends TreeViewer {
 
    @Override
    protected void inputChanged(Object input, Object oldInput) {
+      // Allow lazy load columns to be compute getColumnText prior to supplying Viewer with new input
+      List<Object> objects = new LinkedList<Object>();
+      if (input instanceof Collection) {
+         Collection<?> collection = (Collection<?>) input;
+         for (Object obj : collection) {
+            objects.add(obj);
+         }
+      }
+      for (XViewerColumn column : getCustomizeMgr().getCurrentVisibleTableColumns()) {
+         if (column instanceof IXViewerLazyLoadColumn) {
+            IXViewerLazyLoadColumn lazyColumn = (IXViewerLazyLoadColumn) column;
+            lazyColumn.setLoading(true);
+            refreshColumnLazy(lazyColumn, objects);
+            lazyColumn.setLoading(false);
+         }
+      }
       super.inputChanged(input, oldInput);
       updateStatusLabel();
    }
 
    /**
+    * Launch refresh of LazyLoadColumn into background and update display when completed.
+    */
+   public void refreshColumnLazy(final IXViewerLazyLoadColumn preCompColumn) {
+      refreshColumnLazy(preCompColumn, getInput());
+   }
+
+   /**
+    * Launch refresh of LazyLoadColumn into background and update display when completed.
+    */
+   public void refreshColumnLazy(final IXViewerLazyLoadColumn preCompColumn, Object input) {
+      System.err.println("Lazy loading " + preCompColumn);
+      final XViewerColumn column = (XViewerColumn) preCompColumn;
+      if (input instanceof Collection<?>) {
+         final Collection<?> collection = (Collection<?>) input;
+         if (column.lazyLoadingValueMap == null) {
+            column.lazyLoadingValueMap = new HashMap<Long, String>(collection.size());
+         } else {
+            column.lazyLoadingValueMap.clear();
+         }
+
+         Job job = new Job("Computing Lazy Loading Columns") {
+
+            @Override
+            protected IStatus run(IProgressMonitor monitor) {
+               preCompColumn.populateCachedValues(collection, column.lazyLoadingValueMap);
+               return Status.OK_STATUS;
+            }
+         };
+         job.setSystem(false);
+         job.addJobChangeListener(new JobChangeAdapter() {
+
+            @Override
+            public void done(IJobChangeEvent event) {
+               Display.getDefault().asyncExec(new Runnable() {
+
+                  @Override
+                  public void run() {
+                     refreshColumn(column);
+                  }
+               });
+            }
+         });
+         job.schedule();
+      }
+   }
+
+   /**
     * Will be called when Alt-Left-Click is done within table cell
-    * 
+    *
     * @return true if handled
     */
    public boolean handleAltLeftClick(TreeColumn treeColumn, TreeItem treeItem) {
@@ -301,7 +374,7 @@ public class XViewer extends TreeViewer {
    /**
     * Will be called when click is within the first 18 pixels of the cell rectangle where the icon would be. This method
     * will be called in addition to handleLeftClick since both are true.
-    * 
+    *
     * @return true if handled
     */
    public boolean handleLeftClickInIconArea(TreeColumn treeColumn, TreeItem treeItem) {
@@ -666,6 +739,50 @@ public class XViewer extends TreeViewer {
          }
       }
       return itemToReturn;
+   }
+
+   /**
+    * Refresh only single column using normal label provider mechanism. This can be called after normal loading and
+    * after columns compute their input in the background.
+    */
+   public void refreshColumn(XViewerColumn column) {
+      refreshColumn(column.getId());
+   }
+
+   /**
+    * Refresh only single column using normal label provider mechanism. This can be called after normal loading and
+    * after columns compute their input in the background.
+    */
+   public void refreshColumn(String columnId) {
+      Pair<XViewerColumn, Integer> column = getCustomizeMgr().getColumnNumFromXViewerColumn(columnId);
+      IBaseLabelProvider baseLabelProvider = getLabelProvider();
+      if (baseLabelProvider instanceof XViewerLabelProvider) {
+         XViewerLabelProvider labelProvider = (XViewerLabelProvider) baseLabelProvider;
+
+         TreeItem[] items = getTree().getItems();
+         for (TreeItem item : items) {
+
+            ViewerRow viewerRow = getViewerRowFromItem(item);
+            if (viewerRow != null) {
+               try {
+                  ViewerCell cell = viewerRow.getCell(column.getSecond());
+                  String value = null;
+                  try {
+                     value = labelProvider.getColumnText(item.getData(), column.getSecond());
+                  } catch (Exception ex) {
+                     value =
+                        String.format("Exception getting value from column [%s][%s]", column.getFirst().getId(),
+                           ex.getLocalizedMessage());
+                  }
+                  if (value != null) {
+                     cell.setText(value);
+                  }
+               } catch (NullPointerException ex) {
+                  // do nothing
+               }
+            }
+         }
+      }
    }
 
    /**

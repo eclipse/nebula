@@ -11,6 +11,7 @@
 package org.eclipse.nebula.widgets.xviewer;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,12 @@ public abstract class XViewerFactory implements IXViewerFactory {
 
    public XViewerFactory(String namespace) {
       this.namespace = namespace;
+   }
+
+   public void registerColumns(Collection<? extends XViewerColumn> columns) {
+      for (XViewerColumn col : columns) {
+         registerColumns(col);
+      }
    }
 
    public void registerColumns(XViewerColumn... columns) {
