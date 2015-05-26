@@ -86,10 +86,6 @@ public class XViewerMouseListener implements MouseListener {
 
    }
 
-   private boolean shiftBeingHeld(MouseEvent event) {
-      return ((event.stateMask & SWT.MODIFIER_MASK) == SWT.SHIFT);
-   }
-
    private boolean clickOccurredInIconArea(MouseEvent event, TreeItem item) {
       Integer columnNumber = xViewer.getColumnNumberUnderMouseClick(new Point(event.x, event.y));
       if (columnNumber == null) {

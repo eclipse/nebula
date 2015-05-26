@@ -14,12 +14,11 @@ import org.eclipse.nebula.widgets.xviewer.IXViewerLabelProvider;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewerComputedColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
-import org.eclipse.nebula.widgets.xviewer.util.XViewerException;
 import org.eclipse.swt.SWT;
 
 /**
  * Show if cells from two columns (selected and one to right) are different.
- * 
+ *
  * @author Donald G. Dunne
  */
 public class XViewerDiffsBetweenColumnsColumn extends XViewerComputedColumn {
@@ -32,11 +31,11 @@ public class XViewerDiffsBetweenColumnsColumn extends XViewerComputedColumn {
 
    private XViewerDiffsBetweenColumnsColumn(String id) {
       super(id, XViewerText.get("column.diffsBetweenColumns.name"), 30, SWT.LEFT, false, SortDataType.String, false, //$NON-NLS-1$
-    		  XViewerText.get("column.diffsBetweenColumns.description")); //$NON-NLS-1$
+         XViewerText.get("column.diffsBetweenColumns.description")); //$NON-NLS-1$
    }
 
    @Override
-   public String getColumnText(Object element, XViewerColumn column, int columnIndex) throws XViewerException {
+   public String getColumnText(Object element, XViewerColumn column, int columnIndex) {
       if (sourceXViewerColumn == null) {
          return String.format(XViewerText.get("error.no_source_column"), id); //$NON-NLS-1$
       }

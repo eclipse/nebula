@@ -320,7 +320,6 @@ public class XViewer extends TreeViewer {
     * Launch refresh of LazyLoadColumn into background and update display when completed.
     */
    public void refreshColumnLazy(final IXViewerLazyLoadColumn preCompColumn, Object input) {
-      System.err.println("Lazy loading " + preCompColumn);
       final XViewerColumn column = (XViewerColumn) preCompColumn;
       if (input instanceof Collection<?>) {
          final Collection<?> collection = (Collection<?>) input;
