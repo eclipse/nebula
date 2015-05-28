@@ -38,6 +38,7 @@
 		<module>../../widgets/cwt</module>
 		<module>../../widgets/cdatetime</module>
 		<module>../../widgets/visualization</module>
+		<module>../../widgets/richtext</module>
 
 		<!-- Releng -->
 		<module>../org.eclipse.nebula.feature</module>

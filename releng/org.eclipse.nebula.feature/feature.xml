@@ -84,4 +84,8 @@
          id="org.eclipse.nebula.visualization.feature"
          version="0.0.0"/>
 
+   <includes
+         id="org.eclipse.nebula.widgets.richtext.feature"
+         version="0.0.0"/>
+
 </feature>

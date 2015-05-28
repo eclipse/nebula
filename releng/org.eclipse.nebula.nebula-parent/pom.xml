@@ -27,7 +27,7 @@
 
 	<build>
 		<plugins>
-		
+
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-packaging-plugin</artifactId>
@@ -82,11 +82,11 @@
 							<ws>win32</ws>
 							<arch>x86_64</arch>
 						</environment>
-						<environment>
+	<!--  					<environment>
 							<os>macosx</os>
 							<ws>cocoa</ws>
 							<arch>x86</arch>
-						</environment>
+						</environment> -->
 						<environment>
 							<os>macosx</os>
 							<ws>cocoa</ws>
@@ -126,7 +126,7 @@
 				<version>${tycho-version}</version>
 				<configuration>
 					<useUIHarness>true</useUIHarness>
-					<argLine>${tycho.testArgLine} -Xmx512m -Djava.awt.headless=true ${tests.vmargs}</argLine>
+					<argLine>${tycho.testArgLine} -Xmx512m -Djava.awt.headless=true	${tests.vmargs}</argLine>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -261,9 +261,6 @@
 
 		<profile>
 			<id>kepler</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
 			<repositories>
 				<repository>
 					<id>projects</id>
@@ -293,9 +290,35 @@
 					<layout>p2</layout>
 					<url>http://download.eclipse.org/eclipse/updates/4.4/</url>
 				</repository>
+			
+		<repository>
+			<id>nattable</id>
+			<layout>p2</layout>
+			<url>http://download.eclipse.org/nattable/releases/1.3.0/repository/</url>
+		</repository>
+			
 			</repositories>
 		</profile>
 
+		<profile>
+			<id>mars</id>
+			<activation> 
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<repositories>
+				<repository>
+					<id>projects</id>
+					<layout>p2</layout>
+					<url>http://download.eclipse.org/releases/mars/</url>
+				</repository>
+
+				<repository>
+					<id>platform</id>
+					<layout>p2</layout>
+					<url>http://download.eclipse.org/eclipse/updates/4.5/</url>
+				</repository>
+			</repositories>
+		</profile>
 
 		<profile>
 			<id>static-checks</id>

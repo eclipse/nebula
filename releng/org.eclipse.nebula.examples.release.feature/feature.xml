@@ -212,7 +212,6 @@ Each party waives its rights to a jury trial in any resulting
 litigation.
    </license>
 
-
    <url>
       <discovery label="Nebula Release" url="http://download.eclipse.org/technology/nebula/snapshot"/>
       <discovery label="Nebula Incubation" url="http://download.eclipse.org/technology/nebula/incubation/snapshot"/>
@@ -386,6 +385,34 @@ litigation.
 
    <plugin
          id="org.eclipse.nebula.widgets.paperclips.example.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.nebula.widgets.richtext.example"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.nebula.widgets.richtext.example.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.nebula.widgets.richtext.example.e4"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.nebula.widgets.richtext.example.e4.source"
          download-size="0"
          install-size="0"
          version="0.0.0"

@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rich Text Editor Examples
-Bundle-SymbolicName: org.eclipse.nebula.widgets.richtext.examples
+Bundle-SymbolicName: org.eclipse.nebula.widgets.richtext.example
 Bundle-Version: 0.1.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.eclipse.nebula.widgets.richtext;bundle-version="0.1.0",

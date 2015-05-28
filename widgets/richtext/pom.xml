@@ -1,0 +1,25 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.eclipse.nebula</groupId>
+		<version>1.0.0-SNAPSHOT</version>
+		<artifactId>nebula-release</artifactId>
+		<relativePath>../../releng/org.eclipse.nebula.nebula-release</relativePath>
+	</parent>
+
+	<artifactId>richtext</artifactId>
+	<version>0.1.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<modules>
+		<module>org.eclipse.nebula.widgets.richtext</module>
+		<module>org.eclipse.nebula.widgets.richtext.example</module>
+		<module>org.eclipse.nebula.widgets.richtext.example.e4</module>
+		<module>org.eclipse.nebula.widgets.nattable.extension.nebula</module>
+		<module>org.eclipse.nebula.widgets.nattable.extension.nebula.feature</module>
+		<module>org.eclipse.nebula.widgets.richtext.feature</module>
+	</modules> 
+
+</project>
