@@ -20,7 +20,6 @@ import org.eclipse.nebula.widgets.nattable.data.convert.ContextualDisplayConvert
 import org.eclipse.nebula.widgets.nattable.data.convert.DefaultDisplayConverter;
 import org.eclipse.nebula.widgets.nattable.data.convert.IDisplayConverter;
 import org.eclipse.nebula.widgets.nattable.layer.cell.ILayerCell;
-import org.eclipse.nebula.widgets.nattable.style.DisplayMode;
 
 public class MarkupDisplayConverter extends ContextualDisplayConverter {
 
@@ -42,13 +41,9 @@ public class MarkupDisplayConverter extends ContextualDisplayConverter {
 		if (wrappedConverterResult != null) {
 			result = wrappedConverterResult.toString();
 
-			// TODO NatTable 1.4 only perform action when DisplayMode.EDIT is applied
-			if (!DisplayMode.EDIT.equals(cell.getDisplayMode())) {
-
-				// add markups
-				for (MarkupValue markup : this.markups.values()) {
-					result = result.replace(markup.originalValue, markup.markupValue);
-				}
+			// add markups
+			for (MarkupValue markup : this.markups.values()) {
+				result = result.replace(markup.originalValue, markup.markupValue);
 			}
 		}
 		return result;
@@ -59,11 +54,8 @@ public class MarkupDisplayConverter extends ContextualDisplayConverter {
 		// remove markups
 		if (displayValue != null) {
 			String result = displayValue.toString();
-			// TODO NatTable 1.4 only perform action when DisplayMode.EDIT is applied
-			if (!DisplayMode.EDIT.equals(cell.getDisplayMode())) {
-				for (MarkupValue markup : this.markups.values()) {
-					result = result.replace(markup.markupValue, markup.originalValue);
-				}
+			for (MarkupValue markup : this.markups.values()) {
+				result = result.replace(markup.markupValue, markup.originalValue);
 			}
 			return this.wrappedConverter.displayToCanonicalValue(cell, configRegistry, result);
 		}

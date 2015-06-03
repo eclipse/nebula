@@ -84,8 +84,8 @@
       <plugin id="org.eclipse.nebula.widgets.nattable.core"/>
       <plugin id="org.eclipse.nebula.widgets.nattable.extension.nebula"/>
       <plugin id="org.eclipse.nebula.widgets.richtext"/>
+      <plugin id="org.eclipse.nebula.widgets.richtext.example"/>
       <plugin id="org.eclipse.nebula.widgets.richtext.example.e4"/>
-      <plugin id="org.eclipse.nebula.widgets.richtext.examples"/>
       <plugin id="org.eclipse.osgi"/>
       <plugin id="org.eclipse.osgi.compatibility.state" fragment="true"/>
       <plugin id="org.eclipse.osgi.services"/>
