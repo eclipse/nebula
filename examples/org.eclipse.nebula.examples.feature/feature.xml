@@ -5,15 +5,15 @@
       version="1.0.4.qualifier"
       provider-name="Eclipse.org">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description url="%featureDescriptionURL">
+      %featureDescriptionText
    </description>
 
-   <copyright url="http://www.example.com/copyright">
-      [Enter Copyright Description here.]
+   <copyright url="http://www.eclipse.org/legal/epl-v10.html">
+      %copyright
    </copyright>
 
-   <license url="http://www.eclipse.org/legal/epl-v10.html">
+   <license url="%licenseURL">
       Eclipse Public License - v 1.0
 THE ACCOMPANYING PROGRAM IS PROVIDED UNDER THE TERMS OF THIS
 ECLIPSE PUBLIC LICENSE (&quot;AGREEMENT&quot;). ANY USE, REPRODUCTION OR
@@ -211,7 +211,6 @@ Agreement more than one year after the cause of action arose.
 Each party waives its rights to a jury trial in any resulting
 litigation.
    </license>
-
 
    <plugin
          id="org.eclipse.nebula.examples"

@@ -390,32 +390,4 @@ litigation.
          version="0.0.0"
          unpack="false"/>
 
-   <plugin
-         id="org.eclipse.nebula.widgets.richtext.example"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.nebula.widgets.richtext.example.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.nebula.widgets.richtext.example.e4"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.nebula.widgets.richtext.example.e4.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
 </feature>
