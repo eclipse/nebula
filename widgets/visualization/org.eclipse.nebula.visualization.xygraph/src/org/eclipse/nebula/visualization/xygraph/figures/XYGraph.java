@@ -22,9 +22,8 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.nebula.visualization.internal.xygraph.undo.OperationsManager;
 import org.eclipse.nebula.visualization.internal.xygraph.undo.XYGraphMemento;
 import org.eclipse.nebula.visualization.internal.xygraph.undo.ZoomCommand;
-import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
 import org.eclipse.nebula.visualization.xygraph.linearscale.AbstractScale.LabelSide;
-import org.eclipse.nebula.visualization.xygraph.linearscale.LinearScale.Orientation;
+import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
 import org.eclipse.nebula.visualization.xygraph.util.Log10;
 import org.eclipse.nebula.visualization.xygraph.util.SingleSourceHelper;
 import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
@@ -46,6 +45,7 @@ import org.eclipse.swt.widgets.Display;
  * @author Xihui Chen
  * @author Kay Kasemir (performStagger)
  * @author Laurent PHILIPPE (property change support)
+ * @author Alex Clayton (added {@link IAxesFactory} factory)
  */
 public class XYGraph extends Figure {
 
@@ -160,9 +160,18 @@ public class XYGraph extends Figure {
 	private ZoomType zoomType = ZoomType.NONE;
 
 	/**
-	 * Constructor.
+	 * Constructor
 	 */
 	public XYGraph() {
+	    this(new DefaultAxesFactory());
+	}
+	
+	/**
+	 * Constructor.
+	 * @param axesFactory The {@link IAxesFactory} to use to create
+	 * the primary axes for the graph.  Should not be {@code null}
+	 */
+	public XYGraph(IAxesFactory axesFactory) {
 		setOpaque(!transparent);
 		legendMap = new LinkedHashMap<Axis, Legend>();
 		titleLabel = new Label();
@@ -177,15 +186,10 @@ public class XYGraph extends Figure {
 
 		add(titleLabel);
 		add(plotArea);
-		primaryYAxis = new Axis("Y-Axis", true);
-		primaryYAxis.setOrientation(Orientation.VERTICAL);
-		primaryYAxis.setTickLableSide(LabelSide.Primary);
-		primaryYAxis.setAutoScaleThreshold(0.1);
+		primaryYAxis = axesFactory.createYAxis();
 		addAxis(primaryYAxis);
 
-		primaryXAxis = new Axis("X-Axis", false);
-		primaryXAxis.setOrientation(Orientation.HORIZONTAL);
-		primaryXAxis.setTickLableSide(LabelSide.Primary);
+		primaryXAxis = axesFactory.createXAxis();
 		addAxis(primaryXAxis);
 
 		operationsManager = new OperationsManager();
