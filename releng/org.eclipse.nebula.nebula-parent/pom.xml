@@ -9,7 +9,7 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<tycho-version>0.18.1</tycho-version>
+		<tycho-version>0.23.0</tycho-version>
 		<tycho-extras-version>${tycho-version}</tycho-extras-version>
 		<tests.vmargs></tests.vmargs>
 		<!-- Properties to enable jacoco code coverage analysis in Sonar -->
@@ -19,7 +19,7 @@
 		<sonar.jacoco.reportPath>../target/jacoco.exec</sonar.jacoco.reportPath>
 		<mockito-version>1.8.4</mockito-version>
 		<junit-version>4.8.1</junit-version>
-		<jacoco-version>0.6.3.201306030806</jacoco-version>
+		<jacoco-version>0.7.5.201505241946</jacoco-version>
 		<signer-input-directory>/home/data/httpd/download-staging.priv/technology/nebula</signer-input-directory>
 		<tycho.scmUrl>scm:git:https://git.eclipse.org/r/p/nebula/org.eclipse.nebula</tycho.scmUrl>
 	</properties>

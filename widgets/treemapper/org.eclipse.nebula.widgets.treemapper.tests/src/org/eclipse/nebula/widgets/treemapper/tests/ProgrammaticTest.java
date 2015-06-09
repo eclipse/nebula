@@ -17,7 +17,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.nebula.widgets.treemapper.TreeMapper;
 import org.eclipse.nebula.widgets.treemapper.TreeMapperUIConfigProvider;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.swt.widgets.Display;
 import org.junit.Test;
 
 /**
@@ -33,7 +33,7 @@ public class ProgrammaticTest {
 	 */
 	private Dialog openMapperDialog(final String[] treeContent,
 			final String[] mappings) {
-		Dialog dialog = new Dialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()) {
+		Dialog dialog = new Dialog(Display.getDefault().getActiveShell()) {
 			@Override
 			public Composite createDialogArea(Composite parent) {
 				Composite res = (Composite)super.createDialogArea(parent);
