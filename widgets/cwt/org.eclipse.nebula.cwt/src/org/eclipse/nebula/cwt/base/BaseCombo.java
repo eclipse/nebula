@@ -34,7 +34,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
@@ -444,12 +443,7 @@ public abstract class BaseCombo extends Canvas {
 	}
 
 	private void createContentShell() {
-		// fix for disappearing menubar/reorganized toolbar:  create shell that's independent
-		// of Eclipse graphic objects.
-		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=455260
-
-		// contentShell = new Shell(getShell(), SWT.NO_TRIM | SWT.ON_TOP);
-		contentShell = new Shell(getShell().getDisplay(), SWT.NO_TRIM | SWT.ON_TOP);
+		contentShell = new Shell(getShell(), SWT.NO_TRIM | SWT.ON_TOP);
 		contentShell.addListener(SWT.Close, shellListener);
 		contentShell.addListener(SWT.Deactivate, shellListener);
 	}
@@ -1021,16 +1015,12 @@ public abstract class BaseCombo extends Canvas {
 			createContentShell();
 		}
 
-		// Workaround for Bug 455260 (see 'createContentShell()', above). 
-		// No longer create shell for picker using shell of CDateTime object for parent.
-		// Avoids some interaction with Eclipse - CDateTime must be performing operations
-		// that cause the Eclipse menubar to disappear and the toolbar to be rearranged.
-//		if (getShell() != contentShell.getParent()) {
-//			content.setParent(this);
-//			contentShell.dispose();
-//			contentShell = null;
-//			createContentShell();
-//		}
+		if (getShell() != contentShell.getParent()) {
+			content.setParent(this);
+			contentShell.dispose();
+			contentShell = null;
+			createContentShell();
+		}
 
 		if (content.getParent() != contentShell) {
 			content.setParent(contentShell);
