@@ -103,6 +103,10 @@ public class TagProcessingState {
 	 * embedded rendering to be able to calculate the dynamic dimensions without rendering directly.
 	 */
 	private boolean rendering = true;
+	/**
+	 * The number of paragraphs that are found in a text. Needed to calculate the preferred height.
+	 */
+	private int paragraphCount = 0;
 
 	/**
 	 * @return The previous set foreground color.
@@ -322,5 +326,13 @@ public class TagProcessingState {
 		this.listNumberStack.removeLast();
 		this.listMarginStack.removeLast();
 		this.orderedListStack.removeLast();
+	}
+
+	public int getParagraphCount() {
+		return paragraphCount;
+	}
+
+	public void increaseParagraphCount() {
+		this.paragraphCount++;
 	}
 }

@@ -38,6 +38,7 @@ public class ParagraphInstruction implements PaintInstruction {
 
 		// increase y
 		state.increaseY(paragraphSpace);
+		state.increaseParagraphCount();
 
 		// full reset x
 		state.resetX();

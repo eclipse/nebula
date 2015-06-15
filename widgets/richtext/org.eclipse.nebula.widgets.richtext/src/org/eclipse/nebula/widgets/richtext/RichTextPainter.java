@@ -435,7 +435,7 @@ public class RichTextPainter {
 			preferredSize.y += painter.getLineHeight();
 		}
 		// add paragraphSpace on top and bottom
-		preferredSize.y += (2 * getParagraphSpace());
+		preferredSize.y += (2 * state.getParagraphCount() * getParagraphSpace());
 
 		preferredSize.y = Math.max(preferredSize.y, bounds.height);
 	}
@@ -460,6 +460,7 @@ public class RichTextPainter {
 				public void paint(GC gc, Rectangle area) {
 					state.activateNextLine();
 					state.increaseY(getParagraphSpace());
+					state.increaseParagraphCount();
 				}
 			});
 		}
