@@ -1002,6 +1002,15 @@ public abstract class BaseCombo extends Canvas {
 	 * @see BaseCombo#setOpen(boolean)
 	 */
 	protected synchronized void setOpen(boolean open, final Runnable callback) {
+		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=198240
+		// Avoid infinite loop:  
+		//		Button starts close
+		//      Close triggers SWT.Deactivate event
+		//      Deactivate listener calls setOpen(false)
+		if (isOpen() == open) {
+			return;
+		}
+
 		if (content == null || content.isDisposed()) {
 			if (contentShell != null) {
 				contentShell.dispose();
