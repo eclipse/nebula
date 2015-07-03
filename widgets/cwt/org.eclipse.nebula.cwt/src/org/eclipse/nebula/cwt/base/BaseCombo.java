@@ -992,7 +992,8 @@ public abstract class BaseCombo extends Canvas {
 	/**
 	 * If pop is true, then opens the popup shell (sets to visible)<br>
 	 * If pop is false, closes the popup shell (sets to not visible)<br>
-	 * If <code>content == null</code> this method simply returns.<br>
+	 * If <code>content == null</code> or <code>isOpen() == open</code> this
+	 * method simply returns.<br>
 	 * If <code>popup == null</code> then <code>popup</code> will be created.
 	 * 
 	 * @param open
