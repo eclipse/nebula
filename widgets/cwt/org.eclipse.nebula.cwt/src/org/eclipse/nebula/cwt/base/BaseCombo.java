@@ -976,13 +976,12 @@ public abstract class BaseCombo extends Canvas {
 	}
 
 	/**
-	 * If pop is true, then opens the popup shell (sets to visible)<br>
-	 * If pop is false, closes the popup shell (sets to not visible)<br>
-	 * If <code>content == null</code> this method simply returns.<br>
-	 * If <code>popup == null</code> then <code>popup</code> will be created.
+	 * Convenience method for BaseCombo:setOpen(boolean, Runnable), omitting optional runnable.
 	 * 
 	 * @param open
-	 *            true to open the popup shell, false to close it.
+	 *            true to open the popup (date/time picker) shell, false to close it.
+	 *<br>
+	 *<br>
 	 * @see BaseCombo#setOpen(boolean, Runnable)
 	 */
 	protected void setOpen(boolean open) {
@@ -990,16 +989,18 @@ public abstract class BaseCombo extends Canvas {
 	}
 
 	/**
-	 * If pop is true, then opens the popup shell (sets to visible)<br>
-	 * If pop is false, closes the popup shell (sets to not visible)<br>
+	 * If 'open' is true, then open the popup shell (time/date picker) (set to visible)<br>
+	 * If 'open' is false, close the popup shell (set to not visible)<br>
 	 * If <code>content == null</code> or <code>isOpen() == open</code> this
 	 * method simply returns.<br>
-	 * If <code>popup == null</code> then <code>popup</code> will be created.
+	 * If <code>contentShell == null</code> then <code>contentShell</code> will be created.
 	 * 
 	 * @param open
-	 *            true to open the popup shell, false to close it.
+	 *            true to open the popup (date/time picker) shell, false to close it.
 	 * @param callback
-	 *            a runnable to be run when the operation completes.
+	 *            an optional runnable to be run when the operation completes.
+	 *<br>
+	 *<br>
 	 * @see BaseCombo#setOpen(boolean)
 	 */
 	protected synchronized void setOpen(boolean open, final Runnable callback) {
