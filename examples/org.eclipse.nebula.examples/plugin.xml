@@ -7,7 +7,7 @@
       <view
             category="org.eclipse.nebula.examples.nebula"
             class="org.eclipse.nebula.examples.ExamplesView"
-            icon="icons/eclipse.png"
+            icon="icons/16px.png"
             id="org.eclipse.nebula.examples.view"
             name="%view.name"/>
       <category
@@ -22,6 +22,7 @@
       <perspective
             class="org.eclipse.nebula.examples.internal.ExamplesPerspective"
             fixed="true"
+            icon="icons/16px.png"
             id="org.eclipse.nebula.examples.perspective"
             name="%perspective.name">
       </perspective>
