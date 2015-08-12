@@ -289,7 +289,20 @@ public class XViewer extends TreeViewer {
 
    @Override
    protected void inputChanged(Object input, Object oldInput) {
-      // Allow lazy load columns to be compute getColumnText prior to supplying Viewer with new input
+      // Allow pre-computed columns to prior to supplying Viewer with new input
+      refreshColumnsWithPreCompute(input, oldInput);
+   }
+
+   /**
+    * This is called after all precomputed columns are done loading.
+    */
+   private void superInputChanged(Object input, Object oldInput) {
+      if (getTree() != null && !getTree().isDisposed()) {
+         super.inputChanged(input, oldInput);
+      }
+   }
+
+   private List<Object> getInputObjects(Object input) {
       List<Object> objects = new LinkedList<Object>();
       if (input instanceof Collection) {
          Collection<?> collection = (Collection<?>) input;
@@ -297,62 +310,53 @@ public class XViewer extends TreeViewer {
             objects.add(obj);
          }
       }
-      for (XViewerColumn column : getCustomizeMgr().getCurrentVisibleTableColumns()) {
-         if (column instanceof IXViewerLazyLoadColumn) {
-            IXViewerLazyLoadColumn lazyColumn = (IXViewerLazyLoadColumn) column;
-            lazyColumn.setLoading(true);
-            refreshColumnLazy(lazyColumn, objects);
-            lazyColumn.setLoading(false);
-         }
-      }
-      super.inputChanged(input, oldInput);
-      updateStatusLabel();
+      return objects;
    }
 
-   /**
-    * Launch refresh of LazyLoadColumn into background and update display when completed.
-    */
-   public void refreshColumnLazy(final IXViewerLazyLoadColumn preCompColumn) {
-      refreshColumnLazy(preCompColumn, getInput());
+   public void refreshColumnsWithPreCompute() {
+      refreshColumnsWithPreCompute(getInput(), getInput());
    }
 
-   /**
-    * Launch refresh of LazyLoadColumn into background and update display when completed.
-    */
-   public void refreshColumnLazy(final IXViewerLazyLoadColumn preCompColumn, Object input) {
-      final XViewerColumn column = (XViewerColumn) preCompColumn;
-      if (input instanceof Collection<?>) {
-         final Collection<?> collection = (Collection<?>) input;
-         if (column.lazyLoadingValueMap == null) {
-            column.lazyLoadingValueMap = new HashMap<Long, String>(collection.size());
-         } else {
-            column.lazyLoadingValueMap.clear();
-         }
+   public void refreshColumnsWithPreCompute(final Object input, final Object oldInput) {
+      final List<Object> inputObjects = getInputObjects(input);
+      final XViewer xViewer = this;
+      this.loading = true;
+      Job job = new Job("Refreshing Columns") {
 
-         Job job = new Job("Computing Lazy Loading Columns") {
-
-            @Override
-            protected IStatus run(IProgressMonitor monitor) {
-               preCompColumn.populateCachedValues(collection, column.lazyLoadingValueMap);
-               return Status.OK_STATUS;
-            }
-         };
-         job.setSystem(false);
-         job.addJobChangeListener(new JobChangeAdapter() {
-
-            @Override
-            public void done(IJobChangeEvent event) {
-               Display.getDefault().asyncExec(new Runnable() {
-
-                  @Override
-                  public void run() {
-                     refreshColumn(column);
+         @Override
+         protected IStatus run(IProgressMonitor monitor) {
+            for (XViewerColumn column : getCustomizeMgr().getCurrentVisibleTableColumns()) {
+               if (column instanceof IXViewerPreComputedColumn) {
+                  IXViewerPreComputedColumn preComputedColumn = (IXViewerPreComputedColumn) column;
+                  if (column.preComputedValueMap == null) {
+                     column.preComputedValueMap = new HashMap<Long, String>(inputObjects.size());
+                  } else {
+                     column.preComputedValueMap.clear();
                   }
-               });
+                  preComputedColumn.populateCachedValues(inputObjects, column.preComputedValueMap);
+               }
             }
-         });
-         job.schedule();
-      }
+
+            return Status.OK_STATUS;
+         }
+      };
+      job.setSystem(false);
+      job.addJobChangeListener(new JobChangeAdapter() {
+
+         @Override
+         public void done(IJobChangeEvent event) {
+            Display.getDefault().asyncExec(new Runnable() {
+
+               @Override
+               public void run() {
+                  xViewer.superInputChanged(input, oldInput);
+                  loading = false;
+                  updateStatusLabel();
+               }
+            });
+         }
+      });
+      job.schedule();
    }
 
    /**
@@ -453,6 +457,7 @@ public class XViewer extends TreeViewer {
    };
    private Composite searchComp;
    private XViewerMouseListener mouseListener;
+   private boolean loading;
 
    public void resetDefaultSorter() {
       customizeMgr.resetDefaultSorter();
@@ -569,38 +574,45 @@ public class XViewer extends TreeViewer {
          return;
       }
       StringBuffer sb = new StringBuffer();
+      boolean allItemsFiltered = false;
 
-      // Status Line 1
-      int loadedNum = 0;
-      int visibleNum = getVisibleItemCount(getTree().getItems());
-      if (getRoot() != null && ((ITreeContentProvider) getContentProvider()) != null) {
-         loadedNum = ((ITreeContentProvider) getContentProvider()).getChildren(getRoot()).length;
-      }
-      boolean allItemsFiltered = loadedNum > 0 && visibleNum == 0;
-      if (allItemsFiltered) {
-         sb.append(XViewerText.get("status.all_filtered")); //$NON-NLS-1$
-      }
-      sb.append(MessageFormat.format(XViewerText.get("status"), loadedNum, visibleNum, //$NON-NLS-1$
-         ((IStructuredSelection) getSelection()).size()));
-      customizeMgr.appendToStatusLabel(sb);
-      if (filterDataUI != null) {
-         filterDataUI.appendToStatusLabel(sb);
-      }
-      columnFilterDataUI.appendToStatusLabel(sb);
-      sb.append(getStatusString());
-      if (sb.length() > 0) {
-         sb.append("\n"); //$NON-NLS-1$
-      }
+      if (loading) {
+         sb.append("Loading...");
+      } else {
+         // Status Line 1
+         int loadedNum = 0;
+         int visibleNum = getVisibleItemCount(getTree().getItems());
+         if (getRoot() != null && ((ITreeContentProvider) getContentProvider()) != null) {
+            loadedNum = ((ITreeContentProvider) getContentProvider()).getChildren(getRoot()).length;
+         }
+         allItemsFiltered = loadedNum > 0 && visibleNum == 0;
+         if (allItemsFiltered) {
+            sb.append(XViewerText.get("status.all_filtered")); //$NON-NLS-1$
+         }
+         sb.append(MessageFormat.format(XViewerText.get("status"), loadedNum, visibleNum, //$NON-NLS-1$
+            ((IStructuredSelection) getSelection()).size()));
+         customizeMgr.appendToStatusLabel(sb);
+         if (filterDataUI != null) {
+            filterDataUI.appendToStatusLabel(sb);
+         }
+         columnFilterDataUI.appendToStatusLabel(sb);
+         sb.append(getStatusString());
+         if (sb.length() > 0) {
+            sb.append("\n"); //$NON-NLS-1$
+         }
 
-      // Status Line 2
-      customizeMgr.getSortingStr(sb);
+         // Status Line 2
+         customizeMgr.getSortingStr(sb);
+      }
 
       // Display status lines
       String str = sb.toString();
       statusLabel.setText(str);
       statusLabel.getParent().getParent().layout();
       statusLabel.setToolTipText(str);
-      if (allItemsFiltered) {
+      if (loading) {
+         statusLabel.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));
+      } else if (allItemsFiltered) {
          statusLabel.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
       } else {
          statusLabel.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));

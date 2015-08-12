@@ -278,12 +278,12 @@ public class CustomizeManager {
 
    public void appendToStatusLabel(StringBuffer sb) {
       if (currentCustData != null && currentCustData.getName() != null &&
-         //
-         !currentCustData.getName().equals(CURRENT_LABEL) &&
-         //
-         !currentCustData.getName().equals(TABLE_DEFAULT_LABEL) &&
-         //
-         currentCustData.getName() != null) {
+      //
+      !currentCustData.getName().equals(CURRENT_LABEL) &&
+      //
+      !currentCustData.getName().equals(TABLE_DEFAULT_LABEL) &&
+      //
+      currentCustData.getName() != null) {
          sb.append(XViewerText.get("label.custom", currentCustData.getName())); //$NON-NLS-1$
       }
    }

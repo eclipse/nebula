@@ -8,12 +8,7 @@ package org.eclipse.nebula.widgets.xviewer;
 /**
  * @author Donald G. Dunne
  */
-public abstract class XViewerLazyLoadColumnAdapter implements IXViewerLazyLoadColumn {
-
-   @Override
-   public void setLoading(boolean loading) {
-      // do nothing
-   }
+public abstract class XViewerPreComputedColumnAdapter implements IXViewerPreComputedColumn {
 
    @Override
    public String getText(Object obj, Long key, String cachedValue) {

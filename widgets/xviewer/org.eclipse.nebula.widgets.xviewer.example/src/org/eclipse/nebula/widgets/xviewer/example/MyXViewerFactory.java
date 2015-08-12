@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * Columns for example XViewer
- * 
+ *
  * @author Donald G. Dunne
  */
 public class MyXViewerFactory extends XViewerFactory {
@@ -55,13 +55,12 @@ public class MyXViewerFactory extends XViewerFactory {
       "Other Description", 75, SWT.LEFT, false, SortDataType.String, false, null);
    public static XViewerColumn Long_Column = new XViewerColumn(COLUMN_NAMESPACE + ".longColumn", "Long Values", 50,
       SWT.LEFT, false, SortDataType.Long, false, null);
+   public static MyPreComputedColumn preComputedColumn = new MyPreComputedColumn();
 
    public MyXViewerFactory() {
       super("xviewer.test");
-      /**
-       * Normally, you want to re-create Lazy Loading Columns cause they have cached values.
-       */
-      registerColumns(Name_Col, Run_Col, Schedule_Time, new MyLazyLoadingColumn(), Completed_Col, Run_Db, Task_Type,
+
+      registerColumns(Name_Col, Run_Col, Schedule_Time, preComputedColumn, Completed_Col, Run_Db, Task_Type,
          Last_Run_Date, Category, Notification, Description, Other_Description, Long_Column);
 
       Completed_Col.addMapEntry(SomeTask.class, new CellEditDescriptor(Text.class, SWT.BORDER,

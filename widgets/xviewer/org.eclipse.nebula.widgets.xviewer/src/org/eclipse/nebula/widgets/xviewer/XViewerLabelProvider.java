@@ -81,12 +81,12 @@ public abstract class XViewerLabelProvider implements ITableLabelProvider, ITabl
          if (!xViewerColumn.isShow()) {
             return "";
          }
-         // Check if Lazy Loaded column
-         if (xViewerColumn instanceof IXViewerLazyLoadColumn) {
-            IXViewerLazyLoadColumn lazyLoadColumn = (IXViewerLazyLoadColumn) xViewerColumn;
-            Long key = lazyLoadColumn.getKey(element);
-            String cachedValue = xViewerColumn.getLazyLoadingValue(key);
-            String result = ((IXViewerLazyLoadColumn) xViewerColumn).getText(element, key, cachedValue);
+         // Check if Pre Computed column
+         if (xViewerColumn instanceof IXViewerPreComputedColumn) {
+            IXViewerPreComputedColumn preComputedColumn = (IXViewerPreComputedColumn) xViewerColumn;
+            Long key = preComputedColumn.getKey(element);
+            String cachedValue = xViewerColumn.getPreComputedValue(key);
+            String result = ((IXViewerPreComputedColumn) xViewerColumn).getText(element, key, cachedValue);
             return result;
          }
          // First check value column's methods

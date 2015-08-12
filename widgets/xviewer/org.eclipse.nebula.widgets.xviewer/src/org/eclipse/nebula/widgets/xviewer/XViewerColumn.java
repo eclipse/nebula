@@ -36,7 +36,7 @@ public class XViewerColumn {
    private boolean show = true;
    private SortDataType sortDataType = SortDataType.String;
    private String toolTip = "";
-   protected Map<Long, String> lazyLoadingValueMap = null;
+   protected Map<Long, String> preComputedValueMap = null;
    public enum SortDataType {
       Date,
       Float,
@@ -335,12 +335,12 @@ public class XViewerColumn {
       this.id = XViewerLib.intern(id);
    }
 
-   public String getLazyLoadingValue(Long key) {
+   public String getPreComputedValue(Long key) {
       String result = null;
-      if (lazyLoadingValueMap == null) {
+      if (preComputedValueMap == null) {
          return result;
       }
-      return lazyLoadingValueMap.get(key);
+      return preComputedValueMap.get(key);
    }
 
 }

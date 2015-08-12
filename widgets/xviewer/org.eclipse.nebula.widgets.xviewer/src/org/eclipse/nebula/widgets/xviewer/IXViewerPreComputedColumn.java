@@ -9,13 +9,13 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * Columns that implement this interface will be given a chance to compute their values in the background and then
- * refreshed once completed. This feature uses the XViewer.refreshColumn to only refresh a single column after it's
- * values are cached.
+ * Columns that implement this interface will be given a chance to compute their values in the background before the
+ * XViewer is loaded. Any item that does not have a value (null or otherwise) in preComputedValueMap will call getText
+ * as normal.
  *
  * @author Donald G. Dunne
  */
-public interface IXViewerLazyLoadColumn {
+public interface IXViewerPreComputedColumn {
 
    /**
     * Called to get index for element for retrieval of cached text value
@@ -27,12 +27,6 @@ public interface IXViewerLazyLoadColumn {
     * have an entry here. Null values will show the result of the getLoadingString method below.
     */
    void populateCachedValues(Collection<?> objects, Map<Long, String> preComputedValueMap);
-
-   /*
-    * Optional method called prior to and after populateCachedValues. Used if column wants to return a loading string
-    * from getText during loading or do someother set-up/clean-up.
-    */
-   void setLoading(boolean loading);
 
    /**
     * Optional method available to make other checks during loading or otherwise change the cached value
