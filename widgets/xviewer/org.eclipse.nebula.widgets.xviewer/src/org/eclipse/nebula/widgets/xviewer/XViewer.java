@@ -88,6 +88,7 @@ public class XViewer extends TreeViewer {
    private Integer rightClickSelectedColumnNum = null;
    private TreeItem rightClickSelectedItem = null;
    private Color searchColor;
+   private boolean forcePend = false;
    private static final Map<Composite, Composite> parentToTopComposites = new HashMap<Composite, Composite>();
 
    public XViewer(Composite parent, int style, IXViewerFactory xViewerFactory) {
@@ -321,42 +322,57 @@ public class XViewer extends TreeViewer {
       final List<Object> inputObjects = getInputObjects(input);
       final XViewer xViewer = this;
       this.loading = true;
-      Job job = new Job("Refreshing Columns") {
 
-         @Override
-         protected IStatus run(IProgressMonitor monitor) {
-            for (XViewerColumn column : getCustomizeMgr().getCurrentVisibleTableColumns()) {
-               if (column instanceof IXViewerPreComputedColumn) {
-                  IXViewerPreComputedColumn preComputedColumn = (IXViewerPreComputedColumn) column;
-                  if (column.preComputedValueMap == null) {
-                     column.preComputedValueMap = new HashMap<Long, String>(inputObjects.size());
-                  } else {
-                     column.preComputedValueMap.clear();
-                  }
-                  preComputedColumn.populateCachedValues(inputObjects, column.preComputedValueMap);
-               }
+      if (forcePend) {
+         performPreCompute(inputObjects);
+         performLoad(inputObjects, oldInput, xViewer);
+      } else {
+         Job job = new Job("Refreshing Columns") {
+
+            @Override
+            protected IStatus run(IProgressMonitor monitor) {
+               performPreCompute(inputObjects);
+               return Status.OK_STATUS;
             }
 
-            return Status.OK_STATUS;
-         }
-      };
-      job.setSystem(false);
-      job.addJobChangeListener(new JobChangeAdapter() {
+         };
+         job.setSystem(false);
+         job.addJobChangeListener(new JobChangeAdapter() {
 
-         @Override
-         public void done(IJobChangeEvent event) {
-            Display.getDefault().asyncExec(new Runnable() {
+            @Override
+            public void done(IJobChangeEvent event) {
+               Display.getDefault().asyncExec(new Runnable() {
 
-               @Override
-               public void run() {
-                  xViewer.superInputChanged(input, oldInput);
-                  loading = false;
-                  updateStatusLabel();
-               }
-            });
+                  @Override
+                  public void run() {
+                     performLoad(input, oldInput, xViewer);
+                  }
+
+               });
+            }
+         });
+         job.schedule();
+      }
+   }
+
+   private void performPreCompute(final List<Object> inputObjects) {
+      for (XViewerColumn column : getCustomizeMgr().getCurrentVisibleTableColumns()) {
+         if (column instanceof IXViewerPreComputedColumn) {
+            IXViewerPreComputedColumn preComputedColumn = (IXViewerPreComputedColumn) column;
+            if (column.preComputedValueMap == null) {
+               column.preComputedValueMap = new HashMap<Long, String>(inputObjects.size());
+            } else {
+               column.preComputedValueMap.clear();
+            }
+            preComputedColumn.populateCachedValues(inputObjects, column.preComputedValueMap);
          }
-      });
-      job.schedule();
+      }
+   }
+
+   private void performLoad(final Object input, final Object oldInput, final XViewer xViewer) {
+      xViewer.superInputChanged(input, oldInput);
+      loading = false;
+      updateStatusLabel();
    }
 
    /**
@@ -822,6 +838,14 @@ public class XViewer extends TreeViewer {
 
    public XViewerMouseListener getMouseListener() {
       return mouseListener;
+   }
+
+   public boolean isForcePend() {
+      return forcePend;
+   }
+
+   public void setForcePend(boolean forcePend) {
+      this.forcePend = forcePend;
    }
 
 }
