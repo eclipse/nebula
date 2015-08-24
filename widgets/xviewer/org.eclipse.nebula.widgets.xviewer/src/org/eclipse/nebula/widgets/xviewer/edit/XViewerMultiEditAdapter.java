@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.Event;
 /**
  * simple multi edit adapter <br>
  * - Converter.getInput() gives you the current selection in the selObject (first object is the clicked one)
- * 
+ *
  * @author Juergen Reichl
  */
 public class XViewerMultiEditAdapter extends XViewerEditAdapter {
@@ -89,7 +89,7 @@ public class XViewerMultiEditAdapter extends XViewerEditAdapter {
    }
 
    @Override
-   void refreshElement(Object toRefresh) {
+   protected void refreshElement(Object toRefresh) {
       if (toRefresh instanceof List<?>) {
          for (Object o : (List<?>) toRefresh) {
             super.refreshElement(o);
