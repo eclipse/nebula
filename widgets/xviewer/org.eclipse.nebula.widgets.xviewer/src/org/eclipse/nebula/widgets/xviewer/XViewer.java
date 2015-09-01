@@ -370,9 +370,11 @@ public class XViewer extends TreeViewer {
    }
 
    private void performLoad(final Object input, final Object oldInput, final XViewer xViewer) {
-      xViewer.superInputChanged(input, oldInput);
-      loading = false;
-      updateStatusLabel();
+      if (xViewer.getTree() != null && !xViewer.getTree().isDisposed()) {
+         xViewer.superInputChanged(input, oldInput);
+         loading = false;
+         updateStatusLabel();
+      }
    }
 
    /**
