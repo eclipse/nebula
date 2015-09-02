@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.ToolItem;
 
 /**
  * Example use of XViewer. Run as application to see sample XViewer.
- * 
+ *
  * @author Donald G. Dunne
  */
 public class MyXViewerTest {
@@ -89,7 +89,10 @@ public class MyXViewerTest {
       for (int x = 0; x < 1; x++) {
          tasks.addAll(getTestTasks());
       }
-      myXviewer.setInput(tasks);
+      /**
+       * Note: setInputXViewer must be called instead of setInput for XViewer to operate properly
+       */
+      myXviewer.setInputXViewer(tasks);
       Shell_1.open();
       while (!Shell_1.isDisposed()) {
          if (!Display_1.readAndDispatch()) {
@@ -122,7 +125,10 @@ public class MyXViewerTest {
             for (int x = 0; x < 1; x++) {
                tasks.addAll(getTestTasks());
             }
-            myXviewer.setInput(tasks);
+            /**
+             * Note: setInputXViewer must be called instead of setInput for XViewer to operate properly
+             */
+            myXviewer.setInputXViewer(tasks);
          }
       });
 

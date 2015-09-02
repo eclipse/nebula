@@ -11,7 +11,10 @@ import java.util.Map;
 /**
  * Columns that implement this interface will be given a chance to compute their values in the background before the
  * XViewer is loaded. Any item that does not have a value (null or otherwise) in preComputedValueMap will call getText
- * as normal.
+ * as normal.<br/>
+ * <br/>
+ * Important: XViewer.setInputXViewer(Object input) should be called instead of XViewer.setInput for precomputed columns
+ * to work
  *
  * @author Donald G. Dunne
  */

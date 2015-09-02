@@ -288,18 +288,21 @@ public class XViewer extends TreeViewer {
       return 0;
    }
 
-   @Override
-   protected void inputChanged(Object input, Object oldInput) {
+   /**
+    * Called to set the input to the XViewer. This method MUST be used to ensure that XViewer loads properly. Especially
+    * with the use of IXViewerPreComputedColumn.
+    */
+   public final void setInputXViewer(Object input) {
       // Allow pre-computed columns to prior to supplying Viewer with new input
-      refreshColumnsWithPreCompute(input, oldInput);
+      refreshColumnsWithPreCompute(input);
    }
 
    /**
-    * This is called after all precomputed columns are done loading.
+    * This is called after all preComputed columns are done loading.
     */
-   private void superInputChanged(Object input, Object oldInput) {
+   private void superInputChanged(Object input) {
       if (getTree() != null && !getTree().isDisposed()) {
-         super.inputChanged(input, oldInput);
+         super.setInput(input);
       }
    }
 
@@ -315,17 +318,17 @@ public class XViewer extends TreeViewer {
    }
 
    public void refreshColumnsWithPreCompute() {
-      refreshColumnsWithPreCompute(getInput(), getInput());
+      refreshColumnsWithPreCompute(getInput());
    }
 
-   public void refreshColumnsWithPreCompute(final Object input, final Object oldInput) {
+   public void refreshColumnsWithPreCompute(final Object input) {
       final List<Object> inputObjects = getInputObjects(input);
       final XViewer xViewer = this;
       this.loading = true;
 
       if (forcePend) {
          performPreCompute(inputObjects);
-         performLoad(inputObjects, oldInput, xViewer);
+         performLoad(inputObjects, xViewer);
       } else {
          Job job = new Job("Refreshing Columns") {
 
@@ -345,7 +348,7 @@ public class XViewer extends TreeViewer {
 
                   @Override
                   public void run() {
-                     performLoad(input, oldInput, xViewer);
+                     performLoad(input, xViewer);
                   }
 
                });
@@ -369,9 +372,9 @@ public class XViewer extends TreeViewer {
       }
    }
 
-   private void performLoad(final Object input, final Object oldInput, final XViewer xViewer) {
+   private void performLoad(final Object input, final XViewer xViewer) {
       if (xViewer.getTree() != null && !xViewer.getTree().isDisposed()) {
-         xViewer.superInputChanged(input, oldInput);
+         xViewer.superInputChanged(input);
          loading = false;
          updateStatusLabel();
       }
@@ -496,8 +499,14 @@ public class XViewer extends TreeViewer {
       }
    }
 
+   /**
+    * setInputXViewer(Object input) should be called for setting input to XViewer.
+    *
+    * @param objects
+    */
+   @Deprecated
    public void load(Collection<Object> objects) {
-      super.setInput(objects);
+      setInputXViewer(objects);
    }
 
    @Override
