@@ -850,8 +850,4 @@ public class XViewer extends TreeViewer {
       this.forcePend = forcePend;
    }
 
-   public void clearElementMap() {
-      super.unmapAllElements();
-   }
-
 }
