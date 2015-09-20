@@ -1063,6 +1063,9 @@ public class GridItem extends Item {
 		if (background != null && background.isDisposed()) {
 			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 		}
+		for (int i = 0; i < getParent().getColumnCount(); i++) {
+			setBackground(i, background);
+		}
 
 		defaultBackground = background;
 		parent.redraw();
@@ -1383,6 +1386,9 @@ public class GridItem extends Item {
 		checkWidget();
 		if (foreground != null && foreground.isDisposed()) {
 			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+		}
+		for (int i = 0; i < getParent().getColumnCount(); i++) {
+			setForeground(i, foreground);
 		}
 		defaultForeground = foreground;
 		parent.redraw();
