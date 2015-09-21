@@ -25,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -1183,16 +1184,42 @@ public class RichTextEditor extends Composite {
 
 				@Override
 				public void run() {
-					String path = RichTextEditor.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-					String decodedPath = null;
-					try {
-						decodedPath = URLDecoder.decode(path, "UTF-8");
-					} catch (UnsupportedEncodingException e1) {
-						e1.printStackTrace();
+					URL jarURL = RichTextEditor.class.getProtectionDomain().getCodeSource().getLocation();
+					File jarFileReference = null;
+					if (jarURL.getProtocol().equals("file")) {
+						try {
+							String decodedPath = URLDecoder.decode(jarURL.getPath(), "UTF-8");
+							jarFileReference = new File(decodedPath);
+						} catch (UnsupportedEncodingException e) {
+							e.printStackTrace();
+						}
+					}
+					else {
+						// temporary download of jar file
+						// necessary to be able to unzip the resources
+						try {
+							final Path jar = Files.createTempFile("richtext", ".jar");
+							Files.copy(jarURL.openStream(), jar, StandardCopyOption.REPLACE_EXISTING);
+							jarFileReference = jar.toFile();
+
+							// delete the temporary file
+							Runtime.getRuntime().addShutdownHook(new Thread() {
+								@Override
+								public void run() {
+									try {
+										Files.delete(jar);
+									} catch (IOException e) {
+										e.printStackTrace();
+									}
+								}
+							});
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
 					}
 
-					if (decodedPath != null) {
-						try (JarFile jarFile = new JarFile(new File(decodedPath))) {
+					if (jarFileReference != null) {
+						try (JarFile jarFile = new JarFile(jarFileReference)) {
 							String unpackDirectory = System.getProperty(JAR_UNPACK_LOCATION_PROPERTY);
 							// create the directory to unzip to
 							final java.nio.file.Path tempDir =
