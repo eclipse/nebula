@@ -57,8 +57,8 @@ import org.eclipse.swt.widgets.Widget;
  * @author Unknown...
  * @author Mirko Paturzo <mirko.paturzo@exeura.eu>
  * 
- * Mirko modified improve performace and reduce used memory
- * fix memory leak and slow disposed object 
+ *         Mirko modified improve performace and reduce used memory fix memory
+ *         leak and slow disposed object
  */
 public class GridTableViewer extends AbstractTableViewer {
 	/** This viewer's grid control. */
@@ -94,6 +94,7 @@ public class GridTableViewer extends AbstractTableViewer {
 	 * viewer has no input, no content provider, a default label provider, no
 	 * sorter, and no filters.
 	 * 
+	 * @param dataVisualizer
 	 * @param parent
 	 *            the parent control
 	 * @param style
@@ -103,7 +104,6 @@ public class GridTableViewer extends AbstractTableViewer {
 		this(new Grid(dataVisualizer, parent, style));
 	}
 
-	
 	/**
 	 * Creates a grid viewer on a newly-created grid control under the given
 	 * parent. The grid control is created using the SWT style bits
@@ -111,6 +111,7 @@ public class GridTableViewer extends AbstractTableViewer {
 	 * viewer has no input, no content provider, a default label provider, no
 	 * sorter, and no filters.
 	 * 
+	 * @param dataVisualizer
 	 * @param parent
 	 *            the parent control
 	 */
@@ -171,9 +172,7 @@ public class GridTableViewer extends AbstractTableViewer {
 	/** {@inheritDoc} */
 	@Override
 	protected ColumnViewerEditor createViewerEditor() {
-		return new GridViewerEditor(this,
-				new ColumnViewerEditorActivationStrategy(this),
-				ColumnViewerEditor.DEFAULT);
+		return new GridViewerEditor(this, new ColumnViewerEditorActivationStrategy(this), ColumnViewerEditor.DEFAULT);
 	}
 
 	/** {@inheritDoc} */
@@ -187,19 +186,15 @@ public class GridTableViewer extends AbstractTableViewer {
 	protected void doClearAll() {
 		grid.getDataVisualizer().clearAll();
 	}
-	
+
 	/**
 	 * @see org.eclipse.jface.viewers.StructuredViewer#refresh()
 	 */
 	@Override
-	public void refresh()
-	{
-		try
-		{
+	public void refresh() {
+		try {
 			super.refresh();
-		}
-		finally
-		{
+		} finally {
 			grid.refreshData();
 		}
 	}
@@ -277,28 +272,29 @@ public class GridTableViewer extends AbstractTableViewer {
 	}
 
 	/** {@inheritDoc} */
+	@SuppressWarnings("deprecation")
 	@Override
 	protected void doRemoveAll() {
 		grid.removeAll();
 	}
-	
+
 	/**
 	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.AbstractTableViewer#handleDispose(org.eclipse.swt.events.DisposeEvent)
-	 * fix crossed reference for GC
+	 *      fix crossed reference for GC
 	 */
-    @Override
-    protected void handleDispose(final DisposeEvent event)
-    {
-        super.handleDispose(event);
+	@Override
+	protected void handleDispose(final DisposeEvent event) {
+		super.handleDispose(event);
 
-        cachedRow = null;
-        rowHeaderLabelProvider = null;
-        
-        getGrid().setRedraw(false);
-        getGrid().disposeAllItems();
-        getGrid().clearItems();
-    }
+		cachedRow = null;
+		rowHeaderLabelProvider = null;
+
+		getGrid().setRedraw(false);
+		getGrid().disposeAllItems();
+		getGrid().clearItems();
+	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -391,6 +387,8 @@ public class GridTableViewer extends AbstractTableViewer {
 	 * When this method is called, existing rows are not resized to their
 	 * preferred height. Therefore it is suggested that this method be called
 	 * before rows are populated (i.e. before setInput).
+	 * 
+	 * @param autoPreferredHeight
 	 */
 	public void setAutoPreferredHeight(boolean autoPreferredHeight) {
 		this.autoPreferredHeight = autoPreferredHeight;
@@ -415,8 +413,7 @@ public class GridTableViewer extends AbstractTableViewer {
 
 	private void updateRowHeader(Widget widget) {
 		if (rowHeaderLabelProvider != null) {
-			ViewerCell cell = getViewerRowFromItem(widget).getCell(
-					Integer.MAX_VALUE);
+			ViewerCell cell = getViewerRowFromItem(widget).getCell(Integer.MAX_VALUE);
 			rowHeaderLabelProvider.update(cell);
 		}
 	}
@@ -427,8 +424,7 @@ public class GridTableViewer extends AbstractTableViewer {
 	 * @param rowHeaderLabelProvider
 	 *            the provider
 	 */
-	public void setRowHeaderLabelProvider(
-			CellLabelProvider rowHeaderLabelProvider) {
+	public void setRowHeaderLabelProvider(CellLabelProvider rowHeaderLabelProvider) {
 		this.rowHeaderLabelProvider = rowHeaderLabelProvider;
 	}
 
@@ -463,8 +459,7 @@ public class GridTableViewer extends AbstractTableViewer {
 				if (row != null) {
 					ViewerCell cell = row.getCell(column);
 					if (cell != null) {
-						triggerEditorActivationEvent(new ColumnViewerEditorActivationEvent(
-								cell));
+						triggerEditorActivationEvent(new ColumnViewerEditorActivationEvent(cell));
 					}
 				}
 			}
@@ -477,16 +472,18 @@ public class GridTableViewer extends AbstractTableViewer {
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	protected void setSelectionToWidget(ISelection selection, boolean reveal) {
-		if( ! grid.isCellSelectionEnabled() || !(selection instanceof CellSelection) ) {
+		if (!grid.isCellSelectionEnabled() || !(selection instanceof CellSelection)) {
 			super.setSelectionToWidget(selection, reveal);
-			if( selection instanceof SelectionWithFocusRow ) {
-				Object el = ((SelectionWithFocusRow)selection).getFocusElement();
-				if( el != null ) {
-					for( int i = 0; i < grid.getItemCount(); i++) {
+			if (selection instanceof SelectionWithFocusRow) {
+				Object el = ((SelectionWithFocusRow) selection).getFocusElement();
+				if (el != null) {
+					for (int i = 0; i < grid.getItemCount(); i++) {
 						GridItem item = grid.getItem(i);
-						if( item.getData() == el || item.getData().equals(el) || (getComparer() != null && getComparer().equals(item.getData(), el)) ) {
+						if (item.getData() == el || item.getData().equals(el)
+								|| (getComparer() != null && getComparer().equals(item.getData(), el))) {
 							grid.setFocusItem(item);
 							break;
 						}
@@ -497,17 +494,18 @@ public class GridTableViewer extends AbstractTableViewer {
 			CellSelection cellSelection = (CellSelection) selection;
 			List l = cellSelection.toList();
 			ArrayList pts = new ArrayList();
-			
-			for( int i = 0; i < grid.getItemCount(); i++ ) {
+
+			for (int i = 0; i < grid.getItemCount(); i++) {
 				Iterator it = l.iterator();
 				Object itemObject = grid.getItem(i).getData();
-				while( it.hasNext() ) {
-					Object checkObject = it.next(); 
-					if( itemObject == checkObject || (getComparer() != null && getComparer().equals(itemObject, checkObject) ) ) {
+				while (it.hasNext()) {
+					Object checkObject = it.next();
+					if (itemObject == checkObject
+							|| (getComparer() != null && getComparer().equals(itemObject, checkObject))) {
 						Iterator idxIt = cellSelection.getIndices(checkObject).iterator();
-						while( idxIt.hasNext() ) {
+						while (idxIt.hasNext()) {
 							Integer idx = (Integer) idxIt.next();
-							pts.add(new Point(idx.intValue(),i));
+							pts.add(new Point(idx.intValue(), i));
 						}
 					}
 				}
@@ -515,11 +513,12 @@ public class GridTableViewer extends AbstractTableViewer {
 			Point[] tmp = new Point[pts.size()];
 			pts.toArray(tmp);
 			grid.setCellSelection(tmp);
-			if( cellSelection.getFocusElement() != null ) {
+			if (cellSelection.getFocusElement() != null) {
 				Object el = cellSelection.getFocusElement();
-				for( int i = 0; i < grid.getItemCount(); i++) {
+				for (int i = 0; i < grid.getItemCount(); i++) {
 					GridItem item = grid.getItem(i);
-					if( item.getData() == el || item.getData().equals(el) || (getComparer() != null && getComparer().equals(item.getData(), el)) ) {
+					if (item.getData() == el || item.getData().equals(el)
+							|| (getComparer() != null && getComparer().equals(item.getData(), el))) {
 						grid.setFocusItem(item);
 						break;
 					}
@@ -534,19 +533,18 @@ public class GridTableViewer extends AbstractTableViewer {
 	@Override
 	public ISelection getSelection() {
 		if (!grid.isCellSelectionEnabled()) {
-			IStructuredSelection selection = (IStructuredSelection) super
-					.getSelection();
+			IStructuredSelection selection = (IStructuredSelection) super.getSelection();
 			Object el = null;
 			if (grid.getFocusItem() != null) {
 				el = grid.getFocusItem().getData();
 			}
-			return new SelectionWithFocusRow(selection.toList(), el,
-					getComparer());
+			return new SelectionWithFocusRow(selection.toList(), el, getComparer());
 		} else {
 			return createCellSelection();
 		}
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private CellSelection createCellSelection() {
 		Point[] ps = grid.getCellSelection();
 		Arrays.sort(ps, new Comparator() {
@@ -584,11 +582,10 @@ public class GridTableViewer extends AbstractTableViewer {
 
 		Object focusElement = null;
 
-		if (grid.getFocusItem() != null && ! grid.getFocusItem().isDisposed()) {
+		if (grid.getFocusItem() != null && !grid.getFocusItem().isDisposed()) {
 			focusElement = grid.getFocusItem().getData();
 		}
 
-		return new CellSelection(objectList, indiceLists, focusElement,
-				getComparer());
+		return new CellSelection(objectList, indiceLists, focusElement, getComparer());
 	}
 }

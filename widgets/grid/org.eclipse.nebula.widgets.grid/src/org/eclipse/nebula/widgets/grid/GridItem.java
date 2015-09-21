@@ -48,7 +48,8 @@ import org.eclipse.swt.widgets.TypedListener;
  * @author chris.gross@us.ibm.com
  * @author Mirko Paturzo <mirko.paturzo@exeura.eu>
  * 
- * Mirko removed all collections, improve dispose performance, reduce used memory
+ *         Mirko removed all collections, improve dispose performance, reduce
+ *         used memory
  */
 public class GridItem extends Item {
 	private static final int NO_ROW = -1;
@@ -138,7 +139,7 @@ public class GridItem extends Item {
 	private boolean hasSetData = false;
 
 	private int row = NO_ROW;
-	
+
 	private final Object ROW_LOCK = new Object();
 
 	/**
@@ -200,24 +201,21 @@ public class GridItem extends Item {
 	 * @return grid row index
 	 */
 	public int getRowIndex() {
-		synchronized (ROW_LOCK)
-		{
-			if(row != NO_ROW)
+		synchronized (ROW_LOCK) {
+			if (row != NO_ROW)
 				return row;
 		}
 		return parent.indexOf(this);
 	}
-	
+
 	void increaseRow() {
-		synchronized (ROW_LOCK)
-		{
+		synchronized (ROW_LOCK) {
 			row++;
 		}
 	}
-	
+
 	void decreaseRow() {
-		synchronized (ROW_LOCK)
-		{
+		synchronized (ROW_LOCK) {
 			row--;
 		}
 	}
@@ -245,7 +243,6 @@ public class GridItem extends Item {
 	public GridItem(GridItem parent, int style) {
 		this(parent, style, NO_ROW);
 	}
-
 
 	/**
 	 * Creates a new instance of this class as a child node of the given Grid
@@ -285,8 +282,7 @@ public class GridItem extends Item {
 
 		if (parent.isVisible() && parent.isExpanded()) {
 			setVisible(true);
-		}
-		else {
+		} else {
 			setVisible(false);
 		}
 	}
@@ -301,13 +297,11 @@ public class GridItem extends Item {
 
 			if (parentItem != null) {
 				parentItem.remove(this);
-			}
-			else {
+			} else {
 				parent.removeRootItem(this);
 			}
 			if (hasChildren)
-				for (int i = children.size() - 1; i >= 0; i--)
-				{
+				for (int i = children.size() - 1; i >= 0; i--) {
 					children.get(i).dispose();
 				}
 		}
@@ -340,8 +334,9 @@ public class GridItem extends Item {
 	 * @exception SWTException
 	 *                <ul>
 	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
-	 *                disposed</li> <li>ERROR_THREAD_INVALID_ACCESS - if not
-	 *                called from the thread that created the receiver</li>
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
 	 *                </ul>
 	 */
 	public void addControlListener(ControlListener listener) {
@@ -550,7 +545,7 @@ public class GridItem extends Item {
 		span = getRowSpan(columnIndex);
 
 		int itemCount = parent.getItemCount();
-		
+
 		for (int i = 1; i <= span; i++) {
 			/* We will probably need another escape condition here */
 			if (itemCount <= indexOfCurrentItem + i) {
@@ -834,7 +829,7 @@ public class GridItem extends Item {
 	 */
 	public GridItem getItem(int index) {
 		checkWidget();
-		if(!hasChildren)
+		if (!hasChildren)
 			throw new IllegalArgumentException("GridItem has no children!");
 		return children.get(index);
 	}
@@ -855,7 +850,7 @@ public class GridItem extends Item {
 	 */
 	public int getItemCount() {
 		checkWidget();
-		if(!hasChildren)
+		if (!hasChildren)
 			return 0;
 		return children.size();
 	}
@@ -889,9 +884,9 @@ public class GridItem extends Item {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		if (item.isDisposed())
 			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
-		if(!hasChildren)
+		if (!hasChildren)
 			throw new IllegalArgumentException("GridItem has no children!");
-		
+
 		return children.indexOf(item);
 	}
 
@@ -913,7 +908,7 @@ public class GridItem extends Item {
 	 *             </ul>
 	 */
 	public GridItem[] getItems() {
-		if(!hasChildren)
+		if (!hasChildren)
 			return new GridItem[0];
 		return children.toArray(new GridItem[children.size()]);
 	}
@@ -1028,8 +1023,9 @@ public class GridItem extends Item {
 	 * @throws SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
-	 *             </li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from
-	 *             the thread that created the receiver</li>
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
 	public boolean isExpanded() {
@@ -1066,7 +1062,6 @@ public class GridItem extends Item {
 		for (int i = 0; i < getParent().getColumnCount(); i++) {
 			setBackground(i, background);
 		}
-
 		defaultBackground = background;
 		parent.redraw();
 	}
@@ -1197,8 +1192,9 @@ public class GridItem extends Item {
 	 * @throws SWTException
 	 *             <ul>
 	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
-	 *             </li> <li>ERROR_THREAD_INVALID_ACCESS - if not called from
-	 *             the thread that created the receiver</li>
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
 	 *             </ul>
 	 */
 	public void setExpanded(boolean expanded) {
@@ -1207,35 +1203,7 @@ public class GridItem extends Item {
 
 		// We must unselect any items that are becoming invisible
 		// and thus if we change the selection we have to fire a selection event
-		boolean unselected = false;
-
-		if (hasChildren)
-			for (GridItem item : children)
-			{
-				item.setVisible(expanded && visible);
-				if (!expanded)
-				{
-					if (!getParent().getCellSelectionEnabled())
-					{
-						if (getParent().isSelected(item))
-						{
-							unselected = true;
-							getParent().deselect(item.getRowIndex());
-						}
-						if (deselectChildren(item))
-						{
-							unselected = true;
-						}
-					}
-					else
-					{
-						if (deselectCells(item))
-						{
-							unselected = true;
-						}
-					}
-				}
-			}
+		boolean unselected = doUnselect(expanded);
 
 		this.getParent().topIndex = NO_ROW;
 		this.getParent().bottomIndex = NO_ROW;
@@ -1253,6 +1221,31 @@ public class GridItem extends Item {
 		if (getParent().getCellSelectionEnabled()) {
 			getParent().updateColumnSelection();
 		}
+	}
+
+	private boolean doUnselect(boolean expanded) {
+		boolean unselected = false;
+
+		if (hasChildren)
+			for (GridItem item : children) {
+				item.setVisible(expanded && visible);
+				if (!expanded) {
+					if (!getParent().getCellSelectionEnabled()) {
+						if (getParent().isSelected(item)) {
+							unselected = true;
+							getParent().deselect(item.getRowIndex());
+						}
+						if (deselectChildren(item)) {
+							unselected = true;
+						}
+					} else {
+						if (deselectCells(item)) {
+							unselected = true;
+						}
+					}
+				}
+			}
+		return unselected;
 	}
 
 	private boolean deselectCells(GridItem item) {
@@ -1490,13 +1483,9 @@ public class GridItem extends Item {
 		parent.hasDifferingHeights = true;
 		if (isVisible()) {
 			int myIndex = this.getRowIndex();
-			if (parent.getTopIndex() <= myIndex && myIndex <= parent.getBottomIndex()) // note: cannot use
-																						// Grid#isShown()
-																						// here, because
-																						// that returns
-																						// false for
-																						// partially shown
-																						// items
+			// note: cannot use Grid#isShown() here, because that returns false
+			// for partially shown items
+			if (parent.getTopIndex() <= myIndex && myIndex <= parent.getBottomIndex())
 				parent.bottomIndex = NO_ROW;
 		}
 		parent.setScrollValuesObsolete();
@@ -1559,7 +1548,8 @@ public class GridItem extends Item {
 	 *            the new image
 	 * @throws IllegalArgumentException
 	 *             <ul>
-	 *             <li>ERROR_INVALID_ARGUMENT - if the image has been disposed</li>
+	 *             <li>ERROR_INVALID_ARGUMENT - if the image has been disposed
+	 *             </li>
 	 *             </ul>
 	 * @throws org.eclipse.swt.SWTException
 	 *             <ul>
@@ -1625,7 +1615,7 @@ public class GridItem extends Item {
 	 *            child to remove
 	 */
 	private void remove(GridItem child) {
-		if(!hasChildren)
+		if (!hasChildren)
 			throw new IllegalArgumentException("GridItem has no children!");
 		children.remove(child);
 		parent.getDataVisualizer().clearRow(child);
@@ -1657,8 +1647,7 @@ public class GridItem extends Item {
 			children = new ArrayList<GridItem>();
 		if (index == NO_ROW) {
 			children.add(item);
-		}
-		else {
+		} else {
 			children.add(index, item);
 		}
 	}
@@ -1690,8 +1679,7 @@ public class GridItem extends Item {
 
 		if (visible) {
 			parent.updateVisibleItems(1);
-		}
-		else {
+		} else {
 			parent.updateVisibleItems(NO_ROW);
 		}
 
@@ -1804,7 +1792,8 @@ public class GridItem extends Item {
 		if (text != headerText) {
 			GC gc = new GC(parent);
 
-			int oldWidth = headerText == null ? 0 : parent.getRowHeaderRenderer().computeSize(gc, SWT.DEFAULT, SWT.DEFAULT, this).x;
+			int oldWidth = headerText == null ? 0
+					: parent.getRowHeaderRenderer().computeSize(gc, SWT.DEFAULT, SWT.DEFAULT, this).x;
 
 			this.headerText = text;
 
@@ -1992,8 +1981,7 @@ public class GridItem extends Item {
 			event.item = this;
 			if (parentItem == null) {
 				event.index = getRowIndex();
-			}
-			else {
+			} else {
 				event.index = parentItem.indexOf(this);
 			}
 			getParent().notifyListeners(SWT.SetData, event);
@@ -2009,9 +1997,8 @@ public class GridItem extends Item {
 	void initializeHeight(int height) {
 		this.height = height;
 	}
-	
-	void setHasSetData(boolean hasSetData)
-	{
+
+	void setHasSetData(boolean hasSetData) {
 		this.hasSetData = hasSetData;
 	}
 
@@ -2035,10 +2022,8 @@ public class GridItem extends Item {
 		headerForeground = null;
 
 		// Recursively clear children if requested.
-		if (allChildren && hasChildren)
-		{
-			for (int i = children.size() - 1; i >= 0; i--)
-			{
+		if (allChildren && hasChildren) {
+			for (int i = children.size() - 1; i >= 0; i--) {
 				children.get(i).clear(true);
 			}
 		}
@@ -2050,8 +2035,7 @@ public class GridItem extends Item {
 	 */
 	public void disposeOnly() {
 		if (hasChildren)
-			for (int i = children.size() - 1; i >= 0; i--)
-			{
+			for (int i = children.size() - 1; i >= 0; i--) {
 				children.get(i).disposeOnly();
 			}
 		if (parent.getDataVisualizer() != null) {
@@ -2061,10 +2045,8 @@ public class GridItem extends Item {
 		super.dispose();
 	}
 
-	private void noRow()
-	{
-		synchronized (ROW_LOCK)
-		{
+	private void noRow() {
+		synchronized (ROW_LOCK) {
 			row = NO_ROW;
 		}
 	}
