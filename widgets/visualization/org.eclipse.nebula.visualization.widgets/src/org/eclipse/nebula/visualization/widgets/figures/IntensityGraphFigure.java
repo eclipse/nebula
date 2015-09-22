@@ -580,9 +580,9 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 		}
 		
 		public void mouseReleased(MouseEvent me) {
-			if(!armed || end == null || start == null)
-				return;
-			zoom();
+			if(armed && end != null && start != null){
+				zoom();				
+			}
 			armed = false;
 			end = null; 
 			start = null;			
