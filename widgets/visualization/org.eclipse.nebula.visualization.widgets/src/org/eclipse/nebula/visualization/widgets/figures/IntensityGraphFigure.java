@@ -284,8 +284,8 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 			if(runMode){
 				setCursor(null);
 				GraphAreaZoomer zoomer = new GraphAreaZoomer();
-				addMouseMotionListener(zoomer);
-				addMouseListener(zoomer);				
+				IntensityGraphFigure.this.addMouseMotionListener(zoomer);
+				IntensityGraphFigure.this.addMouseListener(zoomer);				
 			}
 			setSinglePixelProfiling(isSingleLineProfiling());
 		}		
@@ -561,7 +561,9 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 
 		@Override
 		public void mouseMoved(MouseEvent me) {
-			graphArea.updateTextCursor(me);
+			if(graphArea.getClientArea().contains(me.getLocation())){
+				graphArea.updateTextCursor(me);
+			}
 		}
 
 		
