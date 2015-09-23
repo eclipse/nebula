@@ -138,7 +138,7 @@ public class XViewerCustomMenu {
       });
    }
 
-   public void setupMenuForHeader() {
+   protected void setupMenuForHeader() {
       MenuManager mm = xViewer.getMenuManager();
       setupMenuForHeader(mm);
    }
@@ -157,7 +157,7 @@ public class XViewerCustomMenu {
       menuManager.add(uniqueValues);
    }
 
-   public void setupMenuForTable() {
+   protected void setupMenuForTable() {
       MenuManager mm = xViewer.getMenuManager();
       setupMenuForTable(mm);
    }
@@ -496,7 +496,7 @@ public class XViewerCustomMenu {
       xViewer.refresh();
    }
 
-   public void setupActions() {
+   protected void setupActions() {
       showColumn = new Action(XViewerText.get("menu.show")) { //$NON-NLS-1$
          @Override
          public void run() {
