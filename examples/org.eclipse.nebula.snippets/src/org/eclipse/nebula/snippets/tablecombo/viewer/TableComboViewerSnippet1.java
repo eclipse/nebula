@@ -12,10 +12,16 @@
 package org.eclipse.nebula.snippets.tablecombo.viewer;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
+
+import javax.swing.plaf.multi.MultiSliderUI;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableColorProvider;
@@ -49,10 +55,12 @@ public class TableComboViewerSnippet1 {
 	private static Image testImage;
 	private static Image test2Image;
 	private static Image test3Image;
+	private static Color grey;
 	private static Color darkRed;
 	private static Color darkBlue;
 	private static Color darkGreen;
 	private static List modelList;
+	private static List multiSelectionList;
 	private static Text listenerResults;
 	private static Group listenerGroup;
 
@@ -79,9 +87,12 @@ public class TableComboViewerSnippet1 {
 		darkRed = Display.getCurrent().getSystemColor(SWT.COLOR_DARK_RED);
 		darkBlue = Display.getCurrent().getSystemColor(SWT.COLOR_DARK_BLUE);
 		darkGreen = Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GREEN);
+		grey = Display.getCurrent().getSystemColor(SWT.COLOR_GRAY);
 		
 		// load the model list.
 		modelList = loadModel();
+		// create list for multi selection example
+		multiSelectionList = new ArrayList();
 		
 		// create a new shell.
 		Shell shell = new Shell (display);
@@ -305,6 +316,38 @@ public class TableComboViewerSnippet1 {
 		// add listener
 		tcv.addSelectionChangedListener(new ItemSelected("Sample7"));
 		
+		////////////////////////////////////////////////////////////////////////
+		// Sample #8
+		////////////////////////////////////////////////////////////////////////
+		// create label
+		label = new Label(group, SWT.NONE);
+		label.setText("MultiSelection (Keep Pupup Open):");
+
+		// create TableCombo
+		tcv = new TableComboViewer(group, SWT.READ_ONLY | SWT.BORDER);
+		tcv.getTableCombo().setLayoutData(new GridData(125, SWT.DEFAULT));
+		tcv.getTableCombo().setShowTableHeader(true);
+
+		// set the content provider
+		tcv.setContentProvider(ArrayContentProvider.getInstance());
+
+		// set the label provider
+		tcv.setLabelProvider(new MultiSelectionLabelProvider());
+
+		// tell the TableCombo that I want 3 columns autosized with the following column headers.
+		tcv.getTableCombo().defineColumns(new String[] { "Id", "Description", "Computed" });
+
+		// do not allow editable
+		tcv.getTableCombo().setEditable(false);
+
+		// keep popup open after selection
+		tcv.getTableCombo().setClosePopupAfterSelection(false);
+
+		// load the data
+		tcv.setInput(modelList);
+
+		// add listener
+		tcv.addSelectionChangedListener(new MultiItemSelected("Sample8"));
 		
 		shell.open();
 
@@ -479,6 +522,37 @@ public class TableComboViewerSnippet1 {
 		}		
 	}
 	
+	private static class MultiSelectionLabelProvider extends ThreeLabelProvider {
+		/* (non-Javadoc) 
+		 * @see org.eclipse.jface.viewers.ITableColorProvider#getBackground(java.lang.Object, int)
+		 */
+		public Color getBackground(Object element, int columnIndex) {
+			if (isSelected(element)) {
+				return grey;
+			}
+			return null;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ITableColorProvider#getForeground(java.lang.Object, int)
+		 */
+		public Color getForeground(Object element, int columnIndex) {
+			return null;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ITableFontProvider#getFont(java.lang.Object, int)
+		 */
+		public Font getFont(Object element, int index) {
+			return null;
+		}
+
+		private boolean isSelected(Object element) {
+			Model item = (Model) element;
+			return multiSelectionList.contains(Integer.valueOf(item.getId()));
+		}
+	}
+	
 	private static class MultipleColorLabelProvider extends LabelProvider implements ITableLabelProvider, ITableColorProvider, ITableFontProvider {
 		/**
 		 * We return null, because we don't support images yet.
@@ -589,6 +663,51 @@ public class TableComboViewerSnippet1 {
 
 			listenerGroup.setText("Listener Results - (" + text + ")");
 			listenerResults.setText(model.toString());
+		}
+	}
+	
+	private static class MultiItemSelected implements ISelectionChangedListener {
+
+		private String text;
+
+		public MultiItemSelected(String text) {
+			this.text = text;
+		}
+
+		public void selectionChanged(SelectionChangedEvent event) {
+			listenerGroup.setText("Listener Results - (" + text + ")");
+
+			Model model = (Model) ((IStructuredSelection) event.getSelection()).getFirstElement();
+			toggleSelection(model);
+
+			String selectionText = getSelectionText();
+			listenerResults.setText(selectionText);
+
+			TableComboViewer viewer = ((TableComboViewer) event.getSource());
+			viewer.getTableCombo().setText(selectionText);
+			viewer.update(model, null);
+		}
+
+		private void toggleSelection(Model model) {
+			Integer boxedID = Integer.valueOf(model.getId());
+			if (multiSelectionList.contains(boxedID)) {
+				multiSelectionList.remove(boxedID);
+			} else {
+				multiSelectionList.add(boxedID);
+				Collections.sort(multiSelectionList);
+			}
+		}
+
+		private String getSelectionText() {
+			Iterator it = multiSelectionList.iterator();
+			String selectionText = "";
+			if (it.hasNext()) {
+				selectionText += it.next();
+			}
+			while (it.hasNext()) {
+				selectionText += ", " + it.next();
+			}
+			return selectionText;
 		}
 	}
 }

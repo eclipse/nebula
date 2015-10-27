@@ -261,6 +261,35 @@ public class TableComboSnippet1 {
 		// add listener
 		tc.addSelectionListener(new ItemSelected(tc, "Sample7"));
 		
+		////////////////////////////////////////////////////////////////////////
+		// Sample #8
+		////////////////////////////////////////////////////////////////////////
+		// create label
+		label = new Label(group, SWT.NONE);
+		label.setText("Keep popup open");
+		
+		// create TableCombo
+		tc = new TableCombo(group, SWT.BORDER | SWT.READ_ONLY);
+		tc.setLayoutData(new GridData(125, SWT.DEFAULT));
+
+		// tell the TableCombo that I want 3 columns autosized with the following column headers.
+		tc.defineColumns(new String[] { "Id", "Description", "Computed"});
+		
+		// set which column will be used for the selected item.
+		tc.setDisplayColumnIndex(2);
+		
+		// turn on the table header.
+		tc.setShowTableHeader(true);
+
+		// load the dataset.
+		loadThreeColumnDatasetWithColorsAndFonts(tc.getTable());
+		
+		// add listener
+		tc.addSelectionListener(new ItemSelected(tc, "Sample8"));
+		
+		// keep popup open after selecting an element
+		tc.setClosePopupAfterSelection(false);
+		
 		// open the shell.
 		shell.open();
 

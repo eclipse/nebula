@@ -13,6 +13,7 @@
  *  Enrico Schnepel <enrico.schnepel@randomice.net> - help event listener bug 326285
  *  Andreas Ehret <> - patch for bug 334786
  *  Thorsten Hake <mail@thorsten-hake.com> - fix for bug 415868
+ *  Stefan Dirix <sdirix@eclipsesource.com> - offer popup to keep open bug 480298
  *****************************************************************************/
 
 package org.eclipse.nebula.widgets.tablecombo;
@@ -100,6 +101,7 @@ public class TableCombo extends Composite {
     private boolean showImageWithinSelection = true;
     private boolean showColorWithinSelection = true ;
     private boolean showFontWithinSelection = true;
+    private boolean closePupupAfterSelection = true;
 
     
 	/**
@@ -475,7 +477,7 @@ public class TableCombo extends Composite {
 	            dropDown (false);
 	            break;
 	        case SWT.Resize:
-	            internalLayout (false);
+	            internalLayout (false, true);
 	            break;
 	    }
 	}
@@ -1249,9 +1251,10 @@ public class TableCombo extends Composite {
 	/**
 	 * This method is invoked when a resize event occurs.
 	 * @param changed
+	 * @param closeDropDown
 	 */
-	private void internalLayout (boolean changed) {
-	    if (isDropped ()) dropDown (false);
+	private void internalLayout (boolean changed, boolean closeDropDown) {
+	    if (closeDropDown && isDropped ()) dropDown (false);
 	    Rectangle rect = getClientArea ();
 	    int width = rect.width;
 	    int height = rect.height;
@@ -1319,7 +1322,7 @@ public class TableCombo extends Composite {
 	        }
 	        case SWT.MouseUp: {
 	            if (event.button != 1) return;
-	            dropDown (false);
+	            if (closePupupAfterSelection) dropDown (false);
 	            break;
 	        }
 	        case SWT.Selection: {
@@ -1660,7 +1663,7 @@ public class TableCombo extends Composite {
 	    this.font = font;
 	    text.setFont (font);
 	    table.setFont (font);
-	    internalLayout (true);
+	    internalLayout (true, true);
 	}
 	
     /**
@@ -1998,6 +2001,15 @@ public class TableCombo extends Composite {
 	}
 	
 	/**
+	 * Modifies the behavior of the popup after an entry was selected. If
+	 * {@code true} the popup will be closed, if {@code false} it will remain open.
+	 * @param closePopupAfterSelection
+	 */
+	public void setClosePopupAfterSelection(boolean closePopupAfterSelection) {
+		this.closePupupAfterSelection = closePopupAfterSelection;
+	}
+	
+	/**
 	 * returns the column index of the TableColumn to be displayed when selected.
 	 * @return
 	 */
@@ -2042,7 +2054,7 @@ public class TableCombo extends Composite {
     	    selectedImage.setImage(tableItem.getImage(colIndexToUse));
 
     	    // refresh the layout of the widget
-    	    internalLayout(false);
+    	    internalLayout(false, closePupupAfterSelection);
         }
         
         // set color if requested

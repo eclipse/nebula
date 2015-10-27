@@ -55,6 +55,7 @@ public class TableComboExampleTab extends AbstractExampleTab {
 	private Spinner numOfRowsDisplayed;
 	private Button  showImageInCombo;
 	private Button  showCustomFontInCombo;
+	private Button closePopupAfterSelection;
 	
 	private static Font boldFont;
 	private static Image testImage;
@@ -117,6 +118,7 @@ public class TableComboExampleTab extends AbstractExampleTab {
 		tableCombo.setShowImageWithinSelection(showImageInSelection.getSelection());
 		tableCombo.setShowColorWithinSelection(showCustomFontInSelection.getSelection());
 		tableCombo.setShowFontWithinSelection(showCustomFontInSelection.getSelection());
+		tableCombo.setClosePopupAfterSelection(closePopupAfterSelection.getSelection());
 		tableCombo.setTableWidthPercentage(tableWidthPct.getSelection());
 		tableCombo.setVisibleItemCount(numOfRowsDisplayed.getSelection());
 		
@@ -183,6 +185,11 @@ public class TableComboExampleTab extends AbstractExampleTab {
 		showCustomFontInSelection = ButtonFactory.create(gp,SWT.CHECK, "Show Custom Font In Selection", recreateListener , true);
 		showCustomFontInSelection.setLayoutData(gd);
 		showCustomFontInSelection.setToolTipText("Sets whether or not to display custom fonts in the selected text.");
+		
+		// create closePopupAfterSelection checkbox
+		closePopupAfterSelection = ButtonFactory.create(gp,SWT.CHECK, "Close Popup After Selection", recreateListener , true);
+		closePopupAfterSelection.setLayoutData(gd);
+		closePopupAfterSelection.setToolTipText("Sets wheter or not to keep the popup after a selection occured.");
 		
 		// create table width percentage composite.
         Label l = new Label(gp,SWT.NONE);
