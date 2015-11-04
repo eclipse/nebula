@@ -10,6 +10,7 @@
  *    Wim Jongman - https://bugs.eclipse.org/bugs/show_bug.cgi?id=362181
  *    Scott Klein - https://bugs.eclipse.org/bugs/show_bug.cgi?id=370605
  *    Baruch Youssin - https://bugs.eclipse.org/bugs/show_bug.cgi?id=261414
+ *    Doug Showell - https://bugs.eclipse.org/bugs/show_bug.cgi?id=383589
  *****************************************************************************/
 
 package org.eclipse.nebula.widgets.cdatetime;
@@ -2041,6 +2042,11 @@ public class CDateTime extends BaseCombo {
 	 * @see CDateTime#updateText()
 	 */
 	void verify(Event e) {
+		// we don't want to reprocess the event
+		if(e.doit == false){
+			return;
+		}
+		
 		e.doit = false;
 		if (field.length == 0 || activeField == FIELD_NONE)
 			return;
