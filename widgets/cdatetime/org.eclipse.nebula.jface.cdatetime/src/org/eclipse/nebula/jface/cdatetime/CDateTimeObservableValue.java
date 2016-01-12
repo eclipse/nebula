@@ -44,22 +44,28 @@ public class CDateTimeObservableValue extends AbstractObservableValue {
 	protected Date currentSelection;
 
 	private SelectionListener listener = new SelectionListener() {
+		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 			if (!updating) {
-				Date newSelection = CDateTimeObservableValue.this.dateTime
-						.getSelection();
-				fireValueChange(Diffs.createValueDiff(currentSelection,
-						newSelection));
+				Date newSelection = CDateTimeObservableValue.this.dateTime.getSelection();
+				if (((newSelection != null) && !newSelection.equals(currentSelection)) 
+						|| ((currentSelection != null) && !currentSelection.equals(newSelection))) {
+					
+					fireValueChange(Diffs.createValueDiff(currentSelection,	newSelection));
+				}
 				currentSelection = newSelection;
 			}
 		}
 
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			if (!updating) {
-				Date newSelection = CDateTimeObservableValue.this.dateTime
-						.getSelection();
-				fireValueChange(Diffs.createValueDiff(currentSelection,
-						newSelection));
+				Date newSelection = CDateTimeObservableValue.this.dateTime.getSelection();
+				if (((newSelection != null) && !newSelection.equals(currentSelection)) 
+						|| ((currentSelection != null) && !currentSelection.equals(newSelection))) {
+					
+					fireValueChange(Diffs.createValueDiff(currentSelection, newSelection));
+				}
 				currentSelection = newSelection;
 			}
 		}
@@ -83,6 +89,7 @@ public class CDateTimeObservableValue extends AbstractObservableValue {
 		super.dispose();
 	}
 
+	@Override
 	protected Object doGetValue() {
 		if (!dateTime.isDisposed()) {
 			return dateTime.getSelection();
@@ -90,6 +97,7 @@ public class CDateTimeObservableValue extends AbstractObservableValue {
 		return null;
 	}
 
+	@Override
 	protected void doSetValue(Object value) {
 		if ((value instanceof Date || value == null) && !dateTime.isDisposed()) {
 			Date oldValue;
@@ -100,13 +108,18 @@ public class CDateTimeObservableValue extends AbstractObservableValue {
 				newValue = (Date) value;
 				dateTime.setSelection(newValue);
 				currentSelection = newValue;
-				fireValueChange(Diffs.createValueDiff(oldValue, newValue));
+				if (((oldValue != null) && !oldValue.equals(newValue)) 
+						|| ((newValue != null) && !newValue.equals(oldValue))) {
+					
+					fireValueChange(Diffs.createValueDiff(oldValue, newValue));
+				}
 			} finally {
 				updating = false;
 			}
 		}
 	}
 
+	@Override
 	public Object getValueType() {
 		return Date.class;
 	}
