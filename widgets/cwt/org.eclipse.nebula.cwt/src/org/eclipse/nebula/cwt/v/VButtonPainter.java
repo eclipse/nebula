@@ -20,7 +20,6 @@ import org.eclipse.swt.internal.theme.DrawData;
 import org.eclipse.swt.internal.theme.Theme;
 import org.eclipse.swt.widgets.Event;
 
-@SuppressWarnings("restriction")
 public class VButtonPainter extends VControlPainter {
 
 	@Override

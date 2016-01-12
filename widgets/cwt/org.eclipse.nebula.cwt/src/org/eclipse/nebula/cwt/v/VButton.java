@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Event;
 public class VButton extends VControl {
 
 	ImageData oldImageData;
-	boolean paintNative = true;
+	boolean paintNative = false;
 	boolean paintInactive = false;
 	private boolean armed = false;
 
