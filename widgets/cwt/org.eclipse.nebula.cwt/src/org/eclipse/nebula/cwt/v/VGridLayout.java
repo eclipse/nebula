@@ -255,8 +255,8 @@ public class VGridLayout extends VLayout {
 
 		int xslop = makeColumnsEqualWidth ? (int) Math.ceil((size.x - border - xconsumed - (grabWidth * xgrabbers)) / 2) + 1 : 0;
 
-		int xoffset = (parent instanceof VPanel) ? ((VPanel) parent).getBounds().x : 0;
-		int yoffset = (parent instanceof VPanel) ? ((VPanel) parent).getBounds().y : 0;
+		int xoffset = (parent != null) ? parent.getBounds().x : 0;
+		int yoffset = (parent != null) ? parent.getBounds().y : 0;
 		int initX = marginLeft + marginWidth;
 		int cellX = initX;
 		int cellY = marginTop + marginHeight;

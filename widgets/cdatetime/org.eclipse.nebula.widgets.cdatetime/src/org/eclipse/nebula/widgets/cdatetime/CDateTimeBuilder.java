@@ -12,7 +12,6 @@
 package org.eclipse.nebula.widgets.cdatetime;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import org.eclipse.swt.SWT;

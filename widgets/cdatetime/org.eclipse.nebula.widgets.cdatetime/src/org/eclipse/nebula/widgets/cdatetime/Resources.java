@@ -100,7 +100,7 @@ class Resources {
 	}
 
 	public static String getString(String key, Locale locale) {
-		ResourceBundle bundle = (ResourceBundle) bundles.get(locale);
+		ResourceBundle bundle = bundles.get(locale);
 		if (bundle == null) {
 			bundle = ResourceBundle.getBundle(BUNDLE_NAME, locale);
 			bundles.put(locale, bundle); 
