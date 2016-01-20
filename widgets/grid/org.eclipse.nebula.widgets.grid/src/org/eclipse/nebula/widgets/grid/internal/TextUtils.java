@@ -17,6 +17,11 @@ import org.eclipse.swt.graphics.GC;
  * base java API.
  * 
  * @author chris.gross@us.ibm.com
+ * @author Mirko Paturzo <mirko.paturzo@exeura.eu>
+ *
+ * Mirko modified the pivot calculation for improve short text provider performance. 
+ * The pivot number is calculate starting from the size of the cell provided
+ * 
  * @since 2.0.0
  */
 public class TextUtils
@@ -79,7 +84,7 @@ public class TextUtils
 
         return text;
     }
-
+    
     /**
      * Shortens a supplied string so that it fits within the area specified by
      * the width argument. Strings that have been shorted have an "..." attached
@@ -93,7 +98,6 @@ public class TextUtils
      */
     public static String getShortString(GC gc, String t, int width)
     {
-
         if (t == null)
         {
             return null;
@@ -104,17 +108,20 @@ public class TextUtils
             return "";
         }
 
-        if (width >= gc.stringExtent(t).x)
+        int textWidth = gc.stringExtent(t).x;
+        
+		if (width >= textWidth)
         {
             return t;
         }
-
-        int w = gc.stringExtent("...").x;
-        String text = t;
-        int l = text.length();
-        int pivot = l / 2;
+		String text = t;
+		int l = text.length();
+		int w = gc.stringExtent("...").x;
+		double midChar = (double)textWidth / l;
+		int pivot = (int) ((width / midChar) / 2);
         int s = pivot;
-        int e = pivot + 1;
+        int e = l - pivot + 1;
+
         while (s >= 0 && e < l)
         {
             String s1 = text.substring(0, s);
@@ -143,5 +150,6 @@ public class TextUtils
      */
     protected TextUtils()
     {
+    	//is empty
     }
 }
