@@ -3,14 +3,13 @@ package org.eclipse.nebula.snippets.grid.viewer;
 import java.io.StringWriter;
 
 /*******************************************************************************
- * Copyright (c) 2006 Tom Schindl and others.
+ * Copyright (c) 2016 Mirko Paturzo (Exeura srl).
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl - initial API and implementation
  *     Mirko Paturzo - improve Grid Export, dispose, fonts and background
  *     				   functional changes
  *******************************************************************************/

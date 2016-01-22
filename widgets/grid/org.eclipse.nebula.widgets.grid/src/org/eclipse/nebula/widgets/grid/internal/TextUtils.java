@@ -146,9 +146,9 @@ public class TextUtils
     }
 
     /**
-     * Protected constructor to prevent instantiation.
+     * private constructor to prevent instantiation.
      */
-    protected TextUtils()
+    private TextUtils()
     {
     	//is empty
     }
