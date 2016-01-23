@@ -30,12 +30,10 @@ import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.draw2d.MouseEvent;
 import org.eclipse.draw2d.MouseListener;
 import org.eclipse.draw2d.MouseMotionListener;
-import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.XYLayout;
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.LocalSelectionTransfer;
+import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -45,7 +43,6 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.nebula.widgets.treemapper.internal.Activator;
 import org.eclipse.nebula.widgets.treemapper.internal.LinkFigure;
 import org.eclipse.nebula.widgets.treemapper.internal.Messages;
 import org.eclipse.swt.SWT;
@@ -349,9 +346,9 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 			boolean leftItemVisible = true;
 			TreeItem leftTreeItem = (TreeItem) leftTreeViewer.testFindItem(semanticSupport.resolveLeftItem(mapping));
 			if (leftTreeItem == null) {
-				Activator.getDefault().getLog().log(
+				Policy.getLog().log(
 						new Status(IStatus.ERROR,
-								Activator.PLUGIN_ID,
+								"org.eclipse.nebula.widgets.treemapper",
 								"Could not find left entry of mapping " + mapping.toString() + " in left treeViewer."));
 				return false;
 			}
@@ -371,9 +368,9 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 			boolean rightItemVisible = true;
 			TreeItem rightTreeItem = (TreeItem) rightTreeViewer.testFindItem(semanticSupport.resolveRightItem(mapping));
 			if (rightTreeItem == null) {
-				Activator.getDefault().getLog().log(
+				Policy.getLog().log(
 						new Status(IStatus.ERROR,
-								Activator.PLUGIN_ID,
+								"org.eclipse.nebula.widgets.treemapper",
 								"Could not find right entry of mapping " + mapping.toString() + " in right treeViewer."));
 				return false;
 			}

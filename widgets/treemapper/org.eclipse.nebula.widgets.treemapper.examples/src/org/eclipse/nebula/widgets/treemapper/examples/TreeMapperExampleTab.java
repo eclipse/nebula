@@ -17,6 +17,7 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.eclipse.nebula.examples.AbstractExampleTab;
 import org.eclipse.nebula.widgets.treemapper.TreeMapper;
 import org.eclipse.nebula.widgets.treemapper.TreeMapperUIConfigProvider;
 import org.eclipse.nebula.widgets.treemapper.examples.DOMSemanticTreeMapperSupport.DOMMappingBean;
@@ -24,7 +25,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.nebula.examples.AbstractExampleTab;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.w3c.dom.Document;

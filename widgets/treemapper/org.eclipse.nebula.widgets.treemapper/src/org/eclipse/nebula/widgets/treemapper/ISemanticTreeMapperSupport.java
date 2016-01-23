@@ -10,9 +10,6 @@
 *******************************************************************************/
 package org.eclipse.nebula.widgets.treemapper;
 
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.TreeViewer;
-
 /**
  *
  * This interface is the binding between the business object that holds the mapping,
