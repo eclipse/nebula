@@ -272,7 +272,7 @@ public class RoundScaleTickLabels extends Figure {
     	tickLabelAreas.clear();
     	for(int i=0; i<tickLabelPositions.size(); i++) {
     		Dimension ls = FigureUtilities.getTextExtents(tickLabels.get(i), scale.getFont());
-    		if(scale.getTickLablesSide() == LabelSide.Primary)	
+    		if(scale.getTickLabelSide() == LabelSide.Primary)	
     			lableRadius = (int) (scale.getRadius() + 
     					RoundScaleTickMarks.MAJOR_TICK_LENGTH + RoundScale.SPACE_BTW_MARK_LABEL +
     						ls.width/2.0 * Math.abs(Math.cos(tickLabelPositions.get(i))) + 

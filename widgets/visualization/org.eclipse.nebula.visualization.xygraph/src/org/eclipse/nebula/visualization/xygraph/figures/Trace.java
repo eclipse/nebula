@@ -576,13 +576,13 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 					final boolean valueIsNaN = Double.isNaN(dp.getYValue());
 					if (dpInXRange && valueIsNaN) {
 						Point markPos = new Point(xAxis.getValuePosition(dp.getXValue(), false),
-								yAxis.getValuePosition(xAxis.getTickLablesSide() == LabelSide.Primary ? yAxis
+								yAxis.getValuePosition(xAxis.getTickLabelSide() == LabelSide.Primary ? yAxis
 										.getRange().getLower() : yAxis.getRange().getUpper(), false));
 						graphics.setBackgroundColor(traceColor);
 						graphics.fillRectangle(markPos.x - MARKER_SIZE / 2, markPos.y - MARKER_SIZE / 2, MARKER_SIZE,
 								MARKER_SIZE);
 						Sample nanSample = new Sample(dp.getXValue(),
-								xAxis.getTickLablesSide() == LabelSide.Primary ? yAxis.getRange().getLower() : yAxis
+								xAxis.getTickLabelSide() == LabelSide.Primary ? yAxis.getRange().getLower() : yAxis
 										.getRange().getUpper(), dp.getYPlusError(), dp.getYMinusError(), Double.NaN,
 								dp.getXMinusError(), dp.getInfo());
 						hotSampleist.add(nanSample);

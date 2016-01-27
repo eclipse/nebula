@@ -141,7 +141,7 @@ public class RoundScaleTickMarks extends Figure {
                 double theta = tickLabelPositions.get(i);            
                 Point startP = new PolarPoint(r, theta).toRelativePoint(scale.getBounds());
                 Point endP; 
-                if (scale.getTickLablesSide() == LabelSide.Primary)
+                if (scale.getTickLabelSide() == LabelSide.Primary)
                 	endP = new PolarPoint(
                 			r + tickLength, theta).toRelativePoint(scale.getBounds());
                 else
@@ -155,7 +155,7 @@ public class RoundScaleTickMarks extends Figure {
                 double theta = tickLabelPositions.get(i);            
                 Point startP = new PolarPoint(r, theta).toRelativePoint(scale.getBounds());
                 Point endP; 
-                if (scale.getTickLablesSide() == LabelSide.Primary)
+                if (scale.getTickLabelSide() == LabelSide.Primary)
                 	endP = new PolarPoint(
                 			r + MAJOR_TICK_LENGTH, theta).toRelativePoint(scale.getBounds());
                 else
@@ -214,7 +214,7 @@ public class RoundScaleTickMarks extends Figure {
 		Point minorStartP = new PolarPoint(
 					r, t).toRelativePoint(scale.getBounds());
 		Point minorEndP;
-		if(scale.getTickLablesSide() == LabelSide.Primary)	
+		if(scale.getTickLabelSide() == LabelSide.Primary)	
 			 minorEndP =  new PolarPoint(
 					r + MINOR_TICK_LENGTH, t).toRelativePoint(scale.getBounds());
 		else

@@ -271,7 +271,7 @@ public class XYGraph extends Figure {
 		for (int i = xAxisList.size() - 1; i >= 0; i--) {
 			Axis xAxis = xAxisList.get(i);
 			Dimension xAxisSize = xAxis.getPreferredSize(clientArea.width, clientArea.height);
-			if (xAxis.getTickLablesSide() == LabelSide.Primary) {
+			if (xAxis.getTickLabelSide() == LabelSide.Primary) {
 				if (xAxis.isVisible())
 					hasBottomXAxis = true;
 				xAxis.setBounds(new Rectangle(clientArea.x, clientArea.y + clientArea.height - xAxisSize.height,
@@ -293,7 +293,7 @@ public class XYGraph extends Figure {
 			if (hintHeight > getClientArea().height)
 				hintHeight = clientArea.height;
 			Dimension yAxisSize = yAxis.getPreferredSize(clientArea.width, hintHeight);
-			if (yAxis.getTickLablesSide() == LabelSide.Primary) { // on the left
+			if (yAxis.getTickLabelSide() == LabelSide.Primary) { // on the left
 				if (yAxis.isVisible())
 					hasLeftYAxis = true;
 				yAxis.setBounds(new Rectangle(clientArea.x, clientArea.y - (hasTopXAxis ? yAxis.getMargin() : 0),

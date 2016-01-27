@@ -246,17 +246,17 @@ public class LinearScale extends AbstractScale {
 		super.layout();
 		updateTick();
 		Rectangle area = getClientArea();
-		if (isHorizontal() && getTickLablesSide() == LabelSide.Primary) {
+		if (isHorizontal() && getTickLabelSide() == LabelSide.Primary) {
 			tickLabels.setBounds(new Rectangle(area.x, area.y + LinearScaleTickMarks.MAJOR_TICK_LENGTH
 					+ SPACE_BTW_MARK_LABEL, area.width, area.height - LinearScaleTickMarks.MAJOR_TICK_LENGTH));
 			tickMarks.setBounds(area);
-		} else if (isHorizontal() && getTickLablesSide() == LabelSide.Secondary) {
+		} else if (isHorizontal() && getTickLabelSide() == LabelSide.Secondary) {
 			tickLabels.setBounds(new Rectangle(area.x, area.y + area.height - LinearScaleTickMarks.MAJOR_TICK_LENGTH
 					- tickLabels.getTickLabelMaxHeight() - SPACE_BTW_MARK_LABEL, area.width, tickLabels
 					.getTickLabelMaxHeight()));
 			tickMarks.setBounds(new Rectangle(area.x, area.y + area.height - LinearScaleTickMarks.MAJOR_TICK_LENGTH,
 					area.width, LinearScaleTickMarks.MAJOR_TICK_LENGTH));
-		} else if (getTickLablesSide() == LabelSide.Primary) {
+		} else if (getTickLabelSide() == LabelSide.Primary) {
 			tickLabels.setBounds(new Rectangle(area.x + area.width - LinearScaleTickMarks.MAJOR_TICK_LENGTH
 					- tickLabels.getTickLabelMaxLength() - SPACE_BTW_MARK_LABEL, area.y, tickLabels
 					.getTickLabelMaxLength(), area.height));

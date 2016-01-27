@@ -60,7 +60,7 @@ public abstract class AbstractScale extends Figure {
 	private static final Map<String, Format> formatCache = new HashMap<String, Format>();
 
 	/** ticks label position */
-	private LabelSide tickLableSide = LabelSide.Primary;
+	private LabelSide tickLabelSide = LabelSide.Primary;
 
 	/** the default minimum value of log scale range */
 	public final static double DEFAULT_LOG_SCALE_MIN = 0.1d;
@@ -216,10 +216,20 @@ public abstract class AbstractScale extends Figure {
 	}
 
 	/**
+	 * Use the correctly spelled method instead
+	 * 
 	 * @return the side of the tick label relative to the tick marks
 	 */
+	@Deprecated
 	public LabelSide getTickLablesSide() {
-		return tickLableSide;
+		return tickLabelSide;
+	}
+
+	/**
+	 * @return the side of the tick label relative to the tick marks
+	 */
+	public LabelSide getTickLabelSide() {
+		return tickLabelSide;
 	}
 
 	/**
@@ -506,7 +516,7 @@ public abstract class AbstractScale extends Figure {
 	 *            the side of the tick label relative to tick mark
 	 */
 	public void setTickLableSide(LabelSide tickLabelSide) {
-		this.tickLableSide = tickLabelSide;
+		this.tickLabelSide = tickLabelSide;
 		revalidate();
 	}
 

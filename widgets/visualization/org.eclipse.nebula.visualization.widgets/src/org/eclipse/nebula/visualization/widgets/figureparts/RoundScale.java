@@ -232,7 +232,7 @@ public class RoundScale extends AbstractScale {
     public void updateTick() {
     	if(isDirty()){      		
     		//set radius
-        	if(getTickLablesSide() == LabelSide.Primary) {
+        	if(getTickLabelSide() == LabelSide.Primary) {
         		//set an estimated radius first
         		radius = bounds.width/2 - getEstimatedDonutWidth();        		
         		if(endAngle - startAngle > 0) {

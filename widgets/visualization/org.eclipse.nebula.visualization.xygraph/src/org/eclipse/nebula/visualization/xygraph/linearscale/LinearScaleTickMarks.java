@@ -66,9 +66,9 @@ public class LinearScaleTickMarks extends Figure {
 		int height = getSize().height;
 
 		if (scale.isHorizontal()) {
-			drawXTickMarks(graphics, tickLabelPositions, scale.getTickLablesSide(), width, height);
+			drawXTickMarks(graphics, tickLabelPositions, scale.getTickLabelSide(), width, height);
 		} else {
-			drawYTickMarks(graphics, tickLabelPositions, scale.getTickLablesSide(), width, height);
+			drawYTickMarks(graphics, tickLabelPositions, scale.getTickLabelSide(), width, height);
 		}
 	};
 
