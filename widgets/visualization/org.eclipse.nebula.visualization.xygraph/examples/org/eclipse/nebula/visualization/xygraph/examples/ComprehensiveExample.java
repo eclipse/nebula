@@ -17,6 +17,7 @@ import org.eclipse.draw2d.TreeSearch;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.CircularBufferDataProvider;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.Sample;
 import org.eclipse.nebula.visualization.xygraph.figures.Axis;
+import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.PlotArea;
 import org.eclipse.nebula.visualization.xygraph.figures.ToolbarArmedXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace;
@@ -90,7 +91,7 @@ public class ComprehensiveExample {
 	private static ToolbarArmedXYGraph createXYGraph() {
 		final Trace trace2;
 		final Trace trace3;
-		final XYGraph xyGraph;
+		final IXYGraph xyGraph;
 		Runnable updater;
 		final CircularBufferDataProvider trace2Provider;
 		final Trace trace4;
@@ -98,15 +99,15 @@ public class ComprehensiveExample {
 		xyGraph = new XYGraph();
 		xyGraph.setTitle("XY Graph Test");
 		xyGraph.setFont(XYGraphMediaFactory.getInstance().getFont(XYGraphMediaFactory.FONT_TAHOMA));
-		xyGraph.primaryXAxis.setTitle("Time");
-		xyGraph.primaryYAxis.setTitle("Amplitude");
-		xyGraph.primaryXAxis.setRange(new Range(0, 200));
-		xyGraph.primaryXAxis.setDateEnabled(true);
-		xyGraph.primaryYAxis.setAutoScale(true);
-		xyGraph.primaryXAxis.setAutoScale(true);
-		xyGraph.primaryXAxis.setShowMajorGrid(true);
-		xyGraph.primaryYAxis.setShowMajorGrid(true);
-		xyGraph.primaryXAxis.setAutoScaleThreshold(0);
+		xyGraph.getPrimaryXAxis().setTitle("Time");
+		xyGraph.getPrimaryYAxis().setTitle("Amplitude");
+		xyGraph.getPrimaryXAxis().setRange(new Range(0, 200));
+		xyGraph.getPrimaryXAxis().setDateEnabled(true);
+		xyGraph.getPrimaryYAxis().setAutoScale(true);
+		xyGraph.getPrimaryXAxis().setAutoScale(true);
+		xyGraph.getPrimaryXAxis().setShowMajorGrid(true);
+		xyGraph.getPrimaryYAxis().setShowMajorGrid(true);
+		xyGraph.getPrimaryXAxis().setAutoScaleThreshold(0);
 
 		final Axis x2Axis = new Axis("X-2", false);
 		x2Axis.setTickLableSide(LabelSide.Secondary);
@@ -133,7 +134,7 @@ public class ComprehensiveExample {
 		trace2Provider.setBufferSize(100);
 		trace2Provider.setUpdateDelay(100);
 
-		trace2 = new Trace("Trace 2", xyGraph.primaryXAxis, xyGraph.primaryYAxis, trace2Provider);
+		trace2 = new Trace("Trace 2", xyGraph.getPrimaryXAxis(), xyGraph.getPrimaryYAxis(), trace2Provider);
 		trace2.setDataProvider(trace2Provider);
 		trace2.setTraceType(TraceType.SOLID_LINE);
 		trace2.setLineWidth(1);
@@ -149,7 +150,7 @@ public class ComprehensiveExample {
 		trace2.setErrorBarCapWidth(3);
 
 		final CircularBufferDataProvider trace3Provider = new CircularBufferDataProvider(true);
-		trace3 = new Trace("Trace3", xyGraph.primaryXAxis, xyGraph.primaryYAxis, trace3Provider);
+		trace3 = new Trace("Trace3", xyGraph.getPrimaryXAxis(), xyGraph.getPrimaryYAxis(), trace3Provider);
 		trace3.setPointStyle(PointStyle.XCROSS);
 		trace3.setTraceType(TraceType.BAR);
 		trace3.setLineWidth(4);

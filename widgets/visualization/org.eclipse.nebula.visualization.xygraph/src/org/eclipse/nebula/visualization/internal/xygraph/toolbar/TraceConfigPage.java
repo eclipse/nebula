@@ -11,6 +11,7 @@ import java.util.Arrays;
 
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.nebula.visualization.xygraph.figures.Axis;
+import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace;
 import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace.BaseLine;
@@ -62,6 +63,17 @@ public class TraceConfigPage {
 
 	private Composite composite;
 
+	public TraceConfigPage(IXYGraph xyGraph, Trace trace) {
+		this((XYGraph) xyGraph, trace);
+	}
+
+	/**
+	 * Use {@link #TraceConfigPage(IXYGraph, Trace)} instead
+	 * 
+	 * @param xyGraph
+	 * @param trace
+	 */
+	@Deprecated
 	public TraceConfigPage(XYGraph xyGraph, Trace trace) {
 		this.xyGraph = xyGraph;
 		this.trace = trace;

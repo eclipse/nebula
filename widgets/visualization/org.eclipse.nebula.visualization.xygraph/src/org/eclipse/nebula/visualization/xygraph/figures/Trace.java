@@ -238,7 +238,7 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	 */
 	private Color errorBarColor;
 	private boolean drawYErrorInArea = false;
-	private XYGraph xyGraph;
+	private IXYGraph xyGraph;
 
 	private List<ISample> hotSampleist;
 
@@ -1605,18 +1605,41 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	}
 
 	/**
+	 * 
 	 * @param xyGraph
 	 *            the xyGraph to set
 	 */
+	public void setXYGraph(IXYGraph xyGraph) {
+		this.xyGraph = xyGraph;
+	}
+
+	/**
+	 * Use {@link #setXYGraph(IXYGraph)} instead
+	 * 
+	 * @param xyGraph
+	 *            the xyGraph to set
+	 */
+	@Deprecated
 	public void setXYGraph(XYGraph xyGraph) {
 		this.xyGraph = xyGraph;
 	}
 
 	/**
+	 * 
 	 * @return the xyGraph
 	 */
-	public XYGraph getXYGraph() {
+	public IXYGraph getIXYGraph() {
 		return xyGraph;
+	}
+
+	/**
+	 * Use {@link #getIXYGraph()} instead
+	 * 
+	 * @return the xyGraph
+	 */
+	@Deprecated
+	public XYGraph getXYGraph() {
+		return (XYGraph)xyGraph;
 	}
 
 	public void axisForegroundColorChanged(Axis axis, Color oldColor, Color newColor) {

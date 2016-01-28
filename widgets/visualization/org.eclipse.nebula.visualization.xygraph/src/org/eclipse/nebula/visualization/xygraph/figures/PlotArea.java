@@ -64,7 +64,7 @@ public class PlotArea extends Figure {
 	}
 
 	public static final String BACKGROUND_COLOR = "background_color"; //$NON-NLS-1$
-	final private XYGraph xyGraph;
+	final private IXYGraph xyGraph;
 	final private List<Trace> traceList = new ArrayList<Trace>();
 	final private List<Grid> gridList = new ArrayList<Grid>();
 	final private List<Annotation> annotationList = new ArrayList<Annotation>();
@@ -82,6 +82,16 @@ public class PlotArea extends Figure {
 
 	private Color revertBackColor;
 
+	public PlotArea(final IXYGraph xyGraph) {
+		this((XYGraph) xyGraph);
+	}
+
+	/**
+	 * Use {@link #PlotArea(IXYGraph)} instead
+	 * 
+	 * @param xyGraph
+	 */
+	@Deprecated
 	public PlotArea(final XYGraph xyGraph) {
 		this.xyGraph = xyGraph;
 		setBackgroundColor(XYGraphMediaFactory.getInstance().getColor(255, 255, 255));

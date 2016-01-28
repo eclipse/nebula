@@ -11,6 +11,7 @@ import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.nebula.visualization.xygraph.Messages;
 import org.eclipse.nebula.visualization.xygraph.figures.Annotation;
 import org.eclipse.nebula.visualization.xygraph.figures.Axis;
+import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace;
 import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.Annotation.CursorLineStyle;
@@ -56,6 +57,17 @@ public class AnnotationConfigPage {
 	private Label yAxisLabel;
 	private Label colorLabel;
 
+	public AnnotationConfigPage(IXYGraph xyGraph, Annotation annotation) {
+		this((XYGraph) xyGraph, annotation);
+	}
+
+	/**
+	 * Use {@link #AnnotationConfigPage(IXYGraph, Annotation)} instead
+	 * 
+	 * @param xyGraph
+	 * @param annotation
+	 */
+	@Deprecated
 	public AnnotationConfigPage(XYGraph xyGraph, Annotation annotation) {
 		this.xyGraph = xyGraph;
 		this.annotation = annotation;

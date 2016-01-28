@@ -15,6 +15,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.nebula.visualization.internal.xygraph.undo.XYGraphConfigCommand;
 import org.eclipse.nebula.visualization.xygraph.figures.Annotation;
 import org.eclipse.nebula.visualization.xygraph.figures.Axis;
+import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace;
 import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 import org.eclipse.swt.SWT;
@@ -46,14 +47,25 @@ public class XYGraphConfigDialog extends Dialog {
 	private List<AnnotationConfigPage> annotationConfigPageList;
 	private List<AxisConfigPage> axisConfigPageList;
 	private List<TraceConfigPage> traceConfigPageList;
-	private XYGraph xyGraph;
+	private IXYGraph xyGraph;
 	private XYGraphConfigCommand command;
 	private boolean changed = false;
 
+	public XYGraphConfigDialog(Shell parentShell, IXYGraph xyGraph) {
+		this(parentShell, (XYGraph)xyGraph);
+	}
+
+	/**
+	 * Use {@link #XYGraphConfigDialog(Shell, IXYGraph)} instead
+	 * 
+	 * @param parentShell
+	 * @param xyGraph
+	 */
+	@Deprecated
 	public XYGraphConfigDialog(Shell parentShell, XYGraph xyGraph) {
 		super(parentShell);
 		this.xyGraph = xyGraph;
-		graphConfigPage = new GraphConfigPage(xyGraph);
+		graphConfigPage = new GraphConfigPage(this.xyGraph);
 		annotationConfigPageList = new ArrayList<AnnotationConfigPage>();
 		axisConfigPageList = new ArrayList<AxisConfigPage>();
 		traceConfigPageList = new ArrayList<TraceConfigPage>();

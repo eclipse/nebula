@@ -9,6 +9,7 @@ package org.eclipse.nebula.visualization.xygraph.examples;
  ******************************************************************************/
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.CircularBufferDataProvider;
+import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace;
 import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace.PointStyle;
@@ -31,7 +32,7 @@ public class SimpleExample {
 		final LightweightSystem lws = new LightweightSystem(shell);
 
 		// create a new XY Graph.
-		XYGraph xyGraph = new XYGraph();
+		IXYGraph xyGraph = new XYGraph();
 		xyGraph.setTitle("Simple Example");
 		// set it as the content of LightwightSystem
 		lws.setContents(xyGraph);
@@ -44,7 +45,7 @@ public class SimpleExample {
 		traceDataProvider.setCurrentYDataArray(new double[] { 11, 44, 55, 45, 88, 98, 52, 23 });
 
 		// create the trace
-		Trace trace = new Trace("Trace1-XY Plot", xyGraph.primaryXAxis, xyGraph.primaryYAxis, traceDataProvider);
+		Trace trace = new Trace("Trace1-XY Plot", xyGraph.getPrimaryXAxis(), xyGraph.getPrimaryYAxis(), traceDataProvider);
 
 		// set trace property
 		trace.setPointStyle(PointStyle.XCROSS);

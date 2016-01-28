@@ -12,6 +12,7 @@ import java.util.List;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.nebula.visualization.xygraph.Messages;
 import org.eclipse.nebula.visualization.xygraph.figures.Annotation;
+import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace;
 import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 import org.eclipse.swt.SWT;
@@ -28,6 +29,17 @@ import org.eclipse.swt.widgets.Shell;
 public class AddAnnotationDialog extends Dialog {
 	private AnnotationConfigPage configPage;
 
+	public AddAnnotationDialog(final Shell parentShell, final IXYGraph xyGraph) {
+		this(parentShell, (XYGraph)xyGraph);
+	}
+
+	/**
+	 * Use {@link #AddAnnotationDialog(Shell,IXYGraph)} instead
+	 * 
+	 * @param parentShell
+	 * @param xyGraph
+	 */
+	@Deprecated
 	public AddAnnotationDialog(final Shell parentShell, final XYGraph xyGraph) {
 		super(parentShell);
 
@@ -45,7 +57,7 @@ public class AddAnnotationDialog extends Dialog {
 		if (traces.size() > 0)
 			annotation = new Annotation(name, traces.get(0));
 		else
-			annotation = new Annotation(name, xyGraph.primaryXAxis, xyGraph.primaryYAxis);
+			annotation = new Annotation(name, xyGraph.getPrimaryXAxis(), xyGraph.getPrimaryYAxis());
 
 		// Allow user to tweak the settings
 		configPage = new AnnotationConfigPage(xyGraph, annotation);

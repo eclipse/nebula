@@ -8,6 +8,7 @@
 package org.eclipse.nebula.visualization.internal.xygraph.undo;
 
 import org.eclipse.nebula.visualization.xygraph.figures.Annotation;
+import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 
 /**
@@ -18,9 +19,20 @@ import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
  */
 public class RemoveAnnotationCommand implements IUndoableCommand {
 
-	private XYGraph xyGraph;
+	private IXYGraph xyGraph;
 	private Annotation annotation;
 
+	public RemoveAnnotationCommand(IXYGraph xyGraph, Annotation annotation) {
+		this((XYGraph)xyGraph, annotation);
+	}
+
+	/**
+	 * Use {@link #RemoveAnnotationCommand(IXYGraph, Annotation)} instead
+	 * 
+	 * @param xyGraph
+	 * @param annotation
+	 */
+	@Deprecated
 	public RemoveAnnotationCommand(XYGraph xyGraph, Annotation annotation) {
 		this.xyGraph = xyGraph;
 		this.annotation = annotation;

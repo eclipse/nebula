@@ -46,6 +46,16 @@ public class Legend extends RectangleFigure {
 
 	private final List<Trace> traceList = new ArrayList<Trace>();
 
+	public Legend(IXYGraph xyGraph) {
+		this((XYGraph)xyGraph);
+	}
+
+	/**
+	 * Use {@link #Legend(IXYGraph)} instead
+	 * 
+	 * @param xyGraph
+	 */
+	@Deprecated
 	public Legend(XYGraph xyGraph) {
 		// setFont(LEGEND_FONT);
 		xyGraph.getPlotArea().addPropertyChangeListener(PlotArea.BACKGROUND_COLOR, new PropertyChangeListener() {

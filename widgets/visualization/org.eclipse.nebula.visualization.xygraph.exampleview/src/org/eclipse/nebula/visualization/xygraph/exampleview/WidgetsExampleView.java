@@ -15,6 +15,7 @@ import org.eclipse.nebula.visualization.widgets.figures.TankFigure;
 import org.eclipse.nebula.visualization.widgets.figures.ThermometerFigure;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.CircularBufferDataProvider;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.CircularBufferDataProvider.UpdateMode;
+import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace;
 import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace.PointStyle;
@@ -78,8 +79,8 @@ public class WidgetsExampleView extends ViewPart {
 		lws = new LightweightSystem(xyGraphCanvas);
 
 		// create a new XY Graph.
-		XYGraph xyGraph = new XYGraph();
-		xyGraph.primaryXAxis.setAutoScale(true);
+		IXYGraph xyGraph = new XYGraph();
+		xyGraph.getPrimaryXAxis().setAutoScale(true);
 		// set it as the content of LightwightSystem
 		lws.setContents(xyGraph);
 
@@ -93,7 +94,7 @@ public class WidgetsExampleView extends ViewPart {
 		traceDataProvider.setUpdateMode(UpdateMode.X_OR_Y);
 
 		// create the trace
-		Trace trace = new Trace("Trace1-XY Plot", xyGraph.primaryXAxis, xyGraph.primaryYAxis, traceDataProvider);
+		Trace trace = new Trace("Trace1-XY Plot", xyGraph.getPrimaryXAxis(), xyGraph.getPrimaryYAxis(), traceDataProvider);
 
 		// set trace property
 		trace.setPointStyle(PointStyle.POINT);

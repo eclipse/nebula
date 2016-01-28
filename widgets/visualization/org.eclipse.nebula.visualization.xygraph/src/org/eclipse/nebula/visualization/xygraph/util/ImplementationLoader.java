@@ -19,6 +19,11 @@ public class ImplementationLoader {
 		String name = type.getName();
 		Object result = null;
 		try {
+			// if Interface name ends with a digit
+			if(name.matches("^.+?\\d$")) {
+				// remove all trailing digits
+				name = name.replaceAll("\\d*$", "");
+			}
 			result = type.getClassLoader().loadClass(name + "Impl").newInstance(); //$NON-NLS-1$
 		} catch (Exception e) {
 

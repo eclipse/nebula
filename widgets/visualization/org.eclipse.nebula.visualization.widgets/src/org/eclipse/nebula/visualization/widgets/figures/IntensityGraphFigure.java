@@ -46,7 +46,7 @@ import org.eclipse.nebula.visualization.widgets.figureparts.ROIFigure;
 import org.eclipse.nebula.visualization.xygraph.figures.Axis;
 import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
 import org.eclipse.nebula.visualization.xygraph.util.SWTConstants;
-import org.eclipse.nebula.visualization.xygraph.util.SingleSourceHelper;
+import org.eclipse.nebula.visualization.xygraph.util.SingleSourceHelper2;
 import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -508,7 +508,7 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 					Image image = new Image(Display.getDefault(),
 							size.width + CURSOR_SIZE, size.height + CURSOR_SIZE);
 					
-					GC gc = SingleSourceHelper.getImageGC(image);
+					GC gc = SingleSourceHelper2.getImageGC(image);
 					//gc.setAlpha(0);
 					gc.setBackground(TRANSPARENT_COLOR);					
 					gc.fillRectangle(image.getBounds());
@@ -523,7 +523,7 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 					
 					ImageData imageData = image.getImageData();
 					imageData.transparentPixel = imageData.palette.getPixel(TRANSPARENT_COLOR.getRGB());
-					setCursor(SingleSourceHelper.createCursor(Display.getCurrent(),
+					setCursor(SingleSourceHelper2.createCursor(Display.getCurrent(),
 							imageData, CURSOR_SIZE/2 ,CURSOR_SIZE/2, SWT.CURSOR_CROSS));
 					gc.dispose();
 					image.dispose();

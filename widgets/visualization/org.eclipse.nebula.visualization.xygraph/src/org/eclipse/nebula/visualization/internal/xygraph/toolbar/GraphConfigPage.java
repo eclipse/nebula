@@ -10,6 +10,7 @@ package org.eclipse.nebula.visualization.internal.xygraph.toolbar;
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.swt.SWT;
@@ -33,7 +34,7 @@ import org.eclipse.swt.widgets.Text;
  *
  */
 public class GraphConfigPage {
-	private XYGraph xyGraph;
+	private IXYGraph xyGraph;
 	private Text titleText;
 	private Font titleFont;
 	private ColorSelector titleColorSelector;
@@ -43,6 +44,16 @@ public class GraphConfigPage {
 	private Button showPlotAreaBorder;
 	private Button transparent;
 
+	public GraphConfigPage(IXYGraph xyGraph) {
+		this((XYGraph)xyGraph);
+	}
+
+	/**
+	 * Use constructor with @IXYGraph instead
+	 * 
+	 * @param xyGraph
+	 */
+	@Deprecated
 	public GraphConfigPage(XYGraph xyGraph) {
 		this.xyGraph = xyGraph;
 		titleFont = xyGraph.getTitleFont();
@@ -153,9 +164,20 @@ public class GraphConfigPage {
 	}
 
 	/**
+	 * Use {@link #getIXYGraph()} instead
+	 * 
 	 * @return the annotation
 	 */
+	@Deprecated
 	public XYGraph getXYGraph() {
+		return (XYGraph)xyGraph;
+	}
+
+	/**
+	 * 
+	 * @return the annotation
+	 */
+	public IXYGraph getIXYGraph() {
 		return xyGraph;
 	}
 

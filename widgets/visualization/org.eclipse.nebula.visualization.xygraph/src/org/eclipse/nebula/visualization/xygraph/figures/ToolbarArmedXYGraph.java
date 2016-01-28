@@ -20,7 +20,7 @@ import org.eclipse.draw2d.geometry.Rectangle;
  * @author Kay Kasemir added flags
  */
 public class ToolbarArmedXYGraph extends Figure {
-	final private XYGraph xyGraph;
+	final private IXYGraph xyGraph;
 
 	final private XYGraphToolbar toolbar;
 
@@ -38,6 +38,19 @@ public class ToolbarArmedXYGraph extends Figure {
 	 * @param xyGraph
 	 *            XYGraph
 	 */
+	public ToolbarArmedXYGraph(final IXYGraph xyGraph) {
+		this((XYGraph) xyGraph);
+	}
+
+	/**
+	 * Use {@link #ToolbarArmedXYGraph(IXYGraph)} instead
+	 * <br>
+	 * Construct default toolbar around existing graph
+	 * 
+	 * @param xyGraph
+	 *            XYGraph
+	 */
+	@Deprecated
 	public ToolbarArmedXYGraph(final XYGraph xyGraph) {
 		this(xyGraph, XYGraphFlags.COMBINED_ZOOM);
 	}
@@ -52,6 +65,22 @@ public class ToolbarArmedXYGraph extends Figure {
 	 * @see XYGraphFlags#COMBINED_ZOOM
 	 * @see XYGraphFlags#SEPARATE_ZOOM
 	 */
+	public ToolbarArmedXYGraph(final IXYGraph xyGraph, final int flags) {
+		this((XYGraph)xyGraph, flags);
+	}
+
+	/**
+	 * Use {@link #ToolbarArmedXYGraph(IXYGraph, int)} instead<br>
+	 * Construct toolbar around existing graph
+	 * 
+	 * @param xyGraph
+	 *            XYGraph
+	 * @param flags
+	 *            Bitwise 'or' of flags
+	 * @see XYGraphFlags#COMBINED_ZOOM
+	 * @see XYGraphFlags#SEPARATE_ZOOM
+	 */
+	@Deprecated
 	public ToolbarArmedXYGraph(final XYGraph xyGraph, final int flags) {
 		this.xyGraph = xyGraph;
 		toolbar = new XYGraphToolbar(this.xyGraph, flags);
@@ -97,9 +126,19 @@ public class ToolbarArmedXYGraph extends Figure {
 	}
 
 	/**
+	 * Use {@link #getIXYGraph()} instead
+	 * 
 	 * @return the xyGraph
 	 */
+	@Deprecated
 	public XYGraph getXYGraph() {
+		return (XYGraph)xyGraph;
+	}
+
+	/**
+	 * @return the xyGraph
+	 */
+	public IXYGraph getIXYGraph() {
 		return xyGraph;
 	}
 

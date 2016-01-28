@@ -60,7 +60,7 @@ public final class GraphicsUtil {
 			// final int h = titleSize.width + 1;
 			Image image = null;
 			try {
-				image = SingleSourceHelper.createVerticalTextImage(text, graphics.getFont(), graphics
+				image = SingleSourceHelper2.createVerticalTextImage(text, graphics.getFont(), graphics
 						.getForegroundColor().getRGB(), upToDown);
 				graphics.drawImage(image, x, y);
 

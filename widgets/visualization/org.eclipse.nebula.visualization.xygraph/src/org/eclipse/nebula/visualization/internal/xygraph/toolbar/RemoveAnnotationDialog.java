@@ -9,6 +9,7 @@ package org.eclipse.nebula.visualization.internal.xygraph.toolbar;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.nebula.visualization.xygraph.figures.Annotation;
+import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -26,10 +27,21 @@ import org.eclipse.swt.widgets.Shell;
  * @author Kay Kasemir layout tweaks
  */
 public class RemoveAnnotationDialog extends Dialog {
-	private XYGraph xyGraph;
+	private IXYGraph xyGraph;
 	private Combo annotationsCombo;
 	private Annotation removedAnnotation;
 
+	public RemoveAnnotationDialog(Shell parentShell, IXYGraph xyGraph) {
+		this(parentShell, (XYGraph) xyGraph);
+	}
+
+	/**
+	 * Use {@link #RemoveAnnotationDialog(Shell, IXYGraph)} instead
+	 * 
+	 * @param parentShell
+	 * @param xyGraph
+	 */
+	@Deprecated
 	public RemoveAnnotationDialog(Shell parentShell, XYGraph xyGraph) {
 		super(parentShell);
 		this.xyGraph = xyGraph;

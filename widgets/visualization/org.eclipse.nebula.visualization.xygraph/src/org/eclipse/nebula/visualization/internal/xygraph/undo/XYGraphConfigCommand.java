@@ -7,6 +7,7 @@
  ******************************************************************************/
 package org.eclipse.nebula.visualization.internal.xygraph.undo;
 
+import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 
 /**
@@ -17,9 +18,18 @@ import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
  */
 public class XYGraphConfigCommand implements IUndoableCommand {
 
-	private XYGraph xyGraph;
+	private IXYGraph xyGraph;
 	private XYGraphMemento previousXYGraphMem, afterXYGraphMem;
 
+	public XYGraphConfigCommand(IXYGraph xyGraph) {
+		this((XYGraph)xyGraph);
+	}
+
+	/**
+	 * Use {@link #XYGraphConfigCommand(IXYGraph)} instead
+	 * @param xyGraph
+	 */
+	@Deprecated
 	public XYGraphConfigCommand(XYGraph xyGraph) {
 		this.xyGraph = xyGraph;
 		previousXYGraphMem = new XYGraphMemento();

@@ -9,6 +9,7 @@ package org.eclipse.nebula.visualization.xygraph.examples;
  ******************************************************************************/
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.CircularBufferDataProvider;
+import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace;
 import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace.TraceType;
@@ -32,14 +33,14 @@ public class BarChartExample {
 		final LightweightSystem lws = new LightweightSystem(shell);
 
 		// create a new XY Graph.
-		XYGraph xyGraph = new XYGraph();
+		IXYGraph xyGraph = new XYGraph();
 		xyGraph.setTitle("Bar and Area Chart");
 		// set it as the content of LightwightSystem
 		lws.setContents(xyGraph);
 
 		// Configure XYGraph
-		xyGraph.primaryXAxis.setShowMajorGrid(true);
-		xyGraph.primaryYAxis.setShowMajorGrid(true);
+		xyGraph.getPrimaryXAxis().setShowMajorGrid(true);
+		xyGraph.getPrimaryYAxis().setShowMajorGrid(true);
 
 		// create a trace data provider, which will provide the data to the
 		// trace.
@@ -49,7 +50,7 @@ public class BarChartExample {
 		traceDataProvider.setCurrentYDataArray(new double[] { 11, 44, 55, 45, 88, 98, 52, 23, 78 });
 
 		// create the trace
-		Trace trace = new Trace("Trace1-XY Plot", xyGraph.primaryXAxis, xyGraph.primaryYAxis, traceDataProvider);
+		Trace trace = new Trace("Trace1-XY Plot", xyGraph.getPrimaryXAxis(), xyGraph.getPrimaryYAxis(), traceDataProvider);
 
 		// set trace property
 		trace.setTraceType(TraceType.BAR);
@@ -67,7 +68,7 @@ public class BarChartExample {
 		traceDataProvider2.setCurrentYDataArray(new double[] { 15, 60, 40, 60, 70, 80, 65, 70, 23 });
 
 		// create the trace
-		Trace trace2 = new Trace("Trace1-XY Plot", xyGraph.primaryXAxis, xyGraph.primaryYAxis, traceDataProvider2);
+		Trace trace2 = new Trace("Trace1-XY Plot", xyGraph.getPrimaryXAxis(), xyGraph.getPrimaryYAxis(), traceDataProvider2);
 
 		// set trace property
 		trace2.setPointSize(6);

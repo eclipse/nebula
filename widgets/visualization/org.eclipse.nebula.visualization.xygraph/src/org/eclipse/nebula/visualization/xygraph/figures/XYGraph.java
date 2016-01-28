@@ -25,7 +25,7 @@ import org.eclipse.nebula.visualization.internal.xygraph.undo.ZoomCommand;
 import org.eclipse.nebula.visualization.xygraph.linearscale.AbstractScale.LabelSide;
 import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
 import org.eclipse.nebula.visualization.xygraph.util.Log10;
-import org.eclipse.nebula.visualization.xygraph.util.SingleSourceHelper;
+import org.eclipse.nebula.visualization.xygraph.util.SingleSourceHelper2;
 import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -47,12 +47,24 @@ import org.eclipse.swt.widgets.Display;
  * @author Laurent PHILIPPE (property change support)
  * @author Alex Clayton (added {@link IAxesFactory} factory)
  */
-public class XYGraph extends Figure {
+public class XYGraph extends Figure implements IXYGraph {
 
+	/**
+	 * Use {@link IXYGraph#PROPERTY_CONFIG} instead
+	 */
+	@Deprecated
 	public static final String PROPERTY_CONFIG = "config"; //$NON-NLS-1$
 
+	/**
+	 * Use {@link IXYGraph#PROPERTY_XY_GRAPH_MEM} instead
+	 */
+	@Deprecated
 	public static final String PROPERTY_XY_GRAPH_MEM = "xyGraphMem"; //$NON-NLS-1$
 
+	/**
+	 * Use {@link IXYGraph#PROPERTY_ZOOMTYPE} instead
+	 */
+	@Deprecated
 	public static final String PROPERTY_ZOOMTYPE = "zoomType"; //$NON-NLS-1$
 
 	/**
@@ -84,7 +96,7 @@ public class XYGraph extends Figure {
 	}
 
 	public void fireConfigChanged() {
-		changeSupport.firePropertyChange(PROPERTY_CONFIG, null, this);
+		changeSupport.firePropertyChange(IXYGraph.PROPERTY_CONFIG, null, this);
 	}
 
 	/**
@@ -101,7 +113,7 @@ public class XYGraph extends Figure {
 	public void setXyGraphMem(XYGraphMemento xyGraphMem) {
 		XYGraphMemento old = this.xyGraphMem;
 		this.xyGraphMem = xyGraphMem;
-		changeSupport.firePropertyChange(PROPERTY_XY_GRAPH_MEM, old, this.xyGraphMem);
+		changeSupport.firePropertyChange(IXYGraph.PROPERTY_XY_GRAPH_MEM, old, this.xyGraphMem);
 	}
 
 	private static final int GAP = 2;
@@ -129,10 +141,10 @@ public class XYGraph extends Figure {
 	};
 
 	private int traceNum = 0;
-	private boolean transparent = false;
+	protected boolean transparent = false;
 	private boolean showLegend = true;
 
-	private Map<Axis, Legend> legendMap;
+	protected Map<Axis, Legend> legendMap;
 
 	/**
 	 * Graph title. Should never be <code>null</code> because otherwise the
@@ -142,20 +154,28 @@ public class XYGraph extends Figure {
 
 	private Color titleColor;
 
-	private Label titleLabel;
+	protected Label titleLabel;
 
 	// ADD BECAUSE OF SWT invalid Thread acess on getTitleColor()
 	private FontData titleFontData;
 	private RGB titleColorRgb;
 
-	private List<Axis> xAxisList;
-	private List<Axis> yAxisList;
-	private PlotArea plotArea;
+	protected List<Axis> xAxisList;
+	protected List<Axis> yAxisList;
+	protected PlotArea plotArea;
 
+	/**
+	 * Use {@link #getPrimaryXAxis()} instead
+	 */
+	@Deprecated
 	final public Axis primaryXAxis;
+	/**
+	 * Use {@link #getPrimaryYAxis()} instead
+	 */
+	@Deprecated
 	final public Axis primaryYAxis;
 
-	private OperationsManager operationsManager;
+	protected OperationsManager operationsManager;
 
 	private ZoomType zoomType = ZoomType.NONE;
 
@@ -181,7 +201,7 @@ public class XYGraph extends Figure {
 		// titleLabel.setVisible(false);
 		xAxisList = new ArrayList<Axis>();
 		yAxisList = new ArrayList<Axis>();
-		plotArea = new PlotArea(this);
+		plotArea = new PlotArea((IXYGraph)this);
 		getPlotArea().setOpaque(!transparent);
 
 		add(titleLabel);
@@ -412,7 +432,7 @@ public class XYGraph extends Figure {
 			yAxisList.add(axis);
 		plotArea.addGrid(new Grid(axis));
 		add(axis);
-		axis.setXyGraph(this);
+		axis.setXyGraph((IXYGraph)this);
 		revalidate();
 	}
 
@@ -446,12 +466,12 @@ public class XYGraph extends Figure {
 		if (legendMap.containsKey(trace.getYAxis()))
 			legendMap.get(trace.getYAxis()).addTrace(trace);
 		else {
-			legendMap.put(trace.getYAxis(), new Legend(this));
+			legendMap.put(trace.getYAxis(), new Legend((IXYGraph)this));
 			legendMap.get(trace.getYAxis()).addTrace(trace);
 			add(legendMap.get(trace.getYAxis()));
 		}
 		plotArea.addTrace(trace);
-		trace.setXYGraph(this);
+		trace.setXYGraph((IXYGraph)this);
 		trace.dataChanged(null);
 		revalidate();
 		repaint();
@@ -560,7 +580,7 @@ public class XYGraph extends Figure {
 
 	/** @return Image of the XYFigure. Receiver must dispose. */
 	public Image getImage() {
-		return SingleSourceHelper.getXYGraphSnapShot(this);
+		return SingleSourceHelper2.getXYGraphSnapShot(this);
 	}
 
 	/**
@@ -698,5 +718,19 @@ public class XYGraph extends Figure {
 
 		command.saveState();
 		operationsManager.addCommand(command);
+	}
+
+	public Axis getPrimaryXAxis() {
+		if (xAxisList.size() > 0) {
+			return xAxisList.get(0);
+		}
+		return null;
+	}
+
+	public Axis getPrimaryYAxis() {
+		if (yAxisList.size() > 0) {
+			return yAxisList.get(0);
+		}
+		return null;
 	}
 }

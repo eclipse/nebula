@@ -9,6 +9,7 @@ package org.eclipse.nebula.visualization.xygraph.examples;
  ******************************************************************************/
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.CircularBufferDataProvider;
+import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.ToolbarArmedXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace;
 import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
@@ -32,7 +33,7 @@ public class SimpleToolbarArmedXYGraphExample {
 		final LightweightSystem lws = new LightweightSystem(shell);
 
 		// create a new XY Graph.
-		XYGraph xyGraph = new XYGraph();
+		IXYGraph xyGraph = new XYGraph();
 
 		ToolbarArmedXYGraph toolbarArmedXYGraph = new ToolbarArmedXYGraph(xyGraph);
 
@@ -40,8 +41,8 @@ public class SimpleToolbarArmedXYGraphExample {
 		// set it as the content of LightwightSystem
 		lws.setContents(toolbarArmedXYGraph);
 
-		xyGraph.primaryXAxis.setShowMajorGrid(true);
-		xyGraph.primaryYAxis.setShowMajorGrid(true);
+		xyGraph.getPrimaryXAxis().setShowMajorGrid(true);
+		xyGraph.getPrimaryYAxis().setShowMajorGrid(true);
 
 		// create a trace data provider, which will provide the data to the
 		// trace.
@@ -51,7 +52,7 @@ public class SimpleToolbarArmedXYGraphExample {
 		traceDataProvider.setCurrentYDataArray(new double[] { 11, 44, 55, 45, 88, 98, 52, 23 });
 
 		// create the trace
-		Trace trace = new Trace("Trace1-XY Plot", xyGraph.primaryXAxis, xyGraph.primaryYAxis, traceDataProvider);
+		Trace trace = new Trace("Trace1-XY Plot", xyGraph.getPrimaryXAxis(), xyGraph.getPrimaryYAxis(), traceDataProvider);
 
 		// set trace property
 		trace.setPointStyle(PointStyle.XCROSS);

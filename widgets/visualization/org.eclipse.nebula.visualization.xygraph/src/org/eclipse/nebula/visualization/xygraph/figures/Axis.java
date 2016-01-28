@@ -61,7 +61,7 @@ public class Axis extends LinearScale {
 
 	final private List<Trace> traceList = new ArrayList<Trace>();
 
-	private XYGraph xyGraph;
+	private IXYGraph xyGraph;
 	private Grid grid;
 
 	private Font titleFont;
@@ -599,6 +599,17 @@ public class Axis extends LinearScale {
 	 * @param xyGraph
 	 *            the xyGraph to set
 	 */
+	public void setXyGraph(final IXYGraph xyGraph) {
+		this.xyGraph = xyGraph;
+	}
+
+	/**
+	 * Use {@link #setXyGraph(IXYGraph)} instead
+	 * 
+	 * @param xyGraph
+	 *            the xyGraph to set
+	 */
+	@Deprecated
 	public void setXyGraph(final XYGraph xyGraph) {
 		this.xyGraph = xyGraph;
 	}

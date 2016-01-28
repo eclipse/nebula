@@ -36,7 +36,7 @@ import org.eclipse.nebula.visualization.internal.xygraph.undo.AddAnnotationComma
 import org.eclipse.nebula.visualization.internal.xygraph.undo.IOperationsManagerListener;
 import org.eclipse.nebula.visualization.internal.xygraph.undo.OperationsManager;
 import org.eclipse.nebula.visualization.internal.xygraph.undo.RemoveAnnotationCommand;
-import org.eclipse.nebula.visualization.xygraph.util.SingleSourceHelper;
+import org.eclipse.nebula.visualization.xygraph.util.SingleSourceHelper2;
 import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -55,7 +55,7 @@ import org.eclipse.swt.widgets.Display;
 public class XYGraphToolbar extends Figure {
 	private final static int BUTTON_SIZE = 25;
 
-	final private XYGraph xyGraph;
+	final private IXYGraph xyGraph;
 
 	final private ButtonGroup zoomGroup;
 
@@ -71,6 +71,22 @@ public class XYGraphToolbar extends Figure {
 	 * @see XYGraphFlags#COMBINED_ZOOM
 	 * @see XYGraphFlags#SEPARATE_ZOOM
 	 */
+	public XYGraphToolbar(final IXYGraph xyGraph, final int flags) {
+		this((XYGraph)xyGraph, flags);
+	}
+
+	/**
+	 * Use {@link #XYGraphToolbar(IXYGraph, int)} instead<br>
+	 * Initialize
+	 * 
+	 * @param xyGraph
+	 *            XYGraph on which this toolbar operates
+	 * @param flags
+	 *            Bitwise 'or' of flags
+	 * @see XYGraphFlags#COMBINED_ZOOM
+	 * @see XYGraphFlags#SEPARATE_ZOOM
+	 */
+	@Deprecated
 	public XYGraphToolbar(final XYGraph xyGraph, final int flags) {
 		this.xyGraph = xyGraph;
 		setLayoutManager(new WrappableToolbarLayout());
@@ -167,7 +183,7 @@ public class XYGraphToolbar extends Figure {
 				loader.data = new ImageData[] { image.getImageData() };
 				image.dispose();
 				// Prompt for file name
-				String path = SingleSourceHelper.getImageSavePath();
+				String path = SingleSourceHelper2.getImageSavePath();
 				if (path == null || path.length() <= 0)
 					return;
 				// Assert *.png at end of file name
@@ -266,7 +282,7 @@ public class XYGraphToolbar extends Figure {
 			if (zoomType == ZoomType.NONE)
 				zoomGroup.setDefault(model);
 		}
-		xyGraph.addPropertyChangeListener(XYGraph.PROPERTY_ZOOMTYPE, new PropertyChangeListener() {
+		xyGraph.addPropertyChangeListener(IXYGraph.PROPERTY_ZOOMTYPE, new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				zoomGroup.setSelected(zoomButtonModelMap.get(evt.getNewValue()));

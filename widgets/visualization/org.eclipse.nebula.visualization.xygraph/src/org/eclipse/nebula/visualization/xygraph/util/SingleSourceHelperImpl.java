@@ -11,7 +11,7 @@ import org.eclipse.draw2d.FigureUtilities;
 import org.eclipse.draw2d.SWTGraphics;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
+import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
@@ -24,7 +24,7 @@ import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 
-public class SingleSourceHelperImpl extends SingleSourceHelper {
+public class SingleSourceHelperImpl extends SingleSourceHelper2 {
 
 	@Override
 	protected Cursor createInternalCursor(Display display, ImageData imageData, int width, int height, int style) {
@@ -71,7 +71,7 @@ public class SingleSourceHelperImpl extends SingleSourceHelper {
 	}
 
 	@Override
-	protected Image getInternalXYGraphSnapShot(XYGraph xyGraph) {
+	protected Image getInternalXYGraphSnapShot(IXYGraph xyGraph) {
 		Rectangle bounds = xyGraph.getBounds();
 		Image image = new Image(null, bounds.width + 6, bounds.height + 6);
 		GC gc = new GC(image);

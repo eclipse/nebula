@@ -8,7 +8,7 @@
 package org.eclipse.nebula.visualization.xygraph.figures;
 
 import org.eclipse.nebula.visualization.xygraph.Messages;
-import org.eclipse.nebula.visualization.xygraph.util.SingleSourceHelper;
+import org.eclipse.nebula.visualization.xygraph.util.SingleSourceHelper2;
 import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Cursor;
@@ -127,18 +127,18 @@ public enum ZoomType {
 		if (cursorImage == null)
 			cursor = Display.getDefault().getSystemCursor(SWT.CURSOR_ARROW);
 		else
-			cursor = SingleSourceHelper.createCursor(Display.getDefault(), cursorImage.getImageData(), 8, 8,
+			cursor = SingleSourceHelper2.createCursor(Display.getDefault(), cursorImage.getImageData(), 8, 8,
 					backUpSWTCursorType);
 		if (cursorImageOnXAxis == null) {
 			cursorOnXAxis = cursor;
 		} else {
-			cursorOnXAxis = SingleSourceHelper.createCursor(Display.getDefault(), cursorImageOnXAxis.getImageData(), 8,
+			cursorOnXAxis = SingleSourceHelper2.createCursor(Display.getDefault(), cursorImageOnXAxis.getImageData(), 8,
 					8, backUpSWTCursorType);
 		}
 		if (cursorImageOnYAxis == null) {
 			cursorOnYAxis = cursor;
 		} else {
-			cursorOnYAxis = SingleSourceHelper.createCursor(Display.getDefault(), cursorImageOnYAxis.getImageData(), 8,
+			cursorOnYAxis = SingleSourceHelper2.createCursor(Display.getDefault(), cursorImageOnYAxis.getImageData(), 8,
 					8, backUpSWTCursorType);
 		}
 

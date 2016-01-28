@@ -7,7 +7,7 @@
  ******************************************************************************/
 package org.eclipse.nebula.visualization.xygraph.util;
 
-import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
+import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
@@ -17,16 +17,17 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * Use {@link SingleSourceHelper2} instead
+ * Replacement for {@link SingleSourceHelper}
+ * 
+ * @author Baha El-Kassaby
  *
  */
-@Deprecated
-public abstract class SingleSourceHelper {
+public abstract class SingleSourceHelper2 {
 
-	private static final SingleSourceHelper IMPL;
+	private static final SingleSourceHelper2 IMPL;
 
 	static {
-		IMPL = (SingleSourceHelper) ImplementationLoader.newInstance(SingleSourceHelper.class);
+		IMPL = (SingleSourceHelper2) ImplementationLoader.newInstance(SingleSourceHelper2.class);
 	}
 
 	/**
@@ -47,7 +48,7 @@ public abstract class SingleSourceHelper {
 		return IMPL.createInternalVerticalTextImage(text, font, color, upToDown);
 	}
 
-	public static Image getXYGraphSnapShot(XYGraph xyGraph) {
+	public static Image getXYGraphSnapShot(IXYGraph xyGraph) {
 		return IMPL.getInternalXYGraphSnapShot(xyGraph);
 	}
 
@@ -70,6 +71,6 @@ public abstract class SingleSourceHelper {
 
 	protected abstract Image createInternalVerticalTextImage(String text, Font font, RGB color, boolean upToDown);
 
-	protected abstract Image getInternalXYGraphSnapShot(XYGraph xyGraph);
+	protected abstract Image getInternalXYGraphSnapShot(IXYGraph xyGraph);
 
 }

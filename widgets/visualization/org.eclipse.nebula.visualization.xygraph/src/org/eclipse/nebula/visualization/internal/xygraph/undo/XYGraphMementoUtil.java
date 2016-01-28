@@ -9,6 +9,7 @@ package org.eclipse.nebula.visualization.internal.xygraph.undo;
 
 import org.eclipse.nebula.visualization.xygraph.figures.Annotation;
 import org.eclipse.nebula.visualization.xygraph.figures.Axis;
+import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace;
 import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 
@@ -60,6 +61,17 @@ public class XYGraphMementoUtil {
 
 	}
 
+	public static void saveXYGraphPropsToMemento(IXYGraph xyGraph, XYGraphMemento memento) {
+		saveXYGraphPropsToMemento((XYGraph)xyGraph, memento);
+	}
+
+	/**
+	 * Use {@link #saveXYGraphPropsToMemento(IXYGraph, XYGraphMemento)} instead
+	 * 
+	 * @param xyGraph
+	 * @param memento
+	 */
+	@Deprecated
 	public static void saveXYGraphPropsToMemento(XYGraph xyGraph, XYGraphMemento memento) {
 		memento.setTitle(xyGraph.getTitle());
 		memento.setTitleFont(xyGraph.getTitleFont());
@@ -81,6 +93,17 @@ public class XYGraphMementoUtil {
 			saveTracePropsToMemento(trace, memento.getTraceMementoList().get(i++));
 	}
 
+	public static void restoreXYGraphPropsFromMemento(IXYGraph xyGraph, XYGraphMemento memento) {
+		restoreXYGraphPropsFromMemento((XYGraph)xyGraph, memento);
+	}
+
+	/**
+	 * Use {@link #restoreXYGraphPropsFromMemebto(IXYGraph, XYGraphMemento)} instead
+	 * 
+	 * @param xyGraph
+	 * @param memento
+	 */
+	@Deprecated
 	public static void restoreXYGraphPropsFromMemento(XYGraph xyGraph, XYGraphMemento memento) {
 
 		if (memento.getTitle() != null)
