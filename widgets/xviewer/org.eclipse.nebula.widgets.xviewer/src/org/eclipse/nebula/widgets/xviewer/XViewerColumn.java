@@ -281,50 +281,93 @@ public class XViewerColumn {
       if (sortDataType == SortDataType.Float) {
          double sum = 0.0;
          Set<String> exceptions = new HashSet<String>();
-         for (String value : values) {
-            if (value == null || value.equals("")) {
-               continue;
-            }
-            try {
-               sum += new Double(value);
-            } catch (Exception ex) {
-               exceptions.add(ex.getLocalizedMessage());
-            }
-         }
-         return "Sum: " + XViewerLib.doubleToI18nString(sum) + "\n\nNum Items: " + values.size() + (exceptions.size() > 0 ? "\n\nErrors: " + CollectionsUtil.toString(
-            ";", exceptions) : "");
+         sum = sumFloatValues(values, sum, exceptions);
+         return "Sum: " + XViewerLib.doubleToI18nString(
+            sum) + "\n\nNum Items: " + values.size() + (exceptions.size() > 0 ? "\n\nErrors: " + CollectionsUtil.toString(
+               ";", exceptions) : "");
       } else if (sortDataType == SortDataType.Integer) {
          int sum = 0;
          Set<String> exceptions = new HashSet<String>();
-         for (String value : values) {
-            if (value == null || value.equals("")) {
-               continue;
-            }
-            try {
-               sum += Integer.valueOf(value);
-            } catch (Exception ex) {
-               exceptions.add(ex.getLocalizedMessage());
-            }
-         }
+         sum = sumIntegerValues(values, sum, exceptions);
          return "Sum: " + sum + "\n\nNum Items: " + values.size() + (exceptions.size() > 0 ? "\n\nErrors: " + CollectionsUtil.toString(
             ";", exceptions) : "");
       } else if (sortDataType == SortDataType.Long) {
-         int sum = 0;
+         long sum = 0;
          Set<String> exceptions = new HashSet<String>();
-         for (String value : values) {
-            if (value == null || value.equals("")) {
-               continue;
-            }
-            try {
-               sum += Long.valueOf(value);
-            } catch (Exception ex) {
-               exceptions.add(ex.getLocalizedMessage());
-            }
-         }
+         sum = sumLongValues(values, sum, exceptions);
          return "Sum: " + sum + "\n\nNum Items: " + values.size() + (exceptions.size() > 0 ? "\n\nErrors: " + CollectionsUtil.toString(
             ";", exceptions) : "");
       }
       return "Unhandled column type";
+   }
+
+   private double sumFloatValues(Collection<String> values, double sum, Set<String> exceptions) {
+      for (String value : values) {
+         if (value == null || value.equals("")) {
+            continue;
+         }
+         try {
+            sum += new Double(value);
+         } catch (Exception ex) {
+            exceptions.add(ex.getLocalizedMessage());
+         }
+      }
+      return sum;
+   }
+
+   public String averageValues(Collection<String> values) {
+      if (sortDataType == SortDataType.Float) {
+         double sum = 0.0;
+         Set<String> exceptions = new HashSet<String>();
+         sum = sumFloatValues(values, sum, exceptions);
+         Double average = sum == 0 || values.isEmpty() ? 0 : sum / values.size();
+         return "Average: " + XViewerLib.doubleToI18nString(
+            average) + "\n\nNum Items: " + values.size() + (exceptions.size() > 0 ? "\n\nErrors: " + CollectionsUtil.toString(
+               ";", exceptions) : "");
+      } else if (sortDataType == SortDataType.Integer) {
+         int sum = 0;
+         Set<String> exceptions = new HashSet<String>();
+         sum = sumIntegerValues(values, sum, exceptions);
+         Integer average = sum == 0 || values.isEmpty() ? 0 : sum / values.size();
+         return "Average: " + average + "\n\nNum Items: " + values.size() + (exceptions.size() > 0 ? "\n\nErrors: " + CollectionsUtil.toString(
+            ";", exceptions) : "");
+      } else if (sortDataType == SortDataType.Long) {
+         long sum = 0;
+         Set<String> exceptions = new HashSet<String>();
+         sum = sumLongValues(values, sum, exceptions);
+         Long average = sum == 0 || values.isEmpty() ? 0 : sum / Long.valueOf(values.size());
+         return "Average: " + average + "\n\nNum Items: " + values.size() + (exceptions.size() > 0 ? "\n\nErrors: " + CollectionsUtil.toString(
+            ";", exceptions) : "");
+      }
+      return "Unhandled column type";
+   }
+
+   private long sumLongValues(Collection<String> values, long sum, Set<String> exceptions) {
+      for (String value : values) {
+         if (value == null || value.equals("")) {
+            continue;
+         }
+         try {
+            sum += Long.valueOf(value);
+         } catch (Exception ex) {
+            exceptions.add(ex.getLocalizedMessage());
+         }
+      }
+      return sum;
+   }
+
+   private int sumIntegerValues(Collection<String> values, int sum, Set<String> exceptions) {
+      for (String value : values) {
+         if (value == null || value.equals("")) {
+            continue;
+         }
+         try {
+            sum += Integer.valueOf(value);
+         } catch (Exception ex) {
+            exceptions.add(ex.getLocalizedMessage());
+         }
+      }
+      return sum;
    }
 
    public boolean is(TreeColumn treeColumn) {

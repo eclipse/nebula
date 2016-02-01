@@ -89,7 +89,7 @@ public class XViewerCustomMenu {
 
    protected Action filterByValue, filterByColumn, clearAllSorting, clearAllFilters, tableProperties, viewTableReport,
       columnMultiEdit, removeSelected, removeNonSelected, copySelected, showColumn, addComputedColumn, sumColumn,
-      hideColumn, copySelectedColumnCells, viewSelectedCell, copySelectedCell, uniqueValues;
+      averageColumn, hideColumn, copySelectedColumnCells, viewSelectedCell, copySelectedCell, uniqueValues;
    private boolean headerMouseClick = false;
 
    public boolean isHeaderMouseClick() {
@@ -154,6 +154,7 @@ public class XViewerCustomMenu {
       menuManager.add(clearAllSorting);
       menuManager.add(new Separator());
       menuManager.add(sumColumn);
+      menuManager.add(averageColumn);
       menuManager.add(uniqueValues);
    }
 
@@ -478,6 +479,32 @@ public class XViewerCustomMenu {
       XViewerLib.popup(XViewerText.get("menu.sum.prompt"), xCol.sumValues(values)); //$NON-NLS-1$
    }
 
+   protected void handleAverageColumn() {
+      TreeColumn treeCol = xViewer.getRightClickSelectedColumn();
+      XViewerColumn xCol = (XViewerColumn) treeCol.getData();
+      if (!xCol.isSummable()) {
+         return;
+      }
+
+      TreeItem[] items = xViewer.getTree().getSelection();
+      if (items.length == 0) {
+         items = xViewer.getTree().getItems();
+      }
+      if (items.length == 0) {
+         XViewerLib.popup(XViewerText.get("error"), XViewerText.get("error.no_items.average")); //$NON-NLS-1$ //$NON-NLS-2$
+         return;
+      }
+      List<String> values = new ArrayList<String>();
+      for (TreeItem item : items) {
+         for (int x = 0; x < xViewer.getTree().getColumnCount(); x++) {
+            if (xViewer.getTree().getColumn(x).equals(treeCol)) {
+               values.add(((IXViewerLabelProvider) xViewer.getLabelProvider()).getColumnText(item.getData(), x));
+            }
+         }
+      }
+      XViewerLib.popup(XViewerText.get("menu.sum.prompt"), xCol.averageValues(values)); //$NON-NLS-1$
+   }
+
    protected void handleHideColumn() {
       TreeColumn insertTreeCol = xViewer.getRightClickSelectedColumn();
       XViewerColumn insertXCol = (XViewerColumn) insertTreeCol.getData();
@@ -513,6 +540,12 @@ public class XViewerCustomMenu {
          @Override
          public void run() {
             handleSumColumn();
+         }
+      };
+      averageColumn = new Action(XViewerText.get("menu.average")) { //$NON-NLS-1$
+         @Override
+         public void run() {
+            handleAverageColumn();
          }
       };
       uniqueValues = new Action(XViewerText.get("menu.unique")) { //$NON-NLS-1$
