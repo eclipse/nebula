@@ -271,7 +271,7 @@ public class XViewerColumn {
    }
 
    public boolean isSummable() {
-      if (sortDataType == SortDataType.Float || sortDataType == SortDataType.Integer || sortDataType == SortDataType.Long) {
+      if (sortDataType == SortDataType.Float || sortDataType == SortDataType.Integer || sortDataType == SortDataType.Long || sortDataType == SortDataType.Percent) {
          return true;
       }
       return false;
@@ -285,7 +285,7 @@ public class XViewerColumn {
          return "Sum: " + XViewerLib.doubleToI18nString(
             sum) + "\n\nNum Items: " + values.size() + (exceptions.size() > 0 ? "\n\nErrors: " + CollectionsUtil.toString(
                ";", exceptions) : "");
-      } else if (sortDataType == SortDataType.Integer) {
+      } else if (sortDataType == SortDataType.Integer || sortDataType == SortDataType.Percent) {
          int sum = 0;
          Set<String> exceptions = new HashSet<String>();
          sum = sumIntegerValues(values, sum, exceptions);
@@ -324,7 +324,7 @@ public class XViewerColumn {
          return "Average: " + XViewerLib.doubleToI18nString(
             average) + "\n\nNum Items: " + values.size() + (exceptions.size() > 0 ? "\n\nErrors: " + CollectionsUtil.toString(
                ";", exceptions) : "");
-      } else if (sortDataType == SortDataType.Integer) {
+      } else if (sortDataType == SortDataType.Integer || sortDataType == SortDataType.Percent) {
          int sum = 0;
          Set<String> exceptions = new HashSet<String>();
          sum = sumIntegerValues(values, sum, exceptions);

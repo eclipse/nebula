@@ -457,6 +457,8 @@ public class XViewerCustomMenu {
       TreeColumn treeCol = xViewer.getRightClickSelectedColumn();
       XViewerColumn xCol = (XViewerColumn) treeCol.getData();
       if (!xCol.isSummable()) {
+         XViewerLib.popup("Invalid Selection for Sum",
+            String.format("Sum not available for column [%s]", xCol.getName()));
          return;
       }
 
@@ -483,6 +485,8 @@ public class XViewerCustomMenu {
       TreeColumn treeCol = xViewer.getRightClickSelectedColumn();
       XViewerColumn xCol = (XViewerColumn) treeCol.getData();
       if (!xCol.isSummable()) {
+         XViewerLib.popup("Invalid Selection for Average",
+            String.format("Average not available for column [%s]", xCol.getName()));
          return;
       }
 
