@@ -341,8 +341,8 @@ public class PShelf extends Canvas {
 		
 		if (animation && (getStyle() & SWT.SIMPLE) == 0){
   		    if(!redrawOnAnimation) {
-  		      previousOpen.getBody().setRedraw(false);
-  		      item.getBody().setRedraw(false);
+  		      previousOpen.getBodyParent().setRedraw(false);
+  		      item.getBodyParent().setRedraw(false);
   		    }
 			if (items.indexOf(item) < items.indexOf(previousOpen)){
 			    animateOpen(item, previousOpen, false);
@@ -350,8 +350,8 @@ public class PShelf extends Canvas {
 				animateOpen(previousOpen,item, true);
 			}
 			if(!redrawOnAnimation) {
-			  previousOpen.getBody().setRedraw(true);
-			  item.getBody().setRedraw(true);
+			  previousOpen.getBodyParent().setRedraw(true);
+			  item.getBodyParent().setRedraw(true);
 			}
 		} else {
 			if (previousOpen != null && !previousOpen.isDisposed())
