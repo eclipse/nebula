@@ -68,6 +68,8 @@ public class PShelf extends Canvas {
     private int itemHeight = 0;
     
     private ArrayList yCoordinates = new ArrayList();
+    private double animationSpeed = 0.02;
+    private boolean redrawOnAnimation;
 	
     private static int checkStyle(int style)
     {
@@ -338,10 +340,18 @@ public class PShelf extends Canvas {
 		item.getBody().layout();
 		
 		if (animation && (getStyle() & SWT.SIMPLE) == 0){
+  		    if(!redrawOnAnimation) {
+  		      previousOpen.getBody().setRedraw(false);
+  		      item.getBody().setRedraw(false);
+  		    }
 			if (items.indexOf(item) < items.indexOf(previousOpen)){
-				animateOpenFromTop(previousOpen,item);
+			    animateOpen(item, previousOpen, false);
 			} else {
-				animateOpenFromBottom(previousOpen,item);
+				animateOpen(previousOpen,item, true);
+			}
+			if(!redrawOnAnimation) {
+			  previousOpen.getBody().setRedraw(true);
+			  item.getBody().setRedraw(true);
 			}
 		} else {
 			if (previousOpen != null && !previousOpen.isDisposed())
@@ -368,69 +378,9 @@ public class PShelf extends Canvas {
         onResize();
 	}
 	
-    private void animateOpenFromTop(PShelfItem previousItem, PShelfItem newItem)
+    private void animateOpen(PShelfItem previousItem, PShelfItem newItem, boolean openFromBottom)
     {
         double percentOfWork = 0;        
-                
-        while (percentOfWork < 1)
-        {            
-            yCoordinates.clear();
-            
-            int yTop = getClientArea().y;
-            
-            int yBottom = getClientArea().y + getClientArea().height - (itemHeight * (items.size() - (items.indexOf(previousItem) + 1)));
-            
-            int totalGrowingArea = getClientArea().height - (itemHeight * items.size());
-            
-            int growingSpace = (int)(totalGrowingArea * percentOfWork);
-            boolean addingGrowingSpace = false;
-            
-            for (int i = 0; i < items.size(); i++)
-            {
-                if (i <= items.indexOf(newItem))
-                {
-                    //put on top
-                    yCoordinates.add(new Integer(yTop));
-                    yTop += itemHeight;                    
-                }
-                else if (i > items.indexOf(previousItem))
-                {
-                    //put on bottom
-                    yCoordinates.add(new Integer(yBottom));
-                    yBottom += itemHeight;
-                }
-                else
-                {
-                    if (!addingGrowingSpace)
-                    {
-                        yTop += growingSpace;
-                        addingGrowingSpace = true;
-                    }
-                    yCoordinates.add(new Integer(yTop));
-                    yTop += itemHeight;                        
-                }
-                
-            }
-            
-            sizeClients();
-            redraw();
-            update();
-            //workaround for SWT bug 193357
-            if (SWT.getPlatform().equals("carbon"))
-            {
-            	getDisplay().readAndDispatch();
-            }
-            percentOfWork += .02;
-        } 
-        
-        computeItemYCoordinates();
-        redraw();
-    }
-    
-    private void animateOpenFromBottom(PShelfItem previousItem, PShelfItem newItem)
-    {
-        double percentOfWork = 0;        
-                
         while (percentOfWork < 1)
         {            
             yCoordinates.clear();
@@ -439,9 +389,9 @@ public class PShelf extends Canvas {
             
             int yBottom = getClientArea().y + getClientArea().height - (itemHeight * (items.size() - (items.indexOf(newItem) + 1)));
             
-            int totalShrinkingArea = getClientArea().height - (itemHeight * items.size());
+            int totalShrinkingGrowingArea = getClientArea().height - (itemHeight * items.size());
             
-            int collapsingSpace = (int)(totalShrinkingArea * (1 - percentOfWork));
+            int collapsingGrowingSpace = (int)(totalShrinkingGrowingArea * (openFromBottom ? 1 - percentOfWork : percentOfWork));
             boolean addedCollapsingSpace = false;
             
             for (int i = 0; i < items.size(); i++)
@@ -462,7 +412,7 @@ public class PShelf extends Canvas {
                 {
                     if (!addedCollapsingSpace)
                     {
-                        yTop += collapsingSpace;
+                        yTop += collapsingGrowingSpace;
                         addedCollapsingSpace = true;
                     }
                     yCoordinates.add(new Integer(yTop));
@@ -477,9 +427,9 @@ public class PShelf extends Canvas {
             //workaround for SWT bug 193357
             if (SWT.getPlatform().equals("carbon"))
             {
-            	getDisplay().readAndDispatch();
+                getDisplay().readAndDispatch();
             }
-            percentOfWork += .02;
+            percentOfWork += this.animationSpeed;
         } 
         
         computeItemYCoordinates();
@@ -713,5 +663,27 @@ public class PShelf extends Canvas {
 
         removeListener(SWT.Selection, listener);
         removeListener(SWT.DefaultSelection,listener);  
+    }
+    
+    /**
+     * Sets the speed of animation.
+     * This value indicates the relative growing/shrinking value for one step.
+     * Values between 0.0 and 1.0 are allowed.
+     * 
+     * @since 05.02.2016
+     * @param animationSpeed
+     */
+    public void setAnimationSpeed(double animationSpeed) {
+        this.animationSpeed = animationSpeed;
+    }
+    
+    /**
+     * Sets whether to redraw the items (previous and next item) when the open animation occours. 
+     * 
+     * @since 05.02.2016
+     * @param redrawOnAnimation
+     */
+    public void setRedrawOnAmination(boolean redrawOnAnimation) {
+        this.redrawOnAnimation = redrawOnAnimation;
     }
 }
