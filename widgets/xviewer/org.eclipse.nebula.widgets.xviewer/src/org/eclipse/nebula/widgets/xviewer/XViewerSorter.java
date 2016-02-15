@@ -21,12 +21,13 @@ import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumn.SortDataType;
+import org.eclipse.nebula.widgets.xviewer.util.Pair;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
 
 /**
  * XTreeSorter is equipped to: 1) Sort columns forward and backward by re-selecting the column 2) Sort by multiple
  * columns
- * 
+ *
  * @author Donald G. Dunne
  */
 public class XViewerSorter extends ViewerSorter {
@@ -282,6 +283,14 @@ public class XViewerSorter extends ViewerSorter {
       if (date2.trim().equals("")) {
          return 1;
       }
+      Pair<Date, Date> datePair = parseDatePair(date1, date2);
+      date1Date = datePair.getFirst();
+      date2Date = datePair.getSecond();
+      return getCompareForDate(date1Date, date2Date);
+   }
+
+   public static Pair<Date, Date> parseDatePair(String date1, String date2) {
+      Pair<Date, Date> datePair = new Pair<Date, Date>(null, null);
       DateFormat format;
       if (date1.length() == 10) {
          format = format10;
@@ -289,26 +298,28 @@ public class XViewerSorter extends ViewerSorter {
          format = new SimpleDateFormat();
       }
       try {
-         date1Date = format.parse(date1);
+         Date date = format.parse(date1);
+         datePair.setFirst(date);
       } catch (ParseException ex) {
          try {
-            date1Date = new SimpleDateFormat().parse(date1);
+            Date date = new SimpleDateFormat().parse(date1);
+            datePair.setFirst(date);
          } catch (ParseException ex2) {
-            XViewerLog.log(Activator.class, Level.SEVERE, ex2);
-            return 0;
+            // do nothing;
          }
       }
       try {
-         date2Date = format.parse(date2);
+         Date date = format.parse(date2);
+         datePair.setSecond(date);
       } catch (ParseException ex) {
          try {
-            date2Date = DateFormat.getInstance().parse(date2);
+            Date date = DateFormat.getInstance().parse(date2);
+            datePair.setSecond(date);
          } catch (ParseException ex2) {
-            XViewerLog.log(Activator.class, Level.SEVERE, ex2);
-            return 0;
+            // do nothing
          }
       }
-      return getCompareForDate(date1Date, date2Date);
+      return datePair;
    }
 
    public int getCompareForDate(Date date1, Date date2) {

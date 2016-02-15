@@ -15,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -37,6 +38,7 @@ public class XViewerLib {
    static Random random = new Random();
    private static final Date today = new Date();
    public final static int MILLISECS_PER_DAY = (1000 * 60 * 60 * 24);
+   public final static String MMDDYYHHMM = "MM/dd/yyyy hh:mm a";
 
    public static long daysTillToday(Date date) {
       return (date.getTime() - today.getTime()) / MILLISECS_PER_DAY;
@@ -207,4 +209,12 @@ public class XViewerLib {
       }
    }
 
+   public static String getDateFromPattern(Date date, String pattern) {
+      SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
+      if (date == null) {
+         return "";
+      }
+      String result = dateFormat.format(date);
+      return result;
+   }
 }

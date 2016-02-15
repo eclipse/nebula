@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.xviewer;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -18,7 +20,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.nebula.widgets.xviewer.customize.ColumnDateFilter;
 import org.eclipse.nebula.widgets.xviewer.util.internal.Strings;
+import org.eclipse.nebula.widgets.xviewer.util.internal.dialog.DateRangeType;
 
 /**
  * @author Donald G. Dunne
@@ -29,6 +33,7 @@ public class XViewerTextFilter extends ViewerFilter {
    protected Pattern textPattern;
    protected Matcher matcher;
    protected final Map<String, Pattern> colIdToPattern = new HashMap<String, Pattern>();
+   protected final Map<String, ColumnDateFilter> colIdToDateFilter = new HashMap<String, ColumnDateFilter>();
    protected static final Pattern EMPTY_STR_PATTERN = Pattern.compile("");
    protected static final Pattern NOT_EMPTY_STR_PATTERN = Pattern.compile("^.+$");
    private final Set<Object> parentMatches = new HashSet<Object>();
@@ -54,6 +59,7 @@ public class XViewerTextFilter extends ViewerFilter {
       }
       // Update column filter patterns
       colIdToPattern.clear();
+      colIdToDateFilter.clear();
       for (String colId : xViewer.getCustomizeMgr().getColumnFilterData().getColIds()) {
          String colFilterText = xViewer.getCustomizeMgr().getColumnFilterText(colId);
          if (colFilterText != null) {
@@ -80,12 +86,16 @@ public class XViewerTextFilter extends ViewerFilter {
                }
             }
          }
+         ColumnDateFilter dateFilter = xViewer.getCustomizeMgr().getColumnDateFilter(colId);
+         if (dateFilter != null) {
+            colIdToDateFilter.put(colId, dateFilter);
+         }
       }
    }
 
    @Override
    public boolean select(Viewer viewer, Object parentElement, Object element) {
-      if (textPattern == null && colIdToPattern.isEmpty()) {
+      if (textPattern == null && colIdToPattern.isEmpty() && colIdToDateFilter.isEmpty()) {
          return true;
       }
       // If element matches, it's parent is added to this collection; it should always match so get full path shown
@@ -97,14 +107,55 @@ public class XViewerTextFilter extends ViewerFilter {
       }
       boolean match = true;
       // Must match all column filters or don't show
-      for (String filteredColId : xViewer.getCustomizeMgr().getColumnFilterData().getColIds()) {
+      Set<String> colIds = xViewer.getCustomizeMgr().getColumnFilterData().getColIds();
+      for (String filteredColId : colIds) {
          XViewerColumn xCol = xViewer.getCustomizeMgr().getCurrentTableColumn(filteredColId);
-         if (xCol.isShow() && colIdToPattern.keySet().contains(xCol.getId())) {
-            String cellStr =
-               xViewer.getColumnText(element, xViewer.getCustomizeMgr().getColumnNumFromXViewerColumn(xCol));
-            if (cellStr != null) {
-               matcher = colIdToPattern.get(xCol.getId()).matcher(cellStr);
-               if (!matcher.find()) {
+         if (xCol.isShow()) {
+            if (colIdToPattern.keySet().contains(xCol.getId())) {
+               String cellStr =
+                  xViewer.getColumnText(element, xViewer.getCustomizeMgr().getColumnNumFromXViewerColumn(xCol));
+               if (cellStr != null) {
+                  matcher = colIdToPattern.get(xCol.getId()).matcher(cellStr);
+                  if (!matcher.find()) {
+                     return false;
+                  }
+               }
+            }
+            if (colIdToDateFilter.containsKey(xCol.getId())) {
+               String cellStr =
+                  xViewer.getColumnText(element, xViewer.getCustomizeMgr().getColumnNumFromXViewerColumn(xCol));
+               if (Strings.isValid(cellStr)) {
+                  Date cellDate = XViewerSorter.parseDatePair(cellStr, "").getFirst();
+                  if (cellDate != null) {
+                     ColumnDateFilter columnDateFilter = colIdToDateFilter.get(xCol.getId());
+                     Calendar cellCal = Calendar.getInstance();
+                     cellCal.setTime(cellDate);
+                     Calendar filterCal = Calendar.getInstance();
+                     Date filterDate1 = columnDateFilter.getDate1();
+                     filterCal.setTime(filterDate1);
+                     DateRangeType rangeType = columnDateFilter.getType();
+                     if (rangeType == DateRangeType.Equals_Date) {
+                        if (cellCal.get(Calendar.YEAR) != filterCal.get(Calendar.YEAR) || cellCal.get(
+                           Calendar.MONTH) != filterCal.get(Calendar.MONTH) || cellCal.get(
+                              Calendar.DAY_OF_MONTH) != filterCal.get(Calendar.DAY_OF_MONTH)) {
+                           return false;
+                        }
+                     } else if (rangeType == DateRangeType.After_Date && cellDate.before(filterDate1)) {
+                        return false;
+                     } else if (rangeType == DateRangeType.Before_Date && cellDate.after(filterDate1)) {
+                        return false;
+                     } else if (rangeType == DateRangeType.Between_Dates) {
+                        if (cellDate.before(filterDate1)) {
+                           return false;
+                        }
+                        Date filterDate2 = columnDateFilter.getDate2();
+                        if (cellDate.after(filterDate2)) {
+                           return false;
+                        }
+                     }
+                  }
+               } else {
+                  // Do not show this row if date filter selected and no date is shown
                   return false;
                }
             }

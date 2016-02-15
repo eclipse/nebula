@@ -87,9 +87,9 @@ public class XViewerCustomMenu {
    protected XViewer xViewer;
    private final Clipboard clipboard = new Clipboard(null);
 
-   protected Action filterByValue, filterByColumn, clearAllSorting, clearAllFilters, tableProperties, viewTableReport,
-      columnMultiEdit, removeSelected, removeNonSelected, copySelected, showColumn, addComputedColumn, sumColumn,
-      averageColumn, hideColumn, copySelectedColumnCells, viewSelectedCell, copySelectedCell, uniqueValues;
+   protected Action filterByValue, filterByColumn, filterBySelColumn, clearAllSorting, clearAllFilters, tableProperties,
+      viewTableReport, columnMultiEdit, removeSelected, removeNonSelected, copySelected, showColumn, addComputedColumn,
+      sumColumn, averageColumn, hideColumn, copySelectedColumnCells, viewSelectedCell, copySelectedCell, uniqueValues;
    private boolean headerMouseClick = false;
 
    public boolean isHeaderMouseClick() {
@@ -149,6 +149,7 @@ public class XViewerCustomMenu {
       menuManager.add(addComputedColumn);
       menuManager.add(copySelectedColumnCells);
       menuManager.add(new Separator());
+      menuManager.add(filterBySelColumn);
       menuManager.add(filterByColumn);
       menuManager.add(clearAllFilters);
       menuManager.add(clearAllSorting);
@@ -602,6 +603,12 @@ public class XViewerCustomMenu {
             xViewer.getCustomizeMgr().clearFilters();
          }
       };
+      filterBySelColumn = new Action(XViewerText.get("menu.column_filter_sel")) { //$NON-NLS-1$
+         @Override
+         public void run() {
+            performFilterBySelColumn();
+         }
+      };
       filterByColumn = new Action(XViewerText.get("menu.column_filter")) { //$NON-NLS-1$
          @Override
          public void run() {
@@ -711,9 +718,14 @@ public class XViewerCustomMenu {
          return;
       }
       TreeColumn treeCol = (TreeColumn) ld.getResult()[0];
-      String colId = ((XViewerColumn) treeCol.getData()).getId();
-      xViewer.getColumnFilterDataUI().promptSetFilter(colId);
+      XViewerColumn col = (XViewerColumn) treeCol.getData();
+      xViewer.getColumnFilterDataUI().promptSetFilter(col);
 
+   }
+
+   private void performFilterBySelColumn() {
+      XViewerColumn col = (XViewerColumn) xViewer.getRightClickSelectedColumn().getData();
+      xViewer.getColumnFilterDataUI().promptSetFilter(col);
    }
 
    private void performCopyColumnCells() {

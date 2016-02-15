@@ -13,13 +13,17 @@ package org.eclipse.nebula.widgets.xviewer.customize;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.nebula.widgets.xviewer.XViewer;
+import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
-import org.eclipse.nebula.widgets.xviewer.util.internal.dialog.DialogWithEntry;
+import org.eclipse.nebula.widgets.xviewer.util.internal.Strings;
+import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
+import org.eclipse.nebula.widgets.xviewer.util.internal.dialog.ColumnFilterDialog;
+import org.eclipse.nebula.widgets.xviewer.util.internal.dialog.DateRangeType;
 import org.eclipse.swt.widgets.Display;
 
 /**
  * UI for the display of column filter data
- * 
+ *
  * @author Donald G. Dunne
  */
 public class ColumnFilterDataUI {
@@ -34,23 +38,29 @@ public class ColumnFilterDataUI {
       // provided for subclass implementation
    }
 
-   public void promptSetFilter(String colId) {
-      DialogWithEntry ed =
-         new DialogWithEntry(Display.getCurrent().getActiveShell(), XViewerText.get("ColumnFilterDataUI.title"), null, //$NON-NLS-1$
-            XViewerText.get("ColumnFilterDataUI.prompt", colId), MessageDialog.QUESTION, new String[] { //$NON-NLS-1$
+   public void promptSetFilter(XViewerColumn column) {
+      String columnName = column.getId().replaceFirst(".*\\.", "");
+      ColumnFilterDialog ed =
+         new ColumnFilterDialog(Display.getCurrent().getActiveShell(), XViewerText.get("ColumnFilterDataUI.title"), //$NON-NLS-1$
+            XViewerText.get("ColumnFilterDataUI.prompt", columnName), MessageDialog.QUESTION, //$NON-NLS-1$
+            new String[] {
                XViewerText.get("button.ok"), //$NON-NLS-1$
                XViewerText.get("button.clear"), //$NON-NLS-1$
                XViewerText.get("button.clear_all"), //$NON-NLS-1$
-               XViewerText.get("button.cancel")}, 0); //$NON-NLS-1$
-      String str = xViewer.getCustomizeMgr().getColumnFilterData().getFilterText(colId);
+               XViewerText.get("button.cancel")}, //$NON-NLS-1$
+            0, column);
+      String str = xViewer.getCustomizeMgr().getColumnFilterData().getFilterText(column.getId());
       if (str != null && !str.equals("")) { //$NON-NLS-1$
          ed.setEntry(str);
       }
       int result = ed.open();
       if (result == 0) {
-         xViewer.getCustomizeMgr().setColumnFilterText(colId, ed.getEntry());
+         xViewer.getCustomizeMgr().setColumnFilterText(column.getId(), ed.getEntry());
+         xViewer.getCustomizeMgr().setColumnDateFilter(column.getId(), ed.getDateRangeType(), ed.getDate1(),
+            ed.getDate2());
       } else if (result == 1) {
-         xViewer.getCustomizeMgr().setColumnFilterText(colId, null);
+         xViewer.getCustomizeMgr().setColumnFilterText(column.getId(), null);
+         xViewer.getCustomizeMgr().setColumnDateFilter(column.getId(), DateRangeType.None, null, null);
       } else if (result == 2) {
          xViewer.getCustomizeMgr().clearAllColumnFilters();
       }
@@ -58,7 +68,19 @@ public class ColumnFilterDataUI {
 
    public void appendToStatusLabel(StringBuffer sb) {
       for (String colId : xViewer.getCustomizeMgr().getColumnFilterData().getColIds()) {
-         sb.append("[" + colId + "=" + xViewer.getCustomizeMgr().getColumnFilterData().getFilterText(colId) + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+         String filterText = xViewer.getCustomizeMgr().getColumnFilterData().getFilterText(colId);
+         if (Strings.isValid(filterText)) {
+            sb.append("[" + colId + " = " + filterText + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+         }
+         ColumnDateFilter dateFilter = xViewer.getCustomizeMgr().getColumnFilterData().getDateFilter(colId);
+         if (dateFilter != null) {
+            sb.append("[" + colId + " = " + dateFilter.getType().name() + " ");
+            sb.append(XViewerLib.getDateFromPattern(dateFilter.getDate1(), XViewerLib.MMDDYYHHMM));
+            if (dateFilter.getType() == DateRangeType.Between_Dates) {
+               sb.append(" and " + XViewerLib.getDateFromPattern(dateFilter.getDate2(), XViewerLib.MMDDYYHHMM));
+            }
+            sb.append("]");
+         }
       }
    }
 

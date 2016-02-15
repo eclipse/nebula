@@ -12,6 +12,7 @@ package org.eclipse.nebula.widgets.xviewer.customize;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,7 @@ import org.eclipse.nebula.widgets.xviewer.util.XViewerException;
 import org.eclipse.nebula.widgets.xviewer.util.internal.Strings;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
+import org.eclipse.nebula.widgets.xviewer.util.internal.dialog.DateRangeType;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.TreeColumn;
@@ -114,9 +116,7 @@ public class CustomizeManager {
          }
          // Ignore known removed columns
          if (resolvedCol == null && !REMOVED_COLUMNS_TO_IGNORE.contains(storedCol.getName())) {
-            XViewerLog.log(
-               Activator.class,
-               Level.WARNING,
+            XViewerLog.log(Activator.class, Level.WARNING,
                "XViewer Conversion for saved Customization \"" + loadedCustData.getName() + "\" dropped unresolved column Name: \"" + storedCol.getName() + "\"  Id: \"" + storedCol.getId() + "\".  Delete customization and re-save to resolve.");
          }
       }
@@ -417,7 +417,8 @@ public class CustomizeManager {
             if (col != null) {
                sb.append(XViewerText.get("label.status.sort.start")); //$NON-NLS-1$
                sb.append(col.getName());
-               sb.append(col.isSortForward() ? XViewerText.get("label.status.sort.fwd") : XViewerText.get("label.status.sort.rev")); //$NON-NLS-1$ //$NON-NLS-2$
+               sb.append(col.isSortForward() ? XViewerText.get("label.status.sort.fwd") : XViewerText.get( //$NON-NLS-1$
+                  "label.status.sort.rev")); //$NON-NLS-1$
             }
          }
       }
@@ -541,8 +542,8 @@ public class CustomizeManager {
             sb.append("\n"); //$NON-NLS-1$
             sb.append(xCol.getDescription());
          }
-         if (Strings.isValid(xCol.getToolTip()) && !xCol.getToolTip().equals(xCol.getName()) && !xCol.getToolTip().equals(
-            xCol.getDescription())) {
+         if (Strings.isValid(xCol.getToolTip()) && !xCol.getToolTip().equals(
+            xCol.getName()) && !xCol.getToolTip().equals(xCol.getDescription())) {
             sb.append("\n"); //$NON-NLS-1$
             sb.append(xCol.getToolTip());
          }
@@ -563,7 +564,7 @@ public class CustomizeManager {
                   resetDefaultSorter();
                }
                if (xViewer.isAltKeyDown()) {
-                  xViewer.getColumnFilterDataUI().promptSetFilter(xCol.getId());
+                  xViewer.getColumnFilterDataUI().promptSetFilter(xCol);
                } else if (xViewer.isCtrlKeyDown()) {
                   List<XViewerColumn> currSortCols = currentCustData.getSortingData().getSortXCols(oldNameToColumnId);
                   if (currSortCols == null) {
@@ -602,5 +603,20 @@ public class CustomizeManager {
 
    public boolean isFilterTextRegularExpression() {
       return currentCustData.getFilterData().isRegularExpression();
+   }
+
+   public void setColumnDateFilter(String columnId, DateRangeType dateRangeType, Date date1, Date date2) {
+      if (dateRangeType == null || dateRangeType == DateRangeType.None) { //$NON-NLS-1$
+         currentCustData.columnFilterData.removeDateFilter(columnId);
+      } else {
+         currentCustData.columnFilterData.setDateFilter(columnId, dateRangeType, date1, date2);
+      }
+      xViewerTextFilter.update();
+      xViewer.refresh();
+
+   }
+
+   public ColumnDateFilter getColumnDateFilter(String columnId) {
+      return currentCustData.columnFilterData.getDateFilter(columnId);
    }
 }

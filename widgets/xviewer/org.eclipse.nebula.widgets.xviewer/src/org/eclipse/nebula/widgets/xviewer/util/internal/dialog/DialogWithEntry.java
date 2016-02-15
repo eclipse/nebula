@@ -12,7 +12,6 @@ package org.eclipse.nebula.widgets.xviewer.util.internal.dialog;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerTextWidget;
@@ -123,6 +122,8 @@ public class DialogWithEntry extends MessageDialog {
          errorLabel.setLayoutData(gd);
       }
 
+      createExtendedAreaPre(comp);
+
       text = new XViewerTextWidget();
       text.setFillHorizontally(true);
       text.setFocus();
@@ -149,6 +150,13 @@ public class DialogWithEntry extends MessageDialog {
       comp.layout();
       parent.layout();
       return comp;
+   }
+
+   /**
+    * Override to provide other widgets before entry
+    */
+   protected void createExtendedAreaPre(Composite parent) {
+      // provided for subclass implementation
    }
 
    @Override
@@ -201,7 +209,7 @@ public class DialogWithEntry extends MessageDialog {
 
    /**
     * override this method to make own checks on entry this will be called with every keystroke
-    * 
+    *
     * @return true if entry is valid
     */
    public boolean isEntryValid() {

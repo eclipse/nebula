@@ -1,0 +1,59 @@
+/*******************************************************************************
+ * Copyright (c) 2015 Boeing.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Boeing - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.nebula.widgets.xviewer.customize;
+
+import java.util.Date;
+import org.eclipse.nebula.widgets.xviewer.util.internal.dialog.DateRangeType;
+
+/**
+ * @author Donald G. Dunne
+ */
+public class ColumnDateFilter {
+   private DateRangeType type;
+   private Date date1;
+   private Date date2;
+
+   public ColumnDateFilter(DateRangeType type, Date date1, Date date2) {
+      this.type = type;
+      this.date1 = date1;
+      this.date2 = date2;
+   }
+
+   public DateRangeType getType() {
+      return type;
+   }
+
+   public void setType(DateRangeType type) {
+      this.type = type;
+   }
+
+   public Date getDate1() {
+      return date1;
+   }
+
+   public void setDate1(Date date1) {
+      this.date1 = date1;
+   }
+
+   public Date getDate2() {
+      return date2;
+   }
+
+   public void setDate2(Date date2) {
+      this.date2 = date2;
+   }
+
+   @Override
+   public String toString() {
+      return "colDateFilter [type=" + type + ", date1=" + date1 + ", date2=" + date2 + "]";
+   }
+
+}
