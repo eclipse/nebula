@@ -619,4 +619,8 @@ public class CustomizeManager {
    public ColumnDateFilter getColumnDateFilter(String columnId) {
       return currentCustData.columnFilterData.getDateFilter(columnId);
    }
+
+   public CustomizeData getCurrentCustomizeData() {
+      return currentCustData;
+   }
 }
