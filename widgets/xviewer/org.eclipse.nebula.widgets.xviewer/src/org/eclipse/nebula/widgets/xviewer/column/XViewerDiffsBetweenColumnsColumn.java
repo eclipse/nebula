@@ -11,10 +11,11 @@
 package org.eclipse.nebula.widgets.xviewer.column;
 
 import org.eclipse.nebula.widgets.xviewer.IXViewerLabelProvider;
-import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewerComputedColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
-import org.eclipse.swt.SWT;
+import org.eclipse.nebula.widgets.xviewer.core.model.XViewerAlign;
+import org.eclipse.nebula.widgets.xviewer.core.model.SortDataType;
+import org.eclipse.nebula.widgets.xviewer.core.model.XViewerColumn;
 
 /**
  * Show if cells from two columns (selected and one to right) are different.
@@ -30,7 +31,8 @@ public class XViewerDiffsBetweenColumnsColumn extends XViewerComputedColumn {
    }
 
    private XViewerDiffsBetweenColumnsColumn(String id) {
-      super(id, XViewerText.get("column.diffsBetweenColumns.name"), 30, SWT.LEFT, false, SortDataType.String, false, //$NON-NLS-1$
+      super(id, XViewerText.get("column.diffsBetweenColumns.name"), 30, XViewerAlign.Left, false, SortDataType.String, //$NON-NLS-1$
+         false,
          XViewerText.get("column.diffsBetweenColumns.description")); //$NON-NLS-1$
    }
 
@@ -53,7 +55,8 @@ public class XViewerDiffsBetweenColumnsColumn extends XViewerComputedColumn {
          } else if (nextColumnStr == null) {
             return XViewerText.get("different") + " - " + XViewerText.get("column.diffsBetweenColumns.rightNull"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
          }
-         return (sourceColumnStr.equals(nextColumnStr)) ? XViewerText.get("same") : String.format(XViewerText.get("different") + " [%s][%s]", sourceColumnStr, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+         return (sourceColumnStr.equals(nextColumnStr)) ? XViewerText.get("same") : String.format( //$NON-NLS-1$
+            XViewerText.get("different") + " [%s][%s]", sourceColumnStr, //$NON-NLS-1$ //$NON-NLS-2$
             nextColumnStr);
       } catch (Exception ex) {
          return ex.getLocalizedMessage();

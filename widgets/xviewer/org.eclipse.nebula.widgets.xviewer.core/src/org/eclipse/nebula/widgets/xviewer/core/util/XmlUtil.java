@@ -8,7 +8,7 @@
  * Contributors:
  *     Boeing - initial API and implementation
  *******************************************************************************/
-package org.eclipse.nebula.widgets.xviewer.util.internal;
+package org.eclipse.nebula.widgets.xviewer.core.util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +51,7 @@ public class XmlUtil {
 
    /**
     * Parse <xmlRoot name="this.is.name" value="this.is.value"> and return name, value
-    * 
+    *
     * @param xmlRoot xml tag name
     * @param xmlStr string containing xml
     * @return String[]{name, value}
@@ -59,9 +59,8 @@ public class XmlUtil {
    public static String[] getNameValue(String xmlRoot, String xmlStr) {
       String[] strs = new String[] {"", ""};
       Matcher m;
-      m =
-         Pattern.compile("<" + xmlRoot + " name=\"(.*?)\" value=\"(.*?)\" />", Pattern.MULTILINE | Pattern.DOTALL).matcher(
-            xmlStr);
+      m = Pattern.compile("<" + xmlRoot + " name=\"(.*?)\" value=\"(.*?)\" />",
+         Pattern.MULTILINE | Pattern.DOTALL).matcher(xmlStr);
       if (m.find()) {
          strs[0] = m.group(1);
          strs[1] = m.group(2);
@@ -76,8 +75,8 @@ public class XmlUtil {
    public static String[] getTagDataArray(String xmlStr, String xmlRoot) {
       List<String> data = new ArrayList<String>();
       Matcher m;
-      m =
-         Pattern.compile("<" + xmlRoot + ">(.*?)</" + xmlRoot + ">", Pattern.MULTILINE | Pattern.DOTALL).matcher(xmlStr);
+      m = Pattern.compile("<" + xmlRoot + ">(.*?)</" + xmlRoot + ">", Pattern.MULTILINE | Pattern.DOTALL).matcher(
+         xmlStr);
       while (m.find()) {
          data.add(xmlToText(m.group(1)));
       }
@@ -116,7 +115,7 @@ public class XmlUtil {
    /**
     * Given text strings containing xml reserved characters, replace with valid xml representation characters > => & gt;
     * < => & lt; & => & amp; ' => & apos; " => & quot;
-    * 
+    *
     * @param text text to be converted to valid XML representation characters
     */
    public static String textToXml(String text) {

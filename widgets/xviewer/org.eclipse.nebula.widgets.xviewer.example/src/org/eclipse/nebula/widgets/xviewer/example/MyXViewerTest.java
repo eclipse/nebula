@@ -25,7 +25,7 @@ import org.eclipse.nebula.widgets.xviewer.example.model.ISomeTask;
 import org.eclipse.nebula.widgets.xviewer.example.model.ISomeTask.RunDb;
 import org.eclipse.nebula.widgets.xviewer.example.model.ISomeTask.TaskType;
 import org.eclipse.nebula.widgets.xviewer.example.model.SomeTask;
-import org.eclipse.nebula.widgets.xviewer.util.XViewerUtil;
+import org.eclipse.nebula.widgets.xviewer.util.XViewerDisplay;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -69,7 +69,7 @@ public class MyXViewerTest {
       toolBarComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
       // Set property that this xviewer is outside the Eclipse workbench
-      XViewerUtil.setStandaloneXViewer(true, Display_1);
+      XViewerDisplay.setStandaloneXViewer(true, Display_1);
 
       myXviewer = new MyXViewer(Shell_1, SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION);
       myXviewer.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));

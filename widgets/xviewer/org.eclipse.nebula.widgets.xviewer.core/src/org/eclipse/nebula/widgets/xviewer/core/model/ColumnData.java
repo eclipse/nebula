@@ -8,7 +8,7 @@
  * Contributors:
  *     Boeing - initial API and implementation
  *******************************************************************************/
-package org.eclipse.nebula.widgets.xviewer.customize;
+package org.eclipse.nebula.widgets.xviewer.core.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,12 +16,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
-import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
 
 /**
  * Provides for xml packing/unpacking of columns
- * 
+ *
  * @author Donald G. Dunne
  */
 public class ColumnData {
@@ -30,7 +28,7 @@ public class ColumnData {
    Map<String, XViewerColumn> idToColumn = new HashMap<String, XViewerColumn>();
 
    private static Pattern pattern =
-      Pattern.compile("<" + XViewerColumn.XTREECOLUMN_TAG + ">(.*?)</" + XViewerColumn.XTREECOLUMN_TAG + ">");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+      Pattern.compile("<" + XViewerColumn.XTREECOLUMN_TAG + ">(.*?)</" + XViewerColumn.XTREECOLUMN_TAG + ">"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 
    public List<XViewerColumn> setFromXml(String xml) {
       columns.clear();
@@ -42,16 +40,6 @@ public class ColumnData {
          idToColumn.put(xCol.getId(), xCol);
       }
       return columns;
-   }
-
-   @Override
-   public String toString() {
-      StringBuffer sb = new StringBuffer("columnData:["); //$NON-NLS-1$
-      for (XViewerColumn xCol : columns) {
-         sb.append(xCol);
-      }
-      sb.append("]"); //$NON-NLS-1$
-      return sb.toString();
    }
 
    public XViewerColumn getXColumn(String id) {
@@ -79,8 +67,13 @@ public class ColumnData {
       this.columns = columns;
       idToColumn.clear();
       for (XViewerColumn xCol : columns) {
-         idToColumn.put(XViewerLib.intern(xCol.getId()), xCol);
+         idToColumn.put(xCol.getId(), xCol);
       }
+   }
+
+   @Override
+   public String toString() {
+      return "ColumnData [columns=" + columns + "]";
    }
 
 }

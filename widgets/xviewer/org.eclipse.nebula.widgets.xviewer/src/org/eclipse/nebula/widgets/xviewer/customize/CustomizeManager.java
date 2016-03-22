@@ -11,28 +11,29 @@
 package org.eclipse.nebula.widgets.xviewer.customize;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.nebula.widgets.xviewer.Activator;
 import org.eclipse.nebula.widgets.xviewer.IXViewerFactory;
 import org.eclipse.nebula.widgets.xviewer.IXViewerLabelProvider;
 import org.eclipse.nebula.widgets.xviewer.XViewer;
-import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewerComputedColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewerSorter;
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.nebula.widgets.xviewer.XViewerTextFilter;
+import org.eclipse.nebula.widgets.xviewer.core.model.ColumnDateFilter;
+import org.eclipse.nebula.widgets.xviewer.core.model.ColumnFilterData;
+import org.eclipse.nebula.widgets.xviewer.core.model.CustomizeData;
+import org.eclipse.nebula.widgets.xviewer.core.model.DateRangeType;
+import org.eclipse.nebula.widgets.xviewer.core.model.XViewerAlign;
+import org.eclipse.nebula.widgets.xviewer.core.model.XViewerColumn;
+import org.eclipse.nebula.widgets.xviewer.core.util.Strings;
 import org.eclipse.nebula.widgets.xviewer.util.Pair;
 import org.eclipse.nebula.widgets.xviewer.util.XViewerException;
-import org.eclipse.nebula.widgets.xviewer.util.internal.Strings;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
-import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
-import org.eclipse.nebula.widgets.xviewer.util.internal.dialog.DateRangeType;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.TreeColumn;
@@ -53,7 +54,6 @@ public class CustomizeManager {
    public final static String TABLE_DEFAULT_LABEL = XViewerText.get("label.default"); //$NON-NLS-1$
    // Added to keep filter, sorter from working till finished loading
    public boolean loading = true;
-   public final static List<String> REMOVED_COLUMNS_TO_IGNORE = Arrays.asList("Metrics from Tasks");
 
    public CustomizeManager(XViewer xViewer, IXViewerFactory xViewerFactory) throws XViewerException {
       this.xViewer = xViewer;
@@ -113,11 +113,6 @@ public class CustomizeManager {
             resolvedCol.setShow(storedCol.isShow());
             resolvedCol.setSortForward(storedCol.isSortForward());
             resolvedColumns.add(resolvedCol);
-         }
-         // Ignore known removed columns
-         if (resolvedCol == null && !REMOVED_COLUMNS_TO_IGNORE.contains(storedCol.getName())) {
-            XViewerLog.log(Activator.class, Level.WARNING,
-               "XViewer Conversion for saved Customization \"" + loadedCustData.getName() + "\" dropped unresolved column Name: \"" + storedCol.getName() + "\"  Id: \"" + storedCol.getId() + "\".  Delete customization and re-save to resolve.");
          }
       }
       addNewlyCreatedColumns(resolvedColumns);
@@ -206,7 +201,7 @@ public class CustomizeManager {
    }
 
    public void setFilterText(String text, boolean regex) {
-      currentCustData.filterData.setFilterText(text, regex);
+      currentCustData.getFilterData().setFilterText(text, regex);
       try {
          xViewer.getTree().setRedraw(false);
          xViewerTextFilter.update();
@@ -222,9 +217,9 @@ public class CustomizeManager {
 
    public void setColumnFilterText(String colId, String text) {
       if (text == null || text.equals("")) { //$NON-NLS-1$
-         currentCustData.columnFilterData.removeFilterText(colId);
+         currentCustData.getColumnFilterData().removeFilterText(colId);
       } else {
-         currentCustData.columnFilterData.setFilterText(colId, text);
+         currentCustData.getColumnFilterData().setFilterText(colId, text);
       }
       xViewerTextFilter.update();
       xViewer.refresh();
@@ -232,13 +227,13 @@ public class CustomizeManager {
 
    public void clearFilters() {
       xViewer.getFilterDataUI().clear();
-      currentCustData.columnFilterData.clear();
+      currentCustData.getColumnFilterData().clear();
       xViewerTextFilter.update();
       xViewer.refresh();
    }
 
    public void clearAllColumnFilters() {
-      currentCustData.columnFilterData.clear();
+      currentCustData.getColumnFilterData().clear();
       xViewerTextFilter.update();
       xViewer.refresh();
    }
@@ -312,10 +307,10 @@ public class CustomizeManager {
             columns.add(newXCol);
          }
       }
-      custData.columnData.setColumns(columns);
-      custData.sortingData.setFromXml(currentCustData.sortingData.getXml());
-      custData.filterData.setFromXml(currentCustData.filterData.getXml());
-      custData.columnFilterData.setFromXml(currentCustData.columnFilterData.getXml());
+      custData.getColumnData().setColumns(columns);
+      custData.getSortingData().setFromXml(currentCustData.getSortingData().getXml());
+      custData.getFilterData().setFromXml(currentCustData.getFilterData().getXml());
+      custData.getColumnFilterData().setFromXml(currentCustData.getColumnFilterData().getXml());
       return custData;
    }
 
@@ -533,7 +528,7 @@ public class CustomizeManager {
             continue;
          }
          xCol.setXViewer(xViewer);
-         TreeColumn column = new TreeColumn(xViewer.getTree(), xCol.getAlign());
+         TreeColumn column = new TreeColumn(xViewer.getTree(), getSwtAlign(xCol.getAlign()));
          column.setMoveable(true);
          column.setData(xCol);
          StringBuffer sb = new StringBuffer();
@@ -601,15 +596,24 @@ public class CustomizeManager {
       }
    }
 
+   public static int getSwtAlign(XViewerAlign align) {
+      if (align == XViewerAlign.Center) {
+         return SWT.CENTER;
+      } else if (align == XViewerAlign.Right) {
+         return SWT.RIGHT;
+      }
+      return SWT.LEFT;
+   }
+
    public boolean isFilterTextRegularExpression() {
       return currentCustData.getFilterData().isRegularExpression();
    }
 
    public void setColumnDateFilter(String columnId, DateRangeType dateRangeType, Date date1, Date date2) {
       if (dateRangeType == null || dateRangeType == DateRangeType.None) { //$NON-NLS-1$
-         currentCustData.columnFilterData.removeDateFilter(columnId);
+         currentCustData.getColumnFilterData().removeDateFilter(columnId);
       } else {
-         currentCustData.columnFilterData.setDateFilter(columnId, dateRangeType, date1, date2);
+         currentCustData.getColumnFilterData().setDateFilter(columnId, dateRangeType, date1, date2);
       }
       xViewerTextFilter.update();
       xViewer.refresh();
@@ -617,7 +621,7 @@ public class CustomizeManager {
    }
 
    public ColumnDateFilter getColumnDateFilter(String columnId) {
-      return currentCustData.columnFilterData.getDateFilter(columnId);
+      return currentCustData.getColumnFilterData().getDateFilter(columnId);
    }
 
    public CustomizeData getCurrentCustomizeData() {

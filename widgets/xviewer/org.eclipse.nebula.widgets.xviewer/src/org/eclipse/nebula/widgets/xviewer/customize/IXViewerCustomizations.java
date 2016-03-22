@@ -11,6 +11,7 @@
 package org.eclipse.nebula.widgets.xviewer.customize;
 
 import java.util.List;
+import org.eclipse.nebula.widgets.xviewer.core.model.CustomizeData;
 import org.eclipse.nebula.widgets.xviewer.util.XViewerException;
 
 /**

@@ -158,7 +158,8 @@ public class HtmlUtil {
    }
 
    public static String heading(int heading, String str, String id) {
-      return "<h" + heading + (id != null && !id.equals("") ? " id=\"" + id + "\"" : "") + ">" + textToHtml(str) + "</h" + heading + ">";
+      return "<h" + heading + (id != null && !id.equals("") ? " id=\"" + id + "\"" : "") + ">" + textToHtml(
+         str) + "</h" + heading + ">";
    }
 
    public static String heading(int heading, String str) {
@@ -261,7 +262,7 @@ public class HtmlUtil {
 
    /**
     * Create a table with one row multi column containing str[]
-    * 
+    *
     * @param str = array of strings for columns
     * @return Return multi-column table string
     */
@@ -271,7 +272,7 @@ public class HtmlUtil {
 
    /**
     * Create a table with one row multi column containing str[]
-    * 
+    *
     * @param str - array of strings for columns
     * @param width - percent (1..100) of screen for table
     * @return Return multi-column table string
@@ -456,6 +457,11 @@ public class HtmlUtil {
          }
       }
       return table.toString();
+   }
+
+   public static String getPreData(String data) {
+      return "<style>pre { white-space: pre-wrap;       /* CSS 3 */ white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */ white-space: -pre-wrap;      /* Opera 4-6 */ white-space: -o-pre-wrap;    /* Opera 7 */ word-wrap: break-word;       /* Internet Explorer 5.5+ */ }</style>" + HtmlUtil.pre(
+         HtmlUtil.textToHtml(data));
    }
 
 }

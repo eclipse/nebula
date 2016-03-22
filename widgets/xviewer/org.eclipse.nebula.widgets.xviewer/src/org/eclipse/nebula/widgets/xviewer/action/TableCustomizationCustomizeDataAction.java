@@ -14,12 +14,13 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.nebula.widgets.xviewer.XViewer;
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
-import org.eclipse.nebula.widgets.xviewer.customize.CustomizeData;
+import org.eclipse.nebula.widgets.xviewer.core.model.CustomizeData;
+import org.eclipse.nebula.widgets.xviewer.util.internal.CustomizeDataImages;
 import org.eclipse.nebula.widgets.xviewer.util.internal.images.XViewerImageCache;
 
 /**
  * Action to load a specified customize data object
- * 
+ *
  * @author Donald G. Dunne
  */
 public class TableCustomizationCustomizeDataAction extends Action {
@@ -36,7 +37,8 @@ public class TableCustomizationCustomizeDataAction extends Action {
    @Override
    public ImageDescriptor getImageDescriptor() {
       try {
-         return custData.getImageDescriptor(xViewer.getCustomizeMgr().isCustomizationUserDefault(custData));
+         return CustomizeDataImages.getImageDescriptor(xViewer.getCustomizeMgr().isCustomizationUserDefault(custData),
+            custData);
       } catch (Exception ex) {
          // do nothing
       }

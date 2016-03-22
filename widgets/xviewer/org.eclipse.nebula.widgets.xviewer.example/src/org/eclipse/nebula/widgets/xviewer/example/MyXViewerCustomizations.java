@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import org.eclipse.nebula.widgets.xviewer.Activator;
-import org.eclipse.nebula.widgets.xviewer.customize.CustomizeData;
+import org.eclipse.nebula.widgets.xviewer.core.model.CustomizeData;
 import org.eclipse.nebula.widgets.xviewer.customize.XViewerCustomizations;
 import org.eclipse.nebula.widgets.xviewer.example.util.FileUtil;
 import org.eclipse.nebula.widgets.xviewer.example.util.MatchFilter;
@@ -26,7 +26,7 @@ import org.eclipse.nebula.widgets.xviewer.util.XViewerException;
 
 /**
  * Implementation for example XViewer implementation. Saves customizations as files at C:/UserData
- * 
+ *
  * @author Donald G. Dunne
  */
 public class MyXViewerCustomizations extends XViewerCustomizations {

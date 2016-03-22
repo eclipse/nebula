@@ -20,9 +20,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.nebula.widgets.xviewer.customize.ColumnDateFilter;
-import org.eclipse.nebula.widgets.xviewer.util.internal.Strings;
-import org.eclipse.nebula.widgets.xviewer.util.internal.dialog.DateRangeType;
+import org.eclipse.nebula.widgets.xviewer.core.model.ColumnDateFilter;
+import org.eclipse.nebula.widgets.xviewer.core.model.DateRangeType;
+import org.eclipse.nebula.widgets.xviewer.core.model.XViewerColumn;
+import org.eclipse.nebula.widgets.xviewer.core.util.Strings;
 
 /**
  * @author Donald G. Dunne

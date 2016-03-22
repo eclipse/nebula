@@ -17,8 +17,8 @@ import org.eclipse.nebula.widgets.xviewer.Activator;
 import org.eclipse.nebula.widgets.xviewer.IXViewerLabelProvider;
 import org.eclipse.nebula.widgets.xviewer.IXViewerValueColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewer;
-import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
+import org.eclipse.nebula.widgets.xviewer.core.model.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.util.XViewerException;
 import org.eclipse.nebula.widgets.xviewer.util.internal.HtmlUtil;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
@@ -44,8 +44,8 @@ public class ViewSelectedCellDataAction extends Action {
    }
 
    public ViewSelectedCellDataAction(XViewer xViewer, Clipboard clipboard, Option option) {
-      super(
-         option.equals(Option.View) ? XViewerText.get("action.selectedCellData.view") : XViewerText.get("action.selectedCellData.copy")); //$NON-NLS-1$ //$NON-NLS-2$
+      super(option.equals(Option.View) ? XViewerText.get("action.selectedCellData.view") : XViewerText.get( //$NON-NLS-1$
+         "action.selectedCellData.copy")); //$NON-NLS-1$
       this.xViewer = xViewer;
       this.clipboard = clipboard;
       this.option = option;
@@ -80,18 +80,14 @@ public class ViewSelectedCellDataAction extends Action {
          }
          if (data != null && !data.equals("")) { //$NON-NLS-1$
             if (option == Option.View) {
-               String html = HtmlUtil.simplePage(getPreData(data));
-               new HtmlDialog(
-                  treeCol.getText() + " " + XViewerText.get("data"), treeCol.getText() + " " + XViewerText.get("data"), html).open(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+               String html = HtmlUtil.simplePage(HtmlUtil.getPreData(data));
+               new HtmlDialog(treeCol.getText() + " " + XViewerText.get("data"), //$NON-NLS-1$//$NON-NLS-2$
+                  treeCol.getText() + " " + XViewerText.get("data"), html).open(); //$NON-NLS-1$ //$NON-NLS-2$
             } else {
                clipboard.setContents(new Object[] {data}, new Transfer[] {TextTransfer.getInstance()});
             }
          }
       }
-   }
-
-   private String getPreData(String data) {
-      return "<style>pre { white-space: pre-wrap;       /* CSS 3 */ white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */ white-space: -pre-wrap;      /* Opera 4-6 */ white-space: -o-pre-wrap;    /* Opera 7 */ word-wrap: break-word;       /* Internet Explorer 5.5+ */ }</style>" + HtmlUtil.pre(HtmlUtil.textToHtml(data));
    }
 
 }
