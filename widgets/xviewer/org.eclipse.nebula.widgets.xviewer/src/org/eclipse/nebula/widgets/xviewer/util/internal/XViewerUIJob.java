@@ -5,7 +5,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.nebula.widgets.xviewer.util.XViewerUtil;
+import org.eclipse.nebula.widgets.xviewer.util.XViewerDisplay;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -129,7 +129,7 @@ public abstract class XViewerUIJob extends Job {
    public Display getDisplay() {
       //If it was not set get it from the workbench
       if (cachedDisplay == null) {
-         cachedDisplay = XViewerUtil.getDisplay();
+         cachedDisplay = XViewerDisplay.getDisplay();
       }
       return cachedDisplay;
    }

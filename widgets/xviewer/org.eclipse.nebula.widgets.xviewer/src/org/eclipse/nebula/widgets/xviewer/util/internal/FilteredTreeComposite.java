@@ -22,7 +22,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.nebula.widgets.xviewer.util.XViewerUtil;
+import org.eclipse.nebula.widgets.xviewer.util.XViewerDisplay;
 import org.eclipse.nebula.widgets.xviewer.util.internal.images.XViewerImageCache;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -143,7 +143,7 @@ public class FilteredTreeComposite extends Composite {
     */
    static {
       ImageDescriptor descriptor = null;
-      if (!XViewerUtil.isStandaloneXViewer() && XViewerUtil.isWorkbenchRunning()) {
+      if (!XViewerDisplay.isStandaloneXViewer() && XViewerDisplay.isWorkbenchRunning()) {
          descriptor =
             AbstractUIPlugin.imageDescriptorFromPlugin(PlatformUI.PLUGIN_ID, "$nl$/icons/full/etool16/clear_co.gif"); //$NON-NLS-1$
          if (descriptor != null) {
@@ -194,7 +194,7 @@ public class FilteredTreeComposite extends Composite {
    protected void init(int treeStyle, PatternFilter filter) {
       patternFilter = filter;
       showFilterControls = true;
-      if (!XViewerUtil.isStandaloneXViewer() && XViewerUtil.isWorkbenchRunning()) {
+      if (!XViewerDisplay.isStandaloneXViewer() && XViewerDisplay.isWorkbenchRunning()) {
          showFilterControls =
             PlatformUI.getPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_FILTERED_TEXTS);
       }
@@ -596,7 +596,7 @@ public class FilteredTreeComposite extends Composite {
    protected void textChanged() {
       narrowingDown = previousFilterText == null || getFilterString().startsWith(previousFilterText);
       previousFilterText = getFilterString();
-      if (XViewerUtil.isStandaloneXViewer()) {
+      if (XViewerDisplay.isStandaloneXViewer()) {
          refreshJob.run(new NullProgressMonitor());
       } else {
          // cancel currently running job first, to prevent unnecessary redraw

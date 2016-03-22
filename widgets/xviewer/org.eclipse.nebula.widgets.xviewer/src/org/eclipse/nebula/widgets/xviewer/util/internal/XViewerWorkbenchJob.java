@@ -3,7 +3,7 @@ package org.eclipse.nebula.widgets.xviewer.util.internal;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-import org.eclipse.nebula.widgets.xviewer.util.XViewerUtil;
+import org.eclipse.nebula.widgets.xviewer.util.XViewerDisplay;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -49,7 +49,7 @@ public abstract class XViewerWorkbenchJob extends XViewerUIJob {
          public void done(IJobChangeEvent event) {
 
             //Abort if it is not running
-            if (!XViewerUtil.isStandaloneXViewer() && !XViewerUtil.isWorkbenchRunning()) {
+            if (!XViewerDisplay.isStandaloneXViewer() && !XViewerDisplay.isWorkbenchRunning()) {
                return;
             }
 
@@ -77,7 +77,7 @@ public abstract class XViewerWorkbenchJob extends XViewerUIJob {
    @Override
    public boolean shouldSchedule() {
       boolean result =
-         super.shouldSchedule() && (XViewerUtil.isStandaloneXViewer() || XViewerUtil.isWorkbenchRunning());
+         super.shouldSchedule() && (XViewerDisplay.isStandaloneXViewer() || XViewerDisplay.isWorkbenchRunning());
       return result;
    }
 
@@ -87,7 +87,7 @@ public abstract class XViewerWorkbenchJob extends XViewerUIJob {
     */
    @Override
    public boolean shouldRun() {
-      boolean result = super.shouldRun() && (XViewerUtil.isStandaloneXViewer() || XViewerUtil.isWorkbenchRunning());
+      boolean result = super.shouldRun() && (XViewerDisplay.isStandaloneXViewer() || XViewerDisplay.isWorkbenchRunning());
       return result;
    }
 

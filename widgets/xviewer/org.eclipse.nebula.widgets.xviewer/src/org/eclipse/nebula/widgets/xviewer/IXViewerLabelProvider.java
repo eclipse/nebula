@@ -1,5 +1,7 @@
 package org.eclipse.nebula.widgets.xviewer;
 
+import org.eclipse.nebula.widgets.xviewer.core.model.XViewerColumn;
+
 /**
  * @author Juergen Reichl
  */

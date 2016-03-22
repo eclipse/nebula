@@ -8,7 +8,7 @@
  * Contributors:
  *     Boeing - initial API and implementation
  *******************************************************************************/
-package org.eclipse.nebula.widgets.xviewer.util.internal;
+package org.eclipse.nebula.widgets.xviewer.core.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,7 +29,7 @@ public class CollectionsUtil {
 
    /**
     * An flexible alternative for converting a Collection to a String.
-    * 
+    *
     * @param c The Collection to convert to a String
     * @param start The String to place at the beginning of the returned String
     * @param separator The String to place in between elements of the Collection c.
@@ -105,6 +105,7 @@ public class CollectionsUtil {
    /**
     * Returns the unique union of the given lists
     */
+   @SuppressWarnings("unchecked")
    public static <T> Set<T> setUnion(Collection<T>... lists) {
       Set<T> union = new HashSet<T>(lists[0].size() * 2);
 
@@ -130,6 +131,7 @@ public class CollectionsUtil {
    /**
     * Convert an aggregate list of objects into a List
     */
+   @SuppressWarnings("unchecked")
    public static <T> List<T> getAggregate(T... objects) {
       List<T> objs = new ArrayList<T>();
       if (objects != null) {
@@ -188,14 +190,15 @@ public class CollectionsUtil {
 
    /**
     * Cast objects to clazz
-    * 
+    *
     * @param castOption if ALL, cast all and throw exception if cast fails; if MATCHING, only cast those of type clazz
     */
    @SuppressWarnings("unchecked")
    private static <A extends Object> List<A> cast(Class<A> clazz, Collection<? extends Object> objects, CastOption castOption) {
       List<A> results = new ArrayList<A>(objects.size());
       for (Object object : objects) {
-         if ((castOption == CastOption.ALL) || ((castOption == CastOption.MATCHING) && (object.getClass().isAssignableFrom(clazz)))) {
+         if ((castOption == CastOption.ALL) || ((castOption == CastOption.MATCHING) && (object.getClass().isAssignableFrom(
+            clazz)))) {
             results.add((A) object);
          }
       }

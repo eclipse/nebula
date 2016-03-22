@@ -13,9 +13,9 @@ package org.eclipse.nebula.widgets.xviewer.util.internal;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.eclipse.nebula.widgets.xviewer.Activator;
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
+import org.eclipse.nebula.widgets.xviewer.core.util.XmlUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.StyledText;
@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.MenuItem;
 
 /**
  * Generic label and text field object for use by single entry artifact attributes
- * 
+ *
  * @author Donald G. Dunne
  */
 public class XViewerTextWidget extends XViewerWidget {
@@ -50,7 +50,7 @@ public class XViewerTextWidget extends XViewerWidget {
    private Font font;
 
    public XViewerTextWidget() {
-      super("AText", "text");  //$NON-NLS-1$//$NON-NLS-2$
+      super("AText", "text"); //$NON-NLS-1$//$NON-NLS-2$
    }
 
    public XViewerTextWidget(String displayLabel) {
@@ -286,7 +286,7 @@ public class XViewerTextWidget extends XViewerWidget {
 
    /**
     * Set max character limit on text field
-    * 
+    *
     * @param limit - if 0, then limit is 999, else sets to limit
     */
    public void setMaxTextLimit(int limit) {
@@ -362,7 +362,7 @@ public class XViewerTextWidget extends XViewerWidget {
 
    public String get() {
       if (debug) {
-         XViewerLog.log(Activator.class, Level.SEVERE, "text set *" + text + "*");  //$NON-NLS-1$//$NON-NLS-2$
+         XViewerLog.log(Activator.class, Level.SEVERE, "text set *" + text + "*"); //$NON-NLS-1$//$NON-NLS-2$
       }
       return text;
    }
@@ -391,7 +391,7 @@ public class XViewerTextWidget extends XViewerWidget {
 
    @Override
    public String toXml(String xmlRoot) {
-      return "<" + xmlRoot + ">" + getXmlData() + "</" + xmlRoot + ">\n";  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+      return "<" + xmlRoot + ">" + getXmlData() + "</" + xmlRoot + ">\n"; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
    }
 
    @Override
@@ -403,23 +403,23 @@ public class XViewerTextWidget extends XViewerWidget {
    public void setXmlData(String str) {
       set(str);
       if (debug) {
-         XViewerLog.log(Activator.class, Level.SEVERE, "setFromXml *" + str + "*"); //$NON-NLS-1$//$NON-NLS-2$ 
+         XViewerLog.log(Activator.class, Level.SEVERE, "setFromXml *" + str + "*"); //$NON-NLS-1$//$NON-NLS-2$
       }
    }
 
    @Override
    public void setFromXml(String xml) {
       Matcher m;
-      m = Pattern.compile("<" + xmlRoot + ">(.*?)</" + xmlRoot + ">", Pattern.MULTILINE | Pattern.DOTALL).matcher(xml); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ 
+      m = Pattern.compile("<" + xmlRoot + ">(.*?)</" + xmlRoot + ">", Pattern.MULTILINE | Pattern.DOTALL).matcher(xml); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 
       if (m.find()) {
          String xmlStr = m.group(1);
          if (debug) {
-            XViewerLog.log(Activator.class, Level.SEVERE, "xmlStr *" + xmlStr + "*"); //$NON-NLS-1$//$NON-NLS-2$ 
+            XViewerLog.log(Activator.class, Level.SEVERE, "xmlStr *" + xmlStr + "*"); //$NON-NLS-1$//$NON-NLS-2$
          }
          String str = XmlUtil.xmlToText(xmlStr);
          if (debug) {
-            XViewerLog.log(Activator.class, Level.SEVERE, "str *" + str + "*"); //$NON-NLS-1$//$NON-NLS-2$ 
+            XViewerLog.log(Activator.class, Level.SEVERE, "str *" + str + "*"); //$NON-NLS-1$//$NON-NLS-2$
          }
          setXmlData(str);
       }
@@ -480,17 +480,17 @@ public class XViewerTextWidget extends XViewerWidget {
       String textStr = text;
       if (fillVertically) {
          sb.append("\n"); //$NON-NLS-1$
-         textStr = textStr.replaceAll("\n", "\n" + "      "); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ 
+         textStr = textStr.replaceAll("\n", "\n" + "      "); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
          textStr = "      " + textStr; //$NON-NLS-1$
       }
       sb.append(textStr);
-      return sb.toString().replaceAll("\n$", ""); //$NON-NLS-1$//$NON-NLS-2$ 
+      return sb.toString().replaceAll("\n$", ""); //$NON-NLS-1$//$NON-NLS-2$
    }
 
    public String toHTML(String labelFont, boolean newLineText) {
       String s = HtmlUtil.getLabelStr(labelFont, label + ": "); //$NON-NLS-1$
       if (newLineText) {
-         s = "<dl><dt>" + s + "<dd>"; //$NON-NLS-1$//$NON-NLS-2$ 
+         s = "<dl><dt>" + s + "<dd>"; //$NON-NLS-1$//$NON-NLS-2$
       }
       s += text;
       if (newLineText) {

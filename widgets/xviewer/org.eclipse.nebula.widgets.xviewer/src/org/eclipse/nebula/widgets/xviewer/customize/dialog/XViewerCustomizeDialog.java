@@ -27,18 +27,18 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.nebula.widgets.xviewer.Activator;
 import org.eclipse.nebula.widgets.xviewer.XViewer;
-import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumnLabelProvider;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumnSorter;
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
-import org.eclipse.nebula.widgets.xviewer.customize.ColumnFilterData;
-import org.eclipse.nebula.widgets.xviewer.customize.CustomizeData;
+import org.eclipse.nebula.widgets.xviewer.core.model.ColumnFilterData;
+import org.eclipse.nebula.widgets.xviewer.core.model.CustomizeData;
+import org.eclipse.nebula.widgets.xviewer.core.model.SortingData;
+import org.eclipse.nebula.widgets.xviewer.core.model.XViewerColumn;
+import org.eclipse.nebula.widgets.xviewer.core.util.CollectionsUtil;
 import org.eclipse.nebula.widgets.xviewer.customize.CustomizeDataLabelProvider;
 import org.eclipse.nebula.widgets.xviewer.customize.CustomizeManager;
-import org.eclipse.nebula.widgets.xviewer.customize.SortingData;
 import org.eclipse.nebula.widgets.xviewer.util.XViewerException;
 import org.eclipse.nebula.widgets.xviewer.util.internal.ArrayTreeContentProvider;
-import org.eclipse.nebula.widgets.xviewer.util.internal.CollectionsUtil;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerFilteredTree;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
@@ -70,11 +70,12 @@ import org.eclipse.swt.widgets.TreeItem;
 
 /**
  * Provides dialog for table customization
- * 
+ *
  * @author Donald G. Dunne
  */
 public class XViewerCustomizeDialog extends MessageDialog {
-   private static String buttons[] = new String[] {XViewerText.get("button.ok"), XViewerText.get("button.apply"), XViewerText.get("button.cancel")}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+   private static String buttons[] =
+      new String[] {XViewerText.get("button.ok"), XViewerText.get("button.apply"), XViewerText.get("button.cancel")}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
    private final XViewer xViewerToCustomize;
    private XViewerFilteredTree custTable;
    protected XViewerFilteredTree hiddenColTable;
@@ -83,7 +84,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
    private Text filterText;
    private Button filterRegExCheckBox;
    private Text columnFilterText;
-   // Select Customization Buttons 
+   // Select Customization Buttons
    Button setDefaultButton, deleteButton;
    // Config Customization Buttons - Moving items
    Button addItemButton, addAllItemButton, removeItemButton, removeAllItemButton, moveUpButton, moveDownButton;
@@ -986,9 +987,14 @@ public class XViewerCustomizeDialog extends MessageDialog {
 
    private void handleRenameButton() {
       XViewerColumn xCol = getVisibleTableSelection().iterator().next();
-      DialogWithEntry ed =
-         new DialogWithEntry(Display.getCurrent().getActiveShell(), XViewerText.get("button.rename"), null, XViewerText.get("XViewerCustomizeDialog.rename.new"), //$NON-NLS-1$ //$NON-NLS-2$
-            MessageDialog.QUESTION, new String[] {XViewerText.get("button.ok"), XViewerText.get("XViewerCustomizeDialog.rename.default"), XViewerText.get("button.cancel")}, 0);  //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
+      DialogWithEntry ed = new DialogWithEntry(Display.getCurrent().getActiveShell(), XViewerText.get("button.rename"), //$NON-NLS-1$
+         null, XViewerText.get("XViewerCustomizeDialog.rename.new"), //$NON-NLS-1$
+         MessageDialog.QUESTION,
+         new String[] {
+            XViewerText.get("button.ok"), //$NON-NLS-1$
+            XViewerText.get("XViewerCustomizeDialog.rename.default"), //$NON-NLS-1$
+            XViewerText.get("button.cancel")}, //$NON-NLS-1$
+         0);
       int result = ed.open();
       if (result == 2) {
          return;
@@ -1042,10 +1048,10 @@ public class XViewerCustomizeDialog extends MessageDialog {
             return;
          }
          if (xViewerToCustomize.getCustomizeMgr().isCustomizationUserDefault(custData)) {
-            if (MessageDialog.openConfirm(
-               Display.getCurrent().getActiveShell(),
+            if (MessageDialog.openConfirm(Display.getCurrent().getActiveShell(),
                XViewerText.get("button.remove_default"), //$NON-NLS-1$
-               MessageFormat.format(XViewerText.get("XViewerCustomizeDialog.prompt.remove_default"), custData.getName()))) { //$NON-NLS-1$
+               MessageFormat.format(XViewerText.get("XViewerCustomizeDialog.prompt.remove_default"), //$NON-NLS-1$
+                  custData.getName()))) {
                xViewerToCustomize.getCustomizeMgr().setUserDefaultCustData(custData, false);
             }
          } else if (MessageDialog.openConfirm(Display.getCurrent().getActiveShell(),
@@ -1090,23 +1096,32 @@ public class XViewerCustomizeDialog extends MessageDialog {
 
    private void updateButtonEnablements() {
       CustomizeData custData = getCustTableSelection();
-      setDefaultButton.setEnabled(xViewerToCustomize.getXViewerFactory().getXViewerCustomizations().isCustomizationPersistAvailable() && custTable.getViewer().getTree().isFocusControl() && custData != null && !custData.getName().equals(
-         CustomizeManager.TABLE_DEFAULT_LABEL) && !custData.getName().equals(CustomizeManager.CURRENT_LABEL));
+      setDefaultButton.setEnabled(
+         xViewerToCustomize.getXViewerFactory().getXViewerCustomizations().isCustomizationPersistAvailable() && custTable.getViewer().getTree().isFocusControl() && custData != null && !custData.getName().equals(
+            CustomizeManager.TABLE_DEFAULT_LABEL) && !custData.getName().equals(CustomizeManager.CURRENT_LABEL));
       if (custTable.getViewer().getTree().isFocusControl() && custData != null) {
          try {
-            setDefaultButton.setText(xViewerToCustomize.getCustomizeMgr().isCustomizationUserDefault(custData) ? REMOVE_DEFAULT : SET_AS_DEFAULT);
+            setDefaultButton.setText(xViewerToCustomize.getCustomizeMgr().isCustomizationUserDefault(
+               custData) ? REMOVE_DEFAULT : SET_AS_DEFAULT);
          } catch (XViewerException ex) {
             XViewerLog.log(Activator.class, Level.SEVERE, ex);
          }
          setDefaultButton.getParent().layout();
       }
-      deleteButton.setEnabled(xViewerToCustomize.getXViewerFactory().getXViewerCustomizations().isCustomizationPersistAvailable() && custTable.getViewer().getTree().isFocusControl() && custData != null);
-      addItemButton.setEnabled(hiddenColTable.getViewer().getTree().isFocusControl() && getHiddenTableSelection() != null);
-      removeItemButton.setEnabled(visibleColTable.getViewer().getTree().isFocusControl() && getVisibleTableSelection() != null);
-      renameButton.setEnabled(visibleColTable.getViewer().getTree().isFocusControl() && getVisibleTableSelection() != null && getVisibleTableSelection().size() == 1);
-      moveDownButton.setEnabled(visibleColTable.getViewer().getTree().isFocusControl() && getVisibleTableSelection() != null);
-      moveUpButton.setEnabled(visibleColTable.getViewer().getTree().isFocusControl() && getVisibleTableSelection() != null);
-      saveButton.setEnabled(xViewerToCustomize.getXViewerFactory().getXViewerCustomizations() != null && xViewerToCustomize.getXViewerFactory().getXViewerCustomizations().isCustomizationPersistAvailable());
+      deleteButton.setEnabled(
+         xViewerToCustomize.getXViewerFactory().getXViewerCustomizations().isCustomizationPersistAvailable() && custTable.getViewer().getTree().isFocusControl() && custData != null);
+      addItemButton.setEnabled(
+         hiddenColTable.getViewer().getTree().isFocusControl() && getHiddenTableSelection() != null);
+      removeItemButton.setEnabled(
+         visibleColTable.getViewer().getTree().isFocusControl() && getVisibleTableSelection() != null);
+      renameButton.setEnabled(
+         visibleColTable.getViewer().getTree().isFocusControl() && getVisibleTableSelection() != null && getVisibleTableSelection().size() == 1);
+      moveDownButton.setEnabled(
+         visibleColTable.getViewer().getTree().isFocusControl() && getVisibleTableSelection() != null);
+      moveUpButton.setEnabled(
+         visibleColTable.getViewer().getTree().isFocusControl() && getVisibleTableSelection() != null);
+      saveButton.setEnabled(
+         xViewerToCustomize.getXViewerFactory().getXViewerCustomizations() != null && xViewerToCustomize.getXViewerFactory().getXViewerCustomizations().isCustomizationPersistAvailable());
    }
 
    private void loadCustomizeTable() throws Exception {

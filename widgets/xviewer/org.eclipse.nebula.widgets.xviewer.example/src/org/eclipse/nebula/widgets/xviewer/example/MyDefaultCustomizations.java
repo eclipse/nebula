@@ -5,8 +5,8 @@
  */
 package org.eclipse.nebula.widgets.xviewer.example;
 
-import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
-import org.eclipse.nebula.widgets.xviewer.customize.CustomizeData;
+import org.eclipse.nebula.widgets.xviewer.core.model.CustomizeData;
+import org.eclipse.nebula.widgets.xviewer.core.model.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.example.util.MyLib;
 
 public class MyDefaultCustomizations {

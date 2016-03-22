@@ -11,8 +11,8 @@
 package org.eclipse.nebula.widgets.xviewer.example;
 
 import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewerLabelProvider;
+import org.eclipse.nebula.widgets.xviewer.core.model.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.example.images.MyImageCache;
 import org.eclipse.nebula.widgets.xviewer.example.model.ISomeTask;
 import org.eclipse.swt.graphics.Color;
@@ -20,7 +20,7 @@ import org.eclipse.swt.graphics.Image;
 
 /**
  * Example implementation for XViewerTest XViewer
- * 
+ *
  * @author Donald G. Dunne
  */
 public class MyXViewerLabelProvider extends XViewerLabelProvider {
@@ -103,7 +103,8 @@ public class MyXViewerLabelProvider extends XViewerLabelProvider {
    @Override
    public Image getColumnImage(Object element, XViewerColumn xCol, int columnIndex) {
       if (xCol.equals(MyXViewerFactory.Run_Col)) {
-         return xViewerTest.isRun((ISomeTask) element) ? MyImageCache.getImage("chkbox_enabled.gif") : MyImageCache.getImage("chkbox_disabled.gif");
+         return xViewerTest.isRun((ISomeTask) element) ? MyImageCache.getImage(
+            "chkbox_enabled.gif") : MyImageCache.getImage("chkbox_disabled.gif");
       }
       if (xCol.equals(MyXViewerFactory.Name_Col) && xViewerTest.isScheduled((ISomeTask) element)) {
          return MyImageCache.getImage("clock.gif");

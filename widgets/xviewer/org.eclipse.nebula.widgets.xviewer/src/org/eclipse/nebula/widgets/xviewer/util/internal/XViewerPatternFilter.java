@@ -11,8 +11,8 @@
 package org.eclipse.nebula.widgets.xviewer.util.internal;
 
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
-import org.eclipse.nebula.widgets.xviewer.customize.CustomizeData;
+import org.eclipse.nebula.widgets.xviewer.core.model.CustomizeData;
+import org.eclipse.nebula.widgets.xviewer.core.model.XViewerColumn;
 
 public class XViewerPatternFilter extends org.eclipse.nebula.widgets.xviewer.util.internal.PatternFilter {
 

@@ -12,7 +12,6 @@ package org.eclipse.nebula.widgets.xviewer.util.internal;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
 
 /**

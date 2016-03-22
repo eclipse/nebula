@@ -18,10 +18,10 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.nebula.widgets.xviewer.Activator;
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
+import org.eclipse.nebula.widgets.xviewer.core.util.XmlUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
@@ -34,7 +34,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 
 /**
  * Abstract class for all widgets used in Wizards and Editors
- * 
+ *
  * @author Donald G. Dunne
  */
 public abstract class XViewerWidget {
@@ -187,7 +187,7 @@ public abstract class XViewerWidget {
 
    /**
     * Return true if entry is valid
-    * 
+    *
     * @return Return boolean validity indication.
     */
    public abstract boolean isValid();
@@ -219,7 +219,8 @@ public abstract class XViewerWidget {
    }
 
    public String toXml(String xmlRoot, String xmlSubRoot) throws Exception {
-      return "<" + xmlRoot + ">" + "<" + xmlSubRoot + ">" + XmlUtil.textToXml(getXmlData()) + "</" + xmlSubRoot + ">" + "</" + xmlRoot + ">\n"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+      return "<" + xmlRoot + ">" + "<" + xmlSubRoot + ">" + XmlUtil.textToXml( //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
+         getXmlData()) + "</" + xmlSubRoot + ">" + "</" + xmlRoot + ">\n"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
    }
 
    public void setFromXml(String xml) throws IllegalStateException {
