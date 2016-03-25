@@ -9,10 +9,9 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 import org.eclipse.nebula.widgets.xviewer.IXViewerPreComputedColumn;
-import org.eclipse.nebula.widgets.xviewer.core.model.SortDataType;
-import org.eclipse.nebula.widgets.xviewer.core.model.XViewerAlign;
-import org.eclipse.nebula.widgets.xviewer.core.model.XViewerColumn;
+import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.example.model.SomeTask;
+import org.eclipse.swt.SWT;
 
 /**
  * @author Donald G. Dunne
@@ -20,9 +19,8 @@ import org.eclipse.nebula.widgets.xviewer.example.model.SomeTask;
 public class MyPreComputedColumn extends XViewerColumn implements IXViewerPreComputedColumn {
 
    public MyPreComputedColumn() {
-      super(MyXViewerFactory.COLUMN_NAMESPACE + ".preComputedColumnExample", "Pre Computed Column", 130,
-         XViewerAlign.Left, true, SortDataType.String, false,
-         "Background loaded column that loads prior to setting inputs to XViewer.");
+      super(MyXViewerFactory.COLUMN_NAMESPACE + ".preComputedColumnExample", "Pre Computed Column", 130, SWT.LEFT,
+         true, SortDataType.String, false, "Background loaded column that loads prior to setting inputs to XViewer.");
    }
 
    /**

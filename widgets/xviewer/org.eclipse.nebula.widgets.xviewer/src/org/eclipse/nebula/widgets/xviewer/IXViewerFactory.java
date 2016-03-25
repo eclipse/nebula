@@ -11,8 +11,7 @@
 package org.eclipse.nebula.widgets.xviewer;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.nebula.widgets.xviewer.core.model.CustomizeData;
-import org.eclipse.nebula.widgets.xviewer.core.model.XViewerColumn;
+import org.eclipse.nebula.widgets.xviewer.customize.CustomizeData;
 import org.eclipse.nebula.widgets.xviewer.customize.IXViewerCustomizations;
 import org.eclipse.nebula.widgets.xviewer.customize.XViewerCustomMenu;
 

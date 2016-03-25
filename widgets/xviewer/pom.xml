@@ -14,7 +14,6 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>org.eclipse.nebula.widgets.xviewer.core</module>
 		<module>org.eclipse.nebula.widgets.xviewer</module>
 		<module>org.eclipse.nebula.widgets.xviewer.example</module>
 		<module>org.eclipse.nebula.widgets.xviewer.tests</module>

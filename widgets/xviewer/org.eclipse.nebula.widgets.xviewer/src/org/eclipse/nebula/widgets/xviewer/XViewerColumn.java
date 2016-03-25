@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Boeing.
+ * Copyright (c) 2004, 2007 Boeing.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,39 +8,53 @@
  * Contributors:
  *     Boeing - initial API and implementation
  *******************************************************************************/
-package org.eclipse.nebula.widgets.xviewer.core.model;
+package org.eclipse.nebula.widgets.xviewer;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.eclipse.nebula.widgets.xviewer.core.util.CollectionsUtil;
-import org.eclipse.nebula.widgets.xviewer.core.util.XViewerUtil;
-import org.eclipse.nebula.widgets.xviewer.core.util.XmlUtil;
+import org.eclipse.nebula.widgets.xviewer.util.internal.CollectionsUtil;
+import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
+import org.eclipse.nebula.widgets.xviewer.util.internal.XmlUtil;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.TreeColumn;
 
 /**
  * @author Donald G. Dunne
  */
 public class XViewerColumn {
 
+   private XViewer xViewer;
    protected String id;
    protected String name = "";
    private String description;
    private boolean multiColumnEditable = false;
    private int width;
-   private XViewerAlign align;
+   private int align;
    private boolean sortForward = true; // if true, sort alphabetically; else reverse
    private boolean show = true;
    private SortDataType sortDataType = SortDataType.String;
    private String toolTip = "";
    protected Map<Long, String> preComputedValueMap = null;
-   private Object xViewer;
+   public enum SortDataType {
+      Date,
+      Float,
+      Percent,
+      String,
+      String_MultiLine,
+      Boolean,
+      Integer,
+      Long,
+      Paragraph_Number,
+      Check
+   };
 
    protected XViewerColumn() {
       super();
    }
 
-   public XViewerColumn(String id, String name, int width, XViewerAlign align, boolean show, SortDataType sortDataType, boolean multiColumnEditable, String description) {
+   public XViewerColumn(String id, String name, int width, int align, boolean show, SortDataType sortDataType, boolean multiColumnEditable, String description) {
       super();
       setId(id);
       setName(name);
@@ -78,9 +92,9 @@ public class XViewerColumn {
       toXCol.setId(fromXCol.id);
    }
 
-   public XViewerColumn(Object xViewer, String xml) {
-      setFromXml(xml);
+   public XViewerColumn(XViewer xViewer, String xml) {
       this.xViewer = xViewer;
+      setFromXml(xml);
    }
 
    @Override
@@ -129,23 +143,23 @@ public class XViewerColumn {
       return XmlUtil.getTagData(xml, ID);
    }
 
-   public String getAlignStoreName(XViewerAlign align) {
-      if (align == XViewerAlign.Center) {
+   public String getAlignStoreName(int align) {
+      if (align == SWT.CENTER) {
          return "center";
-      } else if (align == XViewerAlign.Right) {
+      } else if (align == SWT.RIGHT) {
          return "right";
       } else {
          return "left";
       }
    }
 
-   public XViewerAlign getAlignStoreValue(String str) {
+   public int getAlignStoreValue(String str) {
       if (str.equals("center")) {
-         return XViewerAlign.Center;
+         return SWT.CENTER;
       } else if (str.equals("right")) {
-         return XViewerAlign.Right;
+         return SWT.RIGHT;
       } else {
-         return XViewerAlign.Left;
+         return SWT.LEFT;
       }
    }
 
@@ -157,11 +171,16 @@ public class XViewerColumn {
       }
    }
 
-   public XViewerAlign getAlign() {
+   @Override
+   public String toString() {
+      return "column:[" + name + "][" + id + "][" + width + "][" + show + "][" + align + "]";
+   }
+
+   public int getAlign() {
       return align;
    }
 
-   public void setAlign(XViewerAlign align) {
+   public void setAlign(int align) {
       this.align = align;
    }
 
@@ -171,6 +190,14 @@ public class XViewerColumn {
 
    public int getWidth() {
       return width;
+   }
+
+   public XViewer getTreeViewer() {
+      return xViewer;
+   }
+
+   public XViewer getXViewer() {
+      return xViewer;
    }
 
    public boolean isSortForward() {
@@ -205,18 +232,22 @@ public class XViewerColumn {
       this.sortDataType = sortDataType;
    }
 
+   public void setXViewer(XViewer treeViewer) {
+      this.xViewer = treeViewer;
+   }
+
    public String getToolTip() {
       return toolTip;
    }
 
    public void setToolTip(String toolTip) {
       if (toolTip != null) {
-         this.toolTip = XViewerUtil.intern(toolTip);
+         this.toolTip = XViewerLib.intern(toolTip);
       }
    }
 
    public void setName(String name) {
-      this.name = XViewerUtil.intern(name);
+      this.name = XViewerLib.intern(name);
    }
 
    public String getDescription() {
@@ -224,7 +255,7 @@ public class XViewerColumn {
    }
 
    public void setDescription(String description) {
-      this.description = description;
+      this.description = XViewerLib.intern(description);
    }
 
    public boolean isMultiColumnEditable() {
@@ -251,7 +282,7 @@ public class XViewerColumn {
          double sum = 0.0;
          Set<String> exceptions = new HashSet<String>();
          sum = sumFloatValues(values, sum, exceptions);
-         return "Sum: " + XViewerUtil.doubleToI18nString(
+         return "Sum: " + XViewerLib.doubleToI18nString(
             sum) + "\n\nNum Items: " + values.size() + (exceptions.size() > 0 ? "\n\nErrors: " + CollectionsUtil.toString(
                ";", exceptions) : "");
       } else if (sortDataType == SortDataType.Integer || sortDataType == SortDataType.Percent) {
@@ -290,7 +321,7 @@ public class XViewerColumn {
          Set<String> exceptions = new HashSet<String>();
          sum = sumFloatValues(values, sum, exceptions);
          Double average = sum == 0 || values.isEmpty() ? 0 : sum / values.size();
-         return "Average: " + XViewerUtil.doubleToI18nString(
+         return "Average: " + XViewerLib.doubleToI18nString(
             average) + "\n\nNum Items: " + values.size() + (exceptions.size() > 0 ? "\n\nErrors: " + CollectionsUtil.toString(
                ";", exceptions) : "");
       } else if (sortDataType == SortDataType.Integer || sortDataType == SortDataType.Percent) {
@@ -339,8 +370,12 @@ public class XViewerColumn {
       return sum;
    }
 
+   public boolean is(TreeColumn treeColumn) {
+      return treeColumn.getText().equals(getName());
+   }
+
    public void setId(String id) {
-      this.id = XViewerUtil.intern(id);
+      this.id = XViewerLib.intern(id);
    }
 
    public String getPreComputedValue(Long key) {
@@ -349,27 +384,6 @@ public class XViewerColumn {
          return result;
       }
       return preComputedValueMap.get(key);
-   }
-
-   public Object getXViewer() {
-      return xViewer;
-   }
-
-   public void setXViewer(Object xViewer) {
-      this.xViewer = xViewer;
-   }
-
-   public Map<Long, String> getPreComputedValueMap() {
-      return preComputedValueMap;
-   }
-
-   public void setPreComputedValueMap(Map<Long, String> preComputedValueMap) {
-      this.preComputedValueMap = preComputedValueMap;
-   }
-
-   @Override
-   public String toString() {
-      return "XViewerColumn [id=" + id + ", name=" + name + ", sortDataType=" + sortDataType + ", show=" + show + ", width=" + width + "]";
    }
 
 }

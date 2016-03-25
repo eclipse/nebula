@@ -13,13 +13,12 @@ package org.eclipse.nebula.widgets.xviewer.customize;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.nebula.widgets.xviewer.XViewer;
+import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
-import org.eclipse.nebula.widgets.xviewer.core.model.ColumnDateFilter;
-import org.eclipse.nebula.widgets.xviewer.core.model.DateRangeType;
-import org.eclipse.nebula.widgets.xviewer.core.model.XViewerColumn;
-import org.eclipse.nebula.widgets.xviewer.core.util.Strings;
+import org.eclipse.nebula.widgets.xviewer.util.internal.Strings;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
 import org.eclipse.nebula.widgets.xviewer.util.internal.dialog.ColumnFilterDialog;
+import org.eclipse.nebula.widgets.xviewer.util.internal.dialog.DateRangeType;
 import org.eclipse.swt.widgets.Display;
 
 /**

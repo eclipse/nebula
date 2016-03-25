@@ -8,7 +8,7 @@
  * Contributors:
  *     Boeing - initial API and implementation
  *******************************************************************************/
-package org.eclipse.nebula.widgets.xviewer.core.model;
+package org.eclipse.nebula.widgets.xviewer.customize;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -17,8 +17,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.eclipse.nebula.widgets.xviewer.core.util.Strings;
-import org.eclipse.nebula.widgets.xviewer.core.util.XmlUtil;
+import org.eclipse.nebula.widgets.xviewer.util.internal.Strings;
+import org.eclipse.nebula.widgets.xviewer.util.internal.XmlUtil;
+import org.eclipse.nebula.widgets.xviewer.util.internal.dialog.DateRangeType;
 
 /**
  * Storage for column filters
@@ -117,6 +118,11 @@ public class ColumnFilterData {
       }
    }
 
+   @Override
+   public String toString() {
+      return "colFilter:[" + colIdToFilterText.toString() + " %s]"; //$NON-NLS-1$//$NON-NLS-2$
+   }
+
    public boolean isFiltered() {
       return colIdToFilterText.size() > 0;
    }
@@ -131,10 +137,5 @@ public class ColumnFilterData {
 
    public void removeDateFilter(String columnId) {
       colIdToDateFilter.remove(columnId);
-   }
-
-   @Override
-   public String toString() {
-      return "ColumnFilterData [colIdToFilterText=" + colIdToFilterText + ", colIdToDateFilter=" + colIdToDateFilter + "]";
    }
 }

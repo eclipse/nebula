@@ -11,9 +11,6 @@
 package org.eclipse.nebula.widgets.xviewer;
 
 import org.eclipse.jface.viewers.StyledString;
-import org.eclipse.nebula.widgets.xviewer.core.model.XViewerAlign;
-import org.eclipse.nebula.widgets.xviewer.core.model.SortDataType;
-import org.eclipse.nebula.widgets.xviewer.core.model.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.util.XViewerException;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -25,7 +22,7 @@ import org.eclipse.swt.graphics.Image;
  * column and only if null/empty string will default to the normal label provider methods. This allows for XViwerColumns
  * to be shared between XViewers and/or have XViewerColumns provide their own values through the same class that defines
  * the column.
- *
+ * 
  * @author Donald G. Dunne
  */
 public class XViewerValueColumn extends XViewerColumn implements IXViewerValueColumn {
@@ -40,7 +37,7 @@ public class XViewerValueColumn extends XViewerColumn implements IXViewerValueCo
          isMultiColumnEditable(), getDescription());
    }
 
-   public XViewerValueColumn(String id, String name, int width, XViewerAlign align, boolean show, SortDataType sortDataType, boolean multiColumnEditable, String description) {
+   public XViewerValueColumn(String id, String name, int width, int align, boolean show, SortDataType sortDataType, boolean multiColumnEditable, String description) {
       super(id, name, width, align, show, sortDataType, multiColumnEditable, description);
    }
 

@@ -3,13 +3,14 @@ package org.eclipse.nebula.widgets.xviewer.action;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.nebula.widgets.xviewer.XViewer;
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
-import org.eclipse.nebula.widgets.xviewer.core.model.CustomizeData;
+import org.eclipse.nebula.widgets.xviewer.customize.CustomizeData;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
 import org.eclipse.nebula.widgets.xviewer.util.internal.images.XViewerImageCache;
 import org.eclipse.swt.SWT;
@@ -51,8 +52,8 @@ public class TableCustomizationDropDownAction extends Action implements IMenuCre
       fMenu = new Menu(parent);
 
       addActionToMenu(fMenu, new TableCustomizationAction(xViewer));
-      addActionToMenu(fMenu,
-         new TableCustomizationCustomizeDataAction(xViewer, xViewer.getCustomizeMgr().getTableDefaultCustData()));
+      addActionToMenu(fMenu, new TableCustomizationCustomizeDataAction(xViewer,
+         xViewer.getCustomizeMgr().getTableDefaultCustData()));
       new MenuItem(fMenu, SWT.SEPARATOR);
       try {
          List<CustomizeData> savedCustDatas = xViewer.getCustomizeMgr().getSavedCustDatas();

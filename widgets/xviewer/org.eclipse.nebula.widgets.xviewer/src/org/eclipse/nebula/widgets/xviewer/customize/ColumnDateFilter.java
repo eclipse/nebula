@@ -8,9 +8,10 @@
  * Contributors:
  *     Boeing - initial API and implementation
  *******************************************************************************/
-package org.eclipse.nebula.widgets.xviewer.core.model;
+package org.eclipse.nebula.widgets.xviewer.customize;
 
 import java.util.Date;
+import org.eclipse.nebula.widgets.xviewer.util.internal.dialog.DateRangeType;
 
 /**
  * @author Donald G. Dunne

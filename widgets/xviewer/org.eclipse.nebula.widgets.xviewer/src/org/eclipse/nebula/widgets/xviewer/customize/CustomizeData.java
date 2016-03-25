@@ -8,28 +8,31 @@
  * Contributors:
  *     Boeing - initial API and implementation
  *******************************************************************************/
-package org.eclipse.nebula.widgets.xviewer.core.model;
+package org.eclipse.nebula.widgets.xviewer.customize;
 
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.eclipse.nebula.widgets.xviewer.core.util.XViewerUtil;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.nebula.widgets.xviewer.Activator;
+import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
+import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
+import org.eclipse.swt.graphics.Image;
 
 /**
  * Single customization object storing name, id, sort, filter and column filter
- *
+ * 
  * @author Donald G. Dunne
  */
 public class CustomizeData implements Comparable<CustomizeData> {
 
-   private String guid = XViewerUtil.generateGuidStr();
+   private String guid = XViewerLib.generateGuidStr();
    private String name;
    private String nameSpace;
    private boolean personal = false;
    protected SortingData sortingData = new SortingData(this);
    protected FilterData filterData = new FilterData();
    protected ColumnFilterData columnFilterData = new ColumnFilterData();
-   public static String TABLE_DEFAULT_LABEL = "-- Current Table View --";
-   public static String CURRENT_LABEL = "-- Table Default --";
 
    public ColumnFilterData getColumnFilterData() {
       return columnFilterData;
@@ -42,12 +45,11 @@ public class CustomizeData implements Comparable<CustomizeData> {
    }
 
    public boolean isTableDefaultCustData() {
-      return name.equals(TABLE_DEFAULT_LABEL);
-
+      return name.equals(CustomizeManager.TABLE_DEFAULT_LABEL);
    }
 
    public boolean isCurrentTableCustData() {
-      return name.equals(CURRENT_LABEL);
+      return name.equals(CustomizeManager.CURRENT_LABEL);
    }
 
    public CustomizeData(String xml) {
@@ -56,12 +58,37 @@ public class CustomizeData implements Comparable<CustomizeData> {
    }
 
    public void resetGuid() {
-      guid = XViewerUtil.generateGuidStr();
+      guid = XViewerLib.generateGuidStr();
+   }
+
+   public Image getImage(boolean isDefault) {
+      Image image = XViewerLib.getImage("customize.gif"); //$NON-NLS-1$
+      if (!personal && isDefault) {
+         image = XViewerLib.getImage("customizeSharedDefault.gif"); //$NON-NLS-1$
+      } else if (!personal) {
+         image = XViewerLib.getImage("customizeShared.gif"); //$NON-NLS-1$
+      } else if (isDefault) {
+         image = XViewerLib.getImage("customizeDefault.gif"); //$NON-NLS-1$
+      }
+      return image;
+   }
+
+   public ImageDescriptor getImageDescriptor(boolean isDefault) {
+      ImageDescriptor image = XViewerLib.getImageDescriptor("customize.gif"); //$NON-NLS-1$
+      if (!personal && isDefault) {
+         image = XViewerLib.getImageDescriptor("customizeSharedDefault.gif"); //$NON-NLS-1$
+      } else if (!personal) {
+         image = XViewerLib.getImageDescriptor("customizeShared.gif"); //$NON-NLS-1$
+      } else if (isDefault) {
+         image = XViewerLib.getImageDescriptor("customizeDefault.gif"); //$NON-NLS-1$
+      }
+      return image;
    }
 
    public String getXml(boolean visibleColumnsOnly) {
-      StringBuffer sb = new StringBuffer(
-         "<XTreeProperties name=\"" + name + "\" namespace=\"" + nameSpace + "\" guid=\"" + guid + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+      StringBuffer sb =
+         new StringBuffer(
+            "<XTreeProperties name=\"" + name + "\" namespace=\"" + nameSpace + "\" guid=\"" + guid + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
       sb.append(sortingData.getXml());
       sb.append(filterData.getXml());
       sb.append(columnFilterData.getXml());
@@ -79,14 +106,19 @@ public class CustomizeData implements Comparable<CustomizeData> {
          setNameSpace(m.group(2));
          guid = m.group(3);
       } else {
-         String name2 = "Invalid customize format for " + xml.substring(0, 50);
-         setName(name2); //$NON-NLS-1$
+         setName("Invalid customize format for " + xml.substring(0, 50)); //$NON-NLS-1$
+         XViewerLog.log(Activator.class, Level.SEVERE, new IllegalStateException(name));
          return;
       }
       sortingData.setFromXml(xml);
       filterData.setFromXml(xml);
       columnData.setFromXml(xml);
       columnFilterData.setFromXml(xml);
+   }
+
+   @Override
+   public String toString() {
+      return "[" + name + "][" + nameSpace + "][" + guid + "][" + columnData + "][" + filterData + "][" + columnFilterData + "][" + sortingData + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
    }
 
    public boolean isPersonal() {
@@ -114,7 +146,7 @@ public class CustomizeData implements Comparable<CustomizeData> {
    }
 
    public void setName(String name) {
-      this.name = XViewerUtil.intern(name);
+      this.name = XViewerLib.intern(name);
    }
 
    public String getNameSpace() {
@@ -122,7 +154,7 @@ public class CustomizeData implements Comparable<CustomizeData> {
    }
 
    public void setNameSpace(String nameSpace) {
-      this.nameSpace = XViewerUtil.intern(nameSpace);
+      this.nameSpace = XViewerLib.intern(nameSpace);
    }
 
    public String getGuid() {
@@ -146,11 +178,6 @@ public class CustomizeData implements Comparable<CustomizeData> {
    @Override
    public int compareTo(CustomizeData custData) {
       return getName().compareToIgnoreCase(custData.getName());
-   }
-
-   @Override
-   public String toString() {
-      return "CustomizeData [guid=" + guid + ", name=" + name + ", nameSpace=" + nameSpace + ", personal=" + personal + ", \n\n" + sortingData + ", \n\n" + filterData + ", \n\n" + columnFilterData + ", \n\n" + columnData + "]";
    }
 
 }

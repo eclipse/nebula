@@ -8,19 +8,23 @@
  * Contributors:
  *     Boeing - initial API and implementation
  *******************************************************************************/
-package org.eclipse.nebula.widgets.xviewer.core.model;
+package org.eclipse.nebula.widgets.xviewer.customize;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.eclipse.nebula.widgets.xviewer.core.util.XViewerUtil;
-import org.eclipse.nebula.widgets.xviewer.core.util.XmlUtil;
+import org.eclipse.nebula.widgets.xviewer.Activator;
+import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
+import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
+import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
+import org.eclipse.nebula.widgets.xviewer.util.internal.XmlUtil;
 
 /**
  * Provides object for storage of sorting data
- *
+ * 
  * @author Donald G. Dunne
  */
 public class SortingData {
@@ -48,6 +52,16 @@ public class SortingData {
       return sortingIds.size() > 0;
    }
 
+   @Override
+   public String toString() {
+      StringBuffer sb = new StringBuffer();
+      for (String str : sortingIds) {
+         sb.append(str);
+         sb.append(", "); //$NON-NLS-1$
+      }
+      return sb.toString().replaceFirst(", $", ""); //$NON-NLS-1$ //$NON-NLS-2$
+   }
+
    public List<XViewerColumn> getSortXCols(Map<String, XViewerColumn> oldNameToColumnId) {
       List<XViewerColumn> cols = new ArrayList<XViewerColumn>();
       for (String id : getSortingIds()) {
@@ -61,6 +75,14 @@ public class SortingData {
          }
          if (xCol != null) {
             cols.add(xCol);
+         } else {
+            // Ignore known removed columns
+            if (!CustomizeManager.REMOVED_COLUMNS_TO_IGNORE.contains(id)) {
+               XViewerLog.log(
+                  Activator.class,
+                  Level.WARNING,
+                  "XViewer Conversion for saved Customization \"" + custData.getName() + "\" dropped unresolved SORTING column Name/Id: \"" + id + "\".  Delete customization and re-save to resolve.");
+            }
          }
       }
       return cols;
@@ -69,7 +91,7 @@ public class SortingData {
    public void setSortXCols(List<XViewerColumn> sortXCols) {
       sortingIds.clear();
       for (XViewerColumn xCol : sortXCols) {
-         sortingIds.add(XViewerUtil.intern(xCol.getId()));
+         sortingIds.add(XViewerLib.intern(xCol.getId()));
       }
    }
 
@@ -110,20 +132,15 @@ public class SortingData {
 
    public void addSortingName(String name) {
       if (!this.sortingIds.contains(name)) {
-         this.sortingIds.add(XViewerUtil.intern(name));
+         this.sortingIds.add(XViewerLib.intern(name));
       }
    }
 
    public void setSortingNames(String... xViewerColumnId) {
       this.sortingIds.clear();
       for (String id : xViewerColumnId) {
-         this.sortingIds.add(XViewerUtil.intern(id));
+         this.sortingIds.add(XViewerLib.intern(id));
       }
-   }
-
-   @Override
-   public String toString() {
-      return "SortingData [sortIds=" + sortingIds + "]";
    }
 
 }

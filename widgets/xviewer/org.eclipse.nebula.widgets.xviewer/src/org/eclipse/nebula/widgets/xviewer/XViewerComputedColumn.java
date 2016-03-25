@@ -14,9 +14,6 @@ import java.util.Collection;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.eclipse.nebula.widgets.xviewer.core.model.XViewerAlign;
-import org.eclipse.nebula.widgets.xviewer.core.model.SortDataType;
-import org.eclipse.nebula.widgets.xviewer.core.model.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
 
 /**
@@ -28,7 +25,7 @@ public abstract class XViewerComputedColumn extends XViewerValueColumn {
    protected XViewer xViewer;
    private final Pattern idPattern = Pattern.compile("^.*\\((.*?)\\)$");
 
-   public XViewerComputedColumn(String id, String name, int width, XViewerAlign align, boolean show, SortDataType sortDataType, boolean multiColumnEditable, String description) {
+   public XViewerComputedColumn(String id, String name, int width, int align, boolean show, SortDataType sortDataType, boolean multiColumnEditable, String description) {
       super(id, name, width, align, show, sortDataType, multiColumnEditable, description);
    }
 
@@ -86,8 +83,8 @@ public abstract class XViewerComputedColumn extends XViewerValueColumn {
    }
 
    @Override
-   public void setXViewer(Object xViewer) {
-      this.xViewer = (XViewer) xViewer;
+   public void setXViewer(XViewer xViewer) {
+      this.xViewer = xViewer;
    }
 
    @Override

@@ -18,9 +18,8 @@ import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.nebula.widgets.xviewer.core.model.DateRangeType;
-import org.eclipse.nebula.widgets.xviewer.core.model.SortDataType;
-import org.eclipse.nebula.widgets.xviewer.core.model.XViewerColumn;
+import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
+import org.eclipse.nebula.widgets.xviewer.XViewerColumn.SortDataType;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -46,9 +45,11 @@ public class ColumnFilterDialog extends DialogWithEntry {
    private DateTime time1Widget;
    private DateTime time2Widget;
    private Composite widgetComp;
+   private final Shell shell;
 
    public ColumnFilterDialog(Shell shell, String dialogTitle, String dialogMessage, int question, String[] strings, int i, XViewerColumn column) {
       super(shell, dialogTitle, null, dialogMessage, MessageDialog.QUESTION, strings, 0);
+      this.shell = shell;
       this.column = column;
    }
 

@@ -8,7 +8,7 @@ package org.eclipse.nebula.widgets.xviewer.util;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 
-public class XViewerDisplay {
+public class XViewerUtil {
 
    private static Boolean standalone = false;
    private static Display display = null;
@@ -33,8 +33,8 @@ public class XViewerDisplay {
    }
 
    public static void setStandaloneXViewer(boolean workbenchRunningOverride, Display display) {
-      XViewerDisplay.standalone = workbenchRunningOverride;
-      XViewerDisplay.display = display;
+      XViewerUtil.standalone = workbenchRunningOverride;
+      XViewerUtil.display = display;
    }
 
 }

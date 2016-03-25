@@ -12,8 +12,8 @@ package org.eclipse.nebula.widgets.xviewer.example.styledExample;
 
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewerStyledTextLabelProvider;
-import org.eclipse.nebula.widgets.xviewer.core.model.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.example.MyXViewerFactory;
 import org.eclipse.nebula.widgets.xviewer.example.images.MyImageCache;
 import org.eclipse.nebula.widgets.xviewer.example.model.ISomeTask;
@@ -24,7 +24,7 @@ import org.eclipse.swt.graphics.Image;
 
 /**
  * Label provider for example StyledStringLabelProvider implementation
- *
+ * 
  * @author Andrew M. Finkbeiner
  */
 public class XViewerTestStyledStringLabelProvider extends XViewerStyledTextLabelProvider {
@@ -58,8 +58,7 @@ public class XViewerTestStyledStringLabelProvider extends XViewerStyledTextLabel
    @Override
    public Image getColumnImage(Object element, XViewerColumn xCol, int columnIndex) {
       if (xCol.equals(MyXViewerFactory.Run_Col)) {
-         return xViewerTest.isRun((ISomeTask) element) ? MyImageCache.getImage(
-            "chkbox_enabled.gif") : MyImageCache.getImage("chkbox_disabled.gif");
+         return xViewerTest.isRun((ISomeTask) element) ? MyImageCache.getImage("chkbox_enabled.gif") : MyImageCache.getImage("chkbox_disabled.gif");
       }
       if (xCol.equals(MyXViewerFactory.Name_Col) && xViewerTest.isScheduled((ISomeTask) element)) {
          return MyImageCache.getImage("clock.gif");

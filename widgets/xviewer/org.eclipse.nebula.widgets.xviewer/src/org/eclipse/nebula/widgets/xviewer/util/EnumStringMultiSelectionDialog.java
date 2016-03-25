@@ -11,6 +11,7 @@
 package org.eclipse.nebula.widgets.xviewer.util;
 
 import java.util.Collection;
+
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.nebula.widgets.xviewer.util.internal.ArrayTreeContentProvider;
 import org.eclipse.nebula.widgets.xviewer.util.internal.StringLabelProvider;

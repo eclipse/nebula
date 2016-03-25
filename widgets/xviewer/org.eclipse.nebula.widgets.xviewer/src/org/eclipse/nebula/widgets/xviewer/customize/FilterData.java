@@ -8,13 +8,13 @@
  * Contributors:
  *     Boeing - initial API and implementation
  *******************************************************************************/
-package org.eclipse.nebula.widgets.xviewer.core.model;
+package org.eclipse.nebula.widgets.xviewer.customize;
 
-import org.eclipse.nebula.widgets.xviewer.core.util.XmlUtil;
+import org.eclipse.nebula.widgets.xviewer.util.internal.XmlUtil;
 
 /**
  * Provides storage of filter
- *
+ * 
  * @author Donald G. Dunne
  */
 public class FilterData {
@@ -38,13 +38,17 @@ public class FilterData {
    }
 
    public String getXml() {
-      return XmlUtil.addTagData(FILTER_TAG, filterText) + XmlUtil.addTagDataBoolean(FILTER_REGEX_TAG,
-         regularExpression);
+      return XmlUtil.addTagData(FILTER_TAG, filterText) + XmlUtil.addTagDataBoolean(FILTER_REGEX_TAG, regularExpression);
    }
 
    public void setFromXml(String xml) {
       filterText = XmlUtil.getTagData(xml, FILTER_TAG);
       regularExpression = XmlUtil.getTagBooleanData(xml, FILTER_REGEX_TAG);
+   }
+
+   @Override
+   public String toString() {
+      return "filterData:[" + filterText + "]" + (regularExpression ? "-RE" : ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
    }
 
    public boolean isRegularExpression() {
@@ -53,11 +57,6 @@ public class FilterData {
 
    public void setRegularExpression(boolean regularExpression) {
       this.regularExpression = regularExpression;
-   }
-
-   @Override
-   public String toString() {
-      return "FilterData [filterText=" + filterText + ", regEx=" + regularExpression + "]";
    }
 
 }

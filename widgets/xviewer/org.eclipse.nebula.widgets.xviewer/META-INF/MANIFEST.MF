@@ -19,5 +19,3 @@ Export-Package: org.eclipse.nebula.widgets.xviewer,
  org.eclipse.nebula.widgets.xviewer.edit,
  org.eclipse.nebula.widgets.xviewer.util
 Eclipse-ExtensibleAPI: true
-Import-Package: org.eclipse.nebula.widgets.xviewer.core.model,
- org.eclipse.nebula.widgets.xviewer.core.util

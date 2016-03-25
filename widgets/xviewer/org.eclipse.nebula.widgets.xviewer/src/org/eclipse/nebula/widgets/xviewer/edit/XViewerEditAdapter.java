@@ -2,7 +2,7 @@ package org.eclipse.nebula.widgets.xviewer.edit;
 
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.nebula.widgets.xviewer.XViewer;
-import org.eclipse.nebula.widgets.xviewer.core.model.XViewerColumn;
+import org.eclipse.nebula.widgets.xviewer.XViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;

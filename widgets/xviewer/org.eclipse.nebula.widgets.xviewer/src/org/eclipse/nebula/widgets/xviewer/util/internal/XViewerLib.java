@@ -20,11 +20,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Level;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.nebula.widgets.xviewer.Activator;
-import org.eclipse.nebula.widgets.xviewer.core.util.XViewerUtil;
 import org.eclipse.nebula.widgets.xviewer.util.internal.images.XViewerImageCache;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
@@ -35,6 +35,7 @@ import org.eclipse.ui.PlatformUI;
  * @author Donald G. Dunne
  */
 public class XViewerLib {
+   static Random random = new Random();
    private static final Date today = new Date();
    public final static int MILLISECS_PER_DAY = (1000 * 60 * 60 * 24);
    public final static String MMDDYYHHMM = "MM/dd/yyyy hh:mm a";
@@ -44,11 +45,12 @@ public class XViewerLib {
    }
 
    public static String intern(String str) {
-      return XViewerUtil.intern(str);
+      return (str == null) ? null : str.intern();
    }
 
    public static String generateGuidStr() {
-      return XViewerUtil.generateGuidStr();
+      long rand = (random.nextLong() & 0x7FFFFFFFFFFFFFFFL) | 0x4000000000000000L;
+      return Long.toString(rand, 32) + Long.toString(System.currentTimeMillis() & 0xFFFFFFFFFFFFFL, 32);
    }
 
    public static void writeStringToFile(String str, File outFile) throws IOException {
@@ -193,6 +195,18 @@ public class XViewerLib {
 
    public static ImageDescriptor getImageDescriptor(String imageName) {
       return XViewerImageCache.getImageDescriptor(imageName);
+   }
+
+   public static String doubleToI18nString(double d) {
+      return doubleToI18nString(d, false);
+   }
+
+   public static String doubleToI18nString(double d, boolean blankIfZero) {
+      if (blankIfZero && d == 0) {
+         return "";
+      } else {
+         return String.format("%4.2f", d);
+      }
    }
 
    public static String getDateFromPattern(Date date, String pattern) {

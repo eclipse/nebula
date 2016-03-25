@@ -12,7 +12,6 @@ package org.eclipse.nebula.widgets.xviewer;
 
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.nebula.widgets.xviewer.core.model.XViewerColumn;
 import org.eclipse.swt.widgets.TreeColumn;
 
 /**

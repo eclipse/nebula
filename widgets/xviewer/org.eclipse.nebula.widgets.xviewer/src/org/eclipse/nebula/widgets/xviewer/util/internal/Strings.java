@@ -9,7 +9,7 @@
  *     Boeing - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.nebula.widgets.xviewer.core.util;
+package org.eclipse.nebula.widgets.xviewer.util.internal;
 
 /**
  * @author Don Dunne
