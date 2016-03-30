@@ -290,13 +290,6 @@
 					<layout>p2</layout>
 					<url>http://download.eclipse.org/eclipse/updates/4.4/</url>
 				</repository>
-			
-		<repository>
-			<id>nattable</id>
-			<layout>p2</layout>
-			<url>http://download.eclipse.org/nattable/releases/1.3.0/repository/</url>
-		</repository>
-			
 			</repositories>
 		</profile>
 

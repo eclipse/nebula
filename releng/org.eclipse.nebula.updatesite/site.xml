@@ -60,10 +60,7 @@
    <feature url="features/org.eclipse.nebula.visualization.feature_0.9.9.qualifier.jar" id="org.eclipse.nebula.visualization.feature" version="0.9.9.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.richtext.feature_0.1.0.qualifier.jar" id="org.eclipse.nebula.widgets.richtext.feature" version="0.1.0.qualifier">
-      <category name="Nebula Release Individual Widgets"/>
-   </feature>
-   <feature url="features/org.eclipse.nebula.widgets.nattable.extension.nebula.feature_0.1.0.qualifier.jar" id="org.eclipse.nebula.widgets.nattable.extension.nebula.feature" version="0.1.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.richtext.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.richtext.feature" version="1.0.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
    <category-def name="Nebula Release All Widgets and Examples" label="Nebula Release All Widgets and Examples">

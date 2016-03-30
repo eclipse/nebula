@@ -2,11 +2,11 @@
 <feature
       id="org.eclipse.nebula.widgets.richtext.feature"
       label="Nebula Rich Text Feature"
-      version="0.1.0.qualifier"
+      version="1.0.0.qualifier"
       provider-name="Eclipse Nebula">
 
    <description url="http://eclipse.org/nebula">
-      Rich Text
+      Nebula Rich Text Feature
    </description>
 
    <license url="%licenseURL">
