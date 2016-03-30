@@ -81,8 +81,6 @@
       <plugin id="org.eclipse.equinox.util"/>
       <plugin id="org.eclipse.jface"/>
       <plugin id="org.eclipse.jface.databinding"/>
-      <plugin id="org.eclipse.nebula.widgets.nattable.core"/>
-      <plugin id="org.eclipse.nebula.widgets.nattable.extension.nebula"/>
       <plugin id="org.eclipse.nebula.widgets.richtext"/>
       <plugin id="org.eclipse.nebula.widgets.richtext.example"/>
       <plugin id="org.eclipse.nebula.widgets.richtext.example.e4"/>
