@@ -593,7 +593,12 @@ public class RichTextEditor extends Composite {
 			((FocusListener) listeners[i]).focusLost(event);
 		}
 	}
-
+	
+	@Override
+	public void setBounds(Rectangle rect) {
+    	setBounds(rect.x, rect.y, rect.width, rect.height);
+	}
+	
 	@Override
 	public void setBounds(int x, int y, int width, int height) {
 		int newX = x;
