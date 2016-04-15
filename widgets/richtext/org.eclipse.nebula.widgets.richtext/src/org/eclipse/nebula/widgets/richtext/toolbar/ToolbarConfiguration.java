@@ -12,10 +12,9 @@
  *****************************************************************************/
 package org.eclipse.nebula.widgets.richtext.toolbar;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -74,7 +73,7 @@ public class ToolbarConfiguration {
 
 	private Browser browser;
 
-	private List<ToolbarButton> customButtons = new ArrayList<>();
+	private Set<ToolbarButton> customButtons = new LinkedHashSet<>();
 	private Map<String, BrowserFunction> buttonCallbacks = new HashMap<>();
 
 	private Set<String> removedButtons = new HashSet<>();
@@ -88,7 +87,7 @@ public class ToolbarConfiguration {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return The toolbar group configuration for the CKEditor toolbar.
 	 */
 	protected String getToolbarGroupConfiguration() {
@@ -105,7 +104,7 @@ public class ToolbarConfiguration {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return The configuration which default buttons should be removed from
 	 *         the toolbar.
 	 */
@@ -135,7 +134,7 @@ public class ToolbarConfiguration {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return The configuration for adding custom commands and buttons to the
 	 *         toolbar.
 	 */
@@ -175,24 +174,28 @@ public class ToolbarConfiguration {
 	 * Adds a custom button to the CKEditor toolbar. Internally creates an
 	 * anonymous {@link BrowserFunction} that executes
 	 * {@link ToolbarButton#execute()} via callback on pressing the button.
-	 * 
+	 *
 	 * @param button
 	 *            The button to add.
 	 */
 	public void addToolbarButton(final ToolbarButton button) {
-		// create the BrowserFunction for the callback
-		addToolbarButton(button, new BrowserFunction(browser, button.getCommandName()) {
-			@Override
-			public Object function(Object[] arguments) {
-				return button.execute();
-			}
-		});
+		if (this.browser != null) {
+			// create the BrowserFunction for the callback
+			addToolbarButton(button, new BrowserFunction(browser, button.getCommandName()) {
+				@Override
+				public Object function(Object[] arguments) {
+					return button.execute();
+				}
+			});
+		} else if (!this.customButtons.contains(button)) {
+			this.customButtons.add(button);
+		}
 	}
 
 	/**
 	 * Adds a custom button to the CKEditor toolbar. Executes the given
 	 * {@link BrowserFunction} via callback on pressing the button.
-	 * 
+	 *
 	 * @param button
 	 *            The button to add.
 	 * @param function
@@ -207,7 +210,9 @@ public class ToolbarConfiguration {
 			this.buttonCallbacks.get(button.getCommandName()).dispose();
 		}
 		this.buttonCallbacks.put(button.getCommandName(), function);
-		this.customButtons.add(button);
+		if (!this.customButtons.contains(button)) {
+			this.customButtons.add(button);
+		}
 		// ensure that the added button wasn't removed before
 		this.removedButtons.remove(button.getButtonName());
 	}
@@ -215,7 +220,7 @@ public class ToolbarConfiguration {
 	/**
 	 * Removes the given {@link ToolbarButton} from the local list of custom
 	 * toolbar buttons.
-	 * 
+	 *
 	 * @param button
 	 *            The {@link ToolbarButton} to remove.
 	 */
@@ -237,7 +242,7 @@ public class ToolbarConfiguration {
 	 * <i>Note: This works only for buttons that have been removed using
 	 * {@link #removeDefaultToolbarButton(String)}</i>
 	 * </p>
-	 * 
+	 *
 	 * @param buttonName
 	 *            The name of the CKEditor default button to add.
 	 */
@@ -247,7 +252,7 @@ public class ToolbarConfiguration {
 
 	/**
 	 * Removes the CKEditor default button for the given name from the toolbar.
-	 * 
+	 *
 	 * @param buttonName
 	 *            The name of the CKEditor default button to remove.
 	 */
@@ -275,13 +280,19 @@ public class ToolbarConfiguration {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param browser
 	 *            The {@link Browser} instance to which this
 	 *            {@link ToolbarConfiguration} should be connected to.
 	 */
 	public void setBrowser(Browser browser) {
 		this.browser = browser;
+
+		// if a browser is set we ensure that the registered custom buttons
+		// are registered and already registered BrowserFunctions are disposed
+		for (ToolbarButton button : this.customButtons) {
+			addToolbarButton(button);
+		}
 	}
 
 }
