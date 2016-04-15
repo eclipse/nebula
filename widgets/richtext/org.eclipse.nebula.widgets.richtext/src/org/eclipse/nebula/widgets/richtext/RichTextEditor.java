@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Copyright (c) 2015 CEA LIST.
+ * Copyright (c) 2015, 2016 CEA LIST.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -36,6 +36,7 @@ import java.util.jar.JarFile;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
+import org.eclipse.nebula.widgets.richtext.toolbar.JavaCallbackListener;
 import org.eclipse.nebula.widgets.richtext.toolbar.ToolbarButton;
 import org.eclipse.nebula.widgets.richtext.toolbar.ToolbarConfiguration;
 import org.eclipse.swt.SWT;
@@ -100,11 +101,14 @@ public class RichTextEditor extends Composite {
 	private final ListenerList modifyListener = new ListenerList(ListenerList.IDENTITY);
 	private final ListenerList keyListener = new ListenerList(ListenerList.IDENTITY);
 	private final ListenerList focusListener = new ListenerList(ListenerList.IDENTITY);
+	private final ListenerList javaCallbackListener = new ListenerList(ListenerList.IDENTITY);
 
 	private final ToolbarConfiguration toolbarConfig;
 
 	private Shell embeddedShell;
 	private Point mouseDragPosition;
+
+	private boolean handleFocusChanges = true;
 
 	/**
 	 * Key of the system property to specify a fixed directory to unpack the ckeditor resources to.
@@ -211,6 +215,8 @@ public class RichTextEditor extends Composite {
 		this.browserFunctions.add(new KeyReleasedFunction(browser, "keyReleased"));
 		this.browserFunctions.add(new FocusInFunction(browser, "focusIn"));
 		this.browserFunctions.add(new FocusOutFunction(browser, "focusOut"));
+		this.browserFunctions.add(new JavaExecutionStartedFunction(browser, "javaExecutionStarted"));
+		this.browserFunctions.add(new JavaExecutionFinishedFunction(browser, "javaExecutionFinished"));
 		this.browserFunctions.add(new BrowserFunction(browser, "configureToolbar") {
 			@Override
 			public Object function(Object[] arguments) {
@@ -536,7 +542,8 @@ public class RichTextEditor extends Composite {
 	 */
 	public void notifyFocusGained(final FocusEvent event) {
 		checkWidget();
-		if (event == null) {
+		// do not handle focus events, e.g. in case a Java callback execution is running
+		if (event == null || !this.handleFocusChanges) {
 			return;
 		}
 
@@ -569,7 +576,8 @@ public class RichTextEditor extends Composite {
 	 */
 	public void notifyFocusLost(final FocusEvent event) {
 		checkWidget();
-		if (event == null) {
+		// do not handle focus events, e.g. in case a Java callback execution is running
+		if (event == null || !this.handleFocusChanges) {
 			return;
 		}
 
@@ -593,12 +601,12 @@ public class RichTextEditor extends Composite {
 			((FocusListener) listeners[i]).focusLost(event);
 		}
 	}
-	
+
 	@Override
 	public void setBounds(Rectangle rect) {
-    	setBounds(rect.x, rect.y, rect.width, rect.height);
+		setBounds(rect.x, rect.y, rect.width, rect.height);
 	}
-	
+
 	@Override
 	public void setBounds(int x, int y, int width, int height) {
 		int newX = x;
@@ -701,6 +709,25 @@ public class RichTextEditor extends Composite {
 	 */
 	public Object evaluateJavascript(String script) {
 		return this.browser.evaluate(script);
+	}
+
+	/**
+	 * @return <code>true</code> if focus changes are handled, <code>false</code> if not
+	 */
+	public boolean isHandleFocusChanges() {
+		return handleFocusChanges;
+	}
+
+	/**
+	 * Configure whether focus changes should be handled or not. A typical use case for disabling
+	 * the focus handling is for example to open a dialog from a Java callback via custom toolbar
+	 * button.
+	 * 
+	 * @param handleFocusChanges
+	 *            <code>true</code> if focus changes should be handled, <code>false</code> if not
+	 */
+	public void setHandleFocusChanges(boolean handleFocusChanges) {
+		this.handleFocusChanges = handleFocusChanges;
 	}
 
 	@Override
@@ -1069,6 +1096,48 @@ public class RichTextEditor extends Composite {
 		return new KeyEvent(event);
 	}
 
+	/**
+	 * Add a {@link JavaCallbackListener} that is triggered on executing a Java callback via custom
+	 * {@link ToolbarButton}.
+	 * 
+	 * @param listener
+	 *            The {@link JavaCallbackListener} to add.
+	 */
+	public void addJavaCallbackListener(JavaCallbackListener listener) {
+		checkWidget();
+		if (listener == null)
+			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		this.javaCallbackListener.add(listener);
+	}
+
+	/**
+	 * Remove a {@link JavaCallbackListener} that is triggered on executing a Java callback via
+	 * custom {@link ToolbarButton}.
+	 * 
+	 * @param listener
+	 *            The {@link JavaCallbackListener} to remove.
+	 */
+	public void removeJavaCallbackListener(JavaCallbackListener listener) {
+		checkWidget();
+		if (listener == null)
+			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		this.javaCallbackListener.remove(listener);
+	}
+
+	private void doNotifyJavaExecutionStarted() {
+		Object[] listeners = this.javaCallbackListener.getListeners();
+		for (int i = 0; i < listeners.length; ++i) {
+			((JavaCallbackListener) listeners[i]).javaExecutionStarted();
+		}
+	}
+
+	private void doNotifyJavaExecutionFinished() {
+		Object[] listeners = this.javaCallbackListener.getListeners();
+		for (int i = 0; i < listeners.length; ++i) {
+			((JavaCallbackListener) listeners[i]).javaExecutionFinished();
+		}
+	}
+
 	private FocusEvent createFocusEvent() {
 		Event event = new Event();
 		event.display = this.getDisplay();
@@ -1172,6 +1241,41 @@ public class RichTextEditor extends Composite {
 		}
 	}
 
+	/**
+	 * Callback function that is called via Javascript before a java callback is triggered via
+	 * custom toolbar button. Is registered for the Javascript function name
+	 * <i>javaExecutionStarted</i>.
+	 */
+	class JavaExecutionStartedFunction extends BrowserFunction {
+
+		public JavaExecutionStartedFunction(Browser browser, String name) {
+			super(browser, name);
+		}
+
+		@Override
+		public Object function(Object[] arguments) {
+			doNotifyJavaExecutionStarted();
+			return super.function(arguments);
+		}
+	}
+
+	/**
+	 * Callback function that is called via Javascript after a java callback is triggered via custom
+	 * toolbar button. Is registered for the Javascript function name <i>javaExecutionFinished</i>.
+	 */
+	class JavaExecutionFinishedFunction extends BrowserFunction {
+
+		public JavaExecutionFinishedFunction(Browser browser, String name) {
+			super(browser, name);
+		}
+
+		@Override
+		public Object function(Object[] arguments) {
+			doNotifyJavaExecutionFinished();
+			return super.function(arguments);
+		}
+	}
+
 	private static void locateTemplateURL() {
 		templateURL = RichTextEditor.class.getResource("resources/template.html");
 
@@ -1227,9 +1331,8 @@ public class RichTextEditor extends Composite {
 						try (JarFile jarFile = new JarFile(jarFileReference)) {
 							String unpackDirectory = System.getProperty(JAR_UNPACK_LOCATION_PROPERTY);
 							// create the directory to unzip to
-							final java.nio.file.Path tempDir =
-									(unpackDirectory == null)
-											? Files.createTempDirectory("richtext") : Files.createDirectories(Paths.get(unpackDirectory));
+							final java.nio.file.Path tempDir = (unpackDirectory == null)
+									? Files.createTempDirectory("richtext") : Files.createDirectories(Paths.get(unpackDirectory));
 
 							// only register the hook to delete the temp directory after shutdown if
 							// a temporary directory was used

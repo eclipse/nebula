@@ -17,6 +17,7 @@ import java.text.MessageFormat;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.TextCellEditor;
+import org.eclipse.nebula.widgets.richtext.toolbar.JavaCallbackListener;
 import org.eclipse.nebula.widgets.richtext.toolbar.ToolbarConfiguration;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
@@ -33,7 +34,7 @@ import org.eclipse.swt.widgets.Control;
 /**
  * A cell editor that manages HTML entry fields. It uses the {@link RichTextEditor} as editing
  * control.
- * 
+ *
  * <p>
  * It creates the {@link RichTextEditor} instance always using the style bit {@link SWT#EMBEDDED} to
  * ensure the editor is opened with a minimum size. Otherwise the editing framework will set the
@@ -67,7 +68,7 @@ public class RichTextCellEditor extends CellEditor {
 
 	/**
 	 * Create a resizable {@link RichTextCellEditor} with the default {@link ToolbarConfiguration}.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent composite.
 	 */
@@ -77,7 +78,7 @@ public class RichTextCellEditor extends CellEditor {
 
 	/**
 	 * Create a resizable {@link RichTextCellEditor} with the given {@link ToolbarConfiguration}.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent composite.
 	 * @param toolbarConfiguration
@@ -91,7 +92,7 @@ public class RichTextCellEditor extends CellEditor {
 	/**
 	 * Create a resizable {@link RichTextCellEditor} with the default {@link ToolbarConfiguration}
 	 * and the given style bits.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent composite.
 	 * @param style
@@ -104,7 +105,7 @@ public class RichTextCellEditor extends CellEditor {
 	/**
 	 * Create a resizable {@link RichTextCellEditor} with the given {@link ToolbarConfiguration} and
 	 * the given style bits.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent composite.
 	 * @param toolbarConfiguration
@@ -173,6 +174,19 @@ public class RichTextCellEditor extends CellEditor {
 		});
 
 		this.editor.addModifyListener(getModifyListener());
+
+		this.editor.addJavaCallbackListener(new JavaCallbackListener() {
+
+			@Override
+			public void javaExecutionStarted() {
+				editor.setHandleFocusChanges(false);
+			}
+
+			@Override
+			public void javaExecutionFinished() {
+				editor.setHandleFocusChanges(true);
+			}
+		});
 
 		return this.editor;
 	}
@@ -248,9 +262,16 @@ public class RichTextCellEditor extends CellEditor {
 		return modifyListener;
 	}
 
+	@Override
+	protected void focusLost() {
+		if (this.editor != null && this.editor.isHandleFocusChanges()) {
+			super.focusLost();
+		}
+	}
+
 	/**
 	 * Return the created {@link RichTextEditor} control.
-	 * 
+	 *
 	 * @return The {@link RichTextEditor} control, or <code>null</code> if this cell editor has no
 	 *         control.
 	 */

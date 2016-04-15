@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Copyright (c) 2015 CEA LIST.
+ * Copyright (c) 2015, 2016 CEA LIST.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -147,8 +147,10 @@ public class ToolbarConfiguration {
 			builder.append("CKEDITOR.instances.editor.addCommand('").append(button.getCommandName()).append("', {");
 			builder.append("exec: function(edt) {");
 			if (button.getJavascriptToExecute() == null) {
+				builder.append("javaExecutionStarted();");
 				BrowserFunction function = this.buttonCallbacks.get(button.getCommandName());
 				builder.append(function.getName()).append("();");
+				builder.append("javaExecutionFinished()");
 			}
 			else {
 				builder.append(button.getJavascriptToExecute());
@@ -160,7 +162,9 @@ public class ToolbarConfiguration {
 			builder.append("label: '").append(button.getButtonLabel()).append("',");
 			builder.append("command: '").append(button.getCommandName()).append("',");
 			builder.append("toolbar: '").append(button.getToolbar()).append("',");
-			builder.append("icon: '").append(button.getIconURL().toString()).append("',");
+			if (button.getIconURL() != null) {
+				builder.append("icon: '").append(button.getIconURL().toString()).append("',");
+			}
 			builder.append("});");
 		}
 
