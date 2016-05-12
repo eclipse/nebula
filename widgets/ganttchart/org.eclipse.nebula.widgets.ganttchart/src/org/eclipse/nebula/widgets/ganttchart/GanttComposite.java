@@ -8365,19 +8365,22 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         if (_mainBounds == null || me.x >= _mainBounds.x) {
         	for (int i = 0; i < _ganttEvents.size(); i++) {
         		GanttEvent event = (GanttEvent) _ganttEvents.get(i);
-        		if (isInside(me.x, me.y, new Rectangle(event.getX(), event.getY(), event.getWidth(), event.getHeight()))) {
-        			showTooltip(event, me);
-        			return;
-        		}
-        		
-        		if (_settings.showHolidayToolTips()) {
-        			for (Holiday holiday : holidays) {
-	            		if (holiday.hasTooltip() && isInside(me.x, me.y, holiday.getBounds())) {
-	            			showTooltip(holiday, me);
-	            			return;
-	            		}
-	    			}
-        		}
+				if (!event.isHidden()) {
+					if (isInside(me.x, me.y,
+							new Rectangle(event.getX(), event.getY(), event.getWidth(), event.getHeight()))) {
+						showTooltip(event, me);
+						return;
+					}
+
+					if (_settings.showHolidayToolTips()) {
+						for (Holiday holiday : holidays) {
+							if (holiday.hasTooltip() && isInside(me.x, me.y, holiday.getBounds())) {
+								showTooltip(holiday, me);
+								return;
+							}
+						}
+					}
+				}
         	}
         }
     }
