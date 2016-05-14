@@ -138,6 +138,7 @@ class AnalogTimePicker extends VPanel {
 		timeAmPm.setMargins(4, 4);
 		timeAmPm.setEnabled(!dialPanel.hasStyle(CDT.READ_ONLY));
 		tapl = new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				if(event.widget == null) {
 					Calendar tmpcal = cdt.getCalendarInstance();
@@ -151,6 +152,7 @@ class AnalogTimePicker extends VPanel {
 		timeAmPm.addListener(SWT.MouseWheel, tapl);
 
 		Listener listener = new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				if(cdt.getEditable()) {
 					switch(event.type) {
@@ -371,6 +373,7 @@ class AnalogTimePicker extends VPanel {
 		updateLabels();
 	}
 
+	@Override
 	public boolean setFocus() {
 		if(timeNow != null) {
 			return timeNow.setFocus();
@@ -467,6 +470,7 @@ class AnalogTimePicker extends VPanel {
 		}
 		if(timeAmPm != null) {
 			SimpleDateFormat sdf = new SimpleDateFormat("a"); //$NON-NLS-1$
+			sdf.setTimeZone(cdt.getTimeZone());
 			timeAmPm.setText(sdf.format(cdt.getCalendarTime()));
 		}
 		dialPanel.redraw();
