@@ -105,7 +105,6 @@ public class CollectionsUtil {
    /**
     * Returns the unique union of the given lists
     */
-   @SuppressWarnings("unchecked")
    public static <T> Set<T> setUnion(Collection<T>... lists) {
       Set<T> union = new HashSet<T>(lists[0].size() * 2);
 
@@ -131,7 +130,6 @@ public class CollectionsUtil {
    /**
     * Convert an aggregate list of objects into a List
     */
-   @SuppressWarnings("unchecked")
    public static <T> List<T> getAggregate(T... objects) {
       List<T> objs = new ArrayList<T>();
       if (objects != null) {
