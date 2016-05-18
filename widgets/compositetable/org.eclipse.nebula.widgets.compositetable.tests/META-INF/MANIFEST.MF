@@ -4,6 +4,8 @@ Bundle-Name: Tests Fragment
 Bundle-SymbolicName: org.eclipse.nebula.widgets.compositetable.tests
 Bundle-Version: 1.0.0.qualifier
 Fragment-Host: org.eclipse.nebula.widgets.compositetable;bundle-version="1.0.0"
-Require-Bundle: org.junit4
 Export-Package: org.eclipse.nebula.widgets.compositetable,
  org.eclipse.nebula.widgets.compositetable.day
+Import-Package: junit.framework;version="4.12.0",
+ junit.runner;version="4.12.0",
+ org.junit;version="4.12.0"
