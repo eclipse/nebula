@@ -1,8 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Calendarcombo Plug-in
+Bundle-Name: Nebula CalendarCombo Widget
 Bundle-SymbolicName: org.eclipse.nebula.widgets.calendarcombo
 Bundle-Version: 1.0.0.qualifier
 Require-Bundle: org.eclipse.swt
 Export-Package: org.eclipse.nebula.widgets.calendarcombo
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-Vendor: Eclipse Nebula

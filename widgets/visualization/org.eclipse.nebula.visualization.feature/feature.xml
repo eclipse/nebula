@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.nebula.visualization.feature"
       label="%featureName"
-      version="0.9.9.qualifier"
+      version="1.0.0.qualifier"
       provider-name="%provider">
 
    <description url="%featureDescriptionURL">

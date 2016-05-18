@@ -21,7 +21,7 @@
    <feature url="features/org.eclipse.nebula.widgets.pshelf.feature_1.0.0.qualifierjar" id="org.eclipse.nebula.widgets.pshelf.feature" version="1.0.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.xviewer.feature_0.9.9.qualifier.jar" id="org.eclipse.nebula.widgets.xviewer.feature" version="0.9.9.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.xviewer.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.xviewer.feature" version="1.0.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
    <feature url="features/org.eclipse.nebula.effects.stw.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.effects.stw.feature" version="1.0.0.qualifier">
@@ -48,13 +48,13 @@
    <feature url="features/org.eclipse.nebula.widgets.paperclips.feature_2.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.paperclips.feature" version="2.0.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.cwt.feature_0.9.0.qualifier.jar" id="org.eclipse.nebula.cwt.feature" version="0.9.0.qualifier">
+   <feature url="features/org.eclipse.nebula.cwt.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.cwt.feature" version="1.0.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
    <feature url="features/org.eclipse.nebula.widgets.pshelf.css.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.pshelf.css.feature" version="1.0.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.visualization.feature_0.9.9.qualifier.jar" id="org.eclipse.nebula.visualization.feature" version="0.9.9.qualifier">
+   <feature url="features/org.eclipse.nebula.visualization.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.visualization.feature" version="1.0.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
    <feature url="features/org.eclipse.nebula.widgets.richtext.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.richtext.feature" version="1.0.0.qualifier">
@@ -65,12 +65,12 @@
    </feature>
    <category-def name="Nebula Release All Widgets and Examples" label="Nebula Release All Widgets and Examples">
       <description>
-         Contains all widgets that are part of the combined Nebula release. All these widgets are supported and under development. You can also choose to include the Examples and the Example view for these widgets.
+         Contains all widgets that are part of the combined Nebula release. You can also choose to include the Examples and the Example view for these widgets.
       </description>
    </category-def>
    <category-def name="Nebula Release Individual Widgets" label="Nebula Release Individual Widgets">
       <description>
-         Contains all widgets that are part of the combined Nebula release. All these widgets are supported and under development.
+         Contains all widgets that are part of the combined Nebula release.
       </description>
    </category-def>
    <category-def name="Nebula Examples View" label="Nebula Examples View">
