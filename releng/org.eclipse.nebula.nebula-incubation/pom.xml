@@ -34,6 +34,7 @@
 		<module>../../widgets/pagination</module>
 		<module>../../widgets/picture</module>
 		<module>../../widgets/geomap</module>
+		<module>../../widgets/effects/</module>
 
 		<!-- Dist -->
 		<module>../org.eclipse.nebula.updatesite.incubation</module>

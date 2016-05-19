@@ -33,7 +33,6 @@
 		<module>../../widgets/tablecombo</module>
 		<module>../../widgets/calendarcombo</module>
 		<module>../../widgets/xviewer</module>
-		<module>../../widgets/effects/</module>
 		<module>../../widgets/paperclips</module>
 		<module>../../widgets/cwt</module>
 		<module>../../widgets/cdatetime</module>
