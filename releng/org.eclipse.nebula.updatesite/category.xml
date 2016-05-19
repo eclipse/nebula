@@ -18,9 +18,6 @@
    <feature url="features/org.eclipse.nebula.widgets.pshelf.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.pshelf.feature" version="1.0.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.effects.stw.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.effects.stw.feature" version="1.0.0.qualifier">
-      <category name="Nebula Release Individual Widgets"/>
-   </feature>
    <feature url="features/org.eclipse.nebula.widgets.grid.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.grid.feature" version="1.0.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
