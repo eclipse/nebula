@@ -22,10 +22,6 @@
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.nebula.widgets.calendarcombo.feature"
-         version="0.0.0"/>
-
-   <includes
          id="org.eclipse.nebula.widgets.compositetable.feature"
          version="0.0.0"/>
 

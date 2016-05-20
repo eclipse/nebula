@@ -36,6 +36,9 @@
    <feature url="features/org.eclipse.nebula.effects.stw.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.effects.stw.feature" version="1.0.0.qualifier">
       <category name="Nebula Individual Incubation Widgets"/>
    </feature>
+   <feature url="features/org.eclipse.nebula.widgets.calendarcombo.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.calendarcombo.feature" version="1.0.0.qualifier">
+      <category name="Nebula Individual Incubation Widgets"/>
+   </feature>
    <category-def name="Nebula All Incubation Widgets" label="Nebula All Incubation Widgets">
       <description>
          Contains all widgets that are part of the Nebula incubator.

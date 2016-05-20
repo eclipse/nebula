@@ -31,10 +31,12 @@
 		<module>../../widgets/datechooser</module>
 		<module>../../widgets/radiogroup</module>
 		<module>../../widgets/treemapper</module>
+		<module>../../widgets/calendarcombo</module>
 		<module>../../widgets/pagination</module>
 		<module>../../widgets/picture</module>
-		<module>../../widgets/geomap</module>
 		<module>../../widgets/effects/</module>
+		<module>../../widgets/geomap</module>
+		
 
 		<!-- Dist -->
 		<module>../org.eclipse.nebula.updatesite.incubation</module>

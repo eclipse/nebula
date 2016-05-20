@@ -31,7 +31,6 @@
 		<module>../../widgets/compositetable</module>
 		<module>../../widgets/oscilloscope</module>
 		<module>../../widgets/tablecombo</module>
-		<module>../../widgets/calendarcombo</module>
 		<module>../../widgets/xviewer</module>
 		<module>../../widgets/paperclips</module>
 		<module>../../widgets/cwt</module>
