@@ -30,9 +30,6 @@
    <feature url="features/org.eclipse.nebula.examples.incubation.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.examples.incubation.feature" version="1.0.0.qualifier">
       <category name="Nebula All Incubation Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.geomap.feature_0.1.0.qualifier.jar" id="org.eclipse.nebula.widgets.geomap.feature" version="0.1.0.qualifier">
-      <category name="Nebula Individual Incubation Widgets"/>
-   </feature>
    <feature url="features/org.eclipse.nebula.effects.stw.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.effects.stw.feature" version="1.0.0.qualifier">
       <category name="Nebula Individual Incubation Widgets"/>
    </feature>

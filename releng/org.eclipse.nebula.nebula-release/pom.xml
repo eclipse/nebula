@@ -37,6 +37,7 @@
 		<module>../../widgets/cdatetime</module>
 		<module>../../widgets/visualization</module>
 		<module>../../widgets/richtext</module>
+		<module>../../widgets/geomap</module>
 
 		<!-- Releng -->
 		<module>../org.eclipse.nebula.feature</module>

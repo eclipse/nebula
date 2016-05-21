@@ -35,7 +35,6 @@
 		<module>../../widgets/pagination</module>
 		<module>../../widgets/picture</module>
 		<module>../../widgets/effects/</module>
-		<module>../../widgets/geomap</module>
 		
 
 		<!-- Dist -->
