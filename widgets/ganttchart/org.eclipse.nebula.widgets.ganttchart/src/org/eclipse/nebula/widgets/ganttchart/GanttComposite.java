@@ -1791,7 +1791,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
         // we need to take the "previous" scroll location into account
         y += _vScrollPos;
 
-        final int max = _vScrollBar.getMaximum() - _vScrollBar.getThumb();
+        final int max = _vScrollBar.getMaximum() - _vScrollBar.getThumb() + _eventHeight + _eventSpacer;
 
         if (y < 0) {
             y = 0;
