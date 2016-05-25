@@ -1719,16 +1719,19 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     }
 
     /**
-     * Sets the top visible item in the chart and scrolls to show it.
+     * Sets the top visible item in the chart and scrolls to show it. Passing
+	 * SWT.NONE prevents any horizontal alignment from occurring.
      * 
      * @param ge Event to show
      * @param yOffset y offset modifier
-     * @param side one of <code>SWT.LEFT</code>, <code>SWT.CENTER</code>, <code>SWT.RIGHT</code>
+     * @param side one of <code>SWT.LEFT</code>, <code>SWT.CENTER</code>, 
+     * 			<code>SWT.RIGHT</code>, <code>SWT.NONE</code>
      */
     public void setTopItem(final GanttEvent ge, final int yOffset, final int side) {
     	
-    	// fix to issue where setting same event would cause chart to jump vertically. Seems we need to handle locked vs. unlocked headers differently
-    	// due to changes made elsewhere
+		// fix to issue where setting same event would cause chart to jump
+		// vertically. Seems we need to handle locked vs. unlocked headers
+		// differently due to changes made elsewhere
     	if (_settings.lockHeaderOnVerticalScroll()) {
     		vScrollToY(ge.getY() + yOffset, false);
     	}
@@ -1737,25 +1740,19 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
     		vScrollToY(ge.getY() - _vScrollPos + yOffset - takeOff, false);
     	}
 
-    	// NOTE: Old code
-/*        
-		int takeOff = getHeaderHeight();
-        if (_settings.lockHeaderOnVerticalScroll()) {
-            takeOff = 0;
-        }
-        
-        vScrollToY(ge.getY() - _vScrollPos + yOffset - takeOff, false);
-        */        
-    	
-        internalSetDate(ge.getActualStartDate(), side, true, false);
+		if (side != SWT.NONE) {
+			internalSetDate(ge.getActualStartDate(), side, true, false);
+		}
         redraw();
     }
 
     /**
-     * Sets the top visible item in the chart and scrolls to show it.
+     * Sets the top visible item in the chart and scrolls to show it. Passing
+	 * SWT.NONE prevents any horizontal alignment from occurring.
      * 
      * @param ge Event to show
-     * @param side one of <code>SWT.LEFT</code>, <code>SWT.CENTER</code>, <code>SWT.RIGHT</code>
+     * @param side one of <code>SWT.LEFT</code>, <code>SWT.CENTER</code>, 
+     * 				<code>SWT.RIGHT</code>, <code>SWT.NONE</code>
      */
     public void setTopItem(final GanttEvent ge, final int side) {
         setTopItem(ge, 0, side);
