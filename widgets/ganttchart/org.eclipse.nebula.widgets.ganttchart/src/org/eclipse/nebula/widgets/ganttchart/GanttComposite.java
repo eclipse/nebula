@@ -26,6 +26,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
 
 import org.eclipse.nebula.widgets.ganttchart.dnd.VerticalDragDropManager;
 import org.eclipse.nebula.widgets.ganttchart.undoredo.GanttUndoRedoManager;
@@ -3996,7 +3997,11 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
             if (ge.getName() == null) {
                 toReturn = toReturn.replaceAll(Constants.STR_NAME, "");
             } else {
-                toReturn = toReturn.replaceAll(Constants.STR_NAME, ge.getName());
+            	try {
+					toReturn = toReturn.replaceAll(Constants.STR_NAME, ge.getName());
+				} catch (IllegalArgumentException e) {
+					toReturn = toReturn.replaceAll(Constants.STR_NAME, Matcher.quoteReplacement(ge.getName()));
+				}
             }
         }
 
