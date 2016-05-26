@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.nebula.cwt.feature"
-      label="Custom Widget Toolkit"
+      label="Nebula Custom Widget Toolkit"
       version="1.0.0.qualifier"
       provider-name="Eclipse Nebula">
 

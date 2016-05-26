@@ -3,7 +3,7 @@
       id="org.eclipse.nebula.examples_webstart"
       label="Nebula Example Webstart Feature"
       version="1.0.0"
-      provider-name="Nebula"
+      provider-name="Eclipse Nebula"
       plugin="org.eclipse.nebula.examples">
 
    <description url="http://www.example.com/description">

@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Nebula Snippets Plug-in
+Bundle-Name: Nebula Snippets
 Bundle-SymbolicName: org.eclipse.nebula.snippets
 Bundle-Version: 1.0.0
 Require-Bundle: org.eclipse.swt,
@@ -30,3 +30,4 @@ Require-Bundle: org.eclipse.swt,
 Export-Package: org.eclipse.nebula.snippets.grid
 Bundle-ClassPath: .
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-Vendor: Eclipse Nebula

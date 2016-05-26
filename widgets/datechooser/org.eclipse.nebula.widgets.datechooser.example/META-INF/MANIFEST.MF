@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Example
+Bundle-Name: Nebula Datechooser Example
 Bundle-SymbolicName: org.eclipse.nebula.widgets.datechooser.example;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Require-Bundle: org.eclipse.ui,
@@ -9,3 +9,4 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.nebula.widgets.datechooser;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-Vendor: Eclipse Nebula
