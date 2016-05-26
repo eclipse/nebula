@@ -1,15 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2012 Stepan Rutz.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http\://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v10.html
  *
- * Contributors\:
- *     IBM Corporation - initial API and implementation
- ******************************************************************************/
+ * Contributors:
+ *    Stepan Rutz - initial implementation
+ *    Hallvard Trætteberg - further cleanup and development
+ *******************************************************************************/
 
-package org.eclipse.nebula.widgets.geomap;
+package org.eclipse.nebula.widgets.geomap.internal;
 
 /**
  * A single tile in the map. A tile has an x and y coordinate, but
@@ -21,8 +22,27 @@ package org.eclipse.nebula.widgets.geomap;
  */
 public final class TileRef {
 
-    public final int x, y, z;
+	/**
+	 * The x coordinate of this TileRef
+	 */
+    public final int x;
 
+    /**
+     * The y coordinate of this TileRef
+     */
+    public final int y;
+
+    /**
+     * The z coordinate, i.e. zoom level, of this TileRef
+     */
+    public final int z;
+
+    /**
+     * Initializes this TileRef with x, y and z coordinates
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @param z the z coordinate
+     */
     public TileRef(int x, int y, int z) {
         this.x = x;
         this.y = y;
@@ -35,6 +55,7 @@ public final class TileRef {
     	return "Tile {" + x + ", " + y + " @ " + z + "}";
     }
     
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -44,6 +65,7 @@ public final class TileRef {
         return result;
     }
 
+	@Override
     public boolean equals(Object obj) {
         if (this == obj) {
         	return true;

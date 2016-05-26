@@ -9,16 +9,26 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.geomap.jface.example;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.ListViewer;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.nebula.examples.AbstractExampleTab;
 import org.eclipse.nebula.widgets.geomap.OsmTileServer;
 import org.eclipse.nebula.widgets.geomap.PointD;
 import org.eclipse.nebula.widgets.geomap.TileServer;
 import org.eclipse.nebula.widgets.geomap.jface.GeoMapViewer;
+import org.eclipse.nebula.widgets.geomap.jface.GoogleMapsSearchServer;
+import org.eclipse.nebula.widgets.geomap.jface.IToolTipProvider;
 import org.eclipse.nebula.widgets.geomap.jface.LabelImageProvider;
+import org.eclipse.nebula.widgets.geomap.jface.Located;
 import org.eclipse.nebula.widgets.geomap.jface.LocationProvider;
+import org.eclipse.nebula.widgets.geomap.jface.OsmSearchServer;
+import org.eclipse.nebula.widgets.geomap.jface.SearchServer;
+import org.eclipse.nebula.widgets.geomap.jface.SearchServer.Result;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -30,10 +40,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 public class GeoMapViewerExampleTab extends AbstractExampleTab {
 
 	private GeoMapViewer geoMapViewer;
+	private ListViewer contentViewer;
 
 	public Control createControl(Composite parent) {
 		geoMapViewer = new GeoMapViewer(parent, SWT.NONE);
@@ -66,7 +78,6 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 		tileServerControl.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		tileServerControl.select(0);
 		tileServerControl.addSelectionListener(new SelectionAdapter() {
-
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				String selection = tileServerControl.getItem(tileServerControl.getSelectionIndex());
@@ -101,6 +112,73 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 				geoMapViewer.setClipRule(clipRuleControl.getSelectionIndex());
 			}
 		});
+		
+		addLabel("Search: ", group);
+		final Text searchText = new Text(group, SWT.SEARCH | SWT.CANCEL);
+		searchText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		addLabel("With: ", group);
+		final Combo searchServerControl = new Combo(group, SWT.READ_ONLY);
+		searchServerControl.setItems(searchServerNames);
+		searchServerControl.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		searchServerControl.select(0);
+		searchText.addSelectionListener(new SelectionAdapter() {
+			public void widgetDefaultSelected(SelectionEvent e) {
+				if (e.detail == SWT.CANCEL) {
+					setViewerInputs(contributorLocations);
+				} else {
+					doSearch(searchText.getText(), searchServerControl.getSelectionIndex());
+				}
+			}
+		});
+		
+		addLabel("Contents: ", group).setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
+		contentViewer = new ListViewer(group, SWT.NONE);
+		contentViewer.getControl().setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, true, 1, 1));
+		contentViewer.setContentProvider(new ArrayContentProvider());
+		contentViewer.setLabelProvider(new LabelProvider() {
+			@Override
+			public String getText(Object element) {
+				String text = labelProvider.getText(element);
+				if (labelProvider instanceof IToolTipProvider) {
+					text += " (" + ((IToolTipProvider) labelProvider).getToolTip(element) + ")";
+				}
+				return text;
+			}
+		});
+		contentViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				geoMapViewer.setSelection(event.getSelection(), true);
+			}
+		});
+		setViewerInputs(contributorLocations);
+	}
+
+	private SearchServer[] searchServers = {new OsmSearchServer(), new GoogleMapsSearchServer()};
+	private String[] searchServerNames = {"OSM Nomination", "Google Maps"};
+
+	private void doSearch(String search, int selectionIndex) {
+		SearchServer server = searchServers[selectionIndex];
+		Object[] results = server.doSearch(search);
+		if (results != null) {
+			setViewerInputs(results);
+		}
+	}
+
+	private void setViewerInputs(Object[] results) {
+		if (geoMapViewer != null && geoMapViewer.getContentProvider() != null) {
+			geoMapViewer.setInput(results);
+			geoMapViewer.revealAll();
+		}
+		if (contentViewer != null && contentViewer.getContentProvider() != null) {
+			contentViewer.setInput(results);
+		}
+	}
+
+	private Label addLabel(String text, Composite composite) {
+		Label label = new Label(composite, SWT.NONE);
+		label.setText(text);
+		label.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		return label;
 	}
 	
 	@Override
@@ -113,7 +191,7 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 		return true;
 	}
 
-	private static class ContributorLocation {
+	private static class ContributorLocation extends Located.Static {
 		public final String name;
 		public PointD location;
 		public final String locationText;
@@ -125,8 +203,13 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 			this.locationText = locationText;
 			this.committer = committer;
 		}
+
 		public String toString() {
 			return name + ", " + locationText + " @ " + location.x + ", " + location.y;
+		}
+		
+		public PointD getLonLat() {
+			return location;
 		}
 	}
 	
@@ -141,59 +224,68 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 			new ContributorLocation("Edwin Park",			new PointD(-74.07,40.76), 		"Hoboken, New Jersey, USA", true),
 			new ContributorLocation("Mickael Istria",		new PointD(5.7349,45.1872),	 	"Grenoble, France", 	true),
 	};
-	
-	private int indexOfLocation(Object element) {
-		for (int i = 0; i < contributorLocations.length; i++) {
-			if (element == contributorLocations[i]) {
-				return i;
+
+	private LabelImageProvider labelProvider = new LabelImageProvider() {
+		
+		private RGB contributorColor = new RGB(255, 250, 200);
+		private RGB committerColor = new RGB(200, 255, 200);
+		
+		@Override
+		public Image getImage(Object element) {
+			if (element instanceof SearchServer.Result) {
+				setFillColor(committerColor);
+			} else if (element instanceof ContributorLocation) {
+				setFillColor(((ContributorLocation) element).committer ? committerColor : contributorColor);
 			}
+			return super.getImage(element);
 		}
-		return -1;
-	}
+		@Override
+		public String getText(Object element) {
+			if (element instanceof SearchServer.Result) {
+				return ((SearchServer.Result) element).getName();
+			} else if (element instanceof ContributorLocation) {
+				ContributorLocation contributorLocation = (ContributorLocation) element;
+				return contributorLocation.name;
+			}
+			return null;
+		}
+		@Override
+		public Object getToolTip(Object element) {
+			if (element instanceof SearchServer.Result) {
+				Result result = (SearchServer.Result) element;
+				PointD lonLat = result.getLonLat();
+				return result.getText() + " @ " + lonLat.x + "," + lonLat.y;
+			} else if (element instanceof ContributorLocation) {
+				return ((ContributorLocation) element).toString();
+			}
+			return null;
+		}
+	};
 	
 	private void configureMapViewer() {
 		geoMapViewer.getGeoMap().setTileServer(OsmTileServer.TILESERVERS[0]);
 //		geoMapViewer.getGeoMap().setTileServer(GoogleTileServer.TILESERVERS[0]);
 		
-		geoMapViewer.setLabelProvider(new LabelImageProvider() {
-			
-			private RGB contributorColor = new RGB(255, 250, 200);
-			private RGB committerColor = new RGB(200, 255, 200);
-			
-			@Override
-			public Image getImage(Object element) {
-				setFillColor(((ContributorLocation) element).committer ? committerColor : contributorColor);
-				return super.getImage(element);
-			}
-			@Override
-			public String getText(Object element) {
-				return ((ContributorLocation) element).name;
-			}
-			@Override
-			public Object getToolTip(Object element) {
-				if (element instanceof ContributorLocation) {
-					return element.toString();
+		geoMapViewer.setLabelProvider(labelProvider);
+		geoMapViewer.setLocationProvider(new LocationProvider() {
+			public PointD getLonLat(Object element) {
+				if (element instanceof Located) {
+					return ((Located) element).getLonLat();
 				}
 				return null;
 			}
-		});
-		geoMapViewer.setLocationProvider(new LocationProvider() {
-			public PointD getLonLat(Object element) {
-				int pos = indexOfLocation(element);
-				return pos >= 0 ? contributorLocations[pos].location : null;
-			}
 			public boolean setLonLat(Object element, double lon, double lat) {
-				int pos = indexOfLocation(element);
-				if (pos < 0) {
-					return false;
+				if (element instanceof Located) {
+					((Located) element).setLonLat(lon, lat);
+					return true;
 				}
-				contributorLocations[pos].location = new PointD(lon, lat);
-				return true;			}
+				return false;
+			}
 		});
 		geoMapViewer.setContentProvider(new ArrayContentProvider());
 		geoMapViewer.getControl().getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				geoMapViewer.setInput(contributorLocations);
+				setViewerInputs(contributorLocations);
 			}
 		});
 	}

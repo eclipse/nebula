@@ -1,79 +1,108 @@
 /*******************************************************************************
- * Copyright (c) 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2012 Stepan Rutz.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http\://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v10.html
  *
- * Contributors\:
- *     IBM Corporation - initial API and implementation
- ******************************************************************************/
+ * Contributors:
+ *    Stepan Rutz - initial implementation
+ *    Hallvard Trætteberg - further cleanup and development
+ *******************************************************************************/
 
 package org.eclipse.nebula.widgets.geomap;
 
-import java.net.URL;
 import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.eclipse.nebula.widgets.geomap.internal.TileRef;
+import org.eclipse.nebula.widgets.geomap.internal.URLService;
 
 /**
  * This class encapsulates a tileserver, which has the concept
  * of a baseurl and a maximum zoom level. 
  */
-public class TileServer {
+public class TileServer extends URLService {
 
-    private String url;
-    private String urlFormat = "{0}/{1}/{2}.png"; // slippy format, must match getURLFormatArguments
+    private String urlFormat = "{0}/{1}/{2}.png"; // slippy format z/x/y, must match getURLFormatArguments //$NON-NLS-1$
     private final int maxZoom;
-    private boolean broken;
 
-    private void parseUrl(String url) {
-		int pos = url.indexOf("{");
-		if (pos > 0) {
-			this.url = url.substring(0, pos);
-			this.urlFormat = url.substring(pos);
-		} else {
-			this.url = url; 
-		}
-    }
+    // See https://raw.github.com/follesoe/MapReplace/master/js/interceptors.js for a list of tile servers
 
+    /**
+     * Initializes a TileServer
+     * @param url the base url of the TileServer
+     * @param maxZoom the max zoom level supported by this TileServer
+     * @param urlFormat the format of the url parameters that are appended to the base url
+     */
     public TileServer(String url, int maxZoom, String urlFormat) {
-    	this.url = url;
+    	super(url, urlFormat);
         this.maxZoom = maxZoom;
-        this.urlFormat = urlFormat;
     }
 
+    /**
+     * Initializes a TileServer using the default slippy format
+     * @param url the base url of the TileServer
+     * @param maxZoom the max zoom level supported by this TileServer
+     */
     public TileServer(String url, int maxZoom) {
-    	parseUrl(url);
+    	parseUrl(url, "{0}/{1}/{2}.png"); //$NON-NLS-1$
     	this.maxZoom = maxZoom;
     }
 
-    protected Object[] getURLFormatArguments(TileRef tile) {
+    @Override
+    protected Object[] getURLFormatArguments(Object ref) {
+    	TileRef tile = (TileRef) ref;
     	return new Object[]{String.valueOf(tile.z), String.valueOf(tile.x), String.valueOf(tile.y)};
     }
     
-    protected String getTileURL(TileRef tile, String urlFormat, Object[] formatArguments) {
-    	return url + MessageFormat.format(urlFormat, formatArguments);
+    protected Map<String, String> createZXYMap(TileRef tile, String zKey, String xKey, String yKey) {
+    	Map<String, String> formatMap = new HashMap<String, String>();
+    	formatMap.put(zKey, String.valueOf(tile.z));
+    	formatMap.put(xKey, String.valueOf(tile.x));
+    	formatMap.put(yKey, String.valueOf(tile.y));
+    	return formatMap;
     }
     
+    protected Map<String, String> getURLFormatMap(TileRef tile) {
+    	return createZXYMap(tile, "{0}", "{1}", "{2}");   //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    }
+    
+    protected String getTileURL(TileRef tile, String urlFormat, Object[] formatArguments) {
+    	return getURL() + MessageFormat.format(urlFormat, formatArguments);
+    }
+
+    protected String getTileURL(TileRef tile, String urlFormat, Map<String, String> formatMap) {
+    	for (String key : formatMap.keySet()) {
+			urlFormat = urlFormat.replace(key, formatMap.get(key));
+		}
+    	return getURL() + urlFormat;
+    }
+
     public String getTileURL(TileRef tile) {
-    	return (urlFormat != null ? getTileURL(tile, urlFormat, getURLFormatArguments(tile)) : null);
+    	if (urlFormat != null) {
+	    	Object[] urlFormatArguments = getURLFormatArguments(tile);
+	    	if (urlFormatArguments != null) {
+	    		return getTileURL(tile, urlFormat, urlFormatArguments);
+	    	}
+	    	Map<String, String> urlFormatMap = getURLFormatMap(tile);
+	    	if (urlFormatMap != null) {
+	    		return getTileURL(tile, urlFormat, urlFormatMap);
+	    	}
+    	}
+    	return null;
     }
     
     public String toString() {
-        return url;
+        return getURL();
     }
 
+    /**
+     * Gets the max zoom level supported by this TileServer
+     * @return the max zoom level
+     */
     public int getMaxZoom() {
         return maxZoom;
-    }
-    public String getURL() {
-        return url;
-    }
-
-    public boolean isBroken() {
-        return broken;
-    }
-
-    public void setBroken(boolean broken) {
-        this.broken = broken;
     }
 }

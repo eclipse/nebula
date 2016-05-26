@@ -10,36 +10,16 @@
  *    Hallvard Trætteberg - further cleanup and development
  *******************************************************************************/
 
-package org.eclipse.nebula.widgets.geomap;
+package org.eclipse.nebula.widgets.geomap.internal;
 
 /**
- * Holds x and y coordinates of type double.
+ * Interface for tapping into internal details of an InternalGeoMap
  */
-public final class PointD {
-	
-	/**
-	 * The x coordinate
-	 */
-    public double x;
+public interface GeoMapHelperListener {
 
-    /**
-     * The y coordinate
-     */
-    public double y;
-    
-    /**
-     * Initializes this PointD with the provided x- and y-coordinates
-     * @param x the x coordinate
-     * @param y the y coordinate
-     */
-    public PointD(double x, double y) {
-        this.x = x;
-        this.y = y;
-    }
-    
-	@Override
-	@SuppressWarnings("nls")
-    public String toString() {
-    	return "PointD {" + x + ", " + y + "}";
-    }
+	/**
+	 * Notifies listener that a tile has been updated and may need (re)painting 
+	 * @param tileRef the reference to the updated tile
+	 */
+	public void tileUpdated(TileRef tileRef);
 }

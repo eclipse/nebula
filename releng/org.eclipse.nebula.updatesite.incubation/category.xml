@@ -36,7 +36,7 @@
    <feature url="features/org.eclipse.nebula.widgets.calendarcombo.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.calendarcombo.feature" version="1.0.0.qualifier">
       <category name="Nebula Individual Incubation Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.geomap.feature_0.1.0.qualifier.jar" id="org.eclipse.nebula.widgets.geomap.feature" version="0.1.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.geomap.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.geomap.feature" version="1.0.0.qualifier">
       <category name="Nebula Individual Incubation Widgets"/>
    </feature>
    <category-def name="Nebula All Incubation Widgets" label="Nebula All Incubation Widgets">

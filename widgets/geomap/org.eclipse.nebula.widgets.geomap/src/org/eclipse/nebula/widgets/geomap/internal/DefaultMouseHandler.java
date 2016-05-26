@@ -1,17 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2012 Stepan Rutz.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http\://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v10.html
  *
- * Contributors\:
- *     IBM Corporation - initial API and implementation
- ******************************************************************************/
+ * Contributors:
+ *    Stepan Rutz - initial implementation
+ *    Hallvard Trætteberg - further cleanup and development
+ *******************************************************************************/
 
 package org.eclipse.nebula.widgets.geomap.internal;
 
-import org.eclipse.nebula.widgets.geomap.GeoMap;
+import org.eclipse.nebula.widgets.geomap.GeoMapUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
@@ -28,18 +29,26 @@ import org.eclipse.swt.graphics.Rectangle;
  * @since 3.3
  *
  */
-public class DefaultMouseHandler implements MouseListener, MouseWheelListener, MouseMoveListener, MouseTrackListener, PaintListener {
-    
+public abstract class DefaultMouseHandler implements MouseListener, MouseWheelListener, MouseMoveListener, MouseTrackListener, PaintListener {
+
     /**
 	 * 
 	 */
-	private final GeoMap geoMap;
-
+	private final GeoMapPositioned geoMap;
+	
 	/**
 	 * @param geoMap
+	 * @param control 
 	 */
-	public DefaultMouseHandler(GeoMap geoMap) {
+	public DefaultMouseHandler(GeoMapPositioned geoMap) {
 		this.geoMap = geoMap;
+	}
+
+	/**
+	 * @return
+	 */
+	protected GeoMapPositioned getGeoMap() {
+		return this.geoMap;
 	}
 
 	/**
@@ -47,15 +56,16 @@ public class DefaultMouseHandler implements MouseListener, MouseWheelListener, M
 	 * @param e the MouseEvent
 	 */
 	protected void zoomIn(MouseEvent e) {
-		this.geoMap.zoomIn(new Point(e.x, e.y));
+		GeoMapUtil.zoomIn(getGeoMap(), new Point(e.x, e.y));
 	}
+
 
 	/**
 	 * Zoom out at cursor position
 	 * @param e the MouseEvent
 	 */
 	protected void zoomOut(MouseEvent e) {
-		this.geoMap.zoomOut(new Point(e.x, e.y));
+		GeoMapUtil.zoomOut(getGeoMap(), new Point(e.x, e.y));
 	}
 
 	/**
@@ -66,22 +76,27 @@ public class DefaultMouseHandler implements MouseListener, MouseWheelListener, M
 	 */
 	protected void pan(int x, int y, boolean relative) {
 		if (relative) {
-			Point p = this.geoMap.getMapPosition();
+			Point p = getGeoMap().getMapPosition();
 			x += p.x;
 			y += p.y;
 		}
-		this.geoMap.setMapPosition(x, y);
-        this.geoMap.redraw();
+		getGeoMap().setMapPosition(x, y);
 	}
 
+	/**
+	 * Gets the size of the map viewport/pane.
+	 * @return the size of the map viewport/pane
+	 */
+	public abstract Point getMapSize();
+	
 	/**
 	 * Center at cursor position
 	 * @param e the MouseEvent
 	 */
 	protected void center(MouseEvent e) {
-		Point mapPosition = this.geoMap.getMapPosition();
-		this.geoMap.setCenterPosition(new Point(mapPosition.x + e.x, mapPosition.y + e.y));
-        this.geoMap.redraw();
+		Point size = getMapSize();
+		Point mapPosition = getGeoMap().getMapPosition();
+		geoMap.setMapPosition(mapPosition.x - size.x / 2, mapPosition.y - size.y / 2);
 	}
 	
 	//
@@ -241,7 +256,7 @@ public class DefaultMouseHandler implements MouseListener, MouseWheelListener, M
     private Point downPosition;
     
     public void mouseEnter(MouseEvent e) {
-        this.geoMap.forceFocus();
+    	// control.forceFocus();
     }
     
     public void mouseExit(MouseEvent e) {
@@ -363,7 +378,7 @@ public class DefaultMouseHandler implements MouseListener, MouseWheelListener, M
      */
     protected boolean panStart(MouseEvent e) {
     	panStart = new Point(e.x, e.y);
-    	downPosition = this.geoMap.getMapPosition();
+    	downPosition = getGeoMap().getMapPosition();
     	return true;
     }
 
@@ -444,7 +459,6 @@ public class DefaultMouseHandler implements MouseListener, MouseWheelListener, M
     		int maxX = Math.max(zoomStart.x, e.x), maxY = Math.max(zoomStart.y, e.y);
     		Point mapPosition = geoMap.getMapPosition();
     		zoomRectangle = new Rectangle(mapPosition.x + minX, mapPosition.y + minY, maxX - minX, maxY - minY);
-    		geoMap.redraw();
     		return true;
     	}
     	return false;
@@ -470,7 +484,7 @@ public class DefaultMouseHandler implements MouseListener, MouseWheelListener, M
     protected boolean handleZoomUp(MouseEvent e) {
     	if (isZooming()) {
     		if (zoomRectangle != null && zoomRectangle.width >= 2 && zoomRectangle.height >= 2) {
-    			geoMap.zoomTo(zoomRectangle);
+    			GeoMapUtil.zoomTo(getGeoMap(), getMapSize(), zoomRectangle, -1);
     		}
     		zoomStart = null;
     		zoomRectangle = null;
