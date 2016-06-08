@@ -131,26 +131,31 @@ public class Legend extends RectangleFigure {
 		if (Preferences.useAdvancedGraphics())
 			graphics.setAntialias(SWT.ON);
 		graphics.setForegroundColor(trace.getTraceColor());
+
+        // limit size of symbol to ICON_WIDTH - INNER_GAP
+        int maxSize = ((trace.getPointSize() > Math.floor((ICON_WIDTH - OUT_GAP) / 2)) ? (int) Math.floor((ICON_WIDTH - OUT_GAP)) : trace
+                .getPointSize());
+
 		// draw symbol
 		switch (trace.getTraceType()) {
 		case BAR:
-			trace.drawLine(graphics, new Point(hPos + ICON_WIDTH / 2, vPos + trace.getPointSize() / 2), new Point(hPos
+			trace.drawLine(graphics, new Point(hPos + ICON_WIDTH / 2, vPos + maxSize / 2), new Point(hPos
 					+ ICON_WIDTH / 2, vPos + ICON_WIDTH));
-			trace.drawPoint(graphics, new Point(hPos + ICON_WIDTH / 2, vPos + trace.getPointSize() / 2));
+			trace.drawPoint(graphics, new Point(hPos + ICON_WIDTH / 2, vPos + maxSize / 2));
 			break;
 		case LINE_AREA:
 			graphics.drawPolyline(new int[] { hPos, vPos + ICON_WIDTH / 2, hPos + ICON_WIDTH / 2,
-					vPos + trace.getPointSize() / 2, hPos + ICON_WIDTH - 1, vPos + ICON_WIDTH / 2, });
+					vPos + maxSize / 2, hPos + ICON_WIDTH - 1, vPos + ICON_WIDTH / 2, });
 		case AREA:
 			graphics.setBackgroundColor(trace.getTraceColor());
 			if (Preferences.useAdvancedGraphics())
 				graphics.setAlpha(trace.getAreaAlpha());
 			graphics.fillPolygon(new int[] { hPos, vPos + ICON_WIDTH / 2, hPos + ICON_WIDTH / 2,
-					vPos + trace.getPointSize() / 2, hPos + ICON_WIDTH, vPos + ICON_WIDTH / 2, hPos + ICON_WIDTH,
+					vPos + maxSize / 2, hPos + ICON_WIDTH, vPos + ICON_WIDTH / 2, hPos + ICON_WIDTH,
 					vPos + ICON_WIDTH, hPos, vPos + ICON_WIDTH });
 			if (Preferences.useAdvancedGraphics())
 				graphics.setAlpha(255);
-			trace.drawPoint(graphics, new Point(hPos + ICON_WIDTH / 2, vPos + trace.getPointSize() / 2));
+			trace.drawPoint(graphics, new Point(hPos + ICON_WIDTH / 2, vPos + maxSize / 2));
 			break;
 		default:
 			trace.drawLine(graphics, new Point(hPos, vPos + ICON_WIDTH / 2), new Point(hPos + ICON_WIDTH, vPos

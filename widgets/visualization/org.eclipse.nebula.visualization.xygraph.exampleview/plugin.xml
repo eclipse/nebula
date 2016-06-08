@@ -17,6 +17,27 @@
             name="XY Graph Example View"
             restorable="true">
       </view>
+      <view
+            class="org.eclipse.nebula.visualization.xygraph.exampleview.XYGraphStyledDoubleExampleView"
+            icon="icons/AutoScale.png"
+            id="org.eclipse.nebula.visualization.xygraph.exampleview.xydoublestyledexampleview"
+            name="XY Styled Graph Example (Double)"
+            restorable="true">
+      </view>
+      <view
+            class="org.eclipse.nebula.visualization.xygraph.exampleview.XYGraphStyledStringExampleView"
+            icon="icons/AutoScale.png"
+            id="org.eclipse.nebula.visualization.xygraph.exampleview.xystringstyledexampleview"
+            name="XY Styled Graph Example (String)"
+            restorable="true">
+      </view>
+      <view
+            class="org.eclipse.nebula.visualization.xygraph.exampleview.XYGraphStyledBoolExampleView"
+            icon="icons/AutoScale.png"
+            id="org.eclipse.nebula.visualization.xygraph.exampleview.xyboolstyledexampleview"
+            name="XY Styled Graph Example (Boolean)"
+            restorable="true">
+      </view>
    </extension>
 
 </plugin>

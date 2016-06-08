@@ -1,11 +1,19 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2016 Oak Ridge National Laboratory.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * Contributors:
+ *     Xihui Chen - initial API and implementation
+ *     Kay Kasemir - Comments, made immutable
+ *     Bernhard Wedl - IMetaData
  ******************************************************************************/
 package org.eclipse.nebula.visualization.xygraph.dataprovider;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * An (x,y) sample data with error.
@@ -21,7 +29,7 @@ package org.eclipse.nebula.visualization.xygraph.dataprovider;
  * @author Xihui Chen
  * @author Kay Kasemir Comments, made immutable
  */
-public class Sample implements ISample {
+public class Sample implements ISample, IMetaData {
 	final private double xValue;
 	final private double yValue;
 	final private double xPlusError;
@@ -29,6 +37,8 @@ public class Sample implements ISample {
 	final private double xMinusError;
 	final private double yMinusError;
 	final private String info;
+	private Object fMetaData;
+	private Map<String, Object> fMetaDataMap = new HashMap<String, Object>();
 
 	/**
 	 * Initialize with x/y value
@@ -179,5 +189,38 @@ public class Sample implements ISample {
 			buf.append(", '" + info + "'");
 		buf.append(")");
 		return buf.toString();
+	}
+
+	@Override
+	public void setData(Object metaData) {
+		fMetaData = metaData;
+	}
+
+	@Override
+	public Object getData() {
+		return fMetaData;
+	}
+
+	@Override
+	public Object getData(String key) {
+		if (key == null)
+			throw new IllegalArgumentException("Key must not be null.");
+		return fMetaDataMap.get(key);
+	}
+
+	@Override
+	public void setData(String key, Object data) {
+		if (key == null)
+			throw new IllegalArgumentException("Key must not be null.");
+
+		if ((data == null) && (fMetaDataMap.containsKey(key)))
+			fMetaDataMap.remove(key);
+		else
+			fMetaDataMap.put(key, data);
+	}
+
+	@Override
+	public Map<String, Object> getDataCollection() {
+		return Collections.unmodifiableMap(fMetaDataMap);
 	}
 }

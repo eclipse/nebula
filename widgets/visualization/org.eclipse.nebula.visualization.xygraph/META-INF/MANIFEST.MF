@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Nebula Visualization XY Graph
 Bundle-SymbolicName: org.eclipse.nebula.visualization.xygraph
-Bundle-Version: 2.0.0.qualifier
+Bundle-Version: 2.1.0.qualifier
 Bundle-Vendor: Eclipse.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.eclipse.swt,
@@ -14,4 +14,5 @@ Export-Package: org.eclipse.nebula.visualization.internal.xygraph.toolbar,
  org.eclipse.nebula.visualization.xygraph.dataprovider,
  org.eclipse.nebula.visualization.xygraph.figures,
  org.eclipse.nebula.visualization.xygraph.linearscale,
+ org.eclipse.nebula.visualization.xygraph.styleprovider,
  org.eclipse.nebula.visualization.xygraph.util
