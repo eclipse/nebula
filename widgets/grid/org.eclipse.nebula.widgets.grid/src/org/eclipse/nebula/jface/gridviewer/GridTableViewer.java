@@ -482,7 +482,7 @@ public class GridTableViewer extends AbstractTableViewer {
 				if (el != null) {
 					for (int i = 0; i < grid.getItemCount(); i++) {
 						GridItem item = grid.getItem(i);
-						if (item.getData() == el || item.getData().equals(el)
+						if (item.getData() == el || el.equals(item.getData())
 								|| (getComparer() != null && getComparer().equals(item.getData(), el))) {
 							grid.setFocusItem(item);
 							break;
