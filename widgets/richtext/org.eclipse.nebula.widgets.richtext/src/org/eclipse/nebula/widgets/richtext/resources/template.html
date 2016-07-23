@@ -103,26 +103,6 @@
         		return CKEDITOR.instances.editor.focusManager.hasFocus;
         	}
         	
-        	function setResizeEnabled(resizeEnabled, minWidth, minHeight) {
-        		CKEDITOR.config.resize_enabled = resizeEnabled;
-        		
-        		if (resizeEnabled) {
-    				//if resizing is enabled via styling, ensure resizing is possible horizontally and vertically
-    				CKEDITOR.config.resize_dir = 'both';
-    				
-    				CKEDITOR.config.resize_minWidth = minWidth;
-   					CKEDITOR.config.resize_minHeight = minHeight;
-        		}
-        	}
-        	
-        	function setToolbarCollapsible(collapsible) {
-        		CKEDITOR.config.toolbarCanCollapse = collapsible;
-        	}
-        	
-        	function setToolbarInitialExpanded(expanded) {
-        		CKEDITOR.config.toolbarStartupExpanded = expanded;
-        	}
-        	
         	function updateToolbar() {
         		// TODO 
         		// waiting for feedback if there is a more elegant way for dynamic toolbar updates
@@ -130,6 +110,11 @@
 
         		// CKEDITOR.instances.editor.reloadToolbar();
         		
+        		CKEDITOR.instances.editor.destroy(false);
+        		initEditor();
+        	}
+        	
+        	function updateEditor() {
         		CKEDITOR.instances.editor.destroy(false);
         		initEditor();
         	}
@@ -167,67 +152,80 @@
         	}
         	
         	function initEditor() {
+        		var config = {
+        			startupFocus : true,
+        			on: {
+        				'instanceReady' 	: function(event) { 
+            				//maximize the editor after the editor instance is ready
+        					maximizeEditorHeight(); 
+        					
+        					event.editor.on('resize', function(resizeEvent) { 
+								if ((prevHeight == null) || prevHeight != resizeEvent.editor.container.$.clientHeight) {
+									prevHeight = CKEDITOR.instances.editor.container.$.clientHeight;
+									
+									if (!mouseDown) {
+										// if the resize is trigger by an external event, 
+										// e.g. toolbar expand/collapse
+										maximizeEditorHeight();
+									}
+									
+									if (resizeCallbackEnabled) {
+										resizeParentContainer();
+									}
+								}
+								else if (prevHeight == CKEDITOR.instances.editor.container.$.clientHeight) {
+									prevHeight = null;
+								}
+							});
+        				},
+        				//notify the FocusListener
+        				'focus'				: function() { focusIn(); },
+        				'blur'				: function() { focusOut(); },
+        				//notify the ModifyListener
+        				'change' 			: function() { textModified(); },
+        				//ensure the key pressed event is fired if Enter is pressed
+        				'key'				: function(event) { event.data.preventDefault(false); },
+        				//notify the KeyListener
+        				'contentDom'		: function() {
+        				    this.document.on('keydown', function(evt) {
+        				    	if (evt.data.$.ctrlKey && evt.data.getKey() == 70) {
+        				    		//prevent opening of browser find dialog on CTRL + F
+        				    		evt.data.preventDefault(false);
+        				    		//open the ckeditor find and replace dialog
+        				    		CKEDITOR.instances.editor.execCommand('find')
+        				    	}
+        				    	else if (evt.data.$.ctrlKey && evt.data.getKey() == 72) {
+        				    		evt.data.preventDefault(false);
+        				    		//open the ckeditor find and replace dialog
+        				    		CKEDITOR.instances.editor.execCommand('replace')
+        				    	}
+        				    	
+        				        keyPressed(evt.data.getKey(), evt.data.getKeystroke());
+        				    });
+        				    this.document.on('keyup', function(evt) {
+        				        keyReleased(evt.data.getKey(), evt.data.getKeystroke());
+        				    });
+        				}
+        			}
+        		};
+                		
+                var customOptions = getAllOptions(); 
+				for (i = 0; i < customOptions.length; i++) {
+					var key = customOptions[i++];
+					var val = customOptions[i];
+					
+					if (key == 'toolbarGroups') {
+						val = eval(val);
+					}
+					
+					config[key] = val;
+				}        	
+        	
                 // Replace the <textarea id="editor"> with a CKEditor instance
-                CKEDITOR.replace( 'editor', 
-                		{
-                			startupFocus : true,
-                			on: {
-                				'instanceReady' 	: function(event) { 
-	                				//maximize the editor after the editor instance is ready
-                					maximizeEditorHeight(); 
-                					
-                					event.editor.on('resize', function(resizeEvent) { 
-										if ((prevHeight == null) || prevHeight != resizeEvent.editor.container.$.clientHeight) {
-											prevHeight = CKEDITOR.instances.editor.container.$.clientHeight;
-											
-											if (!mouseDown) {
-												// if the resize is trigger by an external event, 
-												// e.g. toolbar expand/collapse
-												maximizeEditorHeight();
-											}
-											
-											if (resizeCallbackEnabled) {
-												resizeParentContainer();
-											}
-										}
-										else if (prevHeight == CKEDITOR.instances.editor.container.$.clientHeight) {
-											prevHeight = null;
-										}
-									});
-                				},
-                				//notify the FocusListener
-                				'focus'				: function() { focusIn(); },
-                				'blur'				: function() { focusOut(); },
-                				//notify the ModifyListener
-                				'change' 			: function() { textModified(); },
-                				//ensure the key pressed event is fired if Enter is pressed
-                				'key'				: function(event) { event.data.preventDefault(false); },
-                				//notify the KeyListener
-                				'contentDom'		: function() {
-                				    this.document.on('keydown', function(evt) {
-                				    	if (evt.data.$.ctrlKey && evt.data.getKey() == 70) {
-                				    		//prevent opening of browser find dialog on CTRL + F
-                				    		evt.data.preventDefault(false);
-                				    		//open the ckeditor find and replace dialog
-                				    		CKEDITOR.instances.editor.execCommand('find')
-                				    	}
-                				    	else if (evt.data.$.ctrlKey && evt.data.getKey() == 72) {
-                				    		evt.data.preventDefault(false);
-                				    		//open the ckeditor find and replace dialog
-                				    		CKEDITOR.instances.editor.execCommand('replace')
-                				    	}
-                				    	
-                				        keyPressed(evt.data.getKey(), evt.data.getKeystroke());
-                				    });
-                				    this.document.on('keyup', function(evt) {
-                				        keyReleased(evt.data.getKey(), evt.data.getKeystroke());
-                				    });
-                				}
-                			}
-                		});
+                CKEDITOR.replace( 'editor', config );
                 
-                // Callback to configure the toolbar via ToolbarConfiguration
-                configureToolbar();
+                // Callback to customize the toolbar with custom buttons via RichTextEditorConfiguration
+                customizeToolbar();
                 
                 // Add the Javascript method reloadToolbar() that allows to 
                 // update the toolbar without needing to destroy the current
@@ -285,12 +283,6 @@
             <textarea name="editor" id="editor">
             </textarea>
             <script>
-				//initially disable the ability to manually resize the editor within the browser
-				setResizeEnabled(false, 0, 0);
-				
-				//remove the bottom bar that shows the applied tags
-				CKEDITOR.config.removePlugins = 'elementspath';
-				
 				/*
 				 * Track mouseDown state to be able to distinguish 
 				 * whether a resize is triggered via resize handle

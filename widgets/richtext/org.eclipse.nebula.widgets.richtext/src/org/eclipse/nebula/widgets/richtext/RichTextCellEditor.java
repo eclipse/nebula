@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Copyright (c) 2015 CEA LIST.
+ * Copyright (c) 2015, 2016 CEA LIST.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.nebula.widgets.richtext.toolbar.JavaCallbackListener;
-import org.eclipse.nebula.widgets.richtext.toolbar.ToolbarConfiguration;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.events.FocusAdapter;
@@ -59,38 +58,41 @@ public class RichTextCellEditor extends CellEditor {
 	protected RichTextEditor editor;
 
 	/**
-	 * The {@link ToolbarConfiguration} that should be used for creating the inline rich text editor
-	 * control. If <code>null</code> the default {@link ToolbarConfiguration} will be used.
+	 * The {@link RichTextEditorConfiguration} that should be used for creating the inline rich text editor
+	 * control. If <code>null</code> the default {@link RichTextEditorConfiguration} will be used.
 	 */
-	protected ToolbarConfiguration toolbarConfiguration;
+	protected RichTextEditorConfiguration editorConfiguration;
 
 	private ModifyListener modifyListener;
 
 	/**
-	 * Create a resizable {@link RichTextCellEditor} with the default {@link ToolbarConfiguration}.
+	 * Create a resizable {@link RichTextCellEditor} with the default {@link RichTextEditorConfiguration}.
 	 *
 	 * @param parent
 	 *            The parent composite.
 	 */
 	public RichTextCellEditor(Composite parent) {
-		this(parent, null, SWT.RESIZE);
+		this(parent, (RichTextEditorConfiguration) null, SWT.RESIZE);
 	}
 
 	/**
-	 * Create a resizable {@link RichTextCellEditor} with the given {@link ToolbarConfiguration}.
+	 * Create a resizable {@link RichTextCellEditor} with the given
+	 * {@link org.eclipse.nebula.widgets.richtext.toolbar.ToolbarConfiguration}.
 	 *
 	 * @param parent
 	 *            The parent composite.
 	 * @param toolbarConfiguration
-	 *            The {@link ToolbarConfiguration} that should be used for creating the
-	 *            {@link RichTextEditor}.
+	 *            The {@link org.eclipse.nebula.widgets.richtext.toolbar.ToolbarConfiguration} that
+	 *            should be used for creating the {@link RichTextEditor}.
+	 * @deprecated Use a constructor with {@link RichTextEditorConfiguration} parameter
 	 */
-	public RichTextCellEditor(Composite parent, ToolbarConfiguration toolbarConfiguration) {
+	@Deprecated
+	public RichTextCellEditor(Composite parent, org.eclipse.nebula.widgets.richtext.toolbar.ToolbarConfiguration toolbarConfiguration) {
 		this(parent, toolbarConfiguration, SWT.RESIZE);
 	}
 
 	/**
-	 * Create a resizable {@link RichTextCellEditor} with the default {@link ToolbarConfiguration}
+	 * Create a resizable {@link RichTextCellEditor} with the default {@link RichTextEditorConfiguration}
 	 * and the given style bits.
 	 *
 	 * @param parent
@@ -99,24 +101,43 @@ public class RichTextCellEditor extends CellEditor {
 	 *            The style bits to use.
 	 */
 	public RichTextCellEditor(Composite parent, int style) {
-		this(parent, null, style);
+		this(parent, (RichTextEditorConfiguration) null, style);
 	}
 
 	/**
-	 * Create a resizable {@link RichTextCellEditor} with the given {@link ToolbarConfiguration} and
-	 * the given style bits.
+	 * Create a resizable {@link RichTextCellEditor} with the given
+	 * {@link org.eclipse.nebula.widgets.richtext.toolbar.ToolbarConfiguration} and the given style
+	 * bits.
 	 *
 	 * @param parent
 	 *            The parent composite.
 	 * @param toolbarConfiguration
-	 *            The {@link ToolbarConfiguration} that should be used for creating the
+	 *            The {@link org.eclipse.nebula.widgets.richtext.toolbar.ToolbarConfiguration} that
+	 *            should be used for creating the {@link RichTextEditor}.
+	 * @param style
+	 *            The style bits to use.
+	 * @deprecated Use a constructor with {@link RichTextEditorConfiguration} parameter
+	 */
+	@Deprecated
+	public RichTextCellEditor(Composite parent, org.eclipse.nebula.widgets.richtext.toolbar.ToolbarConfiguration toolbarConfiguration, int style) {
+		this(parent, new RichTextEditorConfiguration(toolbarConfiguration), style);
+	}
+
+	/**
+	 * Create a resizable {@link RichTextCellEditor} with the given {@link RichTextEditorConfiguration} and
+	 * the given style bits.
+	 *
+	 * @param parent
+	 *            The parent composite.
+	 * @param editorConfiguration
+	 *            The {@link RichTextEditorConfiguration} that should be used for creating the
 	 *            {@link RichTextEditor}.
 	 * @param style
 	 *            The style bits to use.
 	 */
-	public RichTextCellEditor(Composite parent, ToolbarConfiguration toolbarConfiguration, int style) {
+	public RichTextCellEditor(Composite parent, RichTextEditorConfiguration editorConfiguration, int style) {
 		super(parent, style | SWT.EMBEDDED);
-		this.toolbarConfiguration = toolbarConfiguration;
+		this.editorConfiguration = editorConfiguration;
 
 		// call super#create(Composite) now because we override it locally empty
 		// to be able to set member variables like the ToolbarConfiguration.
@@ -128,12 +149,12 @@ public class RichTextCellEditor extends CellEditor {
 		// We override this method to be empty in here because it is called by
 		// the super constructor.
 		// Therefore we are not able to set member variables, e.g. the
-		// ToolbarConfiguration before the RichTextEditor control is created.
+		// RichTextEditorConfiguration before the RichTextEditor control is created.
 	}
 
 	@Override
 	protected Control createControl(Composite parent) {
-		this.editor = new RichTextEditor(parent, this.toolbarConfiguration, getStyle()) {
+		this.editor = new RichTextEditor(parent, this.editorConfiguration, getStyle()) {
 			@Override
 			protected int getMinimumHeight() {
 				return getMinimumDimension().y;
@@ -226,7 +247,7 @@ public class RichTextCellEditor extends CellEditor {
 	 *
 	 * @param e
 	 *            the SWT modify event
-	 * 
+	 *
 	 * @see TextCellEditor
 	 */
 	protected void editOccured(ModifyEvent e) {
@@ -247,7 +268,7 @@ public class RichTextCellEditor extends CellEditor {
 
 	/**
 	 * Return the modify listener.
-	 * 
+	 *
 	 * @see TextCellEditor
 	 */
 	private ModifyListener getModifyListener() {
