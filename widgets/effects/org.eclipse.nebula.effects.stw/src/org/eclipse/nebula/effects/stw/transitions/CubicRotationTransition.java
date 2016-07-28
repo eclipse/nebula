@@ -29,6 +29,10 @@ public class CubicRotationTransition extends Transition {
     private double _a1, _a2, _x, _y, _x0, _y0, _v0;
     private boolean _flag1;
     private ImageData _fromData;
+    private ImageData _toData;
+    private ImageData _imgDataBuffer;
+    private ImageData _imgDataToDraw;
+    private Image _bgImage;
     private long _halfT, _t1, _tSqrd;
     private double _dy1, _dx1, _dx2, _dy2
                 , _x1, _y1, _x2, _y2
@@ -68,6 +72,7 @@ public class CubicRotationTransition extends Transition {
 
         _halfT = (long) (_T / 2.0);
         _fromData = from.getImageData();
+        _toData = to.getImageData();
         _w = _fromData.width;
         _h = _fromData.height;
         _halfW = (int) (_w / 2.0);
@@ -115,11 +120,135 @@ public class CubicRotationTransition extends Transition {
         
         _flag1 = false;
         
+        if (useDataBuffersToDraw()) {
+            initImgDataBuffers(gc, direction);
+        }
     }
+    
+    /**
+     * Initialize the image data buffers, used to draw the transition
+     * instead of drawing into the graphics context object directly.
+     * @param gc Graphics context where to initialize the background image object.
+     * @param direction Direction to be used as a reference to
+     * initialize the image data buffers.
+     */
+    private void initImgDataBuffers(GC gc, double direction) {
+        switch((int)direction) {
+        case (int)DIR_RIGHT:
+        case (int)DIR_LEFT:
+            _imgDataBuffer = new ImageData((int) _dx1, _h, 
+                    _fromData.depth, _fromData.palette);
+            break;
+        case (int)DIR_UP:
+        case (int)DIR_DOWN:
+            _imgDataBuffer = new ImageData(_w, (int) _dy1, 
+                    _fromData.depth, _fromData.palette);
+            break;
+        }
+        _bgImage = new Image(gc.getDevice(), _w, _h);
+    }
+    
+    /**
+     * @return true if the application will use the data buffers
+     * to draw the image, false if the buffers won't be used and the
+     * image will be drawn directly to the graphics context
+     * object instead.
+     */
+    private boolean useDataBuffersToDraw() {
+        return IS_MAC_OS;
+    }
+    
+    /**
+     * Draw an image to a graphics context object. The image
+     * can be drawn using image data buffers before drawing to the
+     * graphics context object, or drawn directly to the
+     * graphics context object. 
+     * @param gc Graphics context object to draw the image to.
+     * @param src the source image.
+     * @param srcData image data of the source image.
+     * @param srcX the x coordinate in the source image to copy from
+     * @param srcY the y coordinate in the source image to copy from
+     * @param srcWidth the width in pixels to copy from the source
+     * @param srcHeight the height in pixels to copy from the source
+     * @param destX the x coordinate in the destination to copy to
+     * @param destY the y coordinate in the destination to copy to
+     * @param destWidth the width in pixels of the destination rectangle
+     * @param destHeight the height in pixels of the destination rectangle
+     */
+    private void drawImage(GC gc, Image src, ImageData srcData, 
+            int srcX, int srcY, int srcWidth, int srcHeight,
+            int destX, int destY, int destWidth, int destHeight) {
+        
+        if (useDataBuffersToDraw()) {
+            drawImageData(srcData, 
+                    srcX, srcY, srcWidth, srcHeight,
+                    destX, destY, destWidth, destHeight);
+        } else {
+            gc.drawImage(src, srcX, srcY, srcWidth, srcHeight,
+                    destX, destY, destWidth, destHeight);
+        }
+    }
+    
+    /**
+     * Draw an image to the image data buffer object that contains all
+     * the image data to be drawn to the graphics context object.
+     * @param srcData image data of the source image.
+     * @param srcX the x coordinate in the source image to copy from
+     * @param srcY the y coordinate in the source image to copy from
+     * @param srcWidth the width in pixels to copy from the source
+     * @param srcHeight the height in pixels to copy from the source
+     * @param destX the x coordinate in the destination to copy to
+     * @param destY the y coordinate in the destination to copy to
+     * @param destWidth the width in pixels of the destination rectangle
+     * @param destHeight the height in pixels of the destination rectangle
+     */
+    private void drawImageData(ImageData srcData, 
+            int srcX, int srcY, int srcWidth, int srcHeight,
+            int destX, int destY, int destWidth, int destHeight) {
 
+        if (srcWidth == 0 || srcHeight == 0 || destWidth == 0 || destHeight == 0) {
+            return;
+        }
+        if (srcX == srcData.width) {
+            srcX--;
+        }
+        if (srcY == srcData.height) {
+            srcY--;
+        }
+        if (destX == _imgDataToDraw.width) {
+            destX--;
+        }
+        if (destY == _imgDataToDraw.height) {
+            destY--;
+        }
+        if ((srcX + srcWidth) > srcData.width || (srcY + srcHeight) > srcData.height
+                || (destX + destWidth) > _imgDataToDraw.width || (destY + destHeight) > _imgDataToDraw.height) {
+            return;
+        }
+        
+        for (int y = 0; y < srcHeight; y++) {
+            for (int x = 0; x < srcWidth; x++) {
+                _imgDataBuffer.setPixel(x, y, srcData.getPixel(srcX + x, srcY + y));
+            }
+        }
+        
+        ImageData scaledDataBuffer = _imgDataBuffer.scaledTo(destWidth, destHeight);
+        
+        for (int y = 0; y < destHeight; y++) {
+            for (int x = 0; x < destWidth; x++) {
+                _imgDataToDraw.setPixel(destX + x, destY + y, scaledDataBuffer.getPixel(x, y));
+            }
+        }
+    }
+    
     @Override
     protected void stepTransition(long t, Image from, Image to, GC gc,
             double direction) {
+
+        if (useDataBuffersToDraw()) {
+            gc.copyArea(_bgImage, 0, 0);
+            _imgDataToDraw = _bgImage.getImageData();
+        }
         
         switch((int)direction) {
         
@@ -135,21 +264,24 @@ public class CubicRotationTransition extends Transition {
             for (; _x1 < _w; _x1 += _dx1) {
                 try {
                     _x2 = _x1;
-                    gc.drawImage(from, (int) _x1, 0, (int) _dx1, _h,
-                            (int) (_x + _x1 * _ratio1), (int) _y1
-                            , (int) _dx1, (int) (_h - _y1 - _y1));
-                    gc.drawImage(to, (int) _x2, 0, (int) _dx2, _h,
-                            (int) (_x2 * _ratio2), (int) _y2
-                            , (int) _dx2, (int) (_h - _y2 - _y2));
+                    
+                    drawImage(gc, from, _fromData, (int) _x1, 0, (int) _dx1, _h,
+                            (int) (_x + _x1 * _ratio1), (int) _y1,
+                            (int) _dx1, (int) (_h - _y1 - _y1));
+                    drawImage(gc, to, _toData, (int) _x2, 0, (int) _dx2, _h,
+                            (int) (_x2 * _ratio2), (int) _y2 ,
+                            (int) _dx2, (int) (_h - _y2 - _y2));
+                    
                     _y1 += _dy1;
                     _y2 -= _dy2;
+                    
                 } catch (Exception e) {
-                    gc.drawImage(from, (int) _x1, 0, (int) _remainedSize, _h,
-                            (int) (_x + _x1 * _ratio1), (int) _y1
-                            , (int) _remainedSize, (int) (_h - _y1 - _y1));
-                    gc.drawImage(to, (int) _x2, 0, (int) _remainedSize, _h,
+                    drawImage(gc, from, _fromData, (int) _x1, 0, (int) _remainedSize, _h,
+                          (int) (_x + _x1 * _ratio1), (int) _y1
+                          , (int) _remainedSize, (int) (_h - _y1 - _y1));
+                    drawImage(gc, to, _toData, (int) _x2, 0, (int) _remainedSize, _h,
                             (int) (_x2 * _ratio2), (int) _y2
-                            , (int) _remainedSize, (int) (_h - _y2 - _y2));
+                            , (int) _remainedSize, (int) (_h - _y2 - _y2)); 
                 }
             }
             
@@ -189,24 +321,24 @@ public class CubicRotationTransition extends Transition {
             
             for (; _x1 < _w; _x1 += _dx1) {
                 try {
-                    gc.drawImage(from, (int) _x1, 0, (int) _dx1, _h,
+                    drawImage(gc, from, _fromData, (int) _x1, 0, (int) _dx1, _h,
                             (int) (_x1 * _ratio1), (int) _y1
                             , (int) _dx1, (int) (_h - _y1 - _y1));
                     _y1 -= _dy1;
                 } catch (Exception e) {
-                    gc.drawImage(from, (int) _x1, 0, (int) _remainedSize, _h,
+                    drawImage(gc, from, _fromData, (int) _x1, 0, (int) _remainedSize, _h,
                             (int) (_x1 * _ratio1), (int) _y1
                             , (int) _remainedSize, (int) (_h - _y1 - _y1));
                 }
             }
             for (; _x2 < _w; _x2 += _dx2) {
                 try {
-                    gc.drawImage(to, (int) _x2, 0, (int) _dx2, _h,
+                    drawImage(gc, to, _toData, (int) _x2, 0, (int) _dx2, _h,
                             (int) (_x + _x2 * _ratio2), (int) _y2
                             , (int) _dx2, (int) (_h - _y2 - _y2));
                     _y2 += _dy2;
                 } catch (Exception e) {
-                    gc.drawImage(to, (int) _x2, 0, (int) _remainedSize, _h,
+                    drawImage(gc, to, _toData, (int) _x2, 0, (int) _remainedSize, _h,
                             (int) (_x + _x2 * _ratio2), (int) _y2
                             , (int) _remainedSize, (int) (_h - _y2 - _y2));
                 }
@@ -248,24 +380,24 @@ public class CubicRotationTransition extends Transition {
             
             for (; _y1 < _h; _y1 += _dy1) {
                 try {
-                    gc.drawImage(from, 0, (int) _y1, _w, (int) _dy1
+                    drawImage(gc, from, _fromData, 0, (int) _y1, _w, (int) _dy1
                             , (int) _x1, (int) (_y1 * _ratio1) 
                             , (int) (_w - _x1 - _x1), (int) _dy1);
                     _x1 -= _dx1;
                 } catch (Exception e) {
-                    gc.drawImage(from, 0, (int) _y1, _w, (int) _remainedSize
+                    drawImage(gc, from, _fromData, 0, (int) _y1, _w, (int) _remainedSize
                             , (int) _x1, (int) (_y1 * _ratio1) 
                             , (int) (_w - _x1 - _x1), (int) _remainedSize);
                 }
             }
             for (; _y2 < _h; _y2 += _dy2) {
                 try {
-                    gc.drawImage(to, 0, (int) _y2, _w, (int) _dy2
+                    drawImage(gc, to, _toData, 0, (int) _y2, _w, (int) _dy2
                             , (int) _x2, (int) (_y + _y2 * _ratio2)
                             , (int) (_w - _x2 - _x2), (int) _dy2);
                     _x2 += _dx2;
                 } catch (Exception e) {
-                    gc.drawImage(to, 0, (int) _y2, _w, (int) _remainedSize
+                    drawImage(gc, to, _toData, 0, (int) _y2, _w, (int) _remainedSize
                             , (int) _x2, (int) (_y + _y2 * _ratio2)
                             , (int) (_w - _x2 - _x2), (int) _remainedSize);
                 }
@@ -308,19 +440,19 @@ public class CubicRotationTransition extends Transition {
             for (; _y1 < _h; _y1 += _dy1) {
                 try {
                     _y2 = _y1;
-                    gc.drawImage(from, 0, (int) _y1, _w, (int) _dy1
+                    drawImage(gc, from, _fromData, 0, (int) _y1, _w, (int) _dy1
                             , (int) _x1, (int) (_y + _y1 * _ratio1)
                             , (int) (_w - _x1 - _x1), (int) _dy1);
-                    gc.drawImage(to, 0, (int) _y2, _w, (int) _dy2
+                    drawImage(gc, to, _toData, 0, (int) _y2, _w, (int) _dy2
                             , (int) _x2, (int) (_y2 * _ratio2)
                             , (int) (_w - _x2 - _x2), (int) _dy2);
                     _x1 += _dx1;
                     _x2 -= _dx2;
                 } catch (Exception e) {
-                    gc.drawImage(from, 0, (int) _y1, _w, (int) _remainedSize
+                    drawImage(gc, from, _fromData, 0, (int) _y1, _w, (int) _remainedSize
                             , (int) _x1, (int) (_y + _y1 * _ratio1)
                             , (int) (_w - _x1 - _x1), (int) _remainedSize);
-                    gc.drawImage(to, 0, (int) _y2, _w, (int) _remainedSize
+                    drawImage(gc, to, _toData, 0, (int) _y2, _w, (int) _remainedSize
                             , (int) _x2, (int) (_y2 * _ratio2)
                             , (int) (_w - _x2 - _x2), (int) _remainedSize);
                 }
@@ -352,12 +484,18 @@ public class CubicRotationTransition extends Transition {
             break;
         
         }
-        
+        if (useDataBuffersToDraw()) {
+            Image buffer = new Image(gc.getDevice(), _imgDataToDraw);
+            gc.drawImage(buffer, 0, 0);
+            buffer.dispose();
+        }
     }
     
     @Override
     protected void endTransition(Image from, Image to, GC gc, double direction) {
-
+        if (_bgImage != null && !_bgImage.isDisposed()) {
+            _bgImage.dispose();
+        }
     }
     
     /**

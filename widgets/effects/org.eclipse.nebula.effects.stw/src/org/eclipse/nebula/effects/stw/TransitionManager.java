@@ -189,10 +189,8 @@ public class TransitionManager {
             canvas.setBounds(to.getBounds());
             
             //make the transition
-            GC gcOn = new GC(canvas);
-            _transition.start(imgFrom, imgTo, gcOn, direction);
+            _transition.start(imgFrom, imgTo, canvas, direction);
             _transitionable.setSelection(toIndex);
-            gcOn.dispose();
             
             //dispose the transition canvas
             canvas.dispose();
