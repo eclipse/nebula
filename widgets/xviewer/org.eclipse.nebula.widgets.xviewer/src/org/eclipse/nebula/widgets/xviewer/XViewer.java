@@ -663,6 +663,11 @@ public class XViewer extends TreeViewer {
       }
    }
 
+   public void setLoading(boolean loading) {
+      this.loading = loading;
+      updateStatusLabel();
+   }
+
    private MouseAdapter getCustomizationMouseListener() {
       return new MouseAdapter() {
 
