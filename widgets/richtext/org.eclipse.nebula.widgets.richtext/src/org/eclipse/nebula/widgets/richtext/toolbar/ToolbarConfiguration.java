@@ -12,6 +12,7 @@
  *****************************************************************************/
 package org.eclipse.nebula.widgets.richtext.toolbar;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -19,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.nebula.widgets.richtext.RichTextEditor;
+import org.eclipse.nebula.widgets.richtext.RichTextEditorConfiguration;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.BrowserFunction;
 
@@ -36,7 +38,10 @@ import org.eclipse.swt.browser.BrowserFunction;
  * the {@link Browser} instance of the editor. It can therefore not be re-used
  * for multiple {@link RichTextEditor} instances.
  * </p>
+ *
+ * @deprecated Use the more general {@link RichTextEditorConfiguration}
  */
+@Deprecated
 public class ToolbarConfiguration {
 
 	/**
@@ -295,4 +300,22 @@ public class ToolbarConfiguration {
 		}
 	}
 
+	public Set<ToolbarButton> getCustomButtons() {
+		return Collections.unmodifiableSet(customButtons);
+	}
+
+	public Map<String, BrowserFunction> getButtonCallbacks() {
+		return Collections.unmodifiableMap(buttonCallbacks);
+	}
+
+	public Set<String> getRemovedButtons() {
+		return Collections.unmodifiableSet(removedButtons);
+	}
+
+	public String[] getToolbarButtonConfigurations() {
+		return new String[]{
+				getToolbarGroupConfiguration(),
+				getRemoveButtonConfiguration()
+		};
+	}
 }

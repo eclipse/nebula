@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Copyright (c) 2015 CEA LIST.
+ * Copyright (c) 2015, 2016 CEA LIST.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -35,8 +35,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.nebula.widgets.richtext.RichTextCellEditor;
 import org.eclipse.nebula.widgets.richtext.RichTextCellLabelProvider;
+import org.eclipse.nebula.widgets.richtext.RichTextEditorConfiguration;
 import org.eclipse.nebula.widgets.richtext.toolbar.ToolbarButton;
-import org.eclipse.nebula.widgets.richtext.toolbar.ToolbarConfiguration;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
@@ -336,9 +336,9 @@ public class JFaceViewerIntegrationExample {
 
 		@Override
 		protected CellEditor getCellEditor(Object element) {
-			ToolbarConfiguration config = new ToolbarConfiguration();
-			config.toolbarCollapsible = true;
-			config.toolbarInitialExpanded = false;
+			RichTextEditorConfiguration config = new RichTextEditorConfiguration();
+			config.setToolbarCollapsible(true);
+			config.setToolbarInitialExpanded(false);
 
 			final RichTextCellEditor editor = new RichTextCellEditor((Composite) getViewer().getControl(), config, SWT.RESIZE | SWT.MIN);
 			editor.getRichTextEditor().addToolbarButton(new ToolbarButton("addContentButton",
