@@ -1029,7 +1029,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
 
    private void handleLoadConfigCustButton() {
       xViewerToCustomize.getCustomizeMgr().loadCustomization(getConfigCustomizeCustData());
-      xViewerToCustomize.refresh();
+      xViewerToCustomize.refreshColumnsWithPreCompute();
    }
 
    /**
