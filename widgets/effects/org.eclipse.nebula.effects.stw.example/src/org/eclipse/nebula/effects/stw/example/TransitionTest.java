@@ -56,5 +56,9 @@ public class TransitionTest extends AbstractSTWDemoFrame {
         });
         
     }
+
+    @Override
+    protected void initImages() {
+    }
     
 }

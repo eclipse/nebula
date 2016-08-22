@@ -273,6 +273,7 @@ public class STWDemo {
         frameHolderStackLayout.topControl = currentDemo.getContainerComposiste();
         currentDemo.getTransitionManager().setTransition(currentTransition);
         currentDemo.selectDirection(currentDirection);
+        currentDemo.initImages();
         currentTransition.setTotalTransitionTime(currentT);
         currentTransition.setFPS(currentFPS);
     }

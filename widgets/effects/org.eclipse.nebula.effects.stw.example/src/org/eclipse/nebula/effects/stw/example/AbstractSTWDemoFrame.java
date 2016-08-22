@@ -63,6 +63,8 @@ public abstract class AbstractSTWDemoFrame {
     
     protected abstract void init();
     
+    protected abstract void initImages();
+    
     public Composite getContainerComposiste() {
         return _containerComposite;
     }

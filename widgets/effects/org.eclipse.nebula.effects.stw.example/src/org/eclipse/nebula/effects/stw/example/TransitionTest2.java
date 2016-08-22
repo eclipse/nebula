@@ -13,8 +13,8 @@ package org.eclipse.nebula.effects.stw.example;
 
 import java.util.Formatter;
 
-import org.eclipse.nebula.effects.stw.TransitionManager;
 import org.eclipse.nebula.effects.stw.Transitionable;
+import org.eclipse.nebula.effects.stw.TransitionManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
@@ -100,6 +100,7 @@ public class TransitionTest2 extends AbstractSTWDemoFrame {
                 });
             }
         });
+        _tm.setControlImages(imgs);
         
         cnvs.addPaintListener(new PaintListener() {
             public void paintControl(PaintEvent e) {
@@ -119,5 +120,8 @@ public class TransitionTest2 extends AbstractSTWDemoFrame {
         });
         
     }
+
+    @Override
+    protected void initImages() { }
 
 }

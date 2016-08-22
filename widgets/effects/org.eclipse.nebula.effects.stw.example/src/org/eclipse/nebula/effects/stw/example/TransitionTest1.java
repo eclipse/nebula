@@ -11,11 +11,13 @@
 
 package org.eclipse.nebula.effects.stw.example;
 
-import org.eclipse.nebula.effects.stw.TransitionManager; 
+import org.eclipse.nebula.effects.stw.TransitionManager;
 import org.eclipse.nebula.effects.stw.Transitionable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -39,6 +41,10 @@ public class TransitionTest1 extends AbstractSTWDemoFrame {
     private Composite comp2 = null;
     private Composite comp3 = null;
     
+    private TabFolder tf = null;
+    
+    private Image[] compImage = new Image[3];
+    
     private Font fntTitle = null;
 
     @Override
@@ -46,7 +52,7 @@ public class TransitionTest1 extends AbstractSTWDemoFrame {
         
         _containerComposite.setLayout(new FillLayout());
         
-        final TabFolder tf = new TabFolder(_containerComposite, SWT.NONE);
+        tf = new TabFolder(_containerComposite, SWT.NONE);
         
         TabItem tbi1 = new TabItem(tf, SWT.NONE);
         tbi1.setText("Tab Item 1");
@@ -84,6 +90,7 @@ public class TransitionTest1 extends AbstractSTWDemoFrame {
             public double getDirection(int toIndex, int fromIndex) {
                 return getSelectedDirection(toIndex, fromIndex);
             }
+            
         });
         
     }
@@ -282,6 +289,45 @@ public class TransitionTest1 extends AbstractSTWDemoFrame {
             t2.setText("Affan");
         }
         return comp3;
+    }
+    
+    private void setCompImage(Composite comp) {
+        int index = -1;
+        if (comp == comp1) {
+            index = 0;
+        } else if (comp == comp2) {
+            index = 1;
+        } else if (comp == comp3) {
+            index = 2;
+        }
+        if (index > -1) {
+            tf.setSelection(index);
+            
+            comp.redraw();
+            comp.getDisplay().update();
+            comp.getDisplay().readAndDispatch();
+            
+            Image image = new Image(comp.getDisplay(),
+                    comp.getBounds().width, comp.getBounds().height);
+            GC gc = new GC(comp);
+            gc.copyArea(image, 0, 0);
+            gc.dispose();
+            
+            compImage[index] = image;
+        }
+    }
+
+    @Override
+    protected void initImages() {
+        setCompImage(comp1);
+        setCompImage(comp2);
+        setCompImage(comp3);
+        
+        tf.setSelection(0);
+        tf.getDisplay().update();
+        tf.getDisplay().readAndDispatch();
+        
+        _tm.setControlImages(compImage);
     }
 
 }
