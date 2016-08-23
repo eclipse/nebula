@@ -212,6 +212,7 @@ public class RichTextPainter {
 		boolean listOpened = false;
 
 		GC tempGC = new GC(gc.getDevice());
+		tempGC.setFont(gc.getFont());
 		try {
 			parser = factory.createXMLEventReader(new StringReader(cleanedHtml));
 
