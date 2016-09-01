@@ -11,6 +11,7 @@
 
 package org.eclipse.nebula.widgets.xviewer;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -88,6 +89,15 @@ public abstract class XViewerLabelProvider implements ITableLabelProvider, ITabl
             Long key = preComputedColumn.getKey(element);
             String cachedValue = xViewerColumn.getPreComputedValue(key);
             String result = ((IXViewerPreComputedColumn) xViewerColumn).getText(element, key, cachedValue);
+            if (result == null) {
+               // Give a single chance to populate a potentially new element, else store empty string to ensure good performance
+               preComputedColumn.populateCachedValues(Collections.singleton(element),
+                  xViewerColumn.getPreComputedValueMap());
+               result = xViewerColumn.getPreComputedValue(key);
+               if (result == null) {
+                  xViewerColumn.getPreComputedValueMap().put(key, "");
+               }
+            }
             return result;
          }
          // First check value column's methods

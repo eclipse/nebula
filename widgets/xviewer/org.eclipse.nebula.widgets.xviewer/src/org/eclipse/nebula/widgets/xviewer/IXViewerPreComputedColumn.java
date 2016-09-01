@@ -14,7 +14,7 @@ import java.util.Map;
  * as normal.<br/>
  * <br/>
  * Important: XViewer.setInputXViewer(Object input) should be called instead of XViewer.setInput for precomputed columns
- * to work
+ * to work.
  *
  * @author Donald G. Dunne
  */
@@ -26,13 +26,17 @@ public interface IXViewerPreComputedColumn {
    Long getKey(Object obj);
 
    /**
-    * Called in a background thread to populate values in XViewerColumn.preComputedValueMap. Each item in table must
-    * have an entry here. Null values will show the result of the getLoadingString method below.
+    * Called in a background thread to populate values in XViewerColumn.preComputedValueMap. For best performance, each
+    * item in table should have an entry here and should not be null. See getText comment for cases where null is found.
     */
    void populateCachedValues(Collection<?> objects, Map<Long, String> preComputedValueMap);
 
    /**
-    * Optional method available to make other checks during loading or otherwise change the cached value
+    * Optional method available to make other checks during loading or otherwise change the cached value. If this method
+    * returns null, populateCachedValues will be called one more time to attempt to resolve a possibly new object. If
+    * null is returned, then empty string will be stored in preComputedValueMap for successive calls. This will handle
+    * cases where a parent in the table expands to show an object that was not in the original objects sent to
+    * populateCachedValues OR a new element is added to the viewer.
     *
     * @param key returned from getKey call
     * @param cachedValue that will be used if this method isn't overridden or returns null
