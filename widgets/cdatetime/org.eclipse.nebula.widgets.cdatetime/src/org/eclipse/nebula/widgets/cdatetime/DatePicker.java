@@ -709,8 +709,17 @@ class DatePicker extends VPanel {
 						}
 
 						Calendar tmpcal = cdt.getCalendarInstance();
-						tmpcal.set(Calendar.MONTH,
-								(Integer) button.getData("Month")); //$NON-NLS-1$
+						int tmpday = tmpcal.get(Calendar.DAY_OF_MONTH);
+						Integer tmpmonth = (Integer) button.getData("Month"); //$NON-NLS-1$
+						/*
+						 * : Bug 288164 keep the selected month by setting the day of month
+						 * to the minimum of actual maximum and the selected date
+						 */
+						tmpcal.set(tmpcal.get(Calendar.YEAR), tmpmonth, 1);
+						if (tmpcal.getActualMaximum(Calendar.DAY_OF_MONTH)<tmpday)
+							tmpday = tmpcal.getActualMaximum(Calendar.DAY_OF_MONTH);
+						tmpcal.set(Calendar.DAY_OF_MONTH, tmpday);
+						tmpcal.set(Calendar.MONTH, tmpmonth);
 						cdt.setSelection(tmpcal.getTime());
 						/*
 						 * : Bug 388813 the method cdt.isClosingField checks the
@@ -1398,6 +1407,10 @@ class DatePicker extends VPanel {
 	private void updateMonths() {
 		if (monthPanel != null) {
 			Calendar tmpcal = cdt.getCalendarInstance();
+			/*
+			 * : Bug 288164 use first day of month to get February if currently selected date is higher than 29th
+			 */
+			tmpcal.set(Calendar.DAY_OF_MONTH, 1);
 			for (int i = 0; i < 12; i++) {
 				tmpcal.set(Calendar.MONTH, i);
 				monthButtons[i].setText(getFormattedDate(
