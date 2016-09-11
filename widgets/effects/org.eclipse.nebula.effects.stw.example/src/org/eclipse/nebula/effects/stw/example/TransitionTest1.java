@@ -43,7 +43,7 @@ public class TransitionTest1 extends AbstractSTWDemoFrame {
     
     private TabFolder tf = null;
     
-    private Image[] compImage = new Image[3];
+    private Image[] compImage = null;
     
     private Font fntTitle = null;
 
@@ -319,15 +319,19 @@ public class TransitionTest1 extends AbstractSTWDemoFrame {
 
     @Override
     protected void initImages() {
-        setCompImage(comp1);
-        setCompImage(comp2);
-        setCompImage(comp3);
-        
-        tf.setSelection(0);
-        tf.getDisplay().update();
-        tf.getDisplay().readAndDispatch();
-        
-        _tm.setControlImages(compImage);
+        if (compImage == null) {
+            compImage = new Image[3];
+            
+            setCompImage(comp1);
+            setCompImage(comp2);
+            setCompImage(comp3);
+            
+            _tm.setControlImages(compImage);
+            
+            tf.setSelection(0);
+            tf.getDisplay().update();
+            tf.getDisplay().readAndDispatch();
+        }
     }
 
 }

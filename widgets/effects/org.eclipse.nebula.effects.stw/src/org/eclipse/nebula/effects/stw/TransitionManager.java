@@ -193,11 +193,10 @@ public class TransitionManager {
             
             //capture an image of the "to" view
             Control to  = _transitionable.getControl(toIndex);
-            _transitionable.setSelection(toIndex);
             Image imgTo = null;
             Rectangle toSize = to.getBounds();
             Image ctrlImgTo = getControlImage(toIndex);
-            if (ctrlImgTo != null) {
+            if (ctrlImgTo != null && fromIndex != toIndex) {
                 imgTo   = new Image(to.getDisplay(), toSize.width, toSize.height);
                 GC gcto       = new GC(imgTo);
                 Rectangle imgSize = ctrlImgTo.getBounds();
@@ -205,10 +204,10 @@ public class TransitionManager {
                     0, 0, toSize.width, toSize.height);
                 gcto.dispose();
             } else {
+                _transitionable.setSelection(toIndex);
                 imgTo = ImageCapture.getImage(to, toSize.width, toSize.height, true);
+                _transitionable.setSelection(fromIndex);
             }
-            _transitionable.setSelection(fromIndex);
-            
             
             //create and show the canvas that the transition will be showed on
             Canvas canvas = new Canvas(_transitionable.getComposite(), SWT.DOUBLE_BUFFERED);
@@ -221,6 +220,9 @@ public class TransitionManager {
             
             //dispose the transition canvas
             canvas.dispose();
+            
+            //dispose the image of the "to" view
+            imgTo.dispose();
             
             //if the current transition was canceled to process
             //a new recent one, show the new selection and make
@@ -332,7 +334,10 @@ public class TransitionManager {
      * @param ctrlIndex Index of the control related to the image.
      */
     private void updateControlImage(Image img, int ctrlIndex) {
-        _images.put(ctrlIndex, img);
+        Image previousImg = _images.put(ctrlIndex, img);
+        if (previousImg != null && !previousImg.equals(img)) {
+            previousImg.dispose();
+        }
     }
     
     /**
@@ -346,6 +351,8 @@ public class TransitionManager {
     
     /**
      * Sets the control images used in the transitions processing.
+     * The control images are updated during the application execution.
+     * The old images are disposed during the control images update.
      * This method should be invoked in the beginning of
      * the application execution, to set the control images at an
      * initial state. If this method is not invoked, the control
@@ -356,10 +363,28 @@ public class TransitionManager {
      * processing.
      */
     public void setControlImages(Image[] images) {
-        _images.clear();
+        clearControlImages();
         for (int i = 0; i < images.length; i++) {
-            _images.put(i, images[i]);
+            _images.put(i, new Image(
+                images[i].getDevice(), images[i].getImageData()));
         }
+    }
+    
+    /**
+     * Clears the control images used in the
+     * transitions processing. Disposes all the images as well.
+     */
+    public void clearControlImages() {
+        for (Image image : _images.values()) {
+            image.dispose();
+        }
+        _images.clear();
+    }
+    
+    @Override
+    public void finalize() {
+        // Clear cached control images on finalize.
+        clearControlImages();
     }
     
     /**
