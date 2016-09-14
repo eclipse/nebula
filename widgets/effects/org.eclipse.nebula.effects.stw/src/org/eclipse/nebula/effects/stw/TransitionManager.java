@@ -196,14 +196,21 @@ public class TransitionManager {
             Image imgTo = null;
             Rectangle toSize = to.getBounds();
             Image ctrlImgTo = getControlImage(toIndex);
+            boolean wasControlImageUsed = false;
             if (ctrlImgTo != null && fromIndex != toIndex) {
-                imgTo   = new Image(to.getDisplay(), toSize.width, toSize.height);
-                GC gcto       = new GC(imgTo);
                 Rectangle imgSize = ctrlImgTo.getBounds();
-                gcto.drawImage(ctrlImgTo, 0, 0, imgSize.width, imgSize.height,
-                    0, 0, toSize.width, toSize.height);
-                gcto.dispose();
-            } else {
+                if ((_transitionable instanceof ImageTransitionable)
+                        || (imgSize.width == toSize.width
+                        && imgSize.height == toSize.height)) {
+                    imgTo   = new Image(to.getDisplay(), toSize.width, toSize.height);
+                    GC gcto = new GC(imgTo);
+                    gcto.drawImage(ctrlImgTo, 0, 0, imgSize.width, imgSize.height,
+                            0, 0, toSize.width, toSize.height);
+                    gcto.dispose();
+                    wasControlImageUsed = true;
+                }
+            }
+            if (!wasControlImageUsed) {
                 _transitionable.setSelection(toIndex);
                 imgTo = ImageCapture.getImage(to, toSize.width, toSize.height, true);
                 _transitionable.setSelection(fromIndex);

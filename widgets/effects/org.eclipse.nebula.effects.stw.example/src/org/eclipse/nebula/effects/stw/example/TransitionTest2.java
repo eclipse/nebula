@@ -14,6 +14,7 @@ package org.eclipse.nebula.effects.stw.example;
 import java.util.Formatter;
 
 import org.eclipse.nebula.effects.stw.Transitionable;
+import org.eclipse.nebula.effects.stw.ImageTransitionable;
 import org.eclipse.nebula.effects.stw.TransitionManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
@@ -69,7 +70,7 @@ public class TransitionTest2 extends AbstractSTWDemoFrame {
         fd.right = new FormAttachment(100, -5);
         btn.setLayoutData(fd);
         
-        _tm = new TransitionManager(new Transitionable() {
+        _tm = new TransitionManager(new ImageTransitionable() {
             public void setSelection(int index) {
                 me.curImg = index;
             }
