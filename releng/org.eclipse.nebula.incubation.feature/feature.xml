@@ -50,15 +50,7 @@
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.nebula.widgets.geomap.feature"
-         version="0.0.0"/>
-
-   <includes
          id="org.eclipse.nebula.widgets.calendarcombo.feature"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.nebula.widgets.geomap.feature"
          version="0.0.0"/>
 
 </feature>
