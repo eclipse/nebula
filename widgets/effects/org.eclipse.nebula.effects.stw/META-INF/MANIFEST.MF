@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: State Transition Widget
+Bundle-Name: Nebula State Transition Widget
 Bundle-SymbolicName: org.eclipse.nebula.effects.stw
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

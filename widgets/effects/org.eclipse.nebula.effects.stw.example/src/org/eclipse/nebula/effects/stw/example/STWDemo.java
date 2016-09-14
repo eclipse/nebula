@@ -70,7 +70,10 @@ public class STWDemo {
          * For example, on Windows the Eclipse SWT 3.1 plugin jar is:
          *       installation_directory\plugins\org.eclipse.swt.win32_3.1.0.jar
          */
-        Display display = Display.getDefault();
+    	Display display = Display.getCurrent();
+    	if(display == null){
+    		display = Display.getDefault();
+    	}
         STWDemo thisClass = new STWDemo();
         thisClass.createSShell();
         thisClass.sShell.open();
@@ -79,7 +82,6 @@ public class STWDemo {
             if (!display.readAndDispatch())
                 display.sleep();
         }
-        display.dispose();
     }
 
     /**
