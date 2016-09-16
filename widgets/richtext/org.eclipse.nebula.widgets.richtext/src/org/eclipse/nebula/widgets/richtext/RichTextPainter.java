@@ -128,7 +128,7 @@ public class RichTextPainter {
 
 	/**
 	 * Create a new {@link RichTextPainter}.
-	 * 
+	 *
 	 * @param wordWrap
 	 *            <code>true</code> if automatic word wrapping should be enabled, <code>false</code>
 	 *            if not.
@@ -139,7 +139,7 @@ public class RichTextPainter {
 
 	/**
 	 * Processes the HTML input to calculate the preferred size. Does not perform rendering.
-	 * 
+	 *
 	 * @param html
 	 *            The HTML string to process.
 	 * @param gc
@@ -159,7 +159,7 @@ public class RichTextPainter {
 
 	/**
 	 * Processes the HTML input and paints the result to the given {@link GC}.
-	 * 
+	 *
 	 * @param html
 	 *            The HTML string to process.
 	 * @param gc
@@ -173,7 +173,7 @@ public class RichTextPainter {
 
 	/**
 	 * Processes the HTML input.
-	 * 
+	 *
 	 * @param html
 	 *            The HTML string to process.
 	 * @param gc
@@ -314,7 +314,7 @@ public class RichTextPainter {
 										bullet = "" + state.getCurrentListNumber() + ". ";
 									}
 									int extend = gc.textExtent(bullet).x;
-									gc.drawText(bullet, state.getPointer().x - extend, state.getPointer().y, (state.getPrevBgColor() == null));
+									gc.drawText(bullet, state.getPointer().x - extend, state.getPointer().y, (state.hasPreviousBgColor()));
 
 									state.setTextAlignment(alignment.alignment);
 									state.calculateX(area.width);
@@ -656,7 +656,7 @@ public class RichTextPainter {
 
 	/**
 	 * Calculates the indentation to use for list items.
-	 * 
+	 *
 	 * @param gc
 	 *            The current {@link GC} for calculating the text extend.
 	 * @return The indentation to use for list items.
@@ -680,7 +680,7 @@ public class RichTextPainter {
 	/**
 	 * Set an {@link EntityReplacer} that should be used to replace {@link EntityReference}s in the
 	 * HTML snippet to parse.
-	 * 
+	 *
 	 * @param entityReplacer
 	 *            The {@link EntityReplacer} to use.
 	 */
@@ -690,9 +690,9 @@ public class RichTextPainter {
 
 	/**
 	 * Returns the preferred size of the content. It is calculated after processing the content.
-	 * 
+	 *
 	 * @return The preferred size of the content.
-	 * 
+	 *
 	 * @see RichTextPainter#preCalculate(String, GC, Rectangle, boolean)
 	 */
 	public Point getPreferredSize() {

@@ -54,7 +54,7 @@ public class SpanStylePaintInstruction implements PaintInstruction, FontMetricsP
 		if (this.foregroundColor != null) {
 			// remember the previous set value
 			// to be able to reset on close
-			this.state.setPrevColor(gc.getForeground());
+			this.state.addPreviousColor(gc.getForeground());
 			// set the style value
 			gc.setForeground(this.foregroundColor);
 		}
@@ -62,7 +62,7 @@ public class SpanStylePaintInstruction implements PaintInstruction, FontMetricsP
 		if (this.backgroundColor != null) {
 			// remember the previous set value
 			// to be able to reset on close
-			this.state.setPrevBgColor(gc.getBackground());
+			this.state.addPreviousBgColor(gc.getBackground());
 			// set the style value
 			gc.setBackground(this.backgroundColor);
 		}

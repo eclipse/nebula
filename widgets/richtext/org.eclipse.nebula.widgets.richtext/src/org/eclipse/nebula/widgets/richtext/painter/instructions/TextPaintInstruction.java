@@ -75,7 +75,7 @@ public class TextPaintInstruction implements PaintInstruction {
 		if (TextAlignment.JUSTIFY.equals(this.state.getTextAlignment())) {
 			LinePainter line = this.state.getCurrentLine();
 			for (String word : this.words) {
-				gc.drawText(word, pointer.x, pointer.y + yAdvance, (this.state.getPrevBgColor() == null));
+				gc.drawText(word, pointer.x, pointer.y + yAdvance, (this.state.hasPreviousBgColor()));
 				int length = gc.textExtent(word).x + line.getNextJustifySpace();
 				pointer.x += length;
 				textLength += length;
@@ -83,7 +83,7 @@ public class TextPaintInstruction implements PaintInstruction {
 		}
 		else {
 			textLength = getTextLength(gc);
-			gc.drawText(text, pointer.x, pointer.y + yAdvance, (this.state.getPrevBgColor() == null));
+			gc.drawText(text, pointer.x, pointer.y + yAdvance, (this.state.hasPreviousBgColor()));
 		}
 
 		if (this.state.isUnderlineActive()) {

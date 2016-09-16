@@ -52,15 +52,17 @@ public class TagProcessingState {
 	 */
 	private TextAlignment textAlignment = TextAlignment.LEFT;
 	/**
-	 * The previous set foreground color. Since there is no nesting of spans to perform color
-	 * styling, a stack is not necessary.
+	 * Stack of previous set foreground colors. Usually not necessary as the CKEDITOR closes spans
+	 * before opening new ones regarding colors, but since HTML supports nesting of spans to apply
+	 * colors on the way, a stack is necessary to avoid exceptions then.
 	 */
-	private Color prevColor;
+	private Deque<Color> colorStack = new LinkedList<>();
 	/**
-	 * The previous set background color. Since there is no nesting of spans to perform color
-	 * styling, a stack is not necessary.
+	 * Stack of previous set background colors. Usually not necessary as the CKEDITOR closes spans
+	 * before opening new ones regarding colors, but since HTML supports nesting of spans to apply
+	 * colors on the way, a stack is necessary to avoid exceptions then.
 	 */
-	private Color prevBgColor;
+	private Deque<Color> bgColorStack = new LinkedList<>();
 	/**
 	 * Flag that indicates whether underline styling is active or not. Necessary because the
 	 * underline tag can wrap several other font or styling tags.
@@ -72,7 +74,7 @@ public class TagProcessingState {
 	 */
 	private boolean strikethroughActive = false;
 	/**
-	 * Stack of used fonts. Necesssary because font styling options can be nested (e.g. bold, size,
+	 * Stack of used fonts. Necessary because font styling options can be nested (e.g. bold, size,
 	 * type) and therefore need to be reset in the correct order on close.
 	 */
 	private Deque<Font> fontStack = new LinkedList<>();
@@ -109,38 +111,55 @@ public class TagProcessingState {
 	private int paragraphCount = 0;
 
 	/**
-	 * @return The previous set foreground color.
-	 */
-	public Color getPrevColor() {
-		return prevColor;
-	}
-
-	/**
+	 * Add the given {@link Color} to the stack of previous set foreground colors.
+	 *
 	 * @param prevColor
-	 *            The previous set foreground color.
+	 *            The {@link Color} to add to the previous foreground color stack.
 	 */
-	public void setPrevColor(Color prevColor) {
-		this.prevColor = prevColor;
+	public void addPreviousColor(Color prevColor) {
+		this.colorStack.addLast(prevColor);
 	}
 
 	/**
-	 * @return The previous set background color.
+	 * Removes and returns the last color from the previous foreground color stack. (LIFO)
+	 *
+	 * @return The last {@link Color} that was added to the previous foreground color stack.
 	 */
-	public Color getPrevBgColor() {
-		return prevBgColor;
+	public Color pollPreviousColor() {
+		return this.colorStack.pollLast();
 	}
 
 	/**
+	 * Add the given {@link Color} to the stack of previous set background colors.
+	 *
 	 * @param prevBgColor
-	 *            The previous set background color.
+	 *            The {@link Color} to add to the previous background color stack.
 	 */
-	public void setPrevBgColor(Color prevBgColor) {
-		this.prevBgColor = prevBgColor;
+	public void addPreviousBgColor(Color prevBgColor) {
+		this.bgColorStack.addLast(prevBgColor);
+	}
+
+	/**
+	 * Removes and returns the last color from the previous background color stack. (LIFO)
+	 *
+	 * @return The last {@link Color} that was added to the previous background color stack.
+	 */
+	public Color pollPreviousBgColor() {
+		return this.bgColorStack.pollLast();
+	}
+
+	/**
+	 *
+	 * @return <code>true</code> if there is a previous background color registered on the stack,
+	 *         <code>false</code> if not.
+	 */
+	public boolean hasPreviousBgColor() {
+		return !this.bgColorStack.isEmpty();
 	}
 
 	/**
 	 * Add the given {@link Font} to the stack of previous set fonts.
-	 * 
+	 *
 	 * @param font
 	 *            The {@link Font} to add to the previous font stack
 	 */
@@ -150,7 +169,7 @@ public class TagProcessingState {
 
 	/**
 	 * Removes and returns the last font from the previous font stack. (LIFO)
-	 * 
+	 *
 	 * @return The last {@link Font} that was added to the previous font stack.
 	 */
 	public Font pollPreviousFont() {
@@ -229,12 +248,10 @@ public class TagProcessingState {
 		if (textAlignment.equals(TextAlignment.LEFT)
 				|| textAlignment.equals(TextAlignment.JUSTIFY)) {
 			this.pointer.x = this.startingPoint.x + this.marginLeft + getListMargin();
-		}
-		else if (textAlignment.equals(TextAlignment.RIGHT)) {
+		} else if (textAlignment.equals(TextAlignment.RIGHT)) {
 			int space = areaWidth - (this.marginLeft + getListMargin());
 			this.pointer.x = this.startingPoint.x + this.marginLeft + getListMargin() + (space - getCurrentLine().getContentWidth());
-		}
-		else if (textAlignment.equals(TextAlignment.CENTER)) {
+		} else if (textAlignment.equals(TextAlignment.CENTER)) {
 			int space = areaWidth - (this.marginLeft + getListMargin());
 			this.pointer.x = this.startingPoint.x + this.marginLeft + getListMargin() + ((space - getCurrentLine().getContentWidth()) / 2);
 		}

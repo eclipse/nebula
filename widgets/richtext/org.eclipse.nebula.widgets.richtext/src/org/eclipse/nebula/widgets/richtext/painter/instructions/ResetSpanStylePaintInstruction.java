@@ -13,8 +13,8 @@
 package org.eclipse.nebula.widgets.richtext.painter.instructions;
 
 import org.eclipse.nebula.widgets.richtext.painter.SpanElement;
-import org.eclipse.nebula.widgets.richtext.painter.TagProcessingState;
 import org.eclipse.nebula.widgets.richtext.painter.SpanElement.SpanType;
+import org.eclipse.nebula.widgets.richtext.painter.TagProcessingState;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Rectangle;
@@ -37,12 +37,10 @@ public class ResetSpanStylePaintInstruction implements PaintInstruction, FontMet
 		for (SpanType st : span.types) {
 			switch (st) {
 				case COLOR:
-					gc.setForeground(this.state.getPrevColor());
-					this.state.setPrevColor(null);
+					gc.setForeground(this.state.pollPreviousColor());
 					break;
 				case BG_COLOR:
-					gc.setBackground(this.state.getPrevBgColor());
-					this.state.setPrevBgColor(null);
+					gc.setBackground(this.state.pollPreviousBgColor());
 					break;
 				case FONT:
 					gc.setFont(this.state.pollPreviousFont());
