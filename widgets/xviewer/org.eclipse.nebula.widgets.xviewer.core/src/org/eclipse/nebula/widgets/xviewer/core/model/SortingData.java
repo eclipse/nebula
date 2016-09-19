@@ -31,6 +31,10 @@ public class SortingData {
    private final List<String> sortingIds = new ArrayList<String>();
    private final CustomizeData custData;
 
+   public SortingData() {
+      this.custData = null;
+   }
+
    public SortingData(CustomizeData custData) {
       this.custData = custData;
    }
