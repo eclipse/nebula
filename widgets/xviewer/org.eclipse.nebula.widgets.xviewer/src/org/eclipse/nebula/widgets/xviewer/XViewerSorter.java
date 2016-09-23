@@ -295,6 +295,8 @@ public class XViewerSorter extends ViewerSorter {
       DateFormat format;
       if (date1.length() == 10) {
          format = format10;
+      } else if (date1.length() == 22) {
+         format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
       } else {
          format = new SimpleDateFormat();
       }
