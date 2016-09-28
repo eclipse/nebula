@@ -13,7 +13,7 @@ package org.eclipse.nebula.widgets.xviewer.util;
 import java.util.Collection;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.nebula.widgets.xviewer.util.internal.StringLabelProvider;
-import org.eclipse.nebula.widgets.xviewer.util.internal.StringViewerSorter;
+import org.eclipse.nebula.widgets.xviewer.util.internal.StringNameComparator;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -38,7 +38,7 @@ public class EnumStringSingleSelectionDialog extends org.eclipse.ui.dialogs.List
    @Override
    protected Control createDialogArea(Composite container) {
       Control c = super.createDialogArea(container);
-      getTableViewer().setSorter(new StringViewerSorter());
+      getTableViewer().setComparator(new StringNameComparator());
       return c;
    }
 

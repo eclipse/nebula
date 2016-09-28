@@ -10,26 +10,21 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.xviewer.util.internal;
 
-import java.text.Collator;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 
 /**
  * @author Donald G. Dunne
  */
-public class StringViewerSorter extends ViewerSorter {
+public class StringNameComparator extends ViewerComparator {
 
-   public StringViewerSorter() {
-      // do nothing
+   public StringNameComparator() {
+      super();
    }
 
-   public StringViewerSorter(Collator collator) {
-      super(collator);
-   }
-
-   @SuppressWarnings("unchecked")
    @Override
-   public int compare(Viewer viewer, Object e1, Object e2) {
-      return getComparator().compare(e1, e2);
+   public int compare(Viewer viewer, Object o1, Object o2) {
+      return o1.toString().compareTo(o2.toString());
    }
+
 }

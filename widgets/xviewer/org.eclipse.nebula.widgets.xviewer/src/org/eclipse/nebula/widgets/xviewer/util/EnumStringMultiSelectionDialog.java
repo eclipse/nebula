@@ -14,7 +14,7 @@ import java.util.Collection;
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.nebula.widgets.xviewer.util.internal.ArrayTreeContentProvider;
 import org.eclipse.nebula.widgets.xviewer.util.internal.StringLabelProvider;
-import org.eclipse.nebula.widgets.xviewer.util.internal.StringViewerSorter;
+import org.eclipse.nebula.widgets.xviewer.util.internal.StringNameComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -45,10 +45,10 @@ public class EnumStringMultiSelectionDialog extends CheckedTreeSelectionDialog {
 
    public EnumStringMultiSelectionDialog(String displayName, Collection<String> enums, Collection<String> selEnums) {
       super(Display.getCurrent().getActiveShell(), new StringLabelProvider(), new ArrayTreeContentProvider());
-      setTitle(XViewerText.get("EnumStringMultiSelectionDialog.title")+ " " + displayName);  //$NON-NLS-1$//$NON-NLS-2$
+      setTitle(XViewerText.get("EnumStringMultiSelectionDialog.title") + " " + displayName); //$NON-NLS-1$//$NON-NLS-2$
       setMessage(String.format(XViewerText.get("EnumStringMultiSelectionDialog.message"), displayName)); //$NON-NLS-1$
       setInput(enums);
-      setComparator(new StringViewerSorter());
+      setComparator(new StringNameComparator());
       setInitialSelections(selEnums.toArray());
    }
 
