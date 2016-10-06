@@ -40,7 +40,12 @@ public class LinearScaleTickLabels extends Figure {
 		}
 		return result;
 	}
-
+	
+	/** default: show max label */
+	private boolean showMaxLabel = true;
+	/** default: show min label */
+	private boolean showMinLabel = true;
+	
 	/** the array of tick label vales */
 	private ArrayList<Double> tickLabelValues;
 
@@ -320,7 +325,14 @@ public class LinearScaleTickLabels extends Figure {
 
 		return false;
 	}
+	
+	public boolean isShowMaxLabel() {
+		return showMaxLabel;
+	}
 
+	public void setShowMaxLabel(boolean showMaxLabel) {
+		this.showMaxLabel = showMaxLabel;
+	}
 	/**
 	 * Updates tick label for normal scale.
 	 * 
@@ -370,13 +382,18 @@ public class LinearScaleTickLabels extends Figure {
 		boolean minDateAdded = false;
 		if (min > firstPosition == minBigger) {
 			tickLabelValues.add(min);
-			if (scale.isDateEnabled()) {
-				Date date = new Date((long) min);
-				tickLabels.add(scale.format(date, true));
-				minDateAdded = true;
-			} else {
-				tickLabels.add(scale.format(min));
-			}
+			String lblStr;
+			if (isShowMinLabel()) {
+				if (scale.isDateEnabled()) {
+					Date date = new Date((long) min);
+					lblStr = scale.format(date, true);
+					minDateAdded = true;
+				} else {
+					lblStr = scale.format(min);
+				}
+			} else
+				lblStr = "";
+			tickLabels.add(lblStr);
 			tickLabelPositions.add(scale.getMargin());
 		}
 
@@ -397,12 +414,17 @@ public class LinearScaleTickLabels extends Figure {
 
 		// always add max
 		tickLabelValues.add(max);
-		if (scale.isDateEnabled()) {
-			Date date = new Date((long) max);
-			tickLabels.add(scale.format(date, true));
-		} else {
-			tickLabels.add(scale.format(max));
-		}
+		String lblStr;
+		if (showMaxLabel) {
+			if (scale.isDateEnabled()) {
+				Date date = new Date((long) max);
+				lblStr = scale.format(date, true);
+			} else {
+				lblStr = scale.format(max);
+			}
+		} else
+			lblStr = "";
+		tickLabels.add(lblStr);
 		tickLabelPositions.add(scale.getMargin() + length);
 		// }
 
@@ -587,6 +609,15 @@ public class LinearScaleTickLabels extends Figure {
 		super.paintClientArea(graphics);
 	}
 
+	
+
+	public boolean isShowMinLabel() {
+		return showMinLabel;
+	}
+
+	public void setShowMinLabel(boolean showMinLabel) {
+		this.showMinLabel = showMinLabel;
+	}
 	/**
 	 * Updates the tick labels.
 	 * 

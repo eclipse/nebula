@@ -241,6 +241,24 @@ public class LinearScale extends AbstractScale {
 		return orientation == Orientation.HORIZONTAL;
 	}
 
+	/**
+	 * shows the maximum value of the range as a label
+	 * 
+	 * @return true (default) if shown
+	 */
+	public boolean isShowMaxLabel() {
+		return tickLabels.isShowMaxLabel();
+	}
+
+	/**
+	 * shows the minimum value of the range as a label
+	 * 
+	 * @return true (default) if shown
+	 */
+	public boolean isShowMinLabel() {
+		return tickLabels.isShowMinLabel();
+	}
+	
 	@Override
 	protected void layout() {
 		super.layout();
@@ -315,6 +333,28 @@ public class LinearScale extends AbstractScale {
 		revalidate();
 
 	}
+	
+	/**
+	 * sets the visibility of the maximum label
+	 * 
+	 * @param b
+	 *            show maximal value as a label
+	 */
+	public void setShowMaxLabel(boolean b) {
+		tickLabels.setShowMaxLabel(b);
+
+	}
+
+	/**
+	 * sets the visibility of the minimum label
+	 * 
+	 * @param b
+	 *            show minimum value as a label
+	 */
+	public void setShowMinLabel(boolean b) {
+		tickLabels.setShowMinLabel(b);
+
+	}
 
 	/**
 	 * Updates the tick, recalculate all parameters, such as margin, length...
@@ -335,4 +375,9 @@ public class LinearScale extends AbstractScale {
 	protected boolean useLocalCoordinates() {
 		return true;
 	}
+	
+
+	
+
+
 }

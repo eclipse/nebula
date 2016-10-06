@@ -417,22 +417,22 @@ public class PlotArea extends Figure {
 			if (!armed)
 				return;
 			if (dynamicZoomMode)
-				zoomType = zoomType.DYNAMIC_ZOOM;
+				zoomType = ZoomType.DYNAMIC_ZOOM;
 			switch (zoomType) {
 			case DYNAMIC_ZOOM:
 				dynamicZoomMode = true;
 				if (Math.abs(dynamicStart.x - me.x) < 30) {
 					start = new Point(bounds.x, dynamicStart.y);
 					end = new Point(bounds.x + bounds.width, me.getLocation().y);
-					setZoomType(zoomType.VERTICAL_ZOOM);
+					setZoomType(ZoomType.VERTICAL_ZOOM);
 				} else if (Math.abs(dynamicStart.y - me.y) < 30) {
 					start = new Point(dynamicStart.x, bounds.y);
 					end = new Point(me.getLocation().x, bounds.y + bounds.height);
-					setZoomType(zoomType.HORIZONTAL_ZOOM);
+					setZoomType(ZoomType.HORIZONTAL_ZOOM);
 				} else {
 					start = dynamicStart;
 					end = me.getLocation();
-					setZoomType(zoomType.RUBBERBAND_ZOOM);
+					setZoomType(ZoomType.RUBBERBAND_ZOOM);
 				}
 				break;
 			case RUBBERBAND_ZOOM:
@@ -482,19 +482,19 @@ public class PlotArea extends Figure {
 			// If we are in dynamicZoom mode we will zoom like this, for other
 			// zooms is everything like before
 			if (dynamicZoomMode) {
-				if (zoomType != zoomType.VERTICAL_ZOOM)
+				if (zoomType != ZoomType.VERTICAL_ZOOM)
 					for (Axis axis : xyGraph.getXAxisList()) {
 						final double t1 = axis.getPositionValue(start.x, false);
 						final double t2 = axis.getPositionValue(end.x, false);
 						axis.setRange(t1, t2, true);
 					}
-				if (zoomType != zoomType.HORIZONTAL_ZOOM)
+				if (zoomType != ZoomType.HORIZONTAL_ZOOM)
 					for (Axis axis : xyGraph.getYAxisList()) {
 						final double t1 = axis.getPositionValue(start.y, false);
 						final double t2 = axis.getPositionValue(end.y, false);
 						axis.setRange(t1, t2, true);
 					}
-				setZoomType(zoomType.DYNAMIC_ZOOM);
+				setZoomType(ZoomType.DYNAMIC_ZOOM);
 			} else
 				switch (zoomType) {
 				case RUBBERBAND_ZOOM:
