@@ -30,6 +30,7 @@ import org.eclipse.nebula.widgets.xviewer.XViewer;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumnLabelProvider;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumnSorter;
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
+import org.eclipse.nebula.widgets.xviewer.core.model.ColumnData;
 import org.eclipse.nebula.widgets.xviewer.core.model.ColumnFilterData;
 import org.eclipse.nebula.widgets.xviewer.core.model.CustomizeData;
 import org.eclipse.nebula.widgets.xviewer.core.model.SortingData;
@@ -1023,6 +1024,13 @@ public class XViewerCustomizeDialog extends MessageDialog {
       }
       if (columnFilterText != null) {
          custData.getColumnFilterData().setFromXml(columnFilterText.getText());
+      }
+
+      CustomizeData custTableSelection = getCustTableSelection();
+      if (custData.getColumnData().getColumns().equals(custTableSelection.getColumnData().getColumns())) {
+         custData.setName(custTableSelection.getName());
+      } else {
+         custData.setName("Unsaved Custom");
       }
       return custData;
    }
