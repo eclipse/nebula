@@ -11,6 +11,7 @@
 package org.eclipse.nebula.widgets.xviewer.core.model;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -360,6 +361,9 @@ public class XViewerColumn {
    }
 
    public Map<Long, String> getPreComputedValueMap() {
+      if(preComputedValueMap == null) {
+         preComputedValueMap = new HashMap<Long, String>();
+      }
       return preComputedValueMap;
    }
 

@@ -64,8 +64,6 @@ public class XViewerSorter extends ViewerSorter {
             obj2 = ((IXViewerLabelProvider) labelProvider).getBackingData(o2, sortXCol, columnNum);
          }
 
-         // System.out.println("sortForward.get(columnNum) *" +
-         // sortXCol.isSortForward() + "*");
          int compareInt = 0;
          if (o1Str == null) {
             compareInt = -1;
@@ -87,12 +85,7 @@ public class XViewerSorter extends ViewerSorter {
             compareInt = getComparator().compare(o1Str, o2Str);
          }
 
-         int compareOnDir = getCompareBasedOnDirection(sortXCol, compareInt, viewer, o1, o2, sortXColIndex);
-
-         //         System.out.println(String.format("Dir [%d] Compare [%d] Str1 [%s] Str2 [%s] Column [%s]", compareInt,
-         //               compareOnDir, o1Str, o2Str, sortXCol));
-
-         return compareOnDir;
+         return getCompareBasedOnDirection(sortXCol, compareInt, viewer, o1, o2, sortXColIndex);
 
       } catch (Exception ex) {
          XViewerLog.log(Activator.class, Level.SEVERE, ex);
@@ -131,7 +124,6 @@ public class XViewerSorter extends ViewerSorter {
    public int getCompareBasedOnDirection(XViewerColumn sortXCol, int compareInt, Viewer viewer, Object o1, Object o2, int sortXColIndex) {
       List<XViewerColumn> sortXCols = treeViewer.getCustomizeMgr().getSortXCols();
       int returnInt = (sortXCol.isSortForward() ? 1 : -1) * compareInt;
-      // System.out.println("returnInt *" + returnInt + "*");
       if (returnInt == 0 && sortXCols.size() > sortXColIndex + 1) {
          returnInt = compare(viewer, o1, o2, (sortXColIndex + 1));
       }
@@ -274,20 +266,13 @@ public class XViewerSorter extends ViewerSorter {
       }
       if (date1Date != null && date2Date != null) {
          return getCompareForDate(date1Date, date2Date);
-      }
-      if (date1.trim().equals("") && date2.trim().equals("")) {
+      } else if (obj1 == null && obj2 == null) {
          return 0;
-      }
-      if (date1.trim().equals("")) {
+      } else if (obj1 == null) {
          return -1;
-      }
-      if (date2.trim().equals("")) {
+      } else {
          return 1;
       }
-      Pair<Date, Date> datePair = parseDatePair(date1, date2);
-      date1Date = datePair.getFirst();
-      date2Date = datePair.getSecond();
-      return getCompareForDate(date1Date, date2Date);
    }
 
    public static Pair<Date, Date> parseDatePair(String date1, String date2) {
@@ -295,8 +280,6 @@ public class XViewerSorter extends ViewerSorter {
       DateFormat format;
       if (date1.length() == 10) {
          format = format10;
-      } else if (date1.length() == 22) {
-         format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
       } else {
          format = new SimpleDateFormat();
       }

@@ -189,10 +189,7 @@ public abstract class XViewerLabelProvider implements ITableLabelProvider, ITabl
          }
          // First check value column's methods
          if (xViewerColumn instanceof IXViewerValueColumn) {
-            Object obj = ((IXViewerValueColumn) xViewerColumn).getBackingData(element, xViewerColumn, columnIndex);
-            if (obj != null) {
-               return obj;
-            }
+            return ((IXViewerValueColumn) xViewerColumn).getBackingData(element, xViewerColumn, columnIndex);
          }
       } catch (Exception ex) {
          return XViewerCells.getCellExceptionString(ex);

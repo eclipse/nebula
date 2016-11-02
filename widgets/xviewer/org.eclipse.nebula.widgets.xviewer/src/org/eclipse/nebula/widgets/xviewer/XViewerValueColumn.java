@@ -11,8 +11,8 @@
 package org.eclipse.nebula.widgets.xviewer;
 
 import org.eclipse.jface.viewers.StyledString;
-import org.eclipse.nebula.widgets.xviewer.core.model.XViewerAlign;
 import org.eclipse.nebula.widgets.xviewer.core.model.SortDataType;
+import org.eclipse.nebula.widgets.xviewer.core.model.XViewerAlign;
 import org.eclipse.nebula.widgets.xviewer.core.model.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.util.XViewerException;
 import org.eclipse.swt.graphics.Color;
