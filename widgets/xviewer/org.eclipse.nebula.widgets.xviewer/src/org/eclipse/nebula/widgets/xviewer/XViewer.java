@@ -320,6 +320,11 @@ public class XViewer extends TreeViewer {
          for (Object obj : collection) {
             objects.add(obj);
          }
+      } else if (input instanceof Object[]) {
+         Object[] arr = (Object[]) input;
+         for (Object obj : arr) {
+            objects.add(obj);
+         }
       }
       return objects;
    }
