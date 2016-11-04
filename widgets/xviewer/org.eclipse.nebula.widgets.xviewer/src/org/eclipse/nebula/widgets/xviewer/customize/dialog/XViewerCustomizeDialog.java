@@ -30,7 +30,6 @@ import org.eclipse.nebula.widgets.xviewer.XViewer;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumnLabelProvider;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumnSorter;
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
-import org.eclipse.nebula.widgets.xviewer.core.model.ColumnData;
 import org.eclipse.nebula.widgets.xviewer.core.model.ColumnFilterData;
 import org.eclipse.nebula.widgets.xviewer.core.model.CustomizeData;
 import org.eclipse.nebula.widgets.xviewer.core.model.SortingData;
