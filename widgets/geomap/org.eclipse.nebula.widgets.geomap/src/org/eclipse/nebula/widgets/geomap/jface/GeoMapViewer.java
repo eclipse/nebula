@@ -294,6 +294,11 @@ public class GeoMapViewer extends ContentViewer {
 	}
 
 	@Override
+    protected void inputChanged(Object input, Object oldInput) {
+		refresh();
+    }
+
+	@Override
 	public void setSelection(ISelection selection, boolean reveal) {
 		setSelection(selection instanceof IStructuredSelection ? ((IStructuredSelection) selection).getFirstElement() : null);
 		if (reveal && this.selection != null) {
