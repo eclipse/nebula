@@ -47,7 +47,7 @@ public class GeoMapTest {
 	@Before
 	public void setUp() {
 		SWTBotPreferences.PLAYBACK_DELAY = 1000; // slow down tests...Otherwise we won't see anything
-		display = Display.getCurrent(); // new Display();
+		display = Display.getCurrent();
 		parent = createUI(display);
 		
 		bot = new SWTBot(parent);
@@ -62,7 +62,7 @@ public class GeoMapTest {
 	}
 	
 	protected void handleEvents() {
-		while (! parent.isDisposed()) {
+		while (display != null && (! display.isDisposed()) && (! parent.isDisposed())) {
 			if (! display.readAndDispatch()) {
 				break; // display.sleep();
 			}

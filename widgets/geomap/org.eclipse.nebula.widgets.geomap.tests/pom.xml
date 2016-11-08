@@ -26,8 +26,11 @@
 			<artifactId>tycho-surefire-plugin</artifactId>
 			<version>${tycho-version}</version>
 		    <configuration>
-				<testClass>org.eclipse.nebula.widgets.geomap.tests.GeoMapTest</testClass>
 	          	<argLine>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</argLine>
+	          	<!--
+				<testClass>org.eclipse.nebula.widgets.geomap.tests.GeoMapTest</testClass>
+				<testClass>org.eclipse.nebula.widgets.geomap.tests.GeoMapViewerTest</testClass>
+	          	-->
 		    </configuration>
 		</plugin>
     </plugins>
