@@ -96,7 +96,7 @@ public abstract class DefaultMouseHandler implements MouseListener, MouseWheelLi
 	protected void center(MouseEvent e) {
 		Point size = getMapSize();
 		Point mapPosition = getGeoMap().getMapPosition();
-		geoMap.setMapPosition(mapPosition.x - size.x / 2, mapPosition.y - size.y / 2);
+		getGeoMap().setMapPosition(mapPosition.x + e.x - size.x / 2, mapPosition.y + e.y - size.y / 2);
 	}
 	
 	//

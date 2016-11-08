@@ -66,7 +66,9 @@ public class InternalGeoMap extends Canvas implements GeoMapPositioned, GeoMapHe
     }
 
 	public void tileUpdated(TileRef tileRef) {
-		redraw();
+		if (! isDisposed()) {
+			redraw();
+		}
 	}
 
     private void paintControl(PaintEvent e) {

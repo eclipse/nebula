@@ -9,7 +9,7 @@
   <packaging>eclipse-test-plugin</packaging>
   
   <artifactId>org.eclipse.nebula.widgets.geomap.tests</artifactId>
-  <version>0.1.0-SNAPSHOT</version>
+  <version>1.0.0-SNAPSHOT</version>
   <build>
     <sourceDirectory>src</sourceDirectory>
     <plugins>
@@ -27,6 +27,7 @@
 			<version>${tycho-version}</version>
 		    <configuration>
 				<testClass>org.eclipse.nebula.widgets.geomap.tests.GeoMapTest</testClass>
+	          	<argLine>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</argLine>
 		    </configuration>
 		</plugin>
     </plugins>

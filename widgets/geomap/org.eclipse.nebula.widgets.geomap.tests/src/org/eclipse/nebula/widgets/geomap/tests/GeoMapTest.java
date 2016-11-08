@@ -47,7 +47,7 @@ public class GeoMapTest {
 	@Before
 	public void setUp() {
 		SWTBotPreferences.PLAYBACK_DELAY = 1000; // slow down tests...Otherwise we won't see anything
-		display = new Display();
+		display = Display.getCurrent(); // new Display();
 		parent = createUI(display);
 		
 		bot = new SWTBot(parent);
@@ -58,7 +58,7 @@ public class GeoMapTest {
 	@After
 	public void tearDown() {
 		handleEvents();
-		display.dispose();
+//		display.dispose();
 	}
 	
 	protected void handleEvents() {
@@ -77,6 +77,14 @@ public class GeoMapTest {
 		assertEquals(new Point(position1.x - dx, position1.y - dy), geoMapPositioned.getMapPosition());
 		geoMapBot.pan(vx + dx, vy + dy, vx, vy);
 		assertEquals(position1, geoMapPositioned.getMapPosition());
+	}
+
+	@Test
+	public void testCenter() {
+		Point mapPosition = geoMapPositioned.getMapPosition();
+		int dx = 10, dy = 20;
+		geoMapBot.center(dx, dy);
+		assertEquals(new Point(mapPosition.x + dx, mapPosition.y + dy), geoMap.getCenterPosition());
 	}
 	
 	protected void testMapPositionZoom(int x1, int y1, int z1, int x2, int y2, int z2, int vx, int vy) {
