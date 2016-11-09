@@ -283,10 +283,10 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 			}
 		});
 		geoMapViewer.setContentProvider(new ArrayContentProvider());
-//		geoMapViewer.getControl().getDisplay().asyncExec(new Runnable() {
-//			public void run() {
-//				setViewerInputs(contributorLocations);
-//			}
-//		});
+		geoMapViewer.getControl().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				setViewerInputs(contributorLocations);
+			}
+		});
 	}
 }
