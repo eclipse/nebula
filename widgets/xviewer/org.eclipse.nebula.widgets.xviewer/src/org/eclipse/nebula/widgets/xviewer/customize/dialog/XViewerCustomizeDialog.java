@@ -935,9 +935,18 @@ public class XViewerCustomizeDialog extends MessageDialog {
     */
    private List<XViewerColumn> getConfigCustXViewerColumns() {
       List<XViewerColumn> xCols = new ArrayList<XViewerColumn>();
+      List<XViewerColumn> currColumns = xViewerToCustomize.getCustomizeMgr().getCurrentTableColumns();
       for (XViewerColumn xCol : getTableXViewerColumns(visibleColTable.getViewer())) {
          xCol.setShow(true);
          xCol.setXViewer(xViewerToCustomize);
+
+         for (XViewerColumn currColumn : currColumns) {
+            if (currColumn.getId().equals(xCol.getId())) {
+               if (!currColumn.isSortForward()) {
+                  xCol.setSortForward(false);
+               }
+            }
+         }
          xCols.add(xCol);
       }
       for (XViewerColumn xCol : getTableXViewerColumns(hiddenColTable.getViewer())) {
