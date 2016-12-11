@@ -138,8 +138,22 @@ public class RichTextEditorConfiguration {
 		this.options.put(REMOVE_BUTTONS, getRemoveButtonConfiguration());
 	}
 
-	@SuppressWarnings("deprecation")
-	RichTextEditorConfiguration(org.eclipse.nebula.widgets.richtext.toolbar.ToolbarConfiguration config) {
+	/**
+	 * Creates a {@link RichTextEditorConfiguration} that is initialized with the configuration
+	 * values out of the given
+	 * {@link org.eclipse.nebula.widgets.richtext.toolbar.ToolbarConfiguration}. This constructor is
+	 * used for backwards compatibility only in case adopters use the old ToolbarConfiguration.
+	 * Therefore it is deprecated from the beginning.
+	 * 
+	 * @param config
+	 *            The {@link org.eclipse.nebula.widgets.richtext.toolbar.ToolbarConfiguration} that
+	 *            should be used to initialized the {@link RichTextEditorConfiguration}.
+	 * @deprecated Use the no-arg constructor instead and set the values directly to the created
+	 *             {@link RichTextEditorConfiguration}
+	 * @since 1.2
+	 */
+	@Deprecated
+	public RichTextEditorConfiguration(org.eclipse.nebula.widgets.richtext.toolbar.ToolbarConfiguration config) {
 		this();
 
 		this.removePasteText = config.removePasteText;

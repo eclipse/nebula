@@ -18,7 +18,7 @@
    <feature url="features/org.eclipse.nebula.widgets.grid.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.grid.feature" version="1.0.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.richtext.feature_1.1.0.qualifier.jar" id="org.eclipse.nebula.widgets.richtext.feature" version="1.1.0.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.richtext.feature_1.2.0.qualifier.jar" id="org.eclipse.nebula.widgets.richtext.feature" version="1.2.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
    <feature url="features/org.eclipse.nebula.cwt.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.cwt.feature" version="1.0.0.qualifier">
