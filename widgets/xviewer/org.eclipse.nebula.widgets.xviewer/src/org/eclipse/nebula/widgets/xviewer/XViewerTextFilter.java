@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.xviewer;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,7 +24,6 @@ import org.eclipse.nebula.widgets.xviewer.core.model.ColumnDateFilter;
 import org.eclipse.nebula.widgets.xviewer.core.model.DateRangeType;
 import org.eclipse.nebula.widgets.xviewer.core.model.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.core.util.Strings;
-import org.eclipse.swt.widgets.TreeItem;
 
 /**
  * @author Donald G. Dunne
@@ -41,7 +38,6 @@ public class XViewerTextFilter extends ViewerFilter {
    protected static final Pattern EMPTY_STR_PATTERN = Pattern.compile("");
    protected static final Pattern NOT_EMPTY_STR_PATTERN = Pattern.compile("^.+$");
    private final Set<Object> parentMatches = new HashSet<Object>();
-   private boolean isTransaction = false;
 
    public XViewerTextFilter(XViewer xViewer) {
       this.xViewer = xViewer;
@@ -103,7 +99,6 @@ public class XViewerTextFilter extends ViewerFilter {
       if (textPattern == null && colIdToPattern.isEmpty() && colIdToDateFilter.isEmpty()) {
          return true;
       }
-
       // If element matches, it's parent is added to this collection; it should always match so get full path shown
       if (parentMatches.contains(element)) {
          if (parentElement != null) {
@@ -111,11 +106,9 @@ public class XViewerTextFilter extends ViewerFilter {
          }
          return true;
       }
-
       boolean match = true;
       // Must match all column filters or don't show
       Set<String> colIds = xViewer.getCustomizeMgr().getColumnFilterData().getColIds();
-      Collection<Object> visibleChildren = getVisibleChildrenItems(element);
       for (String filteredColId : colIds) {
          XViewerColumn xCol = xViewer.getCustomizeMgr().getCurrentTableColumn(filteredColId);
          if (xCol.isShow()) {
@@ -124,45 +117,47 @@ public class XViewerTextFilter extends ViewerFilter {
                   xViewer.getColumnText(element, xViewer.getCustomizeMgr().getColumnNumFromXViewerColumn(xCol));
                if (cellStr != null) {
                   matcher = colIdToPattern.get(xCol.getId()).matcher(cellStr);
-
-                  // If no match, check children
                   if (!matcher.find()) {
-                     boolean childMatch = false;
-                     for (Object child : visibleChildren) {
-                        cellStr =
-                           xViewer.getColumnText(child, xViewer.getCustomizeMgr().getColumnNumFromXViewerColumn(xCol));
-                        if (cellStr != null) {
-                           matcher = colIdToPattern.get(xCol.getId()).matcher(cellStr);
-                           if (matcher.find()) {
-                              childMatch = true;
-                              break;
-                           }
-                        }
-                     }
-                     if (!childMatch) {
-                        return false;
-                     }
+                     return false;
                   }
                }
             }
-
             if (colIdToDateFilter.containsKey(xCol.getId())) {
                String cellStr =
                   xViewer.getColumnText(element, xViewer.getCustomizeMgr().getColumnNumFromXViewerColumn(xCol));
-               boolean isMatch = isDateTextMatchin(cellStr, xCol);
-               // If no match, check children
-               if (!isMatch) {
-                  for (Object child : visibleChildren) {
-                     cellStr =
-                        xViewer.getColumnText(child, xViewer.getCustomizeMgr().getColumnNumFromXViewerColumn(xCol));
-                     if (isDateTextMatchin(cellStr, xCol)) {
-                        isMatch = true;
-                        break;
+               if (Strings.isValid(cellStr)) {
+                  Date cellDate = XViewerSorter.parseDatePair(cellStr, "").getFirst();
+                  if (cellDate != null) {
+                     ColumnDateFilter columnDateFilter = colIdToDateFilter.get(xCol.getId());
+                     Calendar cellCal = Calendar.getInstance();
+                     cellCal.setTime(cellDate);
+                     Calendar filterCal = Calendar.getInstance();
+                     Date filterDate1 = columnDateFilter.getDate1();
+                     filterCal.setTime(filterDate1);
+                     DateRangeType rangeType = columnDateFilter.getType();
+                     if (rangeType == DateRangeType.Equals_Date) {
+                        if (cellCal.get(Calendar.YEAR) != filterCal.get(Calendar.YEAR) || cellCal.get(
+                           Calendar.MONTH) != filterCal.get(Calendar.MONTH) || cellCal.get(
+                              Calendar.DAY_OF_MONTH) != filterCal.get(Calendar.DAY_OF_MONTH)) {
+                           return false;
+                        }
+                     } else if (rangeType == DateRangeType.After_Date && cellDate.before(filterDate1)) {
+                        return false;
+                     } else if (rangeType == DateRangeType.Before_Date && cellDate.after(filterDate1)) {
+                        return false;
+                     } else if (rangeType == DateRangeType.Between_Dates) {
+                        if (cellDate.before(filterDate1)) {
+                           return false;
+                        }
+                        Date filterDate2 = columnDateFilter.getDate2();
+                        if (cellDate.after(filterDate2)) {
+                           return false;
+                        }
                      }
                   }
-                  if (!isMatch) {
-                     return false;
-                  }
+               } else {
+                  // Do not show this row if date filter selected and no date is shown
+                  return false;
                }
             }
          }
@@ -191,91 +186,12 @@ public class XViewerTextFilter extends ViewerFilter {
                         parentMatches.add(parentElement);
                      }
                      return true;
-                  } else {
-                     if (isTransaction) {
-                        return true;
-                     }
                   }
                }
             }
          }
       }
       return false;
-   }
-
-   private boolean isDateTextMatchin(String cellStr, XViewerColumn xCol) {
-      if (Strings.isValid(cellStr)) {
-         Date cellDate = XViewerSorter.parseDatePair(cellStr, "").getFirst();
-         if (cellDate != null) {
-            ColumnDateFilter columnDateFilter = colIdToDateFilter.get(xCol.getId());
-            Calendar cellCal = Calendar.getInstance();
-            cellCal.setTime(cellDate);
-            Calendar filterCal = Calendar.getInstance();
-            Date filterDate1 = columnDateFilter.getDate1();
-            filterCal.setTime(filterDate1);
-            DateRangeType rangeType = columnDateFilter.getType();
-            if (rangeType == DateRangeType.Equals_Date) {
-               if (cellCal.get(Calendar.YEAR) != filterCal.get(Calendar.YEAR) || cellCal.get(
-                  Calendar.MONTH) != filterCal.get(Calendar.MONTH) || cellCal.get(
-                     Calendar.DAY_OF_MONTH) != filterCal.get(Calendar.DAY_OF_MONTH)) {
-                  return false;
-               }
-            } else if (rangeType == DateRangeType.After_Date && cellDate.before(filterDate1)) {
-               return false;
-            } else if (rangeType == DateRangeType.Before_Date && cellDate.after(filterDate1)) {
-               return false;
-            } else if (rangeType == DateRangeType.Between_Dates) {
-               if (cellDate.before(filterDate1)) {
-                  return false;
-               }
-               Date filterDate2 = columnDateFilter.getDate2();
-               if (cellDate.after(filterDate2)) {
-                  return false;
-               }
-            }
-         }
-      } else {
-         // Do not show this row if date filter selected and no date is shown
-         return false;
-      }
-      return true;
-   }
-
-   private Collection<Object> getVisibleChildrenItems(Object parent) {
-
-      Collection<TreeItem> visibleItems = xViewer.getVisibleItems();
-      Collection<Object> visibleChildren = new ArrayList<Object>();
-      for (TreeItem visibleItem : visibleItems) {
-         TreeItem parentOfChild = visibleItem.getParentItem();
-         if (parentOfChild != null) {
-            if (parentOfChild.getParentItem() != null && parentOfChild.getParentItem().toString().contains(
-               parent.toString())) {
-               visibleChildren.add(visibleItem);
-            }
-         }
-      }
-
-      Collection<Object> toReturn = new ArrayList<Object>();
-      Object[] visibleExpandedElements = xViewer.getVisibleExpandedElements();
-      for (Object child : visibleChildren) {
-         for (Object expandedElement : visibleExpandedElements) {
-            if (expandedElement instanceof Collection) {
-               Collection<?> objects = (Collection<?>) expandedElement;
-               for (Object obj : objects) {
-                  if (child.toString().contains(obj.toString())) {
-                     toReturn.add(obj);
-                  }
-               }
-            } else if (child.toString().contains(expandedElement.toString())) {
-               toReturn.add(expandedElement);
-            }
-         }
-      }
-      return toReturn;
-   }
-
-   public void setIsTransaction(boolean isTransaction) {
-      this.isTransaction = isTransaction;
    }
 
 }
