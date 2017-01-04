@@ -528,16 +528,29 @@ public class GridItem extends Item {
 	 * @return width and height
 	 */
 	protected Point getCellSize(int columnIndex) {
+		/* width */
 		int width = 0;
 
 		int span = getColumnSpan(columnIndex);
-		for (int i = 0; i <= span; i++) {
-			if (parent.getColumnCount() <= columnIndex + i) {
+
+		int[] columnOrder = parent.getColumnOrder();
+		int visualColumnIndex = columnIndex;
+		for (int i = 0; i < columnOrder.length; i++) {
+			if (columnOrder[i] == columnIndex) {
+				visualColumnIndex = i;
 				break;
 			}
-			width += parent.getColumn(columnIndex + i).getWidth();
 		}
 
+		for (int i = 0; i <= span; i++) {
+			if (visualColumnIndex + i >= columnOrder.length) {
+				break;
+			}
+			int nextColumnIndex = columnOrder[visualColumnIndex + i];
+			width += parent.getColumn(nextColumnIndex).getWidth();
+		}
+
+		/* height */
 		int indexOfCurrentItem = parent.getIndexOfItem(this);
 
 		GridItem item = parent.getItem(indexOfCurrentItem);
