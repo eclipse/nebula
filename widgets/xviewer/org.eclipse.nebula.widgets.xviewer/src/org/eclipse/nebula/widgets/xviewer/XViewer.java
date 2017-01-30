@@ -37,6 +37,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.viewers.ViewerRow;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.nebula.widgets.xviewer.action.TableCustomizationAction;
 import org.eclipse.nebula.widgets.xviewer.action.TableCustomizationDropDownAction;
 import org.eclipse.nebula.widgets.xviewer.column.XViewerDaysTillTodayColumn;
 import org.eclipse.nebula.widgets.xviewer.column.XViewerDiffsBetweenColumnsColumn;
@@ -224,6 +225,10 @@ public class XViewer extends TreeViewer {
    }
 
    public Action getCustomizeAction() {
+      return new TableCustomizationAction(this);
+   }
+
+   public Action getCustomizeDropDownAction() {
       return new TableCustomizationDropDownAction(this);
    }
 
