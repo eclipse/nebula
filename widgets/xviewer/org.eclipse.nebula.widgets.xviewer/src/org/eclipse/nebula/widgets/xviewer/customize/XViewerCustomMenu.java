@@ -237,7 +237,7 @@ public class XViewerCustomMenu {
    }
 
    public void createTableCustomizationMenuItem(Menu popupMenu) {
-      new ActionContributionItem(xViewer.getCustomizeAction()).fill(popupMenu, -1);
+      new ActionContributionItem(xViewer.getCustomizeActionWithoutDropDown()).fill(popupMenu, -1);
    }
 
    public void createViewTableReportMenuItem(Menu popupMenu) {

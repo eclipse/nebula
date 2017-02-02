@@ -225,11 +225,11 @@ public class XViewer extends TreeViewer {
    }
 
    public Action getCustomizeAction() {
-      return new TableCustomizationAction(this);
+      return new TableCustomizationDropDownAction(this);
    }
 
-   public Action getCustomizeDropDownAction() {
-      return new TableCustomizationDropDownAction(this);
+   public Action getCustomizeActionWithoutDropDown() {
+      return new TableCustomizationAction(this);
    }
 
    public void addCustomizeToViewToolbar(IToolBarManager toolbarManager) {
