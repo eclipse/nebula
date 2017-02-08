@@ -426,6 +426,7 @@ public class Axis extends LinearScale {
 		if (traceList.contains(trace))
 			return;
 		traceList.add(trace);
+		addListener(trace);
 		performAutoScale(false);
 	}
 
@@ -437,6 +438,7 @@ public class Axis extends LinearScale {
 	 */
 	public boolean removeTrace(final Trace trace) {
 		final boolean r = traceList.remove(trace);
+		removeListener(trace);
 		performAutoScale(false);
 		return r;
 	}
