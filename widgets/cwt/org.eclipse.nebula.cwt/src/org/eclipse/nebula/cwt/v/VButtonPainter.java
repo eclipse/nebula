@@ -11,13 +11,13 @@
 
 package org.eclipse.nebula.cwt.v;
 
+import org.eclipse.nebula.cwt.internal.theme.ButtonDrawData;
+import org.eclipse.nebula.cwt.internal.theme.DrawData;
+import org.eclipse.nebula.cwt.internal.theme.Theme;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.internal.theme.ButtonDrawData;
-import org.eclipse.swt.internal.theme.DrawData;
-import org.eclipse.swt.internal.theme.Theme;
 import org.eclipse.swt.widgets.Event;
 
 public class VButtonPainter extends VControlPainter {

@@ -11,11 +11,11 @@ Export-Package: org.eclipse.nebula.cwt.animation,
  org.eclipse.nebula.cwt.animation.effects,
  org.eclipse.nebula.cwt.animation.movement,
  org.eclipse.nebula.cwt.base,
+ org.eclipse.nebula.cwt.internal.theme;x-internal:=true,
  org.eclipse.nebula.cwt.svg,
  org.eclipse.nebula.cwt.v
 Import-Package: org.eclipse.swt,
  org.eclipse.swt.events,
  org.eclipse.swt.graphics,
- org.eclipse.swt.internal.theme,
  org.eclipse.swt.layout,
  org.eclipse.swt.widgets
