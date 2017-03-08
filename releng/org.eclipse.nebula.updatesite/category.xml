@@ -57,7 +57,7 @@
    <feature url="features/org.eclipse.nebula.widgets.geomap.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.geomap.feature" version="1.0.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.feature_1.1.0.qualifier.jar" id="org.eclipse.nebula.feature" version="1.1.0.qualifier">
+   <feature url="features/org.eclipse.nebula.feature_1.2.0.qualifier.jar" id="org.eclipse.nebula.feature" version="1.2.0.qualifier">
       <category name="Nebula Release all Widgets and Examples"/>
    </feature>
    <category-def name="Nebula Release all Widgets and Examples" label="Nebula Release all Widgets and Examples">
