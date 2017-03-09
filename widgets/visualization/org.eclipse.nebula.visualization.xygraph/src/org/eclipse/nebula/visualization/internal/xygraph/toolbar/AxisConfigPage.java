@@ -55,6 +55,8 @@ public class AxisConfigPage {
 	private Label minLabel;
 	private DoubleInputText minText;
 
+	private Button invertAxisButton;
+
 	private Button dateEnabledButton;
 	private Button autoFormat;
 	private Label formatLabel;
@@ -269,6 +271,10 @@ public class AxisConfigPage {
 		gridColorSelector = new ColorSelector(composite);
 		gd = new GridData(SWT.BEGINNING, SWT.CENTER, false, false, 1, 1);
 		gridColorSelector.getButton().setLayoutData(gd);
+
+		invertAxisButton = new Button(composite, SWT.CHECK);
+		configCheckButton(invertAxisButton, "Invert Axis");
+
 		initialize();
 	}
 
@@ -293,6 +299,8 @@ public class AxisConfigPage {
 		axis.setForegroundColor(XYGraphMediaFactory.getInstance().getColor(axisColorSelector.getColorValue()));
 		axis.setPrimarySide(primaryButton.getSelection());
 		axis.setLogScale(logButton.getSelection());
+		// must be set before autoScale as we update the maxOrAutoScaleThrText button as well
+		setInverted(invertAxisButton.getSelection());
 		axis.setAutoScale(autoScaleButton.getSelection());
 		if (autoScaleButton.getSelection())
 			axis.setAutoScaleThreshold(maxOrAutoScaleThrText.getDoubleValue());
@@ -316,6 +324,20 @@ public class AxisConfigPage {
 		axis.setShowMajorGrid(showGridButton.getSelection());
 		axis.setDashGridLine(dashGridLineButton.getSelection());
 		axis.setMajorGridColor(XYGraphMediaFactory.getInstance().getColor(gridColorSelector.getColorValue()));
+
+	}
+
+	private void setInverted(boolean isInverted) {
+		axis.setInverted(isInverted);
+		double min = minText.getDoubleValue();
+		double max = maxOrAutoScaleThrText.getDoubleValue();
+		if ((isInverted && (min < max)) || (!isInverted && (min > max))) {
+			minText.getText().setText(String.valueOf(max));
+			if (autoScaleButton.getSelection())
+				maxOrAutoScaleThrText.getText().setText(String.valueOf(axis.getAutoScaleThreshold()));
+			else
+				maxOrAutoScaleThrText.getText().setText(String.valueOf(min));
+		}
 	}
 
 	private void initialize() {
@@ -357,6 +379,7 @@ public class AxisConfigPage {
 		showGridButton.setSelection(axis.isShowMajorGrid());
 		dashGridLineButton.setSelection(axis.isDashGridLine());
 		gridColorSelector.setColorValue(axis.getMajorGridColor().getRGB());
+		invertAxisButton.setSelection(axis.isInverted());
 	}
 
 }

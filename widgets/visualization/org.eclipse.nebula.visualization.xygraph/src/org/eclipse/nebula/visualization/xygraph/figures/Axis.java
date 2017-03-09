@@ -77,6 +77,8 @@ public class Axis extends LinearScale {
 
 	private boolean showMinorGrid = false;
 
+	private boolean isInverted = false;
+
 	private Color majorGridColor;
 
 	private Color minorGridColor;
@@ -165,6 +167,30 @@ public class Axis extends LinearScale {
 		Range old_range = getRange();
 		super.setRange(lower, upper);
 		fireAxisRangeChanged(old_range, getRange());
+	}
+
+	/**
+	 * Inverts the axis if set to True
+	 * 
+	 * @param isInverted
+	 */
+	public void setInverted(boolean isInverted) {
+		this.isInverted = isInverted;
+		double min = getRange().getLower();
+		double max = getRange().getUpper();
+		if ((isInverted && (min < max)) || (!isInverted && (min > max))) {
+			setRange(new Range(max, min));
+		}
+		xyGraph.repaint();
+	}
+
+	/**
+	 * Returns True if axis is inverted, False otherwise
+	 * 
+	 * @return
+	 */
+	public boolean isInverted() {
+		return isInverted;
 	}
 
 	@Override
