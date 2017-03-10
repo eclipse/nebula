@@ -4327,7 +4327,14 @@ public class Grid extends Canvas {
 		if (columnScrolling) {
 			int pixels = 0;
 			for (int i = 0; i < selection; i++) {
-				pixels += ((GridColumn) displayOrderedColumns.get(i)).getWidth();
+				GridColumn gridColumn = (GridColumn) displayOrderedColumns.get(i);
+				if(gridColumn.isVisible()) {
+					pixels += gridColumn.getWidth();
+				} else {
+					if(selection < displayOrderedColumns.size() - 1) {
+						selection += 1;
+					}
+				}
 			}
 			selection = pixels;
 		}
