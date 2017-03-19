@@ -27,7 +27,7 @@ import org.eclipse.swt.graphics.Transform;
  */
 public final class GraphicsUtil {
 
-	private static boolean isRAP = SWT.getPlatform().startsWith("rap"); //$NON-NLS-1$;
+	private static boolean isRAP = SWT.getPlatform().startsWith("rap"); //$NON-NLS-1$ ;
 
 	/**
 	 * Draw vertical text.
@@ -66,8 +66,8 @@ public final class GraphicsUtil {
 			// final int h = titleSize.width + 1;
 			Image image = null;
 			try {
-				image = SingleSourceHelper2.createVerticalTextImage(text, graphics.getFont(), graphics
-						.getForegroundColor().getRGB(), upToDown);
+				image = SingleSourceHelper2.createVerticalTextImage(text, graphics.getFont(),
+						graphics.getForegroundColor().getRGB(), upToDown);
 				graphics.drawImage(image, x, y);
 
 			} finally {

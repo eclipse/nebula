@@ -43,8 +43,8 @@ public class Grid extends Figure implements IAxisListener {
 					graphics.drawLine(axis.getBounds().x + pos, bounds.y + bounds.height, axis.getBounds().x + pos,
 							bounds.y);
 				else
-					graphics.drawLine(bounds.x, axis.getBounds().y + axis.getBounds().height - pos, bounds.x
-							+ bounds.width, axis.getBounds().y + axis.getBounds().height - pos);
+					graphics.drawLine(bounds.x, axis.getBounds().y + axis.getBounds().height - pos,
+							bounds.x + bounds.width, axis.getBounds().y + axis.getBounds().height - pos);
 			}
 		}
 		graphics.popState();

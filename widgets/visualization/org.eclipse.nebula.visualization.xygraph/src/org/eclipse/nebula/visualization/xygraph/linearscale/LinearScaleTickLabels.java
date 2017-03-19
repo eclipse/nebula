@@ -40,12 +40,12 @@ public class LinearScaleTickLabels extends Figure {
 		}
 		return result;
 	}
-	
+
 	/** default: show max label */
 	private boolean showMaxLabel = true;
 	/** default: show min label */
 	private boolean showMinLabel = true;
-	
+
 	/** the array of tick label vales */
 	private ArrayList<Double> tickLabelValues;
 
@@ -325,7 +325,7 @@ public class LinearScaleTickLabels extends Figure {
 
 		return false;
 	}
-	
+
 	public boolean isShowMaxLabel() {
 		return showMaxLabel;
 	}
@@ -333,6 +333,7 @@ public class LinearScaleTickLabels extends Figure {
 	public void setShowMaxLabel(boolean showMaxLabel) {
 		this.showMaxLabel = showMaxLabel;
 	}
+
 	/**
 	 * Updates tick label for normal scale.
 	 * 
@@ -489,14 +490,14 @@ public class LinearScaleTickLabels extends Figure {
 				}
 				tickLabelValues.add(v.doubleValue());
 
-				int tickLabelPosition = (int) ((Math.log10(v.doubleValue()) - logMin) / (Math.log10(max) - logMin) * length)
-						+ scale.getMargin();
+				int tickLabelPosition = (int) ((Math.log10(v.doubleValue()) - logMin) / (Math.log10(max) - logMin)
+						* length) + scale.getMargin();
 				tickLabelPositions.add(tickLabelPosition);
 			} else {
 				// must use BigDecimal because it involves equal comparison
-				for (BigDecimal j = firstPosition; minBigger ? j.doubleValue() >= pow(10, i - 1).doubleValue() : j
-						.doubleValue() <= pow(10, i).doubleValue(); j = minBigger ? j.subtract(tickStep) : j
-						.add(tickStep)) {
+				for (BigDecimal j = firstPosition; minBigger ? j.doubleValue() >= pow(10, i - 1).doubleValue()
+						: j.doubleValue() <= pow(10, i).doubleValue(); j = minBigger ? j.subtract(tickStep)
+								: j.add(tickStep)) {
 					if (minBigger ? j.doubleValue() < max : j.doubleValue() > max) {
 						break;
 					}
@@ -518,8 +519,8 @@ public class LinearScaleTickLabels extends Figure {
 		}
 
 		// add max
-		if (minBigger ? max < tickLabelValues.get(tickLabelValues.size() - 1) : max > tickLabelValues
-				.get(tickLabelValues.size() - 1)) {
+		if (minBigger ? max < tickLabelValues.get(tickLabelValues.size() - 1)
+				: max > tickLabelValues.get(tickLabelValues.size() - 1)) {
 			tickLabelValues.add(max);
 			if (scale.isDateEnabled()) {
 				Date date = new Date((long) max);
@@ -609,8 +610,6 @@ public class LinearScaleTickLabels extends Figure {
 		super.paintClientArea(graphics);
 	}
 
-	
-
 	public boolean isShowMinLabel() {
 		return showMinLabel;
 	}
@@ -618,6 +617,7 @@ public class LinearScaleTickLabels extends Figure {
 	public void setShowMinLabel(boolean showMinLabel) {
 		this.showMinLabel = showMinLabel;
 	}
+
 	/**
 	 * Updates the tick labels.
 	 * 

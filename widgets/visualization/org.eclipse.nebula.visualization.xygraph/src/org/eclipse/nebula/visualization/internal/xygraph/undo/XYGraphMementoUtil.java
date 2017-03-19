@@ -62,7 +62,7 @@ public class XYGraphMementoUtil {
 	}
 
 	public static void saveXYGraphPropsToMemento(IXYGraph xyGraph, XYGraphMemento memento) {
-		saveXYGraphPropsToMemento((XYGraph)xyGraph, memento);
+		saveXYGraphPropsToMemento((XYGraph) xyGraph, memento);
 	}
 
 	/**
@@ -94,11 +94,12 @@ public class XYGraphMementoUtil {
 	}
 
 	public static void restoreXYGraphPropsFromMemento(IXYGraph xyGraph, XYGraphMemento memento) {
-		restoreXYGraphPropsFromMemento((XYGraph)xyGraph, memento);
+		restoreXYGraphPropsFromMemento((XYGraph) xyGraph, memento);
 	}
 
 	/**
-	 * Use {@link #restoreXYGraphPropsFromMemebto(IXYGraph, XYGraphMemento)} instead
+	 * Use {@link #restoreXYGraphPropsFromMemebto(IXYGraph, XYGraphMemento)}
+	 * instead
 	 * 
 	 * @param xyGraph
 	 * @param memento

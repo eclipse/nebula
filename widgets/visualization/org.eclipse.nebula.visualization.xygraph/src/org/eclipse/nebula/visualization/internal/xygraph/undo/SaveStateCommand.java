@@ -18,7 +18,7 @@ abstract public class SaveStateCommand implements IUndoableCommand {
 
 	/**
 	 * Initialize Derived class should save the 'original' state.
-	 * */
+	 */
 	public SaveStateCommand(final String name) {
 		this.name = name;
 	}

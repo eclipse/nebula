@@ -23,7 +23,7 @@ public class RemoveAnnotationCommand implements IUndoableCommand {
 	private Annotation annotation;
 
 	public RemoveAnnotationCommand(IXYGraph xyGraph, Annotation annotation) {
-		this((XYGraph)xyGraph, annotation);
+		this((XYGraph) xyGraph, annotation);
 	}
 
 	/**

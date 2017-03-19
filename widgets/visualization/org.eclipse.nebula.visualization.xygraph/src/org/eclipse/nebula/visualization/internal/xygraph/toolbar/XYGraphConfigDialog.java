@@ -52,7 +52,7 @@ public class XYGraphConfigDialog extends Dialog {
 	private boolean changed = false;
 
 	public XYGraphConfigDialog(Shell parentShell, IXYGraph xyGraph) {
-		this(parentShell, (XYGraph)xyGraph);
+		this(parentShell, (XYGraph) xyGraph);
 	}
 
 	/**

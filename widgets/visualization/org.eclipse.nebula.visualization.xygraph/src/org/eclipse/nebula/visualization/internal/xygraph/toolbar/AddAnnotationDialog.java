@@ -31,7 +31,7 @@ public class AddAnnotationDialog extends Dialog {
 	private AnnotationConfigPage configPage;
 
 	public AddAnnotationDialog(final Shell parentShell, final IXYGraph xyGraph) {
-		this(parentShell, (XYGraph)xyGraph);
+		this(parentShell, (XYGraph) xyGraph);
 	}
 
 	/**

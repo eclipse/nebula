@@ -72,7 +72,8 @@ public class WrappableToolbarLayout extends AbstractLayout {
 			IFigure figure = (IFigure) child;
 			Dimension preferSize = figure.getPreferredSize();
 			if (w + preferSize.width < clientArea.width) {
-				figure.setBounds(new Rectangle(clientArea.x + w, clientArea.y + h, preferSize.width, preferSize.height));
+				figure.setBounds(
+						new Rectangle(clientArea.x + w, clientArea.y + h, preferSize.width, preferSize.height));
 				w += preferSize.width;
 				if (maxH < preferSize.height) {
 					maxH = preferSize.height;
@@ -80,7 +81,8 @@ public class WrappableToolbarLayout extends AbstractLayout {
 			} else {
 				h += maxH;
 				w = 0;
-				figure.setBounds(new Rectangle(clientArea.x + w, clientArea.y + h, preferSize.width, preferSize.height));
+				figure.setBounds(
+						new Rectangle(clientArea.x + w, clientArea.y + h, preferSize.width, preferSize.height));
 				w = preferSize.width;
 				maxH = preferSize.height;
 			}

@@ -45,7 +45,7 @@ public class GraphConfigPage {
 	private Button transparent;
 
 	public GraphConfigPage(IXYGraph xyGraph) {
-		this((XYGraph)xyGraph);
+		this((XYGraph) xyGraph);
 	}
 
 	/**
@@ -75,8 +75,8 @@ public class GraphConfigPage {
 		titleText.setLayoutData(gd);
 
 		final Label fontLabel = new Label(composite, 0);
-		fontLabel.setText("Title Font: "
-				+ (titleFont == null ? "System Default" : titleFont.getFontData()[0].getName()));
+		fontLabel.setText(
+				"Title Font: " + (titleFont == null ? "System Default" : titleFont.getFontData()[0].getName()));
 		fontLabel.setFont(titleFont);
 		fontLabel.setForeground(xyGraph.getTitleColor());
 		labelGd = new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1);
@@ -155,8 +155,8 @@ public class GraphConfigPage {
 		xyGraph.setTitle(titleText.getText());
 		xyGraph.setTitleFont(titleFont);
 		xyGraph.setTitleColor(XYGraphMediaFactory.getInstance().getColor(titleColorSelector.getColorValue()));
-		xyGraph.getPlotArea().setBackgroundColor(
-				XYGraphMediaFactory.getInstance().getColor(plotAreaColorSelector.getColorValue()));
+		xyGraph.getPlotArea()
+				.setBackgroundColor(XYGraphMediaFactory.getInstance().getColor(plotAreaColorSelector.getColorValue()));
 		xyGraph.setShowTitle(showTitle.getSelection());
 		xyGraph.setShowLegend(showLegend.getSelection());
 		xyGraph.getPlotArea().setShowBorder(showPlotAreaBorder.getSelection());
@@ -170,7 +170,7 @@ public class GraphConfigPage {
 	 */
 	@Deprecated
 	public XYGraph getXYGraph() {
-		return (XYGraph)xyGraph;
+		return (XYGraph) xyGraph;
 	}
 
 	/**

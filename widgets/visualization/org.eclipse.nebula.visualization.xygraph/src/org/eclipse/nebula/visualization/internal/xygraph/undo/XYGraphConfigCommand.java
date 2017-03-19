@@ -22,11 +22,12 @@ public class XYGraphConfigCommand implements IUndoableCommand {
 	private XYGraphMemento previousXYGraphMem, afterXYGraphMem;
 
 	public XYGraphConfigCommand(IXYGraph xyGraph) {
-		this((XYGraph)xyGraph);
+		this((XYGraph) xyGraph);
 	}
 
 	/**
 	 * Use {@link #XYGraphConfigCommand(IXYGraph)} instead
+	 * 
 	 * @param xyGraph
 	 */
 	@Deprecated

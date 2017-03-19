@@ -52,7 +52,8 @@ public class SimpleToolbarArmedXYGraphExample {
 		traceDataProvider.setCurrentYDataArray(new double[] { 11, 44, 55, 45, 88, 98, 52, 23 });
 
 		// create the trace
-		Trace trace = new Trace("Trace1-XY Plot", xyGraph.getPrimaryXAxis(), xyGraph.getPrimaryYAxis(), traceDataProvider);
+		Trace trace = new Trace("Trace1-XY Plot", xyGraph.getPrimaryXAxis(), xyGraph.getPrimaryYAxis(),
+				traceDataProvider);
 
 		// set trace property
 		trace.setPointStyle(PointStyle.XCROSS);

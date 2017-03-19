@@ -18,19 +18,19 @@ import org.eclipse.swt.graphics.Color;
 
 public abstract class BasePointStyleProvider implements IPointStyleProvider {
 
-    @Override
-    public Color getPointColor(ISample sample, Trace trace) {
-        return trace.getTraceColor();
-    }
+	@Override
+	public Color getPointColor(ISample sample, Trace trace) {
+		return trace.getTraceColor();
+	}
 
-    @Override
-    public int getPointSize(ISample sample, Trace trace) {
-        return trace.getPointSize();
-    }
+	@Override
+	public int getPointSize(ISample sample, Trace trace) {
+		return trace.getPointSize();
+	}
 
-    @Override
-    public PointStyle getPointStyle(ISample sample, Trace trace) {
-        return trace.getPointStyle();
-    }
+	@Override
+	public PointStyle getPointStyle(ISample sample, Trace trace) {
+		return trace.getPointStyle();
+	}
 
 }

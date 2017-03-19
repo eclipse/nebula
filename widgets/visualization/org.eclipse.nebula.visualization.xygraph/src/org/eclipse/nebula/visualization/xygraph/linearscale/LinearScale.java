@@ -76,13 +76,15 @@ public class LinearScale extends AbstractScale {
 
 	private void calcMargin() {
 		if (isHorizontal()) {
-			margin = (int) Math.ceil(Math.max(
-					FigureUtilities.getTextExtents(format(getRange().getLower(), true), getFont()).width,
-					FigureUtilities.getTextExtents(format(getRange().getUpper(), true), getFont()).width) / 2.0);
+			margin = (int) Math
+					.ceil(Math.max(FigureUtilities.getTextExtents(format(getRange().getLower(), true), getFont()).width,
+							FigureUtilities.getTextExtents(format(getRange().getUpper(), true), getFont()).width)
+							/ 2.0);
 		} else
-			margin = (int) Math.ceil(Math.max(
-					FigureUtilities.getTextExtents(format(getRange().getLower(), true), getFont()).height,
-					FigureUtilities.getTextExtents(format(getRange().getUpper(), true), getFont()).height) / 2.0);
+			margin = (int) Math.ceil(
+					Math.max(FigureUtilities.getTextExtents(format(getRange().getLower(), true), getFont()).height,
+							FigureUtilities.getTextExtents(format(getRange().getUpper(), true), getFont()).height)
+							/ 2.0);
 	}
 
 	/**
@@ -182,8 +184,8 @@ public class LinearScale extends AbstractScale {
 				value = min;
 			// throw new IllegalArgumentException(
 			// "Invalid value: value must be greater than 0");
-			pixelsToStart = (int) ((Math.log10(value) - Math.log10(min)) / (Math.log10(max) - Math.log10(min)) * (length - 2 * margin))
-					+ margin;
+			pixelsToStart = (int) ((Math.log10(value) - Math.log10(min)) / (Math.log10(max) - Math.log10(min))
+					* (length - 2 * margin)) + margin;
 		} else
 			pixelsToStart = (int) ((value - min) / (max - min) * (length - 2 * margin)) + margin;
 
@@ -205,8 +207,9 @@ public class LinearScale extends AbstractScale {
 	 * 
 	 * @param the
 	 *            position.
-	 * @param true if the position is relative to the left/bottom bound of the
-	 *        scale; False if it is the absolute position.
+	 * @param true
+	 *            if the position is relative to the left/bottom bound of the
+	 *            scale; False if it is the absolute position.
 	 * @return the value corresponding to the position.
 	 */
 	public double getPositionValue(int position, boolean relative) {
@@ -258,26 +261,30 @@ public class LinearScale extends AbstractScale {
 	public boolean isShowMinLabel() {
 		return tickLabels.isShowMinLabel();
 	}
-	
+
 	@Override
 	protected void layout() {
 		super.layout();
 		updateTick();
 		Rectangle area = getClientArea();
 		if (isHorizontal() && getTickLabelSide() == LabelSide.Primary) {
-			tickLabels.setBounds(new Rectangle(area.x, area.y + LinearScaleTickMarks.MAJOR_TICK_LENGTH
-					+ SPACE_BTW_MARK_LABEL, area.width, area.height - LinearScaleTickMarks.MAJOR_TICK_LENGTH));
+			tickLabels.setBounds(
+					new Rectangle(area.x, area.y + LinearScaleTickMarks.MAJOR_TICK_LENGTH + SPACE_BTW_MARK_LABEL,
+							area.width, area.height - LinearScaleTickMarks.MAJOR_TICK_LENGTH));
 			tickMarks.setBounds(area);
 		} else if (isHorizontal() && getTickLabelSide() == LabelSide.Secondary) {
-			tickLabels.setBounds(new Rectangle(area.x, area.y + area.height - LinearScaleTickMarks.MAJOR_TICK_LENGTH
-					- tickLabels.getTickLabelMaxHeight() - SPACE_BTW_MARK_LABEL, area.width, tickLabels
-					.getTickLabelMaxHeight()));
+			tickLabels.setBounds(new Rectangle(
+					area.x, area.y + area.height - LinearScaleTickMarks.MAJOR_TICK_LENGTH
+							- tickLabels.getTickLabelMaxHeight() - SPACE_BTW_MARK_LABEL,
+					area.width, tickLabels.getTickLabelMaxHeight()));
 			tickMarks.setBounds(new Rectangle(area.x, area.y + area.height - LinearScaleTickMarks.MAJOR_TICK_LENGTH,
 					area.width, LinearScaleTickMarks.MAJOR_TICK_LENGTH));
 		} else if (getTickLabelSide() == LabelSide.Primary) {
-			tickLabels.setBounds(new Rectangle(area.x + area.width - LinearScaleTickMarks.MAJOR_TICK_LENGTH
-					- tickLabels.getTickLabelMaxLength() - SPACE_BTW_MARK_LABEL, area.y, tickLabels
-					.getTickLabelMaxLength(), area.height));
+			tickLabels
+					.setBounds(new Rectangle(
+							area.x + area.width - LinearScaleTickMarks.MAJOR_TICK_LENGTH
+									- tickLabels.getTickLabelMaxLength() - SPACE_BTW_MARK_LABEL,
+							area.y, tickLabels.getTickLabelMaxLength(), area.height));
 			tickMarks.setBounds(new Rectangle(area.x + area.width - LinearScaleTickMarks.MAJOR_TICK_LENGTH, area.y,
 					LinearScaleTickMarks.MAJOR_TICK_LENGTH, area.height));
 		} else {
@@ -333,7 +340,7 @@ public class LinearScale extends AbstractScale {
 		revalidate();
 
 	}
-	
+
 	/**
 	 * sets the visibility of the maximum label
 	 * 
@@ -375,9 +382,5 @@ public class LinearScale extends AbstractScale {
 	protected boolean useLocalCoordinates() {
 		return true;
 	}
-	
-
-	
-
 
 }

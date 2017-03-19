@@ -20,7 +20,7 @@ public class ImplementationLoader {
 		Object result = null;
 		try {
 			// if Interface name ends with a digit
-			if(name.matches("^.+?\\d$")) {
+			if (name.matches("^.+?\\d$")) {
 				// remove all trailing digits
 				name = name.replaceAll("\\d*$", "");
 			}

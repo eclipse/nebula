@@ -50,7 +50,8 @@ public class BarChartExample {
 		traceDataProvider.setCurrentYDataArray(new double[] { 11, 44, 55, 45, 88, 98, 52, 23, 78 });
 
 		// create the trace
-		Trace trace = new Trace("Trace1-XY Plot", xyGraph.getPrimaryXAxis(), xyGraph.getPrimaryYAxis(), traceDataProvider);
+		Trace trace = new Trace("Trace1-XY Plot", xyGraph.getPrimaryXAxis(), xyGraph.getPrimaryYAxis(),
+				traceDataProvider);
 
 		// set trace property
 		trace.setTraceType(TraceType.BAR);
@@ -68,7 +69,8 @@ public class BarChartExample {
 		traceDataProvider2.setCurrentYDataArray(new double[] { 15, 60, 40, 60, 70, 80, 65, 70, 23 });
 
 		// create the trace
-		Trace trace2 = new Trace("Trace1-XY Plot", xyGraph.getPrimaryXAxis(), xyGraph.getPrimaryYAxis(), traceDataProvider2);
+		Trace trace2 = new Trace("Trace1-XY Plot", xyGraph.getPrimaryXAxis(), xyGraph.getPrimaryYAxis(),
+				traceDataProvider2);
 
 		// set trace property
 		trace2.setPointSize(6);

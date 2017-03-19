@@ -183,13 +183,15 @@ public class XYGraph extends Figure implements IXYGraph {
 	 * Constructor
 	 */
 	public XYGraph() {
-	    this(new DefaultAxesFactory());
+		this(new DefaultAxesFactory());
 	}
-	
+
 	/**
 	 * Constructor.
-	 * @param axesFactory The {@link IAxesFactory} to use to create
-	 * the primary axes for the graph.  Should not be {@code null}
+	 * 
+	 * @param axesFactory
+	 *            The {@link IAxesFactory} to use to create the primary axes for
+	 *            the graph. Should not be {@code null}
 	 */
 	public XYGraph(IAxesFactory axesFactory) {
 		setOpaque(!transparent);
@@ -201,7 +203,7 @@ public class XYGraph extends Figure implements IXYGraph {
 		// titleLabel.setVisible(false);
 		xAxisList = new ArrayList<Axis>();
 		yAxisList = new ArrayList<Axis>();
-		plotArea = new PlotArea((IXYGraph)this);
+		plotArea = new PlotArea((IXYGraph) this);
 		getPlotArea().setOpaque(!transparent);
 
 		add(titleLabel);
@@ -308,8 +310,8 @@ public class XYGraph extends Figure implements IXYGraph {
 
 		for (int i = yAxisList.size() - 1; i >= 0; i--) {
 			Axis yAxis = yAxisList.get(i);
-			int hintHeight = clientArea.height + (hasTopXAxis ? 1 : 0) * yAxis.getMargin() + (hasBottomXAxis ? 1 : 0)
-					* yAxis.getMargin();
+			int hintHeight = clientArea.height + (hasTopXAxis ? 1 : 0) * yAxis.getMargin()
+					+ (hasBottomXAxis ? 1 : 0) * yAxis.getMargin();
 			if (hintHeight > getClientArea().height)
 				hintHeight = clientArea.height;
 			Dimension yAxisSize = yAxis.getPreferredSize(clientArea.width, hintHeight);
@@ -323,8 +325,8 @@ public class XYGraph extends Figure implements IXYGraph {
 			} else { // on the right
 				if (yAxis.isVisible())
 					hasRightYAxis = true;
-				yAxis.setBounds(new Rectangle(clientArea.x + clientArea.width - yAxisSize.width - 1, clientArea.y
-						- (hasTopXAxis ? yAxis.getMargin() : 0), yAxisSize.width, yAxisSize.height));
+				yAxis.setBounds(new Rectangle(clientArea.x + clientArea.width - yAxisSize.width - 1,
+						clientArea.y - (hasTopXAxis ? yAxis.getMargin() : 0), yAxisSize.width, yAxisSize.height));
 				clientArea.width -= yAxisSize.width;
 			}
 		}
@@ -343,8 +345,9 @@ public class XYGraph extends Figure implements IXYGraph {
 		if (plotArea != null && plotArea.isVisible()) {
 
 			Rectangle plotAreaBound = new Rectangle(primaryXAxis.getBounds().x + primaryXAxis.getMargin() + 1,
-					primaryYAxis.getBounds().y + primaryYAxis.getMargin(), primaryXAxis.getBounds().width - 2
-							* primaryXAxis.getMargin(), primaryYAxis.getBounds().height - 2 * primaryYAxis.getMargin());
+					primaryYAxis.getBounds().y + primaryYAxis.getMargin(),
+					primaryXAxis.getBounds().width - 2 * primaryXAxis.getMargin(),
+					primaryYAxis.getBounds().height - 2 * primaryYAxis.getMargin());
 			plotArea.setBounds(plotAreaBound);
 
 		}
@@ -432,7 +435,7 @@ public class XYGraph extends Figure implements IXYGraph {
 			yAxisList.add(axis);
 		plotArea.addGrid(new Grid(axis));
 		add(axis);
-		axis.setXyGraph((IXYGraph)this);
+		axis.setXyGraph((IXYGraph) this);
 		revalidate();
 	}
 
@@ -459,19 +462,19 @@ public class XYGraph extends Figure implements IXYGraph {
 	 */
 	public void addTrace(Trace trace) {
 		if (trace.getTraceColor() == null) { // Cycle through default colors
-			trace.setTraceColor(XYGraphMediaFactory.getInstance().getColor(
-					DEFAULT_TRACES_COLOR[traceNum % DEFAULT_TRACES_COLOR.length]));
+			trace.setTraceColor(XYGraphMediaFactory.getInstance()
+					.getColor(DEFAULT_TRACES_COLOR[traceNum % DEFAULT_TRACES_COLOR.length]));
 			++traceNum;
 		}
 		if (legendMap.containsKey(trace.getYAxis()))
 			legendMap.get(trace.getYAxis()).addTrace(trace);
 		else {
-			legendMap.put(trace.getYAxis(), new Legend((IXYGraph)this));
+			legendMap.put(trace.getYAxis(), new Legend((IXYGraph) this));
 			legendMap.get(trace.getYAxis()).addTrace(trace);
 			add(legendMap.get(trace.getYAxis()));
 		}
 		plotArea.addTrace(trace);
-		trace.setXYGraph((IXYGraph)this);
+		trace.setXYGraph((IXYGraph) this);
 		trace.dataChanged(null);
 		revalidate();
 		repaint();

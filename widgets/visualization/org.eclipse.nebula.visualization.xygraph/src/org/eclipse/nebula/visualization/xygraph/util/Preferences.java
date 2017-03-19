@@ -23,7 +23,7 @@ public class Preferences {
 
 	public static boolean useAdvancedGraphics() {
 		if (use_advanced_graphics) {
-			String value = System.getProperty(PROHIBIT_ADVANCED_GRAPHICS); //$NON-NLS-1$
+			String value = System.getProperty(PROHIBIT_ADVANCED_GRAPHICS); // $NON-NLS-1$
 			if (value == null || !value.equals("true")) //$NON-NLS-1$
 				return true;
 			return false;

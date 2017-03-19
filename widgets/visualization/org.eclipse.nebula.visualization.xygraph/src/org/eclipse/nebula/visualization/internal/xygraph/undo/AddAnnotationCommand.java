@@ -24,7 +24,7 @@ public class AddAnnotationCommand implements IUndoableCommand {
 	private Annotation annotation;
 
 	public AddAnnotationCommand(IXYGraph xyGraph, Annotation annotation) {
-		this((XYGraph)xyGraph, annotation);
+		this((XYGraph) xyGraph, annotation);
 	}
 
 	/**

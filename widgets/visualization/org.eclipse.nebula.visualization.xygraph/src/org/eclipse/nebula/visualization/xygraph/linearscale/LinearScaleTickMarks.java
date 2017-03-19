@@ -154,9 +154,8 @@ public class LinearScaleTickMarks extends Figure {
 					if (i > 0) {
 						// draw the first grid step which is start from min
 						// value
-						if (i == 1
-								&& (tickLabelPositions.get(1) - tickLabelPositions.get(0)) < scale.getScaleTickLabels()
-										.getGridStepInPixel()) {
+						if (i == 1 && (tickLabelPositions.get(1) - tickLabelPositions.get(0)) < scale
+								.getScaleTickLabels().getGridStepInPixel()) {
 							x = tickLabelPositions.get(1);
 							while ((x - tickLabelPositions.get(0)) > minorGridStepInPixel + 3) {
 								x = x - minorGridStepInPixel;
@@ -175,7 +174,7 @@ public class LinearScaleTickMarks extends Figure {
 							for (int j = 0; j < minorTicksNumber; j++) {
 								x = tickLabelPositions.get(i - 1)
 										+ (tickLabelPositions.get(i) - tickLabelPositions.get(i - 1)) * j
-										/ minorTicksNumber;
+												/ minorTicksNumber;
 								drawXMinorTicks(gc, tickLabelSide, x, y);
 							}
 						}
@@ -258,9 +257,8 @@ public class LinearScaleTickMarks extends Figure {
 					if (i > 0) {
 						// draw the first grid step which is start from min
 						// value
-						if (i == 1
-								&& (tickLabelPositions.get(1) - tickLabelPositions.get(0)) < scale.getScaleTickLabels()
-										.getGridStepInPixel()) {
+						if (i == 1 && (tickLabelPositions.get(1) - tickLabelPositions.get(0)) < scale
+								.getScaleTickLabels().getGridStepInPixel()) {
 							y = tickLabelPositions.get(1);
 							while ((y - tickLabelPositions.get(0)) > minorGridStepInPixel + 3) {
 								y = y - minorGridStepInPixel;
@@ -279,7 +277,7 @@ public class LinearScaleTickMarks extends Figure {
 							for (int j = 0; j < minorTicksNumber; j++) {
 								y = height - tickLabelPositions.get(i - 1)
 										- (tickLabelPositions.get(i) - tickLabelPositions.get(i - 1)) * j
-										/ minorTicksNumber;
+												/ minorTicksNumber;
 								drawYMinorTicks(gc, tickLabelSide, x, y);
 							}
 						}

@@ -43,8 +43,7 @@ public class ToolbarArmedXYGraph extends Figure {
 	}
 
 	/**
-	 * Use {@link #ToolbarArmedXYGraph(IXYGraph)} instead
-	 * <br>
+	 * Use {@link #ToolbarArmedXYGraph(IXYGraph)} instead <br>
 	 * Construct default toolbar around existing graph
 	 * 
 	 * @param xyGraph
@@ -66,7 +65,7 @@ public class ToolbarArmedXYGraph extends Figure {
 	 * @see XYGraphFlags#SEPARATE_ZOOM
 	 */
 	public ToolbarArmedXYGraph(final IXYGraph xyGraph, final int flags) {
-		this((XYGraph)xyGraph, flags);
+		this((XYGraph) xyGraph, flags);
 	}
 
 	/**
@@ -132,7 +131,7 @@ public class ToolbarArmedXYGraph extends Figure {
 	 */
 	@Deprecated
 	public XYGraph getXYGraph() {
-		return (XYGraph)xyGraph;
+		return (XYGraph) xyGraph;
 	}
 
 	/**

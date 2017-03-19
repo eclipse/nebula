@@ -214,14 +214,15 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 			break;
 		case FOUR_DIRECTIONS:
 		case LEFT_RIGHT:
-			hLine.setPoints(new PointList(new int[] { xAxis.getValuePosition(xAxis.getRange().getLower(), false),
-					currentPosition.y, xAxis.getValuePosition(xAxis.getRange().getUpper(), false), currentPosition.y }));
+			hLine.setPoints(new PointList(
+					new int[] { xAxis.getValuePosition(xAxis.getRange().getLower(), false), currentPosition.y,
+							xAxis.getValuePosition(xAxis.getRange().getUpper(), false), currentPosition.y }));
 			if (cursorLineStyle != CursorLineStyle.FOUR_DIRECTIONS)
 				break;
 		case UP_DOWN:
-			vLine.setPoints(new PointList(new int[] { currentPosition.x,
-					yAxis.getValuePosition(yAxis.getRange().getUpper(), false), currentPosition.x,
-					yAxis.getValuePosition(yAxis.getRange().getLower(), false) }));
+			vLine.setPoints(new PointList(
+					new int[] { currentPosition.x, yAxis.getValuePosition(yAxis.getRange().getUpper(), false),
+							currentPosition.x, yAxis.getValuePosition(yAxis.getRange().getLower(), false) }));
 			break;
 		default:
 			break;
@@ -275,11 +276,11 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 		switch (cursorLineStyle) {
 		case NONE:
 			// left
-			graphics.drawLine(currentPosition.x - POINT_SIZE / 2, currentPosition.y, currentPosition.x - POINT_SIZE / 2
-					- CURSOR_LINE_LENGTH, currentPosition.y);
+			graphics.drawLine(currentPosition.x - POINT_SIZE / 2, currentPosition.y,
+					currentPosition.x - POINT_SIZE / 2 - CURSOR_LINE_LENGTH, currentPosition.y);
 			// right
-			graphics.drawLine(currentPosition.x + POINT_SIZE / 2, currentPosition.y, currentPosition.x + POINT_SIZE / 2
-					+ CURSOR_LINE_LENGTH, currentPosition.y);
+			graphics.drawLine(currentPosition.x + POINT_SIZE / 2, currentPosition.y,
+					currentPosition.x + POINT_SIZE / 2 + CURSOR_LINE_LENGTH, currentPosition.y);
 			// up
 			graphics.drawLine(currentPosition.x, currentPosition.y - POINT_SIZE / 2, currentPosition.x,
 					currentPosition.y - POINT_SIZE / 2 - CURSOR_LINE_LENGTH);
@@ -744,8 +745,8 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 					if (xValue != currentSnappedSample.getXValue()) {
 						xValue = currentSnappedSample.getXValue();
 					}
-					currentPosition = new Point(xAxis.getValuePosition(xValue, false), yAxis.getValuePosition(yValue,
-							false));
+					currentPosition = new Point(xAxis.getValuePosition(xValue, false),
+							yAxis.getValuePosition(yValue, false));
 					fireAnnotationMoved(oldX, oldY, xValue, yValue);
 				} else if (trace.getHotSampleList().size() > 0) {
 					updateToDefaultPosition();
@@ -980,10 +981,10 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 				graphics.setAntialias(SWT.ON);
 			// draw X-cross point
 			Rectangle clientArea = getClientArea().getCopy().shrink(POINT_SIZE / 2, POINT_SIZE / 2);
-			graphics.drawLine(clientArea.x, clientArea.y, clientArea.x + clientArea.width, clientArea.y
-					+ clientArea.height);
-			graphics.drawLine(clientArea.x + clientArea.width, clientArea.y, clientArea.x, clientArea.y
-					+ clientArea.height);
+			graphics.drawLine(clientArea.x, clientArea.y, clientArea.x + clientArea.width,
+					clientArea.y + clientArea.height);
+			graphics.drawLine(clientArea.x + clientArea.width, clientArea.y, clientArea.x,
+					clientArea.y + clientArea.height);
 
 		}
 	}

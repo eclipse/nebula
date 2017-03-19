@@ -108,9 +108,9 @@ public abstract class AbstractDataProvider implements IDataProvider {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.csstudio.sns.widgets.figureparts.IDataProvider#addDataProviderListener
-	 * (org.csstudio.sns.widgets.figureparts .IDataProviderListener)
+	 * @see org.csstudio.sns.widgets.figureparts.IDataProvider#
+	 * addDataProviderListener (org.csstudio.sns.widgets.figureparts
+	 * .IDataProviderListener)
 	 */
 	public void addDataProviderListener(final IDataProviderListener listener) {
 		if (listeners.contains(listener))
@@ -121,9 +121,9 @@ public abstract class AbstractDataProvider implements IDataProvider {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.csstudio.sns.widgets.figureparts.IDataProvider#removeDataProviderListener
-	 * (org.csstudio.sns.widgets.figureparts .IDataProviderListener)
+	 * @see org.csstudio.sns.widgets.figureparts.IDataProvider#
+	 * removeDataProviderListener (org.csstudio.sns.widgets.figureparts
+	 * .IDataProviderListener)
 	 */
 	public boolean removeDataProviderListener(final IDataProviderListener listener) {
 		return listeners.remove(listener);

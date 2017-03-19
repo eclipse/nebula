@@ -161,8 +161,8 @@ public class LinearScaledMarker extends Figure {
 					graphics.drawLine(markerPos, 0, markerPos, TICK_LENGTH);
 					// draw labels
 					if (isMarkerLableVisible()) {
-						graphics.drawText(labels[i], markerPos - markerLabelDimensions[i].width / 2, TICK_LENGTH
-								+ GAP_BTW_MARK_LABEL);
+						graphics.drawText(labels[i], markerPos - markerLabelDimensions[i].width / 2,
+								TICK_LENGTH + GAP_BTW_MARK_LABEL);
 					}
 					i++;
 				}
@@ -173,8 +173,8 @@ public class LinearScaledMarker extends Figure {
 					graphics.drawLine(markerPos, bounds.height, markerPos, bounds.height - TICK_LENGTH);
 					// draw labels
 					if (isMarkerLableVisible()) {
-						graphics.drawText(labels[i], markerPos - markerLabelDimensions[i].width / 2, bounds.height
-								- TICK_LENGTH - GAP_BTW_MARK_LABEL - markerLabelDimensions[i].height);
+						graphics.drawText(labels[i], markerPos - markerLabelDimensions[i].width / 2,
+								bounds.height - TICK_LENGTH - GAP_BTW_MARK_LABEL - markerLabelDimensions[i].height);
 					}
 					i++;
 				}
@@ -187,9 +187,9 @@ public class LinearScaledMarker extends Figure {
 					graphics.drawLine(bounds.width, markerPositions[i], bounds.width - TICK_LENGTH, markerPositions[i]);
 					// draw labels
 					if (isMarkerLableVisible()) {
-						graphics.drawText(labels[i], bounds.width - TICK_LENGTH - GAP_BTW_MARK_LABEL
-								- markerLabelDimensions[i].width, markerPositions[i] - markerLabelDimensions[i].height
-								/ 2);
+						graphics.drawText(labels[i],
+								bounds.width - TICK_LENGTH - GAP_BTW_MARK_LABEL - markerLabelDimensions[i].width,
+								markerPositions[i] - markerLabelDimensions[i].height / 2);
 					}
 				}
 			} else {
@@ -200,8 +200,8 @@ public class LinearScaledMarker extends Figure {
 
 					// draw labels
 					if (isMarkerLableVisible()) {
-						graphics.drawText(labels[i], TICK_LENGTH + GAP_BTW_MARK_LABEL, markerPos
-								- markerLabelDimensions[i].height / 2);
+						graphics.drawText(labels[i], TICK_LENGTH + GAP_BTW_MARK_LABEL,
+								markerPos - markerLabelDimensions[i].height / 2);
 					}
 					i++;
 				}

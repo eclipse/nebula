@@ -137,7 +137,8 @@ public abstract class AbstractScale extends Figure {
 
 		if (isDateEnabled()) {
 			if (autoFormat || formatPattern == null || formatPattern.equals("")
-					|| formatPattern.equals(default_decimal_format) || formatPattern.equals(DEFAULT_ENGINEERING_FORMAT)) {
+					|| formatPattern.equals(default_decimal_format)
+					|| formatPattern.equals(DEFAULT_ENGINEERING_FORMAT)) {
 				double length = Math.abs(max - min);
 				if (length <= 5000 || timeUnit == Calendar.MILLISECOND) { // less
 																			// than
@@ -166,7 +167,7 @@ public abstract class AbstractScale extends Figure {
 					internalSetFormatPattern("MM-dd");//$NON-NLS-1$
 					// } else if (length <= 31536000000d ||timeUnit ==
 					// Calendar.MONTH) { //less than a year
-					//	                	formatPattern = "yyyy-MM-dd";//$NON-NLS-1$
+					// formatPattern = "yyyy-MM-dd";//$NON-NLS-1$
 				} else { // more than a month
 					internalSetFormatPattern("yyyy-MM-dd"); //$NON-NLS-1$
 				}

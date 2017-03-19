@@ -131,8 +131,8 @@ public class Axis extends LinearScale {
 		addMouseMotionListener(panner);
 		grabbing = XYGraphMediaFactory.getInstance().getCursor(XYGraphMediaFactory.CURSOR_GRABBING_ON_AXIS_PATH);
 		Font sysFont = Display.getCurrent().getSystemFont();
-		titleFont = XYGraphMediaFactory.getInstance().getFont(
-				new FontData(sysFont.getFontData()[0].getName(), 12, SWT.BOLD)); //$NON-NLS-1$
+		titleFont = XYGraphMediaFactory.getInstance()
+				.getFont(new FontData(sysFont.getFontData()[0].getName(), 12, SWT.BOLD)); // $NON-NLS-1$
 		if (getBackgroundColor() != null) {
 			RGB backRGB = getBackgroundColor().getRGB();
 			revertBackColor = XYGraphMediaFactory.getInstance().getColor(255 - backRGB.red, 255 - backRGB.green,
@@ -271,8 +271,8 @@ public class Axis extends LinearScale {
 		final Dimension titleSize = FigureUtilities.getTextExtents(title, titleFont);
 		if (isHorizontal()) {
 			if (getTickLabelSide() == LabelSide.Primary)
-				graphics.drawText(title, bounds.x + bounds.width / 2 - titleSize.width / 2, bounds.y + bounds.height
-						- titleSize.height);
+				graphics.drawText(title, bounds.x + bounds.width / 2 - titleSize.width / 2,
+						bounds.y + bounds.height - titleSize.height);
 			else
 				graphics.drawText(title, bounds.x + bounds.width / 2 - titleSize.width / 2, bounds.y);
 		} else {
@@ -282,8 +282,8 @@ public class Axis extends LinearScale {
 			if (getTickLabelSide() == LabelSide.Primary) {
 				GraphicsUtil.drawVerticalText(graphics, title, bounds.x, bounds.y + bounds.height / 2 - h / 2, false);
 			} else {
-				GraphicsUtil.drawVerticalText(graphics, title, bounds.x + bounds.width - w, bounds.y + bounds.height
-						/ 2 - h / 2, true);
+				GraphicsUtil.drawVerticalText(graphics, title, bounds.x + bounds.width - w,
+						bounds.y + bounds.height / 2 - h / 2, true);
 			}
 		}
 
@@ -424,11 +424,9 @@ public class Axis extends LinearScale {
 		}
 
 		// Any change at all?
-		if ((Double.doubleToLongBits(tempMin) == Double.doubleToLongBits(min) && Double.doubleToLongBits(tempMax) == Double
-				.doubleToLongBits(max))
-				|| Double.isInfinite(tempMin)
-				|| Double.isInfinite(tempMax)
-				|| Double.isNaN(tempMin) || Double.isNaN(tempMax))
+		if ((Double.doubleToLongBits(tempMin) == Double.doubleToLongBits(min)
+				&& Double.doubleToLongBits(tempMax) == Double.doubleToLongBits(max)) || Double.isInfinite(tempMin)
+				|| Double.isInfinite(tempMax) || Double.isNaN(tempMin) || Double.isNaN(tempMax))
 			return false;
 
 		if (isLogScaleEnabled()) { // Revert from log space
@@ -674,13 +672,12 @@ public class Axis extends LinearScale {
 	 * @return <code>true</code> if the zoom type is applicable to this axis
 	 */
 	private boolean isValidZoomType(final ZoomType zoom) {
-		return zoom == ZoomType.PANNING
-				|| zoom == ZoomType.RUBBERBAND_ZOOM
-				|| zoom == ZoomType.DYNAMIC_ZOOM
-				|| zoom == ZoomType.ZOOM_IN
-				|| zoom == ZoomType.ZOOM_OUT
-				|| (isHorizontal() && (zoom == ZoomType.HORIZONTAL_ZOOM || zoom == ZoomType.ZOOM_IN_HORIZONTALLY || zoom == ZoomType.ZOOM_OUT_HORIZONTALLY))
-				|| (!isHorizontal() && (zoom == ZoomType.VERTICAL_ZOOM || zoom == ZoomType.ZOOM_OUT_VERTICALLY || zoom == ZoomType.ZOOM_IN_VERTICALLY));
+		return zoom == ZoomType.PANNING || zoom == ZoomType.RUBBERBAND_ZOOM || zoom == ZoomType.DYNAMIC_ZOOM
+				|| zoom == ZoomType.ZOOM_IN || zoom == ZoomType.ZOOM_OUT
+				|| (isHorizontal() && (zoom == ZoomType.HORIZONTAL_ZOOM || zoom == ZoomType.ZOOM_IN_HORIZONTALLY
+						|| zoom == ZoomType.ZOOM_OUT_HORIZONTALLY))
+				|| (!isHorizontal() && (zoom == ZoomType.VERTICAL_ZOOM || zoom == ZoomType.ZOOM_OUT_VERTICALLY
+						|| zoom == ZoomType.ZOOM_IN_VERTICALLY));
 	}
 
 	/**

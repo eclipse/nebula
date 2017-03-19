@@ -209,6 +209,6 @@ public interface IXYGraph extends IFigure {
 	void performStagger();
 
 	public Axis getPrimaryXAxis();
-	
+
 	public Axis getPrimaryYAxis();
 }

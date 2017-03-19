@@ -86,7 +86,7 @@ public class AxisConfigPage {
 	}
 
 	public AxisConfigPage(IXYGraph xyGraph, Axis axis) {
-		this((XYGraph)xyGraph, axis);
+		this((XYGraph) xyGraph, axis);
 	}
 
 	/**
@@ -188,10 +188,10 @@ public class AxisConfigPage {
 		axisColorSelector.getButton().setLayoutData(gd);
 		axisColorSelector.addListener(new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
-				scaleFontLabel.setForeground(XYGraphMediaFactory.getInstance().getColor(
-						axisColorSelector.getColorValue()));
-				titleFontLabel.setForeground(XYGraphMediaFactory.getInstance().getColor(
-						axisColorSelector.getColorValue()));
+				scaleFontLabel
+						.setForeground(XYGraphMediaFactory.getInstance().getColor(axisColorSelector.getColorValue()));
+				titleFontLabel
+						.setForeground(XYGraphMediaFactory.getInstance().getColor(axisColorSelector.getColorValue()));
 			}
 		});
 
@@ -347,7 +347,8 @@ public class AxisConfigPage {
 		axis.setForegroundColor(XYGraphMediaFactory.getInstance().getColor(axisColorSelector.getColorValue()));
 		axis.setPrimarySide(primaryButton.getSelection());
 		axis.setLogScale(logButton.getSelection());
-		// must be set before autoScale as we update the maxOrAutoScaleThrText button as well
+		// must be set before autoScale as we update the maxOrAutoScaleThrText
+		// button as well
 		setInverted(invertAxisButton.getSelection());
 		axis.setAutoScale(autoScaleButton.getSelection());
 		if (autoScaleButton.getSelection())

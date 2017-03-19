@@ -16,18 +16,20 @@ package org.eclipse.nebula.visualization.xygraph.figures;
  */
 public interface IAxesFactory {
 
-    /**
-     * Creates the primary x axis for the {@link XYGraph}
-     * @return The primary x axis for the {@link XYGraph}, should
-     * not be {@code null}
-     */
-    public Axis createXAxis();
-    
-    /**
-     * Creates the primary y axis for the {@link XYGraph}
-     * @return The primary y axis for the {@link XYGraph}, should
-     * not be {@code null}
-     */
-    public Axis createYAxis();
-    
+	/**
+	 * Creates the primary x axis for the {@link XYGraph}
+	 * 
+	 * @return The primary x axis for the {@link XYGraph}, should not be
+	 *         {@code null}
+	 */
+	public Axis createXAxis();
+
+	/**
+	 * Creates the primary y axis for the {@link XYGraph}
+	 * 
+	 * @return The primary y axis for the {@link XYGraph}, should not be
+	 *         {@code null}
+	 */
+	public Axis createYAxis();
+
 }

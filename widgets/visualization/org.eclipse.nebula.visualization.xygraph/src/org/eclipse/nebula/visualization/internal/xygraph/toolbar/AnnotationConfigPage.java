@@ -212,8 +212,8 @@ public class AnnotationConfigPage {
 		if (snapToTrace.getSelection())
 			annotation.setTrace(xyGraph.getPlotArea().getTraceList().get(xAxisOrTraceCombo.getSelectionIndex()));
 		else
-			annotation.setFree(xyGraph.getXAxisList().get(xAxisOrTraceCombo.getSelectionIndex()), xyGraph
-					.getYAxisList().get(yAxisCombo.getSelectionIndex()));
+			annotation.setFree(xyGraph.getXAxisList().get(xAxisOrTraceCombo.getSelectionIndex()),
+					xyGraph.getYAxisList().get(yAxisCombo.getSelectionIndex()));
 
 		if (!useDefaultColorButton.getSelection())
 			annotation.setAnnotationColor(XYGraphMediaFactory.getInstance().getColor(colorSelector.getColorValue()));
@@ -265,8 +265,9 @@ public class AnnotationConfigPage {
 		useDefaultColorButton.setSelection(annotation.getAnnotationColor() == null);
 		colorLabel.setVisible(!useDefaultColorButton.getSelection());
 		colorSelector.getButton().setVisible(annotation.getAnnotationColor() != null);
-		colorSelector.setColorValue(annotation.getAnnotationColor() == null ? annotation.getYAxis()
-				.getForegroundColor().getRGB() : annotation.getAnnotationColor().getRGB());
+		colorSelector.setColorValue(
+				annotation.getAnnotationColor() == null ? annotation.getYAxis().getForegroundColor().getRGB()
+						: annotation.getAnnotationColor().getRGB());
 
 		fontLabel.setText(Messages.Annotation_Font
 				+ (font == null ? Messages.Annotation_SystemDefault : font.getFontData()[0].getName()));

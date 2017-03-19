@@ -228,11 +228,11 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 
 	public void setPointStyleProvider(IPointStyleProvider pointStyleProvider) {
 		fPointStyleProvider = pointStyleProvider;
-		}
+	}
 
 	public IPointStyleProvider getPointStyleProvider() {
 		return fPointStyleProvider;
-		}
+	}
 
 	private String name;
 
@@ -302,15 +302,15 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 		switch (yErrorBarType) {
 		case BOTH:
 		case MINUS:
-			ep = new Point(xAxis.getValuePosition(dp.getXValue(), false), yAxis.getValuePosition(
-					dp.getYValue() - dp.getYMinusError(), false));
+			ep = new Point(xAxis.getValuePosition(dp.getXValue(), false),
+					yAxis.getValuePosition(dp.getYValue() - dp.getYMinusError(), false));
 			graphics.drawLine(dpPos, ep);
 			graphics.drawLine(ep.x - errorBarCapWidth / 2, ep.y, ep.x + errorBarCapWidth / 2, ep.y);
 			if (yErrorBarType != ErrorBarType.BOTH)
 				break;
 		case PLUS:
-			ep = new Point(xAxis.getValuePosition(dp.getXValue(), false), yAxis.getValuePosition(
-					dp.getYValue() + dp.getYPlusError(), false));
+			ep = new Point(xAxis.getValuePosition(dp.getXValue(), false),
+					yAxis.getValuePosition(dp.getYValue() + dp.getYPlusError(), false));
 			graphics.drawLine(dpPos, ep);
 			graphics.drawLine(ep.x - errorBarCapWidth / 2, ep.y, ep.x + errorBarCapWidth / 2, ep.y);
 			break;
@@ -321,15 +321,15 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 		switch (xErrorBarType) {
 		case BOTH:
 		case MINUS:
-			ep = new Point(xAxis.getValuePosition(dp.getXValue() - dp.getXMinusError(), false), yAxis.getValuePosition(
-					dp.getYValue(), false));
+			ep = new Point(xAxis.getValuePosition(dp.getXValue() - dp.getXMinusError(), false),
+					yAxis.getValuePosition(dp.getYValue(), false));
 			graphics.drawLine(dpPos, ep);
 			graphics.drawLine(ep.x, ep.y - errorBarCapWidth / 2, ep.x, ep.y + errorBarCapWidth / 2);
 			if (xErrorBarType != ErrorBarType.BOTH)
 				break;
 		case PLUS:
-			ep = new Point(xAxis.getValuePosition(dp.getXValue() + dp.getXPlusError(), false), yAxis.getValuePosition(
-					dp.getYValue(), false));
+			ep = new Point(xAxis.getValuePosition(dp.getXValue() + dp.getXPlusError(), false),
+					yAxis.getValuePosition(dp.getYValue(), false));
 			graphics.drawLine(dpPos, ep);
 			graphics.drawLine(ep.x, ep.y - errorBarCapWidth / 2, ep.x, ep.y + errorBarCapWidth / 2);
 			break;
@@ -644,15 +644,17 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 					final boolean valueIsNaN = Double.isNaN(dp.getYValue());
 					if (dpInXRange && valueIsNaN) {
 						Point markPos = new Point(xAxis.getValuePosition(dp.getXValue(), false),
-								yAxis.getValuePosition(xAxis.getTickLabelSide() == LabelSide.Primary ? yAxis
-										.getRange().getLower() : yAxis.getRange().getUpper(), false));
+								yAxis.getValuePosition(
+										xAxis.getTickLabelSide() == LabelSide.Primary ? yAxis.getRange().getLower()
+												: yAxis.getRange().getUpper(),
+										false));
 						graphics.setBackgroundColor(traceColor);
 						graphics.fillRectangle(markPos.x - MARKER_SIZE / 2, markPos.y - MARKER_SIZE / 2, MARKER_SIZE,
 								MARKER_SIZE);
 						Sample nanSample = new Sample(dp.getXValue(),
-								xAxis.getTickLabelSide() == LabelSide.Primary ? yAxis.getRange().getLower() : yAxis
-										.getRange().getUpper(), dp.getYPlusError(), dp.getYMinusError(), Double.NaN,
-								dp.getXMinusError(), dp.getInfo());
+								xAxis.getTickLabelSide() == LabelSide.Primary ? yAxis.getRange().getLower()
+										: yAxis.getRange().getUpper(),
+								dp.getYPlusError(), dp.getYMinusError(), Double.NaN, dp.getXMinusError(), dp.getInfo());
 						if (dp instanceof IMetaData)
 							nanSample.setData(((IMetaData) dp).getData());
 						hotSampleist.add(nanSample);
@@ -661,8 +663,8 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 					boolean dpInRange = dpInXRange && yAxis.getRange().inRange(dp.getYValue());
 					// draw point
 					if (dpInRange) {
-						dpPos = new Point(xAxis.getValuePosition(dp.getXValue(), false), yAxis.getValuePosition(
-								dp.getYValue(), false));
+						dpPos = new Point(xAxis.getValuePosition(dp.getXValue(), false),
+								yAxis.getValuePosition(dp.getYValue(), false));
 						hotSampleist.add(dp);
 
 						// Do not draw points in the same place to improve
@@ -755,8 +757,8 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 
 					final Point predpPos = new Point(xAxis.getValuePosition(predp.getXValue(), false),
 							yAxis.getValuePosition(predp.getYValue(), false));
-					dpPos = new Point(xAxis.getValuePosition(dp.getXValue(), false), yAxis.getValuePosition(
-							dp.getYValue(), false));
+					dpPos = new Point(xAxis.getValuePosition(dp.getXValue(), false),
+							yAxis.getValuePosition(dp.getYValue(), false));
 
 					if (!dpPos.equals(predpPos)) {
 						if (errorBarEnabled && drawYErrorInArea && traceType != TraceType.BAR)
@@ -1118,35 +1120,35 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 			x = xmin;
 			y = (xmin - x1) * dy / dx + y1;
 			if (evalDP(x, y, dp1, dp2)) {
-			    ISample newSample = new Sample(x,y);
-			    boolean insert = true;
-			    for (int i = 0; i < count; i++) {
-			        if (newSample.equals(dpTuple[i])) {
-			            insert = false;
-			            break;
-			        }
-			    }
-			    if (insert) {
-			        dpTuple[count++]=newSample;
-			    }
+				ISample newSample = new Sample(x, y);
+				boolean insert = true;
+				for (int i = 0; i < count; i++) {
+					if (newSample.equals(dpTuple[i])) {
+						insert = false;
+						break;
+					}
+				}
+				if (insert) {
+					dpTuple[count++] = newSample;
+				}
 			}
-				
+
 			// Intersection with right yAxis
 			final double xmax = xAxis.getRange().getUpper();
 			x = xmax;
 			y = (xmax - x1) * dy / dx + y1;
 			if (dx != 0 && evalDP(x, y, dp1, dp2)) {
-			    ISample newSample = new Sample(x,y);
-			    boolean insert = true;
-			    for (int i = 0; i < count; i++) {
-			        if (newSample.equals(dpTuple[i])) {
-			            insert = false;
-			            break;
-			        }
-			    }
-			    if (insert) {
-			        dpTuple[count++]=newSample;
-			    }
+				ISample newSample = new Sample(x, y);
+				boolean insert = true;
+				for (int i = 0; i < count; i++) {
+					if (newSample.equals(dpTuple[i])) {
+						insert = false;
+						break;
+					}
+				}
+				if (insert) {
+					dpTuple[count++] = newSample;
+				}
 			}
 		}
 		return dpTuple;
@@ -1709,7 +1711,7 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	 */
 	@Deprecated
 	public XYGraph getXYGraph() {
-		return (XYGraph)xyGraph;
+		return (XYGraph) xyGraph;
 	}
 
 	public void axisForegroundColorChanged(Axis axis, Color oldColor, Color newColor) {
