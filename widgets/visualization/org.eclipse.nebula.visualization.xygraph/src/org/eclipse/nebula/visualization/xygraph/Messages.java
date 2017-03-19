@@ -41,6 +41,7 @@ public class Messages extends NLS {
 	public static String PointCircle;
 	public static String PointCross;
 	public static String PointDiamond;
+	public static String PointFilledCircle;
 	public static String PointFilledDiamond;
 	public static String PointFilledSquare;
 	public static String PointFilledTriangle;

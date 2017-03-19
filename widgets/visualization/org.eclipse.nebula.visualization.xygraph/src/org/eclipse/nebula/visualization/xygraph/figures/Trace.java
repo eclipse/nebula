@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory and others.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -156,6 +156,8 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 		POINT(Messages.PointPoint),
 
 		CIRCLE(Messages.PointCircle),
+
+		FILLED_CIRCLE(Messages.PointFilledCircle),
 
 		TRIANGLE(Messages.PointTriangle),
 
@@ -424,6 +426,9 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 		case CIRCLE:
 			graphics.drawOval(new Rectangle(pos.x - renderPointSize / 2, pos.y - renderPointSize / 2, renderPointSize,
 					renderPointSize));
+			break;
+		case FILLED_CIRCLE:
+			graphics.fillOval(new Rectangle(pos.x - pointSize / 2, pos.y - pointSize / 2, pointSize, pointSize));
 			break;
 		case TRIANGLE:
 			graphics.drawPolygon(new int[] { pos.x - renderPointSize / 2, pos.y + renderPointSize / 2, pos.x,
