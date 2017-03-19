@@ -151,10 +151,29 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	}
 
 	public enum PointStyle {
-		NONE(Messages.PointNone), POINT(Messages.PointPoint), CIRCLE(Messages.PointCircle), TRIANGLE(
-				Messages.PointTriangle), FILLED_TRIANGLE(Messages.PointFilledTriangle), SQUARE(Messages.PointSquare), FILLED_SQUARE(
-				Messages.PointFilledSquare), DIAMOND(Messages.PointDiamond), FILLED_DIAMOND(Messages.PointFilledDiamond), XCROSS(
-				Messages.PointCross), CROSS(Messages.ProintCross2), BAR(Messages.PointBar);
+		NONE(Messages.PointNone),
+
+		POINT(Messages.PointPoint),
+
+		CIRCLE(Messages.PointCircle),
+
+		TRIANGLE(Messages.PointTriangle),
+
+		FILLED_TRIANGLE(Messages.PointFilledTriangle),
+
+		SQUARE(Messages.PointSquare),
+
+		FILLED_SQUARE(Messages.PointFilledSquare),
+
+		DIAMOND(Messages.PointDiamond),
+
+		FILLED_DIAMOND(Messages.PointFilledDiamond),
+
+		XCROSS(Messages.PointCross),
+
+		CROSS(Messages.ProintCross2),
+
+		BAR(Messages.PointBar);
 
 		private PointStyle(String description) {
 			this.description = description;
