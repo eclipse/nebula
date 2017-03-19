@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,70 +7,77 @@
  ******************************************************************************/
 package org.eclipse.nebula.visualization.xygraph;
 
+import org.eclipse.osgi.util.NLS;
+
 /**
  * Externalized Strings
  * 
  * @author Kay Kasemir
  */
-public class Messages {
-	public static String Annotation_Add = "Add Annotation";
-	public static String Annotation_ChangeFont = "Change...";
-	public static String Annotation_Color = "Color:";
-	public static String Annotation_ColorFromYAxis = "Use Y-Axis color as annotation color";
-	public static String Annotation_Cursor = "Cursor Line Style:";
-	public static String Annotation_DefaultNameFmt = "Annotation";
-	public static String Annotation_Font = "Font:";
-	public static String Annotation_Name = "Name:";
-	public static String Annotation_NameTT = "Text that will be displayed in the annotation";
-	public static String Annotation_ShowInfo = "Show Sample Infomation";
-	public static String Annotation_ShowName = "Show Name";
-	public static String Annotation_ShowPosition = "Show Position";
-	public static String Annotation_Snap = "Snap to Trace";
-	public static String Annotation_SnapTT = "Should annotation snap to points on a trace or float freely?";
-	public static String Annotation_SystemDefault = "System Default";
-	public static String Annotation_Trace = "Trace:";
-	public static String Annotation_TraceSnapTT = "Select trace to which annotation should snap";
-	public static String Annotation_XAxis = "X-Axis:";
-	public static String Annotation_XAxisSnapTT = "Select x-axis to which annotation should snap";
-	public static String Annotation_YAxis = "Y-Axis:";
-	public static String Annotation_YAxisSnapTT = "Select value axis to which annotation should snap";
-	public static String PointBar = "Bar(|)";
-	public static String PointCircle = "Circle(o)";
-	public static String PointCross = "XCross(x)";
-	public static String PointDiamond = "Diamond";
-	public static String PointFilledDiamond = "Filled Diamond";
-	public static String PointFilledSquare = "Filled Square";
-	public static String PointFilledTriangle = "Filled Triangle";
-	public static String PointNone = "None";
-	public static String PointPoint = "Point";
-	public static String PointSquare = "Square";
-	public static String PointTriangle = "Triangle";
-	public static String ProintCross2 = "Cross(+)";
-	public static String TraceArea = "Area";
-	public static String TraceLineArea = "Line Area";
-	public static String TraceBar = "Bar";
-	public static String TraceDash = "Dash Line";
-	public static String TraceDashDot = "Dash Dot Line";
-	public static String TraceDashDotDot = "Dash Dot Dot Line";
-	public static String TraceDot = "Dot Line";
-	public static String TracePoint = "Point";
-	public static String TraceSolid = "Solid Line";
-	public static String TraceStepHoriz = "Step Horizontally";
-	public static String TraceStepVert = "Step Vertically";
-	public static String Zoom_Horiz = "Horizontal Zoom";
-	public static String Zoom_In = "Zoom In";
-	public static String Zoom_InHoriz = "Zoom In Horizontally";
-	public static String Zoom_InVert = "Zoom In Vertically";
-	public static String Zoom_None = "None";
-	public static String Zoom_Out = "Zoom Out";
-	public static String Zoom_OutHoriz = "Zoom Out Horizontally";
-	public static String Zoom_OutVert = "Zoom Out Vertically";
-	public static String Zoom_Pan = "Panning";
-	public static String Zoom_Rubberband = "Rubberband Zoom";
-	public static String Zoom_Dynamic = "Dynamic Zoom";
-	public static String Zoom_Vert = "Vertical Zoom";
+public class Messages extends NLS {
+	private static final String BUNDLE_NAME = "org.eclipse.nebula.visualization.xygraph.messages"; //$NON-NLS-1$
+	public static String Annotation_Add;
+	public static String Annotation_ChangeFont;
+	public static String Annotation_Color;
+	public static String Annotation_ColorFromYAxis;
+	public static String Annotation_Cursor;
+	public static String Annotation_DefaultNameFmt;
+	public static String Annotation_Font;
+	public static String Annotation_Name;
+	public static String Annotation_NameTT;
+	public static String Annotation_ShowInfo;
+	public static String Annotation_ShowName;
+	public static String Annotation_ShowPosition;
+	public static String Annotation_Snap;
+	public static String Annotation_SnapTT;
+	public static String Annotation_SystemDefault;
+	public static String Annotation_Trace;
+	public static String Annotation_TraceSnapTT;
+	public static String Annotation_XAxis;
+	public static String Annotation_XAxisSnapTT;
+	public static String Annotation_YAxis;
+	public static String Annotation_YAxisSnapTT;
+	public static String PointBar;
+	public static String PointCircle;
+	public static String PointCross;
+	public static String PointDiamond;
+	public static String PointFilledDiamond;
+	public static String PointFilledSquare;
+	public static String PointFilledTriangle;
+	public static String PointNone;
+	public static String PointPoint;
+	public static String PointSquare;
+	public static String PointTriangle;
+	public static String ProintCross2;
+	public static String TraceArea;
+	public static String TraceLineArea;
+	public static String TraceBar;
+	public static String TraceDash;
+	public static String TraceDashDot;
+	public static String TraceDashDotDot;
+	public static String TraceDot;
+	public static String TracePoint;
+	public static String TraceSolid;
+	public static String TraceStepHoriz;
+	public static String TraceStepVert;
+	public static String Zoom_Horiz;
+	public static String Zoom_In;
+	public static String Zoom_InHoriz;
+	public static String Zoom_InVert;
+	public static String Zoom_None;
+	public static String Zoom_Out;
+	public static String Zoom_OutHoriz;
+	public static String Zoom_OutVert;
+	public static String Zoom_Pan;
+	public static String Zoom_Rubberband;
+	public static String Zoom_Dynamic;
+	public static String Zoom_Vert;
+	static {
+		// initialize resource bundle
+		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+	}
 
 	private Messages() {
-
+		// Prevent instantiation
 	}
 }
