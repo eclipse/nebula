@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -88,7 +88,9 @@ public class ScaledSliderFigure extends AbstractLinearMarkedFigure {
 	private double stepIncrement = 1;
 	
 	private double pageIncrement = 10;
-	
+
+	private boolean drawFocus = true;
+
 	/**
 	 * Listeners that react on slider events.
 	 */
@@ -309,10 +311,29 @@ public class ScaledSliderFigure extends AbstractLinearMarkedFigure {
 		fireManualValueChange(getValue());
 	}
 
+	/**
+	 * Set the focus rectangle should be drawn on the figure when it has focus.
+	 * 
+	 * @param drawFocus
+	 *            true to draw focus rectangle.
+	 */
+	public void setDrawFocus(boolean drawFocus) {
+		this.drawFocus = drawFocus;
+	}
+
+	/**
+	 * Get whether the focus rectangle is drawn when figure has focus.
+	 * 
+	 * @return true if focus rectangle is drawn
+	 */
+	public boolean isDrawFocus() {
+		return drawFocus;
+	}
+
 	@Override
 	protected void paintClientArea(Graphics graphics) {
 		super.paintClientArea(graphics);
-		if(hasFocus()){
+		if(hasFocus() && drawFocus){
 			graphics.setForegroundColor(ColorConstants.black);
 			graphics.setBackgroundColor(ColorConstants.white);
 
