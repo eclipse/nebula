@@ -407,7 +407,7 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 
 			currentPosition = new Point(xAxis.getValuePosition(xValue, false), yAxis.getValuePosition(yValue, false));
 		}
-		updateInfoLableText(true);
+		updateInfoLabelText(true);
 		if (xValue != oldX || yValue != oldY)
 			revalidate();
 		fireAnnotationMoved(oldX, oldY, xValue, yValue);
@@ -430,7 +430,7 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 		yValue = y;
 
 		currentPosition = new Point(xAxis.getValuePosition(xValue, false), yAxis.getValuePosition(yValue, false));
-		updateInfoLableText(true);
+		updateInfoLabelText(true);
 		revalidate();
 		if (oldX != xValue || oldY != yValue)
 			fireAnnotationMoved(oldX, oldY, xValue, yValue);
@@ -439,7 +439,7 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 	/**
 	 *
 	 */
-	private void updateInfoLableText(boolean updateX0Y0) {
+	private void updateInfoLabelText(boolean updateX0Y0) {
 		String info = "";
 		if (showName)
 			info = name;
@@ -452,8 +452,8 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 		knowX0Y0 = !updateX0Y0;
 	}
 
-	private void updateInfoLableText() {
-		updateInfoLableText(true);
+	private void updateInfoLabelText() {
+		updateInfoLabelText(true);
 	}
 
 	/**
@@ -488,7 +488,7 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 	 */
 	public void setName(String name) {
 		this.name = name;
-		updateInfoLableText();
+		updateInfoLabelText();
 	}
 
 	@Override
@@ -554,7 +554,7 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 	 */
 	public void setShowName(boolean showName) {
 		this.showName = showName;
-		updateInfoLableText();
+		updateInfoLabelText();
 	}
 
 	/**
@@ -563,7 +563,7 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 	 */
 	public void setShowSampleInfo(boolean showSampleInfo) {
 		this.showSampleInfo = showSampleInfo;
-		updateInfoLableText();
+		updateInfoLabelText();
 	}
 
 	/**
@@ -572,7 +572,7 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 	 */
 	public void setShowPosition(boolean showPosition) {
 		this.showPosition = showPosition;
-		updateInfoLableText();
+		updateInfoLabelText();
 	}
 
 	/**
@@ -643,8 +643,8 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 	 * @param currentPosition
 	 *            the currentPosition to set
 	 */
-	public void setCurrentPosition(Point currentPosition, boolean keepLablePosition, boolean calcValueFromPosition) {
-		if (keepLablePosition) {
+	public void setCurrentPosition(Point currentPosition, boolean keepLabelPosition, boolean calcValueFromPosition) {
+		if (keepLabelPosition) {
 			int deltaX = this.currentPosition.x - currentPosition.x;
 			int deltaY = this.currentPosition.y - currentPosition.y;
 			x0 += deltaX;
@@ -660,13 +660,13 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 			yValue = yAxis.getPositionValue(currentPosition.y, false);
 			fireAnnotationMoved(oldX, oldY, xValue, yValue);
 		}
-		updateInfoLableText(keepLablePosition);
+		updateInfoLabelText(keepLabelPosition);
 		revalidate();
 		repaint();
 	}
 
-	public void setCurrentPosition(Point currentPosition, boolean keepLablePosition) {
-		setCurrentPosition(currentPosition, keepLablePosition, true);
+	public void setCurrentPosition(Point currentPosition, boolean keepLabelPosition) {
+		setCurrentPosition(currentPosition, keepLabelPosition, true);
 	}
 
 	/**
@@ -695,7 +695,7 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 
 	public void axisRevalidated(Axis axis) {
 		currentPosition = new Point(xAxis.getValuePosition(xValue, false), yAxis.getValuePosition(yValue, false));
-		updateInfoLableText();
+		updateInfoLabelText();
 		if (getParent() != null)
 			layout();
 	}

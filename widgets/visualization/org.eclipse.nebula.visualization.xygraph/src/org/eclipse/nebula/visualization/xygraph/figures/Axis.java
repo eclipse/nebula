@@ -729,7 +729,7 @@ public class Axis extends LinearScale {
 	 *            is not on the primary side of xy graph(Top/Right).
 	 */
 	public void setPrimarySide(boolean onPrimarySide) {
-		setTickLableSide(onPrimarySide ? LabelSide.Primary : LabelSide.Secondary);
+		setTickLabelSide(onPrimarySide ? LabelSide.Primary : LabelSide.Secondary);
 	}
 
 	/**

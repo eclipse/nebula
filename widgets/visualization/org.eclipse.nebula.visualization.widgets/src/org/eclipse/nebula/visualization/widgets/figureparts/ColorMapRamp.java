@@ -44,7 +44,7 @@ public class ColorMapRamp extends Figure {
 		scale = new LinearScale();
 		scale.setOrientation(Orientation.VERTICAL);
 		scale.setScaleLineVisible(false);
-		scale.setTickLableSide(LabelSide.Secondary);
+		scale.setTickLabelSide(LabelSide.Secondary);
 		scale.setMinorTicksVisible(false);
 		scale.setRange(min, max);
 		scale.setMajorTickMarkStepHint(50);

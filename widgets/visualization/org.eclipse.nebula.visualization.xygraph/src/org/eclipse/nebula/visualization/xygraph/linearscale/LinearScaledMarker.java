@@ -43,11 +43,11 @@ public class LinearScaledMarker extends Figure {
 
 	private LinearScale scale;
 
-	private LabelSide makerLablesPosition = LabelSide.Secondary;
+	private LabelSide makerLabelsPosition = LabelSide.Secondary;
 
 	private boolean markerLineVisible = false;
 
-	private boolean markerLableVisible = true;
+	private boolean markerLabelVisible = true;
 
 	private int tickLabelMaxLength;
 
@@ -154,13 +154,13 @@ public class LinearScaledMarker extends Figure {
 	private void drawMarkerTick(Graphics graphics) {
 		graphics.setLineWidth(TICK_LINE_WIDTH);
 		if (scale.isHorizontal()) {
-			if (makerLablesPosition == LabelSide.Primary) {
+			if (makerLabelsPosition == LabelSide.Primary) {
 				int i = 0;
 				for (int markerPos : markerPositions) {
 					graphics.setForegroundColor(markerColorsList.get(i));
 					graphics.drawLine(markerPos, 0, markerPos, TICK_LENGTH);
 					// draw labels
-					if (isMarkerLableVisible()) {
+					if (isMarkerLabelVisible()) {
 						graphics.drawText(labels[i], markerPos - markerLabelDimensions[i].width / 2,
 								TICK_LENGTH + GAP_BTW_MARK_LABEL);
 					}
@@ -172,7 +172,7 @@ public class LinearScaledMarker extends Figure {
 					graphics.setForegroundColor(markerColorsList.get(i));
 					graphics.drawLine(markerPos, bounds.height, markerPos, bounds.height - TICK_LENGTH);
 					// draw labels
-					if (isMarkerLableVisible()) {
+					if (isMarkerLabelVisible()) {
 						graphics.drawText(labels[i], markerPos - markerLabelDimensions[i].width / 2,
 								bounds.height - TICK_LENGTH - GAP_BTW_MARK_LABEL - markerLabelDimensions[i].height);
 					}
@@ -180,13 +180,13 @@ public class LinearScaledMarker extends Figure {
 				}
 			}
 		} else {
-			if (makerLablesPosition == LabelSide.Primary) {
+			if (makerLabelsPosition == LabelSide.Primary) {
 
 				for (int i = 0; i < markerPositions.length; i++) {
 					graphics.setForegroundColor(markerColorsList.get(i));
 					graphics.drawLine(bounds.width, markerPositions[i], bounds.width - TICK_LENGTH, markerPositions[i]);
 					// draw labels
-					if (isMarkerLableVisible()) {
+					if (isMarkerLabelVisible()) {
 						graphics.drawText(labels[i],
 								bounds.width - TICK_LENGTH - GAP_BTW_MARK_LABEL - markerLabelDimensions[i].width,
 								markerPositions[i] - markerLabelDimensions[i].height / 2);
@@ -199,7 +199,7 @@ public class LinearScaledMarker extends Figure {
 					graphics.drawLine(0, markerPos, TICK_LENGTH, markerPos);
 
 					// draw labels
-					if (isMarkerLableVisible()) {
+					if (isMarkerLabelVisible()) {
 						graphics.drawText(labels[i], TICK_LENGTH + GAP_BTW_MARK_LABEL,
 								markerPos - markerLabelDimensions[i].height / 2);
 					}
@@ -295,18 +295,26 @@ public class LinearScaledMarker extends Figure {
 
 	/**
 	 * @param labelSide
-	 *            the makerLablesPosition to set
+	 *            the makerLabelsPosition to set
 	 */
 	public void setLabelSide(LabelSide labelSide) {
-		this.makerLablesPosition = labelSide;
+		this.makerLabelsPosition = labelSide;
 		dirty = true;
 	}
 
 	/**
-	 * @return the makerLablesPosition
+	 * @return the makerLabelsPosition
 	 */
+	public LabelSide getMakerLabelsPosition() {
+		return makerLabelsPosition;
+	}
+
+	/**
+	 * @deprecated use correctly spelled {@link #getMakerLabelsPosition()}
+	 */
+	@Deprecated
 	public LabelSide getMakerLablesPosition() {
-		return makerLablesPosition;
+		return getMakerLabelsPosition();
 	}
 
 	/**
@@ -326,19 +334,35 @@ public class LinearScaledMarker extends Figure {
 	}
 
 	/**
-	 * @param markerLableVisible
-	 *            the markerLableVisible to set
+	 * @param markerLabelVisible
+	 *            the markerLabelVisible to set
 	 */
-	public void setMarkerLableVisible(boolean markerLableVisible) {
-		this.markerLableVisible = markerLableVisible;
+	public void setMarkerLabelVisible(boolean markerLabelVisible) {
+		this.markerLabelVisible = markerLabelVisible;
 		dirty = true;
 	}
 
 	/**
-	 * @return the markerLableVisible
+	 * @deprecated use correctly spelled {@link #setMarkerLabelVisible(boolean)}
 	 */
+	@Deprecated
+	public void setMarkerLableVisible(boolean markerLabelVisible) {
+		setMarkerLabelVisible(markerLabelVisible);
+	}
+
+	/**
+	 * @return the markerLabelVisible
+	 */
+	public boolean isMarkerLabelVisible() {
+		return markerLabelVisible;
+	}
+
+	/**
+	 * @deprecated use correctly spelled {@link #isMarkerLabelVisible()
+	 */
+	@Deprecated
 	public boolean isMarkerLableVisible() {
-		return markerLableVisible;
+		return isMarkerLabelVisible();
 	}
 
 	@Override

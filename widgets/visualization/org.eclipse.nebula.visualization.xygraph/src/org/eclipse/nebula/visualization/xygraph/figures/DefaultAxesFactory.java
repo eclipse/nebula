@@ -23,7 +23,7 @@ public class DefaultAxesFactory implements IAxesFactory {
 	public Axis createXAxis() {
 		Axis newAxis = new Axis("X-Axis", false);
 		newAxis.setOrientation(Orientation.HORIZONTAL);
-		newAxis.setTickLableSide(LabelSide.Primary);
+		newAxis.setTickLabelSide(LabelSide.Primary);
 		return newAxis;
 	}
 
@@ -31,7 +31,7 @@ public class DefaultAxesFactory implements IAxesFactory {
 	public Axis createYAxis() {
 		Axis newAxis = new Axis("Y-Axis", true);
 		newAxis.setOrientation(Orientation.VERTICAL);
-		newAxis.setTickLableSide(LabelSide.Primary);
+		newAxis.setTickLabelSide(LabelSide.Primary);
 		newAxis.setAutoScaleThreshold(0.1);
 		return newAxis;
 	}

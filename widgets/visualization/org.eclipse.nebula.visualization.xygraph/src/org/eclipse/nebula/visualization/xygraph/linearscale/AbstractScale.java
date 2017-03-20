@@ -217,13 +217,11 @@ public abstract class AbstractScale extends Figure {
 	}
 
 	/**
-	 * Use the correctly spelled method instead
-	 * 
-	 * @return the side of the tick label relative to the tick marks
+	 * @deprecated use correctly spelled {@link #getTickLabelSide(LabelSide)}
 	 */
 	@Deprecated
 	public LabelSide getTickLablesSide() {
-		return tickLabelSide;
+		return getTickLabelSide();
 	}
 
 	/**
@@ -516,9 +514,17 @@ public abstract class AbstractScale extends Figure {
 	 * @param tickLabelSide
 	 *            the side of the tick label relative to tick mark
 	 */
-	public void setTickLableSide(LabelSide tickLabelSide) {
+	public void setTickLabelSide(LabelSide tickLabelSide) {
 		this.tickLabelSide = tickLabelSide;
 		revalidate();
+	}
+
+	/**
+	 * @deprecated use correctly spelled {@link #setTickLabelSide(LabelSide)}
+	 */
+	@Deprecated
+	public void setTickLableSide(LabelSide tickLabelSide) {
+		setTickLabelSide(tickLabelSide);
 	}
 
 	/**

@@ -268,22 +268,22 @@ public class RoundScaleTickLabels extends Figure {
      * Updates the the draw area of each label.
      */
     private void updateTickLabelAreas() {
-    	int  lableRadius;
+    	int  labelRadius;
     	tickLabelAreas.clear();
     	for(int i=0; i<tickLabelPositions.size(); i++) {
     		Dimension ls = FigureUtilities.getTextExtents(tickLabels.get(i), scale.getFont());
     		if(scale.getTickLabelSide() == LabelSide.Primary)	
-    			lableRadius = (int) (scale.getRadius() + 
+    			labelRadius = (int) (scale.getRadius() + 
     					RoundScaleTickMarks.MAJOR_TICK_LENGTH + RoundScale.SPACE_BTW_MARK_LABEL +
     						ls.width/2.0 * Math.abs(Math.cos(tickLabelPositions.get(i))) + 
     						ls.height/2.0 * Math.abs(Math.sin(tickLabelPositions.get(i))));
     		else 		
-    			lableRadius = (int) (scale.getRadius() - 
+    			labelRadius = (int) (scale.getRadius() - 
     					RoundScaleTickMarks.MAJOR_TICK_LENGTH - RoundScale.SPACE_BTW_MARK_LABEL -
     						ls.width/2.0 * Math.abs(Math.cos(tickLabelPositions.get(i))) - 
     						ls.height/2.0 * Math.abs(Math.sin(tickLabelPositions.get(i))));
     	
-    		Point lp = new PolarPoint(lableRadius, tickLabelPositions.get(i)).toRelativePoint(
+    		Point lp = new PolarPoint(labelRadius, tickLabelPositions.get(i)).toRelativePoint(
     				scale.getBounds());
     		tickLabelAreas.add(new Rectangle(lp.x - ls.width/2, lp.y - ls.height/2, 
     				ls.width, ls.height));   		

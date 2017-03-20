@@ -179,10 +179,10 @@ public class TraceConfigPage {
 		gd = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
 		pointStyleCombo.setLayoutData(gd);
 
-		final Label pointSizeLable = new Label(traceCompo, 0);
-		pointSizeLable.setText("Point Size (pixels): ");
+		final Label pointSizeLabel = new Label(traceCompo, 0);
+		pointSizeLabel.setText("Point Size (pixels): ");
 		labelGd = new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1);
-		pointSizeLable.setLayoutData(labelGd);
+		pointSizeLabel.setLayoutData(labelGd);
 
 		pointSizeSpinner = new Spinner(traceCompo, SWT.BORDER);
 		pointSizeSpinner.setMaximum(100);
@@ -201,10 +201,10 @@ public class TraceConfigPage {
 		gd = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
 		baseLineCombo.setLayoutData(gd);
 
-		final Label alphaLable = new Label(traceCompo, 0);
-		alphaLable.setText("Area Alpha: ");
+		final Label alphaLabel = new Label(traceCompo, 0);
+		alphaLabel.setText("Area Alpha: ");
 		labelGd = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
-		alphaLable.setLayoutData(labelGd);
+		alphaLabel.setLayoutData(labelGd);
 
 		areaAlphaSpinner = new Spinner(traceCompo, SWT.BORDER);
 		areaAlphaSpinner.setMaximum(255);
