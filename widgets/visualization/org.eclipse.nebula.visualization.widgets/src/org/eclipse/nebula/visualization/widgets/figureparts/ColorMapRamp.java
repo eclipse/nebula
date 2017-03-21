@@ -46,11 +46,12 @@ public class ColorMapRamp extends Figure {
 		
 		scale = new LinearScale();
 		scale.setOrientation(Orientation.VERTICAL);
-		scale.setScaleLineVisible(false);
+		scale.setScaleLineVisible(true);
 		scale.setTickLabelSide(LabelSide.Secondary);
 		scale.setMinorTicksVisible(false);
 		scale.setRange(min, max);
 		scale.setMajorTickMarkStepHint(50);
+		scale.setFont(getFont());
 		colorMapFigure = new ColorMapFigure();
 		add(colorMapFigure);
 		add(scale);	
@@ -64,7 +65,10 @@ public class ColorMapRamp extends Figure {
 	
 	
 	@Override
-	protected void layout() {			
+	protected void layout() {
+		if (scale.getFont()==null) return;
+		if (getChildren()==null || getChildren().isEmpty()) return;
+
 		Rectangle clientArea = getClientArea();
 		Dimension scaleSize = scale.getPreferredSize(clientArea.width, clientArea.height);		
 		scale.setBounds(new Rectangle(clientArea.x + clientArea.width - scaleSize.width, clientArea.y,
@@ -88,18 +92,24 @@ public class ColorMapRamp extends Figure {
 	 * @param min the min to set
 	 */
 	public final void setMin(double min) {
+		if (Double.isInfinite(min)) return;
+		if (Double.isNaN(min))      return;
 		this.min = min;
 		scale.setRange(min, max);
 		updateMapData();
+		repaint();
 	}
 
 	/**
 	 * @param max the max to set
 	 */
 	public final void setMax(double max) {
+		if (Double.isInfinite(max)) return;
+		if (Double.isNaN(max))      return;
 		this.max = max;
 		scale.setRange(min, max);
 		updateMapData();
+		repaint();
 	}
 
 	/**

@@ -22,8 +22,11 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 /**
  * A live updated Intensity Graph example
@@ -33,9 +36,12 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class ColorMapRampExample {
 
+	private static final String INFINITY_TOOLTIP = "Infinity/-Infinity/NaN can be set and will be passed to ColorMapRamp, but the figure will ignore it.";
 	private ColorMapRamp colorMapRamp;
 	private Combo colorMapCombo;
 	private Button customImageDataCheck;
+	private Text minText;
+	private Text maxText;
 
 	public static void main(String[] args) {
 		new ColorMapRampExample().run();
@@ -74,6 +80,38 @@ public class ColorMapRampExample {
 			};
 		});
 
+		Composite minMaxComposite = new Composite(shell, SWT.NONE);
+		minMaxComposite.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
+		minMaxComposite.setLayout(new GridLayout(2, false));
+
+		Label minLabel = new Label(minMaxComposite, SWT.NONE);
+		minLabel.setText("Min");
+		minLabel.setToolTipText(INFINITY_TOOLTIP);
+		minText = new Text(minMaxComposite, SWT.SINGLE);
+		minText.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
+		minText.setText("0");
+		minText.setToolTipText(INFINITY_TOOLTIP);
+		minText.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				updateRamp();
+			}
+		});
+
+		Label maxLabel = new Label(minMaxComposite, SWT.NONE);
+		maxLabel.setText("Max");
+		maxLabel.setToolTipText(INFINITY_TOOLTIP);
+		maxText = new Text(minMaxComposite, SWT.SINGLE);
+		maxText.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
+		maxText.setText("1");
+		maxText.setToolTipText(INFINITY_TOOLTIP);
+		maxText.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				updateRamp();
+			}
+		});
+
 		shell.open();
 		Display display = Display.getDefault();
 		while (!shell.isDisposed()) {
@@ -102,6 +140,20 @@ public class ColorMapRampExample {
 			colorMapRamp.setImageData(imageData);
 		} else {
 			colorMapRamp.setImageData(null);
+		}
+
+		try {
+			double min = Double.parseDouble(minText.getText());
+			colorMapRamp.setMin(min);
+		} catch (NumberFormatException nfe) {
+			System.out.println("NumberFormatException: Ignoring Min setting: " + minText.getText());
+		}
+
+		try {
+			double max = Double.parseDouble(maxText.getText());
+			colorMapRamp.setMax(max);
+		} catch (NumberFormatException nfe) {
+			System.out.println("NumberFormatException: Ignoring Max setting: " + maxText.getText());
 		}
 
 		colorMapRamp.repaint();
