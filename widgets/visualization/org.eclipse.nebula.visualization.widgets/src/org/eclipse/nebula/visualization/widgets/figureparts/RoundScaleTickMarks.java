@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.nebula.visualization.xygraph.linearscale.AbstractScale.LabelSide;
+import org.eclipse.nebula.visualization.xygraph.util.SingleSourceHelper2;
 import org.eclipse.swt.SWT;
 
 /**
@@ -119,7 +120,7 @@ public class RoundScaleTickMarks extends Figure {
     	//add gap to avoid overlap
     	double minRadians = scale.convertPixelToRadians(2);
         // draw tick marks
-        graphics.setLineStyle(SWT.LINE_SOLID);
+		SingleSourceHelper2.setLineStyle_LINE_SOLID(graphics);
         int r = scale.getRadius();
         
         if(scale.isLogScaleEnabled()) {

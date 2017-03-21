@@ -1,5 +1,5 @@
 /*************************************************************************
- * Copyright (c) 2008 Stiftung Deutsches Elektronen-Synchrotron,
+ * Copyright (c) 2008, 2017 Stiftung Deutsches Elektronen-Synchrotron and others.
  * Member of the Helmholtz Association, (DESY), HAMBURG, GERMANY.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -84,7 +84,8 @@ public final class XYGraphMediaFactory {
 	public Cursor getCursor(String cursorImagePath) {
 		Cursor cursor = cursorRegistry.get(cursorImagePath);
 		if (cursor == null) {
-			cursor = new Cursor(Display.getDefault(), getInstance().getImage(cursorImagePath).getImageData(), 8, 8);
+			cursor = GraphicsUtil.createCursor(Display.getDefault(),
+					getInstance().getImage(cursorImagePath).getImageData(), 8, 8);
 			cursorRegistry.put(cursorImagePath, cursor);
 		}
 		return cursor;

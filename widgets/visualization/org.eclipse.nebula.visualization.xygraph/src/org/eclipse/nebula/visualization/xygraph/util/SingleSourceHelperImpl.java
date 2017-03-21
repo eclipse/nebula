@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
 package org.eclipse.nebula.visualization.xygraph.util;
 
 import org.eclipse.draw2d.FigureUtilities;
+import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.SWTGraphics;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
@@ -28,7 +29,7 @@ public class SingleSourceHelperImpl extends SingleSourceHelper2 {
 
 	@Override
 	protected Cursor createInternalCursor(Display display, ImageData imageData, int width, int height, int style) {
-		Cursor cursor = new Cursor(display, imageData, width, height);
+		Cursor cursor = GraphicsUtil.createCursor(display, imageData, width, height);
 		XYGraphMediaFactory.getInstance().registerCursor(cursor.toString(), cursor);
 		return cursor;
 	}
@@ -41,7 +42,7 @@ public class SingleSourceHelperImpl extends SingleSourceHelper2 {
 		final int h = titleSize.width + 1;
 		Image image = new Image(Display.getCurrent(), w, h);
 
-		final GC gc = new GC(image);
+		final GC gc = GraphicsUtil.createGC(image);
 		final Color titleColor = new Color(Display.getCurrent(), color);
 		RGB transparentRGB = new RGB(240, 240, 240);
 
@@ -53,11 +54,11 @@ public class SingleSourceHelperImpl extends SingleSourceHelper2 {
 		if (!upToDown) {
 			tr.translate(0, h);
 			tr.rotate(-90);
-			gc.setTransform(tr);
+			GraphicsUtil.setTransform(gc, tr);
 		} else {
 			tr.translate(w, 0);
 			tr.rotate(90);
-			gc.setTransform(tr);
+			GraphicsUtil.setTransform(gc, tr);
 		}
 		gc.drawText(text, 0, 0);
 		tr.dispose();
@@ -74,8 +75,10 @@ public class SingleSourceHelperImpl extends SingleSourceHelper2 {
 	protected Image getInternalXYGraphSnapShot(IXYGraph xyGraph) {
 		Rectangle bounds = xyGraph.getBounds();
 		Image image = new Image(null, bounds.width + 6, bounds.height + 6);
-		GC gc = new GC(image);
+		GC gc = GraphicsUtil.createGC(image);
 		SWTGraphics graphics = new SWTGraphics(gc);
+		// Needed because clipping is not set in GTK2
+		graphics.setClip(new Rectangle(0, 0, image.getBounds().width, image.getBounds().height));
 		graphics.translate(-bounds.x + 3, -bounds.y + 3);
 		graphics.setForegroundColor(xyGraph.getForegroundColor());
 		graphics.setBackgroundColor(xyGraph.getBackgroundColor());
@@ -95,7 +98,12 @@ public class SingleSourceHelperImpl extends SingleSourceHelper2 {
 
 	@Override
 	protected GC internalGetImageGC(Image image) {
-		return new GC(image);
+		return GraphicsUtil.createGC(image);
+	}
+
+	@Override
+	protected void internalSetLineStyle_LINE_SOLID(Graphics graphics) {
+		graphics.setLineStyle(SWT.LINE_SOLID);
 	}
 
 }

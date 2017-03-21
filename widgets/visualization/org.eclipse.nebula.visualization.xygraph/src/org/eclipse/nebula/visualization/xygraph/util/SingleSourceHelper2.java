@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  ******************************************************************************/
 package org.eclipse.nebula.visualization.xygraph.util;
 
+import org.eclipse.draw2d.Graphics;
 import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
@@ -62,9 +63,13 @@ public abstract class SingleSourceHelper2 {
 		return IMPL.internalGetImageGC(image);
 	}
 
-	protected abstract GC internalGetImageGC(final Image image);
+	public static void setLineStyle_LINE_SOLID(Graphics graphics) {
+		IMPL.internalSetLineStyle_LINE_SOLID(graphics);
+	}
 
 	protected abstract String getInternalImageSavePath();
+
+	protected abstract GC internalGetImageGC(final Image image);
 
 	protected abstract Cursor createInternalCursor(Display display, ImageData imageData, int width, int height,
 			int backUpSWTCursorStyle);
@@ -73,4 +78,5 @@ public abstract class SingleSourceHelper2 {
 
 	protected abstract Image getInternalXYGraphSnapShot(IXYGraph xyGraph);
 
+	protected abstract void internalSetLineStyle_LINE_SOLID(Graphics graphics);
 }

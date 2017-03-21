@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,13 @@ import org.eclipse.draw2d.FigureUtilities;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.graphics.Device;
+import org.eclipse.swt.graphics.Drawable;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.Transform;
 
 /**
  * Utility function for graphics operations.
@@ -87,5 +93,36 @@ public final class GraphicsUtil {
 
 	public static final boolean isRAP() {
 		return isRAP;
+	}
+
+	/**
+	 * Used for single sourcing, returns null if called in RAP Context.
+	 * 
+	 * @param image
+	 * @return
+	 */
+	public static GC createGC(Drawable image) {
+		try {
+			return GC.class.getConstructor(Drawable.class).newInstance(image);
+		} catch (Exception ne) {
+			return null;
+		}
+	}
+
+	public static void setTransform(GC gc, Transform transform) {
+		try {
+			GC.class.getMethod("setTransform", Transform.class).invoke(gc, transform);
+		} catch (Exception ne) {
+			return;
+		}
+	}
+
+	public static Cursor createCursor(Device device, ImageData imageData, int width, int height) {
+		try {
+			return Cursor.class.getConstructor(Device.class, ImageData.class, int.class, int.class).newInstance(device,
+					imageData, width, height);
+		} catch (Exception ne) {
+			return null;
+		}
 	}
 }
