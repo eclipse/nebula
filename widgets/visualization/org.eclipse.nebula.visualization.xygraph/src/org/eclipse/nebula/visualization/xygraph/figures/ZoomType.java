@@ -215,6 +215,15 @@ public enum ZoomType {
 	}
 
 	/**
+	 * Return the unique id for the enum.
+	 * 
+	 * @return class name . enum name
+	 */
+	public String getId() {
+		return getClass().getName() + "." + name();
+	}
+
+	/**
 	 * XXX: Using this is a bad idea, it modifies global state and as a result
 	 * does not fully work as intended. The overriding of the cursor *must* be
 	 * done outside of the enum. The failing case is when more than one plot is
