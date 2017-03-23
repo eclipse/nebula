@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,6 +101,19 @@ public class XYGraphToolbar extends Figure {
 			}
 		});
 
+		final ToggleButton showLegend = new ToggleButton("",
+				XYGraphMediaFactory.getInstance().getImage("images/ShowLegend.png"));
+		showLegend.setToolTip(new Label("Show Legend"));
+		addButton(showLegend);
+		showLegend.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				xyGraph.setShowLegend(!xyGraph.isShowLegend());
+			}
+		});
+
+		showLegend.setSelected(xyGraph.isShowLegend());
+
+		addSeparator();
 		final Button addAnnotationButton = new Button(
 				XYGraphMediaFactory.getInstance().getImage("images/Add_Annotation.png"));
 		addAnnotationButton.setToolTip(new Label("Add Annotation..."));
