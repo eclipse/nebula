@@ -92,11 +92,11 @@ public enum ZoomType {
 			XYGraphMediaFactory.getInstance().getImage("images/PanningCursor.png"),
 			XYGraphMediaFactory.getInstance().getImage("images/PanningCursorOnAxis.png"),
 			XYGraphMediaFactory.getInstance().getImage("images/PanningCursorOnAxis.png"),
-			XYGraphFlags.COMBINED_ZOOM | XYGraphFlags.SEPARATE_ZOOM, SWT.CURSOR_SIZEALL),
+			XYGraphFlags.COMBINED_ZOOM | XYGraphFlags.SEPARATE_ZOOM, SWT.CURSOR_SIZEALL, false),
 
 	/** Disarm zoom behavior */
 	NONE(Messages.Zoom_None, XYGraphMediaFactory.getInstance().getImage("images/MouseArrow.png"), null, null, null,
-			XYGraphFlags.COMBINED_ZOOM | XYGraphFlags.SEPARATE_ZOOM, SWT.CURSOR_ARROW);
+			XYGraphFlags.COMBINED_ZOOM | XYGraphFlags.SEPARATE_ZOOM, SWT.CURSOR_ARROW, false);
 
 	final private Image iconImage;
 	final private String description;
@@ -105,6 +105,14 @@ public enum ZoomType {
 	final private Cursor cursorOnYAxis;
 
 	final private int flags;
+	final private boolean isZoom;
+
+	private ZoomType(final String description, final Image iconImage, final Image cursorImage,
+			final Image cursorImageOnXAxis, final Image cursorImageOnYAxis, final int flags,
+			final int backUpSWTCursorType) {
+		this(description, iconImage, cursorImage, cursorImageOnXAxis, cursorImageOnYAxis, flags, backUpSWTCursorType,
+				true);
+	}
 
 	/**
 	 * Initialize
@@ -123,7 +131,7 @@ public enum ZoomType {
 	 */
 	private ZoomType(final String description, final Image iconImage, final Image cursorImage,
 			final Image cursorImageOnXAxis, final Image cursorImageOnYAxis, final int flags,
-			final int backUpSWTCursorType) {
+			final int backUpSWTCursorType, boolean isZoom) {
 		this.description = description;
 		this.iconImage = iconImage;
 		if (cursorImage == null)
@@ -145,6 +153,7 @@ public enum ZoomType {
 		}
 
 		this.flags = flags;
+		this.isZoom = isZoom;
 	}
 
 	/**
@@ -193,5 +202,17 @@ public enum ZoomType {
 	@Override
 	public String toString() {
 		return description;
+	}
+
+	/**
+	 * Some of the so-called ZoomTypes are not actually Zooms. The
+	 * {@link #isZoom()} returns <code>true</code> if the Zoom type is actually
+	 * a zoom operation. Returns <code>true</code> for all items, except for
+	 * {@link #NONE} and {@value #PANNING}.
+	 * 
+	 * @return <code>true</code> if an actual zoom type
+	 */
+	public boolean isZoom() {
+		return isZoom;
 	}
 }
