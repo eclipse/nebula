@@ -100,7 +100,11 @@ public enum ZoomType {
 
 	final private Image iconImage;
 	final private String description;
-	final private Cursor cursor;
+	/**
+	 * @see #setCursor(Cursor)
+	 */
+	private Cursor overrideCursor;
+	final private Cursor defaultCursor;
 	final private Cursor cursorOnXAxis;
 	final private Cursor cursorOnYAxis;
 
@@ -135,18 +139,18 @@ public enum ZoomType {
 		this.description = description;
 		this.iconImage = iconImage;
 		if (cursorImage == null)
-			cursor = Display.getDefault().getSystemCursor(SWT.CURSOR_ARROW);
+			defaultCursor = Display.getDefault().getSystemCursor(SWT.CURSOR_ARROW);
 		else
-			cursor = SingleSourceHelper2.createCursor(Display.getDefault(), cursorImage.getImageData(), 8, 8,
+			defaultCursor = SingleSourceHelper2.createCursor(Display.getDefault(), cursorImage.getImageData(), 8, 8,
 					backUpSWTCursorType);
 		if (cursorImageOnXAxis == null) {
-			cursorOnXAxis = cursor;
+			cursorOnXAxis = defaultCursor;
 		} else {
 			cursorOnXAxis = SingleSourceHelper2.createCursor(Display.getDefault(), cursorImageOnXAxis.getImageData(), 8,
 					8, backUpSWTCursorType);
 		}
 		if (cursorImageOnYAxis == null) {
-			cursorOnYAxis = cursor;
+			cursorOnYAxis = defaultCursor;
 		} else {
 			cursorOnYAxis = SingleSourceHelper2.createCursor(Display.getDefault(), cursorImageOnYAxis.getImageData(), 8,
 					8, backUpSWTCursorType);
@@ -174,13 +178,19 @@ public enum ZoomType {
 	 * @return the cursor
 	 */
 	public Cursor getCursor() {
-		return cursor;
+		if (overrideCursor != null) {
+			return overrideCursor;
+		}
+		return defaultCursor;
 	}
 
 	/**
 	 * @return the cursor on axis.
 	 */
 	public Cursor getCursorOnAxis(boolean horizontalAxis) {
+		if (overrideCursor != null) {
+			return overrideCursor;
+		}
 		if (horizontalAxis)
 			return cursorOnXAxis;
 		else
@@ -202,6 +212,33 @@ public enum ZoomType {
 	@Override
 	public String toString() {
 		return description;
+	}
+
+	/**
+	 * XXX: Using this is a bad idea, it modifies global state and as a result
+	 * does not fully work as intended. The overriding of the cursor *must* be
+	 * done outside of the enum. The failing case is when more than one plot is
+	 * open at the same time and each plot tries to set the override cursor. In
+	 * that case the last one wins. Nowhere within the Nebula code base calls
+	 * this method, it only exists to support clients that used this in the past
+	 * and is therefore deprecated.
+	 * <p>
+	 * Override the cursor for the given zoom type.
+	 * <p>
+	 * Overriding the cursor is a normal operation for the {@link #NONE} cursor
+	 * as when the cursor is NONE it is deactivated, so external control has an
+	 * effect on the cursor.
+	 * <p>
+	 * When set to non-<code>null</code> value, {@link #getCursor()} and
+	 * {@link #getCursorOnAxis(boolean)} will return the overridden cursor.
+	 * 
+	 * @param cursor
+	 *            to use when overridden
+	 * @deprecated see Javadocs above for details
+	 */
+	@Deprecated
+	public void setCursor(Cursor cursor) {
+		this.overrideCursor = cursor;
 	}
 
 	/**
