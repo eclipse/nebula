@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
 import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -68,6 +69,21 @@ public class AxisConfigPage {
 	private Button showAxisButton;
 
 	private Composite composite;
+	private boolean enableRanges;
+
+	/**
+	 * Create an Axis Configuration Page for the config dialog.
+	 * 
+	 * @param xyGraph
+	 *            graph to configure
+	 * @param axis
+	 *            axis to configure
+	 * @param enableRanges
+	 *            whether min/max controls are enabled
+	 */
+	public AxisConfigPage(IXYGraph xyGraph, Axis axis, boolean enableRanges) {
+		this((XYGraph) xyGraph, axis, enableRanges);
+	}
 
 	public AxisConfigPage(IXYGraph xyGraph, Axis axis) {
 		this((XYGraph)xyGraph, axis);
@@ -81,10 +97,22 @@ public class AxisConfigPage {
 	 */
 	@Deprecated
 	public AxisConfigPage(XYGraph xyGraph, Axis axis) {
+		this(xyGraph, axis, true);
+	}
+
+	/**
+	 * Use {@link #AxisConfigPage(IXYGraph, Axis)} instead
+	 * 
+	 * @param xyGraph
+	 * @param axis
+	 */
+	@Deprecated
+	public AxisConfigPage(XYGraph xyGraph, Axis axis, boolean enableRanges) {
 		this.xyGraph = xyGraph;
 		this.axis = axis;
 		scaleFont = axis.getFont();
 		titleFont = axis.getTitleFont();
+		this.enableRanges = enableRanges;
 	}
 
 	public void createPage(final Composite composite) {
@@ -182,6 +210,7 @@ public class AxisConfigPage {
 		maxOrAutoScaleThrText = new DoubleInputText(composite, SWT.BORDER | SWT.SINGLE);
 		gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false, 2, 1);
 		maxOrAutoScaleThrText.getText().setLayoutData(gd);
+		maxOrAutoScaleThrText.getText().setEnabled(enableRanges);
 
 		minLabel = new Label(composite, 0);
 		minLabel.setText("Minimum: ");
@@ -190,6 +219,18 @@ public class AxisConfigPage {
 		minText = new DoubleInputText(composite, SWT.BORDER | SWT.SINGLE);
 		gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false, 2, 1);
 		minText.getText().setLayoutData(gd);
+		minText.getText().setEnabled(enableRanges);
+
+		if (!enableRanges) {
+			final CLabel info = new CLabel(composite, SWT.WRAP);
+			info.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false, 3, 1));
+			info.setText("Automatic rescale is on, max. and min. therefore cannot be edited.");
+			info.setImage(XYGraphMediaFactory.getInstance().getImage("images/rescale.png"));
+
+			Label sep = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
+			sep.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false, 3, 1));
+
+		}
 
 		// autoScale button listener
 		autoScaleButton.addSelectionListener(new SelectionAdapter() {
