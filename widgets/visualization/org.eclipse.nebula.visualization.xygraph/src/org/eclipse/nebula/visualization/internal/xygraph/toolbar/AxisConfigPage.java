@@ -300,6 +300,9 @@ public class AxisConfigPage {
 			}
 		});
 
+		Label sep = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
+		sep.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false, 3, 1));
+
 		showGridButton = new Button(composite, SWT.CHECK);
 		configCheckButton(showGridButton, "Show Grid Line");
 		dashGridLineButton = new Button(composite, SWT.CHECK);
