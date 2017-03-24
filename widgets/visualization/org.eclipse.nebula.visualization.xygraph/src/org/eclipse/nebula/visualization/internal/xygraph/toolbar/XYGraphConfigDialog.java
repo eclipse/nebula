@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,9 @@ import org.eclipse.nebula.visualization.xygraph.figures.Axis;
 import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace;
 import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
+import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -42,6 +44,18 @@ import org.eclipse.swt.widgets.TabItem;
  *
  */
 public class XYGraphConfigDialog extends Dialog {
+
+	/**
+	 * Bug 514179: At the moment the implementation of the configuration means
+	 * that each trace, axis or annotation requires its own config page
+	 * instance, with its own set of controls. The result is if there are very
+	 * many traces, axes or annotations, the UI crashes.
+	 * 
+	 * The result is we limit how many traces, axes or annotations can be edited
+	 * manually in this UI and display a warning to the user referencing the
+	 * bug.
+	 */
+	private static final int MAX_CONFIG_PAGE_COUNT = 50;
 
 	private GraphConfigPage graphConfigPage;
 	private List<AnnotationConfigPage> annotationConfigPageList;
@@ -103,21 +117,34 @@ public class XYGraphConfigDialog extends Dialog {
 		axisConfigTab.setToolTipText("Configure Axes Settings");
 		axisConfigTab.setControl(axisTabComposite);
 
+		if (xyGraph.getAxisList().size() > MAX_CONFIG_PAGE_COUNT) {
+			addMaxWarningMessage(axisTabComposite, "axes");
+		}
+
 		Group axisSelectGroup = new Group(axisTabComposite, SWT.NONE);
 		axisSelectGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		axisSelectGroup.setText("Select Axis");
 		axisSelectGroup.setLayout(new GridLayout(1, false));
 		final Combo axisCombo = new Combo(axisSelectGroup, SWT.DROP_DOWN);
 		axisCombo.setLayoutData(new GridData(SWT.FILL, 0, true, false));
-		for (Axis axis : xyGraph.getAxisList())
+		int count = 0;
+		for (Axis axis : xyGraph.getAxisList()) {
+			if (++count > MAX_CONFIG_PAGE_COUNT) {
+				break;
+			}
 			axisCombo.add(axis.getTitle() + (axis.isHorizontal() ? "(X-Axis)" : "(Y-Axis)"));
+		}
 		axisCombo.select(0);
 
 		final Composite axisConfigComposite = new Composite(axisTabComposite, SWT.NONE);
 		axisConfigComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		final StackLayout axisStackLayout = new StackLayout();
 		axisConfigComposite.setLayout(axisStackLayout);
+		count = 0;
 		for (Axis axis : xyGraph.getAxisList()) {
+			if (++count > MAX_CONFIG_PAGE_COUNT) {
+				break;
+			}
 			Group axisConfigGroup = new Group(axisConfigComposite, SWT.NONE);
 			axisConfigGroup.setText("Change Settings");
 			axisConfigGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -143,21 +170,35 @@ public class XYGraphConfigDialog extends Dialog {
 			traceConfigTab.setToolTipText("Configure Traces Settings");
 			traceConfigTab.setControl(traceTabComposite);
 
+			if (xyGraph.getPlotArea().getTraceList().size() > MAX_CONFIG_PAGE_COUNT) {
+				addMaxWarningMessage(traceTabComposite, "traces");
+			}
+
 			Group traceSelectGroup = new Group(traceTabComposite, SWT.NONE);
 			traceSelectGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 			traceSelectGroup.setText("Select Trace");
 			traceSelectGroup.setLayout(new GridLayout(1, false));
 			final Combo traceCombo = new Combo(traceSelectGroup, SWT.DROP_DOWN);
 			traceCombo.setLayoutData(new GridData(SWT.FILL, 0, true, false));
-			for (Trace trace : xyGraph.getPlotArea().getTraceList())
+			count = 0;
+			for (Trace trace : xyGraph.getPlotArea().getTraceList()) {
+				if (++count > MAX_CONFIG_PAGE_COUNT) {
+					break;
+				}
 				traceCombo.add(trace.getName());
+			}
 			traceCombo.select(0);
 
 			final Composite traceConfigComposite = new Composite(traceTabComposite, SWT.NONE);
 			traceConfigComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 			final StackLayout traceStackLayout = new StackLayout();
 			traceConfigComposite.setLayout(traceStackLayout);
+
+			count = 0;
 			for (Trace trace : xyGraph.getPlotArea().getTraceList()) {
+				if (++count > MAX_CONFIG_PAGE_COUNT) {
+					break;
+				}
 				Group traceConfigGroup = new Group(traceConfigComposite, SWT.NONE);
 				traceConfigGroup.setText("Change Settings");
 				traceConfigGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -185,21 +226,34 @@ public class XYGraphConfigDialog extends Dialog {
 			annoConfigTab.setToolTipText("Configure Annotation Settings");
 			annoConfigTab.setControl(annoTabComposite);
 
+			if (xyGraph.getPlotArea().getAnnotationList().size() > MAX_CONFIG_PAGE_COUNT) {
+				addMaxWarningMessage(annoTabComposite, "annotations");
+			}
+
 			Group annoSelectGroup = new Group(annoTabComposite, SWT.NONE);
 			annoSelectGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 			annoSelectGroup.setText("Select Annotation");
 			annoSelectGroup.setLayout(new GridLayout(1, false));
 			final Combo annotationsCombo = new Combo(annoSelectGroup, SWT.DROP_DOWN);
 			annotationsCombo.setLayoutData(new GridData(SWT.FILL, 0, true, false));
-			for (Annotation annotation : xyGraph.getPlotArea().getAnnotationList())
+			count = 0;
+			for (Annotation annotation : xyGraph.getPlotArea().getAnnotationList()) {
+				if (++count > MAX_CONFIG_PAGE_COUNT) {
+					break;
+				}
 				annotationsCombo.add(annotation.getName());
+			}
 			annotationsCombo.select(0);
 
 			final Composite annoConfigComposite = new Composite(annoTabComposite, SWT.NONE);
 			annoConfigComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 			final StackLayout stackLayout = new StackLayout();
 			annoConfigComposite.setLayout(stackLayout);
+			count = 0;
 			for (Annotation annotation : xyGraph.getPlotArea().getAnnotationList()) {
+				if (++count > MAX_CONFIG_PAGE_COUNT) {
+					break;
+				}
 				Group annoConfigGroup = new Group(annoConfigComposite, SWT.NONE);
 				annoConfigGroup.setText("Change Settings");
 				annoConfigGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -219,6 +273,17 @@ public class XYGraphConfigDialog extends Dialog {
 		}
 
 		return parent_composite;
+	}
+
+	private void addMaxWarningMessage(Composite composite, String type) {
+		final CLabel warning = new CLabel(composite, SWT.NONE);
+		warning.setText("There are too many " + type + " to edit");
+		warning.setToolTipText("Currently only the first " + MAX_CONFIG_PAGE_COUNT + " " + type
+				+ " can have their properties manually edited.\n"
+				+ "This is due to a limitation with the current widget design on the configure form.\n"
+				+ "Please see Bug 514179 for more details.");
+		warning.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		warning.setImage(XYGraphMediaFactory.getInstance().getImage("images/warning.png"));
 	}
 
 	@Override
