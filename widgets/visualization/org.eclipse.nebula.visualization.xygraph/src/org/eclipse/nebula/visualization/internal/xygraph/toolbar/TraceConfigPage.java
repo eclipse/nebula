@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,11 +13,11 @@ import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.nebula.visualization.xygraph.figures.Axis;
 import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace;
-import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace.BaseLine;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace.ErrorBarType;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace.PointStyle;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace.TraceType;
+import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -61,6 +61,8 @@ public class TraceConfigPage {
 	private Spinner errorBarCapWidthSpinner;
 	private Button drawYErrorInAreaButton;
 
+	private Button visible;
+
 	private Composite composite;
 
 	public TraceConfigPage(IXYGraph xyGraph, Trace trace) {
@@ -95,6 +97,10 @@ public class TraceConfigPage {
 
 		GridData gd;
 		GridData labelGd = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+
+		visible = new Button(traceCompo, SWT.CHECK);
+		visible.setText("Visible");
+		visible.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false, 3, 1));
 
 		final Label nameLabel = new Label(traceCompo, 0);
 		nameLabel.setText("Name: ");
@@ -270,6 +276,7 @@ public class TraceConfigPage {
 		drawYErrorInAreaButton = new Button(errorBarGroup, SWT.CHECK);
 		drawYErrorInAreaButton.setText("Draw Y Error In Area");
 		drawYErrorInAreaButton.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, 2, 1));
+
 		initialize();
 	}
 
@@ -298,6 +305,11 @@ public class TraceConfigPage {
 		trace.setErrorBarColor(XYGraphMediaFactory.getInstance().getColor(errorBarColorSelector.getColorValue()));
 		trace.setErrorBarCapWidth(errorBarCapWidthSpinner.getSelection());
 		trace.setDrawYErrorInArea(drawYErrorInAreaButton.getSelection());
+
+		boolean vis = visible.getSelection();
+		if (vis != trace.isVisible())
+			trace.setVisible(vis);
+
 	}
 
 	private void initialize() {
@@ -325,6 +337,8 @@ public class TraceConfigPage {
 		errorBarColorSelector.setEnabled(enabled);
 		errorBarCapWidthSpinner.setEnabled(enabled);
 		drawYErrorInAreaButton.setEnabled(enabled);
+
+		visible.setSelection(trace.isVisible());
 
 		updateBaseLineComboEnable();
 	}
