@@ -359,8 +359,8 @@ public class AxisConfigPage {
 		axis.setAutoFormat(autoFormat.getSelection());
 		if (!autoFormat.getSelection()) {
 			String saveFormat = axis.getFormatPattern();
-			axis.setFormatPattern(formatText.getText());
 			try {
+				axis.setFormatPattern(formatText.getText());
 				axis.format(0);
 			} catch (Exception e) {
 				axis.setFormatPattern(saveFormat);
