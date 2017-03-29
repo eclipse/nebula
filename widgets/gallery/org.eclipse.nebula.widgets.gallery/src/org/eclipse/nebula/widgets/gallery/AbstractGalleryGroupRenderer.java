@@ -80,8 +80,8 @@ public abstract class AbstractGalleryGroupRenderer {
 	 * @param x
 	 * @param y
 	 */
-	public abstract void draw(GC gc, GalleryItem group, int x, int y,
-			int clipX, int clipY, int clipWidth, int clipHeight);
+	public abstract void draw(GC gc, GalleryItem group, int x, int y, int clipX,
+			int clipY, int clipWidth, int clipHeight);
 
 	public abstract void dispose();
 
@@ -144,6 +144,19 @@ public abstract class AbstractGalleryGroupRenderer {
 	 */
 	public abstract Rectangle getSize(GalleryItem item);
 
+	/**
+	 * This method can be implemented to handle mouse down events at the group
+	 * level. Usually to interact with custom group UI.
+	 * 
+	 * @param group
+	 *            The group on which the mouse click occured
+	 * @param e
+	 *            The original mouse event
+	 * @param coords
+	 *            The pointer coordinates relative to the group
+	 * @return false if event was handled by the group renderer and Gallery
+	 *         should not try to handle this event as a click on a GalleryItem.
+	 */
 	public abstract boolean mouseDown(GalleryItem group, MouseEvent e,
 			Point coords);
 

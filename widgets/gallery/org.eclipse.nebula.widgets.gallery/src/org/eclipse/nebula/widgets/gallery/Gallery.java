@@ -388,8 +388,8 @@ public class Gallery extends Canvas {
 	 * @param x
 	 * @param y
 	 */
-	protected void sendPaintItemEvent(Item item, int index, GC gc, int x,
-			int y, int width, int height) {
+	protected void sendPaintItemEvent(Item item, int index, GC gc, int x, int y,
+			int width, int height) {
 
 		Event e = new Event();
 		e.item = item;
@@ -671,8 +671,8 @@ public class Gallery extends Canvas {
 				case SWT.PAGE_DOWN:
 				case SWT.HOME:
 				case SWT.END:
-					GalleryItem newItem = groupRenderer.getNextItem(
-							lastSingleClick, e.keyCode);
+					GalleryItem newItem = groupRenderer
+							.getNextItem(lastSingleClick, e.keyCode);
 
 					if (newItem != null) {
 						_deselectAll(false);
@@ -929,7 +929,8 @@ public class Gallery extends Canvas {
 		} else {
 			GalleryItem[] oldSelection = selection;
 			selection = new GalleryItem[oldSelection.length + 1];
-			System.arraycopy(oldSelection, 0, selection, 0, oldSelection.length);
+			System.arraycopy(oldSelection, 0, selection, 0,
+					oldSelection.length);
 		}
 		selection[selection.length - 1] = item;
 
@@ -1081,6 +1082,7 @@ public class Gallery extends Canvas {
 		mouseClickHandled = false;
 
 		if (!_mouseDown(e)) {
+			// Stop handling as requested by the group renderer
 			mouseClickHandled = true;
 			return;
 		}
@@ -1196,9 +1198,11 @@ public class Gallery extends Canvas {
 			System.out.println("paint"); //$NON-NLS-1$
 
 		boolean lowQualityPaint = lowQualityOnUserAction
-				&& (translate != lastTranslateValue || (lastControlWidth != getSize().x
-						|| lastControlHeight != getSize().y
-						|| lastContentHeight != this.gHeight || lastContentWidth != this.gWidth));
+				&& (translate != lastTranslateValue
+						|| (lastControlWidth != getSize().x
+								|| lastControlHeight != getSize().y
+								|| lastContentHeight != this.gHeight
+								|| lastContentWidth != this.gWidth));
 		try {
 			// Linux-GTK Bug 174932
 			if (!SWT.getPlatform().equals(BUG_PLATFORM_LINUX_GTK_174932)) {
@@ -1299,7 +1303,8 @@ public class Gallery extends Canvas {
 			if ((vertical ? item.y : item.x) > end)
 				break;
 
-			if ((vertical ? (item.y + item.height) : (item.x + item.width)) >= start)
+			if ((vertical ? (item.y + item.height)
+					: (item.x + item.width)) >= start)
 				al.add(new Integer(index));
 
 			index++;
@@ -1426,8 +1431,8 @@ public class Gallery extends Canvas {
 				// Parent is the Gallery widget
 				galleryItem = items[i];
 
-				if (galleryItem == null
-						|| (virtualGroups && galleryItem.isUltraLazyDummy() && create)) {
+				if (galleryItem == null || (virtualGroups
+						&& galleryItem.isUltraLazyDummy() && create)) {
 
 					if (DEBUG) {
 						System.out.println("Virtual/creating item "); //$NON-NLS-1$
@@ -1627,8 +1632,8 @@ public class Gallery extends Canvas {
 			updateScrollBarProperties(getVerticalBar(), getClientArea().height,
 					gHeight);
 		} else {
-			updateScrollBarProperties(getHorizontalBar(),
-					getClientArea().width, gWidth);
+			updateScrollBarProperties(getHorizontalBar(), getClientArea().width,
+					gWidth);
 		}
 
 	}
@@ -1835,18 +1840,27 @@ public class Gallery extends Canvas {
 	 * Forward the mouseDown event to the corresponding group according to the
 	 * mouse position.
 	 * 
-	 * @param e
-	 * @return
+	 * @param event
+	 *            The original MouseEvent
+	 * @return true if Gallery should continue standard mouse click handling
 	 */
-	protected boolean _mouseDown(MouseEvent e) {
-		if (DEBUG)
-			System.out.println("getitem " + e.x + " " + e.y); //$NON-NLS-1$//$NON-NLS-2$
+	protected boolean _mouseDown(MouseEvent event) {
 
-		GalleryItem group = this._getGroup(new Point(e.x, e.y));
+		if (DEBUG)
+			System.out.println("getitem " + event.x + " " + event.y); //$NON-NLS-1$//$NON-NLS-2$
+
+		GalleryItem group = this._getGroup(new Point(event.x, event.y));
 		if (group != null) {
-			int pos = vertical ? (e.y + translate) : (e.x + translate);
-			return groupRenderer.mouseDown(group, e, new Point(vertical ? e.x
-					: pos, vertical ? pos : e.y));
+			int pos = vertical ? (event.y + translate) : (event.x + translate);
+
+			try {
+				return groupRenderer.mouseDown(group, event, new Point(
+						vertical ? event.x : pos, vertical ? pos : event.y));
+			} catch (Exception e) {
+				// We can't let 3rd party groupRenderer#mouseDown throw an
+				// exception because unexpected results may occur in SWT.
+				e.printStackTrace();
+			}
 		}
 
 		return true;
@@ -1868,8 +1882,8 @@ public class Gallery extends Canvas {
 
 		GalleryItem group = this._getGroup(coords);
 		if (group != null)
-			return groupRenderer.getItem(group, new Point(vertical ? coords.x
-					: pos, vertical ? pos : coords.y));
+			return groupRenderer.getItem(group, new Point(
+					vertical ? coords.x : pos, vertical ? pos : coords.y));
 
 		return null;
 	}
@@ -1895,7 +1909,8 @@ public class Gallery extends Canvas {
 			if ((vertical ? item.y : item.x) > pos)
 				break;
 
-			if ((vertical ? (item.y + item.height) : (item.x + item.width)) >= pos)
+			if ((vertical ? (item.y + item.height)
+					: (item.x + item.width)) >= pos)
 				return item;
 
 			index++;
@@ -2187,8 +2202,8 @@ public class Gallery extends Canvas {
 			return super.getBackground();
 		}
 
-		return backgroundColor != null ? backgroundColor : getDisplay()
-				.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+		return backgroundColor != null ? backgroundColor
+				: getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 	}
 
 	/*
@@ -2230,8 +2245,8 @@ public class Gallery extends Canvas {
 			return super.getForeground();
 		}
 
-		return foregroundColor != null ? foregroundColor : getDisplay()
-				.getSystemColor(SWT.COLOR_LIST_FOREGROUND);
+		return foregroundColor != null ? foregroundColor
+				: getDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND);
 	}
 
 	/*
@@ -2419,15 +2434,15 @@ public class Gallery extends Canvas {
 		if (array.length == 1 && index == 0)
 			return null;
 
-		Object[] newArray = (Object[]) Array.newInstance(array.getClass()
-				.getComponentType(), array.length - 1);
+		Object[] newArray = (Object[]) Array.newInstance(
+				array.getClass().getComponentType(), array.length - 1);
 
 		if (index > 0)
 			System.arraycopy(array, 0, newArray, 0, index);
 
 		if (index + 1 < array.length)
-			System.arraycopy(array, index + 1, newArray, index, newArray.length
-					- index);
+			System.arraycopy(array, index + 1, newArray, index,
+					newArray.length - index);
 
 		return newArray;
 	}
@@ -2514,8 +2529,8 @@ public class Gallery extends Canvas {
 			System.arraycopy(array, 0, newArray, 0, index);
 
 		if (index + 1 < array.length)
-			System.arraycopy(array, index + 1, newArray, index, newArray.length
-					- index);
+			System.arraycopy(array, index + 1, newArray, index,
+					newArray.length - index);
 
 		return newArray;
 	}

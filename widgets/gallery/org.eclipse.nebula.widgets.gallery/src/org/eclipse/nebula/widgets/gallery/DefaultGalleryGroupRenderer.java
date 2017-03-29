@@ -107,9 +107,8 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.nebula.widgets.gallery.AbstractGalleryGroupRenderer#setGallery
-	 * (org.eclipse.nebula.widgets.gallery.Gallery)
+	 * @see org.eclipse.nebula.widgets.gallery.AbstractGalleryGroupRenderer#
+	 * setGallery (org.eclipse.nebula.widgets.gallery.Gallery)
 	 */
 	public void setGallery(Gallery gallery) {
 		super.setGallery(gallery);
@@ -126,8 +125,8 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 		}
 
 		if (descriptionColor == null) {
-			descriptionColor = gallery.getDisplay().getSystemColor(
-					SWT.COLOR_DARK_BLUE);
+			descriptionColor = gallery.getDisplay()
+					.getSystemColor(SWT.COLOR_DARK_BLUE);
 		}
 
 	}
@@ -168,7 +167,8 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 	 * @param y
 	 * @param group
 	 */
-	protected int drawGroupToggleButton(GC gc, int x, int y, GalleryItem group) {
+	protected int drawGroupToggleButton(GC gc, int x, int y,
+			GalleryItem group) {
 		if (!isAlwaysExpanded()) {
 			// Toggle Button
 
@@ -178,18 +178,18 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 			int toggleX = x + xShift;
 			int toggleY = y + yShift;
 
-			gc.setBackground(gc.getDevice().getSystemColor(
-					SWT.COLOR_LIST_BACKGROUND));
+			gc.setBackground(
+					gc.getDevice().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 			gc.fillRectangle(toggleX, toggleY, 8, 8);
 
-			gc.setForeground(gc.getDevice().getSystemColor(
-					SWT.COLOR_WIDGET_FOREGROUND));
+			gc.setForeground(
+					gc.getDevice().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
 			gc.drawLine(toggleX + 2, toggleY + 4, toggleX + 6, toggleY + 4);
 			if (!expanded) {
 				gc.drawLine(toggleX + 4, toggleY + 2, toggleX + 4, toggleY + 6);
 			}
-			gc.setForeground(gc.getDevice().getSystemColor(
-					SWT.COLOR_WIDGET_NORMAL_SHADOW));
+			gc.setForeground(gc.getDevice()
+					.getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
 			gc.drawRectangle(toggleX, toggleY, 8, 8);
 
 			// if (isFocus()) {
@@ -204,28 +204,31 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 	}
 
 	protected Rectangle getToggleButtonBounds() {
-		return new Rectangle(minMargin
-				+ RendererHelper.getShift(titleHeight, 9), RendererHelper
-				.getShift(titleHeight, 9), 9, 9);
+		return new Rectangle(
+				minMargin + RendererHelper.getShift(titleHeight, 9),
+				RendererHelper.getShift(titleHeight, 9), 9, 9);
 	}
 
 	protected int getGroupHeight(GalleryItem group) {
 		int groupHeight = titleHeight;
 
 		if (group.getImage() != null) {
-			Point imageSize = RendererHelper.getBestSize(group.getImage()
-					.getBounds().width, group.getImage().getBounds().height,
-					maxImageWidth, maxImageHeight);
+			Point imageSize = RendererHelper.getBestSize(
+					group.getImage().getBounds().width,
+					group.getImage().getBounds().height, maxImageWidth,
+					maxImageHeight);
 			groupHeight = Math.max(titleHeight, imageSize.y + 2 * minMargin);
 		}
 
 		// Ensure there is enough room to display all text.
 		int lineCount = 1;
-		if (group.getText(1) != null && !EMPTY_STRING.equals(group.getText(1))) {
+		if (group.getText(1) != null
+				&& !EMPTY_STRING.equals(group.getText(1))) {
 			lineCount++;
 		}
 
-		if (group.getText(2) != null && !EMPTY_STRING.equals(group.getText(2))) {
+		if (group.getText(2) != null
+				&& !EMPTY_STRING.equals(group.getText(2))) {
 			lineCount++;
 		}
 
@@ -243,8 +246,9 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 		imageSize = null;
 		if (group.getImage() != null) {
 			imageSize = RendererHelper.getBestSize(
-					group.getImage().getBounds().width, group.getImage()
-							.getBounds().height, maxImageWidth, maxImageHeight);
+					group.getImage().getBounds().width,
+					group.getImage().getBounds().height, maxImageWidth,
+					maxImageHeight);
 		}
 		int groupHeight = getGroupHeight(group);
 
@@ -273,8 +277,8 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 			baseX += drawGroupImage(gc, group, baseX, y, imageSize);
 
 			// Color for text
-			gc.setForeground(group.getForeground(true) != null ? group
-					.getForeground(true) : titleForeground);
+			gc.setForeground(group.getForeground(true) != null
+					? group.getForeground(true) : titleForeground);
 
 			// Title text
 			gc.setFont(getFont(group));
@@ -285,8 +289,8 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 			for (int i = 1; i < 3; i++) {
 				if (group.getText(i) != null
 						&& !EMPTY_STRING.equals(group.getText(i))) {
-					gc.drawText(group.getText(i), baseX, textY + i
-							* (2 + fontHeight), true);
+					gc.drawText(group.getText(i), baseX,
+							textY + i * (2 + fontHeight), true);
 				}
 			}
 
@@ -331,8 +335,8 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 			gc.setForeground(descriptionColor);
 			for (int i = 1; i < 3; i++) {
 				if (group.getText(i) != null) {
-					gc.drawText(group.getText(i), baseY, textX + i
-							* (2 + fontHeight), true);
+					gc.drawText(group.getText(i), baseY,
+							textX + i * (2 + fontHeight), true);
 				}
 			}
 			gc.setTransform(null);
@@ -380,10 +384,10 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 		Image img = group.getImage();
 		Rectangle imgSize = img.getBounds();
 
-		Point offset = RendererHelper.getImageOffset(imageSize2.x,
-				imageSize2.y, maxImageWidth, getGroupHeight(group));
-		gc.drawImage(img, 0, 0, imgSize.width, imgSize.height, x + offset.x, y
-				+ offset.y, imageSize2.x, imageSize2.y);
+		Point offset = RendererHelper.getImageOffset(imageSize2.x, imageSize2.y,
+				maxImageWidth, getGroupHeight(group));
+		gc.drawImage(img, 0, 0, imgSize.width, imgSize.height, x + offset.x,
+				y + offset.y, imageSize2.x, imageSize2.y);
 
 		return maxImageWidth + 2 * minMargin;
 	}
@@ -438,8 +442,8 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 			if (indexes != null && indexes.length > 0) {
 				for (int i = indexes.length - 1; i >= 0; i--) {
 
-					boolean selected = group.isSelected(group
-							.getItem(indexes[i]));
+					boolean selected = group
+							.isSelected(group.getItem(indexes[i]));
 
 					if (Gallery.DEBUG) {
 						System.out.println("Selected : " + selected //$NON-NLS-1$
@@ -621,8 +625,8 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 
 			}
 
-			animationRunner.runEffect(new GalleryGroupResizeEffect(group,
-					start, end, animationLength, movement, null, null));
+			animationRunner.runEffect(new GalleryGroupResizeEffect(group, start,
+					end, animationLength, movement, null, null));
 		}
 
 	}
@@ -635,7 +639,8 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 	 * (org.eclipse.nebula.widgets.gallery.GalleryItem,
 	 * org.eclipse.swt.events.MouseEvent, org.eclipse.swt.graphics.Point)
 	 */
-	public boolean mouseDown(final GalleryItem group, MouseEvent e, Point coords) {
+	public boolean mouseDown(final GalleryItem group, MouseEvent e,
+			Point coords) {
 
 		if (gallery.isVertical()) { // V_SCROLL
 			if (coords.y - group.y <= getGroupHeight(group)) {
@@ -681,19 +686,24 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 
 						// Select all and notify
 						group.selectAll();
-						gallery.notifySelectionListeners(group, gallery
-								.indexOf(group), false);
+						gallery.notifySelectionListeners(group,
+								gallery.indexOf(group), false);
 						gallery.redraw();
 					}
 				}
+				// Event was handled at the group level, stop further
+				// processing.
 				return false;
 			}
 		} else { // H_SCROLL
 			if (coords.x - group.x <= getGroupHeight(group)) {
 
 				if (!isAlwaysExpanded()
-						&& group.height - coords.y + 5 <= (getToggleButtonBounds().x + getToggleButtonBounds().width)
-						&& group.height - coords.y + 5 > getToggleButtonBounds().x) {
+						&& group.height - coords.y
+								+ 5 <= (getToggleButtonBounds().x
+										+ getToggleButtonBounds().width)
+						&& group.height - coords.y
+								+ 5 > getToggleButtonBounds().x) {
 					// This is a click on the toggle button : expand/collapse
 					// the group
 					// Note : if groups are always expanded, there is no toggle
@@ -732,15 +742,19 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 
 						// Select all and notify
 						group.selectAll();
-						gallery.notifySelectionListeners(group, gallery
-								.indexOf(group), false);
+						gallery.notifySelectionListeners(group,
+								gallery.indexOf(group), false);
 						gallery.redraw();
 					}
 				}
+				// Event was handled at the group level, stop further
+				// processing.
 				return false;
 			}
 		}
 
+		// Mouse down event was not handled at the group level, continue with
+		// standard mouse down event processing.
 		return true;
 	}
 
@@ -782,8 +796,8 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 				throw new IllegalArgumentException(
 						"Please associate this renderer with a Gallery before trying to reset foreground defaults"); //$NON-NLS-1$
 			}
-			titleForeground = gallery.getDisplay().getSystemColor(
-					SWT.COLOR_TITLE_FOREGROUND);
+			titleForeground = gallery.getDisplay()
+					.getSystemColor(SWT.COLOR_TITLE_FOREGROUND);
 		} else {
 			this.titleForeground = titleColor;
 		}
@@ -812,10 +826,10 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 			}
 
 			// Default gradient Background
-			this.titleBackground = gallery.getDisplay().getSystemColor(
-					SWT.COLOR_TITLE_BACKGROUND);
-			this.titleBackground2 = gallery.getDisplay().getSystemColor(
-					SWT.COLOR_TITLE_BACKGROUND_GRADIENT);
+			this.titleBackground = gallery.getDisplay()
+					.getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
+			this.titleBackground2 = gallery.getDisplay()
+					.getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT);
 		}
 	}
 
@@ -877,8 +891,8 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 
 			if (gallery.getItemRenderer() != null) {
 				gallery.getItemRenderer().setSelected(selected);
-				gallery.getItemRenderer().draw(gc, gItem, index, area.x,
-						area.y, area.width, area.height);
+				gallery.getItemRenderer().draw(gc, gItem, index, area.x, area.y,
+						area.width, area.height);
 			}
 
 			return;
@@ -1060,14 +1074,14 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.nebula.widgets.gallery.AbstractGridGroupRenderer#isGroupExpanded
-	 * (org.eclipse.nebula.widgets.gallery.GalleryItem)
+	 * @see org.eclipse.nebula.widgets.gallery.AbstractGridGroupRenderer#
+	 * isGroupExpanded (org.eclipse.nebula.widgets.gallery.GalleryItem)
 	 */
 	protected boolean isGroupExpanded(GalleryItem item) {
 
 		if (animation) {
-			if (item.getData(DefaultGalleryGroupRenderer.DATA_ANIMATION) != null)
+			if (item.getData(
+					DefaultGalleryGroupRenderer.DATA_ANIMATION) != null)
 				return true;
 		}
 		return super.isGroupExpanded(item);

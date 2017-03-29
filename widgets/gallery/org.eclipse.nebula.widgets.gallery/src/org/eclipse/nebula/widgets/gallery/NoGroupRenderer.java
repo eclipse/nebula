@@ -57,8 +57,9 @@ public class NoGroupRenderer extends AbstractGridGroupRenderer {
 				boolean selected = group.isSelected(group.getItem(indexes[i]));
 
 				if (Gallery.DEBUG) {
-					System.out
-							.println("Selected : " + selected + " index : " + indexes[i] + "item : " + group.getItem(indexes[i])); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+					System.out.println(
+							"Selected : " + selected + " index : " + indexes[i] //$NON-NLS-1$//$NON-NLS-2$
+									+ "item : " + group.getItem(indexes[i])); //$NON-NLS-1$
 				}
 
 				drawItem(gc, indexes[i], selected, group, OFFSET);
@@ -139,7 +140,8 @@ public class NoGroupRenderer extends AbstractGridGroupRenderer {
 	 * org.eclipse.swt.events.MouseEvent, org.eclipse.swt.graphics.Point)
 	 */
 	public boolean mouseDown(GalleryItem group, MouseEvent e, Point coords) {
-		// Do nothing
+		// This renderer does not display anything, so there is nothing to do
+		// here. Continue standard mouse down processing
 		return true;
 	}
 
