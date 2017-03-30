@@ -175,6 +175,9 @@ public class Axis extends LinearScale {
 	 * @param isInverted
 	 */
 	public void setInverted(boolean isInverted) {
+		if (this.isInverted == isInverted)
+			return;
+
 		this.isInverted = isInverted;
 		double min = getRange().getLower();
 		double max = getRange().getUpper();
