@@ -53,7 +53,7 @@ public abstract class AbstractScale extends Figure {
 	/**
 	 * the digits limit to be displayed in engineering format
 	 */
-	public static final int ENGINEERING_LIMIT = 4;
+	private static final int ENGINEERING_LIMIT = 4;
 
 	private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd\nHH:mm:ss"; //$NON-NLS-1$
 
@@ -112,8 +112,6 @@ public abstract class AbstractScale extends Figure {
 	private Range range = new Range(min, max);
 
 	private int formatPatternSize = 0;
-
-	private boolean userDefinedFormat = false;
 
 	/**
 	 * Formats the given object.
@@ -321,7 +319,6 @@ public abstract class AbstractScale extends Figure {
 			throw e;
 		}
 
-		this.userDefinedFormat = true;
 		internalSetFormatPattern(formatPattern);
 		autoFormat = false;
 		setDirty(true);
@@ -335,10 +332,6 @@ public abstract class AbstractScale extends Figure {
 		this.formatPattern = formatPattern;
 		if (isDateEnabled())
 			formatPatternSize = TextUtilities.INSTANCE.getTextExtents(formatPattern, getFont()).width;
-	}
-
-	public boolean hasUserDefinedFormat() {
-		return userDefinedFormat;
 	}
 
 	/**
