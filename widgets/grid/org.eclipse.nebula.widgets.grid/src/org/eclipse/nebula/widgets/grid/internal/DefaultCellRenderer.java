@@ -49,7 +49,7 @@ public class DefaultCellRenderer extends GridCellRenderer
 
     int textBottomMargin = 2;
 
-    private int insideMargin = 3;
+    private final int insideMargin = 3;
 
     int treeIndent = 20;
 
@@ -64,7 +64,8 @@ public class DefaultCellRenderer extends GridCellRenderer
     /**
      * {@inheritDoc}
      */
-    public void paint(GC gc, Object value)
+    @Override
+	public void paint(GC gc, Object value)
     {
         GridItem item = (GridItem)value;
 
@@ -103,7 +104,9 @@ public class DefaultCellRenderer extends GridCellRenderer
             {
                 gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
             }
-            gc.setForeground(item.getForeground(getColumn()));
+            
+            Color foreground = item.getForeground(getColumn());
+			gc.setForeground(foreground == null ? getDisplay().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND) : foreground);
         }
 
         if (drawBackground)
@@ -229,7 +232,8 @@ public class DefaultCellRenderer extends GridCellRenderer
                 textLayout = new TextLayout(gc.getDevice());
                 item.getParent().addDisposeListener(new DisposeListener()
                 {
-                    public void widgetDisposed(DisposeEvent e)
+                    @Override
+					public void widgetDisposed(DisposeEvent e)
                     {
                         textLayout.dispose();
                     }
@@ -383,7 +387,8 @@ public class DefaultCellRenderer extends GridCellRenderer
 	/**
      * {@inheritDoc}
      */
-    public Point computeSize(GC gc, int wHint, int hHint, Object value)
+    @Override
+	public Point computeSize(GC gc, int wHint, int hHint, Object value)
     {
         GridItem item = (GridItem)value;
 
@@ -464,7 +469,8 @@ public class DefaultCellRenderer extends GridCellRenderer
     /**
      * {@inheritDoc}
      */
-    public boolean notify(int event, Point point, Object value)
+    @Override
+	public boolean notify(int event, Point point, Object value)
     {
 
         GridItem item = (GridItem)value;
@@ -608,7 +614,8 @@ public class DefaultCellRenderer extends GridCellRenderer
     /**
      * {@inheritDoc}
      */
-    public void setTree(boolean tree)
+    @Override
+	public void setTree(boolean tree)
     {
         super.setTree(tree);
 
@@ -625,7 +632,8 @@ public class DefaultCellRenderer extends GridCellRenderer
     /**
      * {@inheritDoc}
      */
-    public void setCheck(boolean check)
+    @Override
+	public void setCheck(boolean check)
     {
         super.setCheck(check);
 
@@ -643,7 +651,8 @@ public class DefaultCellRenderer extends GridCellRenderer
     /**
      * {@inheritDoc}
      */
-    public Rectangle getTextBounds(GridItem item, boolean preferred)
+    @Override
+	public Rectangle getTextBounds(GridItem item, boolean preferred)
     {
         int x = leftMargin;
 
