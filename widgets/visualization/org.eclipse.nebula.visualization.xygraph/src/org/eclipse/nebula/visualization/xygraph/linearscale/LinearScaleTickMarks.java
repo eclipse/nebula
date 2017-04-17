@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
 package org.eclipse.nebula.visualization.xygraph.linearscale;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.Graphics;
@@ -18,6 +19,7 @@ import org.eclipse.nebula.visualization.xygraph.util.SWTConstants;
  * Linear scale tick marks.
  * 
  * @author Xihui Chen
+ * @author Baha El-Kassaby/Peter Chang - Diamond light Source contributions
  */
 public class LinearScaleTickMarks extends Figure {
 
@@ -25,7 +27,7 @@ public class LinearScaleTickMarks extends Figure {
 	private LinearScale scale;
 
 	/** the line width */
-	protected static final int LINE_WIDTH = 1;
+	public static final int LINE_WIDTH = 1;
 
 	/** the tick length */
 	public static final int MAJOR_TICK_LENGTH = 6;
@@ -60,22 +62,28 @@ public class LinearScaleTickMarks extends Figure {
 
 	protected void paintClientArea(Graphics graphics) {
 		graphics.translate(bounds.x, bounds.y);
-		ArrayList<Integer> tickLabelPositions = scale.getScaleTickLabels().getTickLabelPositions();
+		ITicksProvider ticks = scale.getTicksProvider();
 
 		int width = getSize().width;
 		int height = getSize().height;
 
-		if (scale.isHorizontal()) {
-			drawXTickMarks(graphics, tickLabelPositions, scale.getTickLabelSide(), width, height);
-		} else {
-			drawYTickMarks(graphics, tickLabelPositions, scale.getTickLabelSide(), width, height);
+		try {
+			graphics.pushState();
+			graphics.setAlpha(100);
+			if (scale.isHorizontal()) {
+				drawXTickMarks(graphics, ticks.getPositions(), scale.getTickLabelSide(), width, height);
+			} else {
+				drawYTickMarks(graphics, ticks.getPositions(), scale.getTickLabelSide(), width, height);
+			}
+		} finally {
+			graphics.popState();
 		}
-	};
+	}
 
 	/**
 	 * update the parameters for minor ticks
 	 */
-	public void updateMinorTickParas() {
+	private void updateMinorTickParas() {
 		if (scale.isDateEnabled()) {
 			// when range < 10 min, minor ticks is 5
 			if (Math.abs(scale.getRange().getUpper() - scale.getRange().getLower()) < 600000)
@@ -116,7 +124,7 @@ public class LinearScaleTickMarks extends Figure {
 	 * @param gc
 	 *            the graphics context
 	 */
-	private void drawXTickMarks(Graphics gc, ArrayList<Integer> tickLabelPositions, LabelSide tickLabelSide, int width,
+	private void drawXTickMarks(Graphics gc, List<Integer> tickLabelPositions, LabelSide tickLabelSide, int width,
 			int height) {
 
 		updateMinorTickParas();
@@ -217,7 +225,7 @@ public class LinearScaleTickMarks extends Figure {
 	 * @param gc
 	 *            the graphics context
 	 */
-	private void drawYTickMarks(Graphics gc, ArrayList<Integer> tickLabelPositions, LabelSide tickLabelSide, int width,
+	private void drawYTickMarks(Graphics gc, List<Integer> tickLabelPositions, LabelSide tickLabelSide, int width,
 			int height) {
 		updateMinorTickParas();
 		// draw tick marks

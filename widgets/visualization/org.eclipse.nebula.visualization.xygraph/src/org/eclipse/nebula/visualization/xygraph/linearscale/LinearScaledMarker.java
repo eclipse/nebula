@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,6 +59,11 @@ public class LinearScaledMarker extends Figure {
 	private final static int TICK_LINE_WIDTH = 2;
 	private final static int GAP_BTW_MARK_LABEL = 3;
 
+	/**
+	 * Constructor
+	 *
+	 * @param scale
+	 */
 	public LinearScaledMarker(LinearScale scale) {
 		this.scale = scale;
 		setFont(XYGraphMediaFactory.getInstance().getFont(XYGraphMediaFactory.FONT_TAHOMA));
@@ -137,6 +142,11 @@ public class LinearScaledMarker extends Figure {
 		dirty = true;
 	}
 
+	/**
+	 * Removes the marker element with the given label
+	 *
+	 * @param label
+	 */
 	public void removeMarkerElement(String label) {
 		markersMap.remove(label);
 		dirty = true;
@@ -222,7 +232,7 @@ public class LinearScaledMarker extends Figure {
 	 */
 	public void updateTick() {
 		if (dirty == true) {
-			updateMarkerElments();
+			updateMarkerElements();
 			updateTickLabelMaxLength();
 		}
 		dirty = false;
@@ -258,9 +268,17 @@ public class LinearScaledMarker extends Figure {
 	}
 
 	/**
-	 * @return the markerValues
+	 * Use correctly spelled {@link #updateMarkerElements()} instead.
 	 */
+	@Deprecated
 	public void updateMarkerElments() {
+		updateMarkerElements();
+	}
+
+	/**
+	 * updates marker elements of ticks
+	 */
+	public void updateMarkerElements() {
 		labels = new String[markersMap.size()];
 		markerColorsList.clear();
 		markerValues = new double[markersMap.size()];

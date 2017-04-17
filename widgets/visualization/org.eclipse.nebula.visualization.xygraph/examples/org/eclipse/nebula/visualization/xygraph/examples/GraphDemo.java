@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,9 @@ import org.eclipse.draw2d.MouseListener;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.CircularBufferDataProvider;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.Sample;
 import org.eclipse.nebula.visualization.xygraph.figures.Axis;
+import org.eclipse.nebula.visualization.xygraph.figures.DAxesFactory;
+import org.eclipse.nebula.visualization.xygraph.figures.DAxis;
+import org.eclipse.nebula.visualization.xygraph.figures.DefaultAxesFactory;
 import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.ToolbarArmedXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace;
@@ -44,15 +47,33 @@ import org.eclipse.swt.widgets.Shell;
  * </p>
  * 
  * @author Xihui Chen
+ * @author Baha El-Kassaby - Diamond Light Source contributions
  */
 public class GraphDemo {
 	public static void main(final String[] args) {
+
+		// if testName is Default, the original Axis implementation will be
+		// used. If Diamond, the new DAxis implementation will be used to
+		// generate the tick marks.
+		String testName = "Default";
+		String[] testNames = new String[] { "Default", "Diamond" };
+
 		final Shell shell = new Shell();
 		shell.setSize(800, 500);
 		shell.open();
 
 		final LightweightSystem lws = new LightweightSystem(shell);
-		final XYGraphTest2 testFigure = new XYGraphTest2();
+
+		XYGraphTest2 testFigure = null;
+		if (testName.equals(testNames[0])) {
+			testFigure = new XYGraphTest2(
+					new XYGraph(new DefaultAxesFactory()),
+					new Axis("X-2", false), new Axis("Log Scale", true));
+		} else {
+			testFigure = new XYGraphTest2(
+					new XYGraph(new DAxesFactory()),
+					new DAxis("X-2", false), new DAxis("Log Scale", true));
+		}
 		lws.setContents(testFigure);
 
 		shell.setText("XY Graph Test");
@@ -80,8 +101,12 @@ class XYGraphTest2 extends Figure {
 	private final ToolbarArmedXYGraph toolbarArmedXYGraph;
 
 	public XYGraphTest2() {
+		this(new XYGraph(new DefaultAxesFactory()), new Axis("X-2", false), new Axis("Log Scale", true));
+	}
 
-		xyGraph = new XYGraph();
+	public XYGraphTest2(IXYGraph xyg, Axis x2Axis, Axis y2Axis) {
+
+		xyGraph = xyg;
 		xyGraph.setTitle("XY Graph Test");
 		xyGraph.setFont(XYGraphMediaFactory.getInstance().getFont(XYGraphMediaFactory.FONT_TAHOMA));
 		xyGraph.getPrimaryXAxis().setTitle("Time");
@@ -94,12 +119,10 @@ class XYGraphTest2 extends Figure {
 		xyGraph.getPrimaryYAxis().setShowMajorGrid(true);
 		xyGraph.getPrimaryXAxis().setAutoScaleThreshold(0);
 
-		final Axis x2Axis = new Axis("X-2", false);
 		x2Axis.setTickLabelSide(LabelSide.Secondary);
 		// x2Axis.setAutoScale(true);
 		xyGraph.addAxis(x2Axis);
 
-		final Axis y2Axis = new Axis("Log Scale", true);
 		y2Axis.setRange(10, 1000);
 		y2Axis.setLogScale(true);
 		// y2Axis.setAutoScale(true);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,9 +53,9 @@ public abstract class AbstractScale extends Figure {
 	/**
 	 * the digits limit to be displayed in engineering format
 	 */
-	private static final int ENGINEERING_LIMIT = 4;
+	protected static final int ENGINEERING_LIMIT = 4;
 
-	private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd\nHH:mm:ss"; //$NON-NLS-1$
+	protected static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd\nHH:mm:ss"; //$NON-NLS-1$
 
 	private static final Map<String, Format> formatCache = new HashMap<String, Format>();
 
@@ -69,7 +69,7 @@ public abstract class AbstractScale extends Figure {
 	public final static double DEFAULT_LOG_SCALE_MAX = 100d;
 
 	/** the default label format */
-	private String default_decimal_format = "############.##"; //$NON-NLS-1$
+	protected String default_decimal_format = "############.##"; //$NON-NLS-1$
 
 	/** the state if the axis scale is log scale */
 	protected boolean logScaleEnabled = false;
@@ -81,10 +81,10 @@ public abstract class AbstractScale extends Figure {
 	protected double max = DEFAULT_MAX;
 
 	/** the format for tick labels */
-	private String formatPattern;
+	protected String formatPattern;
 
 	/** the time unit for tick step */
-	private int timeUnit = 0;
+	protected int timeUnit = 0;
 
 	/**
 	 * Whenever any parameter has been changed, the scale should be marked as
@@ -93,7 +93,7 @@ public abstract class AbstractScale extends Figure {
 	 */
 	protected boolean dirty = true;
 
-	private boolean dateEnabled = false;
+	protected boolean dateEnabled = false;
 
 	private boolean scaleLineVisible = true;
 
@@ -107,15 +107,17 @@ public abstract class AbstractScale extends Figure {
 
 	private double majorGridStep = 0;
 
-	private boolean autoFormat = true;
+	protected boolean autoFormat = true;
 
-	private Range range = new Range(min, max);
+	protected Range range = new Range(min, max);
 
 	private int formatPatternSize = 0;
 
 	/**
-	 * Formats the given object.
-	 * 
+	 * Formats the given object as a DateFormat if Date is enabled or as a
+	 * DecimalFormat. This is based on an internal format pattern given the
+	 * object in parameter.
+	 *
 	 * @param obj
 	 *            the object
 	 * @return the formatted string
@@ -125,8 +127,12 @@ public abstract class AbstractScale extends Figure {
 	}
 
 	/**
-	 * Formats the given object.
-	 * 
+	 * Formats the given object as a DateFormat if Date is enabled or as a
+	 * DecimalFormat. This is based on an internal format pattern given the
+	 * object in parameter. When formatting a date, if minOrMaxDate is true as
+	 * well as autoFormat, then the SimpleDateFormat us used to format the
+	 * object.
+	 *
 	 * @param obj
 	 *            the object
 	 * @param minOrMaxDate
