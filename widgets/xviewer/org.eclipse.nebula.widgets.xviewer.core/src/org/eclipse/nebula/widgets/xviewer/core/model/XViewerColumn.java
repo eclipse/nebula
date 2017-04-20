@@ -88,8 +88,10 @@ public class XViewerColumn {
    public boolean equals(Object obj) {
       if (obj instanceof XViewerColumn) {
          return ((XViewerColumn) obj).getId().equals(id);
+      } else if (obj instanceof String) {
+         return id.equals(obj);
       }
-      return super.equals(obj);
+      return false;
    }
 
    @Override
@@ -361,7 +363,7 @@ public class XViewerColumn {
    }
 
    public Map<Long, String> getPreComputedValueMap() {
-      if(preComputedValueMap == null) {
+      if (preComputedValueMap == null) {
          preComputedValueMap = new HashMap<Long, String>();
       }
       return preComputedValueMap;
