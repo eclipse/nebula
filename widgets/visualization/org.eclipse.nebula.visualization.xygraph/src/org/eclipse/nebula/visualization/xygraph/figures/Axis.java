@@ -59,7 +59,7 @@ public class Axis extends LinearScale {
 		this.scaleFontData = getFont().getFontData()[0];
 	}
 
-	final private List<Trace> traceList = new ArrayList<Trace>();
+	private final List<Trace> traceList = new ArrayList<Trace>();
 
 	private IXYGraph xyGraph;
 	private Grid grid;
@@ -87,7 +87,7 @@ public class Axis extends LinearScale {
 
 	private double autoScaleThreshold = 0.01;
 
-	final private List<IAxisListener> listeners = new ArrayList<IAxisListener>();
+	protected final List<IAxisListener> listeners = new ArrayList<IAxisListener>();
 
 	private ZoomType zoomType = ZoomType.NONE;
 
@@ -152,12 +152,12 @@ public class Axis extends LinearScale {
 		return listeners.remove(listener);
 	}
 
-	private void fireRevalidated() {
+	protected void fireRevalidated() {
 		for (IAxisListener listener : listeners)
 			listener.axisRevalidated(this);
 	}
 
-	private void fireAxisRangeChanged(final Range old_range, final Range new_range) {
+	protected void fireAxisRangeChanged(final Range old_range, final Range new_range) {
 		for (IAxisListener listener : listeners)
 			listener.axisRangeChanged(this, old_range, new_range);
 	}
@@ -633,6 +633,13 @@ public class Axis extends LinearScale {
 	}
 
 	/**
+	 * @return xyGraph
+	 */
+	public IXYGraph getXyGraph() {
+		return xyGraph;
+	}
+
+	/**
 	 * Use {@link #setXyGraph(IXYGraph)} instead
 	 * 
 	 * @param xyGraph
@@ -641,6 +648,13 @@ public class Axis extends LinearScale {
 	@Deprecated
 	public void setXyGraph(final XYGraph xyGraph) {
 		this.xyGraph = xyGraph;
+	}
+
+	/**
+	 * @return traceList
+	 */
+	protected List<Trace> getTraceList() {
+		return traceList;
 	}
 
 	@Override
@@ -711,6 +725,13 @@ public class Axis extends LinearScale {
 	}
 
 	/**
+	 * @return autoScale
+	 */
+	public boolean getAutoScale() {
+		return autoScale;
+	}
+
+	/**
 	 * Set this axis as Y-Axis or X-Axis.
 	 * 
 	 * @param isYAxis
@@ -768,7 +789,7 @@ public class Axis extends LinearScale {
 	 * @param t2
 	 *            End of the panning move
 	 */
-	void pan(final Range temp, double t1, double t2) {
+	protected void pan(final Range temp, double t1, double t2) {
 		if (isLogScaleEnabled()) {
 			final double m = Math.log10(t2) - Math.log10(t1);
 			t1 = Math.pow(10, Math.log10(temp.getLower()) - m);
@@ -994,7 +1015,16 @@ public class Axis extends LinearScale {
 		private void performStartEndZoom() {
 			final double t1 = getPositionValue(isHorizontal() ? start.x : start.y, false);
 			final double t2 = getPositionValue(isHorizontal() ? end.x : end.y, false);
-			setRange(t1, t2, true);
+			// Properly set the range given the values of t1 and t2: if the
+			// maximum value of the range is smaller than the minimum,
+			// accordingly set the min and max given the values of t1 and t2 and
+			// vice versa.
+			boolean isMinBigger = getRange().isMinBigger();
+			if (isMinBigger == (t1 > t2)) {
+				setRange(t1, t2);
+			} else {
+				setRange(t2, t1);
+			}
 		}
 
 		/** Perform the in or out zoom according to zoomType */

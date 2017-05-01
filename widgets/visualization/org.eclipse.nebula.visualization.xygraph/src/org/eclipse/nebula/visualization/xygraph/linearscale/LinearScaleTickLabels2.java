@@ -26,17 +26,19 @@ public class LinearScaleTickLabels2 extends LinearScaleTickLabels {
 	 */
 	public LinearScaleTickLabels2(DAxis linearScale) {
 		super(linearScale);
+		setTicksIndexBased(linearScale.isTicksIndexBased());
 	}
 
 	@Override
 	protected void createLinearScaleTicks() {
-		ticks = new LinearScaleTicks2((DAxis) scale);
+		setTicksProvider(new LinearScaleTicks2((DAxis) getScale()));
 	}
 
 	@Override
 	protected void drawXTick(Graphics graphics) {
 		// draw tick labels
-		final int imax = ticks.getMajorCount();
+		ITicksProvider ticks = getTicksProvider();
+		final int imax = getTicksProvider().getMajorCount();
 		for (int i = 0; i < imax; i++) {
 			if (ticks.isVisible(i)) {
 				graphics.drawText(ticks.getLabel(i), ticks.getLabelPosition(i), 0);
@@ -47,11 +49,12 @@ public class LinearScaleTickLabels2 extends LinearScaleTickLabels {
 	@Override
 	protected void drawYTick(Graphics graphics) {
 		// draw tick labels
+		ITicksProvider ticks = getTicksProvider();
 		final int imax = ticks.getMajorCount();
 		if (imax < 1)
 			return;
 		final boolean hasNegative = ticks.getLabel(0).startsWith(MINUS);
-		final int minus = scale.getDimension(MINUS).width;
+		final int minus = getScale().getDimension(MINUS).width;
 		for (int i = 0; i < imax; i++) {
 			if (ticks.isVisible(i)) {
 				String text = ticks.getLabel(i);
@@ -66,6 +69,6 @@ public class LinearScaleTickLabels2 extends LinearScaleTickLabels {
 	 *            if true, make ticks based on axis dataset indexes
 	 */
 	public void setTicksIndexBased(boolean isTicksIndexBased) {
-		((LinearScaleTicks2) ticks).setTicksIndexBased(isTicksIndexBased);
+		((LinearScaleTicks2) getTicksProvider()).setTicksIndexBased(isTicksIndexBased);
 	}
 }

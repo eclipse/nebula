@@ -124,7 +124,7 @@ public class LinearScaleTickMarks extends Figure {
 	 * @param gc
 	 *            the graphics context
 	 */
-	private void drawXTickMarks(Graphics gc, List<Integer> tickLabelPositions, LabelSide tickLabelSide, int width,
+	protected void drawXTickMarks(Graphics gc, List<Integer> tickLabelPositions, LabelSide tickLabelSide, int width,
 			int height) {
 
 		updateMinorTickParas();
@@ -225,7 +225,7 @@ public class LinearScaleTickMarks extends Figure {
 	 * @param gc
 	 *            the graphics context
 	 */
-	private void drawYTickMarks(Graphics gc, List<Integer> tickLabelPositions, LabelSide tickLabelSide, int width,
+	protected void drawYTickMarks(Graphics gc, List<Integer> tickLabelPositions, LabelSide tickLabelSide, int width,
 			int height) {
 		updateMinorTickParas();
 		// draw tick marks
@@ -314,4 +314,11 @@ public class LinearScaleTickMarks extends Figure {
 			gc.drawLine(x, y, x + verticalMinorTickLength, y);
 	}
 
+	/**
+	 *
+	 * @return the scale
+	 */
+	public LinearScale getScaleProvider() {
+		return scale;
+	}
 }

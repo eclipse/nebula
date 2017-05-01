@@ -81,10 +81,10 @@ public abstract class AbstractScale extends Figure {
 	protected double max = DEFAULT_MAX;
 
 	/** the format for tick labels */
-	protected String formatPattern;
+	private String formatPattern;
 
 	/** the time unit for tick step */
-	protected int timeUnit = 0;
+	private int timeUnit = 0;
 
 	/**
 	 * Whenever any parameter has been changed, the scale should be marked as
@@ -93,7 +93,7 @@ public abstract class AbstractScale extends Figure {
 	 */
 	protected boolean dirty = true;
 
-	protected boolean dateEnabled = false;
+	private boolean dateEnabled = false;
 
 	private boolean scaleLineVisible = true;
 
@@ -107,9 +107,9 @@ public abstract class AbstractScale extends Figure {
 
 	private double majorGridStep = 0;
 
-	protected boolean autoFormat = true;
+	private boolean autoFormat = true;
 
-	protected Range range = new Range(min, max);
+	private Range range = new Range(min, max);
 
 	private int formatPatternSize = 0;
 
@@ -591,13 +591,21 @@ public abstract class AbstractScale extends Figure {
 	 *            the autoFormat to set
 	 */
 	public void setAutoFormat(boolean autoFormat) {
-		this.autoFormat = autoFormat;
+		internalSetAutoFormat(autoFormat);
 		if (autoFormat) {
 			formatPattern = null;
 			setRange(getRange());
 			format(0);
 		}
+	}
 
+	/**
+	 * Sets ONLY the autoFormat value
+	 *
+	 * @param autoFormat
+	 */
+	protected void internalSetAutoFormat(boolean autoFormat) {
+		this.autoFormat = autoFormat;
 	}
 
 	/**

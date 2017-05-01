@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Baha El-Kassaby and others.
+ * Copyright (c) 2017 Diamond Light Source and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.draw2d.geometry.Dimension;
@@ -21,7 +22,9 @@ import org.eclipse.nebula.visualization.xygraph.linearscale.ITicksProvider;
 import org.eclipse.nebula.visualization.xygraph.linearscale.LinearScaleTickLabels;
 import org.eclipse.nebula.visualization.xygraph.linearscale.LinearScaleTickLabels2;
 import org.eclipse.nebula.visualization.xygraph.linearscale.LinearScaleTickMarks;
+import org.eclipse.nebula.visualization.xygraph.linearscale.LinearScaleTickMarks2;
 import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * The Diamond Light Source implementation of the axis figure.
@@ -42,11 +45,7 @@ public class DAxis extends Axis {
 	/** the user format */
 	protected boolean userDefinedFormat = false;
 
-	/**
-	 * used if difference between min and max is too small
-	 */
-	private static final double ZERO_RANGE_FRACTION = 0.125;
-
+	private boolean axisAutoscaleTight = false;
 
 	/**
 	 * Constructor
@@ -63,6 +62,11 @@ public class DAxis extends Axis {
 	@Override
 	protected LinearScaleTickLabels createLinearScaleTickLabels() {
 		return new LinearScaleTickLabels2(this);
+	}
+
+	@Override
+	protected LinearScaleTickMarks createLinearScaleTickMarks() {
+		return new LinearScaleTickMarks2(this);
 	}
 
 	/**
@@ -83,8 +87,8 @@ public class DAxis extends Axis {
 	@Override
 	public int getMargin() {
 		if (isDirty())
-			margin = getTicksProvider().getHeadMargin();
-		return margin;
+			setMargin(getTicksProvider().getHeadMargin());
+		return getMargin(false);
 	}
 
 	/**
@@ -93,6 +97,8 @@ public class DAxis extends Axis {
 	 * @return scaling
 	 */
 	public double getScaling() {
+		int length = getLength();
+		int margin = getMargin();
 		if (isLogScaleEnabled())
 			return (Math.log10(max) - Math.log10(min)) / (length - 2 * margin);
 		return (max - min) / (length - 2 * margin);
@@ -107,6 +113,8 @@ public class DAxis extends Axis {
 	protected void layoutTicks() {
 		updateTick();
 		Rectangle area = getClientArea();
+		LinearScaleTickLabels tickLabels = getScaleTickLabels();
+		LinearScaleTickMarks tickMarks = getScaleTickMarks();
 		if (isHorizontal()) {
 			if (getTickLabelSide() == LabelSide.Primary) {
 				tickLabels.setBounds(
@@ -144,8 +152,16 @@ public class DAxis extends Axis {
 	 */
 	public void setTicksIndexBased(boolean isTicksIndexBased) {
 		if (ticksIndexBased != isTicksIndexBased)
-			((LinearScaleTickLabels2)tickLabels).setTicksIndexBased(isTicksIndexBased);
+			((LinearScaleTickLabels2)getScaleTickLabels()).setTicksIndexBased(isTicksIndexBased);
 		ticksIndexBased = isTicksIndexBased;
+	}
+
+	/**
+	 *
+	 * @return True if ticks are index based
+	 */
+	public boolean isTicksIndexBased() {
+		return ticksIndexBased;
 	}
 
 	@Override
@@ -156,13 +172,15 @@ public class DAxis extends Axis {
 	@Override
 	public void updateTick() {
 		if (isDirty()) {
-			length = isHorizontal() ? getClientArea().width : getClientArea().height;
-			if (length > 2 * getMargin()) {
-				Range r = tickLabels.update(length - 2 * getMargin());
-				if (r != null && !r.equals(range) && !forceRange) {
-					localRange = r;
+			setLength(isHorizontal() ? getClientArea().width : getClientArea().height);
+			int length = getLength();
+			int margin = getMargin();
+			if (length > 2 * margin) {
+				Range r = getScaleTickLabels().update(length - 2 * margin);
+				if (r != null && !r.equals(getRange()) && !forceRange) {
+					setLocalRange(r);
 				} else {
-					localRange = null;
+					setLocalRange(null);
 				}
 			}
 			setDirty(false);
@@ -186,6 +204,8 @@ public class DAxis extends Axis {
 		if (extraDP < 0) {
 			throw new IllegalArgumentException("Number of extra decimal places must be non-negative");
 		}
+		String formatPattern = getFormatPattern();
+		boolean autoFormat = isAutoFormat();
 		if (cachedFormats.get(extraDP) == null) {
 			if (isDateEnabled()) {
 				if (autoFormat || formatPattern == null || formatPattern.equals("")
@@ -193,6 +213,7 @@ public class DAxis extends Axis {
 						|| formatPattern.equals(DEFAULT_ENGINEERING_FORMAT)) {
 					// (?) overridden anyway
 					formatPattern = DEFAULT_DATE_FORMAT;
+					int timeUnit = getTimeUnit();
 					double length = Math.abs(max - min);
 					// less than a second
 					if (length <= 1000 || timeUnit == Calendar.MILLISECOND) {
@@ -224,11 +245,13 @@ public class DAxis extends Axis {
 						autoFormat = true;
 					}
 				}
+				setFormatPattern(formatPattern);
 				cachedFormats.put(extraDP, new SimpleDateFormat(formatPattern));
 			} else {
 				if (formatPattern == null || formatPattern.isEmpty() || formatPattern.equals(default_decimal_format)
 						|| formatPattern.equals(DEFAULT_DATE_FORMAT)) {
 					formatPattern = getAutoFormat(min, max);
+					setFormatPattern(formatPattern);
 					if (formatPattern == null || formatPattern.equals("")) {
 						autoFormat = true;
 					}
@@ -248,15 +271,15 @@ public class DAxis extends Axis {
 				}
 				cachedFormats.put(extraDP, new DecimalFormat(ePattern));
 			}
+			internalSetAutoFormat(autoFormat);
 		}
-
 		if (isDateEnabled() && obj instanceof Number) {
 			return cachedFormats.get(extraDP).format(new Date(((Number) obj).longValue()));
 		}
 		return cachedFormats.get(extraDP).format(obj);
 	}
 
-	private String getAutoFormat(double min, double max) {
+	protected String getAutoFormat(double min, double max) {
 		ITicksProvider ticks = getTicksProvider();
 		if (ticks == null) {
 			if ((max != 0 && Math.abs(Math.log10(Math.abs(max))) >= ENGINEERING_LIMIT)
@@ -270,7 +293,7 @@ public class DAxis extends Axis {
 
 	@Override
 	public void setDateEnabled(boolean dateEnabled) {
-		this.dateEnabled = dateEnabled;
+		super.setDateEnabled(dateEnabled);
 		cachedFormats.clear();
 		setDirty(true);
 		revalidate();
@@ -283,69 +306,138 @@ public class DAxis extends Axis {
 	}
 
 	private void setFormat(String formatPattern) {
-		try {
-			new DecimalFormat(formatPattern);
-		} catch (NullPointerException e) {
-			throw e;
-		} catch (IllegalArgumentException e) {
-			throw e;
-		}
 		cachedFormats.clear();
-		this.formatPattern = formatPattern;
-
-		autoFormat = false;
-		setDirty(true);
-		revalidate();
-		repaint();
+		super.setFormatPattern(formatPattern);
 	}
 
 	@Override
 	public void setRange(double lower, double upper) {
-		if (Double.isNaN(lower) || Double.isNaN(upper) || Double.isInfinite(lower) || Double.isInfinite(upper)
-				|| Double.isInfinite(upper - lower)) {
-			throw new IllegalArgumentException("Illegal range: lower=" + lower + ", upper=" + upper);
+		Range old_range = getRange();
+		if (old_range.getLower() == lower && old_range.getUpper() == upper) {
+			return;
 		}
-
-		forceRange = lower == upper;
-		if (forceRange) {
-			final double delta = (lower == 0 ? 1 : Math.abs(lower)) * ZERO_RANGE_FRACTION;
-			upper += delta;
-			lower -= delta;
-			if (Double.isInfinite(upper))
-				throw new IllegalArgumentException("Illegal range: lower=" + lower + ", upper=" + upper);
-		}
-
-		if (logScaleEnabled) {
-			if (upper <= 0)
-				upper = DEFAULT_LOG_SCALE_MAX;
-			if (lower <= 0)
-				lower = DEFAULT_LOG_SCALE_MIN * upper;
-		}
-
-		min = lower;
-		max = upper;
-		range = new Range(min, max);
-		cachedFormats.clear();
-		setDirty(true);
-		revalidate();
-		repaint();
+		setTicksAtEnds(false);
+		super.setRange(lower, upper);
+		fireAxisRangeChanged(old_range, getRange());
 	}
 
 	@Override
 	public void setAutoFormat(boolean autoFormat) {
-		this.autoFormat = autoFormat;
+		super.setAutoFormat(autoFormat);
 		if (autoFormat) {
-			formatPattern = null;
 			cachedFormats.clear();
-			setRange(getRange());
-			format(0);
 		}
 	}
 
 	@Override
 	public void setLogScale(boolean enabled) throws IllegalStateException {
+		boolean cur = isLogScaleEnabled();
 		super.setLogScale(enabled);
+		final IXYGraph xyGraph = getXyGraph();
+		if (cur != enabled && xyGraph != null) {
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					xyGraph.performAutoScale();
+					xyGraph.getPlotArea().layout();
+					xyGraph.revalidate();
+					xyGraph.repaint();
+				}
+			});
+		}
 		setTicksAtEnds(true);
+	}
+
+	@Override
+	public boolean performAutoScale(boolean force) {
+		// Anything to do? Autoscale not enabled nor forced?
+		if (getTraceList().size() <= 0 || !(force || getAutoScale())) {
+			return false;
+		}
+
+		// Get range of data in all traces
+		Range range = getTraceDataRange();
+		if (range == null) {
+			return false;
+		}
+
+		double dataMin = range.getLower();
+		double dataMax = range.getUpper();
+
+		// Get current axis range, determine how 'different' they are
+		double axisMax = getRange().getUpper();
+		double axisMin = getRange().getLower();
+
+		if (rangeIsUnchanged(dataMin, dataMax, axisMin, axisMax) || Double.isInfinite(dataMin)
+				|| Double.isInfinite(dataMax) || Double.isNaN(dataMin) || Double.isNaN(dataMax)) {
+			return false;
+		}
+
+		// The threshold is 'shared' between upper and lower range, times by 0.5
+		final double thr = (axisMax - axisMin) * 0.5 * getAutoScaleThreshold();
+
+		boolean lowerChanged = (dataMin - axisMin) < 0 || (dataMin - axisMin) >= thr;
+		boolean upperChanged = (axisMax - dataMax) < 0 || (axisMax - dataMax) >= thr;
+		// If both the changes are lower than threshold, return
+		if (!lowerChanged && !upperChanged) {
+			return false;
+		}
+
+		// Calculate updated range
+		double newMax = upperChanged ? dataMax : axisMax;
+		double newMin = lowerChanged ? dataMin : axisMin;
+		range = !isInverted() ? new Range(newMin, newMax) : new Range(newMax, newMin);
+
+		// by-pass overridden method as it sets ticks to false
+		super.setRange(range.getLower(), range.getUpper());
+		fireAxisRangeChanged(getRange(), range);
+		setTicksAtEnds(!axisAutoscaleTight);
+		repaint();
+		return true;
+	}
+
+	/**
+	 * Determines if upper or lower data has changed from current axis limits
+	 *
+	 * @param dataMin
+	 *            - min of data in buffer
+	 * @param dataMax
+	 *            - max of data in buffer
+	 * @param axisMin
+	 *            - current axis min
+	 * @param axisMax
+	 *            - current axis max
+	 * @return TRUE if data and axis max and min values are equal
+	 */
+	private boolean rangeIsUnchanged(double dataMin, double dataMax, double axisMin, double axisMax) {
+		return Double.doubleToLongBits(dataMin) == Double.doubleToLongBits(axisMin)
+				&& Double.doubleToLongBits(dataMax) == Double.doubleToLongBits(axisMax);
+	}
+
+	/**
+	 * 
+	 */
+	public void clear() {
+		for (Iterator<IAxisListener> it = listeners.iterator(); it.hasNext();) {
+			if (getTraceList().contains(it.next()))
+				it.remove();
+		}
+		getTraceList().clear();
+	}
+
+	/**
+	 * @param axisTight
+	 *            set whether autoscale sets axis range tight to the data or the
+	 *            end of axis is set to the nearest tickmark
+	 */
+	public void setAxisAutoscaleTight(boolean axisTight) {
+		this.axisAutoscaleTight = axisTight;
+	}
+
+	/**
+	 * @return true if autoscaling axis is tight to displayed data
+	 */
+	public boolean isAxisAutoscaleTight() {
+		return this.axisAutoscaleTight;
 	}
 
 	/**

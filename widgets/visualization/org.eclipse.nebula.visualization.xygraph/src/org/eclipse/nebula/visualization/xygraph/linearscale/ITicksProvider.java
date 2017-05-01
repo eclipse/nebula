@@ -79,12 +79,13 @@ public interface ITicksProvider {
 	public int getMinorCount();
 
 	/**
-	 * Update ticks
+	 * Update ticks.
 	 *
 	 * @param min
 	 * @param max
 	 * @param length
-	 * @return new axis range
+	 * @return null unless the provider has not had cause to change the range -
+	 *         in which case, the new range is returned.
 	 */
 	public Range update(double min, double max, int length);
 

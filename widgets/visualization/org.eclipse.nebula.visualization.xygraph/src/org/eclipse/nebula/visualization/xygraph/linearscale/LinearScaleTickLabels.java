@@ -23,9 +23,9 @@ public class LinearScaleTickLabels extends Figure {
 
 	protected static final String MINUS = "-";
 
-	protected ITicksProvider ticks;
+	private ITicksProvider ticks;
 
-	protected IScaleProvider scale;
+	private IScaleProvider scale;
 
 	/**
 	 * Constructor.
@@ -33,7 +33,7 @@ public class LinearScaleTickLabels extends Figure {
 	 * @param linearScale
 	 *            the scale
 	 */
-	protected LinearScaleTickLabels(IScaleProvider linearScale) {
+	public LinearScaleTickLabels(IScaleProvider linearScale) {
 
 		this.scale = linearScale;
 		createLinearScaleTicks();
@@ -56,6 +56,15 @@ public class LinearScaleTickLabels extends Figure {
 	 */
 	public ITicksProvider getTicksProvider() {
 		return ticks;
+	}
+
+	/**
+	 * Sets the ticks provider
+	 *
+	 * @param ticks
+	 */
+	protected void setTicksProvider(ITicksProvider ticks) {
+		this.ticks = ticks;
 	}
 
 	/**
@@ -219,10 +228,11 @@ public class LinearScaleTickLabels extends Figure {
 	 *
 	 * @param length
 	 *            scale tick length (without margin)
+	 * @return returns a new axis Range if scale has changed and has ticks at
+	 *         ends and its size is > 1, null otherwise.
 	 */
 	public Range update(int length) {
 		final Range range = scale.getScaleRange();
-		ticks.update(range.getLower(), range.getUpper(), length);
-		return range;
+		return ticks.update(range.getLower(), range.getUpper(), length);
 	}
 }

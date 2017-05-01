@@ -536,7 +536,7 @@ public class TickFactory {
 		}
 
 		if (formatOfTicks == TickFormatting.autoMode) { // override labels
-			if (scale != null && scale.areLabelCustomised()) {
+			if (scale != null && scale.isLabelCustomised()) {
 				double vmin = Double.POSITIVE_INFINITY;
 				double vmax = Double.NEGATIVE_INFINITY;
 				boolean allInts = true;

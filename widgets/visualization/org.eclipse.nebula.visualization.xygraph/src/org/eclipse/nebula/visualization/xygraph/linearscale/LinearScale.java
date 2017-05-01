@@ -51,22 +51,22 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 	private Orientation orientation = Orientation.HORIZONTAL;
 
 	/** the scale tick labels */
-	protected LinearScaleTickLabels tickLabels;
+	private LinearScaleTickLabels tickLabels;
 
 	/** the scale tick marks */
-	protected LinearScaleTickMarks tickMarks;
+	private LinearScaleTickMarks tickMarks;
 
 	/** the length of the whole scale */
-	protected int length;
+	private int length;
 
-	protected int margin;
+	private int margin;
 
 	/**
 	 * Constructor.
 	 */
 	public LinearScale() {
 		tickLabels = createLinearScaleTickLabels();
-		tickMarks = new LinearScaleTickMarks(this);
+		tickMarks = createLinearScaleTickMarks();
 		add(tickMarks);
 		add(tickLabels);
 		// setFont(XYGraphMediaFactory.getInstance().getFont(
@@ -81,6 +81,15 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 	 */
 	protected LinearScaleTickLabels createLinearScaleTickLabels() {
 		return new LinearScaleTickLabels(this);
+	}
+
+	/**
+	 * Creates the LinearScaleTickMarks. To be overridden if necessary if
+	 * another Axis implementation is used.
+	 *
+	 */
+	protected LinearScaleTickMarks createLinearScaleTickMarks() {
+		return new LinearScaleTickMarks(this);
 	}
 
 	private void calcMargin() {
@@ -104,6 +113,26 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 	}
 
 	/**
+	 * @param length
+	 */
+	public void setLength(int length) {
+		this.length = length;
+	}
+
+	/**
+	 * If updateTick is True, {@link getMargin()} is used where the tick are
+	 * updated, if not, the method returns {@link margin}.
+	 *
+	 * @param updateTick
+	 * @return
+	 */
+	public int getMargin(boolean updateTick) {
+		if(updateTick)
+			return getMargin();
+		return margin;
+	}
+
+	/**
 	 * Margin is half of the label's length(Horizontal Scale) or height(Vertical
 	 * scale), so that the label can be displayed correctly. So the range and
 	 * format pattern must be set correctly before you can get the correct
@@ -114,6 +143,13 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 	public int getMargin() {
 		updateTick();
 		return margin;
+	}
+
+	/**
+	 * @param margin
+	 */
+	public void setMargin(int margin) {
+		this.margin = margin;
 	}
 
 	/**
@@ -132,12 +168,12 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 		if (isHorizontal()) {
 			// length = wHint;
 			fakeTickLabels.update(wHint - 2 * getMargin());
-			size.height = (int) fakeTickLabels.getTickLabelMaxHeight() + SPACE_BTW_MARK_LABEL
+			size.height = fakeTickLabels.getTickLabelMaxHeight() + SPACE_BTW_MARK_LABEL
 					+ LinearScaleTickMarks.MAJOR_TICK_LENGTH;
 		} else {
 			// length = hHint;
 			fakeTickLabels.update(hHint - 2 * getMargin());
-			size.width = (int) fakeTickLabels.getTickLabelMaxLength() + SPACE_BTW_MARK_LABEL
+			size.width = fakeTickLabels.getTickLabelMaxLength() + SPACE_BTW_MARK_LABEL
 					+ LinearScaleTickMarks.MAJOR_TICK_LENGTH;
 
 		}
@@ -207,6 +243,9 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 			updateTick();
 		// coerce to range
 		// value = value < min ? min : (value > max ? max : value);
+		Range r = getLocalRange();
+		double min = r.getLower();
+		double max = r.getUpper();
 		double pixelsToStart = 0;
 		if (logScaleEnabled) {
 			if (value <= 0)
@@ -409,13 +448,20 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 
 	}
 
-	protected Range localRange = null;
+	private Range localRange = null;
 
 	/**
 	 * @return range used for axis (not range given by data)
 	 */
 	public Range getLocalRange() {
 		return localRange == null ? super.getRange() : localRange;
+	}
+
+	/**
+	 * @param localRange
+	 */
+	public void setLocalRange(Range localRange) {
+		this.localRange = localRange;
 	}
 
 	/**
@@ -473,7 +519,7 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 	}
 
 	@Override
-	public boolean areLabelCustomised() {
+	public boolean isLabelCustomised() {
 		return false;
 	}
 
