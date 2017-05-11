@@ -860,6 +860,11 @@ public class Axis extends LinearScale {
 	}
 
 	/**
+	 * Field used to remember the previous zoom type used
+	 */
+	private ZoomType previousZoomType = ZoomType.NONE;
+
+	/**
 	 * Listener to mouse events, performs panning and some zooms Is very similar
 	 * to the PlotMouseListener, but unclear how easy/useful it would be to base
 	 * them on the same code.
@@ -870,8 +875,14 @@ public class Axis extends LinearScale {
 		@Override
 		public void mousePressed(final MouseEvent me) {
 			// Only react to 'main' mouse button, only react to 'real' zoom
-			if (me.button != 1 || !isValidZoomType(zoomType))
+			if ((me.button != PlotArea.BUTTON1 || !isValidZoomType(zoomType)) && me.button != PlotArea.BUTTON2)
 				return;
+			// Remember last used zoomtype
+			previousZoomType = zoomType;
+			// if mousewheel is pressed
+			if (me.button == PlotArea.BUTTON2) {
+				zoomType = ZoomType.PANNING;
+			}
 			armed = true;
 			// get start position
 			switch (zoomType) {
@@ -1003,6 +1014,11 @@ public class Axis extends LinearScale {
 				break;
 			default:
 				break;
+			}
+			// mousewheel is pressed and last zoom type was not panning, we set
+			// the zoomtype to the previous state.
+			if (me.button == PlotArea.BUTTON2 && previousZoomType != ZoomType.PANNING) {
+				setZoomType(previousZoomType);
 			}
 			command.saveState();
 			xyGraph.getOperationsManager().addCommand(command);
