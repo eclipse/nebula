@@ -37,9 +37,10 @@ import org.eclipse.swt.widgets.Text;
  * properties.
  * 
  * @author Xihui Chen
+ * @author Baha El-Kassaby - make TraceConfigPage implement ITraceConfigPage
  *
  */
-public class TraceConfigPage {
+public class TraceConfigPage implements ITraceConfigPage {
 	private XYGraph xyGraph;
 	private Trace trace;
 	private Text nameText;
@@ -81,6 +82,7 @@ public class TraceConfigPage {
 		this.trace = trace;
 	}
 
+	@Override
 	public void createPage(final Composite composite) {
 		this.composite = composite;
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -277,16 +279,29 @@ public class TraceConfigPage {
 		drawYErrorInAreaButton.setText("Draw Y Error In Area");
 		drawYErrorInAreaButton.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, 2, 1));
 
+		// add potential custom button if necessary by overriding this method to
+		// the left composite
+		addCustomButton(traceCompo);
+
 		initialize();
 	}
 
 	/**
-	 * @return the composite
+	 * Override this method if a custom set of buttons need to be added to the
+	 * trace page.
+	 *
+	 * @param composite
 	 */
+	public void addCustomButton(Composite composite) {
+		// do nothing
+	}
+
+	@Override
 	public Composite getComposite() {
 		return composite;
 	}
 
+	@Override
 	public void applyChanges() {
 		trace.setName(nameText.getText());
 		trace.setXAxis(xyGraph.getXAxisList().get(xAxisCombo.getSelectionIndex()));
