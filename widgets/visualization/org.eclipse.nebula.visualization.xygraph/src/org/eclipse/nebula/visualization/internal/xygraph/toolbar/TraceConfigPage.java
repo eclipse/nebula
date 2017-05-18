@@ -364,4 +364,11 @@ public class TraceConfigPage implements ITraceConfigPage {
 				|| traceTypeCombo.getSelectionIndex() == TraceType.LINE_AREA.ordinal());
 	}
 
+	/**
+	 * @return the trace
+	 */
+	public Trace getTrace() {
+		return trace;
+	}
+
 }
