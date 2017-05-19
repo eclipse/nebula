@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.FigureUtilities;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.RectangleFigure;
@@ -92,9 +93,17 @@ public class Legend extends RectangleFigure {
 
 	@Override
 	protected void outlineShape(Graphics graphics) {
-		graphics.setForegroundColor(traceList.get(0).getYAxis().getForegroundColor());
+		if (!isVisible())
+			return;
+		graphics.pushState();
+		if (!traceList.isEmpty()) {
+			Color fg = traceList.get(0).getYAxis().getForegroundColor();
+			if (fg == null)
+				fg = ColorConstants.black;
+			graphics.setForegroundColor(fg);
+		}
 		super.outlineShape(graphics);
-
+		graphics.popState();
 	}
 
 	@Override
@@ -119,14 +128,14 @@ public class Legend extends RectangleFigure {
 			// OUT_GAP,ICON_WIDTH-INNER_GAP);
 			// graphics.fillRectangle(rect);
 			// graphics.drawRectangle(rect);
-			drawTraceLagend(trace, graphics, hPos, vPos);
+			drawTraceLegend(trace, graphics, hPos, vPos);
 			hPos = hEnd;
 			i++;
 		}
 
 	}
 
-	private void drawTraceLagend(Trace trace, Graphics graphics, int hPos, int vPos) {
+	private void drawTraceLegend(Trace trace, Graphics graphics, int hPos, int vPos) {
 		graphics.pushState();
 		if (Preferences.useAdvancedGraphics())
 			graphics.setAntialias(SWT.ON);
