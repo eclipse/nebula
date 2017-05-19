@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, Alex Clayton <Alex_Clayton_2000@yahoo.com>.
+ * Copyright (c) 2015, 2017 Alex Clayton <Alex_Clayton_2000@yahoo.com> and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,13 +15,14 @@ import org.eclipse.nebula.visualization.xygraph.linearscale.LinearScale.Orientat
  * Default {@link IAxesFactory} just produces standard {@link Axis}
  * 
  * @author Alex Clayton
+ * @author Baha El-Kassaby - use IXYGraph static strings
  *
  */
 public class DefaultAxesFactory implements IAxesFactory {
 
 	@Override
 	public Axis createXAxis() {
-		Axis newAxis = new Axis("X-Axis", false);
+		Axis newAxis = new Axis(IXYGraph.X_AXIS, false);
 		newAxis.setOrientation(Orientation.HORIZONTAL);
 		newAxis.setTickLabelSide(LabelSide.Primary);
 		return newAxis;
@@ -29,7 +30,7 @@ public class DefaultAxesFactory implements IAxesFactory {
 
 	@Override
 	public Axis createYAxis() {
-		Axis newAxis = new Axis("Y-Axis", true);
+		Axis newAxis = new Axis(IXYGraph.Y_AXIS, true);
 		newAxis.setOrientation(Orientation.VERTICAL);
 		newAxis.setTickLabelSide(LabelSide.Primary);
 		newAxis.setAutoScaleThreshold(0.1);

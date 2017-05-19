@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory and others.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,16 @@ public interface IXYGraph extends IFigure {
 	public static final String PROPERTY_XY_GRAPH_MEM = "xyGraphMem"; //$NON-NLS-1$
 
 	public static final String PROPERTY_ZOOMTYPE = "zoomType"; //$NON-NLS-1$
+
+	/**
+	 * default X axis name
+	 */
+	public static final String X_AXIS = "X-Axis";
+
+	/**
+	 * default Y axis name
+	 */
+	public static final String Y_AXIS = "Y-Axis";
 
 	void fireConfigChanged();
 
