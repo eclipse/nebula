@@ -1354,9 +1354,14 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	 *            the lineWidth to set
 	 */
 	public void setLineWidth(int lineWidth) {
+		int orig = this.lineWidth;
 		this.lineWidth = lineWidth;
-		if (xyGraph != null)
+		if (xyGraph != null && orig != lineWidth)
 			xyGraph.repaint();
+		if (orig != lineWidth) {
+			for (ITraceListener listener : listeners)
+				listener.traceWidthChanged(this, orig, lineWidth);
+		}
 	}
 
 	/**
