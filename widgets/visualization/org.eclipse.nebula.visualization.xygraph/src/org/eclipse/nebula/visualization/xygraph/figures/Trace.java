@@ -1316,8 +1316,9 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 		this.traceType = traceType;
 		if (xyGraph != null)
 			xyGraph.repaint();
-
-		fireTraceTypeChanged(old, this.traceType);
+		if (old != traceType) {
+			fireTraceTypeChanged(old, this.traceType);
+		}
 	}
 
 	private void fireTraceTypeChanged(TraceType old, TraceType newTraceType) {
@@ -1344,9 +1345,21 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	 *            the pointStyle to set
 	 */
 	public void setPointStyle(PointStyle pointStyle) {
+		PointStyle old = this.pointStyle;
 		this.pointStyle = pointStyle;
 		if (xyGraph != null)
 			xyGraph.repaint();
+
+		if (old != pointStyle) {
+			firePointStyleChanged(old, this.pointStyle);
+		}
+	}
+
+	private void firePointStyleChanged(PointStyle old, PointStyle newStyle) {
+		if (old == newStyle)
+			return;
+		for (ITraceListener listener : listeners)
+			listener.pointStyleChanged(this, old, newStyle);
 	}
 
 	/**

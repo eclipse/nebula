@@ -7,6 +7,7 @@
  ******************************************************************************/
 package org.eclipse.nebula.visualization.xygraph.figures;
 
+import org.eclipse.nebula.visualization.xygraph.figures.Trace.PointStyle;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace.TraceType;
 import org.eclipse.swt.graphics.Color;
 
@@ -53,6 +54,15 @@ public interface ITraceListener {
 	 * @param newColor
 	 */
 	void traceColorChanged(Trace trace, Color old, Color newColor);
+
+	/**
+	 * Called when trace point style has changed
+	 *
+	 * @param trace
+	 * @param old
+	 * @param newStyle
+	 */
+	void pointStyleChanged(Trace trace, PointStyle old, PointStyle newStyle);
 
 	/**
 	 * Called when trace width has changed
