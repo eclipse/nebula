@@ -288,6 +288,24 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 			graphics.drawLine(currentPosition.x, currentPosition.y + POINT_SIZE / 2, currentPosition.x,
 					currentPosition.y + POINT_SIZE / 2 + CURSOR_LINE_LENGTH);
 			break;
+		case FOUR_DIRECTIONS:
+		case LEFT_RIGHT:
+			// left
+			graphics.drawLine(currentPosition.x - POINT_SIZE / 2, currentPosition.y,
+					xAxis.getValuePosition(xAxis.getRange().getLower(), false), currentPosition.y);
+			// right
+			graphics.drawLine(currentPosition.x + POINT_SIZE / 2, currentPosition.y,
+					xAxis.getValuePosition(xAxis.getRange().getUpper(), false), currentPosition.y);
+			if (cursorLineStyle != CursorLineStyle.FOUR_DIRECTIONS)
+				break;
+		case UP_DOWN:
+			// up
+			graphics.drawLine(currentPosition.x, currentPosition.y - POINT_SIZE / 2, currentPosition.x,
+					yAxis.getValuePosition(yAxis.getRange().getUpper(), false));
+			// down
+			graphics.drawLine(currentPosition.x, currentPosition.y + POINT_SIZE / 2, currentPosition.x,
+					yAxis.getValuePosition(yAxis.getRange().getLower(), false));
+			break;
 		default:
 			break;
 		}
