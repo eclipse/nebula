@@ -17,6 +17,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.eclipse.draw2d.Cursors;
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.Graphics;
+import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.MouseEvent;
 import org.eclipse.draw2d.MouseListener;
@@ -616,6 +617,13 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 	}
 
 	/**
+	 * @return annotation font
+	 */
+	public Font getAnnotationFont() {
+		return infoLabel.getFont();
+	}
+
+	/**
 	 * @param cursorLineStyle
 	 *            the cursorLineStyle to set
 	 */
@@ -797,6 +805,18 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 		this.dx = dx;
 		this.dy = dy;
 		knowX0Y0 = false;
+		repaint();
+	}
+
+	/**
+	 * Sets x an y location.
+	 *
+	 * @param x
+	 * @param y
+	 */
+	public void setLocation(double x, double y) {
+		this.xValue = x;
+		this.yValue = y;
 		repaint();
 	}
 
@@ -1025,6 +1045,18 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 
 	public RGB getAnnotationColorRGB() {
 		return annotationColorRGB;
+	}
+
+	/**
+	 * Sets annotation order to front
+	 */
+	public void toFront() {
+		final IFigure par = getParent();
+		if (par != null) {
+			par.remove(this);
+			final int end = par.getChildren() != null ? par.getChildren().size() : 0;
+			par.add(this, end);
+		}
 	}
 
 }
