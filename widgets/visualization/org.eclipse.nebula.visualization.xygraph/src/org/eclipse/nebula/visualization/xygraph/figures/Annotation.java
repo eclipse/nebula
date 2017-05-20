@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 Oak Ridge National Laboratory and others
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,6 +86,8 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 		}
 
 	}
+
+	private IAnnotationLabelProvider labelProvider = null;
 
 	protected Axis xAxis;
 	protected Axis yAxis;
@@ -460,13 +462,20 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 	 */
 	private void updateInfoLabelText(boolean updateX0Y0) {
 		String info = "";
-		if (showName)
-			info = name;
-		if (showSampleInfo && currentSnappedSample != null && !currentSnappedSample.getInfo().equals(""))
-			info += "\n" + currentSnappedSample.getInfo();
-		if (showPosition)
-			info += "\n" + "(" + xAxis.format(xValue) + ", " + (Double.isNaN(yValue) ? "NaN" : yAxis.format(yValue))
-					+ ")";
+		if (labelProvider != null) {
+			info = labelProvider.getInfoText(xValue, yValue, showName, showSampleInfo, showPosition);
+		}
+
+		if (info == null) {
+			info = "";
+			if (showName)
+				info = name;
+			if (showSampleInfo && currentSnappedSample != null && !currentSnappedSample.getInfo().equals(""))
+				info += "\n" + currentSnappedSample.getInfo();
+			if (showPosition)
+				info += "\n" + "(" + xAxis.format(xValue) + ", " + (Double.isNaN(yValue) ? "NaN" : yAxis.format(yValue))
+						+ ")";
+		}
 		infoLabel.setText(info);
 		knowX0Y0 = !updateX0Y0;
 	}
@@ -1025,6 +1034,14 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 					clientArea.y + clientArea.height);
 
 		}
+	}
+
+	public IAnnotationLabelProvider getLabelProvider() {
+		return labelProvider;
+	}
+
+	public void setLabelProvider(IAnnotationLabelProvider labelProvider) {
+		this.labelProvider = labelProvider;
 	}
 
 	public void axisForegroundColorChanged(Axis axis, Color oldColor, Color newColor) {
