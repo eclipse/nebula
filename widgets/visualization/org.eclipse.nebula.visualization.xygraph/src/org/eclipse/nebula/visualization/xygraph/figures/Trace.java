@@ -1313,19 +1313,15 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	 */
 	public void setTraceType(TraceType traceType) {
 		TraceType old = this.traceType;
+		if (old == traceType)
+			return;
 		this.traceType = traceType;
 		if (xyGraph != null)
 			xyGraph.repaint();
-		if (old != traceType) {
-			fireTraceTypeChanged(old, this.traceType);
-		}
+		fireTraceTypeChanged(old, this.traceType);
 	}
 
 	private void fireTraceTypeChanged(TraceType old, TraceType newTraceType) {
-
-		if (old == newTraceType)
-			return;
-
 		for (ITraceListener listener : listeners)
 			listener.traceTypeChanged(this, old, newTraceType);
 	}
@@ -1346,18 +1342,15 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	 */
 	public void setPointStyle(PointStyle pointStyle) {
 		PointStyle old = this.pointStyle;
+		if (old == pointStyle)
+			return;
 		this.pointStyle = pointStyle;
 		if (xyGraph != null)
 			xyGraph.repaint();
-
-		if (old != pointStyle) {
-			firePointStyleChanged(old, this.pointStyle);
-		}
+		firePointStyleChanged(old, this.pointStyle);
 	}
 
 	private void firePointStyleChanged(PointStyle old, PointStyle newStyle) {
-		if (old == newStyle)
-			return;
 		for (ITraceListener listener : listeners)
 			listener.pointStyleChanged(this, old, newStyle);
 	}
