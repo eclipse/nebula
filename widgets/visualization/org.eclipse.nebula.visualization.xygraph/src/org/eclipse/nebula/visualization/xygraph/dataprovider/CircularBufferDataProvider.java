@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 Oak Ridge National Laboratory and others.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -409,37 +409,51 @@ public class CircularBufferDataProvider extends AbstractDataProvider {
 	}
 
 	@Override
-	protected void updateDataRange() {
+	protected void updateDataRange(boolean positiveOnly) {
 		if (!dataRangedirty)
 			return;
 		dataRangedirty = false;
-		if (getSize() > 0) {
+		if (getSize() > 0) { // does not handle NaNs
 			int lowerBound = 0;
 			if (getSize() > clippingWindow && clippingWindow > 0) {
 				lowerBound = (getSize() - 1) - clippingWindow;
 			}
-			double xMin;
-			double xMax;
-			xMin = getSample(lowerBound).getXValue();
-			xMax = xMin;
+			double xMin = Double.POSITIVE_INFINITY;
+			double xMax = positiveOnly ? 0 : Double.NEGATIVE_INFINITY;
 
-			double yMin;
-			double yMax;
-			yMin = getSample(lowerBound).getYValue();
-			yMax = yMin;
-			for (int i = lowerBound + 1; i < getSize(); i++) {
+			double yMin = Double.POSITIVE_INFINITY;
+			double yMax = positiveOnly ? 0 : Double.NEGATIVE_INFINITY;
+
+			for (int i = lowerBound; i < getSize(); i++) {
 				ISample dp = getSample(i);
-				if (xMin > dp.getXValue() - dp.getXMinusError())
-					xMin = dp.getXValue() - dp.getXMinusError();
-				if (xMax < dp.getXValue() + dp.getXPlusError())
-					xMax = dp.getXValue() + dp.getXPlusError();
+				double value = dp.getXValue() - dp.getXMinusError();
+				if ((!positiveOnly || value > 0) && xMin > value) {
+					xMin = value;
+				}
+				value = dp.getXValue() + dp.getXPlusError();
+				if (xMax < value) {
+					xMax = value;
+				}
 
-				if (yMin > dp.getYValue() - dp.getYMinusError())
-					yMin = dp.getYValue() - dp.getYMinusError();
-				if (yMax < dp.getYValue() + dp.getYPlusError())
-					yMax = dp.getYValue() + dp.getYPlusError();
+				value = dp.getYValue() - dp.getYMinusError();
+				if ((!positiveOnly || value > 0) && yMin > value) {
+					yMin = value;
+				}
+				value = dp.getYValue() + dp.getYPlusError();
+				if (yMax < value) {
+					yMax = value;
+				}
 			}
-
+			if (positiveOnly) {
+				// check that x and y max are greater than their respective
+				// minima.
+				if (xMax < xMin) {
+					xMax = xMin;
+				}
+				if (yMax < yMin) {
+					yMax = yMin;
+				}
+			}
 			xDataMinMax = new Range(xMin, xMax);
 			yDataMinMax = new Range(yMin, yMax);
 		} else {

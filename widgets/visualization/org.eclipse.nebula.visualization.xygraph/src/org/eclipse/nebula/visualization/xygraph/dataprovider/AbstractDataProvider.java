@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,17 +40,14 @@ public abstract class AbstractDataProvider implements IDataProvider {
 		listeners = new ArrayList<IDataProviderListener>();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.csstudio.sns.widgets.figureparts.IDataProvider#getSize()
+	/**
+	 * @return size
 	 */
 	public abstract int getSize();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.csstudio.sns.widgets.figureparts.IDataProvider#getSample(int)
+	/**
+	 * @param index
+	 * @return the ISample element at the given index
 	 */
 	public abstract ISample getSample(int index);
 
@@ -61,30 +58,34 @@ public abstract class AbstractDataProvider implements IDataProvider {
 
 	/**
 	 * update xDataMinMax and yDataMinMax whenever data changed.
+	 *
+	 * @param positiveOnly
 	 */
-	protected abstract void updateDataRange();
+	protected abstract void updateDataRange(boolean positiveOnly);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.csstudio.sns.widgets.figureparts.IDataProvider#getXDataMinMax()
-	 */
-	synchronized public Range getXDataMinMax() {
+	@Override
+	public Range getXDataMinMax() {
+		return getXDataMinMax(false);
+	}
+
+	@Override
+	public Range getYDataMinMax() {
+		return getYDataMinMax(false);
+	}
+
+	@Override
+	synchronized public Range getXDataMinMax(boolean positiveOnly) {
 		if (getSize() <= 0)
 			return null;
-		updateDataRange();
+		updateDataRange(positiveOnly);
 		return xDataMinMax;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.csstudio.sns.widgets.figureparts.IDataProvider#getYDataMinMax()
-	 */
-	synchronized public Range getYDataMinMax() {
+	@Override
+	synchronized public Range getYDataMinMax(boolean positiveOnly) {
 		if (getSize() <= 0)
 			return null;
-		updateDataRange();
+		updateDataRange(positiveOnly);
 		return yDataMinMax;
 	}
 
@@ -96,21 +97,17 @@ public abstract class AbstractDataProvider implements IDataProvider {
 		this.chronological = chronological;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.csstudio.sns.widgets.figureparts.IDataProvider#isChronological()
+	/**
+	 * @return true if the order is chronological
 	 */
 	public boolean isChronological() {
 		return chronological;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.csstudio.sns.widgets.figureparts.IDataProvider#
-	 * addDataProviderListener (org.csstudio.sns.widgets.figureparts
-	 * .IDataProviderListener)
+	/**
+	 * Add listener
+	 *
+	 * @param listener
 	 */
 	public void addDataProviderListener(final IDataProviderListener listener) {
 		if (listeners.contains(listener))
@@ -118,17 +115,19 @@ public abstract class AbstractDataProvider implements IDataProvider {
 		listeners.add(listener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.csstudio.sns.widgets.figureparts.IDataProvider#
-	 * removeDataProviderListener (org.csstudio.sns.widgets.figureparts
-	 * .IDataProviderListener)
+	/**
+	 * Remove listener
+	 *
+	 * @param listener
+	 * @return true if this list contained the specified element
 	 */
 	public boolean removeDataProviderListener(final IDataProviderListener listener) {
 		return listeners.remove(listener);
 	}
 
+	/**
+	 * a data change has occured
+	 */
 	protected void fireDataChange() {
 		innerUpdate();
 		for (IDataProviderListener listener : listeners) {

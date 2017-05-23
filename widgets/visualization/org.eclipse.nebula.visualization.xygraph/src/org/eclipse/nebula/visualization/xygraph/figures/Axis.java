@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -319,14 +319,15 @@ public class Axis extends LinearScale {
 	public Range getTraceDataRange() {
 		double low = Double.POSITIVE_INFINITY;
 		double high = Double.NEGATIVE_INFINITY;
+		final boolean positiveOnly = isLogScaleEnabled();
 		for (Trace trace : traceList) {
 			if (trace.getDataProvider() == null || !trace.isVisible())
 				continue;
 			final Range range;
 			if (isHorizontal())
-				range = trace.getDataProvider().getXDataMinMax();
+				range = trace.getDataProvider().getXDataMinMax(positiveOnly);
 			else
-				range = trace.getDataProvider().getYDataMinMax();
+				range = trace.getDataProvider().getYDataMinMax(positiveOnly);
 			if (range == null)
 				continue;
 			if (Double.isInfinite(range.getLower()) || Double.isInfinite(range.getUpper())
