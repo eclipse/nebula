@@ -27,7 +27,6 @@ import org.eclipse.swt.widgets.Display;
 
 @SuppressWarnings("synthetic-access")
 public class Plotter extends Canvas {
-	private Color bg;
 	private int height = DEFAULT_HEIGHT;
 	private int width = DEFAULT_WIDTH;
 	// Blocks painting if true
@@ -174,10 +173,9 @@ public class Plotter extends Canvas {
 	 */
 	public Plotter(int channels, Composite parent, int style, Color backgroundColor, Color foregroundColor) {
 		super(parent, SWT.DOUBLE_BUFFERED | style);
+		Color bg = backgroundColor;
 		if (backgroundColor == null) {
-			this.bg = Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
-		} else {
-			this.bg = backgroundColor;
+			bg = Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
 		}
 		Color fg;
 		if (foregroundColor == null) {
@@ -186,7 +184,7 @@ public class Plotter extends Canvas {
 			fg = foregroundColor;
 		}
 
-		setBackground(this.bg);
+		setBackground(bg);
 
 		this.chan = new Data[channels];
 		for (int i = 0; i < this.chan.length; i++) {
@@ -680,10 +678,6 @@ public class Plotter extends Canvas {
 	}
 
 	protected void widgetDisposed(DisposeEvent e) {
-		this.bg.dispose();
-		for (Data element : this.chan) {
-			element.fg.dispose();
-		}
 	}
 
 	protected void controlMoved(ControlEvent e) {
