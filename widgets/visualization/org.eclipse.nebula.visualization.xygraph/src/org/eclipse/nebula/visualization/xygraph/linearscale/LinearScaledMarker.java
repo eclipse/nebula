@@ -43,7 +43,7 @@ public class LinearScaledMarker extends Figure {
 
 	private LinearScale scale;
 
-	private LabelSide makerLabelsPosition = LabelSide.Secondary;
+	private LabelSide markerLabelsPosition = LabelSide.Secondary;
 
 	private boolean markerLineVisible = false;
 
@@ -164,7 +164,7 @@ public class LinearScaledMarker extends Figure {
 	private void drawMarkerTick(Graphics graphics) {
 		graphics.setLineWidth(TICK_LINE_WIDTH);
 		if (scale.isHorizontal()) {
-			if (makerLabelsPosition == LabelSide.Primary) {
+			if (markerLabelsPosition == LabelSide.Primary) {
 				int i = 0;
 				for (int markerPos : markerPositions) {
 					graphics.setForegroundColor(markerColorsList.get(i));
@@ -190,7 +190,7 @@ public class LinearScaledMarker extends Figure {
 				}
 			}
 		} else {
-			if (makerLabelsPosition == LabelSide.Primary) {
+			if (markerLabelsPosition == LabelSide.Primary) {
 
 				for (int i = 0; i < markerPositions.length; i++) {
 					graphics.setForegroundColor(markerColorsList.get(i));
@@ -316,7 +316,7 @@ public class LinearScaledMarker extends Figure {
 	 *            the makerLabelsPosition to set
 	 */
 	public void setLabelSide(LabelSide labelSide) {
-		this.makerLabelsPosition = labelSide;
+		this.markerLabelsPosition = labelSide;
 		dirty = true;
 	}
 
@@ -324,7 +324,7 @@ public class LinearScaledMarker extends Figure {
 	 * @return the makerLabelsPosition
 	 */
 	public LabelSide getMakerLabelsPosition() {
-		return makerLabelsPosition;
+		return markerLabelsPosition;
 	}
 
 	/**
