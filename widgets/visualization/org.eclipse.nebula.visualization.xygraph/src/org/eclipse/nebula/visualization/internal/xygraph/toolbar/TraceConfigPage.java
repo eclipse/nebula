@@ -117,7 +117,7 @@ public class TraceConfigPage implements ITraceConfigPage {
 		labelGd = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
 		xAxisLabel.setLayoutData(labelGd);
 
-		xAxisCombo = new Combo(traceCompo, SWT.DROP_DOWN);
+		xAxisCombo = new Combo(traceCompo, SWT.DROP_DOWN | SWT.READ_ONLY);
 		for (Axis axis : xyGraph.getXAxisList())
 			xAxisCombo.add(axis.getTitle());
 		gd = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
@@ -128,7 +128,7 @@ public class TraceConfigPage implements ITraceConfigPage {
 		labelGd = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
 		yAxisLabel.setLayoutData(labelGd);
 
-		yAxisCombo = new Combo(traceCompo, SWT.DROP_DOWN);
+		yAxisCombo = new Combo(traceCompo, SWT.DROP_DOWN | SWT.READ_ONLY);
 		for (Axis axis : xyGraph.getYAxisList())
 			yAxisCombo.add(axis.getTitle());
 		gd = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
@@ -148,7 +148,7 @@ public class TraceConfigPage implements ITraceConfigPage {
 		labelGd = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
 		traceTypeLabel.setLayoutData(labelGd);
 
-		traceTypeCombo = new Combo(traceCompo, SWT.DROP_DOWN);
+		traceTypeCombo = new Combo(traceCompo, SWT.DROP_DOWN | SWT.READ_ONLY);
 		traceTypeCombo.setItems(TraceType.stringValues());
 		gd = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
 		traceTypeCombo.setLayoutData(gd);
@@ -176,7 +176,7 @@ public class TraceConfigPage implements ITraceConfigPage {
 		labelGd = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
 		pointStyleLabel.setLayoutData(labelGd);
 
-		pointStyleCombo = new Combo(traceCompo, SWT.DROP_DOWN);
+		pointStyleCombo = new Combo(traceCompo, SWT.DROP_DOWN | SWT.READ_ONLY);
 		pointStyleCombo.setItems(PointStyle.stringValues());
 		gd = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
 		pointStyleCombo.setLayoutData(gd);
@@ -198,7 +198,7 @@ public class TraceConfigPage implements ITraceConfigPage {
 		baseLineLabel.setLayoutData(labelGd);
 		baseLineLabel.setToolTipText("The baseline for BAR or AREA trace type");
 
-		baseLineCombo = new Combo(traceCompo, SWT.DROP_DOWN);
+		baseLineCombo = new Combo(traceCompo, SWT.DROP_DOWN |SWT.READ_ONLY);
 		baseLineCombo.setItems(BaseLine.stringValues());
 		gd = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
 		baseLineCombo.setLayoutData(gd);
@@ -240,7 +240,7 @@ public class TraceConfigPage implements ITraceConfigPage {
 		labelGd = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
 		xErrorBarTypeLabel.setLayoutData(labelGd);
 
-		xErrorBarTypeCombo = new Combo(errorBarGroup, SWT.DROP_DOWN);
+		xErrorBarTypeCombo = new Combo(errorBarGroup, SWT.DROP_DOWN | SWT.READ_ONLY);
 		xErrorBarTypeCombo.setItems(ErrorBarType.stringValues());
 		gd = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		xErrorBarTypeCombo.setLayoutData(gd);
@@ -250,7 +250,7 @@ public class TraceConfigPage implements ITraceConfigPage {
 		labelGd = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
 		yErrorBarTypeLabel.setLayoutData(labelGd);
 
-		yErrorBarTypeCombo = new Combo(errorBarGroup, SWT.DROP_DOWN);
+		yErrorBarTypeCombo = new Combo(errorBarGroup, SWT.DROP_DOWN | SWT.READ_ONLY);
 		yErrorBarTypeCombo.setItems(ErrorBarType.stringValues());
 		gd = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		yErrorBarTypeCombo.setLayoutData(gd);

@@ -134,7 +134,7 @@ public class XYGraphConfigDialog extends Dialog {
 		axisSelectGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		axisSelectGroup.setText("Select Axis");
 		axisSelectGroup.setLayout(new GridLayout(1, false));
-		axisCombo = new Combo(axisSelectGroup, SWT.DROP_DOWN);
+		axisCombo = new Combo(axisSelectGroup, SWT.DROP_DOWN | SWT.READ_ONLY);
 		axisCombo.setLayoutData(new GridData(SWT.FILL, 0, true, false));
 		int count = 0;
 		for (Axis axis : xyGraph.getAxisList()) {
@@ -187,7 +187,7 @@ public class XYGraphConfigDialog extends Dialog {
 			traceSelectGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 			traceSelectGroup.setText("Select Trace");
 			traceSelectGroup.setLayout(new GridLayout(1, false));
-			traceCombo = new Combo(traceSelectGroup, SWT.DROP_DOWN);
+			traceCombo = new Combo(traceSelectGroup, SWT.DROP_DOWN | SWT.READ_ONLY);
 			traceCombo.setLayoutData(new GridData(SWT.FILL, 0, true, false));
 			count = 0;
 			for (Trace trace : xyGraph.getPlotArea().getTraceList()) {
@@ -243,7 +243,7 @@ public class XYGraphConfigDialog extends Dialog {
 			annoSelectGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 			annoSelectGroup.setText("Select Annotation");
 			annoSelectGroup.setLayout(new GridLayout(1, false));
-			annotationsCombo = new Combo(annoSelectGroup, SWT.DROP_DOWN);
+			annotationsCombo = new Combo(annoSelectGroup, SWT.DROP_DOWN | SWT.READ_ONLY);
 			annotationsCombo.setLayoutData(new GridData(SWT.FILL, 0, true, false));
 			count = 0;
 			for (Annotation annotation : xyGraph.getPlotArea().getAnnotationList()) {
