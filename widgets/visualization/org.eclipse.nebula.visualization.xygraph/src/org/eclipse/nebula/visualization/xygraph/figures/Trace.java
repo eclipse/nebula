@@ -616,6 +616,14 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	protected void paintFigure(Graphics graphics) {
 		super.paintFigure(graphics);
 		graphics.pushState();
+		try {
+			paintInternalFigure(graphics);
+		} finally {
+			graphics.popState();
+		}
+	}
+	
+	private void paintInternalFigure(Graphics graphics) {
 		if (use_advanced_graphics)
 			graphics.setAntialias(antiAliasing ? SWT.ON : SWT.OFF);
 		graphics.setForegroundColor(traceColor);
@@ -719,8 +727,8 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 						predpInRange = xAxis.getRange().inRange(predp.getXValue())
 								&& yAxis.getRange().inRange(predp.getYValue());
 					}
-					if (predp == null) { // No previous data point from which to
-											// draw a line
+					// No previous data point from which to draw a line
+					if (predp == null) {
 						predp = dp;
 						predpInRange = dpInRange;
 						continue;
@@ -741,14 +749,11 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 					}
 
 					if (traceType != TraceType.AREA && traceType != TraceType.LINE_AREA) {
-						if (!predpInRange && !dpInRange) { // both are out of
-															// plot area
+						// both are out of plot area
+						if (!predpInRange && !dpInRange) {
 							ISample[] dpTuple = getIntersection(predp, dp);
-							if (dpTuple[0] == null || dpTuple[1] == null) { // no
-																			// intersection
-																			// with
-																			// plot
-																			// area
+							// no intersection with plot area
+							if (dpTuple[0] == null || dpTuple[1] == null) {
 								predp = origin_dp;
 								predpInRange = origin_dpInRange;
 								continue;
@@ -756,8 +761,7 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 								predp = dpTuple[0];
 								dp = dpTuple[1];
 							}
-						} else if (!predpInRange || !dpInRange) { // one in and
-																	// one out
+						} else if (!predpInRange || !dpInRange) { // one in and one out
 							// calculate the intersection point with the
 							// boundary of plot area.
 							if (!predpInRange) {
@@ -809,7 +813,6 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 									// Draw a polylin at this point, and start
 									// to reconstruct a new
 									// polyline for the rest of the trace.
-
 									if (lastInRegion != null) {
 										// There were several points which have
 										// the same X value.
@@ -916,8 +919,7 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 											lastInRegion = dpPos;
 										} else {
 											// There are more than four points
-											// which have the same X
-											// value.
+											// which have the same X value.
 											if (lastInRegion.y > maxInRegion.y) {
 												maxInRegion = lastInRegion;
 											} else if (lastInRegion.y < minInRegion.y) {
@@ -1025,7 +1027,6 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 				}
 			}
 		}
-		graphics.popState();
 	}
 
 	/**
