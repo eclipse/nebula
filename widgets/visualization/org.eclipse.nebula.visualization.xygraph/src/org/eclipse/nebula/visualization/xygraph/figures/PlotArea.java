@@ -297,6 +297,13 @@ public class PlotArea extends Figure {
 	}
 
 	/**
+	 * @return the active zoom type
+	 */
+	public ZoomType getZoomType() {
+		return zoomType;
+	}
+
+	/**
 	 * Zoom 'in' or 'out' by a fixed factor
 	 * 
 	 * @param horizontally
