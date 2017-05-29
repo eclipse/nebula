@@ -4,7 +4,7 @@ Bundle-Name: Nebula Visualization XY Graph Example View
 Bundle-SymbolicName: org.eclipse.nebula.visualization.xygraph.exampleview;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Eclipse.org
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.draw2d,
  org.eclipse.nebula.visualization.widgets;bundle-version="1.0.0",
