@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -130,7 +130,7 @@ public class XYGraph extends Figure implements IXYGraph {
 			new RGB(242, 26, 26), // red
 			new RGB(33, 179, 33), // green
 			new RGB(0, 0, 0), // black
-			new RGB(128, 0, 255), // violett
+			new RGB(128, 0, 255), // violet
 			new RGB(255, 170, 0), // (darkish) yellow
 			new RGB(255, 0, 240), // pink
 			new RGB(243, 132, 132), // peachy
@@ -202,7 +202,7 @@ public class XYGraph extends Figure implements IXYGraph {
 		// titleLabel.setVisible(false);
 		xAxisList = new ArrayList<Axis>();
 		yAxisList = new ArrayList<Axis>();
-		plotArea = new PlotArea((IXYGraph) this);
+		plotArea = createPlotArea(this);
 		getPlotArea().setOpaque(!transparent);
 
 		add(titleLabel);
@@ -214,6 +214,14 @@ public class XYGraph extends Figure implements IXYGraph {
 		addAxis(primaryXAxis);
 
 		operationsManager = new OperationsManager();
+	}
+
+	/**
+	 * @param xyGraph
+	 * @return a plotArea
+	 */
+	public PlotArea createPlotArea(IXYGraph xyGraph) {
+		return new PlotArea(xyGraph);
 	}
 
 	@Override
@@ -330,7 +338,7 @@ public class XYGraph extends Figure implements IXYGraph {
 			}
 		}
 
-		// re-adjust xAxis boundss
+		// re-adjust xAxis bounds
 		for (int i = xAxisList.size() - 1; i >= 0; i--) {
 			Axis xAxis = xAxisList.get(i);
 			Rectangle r = xAxis.getBounds().getCopy();
