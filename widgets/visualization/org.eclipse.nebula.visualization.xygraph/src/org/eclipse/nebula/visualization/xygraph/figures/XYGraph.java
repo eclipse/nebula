@@ -324,8 +324,8 @@ public class XYGraph extends Figure implements IXYGraph {
 
 		for (int i = yAxisList.size() - 1; i >= 0; i--) {
 			Axis yAxis = yAxisList.get(i);
-			int hintHeight = clientArea.height + (hasTopXAxis ? 1 : 0) * yAxis.getMargin()
-					+ (hasBottomXAxis ? 1 : 0) * yAxis.getMargin();
+			int hintHeight = clientArea.height + (hasTopXAxis ? yAxis.getMargin() : 0)
+					+ (hasBottomXAxis ? yAxis.getMargin() : 0);
 			if (hintHeight > getClientArea().height)
 				hintHeight = clientArea.height;
 			Dimension yAxisSize = yAxis.getPreferredSize(clientArea.width, hintHeight);
@@ -359,8 +359,7 @@ public class XYGraph extends Figure implements IXYGraph {
 		if (plotArea != null && plotArea.isVisible()) {
 
 			Rectangle plotAreaBound = new Rectangle(primaryXAxis.getBounds().x + primaryXAxis.getMargin(),
-					primaryYAxis.getBounds().y + primaryYAxis.getMargin(),
-					primaryXAxis.getTickLength(),
+					primaryYAxis.getBounds().y + primaryYAxis.getMargin(), primaryXAxis.getTickLength(),
 					primaryYAxis.getTickLength());
 			plotArea.setBounds(plotAreaBound);
 
