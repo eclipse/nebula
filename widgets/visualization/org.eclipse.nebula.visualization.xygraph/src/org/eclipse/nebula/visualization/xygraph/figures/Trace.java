@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.draw2d.Figure;
@@ -1210,7 +1211,7 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	 *            the xAxis to set
 	 */
 	public void setXAxis(Axis axis) {
-		if (xAxis == axis)
+		if (Objects.equals(xAxis, axis))
 			return;
 		if (xAxis != null) {
 			xAxis.removeListener(this);
@@ -1240,12 +1241,9 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	 *            the yAxis to set
 	 */
 	public void setYAxis(Axis axis) {
-
 		Axis old = yAxis;
-
-		if (yAxis == axis) {
+		if (Objects.equals(old, axis))
 			return;
-		}
 
 		xyGraph.getLegendMap().get(yAxis).removeTrace(this);
 		if (xyGraph.getLegendMap().get(yAxis).getTraceList().size() <= 0) {
@@ -1307,6 +1305,8 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	 */
 	public void setTraceColor(final Color traceColor) {
 		Color old = this.traceColor;
+		if (Objects.equals(old, traceColor))
+			return;
 		this.traceColor = traceColor;
 		if (!errorBarColorSetFlag)
 			errorBarColor = traceColor;
@@ -1316,10 +1316,6 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	}
 
 	private void fireTraceColorChanged(Color old, Color newColor) {
-
-		if (old == newColor)
-			return;
-
 		for (ITraceListener listener : listeners)
 			listener.traceColorChanged(this, old, newColor);
 	}
@@ -1355,6 +1351,9 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	 *            the baseLine to set
 	 */
 	public void setBaseLine(BaseLine baseLine) {
+		BaseLine old = this.baseLine;
+		if (old == baseLine)
+			return;
 		this.baseLine = baseLine;
 		if (xyGraph != null)
 			xyGraph.repaint();
@@ -1385,13 +1384,13 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	 */
 	public void setLineWidth(int lineWidth) {
 		int orig = this.lineWidth;
+		if (orig == lineWidth)
+			return;
 		this.lineWidth = lineWidth;
-		if (xyGraph != null && orig != lineWidth)
+		if (xyGraph != null)
 			xyGraph.repaint();
-		if (orig != lineWidth) {
-			for (ITraceListener listener : listeners)
-				listener.traceWidthChanged(this, orig, lineWidth);
-		}
+		for (ITraceListener listener : listeners)
+			listener.traceWidthChanged(this, orig, lineWidth);
 	}
 
 	/**
@@ -1399,6 +1398,9 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	 *            the pointSize to set
 	 */
 	public void setPointSize(int pointSize) {
+		int old = this.pointSize;
+		if (old == pointSize)
+			return;
 		this.pointSize = pointSize;
 		if (xyGraph != null)
 			xyGraph.repaint();
@@ -1409,6 +1411,9 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	 *            the areaAlpha to set
 	 */
 	public void setAreaAlpha(int areaAlpha) {
+		int old = this.areaAlpha;
+		if (old == areaAlpha)
+			return;
 		this.areaAlpha = areaAlpha;
 		if (xyGraph != null)
 			xyGraph.repaint();
@@ -1419,6 +1424,9 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	 *            the antiAliasing to set
 	 */
 	public void setAntiAliasing(boolean antiAliasing) {
+		boolean old = this.antiAliasing;
+		if (old == antiAliasing)
+			return;
 		this.antiAliasing = antiAliasing;
 		if (xyGraph != null)
 			xyGraph.repaint();
@@ -1430,19 +1438,16 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	 */
 	public void setName(String name) {
 		String oldName = this.name;
+		if (Objects.equals(oldName, name))
+			return;
 		this.name = name;
 		revalidate();
 		if (xyGraph != null)
 			xyGraph.repaint();
-
 		fireTraceNameChanged(oldName, this.name);
-
 	}
 
 	private void fireTraceNameChanged(String oldName, String newName) {
-		if (((oldName == null) && (newName == null)) || ((oldName != null) && oldName.equals(newName)))
-			return;
-
 		for (ITraceListener listener : listeners)
 			listener.traceNameChanged(this, oldName, newName);
 	}
