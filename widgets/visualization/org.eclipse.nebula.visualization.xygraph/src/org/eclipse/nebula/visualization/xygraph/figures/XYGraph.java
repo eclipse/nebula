@@ -221,10 +221,13 @@ public class XYGraph extends Figure implements IXYGraph {
 	}
 
 	/**
+	 * <b>Warning:</b> This method is called in the constructor to create a plot
+	 * area
+	 *
 	 * @param xyGraph
 	 * @return a plotArea
 	 */
-	public PlotArea createPlotArea(IXYGraph xyGraph) {
+	protected PlotArea createPlotArea(IXYGraph xyGraph) {
 		return new PlotArea(xyGraph);
 	}
 
