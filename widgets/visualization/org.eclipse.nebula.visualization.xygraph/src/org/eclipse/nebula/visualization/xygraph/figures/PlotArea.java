@@ -211,8 +211,12 @@ public class PlotArea extends Figure {
 	 */
 	public boolean removeAnnotation(final Annotation annotation) {
 		final boolean result = annotationList.remove(annotation);
-		if (!annotation.isFree())
-			annotation.getTrace().getDataProvider().removeDataProviderListener(annotation);
+		if (!annotation.isFree()) {
+			Trace trace = annotation.getTrace();
+			if (trace != null && trace.getDataProvider() != null) {
+				trace.getDataProvider().removeDataProviderListener(annotation);
+			}
+		}
 		if (result) {
 			remove(annotation);
 			revalidate();
