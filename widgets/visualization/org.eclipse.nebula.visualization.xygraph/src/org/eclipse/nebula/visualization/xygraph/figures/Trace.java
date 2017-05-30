@@ -1781,4 +1781,27 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 
 	}
 
+	/**
+	 * Remove figures and reset fields
+	 */
+	public void dispose() {
+		if (getParent() != null)
+			getParent().remove(this);
+		removeAll();
+		if (getHotSampleList() != null)
+			getHotSampleList().clear();
+		this.name = null;
+		this.traceDataProvider = null;
+		this.xAxis = null;
+		this.yAxis = null;
+		this.traceColor = null;
+		this.traceType = null;
+		this.baseLine = null;
+		this.pointStyle = null;
+		this.yErrorBarType = null;
+		this.xErrorBarType = null;
+		this.errorBarColor = null;
+		this.xyGraph = null;
+	}
+
 }
