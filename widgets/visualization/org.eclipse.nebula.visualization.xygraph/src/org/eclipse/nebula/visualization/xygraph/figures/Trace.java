@@ -658,7 +658,7 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 				HashSet<Point> hsPoint = new HashSet<Point>();
 
 				// List of points for drawing polyline.
-				PointList plPolyline = new PointList();
+				PointList plPolyline = new NoRepeatsPointsList();
 
 				// List of bottom/top point in a certain horizontal
 				// pixel location for the BAR line type.
