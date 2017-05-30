@@ -17,6 +17,7 @@ import java.util.Map;
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.Label;
+import org.eclipse.draw2d.SWTGraphics;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.nebula.visualization.internal.xygraph.undo.OperationsManager;
@@ -24,6 +25,7 @@ import org.eclipse.nebula.visualization.internal.xygraph.undo.XYGraphMemento;
 import org.eclipse.nebula.visualization.internal.xygraph.undo.ZoomCommand;
 import org.eclipse.nebula.visualization.xygraph.linearscale.AbstractScale.LabelSide;
 import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
+import org.eclipse.nebula.visualization.xygraph.util.GraphicsUtil;
 import org.eclipse.nebula.visualization.xygraph.util.Log10;
 import org.eclipse.nebula.visualization.xygraph.util.SingleSourceHelper2;
 import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
@@ -31,6 +33,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
@@ -46,6 +49,7 @@ import org.eclipse.swt.widgets.Display;
  * @author Kay Kasemir (performStagger)
  * @author Laurent PHILIPPE (property change support)
  * @author Alex Clayton (added {@link IAxesFactory} factory)
+ * @author Baha El-Kassaby/Matthew Gerring (added Diamond Light Source contributions)
  */
 public class XYGraph extends Figure implements IXYGraph {
 
@@ -351,10 +355,10 @@ public class XYGraph extends Figure implements IXYGraph {
 
 		if (plotArea != null && plotArea.isVisible()) {
 
-			Rectangle plotAreaBound = new Rectangle(primaryXAxis.getBounds().x + primaryXAxis.getMargin() + 1,
+			Rectangle plotAreaBound = new Rectangle(primaryXAxis.getBounds().x + primaryXAxis.getMargin(),
 					primaryYAxis.getBounds().y + primaryYAxis.getMargin(),
-					primaryXAxis.getBounds().width - 2 * primaryXAxis.getMargin(),
-					primaryYAxis.getBounds().height - 2 * primaryYAxis.getMargin());
+					primaryXAxis.getTickLength(),
+					primaryYAxis.getTickLength());
 			plotArea.setBounds(plotAreaBound);
 
 		}
@@ -498,9 +502,15 @@ public class XYGraph extends Figure implements IXYGraph {
 				remove(legendMap.remove(trace.getYAxis()));
 			}
 		}
+		try {
+			for (Axis axis : getAxisList()) {
+				axis.removeTrace(trace);
+			}
+		} catch (Exception ne) {
+			// Ignored, this is a bug fix to make the plots rescale after a plot
+			// is deleted.
+		}
 		plotArea.removeTrace(trace);
-		trace.getXAxis().removeTrace(trace);
-		trace.getYAxis().removeTrace(trace);
 		revalidate();
 		repaint();
 	}
@@ -729,6 +739,45 @@ public class XYGraph extends Figure implements IXYGraph {
 		operationsManager.addCommand(command);
 	}
 
+	/**
+	 * @param trim
+	 *           a SWT Rectangle
+	 * @return Image of the XYFigure. Receiver must dispose.
+	 */
+	public Image getImage(org.eclipse.swt.graphics.Rectangle size) {
+		Rectangle orig = new Rectangle(bounds);
+		try {
+			setBounds(new Rectangle(0, 0, size.width, size.height));
+			layout();
+			plotArea.layout();
+			plotArea.layout();
+			primaryYAxis.layout();
+			primaryXAxis.layout();
+
+			Image image = new Image(null, bounds.width + 6, bounds.height + 6);
+			GC gc = GraphicsUtil.createGC(image);
+
+			SWTGraphics graphics = new SWTGraphics(gc);
+			// Needed because the clipping is not set with GTK2
+			graphics.setClip(new Rectangle(0, 0, image.getBounds().width, image.getBounds().height));
+			graphics.translate(-bounds.x + 3, -bounds.y + 3);
+			graphics.setForegroundColor(getForegroundColor());
+			graphics.setBackgroundColor(getBackgroundColor());
+			paint(graphics);
+			gc.dispose();
+			return image;
+
+		} finally {
+			setBounds(orig);
+			layout();
+			plotArea.layout();
+			plotArea.layout();
+			primaryYAxis.layout();
+			primaryXAxis.layout();
+		}
+	}
+
+	@Override
 	public Axis getPrimaryXAxis() {
 		if (xAxisList.size() > 0) {
 			return xAxisList.get(0);
@@ -736,6 +785,7 @@ public class XYGraph extends Figure implements IXYGraph {
 		return null;
 	}
 
+	@Override
 	public Axis getPrimaryYAxis() {
 		if (yAxisList.size() > 0) {
 			return yAxisList.get(0);
