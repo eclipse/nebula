@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -129,7 +129,45 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 		 */
 		public String getROIInfo(int xIndex, int yIndex, int width, int height);
 	}	
-	
+
+	/**
+	 * Wraps an array of raw signed data to emulate an unsigned datatype.
+	 *
+	 */
+	public class UnsignedPrimitiveArrayWrapper implements IPrimaryArrayWrapper {
+
+		private IPrimaryArrayWrapper array;
+		private double offset;
+
+		/**
+		 * Wrap an array to return unsigned data.
+		 *
+		 * @param array
+		 *            Array to be wrapped
+		 * @param bits
+		 *            Length of unsigned data, in bits
+		 */
+		public UnsignedPrimitiveArrayWrapper(IPrimaryArrayWrapper array, int bits) {
+			this.array = array;
+			this.offset = Math.pow(2, bits);
+		}
+
+		@Override
+		public double get(int i) {
+			double value = array.get(i);
+			if (value < 0) {
+				return value + offset;
+			} else {
+				return value;
+			}
+		}
+
+		@Override
+		public int getSize() {
+			return array.getSize();
+		}
+	}
+
 	class SinglePixelProfileCrossHair extends Figure {
 		/**
 		 * Center coordinates 
@@ -413,7 +451,11 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 					return;
 				
 				croppedDataArray = cropDataArray(cropLeft, cropRight, cropTop, cropBottom);
-				
+
+				if(unsignedBits > 0) {
+					croppedDataArray = new UnsignedPrimitiveArrayWrapper(croppedDataArray, unsignedBits);
+				}
+
 				fireProfileDataChanged(croppedDataArray, croppedDataWidth, croppedDataHeight);
 //				for(ROIFigure roiFigure : roiMap.values()){
 //					roiFigure.fireROIUpdated();
@@ -619,6 +661,7 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 
 	private int dataWidth, dataHeight;
 	private int cropLeft, cropRight, cropTop, cropBottom;
+	private int unsignedBits;
 //	private double[] dataArray;
 	private IPrimaryArrayWrapper dataArray;
 	
@@ -993,6 +1036,13 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 	 */
 	public int getDataWidth() {
 		return dataWidth;
+	}
+
+	/**
+	 * @return the unsigned bits
+	 */
+	public int getUnsignedBits() {
+		return unsignedBits;
 	}
 
 	public GraphArea getGraphArea() {
@@ -1410,6 +1460,21 @@ public class IntensityGraphFigure extends Figure implements Introspectable {
 		dataDirty = true;
 		repaint();
 	}
+
+	/**
+	 * Sets the unsigned bits
+	 *
+	 * @param bits
+	 *            the number of bits in the unsigned data, or zero and has to be
+	 *            <= 1023 (limit for IEEE doubles). If bits <= 0, the data is
+	 *            treated as having signed values.
+	 */
+	public final void setUnsignedBits(int bits) {
+		if (bits > 1023)
+			throw new IllegalArgumentException("The value given is higher than 1023!");
+		this.unsignedBits = bits;
+	}
+
 
 	/**Set color of ROI figures.
 	 * @param roiColor
