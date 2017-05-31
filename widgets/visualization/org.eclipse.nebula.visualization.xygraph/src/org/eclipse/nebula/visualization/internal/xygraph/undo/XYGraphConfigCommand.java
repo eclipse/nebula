@@ -7,6 +7,8 @@
  ******************************************************************************/
 package org.eclipse.nebula.visualization.internal.xygraph.undo;
 
+import java.util.function.Supplier;
+
 import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 
@@ -21,20 +23,48 @@ public class XYGraphConfigCommand implements IUndoableCommand {
 	private IXYGraph xyGraph;
 	private XYGraphMemento previousXYGraphMem, afterXYGraphMem;
 
-	public XYGraphConfigCommand(IXYGraph xyGraph) {
-		this((XYGraph) xyGraph);
-	}
-
 	/**
 	 * Use {@link #XYGraphConfigCommand(IXYGraph)} instead
-	 * 
+	 *
 	 * @param xyGraph
 	 */
 	@Deprecated
 	public XYGraphConfigCommand(XYGraph xyGraph) {
+		this(xyGraph, XYGraphMemento::new);
+	}
+
+	/**
+	 * @param xyGraph
+	 */
+	public XYGraphConfigCommand(IXYGraph xyGraph) {
+		this(xyGraph, XYGraphMemento::new);
+	}
+
+	/**
+	 * Use {@link #XYGraphConfigCommand(IXYGraph, Supplier)} instead
+	 *
+	 * @param xyGraph
+	 * @param mementoFactory
+	 *            A supplier that creates a new XYGraphMemento on each call to
+	 *            the supplier's get method.
+	 */
+	@Deprecated
+	public XYGraphConfigCommand(XYGraph xyGraph, Supplier<? extends XYGraphMemento> mementoFactory) {
+		this((IXYGraph) xyGraph, mementoFactory);
+	}
+
+	/**
+	 * Constructor with a XYGraphMemento {@link Supplier}
+	 *
+	 * @param xyGraph
+	 * @param mementoFactory
+	 *            A supplier that creates a new XYGraphMemento on each call to
+	 *            the supplier's get method.
+	 */
+	public XYGraphConfigCommand(IXYGraph xyGraph, Supplier<? extends XYGraphMemento> mementoFactory) {
 		this.xyGraph = xyGraph;
-		previousXYGraphMem = new XYGraphMemento();
-		afterXYGraphMem = new XYGraphMemento();
+		previousXYGraphMem = mementoFactory.get();
+		afterXYGraphMem = mementoFactory.get();
 
 		for (int i = 0; i < xyGraph.getPlotArea().getAnnotationList().size(); i++) {
 			previousXYGraphMem.addAnnotationMemento(new AnnotationMemento());
