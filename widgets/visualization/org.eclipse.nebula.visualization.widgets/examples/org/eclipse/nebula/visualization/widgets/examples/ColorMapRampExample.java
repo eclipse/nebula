@@ -40,6 +40,7 @@ public class ColorMapRampExample {
 	private ColorMapRamp colorMapRamp;
 	private Combo colorMapCombo;
 	private Button customImageDataCheck;
+	private Button logCheck;
 	private Text minText;
 	private Text maxText;
 
@@ -58,6 +59,7 @@ public class ColorMapRampExample {
 		colorMapRampCanvas.setLayoutData(gd);
 		final LightweightSystem lws = new LightweightSystem(colorMapRampCanvas);
 		colorMapRamp = new ColorMapRamp();
+		colorMapRamp.setLog10(false);
 		lws.setContents(colorMapRamp);
 
 		colorMapCombo = new Combo(shell, SWT.READ_ONLY);
@@ -79,6 +81,15 @@ public class ColorMapRampExample {
 				updateRamp();
 			};
 		});
+
+		logCheck = new Button(shell, SWT.CHECK);
+		logCheck.setText("Enable Log");
+		logCheck.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
+				updateRamp();
+			};
+		});
+		logCheck.setSelection(false);
 
 		Composite minMaxComposite = new Composite(shell, SWT.NONE);
 		minMaxComposite.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
@@ -130,6 +141,7 @@ public class ColorMapRampExample {
 		PredefinedColorMap map = PredefinedColorMap.fromIndex(selectionIndex);
 		ColorMap colorMap = new ColorMap(map, true, true);
 		colorMapRamp.setColorMap(colorMap);
+		colorMapRamp.setLog10(logCheck.getSelection());
 
 		if (customImageDataCheck.getSelection()) {
 			ImageData imageData = new ImageData(1, 256, 24, new PaletteData(0xff, 0xff00, 0xff0000));
