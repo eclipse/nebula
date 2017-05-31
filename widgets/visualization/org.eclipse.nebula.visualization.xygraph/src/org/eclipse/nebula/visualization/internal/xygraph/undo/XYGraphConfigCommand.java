@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,6 +67,24 @@ public class XYGraphConfigCommand implements IUndoableCommand {
 
 	public void saveAfterStates() {
 		XYGraphMementoUtil.saveXYGraphPropsToMemento(xyGraph, afterXYGraphMem);
+	}
+
+	/**
+	 * Returns the previous graph memento
+	 *
+	 * @return previous graph memento
+	 */
+	public XYGraphMemento getPreviousXYGraphMemento() {
+		return previousXYGraphMem;
+	}
+
+	/**
+	 * Returns the after graph memento
+	 *
+	 * @return after graph memento
+	 */
+	public XYGraphMemento getAfterXYGraphMemento() {
+		return afterXYGraphMem;
 	}
 
 	@Override
