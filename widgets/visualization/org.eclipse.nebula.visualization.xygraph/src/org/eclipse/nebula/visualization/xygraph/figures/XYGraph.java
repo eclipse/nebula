@@ -669,9 +669,13 @@ public class XYGraph extends Figure implements IXYGraph {
 	public void performAutoScale() {
 		final ZoomCommand command = new ZoomCommand("Auto Scale", xAxisList, yAxisList);
 		for (Axis axis : xAxisList) {
+			if (!axis.isVisible())
+				continue;
 			axis.performAutoScale(true);
 		}
 		for (Axis axis : yAxisList) {
+			if (!axis.isVisible())
+				continue;
 			axis.performAutoScale(true);
 		}
 		command.saveState();
