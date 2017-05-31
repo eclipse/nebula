@@ -13,7 +13,6 @@ import org.eclipse.nebula.visualization.xygraph.figures.Annotation;
 import org.eclipse.nebula.visualization.xygraph.figures.Axis;
 import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace;
-import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.Annotation.CursorLineStyle;
 import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.swt.SWT;
@@ -38,7 +37,7 @@ import org.eclipse.swt.widgets.Text;
  * @author Kay Kasemir Layout tweaks
  */
 public class AnnotationConfigPage {
-	private XYGraph xyGraph;
+	private IXYGraph xyGraph;
 	private Annotation annotation;
 	private Text nameText;
 	private Button snapToTrace;
@@ -57,18 +56,16 @@ public class AnnotationConfigPage {
 	private Label yAxisLabel;
 	private Label colorLabel;
 
-	public AnnotationConfigPage(IXYGraph xyGraph, Annotation annotation) {
-		this((XYGraph) xyGraph, annotation);
-	}
-
 	/**
-	 * Use {@link #AnnotationConfigPage(IXYGraph, Annotation)} instead
-	 * 
+	 * Construct the annotation configuration page for a graph with a given
+	 * annotation
+	 *
 	 * @param xyGraph
+	 *         graph where the annotation is
 	 * @param annotation
+	 *         annotation for which the configuration page is made
 	 */
-	@Deprecated
-	public AnnotationConfigPage(XYGraph xyGraph, Annotation annotation) {
+	public AnnotationConfigPage(IXYGraph xyGraph, Annotation annotation) {
 		this.xyGraph = xyGraph;
 		this.annotation = annotation;
 		font = annotation.getFont();

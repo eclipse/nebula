@@ -17,7 +17,6 @@ import org.eclipse.nebula.visualization.xygraph.figures.Trace.BaseLine;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace.ErrorBarType;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace.PointStyle;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace.TraceType;
-import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -41,7 +40,7 @@ import org.eclipse.swt.widgets.Text;
  *
  */
 public class TraceConfigPage implements ITraceConfigPage {
-	private XYGraph xyGraph;
+	private IXYGraph xyGraph;
 	private Trace trace;
 	private Text nameText;
 	private Combo xAxisCombo;
@@ -66,18 +65,15 @@ public class TraceConfigPage implements ITraceConfigPage {
 
 	private Composite composite;
 
-	public TraceConfigPage(IXYGraph xyGraph, Trace trace) {
-		this((XYGraph) xyGraph, trace);
-	}
-
 	/**
-	 * Use {@link #TraceConfigPage(IXYGraph, Trace)} instead
-	 * 
+	 * Construct a trace configuration page
+	 *
 	 * @param xyGraph
+	 *         the graph where the trace is
 	 * @param trace
+	 *         trace to be configured
 	 */
-	@Deprecated
-	public TraceConfigPage(XYGraph xyGraph, Trace trace) {
+	public TraceConfigPage(IXYGraph xyGraph, Trace trace) {
 		this.xyGraph = xyGraph;
 		this.trace = trace;
 	}

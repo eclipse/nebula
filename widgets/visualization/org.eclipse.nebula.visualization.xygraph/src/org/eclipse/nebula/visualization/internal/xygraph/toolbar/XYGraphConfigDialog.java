@@ -17,7 +17,6 @@ import org.eclipse.nebula.visualization.xygraph.figures.Annotation;
 import org.eclipse.nebula.visualization.xygraph.figures.Axis;
 import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace;
-import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -69,18 +68,15 @@ public class XYGraphConfigDialog extends Dialog {
 	private XYGraphConfigCommand command;
 	private boolean changed = false;
 
-	public XYGraphConfigDialog(Shell parentShell, IXYGraph xyGraph) {
-		this(parentShell, (XYGraph) xyGraph);
-	}
-
 	/**
-	 * Use {@link #XYGraphConfigDialog(Shell, IXYGraph)} instead
-	 * 
+	 * Construct a XYGraph configuration dialog
+	 *
 	 * @param parentShell
+	 *          shell of the parent
 	 * @param xyGraph
+	 *          the graph to be configured
 	 */
-	@Deprecated
-	public XYGraphConfigDialog(Shell parentShell, XYGraph xyGraph) {
+	public XYGraphConfigDialog(Shell parentShell, IXYGraph xyGraph) {
 		super(parentShell);
 		this.xyGraph = xyGraph;
 		graphConfigPage = new GraphConfigPage(this.xyGraph);
@@ -383,7 +379,10 @@ public class XYGraphConfigDialog extends Dialog {
 		return traceConfigPageList;
 	}
 
-	public IXYGraph getXyGraph() {
+	/**
+	 * @return a graph
+	 */
+	public IXYGraph getXYGraph() {
 		return xyGraph;
 	}
 

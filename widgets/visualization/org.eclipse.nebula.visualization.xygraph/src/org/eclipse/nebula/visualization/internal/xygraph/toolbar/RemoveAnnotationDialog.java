@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@ package org.eclipse.nebula.visualization.internal.xygraph.toolbar;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.nebula.visualization.xygraph.figures.Annotation;
 import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
-import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -31,18 +30,16 @@ public class RemoveAnnotationDialog extends Dialog {
 	private Combo annotationsCombo;
 	private Annotation removedAnnotation;
 
-	public RemoveAnnotationDialog(Shell parentShell, IXYGraph xyGraph) {
-		this(parentShell, (XYGraph) xyGraph);
-	}
-
 	/**
-	 * Use {@link #RemoveAnnotationDialog(Shell, IXYGraph)} instead
-	 * 
+	 * Construct a remove annotation dialog to remove all or some of the
+	 * annotation of a graph
+	 *
 	 * @param parentShell
+	 *            shell of the parent
 	 * @param xyGraph
+	 *            the graph where the annotation is
 	 */
-	@Deprecated
-	public RemoveAnnotationDialog(Shell parentShell, XYGraph xyGraph) {
+	public RemoveAnnotationDialog(Shell parentShell, IXYGraph xyGraph) {
 		super(parentShell);
 		this.xyGraph = xyGraph;
 		// Allow resize

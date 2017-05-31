@@ -796,17 +796,7 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 	 * @param xyGraph
 	 *            the xyGraph to set
 	 */
-	public void setxyGraph(IXYGraph xyGraph) {
-		this.xyGraph = xyGraph;
-	}
-
-	/**
-	 * Use {@link #setxyGraph(IXYGraph)} instead
-	 * 
-	 * @param xyGraph
-	 *            the xyGraph to set
-	 */
-	public void setxyGraph(XYGraph xyGraph) {
+	public void setXYGraph(IXYGraph xyGraph) {
 		this.xyGraph = xyGraph;
 	}
 

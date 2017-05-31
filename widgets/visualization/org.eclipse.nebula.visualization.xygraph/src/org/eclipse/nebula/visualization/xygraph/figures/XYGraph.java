@@ -448,7 +448,7 @@ public class XYGraph extends Figure implements IXYGraph {
 			yAxisList.add(axis);
 		plotArea.addGrid(new Grid(axis));
 		add(axis);
-		axis.setXyGraph((IXYGraph) this);
+		axis.setXYGraph(this);
 		revalidate();
 	}
 
@@ -481,12 +481,12 @@ public class XYGraph extends Figure implements IXYGraph {
 		if (legendMap.containsKey(trace.getYAxis()))
 			legendMap.get(trace.getYAxis()).addTrace(trace);
 		else {
-			legendMap.put(trace.getYAxis(), new Legend((IXYGraph) this));
+			legendMap.put(trace.getYAxis(), new Legend(this));
 			legendMap.get(trace.getYAxis()).addTrace(trace);
 			add(legendMap.get(trace.getYAxis()));
 		}
 		plotArea.addTrace(trace);
-		trace.setXYGraph((IXYGraph) this);
+		trace.setXYGraph(this);
 		trace.dataChanged(null);
 		revalidate();
 		repaint();

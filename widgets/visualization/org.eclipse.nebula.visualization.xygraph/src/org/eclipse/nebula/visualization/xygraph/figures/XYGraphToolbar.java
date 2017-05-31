@@ -63,7 +63,7 @@ public class XYGraphToolbar extends Figure {
 
 	/**
 	 * Initialize
-	 * 
+	 *
 	 * @param xyGraph
 	 *            XYGraph on which this toolbar operates
 	 * @param flags
@@ -72,22 +72,6 @@ public class XYGraphToolbar extends Figure {
 	 * @see XYGraphFlags#SEPARATE_ZOOM
 	 */
 	public XYGraphToolbar(final IXYGraph xyGraph, final int flags) {
-		this((XYGraph) xyGraph, flags);
-	}
-
-	/**
-	 * Use {@link #XYGraphToolbar(IXYGraph, int)} instead<br>
-	 * Initialize
-	 * 
-	 * @param xyGraph
-	 *            XYGraph on which this toolbar operates
-	 * @param flags
-	 *            Bitwise 'or' of flags
-	 * @see XYGraphFlags#COMBINED_ZOOM
-	 * @see XYGraphFlags#SEPARATE_ZOOM
-	 */
-	@Deprecated
-	public XYGraphToolbar(final XYGraph xyGraph, final int flags) {
 		this.xyGraph = xyGraph;
 		setLayoutManager(new WrappableToolbarLayout());
 

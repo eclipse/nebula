@@ -10,7 +10,6 @@ package org.eclipse.nebula.visualization.internal.xygraph.undo;
 import java.util.function.Supplier;
 
 import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
-import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 
 /**
  * The command for graph configuration.
@@ -24,33 +23,12 @@ public class XYGraphConfigCommand implements IUndoableCommand {
 	private XYGraphMemento previousXYGraphMem, afterXYGraphMem;
 
 	/**
-	 * Use {@link #XYGraphConfigCommand(IXYGraph)} instead
+	 * Construct a graph configuration command
 	 *
-	 * @param xyGraph
-	 */
-	@Deprecated
-	public XYGraphConfigCommand(XYGraph xyGraph) {
-		this(xyGraph, XYGraphMemento::new);
-	}
-
-	/**
 	 * @param xyGraph
 	 */
 	public XYGraphConfigCommand(IXYGraph xyGraph) {
 		this(xyGraph, XYGraphMemento::new);
-	}
-
-	/**
-	 * Use {@link #XYGraphConfigCommand(IXYGraph, Supplier)} instead
-	 *
-	 * @param xyGraph
-	 * @param mementoFactory
-	 *            A supplier that creates a new XYGraphMemento on each call to
-	 *            the supplier's get method.
-	 */
-	@Deprecated
-	public XYGraphConfigCommand(XYGraph xyGraph, Supplier<? extends XYGraphMemento> mementoFactory) {
-		this((IXYGraph) xyGraph, mementoFactory);
 	}
 
 	/**

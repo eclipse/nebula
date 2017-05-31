@@ -97,17 +97,12 @@ public class PlotArea extends Figure {
 
 	private Color revertBackColor;
 
-	public PlotArea(final IXYGraph xyGraph) {
-		this((XYGraph) xyGraph);
-	}
-
 	/**
-	 * Use {@link #PlotArea(IXYGraph)} instead
-	 * 
+	 * Construct a plot area for the given graph
+	 *
 	 * @param xyGraph
 	 */
-	@Deprecated
-	public PlotArea(final XYGraph xyGraph) {
+	public PlotArea(final IXYGraph xyGraph) {
 		this.xyGraph = xyGraph;
 		setBackgroundColor(XYGraphMediaFactory.getInstance().getColor(255, 255, 255));
 		setForegroundColor(XYGraphMediaFactory.getInstance().getColor(0, 0, 0));
@@ -198,7 +193,7 @@ public class PlotArea extends Figure {
 	 */
 	public void addAnnotation(final Annotation annotation) {
 		annotationList.add(annotation);
-		annotation.setxyGraph(xyGraph);
+		annotation.setXYGraph(xyGraph);
 		add(annotation);
 		revalidate();
 

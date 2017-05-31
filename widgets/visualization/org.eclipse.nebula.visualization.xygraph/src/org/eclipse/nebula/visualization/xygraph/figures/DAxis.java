@@ -333,7 +333,7 @@ public class DAxis extends Axis {
 	public void setLogScale(boolean enabled) throws IllegalStateException {
 		boolean cur = isLogScaleEnabled();
 		super.setLogScale(enabled);
-		final IXYGraph xyGraph = getXyGraph();
+		final IXYGraph xyGraph = getXYGraph();
 		if (cur != enabled && xyGraph != null) {
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {

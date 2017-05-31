@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@ import org.eclipse.nebula.visualization.xygraph.figures.Annotation;
 import org.eclipse.nebula.visualization.xygraph.figures.Axis;
 import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace;
-import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 
 /**
  * Utility to manage XYGraphMemento create, save and restore functions These
@@ -21,7 +20,14 @@ import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
  */
 public class XYGraphMementoUtil {
 
-	public static XYGraphMemento createEmptyMemento(XYGraph xyGraph) {
+	/**
+	 * Creates an empty memento given a XYGraph
+	 *
+	 * @param xyGraph
+	 *          the graph for which an empty memento is created
+	 * @return a XYGraph memento
+	 */
+	public static XYGraphMemento createEmptyMemento(IXYGraph xyGraph) {
 		XYGraphMemento XYGraphMem = new XYGraphMemento();
 
 		for (int i = 0; i < xyGraph.getPlotArea().getAnnotationList().size(); i++) {
@@ -39,21 +45,16 @@ public class XYGraphMementoUtil {
 		return XYGraphMem;
 	}
 
-	public static XYGraphMemento createMemento(final XYGraph xyGraph) {
+	/**
+	 * Creates a memento given a XYGraph
+	 *
+	 * @param xyGraph
+	 *          the graph for which the memento is created
+	 * @return the memento created
+	 */
+	public static XYGraphMemento createMemento(final IXYGraph xyGraph) {
 
-		final XYGraphMemento XYGraphMem = new XYGraphMemento();
-
-		for (int i = 0; i < xyGraph.getPlotArea().getAnnotationList().size(); i++) {
-			XYGraphMem.addAnnotationMemento(new AnnotationMemento());
-		}
-
-		for (int i = 0; i < xyGraph.getAxisList().size(); i++) {
-			XYGraphMem.addAxisMemento(new AxisMemento());
-		}
-
-		for (int i = 0; i < xyGraph.getPlotArea().getTraceList().size(); i++) {
-			XYGraphMem.addTraceMemento(new TraceMemento());
-		}
+		final XYGraphMemento XYGraphMem = createEmptyMemento(xyGraph);
 
 		saveXYGraphPropsToMemento(xyGraph, XYGraphMem);
 
@@ -61,18 +62,15 @@ public class XYGraphMementoUtil {
 
 	}
 
-	public static void saveXYGraphPropsToMemento(IXYGraph xyGraph, XYGraphMemento memento) {
-		saveXYGraphPropsToMemento((XYGraph) xyGraph, memento);
-	}
-
 	/**
-	 * Use {@link #saveXYGraphPropsToMemento(IXYGraph, XYGraphMemento)} instead
-	 * 
+	 * Saves props to the given memento
+	 *
 	 * @param xyGraph
+	 *         the graph
 	 * @param memento
+	 *         memento used to save props
 	 */
-	@Deprecated
-	public static void saveXYGraphPropsToMemento(XYGraph xyGraph, XYGraphMemento memento) {
+	public static void saveXYGraphPropsToMemento(IXYGraph xyGraph, XYGraphMemento memento) {
 		memento.setTitle(xyGraph.getTitle());
 		memento.setTitleFont(xyGraph.getTitleFont());
 		memento.setTitleColor(xyGraph.getTitleColor());
@@ -93,19 +91,15 @@ public class XYGraphMementoUtil {
 			saveTracePropsToMemento(trace, memento.getTraceMementoList().get(i++));
 	}
 
-	public static void restoreXYGraphPropsFromMemento(IXYGraph xyGraph, XYGraphMemento memento) {
-		restoreXYGraphPropsFromMemento((XYGraph) xyGraph, memento);
-	}
-
 	/**
-	 * Use {@link #restoreXYGraphPropsFromMemebto(IXYGraph, XYGraphMemento)}
-	 * instead
-	 * 
+	 * Restores the XYGraph props from the given memento
+	 *
 	 * @param xyGraph
+	 *         the graph
 	 * @param memento
+	 *         memento from where to restore graph props
 	 */
-	@Deprecated
-	public static void restoreXYGraphPropsFromMemento(XYGraph xyGraph, XYGraphMemento memento) {
+	public static void restoreXYGraphPropsFromMemento(IXYGraph xyGraph, XYGraphMemento memento) {
 
 		if (memento.getTitle() != null)
 			xyGraph.setTitle(memento.getTitle());

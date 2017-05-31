@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,29 +34,17 @@ public class ToolbarArmedXYGraph extends Figure {
 
 	/**
 	 * Construct default toolbar around existing graph
-	 * 
+	 *
 	 * @param xyGraph
-	 *            XYGraph
+	 *            the XYGraph
 	 */
 	public ToolbarArmedXYGraph(final IXYGraph xyGraph) {
-		this((XYGraph) xyGraph);
-	}
-
-	/**
-	 * Use {@link #ToolbarArmedXYGraph(IXYGraph)} instead <br>
-	 * Construct default toolbar around existing graph
-	 * 
-	 * @param xyGraph
-	 *            XYGraph
-	 */
-	@Deprecated
-	public ToolbarArmedXYGraph(final XYGraph xyGraph) {
 		this(xyGraph, XYGraphFlags.COMBINED_ZOOM);
 	}
 
 	/**
 	 * Construct toolbar around existing graph
-	 * 
+	 *
 	 * @param xyGraph
 	 *            XYGraph
 	 * @param flags
@@ -65,22 +53,6 @@ public class ToolbarArmedXYGraph extends Figure {
 	 * @see XYGraphFlags#SEPARATE_ZOOM
 	 */
 	public ToolbarArmedXYGraph(final IXYGraph xyGraph, final int flags) {
-		this((XYGraph) xyGraph, flags);
-	}
-
-	/**
-	 * Use {@link #ToolbarArmedXYGraph(IXYGraph, int)} instead<br>
-	 * Construct toolbar around existing graph
-	 * 
-	 * @param xyGraph
-	 *            XYGraph
-	 * @param flags
-	 *            Bitwise 'or' of flags
-	 * @see XYGraphFlags#COMBINED_ZOOM
-	 * @see XYGraphFlags#SEPARATE_ZOOM
-	 */
-	@Deprecated
-	public ToolbarArmedXYGraph(final XYGraph xyGraph, final int flags) {
 		this.xyGraph = xyGraph;
 		toolbar = new XYGraphToolbar(this.xyGraph, flags);
 		xyGraph.setOpaque(false);
@@ -125,19 +97,9 @@ public class ToolbarArmedXYGraph extends Figure {
 	}
 
 	/**
-	 * Use {@link #getIXYGraph()} instead
-	 * 
 	 * @return the xyGraph
 	 */
-	@Deprecated
-	public XYGraph getXYGraph() {
-		return (XYGraph) xyGraph;
-	}
-
-	/**
-	 * @return the xyGraph
-	 */
-	public IXYGraph getIXYGraph() {
+	public IXYGraph getXYGraph() {
 		return xyGraph;
 	}
 

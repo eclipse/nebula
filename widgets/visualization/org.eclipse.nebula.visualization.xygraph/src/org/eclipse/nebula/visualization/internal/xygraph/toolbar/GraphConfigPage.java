@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@ import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
-import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -44,17 +43,13 @@ public class GraphConfigPage {
 	private Button showPlotAreaBorder;
 	private Button transparent;
 
-	public GraphConfigPage(IXYGraph xyGraph) {
-		this((XYGraph) xyGraph);
-	}
-
 	/**
-	 * Use constructor with @IXYGraph instead
-	 * 
+	 * Construct a graph configuration page
+	 *
 	 * @param xyGraph
+	 *         the graph for which the configuration page is created
 	 */
-	@Deprecated
-	public GraphConfigPage(XYGraph xyGraph) {
+	public GraphConfigPage(IXYGraph xyGraph) {
 		this.xyGraph = xyGraph;
 		titleFont = xyGraph.getTitleFont();
 	}
@@ -164,20 +159,9 @@ public class GraphConfigPage {
 	}
 
 	/**
-	 * Use {@link #getIXYGraph()} instead
-	 * 
-	 * @return the annotation
+	 * @return the graph
 	 */
-	@Deprecated
-	public XYGraph getXYGraph() {
-		return (XYGraph) xyGraph;
-	}
-
-	/**
-	 * 
-	 * @return the annotation
-	 */
-	public IXYGraph getIXYGraph() {
+	public IXYGraph getXYGraph() {
 		return xyGraph;
 	}
 

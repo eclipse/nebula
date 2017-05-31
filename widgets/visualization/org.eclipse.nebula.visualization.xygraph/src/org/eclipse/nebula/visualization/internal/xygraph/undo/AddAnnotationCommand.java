@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@ package org.eclipse.nebula.visualization.internal.xygraph.undo;
 import org.eclipse.nebula.visualization.xygraph.Messages;
 import org.eclipse.nebula.visualization.xygraph.figures.Annotation;
 import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
-import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 
 /**
  * The undoable command to add an annotation.
@@ -23,18 +22,15 @@ public class AddAnnotationCommand implements IUndoableCommand {
 	private IXYGraph xyGraph;
 	private Annotation annotation;
 
-	public AddAnnotationCommand(IXYGraph xyGraph, Annotation annotation) {
-		this((XYGraph) xyGraph, annotation);
-	}
-
 	/**
-	 * Use {@link #AddAnnotationCommand(IXYGraph, Annotation)} instead
-	 * 
+	 * Construct an "Add annotation command"
+	 *
 	 * @param xyGraph
+	 *         the graph
 	 * @param annotation
+	 *         annotation to be added
 	 */
-	@Deprecated
-	public AddAnnotationCommand(XYGraph xyGraph, Annotation annotation) {
+	public AddAnnotationCommand(IXYGraph xyGraph, Annotation annotation) {
 		this.xyGraph = xyGraph;
 		this.annotation = annotation;
 	}

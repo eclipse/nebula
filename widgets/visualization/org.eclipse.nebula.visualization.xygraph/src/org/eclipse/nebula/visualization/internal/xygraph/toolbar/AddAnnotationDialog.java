@@ -14,7 +14,6 @@ import org.eclipse.nebula.visualization.xygraph.Messages;
 import org.eclipse.nebula.visualization.xygraph.figures.Annotation;
 import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace;
-import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -30,18 +29,15 @@ import org.eclipse.swt.widgets.Shell;
 public class AddAnnotationDialog extends Dialog {
 	private AnnotationConfigPage configPage;
 
-	public AddAnnotationDialog(final Shell parentShell, final IXYGraph xyGraph) {
-		this(parentShell, (XYGraph) xyGraph);
-	}
-
 	/**
-	 * Use {@link #AddAnnotationDialog(Shell,IXYGraph)} instead
-	 * 
+	 * Construct an annotation dialog for the given XYGraph
+	 *
 	 * @param parentShell
+	 *         parent shell of the dialog
 	 * @param xyGraph
+	 *         the XYGraph where the annotation is
 	 */
-	@Deprecated
-	public AddAnnotationDialog(final Shell parentShell, final XYGraph xyGraph) {
+	public AddAnnotationDialog(final Shell parentShell, final IXYGraph xyGraph) {
 		super(parentShell);
 
 		// Allow resize

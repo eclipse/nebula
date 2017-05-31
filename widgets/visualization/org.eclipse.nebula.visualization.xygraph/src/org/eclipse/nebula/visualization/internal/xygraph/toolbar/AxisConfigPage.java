@@ -12,7 +12,6 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.nebula.visualization.xygraph.figures.Axis;
 import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
-import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
 import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.swt.SWT;
@@ -73,7 +72,19 @@ public class AxisConfigPage {
 
 	/**
 	 * Create an Axis Configuration Page for the config dialog.
-	 * 
+	 *
+	 * @param xyGraph
+	 *            graph to configure
+	 * @param axis
+	 *            axis to configure
+	 */
+	public AxisConfigPage(IXYGraph xyGraph, Axis axis) {
+		this(xyGraph, axis, true);
+	}
+
+	/**
+	 * Create an Axis Configuration Page for the config dialog.
+	 *
 	 * @param xyGraph
 	 *            graph to configure
 	 * @param axis
@@ -82,32 +93,6 @@ public class AxisConfigPage {
 	 *            whether min/max controls are enabled
 	 */
 	public AxisConfigPage(IXYGraph xyGraph, Axis axis, boolean enableRanges) {
-		this((XYGraph) xyGraph, axis, enableRanges);
-	}
-
-	public AxisConfigPage(IXYGraph xyGraph, Axis axis) {
-		this((XYGraph) xyGraph, axis);
-	}
-
-	/**
-	 * Use {@link #AxisConfigPage(IXYGraph, Axis)} instead
-	 * 
-	 * @param xyGraph
-	 * @param axis
-	 */
-	@Deprecated
-	public AxisConfigPage(XYGraph xyGraph, Axis axis) {
-		this(xyGraph, axis, true);
-	}
-
-	/**
-	 * Use {@link #AxisConfigPage(IXYGraph, Axis)} instead
-	 * 
-	 * @param xyGraph
-	 * @param axis
-	 */
-	@Deprecated
-	public AxisConfigPage(XYGraph xyGraph, Axis axis, boolean enableRanges) {
 		this.xyGraph = xyGraph;
 		this.axis = axis;
 		scaleFont = axis.getFont();

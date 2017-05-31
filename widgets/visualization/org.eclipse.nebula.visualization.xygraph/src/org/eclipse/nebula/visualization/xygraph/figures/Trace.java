@@ -1728,7 +1728,6 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	}
 
 	/**
-	 * 
 	 * @param xyGraph
 	 *            the xyGraph to set
 	 */
@@ -1737,32 +1736,10 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 	}
 
 	/**
-	 * Use {@link #setXYGraph(IXYGraph)} instead
-	 * 
-	 * @param xyGraph
-	 *            the xyGraph to set
-	 */
-	@Deprecated
-	public void setXYGraph(XYGraph xyGraph) {
-		this.xyGraph = xyGraph;
-	}
-
-	/**
-	 * 
 	 * @return the xyGraph
 	 */
-	public IXYGraph getIXYGraph() {
+	public IXYGraph getXYGraph() {
 		return xyGraph;
-	}
-
-	/**
-	 * Use {@link #getIXYGraph()} instead
-	 * 
-	 * @return the xyGraph
-	 */
-	@Deprecated
-	public XYGraph getXYGraph() {
-		return (XYGraph) xyGraph;
 	}
 
 	public void axisForegroundColorChanged(Axis axis, Color oldColor, Color newColor) {
