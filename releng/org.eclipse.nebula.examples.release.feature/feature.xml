@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.nebula.examples.release.feature"
       label="Nebula Widgets Examples"
-      version="1.0.4.qualifier"
+      version="1.1.0.qualifier"
       provider-name="Eclipse Nebula">
 
    <description url="http://eclipse.org/nebula">
@@ -190,6 +190,13 @@
 
    <plugin
          id="org.eclipse.nebula.widgets.geomap.example.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.nebula.visualization.example"
          download-size="0"
          install-size="0"
          version="0.0.0"
