@@ -1,7 +1,7 @@
 /*******************************************************************************
  *  Copyright (c) 2010, 2012 Weltevree Beheer BV, Remain Software & Industrial-TSI
- * 
- * All rights reserved. 
+ *
+ * All rights reserved.
  * This program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * @author Wim.Jongman (@remainsoftware.com)
- * 
+ *
  */
 public class MultiScope_Basic {
 
@@ -31,15 +31,20 @@ public class MultiScope_Basic {
 	protected final File BEEPFILE = new File(BEEP);
 
 	protected Shell shell;
+	private int fCounter;
+
+	public MultiScope_Basic(int counter) {
+		fCounter = counter;
+	}
 
 	/**
 	 * Launch the application.
-	 * 
+	 *
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		try {
-			MultiScope_Basic window = new MultiScope_Basic();
+			MultiScope_Basic window = new MultiScope_Basic(25);
 			window.open();
 			System.exit(0);
 		} catch (Exception e) {
@@ -72,9 +77,7 @@ public class MultiScope_Basic {
 		shell.setText("SWT Application");
 		shell.setLayout(new GridLayout(5, false));
 
-		int counter = 25;
-
-		for (int i = 0; i < counter; i++) {
+		for (int i = 0; i < fCounter; i++) {
 
 			int dice = new Random().nextInt(4) + 1;
 
@@ -83,19 +86,24 @@ public class MultiScope_Basic {
 					private File HEARTBEATFILE;
 					private File FLATLINEFILE;
 
+					@Override
 					public void hookSetValues(int value) {
 						getOscilloscope().setValues(0, Oscilloscope.HEARTBEAT);
 					}
 
+					@Override
 					public File getActiveSoundfile() {
-						if (HEARTBEATFILE == null)
+						if (HEARTBEATFILE == null) {
 							HEARTBEATFILE = new File(HEARTBEAT);
+						}
 						return HEARTBEATFILE;
 					}
 
+					@Override
 					public File getInactiveSoundfile() {
-						if (FLATLINEFILE == null)
+						if (FLATLINEFILE == null) {
 							FLATLINEFILE = new File(FLATLINE);
+						}
 						return FLATLINEFILE;
 					};
 
@@ -121,10 +129,11 @@ public class MultiScope_Basic {
 						}
 
 						int intValue = (int) (Math.sin(value) * 100);
-						if (intValue == 99)
+						if (intValue == 99) {
 							if (sound.getSelection()) {
 								clipper.playClip(BEEPFILE, 0);
 							}
+						}
 						getOscilloscope().setValue(0, intValue);
 					}
 
@@ -132,8 +141,9 @@ public class MultiScope_Basic {
 					public boolean isSoundRequired() {
 						if (sound.getSelection()) {
 							int intValue = (int) (Math.sin(value) * 100);
-							if (intValue == 99)
+							if (intValue == 99) {
 								return true;
+							}
 						}
 						return false;
 					}
@@ -162,10 +172,11 @@ public class MultiScope_Basic {
 						int intValue = (int) ((Math.sin(value) + (Math
 								.sin(3 * value) / 3)) * 100);
 						// intValue += ;
-						if (intValue == 99)
+						if (intValue == 99) {
 							if (sound.getSelection()) {
 								clipper.playClip(BEEPFILE, 0);
 							}
+						}
 						getOscilloscope().setValue(0, intValue);
 					}
 
@@ -173,8 +184,9 @@ public class MultiScope_Basic {
 					public boolean isSoundRequired() {
 						if (sound.getSelection()) {
 							int intValue = (int) (Math.sin(value) * 100);
-							if (intValue == 99)
+							if (intValue == 99) {
 								return true;
+							}
 						}
 						return false;
 					}
@@ -208,12 +220,13 @@ public class MultiScope_Basic {
 								+ (Math.sin(13 * value) / 13)
 								+ (Math.sin(15 * value) / 15)
 								+ (Math.sin(17 * value) / 17) + (Math
-								.sin(19 * value) / 19)) * 100);
+										.sin(19 * value) / 19)) * 100);
 
-						if (intValue == 99)
+						if (intValue == 99) {
 							if (sound.getSelection()) {
 								clipper.playClip(BEEPFILE, 0);
 							}
+						}
 						getOscilloscope().setValue(0, intValue);
 					}
 
@@ -221,8 +234,9 @@ public class MultiScope_Basic {
 					public boolean isSoundRequired() {
 						if (sound.getSelection()) {
 							int intValue = (int) (Math.sin(value) * 100);
-							if (intValue == 99)
+							if (intValue == 99) {
 								return true;
+							}
 						}
 						return false;
 					}
