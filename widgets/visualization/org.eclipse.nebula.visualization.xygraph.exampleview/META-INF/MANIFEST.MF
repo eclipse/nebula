@@ -8,5 +8,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.draw2d,
  org.eclipse.nebula.visualization.widgets;bundle-version="1.0.0",
- org.eclipse.nebula.visualization.xygraph;bundle-version="2.0.0",
+ org.eclipse.nebula.visualization.xygraph;bundle-version="3.0.0",
  org.eclipse.ui
