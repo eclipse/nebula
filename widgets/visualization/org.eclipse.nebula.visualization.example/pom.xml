@@ -23,7 +23,9 @@ Contributors:
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>org.eclipse.nebula.visualization.example</artifactId>
+	<groupId>org.eclipse.nebula</groupId>
+	<artifactId>org.eclipse.nebula.widgets.visualization.example</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
 	<packaging>eclipse-plugin</packaging>
 
 </project>
