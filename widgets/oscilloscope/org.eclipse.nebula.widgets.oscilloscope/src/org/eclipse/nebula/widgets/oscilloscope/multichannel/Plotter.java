@@ -1,14 +1,14 @@
 /*******************************************************************************
  *  Copyright (c) 2010, 2012 Weltevree Beheer BV, Remain Software & Industrial-TSI
- * 
- * All rights reserved. 
+ *
+ * All rights reserved.
  * This program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
  *   Wim S. Jongman - initial API and implementation
- *   Jantje- split oscilloscope in plotter and oscilloscope
+ *   Jantje- Make a standalone plotter
  ******************************************************************************/
 package org.eclipse.nebula.widgets.oscilloscope.multichannel;
 
@@ -25,7 +25,6 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
-@SuppressWarnings("synthetic-access")
 public class Plotter extends Canvas {
 	private int height = DEFAULT_HEIGHT;
 	private int width = DEFAULT_WIDTH;
@@ -239,10 +238,12 @@ public class Plotter extends Canvas {
 
 		splitPos = this.chan[c].tailSize * 4;
 
-		if (!isSteady(c))
+		if (!isSteady(c)) {
 			this.chan[c].cursor++;
-		if (this.chan[c].cursor >= this.width)
+		}
+		if (this.chan[c].cursor >= this.width) {
 			this.chan[c].cursor = 0;
+		}
 
 		line1 = new int[this.chan[c].tailSize * 4];
 		line2 = new int[this.chan[c].tailSize * 4];
@@ -261,8 +262,9 @@ public class Plotter extends Canvas {
 			}
 
 			else {
-				if (splitPos == this.chan[c].tailSize * 4)
+				if (splitPos == this.chan[c].tailSize * 4) {
 					splitPos = pos;
+				}
 				line2[pos] = posx - 1;
 				line2[pos + 1] = getBase(c) + this.chan[c].tail[i];
 				line2[pos + 2] = posx;
@@ -286,9 +288,9 @@ public class Plotter extends Canvas {
 	 * @param channel
 	 */
 	private void calculateBase(int channel) {
-		if ((this.myRangeLowValue != 0) || (this.myRangeHighValue != 0))
+		if ((this.myRangeLowValue != 0) || (this.myRangeHighValue != 0)) {
 			this.chan[channel].base = 0;
-		else if (this.height > 2) {
+		} else if (this.height > 2) {
 			this.chan[channel].base = (this.height * +(100 - getBaseOffset(channel))) / 100;
 		}
 	}
@@ -403,8 +405,9 @@ public class Plotter extends Canvas {
 	}
 
 	protected int ConvertValueToScreenPosition(int Value, int ScreenHeight) {
-		if ((this.myRangeLowValue == 0) && (this.myRangeHighValue == 0))
+		if ((this.myRangeLowValue == 0) && (this.myRangeHighValue == 0)) {
 			return ScreenHeight - Value;
+		}
 		float ret = ((float) (Value - this.myRangeLowValue) / (float) (this.myRangeHighValue - this.myRangeLowValue))
 				* ScreenHeight;
 		return ScreenHeight - (int) ret;
@@ -461,13 +464,13 @@ public class Plotter extends Canvas {
 	public String getData(boolean addHeader) {
 		String ret = new String();
 		if (addHeader) {
-			for (int channel = 0; channel < this.chan.length; channel++) {
-				ret = ret + this.chan[channel].name + ';';
+			for (Data element : this.chan) {
+				ret = ret + element.name + ';';
 			}
 		}
 		for (int curvalue = 0; curvalue < this.chan[0].tail.length; curvalue++) {
-			for (int channel = 0; channel < this.chan.length; channel++) {
-				ret += this.chan[channel].tail[curvalue] + ';';
+			for (Data element : this.chan) {
+				ret += element.tail[curvalue] + ';';
 			}
 			ret += '\n';
 		}

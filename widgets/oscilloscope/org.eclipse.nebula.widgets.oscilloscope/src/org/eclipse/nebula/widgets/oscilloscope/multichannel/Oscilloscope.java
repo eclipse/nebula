@@ -8,17 +8,25 @@
  *
  * Contributors:
  *   Wim S. Jongman - initial API and implementation
- *   Jantje- split oscilloscope in plotter and oscilloscope
  ******************************************************************************/
 package org.eclipse.nebula.widgets.oscilloscope.multichannel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Animated widget that tries to mimic an Oscilloscope.
@@ -35,38 +43,50 @@ import org.eclipse.swt.widgets.Composite;
  * @author Wim.Jongman (@remainsoftware.com)
  * 
  */
-public class Oscilloscope extends Plotter {
+public class Oscilloscope extends Canvas {
+
+	/**
+	 * This class holds the data per channel.
+	 * 
+	 * @author Wim Jongman
+	 * 
+	 */
 	private class Data {
 
+		private int base;
+		private int baseOffset = BASE_CENTER;
+		private boolean connect;
+		private int cursor = CURSOR_START_DEFAULT;
 		private OscilloscopeDispatcher dispatcher;
-		private ArrayList<OscilloscopeStackAdapter> stackListeners;
-		private IntegerFiFoCircularStack stack;
+		private boolean fade;
+		private Color fg;
+		private int height = DEFAULT_HEIGHT;
+		private int lineWidth = LINE_WIDTH_DEFAULT;
+		private int originalSteadyPosition = STEADYPOSITION_75PERCENT;
+
+		/**
+		 * This contains the actual values that where input by the user before
+		 * scaling. If the user resized we can calculate how the tail would have
+		 * looked with the new window dimensions.
+		 * 
+		 * @see Oscilloscope#tail
+		 */
+		private int originalTailSize;
+
+		private boolean percentage = false;
 		private int progression = PROGRESSION_DEFAULT;
-	}
-
-	/**
-	 * This method can be called outside of the UI thread.
-	 * 
-	 * @return the number of internal calculation steps at each draw request.
-	 * @see #setProgression(int)
-	 */
-	public int getProgression(int channel) {
-		return chan[channel].progression;
-	}
-
-	/**
-	 * The number of internal steps that must be made before drawing. Normally
-	 * this will slide the graph one pixel. Setting this to a higher value will
-	 * speed up the animation at the cost of a more jerky motion.
-	 * <p/>
-	 * This method can be called outside of the UI thread.
-	 * 
-	 * @param progression
-	 */
-	public void setProgression(int channel, int progression) {
-		if (progression > 0) {
-			chan[channel].progression = progression;
-		}
+		private IntegerFiFoCircularStack stack;
+		private List<OscilloscopeStackAdapter> stackListeners;
+		private boolean steady;
+		/**
+		 * This contains the old or historical input and is used to paint the
+		 * tail of the graph.
+		 */
+		private int[] tail;
+		private int tailFade = TAILFADE_PERCENTAGE;
+		private int tailSize;
+		private int width = DEFAULT_WIDTH;
+		private boolean antiAlias = false;
 
 	}
 
@@ -227,13 +247,86 @@ public class Oscilloscope extends Plotter {
 	}
 
 	/**
+	 * The base of the line is positioned at the center of the widget.
+	 * 
+	 * @see #setBaseOffset(int)
+	 */
+	public static final int BASE_CENTER = 50;
+
+	/**
+	 * The default cursor starting position.
+	 */
+	public static final int CURSOR_START_DEFAULT = 50;
+
+	/**
+	 * The default comfortable widget height.
+	 */
+	public static final int DEFAULT_HEIGHT = 100;
+
+	/**
+	 * The default comfortable widget width.
+	 */
+	public static final int DEFAULT_WIDTH = 180;
+
+	/**
 	 * This set of values will draw a figure that is similar to the heart beat
 	 * that you see on hospital monitors.
 	 */
-	public static final int[] HEARTBEAT = new int[] { 2, 10, 2, -16, 16, 44, 49, 44, 32, 14, -16, -38, -49, -47, -32,
-			-10, 8, 6, 6, -2, 6, 4, 2, 0, 0, 6, 8, 6 };
+	public static final int[] HEARTBEAT = new int[] { 2, 10, 2, -16, 16, 44, 49, 44, 32, 14, -16, -38, -49, -47, -32, -10, 8, 6, 6, -2, 6,
+			4, 2, 0, 0, 6, 8, 6 };
 
-	private Data[] chan;
+	/**
+	 * The default line width.
+	 */
+	public static final int LINE_WIDTH_DEFAULT = 1;
+
+	/**
+	 * The default tail fade percentage
+	 */
+	public static final int PROGRESSION_DEFAULT = 1;
+
+	/**
+	 * Steady position @ 75% of graph.
+	 */
+	public static final int STEADYPOSITION_75PERCENT = -1;
+	/**
+	 * The default amount of tail fading in percentages (25).
+	 */
+	public static final int TAILFADE_DEFAULT = 25;
+
+	/**
+	 * No tailfade.
+	 */
+	public static final int TAILFADE_NONE = 0;
+
+	/**
+	 * The default tail fade percentage
+	 */
+	public static final int TAILFADE_PERCENTAGE = 25;
+
+	/**
+	 * The default tail size is 75% of the width.
+	 */
+	public static final int TAILSIZE_DEFAULT = -3;
+
+	/**
+	 * Will draw a tail from the left border but is only valid if the boolean in
+	 * {@link #setSteady(boolean, int)} was set to true, will default to
+	 * {@link #TAILSIZE_MAX} otherwise.
+	 */
+	public static final int TAILSIZE_FILL = -2;
+
+	/**
+	 * Will draw a maximum tail.
+	 */
+	public static final int TAILSIZE_MAX = -1;
+
+	private Color bg;
+
+	private final Data[] chan;
+
+	// Blocks painting if true
+	private boolean paintBlock;
 
 	private int width;
 
@@ -269,20 +362,53 @@ public class Oscilloscope extends Plotter {
 	 * @param style
 	 */
 	public Oscilloscope(int channels, OscilloscopeDispatcher dispatcher, Composite parent, int style) {
-		super(channels, parent, style);
+		super(parent, SWT.DOUBLE_BUFFERED | style);
 
 		chan = new Data[channels];
-
 		for (int i = 0; i < chan.length; i++) {
+
 			chan[i] = new Data();
+
 			if (dispatcher == null) {
 				chan[i].dispatcher = new OscilloscopeDispatcher(i, this);
 			} else {
 				chan[i].dispatcher = dispatcher;
 				dispatcher.setOscilloscope(this);
 			}
+			bg = Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
+			setBackground(bg);
 
+			chan[i].fg = Display.getDefault().getSystemColor(SWT.COLOR_WHITE);
+
+			setTailSize(i, TAILSIZE_DEFAULT);
 		}
+
+		addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				Oscilloscope.this.widgetDisposed(e);
+			}
+		});
+
+		addPaintListener(new PaintListener() {
+			public void paintControl(PaintEvent e) {
+				if (!paintBlock) {
+					Oscilloscope.this.paintControl(e);
+				}
+				paintBlock = false;
+			}
+		});
+
+		addControlListener(new ControlListener() {
+			public void controlMoved(ControlEvent e) {
+				Oscilloscope.this.controlMoved(e);
+			}
+
+			public void controlResized(ControlEvent e) {
+				paintBlock = true;
+				Oscilloscope.this.controlResized(e);
+
+			}
+		});
 
 	}
 
@@ -300,6 +426,81 @@ public class Oscilloscope extends Plotter {
 		}
 		if (!chan[channel].stackListeners.contains(listener)) {
 			chan[channel].stackListeners.add(listener);
+		}
+	}
+
+	/**
+	 * This method calculates the progression of the line.
+	 * 
+	 * @return
+	 */
+	private Object[] calculate(int channel) {
+
+		int c = channel;
+
+		int[] line1 = null;
+		int[] line2 = null;
+		int splitPos = 0;
+
+		for (int progress = 0; progress < getProgression(c); progress++) {
+
+			if (chan[c].stack.isEmpty() && chan[c].stackListeners != null) {
+				notifyListeners(c);
+			}
+
+			splitPos = chan[c].tailSize * 4;
+
+			if (!isSteady(c)) {
+				chan[c].cursor++;
+			}
+			if (chan[c].cursor >= chan[c].width) {
+				chan[c].cursor = 0;
+			}
+
+			// Draw
+			int tailIndex = 1;
+			line1 = new int[chan[c].tailSize * 4];
+			line2 = new int[chan[c].tailSize * 4];
+
+			chan[c].tail[chan[c].tailSize] = transform(c, chan[c].width, chan[c].height, chan[c].stack.popNegate(0));
+
+			for (int i = 0; i < chan[c].tailSize; i++) {
+
+				int posx = chan[c].cursor - chan[c].tailSize + i;
+				int pos = i * 4;
+				if (posx < 0) {
+					posx += chan[c].width;
+					line1[pos] = posx - 1;
+
+					line1[pos + 1] = getBase(c) + (isSteady(c) ? 0 : chan[c].tail[tailIndex - 1]);
+					line1[pos + 2] = posx;
+					line1[pos + 3] = getBase(c) + (isSteady(c) ? 0 : chan[c].tail[tailIndex]);
+				}
+
+				else {
+					if (splitPos == chan[c].tailSize * 4) {
+						splitPos = pos;
+					}
+					line2[pos] = posx - 1;
+					line2[pos + 1] = getBase(c) + chan[c].tail[tailIndex - 1];
+					line2[pos + 2] = posx;
+					line2[pos + 3] = (getBase(c) + chan[c].tail[tailIndex]);
+				}
+				chan[c].tail[tailIndex - 1] = chan[c].tail[tailIndex++];
+			}
+		}
+
+		int[] l1 = new int[splitPos];
+		System.arraycopy(line1, 0, l1, 0, l1.length);
+		int[] l2 = new int[(chan[c].tailSize * 4) - splitPos];
+		System.arraycopy(line2, splitPos, l2, 0, l2.length);
+
+		return new Object[] { l1, l2 };
+	}
+
+	private void calculateBase(int channel) {
+		if (chan[channel].height > 2) {
+			chan[channel].base = (chan[channel].height * +(100 - getBaseOffset(channel))) / 100;
 		}
 	}
 
@@ -325,6 +526,49 @@ public class Oscilloscope extends Plotter {
 		return new Point(width + 2, height + 2);
 	}
 
+	protected void controlMoved(ControlEvent e) {
+
+	}
+
+	protected void controlResized(ControlEvent e) {
+		setSizeInternal(getSize().x, getSize().y);
+		width = getBounds().width;
+		if (getBounds().width > 0) {
+			for (int channel = 0; channel < chan.length; channel++) {
+				setSteady(channel, chan[channel].steady, chan[channel].originalSteadyPosition);
+				setTailSizeInternal(channel);
+			}
+		}
+	}
+
+	/**
+	 * This method can be called outside of the UI thread.
+	 * 
+	 * @return the base of the line.
+	 */
+	public int getBase(int channel) {
+		return chan[channel].base;
+	}
+
+	/**
+	 * Gets the relative location where the line is drawn in the widget. This
+	 * method can be called outside of the UI thread.
+	 * 
+	 * @return baseOffset
+	 */
+	public int getBaseOffset(int channel) {
+		return chan[channel].baseOffset;
+	}
+
+	/**
+	 * This method can be called outside of the UI thread.
+	 * 
+	 * @return int, number of channels.
+	 */
+	public int getChannels() {
+		return chan.length;
+	}
+
 	/**
 	 * This method can be called outside of the UI thread.
 	 * 
@@ -333,6 +577,112 @@ public class Oscilloscope extends Plotter {
 	 */
 	public OscilloscopeDispatcher getDispatcher(int channel) {
 		return chan[channel].dispatcher;
+	}
+
+	/**
+	 * This method can be called outside of the UI thread.
+	 * 
+	 * @param channel
+	 * @return the foreground color associated with the supplied channel.
+	 */
+	public Color getForeground(int channel) {
+		return chan[channel].fg;
+	}
+
+	/**
+	 * This method can be called outside of the UI thread.
+	 * 
+	 * @return int, the width of the line.
+	 * @see #setLineWidth(int)
+	 */
+	public int getLineWidth(int channel) {
+		return chan[channel].lineWidth;
+	}
+
+	/**
+	 * This method can be called outside of the UI thread.
+	 * 
+	 * @return the number of internal calculation steps at each draw request.
+	 * @see #setProgression(int)
+	 */
+	public int getProgression(int channel) {
+		return chan[channel].progression;
+	}
+
+	/**
+	 * Gets the percentage of tail that must be faded out. This method can be
+	 * called outside of the UI thread.
+	 * 
+	 * @return int percentage
+	 * @see #setFade(boolean)
+	 */
+	public int getTailFade(int channel) {
+		return chan[channel].tailFade;
+	}
+
+	/**
+	 * Returns the size of the tail. This method can be called outside of the UI
+	 * thread.
+	 * 
+	 * @return int
+	 * @see #setTailSize(int)
+	 * @see #TAILSIZE_DEFAULT
+	 * @see #TAILSIZE_FILL
+	 * @see #TAILSIZE_MAX
+	 * 
+	 */
+	public int getTailSize(int channel) {
+		return chan[channel].tailSize;
+	}
+
+	/**
+	 * This method can be called outside of the UI thread.
+	 * 
+	 * @return boolean, true if the tail and the head of the graph must be
+	 *         connected if tail size is {@link #TAILSIZE_MAX} no fading graph.
+	 */
+	public boolean isConnect(int channel) {
+		return chan[channel].connect;
+	}
+
+	/**
+	 * This method can be called outside of the UI thread.
+	 * 
+	 * @see #setFade(boolean)
+	 * @return boolean fade
+	 */
+	public boolean isFade(int channel) {
+		return chan[channel].fade;
+	}
+
+	/**
+	 * This method can be called outside of the UI thread.
+	 * 
+	 * @return boolean
+	 * @see #setPercentage(boolean)
+	 */
+	public boolean isPercentage(int channel) {
+		return chan[channel].percentage;
+	}
+
+	/**
+	 * This method can be called outside of the UI thread.
+	 * 
+	 * @return boolean steady indicator
+	 * @see Oscilloscope#setSteady(boolean, int)
+	 */
+	public boolean isSteady(int channel) {
+		return chan[channel].steady;
+	}
+
+	/**
+	 * This method can be called outside of the UI thread.
+	 * 
+	 * @return boolean anti-alias indicator
+	 * @see Oscilloscope#setAntialias(int, boolean)
+	 */
+	public boolean isAntiAlias(int channel) {
+		return chan[channel].antiAlias;
 	}
 
 	public boolean needsRedraw() {
@@ -350,20 +700,54 @@ public class Oscilloscope extends Plotter {
 	}
 
 	protected void paintControl(PaintEvent e) {
-		super.paintControl(e);
-		for (int c = 0; c < chan.length; c++) {
-			for (int progress = 0; progress < getProgression(c); progress++) {
 
-				if (chan[c].stack.isEmpty() && chan[c].stackListeners != null) {
-					notifyListeners(c);
-				}
-				setValue(c, chan[c].stack.popNegate(0));
+		for (int c = 0; c < chan.length; c++) {
+
+			if (chan[c].tailSize <= 0) {
+				chan[c].stack.popNegate(0);
+				continue;
 			}
-			// I think the next code can be removed
-			// if (getTailSize(c) <= 0) {
-			// chan[c].stack.popNegate(0);
-			// continue;
-			// }
+
+			// Go calculate the line
+			Object[] result = calculate(c);
+			int[] l1 = (int[]) result[0];
+			int[] l2 = (int[]) result[1];
+
+			// Draw it
+			GC gc = e.gc;
+			gc.setForeground(getForeground(c));
+			gc.setAdvanced(true);
+			gc.setAntialias(chan[c].antiAlias ? SWT.ON : SWT.OFF);
+			gc.setLineWidth(getLineWidth(c));
+
+			// Fade tail
+			if (isFade(c)) {
+				gc.setAlpha(0);
+				double fade = 0;
+				double fadeOutStep = (double) 125 / (double) ((getTailSize(c) * (getTailFade(c)) / 100));
+				for (int i = 0; i < l1.length - 4;) {
+					fade += (fadeOutStep / 2);
+					setAlpha(gc, fade);
+					gc.drawLine(l1[i], l1[i + 1], l1[i + 2], l1[i + 3]);
+					i += 2;
+				}
+
+				for (int i = 0; i < l2.length - 4;) {
+					fade += (fadeOutStep / 2);
+					setAlpha(gc, fade);
+					gc.drawLine(l2[i], l2[i + 1], l2[i + 2], l2[i + 3]);
+					i += 2;
+				}
+
+			} else {
+				gc.drawPolyline(l1);
+				gc.drawPolyline(l2);
+			}
+
+			// Connects the head with the tail
+			if (isConnect(c) && !isFade(c) && chan[c].originalTailSize == TAILSIZE_MAX && l1.length > 0 && l2.length > 0) {
+				gc.drawLine(l2[l2.length - 2], l2[l2.length - 1], l1[0], l1[1]);
+			}
 		}
 	}
 
@@ -384,6 +768,64 @@ public class Oscilloscope extends Plotter {
 		}
 	}
 
+	private void setAlpha(GC gc, double fade) {
+
+		if (gc.getAlpha() == fade) {
+			return;
+		}
+		if (fade >= 255) {
+			gc.setAlpha(255);
+		} else {
+			gc.setAlpha((int) fade);
+		}
+	}
+
+	/**
+	 * Gets the relative location where the line is drawn in the widget, the
+	 * default is <code>BASE_CENTER</code> which is in the middle of the scope.
+	 * This method can be called outside of the UI thread.
+	 * 
+	 * @param baseOffset
+	 *            must be between 100 and -100, exceeding values are rounded to
+	 *            the closest allowable value.
+	 */
+	public void setBaseOffset(int channel, int baseOffset) {
+
+		if (baseOffset > 100) {
+			baseOffset = 100;
+		}
+
+		if (baseOffset < -100) {
+			baseOffset = -100;
+		}
+
+		chan[channel].baseOffset = baseOffset;
+
+		calculateBase(channel);
+	}
+
+	/**
+	 * Connects head and tail only if tail size is {@link #TAILSIZE_MAX} and no
+	 * fading. This method can be called outside of the UI thread.
+	 * 
+	 * @param connectHeadAndTail
+	 */
+	public void setConnect(int channel, boolean connectHeadAndTail) {
+		chan[channel].connect = connectHeadAndTail;
+	}
+
+	/**
+	 * Sets if the line must be anti-aliased which uses more processing power in
+	 * return of a smoother image. The default value is false. This method can
+	 * be called outside of the UI thread.
+	 * 
+	 * @param channel
+	 * @param antialias
+	 */
+	public void setAntialias(int channel, boolean antialias) {
+		chan[channel].antiAlias = antialias;
+	}
+
 	/**
 	 * Sets the dispatcher that is associated with the supplied channel. This
 	 * method can be called outside of the UI thread.
@@ -393,6 +835,232 @@ public class Oscilloscope extends Plotter {
 	 */
 	public void setDispatcher(int channel, OscilloscopeDispatcher dispatcher) {
 		chan[channel].dispatcher = dispatcher;
+	}
+
+	/**
+	 * Sets fade mode so that a percentage of the tail will be faded out at the
+	 * costs of extra CPU utilization (no beauty without pain or as the Dutch
+	 * say: "Wie mooi wil gaan moet pijn doorstaan"). The reason for this is
+	 * that each pixel must be drawn separately with alpha faded in instead of
+	 * the elegant {@link GC#drawPolygon(int[])} routine which does not support
+	 * alpha blending.
+	 * <p>
+	 * In addition to this, set the percentage of tail that must be faded out
+	 * {@link #setTailFade(int)}.
+	 * <p>
+	 * This method can be called outside of the UI thread.
+	 * 
+	 * @param fade
+	 *            true or false
+	 * @see #setTailFade(int)
+	 */
+	public void setFade(int channel, boolean fade) {
+		chan[channel].fade = fade;
+	}
+
+	/**
+	 * Sets the foreground color for the supplied channel.
+	 * <p/>
+	 * This method can be called outside of the UI thread.
+	 * 
+	 * @param channel
+	 * @param color
+	 */
+	public void setForeground(int channel, Color color) {
+		chan[channel].fg = color;
+	}
+
+	/**
+	 * Sets the line width. A value equal or below zero is ignored. The default
+	 * width is 1. This method can be called outside of the UI thread.
+	 * 
+	 * @param lineWidth
+	 */
+	public void setLineWidth(int channel, int lineWidth) {
+		if (lineWidth > 0) {
+			chan[channel].lineWidth = lineWidth;
+		}
+	}
+
+	/**
+	 * If set to true then the values are treated as percentages of the
+	 * available space rather than absolute values. This will scale the
+	 * amplitudes if the control is resized. Default is false.
+	 * <p/>
+	 * This method can be called outside of the UI thread.
+	 * 
+	 * @param percentage
+	 *            true if percentages
+	 */
+	public void setPercentage(int channel, boolean percentage) {
+		chan[channel].percentage = percentage;
+	}
+
+	/**
+	 * The number of internal steps that must be made before drawing. Normally
+	 * this will slide the graph one pixel. Setting this to a higher value will
+	 * speed up the animation at the cost of a more jerky motion.
+	 * <p/>
+	 * This method can be called outside of the UI thread.
+	 * 
+	 * @param progression
+	 */
+	public void setProgression(int channel, int progression) {
+		if (progression > 0) {
+			chan[channel].progression = progression;
+		}
+
+	}
+
+	private void setSizeInternal(int width, int height) {
+
+		for (int c = 0; c < chan.length; c++) {
+
+			chan[c].width = width;
+			chan[c].height = height;
+
+			// calculate the base of the line
+			calculateBase(c);
+
+			if (width > 1) {
+				if (chan[c].stack == null) {
+					chan[c].stack = new IntegerFiFoCircularStack(width);
+				} else {
+					chan[c].stack = new IntegerFiFoCircularStack(width, chan[c].stack);
+				}
+			}
+		}
+	}
+
+	/**
+	 * If steady is true the graph will draw on a steady position instead of
+	 * advancing.
+	 * <p/>
+	 * This method can be called outside of the UI thread.
+	 * 
+	 * @param steady
+	 * @param steadyPosition
+	 */
+	public void setSteady(int channel, boolean steady, int steadyPosition) {
+		chan[channel].steady = steady;
+		chan[channel].originalSteadyPosition = steadyPosition;
+		if (steady) {
+			if (steadyPosition == STEADYPOSITION_75PERCENT) {
+				chan[channel].cursor = (int) (chan[channel].width * 0.75);
+			} else if (steadyPosition > 0 && steadyPosition < chan[channel].width) {
+				chan[channel].cursor = steadyPosition;
+			}
+		}
+	}
+
+	/**
+	 * Sets the percentage of tail that must be faded out. If you supply 100
+	 * then the tail is faded out all the way to the top. The effect will become
+	 * increasingly less obvious.
+	 * <p/>
+	 * This method can be called outside of the UI thread.
+	 * 
+	 * @param tailFade
+	 */
+	public void setTailFade(int channel, int tailFade) {
+		checkWidget();
+		if (tailFade > 100) {
+			tailFade = 100;
+		}
+		if (tailFade < 1) {
+			tailFade = 1;
+		}
+		chan[channel].tailFade = tailFade;
+	}
+
+	/**
+	 * The tail size defaults to TAILSIZE_DEFAULT which is 75% of the width.
+	 * Setting it with TAILSIZE_MAX will leave one pixel between the tail and
+	 * the head. All values are absolute except TAILSIZE*. If the width is
+	 * smaller then the tail size then the tail size will behave like
+	 * TAILSIZE_MAX.
+	 * 
+	 * @param size
+	 *            the size of the tail
+	 * @see #getTailSize()
+	 * @see #TAILSIZE_DEFAULT
+	 * @see #TAILSIZE_FILL
+	 * @see #TAILSIZE_MAX
+	 */
+	public void setTailSize(int channel, int size) {
+		checkWidget();
+
+		if (size == TAILSIZE_FILL && !isSteady(channel)) {
+			size = TAILSIZE_MAX;
+		}
+
+		if (chan[channel].originalTailSize != size) {
+			tailSizeCheck(size);
+			chan[channel].originalTailSize = size;
+			setTailSizeInternal(channel);
+		}
+	}
+
+	private void setTailSizeInternal(int channel) {
+
+		if (chan[channel].originalTailSize == TAILSIZE_DEFAULT) {
+			chan[channel].tailSize = (chan[channel].width / 4) * 3;
+			chan[channel].tailSize--;
+		} else if (chan[channel].originalTailSize == TAILSIZE_FILL) {
+			if (isSteady(channel)) {
+				chan[channel].tailSize = chan[channel].originalSteadyPosition - 1;
+			} else {
+				// act as if TAILSIZE_MAX
+				chan[channel].tailSize = chan[channel].width - 2;
+			}
+		} else if (chan[channel].originalTailSize == TAILSIZE_MAX || chan[channel].originalTailSize > chan[channel].width) {
+			chan[channel].tailSize = chan[channel].width - 2;
+		} else if (chan[channel].tailSize != chan[channel].originalTailSize) {
+			chan[channel].tailSize = chan[channel].originalTailSize;
+		}
+
+		// Transform the old tail. This is we want to see sort of the same form
+		// after resize.
+		int[] oldTail = chan[channel].tail;
+		if (oldTail == null) {
+			chan[channel].tail = new int[chan[channel].tailSize + 1];
+		} else {
+			chan[channel].tail = new int[chan[channel].tailSize + 1];
+			if (chan[channel].tail.length >= oldTail.length) {
+				for (int i = 0; i < oldTail.length; i++) {
+					chan[channel].tail[chan[channel].tail.length - 1 - i] = oldTail[oldTail.length - 1 - i];
+				}
+			} else {
+				for (int i = 0; i < chan[channel].tail.length; i++) {
+					chan[channel].tail[chan[channel].tail.length - 1 - i] = oldTail[oldTail.length - 1 - i];
+				}
+			}
+		}
+	}
+
+	/**
+	 * Sets a value to be drawn relative to the center of the channel. Supply a
+	 * positive or negative value. This method will only accept values if the
+	 * width of the scope > 0. The values will be stored in a stack and popped
+	 * once a value is needed. The size of the stack is the width of the widget.
+	 * If you resize the widget, the old stack will be copied into a new stack
+	 * with the new capacity.
+	 * <p/>
+	 * This method can be called outside of the UI thread.
+	 * 
+	 * @param channel
+	 * @param value
+	 *            which is an absolute value or a percentage
+	 * 
+	 * @see #isPercentage(int)
+	 * @see #setBaseOffset(int, int)
+	 */
+	public void setValue(int channel, int value) {
+		if (width > 0) {
+			if (chan[channel].stack.capacity > 0) {
+				chan[channel].stack.push(value);
+			}
+		}
 	}
 
 	/**
@@ -407,34 +1075,37 @@ public class Oscilloscope extends Plotter {
 	 * @see #setValue(int, int)
 	 */
 	public synchronized void setValues(int channel, int[] values) {
-		checkWidget();
-
-		if (getBounds().width <= 0)
-			return;
-
-		if (!super.isVisible())
-			return;
-
-		if (this.chan[channel].stack == null)
-			this.chan[channel].stack = new IntegerFiFoCircularStack(width);
-
-		for (int i = 0; i < values.length; i++) {
-			this.chan[channel].stack.push(values[i]);
+		if (width > 0) {
+			for (int value : values) {
+				setValue(channel, value);
+			}
 		}
 	}
 
-	protected void controlResized(ControlEvent e) {
-		super.controlResized(e);
-		width = getSize().x;
+	private void tailSizeCheck(int size) {
+		if (size < -3 || size == 0) {
+			throw new RuntimeException("Invalid tail size " + size);
+		}
+	}
 
-		if (width > 1) {
-			for (int c = 0; c < this.chan.length; c++) {
-				if (this.chan[c].stack == null) {
-					this.chan[c].stack = new IntegerFiFoCircularStack(width);
-				} else {
-					this.chan[c].stack = new IntegerFiFoCircularStack(width, this.chan[c].stack);
-				}
-			}
+	/**
+	 * Transforms the value before it is drawn.
+	 * 
+	 * @param value
+	 *            the next value to be processed
+	 * @return the transformed value
+	 */
+	private int transform(int channel, int vWidth, int vHeight, int value) {
+		if (isPercentage(channel)) {
+			return (((vHeight / 2) * value) / 100);
+		}
+		return value;
+	}
+
+	protected void widgetDisposed(DisposeEvent e) {
+		bg.dispose();
+		for (Data element : chan) {
+			element.fg.dispose();
 		}
 	}
 }
