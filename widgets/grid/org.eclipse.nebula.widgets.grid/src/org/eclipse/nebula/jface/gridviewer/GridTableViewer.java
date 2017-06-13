@@ -535,7 +535,7 @@ public class GridTableViewer extends AbstractTableViewer {
 		if (!grid.isCellSelectionEnabled()) {
 			IStructuredSelection selection = (IStructuredSelection) super.getSelection();
 			Object el = null;
-			if (grid.getFocusItem() != null) {
+			if (grid.getFocusItem() != null && !grid.getFocusItem().isDisposed()) {
 				el = grid.getFocusItem().getData();
 			}
 			return new SelectionWithFocusRow(selection.toList(), el, getComparer());
