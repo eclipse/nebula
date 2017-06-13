@@ -21,17 +21,24 @@ Contributors:
 	<packaging>pom</packaging>
 
 	<properties>
-		<tycho-version>0.24.0</tycho-version>
+
+		<tycho-version>1.0.0</tycho-version>
 		<tycho-extras-version>${tycho-version}</tycho-extras-version>
+		<mockito-version>2.8.9</mockito-version>
+		<findbugs-version>2.3.2</findbugs-version>
+		<map-version>2.2-beta-4</map-version>
+		<mjd-version>2.7</mjd-version>
+		<mrp-version>3.0.2</mrp-version>
+		<ejp-version>1.0.4</ejp-version>
+		<pmd-version>2.5</pmd-version>
+		<junit-version>4.8.1</junit-version>
+		<jacoco-version>0.7.9</jacoco-version>
+
 		<tests.vmargs></tests.vmargs>
-		<!-- Properties to enable jacoco code coverage analysis in Sonar -->
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<!-- When running in children tests/* modules, all reports will be in ../target/jacoco.exec -->
 		<sonar.jacoco.reportPath>../target/jacoco.exec</sonar.jacoco.reportPath>
-		<mockito-version>1.8.4</mockito-version>
-		<junit-version>4.8.1</junit-version>
-		<jacoco-version>0.7.5.201505241946</jacoco-version>
 		<signer-input-directory>/home/data/httpd/download-staging.priv/technology/nebula</signer-input-directory>
 		<tycho.scmUrl>scm:git:https://git.eclipse.org/r/p/nebula/org.eclipse.nebula</tycho.scmUrl>
 	</properties>
@@ -157,7 +164,7 @@ Contributors:
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.7</version>
+				<version>${mjd-version}</version>
 			</plugin>
 		</plugins>
 
@@ -190,7 +197,7 @@ Contributors:
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-resources-plugin</artifactId>
-					<version>2.4.1</version>
+					<version>${mrp-version}</version>
 					<configuration>
 						<encoding>ISO-8859-1</encoding>
 					</configuration>
@@ -198,7 +205,7 @@ Contributors:
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>findbugs-maven-plugin</artifactId>
-					<version>2.3.2</version>
+					<version>${findbugs-version}</version>
 					<configuration>
 						<findbugsXmlOutput>true</findbugsXmlOutput>
 						<failOnError>false</failOnError>
@@ -214,7 +221,7 @@ Contributors:
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-pmd-plugin</artifactId>
-					<version>2.5</version>
+					<version>${pmd-version}</version>
 					<configuration>
 						<sourceEncoding>utf-8</sourceEncoding>
 						<minimumTokens>100</minimumTokens>
@@ -233,7 +240,7 @@ Contributors:
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-assembly-plugin</artifactId>
-					<version>2.2-beta-4</version>
+					<version>${map-version}</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -255,60 +262,9 @@ Contributors:
 		</profile>
 
 		<profile>
-			<id>platform-juno</id>
-			<repositories>
-				<repository>
-					<id>eclipse-platform</id>
-					<layout>p2</layout>
-					<url>http://download.eclipse.org/releases/juno</url>
-				</repository>
-
-				<repository>
-					<id>platform</id>
-					<layout>p2</layout>
-					<url>http://download.eclipse.org/eclipse/updates/4.2/</url>
-				</repository>
-			</repositories>
-		</profile>
-
-		<profile>
-			<id>kepler</id>
-			<repositories>
-				<repository>
-					<id>projects</id>
-					<layout>p2</layout>
-					<url>http://download.eclipse.org/releases/kepler/</url>
-				</repository>
-
-				<repository>
-					<id>platform</id>
-					<layout>p2</layout>
-					<url>http://download.eclipse.org/eclipse/updates/4.3/</url>
-				</repository>
-			</repositories>
-		</profile>
-
-		<profile>
-			<id>luna</id>
-			<repositories>
-				<repository>
-					<id>projects</id>
-					<layout>p2</layout>
-					<url>http://download.eclipse.org/releases/luna/</url>
-				</repository>
-
-				<repository>
-					<id>platform</id>
-					<layout>p2</layout>
-					<url>http://download.eclipse.org/eclipse/updates/4.4/</url>
-				</repository>
-			</repositories>
-		</profile>
-
-		<profile>
 			<id>mars</id>
 			<activation> 
-				<activeByDefault>true</activeByDefault>
+				<activeByDefault>false</activeByDefault>
 			</activation>
 			<repositories>
 				<repository>
@@ -321,6 +277,26 @@ Contributors:
 					<id>platform</id>
 					<layout>p2</layout>
 					<url>http://download.eclipse.org/eclipse/updates/4.5/</url>
+				</repository>
+			</repositories>
+		</profile>
+
+		<profile>
+			<id>oxygen</id>
+			<activation> 
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<repositories>
+				<repository>
+					<id>projects</id>
+					<layout>p2</layout>
+					<url>http://download.eclipse.org/releases/oxygen/</url>
+				</repository>
+
+				<repository>
+					<id>platform</id>
+					<layout>p2</layout>
+					<url>http://download.eclipse.org/eclipse/updates/4.6/</url>
 				</repository>
 			</repositories>
 		</profile>
@@ -366,7 +342,7 @@ Contributors:
 					<plugin>
 						<groupId>org.eclipse.cbi.maven.plugins</groupId>
 						<artifactId>eclipse-jarsigner-plugin</artifactId>
-						<version>1.0.4</version>
+						<version>${ejp-version}</version>
 						<executions>
 							<execution>
 								<id>sign</id>

@@ -58,7 +58,7 @@ Contributors:
 		<repository>
 			<id>rap incubator</id>
 			<layout>p2</layout>
-			<url>http://download.eclipse.org/rt/rap/incubator/2.0/fileupload/</url>
+			<url> http://download.eclipse.org/rt/rap/3.2/</url>
 		</repository>
 	</repositories>
 
