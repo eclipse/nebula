@@ -34,20 +34,22 @@ public class LinearScaleTickLabels extends Figure {
 	 *            the scale
 	 */
 	public LinearScaleTickLabels(IScaleProvider linearScale) {
-
-		this.scale = linearScale;
-		createLinearScaleTicks();
-		setFont(this.scale.getFont());
-		setForegroundColor(this.scale.getForegroundColor());
+		this(linearScale, new LinearScaleTicks(linearScale));
 	}
 
 	/**
-	 * Create the tick provider for the default axis implementation. To be
-	 * overridden if another tick provider is needed.
+	 * Constructor.
 	 *
+	 * @param linearScale
+	 *            the scale
+	 * @param ticks
+	 *            the tick provider
 	 */
-	protected void createLinearScaleTicks() {
-		ticks = new LinearScaleTicks(scale);
+	public LinearScaleTickLabels(IScaleProvider linearScale, ITicksProvider ticks) {
+		this.scale = linearScale;
+		this.ticks = ticks;
+		setFont(this.scale.getFont());
+		setForegroundColor(this.scale.getForegroundColor());
 	}
 
 	/**
