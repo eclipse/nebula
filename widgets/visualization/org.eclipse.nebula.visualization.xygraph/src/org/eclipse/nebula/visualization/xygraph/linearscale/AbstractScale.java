@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.TextUtilities;
@@ -63,7 +64,7 @@ public abstract class AbstractScale extends Figure {
 	private LabelSide tickLabelSide = LabelSide.Primary;
 
 	/** the default minimum value of log scale range */
-	public final static double DEFAULT_LOG_SCALE_MIN = 0.1d;
+	private final static double DEFAULT_LOG_SCALE_MIN = 0.1d;
 
 	/** the default maximum value of log scale range */
 	public final static double DEFAULT_LOG_SCALE_MAX = 100d;
@@ -72,7 +73,7 @@ public abstract class AbstractScale extends Figure {
 	protected String default_decimal_format = "############.##"; //$NON-NLS-1$
 
 	/** the state if the axis scale is log scale */
-	protected boolean logScaleEnabled = false;
+	private boolean logScaleEnabled = false;
 
 	/** The minimum value of the scale */
 	protected double min = DEFAULT_MIN;
@@ -332,11 +333,11 @@ public abstract class AbstractScale extends Figure {
 		repaint();
 	}
 
-	private void internalSetFormatPattern(String formatPattern) {
-		if (formatPattern.equals(this.formatPattern))
+	protected void internalSetFormatPattern(String formatPattern) {
+		if (Objects.equals(this.formatPattern, formatPattern))
 			return;
 		this.formatPattern = formatPattern;
-		if (isDateEnabled())
+		if (formatPattern != null && isDateEnabled())
 			formatPatternSize = TextUtilities.INSTANCE.getTextExtents(formatPattern, getFont()).width;
 	}
 
@@ -386,6 +387,10 @@ public abstract class AbstractScale extends Figure {
 		revalidate();
 		repaint();
 
+	}
+
+	protected void internalSetLogScaleEnabled(boolean logScaleEnabled) {
+		this.logScaleEnabled = logScaleEnabled;
 	}
 
 	/**
@@ -506,6 +511,10 @@ public abstract class AbstractScale extends Figure {
 		setDirty(true);
 		revalidate();
 		repaint();
+	}
+
+	protected void internalSetRange(Range range) {
+		this.range = range;
 	}
 
 	/**

@@ -247,7 +247,7 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 		double min = r.getLower();
 		double max = r.getUpper();
 		double pixelsToStart = 0;
-		if (logScaleEnabled) {
+		if (isLogScaleEnabled()) {
 			if (value <= 0)
 				value = min;
 			// throw new IllegalArgumentException(
@@ -375,6 +375,13 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 					area.y, tickLabels.getTickLabelMaxLength(), area.height));
 			tickMarks.setBounds(new Rectangle(area.x, area.y, LinearScaleTickMarks.MAJOR_TICK_LENGTH, area.height));
 		}
+	}
+
+	/**
+	 * Simple call of {@link void org.eclipse.draw2d.Figure.layout()}
+	 */
+	public void figureLayout() {
+		super.layout();
 	}
 
 	@Override

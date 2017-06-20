@@ -47,6 +47,12 @@ public class DAxis extends Axis {
 
 	private boolean axisAutoscaleTight = false;
 
+	/** the default minimum value of log scale range */
+	private final static double DEFAULT_LOG_SCALE_MIN = 0.0001d;
+
+	// used if difference between min and max is too small
+	private static final double ZERO_RANGE_FRACTION = 0.125;
+
 	/**
 	 * Constructor
 	 *
@@ -106,8 +112,9 @@ public class DAxis extends Axis {
 
 	@Override
 	protected void layout() {
-		super.layout();
+		figureLayout();
 		layoutTicks();
+		fireRevalidated();
 	}
 
 	protected void layoutTicks() {
@@ -245,13 +252,13 @@ public class DAxis extends Axis {
 						autoFormat = true;
 					}
 				}
-				setFormatPattern(formatPattern);
+				internalSetFormatPattern(formatPattern);
 				cachedFormats.put(extraDP, new SimpleDateFormat(formatPattern));
 			} else {
 				if (formatPattern == null || formatPattern.isEmpty() || formatPattern.equals(default_decimal_format)
 						|| formatPattern.equals(DEFAULT_DATE_FORMAT)) {
 					formatPattern = getAutoFormat(min, max);
-					setFormatPattern(formatPattern);
+					internalSetFormatPattern(formatPattern);
 					if (formatPattern == null || formatPattern.equals("")) {
 						autoFormat = true;
 					}
@@ -293,10 +300,8 @@ public class DAxis extends Axis {
 
 	@Override
 	public void setDateEnabled(boolean dateEnabled) {
-		super.setDateEnabled(dateEnabled);
 		cachedFormats.clear();
-		setDirty(true);
-		revalidate();
+		super.setDateEnabled(dateEnabled);
 	}
 
 	@Override
@@ -317,22 +322,75 @@ public class DAxis extends Axis {
 			return;
 		}
 		setTicksAtEnds(false);
-		super.setRange(lower, upper);
+
+		if (Double.isNaN(lower) || Double.isNaN(upper) || Double.isInfinite(lower) || Double.isInfinite(upper)
+				|| Double.isInfinite(upper - lower)) {
+			throw new IllegalArgumentException("Illegal range: lower=" + lower + ", upper=" + upper);
+		}
+		forceRange = lower == upper;
+		if (forceRange) {
+			final double delta = (lower == 0 ? 1 : Math.abs(lower)) * ZERO_RANGE_FRACTION;
+			upper += delta;
+			lower -= delta;
+		}
+		if (isLogScaleEnabled()) {
+			if (upper <= 0)
+				upper = DEFAULT_LOG_SCALE_MAX;
+			if (lower <= 0)
+				lower = DEFAULT_LOG_SCALE_MIN * upper;
+		}
+		min = lower;
+		max = upper;
+		internalSetRange(new Range(min, max));
+		cachedFormats.clear();
+		setDirty(true);
+		revalidate();
+		repaint();
+
 		fireAxisRangeChanged(old_range, getRange());
 	}
 
 	@Override
 	public void setAutoFormat(boolean autoFormat) {
-		super.setAutoFormat(autoFormat);
 		if (autoFormat) {
 			cachedFormats.clear();
 		}
+		super.setAutoFormat(autoFormat);
 	}
 
 	@Override
 	public void setLogScale(boolean enabled) throws IllegalStateException {
 		boolean cur = isLogScaleEnabled();
-		super.setLogScale(enabled);
+
+		if (cur == enabled) {
+			return;
+		}
+
+		if (enabled) {
+			if (min == DEFAULT_MIN && max == DEFAULT_MAX) {
+				min = DEFAULT_LOG_SCALE_MIN;
+				max = DEFAULT_LOG_SCALE_MAX;
+			}
+			if (max <= 0) {
+				max = DEFAULT_LOG_SCALE_MAX;
+			}
+			if (min <= 0) {
+				min = DEFAULT_LOG_SCALE_MIN * max;
+			}
+			if (max <= min) {
+				max = min + DEFAULT_LOG_SCALE_MAX;
+			}
+		} else if (min == DEFAULT_LOG_SCALE_MIN && max == DEFAULT_LOG_SCALE_MAX) {
+			min = DEFAULT_MIN;
+			max = DEFAULT_MAX;
+		}
+		internalSetLogScaleEnabled(enabled);
+		setTicksAtEnds(true);
+		internalSetRange(new Range(min, max));
+		setDirty(true);
+		revalidate();
+		repaint();
+
 		final IXYGraph xyGraph = getXYGraph();
 		if (cur != enabled && xyGraph != null) {
 			Display.getDefault().asyncExec(new Runnable() {

@@ -837,7 +837,7 @@ public class Axis extends LinearScale {
 	public void setLogScale(boolean enabled) throws IllegalStateException {
 		boolean old = isLogScaleEnabled();
 		super.setLogScale(enabled);
-		fireAxisLogScaleChanged(old, logScaleEnabled);
+		fireAxisLogScaleChanged(old, enabled);
 	}
 
 	private void fireAxisLogScaleChanged(boolean old, boolean logScale) {
