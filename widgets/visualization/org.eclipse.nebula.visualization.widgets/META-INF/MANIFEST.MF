@@ -2,12 +2,12 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Nebula Visualization Widgets
 Bundle-SymbolicName: org.eclipse.nebula.visualization.widgets
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.1.0.qualifier
 Bundle-Vendor: Eclipse Nebula
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.swt,
  org.eclipse.draw2d,
- org.eclipse.nebula.visualization.xygraph;bundle-version="2.0.0"
+ org.eclipse.nebula.visualization.xygraph;bundle-version="[3.0.0,4.0.0)"
 Export-Package: org.eclipse.nebula.visualization.internal.widgets.introspection,
  org.eclipse.nebula.visualization.widgets.datadefinition,
  org.eclipse.nebula.visualization.widgets.figureparts,
