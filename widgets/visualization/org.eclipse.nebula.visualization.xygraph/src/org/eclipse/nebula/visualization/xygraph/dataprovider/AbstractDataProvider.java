@@ -51,18 +51,6 @@ public abstract class AbstractDataProvider implements IDataProvider {
 	 */
 	public abstract ISample getSample(int index);
 
-	/**
-	 * the update needed when {@link #fireDataChange()} was called.
-	 */
-	protected abstract void innerUpdate();
-
-	/**
-	 * update xDataMinMax and yDataMinMax whenever data changed.
-	 *
-	 * @param positiveOnly
-	 */
-	protected abstract void updateDataRange(boolean positiveOnly);
-
 	@Override
 	public Range getXDataMinMax() {
 		return getXDataMinMax(false);
@@ -77,7 +65,7 @@ public abstract class AbstractDataProvider implements IDataProvider {
 	synchronized public Range getXDataMinMax(boolean positiveOnly) {
 		if (getSize() <= 0)
 			return null;
-		updateDataRange(positiveOnly);
+		xDataMinMax = getDataRange(positiveOnly, true);
 		return xDataMinMax;
 	}
 
@@ -85,8 +73,64 @@ public abstract class AbstractDataProvider implements IDataProvider {
 	synchronized public Range getYDataMinMax(boolean positiveOnly) {
 		if (getSize() <= 0)
 			return null;
-		updateDataRange(positiveOnly);
+		yDataMinMax = getDataRange(positiveOnly, false);
 		return yDataMinMax;
+	}
+
+	/**
+	 * Returns an updated range whenever data changed, for the XAxis or YAxis,
+	 * with positive data only or not.
+	 *
+	 * @param positiveOnly
+	 *            if data is positive only (for log scale mode)
+	 * @param isXAxis
+	 * @param isXAxis
+	 *            if true, then this will return the updated range for the
+	 *            XAxis, YAxis otherwise
+	 */
+	public Range getDataRange(final boolean positiveOnly, final boolean isAxis) {
+		return getDataRange(positiveOnly, isAxis, 0);
+	}
+
+	/**
+	 * Returns an updated range whenever data changed, for the XAxis or YAxis,
+	 * with positive data only or not.
+	 *
+	 * @param positiveOnly
+	 *            if data is positive only (for log scale mode)
+	 * @param isXAxis
+	 *            if true, then this will return the updated range for the
+	 *            XAxis, YAxis otherwise
+	 * @param lowerBound
+	 *            by default it should be 0
+	 */
+	public Range getDataRange(final boolean positiveOnly, final boolean isXAxis, final int lowerBound) {
+		Range range = null;
+		if (getSize() > 0) { // does not handle NaNs
+			double min = Double.POSITIVE_INFINITY;
+			double max = positiveOnly ? 0 : Double.NEGATIVE_INFINITY;
+
+			for (int i = lowerBound; i < getSize(); i++) {
+				ISample dp = getSample(i);
+				double value = isXAxis ? dp.getXValue() - dp.getXMinusError() : dp.getYValue() - dp.getYMinusError();
+				if ((!positiveOnly || value > 0) && min > value && (value != 0 || !positiveOnly)) {
+					min = value;
+				}
+				value = isXAxis ? dp.getXValue() + dp.getXPlusError() : dp.getYValue() + dp.getYPlusError();
+				if (max < value) {
+					max = value;
+				}
+			}
+			if (positiveOnly) {
+				// check that the max is greater than its respective
+				// minima.
+				if (max < min) {
+					max = min;
+				}
+			}
+			range = new Range(min, max);
+		}
+		return range;
 	}
 
 	/**
@@ -129,9 +173,9 @@ public abstract class AbstractDataProvider implements IDataProvider {
 	 * a data change has occured
 	 */
 	protected void fireDataChange() {
-		innerUpdate();
 		for (IDataProviderListener listener : listeners) {
 			listener.dataChanged(this);
 		}
 	}
+
 }

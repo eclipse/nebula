@@ -11,6 +11,7 @@
 package org.eclipse.nebula.visualization.xygraph.dataprovider;
 
 import org.eclipse.nebula.visualization.xygraph.dataprovider.CircularBufferDataProvider;
+import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
 
 /**
  * {@link CircularBufferDataProvider} with a limited window on the trace data
@@ -35,4 +36,16 @@ public class ClippedCircularBufferDataProvider extends CircularBufferDataProvide
 		return clippingWindow;
 	}
 
+	@Override
+	public Range getDataRange(final boolean positiveOnly, final boolean isXAxis) {
+		Range range = null;
+		if (getSize() > 0) { // does not handle NaNs
+			int lowerBound = 0;
+			if (getSize() > clippingWindow && clippingWindow > 0) {
+				lowerBound = (getSize() - 1) - clippingWindow;
+			}
+			range = super.getDataRange(positiveOnly, isXAxis, lowerBound);
+		}
+		return range;
+	}
 }

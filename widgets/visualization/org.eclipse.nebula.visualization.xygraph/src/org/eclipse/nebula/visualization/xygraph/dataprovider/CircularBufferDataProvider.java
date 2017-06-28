@@ -14,7 +14,6 @@ package org.eclipse.nebula.visualization.xygraph.dataprovider;
 import java.util.Calendar;
 import java.util.Iterator;
 
-import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -100,18 +99,11 @@ public class CircularBufferDataProvider extends AbstractDataProvider {
 
 	private boolean concatenate_data = true;
 
-	/**
-	 * this indicates if the max and min of the data need to be recalculated.
-	 */
-	protected boolean dataRangedirty = false;
-
 	private UpdateMode updateMode = UpdateMode.X_AND_Y;
 
 	private PlotMode plotMode = PlotMode.LAST_N;
 
 	private Runnable fireUpdate;
-
-	private int clippingWindow = -1;
 
 	public CircularBufferDataProvider(boolean chronological) {
 		super(chronological);
@@ -400,65 +392,6 @@ public class CircularBufferDataProvider extends AbstractDataProvider {
 			addDataPoint();
 	}
 
-	@Override
-	protected void innerUpdate() {
-		dataRangedirty = true;
-	}
-
-	@Override
-	protected void updateDataRange(boolean positiveOnly) {
-		if (!dataRangedirty)
-			return;
-		dataRangedirty = false;
-		if (getSize() > 0) { // does not handle NaNs
-			int lowerBound = 0;
-			if (getSize() > clippingWindow && clippingWindow > 0) {
-				lowerBound = (getSize() - 1) - clippingWindow;
-			}
-			double xMin = Double.POSITIVE_INFINITY;
-			double xMax = positiveOnly ? 0 : Double.NEGATIVE_INFINITY;
-
-			double yMin = Double.POSITIVE_INFINITY;
-			double yMax = positiveOnly ? 0 : Double.NEGATIVE_INFINITY;
-
-			for (int i = lowerBound; i < getSize(); i++) {
-				ISample dp = getSample(i);
-				double value = dp.getXValue() - dp.getXMinusError();
-				if ((!positiveOnly || value > 0) && xMin > value) {
-					xMin = value;
-				}
-				value = dp.getXValue() + dp.getXPlusError();
-				if (xMax < value) {
-					xMax = value;
-				}
-
-				value = dp.getYValue() - dp.getYMinusError();
-				if ((!positiveOnly || value > 0) && yMin > value) {
-					yMin = value;
-				}
-				value = dp.getYValue() + dp.getYPlusError();
-				if (yMax < value) {
-					yMax = value;
-				}
-			}
-			if (positiveOnly) {
-				// check that x and y max are greater than their respective
-				// minima.
-				if (xMax < xMin) {
-					xMax = xMin;
-				}
-				if (yMax < yMin) {
-					yMax = yMin;
-				}
-			}
-			xDataMinMax = new Range(xMin, xMax);
-			yDataMinMax = new Range(yMin, yMax);
-		} else {
-			xDataMinMax = null;
-			yDataMinMax = null;
-		}
-	}
-
 	/**
 	 * @param plotMode
 	 *            the plotMode to set
@@ -506,7 +439,6 @@ public class CircularBufferDataProvider extends AbstractDataProvider {
 	@Override
 	protected synchronized void fireDataChange() {
 		if (updateDelay > 0) {
-			innerUpdate();
 			if (!duringDelay) {
 				Display.getCurrent().timerExec(updateDelay, fireUpdate);
 				duringDelay = true;
@@ -523,13 +455,4 @@ public class CircularBufferDataProvider extends AbstractDataProvider {
 		return concatenate_data;
 	}
 
-	public void setClippingWindow(int clippingWindow) {
-		assert clippingWindow >= 0;
-		assert clippingWindow <= getSize();
-		this.clippingWindow = clippingWindow;
-	}
-
-	public int getClippingWindow() {
-		return clippingWindow;
-	}
 }
