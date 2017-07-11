@@ -200,8 +200,13 @@ public class CDT {
 	public static final int COMPACT			= 1 << 15;
 
 	/**
+	 * Style constant specifying the CDateTime to call Calendar.add() instead of Calendar.roll() on fieldAdjust() (value is 1&lt;&lt;19).
+	 */
+	public static final int ADD_ON_ROLL			= 1 << 19;
+
+	/**
 	 * Style constant indicating that the TAB key should be used to traverse
-	 * the CDateTime's fields (value is 1&lt;&lt;19).
+	 * the CDateTime's fields (value is 1&lt;&lt;25).
 	 */
 	public static final int TAB_FIELDS 		= 1 << 25;
 

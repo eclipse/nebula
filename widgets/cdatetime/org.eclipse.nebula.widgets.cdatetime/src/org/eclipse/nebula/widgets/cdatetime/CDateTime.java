@@ -807,7 +807,11 @@ public class CDateTime extends BaseCombo {
 				this.setTimeZone(this.allowedTimezones[0]);
 			}
 		} else {
-			calendar.roll(calendarField, rollAmount);
+			if ((this.style & CDT.ADD_ON_ROLL) != 0) {
+				calendar.add(calendarField, rollAmount);
+			} else {
+				calendar.roll(calendarField, rollAmount);
+			}
 		}
 
 		if (selection.length > 0) {
