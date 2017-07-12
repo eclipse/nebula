@@ -399,7 +399,19 @@ public class GridColumn extends Item {
 	}
 
 	void setWidth(int width, boolean redraw) {
-		this.width = Math.max(minimumWidth, width);
+		int widthToSet = Math.max(minimumWidth, width);
+		if (parent.getColumnScrolling()) {
+			/*
+			 * width should not be greater than visible available width for columns, as we
+			 * can't scroll all to the right
+			 */
+			int availableVisibleWidthForColumns = parent.getClientArea().width;
+			if (parent.isRowHeaderVisible()) {
+				availableVisibleWidthForColumns -= parent.getRowHeaderWidth();
+			}
+			widthToSet = Math.min(availableVisibleWidthForColumns, widthToSet);
+		}
+		this.width = widthToSet;
 		if (redraw) {
 			parent.setScrollValuesObsolete();
 			parent.redraw();
