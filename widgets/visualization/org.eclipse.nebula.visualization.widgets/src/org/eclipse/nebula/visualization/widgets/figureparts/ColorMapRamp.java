@@ -37,26 +37,38 @@ public class ColorMapRamp extends Figure {
 	private final static int RAMP_WIDTH = 25;
 	private ImageData imageData;
 
+	/**
+	 * Default constructor with a LinearScale scale
+	 */
 	public ColorMapRamp() {
+		this(new LinearScale());
+	}
+
+	/**
+	 * Constructor with custom scale
+	 *
+	 * @param scale
+	 *            type of scale to use to build the ColorMapRamp
+	 */
+	public ColorMapRamp(LinearScale scale) {
 		mapData = new double[256];
 		min = 0;
 		max = 1;
 		updateMapData();
 		colorMap = new ColorMap(PredefinedColorMap.GrayScale, true, true);
-		
-		scale = new LinearScale();
-		scale.setOrientation(Orientation.VERTICAL);
-		scale.setScaleLineVisible(true);
-		scale.setTickLabelSide(LabelSide.Secondary);
-		scale.setMinorTicksVisible(false);
-		scale.setRange(min, max);
-		scale.setMajorTickMarkStepHint(50);
-		scale.setFont(getFont());
+
+		this.scale = scale;
+		this.scale.setOrientation(Orientation.VERTICAL);
+		this.scale.setScaleLineVisible(true);
+		this.scale.setTickLabelSide(LabelSide.Secondary);
+		this.scale.setMinorTicksVisible(false);
+		this.scale.setRange(min, max);
+		this.scale.setMajorTickMarkStepHint(50);
+		this.scale.setFont(getFont());
 		colorMapFigure = new ColorMapFigure();
 		add(colorMapFigure);
-		add(scale);	
+		add(this.scale);
 	}
-
 
 	private void updateMapData() {
 		for(int j=0; j<256; j++)

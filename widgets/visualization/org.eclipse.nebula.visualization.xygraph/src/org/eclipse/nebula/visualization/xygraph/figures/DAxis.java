@@ -54,6 +54,13 @@ public class DAxis extends Axis {
 	private static final double ZERO_RANGE_FRACTION = 0.125;
 
 	/**
+	 * Constructor that creates a DAxis with no title
+	 */
+	public DAxis() {
+		this(null, false);
+	}
+
+	/**
 	 * Constructor
 	 *
 	 * @param title

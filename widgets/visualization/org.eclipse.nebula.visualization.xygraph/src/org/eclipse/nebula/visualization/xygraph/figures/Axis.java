@@ -55,6 +55,8 @@ public class Axis extends LinearScale {
 
 	@Override
 	public void setFont(Font font) {
+		if (font == null)
+			return;
 		super.setFont(font);
 		this.scaleFontData = getFont().getFontData()[0];
 	}
@@ -248,10 +250,12 @@ public class Axis extends LinearScale {
 	public Dimension getPreferredSize(final int wHint, final int hHint) {
 		final Dimension d = super.getPreferredSize(wHint, hHint);
 		if (isVisible()) {
-			if (isHorizontal())
-				d.height += FigureUtilities.getTextExtents(title, titleFont).height;
-			else
-				d.width += FigureUtilities.getTextExtents(title, titleFont).height;
+			if (title != null) {
+				if (isHorizontal())
+					d.height += FigureUtilities.getTextExtents(title, titleFont).height;
+				else
+					d.width += FigureUtilities.getTextExtents(title, titleFont).height;
+			}
 		} else { // Not visible, flatten it to use zero height resp. width
 			if (isHorizontal())
 				d.height = 0;
@@ -270,26 +274,28 @@ public class Axis extends LinearScale {
 		super.paintClientArea(graphics);
 
 		// graphics.pushState();
-		graphics.setFont(titleFont);
-		final Dimension titleSize = FigureUtilities.getTextExtents(title, titleFont);
-		if (isHorizontal()) {
-			if (getTickLabelSide() == LabelSide.Primary)
-				graphics.drawText(title, bounds.x + bounds.width / 2 - titleSize.width / 2,
-						bounds.y + bounds.height - titleSize.height);
-			else
-				graphics.drawText(title, bounds.x + bounds.width / 2 - titleSize.width / 2, bounds.y);
-		} else {
-			final int w = titleSize.height;
-			final int h = titleSize.width + 1;
-
-			if (getTickLabelSide() == LabelSide.Primary) {
-				GraphicsUtil.drawVerticalText(graphics, title, bounds.x, bounds.y + bounds.height / 2 - h / 2, false);
+		if (title != null) {
+			graphics.setFont(titleFont);
+			final Dimension titleSize = FigureUtilities.getTextExtents(title, titleFont);
+			if (isHorizontal()) {
+				if (getTickLabelSide() == LabelSide.Primary)
+					graphics.drawText(title, bounds.x + bounds.width / 2 - titleSize.width / 2,
+							bounds.y + bounds.height - titleSize.height);
+				else
+					graphics.drawText(title, bounds.x + bounds.width / 2 - titleSize.width / 2, bounds.y);
 			} else {
-				GraphicsUtil.drawVerticalText(graphics, title, bounds.x + bounds.width - w,
-						bounds.y + bounds.height / 2 - h / 2, true);
+				final int w = titleSize.height;
+				final int h = titleSize.width + 1;
+
+				if (getTickLabelSide() == LabelSide.Primary) {
+					GraphicsUtil.drawVerticalText(graphics, title, bounds.x, bounds.y + bounds.height / 2 - h / 2,
+							false);
+				} else {
+					GraphicsUtil.drawVerticalText(graphics, title, bounds.x + bounds.width - w,
+							bounds.y + bounds.height / 2 - h / 2, true);
+				}
 			}
 		}
-
 		// graphics.popState();
 
 		// Show the start/end cursor or the 'rubberband' of a zoom operation?
