@@ -302,44 +302,64 @@ public class TickFactoryTest {
 
 	@Test
 	public void testLogTicks() {
-		testGeneratedLogTicks(true, 1, 2, 4, "1");
+		testGeneratedLogTicks(true,  1, 2, 4, "1");
 		testGeneratedLogTicks(false, 1, 2, 4, "1", "10");
 
-		testGeneratedLogTicks(true, 1, 20, 4, "1", "10");
+		testGeneratedLogTicks(true,  1, 20, 4, "1", "10");
 		testGeneratedLogTicks(false, 1, 20, 4, "1", "10", "100");
 
-		testGeneratedLogTicks(true, 1e-3, 2e2, 7, "0.001", "0.010", "0.100", "1.000", "10.000", "100.000");
+		testGeneratedLogTicks(true,  1e-3, 2e2, 7, "0.001", "0.010", "0.100", "1.000", "10.000", "100.000");
 		testGeneratedLogTicks(false, 1e-3, 2e2, 7, "0.001", "0.010", "0.100", "1.000", "10.000", "100.000", "1000.000");
 
-		testGeneratedLogTicks(true, 1e-3, 2e2, 3, "0.001", "0.100", "10.000");
+		testGeneratedLogTicks(true,  1e-3, 2e2, 3, "0.001", "0.100", "10.000");
 		testGeneratedLogTicks(false, 1e-3, 2e2, 3, "0.001", "0.100", "10.000", "1000.000");
 
-		testGeneratedLogTicks(true, 1e-4, 2e2, 3, "1e-04", "1e-02", "1e+00", "1e+02");
-		testGeneratedLogTicks(false, 1e-4, 2e2, 3, "1e-04", "1e-02", "1e+00", "1e+02");
+		testGeneratedLogTicks(true,  1e-4, 2e2, 3, "1e-04", "1e-01", "1e+02");
+		testGeneratedLogTicks(false, 1e-4, 2e2, 3, "1e-04", "1e-01", "1e+02", "1e+05");
 
-		testGeneratedLogTicks(true, 1e-5, 2e4, 3, "1e-05", "1e-02", "1e+01", "1e+04");
-		testGeneratedLogTicks(false, 1e-5, 2e4, 3, "1e-05", "1e-02", "1e+01", "1e+04");
+		testGeneratedLogTicks(true,  1e-5, 2e4, 3, "1e-05", "1e-01", "1e+03");
+		testGeneratedLogTicks(false, 1e-5, 2e4, 3, "1e-05", "1e-01", "1e+03", "1e+07");
 
-		testGeneratedLogTicks(true, 2.3e-5, 4.5e-5, 4, "1e-05");
+		testGeneratedLogTicks(true,  2.3e-5, 4.5e-5, 4, "1e-05");
 		testGeneratedLogTicks(false, 2.3e-5, 4.5e-5, 4, "1e-05", "1e-04");
 
-		testGeneratedLogTicks(true, 2.3e5, 4.5e5, 4, "1e+05");
+		testGeneratedLogTicks(true,  2.3e5, 4.5e5, 4, "1e+05");
 		testGeneratedLogTicks(false, 2.3e5, 4.5e5, 4, "1e+05", "1e+06");
 
-		testGeneratedLogTicks(true, 7.5e-128, 2.1e237, 8, "1e-128", "1e-87", "1e-46", "1e-05", "1e+36", "1e+77",
-				"1e+118", "1e+159", "1e+200");
-		testGeneratedLogTicks(false, 7.5e-128, 2.1e237, 8, "1e-128", "1e-87", "1e-46", "1e-05", "1e+36", "1e+77",
-				"1e+118", "1e+159", "1e+200");
+		testGeneratedLogTicks(true,  1.5e-317, 183783, 7, "1e-317", "1e-270", "1e-223", "1e-176", "1e-129", "1e-82",
+				"1e-35");
+		testGeneratedLogTicks(false, 1.5e-317, 183783, 7, "1e-317", "1e-270", "1e-223", "1e-176", "1e-129", "1e-82",
+				"1e-35", "1e+12");
 
-		testGeneratedLogTicks(true, 2.23e-308, 1.79e308, 8, "1e-308", "1e-239", "1e-170", "1e-101", "1e-32", "1e+37",
-				"1e+106", "1e+175", "1e+244");
-		testGeneratedLogTicks(false, 2.23e-308, 1.79e308, 8, "1e-308", "1e-239", "1e-170", "1e-101", "1e-32", "1e+37",
-				"1e+106", "1e+175", "1e+244");
+		testGeneratedLogTicks(true,  7.5e-128, 2.1e237, 8, "1e-128", "1e-82", "1e-36", "1e+10", "1e+56", "1e+102",
+				"1e+148", "1e+194");
+		testGeneratedLogTicks(false, 7.5e-128, 2.1e237, 8, "1e-128", "1e-82", "1e-36", "1e+10", "1e+56", "1e+102",
+				"1e+148", "1e+194", "1e+240");
 
-		testGeneratedLogTicks(true, 4.95e-324, 1.79e308, 8, "1e-323", "1e-252", "1e-181", "1e-110", "1e-39", "1e+32",
-				"1e+103", "1e+174", "1e+245");
-		testGeneratedLogTicks(false, 4.95e-324, 1.79e308, 8, "1e-323", "1e-252", "1e-181", "1e-110", "1e-39", "1e+32",
-				"1e+103", "1e+174", "1e+245");
+		testGeneratedLogTicks(true,  2.23e-308, 1.79e308, 8, "1e-308", "1e-231", "1e-154", "1e-77", "1e+00", "1e+77",
+				"1e+154", "1e+231", "1e+308");
+		testGeneratedLogTicks(false, 2.23e-308, 1.79e308, 8, "1e-308", "1e-231", "1e-154", "1e-77", "1e+00", "1e+77",
+				"1e+154", "1e+231", "1e+308");
+
+		testGeneratedLogTicks(true,  4.95e-324, 1.79e308, 8, "1e-316", "1e-238", "1e-160", "1e-82", "1e-04", "1e+74",
+				"1e+152", "1e+230", "1e+308");
+		testGeneratedLogTicks(false, 4.95e-324, 1.79e308, 8, "1e-316", "1e-238", "1e-160", "1e-82", "1e-04", "1e+74",
+				"1e+152", "1e+230", "1e+308");
+
+		testGeneratedLogTicks(false, 1e-311, 183783, 1, "1e-311", "1e+06");
+		testGeneratedLogTicks(false, 1e-312, 183783, 1, "1e-312", "1e+06");
+		testGeneratedLogTicks(false, 1e-313, 183783, 1, "1e-313", "1e+06");
+		testGeneratedLogTicks(true, 1e-313, 183783, 1, "1e-313");
+
+		testGeneratedLogTicks(false, 1.01e-311, 183783, 1, "1e-311", "1e+06");
+		testGeneratedLogTicks(false, 1.01e-312, 183783, 1, "1e-312", "1e+06");
+		testGeneratedLogTicks(false, 1.01e-313, 183783, 1, "1e-313", "1e+06");
+		testGeneratedLogTicks(true, 1.01e-313, 183783, 1, "1e-313");
+
+		testGeneratedLogTicks(false, 9.999999999999e-311, 183783, 1, "1e-311", "1e+06");
+		testGeneratedLogTicks(false, 9.99999999999e-312, 183783, 1, "1e-312", "1e+06");
+		testGeneratedLogTicks(false, 9.9999999999e-313, 183783, 1, "1e-313", "1e+06");
+		testGeneratedLogTicks(true, 9.9999999999e-313, 183783, 1, "1e-313");
 	}
 
 	private String scale(String s, int p) {

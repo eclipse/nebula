@@ -576,6 +576,7 @@ public class TickFactory {
 	}
 
 	private final static int LOWEST_LOG_10 = -323; // sub-normal value 4.9e-324
+	private final static int LOWER_LOG_10 = -311; // where Math.log10 becomes inaccurate
 	private final static int HIGHEST_LOG_10 = 308; // 1.80e308
 
 	private int determineNumLogTicks(double min, double max, int maxTicks, boolean allowMinMaxOver) {
@@ -588,10 +589,14 @@ public class TickFactory {
 
 		graphMin = Math.log10(min);
 		graphMax = Math.log10(max);
-		int loDecade = (int) Math.floor(graphMin); // lowest decade (or power of
-													// ten)
+		int loDecade = (int) Math.floor(graphMin); // lowest decade (or power of ten)
 		if (loDecade < LOWEST_LOG_10) {
 			loDecade = LOWEST_LOG_10;
+		} else if (loDecade < LOWER_LOG_10) {
+			BigDecimal bd = BigDecimal.valueOf(min).scaleByPowerOfTen(-loDecade);
+			if (bd.doubleValue() >= 10) { // should be less than 10
+				loDecade++;
+			}
 		}
 		int hiDecade = (int) Math.ceil(graphMax);
 		if (hiDecade > HIGHEST_LOG_10) {
@@ -600,13 +605,20 @@ public class TickFactory {
 
 		int decades = hiDecade - loDecade;
 
-		int unit = (int) Math.ceil(1 + decades / (maxTicks + 1));
-		int n = decades / unit;
+		int unit = (decades + maxTicks - 1) / maxTicks;
 
 		if (allowMinMaxOver) {
 			graphMin = loDecade;
-			graphMax = n * unit + loDecade;
-			numberOfIntervals = n;
+			numberOfIntervals = (decades + unit - 1) / unit; // ceiling of units in decades
+			if (hiDecade < HIGHEST_LOG_10) {
+				graphMax = numberOfIntervals * unit + loDecade;
+			} else if (loDecade > LOWEST_LOG_10) {
+				graphMax = hiDecade;
+			} else { // bound on both ends
+				graphMax = hiDecade;
+				unit = decades / numberOfIntervals; // trim units to ensure graphMin >= loDecades
+				graphMin = hiDecade - numberOfIntervals * unit;
+			}
 		} else {
 			numberOfIntervals = (int) Math.floor(graphMax - graphMin) / unit;
 		}
