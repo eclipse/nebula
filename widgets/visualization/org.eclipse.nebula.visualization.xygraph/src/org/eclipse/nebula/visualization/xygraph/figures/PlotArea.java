@@ -98,18 +98,32 @@ public class PlotArea extends Figure {
 	private Color revertBackColor;
 
 	/**
-	 * Construct a plot area for the given graph
+	 * Construct a plot area for the given graph with black foreground
+	 * and white background
 	 *
 	 * @param xyGraph
 	 */
 	public PlotArea(final IXYGraph xyGraph) {
+		this(xyGraph, XYGraphMediaFactory.getInstance().getColor(0, 0, 0), XYGraphMediaFactory.getInstance().getColor(255, 255, 255));
+	}
+
+	/**
+	 * Construct a plot area for the given graph with given foreground and
+	 * background colors
+	 *
+	 * @param xyGraph
+	 * @param foreground color for foreground, can be null to inherit parent's color
+	 * @param background color for background, can be null to inherit parent's color
+	 */
+	public PlotArea(final IXYGraph xyGraph, Color foreground, Color background) {
 		this.xyGraph = xyGraph;
-		setBackgroundColor(XYGraphMediaFactory.getInstance().getColor(255, 255, 255));
-		setForegroundColor(XYGraphMediaFactory.getInstance().getColor(0, 0, 0));
+		if (foreground != null) {
+			setForegroundColor(foreground);
+		}
+		if (background != null) {
+			internalSetBackgroundColor(background);
+		}
 		setOpaque(true);
-		RGB backRGB = getBackgroundColor().getRGB();
-		revertBackColor = XYGraphMediaFactory.getInstance().getColor(255 - backRGB.red, 255 - backRGB.green,
-				255 - backRGB.blue);
 		PlotMouseListener zoomer = new PlotMouseListener();
 		addMouseListener(zoomer);
 		addMouseMotionListener(zoomer);
@@ -117,17 +131,21 @@ public class PlotArea extends Figure {
 		zoomType = ZoomType.NONE;
 	}
 
-	@Override
-	public void setBackgroundColor(final Color bg) {
-		// System.out.println("**** PlotArea.setBackgroundColor() ****");
+	private Color internalSetBackgroundColor(final Color bg) {
 		RGB backRGB = bg.getRGB();
 		revertBackColor = XYGraphMediaFactory.getInstance().getColor(255 - backRGB.red, 255 - backRGB.green,
 				255 - backRGB.blue);
 		Color oldColor = getBackgroundColor();
 		super.setBackgroundColor(bg);
+		return oldColor;
+	}
+
+	@Override
+	public void setBackgroundColor(final Color bg) {
+		// System.out.println("**** PlotArea.setBackgroundColor() ****");
+		Color oldColor = internalSetBackgroundColor(bg);
 
 		changeSupport.firePropertyChange(BACKGROUND_COLOR, oldColor, bg);
-
 	}
 
 	/**
