@@ -207,6 +207,9 @@ public class Axis extends LinearScale {
 	@Override
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
+		if (grid != null) {
+			grid.setVisible(visible);
+		}
 		revalidate();
 	}
 
