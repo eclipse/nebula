@@ -454,6 +454,7 @@ public class DAxis extends Axis {
 
 		// by-pass overridden method as it sets ticks to false
 		super.setRange(range.getLower(), range.getUpper());
+		cachedFormats.clear();
 		fireAxisRangeChanged(getRange(), range);
 		setTicksAtEnds(!axisAutoscaleTight);
 		repaint();
@@ -479,7 +480,7 @@ public class DAxis extends Axis {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void clear() {
 		for (Iterator<IAxisListener> it = listeners.iterator(); it.hasNext();) {

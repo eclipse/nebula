@@ -163,7 +163,7 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 	public Dimension getPreferredSize(int wHint, int hHint) {
 
 		Dimension size = new Dimension(wHint, hHint);
-		LinearScaleTickLabels fakeTickLabels = new LinearScaleTickLabels(this);
+		LinearScaleTickLabels fakeTickLabels = createLinearScaleTickLabels();
 
 		if (isHorizontal()) {
 			// length = wHint;
