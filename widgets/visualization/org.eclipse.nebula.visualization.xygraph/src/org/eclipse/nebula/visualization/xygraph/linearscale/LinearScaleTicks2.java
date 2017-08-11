@@ -8,6 +8,7 @@
 package org.eclipse.nebula.visualization.xygraph.linearscale;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.draw2d.geometry.Dimension;
@@ -29,7 +30,7 @@ public class LinearScaleTicks2 implements ITicksProvider {
 	/**
 	 * the list of ticks marks
 	 */
-	protected List<Tick> ticks;
+	protected List<Tick> ticks = Collections.emptyList();
 
 	/** the maximum width of tick labels */
 	private int maxWidth;
