@@ -104,6 +104,7 @@ public class TableCombo extends Composite {
 	private boolean showColorWithinSelection = true;
 	private boolean showFontWithinSelection = true;
 	private boolean closePupupAfterSelection = true;
+	private boolean selectOnEnter = true;
 
 	/**
 	 * Constructs a new instance of this class given its parent and a style
@@ -1552,12 +1553,14 @@ public class TableCombo extends Composite {
 				dropDown(false);
 			}
 			if (event.character == SWT.CR) {
-				// Enter causes default selection
 				dropDown(false);
-				Event e = new Event();
-				e.time = event.time;
-				e.stateMask = event.stateMask;
-				notifyListeners(SWT.DefaultSelection, e);
+				// Enter causes default selection
+				if (selectOnEnter) {
+					Event e = new Event();
+					e.time = event.time;
+					e.stateMask = event.stateMask;
+					notifyListeners(SWT.DefaultSelection, e);
+				}
 			}
 			// At this point the widget may have been disposed.
 			// If so, do not continue.
@@ -1574,6 +1577,19 @@ public class TableCombo extends Composite {
 
 		}
 		}
+	}
+
+	/**
+	 * Allows to change the on enter behavior when the drop-down is shown.
+	 * Default value is <code>true</code>.
+	 * 
+	 * @param selectOnEnter
+	 *            <code>true</code> if pressing enter should set the combo
+	 *            selection to the last selected element in the table,
+	 *            <code>false</code> if combo selection should not change
+	 */
+	public void setUpdateSelectionOnEnter(boolean selectOnEnter) {
+		this.selectOnEnter = selectOnEnter;
 	}
 
 	/**
