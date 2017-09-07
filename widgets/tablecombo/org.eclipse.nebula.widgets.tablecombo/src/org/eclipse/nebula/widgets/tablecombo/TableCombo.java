@@ -105,6 +105,7 @@ public class TableCombo extends Composite {
 	private boolean showFontWithinSelection = true;
 	private boolean closePupupAfterSelection = true;
 	private boolean selectOnEnter = true;
+	private boolean updateTextWithinSelection = true;
 
 	/**
 	 * Constructs a new instance of this class given its parent and a style
@@ -2040,6 +2041,9 @@ public class TableCombo extends Composite {
 			table.deselectAll();
 			text.setText(string);
 			return;
+		} else if (!updateTextWithinSelection) {
+			/* following selection change won't update the text */
+			text.setText(string);
 		}
 
 		// select the text and table row.
@@ -2371,7 +2375,9 @@ public class TableCombo extends Composite {
 		}
 
 		// set the label text.
-		text.setText(tableItem.getText(colIndexToUse));
+		if(updateTextWithinSelection) {
+			text.setText(tableItem.getText(colIndexToUse));
+		}
 		text.selectAll();
 	}
 
@@ -2397,6 +2403,20 @@ public class TableCombo extends Composite {
 	public void setShowFontWithinSelection(boolean showFontWithinSelection) {
 		checkWidget();
 		this.showFontWithinSelection = showFontWithinSelection;
+	}
+
+	/**
+	 * Whether a selection change should automatically update the combo's text
+	 * to the selection's text. The default value is <code>true</code>.
+	 * 
+	 * @param updateTextWithinSelection
+	 *            <code>true</code> if selection changes will update the combo's
+	 *            text accordingly; <code>false</code> if no text changes are
+	 *            desired. Clients have to update the text manually
+	 */
+	public void setUpdateTextWithinSelection(boolean updateTextWithinSelection) {
+		checkWidget();
+		this.updateTextWithinSelection = updateTextWithinSelection;
 	}
 
 	/**
