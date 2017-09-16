@@ -53,9 +53,9 @@ public class Plotter extends Canvas {
 		private int originalSteadyPosition = STEADYPOSITION_75PERCENT;
 
 		/**
-		 * This contains the actual values that where input by the user before
-		 * scaling. If the user resized we can calculate how the tail would have
-		 * looked with the new window dimensions.
+		 * This contains the actual values that where input by the user before scaling.
+		 * If the user resized we can calculate how the tail would have looked with the
+		 * new window dimensions.
 		 *
 		 * @see Plotter#tail
 		 */
@@ -65,8 +65,8 @@ public class Plotter extends Canvas {
 
 		private boolean steady;
 		/**
-		 * This contains the old or historical input and is used to paint the
-		 * tail of the graph.
+		 * This contains the old or historical input and is used to paint the tail of
+		 * the graph.
 		 */
 		private int[] tail;
 		private int tailFade = TAILFADE_PERCENTAGE;
@@ -348,11 +348,11 @@ public class Plotter extends Canvas {
 
 	/**
 	 * Sets a value to be drawn relative to the center of the channel. Supply a
-	 * positive or negative value. This method will only accept values if the
-	 * width of the plotter > 0. The values will be stored in a stack and popped
-	 * once a value is needed. The size of the stack is the width of the widget.
-	 * If you resize the widget, the old stack will be copied into a new stack
-	 * with the new capacity.
+	 * positive or negative value. This method will only accept values if the width
+	 * of the plotter > 0. The values will be stored in a stack and popped once a
+	 * value is needed. The size of the stack is the width of the widget. If you
+	 * resize the widget, the old stack will be copied into a new stack with the new
+	 * capacity.
 	 * <p/>
 	 * This method can be called outside of the UI thread.
 	 *
@@ -457,24 +457,37 @@ public class Plotter extends Canvas {
 	}
 
 	/**
-	 * This method returns the data in csv format using semi comma as seperator.
-	 * if addHeader is true a header is added based on the names of the
-	 * channels. Use setChannelName to set the names
+	 * Returns the data in CSV format using the semicolon (;) as separator and
+	 * delegating to {@link #getData(boolean, String)}.
+	 *
+	 * @param addHeader
+	 *            true to add the header
+	 * @return the CSV string.
+	 *
+	 * @see #getData(boolean, String)
 	 */
 	public String getData(boolean addHeader) {
+		return getData(addHeader, ";");
+	}
+
+	/**
+	 * This method returns the data in csv format using the passed separator as
+	 * field separator. if addHeader is true a header is added based on the names of
+	 * the channels. Use {@link #SetChannelName(int, String)} to set the names.
+	 */
+	public String getData(boolean addHeader, String separator) {
 		String ret = new String();
-		String sep = ";";
 		String nl = System.lineSeparator();
 
 		if (addHeader) {
 			for (Data element : this.chan) {
-				ret = ret + element.name + sep;
+				ret = ret + element.name + separator;
 			}
 			ret += nl;
 		}
 		for (int curvalue = 0; curvalue < this.chan[0].tail.length; curvalue++) {
 			for (Data element : this.chan) {
-				ret += element.tail[curvalue] + sep;
+				ret += element.tail[curvalue] + separator;
 			}
 			ret += nl;
 		}
@@ -544,8 +557,8 @@ public class Plotter extends Canvas {
 	}
 
 	/**
-	 * Gets the relative location where the line is drawn in the widget. This
-	 * method can be called outside of the UI thread.
+	 * Gets the relative location where the line is drawn in the widget. This method
+	 * can be called outside of the UI thread.
 	 *
 	 * @return baseOffset
 	 */
@@ -584,8 +597,8 @@ public class Plotter extends Canvas {
 	}
 
 	/**
-	 * Gets the percentage of tail that must be faded out. This method can be
-	 * called outside of the UI thread.
+	 * Gets the percentage of tail that must be faded out. This method can be called
+	 * outside of the UI thread.
 	 *
 	 * @return int percentage
 	 * @see #setFade(boolean)
@@ -612,8 +625,8 @@ public class Plotter extends Canvas {
 	/**
 	 * This method can be called outside of the UI thread.
 	 *
-	 * @return boolean, true if the tail and the head of the graph must be
-	 *         connected if tail size is {@link #TAILSIZE_MAX} no fading graph.
+	 * @return boolean, true if the tail and the head of the graph must be connected
+	 *         if tail size is {@link #TAILSIZE_MAX} no fading graph.
 	 */
 	public boolean isConnect(int channel) {
 		return this.chan[channel].connect;
@@ -650,11 +663,10 @@ public class Plotter extends Canvas {
 	}
 
 	/**
-	 * The tail size defaults to TAILSIZE_DEFAULT which is 75% of the width.
-	 * Setting it with TAILSIZE_MAX will leave one pixel between the tail and
-	 * the head. All values are absolute except TAILSIZE*. If the width is
-	 * smaller then the tail size then the tail size will behave like
-	 * TAILSIZE_MAX.
+	 * The tail size defaults to TAILSIZE_DEFAULT which is 75% of the width. Setting
+	 * it with TAILSIZE_MAX will leave one pixel between the tail and the head. All
+	 * values are absolute except TAILSIZE*. If the width is smaller then the tail
+	 * size then the tail size will behave like TAILSIZE_MAX.
 	 *
 	 * @param size
 	 *            the size of the tail
@@ -707,8 +719,8 @@ public class Plotter extends Canvas {
 	}
 
 	/**
-	 * Sets the percentage of tail that must be faded out. If you supply 100
-	 * then the tail is faded out all the way to the top. The effect will become
+	 * Sets the percentage of tail that must be faded out. If you supply 100 then
+	 * the tail is faded out all the way to the top. The effect will become
 	 * increasingly less obvious.
 	 * <p/>
 	 * This method can be called outside of the UI thread.
@@ -729,11 +741,10 @@ public class Plotter extends Canvas {
 
 	/**
 	 * Sets fade mode so that a percentage of the tail will be faded out at the
-	 * costs of extra CPU utilization (no beauty without pain or as the Dutch
-	 * say: "Wie mooi wil gaan moet pijn doorstaan"). The reason for this is
-	 * that each pixel must be drawn separately with alpha faded in instead of
-	 * the elegant {@link GC#drawPolygon(int[])} routine which does not support
-	 * alpha blending.
+	 * costs of extra CPU utilization (no beauty without pain or as the Dutch say:
+	 * "Wie mooi wil gaan moet pijn doorstaan"). The reason for this is that each
+	 * pixel must be drawn separately with alpha faded in instead of the elegant
+	 * {@link GC#drawPolygon(int[])} routine which does not support alpha blending.
 	 * <p>
 	 * In addition to this, set the percentage of tail that must be faded out
 	 * {@link #setTailFade(int)}.
@@ -773,9 +784,9 @@ public class Plotter extends Canvas {
 	}
 
 	/**
-	 * If set to true then the values are treated as percentages of the
-	 * available space rather than absolute values. This will scale the
-	 * amplitudes if the control is resized. Default is false.
+	 * If set to true then the values are treated as percentages of the available
+	 * space rather than absolute values. This will scale the amplitudes if the
+	 * control is resized. Default is false.
 	 * <p/>
 	 * This method can be called outside of the UI thread.
 	 *
@@ -787,13 +798,13 @@ public class Plotter extends Canvas {
 	}
 
 	/**
-	 * Gets the relative location where the line is drawn in the widget, the
-	 * default is <code>BASE_CENTER</code> which is in the middle of the
-	 * plotter. This method can be called outside of the UI thread.
+	 * Gets the relative location where the line is drawn in the widget, the default
+	 * is <code>BASE_CENTER</code> which is in the middle of the plotter. This
+	 * method can be called outside of the UI thread.
 	 *
 	 * @param baseOffset
-	 *            must be between 100 and -100, exceeding values are rounded to
-	 *            the closest allowable value.
+	 *            must be between 100 and -100, exceeding values are rounded to the
+	 *            closest allowable value.
 	 */
 	public void setBaseOffset(int channel, int newBaseOffset) {
 		int baseOffset = newBaseOffset;
@@ -822,8 +833,8 @@ public class Plotter extends Canvas {
 
 	/**
 	 * Sets if the line must be anti-aliased which uses more processing power in
-	 * return of a smoother image. The default value is false. This method can
-	 * be called outside of the UI thread.
+	 * return of a smoother image. The default value is false. This method can be
+	 * called outside of the UI thread.
 	 *
 	 * @param channel
 	 * @param antialias
