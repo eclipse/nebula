@@ -463,16 +463,20 @@ public class Plotter extends Canvas {
 	 */
 	public String getData(boolean addHeader) {
 		String ret = new String();
+		String sep = ";";
+		String nl = System.lineSeparator();
+
 		if (addHeader) {
 			for (Data element : this.chan) {
-				ret = ret + element.name + ';';
+				ret = ret + element.name + sep;
 			}
+			ret += nl;
 		}
 		for (int curvalue = 0; curvalue < this.chan[0].tail.length; curvalue++) {
 			for (Data element : this.chan) {
-				ret += element.tail[curvalue] + ';';
+				ret += element.tail[curvalue] + sep;
 			}
-			ret += '\n';
+			ret += nl;
 		}
 		return ret;
 	}
