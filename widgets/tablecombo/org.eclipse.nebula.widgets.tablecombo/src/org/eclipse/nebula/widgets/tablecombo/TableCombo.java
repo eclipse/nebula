@@ -2360,7 +2360,7 @@ public class TableCombo extends Composite {
 			selectedImage.setImage(tableItem.getImage(colIndexToUse));
 
 			// refresh the layout of the widget
-			internalLayout(false, closePupupAfterSelection);
+			internalLayout(false, false);
 		}
 
 		// set color if requested
