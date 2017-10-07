@@ -296,7 +296,7 @@ Contributors:
 				<repository>
 					<id>platform</id>
 					<layout>p2</layout>
-					<url>http://download.eclipse.org/eclipse/updates/4.6/</url>
+					<url>http://download.eclipse.org/eclipse/updates/4.7/</url>
 				</repository>
 			</repositories>
 		</profile>
