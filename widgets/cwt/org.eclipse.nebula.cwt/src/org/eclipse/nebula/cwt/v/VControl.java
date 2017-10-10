@@ -236,19 +236,13 @@ public abstract class VControl {
 	}
 
 	void attachListeners(boolean keyListeners) {
-//			if(keyListeners && this != VTracker.getFocusControl()) {
-//				System.out.println("this: " + this + ", focusControl: " + VTracker.getFocusControl());
-//				throw new UnsupportedOperationException();
-//			}
-//			if(!keyListeners || this == VTracker.getFocusControl()) {
-				Set<Integer> eventTypes = new HashSet<Integer>(this.eventTypes);
-				eventTypes.addAll(listeners.keySet());
-				for(Integer eventType : eventTypes) {
-					if(include(keyListeners, eventType)) {
-						composite.addListener(eventType, listener);
-					}
-				}
-//			}
+	    Set<Integer> eventTypes = new HashSet<Integer>(this.eventTypes);
+	    eventTypes.addAll(listeners.keySet());
+	    for(Integer eventType : eventTypes) {
+	        if(include(keyListeners, eventType)) {
+	            composite.addListener(eventType, listener);
+	        }
+	    }
 	}
 
 	void detachListeners(boolean keyListeners) {
@@ -420,7 +414,6 @@ public abstract class VControl {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	public <T> T getData(String name, Class<T> clazz) {
 		if(dataMap != null) {
 			return (T) dataMap.get(name);
@@ -693,11 +686,11 @@ public abstract class VControl {
 	}
 
 	public void setAlpha(GC gc) {
-		gc.setAlpha((int) (2.55 * (double) visibility));
+		gc.setAlpha((int) (2.55 * visibility));
 	}
 
 	public void setAlpha(GC gc, int alpha) {
-		gc.setAlpha((int) ((double) alpha * (double) visibility * (double) 0.01));
+		gc.setAlpha((int) ((double) alpha * (double) visibility * 0.01));
 	}
 
 	public void setBackground(Color color) {
@@ -713,13 +706,6 @@ public abstract class VControl {
 		bounds.width = width;
 		bounds.height = height;
 
-		Point p = getDisplay().getCursorLocation();
-		if(bounds.contains(toControl(p))) {
-			activate();
-		} else {
-			deactivate();
-		}
-		
 		if(moved) {
 			notifyListeners(SWT.Move, new Event());
 		}
@@ -997,7 +983,7 @@ public abstract class VControl {
 									setVisibility(visibility + (visible ? 10 : -10));
 									composite.update();
 								}
-							};
+							}
 						});
 						if(!disposed) {
 							try {
@@ -1014,7 +1000,7 @@ public abstract class VControl {
 									setVisible(visible);
 									composite.update();
 								}
-							};
+							}
 						});
 					}
 					if(callback != null) {

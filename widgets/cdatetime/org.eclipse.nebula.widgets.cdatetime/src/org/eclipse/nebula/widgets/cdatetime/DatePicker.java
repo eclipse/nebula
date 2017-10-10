@@ -91,7 +91,6 @@ class DatePicker extends VPanel {
 	AnalogTimePicker timePanel;
 
 	private CDateTime cdt;
-	private int fields = 0;
 	private SimpleDateFormat sdf;
 	private String lastPattern;
 
@@ -966,14 +965,6 @@ class DatePicker extends VPanel {
 
 	public void setFields(int[] calendarFields) {
 		cdt.builder.setFields(calendarFields);
-		fields = 0;
-		int[] fa = getFields();
-		for (int i = 0; i < calendarFields.length; i++) {
-			for (int j = 0; j < fa.length; j++) {
-				if (calendarFields[i] == fa[j])
-					fields |= (1 << j);
-			}
-		}
 
 		createContents();
 		updateLabels();
@@ -1449,6 +1440,7 @@ class DatePicker extends VPanel {
 
 	private void setCDTSelection(Date selection) {
 		cdt.setSelection(selection);
+		setFocusToSelection();
 		cdt.fireSelectionChanged();
 	}
 
