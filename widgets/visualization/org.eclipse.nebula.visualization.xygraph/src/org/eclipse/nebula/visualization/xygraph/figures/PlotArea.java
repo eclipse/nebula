@@ -389,6 +389,13 @@ public class PlotArea extends Figure {
 	 */
 	private ZoomType previousZoomType = ZoomType.NONE;
 
+	private enum PanStatus {
+		X_FAIL,
+		Y_FAIL,
+		XY_FAIL,
+		SUCCESS,
+	}
+
 	/**
 	 * Listener to mouse events, performs panning and some zooms Is very similar
 	 * to the Axis.AxisMouseListener, but unclear how easy/useful it would be to
@@ -519,8 +526,22 @@ public class PlotArea extends Figure {
 				end = new Point(bounds.x + bounds.width, me.getLocation().y);
 				break;
 			case PANNING:
+				Point old = end == null ? start : end;
 				end = me.getLocation();
-				pan();
+				switch (pan()) { // reset parts of end point
+				case XY_FAIL:
+					end = old;
+					break;
+				case X_FAIL:
+					end.y = old.y;
+					break;
+				case Y_FAIL:
+					end.x = old.x;
+					break;
+				case SUCCESS:
+				default:
+					break;
+				}
 				break;
 			default:
 				break;
@@ -631,19 +652,28 @@ public class PlotArea extends Figure {
 		}
 
 		/** Pan axis according to start/end from mouse listener */
-		private void pan() {
+		private PanStatus pan() {
 			List<Axis> axes = xyGraph.getXAxisList();
+			PanStatus status = PanStatus.SUCCESS;
 			for (int i = 0; i < axes.size(); ++i) {
 				final Axis axis = axes.get(i);
-				axis.pan(xAxisStartRangeList.get(i), axis.getPositionValue(start.x, false),
-						axis.getPositionValue(end.x, false));
+				if (axis.panChecked(xAxisStartRangeList.get(i), axis.getPositionValue(start.x, false),
+						axis.getPositionValue(end.x, false))) {
+					status = PanStatus.X_FAIL;
+					break;
+				}
 			}
 			axes = xyGraph.getYAxisList();
 			for (int i = 0; i < axes.size(); ++i) {
 				final Axis axis = axes.get(i);
-				axis.pan(yAxisStartRangeList.get(i), axis.getPositionValue(start.y, false),
-						axis.getPositionValue(end.y, false));
+				if (axis.panChecked(yAxisStartRangeList.get(i), axis.getPositionValue(start.y, false),
+						axis.getPositionValue(end.y, false))) {
+					status = status == PanStatus.X_FAIL ? PanStatus.XY_FAIL : PanStatus.Y_FAIL;
+					break;
+				}
 			}
+
+			return status;
 		}
 
 		/** Perform the in or out zoom according to zoomType */

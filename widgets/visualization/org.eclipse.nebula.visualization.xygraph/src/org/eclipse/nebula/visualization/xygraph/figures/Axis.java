@@ -778,6 +778,9 @@ public class Axis extends LinearScale {
 			pan(startRange, getPositionValue(start.y, false), getPositionValue(end.y, false));
 	}
 
+	private final static double LOWEST_LOG_10 = -323.3062; // 4.940656e-324
+	private final static double HIGHEST_LOG_10 = 308.2547; // 1.797629e308
+
 	/**
 	 * Pan the axis
 	 * 
@@ -789,16 +792,37 @@ public class Axis extends LinearScale {
 	 *            End of the panning move
 	 */
 	protected void pan(final Range temp, double t1, double t2) {
+		panChecked(temp, t1, t2);
+	}
+
+	/**
+	 * Pan the axis and check if new range is okay
+	 * 
+	 * @param temp
+	 *            Original axis range before the panning started
+	 * @param t1
+	 *            Start of the panning move
+	 * @param t2
+	 *            End of the panning move
+	 * @return true if pan ends up out-of-bounds
+	 */
+	protected boolean panChecked(final Range temp, double t1, double t2) {
 		if (isLogScaleEnabled()) {
 			final double m = Math.log10(t2) - Math.log10(t1);
-			t1 = Math.pow(10, Math.log10(temp.getLower()) - m);
-			t2 = Math.pow(10, Math.log10(temp.getUpper()) - m);
+			t1 = Math.log10(temp.getLower()) - m;
+			t2 = Math.log10(temp.getUpper()) - m;
+			if (t1 < LOWEST_LOG_10 || t2 > HIGHEST_LOG_10) {
+				return true;
+			}
+			t1 = Math.pow(10,  t1);
+			t2 = Math.pow(10,  t2);
 		} else {
 			final double m = t2 - t1;
 			t1 = temp.getLower() - m;
 			t2 = temp.getUpper() - m;
 		}
 		setRange(t1, t2);
+		return false;
 	}
 
 	/**
@@ -810,19 +834,29 @@ public class Axis extends LinearScale {
 	 *            Zoom factor. Positive to zoom 'in', negative 'out'.
 	 */
 	public void zoomInOut(final double center, final double factor) {
-		final double t1, t2;
+		double up = getRange().getUpper();
+		double lo = getRange().getLower();
+		double t1, t2;
 		if (isLogScaleEnabled()) {
-			final double l = Math.log10(getRange().getUpper()) - Math.log10(getRange().getLower());
-			final double r1 = (Math.log10(center) - Math.log10(getRange().getLower())) / l;
-			final double r2 = (Math.log10(getRange().getUpper()) - Math.log10(center)) / l;
-			t1 = Math.pow(10, Math.log10(getRange().getLower()) + r1 * factor * l);
-			t2 = Math.pow(10, Math.log10(getRange().getUpper()) - r2 * factor * l);
+			up = Math.log10(up);
+			lo = Math.log10(lo);
+			final double l = up - lo;
+			final double r1 = Math.log10(center) - lo;
+			t1 = lo + r1 * factor;
+			t2 = up - (l - r1) * factor;
+			if (t1 < LOWEST_LOG_10) { // clamp lower value
+				t1 = LOWEST_LOG_10;
+			}
+			t1 = Math.pow(10,  t1);
+			if (t2 > HIGHEST_LOG_10) { // clamp upper value
+				t2 = HIGHEST_LOG_10;
+			}
+			t2 = Math.pow(10,  t2);
 		} else {
-			final double l = getRange().getUpper() - getRange().getLower();
-			final double r1 = (center - getRange().getLower()) / l;
-			final double r2 = (getRange().getUpper() - center) / l;
-			t1 = getRange().getLower() + r1 * factor * l;
-			t2 = getRange().getUpper() - r2 * factor * l;
+			final double l = up - lo;
+			final double r1 = center - lo;
+			t1 = lo + r1 * factor;
+			t2 = up - (l - r1) * factor;
 		}
 		setRange(t1, t2, true);
 	}
