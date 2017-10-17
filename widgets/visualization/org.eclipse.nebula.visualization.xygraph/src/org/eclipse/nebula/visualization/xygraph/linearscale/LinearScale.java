@@ -10,6 +10,7 @@ package org.eclipse.nebula.visualization.xygraph.linearscale;
 import org.eclipse.draw2d.FigureUtilities;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.nebula.visualization.internal.xygraph.utils.LargeNumberUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -254,8 +255,13 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 			// "Invalid value: value must be greater than 0");
 			pixelsToStart = ((Math.log10(value) - Math.log10(min)) / (Math.log10(max) - Math.log10(min))
 					* ((double) length - 2d * margin)) + margin;
-		} else
-			pixelsToStart = ((value - min) / (max - min) * ((double) length - 2d * margin)) + margin;
+		} else {
+			double f = LargeNumberUtils.maxMagnitude(min, max);
+			max /= f;
+			min /= f;
+			double t = max - min;
+			pixelsToStart = ((value / f - min) / t * ((double) length - 2d * margin)) + margin;
+		}
 
 		if (relative) {
 			if (orientation == Orientation.HORIZONTAL)
@@ -314,11 +320,16 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 		Range r = getLocalRange();
 		double min = r.getLower();
 		double max = r.getUpper();
-		if (isLogScaleEnabled())
+		if (isLogScaleEnabled()) {
 			value = Math.pow(10, (pixelsToStart - margin) * (Math.log10(max) - Math.log10(min)) / (length - 2 * margin)
 					+ Math.log10(min));
-		else
-			value = (pixelsToStart - margin) * (max - min) / (length - 2 * margin) + min;
+		} else {
+			double f = LargeNumberUtils.maxMagnitude(min, max);
+			max /= f;
+			min /= f;
+			double t = max - min;
+			value = ((pixelsToStart - margin) / (length - 2 * margin) * t + min) * f;
+		}
 
 		return value;
 	}

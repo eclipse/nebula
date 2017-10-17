@@ -19,6 +19,7 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.nebula.visualization.internal.xygraph.undo.AxisPanOrZoomCommand;
 import org.eclipse.nebula.visualization.internal.xygraph.undo.SaveStateCommand;
+import org.eclipse.nebula.visualization.internal.xygraph.utils.LargeNumberUtils;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.IDataProvider;
 import org.eclipse.nebula.visualization.xygraph.linearscale.LinearScale;
 import org.eclipse.nebula.visualization.xygraph.linearscale.Range;
@@ -411,7 +412,13 @@ public class Axis extends LinearScale {
 			min = Log10.log10(min);
 		}
 
-		double thr = (tempMax - tempMin) * autoScaleThreshold;
+		double f = LargeNumberUtils.maxMagnitude(tempMin, tempMax);
+		max /= f;
+		min /= f;
+		tempMax /= f;
+		tempMin /= f;
+		double thr = tempMax - tempMin;
+		thr *= autoScaleThreshold;
 
 		if (tempMax == tempMin) {
 			if (tempMax == 0) {
@@ -435,6 +442,11 @@ public class Axis extends LinearScale {
 			else
 				tempMax = max;
 		}
+
+		max = LargeNumberUtils.requireFinite(max * f);
+		min = LargeNumberUtils.requireFinite(min * f);
+		tempMax = LargeNumberUtils.requireFinite(tempMax * f);
+		tempMin = LargeNumberUtils.requireFinite(tempMin * f);
 
 		// Any change at all?
 		if ((Double.doubleToLongBits(tempMin) == Double.doubleToLongBits(min)
@@ -817,9 +829,13 @@ public class Axis extends LinearScale {
 			t1 = Math.pow(10,  t1);
 			t2 = Math.pow(10,  t2);
 		} else {
-			final double m = t2 - t1;
-			t1 = temp.getLower() - m;
-			t2 = temp.getUpper() - m;
+			double f = LargeNumberUtils.maxMagnitude(t1, t2);
+			double m = t2 / f - t1 / f;
+			t1 = (temp.getLower() / f - m) * f;
+			t2 = (temp.getUpper() / f - m) * f;
+			if (Double.isInfinite(t1) || Double.isInfinite(t2)) {
+				return true;
+			}
 		}
 		setRange(t1, t2);
 		return false;
@@ -853,10 +869,13 @@ public class Axis extends LinearScale {
 			}
 			t2 = Math.pow(10,  t2);
 		} else {
-			final double l = up - lo;
-			final double r1 = center - lo;
-			t1 = lo + r1 * factor;
-			t2 = up - (l - r1) * factor;
+			double f = LargeNumberUtils.maxMagnitude(lo, up);
+			lo /= f;
+			up /= f;
+			double l = up - lo;
+			final double r1 = center / f - lo;
+			t1 = LargeNumberUtils.requireFinite((lo + r1 * factor) * f);
+			t2 = LargeNumberUtils.requireFinite((up - (l - r1) * factor) * f);
 		}
 		setRange(t1, t2, true);
 	}

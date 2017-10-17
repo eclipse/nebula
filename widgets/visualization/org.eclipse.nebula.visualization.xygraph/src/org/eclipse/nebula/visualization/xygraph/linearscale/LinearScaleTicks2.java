@@ -201,8 +201,19 @@ public class LinearScaleTicks2 implements ITicksProvider {
 		} while (!updateLabelPositionsAndCheckGaps(length, hMargin, tMargin, min > max) && numTicks-- > MIN_TICKS);
 
 		updateMinorTicks(hMargin + length);
-		if (scale.hasTicksAtEnds() && ticks.size() > 1)
-			return new Range(ticks.get(0).getValue(), ticks.get(ticks.size() - 1).getValue());
+		if (scale.hasTicksAtEnds() && ticks.size() > 1) {
+			// check for extreme case where outer ticks has been placed inside
+			// requested range owing to their magnitude exceeding Double.MAX_VALUE
+			double lo = ticks.get(0).getValue();
+			if (min < lo) {
+				lo = min;
+			}
+			double hi = ticks.get(ticks.size() - 1).getValue();
+			if (max > hi) {
+				hi = max;
+			}
+			return new Range(lo, hi);
+		}
 
 		return null;
 	}

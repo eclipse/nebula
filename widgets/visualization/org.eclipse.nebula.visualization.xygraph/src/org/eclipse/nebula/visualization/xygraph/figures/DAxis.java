@@ -18,6 +18,7 @@ import java.util.Map;
 
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.nebula.visualization.internal.xygraph.utils.LargeNumberUtils;
 import org.eclipse.nebula.visualization.xygraph.linearscale.ITicksProvider;
 import org.eclipse.nebula.visualization.xygraph.linearscale.LinearScaleTickLabels;
 import org.eclipse.nebula.visualization.xygraph.linearscale.LinearScaleTickLabels2;
@@ -50,8 +51,8 @@ public class DAxis extends Axis {
 	/** the default minimum value of log scale range */
 	private final static double DEFAULT_LOG_SCALE_MIN = 0.0001d;
 
-	// used if difference between min and max is too small
-	private static final double ZERO_RANGE_FRACTION = 0.125;
+	// used if difference between min and max is zero
+	private static final double ZERO_RANGE_LOWEST_FRACTION = Math.pow(2, -53);
 
 	/**
 	 * Constructor that creates a DAxis with no title
@@ -324,21 +325,41 @@ public class DAxis extends Axis {
 
 	@Override
 	public void setRange(double lower, double upper) {
+		internalSetRange(lower, upper, false);
+	}
+
+	private void internalSetRange(double lower, double upper, boolean ticksAtEnd) {
 		Range old_range = getRange();
 		if (old_range.getLower() == lower && old_range.getUpper() == upper) {
 			return;
 		}
-		setTicksAtEnds(false);
 
-		if (Double.isNaN(lower) || Double.isNaN(upper) || Double.isInfinite(lower) || Double.isInfinite(upper)
-				|| Double.isInfinite(upper - lower)) {
+		setTicksAtEnds(ticksAtEnd);
+
+		if (Double.isNaN(lower) || Double.isNaN(upper) || Double.isInfinite(lower) || Double.isInfinite(upper)) {
 			throw new IllegalArgumentException("Illegal range: lower=" + lower + ", upper=" + upper);
 		}
 		forceRange = lower == upper;
 		if (forceRange) {
-			final double delta = (lower == 0 ? 1 : Math.abs(lower)) * ZERO_RANGE_FRACTION;
-			upper += delta;
-			lower -= delta;
+			double delta = (lower == 0 ? 1 : Math.abs(lower));
+			double limit = delta * ZERO_RANGE_LOWEST_FRACTION;
+			double h;
+			double l;
+			do { // split ends of range apart equally
+				delta /= 2;
+				h = upper + delta;
+				l = lower - delta;
+			} while ((Double.isInfinite(h) || Double.isInfinite(l)) && delta > limit);
+
+			if (Double.isInfinite(h)) { // limit splitting to one side
+				lower = l - delta;
+			}
+			if (Double.isInfinite(l)) {
+				upper = h + delta;
+			} else {
+				upper = h;
+				lower = l;
+			}
 		}
 		if (isLogScaleEnabled()) {
 			if (upper <= 0)
@@ -438,6 +459,11 @@ public class DAxis extends Axis {
 		}
 
 		// The threshold is 'shared' between upper and lower range, times by 0.5
+		double f = Math.max(LargeNumberUtils.maxMagnitude(axisMin, axisMax), LargeNumberUtils.maxMagnitude(dataMin, dataMax));
+		axisMin /= f;
+		axisMax /= f;
+		dataMin /= f;
+		dataMax /= f;
 		final double thr = (axisMax - axisMin) * 0.5 * getAutoScaleThreshold();
 
 		boolean lowerChanged = (dataMin - axisMin) < 0 || (dataMin - axisMin) >= thr;
@@ -450,14 +476,13 @@ public class DAxis extends Axis {
 		// Calculate updated range
 		double newMax = upperChanged ? dataMax : axisMax;
 		double newMin = lowerChanged ? dataMin : axisMin;
-		range = !isInverted() ? new Range(newMin, newMax) : new Range(newMax, newMin);
 
-		// by-pass overridden method as it sets ticks to false
-		super.setRange(range.getLower(), range.getUpper());
-		cachedFormats.clear();
-		fireAxisRangeChanged(getRange(), range);
-		setTicksAtEnds(!axisAutoscaleTight);
-		repaint();
+		if (isInverted()) {
+			double t = newMin;
+			newMin = newMax;
+			newMax = t;
+		}
+		internalSetRange(newMin * f, newMax * f, !axisAutoscaleTight);
 		return true;
 	}
 

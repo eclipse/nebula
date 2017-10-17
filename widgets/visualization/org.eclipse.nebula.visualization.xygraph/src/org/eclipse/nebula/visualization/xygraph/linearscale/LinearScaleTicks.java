@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.draw2d.FigureUtilities;
 import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.nebula.visualization.internal.xygraph.utils.LargeNumberUtils;
 
 /**
  * Default scale tick mark algorithm
@@ -225,7 +226,8 @@ public class LinearScaleTicks implements ITicksProvider {
 			}
 		}
 
-		double length = Math.abs(max - min);
+		double length = LargeNumberUtils.requireFinite(Math.abs(max - min));
+
 		double majorTickMarkStepHint = scale.getMajorTickMarkStepHint();
 		if (majorTickMarkStepHint > lengthInPixels)
 			majorTickMarkStepHint = lengthInPixels;
@@ -391,7 +393,9 @@ public class LinearScaleTicks implements ITicksProvider {
 	 */
 	private void updateTickLabelForLinearScale(double min, double max, int length) {
 		double gridStep = getGridStep(length, min, max);
-		gridStepInPixel = (int) (length * gridStep / (max - min));
+		double f = LargeNumberUtils.maxMagnitude(min, max);
+		double t = max / f - min / f;
+		gridStepInPixel = (int) (length * (gridStep / f) / t);
 		updateTickLabelForLinearScale(min, max, length, gridStep);
 	}
 
@@ -445,21 +449,31 @@ public class LinearScaleTicks implements ITicksProvider {
 		}
 
 		int i = 1;
-		for (double b = firstPosition; max >= min ? b < max : b > max; b = firstPosition + i++ * tickStep) {
+		double f = LargeNumberUtils.maxMagnitude(min, max);
+		max /= f;
+		min /= f;
+		tickStep /= f;
+		firstPosition /= f;
+		double t = max - min;
+		for (double p = firstPosition; max >= min ? p < max : p > max; p = firstPosition + i++ * tickStep) {
+			double b = p * f;
+			if (Double.isInfinite(b)) {
+				continue;
+			}
 			if (scale.isDateEnabled()) {
 				Date date = new Date((long) b);
-				tickLabels.add(scale.format(date, b == firstPosition && !minDateAdded));
+				tickLabels.add(scale.format(date, i == 1 && !minDateAdded));
 			} else {
 				tickLabels.add(scale.format(b));
 			}
 			tickLabelValues.add(b);
 
-			int tickLabelPosition = (int) ((b - min) / (max - min) * length) + scale.getMargin();
-			// - LINE_WIDTH;
+			int tickLabelPosition = (int) ((p - min) / t * length) + scale.getMargin();
 			tickLabelPositions.add(tickLabelPosition);
 		}
 
 		// always add max
+		max *= f;
 		tickLabelValues.add(max);
 		String lblStr;
 		if (showMaxLabel) {
@@ -473,8 +487,6 @@ public class LinearScaleTicks implements ITicksProvider {
 			lblStr = "";
 		tickLabels.add(lblStr);
 		tickLabelPositions.add(scale.getMargin() + length);
-		// }
-
 	}
 
 	/**

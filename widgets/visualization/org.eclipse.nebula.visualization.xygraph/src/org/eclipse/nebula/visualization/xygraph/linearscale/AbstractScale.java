@@ -17,6 +17,7 @@ import java.util.Objects;
 
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.TextUtilities;
+import org.eclipse.nebula.visualization.internal.xygraph.utils.LargeNumberUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 
@@ -454,21 +455,9 @@ public abstract class AbstractScale extends Figure {
 	 *             (upper - lower) is Infinite
 	 */
 	public void setRange(double lower, double upper) {
-		if (Double.isNaN(lower) || Double.isNaN(upper) || Double.isInfinite(lower) || Double.isInfinite(upper)
-				|| Double.isInfinite(upper - lower)) {
+		if (Double.isNaN(lower) || Double.isNaN(upper) || Double.isInfinite(lower) || Double.isInfinite(upper)) {
 			throw new IllegalArgumentException("Illegal range: lower=" + lower + ", upper=" + upper);
 		}
-
-		// in case of lower > upper, reverse them.
-		// if(lower > upper){
-		// double temp = lower;
-		// lower = upper;
-		// upper = temp;
-		// }
-
-		// if (min == lower && max == upper) {
-		// return;
-		// }
 
 		if (lower == upper) {
 			upper = lower + 1;
@@ -485,12 +474,13 @@ public abstract class AbstractScale extends Figure {
 
 		// calculate the default decimal format
 		if (formatPattern == null || formatPattern == default_decimal_format) {
-			if (Math.abs(max - min) > 0.1)
+			double f = LargeNumberUtils.maxMagnitude(min, max);
+			double mantissa = Math.abs(max / f - min / f);
+			if (mantissa > 0.1*f) {
 				default_decimal_format = "############.##";
-			else {
+			} else {
 				default_decimal_format = "##.##";
-				double mantissa = Math.abs(max - min);
-				while (mantissa < 1) {
+				while (mantissa < f) {
 					mantissa *= 10.0;
 					default_decimal_format += "#";
 				}

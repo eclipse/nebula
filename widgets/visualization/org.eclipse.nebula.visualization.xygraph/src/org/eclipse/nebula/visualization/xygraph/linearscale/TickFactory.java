@@ -8,10 +8,13 @@
 package org.eclipse.nebula.visualization.xygraph.linearscale;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import org.eclipse.nebula.visualization.internal.xygraph.utils.LargeNumberUtils;
 
 /**
  * Tick factory produces the different axis ticks. When specifying a format and
@@ -256,6 +259,10 @@ public class TickFactory {
 		return e;
 	}
 
+	private static BigDecimal divide(BigDecimal dividend, int divisor) {
+		return dividend.divide(BigDecimal.valueOf(divisor), dividend.scale() + 2, RoundingMode.DOWN);
+	}
+
 	/**
 	 * @param x
 	 * @param round
@@ -268,6 +275,8 @@ public class TickFactory {
 		double nf; /* nice, rounded number */
 		BigDecimal bf;
 
+		boolean negative = x.signum() == -1;
+		x = x.abs();
 		expv = log10(x);
 		bf = x.scaleByPowerOfTen(-expv);
 		f = bf.doubleValue(); /* between 1 and 10 */
@@ -290,7 +299,11 @@ public class TickFactory {
 			nf = 5;
 		else
 			nf = 10;
-		return BigDecimal.valueOf(BigDecimal.valueOf(nf).scaleByPowerOfTen(expv).doubleValue()).stripTrailingZeros();
+
+		if (negative) {
+			nf = -nf;
+		}
+		return BigDecimal.valueOf(nf).scaleByPowerOfTen(expv).stripTrailingZeros();
 	}
 
 	private double determineNumTicks(double min, double max, int maxTicks, boolean allowMinMaxOver) {
@@ -334,17 +347,29 @@ public class TickFactory {
 		do {
 			long n;
 			do { // ensure number of ticks is less or equal to number requested
-				bUnit = nicenum(BigDecimal.valueOf(bRange.doubleValue() / nTicks), true);
+				bUnit = nicenum(divide(bRange, nTicks), true);
 				n = bRange.divideToIntegralValue(bUnit).longValue();
 			} while (n > maxTicks && --nTicks > 0);
 
 			if (allowMinMaxOver) {
 				graphMin = roundDown(bMin, bUnit);
-				if (graphMin == 0) // ensure positive zero
+				if (graphMin == 0) { // ensure positive zero
 					graphMin = 0;
+				} else if (Double.isInfinite(graphMin) && graphMin < 0) {
+					// ensure graph minimum can be used as double
+					graphMin = roundUp(bMin, bUnit);
+					// it signals generateTicks to loosen its bounds
+					// and use its input minimum (rather the first tick)
+				}
 				graphMax = roundUp(bMax, bUnit);
-				if (graphMax == 0)
+				if (graphMax == 0) {
 					graphMax = 0;
+				} else if (Double.isInfinite(graphMax) && graphMax > 0) {
+					// ensure graph maximum can be used as double
+					graphMax = roundDown(bMax, bUnit);
+					// it signals generateTicks to loosen its bounds
+					// and use its input maximum (rather the last tick)
+				}
 			} else {
 				if (isReversed) {
 					graphMin = max;
@@ -357,7 +382,9 @@ public class TickFactory {
 			if (bUnit.compareTo(BREL_ERROR.multiply(magnitude)) <= 0) {
 				numberOfIntervals = -1; // signal that we hit the limit of precision
 			} else {
-				numberOfIntervals = (int) Math.round((graphMax - graphMin) / bUnit.doubleValue());
+				double factor = LargeNumberUtils.maxMagnitude(graphMin, graphMax);
+				double tmp = graphMax/factor - graphMin/factor;
+				numberOfIntervals = (int) Math.round(tmp / (bUnit.doubleValue() / factor));
 			}
 		} while (numberOfIntervals > maxTicks && --nTicks > 0);
 		if (isReversed) {
@@ -406,15 +433,20 @@ public class TickFactory {
 			final boolean tight) {
 		List<Tick> ticks = new ArrayList<Tick>();
 		double tickUnit = determineNumTicks(min, max, maxTicks, allowMinMaxOver);
-		if (tickUnit == 0)
+		if (tickUnit == 0) {
 			return ticks;
+		}
 
+		double tmin = graphMin / tickUnit;
 		for (int i = 0; i <= numberOfIntervals; i++) {
-			double p = graphMin + i * tickUnit;
-			if (Math.abs(p / tickUnit) < REL_ERROR)
+			double p = (tmin + i) * tickUnit;
+			if (Math.abs(p / tickUnit) < REL_ERROR) {
 				p = 0; // ensure positive zero
-			boolean r = inRange(p, min, max);
-			if (!tight || r) {
+			} else if (Double.isInfinite(p)) {
+				continue;
+			}
+
+			if (!tight || inRange(p, min, max)) {
 				Tick newTick = new Tick();
 				newTick.setValue(p);
 				newTick.setText(getTickString(p));
@@ -454,17 +486,23 @@ public class TickFactory {
 				imax++;
 			}
 		}
-		double lo = tight ? min : ticks.get(0).getValue();
-		double hi = tight ? max : (imax > 1 ? ticks.get(imax - 1).getValue() : lo);
+
+		// override tight flag in cases where graph ends have been
+		// modified (in determineNumTicks) to be representable as doubles
+		double lo = tight || min < graphMin ? min : ticks.get(0).getValue();
+		double hi = tight || max > graphMax ? max : (imax > 1 ? ticks.get(imax - 1).getValue() : lo);
+		double factor = LargeNumberUtils.maxMagnitude(lo, hi);
+		lo /= factor;
+		hi /= factor;
 		double range = imax > 1 ? hi - lo : 1;
 
 		if (isReversed) {
 			for (Tick t : ticks) {
-				t.setPosition(1 - (t.getValue() - lo) / range);
+				t.setPosition(1 - (t.getValue()/factor - lo) / range);
 			}
 		} else {
 			for (Tick t : ticks) {
-				t.setPosition((t.getValue() - lo) / range);
+				t.setPosition((t.getValue()/factor - lo) / range);
 			}
 		}
 		return ticks;

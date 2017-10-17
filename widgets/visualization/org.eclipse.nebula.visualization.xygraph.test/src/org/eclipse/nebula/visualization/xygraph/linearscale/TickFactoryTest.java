@@ -153,6 +153,9 @@ public class TickFactoryTest {
 		Assert.assertEquals(new BigDecimal("1e1"), TickFactory.nicenum(BigDecimal.valueOf(8.3), true));
 		Assert.assertEquals(new BigDecimal("1e1"), TickFactory.nicenum(BigDecimal.valueOf(9.7), true));
 		Assert.assertEquals(new BigDecimal("1e1"), TickFactory.nicenum(BigDecimal.valueOf(10), true));
+
+		Assert.assertEquals(new BigDecimal("2e308"), TickFactory.nicenum(new BigDecimal("1.6e+308"), true));
+		Assert.assertEquals(new BigDecimal("-2e308"), TickFactory.nicenum(new BigDecimal("-1.6e+308"), true));
 	}
 
 	@Test
@@ -201,6 +204,21 @@ public class TickFactoryTest {
 
 		testGeneratedLooseTicks(0, 12, 8, "0.0", "2.5", "5.0", "7.5", "10.0", "12.5");
 		testGeneratedTightTicks(0, 12, 8, "0.0", "2.5", "5.0", "7.5", "10.0");
+	}
+
+	@Test
+	public void testExtremeTicks() {
+		testGeneratedLooseTicks(0, 0.9e308, 6, "0.0e+00", "2.0e+307", "4.0e+307", "6.0e+307", "8.0e+307", "1.0e+308");
+		testGeneratedTightTicks(0, 0.9e308, 6, "0.0e+00", "2.0e+307", "4.0e+307", "6.0e+307", "8.0e+307");
+
+		testGeneratedLooseTicks(0, 1.6e308, 6, "0.0e+00", "5.0e+307", "1.0e+308", "1.5e+308");
+		testGeneratedTightTicks(0, 1.6e308, 6, "0.0e+00", "5.0e+307", "1.0e+308", "1.5e+308");
+
+		testGeneratedLooseTicks(-0.9e308, 0.9e308, 5, "-1.0e+308", "-5.0e+307", "0.0e+00", "5.0e+307", "1.0e+308");
+		testGeneratedTightTicks(-0.9e308, 0.9e308, 5, "-5.0e+307", "0.0e+00", "5.0e+307");
+
+		testGeneratedLooseTicks(-1.6e308, 1.6e308, 5, "-1e+308", "0e+00", "1e+308");
+		testGeneratedTightTicks(-1.6e308, 1.6e308, 5, "-1e+308", "0e+00", "1e+308");
 	}
 
 	@Test
