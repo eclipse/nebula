@@ -1,7 +1,8 @@
 package org.eclipse.nebula.visualization.xygraph.examples;
 
+import org.eclipse.draw2d.ColorConstants;
 /*******************************************************************************
- * Copyright (c) 2010 Oak Ridge National Laboratory.
+ * Copyright (c) 2010, 2017 Oak Ridge National Laboratory.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,9 +10,11 @@ package org.eclipse.nebula.visualization.xygraph.examples;
  ******************************************************************************/
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.CircularBufferDataProvider;
+import org.eclipse.nebula.visualization.xygraph.figures.Annotation;
 import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace;
 import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
+import org.eclipse.nebula.visualization.xygraph.figures.Annotation.CursorLineStyle;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace.PointStyle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -50,6 +53,20 @@ public class SimpleExample {
 
 		// set trace property
 		trace.setPointStyle(PointStyle.XCROSS);
+
+		// Create an annotation on Primary axis, pName is a String
+		Annotation lAnnotation = new Annotation("Point1", xyGraph.getPrimaryXAxis(), xyGraph.getPrimaryYAxis());
+
+		// Set the value as an X
+		lAnnotation.setValues(10, 11);
+		lAnnotation.setEnabled(true); // the annotation can be moved on the graph
+		lAnnotation.setShowPosition(true);
+		lAnnotation.setShowName(true);
+		lAnnotation.setShowSampleInfo(false);
+
+		lAnnotation.setCursorLineStyle(CursorLineStyle.NONE);
+		lAnnotation.setAnnotationColor(ColorConstants.darkGray);
+		xyGraph.addAnnotation(lAnnotation);
 
 		// add the trace to xyGraph
 		xyGraph.addTrace(trace);
