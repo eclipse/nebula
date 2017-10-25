@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.nebula.widgets.grid.feature"
       label="Nebula Grid Widget"
-      version="1.0.0.qualifier"
+      version="1.1.0.qualifier"
       provider-name="Eclipse Nebula">
 
    <description url="http://eclipse.org/nebula">
@@ -17,14 +17,14 @@
          id="org.eclipse.nebula.widgets.grid"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.nebula.widgets.grid.source"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
 </feature>
