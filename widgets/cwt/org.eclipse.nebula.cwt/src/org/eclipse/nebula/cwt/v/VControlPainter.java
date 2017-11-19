@@ -168,13 +168,25 @@ public class VControlPainter implements IControlPainter {
 	
 	private static void paintText(VControl control, Event e) {
 		e.gc.setTextAntialias(SWT.ON);
-
 		if(control.foreground != null && !control.foreground.isDisposed()) {
 			e.gc.setForeground(control.foreground);
 		}
-
 		Point size = e.gc.textExtent(control.text);
 		e.gc.drawText(control.text, (int)getX(control, size.x), (int)getY(control, size.y), true);
+		paintSelected(control, e, size);
+	}
+
+	private static void paintSelected(VControl control, Event e, Point size) {
+		if (control.hasState(VControl.STATE_SELECTED)) {
+			e.gc.drawFocus((int) getX(control, size.x) - 2,
+					(int) getY(control, size.y), size.x + 4, size.y);
+			if (e.gc.getAdvanced()) {
+				e.gc.setBackground(control.getForeground());
+				e.gc.setAlpha(40);
+				e.gc.fillRectangle((int) getX(control, size.x) - 2,
+						(int) getY(control, size.y), size.x + 4, size.y);
+			}
+		}
 	}
 
 	public void dispose() {
