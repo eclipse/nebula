@@ -40,7 +40,7 @@ public class CDateTimePainter implements IControlPainter {
 	}
 
 	private void defaultPaintBackground(VControl control, Event e) {
-		switch(control.getType()) {
+		switch (control.getType()) {
 		case Button:
 			buttonPainter.paintBackground(control, e);
 			break;
@@ -52,9 +52,9 @@ public class CDateTimePainter implements IControlPainter {
 			break;
 		}
 	}
-	
+
 	private void defaultPaintBorders(VControl control, Event e) {
-		switch(control.getType()) {
+		switch (control.getType()) {
 		case Button:
 			buttonPainter.paintBorders(control, e);
 			break;
@@ -66,9 +66,9 @@ public class CDateTimePainter implements IControlPainter {
 			break;
 		}
 	}
-	
+
 	private void defaultPaintContent(VControl control, Event e) {
-		switch(control.getType()) {
+		switch (control.getType()) {
 		case Button:
 			buttonPainter.paintContent(control, e);
 			break;
@@ -81,6 +81,7 @@ public class CDateTimePainter implements IControlPainter {
 		}
 	}
 
+	@Override
 	public void dispose() {
 		buttonPainter.dispose();
 		labelPainter.dispose();
@@ -93,15 +94,15 @@ public class CDateTimePainter implements IControlPainter {
 
 	protected final int indexOf(VControl control) {
 		Object obj = control.getData(CDT.Key.Index);
-		if(obj instanceof Integer) {
+		if (obj instanceof Integer) {
 			return (Integer) obj;
 		}
 		return -1;
 	}
-	
+
 	protected final boolean isActive(VControl control) {
 		Object obj = control.getData(CDT.Key.Active);
-		if(obj instanceof Boolean) {
+		if (obj instanceof Boolean) {
 			return (Boolean) obj;
 		}
 		return false;
@@ -109,14 +110,15 @@ public class CDateTimePainter implements IControlPainter {
 
 	protected final boolean isToday(VControl control) {
 		Object obj = control.getData(CDT.Key.Today);
-		if(obj instanceof Boolean) {
+		if (obj instanceof Boolean) {
 			return (Boolean) obj;
 		}
 		return false;
 	}
 
+	@Override
 	public final void paintBackground(VControl control, Event e) {
-		switch((CDT.PickerPart) control.getData(CDT.PickerPart)) {
+		switch ((CDT.PickerPart) control.getData(CDT.PickerPart)) {
 		case ClearButton:
 			paintClearButtonBackground(control, e);
 			break;
@@ -168,8 +170,9 @@ public class CDateTimePainter implements IControlPainter {
 		}
 	}
 
+	@Override
 	public final void paintBorders(VControl control, Event e) {
-		switch((CDT.PickerPart) control.getData(CDT.PickerPart)) {
+		switch ((CDT.PickerPart) control.getData(CDT.PickerPart)) {
 		case ClearButton:
 			paintClearButtonBorders(control, e);
 			break;
@@ -233,8 +236,9 @@ public class CDateTimePainter implements IControlPainter {
 		defaultPaintContent(control, e);
 	}
 
+	@Override
 	public final void paintContent(VControl control, Event e) {
-		switch((CDT.PickerPart) control.getData(CDT.PickerPart)) {
+		switch ((CDT.PickerPart) control.getData(CDT.PickerPart)) {
 		case ClearButton:
 			paintClearButtonContent(control, e);
 			break;
@@ -342,22 +346,26 @@ public class CDateTimePainter implements IControlPainter {
 		defaultPaintBorders(control, e);
 		Calendar cal = cdt.getCalendarInstance();
 		VPanel picker = getPicker();
-		if(picker instanceof DatePicker) {
+		if (picker instanceof DatePicker) {
 			VButton[] days = ((DatePicker) picker).dayButtons;
-			for(int i = 1; i < days.length; i++) {
+			for (int i = 1; i < days.length; i++) {
 				VButton day = days[i];
 				cal.setTime(day.getData(CDT.Key.Date, Date.class));
-				if(cal.get(Calendar.DAY_OF_MONTH) == 1 && !isActive(day) && !isActive(days[i-1])) {
+				if (cal.get(Calendar.DAY_OF_MONTH) == 1 && !isActive(day)
+						&& !isActive(days[i - 1])) {
 					Rectangle bounds = day.getBounds();
 					Rectangle pbounds = control.getBounds();
-					if(indexOf(day) % 7 != 0) {
-						e.gc.drawLine(bounds.x, bounds.y, bounds.x, bounds.y+bounds.height);
+					if (indexOf(day) % 7 != 0) {
+						e.gc.drawLine(bounds.x, bounds.y, bounds.x,
+								bounds.y + bounds.height);
 					}
-					if(indexOf(day) > 7) {
-						e.gc.drawLine(bounds.x, bounds.y, pbounds.x+pbounds.width, bounds.y);
+					if (indexOf(day) > 7) {
+						e.gc.drawLine(bounds.x, bounds.y,
+								pbounds.x + pbounds.width, bounds.y);
 					}
-					e.gc.drawLine(pbounds.x, bounds.y+bounds.height, bounds.x, bounds.y+bounds.height);
-					
+					e.gc.drawLine(pbounds.x, bounds.y + bounds.height, bounds.x,
+							bounds.y + bounds.height);
+
 					i += 28;
 				}
 			}
@@ -479,7 +487,7 @@ public class CDateTimePainter implements IControlPainter {
 	public final void setButtonPainter(IControlPainter painter) {
 		this.buttonPainter = painter;
 	}
-	
+
 	void setCDateTime(CDateTime cdt) {
 		this.cdt = cdt;
 	}
@@ -489,7 +497,7 @@ public class CDateTimePainter implements IControlPainter {
 	}
 
 	public final void update(VControl control) {
-		switch((CDT.PickerPart) control.getData(CDT.PickerPart)) {
+		switch ((CDT.PickerPart) control.getData(CDT.PickerPart)) {
 		case ClearButton:
 			updateClearButton(control);
 			break;
@@ -546,12 +554,15 @@ public class CDateTimePainter implements IControlPainter {
 	}
 
 	protected void updateDayButton(VControl control) {
-		if(isToday(control)) {
-			control.setForeground(control.getDisplay().getSystemColor(SWT.COLOR_RED));
-		} else if(isActive(control)) {
-			control.setForeground(control.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+		if (isToday(control)) {
+			control.setForeground(
+					control.getDisplay().getSystemColor(SWT.COLOR_RED));
+		} else if (isActive(control)) {
+			control.setForeground(
+					control.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 		} else {
-			control.setForeground(control.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
+			control.setForeground(
+					control.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
 		}
 	}
 
@@ -559,11 +570,13 @@ public class CDateTimePainter implements IControlPainter {
 	}
 
 	protected void updateDayOfWeekPanel(VControl control) {
-		control.setBackground(control.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		control.setBackground(
+				control.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 	}
 
 	protected void updateDayPanel(VControl control) {
-		control.setBackground(control.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		control.setBackground(
+				control.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 	}
 
 	protected void updateFooterButton(VControl control) {

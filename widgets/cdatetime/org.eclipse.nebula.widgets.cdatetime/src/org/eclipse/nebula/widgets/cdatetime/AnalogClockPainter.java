@@ -71,11 +71,10 @@ class AnalogClockPainter implements IControlPainter {
 		float angleM = cal.get(Calendar.MINUTE) * 6;
 		float angleH;
 		if (picker.is24Hour) {
-			angleH = (cal.get(Calendar.HOUR_OF_DAY) * 15)
-					+ (cal.get(Calendar.MINUTE) / 4);
+			angleH = cal.get(Calendar.HOUR_OF_DAY) * 15
+					+ cal.get(Calendar.MINUTE) / 4;
 		} else {
-			angleH = (cal.get(Calendar.HOUR) * 30)
-					+ (cal.get(Calendar.MINUTE) / 2);
+			angleH = cal.get(Calendar.HOUR) * 30 + cal.get(Calendar.MINUTE) / 2;
 		}
 
 		Transform o = new Transform(e.display);
@@ -246,12 +245,12 @@ class AnalogClockPainter implements IControlPainter {
 		inc = 12;
 		for (int i = 0; i < inc; i++) {
 			int x2 = x + picker.dialRadius + (int) ((picker.dialRadius - 25)
-					* (Math.cos(2 * (double) i * Math.PI / inc - Math.PI / 2)));
+					* Math.cos(2 * (double) i * Math.PI / inc - Math.PI / 2));
 			int y2 = y + picker.dialRadius + (int) ((picker.dialRadius - 25)
-					* (Math.sin(2 * (double) i * Math.PI / inc - Math.PI / 2)));
+					* Math.sin(2 * (double) i * Math.PI / inc - Math.PI / 2));
 			String str = sdf.format(tmpcal.getTime());
 			Point ss = e.gc.stringExtent(str);
-			e.gc.drawString(str, x2 - (ss.x / 2), y2 - (ss.y / 2));
+			e.gc.drawString(str, x2 - ss.x / 2, y2 - ss.y / 2);
 			tmpcal.add(Calendar.HOUR_OF_DAY, picker.is24Hour ? 2 : 1);
 		}
 

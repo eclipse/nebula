@@ -24,41 +24,38 @@ import java.util.Map.Entry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 class Resources {
 
-	private static Listener disposeListener = new Listener() {
-		public void handleEvent(Event event) {
-			List<String> invalids = new ArrayList<String>();
-			for (Entry<String, Image> entry : images.entrySet()) {
-				Image img = entry.getValue();
-				if (event.display == img.getDevice()) {
-					invalids.add(entry.getKey());
-					if (!img.isDisposed()) {
-						img.dispose();
-					}
-				}
-			}
-			for (String key : invalids) {
-				images.remove(key);
-			}
-		}
-	};
-
-	public static final String ICON_CALENDAR = "calendar.png";
-	public static final String ICON_CLOCK = "clock.png";
-	public static final String ICON_BULLET = "bullet.png";
-	public static final String ICON_CALENDAR_CLOCK = "dateclock.png";
+	public static final String ICON_CALENDAR = "calendar.png"; //$NON-NLS-1$
+	public static final String ICON_CLOCK = "clock.png"; //$NON-NLS-1$
+	public static final String ICON_BULLET = "bullet.png"; //$NON-NLS-1$
+	public static final String ICON_CALENDAR_CLOCK = "dateclock.png"; //$NON-NLS-1$
 
 	private static final String BUNDLE_NAME = Resources.class.getPackage()
 			.getName() + ".messages"; //$NON-NLS-1$
 
 	private static ResourceBundle defaultBundle;
-	private static final Map<Locale, ResourceBundle> bundles = new HashMap<Locale, ResourceBundle>();
+	private static final Map<Locale, ResourceBundle> bundles = new HashMap<>();
 
-	private static final Map<String, Image> images = new HashMap<String, Image>();
+	private static final Map<String, Image> images = new HashMap<>();
+
+	private static Listener disposeListener = event -> {
+		List<String> invalids = new ArrayList<>();
+		for (Entry<String, Image> entry : images.entrySet()) {
+			Image img = entry.getValue();
+			if (event.display == img.getDevice()) {
+				invalids.add(entry.getKey());
+				if (!img.isDisposed()) {
+					img.dispose();
+				}
+			}
+		}
+		for (String key : invalids) {
+			images.remove(key);
+		}
+	};
 
 	private static String getDefaultString(String key) {
 		if (defaultBundle == null) {
@@ -103,17 +100,17 @@ class Resources {
 		ResourceBundle bundle = bundles.get(locale);
 		if (bundle == null) {
 			bundle = ResourceBundle.getBundle(BUNDLE_NAME, locale);
-			bundles.put(locale, bundle); 
+			bundles.put(locale, bundle);
 		}
 		try {
 			return bundle.getString(key);
 		} catch (MissingResourceException e) {
-			return getDefaultString(key);  
+			return getDefaultString(key);
 		}
 	}
 
 	/**
-	 * @return
+	 * @return an icon containing a calendar and a clock.
 	 */
 	public static Image getIconCalendarClock() {
 		return getImage(ICON_CALENDAR_CLOCK);

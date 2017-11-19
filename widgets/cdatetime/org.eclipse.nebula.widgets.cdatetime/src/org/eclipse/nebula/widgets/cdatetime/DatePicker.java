@@ -17,7 +17,6 @@ import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Locale;
 
 import org.eclipse.nebula.cwt.v.VButton;
@@ -141,10 +140,10 @@ class DatePicker extends VPanel {
 	 */
 	private void adjustDays(int field, int amount) {
 		Calendar tmpcal = cdt.getCalendarInstance();
-		for (int day = 0; day < dayButtons.length; day++) {
-			tmpcal.setTime(dayButtons[day].getData(CDT.Key.Date, Date.class));
+		for (VButton dayButton : dayButtons) {
+			tmpcal.setTime(dayButton.getData(CDT.Key.Date, Date.class));
 			tmpcal.add(field, amount);
-			dayButtons[day].setData(CDT.Key.Date, tmpcal.getTime());
+			dayButton.setData(CDT.Key.Date, tmpcal.getTime());
 		}
 	}
 
@@ -165,12 +164,11 @@ class DatePicker extends VPanel {
 
 		addBodyPanel();
 
-		for (Iterator<Body> iter = cdt.builder.getBodies().iterator(); iter
-				.hasNext();) {
-			Body b = iter.next();
+		for (Body b : cdt.builder.getBodies()) {
 			if (b.newColumn) {
 				VLabel sep = new VLabel(body, SWT.SEPARATOR | SWT.VERTICAL);
-				sep.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+				sep.setLayoutData(
+						new GridData(SWT.FILL, SWT.FILL, false, false));
 				body.getLayout(VGridLayout.class).numColumns++;
 				addBodyPanel();
 			}
@@ -215,8 +213,8 @@ class DatePicker extends VPanel {
 		if (cdt.builder.hasHeader()
 				&& (cdt.builder.hasBody() || cdt.builder.hasFooter())) {
 			VLabel separator = new VLabel(this, SWT.HORIZONTAL | SWT.SEPARATOR);
-			separator.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
-					false));
+			separator.setLayoutData(
+					new GridData(SWT.FILL, SWT.FILL, false, false));
 		}
 
 		if (cdt.builder.hasBody()) {
@@ -250,17 +248,14 @@ class DatePicker extends VPanel {
 
 		bodyPanel.getLayout(VStackLayout.class).setDefault(dayPanel, false);
 
-		addListener(SWT.MouseWheel, new Listener() {
-			public void handleEvent(Event event) {
-				scrollCalendar((event.count > 0) ? SWT.ARROW_UP
-						: SWT.ARROW_DOWN);
-			}
-		});
+		addListener(SWT.MouseWheel, event -> scrollCalendar(
+				event.count > 0 ? SWT.ARROW_UP : SWT.ARROW_DOWN));
 
 		Menu bodyMenu = dayPanel.createMenu();
 
 		todayMenuItem = new MenuItem(bodyMenu, SWT.NONE);
 		todayMenuItem.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				setCDTSelection(new Date());
 			}
@@ -268,62 +263,60 @@ class DatePicker extends VPanel {
 
 		showSelMenuItem = new MenuItem(bodyMenu, SWT.NONE);
 		showSelMenuItem.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				cdt.showSelection();
 			}
 		});
 
-		dayListener = new Listener() {
-			public void handleEvent(Event event) {
-				switch (event.type) {
-				case SWT.KeyDown:
-					if (event.stateMask == 0) {
-						if (event.keyCode == SWT.KEYPAD_CR
-								|| event.character == SWT.CR
-								|| event.character == ' ') {
-							setSelectionFromFocusButton(event);
-						} else if (event.keyCode == SWT.HOME
-								|| event.keyCode == SWT.END
-								|| event.keyCode == SWT.PAGE_DOWN
-								|| event.keyCode == SWT.PAGE_UP) {
-							scrollCalendar(event.keyCode);
-							setSelectionFromFocusButton(event);
-						}
-					}
-					break;
-				case SWT.MouseDown:
-					if (event.button == 3) {
-						dayPanel.getMenu().setVisible(true);
-					}
-					break;
-				case SWT.MouseWheel:
-					scrollCalendar((event.count > 0) ? SWT.ARROW_UP
-							: SWT.ARROW_DOWN);
-					break;
-				case SWT.Selection:
-					if (event.widget == null) {
-						VButton button = (VButton) event.data;
-						int stateMask = event.stateMask;
-						setSelectionFromButton(button, stateMask);
-						// Bug 388813
-						// when the date field is the most "precise"
-						// information according to the pattern
-						if (cdt.isClosingField(Calendar.DATE)) {
-							cdt.fireSelectionChanged(true);
-						} else {
-							cdt.fireSelectionChanged();
-						}
-					}
-					break;
-				case SWT.Traverse:
-					if (event.detail == SWT.TRAVERSE_RETURN) {
+		dayListener = event -> {
+			switch (event.type) {
+			case SWT.KeyDown:
+				if (event.stateMask == 0) {
+					if (event.keyCode == SWT.KEYPAD_CR
+							|| event.character == SWT.CR
+							|| event.character == ' ') {
 						setSelectionFromFocusButton(event);
-					} else {
-						traverseSelection(event.keyCode);
+					} else if (event.keyCode == SWT.HOME
+							|| event.keyCode == SWT.END
+							|| event.keyCode == SWT.PAGE_DOWN
+							|| event.keyCode == SWT.PAGE_UP) {
+						scrollCalendar(event.keyCode);
 						setSelectionFromFocusButton(event);
 					}
-					break;
 				}
+				break;
+			case SWT.MouseDown:
+				if (event.button == 3) {
+					dayPanel.getMenu().setVisible(true);
+				}
+				break;
+			case SWT.MouseWheel:
+				scrollCalendar(event.count > 0 ? SWT.ARROW_UP : SWT.ARROW_DOWN);
+				break;
+			case SWT.Selection:
+				if (event.widget == null) {
+					VButton button = (VButton) event.data;
+					int stateMask = event.stateMask;
+					setSelectionFromButton(button, stateMask);
+					// Bug 388813
+					// when the date field is the most "precise"
+					// information according to the pattern
+					if (cdt.isClosingField(Calendar.DATE)) {
+						cdt.fireSelectionChanged(true);
+					} else {
+						cdt.fireSelectionChanged();
+					}
+				}
+				break;
+			case SWT.Traverse:
+				if (event.detail == SWT.TRAVERSE_RETURN) {
+					setSelectionFromFocusButton(event);
+				} else {
+					traverseSelection(event.keyCode);
+					setSelectionFromFocusButton(event);
+				}
+				break;
 			}
 		};
 
@@ -336,8 +329,8 @@ class DatePicker extends VPanel {
 			dayLabels[day].setPainter(cdt.getPainter());
 			cdt.getPainter().update(dayLabels[day]);
 			dayLabels[day].setMargins(1, 1);
-			dayLabels[day].setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
-					true, false));
+			dayLabels[day].setLayoutData(
+					new GridData(SWT.FILL, SWT.CENTER, true, false));
 		}
 
 		VLabel sep = new VLabel(dayPanel, SWT.HORIZONTAL | SWT.SEPARATOR);
@@ -352,8 +345,8 @@ class DatePicker extends VPanel {
 			cdt.getPainter().update(dayButtons[day]);
 			dayButtons[day].setSquare(true);
 			dayButtons[day].setMargins(4, 4);
-			dayButtons[day].setLayoutData(new GridData(SWT.FILL, SWT.FILL,
-					true, true));
+			dayButtons[day].setLayoutData(
+					new GridData(SWT.FILL, SWT.FILL, true, true));
 			dayButtons[day].addListener(SWT.KeyDown, dayListener);
 			dayButtons[day].addListener(SWT.MouseDown, dayListener);
 			dayButtons[day].addListener(SWT.MouseWheel, dayListener);
@@ -363,7 +356,8 @@ class DatePicker extends VPanel {
 	}
 
 	/**
-	 * create the footer (footerButton) for the Calendar part of this CDateTime<br/>
+	 * create the footer (footerButton) for the Calendar part of this
+	 * CDateTime<br/>
 	 * there is currently no footer for the Clock part - should there be? or
 	 * should this footer span both parts?
 	 */
@@ -382,23 +376,18 @@ class DatePicker extends VPanel {
 		footer.setLayoutData(new GridData(cdt.builder.getFooterAlignment(),
 				SWT.FILL, true, false));
 
-		for (Iterator<Footer> iter = cdt.builder.getFooters().iterator(); iter
-				.hasNext();) {
+		for (Footer f : cdt.builder.getFooters()) {
 			((VGridLayout) footer.getLayout()).numColumns++;
-			Footer f = iter.next();
 			switch (f.type) {
 			case Footer.CLEAR:
 				clear = new VButton(footer, SWT.PUSH | SWT.NO_FOCUS);
 				clear.setData(CDT.PickerPart, PickerPart.ClearButton);
 				clear.setPainter(cdt.getPainter());
 				cdt.getPainter().update(clear);
-				clear.setLayoutData(new GridData(f.alignment, SWT.FILL, f.grab,
-						false));
-				clear.addListener(SWT.Selection, new Listener() {
-					public void handleEvent(Event event) {
-						setCDTSelection(null);
-					}
-				});
+				clear.setLayoutData(
+						new GridData(f.alignment, SWT.FILL, f.grab, false));
+				clear.addListener(SWT.Selection,
+						event -> setCDTSelection(null));
 				break;
 			case Footer.TODAY:
 			case Footer.VERBOSE_TODAY:
@@ -406,13 +395,10 @@ class DatePicker extends VPanel {
 				today.setData(CDT.PickerPart, PickerPart.TodayButton);
 				today.setPainter(cdt.getPainter());
 				cdt.getPainter().update(today);
-				today.setLayoutData(new GridData(f.alignment, SWT.FILL, f.grab,
-						false));
-				today.addListener(SWT.Selection, new Listener() {
-					public void handleEvent(Event event) {
-						setCDTSelection(new Date());
-					}
-				});
+				today.setLayoutData(
+						new GridData(f.alignment, SWT.FILL, f.grab, false));
+				today.addListener(SWT.Selection,
+						event -> setCDTSelection(new Date()));
 				break;
 			}
 		}
@@ -439,10 +425,8 @@ class DatePicker extends VPanel {
 
 		GridData data;
 
-		for (Iterator<Header> iter = cdt.builder.getHeaders().iterator(); iter
-				.hasNext();) {
+		for (Header h : cdt.builder.getHeaders()) {
 			((VGridLayout) header.getLayout()).numColumns++;
-			Header h = iter.next();
 			data = new GridData(h.alignment, SWT.FILL, h.grab, false);
 			switch (h.type) {
 			case Header.DATE_NOW:
@@ -453,11 +437,8 @@ class DatePicker extends VPanel {
 				dateNow.setMargins(4, 0);
 				dateNow.setPolygon(new int[] { 7, 7 });
 				dateNow.setLayoutData(data);
-				dateNow.addListener(SWT.Selection, new Listener() {
-					public void handleEvent(Event event) {
-						setCDTSelection(new Date());
-					}
-				});
+				dateNow.addListener(SWT.Selection,
+						event -> setCDTSelection(new Date()));
 				break;
 			case Header.MONTH:
 				monthButton = new VButton(header, SWT.TOGGLE | SWT.NO_FOCUS);
@@ -470,22 +451,18 @@ class DatePicker extends VPanel {
 					monthButton.setPaintNative(false);
 				} else {
 					if (CDT.gtk) {
-						monthButton.addListener(SWT.MouseWheel, new Listener() {
-							public void handleEvent(Event event) {
-								if (SWT.MouseWheel == event.type) {
-									Calendar tmpcal = cdt.getCalendarInstance();
-									tmpcal.add(Calendar.MONTH,
-											(event.count > 0) ? 1 : -1);
-									setCDTSelection(tmpcal.getTime());
-								}
+						monthButton.addListener(SWT.MouseWheel, event -> {
+							if (SWT.MouseWheel == event.type) {
+								Calendar tmpcal = cdt.getCalendarInstance();
+								tmpcal.add(Calendar.MONTH,
+										event.count > 0 ? 1 : -1);
+								setCDTSelection(tmpcal.getTime());
 							}
 						});
 					}
-					monthButton.addListener(SWT.Selection, new Listener() {
-						public void handleEvent(Event event) {
-							handleHeaderSelection((VButton) event.data);
-						}
-					});
+					monthButton.addListener(SWT.Selection,
+							event -> handleHeaderSelection(
+									(VButton) event.data));
 
 					Menu monthMenu = monthButton.createMenu();
 					monthItems = new MenuItem[12];
@@ -493,19 +470,20 @@ class DatePicker extends VPanel {
 						Calendar tmpcal = cdt.getCalendarInstance();
 						tmpcal.set(Calendar.MONTH, i);
 						monthItems[i] = new MenuItem(monthMenu, SWT.NONE);
-						monthItems[i]
-								.setData(
-										"Month", new Integer(tmpcal.get(Calendar.MONTH))); //$NON-NLS-1$
+						monthItems[i].setData("Month", //$NON-NLS-1$
+								new Integer(tmpcal.get(Calendar.MONTH)));
 						monthItems[i]
 								.addSelectionListener(new SelectionAdapter() {
-									public void widgetSelected(SelectionEvent e) {
+									@Override
+									public void widgetSelected(
+											SelectionEvent e) {
 										MenuItem item = (MenuItem) e.widget;
 										Calendar tmpcal = cdt
 												.getCalendarInstance();
-										tmpcal.set(
-												Calendar.MONTH,
+										tmpcal.set(Calendar.MONTH,
 												((Integer) item
-														.getData("Month")).intValue()); //$NON-NLS-1$
+														.getData("Month")) //$NON-NLS-1$
+																.intValue());
 										setCDTSelection(tmpcal.getTime());
 									}
 								});
@@ -513,45 +491,41 @@ class DatePicker extends VPanel {
 				}
 				break;
 			case Header.MONTH_NEXT:
-				monthNext = new VButton(header, SWT.ARROW | SWT.RIGHT
-						| SWT.NO_FOCUS);
+				monthNext = new VButton(header,
+						SWT.ARROW | SWT.RIGHT | SWT.NO_FOCUS);
 				monthNext.setData(CDT.PickerPart, PickerPart.MonthNext);
 				monthNext.setPainter(cdt.getPainter());
 				cdt.getPainter().update(monthNext);
-				monthNext.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
-						false));
-				monthNext.addListener(SWT.Selection, new Listener() {
-					public void handleEvent(Event event) {
-						Calendar tmpcal = cdt.getCalendarInstance();
-						if (yearNext == null && yearButton != null
-								&& yearButton.getSelection()) {
-							tmpcal.add(Calendar.YEAR, 10);
-						} else {
-							tmpcal.add(Calendar.MONTH, 1);
-						}
-						setCDTSelection(tmpcal.getTime());
+				monthNext.setLayoutData(
+						new GridData(SWT.FILL, SWT.FILL, false, false));
+				monthNext.addListener(SWT.Selection, event -> {
+					Calendar tmpcal = cdt.getCalendarInstance();
+					if (yearNext == null && yearButton != null
+							&& yearButton.getSelection()) {
+						tmpcal.add(Calendar.YEAR, 10);
+					} else {
+						tmpcal.add(Calendar.MONTH, 1);
 					}
+					setCDTSelection(tmpcal.getTime());
 				});
 				break;
 			case Header.MONTH_PREV:
-				monthPrev = new VButton(header, SWT.ARROW | SWT.LEFT
-						| SWT.NO_FOCUS);
+				monthPrev = new VButton(header,
+						SWT.ARROW | SWT.LEFT | SWT.NO_FOCUS);
 				monthPrev.setData(CDT.PickerPart, PickerPart.MonthPrev);
 				monthPrev.setPainter(cdt.getPainter());
 				cdt.getPainter().update(monthPrev);
-				monthPrev.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
-						false));
-				monthPrev.addListener(SWT.Selection, new Listener() {
-					public void handleEvent(Event event) {
-						Calendar tmpcal = cdt.getCalendarInstance();
-						if (yearPrev == null && yearButton != null
-								&& yearButton.getSelection()) {
-							tmpcal.add(Calendar.YEAR, -10);
-						} else {
-							tmpcal.add(Calendar.MONTH, -1);
-						}
-						setCDTSelection(tmpcal.getTime());
+				monthPrev.setLayoutData(
+						new GridData(SWT.FILL, SWT.FILL, false, false));
+				monthPrev.addListener(SWT.Selection, event -> {
+					Calendar tmpcal = cdt.getCalendarInstance();
+					if (yearPrev == null && yearButton != null
+							&& yearButton.getSelection()) {
+						tmpcal.add(Calendar.YEAR, -10);
+					} else {
+						tmpcal.add(Calendar.MONTH, -1);
 					}
+					setCDTSelection(tmpcal.getTime());
 				});
 				break;
 			case Header.TIME:
@@ -561,13 +535,10 @@ class DatePicker extends VPanel {
 				timeButton.setData(CDT.PickerPart, PickerPart.MonthPrev);
 				timeButton.setPainter(cdt.getPainter());
 				cdt.getPainter().update(timeButton);
-				timeButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL,
-						false, false));
-				timeButton.addListener(SWT.Selection, new Listener() {
-					public void handleEvent(Event event) {
-						handleHeaderSelection((VButton) event.data);
-					}
-				});
+				timeButton.setLayoutData(
+						new GridData(SWT.FILL, SWT.FILL, false, false));
+				timeButton.addListener(SWT.Selection,
+						event -> handleHeaderSelection((VButton) event.data));
 				break;
 			case Header.YEAR:
 				yearButton = new VButton(header, SWT.TOGGLE | SWT.NO_FOCUS);
@@ -580,22 +551,18 @@ class DatePicker extends VPanel {
 					yearButton.setPaintNative(false);
 				} else {
 					if (CDT.gtk) {
-						yearButton.addListener(SWT.MouseWheel, new Listener() {
-							public void handleEvent(Event event) {
-								if (SWT.MouseWheel == event.type) {
-									Calendar tmpcal = cdt.getCalendarInstance();
-									tmpcal.add(Calendar.YEAR,
-											(event.count > 0) ? 1 : -1);
-									setCDTSelection(tmpcal.getTime());
-								}
+						yearButton.addListener(SWT.MouseWheel, event -> {
+							if (SWT.MouseWheel == event.type) {
+								Calendar tmpcal = cdt.getCalendarInstance();
+								tmpcal.add(Calendar.YEAR,
+										event.count > 0 ? 1 : -1);
+								setCDTSelection(tmpcal.getTime());
 							}
 						});
 					}
-					yearButton.addListener(SWT.Selection, new Listener() {
-						public void handleEvent(Event event) {
-							handleHeaderSelection((VButton) event.data);
-						}
-					});
+					yearButton.addListener(SWT.Selection,
+							event -> handleHeaderSelection(
+									(VButton) event.data));
 
 					Menu yearMenu = yearButton.createMenu();
 					yearItems = new MenuItem[11];
@@ -604,13 +571,15 @@ class DatePicker extends VPanel {
 						yearItems[i].setData("Year", new Integer(i)); //$NON-NLS-1$
 						yearItems[i]
 								.addSelectionListener(new SelectionAdapter() {
-									public void widgetSelected(SelectionEvent e) {
+									@Override
+									public void widgetSelected(
+											SelectionEvent e) {
 										MenuItem item = (MenuItem) e.widget;
 										Calendar tmpcal = cdt
 												.getCalendarInstance();
-										tmpcal.add(
-												Calendar.YEAR,
-												((Integer) item.getData("Year")).intValue() - 5); //$NON-NLS-1$
+										tmpcal.add(Calendar.YEAR,
+												((Integer) item.getData("Year")) //$NON-NLS-1$
+														.intValue() - 5);
 										setCDTSelection(tmpcal.getTime());
 									}
 								});
@@ -618,45 +587,41 @@ class DatePicker extends VPanel {
 				}
 				break;
 			case Header.YEAR_NEXT:
-				yearNext = new VButton(header, SWT.ARROW | SWT.RIGHT
-						| SWT.NO_FOCUS);
+				yearNext = new VButton(header,
+						SWT.ARROW | SWT.RIGHT | SWT.NO_FOCUS);
 				yearNext.setData(CDT.PickerPart, PickerPart.YearNext);
 				yearNext.setPainter(cdt.getPainter());
 				cdt.getPainter().update(yearNext);
 				yearNext.setLayoutData(data);
-				yearNext.addListener(SWT.Selection, new Listener() {
-					public void handleEvent(Event event) {
-						Calendar tmpcal = cdt.getCalendarInstance();
-						if (yearButton != null && yearButton.getSelection()) {
-							tmpcal.add(Calendar.YEAR, 10);
-						} else if (cdt.isClosingField(Calendar.YEAR)) {
-							tmpcal.add(Calendar.YEAR, 10);
-						} else {
-							tmpcal.add(Calendar.YEAR, 1);
-						}
-						setCDTSelection(tmpcal.getTime());
+				yearNext.addListener(SWT.Selection, event -> {
+					Calendar tmpcal = cdt.getCalendarInstance();
+					if (yearButton != null && yearButton.getSelection()) {
+						tmpcal.add(Calendar.YEAR, 10);
+					} else if (cdt.isClosingField(Calendar.YEAR)) {
+						tmpcal.add(Calendar.YEAR, 10);
+					} else {
+						tmpcal.add(Calendar.YEAR, 1);
 					}
+					setCDTSelection(tmpcal.getTime());
 				});
 				break;
 			case Header.YEAR_PREV:
-				yearPrev = new VButton(header, SWT.ARROW | SWT.LEFT
-						| SWT.NO_FOCUS);
+				yearPrev = new VButton(header,
+						SWT.ARROW | SWT.LEFT | SWT.NO_FOCUS);
 				yearPrev.setData(CDT.PickerPart, PickerPart.YearPrev);
 				yearPrev.setPainter(cdt.getPainter());
 				cdt.getPainter().update(yearPrev);
 				yearPrev.setLayoutData(data);
-				yearPrev.addListener(SWT.Selection, new Listener() {
-					public void handleEvent(Event event) {
-						Calendar tmpcal = cdt.getCalendarInstance();
-						if (yearButton != null && yearButton.getSelection()) {
-							tmpcal.add(Calendar.YEAR, -10);
-						} else if (cdt.isClosingField(Calendar.YEAR)) {
-							tmpcal.add(Calendar.YEAR, -10);
-						} else {
-							tmpcal.add(Calendar.YEAR, -1);
-						}
-						setCDTSelection(tmpcal.getTime());
+				yearPrev.addListener(SWT.Selection, event -> {
+					Calendar tmpcal = cdt.getCalendarInstance();
+					if (yearButton != null && yearButton.getSelection()) {
+						tmpcal.add(Calendar.YEAR, -10);
+					} else if (cdt.isClosingField(Calendar.YEAR)) {
+						tmpcal.add(Calendar.YEAR, -10);
+					} else {
+						tmpcal.add(Calendar.YEAR, -1);
 					}
+					setCDTSelection(tmpcal.getTime());
 				});
 				break;
 			}
@@ -683,7 +648,7 @@ class DatePicker extends VPanel {
 		monthButtons = new VButton[12];
 		for (int month = 0; month < monthButtons.length; month++) {
 			monthButtons[month] = new VButton(monthPanel,
-					(cdt.field.length > 1) ? (SWT.PUSH | SWT.NO_FOCUS)
+					cdt.field.length > 1 ? SWT.PUSH | SWT.NO_FOCUS
 							: SWT.TOGGLE);
 			monthButtons[month].setSquare(true);
 			monthButtons[month].setData("month", month); //$NON-NLS-1$
@@ -692,46 +657,47 @@ class DatePicker extends VPanel {
 			monthButtons[month].setData(CDT.Key.Index, month);
 			monthButtons[month].setPainter(cdt.getPainter());
 			cdt.getPainter().update(monthButtons[month]);
-			monthButtons[month].setLayoutData(new GridData(SWT.FILL, SWT.FILL,
-					true, true));
+			monthButtons[month].setLayoutData(
+					new GridData(SWT.FILL, SWT.FILL, true, true));
 			// monthButtons[month].addListener(SWT.Selection, dayListener);
-			monthButtons[month].addListener(SWT.Selection, new Listener() {
-				public void handleEvent(Event event) {
-					if (event.widget == null) {
-						VButton button = (VButton) event.data;
-						if (button.hasStyle(SWT.TOGGLE)) {
-							for (VButton b : monthButtons) {
-								if (b != button) {
-									b.setSelection(false);
-								}
+			monthButtons[month].addListener(SWT.Selection, event -> {
+				if (event.widget == null) {
+					VButton button = (VButton) event.data;
+					if (button.hasStyle(SWT.TOGGLE)) {
+						for (VButton b1 : monthButtons) {
+							if (b1 != button) {
+								b1.setSelection(false);
 							}
 						}
+					}
 
-						Calendar tmpcal = cdt.getCalendarInstance();
-						int tmpday = tmpcal.get(Calendar.DAY_OF_MONTH);
-						Integer tmpmonth = (Integer) button.getData("Month"); //$NON-NLS-1$
-						/*
-						 * : Bug 288164 keep the selected month by setting the day of month
-						 * to the minimum of actual maximum and the selected date
-						 */
-						tmpcal.set(tmpcal.get(Calendar.YEAR), tmpmonth, 1);
-						if (tmpcal.getActualMaximum(Calendar.DAY_OF_MONTH)<tmpday)
-							tmpday = tmpcal.getActualMaximum(Calendar.DAY_OF_MONTH);
-						tmpcal.set(Calendar.DAY_OF_MONTH, tmpday);
-						tmpcal.set(Calendar.MONTH, tmpmonth);
-						cdt.setSelection(tmpcal.getTime());
-						/*
-						 * : Bug 388813 the method cdt.isClosingField checks the
-						 * "most concrete" portion of the date pattern and
-						 * returns true if the requested field *is* the one
-						 * closing the picker panel and false otherwise
-						 */
-						if (cdt.isClosingField(Calendar.MONTH)) {
-							cdt.fireSelectionChanged(true);
-						} else {
-							cdt.fireSelectionChanged();
-							handleHeaderSelection(null);
-						}
+					Calendar tmpcal = cdt.getCalendarInstance();
+					int tmpday = tmpcal.get(Calendar.DAY_OF_MONTH);
+					Integer tmpmonth = (Integer) button.getData("Month"); //$NON-NLS-1$
+					/*
+					 * : Bug 288164 keep the selected month by setting the day
+					 * of month to the minimum of actual maximum and the
+					 * selected date
+					 */
+					tmpcal.set(tmpcal.get(Calendar.YEAR), tmpmonth, 1);
+					if (tmpcal
+							.getActualMaximum(Calendar.DAY_OF_MONTH) < tmpday) {
+						tmpday = tmpcal.getActualMaximum(Calendar.DAY_OF_MONTH);
+					}
+					tmpcal.set(Calendar.DAY_OF_MONTH, tmpday);
+					tmpcal.set(Calendar.MONTH, tmpmonth);
+					cdt.setSelection(tmpcal.getTime());
+					/*
+					 * : Bug 388813 the method cdt.isClosingField checks the
+					 * "most concrete" portion of the date pattern and returns
+					 * true if the requested field *is* the one closing the
+					 * picker panel and false otherwise
+					 */
+					if (cdt.isClosingField(Calendar.MONTH)) {
+						cdt.fireSelectionChanged(true);
+					} else {
+						cdt.fireSelectionChanged();
+						handleHeaderSelection(null);
 					}
 				}
 			});
@@ -776,40 +742,38 @@ class DatePicker extends VPanel {
 		yearButtons = new VButton[15];
 		for (int year = 0; year < yearButtons.length; year++) {
 			yearButtons[year] = new VButton(yearPanel,
-					(cdt.field.length > 1) ? (SWT.PUSH | SWT.NO_FOCUS)
+					cdt.field.length > 1 ? SWT.PUSH | SWT.NO_FOCUS
 							: SWT.TOGGLE);
 			yearButtons[year].setSquare(true);
-			yearButtons[year]
-					.setData(CDT.PickerPart, PickerPart.DayOfWeekLabel);
+			yearButtons[year].setData(CDT.PickerPart,
+					PickerPart.DayOfWeekLabel);
 			yearButtons[year].setData(CDT.Key.Index, year);
 			yearButtons[year].setPainter(cdt.getPainter());
 			cdt.getPainter().update(yearButtons[year]);
-			yearButtons[year].setLayoutData(new GridData(SWT.FILL, SWT.FILL,
-					true, true));
-			yearButtons[year].addListener(SWT.Selection, new Listener() {
-				public void handleEvent(Event event) {
-					if (event.widget == null) {
-						VButton button = (VButton) event.data;
-						if (button.hasStyle(SWT.TOGGLE)) {
-							for (VButton b : yearButtons) {
-								if (b != button) {
-									b.setSelection(false);
-								}
+			yearButtons[year].setLayoutData(
+					new GridData(SWT.FILL, SWT.FILL, true, true));
+			yearButtons[year].addListener(SWT.Selection, event -> {
+				if (event.widget == null) {
+					VButton button = (VButton) event.data;
+					if (button.hasStyle(SWT.TOGGLE)) {
+						for (VButton b1 : yearButtons) {
+							if (b1 != button) {
+								b1.setSelection(false);
 							}
 						}
+					}
 
-						Calendar tmpcal = cdt.getCalendarInstance();
-						tmpcal.set(Calendar.YEAR,
-								Integer.parseInt(button.getText()));
-						cdt.setSelection(tmpcal.getTime());
-						// Bug 388813
-						// when the year field is the most precise field
-						if (cdt.isClosingField(Calendar.YEAR)) {
-							cdt.fireSelectionChanged(true);
-						} else {
-							cdt.fireSelectionChanged();
-							handleHeaderSelection(null);
-						}
+					Calendar tmpcal = cdt.getCalendarInstance();
+					tmpcal.set(Calendar.YEAR,
+							Integer.parseInt(button.getText()));
+					cdt.setSelection(tmpcal.getTime());
+					// Bug 388813
+					// when the year field is the most precise field
+					if (cdt.isClosingField(Calendar.YEAR)) {
+						cdt.fireSelectionChanged(true);
+					} else {
+						cdt.fireSelectionChanged();
+						handleHeaderSelection(null);
 					}
 				}
 			});
@@ -821,7 +785,8 @@ class DatePicker extends VPanel {
 	}
 
 	public int[] getFields() {
-		return new int[] { Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH };
+		return new int[] { Calendar.YEAR, Calendar.MONTH,
+				Calendar.DAY_OF_MONTH };
 	}
 
 	private int getFocusDayButton() {
@@ -863,8 +828,8 @@ class DatePicker extends VPanel {
 
 		if (button != null && button.getSelection()) {
 			VPanel panel = button.getData(Key.Panel, VPanel.class);
-			panel.getParent().getLayout(VStackLayout.class)
-					.setTopControl(panel, 500);
+			panel.getParent().getLayout(VStackLayout.class).setTopControl(panel,
+					500);
 		} else {
 			for (VPanel panel : bodyPanels) {
 				panel.getLayout(VStackLayout.class).setTopControl(null, 500);
@@ -874,7 +839,7 @@ class DatePicker extends VPanel {
 
 	private void init(int style) {
 		if (cdt.builder == null) {
-			if (cdt.field.length > 1 && (style & (CDT.COMPACT)) != 0) {
+			if (cdt.field.length > 1 && (style & CDT.COMPACT) != 0) {
 				cdt.builder = CDateTimeBuilder.getCompact();
 			} else {
 				cdt.builder = CDateTimeBuilder.getStandard();
@@ -923,7 +888,8 @@ class DatePicker extends VPanel {
 	 * Set the date for each dayButton by starting with the given
 	 * <code>firstDate</code> and iterating over all the dayButtons, adding 1
 	 * day to the date with each iteration.<br>
-	 * The date is stored in the dayButton with: setData(CDT.Key.Date, date).<br>
+	 * The date is stored in the dayButton with: setData(CDT.Key.Date,
+	 * date).<br>
 	 * If <code>alignMonth</code> is true, then the actual first date used will
 	 * be modified to be the first date of the visible calendar which includes
 	 * the given <code>firstDate</code>
@@ -947,8 +913,8 @@ class DatePicker extends VPanel {
 			tmpcal.add(Calendar.DATE, -firstDay);
 		}
 
-		for (int day = 0; day < dayButtons.length; day++) {
-			dayButtons[day].setData(CDT.Key.Date, tmpcal.getTime());
+		for (VButton dayButton : dayButtons) {
+			dayButton.setData(CDT.Key.Date, tmpcal.getTime());
 			tmpcal.add(Calendar.DATE, 1);
 		}
 	}
@@ -970,11 +936,9 @@ class DatePicker extends VPanel {
 		updateLabels();
 
 		if (monthButton != null) {
-			monthButton.addListener(SWT.Resize, new Listener() {
-				public void handleEvent(Event event) {
-					if (SWT.Resize == event.type) {
-						setMonthLabelText();
-					}
+			monthButton.addListener(SWT.Resize, event -> {
+				if (SWT.Resize == event.type) {
+					setMonthLabelText();
 				}
 			});
 		}
@@ -984,6 +948,7 @@ class DatePicker extends VPanel {
 		}
 	}
 
+	@Override
 	public boolean setFocus() {
 		return setFocusToSelection();
 	}
@@ -1002,15 +967,15 @@ class DatePicker extends VPanel {
 	private boolean setFocusToSelection() {
 		if (dayPanel != null) {
 			if (cdt.hasSelection()) {
-				Calendar first = cdt.getCalendarInstance((Date) dayButtons[0]
-						.getData(CDT.Key.Date));
+				Calendar first = cdt.getCalendarInstance(
+						(Date) dayButtons[0].getData(CDT.Key.Date));
 				first.set(Calendar.MILLISECOND, 0);
 				first.set(Calendar.SECOND, 0);
 				first.set(Calendar.MINUTE, 0);
 				first.set(Calendar.HOUR_OF_DAY, 0);
 
-				Calendar last = cdt
-						.getCalendarInstance((Date) dayButtons[dayButtons.length - 1]
+				Calendar last = cdt.getCalendarInstance(
+						(Date) dayButtons[dayButtons.length - 1]
 								.getData(CDT.Key.Date));
 				last.set(Calendar.MILLISECOND, 0);
 				last.set(Calendar.SECOND, 0);
@@ -1021,16 +986,15 @@ class DatePicker extends VPanel {
 
 				Date selection = cdt.getSelection();
 				Calendar scal = cdt.getCalendarInstance(selection);
-				for (int j = 0; j < dayButtons.length; j++) {
-					Calendar tmpcal = cdt
-							.getCalendarInstance((Date) dayButtons[j]
-									.getData(CDT.Key.Date));
-					if ((scal.get(Calendar.DATE) == tmpcal.get(Calendar.DATE))
-							&& (scal.get(Calendar.MONTH) == tmpcal
-									.get(Calendar.MONTH))
-							&& (scal.get(Calendar.YEAR) == tmpcal
-									.get(Calendar.YEAR))) {
-						return dayButtons[j].setFocus();
+				for (VButton dayButton : dayButtons) {
+					Calendar tmpcal = cdt.getCalendarInstance(
+							(Date) dayButton.getData(CDT.Key.Date));
+					if (scal.get(Calendar.DATE) == tmpcal.get(Calendar.DATE)
+							&& scal.get(Calendar.MONTH) == tmpcal
+									.get(Calendar.MONTH)
+							&& scal.get(Calendar.YEAR) == tmpcal
+									.get(Calendar.YEAR)) {
+						return dayButton.setFocus();
 					}
 				}
 			} else {
@@ -1087,7 +1051,8 @@ class DatePicker extends VPanel {
 			setSelectionFromButton(button, stateMask);
 			boolean defaultSelection = false;
 			if (event.type == SWT.KeyDown && event.stateMask == 0) {
-				if (event.keyCode == SWT.KEYPAD_CR || event.character == SWT.CR) {
+				if (event.keyCode == SWT.KEYPAD_CR
+						|| event.character == SWT.CR) {
 					defaultSelection = true;
 				}
 			} else if (event.type == SWT.Traverse && event.stateMask == 0) {
@@ -1101,8 +1066,9 @@ class DatePicker extends VPanel {
 
 	/**
 	 * Traverse the selection programmatically just as a user would with the
-	 * keyboard. <dt><b>Valid Keys:</b></dt> <dd>SWT.ARROW_UP, SWT.ARROW_DOWN,
-	 * SWT.ARROW_LEFT, SWT.ARROW_RIGHT</dd>
+	 * keyboard.
+	 * <dt><b>Valid Keys:</b></dt>
+	 * <dd>SWT.ARROW_UP, SWT.ARROW_DOWN, SWT.ARROW_LEFT, SWT.ARROW_RIGHT</dd>
 	 * 
 	 * @param keyCode
 	 *            a SWT traversal keycode
@@ -1131,11 +1097,11 @@ class DatePicker extends VPanel {
 				setButtonFocus(focusDayButton - 1);
 			} else {
 				scrollCalendar(SWT.ARROW_UP);
-				setButtonFocus(focusDayButton + (DAYS_IN_WEEK - 1));
+				setButtonFocus(focusDayButton + DAYS_IN_WEEK - 1);
 			}
 			break;
 		case SWT.ARROW_RIGHT:
-			if (focusDayButton < (DAYS_IN_WEEK * NUM_ROWS - 1)) {
+			if (focusDayButton < DAYS_IN_WEEK * NUM_ROWS - 1) {
 				setButtonFocus(focusDayButton + 1);
 			} else {
 				scrollCalendar(SWT.ARROW_DOWN);
@@ -1153,44 +1119,41 @@ class DatePicker extends VPanel {
 			Calendar active = cdt.getCalendarInstance();
 			Calendar today = cdt
 					.getCalendarInstance(System.currentTimeMillis());
-			for (int day = 0; day < dayButtons.length; day++) {
-				if ((dayButtons[day] != null)) {
-					date.setTime((Date) dayButtons[day].getData(CDT.Key.Date));
+			for (VButton dayButton : dayButtons) {
+				if (dayButton != null) {
+					date.setTime((Date) dayButton.getData(CDT.Key.Date));
 
-					boolean isToday = (date.get(Calendar.YEAR) == today
-							.get(Calendar.YEAR))
-							&& (date.get(Calendar.DAY_OF_YEAR) == today
-									.get(Calendar.DAY_OF_YEAR));
-					boolean isActive = (date.get(Calendar.YEAR) == active
-							.get(Calendar.YEAR))
-							&& (date.get(Calendar.MONTH) == active
-									.get(Calendar.MONTH));
+					boolean isToday = date.get(Calendar.YEAR) == today
+							.get(Calendar.YEAR)
+							&& date.get(Calendar.DAY_OF_YEAR) == today
+									.get(Calendar.DAY_OF_YEAR);
+					boolean isActive = date.get(Calendar.YEAR) == active
+							.get(Calendar.YEAR)
+							&& date.get(Calendar.MONTH) == active
+									.get(Calendar.MONTH);
 
-					dayButtons[day].setText(getFormattedDate(
-							"d", date.getTime())); //$NON-NLS-1$
-					dayButtons[day].setData(CDT.Key.Today, isToday);
-					dayButtons[day].setData(CDT.Key.Active, isActive);
+					dayButton.setText(getFormattedDate("d", date.getTime())); //$NON-NLS-1$
+					dayButton.setData(CDT.Key.Today, isToday);
+					dayButton.setData(CDT.Key.Active, isActive);
 
-					cdt.getPainter().update(dayButtons[day]);
+					cdt.getPainter().update(dayButton);
 				}
 			}
 
-			int focusButton = -1;
-
-			for (int i = 0; i < dayButtons.length; i++) {
-				dayButtons[i].setSelection(false);
+			for (VButton dayButton : dayButtons) {
+				dayButton.setSelection(false);
 			}
 
 			if (cdt.hasSelection()) {
-				Calendar first = cdt.getCalendarInstance((Date) dayButtons[0]
-						.getData(CDT.Key.Date));
+				Calendar first = cdt.getCalendarInstance(
+						(Date) dayButtons[0].getData(CDT.Key.Date));
 				first.set(Calendar.MILLISECOND, 0);
 				first.set(Calendar.SECOND, 0);
 				first.set(Calendar.MINUTE, 0);
 				first.set(Calendar.HOUR_OF_DAY, 0);
 
-				Calendar last = cdt
-						.getCalendarInstance((Date) dayButtons[dayButtons.length - 1]
+				Calendar last = cdt.getCalendarInstance(
+						(Date) dayButtons[dayButtons.length - 1]
 								.getData(CDT.Key.Date));
 				last.set(Calendar.MILLISECOND, 0);
 				last.set(Calendar.SECOND, 0);
@@ -1201,27 +1164,19 @@ class DatePicker extends VPanel {
 
 				Date selection = cdt.getSelection();
 				Calendar scal = cdt.getCalendarInstance(selection);
-				for (int j = 0; j < dayButtons.length; j++) {
-					Calendar tmpcal = cdt
-							.getCalendarInstance((Date) dayButtons[j]
-									.getData(CDT.Key.Date));
-					if ((scal.get(Calendar.DATE) == tmpcal.get(Calendar.DATE))
-							&& (scal.get(Calendar.MONTH) == tmpcal
-									.get(Calendar.MONTH))
-							&& (scal.get(Calendar.YEAR) == tmpcal
-									.get(Calendar.YEAR))) {
-						dayButtons[j].setSelection(true);
-						// Bug 388813:
-						// don't catch the focus
-						// focusButton = j;
+				for (VButton dayButton : dayButtons) {
+					Calendar tmpcal = cdt.getCalendarInstance(
+							(Date) dayButton.getData(CDT.Key.Date));
+					if (scal.get(Calendar.DATE) == tmpcal.get(Calendar.DATE)
+							&& scal.get(Calendar.MONTH) == tmpcal
+									.get(Calendar.MONTH)
+							&& scal.get(Calendar.YEAR) == tmpcal
+									.get(Calendar.YEAR)) {
+						dayButton.setSelection(true);
 						break;
 					}
 				}
-				if (focusButton >= 0) {
-					dayButtons[focusButton].setFocus();
-				}
 			}
-
 			dayPanel.redraw();
 		}
 	}
@@ -1236,12 +1191,12 @@ class DatePicker extends VPanel {
 			Calendar tmpcal = cdt.getCalendarInstance();
 			tmpcal.set(Calendar.DAY_OF_WEEK, tmpcal.getFirstDayOfWeek());
 			Locale locale = cdt.getLocale();
-			boolean ltr = (ComponentOrientation.getOrientation(locale)
-					.isLeftToRight() && !locale.getLanguage().equals("zh")); //$NON-NLS-1$
+			boolean ltr = ComponentOrientation.getOrientation(locale)
+					.isLeftToRight() && !locale.getLanguage().equals("zh"); //$NON-NLS-1$
 			BreakIterator iterator = BreakIterator.getCharacterInstance(locale);
-			for (int x = 0; x < dayLabels.length; x++) {
+			for (VLabel dayLabel : dayLabels) {
 				String str = getFormattedDate("E", tmpcal.getTime()); //$NON-NLS-1$
-				if (dayLabels[x].getData(CDT.Key.Compact, Boolean.class)) {
+				if (dayLabel.getData(CDT.Key.Compact, Boolean.class)) {
 					iterator.setText(str);
 					int start, end;
 					if (ltr) {
@@ -1251,9 +1206,9 @@ class DatePicker extends VPanel {
 						end = iterator.last();
 						start = iterator.previous();
 					}
-					dayLabels[x].setText(str.substring(start, end));
+					dayLabel.setText(str.substring(start, end));
 				} else {
-					dayLabels[x].setText(str);
+					dayLabel.setText(str);
 				}
 				tmpcal.add(Calendar.DAY_OF_WEEK, 1);
 			}
@@ -1268,16 +1223,14 @@ class DatePicker extends VPanel {
 			Locale locale = cdt.getLocale();
 			if (today != null) {
 				if (cdt.builder.hasFooter(Footer.VERBOSE_TODAY)) {
-					Calendar cal = cdt.getCalendarInstance(System
-							.currentTimeMillis());
-					Object[] margs = {
-							cal.getTime(),
-							Resources
-									.getString(
-											"date_ordinal_" + cal.get(Calendar.DATE), locale) //$NON-NLS-1$
+					Calendar cal = cdt
+							.getCalendarInstance(System.currentTimeMillis());
+					Object[] margs = { cal.getTime(), Resources.getString(
+							"date_ordinal_" + cal.get(Calendar.DATE), locale) //$NON-NLS-1$
 					};
 					MessageFormat formatter = new MessageFormat(
-							Resources.getString("today_verbose.text", locale), locale); //$NON-NLS-1$
+							Resources.getString("today_verbose.text", locale), //$NON-NLS-1$
+							locale);
 					today.setText(formatter.format(margs));
 				} else {
 					today.setText(Resources.getString("today.text", locale)); //$NON-NLS-1$
@@ -1306,10 +1259,10 @@ class DatePicker extends VPanel {
 				Calendar tmpcal = cdt.getCalendarInstance();
 				for (int i = 0; i < 12; i++) {
 					tmpcal.set(Calendar.MONTH, i);
-					monthItems[i].setText(getFormattedDate(
-							"MMMM", tmpcal.getTime())); //$NON-NLS-1$
-					monthItems[i].setData(
-							"Month", new Integer(tmpcal.get(Calendar.MONTH)));//$NON-NLS-1$
+					monthItems[i].setText(
+							getFormattedDate("MMMM", tmpcal.getTime())); //$NON-NLS-1$
+					monthItems[i].setData("Month", //$NON-NLS-1$
+							new Integer(tmpcal.get(Calendar.MONTH)));
 					if (selected.get(Calendar.MONDAY) == tmpcal
 							.get(Calendar.MONTH)) {
 						monthItems[i].setImage(Resources.getIconBullet());
@@ -1320,16 +1273,16 @@ class DatePicker extends VPanel {
 			}
 
 			if (yearButton != null) {
-				yearButton.setText(getFormattedDate(
-						"yyyy", cdt.getCalendarTime())); //$NON-NLS-1$
+				yearButton.setText(
+						getFormattedDate("yyyy", cdt.getCalendarTime())); //$NON-NLS-1$
 			}
 
 			if (yearItems != null) {
 				Calendar tmpcal = cdt.getCalendarInstance();
 				tmpcal.add(Calendar.YEAR, -5);
 				for (int i = 0; i < 11; i++) {
-					yearItems[i].setText(getFormattedDate(
-							"yyyy", tmpcal.getTime())); //$NON-NLS-1$
+					yearItems[i].setText(
+							getFormattedDate("yyyy", tmpcal.getTime())); //$NON-NLS-1$
 					if (selected.get(Calendar.YEAR) == tmpcal
 							.get(Calendar.YEAR)) {
 						yearItems[i].setImage(Resources.getIconBullet());
@@ -1370,44 +1323,54 @@ class DatePicker extends VPanel {
 	 */
 	private void updateLocale() {
 		Locale locale = cdt.getLocale();
-		if (monthPrev != null)
-			monthPrev.setToolTipText(Resources.getString(
-					"nav_prev_month", locale)); //$NON-NLS-1$
-		if (monthNext != null)
-			monthNext.setToolTipText(Resources.getString(
-					"nav_next_month", locale)); //$NON-NLS-1$
-		if (dateNow != null)
-			dateNow.setToolTipText(Resources.getString(
-					"nav_current_day", locale)); //$NON-NLS-1$
-		if (yearPrev != null)
-			yearPrev.setToolTipText(Resources
-					.getString("nav_prev_year", locale)); //$NON-NLS-1$
-		if (yearNext != null)
-			yearNext.setToolTipText(Resources
-					.getString("nav_next_year", locale)); //$NON-NLS-1$
-		if (today != null)
-			today.setToolTipText(Resources.getString("nav_current_day", locale)); //$NON-NLS-1$
-		if (todayMenuItem != null)
-			todayMenuItem.setText(Resources
-					.getString("nav_current_day", locale)); //$NON-NLS-1$
-		if (showSelMenuItem != null)
-			showSelMenuItem.setText(Resources.getString(
-					"show_selection", locale)); //$NON-NLS-1$
+		if (monthPrev != null) {
+			monthPrev.setToolTipText(
+					Resources.getString("nav_prev_month", locale)); //$NON-NLS-1$
+		}
+		if (monthNext != null) {
+			monthNext.setToolTipText(
+					Resources.getString("nav_next_month", locale)); //$NON-NLS-1$
+		}
+		if (dateNow != null) {
+			dateNow.setToolTipText(
+					Resources.getString("nav_current_day", locale)); //$NON-NLS-1$
+		}
+		if (yearPrev != null) {
+			yearPrev.setToolTipText(
+					Resources.getString("nav_prev_year", locale)); //$NON-NLS-1$
+		}
+		if (yearNext != null) {
+			yearNext.setToolTipText(
+					Resources.getString("nav_next_year", locale)); //$NON-NLS-1$
+		}
+		if (today != null) {
+			today.setToolTipText(
+					Resources.getString("nav_current_day", locale)); //$NON-NLS-1$
+		}
+		if (todayMenuItem != null) {
+			todayMenuItem
+					.setText(Resources.getString("nav_current_day", locale)); //$NON-NLS-1$
+		}
+		if (showSelMenuItem != null) {
+			showSelMenuItem
+					.setText(Resources.getString("show_selection", locale)); //$NON-NLS-1$
+		}
 	}
 
 	private void updateMonths() {
 		if (monthPanel != null) {
 			Calendar tmpcal = cdt.getCalendarInstance();
 			/*
-			 * : Bug 288164 use first day of month to get February if currently selected date is higher than 29th
+			 * : Bug 288164 use first day of month to get February if currently
+			 * selected date is higher than 29th
 			 */
 			tmpcal.set(Calendar.DAY_OF_MONTH, 1);
 			for (int i = 0; i < 12; i++) {
 				tmpcal.set(Calendar.MONTH, i);
-				monthButtons[i].setText(getFormattedDate(
-						"MMM", tmpcal.getTime())); //$NON-NLS-1$
-				monthButtons[i].setData(
-						"Month", new Integer(tmpcal.get(Calendar.MONTH)));//$NON-NLS-1$
+				monthButtons[i]
+						.setText(getFormattedDate("MMM", tmpcal.getTime())); //$NON-NLS-1$
+				monthButtons[i].setData("Month", //$NON-NLS-1$
+						new Integer(tmpcal.get(Calendar.MONTH)));
 			}
 		}
 	}
@@ -1430,9 +1393,8 @@ class DatePicker extends VPanel {
 		if (yearPanel != null) {
 			Calendar tmpcal = cdt.getCalendarInstance();
 			tmpcal.add(Calendar.YEAR, -7);
-			for (int i = 0; i < yearButtons.length; i++) {
-				yearButtons[i].setText(getFormattedDate(
-						"yyyy", tmpcal.getTime())); //$NON-NLS-1$
+			for (VButton yearButton2 : yearButtons) {
+				yearButton2.setText(getFormattedDate("yyyy", tmpcal.getTime())); //$NON-NLS-1$
 				tmpcal.add(Calendar.YEAR, 1);
 			}
 		}

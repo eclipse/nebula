@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.eclipse.nebula.cwt.v.VControl;
 import org.eclipse.nebula.cwt.v.VNative;
 import org.eclipse.nebula.cwt.v.VPanel;
@@ -27,6 +25,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+
+import junit.framework.TestCase;
 
 public abstract class AbstractVTestCase extends TestCase {
 
@@ -270,10 +270,11 @@ public abstract class AbstractVTestCase extends TestCase {
 		syncExec(new Runnable() {
 			public void run() {
 				Object o = control.getData("cwt_vcontrol");
-				if (o instanceof VPanel)
+				if (o instanceof VPanel) {
 					result.add((VPanel) o);
-				else
+				} else {
 					result.add(null);
+				}
 			}
 		});
 
@@ -687,6 +688,10 @@ public abstract class AbstractVTestCase extends TestCase {
 		}
 	}
 
+	public void sleep(int i) {
+		pause(i);
+	}
+
 	public void processEvents() {
 		syncExec(new Runnable() {
 			public void run() {
@@ -723,6 +728,7 @@ public abstract class AbstractVTestCase extends TestCase {
 		processEvents();
 	}
 
+	@Override
 	public void runBare() throws Throwable {
 		final String name = getName();
 
@@ -780,7 +786,7 @@ public abstract class AbstractVTestCase extends TestCase {
 
 	/**
 	 * Creates the {@link Shell}, override for a special shell.
-	 * 
+	 *
 	 * @return
 	 */
 	public Shell createShell() {
