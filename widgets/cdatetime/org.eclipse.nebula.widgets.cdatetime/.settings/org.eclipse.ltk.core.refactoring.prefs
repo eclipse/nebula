@@ -1,3 +1,2 @@
-#Fri Jul 27 17:01:55 EDT 2007
 eclipse.preferences.version=1
-org.eclipse.ltk.core.refactoring.enable.project.refactoring.history=true
+org.eclipse.ltk.core.refactoring.enable.project.refactoring.history=false

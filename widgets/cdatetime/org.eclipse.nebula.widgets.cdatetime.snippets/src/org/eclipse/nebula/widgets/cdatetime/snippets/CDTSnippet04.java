@@ -21,8 +21,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-
-
 public class CDTSnippet04 {
 
 	/**
@@ -36,20 +34,23 @@ public class CDTSnippet04 {
 
 		final CDateTime cdt = new CDateTime(shell, CDT.BORDER | CDT.COMPACT | CDT.SIMPLE);
 		cdt.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
-        
+		cdt.addListener(SWT.DefaultSelection, event -> {
+			System.out.println(cdt.getSelection());
+		});
+
 		shell.pack();
 		Point size = shell.getSize();
 		Rectangle screen = display.getMonitors()[0].getBounds();
-		shell.setBounds(
-				(screen.width-size.x)/2,
-				(screen.height-size.y)/2,
-				size.x,
-				size.y
-		);
+		shell.setBounds( //
+				(screen.width - size.x) / 2, //
+				(screen.height - size.y) / 2, //
+				size.x, //
+				size.y);
 		shell.open();
 		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch())
+			if (!display.readAndDispatch()) {
 				display.sleep();
+			}
 		}
 		display.dispose();
 	}

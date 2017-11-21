@@ -21,6 +21,7 @@ import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
@@ -34,8 +35,30 @@ public class FocusTests extends AbstractVTestCase {
 	private CDateTime cdt1;
 	private CDateTime cdt2;
 
+	public static void main(String[] args) {
+		new FocusTests().showSetup1();
+	}
+
+	private void showSetup1() {
+		Display display = new Display();
+		Shell shell = new Shell(display);
+		doSetUp1(shell);
+		shell.pack();
+		shell.open();
+		while (!shell.isDisposed()) {
+			if (!display.readAndDispatch()) {
+				display.sleep();
+			}
+		}
+		display.dispose();
+	}
+
 	public void setUp1() throws Exception {
 		Shell shell = getShell();
+		doSetUp1(shell);
+	}
+
+	private void doSetUp1(Shell shell) {
 		shell.setLayout(new GridLayout(4, false));
 
 		button1 = new Button(shell, SWT.TOGGLE);
@@ -402,12 +425,14 @@ public class FocusTests extends AbstractVTestCase {
 		assertTrue(hasFocus(button1));
 
 		keyDown(SWT.SHIFT);
-
 		keyPress('\t');
+		System.out.println(getFocusControl().getClass().getName());
 		assertTrue(hasFocus(cdt2));
 
 		keyPress('\t');
-		assertTrue(hasFocus(button2));
+		System.out.println(getFocusControl().getClass().getName());
+		assertTrue(hasFocus(button1));
+
 
 		keyPress('\t');
 		assertTrue(hasFocus(cdt1.getTextWidget()));
@@ -505,8 +530,8 @@ public class FocusTests extends AbstractVTestCase {
 		delay(1000);
 		System.out.println(tester.getSelection());
 		System.out.println(date);
-		
-		
+
+
 		assertEquals("03", tester.getText());
 		assertFalse("Dates should not equal", date.equals(tester.getSelection()));
 

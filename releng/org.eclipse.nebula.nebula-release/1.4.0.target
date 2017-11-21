@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pde version="3.8"?><target name="Nebula 1.4.0" sequenceNumber="4">
+<locations>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.nebula.cwt.feature.feature.group" version="1.0.0.201711021145"/>
+<unit id="org.eclipse.nebula.effects.stw.feature.feature.group" version="1.0.0.201711021145"/>
+<unit id="org.eclipse.nebula.visualization.feature.feature.group" version="2.1.0.201711021145"/>
+<unit id="org.eclipse.nebula.widgets.cdatetime.feature.feature.group" version="1.1.0.201711021145"/>
+<unit id="org.eclipse.nebula.widgets.compositetable.feature.feature.group" version="1.0.0.201711021145"/>
+<unit id="org.eclipse.nebula.widgets.gallery.feature.feature.group" version="1.0.0.201711021145"/>
+<unit id="org.eclipse.nebula.widgets.ganttchart.feature.feature.group" version="1.0.0.201711021145"/>
+<unit id="org.eclipse.nebula.widgets.geomap.feature.feature.group" version="1.0.0.201711021145"/>
+<unit id="org.eclipse.nebula.widgets.grid.feature.feature.group" version="1.1.0.201711021145"/>
+<unit id="org.eclipse.nebula.widgets.oscilloscope.feature.feature.group" version="1.4.0.201711021145"/>
+<unit id="org.eclipse.nebula.widgets.paperclips.feature.feature.group" version="2.0.0.201711021145"/>
+<unit id="org.eclipse.nebula.widgets.pgroup.feature.feature.group" version="1.0.0.201711021145"/>
+<unit id="org.eclipse.nebula.widgets.pshelf.css.feature.feature.group" version="1.0.0.201711021145"/>
+<unit id="org.eclipse.nebula.widgets.pshelf.feature.feature.group" version="1.0.0.201711021145"/>
+<unit id="org.eclipse.nebula.widgets.richtext.feature.feature.group" version="1.2.0.201711021145"/>
+<unit id="org.eclipse.nebula.widgets.tablecombo.feature.feature.group" version="1.1.0.201711021145"/>
+<unit id="org.eclipse.nebula.widgets.xviewer.feature.feature.group" version="1.1.0.201711021145"/>
+<repository location="http://download.eclipse.org/nebula/releases/1.4.0"/>
+</location>
+</locations>
+</target>

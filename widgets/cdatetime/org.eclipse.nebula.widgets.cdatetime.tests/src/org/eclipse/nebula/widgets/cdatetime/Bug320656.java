@@ -34,21 +34,25 @@ public class Bug320656 extends AbstractVTestCase {
 
 		long original = tester.getSelection().getTime();
 
-		moveToEdge(tester.getCDateTime(), SWT.RIGHT);
-		moveX(-10);
-		moveY(-5);
+		moveToEdge(tester.getCDateTime(), SWT.RIGHT | SWT.TOP);
+		// sleep(5000);
+		// System.out.println(tester.getSelection().getTime());
+		moveX(-15);
+		moveY(5);
+		// sleep(5000);
 		click();
+		// System.out.println(tester.getSelection().getTime());
 		long time = tester.getSelection().getTime();
-		assertTrue(time == original + (60 * 60 * 1000));
+		assertTrue("Difference = " + (original - time), time == original + (60 * 60 * 1000));
 
 		keyPress(SWT.ARROW_RIGHT);
-		moveToEdge(tester.getCDateTime(), SWT.RIGHT);
-		moveX(-10);
-		moveY(-5);
+		moveToEdge(tester.getCDateTime(), SWT.RIGHT | SWT.BOTTOM);
+		moveX(-15);
+		moveY(-8);
 		click();
 		original = time;
 		time = tester.getSelection().getTime();
-		assertTrue(time == original + (60 * 1000));
+		assertTrue("Difference = " + (original - time), time == original - (60 * 1000));
 
 	}
 }

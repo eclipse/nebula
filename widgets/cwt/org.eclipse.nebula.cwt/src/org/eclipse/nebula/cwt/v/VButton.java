@@ -16,6 +16,24 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Event;
 
 public class VButton extends VControl {
+	
+	/** Part state selected */
+	public static final int SELECTED = 1 << 1;
+	/** Part state focused */
+	public static final int FOCUSED = 1 << 2;
+	/** Part state pressed */
+	public static final int PRESSED = 1 << 3;
+	/** Part state active */
+	public static final int ACTIVE = 1 << 4;
+	/** Part state disabled */
+	public static final int DISABLED = 1 << 5;
+	/** Part state hot */
+	public static final int HOT = 1 << 6;
+	/** Part state defaulted */
+	public static final int DEFAULTED = 1 << 7;
+	/** Part state grayed */
+	public static final int GRAYED = 1 << 8;
+
 
 	ImageData oldImageData;
 	boolean paintNative = false;

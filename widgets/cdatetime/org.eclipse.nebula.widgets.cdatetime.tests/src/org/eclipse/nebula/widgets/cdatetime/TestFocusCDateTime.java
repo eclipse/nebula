@@ -23,20 +23,23 @@ public class TestFocusCDateTime extends AbstractVTestCase {
 	/**
 	 * @throws java.lang.Exception
 	 */
+	@Override
 	protected void setUp() throws Exception {
+		super.setUp();
 		tester = new CdtTester(getShell(), CDT.DATE_MEDIUM | CDT.TIME_MEDIUM);
 	}
 
 	/**
 	 * @throws java.lang.Exception
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 	}
 
 	public void testFocusCDateTime(){
 		Boolean successFocus = tester.setFocus();
-		Boolean hasIndeedFocus = hasFocus(tester.getCDateTime());
+		Boolean hasIndeedFocus = hasFocus(tester.getCDateTime().getTextWidget());
 		assertTrue(successFocus);
 		assertTrue(hasIndeedFocus);
 	}

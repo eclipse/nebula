@@ -173,7 +173,7 @@ public class VControlPainter implements IControlPainter {
 		}
 		Point size = e.gc.textExtent(control.text);
 		e.gc.drawText(control.text, (int)getX(control, size.x), (int)getY(control, size.y), true);
-		paintSelected(control, e, size);
+	//	paintSelected(control, e, size);
 	}
 
 	private static void paintSelected(VControl control, Event e, Point size) {

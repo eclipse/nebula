@@ -9,4 +9,4 @@ Export-Package: org.eclipse.nebula.widgets.cdatetime.snippets
 Require-Bundle: org.eclipse.jface,
  org.eclipse.ui.forms,
  org.eclipse.nebula.widgets.cdatetime
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
