@@ -15,25 +15,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Event;
 
+/**
+ * Control to mimic a button.
+ */
 public class VButton extends VControl {
-	
-	/** Part state selected */
-	public static final int SELECTED = 1 << 1;
-	/** Part state focused */
-	public static final int FOCUSED = 1 << 2;
-	/** Part state pressed */
-	public static final int PRESSED = 1 << 3;
-	/** Part state active */
-	public static final int ACTIVE = 1 << 4;
-	/** Part state disabled */
-	public static final int DISABLED = 1 << 5;
-	/** Part state hot */
-	public static final int HOT = 1 << 6;
-	/** Part state defaulted */
-	public static final int DEFAULTED = 1 << 7;
-	/** Part state grayed */
-	public static final int GRAYED = 1 << 8;
-
 
 	ImageData oldImageData;
 	boolean paintNative = false;
@@ -42,20 +27,24 @@ public class VButton extends VControl {
 
 	public VButton(VPanel panel, int style) {
 		super(panel, style);
-		if(!hasStyle(SWT.CHECK | SWT.RADIO | SWT.TOGGLE)) {
+		if (!hasStyle(SWT.CHECK | SWT.RADIO | SWT.TOGGLE)) {
 			setStyle(SWT.PUSH, true);
 		}
-		
 		setPainter(new VButtonPainter());
-		
 		addListener(SWT.MouseDown);
 		addListener(SWT.MouseUp);
 	}
 
+	/**
+	 * @see #setPaintNative(boolean)
+	 */
 	public boolean getNativeBackground() {
 		return paintNative;
 	}
 
+	/**
+	 * @return true if this button is currently selected.
+	 */
 	public boolean getSelection() {
 		return hasState(STATE_SELECTED);
 	}
@@ -66,67 +55,40 @@ public class VButton extends VControl {
 	}
 
 	protected void filterEvent(Event event) {
-		if(hasState(STATE_ACTIVE)) {
-			switch(event.type) {
+		if (hasState(STATE_ACTIVE)) {
+			switch (event.type) {
 			case SWT.MouseDown:
 				setFocus();
-				
-				if(event.button != 1) {
+
+				if (event.button != 1) {
 					break;
 				}
-	
-				if(hasStyle(SWT.PUSH)) {
-					if(setState(STATE_SELECTED, true)) {
+
+				if (hasStyle(SWT.PUSH)) {
+					if (setState(STATE_SELECTED, true)) {
 						redraw();
 					}
 					armed = true;
 				} else {
 					setState(STATE_SELECTED, !hasState(STATE_SELECTED));
-	
-					Event e = new Event();
-					e.type = SWT.Selection;
-					e.data = VButton.this;
-					e.button = event.button;
-					e.detail = event.detail;
-					e.display = event.display;
-					e.gc = event.gc;
-					e.height = event.height;
-					e.stateMask = event.stateMask;
-					e.time = event.time;
-					e.width = event.width;
-					e.x = event.x;
-					e.y = event.y;
-	
+					Event e = createEvent(event);
 					notifyListeners(SWT.Selection, e);
-					
 					redraw();
 				}
 				break;
+
 			case SWT.MouseUp:
-				if(event.button != 1) {
+				if (event.button != 1) {
 					break;
 				}
-	
-				if(hasStyle(SWT.PUSH)) {
-					if(setState(STATE_SELECTED, false)) {
+
+				if (hasStyle(SWT.PUSH)) {
+					if (setState(STATE_SELECTED, false)) {
 						redraw();
 					}
 				}
-				if(armed) {
-					Event e = new Event();
-					e.type = SWT.Selection;
-					e.data = VButton.this;
-					e.button = event.button;
-					e.detail = event.detail;
-					e.display = event.display;
-					e.gc = event.gc;
-					e.height = event.height;
-					e.stateMask = event.stateMask;
-					e.time = event.time;
-					e.width = event.width;
-					e.x = event.x;
-					e.y = event.y;
-	
+				if (armed) {
+					Event e = createEvent(event);
 					notifyListeners(SWT.Selection, e);
 				}
 				armed = false;
@@ -135,20 +97,56 @@ public class VButton extends VControl {
 		}
 	}
 
+	private Event createEvent(Event event) {
+		Event e = new Event();
+		e.type = SWT.Selection;
+		e.data = VButton.this;
+		e.button = event.button;
+		e.detail = event.detail;
+		e.display = event.display;
+		e.gc = event.gc;
+		e.height = event.height;
+		e.stateMask = event.stateMask;
+		e.time = event.time;
+		e.width = event.width;
+		e.x = event.x;
+		e.y = event.y;
+		return e;
+	}
+
+	/**
+	 * @param paintInactive
+	 *            true to paint the button in an inactive state.
+	 */
 	public void setPaintInactive(boolean paintInactive) {
 		this.paintInactive = paintInactive;
 	}
 
+	/**
+	 * Setting this value currently does nothing but subclasses can take
+	 * advantage of this flag.
+	 * <p/>
+	 * Painting native is the act of letting the underlying OS take care of
+	 * painting the background in some way or another.
+	 * 
+	 * @param paintNative
+	 *            true to paint native
+	 */
 	public void setPaintNative(boolean paintNative) {
 		this.paintNative = paintNative;
 	}
 
+	/**
+	 * Marks this button as being "selected" by the user.
+	 * 
+	 * @param select
+	 *            true to make the button "selected".
+	 */
 	public void setSelection(boolean select) {
-		if(!hasStyle(SWT.PUSH)) {
-			if(setState(STATE_SELECTED, select)) {
+		if (!hasStyle(SWT.PUSH)) {
+			if (setState(STATE_SELECTED, select)) {
 				redraw();
 			}
 		}
 	}
-
 }
