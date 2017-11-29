@@ -533,10 +533,10 @@ public class PlotArea extends Figure {
 					end = old;
 					break;
 				case X_FAIL:
-					end.y = old.y;
+					end.x = old.x;
 					break;
 				case Y_FAIL:
-					end.x = old.x;
+					end.y = old.y;
 					break;
 				case SUCCESS:
 				default:
