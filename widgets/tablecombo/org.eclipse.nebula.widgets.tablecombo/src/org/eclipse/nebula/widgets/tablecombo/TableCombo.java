@@ -29,8 +29,6 @@ import org.eclipse.swt.accessibility.AccessibleControlEvent;
 import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.accessibility.AccessibleTextAdapter;
 import org.eclipse.swt.accessibility.AccessibleTextEvent;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
@@ -108,20 +106,20 @@ public class TableCombo extends Composite {
 	private boolean updateTextWithinSelection = true;
 
 	/**
-	 * Constructs a new instance of this class given its parent and a style
-	 * value describing its behavior and appearance.
+	 * Constructs a new instance of this class given its parent and a style value
+	 * describing its behavior and appearance.
 	 * <p>
 	 * The style value is either one of the style constants defined in class
-	 * <code>SWT</code> which is applicable to instances of this class, or must
-	 * be built by <em>bitwise OR</em>'ing together (that is, using the
-	 * <code>int</code> "|" operator) two or more of those <code>SWT</code>
-	 * style constants. The class description lists the style constants that are
+	 * <code>SWT</code> which is applicable to instances of this class, or must be
+	 * built by <em>bitwise OR</em>'ing together (that is, using the
+	 * <code>int</code> "|" operator) two or more of those <code>SWT</code> style
+	 * constants. The class description lists the style constants that are
 	 * applicable to the class. Style bits are also inherited from superclasses.
 	 * </p>
 	 *
 	 * @param parent
-	 *            a widget which will be the parent of the new instance (cannot
-	 *            be null)
+	 *            a widget which will be the parent of the new instance (cannot be
+	 *            null)
 	 * @param style
 	 *            the style of widget to construct
 	 *
@@ -140,7 +138,7 @@ public class TableCombo extends Composite {
 	 * @see SWT#FLAT
 	 * @see Widget#getStyle()
 	 */
-	public TableCombo(Composite parent, int style) {
+	public TableCombo(final Composite parent, int style) {
 		super(parent, style = checkStyle(style));
 
 		// set the label style
@@ -179,21 +177,22 @@ public class TableCombo extends Composite {
 		createListeners();
 
 		// set the listeners for this control
-		int[] comboEvents = { SWT.Dispose, SWT.FocusIn, SWT.Move, SWT.Resize };
-		for (int i = 0; i < comboEvents.length; i++) {
-			this.addListener(comboEvents[i], listener);
+		final int[] comboEvents = { SWT.Dispose, SWT.FocusIn, SWT.Move, SWT.Resize };
+		for (int comboEvent : comboEvents) {
+			this.addListener(comboEvent, listener);
 		}
 
-		int[] textEvents = { SWT.DefaultSelection, SWT.KeyDown, SWT.KeyUp, SWT.MenuDetect, SWT.Modify, SWT.MouseDown,
-				SWT.MouseUp, SWT.MouseDoubleClick, SWT.MouseWheel, SWT.Traverse, SWT.FocusIn, SWT.Verify };
-		for (int i = 0; i < textEvents.length; i++) {
-			text.addListener(textEvents[i], listener);
+		final int[] textEvents = { SWT.DefaultSelection, SWT.KeyDown, SWT.KeyUp, SWT.MenuDetect, SWT.Modify,
+				SWT.MouseDown, SWT.MouseUp, SWT.MouseDoubleClick, SWT.MouseWheel, SWT.Traverse, SWT.FocusIn,
+				SWT.Verify };
+		for (int textEvent : textEvents) {
+			text.addListener(textEvent, listener);
 		}
 
 		// set the listeners for the arrow image
-		int[] arrowEvents = { SWT.Selection, SWT.FocusIn };
-		for (int i = 0; i < arrowEvents.length; i++) {
-			arrow.addListener(arrowEvents[i], listener);
+		final int[] arrowEvents = { SWT.Selection, SWT.FocusIn };
+		for (int arrowEvent : arrowEvents) {
+			arrow.addListener(arrowEvent, listener);
 		}
 
 		// initialize the drop down
@@ -201,77 +200,66 @@ public class TableCombo extends Composite {
 
 		initAccessible();
 
-		addDisposeListener(new DisposeListener() {
-
-			public void widgetDisposed(DisposeEvent e) {
-				popup.dispose();
-			}
-		});
+		addDisposeListener(e -> popup.dispose());
 	}
 
 	private void createListeners() {
 
 		// create new focus listener
-		focusFilter = new Listener() {
-			public void handleEvent(Event event) {
-				if (isDisposed()) {
-					return;
-				}
-				Shell shell = ((Control) event.widget).getShell();
+		focusFilter = event -> {
+			if (isDisposed()) {
+				return;
+			}
+			final Shell shell = ((Control) event.widget).getShell();
 
-				if (shell == TableCombo.this.getShell()) {
-					handleFocus(SWT.FocusOut);
-				}
+			if (shell == TableCombo.this.getShell()) {
+				handleFocus(SWT.FocusOut);
 			}
 		};
 
 		// now add a listener to listen to the events we are interested in.
-		listener = new Listener() {
-			public void handleEvent(Event event) {
-				if (isDisposed()) {
-					return;
-				}
+		listener = event -> {
+			if (isDisposed()) {
+				return;
+			}
 
-				// check for a popup event
-				if (popup == event.widget) {
-					popupEvent(event);
-					return;
-				}
+			// check for a popup event
+			if (popup == event.widget) {
+				popupEvent(event);
+				return;
+			}
 
-				if (text == event.widget) {
-					textEvent(event);
-					return;
-				}
+			if (text == event.widget) {
+				textEvent(event);
+				return;
+			}
 
-				// check for a table event
-				if (table == event.widget) {
-					tableEvent(event);
-					return;
-				}
+			// check for a table event
+			if (table == event.widget) {
+				tableEvent(event);
+				return;
+			}
 
-				// check for arrow event
-				if (arrow == event.widget) {
-					arrowEvent(event);
-					return;
-				}
+			// check for arrow event
+			if (arrow == event.widget) {
+				arrowEvent(event);
+				return;
+			}
 
-				// check for this widget's event
-				if (TableCombo.this == event.widget) {
-					comboEvent(event);
-					return;
-				}
+			// check for this widget's event
+			if (TableCombo.this == event.widget) {
+				comboEvent(event);
+				return;
+			}
 
-				// check for shell event
-				if (getShell() == event.widget) {
-					getDisplay().asyncExec(new Runnable() {
-						public void run() {
-							if (isDisposed()) {
-								return;
-							}
-							handleFocus(SWT.FocusOut);
-						}
-					});
-				}
+			// check for shell event
+			if (getShell() == event.widget) {
+				getDisplay().asyncExec(() -> {
+					if (isDisposed()) {
+						return;
+					}
+					handleFocus(SWT.FocusOut);
+				});
 			}
 		};
 	}
@@ -280,15 +268,15 @@ public class TableCombo extends Composite {
 	 * @param style
 	 * @return
 	 */
-	private static int checkStyle(int style) {
-		int mask = SWT.BORDER | SWT.READ_ONLY | SWT.FLAT | SWT.LEFT_TO_RIGHT | SWT.RIGHT_TO_LEFT;
-		return SWT.NO_FOCUS | (style & mask);
+	private static int checkStyle(final int style) {
+		final int mask = SWT.BORDER | SWT.READ_ONLY | SWT.FLAT | SWT.LEFT_TO_RIGHT | SWT.RIGHT_TO_LEFT;
+		return SWT.NO_FOCUS | style & mask;
 	}
 
 	/**
-	 * Adds the listener to the collection of listeners who will be notified
-	 * when the receiver's text is modified, by sending it one of the messages
-	 * defined in the <code>ModifyListener</code> interface.
+	 * Adds the listener to the collection of listeners who will be notified when
+	 * the receiver's text is modified, by sending it one of the messages defined in
+	 * the <code>ModifyListener</code> interface.
 	 *
 	 * @param listener
 	 *            the listener which should be notified
@@ -308,28 +296,28 @@ public class TableCombo extends Composite {
 	 * @see ModifyListener
 	 * @see #removeModifyListener
 	 */
-	public void addModifyListener(ModifyListener listener) {
+	public void addModifyListener(final ModifyListener listener) {
 		checkWidget();
 		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
-		TypedListener typedListener = new TypedListener(listener);
+		final TypedListener typedListener = new TypedListener(listener);
 		addListener(SWT.Modify, typedListener);
 	}
 
 	/**
-	 * Adds the listener to the collection of listeners who will be notified
-	 * when the user changes the receiver's selection, by sending it one of the
-	 * messages defined in the <code>SelectionListener</code> interface.
+	 * Adds the listener to the collection of listeners who will be notified when
+	 * the user changes the receiver's selection, by sending it one of the messages
+	 * defined in the <code>SelectionListener</code> interface.
 	 * <p>
 	 * <code>widgetSelected</code> is called when the combo's list selection
-	 * changes. <code>widgetDefaultSelected</code> is typically called when
-	 * ENTER is pressed the combo's text area.
+	 * changes. <code>widgetDefaultSelected</code> is typically called when ENTER is
+	 * pressed the combo's text area.
 	 * </p>
 	 *
 	 * @param listener
-	 *            the listener which should be notified when the user changes
-	 *            the receiver's selection
+	 *            the listener which should be notified when the user changes the
+	 *            receiver's selection
 	 *
 	 * @exception IllegalArgumentException
 	 *                <ul>
@@ -347,24 +335,24 @@ public class TableCombo extends Composite {
 	 * @see #removeSelectionListener
 	 * @see SelectionEvent
 	 */
-	public void addSelectionListener(SelectionListener listener) {
+	public void addSelectionListener(final SelectionListener listener) {
 		checkWidget();
 		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
 
-		TypedListener typedListener = new TypedListener(listener);
+		final TypedListener typedListener = new TypedListener(listener);
 		addListener(SWT.Selection, typedListener);
 		addListener(SWT.DefaultSelection, typedListener);
 	}
 
 	/**
-	 * Adds the listener to the collection of listeners who will be notified
-	 * when the user presses keys in the text field. interface.
+	 * Adds the listener to the collection of listeners who will be notified when
+	 * the user presses keys in the text field. interface.
 	 *
 	 * @param listener
-	 *            the listener which should be notified when the user presses
-	 *            keys in the text control.
+	 *            the listener which should be notified when the user presses keys
+	 *            in the text control.
 	 *
 	 * @exception IllegalArgumentException
 	 *                <ul>
@@ -378,7 +366,7 @@ public class TableCombo extends Composite {
 	 *                thread that created the receiver</li>
 	 *                </ul>
 	 */
-	public void addTextControlKeyListener(KeyListener listener) {
+	public void addTextControlKeyListener(final KeyListener listener) {
 		checkWidget();
 		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
@@ -387,8 +375,8 @@ public class TableCombo extends Composite {
 	}
 
 	/**
-	 * Removes the listener from the collection of listeners who will be
-	 * notified when the user presses keys in the text control.
+	 * Removes the listener from the collection of listeners who will be notified
+	 * when the user presses keys in the text control.
 	 *
 	 * @param listener
 	 *            the listener which should no longer be notified
@@ -406,7 +394,7 @@ public class TableCombo extends Composite {
 	 *                </ul>
 	 *
 	 */
-	public void removeTextControlKeyListener(KeyListener listener) {
+	public void removeTextControlKeyListener(final KeyListener listener) {
 		checkWidget();
 		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
@@ -415,9 +403,9 @@ public class TableCombo extends Composite {
 	}
 
 	/**
-	 * Adds the listener to the collection of listeners who will be notified
-	 * when the receiver's text is verified, by sending it one of the messages
-	 * defined in the <code>VerifyListener</code> interface.
+	 * Adds the listener to the collection of listeners who will be notified when
+	 * the receiver's text is verified, by sending it one of the messages defined in
+	 * the <code>VerifyListener</code> interface.
 	 *
 	 * @param listener
 	 *            the listener which should be notified
@@ -439,12 +427,12 @@ public class TableCombo extends Composite {
 	 *
 	 * @since 3.3
 	 */
-	public void addVerifyListener(VerifyListener listener) {
+	public void addVerifyListener(final VerifyListener listener) {
 		checkWidget();
 		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
-		TypedListener typedListener = new TypedListener(listener);
+		final TypedListener typedListener = new TypedListener(listener);
 		addListener(SWT.Verify, typedListener);
 	}
 
@@ -453,14 +441,14 @@ public class TableCombo extends Composite {
 	 *
 	 * @param event
 	 */
-	private void arrowEvent(Event event) {
+	private void arrowEvent(final Event event) {
 		switch (event.type) {
 		case SWT.FocusIn: {
 			handleFocus(SWT.FocusIn);
 			break;
 		}
 		case SWT.MouseDown: {
-			Event mouseEvent = new Event();
+			final Event mouseEvent = new Event();
 			mouseEvent.button = event.button;
 			mouseEvent.count = event.count;
 			mouseEvent.stateMask = event.stateMask;
@@ -472,7 +460,7 @@ public class TableCombo extends Composite {
 			break;
 		}
 		case SWT.MouseUp: {
-			Event mouseEvent = new Event();
+			final Event mouseEvent = new Event();
 			mouseEvent.button = event.button;
 			mouseEvent.count = event.count;
 			mouseEvent.stateMask = event.stateMask;
@@ -493,8 +481,8 @@ public class TableCombo extends Composite {
 
 	/**
 	 * Sets the selection in the receiver's text field to an empty selection
-	 * starting just before the first character. If the text field is editable,
-	 * this has the effect of placing the i-beam at the start of the text.
+	 * starting just before the first character. If the text field is editable, this
+	 * has the effect of placing the i-beam at the start of the text.
 	 * <p>
 	 * Note: To clear the selected items in the receiver's list, use
 	 * <code>deselectAll()</code>.
@@ -521,7 +509,7 @@ public class TableCombo extends Composite {
 	 *
 	 * @param event
 	 */
-	private void comboEvent(Event event) {
+	private void comboEvent(final Event event) {
 		switch (event.type) {
 		case SWT.Dispose:
 			removeListener(SWT.Dispose, listener);
@@ -532,9 +520,9 @@ public class TableCombo extends Composite {
 				table.removeListener(SWT.Dispose, listener);
 				popup.dispose();
 			}
-			Shell shell = getShell();
+			final Shell shell = getShell();
 			shell.removeListener(SWT.Deactivate, listener);
-			Display display = getDisplay();
+			final Display display = getDisplay();
 			display.removeFilter(SWT.FocusIn, focusFilter);
 			popup = null;
 			text = null;
@@ -543,7 +531,7 @@ public class TableCombo extends Composite {
 			selectedImage = null;
 			break;
 		case SWT.FocusIn:
-			Control focusControl = getDisplay().getFocusControl();
+			final Control focusControl = getDisplay().getFocusControl();
 			if (focusControl == arrow || focusControl == table) {
 				return;
 			}
@@ -565,43 +553,44 @@ public class TableCombo extends Composite {
 	/**
 	 * {@inheritDoc}
 	 */
-	public Point computeSize(int wHint, int hHint, boolean changed) {
+	@Override
+	public Point computeSize(final int wHint, final int hHint, final boolean changed) {
 		checkWidget();
 
 		int overallWidth = 0;
 		int overallHeight = 0;
-		int borderWidth = getBorderWidth();
+		final int borderWidth = getBorderWidth();
 
 		// use user defined values if they are specified.
 		if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT) {
 			overallWidth = wHint;
 			overallHeight = hHint;
 		} else {
-			TableItem[] tableItems = table.getItems();
+			final TableItem[] tableItems = table.getItems();
 
-			GC gc = new GC(text);
-			int spacer = gc.stringExtent(" ").x; //$NON-NLS-1$
+			final GC gc = new GC(text);
+			final int spacer = gc.stringExtent(" ").x; //$NON-NLS-1$
 			int maxTextWidth = gc.stringExtent(text.getText()).x;
-			int colIndex = getDisplayColumnIndex();
+			final int colIndex = getDisplayColumnIndex();
 			int maxImageHeight = 0;
 			int currTextWidth = 0;
 
 			// calculate the maximum text width and image height.
-			for (int i = 0; i < tableItems.length; i++) {
-				currTextWidth = gc.stringExtent(tableItems[i].getText(colIndex)).x;
+			for (TableItem tableItem : tableItems) {
+				currTextWidth = gc.stringExtent(tableItem.getText(colIndex)).x;
 
 				// take image into account if there is one for the tableitem.
-				if (tableItems[i].getImage() != null) {
-					currTextWidth += tableItems[i].getImage().getBounds().width;
-					maxImageHeight = Math.max(tableItems[i].getImage().getBounds().height, maxImageHeight);
+				if (tableItem.getImage() != null) {
+					currTextWidth += tableItem.getImage().getBounds().width;
+					maxImageHeight = Math.max(tableItem.getImage().getBounds().height, maxImageHeight);
 				}
 
 				maxTextWidth = Math.max(currTextWidth, maxTextWidth);
 			}
 
 			gc.dispose();
-			Point textSize = text.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
-			Point arrowSize = arrow.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
+			final Point textSize = text.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
+			final Point arrowSize = arrow.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
 
 			overallHeight = Math.max(textSize.y, arrowSize.y);
 			overallHeight = Math.max(maxImageHeight, overallHeight);
@@ -645,7 +634,7 @@ public class TableCombo extends Composite {
 	 *
 	 * @param selectionIndex
 	 */
-	void createPopup(int selectionIndex) {
+	void createPopup(final int selectionIndex) {
 		// create shell and table
 		popup = new Shell(getShell(), SWT.NO_TRIM | SWT.ON_TOP);
 
@@ -663,16 +652,16 @@ public class TableCombo extends Composite {
 		}
 
 		// Add popup listeners
-		int[] popupEvents = { SWT.Close, SWT.Paint, SWT.Deactivate, SWT.Help };
-		for (int i = 0; i < popupEvents.length; i++) {
-			popup.addListener(popupEvents[i], listener);
+		final int[] popupEvents = { SWT.Close, SWT.Paint, SWT.Deactivate, SWT.Help };
+		for (int popupEvent : popupEvents) {
+			popup.addListener(popupEvent, listener);
 		}
 
 		// add table listeners
-		int[] tableEvents = { SWT.MouseUp, SWT.Selection, SWT.Traverse, SWT.KeyDown, SWT.KeyUp, SWT.FocusIn,
+		final int[] tableEvents = { SWT.MouseUp, SWT.Selection, SWT.Traverse, SWT.KeyDown, SWT.KeyUp, SWT.FocusIn,
 				SWT.Dispose };
-		for (int i = 0; i < tableEvents.length; i++) {
-			table.addListener(tableEvents[i], listener);
+		for (int tableEvent : tableEvents) {
+			table.addListener(tableEvent, listener);
 		}
 
 		// set the selection
@@ -684,8 +673,8 @@ public class TableCombo extends Composite {
 	/**
 	 * Cuts the selected text.
 	 * <p>
-	 * The current selection is first copied to the clipboard and then deleted
-	 * from the widget.
+	 * The current selection is first copied to the clipboard and then deleted from
+	 * the widget.
 	 * </p>
 	 *
 	 * @exception SWTException
@@ -708,7 +697,7 @@ public class TableCombo extends Composite {
 	 *
 	 * @param drop
 	 */
-	void dropDown(boolean drop) {
+	void dropDown(final boolean drop) {
 
 		// if already dropped then return
 		if (drop == isDropped()) {
@@ -730,12 +719,12 @@ public class TableCombo extends Composite {
 		}
 
 		// get the size of the TableCombo.
-		Point tableComboSize = getSize();
+		final Point tableComboSize = getSize();
 
 		// calculate the table height.
 		int itemCount = table.getItemCount();
-		itemCount = (itemCount == 0) ? visibleItemCount : Math.min(visibleItemCount, itemCount);
-		int itemHeight = (table.getItemHeight() * itemCount);
+		itemCount = itemCount == 0 ? visibleItemCount : Math.min(visibleItemCount, itemCount);
+		int itemHeight = table.getItemHeight() * itemCount;
 
 		// add 1 to the table height if the table item count is less than the
 		// visible item count.
@@ -756,7 +745,7 @@ public class TableCombo extends Composite {
 
 		// get table column references
 		TableColumn[] tableColumns = table.getColumns();
-		int totalColumns = (tableColumns == null ? 0 : tableColumns.length);
+		int totalColumns = tableColumns == null ? 0 : tableColumns.length;
 
 		// check to make sure at least one column has been specified. if it
 		// hasn't
@@ -778,16 +767,16 @@ public class TableCombo extends Composite {
 
 		// reset the last column's width to the preferred size if it has a
 		// explicit value.
-		int lastColIndex = totalColumns - 1;
+		final int lastColIndex = totalColumns - 1;
 		if (wasColumnWidthSpecified(lastColIndex)) {
 			tableColumns[lastColIndex].setWidth(columnWidths[lastColIndex]);
 		}
 
 		// calculate the table size after making adjustments.
-		Point tableSize = table.computeSize(SWT.DEFAULT, itemHeight, false);
+		final Point tableSize = table.computeSize(SWT.DEFAULT, itemHeight, false);
 
 		// calculate the table width and table height.
-		double pct = tableWidthPercentage / 100d;
+		final double pct = tableWidthPercentage / 100d;
 		int tableWidth = (int) (Math.max(tableComboSize.x - 2, tableSize.x) * pct);
 		int tableHeight = tableSize.y;
 
@@ -818,17 +807,17 @@ public class TableCombo extends Composite {
 		autoAdjustColumnWidthsIfNeeded(tableColumns, tableWidth, totalColumnWidth);
 
 		// set the table top index if there is a valid selection.
-		int index = table.getSelectionIndex();
+		final int index = table.getSelectionIndex();
 		if (index != -1) {
 			table.setTopIndex(index);
 		}
 
 		// calculate popup dimensions.
-		Display display = getDisplay();
-		Rectangle tableRect = table.getBounds();
-		Rectangle parentRect = display.map(getParent(), null, getBounds());
-		Point comboSize = getSize();
-		Rectangle displayRect = getMonitor().getClientArea();
+		final Display display = getDisplay();
+		final Rectangle tableRect = table.getBounds();
+		final Rectangle parentRect = display.map(getParent(), null, getBounds());
+		final Point comboSize = getSize();
+		final Rectangle displayRect = getMonitor().getClientArea();
 
 		int overallWidth = 0;
 
@@ -839,7 +828,7 @@ public class TableCombo extends Composite {
 			overallWidth = Math.max(comboSize.x, tableRect.width + 2);
 		}
 
-		int overallHeight = tableRect.height + 2;
+		final int overallHeight = tableRect.height + 2;
 		int x = parentRect.x;
 		int y = parentRect.y + comboSize.y;
 		if (y + overallHeight > displayRect.y + displayRect.height) {
@@ -860,11 +849,11 @@ public class TableCombo extends Composite {
 	}
 
 	/*
-	 * Return the Label immediately preceding the receiver in the z-order, or
-	 * null if none.
+	 * Return the Label immediately preceding the receiver in the z-order, or null
+	 * if none.
 	 */
 	private Label getAssociatedLabel() {
-		Control[] siblings = getParent().getChildren();
+		final Control[] siblings = getParent().getChildren();
 		for (int i = 0; i < siblings.length; i++) {
 			if (siblings[i] == TableCombo.this) {
 				if (i > 0 && siblings[i - 1] instanceof Label) {
@@ -878,6 +867,7 @@ public class TableCombo extends Composite {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Control[] getChildren() {
 		checkWidget();
 		return new Control[0];
@@ -904,8 +894,8 @@ public class TableCombo extends Composite {
 	}
 
 	/**
-	 * Returns the item at the given, zero-relative index in the receiver's
-	 * list. Throws an exception if the index is out of range.
+	 * Returns the item at the given, zero-relative index in the receiver's list.
+	 * Throws an exception if the index is out of range.
 	 *
 	 * @param index
 	 *            the index of the item to return
@@ -913,9 +903,8 @@ public class TableCombo extends Composite {
 	 *
 	 * @exception IllegalArgumentException
 	 *                <ul>
-	 *                <li>ERROR_INVALID_RANGE - if the index is not between 0
-	 *                and the number of elements in the list minus 1
-	 *                (inclusive)</li>
+	 *                <li>ERROR_INVALID_RANGE - if the index is not between 0 and
+	 *                the number of elements in the list minus 1 (inclusive)</li>
 	 *                </ul>
 	 * @exception SWTException
 	 *                <ul>
@@ -925,7 +914,7 @@ public class TableCombo extends Composite {
 	 *                thread that created the receiver</li>
 	 *                </ul>
 	 */
-	public String getItem(int index) {
+	public String getItem(final int index) {
 		checkWidget();
 		return table.getItem(index).getText(getDisplayColumnIndex());
 	}
@@ -949,8 +938,8 @@ public class TableCombo extends Composite {
 	}
 
 	/**
-	 * Returns the height of the area which would be used to display
-	 * <em>one</em> of the items in the receiver's list.
+	 * Returns the height of the area which would be used to display <em>one</em> of
+	 * the items in the receiver's list.
 	 *
 	 * @return the height of one item
 	 *
@@ -971,8 +960,8 @@ public class TableCombo extends Composite {
 	 * Returns an array of <code>String</code>s which are the items in the
 	 * receiver's list.
 	 * <p>
-	 * Note: This is not the actual structure used by the receiver to maintain
-	 * its list of items, so modifying the array will not affect the receiver.
+	 * Note: This is not the actual structure used by the receiver to maintain its
+	 * list of items, so modifying the array will not affect the receiver.
 	 * </p>
 	 *
 	 * @return the items in the receiver's list
@@ -989,14 +978,14 @@ public class TableCombo extends Composite {
 		checkWidget();
 
 		// get a list of the table items.
-		TableItem[] tableItems = table.getItems();
+		final TableItem[] tableItems = table.getItems();
 
-		int totalItems = (tableItems == null ? 0 : tableItems.length);
+		final int totalItems = tableItems == null ? 0 : tableItems.length;
 
 		// create string array to hold the total number of items.
-		String[] stringItems = new String[totalItems];
+		final String[] stringItems = new String[totalItems];
 
-		int colIndex = getDisplayColumnIndex();
+		final int colIndex = getDisplayColumnIndex();
 
 		// now copy the display string from the tableitems.
 		for (int index = 0; index < totalItems; index++) {
@@ -1007,11 +996,10 @@ public class TableCombo extends Composite {
 	}
 
 	/**
-	 * Returns a <code>Point</code> whose x coordinate is the start of the
-	 * selection in the receiver's text field, and whose y coordinate is the end
-	 * of the selection. The returned values are zero-relative. An "empty"
-	 * selection as indicated by the the x and y coordinates having the same
-	 * value.
+	 * Returns a <code>Point</code> whose x coordinate is the start of the selection
+	 * in the receiver's text field, and whose y coordinate is the end of the
+	 * selection. The returned values are zero-relative. An "empty" selection as
+	 * indicated by the the x and y coordinates having the same value.
 	 *
 	 * @return a point representing the selection start and end
 	 *
@@ -1029,8 +1017,8 @@ public class TableCombo extends Composite {
 	}
 
 	/**
-	 * Returns the zero-relative index of the item which is currently selected
-	 * in the receiver's list, or -1 if no item is selected.
+	 * Returns the zero-relative index of the item which is currently selected in
+	 * the receiver's list, or -1 if no item is selected.
 	 *
 	 * @return the index of the selected item
 	 *
@@ -1050,6 +1038,7 @@ public class TableCombo extends Composite {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public int getStyle() {
 		checkWidget();
 
@@ -1124,7 +1113,7 @@ public class TableCombo extends Composite {
 	 *
 	 * @param type
 	 */
-	private void handleFocus(int type) {
+	private void handleFocus(final int type) {
 		switch (type) {
 		case SWT.FocusIn: {
 			if (hasFocus) {
@@ -1134,13 +1123,13 @@ public class TableCombo extends Composite {
 				text.selectAll();
 			}
 			hasFocus = true;
-			Shell shell = getShell();
+			final Shell shell = getShell();
 			shell.removeListener(SWT.Deactivate, listener);
 			shell.addListener(SWT.Deactivate, listener);
-			Display display = getDisplay();
+			final Display display = getDisplay();
 			display.removeFilter(SWT.FocusIn, focusFilter);
 			display.addFilter(SWT.FocusIn, focusFilter);
-			Event e = new Event();
+			final Event e = new Event();
 			notifyListeners(SWT.FocusIn, e);
 			break;
 		}
@@ -1148,16 +1137,16 @@ public class TableCombo extends Composite {
 			if (!hasFocus) {
 				return;
 			}
-			Control focusControl = getDisplay().getFocusControl();
+			final Control focusControl = getDisplay().getFocusControl();
 			if (focusControl == arrow || focusControl == table || focusControl == text) {
 				return;
 			}
 			hasFocus = false;
-			Shell shell = getShell();
+			final Shell shell = getShell();
 			shell.removeListener(SWT.Deactivate, listener);
-			Display display = getDisplay();
+			final Display display = getDisplay();
 			display.removeFilter(SWT.FocusIn, focusFilter);
-			Event e = new Event();
+			final Event e = new Event();
 			notifyListeners(SWT.FocusOut, e);
 			break;
 		}
@@ -1165,9 +1154,9 @@ public class TableCombo extends Composite {
 	}
 
 	/**
-	 * Searches the receiver's list starting at the first item (index 0) until
-	 * an item is found that is equal to the argument, and returns the index of
-	 * that item. If no item is found, returns -1.
+	 * Searches the receiver's list starting at the first item (index 0) until an
+	 * item is found that is equal to the argument, and returns the index of that
+	 * item. If no item is found, returns -1.
 	 *
 	 * @param string
 	 *            the search item
@@ -1185,17 +1174,17 @@ public class TableCombo extends Composite {
 	 *                thread that created the receiver</li>
 	 *                </ul>
 	 */
-	public int indexOf(String string) {
+	public int indexOf(final String string) {
 		checkWidget();
 		if (string == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
 
 		// get a list of the table items.
-		TableItem[] tableItems = table.getItems();
+		final TableItem[] tableItems = table.getItems();
 
-		int totalItems = (tableItems == null ? 0 : tableItems.length);
-		int colIndex = getDisplayColumnIndex();
+		final int totalItems = tableItems == null ? 0 : tableItems.length;
+		final int colIndex = getDisplayColumnIndex();
 
 		// now copy the display string from the tableitems.
 		for (int index = 0; index < totalItems; index++) {
@@ -1208,10 +1197,9 @@ public class TableCombo extends Composite {
 	}
 
 	/**
-	 * Searches the receiver's list starting at the given, zero-relative index
-	 * until an item is found that is equal to the argument, and returns the
-	 * index of that item. If no item is found or the starting index is out of
-	 * range, returns -1.
+	 * Searches the receiver's list starting at the given, zero-relative index until
+	 * an item is found that is equal to the argument, and returns the index of that
+	 * item. If no item is found or the starting index is out of range, returns -1.
 	 *
 	 * @param string
 	 *            the search item
@@ -1231,20 +1219,20 @@ public class TableCombo extends Composite {
 	 *                thread that created the receiver</li>
 	 *                </ul>
 	 */
-	public int indexOf(String string, int start) {
+	public int indexOf(final String string, final int start) {
 		checkWidget();
 		if (string == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
 
 		// get a list of the table items.
-		TableItem[] tableItems = table.getItems();
+		final TableItem[] tableItems = table.getItems();
 
-		int totalItems = (tableItems == null ? 0 : tableItems.length);
+		final int totalItems = tableItems == null ? 0 : tableItems.length;
 
 		if (start < totalItems) {
 
-			int colIndex = getDisplayColumnIndex();
+			final int colIndex = getDisplayColumnIndex();
 
 			// now copy the display string from the tableitems.
 			for (int index = start; index < totalItems; index++) {
@@ -1262,7 +1250,7 @@ public class TableCombo extends Composite {
 	 *
 	 * @param showTableLines
 	 */
-	public void setShowTableLines(boolean showTableLines) {
+	public void setShowTableLines(final boolean showTableLines) {
 		checkWidget();
 		table.setLinesVisible(showTableLines);
 	}
@@ -1272,7 +1260,7 @@ public class TableCombo extends Composite {
 	 *
 	 * @param showTableHeader
 	 */
-	public void setShowTableHeader(boolean showTableHeader) {
+	public void setShowTableHeader(final boolean showTableHeader) {
 		checkWidget();
 		table.setHeaderVisible(showTableHeader);
 	}
@@ -1281,23 +1269,25 @@ public class TableCombo extends Composite {
 	 * Add Accessbile listeners to label and table.
 	 */
 	void initAccessible() {
-		AccessibleAdapter accessibleAdapter = new AccessibleAdapter() {
-			public void getName(AccessibleEvent e) {
+		final AccessibleAdapter accessibleAdapter = new AccessibleAdapter() {
+			@Override
+			public void getName(final AccessibleEvent e) {
 				String name = null;
-				Label label = getAssociatedLabel();
+				final Label label = getAssociatedLabel();
 				if (label != null) {
 					name = stripMnemonic(text.getText());
 				}
 				e.result = name;
 			}
 
-			public void getKeyboardShortcut(AccessibleEvent e) {
+			@Override
+			public void getKeyboardShortcut(final AccessibleEvent e) {
 				String shortcut = null;
-				Label label = getAssociatedLabel();
+				final Label label = getAssociatedLabel();
 				if (label != null) {
-					String text = label.getText();
+					final String text = label.getText();
 					if (text != null) {
-						char mnemonic = _findMnemonic(text);
+						final char mnemonic = _findMnemonic(text);
 						if (mnemonic != '\0') {
 							shortcut = "Alt+" + mnemonic; //$NON-NLS-1$
 						}
@@ -1306,7 +1296,8 @@ public class TableCombo extends Composite {
 				e.result = shortcut;
 			}
 
-			public void getHelp(AccessibleEvent e) {
+			@Override
+			public void getHelp(final AccessibleEvent e) {
 				e.result = getToolTipText();
 			}
 		};
@@ -1316,73 +1307,86 @@ public class TableCombo extends Composite {
 		table.getAccessible().addAccessibleListener(accessibleAdapter);
 
 		arrow.getAccessible().addAccessibleListener(new AccessibleAdapter() {
-			public void getName(AccessibleEvent e) {
+			@Override
+			public void getName(final AccessibleEvent e) {
 				e.result = isDropped() ? SWT.getMessage("SWT_Close") : SWT.getMessage("SWT_Open"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 
-			public void getKeyboardShortcut(AccessibleEvent e) {
+			@Override
+			public void getKeyboardShortcut(final AccessibleEvent e) {
 				e.result = "Alt+Down Arrow"; //$NON-NLS-1$
 			}
 
-			public void getHelp(AccessibleEvent e) {
+			@Override
+			public void getHelp(final AccessibleEvent e) {
 				e.result = getToolTipText();
 			}
 		});
 
 		getAccessible().addAccessibleTextListener(new AccessibleTextAdapter() {
-			public void getCaretOffset(AccessibleTextEvent e) {
+			@Override
+			public void getCaretOffset(final AccessibleTextEvent e) {
 				e.offset = text.getCaretPosition();
 			}
 
-			public void getSelectionRange(AccessibleTextEvent e) {
-				Point sel = text.getSelection();
+			@Override
+			public void getSelectionRange(final AccessibleTextEvent e) {
+				final Point sel = text.getSelection();
 				e.offset = sel.x;
 				e.length = sel.y - sel.x;
 			}
 		});
 
 		getAccessible().addAccessibleControlListener(new AccessibleControlAdapter() {
-			public void getChildAtPoint(AccessibleControlEvent e) {
-				Point testPoint = toControl(e.x, e.y);
+			@Override
+			public void getChildAtPoint(final AccessibleControlEvent e) {
+				final Point testPoint = toControl(e.x, e.y);
 				if (getBounds().contains(testPoint)) {
 					e.childID = ACC.CHILDID_SELF;
 				}
 			}
 
-			public void getLocation(AccessibleControlEvent e) {
-				Rectangle location = getBounds();
-				Point pt = getParent().toDisplay(location.x, location.y);
+			@Override
+			public void getLocation(final AccessibleControlEvent e) {
+				final Rectangle location = getBounds();
+				final Point pt = getParent().toDisplay(location.x, location.y);
 				e.x = pt.x;
 				e.y = pt.y;
 				e.width = location.width;
 				e.height = location.height;
 			}
 
-			public void getChildCount(AccessibleControlEvent e) {
+			@Override
+			public void getChildCount(final AccessibleControlEvent e) {
 				e.detail = 0;
 			}
 
-			public void getRole(AccessibleControlEvent e) {
+			@Override
+			public void getRole(final AccessibleControlEvent e) {
 				e.detail = ACC.ROLE_COMBOBOX;
 			}
 
-			public void getState(AccessibleControlEvent e) {
+			@Override
+			public void getState(final AccessibleControlEvent e) {
 				e.detail = ACC.STATE_NORMAL;
 			}
 
-			public void getValue(AccessibleControlEvent e) {
+			@Override
+			public void getValue(final AccessibleControlEvent e) {
 				e.result = text.getText();
 			}
 		});
 
 		text.getAccessible().addAccessibleControlListener(new AccessibleControlAdapter() {
-			public void getRole(AccessibleControlEvent e) {
+			@Override
+			public void getRole(final AccessibleControlEvent e) {
 				e.detail = text.getEditable() ? ACC.ROLE_TEXT : ACC.ROLE_LABEL;
 			}
 		});
 
 		arrow.getAccessible().addAccessibleControlListener(new AccessibleControlAdapter() {
-			public void getDefaultAction(AccessibleControlEvent e) {
+			@Override
+			public void getDefaultAction(final AccessibleControlEvent e) {
 				e.result = isDropped() ? SWT.getMessage("SWT_Close") : SWT.getMessage("SWT_Open"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		});
@@ -1400,6 +1404,7 @@ public class TableCombo extends Composite {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean isFocusControl() {
 		checkWidget();
 		// if (label.isFocusControl () || arrow.isFocusControl () ||
@@ -1416,18 +1421,18 @@ public class TableCombo extends Composite {
 	 * @param changed
 	 * @param closeDropDown
 	 */
-	private void internalLayout(boolean changed, boolean closeDropDown) {
+	private void internalLayout(final boolean changed, final boolean closeDropDown) {
 		if (closeDropDown && isDropped()) {
 			dropDown(false);
 		}
-		Rectangle rect = getClientArea();
-		int width = rect.width;
-		int height = rect.height;
-		Point arrowSize = arrow.computeSize(SWT.DEFAULT, height, changed);
+		final Rectangle rect = getClientArea();
+		final int width = rect.width;
+		final int height = rect.height;
+		final Point arrowSize = arrow.computeSize(SWT.DEFAULT, height, changed);
 
 		// calculate text vertical alignment.
 		int textYPos = 0;
-		Point textSize = text.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		final Point textSize = text.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		if (textSize.y < height) {
 			textYPos = (height - textSize.y) / 2;
 		}
@@ -1442,7 +1447,7 @@ public class TableCombo extends Composite {
 			// calculate the amount of width left in the control after taking
 			// into account the arrow selector
 			int remainingWidth = width - arrowSize.x;
-			Point imageSize = selectedImage.computeSize(SWT.DEFAULT, height, changed);
+			final Point imageSize = selectedImage.computeSize(SWT.DEFAULT, height, changed);
 			int imageWidth = imageSize.x + 2;
 
 			// handle the case where the image is larger than the available
@@ -1455,7 +1460,7 @@ public class TableCombo extends Composite {
 			}
 
 			// set the width of the text.
-			int textWidth = remainingWidth;
+			final int textWidth = remainingWidth;
 
 			// set image, text, and arrow boundaries
 			selectedImage.setBounds(0, 0, imageWidth, imageSize.y);
@@ -1472,7 +1477,7 @@ public class TableCombo extends Composite {
 	 * @throws InvocationTargetException
 	 * @throws NoSuchMethodException
 	 */
-	private void tableEvent(Event event) {
+	private void tableEvent(final Event event) {
 		switch (event.type) {
 		case SWT.FocusIn: {
 			handleFocus(SWT.FocusIn);
@@ -1488,7 +1493,7 @@ public class TableCombo extends Composite {
 			break;
 		}
 		case SWT.Selection: {
-			int index = table.getSelectionIndex();
+			final int index = table.getSelectionIndex();
 			if (index == -1) {
 				return;
 			}
@@ -1499,7 +1504,7 @@ public class TableCombo extends Composite {
 			// set the selection in the table.
 			table.setSelection(index);
 
-			Event e = new Event();
+			final Event e = new Event();
 			e.time = event.time;
 			e.stateMask = event.stateMask;
 			e.doit = event.doit;
@@ -1524,7 +1529,7 @@ public class TableCombo extends Composite {
 				}
 				return;
 			}
-			Event e = new Event();
+			final Event e = new Event();
 			e.time = event.time;
 			e.detail = event.detail;
 			e.doit = event.doit;
@@ -1536,7 +1541,7 @@ public class TableCombo extends Composite {
 			break;
 		}
 		case SWT.KeyUp: {
-			Event e = new Event();
+			final Event e = new Event();
 			e.time = event.time;
 			e.character = event.character;
 			e.keyCode = event.keyCode;
@@ -1557,7 +1562,7 @@ public class TableCombo extends Composite {
 				dropDown(false);
 				// Enter causes default selection
 				if (selectOnEnter) {
-					Event e = new Event();
+					final Event e = new Event();
 					e.time = event.time;
 					e.stateMask = event.stateMask;
 					notifyListeners(SWT.DefaultSelection, e);
@@ -1568,7 +1573,7 @@ public class TableCombo extends Composite {
 			if (isDisposed()) {
 				break;
 			}
-			Event e = new Event();
+			final Event e = new Event();
 			e.time = event.time;
 			e.character = event.character;
 			e.keyCode = event.keyCode;
@@ -1581,23 +1586,23 @@ public class TableCombo extends Composite {
 	}
 
 	/**
-	 * Allows to change the on enter behavior when the drop-down is shown.
-	 * Default value is <code>true</code>.
-	 * 
+	 * Allows to change the on enter behavior when the drop-down is shown. Default
+	 * value is <code>true</code>.
+	 *
 	 * @param selectOnEnter
-	 *            <code>true</code> if pressing enter should set the combo
-	 *            selection to the last selected element in the table,
-	 *            <code>false</code> if combo selection should not change
+	 *            <code>true</code> if pressing enter should set the combo selection
+	 *            to the last selected element in the table, <code>false</code> if
+	 *            combo selection should not change
 	 */
-	public void setUpdateSelectionOnEnter(boolean selectOnEnter) {
+	public void setUpdateSelectionOnEnter(final boolean selectOnEnter) {
 		this.selectOnEnter = selectOnEnter;
 	}
 
 	/**
 	 * Pastes text from clipboard.
 	 * <p>
-	 * The selected text is deleted from the widget and new text inserted from
-	 * the clipboard.
+	 * The selected text is deleted from the widget and new text inserted from the
+	 * clipboard.
 	 * </p>
 	 *
 	 * @exception SWTException
@@ -1620,11 +1625,11 @@ public class TableCombo extends Composite {
 	 *
 	 * @param event
 	 */
-	private void popupEvent(Event event) {
+	private void popupEvent(final Event event) {
 		switch (event.type) {
 		case SWT.Paint:
 			// draw rectangle around table
-			Rectangle tableRect = table.getBounds();
+			final Rectangle tableRect = table.getBounds();
 			event.gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION));
 			event.gc.drawRectangle(0, 0, tableRect.width + 1, tableRect.height + 1);
 			break;
@@ -1634,19 +1639,18 @@ public class TableCombo extends Composite {
 			break;
 		case SWT.Deactivate:
 			/*
-			 * Bug in GTK. When the arrow button is pressed the popup control
-			 * receives a deactivate event and then the arrow button receives a
-			 * selection event. If we hide the popup in the deactivate event,
-			 * the selection event will show it again. To prevent the popup from
-			 * showing again, we will let the selection event of the arrow
-			 * button hide the popup. In Windows, hiding the popup during the
-			 * deactivate causes the deactivate to be called twice and the
-			 * selection event to be disappear.
+			 * Bug in GTK. When the arrow button is pressed the popup control receives a
+			 * deactivate event and then the arrow button receives a selection event. If we
+			 * hide the popup in the deactivate event, the selection event will show it
+			 * again. To prevent the popup from showing again, we will let the selection
+			 * event of the arrow button hide the popup. In Windows, hiding the popup during
+			 * the deactivate causes the deactivate to be called twice and the selection
+			 * event to be disappear.
 			 */
 			if (!"carbon".equals(SWT.getPlatform())) {
-				Point point = arrow.toControl(getDisplay().getCursorLocation());
-				Point size = arrow.getSize();
-				Rectangle rect = new Rectangle(0, 0, size.x, size.y);
+				final Point point = arrow.toControl(getDisplay().getCursorLocation());
+				final Point size = arrow.getSize();
+				final Rectangle rect = new Rectangle(0, 0, size.x, size.y);
 				if (!rect.contains(point)) {
 					dropDown(false);
 				}
@@ -1674,6 +1678,7 @@ public class TableCombo extends Composite {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void redraw() {
 		super.redraw();
 		text.redraw();
@@ -1686,13 +1691,14 @@ public class TableCombo extends Composite {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void redraw(int x, int y, int width, int height, boolean all) {
+	@Override
+	public void redraw(final int x, final int y, final int width, final int height, final boolean all) {
 		super.redraw(x, y, width, height, true);
 	}
 
 	/**
-	 * Removes the listener from the collection of listeners who will be
-	 * notified when the receiver's text is modified.
+	 * Removes the listener from the collection of listeners who will be notified
+	 * when the receiver's text is modified.
 	 *
 	 * @param listener
 	 *            the listener which should no longer be notified
@@ -1712,7 +1718,7 @@ public class TableCombo extends Composite {
 	 * @see ModifyListener
 	 * @see #addModifyListener
 	 */
-	public void removeModifyListener(ModifyListener listener) {
+	public void removeModifyListener(final ModifyListener listener) {
 		checkWidget();
 		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
@@ -1721,8 +1727,8 @@ public class TableCombo extends Composite {
 	}
 
 	/**
-	 * Removes the listener from the collection of listeners who will be
-	 * notified when the user changes the receiver's selection.
+	 * Removes the listener from the collection of listeners who will be notified
+	 * when the user changes the receiver's selection.
 	 *
 	 * @param listener
 	 *            the listener which should no longer be notified
@@ -1742,7 +1748,7 @@ public class TableCombo extends Composite {
 	 * @see SelectionListener
 	 * @see #addSelectionListener
 	 */
-	public void removeSelectionListener(SelectionListener listener) {
+	public void removeSelectionListener(final SelectionListener listener) {
 		checkWidget();
 		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
@@ -1752,8 +1758,8 @@ public class TableCombo extends Composite {
 	}
 
 	/**
-	 * Removes the listener from the collection of listeners who will be
-	 * notified when the control is verified.
+	 * Removes the listener from the collection of listeners who will be notified
+	 * when the control is verified.
 	 *
 	 * @param listener
 	 *            the listener which should no longer be notified
@@ -1775,7 +1781,7 @@ public class TableCombo extends Composite {
 	 *
 	 * @since 3.3
 	 */
-	public void removeVerifyListener(VerifyListener listener) {
+	public void removeVerifyListener(final VerifyListener listener) {
 		checkWidget();
 		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
@@ -1784,9 +1790,9 @@ public class TableCombo extends Composite {
 	}
 
 	/**
-	 * Selects the item at the given zero-relative index in the receiver's list.
-	 * If the item at the index was already selected, it remains selected.
-	 * Indices that are out of range are ignored.
+	 * Selects the item at the given zero-relative index in the receiver's list. If
+	 * the item at the index was already selected, it remains selected. Indices that
+	 * are out of range are ignored.
 	 *
 	 * @param index
 	 *            the index of the item to select
@@ -1799,7 +1805,7 @@ public class TableCombo extends Composite {
 	 *                thread that created the receiver</li>
 	 *                </ul>
 	 */
-	public void select(int index) {
+	public void select(final int index) {
 		checkWidget();
 
 		// deselect if a value of -1 is passed in.
@@ -1825,7 +1831,8 @@ public class TableCombo extends Composite {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void setBackground(Color color) {
+	@Override
+	public void setBackground(final Color color) {
 		super.setBackground(color);
 		background = color;
 		if (text != null) {
@@ -1858,7 +1865,7 @@ public class TableCombo extends Composite {
 	 *
 	 * @since 3.0
 	 */
-	public void setEditable(boolean editable) {
+	public void setEditable(final boolean editable) {
 		checkWidget();
 		text.setEditable(editable);
 	}
@@ -1866,7 +1873,8 @@ public class TableCombo extends Composite {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void setEnabled(boolean enabled) {
+	@Override
+	public void setEnabled(final boolean enabled) {
 		super.setEnabled(enabled);
 		if (popup != null) {
 			popup.setVisible(false);
@@ -1885,6 +1893,7 @@ public class TableCombo extends Composite {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean setFocus() {
 		checkWidget();
 		if (!isEnabled() || !isVisible()) {
@@ -1900,7 +1909,8 @@ public class TableCombo extends Composite {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void setFont(Font font) {
+	@Override
+	public void setFont(final Font font) {
 		super.setFont(font);
 		this.font = font;
 		text.setFont(font);
@@ -1911,7 +1921,8 @@ public class TableCombo extends Composite {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void setForeground(Color color) {
+	@Override
+	public void setForeground(final Color color) {
 		super.setForeground(color);
 		foreground = color;
 		if (text != null) {
@@ -1929,8 +1940,8 @@ public class TableCombo extends Composite {
 	 * Sets the layout which is associated with the receiver to be the argument
 	 * which may be null.
 	 * <p>
-	 * Note : No Layout can be set on this Control because it already manages
-	 * the size and position of its children.
+	 * Note : No Layout can be set on this Control because it already manages the
+	 * size and position of its children.
 	 * </p>
 	 *
 	 * @param layout
@@ -1944,18 +1955,19 @@ public class TableCombo extends Composite {
 	 *                thread that created the receiver</li>
 	 *                </ul>
 	 */
-	public void setLayout(Layout layout) {
+	@Override
+	public void setLayout(final Layout layout) {
 		checkWidget();
 		return;
 	}
 
 	/**
-	 * Marks the receiver's list as visible if the argument is
-	 * <code>true</code>, and marks it invisible otherwise.
+	 * Marks the receiver's list as visible if the argument is <code>true</code>,
+	 * and marks it invisible otherwise.
 	 * <p>
 	 * If one of the receiver's ancestors is not visible or some other condition
-	 * makes the receiver not visible, marking it visible may not actually cause
-	 * it to be displayed.
+	 * makes the receiver not visible, marking it visible may not actually cause it
+	 * to be displayed.
 	 * </p>
 	 *
 	 * @param visible
@@ -1971,14 +1983,14 @@ public class TableCombo extends Composite {
 	 *
 	 * @since 3.4
 	 */
-	public void setTableVisible(boolean visible) {
+	public void setTableVisible(final boolean visible) {
 		checkWidget();
 		dropDown(visible);
 	}
 
 	/**
-	 * Sets the selection in the receiver's text field to the range specified by
-	 * the argument whose x coordinate is the start of the selection and whose y
+	 * Sets the selection in the receiver's text field to the range specified by the
+	 * argument whose x coordinate is the start of the selection and whose y
 	 * coordinate is the end of the selection.
 	 *
 	 * @param selection
@@ -1996,7 +2008,7 @@ public class TableCombo extends Composite {
 	 *                thread that created the receiver</li>
 	 *                </ul>
 	 */
-	public void setSelection(Point selection) {
+	public void setSelection(final Point selection) {
 		checkWidget();
 		if (selection == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
@@ -2009,8 +2021,8 @@ public class TableCombo extends Composite {
 	 * <p>
 	 * Note: The text field in a <code>Combo</code> is typically only capable of
 	 * displaying a single line of text. Thus, setting the text to a string
-	 * containing line breaks or other special characters will probably cause it
-	 * to display incorrectly.
+	 * containing line breaks or other special characters will probably cause it to
+	 * display incorrectly.
 	 * </p>
 	 *
 	 * @param string
@@ -2028,14 +2040,14 @@ public class TableCombo extends Composite {
 	 *                thread that created the receiver</li>
 	 *                </ul>
 	 */
-	public void setText(String string) {
+	public void setText(final String string) {
 		checkWidget();
 		if (string == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
 
 		// find the index of the given string.
-		int index = indexOf(string);
+		final int index = indexOf(string);
 
 		if (index == -1) {
 			table.deselectAll();
@@ -2069,7 +2081,7 @@ public class TableCombo extends Composite {
 	 *                thread that created the receiver</li>
 	 *                </ul>
 	 */
-	public void setTextLimit(int limit) {
+	public void setTextLimit(final int limit) {
 		checkWidget();
 		text.setTextLimit(limit);
 	}
@@ -2077,7 +2089,8 @@ public class TableCombo extends Composite {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void setToolTipText(String tipText) {
+	@Override
+	public void setToolTipText(final String tipText) {
 		checkWidget();
 		super.setToolTipText(tipText);
 		if (selectedImage != null) {
@@ -2094,11 +2107,12 @@ public class TableCombo extends Composite {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void setVisible(boolean visible) {
+	@Override
+	public void setVisible(final boolean visible) {
 		super.setVisible(visible);
 		/*
-		 * At this point the widget may have been disposed in a FocusOut event.
-		 * If so then do not continue.
+		 * At this point the widget may have been disposed in a FocusOut event. If so
+		 * then do not continue.
 		 */
 		if (isDisposed()) {
 			return;
@@ -2129,7 +2143,7 @@ public class TableCombo extends Composite {
 	 *
 	 * @since 3.0
 	 */
-	public void setVisibleItemCount(int count) {
+	public void setVisibleItemCount(final int count) {
 		checkWidget();
 		if (count > 0) {
 			visibleItemCount = count;
@@ -2140,11 +2154,11 @@ public class TableCombo extends Composite {
 	 * @param string
 	 * @return
 	 */
-	private String stripMnemonic(String string) {
+	private String stripMnemonic(final String string) {
 		int index = 0;
-		int length = string.length();
+		final int length = string.length();
 		do {
-			while ((index < length) && (string.charAt(index) != '&')) {
+			while (index < length && string.charAt(index) != '&') {
 				index++;
 			}
 			if (++index >= length) {
@@ -2161,13 +2175,13 @@ public class TableCombo extends Composite {
 	/**
 	 * Defines what columns the drop down table will have.
 	 *
-	 * Use this method when you don't care about the width of the columns but
-	 * want to set the column header text.
+	 * Use this method when you don't care about the width of the columns but want
+	 * to set the column header text.
 	 *
 	 * @param columnHeaders
 	 * @param columnWidths
 	 */
-	public void defineColumns(String[] columnHeaders) {
+	public void defineColumns(final String[] columnHeaders) {
 		if (columnHeaders != null && columnHeaders.length > 0) {
 			defineColumnsInternal(columnHeaders, null, columnHeaders.length);
 		}
@@ -2176,13 +2190,13 @@ public class TableCombo extends Composite {
 	/**
 	 * Defines what columns the drop down table will have.
 	 *
-	 * Use this method when you don't care about the column header text but you
-	 * want the fields to be a specific width.
+	 * Use this method when you don't care about the column header text but you want
+	 * the fields to be a specific width.
 	 *
 	 * @param columnHeaders
 	 * @param columnBounds
 	 */
-	public void defineColumns(int[] columnBounds) {
+	public void defineColumns(final int[] columnBounds) {
 		this.columnWidths = columnBounds;
 
 		if (columnBounds != null && columnBounds.length > 0) {
@@ -2193,14 +2207,14 @@ public class TableCombo extends Composite {
 	/**
 	 * Defines what columns the drop down table will have.
 	 *
-	 * Use this method when you don't care about the column headers and you want
-	 * the columns to be automatically sized based upon their content.
+	 * Use this method when you don't care about the column headers and you want the
+	 * columns to be automatically sized based upon their content.
 	 *
 	 * @param columnHeaders
 	 * @param columnWidths
 	 */
 
-	public void defineColumns(int numberOfColumnsToCreate) {
+	public void defineColumns(final int numberOfColumnsToCreate) {
 		if (numberOfColumnsToCreate > 0) {
 			defineColumnsInternal(null, null, numberOfColumnsToCreate);
 		}
@@ -2216,7 +2230,7 @@ public class TableCombo extends Composite {
 	 * @param columnHeaders
 	 * @param columnBounds
 	 */
-	public void defineColumns(String[] columnHeaders, int[] columnBounds) {
+	public void defineColumns(final String[] columnHeaders, final int[] columnBounds) {
 		if (columnHeaders != null || columnBounds != null) {
 			int total = columnHeaders == null ? 0 : columnHeaders.length;
 			if (columnBounds != null && columnBounds.length > total) {
@@ -2236,17 +2250,18 @@ public class TableCombo extends Composite {
 	 * @param columnHeaders
 	 * @param columnBounds
 	 */
-	private void defineColumnsInternal(String[] columnHeaders, int[] columnBounds, int totalColumnsToBeCreated) {
+	private void defineColumnsInternal(final String[] columnHeaders, final int[] columnBounds,
+			final int totalColumnsToBeCreated) {
 
 		checkWidget();
 
-		int totalColumnHeaders = columnHeaders == null ? 0 : columnHeaders.length;
-		int totalColBounds = columnBounds == null ? 0 : columnBounds.length;
+		final int totalColumnHeaders = columnHeaders == null ? 0 : columnHeaders.length;
+		final int totalColBounds = columnBounds == null ? 0 : columnBounds.length;
 
 		if (totalColumnsToBeCreated > 0) {
 
 			for (int index = 0; index < totalColumnsToBeCreated; index++) {
-				TableColumn column = new TableColumn(table, SWT.NONE);
+				final TableColumn column = new TableColumn(table, SWT.NONE);
 
 				if (index < totalColumnHeaders) {
 					column.setText(columnHeaders[index]);
@@ -2266,13 +2281,13 @@ public class TableCombo extends Composite {
 	 * Sets the table width percentage in relation to the width of the label
 	 * control.
 	 *
-	 * The default value if 100% which means that it will be the same size as
-	 * the label control. If you want the table to be wider than the label then
-	 * just display a value higher than 100%.
+	 * The default value if 100% which means that it will be the same size as the
+	 * label control. If you want the table to be wider than the label then just
+	 * display a value higher than 100%.
 	 *
 	 * @param ddWidthPct
 	 */
-	public void setTableWidthPercentage(int ddWidthPct) {
+	public void setTableWidthPercentage(final int ddWidthPct) {
 		checkWidget();
 
 		// don't accept invalid input.
@@ -2287,7 +2302,7 @@ public class TableCombo extends Composite {
 	 *
 	 * @param displayColumnIndex
 	 */
-	public void setDisplayColumnIndex(int displayColumnIndex) {
+	public void setDisplayColumnIndex(final int displayColumnIndex) {
 		checkWidget();
 
 		if (displayColumnIndex >= 0) {
@@ -2297,37 +2312,35 @@ public class TableCombo extends Composite {
 
 	/**
 	 * Modifies the behavior of the popup after an entry was selected. If
-	 * {@code true} the popup will be closed, if {@code false} it will remain
-	 * open.
+	 * {@code true} the popup will be closed, if {@code false} it will remain open.
 	 *
 	 * @param closePopupAfterSelection
 	 */
-	public void setClosePopupAfterSelection(boolean closePopupAfterSelection) {
+	public void setClosePopupAfterSelection(final boolean closePopupAfterSelection) {
 		this.closePupupAfterSelection = closePopupAfterSelection;
 	}
 
 	/**
-	 * returns the column index of the TableColumn to be displayed when
-	 * selected.
+	 * returns the column index of the TableColumn to be displayed when selected.
 	 *
 	 * @return
 	 */
 	private int getDisplayColumnIndex() {
 		// make sure the requested column index is valid.
-		return (displayColumnIndex <= (table.getColumnCount() - 1) ? displayColumnIndex : 0);
+		return displayColumnIndex <= table.getColumnCount() - 1 ? displayColumnIndex : 0;
 	}
 
 	/*
 	 * Return the lowercase of the first non-'&' character following an '&'
-	 * character in the given string. If there are no '&' characters in the
-	 * given string, return '\0'.
+	 * character in the given string. If there are no '&' characters in the given
+	 * string, return '\0'.
 	 */
-	private char _findMnemonic(String string) {
+	private char _findMnemonic(final String string) {
 		if (string == null) {
 			return '\0';
 		}
 		int index = 0;
-		int length = string.length();
+		final int length = string.length();
 		do {
 			while (index < length && string.charAt(index) != '&') {
 				index++;
@@ -2346,13 +2359,13 @@ public class TableCombo extends Composite {
 	/**
 	 * Refreshes the label control with the selected object's details.
 	 */
-	private void refreshText(int index) {
+	private void refreshText(final int index) {
 
 		// get a reference to the selected TableItem
-		TableItem tableItem = table.getItem(index);
+		final TableItem tableItem = table.getItem(index);
 
 		// get the TableItem index to use for displaying the text.
-		int colIndexToUse = getDisplayColumnIndex();
+		final int colIndexToUse = getDisplayColumnIndex();
 
 		// set image if requested
 		if (showImageWithinSelection) {
@@ -2375,7 +2388,7 @@ public class TableCombo extends Composite {
 		}
 
 		// set the label text.
-		if(updateTextWithinSelection) {
+		if (updateTextWithinSelection) {
 			text.setText(tableItem.getText(colIndexToUse));
 		}
 		text.selectAll();
@@ -2384,7 +2397,7 @@ public class TableCombo extends Composite {
 	/**
 	 * @param showImageWithinSelection
 	 */
-	public void setShowImageWithinSelection(boolean showImageWithinSelection) {
+	public void setShowImageWithinSelection(final boolean showImageWithinSelection) {
 		checkWidget();
 		this.showImageWithinSelection = showImageWithinSelection;
 	}
@@ -2392,7 +2405,7 @@ public class TableCombo extends Composite {
 	/**
 	 * @param showColorWithinSelection
 	 */
-	public void setShowColorWithinSelection(boolean showColorWithinSelection) {
+	public void setShowColorWithinSelection(final boolean showColorWithinSelection) {
 		checkWidget();
 		this.showColorWithinSelection = showColorWithinSelection;
 	}
@@ -2400,21 +2413,21 @@ public class TableCombo extends Composite {
 	/**
 	 * @param showFontWithinSelection
 	 */
-	public void setShowFontWithinSelection(boolean showFontWithinSelection) {
+	public void setShowFontWithinSelection(final boolean showFontWithinSelection) {
 		checkWidget();
 		this.showFontWithinSelection = showFontWithinSelection;
 	}
 
 	/**
-	 * Whether a selection change should automatically update the combo's text
-	 * to the selection's text. The default value is <code>true</code>.
-	 * 
+	 * Whether a selection change should automatically update the combo's text to
+	 * the selection's text. The default value is <code>true</code>.
+	 *
 	 * @param updateTextWithinSelection
 	 *            <code>true</code> if selection changes will update the combo's
 	 *            text accordingly; <code>false</code> if no text changes are
 	 *            desired. Clients have to update the text manually
 	 */
-	public void setUpdateTextWithinSelection(boolean updateTextWithinSelection) {
+	public void setUpdateTextWithinSelection(final boolean updateTextWithinSelection) {
 		checkWidget();
 		this.updateTextWithinSelection = updateTextWithinSelection;
 	}
@@ -2439,11 +2452,11 @@ public class TableCombo extends Composite {
 	 * @param columnIndex
 	 * @return
 	 */
-	private boolean wasColumnWidthSpecified(int columnIndex) {
-		return (columnWidths != null && columnWidths.length > columnIndex && columnWidths[columnIndex] != SWT.DEFAULT);
+	private boolean wasColumnWidthSpecified(final int columnIndex) {
+		return columnWidths != null && columnWidths.length > columnIndex && columnWidths[columnIndex] != SWT.DEFAULT;
 	}
 
-	void textEvent(Event event) {
+	void textEvent(final Event event) {
 		switch (event.type) {
 		case SWT.FocusIn: {
 			handleFocus(SWT.FocusIn);
@@ -2451,14 +2464,14 @@ public class TableCombo extends Composite {
 		}
 		case SWT.DefaultSelection: {
 			dropDown(false);
-			Event e = new Event();
+			final Event e = new Event();
 			e.time = event.time;
 			e.stateMask = event.stateMask;
 			notifyListeners(SWT.DefaultSelection, e);
 			break;
 		}
 		case SWT.KeyDown: {
-			Event keyEvent = new Event();
+			final Event keyEvent = new Event();
 			keyEvent.time = event.time;
 			keyEvent.character = event.character;
 			keyEvent.keyCode = event.keyCode;
@@ -2474,7 +2487,7 @@ public class TableCombo extends Composite {
 			if (event.keyCode == SWT.ARROW_UP || event.keyCode == SWT.ARROW_DOWN) {
 				event.doit = false;
 				if ((event.stateMask & SWT.ALT) != 0) {
-					boolean dropped = isDropped();
+					final boolean dropped = isDropped();
 					text.selectAll();
 					if (!dropped) {
 						setFocus();
@@ -2483,14 +2496,14 @@ public class TableCombo extends Composite {
 					break;
 				}
 
-				int oldIndex = table.getSelectionIndex();
+				final int oldIndex = table.getSelectionIndex();
 				if (event.keyCode == SWT.ARROW_UP) {
 					select(Math.max(oldIndex - 1, 0));
 				} else {
 					select(Math.min(oldIndex + 1, getItemCount() - 1));
 				}
 				if (oldIndex != table.getSelectionIndex()) {
-					Event e = new Event();
+					final Event e = new Event();
 					e.time = event.time;
 					e.stateMask = event.stateMask;
 					notifyListeners(SWT.Selection, e);
@@ -2505,7 +2518,7 @@ public class TableCombo extends Composite {
 			break;
 		}
 		case SWT.KeyUp: {
-			Event e = new Event();
+			final Event e = new Event();
 			e.time = event.time;
 			e.character = event.character;
 			e.keyCode = event.keyCode;
@@ -2515,20 +2528,20 @@ public class TableCombo extends Composite {
 			break;
 		}
 		case SWT.MenuDetect: {
-			Event e = new Event();
+			final Event e = new Event();
 			e.time = event.time;
 			notifyListeners(SWT.MenuDetect, e);
 			break;
 		}
 		case SWT.Modify: {
 			table.deselectAll();
-			Event e = new Event();
+			final Event e = new Event();
 			e.time = event.time;
 			notifyListeners(SWT.Modify, e);
 			break;
 		}
 		case SWT.MouseDown: {
-			Event mouseEvent = new Event();
+			final Event mouseEvent = new Event();
 			mouseEvent.button = event.button;
 			mouseEvent.count = event.count;
 			mouseEvent.stateMask = event.stateMask;
@@ -2549,7 +2562,7 @@ public class TableCombo extends Composite {
 			if (text.getEditable()) {
 				return;
 			}
-			boolean dropped = isDropped();
+			final boolean dropped = isDropped();
 			text.selectAll();
 			if (!dropped) {
 				setFocus();
@@ -2558,7 +2571,7 @@ public class TableCombo extends Composite {
 			break;
 		}
 		case SWT.MouseUp: {
-			Event mouseEvent = new Event();
+			final Event mouseEvent = new Event();
 			mouseEvent.button = event.button;
 			mouseEvent.count = event.count;
 			mouseEvent.stateMask = event.stateMask;
@@ -2583,7 +2596,7 @@ public class TableCombo extends Composite {
 			break;
 		}
 		case SWT.MouseDoubleClick: {
-			Event mouseEvent = new Event();
+			final Event mouseEvent = new Event();
 			mouseEvent.button = event.button;
 			mouseEvent.count = event.count;
 			mouseEvent.stateMask = event.stateMask;
@@ -2594,7 +2607,7 @@ public class TableCombo extends Composite {
 			break;
 		}
 		case SWT.MouseWheel: {
-			Event keyEvent = new Event();
+			final Event keyEvent = new Event();
 			keyEvent.time = event.time;
 			keyEvent.keyCode = event.count > 0 ? SWT.ARROW_UP : SWT.ARROW_DOWN;
 			keyEvent.stateMask = event.stateMask;
@@ -2608,14 +2621,14 @@ public class TableCombo extends Composite {
 			}
 			if (event.count != 0) {
 				event.doit = false;
-				int oldIndex = table.getSelectionIndex();
+				final int oldIndex = table.getSelectionIndex();
 				if (event.count > 0) {
 					select(Math.max(oldIndex - 1, 0));
 				} else {
 					select(Math.min(oldIndex + 1, getItemCount() - 1));
 				}
 				if (oldIndex != table.getSelectionIndex()) {
-					Event e = new Event();
+					final Event e = new Event();
 					e.time = event.time;
 					e.stateMask = event.stateMask;
 					notifyListeners(SWT.Selection, e);
@@ -2640,7 +2653,7 @@ public class TableCombo extends Composite {
 				event.detail = SWT.TRAVERSE_NONE;
 				return;
 			}
-			Event e = new Event();
+			final Event e = new Event();
 			e.time = event.time;
 			e.detail = event.detail;
 			e.doit = event.doit;
@@ -2652,7 +2665,7 @@ public class TableCombo extends Composite {
 			break;
 		}
 		case SWT.Verify: {
-			Event e = new Event();
+			final Event e = new Event();
 			e.text = event.text;
 			e.start = event.start;
 			e.end = event.end;
@@ -2667,23 +2680,23 @@ public class TableCombo extends Composite {
 	}
 
 	/**
-	 * adjusts the last table column width to fit inside of the table if the
-	 * table column data does not fill out the table area.
+	 * adjusts the last table column width to fit inside of the table if the table
+	 * column data does not fill out the table area.
 	 */
-	private void autoAdjustColumnWidthsIfNeeded(TableColumn[] tableColumns, int totalAvailWidth,
-			int totalColumnWidthUsage) {
+	private void autoAdjustColumnWidthsIfNeeded(final TableColumn[] tableColumns, final int totalAvailWidth,
+			final int totalColumnWidthUsage) {
 
 		int scrollBarSize = 0;
-		int totalColumns = (tableColumns == null ? 0 : tableColumns.length);
+		final int totalColumns = tableColumns == null ? 0 : tableColumns.length;
 
 		// determine if the vertical scroll bar needs to be taken into account
 		if (table.getVerticalBar().getVisible()) {
-			scrollBarSize = (table.getVerticalBar() == null ? 0 : table.getVerticalBar().getSize().x);
+			scrollBarSize = table.getVerticalBar() == null ? 0 : table.getVerticalBar().getSize().x;
 		}
 
 		// is there any extra space that the table is not using?
 		if (totalAvailWidth > totalColumnWidthUsage + scrollBarSize) {
-			int totalAmtToBeAllocated = (totalAvailWidth - totalColumnWidthUsage - scrollBarSize);
+			final int totalAmtToBeAllocated = totalAvailWidth - totalColumnWidthUsage - scrollBarSize;
 
 			// add unused space to the last column.
 			if (totalAmtToBeAllocated > 0) {

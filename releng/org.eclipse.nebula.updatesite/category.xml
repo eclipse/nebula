@@ -36,9 +36,6 @@
    <feature url="features/org.eclipse.nebula.widgets.compositetable.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.compositetable.feature" version="1.0.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.tablecombo.feature_1.1.0.qualifier.jar" id="org.eclipse.nebula.widgets.tablecombo.feature" version="1.1.0.qualifier">
-      <category name="Nebula Release Individual Widgets"/>
-   </feature>
    <feature url="features/org.eclipse.nebula.widgets.gallery.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.gallery.feature" version="1.0.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
@@ -60,6 +57,9 @@
    <feature url="features/org.eclipse.nebula.widgets.oscilloscope.feature_1.4.0.qualifier.jar" id="org.eclipse.nebula.widgets.oscilloscope.feature" version="1.4.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
+   <bundle id="org.eclipse.nebula.widgets.tablecombo" version="1.2.0.qualifier">
+      <category name="Nebula Release Individual Widgets"/>
+   </bundle>
    <category-def name="Nebula Release all Widgets and Examples" label="Nebula Release all Widgets and Examples">
       <description>
          Contains all widgets that are part of the combined Nebula release. You can also choose to include the Examples and the Example view for these widgets.
