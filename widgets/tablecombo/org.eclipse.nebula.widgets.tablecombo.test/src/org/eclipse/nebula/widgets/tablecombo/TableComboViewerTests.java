@@ -9,9 +9,14 @@ package org.eclipse.nebula.widgets.tablecombo;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Logger;
+
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.nebula.jface.tablecomboviewer.TableComboViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -22,11 +27,14 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.matchers.WidgetMatcherFactory;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotArrowButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
 import org.junit.Before;
 import org.junit.Test;
 
 public class TableComboViewerTests {
+
+	private final static Logger LOG = Logger.getLogger(TableComboViewerTests.class.getName());
 
 	private Shell shell;
 
@@ -108,6 +116,50 @@ public class TableComboViewerTests {
 
 	}
 
+	/**
+	 * Regression test for #514731. Ensures that the TableComboViewer does not emit
+	 * a selection change event on opening of the drop down table of the
+	 * TableCombo.<br>
+	 * TODO This test will fail until the bug is actually fixed.
+	 */
+	@Test
+	public void testThatNoSelectionEventIsFiredOnDropDown() {
+
+		final AtomicInteger selectionEventCounter = new AtomicInteger(0);
+
+		/*
+		 * GIVEN a TableComboViewer with a selection change listener registered. two
+		 * columns and a number of items set as
+		 */
+		final TableComboViewer viewer = createTableComboViewer(shell, 5);
+		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+
+			@Override
+			public void selectionChanged(final SelectionChangedEvent event) {
+				LOG.warning("Received unexpected selection change event " + event);
+				selectionEventCounter.getAndIncrement();
+			}
+		});
+		shell.open();
+
+		/*
+		 * WHEN the drop down table of the TableCombo gets opened by a click on the
+		 * arrow button
+		 */
+		final SWTBot shellBot = new SWTBot(shell);
+		final SWTBotArrowButton dropDownTriggerBot = shellBot.arrowButton();
+		dropDownTriggerBot.click();
+
+		consumeEvents();
+
+		/*
+		 * THEN no selection change event must have been fired.
+		 */
+		assertEquals(
+				"Expected no selection change event to have been fired on drop down of the table of the TableCombo", 0,
+				selectionEventCounter.get());
+	}
+
 	private TableComboViewer createTableComboViewer(final Composite parent, final int noOfItems) {
 		final TableComboViewer result = new TableComboViewer(parent, SWT.NONE);
 		result.getTableCombo().setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false));
@@ -128,6 +180,12 @@ public class TableComboViewerTests {
 
 		return result;
 
+	}
+
+	private void consumeEvents() {
+		while (Display.getCurrent().readAndDispatch()) {
+			// loop through events
+		}
 	}
 
 	private class TestLabelProvider extends LabelProvider implements ITableLabelProvider {

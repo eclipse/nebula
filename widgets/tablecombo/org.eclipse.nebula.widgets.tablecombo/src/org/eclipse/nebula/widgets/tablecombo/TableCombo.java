@@ -178,20 +178,20 @@ public class TableCombo extends Composite {
 
 		// set the listeners for this control
 		final int[] comboEvents = { SWT.Dispose, SWT.FocusIn, SWT.Move, SWT.Resize };
-		for (int comboEvent : comboEvents) {
+		for (final int comboEvent : comboEvents) {
 			this.addListener(comboEvent, listener);
 		}
 
 		final int[] textEvents = { SWT.DefaultSelection, SWT.KeyDown, SWT.KeyUp, SWT.MenuDetect, SWT.Modify,
 				SWT.MouseDown, SWT.MouseUp, SWT.MouseDoubleClick, SWT.MouseWheel, SWT.Traverse, SWT.FocusIn,
 				SWT.Verify };
-		for (int textEvent : textEvents) {
+		for (final int textEvent : textEvents) {
 			text.addListener(textEvent, listener);
 		}
 
 		// set the listeners for the arrow image
 		final int[] arrowEvents = { SWT.Selection, SWT.FocusIn };
-		for (int arrowEvent : arrowEvents) {
+		for (final int arrowEvent : arrowEvents) {
 			arrow.addListener(arrowEvent, listener);
 		}
 
@@ -576,7 +576,7 @@ public class TableCombo extends Composite {
 			int currTextWidth = 0;
 
 			// calculate the maximum text width and image height.
-			for (TableItem tableItem : tableItems) {
+			for (final TableItem tableItem : tableItems) {
 				currTextWidth = gc.stringExtent(tableItem.getText(colIndex)).x;
 
 				// take image into account if there is one for the tableitem.
@@ -653,14 +653,14 @@ public class TableCombo extends Composite {
 
 		// Add popup listeners
 		final int[] popupEvents = { SWT.Close, SWT.Paint, SWT.Deactivate, SWT.Help };
-		for (int popupEvent : popupEvents) {
+		for (final int popupEvent : popupEvents) {
 			popup.addListener(popupEvent, listener);
 		}
 
 		// add table listeners
 		final int[] tableEvents = { SWT.MouseUp, SWT.Selection, SWT.Traverse, SWT.KeyDown, SWT.KeyUp, SWT.FocusIn,
 				SWT.Dispose };
-		for (int tableEvent : tableEvents) {
+		for (final int tableEvent : tableEvents) {
 			table.addListener(tableEvent, listener);
 		}
 
@@ -862,15 +862,6 @@ public class TableCombo extends Composite {
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Control[] getChildren() {
-		checkWidget();
-		return new Control[0];
 	}
 
 	/**
