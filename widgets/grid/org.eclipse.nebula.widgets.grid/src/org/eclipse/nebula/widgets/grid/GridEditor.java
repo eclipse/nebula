@@ -169,7 +169,7 @@ public class GridEditor extends ControlEditor
     {
         if (item == null || column == -1 || item.isDisposed())
             return new Rectangle(0, 0, 0, 0);
-        Rectangle cell = item.getBounds(column);
+        Rectangle cell = item.getBoundsCorrected(column);
         Rectangle area = table.getClientArea();
         if (cell.x < area.x + area.width)
         {

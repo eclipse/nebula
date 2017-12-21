@@ -494,6 +494,30 @@ public class GridItem extends Item {
 	public Rectangle getBounds(int columnIndex) {
 		checkWidget();
 
+		final Point origin = parent.getOrigin(parent.getColumn(columnIndex), this);
+		final Point cellSize = this.getCellSize(columnIndex);
+		return new Rectangle(origin.x, origin.y, cellSize.x, cellSize.y);
+	}
+		
+	/**
+	 * Returns a rectangle describing the receiver's size and location relative
+	 * to its parent at a column in the table.
+	 * Handle not visible items.
+	 *
+	 * @param columnIndex
+	 *            the index that specifies the column
+	 * @return the receiver's bounding column rectangle
+	 * @throws SWTException
+	 *             <ul>
+	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
+	 *             </ul>
+	 */
+	public Rectangle getBoundsCorrected(final int columnIndex) {
+		checkWidget();
+		
 		// HACK: The -1000,-1000 xy coordinates below are a hack to deal with
 		// GridEditor issues. In
 		// normal SWT Table, when an editor is created on Table and its
