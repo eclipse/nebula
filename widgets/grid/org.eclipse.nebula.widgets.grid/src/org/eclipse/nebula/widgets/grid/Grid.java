@@ -4999,7 +4999,7 @@ public class Grid extends Canvas {
 
 		if (hasSpanning) {
 			// We need to find the first Item to draw. An earlier item can row-span the first visible item.
-			for (int rowIndex = 0; rowIndex < firstVisibleIndex; rowIndex++) {
+			for (int rowIndex = 0; rowIndex < firstVisibleIndex && rowIndex < items.size(); rowIndex++) {
 				GridItem itemForRow = items.get(rowIndex);
 				int colIndex = 0;
 
@@ -5026,7 +5026,7 @@ public class Grid extends Canvas {
 				}
 			}
 
-			for (int rowIndex = firstItemToDraw; rowIndex < firstVisibleIndex; rowIndex++) {
+			for (int rowIndex = firstItemToDraw; rowIndex < firstVisibleIndex && rowIndex < items.size(); rowIndex++) {
 				GridItem itemForRow = items.get(rowIndex);
 				y = y - itemForRow.getHeight() - 1;
 			}
