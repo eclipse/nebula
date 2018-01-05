@@ -1,0 +1,39 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.eclipse.nebula</groupId>
+	<artifactId>opal</artifactId>
+	<packaging>pom</packaging>
+	<version>1.0.0-SNAPSHOT</version>
+
+	<parent>
+		<groupId>org.eclipse.nebula</groupId>
+		<version>1.0.0-SNAPSHOT</version>
+		<artifactId>nebula-release</artifactId>
+		<relativePath>../../releng/org.eclipse.nebula.nebula-release</relativePath>
+	</parent>
+
+	<modules>
+		<module>breadcrumb</module>
+		<module>commons</module>
+		<module>checkboxgroup</module>
+		<module>columnbrowser</module>
+		<module>dialog</module>
+		<module>duallist</module>
+		<module>header</module>
+		<module>heapmanager</module>
+		<module>logindialog</module>
+		<module>multichoice</module>
+		<module>notifier</module>
+		<module>preferencewindow</module>
+		<module>promptsupport</module>
+		<module>propertytable</module>
+		<module>rangeslider</module>
+		<module>starrating</module>
+		<module>textassist</module>
+		<module>tipoftheday</module>
+		<module>titledseparator</module>
+	</modules>
+
+
+</project>

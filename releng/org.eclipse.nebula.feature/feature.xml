@@ -85,4 +85,80 @@
          id="org.eclipse.nebula.widgets.geomap.feature"
          version="0.0.0"/>
 
+   <includes
+         id="org.eclipse.nebula.widgets.opal.breadcrumb.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.nebula.widgets.opal.checkboxgroup.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.nebula.widgets.opal.columnbrowser.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.nebula.widgets.opal.commons.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.nebula.widgets.opal.dialog.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.nebula.widgets.opal.duallist.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.nebula.widgets.opal.header.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.nebula.widgets.opal.heapmanager.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.nebula.widgets.opal.logindialog.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.nebula.widgets.opal.multichoice.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.nebula.widgets.opal.notifier.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.nebula.widgets.opal.preferencewindow.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.nebula.widgets.opal.promptsupport.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.nebula.widgets.opal.propertytable.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.nebula.widgets.opal.rangeslider.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.nebula.widgets.opal.starrating.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.nebula.widgets.opal.textassist.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.nebula.widgets.opal.tipoftheday.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.nebula.widgets.opal.titledseparator.feature"
+         version="0.0.0"/>
+
 </feature>

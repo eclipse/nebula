@@ -222,5 +222,138 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+         
+	<!-- Opal -->
+   <plugin
+         id="org.eclipse.nebula.widgets.opal.commons"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+   <plugin
+         id="org.eclipse.nebula.widgets.opal.breadcrumb"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+		 
+   <plugin
+         id="org.eclipse.nebula.widgets.opal.checkboxgroup"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+		 
+   <plugin
+         id="org.eclipse.nebula.widgets.opal.columnbrowser"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+		 
+   <plugin
+         id="org.eclipse.nebula.widgets.opal.dialog"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+		 
+   <plugin
+         id="org.eclipse.nebula.widgets.opal.duallist"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+		 
+   <plugin
+         id="org.eclipse.nebula.widgets.opal.header"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
+   <plugin
+         id="org.eclipse.nebula.widgets.opal.heapmanager"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>		 
+		 
+   <plugin
+         id="org.eclipse.nebula.widgets.opal.logindialog"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+		 
+   <plugin
+         id="org.eclipse.nebula.widgets.opal.multichoice"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+		 
+   <plugin
+         id="org.eclipse.nebula.widgets.opal.notifier"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+		 
+   <plugin
+         id="org.eclipse.nebula.widgets.opal.preferencewindow"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+		 
+   <plugin
+         id="org.eclipse.nebula.widgets.opal.promptsupport"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+		 
+		 
+   <plugin
+         id="org.eclipse.nebula.widgets.opal.propertytable"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+		 
+   <plugin
+         id="org.eclipse.nebula.widgets.opal.rangeslider"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+		 
+   <plugin
+         id="org.eclipse.nebula.widgets.opal.starrating"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+		 
+   <plugin
+         id="org.eclipse.nebula.widgets.opal.textassist"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+		 
+   <plugin
+         id="org.eclipse.nebula.widgets.opal.tipoftheday"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+		 
+   <plugin
+         id="org.eclipse.nebula.widgets.opal.titledseparator"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 </feature>

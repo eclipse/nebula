@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Opal RangeSlider widget plug-in
+Bundle-SymbolicName: org.eclipse.nebula.widgets.opal.rangeslider
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.eclipse.nebula.widgets.opal.commons;bundle-version="1.0.0";visibility:=reexport
+Export-Package: org.eclipse.nebula.widgets.opal.rangeslider

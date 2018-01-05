@@ -39,6 +39,25 @@
 		<module>../../widgets/richtext</module>
 		<module>../../widgets/effects</module>
 		<module>../../widgets/geomap</module>
+		<module>../../widgets/opal/breadcrumb</module>
+		<module>../../widgets/opal/checkboxgroup</module>
+		<module>../../widgets/opal/columnbrowser</module>
+		<module>../../widgets/opal/commons</module>
+		<module>../../widgets/opal/dialog</module>
+		<module>../../widgets/opal/duallist</module>
+		<module>../../widgets/opal/header</module>
+		<module>../../widgets/opal/heapmanager</module>
+		<module>../../widgets/opal/logindialog</module>
+		<module>../../widgets/opal/multichoice</module>
+		<module>../../widgets/opal/notifier</module>
+		<module>../../widgets/opal/preferencewindow</module>
+		<module>../../widgets/opal/promptsupport</module>
+		<module>../../widgets/opal/propertytable</module>
+		<module>../../widgets/opal/rangeslider</module>
+		<module>../../widgets/opal/starrating</module>
+		<module>../../widgets/opal/textassist</module>
+		<module>../../widgets/opal/tipoftheday</module>
+		<module>../../widgets/opal/titledseparator</module>
 
 		<!-- Releng -->
 		<module>../org.eclipse.nebula.feature</module>
