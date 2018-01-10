@@ -2,13 +2,12 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.nebula.widgets.tablecombo.test
-Bundle-Version: 1.0.0.qualifier
-Fragment-Host: org.eclipse.nebula.widgets.tablecombo;bundle-version="1.0.0"
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-Version: 1.2.0.qualifier
+Fragment-Host: org.eclipse.nebula.widgets.tablecombo;bundle-version="1.2.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: %Bundle-Vendor
 Require-Bundle: org.junit,
  org.eclipse.swt,
- org.eclipse.swtbot.swt.finder,
- org.eclipse.swtbot.junit4_x,
+ org.eclipse.swtbot.go,
  org.eclipse.core.runtime;bundle-version="3.12.0",
  org.apache.log4j;bundle-version="1.2.15"
