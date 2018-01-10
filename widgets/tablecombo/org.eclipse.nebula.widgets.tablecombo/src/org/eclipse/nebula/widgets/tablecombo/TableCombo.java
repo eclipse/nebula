@@ -178,7 +178,7 @@ public class TableCombo extends Composite {
 
 		// set the listeners for this control
 		final int[] comboEvents = { SWT.Dispose, SWT.FocusIn, SWT.Move, SWT.Resize };
-		for (final int comboEvent : comboEvents) {
+		for (int comboEvent : comboEvents) {
 			this.addListener(comboEvent, listener);
 		}
 
