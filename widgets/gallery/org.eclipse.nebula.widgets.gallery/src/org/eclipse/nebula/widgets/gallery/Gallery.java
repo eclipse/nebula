@@ -1276,7 +1276,9 @@ public class Gallery extends Canvas {
 
 	protected class RedrawTimer implements Runnable {
 		public void run() {
-			redraw();
+			if (!isDisposed()) {
+				redraw();
+			}
 		}
 	}
 
