@@ -538,6 +538,9 @@ public abstract class AbstractGridGroupRenderer extends
 			GalleryItem currentGroup = group;
 			while (item == null && currentGroup != null) {
 				currentGroup = this.getPreviousGroup(currentGroup);
+				if (currentGroup == null || currentGroup.getItemCount() == 0) {
+					continue;
+				}
 				item = this.getFirstItem(currentGroup, END);
 			}
 			return item;
@@ -680,6 +683,9 @@ public abstract class AbstractGridGroupRenderer extends
 			GalleryItem currentGroup = group;
 			while (item == null && currentGroup != null) {
 				currentGroup = this.getNextGroup(currentGroup);
+				if (currentGroup == null || currentGroup.getItemCount() == 0) {
+					continue;
+				}
 				item = this.getItemAt(currentGroup, colPos, START);
 			}
 			return item;
