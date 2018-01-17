@@ -29,6 +29,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+import java.util.function.Consumer;
+import java.util.function.ToIntFunction;
 
 import org.eclipse.nebula.widgets.grid.internal.DefaultBottomLeftRenderer;
 import org.eclipse.nebula.widgets.grid.internal.DefaultColumnGroupHeaderRenderer;
@@ -605,8 +607,6 @@ public class Grid extends Canvas {
 	 */
 	private GridToolTip inplaceToolTip;
 
-	private final GC sizingGC;
-
 	private Color backgroundColor;
 
 	/**
@@ -803,8 +803,6 @@ public class Grid extends Canvas {
 		setData("DEFAULT_DRAG_SOURCE_EFFECT", new GridDragSourceEffect(this));
 		setData("DEFAULT_DROP_TARGET_EFFECT", new GridDropTargetEffect(this));
 
-		sizingGC = new GC(this);
-
 		topLeftRenderer.setDisplay(getDisplay());
 		bottomLeftRenderer.setDisplay(getDisplay());
 		rowHeaderRenderer.setDisplay(getDisplay());
@@ -844,7 +842,7 @@ public class Grid extends Canvas {
 		initListeners();
 		initAccessible();
 
-		itemHeight = sizingGC.getFontMetrics().getHeight() + 2;
+		estimate(sizingGC -> itemHeight = sizingGC.getFontMetrics().getHeight() + 2);
 
 		RGB sel = getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION).getRGB();
 		RGB white = getDisplay().getSystemColor(SWT.COLOR_WHITE).getRGB();
@@ -3629,13 +3627,7 @@ public class Grid extends Canvas {
 		setColumnScrolling(true);
 
 		if (show && isAutoWidth()) {
-			rowHeaderWidth = 1;
-
-			for (Iterator iter = items.iterator(); iter.hasNext();) {
-				GridItem iterItem = (GridItem) iter.next();
-				rowHeaderWidth = Math.max(rowHeaderWidth,
-						rowHeaderRenderer.computeSize(sizingGC, SWT.DEFAULT, SWT.DEFAULT, iterItem).x);
-			}
+			computeRowHeaderWidth(1);
 		}
 
 		redraw();
@@ -4238,6 +4230,10 @@ public class Grid extends Canvas {
 		groupHeaderHeight = groupHeight;
 	}
 
+	private void computeHeaderHeight() {
+		estimate(this::computeHeaderHeight);
+	}
+
 	private void computeFooterHeight(GC gc) {
 
 		int colFooterHeight = 0;
@@ -4278,6 +4274,10 @@ public class Grid extends Canvas {
 		}
 
 		return height <= 0 ? 16 : height;
+	}
+
+	private int computeItemHeight(final GridItem item) {
+		return estimateWithResult(sizingGC -> computeItemHeight(item, sizingGC));
 	}
 
 	/**
@@ -6209,8 +6209,6 @@ public class Grid extends Canvas {
 			GridColumn col = (GridColumn) iterator.next();
 			col.dispose();
 		}
-
-		sizingGC.dispose();
 	}
 
 	/**
@@ -7523,8 +7521,10 @@ public class Grid extends Canvas {
 			}
 		}
 
-		computeHeaderHeight(sizingGC);
-		computeFooterHeight(sizingGC);
+		estimate(sizingGC -> {
+			computeHeaderHeight(sizingGC);
+			computeFooterHeight(sizingGC);
+		});
 
 		updatePrimaryCheckColumn();
 
@@ -7683,19 +7683,21 @@ public class Grid extends Canvas {
 			}
 		}
 
-		if (items.size() == 1 && !userModifiedItemHeight) {
-			itemHeight = computeItemHeight(item, sizingGC);
-			// virtual problems here
-			if ((getStyle() & SWT.VIRTUAL) != 0)
-				item.setHasSetData(false);
-		}
+		estimate(sizingGC -> {
+			if (items.size() == 1 && !userModifiedItemHeight) {
+				itemHeight = computeItemHeight(item, sizingGC);
+				// virtual problems here
+				if ((getStyle() & SWT.VIRTUAL) != 0)
+					item.setHasSetData(false);
+			}
 
-		item.initializeHeight(itemHeight);
+			item.initializeHeight(itemHeight);
 
-		if (isRowHeaderVisible() && isAutoWidth()) {
-			rowHeaderWidth = Math.max(rowHeaderWidth,
-					rowHeaderRenderer.computeSize(sizingGC, SWT.DEFAULT, SWT.DEFAULT, item).x);
-		}
+			if (isRowHeaderVisible() && isAutoWidth()) {
+				rowHeaderWidth = Math.max(rowHeaderWidth, //
+						rowHeaderRenderer.computeSize(sizingGC, SWT.DEFAULT, SWT.DEFAULT, item).x);
+			}
+		});
 
 		scrollValuesObsolete = true;
 		topIndex = -1;
@@ -7776,7 +7778,7 @@ public class Grid extends Canvas {
 		// if we just added the first col group, then we need to up the row
 		// height
 		if (columnGroups.length == 1) {
-			computeHeaderHeight(sizingGC);
+			computeHeaderHeight();
 		}
 
 		scrollValuesObsolete = true;
@@ -7801,7 +7803,7 @@ public class Grid extends Canvas {
 		columnGroups = newColumnGroups;
 
 		if (columnGroups.length == 0) {
-			computeHeaderHeight(sizingGC);
+			computeHeaderHeight();
 		}
 
 		scrollValuesObsolete = true;
@@ -8888,7 +8890,7 @@ public class Grid extends Canvas {
 			userModifiedItemHeight = false;
 			hasDifferingHeights = false;
 
-			itemHeight = computeItemHeight(items.get(0), sizingGC);
+			itemHeight = computeItemHeight(items.get(0));
 
 			for (int cnt = 0; cnt < items.size(); cnt++)
 				items.get(cnt).setHeight(itemHeight);
@@ -8910,13 +8912,7 @@ public class Grid extends Canvas {
 			//if the changed width is smaller, and the previous width of that rows header was equal
 			//to the current row header width then its possible that we may need to make the new
 			//row header width smaller, but to do that we need to ask all the rows all over again
-			for (Iterator iter = items.iterator(); iter.hasNext();) {
-				GridItem iterItem = (GridItem) iter.next();
-				newWidth = Math.max(newWidth,
-						rowHeaderRenderer.computeSize(sizingGC, SWT.DEFAULT, SWT.DEFAULT, iterItem).x);
-			}
-
-			rowHeaderWidth = newWidth;
+			computeRowHeaderWidth(newWidth);
 		}
 		redraw();
 	}
@@ -8929,7 +8925,6 @@ public class Grid extends Canvas {
 		dataVisualizer.setDefaultFont(font);
 		defaultFont = font;
 		super.setFont(font);
-		sizingGC.setFont(font);
 	}
 
 	/**
@@ -9453,17 +9448,16 @@ public class Grid extends Canvas {
 				return;
 
 			int height = item.getImage(column).getBounds().height;
-			//FIXME Needs better algorithm
+			// FIXME Needs better algorithm
 			if (height + 20 > getItemHeight()) {
-				height = computeItemHeight(item, sizingGC);
+				height = computeItemHeight(item);
 				setItemHeight(height);
 			}
-		}
-		else {
+		} else {
 			if (firstImageSet || userModifiedItemHeight)
 				return;
 
-			int height = computeItemHeight(item, sizingGC);
+			int height = computeItemHeight(item);
 			setItemHeight(height);
 
 			firstImageSet = true;
@@ -9761,7 +9755,7 @@ public class Grid extends Canvas {
 	 */
 	public void recalculateHeader() {
 		int previous = getHeaderHeight();
-		computeHeaderHeight(sizingGC);
+		computeHeaderHeight();
 
 		if (previous != getHeaderHeight()) {
 			scrollValuesObsolete = true;
@@ -9989,5 +9983,29 @@ public class Grid extends Canvas {
 			{
 				item.setHasSetData(false);
 			}
+	}
+
+	private void computeRowHeaderWidth(int minWidth) {
+		estimate(sizingGC -> //
+		rowHeaderWidth = items.stream() //
+				.mapToInt(item -> rowHeaderRenderer.computeSize(sizingGC, SWT.DEFAULT, SWT.DEFAULT, item).x) //
+				.max() //
+				.orElse(minWidth));
+	}
+
+	private int estimateWithResult(ToIntFunction<GC> function) {
+		GC gc = new GC(Grid.this);
+		try {
+			return function.applyAsInt(gc);
+		} finally {
+			gc.dispose();
+		}
+	}
+
+	private void estimate(Consumer<GC> consumer) {
+		estimateWithResult(gc -> {
+			consumer.accept(gc);
+			return 0;
+		});
 	}
 }
