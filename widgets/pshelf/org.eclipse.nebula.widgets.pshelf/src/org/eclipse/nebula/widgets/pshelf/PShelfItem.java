@@ -140,6 +140,7 @@ public class PShelfItem extends Item {
 	/** 
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void dispose() {
         checkWidget();
 		parent.removeItem(this);
@@ -150,7 +151,8 @@ public class PShelfItem extends Item {
     /** 
      * {@inheritDoc}
      */
-    public void setImage(Image image)
+    @Override
+	public void setImage(Image image)
     {
         super.setImage(image);
         parent.computeItemHeight();
@@ -161,7 +163,8 @@ public class PShelfItem extends Item {
     /** 
      * {@inheritDoc}
      */
-    public void setText(String string)
+    @Override
+	public void setText(String string)
     {
         super.setText(string);
         parent.redraw();

@@ -60,6 +60,7 @@ public class RedmondShelfRenderer extends AbstractRenderer {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Point computeSize(GC gc, int wHint, int hHint, Object value) {
 		PShelfItem item = (PShelfItem) value;
 
@@ -88,6 +89,7 @@ public class RedmondShelfRenderer extends AbstractRenderer {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void paint(GC gc, Object value) {
 		PShelfItem item = (PShelfItem) value;
 
@@ -179,6 +181,7 @@ public class RedmondShelfRenderer extends AbstractRenderer {
 		}
 	}
 
+	@Override
 	public void initialize(Control control) {
 		this.parent = (PShelf) control;
 
@@ -254,6 +257,7 @@ public class RedmondShelfRenderer extends AbstractRenderer {
 		initialColors = new Color[] { gradient1, gradient2, selectedGradient1, selectedGradient2, hoverGradient1, hoverGradient2, lineColor };
 	}
 
+	@Override
 	public void dispose() {
 		initialFont.dispose();
 		initialOpenFont.dispose();

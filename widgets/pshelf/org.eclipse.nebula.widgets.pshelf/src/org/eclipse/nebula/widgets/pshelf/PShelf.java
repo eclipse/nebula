@@ -9,16 +9,14 @@
 
 package org.eclipse.nebula.widgets.pshelf;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -27,11 +25,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TypedListener;
-
-import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * <p>
@@ -59,7 +53,7 @@ import java.util.Iterator;
  */
 public class PShelf extends Canvas {
 	
-	private ArrayList items = new ArrayList();
+	private ArrayList<PShelfItem> items = new ArrayList<PShelfItem>();
 	private AbstractRenderer renderer;
 	private PShelfItem openItem;
 	private PShelfItem focusItem;
@@ -67,7 +61,7 @@ public class PShelf extends Canvas {
 	private PShelfItem hoverItem;
     private int itemHeight = 0;
     
-    private ArrayList yCoordinates = new ArrayList();
+    private ArrayList<Integer> yCoordinates = new ArrayList<Integer>();
     private double animationSpeed = 0.02;
     private boolean redrawOnAnimation;
 	
@@ -105,21 +99,12 @@ public class PShelf extends Canvas {
 		super(parent,checkStyle(style));
 		setRenderer(new PaletteShelfRenderer());
 		
-		this.addPaintListener(new PaintListener() {
-			public void paintControl(PaintEvent e) {
-				onPaint(e.gc);
-			}		
-		});
+		this.addPaintListener(e -> onPaint(e.gc));
 		
-		this.addListener(SWT.Resize, new Listener()
-        {        
-            public void handleEvent(Event event)
-            {
-                onResize();
-            }        
-        });
+		this.addListener(SWT.Resize, event -> onResize());
 		
 		this.addMouseListener(new MouseListener() {
+			@Override
 			public void mouseUp(MouseEvent e) {
 				PShelfItem item = getItem(new Point(1,e.y));
 				if ((item) == null)
@@ -128,38 +113,38 @@ public class PShelf extends Canvas {
 					openItem(item,true);
 				}
 			}
+			@Override
 			public void mouseDown(MouseEvent e) {
 				mouseDownItem = getItem(new Point(1,e.y));
 			}
+			@Override
 			public void mouseDoubleClick(MouseEvent arg0) {
 			}		
 		});
 		
-		this.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent arg0) {
-				onDispose();
-			}		
-		});
+		this.addDisposeListener(arg0 -> onDispose());
 		
 		this.addMouseTrackListener(new MouseTrackListener() {
+			@Override
 			public void mouseHover(MouseEvent arg0) {
 			}
+			@Override
 			public void mouseExit(MouseEvent arg0) {
 				hoverItem = null;
 				redraw();
 			}
+			@Override
 			public void mouseEnter(MouseEvent arg0) {
 			}		
 		});
 		
-        this.addMouseMoveListener(new MouseMoveListener(){
-            public void mouseMove(MouseEvent e) {
-				PShelfItem item = getItem(new Point(1,e.y));
-				if (item != hoverItem){
-					hoverItem = item;
-					redraw();
-				}
-            }});
+        this.addMouseMoveListener(e -> {
+			PShelfItem item = getItem(new Point(1,e.y));
+			if (item != hoverItem){
+				hoverItem = item;
+				redraw();
+			}
+		});
 	}
 	
     /**
@@ -215,7 +200,8 @@ public class PShelf extends Canvas {
 	/** 
      * {@inheritDoc}
      */
-    public Point computeSize(int wHint, int hHint, boolean changed)
+    @Override
+	public Point computeSize(int wHint, int hHint, boolean changed)
     {
         checkWidget();
         
@@ -258,13 +244,13 @@ public class PShelf extends Canvas {
 		
 		int index = 0;
 
-		for (Iterator iter = items.iterator(); iter.hasNext();) {
-			PShelfItem item = (PShelfItem) iter.next();
+		for (Iterator<PShelfItem> iter = items.iterator(); iter.hasNext();) {
+			PShelfItem item = iter.next();
 						
 			gc.setBackground(back);
 			gc.setForeground(fore);
             
-            Integer y = (Integer) yCoordinates.get(index);
+            Integer y = yCoordinates.get(index);
 			
             renderer.setBounds(0,y.intValue(),getClientArea().width,itemHeight);
             renderer.setSelected(item == openItem);
@@ -284,11 +270,11 @@ public class PShelf extends Canvas {
         int y = getClientArea().y;
         int i = 0;
         
-        for (Iterator iter = items.iterator(); iter.hasNext();)
+        for (Iterator<PShelfItem> iter = items.iterator(); iter.hasNext();)
         {
             i ++;
             
-            PShelfItem item = (PShelfItem)iter.next();
+            PShelfItem item = iter.next();
             
             yCoordinates.add(new Integer(y));
             
@@ -323,7 +309,7 @@ public class PShelf extends Canvas {
 			openItem = null;
 			if (items.size() > 0)
 			{
-				openItem((PShelfItem) items.get(0),false);
+				openItem(items.get(0),false);
 			}
 		}			
         
@@ -442,9 +428,9 @@ public class PShelf extends Canvas {
         
         int clientHeight = getClientArea().height - (itemHeight * items.size());
         
-        for (Iterator iter = items.iterator(); iter.hasNext();)
+        for (Iterator<PShelfItem> iter = items.iterator(); iter.hasNext();)
         {
-            PShelfItem item = (PShelfItem)iter.next();
+            PShelfItem item = iter.next();
             item.getBody().setBounds(0,0,getClientArea().width,clientHeight);            
         }
 	}
@@ -459,12 +445,12 @@ public class PShelf extends Canvas {
         
         for(int i = 0; i < items.size(); i ++)
         {
-            PShelfItem item = (PShelfItem)items.get(i);
-            int y = ((Integer)yCoordinates.get(i)).intValue();
+            PShelfItem item = items.get(i);
+            int y = yCoordinates.get(i).intValue();
             int nextY = 0;
             if (i + 1 < items.size())
             {
-                nextY = ((Integer)yCoordinates.get(i + 1)).intValue();    
+                nextY = yCoordinates.get(i + 1).intValue();    
             }
             else
             {
@@ -489,8 +475,8 @@ public class PShelf extends Canvas {
 	void computeItemHeight(){
 		GC gc = new GC(this);
 		
-		for (Iterator iter = items.iterator(); iter.hasNext();) {
-			PShelfItem item = (PShelfItem) iter.next();
+		for (Iterator<PShelfItem> iter = items.iterator(); iter.hasNext();) {
+			PShelfItem item = iter.next();
 			itemHeight = Math.max(renderer.computeSize(gc, 0, SWT.DEFAULT, item).y,itemHeight);
 		}
 
@@ -515,14 +501,13 @@ public class PShelf extends Canvas {
         
 		int y1 = 0;
 		int y2 = 0;
-		int c = 0;
         
         if (point == null)
             SWT.error(SWT.ERROR_NULL_ARGUMENT);
         
-        for (Iterator iter = items.iterator(); iter.hasNext();)
+        for (Iterator<PShelfItem> iter = items.iterator(); iter.hasNext();)
         {
-            PShelfItem item = (PShelfItem)iter.next();
+            PShelfItem item = iter.next();
             
             y2 += itemHeight;
             
@@ -536,7 +521,6 @@ public class PShelf extends Canvas {
                 y1 += openItem.getBodyParent().getSize().y;
                 y2 += openItem.getBodyParent().getSize().y;
             }
-            c ++;
         }
         	
 		return null;
@@ -605,7 +589,7 @@ public class PShelf extends Canvas {
     public PShelfItem[] getItems()
     {
         checkWidget();
-        return (PShelfItem[])items.toArray(new PShelfItem[items.size()]);
+        return items.toArray(new PShelfItem[items.size()]);
     }
     
     /**

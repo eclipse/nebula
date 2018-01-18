@@ -36,7 +36,8 @@ public class PaletteShelfRenderer extends AbstractRenderer {
 	/** 
      * {@inheritDoc}
      */
-    public Point computeSize(GC gc, int wHint, int hHint, Object value)
+    @Override
+	public Point computeSize(GC gc, int wHint, int hHint, Object value)
     {
         PShelfItem item = (PShelfItem)value;
         
@@ -55,7 +56,8 @@ public class PaletteShelfRenderer extends AbstractRenderer {
 	/** 
      * {@inheritDoc}
      */
-    public void paint(GC gc, Object value)
+    @Override
+	public void paint(GC gc, Object value)
     {
         PShelfItem item = (PShelfItem)value;
         
@@ -107,6 +109,7 @@ public class PaletteShelfRenderer extends AbstractRenderer {
 		}
 	}
 	
+	@Override
 	public void initialize(Control control){
 		this.parent = (PShelf)control;
 		shadeColor = parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
