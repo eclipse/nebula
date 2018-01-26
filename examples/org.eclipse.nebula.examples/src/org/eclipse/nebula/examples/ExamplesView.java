@@ -24,23 +24,25 @@ import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Nebula examples view.
- * 
+ *
  * @author cgross
  */
 public class ExamplesView extends ViewPart {
 
-	private TabFolder tabFolder;
+	private CTabFolder tabFolder;
 	private static ImageRegistry imgRegistry = new ImageRegistry();
 	private static FontRegistry fontRegistry = new FontRegistry();
 
@@ -51,10 +53,9 @@ public class ExamplesView extends ViewPart {
 
 	public void createPartControl(Composite parent) {
 
-		tabFolder = new TabFolder(parent, SWT.TOP);
+		tabFolder = new CTabFolder(parent, SWT.TOP);
 		IConfigurationElement[] elements = Platform.getExtensionRegistry()
-				.getConfigurationElementsFor(
-						"org.eclipse.nebula.examples.examples");
+				.getConfigurationElementsFor("org.eclipse.nebula.examples.examples");
 		HashMap elementsMap = new HashMap();
 
 		for (int i = 0; i < elements.length; i++) {
@@ -64,19 +65,17 @@ public class ExamplesView extends ViewPart {
 		Map sortedElements = new TreeMap(elementsMap);
 		Iterator iter = sortedElements.entrySet().iterator();
 		while (iter.hasNext()) {
-			IConfigurationElement element = (IConfigurationElement) ((Map.Entry) iter
-					.next()).getValue();
-			TabItem item = new TabItem(tabFolder, SWT.NONE);
+			IConfigurationElement element = (IConfigurationElement) ((Map.Entry) iter.next()).getValue();
+			CTabItem item = new CTabItem(tabFolder, SWT.NONE);
 			item.setText(element.getAttribute("name"));
 
 			try {
-				final AbstractExampleTab part = (AbstractExampleTab) element
-						.createExecutableExtension("class");
+				final AbstractExampleTab part = (AbstractExampleTab) element.createExecutableExtension("class");
 
 				Composite client = new Composite(tabFolder, SWT.NONE);
 				part.create(client);
-
 				item.setControl(client);
+				item.setData("example", part);
 
 			} catch (CoreException e) {
 				e.printStackTrace();
@@ -84,9 +83,17 @@ public class ExamplesView extends ViewPart {
 		}
 
 		// bug 368889
-		if (tabFolder.getItems().length > 0)
+		if (tabFolder.getItems().length > 0) {
 			tabFolder.setSelection(tabFolder.getItem(0));
+		}
 
+		tabFolder.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				AbstractExampleTab tab = (AbstractExampleTab) tabFolder.getItem(tabFolder.getSelectionIndex())
+						.getData("example");
+				tab.reveal();
+			}
+		});
 	}
 
 	public void setFocus() {
@@ -94,23 +101,21 @@ public class ExamplesView extends ViewPart {
 	}
 
 	/**
-	 * Returns an image descriptor for the image file at the given plug-in
-	 * relative path.
-	 * 
+	 * Returns an image descriptor for the image file at the given plug-in relative
+	 * path.
+	 *
 	 * @param path
 	 *            the path
 	 * @return the image descriptor
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
-		return AbstractUIPlugin.imageDescriptorFromPlugin(
-				"org.eclipse.nebula.examples", path);
+		return AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.nebula.examples", path);
 	}
 
 	/**
-	 * Returns an image for the image file at the given plug-in relative path.
-	 * This image is maintained in an ImageRegistry and will automatically be
-	 * disposed.
-	 * 
+	 * Returns an image for the image file at the given plug-in relative path. This
+	 * image is maintained in an ImageRegistry and will automatically be disposed.
+	 *
 	 * @param path
 	 *            the path
 	 * @return the image
@@ -120,8 +125,9 @@ public class ExamplesView extends ViewPart {
 
 		if (i == null) {
 			ImageDescriptor id = getImageDescriptor(path);
-			if (id == null)
+			if (id == null) {
 				return null;
+			}
 
 			i = id.createImage();
 			imgRegistry.put(path, i);
@@ -132,7 +138,7 @@ public class ExamplesView extends ViewPart {
 
 	/**
 	 * Returns a Font for the specified lookup key.
-	 * 
+	 *
 	 * @param fontLookupKey
 	 * @return
 	 */
@@ -142,7 +148,7 @@ public class ExamplesView extends ViewPart {
 
 	/**
 	 * Sets FontData[] for the specified lookup key.
-	 * 
+	 *
 	 * @param fontLookupKey
 	 * @return
 	 */

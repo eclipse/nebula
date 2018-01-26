@@ -11,8 +11,11 @@
 
 package org.eclipse.nebula.examples;
 
-import org.eclipse.jface.dialogs.Dialog;
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ArmEvent;
@@ -52,35 +55,28 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
 /**
  * The base class for all Nebula example extensions. Extenders will need to
  * provide implementation for <code>createParameters</code> and
  * <code>createControl</code>.
- * 
+ *
  * Extenders may also require the use of following methods:
  * <ul>
  * <li><code>recreateExample</code></li>
  * <li><code>relayoutExample</code></li>
  * <li><code>addEventParticipant</code></li>
  * </ul>
- * 
+ *
  * @author cgross
  */
 public abstract class AbstractExampleTab {
-	public static int[] eventIds = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-			11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27,
-			28, 29, 30, 31, 32, 33, 34, 35, 36, 37 };
-	public static String[] eventNames = new String[] { "KeyDown", "KeyUp",
-			"MouseDown", "MouseUp", "MouseMove", "MouseEnter", "MouseExit",
-			"MouseDoubleClick", "Paint", "Move", "Resize", "Dispose",
-			"Selection", "DefaultSelection", "FocusIn", "FocusOut", "Expand",
-			"Collapse", "Iconify", "Deiconify", "Close", "Show", "Hide",
-			"Modify", "Verify", "Activate", "Deactivate", "Help", "DragDetect",
-			"Arm", "Traverse", "MouseHover", "HardKeyDown", "HardKeyUp",
-			"MenuDetect", "SetData", "MouseWheel" };
+	public static int[] eventIds = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+			21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37 };
+	public static String[] eventNames = new String[] { "KeyDown", "KeyUp", "MouseDown", "MouseUp", "MouseMove",
+			"MouseEnter", "MouseExit", "MouseDoubleClick", "Paint", "Move", "Resize", "Dispose", "Selection",
+			"DefaultSelection", "FocusIn", "FocusOut", "Expand", "Collapse", "Iconify", "Deiconify", "Close", "Show",
+			"Hide", "Modify", "Verify", "Activate", "Deactivate", "Help", "DragDetect", "Arm", "Traverse", "MouseHover",
+			"HardKeyDown", "HardKeyUp", "MenuDetect", "SetData", "MouseWheel" };
 
 	private ArrayList selectedEvents = new ArrayList();
 	private ArrayList additionalEventParticipants = new ArrayList();
@@ -99,18 +95,18 @@ public abstract class AbstractExampleTab {
 	private Color modifiedFore;
 
 	/**
-	 * Create the parameters section that will display to the right of the
-	 * example widget.
-	 * 
+	 * Create the parameters section that will display to the right of the example
+	 * widget.
+	 *
 	 * @param parent
 	 *            the parent composite.
 	 */
 	public abstract void createParameters(Composite parent);
 
 	/**
-	 * Create the control, based upon the selections made on the widgets created
-	 * in <code>createParameters</code>.
-	 * 
+	 * Create the control, based upon the selections made on the widgets created in
+	 * <code>createParameters</code>.
+	 *
 	 * @param parent
 	 *            the parent composite.
 	 * @return the example control.
@@ -121,21 +117,24 @@ public abstract class AbstractExampleTab {
 
 	/**
 	 * Recreates the example control. This method will call
-	 * <code>createControl</code>. Extenders should call this method after a
-	 * user changes an option or style on the control that will require the
-	 * control to be recreated.
+	 * <code>createControl</code>. Extenders should call this method after a user
+	 * changes an option or style on the control that will require the control to be
+	 * recreated.
 	 */
 	protected void recreateExample() {
-		if (controlExample != null && !controlExample.isDisposed())
+		if (controlExample != null && !controlExample.isDisposed()) {
 			controlExample.dispose();
+		}
 
 		controlExample = createControl(controlArea);
 
-		if (modifiedBack != null)
+		if (modifiedBack != null) {
 			controlExample.setBackground(modifiedBack);
+		}
 
-		if (modifiedFore != null)
+		if (modifiedFore != null) {
 			controlExample.setForeground(modifiedFore);
+		}
 
 		updateListeners();
 
@@ -145,10 +144,10 @@ public abstract class AbstractExampleTab {
 	}
 
 	/**
-	 * Recalculates and repositions the layout of the example control based upon
-	 * the layout options chosen by the user. Extenders may wish to call this
-	 * method if a user changes a widget parameter that might affect the layout
-	 * (usually the preferred size).
+	 * Recalculates and repositions the layout of the example control based upon the
+	 * layout options chosen by the user. Extenders may wish to call this method if
+	 * a user changes a widget parameter that might affect the layout (usually the
+	 * preferred size).
 	 */
 	protected void relayoutExample() {
 		controlGridData.verticalAlignment = vFill ? SWT.FILL : SWT.BEGINNING;
@@ -163,9 +162,8 @@ public abstract class AbstractExampleTab {
 
 	/**
 	 * Creates the main container and default example options (such as event
-	 * listening and size options). This method should not be called by
-	 * extenders.
-	 * 
+	 * listening and size options). This method should not be called by extenders.
+	 *
 	 * @param parent
 	 */
 	public final void create(Composite parent) {
@@ -197,8 +195,7 @@ public abstract class AbstractExampleTab {
 
 		Composite lowerParamsArea = new Composite(content, SWT.NONE);
 		lowerParamsArea.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		GridLayoutFactory.swtDefaults().margins(0, 0).numColumns(2)
-				.applyTo(lowerParamsArea);
+		GridLayoutFactory.swtDefaults().margins(0, 0).numColumns(2).applyTo(lowerParamsArea);
 
 		Group sizeGroup = new Group(lowerParamsArea, SWT.SHADOW_ETCHED_IN);
 		sizeGroup.setText("Size");
@@ -214,8 +211,7 @@ public abstract class AbstractExampleTab {
 
 		Composite thirdParmsArea = new Composite(content, SWT.NONE);
 		thirdParmsArea.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		GridLayoutFactory.swtDefaults().margins(0, 0).numColumns(2)
-				.applyTo(thirdParmsArea);
+		GridLayoutFactory.swtDefaults().margins(0, 0).numColumns(2).applyTo(thirdParmsArea);
 
 		Group colorsGroup = new Group(thirdParmsArea, SWT.SHADOW_ETCHED_IN);
 		colorsGroup.setText("Colors");
@@ -252,14 +248,14 @@ public abstract class AbstractExampleTab {
 		back.setText("Background...");
 		back.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				ColorDialog cd = new ColorDialog(Display.getCurrent()
-						.getActiveShell());
+				ColorDialog cd = new ColorDialog(Display.getCurrent().getActiveShell());
 				RGB newRGB = cd.open();
 				if (newRGB != null) {
 					Color newColor = new Color(Display.getCurrent(), newRGB);
 					controlExample.setBackground(newColor);
-					if (modifiedBack != null)
+					if (modifiedBack != null) {
 						modifiedBack.dispose();
+					}
 					modifiedBack = newColor;
 				}
 			}
@@ -268,14 +264,14 @@ public abstract class AbstractExampleTab {
 		fore.setText("Foreground...");
 		fore.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				ColorDialog cd = new ColorDialog(Display.getCurrent()
-						.getActiveShell());
+				ColorDialog cd = new ColorDialog(Display.getCurrent().getActiveShell());
 				RGB newRGB = cd.open();
 				if (newRGB != null) {
 					Color newColor = new Color(Display.getCurrent(), newRGB);
 					controlExample.setForeground(newColor);
-					if (modifiedFore != null)
+					if (modifiedFore != null) {
 						modifiedFore.dispose();
+					}
 					modifiedFore = newColor;
 				}
 			}
@@ -285,16 +281,17 @@ public abstract class AbstractExampleTab {
 	private void createBackMode(Composite parent) {
 		parent.setLayout(new GridLayout());
 		final Combo backMode = new Combo(parent, SWT.READ_ONLY);
-		backMode.setItems(new String[] { "SWT.INHERIT_NONE",
-				"SWT.INHERIT_DEFAULT", "SWT.INHERIT_FORCE" });
+		backMode.setItems(new String[] { "SWT.INHERIT_NONE", "SWT.INHERIT_DEFAULT", "SWT.INHERIT_FORCE" });
 		backMode.select(0);
 		backMode.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				int mode = SWT.INHERIT_NONE;
-				if (backMode.getText().indexOf("DEFAULT") != -1)
+				if (backMode.getText().indexOf("DEFAULT") != -1) {
 					mode = SWT.INHERIT_DEFAULT;
-				if (backMode.getText().indexOf("FORCE") != -1)
+				}
+				if (backMode.getText().indexOf("FORCE") != -1) {
 					mode = SWT.INHERIT_FORCE;
+				}
 				controlArea.setBackgroundMode(mode);
 			}
 		});
@@ -304,8 +301,7 @@ public abstract class AbstractExampleTab {
 		backImage.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				if (backImage.getSelection()) {
-					controlArea.setBackgroundImage(ExamplesView
-							.getImage("icons/background.PNG"));
+					controlArea.setBackgroundImage(ExamplesView.getImage("icons/background.PNG"));
 				} else {
 					controlArea.setBackgroundImage(null);
 				}
@@ -317,8 +313,7 @@ public abstract class AbstractExampleTab {
 		backColor.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				if (backColor.getSelection()) {
-					controlArea.setBackground(controlArea.getDisplay()
-							.getSystemColor(SWT.COLOR_CYAN));
+					controlArea.setBackground(controlArea.getDisplay().getSystemColor(SWT.COLOR_CYAN));
 				} else {
 					controlArea.setBackground(null);
 				}
@@ -331,8 +326,9 @@ public abstract class AbstractExampleTab {
 
 		String[] links = createLinks();
 
-		if (links == null)
+		if (links == null) {
 			return;
+		}
 
 		for (int i = 0; i < links.length; i++) {
 			Link link = new Link(parent, SWT.NONE);
@@ -413,19 +409,19 @@ public abstract class AbstractExampleTab {
 
 	/**
 	 * Gets the initial value for horizontal fill, subclasses may override.
-	 * 
-	 * @return <code>true</code> if the horizontal fill flag must be set the
-	 *         default is <code>false</code>
+	 *
+	 * @return <code>true</code> if the horizontal fill flag must be set the default
+	 *         is <code>false</code>
 	 */
 	public boolean getInitialHorizontalFill() {
 		return false;
 	}
 
 	/**
-	 * Gets the initial  value for vertical fill, subclasses may override.
-	 * 
-	 * @return <code>true</code> if the vertical fill flag must be set the
-	 *         default is <code>false</code>
+	 * Gets the initial value for vertical fill, subclasses may override.
+	 *
+	 * @return <code>true</code> if the vertical fill flag must be set the default
+	 *         is <code>false</code>
 	 */
 	public boolean getInitialVerticalFill() {
 		return false;
@@ -434,23 +430,21 @@ public abstract class AbstractExampleTab {
 	private void createListeners(Composite parent) {
 		parent.setLayout(new GridLayout(4, false));
 
-		ButtonFactory.create(parent, SWT.PUSH, "Select Listeners",
-				new Listener() {
-					public void handleEvent(Event event) {
-						ListenersDialog dialog = new ListenersDialog(Display
-								.getCurrent().getActiveShell());
+		ButtonFactory.create(parent, SWT.PUSH, "Select Listeners", new Listener() {
+			public void handleEvent(Event event) {
+				ListenersDialog dialog = new ListenersDialog(Display.getCurrent().getActiveShell());
 
-						if (dialog.open(selectedEvents) == Dialog.OK)
-							updateListeners();
-					}
-				});
+				if (dialog.open(selectedEvents) == Window.OK) {
+					updateListeners();
+				}
+			}
+		});
 
-		listen = ButtonFactory.create(parent, SWT.CHECK, "Listen",
-				new Listener() {
-					public void handleEvent(Event event) {
-						updateListeners();
-					}
-				});
+		listen = ButtonFactory.create(parent, SWT.CHECK, "Listen", new Listener() {
+			public void handleEvent(Event event) {
+				updateListeners();
+			}
+		});
 
 		Label spacer = new Label(parent, SWT.NONE);
 		spacer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -458,8 +452,7 @@ public abstract class AbstractExampleTab {
 		Button clear = new Button(parent, SWT.PUSH);
 		clear.setText("Clear");
 
-		final Text eventText = new Text(parent, SWT.BORDER | SWT.MULTI
-				| SWT.V_SCROLL | SWT.H_SCROLL);
+		final Text eventText = new Text(parent, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 120;
 		gd.horizontalSpan = 4;
@@ -485,30 +478,30 @@ public abstract class AbstractExampleTab {
 			boolean selected = (selectedEvents.contains(new Integer(eventId)));
 
 			controlExample.removeListener(eventId, listenerThatPrints);
-			if (selected && listen.getSelection())
+			if (selected && listen.getSelection()) {
 				controlExample.addListener(eventId, listenerThatPrints);
+			}
 
-			for (Iterator iterator = additionalEventParticipants.iterator(); iterator
-					.hasNext();) {
+			for (Iterator iterator = additionalEventParticipants.iterator(); iterator.hasNext();) {
 				Widget participant = (Widget) iterator.next();
 
 				participant.removeListener(eventId, listenerThatPrints);
-				if (selected && listen.getSelection())
+				if (selected && listen.getSelection()) {
 					participant.addListener(eventId, listenerThatPrints);
+				}
 			}
 		}
 	}
 
 	/**
 	 * Adds the given widget to the list of which will participate in the event
-	 * listening mechanism of the example tab. In other words, if a user has
-	 * chosen to listen for a specific event, and that event is fired on the
-	 * given widget, the event's details will print in the event text area in
-	 * the example.
-	 * 
+	 * listening mechanism of the example tab. In other words, if a user has chosen
+	 * to listen for a specific event, and that event is fired on the given widget,
+	 * the event's details will print in the event text area in the example.
+	 *
 	 * This method is primarily used to include a widget's <code>Item</code>
 	 * children in the event listening mechanism.
-	 * 
+	 *
 	 * @param widget
 	 */
 	protected void addEventParticipant(final Widget widget) {
@@ -604,6 +597,13 @@ public abstract class AbstractExampleTab {
 		}
 
 		return typedEvent;
+	}
+
+	/**
+	 * This method is called when the user reveals the tab.
+	 */
+	public void reveal() {
+
 	}
 
 }
