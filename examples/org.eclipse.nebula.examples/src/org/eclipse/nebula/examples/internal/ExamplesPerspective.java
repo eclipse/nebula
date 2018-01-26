@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors :
- *    Nicolas Richeton (nicolas.richeton@gmail.com) 
+ *    Nicolas Richeton (nicolas.richeton@gmail.com)
  *******************************************************************************/
 package org.eclipse.nebula.examples.internal;
 
@@ -14,9 +14,11 @@ import org.eclipse.ui.IPerspectiveFactory;
 
 public class ExamplesPerspective implements IPerspectiveFactory {
 
+	@Override
 	public void createInitialLayout(IPageLayout layout) {
 		layout.setEditorAreaVisible(false);
-		layout.addStandaloneView("org.eclipse.nebula.examples.view", false,IPageLayout.LEFT, 1, layout.getEditorArea());
+		layout.addStandaloneView("org.eclipse.nebula.examples.view", false, IPageLayout.LEFT, 1,
+				layout.getEditorArea());
 	}
 
 }

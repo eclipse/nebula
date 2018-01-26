@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors :
- *    Nicolas Richeton (nicolas.richeton@gmail.com) 
+ *    Nicolas Richeton (nicolas.richeton@gmail.com)
  *******************************************************************************/
 package org.eclipse.nebula.examples.internal;
 
@@ -17,11 +17,12 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 
 	private static final String PERSPECTIVE_ID = "org.eclipse.nebula.examples.perspective";
 
-	public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(
-			IWorkbenchWindowConfigurer configurer) {
+	@Override
+	public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer configurer) {
 		return new ApplicationWorkbenchWindowAdvisor(configurer);
 	}
 
+	@Override
 	public String getInitialWindowPerspectiveId() {
 		return PERSPECTIVE_ID;
 	}

@@ -51,6 +51,7 @@ public class ExamplesView extends ViewPart {
 
 	}
 
+	@Override
 	public void createPartControl(Composite parent) {
 
 		tabFolder = new CTabFolder(parent, SWT.TOP);
@@ -58,8 +59,8 @@ public class ExamplesView extends ViewPart {
 				.getConfigurationElementsFor("org.eclipse.nebula.examples.examples");
 		HashMap elementsMap = new HashMap();
 
-		for (int i = 0; i < elements.length; i++) {
-			elementsMap.put(elements[i].getAttribute("name"), elements[i]);
+		for (IConfigurationElement element : elements) {
+			elementsMap.put(element.getAttribute("name"), element);
 		}
 
 		Map sortedElements = new TreeMap(elementsMap);
@@ -88,6 +89,7 @@ public class ExamplesView extends ViewPart {
 		}
 
 		tabFolder.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				AbstractExampleTab tab = (AbstractExampleTab) tabFolder.getItem(tabFolder.getSelectionIndex())
 						.getData("example");
@@ -96,6 +98,7 @@ public class ExamplesView extends ViewPart {
 		});
 	}
 
+	@Override
 	public void setFocus() {
 		tabFolder.setFocus();
 	}

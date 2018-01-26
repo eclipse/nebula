@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors :
- *    Nicolas Richeton (nicolas.richeton@gmail.com) 
+ *    Nicolas Richeton (nicolas.richeton@gmail.com)
  *******************************************************************************/
 package org.eclipse.nebula.examples.internal;
 
@@ -19,6 +19,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		super(configurer);
 	}
 
+	@Override
 	public void preWindowOpen() {
 		IWorkbenchWindowConfigurer configurer = getWindowConfigurer();
 		configurer.setInitialSize(new Point(700, 400));

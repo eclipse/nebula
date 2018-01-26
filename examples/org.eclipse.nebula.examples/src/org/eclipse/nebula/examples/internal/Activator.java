@@ -11,6 +11,7 @@ public class Activator extends AbstractUIPlugin {
 
 	}
 
+	@Override
 	public void start(BundleContext context) throws Exception {
 
 		bundle = this;

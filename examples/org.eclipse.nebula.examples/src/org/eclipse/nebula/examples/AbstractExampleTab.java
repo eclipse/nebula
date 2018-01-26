@@ -21,7 +21,6 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ArmEvent;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.events.KeyEvent;
@@ -246,34 +245,30 @@ public abstract class AbstractExampleTab {
 		parent.setLayout(new GridLayout());
 		Button back = new Button(parent, SWT.PUSH);
 		back.setText("Background...");
-		back.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				ColorDialog cd = new ColorDialog(Display.getCurrent().getActiveShell());
-				RGB newRGB = cd.open();
-				if (newRGB != null) {
-					Color newColor = new Color(Display.getCurrent(), newRGB);
-					controlExample.setBackground(newColor);
-					if (modifiedBack != null) {
-						modifiedBack.dispose();
-					}
-					modifiedBack = newColor;
+		back.addListener(SWT.Selection, event -> {
+			ColorDialog cd = new ColorDialog(Display.getCurrent().getActiveShell());
+			RGB newRGB = cd.open();
+			if (newRGB != null) {
+				Color newColor = new Color(Display.getCurrent(), newRGB);
+				controlExample.setBackground(newColor);
+				if (modifiedBack != null) {
+					modifiedBack.dispose();
 				}
+				modifiedBack = newColor;
 			}
 		});
 		Button fore = new Button(parent, SWT.PUSH);
 		fore.setText("Foreground...");
-		fore.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				ColorDialog cd = new ColorDialog(Display.getCurrent().getActiveShell());
-				RGB newRGB = cd.open();
-				if (newRGB != null) {
-					Color newColor = new Color(Display.getCurrent(), newRGB);
-					controlExample.setForeground(newColor);
-					if (modifiedFore != null) {
-						modifiedFore.dispose();
-					}
-					modifiedFore = newColor;
+		fore.addListener(SWT.Selection, event -> {
+			ColorDialog cd = new ColorDialog(Display.getCurrent().getActiveShell());
+			RGB newRGB = cd.open();
+			if (newRGB != null) {
+				Color newColor = new Color(Display.getCurrent(), newRGB);
+				controlExample.setForeground(newColor);
+				if (modifiedFore != null) {
+					modifiedFore.dispose();
 				}
+				modifiedFore = newColor;
 			}
 		});
 	}
@@ -283,40 +278,34 @@ public abstract class AbstractExampleTab {
 		final Combo backMode = new Combo(parent, SWT.READ_ONLY);
 		backMode.setItems(new String[] { "SWT.INHERIT_NONE", "SWT.INHERIT_DEFAULT", "SWT.INHERIT_FORCE" });
 		backMode.select(0);
-		backMode.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				int mode = SWT.INHERIT_NONE;
-				if (backMode.getText().indexOf("DEFAULT") != -1) {
-					mode = SWT.INHERIT_DEFAULT;
-				}
-				if (backMode.getText().indexOf("FORCE") != -1) {
-					mode = SWT.INHERIT_FORCE;
-				}
-				controlArea.setBackgroundMode(mode);
+		backMode.addListener(SWT.Selection, event -> {
+			int mode = SWT.INHERIT_NONE;
+			if (backMode.getText().indexOf("DEFAULT") != -1) {
+				mode = SWT.INHERIT_DEFAULT;
 			}
+			if (backMode.getText().indexOf("FORCE") != -1) {
+				mode = SWT.INHERIT_FORCE;
+			}
+			controlArea.setBackgroundMode(mode);
 		});
 
 		final Button backImage = new Button(parent, SWT.CHECK);
 		backImage.setText("Background Image");
-		backImage.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				if (backImage.getSelection()) {
-					controlArea.setBackgroundImage(ExamplesView.getImage("icons/background.PNG"));
-				} else {
-					controlArea.setBackgroundImage(null);
-				}
+		backImage.addListener(SWT.Selection, event -> {
+			if (backImage.getSelection()) {
+				controlArea.setBackgroundImage(ExamplesView.getImage("icons/background.PNG"));
+			} else {
+				controlArea.setBackgroundImage(null);
 			}
 		});
 
 		final Button backColor = new Button(parent, SWT.CHECK);
 		backColor.setText("Background Color");
-		backColor.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				if (backColor.getSelection()) {
-					controlArea.setBackground(controlArea.getDisplay().getSystemColor(SWT.COLOR_CYAN));
-				} else {
-					controlArea.setBackground(null);
-				}
+		backColor.addListener(SWT.Selection, event -> {
+			if (backColor.getSelection()) {
+				controlArea.setBackground(controlArea.getDisplay().getSystemColor(SWT.COLOR_CYAN));
+			} else {
+				controlArea.setBackground(null);
 			}
 		});
 	}
@@ -330,10 +319,11 @@ public abstract class AbstractExampleTab {
 			return;
 		}
 
-		for (int i = 0; i < links.length; i++) {
+		for (String link2 : links) {
 			Link link = new Link(parent, SWT.NONE);
-			link.setText(links[i]);
+			link.setText(link2);
 			link.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					Program.launch(e.text);
 				}
@@ -350,60 +340,48 @@ public abstract class AbstractExampleTab {
 		Button prefSize = new Button(parent, SWT.RADIO);
 		prefSize.setText("Preferred");
 		prefSize.setSelection(true);
-		prefSize.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				controlGridData = new GridData();
-				relayoutExample();
-			}
+		prefSize.addListener(SWT.Selection, event -> {
+			controlGridData = new GridData();
+			relayoutExample();
 		});
 
 		Button tenSize = new Button(parent, SWT.RADIO);
 		tenSize.setText("10 X 10");
-		tenSize.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				controlGridData = new GridData(10, 10);
-				relayoutExample();
-			}
+		tenSize.addListener(SWT.Selection, event -> {
+			controlGridData = new GridData(10, 10);
+			relayoutExample();
 		});
 
 		Button fiftySize = new Button(parent, SWT.RADIO);
 		fiftySize.setText("50 X 50");
-		fiftySize.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				controlGridData = new GridData(50, 50);
-				relayoutExample();
-			}
+		fiftySize.addListener(SWT.Selection, event -> {
+			controlGridData = new GridData(50, 50);
+			relayoutExample();
 		});
 
 		Button hundredSize = new Button(parent, SWT.RADIO);
 		hundredSize.setText("100 X 100");
-		hundredSize.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				controlGridData = new GridData(100, 100);
-				relayoutExample();
-			}
+		hundredSize.addListener(SWT.Selection, event -> {
+			controlGridData = new GridData(100, 100);
+			relayoutExample();
 		});
 
 		final Button hFillB = new Button(parent, SWT.CHECK);
 		hFillB.setText("Horizontal Fill");
 		hFill = getInitialHorizontalFill();
 		hFillB.setSelection(hFill);
-		hFillB.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				hFill = hFillB.getSelection();
-				relayoutExample();
-			}
+		hFillB.addListener(SWT.Selection, event -> {
+			hFill = hFillB.getSelection();
+			relayoutExample();
 		});
 
 		final Button vFillB = new Button(parent, SWT.CHECK);
 		vFillB.setText("Vertical Fill");
 		vFill = getInitialVerticalFill();
 		vFillB.setSelection(vFill);
-		vFillB.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				vFill = vFillB.getSelection();
-				relayoutExample();
-			}
+		vFillB.addListener(SWT.Selection, event -> {
+			vFill = vFillB.getSelection();
+			relayoutExample();
 		});
 	}
 
@@ -430,21 +408,15 @@ public abstract class AbstractExampleTab {
 	private void createListeners(Composite parent) {
 		parent.setLayout(new GridLayout(4, false));
 
-		ButtonFactory.create(parent, SWT.PUSH, "Select Listeners", new Listener() {
-			public void handleEvent(Event event) {
-				ListenersDialog dialog = new ListenersDialog(Display.getCurrent().getActiveShell());
+		ButtonFactory.create(parent, SWT.PUSH, "Select Listeners", event -> {
+			ListenersDialog dialog = new ListenersDialog(Display.getCurrent().getActiveShell());
 
-				if (dialog.open(selectedEvents) == Window.OK) {
-					updateListeners();
-				}
-			}
-		});
-
-		listen = ButtonFactory.create(parent, SWT.CHECK, "Listen", new Listener() {
-			public void handleEvent(Event event) {
+			if (dialog.open(selectedEvents) == Window.OK) {
 				updateListeners();
 			}
 		});
+
+		listen = ButtonFactory.create(parent, SWT.CHECK, "Listen", event -> updateListeners());
 
 		Label spacer = new Label(parent, SWT.NONE);
 		spacer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -458,24 +430,17 @@ public abstract class AbstractExampleTab {
 		gd.horizontalSpan = 4;
 		eventText.setLayoutData(gd);
 
-		clear.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				eventText.setText("");
-			}
-		});
+		clear.addListener(SWT.Selection, event -> eventText.setText(""));
 
-		listenerThatPrints = new Listener() {
-			public void handleEvent(Event event) {
-				TypedEvent typedEvent = getTypedEvent(event);
-				eventText.append("\n" + typedEvent.toString());
-			}
+		listenerThatPrints = event -> {
+			TypedEvent typedEvent = getTypedEvent(event);
+			eventText.append("\n" + typedEvent.toString());
 		};
 	}
 
 	private void updateListeners() {
-		for (int i = 0; i < eventIds.length; i++) {
-			int eventId = eventIds[i];
-			boolean selected = (selectedEvents.contains(new Integer(eventId)));
+		for (int eventId : eventIds) {
+			boolean selected = selectedEvents.contains(new Integer(eventId));
 
 			controlExample.removeListener(eventId, listenerThatPrints);
 			if (selected && listen.getSelection()) {
@@ -506,11 +471,7 @@ public abstract class AbstractExampleTab {
 	 */
 	protected void addEventParticipant(final Widget widget) {
 		additionalEventParticipants.add(widget);
-		widget.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				additionalEventParticipants.remove(widget);
-			}
-		});
+		widget.addDisposeListener(e -> additionalEventParticipants.remove(widget));
 	}
 
 	private TypedEvent getTypedEvent(Event e) {
