@@ -6,15 +6,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.nebula.widgets.geomap.GeoMap;
 import org.eclipse.nebula.widgets.geomap.GeoMapUtil;
 import org.eclipse.nebula.widgets.geomap.PointD;
-import org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned;
 import org.eclipse.nebula.widgets.geomap.jface.GeoMapViewer;
 import org.eclipse.nebula.widgets.geomap.jface.LabelImageProvider;
 import org.eclipse.nebula.widgets.geomap.jface.LocationProvider;
@@ -39,32 +36,36 @@ public class GeoMapViewerTest {
 		shell.setText("GeoMap Widget - SWT Native Map Browsing, Map data from openstreetmap.org");
 		shell.setSize(600, 710);
 		shell.setLocation(10, 10);
-		shell.setLayout (new FillLayout());
-		
+		shell.setLayout(new FillLayout());
+
 		createControls(shell);
 		shell.open();
-		
+
 		return shell;
 	}
 
 	private GeoMapViewer viewer;
 	private Map<Object, PointD> locations;
-	private LabelImageProvider labelProvider; 
-	
+	private LabelImageProvider labelProvider;
+
 	protected void createControls(Shell shell) {
 		viewer = new GeoMapViewer(shell, SWT.NONE);
-		locations  = new HashMap<Object, PointD>();
+		locations = new HashMap<>();
 		initLocations();
 		viewer.setLocationProvider(new LocationProvider() {
+			@Override
 			public boolean setLonLat(Object element, double lon, double lat) {
 				locations.put(element, new PointD(lon, lat));
 				return true;
 			}
+
+			@Override
 			public PointD getLonLat(Object element) {
 				return locations.get(element);
 			}
 		});
 		viewer.setContentProvider(new IStructuredContentProvider() {
+			@Override
 			public Object[] getElements(Object inputElement) {
 				Collection<?> col = null;
 				if (inputElement instanceof Collection<?>) {
@@ -76,67 +77,61 @@ public class GeoMapViewerTest {
 				}
 				return col.toArray();
 			}
+
+			@Override
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			}
+
+			@Override
 			public void dispose() {
 			}
 		});
 		viewer.setInput(locations.keySet());
 		labelProvider = new LabelImageProvider();
 		viewer.setLabelProvider(labelProvider);
-		
-		// corresponds to viewer.zoomTo(locations.keySet().toArray(), 12); 
+
+		// corresponds to viewer.zoomTo(locations.keySet().toArray(), 12);
 		getGeoMap().setZoom(5);
 		getGeoMap().setMapPosition(3967, 2136);
-		
-		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-//				PointD lonLat = viewer.getLocationProvider().getLonLat(me);
-//				int zoom = getGeoMap().getZoom();
-//				Point position = GeoMapUtil.computePosition(lonLat, zoom);
-//				Point mapPosition = getGeoMap().getMapPosition();
-//				System.out.println(position + " - " + mapPosition + " = " + (position.x - mapPosition.x) + ", " + (position.y - mapPosition.y) + " @ " + zoom);
-				GeoMapViewerTest.this.selection = event.getSelection();
-			}
-		});
+
+		viewer.addSelectionChangedListener(event -> GeoMapViewerTest.this.selection = event.getSelection());
 	}
-	
+
 	private ISelection selection = null;
 	private String me = "Hallvard Traetteberg";
 
 	private void initLocations() {
-		locations.put(me, new PointD(10.4234,63.4242));
-		locations.put("Stepan Rutz", new PointD(6.8222,50.9178));
-		locations.put("Wim Jongman", new PointD(4.6410,52.3894));
+		locations.put(me, new PointD(10.4234, 63.4242));
+		locations.put("Stepan Rutz", new PointD(6.8222, 50.9178));
+		locations.put("Wim Jongman", new PointD(4.6410, 52.3894));
 	}
 
 	private Display display;
 	private Widget parent;
-	
+
 	private SWTBot bot;
 	private SWTBotGeoMap geoMapBot;
-	
+
 	@Before
 	public void setUp() {
 		SWTBotPreferences.PLAYBACK_DELAY = 1000; // slow down tests...Otherwise we won't see anything
 		display = Display.getCurrent();
 		parent = createUI(display);
-		
+
 		bot = new SWTBot(parent);
 		GeoMap geoMap = bot.widget(Is.isA(GeoMap.class));
-		GeoMapPositioned geoMapPositioned = geoMap; 
 		geoMapBot = new SWTBotGeoMap(geoMap);
 	}
 
 	@After
 	public void tearDown() {
 		handleEvents();
-//		display.dispose();
+		// display.dispose();
 	}
-	
+
 	protected void handleEvents() {
-		while (display != null && (! display.isDisposed()) && (! parent.isDisposed())) {
-			if (! display.readAndDispatch()) {
+		while (display != null && !display.isDisposed() && !parent.isDisposed()) {
+			if (!display.readAndDispatch()) {
 				break; // display.sleep();
 			}
 		}
@@ -147,12 +142,12 @@ public class GeoMapViewerTest {
 	private void run() {
 		display = Display.getDefault();
 		parent = createUI(display);
-		while (! parent.isDisposed()) {
-			if (! display.readAndDispatch()) {
+		while (!parent.isDisposed()) {
+			if (!display.readAndDispatch()) {
 				display.sleep();
 			}
 		}
-		if (! display.isDisposed()) {
+		if (!display.isDisposed()) {
 			display.dispose();
 		}
 	}
@@ -160,13 +155,13 @@ public class GeoMapViewerTest {
 	public static void main(String[] args) {
 		new GeoMapViewerTest().run();
 	}
-	
+
 	//
-	
+
 	public GeoMap getGeoMap() {
 		return viewer.getGeoMap();
 	}
- 
+
 	@Test
 	public void testSelectMe() {
 		Point mapPosition = getGeoMap().getMapPosition();
@@ -177,7 +172,7 @@ public class GeoMapViewerTest {
 		Assert.assertTrue(selection instanceof IStructuredSelection);
 		Assert.assertEquals(me, ((IStructuredSelection) selection).getFirstElement());
 	}
-	
+
 	@Test
 	public void testDragMe() {
 		Point mapPosition = getGeoMap().getMapPosition();
@@ -188,10 +183,10 @@ public class GeoMapViewerTest {
 		geoMapBot.mouseDrag(x0, y0, x1, y1, SWT.BUTTON1, 1);
 		Assert.assertTrue(selection instanceof IStructuredSelection);
 		Assert.assertEquals(me, ((IStructuredSelection) selection).getFirstElement());
-		
+
 		Point position2 = GeoMapUtil.computePosition(viewer.getLocationProvider().getLonLat(me), getGeoMap().getZoom());
 		// accept round-off errors
-		Assert.assertEquals((double) mx, (double) (position2.x - position1.x), 1);		
-		Assert.assertEquals((double) my, (double) (position2.y - position1.y), 1);		
+		Assert.assertEquals((double) mx, (double) (position2.x - position1.x), 1);
+		Assert.assertEquals((double) my, (double) (position2.y - position1.y), 1);
 	}
 }

@@ -19,5 +19,5 @@ import org.eclipse.swt.widgets.Control;
  * @version $Revision$
  */
 public interface Page {
-    Control getControl(PageContainer container, Composite parent);
+	Control getControl(PageContainer container, Composite parent);
 }

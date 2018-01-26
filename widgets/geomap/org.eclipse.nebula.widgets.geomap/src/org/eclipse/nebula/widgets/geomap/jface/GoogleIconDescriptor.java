@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Hallvard Tr�tteberg - initial API and implementation
  ******************************************************************************/
@@ -25,8 +25,10 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.RGB;
 
 /**
- * ImageDescriptor that downloads the image data from https://chart.googleapis.com/
- * Typically used by a LabelProvider with an ImageRegistry to provide map icons.
+ * ImageDescriptor that downloads the image data from
+ * https://chart.googleapis.com/ Typically used by a LabelProvider with an
+ * ImageRegistry to provide map icons.
+ * 
  * @see LabelProvider
  * @see ImageRegistry
  * @author hal
@@ -36,6 +38,7 @@ public class GoogleIconDescriptor extends ImageDescriptor {
 
 	/**
 	 * Options for the GoogleIconDescriptor
+	 * 
 	 * @since 3.3
 	 *
 	 */
@@ -48,6 +51,7 @@ public class GoogleIconDescriptor extends ImageDescriptor {
 
 		/**
 		 * The various options that can be provided for Google's map icons
+		 * 
 		 * @param iconClass
 		 * @param iconName
 		 * @param style
@@ -56,17 +60,15 @@ public class GoogleIconDescriptor extends ImageDescriptor {
 		 * @param fillColor
 		 * @param textColor
 		 */
-		public Options(String iconClass, String iconName,
-				String style, boolean hasShadow, String text, RGB fillColor,
-				RGB textColor) {
+		public Options(String iconClass, String iconName, String style,
+				boolean hasShadow, String text, RGB fillColor, RGB textColor) {
 			super();
 			setOptions(iconClass, iconName, style, hasShadow, text, fillColor,
 					textColor);
 		}
 
-		private void setOptions(String iconClass, String iconName,
-				String style, boolean hasShadow, String text, RGB fillColor,
-				RGB textColor) {
+		private void setOptions(String iconClass, String iconName, String style,
+				boolean hasShadow, String text, RGB fillColor, RGB textColor) {
 			this.iconClass = iconClass;
 			this.iconName = iconName;
 			this.style = style;
@@ -78,33 +80,38 @@ public class GoogleIconDescriptor extends ImageDescriptor {
 
 		/**
 		 * Copying constructor
+		 * 
 		 * @param options
 		 */
 		public Options(Options options) {
-			setOptions(options.iconClass, options.iconName, options.style, options.hasShadow, options.text, options.fillColor, options.textColor);
+			setOptions(options.iconClass, options.iconName, options.style,
+					options.hasShadow, options.text, options.fillColor,
+					options.textColor);
 		}
 	}
-	
+
 	private Options options;
 
 	/**
 	 * Initializes this GoogleIconDescriptor based on the provided options
+	 * 
 	 * @param options
 	 */
 	public GoogleIconDescriptor(Options options) {
 		this.options = options;
 	}
-	
+
 	private static String baseUrl = "https://chart.googleapis.com/chart?"; //$NON-NLS-1$
 	private static String argsSep = "|"; //$NON-NLS-1$
-	
+
 	@Override
 	public String toString() {
-		return "[GoogleIconDescriptor @ " + getUrlString() + "]";  //$NON-NLS-1$ //$NON-NLS-2$
+		return "[GoogleIconDescriptor @ " + getUrlString() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	/**
 	 * Gets the URL used to fetch the map icon
+	 * 
 	 * @return the URL used to fetch the map icon
 	 */
 	public String getUrlString() {
@@ -112,21 +119,22 @@ public class GoogleIconDescriptor extends ImageDescriptor {
 		if (options.hasShadow) {
 			chst += "_withshadow"; //$NON-NLS-1$
 		}
-		Object[] args = {options.iconName, options.style, options.text, toHex(options.fillColor), toHex(options.textColor)};
+		Object[] args = { options.iconName, options.style, options.text,
+				toHex(options.fillColor), toHex(options.textColor) };
 		StringBuilder chld = new StringBuilder();
-		for (int i = 0; i < args.length; i++) {
-			if (args[i] != null) {
+		for (Object arg : args) {
+			if (arg != null) {
 				if (chld.length() > 0) {
 					chld.append(argsSep);
 				}
 				try {
-					chld.append(URLEncoder.encode(args[i].toString(), "utf-8")); //$NON-NLS-1$
+					chld.append(URLEncoder.encode(arg.toString(), "utf-8")); //$NON-NLS-1$
 				} catch (UnsupportedEncodingException e) {
 					// ignore
 				}
 			}
 		}
-		return baseUrl + "chst=" + chst + "&chld=" + chld;  //$NON-NLS-1$ //$NON-NLS-2$
+		return baseUrl + "chst=" + chst + "&chld=" + chld; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override
@@ -137,7 +145,7 @@ public class GoogleIconDescriptor extends ImageDescriptor {
 			return null;
 		}
 	}
-	
+
 	private String toHex(RGB rgb) {
 		return String.format("%02x%02x%02x", rgb.red, rgb.green, rgb.blue); //$NON-NLS-1$
 	}
@@ -161,18 +169,18 @@ public class GoogleIconDescriptor extends ImageDescriptor {
 			}
 		}
 	}
-	
+
 	//
-	
+
 	public final static String icon_map_pin_letter = "d_map_pin_letter";
 	public final static String icon_bubble_text_small = "d_bubble_text_small";
 	public final static String icon_bubble_icon_text_small = "d_bubble_icon_text_small";
-	
+
 	public final static String icon_style_pin = "pin";
 	public final static String icon_style_pin_star = "pin_star";
 	public final static String icon_style_pin_sleft = "pin_sleft";
 	public final static String icon_style_pin_sright = "pin_sright";
-	
+
 	public final static String frame_style_bb = "bb";
 	public final static String frame_style_bbtl = "bbtl";
 	public final static String frame_style_bbtr = "bbtr";
@@ -191,28 +199,42 @@ public class GoogleIconDescriptor extends ImageDescriptor {
 	public final static String frame_style_edge_rt = "edge_rt";
 	public final static String frame_style_edge_rc = "edge_rc";
 	public final static String frame_style_edge_rb = "edge_rb";
-	
+
 	/**
 	 * Helper method for creating a letter map icon
-	 * @param c the letter
-	 * @param hasShadow if it as a shaddow
-	 * @param fillColor the fill color
-	 * @param textColor the text color
+	 * 
+	 * @param c
+	 *            the letter
+	 * @param hasShadow
+	 *            if it as a shaddow
+	 * @param fillColor
+	 *            the fill color
+	 * @param textColor
+	 *            the text color
 	 * @return the corresponding descriptor
 	 */
-	public static GoogleIconDescriptor letterPin(char c, boolean hasShadow, RGB fillColor, RGB textColor) {
-		return new GoogleIconDescriptor(new Options(icon_map_pin_letter, null, null, hasShadow, String.valueOf(c), fillColor, textColor));
+	public static GoogleIconDescriptor letterPin(char c, boolean hasShadow,
+			RGB fillColor, RGB textColor) {
+		return new GoogleIconDescriptor(new Options(icon_map_pin_letter, null,
+				null, hasShadow, String.valueOf(c), fillColor, textColor));
 	}
 
 	/**
 	 * Helper method for creating a text bubble map icon
-	 * @param s the text
-	 * @param hasShadow if it as a shaddow
-	 * @param fillColor the fill color
-	 * @param textColor the text color
+	 * 
+	 * @param s
+	 *            the text
+	 * @param hasShadow
+	 *            if it as a shaddow
+	 * @param fillColor
+	 *            the fill color
+	 * @param textColor
+	 *            the text color
 	 * @return the corresponding descriptor
 	 */
-	public static GoogleIconDescriptor textBubble(String s, boolean hasShadow, RGB fillColor, RGB textColor) {
-		return new GoogleIconDescriptor(new Options(icon_bubble_text_small, null, frame_style_bb, hasShadow, s, fillColor, textColor));
+	public static GoogleIconDescriptor textBubble(String s, boolean hasShadow,
+			RGB fillColor, RGB textColor) {
+		return new GoogleIconDescriptor(new Options(icon_bubble_text_small,
+				null, frame_style_bb, hasShadow, s, fillColor, textColor));
 	}
 }

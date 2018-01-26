@@ -18,22 +18,30 @@ package org.eclipse.nebula.widgets.geomap.internal;
 public interface InternalGeoMapListener {
 
 	/**
-	 * Notifies listener that a tile has been (re)painted 
-	 * @param tileRef the reference to the painted tile
+	 * Notifies listener that a tile has been (re)painted
+	 * 
+	 * @param tileRef
+	 *            the reference to the painted tile
 	 */
 	public void tilePainted(TileRef tileRef);
 
 	/**
-	 * Notifies listener that the control has been (re)painted 
-	 * @param tileCount the number of tiles that where painted
-	 * @param time the time it took
+	 * Notifies listener that the control has been (re)painted
+	 * 
+	 * @param tileCount
+	 *            the number of tiles that where painted
+	 * @param time
+	 *            the time it took
 	 */
 	public void mapPainted(int tileCount, long time);
-	
+
 	/**
-	 * Notifies listener that the tile cache has been updated 
-	 * @param used the used slots of the cache
-	 * @param size the size of the cache
+	 * Notifies listener that the tile cache has been updated
+	 * 
+	 * @param used
+	 *            the used slots of the cache
+	 * @param size
+	 *            the size of the cache
 	 */
 	public void tileCacheUpdated(int used, int size);
 }

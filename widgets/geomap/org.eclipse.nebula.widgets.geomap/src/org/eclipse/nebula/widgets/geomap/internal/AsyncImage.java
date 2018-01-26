@@ -22,9 +22,9 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * An async image that loads itself in the background on an image-fetcher thread.
- * Once its loaded it will trigger a redraw. Sometimes redraws that 
- * are not really necessary can be triggered, but that is not relevant in terms of
+ * An async image that loads itself in the background on an image-fetcher
+ * thread. Once its loaded it will trigger a redraw. Sometimes redraws that are
+ * not really necessary can be triggered, but that is not relevant in terms of
  * performance for this swt-component.
  *
  */
@@ -36,7 +36,8 @@ class AsyncImage extends AtomicReference<ImageData> implements Runnable {
 	private final String tileUrl;
 
 	private volatile long stamp;
-	//        private final AtomicReference<ImageData> imageData = new AtomicReference<ImageData>();
+	// private final AtomicReference<ImageData> imageData = new
+	// AtomicReference<ImageData>();
 	private Image image = null; // might as well be thread-local
 
 	AsyncImage(GeoMapHelper geoMapHelper, TileRef tile, String tileUrl) {
@@ -44,7 +45,8 @@ class AsyncImage extends AtomicReference<ImageData> implements Runnable {
 		this.stamp = this.geoMapHelper.zoomStamp.longValue();
 		this.tile = tile;
 		this.tileUrl = tileUrl;
-		this.geoMapHelper.executor.execute(new FutureTask<Boolean>(this, Boolean.TRUE));
+		this.geoMapHelper.executor
+				.execute(new FutureTask<>(this, Boolean.TRUE));
 	}
 
 	private Runnable removeTileFromCacheRunnable = new Runnable() {
@@ -57,13 +59,15 @@ class AsyncImage extends AtomicReference<ImageData> implements Runnable {
 			AsyncImage.this.geoMapHelper.tileUpdated(tile);
 		}
 	};
-	
+
+	@Override
 	public void run() {
 		if (stamp != this.geoMapHelper.zoomStamp.longValue()) {
 			try {
 				// here is a race, we just live with.
-				if (! this.geoMapHelper.getDisplay().isDisposed()) {
-					this.geoMapHelper.getDisplay().asyncExec(removeTileFromCacheRunnable);
+				if (!this.geoMapHelper.getDisplay().isDisposed()) {
+					this.geoMapHelper.getDisplay()
+							.asyncExec(removeTileFromCacheRunnable);
 				}
 			} catch (SWTException e) {
 				// ignore
@@ -72,18 +76,21 @@ class AsyncImage extends AtomicReference<ImageData> implements Runnable {
 		}
 		try {
 			URLConnection con = new URL(tileUrl).openConnection();
-			con.setRequestProperty("User-Agent", "org.eclipse.nebula.widgets.geomap.GeoMap");   //$NON-NLS-1$ //$NON-NLS-2$
+			con.setRequestProperty("User-Agent", //$NON-NLS-1$
+					"org.eclipse.nebula.widgets.geomap.GeoMap"); //$NON-NLS-1$
 			set(new ImageData(con.getInputStream()));
 			try {
 				// here is a race, we just live with.
-				if (! this.geoMapHelper.getDisplay().isDisposed()) {
-					this.geoMapHelper.getDisplay().asyncExec(tileUpdatedRunnable);
+				if (!this.geoMapHelper.getDisplay().isDisposed()) {
+					this.geoMapHelper.getDisplay()
+							.asyncExec(tileUpdatedRunnable);
 				}
 			} catch (SWTException e) {
 				// ignore
 			}
 		} catch (Exception e) {
-			//                log.log(Level.SEVERE, "failed to load imagedata from url: " + tileUrl, e);
+			// log.log(Level.SEVERE, "failed to load imagedata from url: " +
+			// tileUrl, e);
 		}
 	}
 
@@ -106,7 +113,8 @@ class AsyncImage extends AtomicReference<ImageData> implements Runnable {
 	private void checkThread(Display display) {
 		// jdk 1.6 bug from checkWidget still fails here
 		if (display.getThread() != Thread.currentThread()) {
-			throw new IllegalStateException("Wrong thread to pick up the image"); //$NON-NLS-1$
+			throw new IllegalStateException(
+					"Wrong thread to pick up the image"); //$NON-NLS-1$
 		}
 	}
 }

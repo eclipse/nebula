@@ -18,8 +18,10 @@ package org.eclipse.nebula.widgets.geomap.internal;
 public interface GeoMapHelperListener {
 
 	/**
-	 * Notifies listener that a tile has been updated and may need (re)painting 
-	 * @param tileRef the reference to the updated tile
+	 * Notifies listener that a tile has been updated and may need (re)painting
+	 * 
+	 * @param tileRef
+	 *            the reference to the updated tile
 	 */
 	public void tileUpdated(TileRef tileRef);
 }

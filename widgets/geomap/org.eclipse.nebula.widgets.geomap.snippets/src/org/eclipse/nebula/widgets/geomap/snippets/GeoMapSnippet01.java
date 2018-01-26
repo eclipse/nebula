@@ -18,22 +18,22 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 public class GeoMapSnippet01 {
-	
-	public static void main (String [] args) throws Exception {
-	    Display display = new Display ();
-	    Shell shell = new Shell(display);
-	    shell.setText("GeoMap Widget - SWT Native Map Browsing, Map data from openstreetmap.org");
-	    shell.setSize(600, 710);
-	    shell.setLocation(10, 10);
-	    shell.setLayout (new FillLayout());
-	    
-	    new GeoMap(shell, SWT.NONE);
-	    shell.open ();
-	    while (! shell.isDisposed ()) {
-	        if (! display.readAndDispatch()) {
-	        	display.sleep ();
-	        }
-	    }
-	    display.dispose ();
+
+	public static void main(String[] args) throws Exception {
+		Display display = new Display();
+		Shell shell = new Shell(display);
+		shell.setText("GeoMap Widget - SWT Native Map Browsing, Map data from openstreetmap.org");
+		shell.setSize(600, 710);
+		shell.setLocation(10, 10);
+		shell.setLayout(new FillLayout());
+
+		new GeoMap(shell, SWT.NONE);
+		shell.open();
+		while (!shell.isDisposed()) {
+			if (!display.readAndDispatch()) {
+				display.sleep();
+			}
+		}
+		display.dispose();
 	}
 }

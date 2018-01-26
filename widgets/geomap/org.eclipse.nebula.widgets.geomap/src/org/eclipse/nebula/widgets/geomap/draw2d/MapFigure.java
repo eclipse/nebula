@@ -31,13 +31,14 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * An ImageFigure that creates the image from tiles fetched using a GeoMapHelper
+ * 
  * @since 3.3
  *
  */
 public class MapFigure extends ImageFigure implements GeoMapHelperListener {
 
 	private static int DEFAULT_CACHE_SIZE = 256;
-	
+
 	private GeoMapHelper geoMapHelper;
 
 	private TileServer tileServer;
@@ -46,23 +47,27 @@ public class MapFigure extends ImageFigure implements GeoMapHelperListener {
 
 	/**
 	 * Sets the TileServer used for fetching tiles.
-	 * @param tileServer The tileServer to set.
+	 * 
+	 * @param tileServer
+	 *            The tileServer to set.
 	 */
 	public void setTileServer(TileServer tileServer) {
 		this.tileServer = tileServer;
 		invalidateImage();
 	}
-	
+
 	/**
-	 * @param zoom The zoomLevel to set.
+	 * @param zoom
+	 *            The zoomLevel to set.
 	 */
 	public void setZoomLevel(int zoom) {
 		this.zoom = zoom;
 		invalidateImage();
 	}
-	
+
 	/**
 	 * Sets the location as a pair of longitude/latitude values
+	 * 
 	 * @param longitude
 	 * @param latitude
 	 */
@@ -72,7 +77,7 @@ public class MapFigure extends ImageFigure implements GeoMapHelperListener {
 	}
 
 	private Image cachedImage = null;
-	
+
 	private void invalidateImage() {
 		Image oldImage = getImage();
 		if (oldImage != null) {
@@ -84,20 +89,23 @@ public class MapFigure extends ImageFigure implements GeoMapHelperListener {
 	}
 
 	private Display display;
-	
+
 	private Display getDisplay() {
 		if (display == null) {
 			display = Display.getCurrent();
 		}
 		return display;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.draw2d.Figure#paint(org.eclipse.draw2d.Graphics)
 	 */
+	@Override
 	public void paint(Graphics graphics) {
 		if (getImage() == null) {
-		    updateImage();
+			updateImage();
 		}
 		super.paint(graphics);
 	}
@@ -108,7 +116,8 @@ public class MapFigure extends ImageFigure implements GeoMapHelperListener {
 			Dimension size = getSize();
 			if (cachedImage != null) {
 				Rectangle imageSize = cachedImage.getBounds();
-				if (imageSize.width != size.width || imageSize.height != size.height) {
+				if (imageSize.width != size.width
+						|| imageSize.height != size.height) {
 					cachedImage.dispose();
 					cachedImage = null;
 				}
@@ -124,12 +133,13 @@ public class MapFigure extends ImageFigure implements GeoMapHelperListener {
 			setImage(image);
 		}
 	}
-	
+
 	private void updateGeoMapHelper() {
 		if (location != null) {
 			Point position = GeoMapUtil.computePosition(location, zoom);
 			if (geoMapHelper == null) {
-				geoMapHelper = new GeoMapHelper(getDisplay(), position, zoom, DEFAULT_CACHE_SIZE);
+				geoMapHelper = new GeoMapHelper(getDisplay(), position, zoom,
+						DEFAULT_CACHE_SIZE);
 				geoMapHelper.addGeoMapHelperListener(this);
 			}
 			if (tileServer != null) {
@@ -140,6 +150,7 @@ public class MapFigure extends ImageFigure implements GeoMapHelperListener {
 		}
 	}
 
+	@Override
 	public void tileUpdated(TileRef tileRef) {
 		invalidateImage();
 	}
@@ -148,6 +159,7 @@ public class MapFigure extends ImageFigure implements GeoMapHelperListener {
 
 	/**
 	 * Minimal standalone example, used for testing
+	 * 
 	 * @param args
 	 */
 	@SuppressWarnings("nls")
