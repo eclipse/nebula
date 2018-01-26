@@ -47,34 +47,37 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 	private GeoMapViewer geoMapViewer;
 	private ListViewer contentViewer;
 
+	@Override
 	public Control createControl(Composite parent) {
 		geoMapViewer = new GeoMapViewer(parent, SWT.NONE);
 		configureMapViewer();
 		return geoMapViewer.getControl();
 	}
 
+	@Override
 	public String[] createLinks() {
 		return new String[] {
 				"<a href=\"http://www.eclipse.org/nebula/widgets/geomap/geomap.php\">GeoMap Home Page</a>",
 				"<a href=\"http://www.eclipse.org/nebula/widgets/geomap/snippets.php\">Snippets</a>",
-				"<a href=\"https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=&classification=Technology&product=Nebula&component=GeoMap&long_desc_type=allwordssubstr&long_desc=&bug_file_loc_type=allwordssubstr&bug_file_loc=&status_whiteboard_type=allwordssubstr&status_whiteboard=&keywords_type=allwords&keywords=&emailtype1=substring&email1=&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=&chfieldto=Now&chfieldvalue=&cmdtype=doit&order=Reuse+same+sort+as+last+time&field0-0-0=noop&type0-0-0=noop&value0-0-0=\">Bugs</a>" };
+		"<a href=\"https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=&classification=Technology&product=Nebula&component=GeoMap&long_desc_type=allwordssubstr&long_desc=&bug_file_loc_type=allwordssubstr&bug_file_loc=&status_whiteboard_type=allwordssubstr&status_whiteboard=&keywords_type=allwords&keywords=&emailtype1=substring&email1=&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=&chfieldto=Now&chfieldvalue=&cmdtype=doit&order=Reuse+same+sort+as+last+time&field0-0-0=noop&type0-0-0=noop&value0-0-0=\">Bugs</a>" };
 	}
 
 	@Override
 	public void createParameters(Composite parent) {
-        GridLayoutFactory.swtDefaults().margins(0,0).numColumns(1).applyTo(parent);
+		GridLayoutFactory.swtDefaults().margins(0, 0).numColumns(1).applyTo(parent);
 
 		Group group = new Group(parent, SWT.NONE);
 		group.setText("Interaction");
 		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-		
+
 		group.setLayout(new GridLayout(2, false));
 
 		Label tileServerLabel = new Label(group, SWT.NONE);
 		tileServerLabel.setText("Tile server: ");
 		tileServerLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		final Combo tileServerControl = new Combo(group, SWT.NONE);
-		tileServerControl.setItems(new String[]{"http://tile.openstreetmap.org/{0}/{1}/{2}.png", "http://mt1.google.com/vt/lyrs=m@129&hl=en&s=Galileo&z={0}&x={1}&y={2}"});
+		tileServerControl.setItems(new String[] { "http://tile.openstreetmap.org/{0}/{1}/{2}.png",
+		"http://mt1.google.com/vt/lyrs=m@129&hl=en&s=Galileo&z={0}&x={1}&y={2}" });
 		tileServerControl.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		tileServerControl.select(0);
 		tileServerControl.addSelectionListener(new SelectionAdapter() {
@@ -89,7 +92,8 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 		moveSelectionModeLabel.setText("Move selection mode: ");
 		moveSelectionModeLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		final Combo moveSelectionModeControl = new Combo(group, SWT.READ_ONLY);
-		moveSelectionModeControl.setItems(new String[]{"Cannot move selection", "Allow, check readonly on mouse down", "Allow, just try to set new location"});
+		moveSelectionModeControl.setItems(new String[] { "Cannot move selection", "Allow, check readonly on mouse down",
+		"Allow, just try to set new location" });
 		moveSelectionModeControl.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		moveSelectionModeControl.select(1);
 		moveSelectionModeControl.addSelectionListener(new SelectionAdapter() {
@@ -98,12 +102,12 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 				geoMapViewer.setMoveSelectionMode(moveSelectionModeControl.getSelectionIndex());
 			}
 		});
-		
+
 		Label clipRuleLabel = new Label(group, SWT.NONE);
 		clipRuleLabel.setText("Clip rule: ");
 		clipRuleLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		final Combo clipRuleControl = new Combo(group, SWT.READ_ONLY);
-		clipRuleControl.setItems(new String[]{"Don't clip", "Clip on element position", "Clip in image bounds"});
+		clipRuleControl.setItems(new String[] { "Don't clip", "Clip on element position", "Clip in image bounds" });
 		clipRuleControl.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		clipRuleControl.select(1);
 		clipRuleControl.addSelectionListener(new SelectionAdapter() {
@@ -112,7 +116,7 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 				geoMapViewer.setClipRule(clipRuleControl.getSelectionIndex());
 			}
 		});
-		
+
 		addLabel("Search: ", group);
 		final Text searchText = new Text(group, SWT.SEARCH | SWT.CANCEL);
 		searchText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
@@ -122,6 +126,7 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 		searchServerControl.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		searchServerControl.select(0);
 		searchText.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				if (e.detail == SWT.CANCEL) {
 					setViewerInputs(contributorLocations);
@@ -130,7 +135,7 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 				}
 			}
 		});
-		
+
 		addLabel("Contents: ", group).setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
 		contentViewer = new ListViewer(group, SWT.NONE);
 		contentViewer.getControl().setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, true, 1, 1));
@@ -146,6 +151,7 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 			}
 		});
 		contentViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				geoMapViewer.setSelection(event.getSelection(), true);
 			}
@@ -153,8 +159,8 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 		setViewerInputs(contributorLocations);
 	}
 
-	private SearchServer[] searchServers = {new OsmSearchServer(), new GoogleMapsSearchServer()};
-	private String[] searchServerNames = {"OSM Nomination", "Google Maps"};
+	private SearchServer[] searchServers = { new OsmSearchServer(), new GoogleMapsSearchServer() };
+	private String[] searchServerNames = { "OSM Nomination", "Google Maps" };
 
 	private void doSearch(String search, int selectionIndex) {
 		SearchServer server = searchServers[selectionIndex];
@@ -162,6 +168,11 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 		if (results != null) {
 			setViewerInputs(results);
 		}
+	}
+
+	@Override
+	public void reveal() {
+		setViewerInputs(contributorLocations);
 	}
 
 	private void setViewerInputs(Object[] results) {
@@ -180,7 +191,7 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 		label.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		return label;
 	}
-	
+
 	@Override
 	public boolean getInitialHorizontalFill() {
 		return true;
@@ -196,6 +207,7 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 		public PointD location;
 		public final String locationText;
 		public final boolean committer;
+
 		public ContributorLocation(String name, PointD location, String locationText, boolean committer) {
 			super();
 			this.name = name;
@@ -204,32 +216,33 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 			this.committer = committer;
 		}
 
+		@Override
 		public String toString() {
 			return name + ", " + locationText + " @ " + location.x + ", " + location.y;
 		}
-		
+
+		@Override
 		public PointD getLonLat() {
 			return location;
 		}
 	}
-	
+
 	private ContributorLocation[] contributorLocations = {
-			new ContributorLocation("Hallvard Traetteberg", new PointD(10.4234,63.4242), 	"Trondheim, Norway", 	true),
-			new ContributorLocation("Stepan Rutz",		 	new PointD(6.8222,50.9178), 	"Frechen, Germany", 	false),
-			new ContributorLocation("Wim Jongman", 			new PointD(4.6410,52.3894),		"Haarlem, Netherlands", true),
-			new ContributorLocation("Dirk Fauth", 			new PointD(9.1858,48.7775), 	"Stuttgart, Germany", 	true),
-			new ContributorLocation("Tom Schindl", 			new PointD(11.4000,47.2671), 	"Innsbruck, Austria", 	true),
-			new ContributorLocation("Matthew Hall",			new PointD(-111.97,40.54), 		"Riverton, Utah, USA", 	true),
-			new ContributorLocation("Justin Dolezy",		new PointD(-0.34,51.48), 		"Richmond, Surrey, UK", true),
-			new ContributorLocation("Edwin Park",			new PointD(-74.07,40.76), 		"Hoboken, New Jersey, USA", true),
-			new ContributorLocation("Mickael Istria",		new PointD(5.7349,45.1872),	 	"Grenoble, France", 	true),
-	};
+			new ContributorLocation("Hallvard Traetteberg", new PointD(10.4234, 63.4242), "Trondheim, Norway", true),
+			new ContributorLocation("Stepan Rutz", new PointD(6.8222, 50.9178), "Frechen, Germany", false),
+			new ContributorLocation("Wim Jongman", new PointD(4.6410, 52.3894), "Haarlem, Netherlands", true),
+			new ContributorLocation("Dirk Fauth", new PointD(9.1858, 48.7775), "Stuttgart, Germany", true),
+			new ContributorLocation("Tom Schindl", new PointD(11.4000, 47.2671), "Innsbruck, Austria", true),
+			new ContributorLocation("Matthew Hall", new PointD(-111.97, 40.54), "Riverton, Utah, USA", true),
+			new ContributorLocation("Justin Dolezy", new PointD(-0.34, 51.48), "Richmond, Surrey, UK", true),
+			new ContributorLocation("Edwin Park", new PointD(-74.07, 40.76), "Hoboken, New Jersey, USA", true),
+			new ContributorLocation("Mickael Istria", new PointD(5.7349, 45.1872), "Grenoble, France", true), };
 
 	private LabelImageProvider labelProvider = new LabelImageProvider() {
-		
+
 		private RGB contributorColor = new RGB(255, 250, 200);
 		private RGB committerColor = new RGB(200, 255, 200);
-		
+
 		@Override
 		public Image getImage(Object element) {
 			if (element instanceof SearchServer.Result) {
@@ -239,6 +252,7 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 			}
 			return super.getImage(element);
 		}
+
 		@Override
 		public String getText(Object element) {
 			if (element instanceof SearchServer.Result) {
@@ -249,6 +263,7 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 			}
 			return null;
 		}
+
 		@Override
 		public Object getToolTip(Object element) {
 			if (element instanceof SearchServer.Result) {
@@ -261,19 +276,22 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 			return null;
 		}
 	};
-	
+
 	private void configureMapViewer() {
 		geoMapViewer.getGeoMap().setTileServer(OsmTileServer.TILESERVERS[0]);
-//		geoMapViewer.getGeoMap().setTileServer(GoogleTileServer.TILESERVERS[0]);
-		
+		// geoMapViewer.getGeoMap().setTileServer(GoogleTileServer.TILESERVERS[0]);
+
 		geoMapViewer.setLabelProvider(labelProvider);
 		geoMapViewer.setLocationProvider(new LocationProvider() {
+			@Override
 			public PointD getLonLat(Object element) {
 				if (element instanceof Located) {
 					return ((Located) element).getLonLat();
 				}
 				return null;
 			}
+
+			@Override
 			public boolean setLonLat(Object element, double lon, double lat) {
 				if (element instanceof Located) {
 					((Located) element).setLonLat(lon, lat);
@@ -284,6 +302,7 @@ public class GeoMapViewerExampleTab extends AbstractExampleTab {
 		});
 		geoMapViewer.setContentProvider(new ArrayContentProvider());
 		geoMapViewer.getControl().getDisplay().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				setViewerInputs(contributorLocations);
 			}
