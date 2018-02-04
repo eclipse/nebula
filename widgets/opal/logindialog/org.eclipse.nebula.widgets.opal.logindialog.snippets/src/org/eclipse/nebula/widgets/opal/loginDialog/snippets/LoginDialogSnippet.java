@@ -118,8 +118,7 @@ public class LoginDialogSnippet {
 			public void widgetSelected(final SelectionEvent e) {
 
 				final LoginDialog dialog = new LoginDialog();
-				dialog.setImage(new Image(display, LoginDialogSnippet.class.getClassLoader()
-						.getResourceAsStream("org/eclipse/nebula/opal/loginDialog/snippets/image.png")));
+				dialog.setImage(new Image(display, LoginDialogSnippet.class.getResourceAsStream("image.png")));
 				dialog.setDescription(
 						"Please login to our system...\nPlease remember that the password is the same as the login :)");
 				dialog.setAutorizedLogin("Laurent", "Albert", "Erik", "Ulrich", "Luis");

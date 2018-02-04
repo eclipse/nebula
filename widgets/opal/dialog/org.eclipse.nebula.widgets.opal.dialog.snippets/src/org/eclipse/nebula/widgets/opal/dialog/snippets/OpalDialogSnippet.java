@@ -20,6 +20,7 @@ import org.eclipse.nebula.widgets.opal.dialog.Dialog.OpalDialogType;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -319,10 +320,10 @@ public class OpalDialogSnippet {
 		dialog.setTitle("Security Warning");
 		dialog.setMinimumWidth(400);
 		dialog.getMessageArea().setTitle("The publisher cannot be verified.\nDo you want to run this software?") //
-				.setIcon(Display.getCurrent().getSystemImage(SWT.ICON_WARNING)) //
-				.setText("Name: C:\\Program Files\\eclipse\\eclipse.exe<br/>" + //
-						"Publisher: <b>Unknown Publisher</b><br/>" + //
-						"Type: Application<br/>");
+		.setIcon(Display.getCurrent().getSystemImage(SWT.ICON_WARNING)) //
+		.setText("Name: C:\\Program Files\\eclipse\\eclipse.exe<br/>" + //
+				"Publisher: <b>Unknown Publisher</b><br/>" + //
+				"Type: Application<br/>");
 
 		dialog.getFooterArea().addCheckBox("Always ask before opening this file", false).setButtonLabels("Run",
 				"Cancel");
@@ -338,11 +339,11 @@ public class OpalDialogSnippet {
 		dialog.setTitle("Copying...");
 		dialog.setMinimumWidth(400);
 		dialog.getMessageArea().setTitle("Copying files") //
-				.setIcon(Display.getCurrent().getSystemImage(SWT.ICON_INFORMATION)) //
-				.setText("Location : from 'Others' to 'Others'<br/>" + //
-						"File Name : <b>photo.jpg</b>")
-				.//
-				addProgressBar(0, 100, 0);
+		.setIcon(Display.getCurrent().getSystemImage(SWT.ICON_INFORMATION)) //
+		.setText("Location : from 'Others' to 'Others'<br/>" + //
+				"File Name : <b>photo.jpg</b>")
+		.//
+		addProgressBar(0, 100, 0);
 
 		final int[] counter = new int[1];
 		counter[0] = 10;
@@ -353,7 +354,7 @@ public class OpalDialogSnippet {
 			public void run() {
 				dialog.getMessageArea().setProgressBarValue(counter[0]);
 				dialog.getMessageArea().setText("Location : from 'Others' to 'Others'<br/>" + //
-				"File Name : <b>photo" + counter[0] + ".jpg</b>");
+						"File Name : <b>photo" + counter[0] + ".jpg</b>");
 				counter[0] += 10;
 				if (counter[0] < 120) {
 					Display.getCurrent().timerExec(500, this);
@@ -377,14 +378,13 @@ public class OpalDialogSnippet {
 		final Dialog dialog = new Dialog();
 		dialog.setTitle("Application Error");
 		dialog.getMessageArea().setTitle("CRASH AND BURN !").//
-				setText("The application has performed an illegal action. This action has been logged and reported.").//
-				setIcon(Display.getCurrent().getSystemImage(SWT.ICON_ERROR));
+		setText("The application has performed an illegal action. This action has been logged and reported.").//
+		setIcon(Display.getCurrent().getSystemImage(SWT.ICON_ERROR));
 		dialog.setButtonType(OpalDialogType.OK);
 		dialog.getFooterArea().setExpanded(false).addCheckBox("Don't show me this error next time", true)
-				.setDetailText("More explanations to come...");
+		.setDetailText("More explanations to come...");
 		dialog.getFooterArea().setFooterText("Your application crashed because a developer forgot to write a unit test")
-				.//
-				setIcon(SWTGraphicUtil.createImageFromFile("org/mihalis/opal/OpalDialog/warning.png"));
+		.setIcon(new Image(null, OpalDialogSnippet.class.getResourceAsStream("warning.png")));
 		dialog.show();
 
 	}

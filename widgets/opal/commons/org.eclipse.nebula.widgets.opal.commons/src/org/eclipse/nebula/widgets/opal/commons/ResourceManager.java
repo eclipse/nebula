@@ -4,7 +4,7 @@ import java.util.ResourceBundle;
 
 public class ResourceManager {
 	private static final ResourceBundle RSC = ResourceBundle
-			.getBundle("org/eclipse/nebula/opal/commons/resources/opal");
+			.getBundle(ResourceManager.class.getPackage().getName() + "/resources/opal");
 
 	public static final String OK = "Ok";
 	public static final String CANCEL = "Cancel";
@@ -74,7 +74,8 @@ public class ResourceManager {
 	/**
 	 * Get a translated label
 	 *
-	 * @param key key to get
+	 * @param key
+	 *            key to get
 	 * @return the translated value of the key
 	 */
 	public static String getLabel(final String key) {

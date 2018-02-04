@@ -98,8 +98,7 @@ public class SWTGraphicUtil {
 			return new Image(Display.getCurrent(), fileName);
 		} else {
 			return new Image(Display.getCurrent(), //
-					SWTGraphicUtil.class.getClassLoader()
-							.getResourceAsStream("org/eclipse/nebula/opal/commons/" + fileName));
+					SWTGraphicUtil.class.getResourceAsStream(fileName));
 		}
 	}
 
@@ -322,7 +321,7 @@ public class SWTGraphicUtil {
 			radius = Math.min(newImageData.height, newImageData.width) - 1;
 		}
 		// initialize cache
-		final ArrayList<RGB[]> rowCache = new ArrayList<RGB[]>();
+		final ArrayList<RGB[]> rowCache = new ArrayList<>();
 		// number of rows of imageData we cache
 		final int cacheSize = radius * 2 + 1 > newImageData.height ? newImageData.height : radius * 2 + 1;
 		int cacheStartIndex = 0; // which row of imageData the cache begins with
@@ -358,7 +357,7 @@ public class SWTGraphicUtil {
 						rowCache.add(rowCache.size(), blurRow(originalImageData, bottomSumBoundary, radius));
 					}
 				} while (bottomSumBoundary <= radius); // to initialize
-														// rowRGBSums at start
+				// rowRGBSums at start
 			}
 
 			if (targetRow - topSumBoundary > radius) {
@@ -372,7 +371,7 @@ public class SWTGraphicUtil {
 				numRows--;
 				topSumBoundary++; // move top scope boundary lower
 				rowCache.remove(0); // remove top row which is out of summing
-									// scope
+				// scope
 				cacheStartIndex++;
 			}
 
@@ -398,7 +397,7 @@ public class SWTGraphicUtil {
 		final int[] lineData = new int[originalImageData.width];
 		originalImageData.getPixels(0, row, originalImageData.width, lineData, 0);
 		int r = 0, g = 0, b = 0; // sum red, green, and blue values separately
-									// for averaging
+		// for averaging
 		int leftSumBoundary = 0; // beginning index of summed values scope
 		int targetColumn = 0; // column of RGB average to be determined
 		int rightSumBoundary = 0; // ending index of summed values scope
@@ -415,7 +414,7 @@ public class SWTGraphicUtil {
 					numCols++;
 					rightSumBoundary++;
 				} while (rightSumBoundary <= radius); // to initialize summing
-														// scope at start
+				// scope at start
 			}
 
 			// subtract sum of left pixel as summing scope moves right

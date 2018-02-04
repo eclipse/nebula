@@ -34,8 +34,7 @@ public class HeaderSnippet {
 		final Shell shell = new Shell(display);
 		shell.setLayout(new GridLayout(1, false));
 
-		final Image icon = new Image(display, HeaderSnippet.class.getClassLoader()
-				.getResourceAsStream("org/eclipse/nebula/opal/header/snippets/configure.png"));
+		final Image icon = new Image(display, HeaderSnippet.class.getResourceAsStream("configure.png"));
 
 		shell.setText("Header Snippet");
 		shell.setLayout(new GridLayout(2, false));

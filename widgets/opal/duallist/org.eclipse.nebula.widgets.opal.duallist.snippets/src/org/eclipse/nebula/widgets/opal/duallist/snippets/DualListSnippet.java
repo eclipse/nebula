@@ -13,10 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.nebula.widgets.opal.duallist.DLItem;
+import org.eclipse.nebula.widgets.opal.duallist.DLItem.LAST_ACTION;
 import org.eclipse.nebula.widgets.opal.duallist.DualList;
 import org.eclipse.nebula.widgets.opal.duallist.SelectionChangeEvent;
 import org.eclipse.nebula.widgets.opal.duallist.SelectionChangeListener;
-import org.eclipse.nebula.widgets.opal.duallist.DLItem.LAST_ACTION;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -77,7 +77,7 @@ public class DualListSnippet {
 	}
 
 	private static List<DLItem> createItems(final Shell shell) {
-		final List<DLItem> list = new ArrayList<DLItem>();
+		final List<DLItem> list = new ArrayList<>();
 
 		String defaultFontName = null;
 		int defaultHeight = -1;
@@ -133,8 +133,8 @@ public class DualListSnippet {
 	}
 
 	private static Image createImage(final Shell shell, final String fileName) {
-		final Image image = new Image(shell.getDisplay(), DualListSnippet.class.getClassLoader().//
-				getResourceAsStream("org/eclipse/nebula/opal/duallist/snippets/flags/" + fileName + ".png"));
+		final Image image = new Image(shell.getDisplay(), DualListSnippet.class.//
+				getResourceAsStream("flags/" + fileName + ".png"));
 		shell.addDisposeListener(new DisposeListener() {
 
 			@Override
