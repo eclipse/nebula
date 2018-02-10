@@ -128,7 +128,7 @@ class PTWidgetTable extends AbstractPTWidget {
 				}
 			});
 		} else {
-			props = getParentPropertyTable().getPropertiesAsList();
+			props = new ArrayList<PTProperty>(getParentPropertyTable().getPropertiesAsList());
 		}
 
 		final List<ControlEditor> editors = new ArrayList<ControlEditor>();
@@ -165,22 +165,28 @@ class PTWidgetTable extends AbstractPTWidget {
 	 */
 	@Override
 	public void refillData() {
-		for (final TableItem item : table.getItems()) {
-			item.dispose();
-		}
-
-		if (table.getData() != null) {
-			@SuppressWarnings("unchecked")
-			final List<ControlEditor> list = (List<ControlEditor>) table.getData();
-			for (final ControlEditor c : list) {
-				c.dispose();
+		try {
+			table.setRedraw(false);
+			for (final TableItem item : table.getItems()) {
+				item.dispose();
 			}
-			list.clear();
-			table.setData(null);
+
+			if (table.getData() != null) {
+				@SuppressWarnings("unchecked")
+				final List<ControlEditor> list = (List<ControlEditor>) table.getData();
+				for (final ControlEditor c : list) {
+					c.dispose();
+				}
+				list.clear();
+				table.setData(null);
+			}
+
+			fillData();
+		} finally {
+			table.setRedraw(true);
+			table.redraw();
+			table.update();
 		}
-
-		fillData();
-
 	}
 
 	/**

@@ -171,12 +171,19 @@ public class PTWidgetTree extends AbstractPTWidget {
 	 */
 	@Override
 	public void refillData() {
-		if (tree != null) {
-			for (final TreeItem treeItem : tree.getItems()) {
-				treeItem.dispose();
+		try {
+			if (tree != null) {
+				tree.setRedraw(false);
+				for (final TreeItem treeItem : tree.getItems()) {
+					treeItem.dispose();
+				}
 			}
+			fillData();
+		} finally {
+			tree.setRedraw(true);
+			tree.redraw();
+			tree.update();
 		}
-		fillData();
 	}
 
 	/**
