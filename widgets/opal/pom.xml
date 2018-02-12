@@ -33,6 +33,7 @@
 		<module>textassist</module>
 		<module>tipoftheday</module>
 		<module>titledseparator</module>
+		<module>roundedtoolbar</module>
 	</modules>
 
 

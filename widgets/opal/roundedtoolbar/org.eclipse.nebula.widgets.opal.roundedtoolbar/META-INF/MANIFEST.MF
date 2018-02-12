@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Rounded Toolbar plug-in
+Bundle-SymbolicName: org.eclipse.nebula.widgets.opal.roundedtoolbar
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Laurent CARON
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.eclipse.nebula.widgets.opal.commons;bundle-version="1.0.0";visibility:=reexport
+Export-Package: org.eclipse.nebula.widgets.opal.roundedtoolbar
