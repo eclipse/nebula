@@ -25,6 +25,15 @@ Information regarding source code management, builds, coding standards, and more
 - https://projects.eclipse.org/projects/technology.nebula/developer
 
 
+Building Nebula
+---------------
+
+Run `mvn clean verify` from one of the following directories:
+
+* releng/org.eclipse.nebula.nebula-release
+* releng/org.eclipse.nebula.nebula-incubation
+
+
 Contributor License Agreement:
 ------------------------------
 
