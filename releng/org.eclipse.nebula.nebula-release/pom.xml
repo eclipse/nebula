@@ -60,6 +60,7 @@
 		<module>../../widgets/opal/titledseparator</module>
 		<module>../../widgets/opal/roundedtoolbar</module>
 		<module>../../widgets/opal/calculator</module>
+		<module>../../widgets/opal/horizontalspinner</module>
 
 		<!-- Releng -->
 		<module>../org.eclipse.nebula.feature</module>

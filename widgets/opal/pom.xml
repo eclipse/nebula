@@ -35,6 +35,7 @@
 		<module>titledseparator</module>
 		<module>roundedtoolbar</module>
 		<module>calculator</module>
+		<module>horizontalspinner</module>
 	</modules>
 
 

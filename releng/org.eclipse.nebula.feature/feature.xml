@@ -167,5 +167,9 @@
 
    <includes
          id="org.eclipse.nebula.widgets.opal.calculator.feature"
-         version="0.0.0"/>		 
+         version="0.0.0"/>	
+         	 
+   <includes
+         id="org.eclipse.nebula.widgets.opal.horizontalspinner.feature"
+         version="0.0.0"/>
 </feature>
