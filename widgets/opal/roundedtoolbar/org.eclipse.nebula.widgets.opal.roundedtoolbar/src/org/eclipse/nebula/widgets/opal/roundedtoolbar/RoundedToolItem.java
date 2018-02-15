@@ -16,6 +16,7 @@ import org.eclipse.nebula.widgets.opal.commons.AdvancedPath;
 import org.eclipse.nebula.widgets.opal.commons.SWTGraphicUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -25,6 +26,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Widget;
 
 /**
@@ -32,10 +34,14 @@ import org.eclipse.swt.widgets.Widget;
  * represents a button in a rounded tool bar.
  * <dl>
  * <dt><b>Styles:</b></dt>
- * <dd>(none)</dd>
+ * <dd>CHECK, PUSH, RADIO, TOGGLE</dd>
  * <dt><b>Events:</b></dt>
  * <dd>Selection</dd>
  * </dl>
+ * <p>
+ * Note: Only one of the styles CHECK, PUSH, RADIO, TOGGLE and DROP_DOWN
+ * may be specified.
+ * </p>
  *
  * @see <a href="http://www.eclipse.org/swt/snippets/#toolbar">ToolBar, ToolItem
  *      snippets</a>
@@ -96,7 +102,7 @@ public class RoundedToolItem extends Item {
 	 * @see Widget#getStyle
 	 */
 	public RoundedToolItem(final RoundedToolbar parent) {
-		this(parent, SWT.NONE);
+		this(parent, SWT.PUSH);
 	}
 
 	/**
@@ -132,7 +138,7 @@ public class RoundedToolItem extends Item {
 	 * @see Widget#getStyle
 	 */
 	public RoundedToolItem(final RoundedToolbar parent, final int style) {
-		super(parent, style);
+		super(parent, checkStyle(style));
 		parent.addItem(this);
 		parentToolbar = parent;
 		textColor = parent.getDisplay().getSystemColor(SWT.COLOR_BLACK);
@@ -143,6 +149,50 @@ public class RoundedToolItem extends Item {
 		selectionListeners = new CopyOnWriteArrayList<SelectionListener>();
 		width = -1;
 		height = -1;
+	}
+
+	private static int checkStyle(final int style) {
+		if ((style & SWT.CHECK) != 0) {
+			return SWT.CHECK;
+		}
+		if ((style & SWT.RADIO) != 0) {
+			return SWT.RADIO;
+		}
+		if ((style & SWT.TOGGLE) != 0) {
+			return SWT.TOGGLE;
+		}
+		if ((style & SWT.DROP_DOWN) != 0) {
+			return SWT.DROP_DOWN;
+		}
+		return SWT.PUSH;
+	}
+
+	/**
+	 * @see org.eclipse.swt.widgets.Widget#addListener(int, org.eclipse.swt.widgets.Listener)
+	 */
+	@Override
+	public void addListener(int eventType, Listener listener) {
+		checkWidget();
+		if (listener == null) {
+			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
+		if (eventType == SWT.Selection) {
+			addSelectionListener(new SelectionAdapter() {
+
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					final Event event = new Event();
+					event.widget = RoundedToolItem.this;
+					event.display = getDisplay();
+					event.item = RoundedToolItem.this;
+					event.type = SWT.Selection;
+					listener.handleEvent(event);
+				}
+
+			});
+			return;
+		}
+		super.addListener(eventType, listener);
 	}
 
 	/**
@@ -185,7 +235,8 @@ public class RoundedToolItem extends Item {
 	 */
 	Point computeDefaultSize() {
 		final Point sizeOfTextAndImages = computeSizeOfTextAndImages();
-		return new Point(2 * MARGIN + sizeOfTextAndImages.x, 2 * MARGIN + sizeOfTextAndImages.y);
+		final int additionnalWidth = getAdditionnalWidth();
+		return new Point(2 * MARGIN + sizeOfTextAndImages.x + additionnalWidth, 2 * MARGIN + sizeOfTextAndImages.y);
 	}
 
 	private Point computeSizeOfTextAndImages() {
@@ -224,6 +275,13 @@ public class RoundedToolItem extends Item {
 		imageSize.y = Math.max(imageBounds.height, imageSize.y);
 	}
 
+	private int getAdditionnalWidth() {
+		if (isCheckbox() || isRadio()) {
+			return 16;
+		}
+		return 0;
+	}
+
 	/**
 	 * @see org.eclipse.swt.widgets.Widget#dispose()
 	 */
@@ -244,7 +302,7 @@ public class RoundedToolItem extends Item {
 		this.toolbarHeight = toolbarHeight;
 		this.isLast = isLast;
 
-		if (selection) {
+		if (selection && (isToogleButon() || isPushButon() || isDropDown())) {
 			drawBackground(x);
 		}
 		if (!isLast) {
@@ -252,6 +310,14 @@ public class RoundedToolItem extends Item {
 		}
 
 		int xPosition = computeHorizontalPosition(x);
+		if (isCheckbox()) {
+			drawCheckBox(x + xPosition);
+			xPosition += 16;
+		}
+		if (isRadio()) {
+			drawRadio(x + xPosition);
+			xPosition += 16;
+		}
 
 		xPosition += drawImage(x + xPosition);
 		drawText(x + xPosition);
@@ -285,7 +351,7 @@ public class RoundedToolItem extends Item {
 	}
 
 	private int computeHorizontalPosition(final int x) {
-		final int widthOfTextAndImage = computeSizeOfTextAndImages().x;
+		final int widthOfTextAndImage = computeSizeOfTextAndImages().x + getAdditionnalWidth();
 		switch (alignment) {
 			case SWT.CENTER:
 				return (getWidth() - widthOfTextAndImage) / 2;
@@ -318,11 +384,38 @@ public class RoundedToolItem extends Item {
 		}
 	}
 
+	private void drawCheckBox(int xPosition) {
+		gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_BLACK));
+		final Point textSize = gc.stringExtent(getText());
+		final int yPosition = computeVerticalPosition(textSize.y);
+		gc.drawRectangle(xPosition, yPosition, 13, 13);
+
+		if (!selection) {
+			return;
+		}
+		gc.drawPolyline(new int[] { xPosition + 2, yPosition + 6, //
+				xPosition + 5, yPosition + 9, //
+				xPosition + 10, yPosition + 3 });
+	}
+
+	private void drawRadio(int xPosition) {
+		gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_BLACK));
+		final Point textSize = gc.stringExtent(getText());
+		final int yPosition = computeVerticalPosition(textSize.y);
+		gc.drawOval(xPosition, yPosition, 13, 13);
+
+		if (!selection) {
+			return;
+		}
+		gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_BLACK));
+		gc.fillOval(xPosition + 3, yPosition + 3, 8, 8);
+	}
+
 	private int drawImage(final int xPosition) {
 		Image image;
 		if (!isEnabled()) {
 			image = disabledImage;
-		} else if (selection) {
+		} else if (selection && (isToogleButon() || isPushButon() || isDropDown())) {
 			image = selectionImage;
 		} else {
 			image = getImage();
@@ -339,7 +432,7 @@ public class RoundedToolItem extends Item {
 
 	private void drawText(final int xPosition) {
 		gc.setFont(parentToolbar.getFont());
-		if (selection) {
+		if (selection && (isToogleButon() || isPushButon() || isDropDown())) {
 			gc.setForeground(textColorSelected);
 		} else {
 			gc.setForeground(textColor);
@@ -759,7 +852,7 @@ public class RoundedToolItem extends Item {
 	 * Note: Attempting to set the width or height of the receiver to a negative
 	 * number will cause that value to be set to zero instead.
 	 * </p>
-	 * 
+	 *
 	 * @param height the new width
 	 *
 	 * @exception SWTException
@@ -790,7 +883,9 @@ public class RoundedToolItem extends Item {
 	 */
 	public void setSelection(final boolean selected) {
 		checkWidget();
-		selection = selected;
+		if (isToogleButon() || isCheckbox() || isRadio() || !selected) {
+			selection = selected;
+		}
 	}
 
 	/**
@@ -918,7 +1013,7 @@ public class RoundedToolItem extends Item {
 	 * Note: Attempting to set the width or height of the receiver to a negative
 	 * number will cause that value to be set to zero instead.
 	 * </p>
-	 * 
+	 *
 	 * @param width the new width
 	 *
 	 * @exception SWTException
@@ -933,4 +1028,29 @@ public class RoundedToolItem extends Item {
 		checkWidget();
 		this.width = Math.max(0, width);
 	}
+
+	boolean isToogleButon() {
+		return (getStyle() & SWT.TOGGLE) != 0;
+	}
+
+	boolean isPushButon() {
+		return (getStyle() & SWT.PUSH) != 0;
+	}
+
+	boolean isCheckbox() {
+		return (getStyle() & SWT.CHECK) != 0;
+	}
+
+	boolean isRadio() {
+		return (getStyle() & SWT.RADIO) != 0;
+	}
+
+	boolean isDropDown() {
+		return (getStyle() & SWT.DROP_DOWN) != 0;
+	}
+
+	void forceSelection() {
+		selection = true;
+	}
+
 }

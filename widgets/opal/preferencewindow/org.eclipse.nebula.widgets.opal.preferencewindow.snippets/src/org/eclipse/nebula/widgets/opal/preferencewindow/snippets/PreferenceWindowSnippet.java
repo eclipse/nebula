@@ -139,10 +139,7 @@ public class PreferenceWindowSnippet {
 	}
 
 	protected static void createDocumentTab(final PreferenceWindow window) {
-		final PWTab documentTab = window.addTab(
-				new Image(Display.getCurrent(), PreferenceWindowSnippet.class.getClassLoader()
-						.getResourceAsStream("org/eclipse/nebula/opal/prefwindow/snippets/images/document.png")),
-				"Document");
+		final PWTab documentTab = window.addTab(new Image(Display.getCurrent(), PreferenceWindowSnippet.class.getResourceAsStream("images/document.png")), "Document");
 
 		documentTab.add(new PWLabel("Let's start with Text, Separator, Combo and button")).//
 				add(new PWStringText("String :", "text").setAlignment(GridData.FILL)).//
@@ -157,8 +154,7 @@ public class PreferenceWindowSnippet {
 		documentTab.add(new PWSeparator());
 
 		documentTab.add(new PWCombo("Combo (read-only):", "comboReadOnly", "Value 1", "Value 2", "Value 3"));
-		documentTab
-				.add(new PWCombo("Combo (editable):", "combo", true, new Object[] { "Value 1", "Value 2", "Value 3" }));
+		documentTab.add(new PWCombo("Combo (editable):", "combo", true, new Object[] { "Value 1", "Value 2", "Value 3" }));
 
 		documentTab.add(new PWSeparator("Titled separator"));
 		documentTab.add(new PWButton("First button", new SelectionAdapter() {
@@ -175,11 +171,7 @@ public class PreferenceWindowSnippet {
 	}
 
 	protected static void createInfoTab(final PreferenceWindow window) {
-		final PWTab infoTab = window.addTab(
-				new Image(Display.getCurrent(),
-						PreferenceWindowSnippet.class.getClassLoader()
-								.getResourceAsStream("org/eclipse/nebula/opal/prefwindow/snippets/images/info.png")),
-				"Info");
+		final PWTab infoTab = window.addTab(new Image(Display.getCurrent(), PreferenceWindowSnippet.class.getResourceAsStream("images/info.png")), "Info");
 
 		infoTab.add(new PWLabel("Checkboxes, Slider,Spinner, Color chooser, Font chooser"));
 		infoTab.add(new PWCheckbox("Checkbox 1", "cb1"));
@@ -198,10 +190,7 @@ public class PreferenceWindowSnippet {
 	}
 
 	protected static void createTerminalTab(final PreferenceWindow window) {
-		final PWTab terminalTab = window.addTab(
-				new Image(Display.getCurrent(), PreferenceWindowSnippet.class.getClassLoader()
-						.getResourceAsStream("org/eclipse/nebula/opal/prefwindow/snippets/images/openterm.png")),
-				"Terminal");
+		final PWTab terminalTab = window.addTab(new Image(Display.getCurrent(), PreferenceWindowSnippet.class.getResourceAsStream("images/openterm.png")), "Terminal");
 
 		terminalTab.add(new PWLabel("Group, radio, indentation and group of buttons in a row"));
 
@@ -222,11 +211,7 @@ public class PreferenceWindowSnippet {
 	}
 
 	protected static void createPrinterTab(final PreferenceWindow window) {
-		final PWTab printerTab = window.addTab(
-				new Image(Display.getCurrent(),
-						PreferenceWindowSnippet.class.getClassLoader()
-								.getResourceAsStream("org/eclipse/nebula/opal/prefwindow/snippets/images/printer.png")),
-				"Printer");
+		final PWTab printerTab = window.addTab(new Image(Display.getCurrent(), PreferenceWindowSnippet.class.getResourceAsStream("images/printer.png")), "Printer");
 
 		printerTab.add(new PWLabel("Play <i>with</i> <b>checkboxes</b>"));
 
@@ -234,8 +219,7 @@ public class PreferenceWindowSnippet {
 		group.add(new PWRow().add(new PWCheckbox("First choice", "cb4")).add(new PWCheckbox("Second choice", "cb5")));
 		group.add(new PWRow().add(new PWCheckbox("Third choice", "cb6")).add(new PWCheckbox("Fourth choice", "cb7")));
 		group.add(new PWRow().add(new PWCheckbox("Fifth choice", "cb8")).add(new PWCheckbox("Sixth choice", "cb9")));
-		group.add(
-				new PWRow().add(new PWCheckbox("Seventh choice", "cb10")).add(new PWCheckbox("Eighth choice", "cb11")));
+		group.add(new PWRow().add(new PWCheckbox("Seventh choice", "cb10")).add(new PWCheckbox("Eighth choice", "cb11")));
 		printerTab.add(group);
 
 		printerTab.add(new PWRow().//
@@ -252,16 +236,11 @@ public class PreferenceWindowSnippet {
 	}
 
 	protected static void createSystemTab(final PreferenceWindow window) {
-		final PWTab systemTab = window.addTab(
-				new Image(Display.getCurrent(),
-						PreferenceWindowSnippet.class.getClassLoader()
-								.getResourceAsStream("org/eclipse/nebula/opal/prefwindow/snippets/images/system.png")),
-				"System");
+		final PWTab systemTab = window.addTab(new Image(Display.getCurrent(), PreferenceWindowSnippet.class.getResourceAsStream("images/system.png")), "System");
 
 		systemTab.add(new PWLabel("Rows..."));
 
-		systemTab.add(new PWRow()
-				.add(new PWCombo("Cache size", "cacheSize", true, new Object[] { "128", "256", "512", "1024" })).//
+		systemTab.add(new PWRow().add(new PWCombo("Cache size", "cacheSize", true, new Object[] { "128", "256", "512", "1024" })).//
 				add(new PWCombo(null, "cacheSizeUnit", "Bytes", "Kilobytes", "Megabytes")));
 
 		systemTab.add(new PWRow().//
@@ -275,10 +254,7 @@ public class PreferenceWindowSnippet {
 		systemTab.add(new PWCheckbox("Show information", "show").setWidth(150));
 		systemTab.add(new PWGroup("Open Mode").setEnabler(new EnabledIfTrue("show")).//
 				add(new PWRadio(null, "openMode", "Double click", "Single click")).//
-				add(new PWCheckbox("Select on hover", "selectonhover").setIndent(10).setWidth(200)
-						.setEnabler(new EnabledIfEquals("openMode", "Single click")))
-				.//
-				add(new PWCheckbox("Open when using arrow keys", "openarrow").setIndent(10).setWidth(200)
-						.setEnabler(new EnabledIfEquals("openMode", "Single click"))));
+				add(new PWCheckbox("Select on hover", "selectonhover").setIndent(10).setWidth(200).setEnabler(new EnabledIfEquals("openMode", "Single click"))).//
+				add(new PWCheckbox("Open when using arrow keys", "openarrow").setIndent(10).setWidth(200).setEnabler(new EnabledIfEquals("openMode", "Single click"))));
 	}
 }

@@ -13,15 +13,12 @@ package org.eclipse.nebula.widgets.opal.roundedtoolbar.snippets;
 import org.eclipse.nebula.widgets.opal.roundedtoolbar.RoundedToolItem;
 import org.eclipse.nebula.widgets.opal.roundedtoolbar.RoundedToolbar;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -66,15 +63,41 @@ public class RoundedToolbarSnippet {
 		emailb = new Image(display, RoundedToolbarSnippet.class.getResourceAsStream("icons/email_b.png"));
 		emailw = new Image(display, RoundedToolbarSnippet.class.getResourceAsStream("icons/email_w.png"));
 
-		createFirstToolbar(shell);
+		final Label firstLabel = new Label(shell, SWT.NONE);
+		firstLabel.setText("Toggle buttons");
+		createToggleButtons(shell);
 
-		createSecondToolbar(shell, false);
+		final Label secondLabel = new Label(shell, SWT.NONE);
+		secondLabel.setText("Push buttons");
+		createPushButtons(shell, false);
 
-		final RoundedToolbar toolbar = createSecondToolbar(shell, true);
+		final RoundedToolbar toolbar = createPushButtons(shell, true);
 		final GridData gd = new GridData(SWT.FILL, SWT.FILL, false, false);
 		gd.widthHint = SWT.DEFAULT;
 		gd.heightHint = 100;
 		toolbar.setLayoutData(gd);
+
+		// CHECKBOX
+		final Label cbLabel = new Label(shell, SWT.NONE);
+		cbLabel.setText("Checkbox buttons");
+		createCheckButtons(shell, false);
+
+		final RoundedToolbar toolbar2 = createCheckButtons(shell, true);
+		final GridData gd2 = new GridData(SWT.FILL, SWT.FILL, false, false);
+		gd2.widthHint = SWT.DEFAULT;
+		gd2.heightHint = 100;
+		toolbar2.setLayoutData(gd);
+
+		// RADIO
+		final Label radioLabel = new Label(shell, SWT.NONE);
+		radioLabel.setText("Radio buttons");
+		createRadioButtons(shell, false);
+
+		final RoundedToolbar toolbar3 = createRadioButtons(shell, true);
+		final GridData gd3 = new GridData(SWT.FILL, SWT.FILL, false, false);
+		gd3.widthHint = SWT.DEFAULT;
+		gd3.heightHint = 100;
+		toolbar3.setLayoutData(gd);
 
 		shell.open();
 		while (!shell.isDisposed()) {
@@ -98,99 +121,166 @@ public class RoundedToolbarSnippet {
 
 	}
 
-	private static void createFirstToolbar(final Shell shell) {
+	private static void createToggleButtons(final Shell shell) {
 		final RoundedToolbar roundedToolBar = new RoundedToolbar(shell, SWT.NONE);
 
-		roundedToolBar.setMultiselection(true);
 		roundedToolBar.setBackground(grey1);
 		roundedToolBar.setCornerRadius(6);
 
-		roundedToolBar.addControlListener(new ControlListener() {
-
-			@Override
-			public void controlResized(final ControlEvent e) {
-				System.out.println(roundedToolBar.getSize());
-
-			}
-
-			@Override
-			public void controlMoved(final ControlEvent e) {
-				// TODO Auto-generated method stub
-
-			}
+		roundedToolBar.addListener(SWT.Resize, e -> {
+			System.out.println(roundedToolBar.getSize());
 		});
 
-		final RoundedToolItem item1 = new RoundedToolItem(roundedToolBar);
+		final RoundedToolItem item1 = new RoundedToolItem(roundedToolBar, SWT.TOGGLE);
 		item1.setSelection(true);
 		item1.setTooltipText("Multiple ballons");
 		item1.setWidth(40);
 		item1.setSelectionImage(iconBubble3w);
 		item1.setImage(iconBubble3b);
 
-		final RoundedToolItem item2 = new RoundedToolItem(roundedToolBar);
+		final RoundedToolItem item2 = new RoundedToolItem(roundedToolBar, SWT.TOGGLE);
 		item2.setTooltipText("Simple item");
 		item2.setSelectionImage(iconBubble1w);
 		item2.setImage(iconBubble1b);
 		item2.setWidth(40);
 
-		final RoundedToolItem item3 = new RoundedToolItem(roundedToolBar);
+		final RoundedToolItem item3 = new RoundedToolItem(roundedToolBar, SWT.TOGGLE);
 		item3.setTooltipText("Lot of lines\r\n\r\nThis item has a line-break");
 		item3.setSelectionImage(iconBubble2w);
 		item3.setImage(iconBubble2b);
 		item3.setWidth(40);
 	}
 
-	private static RoundedToolbar createSecondToolbar(final Shell shell, final boolean verticalAlignment) {
-		final RoundedToolbar roundedToolBar2 = new RoundedToolbar(shell, SWT.NONE);
-		roundedToolBar2.setCornerRadius(8);
-		roundedToolBar2.setBackground(grey1);
+	private static RoundedToolbar createPushButtons(final Shell shell, final boolean verticalAlignment) {
+		final RoundedToolbar toolbar = new RoundedToolbar(shell, SWT.NONE);
+		toolbar.setCornerRadius(8);
+		toolbar.setBackground(grey1);
 
-		final RoundedToolItem mailItem = new RoundedToolItem(roundedToolBar2);
+		final RoundedToolItem mailItem = new RoundedToolItem(toolbar);
 		mailItem.setSelectionImage(emailw);
 		mailItem.setImage(emailb);
 		mailItem.setWidth(32);
-		mailItem.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				System.out.println("Bar2/Button 1");
-			}
+		mailItem.addListener(SWT.Selection, e -> {
+			System.out.println("push/Button 1");
 		});
 		if (verticalAlignment) {
 			mailItem.setVerticalAlignment(SWT.TOP);
 		}
 
-		final RoundedToolItem mailItemWithText = new RoundedToolItem(roundedToolBar2);
+		final RoundedToolItem mailItemWithText = new RoundedToolItem(toolbar);
 		mailItemWithText.setTextColorSelected(grey2);
 		mailItemWithText.setText("Mails");
 		mailItemWithText.setSelectionImage(emailw);
 		mailItemWithText.setImage(emailb);
 		mailItemWithText.setWidth(65);
-		mailItemWithText.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				System.out.println("Bar2/Button 2");
-			}
+		mailItemWithText.addListener(SWT.Selection, e -> {
+			System.out.println("push/Button 2");
 		});
 		if (verticalAlignment) {
 			mailItemWithText.setVerticalAlignment(SWT.CENTER);
 		}
 
-		final RoundedToolItem itemJustText = new RoundedToolItem(roundedToolBar2);
+		final RoundedToolItem itemJustText = new RoundedToolItem(toolbar);
 		itemJustText.setTextColorSelected(grey2);
 		itemJustText.setText("Just text");
 		itemJustText.setWidth(100);
 		itemJustText.setAlignment(SWT.RIGHT);
-		itemJustText.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				System.out.println("Bar2/Button 3");
-			}
+		itemJustText.addListener(SWT.Selection, e -> {
+			System.out.println("push/Button 3");
 		});
 
 		if (verticalAlignment) {
 			itemJustText.setVerticalAlignment(SWT.BOTTOM);
 		}
-		return roundedToolBar2;
+		return toolbar;
 
+	}
+
+	private static RoundedToolbar createCheckButtons(final Shell shell, final boolean verticalAlignment) {
+		final RoundedToolbar toolBar = new RoundedToolbar(shell, SWT.NONE);
+		toolBar.setCornerRadius(8);
+		toolBar.setBackground(grey1);
+
+		final RoundedToolItem mailItem = new RoundedToolItem(toolBar, SWT.CHECK);
+		mailItem.setSelectionImage(emailw);
+		mailItem.setImage(emailb);
+		mailItem.setWidth(50);
+		mailItem.addListener(SWT.Selection, e -> {
+			System.out.println("check/Button 1");
+		});
+		if (verticalAlignment) {
+			mailItem.setVerticalAlignment(SWT.TOP);
+		}
+
+		final RoundedToolItem mailItemWithText = new RoundedToolItem(toolBar, SWT.CHECK);
+		mailItemWithText.setTextColorSelected(grey2);
+		mailItemWithText.setText("Mails");
+		mailItemWithText.setSelectionImage(emailw);
+		mailItemWithText.setImage(emailb);
+		mailItemWithText.setWidth(80);
+		mailItemWithText.addListener(SWT.Selection, e -> {
+			System.out.println("check/Button 2");
+		});
+		if (verticalAlignment) {
+			mailItemWithText.setVerticalAlignment(SWT.CENTER);
+		}
+
+		final RoundedToolItem itemJustText = new RoundedToolItem(toolBar, SWT.CHECK);
+		itemJustText.setTextColorSelected(grey2);
+		itemJustText.setText("Just text");
+		itemJustText.setWidth(100);
+		itemJustText.setAlignment(SWT.RIGHT);
+		itemJustText.addListener(SWT.Selection, e -> {
+			System.out.println("check/Button 3");
+		});
+
+		if (verticalAlignment) {
+			itemJustText.setVerticalAlignment(SWT.BOTTOM);
+		}
+		return toolBar;
+	}
+
+	private static RoundedToolbar createRadioButtons(final Shell shell, final boolean verticalAlignment) {
+		final RoundedToolbar toolBar = new RoundedToolbar(shell, SWT.NONE);
+		toolBar.setCornerRadius(8);
+		toolBar.setBackground(grey1);
+
+		final RoundedToolItem mailItem = new RoundedToolItem(toolBar, SWT.RADIO);
+		mailItem.setSelectionImage(emailw);
+		mailItem.setImage(emailb);
+		mailItem.setWidth(50);
+		mailItem.addListener(SWT.Selection, e -> {
+			System.out.println("radio/Button 1");
+		});
+		if (verticalAlignment) {
+			mailItem.setVerticalAlignment(SWT.TOP);
+		}
+
+		final RoundedToolItem mailItemWithText = new RoundedToolItem(toolBar, SWT.RADIO);
+		mailItemWithText.setTextColorSelected(grey2);
+		mailItemWithText.setText("Mails");
+		mailItemWithText.setSelectionImage(emailw);
+		mailItemWithText.setImage(emailb);
+		mailItemWithText.setWidth(80);
+		mailItemWithText.addListener(SWT.Selection, e -> {
+			System.out.println("radio/Button 2");
+		});
+		if (verticalAlignment) {
+			mailItemWithText.setVerticalAlignment(SWT.CENTER);
+		}
+
+		final RoundedToolItem itemJustText = new RoundedToolItem(toolBar, SWT.RADIO);
+		itemJustText.setTextColorSelected(grey2);
+		itemJustText.setText("Just text");
+		itemJustText.setWidth(100);
+		itemJustText.setAlignment(SWT.RIGHT);
+		itemJustText.addListener(SWT.Selection, e -> {
+			System.out.println("radio/Button 3");
+		});
+
+		if (verticalAlignment) {
+			itemJustText.setVerticalAlignment(SWT.BOTTOM);
+		}
+		return toolBar;
 	}
 }

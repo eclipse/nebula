@@ -436,7 +436,7 @@ public class HTMLStyledTextParser {
 			}
 		}
 		final Color color = new Color(styledText.getDisplay(), red, green, blue);
-		styledText.addListener(SWT.Dispose, (e) -> {
+		styledText.addListener(SWT.Dispose, e -> {
 			color.dispose();
 		});
 		return color;

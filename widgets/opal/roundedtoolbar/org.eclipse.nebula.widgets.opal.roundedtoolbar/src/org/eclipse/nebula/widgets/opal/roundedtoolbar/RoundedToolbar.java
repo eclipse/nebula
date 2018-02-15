@@ -18,15 +18,12 @@ import org.eclipse.nebula.widgets.opal.commons.SWTGraphicUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Widget;
 
 /**
@@ -50,7 +47,6 @@ import org.eclipse.swt.widgets.Widget;
 public class RoundedToolbar extends Canvas {
 
 	private final List<RoundedToolItem> items;
-	private boolean multiSelection;
 	private int cornerRadius;
 	private static Color START_GRADIENT_COLOR_DEFAULT = SWTGraphicUtil.getColorSafely(245, 245, 245);
 	private static Color END_GRADIENT_COLOR_DEFAULT = SWTGraphicUtil.getColorSafely(185, 185, 185);
@@ -137,62 +133,77 @@ public class RoundedToolbar extends Canvas {
 	}
 
 	private void addListeners() {
-		addListener(SWT.MouseUp, new Listener() {
-			@Override
-			public void handleEvent(final Event event) {
-				if (event.button != 1) {
-					return;
-				}
-				for (final RoundedToolItem item : items) {
-					if (item.getBounds().contains(event.x, event.y)) {
-						if (!item.isEnabled()) {
-							return;
-						}
-						if (!multiSelection) {
-							applyRadioBehaviour(item);
-						}
-						item.setSelection(!item.getSelection());
-						item.fireSelectionEvent();
-						redraw();
-						update();
-						return;
-					}
-				}
+		addListener(SWT.MouseDown, event -> {
+			if (event.button != 1) {
+				return;
 			}
 
-			private void applyRadioBehaviour(final RoundedToolItem selectedItem) {
-				for (final RoundedToolItem item : items) {
-					if (!item.equals(selectedItem)) {
-						item.setSelection(false);
-						item.fireSelectionEvent();
-					}
-				}
+			final RoundedToolItem item = items.stream()//
+					.filter(element -> element.getBounds().contains(event.x, event.y) && element.isEnabled()) //
+					.findFirst() //
+					.orElse(null);
+			if (item == null) {
+				return;
 			}
+
+			if (item.isPushButon()) {
+				item.forceSelection();
+			} else {
+				item.setSelection(!item.getSelection());
+			}
+
+			redraw();
+			update();
 		});
 
-		addListener(SWT.MouseHover, new Listener() {
-			@Override
-			public void handleEvent(final Event event) {
-				for (final RoundedToolItem item : items) {
-					if (item.getBounds().contains(event.x, event.y)) {
-						setToolTipText(item.getTooltipText() == null ? "" : item.getTooltipText());
-						return;
+		addListener(SWT.MouseUp, event -> {
+			if (event.button != 1) {
+				return;
+			}
+
+			final RoundedToolItem item = items.stream()//
+					.filter(element -> element.getBounds().contains(event.x, event.y) && element.isEnabled()) //
+					.findFirst() //
+					.orElse(null);
+			if (item == null) {
+				return;
+			}
+
+			if (item.isPushButon()) {
+				item.setSelection(false);
+			}
+			item.fireSelectionEvent();
+			if (item.isRadio()) {
+				for (final RoundedToolItem current : items) {
+					if (!current.equals(item)) {
+						current.setSelection(false);
+						current.fireSelectionEvent();
 					}
 				}
 			}
+			redraw();
+			update();
+		});
+		addListener(SWT.MouseHover, event -> {
+			final RoundedToolItem item = items.stream()//
+					.filter(element -> element.getBounds().contains(event.x, event.y)) //
+					.findFirst() //
+					.orElse(null);
+			if (item == null) {
+				return;
+			}
+
+			setToolTipText(item.getTooltipText() == null ? "" : item.getTooltipText());
 		});
 
-		addPaintListener(new PaintListener() {
-			@Override
-			public void paintControl(final PaintEvent e) {
-				RoundedToolbar.this.paintControl(e);
-			}
+		addPaintListener(e -> {
+			RoundedToolbar.this.paintControl(e);
 		});
 	}
 
 	/**
 	 * Add an item to the toolbar
-	 * 
+	 *
 	 * @param roundedToolItem roundedToolItem to add
 	 */
 	void addItem(final RoundedToolItem roundedToolItem) {
@@ -271,12 +282,11 @@ public class RoundedToolbar extends Canvas {
 	 */
 	public RoundedToolItem getItem(final Point point) {
 		checkWidget();
-		for (final RoundedToolItem item : items) {
-			if (item.getBounds().contains(point)) {
-				return item;
-			}
-		}
-		return null;
+		final RoundedToolItem item = items.stream()//
+				.filter(element -> element.getBounds().contains(point)) //
+				.findFirst() //
+				.orElse(null);
+		return item;
 	}
 
 	/**
@@ -348,17 +358,8 @@ public class RoundedToolbar extends Canvas {
 	}
 
 	/**
-	 * @return <code>true</code> if the toolbar is in multiselection mode,
-	 *         <code>false</code> otherwise
-	 */
-	public boolean isMultiselection() {
-		checkWidget();
-		return multiSelection;
-	}
-
-	/**
 	 * Paint the component
-	 * 
+	 *
 	 * @param e event
 	 */
 	protected void paintControl(final PaintEvent e) {
@@ -396,7 +397,7 @@ public class RoundedToolbar extends Canvas {
 
 	/**
 	 * Add an item to the toolbar
-	 * 
+	 *
 	 * @param roundedToolItem roundedToolItem to add
 	 */
 	void removeItem(final RoundedToolItem roundedToolItem) {
@@ -410,14 +411,6 @@ public class RoundedToolbar extends Canvas {
 	public void setCornerRadius(final int cornerRadius) {
 		checkWidget();
 		this.cornerRadius = cornerRadius;
-	}
-
-	/**
-	 * @param multiSelection new value of the multi selection flag
-	 */
-	public void setMultiselection(final boolean multiSelection) {
-		checkWidget();
-		this.multiSelection = multiSelection;
 	}
 
 }

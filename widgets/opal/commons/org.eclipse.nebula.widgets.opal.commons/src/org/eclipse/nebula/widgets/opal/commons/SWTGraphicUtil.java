@@ -51,7 +51,7 @@ public class SWTGraphicUtil {
 	 * @param resource the resource to dispose
 	 */
 	public static void addDisposer(final Widget widget, final Resource resource) {
-		widget.addDisposeListener((e) -> {
+		widget.addDisposeListener(e -> {
 			safeDispose(resource);
 		});
 	}
@@ -78,7 +78,7 @@ public class SWTGraphicUtil {
 	public static Color getColorSafely(final int r, final int g, final int b) {
 		final Display display = Display.getCurrent();
 		final Color color = new Color(display, r, g, b);
-		display.addListener(SWT.Dispose, (e) -> {
+		display.addListener(SWT.Dispose, e -> {
 			if (!color.isDisposed()) {
 				color.dispose();
 			}
@@ -120,8 +120,7 @@ public class SWTGraphicUtil {
 
 		// Create a new image
 		final Rectangle sourceBounds = source.getBounds();
-		final Image newImage = new Image(source.getDevice(),
-				new Rectangle(0, 0, sourceBounds.width, (int) (sourceBounds.height * 1.5)));
+		final Image newImage = new Image(source.getDevice(), new Rectangle(0, 0, sourceBounds.width, (int) (sourceBounds.height * 1.5)));
 		final GC gc = new GC(newImage);
 		gc.setAdvanced(true);
 
@@ -315,8 +314,7 @@ public class SWTGraphicUtil {
 
 		// prepare new image data with 24-bit direct palette to hold blurred
 		// copy of image
-		final ImageData newImageData = new ImageData(originalImageData.width, originalImageData.height, 24,
-				new PaletteData(0xFF, 0xFF00, 0xFF0000));
+		final ImageData newImageData = new ImageData(originalImageData.width, originalImageData.height, 24, new PaletteData(0xFF, 0xFF00, 0xFF0000));
 		if (radius >= newImageData.height || radius >= newImageData.width) {
 			radius = Math.min(newImageData.height, newImageData.width) - 1;
 		}
@@ -377,8 +375,7 @@ public class SWTGraphicUtil {
 
 			// calculate each column's RGB-averaged pixel
 			for (int col = 0; col < newImageData.width; col++) {
-				rowRGBAverages[col] = newImageData.palette.getPixel(new RGB(rowRGBSums[col].red / numRows,
-						rowRGBSums[col].green / numRows, rowRGBSums[col].blue / numRows));
+				rowRGBAverages[col] = newImageData.palette.getPixel(new RGB(rowRGBSums[col].red / numRows, rowRGBSums[col].green / numRows, rowRGBSums[col].blue / numRows));
 			}
 
 			// replace original pixels
