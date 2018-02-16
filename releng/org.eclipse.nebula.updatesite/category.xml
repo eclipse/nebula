@@ -117,6 +117,9 @@
    <feature url="features/org.eclipse.nebula.widgets.opal.roundedtoolbar.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.roundedtoolbar.feature" version="1.0.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
+   <feature url="features/org.eclipse.nebula.widgets.opal.calculator.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.calculator.feature" version="1.0.0.qualifier">
+      <category name="Nebula Release Individual Widgets"/>
+   </feature>
    <bundle id="org.eclipse.nebula.widgets.tablecombo" version="1.2.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </bundle>

@@ -59,6 +59,7 @@
 		<module>../../widgets/opal/tipoftheday</module>
 		<module>../../widgets/opal/titledseparator</module>
 		<module>../../widgets/opal/roundedtoolbar</module>
+		<module>../../widgets/opal/calculator</module>
 
 		<!-- Releng -->
 		<module>../org.eclipse.nebula.feature</module>

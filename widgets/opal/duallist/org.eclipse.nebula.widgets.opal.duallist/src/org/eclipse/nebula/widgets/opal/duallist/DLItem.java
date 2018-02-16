@@ -91,7 +91,7 @@ public class DLItem extends OpalItem {
 	}
 
 	/**
-	 * @see org.mihalis.opal.OpalItem#getHeight()
+	 * @see org.eclipse.nebula.widgets.opal.commons.OpalItem#getHeight()
 	 */
 	@Override
 	public int getHeight() {
@@ -99,7 +99,7 @@ public class DLItem extends OpalItem {
 	}
 
 	/**
-	 * @see org.mihalis.opal.OpalItem#setHeight(int)
+	 * @see org.eclipse.nebula.widgets.opal.commons.OpalItem#setHeight(int)
 	 */
 	@Override
 	public void setHeight(final int height) {

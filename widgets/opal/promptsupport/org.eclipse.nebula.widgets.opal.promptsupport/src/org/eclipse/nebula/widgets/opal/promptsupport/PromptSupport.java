@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Laurent CARON (laurent.caron@gmail.com) - initial API and implementation
+ * Laurent CARON (laurent.caron@gmail.com) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.promptsupport;
 
@@ -35,7 +35,7 @@ public class PromptSupport {
 		HIDE_PROMPT
 	};
 
-	private static final String KEY = "org.mihalis.opal.promptSupport.PromptSupport";
+	private static final String KEY = "org.eclipse.nebula.widgets.opal.promptsupport.PromptSupport";
 	static final String BACKGROUND = KEY + ".background";
 	static final String FOREGROUND = KEY + ".foreground";
 	static final String STYLE = KEY + ".style";
@@ -48,7 +48,7 @@ public class PromptSupport {
 	 * Convenience method to set the <code>promptText</code> and
 	 * <code>promptTextColor</code> on a {@link Control}.
 	 * </p>
-	 * 
+	 *
 	 * @param promptText Prompt Text
 	 * @param promptForeground Foreground
 	 * @param promptBackground Background
@@ -72,7 +72,7 @@ public class PromptSupport {
 	 * Get the background color of the <code>control</code>, when no text is
 	 * present. If no color has been set, the <code>control</code> background
 	 * color will be returned.
-	 * 
+	 *
 	 * @param textComponent
 	 * @return the the background color of the text component, when no text is
 	 *         present
@@ -87,7 +87,7 @@ public class PromptSupport {
 	 * Sets the prompts background color on <code>control</code>. This
 	 * background color will only be used when no text is present.
 	 * </p>
-	 * 
+	 *
 	 * @param background
 	 * @param control
 	 * @exception IllegalArgumentException if the control is not a Text Box, a
@@ -100,7 +100,7 @@ public class PromptSupport {
 
 	/**
 	 * Get the {@link FocusBehavior} of <code>control</code>.
-	 * 
+	 *
 	 * @param control
 	 * @return the {@link FocusBehavior} or {@link FocusBehavior#HIDE_PROMPT} if
 	 *         none is set
@@ -114,7 +114,7 @@ public class PromptSupport {
 	/**
 	 * Sets the {@link FocusBehavior} on <code>control</code>, if it is the
 	 * focus owner.
-	 * 
+	 *
 	 * @param focusBehavior
 	 * @param control
 	 * @exception IllegalArgumentException if the control is not a Text Box, a
@@ -128,7 +128,7 @@ public class PromptSupport {
 	/**
 	 * Returns the font style of the prompt text, which is a OR mix of
 	 * SWT.ITALIC, SWT.NONE or SWT.BOLD
-	 * 
+	 *
 	 * @param control
 	 * @return font style of the prompt text
 	 */
@@ -143,7 +143,7 @@ public class PromptSupport {
 	 * Set the style of the prompt font, which is a OR mix of SWT.ITALIC,
 	 * SWT.NONE or SWT.BOLD
 	 * </p>
-	 * 
+	 *
 	 * @param fontStyle
 	 * @param control
 	 * @exception IllegalArgumentException if the control is not a Text Box, a
@@ -157,7 +157,7 @@ public class PromptSupport {
 	/**
 	 * Get the foreground color of the prompt text. If no color has been set,
 	 * the <code>GREY</code> color will be returned.
-	 * 
+	 *
 	 * @param color
 	 * @return the color of the prompt text or <code>GREY</code>if none is set
 	 */
@@ -170,7 +170,7 @@ public class PromptSupport {
 	/**
 	 * Sets the foreground color of the prompt on <code>control</code>. This
 	 * color will be used when no text is present.
-	 * 
+	 *
 	 * @param promptTextColor
 	 * @param textComponent
 	 * @exception IllegalArgumentException if the control is not a Text Box, a
@@ -183,7 +183,7 @@ public class PromptSupport {
 
 	/**
 	 * Get the prompt text of <code>control</code>.
-	 * 
+	 *
 	 * @param control
 	 * @return the prompt text
 	 */
@@ -195,7 +195,7 @@ public class PromptSupport {
 	 * <p>
 	 * Sets the prompt text on <code>control</code>
 	 * </p>
-	 * 
+	 *
 	 * @param promptText
 	 * @param textComponent
 	 * @exception IllegalArgumentException if the control is not a Text Box, a
@@ -218,7 +218,7 @@ public class PromptSupport {
 
 	/**
 	 * Check if the control is a Text, a Combo, a StyledText or a CCombo
-	 * 
+	 *
 	 * @param control control to check
 	 */
 	private static void checkControl(final Control control) {

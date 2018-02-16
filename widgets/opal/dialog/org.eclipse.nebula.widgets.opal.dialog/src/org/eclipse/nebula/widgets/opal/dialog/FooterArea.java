@@ -85,7 +85,7 @@ public class FooterArea extends DialogArea {
 	}
 
 	/**
-	 * @see org.mihalis.opal.OpalDialog.DialogArea#render()
+	 * @see org.eclipse.nebula.widgets.opal.dialog.DialogArea#render()
 	 */
 	@Override
 	void render() {

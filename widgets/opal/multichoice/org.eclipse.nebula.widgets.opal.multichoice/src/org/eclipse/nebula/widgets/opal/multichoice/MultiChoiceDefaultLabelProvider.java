@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Laurent CARON (laurent.caron@gmail.com) - initial API and implementation
+ * Laurent CARON (laurent.caron@gmail.com) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.multichoice;
 
@@ -16,7 +16,7 @@ package org.eclipse.nebula.widgets.opal.multichoice;
 public class MultiChoiceDefaultLabelProvider implements MultiChoiceLabelProvider {
 
 	/**
-	 * @see org.mihalis.opal.multiChoice.MultiChoiceLabelProvider#getText(java.lang.Object)
+	 * @see org.eclipse.nebula.widgets.opal.multichoice.MultiChoiceLabelProvider#getText(java.lang.Object)
 	 */
 	@Override
 	public String getText(final Object element) {

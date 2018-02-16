@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation (Snippet 320)
- *     Laurent CARON (laurent.caron@gmail.com) - Make a widget from the snippet
+ * IBM Corporation - initial API and implementation (Snippet 320)
+ * Laurent CARON (laurent.caron@gmail.com) - Make a widget from the snippet
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.textassist;
 
@@ -42,7 +42,7 @@ import org.eclipse.swt.widgets.Widget;
  */
 public class TextAssist extends Composite {
 
-	private static final String SETTEXT_KEY = "org.mihalis.opal.textAssist.TextAssist.settext";
+	private static final String SETTEXT_KEY = "org.eclipse.nebula.widgets.opal.textassist.TextAssist.settext";
 	private final Text text;
 	private final Shell popup;
 	private final Table table;
@@ -153,29 +153,29 @@ public class TextAssist extends Composite {
 			@Override
 			public void handleEvent(final Event event) {
 				switch (event.keyCode) {
-				case SWT.ARROW_DOWN:
-					int index = (table.getSelectionIndex() + 1) % table.getItemCount();
-					table.setSelection(index);
-					event.doit = false;
-					break;
-				case SWT.ARROW_UP:
-					index = table.getSelectionIndex() - 1;
-					if (index < 0) {
-						index = table.getItemCount() - 1;
-					}
-					table.setSelection(index);
-					event.doit = false;
-					break;
-				case SWT.CR:
-				case SWT.KEYPAD_CR:
-					if (popup.isVisible() && table.getSelectionIndex() != -1) {
-						text.setText(table.getSelection()[0].getText());
+					case SWT.ARROW_DOWN:
+						int index = (table.getSelectionIndex() + 1) % table.getItemCount();
+						table.setSelection(index);
+						event.doit = false;
+						break;
+					case SWT.ARROW_UP:
+						index = table.getSelectionIndex() - 1;
+						if (index < 0) {
+							index = table.getItemCount() - 1;
+						}
+						table.setSelection(index);
+						event.doit = false;
+						break;
+					case SWT.CR:
+					case SWT.KEYPAD_CR:
+						if (popup.isVisible() && table.getSelectionIndex() != -1) {
+							text.setText(table.getSelection()[0].getText());
+							popup.setVisible(false);
+						}
+						break;
+					case SWT.ESC:
 						popup.setVisible(false);
-					}
-					break;
-				case SWT.ESC:
-					popup.setVisible(false);
-					break;
+						break;
 				}
 			}
 		};
@@ -509,6 +509,7 @@ public class TextAssist extends Composite {
 	/**
 	 * @see org.eclipse.swt.widgets.Text#getOrientation()
 	 */
+	@Override
 	public int getOrientation() {
 		checkWidget();
 		return text.getOrientation();
@@ -697,6 +698,7 @@ public class TextAssist extends Composite {
 	/**
 	 * @see org.eclipse.swt.widgets.Text#setOrientation(int)
 	 */
+	@Override
 	public void setOrientation(final int orientation) {
 		checkWidget();
 		text.setOrientation(orientation);

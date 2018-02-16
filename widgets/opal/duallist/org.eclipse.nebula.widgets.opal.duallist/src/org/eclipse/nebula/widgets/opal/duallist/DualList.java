@@ -141,7 +141,7 @@ public class DualList extends Composite {
 		final Button buttonSelectAll = createButton(DOUBLE_RIGHT_IMAGE, true, GridData.END);
 		buttonSelectAll.addSelectionListener(new SimpleSelectionAdapter() {
 			/**
-			 * @see org.mihalis.opal.utils.SimpleSelectionAdapter#handle(org.eclipse.swt.events.SelectionEvent)
+			 * @see org.eclipse.nebula.widgets.opal.commons.SimpleSelectionAdapter#handle(org.eclipse.swt.events.SelectionEvent)
 			 */
 			@Override
 			public void handle(final SelectionEvent e) {
@@ -167,7 +167,7 @@ public class DualList extends Composite {
 		final Button buttonMoveFirst = createButton(DOUBLE_UP_IMAGE, true, GridData.END);
 		buttonMoveFirst.addSelectionListener(new SimpleSelectionAdapter() {
 			/**
-			 * @see org.mihalis.opal.utils.SimpleSelectionAdapter#handle(org.eclipse.swt.events.SelectionEvent)
+			 * @see org.eclipse.nebula.widgets.opal.commons.SimpleSelectionAdapter#handle(org.eclipse.swt.events.SelectionEvent)
 			 */
 			@Override
 			public void handle(final SelectionEvent e) {
@@ -180,7 +180,7 @@ public class DualList extends Composite {
 		final Button buttonSelect = createButton(ARROW_RIGHT_IMAGE, false, GridData.CENTER);
 		buttonSelect.addSelectionListener(new SimpleSelectionAdapter() {
 			/**
-			 * @see org.mihalis.opal.utils.SimpleSelectionAdapter#handle(org.eclipse.swt.events.SelectionEvent)
+			 * @see org.eclipse.nebula.widgets.opal.commons.SimpleSelectionAdapter#handle(org.eclipse.swt.events.SelectionEvent)
 			 */
 			@Override
 			public void handle(final SelectionEvent e) {
@@ -193,7 +193,7 @@ public class DualList extends Composite {
 		final Button buttonMoveUp = createButton(ARROW_UP_IMAGE, false, GridData.CENTER);
 		buttonMoveUp.addSelectionListener(new SimpleSelectionAdapter() {
 			/**
-			 * @see org.mihalis.opal.utils.SimpleSelectionAdapter#handle(org.eclipse.swt.events.SelectionEvent)
+			 * @see org.eclipse.nebula.widgets.opal.commons.SimpleSelectionAdapter#handle(org.eclipse.swt.events.SelectionEvent)
 			 */
 			@Override
 			public void handle(final SelectionEvent e) {
@@ -206,7 +206,7 @@ public class DualList extends Composite {
 		final Button buttonDeselect = createButton(ARROW_LEFT_IMAGE, false, GridData.CENTER);
 		buttonDeselect.addSelectionListener(new SimpleSelectionAdapter() {
 			/**
-			 * @see org.mihalis.opal.utils.SimpleSelectionAdapter#handle(org.eclipse.swt.events.SelectionEvent)
+			 * @see org.eclipse.nebula.widgets.opal.commons.SimpleSelectionAdapter#handle(org.eclipse.swt.events.SelectionEvent)
 			 */
 			@Override
 			public void handle(final SelectionEvent e) {
@@ -219,7 +219,7 @@ public class DualList extends Composite {
 		final Button buttonMoveDown = createButton(ARROW_DOWN_IMAGE, false, GridData.CENTER);
 		buttonMoveDown.addSelectionListener(new SimpleSelectionAdapter() {
 			/**
-			 * @see org.mihalis.opal.utils.SimpleSelectionAdapter#handle(org.eclipse.swt.events.SelectionEvent)
+			 * @see org.eclipse.nebula.widgets.opal.commons.SimpleSelectionAdapter#handle(org.eclipse.swt.events.SelectionEvent)
 			 */
 			@Override
 			public void handle(final SelectionEvent e) {
@@ -232,7 +232,7 @@ public class DualList extends Composite {
 		final Button buttonDeselectAll = createButton(DOUBLE_LEFT_IMAGE, false, GridData.BEGINNING);
 		buttonDeselectAll.addSelectionListener(new SimpleSelectionAdapter() {
 			/**
-			 * @see org.mihalis.opal.utils.SimpleSelectionAdapter#handle(org.eclipse.swt.events.SelectionEvent)
+			 * @see org.eclipse.nebula.widgets.opal.commons.SimpleSelectionAdapter#handle(org.eclipse.swt.events.SelectionEvent)
 			 */
 			@Override
 			public void handle(final SelectionEvent e) {
@@ -245,7 +245,7 @@ public class DualList extends Composite {
 		final Button buttonMoveLast = createButton(DOUBLE_DOWN_IMAGE, true, GridData.BEGINNING);
 		buttonMoveLast.addSelectionListener(new SimpleSelectionAdapter() {
 			/**
-			 * @see org.mihalis.opal.utils.SimpleSelectionAdapter#handle(org.eclipse.swt.events.SelectionEvent)
+			 * @see org.eclipse.nebula.widgets.opal.commons.SimpleSelectionAdapter#handle(org.eclipse.swt.events.SelectionEvent)
 			 */
 			@Override
 			public void handle(final SelectionEvent e) {

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Laurent CARON (laurent.caron at gmail dot com) - Initial API and implementation
+ * Laurent CARON (laurent.caron at gmail dot com) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.promptsupport;
 
@@ -19,7 +19,7 @@ class CComboFocusControlListener extends BaseFocusControlListener {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param control control on which this listener will be attached
 	 */
 	public CComboFocusControlListener(final CCombo control) {
@@ -27,41 +27,41 @@ class CComboFocusControlListener extends BaseFocusControlListener {
 	}
 
 	/**
-	 * @see org.mihalis.opal.promptSupport.BaseFocusControlListener#hidePrompt()
+	 * @see org.eclipse.nebula.widgets.opal.promptsupport.BaseFocusControlListener#hidePrompt()
 	 */
 	@Override
 	protected void hidePrompt() {
-		((CCombo) this.control).setText(EMPTY_STRING);
+		((CCombo) control).setText(EMPTY_STRING);
 	}
 
 	/**
-	 * @see org.mihalis.opal.promptSupport.BaseFocusControlListener#highLightPrompt()
+	 * @see org.eclipse.nebula.widgets.opal.promptsupport.BaseFocusControlListener#highLightPrompt()
 	 */
 	@Override
 	protected void highLightPrompt() {
 	}
 
 	/**
-	 * @see org.mihalis.opal.promptSupport.BaseFocusControlListener#fillPromptText()
+	 * @see org.eclipse.nebula.widgets.opal.promptsupport.BaseFocusControlListener#fillPromptText()
 	 */
 	@Override
 	protected void fillPromptText() {
-		final String promptText = PromptSupport.getPrompt(this.control);
+		final String promptText = PromptSupport.getPrompt(control);
 		if (promptText != null) {
-			((CCombo) this.control).setText(promptText);
+			((CCombo) control).setText(promptText);
 		}
 	}
 
 	/**
-	 * @see org.mihalis.opal.promptSupport.BaseFocusControlListener#isFilled()
+	 * @see org.eclipse.nebula.widgets.opal.promptsupport.BaseFocusControlListener#isFilled()
 	 */
 	@Override
 	protected boolean isFilled() {
-		final String promptText = PromptSupport.getPrompt(this.control);
-		if (promptText != null && promptText.equals(((CCombo) this.control).getText().trim())) {
+		final String promptText = PromptSupport.getPrompt(control);
+		if (promptText != null && promptText.equals(((CCombo) control).getText().trim())) {
 			return false;
 		}
-		return !EMPTY_STRING.equals(((CCombo) this.control).getText().trim());
+		return !EMPTY_STRING.equals(((CCombo) control).getText().trim());
 	}
 
 }

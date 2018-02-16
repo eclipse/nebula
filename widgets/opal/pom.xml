@@ -34,6 +34,7 @@
 		<module>tipoftheday</module>
 		<module>titledseparator</module>
 		<module>roundedtoolbar</module>
+		<module>calculator</module>
 	</modules>
 
 
