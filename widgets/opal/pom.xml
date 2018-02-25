@@ -36,6 +36,8 @@
 		<module>roundedtoolbar</module>
 		<module>calculator</module>
 		<module>horizontalspinner</module>
+		<module>launcher</module>
+		<module>panels</module>
 	</modules>
 
 

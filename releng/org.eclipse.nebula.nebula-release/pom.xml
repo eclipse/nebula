@@ -62,6 +62,7 @@
 		<module>../../widgets/opal/calculator</module>
 		<module>../../widgets/opal/horizontalspinner</module>
 		<module>../../widgets/opal/launcher</module>
+		<module>../../widgets/opal/panels</module>
 
 		<!-- Releng -->
 		<module>../org.eclipse.nebula.feature</module>

@@ -176,4 +176,8 @@
    <includes
          id="org.eclipse.nebula.widgets.opal.launcher.feature"
          version="0.0.0"/>	
+		 
+   <includes
+         id="org.eclipse.nebula.widgets.opal.panels.feature"
+         version="0.0.0"/>
 </feature>
