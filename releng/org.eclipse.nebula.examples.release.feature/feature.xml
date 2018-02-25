@@ -390,5 +390,12 @@
          download-size="0"
          install-size="0"
          version="0.0.0"
-         unpack="false"/>		 
+         unpack="false"/>		
+
+   <plugin
+         id="org.eclipse.nebula.widgets.opal.switchbutton"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>				 
 </feature>

@@ -38,6 +38,7 @@
 		<module>horizontalspinner</module>
 		<module>launcher</module>
 		<module>panels</module>
+		<module>switchbutton</module>
 	</modules>
 
 
