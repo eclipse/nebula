@@ -12,8 +12,6 @@ package org.eclipse.nebula.widgets.opal.preferencewindow.widgets;
 import org.eclipse.nebula.widgets.opal.commons.StringUtil;
 import org.eclipse.nebula.widgets.opal.preferencewindow.PreferenceWindow;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.VerifyEvent;
-import org.eclipse.swt.events.VerifyListener;
 
 /**
  * Instances of this class are text box to type floats
@@ -35,19 +33,13 @@ public class PWFloatText extends PWText {
 	 */
 	@Override
 	public void addVerifyListeners() {
-		text.addVerifyListener(new VerifyListener() {
-
-			@Override
-			public void verifyText(final VerifyEvent e) {
-				if (e.character != 0 && !Character.isDigit(e.character) && e.keyCode != SWT.BS && e.keyCode != SWT.DEL
-						&& e.character != '.' && e.character != ',') {
-					e.doit = false;
-					return;
-				}
-
-				e.doit = verifyEntry(e.text, e.keyCode);
-
+		text.addListener(SWT.Verify, e -> {
+			if (e.character != 0 && !Character.isDigit(e.character) && e.keyCode != SWT.BS && e.keyCode != SWT.DEL && e.character != '.' && e.character != ',') {
+				e.doit = false;
+				return;
 			}
+
+			e.doit = verifyEntry(e.text, e.keyCode);
 		});
 
 	}
@@ -90,8 +82,7 @@ public class PWFloatText extends PWText {
 			PreferenceWindow.getInstance().setValue(getPropertyKey(), new Float(0));
 		} else {
 			if (!(value instanceof Float)) {
-				throw new UnsupportedOperationException("The property '" + getPropertyKey()
-						+ "' has to be a Float because it is associated to a float text widget");
+				throw new UnsupportedOperationException("The property '" + getPropertyKey() + "' has to be a Float because it is associated to a float text widget");
 			}
 		}
 	}

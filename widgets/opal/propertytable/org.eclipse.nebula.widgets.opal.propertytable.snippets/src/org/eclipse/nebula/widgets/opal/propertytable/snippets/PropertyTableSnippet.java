@@ -95,8 +95,7 @@ public class PropertyTableSnippet {
 	 * @param showDescription if <code>true</code>, show description
 	 * @return a property table
 	 */
-	private static PropertyTable buildPropertyTable(final TabFolder tabFolder, final boolean showButton,
-			final boolean showAsCategory, final boolean showDescription) {
+	private static PropertyTable buildPropertyTable(final TabFolder tabFolder, final boolean showButton, final boolean showAsCategory, final boolean showDescription) {
 		final PropertyTable table = new PropertyTable(tabFolder, SWT.NONE);
 
 		if (showButton) {
@@ -116,53 +115,30 @@ public class PropertyTableSnippet {
 		} else {
 			table.hideDescription();
 		}
-		table.addProperty(new PTProperty("id", "Identifier", "Description for identifier", "My id"))
-				.setCategory("General");
-		table.addProperty(new PTProperty("text", "Description", "Description for the description field", "blahblah..."))
-				.setCategory("General");
-		table.addProperty(new PTProperty("url", "URL:", "This is a nice <b>URL</b>", "http://www.google.com")
-				.setCategory("General")).setEditor(new PTURLEditor());
-		table.addProperty(
-				new PTProperty("password", "Password", "Enter your <i>password</i> and keep it secret...", "password"))
-				.setCategory("General").setEditor(new PTPasswordEditor());
+		table.addProperty(new PTProperty("id", "Identifier", "Description for identifier", "My id")).setCategory("General");
+		table.addProperty(new PTProperty("text", "Description", "Description for the description field", "blahblah...")).setCategory("General");
+		table.addProperty(new PTProperty("url", "URL:", "This is a nice <b>URL</b>", "http://www.google.com").setCategory("General")).setEditor(new PTURLEditor());
+		table.addProperty(new PTProperty("password", "Password", "Enter your <i>password</i> and keep it secret...", "password")).setCategory("General").setEditor(new PTPasswordEditor());
 
-		table.addProperty(new PTProperty("int", "An integer", "Type any integer", "123")).setCategory("Number")
-				.setEditor(new PTIntegerEditor());
-		table.addProperty(new PTProperty("float", "A float", "Type any float", "123.45")).setCategory("Number")
-				.setEditor(new PTFloatEditor());
-		table.addProperty(new PTProperty("spinner", "Another integer", "Use a spinner to enter an integer"))
-				.setCategory("Number").setEditor(new PTSpinnerEditor(0, 100));
+		table.addProperty(new PTProperty("int", "An integer", "Type any integer", "123")).setCategory("Number").setEditor(new PTIntegerEditor());
+		table.addProperty(new PTProperty("float", "A float", "Type any float", "123.45")).setCategory("Number").setEditor(new PTFloatEditor());
+		table.addProperty(new PTProperty("spinner", "Another integer", "Use a spinner to enter an integer")).setCategory("Number").setEditor(new PTSpinnerEditor(0, 100));
 
-		table.addProperty(new PTProperty("directory", "Directory", "Select a directory")).setCategory("Directory/File")
-				.setEditor(new PTDirectoryEditor());
-		table.addProperty(new PTProperty("file", "File", "Select a file")).setCategory("Directory/File")
-				.setEditor(new PTFileEditor());
+		table.addProperty(new PTProperty("directory", "Directory", "Select a directory")).setCategory("Directory/File").setEditor(new PTDirectoryEditor());
+		table.addProperty(new PTProperty("file", "File", "Select a file")).setCategory("Directory/File").setEditor(new PTFileEditor());
 
-		table.addProperty(new PTProperty("comboReadOnly", "Combo (read-only)", "A simple combo with seasons"))
-				.setCategory("Combo")
-				.setEditor(new PTComboEditor(true, new Object[] { "Spring", "Summer", "Autumn", "Winter" }));
-		table.addProperty(new PTProperty("combo", "Combo", "A combo that is not read-only")).setCategory("Combo")
-				.setEditor(new PTComboEditor("Value 1", "Value 2", "Value 3"));
+		table.addProperty(new PTProperty("comboReadOnly", "Combo (read-only)", "A simple combo with seasons")).setCategory("Combo").setEditor(new PTComboEditor(true, new Object[] { "Spring", "Summer", "Autumn", "Winter" }));
+		table.addProperty(new PTProperty("combo", "Combo", "A combo that is not read-only")).setCategory("Combo").setEditor(new PTComboEditor("Value 1", "Value 2", "Value 3"));
 
-		table.addProperty(new PTProperty("cb", "Checkbox", "A checkbox")).setCategory("Checkbox")
-				.setEditor(new PTCheckboxEditor()).setCategory("Checkbox");
-		table.addProperty(new PTProperty("cb2", "Checkbox (disabled)", "A disabled checkbox..."))
-				.setEditor(new PTCheckboxEditor()).setCategory("Checkbox").setEnabled(false);
+		table.addProperty(new PTProperty("cb", "Checkbox", "A checkbox")).setCategory("Checkbox").setEditor(new PTCheckboxEditor()).setCategory("Checkbox");
+		table.addProperty(new PTProperty("cb2", "Checkbox (disabled)", "A disabled checkbox...")).setEditor(new PTCheckboxEditor()).setCategory("Checkbox").setEnabled(false);
 
-		table.addProperty(new PTProperty("color", "Color", "Pick it !")).setCategory("Misc")
-				.setEditor(new PTColorEditor());
-		table.addProperty(new PTProperty("font", "Font", "Pick again my friend")).setEditor(new PTFontEditor())
-				.setCategory("Misc");
-		table.addProperty(new PTProperty("dimension", "Dimension", "A dimension is composed of a width and a height"))
-				.setCategory("Misc").setEditor(new PTDimensionEditor());
-		table.addProperty(new PTProperty("rectangle", "Rectangle",
-				"A rectangle is composed of a position (x,y) and a dimension(width,height)")).setCategory("Misc")
-				.setEditor(new PTRectangleEditor());
-		table.addProperty(
-				new PTProperty("inset", "Inset", "An inset is composed of the following fields:top,left,bottom,right)"))
-				.setCategory("Misc").setEditor(new PTInsetsEditor());
-		table.addProperty(new PTProperty("date", "Date", "Well, is there something more to say ?")).setCategory("Misc")
-				.setEditor(new PTDateEditor());
+		table.addProperty(new PTProperty("color", "Color", "Pick it !")).setCategory("Misc").setEditor(new PTColorEditor());
+		table.addProperty(new PTProperty("font", "Font", "Pick again my friend")).setEditor(new PTFontEditor()).setCategory("Misc");
+		table.addProperty(new PTProperty("dimension", "Dimension", "A dimension is composed of a width and a height")).setCategory("Misc").setEditor(new PTDimensionEditor());
+		table.addProperty(new PTProperty("rectangle", "Rectangle", "A rectangle is composed of a position (x,y) and a dimension(width,height)")).setCategory("Misc").setEditor(new PTRectangleEditor());
+		table.addProperty(new PTProperty("inset", "Inset", "An inset is composed of the following fields:top,left,bottom,right)")).setCategory("Misc").setEditor(new PTInsetsEditor());
+		table.addProperty(new PTProperty("date", "Date", "Well, is there something more to say ?")).setCategory("Misc").setEditor(new PTDateEditor());
 
 		return table;
 	}

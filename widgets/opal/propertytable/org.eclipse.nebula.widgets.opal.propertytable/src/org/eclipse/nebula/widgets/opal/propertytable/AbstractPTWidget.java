@@ -20,8 +20,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 
 /**
  * This abstract class contains all common methods for widgets that are part of
@@ -66,8 +64,8 @@ public abstract class AbstractPTWidget implements PTWidget {
 		parent.setLayout(new GridLayout(3, false));
 
 		if (parentPropertyTable.showButtons) {
-			buildButtons(parent, parentPropertyTable.sorted,
-					parentPropertyTable.styleOfView == PropertyTable.VIEW_AS_CATEGORIES,
+			buildButtons(parent, parentPropertyTable.sorted, //
+					parentPropertyTable.styleOfView == PropertyTable.VIEW_AS_CATEGORIES, //
 					parentPropertyTable.showDescription);
 		}
 
@@ -91,8 +89,7 @@ public abstract class AbstractPTWidget implements PTWidget {
 	 * @param showDescription if <code>true</code>, the "description" button is
 	 *            pushed
 	 */
-	private void buildButtons(final Composite parent, final boolean sorted, final boolean showAsCategory,
-			final boolean showDescription) {
+	private void buildButtons(final Composite parent, final boolean sorted, final boolean showAsCategory, final boolean showDescription) {
 		buildSortButton(parent, sorted);
 		buildCategoryButton(parent, showAsCategory);
 		buildDescriptionButton(parent, showDescription);
@@ -109,13 +106,9 @@ public abstract class AbstractPTWidget implements PTWidget {
 		sortButton.setToolTipText(ResourceManager.getLabel(ResourceManager.SORT_SHORT_DESCRIPTION));
 		sortButton.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, false, 1, 1));
 
-		sortButton.addListener(SWT.Selection, new Listener() {
-
-			@Override
-			public void handleEvent(final Event event) {
-				getParentPropertyTable().sorted = !getParentPropertyTable().sorted;
-				refillData();
-			}
+		sortButton.addListener(SWT.Selection, event -> {
+			getParentPropertyTable().sorted = !getParentPropertyTable().sorted;
+			refillData();
 		});
 
 	}
@@ -132,16 +125,11 @@ public abstract class AbstractPTWidget implements PTWidget {
 		categoryButton.setToolTipText(ResourceManager.getLabel(ResourceManager.CATEGORY_SHORT_DESCRIPTION));
 		categoryButton.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, false, 1, 1));
 
-		categoryButton.addListener(SWT.Selection, new Listener() {
-
-			@Override
-			public void handleEvent(final Event event) {
-				if (getParentPropertyTable().styleOfView == PropertyTable.VIEW_AS_CATEGORIES) {
-					getParentPropertyTable().viewAsFlatList();
-				} else {
-					getParentPropertyTable().viewAsCategories();
-				}
-
+		categoryButton.addListener(SWT.Selection, event -> {
+			if (getParentPropertyTable().styleOfView == PropertyTable.VIEW_AS_CATEGORIES) {
+				getParentPropertyTable().viewAsFlatList();
+			} else {
+				getParentPropertyTable().viewAsCategories();
 			}
 		});
 
@@ -159,15 +147,11 @@ public abstract class AbstractPTWidget implements PTWidget {
 		descriptionButton.setToolTipText(ResourceManager.getLabel(ResourceManager.DESCRIPTION_SHORT_DESCRIPTION));
 		descriptionButton.setLayoutData(new GridData(GridData.BEGINNING, GridData.FILL, true, false, 1, 1));
 
-		descriptionButton.addListener(SWT.Selection, new Listener() {
-
-			@Override
-			public void handleEvent(final Event event) {
-				if (getParentPropertyTable().showDescription) {
-					getParentPropertyTable().hideDescription();
-				} else {
-					getParentPropertyTable().showDescription();
-				}
+		descriptionButton.addListener(SWT.Selection, event -> {
+			if (getParentPropertyTable().showDescription) {
+				getParentPropertyTable().hideDescription();
+			} else {
+				getParentPropertyTable().showDescription();
 			}
 		});
 

@@ -15,8 +15,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -40,45 +38,25 @@ public class NotifierSnippet {
 		// Yellow theme (default)
 		final Button testerYellow = new Button(shell, SWT.PUSH);
 		testerYellow.setText("Push me [Yellow theme]!");
-		testerYellow.addListener(SWT.Selection, new Listener() {
-
-			@Override
-			public void handleEvent(final Event event) {
-				Notifier.notify("New Mail message",
-						"Laurent CARON (lcaron@...)<br/><br/>Test message #" + counter[0] + "...");
-				counter[0]++;
-			}
-
+		testerYellow.addListener(SWT.Selection, event -> {
+			Notifier.notify("New Mail message", "Laurent CARON (lcaron@...)<br/><br/>Test message #" + counter[0] + "...");
+			counter[0]++;
 		});
 
 		// Blue theme
 		final Button testerBlue = new Button(shell, SWT.PUSH);
 		testerBlue.setText("Push me [Blue theme]!");
-		testerBlue.addListener(SWT.Selection, new Listener() {
-
-			@Override
-			public void handleEvent(final Event event) {
-				Notifier.notify("New Mail message",
-						"Laurent CARON (lcaron@...)<br/><br/>Test message #" + counter[0] + "...",
-						NotifierTheme.BLUE_THEME);
-				counter[0]++;
-			}
-
+		testerBlue.addListener(SWT.Selection, event -> {
+			Notifier.notify("New Mail message", "Laurent CARON (lcaron@...)<br/><br/>Test message #" + counter[0] + "...", NotifierTheme.BLUE_THEME);
+			counter[0]++;
 		});
 
 		// Grey theme
 		final Button testerGrey = new Button(shell, SWT.PUSH);
 		testerGrey.setText("Push me [Gray theme]!");
-		testerGrey.addListener(SWT.Selection, new Listener() {
-
-			@Override
-			public void handleEvent(final Event event) {
-				Notifier.notify("New Mail message",
-						"Laurent CARON (lcaron@...)<br/><br/>Test message #" + counter[0] + "...",
-						NotifierTheme.GRAY_THEME);
-				counter[0]++;
-			}
-
+		testerGrey.addListener(SWT.Selection, event -> {
+			Notifier.notify("New Mail message", "Laurent CARON (lcaron@...)<br/><br/>Test message #" + counter[0] + "...", NotifierTheme.GRAY_THEME);
+			counter[0]++;
 		});
 
 		shell.open();

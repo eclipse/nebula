@@ -15,8 +15,6 @@ import org.eclipse.nebula.widgets.opal.commons.SWTGraphicUtil;
 import org.eclipse.nebula.widgets.opal.loginDialog.LoginDialog;
 import org.eclipse.nebula.widgets.opal.loginDialog.LoginDialogVerifier;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -75,23 +73,15 @@ public class LoginDialogSnippet {
 			}
 		};
 
-		button1.addSelectionListener(new SelectionAdapter() {
+		button1.addListener(SWT.Selection, e -> {
+			final LoginDialog dialog = new LoginDialog();
+			dialog.setVerifier(verifier);
 
-			/**
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-
-				final LoginDialog dialog = new LoginDialog();
-				dialog.setVerifier(verifier);
-
-				final boolean result = dialog.open();
-				if (result) {
-					System.out.println("Login confirmed : " + dialog.getLogin());
-				} else {
-					System.out.println("User canceled !");
-				}
+			final boolean result = dialog.open();
+			if (result) {
+				System.out.println("Login confirmed : " + dialog.getLogin());
+			} else {
+				System.out.println("User canceled !");
 			}
 		});
 
@@ -101,37 +91,28 @@ public class LoginDialogSnippet {
 		// Login dialog with image, description, default login, and no button
 		// "remember my password"
 		final Label label2 = new Label(shell, SWT.NONE);
-		label2.setText(
-				"This is a customized login (image, description, \ndefault login, multiple login values, \nno button 'remember my password'");
+		label2.setText("This is a customized login (image, description, \ndefault login, multiple login values, \nno button 'remember my password'");
 		label2.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false));
 
 		final Button button2 = new Button(shell, SWT.PUSH);
 		button2.setText("Open customized dialog");
 		button2.setLayoutData(new GridData(GridData.END, GridData.BEGINNING, false, false));
 
-		button2.addSelectionListener(new SelectionAdapter() {
+		button2.addListener(SWT.Selection, e -> {
 
-			/**
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
+			final LoginDialog dialog = new LoginDialog();
+			dialog.setImage(new Image(display, LoginDialogSnippet.class.getResourceAsStream("image.png")));
+			dialog.setDescription("Please login to our system...\nPlease remember that the password is the same as the login :)");
+			dialog.setAutorizedLogin("Laurent", "Albert", "Erik", "Ulrich", "Luis");
+			dialog.setLogin("Laurent");
+			dialog.setDisplayRememberPassword(false);
+			dialog.setVerifier(verifier);
 
-				final LoginDialog dialog = new LoginDialog();
-				dialog.setImage(new Image(display, LoginDialogSnippet.class.getResourceAsStream("image.png")));
-				dialog.setDescription(
-						"Please login to our system...\nPlease remember that the password is the same as the login :)");
-				dialog.setAutorizedLogin("Laurent", "Albert", "Erik", "Ulrich", "Luis");
-				dialog.setLogin("Laurent");
-				dialog.setDisplayRememberPassword(false);
-				dialog.setVerifier(verifier);
-
-				final boolean result = dialog.open();
-				if (result) {
-					System.out.println("Login confirmed : " + dialog.getLogin());
-				} else {
-					System.out.println("User canceled !");
-				}
+			final boolean result = dialog.open();
+			if (result) {
+				System.out.println("Login confirmed : " + dialog.getLogin());
+			} else {
+				System.out.println("User canceled !");
 			}
 		});
 

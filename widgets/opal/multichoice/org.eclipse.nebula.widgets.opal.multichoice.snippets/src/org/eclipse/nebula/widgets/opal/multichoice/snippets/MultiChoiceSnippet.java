@@ -12,12 +12,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.nebula.widgets.opal.commons.SimpleSelectionAdapter;
 import org.eclipse.nebula.widgets.opal.multichoice.MultiChoice;
 import org.eclipse.nebula.widgets.opal.multichoice.MultiChoiceLabelProvider;
 import org.eclipse.nebula.widgets.opal.multichoice.MultiChoiceSelectionListener;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -38,9 +36,7 @@ public class MultiChoiceSnippet {
 		shell.setText("MultiChoice Example");
 
 		// Data
-		final String[] euroZone = new String[] { "Austria", "Belgium", "Cyprus", "Estonia", "Finland", "France",
-				"Germany", "Greece", "Ireland", "Italy", "Luxembourg", "Malta", "Netherlands", "Portugal", "Slovakia",
-				"Slovenia", "Spain" };
+		final String[] euroZone = new String[] { "Austria", "Belgium", "Cyprus", "Estonia", "Finland", "France", "Germany", "Greece", "Ireland", "Italy", "Luxembourg", "Malta", "Netherlands", "Portugal", "Slovakia", "Slovenia", "Spain" };
 
 		final List<Country> membersOfEuropeanUnion = new ArrayList<Country>();
 		membersOfEuropeanUnion.add(new Country("Austria", 8372930));
@@ -108,8 +104,7 @@ public class MultiChoiceSnippet {
 		mcSL.setSelectionListener(new MultiChoiceSelectionListener<Country>(mcSL) {
 
 			@Override
-			public void handle(final MultiChoice<Country> parent, final Country receiver, final boolean selection,
-					final Shell popup) {
+			public void handle(final MultiChoice<Country> parent, final Country receiver, final boolean selection, final Shell popup) {
 				if ("Select All".equals(receiver.toString())) {
 					if (selection) {
 						parent.deselectAll();
@@ -194,46 +189,38 @@ public class MultiChoiceSnippet {
 		final Button buttonShowSelection = new Button(mc.getParent(), SWT.PUSH);
 		buttonShowSelection.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
 		buttonShowSelection.setText("Show selection");
-		buttonShowSelection.addSelectionListener(new SimpleSelectionAdapter() {
-
-			@Override
-			public void handle(final SelectionEvent e) {
-				final Iterator<?> it = mc.getSelection().iterator();
-				final StringBuilder sb = new StringBuilder();
-				while (it.hasNext()) {
-					sb.append(it.next().toString());
-					if (it.hasNext()) {
-						sb.append(", ");
-					}
+		buttonShowSelection.addListener(SWT.Selection, e -> {
+			final Iterator<?> it = mc.getSelection().iterator();
+			final StringBuilder sb = new StringBuilder();
+			while (it.hasNext()) {
+				sb.append(it.next().toString());
+				if (it.hasNext()) {
+					sb.append(", ");
 				}
-				final MessageBox mb = new MessageBox(mc.getShell(), SWT.OK);
-				mb.setMessage(sb.toString());
-				mb.open();
 			}
+			final MessageBox mb = new MessageBox(mc.getShell(), SWT.OK);
+			mb.setMessage(sb.toString());
+			mb.open();
 		});
 
 		final Button buttonShowSelectedIndex = new Button(mc.getParent(), SWT.PUSH);
 		buttonShowSelectedIndex.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
 		buttonShowSelectedIndex.setText("Show selected index");
-		buttonShowSelectedIndex.addSelectionListener(new SimpleSelectionAdapter() {
-
-			@Override
-			public void handle(final SelectionEvent e) {
-				final StringBuilder sb = new StringBuilder();
-				final int[] selectedIndex = mc.getSelectedIndex();
-				if (selectedIndex.length > 0) {
-					sb.append(selectedIndex[0]);
-					for (int i = 1; i < selectedIndex.length; i++) {
-						sb.append(",");
-						sb.append(selectedIndex[i]);
-					}
-				} else {
-					sb.append("Empty");
+		buttonShowSelectedIndex.addListener(SWT.Selection, e -> {
+			final StringBuilder sb = new StringBuilder();
+			final int[] selectedIndex = mc.getSelectedIndex();
+			if (selectedIndex.length > 0) {
+				sb.append(selectedIndex[0]);
+				for (int i = 1; i < selectedIndex.length; i++) {
+					sb.append(",");
+					sb.append(selectedIndex[i]);
 				}
-				final MessageBox mb = new MessageBox(mc.getShell(), SWT.OK);
-				mb.setMessage(sb.toString());
-				mb.open();
+			} else {
+				sb.append("Empty");
 			}
+			final MessageBox mb = new MessageBox(mc.getShell(), SWT.OK);
+			mb.setMessage(sb.toString());
+			mb.open();
 		});
 	}
 }

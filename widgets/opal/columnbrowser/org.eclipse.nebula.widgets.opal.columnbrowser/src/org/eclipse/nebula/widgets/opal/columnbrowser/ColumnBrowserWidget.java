@@ -18,8 +18,6 @@ import org.eclipse.nebula.widgets.opal.commons.SWTGraphicUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -114,12 +112,8 @@ public class ColumnBrowserWidget extends ScrolledComposite {
 
 		selectionListeners = new ArrayList<SelectionListener>();
 
-		addDisposeListener(new DisposeListener() {
-
-			@Override
-			public void widgetDisposed(final DisposeEvent arg0) {
-				SWTGraphicUtil.safeDispose(columnArrow);
-			}
+		addDisposeListener(e -> {
+			SWTGraphicUtil.safeDispose(columnArrow);
 		});
 
 	}
@@ -136,8 +130,7 @@ public class ColumnBrowserWidget extends ScrolledComposite {
 
 		addTableListeners(table);
 
-		if (super.getBackground() != null && super.getBackground().getRed() != 240
-				&& super.getBackground().getGreen() != 240 && super.getBackground().getBlue() != 240) {
+		if (super.getBackground() != null && super.getBackground().getRed() != 240 && super.getBackground().getGreen() != 240 && super.getBackground().getBlue() != 240) {
 			table.setBackground(super.getBackground());
 		}
 		table.setBackgroundImage(super.getBackgroundImage());
@@ -151,24 +144,17 @@ public class ColumnBrowserWidget extends ScrolledComposite {
 	}
 
 	private void addTableListeners(final Table table) {
-		table.addListener(SWT.Resize, new Listener() {
-
-			@Override
-			public void handleEvent(final Event event) {
-				final int width = table.getSize().x;
-				table.getColumn(0).setWidth(width - 5);
-			}
+		table.addListener(SWT.Resize, event -> {
+			final int width = table.getSize().x;
+			table.getColumn(0).setWidth(width - 5);
 		});
 
-		table.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(final Event event) {
-				final Table table = (Table) event.widget;
-				if (table.getSelection() == null || table.getSelection().length != 1) {
-					return;
-				}
-				ColumnBrowserWidget.this.selectItem(table.getSelection()[0]);
+		table.addListener(SWT.Selection, event -> {
+			final Table tbl = (Table) event.widget;
+			if (tbl.getSelection() == null || tbl.getSelection().length != 1) {
+				return;
 			}
+			selectItem(tbl.getSelection()[0]);
 		});
 
 		final Listener paintListener = new Listener() {
@@ -207,17 +193,8 @@ public class ColumnBrowserWidget extends ScrolledComposite {
 		table.addListener(SWT.MeasureItem, paintListener);
 		table.addListener(SWT.PaintItem, paintListener);
 
-		table.addSelectionListener(new SelectionListener() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				ColumnBrowserWidget.this.fireSelectionListeners(e);
-			}
-
-			@Override
-			public void widgetDefaultSelected(final SelectionEvent e) {
-				ColumnBrowserWidget.this.fireSelectionListeners(e);
-			}
+		table.addListener(SWT.Selection, e -> {
+			fireSelectionListeners(e);
 		});
 	}
 
@@ -227,7 +204,7 @@ public class ColumnBrowserWidget extends ScrolledComposite {
 	 * @param selectionEvent mouse event
 	 * @return true if the selection could be changed, false otherwise
 	 */
-	private boolean fireSelectionListeners(final SelectionEvent selectionEvent) {
+	private boolean fireSelectionListeners(final Event selectionEvent) {
 		final Event event = new Event();
 
 		event.button = 0;
@@ -508,7 +485,6 @@ public class ColumnBrowserWidget extends ScrolledComposite {
 		composite.pack();
 		this.setMinSize(composite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		columns.get(columns.size() - 1).forceFocus();
-
 	}
 
 	/**

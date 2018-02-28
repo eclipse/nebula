@@ -14,8 +14,6 @@ import java.util.List;
 
 import org.eclipse.nebula.widgets.opal.commons.SWTGraphicUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -24,8 +22,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 
 /**
  * Instances of this class are a container that allows the user to select a tab
@@ -101,25 +97,20 @@ class PWTabContainer extends Composite {
 	 * Create the background of the container
 	 */
 	private void createButtonsContainerBackground() {
-		buttonContainer.addListener(SWT.Resize, new Listener() {
-
-			@Override
-			public void handleEvent(final Event event) {
-				final Rectangle rect = buttonContainer.getClientArea();
-				final Image image = new Image(getDisplay(), Math.max(1, rect.width), Math.max(1, rect.height));
-				final GC gc = new GC(image);
-				final Color grey = new Color(getDisplay(), 204, 204, 204);
-				gc.setForeground(grey);
-				gc.drawLine(0, rect.height - 1, rect.width, rect.height - 1);
-				grey.dispose();
-				gc.dispose();
-				buttonContainer.setBackgroundImage(image);
-				if (oldButtonContainerImage != null) {
-					oldButtonContainerImage.dispose();
-				}
-				oldButtonContainerImage = image;
-
+		buttonContainer.addListener(SWT.Resize, event -> {
+			final Rectangle rect = buttonContainer.getClientArea();
+			final Image image = new Image(getDisplay(), Math.max(1, rect.width), Math.max(1, rect.height));
+			final GC gc = new GC(image);
+			final Color grey = new Color(getDisplay(), 204, 204, 204);
+			gc.setForeground(grey);
+			gc.drawLine(0, rect.height - 1, rect.width, rect.height - 1);
+			grey.dispose();
+			gc.dispose();
+			buttonContainer.setBackgroundImage(image);
+			if (oldButtonContainerImage != null) {
+				oldButtonContainerImage.dispose();
 			}
+			oldButtonContainerImage = image;
 		});
 		SWTGraphicUtil.addDisposer(buttonContainer, oldButtonContainerImage);
 	}
@@ -147,20 +138,10 @@ class PWTabContainer extends Composite {
 			button.setLayoutData(gd);
 
 			final int index = i;
-			button.addSelectionListener(new SelectionAdapter() {
-
-				/**
-				 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-				 */
-				@Override
-				public void widgetSelected(final SelectionEvent e) {
-					select(index);
-				}
-
+			button.addListener(SWT.Selection, e -> {
+				select(index);
 			});
-
 			buttons.add(button);
-
 		}
 	}
 

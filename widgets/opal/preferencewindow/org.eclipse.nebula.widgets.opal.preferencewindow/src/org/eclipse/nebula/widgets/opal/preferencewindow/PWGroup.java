@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Laurent CARON (laurent.caron at gmail dot com) - Initial implementation and API
+ * Laurent CARON (laurent.caron at gmail dot com) - Initial implementation and API
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.preferencewindow;
 
@@ -32,7 +32,7 @@ public class PWGroup extends PWRowGroup {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param hasBorder if <code>true</code>, the group has a border
 	 */
 	public PWGroup(final boolean hasBorder) {
@@ -41,7 +41,7 @@ public class PWGroup extends PWRowGroup {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param label label associated to the group
 	 */
 	public PWGroup(final String label) {
@@ -50,14 +50,14 @@ public class PWGroup extends PWRowGroup {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param label label associated to the group
 	 * @param hasBorder if <code>true</code>, the group has a border
 	 */
 	public PWGroup(final String label, final boolean hasBorder) {
 		this.label = label;
 		this.hasBorder = hasBorder;
-		this.children = new ArrayList<PWRow>();
+		children = new ArrayList<PWRow>();
 	}
 
 	/**
@@ -68,7 +68,7 @@ public class PWGroup extends PWRowGroup {
 		if (!(element instanceof PWRow)) {
 			throw new UnsupportedOperationException("Can only add a PWRow.");
 		}
-		this.children.add((PWRow) element);
+		children.add((PWRow) element);
 		return this;
 	}
 
@@ -79,7 +79,7 @@ public class PWGroup extends PWRowGroup {
 	public PWContainer add(final PWWidget widget) {
 		final PWRow row = new PWRow();
 		row.add(widget);
-		this.children.add(row);
+		children.add(row);
 		return this;
 	}
 
@@ -89,10 +89,10 @@ public class PWGroup extends PWRowGroup {
 	@Override
 	public void build(final Composite parent) {
 		final Composite composite;
-		if (this.hasBorder) {
+		if (hasBorder) {
 			composite = new Group(parent, SWT.NONE);
-			if (this.label != null && !this.label.trim().equals("")) {
-				((Group) composite).setText(this.label);
+			if (label != null && !label.trim().equals("")) {
+				((Group) composite).setText(label);
 			}
 		} else {
 			composite = new Composite(parent, SWT.BORDER);
@@ -101,9 +101,9 @@ public class PWGroup extends PWRowGroup {
 		final int numCol = computeNumberOfColumns();
 
 		composite.setLayout(new GridLayout(numCol, false));
-		composite.setLayoutData(new GridData(GridData.BEGINNING, GridData.FILL, false, false, this.parentNumberOfColums, 1));
+		composite.setLayoutData(new GridData(GridData.BEGINNING, GridData.FILL, false, false, parentNumberOfColums, 1));
 
-		for (final PWRow row : this.children) {
+		for (final PWRow row : children) {
 			row.setParentNumberOfColumns(numCol);
 			row.build(composite);
 		}
@@ -115,7 +115,7 @@ public class PWGroup extends PWRowGroup {
 	 */
 	private int computeNumberOfColumns() {
 		int numberOfColumns = 1;
-		for (final PWRow row : this.children) {
+		for (final PWRow row : children) {
 			numberOfColumns = Math.max(numberOfColumns, row.getNumberOfColums());
 		}
 		return numberOfColumns;
@@ -137,33 +137,31 @@ public class PWGroup extends PWRowGroup {
 	 */
 	@Override
 	public void enableOrDisable() {
-		if (this.enabler == null) {
+		if (enabler == null) {
 			return;
 		}
 
-		final boolean enabled = this.enabler.isEnabled();
-		for (final PWRow row : this.children) {
+		final boolean enabled = enabler.isEnabled();
+		for (final PWRow row : children) {
 			enableOrDisable(row, enabled);
 		}
 	}
 
 	/**
 	 * Enable or disable a row
-	 * 
+	 *
 	 * @param row row to enable or disable
 	 * @param enabled enable flag
 	 */
 	private void enableOrDisable(final PWRow row, final boolean enabled) {
 		for (final PWWidget widget : row.widgets) {
 			final boolean widgetEnable = widget.enableOrDisable();
-
 			for (final Control c : widget.getControls()) {
 				if (!c.isDisposed()) {
 					c.setEnabled(enabled && widgetEnable);
 				}
 			}
 		}
-
 	}
 
 }

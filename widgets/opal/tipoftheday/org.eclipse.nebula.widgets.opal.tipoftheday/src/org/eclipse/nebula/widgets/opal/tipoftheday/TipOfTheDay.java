@@ -18,8 +18,6 @@ import org.eclipse.nebula.widgets.opal.commons.SWTGraphicUtil;
 import org.eclipse.nebula.widgets.opal.header.Header;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
@@ -29,10 +27,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -120,16 +116,13 @@ public class TipOfTheDay {
 		shell.setText(ResourceManager.getLabel(ResourceManager.TIP_OF_THE_DAY));
 		shell.setLayout(new GridLayout(style == TipStyle.HEADER ? 1 : 2, false));
 
-		shell.addListener(SWT.Traverse, new Listener() {
-			@Override
-			public void handleEvent(final Event event) {
-				switch (event.detail) {
-					case SWT.TRAVERSE_ESCAPE:
-						shell.dispose();
-						event.detail = SWT.TRAVERSE_NONE;
-						event.doit = false;
-						break;
-				}
+		shell.addListener(SWT.Traverse, event -> {
+			switch (event.detail) {
+				case SWT.TRAVERSE_ESCAPE:
+					shell.dispose();
+					event.detail = SWT.TRAVERSE_NONE;
+					event.doit = false;
+					break;
 			}
 		});
 	}
@@ -303,12 +296,8 @@ public class TipOfTheDay {
 		checkBox.setLayoutData(gridData);
 		checkBox.setText(ResourceManager.getLabel(ResourceManager.SHOW_TIP_AT_STARTUP));
 		checkBox.setSelection(showOnStartup);
-		checkBox.addListener(SWT.Selection, new Listener() {
-
-			@Override
-			public void handleEvent(final Event event) {
-				showOnStartup = checkBox.getSelection();
-			}
+		checkBox.addListener(SWT.Selection, event -> {
+			showOnStartup = checkBox.getSelection();
 		});
 
 	}
@@ -323,20 +312,12 @@ public class TipOfTheDay {
 		final Button previous = new Button(composite, SWT.PUSH);
 		previous.setText(ResourceManager.getLabel(ResourceManager.PREVIOUS_TIP));
 		previous.setLayoutData(gridData);
-		previous.addSelectionListener(new SelectionAdapter() {
-
-			/**
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				if (index == 0) {
-					setIndex(tips.size() - 1);
-				} else {
-					setIndex(index - 1);
-				}
+		previous.addListener(SWT.Selection, event -> {
+			if (index == 0) {
+				setIndex(tips.size() - 1);
+			} else {
+				setIndex(index - 1);
 			}
-
 		});
 
 	}
@@ -352,18 +333,11 @@ public class TipOfTheDay {
 		next.setText(ResourceManager.getLabel(ResourceManager.NEXT_TIP));
 
 		next.setLayoutData(gridData);
-		next.addSelectionListener(new SelectionAdapter() {
-
-			/**
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				if (index == tips.size() - 1) {
-					setIndex(0);
-				} else {
-					setIndex(index + 1);
-				}
+		next.addListener(SWT.Selection, event -> {
+			if (index == tips.size() - 1) {
+				setIndex(0);
+			} else {
+				setIndex(index + 1);
 			}
 
 		});
@@ -380,18 +354,9 @@ public class TipOfTheDay {
 		close.setText(ResourceManager.getLabel(ResourceManager.CLOSE));
 
 		close.setLayoutData(gridData);
-		close.addSelectionListener(new SelectionAdapter() {
-
-			/**
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				shell.dispose();
-			}
-
+		close.addListener(SWT.Selection, event -> {
+			shell.dispose();
 		});
-
 	}
 
 	/**
@@ -477,8 +442,7 @@ public class TipOfTheDay {
 	 */
 	public void setIndex(final int index) {
 		if (index < 0 || index >= tips.size() || tips.get(index) == null) {
-			throw new IllegalArgumentException(
-					"Index should be between 0 and " + (tips.size() - 1) + " (entered value:" + index + ")");
+			throw new IllegalArgumentException("Index should be between 0 and " + (tips.size() - 1) + " (entered value:" + index + ")");
 		}
 
 		this.index = index;

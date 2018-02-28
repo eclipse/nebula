@@ -119,5 +119,4 @@ public class DLItem extends OpalItem {
 	public void setLastAction(final LAST_ACTION lastAction) {
 		this.lastAction = lastAction;
 	}
-
 }

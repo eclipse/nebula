@@ -15,8 +15,6 @@ import java.util.List;
 import org.eclipse.nebula.widgets.opal.duallist.DLItem;
 import org.eclipse.nebula.widgets.opal.duallist.DualList;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
@@ -113,12 +111,8 @@ public class DualListTextSnippet {
 		list.add(new DLItem("Sweden"));
 		list.add(new DLItem("United Kingdom"));
 
-		shell.addDisposeListener(new DisposeListener() {
-
-			@Override
-			public void widgetDisposed(final DisposeEvent e) {
-				font.dispose();
-			}
+		shell.addDisposeListener(e -> {
+			font.dispose();
 		});
 
 		return list;

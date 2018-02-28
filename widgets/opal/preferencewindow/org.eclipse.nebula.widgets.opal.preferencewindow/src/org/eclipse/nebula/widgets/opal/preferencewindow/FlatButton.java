@@ -16,7 +16,7 @@ import org.eclipse.nebula.widgets.opal.commons.SWTGraphicUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -108,44 +108,31 @@ class FlatButton extends Canvas {
 	}
 
 	private void addListeners() {
-		addPaintListener(new PaintListener() {
-			@Override
-			public void paintControl(final PaintEvent e) {
-				FlatButton.this.paintControl(e);
-			}
+		addPaintListener(e -> {
+			FlatButton.this.paintControl(e);
 		});
 
-		addListener(SWT.MouseEnter, new Listener() {
-			@Override
-			public void handleEvent(final Event event) {
-				mouseIn = true;
-				redraw();
-			}
+		addListener(SWT.MouseEnter, event -> {
+			mouseIn = true;
+			redraw();
 		});
 
-		addListener(SWT.MouseExit, new Listener() {
-			@Override
-			public void handleEvent(final Event event) {
-				mouseIn = false;
-				redraw();
-			}
+		addListener(SWT.MouseExit, event -> {
+			mouseIn = false;
+			redraw();
 		});
 
-		addListener(SWT.MouseUp, new Listener() {
-			@Override
-			public void handleEvent(final Event event) {
-				boolean doIt = true;
+		addListener(SWT.MouseUp, event -> {
+			boolean doIt = true;
+			selection = !selection;
+			for (final SelectionListener listener : listeners) {
+				final SelectionEvent sEvent = new SelectionEvent(event);
+				listener.widgetSelected(sEvent);
+				doIt = doIt && sEvent.doit;
+			}
+			if (!doIt) {
 				selection = !selection;
-				for (final SelectionListener listener : listeners) {
-					final SelectionEvent sEvent = new SelectionEvent(event);
-					listener.widgetSelected(sEvent);
-					doIt = doIt && sEvent.doit;
-				}
-				if (!doIt) {
-					selection = !selection;
-				}
 			}
-
 		});
 	}
 
@@ -389,7 +376,6 @@ class FlatButton extends Canvas {
 	 *                thread that created the receiver</li>
 	 *                </ul>
 	 */
-
 	public Color getSelectedTextColor() {
 		return selectedTextColor;
 	}
@@ -646,4 +632,20 @@ class FlatButton extends Canvas {
 		redraw();
 	}
 
+	/**
+	 * @see org.eclipse.swt.widgets.Widget#addListener(int, org.eclipse.swt.widgets.Listener)
+	 */
+	@Override
+	public void addListener(int eventType, Listener listener) {
+		if (eventType == SWT.Selection) {
+			addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					listener.handleEvent(new Event());
+				}
+			});
+			return;
+		}
+		super.addListener(eventType, listener);
+	}
 }

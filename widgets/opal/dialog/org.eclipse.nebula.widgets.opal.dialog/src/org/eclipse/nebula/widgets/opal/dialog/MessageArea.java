@@ -14,8 +14,6 @@ import org.eclipse.nebula.widgets.opal.commons.SWTGraphicUtil;
 import org.eclipse.nebula.widgets.opal.commons.StringUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -223,7 +221,6 @@ public class MessageArea extends DialogArea {
 		if (hasProgressBar) {
 			createProgressBar();
 		}
-
 	}
 
 	/**
@@ -268,7 +265,6 @@ public class MessageArea extends DialogArea {
 	 * @param hasTitle if <code>true</code> a title is displayed
 	 */
 	private void createText(final boolean hasIcon, final boolean hasTitle) {
-
 		label = new ReadOnlyStyledText(composite, SWT.NONE | (verticalScrollbar ? SWT.V_SCROLL : SWT.NONE));
 		label.setText(text);
 		SWTGraphicUtil.applyHTMLFormating(label);
@@ -303,18 +299,10 @@ public class MessageArea extends DialogArea {
 			button.setText(radioValues[i]);
 
 			final Integer index = Integer.valueOf(i);
-			button.addSelectionListener(new SelectionAdapter() {
-
-				/**
-				 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-				 */
-				@Override
-				public void widgetSelected(final SelectionEvent e) {
-					if (button.getSelection()) {
-						radioChoice = index.intValue();
-					}
+			button.addListener(SWT.Selection, e -> {
+				if (button.getSelection()) {
+					radioChoice = index.intValue();
 				}
-
 			});
 
 			button.setSelection(i == radioDefaultSelection);
@@ -345,23 +333,14 @@ public class MessageArea extends DialogArea {
 		textbox.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 		final GridData gd = new GridData(GridData.FILL, GridData.FILL, true, true, 1, 1);
 		textbox.setLayoutData(gd);
-		textbox.addModifyListener(new ModifyListener() {
-
-			@Override
-			public void modifyText(final ModifyEvent e) {
-				textBoxValue = textbox.getText();
-			}
+		textbox.addListener(SWT.Modify, e -> {
+			textBoxValue = textbox.getText();
 		});
 
-		textbox.addListener(SWT.KeyUp, new Listener() {
-
-			@Override
-			public void handleEvent(final Event e) {
-				if (e.keyCode == SWT.CR || e.keyCode == SWT.KEYPAD_CR) {
-					MessageArea.this.parent.shell.dispose();
-					MessageArea.this.parent.getFooterArea().selectedButtonIndex = 0;
-				}
-
+		textbox.addListener(SWT.KeyUp, e -> {
+			if (e.keyCode == SWT.CR || e.keyCode == SWT.KEYPAD_CR) {
+				MessageArea.this.parent.shell.dispose();
+				MessageArea.this.parent.getFooterArea().selectedButtonIndex = 0;
 			}
 		});
 

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Laurent CARON (laurent.caron at gmail dot com) - initial API and implementation 
+ * Laurent CARON (laurent.caron at gmail dot com) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.loginDialog;
 
@@ -17,12 +17,6 @@ import org.eclipse.nebula.widgets.opal.commons.ResourceManager;
 import org.eclipse.nebula.widgets.opal.commons.SWTGraphicUtil;
 import org.eclipse.nebula.widgets.opal.dialog.Dialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
@@ -74,24 +68,24 @@ public class LoginDialog {
 	 * Constructor
 	 */
 	public LoginDialog() {
-		this.displayRememberPassword = true;
+		displayRememberPassword = true;
 	}
 
 	/**
 	 * Open the Login box
-	 * 
+	 *
 	 * @return <code>true</code> if the authentication is OK, <code>false</code>
 	 *         if the user pressed on cancel.
 	 */
 	public boolean open() {
-		if (this.verifier == null) {
+		if (verifier == null) {
 			throw new IllegalArgumentException("Please set a verifier before opening the dialog box");
 		}
 
 		buildDialog();
 		openShell();
 
-		return this.returnedValue;
+		return returnedValue;
 	}
 
 	/**
@@ -103,7 +97,7 @@ public class LoginDialog {
 		buildDescription();
 		buildLogin();
 		buildPassword();
-		if (this.displayRememberPassword) {
+		if (displayRememberPassword) {
 			buildRememberPassword();
 		}
 		buildButtons();
@@ -113,9 +107,9 @@ public class LoginDialog {
 	 * Build the shell
 	 */
 	private void buildShell() {
-		this.shell = new Shell(SWT.SYSTEM_MODAL | SWT.TITLE | SWT.BORDER);
-		this.shell.setText(ResourceManager.getLabel(ResourceManager.LOGIN));
-		this.shell.setLayout(new GridLayout(4, false));
+		shell = new Shell(SWT.SYSTEM_MODAL | SWT.TITLE | SWT.BORDER);
+		shell.setText(ResourceManager.getLabel(ResourceManager.LOGIN));
+		shell.setLayout(new GridLayout(4, false));
 	}
 
 	/**
@@ -123,17 +117,13 @@ public class LoginDialog {
 	 * a default image
 	 */
 	private void buildImage() {
-		final Canvas canvas = new Canvas(this.shell, SWT.DOUBLE_BUFFERED);
+		final Canvas canvas = new Canvas(shell, SWT.DOUBLE_BUFFERED);
 		final GridData gridData = new GridData(GridData.FILL, GridData.FILL, true, false, 4, 1);
 		gridData.widthHint = 400;
 		gridData.heightHint = 60;
 		canvas.setLayoutData(gridData);
-		canvas.addPaintListener(new PaintListener() {
-
-			@Override
-			public void paintControl(final PaintEvent e) {
-				e.gc.drawImage(LoginDialog.this.image == null ? createDefaultImage(e.width, e.height) : LoginDialog.this.image, 0, 0);
-			}
+		canvas.addPaintListener(e -> {
+			e.gc.drawImage(image == null ? createDefaultImage(e.width, e.height) : image, 0, 0);
 		});
 
 	}
@@ -141,7 +131,7 @@ public class LoginDialog {
 	/**
 	 * Create a default image. It is a port of the image used by the Login Box
 	 * in the project SwingX
-	 * 
+	 *
 	 * @param w width
 	 * @param h height
 	 * @return a default image (blue wave)
@@ -191,7 +181,7 @@ public class LoginDialog {
 	 * Build the description part of the box
 	 */
 	private void buildDescription() {
-		final Label label = new Label(this.shell, SWT.NONE);
+		final Label label = new Label(shell, SWT.NONE);
 		final GridData gridData = new GridData(GridData.FILL, GridData.BEGINNING, true, false, 4, 1);
 		gridData.verticalIndent = 5;
 		gridData.horizontalIndent = 5;
@@ -200,10 +190,10 @@ public class LoginDialog {
 		label.setFont(bold);
 		SWTGraphicUtil.addDisposer(label, bold);
 
-		if (this.description == null || this.description.trim().equals("")) {
+		if (description == null || description.trim().equals("")) {
 			label.setText(" ");
 		} else {
-			label.setText(this.description);
+			label.setText(description);
 		}
 	}
 
@@ -211,14 +201,14 @@ public class LoginDialog {
 	 * Build the login part of the box
 	 */
 	private void buildLogin() {
-		final Label label = new Label(this.shell, SWT.NONE);
+		final Label label = new Label(shell, SWT.NONE);
 		final GridData gridData = new GridData(GridData.END, GridData.END, false, false, 1, 1);
 		gridData.horizontalIndent = 35;
 		gridData.verticalIndent = 15;
 		label.setLayoutData(gridData);
 		label.setText(ResourceManager.getLabel(ResourceManager.NAME));
 
-		if (this.autorizedLogin != null && !this.autorizedLogin.isEmpty()) {
+		if (autorizedLogin != null && !autorizedLogin.isEmpty()) {
 			// Combo
 			buildLoginCombo();
 		} else {
@@ -229,36 +219,28 @@ public class LoginDialog {
 	}
 
 	private void buildLoginCombo() {
-		final Combo combo = new Combo(this.shell, SWT.BORDER | SWT.READ_ONLY);
+		final Combo combo = new Combo(shell, SWT.BORDER | SWT.READ_ONLY);
 
 		combo.setLayoutData(new GridData(GridData.FILL, GridData.END, true, false, 3, 1));
-		for (final String loginToAdd : this.autorizedLogin) {
+		for (final String loginToAdd : autorizedLogin) {
 			combo.add(loginToAdd);
 		}
-		combo.setText(this.login == null ? "" : this.login);
+		combo.setText(login == null ? "" : login);
 		combo.setFocus();
-		combo.addModifyListener(new ModifyListener() {
-
-			@Override
-			public void modifyText(final ModifyEvent e) {
-				LoginDialog.this.login = combo.getText();
-				changeButtonOkState();
-			}
+		combo.addListener(SWT.Modify, e -> {
+			login = combo.getText();
+			changeButtonOkState();
 		});
 	}
 
 	private void buildLoginText() {
-		final Text text = new Text(this.shell, SWT.BORDER);
-		text.setText(this.login == null ? "" : this.login);
+		final Text text = new Text(shell, SWT.BORDER);
+		text.setText(login == null ? "" : login);
 		text.setLayoutData(new GridData(GridData.FILL, GridData.END, true, false, 3, 1));
 		text.setFocus();
-		text.addModifyListener(new ModifyListener() {
-
-			@Override
-			public void modifyText(final ModifyEvent e) {
-				LoginDialog.this.login = text.getText();
-				changeButtonOkState();
-			}
+		text.addListener(SWT.Modify, e -> {
+			login = text.getText();
+			changeButtonOkState();
 		});
 	}
 
@@ -266,22 +248,18 @@ public class LoginDialog {
 	 * Build the password part of the box
 	 */
 	private void buildPassword() {
-		final Label label = new Label(this.shell, SWT.NONE);
+		final Label label = new Label(shell, SWT.NONE);
 		final GridData gridData = new GridData(GridData.END, GridData.CENTER, false, false, 1, 1);
 		gridData.horizontalIndent = 35;
 		label.setLayoutData(gridData);
 		label.setText(ResourceManager.getLabel(ResourceManager.PASSWORD));
 
-		final Text text = new Text(this.shell, SWT.PASSWORD | SWT.BORDER);
-		text.setText(this.password == null ? "" : this.password);
+		final Text text = new Text(shell, SWT.PASSWORD | SWT.BORDER);
+		text.setText(password == null ? "" : password);
 		text.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 3, 1));
-		text.addModifyListener(new ModifyListener() {
-
-			@Override
-			public void modifyText(final ModifyEvent e) {
-				LoginDialog.this.password = text.getText();
-				changeButtonOkState();
-			}
+		text.addListener(SWT.Modify, e -> {
+			password = text.getText();
+			changeButtonOkState();
 		});
 	}
 
@@ -290,21 +268,21 @@ public class LoginDialog {
 	 * not)
 	 */
 	private void changeButtonOkState() {
-		final boolean loginEntered = this.login != null && !this.login.trim().equals("");
-		final boolean passwordEntered = this.password != null && !this.password.trim().equals("");
-		this.buttonOk.setEnabled(loginEntered && passwordEntered);
+		final boolean loginEntered = login != null && !login.trim().equals("");
+		final boolean passwordEntered = password != null && !password.trim().equals("");
+		buttonOk.setEnabled(loginEntered && passwordEntered);
 	}
 
 	/**
 	 * Build the "remember password" part of the box
 	 */
 	private void buildRememberPassword() {
-		final Button checkbox = new Button(this.shell, SWT.CHECK);
+		final Button checkbox = new Button(shell, SWT.CHECK);
 		final GridData gridData = new GridData(GridData.BEGINNING, GridData.CENTER, true, false, 4, 1);
 		gridData.horizontalIndent = 35;
 		checkbox.setLayoutData(gridData);
 		checkbox.setText(ResourceManager.getLabel(ResourceManager.REMEMBER_PASSWORD));
-		checkbox.setSelection(this.rememberPassword);
+		checkbox.setSelection(rememberPassword);
 	}
 
 	/**
@@ -316,31 +294,25 @@ public class LoginDialog {
 	}
 
 	private void buildOkButton() {
-		this.buttonOk = new Button(this.shell, SWT.PUSH);
+		buttonOk = new Button(shell, SWT.PUSH);
 		final GridData gdOk = new GridData(GridData.END, GridData.CENTER, true, false, 3, 1);
 		gdOk.verticalIndent = 60;
 		gdOk.minimumWidth = 80;
-		this.buttonOk.setLayoutData(gdOk);
-		this.buttonOk.setText(ResourceManager.getLabel(ResourceManager.OK));
-		this.buttonOk.setEnabled(false);
+		buttonOk.setLayoutData(gdOk);
+		buttonOk.setText(ResourceManager.getLabel(ResourceManager.OK));
+		buttonOk.setEnabled(false);
 
-		this.buttonOk.addSelectionListener(new SelectionAdapter() {
-			/**
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void widgetSelected(final SelectionEvent selectionEvent) {
-				try {
-					LoginDialog.this.verifier.authenticate(LoginDialog.this.login, LoginDialog.this.password);
-					LoginDialog.this.returnedValue = true;
-					LoginDialog.this.shell.dispose();
-				} catch (final Exception e) {
-					Dialog.error(ResourceManager.getLabel(ResourceManager.LOGIN_FAILED), e.getMessage());
-					for (final Control control : LoginDialog.this.shell.getChildren()) {
-						if (control instanceof Text || control instanceof Combo) {
-							control.setFocus();
-							break;
-						}
+		buttonOk.addListener(SWT.Selection, event -> {
+			try {
+				verifier.authenticate(login, password);
+				returnedValue = true;
+				shell.dispose();
+			} catch (final Exception e) {
+				Dialog.error(ResourceManager.getLabel(ResourceManager.LOGIN_FAILED), e.getMessage());
+				for (final Control control : shell.getChildren()) {
+					if (control instanceof Text || control instanceof Combo) {
+						control.setFocus();
+						break;
 					}
 				}
 			}
@@ -348,21 +320,15 @@ public class LoginDialog {
 	}
 
 	private void buildCancelButton() {
-		final Button buttonCancel = new Button(this.shell, SWT.PUSH);
+		final Button buttonCancel = new Button(shell, SWT.PUSH);
 		final GridData gdCancel = new GridData(GridData.FILL, GridData.CENTER, false, false);
 		gdCancel.widthHint = 80;
 		gdCancel.verticalIndent = 60;
 		buttonCancel.setLayoutData(gdCancel);
 		buttonCancel.setText(ResourceManager.getLabel(ResourceManager.CANCEL));
-		buttonCancel.addSelectionListener(new SelectionAdapter() {
-			/**
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				LoginDialog.this.returnedValue = false;
-				LoginDialog.this.shell.dispose();
-			}
+		buttonCancel.addListener(SWT.Selection, event -> {
+			returnedValue = false;
+			shell.dispose();
 		});
 	}
 
@@ -370,13 +336,13 @@ public class LoginDialog {
 	 * Open the shell
 	 */
 	private void openShell() {
-		this.shell.setDefaultButton(this.buttonOk);
-		this.shell.pack();
-		this.shell.open();
-		SWTGraphicUtil.centerShell(this.shell);
-		while (!this.shell.isDisposed()) {
-			if (!this.shell.getDisplay().readAndDispatch()) {
-				this.shell.getDisplay().sleep();
+		shell.setDefaultButton(buttonOk);
+		shell.pack();
+		shell.open();
+		SWTGraphicUtil.centerShell(shell);
+		while (!shell.isDisposed()) {
+			if (!shell.getDisplay().readAndDispatch()) {
+				shell.getDisplay().sleep();
 			}
 		}
 	}
@@ -386,35 +352,35 @@ public class LoginDialog {
 	 * @return the image
 	 */
 	public Image getImage() {
-		return this.image;
+		return image;
 	}
 
 	/**
 	 * @return the description
 	 */
 	public String getDescription() {
-		return this.description;
+		return description;
 	}
 
 	/**
 	 * @return the login
 	 */
 	public String getLogin() {
-		return this.login == null ? null : this.login.trim();
+		return login == null ? null : login.trim();
 	}
 
 	/**
 	 * @return the password
 	 */
 	public String getPassword() {
-		return this.password == null ? null : this.password.trim();
+		return password == null ? null : password.trim();
 	}
 
 	/**
 	 * @return the list of autorized logins
 	 */
 	public List<String> getAutorizedLogin() {
-		return this.autorizedLogin;
+		return autorizedLogin;
 	}
 
 	/**
@@ -422,7 +388,7 @@ public class LoginDialog {
 	 *         displayed, <code>false</code> otherwise
 	 */
 	public boolean isDisplayRememberPassword() {
-		return this.displayRememberPassword;
+		return displayRememberPassword;
 	}
 
 	/**
@@ -430,14 +396,14 @@ public class LoginDialog {
 	 *         checked, <code>false</code> otherwise
 	 */
 	public boolean isRememberPassword() {
-		return this.rememberPassword;
+		return rememberPassword;
 	}
 
 	/**
 	 * @return the verifier associated to this box
 	 */
 	public LoginDialogVerifier getVerifier() {
-		return this.verifier;
+		return verifier;
 	}
 
 	/**

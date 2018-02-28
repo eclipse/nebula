@@ -197,7 +197,7 @@ public class RoundedToolbar extends Canvas {
 		});
 
 		addPaintListener(e -> {
-			RoundedToolbar.this.paintControl(e);
+			paintControl(e);
 		});
 	}
 

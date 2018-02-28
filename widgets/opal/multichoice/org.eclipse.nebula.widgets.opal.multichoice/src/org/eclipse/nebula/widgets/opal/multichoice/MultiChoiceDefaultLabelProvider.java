@@ -22,5 +22,4 @@ public class MultiChoiceDefaultLabelProvider implements MultiChoiceLabelProvider
 	public String getText(final Object element) {
 		return element == null ? "" : element.toString();
 	}
-
 }

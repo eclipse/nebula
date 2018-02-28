@@ -20,10 +20,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -67,13 +65,9 @@ public abstract class PTWindowEditor extends PTChooserEditor {
 		okLayoutData.widthHint = 150;
 		ok.setLayoutData(okLayoutData);
 		ok.setText(ResourceManager.getLabel(ResourceManager.OK));
-		ok.addListener(SWT.Selection, new Listener() {
-
-			@Override
-			public void handleEvent(final Event event) {
-				fillProperty(item, property);
-				shell.dispose();
-			}
+		ok.addListener(SWT.Selection, event -> {
+			fillProperty(item, property);
+			shell.dispose();
 		});
 
 		final Button cancel = new Button(composite, SWT.PUSH);
@@ -81,12 +75,8 @@ public abstract class PTWindowEditor extends PTChooserEditor {
 		cancelLayoutData.widthHint = 150;
 		cancel.setLayoutData(cancelLayoutData);
 		cancel.setText(ResourceManager.getLabel(ResourceManager.CANCEL));
-		cancel.addListener(SWT.Selection, new Listener() {
-
-			@Override
-			public void handleEvent(final Event event) {
-				shell.dispose();
-			}
+		cancel.addListener(SWT.Selection, event -> {
+			shell.dispose();
 		});
 
 		shell.setDefaultButton(ok);
@@ -138,17 +128,14 @@ public abstract class PTWindowEditor extends PTChooserEditor {
 	 * @param text text widget
 	 */
 	protected void addVerifyListeners(final Text text) {
-		text.addListener(SWT.Verify, new Listener() {
-			@Override
-			public void handleEvent(final Event e) {
-				final String string = e.text;
-				final char[] chars = new char[string.length()];
-				string.getChars(0, chars.length, chars, 0);
-				for (int i = 0; i < chars.length; i++) {
-					if (!('0' <= chars[i] && chars[i] <= '9') && e.keyCode != SWT.BS && e.keyCode != SWT.DEL) {
-						e.doit = false;
-						return;
-					}
+		text.addListener(SWT.Verify, e -> {
+			final String string = e.text;
+			final char[] chars = new char[string.length()];
+			string.getChars(0, chars.length, chars, 0);
+			for (int i = 0; i < chars.length; i++) {
+				if (!('0' <= chars[i] && chars[i] <= '9') && e.keyCode != SWT.BS && e.keyCode != SWT.DEL) {
+					e.doit = false;
+					return;
 				}
 			}
 		});

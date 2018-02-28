@@ -21,9 +21,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -96,8 +94,7 @@ public class Notifier {
 	 * @see NotifierTheme
 	 */
 	public static void notify(final Image image, final String title, final String text, final NotifierTheme theme) {
-		final Shell shell = createNotificationWindow(image, title, text,
-				NotifierColorsFactory.getColorsForTheme(theme));
+		final Shell shell = createNotificationWindow(image, title, text, NotifierColorsFactory.getColorsForTheme(theme));
 		makeShellAppears(shell);
 	}
 
@@ -110,8 +107,7 @@ public class Notifier {
 	 * @param colors color set
 	 * @return the notification window as a shell object
 	 */
-	protected static Shell createNotificationWindow(final Image image, final String title, final String text,
-			final NotifierColors colors) {
+	protected static Shell createNotificationWindow(final Image image, final String title, final String text, final NotifierColors colors) {
 		final Shell shell = new Shell(Display.getDefault().getActiveShell(), SWT.NO_TRIM | SWT.NO_FOCUS | SWT.ON_TOP);
 		shell.setLayout(new GridLayout(2, false));
 		shell.setBackgroundMode(SWT.INHERIT_FORCE);
@@ -122,12 +118,8 @@ public class Notifier {
 		createBackground(shell, colors);
 		createCloseAction(shell);
 
-		shell.addListener(SWT.Dispose, new Listener() {
-
-			@Override
-			public void handleEvent(final Event event) {
-				colors.dispose();
-			}
+		shell.addListener(SWT.Dispose, event -> {
+			colors.dispose();
 		});
 
 		shell.pack();
@@ -209,38 +201,33 @@ public class Notifier {
 	 * @param colors the color set of the window
 	 */
 	private static void createBackground(final Shell shell, final NotifierColors colors) {
-		shell.addListener(SWT.Resize, new Listener() {
+		shell.addListener(SWT.Resize, event -> {
+			final Rectangle rect = shell.getClientArea();
+			final Image newImage = new Image(Display.getDefault(), Math.max(1, rect.width), rect.height);
+			final GC gc = new GC(newImage);
+			gc.setAntialias(SWT.ON);
 
-			@Override
-			public void handleEvent(final Event event) {
-				final Rectangle rect = shell.getClientArea();
-				final Image newImage = new Image(Display.getDefault(), Math.max(1, rect.width), rect.height);
-				final GC gc = new GC(newImage);
-				gc.setAntialias(SWT.ON);
+			final Color borderColor = colors.borderColor;
+			final Color fillColor1 = colors.leftColor;
+			final Color fillColor2 = colors.rightColor;
 
-				final Color borderColor = colors.borderColor;
-				final Color fillColor1 = colors.leftColor;
-				final Color fillColor2 = colors.rightColor;
+			gc.setBackground(borderColor);
+			gc.fillRoundRectangle(0, 0, rect.width, rect.height, 8, 8);
 
-				gc.setBackground(borderColor);
-				gc.fillRoundRectangle(0, 0, rect.width, rect.height, 8, 8);
+			gc.setBackground(fillColor1);
+			gc.fillRoundRectangle(1, 1, rect.width - 2, rect.height - 2, 8, 8);
 
-				gc.setBackground(fillColor1);
-				gc.fillRoundRectangle(1, 1, rect.width - 2, rect.height - 2, 8, 8);
+			gc.setBackground(fillColor2);
+			gc.fillRoundRectangle(30, 1, rect.width - 32, rect.height - 2, 8, 8);
+			gc.fillRectangle(30, 1, 10, rect.height - 2);
 
-				gc.setBackground(fillColor2);
-				gc.fillRoundRectangle(30, 1, rect.width - 32, rect.height - 2, 8, 8);
-				gc.fillRectangle(30, 1, 10, rect.height - 2);
+			final Image closeImage = SWTGraphicUtil.createImageFromFile("images/close.png");
+			gc.drawImage(closeImage, rect.width - 21, 13);
 
-				final Image closeImage = SWTGraphicUtil.createImageFromFile("images/close.png");
-				gc.drawImage(closeImage, rect.width - 21, 13);
+			gc.dispose();
+			closeImage.dispose();
 
-				gc.dispose();
-				closeImage.dispose();
-
-				shell.setBackgroundImage(newImage);
-
-			}
+			shell.setBackgroundImage(newImage);
 		});
 
 	}
@@ -325,22 +312,14 @@ public class Notifier {
 	 * @param shell associated shell
 	 */
 	private static void createCloseAction(final Shell shell) {
-		shell.addListener(SWT.MouseUp, new Listener() {
+		shell.addListener(SWT.MouseUp, event -> {
+			final Rectangle rect = shell.getClientArea();
+			final int xUpperLeftCorner = rect.width - 21;
+			final int yUpperLeftCorner = 13;
 
-			@Override
-			public void handleEvent(final Event event) {
-				final Rectangle rect = shell.getClientArea();
-				final int xUpperLeftCorner = rect.width - 21;
-				final int yUpperLeftCorner = 13;
-
-				if (event.x >= xUpperLeftCorner && event.x <= xUpperLeftCorner + 8 && event.y >= yUpperLeftCorner
-						&& event.y <= yUpperLeftCorner + 8) {
-					Display.getDefault().timerExec(0, fadeOut(shell, true));
-				}
-
+			if (event.x >= xUpperLeftCorner && event.x <= xUpperLeftCorner + 8 && event.y >= yUpperLeftCorner && event.y <= yUpperLeftCorner + 8) {
+				Display.getDefault().timerExec(0, fadeOut(shell, true));
 			}
 		});
-
 	}
-
 }

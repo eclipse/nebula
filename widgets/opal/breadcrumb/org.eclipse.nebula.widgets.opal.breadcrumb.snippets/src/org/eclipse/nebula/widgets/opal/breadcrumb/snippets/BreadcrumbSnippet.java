@@ -59,8 +59,7 @@ public class BreadcrumbSnippet {
 		images = new Image[5];
 		final String[] fileNames = new String[] { "add.png", "bell.png", "feed.png", "house.png", "script.png" };
 		for (int i = 0; i < 5; i++) {
-			final Image image = new Image(Display.getCurrent(),
-					BreadcrumbSnippet.class.getResourceAsStream(fileNames[i]));
+			final Image image = new Image(Display.getCurrent(), BreadcrumbSnippet.class.getResourceAsStream(fileNames[i]));
 			images[i] = image;
 		}
 	}
@@ -76,8 +75,7 @@ public class BreadcrumbSnippet {
 		createBreadcrumb(shell, SWT.NONE, SWT.CENTER, false);
 	}
 
-	private static void createBreadcrumb(final Shell shell, final int breadCrumbArgument, final int itemArgument,
-			final boolean showImages) {
+	private static void createBreadcrumb(final Shell shell, final int breadCrumbArgument, final int itemArgument, final boolean showImages) {
 		final Breadcrumb bc = new Breadcrumb(shell, breadCrumbArgument);
 		bc.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false));
 

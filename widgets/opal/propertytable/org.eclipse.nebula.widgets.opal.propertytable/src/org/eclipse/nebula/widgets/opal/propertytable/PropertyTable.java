@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Laurent CARON (laurent.caron at gmail dot com) - initial API and implementation
+ * Laurent CARON (laurent.caron at gmail dot com) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.propertytable;
 
@@ -19,8 +19,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 
 /**
  * Instances of this class are property sheets
@@ -87,14 +85,11 @@ public class PropertyTable extends Composite {
 
 		widget = PTWidgetFactory.build(this);
 
-		addListener(SWT.Resize, new Listener() {
-			@Override
-			public void handleEvent(final Event event) {
-				// Draw the widget on first displaying
-				if (!hasBeenBuilt) {
-					widget.build();
-					hasBeenBuilt = true;
-				}
+		addListener(SWT.Resize, event -> {
+			// Draw the widget on first displaying
+			if (!hasBeenBuilt) {
+				widget.build();
+				hasBeenBuilt = true;
 			}
 		});
 

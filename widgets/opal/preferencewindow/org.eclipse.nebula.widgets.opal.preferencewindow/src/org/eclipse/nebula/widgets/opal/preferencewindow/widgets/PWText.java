@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Laurent CARON (laurent.caron at gmail dot com) - Initial implementation and API
+ * Laurent CARON (laurent.caron at gmail dot com) - Initial implementation and API
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.preferencewindow.widgets;
 
@@ -15,8 +15,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 /**
@@ -28,7 +26,7 @@ public abstract class PWText extends PWWidget {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param label associated label
 	 * @param propertyKey associated property key
 	 */
@@ -43,17 +41,14 @@ public abstract class PWText extends PWWidget {
 	@Override
 	public Control build(final Composite parent) {
 		buildLabel(parent, GridData.CENTER);
-		this.text = new Text(parent, SWT.BORDER | getStyle());
-		addControl(this.text);
+		text = new Text(parent, SWT.BORDER | getStyle());
+		addControl(text);
 		addVerifyListeners();
-		this.text.setText(PreferenceWindow.getInstance().getValueFor(getPropertyKey()).toString());
-		this.text.addListener(SWT.Modify, new Listener() {
-			@Override
-			public void handleEvent(final Event event) {
-				PreferenceWindow.getInstance().setValue(getPropertyKey(), convertValue());
-			}
+		text.setText(PreferenceWindow.getInstance().getValueFor(getPropertyKey()).toString());
+		text.addListener(SWT.Modify, event -> {
+			PreferenceWindow.getInstance().setValue(getPropertyKey(), convertValue());
 		});
-		return this.text;
+		return text;
 	}
 
 	/**

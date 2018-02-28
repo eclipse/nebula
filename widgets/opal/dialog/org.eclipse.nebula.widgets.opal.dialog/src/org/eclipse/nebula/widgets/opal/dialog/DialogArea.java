@@ -11,8 +11,6 @@ package org.eclipse.nebula.widgets.opal.dialog;
 
 import org.eclipse.nebula.widgets.opal.commons.SWTGraphicUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -89,12 +87,8 @@ abstract class DialogArea {
 	 */
 	private Font getFont(final String name, final int size, final int style) {
 		final Font font = new Font(Display.getCurrent(), name, size, style);
-		parent.shell.addDisposeListener(new DisposeListener() {
-
-			@Override
-			public void widgetDisposed(final DisposeEvent e) {
-				SWTGraphicUtil.safeDispose(font);
-			}
+		parent.shell.addDisposeListener(e -> {
+			SWTGraphicUtil.safeDispose(font);
 		});
 		return font;
 	}

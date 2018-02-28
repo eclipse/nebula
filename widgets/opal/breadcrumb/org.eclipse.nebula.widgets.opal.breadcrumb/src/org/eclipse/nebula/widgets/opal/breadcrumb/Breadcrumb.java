@@ -17,14 +17,11 @@ import org.eclipse.nebula.widgets.opal.commons.SWTGraphicUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Widget;
 
 /**
@@ -103,80 +100,77 @@ public class Breadcrumb extends Canvas {
 		addMouseDownListener();
 		addMouseUpListener();
 		addMouseHoverListener();
-		addPaintListener(new PaintListener() {
-			@Override
-			public void paintControl(final PaintEvent e) {
-				Breadcrumb.this.paintControl(e);
-			}
+		addPaintListener(e -> {
+			paintControl(e);
 		});
 	}
 
 	private void addMouseDownListener() {
-		addListener(SWT.MouseDown, new Listener() {
-			@Override
-			public void handleEvent(final Event event) {
-				for (final BreadcrumbItem item : items) {
-					if (item.getBounds().contains(event.x, event.y)) {
-						final boolean isToggle = (item.getStyle() & SWT.TOGGLE) != 0;
-						final boolean isPush = (item.getStyle() & SWT.PUSH) != 0;
-						if (isToggle || isPush) {
-							item.setSelection(!item.getSelection());
-							redraw();
-							update();
-						}
-						item.setData(IS_BUTTON_PRESSED, "*");
-						return;
-					}
-				}
+		addListener(SWT.MouseDown, event -> {
+
+			final BreadcrumbItem item = items.stream()//
+					.filter(element -> element.getBounds().contains(event.x, event.y)) //
+					.findFirst() //
+					.orElse(null);
+			if (item == null) {
+				return;
 			}
+			final boolean isToggle = (item.getStyle() & SWT.TOGGLE) != 0;
+			final boolean isPush = (item.getStyle() & SWT.PUSH) != 0;
+			if (isToggle || isPush) {
+				item.setSelection(!item.getSelection());
+				redraw();
+				update();
+			}
+			item.setData(IS_BUTTON_PRESSED, "*");
 		});
+
 	}
 
 	private void addMouseUpListener() {
-		addListener(SWT.MouseUp, new Listener() {
-			@Override
-			public void handleEvent(final Event event) {
-				for (final BreadcrumbItem item : items) {
-					if (item.getBounds().contains(event.x, event.y)) {
-						if (item.getData(IS_BUTTON_PRESSED) == null) {
-							// The button was not pressed
-							return;
-						}
-						item.setData(IS_BUTTON_PRESSED, null);
+		addListener(SWT.MouseUp, event -> {
 
-						if ((item.getStyle() & SWT.PUSH) != 0) {
-							item.setSelection(false);
-						}
+			final BreadcrumbItem item = items.stream()//
+					.filter(element -> element.getBounds().contains(event.x, event.y)) //
+					.findFirst() //
+					.orElse(null);
+			if (item == null) {
+				return;
+			}
+			if (item.getData(IS_BUTTON_PRESSED) == null) {
+				// The button was not pressed
+				return;
+			}
+			item.setData(IS_BUTTON_PRESSED, null);
 
-						if ((item.getStyle() & (SWT.TOGGLE | SWT.PUSH)) != 0) {
-							item.fireSelectionEvent();
-							redraw();
-							update();
-						}
-						return;
-					}
-				}
+			if ((item.getStyle() & SWT.PUSH) != 0) {
+				item.setSelection(false);
+			}
+
+			if ((item.getStyle() & (SWT.TOGGLE | SWT.PUSH)) != 0) {
+				item.fireSelectionEvent();
+				redraw();
+				update();
 			}
 		});
 	}
 
 	private void addMouseHoverListener() {
-		addListener(SWT.MouseHover, new Listener() {
-			@Override
-			public void handleEvent(final Event event) {
-				for (final BreadcrumbItem item : items) {
-					if (item.getBounds().contains(event.x, event.y)) {
-						setToolTipText(item.getTooltipText() == null ? "" : item.getTooltipText());
-						return;
-					}
-				}
+		addListener(SWT.MouseHover, event -> {
+			final BreadcrumbItem item = items.stream()//
+					.filter(element -> element.getBounds().contains(event.x, event.y)) //
+					.findFirst() //
+					.orElse(null);
+			if (item == null) {
+				return;
 			}
+			setToolTipText(item.getTooltipText() == null ? "" : item.getTooltipText());
 		});
 	}
 
 	/**
 	 * Paint the component
-	 * 
+	 *
 	 * @param e event
 	 */
 	private void paintControl(final PaintEvent e) {
@@ -211,7 +205,7 @@ public class Breadcrumb extends Canvas {
 
 	/**
 	 * Add an item to the toolbar
-	 * 
+	 *
 	 * @param item roundedToolItem to add
 	 */
 	void addItem(final BreadcrumbItem item) {
@@ -280,12 +274,11 @@ public class Breadcrumb extends Canvas {
 	 */
 	public BreadcrumbItem getItem(final Point point) {
 		checkWidget();
-		for (final BreadcrumbItem item : items) {
-			if (item.getBounds().contains(point)) {
-				return item;
-			}
-		}
-		return null;
+		final BreadcrumbItem item = items.stream()//
+				.filter(element -> element.getBounds().contains(point)) //
+				.findFirst() //
+				.orElse(null);
+		return item;
 	}
 
 	/**
@@ -358,7 +351,7 @@ public class Breadcrumb extends Canvas {
 
 	/**
 	 * Remove an item to the toolbar
-	 * 
+	 *
 	 * @param item item to remove
 	 */
 	public void removeItem(final BreadcrumbItem item) {

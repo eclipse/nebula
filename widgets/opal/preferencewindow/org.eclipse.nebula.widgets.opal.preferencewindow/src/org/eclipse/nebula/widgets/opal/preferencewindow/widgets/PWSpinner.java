@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Laurent CARON (laurent.caron at gmail dot com) - Initial implementation and API
+ * Laurent CARON (laurent.caron at gmail dot com) - Initial implementation and API
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.preferencewindow.widgets;
 
@@ -15,8 +15,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Spinner;
 
 /**
@@ -28,7 +26,7 @@ public class PWSpinner extends PWWidget {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param label associated label
 	 * @param propertyKey associated key
 	 * @param min minimum value
@@ -48,16 +46,13 @@ public class PWSpinner extends PWWidget {
 		buildLabel(parent, GridData.CENTER);
 		final Spinner spinner = new Spinner(parent, SWT.HORIZONTAL | SWT.BORDER);
 		addControl(spinner);
-		spinner.setMinimum(this.min);
-		spinner.setMaximum(this.max);
+		spinner.setMinimum(min);
+		spinner.setMaximum(max);
 		final Integer originalValue = (Integer) PreferenceWindow.getInstance().getValueFor(getPropertyKey());
 		spinner.setSelection(originalValue.intValue());
 
-		spinner.addListener(SWT.Modify, new Listener() {
-			@Override
-			public void handleEvent(final Event event) {
-				PreferenceWindow.getInstance().setValue(getPropertyKey(), Integer.valueOf(spinner.getSelection()));
-			}
+		spinner.addListener(SWT.Modify, event -> {
+			PreferenceWindow.getInstance().setValue(getPropertyKey(), Integer.valueOf(spinner.getSelection()));
 		});
 
 		return spinner;
@@ -70,15 +65,15 @@ public class PWSpinner extends PWWidget {
 	public void check() {
 		final Object value = PreferenceWindow.getInstance().getValueFor(getPropertyKey());
 		if (value == null) {
-			PreferenceWindow.getInstance().setValue(getPropertyKey(), Integer.valueOf(this.min));
+			PreferenceWindow.getInstance().setValue(getPropertyKey(), Integer.valueOf(min));
 		} else {
 			if (!(value instanceof Integer)) {
 				throw new UnsupportedOperationException("The property '" + getPropertyKey() + "' has to be an Integer because it is associated to a spinner");
 			}
 
 			final int valueAsInt = ((Integer) value).intValue();
-			if (valueAsInt < this.min || valueAsInt > this.max) {
-				throw new UnsupportedOperationException("The property '" + getPropertyKey() + "' is out of range (value is " + valueAsInt + ", range is " + this.min + "-" + this.max + ")");
+			if (valueAsInt < min || valueAsInt > max) {
+				throw new UnsupportedOperationException("The property '" + getPropertyKey() + "' is out of range (value is " + valueAsInt + ", range is " + min + "-" + max + ")");
 			}
 		}
 	}

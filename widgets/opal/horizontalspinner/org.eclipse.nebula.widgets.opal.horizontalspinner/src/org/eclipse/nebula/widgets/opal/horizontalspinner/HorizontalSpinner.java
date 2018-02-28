@@ -17,13 +17,9 @@ import java.util.List;
 import org.eclipse.nebula.widgets.opal.commons.StringUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.events.VerifyEvent;
-import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
@@ -197,36 +193,26 @@ public class HorizontalSpinner extends Composite {
 	 * Add the text listeners
 	 */
 	private void addTextListeners() {
-		text.addVerifyListener(new VerifyListener() {
-			@Override
-			public void verifyText(final VerifyEvent e) {
-				if (e.character != 0 && !(Character.isDigit(e.character) || e.character == '-') && e.keyCode != SWT.BS && e.keyCode != SWT.DEL) {
-					e.doit = false;
-					return;
-				}
-				e.doit = verifyEntryAndStoreValue(e.text, e.keyCode);
+		text.addListener(SWT.Verify, e -> {
+			if (e.character != 0 && !(Character.isDigit(e.character) || e.character == '-') && e.keyCode != SWT.BS && e.keyCode != SWT.DEL) {
+				e.doit = false;
+				return;
 			}
+			e.doit = verifyEntryAndStoreValue(e.text, e.keyCode);
 		});
 
-		text.addKeyListener(new KeyAdapter() {
-
-			/**
-			 * @see org.eclipse.swt.events.KeyAdapter#keyReleased(org.eclipse.swt.events.KeyEvent)
-			 */
-			@Override
-			public void keyReleased(final KeyEvent e) {
-				if (e.keyCode == SWT.ARROW_UP) {
-					increaseValue(increment);
-				}
-				if (e.keyCode == SWT.ARROW_DOWN) {
-					decreaseValue(increment);
-				}
-				if (e.keyCode == SWT.PAGE_UP) {
-					increaseValue(pageIncrement);
-				}
-				if (e.keyCode == SWT.PAGE_DOWN) {
-					decreaseValue(pageIncrement);
-				}
+		text.addListener(SWT.KeyUp, e -> {
+			if (e.keyCode == SWT.ARROW_UP) {
+				increaseValue(increment);
+			}
+			if (e.keyCode == SWT.ARROW_DOWN) {
+				decreaseValue(increment);
+			}
+			if (e.keyCode == SWT.PAGE_UP) {
+				increaseValue(pageIncrement);
+			}
+			if (e.keyCode == SWT.PAGE_DOWN) {
+				decreaseValue(pageIncrement);
 			}
 
 		});

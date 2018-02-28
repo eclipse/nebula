@@ -14,9 +14,6 @@ import org.eclipse.nebula.widgets.opal.commons.SWTGraphicUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -96,11 +93,8 @@ public class HeapManager extends Composite {
 		gd.heightHint = 30;
 		bar.setLayoutData(gd);
 		heapMaxSize = (int) (Runtime.getRuntime().maxMemory() / (1024 * 1024));
-		bar.addPaintListener(new PaintListener() {
-			@Override
-			public void paintControl(final PaintEvent e) {
-				drawBar(e);
-			}
+		bar.addPaintListener(e -> {
+			drawBar(e);
 		});
 	}
 
@@ -149,14 +143,8 @@ public class HeapManager extends Composite {
 		button.setImage(image);
 		SWTGraphicUtil.addDisposer(button, image);
 		button.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, false));
-		button.addSelectionListener(new SelectionAdapter() {
-			/**
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				System.gc();
-			}
+		button.addListener(SWT.Selection, e -> {
+			System.gc();
 		});
 		button.setToolTipText(ResourceManager.getLabel(ResourceManager.PERFORM_GC));
 		button.pack();

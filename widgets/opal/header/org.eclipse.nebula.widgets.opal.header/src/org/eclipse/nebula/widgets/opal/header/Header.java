@@ -24,10 +24,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
-import org.eclipse.swt.widgets.Listener;
 
 /**
  * Instances of this class provide a header, which is composed of a text, a
@@ -87,11 +85,8 @@ public class Header extends Composite {
 
 		setBackgroundMode(SWT.INHERIT_FORCE);
 
-		addListener(SWT.Resize, new Listener() {
-			@Override
-			public void handleEvent(final Event event) {
-				redrawComposite();
-			}
+		addListener(SWT.Resize, e -> {
+			redrawComposite();
 		});
 	}
 
@@ -177,7 +172,6 @@ public class Header extends Composite {
 	 * Create the image
 	 */
 	private void createImage() {
-
 		int numberOfLines = 1;
 		if (title != null && description != null) {
 			numberOfLines++;
@@ -565,5 +559,4 @@ public class Header extends Composite {
 		checkWidget();
 		titleFont = headerFont;
 	}
-
 }

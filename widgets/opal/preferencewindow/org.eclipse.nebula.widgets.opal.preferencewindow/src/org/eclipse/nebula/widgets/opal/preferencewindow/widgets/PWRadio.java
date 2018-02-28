@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Laurent CARON (laurent.caron at gmail dot com) - Initial implementation and API
+ * Laurent CARON (laurent.caron at gmail dot com) - Initial implementation and API
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.preferencewindow.widgets;
 
@@ -21,12 +21,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 
 /**
  * Instances of this class are a group of radio buttons
- * 
+ *
  */
 public class PWRadio extends PWWidget {
 
@@ -35,14 +33,14 @@ public class PWRadio extends PWWidget {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param label associated label
 	 * @param propertyKey associated key
 	 */
 	public PWRadio(final String label, final String prop, final Object... values) {
 		super(null, prop, label == null ? 1 : 2, false);
-		this.data = new ArrayList<Object>(Arrays.asList(values));
-		this.buttons = new ArrayList<Button>();
+		data = new ArrayList<Object>(Arrays.asList(values));
+		buttons = new ArrayList<Button>();
 	}
 
 	/**
@@ -57,23 +55,20 @@ public class PWRadio extends PWWidget {
 		gridLayout.marginHeight = gridLayout.marginWidth = 0;
 		composite.setLayout(gridLayout);
 
-		for (final Object datum : this.data) {
+		for (final Object datum : data) {
 			final Button button = new Button(composite, SWT.RADIO);
 			addControl(button);
 			button.setText(datum.toString());
 			button.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false));
 			button.setSelection(datum.equals(PreferenceWindow.getInstance().getValueFor(getPropertyKey())));
 			button.setData(datum);
-			button.addListener(SWT.Selection, new Listener() {
-				@Override
-				public void handleEvent(final Event event) {
-					if (button.getSelection()) {
-						PreferenceWindow.getInstance().setValue(getPropertyKey(), button.getData());
-					}
+			button.addListener(SWT.Selection, event -> {
+				if (button.getSelection()) {
+					PreferenceWindow.getInstance().setValue(getPropertyKey(), button.getData());
 				}
 			});
 
-			this.buttons.add(button);
+			buttons.add(button);
 		}
 		return composite;
 	}
@@ -87,9 +82,9 @@ public class PWRadio extends PWWidget {
 		if (value == null) {
 			PreferenceWindow.getInstance().setValue(getPropertyKey(), null);
 		} else {
-			if (!this.data.isEmpty()) {
-				if (!value.getClass().equals(this.data.get(0).getClass())) {
-					throw new UnsupportedOperationException("The property '" + getPropertyKey() + "' has to be a " + this.data.get(0).getClass() + " because it is associated to a combo");
+			if (!data.isEmpty()) {
+				if (!value.getClass().equals(data.get(0).getClass())) {
+					throw new UnsupportedOperationException("The property '" + getPropertyKey() + "' has to be a " + data.get(0).getClass() + " because it is associated to a combo");
 				}
 			}
 		}

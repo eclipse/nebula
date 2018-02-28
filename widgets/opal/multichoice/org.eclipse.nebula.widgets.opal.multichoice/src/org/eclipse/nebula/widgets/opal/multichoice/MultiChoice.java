@@ -17,11 +17,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.nebula.widgets.opal.commons.ResourceManager;
-import org.eclipse.nebula.widgets.opal.commons.SimpleSelectionAdapter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -247,7 +245,7 @@ public class MultiChoice<T> extends Composite {
 
 		final String messageToDisplay;
 		if (fieldsInError.size() == 1) {
-			messageToDisplay = String.format(ResourceManager.getLabel(ResourceManager.MULTICHOICE_MESSAGE),
+			messageToDisplay = String.format(ResourceManager.getLabel(ResourceManager.MULTICHOICE_MESSAGE), //
 					fieldsInError.get(0));
 		} else {
 			final StringBuilder sb = new StringBuilder();
@@ -258,17 +256,14 @@ public class MultiChoice<T> extends Composite {
 					sb.append(",");
 				}
 			}
-			messageToDisplay = String.format(ResourceManager.getLabel(ResourceManager.MULTICHOICE_MESSAGE_PLURAL),
+			messageToDisplay = String.format(ResourceManager.getLabel(ResourceManager.MULTICHOICE_MESSAGE_PLURAL), //
 					sb.toString());
 		}
-		getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				final MessageBox mb = new MessageBox(getShell(), SWT.OK | SWT.ICON_ERROR);
-				mb.setMessage(messageToDisplay);
-				mb.open();
-				MultiChoice.this.text.forceFocus();
-			}
+		getDisplay().asyncExec(() -> {
+			final MessageBox mb = new MessageBox(getShell(), SWT.OK | SWT.ICON_ERROR);
+			mb.setMessage(messageToDisplay);
+			mb.open();
+			MultiChoice.this.text.forceFocus();
 		});
 
 	}
@@ -449,9 +444,7 @@ public class MultiChoice<T> extends Composite {
 		if (this.elements == null) {
 			return 0;
 		}
-
 		return this.elements.size();
-
 	}
 
 	/**
@@ -728,7 +721,6 @@ public class MultiChoice<T> extends Composite {
 		for (int i = 0; i < selectedIndex.size(); i++) {
 			returned[i] = selectedIndex.get(i);
 		}
-
 		return returned;
 	}
 
@@ -1013,7 +1005,6 @@ public class MultiChoice<T> extends Composite {
 			}
 		}
 		setLabel();
-
 	}
 
 	/**
@@ -1067,17 +1058,14 @@ public class MultiChoice<T> extends Composite {
 			checkBoxButton.setData(o);
 			checkBoxButton.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false));
 			checkBoxButton.setText(this.labelProvider.getText(o));
-			checkBoxButton.addSelectionListener(new SimpleSelectionAdapter() {
-				@Override
-				public void handle(final SelectionEvent e) {
-					if (checkBoxButton.getSelection()) {
-						MultiChoice.this.selection.add(o);
-					} else {
-						MultiChoice.this.selection.remove(o);
-					}
-					MultiChoice.this.lastModified = o;
-					setLabel();
+			checkBoxButton.addListener(SWT.Selection, e -> {
+				if (checkBoxButton.getSelection()) {
+					MultiChoice.this.selection.add(o);
+				} else {
+					MultiChoice.this.selection.remove(o);
 				}
+				MultiChoice.this.lastModified = o;
+				setLabel();
 			});
 
 			if (this.selectionListener != null) {
@@ -1245,7 +1233,6 @@ public class MultiChoice<T> extends Composite {
 				this.checkboxes = null;
 				break;
 		}
-
 	}
 
 	/**
@@ -1273,8 +1260,7 @@ public class MultiChoice<T> extends Composite {
 			createPopup();
 		}
 
-		final Point arrowRect = this.arrow.toDisplay(this.arrow.getSize().x - 5,
-				this.arrow.getSize().y + this.arrow.getBorderWidth() - 3);
+		final Point arrowRect = this.arrow.toDisplay(this.arrow.getSize().x - 5, this.arrow.getSize().y + this.arrow.getBorderWidth() - 3);
 		int x = arrowRect.x;
 		int y = arrowRect.y;
 
@@ -1343,7 +1329,7 @@ public class MultiChoice<T> extends Composite {
 	 * setText("USA"), the text will display "USA", but <code>getSelection()</code>
 	 * will return and empty text. To retrieve "USA", you have to use the method
 	 * getText();
-	 * 
+	 *
 	 * @param textValue new text value
 	 */
 	public void setText(String textValue) {
@@ -1364,5 +1350,4 @@ public class MultiChoice<T> extends Composite {
 		checkNullElement();
 		return text.getText();
 	}
-
 }

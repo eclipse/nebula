@@ -115,9 +115,9 @@ public class CheckBoxGroup extends Canvas implements PaintListener {
 					return;
 				}
 				if (button.getSelection()) {
-					CheckBoxGroup.this.activate();
+					activate();
 				} else {
-					CheckBoxGroup.this.deactivate();
+					deactivate();
 				}
 			}
 		});

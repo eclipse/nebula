@@ -56,197 +56,99 @@ public class OpalDialogSnippet {
 		final Button button2 = new Button(shell, SWT.PUSH);
 		button2.setText("Crash and burn");
 		button2.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, false));
-		button2.addSelectionListener(new SelectionAdapter() {
-
-			/**
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				displayCrashAndBurn();
-			}
+		button2.addListener(SWT.Selection, e -> {
+			displayCrashAndBurn();
 		});
 
 		final Button button3 = new Button(shell, SWT.PUSH);
 		button3.setText("You won !");
 		button3.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, false));
-		button3.addSelectionListener(new SelectionAdapter() {
-
-			/**
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				displayYouWon();
-			}
+		button3.addListener(SWT.Selection, e -> {
+			displayYouWon();
 		});
 
 		final Button button4 = new Button(shell, SWT.PUSH);
 		button4.setText("Confirm exit");
 		button4.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, false));
-		button4.addSelectionListener(new SelectionAdapter() {
-
-			/**
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				displayConfirmExit();
-			}
+		button4.addListener(SWT.Selection, e -> {
+			displayConfirmExit();
 		});
 
 		final Button button5 = new Button(shell, SWT.PUSH);
 		button5.setText("Radio choice");
 		button5.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, false));
-		button5.addSelectionListener(new SelectionAdapter() {
-
-			/**
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				displayRadioChoice();
-			}
+		button5.addListener(SWT.Selection, e -> {
+			displayRadioChoice();
 		});
 
 		final Button button6 = new Button(shell, SWT.PUSH);
 		button6.setText("Exception viewer");
 		button6.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, false));
-		button6.addSelectionListener(new SelectionAdapter() {
-
-			/**
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				displayException();
-			}
+		button6.addListener(SWT.Selection, e -> {
+			displayException();
 		});
 
 		final Button button7 = new Button(shell, SWT.PUSH);
 		button7.setText("Input box");
 		button7.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, false));
-		button7.addSelectionListener(new SelectionAdapter() {
-
-			/**
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				displayInput();
-			}
+		button7.addListener(SWT.Selection, e -> {
+			displayInput();
 		});
 
 		final Button button8 = new Button(shell, SWT.PUSH);
 		button8.setText("Choice...");
 		button8.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, false));
-		button8.addSelectionListener(new SelectionAdapter() {
-
-			/**
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				displayChoice();
-			}
+		button8.addListener(SWT.Selection, e -> {
+			displayChoice();
 		});
 
 		final Button button9 = new Button(shell, SWT.PUSH);
 		button9.setText("Delayed quit");
 		button9.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, false));
-		button9.addSelectionListener(new SelectionAdapter() {
-
-			/**
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				displayDelayedQuit();
-			}
+		button9.addListener(SWT.Selection, e -> {
+			displayDelayedQuit();
 		});
 
 		final Button button10 = new Button(shell, SWT.PUSH);
 		button10.setText("Progress bar");
 		button10.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, false));
-		button10.addSelectionListener(new SelectionAdapter() {
-
-			/**
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				displayProgressBar();
-			}
+		button10.addListener(SWT.Selection, e -> {
+			displayProgressBar();
 		});
 
 		final Button button11 = new Button(shell, SWT.PUSH);
 		button11.setText("Complex Example 1");
 		button11.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, false));
-		button11.addSelectionListener(new SelectionAdapter() {
-
-			/**
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				displaySecurityWarning();
-			}
+		button11.addListener(SWT.Selection, e -> {
+			displaySecurityWarning();
 		});
 
 		final Button button12 = new Button(shell, SWT.PUSH);
 		button12.setText("Complex Example 2");
 		button12.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, false));
-		button12.addSelectionListener(new SelectionAdapter() {
-
-			/**
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				displayComplex();
-			}
+		button12.addListener(SWT.Selection, e -> {
+			displayComplex();
 		});
 
 		final Button button13 = new Button(shell, SWT.PUSH);
 		button13.setText("Large Text Example");
 		button13.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, false));
-		button13.addSelectionListener(new SelectionAdapter() {
-
-			/**
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				displayLargeText();
-			}
+		button13.addListener(SWT.Selection, e -> {
+			displayLargeText();
 		});
 
 		final Button button14 = new Button(shell, SWT.PUSH);
 		button14.setText("Issue 29");
 		button14.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, false));
-		button14.addSelectionListener(new SelectionAdapter() {
-
-			/**
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				testIssue29();
-			}
+		button14.addListener(SWT.Selection, e -> {
+			testIssue29();
 		});
 
 		final Button button15 = new Button(shell, SWT.PUSH);
 		button15.setText("Issue 45");
 		button15.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, false));
-		button15.addSelectionListener(new SelectionAdapter() {
-
-			/**
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				testIssue45();
-			}
+		button15.addListener(SWT.Selection, e -> {
+			testIssue45();
 		});
 
 		// Open the shell
@@ -271,8 +173,7 @@ public class OpalDialogSnippet {
 	}
 
 	private static void displayCrashAndBurn() {
-		Dialog.error("CRASH AND BURN !",
-				"The application has performed an illegal action. This action has been logged and reported.");
+		Dialog.error("CRASH AND BURN !", "The application has performed an illegal action. This action has been logged and reported.");
 	}
 
 	private static void displayYouWon() {
@@ -291,7 +192,6 @@ public class OpalDialogSnippet {
 	}
 
 	private static void displayException() {
-
 		try {
 			new BigDecimal("seven");
 		} catch (final Throwable ex) {
@@ -300,19 +200,14 @@ public class OpalDialogSnippet {
 	}
 
 	private static void displayChoice() {
-		final int choice = Dialog.choice("What do you want to do with your game in\nprogress?", "", 1,
-				new ChoiceItem("Exit and save my game",
-						"Save your game in progress, then exit. " + "This will\noverwrite any previously saved games."),
-				new ChoiceItem("Exit and don't save",
-						"Exit without saving your game. " + "This is counted\nas a loss in your statistics."),
-				new ChoiceItem("Don't exit", "Return to your game progress"));
+		final int choice = Dialog.choice("What do you want to do with your game in\nprogress?", "", 1, new ChoiceItem("Exit and save my game", "Save your game in progress, then exit. " + "This will\noverwrite any previously saved games."),
+				new ChoiceItem("Exit and don't save", "Exit without saving your game. " + "This is counted\nas a loss in your statistics."), new ChoiceItem("Don't exit", "Return to your game progress"));
 		System.out.println("Choice is..." + choice);
 	}
 
 	private static void displayDelayedQuit() {
 		final boolean choice = Dialog.isConfirmed("Are you sure you want to quit?", "Please do not quit yet!", 10);
 		System.out.println("Choice is..." + choice);
-
 	}
 
 	private static void displaySecurityWarning() {
@@ -320,18 +215,15 @@ public class OpalDialogSnippet {
 		dialog.setTitle("Security Warning");
 		dialog.setMinimumWidth(400);
 		dialog.getMessageArea().setTitle("The publisher cannot be verified.\nDo you want to run this software?") //
-		.setIcon(Display.getCurrent().getSystemImage(SWT.ICON_WARNING)) //
-		.setText("Name: C:\\Program Files\\eclipse\\eclipse.exe<br/>" + //
-				"Publisher: <b>Unknown Publisher</b><br/>" + //
-				"Type: Application<br/>");
+				.setIcon(Display.getCurrent().getSystemImage(SWT.ICON_WARNING)) //
+				.setText("Name: C:\\Program Files\\eclipse\\eclipse.exe<br/>" + //
+						"Publisher: <b>Unknown Publisher</b><br/>" + //
+						"Type: Application<br/>");
 
-		dialog.getFooterArea().addCheckBox("Always ask before opening this file", false).setButtonLabels("Run",
-				"Cancel");
+		dialog.getFooterArea().addCheckBox("Always ask before opening this file", false).setButtonLabels("Run", "Cancel");
 		dialog.show();
 
-		System.out.println(
-				"The choice is " + dialog.getSelectedButton() + ", the checkbox value is " + dialog.getCheckboxValue());
-
+		System.out.println("The choice is " + dialog.getSelectedButton() + ", the checkbox value is " + dialog.getCheckboxValue());
 	}
 
 	private static void displayProgressBar() {
@@ -339,22 +231,21 @@ public class OpalDialogSnippet {
 		dialog.setTitle("Copying...");
 		dialog.setMinimumWidth(400);
 		dialog.getMessageArea().setTitle("Copying files") //
-		.setIcon(Display.getCurrent().getSystemImage(SWT.ICON_INFORMATION)) //
-		.setText("Location : from 'Others' to 'Others'<br/>" + //
-				"File Name : <b>photo.jpg</b>")
-		.//
-		addProgressBar(0, 100, 0);
+				.setIcon(Display.getCurrent().getSystemImage(SWT.ICON_INFORMATION)) //
+				.setText("Location : from 'Others' to 'Others'<br/>" + //
+						"File Name : <b>photo.jpg</b>")
+				.//
+				addProgressBar(0, 100, 0);
 
 		final int[] counter = new int[1];
 		counter[0] = 10;
 
 		Display.getCurrent().timerExec(500, new Runnable() {
-
 			@Override
 			public void run() {
 				dialog.getMessageArea().setProgressBarValue(counter[0]);
 				dialog.getMessageArea().setText("Location : from 'Others' to 'Others'<br/>" + //
-						"File Name : <b>photo" + counter[0] + ".jpg</b>");
+				"File Name : <b>photo" + counter[0] + ".jpg</b>");
 				counter[0] += 10;
 				if (counter[0] < 120) {
 					Display.getCurrent().timerExec(500, this);
@@ -365,28 +256,23 @@ public class OpalDialogSnippet {
 		});
 
 		dialog.show();
-
 	}
 
 	private static void displayInput() {
 		final String input = Dialog.ask("Enter you name", "or any other text if you prefer", "Laurent CARON");
 		System.out.println("Choice is..." + input);
-
 	}
 
 	private static void displayComplex() {
 		final Dialog dialog = new Dialog();
 		dialog.setTitle("Application Error");
 		dialog.getMessageArea().setTitle("CRASH AND BURN !").//
-		setText("The application has performed an illegal action. This action has been logged and reported.").//
-		setIcon(Display.getCurrent().getSystemImage(SWT.ICON_ERROR));
+				setText("The application has performed an illegal action. This action has been logged and reported.").//
+				setIcon(Display.getCurrent().getSystemImage(SWT.ICON_ERROR));
 		dialog.setButtonType(OpalDialogType.OK);
-		dialog.getFooterArea().setExpanded(false).addCheckBox("Don't show me this error next time", true)
-		.setDetailText("More explanations to come...");
-		dialog.getFooterArea().setFooterText("Your application crashed because a developer forgot to write a unit test")
-		.setIcon(new Image(null, OpalDialogSnippet.class.getResourceAsStream("warning.png")));
+		dialog.getFooterArea().setExpanded(false).addCheckBox("Don't show me this error next time", true).setDetailText("More explanations to come...");
+		dialog.getFooterArea().setFooterText("Your application crashed because a developer forgot to write a unit test").setIcon(new Image(null, OpalDialogSnippet.class.getResourceAsStream("warning.png")));
 		dialog.show();
-
 	}
 
 	private static void displayLargeText() {
@@ -422,7 +308,6 @@ public class OpalDialogSnippet {
 
 		d.getFooterArea().setButtonLabels(Arrays.asList("Don't Save please", "Cancel"));
 		d.show();
-
 	}
 
 	private static void testIssue45() {

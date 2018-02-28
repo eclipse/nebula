@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Laurent CARON (laurent.caron at gmail dot com) - initial API and implementation
+ * Laurent CARON (laurent.caron at gmail dot com) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.duallist;
 
@@ -51,7 +51,7 @@ public class SelectionChangeEvent extends TypedEvent {
 	 * @return the list of items
 	 */
 	public List<DLItem> getItems() {
-		return this.items;
+		return items;
 	}
 
 	/**
@@ -60,5 +60,4 @@ public class SelectionChangeEvent extends TypedEvent {
 	public void setItems(final List<DLItem> items) {
 		this.items = items;
 	}
-
 }

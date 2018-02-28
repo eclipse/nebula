@@ -40,11 +40,8 @@ class TextFocusControlListener extends BaseFocusControlListener {
 	@Override
 	protected void highLightPrompt() {
 		// If we do a select all directly, it's not working !
-		control.getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				((Text) TextFocusControlListener.this.control).selectAll();
-			}
+		control.getDisplay().asyncExec(() -> {
+			((Text) TextFocusControlListener.this.control).selectAll();
 		});
 	}
 

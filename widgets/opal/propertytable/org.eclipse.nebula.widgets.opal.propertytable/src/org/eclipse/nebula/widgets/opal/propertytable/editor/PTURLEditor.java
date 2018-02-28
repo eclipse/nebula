@@ -15,8 +15,6 @@ import java.net.URL;
 import org.eclipse.nebula.widgets.opal.commons.ResourceManager;
 import org.eclipse.nebula.widgets.opal.dialog.Dialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 
 /**
  * This editor is used to edit URL values
@@ -28,19 +26,13 @@ public class PTURLEditor extends PTBaseTextEditor {
 	 */
 	@Override
 	public void addVerifyListeners() {
-		text.addListener(SWT.FocusOut, new Listener() {
-
-			@Override
-			public void handleEvent(final Event event) {
-				try {
-					new URL(PTURLEditor.this.text.getText());
-				} catch (final MalformedURLException e) {
-					Dialog.error(ResourceManager.getLabel(ResourceManager.APPLICATION_ERROR),
-							ResourceManager.getLabel(ResourceManager.VALID_URL));
-					event.doit = false;
-					PTURLEditor.this.text.forceFocus();
-				}
-
+		text.addListener(SWT.FocusOut, event -> {
+			try {
+				new URL(PTURLEditor.this.text.getText());
+			} catch (final MalformedURLException e) {
+				Dialog.error(ResourceManager.getLabel(ResourceManager.APPLICATION_ERROR), ResourceManager.getLabel(ResourceManager.VALID_URL));
+				event.doit = false;
+				PTURLEditor.this.text.forceFocus();
 			}
 		});
 

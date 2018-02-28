@@ -14,8 +14,6 @@ import org.eclipse.nebula.widgets.opal.preferencewindow.PreferenceWindow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 /**
@@ -43,18 +41,13 @@ public class PWDirectoryChooser extends PWChooser {
 		final String originalDirectory = (String) PreferenceWindow.getInstance().getValueFor(getPropertyKey());
 		text.setText(originalDirectory);
 
-		button.addListener(SWT.Selection, new Listener() {
-
-			@Override
-			public void handleEvent(final Event event) {
-				final DirectoryDialog dialog = new DirectoryDialog(text.getShell());
-				dialog.setMessage(ResourceManager.getLabel(ResourceManager.CHOOSE_DIRECTORY));
-				final String result = dialog.open();
-				if (result != null) {
-					text.setText(result);
-					PreferenceWindow.getInstance().setValue(getPropertyKey(), result);
-				}
-
+		button.addListener(SWT.Selection, event -> {
+			final DirectoryDialog dialog = new DirectoryDialog(text.getShell());
+			dialog.setMessage(ResourceManager.getLabel(ResourceManager.CHOOSE_DIRECTORY));
+			final String result = dialog.open();
+			if (result != null) {
+				text.setText(result);
+				PreferenceWindow.getInstance().setValue(getPropertyKey(), result);
 			}
 		});
 	}
@@ -69,8 +62,7 @@ public class PWDirectoryChooser extends PWChooser {
 			PreferenceWindow.getInstance().setValue(getPropertyKey(), "");
 		} else {
 			if (!(value instanceof String)) {
-				throw new UnsupportedOperationException("The property '" + getPropertyKey()
-						+ "' has to be a String because it is associated to a directory chooser");
+				throw new UnsupportedOperationException("The property '" + getPropertyKey() + "' has to be a String because it is associated to a directory chooser");
 			}
 		}
 	}

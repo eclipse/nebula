@@ -109,11 +109,8 @@ public class TextAssist extends Composite {
 
 		final int[] events = new int[] { SWT.Move, SWT.FocusOut };
 		for (final int event : events) {
-			getShell().addListener(event, new Listener() {
-				@Override
-				public void handleEvent(final Event event) {
-					popup.setVisible(false);
-				}
+			getShell().addListener(event, e -> {
+				popup.setVisible(false);
 			});
 		}
 
@@ -126,19 +123,13 @@ public class TextAssist extends Composite {
 	}
 
 	private void addTableLittle() {
-		table.addListener(SWT.DefaultSelection, new Listener() {
-			@Override
-			public void handleEvent(final Event event) {
-				text.setText(table.getSelection()[0].getText());
-				popup.setVisible(false);
-			}
+		table.addListener(SWT.DefaultSelection, event -> {
+			text.setText(table.getSelection()[0].getText());
+			popup.setVisible(false);
 		});
-		table.addListener(SWT.KeyDown, new Listener() {
-			@Override
-			public void handleEvent(final Event event) {
-				if (event.keyCode == SWT.ESC) {
-					popup.setVisible(false);
-				}
+		table.addListener(SWT.KeyDown, event -> {
+			if (event.keyCode == SWT.ESC) {
+				popup.setVisible(false);
 			}
 		});
 
@@ -251,16 +242,13 @@ public class TextAssist extends Composite {
 				/*
 				 * Async is needed to wait until focus reaches its new Control
 				 */
-				TextAssist.this.getDisplay().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						if (TextAssist.this.isDisposed() || TextAssist.this.getDisplay().isDisposed()) {
-							return;
-						}
-						final Control control = TextAssist.this.getDisplay().getFocusControl();
-						if (control == null || control != text && control != table) {
-							popup.setVisible(false);
-						}
+				TextAssist.this.getDisplay().asyncExec(() -> {
+					if (TextAssist.this.isDisposed() || TextAssist.this.getDisplay().isDisposed()) {
+						return;
+					}
+					final Control control = TextAssist.this.getDisplay().getFocusControl();
+					if (control == null || control != text && control != table) {
+						popup.setVisible(false);
 					}
 				});
 			}

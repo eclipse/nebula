@@ -18,8 +18,6 @@ import org.eclipse.nebula.widgets.opal.duallist.DualList;
 import org.eclipse.nebula.widgets.opal.duallist.SelectionChangeEvent;
 import org.eclipse.nebula.widgets.opal.duallist.SelectionChangeListener;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
@@ -111,8 +109,7 @@ public class DualListSnippet {
 		list.add(new DLItem("Luxembourg", createImage(shell, "luxembourg")));
 		list.add(new DLItem("Malta", createImage(shell, "malta")));
 		list.add(new DLItem("Netherlands", createImage(shell, "netherlands")));
-		list.add(new DLItem("Poland", createImage(shell, "poland"), shell.getDisplay().getSystemColor(SWT.COLOR_WHITE),
-				shell.getDisplay().getSystemColor(SWT.COLOR_RED)));
+		list.add(new DLItem("Poland", createImage(shell, "poland"), shell.getDisplay().getSystemColor(SWT.COLOR_WHITE), shell.getDisplay().getSystemColor(SWT.COLOR_RED)));
 		list.add(new DLItem("Portugal", createImage(shell, "portugal")));
 		list.add(new DLItem("Romania", createImage(shell, "romania")));
 		list.add(new DLItem("Slovakia", createImage(shell, "slovakia")));
@@ -121,12 +118,8 @@ public class DualListSnippet {
 		list.add(new DLItem("Sweden", createImage(shell, "sweden")));
 		list.add(new DLItem("United Kingdom", createImage(shell, "unitedkingdom")));
 
-		shell.addDisposeListener(new DisposeListener() {
-
-			@Override
-			public void widgetDisposed(final DisposeEvent e) {
-				font.dispose();
-			}
+		shell.addDisposeListener(e -> {
+			font.dispose();
 		});
 
 		return list;
@@ -135,12 +128,8 @@ public class DualListSnippet {
 	private static Image createImage(final Shell shell, final String fileName) {
 		final Image image = new Image(shell.getDisplay(), DualListSnippet.class.//
 				getResourceAsStream("flags/" + fileName + ".png"));
-		shell.addDisposeListener(new DisposeListener() {
-
-			@Override
-			public void widgetDisposed(final DisposeEvent de) {
-				image.dispose();
-			}
+		shell.addDisposeListener(e -> {
+			image.dispose();
 		});
 		return image;
 	}

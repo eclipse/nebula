@@ -6,16 +6,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Laurent CARON (laurent.caron at gmail dot com) - Initial implementation and API
+ * Laurent CARON (laurent.caron at gmail dot com) - Initial implementation and API
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.preferencewindow.widgets;
 
 import org.eclipse.nebula.widgets.opal.preferencewindow.PreferenceWindow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 /**
@@ -25,7 +23,7 @@ public class PWFileChooser extends PWChooser {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param label associated label
 	 * @param propertyKey associated key
 	 */
@@ -42,16 +40,12 @@ public class PWFileChooser extends PWChooser {
 		final String originalFile = (String) PreferenceWindow.getInstance().getValueFor(getPropertyKey());
 		text.setText(originalFile);
 
-		button.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(final Event event) {
-				final FileDialog dialog = new FileDialog(text.getShell(), SWT.OPEN);
-				final String result = dialog.open();
-				if (result != null) {
-					text.setText(result);
-					PreferenceWindow.getInstance().setValue(getPropertyKey(), result);
-				}
-
+		button.addListener(SWT.Selection, event -> {
+			final FileDialog dialog = new FileDialog(text.getShell(), SWT.OPEN);
+			final String result = dialog.open();
+			if (result != null) {
+				text.setText(result);
+				PreferenceWindow.getInstance().setValue(getPropertyKey(), result);
 			}
 		});
 

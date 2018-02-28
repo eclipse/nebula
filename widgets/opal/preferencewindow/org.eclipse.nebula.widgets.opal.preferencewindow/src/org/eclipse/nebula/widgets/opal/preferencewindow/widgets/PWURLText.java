@@ -16,8 +16,6 @@ import org.eclipse.nebula.widgets.opal.commons.ResourceManager;
 import org.eclipse.nebula.widgets.opal.dialog.Dialog;
 import org.eclipse.nebula.widgets.opal.preferencewindow.PreferenceWindow;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 
 /**
  * Instances of this class are text box used to type URL
@@ -40,19 +38,13 @@ public class PWURLText extends PWText {
 	 */
 	@Override
 	public void addVerifyListeners() {
-		text.addListener(SWT.FocusOut, new Listener() {
-
-			@Override
-			public void handleEvent(final Event event) {
-				try {
-					new URL(PWURLText.this.text.getText());
-				} catch (final MalformedURLException e) {
-					Dialog.error(ResourceManager.getLabel(ResourceManager.APPLICATION_ERROR),
-							ResourceManager.getLabel(ResourceManager.VALID_URL));
-					event.doit = false;
-					PWURLText.this.text.forceFocus();
-				}
-
+		text.addListener(SWT.FocusOut, event -> {
+			try {
+				new URL(PWURLText.this.text.getText());
+			} catch (final MalformedURLException e) {
+				Dialog.error(ResourceManager.getLabel(ResourceManager.APPLICATION_ERROR), ResourceManager.getLabel(ResourceManager.VALID_URL));
+				event.doit = false;
+				PWURLText.this.text.forceFocus();
 			}
 		});
 
@@ -68,8 +60,7 @@ public class PWURLText extends PWText {
 			PreferenceWindow.getInstance().setValue(getPropertyKey(), "");
 		} else {
 			if (!(value instanceof String)) {
-				throw new UnsupportedOperationException("The property '" + getPropertyKey()
-						+ "' has to be a String because it is associated to a URL text box");
+				throw new UnsupportedOperationException("The property '" + getPropertyKey() + "' has to be a String because it is associated to a URL text box");
 			}
 
 			final String str = (String) value;
@@ -81,8 +72,7 @@ public class PWURLText extends PWText {
 			try {
 				new URL(str);
 			} catch (final MalformedURLException e) {
-				throw new UnsupportedOperationException(
-						"The property '" + getPropertyKey() + "' has a value (" + value + ") that is not an URL");
+				throw new UnsupportedOperationException("The property '" + getPropertyKey() + "' has a value (" + value + ") that is not an URL");
 			}
 		}
 	}

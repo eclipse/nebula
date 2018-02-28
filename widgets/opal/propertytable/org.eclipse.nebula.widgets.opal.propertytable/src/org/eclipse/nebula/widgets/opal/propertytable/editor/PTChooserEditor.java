@@ -17,8 +17,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ControlEditor;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.custom.TreeEditor;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
@@ -114,21 +112,15 @@ public abstract class PTChooserEditor extends PTEditor {
 		eraseButton.setEnabled(property.isEnabled());
 		eraseButton.pack();
 
-		eraseButton.addSelectionListener(new SelectionAdapter() {
-			/**
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				property.setValue(null);
-				if (item instanceof TableItem) {
-					((TableItem) item).setBackground(1, Display.getDefault().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-					((TableItem) item).setText(1, getTextFor(property));
-				}
-				if (item instanceof TreeItem) {
-					((TreeItem) item).setBackground(1, Display.getDefault().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-					((TreeItem) item).setText(1, getTextFor(property));
-				}
+		eraseButton.addListener(SWT.Selection, event -> {
+			property.setValue(null);
+			if (item instanceof TableItem) {
+				((TableItem) item).setBackground(1, Display.getDefault().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+				((TableItem) item).setText(1, getTextFor(property));
+			}
+			if (item instanceof TreeItem) {
+				((TreeItem) item).setBackground(1, Display.getDefault().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+				((TreeItem) item).setText(1, getTextFor(property));
 			}
 		});
 
@@ -152,22 +144,12 @@ public abstract class PTChooserEditor extends PTEditor {
 		plusButton.setToolTipText(ResourceManager.getLabel(ResourceManager.EDIT_PROPERTY));
 		plusButton.setEnabled(property.isEnabled());
 
-		plusButton.addSelectionListener(new SelectionAdapter() {
-			/**
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				openWindow(widget, item, property);
-			}
+		plusButton.addListener(SWT.Selection, event -> {
+			openWindow(widget, item, property);
 		});
 
-		plusButton.addListener(SWT.FocusIn, new Listener() {
-
-			@Override
-			public void handleEvent(final Event event) {
-				widget.updateDescriptionPanel(property);
-			}
+		plusButton.addListener(SWT.FocusIn, event -> {
+			widget.updateDescriptionPanel(property);
 		});
 
 		plusButton.pack();

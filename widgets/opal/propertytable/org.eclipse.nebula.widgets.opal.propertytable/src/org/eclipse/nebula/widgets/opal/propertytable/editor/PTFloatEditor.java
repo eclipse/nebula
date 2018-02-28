@@ -11,8 +11,6 @@ package org.eclipse.nebula.widgets.opal.propertytable.editor;
 
 import org.eclipse.nebula.widgets.opal.commons.StringUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.VerifyEvent;
-import org.eclipse.swt.events.VerifyListener;
 
 /**
  * This editor is used to edit float values
@@ -24,19 +22,13 @@ public class PTFloatEditor extends PTBaseTextEditor {
 	 */
 	@Override
 	public void addVerifyListeners() {
-		text.addVerifyListener(new VerifyListener() {
-
-			@Override
-			public void verifyText(final VerifyEvent e) {
-				if (e.character != 0 && !Character.isDigit(e.character) && e.keyCode != SWT.BS && e.keyCode != SWT.DEL
-						&& e.character != '.' && e.character != ',') {
-					e.doit = false;
-					return;
-				}
-
-				e.doit = verifyEntry(e.text, e.keyCode);
-
+		text.addListener(SWT.Verify, e -> {
+			if (e.character != 0 && !Character.isDigit(e.character) && e.keyCode != SWT.BS && e.keyCode != SWT.DEL && e.character != '.' && e.character != ',') {
+				e.doit = false;
+				return;
 			}
+
+			e.doit = verifyEntry(e.text, e.keyCode);
 		});
 	}
 

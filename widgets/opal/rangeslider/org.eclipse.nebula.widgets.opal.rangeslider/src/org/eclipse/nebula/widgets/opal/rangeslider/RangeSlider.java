@@ -16,10 +16,7 @@ import java.util.List;
 import org.eclipse.nebula.widgets.opal.commons.SWTGraphicUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.GC;
@@ -29,7 +26,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Widget;
 
 /**
@@ -152,56 +148,38 @@ public class RangeSlider extends Canvas {
 		isOn = (style & SWT.ON) == SWT.ON;
 		selectedElement = isFullSelection ? BOTH : LOWER;
 
-		addListener(SWT.Dispose, new Listener() {
-			@Override
-			public void handleEvent(final Event event) {
-				SWTGraphicUtil.safeDispose(slider);
-				SWTGraphicUtil.safeDispose(sliderHover);
-				SWTGraphicUtil.safeDispose(sliderDrag);
-				SWTGraphicUtil.safeDispose(sliderSelected);
+		addListener(SWT.Dispose, event -> {
+			SWTGraphicUtil.safeDispose(slider);
+			SWTGraphicUtil.safeDispose(sliderHover);
+			SWTGraphicUtil.safeDispose(sliderDrag);
+			SWTGraphicUtil.safeDispose(sliderSelected);
 
-				SWTGraphicUtil.safeDispose(vSlider);
-				SWTGraphicUtil.safeDispose(vSliderHover);
-				SWTGraphicUtil.safeDispose(vSliderDrag);
-				SWTGraphicUtil.safeDispose(vSliderSelected);
-			}
+			SWTGraphicUtil.safeDispose(vSlider);
+			SWTGraphicUtil.safeDispose(vSliderHover);
+			SWTGraphicUtil.safeDispose(vSliderDrag);
+			SWTGraphicUtil.safeDispose(vSliderSelected);
 		});
 		addMouseListeners();
-		addListener(SWT.Resize, new Listener() {
-			@Override
-			public void handleEvent(final Event e) {
-				if (isHighQuality) {
-					setTickFactors();
-				} else {
-					tickFactor = ((orientation == SWT.HORIZONTAL ? getClientArea().width : getClientArea().height)
-							- 20f) / tickDivisions;
-				}
+		addListener(SWT.Resize, event -> {
+			if (isHighQuality) {
+				setTickFactors();
+			} else {
+				tickFactor = ((orientation == SWT.HORIZONTAL ? getClientArea().width : getClientArea().height) - 20f) / tickDivisions;
 			}
 		});
-		addFocusListener(new FocusListener() {
-			@Override
-			public void focusGained(FocusEvent e) {
-				hasFocus = true;
-				redraw();
-			}
-
-			@Override
-			public void focusLost(FocusEvent e) {
-				hasFocus = false;
-				redraw();
-			}
+		addListener(SWT.FocusIn, e -> {
+			hasFocus = true;
+			redraw();
 		});
-		addListener(SWT.KeyDown, new Listener() {
-			@Override
-			public void handleEvent(final Event event) {
-				handleKeyDown(event);
-			}
+		addListener(SWT.FocusOut, e -> {
+			hasFocus = false;
+			redraw();
 		});
-		addPaintListener(new PaintListener() {
-			@Override
-			public void paintControl(final PaintEvent e) {
-				drawWidget(e);
-			}
+		addListener(SWT.KeyDown, event -> {
+			handleKeyDown(event);
+		});
+		addPaintListener(event -> {
+			drawWidget(event);
 		});
 	}
 
@@ -265,54 +243,38 @@ public class RangeSlider extends Canvas {
 
 	@Override
 	public int getStyle() {
-		return super.getStyle() | orientation | (isSmooth ? SWT.SMOOTH : SWT.NONE) | (isOn ? SWT.ON : SWT.NONE)
-				| (isFullSelection ? SWT.CONTROL : SWT.NONE) | (isHighQuality ? SWT.HIGH : SWT.NONE);
+		return super.getStyle() | orientation | (isSmooth ? SWT.SMOOTH : SWT.NONE) | //
+				(isOn ? SWT.ON : SWT.NONE) | //
+				(isFullSelection ? SWT.CONTROL : SWT.NONE) | //
+				(isHighQuality ? SWT.HIGH : SWT.NONE);
 	}
 
 	/**
 	 * Add the mouse listeners (mouse up, mouse down, mouse move, mouse wheel)
 	 */
 	private void addMouseListeners() {
-		addListener(SWT.MouseDown, new Listener() {
-			@Override
-			public void handleEvent(final Event e) {
-				handleMouseDown(e);
-			}
+		addListener(SWT.MouseDown, event -> {
+			handleMouseDown(event);
 		});
 
-		addListener(SWT.MouseUp, new Listener() {
-			@Override
-			public void handleEvent(final Event e) {
-				handleMouseUp(e);
-			}
+		addListener(SWT.MouseUp, event -> {
+			handleMouseUp(event);
 		});
 
-		addListener(SWT.MouseMove, new Listener() {
-			@Override
-			public void handleEvent(final Event e) {
-				handleMouseMove(e);
-			}
+		addListener(SWT.MouseMove, event -> {
+			handleMouseMove(event);
 		});
 
-		addListener(SWT.MouseWheel, new Listener() {
-			@Override
-			public void handleEvent(final Event e) {
-				handleMouseWheel(e);
-			}
+		addListener(SWT.MouseWheel, event -> {
+			handleMouseWheel(event);
 		});
 
-		addListener(SWT.MouseHover, new Listener() {
-			@Override
-			public void handleEvent(final Event e) {
-				handleMouseHover(e);
-			}
+		addListener(SWT.MouseHover, event -> {
+			handleMouseHover(event);
 		});
 
-		addListener(SWT.MouseDoubleClick, new Listener() {
-			@Override
-			public void handleEvent(final Event e) {
-				handleMouseDoubleClick(e);
-			}
+		addListener(SWT.MouseDoubleClick, event -> {
+			handleMouseDoubleClick(event);
 		});
 	}
 
@@ -327,8 +289,7 @@ public class RangeSlider extends Canvas {
 			priorSelectedElement = selectedElement;
 		}
 		if (upperHover || lowerHover) {
-			selectedElement = isFullSelection && lowerHover && upperHover ? BOTH
-					: lowerHover ? LOWER : upperHover ? UPPER : selectedElement;
+			selectedElement = isFullSelection && lowerHover && upperHover ? BOTH : lowerHover ? LOWER : upperHover ? UPPER : selectedElement;
 			dragInProgress = true;
 			startDragLowerValue = previousLowerValue = lowerValue;
 			startDragUpperValue = previousUpperValue = upperValue;
@@ -488,9 +449,8 @@ public class RangeSlider extends Canvas {
 	 * @return
 	 */
 	private boolean isBetweenKnobs(int x, int y) {
-		return orientation == SWT.HORIZONTAL
-				? x < coordUpper.x && x > coordLower.x && y >= 9 && y <= 9 + getClientArea().height - 20
-				: y < coordUpper.y && y > coordLower.y && x >= 9 && x <= 9 + getClientArea().width - 20;
+		return orientation == SWT.HORIZONTAL ? x < coordUpper.x && x > coordLower.x && y >= 9 && y <= 9 + getClientArea().height - 20 : //
+				y < coordUpper.y && y > coordLower.y && x >= 9 && x <= 9 + getClientArea().width - 20;
 	}
 
 	/**
@@ -503,11 +463,10 @@ public class RangeSlider extends Canvas {
 	private void selectKnobs(final Event e) {
 		final Image img = orientation == SWT.HORIZONTAL ? slider : vSlider;
 		final int x = e.x, y = e.y;
-		lowerHover = x >= coordLower.x && x <= coordLower.x + img.getBounds().width && y >= coordLower.y
-				&& y <= coordLower.y + img.getBounds().height;
-		upperHover = ((e.stateMask & (SWT.CTRL | SWT.SHIFT)) != 0 || !lowerHover) && x >= coordUpper.x
-				&& x <= coordUpper.x + img.getBounds().width && y >= coordUpper.y
-				&& y <= coordUpper.y + img.getBounds().height;
+		lowerHover = x >= coordLower.x && x <= coordLower.x + img.getBounds().width && y >= coordLower.y && y <= coordLower.y + img.getBounds().height;
+		upperHover = ((e.stateMask & (SWT.CTRL | SWT.SHIFT)) != 0 || !lowerHover) && //
+				x >= coordUpper.x && x <= coordUpper.x + img.getBounds().width && //
+				y >= coordUpper.y && y <= coordUpper.y + img.getBounds().height;
 		lowerHover &= (e.stateMask & SWT.CTRL) != 0 || !upperHover;
 		if (!lowerHover && !upperHover && isFullSelection && isBetweenKnobs(x, y)) {
 			lowerHover = upperHover = true;
@@ -1577,8 +1536,7 @@ public class RangeSlider extends Canvas {
 	 */
 	public void setSelection(final int lowerValue, final int upperValue) {
 		checkWidget();
-		if (lowerValue <= upperValue && lowerValue >= minimum && upperValue <= maximum
-				&& (this.lowerValue != lowerValue || this.upperValue != upperValue)) {
+		if (lowerValue <= upperValue && lowerValue >= minimum && upperValue <= maximum && (this.lowerValue != lowerValue || this.upperValue != upperValue)) {
 			this.lowerValue = lowerValue;
 			this.upperValue = upperValue;
 			redraw();

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Laurent CARON (laurent.caron at gmail dot com) - Initial implementation and API
+ * Laurent CARON (laurent.caron at gmail dot com) - Initial implementation and API
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.preferencewindow.widgets;
 
@@ -15,19 +15,17 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 /**
  * Instances of this class are text areas
- * 
+ *
  */
 public class PWTextarea extends PWWidget {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param label associated label
 	 * @param propertyKey associated key
 	 */
@@ -48,12 +46,8 @@ public class PWTextarea extends PWWidget {
 		final Text text = new Text(parent, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		addControl(text);
 		text.setText(PreferenceWindow.getInstance().getValueFor(getPropertyKey()).toString());
-		text.addListener(SWT.FocusOut, new Listener() {
-
-			@Override
-			public void handleEvent(final Event event) {
-				PreferenceWindow.getInstance().setValue(getPropertyKey(), text.getText());
-			}
+		text.addListener(SWT.FocusOut, event -> {
+			PreferenceWindow.getInstance().setValue(getPropertyKey(), text.getText());
 		});
 
 		return text;

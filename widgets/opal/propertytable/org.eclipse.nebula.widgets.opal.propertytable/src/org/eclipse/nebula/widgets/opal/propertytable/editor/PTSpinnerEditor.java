@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Laurent CARON (laurent.caron at gmail dot com) - initial API and implementation 
+ * Laurent CARON (laurent.caron at gmail dot com) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.propertytable.editor;
 
@@ -16,9 +16,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ControlEditor;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.custom.TreeEditor;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
@@ -27,7 +25,7 @@ import org.eclipse.swt.widgets.TreeItem;
 
 /**
  * This editor is a spinner
- * 
+ *
  */
 public class PTSpinnerEditor extends PTEditor {
 	private final int max;
@@ -35,7 +33,7 @@ public class PTSpinnerEditor extends PTEditor {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param min minimum value
 	 * @param max maximum value
 	 */
@@ -60,24 +58,17 @@ public class PTSpinnerEditor extends PTEditor {
 
 		final Spinner spinner = new Spinner(widget.getWidget(), SWT.HORIZONTAL);
 
-		spinner.setMinimum(this.min);
-		spinner.setMaximum(this.max);
+		spinner.setMinimum(min);
+		spinner.setMaximum(max);
 		final Integer originalValue = (Integer) property.getValue();
-		spinner.setSelection(originalValue == null ? this.min : originalValue.intValue());
+		spinner.setSelection(originalValue == null ? min : originalValue.intValue());
 
-		spinner.addListener(SWT.FocusIn, new Listener() {
-
-			@Override
-			public void handleEvent(final Event event) {
-				widget.updateDescriptionPanel(property);
-			}
+		spinner.addListener(SWT.FocusIn, event -> {
+			widget.updateDescriptionPanel(property);
 		});
 
-		spinner.addListener(SWT.Modify, new Listener() {
-			@Override
-			public void handleEvent(final Event event) {
-				property.setValue(Integer.valueOf(spinner.getSelection()));
-			}
+		spinner.addListener(SWT.Modify, event -> {
+			property.setValue(Integer.valueOf(spinner.getSelection()));
 		});
 
 		editor.grabHorizontal = true;

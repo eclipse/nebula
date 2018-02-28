@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Laurent CARON (laurent.caron at gmail dot com) - Initial implementation and API
+ * Laurent CARON (laurent.caron at gmail dot com) - Initial implementation and API
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.commons;
 
@@ -15,14 +15,12 @@ import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackAdapter;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 
 /**
  * Instances of this class are StyledText that are read-only, that means that we
  * use it only as a renderer
- * 
+ *
  * @see StyledText
  */
 public class ReadOnlyStyledText extends StyledText {
@@ -38,19 +36,21 @@ public class ReadOnlyStyledText extends StyledText {
 	 * style constants. The class description lists the style constants that are
 	 * applicable to the class. Style bits are also inherited from superclasses.
 	 * </p>
-	 * 
+	 *
 	 * @param parent a widget which will be the parent of the new instance
 	 *            (cannot be null)
 	 * @param style the style of widget to construct
-	 * 
-	 * @exception IllegalArgumentException <ul>
+	 *
+	 * @exception IllegalArgumentException
+	 *                <ul>
 	 *                <li>ERROR_NULL_ARGUMENT - if the parent is null</li>
 	 *                </ul>
-	 * @exception SWTException <ul>
+	 * @exception SWTException
+	 *                <ul>
 	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
 	 *                thread that created the parent</li>
 	 *                </ul>
-	 * 
+	 *
 	 * @see SWT#FULL_SELECTION
 	 * @see SWT#MULTI
 	 * @see SWT#SINGLE
@@ -66,15 +66,8 @@ public class ReadOnlyStyledText extends StyledText {
 			}
 		});
 		setCaret(null);
-		addSelectionListener(new SelectionAdapter() {
-			/**
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				setSelection(0, 0);
-			}
-
+		addListener(SWT.Selection, e -> {
+			setSelection(0, 0);
 		});
 	}
 }

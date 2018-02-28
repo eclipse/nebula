@@ -21,10 +21,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ControlEditor;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -84,19 +80,11 @@ class PTWidgetTable extends AbstractPTWidget {
 
 		});
 
-		table.addSelectionListener(new SelectionAdapter() {
-
-			/**
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				if (table.getSelectionCount() == 0 || table.getSelection()[0] == null) {
-					return;
-				}
-				updateDescriptionPanel(table.getSelection()[0].getData());
+		table.addListener(SWT.Selection, event -> {
+			if (table.getSelectionCount() == 0 || table.getSelection()[0] == null) {
+				return;
 			}
-
+			updateDescriptionPanel(table.getSelection()[0].getData());
 		});
 
 	}
@@ -141,15 +129,11 @@ class PTWidgetTable extends AbstractPTWidget {
 			}
 
 			final ControlEditor editor = p.getEditor().render(this, item, p);
-			item.addDisposeListener(new DisposeListener() {
-
-				@Override
-				public void widgetDisposed(final DisposeEvent e) {
-					if (editor.getEditor() != null) {
-						editor.getEditor().dispose();
-					}
-					editor.dispose();
+			item.addListener(SWT.Dispose, event -> {
+				if (editor.getEditor() != null) {
+					editor.getEditor().dispose();
 				}
+				editor.dispose();
 			});
 			if (!p.isEnabled()) {
 				item.setForeground(table.getDisplay().getSystemColor(SWT.COLOR_GRAY));

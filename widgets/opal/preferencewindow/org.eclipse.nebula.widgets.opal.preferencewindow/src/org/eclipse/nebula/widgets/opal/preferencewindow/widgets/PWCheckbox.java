@@ -6,14 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Laurent CARON (laurent.caron at gmail dot com) - Initial implementation and API
+ * Laurent CARON (laurent.caron at gmail dot com) - Initial implementation and API
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.preferencewindow.widgets;
 
 import org.eclipse.nebula.widgets.opal.preferencewindow.PreferenceWindow;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -25,7 +23,7 @@ public class PWCheckbox extends PWWidget {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param label associated label
 	 * @param propertyKey associated key
 	 */
@@ -47,14 +45,8 @@ public class PWCheckbox extends PWWidget {
 		final boolean originalSelection = (Boolean) PreferenceWindow.getInstance().getValueFor(getPropertyKey());
 		button.setSelection(originalSelection);
 
-		button.addSelectionListener(new SelectionAdapter() {
-			/**
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				PreferenceWindow.getInstance().setValue(getPropertyKey(), button.getSelection());
-			}
+		button.addListener(SWT.Selection, e -> {
+			PreferenceWindow.getInstance().setValue(getPropertyKey(), button.getSelection());
 		});
 		return button;
 	}

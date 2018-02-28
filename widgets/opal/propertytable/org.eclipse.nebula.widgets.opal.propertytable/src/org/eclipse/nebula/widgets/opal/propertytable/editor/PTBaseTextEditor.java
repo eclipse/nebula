@@ -16,9 +16,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ControlEditor;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.custom.TreeEditor;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
@@ -55,19 +53,12 @@ public abstract class PTBaseTextEditor extends PTEditor {
 		addVerifyListeners();
 
 		text.setText(StringUtil.safeToString(property.getValue()));
-		text.addListener(SWT.Modify, new Listener() {
-			@Override
-			public void handleEvent(final Event event) {
-				property.setValue(convertValue());
-			}
+		text.addListener(SWT.Modify, event -> {
+			property.setValue(convertValue());
 		});
 
-		text.addListener(SWT.FocusIn, new Listener() {
-
-			@Override
-			public void handleEvent(final Event event) {
-				widget.updateDescriptionPanel(property);
-			}
+		text.addListener(SWT.FocusIn, event -> {
+			widget.updateDescriptionPanel(property);
 		});
 
 		editor.grabHorizontal = true;

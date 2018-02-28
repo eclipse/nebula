@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- * 
+ *
  * Contributors:
  * Laurent CARON (laurent.caron at gmail dot com) - Initial API and implementation
  *******************************************************************************/
@@ -40,12 +40,8 @@ class StyledTextFocusControlListener extends BaseFocusControlListener {
 	 */
 	@Override
 	protected void highLightPrompt() {
-		control.getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				((StyledText) StyledTextFocusControlListener.this.control).selectAll();
-
-			}
+		control.getDisplay().asyncExec(() -> {
+			((StyledText) StyledTextFocusControlListener.this.control).selectAll();
 		});
 	}
 

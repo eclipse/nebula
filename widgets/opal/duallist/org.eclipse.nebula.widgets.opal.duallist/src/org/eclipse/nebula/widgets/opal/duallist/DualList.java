@@ -13,12 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.nebula.widgets.opal.commons.SWTGraphicUtil;
-import org.eclipse.nebula.widgets.opal.commons.SimpleSelectionAdapter;
 import org.eclipse.nebula.widgets.opal.duallist.DLItem.LAST_ACTION;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
@@ -110,14 +107,8 @@ public class DualList extends Composite {
 
 	private void createItemsTable() {
 		itemsTable = createTable();
-		itemsTable.addMouseListener(new MouseAdapter() {
-			/**
-			 * @see org.eclipse.swt.events.MouseAdapter#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
-			 */
-			@Override
-			public void mouseDoubleClick(final MouseEvent event) {
-				DualList.this.selectItem();
-			}
+		itemsTable.addListener(SWT.MouseDoubleClick, event -> {
+			selectItem();
 		});
 	}
 
@@ -139,118 +130,64 @@ public class DualList extends Composite {
 
 	private void createButtonSelectAll() {
 		final Button buttonSelectAll = createButton(DOUBLE_RIGHT_IMAGE, true, GridData.END);
-		buttonSelectAll.addSelectionListener(new SimpleSelectionAdapter() {
-			/**
-			 * @see org.eclipse.nebula.widgets.opal.commons.SimpleSelectionAdapter#handle(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void handle(final SelectionEvent e) {
-				DualList.this.selectAll();
-			}
+		buttonSelectAll.addListener(SWT.Selection, e -> {
+			selectAll();
 		});
 	}
 
 	private void createSelectionTable() {
 		selectionTable = createTable();
-		selectionTable.addMouseListener(new MouseAdapter() {
-			/**
-			 * @see org.eclipse.swt.events.MouseAdapter#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
-			 */
-			@Override
-			public void mouseDoubleClick(final MouseEvent event) {
-				DualList.this.deselectItem();
-			}
+		selectionTable.addListener(SWT.MouseDoubleClick, event -> {
+			deselectItem();
 		});
 	}
 
 	private void createButtonMoveFirst() {
 		final Button buttonMoveFirst = createButton(DOUBLE_UP_IMAGE, true, GridData.END);
-		buttonMoveFirst.addSelectionListener(new SimpleSelectionAdapter() {
-			/**
-			 * @see org.eclipse.nebula.widgets.opal.commons.SimpleSelectionAdapter#handle(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void handle(final SelectionEvent e) {
-				DualList.this.moveSelectionToFirstPosition();
-			}
+		buttonMoveFirst.addListener(SWT.Selection, e -> {
+			moveSelectionToFirstPosition();
 		});
 	}
 
 	private void createButtonSelect() {
 		final Button buttonSelect = createButton(ARROW_RIGHT_IMAGE, false, GridData.CENTER);
-		buttonSelect.addSelectionListener(new SimpleSelectionAdapter() {
-			/**
-			 * @see org.eclipse.nebula.widgets.opal.commons.SimpleSelectionAdapter#handle(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void handle(final SelectionEvent e) {
-				DualList.this.selectItem();
-			}
+		buttonSelect.addListener(SWT.Selection, e -> {
+			selectItem();
 		});
 	}
 
 	private void createButtonMoveUp() {
 		final Button buttonMoveUp = createButton(ARROW_UP_IMAGE, false, GridData.CENTER);
-		buttonMoveUp.addSelectionListener(new SimpleSelectionAdapter() {
-			/**
-			 * @see org.eclipse.nebula.widgets.opal.commons.SimpleSelectionAdapter#handle(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void handle(final SelectionEvent e) {
-				DualList.this.moveUpItem();
-			}
+		buttonMoveUp.addListener(SWT.Selection, e -> {
+			moveUpItem();
 		});
 	}
 
 	private void createButtonDeselect() {
 		final Button buttonDeselect = createButton(ARROW_LEFT_IMAGE, false, GridData.CENTER);
-		buttonDeselect.addSelectionListener(new SimpleSelectionAdapter() {
-			/**
-			 * @see org.eclipse.nebula.widgets.opal.commons.SimpleSelectionAdapter#handle(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void handle(final SelectionEvent e) {
-				DualList.this.deselectItem();
-			}
+		buttonDeselect.addListener(SWT.Selection, e -> {
+			deselectItem();
 		});
 	}
 
 	private void createButtonMoveDown() {
 		final Button buttonMoveDown = createButton(ARROW_DOWN_IMAGE, false, GridData.CENTER);
-		buttonMoveDown.addSelectionListener(new SimpleSelectionAdapter() {
-			/**
-			 * @see org.eclipse.nebula.widgets.opal.commons.SimpleSelectionAdapter#handle(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void handle(final SelectionEvent e) {
-				DualList.this.moveDownItem();
-			}
+		buttonMoveDown.addListener(SWT.Selection, e -> {
+			moveDownItem();
 		});
 	}
 
 	private void createButtonDeselectAll() {
 		final Button buttonDeselectAll = createButton(DOUBLE_LEFT_IMAGE, false, GridData.BEGINNING);
-		buttonDeselectAll.addSelectionListener(new SimpleSelectionAdapter() {
-			/**
-			 * @see org.eclipse.nebula.widgets.opal.commons.SimpleSelectionAdapter#handle(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void handle(final SelectionEvent e) {
-				DualList.this.deselectAll();
-			}
+		buttonDeselectAll.addListener(SWT.Selection, e -> {
+			deselectAll();
 		});
 	}
 
 	private void createButtonMoveLast() {
 		final Button buttonMoveLast = createButton(DOUBLE_DOWN_IMAGE, true, GridData.BEGINNING);
-		buttonMoveLast.addSelectionListener(new SimpleSelectionAdapter() {
-			/**
-			 * @see org.eclipse.nebula.widgets.opal.commons.SimpleSelectionAdapter#handle(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void handle(final SelectionEvent e) {
-				DualList.this.moveSelectionToLastPosition();
-			}
+		buttonMoveLast.addListener(SWT.Selection, e -> {
+			moveSelectionToLastPosition();
 		});
 	}
 

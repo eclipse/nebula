@@ -73,25 +73,18 @@ public class PreferenceWindowSnippet {
 
 		final Map<String, Object> data = fillData();
 
-		button1.addSelectionListener(new SelectionAdapter() {
+		button1.addListener(SWT.Selection, e -> {
+			final PreferenceWindow window = PreferenceWindow.create(shell, data);
 
-			/**
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				final PreferenceWindow window = PreferenceWindow.create(shell, data);
+			createDocumentTab(window);
+			createInfoTab(window);
+			createTerminalTab(window);
+			createPrinterTab(window);
+			createSystemTab(window);
 
-				createDocumentTab(window);
-				createInfoTab(window);
-				createTerminalTab(window);
-				createPrinterTab(window);
-				createSystemTab(window);
+			window.setSelectedTab(2);
 
-				window.setSelectedTab(2);
-
-				window.open();
-			}
+			window.open();
 		});
 
 		shell.pack();
@@ -207,7 +200,6 @@ public class PreferenceWindowSnippet {
 				})).//
 				add(new PWButton("Third button", new SelectionAdapter() {
 				})));
-
 	}
 
 	protected static void createPrinterTab(final PreferenceWindow window) {
@@ -254,7 +246,10 @@ public class PreferenceWindowSnippet {
 		systemTab.add(new PWCheckbox("Show information", "show").setWidth(150));
 		systemTab.add(new PWGroup("Open Mode").setEnabler(new EnabledIfTrue("show")).//
 				add(new PWRadio(null, "openMode", "Double click", "Single click")).//
-				add(new PWCheckbox("Select on hover", "selectonhover").setIndent(10).setWidth(200).setEnabler(new EnabledIfEquals("openMode", "Single click"))).//
+				add(new PWCheckbox("Select on hover", "selectonhover").//
+						setIndent(10).setWidth(200).//
+						setEnabler(new EnabledIfEquals("openMode", "Single click")))
+				.//
 				add(new PWCheckbox("Open when using arrow keys", "openarrow").setIndent(10).setWidth(200).setEnabler(new EnabledIfEquals("openMode", "Single click"))));
 	}
 }

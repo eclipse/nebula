@@ -14,9 +14,7 @@ import org.eclipse.nebula.widgets.opal.preferencewindow.PreferenceWindow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FontDialog;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 /**
@@ -45,8 +43,7 @@ public class PWFontChooser extends PWChooser {
 			PreferenceWindow.getInstance().setValue(getPropertyKey(), null);
 		} else {
 			if (!(value instanceof FontData)) {
-				throw new UnsupportedOperationException("The property '" + getPropertyKey()
-						+ "' has to be a FontData because it is associated to a font chooser");
+				throw new UnsupportedOperationException("The property '" + getPropertyKey() + "' has to be a FontData because it is associated to a font chooser");
 			}
 		}
 	}
@@ -59,18 +56,13 @@ public class PWFontChooser extends PWChooser {
 	protected void setButtonAction(final Text text, final Button button) {
 		fontData = (FontData) PreferenceWindow.getInstance().getValueFor(getPropertyKey());
 
-		button.addListener(SWT.Selection, new Listener() {
-
-			@Override
-			public void handleEvent(final Event event) {
-				final FontDialog dialog = new FontDialog(text.getShell());
-				final FontData result = dialog.open();
-				if (result != null && result.getName() != null && !"".equals(result.getName().trim())) {
-					fontData = result;
-					PreferenceWindow.getInstance().setValue(getPropertyKey(), result);
-					text.setText(buildFontInformation());
-				}
-
+		button.addListener(SWT.Selection, event -> {
+			final FontDialog dialog = new FontDialog(text.getShell());
+			final FontData result = dialog.open();
+			if (result != null && result.getName() != null && !"".equals(result.getName().trim())) {
+				fontData = result;
+				PreferenceWindow.getInstance().setValue(getPropertyKey(), result);
+				text.setText(buildFontInformation());
 			}
 		});
 

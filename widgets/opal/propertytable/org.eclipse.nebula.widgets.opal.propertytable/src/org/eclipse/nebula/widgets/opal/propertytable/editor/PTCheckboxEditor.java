@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Laurent CARON (laurent.caron at gmail dot com) - initial API and implementation 
+ * Laurent CARON (laurent.caron at gmail dot com) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.propertytable.editor;
 
@@ -16,12 +16,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ControlEditor;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.custom.TreeEditor;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Tree;
@@ -29,7 +25,7 @@ import org.eclipse.swt.widgets.TreeItem;
 
 /**
  * This editor is a check box for boolean values
- * 
+ *
  */
 public class PTCheckboxEditor extends PTEditor {
 
@@ -55,22 +51,12 @@ public class PTCheckboxEditor extends PTEditor {
 			button.setSelection(((Boolean) property.getValue()).booleanValue());
 		}
 
-		button.addSelectionListener(new SelectionAdapter() {
-			/**
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				property.setValue(Boolean.valueOf(button.getSelection()));
-			}
+		button.addListener(SWT.Selection, event -> {
+			property.setValue(Boolean.valueOf(button.getSelection()));
 		});
 
-		button.addListener(SWT.FocusIn, new Listener() {
-
-			@Override
-			public void handleEvent(final Event event) {
-				widget.updateDescriptionPanel(property);
-			}
+		button.addListener(SWT.FocusIn, event -> {
+			widget.updateDescriptionPanel(property);
 		});
 
 		button.pack();

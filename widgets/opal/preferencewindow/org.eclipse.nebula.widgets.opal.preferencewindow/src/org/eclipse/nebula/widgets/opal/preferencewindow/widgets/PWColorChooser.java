@@ -67,18 +67,14 @@ public class PWColorChooser extends PWWidget {
 			}
 		});
 
-		button.addListener(SWT.Selection, new Listener() {
-
-			@Override
-			public void handleEvent(final Event event) {
-				final ColorDialog dialog = new ColorDialog(button.getShell());
-				final RGB result = dialog.open();
-				if (result != null) {
-					SWTGraphicUtil.safeDispose(color);
-					color = new Color(button.getDisplay(), result);
-					drawButton(button);
-					PreferenceWindow.getInstance().setValue(getPropertyKey(), result);
-				}
+		button.addListener(SWT.Selection, event -> {
+			final ColorDialog dialog = new ColorDialog(button.getShell());
+			final RGB result = dialog.open();
+			if (result != null) {
+				SWTGraphicUtil.safeDispose(color);
+				color = new Color(button.getDisplay(), result);
+				drawButton(button);
+				PreferenceWindow.getInstance().setValue(getPropertyKey(), result);
 			}
 		});
 		return button;
@@ -115,8 +111,7 @@ public class PWColorChooser extends PWWidget {
 			PreferenceWindow.getInstance().setValue(getPropertyKey(), null);
 		} else {
 			if (!(value instanceof RGB)) {
-				throw new UnsupportedOperationException("The property '" + getPropertyKey()
-						+ "' has to be a RGB because it is associated to a color chooser");
+				throw new UnsupportedOperationException("The property '" + getPropertyKey() + "' has to be a RGB because it is associated to a color chooser");
 			}
 		}
 	}

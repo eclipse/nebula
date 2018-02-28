@@ -14,8 +14,6 @@ import java.util.List;
 
 import org.eclipse.nebula.widgets.opal.commons.ResourceManager;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -126,7 +124,6 @@ public class FooterArea extends DialogArea {
 
 		if (footerText != null) {
 			createFooter();
-
 		}
 
 	}
@@ -151,17 +148,9 @@ public class FooterArea extends DialogArea {
 			}
 
 			final Integer integer = Integer.valueOf(i);
-			button.addSelectionListener(new SelectionAdapter() {
-
-				/**
-				 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-				 */
-				@Override
-				public void widgetSelected(final SelectionEvent e) {
-					FooterArea.this.parent.shell.dispose();
-					selectedButtonIndex = integer.intValue();
-				}
-
+			button.addListener(SWT.Selection, e -> {
+				FooterArea.this.parent.shell.dispose();
+				selectedButtonIndex = integer.intValue();
 			});
 
 			if (i == timerIndexButton && timer != -1) {
@@ -261,16 +250,8 @@ public class FooterArea extends DialogArea {
 		button.setSelection(checkBoxValue);
 		button.setBackground(getGreyColor());
 		button.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, true, false, numberOfColumns, 1));
-		button.addSelectionListener(new SelectionAdapter() {
-
-			/**
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				checkBoxValue = button.getSelection();
-			}
-
+		button.addListener(SWT.Selection, e -> {
+			checkBoxValue = button.getSelection();
 		});
 	}
 
@@ -326,7 +307,6 @@ public class FooterArea extends DialogArea {
 
 		final Label separator = new Label(c, SWT.SEPARATOR | SWT.HORIZONTAL);
 		separator.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
-
 	}
 
 	// ------------------------------------------- Getters & Setters

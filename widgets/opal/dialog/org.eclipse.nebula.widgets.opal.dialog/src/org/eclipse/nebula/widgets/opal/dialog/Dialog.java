@@ -79,8 +79,7 @@ public class Dialog {
 	 */
 	public Dialog(final Shell parent, final boolean resizable) {
 		if (parent == null) {
-			shell = new Shell(Display.getCurrent(),
-					SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | (resizable ? SWT.RESIZE : SWT.NONE));
+			shell = new Shell(Display.getCurrent(), SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | (resizable ? SWT.RESIZE : SWT.NONE));
 		} else {
 			shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | (resizable ? SWT.RESIZE : SWT.NONE));
 			if (parent.getImage() != null) {
@@ -126,7 +125,6 @@ public class Dialog {
 	 */
 	public void close() {
 		shell.dispose();
-
 	}
 
 	/**
@@ -186,8 +184,7 @@ public class Dialog {
 	public static String ask(final Shell shell, final String title, final String text, final String defaultValue) {
 		final Dialog dialog = new Dialog(shell);
 		dialog.setTitle(ResourceManager.getLabel(ResourceManager.INPUT));
-		dialog.getMessageArea().setTitle(title).setText(text)
-				.setIcon(Display.getCurrent().getSystemImage(SWT.ICON_QUESTION)).addTextBox(defaultValue);
+		dialog.getMessageArea().setTitle(title).setText(text).setIcon(Display.getCurrent().getSystemImage(SWT.ICON_QUESTION)).addTextBox(defaultValue);
 		dialog.setButtonType(OpalDialogType.OK_CANCEL);
 		if (dialog.show() == 0) {
 			return dialog.getMessageArea().getTextBoxValue();
@@ -243,8 +240,8 @@ public class Dialog {
 	public static void inform(final Shell shell, final String title, final String text) {
 		final Dialog dialog = new Dialog(shell);
 		dialog.setTitle(ResourceManager.getLabel(ResourceManager.INFORMATION));
-		dialog.getMessageArea().setTitle(title).setText(text)
-				.setIcon(Display.getCurrent().getSystemImage(SWT.ICON_INFORMATION));
+		dialog.getMessageArea().setTitle(title).//
+				setText(text).setIcon(Display.getCurrent().getSystemImage(SWT.ICON_INFORMATION));
 		dialog.setButtonType(OpalDialogType.CLOSE);
 		dialog.show();
 	}
@@ -298,8 +295,7 @@ public class Dialog {
 	public static boolean isConfirmed(final Shell shell, final String title, final String text, final int timer) {
 		final Dialog dialog = new Dialog(shell);
 		dialog.setTitle(ResourceManager.getLabel(ResourceManager.WARNING));
-		dialog.getMessageArea().setTitle(title).setText(text)
-				.setIcon(Display.getCurrent().getSystemImage(SWT.ICON_WARNING));
+		dialog.getMessageArea().setTitle(title).setText(text).setIcon(Display.getCurrent().getSystemImage(SWT.ICON_WARNING));
 
 		dialog.getFooterArea().setTimer(timer).setTimerIndexButton(0);
 		dialog.setButtonType(OpalDialogType.YES_NO);
@@ -315,8 +311,7 @@ public class Dialog {
 	 * @param values values to display
 	 * @return the index of the selection
 	 */
-	public static int radioChoice(final String title, final String text, final int defaultSelection,
-			final String... values) {
+	public static int radioChoice(final String title, final String text, final int defaultSelection, final String... values) {
 		return radioChoice(null, title, text, defaultSelection, values);
 	}
 
@@ -330,13 +325,10 @@ public class Dialog {
 	 * @param values values to display
 	 * @return the index of the selection
 	 */
-	public static int radioChoice(final Shell shell, final String title, final String text, final int defaultSelection,
-			final String... values) {
+	public static int radioChoice(final Shell shell, final String title, final String text, final int defaultSelection, final String... values) {
 		final Dialog dialog = new Dialog(shell);
 		dialog.setTitle(ResourceManager.getLabel(ResourceManager.CHOICE));
-		dialog.getMessageArea().setTitle(title).setText(text)
-				.setIcon(Display.getCurrent().getSystemImage(SWT.ICON_QUESTION))
-				.addRadioButtons(defaultSelection, values);
+		dialog.getMessageArea().setTitle(title).setText(text).setIcon(Display.getCurrent().getSystemImage(SWT.ICON_QUESTION)).addRadioButtons(defaultSelection, values);
 		dialog.setButtonType(OpalDialogType.SELECT_CANCEL);
 		if (dialog.show() == 0) {
 			return dialog.getMessageArea().getRadioChoice();
@@ -378,8 +370,7 @@ public class Dialog {
 	 * @param items items to display
 	 * @return the index of the selected value
 	 */
-	public static int choice(final String title, final String text, final int defaultSelection,
-			final ChoiceItem... items) {
+	public static int choice(final String title, final String text, final int defaultSelection, final ChoiceItem... items) {
 		return choice(null, title, text, defaultSelection, items);
 	}
 
@@ -393,12 +384,10 @@ public class Dialog {
 	 * @param items items to display
 	 * @return the index of the selected value
 	 */
-	public static int choice(final Shell shell, final String title, final String text, final int defaultSelection,
-			final ChoiceItem... items) {
+	public static int choice(final Shell shell, final String title, final String text, final int defaultSelection, final ChoiceItem... items) {
 		final Dialog dialog = new Dialog(shell);
 		dialog.setTitle(ResourceManager.getLabel(ResourceManager.CHOICE));
-		dialog.getMessageArea().setTitle(title).setText(text)
-				.setIcon(Display.getCurrent().getSystemImage(SWT.ICON_QUESTION)).addChoice(defaultSelection, items);
+		dialog.getMessageArea().setTitle(title).setText(text).setIcon(Display.getCurrent().getSystemImage(SWT.ICON_QUESTION)).addChoice(defaultSelection, items);
 		dialog.setButtonType(OpalDialogType.NONE);
 		dialog.show();
 		return dialog.getMessageArea().getChoice();
@@ -443,16 +432,13 @@ public class Dialog {
 				footerArea.setButtonLabels(ResourceManager.getLabel(ResourceManager.OK)).setDefaultButtonIndex(0);
 				break;
 			case OK_CANCEL:
-				footerArea.setButtonLabels(ResourceManager.getLabel(ResourceManager.OK),
-						ResourceManager.getLabel(ResourceManager.CANCEL)).setDefaultButtonIndex(-1);
+				footerArea.setButtonLabels(ResourceManager.getLabel(ResourceManager.OK), ResourceManager.getLabel(ResourceManager.CANCEL)).setDefaultButtonIndex(-1);
 				break;
 			case SELECT_CANCEL:
-				footerArea.setButtonLabels(ResourceManager.getLabel(ResourceManager.SELECT),
-						ResourceManager.getLabel(ResourceManager.CANCEL)).setDefaultButtonIndex(-1);
+				footerArea.setButtonLabels(ResourceManager.getLabel(ResourceManager.SELECT), ResourceManager.getLabel(ResourceManager.CANCEL)).setDefaultButtonIndex(-1);
 				break;
 			case YES_NO:
-				footerArea.setButtonLabels(ResourceManager.getLabel(ResourceManager.YES),
-						ResourceManager.getLabel(ResourceManager.NO)).setDefaultButtonIndex(0);
+				footerArea.setButtonLabels(ResourceManager.getLabel(ResourceManager.YES), ResourceManager.getLabel(ResourceManager.NO)).setDefaultButtonIndex(0);
 				break;
 			default:
 				break;
