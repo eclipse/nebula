@@ -19,6 +19,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
@@ -158,6 +159,10 @@ public class FooterArea extends DialogArea {
 				button.setData(button.getText());
 				button.setText(button.getText() + " (" + timer + ")");
 				button.setEnabled(false);
+				final int newWidth = button.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+				gd.minimumWidth = Math.max(BUTTON_WIDTH, newWidth);
+				gd.widthHint = Math.max(BUTTON_WIDTH, newWidth);
+				button.getParent().layout(new Control[] { button });
 			}
 
 		}
@@ -177,6 +182,11 @@ public class FooterArea extends DialogArea {
 						disabledButton.setEnabled(true);
 					} else {
 						disabledButton.setText(disabledButton.getData() + " (" + timer + ")");
+						final GridData gd = (GridData) disabledButton.getLayoutData();
+						final int defaultWidth = disabledButton.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+						gd.minimumWidth = Math.max(BUTTON_WIDTH, defaultWidth);
+						gd.widthHint = Math.max(BUTTON_WIDTH, defaultWidth);
+						disabledButton.getParent().layout(new Control[] { disabledButton });
 						Display.getCurrent().timerExec(1000, this);
 					}
 
