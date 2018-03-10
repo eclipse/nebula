@@ -186,6 +186,6 @@
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.nebula.widgets.opal.progresscircle.feature"
+         id="org.eclipse.nebula.widgets.progresscircle.feature"
          version="0.0.0"/>
 </feature>
