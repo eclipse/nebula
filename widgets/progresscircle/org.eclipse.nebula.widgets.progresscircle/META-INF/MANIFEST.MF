@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Nebula Progress Circle widget plug-in
+Bundle-SymbolicName: org.eclipse.nebula.progresscircle
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Nebula
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: org.eclipse.nebula.widgets.progresscircle
+Require-Bundle: org.eclipse.swt;bundle-version="3.106.1";visibility:=reexport,
+ org.eclipse.equinox.common;bundle-version="3.9.0";visibility:=reexport

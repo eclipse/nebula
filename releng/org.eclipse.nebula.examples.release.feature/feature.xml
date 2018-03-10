@@ -231,84 +231,84 @@
          version="0.0.0"
          unpack="false"/>
    <plugin
-         id="org.eclipse.nebula.widgets.opal.breadcrumb"
+         id="org.eclipse.nebula.widgets.opal.breadcrumb.snippets"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 		 
    <plugin
-         id="org.eclipse.nebula.widgets.opal.checkboxgroup"
+         id="org.eclipse.nebula.widgets.opal.checkboxgroup.snippets"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 		 
    <plugin
-         id="org.eclipse.nebula.widgets.opal.columnbrowser"
+         id="org.eclipse.nebula.widgets.opal.columnbrowser.snippets"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 		 
    <plugin
-         id="org.eclipse.nebula.widgets.opal.dialog"
+         id="org.eclipse.nebula.widgets.opal.dialog.snippets"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 		 
    <plugin
-         id="org.eclipse.nebula.widgets.opal.duallist"
+         id="org.eclipse.nebula.widgets.opal.duallist.snippets"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 		 
    <plugin
-         id="org.eclipse.nebula.widgets.opal.header"
+         id="org.eclipse.nebula.widgets.opal.header.snippets"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.nebula.widgets.opal.heapmanager"
+         id="org.eclipse.nebula.widgets.opal.heapmanager.snippets"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>		 
 		 
    <plugin
-         id="org.eclipse.nebula.widgets.opal.logindialog"
+         id="org.eclipse.nebula.widgets.opal.logindialog.snippets"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 		 
    <plugin
-         id="org.eclipse.nebula.widgets.opal.multichoice"
+         id="org.eclipse.nebula.widgets.opal.multichoice.snippets"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 		 
    <plugin
-         id="org.eclipse.nebula.widgets.opal.notifier"
+         id="org.eclipse.nebula.widgets.opal.notifier.snippets"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 		 
    <plugin
-         id="org.eclipse.nebula.widgets.opal.preferencewindow"
+         id="org.eclipse.nebula.widgets.opal.preferencewindow.snippets"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 		 
    <plugin
-         id="org.eclipse.nebula.widgets.opal.promptsupport"
+         id="org.eclipse.nebula.widgets.opal.promptsupport.snippets"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -316,86 +316,94 @@
 		 
 		 
    <plugin
-         id="org.eclipse.nebula.widgets.opal.propertytable"
+         id="org.eclipse.nebula.widgets.opal.propertytable.snippets"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 		 
    <plugin
-         id="org.eclipse.nebula.widgets.opal.rangeslider"
+         id="org.eclipse.nebula.widgets.opal.rangeslider.snippets"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 		 
    <plugin
-         id="org.eclipse.nebula.widgets.opal.starrating"
+         id="org.eclipse.nebula.widgets.opal.starrating.snippets"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 		 
    <plugin
-         id="org.eclipse.nebula.widgets.opal.textassist"
+         id="org.eclipse.nebula.widgets.opal.textassist.snippets"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 		 
    <plugin
-         id="org.eclipse.nebula.widgets.opal.tipoftheday"
+         id="org.eclipse.nebula.widgets.opal.tipoftheday.snippets"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 		 
    <plugin
-         id="org.eclipse.nebula.widgets.opal.titledseparator"
+         id="org.eclipse.nebula.widgets.opal.titledseparator.snippets"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 		 
    <plugin
-         id="org.eclipse.nebula.widgets.opal.roundedtoolbar"
+         id="org.eclipse.nebula.widgets.opal.roundedtoolbar.snippets"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 		 
    <plugin
-         id="org.eclipse.nebula.widgets.opal.calculator"
+         id="org.eclipse.nebula.widgets.opal.calculator.snippets"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 		 
    <plugin
-         id="org.eclipse.nebula.widgets.opal.horizontalspinner"
+         id="org.eclipse.nebula.widgets.opal.horizontalspinner.snippets"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 		 
    <plugin
-         id="org.eclipse.nebula.widgets.opal.launcher"
+         id="org.eclipse.nebula.widgets.opal.launcher.snippets"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>		 
 		 
    <plugin
-         id="org.eclipse.nebula.widgets.opal.panels"
+         id="org.eclipse.nebula.widgets.opal.panels.snippets"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>		
 
    <plugin
-         id="org.eclipse.nebula.widgets.opal.switchbutton"
+         id="org.eclipse.nebula.widgets.opal.switchbutton.snippets"
          download-size="0"
          install-size="0"
          version="0.0.0"
-         unpack="false"/>				 
+         unpack="false"/>	
+
+   <plugin
+         id="org.eclipse.nebula.widgets.progresscircle.snippets"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>		
+		 
 </feature>
