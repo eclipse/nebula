@@ -65,6 +65,7 @@
 		<module>../../widgets/opal/panels</module>
 		<module>../../widgets/opal/switchbutton</module>
 		<module>../../widgets/progresscircle</module> 
+		<module>../../widgets/nebulaslider</module> 
 
 		<!-- Releng -->
 		<module>../org.eclipse.nebula.feature</module>

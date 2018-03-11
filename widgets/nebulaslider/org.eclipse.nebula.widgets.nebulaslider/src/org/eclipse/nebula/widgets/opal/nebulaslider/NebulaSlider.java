@@ -231,7 +231,7 @@ public class NebulaSlider extends Canvas {
 				return;
 			}
 			moving = true;
-			previousX = e.x;
+			previousX = getDisplay().getCursorLocation().x;
 		});
 
 		addListener(SWT.MouseUp, e -> {
@@ -242,7 +242,7 @@ public class NebulaSlider extends Canvas {
 			if (!moving) {
 				return;
 			}
-			final int deltaX = previousX - e.x;
+			final int deltaX = previousX - getDisplay().getCursorLocation().x;
 			final int originalWidth = getClientArea().width - H_MARGIN * 2 - SELECTOR_WIDTH;
 			final float step = (maximum - minimum) / originalWidth;
 			value -= deltaX * step * 2;
@@ -252,7 +252,7 @@ public class NebulaSlider extends Canvas {
 			if (value > maximum) {
 				value = maximum;
 			}
-			previousX = e.x;
+			previousX = getDisplay().getCursorLocation().x;
 			fireSelectionEvent();
 			redraw();
 			update();
