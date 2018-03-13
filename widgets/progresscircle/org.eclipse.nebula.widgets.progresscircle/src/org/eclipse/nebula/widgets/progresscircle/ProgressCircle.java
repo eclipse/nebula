@@ -88,7 +88,7 @@ public class ProgressCircle extends Canvas {
 
 	private static int checkStyle(final int style) {
 		if ((style & SWT.BORDER) != 0) {
-			return style & ~SWT.BORDER;
+			return SWT.BORDER;
 		}
 		return 0;
 	}
@@ -151,8 +151,9 @@ public class ProgressCircle extends Canvas {
 		if (showPercentage) {
 			gc.setForeground(getHighlightColor());
 			final String text = percentage + "%";
-			final int x = (circleSize + MARGIN - gc.stringExtent(text).x) / 2;
-			final int y = (circleSize + MARGIN - gc.stringExtent(text).y) / 2;
+			final Point textSize = gc.stringExtent(text);
+			final int x = MARGIN + (circleSize - textSize.x) / 2;
+			final int y = (circleSize - textSize.y) / 2;
 			gc.drawText(text, x, y, true);
 		}
 
