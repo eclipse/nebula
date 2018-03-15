@@ -14,6 +14,25 @@
     name="nebula"
     label="Nebula">
   <setupTask
+      xsi:type="setup:CompoundTask"
+      name="User Preferences">
+    <annotation
+        source="http://www.eclipse.org/oomph/setup/UserPreferences">
+      <detail
+          key="/instance/org.eclipse.pde.api.tools/missing_default_api_profile">
+        <value>record</value>
+      </detail>
+    </annotation>
+    <setupTask
+        xsi:type="setup:CompoundTask"
+        name="org.eclipse.pde.api.tools">
+      <setupTask
+          xsi:type="setup:PreferenceTask"
+          key="/instance/org.eclipse.pde.api.tools/missing_default_api_profile"
+          value="Warning"/>
+    </setupTask>
+  </setupTask>
+  <setupTask
       xsi:type="jdt:JRETask"
       version="JavaSE-1.7"
       location="${jre.location-1.7}">
@@ -42,14 +61,14 @@
   <setupTask
       xsi:type="setup:VariableTask"
       name="eclipse.target.platform"
-      defaultValue="Mars"
+      defaultValue="Photon"
       storageURI="scope://Workspace"/>
   <setupTask
       xsi:type="setup.p2:P2Task">
     <repository
-        url="http://download.eclipse.org/technology/nebula/snapshot"/>
+        url="http://download.eclipse.org/nebula/snapshot"/>
     <repository
-        url="http://download.eclipse.org/technology/nebula/incubation/snapshot"/>
+        url="http://download.eclipse.org/nebula/incubation/snapshot"/>
     <description>Install the tools needed in the IDE to work with the source code for ${scope.project.label}</description>
   </setupTask>
   <setupTask
@@ -86,31 +105,58 @@
           rootFolder="${git.clone.location}"
           locateNestedProjects="true"/>
       <repositoryList
+          name="Photon">
+        <repository
+            url="http://download.eclipse.org/releases/photon"/>
+        <repository
+            url="http://download.eclipse.org/nebula/snapshot"/>
+        <repository
+            url="http://download.eclipse.org/nebula/incubation/snapshot"/>
+      </repositoryList>
+      <repositoryList
+          name="Oxygen">
+        <repository
+            url="http://download.eclipse.org/releases/neon"/>
+        <repository
+            url="http://download.eclipse.org/nebula/snapshot"/>
+        <repository
+            url="http://download.eclipse.org/nebula/incubation/snapshot"/>
+      </repositoryList>
+      <repositoryList
+          name="Neon">
+        <repository
+            url="http://download.eclipse.org/releases/neon"/>
+        <repository
+            url="http://download.eclipse.org/nebula/snapshot"/>
+        <repository
+            url="http://download.eclipse.org/nebula/incubation/snapshot"/>
+      </repositoryList>
+      <repositoryList
           name="Mars">
         <repository
             url="http://download.eclipse.org/releases/mars"/>
         <repository
-            url="http://download.eclipse.org/technology/nebula/snapshot"/>
+            url="http://download.eclipse.org/nebula/snapshot"/>
         <repository
-            url="http://download.eclipse.org/technology/nebula/incubation/snapshot"/>
+            url="http://download.eclipse.org/nebula/incubation/snapshot"/>
       </repositoryList>
       <repositoryList
           name="Luna">
         <repository
             url="http://download.eclipse.org/releases/luna"/>
         <repository
-            url="http://download.eclipse.org/technology/nebula/snapshot"/>
+            url="http://download.eclipse.org/nebula/snapshot"/>
         <repository
-            url="http://download.eclipse.org/technology/nebula/incubation/snapshot"/>
+            url="http://download.eclipse.org/nebula/incubation/snapshot"/>
       </repositoryList>
       <repositoryList
           name="Kepler">
         <repository
             url="http://download.eclipse.org/releases/kepler"/>
         <repository
-            url="http://download.eclipse.org/technology/nebula/snapshot"/>
+            url="http://download.eclipse.org/nebula/snapshot"/>
         <repository
-            url="http://download.eclipse.org/technology/nebula/incubation/snapshot"/>
+            url="http://download.eclipse.org/nebula/incubation/snapshot"/>
       </repositoryList>
     </targlet>
   </setupTask>
