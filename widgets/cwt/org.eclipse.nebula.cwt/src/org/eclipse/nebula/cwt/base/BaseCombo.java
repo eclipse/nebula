@@ -1077,7 +1077,7 @@ public abstract class BaseCombo extends Canvas {
 			Point location = positionControl.getComposite().toDisplay(
 					positionControl.getLocation());
 			location.y += (positionControl.getSize().y + 2);
-			int dHeight = getDisplay().getClientArea().height;
+			int dHeight = positionControl.getControl().getMonitor().getClientArea().height;
 			if ((location.y + size.y) > dHeight) {
 				location.y -= (positionControl.getSize().y + size.y + 4);
 				// aStyle |= Animator.UP;
