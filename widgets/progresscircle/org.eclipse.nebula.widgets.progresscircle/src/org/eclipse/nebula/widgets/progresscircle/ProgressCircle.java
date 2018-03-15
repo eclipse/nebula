@@ -9,6 +9,8 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.progresscircle;
 
+import java.time.LocalTime;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.PaintEvent;
@@ -24,7 +26,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Widget;
 
 /**
- * Instances of this class represents a progress circle, which displays a percentage in a "donut".
+ * Instances of this class represents a progress circle (also known as <i>donuts</i>), which represents a ratio.
+ * It can also represent a remaining time, like an egg cooker.
  * <p>
  * <dl>
  * <dt><b>Styles:</b></dt>
@@ -35,13 +38,21 @@ import org.eclipse.swt.widgets.Widget;
  *
  */
 public class ProgressCircle extends Canvas {
-	private int percentage;
+	public static final String PERCENTAGE_PATTERN = "%d%%";
+	public static final String INTEGER_PATTERN = "%d";
+
+	private int value;
 	private int circleSize;
 	private int thickness;
-	private boolean showPercentage;
+	private boolean showText;
 	private Color highlightColor;
 	private static int MARGIN = 2;
 	private boolean firstDisplay = true;
+	private int maximum;
+	private int minimum;
+	private String textPattern = PERCENTAGE_PATTERN;
+	private float floatValue;
+	private boolean isTimer;
 
 	/**
 	 * Constructs a new instance of this class given its parent and a style value
@@ -75,7 +86,9 @@ public class ProgressCircle extends Canvas {
 	 */
 	public ProgressCircle(Composite parent, int style) {
 		super(parent, checkStyle(style) | SWT.DOUBLE_BUFFERED);
-		percentage = 0;
+		value = 0;
+		minimum = 0;
+		maximum = 100;
 		circleSize = 100;
 		thickness = 10;
 		highlightColor = getAndDisposeColor(119, 167, 251);
@@ -122,7 +135,15 @@ public class ProgressCircle extends Canvas {
 
 		// Draw the selected part
 		final Path pathHighlight = new Path(getDisplay());
-		final float angle = percentage * 3.6f;
+		float ratio = 1.0f * value / (maximum - minimum);
+		if (minimum < 0 && maximum < 0) {
+			ratio = -1.0f * (minimum - value) / (maximum - minimum);
+		}
+
+		float angle = ratio * 360f;
+		if (minimum < 0 && maximum > 0) {
+			angle += 180;
+		}
 
 		pathHighlight.addArc(MARGIN, MARGIN, circleSize, circleSize, 90, -angle);
 		pathHighlight.lineTo((MARGIN + circleSize) / 2, (MARGIN + circleSize) / 2);
@@ -134,7 +155,7 @@ public class ProgressCircle extends Canvas {
 
 		// Draw the unselected part
 		final Path path = new Path(getDisplay());
-		final float unselectedAngle = (100 - percentage) * 3.6f;
+		final float unselectedAngle = 360f - angle;
 
 		path.addArc(MARGIN, MARGIN, circleSize, circleSize, 90 - angle, -unselectedAngle);
 		path.lineTo((MARGIN + circleSize) / 2, (MARGIN + circleSize) / 2);
@@ -148,39 +169,113 @@ public class ProgressCircle extends Canvas {
 		gc.setBackground(getBackground());
 		gc.fillOval(MARGIN + thickness, MARGIN + thickness, circleSize - thickness * 2, circleSize - thickness * 2);
 
-		if (showPercentage) {
+		if (showText) {
 			gc.setForeground(getHighlightColor());
-			final String text = percentage + "%";
+			final String text;
+			if (isTimer) {
+				final LocalTime time = LocalTime.ofSecondOfDay(value);
+				if (time.getHour() == 0) {
+					if (time.getMinute() == 0) {
+						// Seconds only
+						text = String.format("%02d", time.getSecond());
+					} else {
+						// Minutes+secondes
+						text = String.format("%02d:%02d", time.getMinute(), time.getSecond());
+					}
+				} else {
+					// Hour/Min/sec
+					text = String.format("%02d:%02d:%02d", time.getHour(), time.getMinute(), time.getSecond());
+				}
+			} else {
+				text = String.format(textPattern, value);
+			}
 			final Point textSize = gc.stringExtent(text);
 			final int x = MARGIN + (circleSize - textSize.x) / 2;
 			final int y = (circleSize - textSize.y) / 2;
 			gc.drawText(text, x, y, true);
 		}
-
 	}
 
 	// ----------------------------- Getters and Setters
 
 	/**
-	 * @return the percentage value
+	 * Returns the maximum value which the receiver will allow.
+	 *
+	 * @return the maximum
 	 *
 	 * @exception SWTException
 	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
-	 *                disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
-	 *                thread that created the receiver</li>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
 	 *                </ul>
 	 */
-	public int getPercentage() {
+	public int getMaximum() {
 		checkWidget();
-		return percentage;
+		return maximum;
 	}
 
 	/**
-	 * Set the percentage value of the circle
+	 * Sets the maximum value that the receiver will allow.
 	 *
-	 * @param percentage the new percentage value
+	 * @param value the new maximum
+	 *
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_INVALID_ARGUMENT - If maximum is lower than the minimum value</li>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                </ul>
+	 */
+	public void setMaximum(int maximum) {
+		checkWidget();
+		if (maximum < minimum) {
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT, null, String.format("The value %d is lower than the minimum (%d)", maximum, minimum));
+		}
+		this.maximum = maximum;
+		redraw();
+		update();
+	}
+
+	/**
+	 * Returns the minimum value which the receiver will allow.
+	 *
+	 * @return the minimum
+	 *
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                </ul>
+	 */
+	public int getMinimum() {
+		checkWidget();
+		return minimum;
+	}
+
+	/**
+	 * Sets the minimum value that the receiver will allow.
+	 *
+	 * @param value the new minimum
+	 *
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_INVALID_ARGUMENT - If minimum is greater than the maximum value</li>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                </ul>
+	 */
+	public void setMinimum(int minimum) {
+		checkWidget();
+		if (minimum > maximum) {
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT, null, String.format("The value %d is greater than the maximum (%d)", minimum, maximum));
+		}
+		this.minimum = minimum;
+		redraw();
+		update();
+	}
+
+	/**
+	 * @return selection value
 	 *
 	 * @exception SWTException
 	 *                <ul>
@@ -190,38 +285,60 @@ public class ProgressCircle extends Canvas {
 	 *                thread that created the receiver</li>
 	 *                </ul>
 	 */
-	public void setPercentage(int percentage) {
+	public int getSelection() {
 		checkWidget();
-		if (percentage < 0 || percentage > 100) {
-			SWT.error(SWT.ERROR_INVALID_ARGUMENT, null, String.format("Value %d is out of range [0-100]", percentage));
+		return value;
+	}
+
+	/**
+	 * Set the selection value of this widget
+	 *
+	 * @param value the new percentage value
+	 *
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
+	 *                </ul>
+	 */
+	public void setSelection(int selection) {
+		checkWidget();
+		if (selection < minimum || selection > maximum) {
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT, null, String.format("Value %d is out of range [%d - %d]", selection, minimum, maximum));
 		}
-		final int previousValue = this.percentage;
-		this.percentage = percentage;
-		if (firstDisplay || previousValue == percentage) {
+		final int previousValue = value;
+		value = selection;
+		if (firstDisplay || previousValue == selection) {
 			return;
 		}
 		startAnimation(previousValue);
 	}
 
 	private void startAnimation(int startValue) {
-		final int endValue = percentage;
+		final int endValue = value;
 		final float delta = (endValue - startValue) / 10f;
-		percentage = startValue;
+		floatValue = 1.0f * startValue;
 		redraw();
 		update();
 		getDisplay().asyncExec(new Runnable() {
 
 			@Override
 			public void run() {
-				percentage = (int) (percentage + delta);
+				floatValue = floatValue + delta;
+				value = (int) floatValue;
 				if (isDisposed()) {
 					return;
 				}
 				redraw();
 				update();
 
-				if (delta > 0 && percentage >= endValue || delta < 0 && percentage <= endValue) {
-					percentage = endValue;
+				if (delta > 0 && value >= endValue || delta < 0 && value <= endValue) {
+					value = endValue;
+					redraw();
+					update();
+
 					return;
 				}
 				getDisplay().timerExec(50, this);
@@ -305,7 +422,7 @@ public class ProgressCircle extends Canvas {
 	}
 
 	/**
-	 * @return <code>true</code> if the percentage text is displayed, false otherwise
+	 * @return <code>true</code> if the text is displayed, false otherwise
 	 *
 	 * @exception SWTException
 	 *                <ul>
@@ -315,27 +432,28 @@ public class ProgressCircle extends Canvas {
 	 *                thread that created the receiver</li>
 	 *                </ul>
 	 */
-	public boolean isShowPercentage() {
+	public boolean isShowText() {
 		checkWidget();
-		return showPercentage;
+		return showText;
 	}
 
 	/**
-	 * Displays or not the percentage label
+	 * Displays or not the text
 	 *
 	 * @param showPercentage if <code>true</code>, displays the percentage label
 	 *
 	 * @exception SWTException
 	 *                <ul>
+	 *                <li>ERROR_INVALID_ARGUMENT - if the display mode is not percentage</li>
 	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
 	 *                disposed</li>
 	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
 	 *                thread that created the receiver</li>
 	 *                </ul>
 	 */
-	public void setShowPercentage(boolean showPercentage) {
+	public void setShowText(boolean showPercentage) {
 		checkWidget();
-		this.showPercentage = showPercentage;
+		showText = showPercentage;
 		redraw();
 		update();
 	}
@@ -374,6 +492,73 @@ public class ProgressCircle extends Canvas {
 		this.highlightColor = highlightColor;
 		redraw();
 		update();
+	}
+
+	/**
+	 * @return the text pattern used to display the value
+	 *
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
+	 *                </ul>
+	 */
+	public String getTextPattern() {
+		checkWidget();
+		return textPattern;
+	}
+
+	/**
+	 * Set the pattern used to display the value
+	 *
+	 * @param textPattern the new text pattern used to display the value
+	 *
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_NULL_ARGUMENT - if the parameter is NULL</li>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
+	 *                </ul>
+	 */
+	public void setTextPattern(String textPattern) {
+		checkWidget();
+		if (textPattern == null) {
+			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
+		this.textPattern = textPattern;
+	}
+
+	public void startCountDown(LocalTime startTime) {
+		checkWidget();
+		setMinimum(0);
+		final int numberOfSeconds = startTime.getHour() * 3600 + //
+				startTime.getMinute() * 60 + //
+				startTime.getSecond();
+		minimum = 0;
+		maximum = numberOfSeconds;
+		value = numberOfSeconds;
+		isTimer = true;
+		redraw();
+		update();
+		final Runnable runnable = new Runnable() {
+			@Override
+			public void run() {
+				if (isDisposed()) {
+					return;
+				}
+				value--;
+				redraw();
+				update();
+				if (value != 0) {
+					getDisplay().timerExec(1000, this);
+				}
+			}
+		};
+		getDisplay().timerExec(1000, runnable);
 	}
 
 	// ----------- Overriden methods
