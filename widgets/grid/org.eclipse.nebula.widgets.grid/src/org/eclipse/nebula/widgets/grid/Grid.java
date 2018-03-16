@@ -104,7 +104,7 @@ import org.eclipse.swt.widgets.TypedListener;
  * </dl>
  *
  * @author chris.gross@us.ibm.com
- * @author Mirko Paturzo <mirko.paturzo@exeura.eu>
+ * @author Mirko Paturzo <mirko.paturzo@yahoo.it>
  *
  * Mirko modified this widget for improve performace and reduce used memory
  * fix memory leak and slow disposed object
@@ -312,6 +312,8 @@ public class Grid extends Canvas {
 	 * List of the table columns in the order they are displayed.
 	 */
 	private final List displayOrderedColumns = new ArrayList();
+	
+	private static final Object displayOrderedColumnsLock = new Object();
 
 	private GridColumnGroup[] columnGroups = new GridColumnGroup[0];
 
@@ -727,6 +729,11 @@ public class Grid extends Canvas {
 	private Listener defaultKeyListener;
 
 	private boolean defaultKeyListenerEnabled = true;
+
+	/**
+	 * caching columns order improves grid rendering
+	 */
+	private int[] columnsOrder;
 
 	/**
 	 * A range of rows in a <code>Grid</code>.
@@ -1188,7 +1195,7 @@ public class Grid extends Canvas {
 
 		return (GridColumn) columns.get(index);
 	}
-
+	
 	/**
 	 * Returns the column at the given point in the receiver or null if no such
 	 * column exists. The point is in the coordinate system of the receiver.
@@ -1340,15 +1347,18 @@ public class Grid extends Canvas {
 	 */
 	public int[] getColumnOrder() {
 		checkWidget();
-
-		int[] order = new int[columns.size()];
-		int i = 0;
-		for (Iterator colIterator = displayOrderedColumns.iterator(); colIterator.hasNext();) {
-			GridColumn col = (GridColumn) colIterator.next();
-			order[i] = columns.indexOf(col);
-			i++;
+		synchronized (displayOrderedColumnsLock) {
+			if(columnsOrder == null) {
+				columnsOrder = new int[columns.size()];
+				int i = 0;
+				for (Iterator colIterator = displayOrderedColumns.iterator(); colIterator.hasNext();) {
+					GridColumn col = (GridColumn) colIterator.next();
+					columnsOrder[i] = columns.indexOf(col);
+					i++;
+				}
+			}
 		}
-		return order;
+		return columnsOrder;
 	}
 
 	/**
@@ -1491,6 +1501,16 @@ public class Grid extends Canvas {
 
 		for (int i = 0; i < order.length; i++) {
 			displayOrderedColumns.add(cols[order[i]]);
+		}
+		clearDisplayOrderedCache();
+	}
+
+	/**
+	 * This method is used for clearing columns displayed ordering cache
+	 */
+	private void clearDisplayOrderedCache() {
+		synchronized (displayOrderedColumnsLock) {
+			columnsOrder = null;
 		}
 	}
 
@@ -4560,8 +4580,8 @@ public class Grid extends Canvas {
 			for (int i = notifyFrom; i <= notifyTo; i++) {
 				((GridColumn) displayOrderedColumns.get(i)).fireMoved();
 			}
+			clearDisplayOrderedCache();
 		}
-
 		redraw();
 	}
 
@@ -7535,7 +7555,7 @@ public class Grid extends Canvas {
 
 		scrollValuesObsolete = true;
 		redraw();
-
+		clearDisplayOrderedCache();
 		return columns.size() - 1;
 	}
 
@@ -7597,6 +7617,7 @@ public class Grid extends Canvas {
 		if (selectionModified && !disposing) {
 			updateColumnSelection();
 		}
+		clearDisplayOrderedCache();
 	}
 
 	/**
