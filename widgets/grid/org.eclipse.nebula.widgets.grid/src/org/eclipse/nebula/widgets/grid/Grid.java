@@ -312,8 +312,6 @@ public class Grid extends Canvas {
 	 * List of the table columns in the order they are displayed.
 	 */
 	private final List displayOrderedColumns = new ArrayList();
-	
-	private static final Object displayOrderedColumnsLock = new Object();
 
 	private GridColumnGroup[] columnGroups = new GridColumnGroup[0];
 
@@ -1347,15 +1345,13 @@ public class Grid extends Canvas {
 	 */
 	public int[] getColumnOrder() {
 		checkWidget();
-		synchronized (displayOrderedColumnsLock) {
-			if(columnsOrder == null) {
-				columnsOrder = new int[columns.size()];
-				int i = 0;
-				for (Iterator colIterator = displayOrderedColumns.iterator(); colIterator.hasNext();) {
-					GridColumn col = (GridColumn) colIterator.next();
-					columnsOrder[i] = columns.indexOf(col);
-					i++;
-				}
+		if(columnsOrder == null) {
+			columnsOrder = new int[columns.size()];
+			int i = 0;
+			for (Iterator colIterator = displayOrderedColumns.iterator(); colIterator.hasNext();) {
+				GridColumn col = (GridColumn) colIterator.next();
+				columnsOrder[i] = columns.indexOf(col);
+				i++;
 			}
 		}
 		return columnsOrder;
@@ -1509,9 +1505,7 @@ public class Grid extends Canvas {
 	 * This method is used for clearing columns displayed ordering cache
 	 */
 	private void clearDisplayOrderedCache() {
-		synchronized (displayOrderedColumnsLock) {
-			columnsOrder = null;
-		}
+		columnsOrder = null;
 	}
 
 	/**
