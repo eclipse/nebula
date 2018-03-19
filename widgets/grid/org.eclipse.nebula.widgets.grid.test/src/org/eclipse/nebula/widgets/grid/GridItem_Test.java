@@ -38,10 +38,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 
-@SuppressWarnings( {
-  "deprecation",
-  "restriction"
-} )
 public class GridItem_Test {
 
   private Display display;
@@ -728,7 +724,7 @@ public class GridItem_Test {
     assertFalse( item.getCheckable( 1 ) );
   }
 
-  @Test( expected = IndexOutOfBoundsException.class )
+  @Test( expected = IllegalArgumentException.class )
   public void testGetCheckableByIndex_InvalidIndex() {
     createGridColumns( grid, 3, SWT.NONE );
     GridItem item = new GridItem( grid, SWT.NONE );

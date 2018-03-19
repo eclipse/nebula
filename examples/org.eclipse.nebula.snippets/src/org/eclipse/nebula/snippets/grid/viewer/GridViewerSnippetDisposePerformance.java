@@ -354,7 +354,7 @@ public class GridViewerSnippetDisposePerformance
 					grid.remove(selected);
 					while (focus.y >= grid.getItemCount())
 						--focus.y;
-					if (focus.y >= 0)
+					if (focus.y >= 0 && focus.x >=0)
 					{
 						grid.setFocusItem(grid.getItem(focus.y));
 						grid.setFocusColumn(grid.getColumn(focus.x));
