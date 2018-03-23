@@ -4,7 +4,7 @@ Bundle-Name: Oscilloscope Example
 Bundle-SymbolicName: org.eclipse.nebula.widgets.oscilloscope.example;singleton:=true
 Bundle-Version: 1.0.1.qualifier
 Bundle-Vendor: Eclipse.org
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.eclipse.nebula.examples;bundle-version="1.0.4",
  org.eclipse.ui,
  org.eclipse.core.runtime,

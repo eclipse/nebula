@@ -367,6 +367,14 @@ Contributors:
 							</execution>
 						</executions>
 					</plugin>
+					<plugin>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>tycho-compiler-plugin</artifactId>
+						<version>${tycho-version}</version>
+						<configuration>
+							<useJDK>BREE</useJDK>
+						</configuration>
+					</plugin>
 				</plugins>
 			</build>
 
