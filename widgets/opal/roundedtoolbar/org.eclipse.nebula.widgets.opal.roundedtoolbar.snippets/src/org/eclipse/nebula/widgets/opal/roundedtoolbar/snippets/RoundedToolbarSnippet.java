@@ -63,12 +63,10 @@ public class RoundedToolbarSnippet {
 		emailb = new Image(display, RoundedToolbarSnippet.class.getResourceAsStream("icons/email_b.png"));
 		emailw = new Image(display, RoundedToolbarSnippet.class.getResourceAsStream("icons/email_w.png"));
 
-		final Label firstLabel = new Label(shell, SWT.NONE);
-		firstLabel.setText("Toggle buttons");
+		new Label(shell, SWT.NONE).setText("Toggle buttons");
 		createToggleButtons(shell);
 
-		final Label secondLabel = new Label(shell, SWT.NONE);
-		secondLabel.setText("Push buttons");
+		new Label(shell, SWT.NONE).setText("Push buttons");
 		createPushButtons(shell, false);
 
 		final RoundedToolbar toolbar = createPushButtons(shell, true);
@@ -78,8 +76,7 @@ public class RoundedToolbarSnippet {
 		toolbar.setLayoutData(gd);
 
 		// CHECKBOX
-		final Label cbLabel = new Label(shell, SWT.NONE);
-		cbLabel.setText("Checkbox buttons");
+		new Label(shell, SWT.NONE).setText("Checkbox buttons");
 		createCheckButtons(shell, false);
 
 		final RoundedToolbar toolbar2 = createCheckButtons(shell, true);
@@ -89,15 +86,17 @@ public class RoundedToolbarSnippet {
 		toolbar2.setLayoutData(gd);
 
 		// RADIO
-		final Label radioLabel = new Label(shell, SWT.NONE);
-		radioLabel.setText("Radio buttons");
-		createRadioButtons(shell, false);
+		new Label(shell, SWT.NONE).setText("Radio buttons");
+		createRadioButtons(shell, false, true);
 
-		final RoundedToolbar toolbar3 = createRadioButtons(shell, true);
+		final RoundedToolbar toolbar3 = createRadioButtons(shell, true, true);
 		final GridData gd3 = new GridData(SWT.FILL, SWT.FILL, false, false);
 		gd3.widthHint = SWT.DEFAULT;
 		gd3.heightHint = 100;
 		toolbar3.setLayoutData(gd);
+
+		new Label(shell, SWT.NONE).setText("Radio button behaviour (no button drawned)");
+		createRadioButtons(shell, false, false);
 
 		shell.open();
 		while (!shell.isDisposed()) {
@@ -126,10 +125,6 @@ public class RoundedToolbarSnippet {
 
 		roundedToolBar.setBackground(grey1);
 		roundedToolBar.setCornerRadius(6);
-
-		roundedToolBar.addListener(SWT.Resize, e -> {
-			System.out.println(roundedToolBar.getSize());
-		});
 
 		final RoundedToolItem item1 = new RoundedToolItem(roundedToolBar, SWT.TOGGLE);
 		item1.setSelection(true);
@@ -240,8 +235,8 @@ public class RoundedToolbarSnippet {
 		return toolBar;
 	}
 
-	private static RoundedToolbar createRadioButtons(final Shell shell, final boolean verticalAlignment) {
-		final RoundedToolbar toolBar = new RoundedToolbar(shell, SWT.NONE);
+	private static RoundedToolbar createRadioButtons(final Shell shell, final boolean verticalAlignment, final boolean drawRadio) {
+		final RoundedToolbar toolBar = new RoundedToolbar(shell, drawRadio ? SWT.NONE : SWT.HIDE_SELECTION);
 		toolBar.setCornerRadius(8);
 		toolBar.setBackground(grey1);
 

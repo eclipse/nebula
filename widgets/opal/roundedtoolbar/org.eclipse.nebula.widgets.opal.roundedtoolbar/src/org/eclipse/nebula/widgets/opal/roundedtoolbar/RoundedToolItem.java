@@ -69,6 +69,7 @@ public class RoundedToolItem extends Item {
 	private GC gc;
 	private int toolbarHeight;
 	private boolean isLast;
+	private final boolean hideSelection;
 
 	/**
 	 * Constructs a new instance of this class given its parent (which must be a
@@ -149,6 +150,7 @@ public class RoundedToolItem extends Item {
 		selectionListeners = new CopyOnWriteArrayList<SelectionListener>();
 		width = -1;
 		height = -1;
+		hideSelection = (parent.getStyle() & SWT.HIDE_SELECTION) == SWT.HIDE_SELECTION;
 	}
 
 	private static int checkStyle(final int style) {
@@ -315,23 +317,36 @@ public class RoundedToolItem extends Item {
 			xPosition += 16;
 		}
 		if (isRadio()) {
-			drawRadio(x + xPosition);
-			xPosition += 16;
+			if (hideSelection) {
+				if (selection) {
+					drawBackground(x);
+				}
+			} else {
+				drawRadio(x + xPosition);
+				xPosition += 16;
+			}
 		}
 
 		xPosition += drawImage(x + xPosition);
 		drawText(x + xPosition);
 
-		bounds = new Rectangle(x, 0, getWidth(), toolbarHeight);
+		int width = getWidth();
+		if (isLast) {
+			width = Math.max(getWidth(), getParent().getSize().x - x);
+		}
+		bounds = new Rectangle(x, 0, width, toolbarHeight);
 	}
 
 	private void drawBackground(final int x) {
 		final AdvancedPath path = new AdvancedPath(getDisplay());
 		final boolean isFirst = getParent().indexOf(this) == 0;
+
+		int width = getWidth();
 		if (isFirst) {
 			path.addRoundRectangleStraightRight(x, 0, getWidth(), toolbarHeight, parentToolbar.getCornerRadius(), parentToolbar.getCornerRadius());
 		} else if (isLast) {
-			path.addRoundRectangleStraightLeft(x, 0, getWidth(), toolbarHeight, parentToolbar.getCornerRadius(), parentToolbar.getCornerRadius());
+			width = Math.max(getWidth(), getParent().getSize().x - x);
+			path.addRoundRectangleStraightLeft(x, 0, width, toolbarHeight, parentToolbar.getCornerRadius(), parentToolbar.getCornerRadius());
 		} else {
 			path.addRectangle(x, 0, getWidth(), toolbarHeight);
 		}
@@ -340,7 +355,7 @@ public class RoundedToolItem extends Item {
 
 		gc.setForeground(START_GRADIENT_COLOR);
 		gc.setBackground(END_GRADIENT_COLOR);
-		gc.fillGradientRectangle(x, 0, getWidth() + parentToolbar.getCornerRadius(), toolbarHeight, true);
+		gc.fillGradientRectangle(x, 0, width + parentToolbar.getCornerRadius(), toolbarHeight, true);
 
 		gc.setClipping((Rectangle) null);
 	}
@@ -1049,8 +1064,8 @@ public class RoundedToolItem extends Item {
 		return (getStyle() & SWT.DROP_DOWN) != 0;
 	}
 
-	void forceSelection() {
-		selection = true;
+	void forceSelection(boolean newSelection) {
+		selection = newSelection;
 	}
 
 }

@@ -12,6 +12,7 @@ package org.eclipse.nebula.widgets.opal.roundedtoolbar;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import org.eclipse.nebula.widgets.opal.commons.AdvancedPath;
 import org.eclipse.nebula.widgets.opal.commons.SWTGraphicUtil;
@@ -36,7 +37,7 @@ import org.eclipse.swt.widgets.Widget;
  * <p>
  * <dl>
  * <dt><b>Styles:</b></dt>
- * <dd>NONE</dd>
+ * <dd>HIDE_SELECTION</dd>: if this style is selected, the radio button are not drawned
  * <dt><b>Events:</b></dt>
  * <dd>(none)</dd>
  * </dl>
@@ -138,16 +139,15 @@ public class RoundedToolbar extends Canvas {
 				return;
 			}
 
-			final RoundedToolItem item = items.stream()//
+			final Optional<RoundedToolItem> pressedItem = items.stream()//
 					.filter(element -> element.getBounds().contains(event.x, event.y) && element.isEnabled()) //
-					.findFirst() //
-					.orElse(null);
-			if (item == null) {
+					.findFirst();
+			if (!pressedItem.isPresent()) {
 				return;
 			}
-
+			final RoundedToolItem item = pressedItem.get();
 			if (item.isPushButon()) {
-				item.forceSelection();
+				item.forceSelection(true);
 			} else {
 				item.setSelection(!item.getSelection());
 			}
@@ -161,13 +161,13 @@ public class RoundedToolbar extends Canvas {
 				return;
 			}
 
-			final RoundedToolItem item = items.stream()//
+			final Optional<RoundedToolItem> selectedItem = items.stream()//
 					.filter(element -> element.getBounds().contains(event.x, event.y) && element.isEnabled()) //
-					.findFirst() //
-					.orElse(null);
-			if (item == null) {
+					.findFirst();
+			if (!selectedItem.isPresent()) {
 				return;
 			}
+			final RoundedToolItem item = selectedItem.get();
 
 			if (item.isPushButon()) {
 				item.setSelection(false);
@@ -185,15 +185,31 @@ public class RoundedToolbar extends Canvas {
 			update();
 		});
 		addListener(SWT.MouseHover, event -> {
-			final RoundedToolItem item = items.stream()//
-					.filter(element -> element.getBounds().contains(event.x, event.y)) //
-					.findFirst() //
-					.orElse(null);
-			if (item == null) {
+			final Optional<RoundedToolItem> previouslySelectedItem = items.stream()//
+					.filter(element -> element.getBounds().contains(event.x, event.y) && element.isEnabled()) //
+					.findFirst();
+			if (!previouslySelectedItem.isPresent()) {
 				return;
 			}
+			final RoundedToolItem item = previouslySelectedItem.get();
 
 			setToolTipText(item.getTooltipText() == null ? "" : item.getTooltipText());
+		});
+
+		addListener(SWT.MouseExit, event -> {
+			final Iterator<RoundedToolItem> it = items.iterator();
+			boolean needRedraw = false;
+			while (it.hasNext()) {
+				final RoundedToolItem item = it.next();
+				if (item.isPushButon() && item.getSelection()) {
+					item.forceSelection(false);
+					needRedraw = true;
+				}
+			}
+			if (needRedraw) {
+				redraw();
+				update();
+			}
 		});
 
 		addPaintListener(e -> {
