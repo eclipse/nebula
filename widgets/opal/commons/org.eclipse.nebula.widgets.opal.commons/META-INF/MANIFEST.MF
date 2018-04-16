@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.eclipse.nebula.widgets.opal.commons
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Laurent CARON
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: org.eclipse.equinox.common;bundle-version="3.9.0";visibility:=reexport,
+Require-Bundle: org.eclipse.equinox.common;visibility:=reexport,
  org.eclipse.swt;visibility:=reexport
 Export-Package: org.eclipse.nebula.widgets.opal.commons,
  org.eclipse.nebula.widgets.opal.commons.resources
