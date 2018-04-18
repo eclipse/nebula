@@ -12,6 +12,7 @@ package org.eclipse.nebula.widgets.opal.commons;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -243,7 +244,36 @@ public class HTMLStyledTextParser {
 			}
 		}
 		styledText.setText(output.toString());
-		styledText.setStyleRanges(listOfStyles.toArray(new StyleRange[listOfStyles.size()]));
+		styledText.setStyleRanges(removeDoublons());
+	}
+
+	private StyleRange[] removeDoublons() {
+		final Iterator<StyleRange> mainIt = listOfStyles.iterator();
+		while (mainIt.hasNext()) {
+			final StyleRange current = mainIt.next();
+			final Iterator<StyleRange> it = listOfStyles.iterator();
+			while (it.hasNext()) {
+				final StyleRange other = it.next();
+				if (current == other) {
+					continue;
+				}
+				if (current.start == other.start && current.length == other.length) {
+					current.fontStyle = current.fontStyle | other.fontStyle;
+					if (current.font == null) {
+						current.font = other.font;
+					}
+					if (current.foreground == null) {
+						current.foreground = other.foreground;
+					}
+					if (current.background == null) {
+						current.background = other.background;
+					}
+					it.remove();
+				}
+			}
+		}
+
+		return listOfStyles.toArray(new StyleRange[listOfStyles.size()]);
 	}
 
 	private void initBeforeParsing() {

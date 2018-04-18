@@ -151,6 +151,13 @@ public class OpalDialogSnippet {
 			testIssue45();
 		});
 
+		final Button button16 = new Button(shell, SWT.PUSH);
+		button16.setText("Bug 533776");
+		button16.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, false));
+		button16.addListener(SWT.Selection, e -> {
+			testBug533776();
+		});
+
 		// Open the shell
 		shell.pack();
 		SWTGraphicUtil.centerShell(shell);
@@ -319,4 +326,14 @@ public class OpalDialogSnippet {
 		dialog.setButtonType(OpalDialogType.OK);
 		dialog.show();
 	}
+
+	private static void testBug533776() {
+		final Dialog dialog = new Dialog(true);
+		dialog.getMessageArea().setVerticalScrollbar(true);
+		dialog.getMessageArea().setHeight(200);
+		dialog.getMessageArea().setText("<color=red><b>test</b></color>");
+		dialog.setButtonType(OpalDialogType.OK);
+		dialog.show();
+	}
+
 }
