@@ -14,7 +14,7 @@
  *    Benjamin Bortfeldt<bbortfeldt@gmail.com> - new tooltip support in 300797
  *    Thomas Halm <thha@fernbach.com> - bugfix in 315397
  *    Cserveny Tamas <cserveny.tamas@gmail.com> - bugfix in 318984
- *    Mirko Paturzo <mirko.paturzo@exeura.eu> - bugfix in 248388
+ *    Mirko Paturzo <mirko.paturzo@yahoo.it> - bugfix in 248388, 525390
  *******************************************************************************/
 package org.eclipse.nebula.widgets.grid;
 
@@ -406,10 +406,12 @@ public class GridColumn extends Item {
 			 * can't scroll all to the right
 			 */
 			int availableVisibleWidthForColumns = parent.getClientArea().width;
-			if (parent.isRowHeaderVisible()) {
-				availableVisibleWidthForColumns -= parent.getRowHeaderWidth();
+			if(availableVisibleWidthForColumns > 0) {
+				if (parent.isRowHeaderVisible()) {
+					availableVisibleWidthForColumns -= parent.getRowHeaderWidth();
+				}
+				widthToSet = Math.min(availableVisibleWidthForColumns, widthToSet);
 			}
-			widthToSet = Math.min(availableVisibleWidthForColumns, widthToSet);
 		}
 		this.width = widthToSet;
 		if (redraw) {

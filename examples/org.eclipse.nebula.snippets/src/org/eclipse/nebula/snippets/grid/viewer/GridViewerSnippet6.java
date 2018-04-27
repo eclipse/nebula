@@ -12,9 +12,6 @@
 
 package org.eclipse.nebula.snippets.grid.viewer;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.CellLabelProvider;
@@ -41,7 +38,7 @@ public class GridViewerSnippet6 {
 	private static class MyContentProvider implements
 			IStructuredContentProvider {
 
-		public Object[] getElements(Object inputElement) {
+		public Object[] getElements(final Object inputElement) {
 			return new String[] { "one", "two", "three", "four", "five", "six",
 					"seven", "eight", "nine", "ten" };
 		}
@@ -50,7 +47,7 @@ public class GridViewerSnippet6 {
 
 		}
 
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
 
 		}
 	}
@@ -58,23 +55,24 @@ public class GridViewerSnippet6 {
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		final Display display = new Display();
-		Shell shell = new Shell(display);
+		final Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
 
 		final ImageRegistry reg = new ImageRegistry(display);
 		reg.put("ICON", ImageDescriptor.createFromFile(GridViewerSnippet6.class, "th_vertical.gif"));
 
-		GridTableViewer v = new GridTableViewer(shell, SWT.FULL_SELECTION|SWT.H_SCROLL|SWT.V_SCROLL);
+		final GridTableViewer v = new GridTableViewer(shell, SWT.FULL_SELECTION|SWT.H_SCROLL|SWT.V_SCROLL);
 		v.getGrid().setLinesVisible(true);
 		v.getGrid().setHeaderVisible(true);
 		v.setContentProvider(new MyContentProvider());
+		v.getGrid().setColumnScrolling(true);
 		v.getGrid().setRowHeaderVisible(true);
 		v.setRowHeaderLabelProvider(new CellLabelProvider() {
 
 			@Override
-			public void update(ViewerCell cell) {
+			public void update(final ViewerCell cell) {
 				cell.setImage(reg.get("ICON"));
 				cell.setText(cell.getElement().toString());
 			}
@@ -82,34 +80,38 @@ public class GridViewerSnippet6 {
 		});
 		ColumnViewerToolTipSupport.enableFor(v,ToolTip.NO_RECREATE);
 
-		CellLabelProvider labelProvider = new CellLabelProvider() {
+		final CellLabelProvider labelProvider = new CellLabelProvider() {
 
-			public String getToolTipText(Object element) {
+			@Override
+			public String getToolTipText(final Object element) {
 				return "Tooltip (" + element + ")";
 			}
 
-			public Point getToolTipShift(Object object) {
+			@Override
+			public Point getToolTipShift(final Object object) {
 				return new Point(5, 5);
 			}
 
-			public int getToolTipDisplayDelayTime(Object object) {
+			@Override
+			public int getToolTipDisplayDelayTime(final Object object) {
 				return 2000;
 			}
 
-			public int getToolTipTimeDisplayed(Object object) {
+			@Override
+			public int getToolTipTimeDisplayed(final Object object) {
 				return 5000;
 			}
 
-			public void update(ViewerCell cell) {
+			@Override
+			public void update(final ViewerCell cell) {
 				cell.setText(cell.getElement().toString());
 
 			}
 		};
 
-		GridViewerColumn column = new GridViewerColumn(v, SWT.NONE);
-		column.setLabelProvider(labelProvider);
-		column.getColumn().setText("Column 1");
-		column.getColumn().setWidth(100);
+		column(v, labelProvider, "Column 1");
+		column(v, labelProvider, "Column 2");
+		column(v, labelProvider, "Column 3");
 
 		v.setInput("");
 
@@ -123,6 +125,15 @@ public class GridViewerSnippet6 {
 		}
 
 		display.dispose();
+	}
+
+	private static GridViewerColumn column(final GridTableViewer v, final CellLabelProvider labelProvider,
+			final String columnName) {
+		final GridViewerColumn column2 = new GridViewerColumn(v, SWT.NONE);
+		column2.setLabelProvider(labelProvider);
+		column2.getColumn().setText(columnName);
+		column2.getColumn().setWidth(300);
+		return column2;
 	}
 
 }
