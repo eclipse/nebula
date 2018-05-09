@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Nebula XViewer Integration
+Bundle-SymbolicName: org.eclipse.nebula.widgets.xviewer.integration;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.eclipse.nebula.widgets.xviewer.integration.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.nebula.widgets.xviewer,
+ org.eclipse.nebula.examples,
+ org.eclipse.nebula.widgets.xviewer.example
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-Vendor: Eclipse Nebula

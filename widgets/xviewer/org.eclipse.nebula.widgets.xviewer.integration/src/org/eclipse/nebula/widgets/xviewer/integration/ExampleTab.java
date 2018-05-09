@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Remain Software
+* Copyright (c) 2012 Remain Software
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,9 +9,10 @@
  *    Wim jongman <wim.jongman@remainsoftware.com> - creation
  *******************************************************************************/
 
-package org.eclipse.nebula.widgets.xviewer.example;
+package org.eclipse.nebula.widgets.xviewer.integration;
 
 import org.eclipse.nebula.examples.AbstractExampleTab;
+import org.eclipse.nebula.widgets.xviewer.example.MyXViewerTest;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
