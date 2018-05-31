@@ -14,6 +14,7 @@ package org.eclipse.nebula.jface.cdatetime;
 import java.util.Date;
 
 import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
 import org.eclipse.nebula.widgets.cdatetime.CDateTime;
 import org.eclipse.swt.events.SelectionEvent;
@@ -78,6 +79,21 @@ public class CDateTimeObservableValue extends AbstractObservableValue {
 	 *            the control to observe
 	 */
 	public CDateTimeObservableValue(CDateTime dateTime) {
+		this.dateTime = dateTime;
+		currentSelection = dateTime.getSelection();
+		this.dateTime.addSelectionListener(listener);
+	}
+
+	/**
+	 * Observe the selection property of the provided CDateTime control.
+	 * 
+	 * @param dateTime
+	 *            the control to observe
+	 * @param realm
+	 *            the {@link Realm} to use
+	 */
+	public CDateTimeObservableValue(CDateTime dateTime, Realm realm) {
+		super(realm);
 		this.dateTime = dateTime;
 		currentSelection = dateTime.getSelection();
 		this.dateTime.addSelectionListener(listener);
