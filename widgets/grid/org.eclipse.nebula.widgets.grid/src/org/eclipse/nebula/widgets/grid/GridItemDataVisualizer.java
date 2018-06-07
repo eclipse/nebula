@@ -302,7 +302,7 @@ public class GridItemDataVisualizer implements DataVisualizer {
 	 */
 	@Override
 	public String getToolTipText(GridItem gridItem, int column) {
-		return getValueOrDefault(toolTipTexts, gridItem, column, "");
+		return getValueOrDefault(toolTipTexts, gridItem, column, null);
 	}
 
 	/**
