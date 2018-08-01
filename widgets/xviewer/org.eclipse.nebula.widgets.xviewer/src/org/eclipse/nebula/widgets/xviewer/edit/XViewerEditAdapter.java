@@ -43,8 +43,8 @@ public class XViewerEditAdapter {
    public XViewerEditAdapter(XViewerControlFactory factory, XViewerConverter converter) {
       this.factory = factory;
       this.converter = converter;
-
       this.orientationStyle = SWT.RIGHT;
+      
       this.swtEvent = SWT.MouseDown;
    }
 
@@ -234,95 +234,95 @@ public class XViewerEditAdapter {
    private static boolean InInput = false;
 
    void getInput(Control c) {
-	      if (InInput) {
-	         return;
-	      }
-	      if (klickedCell == null) {
-	         return;
-	      }
-	      XViewerColumn xCol =
-	         xv.getXViewerFactory().getDefaultXViewerColumn(((XViewerColumn) klickedColumn.getData()).getId());
-	      if (xCol instanceof ExtendedViewerColumn) {
-	         ExtendedViewerColumn extendedCol = (ExtendedViewerColumn) xCol;
-	         CellEditDescriptor ced = extendedCol.getCellEditDescriptorMap().get(klickedCell.getElement().getClass());
-	         if (ced == null || ced.getControl() == null) {
-	            return;
-	         }
-	         InInput = true;
-	         try {
-	            Object toModify = getInputToModify();
-	            Object obj = converter.getInput(c, ced, toModify);
-	            if (obj == null) {
-	               refreshElement(toModify);
-	            } else {
-	               refreshElement(obj);
-	            }
-	         } catch (Exception ex) {
-	            // do nothing
-	         } finally {
-	            InInput = false;
-	         }
-	      }
-	   }
+      if (InInput) {
+         return;
+      }
+      if (klickedCell == null) {
+         return;
+      }
+      XViewerColumn xCol =
+         xv.getXViewerFactory().getDefaultXViewerColumn(((XViewerColumn) klickedColumn.getData()).getId());
+      if (xCol instanceof ExtendedViewerColumn) {
+         ExtendedViewerColumn extendedCol = (ExtendedViewerColumn) xCol;
+         CellEditDescriptor ced = extendedCol.getCellEditDescriptorMap().get(klickedCell.getElement().getClass());
+         if (ced == null || ced.getControl() == null) {
+            return;
+         }
+         InInput = true;
+         try {
+            Object toModify = getInputToModify();
+            Object obj = converter.getInput(c, ced, toModify);
+            if (obj == null) {
+               refreshElement(toModify);
+            } else {
+               refreshElement(obj);
+            }
+         } catch (Exception ex) {
+            // do nothing
+         } finally {
+            InInput = false;
+         }
+      }
+   }
 
-	   void refreshElement(Object toRefresh) {
-	      xv.refresh(toRefresh);
-	   }
+   void refreshElement(Object toRefresh) {
+      xv.refresh(toRefresh);
+   }
 
-	   Object getInputToModify() {
-	      return klickedCell.getElement();
-	   }
+   Object getInputToModify() {
+      return klickedCell.getElement();
+   }
 
-	   void setInput(Control c) {
-	      if (klickedCell == null) {
-	         return;
-	      }
-	      boolean fitInCell = true;
-	      XViewerColumn xCol =
-	         xv.getXViewerFactory().getDefaultXViewerColumn(((XViewerColumn) klickedColumn.getData()).getId());
-	      if (xCol instanceof ExtendedViewerColumn) {
-	         ExtendedViewerColumn extendedCol = (ExtendedViewerColumn) xCol;
-	         CellEditDescriptor ced = extendedCol.getCellEditDescriptorMap().get(klickedCell.getElement().getClass());
-	         if (ced == null || ced.getControl() == null) {
-	            return;
-	         }
-	         converter.setInput(c, ced, klickedCell.getElement());
-	         fitInCell = ced.isFitInCell();
-	      }
-	      if (fitInCell) {
-	    	  //if there is an image then enable editor control
-	    	  //only if clicked outside image (after the 18th pixel)
-	    	  if (klickedCell.getImage() != null) {
-	    		  Rectangle bounds = klickedCell.getBounds();
-	    		  bounds.x = bounds.x + 18;
-	    		  c.setBounds(bounds);
-	    	  } else {
-	    		  c.setBounds(klickedCell.getBounds());
-	    	  }
-	      } else {
-	         Rectangle bounds = klickedCell.getBounds();
-	         Point point = c.getSize();
-	         //Point point = c.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-	         //consider size from left to write in x-axis
-	         if (orientationStyle == SWT.RIGHT_TO_LEFT
-	        		 || orientationStyle == SWT.RIGHT) {
-	        	 bounds.x = bounds.x + bounds.width - point.x;
-	         }
-	         bounds.width = point.x;
-	         bounds.height = point.y;
-	         c.setBounds(bounds);
-	      }
-	   }
-	   
-	   /**
-	    * controls the positioning of  the input control in the
-	    * case the CellEditDescriptor Control does not take up
-	    * the whole cell space. Default value assumes right
-	    * placement.
-	    *    
-	    * @param style
-	    */
-	   public void setInputControlOrientation(int style) {
-		   orientationStyle = style;
-	   }
+   void setInput(Control c) {
+      if (klickedCell == null) {
+         return;
+      }
+      boolean fitInCell = true;
+      XViewerColumn xCol =
+         xv.getXViewerFactory().getDefaultXViewerColumn(((XViewerColumn) klickedColumn.getData()).getId());
+      if (xCol instanceof ExtendedViewerColumn) {
+         ExtendedViewerColumn extendedCol = (ExtendedViewerColumn) xCol;
+         CellEditDescriptor ced = extendedCol.getCellEditDescriptorMap().get(klickedCell.getElement().getClass());
+         if (ced == null || ced.getControl() == null) {
+            return;
+         }
+         converter.setInput(c, ced, klickedCell.getElement());
+         fitInCell = ced.isFitInCell();
+      }
+      if (fitInCell) {
+    	  //if there is an image then enable editor control
+    	  //only if clicked outside image (after the 18th pixel)
+    	  if (klickedCell.getImage() != null) {
+    		  Rectangle bounds = klickedCell.getBounds();
+    		  bounds.x = bounds.x + 18;
+    		  c.setBounds(bounds);
+    	  } else {
+    		  c.setBounds(klickedCell.getBounds());
+    	  }
+      } else {
+         Rectangle bounds = klickedCell.getBounds();
+         Point point = c.getSize();
+         //Point point = c.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+         //consider size from left to write in x-axis
+         if (orientationStyle == SWT.RIGHT_TO_LEFT
+        		 || orientationStyle == SWT.RIGHT) {
+        	 bounds.x = bounds.x + bounds.width - point.x;
+         }
+         bounds.width = point.x;
+         bounds.height = point.y;
+         c.setBounds(bounds);
+      }
+   }
+   
+   /**
+    * controls the positioning of  the input control in the
+    * case the CellEditDescriptor Control does not take up
+    * the whole cell space. Default value assumes right
+    * placement.
+    *    
+    * @param style
+    */
+   public void setInputControlOrientation(int style) {
+	   orientationStyle = style;
+   }
 }
