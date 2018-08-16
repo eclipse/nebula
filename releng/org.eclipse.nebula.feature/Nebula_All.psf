@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <psf version="2.0">
 <provider id="org.eclipse.egit.core.GitProvider">
-<project reference="1.0,https://github.com/eclipse/nebula.git,master,."/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/cwt/org.eclipse.nebula.cwt"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/cwt/org.eclipse.nebula.cwt.feature"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/cwt/org.eclipse.nebula.cwt.snippets"/>
@@ -34,6 +33,7 @@
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/visualization/org.eclipse.nebula.visualization.widgets.tests"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/visualization/org.eclipse.nebula.visualization.xygraph"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/visualization/org.eclipse.nebula.visualization.xygraph.exampleview"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/visualization/org.eclipse.nebula.visualization.xygraph.test"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/bidilayout/org.eclipse.nebula.widgets.bidilayout"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/calendarcombo/org.eclipse.nebula.widgets.calendarcombo"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/calendarcombo/org.eclipse.nebula.widgets.calendarcombo.example"/>
@@ -55,6 +55,7 @@
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/datechooser/org.eclipse.nebula.widgets.datechooser.feature"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/formattedtext/org.eclipse.nebula.widgets.formattedtext"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/formattedtext/org.eclipse.nebula.widgets.formattedtext.feature"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/formattedtext/org.eclipse.nebula.widgets.formattedtext.tests"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/gallery/org.eclipse.nebula.widgets.gallery"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/gallery/org.eclipse.nebula.widgets.gallery.example"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/gallery/org.eclipse.nebula.widgets.gallery.feature"/>
@@ -67,10 +68,89 @@
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/geomap/org.eclipse.nebula.widgets.geomap.example"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/geomap/org.eclipse.nebula.widgets.geomap.feature"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/geomap/org.eclipse.nebula.widgets.geomap.snippets"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/geomap/org.eclipse.nebula.widgets.geomap.tests"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/grid/org.eclipse.nebula.widgets.grid"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/grid/org.eclipse.nebula.widgets.grid.example"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/grid/org.eclipse.nebula.widgets.grid.feature"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/grid/org.eclipse.nebula.widgets.grid.test"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/nebulaslider/org.eclipse.nebula.widgets.nebulaslider"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/nebulaslider/org.eclipse.nebula.widgets.nebulaslider.feature"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/nebulaslider/org.eclipse.nebula.widgets.nebulaslider.snippets"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/nebulatoolbar/org.eclipse.nebula.widgets.nebulatoolbar"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/breadcrumb/org.eclipse.nebula.widgets.opal.breadcrumb"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/breadcrumb/org.eclipse.nebula.widgets.opal.breadcrumb.feature"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/breadcrumb/org.eclipse.nebula.widgets.opal.breadcrumb.snippets"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/calculator/org.eclipse.nebula.widgets.opal.calculator"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/calculator/org.eclipse.nebula.widgets.opal.calculator.feature"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/calculator/org.eclipse.nebula.widgets.opal.calculator.snippets"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/checkboxgroup/org.eclipse.nebula.widgets.opal.checkboxgroup"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/checkboxgroup/org.eclipse.nebula.widgets.opal.checkboxgroup.feature"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/checkboxgroup/org.eclipse.nebula.widgets.opal.checkboxgroup.snippets"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/columnbrowser/org.eclipse.nebula.widgets.opal.columnbrowser"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/columnbrowser/org.eclipse.nebula.widgets.opal.columnbrowser.feature"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/columnbrowser/org.eclipse.nebula.widgets.opal.columnbrowser.snippets"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/commons/org.eclipse.nebula.widgets.opal.commons"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/commons/org.eclipse.nebula.widgets.opal.commons.feature"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/dialog/org.eclipse.nebula.widgets.opal.dialog"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/dialog/org.eclipse.nebula.widgets.opal.dialog.feature"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/dialog/org.eclipse.nebula.widgets.opal.dialog.snippets"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/duallist/org.eclipse.nebula.widgets.opal.duallist"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/duallist/org.eclipse.nebula.widgets.opal.duallist.feature"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/duallist/org.eclipse.nebula.widgets.opal.duallist.snippets"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/header/org.eclipse.nebula.widgets.opal.header"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/header/org.eclipse.nebula.widgets.opal.header.feature"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/header/org.eclipse.nebula.widgets.opal.header.snippets"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/heapmanager/org.eclipse.nebula.widgets.opal.heapmanager"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/heapmanager/org.eclipse.nebula.widgets.opal.heapmanager.feature"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/heapmanager/org.eclipse.nebula.widgets.opal.heapmanager.snippets"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/horizontalspinner/org.eclipse.nebula.widgets.opal.horizontalspinner"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/horizontalspinner/org.eclipse.nebula.widgets.opal.horizontalspinner.feature"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/horizontalspinner/org.eclipse.nebula.widgets.opal.horizontalspinner.snippets"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/launcher/org.eclipse.nebula.widgets.opal.launcher"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/launcher/org.eclipse.nebula.widgets.opal.launcher.feature"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/launcher/org.eclipse.nebula.widgets.opal.launcher.snippets"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/logindialog/org.eclipse.nebula.widgets.opal.logindialog"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/logindialog/org.eclipse.nebula.widgets.opal.logindialog.feature"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/logindialog/org.eclipse.nebula.widgets.opal.logindialog.snippets"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/multichoice/org.eclipse.nebula.widgets.opal.multichoice"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/multichoice/org.eclipse.nebula.widgets.opal.multichoice.feature"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/multichoice/org.eclipse.nebula.widgets.opal.multichoice.snippets"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/notifier/org.eclipse.nebula.widgets.opal.notifier"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/notifier/org.eclipse.nebula.widgets.opal.notifier.feature"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/notifier/org.eclipse.nebula.widgets.opal.notifier.snippets"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/panels/org.eclipse.nebula.widgets.opal.panels"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/panels/org.eclipse.nebula.widgets.opal.panels.feature"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/panels/org.eclipse.nebula.widgets.opal.panels.snippets"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/preferencewindow/org.eclipse.nebula.widgets.opal.preferencewindow"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/preferencewindow/org.eclipse.nebula.widgets.opal.preferencewindow.feature"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/preferencewindow/org.eclipse.nebula.widgets.opal.preferencewindow.snippets"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/promptsupport/org.eclipse.nebula.widgets.opal.promptsupport"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/promptsupport/org.eclipse.nebula.widgets.opal.promptsupport.feature"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/promptsupport/org.eclipse.nebula.widgets.opal.promptsupport.snippets"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/propertytable/org.eclipse.nebula.widgets.opal.propertytable"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/propertytable/org.eclipse.nebula.widgets.opal.propertytable.feature"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/propertytable/org.eclipse.nebula.widgets.opal.propertytable.snippets"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/rangeslider/org.eclipse.nebula.widgets.opal.rangeslider"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/rangeslider/org.eclipse.nebula.widgets.opal.rangeslider.feature"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/rangeslider/org.eclipse.nebula.widgets.opal.rangeslider.snippets"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/roundedtoolbar/org.eclipse.nebula.widgets.opal.roundedtoolbar"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/roundedtoolbar/org.eclipse.nebula.widgets.opal.roundedtoolbar.feature"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/roundedtoolbar/org.eclipse.nebula.widgets.opal.roundedtoolbar.snippets"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/starrating/org.eclipse.nebula.widgets.opal.starrating"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/starrating/org.eclipse.nebula.widgets.opal.starrating.feature"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/starrating/org.eclipse.nebula.widgets.opal.starrating.snippets"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/switchbutton/org.eclipse.nebula.widgets.opal.switchbutton"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/switchbutton/org.eclipse.nebula.widgets.opal.switchbutton.feature"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/switchbutton/org.eclipse.nebula.widgets.opal.switchbutton.snippets"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/textassist/org.eclipse.nebula.widgets.opal.textassist"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/textassist/org.eclipse.nebula.widgets.opal.textassist.feature"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/textassist/org.eclipse.nebula.widgets.opal.textassist.snippets"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/tipoftheday/org.eclipse.nebula.widgets.opal.tipoftheday"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/tipoftheday/org.eclipse.nebula.widgets.opal.tipoftheday.feature"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/tipoftheday/org.eclipse.nebula.widgets.opal.tipoftheday.snippets"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/titledseparator/org.eclipse.nebula.widgets.opal.titledseparator"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/titledseparator/org.eclipse.nebula.widgets.opal.titledseparator.feature"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/opal/titledseparator/org.eclipse.nebula.widgets.opal.titledseparator.snippets"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/oscilloscope/org.eclipse.nebula.widgets.oscilloscope"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/oscilloscope/org.eclipse.nebula.widgets.oscilloscope.example"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/oscilloscope/org.eclipse.nebula.widgets.oscilloscope.feature"/>
@@ -81,6 +161,7 @@
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/pagination/org.eclipse.nebula.widgets.pagination.feature"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/pagination/org.eclipse.nebula.widgets.pagination.snippets"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/pagination/org.eclipse.nebula.widgets.pagination.tests"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/paperclips/org.eclipse.nebula.widgets.paperclips.example"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/paperclips/org.eclipse.nebula.widgets.paperclips.feature"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/pgroup/org.eclipse.nebula.widgets.pgroup"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/pgroup/org.eclipse.nebula.widgets.pgroup.example"/>
@@ -89,6 +170,9 @@
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/picture/org.eclipse.nebula.widgets.picture.example"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/picture/org.eclipse.nebula.widgets.picture.feature"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/picture/org.eclipse.nebula.widgets.picture.snippets"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/progresscircle/org.eclipse.nebula.widgets.progresscircle"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/progresscircle/org.eclipse.nebula.widgets.progresscircle.feature"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/progresscircle/org.eclipse.nebula.widgets.progresscircle.snippets"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/pshelf/org.eclipse.nebula.widgets.pshelf"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/pshelf/org.eclipse.nebula.widgets.pshelf.css"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/pshelf/org.eclipse.nebula.widgets.pshelf.css.feature"/>
@@ -105,6 +189,7 @@
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/tablecombo/org.eclipse.nebula.widgets.tablecombo"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/tablecombo/org.eclipse.nebula.widgets.tablecombo.example"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/tablecombo/org.eclipse.nebula.widgets.tablecombo.feature"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/tablecombo/org.eclipse.nebula.widgets.tablecombo.test"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/treemapper/org.eclipse.nebula.widgets.treemapper"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/treemapper/org.eclipse.nebula.widgets.treemapper.examples"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/treemapper/org.eclipse.nebula.widgets.treemapper.feature"/>
@@ -114,10 +199,21 @@
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/xviewer/org.eclipse.nebula.widgets.xviewer.example"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/xviewer/org.eclipse.nebula.widgets.xviewer.feature"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/xviewer/org.eclipse.nebula.widgets.xviewer.feature.test"/>
+<project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/xviewer/org.eclipse.nebula.widgets.xviewer.integration"/>
 <project reference="1.0,https://github.com/eclipse/nebula.git,master,widgets/xviewer/org.eclipse.nebula.widgets.xviewer.tests"/>
 </provider>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1330708566440_26" label="BidiLayout" name="BidiLayout">
 <item elementID="=org.eclipse.nebula.widgets.bidilayout" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+</workingSets>
+<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1534438367568_34" label="Breadcrumb" name="Breadcrumb">
+<item elementID="=org.eclipse.nebula.widgets.opal.breadcrumb" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.opal.breadcrumb.feature" type="4"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.breadcrumb.snippets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+</workingSets>
+<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1534438408486_35" label="Calculator" name="Calculator">
+<item elementID="=org.eclipse.nebula.widgets.opal.calculator" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.opal.calculator.feature" type="4"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.calculator.snippets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 </workingSets>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1330704630740_6" label="CalendarCombo" name="CalendarCombo">
 <item elementID="=org.eclipse.nebula.widgets.calendarcombo" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
@@ -132,10 +228,20 @@
 <item elementID="=org.eclipse.nebula.jface.cdatetime" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item elementID="=org.eclipse.nebula.widgets.cdatetime" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 </workingSets>
+<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1534438443296_36" label="Checkboxgroup" name="Checkboxgroup">
+<item elementID="=org.eclipse.nebula.widgets.opal.checkboxgroup" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.opal.checkboxgroup.feature" type="4"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.checkboxgroup.snippets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+</workingSets>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1330704683876_8" label="CollapsibleButtons" name="CollapsibleButtons">
 <item elementID="=org.eclipse.nebula.widgets.collapsiblebuttons" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item elementID="=org.eclipse.nebula.widgets.collapsiblebuttons.example" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.collapsiblebuttons.feature" type="4"/>
+</workingSets>
+<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1534438472280_37" label="Columnbrowser" name="Columnbrowser">
+<item elementID="=org.eclipse.nebula.widgets.opal.columnbrowser" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.opal.columnbrowser.feature" type="4"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.columnbrowser.snippets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 </workingSets>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1330704719059_9" label="CompositeTable" name="CompositeTable">
 <item elementID="=org.eclipse.nebula.widgets.compositetable.tests" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
@@ -156,6 +262,16 @@
 <item elementID="=org.eclipse.nebula.widgets.datechooser.example" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.datechooser.feature" type="4"/>
 </workingSets>
+<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1534438609226_39" label="Dialog" name="Dialog">
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.opal.dialog.feature" type="4"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.dialog.snippets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.dialog" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+</workingSets>
+<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1534438686561_40" label="DualList" name="DualList">
+<item elementID="=org.eclipse.nebula.widgets.opal.duallist" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.duallist.snippets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.opal.duallist.feature" type="4"/>
+</workingSets>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1330704548437_4" label="Examples" name="Examples">
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.examples_webstart" type="4"/>
 <item elementID="=org.eclipse.nebula.examples" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
@@ -167,6 +283,7 @@
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1330704789115_11" label="FormattedText" name="FormattedText">
 <item elementID="=org.eclipse.nebula.widgets.formattedtext" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.formattedtext.feature" type="4"/>
+<item elementID="=org.eclipse.nebula.widgets.formattedtext.tests" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 </workingSets>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1330704754683_10" label="Gallery" name="Gallery">
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.gallery.feature" type="4"/>
@@ -185,15 +302,194 @@
 <item elementID="=org.eclipse.nebula.widgets.geomap" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item elementID="=org.eclipse.nebula.widgets.geomap.example" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item elementID="=org.eclipse.nebula.widgets.geomap.snippets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.geomap.tests" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 </workingSets>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1330708417274_22" label="Grid" name="Grid">
 <item elementID="=org.eclipse.nebula.widgets.grid" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item elementID="=org.eclipse.nebula.widgets.grid.example" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item elementID="=org.eclipse.nebula.jface.gridviewer" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.grid.feature" type="4"/>
+<item elementID="=org.eclipse.nebula.widgets.grid.test" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+</workingSets>
+<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1534438727253_41" label="Header" name="Header">
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.opal.header.feature" type="4"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.header" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.header.snippets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+</workingSets>
+<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1534438748465_42" label="HeapManager" name="HeapManager">
+<item elementID="=org.eclipse.nebula.widgets.opal.heapmanager" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.heapmanager.snippets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.opal.heapmanager.feature" type="4"/>
+</workingSets>
+<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1534438767980_43" label="HorizontalSpinner" name="HorizontalSpinner">
+<item elementID="=org.eclipse.nebula.widgets.opal.horizontalspinner.snippets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.horizontalspinner" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.opal.horizontalspinner.feature" type="4"/>
+</workingSets>
+<workingSets editPageId="org.eclipse.jdt.internal.ui.DynamicSourcesWorkingSet" id="1534437662378_0" label="Java Main Sources" name="main">
+<item elementID="=org.eclipse.nebula.cwt/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.cwt.snippets/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.cwt.tests/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.effects.stw/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.effects.stw.example/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.examples/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.jface.cdatetime/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.jface.gridviewer/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.paperclips.core/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.paperclips.snippets/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.paperclips.tests/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.paperclips.widgets/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.snippets/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.visualization.example/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.visualization.widgets/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.visualization.widgets/examples" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.visualization.widgets.tests/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.visualization.xygraph/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.visualization.xygraph/examples" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.visualization.xygraph.exampleview/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.bidilayout/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.calendarcombo/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.calendarcombo.example/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.cdatetime/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.cdatetime.example/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.cdatetime.snippets/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.cdatetime.tests/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.collapsiblebuttons/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.collapsiblebuttons.example/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.compositetable/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.compositetable.tests/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.ctree/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.datechooser/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.datechooser.example/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.formattedtext/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.gallery/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.gallery.example/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.gallery.tests/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.ganttchart/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.ganttchart.example/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.geomap/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.geomap.example/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.geomap.snippets/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.grid/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.grid.example/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.oscilloscope/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.oscilloscope.example/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.oscilloscope.snippets/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.oscilloscope.tests/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.pagination/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.pagination.example/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.pagination.snippets/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.pagination.tests/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.pgroup/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.pgroup.example/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.picture/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.picture.example/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.picture.snippets/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.pshelf/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.pshelf.css/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.pshelf.example/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.radiogroup/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.radiogroup.example/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.radiogroup.tests/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.richtext/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.richtext.example/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.richtext.example.e4/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.tablecombo/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.tablecombo.example/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.treemapper/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.treemapper.examples/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.treemapper.tests/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.xviewer/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.xviewer.core/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.xviewer.example/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.xviewer.tests/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.nebulaslider/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.nebulaslider.snippets/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.breadcrumb/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.breadcrumb.snippets/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.calculator/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.calculator.snippets/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.checkboxgroup/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.checkboxgroup.snippets/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.columnbrowser/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.columnbrowser.snippets/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.dialog/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.header/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.panels/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.duallist/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.launcher/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.notifier/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.progresscircle/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.starrating/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.dialog.snippets/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.header.snippets/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.heapmanager/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.panels.snippets/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.textassist/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.logindialog/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.multichoice/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.tipoftheday/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.switchbutton/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.duallist.snippets/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.launcher.snippets/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.notifier.snippets/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.promptsupport/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.propertytable/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.progresscircle.snippets/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.roundedtoolbar/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.starrating.snippets/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.textassist.snippets/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.titledseparator/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.heapmanager.snippets/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.logindialog.snippets/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.multichoice.snippets/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.tipoftheday.snippets/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.preferencewindow/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.switchbutton.snippets/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.horizontalspinner/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.promptsupport.snippets/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.propertytable.snippets/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.roundedtoolbar.snippets/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.titledseparator.snippets/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.preferencewindow.snippets/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.horizontalspinner.snippets/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.geomap.tests/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.commons/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.visualization.xygraph.test/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.grid.test/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.rangeslider/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.rangeslider.snippets/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.tablecombo.test/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.paperclips.example/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.xviewer.integration/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.formattedtext.tests/src" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+</workingSets>
+<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1534438793268_44" label="Launcher" name="Launcher">
+<item elementID="=org.eclipse.nebula.widgets.opal.launcher" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.opal.launcher.feature" type="4"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.launcher.snippets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+</workingSets>
+<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1534438815780_45" label="LoginDialog" name="LoginDialog">
+<item elementID="=org.eclipse.nebula.widgets.opal.logindialog" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.logindialog.snippets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.opal.logindialog.feature" type="4"/>
+</workingSets>
+<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1534438842362_46" label="MultiChoice" name="MultiChoice">
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.opal.multichoice.feature" type="4"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.multichoice" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.multichoice.snippets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 </workingSets>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1330708537225_25" label="NebulaToolbar" name="NebulaToolbar">
 <item elementID="=org.eclipse.nebula.widgets.nebulatoolbar" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+</workingSets>
+<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1534438862749_47" label="Notifier" name="Notifier">
+<item elementID="=org.eclipse.nebula.widgets.opal.notifier" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.opal.notifier.feature" type="4"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.notifier.snippets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+</workingSets>
+<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1534439168578_59" label="Opal" name="Opal">
+<item elementID="=org.eclipse.nebula.widgets.opal.commons" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.opal.commons.feature" type="4"/>
 </workingSets>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1330704844411_13" label="Oscilloscope" name="Oscilloscope">
 <item elementID="=org.eclipse.nebula.widgets.oscilloscope.example" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
@@ -209,12 +505,18 @@
 <item elementID="=org.eclipse.nebula.widgets.pagination.example" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item elementID="=org.eclipse.nebula.widgets.pagination.tests" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 </workingSets>
+<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1534438877062_48" label="Panels" name="Panels">
+<item elementID="=org.eclipse.nebula.widgets.opal.panels" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.panels.snippets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.opal.panels.feature" type="4"/>
+</workingSets>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1330704656300_7" label="PaperClips" name="PaperClips">
 <item elementID="=org.eclipse.nebula.paperclips.core" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item elementID="=org.eclipse.nebula.paperclips.widgets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item elementID="=org.eclipse.nebula.paperclips.snippets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.paperclips.feature" type="4"/>
 <item elementID="=org.eclipse.nebula.paperclips.tests" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.paperclips.example" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 </workingSets>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1330704878402_14" label="PGroup" name="PGroup">
 <item elementID="=org.eclipse.nebula.widgets.pgroup.example" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
@@ -226,6 +528,26 @@
 <item elementID="=org.eclipse.nebula.widgets.picture.example" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item elementID="=org.eclipse.nebula.widgets.picture" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item elementID="=org.eclipse.nebula.widgets.picture.feature" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+</workingSets>
+<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1534438896952_49" label="PreferenceWindow" name="PreferenceWindow">
+<item elementID="=org.eclipse.nebula.widgets.opal.preferencewindow.snippets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.opal.preferencewindow.feature" type="4"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.preferencewindow" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+</workingSets>
+<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1534439063927_58" label="ProgressCircle" name="ProgressCircle">
+<item elementID="=org.eclipse.nebula.widgets.progresscircle.snippets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.progresscircle" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.progresscircle.feature" type="4"/>
+</workingSets>
+<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1534438914926_50" label="PromptSupport" name="PromptSupport">
+<item elementID="=org.eclipse.nebula.widgets.opal.promptsupport" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.promptsupport.snippets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.opal.promptsupport.feature" type="4"/>
+</workingSets>
+<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1534438932284_51" label="PropertyTable" name="PropertyTable">
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.opal.propertytable.feature" type="4"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.propertytable" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.propertytable.snippets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 </workingSets>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1330708377962_20" label="PShelf" name="PShelf">
 <item elementID="=org.eclipse.nebula.widgets.pshelf.css" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
@@ -240,6 +562,11 @@
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.radiogroup.feature" type="4"/>
 <item elementID="=org.eclipse.nebula.widgets.radiogroup.tests" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 </workingSets>
+<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1534439269312_60" label="RangeSlider" name="RangeSlider">
+<item elementID="=org.eclipse.nebula.widgets.opal.rangeslider" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.opal.rangeslider.feature" type="4"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.rangeslider.snippets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+</workingSets>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1330708517145_24" label="Releng" name="Releng">
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.nebula-release" type="4"/>
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.nebula-parent" type="4"/>
@@ -248,18 +575,53 @@
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.updatesite.incubation" type="4"/>
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.updatesite" type="4"/>
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.nebula-incubation" type="4"/>
-<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/nebula" type="4"/>
 </workingSets>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1463605369103_59" label="RichText" name="RichText">
-<item elementID="=org.eclipse.nebula.widgets.richtext.example" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item elementID="=org.eclipse.nebula.widgets.richtext" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item elementID="=org.eclipse.nebula.widgets.richtext.example.e4" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.richtext.example" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.richtext.feature" type="4"/>
+</workingSets>
+<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1534438946581_52" label="RoundedToolbar" name="RoundedToolbar">
+<item elementID="=org.eclipse.nebula.widgets.opal.roundedtoolbar" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.opal.roundedtoolbar.feature" type="4"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.roundedtoolbar.snippets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+</workingSets>
+<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1534438266449_33" label="Sider" name="Sider">
+<item elementID="=org.eclipse.nebula.widgets.nebulaslider" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.nebulaslider.feature" type="4"/>
+<item elementID="=org.eclipse.nebula.widgets.nebulaslider.snippets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+</workingSets>
+<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1534438960690_53" label="StarRating" name="StarRating">
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.opal.starrating.feature" type="4"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.starrating" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.starrating.snippets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+</workingSets>
+<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1534438982757_54" label="SwitchButton" name="SwitchButton">
+<item elementID="=org.eclipse.nebula.widgets.opal.switchbutton.snippets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.opal.switchbutton.feature" type="4"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.switchbutton" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 </workingSets>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1330704962274_18" label="TableCombo" name="TableCombo">
 <item elementID="=org.eclipse.nebula.widgets.tablecombo" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item elementID="=org.eclipse.nebula.widgets.tablecombo.example" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.tablecombo.feature" type="4"/>
+<item elementID="=org.eclipse.nebula.widgets.tablecombo.test" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+</workingSets>
+<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1534438998645_55" label="TextAssist" name="TextAssist">
+<item elementID="=org.eclipse.nebula.widgets.opal.textassist.snippets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.opal.textassist.feature" type="4"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.textassist" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+</workingSets>
+<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1534439020511_56" label="TipDialog" name="TipDialog">
+<item elementID="=org.eclipse.nebula.widgets.opal.tipoftheday" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.opal.tipoftheday.feature" type="4"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.tipoftheday.snippets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+</workingSets>
+<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1534439043386_57" label="TitledSeparator" name="TitledSeparator">
+<item elementID="=org.eclipse.nebula.widgets.opal.titledseparator" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.opal.titledseparator.feature" type="4"/>
+<item elementID="=org.eclipse.nebula.widgets.opal.titledseparator.snippets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 </workingSets>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1330704486917_2" label="Transition (STW)" name="Transition (STW)">
 <item elementID="=org.eclipse.nebula.effects.stw" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
@@ -279,6 +641,7 @@
 <item elementID="=org.eclipse.nebula.visualization.widgets" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item elementID="=org.eclipse.nebula.visualization.example" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.visualization.feature" type="4"/>
+<item elementID="=org.eclipse.nebula.visualization.xygraph.test" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 </workingSets>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1330704941386_17" label="XViewer" name="XViewer">
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.xviewer.feature" type="4"/>
@@ -287,5 +650,6 @@
 <item elementID="=org.eclipse.nebula.widgets.xviewer" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item elementID="=org.eclipse.nebula.widgets.xviewer.tests" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item elementID="=org.eclipse.nebula.widgets.xviewer.example" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.nebula.widgets.xviewer.integration" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 </workingSets>
 </psf>
