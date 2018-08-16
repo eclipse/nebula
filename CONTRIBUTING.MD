@@ -1,7 +1,7 @@
 # Contributing to Supplemental Widgets for SWT (Nebula)
 
-
 Thanks for your interest in this project.
+
 
 ## Project description:
 Nebula is a place where different Eclipse-Projects and Independent developers collaborate on building Custom SWT widgets and reuseable UI-Components useable in UI-Applications built using SWT, JFace and RAP.
@@ -20,7 +20,7 @@ Information regarding source code management, builds, coding standards, and more
 
 
 ## Building Nebula
-Run `mvn clean verify` from one of the following directories:
+Run `mvn clean verify -DskipTests=true` from one of the following directories:
 
 * releng/org.eclipse.nebula.nebula-release
 * releng/org.eclipse.nebula.nebula-incubation
@@ -36,7 +36,6 @@ Before your contribution can be accepted by the project, you need to create and 
 Contact the project developers via the project's "dev" list.
 
 * https://dev.eclipse.org/mailman/listinfo/nebula-dev
-
 
 ## Search for bugs:
 This project uses GitHub Issues to track ongoing development and issues.
