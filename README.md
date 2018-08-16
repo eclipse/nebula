@@ -10,8 +10,10 @@ Fat or Thin client applications based on Java and SWT.
 We can accept you patches if you have signed the [Eclipse Contributors Agreement (ECA)](https://wiki.eclipse.org/ECA) 
 which ensures users of these libraries that they can use your code without getting into any legal trouble. 
 
-## TODO Building on our build server
-Every patch you supply gets build immediately.
+## Building on our build server
+Every pull request gets build automatically by these two jobs:
+ * [Stable Widgets](https://ci.eclipse.org/nebula/job/nebula.stable.github/)
+ * [Incubation Widgets](https://ci.eclipse.org/nebula/job/nebula.incubation.github/)
 
 ## Building local
 To build locally [refer to the builds page](https://wiki.eclipse.org/Nebula/Builds)
