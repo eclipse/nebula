@@ -40,6 +40,7 @@ abstract class BaseFocusControlListener implements FocusListener, ControlListene
 	 */
 	BaseFocusControlListener(final Control control) {
 		this.control = control;
+		storeInitialLook();		
 		firstDraw = true;
 	}
 
