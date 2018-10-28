@@ -16,7 +16,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -24,6 +23,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 
@@ -58,7 +58,7 @@ import org.eclipse.swt.widgets.Widget;
  */
 public class FloatingText extends Composite implements FocusListener {
 	private Text fText;
-	private Composite fFloatComposite;
+	private Label fLabel;
 	private int fStyle;
 
 	/**
@@ -119,8 +119,8 @@ public class FloatingText extends Composite implements FocusListener {
 		gridLayout.horizontalSpacing = 0;
 		setLayout(gridLayout);
 
-		fFloatComposite = new Composite(this, SWT.NONE);
-		fFloatComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		fLabel = new Label(this, SWT.NONE);
+		fLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
 		fStyle = ((pStyle & SWT.SINGLE) | (pStyle & SWT.MULTI) | (pStyle & SWT.READ_ONLY) | (pStyle & SWT.WRAP)
 				| (pStyle & SWT.LEFT) | (pStyle & SWT.RIGHT) | (pStyle & SWT.CENTER) | (pStyle & SWT.PASSWORD)
@@ -131,56 +131,37 @@ public class FloatingText extends Composite implements FocusListener {
 		fText = new Text(this, (fStyle ^ SWT.BORDER));
 		fText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
-		fFloatComposite.setBackground(fText.getBackground());
-
-		addPaintListener(e -> paint(e));
-		fText.addPaintListener(e -> paintText(e));
-		fFloatComposite.addPaintListener(e -> paintFloatComposite(e));
+		fLabel.setBackground(fText.getBackground());
 		fText.addFocusListener(this);
 	}
 
-	private void paintText(PaintEvent pE) {
-	}
-
-	private void paintFloatComposite(PaintEvent pEvent) {
-		clearFloatComposite(pEvent);
+	private void setLabelText(boolean pFocus) {
+		fLabel.setText("");
 		String prompt = PromptSupport.getPrompt(fText);
-		if (prompt == null) {
-			if (fText.getText().isEmpty() && fText.isFocusControl()) {
-				drawMessageText(pEvent);
-			} else if (!fText.getText().isEmpty()) {
-				drawMessageText(pEvent);
-			}
-		}
-
-		else {
-			if (fText.getText().equals(prompt) && fText.isFocusControl()) {
-				drawMessageText(pEvent);
-			} else if (!fText.getText().equals(prompt)) {
-				drawMessageText(pEvent);
+		if (pFocus) {
+			doSetLabelText();
+		} else {
+			if (!fText.getText().isEmpty() && !fText.getText().equals(prompt)) {
+				doSetLabelText();
 			}
 		}
 	}
 
-	private void clearFloatComposite(PaintEvent pEvent) {
-		pEvent.gc.fillRectangle(0, 0, fFloatComposite.getSize().x, fFloatComposite.getSize().y);
-	}
-
-	private void drawMessageText(PaintEvent pEvent) {
+	private void doSetLabelText() {
 		String message = getMessage();
 		if (!message.isEmpty()) {
 			FontData[] fontData = fText.getFont().getFontData();
-			fontData[0].setHeight(fFloatComposite.getSize().y - 4);
+			fontData[0].setHeight(fLabel.getSize().y - 4);
 			Font font = new Font(getDisplay(), fontData[0]);
-			pEvent.gc.setFont(font);
-			pEvent.gc.drawText(message, 0, 0);
+			fLabel.setFont(font);
+			fLabel.setText(message);
 			font.dispose();
 		}
 	}
 
 	private String getMessage() {
 		String message = fText.getMessage();
-		if (message == null || message.isEmpty()) {
+		if (message == null || message.trim().isEmpty()) {
 			message = PromptSupport.getPrompt(fText);
 		}
 		return message == null ? "" : message.trim();
@@ -193,51 +174,39 @@ public class FloatingText extends Composite implements FocusListener {
 		return fText;
 	}
 
-	public void paint(PaintEvent e) {
-		paintText(e);
-		paintFloatComposite(e);
-	}
-
 	@Override
 	public Point computeSize(int pWHint, int pHHint, boolean pChanged) {
-		// Point compSize = fComposite.computeSize(pWHint, pHHint, pChanged);
-		// System.out.print("Composite((" + pWHint + ") " + compSize.x + " " + "(" +
-		// pHHint + ") " + compSize.y + ")");
 		Point textSize = fText.computeSize(pWHint, pHHint, pChanged);
-		// System.out.print(" Text((" + pWHint + ") " + textSize.x + " " + "(" + pHHint
-		// + ") " + textSize.y + ")");
 		Point result = new Point(textSize.x, textSize.y + ((textSize.y + 1) / 2) + 3);
-		((GridData) fFloatComposite.getLayoutData()).heightHint = result.y - textSize.y;
+		((GridData) fLabel.getLayoutData()).heightHint = result.y - textSize.y;
 		if ((fStyle & SWT.BORDER) == SWT.BORDER) {
 			result.x += 4;
 			result.y += 4;
 		}
-		// System.out.println(" Widget((" + pWHint + ") " + result.x + " " + "(" +
-		// pHHint + ") " + result.y + ")");
 		return result;
 	}
 
 	@Override
 	public void focusGained(FocusEvent pEvent) {
-		fFloatComposite.redraw();
+		setLabelText(true);
 	}
 
 	@Override
 	public void focusLost(FocusEvent pEvent) {
-		fFloatComposite.redraw();
+		setLabelText(false);
 	}
 
 	@Override
 	public void setBackground(Color pColor) {
 		fText.setBackground(pColor);
-		fFloatComposite.setBackground(pColor);
+		fLabel.setBackground(pColor);
 		super.setBackground(pColor);
 	}
 
 	@Override
 	public void setForeground(Color pColor) {
 		fText.setForeground(pColor);
-		fFloatComposite.setForeground(pColor);
+		fLabel.setForeground(pColor);
 		super.setForeground(pColor);
 	}
 }

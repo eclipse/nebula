@@ -67,16 +67,16 @@ public class FloatingTextSnippet {
 		final FloatingText floatPrompt = new FloatingText(group, SWT.BORDER);
 		floatPrompt.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
 		PromptSupport.setPrompt("Floating Prompt Support", floatPrompt.getText());
-
-		final FloatingText multi = new FloatingText(group, SWT.BORDER | SWT.MULTI);
-		multi.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
-		PromptSupport.setPrompt("MultiText", multi.getText());
-
+		
 		final FloatingText blackWhite = new FloatingText(group, SWT.BORDER);
 		blackWhite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
 		blackWhite.setBackground(group.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 		blackWhite.setForeground(group.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		PromptSupport.setPrompt("Black White", blackWhite.getText());
+
+		final FloatingText multi = new FloatingText(group, SWT.BORDER | SWT.MULTI);
+		multi.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
+		PromptSupport.setPrompt("MultiText", multi.getText());
 
 		final Text txt2 = new Text(group, SWT.BORDER);
 		txt2.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
