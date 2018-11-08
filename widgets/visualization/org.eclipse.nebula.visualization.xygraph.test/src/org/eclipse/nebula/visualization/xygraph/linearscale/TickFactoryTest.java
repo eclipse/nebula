@@ -211,7 +211,7 @@ public class TickFactoryTest {
 		testGeneratedLooseTicks(0, 0.9e308, 6, "0.0e+00", "2.0e+307", "4.0e+307", "6.0e+307", "8.0e+307", "1.0e+308");
 		testGeneratedTightTicks(0, 0.9e308, 6, "0.0e+00", "2.0e+307", "4.0e+307", "6.0e+307", "8.0e+307");
 
-		testGeneratedLooseTicks(0, 1.6e308, 6, "0.0e+00", "5.0e+307", "1.0e+308", "1.5e+308");
+		testGeneratedLooseTicks(false, 0, 1.6e308, 6, "0.0e+00", "5.0e+307", "1.0e+308", "1.5e+308"); // tick positions do not match
 		testGeneratedTightTicks(0, 1.6e308, 6, "0.0e+00", "5.0e+307", "1.0e+308", "1.5e+308");
 
 		testGeneratedLooseTicks(-0.9e308, 0.9e308, 5, "-1.0e+308", "-5.0e+307", "0.0e+00", "5.0e+307", "1.0e+308");
@@ -276,9 +276,9 @@ public class TickFactoryTest {
 					scale("0.1", p));
 
 			// this is on the limit!
-			testGeneratedLooseTicks(0.12345678901234505 * s, 0.12345678901234583 * s, 6, scale("0.1234567890123450", p),
+			testGeneratedLooseTicks(false, 0.12345678901234505 * s, 0.12345678901234583 * s, 6, scale("0.1234567890123450", p),
 					scale("0.1234567890123452", p), scale("0.1234567890123454", p), scale("0.1234567890123456", p),
-					scale("0.1234567890123458", p), scale("0.1234567890123460", p));
+					scale("0.1234567890123458", p), scale("0.1234567890123460", p));  // tick positions do not match
 			testGeneratedTightTicks(0.12345678901234505 * s, 0.12345678901234583 * s, 6, scale("0.1234567890123452", p),
 					scale("0.1234567890123454", p), scale("0.1234567890123456", p), scale("0.1234567890123458", p));
 
@@ -399,44 +399,60 @@ public class TickFactoryTest {
 		return String.format("%se%+02d", s, p);
 	}
 
+	private void testGeneratedLooseTicks(boolean checkPosition, double lower, double upper, int nTicks, final String... out) {
+		testGeneratedTicks(checkPosition, false, lower, upper, nTicks, out);
+	}
+
 	private void testGeneratedLooseTicks(double lower, double upper, int nTicks, final String... out) {
-		testGeneratedTicks(false, lower, upper, nTicks, out);
+		testGeneratedTicks(true, false, lower, upper, nTicks, out);
 	}
 
 	private void testGeneratedTightTicks(double lower, double upper, int nTicks, final String... out) {
-		testGeneratedTicks(true, lower, upper, nTicks, out);
+		testGeneratedTicks(true, true, lower, upper, nTicks, out);
 	}
 
 	private void testGeneratedBothTicks(double lower, double upper, int nTicks, final String... out) {
-		testGeneratedTicks(false, lower, upper, nTicks, out);
-		testGeneratedTicks(true, lower, upper, nTicks, out);
+		testGeneratedTicks(true, false, lower, upper, nTicks, out);
+		testGeneratedTicks(true, true, lower, upper, nTicks, out);
 	}
 
-	private void testGeneratedTicks(boolean tight, double lower, double upper, int nTicks, final String... out) {
+	private void testGeneratedTicks(final boolean checkPosition, boolean tight, double lower, double upper, int nTicks, final String... out) {
 		TickFactory tf = new TickFactory(TickFormatting.autoMode, null);
 		String[] values = new String[out.length];
 		List<Tick> t;
+		List<Tick> ot;
 
 		t = tf.generateTicks(lower, upper, nTicks, true, tight);
 		checkTickValues(t, out);
 
 		if (upper != lower) {
+			ot = t;
 			t = tf.generateTicks(upper, lower, nTicks, true, tight);
-			for (int i = 0; i < out.length; i++)
+			for (int i = 0; i < out.length; i++) {
 				values[i] = out[out.length - 1 - i];
+			}
 			checkTickValues(t, values);
+			if (checkPosition && !tight) {
+				checkTickPositions(ot, t);
+			}
 		}
 
 		t = tf.generateTicks(-lower, -upper, nTicks, true, tight);
-		for (int i = 0; i < out.length; i++)
+		for (int i = 0; i < out.length; i++) {
 			values[i] = negate(out[i]);
+		}
 		checkTickValues(t, values);
 
 		if (upper != lower) {
+			ot = t;
 			t = tf.generateTicks(-upper, -lower, nTicks, true, tight);
-			for (int i = 0; i < out.length; i++)
+			for (int i = 0; i < out.length; i++) {
 				values[i] = negate(out[out.length - 1 - i]);
+			}
 			checkTickValues(t, values);
+			if (checkPosition && !tight) {
+				checkTickPositions(ot, t);
+			}
 		}
 	}
 
@@ -493,6 +509,19 @@ public class TickFactoryTest {
 			double v = Double.valueOf(values[i++]);
 			double verr = v == 0 ? ERROR : ERROR * Math.abs(v);
 			Assert.assertEquals(v, t.getValue(), verr);
+		}
+	}
+
+	private static final double COARSE_ERROR = 1e-3;
+	private void checkTickPositions(List<Tick> oTicks, List<Tick> nTicks) {
+		int imax = oTicks.size();
+		Assert.assertEquals("Number of ticks", imax, nTicks.size());
+		for (int i = 0; i < imax; i++) {
+			Tick ot = oTicks.get(i);
+			Tick nt = nTicks.get(i);
+			double v = ot.getPosition();
+			double verr = Math.max(v == 0 ? COARSE_ERROR : COARSE_ERROR * Math.abs(v), 1e-6);
+			Assert.assertEquals(v, nt.getPosition(), verr);
 		}
 	}
 }

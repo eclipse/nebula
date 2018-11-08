@@ -198,18 +198,19 @@ public class LinearScaleTicks2 implements ITicksProvider {
 			} else {
 				ticks = tf.generateTicks(min, max, numTicks, true, !scale.hasTicksAtEnds());
 			}
-		} while (!updateLabelPositionsAndCheckGaps(length, hMargin, tMargin, min > max) && numTicks-- > MIN_TICKS);
+		} while (!updateLabelPositionsAndCheckGaps(length, hMargin, tMargin) && numTicks-- > MIN_TICKS);
 
 		updateMinorTicks(hMargin + length);
 		if (scale.hasTicksAtEnds() && ticks.size() > 1) {
 			// check for extreme case where outer ticks has been placed inside
 			// requested range owing to their magnitude exceeding Double.MAX_VALUE
+			boolean isInverted = min > max;
 			double lo = ticks.get(0).getValue();
-			if (min < lo) {
+			if (isInverted ^ (lo > min)) {
 				lo = min;
 			}
 			double hi = ticks.get(ticks.size() - 1).getValue();
-			if (max > hi) {
+			if (isInverted ^ (hi < max)) {
 				hi = max;
 			}
 			return new Range(lo, hi);
@@ -278,8 +279,7 @@ public class LinearScaleTicks2 implements ITicksProvider {
 	 *
 	 * @return true if there is no overlaps
 	 */
-	private boolean updateLabelPositionsAndCheckGaps(int length, final int hMargin, final int tMargin,
-			final boolean isReversed) {
+	private boolean updateLabelPositionsAndCheckGaps(int length, final int hMargin, final int tMargin) {
 		final int imax = ticks.size();
 		if (imax == 0) {
 			return true;
@@ -305,15 +305,10 @@ public class LinearScaleTicks2 implements ITicksProvider {
 			}
 		}
 
-		if (isReversed) {
-			for (Tick t : ticks) {
-				t.setPosition(length - length * t.getPosition() + hMargin);
-			}
-		} else {
-			for (Tick t : ticks) {
-				t.setPosition(length * t.getPosition() + hMargin);
-			}
+		for (Tick t : ticks) {
+			t.setPosition(length * t.getPosition() + hMargin);
 		}
+
 		// re-expand length (so labels can flow into margins)
 		length += hMargin + tMargin;
 		if (scale.isHorizontal()) {
