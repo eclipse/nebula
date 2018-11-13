@@ -163,7 +163,7 @@ public abstract class AbstractPTWidget implements PTWidget {
 	 * @param parent parent composite
 	 */
 	private void buildDescriptionPanel(final Composite parent) {
-		descriptionLabel = new StyledText(parent, SWT.READ_ONLY);
+		descriptionLabel = new StyledText(parent, SWT.READ_ONLY | SWT.WRAP | SWT.V_SCROLL);
 		descriptionLabel.setText("");
 		descriptionLabel.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 1, 1));
 	}

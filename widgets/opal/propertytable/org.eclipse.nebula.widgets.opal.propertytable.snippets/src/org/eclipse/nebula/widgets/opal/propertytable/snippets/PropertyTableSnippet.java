@@ -119,6 +119,10 @@ public class PropertyTableSnippet {
 		table.addProperty(new PTProperty("text", "Description", "Description for the description field", "blahblah...")).setCategory("General");
 		table.addProperty(new PTProperty("url", "URL:", "This is a nice <b>URL</b>", "http://www.google.com").setCategory("General")).setEditor(new PTURLEditor());
 		table.addProperty(new PTProperty("password", "Password", "Enter your <i>password</i> and keep it secret...", "password")).setCategory("General").setEditor(new PTPasswordEditor());
+		table.addProperty(new PTProperty("longText", "Long", "Description for the description field, which is soooooo long that you have to scroll to see eveything.\n" + //
+				"I keep typing but I've no idea, I just want to make it as long as possible, but\nI've definitively no idea.\n" + //
+				"I think this is the last line...\nDid you know that I'm a huge fan of Pink Floyd ?", //
+				"too long...")).setCategory("General");
 
 		table.addProperty(new PTProperty("int", "An integer", "Type any integer", "123")).setCategory("Number").setEditor(new PTIntegerEditor());
 		table.addProperty(new PTProperty("float", "A float", "Type any float", "123.45")).setCategory("Number").setEditor(new PTFloatEditor());
