@@ -47,6 +47,9 @@ import org.eclipse.swt.widgets.Widget;
  */
 public class RoundedToolbar extends Canvas {
 
+	private static final String LAST_TOGGLE_BUTTON_SELECTED = RoundedToolbar.class.toString() + "_LAST_TOGGLE_BUTTON_SELECTED";
+	private static final String LAST_TOGGLE_BUTTON_SELECTED_STATE = RoundedToolbar.class.toString() + "_LAST_TOGGLE_BUTTON_SELECTED_STATE";
+
 	private final List<RoundedToolItem> items;
 	private int cornerRadius;
 	private static Color START_GRADIENT_COLOR_DEFAULT = SWTGraphicUtil.getColorSafely(245, 245, 245);
@@ -149,6 +152,10 @@ public class RoundedToolbar extends Canvas {
 			if (item.isPushButon()) {
 				item.forceSelection(true);
 			} else {
+				if (item.isToogleButon()) {
+					setData(LAST_TOGGLE_BUTTON_SELECTED, item);
+					setData(LAST_TOGGLE_BUTTON_SELECTED_STATE, item.getSelection());
+				}
 				item.setSelection(!item.getSelection());
 			}
 
@@ -168,7 +175,20 @@ public class RoundedToolbar extends Canvas {
 				return;
 			}
 			final RoundedToolItem item = selectedItem.get();
+			if (item.isToogleButon()) {
+				// The user clicked on a toogle button and release the button on another button
+				final RoundedToolItem lastToggleButtonSelected = (RoundedToolItem) getData(LAST_TOGGLE_BUTTON_SELECTED);
+				if (lastToggleButtonSelected != null && lastToggleButtonSelected != item) {
+					final Boolean value = (Boolean) getData(LAST_TOGGLE_BUTTON_SELECTED_STATE);
+					lastToggleButtonSelected.forceSelection(value);
+					clearLastToggleButtonInfo();
+					redraw();
+					update();
+					return;
+				}
 
+			}
+			clearLastToggleButtonInfo();
 			if (item.isPushButon()) {
 				item.setSelection(false);
 			}
@@ -205,7 +225,16 @@ public class RoundedToolbar extends Canvas {
 					item.forceSelection(false);
 					needRedraw = true;
 				}
+				// The user clicks on a toogle button, keeps the button press and leave the toolbar: we revert to the previous state
+				final RoundedToolItem lastToggleButtonSelected = (RoundedToolItem) getData(LAST_TOGGLE_BUTTON_SELECTED);
+				if (lastToggleButtonSelected != null && lastToggleButtonSelected == item) {
+					final Boolean value = (Boolean) getData(LAST_TOGGLE_BUTTON_SELECTED_STATE);
+					item.forceSelection(value);
+					needRedraw = true;
+				}
+
 			}
+			clearLastToggleButtonInfo();
 			if (needRedraw) {
 				redraw();
 				update();
@@ -215,6 +244,11 @@ public class RoundedToolbar extends Canvas {
 		addPaintListener(e -> {
 			paintControl(e);
 		});
+	}
+
+	private void clearLastToggleButtonInfo() {
+		setData(LAST_TOGGLE_BUTTON_SELECTED, null);
+		setData(LAST_TOGGLE_BUTTON_SELECTED_STATE, null);
 	}
 
 	/**
