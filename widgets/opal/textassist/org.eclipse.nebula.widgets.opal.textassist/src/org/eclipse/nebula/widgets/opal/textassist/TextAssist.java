@@ -657,6 +657,15 @@ public class TextAssist extends Composite {
 	}
 
 	/**
+	 * @see org.eclipse.swt.widgets.Composite#setFocus()
+	 */
+	@Override
+	public boolean setFocus() {
+		checkWidget();
+		return text.setFocus();
+	}
+
+	/**
 	 * @see org.eclipse.swt.widgets.Text#setFont(org.eclipse.swt.graphics.Font)
 	 */
 	@Override
