@@ -278,7 +278,7 @@ public class RoundedToolItem extends Item {
 	}
 
 	private int getAdditionnalWidth() {
-		if (isCheckbox() || isRadio()) {
+		if (isCheckbox() || isRadio() && !hideSelection) {
 			return 16;
 		}
 		return 0;
