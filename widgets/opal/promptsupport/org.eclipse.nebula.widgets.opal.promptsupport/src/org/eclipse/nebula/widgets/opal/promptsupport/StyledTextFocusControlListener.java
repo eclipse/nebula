@@ -63,10 +63,11 @@ class StyledTextFocusControlListener extends BaseFocusControlListener {
 	@Override
 	protected boolean isFilled() {
 		final String promptText = PromptSupport.getPrompt(control);
-		if (promptText != null && promptText.equals(((StyledText) control).getText().trim())) {
+		final String trimmedText = ((StyledText) control).getText().trim();
+		if (promptText != null && promptText.equals(trimmedText) && !PromptSupport.isPromptDisplayed(control)) {
 			return false;
 		}
-		return !EMPTY_STRING.equals(((StyledText) control).getText().trim());
+		return !EMPTY_STRING.equals(trimmedText);
 	}
 
 }
