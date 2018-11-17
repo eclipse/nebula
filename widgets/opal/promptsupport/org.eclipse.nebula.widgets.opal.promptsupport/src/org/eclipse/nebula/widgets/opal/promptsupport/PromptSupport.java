@@ -42,6 +42,7 @@ public class PromptSupport {
 	static final String BEHAVIOR = KEY + ".behavior";
 	static final String PROMPT = KEY + ".prompt";
 	static final String SET = KEY + ".set";
+	static final String IS_PROMPT_DISPLAYED = KEY + ".displayed";
 
 	/**
 	 * <p>
@@ -66,6 +67,7 @@ public class PromptSupport {
 		if (promptBackground != null) {
 			setBackground(promptBackground, control);
 		}
+
 	}
 
 	/**
@@ -225,5 +227,13 @@ public class PromptSupport {
 		if (!(control instanceof Text) && !(control instanceof Combo) && !(control instanceof StyledText) && !(control instanceof CCombo)) {
 			throw new IllegalArgumentException("PromptSupport can only be used on a Text, a Combo, a StyledText or a CCombo widget.");
 		}
+	}
+
+	static boolean isPromptDisplayed(final Control control) {
+		return (boolean) control.getData(IS_PROMPT_DISPLAYED);
+	}
+
+	static void setPromptDisplayed(final Control control, boolean newValue) {
+		control.setData(IS_PROMPT_DISPLAYED, newValue);
 	}
 }

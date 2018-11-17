@@ -60,9 +60,10 @@ class ComboFocusControlListener extends BaseFocusControlListener {
 	@Override
 	protected boolean isFilled() {
 		final String promptText = PromptSupport.getPrompt(control);
-		if (promptText != null && promptText.equals(((Combo) control).getText().trim())) {
+		final String trimmedText = ((Combo) control).getText().trim();
+		if (promptText != null && promptText.equals(trimmedText) && !PromptSupport.isPromptDisplayed(control)) {
 			return false;
 		}
-		return !"".equals(((Combo) control).getText().trim());
+		return !"".equals(trimmedText);
 	}
 }
