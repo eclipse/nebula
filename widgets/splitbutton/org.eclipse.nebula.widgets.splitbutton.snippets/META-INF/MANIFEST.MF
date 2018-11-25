@@ -4,4 +4,4 @@ Bundle-Name: Opal SplitButton Snippets plug-in
 Bundle-SymbolicName: org.eclipse.nebula.widgets.splitbutton.snippets
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: org.eclipse.nebula.widgets.splibutton;bundle-version="1.0.0"
+Require-Bundle: org.eclipse.nebula.widgets.splitbutton;bundle-version="1.0.0"

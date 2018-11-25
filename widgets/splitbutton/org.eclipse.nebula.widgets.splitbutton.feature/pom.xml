@@ -29,6 +29,6 @@ Contributors:
   <packaging>eclipse-feature</packaging>
   <version>1.0.0-SNAPSHOT</version>
 
-  <name>Nebula Slider Feature</name>
+  <name>Nebula SplitButton Feature</name>
 
 </project>
