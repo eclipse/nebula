@@ -21,7 +21,7 @@ Contributors:
 
 	<parent>
 		<groupId>org.eclipse.nebula</groupId>
-		<artifactId>titledseparator</artifactId>
+		<artifactId>roundedcheckbox</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
