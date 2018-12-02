@@ -5,7 +5,14 @@
 	<artifactId>roundedcheckbox</artifactId>
 	<packaging>pom</packaging>
 	<version>1.0.0-SNAPSHOT</version>
-
+	
+	<parent>
+		<groupId>org.eclipse.nebula</groupId>
+		<version>1.0.0-SNAPSHOT</version>
+		<artifactId>nebula-release</artifactId>
+		<relativePath>../../releng/org.eclipse.nebula.nebula-release</relativePath>
+	</parent>
+	
 	<modules>
 		<module>org.eclipse.nebula.widgets.roundedcheckbox</module>
 		<module>org.eclipse.nebula.widgets.roundedcheckbox.feature</module>
