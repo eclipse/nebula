@@ -192,9 +192,8 @@
    <includes
          id="org.eclipse.nebula.widgets.nebulaslider.feature"
          version="0.0.0"/>
-	
-   <includes
-         id="org.eclipse.nebula.widgets.roundedcheckbox.feature"
-         version="0.0.0"/>	
 		 
+   <includes
+         id="org.eclipse.nebula.widgets.splitbutton.feature"
+         version="0.0.0"/>
 </feature>
