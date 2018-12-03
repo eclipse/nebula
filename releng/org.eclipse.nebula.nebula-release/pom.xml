@@ -68,6 +68,7 @@
 		<module>../../widgets/nebulaslider</module> 
 		<module>../../widgets/splitbutton</module> 
 
+
 		<!-- Releng -->
 		<module>../org.eclipse.nebula.feature</module>
 		<module>../org.eclipse.nebula.updatesite</module>
