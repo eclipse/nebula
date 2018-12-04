@@ -10,6 +10,7 @@ package org.eclipse.nebula.visualization.xygraph.exampleview;
 
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.CircularBufferDataProvider;
+import org.eclipse.nebula.visualization.xygraph.figures.DAxesFactory;
 import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.ToolbarArmedXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace;
@@ -32,7 +33,7 @@ public class PureJavaExample {
 		final LightweightSystem lws = new LightweightSystem(shell);
 
 		// create a new XY Graph.
-		IXYGraph xyGraph = new XYGraph();
+		IXYGraph xyGraph = new XYGraph(new DAxesFactory());
 
 		ToolbarArmedXYGraph toolbarArmedXYGraph = new ToolbarArmedXYGraph(xyGraph);
 
@@ -42,13 +43,17 @@ public class PureJavaExample {
 
 		xyGraph.getPrimaryXAxis().setShowMajorGrid(true);
 		xyGraph.getPrimaryYAxis().setShowMajorGrid(true);
+		xyGraph.getPrimaryXAxis().setAutoScale(true);
+		xyGraph.getPrimaryYAxis().setAutoScale(true);
+		xyGraph.getPrimaryXAxis().setInverted(true);
+		xyGraph.getPrimaryYAxis().setInverted(true);
 
 		// create a trace data provider, which will provide the data to the
 		// trace.
 		CircularBufferDataProvider traceDataProvider = new CircularBufferDataProvider(false);
 		traceDataProvider.setBufferSize(100);
-		traceDataProvider.setCurrentXDataArray(new double[] { 10, 23, 34, 45, 56, 78, 88, 99 });
-		traceDataProvider.setCurrentYDataArray(new double[] { 11, 44, 55, 45, 88, 98, 52, 23 });
+		traceDataProvider.setCurrentXDataArray(new double[] { -0.2, 23, 34, 45, 56, 78, 88, 100.1 });
+		traceDataProvider.setCurrentYDataArray(new double[] { -0.5, 44, 55, 45, 88, 100.1, 52, 23 });
 
 		// create the trace
 		Trace trace = new Trace("Trace1-XY Plot", xyGraph.getPrimaryXAxis(), xyGraph.getPrimaryYAxis(), traceDataProvider);
@@ -64,6 +69,5 @@ public class PureJavaExample {
 			if (!display.readAndDispatch())
 				display.sleep();
 		}
-
 	}
 }

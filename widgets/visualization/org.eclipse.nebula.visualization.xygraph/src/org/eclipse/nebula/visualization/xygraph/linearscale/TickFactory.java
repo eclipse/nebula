@@ -489,23 +489,25 @@ public class TickFactory {
 
 		// override tight flag in cases where graph ends have been
 		// modified (in determineNumTicks) to be representable as doubles
-		double lo = tight || min < graphMin ? min : ticks.get(0).getValue();
-		double hi = tight || max > graphMax ? max : (imax > 1 ? ticks.get(imax - 1).getValue() : lo);
+		double lo = tight || compare(isReversed, min, graphMin) ? min : ticks.get(0).getValue();
+		double hi = tight || compare(!isReversed, max, graphMax) ? max : (imax > 1 ? ticks.get(imax - 1).getValue() : lo);
 		double factor = LargeNumberUtils.maxMagnitude(lo, hi);
 		lo /= factor;
 		hi /= factor;
 		double range = imax > 1 ? hi - lo : 1;
 
-		if (isReversed) {
-			for (Tick t : ticks) {
-				t.setPosition(1 - (t.getValue()/factor - lo) / range);
-			}
-		} else {
-			for (Tick t : ticks) {
-				t.setPosition((t.getValue()/factor - lo) / range);
-			}
+		for (Tick t : ticks) {
+			t.setPosition((t.getValue()/factor - lo) / range);
 		}
+
 		return ticks;
+	}
+
+	private static boolean compare(boolean isGreaterThan, double a, double b) {
+		if (isGreaterThan) {
+			return a > b;
+		}
+		return a < b;
 	}
 
 	private static final DecimalFormat INDEX_FORMAT = new DecimalFormat("0");
