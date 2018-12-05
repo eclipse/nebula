@@ -158,7 +158,8 @@ public class GalleryItem extends Item {
 
 	}
 
-	protected GalleryItem(Gallery parent, int style, int index, boolean create) {
+	protected GalleryItem(Gallery parent, int style, int index,
+			boolean create) {
 		super(parent, style);
 		this.parent = parent;
 		this.parentItem = null;
@@ -266,6 +267,10 @@ public class GalleryItem extends Item {
 	}
 
 	public void setImage(Image image) {
+		checkWidget();
+		if (image != null && image.isDisposed()) {
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+		}
 		super.setImage(image);
 		parent.redraw(this);
 	}
