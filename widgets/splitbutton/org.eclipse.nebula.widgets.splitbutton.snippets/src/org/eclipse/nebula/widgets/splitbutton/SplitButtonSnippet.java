@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * Sample for the Split Button Widget
  */
-public class SplitButtonExample {
+public class SplitButtonSnippet {
 
 	public static void main(final String[] args) {
 		final Display display = new Display();
@@ -32,14 +32,14 @@ public class SplitButtonExample {
 		shell.setLayout(new GridLayout());
 
 		// First Button
-		final SplitButton replyToButton = new SplitButton(shell, SWT.NONE);
-		replyToButton.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
-		replyToButton.setText("Actions"); //$NON-NLS-1$
+		final SplitButton actionButton = new SplitButton(shell, SWT.NONE);
+		actionButton.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
+		actionButton.setText("Actions"); //$NON-NLS-1$
 
-		final Menu replyToMenu = replyToButton.getMenu();
-		createMenuEntries(replyToMenu, "Reply to", "Reply to All", "Forward", "Print");
+		final Menu actionMenu = actionButton.getMenu();
+		createMenuEntries(actionMenu, "Reply to", "Reply to All", "Forward", "Print");
 
-		replyToButton.addListener(SWT.Selection, (e) -> {
+		actionButton.addListener(SWT.Selection, (e) -> {
 			System.out.println("Click on Splitbutton 'Reply To'"); //$NON-NLS-1$
 		});
 
@@ -48,8 +48,8 @@ public class SplitButtonExample {
 		stateButton.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
 		stateButton.setText("Toggle Button"); //$NON-NLS-1$
 
-		final Menu otherMenu = stateButton.getMenu();
-		createMenuEntries(otherMenu, "First Action", "Second Action", "Last Action");
+		final Menu stateButtonMenu = stateButton.getMenu();
+		createMenuEntries(stateButtonMenu, "First Action", "Second Action", "Last Action");
 
 		stateButton.addListener(SWT.Selection, (e) -> {
 			System.out.println("Click on Splitbutton 'State Button'"); //$NON-NLS-1$
@@ -68,7 +68,7 @@ public class SplitButtonExample {
 		for (final String label : labels) {
 			final MenuItem item = new MenuItem(menu, SWT.PUSH);
 			item.setText(label);
-			item.addListener(SWT.Selection, e -> System.out.println("Click on button [" + label + "]"));
+			item.addListener(SWT.Selection, e -> System.out.println("Click on menu item [" + label + "]"));
 		}
 	}
 
