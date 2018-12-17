@@ -167,16 +167,16 @@
 
    <includes
          id="org.eclipse.nebula.widgets.opal.calculator.feature"
-         version="0.0.0"/>	
-         	 
+         version="0.0.0"/>
+
    <includes
          id="org.eclipse.nebula.widgets.opal.horizontalspinner.feature"
          version="0.0.0"/>
-		 
+
    <includes
          id="org.eclipse.nebula.widgets.opal.launcher.feature"
-         version="0.0.0"/>	
-		 
+         version="0.0.0"/>
+
    <includes
          id="org.eclipse.nebula.widgets.opal.panels.feature"
          version="0.0.0"/>
@@ -188,8 +188,13 @@
    <includes
          id="org.eclipse.nebula.widgets.progresscircle.feature"
          version="0.0.0"/>
-		 
+
    <includes
          id="org.eclipse.nebula.widgets.nebulaslider.feature"
          version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.nebula.widgets.floatingtext.feature"
+         version="0.0.0"/>
+
 </feature>
