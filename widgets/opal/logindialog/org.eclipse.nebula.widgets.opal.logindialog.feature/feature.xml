@@ -17,11 +17,18 @@
       <import feature="org.eclipse.nebula.widgets.opal.commons.feature"/>
       <import feature="org.eclipse.nebula.widgets.opal.dialog.feature"/>
    </requires>
+   
    <plugin
          id="org.eclipse.nebula.widgets.opal.logindialog"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
+         
+   <plugin
+         id="org.eclipse.nebula.widgets.opal.logindialog.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 </feature>

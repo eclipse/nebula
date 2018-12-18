@@ -16,8 +16,11 @@ import org.eclipse.nebula.widgets.opal.textassist.TextAssistContentProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 /**
  * A simple snippet for the TextAssist Widget
@@ -30,9 +33,7 @@ public class TextAssistSnippet {
 
 		final TextAssistContentProvider contentProvider = new TextAssistContentProvider() {
 
-			private final String[] EUROZONE = new String[] { "Austria", "Belgium", "Cyprus", "Estonia", "Finland",
-					"France", "Germany", "Greece", "Ireland", "Italy", "Luxembourg", "Malta", "Netherlands", "Portugal",
-					"Slovakia", "Slovenia", "Spain" };
+			private final String[] EUROZONE = new String[] { "Austria", "Belgium", "Cyprus", "Estonia", "Finland", "France", "Germany", "Greece", "Ireland", "Italy", "Luxembourg", "Malta", "Netherlands", "Portugal", "Slovakia", "Slovenia", "Spain" };
 
 			@Override
 			public List<String> getContent(final String entry) {
@@ -48,8 +49,24 @@ public class TextAssistSnippet {
 			}
 		};
 
-		final TextAssist text = new TextAssist(shell, SWT.SINGLE | SWT.BORDER, contentProvider);
+		final Label lblTextAssist = new Label(shell, SWT.NONE);
+		lblTextAssist.setText("Text field with text assist:");
+
+		final TextAssist textAssist = new TextAssist(shell, SWT.SINGLE | SWT.BORDER, contentProvider);
+		textAssist.setLayoutData(new GridData(150, SWT.DEFAULT));
+
+		new Label(shell, SWT.NONE);
+		final Label lblSimpleText = new Label(shell, SWT.NONE);
+		lblSimpleText.setText("Simple Text field:");
+
+		final Text text = new Text(shell, SWT.SINGLE | SWT.BORDER);
 		text.setLayoutData(new GridData(150, SWT.DEFAULT));
+
+		new Label(shell, SWT.NONE);
+		final Button button = new Button(shell, SWT.PUSH);
+		button.setText("Force focus on Text Assist Field");
+		button.addListener(SWT.Selection, (e) -> textAssist.setFocus());
+
 		shell.pack();
 		shell.open();
 

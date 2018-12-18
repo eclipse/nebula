@@ -37,10 +37,10 @@ public class PromptSupportSnippet {
 		final Shell shell = new Shell(display);
 		shell.setLayout(new GridLayout(2, true));
 
-		createText(new Group(shell, SWT.NONE));
-		createStyledText(new Group(shell, SWT.NONE));
-		createCombo(new Group(shell, SWT.NONE));
-		createCCombo(new Group(shell, SWT.NONE));
+		createText(createGroup(shell));
+		createStyledText(createGroup(shell));
+		createCombo(createGroup(shell));
+		createCCombo(createGroup(shell));
 
 		shell.pack();
 		shell.open();
@@ -52,6 +52,12 @@ public class PromptSupportSnippet {
 		}
 		display.dispose();
 
+	}
+
+	private static Group createGroup(Shell shell) {
+		final Group group = new Group(shell, SWT.NONE);
+		group.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+		return group;
 	}
 
 	private static void createText(final Group group) {

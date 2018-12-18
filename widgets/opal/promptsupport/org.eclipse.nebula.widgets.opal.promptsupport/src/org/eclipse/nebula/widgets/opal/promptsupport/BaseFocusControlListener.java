@@ -40,7 +40,9 @@ abstract class BaseFocusControlListener implements FocusListener, ControlListene
 	 */
 	BaseFocusControlListener(final Control control) {
 		this.control = control;
+		storeInitialLook();
 		firstDraw = true;
+		PromptSupport.setPromptDisplayed(control, false);
 	}
 
 	/**
@@ -50,10 +52,11 @@ abstract class BaseFocusControlListener implements FocusListener, ControlListene
 	public void focusGained(final FocusEvent e) {
 		if (isFilled()) {
 			// Widget not empty
+			PromptSupport.setPromptDisplayed(control, false);
 			return;
 		}
-
 		applyInitialLook();
+		PromptSupport.setPromptDisplayed(control, true);
 		if (PromptSupport.getFocusBehavior(control) == FocusBehavior.HIDE_PROMPT) {
 			hidePrompt();
 		} else {

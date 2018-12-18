@@ -243,7 +243,7 @@ public class RoundedToolbarSnippet {
 		final RoundedToolItem mailItem = new RoundedToolItem(toolBar, SWT.RADIO);
 		mailItem.setSelectionImage(emailw);
 		mailItem.setImage(emailb);
-		mailItem.setWidth(50);
+		mailItem.setWidth(drawRadio ? 50 : 32);
 		mailItem.addListener(SWT.Selection, e -> {
 			System.out.println("radio/Button 1");
 		});
@@ -256,7 +256,7 @@ public class RoundedToolbarSnippet {
 		mailItemWithText.setText("Mails");
 		mailItemWithText.setSelectionImage(emailw);
 		mailItemWithText.setImage(emailb);
-		mailItemWithText.setWidth(80);
+		mailItemWithText.setWidth(drawRadio ? 80 : 65);
 		mailItemWithText.addListener(SWT.Selection, e -> {
 			System.out.println("radio/Button 2");
 		});
