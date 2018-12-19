@@ -57,6 +57,7 @@ public class FloatingTextSnippet {
 		final FloatingText txt1 = new FloatingText(group, SWT.BORDER);
 		txt1.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
 		txt1.getText().setMessage("Out of the box floating text");
+		txt1.getText().setText("this is text");
 
 		final FloatingText txt11w = new FloatingText(group, SWT.BORDER | SWT.SEPARATOR);
 		txt11w.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
