@@ -9,8 +9,6 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.floatingtext.snippets;
 
-import javax.annotation.Generated;
-
 import org.eclipse.nebula.widgets.floatingtext.FloatingText;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
