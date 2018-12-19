@@ -9,17 +9,14 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.floatingtext.snippets;
 
-import javax.annotation.Generated;
-
 import org.eclipse.nebula.widgets.floatingtext.FloatingText;
-import org.eclipse.nebula.widgets.opal.promptsupport.PromptSupport;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 
 /**
  * A simple snipper for the PromptSupport utilities
@@ -37,7 +34,10 @@ public class FloatingTextSnippet {
 
 		createText(new Group(shell, SWT.NONE));
 
-		shell.pack();
+		Point p = shell.getSize();
+		p.y = (int) (shell.getMonitor().getBounds().height * 75) / 100;
+		p.x = (int) (shell.getMonitor().getBounds().width * 50) / 100;
+		shell.setSize(p);
 		shell.open();
 
 		while (!shell.isDisposed()) {
@@ -52,60 +52,71 @@ public class FloatingTextSnippet {
 	private static void createText(final Group group) {
 		group.setLayout(new GridLayout(1, false));
 		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		group.setText("Text widgets");
+		group.setText("Floating Text widgets");
 
-		final FloatingText txt0 = new FloatingText(group, SWT.BORDER | SWT.SEPARATOR);
-		txt0.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
-		txt0.getText().setMessage("First Name + Light Separator");
-
-		final FloatingText txt1 = new FloatingText(group, SWT.BORDER | SWT.SEPARATOR);
+		final FloatingText txt1 = new FloatingText(group, SWT.BORDER);
 		txt1.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
-		txt1.getText().setMessage("Last Name + Dark Separator");
-		txt1.setBackground(txt1.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
-		
-		final FloatingText ratio50 = new FloatingText(group, SWT.BORDER);
-		ratio50.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
-		ratio50.getText().setMessage("Label Ratio 70%");
-		ratio50.setRatio(70);
-		ratio50.setBackground(ratio50.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
-		
-		final FloatingText ratio90 = new FloatingText(group, SWT.BORDER);
-		ratio90.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
-		ratio90.getText().setMessage("Label Ratio 100%");
-		ratio90.setRatio(100);
-		ratio90.setBackground(ratio90.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
+		txt1.getText().setMessage("Out of the box floating text");
+
+		final FloatingText txt11w = new FloatingText(group, SWT.BORDER | SWT.SEPARATOR);
+		txt11w.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+		txt11w.getText().setMessage("Text with Separator");
+
+		final FloatingText txt11x = new FloatingText(group, SWT.BORDER | SWT.SEPARATOR);
+		txt11x.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+		txt11x.getText().setMessage("Text + Dark Separator");
+		txt11x.setBackground(txt11x.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+
+		final FloatingText txt11 = new FloatingText(group, SWT.BORDER | SWT.SEPARATOR);
+		txt11.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+		txt11.getText().setMessage("Text + Separator + Gray label");
+		txt11.getLabel().setForeground(txt11.getDisplay().getSystemColor(SWT.COLOR_GRAY));
+
+		final FloatingText txt112 = new FloatingText(group, SWT.BORDER | SWT.SEPARATOR);
+		txt112.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+		txt112.getText().setMessage("Last Name + Dark Separator + Label Background");
+		txt112.getLabel().setBackground(txt112.getDisplay().getSystemColor(SWT.COLOR_GRAY));
+		txt112.getLabel().setForeground(txt112.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		txt112.setBackground(txt112.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+
+		final FloatingText txt2gap = new FloatingText(group, SWT.BORDER | SWT.SEPARATOR);
+		txt2gap.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+		txt2gap.getText().setMessage("2 pixel blue gap");
+		txt2gap.setSeparatorSpace(2);
+		txt2gap.setBackground(txt11.getDisplay().getSystemColor(SWT.COLOR_BLUE));
+
+		final FloatingText txt2 = new FloatingText(group, SWT.BORDER | SWT.SEPARATOR);
+		txt2.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+		txt2.getText().setMessage("Red Separator");
+		txt2.setBackground(txt11.getDisplay().getSystemColor(SWT.COLOR_RED));
 
 		final FloatingText passw = new FloatingText(group, SWT.PASSWORD);
 		passw.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
 		passw.getText().setMessage("Password - Borderless");
 
-		final FloatingText floatPrompt = new FloatingText(group, SWT.BORDER);
-		floatPrompt.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
-		PromptSupport.setPrompt("Floating with Opal Prompt Support", floatPrompt.getText());
+		final FloatingText flip = new FloatingText(group, SWT.BORDER | SWT.RIGHT_TO_LEFT | SWT.SEPARATOR);
+		flip.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+		flip.getText().setMessage("Right to Left");
 
-		final FloatingText blackWhite = new FloatingText(group, SWT.BORDER | SWT.SEPARATOR);
-		blackWhite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
-		blackWhite.setBackgroundColors(group.getDisplay().getSystemColor(SWT.COLOR_BLACK));
-		blackWhite.setForegroundColors(group.getDisplay().getSystemColor(SWT.COLOR_WHITE));
-		PromptSupport.setPrompt("Black White Separator", blackWhite.getText());
+		final FloatingText ratio50 = new FloatingText(group, SWT.BORDER);
+		ratio50.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+		ratio50.getText().setMessage("Label Ratio 70%");
+		ratio50.setRatio(70);
 
-		final FloatingText greenred = new FloatingText(group, SWT.BORDER | SWT.SEPARATOR);
-		greenred.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
-		greenred.setForegroundColors(group.getDisplay().getSystemColor(SWT.COLOR_GREEN));
-		greenred.setBackgroundColors(group.getDisplay().getSystemColor(SWT.COLOR_RED));
-		greenred.setBackground(ratio90.getDisplay().getSystemColor(SWT.COLOR_YELLOW));
-		PromptSupport.setPrompt("Green Red Yello", greenred.getText());
+		final FloatingText ratio120 = new FloatingText(group, SWT.BORDER | SWT.SEPARATOR);
+		ratio120.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+		ratio120.getText().setMessage("Label Ratio 120%");
+		ratio120.setRatio(120);
+		ratio120.setBackground(ratio120.getDisplay().getSystemColor(SWT.COLOR_YELLOW));
 
-		final FloatingText multi = new FloatingText(group, SWT.BORDER | SWT.MULTI);
+		final FloatingText multi = new FloatingText(group, SWT.MULTI | SWT.WRAP);
 		multi.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
-		PromptSupport.setPrompt("MultiText", multi.getText());
+		multi.getText().setMessage("Multi Text");
+		multi.setBackground(multi.getDisplay().getSystemColor(SWT.COLOR_RED));
 
-		final Text txt2 = new Text(group, SWT.BORDER);
-		txt2.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
-		PromptSupport.setPrompt("Normal Text", txt2);
+		final FloatingText multi2 = new FloatingText(group, SWT.MULTI);
+		multi2.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
+		multi2.getText().setMessage("Multi Text 2");
 
-		final Text normalMulti = new Text(group, SWT.BORDER | SWT.MULTI);
-		normalMulti.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
-		PromptSupport.setPrompt("Normal Multi Text", normalMulti);
 	}
 }
