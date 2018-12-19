@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Widget;
 /**
  * Instances of this class are selectable user interface objects that allow the
  * user to enter and modify text with a label floating above the input area.
- * FloatinText controls can be either single or multi-line. In contrast to a
+ * FloatingText controls can be either single or multi-line. In contrast to a
  * Text widget, when a floating text control is created with a border, a custom
  * drawn inset will be painted INSTEAD OF the platform specific inset.
  *
@@ -65,7 +65,6 @@ public class FloatingText extends Composite implements FocusListener {
 	private Label fLabel;
 	private int fStyle;
 	private int fRatio = 100;
-	// private Composite fTextComposite;
 	private Font fLabelFont;
 
 	/**
@@ -118,25 +117,107 @@ public class FloatingText extends Composite implements FocusListener {
 	 * @see Widget#getStyle
 	 */
 	public FloatingText(final Composite pParent, final int pStyle) {
-
 		super(pParent, SWT.DOUBLE_BUFFERED | (pStyle & SWT.BORDER));
-		GridLayout gridLayout = new GridLayout(1, false);
-		gridLayout.marginWidth = 0;
-		gridLayout.marginHeight = 0;
-		gridLayout.horizontalSpacing = 0;
-		gridLayout.verticalSpacing = 0;
-		setLayout(gridLayout);
+		fStyle = pStyle;
+		setLayout(createLayout(pStyle));
+		fLabel = createLabel(pStyle);
+		fText = new Text(this, removeStyles(pStyle, SWT.BORDER, SWT.SEPARATOR));
+		fText.setLayoutData(getTextLayoutData());
+		fLabel.setBackground(fText.getBackground());
+		fLabel.setLayoutData(getLabelLayoutData());
+		fText.addFocusListener(this);
+	}
 
-		if ((pStyle & SWT.SEPARATOR) == SWT.SEPARATOR) {
-			gridLayout.verticalSpacing = 1;
+	@Override
+	public Point computeSize(int pWidthHint, int pHeightHint, boolean pChanged) {
+		Point textSize = fText.computeSize(pWidthHint, pHeightHint, pChanged);
+		Point labelSize = fLabel.computeSize(pWidthHint,
+				(pHeightHint == SWT.DEFAULT ? SWT.DEFAULT : (textSize.y * fRatio) / 100), pChanged);
+		Point result = new Point(textSize.x + labelSize.x, textSize.y + labelSize.y);
+		if ((fStyle & SWT.BORDER) == SWT.BORDER) {
+			result.x += 2;
+			result.y += 6;
 		}
+		result.y += getLayout().verticalSpacing;
+		return result;
+	}
 
-		fLabel = new Label(this, SWT.NONE | ((pStyle & SWT.LEFT_TO_RIGHT) > 0 ? SWT.LEFT : SWT.NONE)
+	@Override
+	public void focusGained(FocusEvent pEvent) {
+		setLabelText(true);
+	}
+
+	@Override
+	public void focusLost(FocusEvent pEvent) {
+		setLabelText(false);
+	}
+
+	/**
+	 * @return the label that floats above the text
+	 */
+	public Label getLabel() {
+		return fLabel;
+	}
+
+	@Override
+	public GridLayout getLayout() {
+		return (GridLayout) super.getLayout();
+	}
+
+	/**
+	 * @return the underlying text widget.
+	 */
+	public Text getText() {
+		return fText;
+	}
+
+	/**
+	 * Sets the backgrounds of the label and the text to the provided color.
+	 *
+	 * @param color the color.
+	 */
+	public void setBackgroundColors(Color color) {
+		fText.setBackground(color);
+		fLabel.setBackground(color);
+	}
+
+	/**
+	 * Sets the foregrounds of the label and the text to the provided color.
+	 *
+	 * @param color the color.
+	 */
+	public void setForegroundColors(Color color) {
+		fText.setForeground(color);
+		fLabel.setForeground(color);
+	}
+
+	/**
+	 * Sets the height of the label as ratio of the text height.
+	 *
+	 * @param ratio the ratio of the label versus the text height
+	 */
+	public void setRatio(int ratio) {
+		fRatio = ratio;
+		fLabel.setLayoutData(getLabelLayoutData());
+		requestLayout();
+	}
+
+	/**
+	 * If you have used the SWT.SEPARATOR style hint then you can set the width of
+	 * the separator here.
+	 * 
+	 * @param space the amount of pixels
+	 * @return this
+	 */
+	public FloatingText setSeparatorSpace(final int space) {
+		getLayout().verticalSpacing = space;
+		requestLayout();
+		return this;
+	}
+
+	private Label createLabel(final int pStyle) {
+		return new Label(this, SWT.NONE | ((pStyle & SWT.LEFT_TO_RIGHT) > 0 ? SWT.LEFT : SWT.NONE)
 				| ((pStyle & SWT.RIGHT_TO_LEFT) > 0 ? SWT.RIGHT : SWT.NONE)) {
-
-			@Override
-			protected void checkSubclass() {
-			}
 
 			@Override
 			public Point computeSize(int pWHint, int pHHint, boolean pChanged) {
@@ -144,60 +225,23 @@ public class FloatingText extends Composite implements FocusListener {
 				result.y = ((GridData) fLabel.getLayoutData()).heightHint;
 				return result;
 			}
+
+			@Override
+			protected void checkSubclass() {
+			}
 		};
-
-		fStyle = ((pStyle & SWT.SINGLE) | (pStyle & SWT.MULTI) | (pStyle & SWT.READ_ONLY) | (pStyle & SWT.WRAP)
-				| (pStyle & SWT.LEFT) | (pStyle & SWT.RIGHT) | (pStyle & SWT.CENTER) | (pStyle & SWT.PASSWORD)
-				| (pStyle & SWT.SEARCH) | (pStyle & SWT.ICON_SEARCH) | (pStyle & SWT.ICON_CANCEL)
-				| (pStyle & SWT.BORDER) | (pStyle & SWT.LEFT_TO_RIGHT) | (pStyle & SWT.RIGHT_TO_LEFT)
-				| (pStyle & SWT.FLIP_TEXT_DIRECTION) | (pStyle & SWT.H_SCROLL) | (pStyle & SWT.V_SCROLL));
-
-		fText = new Text(this, removeStyles(pStyle, SWT.BORDER, SWT.SEPARATOR));
-		fText.setLayoutData(getTextLayoutData());
-
-		fLabel.setBackground(fText.getBackground());
-		fLabel.setLayoutData(getLabelLayoutData());
-
-		fText.addFocusListener(this);
 	}
 
-	private GridData getTextLayoutData() {
-		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
-		return gridData;
-	}
-
-	private int removeStyles(int pStyle, int... styles) {
-		int result = pStyle;
-		for (int i : styles) {
-			if ((result & i) == i) {
-				result = result ^ i;
-			}
+	private GridLayout createLayout(final int pStyle) {
+		GridLayout gridLayout = new GridLayout(1, false);
+		gridLayout.marginWidth = 0;
+		gridLayout.marginHeight = 0;
+		gridLayout.horizontalSpacing = 0;
+		gridLayout.verticalSpacing = 0;
+		if ((pStyle & SWT.SEPARATOR) == SWT.SEPARATOR) {
+			gridLayout.verticalSpacing = 1;
 		}
-		return result;
-	}
-
-	private GridData getLabelLayoutData() {
-		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, false);
-		gridData.heightHint = (fText.computeSize(-1, -1).y * fRatio) / 100;
-		return gridData;
-	}
-
-	private void setLabelText(boolean pFocus) {
-		fLabel.setText("");
-		String prompt = fText.getMessage();
-		if (pFocus) {
-			doSetLabelText();
-		} else {
-			if (!fText.getText().isEmpty() && !fText.getText().equals(prompt)) {
-				doSetLabelText();
-			}
-		}
-	}
-
-	public FloatingText setSeparatorSpace(final int space) {
-		getLayout().verticalSpacing = space;
-		requestLayout();
-		return this;
+		return gridLayout;
 	}
 
 	private void doSetLabelText() {
@@ -228,8 +272,15 @@ public class FloatingText extends Composite implements FocusListener {
 			fLabelFont.dispose();
 		}
 		fLabelFont = new Font(getDisplay(), newFontData);
+		fLabel.addDisposeListener(e -> fLabelFont.dispose());
 		fLabel.setFont(fLabelFont);
 		fLabel.setText(message);
+	}
+
+	private GridData getLabelLayoutData() {
+		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, false);
+		gridData.heightHint = (fText.computeSize(-1, -1).y * fRatio) / 100;
+		return gridData;
 	}
 
 	private String getMessage() {
@@ -240,77 +291,30 @@ public class FloatingText extends Composite implements FocusListener {
 		return message == null ? "" : message.trim();
 	}
 
-	/**
-	 * @return the underlying text widget.
-	 */
-	public Text getText() {
-		return fText;
+	private GridData getTextLayoutData() {
+		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+		return gridData;
 	}
 
-	@Override
-	public Point computeSize(int pWidthHint, int pHeightHint, boolean pChanged) {
-		Point textSize = fText.computeSize(pWidthHint, pHeightHint, pChanged);
-		Point labelSize = fLabel.computeSize(pWidthHint,
-				(pHeightHint == SWT.DEFAULT ? SWT.DEFAULT : (textSize.y * fRatio) / 100), pChanged);
-		Point result = new Point(textSize.x + labelSize.x, textSize.y + labelSize.y);
-		if ((fStyle & SWT.BORDER) == SWT.BORDER) {
-			result.x += 2;
-			result.y += 6;
+	private int removeStyles(int pStyle, int... styles) {
+		int result = pStyle;
+		for (int i : styles) {
+			if ((result & i) == i) {
+				result = result ^ i;
+			}
 		}
-		result.y += getLayout().verticalSpacing;
 		return result;
 	}
 
-	@Override
-	public void focusGained(FocusEvent pEvent) {
-		setLabelText(true);
-	}
-
-	@Override
-	public void focusLost(FocusEvent pEvent) {
-		setLabelText(false);
-	}
-
-	/**
-	 * Sets the backgrounds of the label and the text to the provided color.
-	 *
-	 * @param color the color.
-	 */
-	public void setBackgroundColors(Color pColor) {
-		fText.setBackground(pColor);
-		fLabel.setBackground(pColor);
-	}
-
-	/**
-	 * Sets the foregrounds of the label and the text to the provided color.
-	 *
-	 * @param color the color.
-	 */
-	public void setForegroundColors(Color pColor) {
-		fText.setForeground(pColor);
-		fLabel.setForeground(pColor);
-	}
-
-	/**
-	 * @return the label that floats above the text
-	 */
-	public Label getLabel() {
-		return fLabel;
-	}
-
-	@Override
-	public GridLayout getLayout() {
-		return (GridLayout) super.getLayout();
-	}
-
-	/**
-	 * Sets the height of the label as ratio of the text height.
-	 *
-	 * @param pRatio the ratio of the label versus the text height
-	 */
-	public void setRatio(int pRatio) {
-		fRatio = pRatio;
-		fLabel.setLayoutData(getLabelLayoutData());
-		requestLayout();
+	private void setLabelText(boolean pFocus) {
+		fLabel.setText("");
+		String prompt = fText.getMessage();
+		if (pFocus) {
+			doSetLabelText();
+		} else {
+			if (!fText.getText().isEmpty() && !fText.getText().equals(prompt)) {
+				doSetLabelText();
+			}
+		}
 	}
 }
