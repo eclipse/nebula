@@ -130,7 +130,7 @@ public class FloatingText extends Composite {
 			if (!fText.getText().isEmpty() && fLabel.getText().isEmpty()) {
 				fLabel.setText(fText.getMessage());
 			}
-			if (fText.getText().isEmpty() && !fLabel.getText().isEmpty()) {
+			if (fText.getText().isEmpty() && !fLabel.getText().isEmpty() && !(getDisplay().getFocusControl() == fText)) {
 				fLabel.setText("");
 			}
 		});
@@ -168,7 +168,7 @@ public class FloatingText extends Composite {
 	public Text getText() {
 		return fText;
 	}
-	
+
 	@Override
 	public void setEnabled(boolean pEnabled) {
 		super.setEnabled(pEnabled);
