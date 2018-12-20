@@ -13,10 +13,6 @@ package org.eclipse.nebula.widgets.floatingtext;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -62,11 +58,11 @@ import org.eclipse.swt.widgets.Widget;
  * causing the application to search for an empty string.
  * </p>
  */
-public class FloatingText extends Composite implements FocusListener {
+public class FloatingText extends Composite {
 	private Text fText;
 	private Label fLabel;
 	private int fStyle;
-	private int fRatio = 100;
+	private int fLabelToTextRatio = 90;
 	private Font fLabelFont;
 
 	/**
@@ -126,11 +122,16 @@ public class FloatingText extends Composite implements FocusListener {
 		fText = new Text(this, removeStyles(pStyle, SWT.BORDER, SWT.SEPARATOR));
 		fText.setLayoutData(getTextLayoutData());
 		fLabel.setBackground(fText.getBackground());
+		fLabel.setForeground(fText.getForeground());
 		fLabel.setLayoutData(getLabelLayoutData());
-		fText.addFocusListener(this);
-		fText.addModifyListener(e -> {
+		fText.addListener(SWT.FocusIn, e -> setLabelText(true));
+		fText.addListener(SWT.FocusOut, e -> setLabelText(false));
+		fText.addListener(SWT.Modify, e -> {
 			if (!fText.getText().isEmpty() && fLabel.getText().isEmpty()) {
 				fLabel.setText(fText.getMessage());
+			}
+			if (fText.getText().isEmpty() && !fLabel.getText().isEmpty()) {
+				fLabel.setText("");
 			}
 		});
 	}
@@ -139,7 +140,7 @@ public class FloatingText extends Composite implements FocusListener {
 	public Point computeSize(int pWidthHint, int pHeightHint, boolean pChanged) {
 		Point textSize = fText.computeSize(pWidthHint, pHeightHint, pChanged);
 		Point labelSize = fLabel.computeSize(pWidthHint,
-				(pHeightHint == SWT.DEFAULT ? SWT.DEFAULT : (textSize.y * fRatio) / 100), pChanged);
+				(pHeightHint == SWT.DEFAULT ? SWT.DEFAULT : (textSize.y * fLabelToTextRatio) / 100), pChanged);
 		Point result = new Point(textSize.x + labelSize.x, textSize.y + labelSize.y);
 		if ((fStyle & SWT.BORDER) == SWT.BORDER) {
 			result.x += 2;
@@ -147,16 +148,6 @@ public class FloatingText extends Composite implements FocusListener {
 		}
 		result.y += getLayout().verticalSpacing;
 		return result;
-	}
-
-	@Override
-	public void focusGained(FocusEvent pEvent) {
-		setLabelText(true);
-	}
-
-	@Override
-	public void focusLost(FocusEvent pEvent) {
-		setLabelText(false);
 	}
 
 	/**
@@ -176,6 +167,13 @@ public class FloatingText extends Composite implements FocusListener {
 	 */
 	public Text getText() {
 		return fText;
+	}
+	
+	@Override
+	public void setEnabled(boolean pEnabled) {
+		super.setEnabled(pEnabled);
+		fText.setEnabled(pEnabled);
+		fLabel.setEnabled(pEnabled);
 	}
 
 	/**
@@ -199,14 +197,26 @@ public class FloatingText extends Composite implements FocusListener {
 	}
 
 	/**
-	 * Sets the height of the label as ratio of the text height.
+	 * Sets the height of the label as ratio of the text height where 100 means that
+	 * the label and text are the same size.
 	 *
 	 * @param ratio the ratio of the label versus the text height
 	 */
 	public void setRatio(int ratio) {
-		fRatio = ratio;
+		fLabelToTextRatio = ratio;
 		fLabel.setLayoutData(getLabelLayoutData());
 		requestLayout();
+	}
+
+	/**
+	 * The default is 90 which means that the label height is 90% of the text text
+	 * height.
+	 * 
+	 * @return the label to text ratio.
+	 * @see FloatingText#setRatio(int)
+	 */
+	public int getLabelRatio() {
+		return fLabelToTextRatio;
 	}
 
 	/**
@@ -286,7 +296,7 @@ public class FloatingText extends Composite implements FocusListener {
 
 	private GridData getLabelLayoutData() {
 		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, false);
-		gridData.heightHint = (fText.computeSize(-1, -1).y * fRatio) / 100;
+		gridData.heightHint = (fText.computeSize(-1, -1).y * fLabelToTextRatio) / 100;
 		return gridData;
 	}
 

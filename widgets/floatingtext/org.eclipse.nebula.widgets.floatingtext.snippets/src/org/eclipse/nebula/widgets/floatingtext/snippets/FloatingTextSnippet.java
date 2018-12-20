@@ -11,9 +11,12 @@ package org.eclipse.nebula.widgets.floatingtext.snippets;
 
 import org.eclipse.nebula.widgets.floatingtext.FloatingText;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
@@ -50,7 +53,7 @@ public class FloatingTextSnippet {
 	}
 
 	private static void createText(final Group group) {
-		group.setLayout(new GridLayout(1, false));
+		group.setLayout(new GridLayout(2, false));
 		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		group.setText("Floating Text widgets");
 
@@ -58,6 +61,39 @@ public class FloatingTextSnippet {
 		txt1.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
 		txt1.getText().setMessage("Out of the box floating text");
 		txt1.getText().setText("this is text");
+
+		Group group2 = new Group(group, SWT.NONE);
+		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, false);
+		layoutData.verticalSpan = 2;
+		group2.setLayoutData(layoutData);
+		group2.setLayout(new GridLayout(1, false));
+		group2.setText("Special case");
+
+		Button button = new Button(group2, SWT.CHECK);
+		button.setText("Use default location");
+		button.setSelection(true);
+		button.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+		final FloatingText txt11b = new FloatingText(group2, SWT.BORDER);
+		txt11b.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+		txt11b.getText().setMessage("Location");
+		String initText = "C:\\default";
+		txt11b.getText().setText(initText);
+		txt11b.setEnabled(false);
+
+		button.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (txt11b.isEnabled()) {
+					txt11b.setEnabled(false);
+					txt11b.getText().setText(initText);
+				} else {
+					txt11b.setEnabled(true);
+					if (txt11b.getText().getText().equals(initText)) {
+						txt11b.getText().setText("");
+					}
+				}
+			}
+		});
 
 		final FloatingText txt11w = new FloatingText(group, SWT.BORDER | SWT.SEPARATOR);
 		txt11w.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
@@ -110,14 +146,16 @@ public class FloatingTextSnippet {
 		ratio120.setRatio(120);
 		ratio120.setBackground(ratio120.getDisplay().getSystemColor(SWT.COLOR_YELLOW));
 
+		final FloatingText multi2 = new FloatingText(group, SWT.MULTI);
+		GridData layoutData2 = new GridData(GridData.FILL, GridData.FILL, true, true);
+		layoutData2.verticalSpan = 2;
+		multi2.setLayoutData(layoutData2);
+		multi2.getText().setMessage("Multi Text 2");
+
 		final FloatingText multi = new FloatingText(group, SWT.MULTI | SWT.WRAP);
-		multi.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
+		multi.setLayoutData(layoutData2);
 		multi.getText().setMessage("Multi Text");
 		multi.setBackground(multi.getDisplay().getSystemColor(SWT.COLOR_RED));
-
-		final FloatingText multi2 = new FloatingText(group, SWT.MULTI);
-		multi2.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
-		multi2.getText().setMessage("Multi Text 2");
 
 	}
 }
