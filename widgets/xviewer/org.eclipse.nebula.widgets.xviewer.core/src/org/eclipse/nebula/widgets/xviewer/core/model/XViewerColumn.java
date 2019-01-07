@@ -36,6 +36,7 @@ public class XViewerColumn {
    private String toolTip = "";
    protected Map<Long, String> preComputedValueMap = null;
    private Object xViewer;
+   private Long elapsedTime = 0L;
 
    protected XViewerColumn() {
       super();
@@ -376,6 +377,25 @@ public class XViewerColumn {
    @Override
    public String toString() {
       return "XViewerColumn [id=" + id + ", name=" + name + ", sortDataType=" + sortDataType + ", show=" + show + ", width=" + width + "]";
+   }
+
+   /**
+    * @return time in milliseconds
+    */
+   public Long getElapsedTime() {
+      return elapsedTime;
+   }
+
+   public void addElapsedTime(Long elapsedTimeMs) {
+      this.elapsedTime += elapsedTimeMs;
+   }
+
+   public void setElapsedTime(Long elapsedTimeMs) {
+      this.elapsedTime = elapsedTimeMs;
+   }
+
+   public void resetElapsedTime() {
+      this.elapsedTime = 0L;
    }
 
 }

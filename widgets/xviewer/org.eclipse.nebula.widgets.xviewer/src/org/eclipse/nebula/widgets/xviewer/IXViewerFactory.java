@@ -61,6 +61,11 @@ public interface IXViewerFactory {
     */
    XViewerTreeReport getXViewerTreeReport(XViewer xViewer);
 
+   /**
+    * Provides for ability to customize loading report that is provided
+    */
+   XViewerLoadingReport getXViewerLoadingReport(XViewer xViewer);
+
    public boolean isSearchUiAvailable();
 
    public boolean isFilterUiAvailable();
