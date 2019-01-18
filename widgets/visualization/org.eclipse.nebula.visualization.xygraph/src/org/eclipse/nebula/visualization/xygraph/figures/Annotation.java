@@ -175,6 +175,16 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 		yAxis.addListener(this);
 	}
 
+	public void remove() {
+		if (listeners != null) {
+			listeners.clear();
+			listeners = null;
+		}
+		if (getParent()!=null) getParent().remove(this);
+		xAxis.removeListener(this);
+		yAxis.removeListener(this);
+	}
+
 	public synchronized void addAnnotationListener(IAnnotationListener listener) {
 		if (listeners == null)
 			listeners = new CopyOnWriteArrayList<IAnnotationListener>();
