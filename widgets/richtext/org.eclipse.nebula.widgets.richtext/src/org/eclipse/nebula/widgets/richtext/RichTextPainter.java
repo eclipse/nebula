@@ -118,6 +118,8 @@ public class RichTextPainter {
 	}
 
 	private EntityReplacer entityReplacer = new DefaultEntityReplacer();
+	
+	private String wordSplitRegex = "\\s";
 
 	/**
 	 * Create a new {@link RichTextPainter} with disabled word wrapping.
@@ -482,7 +484,7 @@ public class RichTextPainter {
 					// if word wrapping is enabled, split the text and create new lines
 					// by making several TextPaintInstructions with substrings
 
-					Deque<String> wordsToProcess = new LinkedList<>(Arrays.asList(txtInstr.getText().split("(?<=\\s)")));
+					Deque<String> wordsToProcess = new LinkedList<>(Arrays.asList(txtInstr.getText().split("(?<=" + wordSplitRegex + ")")));
 					String subString = "";
 					int subStringLength = 0;
 					while (!wordsToProcess.isEmpty()) {
@@ -717,5 +719,14 @@ public class RichTextPainter {
 	 */
 	public void setParagraphSpace(int paragraphSpace) {
 		this.paragraphSpace = paragraphSpace;
+	}
+	
+	/**
+	 * @param wordSplitRegex
+	 *            The regular expression that will be used to determine word boundaries. The default
+	 *            is "\s".
+	 */
+	public void setWordSplitRegex(String wordSplitRegex) {
+		this.wordSplitRegex = wordSplitRegex;
 	}
 }
