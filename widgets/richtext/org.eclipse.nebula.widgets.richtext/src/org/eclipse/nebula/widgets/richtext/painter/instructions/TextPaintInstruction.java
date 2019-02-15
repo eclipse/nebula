@@ -34,13 +34,17 @@ public class TextPaintInstruction implements PaintInstruction {
 	private List<String> words = new ArrayList<>();
 
 	public TextPaintInstruction(TagProcessingState state, String text) {
+		this(state, text, "\\s");
+	}
+
+	public TextPaintInstruction(TagProcessingState state, String text, String wordSplitRegex) {
 		this.state = state;
 		this.text = text;
 
 		// extract and store the trimmed words in the text
 		String word = text.trim();
 		if (word.length() > 0) {
-			String[] splitText = word.split("\\s");
+			String[] splitText = word.split(wordSplitRegex);
 			for (String splitWord : splitText) {
 				String trimmed = splitWord.trim();
 				if (trimmed.length() > 0) {
@@ -80,8 +84,7 @@ public class TextPaintInstruction implements PaintInstruction {
 				pointer.x += length;
 				textLength += length;
 			}
-		}
-		else {
+		} else {
 			textLength = getTextLength(gc);
 			gc.drawText(text, pointer.x, pointer.y + yAdvance, (!this.state.hasPreviousBgColor()));
 		}

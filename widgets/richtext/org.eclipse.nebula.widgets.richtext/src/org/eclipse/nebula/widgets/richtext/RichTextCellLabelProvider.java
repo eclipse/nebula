@@ -47,9 +47,14 @@ public abstract class RichTextCellLabelProvider<T> extends StyledCellLabelProvid
 	}
 
 	public RichTextCellLabelProvider(final Control viewerControl, final int leftRightMargin, boolean wordWrap) {
+		this(viewerControl, leftRightMargin, wordWrap, "\\s");
+	}
+	
+	public RichTextCellLabelProvider(final Control viewerControl, final int leftRightMargin, boolean wordWrap, String wordSplitRegex) {
 		super(COLORS_ON_SELECTION);
 
 		this.painter = new RichTextPainter(wordWrap);
+		painter.setWordSplitRegex(wordSplitRegex);
 
 		if (viewerControl instanceof Tree) {
 			viewerControl.addListener(SWT.MeasureItem, new Listener() {
