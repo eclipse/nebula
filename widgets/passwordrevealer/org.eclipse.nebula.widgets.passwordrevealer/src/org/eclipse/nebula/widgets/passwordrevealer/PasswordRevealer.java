@@ -138,12 +138,6 @@ public class PasswordRevealer extends Composite {
 
 		eyeButton = new EyeButton(this, SWT.NONE);
 		eyeButton.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, false));
-
-		passwordField.addListener(SWT.Modify, e -> {
-			final String currentText = passwordField.getText();
-			textField.setText(currentText);
-		});
-
 	}
 
 	private int removeFields(int original, int... styles) {
@@ -158,6 +152,8 @@ public class PasswordRevealer extends Composite {
 
 	void revealPassword() {
 		currentCaretPosition = passwordField.getSelection();
+		final String currentText = passwordField.getText();
+		textField.setText(currentText);
 		swap(passwordField, textField);
 	}
 
@@ -179,6 +175,7 @@ public class PasswordRevealer extends Composite {
 
 	void hidePassword() {
 		swap(textField, passwordField);
+		textField.setText("");
 		passwordField.setFocus();
 		passwordField.setSelection(currentCaretPosition);
 	}
