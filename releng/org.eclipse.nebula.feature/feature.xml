@@ -201,4 +201,7 @@
          id="org.eclipse.nebula.widgets.splitbutton.feature"
          version="0.0.0"/>
 
+   <includes
+         id="org.eclipse.nebula.widgets.passwordrevealer.feature"
+         version="0.0.0"/>
 </feature>
