@@ -47,7 +47,7 @@ import org.eclipse.swt.widgets.Widget;
 /**
  * Instances of this class are selectable user interface
  * objects that allow the user to enter and modify passwords.
- * A button is drawned on the right side of the widget. When one clicks on the button,
+ * A "eye" button is drawned on the right side of the widget. When one clicks on the button,
  * the password is revealed, and when the user stops clicking the password is displayed with dots.
  * <p>
  * <dl>
