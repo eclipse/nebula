@@ -68,6 +68,7 @@
 		<module>../../widgets/nebulaslider</module> 
 		<module>../../widgets/splitbutton</module> 
 		<module>../../widgets/floatingtext</module> 
+		<module>../../widgets/passwordrevealer</module>
 
 
 		<!-- Releng -->
