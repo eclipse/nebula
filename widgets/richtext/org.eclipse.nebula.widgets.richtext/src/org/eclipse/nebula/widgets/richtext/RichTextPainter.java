@@ -725,6 +725,7 @@ public class RichTextPainter {
 	 * @param wordSplitRegex
 	 *            The regular expression that will be used to determine word boundaries. The default
 	 *            is "\s".
+	 * @since 1.3.0
 	 */
 	public void setWordSplitRegex(String wordSplitRegex) {
 		this.wordSplitRegex = wordSplitRegex;

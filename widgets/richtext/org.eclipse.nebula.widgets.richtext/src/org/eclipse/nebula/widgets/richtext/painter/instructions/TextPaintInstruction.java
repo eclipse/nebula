@@ -37,6 +37,9 @@ public class TextPaintInstruction implements PaintInstruction {
 		this(state, text, "\\s");
 	}
 
+	/**
+	 * @since 1.3.0
+	 */
 	public TextPaintInstruction(TagProcessingState state, String text, String wordSplitRegex) {
 		this.state = state;
 		this.text = text;

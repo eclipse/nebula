@@ -50,6 +50,9 @@ public abstract class RichTextCellLabelProvider<T> extends StyledCellLabelProvid
 		this(viewerControl, leftRightMargin, wordWrap, "\\s");
 	}
 	
+	/**
+	 * @since 1.3.0
+	 */
 	public RichTextCellLabelProvider(final Control viewerControl, final int leftRightMargin, boolean wordWrap, String wordSplitRegex) {
 		super(COLORS_ON_SELECTION);
 
