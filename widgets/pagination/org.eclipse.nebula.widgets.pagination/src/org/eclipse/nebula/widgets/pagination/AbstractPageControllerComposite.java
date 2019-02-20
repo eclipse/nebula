@@ -125,7 +125,6 @@ public abstract class AbstractPageControllerComposite extends Composite
 		this.controller.addPageChangedListener(this);
 	}
 
-	@SuppressWarnings("unchecked")
 	protected PageableController createController(int pageSize) {
 		if (pageContentProvider != null) {
 			return pageContentProvider.createController(pageSize);
