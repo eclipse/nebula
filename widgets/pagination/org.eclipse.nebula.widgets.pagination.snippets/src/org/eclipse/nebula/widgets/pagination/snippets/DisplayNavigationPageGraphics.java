@@ -23,28 +23,12 @@ public class DisplayNavigationPageGraphics {
 			}
 		};
 
-		// PageItemsThemesHelper.setGreenTheme(canvas);
-
 		canvas.update(indexes, 1);
-
-		// canvas.addSelectionListener(new SelectionAdapter() {
-		// @Override
-		// public void widgetSelected(SelectionEvent e) {
-		// System.err.println(e);
-		// }
-		// });
 
 		canvas.setSize(150, 150);
 		canvas.setLocation(20, 20);
 		shell.open();
 		shell.setSize(200, 220);
-		//
-		// GC gc = new GC(canvas);
-		// gc.setForeground(new Color(display, 100, 100, 200));
-		// gc.drawRectangle(10, 10, 40, 45);
-		// gc.drawString("1", 15, 14);
-		//
-		// gc.dispose();
 
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch())
