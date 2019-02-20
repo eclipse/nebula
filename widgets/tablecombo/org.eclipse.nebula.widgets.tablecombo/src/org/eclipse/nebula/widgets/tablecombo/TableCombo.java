@@ -1495,6 +1495,9 @@ public class TableCombo extends Composite {
 			e.time = event.time;
 			e.stateMask = event.stateMask;
 			e.doit = event.doit;
+			if (event.item != null) {
+                e.data = event.item.getData();
+			}
 			notifyListeners(SWT.Selection, e);
 			event.doit = e.doit;
 			break;
