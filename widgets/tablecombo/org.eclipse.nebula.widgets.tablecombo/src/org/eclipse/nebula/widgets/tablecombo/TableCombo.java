@@ -178,8 +178,8 @@ public class TableCombo extends Composite {
 
 		// set the listeners for this control
 		final int[] comboEvents = { SWT.Dispose, SWT.FocusIn, SWT.Move, SWT.Resize };
-		for (int comboEvent : comboEvents) {
-			this.addListener(comboEvent, listener);
+		for (final int comboEvent : comboEvents) {
+			addListener(comboEvent, listener);
 		}
 
 		final int[] textEvents = { SWT.DefaultSelection, SWT.KeyDown, SWT.KeyUp, SWT.MenuDetect, SWT.Modify,
@@ -1127,6 +1127,9 @@ public class TableCombo extends Composite {
 			final Control focusControl = getDisplay().getFocusControl();
 			if (focusControl == arrow || focusControl == table || focusControl == text) {
 				return;
+			}
+			if (focusControl == null || focusControl.getShell() == getShell()) {
+				dropDown(false);
 			}
 			hasFocus = false;
 			final Shell shell = getShell();
@@ -2184,7 +2187,7 @@ public class TableCombo extends Composite {
 	 * @param columnBounds
 	 */
 	public void defineColumns(final int[] columnBounds) {
-		this.columnWidths = columnBounds;
+		columnWidths = columnBounds;
 
 		if (columnBounds != null && columnBounds.length > 0) {
 			defineColumnsInternal(null, columnBounds, columnBounds.length);
@@ -2224,7 +2227,7 @@ public class TableCombo extends Composite {
 				total = columnBounds.length;
 			}
 
-			this.columnWidths = columnBounds;
+			columnWidths = columnBounds;
 
 			// define the columns
 			defineColumnsInternal(columnHeaders, columnBounds, total);
@@ -2279,7 +2282,7 @@ public class TableCombo extends Composite {
 
 		// don't accept invalid input.
 		if (ddWidthPct > 0 && ddWidthPct <= 100) {
-			this.tableWidthPercentage = ddWidthPct;
+			tableWidthPercentage = ddWidthPct;
 		}
 	}
 
@@ -2304,7 +2307,7 @@ public class TableCombo extends Composite {
 	 * @param closePopupAfterSelection
 	 */
 	public void setClosePopupAfterSelection(final boolean closePopupAfterSelection) {
-		this.closePupupAfterSelection = closePopupAfterSelection;
+		closePupupAfterSelection = closePopupAfterSelection;
 	}
 
 	/**
