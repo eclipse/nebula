@@ -182,6 +182,11 @@ public class TableCombo extends Composite {
 			addListener(comboEvent, listener);
 		}
 
+		final int[] imageEvents = { SWT.MouseDown };
+		for (final int imageEvent : imageEvents) {
+			selectedImage.addListener(imageEvent, listener);
+		}
+
 		final int[] textEvents = { SWT.DefaultSelection, SWT.KeyDown, SWT.KeyUp, SWT.MenuDetect, SWT.Modify,
 				SWT.MouseDown, SWT.MouseUp, SWT.MouseDoubleClick, SWT.MouseWheel, SWT.Traverse, SWT.FocusIn,
 				SWT.Verify };
@@ -232,6 +237,10 @@ public class TableCombo extends Composite {
 			if (text == event.widget) {
 				textEvent(event);
 				return;
+			}
+
+			if (selectedImage == event.widget) {
+				selectedImageEvent(event);
 			}
 
 			// check for a table event
@@ -1499,7 +1508,7 @@ public class TableCombo extends Composite {
 			e.stateMask = event.stateMask;
 			e.doit = event.doit;
 			if (event.item != null) {
-                e.data = event.item.getData();
+				e.data = event.item.getData();
 			}
 			notifyListeners(SWT.Selection, e);
 			event.doit = e.doit;
@@ -2669,6 +2678,24 @@ public class TableCombo extends Composite {
 			event.doit = e.doit;
 			break;
 		}
+		}
+	}
+
+	void selectedImageEvent(Event event) {
+		switch (event.type) {
+			case SWT.MouseDown: {
+				Event mouseEvent = new Event();
+				mouseEvent.button = event.button;
+				mouseEvent.count = event.count;
+				mouseEvent.stateMask = event.stateMask;
+				mouseEvent.time = event.time;
+				mouseEvent.x = event.x;
+				mouseEvent.y = event.y;
+				notifyListeners(SWT.MouseDown, mouseEvent);
+				event.doit = mouseEvent.doit;
+				dropDown(!isDropped());
+				break;
+			}
 		}
 	}
 
