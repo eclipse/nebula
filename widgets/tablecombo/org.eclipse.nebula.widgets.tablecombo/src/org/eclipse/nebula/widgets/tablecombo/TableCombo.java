@@ -526,11 +526,15 @@ public class TableCombo extends Composite {
 			event.type = SWT.None;
 
 			if (popup != null && !popup.isDisposed()) {
-				table.removeListener(SWT.Dispose, listener);
+				if (!table.isDisposed()) {
+					table.removeListener(SWT.Dispose, listener);
+				}
 				popup.dispose();
 			}
 			final Shell shell = getShell();
-			shell.removeListener(SWT.Deactivate, listener);
+			if (!shell.isDisposed()) {
+				shell.removeListener(SWT.Deactivate, listener);
+			}
 			final Display display = getDisplay();
 			display.removeFilter(SWT.FocusIn, focusFilter);
 			popup = null;
