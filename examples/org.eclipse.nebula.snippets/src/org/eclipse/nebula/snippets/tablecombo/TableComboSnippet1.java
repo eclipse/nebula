@@ -45,7 +45,7 @@ public class TableComboSnippet1 {
 	private static Color darkRed;
 	private static Color darkBlue;
 	private static Color darkGreen;
-	private static List modelList;
+	private static List<Model> modelList;
 	private static Text listenerResults;
 	private static Group listenerGroup;
 
@@ -318,8 +318,8 @@ public class TableComboSnippet1 {
 	 * load a list of rows with a single column
 	 * @return
 	 */
-	private static List loadSingleDataset(Table table) {
-		List rowList = new ArrayList();
+	private static List<TableItem> loadSingleDataset(Table table) {
+		List<TableItem> rowList = new ArrayList<TableItem>();
 		
 		int total = (modelList == null ? 0 : modelList.size());
 		
@@ -337,8 +337,8 @@ public class TableComboSnippet1 {
 	 * load a list of rows with a single column that includes images
 	 * @return
 	 */
-	private static List loadSingleDatasetWithImages(Table table) {
-		List list = loadSingleDataset(table);
+	private static List<TableItem> loadSingleDatasetWithImages(Table table) {
+		List<TableItem> list = loadSingleDataset(table);
 		
 		int total = (list == null ? 0 : list.size());
 		
@@ -363,8 +363,8 @@ public class TableComboSnippet1 {
 	 * load a list of rows with 2 columns in each row.
 	 * @return
 	 */
-	private static List loadTwoColumnDataset(Table table) {
-		List rowList = new ArrayList();
+	private static List<TableItem> loadTwoColumnDataset(Table table) {
+		List<TableItem> rowList = new ArrayList<TableItem>();
 		
 		int total = (modelList == null ? 0 : modelList.size());
 		
@@ -382,8 +382,8 @@ public class TableComboSnippet1 {
 	 * load a list of rows with 2 columns that includes colors and fonts.
 	 * @return
 	 */
-	private static List loadTwoColumnDatasetWithColorsAndFonts(Table table) {
-		List list = loadTwoColumnDataset(table);
+	private static List<TableItem> loadTwoColumnDatasetWithColorsAndFonts(Table table) {
+		List<TableItem> list = loadTwoColumnDataset(table);
 		
 		int total = (list == null ? 0 : list.size());
 		
@@ -411,8 +411,8 @@ public class TableComboSnippet1 {
 	 * load a list of rows with 3 columns
 	 * @return
 	 */
-	private static List loadThreeColumnDataset(Table table) {
-		List rowList = new ArrayList();
+	private static List<TableItem> loadThreeColumnDataset(Table table) {
+		List<TableItem> rowList = new ArrayList<TableItem>();
 		
 		int total = (modelList == null ? 0 : modelList.size());
 		
@@ -431,8 +431,8 @@ public class TableComboSnippet1 {
 	 * load a list of rows with 3 columns that includes colors and fonts.
 	 * @return
 	 */
-	private static List loadThreeColumnDatasetWithColorsAndFonts(Table table) {
-		List list = loadThreeColumnDataset(table);
+	private static List<TableItem> loadThreeColumnDatasetWithColorsAndFonts(Table table) {
+		List<TableItem> list = loadThreeColumnDataset(table);
 		
 		int total = (list == null ? 0 : list.size());
 		
@@ -446,8 +446,10 @@ public class TableComboSnippet1 {
 			else if (index == 4 || index == 19) {
 				ti.setForeground(darkBlue);
 				ti.setFont(boldFont);
-			}
-			else if (index == 9) {
+			} else if (index==6) {
+				ti.setForeground(table.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+				ti.setBackground(table.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+			} else if (index == 9) {
 				ti.setForeground(darkGreen);
 				ti.setFont(boldFont);
 			}
@@ -460,8 +462,8 @@ public class TableComboSnippet1 {
 	 * load the Model data.
 	 * @return
 	 */
-	private static List loadModel() {
-		List items = new ArrayList();
+	private static List<Model> loadModel() {
+		List<Model> items = new ArrayList<Model>();
 		items.add(new Model(1, "One"));
 		items.add(new Model(2, "Two"));
 		items.add(new Model(3, "Three"));

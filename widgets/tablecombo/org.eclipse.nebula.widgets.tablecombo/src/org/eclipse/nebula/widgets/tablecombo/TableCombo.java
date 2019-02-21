@@ -2385,6 +2385,7 @@ public class TableCombo extends Composite {
 		// set color if requested
 		if (showColorWithinSelection) {
 			text.setForeground(tableItem.getForeground(colIndexToUse));
+			text.setBackground(tableItem.getBackground(colIndexToUse));
 		}
 
 		// set font if requested
@@ -2489,6 +2490,10 @@ public class TableCombo extends Composite {
 			event.doit = keyEvent.doit;
 			if (!event.doit) {
 				break;
+			}
+			if (event.character == SWT.ESC) {
+				// Escape key cancels popup list
+				dropDown(false);
 			}
 			if (event.keyCode == SWT.ARROW_UP || event.keyCode == SWT.ARROW_DOWN) {
 				event.doit = false;
