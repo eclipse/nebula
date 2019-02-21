@@ -11,7 +11,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
-public class IPAddressFormatterSnippet1 {
+public class IPAddressFormatterSnippet {
 	public static void main(String[] args) {
 		Display display = new Display();
 		Shell shell = new Shell(display);
