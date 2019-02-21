@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Widget;
 
 /**
  * TableComboViewerRow is basically identical to the TableRow class with a
- * few modifications to reference the TableComboViewer row instead of a standar
+ * few modifications to reference the TableComboViewer row instead of a standard
  * TableViewer row.
  *
  */
