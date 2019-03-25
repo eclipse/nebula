@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * This snippet demonstrates the TitledSeparator widget
+ * This snippet demonstrates the RoundedCheckBox widget
  *
  */
 public class RoundedCheckBoxSnippet {

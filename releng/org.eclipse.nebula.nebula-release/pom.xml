@@ -69,6 +69,7 @@
 		<module>../../widgets/splitbutton</module> 
 		<module>../../widgets/floatingtext</module> 
 		<module>../../widgets/passwordrevealer</module>
+		<module>../../widgets/ctreecombo</module>
 
 
 		<!-- Releng -->
