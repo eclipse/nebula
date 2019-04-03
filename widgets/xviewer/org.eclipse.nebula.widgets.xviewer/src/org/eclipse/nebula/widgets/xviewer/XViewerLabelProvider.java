@@ -115,13 +115,22 @@ public abstract class XViewerLabelProvider implements ITableLabelProvider, ITabl
       }
    }
 
+   public Color getSearchBackground(Object element, int columnIndex) {
+      String text = getColumnText(element, columnIndex);
+      if (viewer.searchMatch(text)) {
+         return viewer.getSearchMatchColor();
+      }
+      return null;
+   }
+
    @Override
    public Color getBackground(Object element, int columnIndex) {
       try {
+         Color searchColor = null;
          if (viewer.isSearch()) {
-            String text = getColumnText(element, columnIndex);
-            if (viewer.searchMatch(text)) {
-               return viewer.getSearchMatchColor();
+            searchColor = getSearchBackground(element, columnIndex);
+            if (searchColor != null) {
+               return searchColor;
             }
          }
 
