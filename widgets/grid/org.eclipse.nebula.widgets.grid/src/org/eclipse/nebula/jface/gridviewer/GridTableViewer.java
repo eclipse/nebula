@@ -26,6 +26,7 @@ import org.eclipse.jface.viewers.ColumnViewerEditorActivationEvent;
 import org.eclipse.jface.viewers.ColumnViewerEditorActivationStrategy;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.viewers.ViewerRow;
 import org.eclipse.nebula.jface.gridviewer.internal.CellSelection;
@@ -532,6 +533,9 @@ public class GridTableViewer extends AbstractTableViewer {
 	 */
 	@Override
 	public ISelection getSelection() {
+		if (grid == null || grid.isDisposed()) {
+			return StructuredSelection.EMPTY;
+		}
 		if (!grid.isCellSelectionEnabled()) {
 			IStructuredSelection selection = (IStructuredSelection) super.getSelection();
 			Object el = null;
