@@ -415,7 +415,7 @@ public class PGroup extends Canvas
 
     private void onMouseMove(Event e)
     {
-        boolean newOverToggle = PGroup.this.strategy.isToggleLocation(e.x, e.y);
+        boolean newOverToggle = toggleRenderer != null && PGroup.this.strategy.isToggleLocation(e.x, e.y);
         boolean redraw = false;
         if (newOverToggle != overToggle)
         {

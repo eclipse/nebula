@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * This snippet demonstrates the TitledSeparator widget
+ * This snippet demonstrates the CTreeComboSnippet widget
  *
  */
 public class CTreeComboSnippet {
