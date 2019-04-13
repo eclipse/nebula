@@ -114,7 +114,7 @@ import org.eclipse.swt.widgets.Text;
  */
 public class DateTimeFormatter extends AbstractFormatter {
   /** Cache of patterns by locale ISO3 codes */
-  protected static Hashtable cachedPatterns = new Hashtable();
+  protected static Hashtable<String, String> cachedPatterns = new Hashtable<String, String>();
   /** Numbers formatter */
   private static NumberFormat nf;
 
@@ -227,10 +227,6 @@ public class DateTimeFormatter extends AbstractFormatter {
 	public DateTimeFormatter(String editPattern, String displayPattern, Locale loc) {
     // Set the default value
     calendar = Calendar.getInstance(loc);
-    if ( yearStart == -1 ) {
-    	calendar.setTime(sdfDisplay.get2DigitYearStart());
-    	yearStart = calendar.get(Calendar.YEAR) % 100;
-    }
     calendar.setTimeInMillis(0);
 
     // Creates the formatter for the edit value
@@ -244,6 +240,10 @@ public class DateTimeFormatter extends AbstractFormatter {
 			displayPattern = editPattern;
 		}
     sdfDisplay = new SimpleDateFormat(displayPattern, loc);
+    if ( yearStart == -1 ) {
+    	calendar.setTime(sdfDisplay.get2DigitYearStart());
+    	yearStart = calendar.get(Calendar.YEAR) % 100;
+    }
     locale		 = loc;
 
     // Instantiate the key listener
@@ -682,7 +682,7 @@ public class DateTimeFormatter extends AbstractFormatter {
    * 
    * @return The value type.
    */
-  public Class getValueType() {
+  public Class<Date> getValueType() {
 		return Date.class;
 	}
 
