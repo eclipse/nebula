@@ -227,8 +227,11 @@ public class DateTimeFormatter extends AbstractFormatter {
 	public DateTimeFormatter(String editPattern, String displayPattern, Locale loc) {
     // Set the default value
     calendar = Calendar.getInstance(loc);
-    calendar.setTimeInMillis(0);
-
+    calendar.set(Calendar.HOUR_OF_DAY, 0);
+    calendar.set(Calendar.MINUTE, 0);
+    calendar.set(Calendar.SECOND, 0);
+    calendar.set(Calendar.MILLISECOND, 0);
+    
     // Creates the formatter for the edit value
 		if ( editPattern == null ) {
 			editPattern = getDefaultEditPattern(loc);
