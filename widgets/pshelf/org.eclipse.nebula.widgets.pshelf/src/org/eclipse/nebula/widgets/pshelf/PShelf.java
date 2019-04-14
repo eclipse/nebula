@@ -408,13 +408,8 @@ public class PShelf extends Canvas {
             }
             
             sizeClients();
-            redraw(getClientArea().x,getClientArea().y, getClientArea().width, getClientArea().height, false);
+            redraw(getClientArea().x,getClientArea().y, getClientArea().width, getClientArea().height, true);
             update();
-            //workaround for SWT bug 193357
-            if (SWT.getPlatform().equals("carbon"))
-            {
-                getDisplay().readAndDispatch();
-            }
             percentOfWork += this.animationSpeed;
         } 
         
