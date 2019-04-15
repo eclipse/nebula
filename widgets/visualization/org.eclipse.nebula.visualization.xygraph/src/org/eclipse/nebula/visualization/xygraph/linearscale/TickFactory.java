@@ -11,7 +11,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.nebula.visualization.internal.xygraph.utils.LargeNumberUtils;
@@ -518,11 +517,9 @@ public class TickFactory {
 	 * @param min
 	 * @param max
 	 * @param maxTicks
-	 * @param tight
-	 *            if true then remove ticks outside range (ignored)
 	 * @return a list of the ticks for the axis
 	 */
-	public List<Tick> generateIndexBasedTicks(double min, double max, int maxTicks, boolean tight) {
+	public List<Tick> generateIndexBasedTicks(double min, double max, int maxTicks) {
 		isReversed = min > max;
 		if (isReversed) {
 			double t = max;
@@ -558,21 +555,31 @@ public class TickFactory {
 			break;
 		}
 
+		final double p0;
+		if (isReversed) {
+			p0 = graphMax;
+			tickUnit = -tickUnit;
+		} else {
+			p0 = graphMin;
+		}
 		for (int i = 0; i <= numberOfIntervals; i++) {
-			double p = graphMin + i * tickUnit;
+			double p = p0 + i * tickUnit;
 			Tick newTick = new Tick();
 			newTick.setValue(p);
 			newTick.setText(getTickString(p));
 			ticks.add(newTick);
 		}
 
-		int imax = ticks.size();
-		double range = imax > 1 ? max - min : 1;
-		for (Tick t : ticks) {
-			t.setPosition((t.getValue() - min) / range);
-		}
+		double lo = Math.min(min, graphMin);
+		double hi = Math.max(max, graphMax);
 		if (isReversed) {
-			Collections.reverse(ticks);
+			double t = hi;
+			hi = lo;
+			lo = t;
+		}
+		double range = numberOfIntervals > 0 ? hi - lo: 1;
+		for (Tick t : ticks) {
+			t.setPosition((t.getValue() - lo) / range);
 		}
 
 		if (formatOfTicks == TickFormatting.autoMode) { // override labels
@@ -771,20 +778,11 @@ public class TickFactory {
 			}
 		}
 
-		if (tickUnit > 0) {
-			double lo = Math.log(tight ? min : ticks.get(0).getValue());
-			double hi = Math.log(tight ? max : ticks.get(imax - 1).getValue());
-			double range = hi - lo;
-			for (Tick t : ticks) {
-				t.setPosition((Math.log(t.getValue()) - lo) / range);
-			}
-		} else {
-			double lo = Math.log(tight ? max : ticks.get(0).getValue());
-			double hi = Math.log(tight ? min : ticks.get(imax - 1).getValue());
-			double range = hi - lo;
-			for (Tick t : ticks) {
-				t.setPosition(1 - (Math.log(t.getValue()) - lo) / range);
-			}
+		double lo = Math.log(tight ? min : ticks.get(0).getValue());
+		double hi = Math.log(tight ? max : ticks.get(imax - 1).getValue());
+		double range = hi - lo;
+		for (Tick t : ticks) {
+			t.setPosition((Math.log(t.getValue()) - lo) / range);
 		}
 		return ticks;
 	}

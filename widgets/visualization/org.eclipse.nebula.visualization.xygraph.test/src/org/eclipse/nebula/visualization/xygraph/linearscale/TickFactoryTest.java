@@ -308,14 +308,13 @@ public class TickFactoryTest {
 
 	@Test
 	public void testIndexTicks() {
-		testGeneratedIndexBasedTicks(true, 0, 1, 4, "0", "1");
-		testGeneratedIndexBasedTicks(false, 0, 1, 4, "0", "1");
+		testGeneratedIndexBasedTicks(0, 1, 4, "0", "1");
 
-		testGeneratedIndexBasedTicks(true, 0.1, 1, 4, "1");
-		testGeneratedIndexBasedTicks(false, 0.1, 1, 4, "1");
+		testGeneratedIndexBasedTicks(0, 3, 4, "0", "2");
 
-		testGeneratedIndexBasedTicks(true, 0.1, 0.9, 4);
-		testGeneratedIndexBasedTicks(false, 0.1, 0.9, 4);
+		testGeneratedIndexBasedTicks(0.1, 1, 4, "1");
+
+		testGeneratedIndexBasedTicks(0.1, 0.9, 4);
 	}
 
 	@Test
@@ -465,26 +464,31 @@ public class TickFactoryTest {
 		checkTickValues(t, out);
 
 		if (upper != lower) {
+			List<Tick> ot = t;
 			t = tf.generateLogTicks(upper, lower, nTicks, true, tight);
-			for (int i = 0; i < out.length; i++)
+			for (int i = 0; i < out.length; i++) {
 				values[i] = out[out.length - 1 - i];
+			}
 			checkTickValues(t, values);
+			if (!tight) {
+				checkTickPositions(ot, t);
+			}
 		}
 	}
 
-	private void testGeneratedIndexBasedTicks(boolean tight, double lower, double upper, int nTicks,
-			final String... out) {
+	private void testGeneratedIndexBasedTicks(double lower, double upper, int nTicks, final String... out) {
 		TickFactory tf = new TickFactory(TickFormatting.autoMode, null);
 		String[] values = new String[out.length];
 		List<Tick> t;
 
-		t = tf.generateIndexBasedTicks(lower, upper, nTicks, tight);
+		t = tf.generateIndexBasedTicks(lower, upper, nTicks);
 		checkTickValues(t, out);
 
 		if (upper != lower) {
-			t = tf.generateIndexBasedTicks(upper, lower, nTicks, tight);
-			for (int i = 0; i < out.length; i++)
+			t = tf.generateIndexBasedTicks(upper, lower, nTicks);
+			for (int i = 0; i < out.length; i++) {
 				values[i] = out[out.length - 1 - i];
+			}
 			checkTickValues(t, values);
 		}
 	}
