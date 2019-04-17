@@ -82,9 +82,6 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
     {
         super.initialize(sg);
 
-        getGroup()
-            .setForeground(getGroup().getDisplay().getSystemColor(SWT.COLOR_TITLE_FOREGROUND));
-
         g1 = getGroup().getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT);
         g2 = getGroup().getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
 
@@ -398,8 +395,9 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
         	}
         }
 
-        gc.setForeground(getGroup().getForeground());
+        gc.setForeground(getGroup().getDisplay().getSystemColor(SWT.COLOR_TITLE_FOREGROUND));
         gc.drawText(shortened, textBounds.x, textBounds.y, true);
+        gc.setForeground(getGroup().getForeground());
 
         if (!getGroup().getExpanded())
         {
