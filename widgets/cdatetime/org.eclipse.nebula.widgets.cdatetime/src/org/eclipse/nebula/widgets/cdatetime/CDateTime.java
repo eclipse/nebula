@@ -11,6 +11,7 @@
  *    Scott Klein - https://bugs.eclipse.org/bugs/show_bug.cgi?id=370605
  *    Baruch Youssin - https://bugs.eclipse.org/bugs/show_bug.cgi?id=261414
  *    Doug Showell - https://bugs.eclipse.org/bugs/show_bug.cgi?id=383589
+ *    Bel Razom - https://bugs.eclipse.org/bugs/show_bug.cgi?id=527399
  *****************************************************************************/
 
 package org.eclipse.nebula.widgets.cdatetime;
@@ -1126,6 +1127,7 @@ public class CDateTime extends BaseCombo {
 			return;
 		}
 		if ('\r' == event.keyCode || SWT.KEYPAD_CR == event.keyCode) {
+			fieldNext();
 			fireSelectionChanged(true);
 		} else if (SWT.BS == event.keyCode || SWT.DEL == event.keyCode) {
 			event.doit = false;
@@ -1148,6 +1150,10 @@ public class CDateTime extends BaseCombo {
 				if (editField != null) {
 					editField.removeLastCharacter();
 				}
+				break;
+			case SWT.CR:
+				fieldNext();
+				fireSelectionChanged();
 				break;
 			case SWT.ARROW_DOWN:
 				fieldAdjust(-1);
