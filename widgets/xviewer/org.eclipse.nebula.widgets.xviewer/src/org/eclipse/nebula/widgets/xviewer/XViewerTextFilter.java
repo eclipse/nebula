@@ -64,10 +64,16 @@ public class XViewerTextFilter extends ViewerFilter {
       for (String colId : xViewer.getCustomizeMgr().getColumnFilterData().getColIds()) {
          String colFilterText = xViewer.getCustomizeMgr().getColumnFilterText(colId);
          if (colFilterText != null) {
-            boolean isNot = colFilterText.startsWith("!");
+            boolean isWrapped = (colFilterText.matches("^\\(.*\\)$"));
+            boolean isNot;
+            if (isWrapped) {
+               colFilterText = colFilterText.substring(1, colFilterText.length() - 1);
+            }
+            isNot = colFilterText.startsWith("!");
             if (isNot) {
                colFilterText = colFilterText.replaceFirst("^!", "");
             }
+            colFilterText = Pattern.quote(colFilterText);
             // Handle != case  ^(.(?<!big))*$
             if (isNot) {
                if (colFilterText.equals("")) {
@@ -82,8 +88,7 @@ public class XViewerTextFilter extends ViewerFilter {
                if (colFilterText.equals("")) {
                   colIdToPattern.put(colId, EMPTY_STR_PATTERN);
                } else {
-                  colIdToPattern.put(colId, Pattern.compile(
-                     xViewer.getCustomizeMgr().getColumnFilterData().getFilterText(colId), Pattern.CASE_INSENSITIVE));
+                  colIdToPattern.put(colId, Pattern.compile(colFilterText, Pattern.CASE_INSENSITIVE));
                }
             }
          }
