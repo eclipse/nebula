@@ -279,7 +279,7 @@ public class CDateTime extends BaseCombo {
 			}
 			break;
 		case SWT.KeyDown:
-			handleKey(event);
+ 			handleKey(event);
 			break;
 		case SWT.MouseDown:
 			if (event.button == 1) {
@@ -814,7 +814,10 @@ public class CDateTime extends BaseCombo {
 			if ((this.style & CDT.ADD_ON_ROLL) != 0) {
 				calendar.add(calendarField, rollAmount);
 			} else {
-				calendar.roll(calendarField, rollAmount);
+				if (calendarField==Calendar.YEAR && calendar.get(Calendar.YEAR)==1 && rollAmount<0) {
+					return false;
+				}
+				calendar.roll(calendarField, rollAmount); 
 			}
 		}
 
@@ -1123,7 +1126,7 @@ public class CDateTime extends BaseCombo {
 	 *            the event
 	 */
 	void handleKey(Event event) {
-		if (event.stateMask != 0) {
+		if (event.stateMask != 0 && event.stateMask != SWT.SHIFT) {
 			return;
 		}
 		if ('\r' == event.keyCode || SWT.KEYPAD_CR == event.keyCode) {
