@@ -926,7 +926,9 @@ public abstract class BaseCombo extends Canvas {
 			text.setFont(font);
 		}
 		if (checkContent()) {
-			content.setFont(font);
+			if( content != this ){
+				content.setFont(font);
+			}
 		}
 	}
 
