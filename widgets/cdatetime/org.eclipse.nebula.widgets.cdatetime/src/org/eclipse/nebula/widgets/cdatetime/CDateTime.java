@@ -1123,7 +1123,7 @@ public class CDateTime extends BaseCombo {
 	 *            the event
 	 */
 	void handleKey(Event event) {
-		if (event.stateMask != 0) {
+		if (event.stateMask != 0 && event.stateMask != SWT.SHIFT) {
 			return;
 		}
 		if ('\r' == event.keyCode || SWT.KEYPAD_CR == event.keyCode) {
