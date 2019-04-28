@@ -494,7 +494,7 @@ public class GanttSpecialDateRange {
      * 
      * @param start Start date
      * @param end End date
-     * @return true if any date is overlapping the dates of this range
+     * @return true if no date is overlapping the dates of this range, false otherwise
      */
     public boolean canEventOccupy(final Calendar start, final Calendar end) {
     	if (isAllowEventsOnDates()) {
