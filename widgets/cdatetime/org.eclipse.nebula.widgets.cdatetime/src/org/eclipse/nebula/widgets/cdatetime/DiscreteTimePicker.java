@@ -260,7 +260,7 @@ class DiscreteTimePicker extends VPanel {
 
 	@Override
 	public boolean setFocus() {
-		return true;
+		return getComposite().forceFocus();
 	}
 
 	protected void updateLabels() {
