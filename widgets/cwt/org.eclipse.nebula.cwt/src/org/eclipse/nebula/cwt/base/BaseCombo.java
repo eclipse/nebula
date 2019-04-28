@@ -926,7 +926,7 @@ public abstract class BaseCombo extends Canvas {
 			text.setFont(font);
 		}
 		if (checkContent()) {
-			if (content != this) {
+			if( content != this ){
 				content.setFont(font);
 			}
 		}
@@ -987,6 +987,9 @@ public abstract class BaseCombo extends Canvas {
 	 * @see BaseCombo#setOpen(boolean, Runnable)
 	 */
 	protected void setOpen(boolean open) {
+		if (open == this.open) {
+			return;
+		}
 		setOpen(open, null);
 	}
 
