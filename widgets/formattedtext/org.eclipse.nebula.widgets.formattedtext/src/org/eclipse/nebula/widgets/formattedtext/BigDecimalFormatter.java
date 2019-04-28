@@ -112,7 +112,24 @@ public class BigDecimalFormatter extends NumberFormatter {
 	 *
 	 * @return The value type.
 	 */
-	public Class getValueType() {
+	public Class<BigDecimal> getValueType() {
 		return BigDecimal.class;
+	}
+	
+	  /**
+	   * Sets the patterns and initializes the technical attributes used to manage
+	   * the operations.<p>
+	   * Override the NumberFormatter implementation to handle large numbers.
+	   * 
+	   * @param edit edit pattern
+	   * @param display display pattern
+	   * @param loc Locale to use
+	   * @throws IllegalArgumentException if a pattern is invalid
+		 * @see com.wdev91.comp4swt.core.NumberFormatter#setPatterns(java.lang.String, java.lang.String, java.util.Locale)
+	   */	
+	protected void setPatterns(String edit, String display, Locale loc) {
+		super.setPatterns(edit, display, loc);
+		nfEdit.setParseBigDecimal(true);
+		nfDisplay.setParseBigDecimal(true);
 	}
 }
