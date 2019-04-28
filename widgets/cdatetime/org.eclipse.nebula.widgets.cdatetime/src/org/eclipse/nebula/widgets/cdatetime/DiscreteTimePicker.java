@@ -272,7 +272,11 @@ class DiscreteTimePicker extends VPanel {
 				.getTimeInstance(DateFormat.SHORT, locale)).toPattern();
 		SimpleDateFormat sdf = null;
 		if (pattern.indexOf("HH") > -1) { //$NON-NLS-1$
-			sdf = new SimpleDateFormat("HH", locale); //$NON-NLS-1$
+			if (is24Hour) {
+				sdf = new SimpleDateFormat("HH", locale); //$NON-NLS-1$
+			} else {
+				sdf = new SimpleDateFormat("h", locale); //$NON-NLS-1$				
+			}
 		} else if (pattern.indexOf("H") > -1) { //$NON-NLS-1$
 			sdf = new SimpleDateFormat("H", locale); //$NON-NLS-1$
 		} else if (pattern.indexOf("hh") > -1) { //$NON-NLS-1$
