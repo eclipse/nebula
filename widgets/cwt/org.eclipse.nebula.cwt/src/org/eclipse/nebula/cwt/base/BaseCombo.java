@@ -985,6 +985,9 @@ public abstract class BaseCombo extends Canvas {
 	 * @see BaseCombo#setOpen(boolean, Runnable)
 	 */
 	protected void setOpen(boolean open) {
+		if (open == this.open) {
+			return;
+		}
 		setOpen(open, null);
 	}
 
