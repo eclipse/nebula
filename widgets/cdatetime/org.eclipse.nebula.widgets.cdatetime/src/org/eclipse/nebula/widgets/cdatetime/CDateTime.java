@@ -956,6 +956,8 @@ public class CDateTime extends BaseCombo {
 				cf = Calendar.HOUR;
 			} else if (field.toString().contains("zone")) { //$NON-NLS-1$
 				cf = Calendar.ZONE_OFFSET;
+			} else if (field.toString().contains("hour of day 1")) { //$NON-NLS-1$
+				cf = Calendar.HOUR_OF_DAY;
 			}
 		}
 		return cf;
