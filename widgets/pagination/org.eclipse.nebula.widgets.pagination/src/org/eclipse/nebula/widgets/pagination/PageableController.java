@@ -57,7 +57,7 @@ public class PageableController implements Serializable {
 	// The current locale used for the resources
 	private Locale locale = Locale.getDefault();
 
-	private ListenerList pageChangedListeners = new ListenerList();
+	private ListenerList<IPageChangedListener> pageChangedListeners = new ListenerList<IPageChangedListener>();
 
 	/**
 	 * Constructor with default page size.
