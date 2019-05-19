@@ -538,22 +538,6 @@ public class CDateTime extends BaseCombo {
 		sep.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 	}
 
-	// void deselect(Date date) {
-	// if(date != null && isSelected(date)) {
-	// Date[] tmp = new Date[selection.length - 1];
-	// for(int i = 0, j = 0; i < selection.length; i++) {
-	// if(!selection[i].equals(date)) {
-	// tmp[j++] = selection[i];
-	// }
-	// }
-	// setSelection(tmp);
-	// }
-	// }
-	//
-	// void deselectAll() {
-	// setSelectedDates((Date[]) null);
-	// }
-
 	private void disposePicker() {
 		if (content != null) {
 			if (picker != null) {
@@ -1172,13 +1156,23 @@ public class CDateTime extends BaseCombo {
 			case SWT.ARROW_RIGHT:
 				fieldNext(true);
 				break;
+			case SWT.ESC:
+				if (contentShell != null) {
+					event.doit = false;
+					if (selection.length > 0 && selection[0] != cancelDate) {
+						setSelection(cancelDate);
+						fireSelectionChanged();
+					}
+					setOpen(false);
+				}
+				break;
 			default:
-				if (hasField(activeField) && activeField + 1 < separator.length
+				if (hasField(activeField) && activeField + 1 < separator.length 
 						&& String.valueOf(event.character)
 								.equals(separator[activeField + 1])) {
 					fieldNext();
 				} else if (!hasSelection()
-						&& String.valueOf(event.character).matches("[0-9]")) {
+						&& String.valueOf(event.character).matches("[0-9]")) { //$NON-NLS-1$
 					fieldAdjust(0);
 					fieldFirst();
 				}
