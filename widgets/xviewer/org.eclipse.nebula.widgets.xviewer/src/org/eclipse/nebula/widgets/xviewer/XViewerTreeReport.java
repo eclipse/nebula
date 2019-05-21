@@ -11,32 +11,24 @@
 
 package org.eclipse.nebula.widgets.xviewer;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import org.eclipse.nebula.widgets.xviewer.core.model.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.util.XViewerException;
 import org.eclipse.nebula.widgets.xviewer.util.internal.HtmlUtil;
-import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
-import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.program.Program;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.TreeItem;
 
 /**
  * @author Donald G. Dunne
  */
-public class XViewerTreeReport {
+public class XViewerTreeReport extends XViewerHtmlReport {
 
    protected final XViewer xViewer;
    protected final String title;
 
    public XViewerTreeReport(String title, XViewer treeViewer) {
+      super(title);
       this.title = title;
       this.xViewer = treeViewer;
    }
@@ -45,41 +37,16 @@ public class XViewerTreeReport {
       this(XViewerText.get("XViewerTreeReport.title"), xViewer); //$NON-NLS-1$
    }
 
-   public void open() {
-      open(xViewer.getTree().getItems(), null);
-   }
-
+   @Override
    public void open(String defaultFilename) {
-      open(xViewer.getTree().getItems(), defaultFilename);
+      super.open(defaultFilename);
    }
 
+   @Override
    public String getHtml() throws XViewerException {
       return getHtml(xViewer.getTree().getItems());
    }
 
-   public void open(TreeItem items[], String defaultFilename) {
-      try {
-         String html = getHtml(items);
-         final FileDialog dialog = new FileDialog(Display.getCurrent().getActiveShell().getShell(), SWT.SAVE);
-         dialog.setFilterExtensions(new String[] {"*.html"}); //$NON-NLS-1$
-         if (defaultFilename != null && !defaultFilename.equals("")) { //$NON-NLS-1$
-            dialog.setFileName(defaultFilename);
-         }
-         String filename = dialog.open();
-         if (filename == null || filename.equals("")) { //$NON-NLS-1$
-            return;
-         }
-         try {
-            XViewerLib.writeStringToFile(html, new File(filename));
-         } catch (IOException ex) {
-            XViewerLog.log(Activator.class, Level.SEVERE, ex);
-            return;
-         }
-         Program.launch(filename);
-      } catch (Exception ex) {
-         XViewerLog.logAndPopup(Activator.class, Level.SEVERE, ex);
-      }
-   }
    private Map<XViewerColumn, Integer> xColToColumnIndex = null;
 
    public String getHtml(TreeItem items[]) throws XViewerException {

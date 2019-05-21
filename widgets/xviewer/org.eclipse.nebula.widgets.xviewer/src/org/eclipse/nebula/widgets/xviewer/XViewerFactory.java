@@ -126,6 +126,11 @@ public abstract class XViewerFactory implements IXViewerFactory {
    }
 
    @Override
+   public XViewerLoadingReport getXViewerLoadingReport(XViewer viewer) {
+      return null;
+   }
+
+   @Override
    public boolean isFilterUiAvailable() {
       return true;
    }
