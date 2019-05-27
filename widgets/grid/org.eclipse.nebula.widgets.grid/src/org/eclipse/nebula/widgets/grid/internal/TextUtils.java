@@ -61,7 +61,7 @@ public class TextUtils
 	    return t;
 	}
 
-	if (width >= gc.textExtent(t).x) {
+	if (width >= gc.stringExtent(t).x) {
 	    return t;
 	}
 	
@@ -69,7 +69,7 @@ public class TextUtils
 	int length = chars.length;
 	int left = 0;
 	int right = length - 1;
-	int calcWidth = gc.textExtent("...").x;;
+	int calcWidth = gc.stringExtent("...").x;;
 
 	while (left < right) {
 	    int step = gc.getCharWidth(chars[left]);
