@@ -10,10 +10,14 @@ package org.eclipse.nebula.visualization.xygraph.examples;
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.CircularBufferDataProvider;
 import org.eclipse.nebula.visualization.xygraph.figures.IXYGraph;
+import org.eclipse.nebula.visualization.xygraph.figures.Legend;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace;
 import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace.TraceType;
 import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
@@ -81,7 +85,14 @@ public class BarChartExample {
 		// trace2.setLineWidth(5);
 		// add the trace to xyGraph
 		xyGraph.addTrace(trace2);
-
+		
+		Font LEGEND_FONT = XYGraphMediaFactory.getInstance().getFont(new FontData("Lucida Sans", 11, SWT.BOLD));
+		
+		Legend legend = xyGraph.getLegend(trace);
+		legend.setDrawBorder(true);
+		legend.setPreferredHeight(100);
+		legend.setTextFont(LEGEND_FONT);
+		
 		Display display = Display.getDefault();
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch())
