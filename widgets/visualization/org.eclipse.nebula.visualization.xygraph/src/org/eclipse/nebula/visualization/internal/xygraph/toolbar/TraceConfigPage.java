@@ -300,8 +300,12 @@ public class TraceConfigPage implements ITraceConfigPage {
 	@Override
 	public void applyChanges() {
 		trace.setName(nameText.getText());
-		trace.setXAxis(xyGraph.getXAxisList().get(xAxisCombo.getSelectionIndex()));
-		trace.setYAxis(xyGraph.getYAxisList().get(yAxisCombo.getSelectionIndex()));
+		if (xAxisCombo.getSelectionIndex() >= 0) {
+			trace.setXAxis(xyGraph.getXAxisList().get(xAxisCombo.getSelectionIndex()));
+		}
+		if (yAxisCombo.getSelectionIndex() >= 0) {
+			trace.setYAxis(xyGraph.getYAxisList().get(yAxisCombo.getSelectionIndex()));
+		}
 		trace.setTraceColor(XYGraphMediaFactory.getInstance().getColor(traceColorSelector.getColorValue()));
 		trace.setTraceType(TraceType.values()[traceTypeCombo.getSelectionIndex()]);
 		trace.setLineWidth(lineWidthSpinner.getSelection());
