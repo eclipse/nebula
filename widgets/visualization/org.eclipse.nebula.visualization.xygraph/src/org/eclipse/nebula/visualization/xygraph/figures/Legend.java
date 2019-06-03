@@ -41,7 +41,7 @@ public class Legend extends RectangleFigure {
 	private final List<Trace> traceList = new ArrayList<Trace>();
 	private boolean drawBorder = true;
 	private int preferredHeight = -1;
-	private Font textFont;
+	private Font font;
 	
 
 	/**
@@ -121,7 +121,7 @@ public class Legend extends RectangleFigure {
 			if (!trace.isVisible())
 				continue;
 			int hwidth = OUT_GAP + ICON_WIDTH + INNER_GAP
-					+ +FigureUtilities.getTextExtents(trace.getName(), textFont==null?getFont():textFont).width;
+					+ +FigureUtilities.getTextExtents(trace.getName(), font==null?super.getFont():font).width;
 			int hEnd = hPos + hwidth;
 			if (hEnd > (bounds.x + bounds.width) && i > 0) {
 				hPos = bounds.x + INNER_GAP;
@@ -179,9 +179,9 @@ public class Legend extends RectangleFigure {
 		}
 
 		// draw text
-		Font previousFont = getFont();
-		if (textFont != null) {
-			graphics.setFont(textFont);
+		Font previousFont = super.getFont();
+		if (font != null) {
+			graphics.setFont(font);
 		}
 		
 		graphics.drawText(trace.getName(), hPos + ICON_WIDTH + INNER_GAP,
@@ -201,11 +201,11 @@ public class Legend extends RectangleFigure {
 			if (!trace.isVisible())
 				continue;
 			hEnd = hEnd + OUT_GAP + ICON_WIDTH + INNER_GAP
-					+ +FigureUtilities.getTextExtents(trace.getName(), textFont==null?getFont():textFont).width;
+					+ +FigureUtilities.getTextExtents(trace.getName(), font==null?super.getFont():font).width;
 
 			if (hEnd > wHint) {
 				hEnd = INNER_GAP + OUT_GAP + ICON_WIDTH + INNER_GAP
-						+ +FigureUtilities.getTextExtents(trace.getName(), textFont==null?getFont():textFont).width;
+						+ +FigureUtilities.getTextExtents(trace.getName(), font==null?super.getFont():font).width;
 				height += ICON_WIDTH + INNER_GAP;
 			}
 			if (maxWidth < hEnd)
@@ -257,15 +257,15 @@ public class Legend extends RectangleFigure {
 	/**
 	 * @return the initialised text font
 	 */
-	public Font getTextFont() {
-		return textFont;
+	public Font getFont() {
+		return font;
 	}
 
 	/**
 	 * @param textFont new font used for the text
 	 */
 	public void setTextFont(Font textFont) {
-		this.textFont = textFont;
+		this.font = textFont;
 	}
 	
 }
