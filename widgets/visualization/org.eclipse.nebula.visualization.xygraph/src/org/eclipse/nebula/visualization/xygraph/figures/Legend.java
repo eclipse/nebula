@@ -22,6 +22,7 @@ import org.eclipse.nebula.visualization.xygraph.util.Preferences;
 import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 
 /**
  * The legend to indicate the style and size of the trace line and point. The
@@ -35,17 +36,13 @@ public class Legend extends RectangleFigure {
 	private final static int INNER_GAP = 2;
 	private final static int OUT_GAP = 5;
 
-	// private final static Font LEGEND_FONT =
-	// XYGraphMediaFactory.getInstance().getFont(
-	// XYGraphMediaFactory.FONT_ARIAL);
-	//
-	// private final Color WHITE_COLOR =
-	// XYGraphMediaFactory.getInstance().getColor(
-	// XYGraphMediaFactory.COLOR_WHITE);
-
 	private final Color BLACK_COLOR = XYGraphMediaFactory.getInstance().getColor(XYGraphMediaFactory.COLOR_BLACK);
 
 	private final List<Trace> traceList = new ArrayList<Trace>();
+	private boolean drawBorder = true;
+	private int preferredHeight = -1;
+	private Font font;
+	
 
 	/**
 	 * Construct a legend
@@ -54,7 +51,6 @@ public class Legend extends RectangleFigure {
 	 *          the graph for which the legend is created
 	 */
 	public Legend(IXYGraph xyGraph) {
-		// setFont(LEGEND_FONT);
 		xyGraph.getPlotArea().addPropertyChangeListener(PlotArea.BACKGROUND_COLOR, new PropertyChangeListener() {
 
 			public void propertyChange(PropertyChangeEvent evt) {
@@ -89,8 +85,9 @@ public class Legend extends RectangleFigure {
 
 	@Override
 	protected void outlineShape(Graphics graphics) {
-		if (!isVisible())
+		if (!isVisible() || !drawBorder)
 			return;
+		
 		graphics.pushState();
 		if (!traceList.isEmpty()) {
 			Color fg = traceList.get(0).getYAxis().getForegroundColor();
@@ -106,31 +103,40 @@ public class Legend extends RectangleFigure {
 	protected void fillShape(Graphics graphics) {
 		if (!((XYGraph) getParent()).isTransparent())
 			super.fillShape(graphics);
+
+		int upperMargin = 0;
+		if (preferredHeight != -1) {
+			int totalHeight = drawLegendOrComputeHeight(graphics, upperMargin, false);
+			upperMargin = (preferredHeight - totalHeight) / 2;
+		}
+		drawLegendOrComputeHeight(graphics, upperMargin, true);
+	}
+	
+	private int drawLegendOrComputeHeight(Graphics graphics, int upperMargin, boolean draw) {
 		int hPos = bounds.x + INNER_GAP;
-		int vPos = bounds.y + INNER_GAP;
+		int vPos = bounds.y + INNER_GAP + upperMargin;
 		int i = 0;
+		int totalHeight = ICON_WIDTH + INNER_GAP;
 		for (Trace trace : traceList) {
 			if (!trace.isVisible())
 				continue;
 			int hwidth = OUT_GAP + ICON_WIDTH + INNER_GAP
-					+ +FigureUtilities.getTextExtents(trace.getName(), getFont()).width;
+					+ +FigureUtilities.getTextExtents(trace.getName(), font==null?super.getFont():font).width;
 			int hEnd = hPos + hwidth;
 			if (hEnd > (bounds.x + bounds.width) && i > 0) {
 				hPos = bounds.x + INNER_GAP;
 				vPos += ICON_WIDTH + INNER_GAP;
+				totalHeight += ICON_WIDTH + INNER_GAP;
 				hEnd = hPos + hwidth;
 			}
 
-			// graphics.setForegroundColor(trace.getYAxis().getForegroundColor());
-			// Rectangle rect = new Rectangle(hPos, vPos-INNER_GAP/2, hwidth -
-			// OUT_GAP,ICON_WIDTH-INNER_GAP);
-			// graphics.fillRectangle(rect);
-			// graphics.drawRectangle(rect);
-			drawTraceLegend(trace, graphics, hPos, vPos);
+			if (draw) {
+				drawTraceLegend(trace, graphics, hPos, vPos);
+			}
 			hPos = hEnd;
 			i++;
 		}
-
+		return totalHeight;
 	}
 
 	private void drawTraceLegend(Trace trace, Graphics graphics, int hPos, int vPos) {
@@ -147,7 +153,7 @@ public class Legend extends RectangleFigure {
 		// draw symbol
 		switch (trace.getTraceType()) {
 		case BAR:
-			trace.drawLine(graphics, new Point(hPos + ICON_WIDTH / 2, vPos + maxSize / 2),
+			trace.drawLine(graphics, new Point(hPos + ICON_WIDTH / 2, vPos + maxSize / 2 ),
 					new Point(hPos + ICON_WIDTH / 2, vPos + ICON_WIDTH));
 			trace.drawPoint(graphics, new Point(hPos + ICON_WIDTH / 2, vPos + maxSize / 2));
 			break;
@@ -173,8 +179,15 @@ public class Legend extends RectangleFigure {
 		}
 
 		// draw text
+		Font previousFont = super.getFont();
+		if (font != null) {
+			graphics.setFont(font);
+		}
+		
 		graphics.drawText(trace.getName(), hPos + ICON_WIDTH + INNER_GAP,
 				vPos + ICON_WIDTH / 2 - FigureUtilities.getTextExtents(trace.getName(), getFont()).height / 2);
+		
+		graphics.setFont(previousFont);
 		graphics.popState();
 	}
 
@@ -188,17 +201,21 @@ public class Legend extends RectangleFigure {
 			if (!trace.isVisible())
 				continue;
 			hEnd = hEnd + OUT_GAP + ICON_WIDTH + INNER_GAP
-					+ +FigureUtilities.getTextExtents(trace.getName(), getFont()).width;
+					+ +FigureUtilities.getTextExtents(trace.getName(), font==null?super.getFont():font).width;
 
 			if (hEnd > wHint) {
 				hEnd = INNER_GAP + OUT_GAP + ICON_WIDTH + INNER_GAP
-						+ +FigureUtilities.getTextExtents(trace.getName(), getFont()).width;
+						+ +FigureUtilities.getTextExtents(trace.getName(), font==null?super.getFont():font).width;
 				height += ICON_WIDTH + INNER_GAP;
 			}
 			if (maxWidth < hEnd)
 				maxWidth = hEnd;
-			// i++;
 		}
+		
+		if (preferredHeight != -1) {
+			height=preferredHeight;
+		}
+		
 		return new Dimension(maxWidth, height);
 	}
 
@@ -209,4 +226,46 @@ public class Legend extends RectangleFigure {
 		return traceList;
 	}
 
+	/**
+	 * @return <code>true</code> if a border is displayed around the legend
+	 */
+	public boolean isDrawBorder() {
+		return drawBorder;
+	}
+
+	/**
+	 * @param displayDrawBorderAround if <code>true</code> a border is displayed around the legend
+	 */
+	public void setDrawBorder(boolean displayDrawBorderAround) {
+		this.drawBorder = displayDrawBorderAround;
+	}
+
+	/**
+	 * @return the preferred height of this legend. If this value is -1, the height will be computed with the elements
+	 */
+	public int getPreferredHeight() {
+		return preferredHeight;
+	}
+
+	/**
+	 * @param preferredHeight the preferred height of this legend. If this value is -1, the height will be computed with default values
+	 */
+	public void setPreferredHeight(int preferredHeight) {
+		this.preferredHeight = preferredHeight;
+	}
+
+	/**
+	 * @return the initialised text font
+	 */
+	public Font getFont() {
+		return font;
+	}
+
+	/**
+	 * @param textFont new font used for the text
+	 */
+	public void setTextFont(Font textFont) {
+		this.font = textFont;
+	}
+	
 }

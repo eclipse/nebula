@@ -221,4 +221,6 @@ public interface IXYGraph extends IFigure {
 	public Axis getPrimaryXAxis();
 
 	public Axis getPrimaryYAxis();
+
+	Legend getLegend(Trace trace);
 }
