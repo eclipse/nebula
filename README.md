@@ -17,8 +17,15 @@ After admin approval, pull requests gets build by these two jobs:
  * [Stable Widgets](https://ci.eclipse.org/nebula/job/nebula.stable.github/)
  * [Incubation Widgets](https://ci.eclipse.org/nebula/job/nebula.incubation.github/)
 
-## Building local
-To build locally [refer to the builds page](https://wiki.eclipse.org/Nebula/Builds)
+## Building locally
+    git clone https://github.com/eclipse/nebula.git
+    cd releng/org.eclipse.nebula.nebula-release
+    mvn verify
+ 
+    cd releng/org.eclipse.nebula.nebula-incubation
+    mvn verify (or install to install in the local maven repo)
+
+More info can be found on the [the builds page](https://wiki.eclipse.org/Nebula/Builds)
 
 ## New Committers
 Before you decide to contribute your code to Eclipse, keep in mind that your code must follow the EPL, Eclipse's Public License.  
