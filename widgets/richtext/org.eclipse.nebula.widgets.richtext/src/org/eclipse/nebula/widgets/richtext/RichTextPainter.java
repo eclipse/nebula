@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Copyright (c) 2015, 2018 CEA LIST.
+ * Copyright (c) 2015, 2019 CEA LIST.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -118,7 +118,7 @@ public class RichTextPainter {
 	}
 
 	private EntityReplacer entityReplacer = new DefaultEntityReplacer();
-	
+
 	private String wordSplitRegex = "\\s";
 
 	/**
@@ -213,15 +213,22 @@ public class RichTextPainter {
 
 		boolean listOpened = false;
 
-		GC tempGC = new GC(gc.getDevice());
-		tempGC.setFont(gc.getFont());
+		GC tempGC = null;
+		try {
+			tempGC = new GC(gc.getDevice());
+			tempGC.setFont(gc.getFont());
+		} catch (IllegalArgumentException e) {
+			// this can happen for example if the original GC was created for a printer,
+			// e.g. when trying to print a NatTable that uses this painter as cell painter
+			tempGC = gc;
+		}
 		try {
 			parser = factory.createXMLEventReader(new StringReader(cleanedHtml));
 
 			LinePainter currentLine = null;
 			while (parser.hasNext()) {
 				XMLEvent event = parser.nextEvent();
-
+				
 				switch (event.getEventType()) {
 					case XMLStreamConstants.END_DOCUMENT:
 						parser.close();
@@ -417,7 +424,9 @@ public class RichTextPainter {
 		} catch (XMLStreamException e) {
 			e.printStackTrace();
 		} finally {
-			tempGC.dispose();
+			if (tempGC != gc) {
+				tempGC.dispose();
+			}
 			if (parser != null) {
 				try {
 					parser.close();
@@ -436,7 +445,6 @@ public class RichTextPainter {
 		// perform the painting
 		for (LinePainter painter : lines) {
 			painter.paint(gc, bounds);
-
 			preferredSize.x = Math.max(preferredSize.x, painter.getContentWidth());
 			preferredSize.y += painter.getLineHeight();
 		}
@@ -474,9 +482,14 @@ public class RichTextPainter {
 		LinePainter lineToUse = currentLine;
 
 		if (instruction instanceof TextPaintInstruction) {
+
 			TextPaintInstruction txtInstr = (TextPaintInstruction) instruction;
 			int textLength = txtInstr.getTextLength(gc);
 			int trimmedTextLength = txtInstr.getTrimmedTextLength(gc);
+
+			// this needs to be done to deal with an issue on the printer GC that strangely
+			// changes the font metrics on textExtent()
+			gc.setFont(gc.getFont());
 
 			if ((currentLine.getContentWidth() + textLength) > availableWidth) {
 
@@ -505,18 +518,16 @@ public class RichTextPainter {
 
 								lineToUse.increaseContentWidth(textLength);
 								lineToUse.increaseTrimmedContentWidth(trimmedTextLength);
-
-								subString = word;
-								subStringLength = wordLength;
 							}
 							else if (lineToUse.getContentWidth() == 0) {
 								// no content already but text width greater than available width
 								// TODO 0.2 - modify text to show ...
 								// TODO 0.2 - add trim to avoid empty lines because of spaces
-								subString = word;
-								subStringLength = wordLength;
 								newLine = false;
 							}
+							
+							subString = word;
+							subStringLength = wordLength;
 
 							if (newLine) {
 								lineToUse = createNewLine(lines);
