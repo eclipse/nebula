@@ -18,6 +18,7 @@ import org.eclipse.swt.graphics.GC;
  * 
  * @author chris.gross@us.ibm.com
  * @author Mirko Paturzo <mirko.paturzo@exeura.eu>
+ * @author gongguangyong@live.cn
  *
  * Mirko modified the pivot calculation for improve short text provider performance. 
  * The pivot number is calculate starting from the size of the cell provided
@@ -37,7 +38,9 @@ public class TextUtils
      * @param t text to modify.
      * @param width Pixels to display.
      * @return shortened string that fits in area specified.
+     * @deprecated when text is large, performance is poor, possible occur OOM exception. suggest use {@link #getShortStr(GC, String, int)}
      */
+    @Deprecated
     public static String getShortText(GC gc, String t, int width)
     {
         if (t == null)
@@ -95,7 +98,9 @@ public class TextUtils
      * @param t text to modify.
      * @param width Pixels to display.
      * @return shortened string that fits in area specified.
+     * @deprecated when text is large, performance is poor, possible occur OOM exception. suggest use {@link #getShortStr(GC, String, int)}
      */
+    @Deprecated
     public static String getShortString(GC gc, String t, int width)
     {
         if (t == null)
@@ -109,16 +114,15 @@ public class TextUtils
         }
 
         int textWidth = gc.stringExtent(t).x;
-        
-		if (width >= textWidth)
+	if (width >= textWidth)
         {
             return t;
         }
-		String text = t;
-		int l = text.length();
-		int w = gc.stringExtent("...").x;
-		double midChar = (double)textWidth / l;
-		int pivot = (int) ((width / midChar) / 2);
+	String text = t;
+	int l = text.length();
+	int w = gc.stringExtent("...").x;
+	double midChar = (double)textWidth / l;
+	int pivot = (int) ((width / midChar) / 2);
         int s = pivot;
         int e = l - pivot + 1;
 
@@ -143,6 +147,61 @@ public class TextUtils
         }
 
         return text;
+    }
+    
+    /**
+     * Shortens a supplied string so that it fits within the area specified by
+     * the width argument. Strings that have been shorted have an "..." attached
+     * to the end of the string. The width is computed using the
+     * {@link GC#getCharWidth(char)}.
+     * 
+     * @param gc GC used to perform calculation.
+     * @param t text to modify.
+     * @param width Pixels to display.
+     * @return shortened string that fits in area specified.
+     */
+    public static String getShortStr(GC gc, String t, int width)
+    {
+        if (t == null || t.equals("")) {
+	    return t;
+	}
+
+	if (width >= gc.stringExtent(t).x) {
+	    return t;
+	}
+	
+	char[] chars = t.toCharArray();
+	int length = chars.length;
+	int left = 0;
+	int right = length - 1;
+	int calcWidth = gc.stringExtent("...").x;
+
+	while (left < right) {
+	    int step = gc.getCharWidth(chars[left]);
+	    calcWidth += step;
+	    if(calcWidth >= width) {
+	        break;
+	    }
+	    left++;
+			
+	    step = gc.getCharWidth(chars[right]);
+	    calcWidth += step;
+	    if (calcWidth >= width) {
+	        break;
+	    }
+	    right--;
+	}
+	if (left >= right) {
+	    return t;
+	}
+	StringBuilder builder = new StringBuilder(left + length - right + 4);
+	if(left == 0 || right == length - 1) {
+	    builder.append(chars[0]).append("...").append(chars[length-1]);
+	} else {
+	    int leftLen = left == 1 ? left : left - 1;
+	    builder.append(chars, 0, leftLen).append("...").append(chars, right+1, length - right - 1);
+	}
+	return builder.toString();
     }
 
     /**
