@@ -13,7 +13,7 @@ which ensures users of these libraries that they can use your code without getti
 For every patch we require a [corresponding Bugzilla issue.](https://bugs.eclipse.org/bugs/)
 
 ## Building on our build server
-Every pull request gets build automatically by these two jobs:
+After admin approval, pull requests gets build by these two jobs:
  * [Stable Widgets](https://ci.eclipse.org/nebula/job/nebula.stable.github/)
  * [Incubation Widgets](https://ci.eclipse.org/nebula/job/nebula.incubation.github/)
 
