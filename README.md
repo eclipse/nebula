@@ -8,7 +8,9 @@ Fat or Thin client applications based on Java and SWT.
 
 ## Patches 
 We can accept you patches if you have signed the [Eclipse Contributors Agreement (ECA)](https://wiki.eclipse.org/ECA) 
-which ensures users of these libraries that they can use your code without getting into any legal trouble. 
+which ensures users of these libraries that they can use your code without getting into any legal trouble.
+
+For every patch we require a [corresponding Bugzilla issue].(https://bugs.eclipse.org/bugs/)
 
 ## Building on our build server
 Every pull request gets build automatically by these two jobs:
