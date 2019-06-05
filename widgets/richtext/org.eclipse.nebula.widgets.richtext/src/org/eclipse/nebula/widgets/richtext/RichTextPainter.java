@@ -213,15 +213,6 @@ public class RichTextPainter {
 
 		boolean listOpened = false;
 
-		GC tempGC = null;
-		try {
-			tempGC = new GC(gc.getDevice());
-			tempGC.setFont(gc.getFont());
-		} catch (IllegalArgumentException e) {
-			// this can happen for example if the original GC was created for a printer,
-			// e.g. when trying to print a NatTable that uses this painter as cell painter
-			tempGC = gc;
-		}
 		try {
 			parser = factory.createXMLEventReader(new StringReader(cleanedHtml));
 
@@ -240,27 +231,27 @@ public class RichTextPainter {
 						if (TAG_PARAGRAPH.equals(elementString)) {
 							currentLine = createNewLine(lines);
 							AlignmentStyle alignment = handleAlignmentConfiguration(element);
-							currentLine = addInstruction(tempGC, availableWidth, lines, currentLine, state,
+							currentLine = addInstruction(gc, availableWidth, lines, currentLine, state,
 									new ParagraphInstruction(alignment, getParagraphSpace(), state));
 
 							availableWidth -= alignment.marginLeft;
 						}
 						else if (TAG_BR.equals(elementString)) {
 							currentLine = createNewLine(lines);
-							currentLine = addInstruction(tempGC, availableWidth, lines, currentLine, state, new NewLineInstruction(state));
+							currentLine = addInstruction(gc, availableWidth, lines, currentLine, state, new NewLineInstruction(state));
 						}
 						else if (TAG_SPAN.equals(elementString)) {
 							PaintInstruction styleInstruction = handleStyleConfiguration(element, spanStack, state);
-							currentLine = addInstruction(tempGC, availableWidth, lines, currentLine, state, styleInstruction);
+							currentLine = addInstruction(gc, availableWidth, lines, currentLine, state, styleInstruction);
 						}
 						else if (TAG_STRONG.equals(elementString)) {
-							currentLine = addInstruction(tempGC, availableWidth, lines, currentLine, state, new BoldPaintInstruction(state));
+							currentLine = addInstruction(gc, availableWidth, lines, currentLine, state, new BoldPaintInstruction(state));
 						}
 						else if (TAG_EM.equals(elementString)) {
-							currentLine = addInstruction(tempGC, availableWidth, lines, currentLine, state, new ItalicPaintInstruction(state));
+							currentLine = addInstruction(gc, availableWidth, lines, currentLine, state, new ItalicPaintInstruction(state));
 						}
 						else if (TAG_UNDERLINE.equals(elementString)) {
-							currentLine = addInstruction(tempGC, availableWidth, lines, currentLine, state, new PaintInstruction() {
+							currentLine = addInstruction(gc, availableWidth, lines, currentLine, state, new PaintInstruction() {
 
 								@Override
 								public void paint(GC gc, Rectangle area) {
@@ -269,7 +260,7 @@ public class RichTextPainter {
 							});
 						}
 						else if (TAG_STRIKETHROUGH.equals(elementString)) {
-							currentLine = addInstruction(tempGC, availableWidth, lines, currentLine, state, new PaintInstruction() {
+							currentLine = addInstruction(gc, availableWidth, lines, currentLine, state, new PaintInstruction() {
 
 								@Override
 								public void paint(GC gc, Rectangle area) {
@@ -279,7 +270,7 @@ public class RichTextPainter {
 						}
 						else if (TAG_UNORDERED_LIST.equals(elementString)
 								|| TAG_ORDERED_LIST.equals(elementString)) {
-							int indent = calculateListIndentation(tempGC);
+							int indent = calculateListIndentation(gc);
 							availableWidth -= indent;
 							listIndentation.add(indent);
 							listOpened = true;
@@ -290,19 +281,19 @@ public class RichTextPainter {
 							boolean isOrderedList = TAG_ORDERED_LIST.equals(elementString);
 
 							currentLine = createNewLine(lines);
-							currentLine = addInstruction(tempGC, availableWidth, lines, currentLine, state,
+							currentLine = addInstruction(gc, availableWidth, lines, currentLine, state,
 									new ListInstruction(indent, isOrderedList, alignment, getParagraphSpace(), state));
 
 							// inspect font attributes
 							PaintInstruction styleInstruction = handleStyleConfiguration(element, spanStack, state);
-							currentLine = addInstruction(tempGC, availableWidth, lines, currentLine, state, styleInstruction);
+							currentLine = addInstruction(gc, availableWidth, lines, currentLine, state, styleInstruction);
 						}
 						else if (TAG_LIST_ITEM.equals(elementString)) {
 							// if a list was opened before, the list tag created a new line
 							// otherwise we create a new line for the new list item
 							if (!listOpened) {
 								currentLine = createNewLine(lines);
-								currentLine = addInstruction(tempGC, availableWidth, lines,
+								currentLine = addInstruction(gc, availableWidth, lines,
 										currentLine, state, new NewLineInstruction(state));
 							}
 							else {
@@ -312,7 +303,7 @@ public class RichTextPainter {
 							final AlignmentStyle alignment = handleAlignmentConfiguration(element);
 
 							// paint number/bullet
-							currentLine = addInstruction(tempGC, availableWidth, lines, currentLine, state, new PaintInstruction() {
+							currentLine = addInstruction(gc, availableWidth, lines, currentLine, state, new PaintInstruction() {
 
 								@Override
 								public void paint(GC gc, Rectangle area) {
@@ -335,21 +326,21 @@ public class RichTextPainter {
 					case XMLStreamConstants.END_ELEMENT:
 						String endElementString = event.asEndElement().getName().toString();
 						if (TAG_PARAGRAPH.equals(endElementString)) {
-							currentLine = addInstruction(tempGC, availableWidth, lines, currentLine, state,
+							currentLine = addInstruction(gc, availableWidth, lines, currentLine, state,
 									new ResetParagraphInstruction(getParagraphSpace(), state));
 
 							availableWidth = bounds.width;
 						}
 						else if (TAG_SPAN.equals(endElementString)) {
 							SpanElement span = spanStack.pollLast();
-							currentLine = addInstruction(tempGC, availableWidth, lines, currentLine, state, new ResetSpanStylePaintInstruction(state, span));
+							currentLine = addInstruction(gc, availableWidth, lines, currentLine, state, new ResetSpanStylePaintInstruction(state, span));
 						}
 						else if (TAG_STRONG.equals(endElementString)
 								|| TAG_EM.equals(endElementString)) {
-							currentLine = addInstruction(tempGC, availableWidth, lines, currentLine, state, new ResetFontPaintInstruction(state));
+							currentLine = addInstruction(gc, availableWidth, lines, currentLine, state, new ResetFontPaintInstruction(state));
 						}
 						else if (TAG_UNDERLINE.equals(endElementString)) {
-							currentLine = addInstruction(tempGC, availableWidth, lines, currentLine, state, new PaintInstruction() {
+							currentLine = addInstruction(gc, availableWidth, lines, currentLine, state, new PaintInstruction() {
 
 								@Override
 								public void paint(GC gc, Rectangle area) {
@@ -358,7 +349,7 @@ public class RichTextPainter {
 							});
 						}
 						else if (TAG_STRIKETHROUGH.equals(endElementString)) {
-							currentLine = addInstruction(tempGC, availableWidth, lines, currentLine, state, new PaintInstruction() {
+							currentLine = addInstruction(gc, availableWidth, lines, currentLine, state, new PaintInstruction() {
 
 								@Override
 								public void paint(GC gc, Rectangle area) {
@@ -367,7 +358,7 @@ public class RichTextPainter {
 							});
 						}
 						else if (TAG_LIST_ITEM.equals(endElementString)) {
-							currentLine = addInstruction(tempGC, availableWidth, lines, currentLine, state, new PaintInstruction() {
+							currentLine = addInstruction(gc, availableWidth, lines, currentLine, state, new PaintInstruction() {
 
 								@Override
 								public void paint(GC gc, Rectangle area) {
@@ -378,7 +369,7 @@ public class RichTextPainter {
 						}
 						else if (TAG_ORDERED_LIST.equals(endElementString)
 								|| TAG_UNORDERED_LIST.equals(endElementString)) {
-							currentLine = addInstruction(tempGC, availableWidth, lines, currentLine, state, new PaintInstruction() {
+							currentLine = addInstruction(gc, availableWidth, lines, currentLine, state, new PaintInstruction() {
 
 								@Override
 								public void paint(GC gc, Rectangle area) {
@@ -407,12 +398,12 @@ public class RichTextPainter {
 					case XMLStreamConstants.CHARACTERS:
 						Characters characters = event.asCharacters();
 						String text = characters.getData();
-						currentLine = addInstruction(tempGC, availableWidth, lines, currentLine, state, new TextPaintInstruction(state, text));
+						currentLine = addInstruction(gc, availableWidth, lines, currentLine, state, new TextPaintInstruction(state, text));
 						break;
 					case XMLStreamConstants.ENTITY_REFERENCE:
 						String value = entityReplacer.getEntityReferenceValue((EntityReference) event);
 						if (value != null) {
-							currentLine = addInstruction(tempGC, availableWidth, lines, currentLine, state, new TextPaintInstruction(state, value));
+							currentLine = addInstruction(gc, availableWidth, lines, currentLine, state, new TextPaintInstruction(state, value));
 						}
 						break;
 					case XMLStreamConstants.ATTRIBUTE:
@@ -424,9 +415,6 @@ public class RichTextPainter {
 		} catch (XMLStreamException e) {
 			e.printStackTrace();
 		} finally {
-			if (tempGC != gc) {
-				tempGC.dispose();
-			}
 			if (parser != null) {
 				try {
 					parser.close();
