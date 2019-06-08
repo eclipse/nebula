@@ -27,6 +27,7 @@ import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -41,6 +42,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.TypedListener;
 
 /**
  * The AbstractCombo is an abstract class which provides the basic functionality
@@ -406,7 +408,7 @@ public abstract class BaseCombo extends Canvas {
 	 * @see ModifyListener
 	 * @see #removeModifyListener
 	 */
-	protected void addModifyListener(ModifyListener listener) {
+	public void addModifyListener(ModifyListener listener) {
 		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
@@ -419,7 +421,36 @@ public abstract class BaseCombo extends Canvas {
 		text.getControl().addListener(SWT.KeyDown, textListener);
 		text.getControl().addListener(SWT.Modify, textListener);
 	}
+	
+	/**
+	 * Adds the listener to the collection of listeners who will
+	 * be notified when traversal events occur, by sending it
+	 * one of the messages defined in the <code>TraverseListener</code>
+	 * interface.
+	 *
+	 * @param listener the listener which should be notified
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
+	 * </ul>
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 * </ul>
+	 *
+	 * @see TraverseListener
+	 * @see #removeTraverseListener
+	 */
+	public void addTraverseListener (TraverseListener listener) {
+		if (listener == null) {
+			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
+		if (checkText()) {
+			text.getControl().addTraverseListener(listener);
+		}
+	}
 
+	
 	/**
 	 * @return true if the {@link #button} field is in a fit state to be used
 	 */
@@ -791,7 +822,7 @@ public abstract class BaseCombo extends Canvas {
 	 * @see ModifyListener
 	 * @see #addModifyListener
 	 */
-	protected void removeModifyListener(ModifyListener listener) {
+	public void removeModifyListener(ModifyListener listener) {
 		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
@@ -803,6 +834,32 @@ public abstract class BaseCombo extends Canvas {
 	private void removeTextListener() {
 		text.getControl().removeListener(SWT.KeyDown, textListener);
 		text.getControl().removeListener(SWT.Modify, textListener);
+	}
+	
+	/**
+	 * Removes the listener from the collection of listeners who will
+	 * be notified when traversal events occur.
+	 *
+	 * @param listener the listener which should no longer be notified
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
+	 * </ul>
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 * </ul>
+	 *
+	 * @see TraverseListener
+	 * @see #addTraverseListener
+	 */
+	public void removeTraverseListener(TraverseListener listener) {
+		if (listener == null) {
+			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
+		if (checkText()) {
+			text.getControl().removeTraverseListener(listener);
+		}
 	}
 
 	/**
