@@ -24,6 +24,7 @@ import org.eclipse.nebula.cwt.v.VPanel;
 import org.eclipse.nebula.cwt.v.VSimpleLayout;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
@@ -341,6 +342,45 @@ public abstract class BaseCombo extends Canvas {
 		init(style);
 	}
 
+	/**
+	 * Adds the listener to the collection of listeners who will
+	 * be notified when keys are pressed and released on the system keyboard, by sending
+	 * it one of the messages defined in the <code>KeyListener</code>
+	 * interface.
+	 * <p>
+	 * When a key listener is added to a control, the control
+	 * will take part in widget traversal.  By default, all
+	 * traversal keys (such as the tab key and so on) are
+	 * delivered to the control.  In order for a control to take
+	 * part in traversal, it should listen for traversal events.
+	 * Otherwise, the user can traverse into a control but not
+	 * out.  Note that native controls such as table and tree
+	 * implement key traversal in the operating system.  It is
+	 * not necessary to add traversal listeners for these controls,
+	 * unless you want to override the default traversal.
+	 * </p>
+	 * @param listener the listener which should be notified
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
+	 * </ul>
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 * </ul>
+	 *
+	 * @see KeyListener
+	 * @see #removeKeyListener
+	 */
+	public void addKeyListener (KeyListener listener) {
+		if (listener == null) {
+			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
+		if (checkText()) {
+			text.getControl().addKeyListener(listener);
+		}
+	}
+	
 	/**
 	 * Adds the listener to the collection of listeners who will be notified
 	 * when the receiver's text is modified, by sending it one of the messages
@@ -702,6 +742,33 @@ public abstract class BaseCombo extends Canvas {
 		// subclasses to implement if necessary
 	}
 
+	
+	/**
+	 * Removes the listener from the collection of listeners who will
+	 * be notified when keys are pressed and released on the system keyboard.
+	 *
+	 * @param listener the listener which should no longer be notified
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
+	 * </ul>
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 * </ul>
+	 *
+	 * @see KeyListener
+	 * @see #addKeyListener
+	 */
+	public void removeKeyListener(KeyListener listener) {
+		if (listener == null) {
+			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
+		if (checkText()) {
+			text.getControl().removeKeyListener(listener);
+		}
+	}	
+	
 	/**
 	 * Removes the listener from the collection of listeners who will be
 	 * notified when the receiver's text is modified.
