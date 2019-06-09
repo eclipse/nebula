@@ -163,6 +163,7 @@ public class AnnotationConfigPage {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				FontDialog fontDialog = new FontDialog(composite.getShell());
+				fontDialog.setEffectsVisible(false);
 				if (font != null)
 					fontDialog.setFontList(font.getFontData());
 				FontData fontData = fontDialog.open();
