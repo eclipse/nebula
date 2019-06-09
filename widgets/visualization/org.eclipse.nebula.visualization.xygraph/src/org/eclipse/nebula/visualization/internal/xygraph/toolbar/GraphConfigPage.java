@@ -85,6 +85,7 @@ public class GraphConfigPage {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				FontDialog fontDialog = new FontDialog(composite.getShell());
+				fontDialog.setEffectsVisible(false);
 				if (titleFont != null)
 					fontDialog.setFontList(titleFont.getFontData());
 				FontData fontData = fontDialog.open();
