@@ -54,10 +54,8 @@ public class FormGroupStrategy extends AbstractGroupStrategy
 
     private Rectangle toolItemArea;
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.swtplus.widgets.AbstractGroupStrategy#initialize(com.swtplus.widgets.PGroup)
+    /** 
+     * @see org.eclipse.nebula.widgets.pgroup.AbstractGroupStrategy#initialize()
      */
     public void initialize()
     {
@@ -76,6 +74,13 @@ public class FormGroupStrategy extends AbstractGroupStrategy
 
     }
 
+    /**
+     * @deprecated use constructor with PGroup element instead
+     */
+    public FormGroupStrategy() {
+    	this(null);
+    }
+    
     /**
      * Creates a FormGroupStrategy with the given toggle and style.
      *

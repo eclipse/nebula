@@ -47,6 +47,13 @@ public class SimpleGroupStrategy extends AbstractGroupStrategy
     private int fontHeight;
 
     /**
+     * @deprecated use constructor with PGroup element instead
+     */
+    public SimpleGroupStrategy() {
+    	this(null);
+    }
+    
+    /**
      * Creates a SimpleGroupStrategy with the given toggle and style.
      * 
      * @param ts

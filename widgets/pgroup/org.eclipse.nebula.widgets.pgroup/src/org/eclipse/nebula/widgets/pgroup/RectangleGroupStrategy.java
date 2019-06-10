@@ -63,6 +63,13 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
     private Rectangle toolItemArea;
 
     /**
+     * @deprecated use constructor with PGroup element instead
+     */
+    public RectangleGroupStrategy() {
+    	this(null);
+    }
+    
+    /**
      * Constructs a RectangleGroupStrategy with the given toggle and style.
      *
      * @param toggleStrategy
