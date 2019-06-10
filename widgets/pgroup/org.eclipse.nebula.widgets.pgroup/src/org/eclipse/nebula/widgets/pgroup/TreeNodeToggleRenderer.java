@@ -66,7 +66,6 @@ public class TreeNodeToggleRenderer extends AbstractRenderer
 
     public Point computeSize(GC gc, int wHint, int hHint, Object value)
     {
-        // TODO Auto-generated method stub
         return null;
     }
 

@@ -64,10 +64,8 @@ public abstract class AbstractRenderer
         setBounds(new Rectangle(x, y, width, height));
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.ibm.mozart.mwt.widgets.table.IRenderer#setBounds(org.eclipse.swt.graphics.Rectangle)
+    /**
+     * @param bounds
      */
     public void setBounds(Rectangle bounds)
     {
@@ -85,7 +83,8 @@ public abstract class AbstractRenderer
     }
 
     /**
-     * {@inheritDoc}
+     * @param x
+     * @param y
      */
     public void setLocation(int x, int y)
     {
@@ -93,7 +92,7 @@ public abstract class AbstractRenderer
     }
 
     /**
-     * {@inheritDoc}
+     * @param location
      */
     public void setLocation(Point location)
     {
@@ -101,7 +100,8 @@ public abstract class AbstractRenderer
     }
 
     /**
-     * {@inheritDoc}
+     * @param width
+     * @param height
      */
     public void setSize(int width, int height)
     {
@@ -109,7 +109,7 @@ public abstract class AbstractRenderer
     }
 
     /**
-     * {@inheritDoc}
+     * @param size
      */
     public void setSize(Point size)
     {
@@ -126,10 +126,8 @@ public abstract class AbstractRenderer
         return focus;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.ibm.mozart.mwt.widgets.table.IRenderer#setFocus(boolean)
+    /**
+     * @param focus
      */
     public void setFocus(boolean focus)
     {
@@ -146,10 +144,8 @@ public abstract class AbstractRenderer
         return hover;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.ibm.mozart.mwt.widgets.table.IRenderer#setHover(boolean)
+    /**
+     * @param hover
      */
     public void setHover(boolean hover)
     {
@@ -167,10 +163,8 @@ public abstract class AbstractRenderer
         return mouseDown;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.ibm.mozart.mwt.widgets.table.IRenderer#setMouseDown(boolean)
+    /**
+     * @param mouseDown
      */
     public void setMouseDown(boolean mouseDown)
     {
@@ -187,10 +181,8 @@ public abstract class AbstractRenderer
         return selected;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.ibm.mozart.mwt.widgets.table.IRenderer#setSelected(boolean)
+    /**
+     * @param selected
      */
     public void setSelected(boolean selected)
     {
