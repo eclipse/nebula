@@ -63,25 +63,33 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
     private Rectangle toolItemArea;
 
     /**
+     * @deprecated use constructor with PGroup element instead
+     */
+    public RectangleGroupStrategy() {
+    	this(null);
+    }
+    
+    /**
      * Constructs a RectangleGroupStrategy with the given toggle and style.
      *
      * @param toggleStrategy
      * @param style
      */
-    public RectangleGroupStrategy()
+    public RectangleGroupStrategy(PGroup g)
     {
-        super();
+        super(g);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.swtplus.widgets.AbstractGroupStrategy#initialize(com.swtplus.widgets.PGroup)
+    /** 
+     * @see org.eclipse.nebula.widgets.pgroup.AbstractGroupStrategy#initialize()
      */
-    public void initialize(PGroup sg)
+    public void initialize()
     {
-        super.initialize(sg);
+        super.initialize();
 
+        if (gradientColors!=null && gradientColors != null) {
+        	return;
+        }
         g1 = getGroup().getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT);
         g2 = getGroup().getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
 
@@ -89,10 +97,8 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
         setBorderColor(g2);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.swtplus.widgets.AbstractGroupStrategy#paintGroup(org.eclipse.swt.graphics.GC)
+    /** 
+     * @see org.eclipse.nebula.widgets.pgroup.AbstractGroupStrategy#paint(org.eclipse.swt.graphics.GC)
      */
     public void paint(GC gc)
     {
@@ -185,9 +191,6 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
             reg.dispose();
         }
 
-
-
-
         // Paint rectangle
         int toggleHeight = 0;
         if (getGroup().getToggleRenderer() != null)
@@ -263,10 +266,6 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
         else
         {
 
-            // gc.setBackground(getGroup().getParent().getBackground());
-            // gc.fillRectangle(0,0,getGroup().getSize().x,getTitleHeight() -
-            // titleAreaHeight);
-
             if (gradientColors != null)
             {
                 GraphicUtils.fillGradientRectangle(gc, 0, titleHeight - titleAreaHeight, getGroup()
@@ -280,12 +279,6 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
                     .max(titleAreaHeight, toggleHeight));
             }
 
-            // if ((getGroup().getStyle() & SWT.SMOOTH) != 0){
-            // GraphicUtils.drawRoundRectangle(gc,0,getTitleHeight() -
-            // titleAreaHeight,getGroup().getSize().x
-            // -1,Math.max(titleAreaHeight,toggleHeight)
-            // ,getGroup().getParent().getBackground(),null,true,!getGroup().isExpanded());
-            // }
         }
 
         if ((getGroup().getStyle() & SWT.SMOOTH) != 0)
@@ -295,7 +288,6 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
         }
 
         // Paint Image
-
         if (image != null)
         {
             if ((getGroup().getImagePosition() & SWT.LEAD) != 0)
@@ -402,7 +394,6 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
         if (!getGroup().getExpanded())
         {
             gc.setBackground(getGroup().getParent().getBackground());
-            // gc.fillRectangle(0,getTitleHeight(),getGroup().getBounds().width,getGroup().getBounds().height);
         }
         else
         {
@@ -419,8 +410,6 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
             if ((getGroup().getStyle() & SWT.SMOOTH) != 0)
             {
                 gc.setBackground(getGroup().getBackground());
-                // gc.fillRectangle(0,getGroup().getSize().y -
-                // 5,getGroup().getSize().x -1,5);
                 gc.setForeground(_borderColor);
 
                 reg = new Region(getGroup().getDisplay());
@@ -468,8 +457,8 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
     	return toolItemArea;
     }
 
-    /**
-     * {@inheritDoc}
+    /** 
+     * @see org.eclipse.nebula.widgets.pgroup.AbstractGroupStrategy#isToggleLocation(int, int)
      */
     public boolean isToggleLocation(int x, int y)
     {
@@ -524,7 +513,6 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
         }
 
         // Part 2, Toggle
-
         if (getGroup().getToggleRenderer() != null)
         {
             if ((getGroup().getTogglePosition() & SWT.LEAD) != 0)
@@ -548,8 +536,8 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
         return new Rectangle(textPoint.x, textPoint.y, textWidth, fontHeight);
     }
 
-    /**
-     * {@inheritDoc}
+    /** 
+     * @see org.eclipse.nebula.widgets.pgroup.AbstractGroupStrategy#getClientArea()
      */
     public Rectangle getClientArea()
     {
@@ -568,8 +556,8 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
         return area;
     }
 
-    /**
-     * {@inheritDoc}
+    /** 
+     * @see org.eclipse.nebula.widgets.pgroup.AbstractGroupStrategy#computeTrim(int, int, int, int)
      */
     public Rectangle computeTrim(int x, int y, int width, int height)
     {
@@ -592,10 +580,8 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
         return area;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.swtplus.widgets.IGroupStrategy#dispose()
+    /** 
+     * @see org.eclipse.nebula.widgets.pgroup.AbstractGroupStrategy#dispose()
      */
     public void dispose()
     {
@@ -677,10 +663,6 @@ public class RectangleGroupStrategy extends AbstractGroupStrategy
                 if (percents[i] < 0 || percents[i] > 100)
                 {
                     throw new RuntimeException("Percent array item out of range");
-                }
-                if (i > 0 && percents[i] < percents[i - 1])
-                {
-                    // throw new RuntimeException("huh?");
                 }
             }
         }

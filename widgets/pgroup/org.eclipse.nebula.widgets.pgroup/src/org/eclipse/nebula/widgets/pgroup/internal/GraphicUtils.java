@@ -222,18 +222,13 @@ public class GraphicUtils
 
     public static Color createNewBlendedColor(RGB rgb1, RGB rgb2, int ratio)
     {
-
         Color newColor = new Color(Display.getCurrent(), blend(rgb1, rgb2, ratio));
-
         return newColor;
-
     }
 
     public static Color createNewBlendedColor(Color c1, Color c2, int ratio)
     {
-
         Color newColor = new Color(Display.getCurrent(), blend(c1.getRGB(), c2.getRGB(), ratio));
-
         return newColor;
     }
 
@@ -261,14 +256,8 @@ public class GraphicUtils
         if (hsb[0] < 0f)
             hsb[0] = 0f;
 
-        // hsb[2] += saturation;
-        // if (hsb[2] > 1.0f)
-        // hsb[2] = 1.0f;
-
         java.awt.Color awtColor = new java.awt.Color(java.awt.Color
             .HSBtoRGB(hsb[0], hsb[1], hsb[2]));
-        // awtColor = awtColor.brighter();
-        // awtColor = awtColor.brighter();
         return new RGB(awtColor.getRed(), awtColor.getGreen(), awtColor.getBlue());
     }
 

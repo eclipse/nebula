@@ -74,17 +74,6 @@ public class PGroupExampleTab extends AbstractExampleTab
             toggleRenderer = new TreeNodeToggleRenderer();
         }
         
-        AbstractGroupStrategy strat;
-        if (strategy.getText().indexOf("Form") != -1)
-        {
-            strat = new FormGroupStrategy();
-        } else if (strategy.getText().indexOf("Rectangle") != -1)
-        {
-            strat = new RectangleGroupStrategy();
-        } else
-        {
-            strat = new SimpleGroupStrategy();
-        }
         
         int style = SWT.NONE;
         
@@ -92,6 +81,17 @@ public class PGroupExampleTab extends AbstractExampleTab
             style |= SWT.SMOOTH;
         
         group = new PGroup(parent, style);
+        AbstractGroupStrategy strat;
+        if (strategy.getText().indexOf("Form") != -1)
+        {
+            strat = new FormGroupStrategy(group);
+        } else if (strategy.getText().indexOf("Rectangle") != -1)
+        {
+            strat = new RectangleGroupStrategy(group);
+        } else
+        {
+            strat = new SimpleGroupStrategy(group);
+        }
         group.setStrategy(strat);
         group.setToggleRenderer(toggleRenderer);
         group.setText(text.getText());

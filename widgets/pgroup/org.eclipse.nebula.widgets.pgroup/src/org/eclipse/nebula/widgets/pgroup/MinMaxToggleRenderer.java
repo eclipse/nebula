@@ -46,7 +46,6 @@ public class MinMaxToggleRenderer extends AbstractRenderer
         if (isHover())
         {
             gc.setForeground(gc.getDevice().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
-            // gc.fillRoundRectangle(0,0,16,17,5,5);
             gc.drawRoundRectangle(0, 0, 17, 17, 5, 5);
         }
 
@@ -72,7 +71,6 @@ public class MinMaxToggleRenderer extends AbstractRenderer
 
     public Point computeSize(GC gc, int wHint, int hHint, Object value)
     {
-        // TODO Auto-generated method stub
         return null;
     }
 
