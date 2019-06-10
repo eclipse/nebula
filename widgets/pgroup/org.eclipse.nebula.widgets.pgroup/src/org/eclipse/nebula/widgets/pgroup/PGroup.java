@@ -652,7 +652,12 @@ public class PGroup extends Canvas
             kids[i].setVisible(expanded);
         }
         this.expanded = expanded;
-        getParent().layout();
+        Composite parent = getParent();
+        parent.layout(true);
+        while (parent instanceof PGroup) {
+        	parent = parent.getParent();
+        	parent.layout(true);
+        }
         redraw();
     }
 
