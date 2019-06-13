@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2004-2008 Jeremy Dowdall
+ * Copyright (c) 2004-2019 Jeremy Dowdall
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Jeremy Dowdall <jeremyd@aspencloud.com> - initial API and implementation
+ *    Stefan Nöbauer - https://bugs.eclipse.org/bugs/show_bug.cgi?id=548149
  *****************************************************************************/
 
 package org.eclipse.nebula.widgets.cdatetime;
@@ -686,7 +687,9 @@ class DatePicker extends VPanel {
 					}
 					tmpcal.set(Calendar.DAY_OF_MONTH, tmpday);
 					tmpcal.set(Calendar.MONTH, tmpmonth);
-					cdt.setSelection(tmpcal.getTime());
+					if(isValidDate(tmpcal)) {
+						cdt.setSelection(tmpcal.getTime());
+					}
 					/*
 					 * : Bug 388813 the method cdt.isClosingField checks the
 					 * "most concrete" portion of the date pattern and returns
@@ -1024,7 +1027,7 @@ class DatePicker extends VPanel {
 		if (cdt.isSingleSelection()) {
 			if ((stateMask & SWT.CTRL) != 0 && cdt.isSelected(date)) {
 				cdt.setSelection(null);
-			} else {
+			} else if(button.getEnabled()){
 				cdt.setSelection(date);
 			}
 		} else {
@@ -1127,15 +1130,19 @@ class DatePicker extends VPanel {
 							.get(Calendar.YEAR)
 							&& date.get(Calendar.DAY_OF_YEAR) == today
 									.get(Calendar.DAY_OF_YEAR);
+					boolean isValid = isValidDate(date);
 					boolean isActive = date.get(Calendar.YEAR) == active
 							.get(Calendar.YEAR)
 							&& date.get(Calendar.MONTH) == active
-									.get(Calendar.MONTH);
+									.get(Calendar.MONTH)
+							&& isValid;
+							
 
 					dayButton.setText(getFormattedDate("d", date.getTime())); //$NON-NLS-1$
 					dayButton.setData(CDT.Key.Today, isToday);
 					dayButton.setData(CDT.Key.Active, isActive);
-
+					dayButton.setEnabled(isValid);
+					
 					cdt.getPainter().update(dayButton);
 				}
 			}
@@ -1401,9 +1408,39 @@ class DatePicker extends VPanel {
 	}
 
 	private void setCDTSelection(Date selection) {
-		cdt.setSelection(selection);
-		setFocusToSelection();
-		cdt.fireSelectionChanged();
+		Calendar calendarSelection = null;
+		if(selection != null) {
+			calendarSelection = cdt.getCalendarInstance(selection);
+		}
+		
+		if(isValidDate(calendarSelection)) {
+			cdt.setSelection(selection);
+			setFocusToSelection();
+			cdt.fireSelectionChanged();
+		} else {
+			cdt.show(selection);
+		}
+	}
+	
+	private boolean isValidDate(Calendar selectedDay) {
+		return isValidDate(selectedDay, cdt.getMinDate(), cdt.getMaxDate());
+	}
+	
+	static boolean isValidDate(Calendar selectedDay, Calendar min, Calendar max) {
+		if((min == null && max == null) || selectedDay == null) {
+			return true;
+		}
+		boolean validMinDate = true;
+		if(min != null) {
+			validMinDate = selectedDay.after(min);
+		}
+		
+		boolean validMaxDate = true;
+		if(max != null) {
+			validMaxDate = selectedDay.before(max);
+		}
+		
+		return validMinDate && validMaxDate;
 	}
 
 }
