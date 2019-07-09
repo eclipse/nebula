@@ -78,6 +78,7 @@ public class XViewerColumn {
       toXCol.setMultiColumnEditable(fromXCol.multiColumnEditable);
       toXCol.setName(fromXCol.name);
       toXCol.setSortDataType(fromXCol.sortDataType);
+      toXCol.setSortForward(isSortForward());
       toXCol.setToolTip(fromXCol.toolTip);
       toXCol.setWidth(fromXCol.width);
       toXCol.setShow(fromXCol.show);
@@ -380,7 +381,7 @@ public class XViewerColumn {
 
    @Override
    public String toString() {
-      return "XViewerColumn [id=" + id + ", name=" + name + ", sortDataType=" + sortDataType + ", show=" + show + ", width=" + width + "]";
+      return "XViewerColumn [id=" + id + ", name=" + name + ", sortDataType=" + sortDataType + ", sortForward=" + isSortForward() + ", show=" + show + ", width=" + width + "]";
    }
 
    /**

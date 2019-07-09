@@ -34,13 +34,14 @@ public class ExtendedViewerColumn extends XViewerColumn implements IExtendedView
    }
 
    /**
-    * @see org.eclipse.nebula.widgets.xviewer.XViewerColumn#copy()
+    * @see org.eclipse.nebula.widgets.xviewer.core.model.XViewerColumn#copy()
     */
    @Override
    public XViewerColumn copy() {
-      XViewerColumn copyColumn = new ExtendedViewerColumn(super.id, super.name, super.getWidth(), super.getAlign(),
+      ExtendedViewerColumn copyColumn = new ExtendedViewerColumn(super.id, super.name, super.getWidth(), super.getAlign(),
          super.isShow(), super.getSortDataType(), super.isMultiColumnEditable(), super.getDescription());
-      ((ExtendedViewerColumn) copyColumn).setCellEditDescriptorMap(map);
+      copyColumn.setCellEditDescriptorMap(map);
+      copyColumn.setSortForward(isSortForward());
       return copyColumn;
    }
 
