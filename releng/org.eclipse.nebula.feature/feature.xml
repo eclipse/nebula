@@ -14,7 +14,7 @@
    </license>
 
    <url>
-      <discovery label="Nebula Incubation" url="http://download.eclipse.org/technology/nebula/incubation/snapshot"/>
+      <discovery label="Nebula Incubation" url="http://download.eclipse.org/nebula/incubation/snapshot"/>
    </url>
 
    <includes
