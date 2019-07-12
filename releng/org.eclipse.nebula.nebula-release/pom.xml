@@ -15,7 +15,7 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<download-publish-path>/home/data/httpd/download.eclipse.org/technology/nebula/snapshot</download-publish-path>
+		<download-publish-path>/home/data/httpd/download.eclipse.org/nebula/snapshot</download-publish-path>
 	</properties>
 
 	<modules>
