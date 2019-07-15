@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2008 Jeremy Dowdall
+ * Copyright (c) 2008 - 2019 Jeremy Dowdall
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,13 @@
  *
  * Contributors:
  *    Jeremy Dowdall <jeremyd@aspencloud.com> - initial API and implementation
+ *    Stefan Nöbauer - https://bugs.eclipse.org/bugs/show_bug.cgi?id=548149
  *****************************************************************************/
 
 package org.eclipse.nebula.widgets.cdatetime;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -63,6 +65,9 @@ public class CDateTimeBuilder {
 
 	private int footerAlignment;
 	private boolean footerEqualColumns;
+	
+	private Calendar minDate;
+	private Calendar maxDate;
 
 	public List<Body> getBodies() {
 		return activeBodies;
@@ -131,6 +136,26 @@ public class CDateTimeBuilder {
 		return false;
 	}
 
+	/**
+	 * @return Returns a clone of the minDate or <code>null</code>.
+	 */
+	public Calendar getMinDate() {
+		if(minDate == null) {
+			return null;
+		}
+		return (Calendar) minDate.clone();
+	}
+	
+	/**
+	 * @return Returns a clone of the maxDate or <code>null</code>.
+	 */
+	public Calendar getMaxDate() {
+		if(maxDate == null) {
+			return null;
+		}
+		return  (Calendar) maxDate.clone();
+	}
+	
 	public void setBody(Body... attrs) {
 		this.bodies = attrs;
 	}
@@ -225,5 +250,30 @@ public class CDateTimeBuilder {
 		headerEqualColumns = equalColumns;
 		this.headers = attrs;
 	}
-
+	
+	/**
+	 * Sets a minimum date for the date picker. This date is exclusive.
+	 * 
+	 * @param minDate minimum date or <code>null</code> for no limit.
+	 * @return CDateTimeBuilder instance
+	 * 
+	 * @since 1.4.0
+	 */
+	public CDateTimeBuilder setMinDate(Calendar minDate) {
+		this.minDate = minDate;
+		return this;
+	}
+	
+	/**
+	 * Sets a maximum date for the date picker. This date is inclusive.
+	 * 
+	 * @param maxDate maximum date or <code>null</code> for no limit.
+	 * @return CDateTimeBuilder instance
+	 * 
+	 * @since 1.4.0
+	 */
+	public CDateTimeBuilder setMaxDate(Calendar maxDate) {
+		this.maxDate = maxDate;
+		return this;
+	}
 }
