@@ -13,6 +13,7 @@
 package org.eclipse.nebula.widgets.cdatetime.snippets;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import org.eclipse.nebula.widgets.cdatetime.CDT;
 import org.eclipse.nebula.widgets.cdatetime.CDateTime;
@@ -47,12 +48,19 @@ public class CDTSnippet11 {
 
 		final CDateTime cdt1 = new CDateTime(shell, CDT.BORDER | CDT.DROP_DOWN);
 		cdt1.setBuilder(builder);
+		cdt1.setSelection(new Date());
 		cdt1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
-
 		
-		final CDateTime cdt2 = new CDateTime(shell, CDT.BORDER | CDT.SIMPLE);
+		final CDateTime cdt2 = new CDateTime(shell, CDT.BORDER | CDT.DROP_DOWN);
 		cdt2.setBuilder(builder);
 		cdt2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
+		cdt2.setSelection(new Date());
+		cdt2.setEditable(false);
+		
+		final CDateTime cdt3 = new CDateTime(shell, CDT.BORDER | CDT.SIMPLE);
+		cdt3.setBuilder(builder);
+		cdt3.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
+		cdt3.setEditable(false);
 		
 		shell.pack();
 		Point size = shell.getSize();
