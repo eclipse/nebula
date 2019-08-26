@@ -2065,7 +2065,9 @@ public class CDateTime extends BaseCombo {
 					text.setText(string);
 					text.getControl().addListener(SWT.Verify, textListener);
 				}
-				text.getControl().setSelection(selStart, selEnd);
+				if((text.getControl().getStyle() & SWT.READ_ONLY) == 0) {
+					text.getControl().setSelection(selStart, selEnd);
+				}
 			}
 		};
 
