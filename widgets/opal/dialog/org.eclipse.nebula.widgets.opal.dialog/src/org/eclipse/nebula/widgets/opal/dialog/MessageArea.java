@@ -1,11 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2011 Laurent CARON All rights reserved. This program and the
+ * Copyright (c) 2011-2019 Laurent CARON All rights reserved. This program and the
  * accompanying materials are made available under the terms of the Eclipse
  * Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- * Contributors: Laurent CARON (laurent.caron at gmail dot com) - Initial
- * implementation
+ * Contributors: 
+ * 	Laurent CARON (laurent.caron at gmail dot com) - Initial implementation
+ *  Stefan Nöbauer - Bug 550437 
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.dialog;
 
@@ -17,6 +18,7 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -32,8 +34,6 @@ import org.eclipse.swt.widgets.Text;
  * Instances of this class are message areas
  */
 public class MessageArea extends DialogArea {
-	private static final int DEFAULT_MIN_HEIGHT_FOR_EXCEPTIONS = 300;
-
 	private static final int INDENT_NO_ICON = 8;
 	private static final int DEFAULT_MARGIN = 10;
 
@@ -267,10 +267,11 @@ public class MessageArea extends DialogArea {
 	private void createText(final boolean hasIcon, final boolean hasTitle) {
 		label = new ReadOnlyStyledText(composite, SWT.NONE | (verticalScrollbar ? SWT.V_SCROLL : SWT.NONE));
 		label.setText(text);
+		
 		SWTGraphicUtil.applyHTMLFormating(label);
 		label.setEditable(false);
 		label.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
-		final GridData gd = new GridData(GridData.FILL, GridData.FILL, true, true, 1, 1);
+		final GridData gd = new GridData(GridData.FILL, GridData.FILL, true, false, 1, 1);
 		if (height != -1) {
 			gd.heightHint = height;
 		}
@@ -320,7 +321,6 @@ public class MessageArea extends DialogArea {
 		textException.setText(StringUtil.stackStraceAsString(exception));
 		textException.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 		final GridData gd = new GridData(GridData.FILL, GridData.FILL, true, true, 1, 1);
-		gd.minimumHeight = DEFAULT_MIN_HEIGHT_FOR_EXCEPTIONS;
 		textException.setLayoutData(gd);
 	}
 
@@ -402,15 +402,29 @@ public class MessageArea extends DialogArea {
 	 * Hide the exception panel
 	 */
 	void hideException() {
-		textException.dispose();
+		Point size = parent.shell.getSize();
+		
+		textException.setVisible(false);
+		((GridData)textException.getLayoutData()).exclude = true;
+		
+		parent.shell.setMinimumSize(new Point(0,0));
+		parent.shell.layout();
 		parent.pack();
+		parent.shell.setMinimumSize(parent.shell.getSize());
+		parent.setLastSize(size);
 	}
 
 	/**
 	 * Show the exception panel
 	 */
 	void showException() {
-		createTextException();
+		if(textException == null) {
+			createTextException();
+		} else {
+			textException.setVisible(true);
+			((GridData)textException.getLayoutData()).exclude = false;
+			parent.shell.layout();
+		}
 		parent.pack();
 	}
 

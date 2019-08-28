@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2011 Laurent CARON All rights reserved. This program and the
+ * Copyright (c) 2011-2019 Laurent CARON All rights reserved. This program and the
  * accompanying materials are made available under the terms of the Eclipse
  * Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- * Contributors: Laurent CARON (laurent.caron at gmail dot com) - initial API
- * and implementation Eugene Ryzhikov - Author of the Oxbow Project
- * (http://code.google.com/p/oxbow/) - Inspiration
+ * Contributors: 
+ * 	Laurent CARON (laurent.caron at gmail dot com) - initial API and implementation 
+ *  Eugene Ryzhikov - Author of the Oxbow Project (http://code.google.com/p/oxbow/) - Inspiration
+ *  Stefan Nöbauer - Bug 550437 
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.dialog.snippets;
 
@@ -141,7 +142,7 @@ public class OpalDialogSnippet {
 		button14.setText("Issue 29");
 		button14.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, false));
 		button14.addListener(SWT.Selection, e -> {
-			testIssue29();
+			testIssue29(shell);
 		});
 
 		final Button button15 = new Button(shell, SWT.PUSH);
@@ -180,7 +181,7 @@ public class OpalDialogSnippet {
 	}
 
 	private static void displayCrashAndBurn() {
-		Dialog.error("CRASH AND BURN !", "The application has performed an illegal action. This action has been logged and reported.");
+		Dialog.error("CRASH AND BURN !", "The application has performed an illegal action. This action has been logged and reported. This text may also a bit longer as expected");
 	}
 
 	private static void displayYouWon() {
@@ -266,7 +267,7 @@ public class OpalDialogSnippet {
 	}
 
 	private static void displayInput() {
-		final String input = Dialog.ask("Enter you name", "or any other text if you prefer", "Laurent CARON");
+		final String input = Dialog.ask("Enter you name", "or any other text if you prefer Somthing longer may stress the layout", "Laurent CARON");
 		System.out.println("Choice is..." + input);
 	}
 
@@ -306,8 +307,8 @@ public class OpalDialogSnippet {
 		dialog.show();
 	}
 
-	private static void testIssue29() {
-		final Dialog d = new Dialog();
+	private static void testIssue29(Shell parent) {
+		final Dialog d = new Dialog(parent);
 		d.setCenterPolicy(Dialog.CenterOption.CENTER_ON_DIALOG);
 		d.setTitle("foo title");
 

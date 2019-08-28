@@ -1,11 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2011 Laurent CARON All rights reserved. This program and the
+ * Copyright (c) 2011-2019 Laurent CARON All rights reserved. This program and the
  * accompanying materials are made available under the terms of the Eclipse
  * Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- * Contributors: Laurent CARON (laurent.caron at gmail dot com) - Initial
- * implementation and API
+ * Contributors: 
+ * 	Laurent CARON (laurent.caron at gmail dot com) - Initial implementation and API
+ *  Stefan Nöbauer - Bug 550437 
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.dialog;
 
@@ -43,8 +44,10 @@ public class Dialog {
 	private final FooterArea footerArea;
 	final Shell shell;
 
-	private int minimumWidth = 300;
+	private int minimumWidth = 400;
 	private int minimumHeight = 150;
+	
+	private Point lastSize;
 
 	/**
 	 * Constructor
@@ -68,7 +71,7 @@ public class Dialog {
 	 * @param parent parent shell
 	 */
 	public Dialog(final Shell parent) {
-		this(parent, false);
+		this(parent, true);
 	}
 
 	/**
@@ -108,6 +111,9 @@ public class Dialog {
 			shell.setText(title);
 		}
 		pack();
+		center();
+		
+		shell.setMinimumSize(shell.computeSize(minimumWidth, SWT.DEFAULT));
 		shell.open();
 
 		final Display display = shell.getDisplay();
@@ -118,6 +124,34 @@ public class Dialog {
 		}
 
 		return footerArea.getSelectedButton();
+	}
+
+	private void center() {
+		final Point preferredSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+
+		if (preferredSize.x < minimumWidth) {
+			preferredSize.x = minimumWidth;
+		}
+
+		if (preferredSize.y < minimumHeight) {
+			preferredSize.y = minimumHeight;
+		}
+		
+		final int centerX;
+		final int centerY;
+
+		if (centerPolicy == CenterOption.CENTER_ON_SCREEN || shell.getParent() == null) {
+			Shell activeShell = shell.getDisplay().getActiveShell();
+			final Rectangle monitorBounds = SWTGraphicUtil.getBoundsOfMonitorOnWhichShellIsDisplayed(activeShell);
+			centerX = monitorBounds.x + (monitorBounds.width - preferredSize.x) / 2;
+			centerY = monitorBounds.y + (monitorBounds.height - preferredSize.y) / 2;
+		} else {
+			final Shell parent = (Shell) shell.getParent();
+			centerX = parent.getLocation().x + (parent.getSize().x - preferredSize.x) / 2;
+			centerY = parent.getLocation().y + (parent.getSize().y - preferredSize.y) / 2;
+		}
+
+		shell.setBounds(centerX, centerY, preferredSize.x, preferredSize.y);		
 	}
 
 	/**
@@ -133,30 +167,21 @@ public class Dialog {
 	void pack() {
 
 		final Point preferredSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		Rectangle bounds = shell.getBounds();
+		
+		preferredSize.x = Math.max(preferredSize.x, minimumWidth);
+		preferredSize.y = Math.max(preferredSize.y, minimumHeight);
+		
 
-		if (preferredSize.x < minimumWidth) {
-			preferredSize.x = minimumWidth;
+		if(lastSize != null) {
+			preferredSize.x = Math.max(preferredSize.x, lastSize.x);
+			preferredSize.y = Math.max(preferredSize.y, lastSize.y);
 		}
 
-		if (preferredSize.y < minimumHeight) {
-			preferredSize.y = minimumHeight;
-		}
-
-		final int centerX;
-		final int centerY;
-
-		if (centerPolicy == CenterOption.CENTER_ON_SCREEN || shell.getParent() == null) {
-			final Rectangle monitorBounds = SWTGraphicUtil.getBoundsOfMonitorOnWhichShellIsDisplayed(shell);
-			centerX = monitorBounds.x + (monitorBounds.width - preferredSize.x) / 2;
-			centerY = monitorBounds.y + (monitorBounds.height - preferredSize.y) / 2;
-		} else {
-			final Shell parent = (Shell) shell.getParent();
-			centerX = parent.getLocation().x + (parent.getSize().x - preferredSize.x) / 2;
-			centerY = parent.getLocation().y + (parent.getSize().y - preferredSize.y) / 2;
-		}
-
-		shell.setBounds(centerX, centerY, preferredSize.x, preferredSize.y);
+		shell.setBounds(bounds.x, bounds.y, preferredSize.x, preferredSize.y);
+		lastSize = null;
 	}
+	
 
 	// ------------------------------------------- Convenient methods
 
@@ -344,6 +369,7 @@ public class Dialog {
 	 */
 	public static void showException(final Throwable exception) {
 		final Dialog dialog = new Dialog();
+		
 		dialog.setTitle(ResourceManager.getLabel(ResourceManager.EXCEPTION));
 
 		final String msg = exception.getMessage();
@@ -522,6 +548,10 @@ public class Dialog {
 	 */
 	public void setCenterPolicy(final CenterOption centerPolicy) {
 		this.centerPolicy = centerPolicy;
+	}
+	
+	void setLastSize(Point lastSize) {
+		this.lastSize = lastSize;
 	}
 
 }
