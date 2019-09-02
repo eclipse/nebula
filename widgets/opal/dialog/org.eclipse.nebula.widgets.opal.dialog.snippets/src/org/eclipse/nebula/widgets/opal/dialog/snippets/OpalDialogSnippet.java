@@ -7,7 +7,7 @@
  * Contributors: 
  * 	Laurent CARON (laurent.caron at gmail dot com) - initial API and implementation 
  *  Eugene Ryzhikov - Author of the Oxbow Project (http://code.google.com/p/oxbow/) - Inspiration
- *  Stefan Nöbauer - Bug 550437 
+ *  Stefan Nöbauer - Bug 550437, Bug 550659
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.dialog.snippets;
 
@@ -16,6 +16,7 @@ import java.util.Arrays;
 
 import org.eclipse.nebula.widgets.opal.commons.ResourceManager;
 import org.eclipse.nebula.widgets.opal.commons.SWTGraphicUtil;
+import org.eclipse.nebula.widgets.opal.commons.StringUtil;
 import org.eclipse.nebula.widgets.opal.dialog.ChoiceItem;
 import org.eclipse.nebula.widgets.opal.dialog.Dialog;
 import org.eclipse.nebula.widgets.opal.dialog.Dialog.OpalDialogType;
@@ -188,7 +189,8 @@ public class OpalDialogSnippet {
 	}
 
 	private static void displayCrashAndBurn() {
-		Dialog.error("CRASH AND BURN !", "The application has performed an illegal action. This action has been logged and reported. This text may also a bit longer as expected");
+		Dialog.error("CRASH AND BURN !",
+				"The application has performed an illegal action. This action has been logged and reported. This text may also a bit longer as expected");
 	}
 
 	private static void displayYouWon() {
@@ -210,13 +212,22 @@ public class OpalDialogSnippet {
 		try {
 			new BigDecimal("seven");
 		} catch (final Throwable ex) {
-			Dialog.showException(ex);
+			Dialog dialog = Dialog.buildExceptionDialog(ex);
+			Image mail = new Image(Display.getCurrent(), OpalDialogSnippet.class.getResourceAsStream("mail.png"));
+			Image mailHot = new Image(Display.getCurrent(), OpalDialogSnippet.class.getResourceAsStream("mail_hover.png"));
+			Image[] images = Arrays.asList(mail, mailHot).toArray(new Image[0]);
+			dialog.getFooterArea().addFooterAction(()-> "Send Mail", d -> System.out.println(StringUtil.stackStraceAsString(d.getMessageArea().getException())), images);
+			dialog.show();
 		}
 	}
 
 	private static void displayChoice() {
-		final int choice = Dialog.choice("What do you want to do with your game in\nprogress?", "", 1, new ChoiceItem("Exit and save my game", "Save your game in progress, then exit. " + "This will\noverwrite any previously saved games."),
-				new ChoiceItem("Exit and don't save", "Exit without saving your game. " + "This is counted\nas a loss in your statistics."), new ChoiceItem("Don't exit", "Return to your game progress"));
+		final int choice = Dialog.choice("What do you want to do with your game in\nprogress?", "", 1,
+				new ChoiceItem("Exit and save my game",
+						"Save your game in progress, then exit. " + "This will\noverwrite any previously saved games."),
+				new ChoiceItem("Exit and don't save",
+						"Exit without saving your game. " + "This is counted\nas a loss in your statistics."),
+				new ChoiceItem("Don't exit", "Return to your game progress"));
 		System.out.println("Choice is..." + choice);
 	}
 
@@ -235,10 +246,12 @@ public class OpalDialogSnippet {
 						"Publisher: <b>Unknown Publisher</b><br/>" + //
 						"Type: Application<br/>");
 
-		dialog.getFooterArea().addCheckBox("Always ask before opening this file", false).setButtonLabels("Run", "Cancel");
+		dialog.getFooterArea().addCheckBox("Always ask before opening this file", false).setButtonLabels("Run",
+				"Cancel");
 		dialog.show();
 
-		System.out.println("The choice is " + dialog.getSelectedButton() + ", the checkbox value is " + dialog.getCheckboxValue());
+		System.out.println(
+				"The choice is " + dialog.getSelectedButton() + ", the checkbox value is " + dialog.getCheckboxValue());
 	}
 
 	private static void displayProgressBar() {
@@ -274,7 +287,8 @@ public class OpalDialogSnippet {
 	}
 
 	private static void displayInput() {
-		final String input = Dialog.ask("Enter you name", "or any other text if you prefer Somthing longer may stress the layout", "Laurent CARON");
+		final String input = Dialog.ask("Enter you name",
+				"or any other text if you prefer Somthing longer may stress the layout", "Laurent CARON");
 		System.out.println("Choice is..." + input);
 	}
 
@@ -285,8 +299,10 @@ public class OpalDialogSnippet {
 				setText("The application has performed an illegal action. This action has been logged and reported.").//
 				setIcon(Display.getCurrent().getSystemImage(SWT.ICON_ERROR));
 		dialog.setButtonType(OpalDialogType.OK);
-		dialog.getFooterArea().setExpanded(false).addCheckBox("Don't show me this error next time", true).setDetailText("More explanations to come...");
-		dialog.getFooterArea().setFooterText("Your application crashed because a developer forgot to write a unit test").setIcon(new Image(null, OpalDialogSnippet.class.getResourceAsStream("warning.png")));
+		dialog.getFooterArea().setExpanded(false).addCheckBox("Don't show me this error next time", true)
+				.setDetailText("More explanations to come...");
+		dialog.getFooterArea().setFooterText("Your application crashed because a developer forgot to write a unit test")
+				.setIcon(new Image(null, OpalDialogSnippet.class.getResourceAsStream("warning.png")));
 		dialog.show();
 	}
 	
