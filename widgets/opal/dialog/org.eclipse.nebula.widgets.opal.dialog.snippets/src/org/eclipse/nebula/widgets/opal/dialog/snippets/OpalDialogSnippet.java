@@ -14,6 +14,7 @@ package org.eclipse.nebula.widgets.opal.dialog.snippets;
 import java.math.BigDecimal;
 import java.util.Arrays;
 
+import org.eclipse.nebula.widgets.opal.commons.ResourceManager;
 import org.eclipse.nebula.widgets.opal.commons.SWTGraphicUtil;
 import org.eclipse.nebula.widgets.opal.dialog.ChoiceItem;
 import org.eclipse.nebula.widgets.opal.dialog.Dialog;
@@ -158,6 +159,12 @@ public class OpalDialogSnippet {
 		button16.addListener(SWT.Selection, e -> {
 			testBug533776();
 		});
+		final Button button17 = new Button(shell, SWT.PUSH);
+		button17.setText("Complex exception");
+		button17.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, false));
+		button17.addListener(SWT.Selection, e -> {
+			displayComplex1();
+		});
 
 		// Open the shell
 		shell.pack();
@@ -281,6 +288,31 @@ public class OpalDialogSnippet {
 		dialog.getFooterArea().setExpanded(false).addCheckBox("Don't show me this error next time", true).setDetailText("More explanations to come...");
 		dialog.getFooterArea().setFooterText("Your application crashed because a developer forgot to write a unit test").setIcon(new Image(null, OpalDialogSnippet.class.getResourceAsStream("warning.png")));
 		dialog.show();
+	}
+	
+	private static void displayComplex1() {
+		try {
+			new BigDecimal("seven");
+		} catch (final Throwable ex) {
+			final Dialog dialog = new Dialog();
+			
+			dialog.setTitle(ResourceManager.getLabel(ResourceManager.EXCEPTION));
+
+			final String msg = ex.getMessage();
+			final String className = ex.getClass().getName();
+			final boolean noMessage = msg == null || msg.trim().length() == 0;
+
+			dialog.getMessageArea().setTitle(noMessage ? className : msg).//
+					setText(noMessage ? "" : className).//
+					setIcon(Display.getCurrent().getSystemImage(SWT.ICON_ERROR)).//
+					setException(ex).addCheckBox("Don't show this again", false);
+
+			dialog.getFooterArea().setExpanded(true);
+
+			dialog.setButtonType(OpalDialogType.CLOSE);
+			
+			dialog.show();
+		}
 	}
 
 	private static void displayLargeText() {
