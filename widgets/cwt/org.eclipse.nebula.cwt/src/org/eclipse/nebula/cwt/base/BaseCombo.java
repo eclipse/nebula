@@ -42,7 +42,6 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.TypedListener;
 
 /**
  * The AbstractCombo is an abstract class which provides the basic functionality
@@ -181,6 +180,11 @@ public abstract class BaseCombo extends Canvas {
 	 */
 	protected static final int BUTTON_AUTO = 3;
 
+	/**
+	 * boolean to disable button on open state.
+	 */
+	boolean buttonActive = true;
+	
 	private static int checkStyle(int style) {
 		int rstyle = SWT.NONE;
 		if ((style & SWT.BORDER) != 0) {
@@ -490,7 +494,9 @@ public abstract class BaseCombo extends Canvas {
 		}
 		button.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				setOpen(!isOpen());
+				if(buttonActive) {
+					setOpen(!isOpen());
+				}
 			}
 		});
 
@@ -1133,6 +1139,7 @@ public abstract class BaseCombo extends Canvas {
 	 * @see BaseCombo#setOpen(boolean)
 	 */
 	protected synchronized void setOpen(boolean open, final Runnable callback) {
+		buttonActive = false;
 		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=198240
 		// Avoid infinite loop:  
 		//		Button starts close
@@ -1184,6 +1191,8 @@ public abstract class BaseCombo extends Canvas {
 				Runnable runnable = new Runnable() {
 					public void run() {
 						postClose(contentShell);
+						buttonActive = true;
+						
 						if (callback != null) {
 							callback.run();
 						}
