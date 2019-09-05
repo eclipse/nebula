@@ -23,7 +23,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
@@ -73,6 +72,10 @@ public class MessageArea extends DialogArea {
 
 	private StyledText label;
 
+	private String checkBoxLabel;
+	private boolean checkBoxValue;
+	private Composite bottomComponent;
+	
 	/**
 	 * Constructor
 	 *
@@ -142,6 +145,19 @@ public class MessageArea extends DialogArea {
 	}
 
 	/**
+	 * Add a check box
+	 *
+	 * @param label label to display
+	 * @param selection default value of the check box
+	 * @return this message area
+	 */
+	public MessageArea addCheckBox(final String label, final boolean selection) {
+		checkBoxLabel = label;
+		checkBoxValue = selection;
+		setInitialised(true);
+		return this;
+	}
+	/**
 	 * @see org.eclipse.nebula.widgets.opal.dialog.DialogArea#render()
 	 */
 	@Override
@@ -153,7 +169,8 @@ public class MessageArea extends DialogArea {
 		composite = new Composite(parent.shell, SWT.NONE);
 		composite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 		composite.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_WHITE));
-
+		composite.setBackgroundMode(SWT.INHERIT_DEFAULT);
+		
 		final boolean hasIcon = icon != null;
 		final boolean hasTitle = !StringUtil.isEmpty(title);
 		final boolean hasText = !StringUtil.isEmpty(text);
@@ -162,6 +179,7 @@ public class MessageArea extends DialogArea {
 		final boolean hasTextbox = textBoxValue != null;
 		final boolean hasChoice = choiceValues != null;
 		final boolean hasProgressBar = progressBarValue != -1;
+		final boolean hasCheckbox = !StringUtil.isEmpty(checkBoxLabel);
 
 		final int numberOfColumns = hasIcon ? 2 : 1;
 		int numberOfRows = hasTitle && hasText ? 2 : 1;
@@ -181,7 +199,7 @@ public class MessageArea extends DialogArea {
 		if (hasProgressBar) {
 			numberOfRows++;
 		}
-
+		
 		final GridLayout gridLayout = new GridLayout(numberOfColumns, false);
 		gridLayout.marginHeight = gridLayout.marginWidth = 0;
 		gridLayout.marginRight = DEFAULT_MARGIN;
@@ -221,6 +239,25 @@ public class MessageArea extends DialogArea {
 		if (hasProgressBar) {
 			createProgressBar();
 		}
+		
+		
+		bottomComponent = new Composite(parent.shell, SWT.NONE);
+		bottomComponent.setLayoutData(new GridData(GridData.FILL, SWT.BOTTOM, true, false));
+		bottomComponent.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		bottomComponent.setBackgroundMode(SWT.INHERIT_DEFAULT);
+		
+		final GridLayout bottomGridLayout = new GridLayout(1, false);
+		bottomGridLayout.marginHeight = gridLayout.marginWidth = 0;
+		bottomGridLayout.marginRight = DEFAULT_MARGIN;
+		bottomGridLayout.marginLeft = DEFAULT_MARGIN;
+		bottomGridLayout.marginTop = DEFAULT_MARGIN;
+		bottomGridLayout.marginBottom = DEFAULT_MARGIN;
+		bottomComponent.setLayout(gridLayout);
+		
+		if (hasCheckbox) {
+			createCheckBox();
+		}
+
 	}
 
 	/**
@@ -231,7 +268,6 @@ public class MessageArea extends DialogArea {
 	private void createIcon(final int numberOfRows) {
 		final Label label = new Label(composite, SWT.NONE);
 		label.setImage(icon);
-		label.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		label.setLayoutData(new GridData(GridData.CENTER, GridData.BEGINNING, false, false, 1, numberOfRows));
 	}
 
@@ -245,7 +281,6 @@ public class MessageArea extends DialogArea {
 		label.setText(title);
 		label.setFont(getBiggerFont());
 		label.setForeground(getTitleColor());
-		label.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 		final GridData gd = new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 1, 1);
 
 		if (hasIcon) {
@@ -270,7 +305,6 @@ public class MessageArea extends DialogArea {
 		
 		SWTGraphicUtil.applyHTMLFormating(label);
 		label.setEditable(false);
-		label.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 		final GridData gd = new GridData(GridData.FILL, GridData.FILL, true, false, 1, 1);
 		if (height != -1) {
 			gd.heightHint = height;
@@ -296,7 +330,6 @@ public class MessageArea extends DialogArea {
 	private void createRadioButtons() {
 		for (int i = 0; i < radioValues.length; i++) {
 			final Button button = new Button(composite, SWT.RADIO);
-			button.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 			button.setText(radioValues[i]);
 
 			final Integer index = Integer.valueOf(i);
@@ -319,7 +352,7 @@ public class MessageArea extends DialogArea {
 	private void createTextException() {
 		textException = new Text(composite, SWT.MULTI | SWT.READ_ONLY | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		textException.setText(StringUtil.stackStraceAsString(exception));
-		textException.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+		textException.setBackground(composite.getBackground());
 		final GridData gd = new GridData(GridData.FILL, GridData.FILL, true, true, 1, 1);
 		textException.setLayoutData(gd);
 	}
@@ -328,9 +361,8 @@ public class MessageArea extends DialogArea {
 	 * Create a text box
 	 */
 	private void createTextBox() {
-		final Text textbox = new Text(composite, SWT.BORDER);
+		final Text textbox = new Text(composite, SWT.BORDER | SWT.WRAP);
 		textbox.setText(textBoxValue);
-		textbox.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 		final GridData gd = new GridData(GridData.FILL, GridData.FILL, true, true, 1, 1);
 		textbox.setLayoutData(gd);
 		textbox.addListener(SWT.Modify, e -> {
@@ -362,7 +394,6 @@ public class MessageArea extends DialogArea {
 	private void createChoice() {
 		for (int i = 0; i < choiceValues.length; i++) {
 			final ChoiceWidget choice = new ChoiceWidget(composite, SWT.RADIO);
-			choice.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 			choice.setChoiceItem(choiceValues[i]);
 
 			final Integer index = Integer.valueOf(i);
@@ -393,11 +424,25 @@ public class MessageArea extends DialogArea {
 		progressBar.setMinimum(progressBarMinimumValue);
 		progressBar.setMaximum(progressBarMaximumValue);
 		progressBar.setSelection(progressBarValue);
-		progressBar.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 		final GridData gd = new GridData(GridData.FILL, GridData.FILL, true, false, 1, 1);
 		progressBar.setLayoutData(gd);
 	}
 
+	/**
+	 * Create a check box
+	 *
+	 * @param numberOfColumns
+	 */
+	private void createCheckBox() {
+		final Button button = new Button(bottomComponent, SWT.CHECK);
+		button.setText(checkBoxLabel);
+		button.setSelection(checkBoxValue);
+		button.setLayoutData(new GridData(SWT.BEGINNING, SWT.BOTTOM, true, true, 1, 1));
+		button.addListener(SWT.Selection, e -> {
+			checkBoxValue = button.getSelection();
+		});
+	}
+	
 	/**
 	 * Hide the exception panel
 	 */
@@ -598,6 +643,13 @@ public class MessageArea extends DialogArea {
 	 */
 	public void setHeight(final int height) {
 		this.height = height;
+	}
+	
+	/**
+	 * @return the check box vqlue
+	 */
+	public boolean getCheckBoxValue() {
+		return checkBoxValue;
 	}
 
 }
