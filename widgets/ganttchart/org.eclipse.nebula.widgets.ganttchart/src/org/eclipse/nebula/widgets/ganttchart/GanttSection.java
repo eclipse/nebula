@@ -45,6 +45,7 @@ public class GanttSection implements IFillBackgroundColors {
     private List                  _dndGanttEvents;
     private Rectangle             _bounds;
     private Image                 _nameImage;
+    private Image				  _additionalImage;
     private boolean               _needsNameUpdate;
     private IFillBackgroundColors _fillColorManager;
 
@@ -145,7 +146,22 @@ public class GanttSection implements IFillBackgroundColors {
         _ganttEvents.remove(event);
     }
 
+
     /**
+     * @return the additional image
+     */
+    public Image getAdditionalImage() {
+		return _additionalImage;
+	}
+
+	/**
+	 * @param _additionalImage the additional image to set
+	 */
+	public void setAdditionalImage(Image _additionalImage) {
+		this._additionalImage = _additionalImage;
+	}
+
+	/**
      * Returns a list of all IGanttChartItems (GanttEvent and GanttGroup) contained in this section.
      * 
      * @return List of items
@@ -199,33 +215,6 @@ public class GanttSection implements IFillBackgroundColors {
     public Rectangle getBounds() {
         return _bounds;
     }
-
-    // note to self: this does not take into account the height the name will take up
-    // this method can NOT use the bounds on the events as this method will be called prior to events being drawn and thus have no values for bounds
-    /*
-     * int _getEventsHeight(ISettings settings) { int height = 0;
-     * 
-     * if (ganttEvents.size() == 0) return settings.getMinimumSectionHeight();
-     * 
-     * height += settings.getEventsTopSpacer();
-     * 
-     * GanttGroup lastGroup = null; for (int i = 0; i < ganttEvents.size(); i++) { IGanttChartItem event = (IGanttChartItem) ganttEvents.get(i); if (event instanceof GanttEvent) {
-     * if (lastGroup != null) height += settings.getEventSpacer();
-     * 
-     * GanttEvent ge = (GanttEvent) ganttEvents.get(i); if (!ge.isAutomaticRowHeight()) height += ge.getFixedRowHeight(); else height += settings.getEventHeight(); // skip last
-     * event check, we need spacing there too height += settings.getEventSpacer(); lastGroup = null; } else if (event instanceof GanttGroup) { GanttGroup gg = (GanttGroup) event;
-     * 
-     * if (gg != lastGroup) { if (!gg.isAutomaticRowHeight()) { height += gg.getFixedRowHeight(); } else { height += settings.getEventHeight(); //height +=
-     * settings.getEventHeight(); //height += settings.getEventSpacer()/2; }
-     * 
-     * if (i != ganttEvents.size()-1) height += settings.getEventSpacer(); }
-     * 
-     * lastGroup = gg; } }
-     * 
-     * if (height < settings.getMinimumSectionHeight()) height = settings.getMinimumSectionHeight(); // System.err.println(getName() + " " + height + " " + ganttEvents.size());
-     * 
-     * return height; }
-     */
 
     public Color getSaturdayBackgroundColorBottom() {
         return _saturdayBgColorBottom == null ? _fillColorManager.getSaturdayBackgroundColorBottom() : _saturdayBgColorBottom;
