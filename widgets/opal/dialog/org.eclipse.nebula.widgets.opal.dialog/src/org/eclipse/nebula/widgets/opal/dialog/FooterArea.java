@@ -1,16 +1,21 @@
 /*******************************************************************************
- * Copyright (c) 2011 Laurent CARON All rights reserved. This program and the
+ * Copyright (c) 2011-2019 Laurent CARON All rights reserved. This program and the
  * accompanying materials are made available under the terms of the Eclipse
  * Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- * Contributors: Laurent CARON (laurent.caron at gmail dot com) - Initial
- * implementation and API
+ * Contributors: 
+ *  Laurent CARON (laurent.caron at gmail dot com) - Initial implementation and API
+ *  Stefan Nöbauer - Bug 550659
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.dialog;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import org.eclipse.nebula.widgets.opal.commons.ResourceManager;
 import org.eclipse.swt.SWT;
@@ -25,6 +30,8 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 
 /**
  * Instances of this class are message areas
@@ -54,6 +61,9 @@ public class FooterArea extends DialogArea {
 
 	private Text expandedPanel;
 	private Composite composite;
+	private ToolBar toolbar;
+
+	private List<FooterAction> footerActions = new ArrayList<>();
 
 	/**
 	 * Constructor
@@ -99,16 +109,25 @@ public class FooterArea extends DialogArea {
 		composite.setBackground(getGreyColor());
 
 		int numberOfColumns = buttonLabels == null ? 0 : buttonLabels.size();
-		if (details) {
-			numberOfColumns += 2;
+		if (details || !footerActions.isEmpty()) {
+			numberOfColumns += 1;
 		}
 
 		final GridLayout gridLayout = new GridLayout(numberOfColumns, false);
 		gridLayout.marginHeight = gridLayout.marginWidth = 10;
 		composite.setLayout(gridLayout);
 
-		if (details) {
+		if (details || !footerActions.isEmpty()) {
+			gridLayout.marginHeight = 5;
+			toolbar = new ToolBar(composite, SWT.NONE);
+		}
+		
+		if(details) {
 			createDetails(numberOfColumns);
+		}
+
+		if(!footerActions.isEmpty()) {
+			createFooterActions();
 		}
 
 		if (buttonLabels != null) {
@@ -203,15 +222,9 @@ public class FooterArea extends DialogArea {
 	 * @param numberOfColumns
 	 */
 	private void createDetails(final int numberOfColumns) {
-		final Label icon = new Label(composite, SWT.NONE);
-		icon.setBackground(getGreyColor());
-		icon.setImage(isExpanded() ? getFewerDetailsImage() : getMoreDetailsImage());
-		icon.setLayoutData(new GridData(GridData.CENTER, GridData.CENTER, false, false));
-
-		final Label label = new Label(composite, SWT.NONE);
-		label.setBackground(getGreyColor());
-		label.setText(isExpanded() ? expandedLabelText : collapsedLabelText);
-		label.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false));
+		final ToolItem detailsItem = new ToolItem(toolbar, SWT.NONE);
+		detailsItem.setImage(isExpanded() ? getFewerDetailsImage() : getMoreDetailsImage());
+		detailsItem.setText(isExpanded() ? expandedLabelText : collapsedLabelText);
 
 		final int numberOfColumnsParam = numberOfColumns;
 
@@ -219,25 +232,29 @@ public class FooterArea extends DialogArea {
 			@Override
 			public void handleEvent(final Event event) {
 				if (FooterArea.this.parent.getMessageArea().getException() != null) {
-					if (label.getText().equals(expandedLabelText)) {
-						label.setText(collapsedLabelText);
-						icon.setImage(FooterArea.this.getMoreDetailsImage());
+					if (detailsItem.getText().equals(expandedLabelText)) {
+						detailsItem.setText(collapsedLabelText);
+						detailsItem.setImage(FooterArea.this.getMoreDetailsImage());
+
 						FooterArea.this.parent.getMessageArea().hideException();
 					} else {
-						label.setText(expandedLabelText);
-						icon.setImage(FooterArea.this.getFewerDetailsImage());
+						detailsItem.setText(expandedLabelText);
+						detailsItem.setImage(FooterArea.this.getFewerDetailsImage());
+
 						FooterArea.this.parent.getMessageArea().showException();
 					}
 
 				} else {
-					if (label.getText().equals(expandedLabelText)) {
-						label.setText(collapsedLabelText);
-						icon.setImage(FooterArea.this.getMoreDetailsImage());
+					if (detailsItem.getText().equals(expandedLabelText)) {
+						detailsItem.setText(collapsedLabelText);
+						detailsItem.setImage(FooterArea.this.getMoreDetailsImage());
+
 						expandedPanel.dispose();
 						FooterArea.this.parent.pack();
 					} else {
-						label.setText(expandedLabelText);
-						icon.setImage(FooterArea.this.getFewerDetailsImage());
+						detailsItem.setText(expandedLabelText);
+						detailsItem.setImage(FooterArea.this.getFewerDetailsImage());
+
 						FooterArea.this.createExpandedPanel(numberOfColumnsParam);
 						FooterArea.this.parent.pack();
 					}
@@ -245,8 +262,26 @@ public class FooterArea extends DialogArea {
 			}
 		};
 
-		label.addListener(SWT.MouseUp, listener);
-		icon.addListener(SWT.MouseUp, listener);
+		detailsItem.addListener(SWT.Selection, listener);
+	}
+
+	private void createFooterActions() {
+		for (FooterAction action : footerActions) {
+			final ToolItem item = new ToolItem(toolbar, SWT.NONE);
+			item.setText(action.getLabel());
+			item.addListener(SWT.Selection, e -> action.getAction().accept(parent));
+
+			if (action.getActive().isPresent()) {
+				item.setImage(action.getActive().get());
+			}
+			if (action.getInactive().isPresent()) {
+				item.setDisabledImage(action.getInactive().get());
+			}
+			if (action.getHot().isPresent()) {
+				item.setHotImage(action.getHot().get());
+			}
+
+		}
 	}
 
 	/**
@@ -379,6 +414,18 @@ public class FooterArea extends DialogArea {
 	public FooterArea setButtonLabels(final String... buttonLabels) {
 		this.buttonLabels = Arrays.asList(buttonLabels);
 		setInitialised(true);
+		return this;
+	}
+
+	/**
+	 * 
+	 * @param action Runnable to be called when pressed.
+	 * @param label  label of the footer action
+	 * @param images Images Array [active, highlight, inactive]
+	 * @return
+	 */
+	public FooterArea addFooterAction(Supplier<String> label, Consumer<Dialog> action, Image... images) {
+		footerActions.add(new FooterAction(label, action, images));
 		return this;
 	}
 
@@ -519,4 +566,46 @@ public class FooterArea extends DialogArea {
 		return checkBoxValue;
 	}
 
+	private class FooterAction {
+		private Consumer<Dialog> action;
+		private Image active;
+		private Image inactive;
+		private Image hot;
+		private Supplier<String> label;
+
+		public FooterAction(Supplier<String> label, Consumer<Dialog> action, Image... images) {
+			this.label = label;
+			this.action = action;
+			if (images.length > 0) {
+				active = images[0];
+			}
+			if (images.length > 1) {
+				hot = images[1];
+			}
+			if (images.length > 2) {
+				inactive = images[2];
+			}
+		}
+
+		public Consumer<Dialog> getAction() {
+			return action;
+		}
+
+		public Optional<Image> getActive() {
+			return Optional.ofNullable(active);
+		}
+
+		public Optional<Image> getInactive() {
+			return Optional.ofNullable(inactive);
+		}
+
+		public Optional<Image> getHot() {
+			return Optional.ofNullable(hot);
+		}
+
+		public String getLabel() {
+			return label.get();
+		}
+
+	}
 }
