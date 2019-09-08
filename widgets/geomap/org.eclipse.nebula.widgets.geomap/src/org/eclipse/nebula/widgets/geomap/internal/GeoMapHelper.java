@@ -64,7 +64,7 @@ public class GeoMapHelper implements GeoMapPositioned, GeoMapHelperListener {
 	}
 
 	/* basically not be changed, must be the same as GeoMapUtil's TILE_SIZE */
-	static final int TILE_SIZE = 256;
+	public static final int TILE_SIZE = 256;
 
 	private static final int DEFAULT_NUMBER_OF_IMAGEFETCHER_THREADS = 4;
 
@@ -270,22 +270,16 @@ public class GeoMapHelper implements GeoMapPositioned, GeoMapHelperListener {
 
 	//
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#
-	 * getMapPosition()
+	/**
+	 * @see org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#getMapPosition()
 	 */
 	@Override
 	public Point getMapPosition() {
 		return new Point(mapPosition.x, mapPosition.y);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#
-	 * setMapPosition(int, int)
+	/**
+	 * @see org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#setMapPosition(int, int)
 	 */
 	@Override
 	public void setMapPosition(int x, int y) {
@@ -293,9 +287,7 @@ public class GeoMapHelper implements GeoMapPositioned, GeoMapHelperListener {
 		mapPosition.y = y;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see
 	 * org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#getMaxZoom()
 	 */
@@ -304,22 +296,16 @@ public class GeoMapHelper implements GeoMapPositioned, GeoMapHelperListener {
 		return getTileServer().getMaxZoom();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#getZoom()
+	/**
+	 * @see org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#getZoom()
 	 */
 	@Override
 	public int getZoom() {
 		return zoom;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#setZoom(int)
+	/**
+	 * @see org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#setZoom(int)
 	 */
 	@Override
 	public void setZoom(int zoom) {
@@ -384,5 +370,9 @@ public class GeoMapHelper implements GeoMapPositioned, GeoMapHelperListener {
 	 */
 	public void removeInternalGeoMapListener(InternalGeoMapListener listener) {
 		internalGeoMapListeners.remove(listener);
+	}
+	
+	public int getNumberOfTiles() {
+		return Math.max(cache.size(), cacheSize);
 	}
 }
