@@ -17,7 +17,9 @@ import java.util.EventListener;
 import java.util.List;
 
 import org.eclipse.nebula.widgets.geomap.internal.DefaultMouseHandler;
+import org.eclipse.nebula.widgets.geomap.internal.GeoMapHelper;
 import org.eclipse.nebula.widgets.geomap.internal.InternalGeoMap;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
@@ -82,15 +84,13 @@ public class GeoMap extends InternalGeoMap {
 	 */
 	@SuppressWarnings({ "nls" })
 	public static final String ABOUT_MSG = "GeoMap - Minimal Openstreetmap/Maptile Viewer\r\n"
-			+ "Requirements: Java + SWT. Opensource and licensed under EPL.\r\n"
-			+ "\r\n"
+			+ "Requirements: Java + SWT. Opensource and licensed under EPL.\r\n" + "\r\n"
 			+ "Web/Source: <a href=\"http://eclipse.org/nebula\">http://eclipse.org/nebula</a>\r\n"
 			+ "Written by Stephan Rutz. Maintained by the Eclipse Nebula Project.\r\n\r\n"
 			+ "Tileserver and Nominationserver are accessed online and are part of Openstreetmap.org and not of this software.\r\n";
 
 	private Point mouseCoords = new Point(0, 0);
-	private DefaultMouseHandler defaultMouseHandler = new DefaultMouseHandler(
-			this) {
+	private DefaultMouseHandler defaultMouseHandler = new DefaultMouseHandler(this) {
 		@Override
 		public Point getMapSize() {
 			return getSize();
@@ -101,9 +101,9 @@ public class GeoMap extends InternalGeoMap {
 
 	/**
 	 * Creates a new <code>GeoMap</code> using the default size for its internal
-	 * cache of tiles. The map is showing the position
-	 * <code>(275091, 180145</code> at zoom level <code>11</code>. In other
-	 * words this constructor is best used only in debugging scenarios.
+	 * cache of tiles. The map is showing the position <code>(275091, 180145</code>
+	 * at zoom level <code>11</code>. In other words this constructor is best used
+	 * only in debugging scenarios.
 	 * 
 	 * @param parent
 	 *            SWT parent <code>Composite</code>
@@ -133,8 +133,7 @@ public class GeoMap extends InternalGeoMap {
 		this(parent, style, mapPosition, zoom, DEFAULT_CACHE_SIZE);
 	}
 
-	private class MouseCoordsHandler
-			implements MouseListener, MouseMoveListener {
+	private class MouseCoordsHandler implements MouseListener, MouseMoveListener {
 
 		private void setMouseCoords(MouseEvent e) {
 			mouseCoords = new Point(e.x, e.y);
@@ -178,8 +177,7 @@ public class GeoMap extends InternalGeoMap {
 	 *            initial cache size, eg number of tile-images that are kept in
 	 *            cache to prevent reloading from the network.
 	 */
-	public GeoMap(Composite parent, int style, Point mapPosition, int zoom,
-			int cacheSize) {
+	public GeoMap(Composite parent, int style, Point mapPosition, int zoom, int cacheSize) {
 		super(parent, style, mapPosition, zoom, cacheSize);
 		MouseCoordsHandler mouseCoordsHandler = new MouseCoordsHandler();
 		addMouseListener(mouseCoordsHandler);
@@ -222,8 +220,8 @@ public class GeoMap extends InternalGeoMap {
 	}
 
 	/**
-	 * Removes listener from appropriate listener lists depending on the
-	 * listener interfaces that are implemented.
+	 * Removes listener from appropriate listener lists depending on the listener
+	 * interfaces that are implemented.
 	 * 
 	 * @param listener
 	 *            the listener
@@ -258,8 +256,8 @@ public class GeoMap extends InternalGeoMap {
 	}
 
 	/**
-	 * Sets the current TileServer of this GeoMap. Note that this will clear the
-	 * map and reload the tiles using the new TileServer.
+	 * Sets the current TileServer of this GeoMap. Note that this will clear the map
+	 * and reload the tiles using the new TileServer.
 	 * 
 	 * @param tileServer
 	 *            the TileServer
@@ -273,8 +271,8 @@ public class GeoMap extends InternalGeoMap {
 	private List<GeoMapListener> geoMapListeners;
 
 	/**
-	 * Adds a GeoMapListener, that will be notified of changes to the position
-	 * and zoom level
+	 * Adds a GeoMapListener, that will be notified of changes to the position and
+	 * zoom level
 	 * 
 	 * @param listener
 	 *            the GeoMapListener
@@ -287,8 +285,8 @@ public class GeoMap extends InternalGeoMap {
 	}
 
 	/**
-	 * Removes a GeoMapListener, so it no longer will be notified of changes to
-	 * the position and zoom level
+	 * Removes a GeoMapListener, so it no longer will be notified of changes to the
+	 * position and zoom level
 	 * 
 	 * @param listener
 	 *            the GeoMapListener
@@ -344,8 +342,8 @@ public class GeoMap extends InternalGeoMap {
 	}
 
 	/**
-	 * Translates the position of the upper left corner of this GeoMap, without
-	 * any panning effect.
+	 * Translates the position of the upper left corner of this GeoMap, without any
+	 * panning effect.
 	 * 
 	 * @param tx
 	 *            the relative distance in x-direction
@@ -404,21 +402,19 @@ public class GeoMap extends InternalGeoMap {
 	}
 
 	/**
-	 * Returns the position of the center of this GeoMap. The coordinates depend
-	 * on the zoom level.
+	 * Returns the position of the center of this GeoMap. The coordinates depend on
+	 * the zoom level.
 	 * 
 	 * @return the position of the center of this GeoMap
 	 */
 	public Point getCenterPosition() {
 		org.eclipse.swt.graphics.Point size = getSize();
 		Point mapPosition = getMapPosition();
-		return new Point(mapPosition.x + size.x / 2,
-				mapPosition.y + size.y / 2);
+		return new Point(mapPosition.x + size.x / 2, mapPosition.y + size.y / 2);
 	}
 
 	/**
-	 * Sets the position of the center of this GeoMap, without any panning
-	 * effect.
+	 * Sets the position of the center of this GeoMap, without any panning effect.
 	 * 
 	 * @param mapPosition
 	 *            the new position
@@ -435,7 +431,28 @@ public class GeoMap extends InternalGeoMap {
 	 */
 	public Point getCursorPosition() {
 		Point mapPosition = getMapPosition();
-		return new Point(mapPosition.x + mouseCoords.x,
+		return new Point(mapPosition.x + mouseCoords.x, //
 				mapPosition.y + mouseCoords.y);
 	}
+
+	public Point computeSize(int wHint, int hHint, boolean changed) {
+		int widthHint, heightHint;
+		if (wHint == SWT.DEFAULT) {
+			widthHint = GeoMapHelper.TILE_SIZE * 3; // Arbitrary size
+		} else {
+			widthHint = wHint;
+		}
+		if (hHint == SWT.DEFAULT) {
+			heightHint = GeoMapHelper.TILE_SIZE * 3; // Arbitrary size
+		} else {
+			heightHint = hHint;
+		}
+
+		return super.computeSize(widthHint, heightHint, changed);
+	}
+
+	public Point computeSize(int wHint, int hHint) {
+		return computeSize(wHint, hHint, true);
+	}
+
 }
