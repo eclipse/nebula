@@ -2144,7 +2144,11 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 					p = gs.getNameExtent();
 				}
 
-				barWidth = Math.max(barWidth, p.x + horiSpacer * 2);
+				if (gs.getAdditionalImage() != null) {
+					barWidth = Math.max(barWidth, p.x + horiSpacer * 2 + gs.getAdditionalImage().getBounds().width + 2 );
+				} else {
+					barWidth = Math.max(barWidth, p.x + horiSpacer * 2);
+				}
 			}
 		}
 
@@ -2271,12 +2275,17 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 						}
 						gcTemp.fillGradientRectangle(0, 0, extent.x, xMax - 2, true);
 						gcTemp.setForeground(_textColor);
-						gcTemp.drawText(gs.getName(), 0, 0, true);
+						gcTemp.drawText(gs.getName(), 0, gs.getAdditionalImage()!=null ? (gs.getAdditionalImage().getBounds().width) : 0 , true);
 						gcTemp.dispose();
 
 						final ImageData id = textImage.getImageData();
 						image = new Image(getDisplay(), rotate(id, rightSide ? SWT.RIGHT : SWT.LEFT)); // NOPMD
-						gs.setNameImage(image);
+                        if(gs.getAdditionalImage()!=null) {
+                        	final GC gcAdditionalImage = new GC(image);
+                        	gcAdditionalImage.drawImage(gs.getAdditionalImage(), 0, image.getBounds().height/2 - gs.getAdditionalImage().getBounds().height/2);
+                        	gcAdditionalImage.dispose();
+                        }
+                        gs.setNameImage(image);						
 					} else {
 						image = gs.getNameImage();
 					}
@@ -2287,7 +2296,10 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 					gc.drawImage(image, sectionBarX + xStart - 1, yStart + textLocY);
 				} else if (gs.getTextOrientation() == SWT.HORIZONTAL) {
 					xStart -= extent.x / 2;
-					gc.drawText(gs.getName(), sectionBarX + xStart, yStart + gsHeight / 2 - gs.getNameExtent().y / 2, true);
+					if (gs.getAdditionalImage() != null) {
+						gc.drawImage(gs.getAdditionalImage(), 2, yStart + (gsHeight / 2) - (gs.getAdditionalImage().getBounds().height / 2));
+					}
+					gc.drawText(gs.getName(), gs.getAdditionalImage() != null ? gs.getAdditionalImage().getBounds().width + 5 : horiSpacer, yStart + (gsHeight / 2) - (gs.getNameExtent().y / 2), true);
 				}
 
 				yStart += gsHeight - 1;
