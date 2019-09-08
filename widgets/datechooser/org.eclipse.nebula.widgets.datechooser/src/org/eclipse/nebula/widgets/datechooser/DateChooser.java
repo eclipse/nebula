@@ -27,6 +27,7 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
@@ -48,12 +49,12 @@ import org.eclipse.swt.widgets.TypedListener;
 /**
  * Calendar widget. Presents the monthly view of a calendar for date picking.
  * <p>
- * 
+ *
  * Calendar is composed of a header and a grid for date selection. The header
  * display the current month and year, and the two buttons for navigation
  * (previous and next month). An optional footer display the today date.
  * <p>
- * 
+ *
  * Features:
  * <ul>
  * <li>Month names, weekday names and first day of week depend of the locale
@@ -66,7 +67,7 @@ import org.eclipse.swt.widgets.TypedListener;
  * <li>Keyboard support.</li>
  * </ul>
  * <p>
- * 
+ *
  * To know which dates have been selected in the calendar, there is two means :
  * <ul>
  * <li>The <code>getSelectedDate()</code> method returns the currently
@@ -77,7 +78,7 @@ import org.eclipse.swt.widgets.TypedListener;
  * selection if in single selection mode.</li>
  * </ul>
  * <p>
- * 
+ *
  * Keyboard navigation :
  * <ul>
  * <li>Arrows: Change the focus cell.</li>
@@ -223,19 +224,19 @@ public class DateChooser extends Composite {
 	 * Calendar grid specific layout.
 	 */
 	protected class DateChooserLayout extends Layout {
-		private Point gridPanelSize = new Point(0, 0);
-		private Point headersPanelSize = new Point(0, 0);
-		private Point weeksPanelSize = new Point(0, 0);
-		private Point daysPanelSize = new Point(0, 0);
-		private Point todayLabelSize = new Point(0, 0);
+		private final Point gridPanelSize = new Point(0, 0);
+		private final Point headersPanelSize = new Point(0, 0);
+		private final Point weeksPanelSize = new Point(0, 0);
+		private final Point daysPanelSize = new Point(0, 0);
+		private final Point todayLabelSize = new Point(0, 0);
 		private int cellWidth = 0;
 		private int cellHeight = 0;
 
 		protected void compute() {
-			GC gc = new GC(days[0].label);
+			final GC gc = new GC(days[0].label);
 
 			int headerWidth = 0;
-			String[] months = df1.getDateFormatSymbols().getMonths();
+			final String[] months = df1.getDateFormatSymbols().getMonths();
 			for (int i = 0; i < months.length; i++) {
 				headerWidth = Math.max(headerWidth, gc.textExtent(months[i]).x);
 			}
@@ -272,15 +273,19 @@ public class DateChooser extends Composite {
 			gc.dispose();
 		}
 
+		@Override
 		protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
-			if (flushCache)
+			if (flushCache) {
 				compute();
+			}
 			return gridPanelSize;
 		}
 
+		@Override
 		protected void layout(Composite composite, boolean flushCache) {
-			if (flushCache)
+			if (flushCache) {
 				compute();
+			}
 
 			headersPanel.setBounds(0, 0, headersPanelSize.x, headersPanelSize.y);
 
@@ -298,8 +303,8 @@ public class DateChooser extends Composite {
 				}
 			}
 
-			int x = weeksVisible ? 0 : 1;
-			int px = weeksVisible ? weeksPanelSize.x + 1 : 0;
+			final int x = weeksVisible ? 0 : 1;
+			final int px = weeksVisible ? weeksPanelSize.x + 1 : 0;
 
 			daysPanel.setBounds(px, headersPanelSize.y + 1, daysPanelSize.x, daysPanelSize.y);
 			for (int r = 0; r < 6; r++) {
@@ -318,7 +323,7 @@ public class DateChooser extends Composite {
 	 * <p>
 	 * The calendar is initialized by default with the default Locale, and the
 	 * current date for today and selected date attributes.
-	 * 
+	 *
 	 * @param parent a composite control which will be the parent of the new instance (cannot be null)
 	 * @param style the style of control to construct
 	 */
@@ -349,24 +354,26 @@ public class DateChooser extends Composite {
 	 */
 	public void addSelectionListener(SelectionListener lsnr) {
 		checkWidget();
-		if (lsnr == null)
+		if (lsnr == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		TypedListener typedListener = new TypedListener(lsnr);
+		}
+		final TypedListener typedListener = new TypedListener(lsnr);
 		addListener(SWT.Selection, typedListener);
 	}
 
 	/**
 	 * Manages navigation buttons events.
-	 * 
+	 *
 	 * @param event event
 	 */
 	protected void buttonsEvent(Event event) {
 		switch (event.type) {
 			case SWT.MouseUp: {
-				Rectangle r = ((Control) event.widget).getBounds();
-				if (event.x < 0 || event.x >= r.width || event.y < 0 || event.y >= r.height)
+				final Rectangle r = ((Control) event.widget).getBounds();
+				if (event.x < 0 || event.x >= r.width || event.y < 0 || event.y >= r.height) {
 					return;
-				boolean ctrl = (event.stateMask & SWT.CTRL) != 0;
+				}
+				final boolean ctrl = (event.stateMask & SWT.CTRL) != 0;
 				if (event.widget == prevMonth) {
 					changeCurrentMonth(ctrl ? -12 : -1);
 				} else if (event.widget == nextMonth) {
@@ -383,7 +390,7 @@ public class DateChooser extends Composite {
 
 	/**
 	 * Manages event at the calendar level.
-	 * 
+	 *
 	 * @param event event
 	 */
 	protected void calendarEvent(Event event) {
@@ -406,44 +413,51 @@ public class DateChooser extends Composite {
 				break;
 
 			case SWT.KeyDown: {
-				boolean ctrl = (event.stateMask & SWT.CTRL) != 0;
+				final boolean ctrl = (event.stateMask & SWT.CTRL) != 0;
 				switch (event.keyCode) {
 					case SWT.ARROW_LEFT:
-						if (event.stateMask != 0)
+						if (event.stateMask != 0) {
 							return;
+						}
 						setFocus(focusIndex - 1);
 						break;
 					case SWT.ARROW_RIGHT:
-						if (event.stateMask != 0)
+						if (event.stateMask != 0) {
 							return;
+						}
 						setFocus(focusIndex + 1);
 						break;
 					case SWT.ARROW_UP:
-						if (event.stateMask != 0)
+						if (event.stateMask != 0) {
 							return;
+						}
 						setFocus(focusIndex - 7);
 						break;
 					case SWT.ARROW_DOWN:
-						if (event.stateMask != 0)
+						if (event.stateMask != 0) {
 							return;
+						}
 						setFocus(focusIndex + 7);
 						break;
 					case SWT.PAGE_DOWN:
-						if (event.stateMask != 0 || !navigationEnabled)
+						if (event.stateMask != 0 || !navigationEnabled) {
 							return;
+						}
 						changeCurrentMonth(ctrl ? 12 : 1);
 						break;
 					case SWT.PAGE_UP:
-						if (event.stateMask != 0 || !navigationEnabled)
+						if (event.stateMask != 0 || !navigationEnabled) {
 							return;
+						}
 						changeCurrentMonth(ctrl ? -12 : -1);
 						break;
 					case ' ':
 						select(focusIndex, event.stateMask);
 						break;
 					case SWT.HOME:
-						if (event.stateMask != 0)
+						if (event.stateMask != 0) {
 							return;
+						}
 						setFocusOnToday(autoSelectOnFooter);
 						break;
 					default:
@@ -456,7 +470,7 @@ public class DateChooser extends Composite {
 			}
 
 			case SWT.Dispose: {
-				Display display = getDisplay();
+				final Display display = getDisplay();
 				display.removeFilter(SWT.FocusIn, filter);
 				display.removeFilter(SWT.KeyDown, filter);
 				hasFocus = false;
@@ -468,7 +482,7 @@ public class DateChooser extends Composite {
 	/**
 	 * Displays a new month in the grid. The new month is specified by delta from
 	 * the currently displayed one.
-	 * 
+	 *
 	 * @param add delta from the current month
 	 */
 	protected void changeCurrentMonth(int add) {
@@ -489,7 +503,7 @@ public class DateChooser extends Composite {
 	/**
 	 * Clears the selection. The refresh flag allows to indicate must be
 	 * refreshed or not.
-	 * 
+	 *
 	 * @param refresh true to refresh display, else false
 	 */
 	protected void clearSelection(boolean refresh) {
@@ -498,15 +512,16 @@ public class DateChooser extends Composite {
 			days[i].selected = false;
 		}
 		beginInterval = null;
-		if (refresh)
+		if (refresh) {
 			refreshDisplay();
+		}
 	}
 
 	/**
 	 * Constructs and initializes all the GUI of the calendar.
 	 */
 	private void createContent() {
-		GridLayout layout = new GridLayout(1, false);
+		final GridLayout layout = new GridLayout(1, false);
 		layout.horizontalSpacing = 0;
 		layout.verticalSpacing = 0;
 		layout.marginWidth = 0;
@@ -514,6 +529,7 @@ public class DateChooser extends Composite {
 		super.setLayout(layout);
 
 		listener = new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				if (event.type == SWT.MouseDown && !hasFocus) {
 					setFocus();
@@ -533,6 +549,7 @@ public class DateChooser extends Composite {
 			}
 		};
 		filter = new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				switch (event.type) {
 					case SWT.FocusIn:
@@ -623,7 +640,7 @@ public class DateChooser extends Composite {
 		monthsMenu = new Menu(getShell(), SWT.POP_UP);
 		currentMonth.setMenu(monthsMenu);
 		for (int i = 0; i < 12; i++) {
-			MenuItem item = new MenuItem(monthsMenu, SWT.PUSH);
+			final MenuItem item = new MenuItem(monthsMenu, SWT.PUSH);
 			item.addListener(SWT.Selection, listener);
 			item.setData(new Integer(i));
 		}
@@ -633,9 +650,10 @@ public class DateChooser extends Composite {
 	/**
 	 * Disposes of the operating system resources associated with the receiver
 	 * and all its descendants.
-	 * 
+	 *
 	 * @see org.eclipse.swt.widgets.Widget#dispose()
 	 */
+	@Override
 	public void dispose() {
 		getDisplay().removeFilter(SWT.KeyDown, filter);
 		getDisplay().removeFilter(SWT.FocusIn, filter);
@@ -644,7 +662,7 @@ public class DateChooser extends Composite {
 
 	/**
 	 * Manages events on the footer label.
-	 * 
+	 *
 	 * @param event event
 	 */
 	protected void footerEvent(Event event) {
@@ -658,9 +676,10 @@ public class DateChooser extends Composite {
 	/**
 	 * Forces the receiver to have the keyboard focus, causing all keyboard events
 	 * to be delivered to it.
-	 * 
+	 *
 	 * @return <code>true</code> if the control got focus, and <code>false</code> if it was unable to.
 	 */
+	@Override
 	public boolean forceFocus() {
 		checkWidget();
 		if (super.forceFocus()) {
@@ -672,21 +691,22 @@ public class DateChooser extends Composite {
 
 	/**
 	 * Returns the cell index corresponding to the given label.
-	 * 
+	 *
 	 * @param label label
 	 * @return cell index
 	 */
 	private int getCellIndex(Label label) {
 		for (int i = 0; i < days.length; i++) {
-			if (days[i].label == label)
+			if (days[i].label == label) {
 				return i;
+			}
 		}
 		return -1;
 	}
 
 	/**
 	 * Returns the current displayed month.
-	 * 
+	 *
 	 * @return Date representing current month.
 	 */
 	public Date getCurrentMonth() {
@@ -696,16 +716,16 @@ public class DateChooser extends Composite {
 
 	/**
 	 * Gets what the first day of the week is.
-	 * 
+	 *
 	 * @return the first day of the week.
 	 */
 	public int getFirstDayOfWeek() {
-		return this.firstDayOfWeek;
+		return firstDayOfWeek;
 	}
 
 	/**
 	 * Returns the grid visibility status.
-	 * 
+	 *
 	 * @return Returns the grid visible status.
 	 */
 	public int getGridVisible() {
@@ -715,11 +735,11 @@ public class DateChooser extends Composite {
 
 	/**
 	 * Gets what the minimal days required in the first week of the year are.
-	 * 
+	 *
 	 * @return the minimal days required in the first week of the year.
 	 */
 	public int getMinimalDaysInFirstWeek() {
-		return this.minimalDaysInFirstWeek;
+		return minimalDaysInFirstWeek;
 	}
 
 	/**
@@ -727,7 +747,7 @@ public class DateChooser extends Composite {
 	 * first item of selection list is returned, with no guaranty of the selection
 	 * order by the user.
 	 * If no selection, return <code>null</code>.
-	 * 
+	 *
 	 * @return selected date
 	 */
 	public Date getSelectedDate() {
@@ -739,17 +759,17 @@ public class DateChooser extends Composite {
 	 * Returns all the selected dates. The collection returned is a copy of the
 	 * internal selection list.
 	 * <p>
-	 * 
+	 *
 	 * If the calendar is in single selection mode, it is preferable to use
 	 * <code>getSelectedDate</code> that returns a Date value.
-	 * 
+	 *
 	 * @return Collection of selected dates
 	 */
 	public Collection<Date> getSelectedDates() {
 		checkWidget();
-		List<Date> returnSelection = new ArrayList<Date>(selection.size());
-		for (Iterator<Date> it = selection.iterator(); it.hasNext();) {
-			Date d = (Date) it.next();
+		final List<Date> returnSelection = new ArrayList<Date>(selection.size());
+		for (final Iterator<Date> it = selection.iterator(); it.hasNext();) {
+			final Date d = it.next();
 			if (!returnSelection.contains(d)) {
 				returnSelection.add(d);
 			}
@@ -759,7 +779,7 @@ public class DateChooser extends Composite {
 
 	/**
 	 * Returns the today date.
-	 * 
+	 *
 	 * @return today date
 	 */
 	public Date getTodayDate() {
@@ -769,37 +789,40 @@ public class DateChooser extends Composite {
 
 	/**
 	 * Manages events at the grid level.
-	 * 
+	 *
 	 * @param event event
 	 */
 	protected void gridEvent(Event event) {
 		switch (event.type) {
 			case SWT.MouseUp: {
-				Rectangle r = ((Control) event.widget).getBounds();
-				if (event.x < 0 || event.x >= r.width || event.y < 0 || event.y >= r.height)
+				final Rectangle r = ((Control) event.widget).getBounds();
+				if (event.x < 0 || event.x >= r.width || event.y < 0 || event.y >= r.height) {
 					return;
+				}
 				setFocus(getCellIndex((Label) event.widget));
 				select(focusIndex, event.stateMask);
 				break;
 			}
 
 			case SWT.Paint: {
-				if (!hasFocus)
+				if (!hasFocus) {
 					return;
-				if (focusIndex < 0)
+				}
+				if (focusIndex < 0) {
 					setFocus(-1);
+				}
 
 				// Draw the focus rectangle on the grid
-				Rectangle r = days[focusIndex].label.getBounds();
+				final Rectangle r = days[focusIndex].label.getBounds();
 				if (daysPanel == event.widget) {
 					event.gc.setLineWidth(1);
 					event.gc.setForeground(theme.focusColor);
 					event.gc.drawRectangle(r.x - 1, r.y - 1, r.width + 1, r.height + 1);
 				} else if (gridPanel == event.widget) {
-					int line = focusIndex / 7;
-					int col = focusIndex % 7;
-					if (line == 0 || line == 5 || (col == 0 && weeksVisible)) {
-						Rectangle rg = daysPanel.getBounds();
+					final int line = focusIndex / 7;
+					final int col = focusIndex % 7;
+					if (line == 0 || line == 5 || col == 0 && weeksVisible) {
+						final Rectangle rg = daysPanel.getBounds();
 						event.gc.setForeground(theme.focusColor);
 						if (line == 0) {
 							event.gc.drawLine(rg.x + r.x - 1, rg.y - 1, rg.x + r.x + r.width, rg.y - 1);
@@ -820,22 +843,23 @@ public class DateChooser extends Composite {
 	 * Redraw the grid panel and all its children (day panel and labels).
 	 */
 	private void gridRedraw() {
-		Rectangle r = gridPanel.getBounds();
+		final Rectangle r = gridPanel.getBounds();
 		gridPanel.redraw(0, 0, r.width, r.height, true);
 	}
 
 	/**
 	 * Handles the focus.
-	 * 
+	 *
 	 * @param mode SWT.FocusIn or SWT.FocusOut
 	 */
 	private void handleFocus(int mode) {
 		switch (mode) {
 			case SWT.FocusIn: {
-				if (hasFocus)
+				if (hasFocus) {
 					return;
+				}
 				hasFocus = true;
-				Display display = getDisplay();
+				final Display display = getDisplay();
 				display.removeFilter(SWT.KeyDown, filter);
 				display.removeFilter(SWT.FocusIn, filter);
 				if (focusIndex < 0) {
@@ -848,11 +872,13 @@ public class DateChooser extends Composite {
 			}
 
 			case SWT.FocusOut: {
-				if (!hasFocus)
+				if (!hasFocus) {
 					return;
-				Control focusControl = getDisplay().getFocusControl();
-				if (focusControl == DateChooser.this || focusControl == nextMonth || focusControl == prevMonth)
+				}
+				final Control focusControl = getDisplay().getFocusControl();
+				if (focusControl == DateChooser.this || focusControl == nextMonth || focusControl == prevMonth) {
 					return;
+				}
 				hasFocus = false;
 				getDisplay().removeFilter(SWT.KeyDown, filter);
 				getDisplay().removeFilter(SWT.FocusIn, filter);
@@ -865,16 +891,16 @@ public class DateChooser extends Composite {
 
 	/**
 	 * Returns the autoChangeOnAdjacent mode.
-	 * 
+	 *
 	 * @return true / false
 	 */
 	public boolean isAutoChangeOnAdjacent() {
-		return this.autoChangeOnAdjacent;
+		return autoChangeOnAdjacent;
 	}
 
 	/**
 	 * Returns the autoSelectOnFooter mode.
-	 * 
+	 *
 	 * @return true / false
 	 */
 	public boolean isAutoSelectOnFooter() {
@@ -885,15 +911,16 @@ public class DateChooser extends Composite {
 	/**
 	 * Returns <code>true</code> if the given date is selected, else returns
 	 * <code>false</code>.
-	 * 
+	 *
 	 * @param date
 	 * @return <code>true</code> if selected, else <code>false</code>.
 	 */
 	public boolean isDateSelected(Date date) {
 		checkWidget();
-		for (Iterator<Date> it = selection.iterator(); it.hasNext();) {
-			if (((Date) it.next()).equals(date))
+		for (final Iterator<Date> it = selection.iterator(); it.hasNext();) {
+			if (it.next().equals(date)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -901,17 +928,18 @@ public class DateChooser extends Composite {
 	/**
 	 * Returns <code>true</code> if the receiver has the user-interface focus,
 	 * and <code>false</code> otherwise.
-	 * 
+	 *
 	 * @return the receiver's focus state
 	 * @see org.eclipse.swt.widgets.Control#isFocusControl()
 	 */
+	@Override
 	public boolean isFocusControl() {
 		return hasFocus;
 	}
 
 	/**
 	 * Returns true if footer is visible.
-	 * 
+	 *
 	 * @return <code>true</code> if footer visible, else <code>false</code>
 	 */
 	public boolean isFooterVisible() {
@@ -921,10 +949,11 @@ public class DateChooser extends Composite {
 
 	/**
 	 * Returns true if grid is visible in the calendar popup.
-	 * 
+	 *
 	 * @return Returns the grid visible status.
 	 * @deprecated
 	 */
+	@Deprecated
 	public boolean isGridVisible() {
 		checkWidget();
 		return gridVisible == GRID_FULL;
@@ -932,7 +961,7 @@ public class DateChooser extends Composite {
 
 	/**
 	 * Returns true if navigation is enabled. If false, buttons are not visible.
-	 * 
+	 *
 	 * @return Returns the navigation status.
 	 */
 	public boolean isNavigationEnabled() {
@@ -942,7 +971,7 @@ public class DateChooser extends Composite {
 
 	/**
 	 * Returns true if weeks numbers are visible.
-	 * 
+	 *
 	 * @return Returns the weeks numbers visible status.
 	 */
 	public boolean isWeeksVisible() {
@@ -952,7 +981,7 @@ public class DateChooser extends Composite {
 
 	/**
 	 * Manages all events of the contextual menu on the month label of the header.
-	 * 
+	 *
 	 * @param event event
 	 */
 	protected void menuEvent(Event event) {
@@ -972,21 +1001,24 @@ public class DateChooser extends Composite {
 	 * Sends selection event to the listeners.
 	 */
 	protected void notifySelection() {
-		Event event = new Event();
-		if (!multi)
+		final Event event = new Event();
+		if (!multi) {
 			event.data = getSelectedDate();
+		}
 		notifyListeners(SWT.Selection, event);
 	}
 
 	private void redrawDec() {
 		redraw--;
-		if (redraw == 0)
+		if (redraw == 0) {
 			setRedraw(true);
+		}
 	}
 
 	private void redrawInc() {
-		if (redraw == 0)
+		if (redraw == 0) {
 			setRedraw(false);
+		}
 		redraw++;
 	}
 
@@ -995,26 +1027,27 @@ public class DateChooser extends Composite {
 	 * of a month display, a locale or color model change.
 	 */
 	private void refreshDisplay() {
-		if (currentMonthCal == null || theme == null)
+		if (currentMonthCal == null || theme == null) {
 			return;
+		}
 		redrawInc();
 		currentMonth.setText(df1.format(currentMonthCal.getTime()));
 
-		int maxDay = currentMonthCal.getActualMaximum(Calendar.DAY_OF_MONTH);
-		Calendar cal = (Calendar) currentMonthCal.clone();
+		final int maxDay = currentMonthCal.getActualMaximum(Calendar.DAY_OF_MONTH);
+		final Calendar cal = (Calendar) currentMonthCal.clone();
 		int delta = -((cal.get(Calendar.DAY_OF_WEEK) - firstDayOfWeek + 7) % 7);
 		cal.add(Calendar.DAY_OF_MONTH, delta);
 		for (int i = 0; i < 42; i++) {
 			if (i % 7 == 0) {
-				int w = cal.get(Calendar.WEEK_OF_YEAR);
+				final int w = cal.get(Calendar.WEEK_OF_YEAR);
 				weeks[i / 7].label.setText(w < 10 ? "0" + w : "" + w);
 			}
 			if (delta == 0) {
 				firstDayIndex = i;
 			}
-			int weekDay = cal.get(Calendar.DAY_OF_WEEK);
+			final int weekDay = cal.get(Calendar.DAY_OF_WEEK);
 			days[i].weekend = weekDay == 1 || weekDay == 7;
-			days[i].adjacent = delta < 0 ? -1 : (delta >= maxDay ? 1 : 0);
+			days[i].adjacent = delta < 0 ? -1 : delta >= maxDay ? 1 : 0;
 			days[i].today = cal.equals(todayCal);
 			if (days[i].cal == null) {
 				days[i].cal = (Calendar) cal.clone();
@@ -1033,7 +1066,7 @@ public class DateChooser extends Composite {
 
 	/**
 	 * Removes the given date from the selection.
-	 * 
+	 *
 	 * @param d date to remove
 	 */
 	public void removeSelectedDate(Date d) {
@@ -1044,20 +1077,21 @@ public class DateChooser extends Composite {
 	/**
 	 * Removes the given date from the selection. The refresh flag allows to
 	 * indicate must be refreshed or not.
-	 * 
+	 *
 	 * @param d date to remove
 	 * @param refresh true to refresh display, else false
 	 */
 	private void removeSelectedDate(Date d, boolean refresh) {
-		for (Iterator<Date> it = selection.iterator(); it.hasNext();) {
-			Date itDate = (Date) it.next();
+		for (final Iterator<Date> it = selection.iterator(); it.hasNext();) {
+			final Date itDate = it.next();
 			if (itDate.equals(d)) {
 				selection.remove(itDate);
 				break;
 			}
 		}
-		if (refresh)
+		if (refresh) {
 			refreshDisplay();
+		}
 	}
 
 	/**
@@ -1070,31 +1104,41 @@ public class DateChooser extends Composite {
 	 */
 	public void removeSelectionListener(SelectionListener lsnr) {
 		checkWidget();
-		if (lsnr == null)
+		if (lsnr == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
 		removeListener(SWT.Selection, lsnr);
 	}
 
 	/**
 	 * Manages the selection based on the current selected cell, specified by
 	 * index, and the keyboard mask.
-	 * 
+	 *
 	 * @param index index of selected cell
 	 * @param stateMask keyboard state
 	 */
 	private void select(int index, int stateMask) {
-		Cell cell = days[index];
-		if (!navigationEnabled && cell.adjacent != 0)
+		final Cell cell = days[index];
+		if (!navigationEnabled && cell.adjacent != 0) {
 			return;
+		}
+
+		// check if the cell is enabled
+		if (!theme.getCustomState(cell.cal.getTime())) {
+			refreshDisplay();
+			return;
+		}
+
 		boolean ctrl = (stateMask & SWT.CTRL) != 0;
 		boolean shift = (stateMask & SWT.SHIFT) != 0;
 		if (shift && beginInterval == null) {
 			ctrl = true;
 			shift = false;
 		}
-		if (!multi || (!ctrl && !shift))
+		if (!multi || !ctrl && !shift) {
 			clearSelection(false);
-		Date selectedDate = cell.cal.getTime();
+		}
+		final Date selectedDate = cell.cal.getTime();
 		if (multi && ctrl && cell.selected) {
 			// Remove the selection on a single cell
 			removeSelectedDate(selectedDate, false);
@@ -1103,7 +1147,7 @@ public class DateChooser extends Composite {
 		} else {
 			if (multi && shift) {
 				// Interval selection
-				Calendar c = (Calendar) cell.cal.clone();
+				final Calendar c = (Calendar) cell.cal.clone();
 				Date d;
 				int delta;
 				// Clear the previous interval
@@ -1148,7 +1192,7 @@ public class DateChooser extends Composite {
 	 * when an adjacent day is clicked in the grid.
 	 * <p>
 	 * This mode is <code>true</code> by default.
-	 * 
+	 *
 	 * @param autoChangeOnAdjacent true / false
 	 */
 	public void setAutoChangeOnAdjacent(boolean autoChangeOnAdjacent) {
@@ -1159,17 +1203,17 @@ public class DateChooser extends Composite {
 	 * Set the autoSelectOnFooter mode. If true, the today date is automatically
 	 * selected on the footer selection event.
 	 * This mode is <code>false</code> by default.
-	 * 
+	 *
 	 * @param autoselectOnFooter true /false
 	 */
 	public void setAutoSelectOnFooter(boolean autoselectOnFooter) {
 		checkWidget();
-		this.autoSelectOnFooter = autoselectOnFooter;
+		autoSelectOnFooter = autoselectOnFooter;
 	}
 
 	/**
 	 * Sets the colors of a grid cell in function of its current state.
-	 * 
+	 *
 	 * @param cell grid cell
 	 */
 	private void setCellColors(Cell cell) {
@@ -1181,19 +1225,29 @@ public class DateChooser extends Composite {
 			cell.label.setForeground(theme.todayForeground);
 		} else {
 			cell.label.setBackground(theme.dayCellBackground);
-			cell.label.setForeground(cell.adjacent != 0 ? theme.extraMonthForeground : (cell.weekend ? theme.weekendForeground : theme.dayCellForeground));
+			cell.label.setForeground(cell.adjacent != 0 ? theme.extraMonthForeground : cell.weekend ? theme.weekendForeground : theme.dayCellForeground);
 		}
+
+		// Now check for customs colors
+		final Date cellDate = cell.cal.getTime();
+		final Color custom = theme.getCustomColor(cellDate);
+		if (custom != null && !cell.selected) {
+			cell.label.setBackground(custom);
+		}
+		// set tooltip
+		cell.label.setToolTipText(theme.getCustomTootlip(cellDate));
 	}
 
 	/**
 	 * Sets a new month to display.
-	 * 
+	 *
 	 * @param month New month
 	 */
 	public void setCurrentMonth(Date month) {
 		checkWidget();
-		if (month == null)
+		if (month == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
 		if (currentMonthCal == null) {
 			currentMonthCal = Calendar.getInstance(locale);
 			currentMonthCal.setFirstDayOfWeek(firstDayOfWeek);
@@ -1210,7 +1264,7 @@ public class DateChooser extends Composite {
 	 * <p>
 	 * This method allows to change the default first day of the week set
 	 * from the locale. It must be called after <code>setLocale()</code>.
-	 * 
+	 *
 	 * @param firstDayOfWeek the given first day of the week.
 	 */
 	public void setFirstDayOfWeek(int firstDayOfWeek) {
@@ -1225,6 +1279,7 @@ public class DateChooser extends Composite {
 	 *
 	 * @return <code>true</code> if the control got focus, and <code>false</code> if it was unable to.
 	 */
+	@Override
 	public boolean setFocus() {
 		checkWidget();
 		if (super.setFocus()) {
@@ -1236,7 +1291,7 @@ public class DateChooser extends Composite {
 
 	/**
 	 * Sets the focus on the given cell, specified by index.
-	 * 
+	 *
 	 * @param index index of cell taking the focus
 	 */
 	private void setFocus(int index) {
@@ -1257,13 +1312,15 @@ public class DateChooser extends Composite {
 			}
 		}
 		if (index < 0) {
-			if (!navigationEnabled)
+			if (!navigationEnabled) {
 				return;
+			}
 			changeCurrentMonth(-1);
 			focusIndex = index + 42;
 		} else if (index >= 42) {
-			if (!navigationEnabled)
+			if (!navigationEnabled) {
 				return;
+			}
 			changeCurrentMonth(1);
 			focusIndex = index - 42;
 		} else {
@@ -1274,11 +1331,11 @@ public class DateChooser extends Composite {
 	/**
 	 * Sets the focus on the given date. The current displayed month is changed
 	 * if necessary.
-	 * 
+	 *
 	 * @param date date to set the focus on
 	 */
 	public void setFocusOnDate(Date date) {
-		Calendar dateCal = (Calendar) currentMonthCal.clone();
+		final Calendar dateCal = (Calendar) currentMonthCal.clone();
 		dateCal.setTime(date);
 		if (dateCal.get(Calendar.MONTH) != currentMonthCal.get(Calendar.MONTH) || dateCal.get(Calendar.YEAR) != currentMonthCal.get(Calendar.YEAR)) {
 			setCurrentMonth(date);
@@ -1289,7 +1346,7 @@ public class DateChooser extends Composite {
 	/**
 	 * Sets the focus on the today date. If autoselect is true, the today date
 	 * is selected.
-	 * 
+	 *
 	 * @param autoselect true to select automatically the today date, else false
 	 */
 	public void setFocusOnToday(boolean autoselect) {
@@ -1299,10 +1356,12 @@ public class DateChooser extends Composite {
 			setCurrentMonth(todayCal.getTime());
 		}
 		setFocus(NOFOCUS);
-		if (autoselect)
+		if (autoselect) {
 			select(focusIndex, 0);
-		if (isDisposed())
+		}
+		if (isDisposed()) {
 			return;
+		}
 		refreshDisplay();
 		redrawDec();
 	}
@@ -1312,12 +1371,13 @@ public class DateChooser extends Composite {
 	 * the font specified by the argument, or to the default font for that kind
 	 * of control if the argument is null.
 	 * <p>
-	 * 
+	 *
 	 * The new font is applied to all elements (labels) composing the calendar.
 	 * The width of cells is adjusted.
-	 * 
+	 *
 	 * @param font the new font (or null)
 	 */
+	@Override
 	public void setFont(Font font) {
 		checkWidget();
 		redrawInc();
@@ -1339,7 +1399,7 @@ public class DateChooser extends Composite {
 	/**
 	 * Sets the footer visible or not. The footer displays the today date. It is
 	 * not visible by default.
-	 * 
+	 *
 	 * @param footerVisible <code>true</code> to set footer visible, else <code>false</code>
 	 */
 	public void setFooterVisible(boolean footerVisible) {
@@ -1353,10 +1413,11 @@ public class DateChooser extends Composite {
 	/**
 	 * Sets the grid visible or not in the calendar popup. By default, the grid
 	 * is visible.
-	 * 
+	 *
 	 * @param gridVisible <code>true</code> to set grid visible, else <code>false</code>
 	 * @deprecated
 	 */
+	@Deprecated
 	public void setGridVisible(boolean gridVisible) {
 		setGridVisible(gridVisible ? GRID_FULL : GRID_NONE);
 	}
@@ -1364,7 +1425,7 @@ public class DateChooser extends Composite {
 	/**
 	 * Sets the grid visible or not. By default, the grid is visible. The
 	 * possible values are GRID_FULL, GRID_LINES and GRID_NONE.
-	 * 
+	 *
 	 * @param gridVisible grid visibility flag
 	 */
 	public void setGridVisible(int gridVisible) {
@@ -1404,6 +1465,7 @@ public class DateChooser extends Composite {
 	 *
 	 * @param layout the receiver's new layout or null
 	 */
+	@Override
 	public void setLayout(Layout layout) {
 		checkWidget();
 		return;
@@ -1412,13 +1474,14 @@ public class DateChooser extends Composite {
 	/**
 	 * Sets a new locale to use for calendar. Locale will define the names of
 	 * months and days, and the first day of week.
-	 * 
+	 *
 	 * @param locale new locale (must not be null)
 	 */
 	public void setLocale(Locale locale) {
 		checkWidget();
-		if (locale == null)
+		if (locale == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
 
 		this.locale = locale;
 
@@ -1430,7 +1493,7 @@ public class DateChooser extends Composite {
 		// Defines formats
 		df1 = new SimpleDateFormat("MMMM yyyy", locale); //$NON-NLS-1$
 		df2 = DateFormat.getDateInstance(DateFormat.SHORT, locale);
-		Calendar c = Calendar.getInstance(TimeZone.getDefault(), locale);
+		final Calendar c = Calendar.getInstance(TimeZone.getDefault(), locale);
 		firstDayOfWeek = c.getFirstDayOfWeek();
 		minimalDaysInFirstWeek = Integer.parseInt(resources.getString("minimalDaysInFirstWeek"));
 		if (currentMonthCal != null) {
@@ -1443,22 +1506,22 @@ public class DateChooser extends Composite {
 		}
 
 		// Sets the header menu items
-		String[] months = df1.getDateFormatSymbols().getMonths();
-		MenuItem[] items = monthsMenu.getItems();
+		final String[] months = df1.getDateFormatSymbols().getMonths();
+		final MenuItem[] items = monthsMenu.getItems();
 		for (int i = 0; i < 12; i++) {
 			items[i].setText(months[i]);
 		}
 
 		// Sets the grid header initials
 		redrawInc();
-		DateFormatSymbols symboles = df1.getDateFormatSymbols();
-		String[] sn = symboles.getShortWeekdays();
-		String[] ln = symboles.getWeekdays();
+		final DateFormatSymbols symboles = df1.getDateFormatSymbols();
+		final String[] sn = symboles.getShortWeekdays();
+		final String[] ln = symboles.getWeekdays();
 		int f = firstDayOfWeek;
 		for (int i = 1; i < headers.length; i++) {
 			headers[i].setText(sn[f].substring(0, 1).toUpperCase());
 			headers[i].setToolTipText(ln[f]);
-			f = (f % 7) + 1;
+			f = f % 7 + 1;
 		}
 
 		// Updates the footer
@@ -1476,7 +1539,7 @@ public class DateChooser extends Composite {
 	 * <p>
 	 * This method allows to change the default value set from the locale.
 	 * It must be called after <code>setLocale()</code>.
-	 * 
+	 *
 	 * @param minimalDaysInFirstWeek the given minimal days required in the first week of the year.
 	 */
 	public void setMinimalDaysInFirstWeek(int minimalDaysInFirstWeek) {
@@ -1487,7 +1550,7 @@ public class DateChooser extends Composite {
 
 	/**
 	 * Sets the header's navigation buttons visible or not.
-	 * 
+	 *
 	 * @param navigationEnabled true if enabled, false else
 	 */
 	public void setNavigationEnabled(boolean navigationEnabled) {
@@ -1507,21 +1570,23 @@ public class DateChooser extends Composite {
 	/**
 	 * Sets the selected date. The grid is refreshed to display the corresponding
 	 * month.
-	 * 
+	 *
 	 * @param date new selected date (must not be null)
 	 */
 	public void setSelectedDate(Date date) {
 		checkWidget();
-		if (date == null)
+		if (date == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
 
-		Calendar c = (Calendar) currentMonthCal.clone();
+		final Calendar c = (Calendar) currentMonthCal.clone();
 		c.setTime(date);
 		trunc(c);
-		Date d = c.getTime();
+		final Date d = c.getTime();
 		if (!selection.contains(d)) {
-			if (!multi)
+			if (!multi) {
 				clearSelection(false);
+			}
 			selection.add(d);
 		}
 		setCurrentMonth(d);
@@ -1529,19 +1594,20 @@ public class DateChooser extends Composite {
 
 	/**
 	 * Sets the theme to apply to the calendar.
-	 * 
+	 *
 	 * @param theme new theme (must not be null)
 	 */
 	public void setTheme(DateChooserTheme theme) {
 		checkWidget();
-		if (theme == null)
+		if (theme == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
 		this.theme = theme;
 		redrawInc();
 
 		// Border
-		this.setBackground(theme.borderBackground);
-		GridLayout layout = (GridLayout) this.getLayout();
+		setBackground(theme.borderBackground);
+		final GridLayout layout = (GridLayout) getLayout();
 		layout.marginWidth = theme.borderSize;
 		layout.marginHeight = theme.borderSize;
 
@@ -1585,16 +1651,17 @@ public class DateChooser extends Composite {
 	/**
 	 * Sets the today date.
 	 * <p>
-	 * 
+	 *
 	 * By default the today date is initialized to the current system date. But it
 	 * can be needed to adjust it for specifics needs.
-	 * 
+	 *
 	 * @param today today date (must not be null)
 	 */
 	public void setTodayDate(Date today) {
 		checkWidget();
-		if (today == null)
+		if (today == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
 		if (todayCal == null) {
 			todayCal = Calendar.getInstance(locale);
 			todayCal.setFirstDayOfWeek(firstDayOfWeek);
@@ -1609,7 +1676,7 @@ public class DateChooser extends Composite {
 	/**
 	 * Sets the weeks numbers visible or not. By default, the weeks are NOT
 	 * visible.
-	 * 
+	 *
 	 * @param weeksVisible <code>true</code> to set weeks visible, else <code>false</code>
 	 */
 	public void setWeeksVisible(boolean weeksVisible) {
@@ -1622,7 +1689,7 @@ public class DateChooser extends Composite {
 
 	/**
 	 * Truncate a given <code>Calendar</code>. The time fields are all set to 0.
-	 * 
+	 *
 	 * @param cal Calendar
 	 */
 	private void trunc(Calendar cal) {
