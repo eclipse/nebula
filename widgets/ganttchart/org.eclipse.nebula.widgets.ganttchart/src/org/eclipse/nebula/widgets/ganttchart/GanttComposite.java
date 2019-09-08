@@ -187,6 +187,9 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	// clone is made. It is critical it is never modified unless there is a reason for it.
 	private Calendar _mainCalendar;
 
+	// start calendar, is only used for reference internally
+	private Calendar _startCalendar;
+	
 	// end calendar, is only used for reference internally
 	private Calendar _endCalendar;
 
@@ -442,6 +445,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 		// by default, set today's date
 		setDate(_mainCalendar, true, false);
+		_startCalendar = (Calendar) _mainCalendar.clone();
 
 		// we don't really need a layout, but set one in any case
 		setLayout(new FillLayout());
@@ -785,7 +789,25 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 	 * @return Calendar
 	 */
 	public Calendar getRootEndCalendar() {
-		return _endCalendar;
+		    	Calendar end = (Calendar) getRootCalendar().clone();
+		    	for (int i = 0; i < _ganttEvents.size(); i++) {
+		    		GanttEvent event = (GanttEvent) _ganttEvents.get(i);
+					Calendar latestEndDate = event.getLatestEndDate();
+					if (latestEndDate.after(end)) {
+						end = latestEndDate;
+					}
+				}
+		        return end;
+	}
+	
+	/**
+	 * Returns the non-cloned root start calendar of the chart. DO NOT modify this outside of the chart. This method is
+	 * considered internal public and will be removed later.
+	 *
+	 * @return Calendar
+	 */
+	public Calendar getRootStartCalendar() {
+		return _startCalendar;
 	}
 
 	/**
