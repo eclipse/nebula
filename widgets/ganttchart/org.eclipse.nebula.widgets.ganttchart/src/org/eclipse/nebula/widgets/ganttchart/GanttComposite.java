@@ -3932,7 +3932,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 			// if it's a grouped event, get the location from our map to where it's drawn
 			if (groupedEvent && groupLocations.containsKey(ge.getGanttGroup())) {
-				yDrawPos = ((Integer) groupLocations.get(ge.getGanttGroup())).intValue();
+				yDrawPos = ((Integer) groupLocations.get(ge.getGanttGroup())).intValue() - _vScrollPos;
 			}
 
 			int fixedRowHeight = _fixedRowHeight;
@@ -3984,7 +3984,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			// sub-events in a grouped event type where the group has a fixed row height, we just set the yStart to the last yStart, which actually
 			// got through the above switch statement and had its start position calculated
 			if (!newGroup && groupedEvent) {
-				yDrawPos = ((Integer) groupLocations.get(ge.getGanttGroup())).intValue();
+				yDrawPos = ((Integer) groupLocations.get(ge.getGanttGroup())).intValue() - _vScrollPos;
 			}
 
 			if (fixedHeight) {
