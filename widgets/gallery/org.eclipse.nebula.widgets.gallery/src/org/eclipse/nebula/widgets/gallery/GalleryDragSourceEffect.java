@@ -50,7 +50,7 @@ public class GalleryDragSourceEffect extends DragSourceEffect {
 	 */
 	public void dragStart(DragSourceEvent event) {
 		GalleryItem[] selection = g.getSelection();
-		if (selection != null) {
+		if (selection != null && selection.length > 0) {
 			Image img = selection[0].getImage();
 			if (img != null) {
 				event.image = img;
