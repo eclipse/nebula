@@ -6020,15 +6020,10 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			temp.set(Calendar.DAY_OF_MONTH, 1);
 		}
 
-		final long daysBetween = DateHelper.daysBetween(temp, date);
+		final long secondsBetween = DateHelper.secondsBetween(temp.getTime(), date.getTime(), false, false);
 		final int dw = getDayWidth();
-
-		int extra = 0;
-		if (_drawToMinute && (_currentView != ISettings.VIEW_DAY || _currentView != ISettings.VIEW_MINUTE)) {
-			extra = calculateMinuteAdjustment(date);
-		}
-
-		return _mainBounds.x + (int) daysBetween * dw + extra;
+		final float pps = dw / (24f * 60f * 60f);
+		return _mainBounds.x + (int) (secondsBetween * pps);
 	}
 
 	private int getXLengthForEventHours(final GanttEvent event) {
@@ -6041,17 +6036,15 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 			return getXLengthForEventHours(event);
 		}
 
-		// +1 as it's the end date and we include the last day (by default anyway, users may override this)
-		int extra = getDayWidth() * _daysToAppendForEndOfDay;
-		if (_drawToMinute && (_currentView != ISettings.VIEW_DAY || _currentView != ISettings.VIEW_MINUTE)) {
-			extra -= getDayWidth() - calculateMinuteAdjustment(event.getActualEndDate());
-			// also subtract the shift that comes from the starting point
-			extra -= calculateMinuteAdjustment(event.getActualStartDate());
-		}
 
+		final int secondsBetweenStartAndEnd = DateHelper.secondsBetween(event.getActualStartDate().getTime(), event.getActualEndDate().getTime(), false, false);
+
+		final int dw = this.getDayWidth();
+		final float pps = dw / (24f * 60f * 60f);
+
+		final int result = (int) (secondsBetweenStartAndEnd * pps);
+		
 		// ensure there is never a negative value
-		final int result = event.getDaysBetweenStartAndEnd() * getDayWidth() + extra;
-
 		return result > 0 ? result : 1;
 	}
 
