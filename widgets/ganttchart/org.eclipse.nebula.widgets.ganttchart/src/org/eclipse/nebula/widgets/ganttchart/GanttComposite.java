@@ -4394,12 +4394,16 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 				final Rectangle rect = getFirstStub(connection);
 				int x = rect.x;
 				int y = rect.y;
+				
+				// fix for bug 373090
+				// minimum distance between two events to draw ms project style connections correctly
+				final int deltaX = 15;
 
 				final boolean aboveUs = ge2.getY() < ge1.getY();
 				final boolean belowUs = ge2.getY() > ge1.getY();
 				final boolean sameRow = ge2.getY() == ge1.getY();
 				final boolean targetIsOnLeft = ge2.getXEnd() < ge1.getX();
-				final boolean targetIsOnRight = ge2.getX() > ge1.getXEnd();
+				final boolean targetIsOnRight = ge2.getX() > ge1.getXEnd() + deltaX;
 
 				final Rectangle bounds1 = ge1.getBounds();
 				final Rectangle bounds2 = ge2.getBounds();
@@ -4407,7 +4411,7 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 				bounds1.y = bounds2.y;
 				final boolean eventsOverlap = bounds1.intersects(bounds2);
 				final boolean targetIsOnLeftBorder = ge2.getXEnd() == ge1.getX();
-				final boolean targetIsOnRightBorder = ge2.getX() == ge1.getXEnd();
+				final boolean targetIsOnRightBorder = ge2.getX() - ge1.getXEnd() < deltaX;
 
 				final int neg = 8;
 
