@@ -388,7 +388,8 @@ public class VTracker implements DisposeListener {
 				event.widget.notifyListeners(SWT.FocusIn, event);
 			}
 		}
-		if(oldFocus != null && !oldFocus.isSameWidgetAs(newFocus)) {
+		if((newFocus == null || !(newFocus instanceof VButton) || ((VButton)newFocus).getParent().getData("PickerPart") == null) //$NON-NLS-1$
+				&& (oldFocus != null && !oldFocus.isSameWidgetAs(newFocus))) {
 			Widget widget = oldFocus.getWidget();
 			if(widget.getData("cwt_focus") != null) { //$NON-NLS-1$
 				widget.setData("cwt_focus", null); //$NON-NLS-1$
