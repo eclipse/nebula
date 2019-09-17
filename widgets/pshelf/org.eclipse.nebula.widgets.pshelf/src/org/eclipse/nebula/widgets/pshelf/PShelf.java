@@ -644,6 +644,19 @@ public class PShelf extends Canvas {
         removeListener(SWT.DefaultSelection,listener);  
     }
     
+	/**
+	 * Removes all PShelfItems.
+	 */
+	public void removeAll() {
+		checkWidget();
+
+		// dispose widgets (also removes from items)
+		while (!items.isEmpty())
+			((PShelfItem) items.get(0)).dispose();
+
+		onResize();
+	}
+    
     /**
      * Sets the speed of animation.
      * This value indicates the relative growing/shrinking value for one step.
