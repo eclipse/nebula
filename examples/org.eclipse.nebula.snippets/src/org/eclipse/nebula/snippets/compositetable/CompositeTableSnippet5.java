@@ -48,33 +48,29 @@ public class CompositeTableSnippet5 {
 		new Name("B", "Shingar")
 	};
 	
-	static class Opposite implements Comparator {
-		private Comparator c;
-		public Opposite(Comparator c) {
+	static class Opposite implements Comparator<Name> {
+		private Comparator<Name> c;
+		public Opposite(Comparator<Name> c) {
 			this.c = c;
 		}
-		public int compare(Object o1, Object o2) {
+		public int compare(Name o1, Name o2) {
 			return -1 * c.compare(o1, o2);
 		}
 	}
 	
-	static final Comparator firstNameAscending = new Comparator() {
-		public int compare(Object o1, Object o2) {
-			Name name1 = (Name) o1;
-			Name name2 = (Name) o2;
+	static final Comparator<Name> firstNameAscending = new Comparator<Name>() {
+		public int compare(Name name1, Name name2) {
 			return name1.first.compareToIgnoreCase(name2.first);
 		};
 	};
-	static final Comparator firstNameDescending = new Opposite(firstNameAscending);
+	static final Comparator<Name> firstNameDescending = new Opposite(firstNameAscending);
 
-	static final Comparator lastNameAscending = new Comparator() {
-		public int compare(Object o1, Object o2) {
-			Name name1 = (Name) o1;
-			Name name2 = (Name) o2;
+	static final Comparator<Name> lastNameAscending = new Comparator<Name>() {
+		public int compare(Name name1, Name name2) {
 			return name1.last.compareToIgnoreCase(name2.last);
 		};
 	};
-	static final Comparator lastNameDescending = new Opposite(lastNameAscending);
+	static final Comparator<Name> lastNameDescending = new Opposite(lastNameAscending);
 
     /*
  	 * Define our header and row objects.  For convenience, we use
@@ -94,7 +90,7 @@ public class CompositeTableSnippet5 {
 		}
 		
 		protected boolean sortOnColumn(int column, int sortDirection) {
-			Comparator comparator = null;
+			Comparator<Name> comparator = null;
             
 			if (column == 0) {
 				if (sortDirection == SWT.DOWN) {
