@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Control;
  * arbitrary row control with values on demand.
  * @author djo
  */
+@FunctionalInterface
 public interface IRowContentProvider {
 
 	/**

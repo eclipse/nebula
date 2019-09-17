@@ -43,8 +43,6 @@ public class TestCompositeTableInVE {
      * @param args
      */
     public static void main(String[] args) {
-        // TODO Auto-generated method stub
-
         /* Before this is run, be sure to set up the launch configuration (Arguments->VM Arguments)
          * for the correct SWT library path in order to run with the SWT dlls. 
          * The dlls are located in the SWT plugin jar.  

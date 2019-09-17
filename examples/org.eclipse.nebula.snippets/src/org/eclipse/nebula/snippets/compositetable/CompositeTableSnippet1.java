@@ -22,54 +22,45 @@ public class CompositeTableSnippet1 {
 	private static class Name {
 		public final String first;
 		public final String last;
+
 		public Name(String first, String last) {
 			this.first = first;
 			this.last = last;
 		}
 	}
-	
-	static Name[] swtCommitters = new Name[] {
-		new Name("Grant", "Gayed"),
-		new Name("Veronika", "Irvine"),
-		new Name("Steve", "Northover"),
-		new Name("Mike", "Wilson"),
-		new Name("Christophe", "Cornu"),
-		new Name("Lynne", "Kues"),
-		new Name("Silenio", "Quarti"),
-		new Name("Tod", "Creasey"),
-		new Name("Felipe", "Heidrich"),
-		new Name("Billy", "Biggs"),
-		new Name("B", "Shingar")
-	};
+
+	static Name[] swtCommitters = new Name[] { new Name("Grant", "Gayed"), new Name("Veronika", "Irvine"), new Name("Steve", "Northover"), new Name("Mike", "Wilson"), new Name("Christophe", "Cornu"), new Name("Lynne", "Kues"),
+			new Name("Silenio", "Quarti"), new Name("Tod", "Creasey"), new Name("Felipe", "Heidrich"), new Name("Billy", "Biggs"), new Name("B", "Shingar") };
 
 	// Now, define the table's header and row objects
 	//
-	// A tabular layout is desired, so no layout manager is needed on the header 
-	// or row.  CompositeTable will handle the layout automatically.  However,
+	// A tabular layout is desired, so no layout manager is needed on the header
+	// or row. CompositeTable will handle the layout automatically. However,
 	// if you supply a layout manager, CompositeTable will respect and use it.
-	
+
 	private static class Header extends Composite {
 		public Header(Composite parent, int style) {
 			super(parent, style);
-            setLayout(new GridRowLayout(new int[] { 160, 100 }, false));
+			setLayout(new GridRowLayout(new int[] { 160, 100 }, false));
 			new Label(this, SWT.NULL).setText("First Name");
 			new Label(this, SWT.NULL).setText("Last Name");
 		}
 	}
-	
+
 	private static class Row extends Composite {
 		public Row(Composite parent, int style) {
 			super(parent, style);
-            setLayout(new GridRowLayout(new int[] { 160, 100 }, false));
+			setLayout(new GridRowLayout(new int[] { 160, 100 }, false));
 			firstName = new Text(this, SWT.NULL);
 			lastName = new Text(this, SWT.NULL);
 		}
+
 		public final Text firstName;
 		public final Text lastName;
 	}
-	
+
 	// Where it all starts...
-	
+
 	public static void main (String [] args) {
 	    Display display = new Display ();
 	    Shell shell = new Shell (display);
@@ -83,12 +74,10 @@ public class CompositeTableSnippet1 {
 	    table.setNumRowsInCollection(swtCommitters.length);
 	    
 	    // Note the JFace-like virtual table API
-	    table.addRowContentProvider(new IRowContentProvider() {
-			public void refresh(CompositeTable sender, int currentObjectOffset, Control rowControl) {
+	    table.addRowContentProvider((sender,currentObjectOffset,rowControl) -> {
 				Row row = (Row) rowControl;
 				row.firstName.setText(swtCommitters[currentObjectOffset].first);
 				row.lastName.setText(swtCommitters[currentObjectOffset].last);
-			}
 	    });
 	    
 	    shell.setSize(500, 150);
