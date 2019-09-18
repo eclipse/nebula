@@ -123,6 +123,15 @@ public class GanttConnection implements Cloneable {
 		_parent.connectionRemoved(this);
 	}
 	
+	
+	/**
+	 * Set the parent composite
+	 * @param _parent
+	 */
+	void setParentComposite(GanttComposite _parent) {
+		this._parent = _parent;
+	}
+
 	/**
 	 * Clones the GanttConnection (and adds the clone to the parent)
 	 */

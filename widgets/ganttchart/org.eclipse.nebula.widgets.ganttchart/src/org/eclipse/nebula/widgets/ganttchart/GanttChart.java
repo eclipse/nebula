@@ -199,15 +199,7 @@ public class GanttChart extends Composite {
 				&& (style & GanttFlags.H_SCROLL_INFINITE) == 0) {
 			styleToUse |= GanttFlags.H_SCROLL_INFINITE;
 		}
-		
-		if (_settings != null) {
-			if (_settings.allowInfiniteHorizontalScrollBar()) {
-				styleToUse |= GanttFlags.H_SCROLL_INFINITE;
-			} else {
-				styleToUse |= ~GanttFlags.H_SCROLL_INFINITE;
-			}
-		}
-		
+
 		_style = styleToUse;
 		_settings = settings;
 		_colorManager = colorManager;
@@ -243,14 +235,6 @@ public class GanttChart extends Composite {
 		// if no scrollbar is set, set one
 		if ((style & GanttFlags.H_SCROLL_FIXED_RANGE) == 0 && (style & GanttFlags.H_SCROLL_NONE) == 0 && (style & GanttFlags.H_SCROLL_INFINITE) == 0) {
 		    styleToUse |= GanttFlags.H_SCROLL_INFINITE;
-		}
-		
-		if (_settings != null) {
-			if (_settings.allowInfiniteHorizontalScrollBar()) {
-				styleToUse |= GanttFlags.H_SCROLL_INFINITE;
-			} else {
-				styleToUse |= ~GanttFlags.H_SCROLL_INFINITE;
-			}
 		}
 		
 		_style = styleToUse;
