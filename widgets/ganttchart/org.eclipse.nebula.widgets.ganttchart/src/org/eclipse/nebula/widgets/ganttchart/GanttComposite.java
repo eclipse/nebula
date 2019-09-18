@@ -5863,6 +5863,12 @@ public final class GanttComposite extends Canvas implements MouseListener, Mouse
 
 			final long viewPortStart = temp.getTimeInMillis();
 			if (_daysVisible == 0) {
+				if (_endCalendar == null) {
+					// May happen when the widget is about to be created and not visible
+					if (_endCalendar==null) {
+						return Constants.EVENT_NOT_VISIBLE;
+					}
+				}
 				temp.setTime(_endCalendar.getTime());
 			} else {
 				temp.add(Calendar.DATE, _daysVisible);
