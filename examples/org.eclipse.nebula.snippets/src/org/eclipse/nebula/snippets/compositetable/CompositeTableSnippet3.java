@@ -1,13 +1,12 @@
 package org.eclipse.nebula.snippets.compositetable;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.nebula.widgets.compositetable.CompositeTable;
 import org.eclipse.nebula.widgets.compositetable.DeleteAdapter;
 import org.eclipse.nebula.widgets.compositetable.GridRowLayout;
 import org.eclipse.nebula.widgets.compositetable.IInsertHandler;
-import org.eclipse.nebula.widgets.compositetable.IRowContentProvider;
 import org.eclipse.nebula.widgets.compositetable.RowFocusAdapter;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
