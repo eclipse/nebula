@@ -11,8 +11,6 @@ public class TestCompositeTableInVE {
 
     private Shell sShell = null;  //  @jve:decl-index=0:visual-constraint="10,10"
     private CompositeTable compositeTable = null;
-    private Header header = null;
-    private Row row = null;
     /**
      * This method initializes compositeTable	
      *
@@ -28,7 +26,7 @@ public class TestCompositeTableInVE {
      *
      */
     private void createHeader() {
-        header = new Header(compositeTable, SWT.NONE);
+         new Header(compositeTable, SWT.NONE);
     }
 
     /**
@@ -36,7 +34,7 @@ public class TestCompositeTableInVE {
      *
      */
     private void createRow() {
-        row = new Row(compositeTable, SWT.NONE);
+       new Row(compositeTable, SWT.NONE);
     }
 
     /**
@@ -52,6 +50,7 @@ public class TestCompositeTableInVE {
         Display display = Display.getDefault();
         TestCompositeTableInVE thisClass = new TestCompositeTableInVE();
         thisClass.createSShell();
+        thisClass.sShell.layout();
         thisClass.sShell.open();
         while (!thisClass.sShell.isDisposed()) {
             if (!display.readAndDispatch())
