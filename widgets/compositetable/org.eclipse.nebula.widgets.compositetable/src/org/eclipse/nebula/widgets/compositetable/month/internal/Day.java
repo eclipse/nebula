@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     The Pampered Chef - initial API and implementation
+ * The Pampered Chef - initial API and implementation
  ******************************************************************************/
 package org.eclipse.nebula.widgets.compositetable.month.internal;
 
@@ -48,12 +48,17 @@ import org.eclipse.swt.widgets.Label;
  */
 public class Day extends Canvas implements PaintListener, DisposeListener {
 	private final Color FOCUS_RUBBERBAND;
+	private final Color NONACTIVE_FOCUS_RUBBERBAND;
 	private Color CURRENT_MONTH;
 	private Color OTHER_MONTH;
 	private Color CELL_BACKGROUND_LIGHT;
-	
+
 	private static final int FOCUS_LINE_WIDTH = 2;
-	private boolean focusControl = false;
+
+	public static final int NONACTIVE_FOCUS = -1;
+	public static final int FOCUS = 0;
+	public static final int NO_FOCUS = 1;
+	private int focusState = NO_FOCUS;
 
 	private static final int _SIZE_MULTIPLIER = 7;
 	private Label dayNumber = null;
@@ -61,22 +66,23 @@ public class Day extends Canvas implements PaintListener, DisposeListener {
 	private Point textBounds;
 
 	private Point monthPosition = null;
-	
+
 	/**
 	 * @param parent
 	 * @param style
 	 */
 	public Day(Composite parent, int style) {
 		super(parent, style);
-		
+
 		Display display = Display.getCurrent();
 		FOCUS_RUBBERBAND = new Color(display, lighten(saturate(display.getSystemColor(SWT.COLOR_TITLE_BACKGROUND).getRGB(), .85f), -.333f));
+		NONACTIVE_FOCUS_RUBBERBAND = new Color(display, lighten(saturate(display.getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND).getRGB(), .0f), -.333f));
 		CURRENT_MONTH = display.getSystemColor(SWT.COLOR_WHITE);
 		OTHER_MONTH = new Color(display, new RGB(230, 230, 230));
 		CELL_BACKGROUND_LIGHT = new Color(display, new RGB(248, 248, 248));
-		
+
 		initialize();
-		
+
 		addTraverseListener(traverseListener);
 		addKeyListener(keyListener);
 		addMouseListener(mouseListener);
@@ -86,7 +92,7 @@ public class Day extends Canvas implements PaintListener, DisposeListener {
 		addPaintListener(this);
 		addDisposeListener(this);
 	}
-	
+
 	/**
 	 * Sets the color's saturation to the specified value.
 	 * 
@@ -98,7 +104,7 @@ public class Day extends Canvas implements PaintListener, DisposeListener {
 		float[] hsb = color.getHSB();
 		return new RGB(hsb[0], saturation, hsb[2]);
 	}
-	
+
 	/**
 	 * @param color The RGB of the color
 	 * @param amount The amount to lighten as a percentage expresssed as a float between -1 and 1.
@@ -107,19 +113,24 @@ public class Day extends Canvas implements PaintListener, DisposeListener {
 	private RGB lighten(RGB color, float amount) {
 		float[] hsb = color.getHSB();
 		float b = hsb[2] + hsb[2] * amount;
-		if (b < 0) b=0;
-		if (b > 1) b=1;
+		if (b < 0)
+			b = 0;
+		if (b > 1)
+			b = 1;
 		return new RGB(hsb[0], hsb[1], b);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
 	 */
 	public void widgetDisposed(DisposeEvent e) {
 		FOCUS_RUBBERBAND.dispose();
+		NONACTIVE_FOCUS_RUBBERBAND.dispose();
 		OTHER_MONTH.dispose();
 		CELL_BACKGROUND_LIGHT.dispose();
-		
+
 		removeTraverseListener(traverseListener);
 		removeKeyListener(keyListener);
 		removeMouseListener(mouseListener);
@@ -143,20 +154,16 @@ public class Day extends Canvas implements PaintListener, DisposeListener {
 		gridData.verticalAlignment = GridData.CENTER;
 		spacer = new Label(this, SWT.NONE);
 		spacer.setLayoutData(gridData);
-		spacer.setBackground(Display.getCurrent().getSystemColor(
-				SWT.COLOR_LIST_BACKGROUND));
+		spacer.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 2;
 		gridLayout.verticalSpacing = 0;
 		dayNumber = new Label(this, SWT.NONE);
-		dayNumber.setBackground(Display.getCurrent().getSystemColor(
-				SWT.COLOR_LIST_BACKGROUND));
-		dayNumber.setForeground(Display.getCurrent().getSystemColor(
-				SWT.COLOR_LIST_SELECTION));
+		dayNumber.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+		dayNumber.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_LIST_SELECTION));
 		dayNumber.setText("31");
 		textBounds = dayNumber.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-		this.setBackground(Display.getCurrent().getSystemColor(
-				SWT.COLOR_LIST_BACKGROUND));
+		this.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 		this.setLayout(gridLayout);
 		setSize(new org.eclipse.swt.graphics.Point(106, 101));
 		setBackground(CELL_BACKGROUND_LIGHT);
@@ -175,14 +182,14 @@ public class Day extends Canvas implements PaintListener, DisposeListener {
 	public Point getMonthPosition() {
 		return monthPosition;
 	}
-	
+
 	/**
 	 * @param monthPosition The (day, week) of this day in the month.
 	 */
 	public void setMonthPosition(Point monthPosition) {
 		this.monthPosition = monthPosition;
 	}
-	
+
 	/**
 	 * @return The day's number
 	 */
@@ -197,64 +204,74 @@ public class Day extends Canvas implements PaintListener, DisposeListener {
 		dayNumber.setText(Integer.toString(dayNum));
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.swt.events.PaintListener#paintControl(org.eclipse.swt.events.PaintEvent)
 	 */
 	public void paintControl(PaintEvent e) {
 		GC gc = e.gc;
-		
+
 		// Save stuff we're about to change so we can restore it later
 		int oldLineStyle = gc.getLineStyle();
 		int oldLineWidth = gc.getLineWidth();
-		
+
 		// Draw focus rubberband if we're focused
 		try {
-			if (focusControl) {
+			if (focusState != Day.NO_FOCUS) {
+				if (focusState == Day.NONACTIVE_FOCUS) {
+					gc.setForeground(NONACTIVE_FOCUS_RUBBERBAND);
+				} else {
+					gc.setForeground(FOCUS_RUBBERBAND);
+				}
 				gc.setLineStyle(SWT.LINE_DASH);
 				gc.setLineWidth(FOCUS_LINE_WIDTH);
-				gc.setForeground(FOCUS_RUBBERBAND);
 				Point parentSize = getSize();
-				gc.drawRectangle(FOCUS_LINE_WIDTH,
-						FOCUS_LINE_WIDTH, parentSize.x - 4,
-						parentSize.y - 3);
+				gc.drawRectangle(FOCUS_LINE_WIDTH, FOCUS_LINE_WIDTH, parentSize.x - 4, parentSize.y - 3);
 			}
 		} finally {
 			gc.setLineStyle(oldLineStyle);
 			gc.setLineWidth(oldLineWidth);
 		}
 	}
-	
-	private LinkedList mouseListeners = new LinkedList();
-	
-	/* (non-Javadoc)
+
+	private LinkedList<MouseListener> mouseListeners = new LinkedList<>();
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.swt.widgets.Control#addMouseListener(org.eclipse.swt.events.MouseListener)
 	 */
 	public void addMouseListener(MouseListener listener) {
 		super.addMouseListener(listener);
-		if (listener != mouseListener) mouseListeners.add(listener);
+		if (listener != mouseListener)
+			mouseListeners.add(listener);
 	}
-	
+
 	public void removeMouseListener(MouseListener listener) {
 		super.removeMouseListener(listener);
-		if (listener != mouseListener) mouseListeners.remove(listener);
+		if (listener != mouseListener)
+			mouseListeners.remove(listener);
 	}
 
 	private MouseListener mouseListener = new MouseListener() {
 		public void mouseDown(MouseEvent e) {
 			setFocus();
-			for (Iterator i = mouseListeners.iterator(); i.hasNext();) {
+			for (Iterator<MouseListener> i = mouseListeners.iterator(); i.hasNext();) {
 				MouseListener listener = (MouseListener) i.next();
 				listener.mouseDown(e);
 			}
 		}
+
 		public void mouseUp(MouseEvent e) {
-			for (Iterator i = mouseListeners.iterator(); i.hasNext();) {
+			for (Iterator<MouseListener> i = mouseListeners.iterator(); i.hasNext();) {
 				MouseListener listener = (MouseListener) i.next();
 				listener.mouseUp(e);
 			}
 		}
+
 		public void mouseDoubleClick(MouseEvent e) {
-			for (Iterator i = mouseListeners.iterator(); i.hasNext();) {
+			for (Iterator<MouseListener> i = mouseListeners.iterator(); i.hasNext();) {
 				MouseListener listener = (MouseListener) i.next();
 				listener.mouseDoubleClick(e);
 			}
@@ -264,23 +281,23 @@ public class Day extends Canvas implements PaintListener, DisposeListener {
 	private KeyListener keyListener = new KeyAdapter() {
 		public void keyPressed(KeyEvent e) {
 			switch (e.keyCode) {
-			case SWT.ARROW_LEFT:
-				if (monthPosition.x > 0) {
-					traverse(SWT.TRAVERSE_TAB_PREVIOUS);
-				}
-				return;
-			case SWT.ARROW_RIGHT:
-				if (monthPosition.x < 6) {
-					traverse(SWT.TRAVERSE_TAB_NEXT);
-				}
-				return;
-			case SWT.TAB:
-				if ((e.stateMask & SWT.SHIFT) != 0) {
-					traverse(SWT.TRAVERSE_TAB_PREVIOUS);
+				case SWT.ARROW_LEFT:
+					if (monthPosition.x > 0) {
+						traverse(SWT.TRAVERSE_TAB_PREVIOUS);
+					}
 					return;
-				}
-				traverse(SWT.TRAVERSE_TAB_NEXT);
-				return;
+				case SWT.ARROW_RIGHT:
+					if (monthPosition.x < 6) {
+						traverse(SWT.TRAVERSE_TAB_NEXT);
+					}
+					return;
+				case SWT.TAB:
+					if ((e.stateMask & SWT.SHIFT) != 0) {
+						traverse(SWT.TRAVERSE_TAB_PREVIOUS);
+						return;
+					}
+					traverse(SWT.TRAVERSE_TAB_NEXT);
+					return;
 			}
 		}
 	};
@@ -293,26 +310,26 @@ public class Day extends Canvas implements PaintListener, DisposeListener {
 			// NOOP: this just lets us receive focus from SWT
 		}
 	};
-	
+
 	/**
 	 * When we gain/lose focus, redraw ourselves appropriately
 	 */
 	private FocusListener focusListener = new FocusListener() {
 		public void focusGained(FocusEvent e) {
-			focusControl = true;
+			focusState = Day.FOCUS;
 			Color background = getBackgroundTakingIntoAccountIfWeAreInTheCurrentMonth(true);
 			resetAllBackgrounds(Day.this, background);
 			redraw();
 		}
 
 		public void focusLost(FocusEvent e) {
-			focusControl = false;
+			focusState = Day.NONACTIVE_FOCUS;
 			Color background = getBackgroundTakingIntoAccountIfWeAreInTheCurrentMonth(false);
 			resetAllBackgrounds(Day.this, background);
 			redraw();
 		}
 	};
-	
+
 	private void resetAllBackgrounds(Composite composite, Color color) {
 		composite.setBackground(color);
 		Control[] children = composite.getChildren();
@@ -324,7 +341,7 @@ public class Day extends Canvas implements PaintListener, DisposeListener {
 			}
 		}
 	}
-	
+
 	private Color getBackgroundTakingIntoAccountIfWeAreInTheCurrentMonth(boolean focused) {
 		if (inCurrentMonth && focused) {
 			return CURRENT_MONTH;
@@ -334,9 +351,9 @@ public class Day extends Canvas implements PaintListener, DisposeListener {
 		}
 		return OTHER_MONTH;
 	}
-	
+
 	private boolean inCurrentMonth = false;
-	
+
 	/**
 	 * @param inCurrentMonth
 	 */
@@ -345,7 +362,7 @@ public class Day extends Canvas implements PaintListener, DisposeListener {
 		Color background = getBackgroundTakingIntoAccountIfWeAreInTheCurrentMonth(false);
 		resetAllBackgrounds(this, background);
 	}
-	
+
 	private CalendarableItem[] controls = null;
 
 	/**
@@ -371,14 +388,14 @@ public class Day extends Canvas implements PaintListener, DisposeListener {
 			control.setToolTipText(this.controls[i].getToolTipText());
 			control.addMouseListener(mouseListener);
 			GridData gd = new GridData(SWT.FILL, SWT.TOP, true, false);
-			gd.horizontalSpan=2;
+			gd.horizontalSpan = 2;
 			control.setLayoutData(gd);
 			this.controls[i].setControl(control);
 		}
 	}
 
 	private Date date;
-	
+
 	/**
 	 * Sets the Date represented by this Day.
 	 * 
@@ -387,7 +404,7 @@ public class Day extends Canvas implements PaintListener, DisposeListener {
 	public void setDate(Date date) {
 		this.date = date;
 	}
-	
+
 	/**
 	 * Returns the Date represented by this Day.
 	 * 
@@ -395,6 +412,19 @@ public class Day extends Canvas implements PaintListener, DisposeListener {
 	 */
 	public Date getDate() {
 		return date;
+	}
+
+	public int getFocusState() {
+		return focusState;
+	}
+
+	public void setFocusState(int focusState) {
+		if (focusState > 0)
+			this.focusState = NO_FOCUS;
+		else if (focusState < 0)
+			this.focusState = NONACTIVE_FOCUS;
+		else
+			this.focusState = FOCUS;
 	}
 
 } // @jve:decl-index=0:visual-constraint="10,10"
