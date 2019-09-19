@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthew Hall - initial API and implementation
  */
@@ -27,7 +27,6 @@ import org.eclipse.swt.printing.PrinterData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
@@ -61,27 +60,23 @@ public class GridPrintCellClippingAllowClipFirstRow {
 		preview.setPrintJob(job);
 		next.setEnabled(preview.getPageCount() > 1);
 
-		Listener listener = new Listener() {
-			public void handleEvent(Event event) {
-				int newIndex = preview.getPageIndex();
-				if (event.widget == prev)
-					newIndex--;
-				else
-					newIndex++;
-				preview.setPageIndex(newIndex);
-				prev.setEnabled(newIndex > 0);
-				next.setEnabled(newIndex < preview.getPageCount() - 1);
-			}
+		Listener listener = event -> {
+			int newIndex = preview.getPageIndex();
+			if (event.widget == prev)
+				newIndex--;
+			else
+				newIndex++;
+			preview.setPageIndex(newIndex);
+			prev.setEnabled(newIndex > 0);
+			next.setEnabled(newIndex < preview.getPageCount() - 1);
 		};
 		prev.addListener(SWT.Selection, listener);
 		next.addListener(SWT.Selection, listener);
 
-		print.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				PrinterData printerData = new PrintDialog(shell).open();
-				if (printerData != null) {
-					PaperClips.print(job, printerData);
-				}
+		print.addListener(SWT.Selection, event -> {
+			PrinterData printerData = new PrintDialog(shell).open();
+			if (printerData != null) {
+				PaperClips.print(job, printerData);
 			}
 		});
 

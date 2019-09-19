@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthew Hall - initial API and implementation
  */
@@ -21,7 +21,7 @@ import org.eclipse.swt.graphics.GC;
 
 /**
  * A Print which displays its child Prints on top each other.
- * 
+ *
  * @author Matthew Hall
  */
 public class LayerPrint implements Print {
@@ -31,7 +31,7 @@ public class LayerPrint implements Print {
 	public static final int DEFAULT_ALIGN = SWT.LEFT;
 
 	// List<LayerEntry>
-	final List entries = new ArrayList();
+	final List<LayerEntryImpl> entries = new ArrayList<>();
 
 	/**
 	 * Constructs a new LayerPrint.
@@ -41,7 +41,7 @@ public class LayerPrint implements Print {
 
 	/**
 	 * Adds the given Print to this LayerPrint using the default alignment.
-	 * 
+	 *
 	 * @param print
 	 *            the Print to add.
 	 * @see #DEFAULT_ALIGN
@@ -52,7 +52,7 @@ public class LayerPrint implements Print {
 
 	/**
 	 * Adds the given Print to this LayerPrint using the specified alignment.
-	 * 
+	 *
 	 * @param print
 	 *            the Print to add.
 	 * @param align
@@ -63,6 +63,7 @@ public class LayerPrint implements Print {
 		entries.add(new LayerEntryImpl(print, align));
 	}
 
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -70,6 +71,7 @@ public class LayerPrint implements Print {
 		return result;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -88,11 +90,11 @@ public class LayerPrint implements Print {
 
 	/**
 	 * Returns an array of entries in this LayerPrint.
-	 * 
+	 *
 	 * @return an array of entries in this LayerPrint.
 	 */
 	public LayerEntry[] getEntries() {
-		return (LayerEntry[]) entries.toArray(new LayerEntry[entries.size()]);
+		return entries.toArray(new LayerEntry[entries.size()]);
 	}
 
 	public PrintIterator iterator(Device device, GC gc) {

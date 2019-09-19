@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthew Hall - initial API and implementation
  */
@@ -39,7 +39,7 @@ import org.eclipse.swt.graphics.Point;
  * cause the total page count to be incorrect on some pages. At this time there
  * is no known fix. If wrapping a PagePrint is unavoidable, consider using a
  * custom PageNumberFormat which does not display the total page count.
- * 
+ *
  * @author Matthew Hall
  */
 public class PagePrint implements Print {
@@ -53,7 +53,7 @@ public class PagePrint implements Print {
 
 	/**
 	 * Constructs a PagePrint with the given header and body.
-	 * 
+	 *
 	 * @param header
 	 *            a PageDecoration for creating the header. May be null.
 	 * @param headerGap
@@ -67,7 +67,7 @@ public class PagePrint implements Print {
 
 	/**
 	 * Constructs a PagePrint with the given header and body.
-	 * 
+	 *
 	 * @param body
 	 *            the Print being decorated.
 	 * @param header
@@ -79,7 +79,7 @@ public class PagePrint implements Print {
 
 	/**
 	 * Constructs a PagePrint with the given body.
-	 * 
+	 *
 	 * @param body
 	 *            the Print being decorated.
 	 */
@@ -89,7 +89,7 @@ public class PagePrint implements Print {
 
 	/**
 	 * Constructs a PagePrint with the given body and footer.
-	 * 
+	 *
 	 * @param body
 	 *            the Print being decorated.
 	 * @param footer
@@ -101,7 +101,7 @@ public class PagePrint implements Print {
 
 	/**
 	 * Constructs a PagePrint with the given body, header and footer.
-	 * 
+	 *
 	 * @param body
 	 *            the Print being decorated.
 	 * @param footerGap
@@ -115,7 +115,7 @@ public class PagePrint implements Print {
 
 	/**
 	 * Constructs a PagePrint with the given body, header and footer.
-	 * 
+	 *
 	 * @param header
 	 *            a PageDecoration for creating the header. May be null.
 	 * @param body
@@ -129,7 +129,7 @@ public class PagePrint implements Print {
 
 	/**
 	 * Constructs a PagePrint with the given body, header and footer.
-	 * 
+	 *
 	 * @param header
 	 *            a PageDecoration for creating the header. May be null.
 	 * @param headerGap
@@ -150,6 +150,7 @@ public class PagePrint implements Print {
 		setFooter(footer);
 	}
 
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -161,6 +162,7 @@ public class PagePrint implements Print {
 		return result;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -193,7 +195,7 @@ public class PagePrint implements Print {
 
 	/**
 	 * Returns the page header.
-	 * 
+	 *
 	 * @return the page header.
 	 */
 	public PageDecoration getHeader() {
@@ -202,7 +204,7 @@ public class PagePrint implements Print {
 
 	/**
 	 * Sets the page header to the argument.
-	 * 
+	 *
 	 * @param header
 	 *            a PageDecoration which creates the header. May be null.
 	 */
@@ -212,7 +214,7 @@ public class PagePrint implements Print {
 
 	/**
 	 * Returns the gap between the header and body, expressed in points.
-	 * 
+	 *
 	 * @return the gap between the header and body, expressed in points.
 	 */
 	public int getHeaderGap() {
@@ -222,7 +224,7 @@ public class PagePrint implements Print {
 	/**
 	 * Sets the gap between the header and body to the argument, expressed in
 	 * points.
-	 * 
+	 *
 	 * @param points
 	 *            the new gap between the header and body, expressed in points.
 	 *            72 points = 1".
@@ -233,7 +235,7 @@ public class PagePrint implements Print {
 
 	/**
 	 * Returns the page body.
-	 * 
+	 *
 	 * @return the page body.
 	 */
 	public Print getBody() {
@@ -242,7 +244,7 @@ public class PagePrint implements Print {
 
 	/**
 	 * Sets the page body to the argument.
-	 * 
+	 *
 	 * @param body
 	 *            the new page body.
 	 */
@@ -253,7 +255,7 @@ public class PagePrint implements Print {
 
 	/**
 	 * Returns the page footer.
-	 * 
+	 *
 	 * @return the page footer.
 	 */
 	public PageDecoration getFooter() {
@@ -262,7 +264,7 @@ public class PagePrint implements Print {
 
 	/**
 	 * Sets the page footer to the argument.
-	 * 
+	 *
 	 * @param footer
 	 *            a PageDecoration which creates the footer. May be null.
 	 */
@@ -272,7 +274,7 @@ public class PagePrint implements Print {
 
 	/**
 	 * Returns the gap between the body and footer, expressed in points.
-	 * 
+	 *
 	 * @return the gap between the body and footer, expressed in points.
 	 */
 	public int getFooterGap() {
@@ -282,7 +284,7 @@ public class PagePrint implements Print {
 	/**
 	 * Sets the gap between the body and footer to the argument, expressed in
 	 * points.
-	 * 
+	 *
 	 * @param points
 	 *            the new gap between the body and footer (if there is a
 	 *            footer).
@@ -511,7 +513,7 @@ class PageIterator implements PrintIterator {
 		if (headerPiece == null && footerPiece == null)
 			return bodyPiece;
 
-		List entries = new ArrayList();
+		List<CompositeEntry> entries = new ArrayList<>();
 
 		if (headerPiece != null)
 			entries.add(createEntry(headerPiece, 0));
