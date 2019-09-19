@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthew Hall - initial API and implementation
  */
@@ -26,12 +26,13 @@ import org.eclipse.swt.graphics.Point;
  * <p>
  * Use this class as the top-level Print when several distinct Prints should be
  * batched into one print job, but printed on separate pages.
- * 
+ *
  * @author Matthew Hall
  */
 public class SeriesPrint implements Print {
-	final List items = new ArrayList();
+	final List<Print> items = new ArrayList<>();
 
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -39,6 +40,7 @@ public class SeriesPrint implements Print {
 		return result;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -57,7 +59,7 @@ public class SeriesPrint implements Print {
 
 	/**
 	 * Adds the given prints to this SeriesPrint.
-	 * 
+	 *
 	 * @param items
 	 *            the Prints to add
 	 */
@@ -69,7 +71,7 @@ public class SeriesPrint implements Print {
 
 	/**
 	 * Adds the given print to this SeriesPrint.
-	 * 
+	 *
 	 * @param item
 	 *            the Print to add
 	 */
@@ -80,7 +82,7 @@ public class SeriesPrint implements Print {
 
 	/**
 	 * Returns the number of Prints that have been added to this SeriesPrint.
-	 * 
+	 *
 	 * @return the number of Prints that have been added to this SeriesPrint.
 	 */
 	public int size() {
@@ -89,11 +91,11 @@ public class SeriesPrint implements Print {
 
 	/**
 	 * Returns an array of items in the series.
-	 * 
+	 *
 	 * @return an array of items in the series.
 	 */
 	public Print[] getItems() {
-		return (Print[]) items.toArray(new Print[items.size()]);
+		return items.toArray(new Print[items.size()]);
 	}
 
 	public PrintIterator iterator(Device device, GC gc) {
@@ -108,13 +110,13 @@ class SeriesIterator implements PrintIterator {
 	SeriesIterator(SeriesPrint print, Device device, GC gc) {
 		this.iters = new PrintIterator[print.items.size()];
 		for (int i = 0; i < iters.length; i++)
-			iters[i] = ((Print) print.items.get(i)).iterator(device, gc);
+			iters[i] = print.items.get(i).iterator(device, gc);
 
 		this.index = 0;
 	}
 
 	SeriesIterator(SeriesIterator that) {
-		this.iters = (PrintIterator[]) that.iters.clone();
+		this.iters = that.iters.clone();
 		for (int i = index; i < iters.length; i++)
 			this.iters[i] = that.iters[i].copy();
 

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthew Hall - initial API and implementation
  */
@@ -41,7 +41,7 @@ import org.eclipse.swt.widgets.Spinner;
 
 /**
  * Demonstrate use of PrintPreview control.
- * 
+ *
  * @author Matthew
  */
 public class Snippet7 {
@@ -55,8 +55,8 @@ public class Snippet7 {
 			grid.add(new TextPrint(text));
 
 		PagePrint page = new PagePrint(grid);
-		page.setHeader(new SimplePageDecoration(new TextPrint("Snippet7.java",
-				SWT.CENTER)));
+		page.setHeader(new SimplePageDecoration(
+				new TextPrint("Snippet7.java", SWT.CENTER)));
 		page.setFooter(new PageNumberPageDecoration(SWT.CENTER));
 		page.setHeaderGap(5);
 		page.setFooterGap(5);
@@ -114,164 +114,132 @@ public class Snippet7 {
 			composite.setLayout(layout);
 
 			previousPage = createIconButton(composite, "previous_page.gif",
-					"Previous Page", new Listener() {
-						public void handleEvent(Event event) {
-							setPreviewPageIndex(preview.getPageIndex()
-									- preview.getHorizontalPageCount()
-									* preview.getVerticalPageCount());
-						}
+					"Previous Page", event -> {
+						setPreviewPageIndex(preview.getPageIndex()
+								- preview.getHorizontalPageCount()
+										* preview.getVerticalPageCount());
 					});
 
 			pageNumber = new Label(composite, SWT.NONE);
 
-			nextPage = createIconButton(composite, "next_page.gif",
-					"Next Page", new Listener() {
-						public void handleEvent(Event event) {
-							setPreviewPageIndex(preview.getPageIndex()
-									+ preview.getHorizontalPageCount()
-									* preview.getVerticalPageCount());
-						}
+			nextPage = createIconButton(composite, "next_page.gif", "Next Page",
+					event -> {
+						setPreviewPageIndex(preview.getPageIndex()
+								+ preview.getHorizontalPageCount()
+										* preview.getVerticalPageCount());
 					});
 
 			createIconButton(composite, "fit_horizontal.png", "Fit Width",
-					new Listener() {
-						public void handleEvent(Event event) {
-							preview.setFitHorizontal(true);
-							preview.setFitVertical(false);
-							rememberScrollingPosition();
-							updatePreviewSize();
-							restoreScrollingPosition();
-						}
+					event -> {
+						preview.setFitHorizontal(true);
+						preview.setFitVertical(false);
+						rememberScrollingPosition();
+						updatePreviewSize();
+						restoreScrollingPosition();
 					});
 
 			createIconButton(composite, "fit_vertical.png", "Fit Height",
-					new Listener() {
-						public void handleEvent(Event event) {
-							preview.setFitVertical(true);
-							preview.setFitHorizontal(false);
-							rememberScrollingPosition();
-							updatePreviewSize();
-							restoreScrollingPosition();
-						}
+					event -> {
+						preview.setFitVertical(true);
+						preview.setFitHorizontal(false);
+						rememberScrollingPosition();
+						updatePreviewSize();
+						restoreScrollingPosition();
 					});
 
-			createIconButton(composite, "fit_best.png", "Fit Window",
-					new Listener() {
-						public void handleEvent(Event event) {
-							preview.setFitVertical(true);
-							preview.setFitHorizontal(true);
-							rememberScrollingPosition();
-							updatePreviewSize();
-							restoreScrollingPosition();
-						}
-					});
+			createIconButton(composite, "fit_best.png", "Fit Window", event -> {
+				preview.setFitVertical(true);
+				preview.setFitHorizontal(true);
+				rememberScrollingPosition();
+				updatePreviewSize();
+				restoreScrollingPosition();
+			});
 
-			createIconButton(composite, "zoom_in.gif", "Zoom In",
-					new Listener() {
-						public void handleEvent(Event event) {
-							setPreviewScale(preview.getAbsoluteScale() * 1.1f);
-						}
-					});
+			createIconButton(composite, "zoom_in.gif", "Zoom In", event -> {
+				setPreviewScale(preview.getAbsoluteScale() * 1.1f);
+			});
 
-			createIconButton(composite, "zoom_out.gif", "Zoom Out",
-					new Listener() {
-						public void handleEvent(Event event) {
-							setPreviewScale(preview.getAbsoluteScale() / 1.1f);
-						}
-					});
+			createIconButton(composite, "zoom_out.gif", "Zoom Out", event -> {
+				setPreviewScale(preview.getAbsoluteScale() / 1.1f);
+			});
 
 			createIconButton(composite, "zoom_scale.gif", "Zoom to Scale",
-					new Listener() {
-						public void handleEvent(Event event) {
-							setPreviewScale(1);
-						}
+					event -> {
+						setPreviewScale(1);
 					});
 
 			createTextButton(composite, "Port", "Portrait Orientation",
-					new Listener() {
-						public void handleEvent(Event event) {
-							printJob
-									.setOrientation(PaperClips.ORIENTATION_PORTRAIT);
-							preview.setPrintJob(printJob);
+					event -> {
+						printJob.setOrientation(
+								PaperClips.ORIENTATION_PORTRAIT);
+						preview.setPrintJob(printJob);
 
-							forgetScrollingPosition();
-							updatePreviewSize();
-							updatePageNumber();
-						}
+						forgetScrollingPosition();
+						updatePreviewSize();
+						updatePageNumber();
 					});
 
 			createTextButton(composite, "Land", "Landscape Orientation",
-					new Listener() {
-						public void handleEvent(Event event) {
-							printJob
-									.setOrientation(PaperClips.ORIENTATION_LANDSCAPE);
-							preview.setPrintJob(printJob);
+					event -> {
+						printJob.setOrientation(
+								PaperClips.ORIENTATION_LANDSCAPE);
+						preview.setPrintJob(printJob);
 
-							forgetScrollingPosition();
-							updatePreviewSize();
-							updatePageNumber();
-						}
+						forgetScrollingPosition();
+						updatePreviewSize();
+						updatePageNumber();
 					});
 
-			createIconButton(composite, "print.gif", "Print", new Listener() {
-				public void handleEvent(Event event) {
-					PrintDialog dialog = new PrintDialog(shell, SWT.NONE);
-					PrinterData printerData = dialog.open();
-					if (printerData != null) {
-						PaperClips.print(printJob, printerData);
-						preview.setPrinterData(printerData);
-					}
+			createIconButton(composite, "print.gif", "Print", event -> {
+				PrintDialog dialog = new PrintDialog(shell, SWT.NONE);
+				PrinterData printerData = dialog.open();
+				if (printerData != null) {
+					PaperClips.print(printJob, printerData);
+					preview.setPrinterData(printerData);
 				}
 			});
 
 			createLabel(composite, "Horz Pages");
-			createPageCountSpinner(composite, new Listener() {
-				public void handleEvent(Event event) {
-					preview.setHorizontalPageCount(((Spinner) event.widget)
-							.getSelection());
-					forgetScrollingPosition();
-					updatePreviewSize();
-					updatePageNumber();
-				}
+			createPageCountSpinner(composite, event -> {
+				preview.setHorizontalPageCount(
+						((Spinner) event.widget).getSelection());
+				forgetScrollingPosition();
+				updatePreviewSize();
+				updatePageNumber();
 			});
 
 			createLabel(composite, "Vert Pages");
-			createPageCountSpinner(composite, new Listener() {
-				public void handleEvent(Event event) {
-					preview.setVerticalPageCount(((Spinner) event.widget)
-							.getSelection());
-					forgetScrollingPosition();
-					updatePreviewSize();
-					updatePageNumber();
-				}
+			createPageCountSpinner(composite, event -> {
+				preview.setVerticalPageCount(
+						((Spinner) event.widget).getSelection());
+				forgetScrollingPosition();
+				updatePreviewSize();
+				updatePageNumber();
 			});
 
 			return composite;
 		}
 
 		private Control createScrollingPreview(Composite parent) {
-			scroll = new ScrolledComposite(parent, SWT.BORDER | SWT.H_SCROLL
-					| SWT.V_SCROLL);
+			scroll = new ScrolledComposite(parent,
+					SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 			scroll.setExpandHorizontal(true);
 			scroll.setExpandVertical(true);
 
 			preview = new PrintPreview(scroll, SWT.NONE);
 			scroll.setContent(preview);
 
-			scroll.addListener(SWT.Resize, new Listener() {
-				public void handleEvent(Event event) {
-					Rectangle bounds = scroll.getClientArea();
+			scroll.addListener(SWT.Resize, event -> {
+				Rectangle bounds = scroll.getClientArea();
 
-					scroll.getHorizontalBar().setPageIncrement(
-							bounds.width * 2 / 3);
-					scroll.getVerticalBar().setPageIncrement(
-							bounds.height * 2 / 3);
+				scroll.getHorizontalBar()
+						.setPageIncrement(bounds.width * 2 / 3);
+				scroll.getVerticalBar().setPageIncrement(bounds.height * 2 / 3);
 
-					if (preview.isFitHorizontal() ^ preview.isFitVertical()) {
-						rememberScrollingPosition();
-						updatePreviewSize();
-						restoreScrollingPosition();
-					}
+				if (preview.isFitHorizontal() ^ preview.isFitVertical()) {
+					rememberScrollingPosition();
+					updatePreviewSize();
+					restoreScrollingPosition();
 				}
 			});
 
@@ -306,8 +274,9 @@ public class Snippet7 {
 						if (dragging) {
 							forgetScrollingPosition();
 							Point point = preview.toDisplay(event.x, event.y);
-							scroll.setOrigin(dragStartScrollOrigin.x
-									+ dragStartMouseAnchor.x - point.x,
+							scroll.setOrigin(
+									dragStartScrollOrigin.x
+											+ dragStartMouseAnchor.x - point.x,
 									dragStartScrollOrigin.y
 											+ dragStartMouseAnchor.y - point.y);
 						}
@@ -322,9 +291,9 @@ public class Snippet7 {
 						break;
 					case SWT.MouseWheel:
 						if (event.count != 0) {
-							if (scrollable
-									&& !dragging
-									&& (event.stateMask == SWT.NONE || event.stateMask == SWT.SHIFT)) {
+							if (scrollable && !dragging
+									&& (event.stateMask == SWT.NONE
+											|| event.stateMask == SWT.SHIFT)) {
 								forgetScrollingPosition();
 								bounds = scroll.getClientArea();
 								size = preview.getSize();
@@ -334,10 +303,8 @@ public class Snippet7 {
 								// pressing Shift
 								if (size.y > bounds.height
 										&& event.stateMask == SWT.NONE)
-									origin.y += direction
-											* Math
-													.min(dpi.y,
-															bounds.height / 4);
+									origin.y += direction * Math.min(dpi.y,
+											bounds.height / 4);
 								else if (size.x > bounds.width)
 									origin.x += direction
 											* Math.min(dpi.x, bounds.width / 4);
@@ -385,14 +352,16 @@ public class Snippet7 {
 
 		private Button createIconButton(Composite parent, String imageFilename,
 				String toolTipText, Listener selectionListener) {
-			Button button = createButton(parent, toolTipText, selectionListener);
+			Button button = createButton(parent, toolTipText,
+					selectionListener);
 			button.setImage(createImage(imageFilename));
 			return button;
 		}
 
 		private Button createTextButton(Composite parent, String text,
 				String toolTipText, Listener selectionListener) {
-			Button button = createButton(parent, toolTipText, selectionListener);
+			Button button = createButton(parent, toolTipText,
+					selectionListener);
 			button.setText(text);
 			return button;
 		}
@@ -401,9 +370,8 @@ public class Snippet7 {
 				Listener selectionListener) {
 			Button button = new Button(parent, SWT.PUSH);
 			button.setToolTipText(toolTipText);
-			button
-					.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
-							false));
+			button.setLayoutData(
+					new GridData(SWT.FILL, SWT.FILL, false, false));
 			button.addListener(SWT.Selection, selectionListener);
 			return button;
 		}
@@ -422,8 +390,8 @@ public class Snippet7 {
 		}
 
 		private Image createImage(String filename) {
-			final Image image = new Image(display, getClass()
-					.getResourceAsStream(filename));
+			final Image image = new Image(display,
+					getClass().getResourceAsStream(filename));
 
 			shell.addListener(SWT.Dispose, new Listener() {
 				public void handleEvent(Event event) {
@@ -439,10 +407,10 @@ public class Snippet7 {
 			int pageCount = preview.getPageCount();
 			int visiblePageCount = preview.getHorizontalPageCount()
 					* preview.getVerticalPageCount();
-			String text = (visiblePageCount > 1 ? "Pages " + (pageIndex + 1)
-					+ "-" + Math.min(pageCount, pageIndex + visiblePageCount)
-					: "Page " + (pageIndex + 1))
-					+ " of " + pageCount;
+			String text = (visiblePageCount > 1
+					? "Pages " + (pageIndex + 1) + "-"
+							+ Math.min(pageCount, pageIndex + visiblePageCount)
+					: "Page " + (pageIndex + 1)) + " of " + pageCount;
 			pageNumber.setText(text);
 			previousPage.setEnabled(pageIndex > 0);
 			nextPage.setEnabled(pageIndex < pageCount - visiblePageCount);
@@ -468,9 +436,9 @@ public class Snippet7 {
 		private void restoreScrollingPosition() {
 			if (scrollingPosition != null) {
 				Point size = preview.getSize();
-				scroll.setOrigin((int) Math
-						.round(scrollingPosition[0] * size.x), (int) Math
-						.round(scrollingPosition[1] * size.y));
+				scroll.setOrigin(
+						(int) Math.round(scrollingPosition[0] * size.x),
+						(int) Math.round(scrollingPosition[1] * size.y));
 			}
 		}
 
@@ -481,12 +449,15 @@ public class Snippet7 {
 				if (preview.isFitVertical())
 					minSize = new Point(0, 0); // Best fit
 				else
-					minSize = new Point(0, preview.computeSize(bounds.width,
-							SWT.DEFAULT).y); // Fit to width
+					minSize = new Point(0,
+							preview.computeSize(bounds.width, SWT.DEFAULT).y); // Fit
+																				// to
+																				// width
 			} else {
 				if (preview.isFitVertical())
-					minSize = new Point(preview.computeSize(SWT.DEFAULT,
-							bounds.height).x, 0); // Fit to height
+					minSize = new Point(
+							preview.computeSize(SWT.DEFAULT, bounds.height).x,
+							0); // Fit to height
 				else
 					minSize = preview.computeSize(SWT.DEFAULT, SWT.DEFAULT); // Custom
 				// scale
@@ -504,15 +475,15 @@ public class Snippet7 {
 		}
 
 		private void setPreviewPageIndex(int pageIndex) {
-			preview.setPageIndex(Math.max(Math.min(pageIndex, preview
-					.getPageCount() - 1), 0));
+			preview.setPageIndex(Math
+					.max(Math.min(pageIndex, preview.getPageCount() - 1), 0));
 			updatePageNumber();
 		}
 	}
 
 	/**
 	 * Executes the snippet.
-	 * 
+	 *
 	 * @param args
 	 *            command-line args.
 	 */

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthew Hall - initial API and implementation
  */
@@ -19,13 +19,11 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 
 /**
  * A JFace-style {@link Print} viewer which displays a Print in a scrollable
  * pane.
- * 
+ *
  * @author Matthew
  */
 public class PrintViewer {
@@ -39,7 +37,7 @@ public class PrintViewer {
 
 	/**
 	 * Constructs a PrintPreview with the given parent and style.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent component of the scroll pane.
 	 * @param style
@@ -49,11 +47,9 @@ public class PrintViewer {
 		sc = new ScrolledComposite(parent, style | SWT.V_SCROLL | SWT.H_SCROLL);
 		sc.setExpandHorizontal(true);
 		sc.setExpandVertical(true);
-		sc.addListener(SWT.Resize, new Listener() {
-			public void handleEvent(Event event) {
-				if (sc.getClientArea().width != canvasWidth)
-					updateCanvas();
-			}
+		sc.addListener(SWT.Resize, event -> {
+			if (sc.getClientArea().width != canvasWidth)
+				updateCanvas();
 		});
 		canvas = new PrintPieceCanvas(sc, SWT.DOUBLE_BUFFERED);
 		sc.setContent(canvas);
@@ -61,7 +57,7 @@ public class PrintViewer {
 
 	/**
 	 * Returns the viewer component wrapped by this PrintPreview.
-	 * 
+	 *
 	 * @return the viewer component wrapped by this PrintPreview.
 	 */
 	public Control getControl() {
@@ -70,7 +66,7 @@ public class PrintViewer {
 
 	/**
 	 * Sets the Print to be displayed.
-	 * 
+	 *
 	 * @param print
 	 *            the Print to display.
 	 */
@@ -81,7 +77,7 @@ public class PrintViewer {
 
 	/**
 	 * Returns the Print being displayed.
-	 * 
+	 *
 	 * @return the Print being displayed.
 	 */
 	public Print getPrint() {
@@ -102,8 +98,8 @@ public class PrintViewer {
 			PrintIterator iterator = print.iterator(canvas.getDisplay(), gc);
 			sc.setMinWidth(iterator.minimumSize().x);
 
-			int canvasWidth = Math.max(iterator.minimumSize().x, sc
-					.getClientArea().width);
+			int canvasWidth = Math.max(iterator.minimumSize().x,
+					sc.getClientArea().width);
 			if (this.canvasWidth == canvasWidth)
 				return;
 			this.canvasWidth = canvasWidth;

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthew Hall - initial API and implementation
  */
@@ -26,13 +26,11 @@ import org.eclipse.swt.printing.PrintDialog;
 import org.eclipse.swt.printing.PrinterData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 /**
  * Demonstrate use of ScalePrint.
- * 
+ *
  * @author Matthew
  */
 public class Snippet4 {
@@ -60,7 +58,7 @@ public class Snippet4 {
 
 	/**
 	 * Executes the snippet.
-	 * 
+	 *
 	 * @param args
 	 *            command-line args.
 	 */
@@ -72,52 +70,45 @@ public class Snippet4 {
 		shell.setLayout(new GridLayout(3, false));
 
 		Button prevPage = new Button(shell, SWT.PUSH);
-		prevPage.setLayoutData(new GridData(SWT.DEFAULT, SWT.DEFAULT, false,
-				false));
+		prevPage.setLayoutData(
+				new GridData(SWT.DEFAULT, SWT.DEFAULT, false, false));
 		prevPage.setText("Previous Page");
 
 		Button nextPage = new Button(shell, SWT.PUSH);
-		nextPage.setLayoutData(new GridData(SWT.DEFAULT, SWT.DEFAULT, false,
-				false));
+		nextPage.setLayoutData(
+				new GridData(SWT.DEFAULT, SWT.DEFAULT, false, false));
 		nextPage.setText("Next Page");
 
 		Button printButton = new Button(shell, SWT.PUSH);
-		printButton.setLayoutData(new GridData(SWT.DEFAULT, SWT.DEFAULT, false,
-				false));
+		printButton.setLayoutData(
+				new GridData(SWT.DEFAULT, SWT.DEFAULT, false, false));
 		printButton.setText("Print");
 
 		final PrintPreview preview = new PrintPreview(shell, SWT.BORDER);
-		preview
-				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3,
-						1));
+		preview.setLayoutData(
+				new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
 		final PrintJob job = new PrintJob("Snippet4.java", createPrint());
 		preview.setPrintJob(job);
 
-		prevPage.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				int page = Math.max(preview.getPageIndex() - 1, 0);
-				preview.setPageIndex(page);
-			}
+		prevPage.addListener(SWT.Selection, event -> {
+			int page = Math.max(preview.getPageIndex() - 1, 0);
+			preview.setPageIndex(page);
 		});
 
-		nextPage.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				int page = Math.min(preview.getPageIndex() + 1, preview
-						.getPageCount() - 1);
-				preview.setPageIndex(page);
-			}
+		nextPage.addListener(SWT.Selection, event -> {
+			int page = Math.min(preview.getPageIndex() + 1,
+					preview.getPageCount() - 1);
+			preview.setPageIndex(page);
 		});
 
-		printButton.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				PrintDialog dialog = new PrintDialog(shell, SWT.NONE);
-				PrinterData printerData = dialog.open();
-				if (printerData != null) {
-					PaperClips.print(job, printerData);
-					// Update the preview to display according to the selected
-					// printer.
-					preview.setPrinterData(printerData);
-				}
+		printButton.addListener(SWT.Selection, event -> {
+			PrintDialog dialog = new PrintDialog(shell, SWT.NONE);
+			PrinterData printerData = dialog.open();
+			if (printerData != null) {
+				PaperClips.print(job, printerData);
+				// Update the preview to display according to the selected
+				// printer.
+				preview.setPrinterData(printerData);
 			}
 		});
 

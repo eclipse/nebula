@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthew Hall - initial API and implementation
  */
@@ -29,11 +29,11 @@ import org.eclipse.swt.graphics.Point;
 /**
  * A class for printing styled text. Text of varying size and style are aligned
  * along the baseline.
- * 
+ *
  * @author Matthew Hall
  */
 public class StyledTextPrint implements Print {
-	private final List elements = new ArrayList();
+	private final List<Print> elements = new ArrayList<>();
 	private TextStyle style = new TextStyle();
 
 	/**
@@ -42,6 +42,7 @@ public class StyledTextPrint implements Print {
 	public StyledTextPrint() {
 	}
 
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -51,6 +52,7 @@ public class StyledTextPrint implements Print {
 		return result;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -75,7 +77,7 @@ public class StyledTextPrint implements Print {
 	/**
 	 * Sets the text style that will be applied to text added through the
 	 * {@link #append(String)}
-	 * 
+	 *
 	 * @param style
 	 *            the new text style.
 	 * @return this StyledTextPrint, for chaining method calls.
@@ -89,7 +91,7 @@ public class StyledTextPrint implements Print {
 	/**
 	 * Appends the given text to the end of the document, using the default
 	 * style. This method is equivalent to calling append(text, getStyle()).
-	 * 
+	 *
 	 * @param text
 	 *            the text to append.
 	 * @return this StyledTextPrint, for chaining method calls.
@@ -100,7 +102,7 @@ public class StyledTextPrint implements Print {
 
 	/**
 	 * Appends the given text to the end of the document, using the given style.
-	 * 
+	 *
 	 * @param text
 	 *            the text to append.
 	 * @param style
@@ -117,7 +119,7 @@ public class StyledTextPrint implements Print {
 	 * Appends a line break to the document. If a line break produces a blank
 	 * line, that line will take the height of the font in the default text
 	 * style.
-	 * 
+	 *
 	 * @return this StyledTextPrint, for chaining method calls.
 	 */
 	public StyledTextPrint newline() {
@@ -126,7 +128,7 @@ public class StyledTextPrint implements Print {
 
 	/**
 	 * Appends the given element to the document.
-	 * 
+	 *
 	 * @param element
 	 *            the element to append.
 	 * @return this StyledTextPrint, for chaining method calls.
@@ -137,8 +139,8 @@ public class StyledTextPrint implements Print {
 	}
 
 	public PrintIterator iterator(Device device, GC gc) {
-		return new StyledTextIterator((Print[]) elements
-				.toArray(new Print[elements.size()]), device, gc);
+		return new StyledTextIterator(
+				elements.toArray(new Print[elements.size()]), device, gc);
 	}
 }
 
@@ -194,7 +196,7 @@ class StyledTextIterator implements PrintIterator {
 
 		int y = 0;
 
-		List rows = new ArrayList();
+		List<CompositeEntry> rows = new ArrayList<>();
 		while (y < height) {
 			PrintPiece row = nextRow(width, height - y);
 			if (row == null)
@@ -215,9 +217,9 @@ class StyledTextIterator implements PrintIterator {
 		int maxDescent = 0;
 
 		final int backupCursor = cursor;
-		final List backup = new ArrayList();
+		final List<PrintIterator> backup = new ArrayList<>();
 
-		List rowElements = new ArrayList();
+		List<PrintPiece> rowElements = new ArrayList<>();
 		while (hasNext()) { // hasNext advances cursor internally
 			PrintIterator element = elements[cursor];
 			Point preferredSize = element.preferredSize();
@@ -249,26 +251,28 @@ class StyledTextIterator implements PrintIterator {
 		return createRowResult(maxAscent, rowElements);
 	}
 
-	private PrintPiece createRowResult(int rowAscent, List rowElements) {
+	private PrintPiece createRowResult(int rowAscent,
+			List<PrintPiece> rowElements) {
 		if (rowElements.size() == 0)
 			return null;
 
-		List entries = new ArrayList();
+		List<CompositeEntry> entries = new ArrayList<>();
 		int x = 0;
 		for (int i = 0; i < rowElements.size(); i++) {
-			PrintPiece piece = (PrintPiece) rowElements.get(i);
+			PrintPiece piece = rowElements.get(i);
 			int ascent = getAscent(piece);
-			entries.add(new CompositeEntry(piece, new Point(x, rowAscent
-					- ascent)));
+			entries.add(new CompositeEntry(piece,
+					new Point(x, rowAscent - ascent)));
 			x += piece.getSize().x;
 		}
 
 		return new CompositePiece(entries);
 	}
 
-	private void restoreBackup(final int backupCursor, final List backup) {
+	private void restoreBackup(final int backupCursor,
+			final List<PrintIterator> backup) {
 		for (int i = 0; i < backup.size(); i++)
-			elements[backupCursor + i] = (PrintIterator) backup.get(i);
+			elements[backupCursor + i] = backup.get(i);
 		cursor = backupCursor;
 	}
 

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthew Hall - initial API and implementation
  */
@@ -31,6 +31,9 @@ import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 
+/**
+ * Iterator for Grid
+ */
 public class GridIterator implements PrintIterator {
 	final Device device;
 	final Point dpi;
@@ -59,6 +62,11 @@ public class GridIterator implements PrintIterator {
 	// current row.
 	private boolean rowStarted;
 
+	/**
+	 * @param grid
+	 * @param device
+	 * @param gc
+	 */
 	public GridIterator(GridPrint grid, Device device, GC gc) {
 		this.device = device;
 		this.dpi = device.getDPI();
@@ -67,16 +75,19 @@ public class GridIterator implements PrintIterator {
 				grid.getColumns().length);
 		this.columnGroups = grid.getColumnGroups();
 
-		this.header = createGridCellIterators(grid.getHeaderCells(), device, gc);
+		this.header = createGridCellIterators(grid.getHeaderCells(), device,
+				gc);
 		this.body = createGridCellIterators(grid.getBodyCells(), device, gc);
-		this.footer = createGridCellIterators(grid.getFooterCells(), device, gc);
+		this.footer = createGridCellIterators(grid.getFooterCells(), device,
+				gc);
 
 		this.cellClippingEnabled = grid.isCellClippingEnabled();
 
 		this.look = grid.getLook().getPainter(device, gc);
 
 		this.minimumColSizes = computeColumnSizes(PrintSizeStrategy.MINIMUM);
-		this.preferredColSizes = computeColumnSizes(PrintSizeStrategy.PREFERRED);
+		this.preferredColSizes = computeColumnSizes(
+				PrintSizeStrategy.PREFERRED);
 
 		this.minimumSize = computeSize(PrintSizeStrategy.MINIMUM,
 				minimumColSizes);
@@ -100,8 +111,8 @@ public class GridIterator implements PrintIterator {
 			GridCell[] rowCells, Device device, GC gc) {
 		GridCellIterator[] result = new GridCellIterator[rowCells.length];
 		for (int cellIndex = 0; cellIndex < rowCells.length; cellIndex++)
-			result[cellIndex] = ((GridCellImpl) rowCells[cellIndex]).iterator(
-					device, gc);
+			result[cellIndex] = ((GridCellImpl) rowCells[cellIndex])
+					.iterator(device, gc);
 		return result;
 	}
 
@@ -136,7 +147,7 @@ public class GridIterator implements PrintIterator {
 
 	private static GridCellIterator[][] cloneRows(GridCellIterator[][] rows,
 			int firstRow) {
-		GridCellIterator[][] result = (GridCellIterator[][]) rows.clone();
+		GridCellIterator[][] result = rows.clone();
 		// Cloning the outer array is all that's necessary. The inner arrays
 		// (rows) are cloned every time a row
 		// is laid out, so all we have to do is make sure different
@@ -242,8 +253,8 @@ public class GridIterator implements PrintIterator {
 				GridCellIterator entry = row[cellIndex];
 				int colspan = entry.getColspan();
 				if (colspan > 1) {
-					int currentWidth = PaperClipsUtil.sum(colSizes,
-							columnIndex, colspan);
+					int currentWidth = PaperClipsUtil.sum(colSizes, columnIndex,
+							colspan);
 
 					// Subtract column spacing so the weighted distribution of
 					// extra width stays proportional.
@@ -276,7 +287,8 @@ public class GridIterator implements PrintIterator {
 				&& adjustment != 0; i++) {
 			int columnIndex = columnIndices[i];
 
-			int addedWidth = (int) ((long) adjustment * colSizes[columnIndex] / totalWidth);
+			int addedWidth = (int) ((long) adjustment * colSizes[columnIndex]
+					/ totalWidth);
 
 			// Adjust extraWidth and totalCurrentWidth for future iterations.
 			totalWidth -= colSizes[columnIndex];
@@ -340,7 +352,7 @@ public class GridIterator implements PrintIterator {
 		/**
 		 * Returns whether the column at the specified index satisfies the
 		 * condition.
-		 * 
+		 *
 		 * @param col
 		 *            the index of the column to test.
 		 * @return whether the column at the specified index satisfies the
@@ -358,45 +370,50 @@ public class GridIterator implements PrintIterator {
 			}
 		},
 
-		new Condition() {
-			public boolean satisfiedBy(int col) {
-				// Grouped columns with nonzero weight are next choice
-				return isColumnGrouped(col) && columns[col].weight > 0;
-			}
-		},
+				new Condition() {
+					public boolean satisfiedBy(int col) {
+						// Grouped columns with nonzero weight are next choice
+						return isColumnGrouped(col) && columns[col].weight > 0;
+					}
+				},
 
-		new Condition() {
-			public boolean satisfiedBy(int col) {
-				// Ungrouped columns with GridPrint.PREFERRED size are next
-				// choice.
-				return !isColumnGrouped(col)
-						&& columns[col].size == GridPrint.PREFERRED;
-			}
-		},
+				new Condition() {
+					public boolean satisfiedBy(int col) {
+						// Ungrouped columns with GridPrint.PREFERRED size are
+						// next
+						// choice.
+						return !isColumnGrouped(col)
+								&& columns[col].size == GridPrint.PREFERRED;
+					}
+				},
 
-		new Condition() {
-			public boolean satisfiedBy(int col) {
-				// Grouped columns with GridPrint.PREFERRED size are next
-				// choice.
-				return isColumnGrouped(col)
-						&& columns[col].size == GridPrint.PREFERRED;
-			}
-		},
+				new Condition() {
+					public boolean satisfiedBy(int col) {
+						// Grouped columns with GridPrint.PREFERRED size are
+						// next
+						// choice.
+						return isColumnGrouped(col)
+								&& columns[col].size == GridPrint.PREFERRED;
+					}
+				},
 
-		new Condition() {
-			public boolean satisfiedBy(int col) {
-				// Ungrouped columns with SWT.DEFAULT size are next choice.
-				return !isColumnGrouped(col)
-						&& columns[col].size == SWT.DEFAULT;
-			}
-		},
+				new Condition() {
+					public boolean satisfiedBy(int col) {
+						// Ungrouped columns with SWT.DEFAULT size are next
+						// choice.
+						return !isColumnGrouped(col)
+								&& columns[col].size == SWT.DEFAULT;
+					}
+				},
 
-		new Condition() {
-			public boolean satisfiedBy(int col) {
-				// Grouped columns with SWT.DEFAULT size are last choice.
-				return isColumnGrouped(col) && columns[col].size == SWT.DEFAULT;
-			}
-		} };
+				new Condition() {
+					public boolean satisfiedBy(int col) {
+						// Grouped columns with SWT.DEFAULT size are last
+						// choice.
+						return isColumnGrouped(col)
+								&& columns[col].size == SWT.DEFAULT;
+					}
+				} };
 	}
 
 	private int[] findColumns(Condition condition) {
@@ -455,20 +472,17 @@ public class GridIterator implements PrintIterator {
 	private int computeHeaderHeight(final GridMargins margins,
 			PrintSizeStrategy strategy) {
 		int headerHeight = margins.getHeaderTop()
-				+ margins.getHeaderVerticalSpacing()
-				* (header.length - 1)
+				+ margins.getHeaderVerticalSpacing() * (header.length - 1)
 				+ Math.max(margins.getBodyTop(true, true),
 						margins.getBodyTop(true, false));
 		for (int rowIndex = 0; rowIndex < header.length; rowIndex++) {
 			GridCellIterator[] row = header[rowIndex];
-			int col = 0;
 			int rowHeight = 0;
 			for (int cellIndex = 0; cellIndex < row.length; cellIndex++) {
 				GridCellIterator entry = row[cellIndex];
 				// Find tallest cell in row.
 				rowHeight = Math.max(rowHeight,
 						strategy.computeSize(entry.getTarget()).y);
-				col += entry.getColspan();
 			}
 			headerHeight += rowHeight;
 		}
@@ -479,13 +493,11 @@ public class GridIterator implements PrintIterator {
 		int maxBodyRowHeight = 0;
 		for (int rowIndex = 0; rowIndex < body.length; rowIndex++) {
 			GridCellIterator[] row = body[rowIndex];
-			int col = 0;
 			for (int cellIndex = 0; cellIndex < row.length; cellIndex++) {
 				GridCellIterator entry = row[cellIndex];
 				// Find the greatest height of all cells' calculated sizes.
 				maxBodyRowHeight = Math.max(maxBodyRowHeight,
 						strategy.computeSize(entry.getTarget()).y);
-				col += entry.getColspan();
 			}
 		}
 		return maxBodyRowHeight;
@@ -495,19 +507,16 @@ public class GridIterator implements PrintIterator {
 			final GridMargins margins) {
 		int footerHeight = Math.max(margins.getBodyBottom(true, false),
 				margins.getBodyBottom(true, true))
-				+ margins.getFooterVerticalSpacing()
-				* (footer.length - 1)
+				+ margins.getFooterVerticalSpacing() * (footer.length - 1)
 				+ margins.getFooterBottom();
 		for (int rowIndex = 0; rowIndex < footer.length; rowIndex++) {
 			GridCellIterator[] row = footer[rowIndex];
-			int col = 0;
 			int rowHeight = 0;
 			for (int cellIndex = 0; cellIndex < row.length; cellIndex++) {
 				GridCellIterator entry = row[cellIndex];
 				// Find tallest cell in row.
 				rowHeight = Math.max(rowHeight,
 						strategy.computeSize(entry.getTarget()).y);
-				col += entry.getColspan();
 			}
 			footerHeight += rowHeight;
 		}
@@ -541,7 +550,8 @@ public class GridIterator implements PrintIterator {
 		Condition[] conditions = getShrinkableColumnConditions();
 		for (int i = 0; i < conditions.length; i++) {
 			int[] indices = findColumns(conditions[i]);
-			if (PaperClipsUtil.sumByIndex(minimumColSizes, indices) >= extraWidth)
+			if (PaperClipsUtil.sumByIndex(minimumColSizes,
+					indices) >= extraWidth)
 				return indices;
 		}
 
@@ -587,7 +597,8 @@ public class GridIterator implements PrintIterator {
 			int columnIndex = weightedCols[weightedColIndex];
 
 			int columnWeight = columns[columnIndex].weight;
-			int addWidth = (int) ((long) extraWidth * columnWeight / totalWeight);
+			int addWidth = (int) ((long) extraWidth * columnWeight
+					/ totalWeight);
 
 			colSizes[columnIndex] += addWidth;
 
@@ -603,10 +614,12 @@ public class GridIterator implements PrintIterator {
 		int difference = PaperClipsUtil.sum(preferredColSizes)
 				- PaperClipsUtil.sum(minimumColSizes);
 		int[] colSizes = PaperClipsUtil.copy(minimumColSizes);
-		for (int i = 0; i < columns.length && difference != 0 && expansion != 0; i++) {
+		for (int i = 0; i < columns.length && difference != 0
+				&& expansion != 0; i++) {
 			int columnDifference = preferredColSizes[i] - minimumColSizes[i];
 
-			int change = (int) ((long) expansion * columnDifference / difference);
+			int change = (int) ((long) expansion * columnDifference
+					/ difference);
 
 			colSizes[i] += change;
 
@@ -635,7 +648,8 @@ public class GridIterator implements PrintIterator {
 				&& reduction != 0; i++) {
 			int col = shrinkableCols[i];
 
-			int columnReduction = (int) ((long) colSizes[col] * reduction / shrinkableWidth);
+			int columnReduction = (int) ((long) colSizes[col] * reduction
+					/ shrinkableWidth);
 
 			shrinkableWidth -= colSizes[col];
 			colSizes[col] -= columnReduction;
@@ -650,7 +664,8 @@ public class GridIterator implements PrintIterator {
 	}
 
 	private PrintPiece nextRow(final GridCellIterator[] cells,
-			final int[] columnWidths, final int height, final boolean bottomOpen) {
+			final int[] columnWidths, final int height,
+			final boolean bottomOpen) {
 		if (bottomOpen && rowContainsNonDefaultVertAlignment(cells))
 			return null;
 		if (height < 0)
@@ -658,8 +673,8 @@ public class GridIterator implements PrintIterator {
 
 		final int[] cellWidths = calculateCellWidths(cells, columnWidths);
 
-		PrintPiece[] pieces = layoutCellsWithNonFillVertAlignment(cells,
-				height, bottomOpen, cellWidths);
+		PrintPiece[] pieces = layoutCellsWithNonFillVertAlignment(cells, height,
+				bottomOpen, cellWidths);
 		if (pieces == null)
 			return null;
 
@@ -749,8 +764,8 @@ public class GridIterator implements PrintIterator {
 			PrintIterator iter = cell.getTarget();
 
 			if (cell.getVerticalAlignment() == SWT.FILL) {
-				PrintPiece piece = cellPieces[cellIndex] = PaperClips.next(
-						iter, cellWidths[cellIndex], height);
+				PrintPiece piece = cellPieces[cellIndex] = PaperClips.next(iter,
+						cellWidths[cellIndex], height);
 				if (piece == null || iter.hasNext()) {
 					PaperClipsUtil.dispose(piece, cellPieces);
 					return null;
@@ -815,11 +830,11 @@ public class GridIterator implements PrintIterator {
 
 	private static PrintPiece createRowResult(final PrintPiece[] pieces,
 			final int[] xOffsets, final int[] yOffsets) {
-		List result = new ArrayList();
+		List<CompositeEntry> result = new ArrayList<>();
 		for (int cellIndex = 0; cellIndex < pieces.length; cellIndex++)
 			if (pieces[cellIndex] != null)
-				result.add(new CompositeEntry(pieces[cellIndex], new Point(
-						xOffsets[cellIndex], yOffsets[cellIndex])));
+				result.add(new CompositeEntry(pieces[cellIndex],
+						new Point(xOffsets[cellIndex], yOffsets[cellIndex])));
 		return new CompositePiece(result);
 	}
 
@@ -868,8 +883,8 @@ public class GridIterator implements PrintIterator {
 
 		final int firstRow = row;
 		final boolean topOpen = rowStarted;
-		final List bodyRows = new ArrayList();
-		final List bodyColSpans = new ArrayList();
+		final List<Integer> bodyRows = new ArrayList<>();
+		final List<int[]> bodyColSpans = new ArrayList<>();
 
 		height -= margins.getBodyTop(headerPresent, topOpen);
 		final PrintPiece bodyPiece = nextBodyPiece(colSizes, height, bodyRows,
@@ -901,7 +916,7 @@ public class GridIterator implements PrintIterator {
 			final int height, final int[] rowHeights, final int[][] colSpans,
 			final int rowSpacing, GridCellIterator[][] headerOrFooter) {
 		int y = 0;
-		List entries = new ArrayList();
+		List<CompositeEntry> entries = new ArrayList<>();
 		for (int rowIndex = 0; rowIndex < headerOrFooter.length; rowIndex++) {
 			GridCellIterator[] row = cloneRow(headerOrFooter[rowIndex]);
 
@@ -914,8 +929,9 @@ public class GridIterator implements PrintIterator {
 
 			if (rowPiece == null || hasNext) {
 				PaperClipsUtil.dispose(rowPiece);
-				for (Iterator iter = entries.iterator(); iter.hasNext();) {
-					CompositeEntry entry = (CompositeEntry) iter.next();
+				for (Iterator<CompositeEntry> iter = entries.iterator(); iter
+						.hasNext();) {
+					CompositeEntry entry = iter.next();
 					entry.dispose();
 				}
 				return null;
@@ -931,28 +947,28 @@ public class GridIterator implements PrintIterator {
 	}
 
 	private PrintPiece nextBodyPiece(int[] colSizes, final int height,
-			final List rowHeights, final List colSpans,
+			final List<Integer> rowHeights, final List<int[]> colSpans,
 			final boolean footerPresent) {
 		final GridMargins margins = look.getMargins();
 		final int rowSpacing = margins.getBodyVerticalSpacing();
 		final int bodyBottomSpacingOpen = margins.getBodyBottom(footerPresent,
 				true);
-		final int bodyBottomSpacingClosed = margins.getBodyBottom(
-				footerPresent, false);
+		final int bodyBottomSpacingClosed = margins.getBodyBottom(footerPresent,
+				false);
 
 		int y = 0;
-		List entries = new ArrayList();
+		List<CompositeEntry> entries = new ArrayList<>();
 		while (hasNext()) {
 			GridCellIterator[] thisRow = cloneRow(body[row]);
-			PrintPiece rowPiece = nextRow(thisRow, colSizes, height - y
-					- bodyBottomSpacingClosed, rowStarted);
+			PrintPiece rowPiece = nextRow(thisRow, colSizes,
+					height - y - bodyBottomSpacingClosed, rowStarted);
 			boolean hasNext = hasNext(thisRow);
 
 			if ((cellClippingEnabled || entries.isEmpty())
 					&& (rowPiece == null || hasNext)) {
 				thisRow = cloneRow(body[row]);
-				rowPiece = nextRow(thisRow, colSizes, height - y
-						- bodyBottomSpacingOpen, true);
+				rowPiece = nextRow(thisRow, colSizes,
+						height - y - bodyBottomSpacingOpen, true);
 				hasNext = true;
 			}
 
@@ -985,7 +1001,7 @@ public class GridIterator implements PrintIterator {
 	}
 
 	private static GridCellIterator[] cloneRow(GridCellIterator[] row) {
-		GridCellIterator[] result = (GridCellIterator[]) row.clone();
+		GridCellIterator[] result = row.clone();
 		for (int i = 0; i < result.length; i++)
 			result[i] = result[i].copy();
 		return result;
@@ -1006,7 +1022,7 @@ public class GridIterator implements PrintIterator {
 			return null;
 		}
 
-		List sections = new ArrayList();
+		List<CompositeEntry> sections = new ArrayList<>();
 
 		PrintPiece lookPiece = new GridLookPainterPiece(look, colSizes,
 				headerRows, headerColSpans, firstRow, topOpen, bodyRows,
