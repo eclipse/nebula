@@ -201,16 +201,17 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
         	textLayout.setWidth(width < 1 ? 1 : width);
         	textLayout.setText(text);
         	y -= textLayout.getBounds().height;
-        	
+
         	// remove the first line shift
         	y+=gc.getFontMetrics().getHeight();
-        	
+
         	if (column.getParent().isAutoHeight())
         	{
         		column.getParent().recalculateHeader();
         	}
 
         	textLayout.draw(gc, getBounds().x + x + pushedDrawingOffset, y + pushedDrawingOffset);
+        	System.out.println("text=" + text +",width=" + width + ", x=" + (getBounds().x + x + pushedDrawingOffset));
         }
 
         if (column.getSort() != SWT.NONE)
@@ -420,6 +421,5 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
                }
            });
        }
-       textLayout.setAlignment(column.getAlignment());
    }
 }
