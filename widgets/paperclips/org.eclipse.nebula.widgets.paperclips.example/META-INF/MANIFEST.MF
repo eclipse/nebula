@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.nebula.widgets.paperclips.example;singleton:=true
 Bundle-Version: 2.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.nebula.examples;bundle-version="1.0.4",
  org.eclipse.nebula.paperclips.core;bundle-version="[2.0.0,3.0.0)",
