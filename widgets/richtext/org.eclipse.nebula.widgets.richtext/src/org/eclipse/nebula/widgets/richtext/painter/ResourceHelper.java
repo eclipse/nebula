@@ -49,17 +49,25 @@ public final class ResourceHelper {
 
 	public static Color getColor(String rgbString) {
 		if (!JFaceResources.getColorRegistry().hasValueFor(rgbString)) {
-			// rgb string in format rgb(r, g, b)
-			String rgbValues = rgbString.substring(rgbString.indexOf('(') + 1, rgbString.lastIndexOf(')'));
-			String[] values = rgbValues.split(",");
-			try {
-				int red = Integer.valueOf(values[0].trim());
-				int green = Integer.valueOf(values[1].trim());
-				int blue = Integer.valueOf(values[2].trim());
-
-				JFaceResources.getColorRegistry().put(rgbString, new RGB(red, green, blue));
-			} catch (NumberFormatException e) {
-				e.printStackTrace();
+			if (rgbString.startsWith("#")) {
+				// decode hex to rgb
+				Integer intval = Integer.decode(rgbString);
+		        int i = intval.intValue();
+		        RGB rgb = new RGB((i >> 16) & 0xFF, (i >> 8) & 0xFF, i & 0xFF);
+		        JFaceResources.getColorRegistry().put(rgbString, rgb);
+			} else {
+				// rgb string in format rgb(r, g, b)
+				String rgbValues = rgbString.substring(rgbString.indexOf('(') + 1, rgbString.lastIndexOf(')'));
+				String[] values = rgbValues.split(",");
+				try {
+					int red = Integer.valueOf(values[0].trim());
+					int green = Integer.valueOf(values[1].trim());
+					int blue = Integer.valueOf(values[2].trim());
+					
+					JFaceResources.getColorRegistry().put(rgbString, new RGB(red, green, blue));
+				} catch (NumberFormatException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		return JFaceResources.getColorRegistry().get(rgbString);
