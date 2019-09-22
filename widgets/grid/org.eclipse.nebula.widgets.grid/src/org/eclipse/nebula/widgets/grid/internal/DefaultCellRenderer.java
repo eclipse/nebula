@@ -104,7 +104,7 @@ public class DefaultCellRenderer extends GridCellRenderer
             {
                 gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
             }
-            
+
             Color foreground = item.getForeground(getColumn());
 			gc.setForeground(foreground == null ? getDisplay().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND) : foreground);
         }
@@ -248,6 +248,10 @@ public class DefaultCellRenderer extends GridCellRenderer
               // Look through all columns (except this one) to get the max height needed for this item
             int columnCount = item.getParent().getColumnCount();
             int maxHeight = textLayout.getBounds().height + textTopMargin + textBottomMargin;
+			if (image != null) {
+				int imageHeight = topMargin + image.getBounds().height + bottomMargin;
+				maxHeight = Math.max(maxHeight, imageHeight);
+			}
             for (int i=0; i<columnCount; i++)
             {
               GridColumn column = item.getParent().getColumn(i);
