@@ -256,17 +256,17 @@ public class Grid extends Canvas {
 	/**
 	 * All items in the table, not just root items.
 	 */
-	private final List<GridItem> items = new ArrayList<GridItem>();
+	private final List<GridItem> items = new ArrayList<>();
 
 	/**
 	 * All root items.
 	 */
-	private final List<GridItem> rootItems = new ArrayList<GridItem>();
+	private final List<GridItem> rootItems = new ArrayList<>();
 
 	/**
 	 * List of selected items.
 	 */
-	private final List<GridItem> selectedItems = new ArrayList<GridItem>();
+	private final List<GridItem> selectedItems = new ArrayList<>();
 
 	/**
 	 * Reference to the item in focus.
@@ -275,8 +275,8 @@ public class Grid extends Canvas {
 
 	private boolean cellSelectionEnabled = false;
 
-	private final List<Point> selectedCells = new ArrayList<Point>();
-	private final List<Point> selectedCellsBeforeRangeSelect = new ArrayList<Point>();
+	private final List<Point> selectedCells = new ArrayList<>();
+	private final List<Point> selectedCellsBeforeRangeSelect = new ArrayList<>();
 
 	private boolean cellDragSelectionOccuring = false;
 	private boolean cellRowDragSelectionOccuring = false;
@@ -292,7 +292,7 @@ public class Grid extends Canvas {
 
 	private GridColumn focusColumn;
 
-	private final List<GridColumn> selectedColumns = new ArrayList<GridColumn>();
+	private final List<GridColumn> selectedColumns = new ArrayList<>();
 
 	/**
 	 * This is the column that the user last navigated to, but may not be the focusColumn because
@@ -306,12 +306,12 @@ public class Grid extends Canvas {
 	/**
 	 * List of table columns in creation/index order.
 	 */
-	private final List<GridColumn> columns = new ArrayList<GridColumn>();
+	private final List<GridColumn> columns = new ArrayList<>();
 
 	/**
 	 * List of the table columns in the order they are displayed.
 	 */
-	private final List<GridColumn> displayOrderedColumns = new ArrayList<GridColumn>();
+	private final List<GridColumn> displayOrderedColumns = new ArrayList<>();
 
 	private GridColumnGroup[] columnGroups = new GridColumnGroup[0];
 
@@ -2296,7 +2296,7 @@ public class Grid extends Canvas {
 			return selectedItems.toArray(new GridItem[selectedItems.size()]);
 		}
 		else {
-			final Vector<GridItem> items = new Vector<GridItem>();
+			final Vector<GridItem> items = new Vector<>();
 			final int itemCount = getItemCount();
 
 			for (final Point cell: selectedCells) {
@@ -2330,7 +2330,7 @@ public class Grid extends Canvas {
 			return selectedItems.size();
 		}
 		else {
-			final Vector<GridItem> items = new Vector<GridItem>();
+			final Vector<GridItem> items = new Vector<>();
 			for (final Point cell: selectedCells) {
 				final GridItem item = getItem(cell.y);
 				if (!items.contains(item)) {
@@ -2421,7 +2421,7 @@ public class Grid extends Canvas {
 			return indices;
 		}
 		else {
-			final Vector<GridItem> selectedRows = new Vector<GridItem>();
+			final Vector<GridItem> selectedRows = new Vector<>();
 			for (final Point cell: selectedCells) {
 				final GridItem item = getItem(cell.y);
 				if (!selectedRows.contains(item)) {
@@ -3683,16 +3683,37 @@ public class Grid extends Canvas {
 	 * </ul>
 	 */
 	public void setRowHeaderVisible(final boolean show) {
+		setRowHeaderVisible(show, 1);
+	}
+
+	/**
+	 * Marks the receiver's row header as visible if the argument is
+	 * {@code true}, and marks it invisible otherwise. When row headers are
+	 * visible, horizontal scrolling is always done by column rather than by
+	 * pixel.
+	 *
+	 * @param show the new visibility state
+	 * @param minWidth the minimun width of the row column
+	 * @throws org.eclipse.swt.SWTException
+	 * <ul>
+	 * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+	 * created the receiver</li>
+	 * </ul>
+	 */
+	public void setRowHeaderVisible(final boolean show, final int minWidth) {
 		checkWidget();
 		rowHeaderVisible = show;
 		setColumnScrolling(true);
 
 		if (show && isAutoWidth()) {
-			computeRowHeaderWidth(1);
+			computeRowHeaderWidth(minWidth);
 		}
 
 		redraw();
 	}
+
+
 
 	/**
 	 * Selects the item at the given zero-relative index in the receiver. The
@@ -5890,7 +5911,7 @@ public class Grid extends Canvas {
 	 * @return selection event that will need to be fired or null.
 	 */
 	private Event updateCellSelection(final Point newCell, final int stateMask, final boolean dragging, final boolean reverseDuplicateSelections) {
-		final Vector<Point> v = new Vector<Point>();
+		final Vector<Point> v = new Vector<>();
 		v.add(newCell);
 		return updateCellSelection(v, stateMask, dragging, reverseDuplicateSelections);
 	}
@@ -6382,7 +6403,7 @@ public class Grid extends Canvas {
 								ctrl = ((e.stateMask & SWT.MOD1) != 0);
 							}
 
-							final Vector<Point> cells = new Vector<Point>();
+							final Vector<Point> cells = new Vector<>();
 
 							if (shift) {
 								getCells(item, focusItem, cells);
@@ -6466,7 +6487,7 @@ public class Grid extends Canvas {
 				return;
 			}
 
-			final Vector<Point> cells = new Vector<Point>();
+			final Vector<Point> cells = new Vector<>();
 
 			final GridColumnGroup group = col.getColumnGroup();
 			if (group != null && e.y < groupHeaderHeight) {
@@ -6757,7 +6778,7 @@ public class Grid extends Canvas {
 						}
 					}
 
-					final Vector<Point> cells = new Vector<Point>();
+					final Vector<Point> cells = new Vector<>();
 
 					getCells(intentItem, focusItem, cells);
 
@@ -6783,7 +6804,7 @@ public class Grid extends Canvas {
 
 					GridColumn iterCol = intentCol;
 
-					final Vector<Point> newSelected = new Vector<Point>();
+					final Vector<Point> newSelected = new Vector<>();
 
 					final boolean decreasing = (displayOrderedColumns.indexOf(iterCol) > displayOrderedColumns
 							.indexOf(focusColumn));
@@ -7615,7 +7636,7 @@ public class Grid extends Canvas {
 		final int index = indexOf(column);
 
 		if (cellSelectionEnabled) {
-			final Vector<Point> removeSelectedCells = new Vector<Point>();
+			final Vector<Point> removeSelectedCells = new Vector<>();
 
 			for (final Point cell: selectedCells) {
 				if (cell.x == index) {
@@ -8457,7 +8478,7 @@ public class Grid extends Canvas {
 	 */
 	public void selectColumn(final int col) {
 		checkWidget();
-		final Vector<Point> cells = new Vector<Point>();
+		final Vector<Point> cells = new Vector<>();
 		getCells(getColumn(col), cells);
 		selectCells(cells.toArray(new Point[0]));
 	}
@@ -8492,7 +8513,7 @@ public class Grid extends Canvas {
 	 */
 	public void selectColumnGroup(final GridColumnGroup colGroup) {
 		checkWidget();
-		final Vector<Point> cells = new Vector<Point>();
+		final Vector<Point> cells = new Vector<>();
 		getCells(colGroup, cells);
 		selectCells(cells.toArray(new Point[0]));
 	}
@@ -8705,7 +8726,7 @@ public class Grid extends Canvas {
 	}
 
 	private Point[] getCells(final GridItem item) {
-		final Vector<Point> cells = new Vector<Point>();
+		final Vector<Point> cells = new Vector<>();
 
 		final int itemIndex = item.getRowIndex();
 
@@ -9906,7 +9927,7 @@ public class Grid extends Canvas {
 
 		if (startColumnIndex <= endColumnIndex) {
 			if (displayOrderedColumns.size() > 0) {
-				final List<GridColumn> cols = new ArrayList<GridColumn>();
+				final List<GridColumn> cols = new ArrayList<>();
 				for (int i = startColumnIndex; i <= endColumnIndex; i++) {
 					final GridColumn col = displayOrderedColumns.get(i);
 					if (col.isVisible()) {
@@ -10104,11 +10125,13 @@ public class Grid extends Canvas {
 	}
 
 	private void computeRowHeaderWidth(final int minWidth) {
-		estimate(sizingGC -> //
-		rowHeaderWidth = items.stream() //
-				.mapToInt(item -> rowHeaderRenderer.computeSize(sizingGC, SWT.DEFAULT, SWT.DEFAULT, item).x) //
-				.max() //
-				.orElse(minWidth));
+		estimate(sizingGC -> {//
+			final int width = items.stream() //
+					.mapToInt(item -> rowHeaderRenderer.computeSize(sizingGC, SWT.DEFAULT, SWT.DEFAULT, item).x) //
+					.max() //
+					.orElse(minWidth);
+			rowHeaderWidth = width > minWidth ? width : minWidth;
+		});
 	}
 
 	private int estimateWithResult(final ToIntFunction<GC> function) {
