@@ -54,10 +54,10 @@ import org.eclipse.swt.widgets.Widget;
  * ITreeContentProvider} interface. Instead a {@link GridTreeViewer} should be
  * used.
  * <p>
- * 
+ *
  * @author Unknown...
  * @author Mirko Paturzo <mirko.paturzo@exeura.eu>
- * 
+ *
  *         Mirko modified improve performace and reduce used memory fix memory
  *         leak and slow disposed object
  */
@@ -70,18 +70,18 @@ public class GridTableViewer extends AbstractTableViewer {
 	private CellLabelProvider rowHeaderLabelProvider;
 
 	/**
-	 * If true, this grid viewer will ensure that the grid's rows / GridItems
-	 * are always sized to their preferred height.
+	 * If true, this grid viewer will ensure that the grid's rows / GridItems are
+	 * always sized to their preferred height.
 	 */
 	private boolean autoPreferredHeight = false;
 
 	/**
-	 * Creates a grid viewer on a newly-created grid control under the given
-	 * parent. The grid control is created using the SWT style bits
-	 * <code>MULTI, H_SCROLL, V_SCROLL,</code> and <code>BORDER</code>. The
-	 * viewer has no input, no content provider, a default label provider, no
-	 * sorter, and no filters.
-	 * 
+	 * Creates a grid viewer on a newly-created grid control under the given parent.
+	 * The grid control is created using the SWT style bits
+	 * <code>MULTI, H_SCROLL, V_SCROLL,</code> and <code>BORDER</code>. The viewer
+	 * has no input, no content provider, a default label provider, no sorter, and
+	 * no filters.
+	 *
 	 * @param parent
 	 *            the parent control
 	 */
@@ -90,11 +90,11 @@ public class GridTableViewer extends AbstractTableViewer {
 	}
 
 	/**
-	 * Creates a grid viewer on a newly-created grid control under the given
-	 * parent. The grid control is created using the given SWT style bits. The
-	 * viewer has no input, no content provider, a default label provider, no
-	 * sorter, and no filters.
-	 * 
+	 * Creates a grid viewer on a newly-created grid control under the given parent.
+	 * The grid control is created using the given SWT style bits. The viewer has no
+	 * input, no content provider, a default label provider, no sorter, and no
+	 * filters.
+	 *
 	 * @param dataVisualizer
 	 * @param parent
 	 *            the parent control
@@ -106,12 +106,12 @@ public class GridTableViewer extends AbstractTableViewer {
 	}
 
 	/**
-	 * Creates a grid viewer on a newly-created grid control under the given
-	 * parent. The grid control is created using the SWT style bits
-	 * <code>MULTI, H_SCROLL, V_SCROLL,</code> and <code>BORDER</code>. The
-	 * viewer has no input, no content provider, a default label provider, no
-	 * sorter, and no filters.
-	 * 
+	 * Creates a grid viewer on a newly-created grid control under the given parent.
+	 * The grid control is created using the SWT style bits
+	 * <code>MULTI, H_SCROLL, V_SCROLL,</code> and <code>BORDER</code>. The viewer
+	 * has no input, no content provider, a default label provider, no sorter, and
+	 * no filters.
+	 *
 	 * @param dataVisualizer
 	 * @param parent
 	 *            the parent control
@@ -121,11 +121,11 @@ public class GridTableViewer extends AbstractTableViewer {
 	}
 
 	/**
-	 * Creates a grid viewer on a newly-created grid control under the given
-	 * parent. The grid control is created using the given SWT style bits. The
-	 * viewer has no input, no content provider, a default label provider, no
-	 * sorter, and no filters.
-	 * 
+	 * Creates a grid viewer on a newly-created grid control under the given parent.
+	 * The grid control is created using the given SWT style bits. The viewer has no
+	 * input, no content provider, a default label provider, no sorter, and no
+	 * filters.
+	 *
 	 * @param parent
 	 *            the parent control
 	 * @param style
@@ -136,9 +136,9 @@ public class GridTableViewer extends AbstractTableViewer {
 	}
 
 	/**
-	 * Creates a grid viewer on the given grid control. The viewer has no input,
-	 * no content provider, a default label provider, no sorter, and no filters.
-	 * 
+	 * Creates a grid viewer on the given grid control. The viewer has no input, no
+	 * content provider, a default label provider, no sorter, and no filters.
+	 *
 	 * @param grid
 	 *            the grid control
 	 */
@@ -149,7 +149,7 @@ public class GridTableViewer extends AbstractTableViewer {
 
 	/**
 	 * Returns the underlying Grid Control.
-	 * 
+	 *
 	 * @return grid control.
 	 */
 	public Grid getGrid() {
@@ -281,7 +281,7 @@ public class GridTableViewer extends AbstractTableViewer {
 
 	/**
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.AbstractTableViewer#handleDispose(org.eclipse.swt.events.DisposeEvent)
 	 *      fix crossed reference for GC
 	 */
@@ -372,23 +372,22 @@ public class GridTableViewer extends AbstractTableViewer {
 	}
 
 	/**
-	 * When set to true, this grid viewer will ensure that each of the grid's
-	 * items is always automatically sized to its preferred height. The default
-	 * is false.
+	 * When set to true, this grid viewer will ensure that each of the grid's items
+	 * is always automatically sized to its preferred height. The default is false.
 	 * <p>
-	 * Since this mechanism usually leads to a grid with rows of different
-	 * heights and thus to a grid with decreased performance, it should only be
-	 * applied if that is intended. To set the height of all items to a specific
-	 * value, use {@link Grid#setItemHeight(int)} instead.
+	 * Since this mechanism usually leads to a grid with rows of different heights
+	 * and thus to a grid with decreased performance, it should only be applied if
+	 * that is intended. To set the height of all items to a specific value, use
+	 * {@link Grid#setItemHeight(int)} instead.
 	 * <p>
-	 * When a column with activated word wrapping is resized by dragging the
-	 * column resizer, the items are only auto-resized properly if you use
+	 * When a column with activated word wrapping is resized by dragging the column
+	 * resizer, the items are only auto-resized properly if you use
 	 * {@link GridViewerColumn} to create the columns.
 	 * <p>
-	 * When this method is called, existing rows are not resized to their
-	 * preferred height. Therefore it is suggested that this method be called
-	 * before rows are populated (i.e. before setInput).
-	 * 
+	 * When this method is called, existing rows are not resized to their preferred
+	 * height. Therefore it is suggested that this method be called before rows are
+	 * populated (i.e. before setInput).
+	 *
 	 * @param autoPreferredHeight
 	 */
 	public void setAutoPreferredHeight(boolean autoPreferredHeight) {
@@ -421,7 +420,7 @@ public class GridTableViewer extends AbstractTableViewer {
 
 	/**
 	 * Label provider used by calculate the row header text
-	 * 
+	 *
 	 * @param rowHeaderLabelProvider
 	 *            the provider
 	 */
@@ -431,10 +430,10 @@ public class GridTableViewer extends AbstractTableViewer {
 
 	/**
 	 * Refresh row headers only
-	 * 
+	 *
 	 * @param element
-	 *            the element to start or <code>null</code> if all rows should
-	 *            be refreshed
+	 *            the element to start or <code>null</code> if all rows should be
+	 *            refreshed
 	 */
 	public void refreshRowHeaders(Object element) {
 		boolean refresh = element == null;
@@ -478,16 +477,19 @@ public class GridTableViewer extends AbstractTableViewer {
 	protected void setSelectionToWidget(ISelection selection, boolean reveal) {
 		if (!grid.isCellSelectionEnabled() || !(selection instanceof CellSelection)) {
 			super.setSelectionToWidget(selection, reveal);
+			Object el = null;
 			if (selection instanceof SelectionWithFocusRow) {
-				Object el = ((SelectionWithFocusRow) selection).getFocusElement();
-				if (el != null) {
-					for (int i = 0; i < grid.getItemCount(); i++) {
-						GridItem item = grid.getItem(i);
-						if (item.getData() == el || el.equals(item.getData())
-								|| (getComparer() != null && getComparer().equals(item.getData(), el))) {
-							grid.setFocusItem(item);
-							break;
-						}
+				el = ((SelectionWithFocusRow) selection).getFocusElement();
+			} else if (selection instanceof IStructuredSelection) {
+				el = ((IStructuredSelection) selection).getFirstElement();
+			}
+			if (el != null) {
+				for (int i = 0; i < grid.getItemCount(); i++) {
+					GridItem item = grid.getItem(i);
+					if (item.getData() == el || el.equals(item.getData())
+							|| (getComparer() != null && getComparer().equals(item.getData(), el))) {
+						grid.setFocusItem(item);
+						break;
 					}
 				}
 			}
