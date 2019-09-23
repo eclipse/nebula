@@ -734,6 +734,12 @@ public class Grid extends Canvas {
 	private int[] columnOrders;
 
 	/**
+	 * If true, when user types TAB the selection moved to the next line, and SHIFT-TAB move to the previous line
+	 */
+	private boolean moveOnTab = false;
+
+
+	/**
 	 * A range of rows in a <code>Grid</code>.
 	 * <p>
 	 * A row in this sense exists only for visible items
@@ -6161,7 +6167,25 @@ public class Grid extends Canvas {
 		addTraverseListener(new TraverseListener() {
 			@Override
 			public void keyTraversed(final TraverseEvent e) {
-				e.doit = true;
+				if (moveOnTab) {
+					e.doit = false;
+					if (selectedItems.isEmpty()) {
+						select(0);
+						return;
+					}
+					if (selectedItems.size() == 1) {
+						int index = getSelectionIndex();
+						if (SWT.TRAVERSE_TAB_NEXT == e.detail) {
+							select(index == getItemCount() - 1 ? 0 : index + 1);
+						} else if (SWT.TRAVERSE_TAB_PREVIOUS == e.detail) {
+							select(index == 0 ? getItemCount() - 1 : index - 1);
+						}
+						return;
+					}
+					return;
+				} else {
+					e.doit = true;
+				}
 			}
 		});
 
@@ -10122,6 +10146,23 @@ public class Grid extends Canvas {
 				item.setHasSetData(false);
 			}
 		}
+	}
+
+	/**
+	 * @return <code>true</code> if the mouse navigation is enabled on tab/shift tab
+	 */
+	public boolean isMoveOnTab() {
+		checkWidget();
+		return moveOnTab;
+	}
+
+	/**
+	 * This param allows user to change the current selection by pressing TAB and SHIFT-TAB
+	 * @param moveOnTab if <code>true</code>, navigation with tab key is enabled.
+	 */
+	public void setMoveOnTab(boolean moveOnTab) {
+		checkWidget();
+		this.moveOnTab = moveOnTab;
 	}
 
 	private void computeRowHeaderWidth(final int minWidth) {
