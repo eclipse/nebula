@@ -594,4 +594,24 @@ public class GridTableViewer extends AbstractTableViewer {
 
 		return new CellSelection(objectList, indiceLists, focusElement, getComparer());
 	}
+
+	/**
+	 * @see org.eclipse.jface.viewers.AbstractTableViewer#internalRefresh(java.lang.Object, boolean)
+	 */
+	@Override
+	protected void internalRefresh(Object element, boolean updateLabels) {
+		super.internalRefresh(element, updateLabels);
+		doUpdateItem(grid, element, false);
+	}
+
+	/**
+	 * @see org.eclipse.jface.viewers.AbstractTableViewer#internalRefresh(java.lang.Object)
+	 */
+	@Override
+	protected void internalRefresh(Object element) {
+		super.internalRefresh(element);
+		doUpdateItem(grid, element, false);
+	}
+
+
 }
