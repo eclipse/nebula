@@ -42,7 +42,7 @@ public class DefaultRowHeaderRenderer extends AbstractRenderer
     int bottomMargin = 3;
 
     private TextLayout textLayout;
-    
+
     /**
      * {@inheritDoc}
      */
@@ -53,8 +53,8 @@ public class DefaultRowHeaderRenderer extends AbstractRenderer
 
         String text = getHeaderText(item);
 
-        gc.setFont(getDisplay().getSystemFont());
-        
+        gc.setFont(item.getParent().getFont());
+
         Color background = getHeaderBackground(item);
         if( background == null ) {
         	background = getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
@@ -155,17 +155,17 @@ public class DefaultRowHeaderRenderer extends AbstractRenderer
         if( foreground == null ) {
         	foreground = getDisplay().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND);
         }
-        
+
         gc.setForeground(foreground);
 
-        
+
         int y = getBounds().y;
         int selectionOffset = 0;
         if (isSelected() && !item.getParent().getCellSelectionEnabled())
         {
             selectionOffset = 1;
         }
-        
+
         if (!item.getParent().isWordWrapHeader())
         {
             y += (getBounds().height - gc.stringExtent(text).y) / 2;
@@ -176,7 +176,7 @@ public class DefaultRowHeaderRenderer extends AbstractRenderer
           getTextLayout(gc, item);
           textLayout.setWidth(width < 1 ? 1 : width);
           textLayout.setText(text);
-          
+
           if (item.getParent().isAutoHeight())
           {
             // Look through all columns to get the max height needed for this item
@@ -191,13 +191,13 @@ public class DefaultRowHeaderRenderer extends AbstractRenderer
               maxHeight = Math.max(maxHeight, height);
             }
           }
-            
+
           if (maxHeight != item.getHeight())
           {
             item.setHeight(maxHeight);
           }
           }
-          
+
           textLayout.draw(gc, getBounds().x + x + selectionOffset, y + selectionOffset);
         }
 
@@ -253,15 +253,15 @@ public class DefaultRowHeaderRenderer extends AbstractRenderer
         }
         return text;
     }
-    
+
     private Color getHeaderBackground(GridItem item) {
     	return item.getHeaderBackground();
     }
-    
+
     private Color getHeaderForeground(GridItem item) {
     	return item.getHeaderForeground();
     }
-    
+
     private void getTextLayout(GC gc, GridItem gridItem)
     {
         if (textLayout == null)
@@ -269,12 +269,12 @@ public class DefaultRowHeaderRenderer extends AbstractRenderer
             textLayout = new TextLayout(gc.getDevice());
             textLayout.setFont(gc.getFont());
             gridItem.getParent().addDisposeListener(new DisposeListener()
-            {                
+            {
                 @Override
 				public void widgetDisposed(DisposeEvent e)
                 {
                     textLayout.dispose();
-                }                
+                }
             });
         }
     }
