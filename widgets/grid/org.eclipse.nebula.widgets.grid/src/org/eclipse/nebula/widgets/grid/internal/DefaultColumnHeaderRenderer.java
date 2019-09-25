@@ -170,7 +170,6 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
         if (!isWordWrap())
         {
           text = TextUtils.getShortString(gc, text, width);
-            //y -= gc.getFontMetrics().getHeight();
         }
 
         if (column.getAlignment() == SWT.RIGHT)
@@ -211,7 +210,6 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
         	}
 
         	textLayout.draw(gc, getBounds().x + x + pushedDrawingOffset, y + pushedDrawingOffset);
-        	System.out.println("text=" + text +",width=" + width + ", x=" + (getBounds().x + x + pushedDrawingOffset));
         }
 
         if (column.getSort() != SWT.NONE)
@@ -226,7 +224,7 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
                 + 1;
         	}
 
-            arrowRenderer.setSelected(column.getSort() == SWT.UP);
+            arrowRenderer.setSelected(column.getSort() == SWT.DOWN);
             if (drawSelected)
             {
                 arrowRenderer
