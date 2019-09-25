@@ -1839,7 +1839,11 @@ public class Grid extends Canvas {
 				final int displayColIndex = displayOrderedColumns.indexOf(gridColumn);
 
 				// track back all previous columns and check their spanning
+				int indexNextItemToCheck = 0;
 				for (int i = 0; i < itemIndex; i++) {
+					if (i < indexNextItemToCheck) {
+						continue;
+					}
 					final GridItem gridItem = this.getItem(i);
 					if (gridItem.isVisible() == false) {
 						continue;
@@ -1850,6 +1854,7 @@ public class Grid extends Canvas {
 						itemToReturn = gridItem;
 						break;
 					}
+					 indexNextItemToCheck = i + span + 1;
 				}
 			}
 		}
