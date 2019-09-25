@@ -6930,6 +6930,8 @@ public class Grid extends Canvas {
 		hoveringItem = null;
 		hoveringDetail = "";
 		hoveringColumn = null;
+		hoveringColumnHeader = null;
+		hoverColumnGroupHeader = null;
 		hoveringOverText = false;
 		hideToolTip();
 		redraw();
