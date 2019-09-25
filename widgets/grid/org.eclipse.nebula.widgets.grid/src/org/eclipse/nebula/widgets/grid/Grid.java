@@ -8104,7 +8104,7 @@ public class Grid extends Canvas {
 	 * @param col
 	 * @return
 	 */
-	private GridColumn getVisibleColumn_DegradeLeft(final GridItem item, final GridColumn col) {
+	GridColumn getVisibleColumn_DegradeLeft(final GridItem item, final GridColumn col) {
 		int index = displayOrderedColumns.indexOf(col);
 
 		GridColumn prevCol = col;
@@ -8147,7 +8147,7 @@ public class Grid extends Canvas {
 	 * @param col
 	 * @return
 	 */
-	private GridColumn getVisibleColumn_DegradeRight(final GridItem item, final GridColumn col) {
+	GridColumn getVisibleColumn_DegradeRight(final GridItem item, final GridColumn col) {
 		int index = displayOrderedColumns.indexOf(col);
 
 		int i = 0;
