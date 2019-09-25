@@ -7441,7 +7441,7 @@ public class Grid extends Canvas {
 
 		if (col != null) {
 			if (item != null) {
-				if (y < getClientArea().height - footerHeight) {
+				if (y < getClientArea().height - (columnFootersVisible ? footerHeight : 0)) {
 					col.getCellRenderer().setBounds(item.getBounds(columns.indexOf(col)));
 
 					if (col.getCellRenderer().notify(IInternalWidget.MouseMove, new Point(x, y), item)) {
