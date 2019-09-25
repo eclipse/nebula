@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.grid;
 
+import java.util.Vector;
+
 import org.eclipse.nebula.widgets.grid.internal.DefaultColumnGroupHeaderRenderer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
@@ -21,8 +23,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.TypedListener;
-
-import java.util.Vector;
 
 /**
  * <p>
@@ -82,9 +82,22 @@ public class GridColumnGroup extends Item
         super(parent, style);
         this.parent = parent;
 
-        headerRenderer.setDisplay(getDisplay());
+        init(style);
         parent.newColumnGroup(this);
     }
+
+
+	private void init(int style) {
+		headerRenderer.setDisplay(getDisplay());
+		if ((getStyle() & SWT.RIGHT) == SWT.RIGHT) {
+			headerRenderer.setHorizontalAlignment(SWT.RIGHT);
+		}
+
+		if ((getStyle() & SWT.CENTER) == SWT.CENTER) {
+			headerRenderer.setHorizontalAlignment(SWT.CENTER);
+		}
+
+	}
 
     /**
      * Adds the listener to the collection of listeners who will
@@ -464,4 +477,21 @@ public class GridColumnGroup extends Item
     	checkWidget();
     	this.headerFont = font;
     }
+
+	/**
+	 * Returns the column group header alignment.
+	 *
+	 * @return SWT.LEFT, SWT.RIGHT, SWT.CENTER
+	 * @throws org.eclipse.swt.SWTException
+	 *             <ul>
+	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
+	 *             </ul>
+	 */
+	public int getAlignment() {
+		checkWidget();
+		return headerRenderer.getHorizontalAlignment();
+	}
 }
