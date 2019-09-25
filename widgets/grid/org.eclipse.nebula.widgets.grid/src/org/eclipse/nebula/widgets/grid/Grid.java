@@ -6790,7 +6790,7 @@ public class Grid extends Canvas {
 					if (hoveringItem == null) {
 						if (e.y > headerHeight) {
 							//then we must be hovering way to the bottom
-							intentItem = getPreviousVisibleItem(null);//TODO LCN WHAT ?
+							intentItem = getPreviousVisibleItem(null);
 						}
 						else {
 							if (getTopIndex() > 0) {
@@ -7430,10 +7430,10 @@ public class Grid extends Canvas {
 		final GridColumn col = getColumn(new Point(x, y));
 		final GridItem item;
 		// If the user select cells and drag, the mouse pointer could be out of the grid's bounds
-		if (x > getClientArea().width) {
-			item = getItem(new Point(getClientArea().width - 1, y));
+		if (x >= getClientArea().width-1) {
+			item = hoveringItem;
 		} else if (x < getClientArea().x) {
-			item = getItem(new Point(getClientArea().x + 1, y));
+			item = hoveringItem;
 		} else {
 			item = getItem(new Point(x, y));
 		}
