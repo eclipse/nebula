@@ -2,149 +2,144 @@ package org.eclipse.nebula.widgets.grid.internal;
 
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 
 /**
- * A null-op scrollbar proxy.  Used when the grid is not showing scrollbars.
+ * A null-op scrollbar proxy. Used when the grid is not showing scrollbars.
  *
  * @author chris.gross@us.ibm.com
  * @since 2.0.0
  */
-public class NullScrollBarProxy implements IScrollBarProxy
-{
+public class NullScrollBarProxy implements IScrollBarProxy {
 
-    /** 
-     * {@inheritDoc}
-     */
-    public boolean getVisible()
-    {
-        return false;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean getVisible() {
+		return false;
+	}
 
-    /** 
-     * {@inheritDoc}
-     */
-    public void setVisible(boolean visible)
-    {
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setVisible(boolean visible) {
+	}
 
-    /** 
-     * {@inheritDoc}
-     */
-    public int getSelection()
-    {
-        return 0;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public int getSelection() {
+		return 0;
+	}
 
-    /** 
-     * {@inheritDoc}
-     */
-    public void setSelection(int selection)
-    {
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setSelection(int selection) {
+	}
 
-    /** 
-     * {@inheritDoc}
-     */
-    public void setValues(int selection, int min, int max, int thumb, int increment,
-                          int pageIncrement)
-    {
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setValues(int selection, int min, int max, int thumb, int increment, int pageIncrement) {
+	}
 
-    /** 
-     * {@inheritDoc}
-     */
-    public void handleMouseWheel(Event e)
-    {
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public void handleMouseWheel(Event e) {
+	}
 
-    /** 
-     * {@inheritDoc}
-     */
-    public void setMinimum(int min)
-    {
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setMinimum(int min) {
+	}
 
-    /** 
-     * {@inheritDoc}
-     */
-    public int getMinimum()
-    {
-        return 0;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public int getMinimum() {
+		return 0;
+	}
 
-    /** 
-     * {@inheritDoc}
-     */
-    public void setMaximum(int max)
-    {
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setMaximum(int max) {
+	}
 
-    /** 
-     * {@inheritDoc}
-     */
-    public int getMaximum()
-    {
-        return 0;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public int getMaximum() {
+		return 0;
+	}
 
-    /** 
-     * {@inheritDoc}
-     */
-    public void setThumb(int thumb)
-    {
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setThumb(int thumb) {
+	}
 
-    /** 
-     * {@inheritDoc}
-     */
-    public int getThumb()
-    {
-        return 0;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public int getThumb() {
+		return 0;
+	}
 
-    /** 
-     * {@inheritDoc}
-     */
-    public void setIncrement(int increment)
-    {
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setIncrement(int increment) {
+	}
 
-    /** 
-     * {@inheritDoc}
-     */
-    public int getIncrement()
-    {
-        return 0;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public int getIncrement() {
+		return 0;
+	}
 
-    /** 
-     * {@inheritDoc}
-     */
-    public void setPageIncrement(int page)
-    {
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setPageIncrement(int page) {
+	}
 
-    /** 
-     * {@inheritDoc}
-     */
-    public int getPageIncrement()
-    {
-        return 0;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public int getPageIncrement() {
+		return 0;
+	}
 
-    /** 
-     * {@inheritDoc}
-     */
-    public void addSelectionListener(SelectionListener listener)
-    { 
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public void addSelectionListener(SelectionListener listener) {
+	}
 
-    /** 
-     * {@inheritDoc}
-     */
-    public void removeSelectionListener(SelectionListener listener)
-    {
-   
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public void removeSelectionListener(SelectionListener listener) {
+
+	}
+
+	/**
+	 * @see org.eclipse.nebula.widgets.grid.internal.IScrollBarProxy#addListener(int, org.eclipse.swt.widgets.Listener)
+	 */
+	@Override
+	public void addListener(int eventType, Listener listener) {
+	}
+
+	/**
+	 * @see org.eclipse.nebula.widgets.grid.internal.IScrollBarProxy#removeListener(int, org.eclipse.swt.widgets.Listener)
+	 */
+	@Override
+	public void removeListener(int eventType, Listener listener) {
+	}
 
 }
