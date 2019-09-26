@@ -169,7 +169,7 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
 
         if (!isWordWrap())
         {
-          text = TextUtils.getShortString(gc, text, width);
+          text = TextUtils.getShortStr(gc, text, width);
         }
 
         if (column.getAlignment() == SWT.RIGHT)

@@ -77,13 +77,16 @@ public class DefaultCellRenderer extends GridCellRenderer
 
         if (isCellSelected())
         {
-            drawAsSelected = true;//(!isCellFocus());
+            drawAsSelected = true;
         }
 
         if (drawAsSelected)
         {
-            gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION));
-            gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT));
+        	boolean hasFocus = item.getParent().isFocusOnGrid();
+        	Color backgroundColor = hasFocus?getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION):getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
+            Color foregroundColor = hasFocus?getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT):getDisplay().getSystemColor(SWT.COLOR_BLACK);
+        	gc.setBackground(backgroundColor);
+            gc.setForeground(foregroundColor);
         }
         else
         {
@@ -195,7 +198,11 @@ public class DefaultCellRenderer extends GridCellRenderer
 
         if (drawAsSelected)
         {
-            gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT));
+        	boolean hasFocus = item.getParent().isFocusOnGrid();
+        	Color backgroundColor = hasFocus?getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION):getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
+            Color foregroundColor = hasFocus?getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT):getDisplay().getSystemColor(SWT.COLOR_BLACK);
+        	gc.setBackground(backgroundColor);
+            gc.setForeground(foregroundColor);
         }
         else
         {

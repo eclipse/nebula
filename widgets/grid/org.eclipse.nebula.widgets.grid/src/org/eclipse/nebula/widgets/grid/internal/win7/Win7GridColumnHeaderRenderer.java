@@ -102,7 +102,7 @@ public class Win7GridColumnHeaderRenderer extends DefaultColumnHeaderRenderer {
         String text = column.getText();
 
         if (!isWordWrap()) {
-            text = TextUtils.getShortString(gc, text, width);
+            text = TextUtils.getShortStr(gc, text, width);
         }
 
         if (column.getAlignment() == SWT.RIGHT) {

@@ -61,7 +61,7 @@ public class Win7ColumnGroupHeaderRenderer extends DefaultColumnGroupHeaderRende
 
 		gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
 		if (!isWordWrap()) {
-			gc.drawString(TextUtils.getShortString(gc, group.getText(), width), getBounds().x + x,
+			gc.drawString(TextUtils.getShortStr(gc, group.getText(), width), getBounds().x + x,
 					getBounds().y + topMargin, true);
 		} else {
 			getTextLayout(gc, group);
