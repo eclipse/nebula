@@ -383,7 +383,7 @@ public class Grid extends Canvas {
 	/**
 	 * Type of selection behavior. Valid values are SWT.SINGLE and SWT.MULTI.
 	 */
-	private int selectionType = SWT.SINGLE;
+	private GridSelectionType selectionType = GridSelectionType.SINGLE;
 
 	/**
 	 * True if selection highlighting is enabled.
@@ -831,7 +831,7 @@ public class Grid extends Canvas {
 		setLineColor(getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 
 		if ((style & SWT.MULTI) != 0) {
-			selectionType = SWT.MULTI;
+			selectionType = GridSelectionType.MULTI;
 		}
 
 		if (getVerticalBar() != null) {
@@ -3240,11 +3240,11 @@ public class Grid extends Canvas {
 		final GridItem item = items.get(index);
 
 		if (!cellSelectionEnabled) {
-			if (selectionType == SWT.MULTI && selectedItems.contains(item)) {
+			if (selectionType == GridSelectionType.MULTI && selectedItems.contains(item)) {
 				return;
 			}
 
-			if (selectionType == SWT.SINGLE) {
+			if (selectionType == GridSelectionType.SINGLE) {
 				selectedItems.clear();
 			}
 
@@ -3287,12 +3287,12 @@ public class Grid extends Canvas {
 			return;
 		}
 
-		if (selectionType == SWT.SINGLE && start != end) {
+		if (selectionType == GridSelectionType.SINGLE && start != end) {
 			return;
 		}
 
 		if (!cellSelectionEnabled) {
-			if (selectionType == SWT.SINGLE) {
+			if (selectionType == GridSelectionType.SINGLE) {
 				selectedItems.clear();
 			}
 		}
@@ -3357,12 +3357,12 @@ public class Grid extends Canvas {
 			return;
 		}
 
-		if (selectionType == SWT.SINGLE && indices.length > 1) {
+		if (selectionType ==  GridSelectionType.SINGLE && indices.length > 1) {
 			return;
 		}
 
 		if (!cellSelectionEnabled) {
-			if (selectionType == SWT.SINGLE) {
+			if (selectionType ==  GridSelectionType.SINGLE) {
 				selectedItems.clear();
 			}
 		}
@@ -3406,7 +3406,7 @@ public class Grid extends Canvas {
 			return;
 		}
 
-		if (selectionType == SWT.SINGLE) {
+		if (selectionType ==  GridSelectionType.SINGLE) {
 			return;
 		}
 
@@ -3790,7 +3790,7 @@ public class Grid extends Canvas {
 			return;
 		}
 
-		if (selectionType == SWT.SINGLE && start != end) {
+		if (selectionType ==  GridSelectionType.SINGLE && start != end) {
 			return;
 		}
 
@@ -3874,7 +3874,7 @@ public class Grid extends Canvas {
 			return;
 		}
 
-		if (selectionType == SWT.SINGLE && indices.length > 1) {
+		if (selectionType ==  GridSelectionType.SINGLE && indices.length > 1) {
 			return;
 		}
 
@@ -3943,7 +3943,7 @@ public class Grid extends Canvas {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
 
-		if (selectionType == SWT.SINGLE && _items.length > 1) {
+		if (selectionType ==  GridSelectionType.SINGLE && _items.length > 1) {
 			return;
 		}
 
@@ -5787,7 +5787,7 @@ public class Grid extends Canvas {
 
 		Event selectionEvent = null;
 
-		if (selectionType == SWT.SINGLE) {
+		if (selectionType ==  GridSelectionType.SINGLE) {
 			if (selectedItems.contains(item)) {
 				// Deselect when pressing CTRL
 				if ((stateMask & SWT.MOD1) == SWT.MOD1) {
@@ -5804,7 +5804,7 @@ public class Grid extends Canvas {
 			selectionEvent = new Event();
 			selectionEvent.item = item;
 		}
-		else if (selectionType == SWT.MULTI) {
+		else if (selectionType == GridSelectionType.MULTI) {
 			boolean shift = false;
 			boolean ctrl = false;
 
@@ -6103,7 +6103,7 @@ public class Grid extends Canvas {
 			}
 
 			if (!found) {
-				if (selectionType == SWT.SINGLE && selectedCells.size()>0) {
+				if (selectionType ==  GridSelectionType.SINGLE && selectedCells.size()>0) {
 					return;
 				}
 				selectedCells.add(newCell);
@@ -6470,7 +6470,7 @@ public class Grid extends Canvas {
 					return;
 				}
 
-				if (e.button == 3 && selectionType == SWT.MULTI) {
+				if (e.button == 3 && selectionType == GridSelectionType.MULTI) {
 					if ((e.stateMask & SWT.MOD2) == SWT.MOD2) {
 						return;
 					}
@@ -7223,7 +7223,7 @@ public class Grid extends Canvas {
 		}
 		else {
 			Event selectionEvent = null;
-			if (selectionType == SWT.SINGLE || e.stateMask != SWT.MOD1) {
+			if (selectionType ==  GridSelectionType.SINGLE || e.stateMask != SWT.MOD1) {
 				selectionEvent = updateSelection(newSelection, e.stateMask);
 				if (selectionEvent != null) {
 					selectionEvent.stateMask = e.stateMask;
@@ -8220,9 +8220,9 @@ public class Grid extends Canvas {
 			selectedCells.clear();
 			redraw();
 		} else {
-			if ((getStyle() & SWT.SINGLE) == 0) {
+			if ((getStyle() &  SWT.SINGLE) == 0) {
 				// To keep compatibility, one can selected multiple cells
-				selectionType = SWT.MULTI;
+				selectionType = GridSelectionType.MULTI;
 			}
 			selectedItems.clear();
 			redraw();
@@ -8483,7 +8483,7 @@ public class Grid extends Canvas {
 			return selectAllCellsInternal();
 		}
 
-		if (SWT.MULTI != selectionType) {
+		if (GridSelectionType.MULTI != selectionType) {
 			return null;
 		}
 
@@ -10216,6 +10216,18 @@ public class Grid extends Canvas {
 	 * @return true if the grid has focus
 	 */
 	public boolean isFocusOnGrid() {
+		checkWidget();
 		return getDisplay().getFocusControl() == this;
 	}
+
+	/**
+	 * Change selection type (single or multi)
+	 * @param selectionType the new selection type
+	 */
+	public void setSelectionType(GridSelectionType selectionType) {
+		checkWidget();
+		this.selectionType = selectionType;
+	}
+
+
 }
