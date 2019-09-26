@@ -169,7 +169,7 @@ public class DefaultRowHeaderRenderer extends AbstractRenderer
         if (!item.getParent().isWordWrapHeader())
         {
             y += (getBounds().height - gc.stringExtent(text).y) / 2;
-            gc.drawString(TextUtils.getShortString(gc, text, width), getBounds().x + x + selectionOffset, y + selectionOffset, true);
+            gc.drawString(TextUtils.getShortStr(gc, text, width), getBounds().x + x + selectionOffset, y + selectionOffset, true);
         }
         else
         {

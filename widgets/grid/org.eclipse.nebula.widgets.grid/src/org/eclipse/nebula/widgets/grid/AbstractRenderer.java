@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    chris.gross@us.ibm.com - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.nebula.widgets.grid;
 
 import org.eclipse.swt.graphics.Point;
@@ -16,11 +16,11 @@ import org.eclipse.swt.widgets.Display;
 
 /**
  * <p>
- * NOTE:  THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.  THIS IS A PRE-RELEASE ALPHA 
+ * NOTE:  THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.  THIS IS A PRE-RELEASE ALPHA
  * VERSION.  USERS SHOULD EXPECT API CHANGES IN FUTURE VERSIONS.
- * </p> 
+ * </p>
  * Base implementation of IRenderer. Provides management of a few values.
- * 
+ *
  * @author chris.gross@us.ibm.com
  */
 public abstract class AbstractRenderer implements IRenderer
@@ -45,13 +45,10 @@ public abstract class AbstractRenderer implements IRenderer
 
     /** Display used to create GC to perform painting. */
     private Display display;
-    
-    /** Dragging state. */
-    private boolean dragging;
 
     /**
      * Returns the bounds.
-     * 
+     *
      * @return Rectangle describing the bounds.
      */
     public Rectangle getBounds()
@@ -68,7 +65,7 @@ public abstract class AbstractRenderer implements IRenderer
     }
 
 
-    /** 
+    /**
      * {@inheritDoc}
      */
     public void setBounds(Rectangle bounds)
@@ -78,7 +75,7 @@ public abstract class AbstractRenderer implements IRenderer
 
     /**
      * Returns the size.
-     * 
+     *
      * @return size of the renderer.
      */
     public Point getSize()
@@ -120,7 +117,7 @@ public abstract class AbstractRenderer implements IRenderer
 
     /**
      * Returns a boolean value indicating if this renderer has focus.
-     * 
+     *
      * @return True/false if has focus.
      */
     public boolean isFocus()
@@ -128,7 +125,7 @@ public abstract class AbstractRenderer implements IRenderer
         return focus;
     }
 
-    /** 
+    /**
      * {@inheritDoc}
      */
     public void setFocus(boolean focus)
@@ -138,7 +135,7 @@ public abstract class AbstractRenderer implements IRenderer
 
     /**
      * Returns the hover state.
-     * 
+     *
      * @return Is the renderer in the hover state.
      */
     public boolean isHover()
@@ -146,7 +143,7 @@ public abstract class AbstractRenderer implements IRenderer
         return hover;
     }
 
-    /** 
+    /**
      * {@inheritDoc}
      */
     public void setHover(boolean hover)
@@ -157,7 +154,7 @@ public abstract class AbstractRenderer implements IRenderer
     /**
      * Returns the boolean value indicating if the renderer has the mouseDown
      * state.
-     * 
+     *
      * @return mouse down state.
      */
     public boolean isMouseDown()
@@ -165,7 +162,7 @@ public abstract class AbstractRenderer implements IRenderer
         return mouseDown;
     }
 
-    /** 
+    /**
      * {@inheritDoc}
      */
     public void setMouseDown(boolean mouseDown)
@@ -175,7 +172,7 @@ public abstract class AbstractRenderer implements IRenderer
 
     /**
      * Returns the boolean state indicating if the selected state is set.
-     * 
+     *
      * @return selected state.
      */
     public boolean isSelected()
@@ -183,7 +180,7 @@ public abstract class AbstractRenderer implements IRenderer
         return selected;
     }
 
-    /** 
+    /**
      * {@inheritDoc}
      */
     public void setSelected(boolean selected)
@@ -193,7 +190,7 @@ public abstract class AbstractRenderer implements IRenderer
 
     /**
      * Returns the expansion state.
-     * 
+     *
      * @return Returns the expanded.
      */
     public boolean isExpanded()
@@ -203,7 +200,7 @@ public abstract class AbstractRenderer implements IRenderer
 
     /**
      * Sets the expansion state of this renderer.
-     * 
+     *
      * @param expanded The expanded to set.
      */
     public void setExpanded(boolean expanded)
@@ -213,7 +210,7 @@ public abstract class AbstractRenderer implements IRenderer
 
     /**
      * Sets the display for the renderer.
-     * 
+     *
      * @return Returns the display.
      */
     public Display getDisplay()
