@@ -10211,4 +10211,11 @@ public class Grid extends Canvas {
 			return 0;
 		});
 	}
+
+	/**
+	 * @return true if the grid has focus
+	 */
+	public boolean isFocusOnGrid() {
+		return getDisplay().getFocusControl() == this;
+	}
 }
