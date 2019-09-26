@@ -4857,7 +4857,7 @@ public class Grid extends Canvas {
 			newHeight = getClientArea().height;
 		}
 
-		if (newHeight == rowBeingResized.getHeight()) {
+		if (rowBeingResized == null || newHeight == rowBeingResized.getHeight()) {
 			return;
 		}
 
