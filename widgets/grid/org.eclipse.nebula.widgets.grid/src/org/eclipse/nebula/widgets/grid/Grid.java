@@ -6103,6 +6103,9 @@ public class Grid extends Canvas {
 			}
 
 			if (!found) {
+				if (selectionType == SWT.SINGLE && selectedCells.size()>0) {
+					return;
+				}
 				selectedCells.add(newCell);
 			}
 		}
@@ -8216,8 +8219,11 @@ public class Grid extends Canvas {
 		if (!cellSelection) {
 			selectedCells.clear();
 			redraw();
-		}
-		else {
+		} else {
+			if ((getStyle() & SWT.SINGLE) == 0) {
+				// To keep compatibility, one can selected multiple cells
+				selectionType = SWT.MULTI;
+			}
 			selectedItems.clear();
 			redraw();
 		}
