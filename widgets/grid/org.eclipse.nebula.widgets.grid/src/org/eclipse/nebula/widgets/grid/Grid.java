@@ -274,6 +274,7 @@ public class Grid extends Canvas {
 	private GridItem focusItem;
 
 	private boolean cellSelectionEnabled = false;
+	private boolean cellDragSelectionEnabled = true;
 
 	private final List<Point> selectedCells = new ArrayList<>();
 	private final List<Point> selectedCellsBeforeRangeSelect = new ArrayList<>();
@@ -6726,7 +6727,7 @@ public class Grid extends Canvas {
 				return;
 			}
 			if (cellSelectionEnabled) {
-				if (!cellDragSelectionOccuring && cellSelectedOnLastMouseDown) {
+				if (cellDragSelectionEnabled && !cellDragSelectionOccuring && cellSelectedOnLastMouseDown) {
 					cellDragSelectionOccuring = true;
 					//XXX: make this user definable
 					setCursor(getDisplay().getSystemCursor(SWT.CURSOR_CROSS));
@@ -8236,6 +8237,33 @@ public class Grid extends Canvas {
 	 */
 	public boolean isCellSelectionEnabled() {
 		return cellSelectionEnabled;
+	}
+
+	/**
+	 * Sets whether cells are selectable in the receiver by dragging the mouse
+	 * cursor.
+	 *
+	 * @param cellDragSelection
+	 *            the cellDragSelection to set
+	 *
+	 * @throws org.eclipse.swt.SWTException
+	 *             <ul>
+	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *             disposed</li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread
+	 *             that created the receiver</li>
+	 *             </ul>
+	 */
+	public void setCellDragSelectionEnabled(boolean cellDragSelection) {
+		checkWidget();
+		this.cellDragSelectionEnabled = cellDragSelection;
+	}
+
+	/**
+	 * @return <code>true</code> if cell drag selection is enabled
+	 */
+	public boolean isCellDragSelectionEnabled() {
+		return cellDragSelectionEnabled;
 	}
 
 	/**
