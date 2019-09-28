@@ -5111,7 +5111,10 @@ public class Grid extends Canvas {
 			}
 
 			for (int rowIndex = firstItemToDraw; rowIndex < firstVisibleIndex && rowIndex < items.size(); rowIndex++) {
-				y = y - items.get(rowIndex).getHeight() - 1;
+				GridItem itemForRow = items.get(rowIndex);
+				if(itemForRow.isVisible()) {
+					y = y - itemForRow.getHeight() - 1;
+				}
 			}
 		}
 
