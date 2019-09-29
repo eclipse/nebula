@@ -909,6 +909,40 @@ public class GridColumn extends Item {
 	}
 
 	/**
+	 * Returns the vertical alignment.
+	 *
+	 * @return SWT.TOP (default), SWT.CENTER, SWT.BOTTOM
+	 * @throws org.eclipse.swt.SWTException
+	 *             <ul>
+	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
+	 *             </ul>
+	 */
+    public int getVerticalAlignment() {
+        checkWidget();
+        return cellRenderer.getVerticalAlignment();
+    }
+
+    /**
+     * Sets the column's vertical text alignment.
+     *
+     * @param alignment SWT.TOP (default), SWT.CENTER, SWT.BOTTOM
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
+     */
+    public void setVerticalAlignment(int alignment) {
+    	checkWidget();
+    	cellRenderer.setVerticalAlignment(alignment);
+    }
+
+
+	/**
 	 * Returns true if this column is moveable.
 	 *
 	 * @return true if moveable.

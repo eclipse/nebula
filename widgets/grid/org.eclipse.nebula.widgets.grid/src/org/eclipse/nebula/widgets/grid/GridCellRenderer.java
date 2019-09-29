@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    chris.gross@us.ibm.com - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.nebula.widgets.grid;
 
 import org.eclipse.swt.SWT;
@@ -15,9 +15,9 @@ import org.eclipse.swt.graphics.Rectangle;
 
 /**
  * <p>
- * NOTE:  THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.  THIS IS A PRE-RELEASE ALPHA 
+ * NOTE:  THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.  THIS IS A PRE-RELEASE ALPHA
  * VERSION.  USERS SHOULD EXPECT API CHANGES IN FUTURE VERSIONS.
- * </p> 
+ * </p>
  * The super class for all grid cell renderers.  Contains the properties specific
  * to a grid cell.
  *
@@ -32,6 +32,8 @@ public abstract class GridCellRenderer extends AbstractInternalWidget
 
     private int alignment = SWT.LEFT;
 
+    private int verticalAlignment = SWT.TOP;
+
     private boolean tree = false;
 
     private boolean check = false;
@@ -43,11 +45,11 @@ public abstract class GridCellRenderer extends AbstractInternalWidget
     private boolean rowFocus = false;
 
     private boolean cellFocus = false;
-    
+
     private boolean cellSelected = false;
-    
+
     private boolean wordWrap = false;
-    
+
     private boolean dragging = false;
 
     /**
@@ -80,6 +82,20 @@ public abstract class GridCellRenderer extends AbstractInternalWidget
     public void setAlignment(int alignment)
     {
         this.alignment = alignment;
+    }
+
+    /**
+     * @return Returns the vertical alignment.
+     */
+    public int getVerticalAlignment() {
+    	return verticalAlignment;
+    }
+
+    /**
+     * @param verticalAlignment The vertical alignment to set.
+     */
+    public void setVerticalAlignment(int verticalAlignment) {
+    	this.verticalAlignment = verticalAlignment;
     }
 
     /**
@@ -209,14 +225,14 @@ public abstract class GridCellRenderer extends AbstractInternalWidget
     {
         this.cellSelected = cellSelected;
     }
-    
+
     /**
      * Returns the bounds of the text in the cell.  This is used when displaying in-place tooltips.
-     * If <code>null</code> is returned here, in-place tooltips will not be displayed.  If the 
+     * If <code>null</code> is returned here, in-place tooltips will not be displayed.  If the
      * <code>preferred</code> argument is <code>true</code> then the returned bounds should be large
-     * enough to show the entire text.  If <code>preferred</code> is <code>false</code> then the 
+     * enough to show the entire text.  If <code>preferred</code> is <code>false</code> then the
      * returned bounds should be be relative to the current bounds.
-     * 
+     *
      * @param item item to calculate text bounds.
      * @param preferred true if the preferred width of the text should be returned.
      * @return bounds of the text.
@@ -241,9 +257,9 @@ public abstract class GridCellRenderer extends AbstractInternalWidget
     {
         this.wordWrap = wordWrap;
     }
-    
+
     /**
-     * Gets the dragging state. 
+     * Gets the dragging state.
      *
      * @return Returns the dragging state.
      */
