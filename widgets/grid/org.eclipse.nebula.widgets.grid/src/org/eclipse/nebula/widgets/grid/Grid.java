@@ -7131,7 +7131,6 @@ public class Grid extends Canvas {
 			}
 			break;
 		case SWT.HOME:
-
 			if (!cellSelectionEnabled) {
 				if (items.size() > 0) {
 					newSelection = items.get(0);
@@ -7170,7 +7169,14 @@ public class Grid extends Canvas {
 				newSelection = items.get(range.startIndex);
 			}
 
-			newColumnFocus = focusColumn;
+			if (impliedFocusColumn != null) {
+				if (newSelection != null && intendedFocusColumn != null) {
+					newColumnFocus = getVisibleColumn_DegradeLeft(newSelection, intendedFocusColumn);
+				}
+				else {
+					newColumnFocus = impliedFocusColumn;
+				}
+			}
 			break;
 		case SWT.PAGE_DOWN:
 			final int bottomIndex = getBottomIndex();
@@ -7190,7 +7196,14 @@ public class Grid extends Canvas {
 				newSelection = items.get(range.endIndex);
 			}
 
-			newColumnFocus = focusColumn;
+			if (impliedFocusColumn != null) {
+				if (newSelection != null && intendedFocusColumn != null) {
+					newColumnFocus = getVisibleColumn_DegradeLeft(newSelection, intendedFocusColumn);
+				}
+				else {
+					newColumnFocus = impliedFocusColumn;
+				}
+			}
 			break;
 		default:
 			break;
