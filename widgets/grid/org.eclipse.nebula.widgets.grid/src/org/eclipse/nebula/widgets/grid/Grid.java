@@ -5983,7 +5983,7 @@ public class Grid extends Canvas {
 
 			if (ctrl) {
 				selectedCells.clear();
-				selectedCells.addAll(selectedCellsBeforeRangeSelect);
+				addCellstThatDoNotAlreadyExist(selectedCells, selectedCellsBeforeRangeSelect);
 			}
 			else {
 				selectedCells.clear();
@@ -6059,7 +6059,7 @@ public class Grid extends Canvas {
 
 			if (dragging) {
 				selectedCells.clear();
-				selectedCells.addAll(selectedCellsBeforeRangeSelect);
+				 addCellstThatDoNotAlreadyExist(selectedCells, selectedCellsBeforeRangeSelect);
 			}
 
 			if (reverse) {
@@ -6084,6 +6084,26 @@ public class Grid extends Canvas {
 		redraw(clientArea.x, clientArea.y, clientArea.width, clientArea.height, false);
 
 		return e;
+	}
+
+    /**
+     * Adds Point objects from the itemsToBeAdded list that do not currently exist
+     * in the sourceList.
+     * @param sourceList
+     * @param itemsToBeAdded
+     */
+	private void addCellstThatDoNotAlreadyExist(List<Point> sourceList, List<Point> itemsToBeAdded) {
+		if (itemsToBeAdded.size() > 0) {
+			// add all the cells from the itemsToBeAdded list that don't already exist in
+			// the sourceList
+			for (Iterator<Point> cellIterator = itemsToBeAdded.iterator(); cellIterator.hasNext();) {
+				Point cell = cellIterator.next();
+				if (!sourceList.contains(cell)) {
+					sourceList.add(cell);
+				}
+
+			}
+		}
 	}
 
 	private void addToCellSelection(final Point newCell) {
