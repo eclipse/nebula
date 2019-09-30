@@ -19,6 +19,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -53,7 +54,11 @@ public class DefaultRowHeaderRenderer extends AbstractRenderer
 
         String text = getHeaderText(item);
 
-        gc.setFont(item.getParent().getFont());
+		if (getHeaderFont(item) == null) {
+			gc.setFont(item.getParent().getFont());
+		} else {
+			gc.setFont(getHeaderFont(item));
+		}
 
         Color background = getHeaderBackground(item);
         if( background == null ) {
@@ -203,6 +208,10 @@ public class DefaultRowHeaderRenderer extends AbstractRenderer
 
     }
 
+    private Font getHeaderFont(GridItem item){
+    	return item.getHeaderFont();
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -214,9 +223,14 @@ public class DefaultRowHeaderRenderer extends AbstractRenderer
         String text = getHeaderText(item);
         Image image = getHeaderImage(item);
 
-        int x = 0;
+        Font previousFont = gc.getFont();
+		if (getHeaderFont(item) == null) {
+			gc.setFont(item.getParent().getFont());
+		} else {
+			gc.setFont(getHeaderFont(item));
+		}
 
-        x += leftMargin;
+        int x = leftMargin;
 
         if( image != null ) {
         	x += image.getBounds().width + 5;
@@ -224,9 +238,7 @@ public class DefaultRowHeaderRenderer extends AbstractRenderer
 
         x += gc.stringExtent(text).x + rightMargin;
 
-        int y = 0;
-
-        y += topMargin;
+        int y = topMargin;
 
         if( image != null ) {
         	y += Math.max(gc.getFontMetrics().getHeight(),image.getBounds().height);
@@ -236,6 +248,7 @@ public class DefaultRowHeaderRenderer extends AbstractRenderer
 
 
         y += bottomMargin;
+        gc.setFont(previousFont);
 
         return new Point(x, y);
     }
