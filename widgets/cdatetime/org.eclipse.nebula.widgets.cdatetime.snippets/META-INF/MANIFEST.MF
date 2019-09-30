@@ -8,5 +8,6 @@ Bundle-Localization: plugin
 Export-Package: org.eclipse.nebula.widgets.cdatetime.snippets
 Require-Bundle: org.eclipse.jface,
  org.eclipse.ui.forms,
- org.eclipse.nebula.widgets.cdatetime
+ org.eclipse.nebula.widgets.cdatetime,
+ org.eclipse.nebula.jface.cdatetime
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

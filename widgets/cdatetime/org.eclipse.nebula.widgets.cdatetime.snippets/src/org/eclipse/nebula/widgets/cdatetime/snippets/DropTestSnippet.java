@@ -66,9 +66,8 @@ public class DropTestSnippet {
 
 class MyDialog extends Dialog {
 	/**
-	 * 
+	 *
 	 */
-	private static final long serialVersionUID = 1L;
 	Shell shell;
 
 	public MyDialog (Shell parent, int style) {

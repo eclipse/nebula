@@ -13,7 +13,6 @@ package org.eclipse.nebula.widgets.cdatetime.snippets;
 
 import java.util.TimeZone;
 
-import org.eclipse.nebula.widgets.cdatetime.CDT;
 import org.eclipse.nebula.widgets.cdatetime.CDateTime;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -26,9 +25,9 @@ import org.eclipse.swt.widgets.Shell;
  * This snippet shows how to use the timezone features of the CDateTime widget.
  * Please notice that you are able to tab to the timezone field were you can
  * roll through them.
- * 
+ *
  */
-public class CDTSnippet09 { 
+public class CDTSnippet09 {
 
 	/**
 	 * @param args
