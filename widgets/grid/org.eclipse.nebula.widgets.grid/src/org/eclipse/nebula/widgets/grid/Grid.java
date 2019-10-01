@@ -83,6 +83,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.TypedListener;
 
 /**
@@ -4749,8 +4750,14 @@ public class Grid extends Canvas {
 			return false;
 		}
 
-		final GridColumn overThis = overColumnHeader(x, y);
+		final ScrollBar verticalBar = getVerticalBar();
+		boolean clickOnScrollBar = x >= getClientArea().width;
+		if (clickOnScrollBar && verticalBar != null && verticalBar.isVisible())  {
+			// Bug 273916 : if one clicks on the tooltip and the mouse is located on the scrollbar, simulate a click on the scrollbar
+			verticalBar.setSelection(verticalBar.getSelection()-verticalBar.getIncrement());
+		}
 
+		final GridColumn overThis = overColumnHeader(x, y);
 		if (overThis == null) {
 			return false;
 		}
