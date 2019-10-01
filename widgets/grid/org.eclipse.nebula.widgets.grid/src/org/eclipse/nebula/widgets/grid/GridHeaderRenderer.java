@@ -29,6 +29,10 @@ public abstract class GridHeaderRenderer extends AbstractInternalWidget
 {
     private boolean wordWrap = false;
     private int horizontalAlignment = SWT.LEFT;
+    /**
+     * Truncation style
+     */
+    protected int truncationStyle = SWT.CENTER;
 
     /**
      * Returns the bounds of the text in the cell.  This is used when displaying in-place tooltips.
@@ -108,5 +112,24 @@ public abstract class GridHeaderRenderer extends AbstractInternalWidget
 	 */
 	public void setHorizontalAlignment(int alignment) {
 		this.horizontalAlignment = alignment;
+	}
+
+    /**
+     * Get the truncation style
+     * @return the truncation style.
+     */
+	public int getTruncationStyle() {
+		return truncationStyle;
+	}
+
+	/**
+	 * Set the truncation style to use when cell content is too large.
+	 * @see SWT#LEFT
+	 * @see SWT#CENTER
+	 * @see SWT#RIGHT
+	 * @param truncationStyle
+	 */
+	public void setTruncationStyle(int truncationStyle) {
+		this.truncationStyle = truncationStyle;
 	}
 }

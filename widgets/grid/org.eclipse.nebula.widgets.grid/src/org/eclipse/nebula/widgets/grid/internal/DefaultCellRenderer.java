@@ -176,7 +176,7 @@ public class DefaultCellRenderer extends GridCellRenderer {
         }
 
         if (!isWordWrap()) {
-            String text = TextUtils.getShortStr(gc, item.getText(getColumn()), width);
+            String text = TextUtils.getShortStr(gc, item.getText(getColumn()), width,truncationStyle);
 
             if (getAlignment() == SWT.RIGHT) {
                 int len = gc.stringExtent(text).x;

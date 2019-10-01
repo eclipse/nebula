@@ -44,6 +44,9 @@ public class DefaultRowHeaderRenderer extends AbstractRenderer
 
     private TextLayout textLayout;
 
+	private int truncationStyle =SWT.CENTER;
+
+
     /**
      * {@inheritDoc}
      */
@@ -174,7 +177,7 @@ public class DefaultRowHeaderRenderer extends AbstractRenderer
         if (!item.getParent().isWordWrapHeader())
         {
             y += (getBounds().height - gc.stringExtent(text).y) / 2;
-            gc.drawString(TextUtils.getShortStr(gc, text, width), getBounds().x + x + selectionOffset, y + selectionOffset, true);
+            gc.drawString(TextUtils.getShortStr(gc, text, width, truncationStyle), getBounds().x + x + selectionOffset, y + selectionOffset, true);
         }
         else
         {
@@ -291,4 +294,23 @@ public class DefaultRowHeaderRenderer extends AbstractRenderer
             });
         }
     }
+
+    /**
+     * Get the truncation style
+     * @return the truncation style.
+     */
+	public int getTruncationStyle() {
+		return truncationStyle;
+	}
+
+	/**
+	 * Set the truncation style to use when cell content is too large.
+	 * @see SWT#LEFT
+	 * @see SWT#CENTER
+	 * @see SWT#RIGHT
+	 * @param truncationStyle
+	 */
+	public void setTruncationStyle(int truncationStyle) {
+		this.truncationStyle = truncationStyle;
+	}
 }

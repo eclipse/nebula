@@ -38,6 +38,8 @@ public class Win7GridColumnHeaderRenderer extends DefaultColumnHeaderRenderer {
 
     private Win7PaletteProvider palette;
 
+    private int truncationStyle = SWT.CENTER;
+
     /**
      * @param palette
      */
@@ -102,7 +104,7 @@ public class Win7GridColumnHeaderRenderer extends DefaultColumnHeaderRenderer {
         String text = column.getText();
 
         if (!isWordWrap()) {
-            text = TextUtils.getShortStr(gc, text, width);
+            text = TextUtils.getShortStr(gc, text, width,truncationStyle);
         }
 
         if (column.getAlignment() == SWT.RIGHT) {
@@ -277,5 +279,22 @@ public class Win7GridColumnHeaderRenderer extends DefaultColumnHeaderRenderer {
          return new Point(0, 0);
      }
 
+     /**
+      * Get the truncation style
+      * @return the truncation style.
+      */
+ 	public int getTruncationStyle() {
+ 		return truncationStyle;
+ 	}
 
+ 	/**
+ 	 * Set the truncation style to use when cell content is too large.
+	 * @see SWT#LEFT
+	 * @see SWT#CENTER
+	 * @see SWT#RIGHT
+ 	 * @param truncationStyle
+ 	 */
+ 	public void setTruncationStyle(int truncationStyle) {
+ 		this.truncationStyle = truncationStyle;
+ 	}
  }
