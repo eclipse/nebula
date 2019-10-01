@@ -89,7 +89,7 @@ public class DefaultColumnGroupHeaderRenderer extends GridHeaderRenderer
         String text = group.getText();
 		if (!isWordWrap())
         {
-			text = TextUtils.getShortStr(gc, text, width);
+			text = TextUtils.getShortStr(gc, text, width,truncationStyle);
         }
 
         if (getHorizontalAlignment() == SWT.RIGHT)

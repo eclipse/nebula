@@ -112,7 +112,7 @@ public class DefaultColumnFooterRenderer extends GridFooterRenderer
 
         int y = getBounds().y + getBounds().height - bottomMargin - gc.getFontMetrics().getHeight();
 
-        String text = TextUtils.getShortStr(gc, column.getFooterText(), width);
+        String text = TextUtils.getShortStr(gc, column.getFooterText(), width, truncationStyle);
 
         if (column.getAlignment() == SWT.RIGHT)
         {

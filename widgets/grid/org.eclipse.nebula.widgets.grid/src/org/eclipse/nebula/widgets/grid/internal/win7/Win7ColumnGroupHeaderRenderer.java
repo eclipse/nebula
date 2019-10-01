@@ -29,6 +29,8 @@ public class Win7ColumnGroupHeaderRenderer extends DefaultColumnGroupHeaderRende
 
 	private Win7PaletteProvider palette;
 
+	private int truncationStyle = SWT.CENTER;
+
 	/**
 	 * @param palette
 	 */
@@ -61,7 +63,7 @@ public class Win7ColumnGroupHeaderRenderer extends DefaultColumnGroupHeaderRende
 
 		gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
 		if (!isWordWrap()) {
-			gc.drawString(TextUtils.getShortStr(gc, group.getText(), width), getBounds().x + x,
+			gc.drawString(TextUtils.getShortStr(gc, group.getText(), width,truncationStyle), getBounds().x + x,
 					getBounds().y + topMargin, true);
 		} else {
 			getTextLayout(gc, group);
@@ -93,14 +95,30 @@ public class Win7ColumnGroupHeaderRenderer extends DefaultColumnGroupHeaderRende
 		palette.initializePalette(getDisplay(), Win7PaletteProvider.HOVER_GRID_COLUMN_HEADER);
 	}
 
-	private void getTextLayout(GC gc, GridColumnGroup group)
-    {
-        if (textLayout == null)
-        {
-            textLayout = new TextLayout(gc.getDevice());
-            textLayout.setFont(gc.getFont());
-            group.getParent().addListener(SWT.Dispose, e ->
-                    textLayout.dispose()
-            );
-        }
-}}
+	private void getTextLayout(GC gc, GridColumnGroup group) {
+		if (textLayout == null) {
+			textLayout = new TextLayout(gc.getDevice());
+			textLayout.setFont(gc.getFont());
+			group.getParent().addListener(SWT.Dispose, e -> textLayout.dispose());
+		}
+	}
+
+    /**
+     * Get the truncation style
+     * @return the truncation style.
+     */
+	public int getTruncationStyle() {
+		return truncationStyle;
+	}
+
+	/**
+	 * Set the truncation style to use when cell content is too large.
+	 * @see SWT#LEFT
+	 * @see SWT#CENTER
+	 * @see SWT#RIGHT
+	 * @param truncationStyle
+	 */
+	public void setTruncationStyle(int truncationStyle) {
+		this.truncationStyle = truncationStyle;
+	}
+}
