@@ -434,63 +434,58 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 			renderPointSize = pointSize;
 		}
 		// Shortcut when no point requested
-		if (pointStyle == PointStyle.NONE)
+		if (renderPointStyle == PointStyle.NONE) {
 			return;
+		}
 		graphics.pushState();
 		graphics.setBackgroundColor(renderColor);
 		graphics.setForegroundColor(renderColor); // Otherwise redraw does not
 													// affect lines
 		graphics.setLineWidth(1);
 		graphics.setLineStyle(SWTConstants.LINE_SOLID);
+		int halfSize = renderPointSize / 2;
 		switch (renderPointStyle) {
 		case POINT:
-			graphics.fillOval(new Rectangle(pos.x - renderPointSize / 2, pos.y - renderPointSize / 2, renderPointSize,
-					renderPointSize));
+			graphics.fillOval(new Rectangle(pos.x - halfSize, pos.y - halfSize, renderPointSize, renderPointSize));
 			break;
 		case CIRCLE:
-			graphics.drawOval(new Rectangle(pos.x - renderPointSize / 2, pos.y - renderPointSize / 2, renderPointSize,
-					renderPointSize));
+			graphics.drawOval(new Rectangle(pos.x - halfSize, pos.y - halfSize, renderPointSize, renderPointSize));
 			break;
 		case FILLED_CIRCLE:
-			graphics.fillOval(new Rectangle(pos.x - pointSize / 2, pos.y - pointSize / 2, pointSize, pointSize));
+			graphics.fillOval(new Rectangle(pos.x - halfSize, pos.y - halfSize, renderPointSize, renderPointSize));
 			break;
 		case TRIANGLE:
-			graphics.drawPolygon(new int[] { pos.x - renderPointSize / 2, pos.y + renderPointSize / 2, pos.x,
-					pos.y - renderPointSize / 2, pos.x + renderPointSize / 2, pos.y + renderPointSize / 2 });
+			graphics.drawPolygon(new int[] { pos.x - halfSize, pos.y + halfSize, pos.x, pos.y - halfSize,
+					pos.x + halfSize, pos.y + halfSize });
 			break;
 		case FILLED_TRIANGLE:
-			graphics.fillPolygon(new int[] { pos.x - renderPointSize / 2, pos.y + renderPointSize / 2, pos.x,
-					pos.y - renderPointSize / 2, pos.x + renderPointSize / 2, pos.y + renderPointSize / 2 });
+			graphics.fillPolygon(new int[] { pos.x - halfSize, pos.y + halfSize, pos.x, pos.y - halfSize,
+					pos.x + halfSize, pos.y + halfSize });
 			break;
 		case SQUARE:
-			graphics.drawRectangle(new Rectangle(pos.x - renderPointSize / 2, pos.y - renderPointSize / 2,
-					renderPointSize, renderPointSize));
+			graphics.drawRectangle(new Rectangle(pos.x - halfSize, pos.y - halfSize, renderPointSize, renderPointSize));
 			break;
 		case FILLED_SQUARE:
-			graphics.fillRectangle(new Rectangle(pos.x - renderPointSize / 2, pos.y - renderPointSize / 2,
-					renderPointSize, renderPointSize));
+			graphics.fillRectangle(new Rectangle(pos.x - halfSize, pos.y - halfSize, renderPointSize, renderPointSize));
 			break;
 		case BAR:
-			graphics.drawLine(pos.x, pos.y - renderPointSize / 2, pos.x, pos.y + renderPointSize / 2);
+			graphics.drawLine(pos.x, pos.y - halfSize, pos.x, pos.y + halfSize);
 			break;
 		case CROSS:
-			graphics.drawLine(pos.x, pos.y - renderPointSize / 2, pos.x, pos.y + renderPointSize / 2);
-			graphics.drawLine(pos.x - renderPointSize / 2, pos.y, pos.x + renderPointSize / 2, pos.y);
+			graphics.drawLine(pos.x, pos.y - halfSize, pos.x, pos.y + halfSize);
+			graphics.drawLine(pos.x - halfSize, pos.y, pos.x + halfSize, pos.y);
 			break;
 		case XCROSS:
-			graphics.drawLine(pos.x - renderPointSize / 2, pos.y - renderPointSize / 2, pos.x + renderPointSize / 2,
-					pos.y + renderPointSize / 2);
-			graphics.drawLine(pos.x + renderPointSize / 2, pos.y - renderPointSize / 2, pos.x - renderPointSize / 2,
-					pos.y + pointSize / 2);
+			graphics.drawLine(pos.x - halfSize, pos.y - halfSize, pos.x + halfSize, pos.y + halfSize);
+			graphics.drawLine(pos.x + halfSize, pos.y - halfSize, pos.x - halfSize, pos.y + halfSize);
 			break;
 		case DIAMOND:
-			graphics.drawPolyline(new int[] { pos.x, pos.y - renderPointSize / 2, pos.x - renderPointSize / 2, pos.y,
-					pos.x, pos.y + renderPointSize / 2, pos.x + renderPointSize / 2, pos.y, pos.x,
-					pos.y - renderPointSize / 2 });
+			graphics.drawPolyline(new int[] { pos.x, pos.y - halfSize, pos.x - halfSize, pos.y,
+					pos.x, pos.y + halfSize, pos.x + halfSize, pos.y, pos.x, pos.y - halfSize });
 			break;
 		case FILLED_DIAMOND:
-			graphics.fillPolygon(new int[] { pos.x, pos.y - renderPointSize / 2, pos.x - renderPointSize / 2, pos.y,
-					pos.x, pos.y + renderPointSize / 2, pos.x + renderPointSize / 2, pos.y });
+			graphics.fillPolygon(new int[] { pos.x, pos.y - halfSize, pos.x - halfSize, pos.y,
+					pos.x, pos.y + halfSize, pos.x + halfSize, pos.y });
 			break;
 		default:
 			break;
@@ -671,6 +666,9 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 
 				for (int i = startIndex; i <= endIndex; i++) {
 					ISample dp = traceDataProvider.getSample(i);
+					if (dp == null) {
+						continue;
+					}
 					final boolean dpInXRange = xAxis.getRange().inRange(dp.getXValue());
 					// Mark 'NaN' samples on X axis
 					final boolean valueIsNaN = Double.isNaN(dp.getYValue());
