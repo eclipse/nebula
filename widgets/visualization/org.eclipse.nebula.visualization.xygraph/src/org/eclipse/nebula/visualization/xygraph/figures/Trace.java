@@ -961,16 +961,16 @@ public class Trace extends Figure implements IDataProviderListener, IAxisListene
 							if (!use_advanced_graphics && predpPos.x() == dpPos.x()) {
 								// Stores bar line infomration in memory, and
 								// draw lines later.
-								Integer posX = new Integer(predpPos.x());
+								Integer posX = Integer.valueOf(predpPos.x());
 								Integer highY;
 								Integer lowY;
 
 								if (dpPos.y() > predpPos.y()) {
-									highY = new Integer(dpPos.y());
-									lowY = new Integer(predpPos.y());
+									highY = Integer.valueOf(dpPos.y());
+									lowY = Integer.valueOf(predpPos.y());
 								} else {
-									highY = new Integer(predpPos.y());
-									lowY = new Integer(dpPos.y());
+									highY = Integer.valueOf(predpPos.y());
+									lowY = Integer.valueOf(dpPos.y());
 								}
 
 								if (bottomPoints.containsKey(posX)) {
