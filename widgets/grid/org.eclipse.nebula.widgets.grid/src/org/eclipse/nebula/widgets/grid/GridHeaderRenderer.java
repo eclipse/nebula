@@ -64,6 +64,8 @@ public abstract class GridHeaderRenderer extends AbstractInternalWidget
 	/**
 	 * Returns the bounds of the control to display
 	 *
+	 * @param value the control to display
+	 * @param preferred if <code>true</code>, compute the preferred size
 	 * @return the bounds for the control or <code>null</code> if no control is
 	 *         rendered
 	 */
