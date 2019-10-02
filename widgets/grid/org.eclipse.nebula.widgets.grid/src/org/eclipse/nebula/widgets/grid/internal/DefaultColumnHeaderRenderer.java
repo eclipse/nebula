@@ -386,7 +386,7 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
     }
 
 	/**
-	 * @return the bounds reserved for the control
+	 * @see org.eclipse.nebula.widgets.grid.GridHeaderRenderer#getControlBounds(java.lang.Object, boolean)
 	 */
 	protected Rectangle getControlBounds(Object value, boolean preferred) {
 		Rectangle bounds = getBounds();
