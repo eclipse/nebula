@@ -67,10 +67,10 @@
 		<module>../../widgets/progresscircle</module> 
 		<module>../../widgets/nebulaslider</module> 
 		<module>../../widgets/splitbutton</module> 
+		<module>../../widgets/badgedlabel</module> 
 		<module>../../widgets/floatingtext</module> 
 		<module>../../widgets/passwordrevealer</module>
 		<module>../../widgets/ctreecombo</module>
-
 
 		<!-- Releng -->
 		<module>../org.eclipse.nebula.feature</module>
