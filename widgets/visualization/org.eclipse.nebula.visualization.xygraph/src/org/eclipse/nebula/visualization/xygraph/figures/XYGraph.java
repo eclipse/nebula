@@ -204,8 +204,8 @@ public class XYGraph extends Figure implements IXYGraph {
 		setTitleFont(XYGraphMediaFactory.getInstance().getFont(new FontData(sysFontName, 12, SWT.BOLD)));
 		setFont(Display.getCurrent().getSystemFont());
 		// titleLabel.setVisible(false);
-		xAxisList = new ArrayList<Axis>();
-		yAxisList = new ArrayList<Axis>();
+		xAxisList = new ArrayList<>();
+		yAxisList = new ArrayList<>();
 		plotArea = createPlotArea(this);
 		getPlotArea().setOpaque(!transparent);
 
@@ -251,10 +251,10 @@ public class XYGraph extends Figure implements IXYGraph {
 			clientArea.height -= titleSize.height + GAP;
 		}
 		if (showLegend) {
-			List<Integer> rowHPosList = new ArrayList<Integer>();
-			List<Dimension> legendSizeList = new ArrayList<Dimension>();
-			List<Integer> rowLegendNumList = new ArrayList<Integer>();
-			List<Legend> legendList = new ArrayList<Legend>();
+			List<Integer> rowHPosList = new ArrayList<>();
+			List<Dimension> legendSizeList = new ArrayList<>();
+			List<Integer> rowLegendNumList = new ArrayList<>();
+			List<Legend> legendList = new ArrayList<>();
 			Object[] yAxes = legendMap.keySet().toArray();
 			int hPos = 0;
 			int rowLegendNum = 0;
@@ -650,12 +650,20 @@ public class XYGraph extends Figure implements IXYGraph {
 	 *         to xAxisList in the returned list.
 	 */
 	public List<Axis> getAxisList() {
-		List<Axis> list = new ArrayList<Axis>();
+		List<Axis> list = new ArrayList<>();
 		list.addAll(xAxisList);
 		list.addAll(yAxisList);
 		return list;
 	}
 
+	/**
+	 * @param trace
+	 * @return the legend for a given trace
+	 */
+	public Legend getLegend(Trace trace) {
+		return legendMap.get(trace.getYAxis());
+	}
+	
 	/**
 	 * @return the legendMap
 	 */

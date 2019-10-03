@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthew Hall - initial API and implementation
  */
@@ -29,7 +29,6 @@ import org.eclipse.swt.printing.PrinterData;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 
 /**
  * A WYSIWYG (what you see is what you get) print preview panel. This control
@@ -41,7 +40,7 @@ import org.eclipse.swt.widgets.Listener;
  * <dt><b>Events:</b></dt>
  * <dd>(none)</dd>
  * </dl>
- * 
+ *
  * @author Matthew Hall
  */
 public class PrintPreview extends Canvas {
@@ -63,7 +62,7 @@ public class PrintPreview extends Canvas {
 	private GC gc = null;
 
 	private PageEnumeration pageEnumeration = null;
-	private List pages = null;
+	private List<PrintPiece> pages = null;
 	private Point pageDisplaySize = null;
 	private Point[] pageDisplayLocations = null;
 
@@ -73,7 +72,7 @@ public class PrintPreview extends Canvas {
 
 	/**
 	 * Constructs a PrintPreview control.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent control.
 	 * @param style
@@ -82,29 +81,23 @@ public class PrintPreview extends Canvas {
 	public PrintPreview(Composite parent, int style) {
 		super(parent, style | SWT.DOUBLE_BUFFERED);
 
-		addListener(SWT.Paint, new Listener() {
-			public void handleEvent(Event event) {
-				paint(event);
-			}
+		addListener(SWT.Paint, event -> {
+			paint(event);
 		});
 
-		addListener(SWT.Resize, new Listener() {
-			public void handleEvent(Event event) {
-				invalidatePageDisplayBounds();
-				redraw();
-			}
+		addListener(SWT.Resize, event -> {
+			invalidatePageDisplayBounds();
+			redraw();
 		});
 
-		addListener(SWT.Dispose, new Listener() {
-			public void handleEvent(Event event) {
-				disposeResources();
-			}
+		addListener(SWT.Dispose, event -> {
+			disposeResources();
 		});
 	}
 
 	/**
 	 * Returns the print job.
-	 * 
+	 *
 	 * @return the print job.
 	 */
 	public PrintJob getPrintJob() {
@@ -114,7 +107,7 @@ public class PrintPreview extends Canvas {
 
 	/**
 	 * Sets the print job to preview.
-	 * 
+	 *
 	 * @param printJob
 	 *            the print job to preview.
 	 */
@@ -128,7 +121,7 @@ public class PrintPreview extends Canvas {
 
 	/**
 	 * Returns the PrinterData for the printer to preview on.
-	 * 
+	 *
 	 * @return the PrinterData for the printer to preview on.
 	 */
 	public PrinterData getPrinterData() {
@@ -138,7 +131,7 @@ public class PrintPreview extends Canvas {
 
 	/**
 	 * Sets the PrinterData for the printer to preview on.
-	 * 
+	 *
 	 * @param printerData
 	 *            the PrinterData for the printer to preview on.
 	 */
@@ -152,7 +145,7 @@ public class PrintPreview extends Canvas {
 
 	/**
 	 * Returns the index of the first visible page.
-	 * 
+	 *
 	 * @return the index of the first visible page.
 	 */
 	public int getPageIndex() {
@@ -162,7 +155,7 @@ public class PrintPreview extends Canvas {
 
 	/**
 	 * Sets the index of the first visible page to the argument.
-	 * 
+	 *
 	 * @param pageIndex
 	 *            the page index.
 	 */
@@ -177,7 +170,7 @@ public class PrintPreview extends Canvas {
 	 * {@link #setLazyPageLayout(boolean)} is set to true, this method returns
 	 * the number of pages laid out so far. This method returns 0 when
 	 * {@link #getPrintJob()} is null or {@link #getPrinterData()} is null.
-	 * 
+	 *
 	 * @return the known number of pages in the print job.
 	 */
 	public int getPageCount() {
@@ -188,7 +181,7 @@ public class PrintPreview extends Canvas {
 
 	/**
 	 * Returns whether all pages have been laid out.
-	 * 
+	 *
 	 * @return whether all pages have been laid out.
 	 */
 	public boolean isPageLayoutComplete() {
@@ -199,7 +192,7 @@ public class PrintPreview extends Canvas {
 
 	/**
 	 * Returns whether the page scales to fit the document horizontally.
-	 * 
+	 *
 	 * @return whether the page scales to fit the document horizontally.
 	 */
 	public boolean isFitHorizontal() {
@@ -209,7 +202,7 @@ public class PrintPreview extends Canvas {
 
 	/**
 	 * Sets whether the page scales to fit the document horizontally.
-	 * 
+	 *
 	 * @param fitHorizontal
 	 *            whether the page scales to fit the document horizontally.
 	 */
@@ -224,7 +217,7 @@ public class PrintPreview extends Canvas {
 
 	/**
 	 * Returns whether the page scales to fit the document vertically.
-	 * 
+	 *
 	 * @return whether the page scales to fit the document vertically.
 	 */
 	public boolean isFitVertical() {
@@ -234,7 +227,7 @@ public class PrintPreview extends Canvas {
 
 	/**
 	 * Sets whether the page scales to fit the document vertically.
-	 * 
+	 *
 	 * @param fitVertical
 	 *            whether the page scales to fit the document vertically.
 	 */
@@ -250,7 +243,7 @@ public class PrintPreview extends Canvas {
 	/**
 	 * Returns the view scale. The document displays at this scale when
 	 * !(isFitHorizontal() || isFitVertical()).
-	 * 
+	 *
 	 * @return the view scale.
 	 */
 	public float getScale() {
@@ -260,7 +253,7 @@ public class PrintPreview extends Canvas {
 
 	/**
 	 * Sets the view scale.
-	 * 
+	 *
 	 * @param scale
 	 *            the view scale. A scale of 1.0 causes the document to appear
 	 *            at full size on the computer screen.
@@ -285,7 +278,7 @@ public class PrintPreview extends Canvas {
 	 * <p>
 	 * <b>THIS API IS EXPERIMENTAL AND MAY BE REMOVED OR CHANGED IN THE
 	 * FUTURE.</b>
-	 * 
+	 *
 	 * @return how many pages will be displayed in the horizontal direction.
 	 */
 	public int getHorizontalPageCount() {
@@ -298,7 +291,7 @@ public class PrintPreview extends Canvas {
 	 * <p>
 	 * <b>THIS API IS EXPERIMENTAL AND MAY BE REMOVED OR CHANGED IN THE
 	 * FUTURE.</b>
-	 * 
+	 *
 	 * @param horizontalPages
 	 *            how many pages will be displayed in the horizontal direction.
 	 */
@@ -316,7 +309,7 @@ public class PrintPreview extends Canvas {
 	 * <p>
 	 * <b>THIS API IS EXPERIMENTAL AND MAY BE REMOVED OR CHANGED IN THE
 	 * FUTURE.</b>
-	 * 
+	 *
 	 * @return how many pages will be displayed in the vertical direction.
 	 */
 	public int getVerticalPageCount() {
@@ -329,7 +322,7 @@ public class PrintPreview extends Canvas {
 	 * <p>
 	 * <b>THIS API IS EXPERIMENTAL AND MAY BE REMOVED OR CHANGED IN THE
 	 * FUTURE.</b>
-	 * 
+	 *
 	 * @param verticalPages
 	 *            how many pages will be displayed in the vertical direction.
 	 */
@@ -345,7 +338,7 @@ public class PrintPreview extends Canvas {
 	/**
 	 * Returns whether the preview lays out pages lazily. Note that total page
 	 * counts in page numbers will not display correctly when this is enabled.
-	 * 
+	 *
 	 * @return whether the preview lays out pages lazily.
 	 */
 	public boolean isLazyPageLayout() {
@@ -356,7 +349,7 @@ public class PrintPreview extends Canvas {
 	/**
 	 * Sets whether the preview lays out pages lazily. Note that total page
 	 * counts in page numbers will not display correctly when this is enabled.
-	 * 
+	 *
 	 * @param lazy
 	 *            whether the preview lays out pages lazily.
 	 */
@@ -370,7 +363,7 @@ public class PrintPreview extends Canvas {
 	 * periodically as pages are laid out.
 	 * <p>
 	 * <b>NOTE:</b> This API is experimental and subject to change.
-	 * 
+	 *
 	 * @param callback
 	 *            runnable that will be invoked periodically as pages are laid
 	 *            out.
@@ -419,12 +412,10 @@ public class PrintPreview extends Canvas {
 				|| pageIndex < 0 || pageIndex >= pages.size())
 			return;
 
-		int count = Math.min(verticalPageCount * horizontalPageCount, pages
-				.size()
-				- pageIndex);
+		int count = Math.min(verticalPageCount * horizontalPageCount,
+				pages.size() - pageIndex);
 		for (int i = 0; i < count; i++) {
-			paintPage(event, (PrintPiece) pages.get(pageIndex + i),
-					pageDisplayLocations[i]);
+			paintPage(event, pages.get(pageIndex + i), pageDisplayLocations[i]);
 		}
 	}
 
@@ -453,13 +444,14 @@ public class PrintPreview extends Canvas {
 			printerGC.getTransform(printerTransform);
 			printerTransform.translate(rectangle.x - dirtyPaperBounds.x,
 					rectangle.y - dirtyPaperBounds.y);
-			printerTransform.scale((float) rectangle.width
-					/ (float) paperSize.x, (float) rectangle.height
-					/ (float) paperSize.y);
+			printerTransform.scale(
+					(float) rectangle.width / (float) paperSize.x,
+					(float) rectangle.height / (float) paperSize.y);
 			printerGC.setTransform(printerTransform);
 			page.paint(printerGC, 0, 0);
 
-			displayImage = new Image(event.display, printerImage.getImageData());
+			displayImage = new Image(event.display,
+					printerImage.getImageData());
 			event.gc.drawImage(displayImage, dirtyPaperBounds.x,
 					dirtyPaperBounds.y);
 		} finally {
@@ -510,17 +502,19 @@ public class PrintPreview extends Canvas {
 	private boolean orientationRequiresRotate() {
 		int orientation = printJob.getOrientation();
 		Rectangle bounds = PaperClips.getPaperBounds(printer);
-		return (orientation == PaperClips.ORIENTATION_PORTRAIT && bounds.width > bounds.height)
-				|| (orientation == PaperClips.ORIENTATION_LANDSCAPE && bounds.height > bounds.width);
+		return (orientation == PaperClips.ORIENTATION_PORTRAIT
+				&& bounds.width > bounds.height)
+				|| (orientation == PaperClips.ORIENTATION_LANDSCAPE
+						&& bounds.height > bounds.width);
 	}
 
 	private Point getPaperSize() {
 		Printer printer = getPrinter();
 		if (paperSize == null && printer != null && printJob != null) {
 			Rectangle paperBounds = PaperClips.getPaperBounds(printer);
-			this.paperSize = orientationRequiresRotate() ? new Point(
-					paperBounds.height, paperBounds.width) : new Point(
-					paperBounds.width, paperBounds.height);
+			this.paperSize = orientationRequiresRotate()
+					? new Point(paperBounds.height, paperBounds.width)
+					: new Point(paperBounds.width, paperBounds.height);
 		}
 		return paperSize;
 	}
@@ -535,7 +529,7 @@ public class PrintPreview extends Canvas {
 					gc);
 		}
 		if (pages == null)
-			pages = new ArrayList();
+			pages = new ArrayList<>();
 		boolean doRotate = orientationRequiresRotate();
 		boolean allPages = endIndex == ALL_PAGES || !lazy;
 		while (pageEnumeration.hasNext()
@@ -568,7 +562,7 @@ public class PrintPreview extends Canvas {
 	 * either of the fitHorizontal or fitVertical properties are true, this is
 	 * the scale allows the page to fit within this control's current bounds.
 	 * Otherwise the value of the scale property is returned.
-	 * 
+	 *
 	 * @return the absolute scale that the print preview is displaying at.
 	 */
 	public float getAbsoluteScale() {
@@ -583,7 +577,7 @@ public class PrintPreview extends Canvas {
 	 * <p>
 	 * <b>THIS API IS EXPERIMENTAL AND MAY BE REMOVED OR CHANGED IN THE
 	 * FUTURE.</b>
-	 * 
+	 *
 	 * @return a Rectangle whose x, y, width, and height fields respectively
 	 *         indicate the margin at the left, top, right, and bottom edges of
 	 *         the control.
@@ -599,7 +593,7 @@ public class PrintPreview extends Canvas {
 	 * <p>
 	 * <b>THIS API IS EXPERIMENTAL AND MAY BE REMOVED OR CHANGED IN THE
 	 * FUTURE.</b>
-	 * 
+	 *
 	 * @param margins
 	 *            a Rectangle whose x, y, width, and height fields respectively
 	 *            indicate the margin at the left, top, right, and bottom edges
@@ -621,7 +615,7 @@ public class PrintPreview extends Canvas {
 	 * <p>
 	 * <b>THIS API IS EXPERIMENTAL AND MAY BE REMOVED OR CHANGED IN THE
 	 * FUTURE.</b>
-	 * 
+	 *
 	 * @return a Point whose x and y fields respectively indicate the horizontal
 	 *         and vertical spacing between pages on the control.
 	 */
@@ -634,7 +628,7 @@ public class PrintPreview extends Canvas {
 	 * <p>
 	 * <b>THIS API IS EXPERIMENTAL AND MAY BE REMOVED OR CHANGED IN THE
 	 * FUTURE.</b>
-	 * 
+	 *
 	 * @param pageSpacing
 	 *            a Point whose x and y fields respectively indicate the
 	 *            horizontal and vertical spacing between pages on the control.
@@ -649,9 +643,11 @@ public class PrintPreview extends Canvas {
 	}
 
 	private Point getBoilerplateSize() {
-		return new Point(margins.x + margins.width + (horizontalPageCount - 1)
-				* pageSpacing.x, margins.y + margins.height
-				+ (verticalPageCount - 1) * pageSpacing.y);
+		return new Point(
+				margins.x + margins.width
+						+ (horizontalPageCount - 1) * pageSpacing.x,
+				margins.y + margins.height
+						+ (verticalPageCount - 1) * pageSpacing.y);
 	}
 
 	private float getAbsoluteScale(Point controlSize) {
@@ -730,8 +726,8 @@ public class PrintPreview extends Canvas {
 			for (int r = 0; r < verticalPageCount; r++) {
 				int x = x0;
 				for (int c = 0; c < horizontalPageCount; c++) {
-					pageDisplayLocations[r * horizontalPageCount + c] = new Point(
-							x, y);
+					pageDisplayLocations[r * horizontalPageCount
+							+ c] = new Point(x, y);
 					x += pageDisplaySize.x + pageSpacing.x;
 				}
 				y += pageDisplaySize.y + pageSpacing.y;
@@ -744,7 +740,7 @@ public class PrintPreview extends Canvas {
 		if (pages != null) {
 			pageEnumeration = null;
 			for (int i = 0; i < pages.size(); i++)
-				((PrintPiece) pages.get(i)).dispose();
+				pages.get(i).dispose();
 			pages = null;
 			paperSize = null;
 			invalidatePageDisplayBounds();
@@ -773,6 +769,7 @@ public class PrintPreview extends Canvas {
 		disposePrinter();
 	}
 
+	@Override
 	public Point computeSize(int wHint, int hHint, boolean changed) {
 		checkWidget();
 
@@ -808,10 +805,10 @@ public class PrintPreview extends Canvas {
 	/**
 	 * Returns the control size needed to display a full page at the given
 	 * scale.
-	 * 
+	 *
 	 * @param scale
-	 *            the absolute scale. A scale of 1, for example, yields a
-	 *            "life size" preview.
+	 *            the absolute scale. A scale of 1, for example, yields a "life
+	 *            size" preview.
 	 * @return the control size needed to display a full page at the given
 	 *         scale.
 	 */

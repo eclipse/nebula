@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthew Hall - initial API and implementation
  */
@@ -29,7 +29,7 @@ import org.eclipse.swt.graphics.Point;
  * ColumnPrint attempts to use the minimum possible vertical space on the page
  * if isCompressed() returns true (the default). This behavior can be disabled
  * by calling setCompressed(false).
- * 
+ *
  * @author Matthew Hall
  */
 public class ColumnPrint implements Print {
@@ -42,7 +42,7 @@ public class ColumnPrint implements Print {
 	/**
 	 * Constructs a ColumnPrint with the given target, number of columns, and
 	 * column spacing (expressed in points). 72 points = 1".
-	 * 
+	 *
 	 * @param target
 	 *            the print which will be split into columns.
 	 * @param columns
@@ -57,7 +57,7 @@ public class ColumnPrint implements Print {
 	/**
 	 * Constructs a ColumnPrint with the given target, column count, column
 	 * spacing, and compression.
-	 * 
+	 *
 	 * @param target
 	 *            the print to display in columns.
 	 * @param columns
@@ -72,11 +72,11 @@ public class ColumnPrint implements Print {
 			boolean compressed) {
 		Util.notNull(target);
 		if (spacing < 0)
-			PaperClips
-					.error(SWT.ERROR_INVALID_ARGUMENT, "spacing must be >= 0"); //$NON-NLS-1$
+			PaperClips.error(SWT.ERROR_INVALID_ARGUMENT,
+					"spacing must be >= 0"); //$NON-NLS-1$
 		if (columns < 2)
-			PaperClips
-					.error(SWT.ERROR_INVALID_ARGUMENT, "columns must be >= 2"); //$NON-NLS-1$
+			PaperClips.error(SWT.ERROR_INVALID_ARGUMENT,
+					"columns must be >= 2"); //$NON-NLS-1$
 
 		this.target = target;
 		this.spacing = spacing;
@@ -84,6 +84,7 @@ public class ColumnPrint implements Print {
 		this.compressed = compressed;
 	}
 
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -94,6 +95,7 @@ public class ColumnPrint implements Print {
 		return result;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -118,7 +120,7 @@ public class ColumnPrint implements Print {
 
 	/**
 	 * Returns the target print being split into columns.
-	 * 
+	 *
 	 * @return the target print being split into columns.
 	 */
 	public Print getTarget() {
@@ -127,7 +129,7 @@ public class ColumnPrint implements Print {
 
 	/**
 	 * Returns the number of columns per page.
-	 * 
+	 *
 	 * @return the number of columns per page.
 	 */
 	public int getColumnCount() {
@@ -136,7 +138,7 @@ public class ColumnPrint implements Print {
 
 	/**
 	 * Returns the spacing between columns, in points. 72 points = 1".
-	 * 
+	 *
 	 * @return the spacing between columns, in points.
 	 */
 	public int getColumnSpacing() {
@@ -146,7 +148,7 @@ public class ColumnPrint implements Print {
 	/**
 	 * Returns whether the columns are compressed to the smallest possible
 	 * height on the last page.
-	 * 
+	 *
 	 * @return whether the columns are compressed to the smallest possible
 	 *         height on the last page.
 	 */
@@ -157,7 +159,7 @@ public class ColumnPrint implements Print {
 	/**
 	 * Sets whether the columns are compressed to the smallest possible height
 	 * on the last page.
-	 * 
+	 *
 	 * @param compressed
 	 *            whether to compress the columns.
 	 */
@@ -233,15 +235,16 @@ class ColumnIterator implements PrintIterator {
 	 * to continue iterating. A backup of the given iterator should be taken
 	 * before invoking this method! If null is returned, the given iterator is
 	 * corrupt and should no longer be used!
-	 * 
+	 *
 	 * @param colSizes
 	 *            an array of column sizes
 	 * @param height
 	 *            the height
 	 * @return an array of PrintPieces for the given column sizes, or null
 	 */
-	PrintPiece[] nextColumns(PrintIterator iterator, int[] colSizes, int height) {
-		List pieces = new ArrayList();
+	PrintPiece[] nextColumns(PrintIterator iterator, int[] colSizes,
+			int height) {
+		List<PrintPiece> pieces = new ArrayList<>();
 		for (int i = 0; i < columns && iterator.hasNext(); i++) {
 			PrintPiece piece = PaperClips.next(iterator, colSizes[i], height);
 
@@ -251,12 +254,12 @@ class ColumnIterator implements PrintIterator {
 			pieces.add(piece);
 		}
 
-		return (PrintPiece[]) pieces.toArray(new PrintPiece[pieces.size()]);
+		return pieces.toArray(new PrintPiece[pieces.size()]);
 	}
 
-	private PrintPiece[] disposePieces(List pieces) {
-		for (Iterator iter = pieces.iterator(); iter.hasNext();) {
-			PrintPiece piece = (PrintPiece) iter.next();
+	private PrintPiece[] disposePieces(List<PrintPiece> pieces) {
+		for (Iterator<PrintPiece> iter = pieces.iterator(); iter.hasNext();) {
+			PrintPiece piece = iter.next();
 			piece.dispose();
 		}
 		return null;

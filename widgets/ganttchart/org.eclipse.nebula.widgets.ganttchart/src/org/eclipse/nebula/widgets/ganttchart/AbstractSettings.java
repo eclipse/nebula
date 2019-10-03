@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    emil.crumhorn@gmail.com - initial API and implementation
- *    ziogiannigmail.com - Bug 464509 - Minute View Implementation
- *******************************************************************************/ 
+ * emil.crumhorn@gmail.com - initial API and implementation
+ * ziogiannigmail.com - Bug 464509 - Minute View Implementation
+ *******************************************************************************/
 
 package org.eclipse.nebula.widgets.ganttchart;
 
@@ -28,22 +28,23 @@ public abstract class AbstractSettings implements ISettings2 {
 	public String getHourDateFormat() {
 		return "MM/dd/yyyy HH:mm";
 	}
-	
+
 	public String getMinuteDateFormat() {
 		return "MM/dd/yyyy HH:mm:ss";
 	}
-	
+
 	public String getWeekHeaderTextDisplayFormatTop() {
 		return "MMM dd, ''yy";
 	}
-	
+
 	public String getMonthHeaderTextDisplayFormatTop() {
 		return "MMMMM ''yy";
 	}
-	
+
 	public String getDayHeaderTextDisplayFormatTop() {
 		return "MMM dd, HH:mm";
 	}
+
 	public String getMinuteHeaderTextDisplayFormatTop() {
 		return "MMM dd, HH:mm";
 	}
@@ -51,10 +52,11 @@ public abstract class AbstractSettings implements ISettings2 {
 	public String getYearHeaderTextDisplayFormatTop() {
 		return "yyyy";
 	}
-	
+
 	public String getDayHeaderTextDisplayFormatBottom() {
 		return "HH:mm";
 	}
+
 	public String getMinuteHeaderTextDisplayFormatBottom() {
 		return "HH:mm";
 	}
@@ -202,7 +204,7 @@ public abstract class AbstractSettings implements ISettings2 {
 	public int getEventSpacer() {
 		return 12;
 	}
-	
+
 	public boolean enableDragAndDrop() {
 		return true;
 	}
@@ -222,7 +224,7 @@ public abstract class AbstractSettings implements ISettings2 {
 	public boolean allowBlankAreaDragAndDropToMoveDates() {
 		return true;
 	}
-	
+
 	public boolean allowBlankAreaVerticalDragAndDropToMoveChart() {
 		return false;
 	}
@@ -270,7 +272,7 @@ public abstract class AbstractSettings implements ISettings2 {
 	public boolean enableZooming() {
 		return true;
 	}
-	
+
 	public Image getLockImage() {
 		return ImageCache.getImage("icons/lock_tiny.gif");
 	}
@@ -282,7 +284,7 @@ public abstract class AbstractSettings implements ISettings2 {
 	public int getRevisedLineSpacer() {
 		return 3;
 	}
-	
+
 	public Image getDefaultAdvandedTooltipHelpImage() {
 		return null;
 	}
@@ -294,7 +296,7 @@ public abstract class AbstractSettings implements ISettings2 {
 	public boolean roundHourlyEventsOffToNearestHour() {
 		return false;
 	}
-		
+
 	public String getDefaultAdvancedTooltipHelpText() {
 		return null;
 	}
@@ -304,15 +306,15 @@ public abstract class AbstractSettings implements ISettings2 {
 	}
 
 	public String getDefaultAdvancedTooltipTextExtended() {
-		StringBuffer buf = new StringBuffer();
+		final StringBuffer buf = new StringBuffer();
 		buf.append("\\ceRevised: #rs# - #re# (#reviseddays# day(s))\n");
 		buf.append("\\c100100100Planned: #sd# - #ed# (#days# day(s))\n");
 		buf.append("#pc#% complete");
-		return buf.toString();//"\\ceStart Date: \\b#sd#\nEnd Date: \\b#ed#\nRevised Start: \\b#rs#\nRevised End: \\b#re#\nDay Span: \\b#days# days\nPercent Complete: \\b#pc#%";
+		return buf.toString();// "\\ceStart Date: \\b#sd#\nEnd Date: \\b#ed#\nRevised Start: \\b#rs#\nRevised End: \\b#re#\nDay Span: \\b#days# days\nPercent Complete: \\b#pc#%";
 	}
 
 	public String getDefaultAdvancedTooltipText() {
-		StringBuffer buf = new StringBuffer();
+		final StringBuffer buf = new StringBuffer();
 		buf.append("\\cePlanned: #sd# - #ed# (#days# day(s))\n");
 		buf.append("\\c100100100#pc#% complete");
 		return buf.toString();
@@ -331,7 +333,7 @@ public abstract class AbstractSettings implements ISettings2 {
 	}
 
 	public int getVerticalTickMarkOffset() {
-		return (getHeaderMonthHeight()-5 > 0 ? getHeaderMonthHeight()-5 : 0);
+		return getHeaderMonthHeight() - 5 > 0 ? getHeaderMonthHeight() - 5 : 0;
 	}
 
 	public boolean drawHeader() {
@@ -397,11 +399,11 @@ public abstract class AbstractSettings implements ISettings2 {
 	public boolean useSplitArrowConnections() {
 		return true;
 	}
-	
+
 	public int getReverseDependencyLineHorizontalSpacer() {
 		return 2;
 	}
-		
+
 	public boolean drawVerticalLines() {
 		return true;
 	}
@@ -433,7 +435,7 @@ public abstract class AbstractSettings implements ISettings2 {
 	public boolean lockHeaderOnVerticalScroll() {
 		return false;
 	}
-	
+
 	public boolean showDefaultMenuItemsOnEventRightClick() {
 		return true;
 	}
@@ -441,7 +443,7 @@ public abstract class AbstractSettings implements ISettings2 {
 	public boolean allowScopeMenu() {
 		return false;
 	}
-	
+
 	public boolean allowHeaderSelection() {
 		return true;
 	}
@@ -451,7 +453,7 @@ public abstract class AbstractSettings implements ISettings2 {
 	}
 
 	public Calendar getDDayRootCalendar() {
-		Calendar mDDayCalendar = Calendar.getInstance(getDefaultLocale());
+		final Calendar mDDayCalendar = Calendar.getInstance(getDefaultLocale());
 		mDDayCalendar.set(Calendar.YEAR, mDDayCalendar.get(Calendar.YEAR));
 		mDDayCalendar.set(Calendar.MONTH, Calendar.JANUARY);
 		mDDayCalendar.set(Calendar.DATE, 1);
@@ -478,118 +480,123 @@ public abstract class AbstractSettings implements ISettings2 {
 		return false;
 	}
 
-    public int getSectionTextSpacer() {
-        return 30;
-    }
+	public int getSectionTextSpacer() {
+		return 30;
+	}
 
-    public int getPhasesHeaderHeight() {
-        return 18;
-    }
+	public int getPhasesHeaderHeight() {
+		return 18;
+	}
 
-    public boolean allowPhaseOverlap() {
-        return false;
-    }
-      
-    public int getVerticalEventDragging() {
-        return VerticalDragModes.NO_VERTICAL_DRAG;
-    }
+	public boolean allowPhaseOverlap() {
+		return false;
+	}
 
-    public int getVerticalDragResistance() {
-        return 15;
-    }
+	public int getVerticalEventDragging() {
+		return VerticalDragModes.NO_VERTICAL_DRAG;
+	}
 
-    public boolean onVerticalDragDropShowInsertMarker() {
-        return true;
-    }
+	public int getVerticalDragResistance() {
+		return 15;
+	}
 
-    public boolean scaleImageToDayWidth() {
-    	return true;
-    }
+	public boolean onVerticalDragDropShowInsertMarker() {
+		return true;
+	}
 
-    public boolean allowArrowKeysToScrollChart() {
-    	return false;
-    }
+	public boolean scaleImageToDayWidth() {
+		return true;
+	}
 
-    public int getNumberOfDaysToAppendForEndOfDay() {
-    	return 1;
-    }
-    
-    public boolean scrollChartVerticallyOnMouseWheel() {
-    	return true;
-    }
+	public boolean allowArrowKeysToScrollChart() {
+		return false;
+	}
 
-    public IToolTipContentReplacer getToolTipContentReplacer() {
-    	return null;
-    }
+	public int getNumberOfDaysToAppendForEndOfDay() {
+		return 1;
+	}
 
-    public int getMinZoomLevel() {
-    	return ISettings.MIN_ZOOM_LEVEL;
-    }
-    
-    public Calendar getPeriodStart() {
-    	return null;
-    }
-    
-    public Calendar getPeriodEnd() {
-    	return null;
-    }
-    
-    public boolean shiftHorizontalCenteredEventString() {
-    	return false;
-    }
-    
-    public boolean enableAddEvent() {
-    	return false;
-    }
-    
-    public boolean drawEventString() {
-    	return true;
-    }
-    
-    public boolean alwaysDragAllEvents() {
-    	return false;
-    }
-    
-    public boolean printSelectedVerticallyComplete() {
-    	return false;
-    }
-    
-    public boolean printFooter() {
-    	return true;
-    }
- 
-    public boolean drawSectionBar() {
-    	return true;
-    }
-    
-    public boolean drawSectionDetails() {
-    	return false;
-    }
-    
-    public int getSectionDetailWidth() {
-    	return 100;
-    }
-    
-    public String getSectionDetailTitle() {
-    	return "\\b\\s8\\ce#name#";
-    }
-    
-    public String getSectionDetailText() {
+	public boolean scrollChartVerticallyOnMouseWheel() {
+		return true;
+	}
+
+	public IToolTipContentReplacer getToolTipContentReplacer() {
+		return null;
+	}
+
+	public int getMinZoomLevel() {
+		return ISettings.MIN_ZOOM_LEVEL;
+	}
+
+	public Calendar getPeriodStart() {
+		return null;
+	}
+
+	public Calendar getPeriodEnd() {
+		return null;
+	}
+
+	public boolean shiftHorizontalCenteredEventString() {
+		return false;
+	}
+
+	public boolean enableAddEvent() {
+		return false;
+	}
+
+	public boolean drawEventString() {
+		return true;
+	}
+
+	public boolean alwaysDragAllEvents() {
+		return false;
+	}
+
+	public boolean printSelectedVerticallyComplete() {
+		return false;
+	}
+
+	public boolean printFooter() {
+		return true;
+	}
+
+	public boolean drawSectionBar() {
+		return true;
+	}
+
+	public boolean drawSectionDetails() {
+		return false;
+	}
+
+	public int getSectionDetailWidth() {
+		return 100;
+	}
+
+	public String getSectionDetailTitle() {
+		return "\\b\\s8\\ce#name#";
+	}
+
+	public String getSectionDetailText() {
 		return "\\ceEvents: #ne#";
-    }
-    
-    public ISectionDetailContentReplacer getSectionDetailContentReplacer() {
-    	return null;
-    }
-    
-    public boolean showSectionDetailMore() {
-    	return false;
-    }
-    
-    public boolean showHolidayToolTips() {
-    	return false;
-    }
-    public boolean enableTodayLineUpdater() {
-    	return true; 
-    }
+	}
+
+	public ISectionDetailContentReplacer getSectionDetailContentReplacer() {
+		return null;
+	}
+
+	public boolean showSectionDetailMore() {
+		return false;
+	}
+
+	public boolean showHolidayToolTips() {
+		return false;
+	}
+
+	public boolean enableTodayLineUpdater() {
+		return true;
+	}
+
+	public boolean fireEmptyEventSelection() {
+		return false;
+	}
 }

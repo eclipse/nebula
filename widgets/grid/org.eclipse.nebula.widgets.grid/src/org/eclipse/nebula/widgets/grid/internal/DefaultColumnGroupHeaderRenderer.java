@@ -85,16 +85,39 @@ public class DefaultColumnGroupHeaderRenderer extends GridHeaderRenderer
         }
 
         gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
+
+        String text = group.getText();
+		if (!isWordWrap())
+        {
+			text = TextUtils.getShortStr(gc, text, width,truncationStyle);
+        }
+
+        if (getHorizontalAlignment() == SWT.RIGHT)
+        {
+            int len = gc.stringExtent(text).x;
+            if (len < width)
+            {
+                x += width - len;
+            }
+        }
+        else if (getHorizontalAlignment() == SWT.CENTER)
+        {
+            int len = gc.stringExtent(text).x;
+            if (len < width)
+            {
+                x += (width - len) / 2;
+            }
+        }
+
         if (!isWordWrap())
         {
-          gc.drawString(TextUtils.getShortString(gc, group.getText(), width), getBounds().x + x,
-              getBounds().y + topMargin);
+        	gc.drawString(text, getBounds().x + x,getBounds().y + topMargin);
         }
         else
         {
             getTextLayout(gc, group);
             textLayout.setWidth(width < 1 ? 1 : width);
-            textLayout.setText(group.getText());
+            textLayout.setText(text);
 
             if (group.getParent().isAutoHeight())
             {

@@ -54,14 +54,12 @@ public class FormGroupStrategy extends AbstractGroupStrategy
 
     private Rectangle toolItemArea;
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.swtplus.widgets.AbstractGroupStrategy#initialize(com.swtplus.widgets.PGroup)
+    /** 
+     * @see org.eclipse.nebula.widgets.pgroup.AbstractGroupStrategy#initialize()
      */
-    public void initialize(PGroup sg)
+    public void initialize()
     {
-        super.initialize(sg);
+        super.initialize();
 
         RGB borderRGB = GraphicUtils.blend(getGroup().getDisplay()
             .getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT).getRGB(), getGroup()
@@ -77,21 +75,25 @@ public class FormGroupStrategy extends AbstractGroupStrategy
     }
 
     /**
+     * @deprecated use constructor with PGroup element instead
+     */
+    public FormGroupStrategy() {
+    	this(null);
+    }
+    
+    /**
      * Creates a FormGroupStrategy with the given toggle and style.
      *
      * @param toggle
      * @param style
      */
-    public FormGroupStrategy()
+    public FormGroupStrategy(PGroup g)
     {
-        super();
-
+        super(g);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.swtplus.widgets.AbstractGroupStrategy#paintGroup(org.eclipse.swt.graphics.GC)
+    /** 
+     * @see org.eclipse.nebula.widgets.pgroup.AbstractGroupStrategy#paint(org.eclipse.swt.graphics.GC)
      */
     public void paint(GC gc)
     {
@@ -183,9 +185,6 @@ public class FormGroupStrategy extends AbstractGroupStrategy
         gc.setClipping((Region)null);
 
         gc.setForeground(getGroup().getParent().getBackground());
-
-//        if (getGroup().getExpanded())
-//            gc.fillRectangle(1, titleHeight - 1, getGroup().getSize().x - 2, 1);
 
         gc.setBackground(back);
         gc.setForeground(fore);
@@ -284,8 +283,8 @@ public class FormGroupStrategy extends AbstractGroupStrategy
     	return toolItemArea;
     }
 
-    /**
-     * {@inheritDoc}
+    /** 
+     * @see org.eclipse.nebula.widgets.pgroup.AbstractGroupStrategy#isToggleLocation(int, int)
      */
     public boolean isToggleLocation(int x, int y)
     {
@@ -340,8 +339,8 @@ public class FormGroupStrategy extends AbstractGroupStrategy
         return new Rectangle(textPoint.x, textPoint.y, textWidth, fontHeight);
     }
 
-    /**
-     * {@inheritDoc}
+    /** 
+     * @see org.eclipse.nebula.widgets.pgroup.AbstractGroupStrategy#getClientArea()
      */
     public Rectangle getClientArea()
     {
@@ -366,10 +365,8 @@ public class FormGroupStrategy extends AbstractGroupStrategy
         return area;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.swtplus.widgets.IGroupStrategy#dispose()
+    /** 
+     * @see org.eclipse.nebula.widgets.pgroup.AbstractGroupStrategy#dispose()
      */
     public void dispose()
     {

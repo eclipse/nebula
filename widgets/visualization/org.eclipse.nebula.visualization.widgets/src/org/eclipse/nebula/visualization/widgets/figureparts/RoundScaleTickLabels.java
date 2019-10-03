@@ -247,17 +247,16 @@ public class RoundScaleTickLabels extends Figure {
      * 
      * @param base
      *            the base
-     * @param expornent
+     * @param exponent
      *            the exponent
      * @return the value <tt>a<sup>b</sup></tt> in <tt>BigDecimal</tt>
      */
-    private BigDecimal pow(double base, int expornent) {
+    private BigDecimal pow(double base, int exponent) {
         BigDecimal value;
-        if (expornent > 0) {
-            value = new BigDecimal(new Double(base).toString()).pow(expornent);
+        if (exponent > 0) {
+            value = BigDecimal.valueOf(base).pow(exponent);
         } else {
-            value = BigDecimal.ONE.divide(new BigDecimal(new Double(base)
-                    .toString()).pow(-expornent));
+            value = BigDecimal.ONE.divide(BigDecimal.valueOf(base).pow(-exponent));
         }
         return value;
     }
@@ -375,8 +374,8 @@ public class RoundScaleTickLabels extends Figure {
 		int minLogDigit = (int) Math.ceil(minLog);
         int maxLogDigit = (int) Math.ceil(Math.log10(max));
 
-        final BigDecimal minDec = new BigDecimal(new Double(min).toString());
-        BigDecimal tickStep = pow(10, minLogDigit-1);        
+        final BigDecimal minDec = BigDecimal.valueOf(min);
+        BigDecimal tickStep = pow(10, minLogDigit-1);
         BigDecimal firstPosition;
 
         if (minDec.remainder(tickStep).doubleValue() <= 0) {

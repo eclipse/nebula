@@ -125,7 +125,7 @@ public class PGroup extends Canvas
     public PGroup(Composite parent, int style)
     {
         super(parent, checkStyle(style));
-        setStrategy(new RectangleGroupStrategy());
+        setStrategy(new RectangleGroupStrategy(this));
         setToggleRenderer(new ChevronsToggleRenderer());
         setToolItemRenderer(new SimpleToolItemRenderer());
 
@@ -133,13 +133,13 @@ public class PGroup extends Canvas
             .getFontData()[0].getHeight(), SWT.BOLD);
         super.setFont(initialFont);
 
-        strategy.initialize(this);
+        strategy.initialize();
 
         initListeners();
     }
 
-    /**
-     * {@inheritDoc}
+    /** 
+     * @see org.eclipse.swt.widgets.Control#getBackground()
      */
     public Color getBackground()
     {
@@ -415,7 +415,7 @@ public class PGroup extends Canvas
 
     private void onMouseMove(Event e)
     {
-        boolean newOverToggle = PGroup.this.strategy.isToggleLocation(e.x, e.y);
+        boolean newOverToggle = toggleRenderer != null && PGroup.this.strategy.isToggleLocation(e.x, e.y);
         boolean redraw = false;
         if (newOverToggle != overToggle)
         {
@@ -523,7 +523,7 @@ public class PGroup extends Canvas
             SWT.error(SWT.ERROR_NULL_ARGUMENT);
         this.strategy = strategy;
         setForeground(null);
-        strategy.initialize(this);
+        strategy.initialize();
     }
 
     /**
@@ -561,10 +561,8 @@ public class PGroup extends Canvas
         strategy.update();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.eclipse.swt.widgets.Control#setFont(org.eclipse.swt.graphics.Font)
+    /** 
+     * @see org.eclipse.swt.widgets.Canvas#setFont(org.eclipse.swt.graphics.Font)
      */
     public void setFont(Font font)
     {
@@ -609,9 +607,7 @@ public class PGroup extends Canvas
         redraw();
     }
 
-    /*
-     * (non-Javadoc)
-     *
+    /** 
      * @see org.eclipse.swt.widgets.Control#computeSize(int, int, boolean)
      */
     public Point computeSize(int arg0, int arg1, boolean arg2)
@@ -656,7 +652,12 @@ public class PGroup extends Canvas
             kids[i].setVisible(expanded);
         }
         this.expanded = expanded;
-        getParent().layout();
+        Composite parent = getParent();
+        parent.layout(true);
+        while (parent instanceof PGroup) {
+        	parent = parent.getParent();
+        	parent.layout(true);
+        }
         redraw();
     }
 
@@ -844,31 +845,6 @@ public class PGroup extends Canvas
 
         return new Rectangle(-10, 0, 0, 0);
     }
-
-    /**
-     * Sets the receiver's foreground color to the color specified
-     * by the argument, or to the default system color for the control
-     * if the argument is null.
-     * <p>
-     * Note: This operation is a hint and may be overridden by the platform.
-     * </p>
-     * <p>
-     * Note: If a new strategy is set on the receiver it may overwrite the existing
-     * foreground color.
-     * </p>
-     * @param color the new color (or null)
-     *
-     * @exception IllegalArgumentException <ul>
-     *    <li>ERROR_INVALID_ARGUMENT - if the argument has been disposed</li>
-     * </ul>
-     * @exception SWTException <ul>
-     *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-     *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-     * </ul>
-     */
-	public void setForeground(Color color) {
-		super.setForeground(color);
-	}
 
 	void addToolItem(PGroupToolItem toolitem) {
 		toolitems.add(toolitem);

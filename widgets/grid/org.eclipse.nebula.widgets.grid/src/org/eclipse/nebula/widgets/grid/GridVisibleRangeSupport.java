@@ -8,7 +8,6 @@ import java.util.Iterator;
 
 import org.eclipse.nebula.widgets.grid.Grid.GridVisibleRange;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 /**
@@ -19,25 +18,20 @@ import org.eclipse.swt.widgets.Listener;
  * </p>
  */
 public class GridVisibleRangeSupport {
-	private Collection rangeChangeListener;
+	private Collection<VisibleRangeChangedListener> rangeChangeListener;
 	private Grid grid;
 	private GridVisibleRange oldRange = new GridVisibleRange();
 
-	private Listener paintListener = new Listener() {
-
-		public void handleEvent(Event event) {
-			calculateChange();
-		}
-
-	};
+	private Listener paintListener = event -> calculateChange();
 
 	/**
 	 * Listener notified when the visible range changes
 	 */
+	@FunctionalInterface
 	public interface VisibleRangeChangedListener {
 		/**
 		 * Method called when range is changed
-		 * 
+		 *
 		 * @param event
 		 *            the event holding informations about the change
 		 */
@@ -49,7 +43,7 @@ public class GridVisibleRangeSupport {
 	 */
 	public static class RangeChangedEvent extends EventObject {
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = 1L;
 
@@ -94,20 +88,20 @@ public class GridVisibleRangeSupport {
 
 	/**
 	 * Add a listener who is informed when the range is changed
-	 * 
+	 *
 	 * @param listener
 	 *            the listener to add
 	 */
 	public void addRangeChangeListener(VisibleRangeChangedListener listener) {
 		if (rangeChangeListener == null) {
-			rangeChangeListener = new ArrayList();
+			rangeChangeListener = new ArrayList<>();
 		}
 		rangeChangeListener.add(listener);
 	}
 
 	/**
 	 * Remove the listener from the ones informed when the range is changed
-	 * 
+	 *
 	 * @param listener
 	 */
 	public void removeRangeChangeListener(VisibleRangeChangedListener listener) {
@@ -121,62 +115,63 @@ public class GridVisibleRangeSupport {
 
 	private void calculateChange() {
 		// FIXME Add back
-		if (rangeChangeListener != null) {
-			GridVisibleRange range = grid.getVisibleRange();
-
-			ArrayList lOrigItems = new ArrayList();
-			lOrigItems.addAll(Arrays.asList(oldRange.getItems()));
-
-			ArrayList lNewItems = new ArrayList();
-			lNewItems.addAll(Arrays.asList(range.getItems()));
-
-			Iterator it = lNewItems.iterator();
-			while (it.hasNext()) {
-				if (lOrigItems.remove(it.next())) {
-					it.remove();
-				}
-			}
-
-			ArrayList lOrigColumns = new ArrayList();
-			lOrigColumns.addAll(Arrays.asList(oldRange.getColumns()));
-
-			ArrayList lNewColumns = new ArrayList();
-			lNewColumns.addAll(Arrays.asList(range.getColumns()));
-
-			it = lNewColumns.iterator();
-			while (it.hasNext()) {
-				if (lOrigColumns.remove(it.next())) {
-					it.remove();
-				}
-			}
-
-			if (lOrigItems.size() != 0 || lNewItems.size() != 0
-					|| lOrigColumns.size() != 0 || lNewColumns.size() != 0) {
-				RangeChangedEvent evt = new RangeChangedEvent(grid, range);
-				evt.addedRows = new GridItem[lNewItems.size()];
-				lNewItems.toArray(evt.addedRows);
-
-				evt.removedRows = new GridItem[lOrigItems.size()];
-				lOrigItems.toArray(evt.removedRows);
-
-				evt.addedColumns = new GridColumn[lNewColumns.size()];
-				lNewColumns.toArray(evt.addedColumns);
-
-				evt.removedColumns = new GridColumn[lOrigColumns.size()];
-				lNewColumns.toArray(evt.removedColumns);
-				it = rangeChangeListener.iterator();
-				while (it.hasNext()) {
-					((VisibleRangeChangedListener) it.next()).rangeChanged(evt);
-				}
-			}
-
-			oldRange = range;
+		if (rangeChangeListener == null) {
+			return;
 		}
+		GridVisibleRange range = grid.getVisibleRange();
+
+		ArrayList<GridItem> lOrigItems = new ArrayList<>();
+		lOrigItems.addAll(Arrays.asList(oldRange.getItems()));
+
+		ArrayList<GridItem> lNewItems = new ArrayList<>();
+		lNewItems.addAll(Arrays.asList(range.getItems()));
+
+		Iterator<GridItem> newItemsIterator = lNewItems.iterator();
+		while (newItemsIterator.hasNext()) {
+			if (lOrigItems.remove(newItemsIterator.next())) {
+				newItemsIterator.remove();
+			}
+		}
+
+		ArrayList<GridColumn> lOrigColumns = new ArrayList<>();
+		lOrigColumns.addAll(Arrays.asList(oldRange.getColumns()));
+
+		ArrayList<GridColumn> lNewColumns = new ArrayList<>();
+		lNewColumns.addAll(Arrays.asList(range.getColumns()));
+
+		Iterator<GridColumn> newColumnsIterator = lNewColumns.iterator();
+		while (newColumnsIterator.hasNext()) {
+			if (lOrigColumns.remove(newColumnsIterator.next())) {
+				newColumnsIterator.remove();
+			}
+		}
+
+		if (lOrigItems.size() != 0 || lNewItems.size() != 0 || lOrigColumns.size() != 0 || lNewColumns.size() != 0) {
+			RangeChangedEvent evt = new RangeChangedEvent(grid, range);
+			evt.addedRows = new GridItem[lNewItems.size()];
+			lNewItems.toArray(evt.addedRows);
+
+			evt.removedRows = new GridItem[lOrigItems.size()];
+			lOrigItems.toArray(evt.removedRows);
+
+			evt.addedColumns = new GridColumn[lNewColumns.size()];
+			lNewColumns.toArray(evt.addedColumns);
+
+			evt.removedColumns = new GridColumn[lOrigColumns.size()];
+			lNewColumns.toArray(evt.removedColumns);
+			Iterator<VisibleRangeChangedListener> rangeChangeIterator = rangeChangeListener.iterator();
+
+			while (rangeChangeIterator.hasNext()) {
+				rangeChangeIterator.next().rangeChanged(evt);
+			}
+		}
+
+		oldRange = range;
 	}
 
 	/**
 	 * Create a range support for the given grid instance
-	 * 
+	 *
 	 * @param grid
 	 *            the grid instance the range support is created for
 	 * @return the created range support

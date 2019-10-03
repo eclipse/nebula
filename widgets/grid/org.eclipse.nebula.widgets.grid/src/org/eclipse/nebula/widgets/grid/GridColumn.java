@@ -591,15 +591,29 @@ public class GridColumn extends Item {
 				notifyListeners(SWT.Hide, new Event());
 			}
 
+			/*
+			 *  Move focus to the next visible column on the right
+			 *  (or left if it is not possible)
+			 */
+			 if (parent.getFocusColumn() == this) {
+				GridItem focusItem = parent.getFocusItem();
+				if (focusItem != null) {
+					GridColumn column = parent.getVisibleColumn_DegradeRight(focusItem, this);
+					if (column != null)
+						parent.setFocusColumn(column);
+					else {
+						column = parent.getVisibleColumn_DegradeLeft(focusItem, this);
+						if (column != null)
+							parent.setFocusColumn(column);
+					}
+				}
+			}
+
 			GridColumn[] colsOrdered = parent.getColumnsInOrder();
-			boolean fire = false;
 			for (int i = 0; i < colsOrdered.length; i++) {
 				GridColumn column = colsOrdered[i];
-				if (column == this) {
-					fire = true;
-				} else {
-					if (column.isVisible())
-						column.fireMoved();
+				if (column != this && column.isVisible()) {
+					column.fireMoved();
 				}
 			}
 
@@ -893,6 +907,40 @@ public class GridColumn extends Item {
 		checkWidget();
 		cellRenderer.setAlignment(alignment);
 	}
+
+	/**
+	 * Returns the vertical alignment.
+	 *
+	 * @return SWT.TOP (default), SWT.CENTER, SWT.BOTTOM
+	 * @throws org.eclipse.swt.SWTException
+	 *             <ul>
+	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
+	 *             </ul>
+	 */
+    public int getVerticalAlignment() {
+        checkWidget();
+        return cellRenderer.getVerticalAlignment();
+    }
+
+    /**
+     * Sets the column's vertical text alignment.
+     *
+     * @param alignment SWT.TOP (default), SWT.CENTER, SWT.BOTTOM
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
+     */
+    public void setVerticalAlignment(int alignment) {
+    	checkWidget();
+    	cellRenderer.setVerticalAlignment(alignment);
+    }
+
 
 	/**
 	 * Returns true if this column is moveable.

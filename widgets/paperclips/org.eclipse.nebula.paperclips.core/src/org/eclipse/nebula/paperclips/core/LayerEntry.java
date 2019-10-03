@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthew Hall - initial API and implementation
  */
@@ -16,21 +16,21 @@ import org.eclipse.swt.graphics.GC;
 /**
  * Instances implementing this interface are representing an entry in a
  * LayerPrint.
- * 
+ *
  * @author Matthew Hall
  */
 public interface LayerEntry {
 
 	/**
 	 * Returns the target print of this entry.
-	 * 
+	 *
 	 * @return the target print of this entry.
 	 */
 	Print getTarget();
 
 	/**
 	 * Returns the horizontal alignment applied to the target.
-	 * 
+	 *
 	 * @return the horizontal alignment applied to the target.
 	 */
 	int getHorizontalAlignment();
@@ -38,7 +38,7 @@ public interface LayerEntry {
 	/**
 	 * @param device
 	 * @param gc
-	 * @return
+	 * @return the associated iterator for this entry
 	 */
 	LayerEntryIterator iterator(Device device, GC gc);
 }

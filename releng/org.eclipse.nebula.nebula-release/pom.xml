@@ -15,7 +15,7 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<download-publish-path>/home/data/httpd/download.eclipse.org/technology/nebula/snapshot</download-publish-path>
+		<download-publish-path>/home/data/httpd/download.eclipse.org/nebula/snapshot</download-publish-path>
 	</properties>
 
 	<modules>
@@ -68,7 +68,9 @@
 		<module>../../widgets/nebulaslider</module> 
 		<module>../../widgets/splitbutton</module> 
 		<module>../../widgets/badgedlabel</module> 
-
+		<module>../../widgets/floatingtext</module> 
+		<module>../../widgets/passwordrevealer</module>
+		<module>../../widgets/ctreecombo</module>
 
 		<!-- Releng -->
 		<module>../org.eclipse.nebula.feature</module>

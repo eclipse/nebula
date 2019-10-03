@@ -1,11 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2011 Laurent CARON All rights reserved. This program and the
+ * Copyright (c) 2011-2019 Laurent CARON All rights reserved. This program and the
  * accompanying materials are made available under the terms of the Eclipse
  * Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- * Contributors: Laurent CARON (laurent.caron at gmail dot com) - Initial
- * implementation and API
+ * Contributors: 
+ * 	Laurent CARON (laurent.caron at gmail dot com) - Initial implementation and API
+ *  Stefan Nöbauer - Bug 550437, Bug 550659
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.dialog;
 
@@ -43,8 +44,10 @@ public class Dialog {
 	private final FooterArea footerArea;
 	final Shell shell;
 
-	private int minimumWidth = 300;
+	private int minimumWidth = 400;
 	private int minimumHeight = 150;
+	
+	private Point lastSize;
 
 	/**
 	 * Constructor
@@ -68,7 +71,7 @@ public class Dialog {
 	 * @param parent parent shell
 	 */
 	public Dialog(final Shell parent) {
-		this(parent, false);
+		this(parent, true);
 	}
 
 	/**
@@ -108,6 +111,9 @@ public class Dialog {
 			shell.setText(title);
 		}
 		pack();
+		center();
+		
+		shell.setMinimumSize(shell.computeSize(minimumWidth, SWT.DEFAULT));
 		shell.open();
 
 		final Display display = shell.getDisplay();
@@ -118,6 +124,34 @@ public class Dialog {
 		}
 
 		return footerArea.getSelectedButton();
+	}
+
+	private void center() {
+		final Point preferredSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+
+		if (preferredSize.x < minimumWidth) {
+			preferredSize.x = minimumWidth;
+		}
+
+		if (preferredSize.y < minimumHeight) {
+			preferredSize.y = minimumHeight;
+		}
+		
+		final int centerX;
+		final int centerY;
+
+		if (centerPolicy == CenterOption.CENTER_ON_SCREEN || shell.getParent() == null) {
+			Shell activeShell = shell.getDisplay().getActiveShell();
+			final Rectangle monitorBounds = SWTGraphicUtil.getBoundsOfMonitorOnWhichShellIsDisplayed(activeShell);
+			centerX = monitorBounds.x + (monitorBounds.width - preferredSize.x) / 2;
+			centerY = monitorBounds.y + (monitorBounds.height - preferredSize.y) / 2;
+		} else {
+			final Shell parent = (Shell) shell.getParent();
+			centerX = parent.getLocation().x + (parent.getSize().x - preferredSize.x) / 2;
+			centerY = parent.getLocation().y + (parent.getSize().y - preferredSize.y) / 2;
+		}
+
+		shell.setBounds(centerX, centerY, preferredSize.x, preferredSize.y);		
 	}
 
 	/**
@@ -133,30 +167,21 @@ public class Dialog {
 	void pack() {
 
 		final Point preferredSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		Rectangle bounds = shell.getBounds();
+		
+		preferredSize.x = Math.max(preferredSize.x, minimumWidth);
+		preferredSize.y = Math.max(preferredSize.y, minimumHeight);
+		
 
-		if (preferredSize.x < minimumWidth) {
-			preferredSize.x = minimumWidth;
+		if(lastSize != null) {
+			preferredSize.x = Math.max(preferredSize.x, lastSize.x);
+			preferredSize.y = Math.max(preferredSize.y, lastSize.y);
 		}
 
-		if (preferredSize.y < minimumHeight) {
-			preferredSize.y = minimumHeight;
-		}
-
-		final int centerX;
-		final int centerY;
-
-		if (centerPolicy == CenterOption.CENTER_ON_SCREEN || shell.getParent() == null) {
-			final Rectangle monitorBounds = SWTGraphicUtil.getBoundsOfMonitorOnWhichShellIsDisplayed(shell);
-			centerX = monitorBounds.x + (monitorBounds.width - preferredSize.x) / 2;
-			centerY = monitorBounds.y + (monitorBounds.height - preferredSize.y) / 2;
-		} else {
-			final Shell parent = (Shell) shell.getParent();
-			centerX = parent.getLocation().x + (parent.getSize().x - preferredSize.x) / 2;
-			centerY = parent.getLocation().y + (parent.getSize().y - preferredSize.y) / 2;
-		}
-
-		shell.setBounds(centerX, centerY, preferredSize.x, preferredSize.y);
+		shell.setBounds(bounds.x, bounds.y, preferredSize.x, preferredSize.y);
+		lastSize = null;
 	}
+	
 
 	// ------------------------------------------- Convenient methods
 
@@ -182,15 +207,31 @@ public class Dialog {
 	 * @return the value typed by the user
 	 */
 	public static String ask(final Shell shell, final String title, final String text, final String defaultValue) {
-		final Dialog dialog = new Dialog(shell);
-		dialog.setTitle(ResourceManager.getLabel(ResourceManager.INPUT));
-		dialog.getMessageArea().setTitle(title).setText(text).setIcon(Display.getCurrent().getSystemImage(SWT.ICON_QUESTION)).addTextBox(defaultValue);
-		dialog.setButtonType(OpalDialogType.OK_CANCEL);
+		Dialog dialog = buildAskDialog(shell, title, text, defaultValue);
 		if (dialog.show() == 0) {
 			return dialog.getMessageArea().getTextBoxValue();
 		} else {
 			return null;
 		}
+	}
+	
+	/**
+	 * Build a dialog box that asks a question
+	 *
+	 * @shell parent shell
+	 * @param title title of the dialog box
+	 * @param text text of the question
+	 * @param defaultValue default value of the input
+	 * @return dialog
+	 */
+	public static Dialog buildAskDialog(final Shell shell, final String title, final String text,
+			final String defaultValue) {
+		final Dialog dialog = new Dialog(shell);
+		dialog.setTitle(ResourceManager.getLabel(ResourceManager.INPUT));
+		dialog.getMessageArea().setTitle(title).setText(text)
+				.setIcon(Display.getCurrent().getSystemImage(SWT.ICON_QUESTION)).addTextBox(defaultValue);
+		dialog.setButtonType(OpalDialogType.OK_CANCEL);
+		return dialog;
 	}
 
 	/**
@@ -211,13 +252,25 @@ public class Dialog {
 	 * @param errorMessage Error message
 	 */
 	public static void error(final Shell shell, final String title, final String errorMessage) {
+		buildErrorDialog(shell, title, errorMessage).show();
+	}
+
+	/**
+	 * Build a dialog box that displays an error message
+	 *
+	 * @param shell parent shell
+	 * @param title title of the dialog box
+	 * @param errorMessage Error message
+	 * @return dialog
+	 */
+	public static Dialog buildErrorDialog(final Shell shell, final String title, final String errorMessage) {
 		final Dialog dialog = new Dialog(shell);
 		dialog.setTitle(ResourceManager.getLabel(ResourceManager.APPLICATION_ERROR));
 		dialog.getMessageArea().setTitle(title).//
 				setText(errorMessage).//
 				setIcon(Display.getCurrent().getSystemImage(SWT.ICON_ERROR));
 		dialog.setButtonType(OpalDialogType.OK);
-		dialog.show();
+		return dialog;
 	}
 
 	/**
@@ -238,12 +291,24 @@ public class Dialog {
 	 * @param text text to display
 	 */
 	public static void inform(final Shell shell, final String title, final String text) {
+		buildInformDialog(shell, title, text).show();
+	}
+
+	/**
+	 * Build a dialog box that inform the user
+	 *
+	 * @param shell parent shell
+	 * @param title title of the dialog box
+	 * @param text text to display
+	 * @return dialog
+	 */
+	public static Dialog buildInformDialog(final Shell shell, final String title, final String text) {
 		final Dialog dialog = new Dialog(shell);
 		dialog.setTitle(ResourceManager.getLabel(ResourceManager.INFORMATION));
 		dialog.getMessageArea().setTitle(title).//
 				setText(text).setIcon(Display.getCurrent().getSystemImage(SWT.ICON_INFORMATION));
 		dialog.setButtonType(OpalDialogType.CLOSE);
-		dialog.show();
+		return dialog;
 	}
 
 	/**
@@ -293,13 +358,28 @@ public class Dialog {
 	 * @return <code>true</code> if the user confirmed, <code>false</code> otherwise
 	 */
 	public static boolean isConfirmed(final Shell shell, final String title, final String text, final int timer) {
+		return buildConfirmDialog(shell, title, text, timer).show() == 0;
+	}
+
+	/**
+	 * Build a dialog box that asks the user a confirmation. The button "yes" is
+	 * not enabled before timer seconds
+	 *
+	 * @param shell parent shell
+	 * @param title title of the dialog box
+	 * @param text text to display
+	 * @param timer number of seconds before enabling the yes button
+	 * @return dialog
+	 */
+	public static Dialog buildConfirmDialog(final Shell shell, final String title, final String text, final int timer) {
 		final Dialog dialog = new Dialog(shell);
 		dialog.setTitle(ResourceManager.getLabel(ResourceManager.WARNING));
-		dialog.getMessageArea().setTitle(title).setText(text).setIcon(Display.getCurrent().getSystemImage(SWT.ICON_WARNING));
+		dialog.getMessageArea().setTitle(title).setText(text)
+				.setIcon(Display.getCurrent().getSystemImage(SWT.ICON_WARNING));
 
 		dialog.getFooterArea().setTimer(timer).setTimerIndexButton(0);
 		dialog.setButtonType(OpalDialogType.YES_NO);
-		return dialog.show() == 0;
+		return dialog;
 	}
 
 	/**
@@ -325,16 +405,35 @@ public class Dialog {
 	 * @param values values to display
 	 * @return the index of the selection
 	 */
-	public static int radioChoice(final Shell shell, final String title, final String text, final int defaultSelection, final String... values) {
-		final Dialog dialog = new Dialog(shell);
-		dialog.setTitle(ResourceManager.getLabel(ResourceManager.CHOICE));
-		dialog.getMessageArea().setTitle(title).setText(text).setIcon(Display.getCurrent().getSystemImage(SWT.ICON_QUESTION)).addRadioButtons(defaultSelection, values);
-		dialog.setButtonType(OpalDialogType.SELECT_CANCEL);
+	public static int radioChoice(final Shell shell, final String title, final String text, final int defaultSelection,
+			final String... values) {
+		final Dialog dialog = buildRadioChoiceDialog(shell, title, text, defaultSelection, values);
 		if (dialog.show() == 0) {
 			return dialog.getMessageArea().getRadioChoice();
 		} else {
 			return -1;
 		}
+	}
+	
+	/**
+	 * Build a dialog box with a radio choice
+	 *
+	 * @param shell parent shell
+	 * @param title title of the dialog box
+	 * @param text text to display
+	 * @param defaultSelection index of the default selection
+	 * @param values values to display
+	 * @return dialog
+	 */
+	public static Dialog buildRadioChoiceDialog(final Shell shell, final String title, final String text,
+			final int defaultSelection, final String... values) {
+		final Dialog dialog = new Dialog(shell);
+		dialog.setTitle(ResourceManager.getLabel(ResourceManager.CHOICE));
+		dialog.getMessageArea().setTitle(title).setText(text)
+				.setIcon(Display.getCurrent().getSystemImage(SWT.ICON_QUESTION))
+				.addRadioButtons(defaultSelection, values);
+		dialog.setButtonType(OpalDialogType.SELECT_CANCEL);
+		return dialog;
 	}
 
 	/**
@@ -343,7 +442,18 @@ public class Dialog {
 	 * @param exception exception to display
 	 */
 	public static void showException(final Throwable exception) {
+		buildExceptionDialog(exception).show();
+	}
+
+	/**
+	 * Build a dialog box with an exception
+	 *
+	 * @param exception exception to display
+	 * @return dialog
+	 */
+	public static Dialog buildExceptionDialog(final Throwable exception) {
 		final Dialog dialog = new Dialog();
+
 		dialog.setTitle(ResourceManager.getLabel(ResourceManager.EXCEPTION));
 
 		final String msg = exception.getMessage();
@@ -358,7 +468,7 @@ public class Dialog {
 		dialog.getFooterArea().setExpanded(true);
 
 		dialog.setButtonType(OpalDialogType.CLOSE);
-		dialog.show();
+		return dialog;
 	}
 
 	/**
@@ -370,7 +480,8 @@ public class Dialog {
 	 * @param items items to display
 	 * @return the index of the selected value
 	 */
-	public static int choice(final String title, final String text, final int defaultSelection, final ChoiceItem... items) {
+	public static int choice(final String title, final String text, final int defaultSelection,
+			final ChoiceItem... items) {
 		return choice(null, title, text, defaultSelection, items);
 	}
 
@@ -385,12 +496,29 @@ public class Dialog {
 	 * @return the index of the selected value
 	 */
 	public static int choice(final Shell shell, final String title, final String text, final int defaultSelection, final ChoiceItem... items) {
-		final Dialog dialog = new Dialog(shell);
-		dialog.setTitle(ResourceManager.getLabel(ResourceManager.CHOICE));
-		dialog.getMessageArea().setTitle(title).setText(text).setIcon(Display.getCurrent().getSystemImage(SWT.ICON_QUESTION)).addChoice(defaultSelection, items);
-		dialog.setButtonType(OpalDialogType.NONE);
+		final Dialog dialog = buildChoiceDialog(shell, title, text, defaultSelection, items);
 		dialog.show();
 		return dialog.getMessageArea().getChoice();
+	}
+	
+	/**
+	 * Build a dialog box with a choice
+	 *
+	 * @param shell parent shell
+	 * @param title title of the dialog box
+	 * @param text text to display
+	 * @param defaultSelection index of the default selection
+	 * @param items items to display
+	 * @return dialog
+	 */
+	public static Dialog buildChoiceDialog(final Shell shell, final String title, final String text,
+			final int defaultSelection, final ChoiceItem... items) {
+		final Dialog dialog = new Dialog(shell);
+		dialog.setTitle(ResourceManager.getLabel(ResourceManager.CHOICE));
+		dialog.getMessageArea().setTitle(title).setText(text)
+				.setIcon(Display.getCurrent().getSystemImage(SWT.ICON_QUESTION)).addChoice(defaultSelection, items);
+		dialog.setButtonType(OpalDialogType.NONE);
+		return dialog;
 	}
 
 	// ------------------------------------------- Getters & Setters
@@ -522,6 +650,10 @@ public class Dialog {
 	 */
 	public void setCenterPolicy(final CenterOption centerPolicy) {
 		this.centerPolicy = centerPolicy;
+	}
+	
+	void setLastSize(Point lastSize) {
+		this.lastSize = lastSize;
 	}
 
 }

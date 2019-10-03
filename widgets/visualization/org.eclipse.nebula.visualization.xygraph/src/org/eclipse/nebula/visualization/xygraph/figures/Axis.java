@@ -856,10 +856,10 @@ public class Axis extends LinearScale {
 		if (isLogScaleEnabled()) {
 			up = Math.log10(up);
 			lo = Math.log10(lo);
-			final double l = up - lo;
-			final double r1 = Math.log10(center) - lo;
-			t1 = lo + r1 * factor;
-			t2 = up - (l - r1) * factor;
+			final double c = Math.log10(center) * factor;
+			final double e = 1 - factor;
+			t1 = c + lo * e;
+			t2 = c + up * e;
 			if (t1 < LOWEST_LOG_10) { // clamp lower value
 				t1 = LOWEST_LOG_10;
 			}
@@ -872,11 +872,12 @@ public class Axis extends LinearScale {
 			double f = LargeNumberUtils.maxMagnitude(lo, up);
 			lo /= f;
 			up /= f;
-			double l = up - lo;
-			final double r1 = center / f - lo;
-			t1 = LargeNumberUtils.requireFinite((lo + r1 * factor) * f);
-			t2 = LargeNumberUtils.requireFinite((up - (l - r1) * factor) * f);
+			final double c = (center / f) * factor;
+			final double e = 1 - factor;
+			t1 = LargeNumberUtils.requireFinite((c + lo * e) * f);
+			t2 = LargeNumberUtils.requireFinite((c + up * e) * f);
 		}
+
 		setRange(t1, t2, true);
 	}
 

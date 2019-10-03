@@ -178,8 +178,13 @@ public class TableCombo extends Composite {
 
 		// set the listeners for this control
 		final int[] comboEvents = { SWT.Dispose, SWT.FocusIn, SWT.Move, SWT.Resize };
-		for (int comboEvent : comboEvents) {
-			this.addListener(comboEvent, listener);
+		for (final int comboEvent : comboEvents) {
+			addListener(comboEvent, listener);
+		}
+
+		final int[] imageEvents = { SWT.MouseDown };
+		for (final int imageEvent : imageEvents) {
+			selectedImage.addListener(imageEvent, listener);
 		}
 
 		final int[] textEvents = { SWT.DefaultSelection, SWT.KeyDown, SWT.KeyUp, SWT.MenuDetect, SWT.Modify,
@@ -232,6 +237,10 @@ public class TableCombo extends Composite {
 			if (text == event.widget) {
 				textEvent(event);
 				return;
+			}
+
+			if (selectedImage == event.widget) {
+				selectedImageEvent(event);
 			}
 
 			// check for a table event
@@ -517,11 +526,15 @@ public class TableCombo extends Composite {
 			event.type = SWT.None;
 
 			if (popup != null && !popup.isDisposed()) {
-				table.removeListener(SWT.Dispose, listener);
+				if (!table.isDisposed()) {
+					table.removeListener(SWT.Dispose, listener);
+				}
 				popup.dispose();
 			}
 			final Shell shell = getShell();
-			shell.removeListener(SWT.Deactivate, listener);
+			if (!shell.isDisposed()) {
+				shell.removeListener(SWT.Deactivate, listener);
+			}
 			final Display display = getDisplay();
 			display.removeFilter(SWT.FocusIn, focusFilter);
 			popup = null;
@@ -535,9 +548,7 @@ public class TableCombo extends Composite {
 			if (focusControl == arrow || focusControl == table) {
 				return;
 			}
-			if (isDropped()) {
-				table.setFocus();
-			} else {
+			if (!isDropped()) {
 				text.setFocus();
 			}
 			break;
@@ -844,8 +855,6 @@ public class TableCombo extends Composite {
 		// set the popup visible
 		popup.setVisible(true);
 
-		// set focus on the table.
-		table.setFocus();
 	}
 
 	/*
@@ -1131,6 +1140,9 @@ public class TableCombo extends Composite {
 			final Control focusControl = getDisplay().getFocusControl();
 			if (focusControl == arrow || focusControl == table || focusControl == text) {
 				return;
+			}
+			if (focusControl == null || focusControl.getShell() == getShell()) {
+				dropDown(false);
 			}
 			hasFocus = false;
 			final Shell shell = getShell();
@@ -1499,6 +1511,9 @@ public class TableCombo extends Composite {
 			e.time = event.time;
 			e.stateMask = event.stateMask;
 			e.doit = event.doit;
+			if (event.item != null) {
+				e.data = event.item.getData();
+			}
 			notifyListeners(SWT.Selection, e);
 			event.doit = e.doit;
 			break;
@@ -2188,7 +2203,7 @@ public class TableCombo extends Composite {
 	 * @param columnBounds
 	 */
 	public void defineColumns(final int[] columnBounds) {
-		this.columnWidths = columnBounds;
+		columnWidths = columnBounds;
 
 		if (columnBounds != null && columnBounds.length > 0) {
 			defineColumnsInternal(null, columnBounds, columnBounds.length);
@@ -2228,7 +2243,7 @@ public class TableCombo extends Composite {
 				total = columnBounds.length;
 			}
 
-			this.columnWidths = columnBounds;
+			columnWidths = columnBounds;
 
 			// define the columns
 			defineColumnsInternal(columnHeaders, columnBounds, total);
@@ -2283,7 +2298,7 @@ public class TableCombo extends Composite {
 
 		// don't accept invalid input.
 		if (ddWidthPct > 0 && ddWidthPct <= 100) {
-			this.tableWidthPercentage = ddWidthPct;
+			tableWidthPercentage = ddWidthPct;
 		}
 	}
 
@@ -2308,7 +2323,7 @@ public class TableCombo extends Composite {
 	 * @param closePopupAfterSelection
 	 */
 	public void setClosePopupAfterSelection(final boolean closePopupAfterSelection) {
-		this.closePupupAfterSelection = closePopupAfterSelection;
+		closePupupAfterSelection = closePopupAfterSelection;
 	}
 
 	/**
@@ -2370,6 +2385,7 @@ public class TableCombo extends Composite {
 		// set color if requested
 		if (showColorWithinSelection) {
 			text.setForeground(tableItem.getForeground(colIndexToUse));
+			text.setBackground(tableItem.getBackground(colIndexToUse));
 		}
 
 		// set font if requested
@@ -2474,6 +2490,10 @@ public class TableCombo extends Composite {
 			event.doit = keyEvent.doit;
 			if (!event.doit) {
 				break;
+			}
+			if (event.character == SWT.ESC) {
+				// Escape key cancels popup list
+				dropDown(false);
 			}
 			if (event.keyCode == SWT.ARROW_UP || event.keyCode == SWT.ARROW_DOWN) {
 				event.doit = false;
@@ -2667,6 +2687,24 @@ public class TableCombo extends Composite {
 			event.doit = e.doit;
 			break;
 		}
+		}
+	}
+
+	void selectedImageEvent(Event event) {
+		switch (event.type) {
+			case SWT.MouseDown: {
+				Event mouseEvent = new Event();
+				mouseEvent.button = event.button;
+				mouseEvent.count = event.count;
+				mouseEvent.stateMask = event.stateMask;
+				mouseEvent.time = event.time;
+				mouseEvent.x = event.x;
+				mouseEvent.y = event.y;
+				notifyListeners(SWT.MouseDown, mouseEvent);
+				event.doit = mouseEvent.doit;
+				dropDown(!isDropped());
+				break;
+			}
 		}
 	}
 

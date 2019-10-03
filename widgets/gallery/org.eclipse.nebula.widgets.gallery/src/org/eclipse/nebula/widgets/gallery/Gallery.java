@@ -1795,7 +1795,7 @@ public class Gallery extends Canvas {
 
 			if (parent.items == null) {
 				return null;
-			} else {
+			} else if (index < parent.items.length) {
 				return parent.items[index];
 			}
 		}
@@ -1832,7 +1832,9 @@ public class Gallery extends Canvas {
 
 		if (index < getItemCount()) {
 			updateItem(null, index, create);
-			return items[index];
+			if (index < items.length) {
+				return items[index];
+			}
 		}
 
 		return null;

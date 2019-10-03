@@ -409,7 +409,7 @@ public class PaperClips {
 	private static PrintPiece[] getPages(PrintJob printJob, Printer printer,
 			GC gc) {
 		PageEnumeration enumeration = new PageEnumeration(printJob, printer, gc);
-		List pages = new ArrayList();
+		List<PrintPiece> pages = new ArrayList<>();
 		while (enumeration.hasNext()) {
 			PrintPiece page = enumeration.nextPage();
 			if (page == null) {

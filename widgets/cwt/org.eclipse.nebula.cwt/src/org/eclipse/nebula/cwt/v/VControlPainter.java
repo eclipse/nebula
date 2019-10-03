@@ -12,6 +12,7 @@
 package org.eclipse.nebula.cwt.v;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Event;
@@ -167,26 +168,19 @@ public class VControlPainter implements IControlPainter {
 	}
 	
 	private static void paintText(VControl control, Event e) {
+		Font current = e.gc.getFont();
 		e.gc.setTextAntialias(SWT.ON);
-		if(control.foreground != null && !control.foreground.isDisposed()) {
+		if (control.foreground != null && !control.foreground.isDisposed()) {
 			e.gc.setForeground(control.foreground);
 		}
+		
+		if (control.font != null && !control.font.isDisposed() ) {
+			e.gc.setFont(control.font);
+		}
+		
 		Point size = e.gc.textExtent(control.text);
 		e.gc.drawText(control.text, (int)getX(control, size.x), (int)getY(control, size.y), true);
-	//	paintSelected(control, e, size);
-	}
-
-	private static void paintSelected(VControl control, Event e, Point size) {
-		if (control.hasState(VControl.STATE_SELECTED)) {
-			e.gc.drawFocus((int) getX(control, size.x) - 2,
-					(int) getY(control, size.y), size.x + 4, size.y);
-			if (e.gc.getAdvanced()) {
-				e.gc.setBackground(control.getForeground());
-				e.gc.setAlpha(40);
-				e.gc.fillRectangle((int) getX(control, size.x) - 2,
-						(int) getY(control, size.y), size.x + 4, size.y);
-			}
-		}
+		e.gc.setFont(current);
 	}
 
 	public void dispose() {
@@ -220,6 +214,7 @@ public class VControlPainter implements IControlPainter {
 
 	public void paintContent(VControl control, Event e) {
 		int alpha = e.gc.getAlpha();
+		Font current = e.gc.getFont();
 		if(!control.isEnabled()) {
 			control.setAlpha(e.gc, 170);
 		}
@@ -245,6 +240,7 @@ public class VControlPainter implements IControlPainter {
 			paintText(control, e);
 		}
 		e.gc.setAlpha(alpha);
+		e.gc.setFont(current);
 	}
 	
 }

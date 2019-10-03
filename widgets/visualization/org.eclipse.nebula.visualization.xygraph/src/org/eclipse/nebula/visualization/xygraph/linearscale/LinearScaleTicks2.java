@@ -192,7 +192,7 @@ public class LinearScaleTicks2 implements ITicksProvider {
 		// loop until labels fit
 		do {
 			if (ticksIndexBased) {
-				ticks = tf.generateIndexBasedTicks(min, max, numTicks, !scale.hasTicksAtEnds());
+				ticks = tf.generateIndexBasedTicks(min, max, numTicks);
 			} else if (scale.isLogScaleEnabled()) {
 				ticks = tf.generateLogTicks(min, max, numTicks, true, !scale.hasTicksAtEnds());
 			} else {

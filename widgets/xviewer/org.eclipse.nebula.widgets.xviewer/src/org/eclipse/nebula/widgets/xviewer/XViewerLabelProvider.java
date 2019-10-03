@@ -12,6 +12,7 @@
 package org.eclipse.nebula.widgets.xviewer;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -88,12 +89,16 @@ public abstract class XViewerLabelProvider implements ITableLabelProvider, ITabl
             IXViewerPreComputedColumn preComputedColumn = (IXViewerPreComputedColumn) xViewerColumn;
             Long key = preComputedColumn.getKey(element);
             String cachedValue = xViewerColumn.getPreComputedValue(key);
+            Long startTime = viewer.isDebugLoading() ? (new Date()).getTime() : 0L;
             String result = ((IXViewerPreComputedColumn) xViewerColumn).getText(element, key, cachedValue);
             if (result == null) {
                // Give a single chance to populate a potentially new element, else store empty string to ensure good performance
                preComputedColumn.populateCachedValues(Collections.singleton(element),
                   xViewerColumn.getPreComputedValueMap());
                result = xViewerColumn.getPreComputedValue(key);
+               if (viewer.isDebugLoading()) {
+                  xViewerColumn.addElapsedTime((new Date()).getTime() - startTime);
+               }
                if (result == null) {
                   xViewerColumn.getPreComputedValueMap().put(key, "");
                }
@@ -102,26 +107,45 @@ public abstract class XViewerLabelProvider implements ITableLabelProvider, ITabl
          }
          // First check value column's methods
          if (xViewerColumn instanceof IXViewerValueColumn) {
-            String str = ((IXViewerValueColumn) xViewerColumn).getColumnText(element, xViewerColumn, columnIndex);
+            Long startTime = viewer.isDebugLoading() ? (new Date()).getTime() : 0L;
+            IXViewerValueColumn xViewerValueColumn = (IXViewerValueColumn) xViewerColumn;
+            String str = xViewerValueColumn.getColumnText(element, xViewerColumn, columnIndex);
+            if (viewer.isDebugLoading()) {
+               xViewerColumn.addElapsedTime((new Date()).getTime() - startTime);
+            }
             if (str != null) {
                return str;
             }
             return "";
          }
          // Return label provider's value
-         return getColumnText(element, xViewerColumn, columnIndex);
+         Long startTime = viewer.isDebugLoading() ? (new Date()).getTime() : 0L;
+         String value = getColumnText(element, xViewerColumn, columnIndex);
+         if (viewer.isDebugLoading()) {
+            xViewerColumn.addElapsedTime((new Date()).getTime() - startTime);
+         }
+         return value;
       } catch (Exception ex) {
          return XViewerCells.getCellExceptionString(ex);
       }
    }
 
+   public Color getSearchBackground(Object element, int columnIndex) {
+      String text = getColumnText(element, columnIndex);
+      if (viewer.searchMatch(text)) {
+         return viewer.getSearchMatchColor();
+      }
+      return null;
+   }
+
    @Override
    public Color getBackground(Object element, int columnIndex) {
       try {
+         Color searchColor = null;
          if (viewer.isSearch()) {
-            String text = getColumnText(element, columnIndex);
-            if (viewer.searchMatch(text)) {
-               return viewer.getSearchMatchColor();
+            searchColor = getSearchBackground(element, columnIndex);
+            if (searchColor != null) {
+               return searchColor;
             }
          }
 

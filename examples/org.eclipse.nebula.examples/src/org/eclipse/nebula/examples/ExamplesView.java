@@ -107,20 +107,22 @@ public class ExamplesView extends ViewPart {
 	 * Returns an image descriptor for the image file at the given plug-in relative
 	 * path.
 	 *
-	 * @param path
-	 *            the path
+	 * @param path the path
 	 * @return the image descriptor
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
-		return AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.nebula.examples", path);
+		try {
+			return AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.nebula.examples", path);
+		} catch (Throwable e) {
+			return ImageDescriptor.getMissingImageDescriptor();
+		}
 	}
 
 	/**
 	 * Returns an image for the image file at the given plug-in relative path. This
 	 * image is maintained in an ImageRegistry and will automatically be disposed.
 	 *
-	 * @param path
-	 *            the path
+	 * @param path the path
 	 * @return the image
 	 */
 	public static Image getImage(String path) {

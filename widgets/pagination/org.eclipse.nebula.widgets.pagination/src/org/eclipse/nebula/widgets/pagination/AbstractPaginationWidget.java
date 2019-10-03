@@ -322,7 +322,6 @@ public abstract class AbstractPaginationWidget<W extends Widget> extends
 		}
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
 	public void setLocale(Locale locale) {
 		super.setLocale(locale);

@@ -26,18 +26,23 @@ public abstract class AbstractGroupStrategy
 
     private PGroup group;
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.swtplus.widgets.IGroupStrategy#initialize(com.swtplus.widgets.PGroup)
+    public AbstractGroupStrategy(PGroup g) {
+    	group = g;
+    }
+    
+    /**
+     * 
      */
-    public void initialize(PGroup g)
+    public void initialize()
     {
-        group = g;
-
         update();
     }
 
+    /**
+     * @param x
+     * @param y
+     * @return
+     */
     public boolean isToggleLocation(int x, int y)
     {
         if (getGroup().getToggleRenderer() != null)

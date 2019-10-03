@@ -435,7 +435,7 @@ class TextIterator implements PrintIterator {
 	}
 
 	private String[] nextLines(final int width, final int maxLines) {
-		List nextLines = new ArrayList(Math.min(lines.length, maxLines));
+		List<String> nextLines = new ArrayList<>(Math.min(lines.length, maxLines));
 
 		while ((nextLines.size() < maxLines) && (row < lines.length)) {
 			String line = lines[row].substring(col);

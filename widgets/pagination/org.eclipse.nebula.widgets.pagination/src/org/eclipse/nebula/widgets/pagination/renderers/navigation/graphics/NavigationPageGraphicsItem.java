@@ -12,7 +12,6 @@
 package org.eclipse.nebula.widgets.pagination.renderers.navigation.graphics;
 
 import org.eclipse.nebula.widgets.pagination.PaginationHelper;
-import org.eclipse.nebula.widgets.pagination.Resources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Item;

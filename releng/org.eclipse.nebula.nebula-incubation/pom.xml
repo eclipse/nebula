@@ -23,7 +23,7 @@ Contributors:
 	<description>Parent pom for all incubation widgets in Nebula</description>
 
 	<properties>
-		<download-publish-path>/home/data/httpd/download.eclipse.org/technology/nebula/incubation/snapshot</download-publish-path>
+		<download-publish-path>/home/data/httpd/download.eclipse.org/nebula/incubation/snapshot</download-publish-path>
 	</properties>
 
 	<parent>
@@ -48,7 +48,6 @@ Contributors:
 		<module>../../widgets/calendarcombo</module>
 		<module>../../widgets/pagination</module>
 		<module>../../widgets/picture</module>
-		<module>../../widgets/floatingtext</module>
 		
 		<!-- Dist -->
 		<module>../org.eclipse.nebula.updatesite.incubation</module>

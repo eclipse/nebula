@@ -14,6 +14,7 @@ package org.eclipse.nebula.widgets.xviewer;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,6 +50,8 @@ import org.eclipse.nebula.widgets.xviewer.customize.FilterDataUI;
 import org.eclipse.nebula.widgets.xviewer.customize.SearchDataUI;
 import org.eclipse.nebula.widgets.xviewer.edit.XViewerEditAdapter;
 import org.eclipse.nebula.widgets.xviewer.util.Pair;
+import org.eclipse.nebula.widgets.xviewer.util.internal.ElapsedTime;
+import org.eclipse.nebula.widgets.xviewer.util.internal.ElapsedTime.Units;
 import org.eclipse.nebula.widgets.xviewer.util.internal.HtmlUtil;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
@@ -97,6 +100,8 @@ public class XViewer extends TreeViewer {
    private Color searchColor;
    private boolean forcePend = false;
    private static final Map<Composite, Composite> parentToTopComposites = new HashMap<Composite, Composite>();
+   private boolean debugLoading = "true".equals(System.getProperty("DebugLoading"));
+   private final Map<String, Long> preComputeElapsedTime = new HashMap<String, Long>();
 
    public XViewer(Composite parent, int style, IXViewerFactory xViewerFactory) {
       this(parent, style, xViewerFactory, false, false);
@@ -352,7 +357,9 @@ public class XViewer extends TreeViewer {
 
                @Override
                protected IStatus run(IProgressMonitor monitor) {
+                  ElapsedTime time = new ElapsedTime("performPreCompute");
                   performPreCompute(inputObjects);
+                  time.end(Units.SEC);
                   return Status.OK_STATUS;
                }
 
@@ -366,7 +373,9 @@ public class XViewer extends TreeViewer {
 
                      @Override
                      public void run() {
+                        ElapsedTime time = new ElapsedTime("performLoad");
                         performLoad(input, xViewer);
+                        time.end(Units.SEC);
                      }
 
                   });
@@ -389,7 +398,17 @@ public class XViewer extends TreeViewer {
             }
             if (!inputObjects.isEmpty()) {
                try {
+                  Long startTime = isDebugLoading() ? (new Date()).getTime() : 0L;
                   preComputedColumn.populateCachedValues(inputObjects, column.getPreComputedValueMap());
+                  if (isDebugLoading()) {
+                     Long elapsedTime = preComputeElapsedTime.get("PRE - " + column.getName());
+                     if (elapsedTime == null) {
+                        elapsedTime = (new Date()).getTime() - startTime;
+                     } else {
+                        elapsedTime += (new Date()).getTime() - startTime;
+                     }
+                     preComputeElapsedTime.put("PRE - " + column.getName(), elapsedTime);
+                  }
                } catch (Exception ex) {
                   XViewerLog.log(Activator.class, Level.SEVERE,
                      String.format("Error performing pre-compute for column %s", column), ex);
@@ -910,6 +929,18 @@ public class XViewer extends TreeViewer {
 
    public void setForcePend(boolean forcePend) {
       this.forcePend = forcePend;
+   }
+
+   public boolean isDebugLoading() {
+      return debugLoading;
+   }
+
+   public void setDebugLoading(boolean debugLoading) {
+      this.debugLoading = debugLoading;
+   }
+
+   public Map<String, Long> getPreComputeElapsedTime() {
+      return preComputeElapsedTime;
    }
 
 }

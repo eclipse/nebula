@@ -235,7 +235,7 @@ public class PlotArea extends Figure {
 			}
 		}
 		if (result) {
-			remove(annotation);
+			annotation.remove();
 			revalidate();
 
 			// Laurent PHILIPPE send event

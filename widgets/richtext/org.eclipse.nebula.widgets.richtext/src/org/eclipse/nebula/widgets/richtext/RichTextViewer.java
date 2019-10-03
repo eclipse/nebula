@@ -59,4 +59,17 @@ public class RichTextViewer extends Canvas {
 		redraw();
 		update();
 	}
+	
+	/**
+	 * @param wordSplitRegex
+	 *            The regular expression that will be used to determine word boundaries.
+	 * @since 1.3.0
+	 */
+	public void setWordSplitRegex(String wordSplitRegex) {
+		painter.setWordSplitRegex(wordSplitRegex);
+		if (htmlText != null) {
+			redraw();
+			update();
+		}
+	}
 }

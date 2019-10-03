@@ -1,19 +1,22 @@
 /*******************************************************************************
- * Copyright (c) 2011 Laurent CARON All rights reserved. This program and the
+ * Copyright (c) 2011-2019 Laurent CARON All rights reserved. This program and the
  * accompanying materials are made available under the terms of the Eclipse
  * Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- * Contributors: Laurent CARON (laurent.caron at gmail dot com) - initial API
- * and implementation Eugene Ryzhikov - Author of the Oxbow Project
- * (http://code.google.com/p/oxbow/) - Inspiration
+ * Contributors: 
+ * 	Laurent CARON (laurent.caron at gmail dot com) - initial API and implementation 
+ *  Eugene Ryzhikov - Author of the Oxbow Project (http://code.google.com/p/oxbow/) - Inspiration
+ *  Stefan Nöbauer - Bug 550437, Bug 550659
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.dialog.snippets;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 
+import org.eclipse.nebula.widgets.opal.commons.ResourceManager;
 import org.eclipse.nebula.widgets.opal.commons.SWTGraphicUtil;
+import org.eclipse.nebula.widgets.opal.commons.StringUtil;
 import org.eclipse.nebula.widgets.opal.dialog.ChoiceItem;
 import org.eclipse.nebula.widgets.opal.dialog.Dialog;
 import org.eclipse.nebula.widgets.opal.dialog.Dialog.OpalDialogType;
@@ -141,7 +144,7 @@ public class OpalDialogSnippet {
 		button14.setText("Issue 29");
 		button14.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, false));
 		button14.addListener(SWT.Selection, e -> {
-			testIssue29();
+			testIssue29(shell);
 		});
 
 		final Button button15 = new Button(shell, SWT.PUSH);
@@ -156,6 +159,12 @@ public class OpalDialogSnippet {
 		button16.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, false));
 		button16.addListener(SWT.Selection, e -> {
 			testBug533776();
+		});
+		final Button button17 = new Button(shell, SWT.PUSH);
+		button17.setText("Complex exception");
+		button17.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, false));
+		button17.addListener(SWT.Selection, e -> {
+			displayComplex1();
 		});
 
 		// Open the shell
@@ -180,7 +189,8 @@ public class OpalDialogSnippet {
 	}
 
 	private static void displayCrashAndBurn() {
-		Dialog.error("CRASH AND BURN !", "The application has performed an illegal action. This action has been logged and reported.");
+		Dialog.error("CRASH AND BURN !",
+				"The application has performed an illegal action. This action has been logged and reported. This text may also a bit longer as expected");
 	}
 
 	private static void displayYouWon() {
@@ -202,13 +212,22 @@ public class OpalDialogSnippet {
 		try {
 			new BigDecimal("seven");
 		} catch (final Throwable ex) {
-			Dialog.showException(ex);
+			Dialog dialog = Dialog.buildExceptionDialog(ex);
+			Image mail = new Image(Display.getCurrent(), OpalDialogSnippet.class.getResourceAsStream("mail.png"));
+			Image mailHot = new Image(Display.getCurrent(), OpalDialogSnippet.class.getResourceAsStream("mail_hover.png"));
+			Image[] images = Arrays.asList(mail, mailHot).toArray(new Image[0]);
+			dialog.getFooterArea().addFooterAction(()-> "Send Mail", d -> System.out.println(StringUtil.stackStraceAsString(d.getMessageArea().getException())), images);
+			dialog.show();
 		}
 	}
 
 	private static void displayChoice() {
-		final int choice = Dialog.choice("What do you want to do with your game in\nprogress?", "", 1, new ChoiceItem("Exit and save my game", "Save your game in progress, then exit. " + "This will\noverwrite any previously saved games."),
-				new ChoiceItem("Exit and don't save", "Exit without saving your game. " + "This is counted\nas a loss in your statistics."), new ChoiceItem("Don't exit", "Return to your game progress"));
+		final int choice = Dialog.choice("What do you want to do with your game in\nprogress?", "", 1,
+				new ChoiceItem("Exit and save my game",
+						"Save your game in progress, then exit. " + "This will\noverwrite any previously saved games."),
+				new ChoiceItem("Exit and don't save",
+						"Exit without saving your game. " + "This is counted\nas a loss in your statistics."),
+				new ChoiceItem("Don't exit", "Return to your game progress"));
 		System.out.println("Choice is..." + choice);
 	}
 
@@ -227,10 +246,12 @@ public class OpalDialogSnippet {
 						"Publisher: <b>Unknown Publisher</b><br/>" + //
 						"Type: Application<br/>");
 
-		dialog.getFooterArea().addCheckBox("Always ask before opening this file", false).setButtonLabels("Run", "Cancel");
+		dialog.getFooterArea().addCheckBox("Always ask before opening this file", false).setButtonLabels("Run",
+				"Cancel");
 		dialog.show();
 
-		System.out.println("The choice is " + dialog.getSelectedButton() + ", the checkbox value is " + dialog.getCheckboxValue());
+		System.out.println(
+				"The choice is " + dialog.getSelectedButton() + ", the checkbox value is " + dialog.getCheckboxValue());
 	}
 
 	private static void displayProgressBar() {
@@ -266,7 +287,8 @@ public class OpalDialogSnippet {
 	}
 
 	private static void displayInput() {
-		final String input = Dialog.ask("Enter you name", "or any other text if you prefer", "Laurent CARON");
+		final String input = Dialog.ask("Enter you name",
+				"or any other text if you prefer Somthing longer may stress the layout", "Laurent CARON");
 		System.out.println("Choice is..." + input);
 	}
 
@@ -277,9 +299,36 @@ public class OpalDialogSnippet {
 				setText("The application has performed an illegal action. This action has been logged and reported.").//
 				setIcon(Display.getCurrent().getSystemImage(SWT.ICON_ERROR));
 		dialog.setButtonType(OpalDialogType.OK);
-		dialog.getFooterArea().setExpanded(false).addCheckBox("Don't show me this error next time", true).setDetailText("More explanations to come...");
-		dialog.getFooterArea().setFooterText("Your application crashed because a developer forgot to write a unit test").setIcon(new Image(null, OpalDialogSnippet.class.getResourceAsStream("warning.png")));
+		dialog.getFooterArea().setExpanded(false).addCheckBox("Don't show me this error next time", true)
+				.setDetailText("More explanations to come...");
+		dialog.getFooterArea().setFooterText("Your application crashed because a developer forgot to write a unit test")
+				.setIcon(new Image(null, OpalDialogSnippet.class.getResourceAsStream("warning.png")));
 		dialog.show();
+	}
+	
+	private static void displayComplex1() {
+		try {
+			new BigDecimal("seven");
+		} catch (final Throwable ex) {
+			final Dialog dialog = new Dialog();
+			
+			dialog.setTitle(ResourceManager.getLabel(ResourceManager.EXCEPTION));
+
+			final String msg = ex.getMessage();
+			final String className = ex.getClass().getName();
+			final boolean noMessage = msg == null || msg.trim().length() == 0;
+
+			dialog.getMessageArea().setTitle(noMessage ? className : msg).//
+					setText(noMessage ? "" : className).//
+					setIcon(Display.getCurrent().getSystemImage(SWT.ICON_ERROR)).//
+					setException(ex).addCheckBox("Don't show this again", false);
+
+			dialog.getFooterArea().setExpanded(true);
+
+			dialog.setButtonType(OpalDialogType.CLOSE);
+			
+			dialog.show();
+		}
 	}
 
 	private static void displayLargeText() {
@@ -306,8 +355,8 @@ public class OpalDialogSnippet {
 		dialog.show();
 	}
 
-	private static void testIssue29() {
-		final Dialog d = new Dialog();
+	private static void testIssue29(Shell parent) {
+		final Dialog d = new Dialog(parent);
 		d.setCenterPolicy(Dialog.CenterOption.CENTER_ON_DIALOG);
 		d.setTitle("foo title");
 

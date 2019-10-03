@@ -7,13 +7,14 @@
  *
  * Contributors:
  *    chris.gross@us.ibm.com - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.nebula.widgets.grid.internal;
 
 import org.eclipse.nebula.widgets.grid.Grid;
 import org.eclipse.nebula.widgets.grid.GridCellRenderer;
 import org.eclipse.nebula.widgets.grid.GridItem;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 
@@ -26,7 +27,7 @@ import org.eclipse.swt.graphics.Point;
 public class DefaultEmptyCellRenderer extends GridCellRenderer
 {
 
-    /** 
+    /**
      * {@inheritDoc}
      */
     public void paint(GC gc, Object value)
@@ -44,11 +45,14 @@ public class DefaultEmptyCellRenderer extends GridCellRenderer
         }
 
         boolean drawBackground = true;
-        
+
         if (isSelected())
         {
-            gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION));
-            gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT));
+        	boolean hasFocus = table.isFocusOnGrid();
+        	Color backgroundColor = hasFocus?getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION):getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
+            Color foregroundColor = hasFocus?getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT):getDisplay().getSystemColor(SWT.COLOR_BLACK);
+        	gc.setBackground(backgroundColor);
+            gc.setForeground(foregroundColor);
         }
         else
         {
@@ -80,7 +84,7 @@ public class DefaultEmptyCellRenderer extends GridCellRenderer
         }
     }
 
-    /** 
+    /**
      * {@inheritDoc}
      */
     public Point computeSize(GC gc, int wHint, int hHint, Object value)
@@ -88,12 +92,12 @@ public class DefaultEmptyCellRenderer extends GridCellRenderer
         return new Point(wHint, hHint);
     }
 
-    /** 
+    /**
      * {@inheritDoc}
      */
     public boolean notify(int event, Point point, Object value)
     {
         return false;
     }
-    
+
 }

@@ -41,8 +41,6 @@ public class DAxis extends Axis {
 
 	private boolean ticksAtEnds = true;
 
-	private boolean forceRange;
-
 	/** the user format */
 	protected boolean userDefinedFormat = false;
 
@@ -188,11 +186,10 @@ public class DAxis extends Axis {
 	public void updateTick() {
 		if (isDirty()) {
 			setLength(isHorizontal() ? getClientArea().width : getClientArea().height);
-			int length = getLength();
-			int margin = getMargin();
-			if (length > 2 * margin) {
-				Range r = getScaleTickLabels().update(length - 2 * margin);
-				if (r != null && !r.equals(getRange()) && !forceRange) {
+			int l = getTickLength();
+			if (l > 0) {
+				Range r = getScaleTickLabels().update(l);
+				if (r != null && !r.equals(getRange())) {
 					setLocalRange(r);
 				} else {
 					setLocalRange(null);
@@ -339,8 +336,8 @@ public class DAxis extends Axis {
 		if (Double.isNaN(lower) || Double.isNaN(upper) || Double.isInfinite(lower) || Double.isInfinite(upper)) {
 			throw new IllegalArgumentException("Illegal range: lower=" + lower + ", upper=" + upper);
 		}
-		forceRange = lower == upper;
-		if (forceRange) {
+
+		if (lower == upper) {
 			double delta = (lower == 0 ? 1 : Math.abs(lower));
 			double limit = delta * ZERO_RANGE_LOWEST_FRACTION;
 			double h;

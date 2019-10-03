@@ -19,8 +19,6 @@ import org.eclipse.nebula.widgets.grid.GridColumn;
 import org.eclipse.nebula.widgets.grid.GridItem;
 import org.eclipse.nebula.widgets.grid.IInternalWidget;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -34,39 +32,26 @@ import org.eclipse.swt.graphics.TextLayout;
  * @author chris.gross@us.ibm.com
  * @since 2.0.0
  */
-public class DefaultCellRenderer extends GridCellRenderer
-{
+public class DefaultCellRenderer extends GridCellRenderer {
 
 	int leftMargin = 4;
-
     int rightMargin = 4;
-
     int topMargin = 0;
-
     int bottomMargin = 0;
-
     int textTopMargin = 1;
-
     int textBottomMargin = 2;
-
     private final int insideMargin = 3;
-
     int treeIndent = 20;
-
     private ToggleRenderer toggleRenderer;
-
 	private BranchRenderer branchRenderer;
-
     private CheckBoxRenderer checkRenderer;
-
     private TextLayout textLayout;
 
     /**
      * {@inheritDoc}
      */
     @Override
-	public void paint(GC gc, Object value)
-    {
+	public void paint(GC gc, Object value) {
         GridItem item = (GridItem)value;
 
         gc.setFont(item.getFont(getColumn()));
@@ -75,36 +60,29 @@ public class DefaultCellRenderer extends GridCellRenderer
 
         boolean drawBackground = true;
 
-        if (isCellSelected())
-        {
-            drawAsSelected = true;//(!isCellFocus());
+        if (isCellSelected()) {
+            drawAsSelected = true;
         }
 
-        if (drawAsSelected)
-        {
-            gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION));
-            gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT));
-        }
-        else
-        {
-            if (item.getParent().isEnabled())
-            {
+        if (drawAsSelected) {
+        	boolean hasFocus = item.getParent().isFocusOnGrid();
+        	Color backgroundColor = hasFocus?getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION):getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
+            Color foregroundColor = hasFocus?getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT):getDisplay().getSystemColor(SWT.COLOR_BLACK);
+        	gc.setBackground(backgroundColor);
+            gc.setForeground(foregroundColor);
+        } else {
+            if (item.getParent().isEnabled()) {
                 Color back = item.getBackground(getColumn());
 
-                if (back != null)
-                {
+                if (back != null) {
                     gc.setBackground(back);
-                }
-                else
-                {
+                } else {
                     drawBackground = false;
                 }
-            }
-            else
-            {
+            } else {
                 gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
             }
-            
+
             Color foreground = item.getForeground(getColumn());
 			gc.setForeground(foreground == null ? getDisplay().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND) : foreground);
         }
@@ -116,8 +94,7 @@ public class DefaultCellRenderer extends GridCellRenderer
 
         int x = leftMargin;
 
-        if (isTree())
-        {
+        if (isTree()) {
         	boolean renderBranches = item.getParent().getTreeLinesVisible();
         	if(renderBranches) {
         		branchRenderer.setBranches(getBranches(item));
@@ -148,26 +125,21 @@ public class DefaultCellRenderer extends GridCellRenderer
 
         }
 
-        if (isCheck())
-        {
+        if (isCheck()) {
             checkRenderer.setChecked(item.getChecked(getColumn()));
             checkRenderer.setGrayed(item.getGrayed(getColumn()));
-            if (!item.getParent().isEnabled())
-            {
+            if (!item.getParent().isEnabled()) {
                 checkRenderer.setGrayed(true);
             }
             checkRenderer.setHover(getHoverDetail().equals("check"));
 
-        	if (isCenteredCheckBoxOnly(item))
-        	{
+        	if (isCenteredCheckBoxOnly(item)) {
         		//Special logic if this column only has a checkbox and is centered
                 checkRenderer.setBounds(getBounds().x + ((getBounds().width - checkRenderer.getBounds().width) /2),
                 		                (getBounds().height - checkRenderer.getBounds().height)
                                             / 2 + getBounds().y, checkRenderer
                                           .getBounds().width, checkRenderer.getBounds().height);
-        	}
-        	else
-        	{
+        	} else {
                 checkRenderer.setBounds(getBounds().x + x, (getBounds().height - checkRenderer
                         .getBounds().height)
                                                                / 2 + getBounds().y, checkRenderer
@@ -180,8 +152,7 @@ public class DefaultCellRenderer extends GridCellRenderer
         }
 
         Image image = item.getImage(getColumn());
-        if (image != null)
-        {
+        if (image != null) {
             int y = getBounds().y;
 
             y += (getBounds().height - image.getBounds().height)/2;
@@ -192,85 +163,76 @@ public class DefaultCellRenderer extends GridCellRenderer
         }
 
         int width = getBounds().width - x - rightMargin;
+        int height = getBounds().height - bottomMargin;
 
-        if (drawAsSelected)
-        {
-            gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT));
-        }
-        else
-        {
+        if (drawAsSelected) {
+        	boolean hasFocus = item.getParent().isFocusOnGrid();
+        	Color backgroundColor = hasFocus?getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION):getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
+            Color foregroundColor = hasFocus?getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT):getDisplay().getSystemColor(SWT.COLOR_BLACK);
+        	gc.setBackground(backgroundColor);
+            gc.setForeground(foregroundColor);
+        } else {
             gc.setForeground(item.getForeground(getColumn()));
         }
 
-        if (!isWordWrap())
-        {
-            String text = TextUtils.getShortString(gc, item.getText(getColumn()), width);
+        if (!isWordWrap()) {
+            String text = TextUtils.getShortStr(gc, item.getText(getColumn()), width,truncationStyle);
 
-            if (getAlignment() == SWT.RIGHT)
-            {
+            if (getAlignment() == SWT.RIGHT) {
                 int len = gc.stringExtent(text).x;
-                if (len < width)
-                {
+                if (len < width) {
                     x += width - len;
                 }
-            }
-            else if (getAlignment() == SWT.CENTER)
-            {
+            } else if (getAlignment() == SWT.CENTER) {
                 int len = gc.stringExtent(text).x;
-                if (len < width)
-                {
+                if (len < width) {
                     x += (width - len) / 2;
                 }
             }
 
-            gc.drawString(text, getBounds().x + x, getBounds().y + textTopMargin + topMargin, true);
-        }
-        else
-        {
-            if (textLayout == null)
-            {
+            int verticalDelta = getVerticalAlignmentAdjustment(gc.stringExtent(text).y, height);
+            gc.drawString(text, getBounds().x + x, getBounds().y + textTopMargin + topMargin + verticalDelta, true);
+        } else {
+            if (textLayout == null) {
                 textLayout = new TextLayout(gc.getDevice());
-                item.getParent().addDisposeListener(new DisposeListener()
-                {
-                    @Override
-					public void widgetDisposed(DisposeEvent e)
-                    {
-                        textLayout.dispose();
-                    }
-                });
+                item.getParent().addListener(SWT.Dispose, e-> textLayout.dispose());
             }
             textLayout.setFont(gc.getFont());
             textLayout.setText(item.getText(getColumn()));
             textLayout.setAlignment(getAlignment());
             textLayout.setWidth(width < 1 ? 1 : width);
-            if (item.getParent().isAutoHeight())
-            {
-              // Look through all columns (except this one) to get the max height needed for this item
-            int columnCount = item.getParent().getColumnCount();
-            int maxHeight = textLayout.getBounds().height + textTopMargin + textBottomMargin;
-            for (int i=0; i<columnCount; i++)
-            {
-              GridColumn column = item.getParent().getColumn(i);
-              if (i != getColumn() && column.getWordWrap())
-              {
-                int height = column.getCellRenderer().computeSize(gc, column.getWidth(), SWT.DEFAULT, item).y;
-                maxHeight = Math.max(maxHeight, height);
-              }
-            }
+			int verticalDelta = 0;
+            if (item.getParent().isAutoHeight()) {
+				// Look through all columns (except this one) to get the max height needed for
+				// this item
+				int columnCount = item.getParent().getColumnCount();
+				int maxHeight = textLayout.getBounds().height + textTopMargin + textBottomMargin;
+				if (image != null) {
+					int imageHeight = topMargin + image.getBounds().height + bottomMargin;
+					maxHeight = Math.max(maxHeight, imageHeight);
+				}
+				for (int i = 0; i < columnCount; i++) {
+					GridColumn column = item.getParent().getColumn(i);
+					if (i != getColumn() && column.getWordWrap()) {
+						height = column.getCellRenderer().computeSize(gc, column.getWidth(), SWT.DEFAULT, item).y;
+						maxHeight = Math.max(maxHeight, height);
+					}
+				}
 
-            // Also look at the row header if necessary
-            if (item.getParent().isWordWrapHeader())
-            {
-            int height = item.getParent().getRowHeaderRenderer().computeSize(gc, SWT.DEFAULT, SWT.DEFAULT, item).y;
-          maxHeight = Math.max(maxHeight, height);
-            }
+				// Also look at the row header if necessary
+				if (item.getParent().isWordWrapHeader()) {
+					height = item.getParent().getRowHeaderRenderer().computeSize(gc, SWT.DEFAULT, SWT.DEFAULT,
+							item).y;
+					maxHeight = Math.max(maxHeight, height);
+				}
 
-            if (maxHeight != item.getHeight())
-            {
-              item.setHeight(maxHeight);
-            }
-            }
-            textLayout.draw(gc, getBounds().x + x, getBounds().y + textTopMargin + topMargin);
+				if (maxHeight != item.getHeight()) {
+					item.setHeight(maxHeight);
+				}
+			} else {
+				verticalDelta = getVerticalAlignmentAdjustment(textLayout.getBounds().height, height);
+			}
+            textLayout.draw(gc, getBounds().x + x, getBounds().y + textTopMargin + topMargin + verticalDelta);
         }
 
 
@@ -311,6 +273,27 @@ public class DefaultCellRenderer extends GridCellRenderer
             }
         }
     }
+
+    private int getVerticalAlignmentAdjustment(int textHeight, int cellHeight)
+    {
+		if (getVerticalAlignment() == SWT.BOTTOM)
+		{
+            if (textHeight < cellHeight)
+            {
+                return cellHeight - textHeight;
+            }
+		}
+		else if (getVerticalAlignment() == SWT.CENTER)
+        {
+            if (textHeight < cellHeight)
+            {
+                return (cellHeight - textHeight) / 2;
+            }
+        }
+
+		return 0;
+    }
+
 
     /**
      * Calculates the sequence of branch lines which should be rendered for the provided item

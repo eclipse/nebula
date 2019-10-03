@@ -15,7 +15,7 @@
    <feature url="features/org.eclipse.nebula.widgets.grid.feature_1.1.0.qualifier.jar" id="org.eclipse.nebula.widgets.grid.feature" version="1.1.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.widgets.richtext.feature_1.2.1.qualifier.jar" id="org.eclipse.nebula.widgets.richtext.feature" version="1.2.1.qualifier">
+   <feature url="features/org.eclipse.nebula.widgets.richtext.feature_1.3.0.qualifier.jar" id="org.eclipse.nebula.widgets.richtext.feature" version="1.3.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
    <feature url="features/org.eclipse.nebula.widgets.paperclips.feature_2.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.paperclips.feature" version="2.0.0.qualifier">
@@ -42,9 +42,6 @@
    <feature url="features/org.eclipse.nebula.widgets.geomap.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.geomap.feature" version="1.0.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.feature_1.4.0.qualifier.jar" id="org.eclipse.nebula.feature" version="1.4.0.qualifier">
-      <category name="Nebula Release all Widgets and Examples"/>
-   </feature>
    <feature url="features/org.eclipse.nebula.examples.release.feature_1.1.0.qualifier.jar" id="org.eclipse.nebula.examples.release.feature" version="1.1.0.qualifier">
       <category name="Nebula Release all Widgets and Examples"/>
    </feature>
@@ -52,9 +49,6 @@
       <category name="Nebula Release Individual Widgets"/>
    </feature>
    <feature url="features/org.eclipse.nebula.cwt.feature_1.1.0.qualifier.jar" id="org.eclipse.nebula.cwt.feature" version="1.1.0.qualifier">
-      <category name="Nebula Release Individual Widgets"/>
-   </feature>
-   <feature url="features/org.eclipse.nebula.widgets.cdatetime.feature_1.3.0.qualifier.jar" id="org.eclipse.nebula.widgets.cdatetime.feature" version="1.3.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
    <feature url="features/org.eclipse.nebula.widgets.opal.breadcrumb.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.opal.breadcrumb.feature" version="1.0.0.qualifier">
@@ -138,7 +132,16 @@
    <feature url="features/org.eclipse.nebula.widgets.nebulaslider.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.nebulaslider.feature" version="1.0.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
+   <feature url="features/org.eclipse.nebula.widgets.floatingtext.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.floatingtext.feature" version="1.0.0.qualifier">
+      <category name="Nebula Release Individual Widgets"/>
+   </feature>
    <feature url="features/org.eclipse.nebula.widgets.splitbutton.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.splitbutton.feature" version="1.0.0.qualifier">
+      <category name="Nebula Release Individual Widgets"/>
+   </feature>
+   <feature url="features/org.eclipse.nebula.feature_2.1.0.qualifier.jar" id="org.eclipse.nebula.feature" version="2.1.0.qualifier">
+      <category name="Nebula Release all Widgets and Examples"/>
+   </feature>
+   <feature url="features/org.eclipse.nebula.widgets.cdatetime.feature_1.4.0.qualifier.jar" id="org.eclipse.nebula.widgets.cdatetime.feature" version="1.4.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
    <bundle id="org.eclipse.nebula.widgets.tablecombo" version="1.2.0.qualifier">

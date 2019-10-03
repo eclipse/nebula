@@ -169,8 +169,7 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
 
         if (!isWordWrap())
         {
-          text = TextUtils.getShortString(gc, text, width);
-            //y -= gc.getFontMetrics().getHeight();
+          text = TextUtils.getShortStr(gc, text, width,truncationStyle);
         }
 
         if (column.getAlignment() == SWT.RIGHT)
@@ -201,10 +200,10 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
         	textLayout.setWidth(width < 1 ? 1 : width);
         	textLayout.setText(text);
         	y -= textLayout.getBounds().height;
-        	
+
         	// remove the first line shift
         	y+=gc.getFontMetrics().getHeight();
-        	
+
         	if (column.getParent().isAutoHeight())
         	{
         		column.getParent().recalculateHeader();
@@ -225,7 +224,7 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
                 + 1;
         	}
 
-            arrowRenderer.setSelected(column.getSort() == SWT.UP);
+            arrowRenderer.setSelected(column.getSort() == SWT.DOWN);
             if (drawSelected)
             {
                 arrowRenderer
@@ -387,7 +386,7 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
     }
 
 	/**
-	 * @return the bounds reserved for the control
+	 * @see org.eclipse.nebula.widgets.grid.GridHeaderRenderer#getControlBounds(java.lang.Object, boolean)
 	 */
 	protected Rectangle getControlBounds(Object value, boolean preferred) {
 		Rectangle bounds = getBounds();
@@ -420,6 +419,5 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
                }
            });
        }
-       textLayout.setAlignment(column.getAlignment());
    }
 }

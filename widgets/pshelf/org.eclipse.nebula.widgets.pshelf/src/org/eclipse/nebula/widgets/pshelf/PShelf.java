@@ -408,13 +408,8 @@ public class PShelf extends Canvas {
             }
             
             sizeClients();
-            redraw(getClientArea().x,getClientArea().y, getClientArea().width, getClientArea().height, false);
+            redraw(getClientArea().x,getClientArea().y, getClientArea().width, getClientArea().height, true);
             update();
-            //workaround for SWT bug 193357
-            if (SWT.getPlatform().equals("carbon"))
-            {
-                getDisplay().readAndDispatch();
-            }
             percentOfWork += this.animationSpeed;
         } 
         
@@ -648,6 +643,19 @@ public class PShelf extends Canvas {
         removeListener(SWT.Selection, listener);
         removeListener(SWT.DefaultSelection,listener);  
     }
+    
+	/**
+	 * Removes all PShelfItems.
+	 */
+	public void removeAll() {
+		checkWidget();
+
+		// dispose widgets (also removes from items)
+		while (!items.isEmpty())
+			((PShelfItem) items.get(0)).dispose();
+
+		onResize();
+	}
     
     /**
      * Sets the speed of animation.

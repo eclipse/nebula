@@ -4,18 +4,17 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthew Hall - initial API and implementation
  */
 package org.eclipse.nebula.paperclips.core;
 
-import org.eclipse.nebula.paperclips.core.Print;
-import org.eclipse.nebula.paperclips.core.PrintIterator;
 import org.eclipse.nebula.paperclips.core.internal.util.Util;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.GC;
 
+@SuppressWarnings("restriction")
 public final class PrintStub implements Print {
 	private int id;
 
@@ -27,6 +26,7 @@ public final class PrintStub implements Print {
 		this.id = id;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (!Util.sameClass(this, obj))
 			return false;

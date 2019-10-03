@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class GanttGroupExample {
 
+	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
 		Display display = new Display();
 		Shell shell = new Shell(display);
@@ -63,21 +64,21 @@ public class GanttGroupExample {
 
 		// Let's connect all events in one group in one direction, and the other in reverse
 		// Note: It's not suggested to have connections between same-group events.
-		List groupOneEvents = groupOne.getEventMembers();
+		List<GanttEvent> groupOneEvents = groupOne.getEventMembers();
 		for (int i = 0; i < groupOneEvents.size(); i++) {
 			if (i >= 1) {
-				GanttEvent ge1 = (GanttEvent) groupOneEvents.get(i - 1);
-				GanttEvent ge2 = (GanttEvent) groupOneEvents.get(i);
+				GanttEvent ge1 = groupOneEvents.get(i - 1);
+				GanttEvent ge2 = groupOneEvents.get(i);
 				ganttChart.addConnection(ge1, ge2);
 			}
 		}
 
 		// Now reverse.. do note that this makes really no sense for a lot of reasons, but it's possible to do regardless
-		List groupTwoEvents = groupTwo.getEventMembers();
+		List<GanttEvent> groupTwoEvents = groupTwo.getEventMembers();
 		for (int i = groupTwoEvents.size() - 1; i >= 0; i--) {
 			if (i > 0) {
-				GanttEvent ge1 = (GanttEvent) groupTwoEvents.get(i);
-				GanttEvent ge2 = (GanttEvent) groupTwoEvents.get(i - 1);
+				GanttEvent ge1 = groupTwoEvents.get(i);
+				GanttEvent ge2 = groupTwoEvents.get(i - 1);
 				ganttChart.addConnection(ge1, ge2);
 			}
 		}

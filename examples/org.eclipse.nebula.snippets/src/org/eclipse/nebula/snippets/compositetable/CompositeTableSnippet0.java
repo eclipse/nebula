@@ -34,11 +34,9 @@ public class CompositeTableSnippet0 {
 		public Row(Composite parent, int style) {
 			super(parent, style);
             setLayout(new GridRowLayout(new int[] { 160, 100 }, false));
-			firstName = new Text(this, SWT.NULL);
-			lastName = new Text(this, SWT.NULL);
+			 new Text(this, SWT.NULL);
+			 new Text(this, SWT.NULL);
 		}
-		public final Text firstName;
-		public final Text lastName;
 	}
 	
 	public static void main (String [] args) {

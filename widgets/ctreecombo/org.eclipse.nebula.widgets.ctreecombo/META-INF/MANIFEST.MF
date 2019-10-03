@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Nebula CTreeCombo widget plug-in
+Bundle-SymbolicName: org.eclipse.nebula.widgets.ctreecombo
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.eclipse.swt,
+ org.eclipse.jface,
+ org.eclipse.core.runtime;bundle-version="3.13.0",
+ org.eclipse.core.databinding.observable
+Export-Package: org.eclipse.nebula.widgets.ctreecombo

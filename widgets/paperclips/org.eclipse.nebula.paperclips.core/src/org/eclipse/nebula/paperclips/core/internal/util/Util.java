@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthew Hall - initial API and implementation
  */
@@ -18,13 +18,13 @@ import org.eclipse.swt.SWT;
 
 /**
  * General use convenience methods: null checking, equality
- * 
+ *
  * @author Matthew Hall
  */
 public class Util {
 	/**
 	 * Returns whether the objects are of the same class.
-	 * 
+	 *
 	 * @param left
 	 *            object to test
 	 * @param right
@@ -41,7 +41,7 @@ public class Util {
 
 	/**
 	 * Returns whether the arguments are equal.
-	 * 
+	 *
 	 * @param left
 	 *            object to test
 	 * @param right
@@ -53,9 +53,9 @@ public class Util {
 			return false;
 		if (left == right)
 			return true;
-		Class clazz = left.getClass();
+		Class<? extends Object> clazz = left.getClass();
 		if (clazz.isArray()) {
-			Class componentType = clazz.getComponentType();
+			Class<?> componentType = clazz.getComponentType();
 			if (componentType.isPrimitive()) {
 				if (componentType == Byte.TYPE)
 					return Arrays.equals((byte[]) left, (byte[]) right);
@@ -91,7 +91,7 @@ public class Util {
 
 	/**
 	 * Returns whether the arguments are equal.
-	 * 
+	 *
 	 * @param left
 	 *            double value to test
 	 * @param right
@@ -105,11 +105,11 @@ public class Util {
 	/**
 	 * Triggers a SWT.ERROR_NULL_ARGUMENT exception if the argument or any of
 	 * its elements is null.
-	 * 
+	 *
 	 * @param list
 	 *            a list to test for null elements.
 	 */
-	public static void noNulls(List list) {
+	public static void noNulls(List<?> list) {
 		notNull(list);
 		if (list.contains(null))
 			PaperClips.error(SWT.ERROR_NULL_ARGUMENT);
@@ -118,7 +118,7 @@ public class Util {
 	/**
 	 * Triggers a SWT.ERROR_NULL_ARGUMENT exception if the argument or any of
 	 * its elements is null.
-	 * 
+	 *
 	 * @param objs
 	 *            an array to test for null elements.
 	 */
@@ -130,7 +130,7 @@ public class Util {
 
 	/**
 	 * Triggers a SWT.ERROR_NULL_ARGUMENT exception if the argument is null.
-	 * 
+	 *
 	 * @param obj
 	 *            the object to test for null.
 	 */
@@ -141,7 +141,7 @@ public class Util {
 
 	/**
 	 * Triggers a SWT.ERROR_NULL_ARGUMENT exception if any argument is null.
-	 * 
+	 *
 	 * @param o1
 	 *            an object to test for null.
 	 * @param o2
@@ -154,7 +154,7 @@ public class Util {
 
 	/**
 	 * Triggers a SWT.ERROR_NULL_ARGUMENT exception if any argument is null.
-	 * 
+	 *
 	 * @param o1
 	 *            an object to test for null.
 	 * @param o2

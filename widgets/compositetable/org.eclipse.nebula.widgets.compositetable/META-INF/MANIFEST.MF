@@ -7,6 +7,7 @@ Export-Package: org.eclipse.nebula.widgets.compositetable,
  org.eclipse.nebula.widgets.compositetable.day,
  org.eclipse.nebula.widgets.compositetable.month,
  org.eclipse.nebula.widgets.compositetable.timeeditor
-Require-Bundle: org.eclipse.swt
-Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Require-Bundle: org.eclipse.swt,
+ org.eclipse.jface
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: Eclipse.org

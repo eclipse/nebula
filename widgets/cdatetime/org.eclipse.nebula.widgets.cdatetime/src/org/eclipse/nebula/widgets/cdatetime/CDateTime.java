@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2006-2008 Jeremy Dowdall
+ * Copyright (c) 2006-2019 Jeremy Dowdall
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,8 @@
  *    Scott Klein - https://bugs.eclipse.org/bugs/show_bug.cgi?id=370605
  *    Baruch Youssin - https://bugs.eclipse.org/bugs/show_bug.cgi?id=261414
  *    Doug Showell - https://bugs.eclipse.org/bugs/show_bug.cgi?id=383589
+ *    Bel Razom - https://bugs.eclipse.org/bugs/show_bug.cgi?id=527399
+ *    Stefan Nöbauer - https://bugs.eclipse.org/bugs/show_bug.cgi?id=548149
  *****************************************************************************/
 
 package org.eclipse.nebula.widgets.cdatetime;
@@ -233,6 +235,9 @@ public class CDateTime extends BaseCombo {
 
 	private Date cancelDate;
 	private Calendar calendar;
+	private Calendar minDate;
+	private Calendar maxDate;
+
 	private DateFormat df;
 	Locale locale;
 
@@ -273,8 +278,11 @@ public class CDateTime extends BaseCombo {
 			break;
 		case SWT.FocusOut:
 			if (!rightClick && !internalFocusShift) {
-				commitEditField();
-				updateText();
+				if (commitEditField()) {
+					updateText();
+				} else {
+					editField = null;
+				}
 			}
 			break;
 		case SWT.KeyDown:
@@ -537,22 +545,6 @@ public class CDateTime extends BaseCombo {
 		sep.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 	}
 
-	// void deselect(Date date) {
-	// if(date != null && isSelected(date)) {
-	// Date[] tmp = new Date[selection.length - 1];
-	// for(int i = 0, j = 0; i < selection.length; i++) {
-	// if(!selection[i].equals(date)) {
-	// tmp[j++] = selection[i];
-	// }
-	// }
-	// setSelection(tmp);
-	// }
-	// }
-	//
-	// void deselectAll() {
-	// setSelectedDates((Date[]) null);
-	// }
-
 	private void disposePicker() {
 		if (content != null) {
 			if (picker != null) {
@@ -581,8 +573,12 @@ public class CDateTime extends BaseCombo {
 	 */
 	void fieldAdjust(int amount) {
 		if (!hasSelection()) {
-			setSelection(calendar.getTime());
-			fireSelectionChanged();
+			if (DatePicker.isValidDate(calendar, minDate, maxDate)) {
+				setSelection(calendar.getTime());
+				fireSelectionChanged();
+			} else {
+				setOpen(true);
+			}
 		} else {
 			int cf = getCalendarField();
 			if (cf >= 0) {
@@ -780,6 +776,8 @@ public class CDateTime extends BaseCombo {
 			return false;
 		}
 
+		long backup = calendar.getTimeInMillis();
+
 		if (calendarField == Calendar.ZONE_OFFSET
 				&& this.allowedTimezones != null) {
 			boolean timeZoneSet = false;
@@ -813,10 +811,18 @@ public class CDateTime extends BaseCombo {
 			if ((this.style & CDT.ADD_ON_ROLL) != 0) {
 				calendar.add(calendarField, rollAmount);
 			} else {
+				if (calendarField == Calendar.YEAR
+						&& calendar.get(Calendar.YEAR) == 1 && rollAmount < 0) {
+					return false;
+				}
 				calendar.roll(calendarField, rollAmount);
 			}
 		}
 
+		if (!DatePicker.isValidDate(calendar, minDate, maxDate)) {
+			calendar.setTimeInMillis(backup);
+			return false;
+		}
 		if (selection.length > 0) {
 			selection[0] = calendar.getTime();
 		}
@@ -873,6 +879,15 @@ public class CDateTime extends BaseCombo {
 					value = calendar.getActualMinimum(calendarField);
 				}
 			}
+
+			Calendar tmp = (Calendar) calendar.clone();
+			tmp.set(calendarField, value);
+			tmp.getTime(); // call to set the Fields in the Calendar
+
+			if (!DatePicker.isValidDate(tmp, getMinDate(), getMaxDate())) {
+				return false;
+			}
+
 			calendar.set(calendarField, value);
 			if (selection.length > 0) {
 				selection[0] = calendar.getTime();
@@ -968,6 +983,8 @@ public class CDateTime extends BaseCombo {
 				cf = Calendar.HOUR;
 			} else if (field.toString().contains("zone")) { //$NON-NLS-1$
 				cf = Calendar.ZONE_OFFSET;
+			} else if (field.toString().contains("hour of day 1")) { //$NON-NLS-1$
+				cf = Calendar.HOUR_OF_DAY;
 			}
 		}
 		return cf;
@@ -1122,10 +1139,11 @@ public class CDateTime extends BaseCombo {
 	 *            the event
 	 */
 	void handleKey(Event event) {
-		if (event.stateMask != 0) {
+		if (event.stateMask != 0 && event.stateMask != SWT.SHIFT) {
 			return;
 		}
 		if ('\r' == event.keyCode || SWT.KEYPAD_CR == event.keyCode) {
+			fieldNext();
 			fireSelectionChanged(true);
 		} else if (SWT.BS == event.keyCode || SWT.DEL == event.keyCode) {
 			event.doit = false;
@@ -1149,6 +1167,10 @@ public class CDateTime extends BaseCombo {
 					editField.removeLastCharacter();
 				}
 				break;
+			case SWT.CR:
+				fieldNext();
+				fireSelectionChanged();
+				break;
 			case SWT.ARROW_DOWN:
 				fieldAdjust(-1);
 				updateText(true);
@@ -1163,13 +1185,23 @@ public class CDateTime extends BaseCombo {
 			case SWT.ARROW_RIGHT:
 				fieldNext(true);
 				break;
+			case SWT.ESC:
+				if (contentShell != null) {
+					event.doit = false;
+					if (selection.length > 0 && selection[0] != cancelDate) {
+						setSelection(cancelDate);
+						fireSelectionChanged();
+					}
+					setOpen(false);
+				}
+				break;
 			default:
 				if (hasField(activeField) && activeField + 1 < separator.length
 						&& String.valueOf(event.character)
 								.equals(separator[activeField + 1])) {
 					fieldNext();
 				} else if (!hasSelection()
-						&& String.valueOf(event.character).matches("[0-9]")) {
+						&& String.valueOf(event.character).matches("[0-9]")) { //$NON-NLS-1$
 					fieldAdjust(0);
 					fieldFirst();
 				}
@@ -1511,11 +1543,15 @@ public class CDateTime extends BaseCombo {
 	 */
 	public void setBuilder(CDateTimeBuilder builder) {
 		this.builder = builder;
+		this.minDate = builder.getMinDate();
+		this.maxDate = builder.getMaxDate();
+
 		if (picker != null) {
 			disposePicker();
 			createPicker();
 		}
 	}
+
 
 	/*
 	 * (non-Javadoc)
@@ -1796,7 +1832,8 @@ public class CDateTime extends BaseCombo {
 		if (getEditable()) {
 			if (selection == null) {
 				this.selection = new Date[0];
-			} else {
+			} else if (DatePicker.isValidDate(getCalendarInstance(selection),
+					minDate, maxDate)) {
 				this.selection = new Date[] { selection };
 			}
 		}
@@ -2028,7 +2065,9 @@ public class CDateTime extends BaseCombo {
 					text.setText(string);
 					text.getControl().addListener(SWT.Verify, textListener);
 				}
-				text.getControl().setSelection(selStart, selEnd);
+				if((text.getControl().getStyle() & SWT.READ_ONLY) == 0) {
+					text.getControl().setSelection(selStart, selEnd);
+				}
 			}
 		};
 
@@ -2148,5 +2187,31 @@ public class CDateTime extends BaseCombo {
 		if (pattern.indexOf('z') != -1) {
 			this.allowedTimezones = allowedTimeZones;
 		}
+	}
+	
+	/** 
+	 * Returns the minimum date or <code>null</code>.
+	 * 
+	 * @return Returns a clone of the minDate or <code>null</code> if not set.
+	 * @since 1.4.0
+	 */
+	public Calendar getMinDate() {
+		if(minDate == null) {
+			return null;
+		}
+		return (Calendar) minDate.clone();
+	}
+
+	/** 
+	 * Returns the maximum date or <code>null</code>.
+	 * 
+	 * @return Returns a clone of the maxDate or <code>null</code> if not set.
+	 * @since 1.4.0
+	 */
+	public Calendar getMaxDate() {
+		if(maxDate == null) {
+			return null;
+		}
+		return (Calendar) maxDate.clone();
 	}
 }

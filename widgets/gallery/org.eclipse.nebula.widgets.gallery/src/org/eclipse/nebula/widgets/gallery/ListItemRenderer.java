@@ -39,8 +39,8 @@ import org.eclipse.swt.widgets.Display;
  * <li>org.eclipse.nebula.widget.gallery.bottomRightOverlay</li>
  * <li>org.eclipse.nebula.widget.gallery.topLeftOverlay</li>
  * <li>org.eclipse.nebula.widget.gallery.topRightOverlay</li>
- *</ul>
- *<p>
+ * </ul>
+ * <p>
  * Supported types are org.eclipse.swt.Image for one single decorator and
  * org.eclipse.swt.Image[] for multiple decorators.
  * </p>
@@ -92,16 +92,16 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 		super();
 
 		// Set defaults
-		foregroundColor = Display.getDefault().getSystemColor(
-				SWT.COLOR_LIST_FOREGROUND);
-		backgroundColor = Display.getDefault().getSystemColor(
-				SWT.COLOR_LIST_BACKGROUND);
-		selectionBackgroundColor = Display.getDefault().getSystemColor(
-				SWT.COLOR_LIST_SELECTION);
-		selectionForegroundColor = Display.getDefault().getSystemColor(
-				SWT.COLOR_LIST_FOREGROUND);
-		descriptionColor = Display.getDefault().getSystemColor(
-				SWT.COLOR_DARK_GRAY);
+		foregroundColor = Display.getDefault()
+				.getSystemColor(SWT.COLOR_LIST_FOREGROUND);
+		backgroundColor = Display.getDefault()
+				.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+		selectionBackgroundColor = Display.getDefault()
+				.getSystemColor(SWT.COLOR_LIST_SELECTION);
+		selectionForegroundColor = Display.getDefault()
+				.getSystemColor(SWT.COLOR_LIST_FOREGROUND);
+		descriptionColor = Display.getDefault()
+				.getSystemColor(SWT.COLOR_DARK_GRAY);
 	}
 
 	/*
@@ -144,8 +144,8 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 			imageHeight = itemImageBounds.height;
 
 			size = RendererHelper.getBestSize(imageWidth, imageHeight,
-					useableHeight - 4 - this.dropShadowsSize, useableHeight - 4
-							- this.dropShadowsSize);
+					useableHeight - 4 - this.dropShadowsSize,
+					useableHeight - 4 - this.dropShadowsSize);
 
 			xShift = ((useableHeight - size.x) >> 1) + 2;
 			yShift = (useableHeight - size.y) >> 1;
@@ -156,20 +156,21 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 					c = (Color) dropShadowsColors.get(i);
 					gc.setForeground(c);
 
-					gc.drawLine(x + useableHeight + i - xShift - 1, y
-							+ dropShadowsSize + yShift, x + useableHeight + i
-							- xShift - 1, y + useableHeight + i - yShift);
-					gc.drawLine(x + xShift + dropShadowsSize, y + useableHeight
-							+ i - yShift - 1, x + useableHeight + i - xShift, y
-							- 1 + useableHeight + i - yShift);
+					gc.drawLine(x + useableHeight + i - xShift - 1,
+							y + dropShadowsSize + yShift,
+							x + useableHeight + i - xShift - 1,
+							y + useableHeight + i - yShift);
+					gc.drawLine(x + xShift + dropShadowsSize,
+							y + useableHeight + i - yShift - 1,
+							x + useableHeight + i - xShift,
+							y - 1 + useableHeight + i - yShift);
 				}
 			}
 		}
 
 		// Draw selection background (rounded rectangles)
-		if (selected
-				|| RendererHelper.isColorsEquals(itemBackgroundColor, gallery
-						.getBackground())) {
+		if (selected || !RendererHelper.isColorsEquals(itemBackgroundColor,
+				gallery.getBackground())) {
 			if (selected) {
 				gc.setBackground(selectionBackgroundColor);
 				gc.setForeground(selectionBackgroundColor);
@@ -186,8 +187,8 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 
 		if (itemImage != null && size != null) {
 			if (size.x > 0 && size.y > 0) {
-				gc.drawImage(itemImage, 0, 0, imageWidth, imageHeight, x
-						+ xShift, y + yShift, size.x, size.y);
+				gc.drawImage(itemImage, 0, 0, imageWidth, imageHeight,
+						x + xShift, y + yShift, size.x, size.y);
 				drawAllOverlays(gc, item, x, y, size, xShift, yShift);
 			}
 		}
@@ -197,8 +198,8 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 
 			// Calculate font height (text and description)
 			gc.setFont(textFont);
-			String text = RendererHelper.createLabel(item.getText(), gc, width
-					- useableHeight - 10);
+			String text = RendererHelper.createLabel(item.getText(), gc,
+					width - useableHeight - 10);
 			int textFontHeight = gc.getFontMetrics().getHeight();
 
 			String description = null;
@@ -221,8 +222,8 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 				displayDescription = true;
 
 			// Background color
-			gc.setBackground(selected ? selectionBackgroundColor
-					: backgroundColor);
+			gc.setBackground(
+					selected ? selectionBackgroundColor : backgroundColor);
 
 			// Draw text
 			if (displayText) {
@@ -246,11 +247,12 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 			if (description != null && displayDescription) {
 				gc.setForeground(this.descriptionColor);
 				gc.setFont(descriptionFont);
-				gc.drawText(description, x + useableHeight + 5,
-						y
+				gc.drawText(
+						description, x + useableHeight + 5, y
 								+ ((height - descriptionFontHeight
 										- textFontHeight - 2) >> 1)
-								+ textFontHeight + 1, true);
+								+ textFontHeight + 1,
+						true);
 			}
 		}
 	}

@@ -55,6 +55,7 @@ public class RichTextViewerExample {
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(editor);
 
 		final RichTextViewer viewer = new RichTextViewer(parent, SWT.BORDER | SWT.WRAP);
+		viewer.setWordSplitRegex("\\s|\\-");//wrap after whitespace characters and delimiter
 		GridDataFactory.fillDefaults().grab(true, true).span(1, 2).applyTo(viewer);
 
 		final Text htmlOutput = new Text(parent,

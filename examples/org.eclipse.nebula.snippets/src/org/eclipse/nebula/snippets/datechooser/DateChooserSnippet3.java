@@ -34,8 +34,8 @@ public class DateChooserSnippet3 {
 
 			public void widgetSelected(SelectionEvent event) {
 				selectedDates.removeAll();
-				for (Iterator it = cal.getSelectedDates().iterator(); it.hasNext(); ) {
-					Date d = (Date) it.next();
+				for (Iterator<Date> it = cal.getSelectedDates().iterator(); it.hasNext(); ) {
+					Date d = it.next();
 					selectedDates.add(df.format(d));
 				}
 			}

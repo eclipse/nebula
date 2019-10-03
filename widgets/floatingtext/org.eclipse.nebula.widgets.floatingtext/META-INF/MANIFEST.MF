@@ -6,6 +6,5 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Eclipse Nebula
 Automatic-Module-Name: org.eclipse.nebula.widgets.floatingtext
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: org.eclipse.swt,
- org.eclipse.nebula.widgets.opal.promptsupport
+Require-Bundle: org.eclipse.swt
 Export-Package: org.eclipse.nebula.widgets.floatingtext;version="1.0.0"

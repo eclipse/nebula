@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Angelo ZERR - initial API and implementation
- *     Pascal Leclercq - initial API and implementation
+ * Angelo ZERR - initial API and implementation
+ * Pascal Leclercq - initial API and implementation
  *******************************************************************************/
 package org.eclipse.nebula.widgets.pagination.collections;
 
@@ -23,18 +23,16 @@ import org.eclipse.swt.SWT;
  */
 public class PageListHelper {
 
-	public static <T> PageResult<T> createPage(List<T> list,
-			PageableController controller) {
+	public static <T> PageResult<T> createPage(List<T> list, PageableController controller) {
 		return createPage(list, controller, DefaultSortProcessor.getInstance());
 	}
 
-	public static <T> PageResult<T> createPage(List<T> list,
-			PageableController controller, SortProcessor processor) {
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static <T> PageResult<T> createPage(List<T> list, PageableController controller, SortProcessor processor) {
 		int sortDirection = controller.getSortDirection();
 		if (sortDirection != SWT.NONE) {
 			// Sort the list
-			processor.sort(list, controller.getSortPropertyName(),
-					sortDirection);
+			processor.sort(list, controller.getSortPropertyName(), sortDirection);
 		}
 		int totalSize = list.size();
 		int pageSize = controller.getPageSize();
@@ -44,6 +42,9 @@ public class PageListHelper {
 		int toIndex = pageIndex + pageSize;
 		if (toIndex > totalSize) {
 			toIndex = totalSize;
+		}
+		if (fromIndex > totalSize) {
+			fromIndex=totalSize - totalSize%pageSize;
 		}
 		List<?> content = list.subList(fromIndex, toIndex);
 		return new PageResult(content, totalSize);

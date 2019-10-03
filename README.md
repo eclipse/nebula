@@ -1,4 +1,4 @@
-# Nebual and Opal: Rich SWT Widgets
+# Nebula and Opal: Rich SWT Widgets
 Welcome to the Eclipse Nebula project. This repositority contains a large set of UI elements that can be used in 
 Fat or Thin client applications based on Java and SWT.
 
@@ -8,15 +8,24 @@ Fat or Thin client applications based on Java and SWT.
 
 ## Patches 
 We can accept you patches if you have signed the [Eclipse Contributors Agreement (ECA)](https://wiki.eclipse.org/ECA) 
-which ensures users of these libraries that they can use your code without getting into any legal trouble. 
+which ensures users of these libraries that they can use your code without getting into any legal trouble.
+
+For every patch we require a [corresponding Bugzilla issue.](https://bugs.eclipse.org/bugs/)
 
 ## Building on our build server
-Every pull request gets build automatically by these two jobs:
+After admin approval, pull requests gets build by these two jobs:
  * [Stable Widgets](https://ci.eclipse.org/nebula/job/nebula.stable.github/)
  * [Incubation Widgets](https://ci.eclipse.org/nebula/job/nebula.incubation.github/)
 
-## Building local
-To build locally [refer to the builds page](https://wiki.eclipse.org/Nebula/Builds)
+## Building locally
+    git clone https://github.com/eclipse/nebula.git
+    cd releng/org.eclipse.nebula.nebula-release
+    mvn verify
+ 
+    cd releng/org.eclipse.nebula.nebula-incubation
+    mvn verify (or install to install in the local maven repo)
+
+More info can be found on the [the builds page](https://wiki.eclipse.org/Nebula/Builds)
 
 ## New Committers
 Before you decide to contribute your code to Eclipse, keep in mind that your code must follow the EPL, Eclipse's Public License.  

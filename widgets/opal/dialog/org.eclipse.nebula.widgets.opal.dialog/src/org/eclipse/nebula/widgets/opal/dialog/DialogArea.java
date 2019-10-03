@@ -1,11 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2011 Laurent CARON All rights reserved. This program and the
+ * Copyright (c) 2011-2019 Laurent CARON All rights reserved. This program and the
  * accompanying materials are made available under the terms of the Eclipse
  * Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- * Contributors: Laurent CARON (laurent.caron at gmail dot com) - Initial
- * implementation and API
+ * Contributors: 
+ * 	Laurent CARON (laurent.caron at gmail dot com) - Initial implementation and API
+ * 	Stefan Nöbauer - Bug 550437 
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.dialog;
 
@@ -26,7 +27,7 @@ abstract class DialogArea {
 	private static final String MAC_OS_DEFAULT_FONT = "Lucida Grande";
 	protected final Dialog parent;
 	private boolean initialised;
-
+	
 	/**
 	 * Constructor
 	 *
@@ -136,5 +137,4 @@ abstract class DialogArea {
 		SWTGraphicUtil.addDisposer(parent.shell, image);
 		return image;
 	}
-
 }

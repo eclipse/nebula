@@ -47,7 +47,7 @@ import org.eclipse.swt.widgets.TypedListener;
  *
  * @author chris.gross@us.ibm.com
  * @author Mirko Paturzo <mirko.paturzo@exeura.eu>
- * 
+ *
  *         Mirko removed all collections, improve dispose performance, reduce
  *         used memory
  */
@@ -131,6 +131,11 @@ public class GridItem extends Item {
 	 * Foreground color of the header
 	 */
 	public Color headerForeground = null;
+
+	/**
+	 * Font of the header
+	 */
+	private Font headerFont = null;
 
 	/**
 	 * (SWT.VIRTUAL only) Flag that specifies whether the client has already
@@ -498,7 +503,7 @@ public class GridItem extends Item {
 		final Point cellSize = this.getCellSize(columnIndex);
 		return new Rectangle(origin.x, origin.y, cellSize.x, cellSize.y);
 	}
-		
+
 	/**
 	 * Returns a rectangle describing the receiver's size and location relative
 	 * to its parent at a column in the table.
@@ -517,7 +522,7 @@ public class GridItem extends Item {
 	 */
 	public Rectangle getBoundsCorrected(final int columnIndex) {
 		checkWidget();
-		
+
 		// HACK: The -1000,-1000 xy coordinates below are a hack to deal with
 		// GridEditor issues. In
 		// normal SWT Table, when an editor is created on Table and its
@@ -1681,7 +1686,7 @@ public class GridItem extends Item {
 	void newItem(GridItem item, int index) {
 		setHasChildren(true);
 		if (children == null)
-			children = new ArrayList<GridItem>();
+			children = new ArrayList<>();
 		if (index == NO_ROW) {
 			children.add(item);
 		} else {
@@ -1806,6 +1811,23 @@ public class GridItem extends Item {
 	}
 
 	/**
+	 * Returns the receiver's row header font
+	 *
+	 * @return the font or <code>null</code> if none
+	 * @throws org.eclipse.swt.SWTException
+	 *             <ul>
+	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
+	 *             </ul>
+	 */
+	public Font getHeaderFont() {
+		checkWidget();
+		return headerFont;
+	}
+
+	/**
 	 * Sets the receiver's row header text. If the text is <code>null</code> the
 	 * row header will display the row number.
 	 *
@@ -1914,6 +1936,25 @@ public class GridItem extends Item {
 	public void setHeaderForeground(Color headerForeground) {
 		checkWidget();
 		this.headerForeground = headerForeground;
+		parent.redraw();
+	}
+
+	/**
+	 * Set the new header font
+	 *
+	 * @param headerFont
+	 *            the font or <code>null</code>
+	 * @throws org.eclipse.swt.SWTException
+	 *             <ul>
+	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
+	 *             </ul>
+	 */
+	public void setHeaderFont(Font headerFont) {
+		checkWidget();
+		this.headerFont=headerFont;
 		parent.redraw();
 	}
 

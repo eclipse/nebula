@@ -11,8 +11,6 @@ public class TestCompositeTableInVE {
 
     private Shell sShell = null;  //  @jve:decl-index=0:visual-constraint="10,10"
     private CompositeTable compositeTable = null;
-    private Header header = null;
-    private Row row = null;
     /**
      * This method initializes compositeTable	
      *
@@ -28,7 +26,7 @@ public class TestCompositeTableInVE {
      *
      */
     private void createHeader() {
-        header = new Header(compositeTable, SWT.NONE);
+         new Header(compositeTable, SWT.NONE);
     }
 
     /**
@@ -36,15 +34,13 @@ public class TestCompositeTableInVE {
      *
      */
     private void createRow() {
-        row = new Row(compositeTable, SWT.NONE);
+       new Row(compositeTable, SWT.NONE);
     }
 
     /**
      * @param args
      */
     public static void main(String[] args) {
-        // TODO Auto-generated method stub
-
         /* Before this is run, be sure to set up the launch configuration (Arguments->VM Arguments)
          * for the correct SWT library path in order to run with the SWT dlls. 
          * The dlls are located in the SWT plugin jar.  
@@ -54,6 +50,7 @@ public class TestCompositeTableInVE {
         Display display = Display.getDefault();
         TestCompositeTableInVE thisClass = new TestCompositeTableInVE();
         thisClass.createSShell();
+        thisClass.sShell.layout();
         thisClass.sShell.open();
         while (!thisClass.sShell.isDisposed()) {
             if (!display.readAndDispatch())

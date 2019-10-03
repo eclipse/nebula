@@ -40,6 +40,7 @@ import org.eclipse.nebula.widgets.xviewer.XViewerComputedColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.nebula.widgets.xviewer.action.ColumnMultiEditAction;
 import org.eclipse.nebula.widgets.xviewer.action.TableCustomizationAction;
+import org.eclipse.nebula.widgets.xviewer.action.ViewLoadingReportAction;
 import org.eclipse.nebula.widgets.xviewer.action.ViewSelectedCellDataAction;
 import org.eclipse.nebula.widgets.xviewer.action.ViewSelectedCellDataAction.Option;
 import org.eclipse.nebula.widgets.xviewer.action.ViewTableReportAction;
@@ -89,8 +90,9 @@ public class XViewerCustomMenu {
    private final Clipboard clipboard = new Clipboard(null);
 
    protected Action filterByValue, filterByColumn, filterBySelColumn, clearAllSorting, clearAllFilters, tableProperties,
-      viewTableReport, columnMultiEdit, removeSelected, removeNonSelected, copySelected, showColumn, addComputedColumn,
-      sumColumn, averageColumn, hideColumn, copySelectedColumnCells, viewSelectedCell, copySelectedCell, uniqueValues;
+      viewTableReport, columnMultiEdit, removeSelected, removeNonSelected, viewLoadingReport, copySelected, showColumn,
+      addComputedColumn, sumColumn, averageColumn, hideColumn, copySelectedColumnCells, viewSelectedCell,
+      copySelectedCell, uniqueValues;
    private boolean headerMouseClick = false;
 
    public boolean isHeaderMouseClick() {
@@ -187,6 +189,11 @@ public class XViewerCustomMenu {
          menuManager.add(removeSelected);
          menuManager.add(removeNonSelected);
       }
+      if (xViewer.isDebugLoading()) {
+         menuManager.add(new Separator());
+         menuManager.add(viewLoadingReport);
+      }
+
       menuManager.add(new GroupMarker(XViewer.MENU_GROUP_POST));
    }
 
@@ -624,6 +631,7 @@ public class XViewerCustomMenu {
       };
       tableProperties = new TableCustomizationAction(xViewer);
       viewTableReport = new ViewTableReportAction(xViewer);
+      viewLoadingReport = new ViewLoadingReportAction(xViewer);
       columnMultiEdit = new ColumnMultiEditAction(xViewer);
    }
 
