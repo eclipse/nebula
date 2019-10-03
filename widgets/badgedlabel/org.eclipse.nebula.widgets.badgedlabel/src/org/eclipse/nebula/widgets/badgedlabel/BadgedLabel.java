@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Akuiteo (http://www.akuiteo.com). All rights reserved. This program and the
+ * Copyright (c) 2019 Akuiteo (http://www.akuiteo.com). All rights reserved. This program and the
  * accompanying materials are made available under the terms of the Eclipse
  * Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -23,14 +23,16 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 
 /**
- * Instances of this class represent a non-selectable
- * user interface object that displays a string or image.
- * A badge is displayed on this label, so you can add extra information (the most common used
- * is a notification label that shows the number of unread notifications).
- * 
+ * Instances of this class represent a non-selectable user interface object that
+ * displays a string or image. A badge is displayed on this label, so you can
+ * add extra information (the most common used is a notification label that
+ * shows the number of unread notifications).
+ *
  * <dl>
  * <dt><b>Styles:</b></dt>
  * <dd>SWT.BORDER</dd>
+ * <dd>SWT.LEFT or SWT.RIGHT (horizontal location)</dd>
+ * <dd>SWT.TOP or SWT.BOTTOM (vertical location)</dd>
  * <dt><b>Events:</b></dt>
  * <dd>(none)</dd>
  * </dl>
@@ -46,7 +48,7 @@ public class BadgedLabel extends Canvas {
 	private Color textColor, backgroundColor, borderColor, badgeForeground, badgeBackground;
 	private final Font badgeFont;
 	private Font boldFont;
-	private BADGE_LOCATION badgeLocation;
+	private int horizontalLocation, verticalLocation;
 	private GC gc;
 	private int left;
 	private int top;
@@ -55,20 +57,22 @@ public class BadgedLabel extends Canvas {
 	private Point badgeTextSizeCache;
 
 	/**
-	 * Constructs a new instance of this class given its parent
-	 * and a style value describing its behavior and appearance.
+	 * Constructs a new instance of this class given its parent and a style value
+	 * describing its behavior and appearance.
 	 * <p>
-	 * The style value is either one of the style constants defined in
-	 * class <code>SWT</code> which is applicable to instances of this
-	 * class, or must be built by <em>bitwise OR</em>'ing together
-	 * (that is, using the <code>int</code> "|" operator) two or more
-	 * of those <code>SWT</code> style constants. The class description
-	 * lists the style constants that are applicable to the class.
-	 * Style bits are also inherited from superclasses.
+	 * The style value is either one of the style constants defined in class
+	 * <code>SWT</code> which is applicable to instances of this class, or must be
+	 * built by <em>bitwise OR</em>'ing together (that is, using the
+	 * <code>int</code> "|" operator) two or more of those <code>SWT</code> style
+	 * constants. The class description lists the style constants that are
+	 * applicable to the class. Style bits are also inherited from superclasses.
 	 * </p>
 	 *
-	 * @param parent a composite control which will be the parent of the new instance (cannot be null)
-	 * @param style the style of control to construct
+	 * @param parent
+	 *            a composite control which will be the parent of the new instance
+	 *            (cannot be null)
+	 * @param style
+	 *            the style of control to construct
 	 *
 	 * @exception IllegalArgumentException
 	 *                <ul>
@@ -76,8 +80,10 @@ public class BadgedLabel extends Canvas {
 	 *                </ul>
 	 * @exception SWTException
 	 *                <ul>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the parent</li>
-	 *                <li>ERROR_INVALID_SUBCLASS - if this class is not an allowed subclass</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the parent</li>
+	 *                <li>ERROR_INVALID_SUBCLASS - if this class is not an allowed
+	 *                subclass</li>
 	 *                </ul>
 	 *
 	 */
@@ -87,16 +93,17 @@ public class BadgedLabel extends Canvas {
 		SWTGraphicUtil.addDisposer(this, badgeFont);
 		boldFont = SWTGraphicUtil.buildFontFrom(this, SWT.BOLD);
 		SWTGraphicUtil.addDisposer(this, boldFont);
-		badgeLocation = BADGE_LOCATION.TOP_RIGHT;
+		horizontalLocation = (getStyle() & SWT.LEFT) != 0 ? SWT.LEFT : SWT.RIGHT;
+		verticalLocation = (getStyle() & SWT.TOP) != 0 ? SWT.TOP : SWT.BOTTOM;
 		initDefaultColors();
 		addListener(SWT.Paint, e -> onPaint(e));
 	}
 
 	private static int checkStyle(final int style) {
-		if ((style & SWT.BORDER) != 0) {
-			return style & ~SWT.BORDER;
-		}
-		return 0;
+		final int mask = SWT.BORDER | SWT.LEFT | SWT.RIGHT | SWT.TOP | SWT.BOTTOM;
+		int newStyle = style & mask;
+		newStyle |= SWT.DOUBLE_BUFFERED;
+		return newStyle;
 	}
 
 	private void initDefaultColors() {
@@ -109,7 +116,9 @@ public class BadgedLabel extends Canvas {
 		borderColor = new Color(getDisplay(), 204, 204, 204);
 		SWTGraphicUtil.addDisposer(this, borderColor);
 
-		changeBadgeColor(BADGE_COLOR.BLUE);
+		badgeForeground = getDisplay().getSystemColor(SWT.COLOR_WHITE);
+		badgeBackground = new Color(getDisplay(), 0, 123, 255);
+		SWTGraphicUtil.addDisposer(this, badgeBackground);
 	}
 
 	private void onPaint(Event e) {
@@ -135,12 +144,12 @@ public class BadgedLabel extends Canvas {
 		buttonSize = computeButtonSize();
 		final Rectangle area = getClientArea();
 		left = MARGIN;
-		if (badgeLocation == BADGE_LOCATION.TOP_LEFT || badgeLocation == BADGE_LOCATION.BOTTOM_LEFT) {
+		if (horizontalLocation == SWT.LEFT) {
 			left += MARGIN;
 		}
 
 		top = MARGIN;
-		if (badgeLocation == BADGE_LOCATION.TOP_LEFT || badgeLocation == BADGE_LOCATION.TOP_RIGHT) {
+		if (verticalLocation == SWT.TOP) {
 			top += MARGIN;
 		}
 
@@ -223,30 +232,27 @@ public class BadgedLabel extends Canvas {
 		}
 
 		int x;
-		switch (badgeLocation) {
-			case TOP_RIGHT:
-			case BOTTOM_RIGHT:
-				x = left + width - badgeWith / 2;
-				break;
-			case TOP_LEFT:
-			case BOTTOM_LEFT:
-				x = left - badgeWith / 2;
-				break;
-			default:
-				return;
+		switch (horizontalLocation) {
+		case SWT.RIGHT:
+			x = left + width - badgeWith / 2;
+			break;
+		case SWT.LEFT:
+			x = left - badgeWith / 2;
+			break;
+		default:
+			return;
 		}
+
 		int y;
-		switch (badgeLocation) {
-			case TOP_RIGHT:
-			case TOP_LEFT:
-				y = top - CIRCLE_DIAMETER / 2;
-				break;
-			case BOTTOM_LEFT:
-			case BOTTOM_RIGHT:
-				y = top + height - CIRCLE_DIAMETER / 2;
-				break;
-			default:
-				return;
+		switch (verticalLocation) {
+		case SWT.TOP:
+			y = top - CIRCLE_DIAMETER / 2;
+			break;
+		case SWT.BOTTOM:
+			y = top + height - CIRCLE_DIAMETER / 2;
+			break;
+		default:
+			return;
 		}
 		if (textSize.x > MAX_BADGE_TEXT_SIZE) {
 			// Draw a round rectangle
@@ -272,10 +278,12 @@ public class BadgedLabel extends Canvas {
 	}
 
 	/**
-	 * Sets the badge's color theme to the theme specified
-	 * by the argument
-	 * 
-	 * @param color the new color
+	 * Sets the badge's color theme to the theme specified by the argument
+	 *
+	 * @param color
+	 *            the new color, can pick one of the following value:
+	 *            SWT.COLOR_BLUE, SWT.COLOR_GRAY, SWT.COLOR_GREEN, SWT.COLOR_RED,
+	 *            SWT.COLOR_YELLOW, SWT.COLOR_CYAN, SWT.COLOR_BLACK
 	 *
 	 * @exception IllegalArgumentException
 	 *                <ul>
@@ -283,19 +291,40 @@ public class BadgedLabel extends Canvas {
 	 *                </ul>
 	 * @exception SWTException
 	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
 	 *                </ul>
 	 */
-	public void changeBadgeColor(BADGE_COLOR color) {
+	public void setPredefinedColor(int color) {
 		checkWidget();
-		if (color == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		badgeForeground = getDisplay().getSystemColor(color.getTextColor());
-		SWTGraphicUtil.addDisposer(this, badgeForeground);
 
-		badgeBackground = new Color(getDisplay(), color.getRgb());
+		badgeForeground = getDisplay().getSystemColor(SWT.COLOR_WHITE);
+		switch (color) {
+		case SWT.COLOR_BLUE:
+			badgeBackground = new Color(getDisplay(), 0, 123, 255);
+			break;
+		case SWT.COLOR_GRAY:
+			badgeBackground = new Color(getDisplay(), 108, 117, 125);
+			break;
+		case SWT.COLOR_GREEN:
+			badgeBackground = new Color(getDisplay(), 40, 167, 69);
+			break;
+		case SWT.COLOR_RED:
+			badgeBackground = new Color(getDisplay(), 220, 53, 69);
+			break;
+		case SWT.COLOR_YELLOW:
+			badgeForeground = getDisplay().getSystemColor(SWT.COLOR_BLACK);
+			badgeBackground = new Color(getDisplay(), 255, 193, 7);
+			break;
+		case SWT.COLOR_CYAN:
+			badgeBackground = new Color(getDisplay(), 23, 162, 184);
+			break;
+		default: // BLACK
+			badgeBackground = new Color(getDisplay(), 52, 58, 64);
+		}
+
 		SWTGraphicUtil.addDisposer(this, badgeBackground);
 	}
 
@@ -343,8 +372,10 @@ public class BadgedLabel extends Canvas {
 	 *
 	 * @exception SWTException
 	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
 	 *                </ul>
 	 */
 	public Color getBackgroundColor() {
@@ -359,8 +390,10 @@ public class BadgedLabel extends Canvas {
 	 *
 	 * @exception SWTException
 	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
 	 *                </ul>
 	 */
 	public Color getBadgeBackground() {
@@ -375,29 +408,15 @@ public class BadgedLabel extends Canvas {
 	 *
 	 * @exception SWTException
 	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
 	 *                </ul>
 	 */
 	public Color getBadgeForeground() {
 		checkWidget();
 		return badgeForeground;
-	}
-
-	/**
-	 * Returns the location of the badge
-	 *
-	 * @return the badge's location
-	 *
-	 * @exception SWTException
-	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 *                </ul>
-	 */
-	public BADGE_LOCATION getBadgeLocation() {
-		checkWidget();
-		return badgeLocation;
 	}
 
 	/**
@@ -407,8 +426,10 @@ public class BadgedLabel extends Canvas {
 	 *
 	 * @exception SWTException
 	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
 	 *                </ul>
 	 */
 	public String getBadgeValue() {
@@ -423,8 +444,10 @@ public class BadgedLabel extends Canvas {
 	 *
 	 * @exception SWTException
 	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
 	 *                </ul>
 	 */
 	public Color getBorderColor() {
@@ -433,15 +456,16 @@ public class BadgedLabel extends Canvas {
 	}
 
 	/**
-	 * Returns the receiver's image if it has one, or null
-	 * if it does not.
+	 * Returns the receiver's image if it has one, or null if it does not.
 	 *
 	 * @return the receiver's image
 	 *
 	 * @exception SWTException
 	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
 	 *                </ul>
 	 */
 	public Image getImage() {
@@ -450,16 +474,17 @@ public class BadgedLabel extends Canvas {
 	}
 
 	/**
-	 * Returns the receiver's text, which will be an empty
-	 * string if it has never been set or if the receiver is
-	 * a <code>SEPARATOR</code> label.
+	 * Returns the receiver's text, which will be an empty string if it has never
+	 * been set or if the receiver is a <code>SEPARATOR</code> label.
 	 *
 	 * @return the receiver's text
 	 *
 	 * @exception SWTException
 	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
 	 *                </ul>
 	 */
 	public String getText() {
@@ -474,8 +499,10 @@ public class BadgedLabel extends Canvas {
 	 *
 	 * @exception SWTException
 	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
 	 *                </ul>
 	 */
 	public Color getTextColor() {
@@ -484,20 +511,23 @@ public class BadgedLabel extends Canvas {
 	}
 
 	/**
-	 * Sets the receiver's background color to the color specified
-	 * by the argument
-	 * 
-	 * @param color the new color
+	 * Sets the receiver's background color to the color specified by the argument
+	 *
+	 * @param color
+	 *            the new color
 	 *
 	 * @exception IllegalArgumentException
 	 *                <ul>
-	 *                <li>ERROR_INVALID_ARGUMENT - if the argument has been disposed</li>
+	 *                <li>ERROR_INVALID_ARGUMENT - if the argument has been
+	 *                disposed</li>
 	 *                <li>ERROR_NULL_ARGUMENT - if the argument is null</li>
 	 *                </ul>
 	 * @exception SWTException
 	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
 	 *                </ul>
 	 */
 	public void setBackgroundColor(Color backgroundColor) {
@@ -516,20 +546,23 @@ public class BadgedLabel extends Canvas {
 	}
 
 	/**
-	 * Sets the badge's background color to the color specified
-	 * by the argument
-	 * 
-	 * @param color the new color
+	 * Sets the badge's background color to the color specified by the argument
+	 *
+	 * @param color
+	 *            the new color
 	 *
 	 * @exception IllegalArgumentException
 	 *                <ul>
-	 *                <li>ERROR_INVALID_ARGUMENT - if the argument has been disposed</li>
+	 *                <li>ERROR_INVALID_ARGUMENT - if the argument has been
+	 *                disposed</li>
 	 *                <li>ERROR_NULL_ARGUMENT - if the argument is null</li>
 	 *                </ul>
 	 * @exception SWTException
 	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
 	 *                </ul>
 	 */
 	public void setBadgeBackground(Color badgeBackground) {
@@ -539,20 +572,23 @@ public class BadgedLabel extends Canvas {
 	}
 
 	/**
-	 * Sets the badge's foreground color to the color specified
-	 * by the argument
-	 * 
-	 * @param color the new color
+	 * Sets the badge's foreground color to the color specified by the argument
+	 *
+	 * @param color
+	 *            the new color
 	 *
 	 * @exception IllegalArgumentException
 	 *                <ul>
-	 *                <li>ERROR_INVALID_ARGUMENT - if the argument has been disposed</li>
+	 *                <li>ERROR_INVALID_ARGUMENT - if the argument has been
+	 *                disposed</li>
 	 *                <li>ERROR_NULL_ARGUMENT - if the argument is null</li>
 	 *                </ul>
 	 * @exception SWTException
 	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
 	 *                </ul>
 	 */
 	public void setBadgeForeground(Color badgeForeground) {
@@ -562,10 +598,10 @@ public class BadgedLabel extends Canvas {
 	}
 
 	/**
-	 * Sets the badge's location to the location specified
-	 * by the argument
-	 * 
-	 * @param location the new location
+	 * Sets the badge's value (text) to the text specified by the argument
+	 *
+	 * @param value
+	 *            the new text value
 	 *
 	 * @exception IllegalArgumentException
 	 *                <ul>
@@ -573,32 +609,10 @@ public class BadgedLabel extends Canvas {
 	 *                </ul>
 	 * @exception SWTException
 	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 *                </ul>
-	 */
-	public void setBadgeLocation(BADGE_LOCATION location) {
-		checkWidget();
-		if (location == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		badgeLocation = location;
-	}
-
-	/**
-	 * Sets the badge's value (text) to the text specified
-	 * by the argument
-	 * 
-	 * @param value the new text value
-	 *
-	 * @exception IllegalArgumentException
-	 *                <ul>
-	 *                <li>ERROR_NULL_ARGUMENT - if the argument is null</li>
-	 *                </ul>
-	 * @exception SWTException
-	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
 	 *                </ul>
 	 */
 	public void setBadgeValue(String value) {
@@ -611,20 +625,23 @@ public class BadgedLabel extends Canvas {
 	}
 
 	/**
-	 * Sets the receiver's border color to the color specified
-	 * by the argument
-	 * 
-	 * @param color the new color
+	 * Sets the receiver's border color to the color specified by the argument
+	 *
+	 * @param color
+	 *            the new color
 	 *
 	 * @exception IllegalArgumentException
 	 *                <ul>
-	 *                <li>ERROR_INVALID_ARGUMENT - if the argument has been disposed</li>
+	 *                <li>ERROR_INVALID_ARGUMENT - if the argument has been
+	 *                disposed</li>
 	 *                <li>ERROR_NULL_ARGUMENT - if the argument is null</li>
 	 *                </ul>
 	 * @exception SWTException
 	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
 	 *                </ul>
 	 */
 	public void setBorderColor(Color borderColor) {
@@ -654,19 +671,23 @@ public class BadgedLabel extends Canvas {
 	}
 
 	/**
-	 * Sets the receiver's image to the argument, which may be
-	 * null indicating that no image should be displayed.
+	 * Sets the receiver's image to the argument, which may be null indicating that
+	 * no image should be displayed.
 	 *
-	 * @param image the image to display on the receiver (may be null)
+	 * @param image
+	 *            the image to display on the receiver (may be null)
 	 *
 	 * @exception IllegalArgumentException
 	 *                <ul>
-	 *                <li>ERROR_INVALID_ARGUMENT - if the image has been disposed</li>
+	 *                <li>ERROR_INVALID_ARGUMENT - if the image has been
+	 *                disposed</li>
 	 *                </ul>
 	 * @exception SWTException
 	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
 	 *                </ul>
 	 */
 	public void setImage(Image image) {
@@ -677,25 +698,24 @@ public class BadgedLabel extends Canvas {
 	/**
 	 * Sets the receiver's text.
 	 * <p>
-	 * This method sets the widget label. The label may include
-	 * the mnemonic character and line delimiters.
+	 * This method sets the widget label. The label may include the mnemonic
+	 * character and line delimiters.
 	 * </p>
 	 * <p>
-	 * Mnemonics are indicated by an '&amp;' that causes the next
-	 * character to be the mnemonic. When the user presses a
-	 * key sequence that matches the mnemonic, focus is assigned
-	 * to the control that follows the label. On most platforms,
-	 * the mnemonic appears underlined but may be emphasised in a
-	 * platform specific manner. The mnemonic indicator character
-	 * '&amp;' can be escaped by doubling it in the string, causing
-	 * a single '&amp;' to be displayed.
+	 * Mnemonics are indicated by an '&amp;' that causes the next character to be
+	 * the mnemonic. When the user presses a key sequence that matches the mnemonic,
+	 * focus is assigned to the control that follows the label. On most platforms,
+	 * the mnemonic appears underlined but may be emphasised in a platform specific
+	 * manner. The mnemonic indicator character '&amp;' can be escaped by doubling
+	 * it in the string, causing a single '&amp;' to be displayed.
 	 * </p>
 	 * <p>
-	 * Note: If control characters like '\n', '\t' etc. are used
-	 * in the string, then the behavior is platform dependent.
+	 * Note: If control characters like '\n', '\t' etc. are used in the string, then
+	 * the behavior is platform dependent.
 	 * </p>
 	 *
-	 * @param string the new text
+	 * @param string
+	 *            the new text
 	 *
 	 * @exception IllegalArgumentException
 	 *                <ul>
@@ -703,8 +723,10 @@ public class BadgedLabel extends Canvas {
 	 *                </ul>
 	 * @exception SWTException
 	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
 	 *                </ul>
 	 */
 	public void setText(String text) {
@@ -714,20 +736,23 @@ public class BadgedLabel extends Canvas {
 	}
 
 	/**
-	 * Sets the receiver's text color to the color specified
-	 * by the argument
-	 * 
-	 * @param color the new color
+	 * Sets the receiver's text color to the color specified by the argument
+	 *
+	 * @param color
+	 *            the new color
 	 *
 	 * @exception IllegalArgumentException
 	 *                <ul>
-	 *                <li>ERROR_INVALID_ARGUMENT - if the argument has been disposed</li>
+	 *                <li>ERROR_INVALID_ARGUMENT - if the argument has been
+	 *                disposed</li>
 	 *                <li>ERROR_NULL_ARGUMENT - if the argument is null</li>
 	 *                </ul>
 	 * @exception SWTException
 	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
 	 *                </ul>
 	 */
 	public void setTextColor(Color textColor) {

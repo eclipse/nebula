@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Akuiteo (http://www.akuiteo.com). All rights reserved. This program and the
+ * Copyright (c) 2019 Akuiteo (http://www.akuiteo.com). All rights reserved. This program and the
  * accompanying materials are made available under the terms of the Eclipse
  * Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -34,15 +34,16 @@ public class BadgedLabelSnippet {
 		shell.setLayout(new GridLayout(5, false));
 		shell.setBackground(display.getSystemColor(SWT.COLOR_WHITE));
 
-		icon = new Image(display, BadgedLabelSnippet.class.getClassLoader().getResourceAsStream("org/eclipse/nebula/widgets/badgedlabel/user.png"));
+		icon = new Image(display, BadgedLabelSnippet.class.getClassLoader()
+				.getResourceAsStream("org/eclipse/nebula/widgets/badgedlabel/user.png"));
 
-		createButtons("Blue :", BADGE_COLOR.BLUE, BADGE_LOCATION.TOP_LEFT);
-		createButtons("Grey:", BADGE_COLOR.GREY, BADGE_LOCATION.TOP_RIGHT);
-		createButtons("Green:", BADGE_COLOR.GREEN, BADGE_LOCATION.BOTTOM_LEFT);
-		createButtons("Red:", BADGE_COLOR.RED, BADGE_LOCATION.BOTTOM_RIGHT);
-		createButtons("Yellow:", BADGE_COLOR.YELLOW, BADGE_LOCATION.TOP_RIGHT);
-		createButtons("Cyan:", BADGE_COLOR.CYAN, BADGE_LOCATION.TOP_LEFT);
-		createButtons("Black:", BADGE_COLOR.BLACK, BADGE_LOCATION.BOTTOM_RIGHT);
+		createButtons("Blue :", SWT.COLOR_BLUE, SWT.TOP | SWT.LEFT);
+		createButtons("Grey:", SWT.COLOR_GRAY, SWT.TOP | SWT.RIGHT);
+		createButtons("Green:", SWT.COLOR_GREEN, SWT.BOTTOM | SWT.LEFT);
+		createButtons("Red:", SWT.COLOR_RED, SWT.BOTTOM | SWT.RIGHT);
+		createButtons("Yellow:", SWT.COLOR_YELLOW, SWT.TOP | SWT.RIGHT);
+		createButtons("Cyan:", SWT.COLOR_CYAN, SWT.TOP | SWT.LEFT);
+		createButtons("Black:", SWT.COLOR_BLACK, SWT.BOTTOM | SWT.RIGHT);
 
 		shell.pack();
 		shell.open();
@@ -57,60 +58,53 @@ public class BadgedLabelSnippet {
 
 	}
 
-	private static void createButtons(final String text, BADGE_COLOR color, BADGE_LOCATION location) {
+	private static void createButtons(final String text, int color, int location) {
 		final Label label = new Label(shell, SWT.NONE);
 		label.setBackground(label.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		String locationText;
-		switch (location) {
-			case BOTTOM_LEFT:
-				locationText = "Bottom left";
-				break;
-			case BOTTOM_RIGHT:
-				locationText = "Bottom right";
-				break;
-			case TOP_LEFT:
-				locationText = "Top left";
-				break;
-			default:
-				locationText = "Top right";
+		if (location == (SWT.BOTTOM | SWT.LEFT)) {
+			locationText = "Bottom left";
+		} else if (location == (SWT.BOTTOM | SWT.RIGHT)) {
+			locationText = "Bottom right";
+		} else if (location == (SWT.TOP | SWT.LEFT)) {
+			locationText = "Top left";
+		} else {
+			locationText = "Top right";
 		}
+
 		label.setText(text + " " + locationText);
 		label.setLayoutData(new GridData(GridData.END, GridData.CENTER, false, false));
 
-		final BadgedLabel button1 = new BadgedLabel(shell, SWT.NONE);
+		final BadgedLabel button1 = new BadgedLabel(shell, location);
 		button1.setText("Notification");
 		final GridData gd = new GridData(GridData.FILL, GridData.CENTER, false, false);
 		gd.widthHint = 200;
 		gd.heightHint = 100;
 		button1.setLayoutData(gd);
-		button1.setBadgeLocation(location);
-		button1.changeBadgeColor(color);
 		button1.setBadgeValue("1");
+		button1.setPredefinedColor(color);
 		button1.setBackground(label.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 
-		final BadgedLabel button2 = new BadgedLabel(shell, SWT.NONE);
+		final BadgedLabel button2 = new BadgedLabel(shell, location);
 		button2.setText("Text & image");
 		button2.setImage(icon);
 		button2.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
-		button2.setBadgeLocation(location);
-		button2.changeBadgeColor(color);
+		button2.setPredefinedColor(color);
 		button2.setBadgeValue("2");
 		button2.setBackground(label.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 
-		final BadgedLabel button3 = new BadgedLabel(shell, SWT.NONE);
+		final BadgedLabel button3 = new BadgedLabel(shell, location);
 		button3.setImage(icon);
 		button3.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false));
-		button3.setBadgeLocation(location);
-		button3.changeBadgeColor(color);
+		button3.setPredefinedColor(color);
 		button3.setBadgeValue("99+");
 		button3.setBackground(label.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 
-		final BadgedLabel button4 = new BadgedLabel(shell, SWT.NONE);
+		final BadgedLabel button4 = new BadgedLabel(shell, location);
 		button4.setText("Disabled");
 		button4.setEnabled(false);
 		button4.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false));
-		button4.setBadgeLocation(location);
-		button4.changeBadgeColor(color);
+		button4.setPredefinedColor(color);
 		button4.setBadgeValue("New");
 		button4.setBackground(label.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 	}
