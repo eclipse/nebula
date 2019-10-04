@@ -18,6 +18,7 @@ package org.eclipse.nebula.widgets.led;
  */
 public enum LEDCharacter {
 	CLEAR(false, false, false, false, false, false, false), //
+	MINUS(false, false, false, false, false, false, true),
 	//
 	ZERO(true, true, true, true, true, true, false), //
 	ONE(false, true, true, false, false, false, false), //
