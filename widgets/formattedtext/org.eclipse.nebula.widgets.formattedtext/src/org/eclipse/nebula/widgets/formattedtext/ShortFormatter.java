@@ -95,7 +95,7 @@ public class ShortFormatter extends NumberFormatter {
 	public Object getValue() {
 		Object value = super.getValue();
 		if (value instanceof Short) {
-			return (Short) value;
+			return value;
 		} else if (value instanceof Number) {
 			return new Short(((Number) value).shortValue());
 		} else {
@@ -110,7 +110,7 @@ public class ShortFormatter extends NumberFormatter {
 	 *
 	 * @return The value type.
 	 */
-	public Class getValueType() {
+	public Class<Short> getValueType() {
 		return Short.class;
 	}
 }
