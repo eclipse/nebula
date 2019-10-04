@@ -25,7 +25,7 @@ public class StringFormatter extends AbstractFormatter {
    * Returns the current value formatted for display.<p>
    * There is no difference in this formatter between edit and display values.
    * So this method returns the edit string.
-   * 
+   *
    * @return display string
    * @see ITextFormatter#getDisplayString()
    */
@@ -39,7 +39,7 @@ public class StringFormatter extends AbstractFormatter {
    * widget gains focus.<br>
    * This formatter has no formatting features. So it simply return the Text
    * widget content.
-   * 
+   *
    * @return edit string
    * @see ITextFormatter#getEditString()
    */
@@ -51,7 +51,7 @@ public class StringFormatter extends AbstractFormatter {
    * Returns the current value.<br>
    * This formatter has no formatting features. So it simply return the Text
    * widget content.
-   * 
+   *
    * @return current string value
    * @see ITextFormatter#getValue()
    */
@@ -63,10 +63,10 @@ public class StringFormatter extends AbstractFormatter {
    * Returns the type of value this {@link ITextFormatter} handles,
    * i.e. returns in {@link #getValue()}.<br>
    * A StringFormatter always returns a String value.
-   * 
+   *
    * @return The value type.
    */
-  public Class getValueType() {
+  public Class<String> getValueType() {
 		return String.class;
 	}
 
@@ -74,7 +74,7 @@ public class StringFormatter extends AbstractFormatter {
    * Returns <code>true</code> if current edited value is empty, else returns
    * <code>false</code>.<br>
    * A string is empty if its length is 0.
-   * 
+   *
    * @return true if empty, else false
    */
   public boolean isEmpty() {
@@ -85,7 +85,7 @@ public class StringFormatter extends AbstractFormatter {
    * Returns <code>true</code> if current edited value is valid, else returns
    * <code>false</code>.<br>
    * StringFormatter always return true.
-   * 
+   *
    * @return true
    * @see ITextFormatter#isValid()
    */
@@ -96,7 +96,7 @@ public class StringFormatter extends AbstractFormatter {
   /**
    * Sets the value to edit. The value provided must be a <code>String</code>.
    * The Text widget is simply updated with the value.
-   * 
+   *
    * @param value string value
    * @throws IllegalArgumentException if not a string
    * @see ITextFormatter#setValue(java.lang.Object)
@@ -112,7 +112,7 @@ public class StringFormatter extends AbstractFormatter {
    * Handles a <code>VerifyEvent</code> sent when the text is about to be modified.
    * This method is the entry point of all operations of formatting.<br>
    * This formatter has no formatting features. So this method do nothing.
-   * 
+   *
    * @see org.eclipse.swt.events.VerifyListener#verifyText(org.eclipse.swt.events.VerifyEvent)
    */
   public void verifyText(VerifyEvent e) {

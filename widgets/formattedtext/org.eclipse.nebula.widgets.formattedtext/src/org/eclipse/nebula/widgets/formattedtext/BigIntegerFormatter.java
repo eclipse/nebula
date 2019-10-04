@@ -96,7 +96,7 @@ public class BigIntegerFormatter extends NumberFormatter {
 	public Object getValue() {
 		Object value = super.getValue();
 		if (value instanceof BigInteger) {
-			return (BigInteger) value;
+			return value;
 		} else if (value instanceof Number) {
 			return new BigInteger(((Number) value).toString());
 		} else {
@@ -111,7 +111,7 @@ public class BigIntegerFormatter extends NumberFormatter {
 	 *
 	 * @return The value type.
 	 */
-	public Class getValueType() {
+	public Class<BigInteger> getValueType() {
 		return BigInteger.class;
 	}
 }

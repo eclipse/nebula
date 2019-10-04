@@ -23,14 +23,14 @@ import org.eclipse.swt.events.VerifyEvent;
 /**
  * This class provides formatting of <code>Number</code> values in a
  * <code>FormattedText</code>.<p>
- * 
+ *
  * Formatter is composed of an edit pattern and a display pattern.<br>
  * Display pattern uses the same syntax than <code>DecimalFormat</code>, and
  * uses it to compute the value to display.<br>
  * Edit pattern is more limited and composed of two part, the int part and
  * the decimal part. Formatting characters allow to specify number of digits,
  * minimal length, decimal position, grouping and negative sign.<p>
- * 
+ *
  * <h4>Patterns Characters</h4>
  * <table border=0 cellspacing=3 cellpadding=0 summary="Chart shows pattern letters, date/time component, presentation, and examples.">
  *   <tr bgcolor="#ccccff">
@@ -58,7 +58,7 @@ import org.eclipse.swt.events.VerifyEvent;
  *     <td>Grouping separator</td>
  *   </tr>
  * </table>
- * 
+ *
  * <h4>Examples</h4>
  * <ul>
  * 	 <li><code>new NumberFormatter("#,##0.00")</code> - 1234.5 will edit and
@@ -73,7 +73,7 @@ public class NumberFormatter extends AbstractFormatter {
   private static final char P_MINUS = '-';
 
   /** Cache of number patterns by locales */
-  protected static Hashtable cachedPatterns = new Hashtable();
+  protected static Hashtable<Locale, String> cachedPatterns = new Hashtable<>();
 
   /** Number formatter for display */
   protected DecimalFormat nfDisplay;
@@ -135,7 +135,7 @@ public class NumberFormatter extends AbstractFormatter {
   /**
    * Constructs a new instance with default edit and display masks for the given
    * locale.
-   * 
+   *
    * @param loc locale
    */
   public NumberFormatter(Locale loc) {
@@ -145,7 +145,7 @@ public class NumberFormatter extends AbstractFormatter {
   /**
    * Constructs a new instance with the given edit mask. Display mask is
    * identical to the edit mask, and locale is the default one.
-   * 
+   *
    * @param editPattern edit mask
    */
   public NumberFormatter(String editPattern) {
@@ -155,7 +155,7 @@ public class NumberFormatter extends AbstractFormatter {
   /**
    * Constructs a new instance with the given edit mask and locale. Display mask
    * is identical to the edit mask.
-   * 
+   *
    * @param editPattern edit mask
    * @param loc locale
    */
@@ -166,7 +166,7 @@ public class NumberFormatter extends AbstractFormatter {
   /**
    * Constructs a new instance with the given edit and display masks. Uses the
    * default locale.
-   * 
+   *
    * @param editPattern edit mask
    * @param displayPattern display mask
    */
@@ -176,7 +176,7 @@ public class NumberFormatter extends AbstractFormatter {
 
   /**
    * Constructs a new instance with the given masks and locale.
-   * 
+   *
    * @param editPattern edit mask
    * @param displayPattern display mask
    * @param loc locale
@@ -191,7 +191,7 @@ public class NumberFormatter extends AbstractFormatter {
   /**
    * Clears a part of the edition cache. The start and len parameters are
    * adjusted to avoid clearing in prefix and suffix parts of the cache.
-   * 
+   *
    * @param start beginning index
    * @param len length of portion to clear
    */
@@ -225,7 +225,7 @@ public class NumberFormatter extends AbstractFormatter {
    * Formats the edit buffer. Inserts group separators to the right places,
    * deletes excess decimal digits and add 0 to complete to the minimal length
    * of int and decimal parts. The position of the cursor is preserved.
-   * 
+   *
    * @param curseur Current position of the cursor
    * @return New position of the cursor
    */
@@ -327,12 +327,12 @@ public class NumberFormatter extends AbstractFormatter {
 
   /**
    * Returns the default edit pattern for a given locale.
-   * 
+   *
    * @param loc locale
    * @return Edit pattern
    */
   protected String getDefaultPattern(Locale loc) {
-    String edit = (String) cachedPatterns.get(loc);
+    String edit = cachedPatterns.get(loc);
     if ( edit == null ) {
     	NumberFormat nf = NumberFormat.getNumberInstance(loc);
     	if ( ! (nf instanceof DecimalFormat) ) {
@@ -356,7 +356,7 @@ public class NumberFormatter extends AbstractFormatter {
    * The displayed value is the result of formatting on the <code>Number</code>
    * with a <code>DecimalFormat<code> for the display pattern passed in
    * constructor.
-   * 
+   *
    * @return display string if valid, empty string else
    * @see ITextFormatter#getDisplayString()
    */
@@ -373,7 +373,7 @@ public class NumberFormatter extends AbstractFormatter {
    * widget gains focus.
    * The value returned is the content of the StringBuilder <code>editValue</code>
    * used as cache.
-   * 
+   *
    * @return edit string
    * @see ITextFormatter#getEditString()
    */
@@ -386,7 +386,7 @@ public class NumberFormatter extends AbstractFormatter {
    * If the buffer is flagged as modified, the value is recalculated by parsing
    * with the <code>nfEdit</code> initialized with the edit pattern. If the
    * number is not valid, returns <code>null</code>.
-   * 
+   *
    * @return current number value if valid, <code>null</code> else
    * @see ITextFormatter#getValue()
    */
@@ -395,7 +395,7 @@ public class NumberFormatter extends AbstractFormatter {
       try {
   			value = nfEdit.parse(editValue.substring(prefixLen, editValue.length() - suffixLen));
   		} catch (ParseException e1) {
-  			if ( zeroIntLen + zeroDecimalLen == 0 
+  			if ( zeroIntLen + zeroDecimalLen == 0
   					 && (editValue.length() == 0
   							 || editValue.charAt(0) == symbols.getDecimalSeparator()) ) {
 					value = null;
@@ -412,17 +412,17 @@ public class NumberFormatter extends AbstractFormatter {
    * Returns the type of value this {@link ITextFormatter} handles,
    * i.e. returns in {@link #getValue()}.<br>
    * A NumberFormatter always returns a Number value.
-   * 
+   *
    * @return The value type.
    */
-  public Class getValueType() {
+  public Class<?> getValueType() {
 		return Number.class;
 	}
 
   /**
    * Returns <code>true</code> if current edited value is empty, else returns
    * <code>false</code>.<br>
-   * 
+   *
    * @return <code>true</code> if empty, else <code>false</code>
    */
   public boolean isEmpty() {
@@ -433,7 +433,7 @@ public class NumberFormatter extends AbstractFormatter {
    * Returns <code>true</code> if current edited value is valid, else returns
    * <code>false</code>.<br>
    * A NumberFormatter is valid if the cached value is not null.
-   * 
+   *
    * @return <code>true</code> if valid, else <code>false</code>
    * @see ITextFormatter#isValid()
    */
@@ -444,7 +444,7 @@ public class NumberFormatter extends AbstractFormatter {
   /**
    * Sets the flag to always display the decimal separator, even if the decimal
    * part is empty.
-   * 
+   *
    * @param show true / false
    */
   public void setDecimalSeparatorAlwaysShown(boolean show) {
@@ -464,7 +464,7 @@ public class NumberFormatter extends AbstractFormatter {
   /**
    * Sets the fixed length flags.<br>
    * By default, int and decimal part of the pattern have a fixed length.
-   * 
+   *
    * @param fixedInt flag for int part
    * @param fixedDec flag for decimal part
    */
@@ -476,7 +476,7 @@ public class NumberFormatter extends AbstractFormatter {
   /**
    * Sets the patterns and initializes the technical attributes used to manage
    * the operations.
-   * 
+   *
    * @param edit edit pattern
    * @param display display pattern
    * @param loc Locale to use
@@ -563,10 +563,10 @@ public class NumberFormatter extends AbstractFormatter {
 
   /**
    * Sets a prefix to display before the value.<br>
-   * 
+   *
    * To clear the current prefix, call the <code>setPrefix</code> method with a
    * <code>null</code> parameter.
-   * 
+   *
    * @param prefix prefix to display, or <code>null</code> to clear
    */
   protected void setPrefix(String prefix) {
@@ -582,10 +582,10 @@ public class NumberFormatter extends AbstractFormatter {
 
   /**
    * Sets a suffix to display after the value.<br>
-   * 
+   *
    * To clear the current suffix, call the <code>setSuffix</code> method with a
    * <code>null</code> parameter.
-   * 
+   *
    * @param suffix suffix to display, or <code>null</code> to clear
    */
   protected void setSuffix(String suffix) {
@@ -601,7 +601,7 @@ public class NumberFormatter extends AbstractFormatter {
 
   /**
    * Sets the value to edit. The value provided must be a <code>Number</code>.
-   * 
+   *
    * @param value number value
    * @throws IllegalArgumentException if not a number
    * @see ITextFormatter#setValue(java.lang.Object)
@@ -641,7 +641,7 @@ public class NumberFormatter extends AbstractFormatter {
   /**
    * Handles a <code>VerifyEvent</code> sent when the text is about to be modified.
    * This method is the entry point of all operations of formatting.
-   * 
+   *
    * @see org.eclipse.swt.events.VerifyListener#verifyText(org.eclipse.swt.events.VerifyEvent)
    */
   public void verifyText(VerifyEvent e) {
@@ -691,7 +691,7 @@ public class NumberFormatter extends AbstractFormatter {
     			 * Some locales (eg. French) return a no-break space as the grouping
     			 * separator. This character is not natural to use for users. So we
     			 * recognize too the simple space as the grouping separator.
-    			 * 
+    			 *
     			 * Java bug: 4510618
     			 */
     			if ( d >= 0 && p > d ) {

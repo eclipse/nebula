@@ -4,7 +4,7 @@ Bundle-Name: Nebula FormattedText
 Bundle-SymbolicName: org.eclipse.nebula.widgets.formattedtext
 Bundle-Version: 1.0.0.qualifier
 Export-Package: org.eclipse.nebula.widgets.formattedtext
-Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: Eclipse Nebula
 Require-Bundle: org.eclipse.jface,
  org.eclipse.core.databinding,
