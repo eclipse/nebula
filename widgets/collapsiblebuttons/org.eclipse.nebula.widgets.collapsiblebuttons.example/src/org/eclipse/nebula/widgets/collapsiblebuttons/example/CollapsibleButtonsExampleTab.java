@@ -11,6 +11,7 @@
 package org.eclipse.nebula.widgets.collapsiblebuttons.example;
 
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.nebula.examples.AbstractExampleTab;
 import org.eclipse.nebula.widgets.collapsiblebuttons.CollapsibleButtons;
 import org.eclipse.nebula.widgets.collapsiblebuttons.IColorManager;
 import org.eclipse.swt.SWT;
@@ -18,19 +19,17 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.nebula.examples.AbstractExampleTab;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 /**
  * Demonstrates the CollapsibleButtons widget.
- * 
+ *
  * @author Nicolas Richeton (nicolas.richeton@gmail.com)
  */
 public class CollapsibleButtonsExampleTab extends AbstractExampleTab {
 
-	
 	Image womanImage = null;
 	Image bgImage = null;
 	Image eclipseImage = null;
@@ -39,16 +38,14 @@ public class CollapsibleButtonsExampleTab extends AbstractExampleTab {
 
 	Image itemImage24 = null;
 	Image itemImage16 = null;
-	
+
 	public Control createControl(Composite parent) {
-		
-		if( itemImage24 == null)
-		 itemImage24 = new Image(parent.getDisplay(), Program
-				.findProgram("jpg").getImageData().scaledTo(24, 24)); //$NON-NLS-1$
-		
-		if( itemImage16 == null)
-			itemImage16 = new Image(parent.getDisplay(), Program
-				.findProgram("jpg").getImageData().scaledTo(16, 16)); //$NON-NLS-1$
+
+		if (itemImage24 == null)
+			itemImage24 = new Image(parent.getDisplay(), Program.findProgram("jpg").getImageData().scaledTo(24, 24)); //$NON-NLS-1$
+
+		if (itemImage16 == null)
+			itemImage16 = new Image(parent.getDisplay(), Program.findProgram("jpg").getImageData().scaledTo(16, 16)); //$NON-NLS-1$
 
 		parent.setLayout(new FillLayout());
 
@@ -60,22 +57,16 @@ public class CollapsibleButtonsExampleTab extends AbstractExampleTab {
 		gl.marginHeight = 0;
 		inner.setLayout(gl);
 
-		
-
-		 collapsibleButtons = new CollapsibleButtons(inner,
-				SWT.NONE, IColorManager.SKIN_OFFICE_2007);
-		collapsibleButtons.setLayoutData(new GridData(GridData.GRAB_VERTICAL
-				| GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_END));
+		collapsibleButtons = new CollapsibleButtons(inner, SWT.NONE, IColorManager.SKIN_OFFICE_2007);
+		collapsibleButtons.setLayoutData(
+				new GridData(GridData.GRAB_VERTICAL | GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_END));
 
 		for (int i = 0; i < 5; i++) {
-			collapsibleButtons.addButton("Button "+i, "Tooltip "+i, itemImage24,
-					itemImage16);
+			collapsibleButtons.addButton("Button " + i, "Tooltip " + i, itemImage24, itemImage16);
 		}
 
 		return collapsibleButtons;
 	}
-
-	
 
 	public String[] createLinks() {
 		String[] links = new String[4];
@@ -91,16 +82,8 @@ public class CollapsibleButtonsExampleTab extends AbstractExampleTab {
 		return links;
 	}
 
-	
-
-	
 	public void createParameters(Composite parent) {
-		GridLayoutFactory.swtDefaults().margins(0, 0).numColumns(3).applyTo(
-				parent);
-	
-
-
+		GridLayoutFactory.swtDefaults().margins(0, 0).numColumns(3).applyTo(parent);
 	}
 
-	
 }

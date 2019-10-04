@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    emil.crumhorn@gmail.com - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.nebula.widgets.collapsiblebuttons;
 
@@ -21,20 +21,20 @@ import org.eclipse.swt.widgets.Display;
 
 public class ImageCache {
 
-    private static HashMap mImageMap;
-    
+    private static HashMap<String, Image> mImageMap;
+
     static {
-    	mImageMap = new HashMap();
+    	mImageMap = new HashMap<>();
     }
-    
+
     /**
      * Returns an image that is also cached if it has to be created and does not already exist in the cache.
-     * 
+     *
      * @param fileName Filename of image to fetch
      * @return Image file or null if it could not be found
      */
     public static Image getImage(String fileName) {
-        Image image = (Image) mImageMap.get(fileName);
+        Image image = mImageMap.get(fileName);
         if (image == null) {
             image = createImage(fileName);
             mImageMap.put(fileName, image);
@@ -78,8 +78,8 @@ public class ImageCache {
      *
      */
     public static void dispose() {
-        Iterator e = mImageMap.values().iterator();
-        while (e.hasNext()) 
-        	((Image)e.next()).dispose();
+        Iterator<Image> e = mImageMap.values().iterator();
+        while (e.hasNext())
+        	e.next().dispose();
     }
 }
