@@ -15,17 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
-import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.events.MouseTrackListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -33,6 +26,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Layout;
 
 /**
@@ -83,7 +77,7 @@ import org.eclipse.swt.widgets.Layout;
  * inner.setLayout(gl);<br>
  * <br>
  * CollapsibleButtons cButtons = new CollapsibleButtons(bcWrapper, SWT.NONE);<br>
- * // will ensure the composite takes up the appropriate amount of space and gets aligned correctly, we align it at the end as that is where it should live<br>    
+ * // will ensure the composite takes up the appropriate amount of space and gets aligned correctly, we align it at the end as that is where it should live<br>
  * cButtons.setLayoutData(new GridData(GridData.GRAB_VERTICAL | GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_END));<br>
  * cButtons.addButton(...);<br>
  * </code>
@@ -134,10 +128,10 @@ import org.eclipse.swt.widgets.Layout;
  * flickering and other odd widget behavior. If you intend to run the widget on
  * either Linux or Macintosh (which both know how to double buffer in the OS),
  * you may turn it off.
- * 
+ *
  * @author Emil Crumhorn
  * @version 1.0
- * 
+ *
  */
 public class CollapsibleButtons extends Composite implements MouseListener, MouseMoveListener, MouseTrackListener {
 
@@ -151,7 +145,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 	private Rectangle			mBounds;
 	private Rectangle			mMoveBar;
 
-	private List				mButtons;
+	private List<CustomButton>	mButtons;
 
 	private int					mButtonHeight;
 
@@ -170,23 +164,23 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 
 	private int					mInvoluntaryButtonLevel	= -1;
 
-	private List				mHidden;
+	private List<CustomButton>	mHidden;
 	private Composite			mParent;
 
 	private int					mColorTheme				= IColorManager.SKIN_AUTO_DETECT;
 
 	private IColorManager		mColorManager;
-	private List				mButtonListeners;
+	private List<IButtonListener> mButtonListeners;
 
 	private ISettings			mSettings;
 	private ILanguageSettings	mLanguage;
 
-	private List				mMenuListeners;
+	private List<IMenuListener> mMenuListeners;
 
 	/**
 	 * Creates a new ButtonComposite. Add buttons using the addButton(...)
 	 * method call.
-	 * 
+	 *
 	 * @param parent Parent composite
 	 * @param style Composite style, SWT.NO_BACKGROUND will be appended to the
 	 *            style.
@@ -199,7 +193,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 
 	/**
 	 * Creates a new ButtonComposite with a given language manager.
-	 *  
+	 *
 	 * @param parent Parent composite
 	 * @param style style
 	 * @param language Language manager
@@ -207,11 +201,11 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 	public CollapsibleButtons(Composite parent, int style, ILanguageSettings language) {
 		this(parent, style, IColorManager.SKIN_AUTO_DETECT, null, null, language);
 	}
-	
+
 	/**
 	 * Creates a new ButtonComposite with a given settings and language manager.
-	 * 
-	 * @param parent Parent composite 
+	 *
+	 * @param parent Parent composite
 	 * @param style style
 	 * @param settings Settings manager
 	 * @param language Language manager
@@ -223,15 +217,15 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 	/**
 	 * Creates a new ButtonComposite. Add buttons using the addButton(...)
 	 * method call.
-	 * 
+	 *
 	 * By default, unless you set a theme, the theme will be read from whatever
 	 * the active color scheme is in Windows XP. If you are using a custom theme
 	 * and the color scheme cannot be determined, the fall-back will be the
 	 * Windows XP Blue theme.
-	 * 
+	 *
 	 * NOTE: If you want the Office 2007 theme, you have to set it manually as
 	 * there is no way to guess if you have office 2007 installed or 2005.
-	 * 
+	 *
 	 * @param parent Parent composite
 	 * @param style Composite style, SWT.NO_BACKGROUND will be appended to the
 	 *            style
@@ -247,7 +241,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 	/**
 	 * Creates a new ButtonComposite. Add buttons using the addButton(...)
 	 * method call.
-	 * 
+	 *
 	 * @param parent Parent composite
 	 * @param style Composite style, SWT.NO_BACKGROUND will be appended to the
 	 *            style
@@ -263,15 +257,15 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 	/**
 	 * Creates a new ButtonComposite. Add buttons using the addButton(...)
 	 * method call.
-	 * 
+	 *
 	 * By default, unless you set a theme, the theme will be read from whatever
 	 * the active color scheme is in Windows XP. If you are using a custom theme
 	 * and the color scheme cannot be determined, the fall-back will be the
 	 * Windows XP Blue theme.
-	 * 
+	 *
 	 * NOTE: If you want the Office 2007 theme, you have to set it manually as
 	 * there is no way to guess if you have office 2007 installed or 2005.
-	 * 
+	 *
 	 * @param parent Parent composite
 	 * @param style Composite style, SWT.NO_BACKGROUND will be appended to the
 	 *            style
@@ -289,15 +283,15 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 	/**
 	 * Creates a new ButtonComposite. Add buttons using the addButton(...)
 	 * method call.
-	 * 
+	 *
 	 * By default, unless you set a theme, the theme will be read from whatever
 	 * the active color scheme is in Windows XP. If you are using a custom theme
 	 * and the color scheme cannot be determined, the fall-back will be the
 	 * Windows XP Blue theme.
-	 * 
+	 *
 	 * NOTE: If you want the Office 2007 theme, you have to set it manually as
 	 * there is no way to guess if you have office 2007 installed or 2005.
-	 * 
+	 *
 	 * @param parent Parent composite
 	 * @param style Composite style, SWT.NO_BACKGROUND will be appended to the
 	 *            style
@@ -328,7 +322,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 	/**
 	 * Adds a new IButtonListener listener that will report clicks and other
 	 * events.
-	 * 
+	 *
 	 * @param listener IButtonListener
 	 */
 	public void addButtonListener(IButtonListener listener) {
@@ -339,7 +333,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 
 	/**
 	 * Removes an IButtonListener
-	 * 
+	 *
 	 * @param listener IButtonListener
 	 */
 	public void removeButtonListener(IButtonListener listener) {
@@ -367,10 +361,10 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 
 		mButtonHeight = mSettings.getButtonHeight();
 
-		mMenuListeners = new ArrayList();
-		mButtons = new ArrayList();
-		mHidden = new ArrayList();
-		mButtonListeners = new ArrayList();
+		mMenuListeners = new ArrayList<>();
+		mButtons = new ArrayList<>();
+		mHidden = new ArrayList<>();
+		mButtonListeners = new ArrayList<>();
 
 		// this lets us auto-fit the buttons to the aviaiable space when the
 		// parent composite is resized.
@@ -382,95 +376,65 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 		// a "new size" has been picked, and that's
 		// the starting point for the next invuluntary size if any. Confusing?
 		// Just try it then look at the code.
-		mParent.addControlListener(new ControlListener() {
-			public void controlMoved(ControlEvent event) {
-			}
+		mParent.addListener(SWT.Resize, e-> {
+			int availableHeight = mParent.getClientArea().height;
+			int neededHeight = getBounds().height;
 
-			public void controlResized(ControlEvent event) {
-				int availableHeight = mParent.getClientArea().height;
-				int neededHeight = getBounds().height;
-
-				if (availableHeight < neededHeight) {
-					if (mInvoluntaryButtonLevel == -1) {
-						mInvoluntaryButtonLevel = getNumVisibleButtons();
-					}
-
-					hideNextButton();
+			if (availableHeight < neededHeight) {
+				if (mInvoluntaryButtonLevel == -1) {
+					mInvoluntaryButtonLevel = getNumVisibleButtons();
 				}
 
-				if (mInvoluntaryButtonLevel != -1) {
-					if (availableHeight - mButtonHeight > neededHeight) {
-						if (getNumVisibleButtons() < mInvoluntaryButtonLevel) {
-							showNextButton();
-						}
+				hideNextButton();
+			}
+
+			if (mInvoluntaryButtonLevel != -1) {
+				if (availableHeight - mButtonHeight > neededHeight) {
+					if (getNumVisibleButtons() < mInvoluntaryButtonLevel) {
+						showNextButton();
 					}
 				}
 			}
 		});
 
-		addPaintListener(new PaintListener() {
-			public void paintControl(PaintEvent event) {
-				repaint(event);
-			}
-		});
-
-		addFocusListener(new FocusListener() {
-			public void focusGained(FocusEvent event) {
-			}
-
-			public void focusLost(FocusEvent event) {
-				redraw();
-			}
-		});
-
-		addMouseTrackListener(new MouseTrackAdapter() {
-			public void mouseEnter(MouseEvent event) {
-			}
-
-			public void mouseExit(MouseEvent event) {
-				setCursor(null);
-			}
-
-			public void mouseHover(MouseEvent event) {
-			}
-		});
+		addListener(SWT.Paint, event -> repaint(event));
+		addListener(SWT.FocusOut, event -> redraw());
+		addListener(SWT.MouseExit, event -> setCursor(null));
 
 		addMouseListener(this);
 
-		addMouseMoveListener(new MouseMoveListener() {
-			public void mouseMove(MouseEvent event) {
-				Point p = toDisplay(new Point(event.x, event.y));
+		addListener(SWT.MouseMove, event -> {
+			Point p = toDisplay(new Point(event.x, event.y));
 
-				if (!mMouseIsDown) {
-					if (isInside(event.x, event.y, mMoveBar)) {
-						if (mSettings.allowButtonResizing()) {
-							setCursor(CURSOR_SIZENS);
-						}
-					} else {
-						setCursor(null);
+			if (!mMouseIsDown) {
+				if (isInside(event.x, event.y, mMoveBar)) {
+					if (mSettings.allowButtonResizing()) {
+						setCursor(CURSOR_SIZENS);
 					}
+				} else {
+					setCursor(null);
 				}
+			}
 
-				if (mMouseIsDown) {
-					// reset the "forced size" value, as we resized it to pick
-					// what size we wanted
-					mInvoluntaryButtonLevel = -1;
-					int diff = p.y - mStartY;
+			if (mMouseIsDown) {
+				// reset the "forced size" value, as we resized it to pick
+				// what size we wanted
+				mInvoluntaryButtonLevel = -1;
+				int diff = p.y - mStartY;
 
-					if (diff > mButtonHeight) {
-						// ensures bar doesn't get smaller unless mouse pointer
-						// is south of the move-bar
-						if (event.y < mMoveBar.y) {
-							return;
-						}
+				if (diff > mButtonHeight) {
+					// ensures bar doesn't get smaller unless mouse pointer
+					// is south of the move-bar
+					if (event.y < mMoveBar.y) {
+						return;
+					}
 
-						hideNextButton();
+					hideNextButton();
+					mStartY = p.y;
+				} else {
+					if (Math.abs(diff) > mButtonHeight) {
+						showNextButton();
 						mStartY = p.y;
-					} else {
-						if (Math.abs(diff) > mButtonHeight) {
-							showNextButton();
-							mStartY = p.y;
-						}
 					}
 				}
 			}
@@ -479,7 +443,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 		setLayout(new VerticalLayout());
 	}
 
-	private void repaint(PaintEvent event) {
+	private void repaint(Event event) {
 		GC gc = event.gc;
 		if (mCreated && mEnableDoubleBuffering) {
 			try {
@@ -585,14 +549,14 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 
 	/**
 	 * Returns the number of currently visible buttons.
-	 * 
+	 *
 	 * @return Number of visible buttons
 	 */
 	public int getNumVisibleButtons() {
 		checkWidget();
 		int num = 0;
 		for (int i = 0; i < mButtons.size(); i++) {
-			CustomButton b = (CustomButton) mButtons.get(i);
+			CustomButton b = mButtons.get(i);
 			if (b.isVisible())
 				num++;
 		}
@@ -601,7 +565,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 
 	/**
 	 * Hides the button from the list and the toolbar.
-	 * 
+	 *
 	 * @param button Button to hide
 	 */
 	public void permanentlyHideButton(CustomButton button) {
@@ -612,7 +576,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 		mHidden.add(button);
 
 		for (int i = 0; i < mButtons.size(); i++) {
-			CustomButton b = (CustomButton) mButtons.get(i);
+			CustomButton b = mButtons.get(i);
 			if (b == button) {
 				if (b.isVisible()) {
 					b.setVisible(false);
@@ -638,7 +602,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 	/**
 	 * Un-hides a button that has been hidden from toolbar and ButtonComposite
 	 * view.
-	 * 
+	 *
 	 * @param button Button to show
 	 */
 	public void permanentlyShowButton(CustomButton button) {
@@ -646,7 +610,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 		mHidden.remove(button);
 
 		for (int i = 0; i < mButtons.size(); i++) {
-			CustomButton b = (CustomButton) mButtons.get(i);
+			CustomButton b = mButtons.get(i);
 
 			if (b == button) {
 				if (!b.isVisible()) {
@@ -670,13 +634,13 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 
 	/**
 	 * Hides the given button (and adds it to the toolbar).
-	 * 
+	 *
 	 * @param button Button to hide
 	 */
 	public void hideButton(CustomButton button) {
 		checkWidget();
 		for (int i = 0; i < mButtons.size(); i++) {
-			CustomButton b = (CustomButton) mButtons.get(i);
+			CustomButton b = mButtons.get(i);
 			if (b == button) {
 				// if (label.isVisible() == true) {
 				b.setVisible(false);
@@ -699,13 +663,13 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 
 	/**
 	 * Shows the given button (and removes it from the toolbar).
-	 * 
+	 *
 	 * @param button Button to show
 	 */
 	public void showButton(CustomButton button) {
 		checkWidget();
 		for (int i = 0; i < mButtons.size(); i++) {
-			CustomButton b = (CustomButton) mButtons.get(i);
+			CustomButton b = mButtons.get(i);
 
 			if (b == button) {
 				if (!b.isVisible()) {
@@ -730,7 +694,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 
 	/**
 	 * If a button is permanently hidden or permanently shown.
-	 * 
+	 *
 	 * @param button CustomButton to check
 	 * @return true or false
 	 */
@@ -742,7 +706,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 	/**
 	 * Hides the next button furthest down in the list. If there are no more
 	 * buttons left to hide, nothing will happen.
-	 * 
+	 *
 	 */
 	public void hideNextButton() {
 		checkWidget();
@@ -751,7 +715,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 		}
 
 		for (int i = (mButtons.size() - 1); i >= 0; i--) {
-			CustomButton b = (CustomButton) mButtons.get(i);
+			CustomButton b = mButtons.get(i);
 
 			if (mHidden.contains(b))
 				continue;
@@ -774,7 +738,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 	/**
 	 * Should you ever need to force a re-layout of the composite, this is the
 	 * method to call. It is not recommended to be used.
-	 * 
+	 *
 	 */
 	public void forceLayoutUpdate() {
 		checkWidget();
@@ -784,7 +748,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 	/**
 	 * Shows the next button from the list of buttons that are currently hidden.
 	 * If there are no more buttons hiding, nothing will happen.
-	 * 
+	 *
 	 */
 	public void showNextButton() {
 		checkWidget();
@@ -793,7 +757,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 		}
 
 		for (int i = 0; i < mButtons.size(); i++) {
-			CustomButton b = (CustomButton) mButtons.get(i);
+			CustomButton b = mButtons.get(i);
 
 			if (mHidden.contains(b))
 				continue;
@@ -827,7 +791,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 	/**
 	 * Adds a button to the composite. Button will be added at the bottom of any
 	 * previously existing buttons.
-	 * 
+	 *
 	 * @param name Text that should be displayed on button. May be null.
 	 * @param toolTip Tooltip that is displayed when mouse moves over both
 	 *            button and tool bar icon. Recommended null.
@@ -857,15 +821,15 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 
 		mParent.redraw();
 		mParent.layout();
-		
+
 		reindexButtons();
 		return cb;
 
 	}
-	
+
 	private void reindexButtons() {
 		for (int i = 0; i < mButtons.size(); i++) {
-			((CustomButton)mButtons.get(i)).setNumber(i);
+			mButtons.get(i).setNumber(i);
 		}
 	}
 
@@ -886,7 +850,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 					return;
 
 				for (int i = 0; i < mButtonListeners.size(); i++) {
-					IButtonListener inav = (IButtonListener) mButtonListeners.get(i);
+					IButtonListener inav = mButtonListeners.get(i);
 					inav.buttonClicked(cb, event);
 				}
 
@@ -924,7 +888,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 			cb.updateHover(true);
 
 			for (int i = 0; i < mButtonListeners.size(); i++) {
-				IButtonListener inav = (IButtonListener) mButtonListeners.get(i);
+				IButtonListener inav = mButtonListeners.get(i);
 				inav.buttonEnter(cb, event);
 			}
 		}
@@ -939,7 +903,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 			setCursor(null);
 
 			for (int i = 0; i < mButtonListeners.size(); i++) {
-				IButtonListener inav = (IButtonListener) mButtonListeners.get(i);
+				IButtonListener inav = mButtonListeners.get(i);
 				inav.buttonExit(cb, event);
 			}
 		}
@@ -951,7 +915,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 			CustomButton cb = (CustomButton) event.widget;
 
 			for (int i = 0; i < mButtonListeners.size(); i++) {
-				IButtonListener inav = (IButtonListener) mButtonListeners.get(i);
+				IButtonListener inav = mButtonListeners.get(i);
 				inav.buttonHover(cb, event);
 			}
 		}
@@ -959,27 +923,27 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 
 	/**
 	 * Flags a button as selected and pretends it got clicked.
-	 * 
+	 *
 	 * @param button Button to select and click
 	 */
 	public void selectItemAndLoad(CustomButton button) {
 		checkWidget();
 		selectItem(button);
 		for (int i = 0; i < mButtonListeners.size(); i++) {
-			IButtonListener inav = (IButtonListener) mButtonListeners.get(i);
+			IButtonListener inav = mButtonListeners.get(i);
 			inav.buttonClicked(getSelection(), null);
 		}
 	}
 
 	/**
 	 * Selects a specific CustomButton.
-	 * 
+	 *
 	 * @param button CustomButton to select
 	 */
 	public void selectItem(CustomButton button) {
 		checkWidget();
 		for (int i = 0; i < mButtons.size(); i++) {
-			CustomButton b = (CustomButton) mButtons.get(i);
+			CustomButton b = mButtons.get(i);
 			if (b == button) {
 				selectButton(button);
 				break;
@@ -998,7 +962,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 		mToolBarComposite.setSelectedItem(null);
 		redraw();
 	}
-	
+
 	// selects a button
 	private void selectButton(CustomButton button) {
 		if (mSelectedButton != null) {
@@ -1017,17 +981,17 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 
 	/**
 	 * Returns the list of all buttons.
-	 * 
+	 *
 	 * @return List of buttons
 	 */
-	public List getItems() {
+	public List<CustomButton> getItems() {
 		checkWidget();
 		return mButtons;
 	}
 
 	/**
 	 * Returns the current selection, or null if none.
-	 * 
+	 *
 	 * @return Selected button.
 	 */
 	public CustomButton getSelection() {
@@ -1037,7 +1001,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 
 	/**
 	 * Returns the number of buttons in the list.
-	 * 
+	 *
 	 * @return Button count
 	 */
 	public int itemCount() {
@@ -1047,7 +1011,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 
 	/**
 	 * Returns the active color manager.
-	 * 
+	 *
 	 * @return IColorManager
 	 */
 	public IColorManager getColorManager() {
@@ -1057,7 +1021,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 
 	/**
 	 * Returns the current Settings manager.
-	 * 
+	 *
 	 * @return ISettings
 	 */
 	public ISettings getSettings() {
@@ -1067,7 +1031,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 
 	/**
 	 * Returns the current Language settings manager.
-	 * 
+	 *
 	 * @return ILanguageSettings
 	 */
 	public ILanguageSettings getLanguageSettings() {
@@ -1077,7 +1041,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 
 	/**
 	 * Returns the toolbar composite.
-	 * 
+	 *
 	 * @return ToolbarComposite
 	 */
 	public ToolbarComposite getToolbarComposite() {
@@ -1087,7 +1051,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 
 	/**
 	 * Adds a menu listener that is notified before and after the menu popup is shown.
-	 * 
+	 *
 	 * @param listener Listener to add
 	 */
 	public void addMenuListener(IMenuListener listener) {
@@ -1097,7 +1061,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 
 	/**
 	 * Removes a menu listener.
-	 * 
+	 *
 	 * @param listener Listener to remove
 	 */
 	public void removeMenuListener(IMenuListener listener) {
@@ -1109,51 +1073,51 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 	 */
 	public void removeAllButtons() {
 		checkWidget();
-		
+
 		// remove them in reverse or we'll have some interesting issues
 		for (int i = mButtons.size()-1; i >= 0; i--) {
-			((CustomButton) mButtons.get(i)).dispose();
+			mButtons.get(i).dispose();
 		}
-		
+
 		if (mToolBarComposite != null)
 			mToolBarComposite.removeAll();
-		
+
 		mButtonListeners.clear();
 		mButtons.clear();
 		mParent.redraw();
-		mParent.layout();		
+		mParent.layout();
 	}
 
 	/**
 	 * Same method that is called when {@link CustomButton#dispose()} is called.
-	 * 
+	 *
 	 * @param cb CustomButton to remove
 	 */
 	public void removeButton(CustomButton cb) {
 		checkWidget();
 		remove(cb, true);
 	}
-	
+
 	// internal remove of button
 	void remove(CustomButton cb, boolean callDispose) {
 		cb.removeMouseListener(this);
 		cb.removeMouseTrackListener(this);
 
 		mButtons.remove(cb);
-		
+
 		if (mToolBarComposite != null)
 			mToolBarComposite.removeItem(cb);
-		
+
 		mParent.redraw();
 		mParent.layout();
 
 		if (callDispose)
-			cb.dispose();		
-		
+			cb.dispose();
+
 		reindexButtons();
 	}
-	
-	List getMenuListeners() {
+
+	List<IMenuListener> getMenuListeners() {
 		return mMenuListeners;
 	}
 
@@ -1177,7 +1141,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 
 				// calculate where toolbar goes first, causes less ghosting
 				for (int i = 0; i < mButtons.size(); i++) {
-					CustomButton button = (CustomButton) mButtons.get(i);
+					CustomButton button = mButtons.get(i);
 					if (!button.isVisible()) {
 						continue;
 					}
@@ -1191,7 +1155,7 @@ public class CollapsibleButtons extends Composite implements MouseListener, Mous
 
 			// now set the toolbars
 			for (int i = 0; i < mButtons.size(); i++) {
-				CustomButton button = (CustomButton) mButtons.get(i);
+				CustomButton button = mButtons.get(i);
 				if (!button.isVisible()) {
 					continue;
 				}
