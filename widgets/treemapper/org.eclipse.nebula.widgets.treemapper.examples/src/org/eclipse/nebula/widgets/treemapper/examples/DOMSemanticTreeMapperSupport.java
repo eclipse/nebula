@@ -25,7 +25,7 @@ public class DOMSemanticTreeMapperSupport implements ISemanticTreeMapperSupport<
 		public Node right;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.nebula.treemapper.ISemanticTreeMapperSupport#createSemanticMappingObject(java.lang.Object, java.lang.Object)
 	 */
 	@Override
@@ -36,7 +36,7 @@ public class DOMSemanticTreeMapperSupport implements ISemanticTreeMapperSupport<
 		return res;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.nebula.treemapper.ISemanticTreeMapperSupport#resolveLeftItem(java.lang.Object)
 	 */
 	@Override
@@ -44,7 +44,7 @@ public class DOMSemanticTreeMapperSupport implements ISemanticTreeMapperSupport<
 		return semanticMappingObject.left;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.nebula.treemapper.ISemanticTreeMapperSupport#resolveRightItem(java.lang.Object)
 	 */
 	@Override
