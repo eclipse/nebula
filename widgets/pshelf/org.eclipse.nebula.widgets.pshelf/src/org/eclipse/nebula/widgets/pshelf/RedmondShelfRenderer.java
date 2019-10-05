@@ -2,8 +2,8 @@
  * Copyright (c) 2006 Chris Gross. All rights reserved. This program and the
  * accompanying materials are made available under the terms of the Eclipse
  * Public License v1.0 which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Contributors: schtoo@schtoo.com(Chris Gross) - initial API and implementation
  ******************************************************************************/
 package org.eclipse.nebula.widgets.pshelf;
@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Display;
  * PRE-RELEASE ALPHA VERSION. USERS SHOULD EXPECT API CHANGES IN FUTURE
  * VERSIONS.
  * </p>
- * 
+ *
  * @author cgross
  */
 public class RedmondShelfRenderer extends AbstractRenderer {
@@ -87,7 +87,7 @@ public class RedmondShelfRenderer extends AbstractRenderer {
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * @see org.eclipse.nebula.widgets.pshelf.AbstractRenderer#paint(org.eclipse.swt.graphics.GC, java.lang.Object)
 	 */
 	@Override
 	public void paint(GC gc, Object value) {
@@ -181,13 +181,15 @@ public class RedmondShelfRenderer extends AbstractRenderer {
 		}
 	}
 
+	/**
+	 * @see org.eclipse.nebula.widgets.pshelf.AbstractRenderer#initialize(org.eclipse.swt.widgets.Control)
+	 */
 	@Override
 	public void initialize(Control control) {
 		this.parent = (PShelf) control;
 
 		FontData fd = parent.getFont().getFontData()[0];
 		initialFont = new Font(parent.getDisplay(), fd.getName(), fd.getHeight(), SWT.BOLD);
-		// parent.setFont(initialFont);
 
 		Color baseColor = parent.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT);
 		Color color1 = createNewBlendedColor(baseColor, parent.getDisplay().getSystemColor(SWT.COLOR_WHITE), 30);
@@ -226,7 +228,6 @@ public class RedmondShelfRenderer extends AbstractRenderer {
 
 		baseColor.dispose();
 
-		// initialOpenFont = FontUtils.createFont(parent.getFont(),4,SWT.BOLD);
 		if ((parent.getStyle() & SWT.SIMPLE) != 0)
 			initialOpenFont = new Font(parent.getDisplay(), "Arial", 12, SWT.BOLD);
 		else
@@ -257,6 +258,9 @@ public class RedmondShelfRenderer extends AbstractRenderer {
 		initialColors = new Color[] { gradient1, gradient2, selectedGradient1, selectedGradient2, hoverGradient1, hoverGradient2, lineColor };
 	}
 
+	/**
+	 * @see org.eclipse.nebula.widgets.pshelf.AbstractRenderer#dispose()
+	 */
 	@Override
 	public void dispose() {
 		initialFont.dispose();
@@ -331,7 +335,7 @@ public class RedmondShelfRenderer extends AbstractRenderer {
 
 	/**
 	 * Sets text color for the selected item.
-	 * 
+	 *
 	 * @param selectedForeground
 	 *            Can be <code>null</code>, foreground color of the parent is
 	 *            used in that case.
@@ -346,7 +350,7 @@ public class RedmondShelfRenderer extends AbstractRenderer {
 
 	/**
 	 * Sets text color for the hovered item.
-	 * 
+	 *
 	 * @param hoverForeground
 	 *            Can be <code>null</code>, foreground color of the parent is
 	 *            used in that case.
@@ -361,7 +365,7 @@ public class RedmondShelfRenderer extends AbstractRenderer {
 
 	/**
 	 * Sets text color for non-selected items.
-	 * 
+	 *
 	 * @param foreground
 	 *            Can be <code>null</code>, foreground color of the parent is
 	 *            used in that case.

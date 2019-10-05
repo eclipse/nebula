@@ -32,5 +32,5 @@ public interface IShelfViewerFactory {
 	 *
 	 * @return new viewer
 	 */
-	public Viewer createViewerForContent(Composite parent, Object content);
+	Viewer createViewerForContent(Composite parent, Object content);
 }
