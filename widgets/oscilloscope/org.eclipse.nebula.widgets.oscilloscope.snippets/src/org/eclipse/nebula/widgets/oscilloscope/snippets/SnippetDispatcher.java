@@ -1,7 +1,7 @@
 /*******************************************************************************
  *  Copyright (c) 2010 Weltevree Beheer BV, Remain Software & Industrial-TSI
- * 
- * All rights reserved. 
+ *
+ * All rights reserved.
  * This program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.TabItem;
 
 /**
  * Used to provide values to the Oscilloscope and keep it alive.
- * 
+ *
  */
 public abstract class SnippetDispatcher extends OscilloscopeDispatcher {
 
@@ -148,13 +148,7 @@ public abstract class SnippetDispatcher extends OscilloscopeDispatcher {
 		group2.setExpandVertical(true);
 		group2.setExpandHorizontal(true);
 
-		;
-		// group2.setShowFocusedControl(true);
-		// group2.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
-		// group2.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-
 		Composite group2a = new Composite(group2, SWT.None);
-		// group2a.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		group2a.setLayout(new GridLayout(4, false));
 
 		Label lblServiceActive = new Label(group2a, SWT.NONE);
