@@ -25,8 +25,6 @@ import java.util.ResourceBundle;
 import org.eclipse.nebula.widgets.picture.forms.FormPictureControl;
 import org.eclipse.nebula.widgets.picture.internal.IOUtils;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.layout.GridData;
@@ -44,7 +42,7 @@ import org.eclipse.swt.widgets.MenuItem;
  * implemented to override methodes whicg create SWT {@link Label}, SWT
  * {@link Composite} and Link according if you use only SWT (see
  * {@link PictureControl}) or SWT Form Toolkit (see {@link FormPictureControl}.
- * 
+ *
  * @param <T>
  *            the "Modify" Link control used to upload a new image picture.
  */
@@ -101,7 +99,7 @@ public abstract class AbstractPictureControl<T extends Control> extends
 
 	/**
 	 * Constructor for {@link AbstractPictureControl} with default SWT styles.
-	 * 
+	 *
 	 * @param parent
 	 *            a composite control which will be the parent of the new
 	 *            instance (cannot be null)
@@ -112,11 +110,11 @@ public abstract class AbstractPictureControl<T extends Control> extends
 
 	/**
 	 * Constructor for {@link AbstractPictureControl} with given SWT style .
-	 * 
+	 *
 	 * @param parent
 	 *            a composite control which will be the parent of the new
 	 *            instance (cannot be null)
-	 * 
+	 *
 	 * @param compositeStyle
 	 *            SWT style of the SWT Composite which host Label+Link controls.
 	 * @param labelStyle
@@ -131,11 +129,11 @@ public abstract class AbstractPictureControl<T extends Control> extends
 
 	/**
 	 * Constructor for {@link AbstractPictureControl} with given SWT styles.
-	 * 
+	 *
 	 * @param parent
 	 *            a composite control which will be the parent of the new
 	 *            instance (cannot be null)
-	 * 
+	 *
 	 * @param compositeStyle
 	 *            SWT style of the SWT Composite which host Label+Link controls.
 	 * @param labelStyle
@@ -158,7 +156,7 @@ public abstract class AbstractPictureControl<T extends Control> extends
 	/**
 	 * Create the UI picture control composed with Label (for host the image
 	 * picture)
-	 * 
+	 *
 	 * @param labelStyle
 	 *            the SWT label style.
 	 * @param linkStyle
@@ -197,7 +195,7 @@ public abstract class AbstractPictureControl<T extends Control> extends
 
 	/**
 	 * Create the SWT {@link Label} to host the image picture.
-	 * 
+	 *
 	 * @param parent
 	 *            a composite control which will be the parent of the new
 	 *            instance (cannot be null)
@@ -228,7 +226,7 @@ public abstract class AbstractPictureControl<T extends Control> extends
 
 	/**
 	 * Create the menu with "Delete", "Modify" Item.
-	 * 
+	 *
 	 * @param parent
 	 * @return
 	 */
@@ -238,30 +236,24 @@ public abstract class AbstractPictureControl<T extends Control> extends
 		// "Delete" menu item.
 		deleteItem = new MenuItem(menu, SWT.NONE);
 		deleteItem.setText(resources.getString(PICTURE_CONTROL_DELETE));
-		deleteItem.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				// Delete the image.
-				AbstractPictureControl.this.handleDeleteImage();
-			}
+		deleteItem.addListener(SWT.Selection, e -> {
+			// Delete the image.
+			AbstractPictureControl.this.handleDeleteImage();
 		});
 
 		// "Modify" menu item.
 		final MenuItem modifyItem = new MenuItem(menu, SWT.NONE);
 		modifyItem.setText(resources.getString(PICTURE_CONTROL_MODIFY));
-		modifyItem.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				// Modify the image.
-				AbstractPictureControl.this.handleModifyImage();
-			}
+		modifyItem.addListener(SWT.Selection, e -> {
+			// Modify the image.
+			AbstractPictureControl.this.handleModifyImage();
 		});
 		return menu;
 	}
 
 	/**
 	 * Create the "Modify" Link to open Explorer File to select a new image.
-	 * 
+	 *
 	 * @param parent
 	 * @param style
 	 * @return
@@ -279,7 +271,7 @@ public abstract class AbstractPictureControl<T extends Control> extends
 
 	/**
 	 * Create the "Delete" Link to delete the current image.
-	 * 
+	 *
 	 * @param parent
 	 * @param style
 	 * @return
@@ -297,7 +289,7 @@ public abstract class AbstractPictureControl<T extends Control> extends
 
 	/**
 	 * Set the text of the "Modify" Link.
-	 * 
+	 *
 	 * @param text
 	 */
 	public void setModifyImageLinkText(String text) {
@@ -306,7 +298,7 @@ public abstract class AbstractPictureControl<T extends Control> extends
 
 	/**
 	 * Set the text of the "Modify" Link.
-	 * 
+	 *
 	 * @param text
 	 */
 	public void setDeleteImageLinkText(String text) {
@@ -329,10 +321,10 @@ public abstract class AbstractPictureControl<T extends Control> extends
 	 * "*.*" matches all files. For filters with multiple extensions, use
 	 * semicolon as a separator, e.g. "*.jpg;*.png".
 	 * </p>
-	 * 
+	 *
 	 * @param extensions
 	 *            the file extension filter
-	 * 
+	 *
 	 * @see #setFilterNames to specify the user-friendly names corresponding to
 	 *      the extensions
 	 */
@@ -361,7 +353,7 @@ public abstract class AbstractPictureControl<T extends Control> extends
 	/**
 	 * Configure the {@link FileDialog} to set the file extension, the text,
 	 * etc. This method can be override to custome the configuration.
-	 * 
+	 *
 	 * @param fd
 	 */
 	protected void configure(FileDialog fd) {
@@ -374,7 +366,7 @@ public abstract class AbstractPictureControl<T extends Control> extends
 	/**
 	 * Returns the {@link FileDialog}SWT style. This method can be override if
 	 * the SWT style should be customized.
-	 * 
+	 *
 	 * @return
 	 */
 	protected int getFileDialogStyle() {
@@ -383,7 +375,7 @@ public abstract class AbstractPictureControl<T extends Control> extends
 
 	/**
 	 * Handle error when file selected cannot be loaded as Image.
-	 * 
+	 *
 	 * @param e
 	 */
 	protected void handleError(Throwable e) {
@@ -392,7 +384,7 @@ public abstract class AbstractPictureControl<T extends Control> extends
 
 	/**
 	 * Returns the picture label which hosts the picture image.
-	 * 
+	 *
 	 * @return
 	 */
 	public Label getPictureLabel() {
@@ -402,7 +394,7 @@ public abstract class AbstractPictureControl<T extends Control> extends
 	/**
 	 * Returns the "Modify" Link control used to open Explorer files to change
 	 * image.
-	 * 
+	 *
 	 * @return
 	 */
 	public T getModifyImageLink() {
@@ -412,7 +404,7 @@ public abstract class AbstractPictureControl<T extends Control> extends
 	/**
 	 * Returns the "Delete" Link control used to open Explorer files to change
 	 * image.
-	 * 
+	 *
 	 * @return
 	 */
 	public T getDeleteImageLink() {
@@ -435,7 +427,7 @@ public abstract class AbstractPictureControl<T extends Control> extends
 	/**
 	 * Set the current {@link InputStream} of the image picture. null is
 	 * accepted to delete the image.
-	 * 
+	 *
 	 * @param stream
 	 * @throws IOException
 	 */
@@ -450,7 +442,7 @@ public abstract class AbstractPictureControl<T extends Control> extends
 	/**
 	 * Returns the {@link InputStream} of the image picture and null if none
 	 * picture was setted.
-	 * 
+	 *
 	 * @return
 	 */
 	public InputStream getImageStream() {
@@ -464,7 +456,7 @@ public abstract class AbstractPictureControl<T extends Control> extends
 	/**
 	 * Set the current byte array of the image picture. null is accepted to
 	 * delete the image.
-	 * 
+	 *
 	 * @param imageByteArray
 	 */
 	public void setImageByteArray(byte[] imageByteArray) {
@@ -498,7 +490,7 @@ public abstract class AbstractPictureControl<T extends Control> extends
 	/**
 	 * Returns the resized {@link ImageData}. This method can be override if
 	 * scale logic doen't please you.
-	 * 
+	 *
 	 * @param imageData
 	 * @return
 	 */
@@ -509,8 +501,8 @@ public abstract class AbstractPictureControl<T extends Control> extends
 			return imageData;
 		}
 		int newHeight = maxImageHeight;
-		float w = (float) width;
-		float h = (float) height;
+		float w = width;
+		float h = height;
 		float nw = (w / h) * maxImageHeight;
 		int newWidth = (int) nw;
 		return imageData.scaledTo(newWidth, newHeight);
@@ -519,7 +511,7 @@ public abstract class AbstractPictureControl<T extends Control> extends
 	/**
 	 * Returns the byte array of the image picture and null if none picture was
 	 * setted.
-	 * 
+	 *
 	 * @return
 	 */
 	public byte[] getImageByteArray() {
@@ -529,7 +521,7 @@ public abstract class AbstractPictureControl<T extends Control> extends
 	/**
 	 * Sets a new locale to use for picture controle. Locale will choose the
 	 * well resources bundle.
-	 * 
+	 *
 	 * @param locale
 	 *            new locale (must not be null)
 	 */
@@ -544,7 +536,7 @@ public abstract class AbstractPictureControl<T extends Control> extends
 
 	/**
 	 * Set the maximum height of the image.
-	 * 
+	 *
 	 * @param maxImageHeight
 	 */
 	public void setMaxImageHeight(Integer maxImageHeight) {
@@ -558,9 +550,9 @@ public abstract class AbstractPictureControl<T extends Control> extends
 
 	/**
 	 * Returns the maximum height of the image.
-	 * 
+	 *
 	 * @param maxImageHeight
-	 * 
+	 *
 	 * @return
 	 */
 	public Integer getMaxImageHeight() {
@@ -569,7 +561,7 @@ public abstract class AbstractPictureControl<T extends Control> extends
 
 	/**
 	 * Set the maximum width of the image.
-	 * 
+	 *
 	 * @param maxImageWidth
 	 */
 	public void setMaxImageWidth(Integer maxImageWidth) {
@@ -583,9 +575,9 @@ public abstract class AbstractPictureControl<T extends Control> extends
 
 	/**
 	 * Returns the maximum width of the image.
-	 * 
+	 *
 	 * @param maxImageWidth
-	 * 
+	 *
 	 * @return
 	 */
 	public Integer getMaxImageWidth() {
@@ -597,7 +589,7 @@ public abstract class AbstractPictureControl<T extends Control> extends
 	 * the input stream of the image in this control. It is used just to display
 	 * an "empty" picture and set the maximum/minimum width of the picture
 	 * Label.
-	 * 
+	 *
 	 * @param defaultImage
 	 */
 	public void setDefaultImage(Image defaultImage) {
@@ -633,7 +625,7 @@ public abstract class AbstractPictureControl<T extends Control> extends
 
 	/**
 	 * Create a SWT {@link Label}.
-	 * 
+	 *
 	 * @param parent
 	 *            a composite control which will be the parent of the new
 	 *            instance (cannot be null)
@@ -645,7 +637,7 @@ public abstract class AbstractPictureControl<T extends Control> extends
 
 	/**
 	 * Create a SWT control for the "Modify" Link.
-	 * 
+	 *
 	 * @param parent
 	 *            a composite control which will be the parent of the new
 	 *            instance (cannot be null)
@@ -657,7 +649,7 @@ public abstract class AbstractPictureControl<T extends Control> extends
 
 	/**
 	 * Create a SWT {@link Composite}.
-	 * 
+	 *
 	 * @param parent
 	 *            a composite control which will be the parent of the new
 	 *            instance (cannot be null)
@@ -669,7 +661,7 @@ public abstract class AbstractPictureControl<T extends Control> extends
 
 	/**
 	 * Set the text of a Link control.
-	 * 
+	 *
 	 * @param modifyImageLink
 	 * @param text
 	 */
@@ -677,14 +669,14 @@ public abstract class AbstractPictureControl<T extends Control> extends
 
 	/**
 	 * Add the handler to open Explorer files to the Link control.
-	 * 
+	 *
 	 * @param modifyImageLink
 	 */
 	protected abstract void addModifyImageHandler(T modifyImageLink);
 
 	/**
 	 * Add the handler to delete the image to the Link control.
-	 * 
+	 *
 	 * @param modifyImageLink
 	 */
 	protected abstract void addDeleteImageHandler(T deleteImageLink);
