@@ -13,8 +13,7 @@ package org.eclipse.nebula.animation.effects;
 
 import org.eclipse.nebula.animation.AnimationRunner;
 import org.eclipse.nebula.animation.movement.IMovement;
-import org.eclipse.swt.events.ShellEvent;
-import org.eclipse.swt.events.ShellListener;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -35,7 +34,8 @@ public class AlphaEffect extends AbstractEffect {
 	 * @param onCancel
 	 */
 	public static void setAlpha(AnimationRunner runner, Shell w, int alpha,
-			int duration, IMovement movement, Runnable onStop, Runnable onCancel) {
+			int duration, IMovement movement, Runnable onStop,
+			Runnable onCancel) {
 		AlphaEffect effect = new AlphaEffect(w, w.getAlpha(), alpha, duration,
 				movement, onStop, onCancel);
 		runner.runEffect(effect);
@@ -75,36 +75,12 @@ public class AlphaEffect extends AbstractEffect {
 			useRunner = new AnimationRunner();
 		}
 
-		final Runnable closeListener = new Runnable() {
-			public void run() {
-				shell.dispose();
-			}
-		};
+		final Runnable closeListener = () -> shell.dispose();
 
-		shell.addShellListener(new ShellListener() {
-
-			public void shellIconified(ShellEvent e) {
-				// Do nothing
-			}
-
-			public void shellDeiconified(ShellEvent e) {
-				// Do nothing
-			}
-
-			public void shellDeactivated(ShellEvent e) {
-				// Do nothing
-			}
-
-			public void shellClosed(ShellEvent e) {
-				e.doit = false;
-				setAlpha(useRunner, shell, 0, duration, easing, closeListener,
-						null);
-			}
-
-			public void shellActivated(ShellEvent e) {
-				// Do nothing
-			}
-
+		shell.addListener(SWT.Close, e -> {
+			e.doit = false;
+			setAlpha(useRunner, shell, 0, duration, easing, closeListener,
+					null);
 		});
 
 	}
@@ -129,8 +105,8 @@ public class AlphaEffect extends AbstractEffect {
 		if (shell.isDisposed())
 			return;
 
-		shell.setAlpha((int) (start + step
-				* easingFunction.getValue((int) currentTime)));
+		shell.setAlpha((int) (start
+				+ step * easingFunction.getValue((int) currentTime)));
 	}
 
 }

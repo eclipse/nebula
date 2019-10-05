@@ -59,15 +59,13 @@ public class GalleryGroupResizeEffect extends AbstractEffect {
 		this.item = item;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.sharemedia.ui.sat.AbstractEffect#applyEffect(long)
 	 */
 	public void applyEffect(final long currentTime) {
 		if (!item.isDisposed()) {
-			double value = src + diff
-					* easingFunction.getValue((int) currentTime);
+			double value = src
+					+ diff * easingFunction.getValue((int) currentTime);
 
 			item.setData(DefaultGalleryGroupRenderer.DATA_ANIMATION,
 					new Double(value));

@@ -17,6 +17,8 @@ import org.eclipse.nebula.animation.movement.ElasticOut;
 import org.eclipse.nebula.animation.movement.ExpoOut;
 import org.eclipse.nebula.animation.movement.IMovement;
 import org.eclipse.nebula.animation.movement.LinearInOut;
+import org.eclipse.nebula.examples.AbstractExampleTab;
+import org.eclipse.nebula.examples.ExamplesView;
 import org.eclipse.nebula.widgets.gallery.AbstractGalleryItemRenderer;
 import org.eclipse.nebula.widgets.gallery.AbstractGridGroupRenderer;
 import org.eclipse.nebula.widgets.gallery.DefaultGalleryGroupRenderer;
@@ -26,87 +28,44 @@ import org.eclipse.nebula.widgets.gallery.GalleryItem;
 import org.eclipse.nebula.widgets.gallery.ListItemRenderer;
 import org.eclipse.nebula.widgets.gallery.NoGroupRenderer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.RowLayout;
-import org.eclipse.nebula.examples.AbstractExampleTab;
-import org.eclipse.nebula.examples.ExamplesView;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Spinner;
 
 /**
  * Demonstrates the Gallery widget.
- * 
+ *
  * @author Nicolas Richeton (nicolas.richeton@gmail.com)
  */
 public class GalleryExampleTab extends AbstractExampleTab {
+	Gallery g = null;
 
-	class WidgetParamSelectionListener implements SelectionListener {
-
-		public void widgetDefaultSelected(SelectionEvent e) {
+	Listener groupParamSelectionListener = e -> {
+		if (g != null) {
+			g.setGroupRenderer(getGroupRenderer());
 		}
+	};
 
-		public void widgetSelected(SelectionEvent e) {
-			recreateExample();
+	Listener itemRendererParamSelectionListener = e -> {
+		if (g != null) {
+			g.setItemRenderer(getItemRenderer());
 		}
-
-	}
-
-	class GroupRendererParamSelectionListener implements SelectionListener {
-
-		public void widgetDefaultSelected(SelectionEvent e) {
-		}
-
-		public void widgetSelected(SelectionEvent e) {
-			if (g != null) {
-				g.setGroupRenderer(getGroupRenderer());
-			}
-		}
-
-	}
-
-	class ItemRendererParamSelectionListener implements SelectionListener {
-
-		public void widgetDefaultSelected(SelectionEvent e) {
-		}
-
-		public void widgetSelected(SelectionEvent e) {
-			if (g != null) {
-				g.setItemRenderer(getItemRenderer());
-			}
-		}
-
-	}
-
-	class ContentParamSelectionListener implements SelectionListener {
-
-		public void widgetDefaultSelected(SelectionEvent e) {
-		}
-
-		public void widgetSelected(SelectionEvent e) {
-			clearAndPopulateGallery(g);
-		}
-
-	}
-
-	WidgetParamSelectionListener widgetParamSelectionListener = new WidgetParamSelectionListener();
-	GroupRendererParamSelectionListener groupParamSelectionListener = new GroupRendererParamSelectionListener();
-	ItemRendererParamSelectionListener itemRendererParamSelectionListener = new ItemRendererParamSelectionListener();
-	ContentParamSelectionListener contentParamSelectionListener = new ContentParamSelectionListener();
+	};
+	Listener contentParamSelectionListener = e -> clearAndPopulateGallery(g);
 
 	Image womanImage = null;
 	Image bgImage = null;
 	Image eclipseImage = null;
 
-	Gallery g = null;
 	ScrollingSmoother scrollingSmoother;
 
 	// Style options
@@ -207,21 +166,21 @@ public class GalleryExampleTab extends AbstractExampleTab {
 
 	private AbstractGalleryItemRenderer getItemRenderer() {
 		AbstractGalleryItemRenderer result = null;
-		
+
 		if (cItemRenderer.getSelectionIndex() == 0) {
 			DefaultGalleryItemRenderer renderer = new DefaultGalleryItemRenderer();
 			renderer.setShowLabels(bItemLabel.getSelection());
 			renderer.setDropShadowsSize(sItemDropShadowSize.getSelection());
 			renderer.setDropShadows(bItemDropShadow.getSelection());
-			result= renderer;
+			result = renderer;
 		} else {
 			ListItemRenderer renderer = new ListItemRenderer();
 			renderer.setShowLabels(bItemLabel.getSelection());
 			renderer.setDropShadowsSize(sItemDropShadowSize.getSelection());
 			renderer.setDropShadows(bItemDropShadow.getSelection());
-			result= renderer;
+			result = renderer;
 		}
-		
+
 		return result;
 
 	}
@@ -256,8 +215,7 @@ public class GalleryExampleTab extends AbstractExampleTab {
 				groupRenderer.setAnimationOpenMovement(m);
 
 				// Length
-				groupRenderer.setAnimationLength(sAnimationDuration
-						.getSelection());
+				groupRenderer.setAnimationLength(sAnimationDuration.getSelection());
 			} else {
 				groupRenderer.setAnimation(false);
 			}
@@ -266,7 +224,7 @@ public class GalleryExampleTab extends AbstractExampleTab {
 			NoGroupRenderer groupRenderer = new NoGroupRenderer();
 			result = groupRenderer;
 		}
-		
+
 		result.setItemWidth(this.itemWidthScale.getSelection());
 		result.setItemHeight(this.itemHeightScale.getSelection());
 		result.setMinMargin(this.marginsScale.getSelection());
@@ -294,7 +252,7 @@ public class GalleryExampleTab extends AbstractExampleTab {
 
 	/**
 	 * Add 10 groups containing 10 to 100 items each.
-	 * 
+	 *
 	 * @param g
 	 */
 	private void populateGalleryWithGroups(Gallery g) {
@@ -328,24 +286,19 @@ public class GalleryExampleTab extends AbstractExampleTab {
 
 				if (bDecoratorLeft.getSelection()) {
 					gi2.setData(DefaultGalleryItemRenderer.OVERLAY_TOP_LEFT,
-							getDecoratorImage(eclipseImage, sDecoratorNumber
-									.getSelection()));
+							getDecoratorImage(eclipseImage, sDecoratorNumber.getSelection()));
 				}
 				if (bDecoratorUp.getSelection()) {
 					gi2.setData(DefaultGalleryItemRenderer.OVERLAY_TOP_RIGHT,
-							getDecoratorImage(eclipseImage, sDecoratorNumber
-									.getSelection()));
+							getDecoratorImage(eclipseImage, sDecoratorNumber.getSelection()));
 				}
 				if (bDecoratorRight.getSelection()) {
-					gi2.setData(
-							DefaultGalleryItemRenderer.OVERLAY_BOTTOM_RIGHT,
-							getDecoratorImage(eclipseImage, sDecoratorNumber
-									.getSelection()));
+					gi2.setData(DefaultGalleryItemRenderer.OVERLAY_BOTTOM_RIGHT,
+							getDecoratorImage(eclipseImage, sDecoratorNumber.getSelection()));
 				}
 				if (bDecoratorDown.getSelection()) {
 					gi2.setData(DefaultGalleryItemRenderer.OVERLAY_BOTTOM_LEFT,
-							getDecoratorImage(eclipseImage, sDecoratorNumber
-									.getSelection()));
+							getDecoratorImage(eclipseImage, sDecoratorNumber.getSelection()));
 				}
 			}
 		}
@@ -383,13 +336,13 @@ public class GalleryExampleTab extends AbstractExampleTab {
 		return links;
 	}
 
-	private Button createButton(Composite parent, int style, String text,
-			boolean selected, boolean createExampleOnChange) {
+	private Button createButton(Composite parent, int style, String text, boolean selected,
+			boolean createExampleOnChange) {
 		Button button = new Button(parent, style);
 		button.setText(text);
 		button.setSelection(selected);
 		if (createExampleOnChange) {
-			button.addSelectionListener(new WidgetParamSelectionListener());
+			button.addListener(SWT.Selection, e -> recreateExample());
 		}
 		return button;
 	}
@@ -410,57 +363,47 @@ public class GalleryExampleTab extends AbstractExampleTab {
 		styleGroup.setLayout(new RowLayout());
 
 		bMulti = createButton(styleGroup, SWT.CHECK, "SWT.MULTI", false, true);
-		bVScroll = createButton(styleGroup, SWT.RADIO, "SWT.V_SCROLL", true,
-				true);
-		bHScroll = createButton(styleGroup, SWT.RADIO, "SWT.H_SCROLL", false,
-				true);
+		bVScroll = createButton(styleGroup, SWT.RADIO, "SWT.V_SCROLL", true, true);
+		bHScroll = createButton(styleGroup, SWT.RADIO, "SWT.H_SCROLL", false, true);
 	}
 
 	private void createAnimationGroup(Composite parent) {
 		Group animationGroup = createEmptyGroup(parent, "Animation");
 		animationGroup.setLayout(new RowLayout());
 
-		bAnimation = createButton(animationGroup, SWT.CHECK, "Animations",
-				false, false);
-		bAnimation.addSelectionListener(groupParamSelectionListener);
+		bAnimation = createButton(animationGroup, SWT.CHECK, "Animations", false, false);
+		bAnimation.addListener(SWT.Selection, groupParamSelectionListener);
 
 		cAnimationMovement = new Combo(animationGroup, SWT.READ_ONLY);
-		cAnimationMovement.setItems(new String[] { "ExpoOut", "BounceOut",
-				"ElasticOut", "LinearInOut" });
+		cAnimationMovement.setItems(new String[] { "ExpoOut", "BounceOut", "ElasticOut", "LinearInOut" });
 		cAnimationMovement.setText("ExpoOut");
-		cAnimationMovement.addSelectionListener(groupParamSelectionListener);
+		cAnimationMovement.addListener(SWT.Selection, groupParamSelectionListener);
 
 		sAnimationDuration = new Spinner(animationGroup, SWT.NONE);
 		sAnimationDuration.setMinimum(250);
 		sAnimationDuration.setMaximum(5000);
 		sAnimationDuration.setIncrement(100);
 		sAnimationDuration.setSelection(500);
-		sAnimationDuration.addSelectionListener(groupParamSelectionListener);
+		sAnimationDuration.addListener(SWT.Selection, groupParamSelectionListener);
 	}
 
 	private void createDataGroup(Composite parent) {
 		Group dataGroup = createEmptyGroup(parent, "Data");
 		dataGroup.setLayout(new RowLayout());
 
-		bGroupImage = createButton(dataGroup, SWT.CHECK, "Group image", false,
-				true);
-		bGroupDescription = createButton(dataGroup, SWT.CHECK,
-				"Group descriptions", false, true);
-		bItemDescription = createButton(dataGroup, SWT.CHECK,
-				"Item descriptions", false, true);
+		bGroupImage = createButton(dataGroup, SWT.CHECK, "Group image", false, true);
+		bGroupDescription = createButton(dataGroup, SWT.CHECK, "Group descriptions", false, true);
+		bItemDescription = createButton(dataGroup, SWT.CHECK, "Item descriptions", false, true);
 	}
 
 	private void createLayoutGroup(Composite parent) {
 		Group dataGroup = createEmptyGroup(parent, "Layout");
 		dataGroup.setLayout(new RowLayout());
 
-		bLayoutAutoMargin = createButton(dataGroup, SWT.CHECK, "Auto Margins",
-				false, true);
-		bLayoutAlwaysExpanded = createButton(dataGroup, SWT.CHECK,
-				"Always expanded", false, true);
+		bLayoutAutoMargin = createButton(dataGroup, SWT.CHECK, "Auto Margins", false, true);
+		bLayoutAlwaysExpanded = createButton(dataGroup, SWT.CHECK, "Always expanded", false, true);
 
-		bLayoutLowQualityOnAction = createButton(dataGroup, SWT.CHECK,
-				"Low quality on user action", false, true);
+		bLayoutLowQualityOnAction = createButton(dataGroup, SWT.CHECK, "Low quality on user action", false, true);
 
 	}
 
@@ -473,20 +416,16 @@ public class GalleryExampleTab extends AbstractExampleTab {
 		sDecoratorNumber.setMaximum(5);
 		sDecoratorNumber.setIncrement(1);
 		sDecoratorNumber.setSelection(1);
-		sDecoratorNumber.addSelectionListener(contentParamSelectionListener);
+		sDecoratorNumber.addListener(SWT.Selection, contentParamSelectionListener);
 
-		bDecoratorLeft = createButton(dataGroup, SWT.CHECK, "Top Left", false,
-				false);
-		bDecoratorLeft.addSelectionListener(contentParamSelectionListener);
-		bDecoratorUp = createButton(dataGroup, SWT.CHECK, "Top Right", false,
-				false);
-		bDecoratorUp.addSelectionListener(contentParamSelectionListener);
-		bDecoratorRight = createButton(dataGroup, SWT.CHECK, "Bottom Right",
-				false, false);
-		bDecoratorRight.addSelectionListener(contentParamSelectionListener);
-		bDecoratorDown = createButton(dataGroup, SWT.CHECK, "Bottom Left",
-				false, false);
-		bDecoratorDown.addSelectionListener(contentParamSelectionListener);
+		bDecoratorLeft = createButton(dataGroup, SWT.CHECK, "Top Left", false, false);
+		bDecoratorLeft.addListener(SWT.Selection, contentParamSelectionListener);
+		bDecoratorUp = createButton(dataGroup, SWT.CHECK, "Top Right", false, false);
+		bDecoratorUp.addListener(SWT.Selection, contentParamSelectionListener);
+		bDecoratorRight = createButton(dataGroup, SWT.CHECK, "Bottom Right", false, false);
+		bDecoratorRight.addListener(SWT.Selection, contentParamSelectionListener);
+		bDecoratorDown = createButton(dataGroup, SWT.CHECK, "Bottom Left", false, false);
+		bDecoratorDown.addListener(SWT.Selection, contentParamSelectionListener);
 	}
 
 	private void createItemParametersGroup(Composite parent) {
@@ -496,109 +435,74 @@ public class GalleryExampleTab extends AbstractExampleTab {
 		cItemRenderer = new Combo(dataGroup, SWT.READ_ONLY);
 		cItemRenderer.setItems(new String[] { "Icon", "List" });
 		cItemRenderer.setText("Icon");
-		cItemRenderer.addSelectionListener(itemRendererParamSelectionListener);
+		cItemRenderer.addListener(SWT.Selection, itemRendererParamSelectionListener);
 
-		bItemDropShadow = createButton(dataGroup, SWT.CHECK, "Drop shadow",
-				false, true);
+		bItemDropShadow = createButton(dataGroup, SWT.CHECK, "Drop shadow", false, true);
 
 		sItemDropShadowSize = new Spinner(dataGroup, SWT.NONE);
 		sItemDropShadowSize.setMinimum(0);
 		sItemDropShadowSize.setMaximum(20);
 		sItemDropShadowSize.setIncrement(1);
 		sItemDropShadowSize.setSelection(5);
-		sItemDropShadowSize
-				.addSelectionListener(itemRendererParamSelectionListener);
+		sItemDropShadowSize.addListener(SWT.Selection, itemRendererParamSelectionListener);
 
-		bItemLabel = createButton(dataGroup, SWT.CHECK, "Display labels",
-				false, true);
+		bItemLabel = createButton(dataGroup, SWT.CHECK, "Display labels", false, true);
 	}
 
 	private void createGroupParametersGroup(Composite parent) {
 		Group dataGroup = createEmptyGroup(parent, "Group parameters");
-		GridLayoutFactory.swtDefaults().margins(3, 3).numColumns(3).applyTo(
-				dataGroup);
+		GridLayoutFactory.swtDefaults().margins(3, 3).numColumns(3).applyTo(dataGroup);
 
 		cGroupRenderer = new Combo(dataGroup, SWT.READ_ONLY);
-		cGroupRenderer
-				.setItems(new String[] { "Show groups", "Hide groups" });
+		cGroupRenderer.setItems(new String[] { "Show groups", "Hide groups" });
 		cGroupRenderer.setText("Show groups");
-		cGroupRenderer.addSelectionListener(groupParamSelectionListener);
+		cGroupRenderer.addListener(SWT.Selection, groupParamSelectionListener);
 		GridData gridData = new GridData();
 		gridData.horizontalSpan = 3;
 		cGroupRenderer.setLayoutData(gridData);
-		
+
 		// Scale : set item size
 		scale = createScale(dataGroup, "Item size", 16, 512, 16, 64);
-		scale.addSelectionListener(new SelectionListener() {
-
-			public void widgetSelected(SelectionEvent arg0) {
-				if (g != null) {
-					groupRenderer.setItemSize(scale.getSelection(), scale
-							.getSelection());
-					itemWidthScale.setSelection(scale.getSelection());
-					itemHeightScale.setSelection(scale.getSelection());
-					g.setGroupRenderer(groupRenderer);
-				}
+		scale.addListener(SWT.Selection, e -> {
+			if (g != null) {
+				groupRenderer.setItemSize(scale.getSelection(), scale.getSelection());
+				itemWidthScale.setSelection(scale.getSelection());
+				itemHeightScale.setSelection(scale.getSelection());
+				g.setGroupRenderer(groupRenderer);
 			}
-
-			public void widgetDefaultSelected(SelectionEvent arg0) {
-			}
-
 		});
 
 		// Scale : set item width
-		this.itemWidthScale = createScale(dataGroup, "Item width", 16, 512, 16,
-				64);
-		itemWidthScale.addSelectionListener(new SelectionListener() {
-
-			public void widgetSelected(SelectionEvent arg0) {
-				if (g != null) {
-					groupRenderer.setItemWidth(itemWidthScale.getSelection());
-					g.setGroupRenderer(groupRenderer);
-				}
+		this.itemWidthScale = createScale(dataGroup, "Item width", 16, 512, 16, 64);
+		itemWidthScale.addListener(SWT.Selection, e -> {
+			if (g != null) {
+				groupRenderer.setItemWidth(itemWidthScale.getSelection());
+				g.setGroupRenderer(groupRenderer);
 			}
-
-			public void widgetDefaultSelected(SelectionEvent arg0) {
-			}
-
 		});
 
 		// Scale : set item height
-		this.itemHeightScale = createScale(dataGroup, "Item height", 16, 512,
-				16, 64);
-		itemHeightScale.addSelectionListener(new SelectionListener() {
-
-			public void widgetSelected(SelectionEvent arg0) {
-				if (g != null) {
-					groupRenderer.setItemHeight(itemHeightScale.getSelection());
-					g.setGroupRenderer(groupRenderer);
-				}
+		this.itemHeightScale = createScale(dataGroup, "Item height", 16, 512, 16, 64);
+		itemHeightScale.addListener(SWT.Selection, e -> {
+			if (g != null) {
+				groupRenderer.setItemHeight(itemHeightScale.getSelection());
+				g.setGroupRenderer(groupRenderer);
 			}
-
-			public void widgetDefaultSelected(SelectionEvent arg0) {
-			}
-
 		});
 
 		// Scale : set margins size
 		this.marginsScale = createScale(dataGroup, "Margins", 0, 128, 16, 10);
-		marginsScale.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent arg0) {
-				if (g != null) {
-					groupRenderer.setMinMargin(marginsScale.getSelection());
-					g.setGroupRenderer(groupRenderer);
-				}
-			}
-
-			public void widgetDefaultSelected(SelectionEvent arg0) {
+		marginsScale.addListener(SWT.Selection, e -> {
+			if (g != null) {
+				groupRenderer.setMinMargin(marginsScale.getSelection());
+				g.setGroupRenderer(groupRenderer);
 			}
 		});
 
 	}
 
 	public void createParameters(Composite parent) {
-		GridLayoutFactory.swtDefaults().margins(0, 0).numColumns(3).applyTo(
-				parent);
+		GridLayoutFactory.swtDefaults().margins(0, 0).numColumns(3).applyTo(parent);
 		createStyleGroup(parent);
 		createAnimationGroup(parent);
 		createDataGroup(parent);
@@ -609,21 +513,11 @@ public class GalleryExampleTab extends AbstractExampleTab {
 
 		Button b = new Button(parent, SWT.NONE);
 		b.setText("deselectAll");
-		b.addSelectionListener(new SelectionListener() {
-
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-
-			public void widgetSelected(SelectionEvent e) {
-				g.deselectAll();
-			}
-
-		});
+		b.addListener(SWT.Selection, e -> g.deselectAll());
 
 	}
 
-	private Scale createScale(Composite parent, String text, int min, int max,
-			int increment, int value) {
+	private Scale createScale(Composite parent, String text, int min, int max, int increment, int value) {
 		GridData gridData = new GridData();
 
 		Label l = new Label(parent, SWT.NONE);

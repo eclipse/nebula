@@ -29,7 +29,8 @@ public class SequenceEffect implements IEffect {
 	 * <p>
 	 * Note :
 	 * <ul>
-	 * <li>onStop and onCancel runnables applies to the whole sequence effect.</li>
+	 * <li>onStop and onCancel runnables applies to the whole sequence
+	 * effect.</li>
 	 * <li>Each effect can have its own onStop and onCancel.</li>
 	 * </ul>
 	 * </p>
@@ -38,7 +39,8 @@ public class SequenceEffect implements IEffect {
 	 * @param onStop
 	 * @param onCancel
 	 */
-	public SequenceEffect(IEffect[] effects, Runnable onStop, Runnable onCancel) {
+	public SequenceEffect(IEffect[] effects, Runnable onStop,
+			Runnable onCancel) {
 		this.effects = effects;
 		this.onCancel = onCancel;
 		this.onStop = onStop;
@@ -52,9 +54,7 @@ public class SequenceEffect implements IEffect {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.nebula.animation.effects.IEffect#cancel()
 	 */
 	public void cancel() {
@@ -68,9 +68,7 @@ public class SequenceEffect implements IEffect {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.nebula.animation.effects.IEffect#doEffect(long)
 	 */
 	public void doEffect(long time) {
@@ -91,18 +89,14 @@ public class SequenceEffect implements IEffect {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.nebula.animation.effects.IEffect#getLength()
 	 */
 	public long getLength() {
 		return length;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.nebula.animation.effects.IEffect#isDone()
 	 */
 	public boolean isDone() {

@@ -21,9 +21,7 @@ public class ExpoOut extends AbstractMovement {
 
 	float increment;
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.sharemedia.gui.viewers.impl.gl.IMovement#getValue(int)
 	 */
 	public double getValue(double step) {
@@ -34,9 +32,7 @@ public class ExpoOut extends AbstractMovement {
 			return max;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.sharemedia.gui.viewers.impl.gl.IMovement#init(float, float, int)
 	 */
 	public void init(double min, double max, int steps) {

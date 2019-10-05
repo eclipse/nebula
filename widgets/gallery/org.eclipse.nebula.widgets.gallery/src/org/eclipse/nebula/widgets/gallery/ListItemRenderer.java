@@ -54,7 +54,7 @@ import org.eclipse.swt.widgets.Display;
 
 public class ListItemRenderer extends AbstractGalleryItemRenderer {
 
-	protected ArrayList dropShadowsColors = new ArrayList();
+	protected ArrayList<Color> dropShadowsColors = new ArrayList<>();
 
 	boolean dropShadows = false;
 
@@ -104,24 +104,19 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 				.getSystemColor(SWT.COLOR_DARK_GRAY);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.nebula.widgets.gallery.AbstractGalleryItemRenderer#preDraw
-	 * (org.eclipse.swt.graphics.GC)
+	/**
+	 * @see org.eclipse.nebula.widgets.gallery.AbstractGalleryItemRenderer#preDraw
+	 *      (org.eclipse.swt.graphics.GC)
 	 */
 	public void preDraw(GC gc) {
 		super.preDraw(gc);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.nebula.widgets.gallery.AbstractGalleryItemRenderer#draw(org
-	 * .eclipse.swt.graphics.GC, org.eclipse.nebula.widgets.gallery.GalleryItem,
-	 * int, int, int, int, int)
+	/**
+	 * @see org.eclipse.nebula.widgets.gallery.AbstractGalleryItemRenderer#draw(org
+	 *      .eclipse.swt.graphics.GC,
+	 *      org.eclipse.nebula.widgets.gallery.GalleryItem, int, int, int, int,
+	 *      int)
 	 */
 	public void draw(GC gc, GalleryItem item, int index, int x, int y,
 			int width, int height) {
@@ -283,9 +278,9 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 	private void freeDropShadowsColors() {
 		// Free colors :
 		{
-			Iterator i = this.dropShadowsColors.iterator();
+			Iterator<Color> i = this.dropShadowsColors.iterator();
 			while (i.hasNext()) {
-				Color c = (Color) i.next();
+				Color c = i.next();
 				if (c != null && !c.isDisposed())
 					c.dispose();
 			}
@@ -304,11 +299,8 @@ public class ListItemRenderer extends AbstractGalleryItemRenderer {
 		return dropShadowsSize;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.nebula.widgets.gallery.AbstractGalleryItemRenderer#dispose()
+	/**
+	 * @see org.eclipse.nebula.widgets.gallery.AbstractGalleryItemRenderer#dispose()
 	 */
 	public void dispose() {
 		freeDropShadowsColors();
