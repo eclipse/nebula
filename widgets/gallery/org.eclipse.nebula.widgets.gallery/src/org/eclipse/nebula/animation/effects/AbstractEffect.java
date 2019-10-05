@@ -45,8 +45,8 @@ public abstract class AbstractEffect implements IEffect {
 	 * @param onStop
 	 * @param onCancel
 	 */
-	public AbstractEffect(long lengthMilli, IMovement movement,
-			Runnable onStop, Runnable onCancel) {
+	public AbstractEffect(long lengthMilli, IMovement movement, Runnable onStop,
+			Runnable onCancel) {
 		this.length = lengthMilli;
 		easingFunction = movement;
 		this.runnableOnCancel = onCancel;
@@ -60,9 +60,7 @@ public abstract class AbstractEffect implements IEffect {
 	 */
 	public abstract void applyEffect(final long currentTime);
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.nebula.animation.effects.IEffect#cancel()
 	 */
 	public void cancel() {
@@ -78,17 +76,13 @@ public abstract class AbstractEffect implements IEffect {
 			runnableOnCancel.run();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.nebula.animation.effects.IEffect#doEffect()
 	 */
 	public void doEffect() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.nebula.animation.effects.IEffect#doEffect(long)
 	 */
 	public void doEffect(long time) {
@@ -108,18 +102,14 @@ public abstract class AbstractEffect implements IEffect {
 			runnableOnStop.run();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.nebula.animation.effects.IEffect#getLength()
 	 */
 	public long getLength() {
 		return length;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.nebula.animation.effects.IEffect#isDone()
 	 */
 	public boolean isDone() {

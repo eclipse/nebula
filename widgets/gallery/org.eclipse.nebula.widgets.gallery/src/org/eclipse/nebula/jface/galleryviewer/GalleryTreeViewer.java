@@ -124,23 +124,17 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 		hookControl(gallery);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.viewers.AbstractTreeViewer#addTreeListener(org.eclipse
-	 * .swt.widgets.Control, org.eclipse.swt.events.TreeListener)
+	/**
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#addTreeListener(org.eclipse
+	 *      .swt.widgets.Control, org.eclipse.swt.events.TreeListener)
 	 */
 	protected void addTreeListener(Control control, TreeListener listener) {
 		((Gallery) control).addTreeListener(listener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.viewers.AbstractTreeViewer#getChild(org.eclipse.swt
-	 * .widgets.Widget, int)
+	/**
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#getChild(org.eclipse.swt
+	 *      .widgets.Widget, int)
 	 */
 	protected Item getChild(Widget widget, int index) {
 		if (widget instanceof GalleryItem) {
@@ -152,12 +146,9 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.viewers.AbstractTreeViewer#getChildren(org.eclipse.
-	 * swt.widgets.Widget)
+	/**
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#getChildren(org.eclipse.
+	 *      swt.widgets.Widget)
 	 */
 	protected Item[] getChildren(Widget widget) {
 		if (widget instanceof GalleryItem) {
@@ -176,67 +167,49 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.viewers.AbstractTreeViewer#getExpanded(org.eclipse.
-	 * swt.widgets.Item)
+	/**
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#getExpanded(org.eclipse.
+	 *      swt.widgets.Item)
 	 */
 	protected boolean getExpanded(Item item) {
 		return ((GalleryItem) item).isExpanded();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.viewers.AbstractTreeViewer#getItemCount(org.eclipse
-	 * .swt.widgets.Control)
+	/**
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#getItemCount(org.eclipse
+	 *      .swt.widgets.Control)
 	 */
 	protected int getItemCount(Control control) {
 		return ((Gallery) control).getItemCount();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.viewers.AbstractTreeViewer#getItemCount(org.eclipse
-	 * .swt.widgets.Item)
+	/**
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#getItemCount(org.eclipse
+	 *      .swt.widgets.Item)
 	 */
 	protected int getItemCount(Item item) {
 		return ((GalleryItem) item).getItemCount();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.viewers.AbstractTreeViewer#getItems(org.eclipse.swt
-	 * .widgets.Item)
+	/**
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#getItems(org.eclipse.swt
+	 *      .widgets.Item)
 	 */
 	protected Item[] getItems(Item item) {
 		return ((GalleryItem) item).getItems();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.viewers.AbstractTreeViewer#getParentItem(org.eclipse
-	 * .swt.widgets.Item)
+	/**
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#getParentItem(org.eclipse
+	 *      .swt.widgets.Item)
 	 */
 	protected Item getParentItem(Item item) {
 		return ((GalleryItem) item).getParentItem();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.viewers.AbstractTreeViewer#getSelection(org.eclipse
-	 * .swt.widgets.Control)
+	/**
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#getSelection(org.eclipse
+	 *      .swt.widgets.Control)
 	 */
 	protected Item[] getSelection(Control control) {
 		Item[] selection = ((Gallery) control).getSelection();
@@ -244,26 +217,22 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 			return new GalleryItem[0];
 		}
 
-		List notDisposed = new ArrayList(selection.length);
+		List<GalleryItem> notDisposed = new ArrayList<>(selection.length);
 		for (int i = 0; i < selection.length; i++) {
 			if (!selection[i].isDisposed()) {
-				notDisposed.add(selection[i]);
+				notDisposed.add((GalleryItem) selection[i]);
 			} else {
 				System.out.println("GalleryItem was disposed (ignoring)");
 			}
 		}
-		selection = (GalleryItem[]) notDisposed
-				.toArray(new GalleryItem[notDisposed.size()]);
+		selection = notDisposed.toArray(new GalleryItem[notDisposed.size()]);
 
 		return selection;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.viewers.AbstractTreeViewer#newItem(org.eclipse.swt.
-	 * widgets.Widget, int, int)
+	/**
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#newItem(org.eclipse.swt.
+	 *      widgets.Widget, int, int)
 	 */
 	protected Item newItem(Widget parent, int style, int index) {
 
@@ -279,12 +248,9 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 		return item;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.viewers.AbstractTreeViewer#removeAll(org.eclipse.swt
-	 * .widgets.Control)
+	/**
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#removeAll(org.eclipse.swt
+	 *      .widgets.Control)
 	 */
 	protected void removeAll(Control control) {
 		((Gallery) control).removeAll();
@@ -314,7 +280,8 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 	 */
 	public void setContentProvider(IContentProvider provider) {
 		if (provider instanceof IStructuredContentProvider
-				&& !(provider instanceof ITreeContentProvider || provider instanceof ITreePathContentProvider)) {
+				&& !(provider instanceof ITreeContentProvider
+						|| provider instanceof ITreePathContentProvider)) {
 			// Wrap a table-style contents with a single root node.
 			super.setContentProvider(new FlatTreeContentProvider(
 					(IStructuredContentProvider) provider));
@@ -323,27 +290,18 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.viewers.AbstractTreeViewer#setExpanded(org.eclipse.
-	 * swt.widgets.Item, boolean)
+	/**
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#setExpanded(org.eclipse.
+	 *      swt.widgets.Item, boolean)
 	 */
 	protected void setExpanded(Item item, boolean expand) {
 		((GalleryItem) item).setExpanded(expand);
-		// if (contentProviderIsLazy) {
-		// // force repaints to happen
-		// getControl().update();
-		// }
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.viewers.AbstractTreeViewer#setSelection(java.util.List)
+	/**
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#setSelection(java.util.List)
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected void setSelection(List items) {
 		Item[] current = getSelection(getGallery());
 
@@ -357,20 +315,15 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 		getGallery().setSelection(newItems);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.viewers.AbstractTreeViewer#showItem(org.eclipse.swt
-	 * .widgets.Item)
+	/**
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#showItem(org.eclipse.swt
+	 *      .widgets.Item)
 	 */
 	protected void showItem(Item item) {
 		gallery.showItem((GalleryItem) item);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.jface.viewers.Viewer#getControl()
 	 */
 	public Control getControl() {
@@ -408,29 +361,22 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 	 * @since 3.2
 	 */
 	public void setChildCount(final Object elementOrTreePath, final int count) {
-		// if (isBusy())
-		// return;
-		preservingSelection(new Runnable() {
-			public void run() {
-				if (internalIsInputOrEmptyPath(elementOrTreePath)) {
-					getGallery().setItemCount(count);
-					return;
-				}
-				Widget[] items = internalFindItems(elementOrTreePath);
-				for (int i = 0; i < items.length; i++) {
-					GalleryItem galleryItem = (GalleryItem) items[i];
-					galleryItem.setItemCount(count);
-				}
+		preservingSelection(() -> {
+			if (internalIsInputOrEmptyPath(elementOrTreePath)) {
+				getGallery().setItemCount(count);
+				return;
+			}
+			Widget[] items = internalFindItems(elementOrTreePath);
+			for (int i = 0; i < items.length; i++) {
+				GalleryItem galleryItem = (GalleryItem) items[i];
+				galleryItem.setItemCount(count);
 			}
 		});
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.viewers.ColumnViewer#getRowPartFromItem(org.eclipse
-	 * .swt.widgets.Widget)
+	/**
+	 * @see org.eclipse.jface.viewers.ColumnViewer#getRowPartFromItem(org.eclipse
+	 *      .swt.widgets.Widget)
 	 */
 	protected ViewerRow getViewerRowFromItem(Widget item) {
 		if (cachedRow == null) {
@@ -450,22 +396,23 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 	 * @param rowIndex
 	 * @return ViewerRow
 	 */
-	private ViewerRow createNewRowPart(ViewerRow parent, int style, int rowIndex) {
+	private ViewerRow createNewRowPart(ViewerRow parent, int style,
+			int rowIndex) {
 		if (parent == null) {
 			if (rowIndex >= 0) {
-				return getViewerRowFromItem(new GalleryItem(gallery, style,
-						rowIndex));
+				return getViewerRowFromItem(
+						new GalleryItem(gallery, style, rowIndex));
 			}
 			return getViewerRowFromItem(new GalleryItem(gallery, style));
 		}
 
 		if (rowIndex >= 0) {
-			return getViewerRowFromItem(new GalleryItem((GalleryItem) parent
-					.getItem(), SWT.NONE, rowIndex));
+			return getViewerRowFromItem(new GalleryItem(
+					(GalleryItem) parent.getItem(), SWT.NONE, rowIndex));
 		}
 
-		return getViewerRowFromItem(new GalleryItem((GalleryItem) parent
-				.getItem(), SWT.NONE));
+		return getViewerRowFromItem(
+				new GalleryItem((GalleryItem) parent.getItem(), SWT.NONE));
 	}
 
 	/**
@@ -479,56 +426,52 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 	 *            child index
 	 * @since 3.3
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void remove(final Object parentOrTreePath, final int index) {
-		// if (isBusy())
-		// return;
-		final List oldSelection = new LinkedList(Arrays
-				.asList(((TreeSelection) getSelection()).getPaths()));
-		preservingSelection(new Runnable() {
-			public void run() {
-				TreePath removedPath = null;
-				if (internalIsInputOrEmptyPath(parentOrTreePath)) {
-					Gallery gallery = (Gallery) getControl();
-					if (index < gallery.getItemCount()) {
-						GalleryItem item = gallery.getItem(index);
+		final List<TreeSelection> oldSelection = new LinkedList(
+				Arrays.asList(((TreeSelection) getSelection()).getPaths()));
+		preservingSelection(() -> {
+			TreePath removedPath = null;
+			if (internalIsInputOrEmptyPath(parentOrTreePath)) {
+				Gallery gallery = (Gallery) getControl();
+				if (index < gallery.getItemCount()) {
+					GalleryItem item = gallery.getItem(index);
+					if (item.getData() != null) {
+						removedPath = getTreePathFromItem(item);
+						disassociate(item);
+					}
+					item.dispose();
+				}
+			} else {
+				Widget[] parentItems = internalFindItems(parentOrTreePath);
+				for (int i = 0; i < parentItems.length; i++) {
+					GalleryItem parentItem = (GalleryItem) parentItems[i];
+					if (index < parentItem.getItemCount()) {
+						GalleryItem item = parentItem.getItem(index);
 						if (item.getData() != null) {
 							removedPath = getTreePathFromItem(item);
 							disassociate(item);
 						}
 						item.dispose();
 					}
-				} else {
-					Widget[] parentItems = internalFindItems(parentOrTreePath);
-					for (int i = 0; i < parentItems.length; i++) {
-						GalleryItem parentItem = (GalleryItem) parentItems[i];
-						if (index < parentItem.getItemCount()) {
-							GalleryItem item = parentItem.getItem(index);
-							if (item.getData() != null) {
-								removedPath = getTreePathFromItem(item);
-								disassociate(item);
-							}
-							item.dispose();
-						}
+				}
+			}
+			if (removedPath != null) {
+				boolean removed = false;
+				for (Iterator it = oldSelection.iterator(); it.hasNext();) {
+					TreePath path = (TreePath) it.next();
+					if (path.startsWith(removedPath, getComparer())) {
+						it.remove();
+						removed = true;
 					}
 				}
-				if (removedPath != null) {
-					boolean removed = false;
-					for (Iterator it = oldSelection.iterator(); it.hasNext();) {
-						TreePath path = (TreePath) it.next();
-						if (path.startsWith(removedPath, getComparer())) {
-							it.remove();
-							removed = true;
-						}
-					}
-					if (removed) {
-						setSelection(new TreeSelection(
-								(TreePath[]) oldSelection
-										.toArray(new TreePath[oldSelection
-												.size()]), getComparer()),
-								false);
-					}
+				if (removed) {
+					setSelection(new TreeSelection(
+							(TreePath[]) oldSelection
+									.toArray(new TreePath[oldSelection.size()]),
+							getComparer()), false);
+				}
 
-				}
 			}
 		});
 	}
@@ -545,8 +488,8 @@ public class GalleryTreeViewer extends AbstractTreeViewer {
 					ViewerCell cell = row.getCell(column);
 					if (cell != null) {
 						getControl().setRedraw(false);
-						triggerEditorActivationEvent(new ColumnViewerEditorActivationEvent(
-								cell));
+						triggerEditorActivationEvent(
+								new ColumnViewerEditorActivationEvent(cell));
 						getControl().setRedraw(true);
 					}
 				}

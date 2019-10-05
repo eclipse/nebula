@@ -99,16 +99,13 @@ public class CrossFadeEffect extends AbstractEffect {
 
 		easingFunction.init(0, 1, (int) lengthMilli);
 
-		buffer = new Image(image1.getDevice(), image1.getBounds().width, image1
-				.getBounds().height);
+		buffer = new Image(image1.getDevice(), image1.getBounds().width,
+				image1.getBounds().height);
 		gc = new GC(buffer);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.nebula.animation.effects.AbstractEffect#applyEffect(long)
+	/**
+	 * @see org.eclipse.nebula.animation.effects.AbstractEffect#applyEffect(long)
 	 */
 	public void applyEffect(long currentTime) {
 		easingValue = easingFunction.getValue(currentTime);
@@ -134,9 +131,7 @@ public class CrossFadeEffect extends AbstractEffect {
 		buffer.dispose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.nebula.animation.effects.AbstractEffect#doCancel()
 	 */
 	protected void doCancel() {
@@ -145,9 +140,7 @@ public class CrossFadeEffect extends AbstractEffect {
 		cleanup();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.nebula.animation.effects.AbstractEffect#doStop()
 	 */
 	protected void doStop() {

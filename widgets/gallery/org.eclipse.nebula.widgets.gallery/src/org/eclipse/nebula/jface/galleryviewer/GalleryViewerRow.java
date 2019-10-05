@@ -46,18 +46,14 @@ public class GalleryViewerRow extends ViewerRow {
 		this.item = item;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.jface.viewers.ViewerRow#clone()
 	 */
 	public Object clone() {
 		return new GalleryViewerRow(item);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.jface.viewers.ViewerRow#getBackground(int)
 	 */
 	public Color getBackground(int columnIndex) {
@@ -65,90 +61,70 @@ public class GalleryViewerRow extends ViewerRow {
 		return item.getBackground();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.jface.viewers.ViewerRow#getBounds()
 	 */
 	public Rectangle getBounds() {
 		return item.getBounds();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.jface.viewers.ViewerRow#getBounds(int)
 	 */
 	public Rectangle getBounds(int columnIndex) {
 		return item.getBounds();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.jface.viewers.ViewerRow#getColumnCount()
 	 */
 	public int getColumnCount() {
 		return 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.jface.viewers.ViewerRow#getControl()
 	 */
 	public Control getControl() {
 		return item.getParent();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.jface.viewers.ViewerRow#getElement()
 	 */
 	public Object getElement() {
 		return item.getData();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.jface.viewers.ViewerRow#getFont(int)
 	 */
 	public Font getFont(int columnIndex) {
 		return item.getFont();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.jface.viewers.ViewerRow#getForeground(int)
 	 */
 	public Color getForeground(int columnIndex) {
 		return item.getForeground();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.jface.viewers.ViewerRow#getImage(int)
 	 */
 	public Image getImage(int columnIndex) {
 		return item.getImage();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.jface.viewers.ViewerRow#getItem()
 	 */
 	public Widget getItem() {
 		return item;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.jface.viewers.ViewerRow#getNeighbor(int, boolean)
 	 */
 	public ViewerRow getNeighbor(int direction, boolean sameLevel) {
@@ -159,7 +135,8 @@ public class GalleryViewerRow extends ViewerRow {
 			// TODO: handle grouping
 			return getRowBelow();
 		} else {
-			throw new IllegalArgumentException("Illegal value of direction argument."); //$NON-NLS-1$
+			throw new IllegalArgumentException(
+					"Illegal value of direction argument."); //$NON-NLS-1$
 		}
 	}
 
@@ -207,22 +184,18 @@ public class GalleryViewerRow extends ViewerRow {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.jface.viewers.ViewerRow#getText(int)
 	 */
 	public String getText(int columnIndex) {
 		return item.getText();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.jface.viewers.ViewerRow#getTreePath()
 	 */
 	public TreePath getTreePath() {
-		LinkedList path = new LinkedList();
+		LinkedList<Object> path = new LinkedList<>();
 		path.add(item.getData());
 
 		GalleryItem curItem = item;
@@ -233,9 +206,7 @@ public class GalleryViewerRow extends ViewerRow {
 		return new TreePath(path.toArray());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.jface.viewers.ViewerRow#setBackground(int,
 	 *      org.eclipse.swt.graphics.Color)
 	 */
@@ -243,9 +214,7 @@ public class GalleryViewerRow extends ViewerRow {
 		item.setBackground(color);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.jface.viewers.ViewerRow#setFont(int,
 	 *      org.eclipse.swt.graphics.Font)
 	 */
@@ -253,9 +222,7 @@ public class GalleryViewerRow extends ViewerRow {
 		item.setFont(font);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.jface.viewers.ViewerRow#setForeground(int,
 	 *      org.eclipse.swt.graphics.Color)
 	 */
@@ -263,9 +230,7 @@ public class GalleryViewerRow extends ViewerRow {
 		item.setForeground(color);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.jface.viewers.ViewerRow#setImage(int,
 	 *      org.eclipse.swt.graphics.Image)
 	 */
@@ -276,9 +241,7 @@ public class GalleryViewerRow extends ViewerRow {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.jface.viewers.ViewerRow#setText(int, java.lang.String)
 	 */
 	public void setText(int columnIndex, String text) {

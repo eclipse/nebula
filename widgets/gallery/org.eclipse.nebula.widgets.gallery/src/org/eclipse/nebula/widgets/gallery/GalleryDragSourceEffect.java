@@ -42,11 +42,8 @@ public class GalleryDragSourceEffect extends DragSourceEffect {
 		g = gallery;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.eclipse.swt.dnd.DragSourceAdapter#dragStart(org.eclipse.swt.dnd.
-	 * DragSourceEvent)
+	/**
+	 * @seeorg.eclipse.swt.dnd.DragSourceAdapter#dragStart(org.eclipse.swt.dnd. DragSourceEvent)
 	 */
 	public void dragStart(DragSourceEvent event) {
 		GalleryItem[] selection = g.getSelection();

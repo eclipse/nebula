@@ -41,7 +41,8 @@ public class ParallelEffect implements IEffect {
 	 * @param onStop
 	 * @param onCancel
 	 */
-	public ParallelEffect(IEffect[] effects, Runnable onStop, Runnable onCancel) {
+	public ParallelEffect(IEffect[] effects, Runnable onStop,
+			Runnable onCancel) {
 		this.effects = effects;
 		this.onCancel = onCancel;
 		this.onStop = onStop;
@@ -63,7 +64,7 @@ public class ParallelEffect implements IEffect {
 	 * 
 	 * @param effects
 	 */
-	public ParallelEffect(List effects) {
+	public ParallelEffect(List<IEffect> effects) {
 		this(effects, null, null);
 	}
 
@@ -74,13 +75,12 @@ public class ParallelEffect implements IEffect {
 	 * @param onStop
 	 * @param onCancel
 	 */
-	public ParallelEffect(List effects, Runnable onStop, Runnable onCancel) {
+	public ParallelEffect(List<IEffect> effects, Runnable onStop,
+			Runnable onCancel) {
 		this((IEffect[]) effects.toArray(), onStop, onCancel);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.nebula.animation.effects.IEffect#cancel()
 	 */
 	public void cancel() {
@@ -96,9 +96,7 @@ public class ParallelEffect implements IEffect {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.nebula.animation.effects.IEffect#doEffect(long)
 	 */
 	public void doEffect(long time) {
@@ -114,18 +112,14 @@ public class ParallelEffect implements IEffect {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.nebula.animation.effects.IEffect#getLength()
 	 */
 	public long getLength() {
 		return length;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.nebula.animation.effects.IEffect#isDone()
 	 */
 	public boolean isDone() {

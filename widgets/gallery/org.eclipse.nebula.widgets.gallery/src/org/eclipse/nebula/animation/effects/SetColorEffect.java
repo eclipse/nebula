@@ -89,23 +89,20 @@ public class SetColorEffect extends AbstractEffect {
 		easingFunction.init(0, 1, (int) lengthMilli);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.nebula.animation.effects.AbstractEffect#applyEffect(long)
+	/**
+	 * @see org.eclipse.nebula.animation.effects.AbstractEffect#applyEffect(long)
 	 */
 	public void applyEffect(final long currentTime) {
 
 		Color currentColor = control.getColor();
 
 		// Get the next color values
-		int nextRed = (int) (src.getRed() + diffR
-				* easingFunction.getValue(currentTime));
-		int nextGreen = (int) (src.getGreen() + diffG
-				* easingFunction.getValue(currentTime));
-		int nextBlue = (int) (src.getBlue() + diffB
-				* easingFunction.getValue(currentTime));
+		int nextRed = (int) (src.getRed()
+				+ diffR * easingFunction.getValue(currentTime));
+		int nextGreen = (int) (src.getGreen()
+				+ diffG * easingFunction.getValue(currentTime));
+		int nextBlue = (int) (src.getBlue()
+				+ diffB * easingFunction.getValue(currentTime));
 
 		RGB nextRGB = new RGB(nextRed, nextGreen, nextBlue);
 
