@@ -17,7 +17,7 @@ import org.eclipse.swt.SWT;
 
 /**
  * Implementation of {@link Comparator} to compare POJO.
- * 
+ *
  */
 @SuppressWarnings("rawtypes")
 public class BeanComparator implements Comparator {
@@ -52,6 +52,7 @@ public class BeanComparator implements Comparator {
 		return 0;
 	}
 
+	@SuppressWarnings("unchecked")
 	private int compare(Comparable c1, Comparable c2) {
 		if (sortDirection == SWT.UP) {
 			return c2.compareTo(c1);

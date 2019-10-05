@@ -25,11 +25,11 @@ import org.eclipse.swt.widgets.Widget;
  * to a pagination controller to display data with pagination. The
  * {@link AbstractPaginationWidget#refreshPage()} must be implemented to load
  * paginated data and update the total element of the controller.
- * 
+ *
  * This composite is able to to add another {@link Composite} on the top and on
  * the bottom of the widget. For instance you can display navigation page links
  * on the top of the widget.
- * 
+ *
  * @param<W> the widget linked to the pagination controller.
  * @param <T>
  *            the pagination controller to observe to refresh paginated data in
@@ -73,13 +73,13 @@ public abstract class AbstractPaginationWidget<W extends Widget> extends
 	 * Constructs a new instance of this class given its parent and a style
 	 * value describing its behavior and appearance. Default page size is used
 	 * here.
-	 * 
+	 *
 	 * @param parent
 	 *            a widget which will be the parent of the new instance (cannot
 	 *            be null)
 	 * @param style
 	 *            the style of widget to construct
-	 * 
+	 *
 	 * @param pageRendererTopFactory
 	 *            the page renderer factory used to create a SWT Composite on
 	 *            the top of the widget. Null if none Composite must be created.
@@ -87,7 +87,7 @@ public abstract class AbstractPaginationWidget<W extends Widget> extends
 	 *            the page renderer factory used to create a SWT Composite on
 	 *            the bottom of the widget. Null if none Composite must be
 	 *            created.
-	 * 
+	 *
 	 */
 	public AbstractPaginationWidget(Composite parent, int style,
 			IPageContentProvider pageContentProvider,
@@ -100,7 +100,7 @@ public abstract class AbstractPaginationWidget<W extends Widget> extends
 	/**
 	 * Constructs a new instance of this class given its parent and a style
 	 * value describing its behavior and appearance.
-	 * 
+	 *
 	 * @param parent
 	 *            a widget which will be the parent of the new instance (cannot
 	 *            be null)
@@ -108,7 +108,7 @@ public abstract class AbstractPaginationWidget<W extends Widget> extends
 	 *            the style of widget to construct
 	 * @param pageSize
 	 *            size of the page (number items displayed per page).
-	 * 
+	 *
 	 * @param pageRendererTopFactory
 	 *            the page renderer factory used to create a SWT Composite on
 	 *            the top of the widget. Null if none Composite must be created.
@@ -116,7 +116,7 @@ public abstract class AbstractPaginationWidget<W extends Widget> extends
 	 *            the page renderer factory used to create a SWT Composite on
 	 *            the bottom of the widget. Null if none Composite must be
 	 *            created.
-	 * 
+	 *
 	 */
 	public AbstractPaginationWidget(Composite parent, int style, int pageSize,
 			IPageContentProvider pageContentProvider,
@@ -129,7 +129,7 @@ public abstract class AbstractPaginationWidget<W extends Widget> extends
 	/**
 	 * Constructs a new instance of this class given its parent and a style
 	 * value describing its behavior and appearance.
-	 * 
+	 *
 	 * @param parent
 	 *            a widget which will be the parent of the new instance (cannot
 	 *            be null)
@@ -137,7 +137,7 @@ public abstract class AbstractPaginationWidget<W extends Widget> extends
 	 *            the style of widget to construct
 	 * @param pageSize
 	 *            size of the page (number items displayed per page).
-	 * 
+	 *
 	 * @param pageRendererTopFactory
 	 *            the page renderer factory used to create a SWT Composite on
 	 *            the top of the widget. Null if none Composite must be created.
@@ -145,10 +145,10 @@ public abstract class AbstractPaginationWidget<W extends Widget> extends
 	 *            the page renderer factory used to create a SWT Composite on
 	 *            the bottom of the widget. Null if none Composite must be
 	 *            created.
-	 * 
+	 *
 	 * @param createUI
 	 *            true if the UI must be created and false otherwise.
-	 * 
+	 *
 	 */
 	protected AbstractPaginationWidget(Composite parent, int style,
 			int pageSize, IPageContentProvider pageContentProvider,
@@ -179,7 +179,7 @@ public abstract class AbstractPaginationWidget<W extends Widget> extends
 
 	/**
 	 * Create top composite if needed.
-	 * 
+	 *
 	 * @param parent
 	 */
 	protected Composite createCompositeTop(Composite parent) {
@@ -198,7 +198,7 @@ public abstract class AbstractPaginationWidget<W extends Widget> extends
 
 	/**
 	 * Create bottom composite if needed.
-	 * 
+	 *
 	 * @param parent
 	 */
 
@@ -219,7 +219,7 @@ public abstract class AbstractPaginationWidget<W extends Widget> extends
 	/**
 	 * Returns the page renderer factory to use to create a Composite on the top
 	 * of the widget.
-	 * 
+	 *
 	 * @return
 	 */
 	public ICompositeRendererFactory getPageRendererTopFactory() {
@@ -229,7 +229,7 @@ public abstract class AbstractPaginationWidget<W extends Widget> extends
 	/**
 	 * Returns the page renderer factory to use to create a Composite on the
 	 * bottom of the widget.
-	 * 
+	 *
 	 * @return
 	 */
 	public ICompositeRendererFactory getPageRendererBottomFactory() {
@@ -239,7 +239,7 @@ public abstract class AbstractPaginationWidget<W extends Widget> extends
 	/**
 	 * Returns the composite created by the pageRendererTopFactory on the top of
 	 * the widget (null if none Composite must be added)
-	 * 
+	 *
 	 * @return
 	 */
 	public Composite getCompositeTop() {
@@ -249,16 +249,14 @@ public abstract class AbstractPaginationWidget<W extends Widget> extends
 	/**
 	 * Returns the composite created by the pageRendererTopFactory on the bottom
 	 * of the widget (null if none Composite must be added)
-	 * 
+	 *
 	 * @return
 	 */
 	public Composite getCompositeBottom() {
 		return compositeBottom;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see
 	 * org.eclipse.nebula.widgets.pagination.PageChangedListener#pageIndexChanged
 	 * (int, int, org.eclipse.nebula.widgets.pagination.PaginationController)
@@ -269,9 +267,7 @@ public abstract class AbstractPaginationWidget<W extends Widget> extends
 		internalRefreshPage();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.nebula.widgets.pagination.PageChangedListener#
 	 * totalElementsChanged(long, long,
 	 * org.eclipse.nebula.widgets.pagination.PaginationController)
@@ -281,9 +277,7 @@ public abstract class AbstractPaginationWidget<W extends Widget> extends
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see
 	 * org.eclipse.nebula.widgets.pagination.PageChangedListener#sortChanged
 	 * (java.lang.String, java.lang.String, int, int,
@@ -295,9 +289,7 @@ public abstract class AbstractPaginationWidget<W extends Widget> extends
 		refreshPage(true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see
 	 * org.eclipse.nebula.widgets.pagination.PageChangedListener#pageSizeChanged
 	 * (int, int, org.eclipse.nebula.widgets.pagination.PaginationController)
@@ -309,7 +301,7 @@ public abstract class AbstractPaginationWidget<W extends Widget> extends
 
 	/**
 	 * Refresh the page.
-	 * 
+	 *
 	 * @param reset
 	 *            true if page index must be reseted to the first page index
 	 *            before refresh page and false otherwise.
@@ -322,6 +314,9 @@ public abstract class AbstractPaginationWidget<W extends Widget> extends
 		}
 	}
 
+	/**
+	 * @see org.eclipse.nebula.widgets.pagination.AbstractPageControllerComposite#setLocale(java.util.Locale)
+	 */
 	@Override
 	public void setLocale(Locale locale) {
 		super.setLocale(locale);
@@ -338,7 +333,7 @@ public abstract class AbstractPaginationWidget<W extends Widget> extends
 
 	/**
 	 * Refresh page by using page loader handler.
-	 * 
+	 *
 	 * @param reset
 	 */
 	private void internalRefreshPage() {
@@ -358,7 +353,7 @@ public abstract class AbstractPaginationWidget<W extends Widget> extends
 
 	/**
 	 * Set the page loader handler to observe before/after page loading process.
-	 * 
+	 *
 	 * @param pageLoaderHandler
 	 */
 	public void setPageLoaderHandler(IPageLoaderHandler pageLoaderHandler) {
@@ -368,7 +363,7 @@ public abstract class AbstractPaginationWidget<W extends Widget> extends
 	/**
 	 * Returns the page loader handler to observe before/after page loading
 	 * process.
-	 * 
+	 *
 	 * @return
 	 */
 	public IPageLoaderHandler getPageLoaderHandler() {
@@ -377,7 +372,7 @@ public abstract class AbstractPaginationWidget<W extends Widget> extends
 
 	/**
 	 * Set the page loader to use to load paginated list.
-	 * 
+	 *
 	 * @param pageLoader
 	 */
 	public void setPageLoader(IPageLoader pageLoader) {
@@ -386,7 +381,7 @@ public abstract class AbstractPaginationWidget<W extends Widget> extends
 
 	/**
 	 * Returns the page loader to use to load paginated list.
-	 * 
+	 *
 	 * @return
 	 */
 	public IPageLoader getPageLoader() {
@@ -395,7 +390,7 @@ public abstract class AbstractPaginationWidget<W extends Widget> extends
 
 	/**
 	 * Returns the widget.
-	 * 
+	 *
 	 * @return
 	 */
 	public W getWidget() {
@@ -404,7 +399,7 @@ public abstract class AbstractPaginationWidget<W extends Widget> extends
 
 	/**
 	 * Create the widget linked to the pagination controller.
-	 * 
+	 *
 	 * @param parent
 	 *            a widget which will be the parent of the new instance (cannot
 	 *            be null)

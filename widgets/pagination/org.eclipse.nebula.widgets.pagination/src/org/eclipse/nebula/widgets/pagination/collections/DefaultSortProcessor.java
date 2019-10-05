@@ -16,7 +16,7 @@ import java.util.List;
 
 /**
  * Default implementation of sort.
- * 
+ *
  */
 public class DefaultSortProcessor implements SortProcessor {
 
@@ -30,6 +30,7 @@ public class DefaultSortProcessor implements SortProcessor {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	public void sort(List<?> list, String sortPropertyName, int sortDirection) {
 		Collections.sort(list, new BeanComparator(sortPropertyName,
 				sortDirection));

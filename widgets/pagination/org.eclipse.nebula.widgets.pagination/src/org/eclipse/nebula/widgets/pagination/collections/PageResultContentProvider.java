@@ -20,7 +20,7 @@ import org.eclipse.nebula.widgets.pagination.PageableController;
  * Implementation of {@link IPageContentProvider} to retrieves pagination
  * information (total elements and paginated list) from the pagination structure
  * {@link PageResult}.
- * 
+ *
  */
 public class PageResultContentProvider implements IPageContentProvider {
 
@@ -28,16 +28,14 @@ public class PageResultContentProvider implements IPageContentProvider {
 
 	/**
 	 * Returns the singleton of {@link PageResultContentProvider}.
-	 * 
+	 *
 	 * @return
 	 */
 	public static IPageContentProvider getInstance() {
 		return INSTANCE;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see
 	 * org.eclipse.nebula.widgets.pagination.IPageContentProvider#createController
 	 * (int)
@@ -46,9 +44,7 @@ public class PageResultContentProvider implements IPageContentProvider {
 		return new PageableController(pageSize);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see
 	 * org.eclipse.nebula.widgets.pagination.IPageContentProvider#getTotalElements
 	 * (java.lang.Object)
@@ -57,9 +53,7 @@ public class PageResultContentProvider implements IPageContentProvider {
 		return ((PageResult<?>) page).getTotalElements();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see
 	 * org.eclipse.nebula.widgets.pagination.IPageContentProvider#getPaginatedList
 	 * (java.lang.Object)

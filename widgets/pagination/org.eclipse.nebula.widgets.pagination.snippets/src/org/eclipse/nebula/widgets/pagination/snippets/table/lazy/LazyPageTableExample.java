@@ -37,10 +37,11 @@ import org.eclipse.swt.widgets.TableColumn;
 /**
  * This sample display a SWT Table with 10 items the first time. If you click on
  * the item 10, 10 items are loaded and added to the SWT Table.
- * 
+ *
  */
 public class LazyPageTableExample {
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void main(String[] args) {
 
 		Display display = new Display();
@@ -117,7 +118,7 @@ public class LazyPageTableExample {
 	}
 
 	private static List<String> createList() {
-		List<String> names = new ArrayList<String>();
+		List<String> names = new ArrayList<>();
 		for (int i = 1; i < 2012; i++) {
 			names.add("Name " + i);
 		}
