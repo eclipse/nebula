@@ -1,7 +1,7 @@
 /*******************************************************************************
  *  Copyright (c) 2010, 2012 Weltevree Beheer BV, Remain Software & Industrial-TSI
- * 
- * All rights reserved. 
+ *
+ * All rights reserved.
  * This program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -16,15 +16,13 @@ import java.util.Random;
 import org.eclipse.nebula.widgets.oscilloscope.multichannel.Oscilloscope;
 import org.eclipse.nebula.widgets.oscilloscope.multichannel.OscilloscopeStackAdapter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /**
  * This snippet demonstrates how to run the dispatcher in simple mode.
- * 
+ *
  */
 public class MultiScope_ScopeWithDataAndProgression2Channels_1 {
 
@@ -32,7 +30,7 @@ public class MultiScope_ScopeWithDataAndProgression2Channels_1 {
 
 	/**
 	 * Launch the application.
-	 * 
+	 *
 	 * @param args
 	 */
 	public static void main(String[] args) {
@@ -58,15 +56,10 @@ public class MultiScope_ScopeWithDataAndProgression2Channels_1 {
 
 		// Create a single channel scope
 		final Oscilloscope scope = new Oscilloscope(2, shell, SWT.NONE);
-		scope.addControlListener(new ControlAdapter() {
-			@Override
-			public void controlResized(ControlEvent e) {
-				scope.setProgression(0, ((Oscilloscope) e.widget).getSize().x);
-				scope.setProgression(1, ((Oscilloscope) e.widget).getSize().x);
-			}
+		scope.addListener(SWT.Resize, e -> {
+			scope.setProgression(0, ((Oscilloscope) e.widget).getSize().x);
+			scope.setProgression(1, ((Oscilloscope) e.widget).getSize().x);
 		});
-		
-		//scope.setSteady();
 
 		OscilloscopeStackAdapter stackAdapter = getStackAdapter();
 		scope.addStackListener(0, stackAdapter);
@@ -129,6 +122,5 @@ public class MultiScope_ScopeWithDataAndProgression2Channels_1 {
 			}
 		};
 
-		// TODO Auto-generated method stub
 	}
 }
