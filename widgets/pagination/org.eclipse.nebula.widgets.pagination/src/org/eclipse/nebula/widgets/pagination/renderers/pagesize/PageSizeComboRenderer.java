@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Label;
  * This SWT {@link Composite} display a SWT {@link Combo} which is populate with
  * several page list that it can be select to change the page size of the linked
  * pagination controller.
- * 
+ *
  */
 public class PageSizeComboRenderer extends
 		AbstractPageControllerComposite implements
@@ -58,9 +58,7 @@ public class PageSizeComboRenderer extends
 		comboViewer.setInput(pageSizeList);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see
 	 * org.eclipse.nebula.widgets.pagination.PageChangedListener#pageIndexChanged
 	 * (int, int, org.eclipse.nebula.widgets.pagination.PaginationController)
@@ -73,9 +71,7 @@ public class PageSizeComboRenderer extends
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.nebula.widgets.pagination.PageChangedListener#
 	 * totalElementsChanged(long, long,
 	 * org.eclipse.nebula.widgets.pagination.PaginationController)
@@ -85,9 +81,7 @@ public class PageSizeComboRenderer extends
 		// Do nothing.
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see
 	 * org.eclipse.nebula.widgets.pagination.PageChangedListener#sortChanged
 	 * (java.lang.String, java.lang.String, int, int,
@@ -99,9 +93,7 @@ public class PageSizeComboRenderer extends
 		// Do nothing.
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see
 	 * org.eclipse.nebula.widgets.pagination.PageChangedListener#pageSizeChanged
 	 * (int, int, org.eclipse.nebula.widgets.pagination.PaginationController)
@@ -159,9 +151,9 @@ public class PageSizeComboRenderer extends
 		return (Integer) ((IStructuredSelection) comboViewer.getSelection())
 				.getFirstElement();
 	}
-	
+
 	@Override
-	public void setLocale(Locale locale) {	
+	public void setLocale(Locale locale) {
 		super.setLocale(locale);
 		itemsPerPageLabel.setText(Resources.getText(
 				Resources.PaginationRenderer_itemsPerPage, getLocale()));

@@ -17,8 +17,8 @@ import java.util.List;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.nebula.widgets.pagination.collections.PageResultLoaderList;
 import org.eclipse.nebula.widgets.pagination.collections.PageResultContentProvider;
+import org.eclipse.nebula.widgets.pagination.collections.PageResultLoaderList;
 import org.eclipse.nebula.widgets.pagination.renderers.navigation.ResultAndNavigationPageGraphicsRenderer;
 import org.eclipse.nebula.widgets.pagination.renderers.navigation.ResultAndNavigationPageGraphicsRendererFactory;
 import org.eclipse.nebula.widgets.pagination.renderers.navigation.graphics.BlackNavigationPageGraphicsConfigurator;
@@ -26,8 +26,6 @@ import org.eclipse.nebula.widgets.pagination.renderers.navigation.graphics.BlueN
 import org.eclipse.nebula.widgets.pagination.renderers.navigation.graphics.GreenNavigationPageGraphicsConfigurator;
 import org.eclipse.nebula.widgets.pagination.table.PageableTable;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -39,7 +37,7 @@ import org.eclipse.swt.widgets.Shell;
  * This sample display a list of String in a SWT Table with navigation page
  * drawn with {@link GC} by using
  * {@link ResultAndNavigationPageGraphicsRendererFactory}.
- * 
+ *
  * The combo on the bottom of the table display several styles "Blue", "Green",
  * "Black" taht you can select to change the styles of GC navigation page.
  */
@@ -73,7 +71,7 @@ public class GraphicsPageableTableExample {
 
 		// 3) Set the page loader used to load a page (sublist of String)
 		// according the page index selected, the page size etc.
-		pageableTable.setPageLoader(new PageResultLoaderList<String>(items));
+		pageableTable.setPageLoader(new PageResultLoaderList<>(items));
 
 		// 4) Set current page to 0 to display the first page
 		pageableTable.setCurrentPage(0);
@@ -81,28 +79,18 @@ public class GraphicsPageableTableExample {
 		final Combo styleCombo = new Combo(shell, SWT.READ_ONLY);
 		styleCombo.setItems(new String[] { "Blue", "Green", "Black" });
 		styleCombo.select(0);
-		styleCombo.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (styleCombo.getText().equals("Blue")) {
-					((ResultAndNavigationPageGraphicsRenderer) pageableTable
-							.getCompositeTop()).getNavigationPage()
-							.setConfigurator(
-									BlueNavigationPageGraphicsConfigurator
-											.getInstance());
-				} else if (styleCombo.getText().equals("Green")) {
-					((ResultAndNavigationPageGraphicsRenderer) pageableTable
-							.getCompositeTop())
-							.setConfigurator(GreenNavigationPageGraphicsConfigurator
-									.getInstance());
-				} else {
-					((ResultAndNavigationPageGraphicsRenderer) pageableTable
-							.getCompositeTop())
-							.setConfigurator(BlackNavigationPageGraphicsConfigurator
-									.getInstance());
-				}
-
+		styleCombo.addListener(SWT.Selection, e -> {
+			if (styleCombo.getText().equals("Blue")) {
+				((ResultAndNavigationPageGraphicsRenderer) pageableTable.getCompositeTop()).getNavigationPage()
+						.setConfigurator(BlueNavigationPageGraphicsConfigurator.getInstance());
+			} else if (styleCombo.getText().equals("Green")) {
+				((ResultAndNavigationPageGraphicsRenderer) pageableTable.getCompositeTop())
+						.setConfigurator(GreenNavigationPageGraphicsConfigurator.getInstance());
+			} else {
+				((ResultAndNavigationPageGraphicsRenderer) pageableTable.getCompositeTop())
+						.setConfigurator(BlackNavigationPageGraphicsConfigurator.getInstance());
 			}
+
 		});
 
 		shell.setSize(450, 300);
@@ -116,11 +104,11 @@ public class GraphicsPageableTableExample {
 
 	/**
 	 * Create a static list.
-	 * 
+	 *
 	 * @return
 	 */
 	private static List<String> createList() {
-		List<String> names = new ArrayList<String>();
+		List<String> names = new ArrayList<>();
 		for (int i = 1; i < 2012; i++) {
 			names.add("Name " + i);
 		}

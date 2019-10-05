@@ -30,21 +30,21 @@ import org.eclipse.swt.widgets.Link;
 
 /**
  * This SWT {@link Composite} display :
- * 
+ *
  * <ul>
  * <li>on the left region the result page.</li>
  * <li>on the right region the page links navigation by using SWT {@link Link}.</li>
  * </ul>
- * 
+ *
  * <p>
  * Example :
- * 
+ *
  * <pre>
  * 	Results 1-5 of 10          Previous 1 2 ...10 Next
  * </pre>
- * 
+ *
  * </p>
- * 
+ *
  */
 public class ResultAndNavigationPageLinksRenderer extends
 		AbstractPageControllerComposite implements SelectionListener {
@@ -68,7 +68,7 @@ public class ResultAndNavigationPageLinksRenderer extends
 	 * Constructs a new instance of this class given its parent and a style
 	 * value describing its behavior and appearance. Here the pagination
 	 * controller is filled.
-	 * 
+	 *
 	 * @param parent
 	 *            a widget which will be the parent of the new instance (cannot
 	 *            be null)
@@ -76,7 +76,7 @@ public class ResultAndNavigationPageLinksRenderer extends
 	 *            the style of widget to construct
 	 * @param controller
 	 *            the pagination controller to observe and update.
-	 * 
+	 *
 	 */
 	public ResultAndNavigationPageLinksRenderer(Composite parent, int style,
 			PageableController controller) {
@@ -86,13 +86,13 @@ public class ResultAndNavigationPageLinksRenderer extends
 
 	/**
 	 * Create the UI like this :
-	 * 
+	 *
 	 * <p>
-	 * 
+	 *
 	 * <pre>
 	 * Results 1-5 of 10          Previous 1 2 ...10 Next
 	 * </pre>
-	 * 
+	 *
 	 * </p>
 	 */
 	protected void createUI(Composite parent) {
@@ -108,7 +108,7 @@ public class ResultAndNavigationPageLinksRenderer extends
 
 	/**
 	 * Create result label "Results 1-5 of 10"
-	 * 
+	 *
 	 * @param parent
 	 */
 	private void createLeftContainer(Composite parent) {
@@ -126,7 +126,7 @@ public class ResultAndNavigationPageLinksRenderer extends
 
 	/**
 	 * Create page links "Previous 1 2 ...10 Next" with SWT Link.
-	 * 
+	 *
 	 * @param parent
 	 */
 	private void createRightContainer(Composite parent) {
@@ -179,9 +179,7 @@ public class ResultAndNavigationPageLinksRenderer extends
 		getController().setCurrentPage(newCurrentPage);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see
 	 * org.eclipse.nebula.widgets.pagination.PageChangedListener#pageIndexChanged
 	 * (int, int, org.eclipse.nebula.widgets.pagination.PaginationController)
@@ -198,7 +196,7 @@ public class ResultAndNavigationPageLinksRenderer extends
 
 	/**
 	 * Returns the string links.
-	 * 
+	 *
 	 * @param indexes
 	 *            array of indexes.
 	 * @param newPageNumber
@@ -224,9 +222,7 @@ public class ResultAndNavigationPageLinksRenderer extends
 		return s.toString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see
 	 * org.eclipse.nebula.widgets.pagination.PageChangedListener#pageSizeChanged
 	 * (int, int, org.eclipse.nebula.widgets.pagination.PaginationController)
@@ -236,9 +232,7 @@ public class ResultAndNavigationPageLinksRenderer extends
 		// Do nothing
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.nebula.widgets.pagination.PageChangedListener#
 	 * totalElementsChanged(long, long,
 	 * org.eclipse.nebula.widgets.pagination.PaginationController)
@@ -253,9 +247,7 @@ public class ResultAndNavigationPageLinksRenderer extends
 		refreshEnabled(controller);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see
 	 * org.eclipse.nebula.widgets.pagination.PageChangedListener#sortChanged
 	 * (java.lang.String, java.lang.String, int, int,
@@ -269,7 +261,7 @@ public class ResultAndNavigationPageLinksRenderer extends
 
 	/**
 	 * Update the enabled Next/Previous links + update the result label.
-	 * 
+	 *
 	 * @param controller
 	 */
 	private void refreshEnabled(PageableController controller) {
@@ -281,7 +273,7 @@ public class ResultAndNavigationPageLinksRenderer extends
 
 	/**
 	 * Create SWT composite.
-	 * 
+	 *
 	 * @param parent
 	 * @param style
 	 * @return
@@ -292,7 +284,7 @@ public class ResultAndNavigationPageLinksRenderer extends
 
 	/**
 	 * Create hyperlink.
-	 * 
+	 *
 	 * @param parent
 	 * @param style
 	 * @return
@@ -303,7 +295,7 @@ public class ResultAndNavigationPageLinksRenderer extends
 
 	/**
 	 * Update the link with text content.
-	 * 
+	 *
 	 * @param link
 	 * @param text
 	 */
@@ -315,7 +307,7 @@ public class ResultAndNavigationPageLinksRenderer extends
 
 	/**
 	 * Add <a href="$href" >$content</a> to the given {@link StringBuilder} a.
-	 * 
+	 *
 	 * @param href
 	 * @param content
 	 * @param a
@@ -330,7 +322,7 @@ public class ResultAndNavigationPageLinksRenderer extends
 
 	/**
 	 * Returns the link Color.
-	 * 
+	 *
 	 * @return
 	 */
 	protected Color getColor() {

@@ -28,12 +28,9 @@ import org.eclipse.nebula.widgets.pagination.renderers.navigation.ResultAndNavig
 import org.eclipse.nebula.widgets.pagination.renderers.navigation.graphics.BlackNavigationPageGraphicsConfigurator;
 import org.eclipse.nebula.widgets.pagination.renderers.navigation.graphics.BlueNavigationPageGraphicsConfigurator;
 import org.eclipse.nebula.widgets.pagination.renderers.navigation.graphics.GreenNavigationPageGraphicsConfigurator;
-import org.eclipse.nebula.widgets.pagination.renderers.pagesize.PageSizeComboRenderer;
 import org.eclipse.nebula.widgets.pagination.table.PageableTable;
 import org.eclipse.nebula.widgets.pagination.table.SortTableColumnSelectionListener;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
@@ -45,12 +42,10 @@ import org.eclipse.swt.widgets.TableColumn;
 
 /**
  * Demonstrates the Nebula Pagination Control
- * 
+ *
  * @author Angelo ZERR
  */
 public class PaginationExampleTab extends AbstractExampleTab {
-
-	private static final String BUNDLE = "org.eclipse.nebula.widgets.pagination.example";
 
 	private PageableTable pageableTable;
 
@@ -146,28 +141,18 @@ public class PaginationExampleTab extends AbstractExampleTab {
 		final Combo styleCombo = new Combo(parent, SWT.READ_ONLY);
 		styleCombo.setItems(new String[] { "Blue", "Green", "Black" });
 		styleCombo.select(0);
-		styleCombo.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (styleCombo.getText().equals("Blue")) {
-					((ResultAndNavigationPageGraphicsRenderer) pageableTable
-							.getCompositeTop()).getNavigationPage()
-							.setConfigurator(
-									BlueNavigationPageGraphicsConfigurator
-											.getInstance());
-				} else if (styleCombo.getText().equals("Green")) {
-					((ResultAndNavigationPageGraphicsRenderer) pageableTable
-							.getCompositeTop())
-							.setConfigurator(GreenNavigationPageGraphicsConfigurator
-									.getInstance());
-				} else {
-					((ResultAndNavigationPageGraphicsRenderer) pageableTable
-							.getCompositeTop())
-							.setConfigurator(BlackNavigationPageGraphicsConfigurator
-									.getInstance());
-				}
-
+		styleCombo.addListener(SWT.Selection, e -> {
+			if (styleCombo.getText().equals("Blue")) {
+				((ResultAndNavigationPageGraphicsRenderer) pageableTable.getCompositeTop()).getNavigationPage()
+						.setConfigurator(BlueNavigationPageGraphicsConfigurator.getInstance());
+			} else if (styleCombo.getText().equals("Green")) {
+				((ResultAndNavigationPageGraphicsRenderer) pageableTable.getCompositeTop())
+						.setConfigurator(GreenNavigationPageGraphicsConfigurator.getInstance());
+			} else {
+				((ResultAndNavigationPageGraphicsRenderer) pageableTable.getCompositeTop())
+						.setConfigurator(BlackNavigationPageGraphicsConfigurator.getInstance());
 			}
+
 		});
 		styleCombo.setLayoutData(new GridData(GridData.FILL_BOTH));
 
@@ -179,15 +164,12 @@ public class PaginationExampleTab extends AbstractExampleTab {
 		localeCombo.setItems(new String[] { "en", "fr" });
 		localeCombo.select(Locale.getDefault().equals(Locale.FRANCE) ? 1 : 0);
 		localeCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		localeCombo.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				String locale = localeCombo.getText();
-				if ("fr".equals(locale)) {
-					pageableTable.setLocale(Locale.FRENCH);
-				} else {
-					pageableTable.setLocale(Locale.ENGLISH);
-				}
+		localeCombo.addListener(SWT.Selection, e -> {
+			String locale = localeCombo.getText();
+			if ("fr".equals(locale)) {
+				pageableTable.setLocale(Locale.FRENCH);
+			} else {
+				pageableTable.setLocale(Locale.ENGLISH);
 			}
 		});
 

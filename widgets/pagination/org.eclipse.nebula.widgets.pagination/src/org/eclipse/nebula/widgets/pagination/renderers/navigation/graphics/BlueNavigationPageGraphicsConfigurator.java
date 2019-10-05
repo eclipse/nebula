@@ -17,20 +17,20 @@ import org.eclipse.swt.graphics.RGB;
 
 /**
  * Navigation page configurator to configure navigation page with blue theme.
- * 
+ *
  */
 public class BlueNavigationPageGraphicsConfigurator implements INavigationPageGraphicsConfigurator {
 
 	private final static INavigationPageGraphicsConfigurator INSTANCE = new BlueNavigationPageGraphicsConfigurator();
 
 	private static final RGB DARK_BLUE = new RGB(0,49,82);
-	private static final RGB BLUE = new RGB(148, 148, 231);	
+	private static final RGB BLUE = new RGB(148, 148, 231);
 	private static final RGB LIGHT_BLUE = new RGB(222, 239, 247);
 	private static final RGB WHITE = new RGB(255, 255, 255);
 	private static final RGB ORANGE = new RGB(236, 82, 16);
-	private static final RGB GRAY = new RGB(239,237,247);	
+	private static final RGB GRAY = new RGB(239,237,247);
 	private static final RGB LIGHT_GRAY = new RGB(134, 134, 134);
-	
+
 	public static INavigationPageGraphicsConfigurator getInstance() {
 		return INSTANCE;
 	}
@@ -39,7 +39,6 @@ public class BlueNavigationPageGraphicsConfigurator implements INavigationPageGr
 
 		page.setBackground(page.getDisplay().getSystemColor(
 				SWT.COLOR_WIDGET_BACKGROUND));
-		// page.setBackground(Resources.getColor(LIGHT_BLUE));
 
 		// Selected item styles
 		page.setSelectedItemBorderColor(Resources.getColor(ORANGE));
@@ -55,7 +54,7 @@ public class BlueNavigationPageGraphicsConfigurator implements INavigationPageGr
 		page.setDisabledItemBorderColor(Resources.getColor(LIGHT_GRAY));
 		page.setDisabledItemForeground(Resources.getColor(LIGHT_GRAY));
 		page.setDisabledItemBackground(Resources.getColor(GRAY));
-		
+
 		page.setRound(5);
 	}
 

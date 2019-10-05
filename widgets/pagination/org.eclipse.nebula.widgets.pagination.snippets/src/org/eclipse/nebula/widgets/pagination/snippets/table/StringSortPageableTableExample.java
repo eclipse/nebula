@@ -37,7 +37,7 @@ import org.eclipse.swt.widgets.Text;
  * displayed with Page Results+Page Links on the top of the SWT Table. The
  * column which display the list of String can be clicked to sort the paginated
  * list.
- * 
+ *
  */
 public class StringSortPageableTableExample {
 
@@ -55,7 +55,7 @@ public class StringSortPageableTableExample {
 		// 1) Create pageable table with 10 items per page
 		// This SWT Component create internally a SWT Table+JFace TreeViewer
 		int pageSize = 10;
-		 paginationTable = new PageableTable(shell, SWT.BORDER, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL, pageSize);
+		paginationTable = new PageableTable(shell, SWT.BORDER, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL, pageSize);
 		paginationTable.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1));
 
 		// 2) Initialize the table viewer + SWT Table
@@ -84,7 +84,7 @@ public class StringSortPageableTableExample {
 
 		// 4) Set the page loader used to load a page (sublist of String)
 		// according the page index selected, the page size etc.
-		paginationTable.setPageLoader(new PageResultLoaderList<String>(items));
+		paginationTable.setPageLoader(new PageResultLoaderList<>(items));
 
 		// 5) Set current page to 0 to display the first page
 		paginationTable.setCurrentPage(0);
@@ -93,7 +93,7 @@ public class StringSortPageableTableExample {
 		lbl.setText("Max rows per page: ");
 		lbl.setLayoutData(new GridData(GridData.END, GridData.CENTER, false, false));
 
-		 txt = new Text(shell, SWT.BORDER);
+		txt = new Text(shell, SWT.BORDER);
 		txt.setText("10");
 		GridData gd = new GridData(GridData.BEGINNING, GridData.CENTER, false, false);
 		gd.widthHint = 30;
@@ -125,11 +125,11 @@ public class StringSortPageableTableExample {
 
 	/**
 	 * Create a static list.
-	 * 
+	 *
 	 * @return
 	 */
 	private static List<String> createList() {
-		List<String> names = new ArrayList<String>();
+		List<String> names = new ArrayList<>();
 		for (int i = 1; i < 2012; i++) {
 			names.add("Name " + i);
 		}

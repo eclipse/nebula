@@ -25,8 +25,6 @@ import org.eclipse.nebula.widgets.pagination.snippets.model.Person;
 import org.eclipse.nebula.widgets.pagination.table.PageableTable;
 import org.eclipse.nebula.widgets.pagination.table.SortTableColumnSelectionListener;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
@@ -41,9 +39,9 @@ import org.eclipse.swt.widgets.TableColumn;
  * pagination banner displayed with Page Results+Page Links on the top of the
  * SWT Table. The 2 columns which display the list of {@link Person} can be
  * clicked to sort the paginated list.
- * 
+ *
  * You can change the total number of items.
- * 
+ *
  */
 public class ModelSortPageableTableAndTotalChangedExample {
 
@@ -88,20 +86,17 @@ public class ModelSortPageableTableAndTotalChangedExample {
 		// 4) Set the page loader used to load a page (sublist of String)
 		// according the page index selected, the page size etc.
 		List<Person> items = createList(combo);
-		final PageResultLoaderList<Person> pageLoader = new PageResultLoaderList<Person>(
+		final PageResultLoaderList<Person> pageLoader = new PageResultLoaderList<>(
 				items);
 		pageableTable.setPageLoader(pageLoader);
-		
+
 		// 5) Set current page to 0 to refresh the table
 		pageableTable.setCurrentPage(0);
 
-		combo.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				List<Person> items = createList(combo);
-				pageLoader.setItems(items);
-				pageableTable.refreshPage(true);
-			}
+		combo.addListener(SWT.Selection, e -> {
+			List<Person> _items = createList(combo);
+			pageLoader.setItems(_items);
+			pageableTable.refreshPage(true);
 		});
 
 		shell.setSize(400, 250);
@@ -146,7 +141,7 @@ public class ModelSortPageableTableAndTotalChangedExample {
 
 	private static List<Person> createList(Combo combo) {
 		int total = Integer.valueOf(TOTAL_ITEMS[combo.getSelectionIndex()]);
-		List<Person> names = new ArrayList<Person>();
+		List<Person> names = new ArrayList<>();
 		for (int i = 1; i < total; i++) {
 			names.add(new Person("Name " + i, i < 100 ? "Adress "
 					+ Math.random() : null));

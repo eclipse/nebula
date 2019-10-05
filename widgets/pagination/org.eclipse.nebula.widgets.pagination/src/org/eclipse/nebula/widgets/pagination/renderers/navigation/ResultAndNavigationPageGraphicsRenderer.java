@@ -30,21 +30,21 @@ import org.eclipse.swt.widgets.Label;
 
 /**
  * This SWT {@link Composite} display :
- * 
+ *
  * <ul>
  * <li>on the left region the result page.</li>
  * <li>on the right region the page links navigation by using {@link GC}.</li>
  * </ul>
- * 
+ *
  * <p>
  * Example :
- * 
+ *
  * <pre>
  * 	Results 1-5 of 10          Previous 1 2 ...10 Next
  * </pre>
- * 
+ *
  * </p>
- * 
+ *
  */
 public class ResultAndNavigationPageGraphicsRenderer extends
 		AbstractPageControllerComposite {
@@ -73,13 +73,13 @@ public class ResultAndNavigationPageGraphicsRenderer extends
 
 	/**
 	 * Create the UI like this :
-	 * 
+	 *
 	 * <p>
-	 * 
+	 *
 	 * <pre>
 	 * Results 1-5 of 10          Previous 1 2 ...10 Next
 	 * </pre>
-	 * 
+	 *
 	 * </p>
 	 */
 	protected void createUI(Composite parent) {
@@ -94,7 +94,7 @@ public class ResultAndNavigationPageGraphicsRenderer extends
 
 	/**
 	 * Create result label "Results 1-5 of 10"
-	 * 
+	 *
 	 * @param parent
 	 */
 	private void createLeftContainer(Composite parent) {
@@ -112,7 +112,7 @@ public class ResultAndNavigationPageGraphicsRenderer extends
 
 	/**
 	 * Create page links "Previous 1 2 ...10 Next" with {@link GC}.
-	 * 
+	 *
 	 * @param parent
 	 */
 	private void createRightContainer(Composite parent) {
@@ -209,7 +209,7 @@ public class ResultAndNavigationPageGraphicsRenderer extends
 
 	/**
 	 * Returns the {@link GC} navigation page.
-	 * 
+	 *
 	 * @return
 	 */
 	public NavigationPageGraphics getNavigationPage() {
@@ -218,7 +218,7 @@ public class ResultAndNavigationPageGraphicsRenderer extends
 
 	/**
 	 * Configure navigation page.
-	 * 
+	 *
 	 * @param configurator
 	 */
 	public void setConfigurator(INavigationPageGraphicsConfigurator configurator) {

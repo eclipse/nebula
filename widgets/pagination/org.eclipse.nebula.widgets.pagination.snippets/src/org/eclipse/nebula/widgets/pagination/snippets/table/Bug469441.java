@@ -28,8 +28,6 @@ import org.eclipse.nebula.widgets.pagination.table.PageableTable;
 import org.eclipse.nebula.widgets.pagination.table.SortTableColumnSelectionListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -80,7 +78,7 @@ public class Bug469441 {
 				return false;
 			}
 		});
-		
+
 
 		// 2) Initialize the table viewer SWT Table
 		TableViewer viewer = pageableTable.getViewer();
@@ -97,23 +95,19 @@ public class Bug469441 {
 		// 4) Set the page loader used to load a page (sublist of String)
 		// according the page index selected, the page size etc.
 		List<Bug469441Person> items = createList(combo);
-		final PageResultLoaderList<Bug469441Person> pageLoader = new PageResultLoaderList<Bug469441Person>(items);
+		final PageResultLoaderList<Bug469441Person> pageLoader = new PageResultLoaderList<>(items);
 		pageableTable.setPageLoader(pageLoader);
 
 		// 5) Set current page to 0 to refresh the table
 		pageableTable.setCurrentPage(0);
 
-		combo.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				List<Bug469441Person> items = createList(combo);
-				pageLoader.setItems(items);
-				pageableTable.refreshPage(true);
-			}
+		combo.addListener(SWT.Selection, e -> {
+			List<Bug469441Person> _items = createList(combo);
+			pageLoader.setItems(_items);
+			pageableTable.refreshPage(true);
 		});
 
-	
-		
+
 		shell.setSize(400, 250);
 		shell.open();
 		while (!shell.isDisposed()) {
@@ -159,7 +153,7 @@ public class Bug469441 {
 
 	private static List<Bug469441Person> createList(Combo combo) {
 		int total = Integer.valueOf(TOTAL_ITEMS[combo.getSelectionIndex()]);
-		List<Bug469441Person> names = new ArrayList<Bug469441Person>();
+		List<Bug469441Person> names = new ArrayList<>();
 		for (int i = 1; i < total; i++) {
 			names.add(new Bug469441Person("Name " + i, i < 100 ? "Address " + Math.random() : null));
 		}
