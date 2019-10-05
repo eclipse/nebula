@@ -28,14 +28,14 @@ public class DOMTreeContentProvider implements ITreeContentProvider {
 
 	private Node root;
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	@Override
 	public void dispose() {
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
 	@Override
@@ -43,7 +43,7 @@ public class DOMTreeContentProvider implements ITreeContentProvider {
 		root = (Node)newInput;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getElements(java.lang.Object)
 	 */
 	@Override
@@ -55,7 +55,7 @@ public class DOMTreeContentProvider implements ITreeContentProvider {
 		}
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
 	@Override
@@ -71,7 +71,7 @@ public class DOMTreeContentProvider implements ITreeContentProvider {
 	 * @return
 	 */
 	private Object[] getChildren(Node node) {
-		List<Node> res = new ArrayList<Node>();
+		List<Node> res = new ArrayList<>();
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			res.add(children.item(i));
@@ -80,7 +80,7 @@ public class DOMTreeContentProvider implements ITreeContentProvider {
 		return res.toArray();
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
 	@Override
@@ -91,7 +91,7 @@ public class DOMTreeContentProvider implements ITreeContentProvider {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
 	@Override

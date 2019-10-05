@@ -8,14 +8,14 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public class XMLNodesComparator implements Comparator<Node> {
-	
+
 	private ILabelProvider labelProvider;
-	
+
 	public XMLNodesComparator() {
 		labelProvider = new DOMLabelProvider();
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
 	@Override
@@ -28,7 +28,7 @@ public class XMLNodesComparator implements Comparator<Node> {
 		} else if (arg0 instanceof Attr && arg1 instanceof Attr) {
 			return labelProvider.getText(arg0).compareTo(labelProvider.getText(arg1));
 		}
-		
+
 		// No attribute, at least one in an element
 		if (arg0 instanceof Element && !(arg1 instanceof Element)) {
 			return -1;
@@ -37,7 +37,7 @@ public class XMLNodesComparator implements Comparator<Node> {
 		} else if (arg0 instanceof Element && arg1 instanceof Element) {
 			return labelProvider.getText(arg0).compareTo(labelProvider.getText(arg1));
 		}
-		
+
 		return 0;
 	}
 

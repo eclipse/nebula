@@ -18,7 +18,7 @@ import org.eclipse.nebula.widgets.treemapper.ISemanticTreeMapperSupport;
  */
 public class ObjectSemanticSupport implements ISemanticTreeMapperSupport<String, String, String> {
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.nebula.widgets.treemapper.ISemanticTreeMapperSupport#createSemanticMappingObject(java.lang.Object, java.lang.Object)
 	 */
 	@Override
@@ -26,7 +26,7 @@ public class ObjectSemanticSupport implements ISemanticTreeMapperSupport<String,
 		return leftItem;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.nebula.widgets.treemapper.ISemanticTreeMapperSupport#resolveLeftItem(java.lang.Object)
 	 */
 	@Override
@@ -34,7 +34,7 @@ public class ObjectSemanticSupport implements ISemanticTreeMapperSupport<String,
 		return semanticMappingObject;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.nebula.widgets.treemapper.ISemanticTreeMapperSupport#resolveRightItem(java.lang.Object)
 	 */
 	@Override
