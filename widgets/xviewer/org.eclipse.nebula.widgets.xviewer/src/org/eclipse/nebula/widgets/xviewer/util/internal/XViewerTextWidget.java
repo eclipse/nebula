@@ -13,16 +13,14 @@ package org.eclipse.nebula.widgets.xviewer.util.internal;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.eclipse.nebula.widgets.xviewer.Activator;
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.nebula.widgets.xviewer.core.util.XmlUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -161,16 +159,12 @@ public class XViewerTextWidget extends XViewerWidget {
    }
 
    private void addModificationListener() {
-      sText.addModifyListener(new ModifyListener() {
-
-         @Override
-         public void modifyText(ModifyEvent e) {
+      sText.addListener(SWT.Modify, e -> {
             if (sText != null) {
                text = sText.getText();
                setLabelError();
                notifyXModifiedListeners();
             }
-         }
       });
    }
 
@@ -222,32 +216,19 @@ public class XViewerTextWidget extends XViewerWidget {
       Menu menu = new Menu(sText.getShell());
       MenuItem cut = new MenuItem(menu, SWT.NONE);
       cut.setText(XViewerText.get("menu.cut")); //$NON-NLS-1$
-      cut.addSelectionListener(new SelectionAdapter() {
-
-         @Override
-         public void widgetSelected(SelectionEvent e) {
+      cut.addListener(SWT.Selection, e-> {
             sText.cut();
             sText.redraw();
-         }
       });
       MenuItem copy = new MenuItem(menu, SWT.NONE);
       copy.setText(XViewerText.get("menu.copy")); //$NON-NLS-1$
-      copy.addSelectionListener(new SelectionAdapter() {
+      copy.addListener(SWT.Selection, e-> sText.copy());
 
-         @Override
-         public void widgetSelected(SelectionEvent e) {
-            sText.copy();
-         }
-      });
       MenuItem paste = new MenuItem(menu, SWT.NONE);
       paste.setText(XViewerText.get("menu.paste")); //$NON-NLS-1$
-      paste.addSelectionListener(new SelectionAdapter() {
-
-         @Override
-         public void widgetSelected(SelectionEvent e) {
+      paste.addListener(SWT.Selection, e->  {
             sText.paste();
             sText.redraw();
-         }
       });
       return menu;
    }
@@ -476,7 +457,7 @@ public class XViewerTextWidget extends XViewerWidget {
 
    @Override
    public String getReportData() {
-      StringBuffer sb = new StringBuffer();
+      StringBuilder sb = new StringBuilder();
       String textStr = text;
       if (fillVertically) {
          sb.append("\n"); //$NON-NLS-1$

@@ -12,6 +12,7 @@ package org.eclipse.nebula.widgets.xviewer.core.model;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.eclipse.nebula.widgets.xviewer.core.util.XViewerUtil;
 
 /**
@@ -60,7 +61,7 @@ public class CustomizeData implements Comparable<CustomizeData> {
    }
 
    public String getXml(boolean visibleColumnsOnly) {
-      StringBuffer sb = new StringBuffer(
+      StringBuilder sb = new StringBuilder(
          "<XTreeProperties name=\"" + name + "\" namespace=\"" + nameSpace + "\" guid=\"" + guid + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
       sb.append(sortingData.getXml());
       sb.append(filterData.getXml());

@@ -17,8 +17,6 @@ import java.util.Date;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -68,24 +66,15 @@ public class DateSelectionDialog extends MessageDialog {
          dp.setMonth(cal.get(Calendar.MONTH));
          dp.setDay(cal.get(Calendar.DAY_OF_YEAR));
       }
-      dp.addSelectionListener(new SelectionAdapter() {
-         @Override
-         public void widgetSelected(SelectionEvent e) {
-            super.widgetSelected(e);
+      dp.addListener(SWT.Selection, e->  {
             Calendar cal = Calendar.getInstance();
             cal.set(dp.getYear(), dp.getMonth(), dp.getDay());
             selectedDate = cal.getTime();
-         }
       });
 
       Button clearButton = new Button(filterComp, SWT.PUSH);
       clearButton.setText(XViewerText.get("button.clear")); //$NON-NLS-1$
-      clearButton.addSelectionListener(new SelectionAdapter() {
-         @Override
-         public void widgetSelected(SelectionEvent e) {
-            selectedDate = null;
-         }
-      });
+      clearButton.addListener(SWT.Selection, e-> selectedDate = null);
 
       // set selected date if != null
       return filterComp;

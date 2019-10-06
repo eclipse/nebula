@@ -12,20 +12,15 @@ package org.eclipse.nebula.widgets.xviewer.customize.dialog;
 
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.nebula.widgets.xviewer.XViewer;
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.nebula.widgets.xviewer.core.model.CustomizeData;
 import org.eclipse.nebula.widgets.xviewer.customize.CustomizeDataLabelProvider;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -90,12 +85,7 @@ public class CustomizationDataSelectionDialog extends ListDialog {
       custText = new Text(comp, SWT.BORDER);
       custText.setFocus();
       custText.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
-      custText.addModifyListener(new ModifyListener() {
-         @Override
-         public void modifyText(ModifyEvent e) {
-            enteredName = custText.getText();
-         }
-      });
+      custText.addListener(SWT.Modify, e -> enteredName = custText.getText());
 
       if (xViewer.getXViewerFactory().isAdmin()) {
          comp = new Composite(container, SWT.NONE);
@@ -106,23 +96,15 @@ public class CustomizationDataSelectionDialog extends ListDialog {
          saveSharedCheckLabel.setText(XViewerText.get("checkbox.shared")); //$NON-NLS-1$
 
          saveSharedCheck = new Button(comp, SWT.CHECK);
-         saveSharedCheck.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-               saveShared = saveSharedCheck.getSelection();
-            }
-         });
+         saveSharedCheck.addListener(SWT.Selection, e -> saveShared = saveSharedCheck.getSelection());
       }
 
-      getTableViewer().addSelectionChangedListener(new ISelectionChangedListener() {
-         @Override
-         public void selectionChanged(SelectionChangedEvent event) {
+      getTableViewer().addSelectionChangedListener(event -> {
             selectedCustData = getSelectedCustomizeData();
             if (saveSharedCheck != null) {
                saveSharedCheck.setSelection(!selectedCustData.isPersonal());
                saveShared = !selectedCustData.isPersonal();
             }
-         }
       });
       return c;
    }

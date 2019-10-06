@@ -39,7 +39,7 @@ public class ColumnMultiEditAction extends Action {
    }
 
    public static Set<TreeColumn> getEditableTreeColumns(XViewer xViewer, Collection<TreeItem> selectedTreeItems) {
-      Set<TreeColumn> editableColumns = new HashSet<TreeColumn>();
+      Set<TreeColumn> editableColumns = new HashSet<>();
       for (TreeColumn treeCol : xViewer.getTree().getColumns()) {
          if (xViewer.isColumnMultiEditable(treeCol, selectedTreeItems)) {
             editableColumns.add(treeCol);

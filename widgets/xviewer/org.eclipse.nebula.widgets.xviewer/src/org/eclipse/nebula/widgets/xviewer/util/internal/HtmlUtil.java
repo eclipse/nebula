@@ -20,6 +20,7 @@ import java.net.URLConnection;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
+
 import org.eclipse.nebula.widgets.xviewer.Activator;
 
 /**
@@ -61,7 +62,7 @@ public class HtmlUtil {
    }
 
    public static String getUrlPageHtml(String urlStr, InetSocketAddress addr) {
-      StringBuffer buffer = new StringBuffer();
+      StringBuilder buffer = new StringBuilder();
       try {
          URL url = new URL(urlStr);
          URLConnection connection = url.openConnection(new Proxy(Proxy.Type.HTTP, addr));
@@ -143,7 +144,7 @@ public class HtmlUtil {
    }
 
    public static String urlBlock(String description, String urls[]) {
-      StringBuffer str = new StringBuffer("<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\">");
+      StringBuilder str = new StringBuilder("<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\">");
       if (!description.equals("")) {
          str.append(description);
          str.append(HtmlUtil.newline());
@@ -278,7 +279,7 @@ public class HtmlUtil {
     * @return Return multi-column table string
     */
    public static String multiColumnTable(String[] str, int width) {
-      StringBuffer sb = new StringBuffer("<table border=\"0\" cellpadding=\"3\" cellspacing=\"0\" width=\"");
+      StringBuilder sb = new StringBuilder("<table border=\"0\" cellpadding=\"3\" cellspacing=\"0\" width=\"");
       sb.append(width);
       sb.append("%\"><tr>");
       for (int i = 0; i < str.length; i++) {
@@ -315,7 +316,7 @@ public class HtmlUtil {
    }
 
    public static String addRowMultiColumnTable(String[] str, String[] colOptions, String backgroundColor) {
-      StringBuffer sb = new StringBuffer("<tr>");
+      StringBuilder sb = new StringBuilder("<tr>");
       if (backgroundColor != null) {
          sb.append("<tr bgcolor=\"");
          sb.append(backgroundColor);

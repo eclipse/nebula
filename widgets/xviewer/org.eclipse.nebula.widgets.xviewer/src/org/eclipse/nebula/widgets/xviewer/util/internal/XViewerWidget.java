@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.nebula.widgets.xviewer.Activator;
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
@@ -56,7 +57,7 @@ public abstract class XViewerWidget {
 
    protected boolean displayLabel = true;
    private final Set<XViewerWidgetModifiedListener> modifiedListeners =
-      new LinkedHashSet<XViewerWidgetModifiedListener>();
+      new LinkedHashSet<>();
    private MouseListener mouseLabelListener;
 
    /**
@@ -232,7 +233,7 @@ public abstract class XViewerWidget {
    }
 
    public List<String> getDisplayLabels() {
-      List<String> l = new ArrayList<String>();
+      List<String> l = new ArrayList<>();
       l.add(label);
       return l;
    }

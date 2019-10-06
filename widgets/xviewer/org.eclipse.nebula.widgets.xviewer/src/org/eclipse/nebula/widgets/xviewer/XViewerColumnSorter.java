@@ -20,7 +20,6 @@ import org.eclipse.swt.widgets.TreeColumn;
  */
 public class XViewerColumnSorter extends ViewerSorter {
 
-   @SuppressWarnings("unchecked")
    @Override
    public int compare(Viewer viewer, Object e1, Object e2) {
       if (e1 instanceof XViewerColumn) {

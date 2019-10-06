@@ -13,23 +13,20 @@ package org.eclipse.nebula.widgets.xviewer.customize;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.eclipse.nebula.widgets.xviewer.XViewer;
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 /**
  * Provides UI for displaying/entering search string
- * 
+ *
  * @author Andrew M. Finkbeiner
  */
 public class SearchDataUI {
@@ -49,8 +46,6 @@ public class SearchDataUI {
 
    public void createWidgets(Composite bar) {
 
-      //	  ExpandBar bar = new ExpandBar(comp, SWT.V_SCROLL);
-
       Label label = new Label(bar, SWT.NONE);
       label.setText(XViewerText.get("SearchDataUI.prompt")); //$NON-NLS-1$
       label.setToolTipText(XViewerText.get("SearchDataUI.prompt.tooltip")); //$NON-NLS-1$
@@ -63,17 +58,8 @@ public class SearchDataUI {
       gd.widthHint = 100;
       searchText.setLayoutData(gd);
 
-      searchText.addKeyListener(new KeyListener() {
-         @Override
-         public void keyPressed(KeyEvent e) {
-            // do nothing
-         }
-
-         @Override
-         public void keyReleased(KeyEvent e) {
-            // System.out.println(e.keyCode);
+      searchText.addListener(SWT.KeyUp, e->  {
             if (e.keyCode == SWT.CR || e.keyCode == SWT.KEYPAD_CR || searchRealTime) {
-               //               xViewer.getCustomizeMgr().setSearchText(searchText.getText());
                String newText = searchText.getText();
                if (newText.trim().length() == 0) {
                   search = false;
@@ -91,7 +77,6 @@ public class SearchDataUI {
                }
                xViewer.refresh();
             }
-         }
       });
 
       Label searchLabel = new Label(bar, SWT.NONE);
@@ -102,14 +87,11 @@ public class SearchDataUI {
       regularExpression.setText(XViewerText.get("regex.prompt")); //$NON-NLS-1$
       regularExpression.setToolTipText(XViewerText.get("regex.prompt.tooltip")); //$NON-NLS-1$
       regularExpression.setLayoutData(new GridData(SWT.RIGHT, SWT.NONE, false, false));
-      searchLabel.addListener(SWT.MouseUp, new Listener() {
-         @Override
-         public void handleEvent(Event event) {
+      searchLabel.addListener(SWT.MouseUp, event -> {
             searchText.setText(""); //$NON-NLS-1$
             search = false;
             match = Pattern.compile(searchText.getText()).matcher(""); //$NON-NLS-1$
             xViewer.refresh();
-         }
       });
    }
 
@@ -118,7 +100,7 @@ public class SearchDataUI {
       xViewer.getCustomizeMgr().setFilterText("", false); //$NON-NLS-1$
    }
 
-   public void appendToStatusLabel(StringBuffer sb) {
+   public void appendToStatusLabel(StringBuilder sb) {
       if (searchText != null && !searchText.getText().equals("")) { //$NON-NLS-1$
          sb.append(XViewerText.get("SearchDataUI.status")); //$NON-NLS-1$
       }

@@ -13,13 +13,9 @@ package org.eclipse.nebula.widgets.xviewer.util.internal.dialog;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
+
 import org.eclipse.nebula.widgets.xviewer.util.internal.PatternFilter;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TreeItem;
@@ -29,7 +25,7 @@ import org.eclipse.swt.widgets.TreeItem;
  */
 public class XCheckedFilteredTree extends XFilteredTree {
 
-   private final Set<Object> checked = new HashSet<Object>();
+   private final Set<Object> checked = new HashSet<>();
 
    public XCheckedFilteredTree(Composite parent, int treeStyle, PatternFilter filter) {
       super(parent, treeStyle, filter, true);
@@ -39,25 +35,11 @@ public class XCheckedFilteredTree extends XFilteredTree {
    @Override
    protected Control createTreeControl(Composite parent, int style) {
       Control control = super.createTreeControl(parent, style);
-      getViewer().addSelectionChangedListener(new ISelectionChangedListener() {
-         @Override
-         public void selectionChanged(SelectionChangedEvent event) {
-            storeResults(treeViewer.getTree().getItems());
-         }
-      });
-      getFilterControl().addModifyListener(new ModifyListener() {
-         @Override
-         public void modifyText(ModifyEvent e) {
-            restoreChecked(treeViewer.getTree().getItems());
-         }
-      });
-      getViewer().getTree().addPaintListener(new PaintListener() {
+      getViewer().addSelectionChangedListener(even -> storeResults(treeViewer.getTree().getItems()));
 
-         @Override
-         public void paintControl(PaintEvent e) {
-            restoreChecked(treeViewer.getTree().getItems());
-         }
-      });
+      getFilterControl().addListener(SWT.Modify, e -> restoreChecked(treeViewer.getTree().getItems()));
+
+      getViewer().getTree().addListener(SWT.Paint, e-> restoreChecked(treeViewer.getTree().getItems()));
       return control;
    }
 
@@ -77,10 +59,8 @@ public class XCheckedFilteredTree extends XFilteredTree {
    private void restoreChecked(TreeItem treeItems[]) {
       for (TreeItem treeItem : treeItems) {
          if (treeItem.getChecked() && !checked.contains(treeItem.getData())) {
-            //            System.out.println("Unchecked " + treeItem.getData());
             treeItem.setChecked(false);
          } else if (!treeItem.getChecked() && checked.contains(treeItem.getData())) {
-            //            System.out.println("Checked " + treeItem.getData());
             treeItem.setChecked(true);
          }
          restoreChecked(treeItem.getItems());
@@ -94,10 +74,8 @@ public class XCheckedFilteredTree extends XFilteredTree {
    private void storeResults(TreeItem treeItems[]) {
       for (TreeItem treeItem : treeItems) {
          if (treeItem.getChecked() && !checked.contains(treeItem.getData())) {
-            //            System.out.println("Added " + treeItem.getData());
             checked.add(treeItem.getData());
          } else if (!treeItem.getChecked() && checked.contains(treeItem.getData())) {
-            //            System.out.println("Removed " + treeItem.getData());
             checked.remove(treeItem.getData());
          }
          storeResults(treeItem.getItems());

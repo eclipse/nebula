@@ -13,6 +13,7 @@ package org.eclipse.nebula.widgets.xviewer;
 
 import java.util.List;
 import java.util.Map.Entry;
+
 import org.eclipse.nebula.widgets.xviewer.core.model.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.util.XViewerException;
 
@@ -42,7 +43,7 @@ public class XViewerLoadingReport extends XViewerHtmlReport {
    @SuppressWarnings("unused")
    @Override
    public String getHtml() throws XViewerException {
-      StringBuffer sb = new StringBuffer("<html><body>"); //$NON-NLS-1$
+      StringBuilder sb = new StringBuilder("<html><body>"); //$NON-NLS-1$
       List<XViewerColumn> columns = xViewer.getCustomizeMgr().getCurrentTableColumnsInOrder();
       sb.append("</br>PRE-COMPUTED</br>");
       for (Entry<String, Long> nameToTime : xViewer.getPreComputeElapsedTime().entrySet()) {

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
+
 import org.eclipse.nebula.widgets.xviewer.Activator;
 import org.eclipse.nebula.widgets.xviewer.util.XViewerException;
 
@@ -45,7 +46,7 @@ public class FileUtil {
    /**
     * Use the Lib method directly - the original implementation of this method was not memory efficient and suppressed
     * exceptions
-    * 
+    *
     * @throws IOException
     */
    public static String readFile(String filename) throws XViewerException {
@@ -55,7 +56,7 @@ public class FileUtil {
    /**
     * Use the Lib method directly - the original implementation of this method was not memory efficient and suppressed
     * exceptions
-    * 
+    *
     * @throws IOException
     */
    public static String readFile(File file) throws XViewerException {
@@ -64,7 +65,7 @@ public class FileUtil {
 
    public static String fileToString(File file) throws XViewerException {
       try {
-         StringBuffer buffer = new StringBuffer();
+         StringBuilder buffer = new StringBuilder();
          Reader inStream = new InputStreamReader(new FileInputStream(file), "UTF-8"); //$NON-NLS-1$
          Reader in = new BufferedReader(inStream);
          int ch;
@@ -86,7 +87,7 @@ public class FileUtil {
    }
 
    public static List<String> readListFromDir(File directory, FilenameFilter filter) {
-      List<String> list = new ArrayList<String>(400);
+      List<String> list = new ArrayList<>(400);
 
       if (directory == null) {
          XViewerLog.log(Activator.class, Level.SEVERE, "Invalid directory path");

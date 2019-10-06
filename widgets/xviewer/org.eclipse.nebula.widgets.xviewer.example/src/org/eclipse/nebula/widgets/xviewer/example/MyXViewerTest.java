@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.nebula.widgets.xviewer.edit.DefaultXViewerControlFactory;
@@ -27,8 +28,6 @@ import org.eclipse.nebula.widgets.xviewer.example.model.ISomeTask.TaskType;
 import org.eclipse.nebula.widgets.xviewer.example.model.SomeTask;
 import org.eclipse.nebula.widgets.xviewer.util.XViewerDisplay;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -64,7 +63,6 @@ public class MyXViewerTest {
 
       // Button composite for state transitions, etc
       Composite toolBarComposite = new Composite(Shell_1, SWT.NONE);
-      // bComp.setBackground(mainSComp.getDisplay().getSystemColor(SWT.COLOR_CYAN));
       toolBarComposite.setLayout(new GridLayout(2, false));
       toolBarComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
@@ -75,8 +73,6 @@ public class MyXViewerTest {
       myXviewer.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
       myXviewer.setContentProvider(new MyXViewerContentProvider());
       myXviewer.setLabelProvider(new MyXViewerLabelProvider(myXviewer));
-      // myXviewer.setLabelProvider(new
-      // MyXViewerStyledTextLabelProvider(myXviewer));
 
       // XViewerEditAdapter
       XViewerControlFactory cFactory = new DefaultXViewerControlFactory();
@@ -85,7 +81,7 @@ public class MyXViewerTest {
 
       createTaskActionBar(toolBarComposite);
 
-      List<Object> tasks = new ArrayList<Object>();
+      List<Object> tasks = new ArrayList<>();
       for (int x = 0; x < 1; x++) {
          tasks.addAll(getTestTasks());
       }
@@ -118,19 +114,17 @@ public class MyXViewerTest {
       ToolItem refreshItem = new ToolItem(toolBar, SWT.PUSH);
       refreshItem.setImage(MyImageCache.getImage("refresh.gif"));
       refreshItem.setToolTipText("Refresh");
-      refreshItem.addSelectionListener(new SelectionAdapter() {
-         @Override
-         public void widgetSelected(SelectionEvent e) {
-            List<Object> tasks = new ArrayList<Object>();
-            for (int x = 0; x < 1; x++) {
-               tasks.addAll(getTestTasks());
-            }
-            /**
-             * Note: setInputXViewer must be called instead of setInput for XViewer to operate properly
-             */
-            myXviewer.setInputXViewer(tasks);
-         }
-      });
+		refreshItem.addListener(SWT.Selection, e -> {
+			List<Object> tasks = new ArrayList<>();
+			for (int x = 0; x < 1; x++) {
+				tasks.addAll(getTestTasks());
+			}
+			/**
+			 * Note: setInputXViewer must be called instead of setInput for XViewer to
+			 * operate properly
+			 */
+			myXviewer.setInputXViewer(tasks);
+		});
 
       Action dropDownAction = myXviewer.getCustomizeAction();
       new ActionContributionItem(dropDownAction).fill(toolBar, 0);
@@ -138,31 +132,23 @@ public class MyXViewerTest {
       ToolItem descriptionItem = new ToolItem(toolBar, SWT.PUSH);
       descriptionItem.setImage(MyImageCache.getImage("descriptionView.gif"));
       descriptionItem.setToolTipText("Show Description View");
-      descriptionItem.addSelectionListener(new SelectionAdapter() {
-         @Override
-         public void widgetSelected(SelectionEvent e) {
-            myXviewer.getCustomizeMgr().loadCustomization(MyDefaultCustomizations.getDescriptionCustomization());
-            myXviewer.refresh();
-         }
-      });
+		descriptionItem.addListener(SWT.Selection, e -> {
+			myXviewer.getCustomizeMgr().loadCustomization(MyDefaultCustomizations.getDescriptionCustomization());
+			myXviewer.refresh();
+		});
 
       ToolItem completeItem = new ToolItem(toolBar, SWT.PUSH);
       completeItem.setImage(MyImageCache.getImage("completionView.gif"));
       completeItem.setToolTipText("Show Completion View");
-      completeItem.addSelectionListener(new SelectionAdapter() {
-         @Override
-         public void widgetSelected(SelectionEvent e) {
-            myXviewer.getCustomizeMgr().loadCustomization(MyDefaultCustomizations.getCompletionCustomization());
-            myXviewer.refresh();
-         }
-      });
+		completeItem.addListener(SWT.Selection, e -> {
+			myXviewer.getCustomizeMgr().loadCustomization(MyDefaultCustomizations.getCompletionCustomization());
+			myXviewer.refresh();
+		});
 
       ToolItem refreshSingleColumn = new ToolItem(toolBar, SWT.PUSH);
       refreshSingleColumn.setImage(MyImageCache.getImage("columnRefresh.gif"));
       refreshSingleColumn.setToolTipText("Example of Refreshing a Single Column");
-      refreshSingleColumn.addSelectionListener(new SelectionAdapter() {
-         @Override
-         public void widgetSelected(SelectionEvent e) {
+      refreshSingleColumn.addListener(SWT.Selection, e -> {
             @SuppressWarnings("unchecked")
             List<Object> items = (List<Object>) myXviewer.getInput();
             for (Object item : items) {
@@ -172,7 +158,6 @@ public class MyXViewerTest {
 
             String columnId = MyXViewerFactory.Task_Type.getId();
             myXviewer.refreshColumn(columnId);
-         }
       });
 
    }
@@ -184,7 +169,7 @@ public class MyXViewerTest {
    }
 
    private static List<ISomeTask> getTestTasks() {
-      List<ISomeTask> tasks = new ArrayList<ISomeTask>();
+      List<ISomeTask> tasks = new ArrayList<>();
       SomeTask task =
          new SomeTask(RunDb.Test_Db, TaskType.Backup, getDate(), "org.eclipse.osee.test1", "10:03", "run to test this",
             "Suite A", "mark@eclipse.com", 50, 50000);

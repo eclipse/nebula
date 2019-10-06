@@ -12,18 +12,15 @@ package org.eclipse.nebula.widgets.xviewer.util.internal.dialog;
 
 import java.util.Calendar;
 import java.util.Date;
+
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.nebula.widgets.xviewer.core.model.DateRangeType;
 import org.eclipse.nebula.widgets.xviewer.core.model.SortDataType;
 import org.eclipse.nebula.widgets.xviewer.core.model.XViewerColumn;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -77,26 +74,14 @@ public class ColumnFilterDialog extends DialogWithEntry {
 
          });
          dateRangeTypeCombo.setInput(DateRangeType.values());
-         dateRangeTypeCombo.addSelectionChangedListener(new ISelectionChangedListener() {
-
-            @Override
-            public void selectionChanged(SelectionChangedEvent event) {
+         dateRangeTypeCombo.addSelectionChangedListener(event -> {
                String text2 = dateRangeTypeCombo.getCombo().getText();
                dateRangeType = DateRangeType.get(text2);
                updateDate2Composite();
-            }
-
          });
 
          date1Widget = new DateTime(widgetComp, SWT.CALENDAR);
-         date1Widget.addSelectionListener(new SelectionAdapter() {
-
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-               setDate1Selection();
-            }
-
-         });
+         date1Widget.addListener(SWT.Selection, e-> setDate1Selection());
 
          // set initial date
          Calendar cal = Calendar.getInstance();
@@ -104,14 +89,7 @@ public class ColumnFilterDialog extends DialogWithEntry {
          date1 = cal.getTime();
 
          time1Widget = new DateTime(widgetComp, SWT.TIME);
-         time1Widget.addSelectionListener(new SelectionAdapter() {
-
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-               setDate1Selection();
-            }
-
-         });
+         time1Widget.addListener(SWT.Selection, e-> setDate1Selection());
          time1Widget.setHours(0);
          time1Widget.setMinutes(0);
          time1Widget.setSeconds(0);
@@ -128,23 +106,10 @@ public class ColumnFilterDialog extends DialogWithEntry {
       if (isBetweenDates()) {
 
          date2Widget = new DateTime(widgetComp, SWT.CALENDAR);
-         date2Widget.addSelectionListener(new SelectionAdapter() {
-
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-               setDate2Selection();
-            }
-
-         });
+         date2Widget.addListener(SWT.Selection, e-> setDate2Selection());
 
          time2Widget = new DateTime(widgetComp, SWT.TIME);
-         time2Widget.addSelectionListener(new SelectionAdapter() {
-
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-               setDate2Selection();
-            }
-         });
+         time2Widget.addListener(SWT.Selection, e-> setDate2Selection());
          time2Widget.setHours(0);
          time2Widget.setMinutes(0);
          time2Widget.setSeconds(0);

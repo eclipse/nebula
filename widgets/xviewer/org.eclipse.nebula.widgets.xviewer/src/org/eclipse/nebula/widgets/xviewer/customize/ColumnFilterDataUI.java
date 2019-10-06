@@ -67,7 +67,7 @@ public class ColumnFilterDataUI {
       }
    }
 
-   public void appendToStatusLabel(StringBuffer sb) {
+   public void appendToStatusLabel(StringBuilder sb) {
       for (String colId : xViewer.getCustomizeMgr().getColumnFilterData().getColIds()) {
          String filterText = xViewer.getCustomizeMgr().getColumnFilterData().getFilterText(colId);
          if (Strings.isValid(filterText)) {

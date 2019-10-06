@@ -6,9 +6,11 @@
 package org.eclipse.nebula.widgets.xviewer;
 
 import java.util.Collection;
+
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 
+@FunctionalInterface
 public interface IMultiColumnEditProvider {
 
    void handleColumnMultiEdit(TreeColumn treeColumn, Collection<TreeItem> treeItems);

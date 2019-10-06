@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -59,14 +60,11 @@ import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerMenuDetectListene
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerMouseListener;
 import org.eclipse.nebula.widgets.xviewer.util.internal.dialog.HtmlDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tree;
@@ -99,9 +97,9 @@ public class XViewer extends TreeViewer {
    private TreeItem rightClickSelectedItem = null;
    private Color searchColor;
    private boolean forcePend = false;
-   private static final Map<Composite, Composite> parentToTopComposites = new HashMap<Composite, Composite>();
+   private static final Map<Composite, Composite> parentToTopComposites = new HashMap<>();
    private boolean debugLoading = "true".equals(System.getProperty("DebugLoading"));
-   private final Map<String, Long> preComputeElapsedTime = new HashMap<String, Long>();
+   private final Map<String, Long> preComputeElapsedTime = new HashMap<>();
 
    public XViewer(Composite parent, int style, IXViewerFactory xViewerFactory) {
       this(parent, style, xViewerFactory, false, false);
@@ -168,7 +166,7 @@ public class XViewer extends TreeViewer {
    protected ColumnViewerEditor createViewerEditor() {
       return super.createViewerEditor();
    }
-   private static List<XViewerComputedColumn> computedColumns = new ArrayList<XViewerComputedColumn>();
+   private static List<XViewerComputedColumn> computedColumns = new ArrayList<>();
 
    public Collection<XViewerComputedColumn> getComputedColumns() {
       if (computedColumns.size() == 0) {
@@ -179,7 +177,7 @@ public class XViewer extends TreeViewer {
    }
 
    public Collection<XViewerComputedColumn> getComputedColumns(XViewerColumn xCol) {
-      List<XViewerComputedColumn> matchCols = new ArrayList<XViewerComputedColumn>();
+      List<XViewerComputedColumn> matchCols = new ArrayList<>();
       for (XViewerColumn computedCol : getComputedColumns()) {
          if (((XViewerComputedColumn) computedCol).isApplicableFor(xCol)) {
             matchCols.add((XViewerComputedColumn) computedCol);
@@ -269,7 +267,7 @@ public class XViewer extends TreeViewer {
             statusLabel = new Label(searchComp, SWT.NONE);
             statusLabel.setText(" "); //$NON-NLS-1$
             statusLabel.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
-            statusLabel.addMouseListener(getCustomizationMouseListener());
+            statusLabel.addListener(SWT.MouseUp, getCustomizationMouseListener());
          }
       }
 
@@ -324,7 +322,7 @@ public class XViewer extends TreeViewer {
    }
 
    private List<Object> getInputObjects(Object input) {
-      List<Object> objects = new LinkedList<Object>();
+      List<Object> objects = new LinkedList<>();
       if (input instanceof Collection) {
          Collection<?> collection = (Collection<?>) input;
          for (Object obj : collection) {
@@ -369,16 +367,11 @@ public class XViewer extends TreeViewer {
 
                @Override
                public void done(IJobChangeEvent event) {
-                  Display.getDefault().asyncExec(new Runnable() {
-
-                     @Override
-                     public void run() {
-                        ElapsedTime time = new ElapsedTime("performLoad");
-                        performLoad(input, xViewer);
-                        time.end(Units.SEC);
-                     }
-
-                  });
+                  Display.getDefault().asyncExec(() -> {
+						ElapsedTime time = new ElapsedTime("performLoad");
+						performLoad(input, xViewer);
+						time.end(Units.SEC);
+	             });
                }
             });
             job.schedule();
@@ -495,9 +488,7 @@ public class XViewer extends TreeViewer {
          Display.getCurrent().addFilter(SWT.FocusOut, displayFocusListener);
       }
    }
-   Listener displayKeysListener = new Listener() {
-      @Override
-      public void handleEvent(org.eclipse.swt.widgets.Event event) {
+   Listener displayKeysListener = event -> {
          if (event.keyCode == SWT.CTRL) {
             if (event.type == SWT.KeyDown) {
                ctrlKeyDown = true;
@@ -512,15 +503,11 @@ public class XViewer extends TreeViewer {
                altKeyDown = false;
             }
          }
-      }
    };
-   Listener displayFocusListener = new Listener() {
-      @Override
-      public void handleEvent(Event event) {
+   Listener displayFocusListener = event -> {
          // Clear when focus is lost
          ctrlKeyDown = false;
          altKeyDown = false;
-      }
    };
    private Composite searchComp;
    private XViewerMouseListener mouseListener;
@@ -587,7 +574,7 @@ public class XViewer extends TreeViewer {
    }
 
    public List<TreeItem> getVisibleItems() {
-      List<TreeItem> toReturn = new ArrayList<TreeItem>();
+      List<TreeItem> toReturn = new ArrayList<>();
       getVisibleItems(toReturn, getTree().getItems());
       return toReturn;
    }
@@ -646,7 +633,7 @@ public class XViewer extends TreeViewer {
       if (getTree().isDisposed() || statusLabel.isDisposed()) {
          return;
       }
-      StringBuffer sb = new StringBuffer();
+      StringBuilder sb = new StringBuilder();
       boolean allItemsFiltered = false;
 
       if (loading) {
@@ -697,12 +684,9 @@ public class XViewer extends TreeViewer {
       updateStatusLabel();
    }
 
-   private MouseAdapter getCustomizationMouseListener() {
-      return new MouseAdapter() {
-
-         @Override
-         public void mouseUp(MouseEvent mouseEvent) {
-            if (mouseEvent.button == 3 && mouseEvent.count == 1) {
+   private Listener getCustomizationMouseListener() {
+      return event-> {
+            if (event.button == 3 && event.count == 1) {
                CustomizeData custData = getCustomizeMgr().getCurrentCustomizeData();
                List<XViewerColumn> currentVisibleTableColumns = getCustomizeMgr().getCurrentVisibleTableColumns();
                custData.getColumnData().getColumns().clear();
@@ -714,8 +698,6 @@ public class XViewer extends TreeViewer {
                String title = String.format("Customization [%s]-[%s]", custData.getName(), custData.getGuid());
                new HtmlDialog(title, title, html).open();
             }
-         }
-
       };
    }
 

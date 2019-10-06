@@ -67,25 +67,21 @@ public class XViewerTestStyledStringLabelProvider extends XViewerStyledTextLabel
       return null;
    }
 
-   @SuppressWarnings("unused")
    @Override
    public Color getBackground(Object element, XViewerColumn viewerColumn, int columnIndex) throws XViewerException {
       return null;
    }
 
-   @SuppressWarnings("unused")
    @Override
    public Font getFont(Object element, XViewerColumn viewerColumn, int columnIndex) throws XViewerException {
       return null;
    }
 
-   @SuppressWarnings("unused")
    @Override
    public Color getForeground(Object element, XViewerColumn viewerColumn, int columnIndex) throws XViewerException {
       return null;
    }
 
-   @SuppressWarnings("unused")
    @Override
    public StyledString getStyledText(Object element, XViewerColumn xCol, int columnIndex) throws XViewerException {
       if (element instanceof String) {
