@@ -8,6 +8,7 @@ package org.eclipse.nebula.widgets.xviewer.customize.dialog;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.nebula.widgets.xviewer.core.model.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.core.util.CollectionsUtil;
@@ -47,14 +48,14 @@ public class XViewerCustDialogDragDrop {
          }
       }
 
-      /*
+      /**
        * @see org.eclipse.swt.dnd.DragSourceAdapter#dragSetData(org.eclipse.swt.dnd.DragSourceEvent)
        */
       @Override
       public void dragSetData(DragSourceEvent event) {
          if (TextTransfer.getInstance().isSupportedType(event.dataType)) {
             List<XViewerColumn> selCols = xViewerCustomizeDialog.getHiddenTableSelection();
-            Collection<String> ids = new ArrayList<String>(selCols.size());
+            Collection<String> ids = new ArrayList<>(selCols.size());
 
             for (XViewerColumn xCol : selCols) {
                ids.add(xCol.getId());
@@ -110,7 +111,7 @@ public class XViewerCustDialogDragDrop {
 
       String droppedIds = (String) event.data;
 
-      List<XViewerColumn> droppedVisibleTableXCols = new ArrayList<XViewerColumn>();
+      List<XViewerColumn> droppedVisibleTableXCols = new ArrayList<>();
       List<XViewerColumn> orderCols =
          (List<XViewerColumn>) xViewerCustomizeDialog.visibleColTable.getViewer().getInput();
       for (XViewerColumn xCol : orderCols) {
@@ -130,14 +131,14 @@ public class XViewerCustDialogDragDrop {
          }
       }
 
-      /*
+      /**
        * @see org.eclipse.swt.dnd.DragSourceAdapter#dragSetData(org.eclipse.swt.dnd.DragSourceEvent)
        */
       @Override
       public void dragSetData(DragSourceEvent event) {
          if (TextTransfer.getInstance().isSupportedType(event.dataType)) {
             List<XViewerColumn> selCols = xViewerCustomizeDialog.getVisibleTableSelection();
-            Collection<String> ids = new ArrayList<String>(selCols.size());
+            Collection<String> ids = new ArrayList<>(selCols.size());
 
             for (XViewerColumn xCol : selCols) {
                ids.add(xCol.getId());
@@ -190,7 +191,7 @@ public class XViewerCustDialogDragDrop {
          }
       }
 
-      List<XViewerColumn> droppedXCols = new ArrayList<XViewerColumn>();
+      List<XViewerColumn> droppedXCols = new ArrayList<>();
       List<XViewerColumn> orderCols =
          (List<XViewerColumn>) xViewerCustomizeDialog.visibleColTable.getViewer().getInput();
       for (XViewerColumn xCol : orderCols) {

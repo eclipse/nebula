@@ -13,6 +13,7 @@ package org.eclipse.nebula.widgets.xviewer.util.internal.images;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 
@@ -21,8 +22,8 @@ import org.eclipse.swt.graphics.Image;
  */
 public class XViewerImageCache {
 
-   static Map<String, Image> imageCache = new HashMap<String, Image>();
-   static Map<String, ImageDescriptor> imageDescriptorCache = new HashMap<String, ImageDescriptor>();
+   static Map<String, Image> imageCache = new HashMap<>();
+   static Map<String, ImageDescriptor> imageDescriptorCache = new HashMap<>();
 
    public static Image getImage(String imageName) {
       if (!imageCache.containsKey(imageName)) {

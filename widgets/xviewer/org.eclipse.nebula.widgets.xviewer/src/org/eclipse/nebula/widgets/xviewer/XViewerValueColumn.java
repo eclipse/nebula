@@ -49,25 +49,21 @@ public class XViewerValueColumn extends XViewerColumn implements IXViewerValueCo
    }
 
    @Override
-   @SuppressWarnings("unused")
    public Image getColumnImage(Object element, XViewerColumn column, int columnIndex) throws XViewerException {
       return null;
    }
 
    @Override
-   @SuppressWarnings("unused")
    public String getColumnText(Object element, XViewerColumn column, int columnIndex) throws XViewerException {
       return "unhandled";
    }
 
    @Override
-   @SuppressWarnings("unused")
    public Color getBackground(Object element, XViewerColumn xCol, int columnIndex) throws XViewerException {
       return null;
    }
 
    @Override
-   @SuppressWarnings("unused")
    public Color getForeground(Object element, XViewerColumn xCol, int columnIndex) throws XViewerException {
       return null;
    }
@@ -80,7 +76,6 @@ public class XViewerValueColumn extends XViewerColumn implements IXViewerValueCo
 
    //This method will only be called be the XViewerStyledTextLabelProvider
    @Override
-   @SuppressWarnings("unused")
    public Font getFont(Object element, XViewerColumn viewerColumn, int columnIndex) throws XViewerException {
       return null;
    }

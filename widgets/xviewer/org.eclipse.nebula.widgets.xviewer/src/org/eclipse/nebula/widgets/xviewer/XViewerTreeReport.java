@@ -14,6 +14,7 @@ package org.eclipse.nebula.widgets.xviewer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import org.eclipse.nebula.widgets.xviewer.core.model.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.util.XViewerException;
 import org.eclipse.nebula.widgets.xviewer.util.internal.HtmlUtil;
@@ -50,11 +51,11 @@ public class XViewerTreeReport extends XViewerHtmlReport {
    private Map<XViewerColumn, Integer> xColToColumnIndex = null;
 
    public String getHtml(TreeItem items[]) throws XViewerException {
-      StringBuffer sb = new StringBuffer("<html><body>"); //$NON-NLS-1$
+      StringBuilder sb = new StringBuilder("<html><body>"); //$NON-NLS-1$
       sb.append(HtmlUtil.beginMultiColumnTable(100, 1));
       List<XViewerColumn> columns = xViewer.getCustomizeMgr().getCurrentTableColumnsInOrder();
-      List<String> headerStrs = new ArrayList<String>(50);
-      List<XViewerColumn> showCols = new ArrayList<XViewerColumn>(50);
+      List<String> headerStrs = new ArrayList<>(50);
+      List<XViewerColumn> showCols = new ArrayList<>(50);
       xColToColumnIndex = xViewer.getCustomizeMgr().getCurrentTableColumnsIndex();
       for (XViewerColumn xCol : columns) {
          if (xCol.isShow()) {
@@ -65,7 +66,7 @@ public class XViewerTreeReport extends XViewerHtmlReport {
       sb.append(HtmlUtil.addHeaderRowMultiColumnTable(headerStrs.toArray(new String[headerStrs.size()])));
       // Get column widths and column name and setup the columns
       IXViewerLabelProvider labelProv = (IXViewerLabelProvider) xViewer.getLabelProvider();
-      ArrayList<String[]> list = new ArrayList<String[]>();
+      ArrayList<String[]> list = new ArrayList<>();
       for (TreeItem item : items) {
          addRow(item, list, labelProv, showCols, 1);
       }
@@ -78,10 +79,10 @@ public class XViewerTreeReport extends XViewerHtmlReport {
    }
 
    private void addRow(TreeItem item, List<String[]> rowData, IXViewerLabelProvider labelProv, List<XViewerColumn> showCols, int level) throws XViewerException {
-      List<String> cellData = new ArrayList<String>(showCols.size());
+      List<String> cellData = new ArrayList<>(showCols.size());
       boolean firstCell = true;
       for (XViewerColumn xCol : showCols) {
-         StringBuffer str = new StringBuffer();
+         StringBuilder str = new StringBuilder();
          if (firstCell) {
             for (int y = 1; y < level; y++) {
                str.append("__INSERT_TAB_HERE__"); //$NON-NLS-1$

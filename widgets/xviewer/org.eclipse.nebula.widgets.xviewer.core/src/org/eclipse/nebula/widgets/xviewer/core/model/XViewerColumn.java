@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
 import org.eclipse.nebula.widgets.xviewer.core.util.CollectionsUtil;
 import org.eclipse.nebula.widgets.xviewer.core.util.XViewerUtil;
 import org.eclipse.nebula.widgets.xviewer.core.util.XmlUtil;
@@ -109,7 +110,7 @@ public class XViewerColumn {
    public final static String XTREECOLUMN_TAG = "xCol";
 
    public String toXml() {
-      StringBuffer sb = new StringBuffer("<" + XTREECOLUMN_TAG + ">");
+      StringBuilder sb = new StringBuilder("<" + XTREECOLUMN_TAG + ">");
       sb.append(XmlUtil.addTagData(ID, id));
       sb.append(XmlUtil.addTagData(NAME, name));
       sb.append(XmlUtil.addTagData(WIDTH, width + ""));
@@ -253,20 +254,20 @@ public class XViewerColumn {
    public String sumValues(Collection<String> values) {
       if (sortDataType == SortDataType.Float) {
          double sum = 0.0;
-         Set<String> exceptions = new HashSet<String>();
+         Set<String> exceptions = new HashSet<>();
          sum = sumFloatValues(values, sum, exceptions);
          return "Sum: " + XViewerUtil.doubleToI18nString(
             sum) + "\n\nNum Items: " + values.size() + (exceptions.size() > 0 ? "\n\nErrors: " + CollectionsUtil.toString(
                ";", exceptions) : "");
       } else if (sortDataType == SortDataType.Integer || sortDataType == SortDataType.Percent) {
          int sum = 0;
-         Set<String> exceptions = new HashSet<String>();
+         Set<String> exceptions = new HashSet<>();
          sum = sumIntegerValues(values, sum, exceptions);
          return "Sum: " + sum + "\n\nNum Items: " + values.size() + (exceptions.size() > 0 ? "\n\nErrors: " + CollectionsUtil.toString(
             ";", exceptions) : "");
       } else if (sortDataType == SortDataType.Long) {
          long sum = 0;
-         Set<String> exceptions = new HashSet<String>();
+         Set<String> exceptions = new HashSet<>();
          sum = sumLongValues(values, sum, exceptions);
          return "Sum: " + sum + "\n\nNum Items: " + values.size() + (exceptions.size() > 0 ? "\n\nErrors: " + CollectionsUtil.toString(
             ";", exceptions) : "");
@@ -291,7 +292,7 @@ public class XViewerColumn {
    public String averageValues(Collection<String> values) {
       if (sortDataType == SortDataType.Float) {
          double sum = 0.0;
-         Set<String> exceptions = new HashSet<String>();
+         Set<String> exceptions = new HashSet<>();
          sum = sumFloatValues(values, sum, exceptions);
          Double average = sum == 0 || values.isEmpty() ? 0 : sum / values.size();
          return "Average: " + XViewerUtil.doubleToI18nString(
@@ -299,14 +300,14 @@ public class XViewerColumn {
                ";", exceptions) : "");
       } else if (sortDataType == SortDataType.Integer || sortDataType == SortDataType.Percent) {
          int sum = 0;
-         Set<String> exceptions = new HashSet<String>();
+         Set<String> exceptions = new HashSet<>();
          sum = sumIntegerValues(values, sum, exceptions);
          Integer average = sum == 0 || values.isEmpty() ? 0 : sum / values.size();
          return "Average: " + average + "\n\nNum Items: " + values.size() + (exceptions.size() > 0 ? "\n\nErrors: " + CollectionsUtil.toString(
             ";", exceptions) : "");
       } else if (sortDataType == SortDataType.Long) {
          long sum = 0;
-         Set<String> exceptions = new HashSet<String>();
+         Set<String> exceptions = new HashSet<>();
          sum = sumLongValues(values, sum, exceptions);
          Long average = sum == 0 || values.isEmpty() ? 0 : sum / Long.valueOf(values.size());
          return "Average: " + average + "\n\nNum Items: " + values.size() + (exceptions.size() > 0 ? "\n\nErrors: " + CollectionsUtil.toString(
@@ -365,7 +366,7 @@ public class XViewerColumn {
 
    public Map<Long, String> getPreComputedValueMap() {
       if (preComputedValueMap == null) {
-         preComputedValueMap = new HashMap<Long, String>();
+         preComputedValueMap = new HashMap<>();
       }
       return preComputedValueMap;
    }

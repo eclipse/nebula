@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
+
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.nebula.widgets.xviewer.Activator;
 import org.eclipse.swt.layout.GridLayout;
@@ -55,14 +56,11 @@ public class MyLib {
       if (!PlatformUI.isWorkbenchRunning()) {
          MyLog.log(Activator.class, Level.SEVERE, message);
       } else {
-         ensureInDisplayThread(new Runnable() {
-            @Override
-            public void run() {
-               MessageDialog.openInformation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), title,
-                  message);
-            }
-         });
-      }
+			ensureInDisplayThread(() -> {
+				MessageDialog.openInformation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), title,
+						message);
+			});
+	      }
    }
 
    public static GridLayout getZeroMarginLayout(int numColumns, boolean equalColumnWidth) {
@@ -80,7 +78,7 @@ public class MyLib {
    }
 
    public static List<String> readListFromDir(File directory, FilenameFilter filter, boolean keepExtension) {
-      List<String> list = new ArrayList<String>(400);
+      List<String> list = new ArrayList<>(400);
 
       if (directory == null) {
          MyLog.log(Activator.class, Level.SEVERE, "Invalid directory path");

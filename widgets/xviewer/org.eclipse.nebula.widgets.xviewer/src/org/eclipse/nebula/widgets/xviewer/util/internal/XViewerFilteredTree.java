@@ -12,11 +12,10 @@ package org.eclipse.nebula.widgets.xviewer.util.internal;
 
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 
 /**
  * @author Donald G. Dunne
@@ -51,17 +50,9 @@ public class XViewerFilteredTree extends FilteredTreeComposite {
    @Override
    protected void createFilterText(Composite parent) {
       super.createFilterText(parent);
-      filterText.addKeyListener(new KeyListener() {
-         @Override
-         public void keyPressed(KeyEvent e) {
-            filterText.setFocus();
-         }
-
-         @Override
-         public void keyReleased(KeyEvent e) {
-            filterText.setFocus();
-         }
-      });
+      Listener listener = event -> filterText.setFocus();
+      filterText.addListener(SWT.KeyUp, listener);
+      filterText.addListener(SWT.KeyDown, listener);
    }
 
 }

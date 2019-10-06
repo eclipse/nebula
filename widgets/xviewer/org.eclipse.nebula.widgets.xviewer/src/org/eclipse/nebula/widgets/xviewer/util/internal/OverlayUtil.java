@@ -12,6 +12,7 @@ package org.eclipse.nebula.widgets.xviewer.util.internal;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
@@ -53,7 +54,7 @@ public class OverlayUtil extends CompositeImageDescriptor {
    public OverlayUtil(Image baseImage, ImageDescriptor overlayImageDescriptor, Location location) {
       this.baseImage = baseImage;
       this.overlayImageDescriptor = overlayImageDescriptor;
-      this.imageInfo = new ArrayList<ImageInfo>(2);
+      this.imageInfo = new ArrayList<>(2);
       imageInfo.add(new ImageInfo(overlayImageDescriptor, location));
    }
 
@@ -112,8 +113,6 @@ public class OverlayUtil extends CompositeImageDescriptor {
 
    @Override
    protected Point getSize() {
-      // System.err.println("Width = " + baseImage.getBounds().width);
-      // System.err.println("Height = " + baseImage.getBounds().height);
       int baseWidth = baseImage.getBounds().width;
       int baseHeight = baseImage.getBounds().height;
 

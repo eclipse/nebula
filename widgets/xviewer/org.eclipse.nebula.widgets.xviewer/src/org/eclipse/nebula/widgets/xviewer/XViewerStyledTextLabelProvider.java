@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
+
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
@@ -33,7 +34,7 @@ public abstract class XViewerStyledTextLabelProvider extends StyledCellLabelProv
    private final XViewer viewer;
 
    // Store index of columnIndex to XViewerColumns to speed up label providing
-   private final Map<Integer, XViewerColumn> indexToXViewerColumnMap = new HashMap<Integer, XViewerColumn>();
+   private final Map<Integer, XViewerColumn> indexToXViewerColumnMap = new HashMap<>();
 
    @Override
    public XViewerColumn getTreeColumnOffIndex(int columnIndex) {
@@ -76,7 +77,7 @@ public abstract class XViewerStyledTextLabelProvider extends StyledCellLabelProv
    /**
     * Creates a {@link XViewerStyledTextLabelProvider} that delegates the requests for the styled labels and the images
     * to a {@link IStyledLabelProvider}.
-    * 
+    *
     * @param labelProvider the label provider that provides the styled labels and the images
     */
    public XViewerStyledTextLabelProvider(XViewer viewer) {
@@ -95,10 +96,6 @@ public abstract class XViewerStyledTextLabelProvider extends StyledCellLabelProv
 
       if (!Arrays.equals(oldStyleRanges, newStyleRanges)) {
          cell.setStyleRanges(newStyleRanges);
-         //         if (cell.getText().equals(newText)) {
-         //            // make sure there will be a refresh from a change
-         //            cell.setText(""); //$NON-NLS-1$
-         //         }
       }
 
       cell.setText(newText);
