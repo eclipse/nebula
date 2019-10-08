@@ -8,6 +8,7 @@
  *
  * Contributors:
  *		Dirk Fauth <dirk.fauth@googlemail.com> - Initial API and implementation
+ *      Laurent Caron <laurent.caron@gmail.com> - Bug 511353
  *
  *****************************************************************************/
 package org.eclipse.nebula.widgets.richtext;
@@ -18,9 +19,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -33,6 +36,7 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 import org.eclipse.nebula.widgets.richtext.painter.AlignmentStyle;
+import org.eclipse.nebula.widgets.richtext.painter.AnchorElement;
 import org.eclipse.nebula.widgets.richtext.painter.DefaultEntityReplacer;
 import org.eclipse.nebula.widgets.richtext.painter.EntityReplacer;
 import org.eclipse.nebula.widgets.richtext.painter.LinePainter;
@@ -82,6 +86,7 @@ public class RichTextPainter {
 	public static final String TAG_UNORDERED_LIST = "ul";
 	public static final String TAG_ORDERED_LIST = "ol";
 	public static final String TAG_LIST_ITEM = "li";
+	public static final String TAG_ANCHOR = "a";
 
 	public static final String TAG_BR = "br";
 
@@ -95,6 +100,8 @@ public class RichTextPainter {
 	public static final String ATTRIBUTE_PARAGRAPH_TEXT_ALIGN = "text-align";
 
 	public static final String ATTRIBUTE_PARAGRAPH_TEXT_ALIGN_VALUE_RIGHT = "right";
+
+	public static final String ATTRIBUTE_HREF = "href";
 
 	public static final String CONTROL_CHARACTER_REGEX = "\\n\\r|\\r\\n|\\n|\\r|\\t"; //$NON-NLS-1$
 
@@ -120,6 +127,8 @@ public class RichTextPainter {
 	private EntityReplacer entityReplacer = new DefaultEntityReplacer();
 
 	private String wordSplitRegex = "\\s";
+
+	private Set<AnchorElement> anchorElements = new HashSet<>();
 
 	/**
 	 * Create a new {@link RichTextPainter} with disabled word wrapping.
@@ -219,7 +228,7 @@ public class RichTextPainter {
 			LinePainter currentLine = null;
 			while (parser.hasNext()) {
 				XMLEvent event = parser.nextEvent();
-				
+
 				switch (event.getEventType()) {
 					case XMLStreamConstants.END_DOCUMENT:
 						parser.close();
@@ -321,7 +330,19 @@ public class RichTextPainter {
 								}
 							});
 						}
+						else if (TAG_ANCHOR.equals(elementString)) {
+							currentLine = addInstruction(gc, availableWidth, lines, currentLine, state, new PaintInstruction() {
 
+								@Override
+								public void paint(GC gc, Rectangle area) {
+									state.setUnderlineActive(true);
+									AnchorElement anchorElement = new AnchorElement();
+									anchorElement.startingPoint = new Point(state.getPointer().x, state.getPointer().y);
+									anchorElement.url = extractURL(element);
+									state.addAnchorElement(anchorElement);
+								}
+							});
+						}
 						break;
 					case XMLStreamConstants.END_ELEMENT:
 						String endElementString = event.asEndElement().getName().toString();
@@ -389,11 +410,25 @@ public class RichTextPainter {
 							});
 
 							availableWidth += listIndentation.pollLast();
-							
+
 							// set currentLine to null as any further content will start on a new line
 							currentLine = null;
 						}
+						else if (TAG_ANCHOR.equals(endElementString)) {
+							currentLine = addInstruction(gc, availableWidth, lines, currentLine, state, new PaintInstruction() {
 
+								@Override
+								public void paint(GC gc, Rectangle area) {
+									state.setUnderlineActive(false);
+									AnchorElement anchorElement = state.pollPreviousAnchorElement();
+									Point endPoint = state.getPointer();
+									anchorElement.area = new Rectangle(anchorElement.startingPoint.x, anchorElement.startingPoint.y, //
+											endPoint.x - anchorElement.startingPoint.x, endPoint.y + state.getCurrentLineHeight() - anchorElement.startingPoint.y);
+
+									anchorElements.add(anchorElement);
+								}
+							});
+						}
 						break;
 					case XMLStreamConstants.CHARACTERS:
 						Characters characters = event.asCharacters();
@@ -441,6 +476,7 @@ public class RichTextPainter {
 
 		preferredSize.y = Math.max(preferredSize.y, bounds.height);
 	}
+
 
 	private LinePainter addInstruction(
 			GC gc, int availableWidth,
@@ -513,7 +549,7 @@ public class RichTextPainter {
 								// TODO 0.2 - add trim to avoid empty lines because of spaces
 								newLine = false;
 							}
-							
+
 							subString = word;
 							subStringLength = wordLength;
 
@@ -658,6 +694,17 @@ public class RichTextPainter {
 		return result;
 	}
 
+	private String extractURL(StartElement element) {
+		for (Iterator<?> attributes = element.getAttributes(); attributes.hasNext();) {
+			Attribute attribute = (Attribute) attributes.next();
+			if (ATTRIBUTE_HREF.equals(attribute.getName().toString())) {
+				return attribute.getValue();
+			}
+		}
+		return null;
+	}
+
+
 	/**
 	 * Calculates the indentation to use for list items.
 	 *
@@ -719,7 +766,7 @@ public class RichTextPainter {
 	public void setParagraphSpace(int paragraphSpace) {
 		this.paragraphSpace = paragraphSpace;
 	}
-	
+
 	/**
 	 * @param wordSplitRegex
 	 *            The regular expression that will be used to determine word boundaries. The default
@@ -729,4 +776,13 @@ public class RichTextPainter {
 	public void setWordSplitRegex(String wordSplitRegex) {
 		this.wordSplitRegex = wordSplitRegex;
 	}
+
+	/**
+	 * @return the anchors information
+	 */
+	public Set<AnchorElement> getAnchorElements() {
+		return anchorElements;
+	}
+
+
 }

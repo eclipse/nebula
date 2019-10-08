@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Copyright (c) 2015 CEA LIST.
+ *  Copyright (c) 2015, 2019 CEA LIST.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -8,6 +8,7 @@
  *
  * Contributors:
  *		Dirk Fauth <dirk.fauth@googlemail.com> - Initial API and implementation
+ *      Laurent Caron <laurent.caron@gmail.com> - Bug 511353
  *
  *****************************************************************************/
 package org.eclipse.nebula.widgets.richtext.painter;
@@ -109,6 +110,8 @@ public class TagProcessingState {
 	 * The number of paragraphs that are found in a text. Needed to calculate the preferred height.
 	 */
 	private int paragraphCount = 0;
+
+	private Deque<AnchorElement> anchorStack = new LinkedList<>();
 
 	/**
 	 * Add the given {@link Color} to the stack of previous set foreground colors.
@@ -351,5 +354,24 @@ public class TagProcessingState {
 
 	public void increaseParagraphCount() {
 		this.paragraphCount++;
+	}
+
+	/**
+	 * Add the given {@link AnchorElement} to the stack of previous set AnchorElement stack.
+	 *
+	 * @param point
+	 *            The {@link AnchorElement} to add to the previous AnchorElement stack.
+	 */
+	public void addAnchorElement(AnchorElement element) {
+		this.anchorStack.addLast(element);
+	}
+
+	/**
+	 * Removes and returns the last AnchorElement from the previous AnchorElements stack. (LIFO)
+	 *
+	 * @return The last {@link AnchorElement} that was added to the previous AnchorElement stack.
+	 */
+	public AnchorElement pollPreviousAnchorElement() {
+		return this.anchorStack.pollLast();
 	}
 }
