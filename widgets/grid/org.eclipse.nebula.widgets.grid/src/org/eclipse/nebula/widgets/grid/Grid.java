@@ -5427,7 +5427,7 @@ public class Grid extends Canvas {
 					} else {
 						rowHeaderRenderer.setSelected(cellInRowSelected);
 					}
-					if ((y == 0 && !columnHeadersVisible) || y >= headerHeight) {
+					if ((!columnHeadersVisible) || y >= headerHeight) {
 						rowHeaderRenderer.setBounds(0, y, rowHeaderWidth, item.getHeight() + 1);
 						rowHeaderRenderer.paint(e.gc, item);
 					}
