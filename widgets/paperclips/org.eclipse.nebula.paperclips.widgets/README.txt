@@ -5,12 +5,14 @@ http://www.eclipse.org/nebula/paperclips/
 
 Copyright (c) 2005-2006 Matthew Hall and others.
 
-All rights reserved. This program and the accompanying materials are made
-available under the terms of the Eclipse Public License v1.0 which accompanies
-this distribution, and is available at
-http://www.eclipse.org/legal/epl-v10.html
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
 
-A copy is found in the file epl-v10.html distributed in this package.
+A copy is found in the file epl-2.0.html distributed in this package.
 
 Contributors:
   Matthew Hall <matthall@woodcraftmill.com> - initial API and implementation
