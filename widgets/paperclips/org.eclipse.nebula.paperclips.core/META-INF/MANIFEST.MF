@@ -7,11 +7,14 @@ Bundle-Vendor: Eclipse.org
 Require-Bundle: org.eclipse.swt;bundle-version="[3.2.0,4.0.0)"
 Export-Package: org.eclipse.nebula.paperclips.core,
  org.eclipse.nebula.paperclips.core.border,
+ org.eclipse.nebula.paperclips.core.border.internal,
  org.eclipse.nebula.paperclips.core.grid,
  org.eclipse.nebula.paperclips.core.grid.internal;x-internal:=true,
  org.eclipse.nebula.paperclips.core.internal;x-internal:=true,
+ org.eclipse.nebula.paperclips.core.internal.piece,
  org.eclipse.nebula.paperclips.core.internal.util;x-internal:=true,
  org.eclipse.nebula.paperclips.core.page,
- org.eclipse.nebula.paperclips.core.text
+ org.eclipse.nebula.paperclips.core.text,
+ org.eclipse.nebula.paperclips.core.text.internal
 Bundle-ClassPath: .
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
