@@ -2,16 +2,19 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PaperClips Core Plug-in
 Bundle-SymbolicName: org.eclipse.nebula.paperclips.core
-Bundle-Version: 2.0.0.qualifier
+Bundle-Version: 2.1.0.qualifier
 Bundle-Vendor: Eclipse.org
 Require-Bundle: org.eclipse.swt;bundle-version="[3.2.0,4.0.0)"
 Export-Package: org.eclipse.nebula.paperclips.core,
  org.eclipse.nebula.paperclips.core.border,
+ org.eclipse.nebula.paperclips.core.border.internal,
  org.eclipse.nebula.paperclips.core.grid,
  org.eclipse.nebula.paperclips.core.grid.internal;x-internal:=true,
  org.eclipse.nebula.paperclips.core.internal;x-internal:=true,
+ org.eclipse.nebula.paperclips.core.internal.piece,
  org.eclipse.nebula.paperclips.core.internal.util;x-internal:=true,
  org.eclipse.nebula.paperclips.core.page,
- org.eclipse.nebula.paperclips.core.text
+ org.eclipse.nebula.paperclips.core.text,
+ org.eclipse.nebula.paperclips.core.text.internal
 Bundle-ClassPath: .
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
