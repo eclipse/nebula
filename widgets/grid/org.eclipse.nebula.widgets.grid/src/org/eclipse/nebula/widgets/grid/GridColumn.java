@@ -21,6 +21,8 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.grid;
 
+import java.util.Locale;
+
 import org.eclipse.nebula.widgets.grid.internal.DefaultCellRenderer;
 import org.eclipse.nebula.widgets.grid.internal.DefaultColumnFooterRenderer;
 import org.eclipse.nebula.widgets.grid.internal.DefaultColumnHeaderRenderer;
@@ -56,6 +58,17 @@ import org.eclipse.swt.widgets.TypedListener;
  * @author chris.gross@us.ibm.com
  */
 public class GridColumn extends Item {
+
+	private static final boolean IS_MAC ;
+	static {
+		final String osProperty = System.getProperty("os.name");
+		if (osProperty != null) {
+			final String osName = osProperty.toUpperCase(Locale.getDefault());
+			IS_MAC = osName.indexOf("MAC") > -1;
+		} else {
+			IS_MAC = false;
+		}
+	}
 
 	private GridHeaderEditor controlEditor;
 
@@ -409,6 +422,10 @@ public class GridColumn extends Item {
 			 * can't scroll all to the right
 			 */
 			int availableVisibleWidthForColumns = parent.getClientArea().width;
+			if (IS_MAC && availableVisibleWidthForColumns == 1 && parent.getClientArea().height == 1) {
+				// One sets column width before the grid size has been layouted
+				availableVisibleWidthForColumns = width;
+			}
 			if(availableVisibleWidthForColumns > 0) {
 				if (parent.isRowHeaderVisible()) {
 					availableVisibleWidthForColumns -= parent.getRowHeaderWidth();
