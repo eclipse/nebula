@@ -8,6 +8,7 @@ package org.eclipse.nebula.widgets.xviewer;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 
+@FunctionalInterface
 public interface IAltLeftClickProvider {
 
    boolean handleAltLeftClick(TreeColumn treeColumn, TreeItem treeItem);

@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2006 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *    chris.gross@us.ibm.com - initial API and implementation
@@ -112,7 +115,7 @@ public class DefaultColumnFooterRenderer extends GridFooterRenderer
 
         int y = getBounds().y + getBounds().height - bottomMargin - gc.getFontMetrics().getHeight();
 
-        String text = TextUtils.getShortString(gc, column.getFooterText(), width);
+        String text = TextUtils.getShortStr(gc, column.getFooterText(), width, truncationStyle);
 
         if (column.getAlignment() == SWT.RIGHT)
         {

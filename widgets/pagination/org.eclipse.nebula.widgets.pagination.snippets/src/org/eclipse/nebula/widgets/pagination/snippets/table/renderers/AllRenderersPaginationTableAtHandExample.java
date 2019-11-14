@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (C) 2011 Angelo Zerr <angelo.zerr@gmail.com>, Pascal Leclercq <pascal.leclercq@gmail.com>
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Angelo ZERR - initial API and implementation
@@ -23,9 +26,9 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.nebula.widgets.pagination.IPageLoader;
 import org.eclipse.nebula.widgets.pagination.PageLoaderStrategyHelper;
 import org.eclipse.nebula.widgets.pagination.PageableController;
-import org.eclipse.nebula.widgets.pagination.collections.PageResultLoaderList;
 import org.eclipse.nebula.widgets.pagination.collections.PageResult;
 import org.eclipse.nebula.widgets.pagination.collections.PageResultContentProvider;
+import org.eclipse.nebula.widgets.pagination.collections.PageResultLoaderList;
 import org.eclipse.nebula.widgets.pagination.renderers.navigation.NavigationPageComboRenderer;
 import org.eclipse.nebula.widgets.pagination.renderers.navigation.NavigationPageScaleRenderer;
 import org.eclipse.nebula.widgets.pagination.renderers.navigation.ResultAndNavigationPageGraphicsRenderer;
@@ -37,8 +40,6 @@ import org.eclipse.nebula.widgets.pagination.snippets.model.Address;
 import org.eclipse.nebula.widgets.pagination.snippets.model.Person;
 import org.eclipse.nebula.widgets.pagination.table.SortTableColumnSelectionListener;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
@@ -53,13 +54,13 @@ import org.eclipse.swt.widgets.TableColumn;
  * This sample display the whole renderer (scale, combo, GC, links tec) provided
  * by the Nebula Pagination. You can too change the locale to refresh the label
  * of the navigation page.
- * 
+ *
  * This demo shows you that the whole renderer are linked to the pagination
  * controller which fire events as soon as it changes (selected page changed
  * page size changed, local changed, etc). For instance if you move the slider
  * to change page index, the tabel is refreshed and the other navigation page
  * are refreshed.
- * 
+ *
  */
 public class AllRenderersPaginationTableAtHandExample {
 
@@ -92,7 +93,7 @@ public class AllRenderersPaginationTableAtHandExample {
 		// 3) Create Table columns with sort of paginated list.
 		int pageSize = 10;
 		final PageableController controller = new PageableController(pageSize);
-		final IPageLoader<PageResult<Person>> pageLoader = new PageResultLoaderList<Person>(items);
+		final IPageLoader<PageResult<Person>> pageLoader = new PageResultLoaderList<>(items);
 		controller.addPageChangedListener(PageLoaderStrategyHelper
 				.createLoadPageAndReplaceItemsListener(controller, viewer,
 						pageLoader, PageResultContentProvider.getInstance(), null));
@@ -151,15 +152,12 @@ public class AllRenderersPaginationTableAtHandExample {
 		localeCombo.setItems(new String[] { "en", "fr" });
 		localeCombo.select(Locale.getDefault().equals(Locale.FRANCE) ? 1 : 0);
 		localeCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		localeCombo.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				String locale = localeCombo.getText();
-				if ("fr".equals(locale)) {
-					controller.setLocale(Locale.FRENCH);
-				} else {
-					controller.setLocale(Locale.ENGLISH);
-				}
+		localeCombo.addListener(SWT.Selection, (e) -> {
+			String locale = localeCombo.getText();
+			if ("fr".equals(locale)) {
+				controller.setLocale(Locale.FRENCH);
+			} else {
+				controller.setLocale(Locale.ENGLISH);
 			}
 		});
 		// 3) Set current page to 0 to refresh the table
@@ -210,7 +208,7 @@ public class AllRenderersPaginationTableAtHandExample {
 	}
 
 	private static List<Person> createList() {
-		List<Person> names = new ArrayList<Person>();
+		List<Person> names = new ArrayList<>();
 		for (int i = 1; i < 100; i++) {
 			names.add(new Person("Name " + i, i < 25 ? "Adress "
 					+ Math.random() : null));

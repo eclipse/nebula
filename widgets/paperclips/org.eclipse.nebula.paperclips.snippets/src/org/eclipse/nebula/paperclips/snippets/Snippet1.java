@@ -1,10 +1,13 @@
 /*
  * Copyright (c) 2006 Matthew Hall and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
  * 
+ * SPDX-License-Identifier: EPL-2.0
+ *
  * Contributors:
  *     Matthew Hall - initial API and implementation
  */
@@ -28,8 +31,6 @@ import org.eclipse.swt.printing.PrintDialog;
 import org.eclipse.swt.printing.PrinterData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -38,7 +39,7 @@ import org.eclipse.swt.widgets.TableItem;
 /**
  * Demonstrates how to print the contents of a Table widget. This snippet uses
  * the GridPrint, TextPrint, and ImagePrint classes.
- * 
+ *
  * @author Matthew
  */
 public class Snippet1 {
@@ -47,8 +48,8 @@ public class Snippet1 {
 
 		DefaultGridLook look = new DefaultGridLook();
 		look.setCellBorder(new LineBorder());
-		RGB background = table.getDisplay().getSystemColor(
-				SWT.COLOR_WIDGET_BACKGROUND).getRGB();
+		RGB background = table.getDisplay()
+				.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND).getRGB();
 		look.setHeaderBackground(background);
 		look.setFooterBackground(background);
 
@@ -86,15 +87,15 @@ public class Snippet1 {
 			return new TextPrint(text, align);
 
 		GridPrint grid = new GridPrint("p, d");
-		grid.add(new ImagePrint(image.getImageData(), image.getDevice()
-				.getDPI()));
+		grid.add(new ImagePrint(image.getImageData(),
+				image.getDevice().getDPI()));
 		grid.add(new TextPrint(text, align));
 		return grid;
 	}
 
 	/**
 	 * Executes the snippet.
-	 * 
+	 *
 	 * @param args
 	 *            command-line args.
 	 */
@@ -127,15 +128,14 @@ public class Snippet1 {
 		for (int i = 0; i < columns.length; i++)
 			columns[i].pack();
 
-		button.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				PrintDialog dialog = new PrintDialog(shell, SWT.NONE);
-				PrinterData printerData = dialog.open();
-				if (printerData != null) {
-					Print print = createPrint(table);
-					PaperClips.print(new PrintJob("Snippet1.java", print)
-							.setMargins(72), printerData);
-				}
+		button.addListener(SWT.Selection, event -> {
+			PrintDialog dialog = new PrintDialog(shell, SWT.NONE);
+			PrinterData printerData = dialog.open();
+			if (printerData != null) {
+				Print print = createPrint(table);
+				PaperClips.print(
+						new PrintJob("Snippet1.java", print).setMargins(72),
+						printerData);
 			}
 		});
 

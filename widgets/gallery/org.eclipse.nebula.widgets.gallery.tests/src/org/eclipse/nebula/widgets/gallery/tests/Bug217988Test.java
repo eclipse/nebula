@@ -2,8 +2,6 @@ package org.eclipse.nebula.widgets.gallery.tests;
 
 import java.util.Arrays;
 
-import junit.framework.TestCase;
-
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -11,9 +9,10 @@ import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.nebula.jface.galleryviewer.GalleryTreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+
+import junit.framework.TestCase;
 
 public class Bug217988Test extends TestCase {
 
@@ -114,7 +113,7 @@ public class Bug217988Test extends TestCase {
 	}
 
 	public static class GalleryTestLabelProvider extends LabelProvider {
-		
+
 		public Image getImage(Object element) {
 			return null;
 		}

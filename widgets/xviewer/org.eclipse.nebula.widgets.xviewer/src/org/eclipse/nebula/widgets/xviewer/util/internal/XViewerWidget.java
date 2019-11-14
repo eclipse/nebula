@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2004, 2007 Boeing.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Boeing - initial API and implementation
@@ -18,6 +21,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.nebula.widgets.xviewer.Activator;
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
@@ -56,7 +60,7 @@ public abstract class XViewerWidget {
 
    protected boolean displayLabel = true;
    private final Set<XViewerWidgetModifiedListener> modifiedListeners =
-      new LinkedHashSet<XViewerWidgetModifiedListener>();
+      new LinkedHashSet<>();
    private MouseListener mouseLabelListener;
 
    /**
@@ -232,7 +236,7 @@ public abstract class XViewerWidget {
    }
 
    public List<String> getDisplayLabels() {
-      List<String> l = new ArrayList<String>();
+      List<String> l = new ArrayList<>();
       l.add(label);
       return l;
    }

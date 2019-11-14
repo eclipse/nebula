@@ -1,11 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2012 Laurent CARON. All rights reserved. This program and the
- * accompanying materials are made available under the terms of the Eclipse
- * Public License v1.0 which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2012 Laurent CARON.
  *
- * Contributors: Laurent CARON (laurent.caron at gmail dot com) - initial API
- * and implementation
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ * Laurent CARON (laurent.caron at gmail dot com) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.breadcrumb;
 
@@ -145,7 +149,7 @@ public class BreadcrumbItem extends Item {
 			alignment = SWT.RIGHT;
 		}
 
-		selectionListeners = new ArrayList<SelectionListener>();
+		selectionListeners = new ArrayList<>();
 		width = height = -1;
 	}
 
@@ -611,7 +615,7 @@ public class BreadcrumbItem extends Item {
 	 * Note: Attempting to set the width or height of the receiver to a negative
 	 * number will cause that value to be set to zero instead.
 	 * </p>
-	 * 
+	 *
 	 * @param height the new width
 	 *
 	 * @exception SWTException
@@ -750,7 +754,7 @@ public class BreadcrumbItem extends Item {
 	 * Note: Attempting to set the width or height of the receiver to a negative
 	 * number will cause that value to be set to zero instead.
 	 * </p>
-	 * 
+	 *
 	 * @param width the new width
 	 *
 	 * @exception SWTException
@@ -874,12 +878,12 @@ public class BreadcrumbItem extends Item {
 	private int computeGap() {
 		final int widthOfTextAndImage = computeSizeOfTextAndImages().x;
 		switch (alignment) {
-			case SWT.CENTER:
-				return (getWidth() - widthOfTextAndImage) / 2;
-			case SWT.RIGHT:
-				return getWidth() - widthOfTextAndImage - MARGIN;
-			default:
-				return MARGIN;
+		case SWT.CENTER:
+			return (getWidth() - widthOfTextAndImage) / 2;
+		case SWT.RIGHT:
+			return getWidth() - widthOfTextAndImage - MARGIN;
+		default:
+			return MARGIN;
 		}
 	}
 

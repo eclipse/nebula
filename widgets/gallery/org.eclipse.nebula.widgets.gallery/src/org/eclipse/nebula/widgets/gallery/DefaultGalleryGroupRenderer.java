@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2006-2007 Nicolas Richeton.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors :
  *    Nicolas Richeton (nicolas.richeton@gmail.com) - initial API and implementation
@@ -15,7 +18,6 @@ import org.eclipse.nebula.animation.AnimationRunner;
 import org.eclipse.nebula.animation.movement.IMovement;
 import org.eclipse.nebula.animation.movement.LinearInOut;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
@@ -23,6 +25,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Transform;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
 
 /**
@@ -104,11 +107,9 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 		super();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.nebula.widgets.gallery.AbstractGalleryGroupRenderer#
-	 * setGallery (org.eclipse.nebula.widgets.gallery.Gallery)
+	 *      setGallery (org.eclipse.nebula.widgets.gallery.Gallery)
 	 */
 	public void setGallery(Gallery gallery) {
 		super.setGallery(gallery);
@@ -192,12 +193,6 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 					.getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
 			gc.drawRectangle(toggleX, toggleY, 8, 8);
 
-			// if (isFocus()) {
-			// gc.setBackground(back);
-			// gc.setForeground(fore);
-			// gc.drawFocus(-1, -1, 11, 11);
-			// }
-
 		}
 
 		return titleHeight + minMargin;
@@ -278,7 +273,8 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 
 			// Color for text
 			gc.setForeground(group.getForeground(true) != null
-					? group.getForeground(true) : titleForeground);
+					? group.getForeground(true)
+					: titleForeground);
 
 			// Title text
 			gc.setFont(getFont(group));
@@ -344,38 +340,6 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 		}
 	}
 
-	// /*
-	// * (non-Javadoc)
-	// *
-	// * @see
-	// * org.eclipse.nebula.widgets.gallery.AbstractGalleryGroupRenderer#getFont
-	// * (org.eclipse.nebula.widgets.gallery.GalleryItem)
-	// */
-	// protected Font getFont(GalleryItem item) {
-	// if (item != null) {
-	//
-	// if (item.getParentItem() != null) {
-	// return super.getFont(item);
-	// }
-	//
-	// // This is a group
-	//
-	// // Use item font first
-	// if (item.font != null) {
-	// return item.font;
-	// }
-	//
-	// if (font != null) {
-	// return font;
-	// }
-	//
-	// // Then parent font.
-	// return item.getParent().getFont();
-	// }
-	//
-	// return null;
-	// }
-
 	private int drawGroupImage(GC gc, GalleryItem group, int x, int y,
 			Point imageSize2) {
 		if (imageSize2 == null)
@@ -415,13 +379,11 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 		return getGroupHeight(item) + minMargin;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.nebula.widgets.gallery.AbstractGridGroupRenderer#draw(org
-	 * .eclipse.swt.graphics.GC, org.eclipse.nebula.widgets.gallery.GalleryItem,
-	 * int, int, int, int, int, int)
+	/**
+	 * @see org.eclipse.nebula.widgets.gallery.AbstractGridGroupRenderer#draw(org
+	 *      .eclipse.swt.graphics.GC,
+	 *      org.eclipse.nebula.widgets.gallery.GalleryItem, int, int, int, int,
+	 *      int, int)
 	 */
 	public void draw(GC gc, GalleryItem group, int x, int y, int clipX,
 			int clipY, int clipWidth, int clipHeight) {
@@ -552,12 +514,9 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 		pre(gc);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.nebula.widgets.gallery.AbstractGridGroupRenderer#preLayout
-	 * (org.eclipse.swt.graphics.GC)
+	/**
+	 * @see org.eclipse.nebula.widgets.gallery.AbstractGridGroupRenderer#preLayout
+	 *      (org.eclipse.swt.graphics.GC)
 	 */
 	public void preLayout(GC gc) {
 		this.marginCalculated = false;
@@ -590,13 +549,10 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 			gc.dispose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.nebula.widgets.gallery.AbstractGridGroupRenderer#getItem(
-	 * org.eclipse.nebula.widgets.gallery.GalleryItem,
-	 * org.eclipse.swt.graphics.Point)
+	/**
+	 * @see org.eclipse.nebula.widgets.gallery.AbstractGridGroupRenderer#getItem(
+	 *      org.eclipse.nebula.widgets.gallery.GalleryItem,
+	 *      org.eclipse.swt.graphics.Point)
 	 */
 	public GalleryItem getItem(GalleryItem group, Point coords) {
 		// Cannot select an item if the group is not expanded
@@ -631,16 +587,11 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.nebula.widgets.gallery.AbstractGridGroupRenderer#mouseDown
-	 * (org.eclipse.nebula.widgets.gallery.GalleryItem,
-	 * org.eclipse.swt.events.MouseEvent, org.eclipse.swt.graphics.Point)
+	/**
+	 * @see org.eclipse.nebula.widgets.gallery.AbstractGalleryGroupRenderer#mouseDown(org.eclipse.nebula.widgets.gallery.GalleryItem,
+	 *      org.eclipse.swt.widgets.Event, org.eclipse.swt.graphics.Point)
 	 */
-	public boolean mouseDown(final GalleryItem group, MouseEvent e,
-			Point coords) {
+	public boolean mouseDown(final GalleryItem group, Event e, Point coords) {
 
 		if (gallery.isVertical()) { // V_SCROLL
 			if (coords.y - group.y <= getGroupHeight(group)) {
@@ -758,12 +709,9 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.nebula.widgets.gallery.AbstractGridGroupRenderer#getSize(
-	 * org.eclipse.nebula.widgets.gallery.GalleryItem)
+	/**
+	 * @see org.eclipse.nebula.widgets.gallery.AbstractGridGroupRenderer#getSize(
+	 *      org.eclipse.nebula.widgets.gallery.GalleryItem)
 	 */
 	public Rectangle getSize(GalleryItem item) {
 		// If the item is not a group, get its parent
@@ -858,13 +806,10 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.nebula.widgets.gallery.AbstractGridGroupRenderer#drawItem
-	 * (org.eclipse.swt.graphics.GC, int, boolean,
-	 * org.eclipse.nebula.widgets.gallery.GalleryItem, int)
+	/**
+	 * @see org.eclipse.nebula.widgets.gallery.AbstractGridGroupRenderer#drawItem
+	 *      (org.eclipse.swt.graphics.GC, int, boolean,
+	 *      org.eclipse.nebula.widgets.gallery.GalleryItem, int)
 	 */
 	protected void drawItem(GC gc, int index, boolean selected,
 			GalleryItem parent, int offsetY) {
@@ -901,11 +846,9 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 		super.drawItem(gc, index, selected, parent, offsetY);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.nebula.widgets.gallery.AbstractGalleryGroupRenderer#
-	 * getScrollBarIncrement()
+	 *      getScrollBarIncrement()
 	 */
 	public int getScrollBarIncrement() {
 		if (fill) {
@@ -1071,11 +1014,9 @@ public class DefaultGalleryGroupRenderer extends AbstractGridGroupRenderer {
 		this.animationCloseMovement = animationMovement;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.nebula.widgets.gallery.AbstractGridGroupRenderer#
-	 * isGroupExpanded (org.eclipse.nebula.widgets.gallery.GalleryItem)
+	 *      isGroupExpanded (org.eclipse.nebula.widgets.gallery.GalleryItem)
 	 */
 	protected boolean isGroupExpanded(GalleryItem item) {
 

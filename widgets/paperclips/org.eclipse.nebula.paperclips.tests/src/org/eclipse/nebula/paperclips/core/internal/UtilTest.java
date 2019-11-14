@@ -1,10 +1,13 @@
 /*
  * Copyright (c) 2007-2008 Matthew Hall and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
  * 
+ * SPDX-License-Identifier: EPL-2.0
+ *
  * Contributors:
  *     Matthew Hall - initial API and implementation
  */
@@ -14,6 +17,7 @@ import org.eclipse.nebula.paperclips.core.internal.util.Util;
 
 import junit.framework.TestCase;
 
+@SuppressWarnings("restriction")
 public class UtilTest extends TestCase {
 	public void testSameClass_same() {
 		Object o1 = new Object();
@@ -53,8 +57,8 @@ public class UtilTest extends TestCase {
 		assertTrue(Util.equal(new char[] { 0, 1 }, new char[] { 0, 1 }));
 		assertTrue(Util.equal(new float[] { 0, 1 }, new float[] { 0, 1 }));
 		assertTrue(Util.equal(new double[] { 0, 1 }, new double[] { 0, 1 }));
-		assertTrue(Util.equal(new boolean[] { false, true }, new boolean[] {
-				false, true }));
+		assertTrue(Util.equal(new boolean[] { false, true },
+				new boolean[] { false, true }));
 		assertTrue(Util.equal(new Object[] { new Stub(), new Stub() },
 				new Object[] { new Stub(), new Stub() }));
 	}
@@ -67,8 +71,8 @@ public class UtilTest extends TestCase {
 		assertFalse(Util.equal(new char[] { 0, 1 }, new char[] { 0, 2 }));
 		assertFalse(Util.equal(new float[] { 0, 1 }, new float[] { 0, 2 }));
 		assertFalse(Util.equal(new double[] { 0, 1 }, new double[] { 0, 2 }));
-		assertFalse(Util.equal(new boolean[] { false, true }, new boolean[] {
-				false, false }));
+		assertFalse(Util.equal(new boolean[] { false, true },
+				new boolean[] { false, false }));
 		assertFalse(Util.equal(new Object[] { new Stub(), new Stub() },
 				new Object[] { new Stub(), new Object() }));
 	}
@@ -76,15 +80,15 @@ public class UtilTest extends TestCase {
 	public void testEqual_equivalentNestedArray() {
 		assertTrue(Util.equal(new Object[] { new Object[] { new Stub() } },
 				new Object[] { new Object[] { new Stub() } }));
-		assertTrue(Util.equal(new int[][] { { 0, 1 } },
-				new int[][] { { 0, 1 } }));
+		assertTrue(
+				Util.equal(new int[][] { { 0, 1 } }, new int[][] { { 0, 1 } }));
 	}
 
 	public void testEqual_differentNestedArray() {
 		assertFalse(Util.equal(new Object[] { new Object[] { new Stub() } },
 				new Object[] { new Object[] { new Object() } }));
-		assertFalse(Util.equal(new int[][] { { 0, 1 } },
-				new int[][] { { 0, 2 } }));
+		assertFalse(
+				Util.equal(new int[][] { { 0, 1 } }, new int[][] { { 0, 2 } }));
 	}
 
 	public void testEqual_double() {
@@ -93,6 +97,7 @@ public class UtilTest extends TestCase {
 	}
 
 	public class Stub {
+		@Override
 		public boolean equals(Object obj) {
 			return Util.sameClass(this, obj);
 		}

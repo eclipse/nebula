@@ -29,7 +29,7 @@ Contributors:
 		<map-version>2.2-beta-4</map-version>
 		<mjd-version>2.7</mjd-version>
 		<mrp-version>3.0.2</mrp-version>
-		<ejp-version>1.0.4</ejp-version>
+		<ejp-version>1.1.5</ejp-version>
 		<pmd-version>2.5</pmd-version>
 		<junit-version>4.8.1</junit-version>
 		<jacoco-version>0.7.9</jacoco-version>

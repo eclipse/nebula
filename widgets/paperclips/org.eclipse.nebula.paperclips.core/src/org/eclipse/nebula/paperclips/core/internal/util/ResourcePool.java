@@ -1,10 +1,13 @@
 /*
  * Copyright (c) 2007-2008 Matthew Hall and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
  * 
+ * SPDX-License-Identifier: EPL-2.0
+ *
  * Contributors:
  *     Matthew Hall - initial API and implementation
  */
@@ -25,17 +28,15 @@ import org.eclipse.swt.graphics.RGB;
 
 /**
  * Manages a pool of graphics resources for a graphics device (fonts, colors).
- * 
+ *
  * @author Matthew Hall
  */
 public class ResourcePool {
-	private static Map devices = new WeakHashMap(); // Map <Device,
-
-	// ResourcePool>
+	private static Map<Device, ResourcePool> devices = new WeakHashMap<>();
 
 	/**
 	 * Returns a SharedGraphics which creates resources on the given device.
-	 * 
+	 *
 	 * @param device
 	 *            the device which resources will be created on.
 	 * @return a SharedGraphics which creates resources on the given device.
@@ -44,7 +45,7 @@ public class ResourcePool {
 		Util.notNull(device);
 		notDisposed(device);
 
-		ResourcePool sharedGraphics = (ResourcePool) devices.get(device);
+		ResourcePool sharedGraphics = devices.get(device);
 		if (sharedGraphics == null) {
 			sharedGraphics = new ResourcePool(device);
 			devices.put(device, sharedGraphics);
@@ -58,18 +59,18 @@ public class ResourcePool {
 	}
 
 	private final Device device;
-	private final Map fonts; // Map <FontData, Font>
-	private final Map colors; // Map <RGB, Color>
+	private final Map<FontData, Font> fonts;
+	private final Map<RGB, Color> colors;
 
 	private ResourcePool(Device device) {
 		this.device = device;
-		this.fonts = new HashMap();
-		this.colors = new HashMap();
+		this.fonts = new HashMap<>();
+		this.colors = new HashMap<>();
 	}
 
 	/**
 	 * Returns a font for the passed in FontData.
-	 * 
+	 *
 	 * @param fontData
 	 *            FontData describing the required font.
 	 * @return a font for the passed in FontData.
@@ -79,7 +80,7 @@ public class ResourcePool {
 			return null;
 		notDisposed(device);
 
-		Font font = (Font) fonts.get(fontData);
+		Font font = fonts.get(fontData);
 		if (font == null) {
 			font = new Font(device, fontData);
 			fonts.put(SWTUtil.copy(fontData), font);
@@ -89,7 +90,7 @@ public class ResourcePool {
 
 	/**
 	 * Returns a color for the passed in RGB.
-	 * 
+	 *
 	 * @param rgb
 	 *            RGB describing the required color.
 	 * @return a color for the passed in RGB.
@@ -99,7 +100,7 @@ public class ResourcePool {
 			return null;
 		notDisposed(device);
 
-		Color color = (Color) colors.get(rgb);
+		Color color = colors.get(rgb);
 		if (color == null) {
 			color = new Color(device, rgb);
 			colors.put(SWTUtil.copy(rgb), color);

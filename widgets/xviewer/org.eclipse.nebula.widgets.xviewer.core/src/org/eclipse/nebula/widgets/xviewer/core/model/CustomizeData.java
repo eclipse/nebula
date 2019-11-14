@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2004, 2007 Boeing.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Boeing - initial API and implementation
@@ -12,6 +15,7 @@ package org.eclipse.nebula.widgets.xviewer.core.model;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.eclipse.nebula.widgets.xviewer.core.util.XViewerUtil;
 
 /**
@@ -60,7 +64,7 @@ public class CustomizeData implements Comparable<CustomizeData> {
    }
 
    public String getXml(boolean visibleColumnsOnly) {
-      StringBuffer sb = new StringBuffer(
+      StringBuilder sb = new StringBuilder(
          "<XTreeProperties name=\"" + name + "\" namespace=\"" + nameSpace + "\" guid=\"" + guid + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
       sb.append(sortingData.getXml());
       sb.append(filterData.getXml());

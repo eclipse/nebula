@@ -1,11 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2011 Laurent CARON All rights reserved. This program and the
- * accompanying materials are made available under the terms of the Eclipse
- * Public License v1.0 which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2011-2019 Laurent CARON
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
- * Contributors: Laurent CARON (laurent.caron at gmail dot com) - Initial
- * implementation and API
+ * Contributors: 
+ * 	Laurent CARON (laurent.caron at gmail dot com) - Initial implementation and API
+ * 	Stefan Nöbauer - Bug 550437 
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.commons;
 
@@ -271,15 +275,12 @@ public class SWTGraphicUtil {
 	 * @return the bounds of the monitor on which the shell is running
 	 */
 	public static Rectangle getBoundsOfMonitorOnWhichShellIsDisplayed(final Shell shell) {
-		for (final Monitor monitor : shell.getDisplay().getMonitors()) {
-			final Rectangle monitorBounds = monitor.getBounds();
-			final Rectangle shellBounds = shell.getBounds();
-			if (monitorBounds.contains(shellBounds.x, shellBounds.y)) {
-				return monitorBounds;
-			}
-		}
-		final Monitor primary = shell.getDisplay().getPrimaryMonitor();
-		return primary.getBounds();
+		Monitor monitor = shell.getDisplay().getPrimaryMonitor();
+		if(shell != null && shell.getMonitor() != null) {
+			monitor = shell.getMonitor();
+		} 
+		
+		return monitor.getBounds();
 	}
 
 	/**

@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2004, 2007 Boeing.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Boeing - initial API and implementation
@@ -17,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
+
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -40,7 +44,6 @@ public class XViewerSorter extends ViewerSorter {
       this.treeViewer = treeViewer;
    }
 
-   @SuppressWarnings("unchecked")
    public int compare(Viewer viewer, Object o1, Object o2, int sortXColIndex) {
       if (treeViewer.getCustomizeMgr().isLoading()) {
          return 0;
@@ -130,7 +133,6 @@ public class XViewerSorter extends ViewerSorter {
       return returnInt;
    }
 
-   @SuppressWarnings("unchecked")
    public int getCompareForFloat(String float1, String float2) {
       double float1Float = 0;
       boolean float1Exception = false;
@@ -159,7 +161,6 @@ public class XViewerSorter extends ViewerSorter {
       return toReturn;
    }
 
-   @SuppressWarnings("unchecked")
    public int getCompareForInteger(String int1, String int2) {
       int int1Integer = 0;
       boolean int1Exception = false;
@@ -190,7 +191,6 @@ public class XViewerSorter extends ViewerSorter {
 
    }
 
-   @SuppressWarnings("unchecked")
    public int getCompareForLong(String long1, String long2) {
       long long1Long = 0;
       boolean long1Exception = false;
@@ -276,7 +276,7 @@ public class XViewerSorter extends ViewerSorter {
    }
 
    public static Pair<Date, Date> parseDatePair(String date1, String date2) {
-      Pair<Date, Date> datePair = new Pair<Date, Date>(null, null);
+      Pair<Date, Date> datePair = new Pair<>(null, null);
       DateFormat format;
       if (date1.length() == 10) {
          format = format10;
@@ -312,7 +312,6 @@ public class XViewerSorter extends ViewerSorter {
       return date1.compareTo(date2);
    }
 
-   @SuppressWarnings("unchecked")
    public int getCompareForPercent(String percent1, String percent2) {
       int percent1Int = 0;
       boolean percent1Exception = false;

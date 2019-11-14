@@ -2,8 +2,6 @@ package org.eclipse.nebula.widgets.gallery.tests;
 
 import java.util.ArrayList;
 
-import junit.framework.TestCase;
-
 import org.eclipse.nebula.widgets.gallery.DefaultGalleryGroupRenderer;
 import org.eclipse.nebula.widgets.gallery.DefaultGalleryItemRenderer;
 import org.eclipse.nebula.widgets.gallery.Gallery;
@@ -15,6 +13,9 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.Widget;
+
+import junit.framework.TestCase;
 
 public class GalleryVirtualBehaviorTest extends TestCase {
 	Display d = null;
@@ -57,13 +58,13 @@ public class GalleryVirtualBehaviorTest extends TestCase {
 
 	public void testGalleryVirtualNew() {
 		Gallery widget = createGallery(SWT.V_SCROLL | SWT.VIRTUAL);
-		final ArrayList setDataCalls = new ArrayList();
+		final ArrayList<Widget> setDataCalls = new ArrayList<>();
 		widget.addListener(SWT.SetData, new Listener() {
 			public void handleEvent(Event event) {
 				setDataCalls.add(event.item);
 			}
 		});
-		
+
 		assertEquals(0, widget.getItemCount());
 
 		GalleryItem item1 = new GalleryItem(widget, SWT.NONE);
@@ -89,7 +90,7 @@ public class GalleryVirtualBehaviorTest extends TestCase {
 
 		widget.removeAll();
 		assertEquals(0, widget.getItemCount());
-		
+
 	}
 
 	/**
@@ -97,20 +98,20 @@ public class GalleryVirtualBehaviorTest extends TestCase {
 	 */
 	public void testTreeVirtualNew() {
 		Tree widget = new Tree(s, SWT.VIRTUAL);
-		final ArrayList setDataCalls = new ArrayList();
+		final ArrayList<Widget> setDataCalls = new ArrayList<>();
 		widget.addListener(SWT.SetData, new Listener() {
 			public void handleEvent(Event event) {
 				setDataCalls.add(event.item);
 			}
 		});
 
-		
+
 		assertEquals(0, widget.getItemCount());
 		TreeItem item1 = new TreeItem(widget, SWT.NONE);
 		assertEquals(1, widget.getItemCount());
 		assertEquals(item1, widget.getItem(0));
 		assertFalse( setDataCalls.contains(item1));
-		
+
 		TreeItem item2 = new TreeItem(item1, SWT.NONE);
 		assertEquals(1, widget.getItemCount());
 		assertEquals(1, item1.getItemCount());
@@ -120,7 +121,7 @@ public class GalleryVirtualBehaviorTest extends TestCase {
 		item1.dispose();
 		assertEquals( 0, widget.getItemCount());
 		assertTrue( item2.isDisposed());
-		
+
 		// Test removeAll
 		item1 = new TreeItem(widget, SWT.NONE);
 		assertEquals(1, widget.getItemCount());
@@ -129,6 +130,6 @@ public class GalleryVirtualBehaviorTest extends TestCase {
 
 		widget.removeAll();
 		assertEquals(0, widget.getItemCount());
-	
+
 	}
 }

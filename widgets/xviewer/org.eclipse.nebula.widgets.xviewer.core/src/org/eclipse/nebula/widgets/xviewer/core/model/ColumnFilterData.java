@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2004, 2007 Boeing.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Boeing - initial API and implementation
@@ -17,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.eclipse.nebula.widgets.xviewer.core.util.Strings;
 import org.eclipse.nebula.widgets.xviewer.core.util.XmlUtil;
 
@@ -61,9 +65,9 @@ public class ColumnFilterData {
    }
 
    public String getXml() {
-      StringBuffer sb = new StringBuffer();
+      StringBuilder sb = new StringBuilder();
       for (String colId : getColIds()) {
-         StringBuffer innerSb = new StringBuffer();
+         StringBuilder innerSb = new StringBuilder();
          innerSb.append(XmlUtil.addTagData(COLUMN_ID_TAG, colId));
          String filterText = colIdToFilterText.get(colId);
          if (Strings.isValid(filterText)) {

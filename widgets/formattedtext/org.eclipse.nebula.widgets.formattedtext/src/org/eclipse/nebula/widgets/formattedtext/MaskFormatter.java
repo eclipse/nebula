@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2005, 2009 Eric Wuillai.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Eric Wuillai (eric@wdev91.com) - initial API and implementation
@@ -16,7 +19,7 @@ import org.eclipse.swt.events.VerifyEvent;
 /**
  * This class provides formatting of <code>String</code> values in a
  * <code>FormattedText</code>.<p>
- * 
+ *
  * <h4>Pattern Characters</h4>
  * <table border=0 cellspacing=3 cellpadding=0 summary="Chart shows pattern letters, date/time component, presentation, and examples.">
  *   <tr bgcolor="#ccccff">
@@ -41,7 +44,7 @@ import org.eclipse.swt.events.VerifyEvent;
  *   </tr>
  * </table>
  * All other characters are considered as separators.
- * 
+ *
  * <h4>Examples</h4>
  * <code>newFormatter("(###) UUU-AAAA");</code><br>
  * <code>setValue("123aBcDeF");</code> -> will display as "(123) ABC-DeF".
@@ -66,7 +69,7 @@ public class MaskFormatter extends AbstractFormatter {
 
 	/**
 	 * Constructs a new instance with the given edit mask.
-	 * 
+	 *
 	 * @param editPattern edit mask
 	 */
 	public MaskFormatter(String editPattern) {
@@ -91,7 +94,7 @@ public class MaskFormatter extends AbstractFormatter {
 	/**
 	 * Clear a part of the edition cache. Mask characters are preserved in their
 	 * positions.
-	 * 
+	 *
 	 * @param start
 	 *            beginning index
 	 * @param len
@@ -114,7 +117,7 @@ public class MaskFormatter extends AbstractFormatter {
 	 * Returns the current value formatted for display.<p>
 	 * There is no difference in this formatter between edit and display values.
 	 * So this method returns the edit string.
-	 * 
+	 *
 	 * @return display string
 	 * @see ITextFormatter#getDisplayString()
 	 */
@@ -127,7 +130,7 @@ public class MaskFormatter extends AbstractFormatter {
 	 * <code>FormattedText</code> when the <code>Text</code> widget gains focus.
 	 * The value returned is the content of the StringBuilder
 	 * <code>editValue</code> used as cache.
-	 * 
+	 *
 	 * @return edit string
 	 * @see ITextFormatter#getEditString()
 	 */
@@ -138,7 +141,7 @@ public class MaskFormatter extends AbstractFormatter {
 	/**
 	 * Returns the current value. The value returned is the content of the edit
 	 * cache without any mask characters.
-	 * 
+	 *
 	 * @return current string value
 	 * @see ITextFormatter#getValue()
 	 */
@@ -158,10 +161,10 @@ public class MaskFormatter extends AbstractFormatter {
 	 * Returns the type of value this {@link ITextFormatter} handles, i.e.
 	 * returns in {@link #getValue()}.<br>
 	 * A MaskFormatter always returns a String value.
-	 * 
+	 *
 	 * @return The value type.
 	 */
-	public Class getValueType() {
+	public Class<String> getValueType() {
 		return String.class;
 	}
 
@@ -169,7 +172,7 @@ public class MaskFormatter extends AbstractFormatter {
 	 * Inserts a sequence of characters in the edit buffer. The current content
 	 * of the buffer is override. The new position of the cursor is computed and
 	 * returned. Mask characters are preserved in their positions.
-	 * 
+	 *
 	 * @param txt String of characters to insert
 	 * @param start Starting position of insertion
 	 * @return New position of the cursor
@@ -251,7 +254,7 @@ public class MaskFormatter extends AbstractFormatter {
 	 * <code>false</code>.<br>
 	 * A value is considered as empty in a MaskFormatter if the edit buffer
 	 * contains no characters except the mask characters.
-	 * 
+	 *
 	 * @return true if empty, else false
 	 */
 	public boolean isEmpty() {
@@ -261,7 +264,7 @@ public class MaskFormatter extends AbstractFormatter {
 	/**
 	 * Returns <code>true</code> if current edited value is valid, else returns
 	 * <code>false</code>. An empty value is considered as valid.
-	 * 
+	 *
 	 * @return true if valid, else false
 	 * @see ITextFormatter#isValid()
 	 */
@@ -271,7 +274,7 @@ public class MaskFormatter extends AbstractFormatter {
 
 	/**
 	 * Sets the value to edit. The value provided must be a <code>String</code>.
-	 * 
+	 *
 	 * @param value string value
 	 * @throws IllegalArgumentException if not a string
 	 * @see ITextFormatter#setValue(java.lang.Object)
@@ -290,7 +293,7 @@ public class MaskFormatter extends AbstractFormatter {
 	/**
 	 * Handles a <code>VerifyEvent</code> sent when the text is about to be
 	 * modified. This method is the entry point of all operations of formatting.
-	 * 
+	 *
 	 * @see org.eclipse.swt.events.VerifyListener#verifyText(org.eclipse.swt.events.VerifyEvent)
 	 */
 	public void verifyText(VerifyEvent e) {
