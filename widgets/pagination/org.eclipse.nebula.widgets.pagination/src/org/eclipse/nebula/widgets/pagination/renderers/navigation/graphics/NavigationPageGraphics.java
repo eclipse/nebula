@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (C) 2011 Angelo Zerr <angelo.zerr@gmail.com>, Pascal Leclercq <pascal.leclercq@gmail.com>
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Angelo ZERR - initial API and implementation
@@ -18,10 +21,6 @@ import java.util.Locale;
 import org.eclipse.nebula.widgets.pagination.PaginationHelper;
 import org.eclipse.nebula.widgets.pagination.Resources;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
@@ -31,11 +30,11 @@ import org.eclipse.swt.widgets.Composite;
 
 /**
  * This canvas draw navigation page with {@link GC} like this :
- * 
+ *
  * <pre>
  *  	Previous 1 2 ...10 Next
  * </pre>
- * 
+ *
  */
 public class NavigationPageGraphics extends Canvas {
 
@@ -78,25 +77,13 @@ public class NavigationPageGraphics extends Canvas {
 				Locale.getDefault()));
 
 		// Add paint listener to draw the navigation page
-		this.addPaintListener(new PaintListener() {
-			public void paintControl(PaintEvent e) {
-				onPaint(e.gc);
-			}
-		});
+		this.addListener(SWT.Paint, e-> onPaint(e.gc));
 
 		// Add mouse listener to select a page item.
-		this.addMouseListener(new MouseListener() {
-			public void mouseUp(MouseEvent e) {
-				NavigationPageGraphicsItem selectedItem = getItem(e.x, e.y);
-				if (selectedItem != null) {
-					select(selectedItem);
-				}
-			}
-
-			public void mouseDown(MouseEvent e) {
-			}
-
-			public void mouseDoubleClick(MouseEvent arg0) {
+		this.addListener(SWT.MouseUp, e -> {
+			NavigationPageGraphicsItem selectedItem = getItem(e.x, e.y);
+			if (selectedItem != null) {
+				select(selectedItem);
 			}
 		});
 
@@ -204,10 +191,10 @@ public class NavigationPageGraphics extends Canvas {
 	public void update(int[] pageIndexes, int currentPage) {
 		update(pageIndexes, currentPage, Locale.getDefault());
 	}
-	
+
 	public void update(int[] pageIndexes, int currentPage, Locale locale) {
 		// Compute navigation item and updat ethe selected item.
-		this.items = new ArrayList<NavigationPageGraphicsItem>(
+		this.items = new ArrayList<>(
 				pageIndexes.length + 2);
 		int index = -1;
 		items.add(previousItem);
@@ -245,7 +232,7 @@ public class NavigationPageGraphics extends Canvas {
 
 	/**
 	 * This method loop for item and update for each item their bound.
-	 * 
+	 *
 	 * @param gc
 	 *            graphic context used to compute the size font used in page
 	 *            item. If GC is null, a new GC is created
@@ -286,19 +273,10 @@ public class NavigationPageGraphics extends Canvas {
 		}
 	}
 
-	// NavigationPageGraphicsItem getItem(int index) {
-	// for (NavigationPageGraphicsItem pageItem : pageItems) {
-	// if (pageItem.getIndex() == index) {
-	// return pageItem;
-	// }
-	// }
-	// return null;
-	// }
-
 	/**
 	 * Returns the item which match the given location point.Null if none item
 	 * is selected or if item is disabled.
-	 * 
+	 *
 	 * @param x
 	 * @param y
 	 * @return
@@ -337,7 +315,7 @@ public class NavigationPageGraphics extends Canvas {
 	/**
 	 * This method is called when page item (Next, Previous or page index) is
 	 * selected. By default this method do nothing.
-	 * 
+	 *
 	 * @param selectedItem
 	 */
 	protected void handleSelection(NavigationPageGraphicsItem selectedItem) {
@@ -424,7 +402,7 @@ public class NavigationPageGraphics extends Canvas {
 
 	/**
 	 * Set the round height/width.
-	 * 
+	 *
 	 * @param round
 	 */
 	public void setRound(int round) {
@@ -433,7 +411,7 @@ public class NavigationPageGraphics extends Canvas {
 
 	/**
 	 * Set text for previous, next item.
-	 * 
+	 *
 	 * @param previousText
 	 * @param nextText
 	 */
@@ -446,7 +424,7 @@ public class NavigationPageGraphics extends Canvas {
 
 	/**
 	 * Set enabled for previous, next item.
-	 * 
+	 *
 	 * @param hasPreviousPage
 	 * @param hasNextPage
 	 */

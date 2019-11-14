@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2004, 2007 Boeing.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Boeing - initial API and implementation
@@ -12,6 +15,7 @@ package org.eclipse.nebula.widgets.xviewer.util.internal.dialog;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerTextWidget;
@@ -20,8 +24,6 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -86,20 +88,11 @@ public class DialogWithEntry extends MessageDialog {
       if (fillVertically) { // Create error label
          Button button = new Button(headerComp, SWT.PUSH);
          button.setText(XViewerText.get("button.clear")); //$NON-NLS-1$
-         button.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-               super.widgetSelected(e);
-               text.setText(""); //$NON-NLS-1$
-            }
-         });
+         button.addListener(SWT.Selection, e-> text.setText(""));
          // Create error label
          fontButton = new Button(headerComp, SWT.CHECK);
          fontButton.setText(XViewerText.get("DialogWithEntry.button.font")); //$NON-NLS-1$
-         fontButton.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-               super.widgetSelected(e);
+         fontButton.addListener(SWT.Selection, e-> {
                if (fontButton.getSelection()) {
                   if (font == null) {
                      font = new Font(Display.getCurrent(), "Courier New", 8, SWT.NORMAL); //$NON-NLS-1$
@@ -108,7 +101,6 @@ public class DialogWithEntry extends MessageDialog {
                } else {
                   text.setFont(null);
                }
-            }
          });
       }
 

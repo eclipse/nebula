@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2006-2009 Nicolas Richeton.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors :
  *    Nicolas Richeton (nicolas.richeton@gmail.com) - initial API and implementation
@@ -45,8 +48,8 @@ public abstract class AbstractEffect implements IEffect {
 	 * @param onStop
 	 * @param onCancel
 	 */
-	public AbstractEffect(long lengthMilli, IMovement movement,
-			Runnable onStop, Runnable onCancel) {
+	public AbstractEffect(long lengthMilli, IMovement movement, Runnable onStop,
+			Runnable onCancel) {
 		this.length = lengthMilli;
 		easingFunction = movement;
 		this.runnableOnCancel = onCancel;
@@ -60,9 +63,7 @@ public abstract class AbstractEffect implements IEffect {
 	 */
 	public abstract void applyEffect(final long currentTime);
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.nebula.animation.effects.IEffect#cancel()
 	 */
 	public void cancel() {
@@ -78,17 +79,13 @@ public abstract class AbstractEffect implements IEffect {
 			runnableOnCancel.run();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.nebula.animation.effects.IEffect#doEffect()
 	 */
 	public void doEffect() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.nebula.animation.effects.IEffect#doEffect(long)
 	 */
 	public void doEffect(long time) {
@@ -108,18 +105,14 @@ public abstract class AbstractEffect implements IEffect {
 			runnableOnStop.run();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.nebula.animation.effects.IEffect#getLength()
 	 */
 	public long getLength() {
 		return length;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.nebula.animation.effects.IEffect#isDone()
 	 */
 	public boolean isDone() {

@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2004, 2007 Boeing.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Boeing - initial API and implementation
@@ -12,6 +15,7 @@ package org.eclipse.nebula.widgets.xviewer.util.internal;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
@@ -53,7 +57,7 @@ public class OverlayUtil extends CompositeImageDescriptor {
    public OverlayUtil(Image baseImage, ImageDescriptor overlayImageDescriptor, Location location) {
       this.baseImage = baseImage;
       this.overlayImageDescriptor = overlayImageDescriptor;
-      this.imageInfo = new ArrayList<ImageInfo>(2);
+      this.imageInfo = new ArrayList<>(2);
       imageInfo.add(new ImageInfo(overlayImageDescriptor, location));
    }
 
@@ -112,8 +116,6 @@ public class OverlayUtil extends CompositeImageDescriptor {
 
    @Override
    protected Point getSize() {
-      // System.err.println("Width = " + baseImage.getBounds().width);
-      // System.err.println("Height = " + baseImage.getBounds().height);
       int baseWidth = baseImage.getBounds().width;
       int baseHeight = baseImage.getBounds().height;
 

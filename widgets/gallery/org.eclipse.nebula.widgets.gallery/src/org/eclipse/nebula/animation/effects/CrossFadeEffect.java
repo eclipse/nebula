@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2006-2010 Nicolas Richeton.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors :
  *    Nicolas Richeton (nicolas.richeton@gmail.com) - initial API and implementation
@@ -99,16 +102,13 @@ public class CrossFadeEffect extends AbstractEffect {
 
 		easingFunction.init(0, 1, (int) lengthMilli);
 
-		buffer = new Image(image1.getDevice(), image1.getBounds().width, image1
-				.getBounds().height);
+		buffer = new Image(image1.getDevice(), image1.getBounds().width,
+				image1.getBounds().height);
 		gc = new GC(buffer);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.nebula.animation.effects.AbstractEffect#applyEffect(long)
+	/**
+	 * @see org.eclipse.nebula.animation.effects.AbstractEffect#applyEffect(long)
 	 */
 	public void applyEffect(long currentTime) {
 		easingValue = easingFunction.getValue(currentTime);
@@ -134,9 +134,7 @@ public class CrossFadeEffect extends AbstractEffect {
 		buffer.dispose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.nebula.animation.effects.AbstractEffect#doCancel()
 	 */
 	protected void doCancel() {
@@ -145,9 +143,7 @@ public class CrossFadeEffect extends AbstractEffect {
 		cleanup();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.nebula.animation.effects.AbstractEffect#doStop()
 	 */
 	protected void doStop() {

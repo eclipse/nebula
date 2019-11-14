@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2009 Claes Rosell
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *    Claes Rosell<claes.rosell@solme.se>    - initial API and implementation
@@ -17,7 +20,7 @@ import java.util.List;
 import org.eclipse.swt.graphics.Rectangle;
 
 class GridCellSpanManager {
-	List listOfCellSpanRectangles = new ArrayList();
+	List<Rectangle> listOfCellSpanRectangles = new ArrayList<>();
 	Rectangle lastUsedCellSpanRectangle = null;
 
 	protected void addCellSpanInfo(int colIndex, int rowIndex, int colSpan,
@@ -28,9 +31,9 @@ class GridCellSpanManager {
 	}
 
 	private Rectangle findSpanRectangle(int columnIndex, int rowIndex) {
-		Iterator iter = listOfCellSpanRectangles.iterator();
+		Iterator<Rectangle> iter = listOfCellSpanRectangles.iterator();
 		while (iter.hasNext()) {
-			Rectangle cellSpanRectangle = (Rectangle) iter.next();
+			Rectangle cellSpanRectangle = iter.next();
 			if (cellSpanRectangle.contains(columnIndex, rowIndex)) {
 				return cellSpanRectangle;
 			}

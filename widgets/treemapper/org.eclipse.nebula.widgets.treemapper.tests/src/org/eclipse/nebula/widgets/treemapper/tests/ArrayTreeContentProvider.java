@@ -1,9 +1,12 @@
 /*******************************************************************************
 * Copyright (c) 2011 PetalsLink
-* All rights reserved. This program and the accompanying materials
-* are made available under the terms of the Eclipse Public License v1.0
-* which accompanies this distribution, and is available at
-* http://www.eclipse.org/legal/epl-v10.html
+*
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
 *
 * Contributors:
 * Mickael Istria, PetalsLink - initial API and implementation
@@ -19,21 +22,21 @@ import org.eclipse.jface.viewers.Viewer;
  */
 public class ArrayTreeContentProvider implements ITreeContentProvider {
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	@Override
 	public void dispose() {
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getElements(java.lang.Object)
 	 */
 	@Override
@@ -41,7 +44,7 @@ public class ArrayTreeContentProvider implements ITreeContentProvider {
 		return (Object[])inputElement;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
 	@Override
@@ -49,7 +52,7 @@ public class ArrayTreeContentProvider implements ITreeContentProvider {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
 	@Override
@@ -57,7 +60,7 @@ public class ArrayTreeContentProvider implements ITreeContentProvider {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
 	@Override

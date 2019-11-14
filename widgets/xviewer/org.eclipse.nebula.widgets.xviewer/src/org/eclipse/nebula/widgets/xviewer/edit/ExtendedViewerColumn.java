@@ -2,8 +2,9 @@ package org.eclipse.nebula.widgets.xviewer.edit;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.eclipse.nebula.widgets.xviewer.core.model.XViewerAlign;
+
 import org.eclipse.nebula.widgets.xviewer.core.model.SortDataType;
+import org.eclipse.nebula.widgets.xviewer.core.model.XViewerAlign;
 import org.eclipse.nebula.widgets.xviewer.core.model.XViewerColumn;
 
 /**
@@ -13,7 +14,7 @@ import org.eclipse.nebula.widgets.xviewer.core.model.XViewerColumn;
  */
 public class ExtendedViewerColumn extends XViewerColumn implements IExtendedViewerColumn {
 
-   private Map<Class<?>, CellEditDescriptor> map = new HashMap<Class<?>, CellEditDescriptor>();
+   private Map<Class<?>, CellEditDescriptor> map = new HashMap<>();
 
    public ExtendedViewerColumn(String id, String name, int width, XViewerAlign align, boolean show, SortDataType sortDataType, boolean multiColumnEditable, String description) {
       super(id, name, width, align, show, sortDataType, multiColumnEditable, description);
@@ -24,7 +25,7 @@ public class ExtendedViewerColumn extends XViewerColumn implements IExtendedView
     */
    @Override
    public Map<Class<?>, CellEditDescriptor> getCellEditDescriptorMap() {
-      return new HashMap<Class<?>, CellEditDescriptor>(map);
+      return new HashMap<>(map);
    }
 
    @Override

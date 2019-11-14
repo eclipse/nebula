@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2006-2007 Nicolas Richeton.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors :
  *    Nicolas Richeton (nicolas.richeton@gmail.com) - initial API and implementation
@@ -32,8 +35,8 @@ import org.eclipse.swt.widgets.Item;
  * @contributor Robert Handschmann (bug 215817)
  */
 
-public abstract class AbstractGridGroupRenderer extends
-		AbstractGalleryGroupRenderer {
+public abstract class AbstractGridGroupRenderer
+		extends AbstractGalleryGroupRenderer {
 
 	static final int DEFAULT_SIZE = 96;
 
@@ -171,9 +174,8 @@ public abstract class AbstractGridGroupRenderer extends
 
 	protected int calculateMargins(int size, int count, int itemSize) {
 		int margin = this.minMargin;
-		margin += Math
-				.round((float) (size - this.minMargin - (count * (itemSize + this.minMargin)))
-						/ (count + 1));
+		margin += Math.round((float) (size - this.minMargin
+				- (count * (itemSize + this.minMargin))) / (count + 1));
 		return margin;
 	}
 
@@ -235,13 +237,13 @@ public abstract class AbstractGridGroupRenderer extends
 				xPixelPos = posX * (itemWidth + margin) + margin;
 				yPixelPos = posY * (itemHeight + minMargin) - gallery.translate
 				/* + minMargin */
-				+ ((parent == null) ? 0 : (parent.y) + offsetY);
+						+ ((parent == null) ? 0 : (parent.y) + offsetY);
 				gItem.x = xPixelPos;
 				gItem.y = yPixelPos + gallery.translate;
 			} else {
 				xPixelPos = posX * (itemWidth + minMargin) - gallery.translate
 				/* + minMargin */
-				+ ((parent == null) ? 0 : (parent.x) + offsetY);
+						+ ((parent == null) ? 0 : (parent.x) + offsetY);
 				yPixelPos = posY * (itemHeight + margin) + margin;
 				gItem.x = xPixelPos + gallery.translate;
 				gItem.y = yPixelPos;
@@ -260,8 +262,8 @@ public abstract class AbstractGridGroupRenderer extends
 					System.out.println("itemRender.draw"); //$NON-NLS-1$
 				Rectangle oldClipping = gc.getClipping();
 
-				gc.setClipping(oldClipping.intersection(new Rectangle(
-						xPixelPos, yPixelPos, itemWidth, itemHeight)));
+				gc.setClipping(oldClipping.intersection(new Rectangle(xPixelPos,
+						yPixelPos, itemWidth, itemHeight)));
 				gallery.getItemRenderer().draw(gc, gItem, index, xPixelPos,
 						yPixelPos, itemWidth, itemHeight);
 				gc.setClipping(oldClipping);
@@ -380,12 +382,9 @@ public abstract class AbstractGridGroupRenderer extends
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.nebula.widgets.gallery.AbstractGalleryGroupRenderer#preLayout
-	 * (org.eclipse.swt.graphics.GC)
+	/**
+	 * @see org.eclipse.nebula.widgets.gallery.AbstractGalleryGroupRenderer#preLayout
+	 *      (org.eclipse.swt.graphics.GC)
 	 */
 	public void preLayout(GC gc) {
 		// Reset margin to minimal value before "best fit" calculation
@@ -453,7 +452,8 @@ public abstract class AbstractGridGroupRenderer extends
 	 * @param coords
 	 * @return
 	 */
-	protected GalleryItem getItem(GalleryItem group, Point coords, int offsetY) {
+	protected GalleryItem getItem(GalleryItem group, Point coords,
+			int offsetY) {
 		if (Gallery.DEBUG) {
 			System.out.println("getitem " + coords.x + " " + coords.y); //$NON-NLS-1$//$NON-NLS-2$
 		}
@@ -484,7 +484,8 @@ public abstract class AbstractGridGroupRenderer extends
 					/ (itemHeight + minMargin);
 
 			// Check if the users clicked on the Y margin.
-			if (((coords.y - group.y - offsetY) % (itemHeight + minMargin)) > itemHeight) {
+			if (((coords.y - group.y - offsetY)
+					% (itemHeight + minMargin)) > itemHeight) {
 				return null;
 			}
 			itemNb = posX + posY * hCount;
@@ -512,7 +513,8 @@ public abstract class AbstractGridGroupRenderer extends
 			int posX = (coords.x - group.x - offsetY) / (itemWidth + minMargin);
 
 			// Check if the users clicked on the X margin.
-			if (((coords.x - group.x - offsetY) % (itemWidth + minMargin)) > itemWidth) {
+			if (((coords.x - group.x - offsetY)
+					% (itemWidth + minMargin)) > itemWidth) {
 				return null;
 			}
 			itemNb = posY + posX * vCount;
@@ -588,8 +590,8 @@ public abstract class AbstractGridGroupRenderer extends
 
 		GalleryItem newItem = null;
 		for (int i = 1; i < lineCount; i++) {
-			newItem = goUp(next.getParentItem(), next.getParentItem().indexOf(
-					next), hCount);
+			newItem = goUp(next.getParentItem(),
+					next.getParentItem().indexOf(next), hCount);
 			if (newItem == next || newItem == null) {
 				break;
 			}
@@ -620,8 +622,8 @@ public abstract class AbstractGridGroupRenderer extends
 
 		GalleryItem newItem = null;
 		for (int i = 1; i < lineCount; i++) {
-			newItem = goDown(next.getParentItem(), next.getParentItem()
-					.indexOf(next), hCount);
+			newItem = goDown(next.getParentItem(),
+					next.getParentItem().indexOf(next), hCount);
 			if (newItem == next || newItem == null) {
 				break;
 			}
@@ -780,12 +782,13 @@ public abstract class AbstractGridGroupRenderer extends
 				break;
 
 			case SWT.PAGE_UP:
-				next = goUp(group, pos, hCount, Math.max(maxVisibleRows - 1, 1));
+				next = goUp(group, pos, hCount,
+						Math.max(maxVisibleRows - 1, 1));
 				break;
 
 			case SWT.PAGE_DOWN:
-				next = goDown(group, pos, hCount, Math.max(maxVisibleRows - 1,
-						1));
+				next = goDown(group, pos, hCount,
+						Math.max(maxVisibleRows - 1, 1));
 				break;
 			}
 		} else {
@@ -809,13 +812,13 @@ public abstract class AbstractGridGroupRenderer extends
 				break;
 
 			case SWT.PAGE_UP:
-				next = goUp(group, pos, vCount
-						* Math.max(maxVisibleColumns - 1, 1));
+				next = goUp(group, pos,
+						vCount * Math.max(maxVisibleColumns - 1, 1));
 				break;
 
 			case SWT.PAGE_DOWN:
-				next = goDown(group, pos, vCount
-						* Math.max(maxVisibleColumns - 1, 1));
+				next = goDown(group, pos,
+						vCount * Math.max(maxVisibleColumns - 1, 1));
 				break;
 
 			}
@@ -900,8 +903,9 @@ public abstract class AbstractGridGroupRenderer extends
 			}
 
 			// Get the last item.
-			return group.getItem((group.getItemCount() / hCount + offset)
-					* hCount + endPos - 1);
+			return group
+					.getItem((group.getItemCount() / hCount + offset) * hCount
+							+ endPos - 1);
 
 		case START:
 		default:

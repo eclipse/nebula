@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2004, 2007 Boeing.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Boeing - initial API and implementation
@@ -21,6 +24,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
+
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.nebula.widgets.xviewer.Activator;
 import org.eclipse.swt.layout.GridLayout;
@@ -55,14 +59,11 @@ public class MyLib {
       if (!PlatformUI.isWorkbenchRunning()) {
          MyLog.log(Activator.class, Level.SEVERE, message);
       } else {
-         ensureInDisplayThread(new Runnable() {
-            @Override
-            public void run() {
-               MessageDialog.openInformation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), title,
-                  message);
-            }
-         });
-      }
+			ensureInDisplayThread(() -> {
+				MessageDialog.openInformation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), title,
+						message);
+			});
+	      }
    }
 
    public static GridLayout getZeroMarginLayout(int numColumns, boolean equalColumnWidth) {
@@ -80,7 +81,7 @@ public class MyLib {
    }
 
    public static List<String> readListFromDir(File directory, FilenameFilter filter, boolean keepExtension) {
-      List<String> list = new ArrayList<String>(400);
+      List<String> list = new ArrayList<>(400);
 
       if (directory == null) {
          MyLog.log(Activator.class, Level.SEVERE, "Invalid directory path");

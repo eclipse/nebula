@@ -200,6 +200,10 @@
    <includes
          id="org.eclipse.nebula.widgets.splitbutton.feature"
          version="0.0.0"/>
+		 
+   <includes
+         id="org.eclipse.nebula.widgets.badgedlabel.feature"
+         version="0.0.0"/>
 
    <includes
          id="org.eclipse.nebula.widgets.passwordrevealer.feature"
@@ -207,6 +211,10 @@
 
    <includes
          id="org.eclipse.nebula.widgets.ctreecombo.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.nebula.widgets.led.feature"
          version="0.0.0"/>
 		 
 </feature>

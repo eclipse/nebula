@@ -1,19 +1,22 @@
 /*******************************************************************************
  * Copyright (c) 2006-2007 Nicolas Richeton.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors :
  *    Nicolas Richeton (nicolas.richeton@gmail.com) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.nebula.widgets.gallery;
 
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Event;
 
 /**
  * <p>
@@ -36,13 +39,11 @@ public class NoGroupRenderer extends AbstractGridGroupRenderer {
 
 	protected static int OFFSET = 0;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.nebula.widgets.gallery.AbstractGridGroupRenderer#draw(org
-	 * .eclipse.swt.graphics.GC, org.eclipse.nebula.widgets.gallery.GalleryItem,
-	 * int, int, int, int, int, int)
+	/**
+	 * @see org.eclipse.nebula.widgets.gallery.AbstractGridGroupRenderer#draw(org
+	 *      .eclipse.swt.graphics.GC,
+	 *      org.eclipse.nebula.widgets.gallery.GalleryItem, int, int, int, int,
+	 *      int, int)
 	 */
 	public void draw(GC gc, GalleryItem group, int x, int y, int clipX,
 			int clipY, int clipWidth, int clipHeight) {
@@ -68,12 +69,10 @@ public class NoGroupRenderer extends AbstractGridGroupRenderer {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.nebula.widgets.gallery.AbstractGridGroupRenderer#layout(org
-	 * .eclipse.swt.graphics.GC, org.eclipse.nebula.widgets.gallery.GalleryItem)
+	/**
+	 * @see org.eclipse.nebula.widgets.gallery.AbstractGridGroupRenderer#layout(org
+	 *      .eclipse.swt.graphics.GC,
+	 *      org.eclipse.nebula.widgets.gallery.GalleryItem)
 	 */
 	public void layout(GC gc, GalleryItem group) {
 
@@ -119,38 +118,28 @@ public class NoGroupRenderer extends AbstractGridGroupRenderer {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.nebula.widgets.gallery.AbstractGridGroupRenderer#getItem(
-	 * org.eclipse.nebula.widgets.gallery.GalleryItem,
-	 * org.eclipse.swt.graphics.Point)
+	/**
+	 * @see org.eclipse.nebula.widgets.gallery.AbstractGridGroupRenderer#getItem(
+	 *      org.eclipse.nebula.widgets.gallery.GalleryItem,
+	 *      org.eclipse.swt.graphics.Point)
 	 */
 	public GalleryItem getItem(GalleryItem group, Point coords) {
 		return super.getItem(group, coords, OFFSET);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.nebula.widgets.gallery.AbstractGridGroupRenderer#mouseDown
-	 * (org.eclipse.nebula.widgets.gallery.GalleryItem,
-	 * org.eclipse.swt.events.MouseEvent, org.eclipse.swt.graphics.Point)
+	/**
+	 * @see org.eclipse.nebula.widgets.gallery.AbstractGalleryGroupRenderer#mouseDown(org.eclipse.nebula.widgets.gallery.GalleryItem,
+	 *      org.eclipse.swt.widgets.Event, org.eclipse.swt.graphics.Point)
 	 */
-	public boolean mouseDown(GalleryItem group, MouseEvent e, Point coords) {
+	public boolean mouseDown(GalleryItem group, Event e, Point coords) {
 		// This renderer does not display anything, so there is nothing to do
 		// here. Continue standard mouse down processing
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.nebula.widgets.gallery.AbstractGridGroupRenderer#getSize(
-	 * org.eclipse.nebula.widgets.gallery.GalleryItem)
+	/**
+	 * @see org.eclipse.nebula.widgets.gallery.AbstractGridGroupRenderer#getSize(
+	 *      org.eclipse.nebula.widgets.gallery.GalleryItem)
 	 */
 	public Rectangle getSize(GalleryItem item) {
 		return super.getSize(item, OFFSET);

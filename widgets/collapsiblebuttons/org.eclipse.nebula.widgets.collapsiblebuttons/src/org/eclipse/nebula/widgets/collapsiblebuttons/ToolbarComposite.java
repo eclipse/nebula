@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) Emil Crumhorn - Hexapixel.com - emil.crumhorn@gmail.com
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *    emil.crumhorn@gmail.com - initial API and implementation
@@ -20,8 +23,6 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -29,13 +30,12 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
 public class ToolbarComposite extends Composite implements MouseListener, MouseMoveListener, MouseTrackListener {
 
-	private List					mToolBarItems;
+	private List<TBItem>			mToolBarItems;
 	private TBItem					mLastHover;
 	private CustomButton			mSelectedItem;
 	private CollapsibleButtons		mButtonComposite;
@@ -57,7 +57,7 @@ public class ToolbarComposite extends Composite implements MouseListener, MouseM
 
 	/**
 	 * Creates a new toolbar composite.
-	 * 
+	 *
 	 * @param bc ButtonComposite parent
 	 * @param style Composite style
 	 */
@@ -75,20 +75,15 @@ public class ToolbarComposite extends Composite implements MouseListener, MouseM
 		else
 			mArrowImage = mOutlook2005ArrowsImage;
 
-		mToolBarItems = new ArrayList();
+		mToolBarItems = new ArrayList<>();
 
-		addPaintListener(new PaintListener() {
-			public void paintControl(PaintEvent event) {
-				repaint(event);
-			}
-		});
-
+		addListener(SWT.Paint, event -> repaint(event));
 		addMouseListener(this);
 		addMouseTrackListener(this);
 		addMouseMoveListener(this);
 	}
 
-	private void repaint(PaintEvent event) {
+	private void repaint(Event event) {
 		GC gc = event.gc;
 		if (mCreated && mEnableDoubleBuffering) {
 			try {
@@ -141,7 +136,7 @@ public class ToolbarComposite extends Composite implements MouseListener, MouseM
 		orderItems();
 
 		for (int i = 0; i < mToolBarItems.size(); i++) {
-			TBItem tb = (TBItem) mToolBarItems.get(i);
+			TBItem tb = mToolBarItems.get(i);
 			if (tb.getHidden())
 				continue;
 
@@ -192,19 +187,18 @@ public class ToolbarComposite extends Composite implements MouseListener, MouseM
 		checkWidget();
 		mToolBarItems.add(new TBItem(button));
 	}
-	
+
 	public void removeAll() {
 		checkWidget();
-		mToolBarItems.clear();		
+		mToolBarItems.clear();
 	}
 
 	public void removeItem(CustomButton button) {
 		checkWidget();
 		for (int i = 0; i < mToolBarItems.size(); i++) {
-			TBItem item = (TBItem) mToolBarItems.get(i);
+			TBItem item = mToolBarItems.get(i);
 			if (item.getButton() == button) {
 				mToolBarItems.remove(item);
-				// redraw();
 				break;
 			}
 		}
@@ -213,7 +207,7 @@ public class ToolbarComposite extends Composite implements MouseListener, MouseM
 	public void hideButton(CustomButton button) {
 		checkWidget();
 		for (int i = 0; i < mToolBarItems.size(); i++) {
-			TBItem item = (TBItem) mToolBarItems.get(i);
+			TBItem item = mToolBarItems.get(i);
 			if (item.getButton() == button) {
 				item.setHidden(true);
 				break;
@@ -229,7 +223,7 @@ public class ToolbarComposite extends Composite implements MouseListener, MouseM
 		mSelectedItem = button;
 
 		for (int i = 0; i < mToolBarItems.size(); i++) {
-			TBItem item = (TBItem) mToolBarItems.get(i);
+			TBItem item = mToolBarItems.get(i);
 
 			if (item.getButton() == mSelectedItem) {
 				Rectangle lb = item.getBounds();
@@ -261,24 +255,16 @@ public class ToolbarComposite extends Composite implements MouseListener, MouseM
 			gc.dispose();
 
 			Menu mainMenu = new Menu(Display.getDefault().getActiveShell(), SWT.POP_UP);
-			
-			List menuListeners = mButtonComposite.getMenuListeners();
+
+			List<IMenuListener> menuListeners = mButtonComposite.getMenuListeners();
 			for (int i = 0; i < menuListeners.size(); i++) {
-				((IMenuListener)menuListeners.get(i)).preMenuItemsCreated(mainMenu);
+				menuListeners.get(i).preMenuItemsCreated(mainMenu);
 			}
-			
+
 			MenuItem menuShowMoreButtons = new MenuItem(mainMenu, SWT.PUSH);
 			MenuItem menuShowFewerButtons = new MenuItem(mainMenu, SWT.PUSH);
-			menuShowFewerButtons.addListener(SWT.Selection, new Listener() {
-				public void handleEvent(Event event) {
-					mButtonComposite.hideNextButton();
-				}
-			});
-			menuShowMoreButtons.addListener(SWT.Selection, new Listener() {
-				public void handleEvent(Event event) {
-					mButtonComposite.showNextButton();
-				}
-			});
+			menuShowFewerButtons.addListener(SWT.Selection, e -> mButtonComposite.hideNextButton());
+			menuShowMoreButtons.addListener(SWT.Selection, e-> mButtonComposite.showNextButton());
 
 			menuShowMoreButtons.setText(mLanguage.getShowMoreButtonsText());
 			menuShowFewerButtons.setText(mLanguage.getShowFewerButtonsText());
@@ -289,36 +275,34 @@ public class ToolbarComposite extends Composite implements MouseListener, MouseM
 			Menu moreMenu = new Menu(more);
 			more.setMenu(moreMenu);
 
-			List cbs = mButtonComposite.getItems();
+			List<CustomButton> cbs = mButtonComposite.getItems();
 			for (int i = 0; i < cbs.size(); i++) {
-				final CustomButton cb = (CustomButton) cbs.get(i);
+				final CustomButton cb = cbs.get(i);
 				final MenuItem temp = new MenuItem(moreMenu, SWT.CHECK);
 				temp.setText(cb.getText());
 				temp.setImage(cb.getToolBarImage());
 				temp.setSelection(mButtonComposite.isVisible(cb));
-				temp.addListener(SWT.Selection, new Listener() {
-					public void handleEvent(Event event) {
-						if (mButtonComposite.isVisible(cb)) {
-							mButtonComposite.permanentlyHideButton(cb);
-							temp.setSelection(false);
-						} else {
-							mButtonComposite.permanentlyShowButton(cb);
-							temp.setSelection(true);
-						}
+				temp.addListener(SWT.Selection, e -> {
+					if (mButtonComposite.isVisible(cb)) {
+						mButtonComposite.permanentlyHideButton(cb);
+						temp.setSelection(false);
+					} else {
+						mButtonComposite.permanentlyShowButton(cb);
+						temp.setSelection(true);
 					}
 				});
 			}
 
 			for (int i = 0; i < menuListeners.size(); i++) {
-				((IMenuListener)menuListeners.get(i)).postMenuItemsCreated(mainMenu);
+				menuListeners.get(i).postMenuItemsCreated(mainMenu);
 			}
-			
+
 			mainMenu.setVisible(true);
 			return;
 		}
 
 		for (int i = 0; i < mToolBarItems.size(); i++) {
-			TBItem item = (TBItem) mToolBarItems.get(i);
+			TBItem item = mToolBarItems.get(i);
 			if (item.getBounds() != null) {
 				if (isInside(event.x, event.y, item.getBounds())) {
 					mButtonComposite.selectItemAndLoad(item.getButton());
@@ -353,7 +337,7 @@ public class ToolbarComposite extends Composite implements MouseListener, MouseM
 		clearArrowsHover();
 
 		for (int i = 0; i < mToolBarItems.size(); i++) {
-			TBItem item = (TBItem) mToolBarItems.get(i);
+			TBItem item = mToolBarItems.get(i);
 			if (item.getBounds() != null) {
 				if (isInside(event.x, event.y, item.getBounds())) {
 					found = item;
@@ -405,7 +389,7 @@ public class ToolbarComposite extends Composite implements MouseListener, MouseM
 
 	private void clearSelection() {
 		for (int i = 0; i < mToolBarItems.size(); i++) {
-			TBItem item = (TBItem) mToolBarItems.get(i);
+			TBItem item = mToolBarItems.get(i);
 			if (item.getButton() == mSelectedItem) {
 				GC gc = new GC(this);
 				Rectangle lb = item.getBounds();
@@ -452,7 +436,7 @@ public class ToolbarComposite extends Composite implements MouseListener, MouseM
 		return false;
 	}
 
-	class TBItem implements Comparable {
+	class TBItem implements Comparable<Object> {
 		private Rectangle		bounds;
 		private CustomButton	button;
 		private boolean			hovered;

@@ -5,7 +5,7 @@ import java.util.Locale;
 /**
  * This class provides formatting of <code>Long</code> values in a
  * <code>FormattedText</code>.<p>
- * 
+ *
  * NumberFormatter returns different numeric types based on the current
  * value in the Text field. LongFormatter is an override of NumberFormatter
  * allowing to guaranty to always return Long values (Number.longValue()).
@@ -40,7 +40,7 @@ public class LongFormatter extends NumberFormatter {
    * If the buffer is flagged as modified, the value is recalculated by parsing
    * with the <code>nfEdit</code> initialized with the edit pattern. If the
    * number is not valid, returns <code>null</code>.
-   * 
+   *
    * @return current number value if valid, <code>null</code> else
    * @see ITextFormatter#getValue()
    */
@@ -56,10 +56,10 @@ public class LongFormatter extends NumberFormatter {
    * Returns the type of value this {@link ITextFormatter} handles,
    * i.e. returns in {@link #getValue()}.<br>
    * A LongFormatter always returns a Long value.
-   * 
+   *
    * @return The value type.
    */
-	public Class getValueType() {
+	public Class<Long> getValueType() {
 		return Long.class;
 	}
 }

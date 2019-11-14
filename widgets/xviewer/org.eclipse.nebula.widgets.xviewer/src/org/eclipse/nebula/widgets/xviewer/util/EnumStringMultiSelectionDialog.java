@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2004, 2007 Boeing.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Boeing - initial API and implementation
@@ -11,13 +14,12 @@
 package org.eclipse.nebula.widgets.xviewer.util;
 
 import java.util.Collection;
+
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.nebula.widgets.xviewer.util.internal.ArrayTreeContentProvider;
 import org.eclipse.nebula.widgets.xviewer.util.internal.StringLabelProvider;
 import org.eclipse.nebula.widgets.xviewer.util.internal.StringNameComparator;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -69,28 +71,20 @@ public class EnumStringMultiSelectionDialog extends CheckedTreeSelectionDialog {
 
       addSelectedRadioButton = new Button(comp, SWT.CHECK);
       addSelectedRadioButton.setSelection(true);
-      addSelectedRadioButton.addSelectionListener(new SelectionAdapter() {
-         @Override
-         public void widgetSelected(SelectionEvent e) {
-            super.widgetSelected(e);
+      addSelectedRadioButton.addListener(SWT.Selection, e -> {
             if (addSelectedRadioButton.getSelection()) {
                selected = Selection.AddSelection;
             }
-         }
       });
 
       if (enableReplace) {
          (new Label(comp, SWT.None)).setText(XViewerText.get("EnumStringMultiSelectionDialog.label.replace")); //$NON-NLS-1$
 
          replaceAllRadioButton = new Button(comp, SWT.CHECK);
-         replaceAllRadioButton.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-               super.widgetSelected(e);
+         replaceAllRadioButton.addListener(SWT.Selection, e-> {
                if (replaceAllRadioButton.getSelection()) {
                   selected = Selection.ReplaceAll;
                }
-            }
          });
       }
 
@@ -98,14 +92,10 @@ public class EnumStringMultiSelectionDialog extends CheckedTreeSelectionDialog {
          (new Label(comp, SWT.None)).setText(XViewerText.get("EnumStringMultiSelectionDialog.label.remove")); //$NON-NLS-1$
 
          deleteSelectedRadioButton = new Button(comp, SWT.CHECK);
-         deleteSelectedRadioButton.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-               super.widgetSelected(e);
+         deleteSelectedRadioButton.addListener(SWT.Selection, e->  {
                if (deleteSelectedRadioButton.getSelection()) {
                   selected = Selection.DeleteSelected;
                }
-            }
          });
       }
       return c;

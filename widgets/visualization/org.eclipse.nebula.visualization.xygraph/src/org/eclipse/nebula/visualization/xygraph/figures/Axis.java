@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 package org.eclipse.nebula.visualization.xygraph.figures;
 
@@ -856,10 +859,10 @@ public class Axis extends LinearScale {
 		if (isLogScaleEnabled()) {
 			up = Math.log10(up);
 			lo = Math.log10(lo);
-			final double l = up - lo;
-			final double r1 = Math.log10(center) - lo;
-			t1 = lo + r1 * factor;
-			t2 = up - (l - r1) * factor;
+			final double c = Math.log10(center) * factor;
+			final double e = 1 - factor;
+			t1 = c + lo * e;
+			t2 = c + up * e;
 			if (t1 < LOWEST_LOG_10) { // clamp lower value
 				t1 = LOWEST_LOG_10;
 			}
@@ -872,11 +875,12 @@ public class Axis extends LinearScale {
 			double f = LargeNumberUtils.maxMagnitude(lo, up);
 			lo /= f;
 			up /= f;
-			double l = up - lo;
-			final double r1 = center / f - lo;
-			t1 = LargeNumberUtils.requireFinite((lo + r1 * factor) * f);
-			t2 = LargeNumberUtils.requireFinite((up - (l - r1) * factor) * f);
+			final double c = (center / f) * factor;
+			final double e = 1 - factor;
+			t1 = LargeNumberUtils.requireFinite((c + lo * e) * f);
+			t2 = LargeNumberUtils.requireFinite((c + up * e) * f);
 		}
+
 		setRange(t1, t2, true);
 	}
 

@@ -1,9 +1,12 @@
 /****************************************************************************
  * Copyright (c) 2005-2009 Jeremy Dowdall
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  * 	 IBM Corporation - SWT's CCombo was relied upon _heavily_ for example and reference
@@ -42,7 +45,6 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.TypedListener;
 
 /**
  * The AbstractCombo is an abstract class which provides the basic functionality
@@ -181,6 +183,11 @@ public abstract class BaseCombo extends Canvas {
 	 */
 	protected static final int BUTTON_AUTO = 3;
 
+	/**
+	 * boolean to disable button on open state.
+	 */
+	boolean buttonActive = true;
+	
 	private static int checkStyle(int style) {
 		int rstyle = SWT.NONE;
 		if ((style & SWT.BORDER) != 0) {
@@ -490,7 +497,9 @@ public abstract class BaseCombo extends Canvas {
 		}
 		button.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				setOpen(!isOpen());
+				if(buttonActive) {
+					setOpen(!isOpen());
+				}
 			}
 		});
 
@@ -1133,6 +1142,7 @@ public abstract class BaseCombo extends Canvas {
 	 * @see BaseCombo#setOpen(boolean)
 	 */
 	protected synchronized void setOpen(boolean open, final Runnable callback) {
+		buttonActive = false;
 		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=198240
 		// Avoid infinite loop:  
 		//		Button starts close
@@ -1184,6 +1194,8 @@ public abstract class BaseCombo extends Canvas {
 				Runnable runnable = new Runnable() {
 					public void run() {
 						postClose(contentShell);
+						buttonActive = true;
+						
 						if (callback != null) {
 							callback.run();
 						}

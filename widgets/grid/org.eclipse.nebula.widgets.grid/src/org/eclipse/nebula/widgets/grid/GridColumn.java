@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2006 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *    chris.gross@us.ibm.com    - initial API and implementation
@@ -17,6 +20,8 @@
  *    Mirko Paturzo <mirko.paturzo@yahoo.it> - bugfix in 248388, 525390
  *******************************************************************************/
 package org.eclipse.nebula.widgets.grid;
+
+import java.util.Locale;
 
 import org.eclipse.nebula.widgets.grid.internal.DefaultCellRenderer;
 import org.eclipse.nebula.widgets.grid.internal.DefaultColumnFooterRenderer;
@@ -53,6 +58,17 @@ import org.eclipse.swt.widgets.TypedListener;
  * @author chris.gross@us.ibm.com
  */
 public class GridColumn extends Item {
+
+	private static final boolean IS_MAC ;
+	static {
+		final String osProperty = System.getProperty("os.name");
+		if (osProperty != null) {
+			final String osName = osProperty.toUpperCase(Locale.getDefault());
+			IS_MAC = osName.indexOf("MAC") > -1;
+		} else {
+			IS_MAC = false;
+		}
+	}
 
 	private GridHeaderEditor controlEditor;
 
@@ -406,6 +422,10 @@ public class GridColumn extends Item {
 			 * can't scroll all to the right
 			 */
 			int availableVisibleWidthForColumns = parent.getClientArea().width;
+			if (IS_MAC && availableVisibleWidthForColumns == 1 && parent.getClientArea().height == 1) {
+				// One sets column width before the grid size has been layouted
+				availableVisibleWidthForColumns = width;
+			}
 			if(availableVisibleWidthForColumns > 0) {
 				if (parent.isRowHeaderVisible()) {
 					availableVisibleWidthForColumns -= parent.getRowHeaderWidth();
@@ -591,15 +611,29 @@ public class GridColumn extends Item {
 				notifyListeners(SWT.Hide, new Event());
 			}
 
+			/*
+			 *  Move focus to the next visible column on the right
+			 *  (or left if it is not possible)
+			 */
+			 if (parent.getFocusColumn() == this) {
+				GridItem focusItem = parent.getFocusItem();
+				if (focusItem != null) {
+					GridColumn column = parent.getVisibleColumn_DegradeRight(focusItem, this);
+					if (column != null)
+						parent.setFocusColumn(column);
+					else {
+						column = parent.getVisibleColumn_DegradeLeft(focusItem, this);
+						if (column != null)
+							parent.setFocusColumn(column);
+					}
+				}
+			}
+
 			GridColumn[] colsOrdered = parent.getColumnsInOrder();
-			boolean fire = false;
 			for (int i = 0; i < colsOrdered.length; i++) {
 				GridColumn column = colsOrdered[i];
-				if (column == this) {
-					fire = true;
-				} else {
-					if (column.isVisible())
-						column.fireMoved();
+				if (column != this && column.isVisible()) {
+					column.fireMoved();
 				}
 			}
 
@@ -893,6 +927,40 @@ public class GridColumn extends Item {
 		checkWidget();
 		cellRenderer.setAlignment(alignment);
 	}
+
+	/**
+	 * Returns the vertical alignment.
+	 *
+	 * @return SWT.TOP (default), SWT.CENTER, SWT.BOTTOM
+	 * @throws org.eclipse.swt.SWTException
+	 *             <ul>
+	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
+	 *             </ul>
+	 */
+    public int getVerticalAlignment() {
+        checkWidget();
+        return cellRenderer.getVerticalAlignment();
+    }
+
+    /**
+     * Sets the column's vertical text alignment.
+     *
+     * @param alignment SWT.TOP (default), SWT.CENTER, SWT.BOTTOM
+     * @throws org.eclipse.swt.SWTException
+     * <ul>
+     * <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that
+     * created the receiver</li>
+     * </ul>
+     */
+    public void setVerticalAlignment(int alignment) {
+    	checkWidget();
+    	cellRenderer.setVerticalAlignment(alignment);
+    }
+
 
 	/**
 	 * Returns true if this column is moveable.

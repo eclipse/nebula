@@ -1,10 +1,13 @@
 /*******************************************************************************
  *  Copyright (c) 2010, 2012 Weltevree Beheer BV, Remain Software & Industrial-TSI
  *
- * All rights reserved.
- * This program and the accompanying materials are made available under the terms of
- * the Eclipse Public License v1.0 which accompanies this distribution, and is
- * available at http://www.eclipse.org/legal/epl-v10.html
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *   Wim S. Jongman - initial API and implementation
@@ -13,17 +16,12 @@
 package org.eclipse.nebula.widgets.oscilloscope.multichannel;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 
 public class Plotter extends Canvas {
 	private int height = DEFAULT_HEIGHT;
@@ -194,33 +192,20 @@ public class Plotter extends Canvas {
 			setTailSize(i, TAILSIZE_DEFAULT);
 		}
 
-		addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				Plotter.this.widgetDisposed(e);
+		addListener(SWT.Dispose, e-> Plotter.this.widgetDisposed(e));
+
+		addListener(SWT.Paint, e -> {
+			if (!Plotter.this.paintBlock) {
+				Plotter.this.paintControl(e);
 			}
+			Plotter.this.paintBlock = false;
 		});
 
-		addPaintListener(new PaintListener() {
-			public void paintControl(PaintEvent e) {
-				if (!Plotter.this.paintBlock) {
-					Plotter.this.paintControl(e);
-				}
-				Plotter.this.paintBlock = false;
-			}
+		addListener(SWT.Move, e-> Plotter.this.controlMoved(e));
+		addListener(SWT.Resize, e-> {
+			Plotter.this.paintBlock = true;
+			Plotter.this.controlResized(e);
 		});
-
-		addControlListener(new ControlListener() {
-			public void controlMoved(ControlEvent e) {
-				Plotter.this.controlMoved(e);
-			}
-
-			public void controlResized(ControlEvent e) {
-				Plotter.this.paintBlock = true;
-				Plotter.this.controlResized(e);
-
-			}
-		});
-
 	}
 
 	/**
@@ -295,7 +280,7 @@ public class Plotter extends Canvas {
 		}
 	}
 
-	protected void paintControl(PaintEvent e) {
+	protected void paintControl(Event e) {
 
 		for (int c = 0; c < this.chan.length; c++) {
 
@@ -696,14 +681,14 @@ public class Plotter extends Canvas {
 		}
 	}
 
-	protected void widgetDisposed(DisposeEvent e) {
+	protected void widgetDisposed(Event e) {
 	}
 
-	protected void controlMoved(ControlEvent e) {
+	protected void controlMoved(Event e) {
 		// nothing to do
 	}
 
-	protected void controlResized(ControlEvent e) {
+	protected void controlResized(Event e) {
 
 		this.width = getSize().x;
 		this.height = getSize().y;

@@ -1,10 +1,13 @@
 /*
  * Copyright (c) 2005 Matthew Hall and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
  * 
+ * SPDX-License-Identifier: EPL-2.0
+ *
  * Contributors:
  *     Matthew Hall - initial API and implementation
  */
@@ -66,7 +69,7 @@ import org.eclipse.swt.graphics.GC;
  * If a grid has one of more columns with the grow attribute set, the grid is
  * horizontally greedy. Greedy prints take up all the available space on the
  * page.
- * 
+ *
  * @author Matthew Hall
  * @see GridColumn
  * @see PrintIterator#minimumSize()
@@ -96,7 +99,7 @@ public final class GridPrint implements Print {
 	private GridLook look;
 
 	/** The columns for this grid. */
-	final List columns; // List<GridColumn>
+	final List<GridColumn> columns;
 
 	/** Array of column groups. */
 	int[][] columnGroups = new int[0][];
@@ -106,9 +109,11 @@ public final class GridPrint implements Print {
 	 * represents a row in the header. Each element of a row represents a
 	 * cellspan in that row.
 	 */
-	final List header = new ArrayList(); // List <List <GridCell>>
+	final List<List<GridCell>> header = new ArrayList<>();
 
-	/** Column cursor - the column that the next added header cell will go into. */
+	/**
+	 * Column cursor - the column that the next added header cell will go into.
+	 */
 	private int headerCol = 0;
 
 	/**
@@ -117,7 +122,7 @@ public final class GridPrint implements Print {
 	 * in that row.
 	 */
 
-	final List body = new ArrayList(); // List <List <GridCell>>
+	final List<List<GridCell>> body = new ArrayList<>();
 
 	/** Column cursor - the column that the next added print will go into. */
 	private int bodyCol = 0;
@@ -129,10 +134,11 @@ public final class GridPrint implements Print {
 	 * represents a row in the footer. Each element of a row represents a
 	 * cellspan in that row.
 	 */
-	// List <List <GridCell>>
-	final List footer = new ArrayList();
+	final List<List<GridCell>> footer = new ArrayList<>();
 
-	/** Column cursor - the column that the next added footer cell will go into. */
+	/**
+	 * Column cursor - the column that the next added footer cell will go into.
+	 */
 	private int footerCol = 0;
 
 	/**
@@ -144,7 +150,7 @@ public final class GridPrint implements Print {
 
 	/**
 	 * Constructs a GridPrint with no columns and the given look.
-	 * 
+	 *
 	 * @param look
 	 *            the look to apply to the constructed grid.
 	 */
@@ -154,7 +160,7 @@ public final class GridPrint implements Print {
 
 	/**
 	 * Constructs a GridPrint with the given columns and a default look.
-	 * 
+	 *
 	 * @param columns
 	 *            a comma-separated list of parseable column specs.
 	 * @see GridColumn#parse(String)
@@ -165,7 +171,7 @@ public final class GridPrint implements Print {
 
 	/**
 	 * Constructs a GridPrint with the given columns and look.
-	 * 
+	 *
 	 * @param columns
 	 *            a comma-separated list of parseable column specs.
 	 * @param look
@@ -178,14 +184,14 @@ public final class GridPrint implements Print {
 
 	/**
 	 * Constructs a GridPrint with the given columns and a default look.
-	 * 
+	 *
 	 * @param columns
 	 *            the columns for the new grid.
 	 */
 	public GridPrint(GridColumn[] columns) {
 		Util.noNulls(columns);
 
-		this.columns = new ArrayList();
+		this.columns = new ArrayList<>();
 		for (int i = 0; i < columns.length; i++)
 			this.columns.add(columns[i]);
 		this.look = new DefaultGridLook();
@@ -193,7 +199,7 @@ public final class GridPrint implements Print {
 
 	/**
 	 * Constructs a GridPrint with the given columns and look.
-	 * 
+	 *
 	 * @param columns
 	 *            the columns for the new grid.
 	 * @param look
@@ -204,6 +210,7 @@ public final class GridPrint implements Print {
 		setLook(look);
 	}
 
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -243,6 +250,7 @@ public final class GridPrint implements Print {
 		return result;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -294,7 +302,7 @@ public final class GridPrint implements Print {
 	 * added to the grid prior to adding the column will be adjusted as follows:
 	 * the right-hand cell of each completed row will have it's colspan expanded
 	 * to fill the added column.
-	 * 
+	 *
 	 * @param column
 	 *            the column to add to the grid.
 	 * @see GridColumn#parse(String)
@@ -308,7 +316,7 @@ public final class GridPrint implements Print {
 	 * added to the grid prior to adding the column will be adjusted as follows:
 	 * the right-hand cell of each completed row will have it's colspan expanded
 	 * to fill the added column.
-	 * 
+	 *
 	 * @param column
 	 *            the column to add to the grid.
 	 */
@@ -321,7 +329,7 @@ public final class GridPrint implements Print {
 	 * have been added to the grid prior to adding the column will be adjusted
 	 * as follows: on each row, the cell which overlaps or whose right edge
 	 * touches the insert position will be expanded to fill the added column.
-	 * 
+	 *
 	 * @param index
 	 *            the insert position.
 	 * @param column
@@ -337,7 +345,7 @@ public final class GridPrint implements Print {
 	 * have been added to the grid prior to adding the column will be adjusted
 	 * as follows: on each row, the cell which overlaps or whose right edge
 	 * touches the insert position will be expanded to fill the added column.
-	 * 
+	 *
 	 * @param index
 	 *            the insert position.
 	 * @param column
@@ -356,7 +364,7 @@ public final class GridPrint implements Print {
 	 * added to the grid prior to adding the columns will be adjusted as
 	 * follows: the right-hand cell of each completed row will have it's colspan
 	 * expanded to fill the added columns.
-	 * 
+	 *
 	 * @param columns
 	 *            the columns to add to the grid.
 	 * @see GridColumn#parse(String)
@@ -370,7 +378,7 @@ public final class GridPrint implements Print {
 	 * added to the grid prior to adding the columns will be adjusted as
 	 * follows: the right-hand cell of each completed row will have it's colspan
 	 * expanded to fill the added columns.
-	 * 
+	 *
 	 * @param columns
 	 *            the columns to add to the grid.
 	 */
@@ -384,7 +392,7 @@ public final class GridPrint implements Print {
 	 * adjusted as follows: on each row, the cell which overlaps or whose right
 	 * edge touches the insert position will be expanded to fill the added
 	 * columns.
-	 * 
+	 *
 	 * @param index
 	 *            the insert position.
 	 * @param columns
@@ -401,7 +409,7 @@ public final class GridPrint implements Print {
 	 * adjusted as follows: on each row, the cell which overlaps or whose right
 	 * edge touches the insert position will be expanded to fill the added
 	 * columns.
-	 * 
+	 *
 	 * @param index
 	 *            the insert position.
 	 * @param columns
@@ -438,12 +446,13 @@ public final class GridPrint implements Print {
 			footerCol += count;
 	}
 
-	private void adjustCellsForColumnInsert(List rows, int index, int count) {
+	private void adjustCellsForColumnInsert(List<List<GridCell>> rows,
+			int index, int count) {
 		for (int rowI = 0; rowI < rows.size(); rowI++) {
-			List row = (List) rows.get(rowI);
+			List<GridCell> row = rows.get(rowI);
 			int col = 0;
 			for (int cellI = 0; cellI < row.size(); cellI++) {
-				GridCell cell = (GridCell) row.get(cellI);
+				GridCell cell = row.get(cellI);
 				col += cell.getColSpan();
 
 				// Adjust the cell which extends through the insert point, or
@@ -455,13 +464,13 @@ public final class GridPrint implements Print {
 				if ( // cell overlaps insert point, or
 				(col > index) ||
 				// right side touches insert point but is not the final cell.
-						(col == index && (rowI + 1 < rows.size() || cellI + 1 < row
-								.size()))) {
+						(col == index && (rowI + 1 < rows.size()
+								|| cellI + 1 < row.size()))) {
 					row.set(cellI,
 							new GridCellImpl(cell.getHorizontalAlignment(),
-									cell.getVerticalAlignment(), cell
-											.getContent(), cell.getColSpan()
-											+ count));
+									cell.getVerticalAlignment(),
+									cell.getContent(),
+									cell.getColSpan() + count));
 					break;
 				}
 			}
@@ -480,7 +489,7 @@ public final class GridPrint implements Print {
 	/**
 	 * Separates the comma-separated argument and parses each piece to obtain an
 	 * array of GridColumns.
-	 * 
+	 *
 	 * @param columns
 	 *            the comma-separated list of column specs.
 	 * @return GridColumn array with the requested columns.
@@ -499,18 +508,18 @@ public final class GridPrint implements Print {
 	/**
 	 * Returns an array of <code>GridColumn</code>s which are the columns in the
 	 * receiver.
-	 * 
+	 *
 	 * @return an array of <code>GridColumn</code>s which are the columns in the
 	 *         receiver.
 	 */
 	public GridColumn[] getColumns() {
-		return (GridColumn[]) columns.toArray(new GridColumn[columns.size()]);
+		return columns.toArray(new GridColumn[columns.size()]);
 	}
 
 	/**
 	 * Adds the Print to the grid header, with default alignment and a colspan
 	 * of 1.
-	 * 
+	 *
 	 * @param cell
 	 *            the print to add.
 	 */
@@ -520,7 +529,7 @@ public final class GridPrint implements Print {
 
 	/**
 	 * Adds the Print to the grid header, using the given alignment.
-	 * 
+	 *
 	 * @param hAlignment
 	 *            the horizontal alignment of the print within the grid cell.
 	 *            One of {@link SWT#DEFAULT} , {@link SWT#LEFT},
@@ -534,7 +543,7 @@ public final class GridPrint implements Print {
 
 	/**
 	 * Adds the Print to the grid header, using the given alignment.
-	 * 
+	 *
 	 * @param hAlignment
 	 *            the horizontal alignment of the print within the grid cell.
 	 *            One of {@link SWT#DEFAULT} , {@link SWT#LEFT},
@@ -556,7 +565,7 @@ public final class GridPrint implements Print {
 	/**
 	 * Adds the Print to the grid header, with the given colspan and the default
 	 * alignment.
-	 * 
+	 *
 	 * @param cell
 	 *            the print to add.
 	 * @param colspan
@@ -570,7 +579,7 @@ public final class GridPrint implements Print {
 
 	/**
 	 * Adds the Print to the grid header, using the given colspan and alignment.
-	 * 
+	 *
 	 * @param cell
 	 *            the print to add.
 	 * @param colspan
@@ -588,7 +597,7 @@ public final class GridPrint implements Print {
 
 	/**
 	 * Adds the Print to the grid header, using the given colspan and alignment.
-	 * 
+	 *
 	 * @param hAlignment
 	 *            the horizontal alignment of the print within the grid cell.
 	 *            One of {@link SWT#DEFAULT} , {@link SWT#LEFT},
@@ -615,7 +624,7 @@ public final class GridPrint implements Print {
 	/**
 	 * Returns an array containing the header cells in this grid. Each inner
 	 * array represents one row in the header.
-	 * 
+	 *
 	 * @return an array containing the header cells in this grid.
 	 */
 	public GridCell[][] getHeaderCells() {
@@ -625,7 +634,7 @@ public final class GridPrint implements Print {
 	/**
 	 * Returns an array containing the body cells in the grid. Each inner array
 	 * represents one row in the body.
-	 * 
+	 *
 	 * @return an array containing the body cells in the grid.
 	 */
 	public GridCell[][] getBodyCells() {
@@ -635,20 +644,20 @@ public final class GridPrint implements Print {
 	/**
 	 * Returns an array containing the footer cells in the grid. Each inner
 	 * array represents one row in the footer.
-	 * 
+	 *
 	 * @return an array containing the footer cells in the grid.
 	 */
 	public GridCell[][] getFooterCells() {
 		return getGridCellArray(footer);
 	}
 
-	private static GridCell[][] getGridCellArray(List list) {
+	private static GridCell[][] getGridCellArray(List<List<GridCell>> list) {
 		GridCell[][] cells = new GridCell[list.size()][];
 		for (int rowIndex = 0; rowIndex < cells.length; rowIndex++) {
-			List row = (List) list.get(rowIndex);
+			List<GridCell> row = list.get(rowIndex);
 			GridCell[] rowCells = new GridCell[row.size()];
 			for (int cellIndex = 0; cellIndex < rowCells.length; cellIndex++)
-				rowCells[cellIndex] = (GridCell) row.get(cellIndex);
+				rowCells[cellIndex] = row.get(cellIndex);
 			cells[rowIndex] = rowCells;
 		}
 		return cells;
@@ -657,7 +666,7 @@ public final class GridPrint implements Print {
 	/**
 	 * Adds the Print to the grid body, with the default alignment and a colspan
 	 * of 1.
-	 * 
+	 *
 	 * @param cell
 	 *            the print to add.
 	 */
@@ -667,7 +676,7 @@ public final class GridPrint implements Print {
 
 	/**
 	 * Adds the Print to the grid body, using the given colspan and alignment.
-	 * 
+	 *
 	 * @param hAlignment
 	 *            the horizontal alignment of the print within the grid cell.
 	 *            One of {@link SWT#DEFAULT} , {@link SWT#LEFT},
@@ -681,7 +690,7 @@ public final class GridPrint implements Print {
 
 	/**
 	 * Adds the Print to the grid body, using the given colspan and alignment.
-	 * 
+	 *
 	 * @param hAlignment
 	 *            the horizontal alignment of the print within the grid cell.
 	 *            One of {@link SWT#DEFAULT} , {@link SWT#LEFT},
@@ -703,7 +712,7 @@ public final class GridPrint implements Print {
 	/**
 	 * Adds the Print to the grid body, with the given colspan and the default
 	 * alignment.
-	 * 
+	 *
 	 * @param cell
 	 *            the print to add.
 	 * @param colspan
@@ -716,7 +725,7 @@ public final class GridPrint implements Print {
 
 	/**
 	 * Adds the Print to the grid body, using the given colspan and alignment.
-	 * 
+	 *
 	 * @param hAlignment
 	 *            the horizontal alignment of the print within the grid cell.
 	 *            One of {@link SWT#DEFAULT} , {@link SWT#LEFT},
@@ -733,7 +742,7 @@ public final class GridPrint implements Print {
 
 	/**
 	 * Adds the Print to the grid body, using the given colspan and alignment.
-	 * 
+	 *
 	 * @param hAlignment
 	 *            the horizontal alignment of the print within the grid cell.
 	 *            One of {@link SWT#DEFAULT} , {@link SWT#LEFT},
@@ -758,7 +767,7 @@ public final class GridPrint implements Print {
 	/**
 	 * Returns whether individual body cells in the grid may be broken across
 	 * pages. Defaults to true.
-	 * 
+	 *
 	 * @return whether individual body cells in the grid may be broken across
 	 *         pages.
 	 */
@@ -769,7 +778,7 @@ public final class GridPrint implements Print {
 	/**
 	 * Sets whether individual body cells in the grid may be broken across
 	 * pages.
-	 * 
+	 *
 	 * @param cellClippingEnabled
 	 *            whether to enabled cell clipping.
 	 */
@@ -780,7 +789,7 @@ public final class GridPrint implements Print {
 	/**
 	 * Adds the Print to the grid footer, with the default alignment and a
 	 * colspan of 1.
-	 * 
+	 *
 	 * @param cell
 	 *            the print to add.
 	 */
@@ -790,7 +799,7 @@ public final class GridPrint implements Print {
 
 	/**
 	 * Adds the Print to the grid footer, using the given colspan and alignment.
-	 * 
+	 *
 	 * @param hAlignment
 	 *            the horizontal alignment of the print within the grid cell.
 	 *            One of {@link SWT#DEFAULT} , {@link SWT#LEFT},
@@ -804,7 +813,7 @@ public final class GridPrint implements Print {
 
 	/**
 	 * Adds the Print to the grid footer, using the given colspan and alignment.
-	 * 
+	 *
 	 * @param hAlignment
 	 *            the horizontal alignment of the print within the grid cell.
 	 *            One of {@link SWT#DEFAULT} , {@link SWT#LEFT},
@@ -826,7 +835,7 @@ public final class GridPrint implements Print {
 	/**
 	 * Adds the Print to the grid footer, with the given colspan and the default
 	 * alignment.
-	 * 
+	 *
 	 * @param cell
 	 *            the print to add.
 	 * @param colspan
@@ -840,7 +849,7 @@ public final class GridPrint implements Print {
 
 	/**
 	 * Adds the Print to the grid footer, using the given colspan and alignment.
-	 * 
+	 *
 	 * @param hAlignment
 	 *            the horizontal alignment of the print within the grid cell.
 	 *            One of {@link SWT#DEFAULT} , {@link SWT#LEFT},
@@ -858,7 +867,7 @@ public final class GridPrint implements Print {
 
 	/**
 	 * Adds the Print to the grid footer, using the given colspan and alignment.
-	 * 
+	 *
 	 * @param hAlignment
 	 *            the horizontal alignment of the print within the grid cell.
 	 *            One of {@link SWT#DEFAULT} , {@link SWT#LEFT},
@@ -886,13 +895,12 @@ public final class GridPrint implements Print {
 	 * Returns the column number that we've advanced to, after adding the new
 	 * cell.
 	 */
-	private int add(
-			List rows, // List of List of GridCell
-			int startColumn, int hAlignment, int vAlignment,
-			Print cellContents, int colspan) {
+	private int add(List<List<GridCell>> rows, // List of List of GridCell
+			int startColumn, int hAlignment, int vAlignment, Print cellContents,
+			int colspan) {
 		startColumn = startNewRowIfCurrentRowFull(startColumn);
 		checkColumnSpan(startColumn, colspan);
-		List row = getOpenRow(rows, startColumn);
+		List<GridCell> row = getOpenRow(rows, startColumn);
 		colspan = convertRemainderToExplicitColSpan(startColumn, colspan);
 
 		GridCell cell = new GridCellImpl(hAlignment, vAlignment, cellContents,
@@ -917,7 +925,8 @@ public final class GridPrint implements Print {
 		return startColumn;
 	}
 
-	private int convertRemainderToExplicitColSpan(int startColumn, int colspan) {
+	private int convertRemainderToExplicitColSpan(int startColumn,
+			int colspan) {
 		if (colspan == REMAINDER)
 			colspan = columns.size() - startColumn;
 		return colspan;
@@ -937,21 +946,22 @@ public final class GridPrint implements Print {
 					+ columns.size() + " columns total)"); //$NON-NLS-1$
 	}
 
-	private List getOpenRow(List rows, int startColumn) {
-		List row; // the row we will add the cell to.
+	private List<GridCell> getOpenRow(List<List<GridCell>> rows,
+			int startColumn) {
+		List<GridCell> row; // the row we will add the cell to.
 		if (startColumn == 0)
 			// Start a new row if back at column 0.
-			rows.add(row = new ArrayList(columns.size()));
+			rows.add(row = new ArrayList<>(columns.size()));
 		else
 			// Get the incomplete row.
-			row = (List) rows.get(rows.size() - 1); // List of GridCell
+			row = rows.get(rows.size() - 1); // List of GridCell
 		return row;
 	}
 
 	/**
 	 * Returns current column groups. The returned array may be modified without
 	 * affecting this GridPrint.
-	 * 
+	 *
 	 * @return the column groups.
 	 */
 	public int[][] getColumnGroups() {
@@ -965,11 +975,11 @@ public final class GridPrint implements Print {
 	 * <p>
 	 * The following statement causes columns 0 and 2 to be the same size, and
 	 * columns 1 and 3 to be the same size.
-	 * 
+	 *
 	 * <pre>
 	 * grid.setColumnGroups(new int[][] { { 0, 2 }, { 1, 3 } });
 	 * </pre>
-	 * 
+	 *
 	 * <p>
 	 * The behavior of this property is undefined when a column belongs to more
 	 * than one group.
@@ -977,7 +987,7 @@ public final class GridPrint implements Print {
 	 * <b>Note:</b> Column grouping is enforced <i>before</i> column weights.
 	 * Therefore, columns in the same group should be given the same weight to
 	 * ensure they are laid out at the same width.
-	 * 
+	 *
 	 * @param columnGroups
 	 *            the new column groups.
 	 */
@@ -1001,7 +1011,7 @@ public final class GridPrint implements Print {
 	private void checkColumnIndex(int columnIndex) {
 		if (columnIndex < 0 || columnIndex >= columns.size())
 			PaperClips.error(SWT.ERROR_INVALID_RANGE,
-					"Column index in column group must be " + "0 <= " //$NON-NLS-1$ //$NON-NLS-2$ 
+					"Column index in column group must be " + "0 <= " //$NON-NLS-1$ //$NON-NLS-2$
 							+ columnIndex + " < " + columns.size()); //$NON-NLS-1$
 	}
 
@@ -1009,7 +1019,7 @@ public final class GridPrint implements Print {
 	 * Returns the grid's look. A GridLook determines what decorations will
 	 * appear around the grid's contents. Default is a DefaultGridLook with no
 	 * cell spacing, no cell borders, and no background colors.
-	 * 
+	 *
 	 * @return the look of this grid.
 	 */
 	public GridLook getLook() {
@@ -1018,7 +1028,7 @@ public final class GridPrint implements Print {
 
 	/**
 	 * Sets the grid's look.
-	 * 
+	 *
 	 * @param look
 	 *            the new look.
 	 */

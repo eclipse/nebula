@@ -1,10 +1,13 @@
 /*
  * Copyright (c) 2005 Matthew Hall and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
  * 
+ * SPDX-License-Identifier: EPL-2.0
+ *
  * Contributors:
  *     Matthew Hall - initial API and implementation
  */
@@ -21,7 +24,7 @@ import org.eclipse.swt.graphics.Point;
  * A composite PrintPiece for displaying child PrintPieces. This class is
  * especially useful for Print implementations that perform layout of multiple
  * child Prints.
- * 
+ *
  * @author Matthew Hall
  */
 public class CompositePiece implements PrintPiece {
@@ -31,7 +34,7 @@ public class CompositePiece implements PrintPiece {
 
 	/**
 	 * Constructs a CompositePiece with the given entries.
-	 * 
+	 *
 	 * @param entries
 	 *            an array of entries that make up this PrintPiece.
 	 */
@@ -43,7 +46,7 @@ public class CompositePiece implements PrintPiece {
 	 * Constructs a CompositePrintPiece with the given entries and explicit
 	 * size. This constructor will increase the explicit size to completely
 	 * contain any child entries which extend outside the given size.
-	 * 
+	 *
 	 * @param entries
 	 *            an array of entries that make up this PrintPiece.
 	 * @param size
@@ -52,8 +55,8 @@ public class CompositePiece implements PrintPiece {
 		this(createList(entries), size);
 	}
 
-	private static List createList(CompositeEntry[] entries) {
-		List result = new ArrayList();
+	private static List<CompositeEntry> createList(CompositeEntry[] entries) {
+		List<CompositeEntry> result = new ArrayList<>();
 		for (int i = 0; i < entries.length; i++)
 			result.add(entries[i]);
 		return result;
@@ -61,18 +64,18 @@ public class CompositePiece implements PrintPiece {
 
 	/**
 	 * Constructs a composite PrintPiece with the given entries.
-	 * 
+	 *
 	 * @param entries
 	 *            an array of entries that make up this PrintPiece.
 	 */
-	public CompositePiece(List entries) {
+	public CompositePiece(List<CompositeEntry> entries) {
 		this(entries, new Point(0, 0));
 	}
 
 	/**
 	 * Constructs a composite PrintPiece with the given entries and minimum
 	 * size.
-	 * 
+	 *
 	 * @param entries
 	 *            a list of CompositeEntry objects describing the child
 	 *            PrintPieces.
@@ -81,11 +84,10 @@ public class CompositePiece implements PrintPiece {
 	 *            from getSize(). This constructor increase this size to fit any
 	 *            entries that extend outside the given size.
 	 */
-	public CompositePiece(List entries, Point size) {
+	public CompositePiece(List<CompositeEntry> entries, Point size) {
 		Util.noNulls(entries);
 
-		this.entries = (CompositeEntry[]) entries
-				.toArray(new CompositeEntry[entries.size()]);
+		this.entries = entries.toArray(new CompositeEntry[entries.size()]);
 		this.size = new Point(size.x, size.y);
 
 		for (int i = 0; i < this.entries.length; i++) {

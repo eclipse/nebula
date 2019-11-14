@@ -1,10 +1,13 @@
 package org.eclipse.nebula.snippets.visualization;
 /*******************************************************************************
  * Copyright (c) 2010 Oak Ridge National Laboratory.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -43,12 +46,14 @@ public class GaugeExample {
 		gaugeFigure.setForegroundColor(
 				XYGraphMediaFactory.getInstance().getColor(255, 255, 255));
 		
-		gaugeFigure.setRange(-100, 100);
+		gaugeFigure.setRange(-90, 90);
 		gaugeFigure.setLoLevel(-50);
 		gaugeFigure.setLoloLevel(-80);
 		gaugeFigure.setHiLevel(60);
 		gaugeFigure.setHihiLevel(80);
 		gaugeFigure.setMajorTickMarkStepHint(50);
+		gaugeFigure.setTitle("Rotation");
+		gaugeFigure.setUnit("Degrees");
 		
 		lws.setContents(gaugeFigure);		
 		
@@ -59,7 +64,7 @@ public class GaugeExample {
 			public void run() {
 				Display.getDefault().asyncExec(new Runnable() {					
 					public void run() {
-						gaugeFigure.setValue(Math.sin(counter++/10.0)*100);						
+						gaugeFigure.setValue(Math.sin(counter++/10.0)*90);						
 					}
 				});
 			}

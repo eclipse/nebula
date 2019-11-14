@@ -2,11 +2,14 @@ package org.eclipse.nebula.widgets.oscilloscope.example;
 
 /*******************************************************************************
  *  Copyright (c) 2010 Weltevree Beheer BV, Remain Software & Industrial-TSI
+ *
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
  * 
- * All rights reserved. 
- * This program and the accompanying materials are made available under the terms of
- * the Eclipse Public License v1.0 which accompanies this distribution, and is
- * available at http://www.eclipse.org/legal/epl-v10.html
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *   Wim S. Jongman - initial API and implementation
@@ -24,8 +27,6 @@ import org.eclipse.nebula.widgets.oscilloscope.multichannel.Oscilloscope;
 import org.eclipse.nebula.widgets.oscilloscope.multichannel.OscilloscopeDispatcher;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -41,7 +42,7 @@ import org.eclipse.swt.widgets.Spinner;
 
 /**
  * Demonstrates the Nebula Oscilloscope
- * 
+ *
  * @author Wim Jongman
  */
 public class OscilloscopeExampleTab extends AbstractExampleTab {
@@ -78,15 +79,11 @@ public class OscilloscopeExampleTab extends AbstractExampleTab {
 	@Override
 	public String[] createLinks() {
 		String[] links = new String[0];
-		// links[0] =
-		// "<a href=\"http://www.eclipse.org/nebula/widgets/gallery/gallery.php\">Gallery Home Page (includes Animation)</a>";
 		return links;
 	}
 
 	@Override
 	public Control createControl(Composite parent) {
-		// Composite c = new Composite(parent, SWT.None);
-		// c.setLayout(new RowLayout());
 
 		oscilloscope = new Oscilloscope(parent, SWT.NONE);
 		oscilloscope.setForeground(oscilloscope.getDisplay().getSystemColor(SWT.COLOR_RED));
@@ -156,8 +153,7 @@ public class OscilloscopeExampleTab extends AbstractExampleTab {
 				public void setSquareValue(int v) {
 					for (int i = 0; i < getProgression(); i++) {
 
-						value += counter; // Math.PI /
-											// getOscilloscope().getBounds().width;
+						value += counter;
 						if (value > 2 * Math.PI) {
 							value = 0;
 						}
@@ -281,9 +277,7 @@ public class OscilloscopeExampleTab extends AbstractExampleTab {
 
 				@Override
 				public boolean isSoundRequired() {
-
 					// active sounds are handled by the signal providers.
-
 					if (!isServiceActive())
 						return sound.getSelection();
 					return false;
@@ -353,12 +347,8 @@ public class OscilloscopeExampleTab extends AbstractExampleTab {
 
 		group2.setExpandVertical(true);
 		group2.setExpandHorizontal(true);
-		// group2.setShowFocusedControl(true);
-		// group2.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
-		// group2.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
 		Composite Inner = new Composite(group2, SWT.None);
-		// group2a.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		Inner.setLayout(new GridLayout(1, false));
 
 		{
@@ -371,14 +361,11 @@ public class OscilloscopeExampleTab extends AbstractExampleTab {
 			lblServiceActive.setText("Service Active");
 
 			serviceActive = new Button(grpSpeed, SWT.CHECK);
-			serviceActive.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
+			serviceActive.addListener(SWT.Selection, e-> {
 					if (serviceActive.getSelection())
 						oscilloscope.setForeground(oscilloscope.getDisplay().getSystemColor(SWT.COLOR_GREEN));
 					else
 						oscilloscope.setForeground(oscilloscope.getDisplay().getSystemColor(SWT.COLOR_RED));
-				}
 			});
 			serviceActive.setSelection(false);
 			new Label(grpSpeed, SWT.NONE);
@@ -438,24 +425,18 @@ public class OscilloscopeExampleTab extends AbstractExampleTab {
 			btnHeartbeatEveryPulse = new Button(grpSignal, SWT.RADIO);
 			btnHeartbeatEveryPulse.setSelection(false);
 			btnHeartbeatEveryPulse.setText("Heartbeat every pulse");
-			btnHeartbeatEveryPulse.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					if (btnHeartbeatEveryPulse.getSelection()) {
-						pulse.setSelection(60);
-					}
+			btnHeartbeatEveryPulse.addListener(SWT.Selection, e -> {
+				if (btnHeartbeatEveryPulse.getSelection()) {
+					pulse.setSelection(60);
 				}
 			});
 			new Label(grpSignal, SWT.NONE);
 
 			btnSine = new Button(grpSignal, SWT.RADIO);
-			btnSine.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					if (btnSine.getSelection()) {
-						pulse.setSelection(1);
-						scale.setSelection(true);
-					}
+			btnSine.addListener(SWT.Selection, e -> {
+				if (btnSine.getSelection()) {
+					pulse.setSelection(1);
+					scale.setSelection(true);
 				}
 			});
 			btnSine.setText("Round Wave (Sine)");
@@ -464,13 +445,10 @@ public class OscilloscopeExampleTab extends AbstractExampleTab {
 			btnFollowProgression.setText("follow progression");
 
 			btnSquareWave = new Button(grpSignal, SWT.RADIO);
-			btnSquareWave.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					if (btnSquareWave.getSelection()) {
-						pulse.setSelection(1);
-						scale.setSelection(true);
-					}
+			btnSquareWave.addListener(SWT.Selection, e -> {
+				if (btnSquareWave.getSelection()) {
+					pulse.setSelection(1);
+					scale.setSelection(true);
 				}
 			});
 			btnSquareWave.setText("Square Wave");
