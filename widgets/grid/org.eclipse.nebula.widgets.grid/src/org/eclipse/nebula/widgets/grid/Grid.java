@@ -38,7 +38,6 @@ import java.util.function.ToIntFunction;
 import org.eclipse.nebula.widgets.grid.internal.DefaultBottomLeftRenderer;
 import org.eclipse.nebula.widgets.grid.internal.DefaultColumnGroupHeaderRenderer;
 import org.eclipse.nebula.widgets.grid.internal.DefaultDropPointRenderer;
-import org.eclipse.nebula.widgets.grid.internal.DefaultEmptyCellRenderer;
 import org.eclipse.nebula.widgets.grid.internal.DefaultEmptyColumnFooterRenderer;
 import org.eclipse.nebula.widgets.grid.internal.DefaultEmptyColumnHeaderRenderer;
 import org.eclipse.nebula.widgets.grid.internal.DefaultEmptyRowHeaderRenderer;

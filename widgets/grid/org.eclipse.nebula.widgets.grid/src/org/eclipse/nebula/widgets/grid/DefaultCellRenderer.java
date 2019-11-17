@@ -14,13 +14,12 @@
  *    smcduff@hotmail.com - wordwrapping in bug 222280
  *    Claes Rosell<claes.rosell@solme.se> - rowspan in bug 272384
  *******************************************************************************/
-package org.eclipse.nebula.widgets.grid.internal;
+package org.eclipse.nebula.widgets.grid;
 
-import org.eclipse.nebula.widgets.grid.Grid;
-import org.eclipse.nebula.widgets.grid.GridCellRenderer;
-import org.eclipse.nebula.widgets.grid.GridColumn;
-import org.eclipse.nebula.widgets.grid.GridItem;
-import org.eclipse.nebula.widgets.grid.IInternalWidget;
+import org.eclipse.nebula.widgets.grid.internal.BranchRenderer;
+import org.eclipse.nebula.widgets.grid.internal.CheckBoxRenderer;
+import org.eclipse.nebula.widgets.grid.internal.TextUtils;
+import org.eclipse.nebula.widgets.grid.internal.ToggleRenderer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
