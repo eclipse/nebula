@@ -23,7 +23,6 @@ package org.eclipse.nebula.widgets.grid;
 
 import java.util.Locale;
 
-import org.eclipse.nebula.widgets.grid.internal.DefaultCellRenderer;
 import org.eclipse.nebula.widgets.grid.internal.DefaultColumnFooterRenderer;
 import org.eclipse.nebula.widgets.grid.internal.DefaultColumnHeaderRenderer;
 import org.eclipse.swt.SWT;

@@ -11,11 +11,8 @@
  * Contributors:
  *    chris.gross@us.ibm.com - initial API and implementation
  *******************************************************************************/
-package org.eclipse.nebula.widgets.grid.internal;
+package org.eclipse.nebula.widgets.grid;
 
-import org.eclipse.nebula.widgets.grid.Grid;
-import org.eclipse.nebula.widgets.grid.GridCellRenderer;
-import org.eclipse.nebula.widgets.grid.GridItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
