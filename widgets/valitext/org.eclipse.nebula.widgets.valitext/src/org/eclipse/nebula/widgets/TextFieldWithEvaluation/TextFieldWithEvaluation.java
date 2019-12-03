@@ -1,10 +1,12 @@
 /*******************************************************************************
 * Copyright (C) 2019 Uenal Akkaya <uenal.akkaya@sap.com>, Michael Gutfleisch <michael.gutfleisch@sap.com>
 *
-* All rights reserved. This program and the accompanying materials
-* are made available under the terms of the Eclipse Public License v1.0
+* This program and the accompanying materials
+* are made available under the terms of the Eclipse Public License 2.0
 * which accompanies this distribution, and is available at
-* http://www.eclipse.org/legal/epl-v10.html
+* https://www.eclipse.org/legal/epl-2.0/
+* 
+* SPDX-License-Identifier: EPL-2.0
 *
 * Contributors:
 *     Uenal Akkaya
@@ -22,6 +24,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 /**
@@ -128,6 +131,15 @@ public class TextFieldWithEvaluation extends Composite {
 	 */
 	public void removeModifyListener(ModifyListener listener) {
 		input.removeModifyListener(listener);
+	}
+
+	/**
+	 * Returns all registered {@link ModifyListener} of the input field.
+	 * 
+	 * @return All registeres {@link ModifyListener} of the input field
+	 */
+	public Listener[] getModifyListeners() {
+		return  this.input.getListeners(SWT.Modify);
 	}
 
 	/**

@@ -14,6 +14,8 @@
 
 	<modules>
 		<module>org.eclipse.nebula.widgets.TextFieldWithEvaluation</module>
+		<module>org.eclipse.nebula.widgets.TextFieldWithEvaluation.example</module>
+		<module>org.eclipse.nebula.widgets.TextFieldWithEvaluation.tests</module>
 	</modules>
 
 </project>
