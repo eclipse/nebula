@@ -38,7 +38,7 @@ Contact the project developers via the project's "dev" list.
 * https://dev.eclipse.org/mailman/listinfo/nebula-dev
 
 ## Search for bugs:
-This project uses GitHub Issues to track ongoing development and issues.
+This project uses Bugzilla to track ongoing development and issues. You may also file an issue here at GitHub.
 
 * https://github.com/eclipse/nebula/issues
 
@@ -46,4 +46,4 @@ This project uses GitHub Issues to track ongoing development and issues.
 ## Create a new bug:
 Be sure to search for existing bugs before you create another one. Remember that contributions are always welcome!
 
-* https://github.com/eclipse/nebula/issues
+* https://bugs.eclipse.org/bugs/enter_bug.cgi?product=Nebula
