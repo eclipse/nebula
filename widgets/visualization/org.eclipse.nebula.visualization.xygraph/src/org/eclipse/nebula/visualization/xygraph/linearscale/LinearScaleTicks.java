@@ -490,11 +490,6 @@ public class LinearScaleTicks implements ITicksProvider {
 			tickLabelPositions.add(tickLabelPosition);
 		}
 
-		if (scale.isHorizontal()) {
-			System.err.println("For length of " + length);
-			System.err.println(tickLabelValues);
-		}
-
 		// always add max
 		max *= f;
 		tickLabelValues.add(max);
