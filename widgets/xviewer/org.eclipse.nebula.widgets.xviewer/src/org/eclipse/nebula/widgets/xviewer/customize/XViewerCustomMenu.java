@@ -15,12 +15,9 @@
 package org.eclipse.nebula.widgets.xviewer.customize;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import org.eclipse.jface.action.Action;
@@ -195,52 +192,6 @@ public class XViewerCustomMenu {
       }
 
       menuManager.add(new GroupMarker(XViewer.MENU_GROUP_POST));
-   }
-
-   public void updateEditMenu(MenuManager mm) {
-      final Collection<TreeItem> selectedTreeItems = Arrays.asList(xViewer.getTree().getSelection());
-      Set<TreeColumn> editableColumns = ColumnMultiEditAction.getEditableTreeColumns(xViewer, selectedTreeItems);
-      MenuManager editMenuManager =
-         createEditMenuManager(xViewer, XViewerText.get("menu.edit.multi"), selectedTreeItems, editableColumns); //$NON-NLS-1$
-      mm.add(editMenuManager);
-   }
-
-   public static MenuManager createEditMenuManager(final XViewer xViewer, String name, final Collection<TreeItem> selectedTreeItems, Set<TreeColumn> editableColumns) {
-      MenuManager editMenuManager = new MenuManager(name, XViewerText.get("menu.edit")); //$NON-NLS-1$
-      if (editableColumns.isEmpty()) {
-         editMenuManager.add(new Action(XViewerText.get("menu.edit.no_columns")) { //$NON-NLS-1$
-
-            @Override
-            public void run() {
-               XViewerLib.popup(XViewerText.get("error"), XViewerText.get("error.no_fields.multi_editable")); //$NON-NLS-1$ //$NON-NLS-2$
-            }
-
-         });
-      } else {
-         Map<String, TreeColumn> nameToColumn = new HashMap<>();
-         for (final TreeColumn treeColumn : editableColumns) {
-            nameToColumn.put(treeColumn.getText(), treeColumn);
-         }
-         String[] names = nameToColumn.keySet().toArray(new String[nameToColumn.size()]);
-         Arrays.sort(names);
-         for (String columnName : names) {
-            final TreeColumn treeColumn = nameToColumn.get(columnName);
-            if (treeColumn.getData() instanceof XViewerColumn) {
-               XViewerColumn xCol = (XViewerColumn) treeColumn.getData();
-               if (xCol.isMultiColumnEditable()) {
-                  editMenuManager.add(new Action(XViewerText.get("menu.edit") + " " + xCol.getName()) { //$NON-NLS-1$//$NON-NLS-2$
-
-                     @Override
-                     public void run() {
-                        xViewer.handleColumnMultiEdit(treeColumn, selectedTreeItems);
-                     }
-
-                  });
-               }
-            }
-         }
-      }
-      return editMenuManager;
    }
 
    public void createTableCustomizationMenuItem(Menu popupMenu) {
