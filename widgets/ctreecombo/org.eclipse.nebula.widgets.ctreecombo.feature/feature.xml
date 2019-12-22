@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.nebula.widgets.ctreecombo.feature"
-      label="CTreeCombo Widget"
+      label="Nebula CTreeCombo Widget"
       version="1.0.0.qualifier"
       provider-name="Eclipse Nebula, Thomas Schindl, Laurent Caron">
 

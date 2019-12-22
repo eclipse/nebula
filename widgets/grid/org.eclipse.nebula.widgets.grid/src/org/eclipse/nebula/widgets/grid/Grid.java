@@ -5,7 +5,7 @@
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
@@ -89,13 +89,9 @@ import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.TypedListener;
 
 /**
- * <p>
- * NOTE: THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT. THIS IS A
- * PRE-RELEASE ALPHA VERSION. USERS SHOULD EXPECT API CHANGES IN FUTURE
- * VERSIONS.
- * </p>
- * Instances of this class implement a selectable user interface object that
- * displays a list of images and strings and issue notification when selected.
+ * The Grid widget is a spreadsheet/table component that offers features not
+ * currently found in the base SWT Table. Features include cell selection,
+ * column grouping, column spanning, row headers, and more.
  * <p>
  * The item children that may be added to instances of this class must be of
  * type {@code GridItem}.
@@ -110,8 +106,6 @@ import org.eclipse.swt.widgets.TypedListener;
  * @author chris.gross@us.ibm.com
  * @author Mirko Paturzo <mirko.paturzo@exeura.eu>
  *
- *         Mirko modified this widget for improve performace and reduce used
- *         memory fix memory leak and slow disposed object
  */
 public class Grid extends Canvas {
 
@@ -1153,9 +1147,7 @@ public class Grid extends Canvas {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
 
-		for (int i = 0; i < indices.length; i++) {
-			final int j = indices[i];
-
+		for (final int j : indices) {
 			if (j >= 0 && j < items.size()) {
 				final GridItem item = items.get(j);
 
@@ -1515,8 +1507,8 @@ public class Grid extends Canvas {
 			GridColumnGroup currentGroup = null;
 			int colsInGroup = 0;
 
-			for (int i = 0; i < order.length; i++) {
-				final GridColumn col = getColumn(order[i]);
+			for (int element : order) {
+				final GridColumn col = getColumn(element);
 
 				if (currentGroup != null) {
 					if (col.getColumnGroup() != currentGroup && colsInGroup > 0) {
@@ -1538,8 +1530,8 @@ public class Grid extends Canvas {
 
 		displayOrderedColumns.clear();
 
-		for (int i = 0; i < order.length; i++) {
-			displayOrderedColumns.add(cols[order[i]]);
+		for (int element : order) {
+			displayOrderedColumns.add(cols[element]);
 		}
 		clearDisplayOrderedCache();
 	}
@@ -1992,8 +1984,8 @@ public class Grid extends Canvas {
 		}
 		itemHeight = height;
 		userModifiedItemHeight = true;
-		for (int cnt = 0; cnt < items.size(); cnt++) {
-			items.get(cnt).setHeight(height);
+		for (GridItem item : items) {
+			item.setHeight(height);
 		}
 		hasDifferingHeights = false;
 		setScrollValuesObsolete();
@@ -3216,8 +3208,7 @@ public class Grid extends Canvas {
 			}
 
 		}
-		for (int i = 0; i < removeThese.length; i++) {
-			final GridItem item = removeThese[i];
+		for (final GridItem item : removeThese) {
 			item.dispose();
 		}
 		redraw();
@@ -3473,9 +3464,7 @@ public class Grid extends Canvas {
 			}
 		}
 
-		for (int i = 0; i < indices.length; i++) {
-			final int j = indices[i];
-
+		for (final int j : indices) {
 			if (j >= 0 && j < items.size()) {
 				final GridItem item = items.get(j);
 
@@ -4017,9 +4006,7 @@ public class Grid extends Canvas {
 			selectedCells.clear();
 		}
 
-		for (int i = 0; i < indices.length; i++) {
-			final int j = indices[i];
-
+		for (final int j : indices) {
 			if (j < 0) {
 				continue;
 			}
@@ -4086,8 +4073,7 @@ public class Grid extends Canvas {
 			selectedCells.clear();
 		}
 
-		for (int i = 0; i < _items.length; i++) {
-			final GridItem item = _items[i];
+		for (final GridItem item : _items) {
 			if (item == null) {
 				continue;
 			}
@@ -4460,8 +4446,7 @@ public class Grid extends Canvas {
 		}
 
 		int groupHeight = 0;
-		for (int groupIndex = 0; groupIndex < columnGroups.length; groupIndex++) {
-			final GridColumnGroup group = columnGroups[groupIndex];
+		for (final GridColumnGroup group : columnGroups) {
 			groupHeight = Math.max(group.getHeaderRenderer().computeSize(gc, SWT.DEFAULT, SWT.DEFAULT, group).y,
 					groupHeight);
 		}
@@ -4693,7 +4678,7 @@ public class Grid extends Canvas {
 				if (columnBeingPushed.getColumnGroup() == null) {
 					if (local_dragDropBeforeColumn != null && local_dragDropAfterColumn != null
 							&& local_dragDropBeforeColumn.getColumnGroup() != null && local_dragDropBeforeColumn
-									.getColumnGroup() == local_dragDropAfterColumn.getColumnGroup()) {
+							.getColumnGroup() == local_dragDropAfterColumn.getColumnGroup()) {
 						// Dont move a column w/o a group in between two columns
 						// in the same group
 						dragDropPointValid = false;
@@ -4702,7 +4687,7 @@ public class Grid extends Canvas {
 					if (!(local_dragDropBeforeColumn != null
 							&& local_dragDropBeforeColumn.getColumnGroup() == columnBeingPushed.getColumnGroup())
 							&& !(local_dragDropAfterColumn != null && local_dragDropAfterColumn
-									.getColumnGroup() == columnBeingPushed.getColumnGroup())) {
+							.getColumnGroup() == columnBeingPushed.getColumnGroup())) {
 						// Dont move a column with a group
 						dragDropPointValid = false;
 					}
@@ -5348,7 +5333,7 @@ public class Grid extends Canvas {
 							column.getCellRenderer().setFocus(isFocusControl());
 							column.getCellRenderer().setRowFocus(focusItem == item);
 							column.getCellRenderer()
-									.setCellFocus(cellSelectionEnabled && focusItem == item && focusColumn == column);
+							.setCellFocus(cellSelectionEnabled && focusItem == item && focusColumn == column);
 
 							column.getCellRenderer().setRowHover(hoveringItem == item);
 							column.getCellRenderer().setColumnHover(hoveringColumn == column);
@@ -5665,7 +5650,7 @@ public class Grid extends Canvas {
 
 					column.getColumnGroup().getHeaderRenderer().setSelected(selected);
 					column.getColumnGroup().getHeaderRenderer()
-							.setHover(hoverColumnGroupHeader == column.getColumnGroup());
+					.setHover(hoverColumnGroupHeader == column.getColumnGroup());
 					column.getColumnGroup().getHeaderRenderer().setHoverDetail(hoveringDetail);
 
 					column.getColumnGroup().getHeaderRenderer().setBounds(x, 0, width, groupHeaderHeight);
@@ -6107,8 +6092,8 @@ public class Grid extends Canvas {
 			}
 
 			selectedCells.clear();
-			for (int i = 0; i < newCells.size(); i++) {
-				addToCellSelection(newCells.get(i));
+			for (Point newCell : newCells) {
+				addToCellSelection(newCell);
 			}
 
 		} else if (shift) {
@@ -6203,8 +6188,8 @@ public class Grid extends Canvas {
 			if (reverse) {
 				selectedCells.removeAll(newCells);
 			} else {
-				for (int i = 0; i < newCells.size(); i++) {
-					addToCellSelection(newCells.get(i));
+				for (Point newCell : newCells) {
+					addToCellSelection(newCell);
 				}
 			}
 		}
@@ -6234,8 +6219,7 @@ public class Grid extends Canvas {
 		if (itemsToBeAdded.size() > 0) {
 			// add all the cells from the itemsToBeAdded list that don't already exist in
 			// the sourceList
-			for (Iterator<Point> cellIterator = itemsToBeAdded.iterator(); cellIterator.hasNext();) {
-				Point cell = cellIterator.next();
+			for (Point cell : itemsToBeAdded) {
 				if (!sourceList.contains(cell)) {
 					sourceList.add(cell);
 				}
@@ -6450,8 +6434,8 @@ public class Grid extends Canvas {
 			item.dispose();
 		}
 
-		for (int i = 0; i < columnGroups.length; i++) {
-			columnGroups[i].dispose();
+		for (GridColumnGroup columnGroup : columnGroups) {
+			columnGroup.dispose();
 		}
 
 		for (final GridColumn col : columns) {
@@ -6734,8 +6718,8 @@ public class Grid extends Canvas {
 			if (sel.contains(rowBeingResized)) {
 				// the user double-clicked a row resizer of a selected row
 				// so update all selected rows
-				for (int cnt = 0; cnt < sel.size(); cnt++) {
-					sel.get(cnt).pack();
+				for (GridItem element : sel) {
+					element.pack();
 				}
 				redraw();
 			} else {
@@ -7679,8 +7663,8 @@ public class Grid extends Canvas {
 				Rectangle preferredTextBounds = null;
 
 				if (hoveringItem != null && hoveringItem.getToolTipText(indexOf(col)) == null && // no inplace tooltips
-																									// when regular
-																									// tooltip
+						// when regular
+						// tooltip
 						!col.getWordWrap()) // dont show inplace tooltips for cells with wordwrap
 				{
 					cellBounds = col.getCellRenderer().getBounds();
@@ -7690,11 +7674,11 @@ public class Grid extends Canvas {
 					textBounds = col.getCellRenderer().getTextBounds(item, false);
 					preferredTextBounds = col.getCellRenderer().getTextBounds(item, true);
 				} else if (hoveringColumnHeader != null && hoveringColumnHeader.getHeaderTooltip() == null) // no
-																											// inplace
-																											// tooltips
-																											// when
-																											// regular
-																											// tooltip
+					// inplace
+					// tooltips
+					// when
+					// regular
+					// tooltip
 				{
 					cellBounds = hoveringColumnHeader.getHeaderRenderer().getBounds();
 					if (cellBounds.x + cellBounds.width > getSize().x) {
@@ -8015,8 +7999,8 @@ public class Grid extends Canvas {
 			selectionModified = true;
 		}
 
-		for (int i = 0; i < cells.length; i++) {
-			if (selectedCells.remove(cells[i])) {
+		for (Point cell : cells) {
+			if (selectedCells.remove(cell)) {
 				selectionModified = true;
 			}
 		}
@@ -8074,9 +8058,9 @@ public class Grid extends Canvas {
 	void removeColumnGroup(final GridColumnGroup group) {
 		final GridColumnGroup[] newColumnGroups = new GridColumnGroup[columnGroups.length - 1];
 		int newIndex = 0;
-		for (int i = 0; i < columnGroups.length; i++) {
-			if (columnGroups[i] != group) {
-				newColumnGroups[newIndex] = columnGroups[i];
+		for (GridColumnGroup columnGroup : columnGroups) {
+			if (columnGroup != group) {
+				newColumnGroups[newIndex] = columnGroup;
 				newIndex++;
 			}
 		}
@@ -8485,14 +8469,14 @@ public class Grid extends Canvas {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
 
-		for (int i = 0; i < cells.length; i++) {
-			if (cells[i] == null) {
+		for (Point cell : cells) {
+			if (cell == null) {
 				SWT.error(SWT.ERROR_NULL_ARGUMENT);
 			}
 		}
 
-		for (int i = 0; i < cells.length; i++) {
-			selectedCells.remove(cells[i]);
+		for (Point cell : cells) {
+			selectedCells.remove(cell);
 		}
 
 		updateColumnSelection();
@@ -8582,14 +8566,14 @@ public class Grid extends Canvas {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
 
-		for (int i = 0; i < cells.length; i++) {
-			if (cells[i] == null) {
+		for (Point cell : cells) {
+			if (cell == null) {
 				SWT.error(SWT.ERROR_NULL_ARGUMENT);
 			}
 		}
 
-		for (int i = 0; i < cells.length; i++) {
-			addToCellSelection(cells[i]);
+		for (Point cell : cells) {
+			addToCellSelection(cell);
 		}
 
 		updateColumnSelection();
@@ -8849,19 +8833,19 @@ public class Grid extends Canvas {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
 
-		for (int i = 0; i < cells.length; i++) {
-			if (cells[i] == null) {
+		for (Point cell : cells) {
+			if (cell == null) {
 				SWT.error(SWT.ERROR_NULL_ARGUMENT);
 			}
 
-			if (!isValidCell(cells[i])) {
+			if (!isValidCell(cell)) {
 				SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 			}
 		}
 
 		selectedCells.clear();
-		for (int i = 0; i < cells.length; i++) {
-			addToCellSelection(cells[i]);
+		for (Point cell : cells) {
+			addToCellSelection(cell);
 		}
 
 		updateColumnSelection();
@@ -8963,8 +8947,8 @@ public class Grid extends Canvas {
 
 	private void getCells(final GridColumnGroup colGroup, final Vector<Point> cells) {
 		final GridColumn[] cols = colGroup.getColumns();
-		for (int i = 0; i < cols.length; i++) {
-			getCells(cols[i], cells);
+		for (GridColumn col : cols) {
+			getCells(col, cells);
 		}
 	}
 
@@ -9276,8 +9260,8 @@ public class Grid extends Canvas {
 
 			itemHeight = computeItemHeight(items.get(0));
 
-			for (int cnt = 0; cnt < items.size(); cnt++) {
-				items.get(cnt).setHeight(itemHeight);
+			for (GridItem item2 : items) {
+				item2.setHeight(itemHeight);
 			}
 
 			setScrollValuesObsolete();
@@ -9431,7 +9415,7 @@ public class Grid extends Canvas {
 					// Name of the column headers
 					e.result = columns.get(childID - items.size()).getText();
 				} else if (childID >= items.size() + columns.size()
-						&& childID < items.size() + columns.size() + columnGroups.length) {
+				&& childID < items.size() + columns.size() + columnGroups.length) {
 					// Name of the column group headers
 					e.result = columnGroups[childID - items.size() - columns.size()].getText();
 				} else if (childID >= items.size() + columns.size() + columnGroups.length
@@ -9501,8 +9485,8 @@ public class Grid extends Canvas {
 						// Child count for parent. Here if the item parent
 						// is not an other item,
 						// it is consider as children of Grid
-						for (int i = 0; i < items.size(); i++) {
-							if (items.get(i).getParentItem() != null) {
+						for (GridItem item : items) {
+							if (item.getParentItem() != null) {
 								length--;
 							}
 						}
@@ -9516,8 +9500,8 @@ public class Grid extends Canvas {
 				if (e.childID == ACC.CHILDID_SELF) {
 					int length = items.size();
 					if (isTree) {
-						for (int i = 0; i < items.size(); i++) {
-							if (items.get(i).getParentItem() != null) {
+						for (GridItem item : items) {
+							if (item.getParentItem() != null) {
 								length--;
 							}
 						}
@@ -9597,7 +9581,7 @@ public class Grid extends Canvas {
 						location.width = column.getWidth();
 					}
 				} else if (childID >= items.size() + columns.size()
-						&& childID < items.size() + columns.size() + columnGroups.length) {
+				&& childID < items.size() + columns.size() + columnGroups.length) {
 					// location of column group header
 					final GridColumnGroup columnGroup = getColumnGroup(childID - items.size() - columns.size());
 					if (columnGroup != null) {
@@ -10145,8 +10129,8 @@ public class Grid extends Canvas {
 				SWT.error(SWT.ERROR_INVALID_RANGE);
 			}
 		}
-		for (int i = 0; i < indices.length; i++) {
-			final GridItem item = items.get(indices[i]);
+		for (int indice : indices) {
+			final GridItem item = items.get(indice);
 			item.clear(allChildren);
 		}
 		redraw();
