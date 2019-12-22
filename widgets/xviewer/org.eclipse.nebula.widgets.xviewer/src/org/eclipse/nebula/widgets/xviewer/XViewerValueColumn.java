@@ -39,8 +39,10 @@ public class XViewerValueColumn extends XViewerColumn implements IXViewerValueCo
     */
    @Override
    public XViewerValueColumn copy() {
-      return new XViewerValueColumn(getId(), getName(), getWidth(), getAlign(), isShow(), getSortDataType(),
+      XViewerValueColumn copyColumn = new XViewerValueColumn(getId(), getName(), getWidth(), getAlign(), isShow(), getSortDataType(),
          isMultiColumnEditable(), getDescription());
+      copyColumn.setSortForward(isSortForward());
+      return copyColumn;
    }
 
    public XViewerValueColumn(String id, String name, int width, XViewerAlign align, boolean show, SortDataType sortDataType, boolean multiColumnEditable, String description) {
