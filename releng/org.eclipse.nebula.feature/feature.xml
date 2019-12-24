@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.nebula.feature"
       label="Nebula Widgets"
-      version="2.1.0.qualifier"
+      version="2.3.0.qualifier"
       provider-name="Eclipse Nebula">
 
    <description url="http://eclipse.org/nebula">
@@ -200,7 +200,7 @@
    <includes
          id="org.eclipse.nebula.widgets.splitbutton.feature"
          version="0.0.0"/>
-		 
+
    <includes
          id="org.eclipse.nebula.widgets.badgedlabel.feature"
          version="0.0.0"/>
@@ -216,5 +216,5 @@
    <includes
          id="org.eclipse.nebula.widgets.led.feature"
          version="0.0.0"/>
-		 
+
 </feature>

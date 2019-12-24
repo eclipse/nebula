@@ -138,7 +138,7 @@
    <feature url="features/org.eclipse.nebula.widgets.splitbutton.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.splitbutton.feature" version="1.0.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.feature_2.1.0.qualifier.jar" id="org.eclipse.nebula.feature" version="2.1.0.qualifier">
+   <feature url="features/org.eclipse.nebula.feature_2.3.0.qualifier.jar" id="org.eclipse.nebula.feature" version="2.3.0.qualifier">
       <category name="Nebula Release all Widgets and Examples"/>
    </feature>
    <feature url="features/org.eclipse.nebula.widgets.cdatetime.feature_1.4.0.qualifier.jar" id="org.eclipse.nebula.widgets.cdatetime.feature" version="1.4.0.qualifier">
