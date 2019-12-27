@@ -271,8 +271,23 @@ public class LinearScaleTicks implements ITicksProvider {
 		} else {
 			gridStep = Math.pow(10, exp); // 1*10^exponent
 		}
+
+		if (exp < 0) { // ensure grid steps are printable for scale format
+			String pattern = scale.getFormatPattern();
+			if (!pattern.contains("E")) {
+				int e = pattern.lastIndexOf(".") + 1;
+				if (e > 0) {
+					double g = Math.pow(10, -(pattern.length() - e));
+					if (gridStep < g) {
+						gridStep = g;
+					}
+				}
+			}
+		}
+
 		if (minBigger)
 			gridStep = -gridStep;
+
 		return gridStep;
 	}
 

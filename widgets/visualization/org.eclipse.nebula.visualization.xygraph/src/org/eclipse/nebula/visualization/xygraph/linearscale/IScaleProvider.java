@@ -88,6 +88,11 @@ public interface IScaleProvider {
 	public void setAutoFormat(boolean autoFormat);
 
 	/**
+	 * @return format pattern string
+	 */
+	public String getFormatPattern();
+
+	/**
 	 * @return margin
 	 */
 	public int getMargin();
