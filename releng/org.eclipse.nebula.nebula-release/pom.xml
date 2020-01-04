@@ -72,6 +72,7 @@
 		<module>../../widgets/passwordrevealer</module>
 		<module>../../widgets/ctreecombo</module>
 		<module>../../widgets/led</module>
+		<module>../../widgets/stepbar</module>
 
 		<!-- Releng -->
 		<module>../org.eclipse.nebula.feature</module>
