@@ -413,4 +413,55 @@
          version="0.0.0"
          unpack="false"/>	
 
+   <plugin 
+         id="org.eclipse.nebula.widgets.floatingtext.snippets"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>	
+
+   <plugin 
+         id="org.eclipse.nebula.widgets.splitbutton.snippets"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>	
+
+   <plugin 
+         id="org.eclipse.nebula.widgets.badgedlabel.snippets"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>	
+
+   <plugin 
+         id="org.eclipse.nebula.widgets.passwordrevealer.snippets"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>	
+
+
+   <plugin 
+         id="org.eclipse.nebula.widgets.ctreecombo.snippets"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>	
+
+
+   <plugin 
+         id="org.eclipse.nebula.widgets.led.snippets"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>	
+
+   <plugin 
+         id="org.eclipse.nebula.widgets.stepbar.snippets"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>	
+
 </feature>
