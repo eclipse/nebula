@@ -73,7 +73,7 @@ import org.eclipse.swt.widgets.Composite;
  *
  * <p>
  * License is EPL (Eclipse Public License)
- * http://www.eclipse.org/legal/epl-v10.html. Contact at stepan.rutz@gmx.de
+ * https://www.eclipse.org/legal/epl-2.0/. Contact at stepan.rutz@gmx.de
  * </p>
  *
  * @author stepan.rutz

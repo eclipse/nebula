@@ -16,7 +16,7 @@
 package org.eclipse.nebula.widgets.geomap.internal;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,7 +66,9 @@ public class GeoMapHelper implements GeoMapPositioned, GeoMapHelperListener {
 		return display;
 	}
 
-	/* basically not be changed, must be the same as GeoMapUtil's TILE_SIZE */
+	/**
+	 * basically not be changed, must be the same as GeoMapUtil's TILE_SIZE
+	 */
 	public static final int TILE_SIZE = 256;
 
 	private static final int DEFAULT_NUMBER_OF_IMAGEFETCHER_THREADS = 4;
@@ -80,7 +82,7 @@ public class GeoMapHelper implements GeoMapPositioned, GeoMapHelperListener {
 	private TileServer tileServer = OsmTileServer.TILESERVERS[0];
 	private int cacheSize;
 	// must be readable from AsyncImage
-	HashMap<TileRef, AsyncImage> cache;
+	Map<TileRef, AsyncImage> cache;
 
 	private BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>();
 
@@ -115,7 +117,7 @@ public class GeoMapHelper implements GeoMapPositioned, GeoMapHelperListener {
 			int cacheSize) {
 		this(display);
 		this.cacheSize = cacheSize;
-		this.cache = new LinkedHashMap<TileRef, AsyncImage>(cacheSize, 0.75f,
+		this.cache = Collections.synchronizedMap(new LinkedHashMap<TileRef, AsyncImage>(cacheSize, 0.75f,
 				true) {
 			@Override
 			protected boolean removeEldestEntry(
@@ -126,7 +128,7 @@ public class GeoMapHelper implements GeoMapPositioned, GeoMapHelperListener {
 				}
 				return remove;
 			}
-		};
+		});
 		waitBackground = new Color(display, 0x88, 0x88, 0x88);
 		waitForeground = new Color(display, 0x77, 0x77, 0x77);
 
@@ -375,6 +377,9 @@ public class GeoMapHelper implements GeoMapPositioned, GeoMapHelperListener {
 		internalGeoMapListeners.remove(listener);
 	}
 	
+	/**
+	 * @return the number of tiles
+	 */
 	public int getNumberOfTiles() {
 		return Math.max(cache.size(), cacheSize);
 	}
