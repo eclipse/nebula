@@ -161,6 +161,10 @@ public class CDateTime extends BaseCombo {
 			int sWidth = sRect.x + sRect.width
 					- 2 * spinner.getControl().getBorderWidth() + 1;
 
+			if (gtk && sWidth==0) {
+				sWidth = 67;
+			}			
+			
 			size.x += sWidth;
 			size.x++;
 			size.y += textMarginHeight;
@@ -191,6 +195,10 @@ public class CDateTime extends BaseCombo {
 			int sWidth = sRect.x + sRect.width
 					- 2 * spinner.getControl().getBorderWidth() + 1;
 
+			if (gtk && sWidth==0) {
+				sWidth = 67;
+			}			
+			
 			tSize.x = cRect.width - sWidth;
 
 			text.setBounds(cRect.x, cRect.y + getBorderWidth(), tSize.x,
