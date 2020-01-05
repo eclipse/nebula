@@ -73,6 +73,8 @@ public class GeoMapHelper implements GeoMapPositioned, GeoMapHelperListener {
 
 	private static final int DEFAULT_NUMBER_OF_IMAGEFETCHER_THREADS = 4;
 
+	private static final int MIN_CACHE_SIZE = 200;
+
 	private Point mapSize = new Point(0, 0);
 	private Point mapPosition = new Point(0, 0);
 	private int zoom;
@@ -116,6 +118,9 @@ public class GeoMapHelper implements GeoMapPositioned, GeoMapHelperListener {
 	public GeoMapHelper(Display display, Point mapPosition, int zoom,
 			int cacheSize) {
 		this(display);
+		if (cacheSize < MIN_CACHE_SIZE) {
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT,null," - Cache size should be greater than " + MIN_CACHE_SIZE); //$NON-NLS-1$
+		}
 		this.cacheSize = cacheSize;
 		this.cache = Collections.synchronizedMap(new LinkedHashMap<TileRef, AsyncImage>(cacheSize, 0.75f,
 				true) {
