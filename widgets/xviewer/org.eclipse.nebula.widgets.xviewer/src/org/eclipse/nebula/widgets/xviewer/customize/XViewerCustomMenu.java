@@ -173,7 +173,7 @@ public class XViewerCustomMenu {
       menuManager.add(tableProperties);
       menuManager.add(viewTableReport);
       if (xViewer.isColumnMultiEditEnabled()) {
-         updateEditMenu(menuManager);
+         menuManager.add(columnMultiEdit);
       }
       menuManager.add(viewSelectedCell);
       menuManager.add(copySelectedCell);
