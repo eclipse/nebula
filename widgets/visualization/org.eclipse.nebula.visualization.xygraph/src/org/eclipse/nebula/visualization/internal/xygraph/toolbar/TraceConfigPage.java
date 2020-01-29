@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 package org.eclipse.nebula.visualization.internal.xygraph.toolbar;
 
@@ -300,8 +303,12 @@ public class TraceConfigPage implements ITraceConfigPage {
 	@Override
 	public void applyChanges() {
 		trace.setName(nameText.getText());
-		trace.setXAxis(xyGraph.getXAxisList().get(xAxisCombo.getSelectionIndex()));
-		trace.setYAxis(xyGraph.getYAxisList().get(yAxisCombo.getSelectionIndex()));
+		if (xAxisCombo.getSelectionIndex() >= 0) {
+			trace.setXAxis(xyGraph.getXAxisList().get(xAxisCombo.getSelectionIndex()));
+		}
+		if (yAxisCombo.getSelectionIndex() >= 0) {
+			trace.setYAxis(xyGraph.getYAxisList().get(yAxisCombo.getSelectionIndex()));
+		}
 		trace.setTraceColor(XYGraphMediaFactory.getInstance().getColor(traceColorSelector.getColorValue()));
 		trace.setTraceType(TraceType.values()[traceTypeCombo.getSelectionIndex()]);
 		trace.setLineWidth(lineWidthSpinner.getSelection());

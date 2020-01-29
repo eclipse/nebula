@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2009 BestSolution.at
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *    tom.schindl@bestsolution.at - initial API and implementation
@@ -15,11 +18,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ControlEditor;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 /**
@@ -40,7 +40,7 @@ class GridHeaderEditor extends ControlEditor {
 
 	private final Listener columnGroupListener;
 
-	private final SelectionListener scrollListener;
+	private final Listener scrollListener;
 
 	private final Listener mouseOverListener;
 
@@ -59,13 +59,7 @@ class GridHeaderEditor extends ControlEditor {
 		columnListener = new ControlListener() {
 			public void controlMoved(ControlEvent e) {
 				layout();
-				e.display.asyncExec(new Runnable() {
-
-					@Override
-					public void run() {
-						layout();
-					}
-				});
+				e.display.asyncExec(() -> layout());
 			}
 
 			public void controlResized(ControlEvent e) {
@@ -73,50 +67,28 @@ class GridHeaderEditor extends ControlEditor {
 			}
 		};
 
-		columnVisibleListener = new Listener() {
-			public void handleEvent(Event event) {
-				getEditor().setVisible(column.isVisible());
-				// if (getEditor().isVisible())
-				layout();
-			}
+		columnVisibleListener = event -> {
+			getEditor().setVisible(column.isVisible());
+			layout();
 		};
 
-		resizeListener = new Listener() {
-			public void handleEvent(Event event) {
-				layout();
-			}
-		};
+		resizeListener = event -> layout();
+		scrollListener = event -> layout();
 
-		scrollListener = new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				layout();
-			}
-
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		};
-
-		columnGroupListener = new Listener() {
-			public void handleEvent(Event event) {
-				if (getEditor() == null || getEditor().isDisposed())
-					return;
-				getEditor().setVisible(column.isVisible());
-				// if (getEditor().isVisible())
-				layout();
-			}
+		columnGroupListener = event -> {
+			if (getEditor() == null || getEditor().isDisposed())
+				return;
+			getEditor().setVisible(column.isVisible());
+			layout();
 		};
 
 		// Reset the mouse cursor when the mouse hovers the control
-		mouseOverListener = new Listener() {
-
-			public void handleEvent(Event event) {
-				if (table.getCursor() != null) {
-					// We need to reset because it could be that when we left the resizer was active
-					table.hoveringOnColumnResizer=false;
-					table.setCursor(null);
-				}
+		mouseOverListener = event -> {
+			if (table.getCursor() != null) {
+				// We need to reset because it could be that when we left the resizer was active
+				table.hoveringOnColumnResizer = false;
+				table.setCursor(null);
 			}
-
 		};
 
 		// The following three listeners are workarounds for
@@ -125,12 +97,10 @@ class GridHeaderEditor extends ControlEditor {
 		table.addListener(SWT.Resize, resizeListener);
 
 		if (table.getVerticalScrollBarProxy() != null) {
-			table.getVerticalScrollBarProxy().addSelectionListener(
-					scrollListener);
+			table.getVerticalScrollBarProxy().addListener(SWT.Selection,scrollListener);
 		}
 		if (table.getHorizontalScrollBarProxy() != null) {
-			table.getHorizontalScrollBarProxy().addSelectionListener(
-					scrollListener);
+			table.getHorizontalScrollBarProxy().addListener(SWT.Selection,scrollListener);
 		}
 
 		// To be consistent with older versions of SWT, grabVertical defaults to
@@ -158,10 +128,8 @@ class GridHeaderEditor extends ControlEditor {
 		if (!table.isDisposed() && !column.isDisposed()) {
 			column.removeControlListener(columnListener);
 			if (column.getColumnGroup() != null) {
-				column.getColumnGroup().removeListener(SWT.Expand,
-						columnGroupListener);
-				column.getColumnGroup().removeListener(SWT.Collapse,
-						columnGroupListener);
+				column.getColumnGroup().removeListener(SWT.Expand,columnGroupListener);
+				column.getColumnGroup().removeListener(SWT.Collapse,columnGroupListener);
 			}
 		}
 
@@ -169,17 +137,20 @@ class GridHeaderEditor extends ControlEditor {
 			table.removeListener(SWT.Resize, resizeListener);
 
 			if (table.getVerticalScrollBarProxy() != null)
-				table.getVerticalScrollBarProxy().removeSelectionListener(
-						scrollListener);
+				table.getVerticalScrollBarProxy().removeListener(SWT.Selection,scrollListener);
 
 			if (table.getHorizontalScrollBarProxy() != null)
-				table.getHorizontalScrollBarProxy().removeSelectionListener(
-						scrollListener);
+				table.getHorizontalScrollBarProxy().removeListener(SWT.Selection,scrollListener);
 		}
 
 		columnListener = null;
 		resizeListener = null;
 		table = null;
+
+		if ( getEditor() != null && !getEditor().isDisposed() ) {
+			getEditor().dispose();
+		}
+
 		super.dispose();
 	}
 
@@ -214,8 +185,7 @@ class GridHeaderEditor extends ControlEditor {
 			return;
 
 		boolean hadFocus = false;
-		if (getEditor() == null || getEditor().isDisposed()
-				|| !column.isVisible()) {
+		if (getEditor() == null || getEditor().isDisposed() || !column.isVisible()) {
 			return;
 		}
 
@@ -227,10 +197,10 @@ class GridHeaderEditor extends ControlEditor {
 		if (rect == null || rect.x < 0) {
 			getEditor().setVisible(false);
 			return;
-		} else if(table.getItemHeaderWidth()>0&&table.getItemHeaderWidth()>rect.x){
+		} else if (table.getItemHeaderWidth() > 0 && table.getItemHeaderWidth() > rect.x) {
 			getEditor().setVisible(false);
-		    return;
-		}else {
+			return;
+		} else {
 			getEditor().setVisible(true);
 		}
 		getEditor().setBounds(rect);

@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2004, 2007 Boeing.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Boeing - initial API and implementation
@@ -24,8 +27,8 @@ import java.util.regex.Pattern;
  */
 public class ColumnData {
 
-   List<XViewerColumn> columns = new ArrayList<XViewerColumn>();
-   Map<String, XViewerColumn> idToColumn = new HashMap<String, XViewerColumn>();
+   List<XViewerColumn> columns = new ArrayList<>();
+   Map<String, XViewerColumn> idToColumn = new HashMap<>();
 
    private static Pattern pattern =
       Pattern.compile("<" + XViewerColumn.XTREECOLUMN_TAG + ">(.*?)</" + XViewerColumn.XTREECOLUMN_TAG + ">"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
@@ -47,7 +50,7 @@ public class ColumnData {
    }
 
    public String getXml(boolean visibleColumnsOnly) {
-      StringBuffer sb = new StringBuffer();
+      StringBuilder sb = new StringBuilder();
       for (XViewerColumn xCol : columns) {
          if (!visibleColumnsOnly || (visibleColumnsOnly && xCol.isShow())) {
             sb.append(xCol.toXml());

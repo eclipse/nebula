@@ -1,9 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
@@ -35,7 +38,6 @@ import org.eclipse.swt.internal.BidiUtil;
 import org.eclipse.swt.internal.win32.OS;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.printing.Printer;
-import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Caret;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
@@ -45,19 +47,19 @@ import org.eclipse.swt.widgets.MenuItem;
 
 @SuppressWarnings("restriction")
 public class BidiLayout extends Composite {
-	
+
 	public static final int LANG_ARABIC = 0x01;
 	public static final int LANG_HEBREW = 0x0d;
 	public static final int LANG_ENGLISH = 0x09;
-	
-    private static final char LRO = '\u202d';
-    private static final char RLO = '\u202e';
-    private static final char PDF = '\u202c';
-    static final String eolStr = "\r\n";
-    
-    
-    
-    Listener listener;
+
+	private static final char LRO = '\u202d';
+	private static final char RLO = '\u202e';
+	private static final char PDF = '\u202c';
+	static final String eolStr = "\r\n";
+
+
+
+	Listener listener;
 	StyledText styledText;
 	int bidiLangCode = 0;
 	int nonBidiLangCode = 0;
@@ -71,9 +73,9 @@ public class BidiLayout extends Composite {
 	MenuItem autopushMenuItem;
 	char[] arrOfIgnoredChars = null;
 	private int prevLength = 0;
-	
-	
-    public BidiLayout(Composite parent, int style){
+
+
+	public BidiLayout(Composite parent, int style){
 		super(parent, 0);
 		this.setLayout(new FillLayout());
 		styledText = new StyledText(this, style);
@@ -81,42 +83,44 @@ public class BidiLayout extends Composite {
 		addBidiSegmentListener();
 		addListeners();
 		styledText.setMenu(createContextMenu());
-    }
-	
-    public void setBidiLang (int lang) {
-    	bidiLangCode = lang;
-    }
-    public void setNonBidiLang (int lang) {
-    	nonBidiLangCode = lang;
-    }
-    
-    public void setArrOfIgnoredChars(char[] arr){
-    	arrOfIgnoredChars = (char[])arr.clone();
-    }
-    
+	}
+
+	public void setBidiLang (int lang) {
+		bidiLangCode = lang;
+	}
+	public void setNonBidiLang (int lang) {
+		nonBidiLangCode = lang;
+	}
+
+	public void setArrOfIgnoredChars(char[] arr){
+		arrOfIgnoredChars = arr.clone();
+	}
+
 	private void addListeners() {
 		listener = new Listener() {
-			
+
+			@Override
 			public void handleEvent(Event event) {
 				switch (event.type) {
 				case SWT.MouseDown: handleMouseDown(event); break;
 				case SWT.KeyDown: handleKeyDown(event); break;
-			}
-				
+				}
+
 			}
 		};
 		addAndReorderListener(SWT.KeyDown, listener);
 		styledText.addListener(SWT.MouseDown, listener);
 		addAndReorderListener(SWT.Show, listener);
-		
+
 		styledText.addKeyListener(new KeyListener() {
+			@Override
 			public void keyReleased(KeyEvent keyEvent) {
 				if ((keyEvent.keyCode == 'u') &&
-					((keyEvent.stateMask & SWT.CTRL) != 0)){
+						((keyEvent.stateMask & SWT.CTRL) != 0)){
 					setPush(true);
 					keyEvent.doit = false;
 				}else if ((keyEvent.keyCode == 'o') &&
-					((keyEvent.stateMask & SWT.CTRL) != 0)) {
+						((keyEvent.stateMask & SWT.CTRL) != 0)) {
 					setPush(false);
 					keyEvent.doit = false;
 				} else if ((keyEvent.keyCode == 't') &&
@@ -130,6 +134,7 @@ public class BidiLayout extends Composite {
 				}
 			}
 
+			@Override
 			public void keyPressed(KeyEvent e) {
 			}
 		});
@@ -139,9 +144,9 @@ public class BidiLayout extends Composite {
 		//have to 'reorder' listeners in eventTable. BidiLayout's listener should come first (before StyledText's one)
 		Listener[] listeners = styledText.getListeners(eventType);
 		Listener styledTextListener = null;
-		for (int i=0; i<listeners.length; i++) {
-			if (listeners[i].getClass().getSimpleName().startsWith("StyledText")){
-				styledTextListener = listeners[i];
+		for (Listener listener2 : listeners) {
+			if (listener2.getClass().getSimpleName().startsWith("StyledText")){
+				styledTextListener = listener2;
 				break;
 			}
 		}
@@ -156,33 +161,37 @@ public class BidiLayout extends Composite {
 
 	private Menu createContextMenu(){
 		Menu menu;
-		if (styledText.getMenu() == null)
+		if (styledText.getMenu() == null) {
 			menu = new Menu(styledText);
-		else
+		} else {
 			menu = styledText.getMenu();
+		}
 
 		MenuItem copy = new MenuItem(menu, SWT.CASCADE);
-		copy.setText("&Copy"); //$NON-NLS-1$ 
-		copy.setAccelerator(SWT.CTRL+'c');	//$NON-NLS-1$ 
+		copy.setText("&Copy"); //$NON-NLS-1$
+		copy.setAccelerator(SWT.CTRL+'c');
 		copy.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				copy();
 				e.doit = false;
 			}
-		});	
+		});
 		MenuItem cut = new MenuItem(menu, SWT.CASCADE);
-		cut.setText("Cu&t"); //$NON-NLS-1$ 
-		cut.setAccelerator(SWT.CTRL+'x');  //$NON-NLS-1$ 
+		cut.setText("Cu&t"); //$NON-NLS-1$
+		cut.setAccelerator(SWT.CTRL+'x');
 		cut.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				cut();
-				e.doit = false;			
+				e.doit = false;
 			}
 		});
 		MenuItem paste = new MenuItem(menu, SWT.CASCADE);
-		paste.setText("&Paste"); //$NON-NLS-1$ 
-		paste.setAccelerator(SWT.CTRL+'v'); //$NON-NLS-1$ 
+		paste.setText("&Paste"); //$NON-NLS-1$
+		paste.setAccelerator(SWT.CTRL+'v');
 		paste.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				paste();
 				e.doit = false;
@@ -190,10 +199,11 @@ public class BidiLayout extends Composite {
 		});
 
 		rtlMenuItem = new MenuItem(menu, SWT.CHECK);
-		rtlMenuItem.setText("Right to Left Reading Order"); //$NON-NLS-1$ 
-		rtlMenuItem.setAccelerator(SWT.CTRL | SWT.SHIFT); //$NON-NLS-1$
+		rtlMenuItem.setText("Right to Left Reading Order"); //$NON-NLS-1$
+		rtlMenuItem.setAccelerator(SWT.CTRL | SWT.SHIFT);
 		rtlMenuItem.setData("#PopupMenu");
 		rtlMenuItem.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				e = createEventForSwithchDir(e);
 				handleKeyDown(e);
@@ -203,47 +213,51 @@ public class BidiLayout extends Composite {
 			private Event createEventForSwithchDir(Event e) {
 				e.widget = styledText;
 				e.keyCode = SWT.SHIFT;
-				if (isWidgetReversed)
+				if (isWidgetReversed) {
 					e.keyLocation = SWT.LEFT;
-				else
+				} else {
 					e.keyLocation = SWT.RIGHT;
+				}
 				e.stateMask = SWT.CTRL;
 				return e;
 			}
 		});
 
 		new MenuItem(menu, SWT.SEPARATOR);
-	
+
 		autopushMenuItem = new MenuItem(menu, SWT.CHECK);
 		autopushMenuItem.setText("AutoPush [Ctrl+T]");
 		autopushMenuItem.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event e) {
-				switchAutoPush();			
+				switchAutoPush();
 			}
 		});
 		final MenuItem pushon = new MenuItem(menu, SWT.CASCADE/*SWT.CHECK*/);
 		pushon.setText("Push On [Ctrl+U]");
 		pushon.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event e) {
-				setPush(true);			
+				setPush(true);
 			}
 		});
-		
+
 		final MenuItem pushoff = new MenuItem(menu, SWT.CASCADE/*SWT.CHECK*/);
 		pushoff.setText("Push Off [Ctrl+O]");
 		pushoff.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event e) {
-				setPush(false);			
+				setPush(false);
 			}
 		});
-		
+
 		return menu;
 	}
-	
+
 	public void copy() {
 		styledText.copy();
 	}
-	
+
 	public void cut() {
 		styledText.cut();
 	}
@@ -259,15 +273,16 @@ public class BidiLayout extends Composite {
 	}
 	protected void handleKeyDown(Event event) {
 		if (event.keyCode == SWT.ARROW_RIGHT && isPushMode){
-			if (!isWidgetReversed && isCursorAtStartPushSegemet())
+			if (!isWidgetReversed && isCursorAtStartPushSegemet()) {
 				setPush(false);
-			else if (isWidgetReversed && isCursorAtEndPushSegemet()){
+			} else if (isWidgetReversed && isCursorAtEndPushSegemet()){
 				int newCaretPos = indxPushSegmentStart;
 				setPush(false);
 				styledText.setCaretOffset (newCaretPos);
 				styledText.invokeAction(ST.COLUMN_NEXT);
-			} else
+			} else {
 				event.keyCode = SWT.ARROW_LEFT;
+			}
 		} else if (event.keyCode == SWT.ARROW_LEFT && isPushMode){
 			if (!isWidgetReversed && isCursorAtEndPushSegemet()){
 				int newCaretPos = indxPushSegmentStart;
@@ -277,8 +292,9 @@ public class BidiLayout extends Composite {
 			} else if (isWidgetReversed && isCursorAtStartPushSegemet()){
 				setPush(false);
 				styledText.invokeAction(ST.COLUMN_NEXT);
-			} else
+			} else {
 				event.keyCode = SWT.ARROW_RIGHT;
+			}
 		}else if (isPushMode && (event.keyCode == SWT.HOME || event.keyCode==SWT.END)){
 			setPush(false);
 			styledText.notifyListeners(SWT.KeyDown, event);
@@ -288,9 +304,9 @@ public class BidiLayout extends Composite {
 			}else {
 				event.doit = false;
 				event.type = SWT.None;
-			}	
+			}
 		} else if (event.keyCode == SWT.BS && isPushMode){
-			if (!isCursorAtStartPushSegemet()){ 
+			if (!isCursorAtStartPushSegemet()){
 				lengthPushSegment --;
 			}else {
 				setPush(false);
@@ -301,7 +317,7 @@ public class BidiLayout extends Composite {
 				switchWidgetDir();
 				styledText.notifyListeners(SWT.KeyDown, event);
 			}
-		} else if (isPushMode && (event.character == SWT.CR) ) { 
+		} else if (isPushMode && (event.character == SWT.CR) ) {
 			setPush(false);
 			styledText.notifyListeners(SWT.KeyDown, event);
 		} else {
@@ -315,26 +331,30 @@ public class BidiLayout extends Composite {
 			}
 		}
 	}
-	
+
 	private boolean isCursorAtStartPushSegemet() {
 		int caretOffset = styledText.getCaretOffset();
-		if (isCaretAtTheLAstLine()) //it is the last line of string
+		if (isCaretAtTheLAstLine()) {
 			caretOffset --;
+		}
 		//pushSegmentStart was stored when string had similar to widget orientation, therefore it needs to be 'mirrored' for comparison
 		int mirroredBoundPosition = calculateMirroredPushSegmentStart();
-		if (mirroredBoundPosition == (caretOffset-1))
+		if (mirroredBoundPosition == (caretOffset-1)) {
 			return true;
+		}
 		return false;
 	}
 	private boolean isCursorAtEndPushSegemet() {
 		int caretOffset = styledText.getCaretOffset();
-		if (isCaretAtTheLAstLine())
+		if (isCaretAtTheLAstLine()) {
 			caretOffset --;
+		}
 		//pushSegmentStart was stored when string had similar to widget orientation, therefore it needs to be 'mirrored' for comparison
 		int mirroredBoundPosition = calculateMirroredPushSegmentEnd();
-		
-		if (mirroredBoundPosition == caretOffset)
+
+		if (mirroredBoundPosition == caretOffset) {
 			return true;
+		}
 		return false;
 	}
 	private int calculateMirroredCaretPosition(int caretPos) {
@@ -347,23 +367,25 @@ public class BidiLayout extends Composite {
 	private int calculateMirroredPushSegmentStart() {
 		return calculateMirroredPushSegmentEnd() - lengthPushSegment;
 	}
-	
+
 	private boolean isCaretAtTheLAstLine(){
 		LineIndx lineIndx = new LineIndx(styledText.getText(),styledText.getCaretOffset());
-		if (lineIndx.getEndIndx() == styledText.getText().length()-1)
+		if (lineIndx.getEndIndx() == styledText.getText().length()-1) {
 			return true;
+		}
 		return false;
 	}
-	
+
 	private boolean isCaretInsidePushSegment(){
 		int mirroredPushSegmentEnd = calculateMirroredPushSegmentEnd();
 		int mirroredPushSegmentStart = calculateMirroredPushSegmentStart();
 		int caretPos = styledText.getCaretOffset();
-		if ((caretPos >= mirroredPushSegmentStart) && (caretPos <= mirroredPushSegmentEnd))
+		if ((caretPos >= mirroredPushSegmentStart) && (caretPos <= mirroredPushSegmentEnd)) {
 			return true;
+		}
 		return false;
 	}
-	
+
 	protected void switchAutoPush() {
 		isAutoPush = !isAutoPush;
 		autopushMenuItem.setSelection(isAutoPush);
@@ -377,22 +399,26 @@ public class BidiLayout extends Composite {
 	public void switchWidgetDir(boolean forceSringReverse) {
 		isWidgetReversed = !isWidgetReversed;
 		int carPos = styledText.getCaretOffset();
-		if (forceSringReverse)
+		if (forceSringReverse) {
 			styledText.setText(reverseStr(styledText.getText()));
+		}
 		styledText.setCaretOffset (carPos);
 		rtlMenuItem.setSelection(isWidgetReversed);
 
-		if (isPushMode)
+		if (isPushMode) {
 			setPush(false);
-		if (isWidgetReversed)
+		}
+		if (isWidgetReversed) {
 			setBidiKeyboardLanguage();
-		else 
+		} else {
 			setNonBidiKeyboardLanguage();
+		}
 	}
 
 	public void setPush(boolean pushOn) {
-		if (isPushMode == pushOn)
+		if (isPushMode == pushOn) {
 			return;
+		}
 		isPushMode = pushOn;
 		if (pushOn) {
 			startPushMode();
@@ -403,19 +429,20 @@ public class BidiLayout extends Composite {
 			lengthPushSegment = 0;
 		}
 	}
-	
+
 	private void endPushMode() {
 		styledText.setCaret(defaultCaret);
 		styledText.setCaret(defaultCaret);
 		styledText.setText(reverseStr(styledText.getText()));
 		styledText.setCaretOffset (indxPushSegmentStart + lengthPushSegment);
-		if (!isWidgetReversed)
+		if (!isWidgetReversed) {
 			setNonBidiKeyboardLanguage();
-		else
+		} else {
 			setBidiKeyboardLanguage();
-		
+		}
+
 	}
-	
+
 	public static String reverseStr (String str) {
 		String resultStr = "";
 		String orgStr = new String(str);
@@ -431,25 +458,27 @@ public class BidiLayout extends Composite {
 		}
 		return resultStr;
 	}
-	
+
 	public void addBidiSegmentListener() {
 		styledText.addBidiSegmentListener(new BidiSegmentListener() {
+			@Override
 			public void lineGetSegments(BidiSegmentEvent event) {
 				int length = event.lineText.length();
 				if ((isPushMode && !isWidgetReversed) ||
-					(!isPushMode && isWidgetReversed)){
+						(!isPushMode && isWidgetReversed)){
 					event.segments = new int[] { 0};
 					event.segmentsChars = new char[] { RLO};
 				} else {
 					event.segments = new int[] { 0, length };
 					event.segmentsChars = new char[] { LRO, PDF };
 				}
-				if (isPushMode && (indxPushSegmentStart != -1) && (prevLength< length))
+				if (isPushMode && (indxPushSegmentStart != -1) && (prevLength< length)) {
 					lengthPushSegment++;
+				}
 				prevLength  = length;
 			}
 		});
-	
+
 	}
 	protected void startPushMode() {
 		final Image image = new Image (styledText.getDisplay(), 20, 20);
@@ -465,74 +494,81 @@ public class BidiLayout extends Composite {
 		cc.setImage(image);
 		styledText.setCaret(cc);
 		int carOffset = styledText.getCaretOffset();
-		
+
 
 		String str = reverseStr(styledText.getText());
 		styledText.setText(str);
 		indxPushSegmentStart = carOffset;
 		styledText.setCaretOffset(getUpdatedCaret(carOffset));
-		if (!isWidgetReversed)
+		if (!isWidgetReversed) {
 			setBidiKeyboardLanguage();
-		else
+		} else {
 			setNonBidiKeyboardLanguage();
+		}
 	}
 	private int getUpdatedCaret(int carOffset) {
 		String str = styledText.getText();
 		LineIndx lineIndx = new LineIndx(str, carOffset);
 		int starIndx = lineIndx.getStartIndx();
 		int endIndx = lineIndx.getEndIndx();
-		if (endIndx == str.length()-1) //it is the last line of string
+		if (endIndx == str.length()-1) {
 			carOffset --;
+		}
 		return starIndx + (endIndx - carOffset);
 	}
 	private void handleAutoPush(){
 		if ((isPushMode && !isWidgetReversed && (BidiUtil.getKeyboardLanguage() == BidiUtil.KEYBOARD_NON_BIDI))||
-			(isPushMode && isWidgetReversed && (BidiUtil.getKeyboardLanguage() == BidiUtil.KEYBOARD_BIDI)))
+				(isPushMode && isWidgetReversed && (BidiUtil.getKeyboardLanguage() == BidiUtil.KEYBOARD_BIDI))) {
 			setPush(false);
-		else if ((!isPushMode && !isWidgetReversed && (BidiUtil.getKeyboardLanguage() == BidiUtil.KEYBOARD_BIDI)) ||
-				 (!isPushMode && isWidgetReversed && (BidiUtil.getKeyboardLanguage() == BidiUtil.KEYBOARD_NON_BIDI)))
+		} else if ((!isPushMode && !isWidgetReversed && (BidiUtil.getKeyboardLanguage() == BidiUtil.KEYBOARD_BIDI)) ||
+				(!isPushMode && isWidgetReversed && (BidiUtil.getKeyboardLanguage() == BidiUtil.KEYBOARD_NON_BIDI))) {
 			setPush(true);
+		}
 	}
-	
+
 	public boolean isWidgetReversed() {
 		return isWidgetReversed;
 	}
 
-	
+
 	private void setBidiKeyboardLanguage(){
-		if (bidiLangCode == 0)
+		if (bidiLangCode == 0) {
 			BidiUtil.setKeyboardLanguage(BidiUtil.KEYBOARD_BIDI);
-		else
+		} else {
 			setSpecificKeyboardLanguage(bidiLangCode);
+		}
 	}
-	
+
 	private void setNonBidiKeyboardLanguage(){
-		if (nonBidiLangCode == 0)
+		if (nonBidiLangCode == 0) {
 			BidiUtil.setKeyboardLanguage(BidiUtil.KEYBOARD_NON_BIDI);
-		else
+		} else {
 			setSpecificKeyboardLanguage(nonBidiLangCode);
+		}
 	}
-	
+
 	public static boolean setSpecificKeyboardLanguage(int langCode){
 		int currentLang = OS.PRIMARYLANGID(OS.LOWORD(OS.GetKeyboardLayout(0)));
-		if (currentLang == langCode)
+		if (currentLang == langCode) {
 			return true;
+		}
 		int [] list = getKeyboardLanguageList();
-		for (int i=0; i<list.length; i++) {
-			if (langCode == OS.PRIMARYLANGID(OS.LOWORD(list[i]))) {
-				OS.ActivateKeyboardLayout(list[i], 0);
+		for (int element : list) {
+			if (langCode == OS.PRIMARYLANGID(OS.LOWORD(element))) {
+				OS.ActivateKeyboardLayout(element, 0);
 				return true;
 			}
 		}
 		return false;
 	}
-	
+
 	public void setText(String text){
-		if (isWidgetReversed)
+		if (isWidgetReversed) {
 			text = reverseStr(text);
+		}
 		styledText.setText(text);
 	}
-	
+
 	public String getText(){
 		return styledText.getText();
 	}
@@ -566,6 +602,7 @@ public class BidiLayout extends Composite {
 	public void removeModifyListener(ModifyListener modifyListener) {
 		styledText.removeModifyListener(modifyListener);
 	}
+	@Override
 	public void redraw() {
 		styledText.redraw();
 	}
@@ -581,6 +618,7 @@ public class BidiLayout extends Composite {
 	public int getLineHeight(int lineIndex) {
 		return styledText.getLineHeight(lineIndex);
 	}
+	@Override
 	public void redraw(int x, int y, int width, int height, boolean all){
 		styledText.redraw(x,y,width,height,all);
 	}
@@ -690,21 +728,25 @@ public class BidiLayout extends Composite {
 		styledText.setDoubleClickEnabled(enable);
 	}
 	public void setEditable(boolean editable) {
-		if (editable)
+		if (editable) {
 			styledText.setBackground(null);
-		else
+		} else {
 			styledText.setBackground(styledText.getParent().getBackground());
+		}
 		styledText.setEditable(editable);
 	}
+	@Override
 	public void setEnabled (boolean enabled){
-		if (enabled)
+		if (enabled) {
 			styledText.setBackground(null);
-		else
+		} else {
 			styledText.setBackground(styledText.getParent().getBackground());
+		}
 		styledText.setEnabled(enabled);
 		super.setEnabled(enabled);
 	}
 
+	@Override
 	public void setBackground (Color color) {
 		styledText.setBackground(color);
 	}
@@ -717,27 +759,29 @@ public class BidiLayout extends Composite {
 		System.arraycopy(tempList, 0, list, 0, size);
 		return list;
 	}
-	
+
 	private class LineIndx {
 		private int startIndx = -1;
 		private int endIndx = -1;
-		
+
 		LineIndx (String str, int indx){
 			startIndx = str.substring(0, indx).lastIndexOf(eolStr);
-			if (startIndx == -1)
+			if (startIndx == -1) {
 				startIndx = 0;
-			else
+			} else {
 				startIndx += eolStr.length();
+			}
 			endIndx = str.substring(startIndx).indexOf(eolStr);
-			if (endIndx == -1)
+			if (endIndx == -1) {
 				endIndx = str.substring(startIndx).length()-1;
+			}
 			endIndx += startIndx;
 		}
-		
+
 		public int getStartIndx(){
 			return startIndx;
 		}
-		
+
 		public int getEndIndx(){
 			return endIndx;
 		}

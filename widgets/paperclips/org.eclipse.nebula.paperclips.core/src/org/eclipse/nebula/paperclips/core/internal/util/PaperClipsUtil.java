@@ -1,10 +1,13 @@
 /*
  * Copyright (c) 2007-2008 Matthew Hall and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
  * 
+ * SPDX-License-Identifier: EPL-2.0
+ *
  * Contributors:
  *     Matthew Hall - initial API and implementation
  */
@@ -18,7 +21,7 @@ import org.eclipse.nebula.paperclips.core.PrintPiece;
 
 /**
  * Convenience methods specific to PaperClips
- * 
+ *
  * @author Matthew Hall
  */
 public class PaperClipsUtil {
@@ -27,7 +30,7 @@ public class PaperClipsUtil {
 
 	/**
 	 * Disposes the print piece if not null.
-	 * 
+	 *
 	 * @param piece
 	 *            the print piece to dispose.
 	 */
@@ -38,7 +41,7 @@ public class PaperClipsUtil {
 
 	/**
 	 * Disposes the arguments that are not null.
-	 * 
+	 *
 	 * @param p1
 	 *            print piece to dispose
 	 * @param p2
@@ -51,7 +54,7 @@ public class PaperClipsUtil {
 
 	/**
 	 * Disposes the print pieces that are not null.
-	 * 
+	 *
 	 * @param pieces
 	 *            array of print pieces to dispose.
 	 */
@@ -64,7 +67,7 @@ public class PaperClipsUtil {
 	/**
 	 * Disposes the print pieces in the array from start (inclusive) to end
 	 * (exclusive).
-	 * 
+	 *
 	 * @param pages
 	 *            array of print pieces to dispose.
 	 * @param start
@@ -79,19 +82,19 @@ public class PaperClipsUtil {
 
 	/**
 	 * Disposes the print pieces in the list.
-	 * 
+	 *
 	 * @param pages
 	 *            list of print pieces to dispose.
 	 */
-	public static void dispose(List pages) {
-		for (Iterator it = pages.iterator(); it.hasNext();)
-			((PrintPiece) it.next()).dispose();
+	public static void dispose(List<PrintPiece> pages) {
+		for (Iterator<PrintPiece> it = pages.iterator(); it.hasNext();)
+			it.next().dispose();
 		pages.clear();
 	}
 
 	/**
 	 * Disposes the print pieces that are not null.
-	 * 
+	 *
 	 * @param piece
 	 *            a print piece to dispose
 	 * @param pieces
@@ -104,26 +107,26 @@ public class PaperClipsUtil {
 
 	/**
 	 * Returns a copy of the array.
-	 * 
+	 *
 	 * @param array
 	 *            the array to copy
 	 * @return a copy of the array.
 	 */
 	public static int[] copy(int[] array) {
 		Util.notNull(array);
-		return (int[]) array.clone();
+		return array.clone();
 	}
 
 	/**
 	 * Returns a deep copy of the array.
-	 * 
+	 *
 	 * @param array
 	 *            the array to copy
 	 * @return a copy of the array.
 	 */
 	public static int[][] copy(int[][] array) {
 		Util.notNull(array);
-		int[][] result = (int[][]) array.clone();
+		int[][] result = array.clone();
 		for (int i = 0; i < result.length; i++)
 			result[i] = copy(result[i]);
 		return result;
@@ -131,7 +134,7 @@ public class PaperClipsUtil {
 
 	/**
 	 * Returns the sum of all elements in the array.
-	 * 
+	 *
 	 * @param array
 	 *            the array
 	 * @return the sum of all elements in the array.
@@ -143,7 +146,7 @@ public class PaperClipsUtil {
 	/**
 	 * Returns the sum of all elements in the array in the range
 	 * <code>[start, start+count)</code>.
-	 * 
+	 *
 	 * @param array
 	 *            the array containing the elements to add up.
 	 * @param start
@@ -163,7 +166,7 @@ public class PaperClipsUtil {
 
 	/**
 	 * Returns the sum of all elements in the array at the given indices.
-	 * 
+	 *
 	 * @param array
 	 *            the array of elements to add up.
 	 * @param indices
@@ -180,36 +183,36 @@ public class PaperClipsUtil {
 
 	/**
 	 * Converts the argument to an int[] array.
-	 * 
+	 *
 	 * @param list
 	 *            a List of Integers.
 	 * @return a primitive int[] array.
 	 */
-	public static int[] toIntArray(List list) {
+	public static int[] toIntArray(List<Integer> list) {
 		final int[] array = new int[list.size()];
 		for (int i = 0; i < array.length; i++)
-			array[i] = ((Integer) list.get(i)).intValue();
+			array[i] = list.get(i).intValue();
 		return array;
 	}
 
 	/**
 	 * Converts the argument to an int[][] array.
-	 * 
+	 *
 	 * @param list
 	 *            a List of int[] arrays.
 	 * @return a primitive int[][] array.
 	 */
-	public static int[][] toIntIntArray(List list) {
+	public static int[][] toIntIntArray(List<int[]> list) {
 		final int[][] array = new int[list.size()][];
 		for (int i = 0; i < array.length; i++)
-			array[i] = (int[]) list.get(i);
+			array[i] = list.get(i);
 		return array;
 	}
 
 	/**
 	 * Returns the first element in masks where (value & mask[index]) ==
 	 * mask[index].
-	 * 
+	 *
 	 * @param value
 	 *            the value to match
 	 * @param masks

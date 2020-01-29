@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Text;
 /**
  * Snippet for DateChooser : DataBinding
  */
+@SuppressWarnings("deprecation")
 public class DateChooserDataBindingSnippet {
 	static class Person {
 		String name;

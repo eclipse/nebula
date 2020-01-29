@@ -1,10 +1,13 @@
 /*************************************************************************
  * Copyright (c) 2008, 2017 Stiftung Deutsches Elektronen-Synchrotron and others.
  * Member of the Helmholtz Association, (DESY), HAMBURG, GERMANY.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *************************************************************************/
 package org.eclipse.nebula.visualization.xygraph.util;
 

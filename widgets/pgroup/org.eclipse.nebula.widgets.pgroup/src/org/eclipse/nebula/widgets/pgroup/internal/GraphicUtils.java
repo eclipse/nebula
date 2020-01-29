@@ -1,8 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2006 Chris Gross. All rights reserved. This program and the
- * accompanying materials are made available under the terms of the Eclipse
- * Public License v1.0 which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html Contributors: schtoo@schtoo.com
+ * Copyright (c) 2006 Chris Gross.
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0 Contributors: schtoo@schtoo.com
  * (Chris Gross) - initial API and implementation
  ******************************************************************************/
 
@@ -222,18 +225,13 @@ public class GraphicUtils
 
     public static Color createNewBlendedColor(RGB rgb1, RGB rgb2, int ratio)
     {
-
         Color newColor = new Color(Display.getCurrent(), blend(rgb1, rgb2, ratio));
-
         return newColor;
-
     }
 
     public static Color createNewBlendedColor(Color c1, Color c2, int ratio)
     {
-
         Color newColor = new Color(Display.getCurrent(), blend(c1.getRGB(), c2.getRGB(), ratio));
-
         return newColor;
     }
 
@@ -261,14 +259,8 @@ public class GraphicUtils
         if (hsb[0] < 0f)
             hsb[0] = 0f;
 
-        // hsb[2] += saturation;
-        // if (hsb[2] > 1.0f)
-        // hsb[2] = 1.0f;
-
         java.awt.Color awtColor = new java.awt.Color(java.awt.Color
             .HSBtoRGB(hsb[0], hsb[1], hsb[2]));
-        // awtColor = awtColor.brighter();
-        // awtColor = awtColor.brighter();
         return new RGB(awtColor.getRed(), awtColor.getGreen(), awtColor.getBlue());
     }
 

@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2004, 2007 Boeing.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Boeing - initial API and implementation
@@ -15,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.eclipse.nebula.widgets.xviewer.core.util.XViewerUtil;
 import org.eclipse.nebula.widgets.xviewer.core.util.XmlUtil;
 
@@ -28,7 +32,7 @@ public class SortingData {
    private final static String XTREESORTER_TAG = "xSorter"; //$NON-NLS-1$
    private final static String COL_NAME_TAG = "id"; //$NON-NLS-1$
    private final static String OLD_COL_NAME_TAG = "name"; //$NON-NLS-1$
-   private final List<String> sortingIds = new ArrayList<String>();
+   private final List<String> sortingIds = new ArrayList<>();
    private final CustomizeData custData;
 
    public SortingData() {
@@ -53,7 +57,7 @@ public class SortingData {
    }
 
    public List<XViewerColumn> getSortXCols(Map<String, XViewerColumn> oldNameToColumnId) {
-      List<XViewerColumn> cols = new ArrayList<XViewerColumn>();
+      List<XViewerColumn> cols = new ArrayList<>();
       for (String id : getSortingIds()) {
          XViewerColumn xCol = custData.getColumnData().getXColumn(id);
          // For backward compatibility, try to resolve column name
@@ -78,7 +82,7 @@ public class SortingData {
    }
 
    public String getXml() {
-      StringBuffer sb = new StringBuffer("<" + XTREESORTER_TAG + ">"); //$NON-NLS-1$ //$NON-NLS-2$
+      StringBuilder sb = new StringBuilder("<" + XTREESORTER_TAG + ">"); //$NON-NLS-1$ //$NON-NLS-2$
       // NOTE: Sorting direction is stored as part of the column data
       for (String item : sortingIds) {
          sb.append(XmlUtil.addTagData(COL_NAME_TAG, item));

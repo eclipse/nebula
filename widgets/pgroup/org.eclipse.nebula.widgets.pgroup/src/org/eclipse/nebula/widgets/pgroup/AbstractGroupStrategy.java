@@ -1,8 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2006 Chris Gross. All rights reserved. This program and the
- * accompanying materials are made available under the terms of the Eclipse
- * Public License v1.0 which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2006 Chris Gross.
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors: schtoo@schtoo.com(Chris Gross) - initial API and implementation
  ******************************************************************************/
@@ -26,18 +29,23 @@ public abstract class AbstractGroupStrategy
 
     private PGroup group;
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.swtplus.widgets.IGroupStrategy#initialize(com.swtplus.widgets.PGroup)
+    public AbstractGroupStrategy(PGroup g) {
+    	group = g;
+    }
+    
+    /**
+     * 
      */
-    public void initialize(PGroup g)
+    public void initialize()
     {
-        group = g;
-
         update();
     }
 
+    /**
+     * @param x
+     * @param y
+     * @return
+     */
     public boolean isToggleLocation(int x, int y)
     {
         if (getGroup().getToggleRenderer() != null)

@@ -17,7 +17,7 @@ public class Activator implements BundleActivator {
 	private static BundleContext  plugin;
 
 	public static LogService logger;
-	
+
 	/**
 	 * The constructor
 	 */
@@ -25,25 +25,21 @@ public class Activator implements BundleActivator {
 	}
 
 
-	/*
-	 * (non-Javadoc)
+	/**
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 	       ServiceReference<?> logService = bundleContext.getServiceReference(LogService.class);
 	        logger = (LogService)bundleContext.getService(logService);
-	        //print an error to test it (note, that info can be below the threshold)
 	        logger.log(LogService.LOG_ERROR, "The bundle is starting...");
 	        Activator.plugin = bundleContext;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
-//		super.stop(context);
 	}
 
 	/**

@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2008 Nicolas Richeton.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  * 
  * Contributors :
  *    Nicolas Richeton (nicolas.richeton@gmail.com) - initial API and implementation
@@ -21,9 +24,7 @@ public class ExpoOut extends AbstractMovement {
 
 	float increment;
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.sharemedia.gui.viewers.impl.gl.IMovement#getValue(int)
 	 */
 	public double getValue(double step) {
@@ -34,9 +35,7 @@ public class ExpoOut extends AbstractMovement {
 			return max;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.sharemedia.gui.viewers.impl.gl.IMovement#init(float, float, int)
 	 */
 	public void init(double min, double max, int steps) {

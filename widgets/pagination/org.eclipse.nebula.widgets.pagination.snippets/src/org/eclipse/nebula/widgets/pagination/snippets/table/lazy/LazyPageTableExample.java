@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (C) 2011 Angelo Zerr <angelo.zerr@gmail.com>, Pascal Leclercq <pascal.leclercq@gmail.com>
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Angelo ZERR - initial API and implementation
@@ -37,10 +40,11 @@ import org.eclipse.swt.widgets.TableColumn;
 /**
  * This sample display a SWT Table with 10 items the first time. If you click on
  * the item 10, 10 items are loaded and added to the SWT Table.
- * 
+ *
  */
 public class LazyPageTableExample {
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void main(String[] args) {
 
 		Display display = new Display();
@@ -117,7 +121,7 @@ public class LazyPageTableExample {
 	}
 
 	private static List<String> createList() {
-		List<String> names = new ArrayList<String>();
+		List<String> names = new ArrayList<>();
 		for (int i = 1; i < 2012; i++) {
 			names.add("Name " + i);
 		}

@@ -1,16 +1,17 @@
 /*
  * Copyright (c) 2007 Matthew Hall and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
  * 
+ * SPDX-License-Identifier: EPL-2.0
+ *
  * Contributors:
  *     Matthew Hall - initial API and implementation
  */
 package org.eclipse.nebula.paperclips.core;
-
-import junit.framework.TestCase;
 
 import org.eclipse.nebula.paperclips.core.internal.util.Util;
 import org.eclipse.nebula.paperclips.core.page.PageNumber;
@@ -19,6 +20,9 @@ import org.eclipse.nebula.paperclips.core.text.TextStyle;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 
+import junit.framework.TestCase;
+
+@SuppressWarnings("restriction")
 public class PageNumberPrintTest extends TestCase {
 	public void testConstructor_illegalArguments() {
 		try {
@@ -33,13 +37,15 @@ public class PageNumberPrintTest extends TestCase {
 		} catch (IllegalArgumentException expected) {
 		}
 
-		assertEquals(SWT.LEFT, new PageNumberPrint(new PageNumberStub(0), 0)
-				.getAlign());
+		assertEquals(SWT.LEFT,
+				new PageNumberPrint(new PageNumberStub(0), 0).getAlign());
 	}
 
 	public void testEquals() {
-		PageNumberPrint pageNumber1 = new PageNumberPrint(new PageNumberStub(0));
-		PageNumberPrint pageNumber2 = new PageNumberPrint(new PageNumberStub(0));
+		PageNumberPrint pageNumber1 = new PageNumberPrint(
+				new PageNumberStub(0));
+		PageNumberPrint pageNumber2 = new PageNumberPrint(
+				new PageNumberStub(0));
 		assertEquals(pageNumber1, pageNumber2);
 
 		pageNumber1.setAlign(SWT.CENTER);
@@ -70,6 +76,7 @@ public class PageNumberPrintTest extends TestCase {
 			this.id = id;
 		}
 
+		@Override
 		public boolean equals(Object obj) {
 			if (!Util.sameClass(this, obj))
 				return false;

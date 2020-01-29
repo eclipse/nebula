@@ -1,10 +1,13 @@
 /*******************************************************************************
  *  Copyright (c) 2010,2012 Weltevree Beheer BV, Remain Software & Industrial-TSI
+ *
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
  * 
- * All rights reserved. 
- * This program and the accompanying materials are made available under the terms of
- * the Eclipse Public License v1.0 which accompanies this distribution, and is
- * available at http://www.eclipse.org/legal/epl-v10.html
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *   Wim S. Jongman - initial API and implementation
@@ -24,7 +27,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * This snippet demonstrates how to run the dispatcher in simple mode.
- * 
+ *
  */
 public class MultiScope_ScopeWithDataAndProgression2Channels_2 {
 
@@ -32,7 +35,7 @@ public class MultiScope_ScopeWithDataAndProgression2Channels_2 {
 
 	/**
 	 * Launch the application.
-	 * 
+	 *
 	 * @param args
 	 */
 	public static void main(String[] args) {
@@ -66,9 +69,6 @@ public class MultiScope_ScopeWithDataAndProgression2Channels_2 {
 			}
 		});
 
-		// scope.setSteady();
-
-		// OscilloscopeStackAdapter stackAdapter = getStackAdapter();
 		scope.addStackListener(0, getStackAdapter());
 		scope.addStackListener(1, getStackAdapter());
 

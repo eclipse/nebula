@@ -30,7 +30,7 @@ public class LayerIterator implements PrintIterator {
 	}
 
 	public LayerIterator(LayerIterator that) {
-		this.entries = (LayerEntryIterator[]) that.entries.clone();
+		this.entries = that.entries.clone();
 		for (int i = 0; i < entries.length; i++)
 			if (entries[i].getTarget().hasNext())
 				entries[i] = entries[i].copy();
@@ -65,15 +65,16 @@ public class LayerIterator implements PrintIterator {
 		LayerEntryIteratorImpl[] entries = (LayerEntryIteratorImpl[]) this.entries
 				.clone();
 
-		List pieces = new ArrayList();
+		List<PrintPiece> pieces = new ArrayList<>();
 		for (int i = 0; i < entries.length; i++) {
 			LayerEntryIteratorImpl entry = entries[i];
 			if (entry.target.hasNext()) {
 				PrintPiece piece = PaperClips.next(entry.target, width, height);
 
 				if (piece == null) {
-					for (Iterator iter = pieces.iterator(); iter.hasNext();)
-						((PrintPiece) iter.next()).dispose();
+					for (Iterator<PrintPiece> iter = pieces.iterator(); iter
+							.hasNext();)
+						iter.next().dispose();
 					return null;
 				}
 				pieces.add(piece);
@@ -83,7 +84,7 @@ public class LayerIterator implements PrintIterator {
 		// Replace instance entries with the entries that were just consumed.
 		this.entries = entries;
 
-		return (PrintPiece[]) pieces.toArray(new PrintPiece[pieces.size()]);
+		return pieces.toArray(new PrintPiece[pieces.size()]);
 	}
 
 	private int getHorzAlignmentOffset(int alignment, int pieceWidth,

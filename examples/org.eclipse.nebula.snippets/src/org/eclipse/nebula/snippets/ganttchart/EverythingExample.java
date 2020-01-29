@@ -2,18 +2,20 @@ package org.eclipse.nebula.snippets.ganttchart;
 
 /*******************************************************************************
  * Copyright (c) Emil Crumhorn - Hexapixel.com - emil.crumhorn@gmail.com
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *    emil.crumhorn@gmail.com - initial API and implementation
+ * emil.crumhorn@gmail.com - initial API and implementation
  *******************************************************************************/
 
 import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 
 import org.eclipse.nebula.widgets.ganttchart.AdvancedTooltip;
 import org.eclipse.nebula.widgets.ganttchart.DateHelper;
@@ -33,25 +35,26 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class EverythingExample {
 
-	public static void main(String args []) {
-		Display display = new Display ();
-		Shell shell = new Shell (display);
+	@SuppressWarnings("unchecked")
+	public static void main(String args[]) {
+		Display display = new Display();
+		Shell shell = new Shell(display);
 		shell.setText("Gantt Chart - Everything Example");
-		shell.setSize(600, 500);		
+		shell.setSize(600, 500);
 		shell.setLayout(new FillLayout());
-		
+
 		// Create a chart
 		final GanttChart ganttChart = new GanttChart(shell, SWT.NONE, null, new ColorThemeSilver(), null, null);
-				
+
 		// Create some sections
 		GanttSection sectionOne = new GanttSection(ganttChart, "Section 1");
 		GanttSection sectionTwo = new GanttSection(ganttChart, "Section 2");
 		GanttSection sectionThree = new GanttSection(ganttChart, "Section 3");
-		
+
 		// Create some calendars
 		Calendar sdEventOne = Calendar.getInstance();
 		Calendar edEventOne = Calendar.getInstance();
-		edEventOne.add(Calendar.DATE, 10); 
+		edEventOne.add(Calendar.DATE, 10);
 
 		Calendar sdEventTwo = Calendar.getInstance();
 		Calendar edEventTwo = Calendar.getInstance();
@@ -71,7 +74,7 @@ public class EverythingExample {
 		sdEventOneLock.add(Calendar.DATE, -5);
 		edEventOneLock.add(Calendar.DATE, 15);
 		eventOne.setNoMoveBeforeDate(sdEventOneLock);
-		eventOne.setNoMoveAfterDate(edEventOneLock);		
+		eventOne.setNoMoveAfterDate(edEventOneLock);
 
 		// Create an advanced custom tooltip
 		StringBuffer buf = new StringBuffer();
@@ -87,17 +90,17 @@ public class EverythingExample {
 
 		AdvancedTooltip at = new AdvancedTooltip(eventOne.getName(), buf.toString());
 		eventOne.setAdvancedTooltip(at);
-				
+
 		GanttEvent eventTwo = new GanttEvent(ganttChart, "Scope Event 2", sdEventTwo, edEventTwo, 10);
-		
+
 		// lock only the end date
 		Calendar edEventTwoLock = Calendar.getInstance();
 		edEventTwoLock.add(Calendar.DATE, 30);
 		eventTwo.setNoMoveAfterDate(edEventTwoLock);
-		
+
 		GanttEvent eventThree = new GanttEvent(ganttChart, "Checkpoint", cpDate, cpDate, 75);
 		eventThree.setCheckpoint(true);
-				
+
 		// opacities and layers
 		eventOne.setLayer(1);
 		eventTwo.setLayer(2);
@@ -105,16 +108,16 @@ public class EverythingExample {
 		ganttChart.getGanttComposite().setLayerOpacity(1, 50);
 		ganttChart.getGanttComposite().setLayerOpacity(2, 150);
 		ganttChart.getGanttComposite().setLayerOpacity(3, 220);
-		
+
 		// Put the events in their respective sections
 		sectionOne.addGanttEvent(eventOne);
 		sectionOne.addGanttEvent(eventTwo);
 		sectionOne.addGanttEvent(eventThree);
-		
+
 		// Create some groups
 		GanttGroup groupOne = new GanttGroup(ganttChart);
-		GanttGroup groupTwo = new GanttGroup(ganttChart);				
-		
+		GanttGroup groupTwo = new GanttGroup(ganttChart);
+
 		// Create 5 events for each group
 		for (int x = 1; x <= 2; x++) {
 			int start = 1;
@@ -122,18 +125,18 @@ public class EverythingExample {
 				Calendar tempStart = Calendar.getInstance();
 				Calendar tempEnd = Calendar.getInstance();
 				tempStart.add(Calendar.DATE, start);
-				tempEnd.add(Calendar.DATE, start+1);
-				GanttEvent temp = new GanttEvent(ganttChart, x+":"+i, tempStart, tempEnd, 50);
+				tempEnd.add(Calendar.DATE, start + 1);
+				GanttEvent temp = new GanttEvent(ganttChart, x + ":" + i, tempStart, tempEnd, 50);
 
 				if (x == 1)
 					groupOne.addEvent(temp);
 				else
 					groupTwo.addEvent(temp);
-				
+
 				start += 9;
 			}
 		}
-		
+
 		sectionTwo.addGanttEvent(groupOne);
 
 		// now let's squeeze a single event in between two groups
@@ -150,43 +153,42 @@ public class EverythingExample {
 		ganttChart.addConnection(eventTwo, eventThree);
 		// reverse one connection back up (not logical, but doable)
 		ganttChart.addConnection(eventThree, eventOne);
-		
+
 		// and another group
 		sectionTwo.addGanttEvent(groupTwo);
-	
-				
+
 		// Let's connect all events in one group in one direction, and the other in reverse
 		// Note: It's not suggested to have connections between same-group events.
-		List groupOneEvents = groupOne.getEventMembers(); 
+		List<GanttEvent> groupOneEvents = groupOne.getEventMembers();
 		for (int i = 0; i < groupOneEvents.size(); i++) {
 			if (i >= 1) {
-				GanttEvent ge1 = (GanttEvent) groupOneEvents.get(i-1);
-				GanttEvent ge2 = (GanttEvent) groupOneEvents.get(i);
+				GanttEvent ge1 = groupOneEvents.get(i - 1);
+				GanttEvent ge2 = groupOneEvents.get(i);
 				ganttChart.addConnection(ge1, ge2);
 			}
 		}
 
 		// Now reverse.. do note that this makes really no sense for a lot of reasons, but it's possible to do regardless
-		List groupTwoEvents = groupTwo.getEventMembers(); 
-		for (int i = groupTwoEvents.size()-1; i >= 0; i--) {
+		List<GanttEvent> groupTwoEvents = groupTwo.getEventMembers();
+		for (int i = groupTwoEvents.size() - 1; i >= 0; i--) {
 			if (i > 0) {
-				GanttEvent ge1 = (GanttEvent) groupTwoEvents.get(i);
-				GanttEvent ge2 = (GanttEvent) groupTwoEvents.get(i-1);
+				GanttEvent ge1 = groupTwoEvents.get(i);
+				GanttEvent ge2 = groupTwoEvents.get(i - 1);
 				ganttChart.addConnection(ge1, ge2);
 			}
 		}
 
 		// move chart start date to the earliest event
 		ganttChart.getGanttComposite().jumpToEarliestEvent();
-		
+
 		// Show chart
-		shell.open();	
-		
-		while (!shell.isDisposed ()) {
-			if (!display.readAndDispatch ()) display.sleep ();
+		shell.open();
+
+		while (!shell.isDisposed()) {
+			if (!display.readAndDispatch())
+				display.sleep();
 		}
-		display.dispose ();
-		
+		display.dispose();
+
 	}
 }
-

@@ -2,6 +2,7 @@ package org.eclipse.nebula.widgets.grid.internal;
 
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ScrollBar;
 
 /**
@@ -10,166 +11,162 @@ import org.eclipse.swt.widgets.ScrollBar;
  * @author chris.gross@us.ibm.com
  * @since 2.0.0
  */
-public class ScrollBarProxyAdapter implements IScrollBarProxy
-{
-    /**
-     * Delegates to this scrollbar.
-     */
-    private ScrollBar scrollBar;
+public class ScrollBarProxyAdapter implements IScrollBarProxy {
+	/**
+	 * Delegates to this scrollbar.
+	 */
+	private ScrollBar scrollBar;
 
-    /**
-     * Contructs this adapter by delegating to the given scroll bar.
-     * 
-     * @param scrollBar delegate
-     */
-    public ScrollBarProxyAdapter(ScrollBar scrollBar)
-    {
-        super();
-        this.scrollBar = scrollBar;
-    }
+	/**
+	 * Contructs this adapter by delegating to the given scroll bar.
+	 *
+	 * @param scrollBar
+	 *            delegate
+	 */
+	public ScrollBarProxyAdapter(ScrollBar scrollBar) {
+		super();
+		this.scrollBar = scrollBar;
+	}
 
-    /** 
-     * {@inheritDoc}
-     */
-    public int getIncrement()
-    {
-        return scrollBar.getIncrement();
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public int getIncrement() {
+		return scrollBar.getIncrement();
+	}
 
-    /** 
-     * {@inheritDoc}
-     */
-    public int getMaximum()
-    {
-        return scrollBar.getMaximum();
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public int getMaximum() {
+		return scrollBar.getMaximum();
+	}
 
-    /** 
-     * {@inheritDoc}
-     */
-    public int getMinimum()
-    {
-        return scrollBar.getMinimum();
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public int getMinimum() {
+		return scrollBar.getMinimum();
+	}
 
-    /** 
-     * {@inheritDoc}
-     */
-    public int getPageIncrement()
-    {
-        return scrollBar.getPageIncrement();
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public int getPageIncrement() {
+		return scrollBar.getPageIncrement();
+	}
 
-    /** 
-     * {@inheritDoc}
-     */
-    public int getSelection()
-    {
-        return scrollBar.getSelection();
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public int getSelection() {
+		return scrollBar.getSelection();
+	}
 
-    /** 
-     * {@inheritDoc}
-     */
-    public int getThumb()
-    {
-        return scrollBar.getThumb();
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public int getThumb() {
+		return scrollBar.getThumb();
+	}
 
-    /** 
-     * {@inheritDoc}
-     */
-    public boolean getVisible()
-    {
-        return scrollBar.getVisible();
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean getVisible() {
+		return scrollBar.getVisible();
+	}
 
-    /** 
-     * {@inheritDoc}
-     */
-    public void setIncrement(int value)
-    {
-        scrollBar.setIncrement(value);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setIncrement(int value) {
+		scrollBar.setIncrement(value);
+	}
 
-    /** 
-     * {@inheritDoc}
-     */
-    public void setMaximum(int value)
-    {
-        scrollBar.setMaximum(value);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setMaximum(int value) {
+		scrollBar.setMaximum(value);
+	}
 
-    /** 
-     * {@inheritDoc}
-     */
-    public void setMinimum(int value)
-    {
-        scrollBar.setMinimum(value);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setMinimum(int value) {
+		scrollBar.setMinimum(value);
+	}
 
-    /** 
-     * {@inheritDoc}
-     */
-    public void setPageIncrement(int value)
-    {
-        scrollBar.setPageIncrement(value);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setPageIncrement(int value) {
+		scrollBar.setPageIncrement(value);
+	}
 
-    /** 
-     * {@inheritDoc}
-     */
-    public void setSelection(int selection)
-    {
-        scrollBar.setSelection(selection);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setSelection(int selection) {
+		scrollBar.setSelection(selection);
+	}
 
-    /** 
-     * {@inheritDoc}
-     */
-    public void setThumb(int value)
-    {
-        scrollBar.setThumb(value);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setThumb(int value) {
+		scrollBar.setThumb(value);
+	}
 
-    /** 
-     * {@inheritDoc}
-     */
-    public void setValues(int selection, int minimum, int maximum, int thumb, int increment, 
-                          int pageIncrement)
-    {
-        scrollBar.setValues(selection, minimum, maximum, thumb, increment, pageIncrement);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setValues(int selection, int minimum, int maximum, int thumb, int increment, int pageIncrement) {
+		scrollBar.setValues(selection, minimum, maximum, thumb, increment, pageIncrement);
+	}
 
-    /** 
-     * {@inheritDoc}
-     */
-    public void setVisible(boolean visible)
-    {
-        scrollBar.setVisible(visible);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setVisible(boolean visible) {
+		scrollBar.setVisible(visible);
+	}
 
-    /** 
-     * {@inheritDoc}
-     */
-    public void handleMouseWheel(Event e)
-    {
-        //do nothing        
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public void handleMouseWheel(Event e) {
+		// do nothing
+	}
 
-    /** 
-     * {@inheritDoc}
-     */
-    public void addSelectionListener(SelectionListener listener)
-    {
-        scrollBar.addSelectionListener(listener);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public void addSelectionListener(SelectionListener listener) {
+		scrollBar.addSelectionListener(listener);
+	}
 
-    /** 
-     * {@inheritDoc}
-     */
-    public void removeSelectionListener(SelectionListener listener)
-    {
-        scrollBar.removeSelectionListener(listener);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public void removeSelectionListener(SelectionListener listener) {
+		scrollBar.removeSelectionListener(listener);
+	}
+
+	/**
+	 * @see org.eclipse.nebula.widgets.grid.internal.IScrollBarProxy#addListener(int, org.eclipse.swt.widgets.Listener)
+	 */
+	@Override
+	public void addListener(int eventType, Listener listener) {
+		scrollBar.addListener(eventType, listener);
+	}
+
+	/**
+	 * @see org.eclipse.nebula.widgets.grid.internal.IScrollBarProxy#removeListener(int, org.eclipse.swt.widgets.Listener)
+	 */
+	@Override
+	public void removeListener(int eventType, Listener listener) {
+		scrollBar.removeListener(eventType, listener);
+	}
 }

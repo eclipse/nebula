@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2004, 2007 Boeing.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Boeing - initial API and implementation
@@ -67,25 +70,21 @@ public class XViewerTestStyledStringLabelProvider extends XViewerStyledTextLabel
       return null;
    }
 
-   @SuppressWarnings("unused")
    @Override
    public Color getBackground(Object element, XViewerColumn viewerColumn, int columnIndex) throws XViewerException {
       return null;
    }
 
-   @SuppressWarnings("unused")
    @Override
    public Font getFont(Object element, XViewerColumn viewerColumn, int columnIndex) throws XViewerException {
       return null;
    }
 
-   @SuppressWarnings("unused")
    @Override
    public Color getForeground(Object element, XViewerColumn viewerColumn, int columnIndex) throws XViewerException {
       return null;
    }
 
-   @SuppressWarnings("unused")
    @Override
    public StyledString getStyledText(Object element, XViewerColumn xCol, int columnIndex) throws XViewerException {
       if (element instanceof String) {

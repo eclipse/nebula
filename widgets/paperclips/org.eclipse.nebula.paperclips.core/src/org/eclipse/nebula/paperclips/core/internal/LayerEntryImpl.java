@@ -11,7 +11,7 @@ import org.eclipse.swt.graphics.GC;
 
 /**
  * Instances in this class represent an entry in a LayerPrint.
- * 
+ *
  * @author Matthew Hall
  */
 public class LayerEntryImpl implements LayerEntry {
@@ -21,7 +21,7 @@ public class LayerEntryImpl implements LayerEntry {
 
 	/**
 	 * Create a new layer entry.
-	 * 
+	 *
 	 * @param target
 	 *            the target print of this entry.
 	 * @param align
@@ -33,6 +33,7 @@ public class LayerEntryImpl implements LayerEntry {
 		this.align = checkAlign(align);
 	}
 
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -41,6 +42,7 @@ public class LayerEntryImpl implements LayerEntry {
 		return result;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -61,7 +63,7 @@ public class LayerEntryImpl implements LayerEntry {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.nebula.paperclips.core.internal.LayerEntry#getTarget()
 	 */
 	public Print getTarget() {
@@ -70,24 +72,23 @@ public class LayerEntryImpl implements LayerEntry {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.nebula.paperclips.core.internal.LayerEntry#getHorizontalAlignment
-	 * ()
+	 *
+	 * @see org.eclipse.nebula.paperclips.core.internal.LayerEntry#
+	 * getHorizontalAlignment ()
 	 */
 	public int getHorizontalAlignment() {
 		return align;
 	}
 
 	private static int checkAlign(int align) {
-		return PaperClipsUtil.firstMatch(align, new int[] { SWT.LEFT,
-				SWT.CENTER, SWT.RIGHT }, SWT.LEFT);
+		return PaperClipsUtil.firstMatch(align,
+				new int[] { SWT.LEFT, SWT.CENTER, SWT.RIGHT }, SWT.LEFT);
 	}
 
 	/**
 	 * @param device
 	 * @param gc
-	 * @return
+	 * @return the iterator
 	 */
 	public LayerEntryIterator iterator(Device device, GC gc) {
 		return new LayerEntryIteratorImpl(this, device, gc);

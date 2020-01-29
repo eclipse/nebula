@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Text;
 /**
  * Snippet for NumberFormatter : DataBinding
  */
+@SuppressWarnings("deprecation")
 public class NumberFormatterDataBindingSnippet {
 	static class Person {
 		String name;

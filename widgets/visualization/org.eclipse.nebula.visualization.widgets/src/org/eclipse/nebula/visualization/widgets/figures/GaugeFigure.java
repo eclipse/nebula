@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2010 Oak Ridge National Laboratory.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 package org.eclipse.nebula.visualization.widgets.figures;
 
@@ -63,6 +66,12 @@ public class GaugeFigure extends AbstractRoundRampedFigure {
 	private Label valueLabel;
 	private Boolean support3D;
 	
+	private Label unitLabel;
+	private String unit;
+	
+	private Label titleLabel;
+	private String title;
+	
 	public GaugeFigure() {
 		super();
 		transparent = true;
@@ -72,6 +81,12 @@ public class GaugeFigure extends AbstractRoundRampedFigure {
 		
 		valueLabel = new Label();	
 		valueLabel.setFont(DEFAULT_LABEL_FONT);
+		
+		unitLabel = new Label();
+		unitLabel.setFont(DEFAULT_LABEL_FONT);
+		
+		titleLabel = new Label();
+		titleLabel.setFont(DEFAULT_LABEL_FONT);
 		
 		needle = new Needle();
 		needle.setFill(true);
@@ -84,6 +99,8 @@ public class GaugeFigure extends AbstractRoundRampedFigure {
 		add(ramp, GaugeLayout.RAMP);
 		add(scale, GaugeLayout.SCALE);		
 		add(valueLabel, GaugeLayout.VALUE_LABEL);
+		add(unitLabel, GaugeLayout.UNIT_LABEL);
+		add(titleLabel, GaugeLayout.TITLE_LABEL);
 		add(needle, GaugeLayout.NEEDLE);
 		add(needleCenter, GaugeLayout.NEEDLE_CENTER);		
 		addFigureListener(new FigureListener() {			
@@ -147,9 +164,6 @@ public class GaugeFigure extends AbstractRoundRampedFigure {
 			final double LR_FILL_PART = 8.5d/10d;
 			final double UP_ANGLE = 0d * Math.PI/180d;
 			final double DOWN_ANGLE = 35d * Math.PI/180d;
-			//add this to eliminate the repaint bug on Mac
-
-//			graphics.fillOval(new Rectangle());
 
 			Pattern glossyPattern = GraphicsUtil.createScaledPattern(graphics, Display.getCurrent(), 
 					area.x + area.width/2, (float)(area.y + area.height/2 - R * UD_FILL_PART),
@@ -209,6 +223,38 @@ public class GaugeFigure extends AbstractRoundRampedFigure {
 		return effect3D;
 	}
 	
+	/**
+	 * @return the displayed unit
+	 */
+	public String getUnit() {
+		return unit;
+	}
+	
+	/**
+	 * @param unit unit that will be displayed above the value label
+	 */
+	public void setUnit(String unit) {
+		this.unit = unit;
+		unitLabel.setText(unit);		
+	}
+	
+	/**
+	 * @return the title associated to this gauge
+	 */
+	public String getTitle() {
+		return title;
+	}
+	
+	/**
+	 * @param title title that will be displayed under the value label
+	 */
+	public void setTitle(String title) {
+		this.title = title;
+		titleLabel.setText(title);
+	}
+
+
+
 	class Needle extends Polygon {
 		public Needle() {
 			setBackgroundColor(DEFAULT_NEEDLE_COLOR);
@@ -232,9 +278,6 @@ public class GaugeFigure extends AbstractRoundRampedFigure {
 			if(support3D == null)
 				support3D = GraphicsUtil.testPatternSupported(graphics);
 			if(effect3D && support3D){		
-				//add this to eliminate the repaint bug on Mac
-//				graphics.fillOval(new Rectangle());
-
 					pattern = GraphicsUtil.createScaledPattern(graphics, Display.getCurrent(), bounds.x, bounds.y,
 							bounds.x + bounds.width, bounds.y + bounds.height, WHITE_COLOR, BORDER_COLOR);
 					graphics.setBackgroundPattern(pattern);							
@@ -260,12 +303,18 @@ public class GaugeFigure extends AbstractRoundRampedFigure {
 		public static final String NEEDLE_CENTER = "needleCenter";      //$NON-NLS-1$
 		/** Used as a constraint for the value label*/
 		public static final String VALUE_LABEL = "valueLabel";      //$NON-NLS-1$
+		/** Used as a constraint for the unit label*/
+		public static final String UNIT_LABEL = "unitLabel";      //$NON-NLS-1$
+		/** Used as a constraint for the title label*/
+		public static final String TITLE_LABEL = "titleLabel";      //$NON-NLS-1$
 		
 		private RoundScale scale;
 		private RoundScaledRamp ramp;
 		private Polygon needle;
 		private NeedleCenter needleCenter;
 		private Label valueLabel;
+		private Label titleLabel;
+		private Label unitLabel;
 		private PointList needlePoints = new PointList(new int[] {0,0,0,0,0,0});
 		
 		
@@ -281,6 +330,11 @@ public class GaugeFigure extends AbstractRoundRampedFigure {
 				needleCenter = (NeedleCenter) child;
 			else if (constraint.equals(VALUE_LABEL))
 				valueLabel = (Label)child;
+			else if (constraint.equals(TITLE_LABEL))
+				titleLabel = (Label)child;
+			else if (constraint.equals(UNIT_LABEL))
+				unitLabel = (Label)child;
+			
 		}
 
 
@@ -312,11 +366,27 @@ public class GaugeFigure extends AbstractRoundRampedFigure {
 				ramp.setBounds(rampBounds.shrink(area.width/4, area.height/4));
 			}
 			
+
+			
 			if(valueLabel != null) {
 				Dimension labelSize = valueLabel.getPreferredSize();
 				valueLabel.setBounds(new Rectangle(area.x + area.width/2 - labelSize.width/2,
-						area.y + area.height * 7/8 - labelSize.height/2,
+						(int)(area.y + area.height * 6.3f/8 - labelSize.height/2),
 						labelSize.width, labelSize.height));
+			}
+			
+			if(title != null) {
+				Dimension titleSize = titleLabel.getPreferredSize();
+				titleLabel.setBounds(new Rectangle(area.x + area.width/2 - titleSize.width/2,
+						(int)(area.y + area.height * 7.1f/8 - titleSize.height/2),
+						titleSize.width, titleSize.height));
+			}
+			
+			if(unit != null) {
+				Dimension unitSize = unitLabel.getPreferredSize();
+				unitLabel.setBounds(new Rectangle(area.x + area.width/2 - unitSize.width/2,
+						(int)(area.y + area.height * 5.5f/8 - unitSize.height/2),
+						unitSize.width, unitSize.height));
 			}
 			
 			if(needle != null && scale != null) {

@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2004, 2007 Boeing.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Boeing - initial API and implementation
@@ -15,6 +18,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.nebula.widgets.xviewer.IXViewerFactory;
 import org.eclipse.nebula.widgets.xviewer.IXViewerLabelProvider;
@@ -34,8 +38,6 @@ import org.eclipse.nebula.widgets.xviewer.util.Pair;
 import org.eclipse.nebula.widgets.xviewer.util.XViewerException;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.TreeColumn;
 
 /**
@@ -69,7 +71,7 @@ public class CustomizeManager {
       xViewerFactory.getXViewerCustomMenu().init(xViewer);
    }
 
-   private final Map<String, XViewerColumn> oldNameToColumnId = new HashMap<String, XViewerColumn>();
+   private final Map<String, XViewerColumn> oldNameToColumnId = new HashMap<>();
 
    /**
     * Since saved customize data is stored as xml, all the columns need to be resolved to the columns available from the
@@ -86,7 +88,7 @@ public class CustomizeManager {
        * Need to resolve columns with what factory has which gets correct class/subclass of XViewerColumn and allows for
        * removal of old and addition of new columns
        */
-      List<XViewerColumn> resolvedColumns = new ArrayList<XViewerColumn>();
+      List<XViewerColumn> resolvedColumns = new ArrayList<>();
       for (XViewerColumn storedCol : loadedCustData.getColumnData().getColumns()) {
          XViewerColumn resolvedCol = xViewer.getXViewerFactory().getDefaultXViewerColumn(storedCol.getId());
 
@@ -271,7 +273,7 @@ public class CustomizeManager {
       }
    }
 
-   public void appendToStatusLabel(StringBuffer sb) {
+   public void appendToStatusLabel(StringBuilder sb) {
       if (currentCustData != null && currentCustData.getName() != null) {
          sb.append(XViewerText.get("label.custom", currentCustData.getName())); //$NON-NLS-1$
       }
@@ -284,7 +286,7 @@ public class CustomizeManager {
       CustomizeData custData = new CustomizeData();
       custData.setName(CustomizeManager.CURRENT_LABEL);
       custData.setNameSpace(xViewer.getXViewerFactory().getNamespace());
-      List<XViewerColumn> columns = new ArrayList<XViewerColumn>(15);
+      List<XViewerColumn> columns = new ArrayList<>(15);
       for (Integer index : xViewer.getTree().getColumnOrder()) {
          TreeColumn treeCol = xViewer.getTree().getColumn(index);
          XViewerColumn xCol = (XViewerColumn) treeCol.getData();
@@ -317,7 +319,7 @@ public class CustomizeManager {
    }
 
    public List<XViewerColumn> getCurrentTableColumnsInOrder() {
-      List<XViewerColumn> columns = new ArrayList<XViewerColumn>(15);
+      List<XViewerColumn> columns = new ArrayList<>(15);
       for (Integer index : xViewer.getTree().getColumnOrder()) {
          TreeColumn treeCol = xViewer.getTree().getColumn(index);
          XViewerColumn xCol = (XViewerColumn) treeCol.getData();
@@ -327,7 +329,7 @@ public class CustomizeManager {
    }
 
    public List<XViewerColumn> getCurrentVisibleTableColumns() {
-      List<XViewerColumn> columns = new ArrayList<XViewerColumn>(15);
+      List<XViewerColumn> columns = new ArrayList<>(15);
       for (XViewerColumn xCol : getCurrentTableColumns()) {
          if (xCol.isShow()) {
             columns.add(xCol);
@@ -337,7 +339,7 @@ public class CustomizeManager {
    }
 
    public List<XViewerColumn> getCurrentHiddenTableColumns() {
-      List<XViewerColumn> columns = new ArrayList<XViewerColumn>(15);
+      List<XViewerColumn> columns = new ArrayList<>(15);
       for (XViewerColumn xCol : getCurrentTableColumns()) {
          if (!xCol.isShow()) {
             columns.add(xCol);
@@ -353,7 +355,7 @@ public class CustomizeManager {
     */
    public Map<XViewerColumn, Integer> getCurrentTableColumnsIndex() {
       int[] index = xViewer.getTree().getColumnOrder();
-      Map<XViewerColumn, Integer> xColToColumnIndex = new HashMap<XViewerColumn, Integer>(index.length);
+      Map<XViewerColumn, Integer> xColToColumnIndex = new HashMap<>(index.length);
       for (int x = 0; x < index.length; x++) {
          TreeColumn treeCol = xViewer.getTree().getColumn(index[x]);
          XViewerColumn xCol = (XViewerColumn) treeCol.getData();
@@ -379,7 +381,7 @@ public class CustomizeManager {
             TreeColumn treeCol = xViewer.getTree().getColumn(index);
             XViewerColumn treeXCol = (XViewerColumn) treeCol.getData();
             if (treeXCol.getId().equals(columnId)) {
-               return new Pair<XViewerColumn, Integer>(treeXCol, index);
+               return new Pair<>(treeXCol, index);
             }
          }
       }
@@ -395,7 +397,7 @@ public class CustomizeManager {
       return custData;
    }
 
-   public void getSortingStr(StringBuffer sb) {
+   public void getSortingStr(StringBuilder sb) {
       if (currentCustData.getSortingData().isSorting()) {
          List<XViewerColumn> cols = getSortXCols();
          if (cols.isEmpty()) {
@@ -436,7 +438,7 @@ public class CustomizeManager {
    }
 
    public List<CustomizeData> getSavedCustDatas() throws Exception {
-      List<CustomizeData> custDatas = new ArrayList<CustomizeData>();
+      List<CustomizeData> custDatas = new ArrayList<>();
       for (CustomizeData savedCustData : xViewerFactory.getXViewerCustomizations().getSavedCustDatas()) {
          custDatas.add(resolveLoadedCustomizeData(savedCustData));
       }
@@ -525,7 +527,7 @@ public class CustomizeManager {
          TreeColumn column = new TreeColumn(xViewer.getTree(), getSwtAlign(xCol.getAlign()));
          column.setMoveable(true);
          column.setData(xCol);
-         StringBuffer sb = new StringBuffer();
+         StringBuilder sb = new StringBuilder();
          sb.append(xCol.getName());
          if (Strings.isValid(xCol.getDescription()) && !xCol.getDescription().equals(xCol.getName())) {
             sb.append("\n"); //$NON-NLS-1$
@@ -544,10 +546,7 @@ public class CustomizeManager {
          column.setToolTipText(sb.toString());
          column.setText(xCol.getName());
          column.setWidth(xCol.getWidth());
-         column.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-               super.widgetSelected(e);
+         column.addListener(SWT.Selection, e-> {
                // Add sorter if doesn't exist
                if (xViewer.getSorter() == null) {
                   resetDefaultSorter();
@@ -557,7 +556,7 @@ public class CustomizeManager {
                } else if (xViewer.isCtrlKeyDown()) {
                   List<XViewerColumn> currSortCols = currentCustData.getSortingData().getSortXCols(oldNameToColumnId);
                   if (currSortCols == null) {
-                     currSortCols = new ArrayList<XViewerColumn>();
+                     currSortCols = new ArrayList<>();
                      currSortCols.add(xCol);
                   } else {
                      // If already selected this item, reverse the sort
@@ -574,7 +573,7 @@ public class CustomizeManager {
                   currentCustData.getSortingData().setSortXCols(currSortCols);
                } else {
 
-                  List<XViewerColumn> cols = new ArrayList<XViewerColumn>();
+                  List<XViewerColumn> cols = new ArrayList<>();
                   cols.add(xCol);
                   // If sorter already has this column sorted, reverse the sort
                   List<XViewerColumn> currSortCols = currentCustData.getSortingData().getSortXCols(oldNameToColumnId);
@@ -585,7 +584,6 @@ public class CustomizeManager {
                   currentCustData.getSortingData().setSortXCols(cols);
                }
                xViewer.refresh();
-            }
          });
       }
    }

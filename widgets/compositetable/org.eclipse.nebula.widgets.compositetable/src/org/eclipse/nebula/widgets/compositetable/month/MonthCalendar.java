@@ -1,12 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2006 The Pampered Chef and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     The Pampered Chef - initial API and implementation
+ * The Pampered Chef - initial API and implementation
  ******************************************************************************/
 package org.eclipse.nebula.widgets.compositetable.month;
 
@@ -44,18 +47,18 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 /**
- * An IEventEditor implementing a month calendar.  This class is not intended
+ * An IEventEditor implementing a month calendar. This class is not intended
  * to be subclassed.
  */
 public class MonthCalendar extends AbstractEventEditor implements IEventEditor {
 
 	private Date startDate;
-    private WeekHeader weekHeader = null;
-    private Composite weeksHolder = null;
+	private WeekHeader weekHeader = null;
+	private Composite weeksHolder = null;
 	private Week[] weeks;
-    
+
 	/**
-	 * Constructor DayEditor.  Constructs a calendar control that can display
+	 * Constructor DayEditor. Constructs a calendar control that can display
 	 * events on one or more days.
 	 * 
 	 * @param parent
@@ -69,18 +72,18 @@ public class MonthCalendar extends AbstractEventEditor implements IEventEditor {
 	}
 
 	private void initialize() {
-        GridLayout gl = new GridLayout();
-        gl.horizontalSpacing = 0;
-        gl.marginWidth = 0;
-        gl.verticalSpacing = 0;
-        gl.marginHeight = 0;
-        createWeekHeader();
-        this.setLayout(gl);
-        createWeeksHolder();
+		GridLayout gl = new GridLayout();
+		gl.horizontalSpacing = 0;
+		gl.marginWidth = 0;
+		gl.verticalSpacing = 0;
+		gl.marginHeight = 0;
+		createWeekHeader();
+		this.setLayout(gl);
+		createWeeksHolder();
 	}
 
-    /**
-	 * This method initializes weekHeader	
+	/**
+	 * This method initializes weekHeader
 	 *
 	 */
 	private void createWeekHeader() {
@@ -93,19 +96,19 @@ public class MonthCalendar extends AbstractEventEditor implements IEventEditor {
 	}
 
 	/**
-	 * This method initializes composite	
+	 * This method initializes composite
 	 *
 	 */
 	private void createWeeksHolder() {
 		weeksHolder = new Composite(this, SWT.NONE);
-		
+
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.horizontalSpacing = 0;
 		gridLayout.marginWidth = 0;
 		gridLayout.verticalSpacing = 1;
 		gridLayout.marginHeight = 0;
 		weeksHolder.setLayout(gridLayout);
-		
+
 		GridData gd = new GridData();
 		gd.horizontalAlignment = GridData.FILL;
 		gd.grabExcessHorizontalSpace = true;
@@ -115,7 +118,7 @@ public class MonthCalendar extends AbstractEventEditor implements IEventEditor {
 	}
 
 	/**
-	 * This method initializes week	
+	 * This method initializes week
 	 */
 	private Week createWeek() {
 		GridData gd = new GridData();
@@ -127,7 +130,7 @@ public class MonthCalendar extends AbstractEventEditor implements IEventEditor {
 		week.setLayoutData(gd);
 		return week;
 	}
-	
+
 	/**
 	 * Sets the start date for this MonthCalendar.
 	 * <p>
@@ -140,7 +143,7 @@ public class MonthCalendar extends AbstractEventEditor implements IEventEditor {
 	 */
 	public void setStartDate(Date startDate) {
 		checkWidget();
-		
+
 		Calendar c = new GregorianCalendar();
 		c.setTime(startDate);
 		c.set(Calendar.DAY_OF_MONTH, 1);
@@ -151,36 +154,33 @@ public class MonthCalendar extends AbstractEventEditor implements IEventEditor {
 		this.startDate = c.getTime();
 		refresh();
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#getStartDate()
+
+	/** 
+	 * @see org.eclipse.nebula.widgets.compositetable.timeeditor.IEventEditor#getStartDate()
 	 */
 	public Date getStartDate() {
 		checkWidget();
-		
+
 		return startDate;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#refresh(java.util.Date)
+
+	/** 
+	 * @see org.eclipse.nebula.widgets.compositetable.timeeditor.IEventEditor#refresh(java.util.Date)
 	 */
 	public void refresh(Date date) {
 		checkWidget();
-		
+
 		if (date == null) {
 			refresh();
 			return;
 		}
-		
+
 		Calendar currentDay = new GregorianCalendar();
 		currentDay.setTime(startDate);
 		currentDay.set(Calendar.DAY_OF_MONTH, 1);
 		currentDay.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
-		
+
 		Calendar endDay = new GregorianCalendar();
 		endDay.setTime(date);
 		endDay.set(Calendar.HOUR_OF_DAY, 0);
@@ -188,12 +188,12 @@ public class MonthCalendar extends AbstractEventEditor implements IEventEditor {
 		endDay.set(Calendar.SECOND, 0);
 		endDay.set(Calendar.MILLISECOND, 0);
 		Date targetDate = endDay.getTime();
-		
+
 		Day currentDayControl = null;
 		for (int week = 0; week < weeks.length; week++) {
 			for (int day = 0; day < 7; day++) {
 				currentDayControl = weeks[week].getDay(day);
-				
+
 				currentDay.add(Calendar.DAY_OF_MONTH, 1);
 				if (currentDay.getTime().after(targetDate)) {
 					refresh(date, currentDayControl);
@@ -202,7 +202,7 @@ public class MonthCalendar extends AbstractEventEditor implements IEventEditor {
 			}
 		}
 	}
-	
+
 	private void refresh(Date date, Day dayControl) {
 		dayControl.setDate(date);
 		if (eventCountProvider == null || eventContentProvider == null) {
@@ -217,35 +217,33 @@ public class MonthCalendar extends AbstractEventEditor implements IEventEditor {
 		dayControl.setItems(controls);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#refresh()
+	/** 
+	 * @see org.eclipse.nebula.widgets.compositetable.timeeditor.AbstractEventEditor#refresh()
 	 */
 	public void refresh() {
 		checkWidget();
-		
+
 		Calendar c = new GregorianCalendar();
 		c.setTime(startDate);
 		int currentMonth = c.get(Calendar.MONTH);
-		
+
 		Calendar nextMonthCalendar = new GregorianCalendar();
 		nextMonthCalendar.setTime(c.getTime());
 		nextMonthCalendar.add(Calendar.MONTH, 1);
 		Date nextMonth = nextMonthCalendar.getTime();
-		
+
 		c.set(Calendar.DAY_OF_MONTH, 1);
 		c.set(Calendar.DAY_OF_WEEK, c.getFirstDayOfWeek());
-		
-		LinkedList newWeeksArray = new LinkedList();
-		
+
+		LinkedList<Week> newWeeksArray = new LinkedList<>();
+
 		for (int week = 0; c.getTime().before(nextMonth); week++) {
 			if (weeks.length > week) {
 				newWeeksArray.addLast(weeks[week]);
 			} else {
 				Week newWeek = createWeek();
 				newWeeksArray.addLast(newWeek);
-				for (int day=0; day < 7; day++) {
+				for (int day = 0; day < 7; day++) {
 					Day newDay = newWeek.getDay(day);
 					newDay.setMonthPosition(new Point(day, week));
 					newDay.addKeyListener(dayKeyListener);
@@ -254,7 +252,7 @@ public class MonthCalendar extends AbstractEventEditor implements IEventEditor {
 				}
 			}
 			for (int day = 0; day < 7; day++) {
-				Day currentDay = ((Week)newWeeksArray.get(week)).getDay(day);
+				Day currentDay = ((Week) newWeeksArray.get(week)).getDay(day);
 				currentDay.setInCurrentMonth(c.get(Calendar.MONTH) == currentMonth);
 				currentDay.setDayNumber(c.get(Calendar.DAY_OF_MONTH));
 				refresh(c.getTime(), currentDay);
@@ -263,7 +261,7 @@ public class MonthCalendar extends AbstractEventEditor implements IEventEditor {
 			}
 		}
 		if (weeks.length > newWeeksArray.size()) {
-			for (int extraWeek=newWeeksArray.size(); extraWeek < weeks.length; ++extraWeek) {
+			for (int extraWeek = newWeeksArray.size(); extraWeek < weeks.length; ++extraWeek) {
 				weeks[extraWeek].dispose();
 			}
 		}
@@ -272,217 +270,157 @@ public class MonthCalendar extends AbstractEventEditor implements IEventEditor {
 		}
 		weeks = (Week[]) newWeeksArray.toArray(new Week[newWeeksArray.size()]);
 	}
-	
+
 	private EventContentProvider eventContentProvider = null;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#setEventContentProvider(org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventContentProvider)
+	/** 
+	 * @see org.eclipse.nebula.widgets.compositetable.timeeditor.IEventEditor#setEventContentProvider(org.eclipse.nebula.widgets.compositetable.timeeditor.EventContentProvider)
 	 */
 	public void setEventContentProvider(EventContentProvider eventContentProvider) {
 		checkWidget();
-		
+
 		this.eventContentProvider = eventContentProvider;
 	}
-	
+
 	private EventCountProvider eventCountProvider = null;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#setEventCountProvider(org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventCountProvider)
-	 */
+
 	public void setEventCountProvider(EventCountProvider eventCountProvider) {
 		checkWidget();
-		
+
 		this.eventCountProvider = eventCountProvider;
 	}
 
-	/*
-	 * FIXME: To be used when we support full editing
-	 */
-//	private boolean fireEvents(CalendarableItem calendarableItem, List handlers) {
-//		CalendarableItemEvent e = new CalendarableItemEvent();
-//		e.calendarableItem = calendarableItem;
-//		for (Iterator iter = handlers.iterator(); iter.hasNext();) {
-//			CalendarableItemEventHandler handler = (CalendarableItemEventHandler) iter.next();
-//			handler.handleRequest(e);
-//			if (!e.doit) {
-//				break;
-//			}
-//		}
-//		for (Iterator i = handlers.iterator(); i.hasNext();) {
-//			CalendarableItemEventHandler h = (CalendarableItemEventHandler) i.next();
-//			h.requestHandled(e);
-//			if (!e.doit) {
-//				break;
-//			}
-//		}
-//		return e.doit;
-//	}
-	
-	private List deleteHandlers = new ArrayList();
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#addItemDeleteHandler(org.eclipse.jface.examples.databinding.compositetable.day.CalendarableItemEventHandler)
+	private List<CalendarableItemEventHandler> deleteHandlers = new ArrayList<>();
+
+	/** 
+	 * @see org.eclipse.nebula.widgets.compositetable.timeeditor.IEventEditor#addItemDeleteHandler(org.eclipse.nebula.widgets.compositetable.day.CalendarableItemEventHandler)
 	 */
 	public void addItemDeleteHandler(CalendarableItemEventHandler deleteHandler) {
 		checkWidget();
-		
+
 		deleteHandlers.add(deleteHandler);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#removeItemDeleteHandler(org.eclipse.jface.examples.databinding.compositetable.day.CalendarableItemEventHandler)
+	/** 
+	 * @see org.eclipse.nebula.widgets.compositetable.timeeditor.IEventEditor#removeItemDeleteHandler(org.eclipse.nebula.widgets.compositetable.day.CalendarableItemEventHandler)
 	 */
 	public void removeItemDeleteHandler(CalendarableItemEventHandler deleteHandler) {
 		checkWidget();
-		
+
 		deleteHandlers.remove(deleteHandler);
 	}
-	
-	private List disposeHandlers = new ArrayList();
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#addItemDisposeHandler(org.eclipse.jface.examples.databinding.compositetable.day.CalendarableItemEventHandler)
+
+	private List<CalendarableItemEventHandler> disposeHandlers = new ArrayList<>();
+
+	/** 
+	 * @see org.eclipse.nebula.widgets.compositetable.timeeditor.IEventEditor#addItemDisposeHandler(org.eclipse.nebula.widgets.compositetable.day.CalendarableItemEventHandler)
 	 */
 	public void addItemDisposeHandler(CalendarableItemEventHandler itemDisposeHandler) {
 		checkWidget();
-		
+
 		disposeHandlers.add(itemDisposeHandler);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#removeItemDisposeHandler(org.eclipse.jface.examples.databinding.compositetable.day.CalendarableItemEventHandler)
+	/** 
+	 * @see org.eclipse.nebula.widgets.compositetable.timeeditor.IEventEditor#removeItemDisposeHandler(org.eclipse.nebula.widgets.compositetable.day.CalendarableItemEventHandler)
 	 */
 	public void removeItemDisposeHandler(CalendarableItemEventHandler itemDisposeHandler) {
 		checkWidget();
-		
 		disposeHandlers.remove(itemDisposeHandler);
 	}
-	
-	private List itemEditHandlers = new ArrayList();
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#addItemEditHandler(org.eclipse.jface.examples.databinding.compositetable.day.CalendarableItemEventHandler)
+
+	private List<CalendarableItemEventHandler> itemEditHandlers = new ArrayList<>();
+
+	/** 
+	 * @see org.eclipse.nebula.widgets.compositetable.timeeditor.IEventEditor#addItemEditHandler(org.eclipse.nebula.widgets.compositetable.day.CalendarableItemEventHandler)
 	 */
 	public void addItemEditHandler(CalendarableItemEventHandler handler) {
 		checkWidget();
-		
+
 		itemEditHandlers.add(handler);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#removeItemEditHandler(org.eclipse.jface.examples.databinding.compositetable.day.CalendarableItemEventHandler)
+	/** 
+	 * @see org.eclipse.nebula.widgets.compositetable.timeeditor.IEventEditor#removeItemEditHandler(org.eclipse.nebula.widgets.compositetable.day.CalendarableItemEventHandler)
 	 */
 	public void removeItemEditHandler(CalendarableItemEventHandler handler) {
 		checkWidget();
-		
+
 		itemEditHandlers.remove(handler);
 	}
-	
-	private List selectionChangeListeners = new ArrayList();
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#addSelectionChangeListener(org.eclipse.jface.examples.databinding.compositetable.day.CalendarableSelectionChangeListener)
+
+	private List<CalendarableSelectionChangeListener> selectionChangeListeners = new ArrayList<>();
+
+
+	/** 
+	 * @see org.eclipse.nebula.widgets.compositetable.timeeditor.IEventEditor#addSelectionChangeListener(org.eclipse.nebula.widgets.compositetable.day.CalendarableSelectionChangeListener)
 	 */
 	public void addSelectionChangeListener(CalendarableSelectionChangeListener l) {
 		checkWidget();
-		
+
 		selectionChangeListeners.add(l);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#removeSelectionChangeListener(org.eclipse.jface.examples.databinding.compositetable.day.CalendarableSelectionChangeListener)
-	 */
 	public void removeSelectionChangeListener(CalendarableSelectionChangeListener l) {
 		checkWidget();
-		
+
 		selectionChangeListeners.remove(l);
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#fireDelete(org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableItem)
+
+	/** 
+	 * @see org.eclipse.nebula.widgets.compositetable.timeeditor.IEventEditor#fireDelete(org.eclipse.nebula.widgets.compositetable.timeeditor.CalendarableItem)
 	 */
 	public boolean fireDelete(CalendarableItem toDelete) {
 		checkWidget();
-		
-		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#setTimeBreakdown(int,
-	 *      int)
+	/** 
+	 * @see org.eclipse.nebula.widgets.compositetable.timeeditor.IEventEditor#setTimeBreakdown(int, int)
 	 */
 	public void setTimeBreakdown(int numberOfDays, int numberOfDivisionsInHour) {
 		checkWidget();
 		// NOOP
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#getNumberOfDays()
+
+	/** 
+	 * @see org.eclipse.nebula.widgets.compositetable.timeeditor.IEventEditor#getNumberOfDays()
 	 */
 	public int getNumberOfDays() {
 		checkWidget();
-		
+
 		// Return the number of days in the current month
 		Calendar c = new GregorianCalendar();
 		c.setTime(startDate);
 		return c.getActualMaximum(Calendar.DAY_OF_MONTH);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#getNumberOfDivisionsInHour()
+	/** 
+	 * @see org.eclipse.nebula.widgets.compositetable.timeeditor.IEventEditor#getNumberOfDivisionsInHour()
 	 */
 	public int getNumberOfDivisionsInHour() {
 		checkWidget();
-		
 		// NOOP
 		return -1;
 	}
-	
+
 	private MonthCalendarSelectedDay selectedDay = null;
-	
+
 	/**
-	 * Method getSelectedDay.  Returns the currently-selected day.
+	 * Method getSelectedDay. Returns the currently-selected day.
 	 * 
 	 * @return The current MonthCalendarSelection which represents the currently-
-	 * selected day.
+	 *         selected day.
 	 */
 	public MonthCalendarSelectedDay getSelectedDay() {
 		checkWidget();
-		
+
 		return selectedDay;
 	}
-	
-	private List focusListeners = new ArrayList();
-	
+
+	private List<FocusListener> focusListeners = new ArrayList<>();
+
 	/**
 	 * Adds the listener to the collection of listeners who will
 	 * be notified when the control gains or loses focus, by sending
@@ -493,13 +431,15 @@ public class MonthCalendar extends AbstractEventEditor implements IEventEditor {
 	 *
 	 * @param listener the listener which should be notified
 	 *
-	 * @exception IllegalArgumentException <ul>
-	 *    <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
-	 * </ul>
-	 * @exception SWTException <ul>
-	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 * </ul>
+	 * @exception IllegalArgumentException
+	 *                <ul>
+	 *                <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
+	 *                </ul>
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                </ul>
 	 *
 	 * @see FocusListener
 	 * @see #removeFocusListener
@@ -507,11 +447,11 @@ public class MonthCalendar extends AbstractEventEditor implements IEventEditor {
 	 */
 	public void addFocusListener(FocusListener listener) {
 		checkWidget();
-		
+
 		super.addFocusListener(listener);
 		focusListeners.add(listener);
 	}
-	
+
 	/**
 	 * Removes the listener from the collection of listeners who will
 	 * be notified when the control gains or loses focus.
@@ -520,13 +460,15 @@ public class MonthCalendar extends AbstractEventEditor implements IEventEditor {
 	 *
 	 * @param listener the listener which should no longer be notified
 	 *
-	 * @exception IllegalArgumentException <ul>
-	 *    <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
-	 * </ul>
-	 * @exception SWTException <ul>
-	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 * </ul>
+	 * @exception IllegalArgumentException
+	 *                <ul>
+	 *                <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
+	 *                </ul>
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                </ul>
 	 *
 	 * @see FocusListener
 	 * @see #addFocusListener
@@ -534,19 +476,28 @@ public class MonthCalendar extends AbstractEventEditor implements IEventEditor {
 	 */
 	public void removeFocusListener(FocusListener listener) {
 		checkWidget();
-		
+
 		super.removeFocusListener(listener);
 		focusListeners.remove(listener);
 	}
-	
+
+	private Day lastSelectedDay;
+
 	private FocusListener dayFocusListener = new FocusListener() {
 		public void focusGained(FocusEvent e) {
 			Day day = (Day) e.widget;
+			if (lastSelectedDay != null && lastSelectedDay != day) {
+				lastSelectedDay.setFocusState(Day.NO_FOCUS);
+				lastSelectedDay.redraw();
+			}
+
 			Point coordinates = day.getMonthPosition();
 			selectedDay = new MonthCalendarSelectedDay(day.getDate(), coordinates);
 			e.data = selectedDay;
-			
-			for (Iterator focusListenersIter = focusListeners.iterator(); focusListenersIter.hasNext();) {
+
+			lastSelectedDay = day;
+
+			for (Iterator<FocusListener> focusListenersIter = focusListeners.iterator(); focusListenersIter.hasNext();) {
 				FocusListener listener = (FocusListener) focusListenersIter.next();
 				listener.focusGained(e);
 			}
@@ -556,36 +507,36 @@ public class MonthCalendar extends AbstractEventEditor implements IEventEditor {
 			Day day = (Day) e.widget;
 			Point coordinates = day.getMonthPosition();
 			e.data = new MonthCalendarSelectedDay(day.getDate(), coordinates);
-			
-			for (Iterator focusListenersIter = focusListeners.iterator(); focusListenersIter.hasNext();) {
+
+			for (Iterator<FocusListener> focusListenersIter = focusListeners.iterator(); focusListenersIter.hasNext();) {
 				FocusListener listener = (FocusListener) focusListenersIter.next();
 				listener.focusLost(e);
 			}
 		}
 	};
-	
-	private List mouseListeners = new ArrayList();
-	
-	/* (non-Javadoc)
+
+	private List<MouseListener> mouseListeners = new ArrayList<>();
+
+	/** 
 	 * @see org.eclipse.swt.widgets.Control#addMouseListener(org.eclipse.swt.events.MouseListener)
 	 */
 	public void addMouseListener(MouseListener listener) {
 		checkWidget();
-		
+
 		super.addMouseListener(listener);
 		mouseListeners.add(listener);
 	}
-	
-	/* (non-Javadoc)
+
+	/** 
 	 * @see org.eclipse.swt.widgets.Control#removeMouseListener(org.eclipse.swt.events.MouseListener)
 	 */
 	public void removeMouseListener(MouseListener listener) {
 		checkWidget();
-		
+
 		super.removeMouseListener(listener);
 		mouseListeners.remove(listener);
 	}
-	
+
 	private MouseListener dayMouseListener = new MouseListener() {
 		private Day getDay(MouseEvent e) {
 			Control control = (Control) e.widget;
@@ -595,43 +546,46 @@ public class MonthCalendar extends AbstractEventEditor implements IEventEditor {
 			Day day = (Day) control;
 			return day;
 		}
+
 		public void mouseDown(MouseEvent e) {
 			Day day = getDay(e);
 			Point coordinates = day.getMonthPosition();
 			e.data = new MonthCalendarSelectedDay(day.getDate(), coordinates);
 
-			for (Iterator mouseListenersIter = mouseListeners.iterator(); mouseListenersIter.hasNext();) {
+			for (Iterator<MouseListener> mouseListenersIter = mouseListeners.iterator(); mouseListenersIter.hasNext();) {
 				MouseListener listener = (MouseListener) mouseListenersIter.next();
 				listener.mouseDown(e);
 			}
 		}
+
 		public void mouseUp(MouseEvent e) {
 			Day day = getDay(e);
 			Point coordinates = day.getMonthPosition();
 			e.data = new MonthCalendarSelectedDay(day.getDate(), coordinates);
-			
-			for (Iterator mouseListenersIter = mouseListeners.iterator(); mouseListenersIter.hasNext();) {
+
+			for (Iterator<MouseListener> mouseListenersIter = mouseListeners.iterator(); mouseListenersIter.hasNext();) {
 				MouseListener listener = (MouseListener) mouseListenersIter.next();
 				listener.mouseUp(e);
 			}
 		}
+
 		public void mouseDoubleClick(MouseEvent e) {
 			Day day = getDay(e);
 			Point coordinates = day.getMonthPosition();
 			e.data = new MonthCalendarSelectedDay(day.getDate(), coordinates);
-			
-			for (Iterator mouseListenersIter = mouseListeners.iterator(); mouseListenersIter.hasNext();) {
+
+			for (Iterator<MouseListener> mouseListenersIter = mouseListeners.iterator(); mouseListenersIter.hasNext();) {
 				MouseListener listener = (MouseListener) mouseListenersIter.next();
 				listener.mouseDoubleClick(e);
 			}
 		}
 	};
 
-	private List keyListeners = new ArrayList();
-	
+	private List<KeyListener> keyListeners = new ArrayList<>();
+
 	/**
 	 * Adds the listener to the collection of listeners who will
-	 * be notified when keys are pressed and released on the system keyboard, by 
+	 * be notified when keys are pressed and released on the system keyboard, by
 	 * sending it one of the messages defined in the <code>KeyListener</code>
 	 * interface.
 	 * <p>
@@ -644,19 +598,21 @@ public class MonthCalendar extends AbstractEventEditor implements IEventEditor {
 	 *
 	 * @param listener the listener which should be notified
 	 *
-	 * @exception IllegalArgumentException <ul>
-	 *    <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
-	 * </ul>
-	 * @exception SWTException <ul>
-	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 * </ul>
+	 * @exception IllegalArgumentException
+	 *                <ul>
+	 *                <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
+	 *                </ul>
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                </ul>
 	 *
 	 * @see org.eclipse.swt.widgets.Control#addKeyListener(org.eclipse.swt.events.KeyListener)
 	 */
 	public void addKeyListener(KeyListener listener) {
 		checkWidget();
-		
+
 		super.addKeyListener(listener);
 		keyListeners.add(listener);
 	}
@@ -667,13 +623,15 @@ public class MonthCalendar extends AbstractEventEditor implements IEventEditor {
 	 *
 	 * @param listener the listener which should no longer be notified
 	 *
-	 * @exception IllegalArgumentException <ul>
-	 *    <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
-	 * </ul>
-	 * @exception SWTException <ul>
-	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 * </ul>
+	 * @exception IllegalArgumentException
+	 *                <ul>
+	 *                <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
+	 *                </ul>
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                </ul>
 	 *
 	 * @see KeyListener
 	 * @see #addKeyListener
@@ -681,7 +639,7 @@ public class MonthCalendar extends AbstractEventEditor implements IEventEditor {
 	 */
 	public void removeKeyListener(KeyListener listener) {
 		checkWidget();
-		
+
 		super.removeKeyListener(listener);
 		keyListeners.remove(listener);
 	}
@@ -691,8 +649,8 @@ public class MonthCalendar extends AbstractEventEditor implements IEventEditor {
 			Day day = (Day) e.widget;
 			Point coordinates = day.getMonthPosition();
 			e.data = new MonthCalendarSelectedDay(day.getDate(), coordinates);
-			
-			for (Iterator keyListenersIter = keyListeners.iterator(); keyListenersIter.hasNext();) {
+
+			for (Iterator<KeyListener> keyListenersIter = keyListeners.iterator(); keyListenersIter.hasNext();) {
 				KeyListener listener = (KeyListener) keyListenersIter.next();
 				listener.keyPressed(e);
 			}
@@ -700,52 +658,102 @@ public class MonthCalendar extends AbstractEventEditor implements IEventEditor {
 			if (!e.doit) {
 				return;
 			}
-			
+
 			switch (e.keyCode) {
-			case SWT.ARROW_UP:
-				if (coordinates.y > 0) {
-					Day newDay = weeks[coordinates.y-1].getDay(coordinates.x);
-					newDay.setFocus();
-				}
-				return;
-			case SWT.ARROW_DOWN:
-				if (coordinates.y < weeks.length-1) {
-					Day newDay = weeks[coordinates.y+1].getDay(coordinates.x);
-					newDay.setFocus();
-				}
-				return;
+				case SWT.ARROW_UP:
+					if (coordinates.y > 0) {
+						Day newDay = weeks[coordinates.y - 1].getDay(coordinates.x);
+						newDay.setFocus();
+					}
+					return;
+				case SWT.ARROW_DOWN:
+					if (coordinates.y < weeks.length - 1) {
+						Day newDay = weeks[coordinates.y + 1].getDay(coordinates.x);
+						newDay.setFocus();
+					}
+					return;
 			}
 		}
-		
-		/* (non-Javadoc)
+
+
+		/** 
 		 * @see org.eclipse.swt.events.KeyAdapter#keyReleased(org.eclipse.swt.events.KeyEvent)
 		 */
 		public void keyReleased(KeyEvent e) {
 			Day day = (Day) e.widget;
 			Point coordinates = day.getMonthPosition();
 			e.data = new MonthCalendarSelectedDay(day.getDate(), coordinates);
-			
-			for (Iterator keyListenersIter = keyListeners.iterator(); keyListenersIter.hasNext();) {
+
+			for (Iterator<KeyListener> keyListenersIter = keyListeners.iterator(); keyListenersIter.hasNext();) {
 				KeyListener listener = (KeyListener) keyListenersIter.next();
 				listener.keyReleased(e);
 			}
 
 			// No need for this logic here yet, but leaving it commented
 			// as a reminder...
-			
+
 			// if (!e.doit) return;
 		}
 	};
-	
-	/* (non-Javadoc)
+
+
+	/** 
 	 * @see org.eclipse.swt.widgets.Composite#setFocus()
 	 */
 	public boolean setFocus() {
 		checkWidget();
-		
-		Day newDay = weeks[0].getDay(0);
+		int week = 0;
+		int day = 0;
+		if (selectedDay != null) {
+			Point position = selectedDay.coordinates;
+			week = position.y;
+			day = position.x;
+		} else {
+			Calendar cal = GregorianCalendar.getInstance();
+			week = cal.get(Calendar.WEEK_OF_MONTH) - 1;
+			day = cal.get(Calendar.DAY_OF_WEEK) - 1;
+		}
+		Day newDay = weeks[week].getDay(day);
 		return newDay.setFocus();
 	}
 
+	public void select(Date newDate) {
+		Calendar cal = GregorianCalendar.getInstance();
+		cal.setTime(newDate);
+		int newMonth = cal.get(Calendar.MONTH);
+		int week = cal.get(Calendar.WEEK_OF_MONTH) - 1;
+		int day = cal.get(Calendar.DAY_OF_WEEK) - 1;
 
-} // @jve:decl-index=0:visual-constraint="10,10"
+		Point coords = new Point(day, week);
+		MonthCalendarSelectedDay newSelectedDay = new MonthCalendarSelectedDay(newDate, coords);
+
+		int state = Day.NONACTIVE_FOCUS;
+
+		MonthCalendarSelectedDay oldSelectedDay = getSelectedDay();
+		if (oldSelectedDay != null) {
+			Day oldDay = weeks[oldSelectedDay.coordinates.y].getDay(oldSelectedDay.coordinates.x);
+			state = oldDay.getFocusState();
+			oldDay.setFocusState(Day.NO_FOCUS);
+			oldDay.redraw();
+		}
+
+		cal.clear();
+
+		cal.setTime(startDate);
+		int currentMonth = cal.get(Calendar.MONTH);
+		if (currentMonth != newMonth) {
+			setStartDate(newDate);
+		}
+
+		Day newDay = weeks[week].getDay(day);
+
+		if (state == Day.FOCUS) {
+			newDay.setFocus();
+		} else {
+			newDay.setFocusState(Day.NONACTIVE_FOCUS);
+			newDay.redraw();
+			selectedDay = newSelectedDay;
+		}
+	}
+
+} 

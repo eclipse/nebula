@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2004, 2007 Boeing.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Boeing - initial API and implementation
@@ -20,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.GroupMarker;
@@ -59,19 +63,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.TreeColumn;
@@ -110,14 +107,21 @@ public class XViewerCustomMenu {
    public void init(final XViewer xviewer) {
       this.xViewer = xviewer;
       setupActions();
-      xViewer.getTree().addKeyListener(new KeySelectedListener());
-      xViewer.getTree().addDisposeListener(new DisposeListener() {
-         @Override
-         public void widgetDisposed(org.eclipse.swt.events.DisposeEvent e) {
+      xViewer.getTree().addListener(SWT.KeyUp, e-> {
+          if (e.keyCode == 'c' && e.stateMask == (SWT.CONTROL | SWT.SHIFT)) {
+              performCopyColumnCells();
+           } else if (e.keyCode == 'b' && e.stateMask == (SWT.CONTROL | SWT.SHIFT)) {
+              performViewOrCopyCell(Option.Copy);
+           } else if (e.keyCode == 'v' && e.stateMask == (SWT.CONTROL | SWT.SHIFT)) {
+              performViewOrCopyCell(Option.View);
+           } else if (e.keyCode == 'c' && e.stateMask == SWT.CONTROL) {
+              performCopy();
+           }
+      });
+      xViewer.getTree().addListener(SWT.Dispose, e-> {
             if (clipboard != null) {
                clipboard.dispose();
             }
-         }
       });
       xViewer.getMenuManager().addMenuListener(new IMenuListener() {
          @Override
@@ -131,13 +135,10 @@ public class XViewerCustomMenu {
             }
          }
       });
-      xViewer.getTree().addListener(SWT.MenuDetect, new Listener() {
-         @Override
-         public void handleEvent(Event event) {
+      xViewer.getTree().addListener(SWT.MenuDetect, event -> {
             Point pt = Display.getCurrent().map(null, xViewer.getTree(), new Point(event.x, event.y));
             Rectangle clientArea = xViewer.getTree().getClientArea();
             headerMouseClick = clientArea.y <= pt.y && pt.y < (clientArea.y + xViewer.getTree().getHeaderHeight());
-         }
       });
    }
 
@@ -217,7 +218,7 @@ public class XViewerCustomMenu {
 
          });
       } else {
-         Map<String, TreeColumn> nameToColumn = new HashMap<String, TreeColumn>();
+         Map<String, TreeColumn> nameToColumn = new HashMap<>();
          for (final TreeColumn treeColumn : editableColumns) {
             nameToColumn.put(treeColumn.getText(), treeColumn);
          }
@@ -251,12 +252,7 @@ public class XViewerCustomMenu {
       setupActions();
       final MenuItem item = new MenuItem(popupMenu, SWT.CASCADE);
       item.setText(XViewerText.get("menu.view_report")); //$NON-NLS-1$
-      item.addSelectionListener(new SelectionAdapter() {
-         @Override
-         public void widgetSelected(SelectionEvent e) {
-            viewTableReport.run();
-         }
-      });
+      item.addListener(SWT.Selection, e->viewTableReport.run());
    }
 
    public void addFilterMenuBlock(Menu popupMenu) {
@@ -268,45 +264,25 @@ public class XViewerCustomMenu {
    public void createFilterByColumnMenuItem(Menu popupMenu) {
       final MenuItem item = new MenuItem(popupMenu, SWT.CASCADE);
       item.setText(XViewerText.get("menu.column_filter")); //$NON-NLS-1$
-      item.addSelectionListener(new SelectionAdapter() {
-         @Override
-         public void widgetSelected(SelectionEvent e) {
-            performFilterByColumn();
-         }
-      });
+      item.addListener(SWT.Selection, e->performFilterByColumn());
    }
 
    public void createFilterByValueMenuItem(Menu popupMenu) {
       final MenuItem item = new MenuItem(popupMenu, SWT.CASCADE);
       item.setText(XViewerText.get("menu.value_filter")); //$NON-NLS-1$
-      item.addSelectionListener(new SelectionAdapter() {
-         @Override
-         public void widgetSelected(SelectionEvent e) {
-            performFilterByValue();
-         }
-      });
+      item.addListener(SWT.Selection, e->performFilterByValue());
    }
 
    public void createClearAllFiltersMenuItem(Menu popupMenu) {
       final MenuItem item = new MenuItem(popupMenu, SWT.CASCADE);
       item.setText(XViewerText.get("menu.clear_filters")); //$NON-NLS-1$
-      item.addSelectionListener(new SelectionAdapter() {
-         @Override
-         public void widgetSelected(SelectionEvent e) {
-            xViewer.getCustomizeMgr().clearFilters();
-         }
-      });
+      item.addListener(SWT.Selection, e->xViewer.getCustomizeMgr().clearFilters());
    }
 
    public void createClearAllSortingMenuItem(Menu popupMenu) {
       final MenuItem item = new MenuItem(popupMenu, SWT.CASCADE);
       item.setText(XViewerText.get("menu.clear_sorts")); //$NON-NLS-1$
-      item.addSelectionListener(new SelectionAdapter() {
-         @Override
-         public void widgetSelected(SelectionEvent e) {
-            xViewer.getCustomizeMgr().clearSorter();
-         }
-      });
+      item.addListener(SWT.Selection, e-> xViewer.getCustomizeMgr().clearSorter());
    }
 
    public void addCopyViewMenuBlock(Menu popupMenu) {
@@ -318,43 +294,23 @@ public class XViewerCustomMenu {
    public void createCopyRowsMenuItem(Menu popupMenu) {
       final MenuItem item = new MenuItem(popupMenu, SWT.CASCADE);
       item.setText(XViewerText.get("menu.copy_row")); //$NON-NLS-1$
-      item.addSelectionListener(new SelectionAdapter() {
-         @Override
-         public void widgetSelected(SelectionEvent e) {
-            performCopy();
-         }
-      });
+      item.addListener(SWT.Selection, e->performCopy());
    }
 
    public void createCopyCellsMenuItem(Menu popupMenu) {
       final MenuItem item = new MenuItem(popupMenu, SWT.CASCADE);
       item.setText(XViewerText.get("menu.copy_column")); //$NON-NLS-1$
-      item.addSelectionListener(new SelectionAdapter() {
-         @Override
-         public void widgetSelected(SelectionEvent e) {
-            performCopyColumnCells();
-         }
-      });
+      item.addListener(SWT.Selection, e->performCopyColumnCells());
    }
 
    public void createViewSelectedCellMenuItem(Menu popupMenu) {
       setupActions();
       final MenuItem item = new MenuItem(popupMenu, SWT.CASCADE);
       item.setText(XViewerText.get("menu.copy_celldata")); //$NON-NLS-1$
-      item.addSelectionListener(new SelectionAdapter() {
-         @Override
-         public void widgetSelected(SelectionEvent e) {
-            copySelectedCell.run();
-         }
-      });
+      item.addListener(SWT.Selection, e->copySelectedCell.run());
       final MenuItem item1 = new MenuItem(popupMenu, SWT.CASCADE);
       item1.setText(XViewerText.get("menu.view_celldata")); //$NON-NLS-1$
-      item1.addSelectionListener(new SelectionAdapter() {
-         @Override
-         public void widgetSelected(SelectionEvent e) {
-            viewSelectedCell.run();
-         }
-      });
+      item1.addListener(SWT.Selection, e->viewSelectedCell.run());
    }
 
    private static PatternFilter patternFilter = new XViewerPatternFilter();
@@ -371,7 +327,7 @@ public class XViewerCustomMenu {
          //         System.out.println("Selected column to add before " + insertXCol);
          CustomizeData custData = xViewer.getCustomizeMgr().generateCustDataFromTable();
          List<XViewerColumn> xCols = custData.getColumnData().getColumns();
-         List<XViewerColumn> newXCols = new ArrayList<XViewerColumn>();
+         List<XViewerColumn> newXCols = new ArrayList<>();
          // if insert col == null; insert new columns at end; set insert col to first non-shown col
          if (insertXCol == null) {
             for (XViewerColumn currXCol : xCols) {
@@ -418,7 +374,7 @@ public class XViewerCustomMenu {
          //         System.out.println("Selected column to add before " + insertXCol);
          CustomizeData custData = xViewer.getCustomizeMgr().generateCustDataFromTable();
          List<XViewerColumn> xCols = custData.getColumnData().getColumns();
-         List<XViewerColumn> newXCols = new ArrayList<XViewerColumn>();
+         List<XViewerColumn> newXCols = new ArrayList<>();
          for (XViewerColumn currXCol : xCols) {
             if (currXCol.equals(insertXCol)) {
                for (Object obj : dialog.getChecked()) {
@@ -449,7 +405,7 @@ public class XViewerCustomMenu {
          XViewerLib.popup(XViewerText.get("error"), XViewerText.get("error.no_items.sum")); //$NON-NLS-1$ //$NON-NLS-2$
          return;
       }
-      Set<String> values = new HashSet<String>();
+      Set<String> values = new HashSet<>();
       for (TreeItem item : items) {
          for (int x = 0; x < xViewer.getTree().getColumnCount(); x++) {
             if (xViewer.getTree().getColumn(x).equals(treeCol)) {
@@ -479,7 +435,7 @@ public class XViewerCustomMenu {
          XViewerLib.popup(XViewerText.get("error"), XViewerText.get("error.no_items.sum")); //$NON-NLS-1$ //$NON-NLS-2$
          return;
       }
-      List<String> values = new ArrayList<String>();
+      List<String> values = new ArrayList<>();
       for (TreeItem item : items) {
          for (int x = 0; x < xViewer.getTree().getColumnCount(); x++) {
             if (xViewer.getTree().getColumn(x).equals(treeCol)) {
@@ -507,7 +463,7 @@ public class XViewerCustomMenu {
          XViewerLib.popup(XViewerText.get("error"), XViewerText.get("error.no_items.average")); //$NON-NLS-1$ //$NON-NLS-2$
          return;
       }
-      List<String> values = new ArrayList<String>();
+      List<String> values = new ArrayList<>();
       for (TreeItem item : items) {
          for (int x = 0; x < xViewer.getTree().getColumnCount(); x++) {
             if (xViewer.getTree().getColumn(x).equals(treeCol)) {
@@ -524,7 +480,7 @@ public class XViewerCustomMenu {
       //      System.out.println("Hide column " + insertXCol);
       CustomizeData custData = xViewer.getCustomizeMgr().generateCustDataFromTable();
       List<XViewerColumn> xCols = custData.getColumnData().getColumns();
-      List<XViewerColumn> newXCols = new ArrayList<XViewerColumn>();
+      List<XViewerColumn> newXCols = new ArrayList<>();
       for (XViewerColumn currXCol : xCols) {
          if (currXCol.equals(insertXCol)) {
             currXCol.setShow(false);
@@ -635,25 +591,7 @@ public class XViewerCustomMenu {
       columnMultiEdit = new ColumnMultiEditAction(xViewer);
    }
 
-   private class KeySelectedListener implements KeyListener {
-      @Override
-      public void keyPressed(KeyEvent e) {
-         // do nothing
-      }
 
-      @Override
-      public void keyReleased(KeyEvent e) {
-         if (e.keyCode == 'c' && e.stateMask == (SWT.CONTROL | SWT.SHIFT)) {
-            performCopyColumnCells();
-         } else if (e.keyCode == 'b' && e.stateMask == (SWT.CONTROL | SWT.SHIFT)) {
-            performViewOrCopyCell(Option.Copy);
-         } else if (e.keyCode == 'v' && e.stateMask == (SWT.CONTROL | SWT.SHIFT)) {
-            performViewOrCopyCell(Option.View);
-         } else if (e.keyCode == 'c' && e.stateMask == SWT.CONTROL) {
-            performCopy();
-         }
-      }
-   }
 
    private void performRemoveSelectedRows() {
       try {
@@ -662,7 +600,7 @@ public class XViewerCustomMenu {
             XViewerLib.popup(XViewerText.get("error"), XViewerText.get("error.no_items")); //$NON-NLS-1$ //$NON-NLS-2$
             return;
          }
-         Set<Object> objs = new HashSet<Object>();
+         Set<Object> objs = new HashSet<>();
          for (TreeItem item : items) {
             objs.add(item.getData());
          }
@@ -679,7 +617,7 @@ public class XViewerCustomMenu {
             XViewerLib.popup(XViewerText.get("error"), XViewerText.get("error.no_items")); //$NON-NLS-1$ //$NON-NLS-2$
             return;
          }
-         Set<Object> keepObjects = new HashSet<Object>();
+         Set<Object> keepObjects = new HashSet<>();
          for (TreeItem item : items) {
             keepObjects.add(item.getData());
          }
@@ -699,7 +637,7 @@ public class XViewerCustomMenu {
    }
 
    private void performFilterByColumn() {
-      Set<TreeColumn> visibleColumns = new HashSet<TreeColumn>();
+      Set<TreeColumn> visibleColumns = new HashSet<>();
       for (TreeColumn treeCol : xViewer.getTree().getColumns()) {
          if (treeCol.getWidth() > 0) {
             visibleColumns.add(treeCol);
@@ -738,13 +676,13 @@ public class XViewerCustomMenu {
    }
 
    private void performCopyColumnCells() {
-      Set<TreeColumn> visibleColumns = new HashSet<TreeColumn>();
+      Set<TreeColumn> visibleColumns = new HashSet<>();
       TreeItem[] items = xViewer.getTree().getSelection();
       if (items.length == 0) {
          XViewerLib.popup(XViewerText.get("error"), XViewerText.get("error.no_selection")); //$NON-NLS-1$ //$NON-NLS-2$
          return;
       }
-      ArrayList<String> textTransferData = new ArrayList<String>();
+      ArrayList<String> textTransferData = new ArrayList<>();
       IXViewerLabelProvider labelProv = (IXViewerLabelProvider) xViewer.getLabelProvider();
       for (TreeColumn treeCol : xViewer.getTree().getColumns()) {
          if (treeCol.getWidth() > 0) {
@@ -773,7 +711,7 @@ public class XViewerCustomMenu {
          return;
       }
       TreeColumn treeCol = (TreeColumn) ld.getResult()[0];
-      StringBuffer sb = new StringBuffer();
+      StringBuilder sb = new StringBuilder();
       for (TreeItem item : items) {
          for (int x = 0; x < xViewer.getTree().getColumnCount(); x++) {
             if (xViewer.getTree().getColumn(x).equals(treeCol)) {
@@ -796,12 +734,12 @@ public class XViewerCustomMenu {
          XViewerLib.popup(XViewerText.get("error"), XViewerText.get("error.no_items")); //$NON-NLS-1$ //$NON-NLS-2$
          return;
       }
-      ArrayList<String> textTransferData = new ArrayList<String>();
+      ArrayList<String> textTransferData = new ArrayList<>();
       IXViewerLabelProvider labelProv = (IXViewerLabelProvider) xViewer.getLabelProvider();
       if (items.length > 0) {
-         StringBuffer sb = new StringBuffer();
+         StringBuilder sb = new StringBuilder();
          for (TreeItem item : items) {
-            List<String> strs = new ArrayList<String>();
+            List<String> strs = new ArrayList<>();
             for (int x = 0; x < xViewer.getTree().getColumnCount(); x++) {
                if (xViewer.getTree().getColumn(x).getWidth() > 0) {
                   String data = labelProv.getColumnText(item.getData(), x);

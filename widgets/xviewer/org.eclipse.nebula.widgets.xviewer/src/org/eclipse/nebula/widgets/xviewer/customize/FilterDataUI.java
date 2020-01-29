@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2004, 2007 Boeing.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Boeing - initial API and implementation
@@ -15,21 +18,16 @@ import org.eclipse.nebula.widgets.xviewer.XViewer;
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 /**
  * Provides UI for display of current filter
- * 
+ *
  * @author Donald G. Dunne
  */
 public class FilterDataUI {
@@ -56,44 +54,28 @@ public class FilterDataUI {
       gd.widthHint = 100;
       filterText.setLayoutData(gd);
 
-      filterText.addKeyListener(new KeyListener() {
-         @Override
-         public void keyPressed(KeyEvent e) {
-            // do nothing
-         }
-
-         @Override
-         public void keyReleased(KeyEvent e) {
-            if (e.keyCode == SWT.CR || e.keyCode == SWT.KEYPAD_CR || filterRealTime) {
-               // System.out.println(e.keyCode);
-               String newText = filterText.getText();
-               xViewer.getCustomizeMgr().setFilterText(newText, isRegularExpression());
-            }
-         }
+      filterText.addListener(SWT.KeyUp, e->  {
+			if (e.keyCode == SWT.CR || e.keyCode == SWT.KEYPAD_CR || filterRealTime) {
+				// System.out.println(e.keyCode);
+				String newText = filterText.getText();
+				xViewer.getCustomizeMgr().setFilterText(newText, isRegularExpression());
+			}
       });
 
       Label filterLabel = new Label(comp, SWT.NONE);
       filterLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.NONE, false, false));
       filterLabel.setImage(XViewerLib.getImage("clear.gif")); //$NON-NLS-1$
-      filterLabel.addListener(SWT.MouseUp, new Listener() {
-         @Override
-         public void handleEvent(Event event) {
+      filterLabel.addListener(SWT.MouseUp, event -> {
             filterText.setText(""); //$NON-NLS-1$
             xViewer.getCustomizeMgr().setFilterText("", isRegularExpression()); //$NON-NLS-1$
-         }
       });
 
       regularExpression = new Button(comp, SWT.CHECK);
       regularExpression.setText(XViewerText.get("regex.prompt")); //$NON-NLS-1$
       regularExpression.setToolTipText(XViewerText.get("regex.prompt.tooltip")); //$NON-NLS-1$
       regularExpression.setLayoutData(new GridData(SWT.RIGHT, SWT.NONE, false, false));
-      regularExpression.addSelectionListener(new SelectionAdapter() {
-
-         @Override
-         public void widgetSelected(SelectionEvent e) {
+      regularExpression.addListener(SWT.Selection, e -> {
             xViewer.getCustomizeMgr().setFilterText(filterText.getText(), isRegularExpression());
-         }
-
       });
 
    }
@@ -128,7 +110,7 @@ public class FilterDataUI {
       xViewer.getCustomizeMgr().setFilterText("", isRegularExpression()); //$NON-NLS-1$
    }
 
-   public void appendToStatusLabel(StringBuffer sb) {
+   public void appendToStatusLabel(StringBuilder sb) {
       if (filterText != null && !filterText.getText().equals("")) { //$NON-NLS-1$
          sb.append(XViewerText.get("status.text_filter")); //$NON-NLS-1$
       }

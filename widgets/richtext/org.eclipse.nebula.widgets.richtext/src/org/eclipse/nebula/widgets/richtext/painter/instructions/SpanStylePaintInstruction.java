@@ -1,10 +1,13 @@
 /*****************************************************************************
- * Copyright (c) 2015 CEA LIST.
+ * Copyright (c) 2015, 2019 CEA LIST.
  *
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *		Dirk Fauth <dirk.fauth@googlemail.com> - Initial API and implementation
@@ -81,9 +84,11 @@ public class SpanStylePaintInstruction implements PaintInstruction, FontMetricsP
 
 	@Override
 	public FontMetrics getFontMetrics(GC gc) {
-		Font currentFont = gc.getFont();
-		this.state.addPreviousFont(currentFont);
-		gc.setFont(ResourceHelper.getFont(currentFont, this.fontType, this.fontSize));
+		if (this.fontSize != null || this.fontType != null) {
+			Font currentFont = gc.getFont();
+			this.state.addPreviousFont(currentFont);
+			gc.setFont(ResourceHelper.getFont(currentFont, this.fontType, this.fontSize));
+		}
 		return gc.getFontMetrics();
 	}
 

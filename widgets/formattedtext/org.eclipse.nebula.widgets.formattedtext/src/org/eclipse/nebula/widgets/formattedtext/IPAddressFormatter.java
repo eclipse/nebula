@@ -1,9 +1,8 @@
 package org.eclipse.nebula.widgets.formattedtext;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 public class IPAddressFormatter extends AbstractFormatter {
@@ -13,7 +12,7 @@ public class IPAddressFormatter extends AbstractFormatter {
 	/** Begin position and end position between which current caret is in */
 	private int begin = 0, end = 0;
 	/** Key listener */
-	protected KeyListener klistener;
+	protected Listener keyListener;
 
 	/**
 	 * An empty constructer.<br>
@@ -28,22 +27,15 @@ public class IPAddressFormatter extends AbstractFormatter {
 				inputCache.append('.');
 		}
 
-		klistener = new KeyListener() {
-			public void keyPressed(KeyEvent e) {
-				int currPos = text.getCaretPosition();
-				int nextBegin = 4 * (currPos / 4 + 1);
-				int nextEnd = nextBegin + 3;
-				if (nextBegin <= 12 && e.character == SPACE)
-					text.setSelection(nextBegin, nextEnd);
-				else
-					return;
-				e.doit = false;
-			}
-
-			public void keyReleased(KeyEvent e) {
-
-			}
-
+		keyListener = e -> {
+			int currPos = text.getCaretPosition();
+			int nextBegin = 4 * (currPos / 4 + 1);
+			int nextEnd = nextBegin + 3;
+			if (nextBegin <= 12 && e.character == SPACE)
+				text.setSelection(nextBegin, nextEnd);
+			else
+				return;
+			e.doit = false;
 		};
 	}
 
@@ -61,7 +53,7 @@ public class IPAddressFormatter extends AbstractFormatter {
 
 	/**
 	 * Test a 1/4 part of the ip address represented in the String format is valid or not
-	 * 
+	 *
 	 * @param ipp the 1/4 part of the address
 	 * @return if valid,return true;else false
 	 */
@@ -84,7 +76,7 @@ public class IPAddressFormatter extends AbstractFormatter {
 	 * Clear a part of the input cache when knocking DEL key.<br>
 	 * Characters are replaced by spaces in the fields, but separators are
 	 * preserved.
-	 * 
+	 *
 	 * @param b beginning index (inclusive)
 	 * @param e end index (exclusive)
 	 * @return Return new position of the cursor
@@ -106,7 +98,7 @@ public class IPAddressFormatter extends AbstractFormatter {
 	 * Clear a part of the input cache when knocking BackSpace key.<br>
 	 * Characters are replaced by spaces in the fields, but separators are
 	 * preserved.
-	 * 
+	 *
 	 * @param b beginning index (inclusive)
 	 * @param e end index (exclusive)
 	 * @return Return new position of the cursor
@@ -159,7 +151,7 @@ public class IPAddressFormatter extends AbstractFormatter {
 	 * Inserts a sequence of characters in the input buffer. The current content
 	 * of the buffer is overrided. The new position of the cursor is computed and
 	 * returned.
-	 * 
+	 *
 	 * @param txt String of characters to insert
 	 * @param pos Starting position of insertion
 	 * @return New position of the cursor
@@ -211,27 +203,27 @@ public class IPAddressFormatter extends AbstractFormatter {
 	 * Called when the formatter is replaced by an other one in the <code>FormattedText</code>
 	 * control. Allow to release ressources like additionnal listeners.
 	 * <p>
-	 * 
+	 *
 	 * Removes the <code>KeyListener</code> on the text widget.
-	 * 
+	 *
 	 * @see ITextFormatter#detach()
 	 */
 	public void detach() {
-		text.removeKeyListener(klistener);
+		text.removeListener(SWT.KeyDown, keyListener);
 	}
 
 	/**
 	 * Sets the <code>Text</code> widget that will be managed by this formatter.
 	 * <p>
-	 * 
+	 *
 	 * The ancestor is overrided to add a key listener on the text widget.
-	 * 
+	 *
 	 * @param text Text widget
 	 * @see ITextFormatter#setText(Text)
 	 */
 	public void setText(Text text) {
 		super.setText(text);
-		text.addKeyListener(klistener);
+		text.addListener(SWT.KeyDown, keyListener);
 	}
 
 	/**
@@ -240,7 +232,7 @@ public class IPAddressFormatter extends AbstractFormatter {
 	 * widget looses focus.
 	 * In case the input is invalid (eg. not an invalid ip address), the edit
 	 * string is returned in place of the display string.
-	 * 
+	 *
 	 * @return display string if valid, edit string else
 	 * @see ITextFormatter#getDisplayString()
 	 */
@@ -253,7 +245,7 @@ public class IPAddressFormatter extends AbstractFormatter {
 	 * This method is called by <code>FormattedText</code> when the <code>Text</code>
 	 * widget gains focus.
 	 * The value returned is the content of the StringBuilder used as cache.
-	 * 
+	 *
 	 * @return edit string
 	 * @see ITextFormatter#getEditString()
 	 */
@@ -264,7 +256,7 @@ public class IPAddressFormatter extends AbstractFormatter {
 	/**
 	 * Returns the current value of the text control if it is a valid ip address.<br>
 	 * If invalid, returns <code>null</code>.
-	 * 
+	 *
 	 * @return current ip address if valid in which the spaces has been removed,
 	 *         <code>null</code> else
 	 * @see ITextFormatter#getValue()
@@ -284,7 +276,7 @@ public class IPAddressFormatter extends AbstractFormatter {
 	/**
 	 * Returns <code>true</code> if current edited value is valid, else returns
 	 * <code>false</code>.
-	 * 
+	 *
 	 * @return true if valid, else false
 	 * @see ITextFormatter#isValid()
 	 */
@@ -300,7 +292,7 @@ public class IPAddressFormatter extends AbstractFormatter {
 
 	/**
 	 * Sets the value to edit. The value provided must be a valid ip address in String format.
-	 * 
+	 *
 	 * @param value new ip address
 	 * @throws IllegalArgumentException if not an invalid ip
 	 * @see ITextFormatter#setValue(java.lang.Object)

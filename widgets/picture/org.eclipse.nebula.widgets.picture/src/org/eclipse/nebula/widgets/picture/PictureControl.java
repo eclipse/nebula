@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (C) 2011 Angelo Zerr <angelo.zerr@gmail.com>, Pascal Leclercq <pascal.leclercq@gmail.com>
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Angelo ZERR - initial API and implementation
@@ -11,8 +14,7 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.picture;
 
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
@@ -27,11 +29,11 @@ public class PictureControl extends AbstractPictureControl<Link> {
 
 	/**
 	 * Constructor for {@link PictureControl} with given SWT style .
-	 * 
+	 *
 	 * @param parent
 	 *            a composite control which will be the parent of the new
 	 *            instance (cannot be null)
-	 * 
+	 *
 	 * @param compositeStyle
 	 *            SWT style of the SWT Composite which host Label+Link controls.
 	 * @param labelStyle
@@ -46,7 +48,7 @@ public class PictureControl extends AbstractPictureControl<Link> {
 
 	/**
 	 * Constructor for {@link PictureControl} with default SWT styles.
-	 * 
+	 *
 	 * @param parent
 	 *            a composite control which will be the parent of the new
 	 *            instance (cannot be null)
@@ -81,22 +83,15 @@ public class PictureControl extends AbstractPictureControl<Link> {
 
 	@Override
 	protected void addModifyImageHandler(Link modifyImageLink) {
-		modifyImageLink.addSelectionListener(new SelectionAdapter() {
-
-			public void widgetSelected(SelectionEvent e) {
-				handleModifyImage();
-			}
+		modifyImageLink.addListener(SWT.Selection, e -> {
+			handleModifyImage();
 		});
 	}
 
 	@Override
 	protected void addDeleteImageHandler(Link deleteImageLink) {
-		deleteImageLink.addSelectionListener(new SelectionAdapter() {
-
-			public void widgetSelected(SelectionEvent e) {
-				handleDeleteImage();
-			}
+		deleteImageLink.addListener(SWT.Selection, e -> {
+			handleDeleteImage();
 		});
-
 	}
 }

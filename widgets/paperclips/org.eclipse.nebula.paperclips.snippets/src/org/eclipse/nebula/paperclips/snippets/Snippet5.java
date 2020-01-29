@@ -1,10 +1,13 @@
 /*
  * Copyright (c) 2006 Matthew Hall and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
  * 
+ * SPDX-License-Identifier: EPL-2.0
+ *
  * Contributors:
  *     Matthew Hall - initial API and implementation
  */
@@ -27,13 +30,11 @@ import org.eclipse.swt.printing.PrintDialog;
 import org.eclipse.swt.printing.PrinterData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 /**
  * Demonstrate use of CellBackgroundProvider.
- * 
+ *
  * @author Matthew
  */
 public class Snippet5 {
@@ -66,7 +67,7 @@ public class Snippet5 {
 
 	/**
 	 * Executes the snippet.
-	 * 
+	 *
 	 * @param args
 	 *            command-line args.
 	 */
@@ -82,19 +83,18 @@ public class Snippet5 {
 		button.setText("Print");
 
 		PrintViewer viewer = new PrintViewer(shell, SWT.BORDER);
-		viewer.getControl().setLayoutData(
-				new GridData(SWT.FILL, SWT.FILL, true, true));
+		viewer.getControl()
+				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		final Print print = createPrint();
 		viewer.setPrint(print);
 
-		button.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				PrintDialog dialog = new PrintDialog(shell, SWT.NONE);
-				PrinterData printerData = dialog.open();
-				if (printerData != null)
-					PaperClips.print(new PrintJob("Snippet5.java", print)
-							.setMargins(72), printerData);
-			}
+		button.addListener(SWT.Selection, event -> {
+			PrintDialog dialog = new PrintDialog(shell, SWT.NONE);
+			PrinterData printerData = dialog.open();
+			if (printerData != null)
+				PaperClips.print(
+						new PrintJob("Snippet5.java", print).setMargins(72),
+						printerData);
 		});
 
 		shell.setVisible(true);

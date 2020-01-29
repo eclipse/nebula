@@ -1,9 +1,12 @@
 /****************************************************************************
- * Copyright (c) 2006-2008 Jeremy Dowdall
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2006-2019 Jeremy Dowdall
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *    Jeremy Dowdall <jeremyd@aspencloud.com> - initial API and implementation
@@ -12,6 +15,7 @@
  *    Baruch Youssin - https://bugs.eclipse.org/bugs/show_bug.cgi?id=261414
  *    Doug Showell - https://bugs.eclipse.org/bugs/show_bug.cgi?id=383589
  *    Bel Razom - https://bugs.eclipse.org/bugs/show_bug.cgi?id=527399
+ *    Stefan Nöbauer - https://bugs.eclipse.org/bugs/show_bug.cgi?id=548149
  *****************************************************************************/
 
 package org.eclipse.nebula.widgets.cdatetime;
@@ -157,6 +161,10 @@ public class CDateTime extends BaseCombo {
 			int sWidth = sRect.x + sRect.width
 					- 2 * spinner.getControl().getBorderWidth() + 1;
 
+			if (gtk && sWidth==0) {
+				sWidth = 67;
+			}			
+			
 			size.x += sWidth;
 			size.x++;
 			size.y += textMarginHeight;
@@ -187,6 +195,10 @@ public class CDateTime extends BaseCombo {
 			int sWidth = sRect.x + sRect.width
 					- 2 * spinner.getControl().getBorderWidth() + 1;
 
+			if (gtk && sWidth==0) {
+				sWidth = 67;
+			}			
+			
 			tSize.x = cRect.width - sWidth;
 
 			text.setBounds(cRect.x, cRect.y + getBorderWidth(), tSize.x,
@@ -234,6 +246,9 @@ public class CDateTime extends BaseCombo {
 
 	private Date cancelDate;
 	private Calendar calendar;
+	private Calendar minDate;
+	private Calendar maxDate;
+
 	private DateFormat df;
 	Locale locale;
 
@@ -274,12 +289,15 @@ public class CDateTime extends BaseCombo {
 			break;
 		case SWT.FocusOut:
 			if (!rightClick && !internalFocusShift) {
-				commitEditField();
-				updateText();
+				if (commitEditField()) {
+					updateText();
+				} else {
+					editField = null;
+				}
 			}
 			break;
 		case SWT.KeyDown:
- 			handleKey(event);
+			handleKey(event);
 			break;
 		case SWT.MouseDown:
 			if (event.button == 1) {
@@ -566,8 +584,12 @@ public class CDateTime extends BaseCombo {
 	 */
 	void fieldAdjust(int amount) {
 		if (!hasSelection()) {
-			setSelection(calendar.getTime());
-			fireSelectionChanged();
+			if (DatePicker.isValidDate(calendar, minDate, maxDate)) {
+				setSelection(calendar.getTime());
+				fireSelectionChanged();
+			} else {
+				setOpen(true);
+			}
 		} else {
 			int cf = getCalendarField();
 			if (cf >= 0) {
@@ -765,6 +787,8 @@ public class CDateTime extends BaseCombo {
 			return false;
 		}
 
+		long backup = calendar.getTimeInMillis();
+
 		if (calendarField == Calendar.ZONE_OFFSET
 				&& this.allowedTimezones != null) {
 			boolean timeZoneSet = false;
@@ -798,13 +822,18 @@ public class CDateTime extends BaseCombo {
 			if ((this.style & CDT.ADD_ON_ROLL) != 0) {
 				calendar.add(calendarField, rollAmount);
 			} else {
-				if (calendarField==Calendar.YEAR && calendar.get(Calendar.YEAR)==1 && rollAmount<0) {
+				if (calendarField == Calendar.YEAR
+						&& calendar.get(Calendar.YEAR) == 1 && rollAmount < 0) {
 					return false;
 				}
-				calendar.roll(calendarField, rollAmount); 
+				calendar.roll(calendarField, rollAmount);
 			}
 		}
 
+		if (!DatePicker.isValidDate(calendar, minDate, maxDate)) {
+			calendar.setTimeInMillis(backup);
+			return false;
+		}
 		if (selection.length > 0) {
 			selection[0] = calendar.getTime();
 		}
@@ -861,6 +890,15 @@ public class CDateTime extends BaseCombo {
 					value = calendar.getActualMinimum(calendarField);
 				}
 			}
+
+			Calendar tmp = (Calendar) calendar.clone();
+			tmp.set(calendarField, value);
+			tmp.getTime(); // call to set the Fields in the Calendar
+
+			if (!DatePicker.isValidDate(tmp, getMinDate(), getMaxDate())) {
+				return false;
+			}
+
 			calendar.set(calendarField, value);
 			if (selection.length > 0) {
 				selection[0] = calendar.getTime();
@@ -1169,7 +1207,7 @@ public class CDateTime extends BaseCombo {
 				}
 				break;
 			default:
-				if (hasField(activeField) && activeField + 1 < separator.length 
+				if (hasField(activeField) && activeField + 1 < separator.length
 						&& String.valueOf(event.character)
 								.equals(separator[activeField + 1])) {
 					fieldNext();
@@ -1516,11 +1554,15 @@ public class CDateTime extends BaseCombo {
 	 */
 	public void setBuilder(CDateTimeBuilder builder) {
 		this.builder = builder;
+		this.minDate = builder.getMinDate();
+		this.maxDate = builder.getMaxDate();
+
 		if (picker != null) {
 			disposePicker();
 			createPicker();
 		}
 	}
+
 
 	/*
 	 * (non-Javadoc)
@@ -1801,7 +1843,8 @@ public class CDateTime extends BaseCombo {
 		if (getEditable()) {
 			if (selection == null) {
 				this.selection = new Date[0];
-			} else {
+			} else if (DatePicker.isValidDate(getCalendarInstance(selection),
+					minDate, maxDate)) {
 				this.selection = new Date[] { selection };
 			}
 		}
@@ -2033,7 +2076,9 @@ public class CDateTime extends BaseCombo {
 					text.setText(string);
 					text.getControl().addListener(SWT.Verify, textListener);
 				}
-				text.getControl().setSelection(selStart, selEnd);
+				if((text.getControl().getStyle() & SWT.READ_ONLY) == 0) {
+					text.getControl().setSelection(selStart, selEnd);
+				}
 			}
 		};
 
@@ -2153,5 +2198,31 @@ public class CDateTime extends BaseCombo {
 		if (pattern.indexOf('z') != -1) {
 			this.allowedTimezones = allowedTimeZones;
 		}
+	}
+	
+	/** 
+	 * Returns the minimum date or <code>null</code>.
+	 * 
+	 * @return Returns a clone of the minDate or <code>null</code> if not set.
+	 * @since 1.4.0
+	 */
+	public Calendar getMinDate() {
+		if(minDate == null) {
+			return null;
+		}
+		return (Calendar) minDate.clone();
+	}
+
+	/** 
+	 * Returns the maximum date or <code>null</code>.
+	 * 
+	 * @return Returns a clone of the maxDate or <code>null</code> if not set.
+	 * @since 1.4.0
+	 */
+	public Calendar getMaxDate() {
+		if(maxDate == null) {
+			return null;
+		}
+		return (Calendar) maxDate.clone();
 	}
 }

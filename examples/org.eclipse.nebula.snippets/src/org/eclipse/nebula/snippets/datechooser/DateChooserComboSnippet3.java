@@ -1,5 +1,6 @@
 package org.eclipse.nebula.snippets.datechooser;
 
+import org.eclipse.nebula.widgets.datechooser.DateChooser;
 import org.eclipse.nebula.widgets.datechooser.DateChooserCombo;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -22,7 +23,7 @@ public class DateChooserComboSnippet3 {
 		data.widthHint = 110;
 		combo.setLayoutData(data);
 		combo.setFooterVisible(true);
-		combo.setGridVisible(false);
+		combo.setGridVisible(DateChooser.GRID_NONE);
 
     shell.open();
     while ( ! shell.isDisposed() ) {

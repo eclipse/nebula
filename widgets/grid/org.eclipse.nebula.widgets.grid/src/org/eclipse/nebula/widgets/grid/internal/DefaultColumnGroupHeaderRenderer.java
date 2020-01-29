@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2006 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *    chris.gross@us.ibm.com - initial API and implementation
@@ -85,16 +88,39 @@ public class DefaultColumnGroupHeaderRenderer extends GridHeaderRenderer
         }
 
         gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
+
+        String text = group.getText();
+		if (!isWordWrap())
+        {
+			text = TextUtils.getShortStr(gc, text, width,truncationStyle);
+        }
+
+        if (getHorizontalAlignment() == SWT.RIGHT)
+        {
+            int len = gc.stringExtent(text).x;
+            if (len < width)
+            {
+                x += width - len;
+            }
+        }
+        else if (getHorizontalAlignment() == SWT.CENTER)
+        {
+            int len = gc.stringExtent(text).x;
+            if (len < width)
+            {
+                x += (width - len) / 2;
+            }
+        }
+
         if (!isWordWrap())
         {
-          gc.drawString(TextUtils.getShortString(gc, group.getText(), width), getBounds().x + x,
-              getBounds().y + topMargin);
+        	gc.drawString(text, getBounds().x + x,getBounds().y + topMargin);
         }
         else
         {
             getTextLayout(gc, group);
             textLayout.setWidth(width < 1 ? 1 : width);
-            textLayout.setText(group.getText());
+            textLayout.setText(text);
 
             if (group.getParent().isAutoHeight())
             {

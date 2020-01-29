@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2004, 2007 Boeing.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Boeing - initial API and implementation
@@ -14,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import org.eclipse.nebula.widgets.xviewer.XViewer;
 import org.eclipse.nebula.widgets.xviewer.example.MyXViewerContentProvider;
 import org.eclipse.nebula.widgets.xviewer.example.MyXViewerFactory;
@@ -34,7 +38,7 @@ import org.eclipse.swt.widgets.Shell;
  * @author Andrew M. Finkbeiner
  */
 public class XViewerStyledStringLableProviderTest extends XViewer {
-   private final Set<ISomeTask> runList = new HashSet<ISomeTask>();
+   private final Set<ISomeTask> runList = new HashSet<>();
 
    public XViewerStyledStringLableProviderTest(Composite parent, int style) {
       super(parent, style, new MyXViewerFactory());
@@ -70,7 +74,7 @@ public class XViewerStyledStringLableProviderTest extends XViewer {
       xViewerTest.setContentProvider(new MyXViewerContentProvider());
       xViewerTest.setLabelProvider(new XViewerTestStyledStringLabelProvider(xViewerTest));
 
-      List<Object> tasks = new ArrayList<Object>();
+      List<Object> tasks = new ArrayList<>();
       for (int x = 0; x < 1; x++) {
          tasks.addAll(getTestTasks());
       }
@@ -89,7 +93,7 @@ public class XViewerStyledStringLableProviderTest extends XViewer {
    }
 
    private static List<ISomeTask> getTestTasks() {
-      List<ISomeTask> tasks = new ArrayList<ISomeTask>();
+      List<ISomeTask> tasks = new ArrayList<>();
       tasks.add(new SomeTask(RunDb.Test_Db, TaskType.Backup, "org.eclipse.osee.test1", "10:03", "run to test this",
          "Suite A", "mark", 99));
       tasks.add(new SomeTask(RunDb.Production_Db, TaskType.Data_Exchange, "org.eclipse.osee.test2", "9:22",

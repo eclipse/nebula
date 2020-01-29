@@ -1,9 +1,12 @@
 /*******************************************************************************
 * Copyright (c) 2011 EBM WebSourcing (PetalsLink)
-* All rights reserved. This program and the accompanying materials
-* are made available under the terms of the Eclipse Public License v1.0
-* which accompanies this distribution, and is available at
-* http://www.eclipse.org/legal/epl-v10.html
+*
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
 *
 * Contributors:
 * Mickael Istria, EBM WebSourcing (PetalsLink) - initial API and implementation
@@ -28,14 +31,14 @@ public class DOMTreeContentProvider implements ITreeContentProvider {
 
 	private Node root;
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	@Override
 	public void dispose() {
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
 	@Override
@@ -43,7 +46,7 @@ public class DOMTreeContentProvider implements ITreeContentProvider {
 		root = (Node)newInput;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getElements(java.lang.Object)
 	 */
 	@Override
@@ -55,7 +58,7 @@ public class DOMTreeContentProvider implements ITreeContentProvider {
 		}
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
 	@Override
@@ -71,7 +74,7 @@ public class DOMTreeContentProvider implements ITreeContentProvider {
 	 * @return
 	 */
 	private Object[] getChildren(Node node) {
-		List<Node> res = new ArrayList<Node>();
+		List<Node> res = new ArrayList<>();
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			res.add(children.item(i));
@@ -80,7 +83,7 @@ public class DOMTreeContentProvider implements ITreeContentProvider {
 		return res.toArray();
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
 	@Override
@@ -91,7 +94,7 @@ public class DOMTreeContentProvider implements ITreeContentProvider {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
 	@Override

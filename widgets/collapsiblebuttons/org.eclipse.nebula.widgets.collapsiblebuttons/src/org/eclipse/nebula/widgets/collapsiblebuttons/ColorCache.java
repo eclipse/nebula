@@ -1,13 +1,16 @@
 /*******************************************************************************
  * Copyright (c) Emil Crumhorn - Hexapixel.com - emil.crumhorn@gmail.com
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *    emil.crumhorn@gmail.com - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.nebula.widgets.collapsiblebuttons;
 
@@ -23,7 +26,7 @@ public class ColorCache {
     public static final RGB BLACK = new RGB(0, 0, 0);
     public static final RGB WHITE = new RGB(255, 255, 255);
 
-    private static HashMap mColorTable;
+    private static HashMap<RGB, Color> mColorTable;
     private static ColorCache mInstance;
 
     public static final int SKIN_NONE = -1;
@@ -48,7 +51,7 @@ public class ColorCache {
      */
     public static void disposeAll() {
         mInstance.dispose();
-        
+
         blueHeaderColor = null;
         lightBlueButtonColor = null;
         blueButtonBackground = null;
@@ -75,13 +78,13 @@ public class ColorCache {
         calendarSilverBorder = null;
         calendarSilverHeader = null;
     }
-    
+
     /**
      * Disposes the cached colors only.
      */
     public static void disposeCachedColor() {
-        Iterator e = mColorTable.values().iterator();
-        while (e.hasNext()) ((Color)e.next()).dispose();
+        Iterator<Color> e = mColorTable.values().iterator();
+        while (e.hasNext()) e.next().dispose();
 
         mColorTable.clear();
     }
@@ -176,25 +179,25 @@ public class ColorCache {
     public static Color o2007blueTop = ColorCache.getColor(227, 239, 255);
     public static Color o2007blueMid = ColorCache.getColor(173, 209, 255);
     public static Color o2007blueBot = ColorCache.getColor(192, 219, 255);
-    
+
     public static Color o2007orangeSelectedTop = ColorCache.getColor(255, 217, 170);
     public static Color o2007orangeSelectedMid = ColorCache.getColor(255, 187, 110);
     public static Color o2007orangeSelectedBot = ColorCache.getColor(254, 225, 122);
-    
+
     public static Color o2007orangeHoveredTop = ColorCache.getColor(255, 254, 228);
     public static Color o2007orangeHoveredMid = ColorCache.getColor(255, 232, 167);
     public static Color o2007orangeHoveredBot = ColorCache.getColor(255, 230, 158);
-    
+
     public static Color o2007buttonBackgroundColor = ColorCache.getColor(101, 147, 207);
-    
+
     private ColorCache() {
         if (mColorTable == null) {
-            mColorTable = new HashMap();
+            mColorTable = new HashMap<>();
         }
     }
 
     private static void checkInstance() {
-        if (mInstance == null) 
+        if (mInstance == null)
             mInstance = new ColorCache();
     }
 
@@ -202,8 +205,8 @@ public class ColorCache {
     private void dispose() {
     	checkInstance();
 
-        Iterator e = mColorTable.values().iterator();
-        while (e.hasNext()) ((Color)e.next()).dispose();
+        Iterator<Color> e = mColorTable.values().iterator();
+        while (e.hasNext()) e.next().dispose();
 
         mColorTable.clear();
 
@@ -272,7 +275,7 @@ public class ColorCache {
 
     /**
      * Returns the color white R255, G255, B255
-     * 
+     *
      * @return White color
      */
     public static Color getWhite() {
@@ -282,7 +285,7 @@ public class ColorCache {
 
     /**
      * Returns the color black R0, G0, B0
-     * 
+     *
      * @return Black color
      */
     public static Color getBlack() {
@@ -292,13 +295,13 @@ public class ColorCache {
 
     /**
      * Returns a color that is also cached if it has not been created before.
-     * 
+     *
      * @param rgb RGB colors
      * @return Color
      */
     public static Color getColor(RGB rgb) {
     	checkInstance();
-        Color color = (Color) mColorTable.get(rgb);
+        Color color = mColorTable.get(rgb);
 
         if (color == null) {
             color = new Color(Display.getCurrent(), rgb);
@@ -310,7 +313,7 @@ public class ColorCache {
 
     /**
      * Returns a color that is also cached if it has not been created before.
-     * 
+     *
      * @param r Red
      * @param g Green
      * @param b Blue

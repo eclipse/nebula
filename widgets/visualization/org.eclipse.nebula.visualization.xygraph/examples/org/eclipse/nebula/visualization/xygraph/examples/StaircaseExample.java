@@ -1,20 +1,28 @@
 /*******************************************************************************
  * Copyright (c) 2017 Oak Ridge National Laboratory and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 package org.eclipse.nebula.visualization.xygraph.examples;
 
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.CircularBufferDataProvider;
 import org.eclipse.nebula.visualization.xygraph.dataprovider.Sample;
+import org.eclipse.nebula.visualization.xygraph.figures.Legend;
 import org.eclipse.nebula.visualization.xygraph.figures.ToolbarArmedXYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace;
 import org.eclipse.nebula.visualization.xygraph.figures.XYGraph;
 import org.eclipse.nebula.visualization.xygraph.figures.XYGraphFlags;
 import org.eclipse.nebula.visualization.xygraph.figures.Trace.TraceType;
+import org.eclipse.nebula.visualization.xygraph.util.XYGraphMediaFactory;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
@@ -94,6 +102,13 @@ public class StaircaseExample {
 		trace.setDrawYErrorInArea(true);
 		xygraph.addTrace(trace);
 
+		Font LEGEND_FONT = XYGraphMediaFactory.getInstance().getFont(new FontData("Lucida Sans", 11, SWT.BOLD));
+		
+		Legend legend = xygraph.getLegend(trace);
+		legend.setDrawBorder(true);
+		legend.setPreferredHeight(100);
+		legend.setTextFont(LEGEND_FONT);
+		
 		// SWT main loop
 		final Display display = Display.getDefault();
 		while (!shell.isDisposed()) {

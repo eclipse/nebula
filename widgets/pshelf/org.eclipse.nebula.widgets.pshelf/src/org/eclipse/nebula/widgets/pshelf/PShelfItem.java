@@ -1,9 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2006 Chris Gross. All rights reserved. This program and the
- * accompanying materials are made available under the terms of the Eclipse
- * Public License v1.0 which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html 
+ * Copyright (c) 2006 Chris Gross.
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
  * 
+ * SPDX-License-Identifier: EPL-2.0
+ *
  * Contributors: schtoo@schtoo.com(Chris Gross) - initial API and implementation
  ******************************************************************************/
 
@@ -17,11 +20,11 @@ import org.eclipse.swt.widgets.Item;
 
 /**
  * <p>
- * NOTE:  THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.  THIS IS A PRE-RELEASE ALPHA 
+ * NOTE:  THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.  THIS IS A PRE-RELEASE ALPHA
  * VERSION.  USERS SHOULD EXPECT API CHANGES IN FUTURE VERSIONS.
- * </p> 
- * 
- * Instances of this class represent an individual shelf.  A shelf is a container widget similar 
+ * </p>
+ *
+ * Instances of this class represent an individual shelf.  A shelf is a container widget similar
  * to a tab folder but with a list-like visualization.
  * <p>
  * Add controls to a shelf item by constructing them on the body (<code>getBody</code>) of the item.
@@ -40,7 +43,7 @@ public class PShelfItem extends Item {
 	private Composite body;
 	private Composite bodyParent;
 	private PShelf parent;
-    
+
     /**
      * Constructs a new instance of this class given its parent
      * (which must be a <code>PShelf</code>), a style value
@@ -49,7 +52,7 @@ public class PShelfItem extends Item {
      * <p>
      * The style value is either one of the style constants defined in
      * class <code>SWT</code> which is applicable to instances of this
-     * class, or must be built by <em>bitwise OR</em>'ing together 
+     * class, or must be built by <em>bitwise OR</em>'ing together
      * (that is, using the <code>int</code> "|" operator) two or more
      * of those <code>SWT</code> style constants. The class description
      * lists the style constants that are applicable to the class.
@@ -70,11 +73,11 @@ public class PShelfItem extends Item {
      * </ul>
      */
 	public PShelfItem(PShelf parent, int style,int index) {
-		super(parent,style,index);       
-        
+		super(parent,style,index);
+
         if (index < 0 || index > parent.getItems().length)
             SWT.error(SWT.ERROR_INVALID_RANGE);
-        
+
 		construct(parent,index);
 	}
 
@@ -86,7 +89,7 @@ public class PShelfItem extends Item {
      * <p>
      * The style value is either one of the style constants defined in
      * class <code>SWT</code> which is applicable to instances of this
-     * class, or must be built by <em>bitwise OR</em>'ing together 
+     * class, or must be built by <em>bitwise OR</em>'ing together
      * (that is, using the <code>int</code> "|" operator) two or more
      * of those <code>SWT</code> style constants. The class description
      * lists the style constants that are applicable to the class.
@@ -111,10 +114,10 @@ public class PShelfItem extends Item {
 
 	private void construct(PShelf parent,int index){
 		this.parent = parent;
-		
+
 		bodyParent = new Composite(parent,SWT.NONE);
-		body = new Composite(bodyParent,SWT.NONE);	
-		
+		body = new Composite(bodyParent,SWT.NONE);
+
 		parent.createItem(this,index);
 	}
 
@@ -137,8 +140,8 @@ public class PShelfItem extends Item {
 		return bodyParent;
 	}
 
-	/** 
-	 * {@inheritDoc}
+	/**
+	 * @see org.eclipse.swt.widgets.Widget#dispose()
 	 */
 	@Override
 	public void dispose() {
@@ -148,8 +151,8 @@ public class PShelfItem extends Item {
 		super.dispose();
 	}
 
-    /** 
-     * {@inheritDoc}
+    /**
+     * @see org.eclipse.swt.widgets.Item#setImage(org.eclipse.swt.graphics.Image)
      */
     @Override
 	public void setImage(Image image)
@@ -160,8 +163,8 @@ public class PShelfItem extends Item {
         parent.redraw();
     }
 
-    /** 
-     * {@inheritDoc}
+    /**
+     * @see org.eclipse.swt.widgets.Item#setText(java.lang.String)
      */
     @Override
 	public void setText(String string)
@@ -169,6 +172,6 @@ public class PShelfItem extends Item {
         super.setText(string);
         parent.redraw();
     }
-    
-    
+
+
 }
