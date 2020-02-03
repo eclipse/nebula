@@ -153,6 +153,9 @@
    <feature url="features/org.eclipse.nebula.widgets.stepbar.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.stepbar.feature" version="1.0.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
+   <feature url="features/org.eclipse.nebula.widgets.chips.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.chips.feature" version="1.0.0.qualifier">
+      <category name="Nebula Release Individual Widgets"/>
+   </feature>
    <feature url="features/org.eclipse.nebula.feature_2.3.0.qualifier.jar" id="org.eclipse.nebula.feature" version="2.3.0.qualifier">
       <category name="Nebula Release all Widgets and Examples"/>
    </feature>
