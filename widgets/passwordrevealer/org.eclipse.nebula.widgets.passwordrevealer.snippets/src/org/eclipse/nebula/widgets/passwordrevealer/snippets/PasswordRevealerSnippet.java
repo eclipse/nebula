@@ -31,6 +31,7 @@ public class PasswordRevealerSnippet {
 		shell.setLayout(new GridLayout(1, false));
 		final Color white = display.getSystemColor(SWT.COLOR_WHITE);
 		shell.setBackground(white);
+		shell.setText("Password Revealer Snippet");
 
 		final Image image = new Image(display, PasswordRevealerSnippet.class.getResourceAsStream("eye.png"));
 		final Image clickImage = new Image(display, PasswordRevealerSnippet.class.getResourceAsStream("eye-slash.png"));
@@ -56,7 +57,7 @@ public class PasswordRevealerSnippet {
 
 		final Label lbl2 = new Label(shell, SWT.NONE);
 		lbl2.setText("Password Revealer with other icon:");
-		final GridData gdLabel2 = new GridData(GridData.BEGINNING, GridData.CENTER, true, false);
+		final GridData gdLabel2 = new GridData(GridData.FILL, GridData.CENTER, true, false);
 		gdLabel2.widthHint = 150;
 		lbl2.setBackground(white);
 		lbl2.setLayoutData(gdLabel2);
