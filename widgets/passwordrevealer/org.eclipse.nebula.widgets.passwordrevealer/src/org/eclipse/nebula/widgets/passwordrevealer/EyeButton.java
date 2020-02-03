@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors: Laurent CARON (laurent.caron at gmail dot com) - initial API
@@ -17,6 +17,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
@@ -27,8 +28,9 @@ class EyeButton extends Canvas {
 	private boolean mouseIn;
 	private boolean pressed;
 	private final Color color;
+	private Image image, clickImage;
 
-	EyeButton(Composite parent, int style) {
+	EyeButton(final Composite parent, final int style) {
 		super(parent, SWT.DOUBLE_BUFFERED);
 		addListeners();
 		color = new Color(parent.getDisplay(), 0, 127, 222);
@@ -65,16 +67,33 @@ class EyeButton extends Canvas {
 		});
 	}
 
-	private void paintControl(PaintEvent e) {
+	private void paintControl(final PaintEvent e) {
 		final GC gc = e.gc;
 		if (!mouseIn && !pressed) {
-			drawEye(gc, getDisplay().getSystemColor(SWT.COLOR_GRAY));
+			if (image != null) {
+				drawImage(gc, image);
+			} else {
+				drawEye(gc, getDisplay().getSystemColor(SWT.COLOR_GRAY));
+			}
 			return;
 		}
 
 		if (mouseIn && !pressed) {
-			drawEye(gc, color);
+			if (image != null) {
+				drawImage(gc, image);
+			} else {
+				drawEye(gc, color);
+			}
 			return;
+		}
+
+		if (clickImage == null && image != null) {
+			drawImage(gc, image);
+			return;
+		} else if (clickImage != null) {
+			drawImage(gc, clickImage);
+			return;
+
 		}
 
 		final Rectangle rect = getClientArea();
@@ -84,7 +103,7 @@ class EyeButton extends Canvas {
 		drawEye(gc, getDisplay().getSystemColor(SWT.COLOR_WHITE));
 	}
 
-	private void drawEye(GC gc, Color clr) {
+	private void drawEye(final GC gc, final Color clr) {
 		gc.setAdvanced(true);
 		gc.setAntialias(SWT.ON);
 		gc.setLineWidth(2);
@@ -99,11 +118,46 @@ class EyeButton extends Canvas {
 		gc.fillOval(rect.width / 2 - CIRCLE_RAY / 2, rect.height / 2 - CIRCLE_RAY / 2, CIRCLE_RAY, CIRCLE_RAY);
 	}
 
+	private void drawImage(final GC gc, final Image img) {
+		final Rectangle rect = getClientArea();
+		final Rectangle imageBounds = img.getBounds();
+		final int middleX = (rect.width - imageBounds.width) / 2;
+		final int middleY = (rect.height - imageBounds.height) / 2;
+		gc.drawImage(img, middleX, middleY);
+	}
+
 	@Override
-	public Point computeSize(int wHint, int hHint, boolean changed) {
+	public Point computeSize(final int wHint, final int hHint, final boolean changed) {
 		final PasswordRevealer parent = (PasswordRevealer) getParent();
 		final int preferred = parent.passwordField.computeSize(SWT.DEFAULT, hHint, changed).y;
-		return super.computeSize(Math.max(preferred, 20), Math.max(preferred, 20), changed);
+		int minWidth, minHeight;
+		if (image == null) {
+			minWidth = minHeight = 20;
+		} else {
+			minWidth = image.getBounds().width;
+			minHeight = image.getBounds().height;
+			if (clickImage != null) {
+				minWidth = Math.max(clickImage.getBounds().width, minWidth);
+				minHeight = Math.max(clickImage.getBounds().height, minHeight);
+			}
+		}
+		return super.computeSize(Math.max(preferred, minWidth), Math.max(preferred, minHeight), changed);
+	}
+
+	void setImage(final Image image) {
+		this.image = image;
+	}
+
+	void setClickImage(final Image clickImage) {
+		this.clickImage = clickImage;
+	}
+
+	Image getImage() {
+		return image;
+	}
+
+	Image getClickImage() {
+		return clickImage;
 	}
 
 }
