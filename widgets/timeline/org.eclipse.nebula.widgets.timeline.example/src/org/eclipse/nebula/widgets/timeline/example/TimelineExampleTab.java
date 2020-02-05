@@ -12,7 +12,6 @@ import org.eclipse.nebula.widgets.timeline.ITrack;
 import org.eclipse.nebula.widgets.timeline.TimelineDataBinding;
 import org.eclipse.nebula.widgets.timeline.jface.TimelineViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
@@ -39,7 +38,7 @@ public class TimelineExampleTab extends AbstractExampleTab {
 		new TimelineDataBinding(timelineViewer, model, DISPLAY_UPDATE_DELAY);
 
 		createRandomContent(model);
-		
+
 		return timelineViewer.getControl();
 	}
 
@@ -66,8 +65,8 @@ public class TimelineExampleTab extends AbstractExampleTab {
 
 			final int offset = random.nextInt(20);
 			final int width = random.nextInt(150);
-			lane.addEvent("Item " + item, (lastPosition + offset) + " - " + (lastPosition + offset + width),
-					lastPosition + offset, lastPosition + offset + width, TimeUnit.NANOSECONDS);
+			lane.addEvent("Item " + item, (lastPosition + offset) + " - " + (lastPosition + offset + width), lastPosition + offset,
+					lastPosition + offset + width, TimeUnit.NANOSECONDS);
 
 			lastPosition += offset + width;
 		}
