@@ -35,18 +35,18 @@
     <genClasses ecoreClass="Timeline.ecore#//Lane">
       <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Timeline.ecore#//Lane/track"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Timeline.ecore#//Lane/timeEvents"/>
-      <genOperations ecoreOperation="Timeline.ecore#//Lane/addEvent">
-        <genParameters ecoreParameter="Timeline.ecore#//Lane/addEvent/title"/>
-        <genParameters ecoreParameter="Timeline.ecore#//Lane/addEvent/message"/>
-        <genParameters ecoreParameter="Timeline.ecore#//Lane/addEvent/startTimestamp"/>
-        <genParameters ecoreParameter="Timeline.ecore#//Lane/addEvent/endTimestamp"/>
-        <genParameters ecoreParameter="Timeline.ecore#//Lane/addEvent/timeUnit"/>
+      <genOperations ecoreOperation="Timeline.ecore#//Lane/createEvent">
+        <genParameters ecoreParameter="Timeline.ecore#//Lane/createEvent/title"/>
+        <genParameters ecoreParameter="Timeline.ecore#//Lane/createEvent/message"/>
+        <genParameters ecoreParameter="Timeline.ecore#//Lane/createEvent/startTimestamp"/>
+        <genParameters ecoreParameter="Timeline.ecore#//Lane/createEvent/duration"/>
+        <genParameters ecoreParameter="Timeline.ecore#//Lane/createEvent/timeUnit"/>
       </genOperations>
-      <genOperations ecoreOperation="Timeline.ecore#//Lane/addEvent.1">
-        <genParameters ecoreParameter="Timeline.ecore#//Lane/addEvent.1/title"/>
-        <genParameters ecoreParameter="Timeline.ecore#//Lane/addEvent.1/message"/>
-        <genParameters ecoreParameter="Timeline.ecore#//Lane/addEvent.1/startTimestamp"/>
-        <genParameters ecoreParameter="Timeline.ecore#//Lane/addEvent.1/endTimestamp"/>
+      <genOperations ecoreOperation="Timeline.ecore#//Lane/createEvent.1">
+        <genParameters ecoreParameter="Timeline.ecore#//Lane/createEvent.1/title"/>
+        <genParameters ecoreParameter="Timeline.ecore#//Lane/createEvent.1/message"/>
+        <genParameters ecoreParameter="Timeline.ecore#//Lane/createEvent.1/startTimestamp"/>
+        <genParameters ecoreParameter="Timeline.ecore#//Lane/createEvent.1/duration"/>
       </genOperations>
     </genClasses>
     <genClasses ecoreClass="Timeline.ecore#//TimelineEvent">

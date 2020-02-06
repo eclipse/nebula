@@ -16,28 +16,20 @@ import org.eclipse.nebula.widgets.timeline.Timing;
  * <p>
  * The following operations are tested:
  * <ul>
- * <li>{@link org.eclipse.nebula.widgets.timeline.ITimelineEvent#getDuration()
- * <em>Get Duration</em>}</li>
- * <li>{@link org.eclipse.nebula.widgets.timeline.ITimelineEvent#setStartTimestamp(long, java.util.concurrent.TimeUnit)
- * <em>Set Start Timestamp</em>}</li>
- * <li>{@link org.eclipse.nebula.widgets.timeline.ITimelineEvent#setEndTimestamp(long, java.util.concurrent.TimeUnit)
- * <em>Set End Timestamp</em>}</li>
- * <li>{@link org.eclipse.nebula.widgets.timeline.ITimelineEvent#setDuration(long, java.util.concurrent.TimeUnit)
- * <em>Set Duration</em>}</li>
- * <li>{@link org.eclipse.nebula.widgets.timeline.ITimelineEvent#setDuration(long)
- * <em>Set Duration</em>}</li>
- * <li>{@link org.eclipse.nebula.widgets.timeline.ITimed#getTiming() <em>Get
- * Timing</em>}</li>
+ *   <li>{@link org.eclipse.nebula.widgets.timeline.ITimelineEvent#getDuration() <em>Get Duration</em>}</li>
+ *   <li>{@link org.eclipse.nebula.widgets.timeline.ITimelineEvent#setStartTimestamp(long, java.util.concurrent.TimeUnit) <em>Set Start Timestamp</em>}</li>
+ *   <li>{@link org.eclipse.nebula.widgets.timeline.ITimelineEvent#setEndTimestamp(long, java.util.concurrent.TimeUnit) <em>Set End Timestamp</em>}</li>
+ *   <li>{@link org.eclipse.nebula.widgets.timeline.ITimelineEvent#setDuration(long, java.util.concurrent.TimeUnit) <em>Set Duration</em>}</li>
+ *   <li>{@link org.eclipse.nebula.widgets.timeline.ITimelineEvent#setDuration(long) <em>Set Duration</em>}</li>
+ *   <li>{@link org.eclipse.nebula.widgets.timeline.ITimed#getTiming() <em>Get Timing</em>}</li>
  * </ul>
  * </p>
- * 
  * @generated
  */
 public class TimelineEventTest extends ColoredTest {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
 	 * @generated
 	 */
 	public static void main(String[] args) {
@@ -45,9 +37,9 @@ public class TimelineEventTest extends ColoredTest {
 	}
 
 	/**
-	 * Constructs a new Event test case with the given name. <!-- begin-user-doc -->
+	 * Constructs a new Event test case with the given name.
+	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * 
 	 * @generated
 	 */
 	public TimelineEventTest(String name) {
@@ -55,19 +47,18 @@ public class TimelineEventTest extends ColoredTest {
 	}
 
 	/**
-	 * Returns the fixture for this Event test case. <!-- begin-user-doc --> <!--
+	 * Returns the fixture for this Event test case.
+	 * <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
-	 * 
 	 * @generated
 	 */
 	@Override
 	protected ITimelineEvent getFixture() {
-		return (ITimelineEvent) fixture;
+		return (ITimelineEvent)fixture;
 	}
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
 	 * @see junit.framework.TestCase#setUp()
 	 * @generated
 	 */
@@ -78,7 +69,6 @@ public class TimelineEventTest extends ColoredTest {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
 	 * @see junit.framework.TestCase#tearDown()
 	 * @generated
 	 */

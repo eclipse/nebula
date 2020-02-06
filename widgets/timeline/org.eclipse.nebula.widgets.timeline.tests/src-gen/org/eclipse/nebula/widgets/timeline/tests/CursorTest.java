@@ -5,9 +5,6 @@ package org.eclipse.nebula.widgets.timeline.tests;
 import junit.framework.TestCase;
 
 import junit.textui.TestRunner;
-
-import java.util.concurrent.TimeUnit;
-
 import org.eclipse.nebula.widgets.timeline.ICursor;
 import org.eclipse.nebula.widgets.timeline.ITimelineFactory;
 import org.eclipse.nebula.widgets.timeline.Timing;
@@ -18,26 +15,23 @@ import org.eclipse.nebula.widgets.timeline.Timing;
  * <p>
  * The following operations are tested:
  * <ul>
- * <li>{@link org.eclipse.nebula.widgets.timeline.ITimed#getTiming() <em>Get
- * Timing</em>}</li>
+ *   <li>{@link org.eclipse.nebula.widgets.timeline.ITimed#getTiming() <em>Get Timing</em>}</li>
  * </ul>
  * </p>
- * 
  * @generated
  */
 public class CursorTest extends TestCase {
 
 	/**
-	 * The fixture for this Cursor test case. <!-- begin-user-doc --> <!--
+	 * The fixture for this Cursor test case.
+	 * <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
-	 * 
 	 * @generated
 	 */
 	protected ICursor fixture = null;
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
 	 * @generated
 	 */
 	public static void main(String[] args) {
@@ -45,9 +39,9 @@ public class CursorTest extends TestCase {
 	}
 
 	/**
-	 * Constructs a new Cursor test case with the given name. <!-- begin-user-doc
+	 * Constructs a new Cursor test case with the given name.
+	 * <!-- begin-user-doc
 	 * --> <!-- end-user-doc -->
-	 * 
 	 * @generated
 	 */
 	public CursorTest(String name) {
@@ -55,9 +49,9 @@ public class CursorTest extends TestCase {
 	}
 
 	/**
-	 * Sets the fixture for this Cursor test case. <!-- begin-user-doc --> <!--
+	 * Sets the fixture for this Cursor test case.
+	 * <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
-	 * 
 	 * @generated
 	 */
 	protected void setFixture(ICursor fixture) {
@@ -65,9 +59,9 @@ public class CursorTest extends TestCase {
 	}
 
 	/**
-	 * Returns the fixture for this Cursor test case. <!-- begin-user-doc --> <!--
+	 * Returns the fixture for this Cursor test case.
+	 * <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
-	 * 
 	 * @generated
 	 */
 	protected ICursor getFixture() {
@@ -76,7 +70,6 @@ public class CursorTest extends TestCase {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
 	 * @see junit.framework.TestCase#setUp()
 	 * @generated
 	 */
@@ -87,7 +80,6 @@ public class CursorTest extends TestCase {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
 	 * @see junit.framework.TestCase#tearDown()
 	 * @generated
 	 */

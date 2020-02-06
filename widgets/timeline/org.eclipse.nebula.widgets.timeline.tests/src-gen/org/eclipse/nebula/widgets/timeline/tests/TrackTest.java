@@ -5,8 +5,6 @@ package org.eclipse.nebula.widgets.timeline.tests;
 import junit.framework.TestCase;
 
 import junit.textui.TestRunner;
-
-import org.eclipse.nebula.widgets.timeline.ICursor;
 import org.eclipse.nebula.widgets.timeline.ILane;
 import org.eclipse.nebula.widgets.timeline.ITimelineFactory;
 import org.eclipse.nebula.widgets.timeline.ITrack;

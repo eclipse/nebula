@@ -316,22 +316,22 @@ public interface ITimelinePackage extends EPackage {
 	int LANE_FEATURE_COUNT = COLORED_FEATURE_COUNT + 2;
 
 	/**
-	 * The operation id for the '<em>Add Event</em>' operation.
+	 * The operation id for the '<em>Create Event</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int LANE___ADD_EVENT__STRING_STRING_LONG_LONG_TIMEUNIT = COLORED_OPERATION_COUNT + 0;
+	int LANE___CREATE_EVENT__STRING_STRING_LONG_LONG_TIMEUNIT = COLORED_OPERATION_COUNT + 0;
 
 	/**
-	 * The operation id for the '<em>Add Event</em>' operation.
+	 * The operation id for the '<em>Create Event</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int LANE___ADD_EVENT__STRING_STRING_LONG_LONG = COLORED_OPERATION_COUNT + 1;
+	int LANE___CREATE_EVENT__STRING_STRING_LONG_LONG = COLORED_OPERATION_COUNT + 1;
 
 	/**
 	 * The number of operations of the '<em>Lane</em>' class.
@@ -759,24 +759,24 @@ public interface ITimelinePackage extends EPackage {
 	EReference getLane_TimeEvents();
 
 	/**
-	 * Returns the meta object for the '{@link org.eclipse.nebula.widgets.timeline.ILane#addEvent(java.lang.String, java.lang.String, long, long, java.util.concurrent.TimeUnit) <em>Add Event</em>}' operation.
+	 * Returns the meta object for the '{@link org.eclipse.nebula.widgets.timeline.ILane#createEvent(java.lang.String, java.lang.String, long, long, java.util.concurrent.TimeUnit) <em>Create Event</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the '<em>Add Event</em>' operation.
-	 * @see org.eclipse.nebula.widgets.timeline.ILane#addEvent(java.lang.String, java.lang.String, long, long, java.util.concurrent.TimeUnit)
+	 * @return the meta object for the '<em>Create Event</em>' operation.
+	 * @see org.eclipse.nebula.widgets.timeline.ILane#createEvent(java.lang.String, java.lang.String, long, long, java.util.concurrent.TimeUnit)
 	 * @generated
 	 */
-	EOperation getLane__AddEvent__String_String_long_long_TimeUnit();
+	EOperation getLane__CreateEvent__String_String_long_long_TimeUnit();
 
 	/**
-	 * Returns the meta object for the '{@link org.eclipse.nebula.widgets.timeline.ILane#addEvent(java.lang.String, java.lang.String, long, long) <em>Add Event</em>}' operation.
+	 * Returns the meta object for the '{@link org.eclipse.nebula.widgets.timeline.ILane#createEvent(java.lang.String, java.lang.String, long, long) <em>Create Event</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the '<em>Add Event</em>' operation.
-	 * @see org.eclipse.nebula.widgets.timeline.ILane#addEvent(java.lang.String, java.lang.String, long, long)
+	 * @return the meta object for the '<em>Create Event</em>' operation.
+	 * @see org.eclipse.nebula.widgets.timeline.ILane#createEvent(java.lang.String, java.lang.String, long, long)
 	 * @generated
 	 */
-	EOperation getLane__AddEvent__String_String_long_long();
+	EOperation getLane__CreateEvent__String_String_long_long();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.nebula.widgets.timeline.ITimelineEvent <em>Event</em>}'.
@@ -1160,20 +1160,20 @@ public interface ITimelinePackage extends EPackage {
 		EReference LANE__TIME_EVENTS = eINSTANCE.getLane_TimeEvents();
 
 		/**
-		 * The meta object literal for the '<em><b>Add Event</b></em>' operation.
+		 * The meta object literal for the '<em><b>Create Event</b></em>' operation.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EOperation LANE___ADD_EVENT__STRING_STRING_LONG_LONG_TIMEUNIT = eINSTANCE.getLane__AddEvent__String_String_long_long_TimeUnit();
+		EOperation LANE___CREATE_EVENT__STRING_STRING_LONG_LONG_TIMEUNIT = eINSTANCE.getLane__CreateEvent__String_String_long_long_TimeUnit();
 
 		/**
-		 * The meta object literal for the '<em><b>Add Event</b></em>' operation.
+		 * The meta object literal for the '<em><b>Create Event</b></em>' operation.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EOperation LANE___ADD_EVENT__STRING_STRING_LONG_LONG = eINSTANCE.getLane__AddEvent__String_String_long_long();
+		EOperation LANE___CREATE_EVENT__STRING_STRING_LONG_LONG = eINSTANCE.getLane__CreateEvent__String_String_long_long();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.nebula.widgets.timeline.impl.TimelineEvent <em>Event</em>}' class.

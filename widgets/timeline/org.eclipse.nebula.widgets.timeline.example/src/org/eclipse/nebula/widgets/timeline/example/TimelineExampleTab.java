@@ -65,8 +65,8 @@ public class TimelineExampleTab extends AbstractExampleTab {
 
 			final int offset = random.nextInt(20);
 			final int width = random.nextInt(150);
-			lane.addEvent("Item " + item, (lastPosition + offset) + " - " + (lastPosition + offset + width), lastPosition + offset,
-					lastPosition + offset + width, TimeUnit.NANOSECONDS);
+			lane.createEvent("Item " + item, (lastPosition + offset) + " - " + (lastPosition + offset + width), lastPosition + offset, width,
+					TimeUnit.NANOSECONDS);
 
 			lastPosition += offset + width;
 		}

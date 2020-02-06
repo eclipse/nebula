@@ -13,27 +13,25 @@ import org.eclipse.swt.graphics.RGB;
  * <p>
  * The following features are tested:
  * <ul>
- * <li>{@link org.eclipse.nebula.widgets.timeline.IColored#getRgb()
- * <em>Rgb</em>}</li>
+ *   <li>{@link org.eclipse.nebula.widgets.timeline.IColored#getRgb() <em>Rgb</em>}</li>
  * </ul>
  * </p>
- * 
  * @generated
  */
 public abstract class ColoredTest extends TestCase {
 
 	/**
-	 * The fixture for this Colored test case. <!-- begin-user-doc --> <!--
+	 * The fixture for this Colored test case.
+	 * <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
-	 * 
 	 * @generated
 	 */
 	protected IColored fixture = null;
 
 	/**
-	 * Constructs a new Colored test case with the given name. <!-- begin-user-doc
+	 * Constructs a new Colored test case with the given name.
+	 * <!-- begin-user-doc
 	 * --> <!-- end-user-doc -->
-	 * 
 	 * @generated
 	 */
 	public ColoredTest(String name) {
@@ -41,9 +39,9 @@ public abstract class ColoredTest extends TestCase {
 	}
 
 	/**
-	 * Sets the fixture for this Colored test case. <!-- begin-user-doc --> <!--
+	 * Sets the fixture for this Colored test case.
+	 * <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
-	 * 
 	 * @generated
 	 */
 	protected void setFixture(IColored fixture) {
@@ -51,9 +49,9 @@ public abstract class ColoredTest extends TestCase {
 	}
 
 	/**
-	 * Returns the fixture for this Colored test case. <!-- begin-user-doc --> <!--
+	 * Returns the fixture for this Colored test case.
+	 * <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
-	 * 
 	 * @generated
 	 */
 	protected IColored getFixture() {

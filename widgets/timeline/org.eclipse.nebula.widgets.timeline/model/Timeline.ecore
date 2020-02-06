@@ -27,18 +27,18 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="title" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Lane" eSuperTypes="#//Colored">
-    <eOperations name="addEvent" lowerBound="1" eType="#//TimelineEvent">
+    <eOperations name="createEvent" lowerBound="1" eType="#//TimelineEvent">
       <eParameters name="title" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eParameters name="message" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eParameters name="startTimestamp" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
-      <eParameters name="endTimestamp" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
+      <eParameters name="duration" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
       <eParameters name="timeUnit" eType="#//TimeUnit"/>
     </eOperations>
-    <eOperations name="addEvent" lowerBound="1" eType="#//TimelineEvent">
+    <eOperations name="createEvent" lowerBound="1" eType="#//TimelineEvent">
       <eParameters name="title" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eParameters name="message" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eParameters name="startTimestamp" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
-      <eParameters name="endTimestamp" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
+      <eParameters name="duration" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
     </eOperations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="track" lowerBound="1" eType="#//Track"
         eOpposite="#//Track/lanes"/>

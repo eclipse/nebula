@@ -67,7 +67,7 @@ public interface ILane extends IColored {
 	 * @model required="true" timeUnitDataType="org.eclipse.nebula.widgets.timeline.TimeUnit"
 	 * @generated
 	 */
-	ITimelineEvent addEvent(String title, String message, long startTimestamp, long endTimestamp, TimeUnit timeUnit);
+	ITimelineEvent createEvent(String title, String message, long startTimestamp, long duration, TimeUnit timeUnit);
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -75,6 +75,6 @@ public interface ILane extends IColored {
 	 * @model required="true"
 	 * @generated
 	 */
-	ITimelineEvent addEvent(String title, String message, long startTimestamp, long endTimestamp);
+	ITimelineEvent createEvent(String title, String message, long startTimestamp, long duration);
 
 } // ILane
