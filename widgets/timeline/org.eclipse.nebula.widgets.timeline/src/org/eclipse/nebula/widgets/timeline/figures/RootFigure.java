@@ -261,7 +261,17 @@ public class RootFigure extends Figure implements IStyledFigure {
 	}
 
 	public TrackFigure createTrackFigure(String title) {
-		return new TrackFigure(title, getStyleProvider());
+		final TrackFigure trackFigure = new TrackFigure(title, getStyleProvider());
+		RootFigure.getFigure(this, TracksLayer.class).add(trackFigure);
+
+		return trackFigure;
+	}
+
+	public LaneFigure createLaneFigure(TrackFigure track) {
+		final LaneFigure laneFigure = new LaneFigure(getStyleProvider());
+		track.add(laneFigure);
+
+		return laneFigure;
 	}
 
 	/**

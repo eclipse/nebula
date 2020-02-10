@@ -9,6 +9,9 @@ Bundle-Localization: plugin
 Automatic-Module-Name: org.eclipse.nebula.widgets.timeline
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.nebula.widgets.timeline,
+ org.eclipse.nebula.widgets.timeline.figures,
+ org.eclipse.nebula.widgets.timeline.figures.detail.track,
+ org.eclipse.nebula.widgets.timeline.figures.detail.track.lane,
  org.eclipse.nebula.widgets.timeline.impl,
  org.eclipse.nebula.widgets.timeline.jface,
  org.eclipse.nebula.widgets.timeline.util

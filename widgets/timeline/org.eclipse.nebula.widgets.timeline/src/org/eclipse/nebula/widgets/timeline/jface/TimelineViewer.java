@@ -315,7 +315,6 @@ public class TimelineViewer extends StructuredViewer {
 				for (final Object track : getContentProvider().getTracks(getInput())) {
 					final TrackFigure trackFigure = ((RootFigure) figure).createTrackFigure(getLabelProvider().getText(track));
 
-					tracksLayer.add(trackFigure);
 					registerFigure(track, trackFigure);
 
 					internalRefresh(track);
@@ -332,7 +331,7 @@ public class TimelineViewer extends StructuredViewer {
 
 				final Object track = getModelElementFor(figure);
 				for (final Object lane : getContentProvider().getLanes(track)) {
-					final LaneFigure laneFigure = new LaneFigure(getStyleProvider());
+					final LaneFigure laneFigure = getControl().getRootFigure().createLaneFigure((TrackFigure) figure);
 
 					figure.add(laneFigure);
 					fElementToFigureMap.put(lane, laneFigure);
