@@ -71,7 +71,7 @@ public class DetailFigure extends Figure {
 		final TimeBaseConverter timeViewDetails = RootFigure.getTimeViewDetails(this);
 		final Timing visibleEventArea = timeViewDetails.getVisibleEventArea();
 
-		final int stepSize = getStepSize();
+		final double stepSize = getStepSize();
 		final long startValue = (long) ((Math.floor((visibleEventArea.left()) / stepSize) + 1) * stepSize);
 
 		for (long pos = startValue; pos < visibleEventArea.right(); pos += stepSize)
@@ -86,12 +86,12 @@ public class DetailFigure extends Figure {
 	 *
 	 * @return step size in eventTime
 	 */
-	private int getStepSize() {
+	private double getStepSize() {
 		final TimeBaseConverter timeViewDetails = RootFigure.getTimeViewDetails(this);
 
 		final double steps = RootFigure.getFigure(this, TracksLayer.class).getBounds().width() / MIN_STEP_SIZE;
 		double stepSizeInEventTime = timeViewDetails.getVisibleEventArea().getDuration() / steps;
-		int factor = 1;
+		double factor = 1;
 		while (stepSizeInEventTime >= 100) {
 			stepSizeInEventTime /= 10;
 			factor *= 10;
