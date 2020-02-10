@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.eclipse.draw2d.BorderLayout;
 import org.eclipse.draw2d.Figure;
+import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.nebula.widgets.timeline.TimeBaseConverter;
 import org.eclipse.nebula.widgets.timeline.Timing;
 import org.eclipse.nebula.widgets.timeline.figures.RootFigure;
@@ -89,7 +90,7 @@ public class DetailFigure extends Figure {
 	private double getStepSize() {
 		final TimeBaseConverter timeViewDetails = RootFigure.getTimeViewDetails(this);
 
-		final double steps = RootFigure.getFigure(this, TracksLayer.class).getBounds().width() / MIN_STEP_SIZE;
+		final double steps = Math.max(1, RootFigure.getFigure(this, TracksLayer.class).getBounds().width() / MIN_STEP_SIZE);
 		double stepSizeInEventTime = timeViewDetails.getVisibleEventArea().getDuration() / steps;
 		double factor = 1;
 		while (stepSizeInEventTime >= 100) {
