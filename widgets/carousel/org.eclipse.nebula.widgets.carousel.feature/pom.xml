@@ -21,14 +21,14 @@ Contributors:
 
 	<parent>
 		<groupId>org.eclipse.nebula</groupId>
-		<artifactId>chips</artifactId>
+		<artifactId>carousel</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
-  <artifactId>org.eclipse.nebula.widgets.chips.feature</artifactId>
+  <artifactId>org.eclipse.nebula.widgets.carousel.feature</artifactId>
   <packaging>eclipse-feature</packaging>
   <version>1.0.0-SNAPSHOT</version>
 
-  <name>Nebula Chips Feature</name>
+  <name>Nebula Carousel Feature</name>
 
 </project>

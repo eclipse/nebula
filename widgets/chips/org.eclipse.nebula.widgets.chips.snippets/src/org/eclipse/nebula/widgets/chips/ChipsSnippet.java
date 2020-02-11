@@ -329,7 +329,7 @@ public class ChipsSnippet {
 		chip4.setForeground(shell.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 		chip4.setBackground(shell.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		chip4.setChipsBackground(shell.getDisplay().getSystemColor(SWT.COLOR_WHITE));
-chip4.setPushedStateForeground(shell.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		chip4.setPushedStateForeground(shell.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		chip4.setPushedStateBackground(checkColor);
 		chip4.setImage(loadImage("icons/email_b.png"));
 		chip4.setPushImage(loadImage("icons/email_w.png"));
