@@ -26,20 +26,29 @@ import org.eclipse.swt.widgets.Event;
 
 class ImageContainer extends Canvas {
 
-	private Image image;
+	private Image image, scrollImage;
 	private Carousel carousel;
+	private int slider;
 
 	public ImageContainer(final Carousel parent, final int style) {
 		super(parent, SWT.CENTER);
 		carousel = parent;
+		slider = -1;
 		addListener(SWT.Paint, e -> {
 			final GC gc = e.gc;
 			if (image == null) {
 				return;
 			}
+
 			final Rectangle clientArea = getClientArea();
-			final Rectangle imageBounds = image.getBounds();
-			gc.drawImage(image, (clientArea.width - imageBounds.width) / 2, (clientArea.height - imageBounds.height) / 2);
+			if (slider == -1) {
+				final Rectangle imageBounds = image.getBounds();
+				gc.drawImage(image, (clientArea.width - imageBounds.width) / 2, (clientArea.height - imageBounds.height) / 2);
+				return;
+			}
+
+			// Animation
+			gc.drawImage(scrollImage, slider, 0, clientArea.width, clientArea.height, 0, 0, clientArea.width, clientArea.height);
 		});
 	}
 
@@ -62,7 +71,7 @@ class ImageContainer extends Canvas {
 	}
 
 	void moveTo(final int newSelection) {
-		final int direction = newSelection > carousel.getSelection() ? SWT.LEFT_TO_RIGHT : SWT.RIGHT_TO_LEFT;
+		final int direction = newSelection > carousel.getSelection() ? SWT.LEFT : SWT.RIGHT;
 		slide(newSelection, direction);
 		carousel.selection = newSelection;
 		fireSelectionEvent();
@@ -74,16 +83,68 @@ class ImageContainer extends Canvas {
 		if (newSelection == carousel.getImages().size()) {
 			newSelection = 0;
 		}
-		slide(newSelection, SWT.LEFT_TO_RIGHT);
+		slide(newSelection, SWT.LEFT);
 		carousel.selection = newSelection;
 		fireSelectionEvent();
 		carousel.imageSelector.redraw();
 	}
 
 	private void slide(final int target, final int direction) {
-		// TODO Auto-generated method stub
+		final int width = getClientArea().width;
+		slider = direction == SWT.LEFT ? 0 : width;
+		if (direction == SWT.LEFT) {
+			createScrolledImage(image, carousel.getImages().get(target));
+		} else {
+			createScrolledImage(carousel.getImages().get(target), image);
+		}
+
+		getDisplay().timerExec(200, new Runnable() {
+
+			@Override
+			public void run() {
+				ImageContainer.this.redraw();
+				final int step = width / 5;
+				if (direction == SWT.LEFT) {
+					slider += step;
+					if (slider >= width) {
+						slider = -1;
+						scrollImage.dispose();
+						return;
+					}
+				} else {
+					slider -= step;
+					if (slider <= 0) {
+						slider = -1;
+						scrollImage.dispose();
+						return;
+					}
+				}
+				getDisplay().timerExec(50, this);
+			}
+		});
+
 		image = carousel.getImages().get(target);
 		redraw();
+	}
+
+	private void createScrolledImage(final Image left, final Image right) {
+		final Rectangle clientArea = getClientArea();
+
+		scrollImage = new Image(getDisplay(), clientArea.width * 2, clientArea.height);
+		final GC gc = new GC(scrollImage);
+		gc.setAntialias(SWT.ON);
+		gc.setInterpolation(SWT.HIGH);
+
+		gc.setBackground(carousel.getBackground());
+		gc.fillRectangle(0, 0, clientArea.width * 2, clientArea.height);
+
+		final Rectangle leftImageBounds = left.getBounds();
+		gc.drawImage(left, (clientArea.width - leftImageBounds.width) / 2, (clientArea.height - leftImageBounds.height) / 2);
+
+		final Rectangle rightImageBounds = right.getBounds();
+		gc.drawImage(right, clientArea.width + (clientArea.width - rightImageBounds.width) / 2, (clientArea.height - rightImageBounds.height) / 2);
+
+		gc.dispose();
 	}
 
 	private void fireSelectionEvent() {
@@ -105,10 +166,10 @@ class ImageContainer extends Canvas {
 	void movePrevious() {
 		final Carousel carousel = (Carousel) getParent();
 		int newSelection = carousel.selection - 1;
-		if (newSelection == 0) {
+		if (newSelection == -1) {
 			newSelection = carousel.getImages().size() - 1;
 		}
-		slide(newSelection, SWT.RIGHT_TO_LEFT);
+		slide(newSelection, SWT.RIGHT);
 		carousel.selection = newSelection;
 		fireSelectionEvent();
 		carousel.imageSelector.redraw();
