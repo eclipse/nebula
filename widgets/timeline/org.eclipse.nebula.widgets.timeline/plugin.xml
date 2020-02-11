@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated Timeline -->
+      <package
+            uri="http://eclipse.org/nebula/timeline/1.0"
+            class="org.eclipse.nebula.widgets.timeline.ITimelinePackage"
+            genModel="model/Timeline.genmodel"/>
+   </extension>
+
+</plugin>
