@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors: Laurent CARON (laurent.caron@gmail.com) - initial API and
@@ -152,7 +152,7 @@ public class MultiChoice<T> extends Composite {
 			}
 		};
 
-		this.selection = new LinkedHashSet<T>();
+		this.selection = new LinkedHashSet<>();
 		this.elements = elements;
 		this.separator = ",";
 		this.labelProvider = new MultiChoiceDefaultLabelProvider();
@@ -224,7 +224,7 @@ public class MultiChoice<T> extends Composite {
 	protected void validateEntry() {
 		final String toValidate = this.text.getText();
 		final String[] elementsToValidate = toValidate.split(this.separator);
-		final List<String> fieldsInError = new ArrayList<String>();
+		final List<String> fieldsInError = new ArrayList<>();
 		this.selection.clear();
 		for (final String elementToValidate : elementsToValidate) {
 			final String temp = elementToValidate.trim();
@@ -303,7 +303,7 @@ public class MultiChoice<T> extends Composite {
 		}
 
 		if (this.elements == null) {
-			this.elements = new ArrayList<T>();
+			this.elements = new ArrayList<>();
 		}
 		this.elements.add(value);
 		refresh();
@@ -364,7 +364,7 @@ public class MultiChoice<T> extends Composite {
 		}
 
 		if (this.elements == null) {
-			this.elements = new ArrayList<T>();
+			this.elements = new ArrayList<>();
 		}
 		this.elements.addAll(values);
 		refresh();
@@ -392,12 +392,27 @@ public class MultiChoice<T> extends Composite {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
 		if (this.elements == null) {
-			this.elements = new ArrayList<T>();
+			this.elements = new ArrayList<>();
 		}
 		for (final T value : values) {
 			this.elements.add(value);
 		}
 		refresh();
+	}
+
+	/**
+	 * Returns the editable state.
+	 *
+	 * @return whether or not the receiver is editable
+	 *
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                </ul>
+	 */
+	public boolean getEditable() {
+		return text.getEditable();
 	}
 
 	/**
@@ -472,7 +487,7 @@ public class MultiChoice<T> extends Composite {
 		if (this.elements == null) {
 			return null;
 		}
-		return new ArrayList<T>(this.elements);
+		return new ArrayList<>(this.elements);
 	}
 
 	/**
@@ -713,7 +728,7 @@ public class MultiChoice<T> extends Composite {
 	public int[] getSelectedIndex() {
 		checkWidget();
 		checkNullElement();
-		final List<Integer> selectedIndex = new ArrayList<Integer>();
+		final List<Integer> selectedIndex = new ArrayList<>();
 		for (int i = 0; i < this.elements.size(); i++) {
 			if (this.selection.contains(this.elements.get(i))) {
 				selectedIndex.add(i);
@@ -749,7 +764,7 @@ public class MultiChoice<T> extends Composite {
 	public List<T> getSelection() {
 		checkWidget();
 		checkNullElement();
-		return new ArrayList<T>(this.selection);
+		return new ArrayList<>(this.selection);
 	}
 
 	/**
@@ -962,6 +977,23 @@ public class MultiChoice<T> extends Composite {
 	}
 
 	/**
+	 * Sets the editable state.
+	 *
+	 * @param editable the new editable state
+	 *
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                </ul>
+	 */
+	public void setEditable(final boolean editable) {
+		checkWidget();
+		this.text.setEditable(editable);
+		this.text.setBackground(null);
+	}
+
+	/**
 	 * @see org.eclipse.swt.widgets.Control#setToolTipText(java.lang.String)
 	 */
 	@Override
@@ -1044,7 +1076,7 @@ public class MultiChoice<T> extends Composite {
 		final Composite content = new Composite(this.scrolledComposite, SWT.NONE);
 		content.setLayout(new GridLayout(this.numberOfColumns, true));
 
-		this.checkboxes = new ArrayList<Button>(this.elements.size());
+		this.checkboxes = new ArrayList<>(this.elements.size());
 		for (final T o : this.elements) {
 			final Button checkBoxButton = new Button(content, SWT.CHECK);
 
@@ -1057,6 +1089,7 @@ public class MultiChoice<T> extends Composite {
 			if (this.background != null) {
 				checkBoxButton.setBackground(this.background);
 			}
+			checkBoxButton.setEnabled(text.getEditable());
 
 			checkBoxButton.setData(o);
 			checkBoxButton.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false));
@@ -1095,7 +1128,7 @@ public class MultiChoice<T> extends Composite {
 			return;
 		}
 
-		final List<String> values = new ArrayList<String>();
+		final List<String> values = new ArrayList<>();
 		for (final Button current : this.checkboxes) {
 			if (current.getSelection()) {
 				values.add(current.getText());
@@ -1335,7 +1368,7 @@ public class MultiChoice<T> extends Composite {
 	 *
 	 * @param textValue new text value
 	 */
-	public void setText(String textValue) {
+	public void setText(final String textValue) {
 		checkWidget();
 		checkNullElement();
 		if (textValue == null) {
