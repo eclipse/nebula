@@ -15,7 +15,7 @@ package org.eclipse.nebula.widgets.chips;
 import org.eclipse.nebula.widgets.carousel.Carousel;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
@@ -34,7 +34,7 @@ public class CarouselSnippet {
 		final Display display = new Display();
 		shell = new Shell(display);
 		shell.setText("Carousel Snippet");
-		shell.setLayout(new GridLayout(1, false));
+		shell.setLayout(new FillLayout());
 		shell.setBackground(display.getSystemColor(SWT.COLOR_WHITE));
 
 		final Carousel carousel = new Carousel(shell, SWT.NONE);

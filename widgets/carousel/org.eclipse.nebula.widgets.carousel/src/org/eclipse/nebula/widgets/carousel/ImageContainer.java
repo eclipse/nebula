@@ -31,11 +31,14 @@ class ImageContainer extends Canvas {
 	private int slider;
 
 	public ImageContainer(final Carousel parent, final int style) {
-		super(parent, SWT.CENTER);
+		super(parent, SWT.DOUBLE_BUFFERED);
 		carousel = parent;
 		slider = -1;
 		addListener(SWT.Paint, e -> {
 			final GC gc = e.gc;
+			gc.setAntialias(SWT.ON);
+			gc.setInterpolation(SWT.HIGH);
+
 			if (image == null) {
 				return;
 			}
@@ -43,13 +46,36 @@ class ImageContainer extends Canvas {
 			final Rectangle clientArea = getClientArea();
 			if (slider == -1) {
 				final Rectangle imageBounds = image.getBounds();
-				gc.drawImage(image, (clientArea.width - imageBounds.width) / 2, (clientArea.height - imageBounds.height) / 2);
+				if (imageBounds.width > clientArea.width || imageBounds.height > clientArea.height) {
+					// Image is too big
+					final Point point = reduceImageSoItFits(image);
+					final int newWidth = point.x;
+					final int newHeight = point.y;
+
+					gc.drawImage(image, 0, 0, imageBounds.width, imageBounds.height, (clientArea.width - newWidth) / 2, (clientArea.height - newHeight) / 2, newWidth, newHeight);
+				} else {
+					gc.drawImage(image, (clientArea.width - imageBounds.width) / 2, (clientArea.height - imageBounds.height) / 2);
+				}
 				return;
 			}
 
 			// Animation
 			gc.drawImage(scrollImage, slider, 0, clientArea.width, clientArea.height, 0, 0, clientArea.width, clientArea.height);
 		});
+	}
+
+	private Point reduceImageSoItFits(final Image img) {
+		final Rectangle clientArea = getClientArea();
+		final Rectangle imageBounds = img.getBounds();
+		final float ratio = imageBounds.width * 1f / imageBounds.height * 1f;
+
+		int newWidth = imageBounds.width;
+		int newHeight = imageBounds.height;
+		while (newWidth > clientArea.width - 5 || newHeight > clientArea.height - 5) {
+			newWidth = (int) (newWidth * .9f);
+			newHeight = (int) (newWidth / ratio);
+		}
+		return new Point(newWidth, newHeight);
 	}
 
 	@Override
@@ -132,17 +158,36 @@ class ImageContainer extends Canvas {
 
 		scrollImage = new Image(getDisplay(), clientArea.width * 2, clientArea.height);
 		final GC gc = new GC(scrollImage);
-		gc.setAntialias(SWT.ON);
 		gc.setInterpolation(SWT.HIGH);
 
 		gc.setBackground(carousel.getBackground());
 		gc.fillRectangle(0, 0, clientArea.width * 2, clientArea.height);
 
 		final Rectangle leftImageBounds = left.getBounds();
-		gc.drawImage(left, (clientArea.width - leftImageBounds.width) / 2, (clientArea.height - leftImageBounds.height) / 2);
+		if (leftImageBounds.width > clientArea.width || leftImageBounds.height > clientArea.height) {
+			// Image is too big
+			final Point point = reduceImageSoItFits(left);
+			final int newWidth = point.x;
+			final int newHeight = point.y;
+
+			gc.drawImage(left, 0, 0, leftImageBounds.width, leftImageBounds.height, //
+					(clientArea.width - newWidth) / 2, (clientArea.height - newHeight) / 2, newWidth, newHeight);
+		} else {
+			gc.drawImage(left, (clientArea.width - leftImageBounds.width) / 2, (clientArea.height - leftImageBounds.height) / 2);
+		}
 
 		final Rectangle rightImageBounds = right.getBounds();
-		gc.drawImage(right, clientArea.width + (clientArea.width - rightImageBounds.width) / 2, (clientArea.height - rightImageBounds.height) / 2);
+		if (rightImageBounds.width > clientArea.width || rightImageBounds.height > clientArea.height) {
+			// Image is too big
+			final Point point = reduceImageSoItFits(right);
+			final int newWidth = point.x;
+			final int newHeight = point.y;
+
+			gc.drawImage(right, 0, 0, rightImageBounds.width, rightImageBounds.height, //
+					clientArea.width + (clientArea.width - newWidth) / 2, (clientArea.height - newHeight) / 2, newWidth, newHeight);
+		} else {
+			gc.drawImage(right, clientArea.width + (clientArea.width - rightImageBounds.width) / 2, (clientArea.height - rightImageBounds.height) / 2);
+		}
 
 		gc.dispose();
 	}
