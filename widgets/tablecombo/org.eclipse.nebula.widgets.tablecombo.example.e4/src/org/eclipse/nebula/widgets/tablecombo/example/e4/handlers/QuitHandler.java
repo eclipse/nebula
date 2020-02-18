@@ -11,7 +11,7 @@
  * Contributors:
  * Laurent Caron <laurent dot caron at gmail dot com> - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.nebula.tablecombo.example.e4.handlers;
+package org.eclipse.nebula.widgets.tablecombo.example.e4.handlers;
 
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.workbench.IWorkbench;

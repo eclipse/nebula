@@ -11,7 +11,7 @@
  * Contributors:
  * Laurent Caron <laurent dot caron at gmail dot com> - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.nebula.tablecombo.example.e4;
+package org.eclipse.nebula.widgets.tablecombo.example.e4;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;

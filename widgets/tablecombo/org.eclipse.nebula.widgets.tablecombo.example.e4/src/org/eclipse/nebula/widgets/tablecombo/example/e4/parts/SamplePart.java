@@ -12,7 +12,7 @@
  * Marty Jones <martybjones at gmail dot com> - initial API and implementation of the sample
  * Laurent Caron <laurent dot caron at gmail dot com> - Eclipse e4 implementation
  *******************************************************************************/
-package org.eclipse.nebula.tablecombo.example.e4.parts;
+package org.eclipse.nebula.widgets.tablecombo.example.e4.parts;
 
 import java.util.ArrayList;
 import java.util.List;

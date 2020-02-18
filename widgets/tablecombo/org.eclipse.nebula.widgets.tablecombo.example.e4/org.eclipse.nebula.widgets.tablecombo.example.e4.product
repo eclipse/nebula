@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="org.eclipse.nebula.tablecombo.example.e4" id="org.eclipse.nebula.tablecombo.example.e4.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="1.0.0.qualifier" useFeatures="false" includeLaunchers="true">
+<product name="org.eclipse.nebula.widgets.tablecombo.example.e4" id="org.eclipse.nebula.widgets.tablecombo.example.e4.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="1.0.0.qualifier" useFeatures="false" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
@@ -16,7 +16,7 @@
    <windowImages/>
 
    <plugins>
-      <plugin id="org.eclipse.nebula.tablecombo.example.e4"/>
+      <plugin id="org.eclipse.nebula.widgets.tablecombo.example.e4"/>
       <plugin id="com.ibm.icu"/>
       <plugin id="javax.annotation"/>
       <plugin id="javax.inject"/>
