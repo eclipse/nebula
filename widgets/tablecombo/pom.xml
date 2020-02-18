@@ -18,6 +18,9 @@
 		<module>org.eclipse.nebula.widgets.tablecombo.example</module>
 		<module>org.eclipse.nebula.widgets.tablecombo.feature</module>
 		<module>org.eclipse.nebula.widgets.tablecombo.test</module>
+		<module>org.eclipse.nebula.widgets.tablecombo.example.e4</module>
+		<!--<module>org.eclipse.nebula.widgets.tablecombo.css</module>
+		<module>org.eclipse.nebula.widgets.tablecombo.css.feature</module>-->
 	</modules>
 
 </project>
