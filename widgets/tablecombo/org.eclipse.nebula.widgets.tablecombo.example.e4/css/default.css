@@ -1,0 +1,38 @@
+/* 
+CSS for TableCombo
+*/
+
+TableCombo#two {
+	font: Verdana 11px;
+	background-color: darkred;
+	color: white;
+	tablecombo-show-table-lines: true;
+	tablecombo-show-table-header: true;
+	tablecombo-border-color: darkblue;
+}
+
+
+TableCombo#three {
+	tablecombo-text-font: "Comic sans MS" italic 14px;
+	tablecombo-text-background-color: darkblue;
+	tablecombo-text-color: white;
+}
+
+TableCombo#four {
+	tablecombo-button-background-color: darkblue;
+	tablecombo-button-color: white;
+}
+
+TableCombo#five {
+	tablecombo-table-font: Arial bold 10px;
+	tablecombo-table-background-color: darkblue;
+	tablecombo-table-color: white;
+}
+
+TableCombo#six {
+	tablecombo-table-odd-lines-color: #000000;
+	tablecombo-table-odd-lines-background-color: #CCCCCC;
+
+	tablecombo-table-even-lines-color: darkred;
+	tablecombo-table-even-lines-background-color: #FFFFCC;
+}

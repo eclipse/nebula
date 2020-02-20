@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.e4.ui.css.core.elementProvider">
+      <provider
+            class="org.eclipse.nebula.widgets.tablecombo.css.TableComboElementProvider">
+         <widget
+               class="org.eclipse.nebula.widgets.tablecombo.TableCombo"></widget>
+      </provider>
+   </extension>
+   <extension
+         point="org.eclipse.e4.ui.css.core.propertyHandler">
+      <handler
+            adapter="org.eclipse.nebula.widgets.tablecombo.css.TableComboElement"
+            composite="true"
+            handler="org.eclipse.nebula.widgets.tablecombo.css.TableComboPropertyHandler">
+			<property-name name="tablecombo-show-table-lines"> </property-name>
+			<property-name name="tablecombo-show-table-header"> </property-name>
+			<property-name name="tablecombo-border-color"> </property-name>
+			<property-name name="tablecombo-text-background-color"> </property-name>
+			<property-name name="tablecombo-text-color"> </property-name>
+			<property-name name="tablecombo-text-font"> </property-name>
+			<property-name name="tablecombo-text-font-style"> </property-name>
+			<property-name name="tablecombo-text-font-size"> </property-name>
+			<property-name name="tablecombo-text-font-weight"> </property-name>
+			<property-name name="tablecombo-text-font-family"> </property-name>
+			<property-name name="tablecombo-button-color"> </property-name>
+			<property-name name="tablecombo-button-background-color"> </property-name>
+			<property-name name="tablecombo-table-color"> </property-name>
+			<property-name name="tablecombo-table-background-color"> </property-name>
+			<property-name name="tablecombo-table-font"> </property-name>
+			<property-name name="tablecombo-table-font-style"> </property-name>
+			<property-name name="tablecombo-table-font-size"> </property-name>
+			<property-name name="tablecombo-table-font-weight"> </property-name>
+			<property-name name="tablecombo-table-font-family"> </property-name>
+			<property-name name="tablecombo-table-odd-lines-color"> </property-name>
+			<property-name name="tablecombo-table-odd-lines-background-color"> </property-name>
+			<property-name name="tablecombo-table-even-lines-color"> </property-name>
+			<property-name name="tablecombo-table-even-lines-background-color"> </property-name>
+      </handler>
+   </extension>
+
+</plugin>
