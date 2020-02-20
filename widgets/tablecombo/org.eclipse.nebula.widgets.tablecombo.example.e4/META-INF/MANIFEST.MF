@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: E4
+Bundle-Name: E4 TableCombo Example
 Bundle-SymbolicName: org.eclipse.nebula.widgets.tablecombo.example.e4;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.2.0.qualifier
 Bundle-Activator: org.eclipse.nebula.widgets.tablecombo.example.e4.Activator
 Require-Bundle: javax.inject;bundle-version="0.0.0",
  org.eclipse.swt;bundle-version="0.0.0",
