@@ -152,8 +152,8 @@ public class GeoMapUtil {
 		Point mapPosition = geoMap.getMapPosition();
 		int dx = pivot.x;
 		int dy = pivot.y;
-		geoMap.setZoom(geoMap.getZoom() + 1);
 		geoMap.setMapPosition(mapPosition.x * 2 + dx, mapPosition.y * 2 + dy);
+		geoMap.setZoom(geoMap.getZoom() + 1);
 	}
 
 	/**
@@ -172,9 +172,9 @@ public class GeoMapUtil {
 		Point mapPosition = geoMap.getMapPosition();
 		int dx = pivot.x;
 		int dy = pivot.y;
-		geoMap.setZoom(geoMap.getZoom() - 1);
 		geoMap.setMapPosition((mapPosition.x - dx) / 2,
 				(mapPosition.y - dy) / 2);
+		geoMap.setZoom(geoMap.getZoom() - 1);
 	}
 
 	static private int zoomMargin = 10;
