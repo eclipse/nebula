@@ -15,9 +15,9 @@
 
 package org.eclipse.nebula.widgets.geomap;
 
-import java.awt.Rectangle;
-
 import org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 
 /**
  * @since 3.3
