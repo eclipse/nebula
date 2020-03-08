@@ -49,9 +49,6 @@ public class VPanel extends VControl {
 				case SWT.Dispose:
 					dispose(false);
 					break;
-//				case SWT.FocusIn:
-//					setFocus();
-//					break;
 				case SWT.Paint:
 					paintControl(event);
 					break;
@@ -303,19 +300,13 @@ public class VPanel extends VControl {
 	
 	public void setWidget(Composite widget) {
 		this.widget = widget;
-		this.widget.addListener(SWT.KeyDown, new Listener() {
-			public void handleEvent(Event event) {
-			}
-		});
-//		this.widget.addListener(SWT.FocusIn, new Listener() {
-//			public void handleEvent(Event event) {
-//				VPanel.this.getWidget().setFocus();
-//			}
-//		});
 	}
 
 	public void sort(Comparator<VControl> comparator) {
 		Collections.sort(children, comparator);
 	}
+	
+	public void updateColorsAndFont() {
+	} 
 	
 }
