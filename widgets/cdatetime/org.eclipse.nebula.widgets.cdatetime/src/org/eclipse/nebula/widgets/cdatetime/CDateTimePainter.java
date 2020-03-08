@@ -25,6 +25,7 @@ import org.eclipse.nebula.cwt.v.VLabelPainter;
 import org.eclipse.nebula.cwt.v.VPanel;
 import org.eclipse.nebula.cwt.v.VPanelPainter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Event;
 
@@ -558,14 +559,14 @@ public class CDateTimePainter implements IControlPainter {
 
 	protected void updateDayButton(VControl control) {
 		if (isToday(control)) {
-			control.setForeground(
-					control.getDisplay().getSystemColor(SWT.COLOR_RED));
+			final Color color = cdt.getPickerTodayColor();
+			control.setForeground(color!=null?color:control.getDisplay().getSystemColor(SWT.COLOR_RED));
 		} else if (isActive(control)) {
-			control.setForeground(
-					control.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+			final Color color = cdt.getPickerForegroundColor();
+			control.setForeground(color!=null?color:control.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 		} else {
-			control.setForeground(
-					control.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
+			final Color color = cdt.getPickerInactiveDayColor();
+			control.setForeground(color!=null?color:control.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
 		}
 	}
 
@@ -573,13 +574,13 @@ public class CDateTimePainter implements IControlPainter {
 	}
 
 	protected void updateDayOfWeekPanel(VControl control) {
-		control.setBackground(
-				control.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		final Color color = cdt.getPickerBackgroundColor();
+		control.setBackground(color!=null?color:control.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 	}
 
 	protected void updateDayPanel(VControl control) {
-		control.setBackground(
-				control.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		final Color color = cdt.getPickerBackgroundColor();
+		control.setBackground(color!=null?color:control.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 	}
 
 	protected void updateFooterButton(VControl control) {

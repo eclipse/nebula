@@ -73,15 +73,8 @@ class DatePicker extends VPanel {
 	MenuItem[] monthItems;
 	MenuItem[] yearItems;
 
-	// private int focusDayButton;
 	boolean editYear = false;
 	private boolean scrollable = true;
-
-	// private Comparator<Date> dayComparator = new Comparator<Date>() {
-	// public int compare(Date d1, Date d2) {
-	// return d1.compareTo(d2);
-	// }
-	// };
 
 	VPanel monthPanel;
 
@@ -129,6 +122,16 @@ class DatePicker extends VPanel {
 		picker.setLayout(new VStackLayout());
 		picker.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
+		if (cdt.pickerBackgroundColor != null) {
+			picker.setBackground(cdt.pickerBackgroundColor);
+		}
+		if (cdt.pickerForegroundColor != null) {
+			picker.setForeground(cdt.pickerForegroundColor);
+		}
+		if (cdt.pickerFont != null) {
+			picker.setFont(cdt.pickerFont);
+		}
+		
 		bodyPanels[bodyPanels.length - 1] = picker;
 	}
 
@@ -207,11 +210,6 @@ class DatePicker extends VPanel {
 
 		if (cdt.builder.hasHeader()) {
 			createHeader();
-			// if (cdt.field.length > 1
-			// || (cdt.getCalendarField(cdt.field[0]) != Calendar.MONTH
-			// && cdt.getCalendarField(cdt.field[0]) != Calendar.YEAR)) {
-			// createHeader();
-			// }
 		}
 
 		if (cdt.builder.hasHeader()
@@ -250,6 +248,16 @@ class DatePicker extends VPanel {
 		layout.verticalSpacing = b.spacing;
 		dayPanel.setLayout(layout);
 
+		if (cdt.pickerBackgroundColor != null) {
+			dayPanel.setBackground(cdt.pickerBackgroundColor);
+		}
+		if (cdt.pickerForegroundColor != null) {
+			dayPanel.setForeground(cdt.pickerForegroundColor);
+		}
+		if (cdt.pickerFont != null) {
+			dayPanel.setFont(cdt.pickerFont);
+		}
+		
 		bodyPanel.getLayout(VStackLayout.class).setDefault(dayPanel, false);
 
 		addListener(SWT.MouseWheel, event -> scrollCalendar(
@@ -333,6 +341,9 @@ class DatePicker extends VPanel {
 			dayLabels[day].setPainter(cdt.getPainter());
 			cdt.getPainter().update(dayLabels[day]);
 			dayLabels[day].setMargins(1, 1);
+			if (cdt.pickerForegroundColor!=null) {
+				dayLabels[day].setForeground(cdt.pickerForegroundColor);
+			}
 			dayLabels[day].setLayoutData(
 					new GridData(SWT.FILL, SWT.CENTER, true, false));
 		}
@@ -356,6 +367,14 @@ class DatePicker extends VPanel {
 			dayButtons[day].addListener(SWT.MouseWheel, dayListener);
 			dayButtons[day].addListener(SWT.Selection, dayListener);
 			dayButtons[day].addListener(SWT.Traverse, dayListener);
+			
+			dayButtons[day].setHoverBackgroundColor(cdt.buttonHoverBackgroundColor);
+			dayButtons[day].setHoverBorderColor(cdt.buttonHoverBorderColor);
+			dayButtons[day].setSelectedBackgroundColor(cdt.buttonSelectedBackgroundColor);
+			dayButtons[day].setSelectedBorderColor(cdt.buttonSelectedBorderColor);
+			dayButtons[day].setForeground(cdt.pickerForegroundColor);
+			dayButtons[day].setFont(cdt.pickerFont);
+
 		}
 	}
 
@@ -392,6 +411,15 @@ class DatePicker extends VPanel {
 						new GridData(f.alignment, SWT.FILL, f.grab, false));
 				clear.addListener(SWT.Selection,
 						event -> setCDTSelection(null));
+				clear.setHoverBackgroundColor(cdt.buttonHoverBackgroundColor);
+				clear.setHoverBorderColor(cdt.buttonHoverBorderColor);
+				clear.setSelectedBackgroundColor(cdt.buttonSelectedBackgroundColor);
+				clear.setSelectedBorderColor(cdt.buttonSelectedBorderColor);
+				if (cdt.pickerForegroundColor != null) {
+					clear.setForeground(cdt.pickerForegroundColor);
+				}
+				clear.setFont(cdt.pickerFont);
+
 				break;
 			case Footer.TODAY:
 			case Footer.VERBOSE_TODAY:
@@ -403,6 +431,15 @@ class DatePicker extends VPanel {
 						new GridData(f.alignment, SWT.FILL, f.grab, false));
 				today.addListener(SWT.Selection,
 						event -> setCDTSelection(new Date()));
+				today.setHoverBackgroundColor(cdt.buttonHoverBackgroundColor);
+				today.setHoverBorderColor(cdt.buttonHoverBorderColor);
+				today.setSelectedBackgroundColor(cdt.buttonSelectedBackgroundColor);
+				today.setSelectedBorderColor(cdt.buttonSelectedBorderColor);
+				if (cdt.pickerForegroundColor != null) {
+					today.setForeground(cdt.pickerForegroundColor);
+				}
+				today.setFont(cdt.pickerFont);
+
 				break;
 			}
 		}
@@ -443,6 +480,15 @@ class DatePicker extends VPanel {
 				dateNow.setLayoutData(data);
 				dateNow.addListener(SWT.Selection,
 						event -> setCDTSelection(new Date()));
+				dateNow.setHoverBackgroundColor(cdt.buttonHoverBackgroundColor);
+				dateNow.setHoverBorderColor(cdt.buttonHoverBorderColor);
+				dateNow.setSelectedBackgroundColor(cdt.buttonSelectedBackgroundColor);
+				dateNow.setSelectedBorderColor(cdt.buttonSelectedBorderColor);
+				if (cdt.pickerForegroundColor != null) {
+					dateNow.setForeground(cdt.pickerForegroundColor);
+				}
+				dateNow.setFont(cdt.pickerFont);
+
 				break;
 			case Header.MONTH:
 				monthButton = new VButton(header, SWT.TOGGLE | SWT.NO_FOCUS);
@@ -451,9 +497,19 @@ class DatePicker extends VPanel {
 				cdt.getPainter().update(monthButton);
 				monthButton.setAlignment(h.textAlignment, SWT.CENTER);
 				monthButton.setLayoutData(data);
+				
 				if (h.readOnly) {
 					monthButton.setPaintNative(false);
 				} else {
+					monthButton.setHoverBackgroundColor(cdt.buttonHoverBackgroundColor);
+					monthButton.setHoverBorderColor(cdt.buttonHoverBorderColor);
+					monthButton.setSelectedBackgroundColor(cdt.buttonSelectedBackgroundColor);
+					monthButton.setSelectedBorderColor(cdt.buttonSelectedBorderColor);
+					if (cdt.pickerForegroundColor != null) {
+						monthButton.setForeground(cdt.pickerForegroundColor);
+					}
+					monthButton.setFont(cdt.pickerFont);
+
 					if (CDT.gtk) {
 						monthButton.addListener(SWT.MouseWheel, event -> {
 							if (SWT.MouseWheel == event.type) {
@@ -493,6 +549,7 @@ class DatePicker extends VPanel {
 								});
 					}
 				}
+
 				break;
 			case Header.MONTH_NEXT:
 				monthNext = new VButton(header,
@@ -512,6 +569,15 @@ class DatePicker extends VPanel {
 					}
 					setCDTSelection(tmpcal.getTime());
 				});
+				monthNext.setHoverBackgroundColor(cdt.buttonHoverBackgroundColor);
+				monthNext.setHoverBorderColor(cdt.buttonHoverBorderColor);
+				monthNext.setSelectedBackgroundColor(cdt.buttonSelectedBackgroundColor);
+				monthNext.setSelectedBorderColor(cdt.buttonSelectedBorderColor);
+				if (cdt.pickerForegroundColor != null) {
+					monthNext.setForeground(cdt.pickerForegroundColor);
+				}
+				monthNext.setFont(cdt.pickerFont);
+
 				break;
 			case Header.MONTH_PREV:
 				monthPrev = new VButton(header,
@@ -531,6 +597,15 @@ class DatePicker extends VPanel {
 					}
 					setCDTSelection(tmpcal.getTime());
 				});
+				monthPrev.setHoverBackgroundColor(cdt.buttonHoverBackgroundColor);
+				monthPrev.setHoverBorderColor(cdt.buttonHoverBorderColor);
+				monthPrev.setSelectedBackgroundColor(cdt.buttonSelectedBackgroundColor);
+				monthPrev.setSelectedBorderColor(cdt.buttonSelectedBorderColor);
+				if (cdt.pickerForegroundColor != null) {
+					monthPrev.setForeground(cdt.pickerForegroundColor);
+				}
+				monthPrev.setFont(cdt.pickerFont);
+
 				break;
 			case Header.TIME:
 				timeButton = new VButton(header, SWT.TOGGLE | SWT.NO_FOCUS);
@@ -543,6 +618,15 @@ class DatePicker extends VPanel {
 						new GridData(SWT.FILL, SWT.FILL, false, false));
 				timeButton.addListener(SWT.Selection,
 						event -> handleHeaderSelection((VButton) event.data));
+				timeButton.setHoverBackgroundColor(cdt.buttonHoverBackgroundColor);
+				timeButton.setHoverBorderColor(cdt.buttonHoverBorderColor);
+				timeButton.setSelectedBackgroundColor(cdt.buttonSelectedBackgroundColor);
+				timeButton.setSelectedBorderColor(cdt.buttonSelectedBorderColor);
+				if (cdt.pickerForegroundColor != null) {
+					timeButton.setForeground(cdt.pickerForegroundColor);
+				}
+				timeButton.setFont(cdt.pickerFont);
+
 				break;
 			case Header.YEAR:
 				yearButton = new VButton(header, SWT.TOGGLE | SWT.NO_FOCUS);
@@ -554,6 +638,15 @@ class DatePicker extends VPanel {
 				if (h.readOnly) {
 					yearButton.setPaintNative(false);
 				} else {
+					yearButton.setHoverBackgroundColor(cdt.buttonHoverBackgroundColor);
+					yearButton.setHoverBorderColor(cdt.buttonHoverBorderColor);
+					yearButton.setSelectedBackgroundColor(cdt.buttonSelectedBackgroundColor);
+					yearButton.setSelectedBorderColor(cdt.buttonSelectedBorderColor);
+					if (cdt.pickerForegroundColor != null) {
+						yearButton.setForeground(cdt.pickerForegroundColor);
+					}
+					yearButton.setFont(cdt.pickerFont);
+
 					if (CDT.gtk) {
 						yearButton.addListener(SWT.MouseWheel, event -> {
 							if (SWT.MouseWheel == event.type) {
@@ -608,6 +701,15 @@ class DatePicker extends VPanel {
 					}
 					setCDTSelection(tmpcal.getTime());
 				});
+				yearNext.setHoverBackgroundColor(cdt.buttonHoverBackgroundColor);
+				yearNext.setHoverBorderColor(cdt.buttonHoverBorderColor);
+				yearNext.setSelectedBackgroundColor(cdt.buttonSelectedBackgroundColor);
+				yearNext.setSelectedBorderColor(cdt.buttonSelectedBorderColor);
+				if (cdt.pickerForegroundColor != null) {
+					yearNext.setForeground(cdt.pickerForegroundColor);
+				}
+				yearNext.setFont(cdt.pickerFont);
+
 				break;
 			case Header.YEAR_PREV:
 				yearPrev = new VButton(header,
@@ -627,10 +729,17 @@ class DatePicker extends VPanel {
 					}
 					setCDTSelection(tmpcal.getTime());
 				});
+				yearPrev.setHoverBackgroundColor(cdt.buttonHoverBackgroundColor);
+				yearPrev.setHoverBorderColor(cdt.buttonHoverBorderColor);
+				yearPrev.setSelectedBackgroundColor(cdt.buttonSelectedBackgroundColor);
+				yearPrev.setSelectedBorderColor(cdt.buttonSelectedBorderColor);
+				if (cdt.pickerForegroundColor != null) {
+					yearPrev.setForeground(cdt.pickerForegroundColor);
+				}
+				yearPrev.setFont(cdt.pickerFont);
 				break;
 			}
 		}
-
 	}
 
 	private void createMonths(Body b) {
@@ -646,7 +755,16 @@ class DatePicker extends VPanel {
 		layout.horizontalSpacing = b.spacing;
 		layout.verticalSpacing = b.spacing;
 		monthPanel.setLayout(layout);
-
+		if (cdt.pickerBackgroundColor != null) {
+			monthPanel.setBackground(cdt.pickerBackgroundColor);
+		}
+		if (cdt.pickerForegroundColor != null) {
+			monthPanel.setForeground(cdt.pickerForegroundColor);
+		}
+		if (cdt.pickerFont != null) {
+			monthPanel.setFont(cdt.pickerFont);
+		}
+		
 		bodyPanel.getLayout(VStackLayout.class).setDefault(monthPanel, false);
 
 		monthButtons = new VButton[12];
@@ -663,7 +781,15 @@ class DatePicker extends VPanel {
 			cdt.getPainter().update(monthButtons[month]);
 			monthButtons[month].setLayoutData(
 					new GridData(SWT.FILL, SWT.FILL, true, true));
-			// monthButtons[month].addListener(SWT.Selection, dayListener);
+			monthButtons[month].setHoverBackgroundColor(cdt.buttonHoverBackgroundColor);
+			monthButtons[month].setHoverBorderColor(cdt.buttonHoverBorderColor);
+			monthButtons[month].setSelectedBackgroundColor(cdt.buttonSelectedBackgroundColor);
+			monthButtons[month].setSelectedBorderColor(cdt.buttonSelectedBorderColor);
+			if (cdt.pickerForegroundColor != null) {
+				monthButtons[month].setForeground(cdt.pickerForegroundColor);
+			}
+			monthButtons[month].setFont(cdt.pickerFont);
+
 			monthButtons[month].addListener(SWT.Selection, event -> {
 				if (event.widget == null) {
 					VButton button = (VButton) event.data;
@@ -743,6 +869,16 @@ class DatePicker extends VPanel {
 		layout.verticalSpacing = b.spacing;
 		yearPanel.setLayout(layout);
 
+		if (cdt.pickerBackgroundColor != null) {
+			yearPanel.setBackground(cdt.pickerBackgroundColor);
+		}
+		if (cdt.pickerForegroundColor != null) {
+			yearPanel.setForeground(cdt.pickerForegroundColor);
+		}
+		if (cdt.pickerFont != null) {
+			yearPanel.setFont(cdt.pickerFont);
+		}
+		
 		bodyPanel.getLayout(VStackLayout.class).setDefault(yearPanel, false);
 
 		yearButtons = new VButton[15];
@@ -756,8 +892,16 @@ class DatePicker extends VPanel {
 			yearButtons[year].setData(CDT.Key.Index, year);
 			yearButtons[year].setPainter(cdt.getPainter());
 			cdt.getPainter().update(yearButtons[year]);
-			yearButtons[year].setLayoutData(
-					new GridData(SWT.FILL, SWT.FILL, true, true));
+			yearButtons[year].setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+			yearButtons[year].setHoverBackgroundColor(cdt.buttonHoverBackgroundColor);
+			yearButtons[year].setHoverBorderColor(cdt.buttonHoverBorderColor);
+			yearButtons[year].setSelectedBackgroundColor(cdt.buttonSelectedBackgroundColor);
+			yearButtons[year].setSelectedBorderColor(cdt.buttonSelectedBorderColor);
+			if (cdt.pickerForegroundColor != null) {
+				yearButtons[year].setForeground(cdt.pickerForegroundColor);
+			}
+			yearButtons[year].setFont(cdt.pickerFont);
+
 			yearButtons[year].addListener(SWT.Selection, event -> {
 				if (event.widget == null) {
 					VButton button = (VButton) event.data;
@@ -1123,8 +1267,7 @@ class DatePicker extends VPanel {
 		if (dayPanel != null) {
 			Calendar date = cdt.getCalendarInstance();
 			Calendar active = cdt.getCalendarInstance();
-			Calendar today = cdt
-					.getCalendarInstance(System.currentTimeMillis());
+			Calendar today = cdt.getCalendarInstance(System.currentTimeMillis());
 			for (VButton dayButton : dayButtons) {
 				if (dayButton != null) {
 					date.setTime((Date) dayButton.getData(CDT.Key.Date));

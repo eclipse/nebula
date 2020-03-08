@@ -23,9 +23,9 @@ package org.eclipse.nebula.widgets.cdatetime;
 import java.text.AttributedCharacterIterator;
 import java.text.CharacterIterator;
 import java.text.DateFormat;
+import java.text.DateFormat.Field;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.text.DateFormat.Field;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -51,6 +51,8 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -161,10 +163,10 @@ public class CDateTime extends BaseCombo {
 			int sWidth = sRect.x + sRect.width
 					- 2 * spinner.getControl().getBorderWidth() + 1;
 
-			if (gtk && sWidth==0) {
+			if (gtk && sWidth == 0) {
 				sWidth = 67;
-			}			
-			
+			}
+
 			size.x += sWidth;
 			size.x++;
 			size.y += textMarginHeight;
@@ -195,10 +197,10 @@ public class CDateTime extends BaseCombo {
 			int sWidth = sRect.x + sRect.width
 					- 2 * spinner.getControl().getBorderWidth() + 1;
 
-			if (gtk && sWidth==0) {
+			if (gtk && sWidth == 0) {
 				sWidth = 67;
-			}			
-			
+			}
+
 			tSize.x = cRect.width - sWidth;
 
 			text.setBounds(cRect.x, cRect.y + getBorderWidth(), tSize.x,
@@ -355,6 +357,14 @@ public class CDateTime extends BaseCombo {
 
 	private TimeZone[] allowedTimezones;
 
+	Color buttonHoverBackgroundColor, buttonHoverBorderColor;
+	Color buttonSelectedBackgroundColor, buttonSelectedBorderColor;
+
+	Color pickerForegroundColor, pickerBackgroundColor;
+	Font pickerFont;
+
+	Color pickerActiveDayColor, pickerInactiveDayColor, pickerTodayColor;
+	
 	/**
 	 * Constructs a new instance of this class given its parent and a style
 	 * value describing its behavior and appearance. The current date and the
@@ -473,6 +483,16 @@ public class CDateTime extends BaseCombo {
 			pickerPanel.setLayout(layout);
 			setContent(pickerPanel.getComposite());
 
+			if (pickerBackgroundColor != null) {
+				pickerPanel.setBackground(pickerBackgroundColor);
+			}
+			if (pickerForegroundColor != null) {
+				pickerPanel.setForeground(pickerForegroundColor);
+			}
+			if (pickerFont != null) {
+				pickerPanel.setFont(pickerFont);
+			}
+				
 			canvas.addListener(SWT.KeyDown, event -> {
 				if (SWT.ESC == event.keyCode) {
 					event.doit = false;
@@ -530,6 +550,10 @@ public class CDateTime extends BaseCombo {
 		b.setToolTipText(Resources.getString("accept.text", locale)); //$NON-NLS-1$
 		b.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		b.addListener(SWT.Selection, event -> setOpen(false));
+		b.setHoverBackgroundColor(buttonHoverBackgroundColor);
+		b.setHoverBorderColor(buttonHoverBorderColor);
+		b.setSelectedBackgroundColor(buttonSelectedBackgroundColor);
+		b.setSelectedBorderColor(buttonSelectedBorderColor);
 
 		b = new VButton(tb, SWT.CANCEL | SWT.NO_FOCUS);
 		b.setData(CDT.PickerPart, PickerPart.CancelButton);
@@ -540,6 +564,10 @@ public class CDateTime extends BaseCombo {
 			fireSelectionChanged();
 			setOpen(false);
 		});
+		b.setHoverBackgroundColor(buttonHoverBackgroundColor);
+		b.setHoverBorderColor(buttonHoverBorderColor);
+		b.setSelectedBackgroundColor(buttonSelectedBackgroundColor);
+		b.setSelectedBorderColor(buttonSelectedBorderColor);
 
 		b = new VButton(tb, SWT.NO_FOCUS);
 		b.setData(CDT.PickerPart, PickerPart.ClearButton);
@@ -551,6 +579,12 @@ public class CDateTime extends BaseCombo {
 			setSelection(null);
 			fireSelectionChanged();
 		});
+		b.setForeground(parent.getForeground());
+		b.setFont(parent.getFont());
+		b.setHoverBackgroundColor(buttonHoverBackgroundColor);
+		b.setHoverBorderColor(buttonHoverBorderColor);
+		b.setSelectedBackgroundColor(buttonSelectedBackgroundColor);
+		b.setSelectedBorderColor(buttonSelectedBorderColor);
 
 		VLabel sep = new VLabel(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
 		sep.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
@@ -1497,33 +1531,6 @@ public class CDateTime extends BaseCombo {
 		text.removeListener(SWT.Traverse, textListener);
 	}
 
-	// void select(Date date) {
-	// if(date != null) {
-	// Date[] tmp = new Date[selection.length + 1];
-	// System.arraycopy(selection, 0, tmp, 1, selection.length);
-	// tmp[0] = date;
-	// setSelectedDates(tmp);
-	// }
-	// }
-	//
-	// void select(Date date1, Date date2, int field, int increment) {
-	// if(date1 != null && date2 != null) {
-	// Date start = date1.before(date2) ? date1 : date2;
-	// Date end = date1.before(date2) ? date2 : date1;
-	// List<Date> tmp = new ArrayList<Date>();
-	// Calendar cal = getCalendarInstance(start);
-	// while(cal.getTime().before(end)) {
-	// tmp.add(cal.getTime());
-	// cal.add(field, increment);
-	// }
-	// tmp.add(cal.getTime());
-	// if(start == date2) {
-	// Collections.reverse(tmp);
-	// }
-	// setSelectedDates(tmp.toArray(new Date[tmp.size()]));
-	// }
-	// }
-
 	/**
 	 * Sets the active field, which may or may not be a real field (it may also
 	 * be <code>FIELD_NONE</code>)
@@ -1562,7 +1569,6 @@ public class CDateTime extends BaseCombo {
 			createPicker();
 		}
 	}
-
 
 	/*
 	 * (non-Javadoc)
@@ -2076,7 +2082,7 @@ public class CDateTime extends BaseCombo {
 					text.setText(string);
 					text.getControl().addListener(SWT.Verify, textListener);
 				}
-				if((text.getControl().getStyle() & SWT.READ_ONLY) == 0) {
+				if ((text.getControl().getStyle() & SWT.READ_ONLY) == 0) {
 					text.getControl().setSelection(selStart, selEnd);
 				}
 			}
@@ -2199,30 +2205,142 @@ public class CDateTime extends BaseCombo {
 			this.allowedTimezones = allowedTimeZones;
 		}
 	}
-	
-	/** 
+
+	/**
 	 * Returns the minimum date or <code>null</code>.
 	 * 
 	 * @return Returns a clone of the minDate or <code>null</code> if not set.
 	 * @since 1.4.0
 	 */
 	public Calendar getMinDate() {
-		if(minDate == null) {
+		if (minDate == null) {
 			return null;
 		}
 		return (Calendar) minDate.clone();
 	}
 
-	/** 
+	/**
 	 * Returns the maximum date or <code>null</code>.
 	 * 
 	 * @return Returns a clone of the maxDate or <code>null</code> if not set.
 	 * @since 1.4.0
 	 */
 	public Calendar getMaxDate() {
-		if(maxDate == null) {
+		if (maxDate == null) {
 			return null;
 		}
 		return (Calendar) maxDate.clone();
 	}
+
+	/**
+	 * @see org.eclipse.swt.widgets.Control#setBackground(org.eclipse.swt.graphics.Color)
+	 */
+	public void setBackground(Color color) {
+		super.setBackground(color);
+		if (spinner != null) {
+			spinner.setBackground(color);
+		}
+	}
+
+	public void setButtonHoverBackgroundColor(Color color) {
+		checkWidget();
+		this.buttonHoverBackgroundColor = color;
+	}
+
+	public void setButtonHoverBorderColor(Color color) {
+		checkWidget();
+		this.buttonHoverBorderColor = color;
+	}
+
+	public void setButtonSelectedBackgroundColor(Color color) {
+		checkWidget();
+		this.buttonSelectedBackgroundColor = color;
+	}
+
+	public void setButtonSelectedBorderColor(Color color) {
+		checkWidget();
+		this.buttonSelectedBorderColor = color;
+	}
+
+	public Color getPickerForegroundColor() {
+		checkWidget();
+		return pickerForegroundColor;
+	}
+
+	public void setPickerForegroundColor(Color pickerForegroundColor) {
+		checkWidget();
+		this.pickerForegroundColor = pickerForegroundColor;
+	}
+
+	public Color getPickerBackgroundColor() {
+		checkWidget();
+		return pickerBackgroundColor;
+	}
+
+	public void setPickerBackgroundColor(Color pickerBackgroundColor) {
+		checkWidget();
+		this.pickerBackgroundColor = pickerBackgroundColor;
+	}
+
+	public Font getPickerFont() {
+		checkWidget();
+		return pickerFont;
+	}
+
+	public void setPickerFont(Font pickerFont) {
+		checkWidget();
+		this.pickerFont = pickerFont;
+	}
+
+	public Color getButtonHoverBackgroundColor() {
+		checkWidget();
+		return buttonHoverBackgroundColor;
+	}
+
+	public Color getButtonHoverBorderColor() {
+		checkWidget();
+		return buttonHoverBorderColor;
+	}
+
+	public Color getButtonSelectedBackgroundColor() {
+		checkWidget();
+		return buttonSelectedBackgroundColor;
+	}
+
+	public Color getButtonSelectedBorderColor() {
+		checkWidget();
+		return buttonSelectedBorderColor;
+	}
+
+	public Color getPickerActiveDayColor() {
+		checkWidget();
+		return pickerActiveDayColor;
+	}
+
+	public void setPickerActiveDayColor(Color pickerActiveDayColor) {
+		checkWidget();
+		this.pickerActiveDayColor = pickerActiveDayColor;
+	}
+
+	public Color getPickerInactiveDayColor() {
+		checkWidget();
+		return pickerInactiveDayColor;
+	}
+
+	public void setPickerInactiveDayColor(Color pickerInactiveDayColor) {
+		checkWidget();
+		this.pickerInactiveDayColor = pickerInactiveDayColor;
+	}
+
+	public Color getPickerTodayColor() {
+		checkWidget();
+		return pickerTodayColor;
+	}
+
+	public void setPickerTodayColor(Color pickerTodayColor) {
+		checkWidget();
+		this.pickerTodayColor = pickerTodayColor;
+	}
+
+	
 }
