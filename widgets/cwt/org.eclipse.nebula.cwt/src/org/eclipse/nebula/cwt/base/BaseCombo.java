@@ -31,6 +31,7 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -106,12 +107,6 @@ public abstract class BaseCombo extends Canvas {
 	}
 
 	/**
-	 * The value of {@link SWT#getVersion()} for the earliest known revision
-	 * that fixes the SWT bug mentioned in bug 185739.
-	 */
-	protected static int SWT_MODAL_FIX_VERSION = 3346;
-
-	/**
 	 * true if the platform is carbon, false otherwise
 	 */
 	protected static final boolean carbon = "carbon".equals(SWT.getPlatform()); //$NON-NLS-1$
@@ -125,16 +120,6 @@ public abstract class BaseCombo extends Canvas {
 	 * true if the platform is win32, false otherwise
 	 */
 	protected static final boolean win32 = "win32".equals(SWT.getPlatform()); //$NON-NLS-1$
-
-	/**
-	 * true if the platform is winXP, false otherwise
-	 */
-	protected static final boolean winxp = "win32".equals(SWT.getPlatform()) && "5.0".equals(System.getProperty("os.version")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
-	/**
-	 * true if the platform is win32, false otherwise
-	 */
-	protected static final boolean vista = "win32".equals(SWT.getPlatform()) && "6.0".equals(System.getProperty("os.version")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 	/**
 	 * A constant value used to pad the computed height for this widget, so that
@@ -1050,6 +1035,9 @@ public abstract class BaseCombo extends Canvas {
 		return panel.setFocus();
 	}
 
+	/**
+	 * @see org.eclipse.swt.widgets.Canvas#setFont(org.eclipse.swt.graphics.Font)
+	 */
 	public void setFont(Font font) {
 		super.setFont(font);
 		if (checkButton()) {
@@ -1063,6 +1051,43 @@ public abstract class BaseCombo extends Canvas {
 				content.setFont(font);
 			}
 		}
+	}
+
+	/**
+	 * @see org.eclipse.swt.widgets.Control#setBackground(org.eclipse.swt.graphics.Color)
+	 */
+	public void setBackground(Color color) {
+		super.setBackground(color);
+		if (checkButton()) {
+			button.setBackground(color);
+		}
+		if (checkText()) {
+			text.setBackground(color);
+		}
+		if (checkContent()) {
+			if( content != this ){
+				content.setBackground(color);
+			}
+		}
+	}
+
+	/**
+	 * @see org.eclipse.swt.widgets.Control#setForeground(org.eclipse.swt.graphics.Color)
+	 */
+	public void setForeground(Color color) {
+		super.setForeground(color);
+		if (checkButton()) {
+			button.setForeground(color);
+		}
+		if (checkText()) {
+			text.setForeground(color);
+		}
+		if (checkContent()) {
+			if( content != this ){
+				content.setForeground(color);
+			}
+		}
+
 	}
 
 	/**

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.e4.ui.css.core.elementProvider">
+      <provider
+            class="org.eclipse.nebula.widgets.cdatetime.css.CDateTimeElementProvider">
+         <widget
+               class="org.eclipse.nebula.widgets.cdatetime.CDateTime"></widget>
+      </provider>
+   </extension>
+   <extension
+         point="org.eclipse.e4.ui.css.core.propertyHandler">
+      <handler
+            adapter="org.eclipse.nebula.widgets.cdatetime.css.CDateTimeElement"
+            composite="true"
+            handler="org.eclipse.nebula.widgets.cdatetime.css.CDateTimePropertyHandler">
+			<property-name name="cdt-background-color"> </property-name>
+			<property-name name="cdt-color"> </property-name>
+			<property-name name="cdt-font"> </property-name>
+			<property-name name="cdt-font-style"> </property-name>
+			<property-name name="cdt-font-size"> </property-name>
+			<property-name name="cdt-font-weight"> </property-name>
+			<property-name name="cdt-font-family"> </property-name>
+			<property-name name="cdt-picker-background-color"> </property-name>
+			<property-name name="cdt-picker-color"> </property-name>
+			<property-name name="cdt-picker-font"> </property-name>
+			<property-name name="cdt-picker-font-style"> </property-name>
+			<property-name name="cdt-picker-font-size"> </property-name>
+			<property-name name="cdt-picker-font-weight"> </property-name>
+			<property-name name="cdt-picker-font-family"> </property-name>
+			<property-name name="cdt-picker-active-day-color"> </property-name>
+			<property-name name="cdt-picker-inactive-day-color"> </property-name>
+			<property-name name="cdt-picker-today-color"> </property-name>
+			<property-name name="cdt-picker-minutes-color"> </property-name>
+			<property-name name="cdt-picker-minutes-background-color"> </property-name>
+			<property-name name="cdt-button-hover-border-color"> </property-name>
+			<property-name name="cdt-button-hover-background-color"> </property-name>
+			<property-name name="cdt-button-selected-border-color"> </property-name>
+			<property-name name="cdt-button-selected-background-color"> </property-name>
+      </handler>
+   </extension>
+
+</plugin>
+
