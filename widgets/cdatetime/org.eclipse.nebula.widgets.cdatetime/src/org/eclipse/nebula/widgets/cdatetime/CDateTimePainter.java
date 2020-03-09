@@ -501,6 +501,9 @@ public class CDateTimePainter implements IControlPainter {
 	}
 
 	public final void update(VControl control) {
+		if (control == null) {
+			return;
+		}
 		switch ((CDT.PickerPart) control.getData(CDT.PickerPart)) {
 		case ClearButton:
 			updateClearButton(control);

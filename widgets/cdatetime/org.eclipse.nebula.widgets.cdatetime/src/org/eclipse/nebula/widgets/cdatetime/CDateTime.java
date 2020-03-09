@@ -364,6 +364,7 @@ public class CDateTime extends BaseCombo {
 	Font pickerFont;
 
 	Color pickerActiveDayColor, pickerInactiveDayColor, pickerTodayColor;
+	Color pickerMinutesColor, pickerMinutesBackgroundColor;
 	
 	/**
 	 * Constructs a new instance of this class given its parent and a style
@@ -483,16 +484,6 @@ public class CDateTime extends BaseCombo {
 			pickerPanel.setLayout(layout);
 			setContent(pickerPanel.getComposite());
 
-			if (pickerBackgroundColor != null) {
-				pickerPanel.setBackground(pickerBackgroundColor);
-			}
-			if (pickerForegroundColor != null) {
-				pickerPanel.setForeground(pickerForegroundColor);
-			}
-			if (pickerFont != null) {
-				pickerPanel.setFont(pickerFont);
-			}
-				
 			canvas.addListener(SWT.KeyDown, event -> {
 				if (SWT.ESC == event.keyCode) {
 					event.doit = false;
@@ -509,11 +500,21 @@ public class CDateTime extends BaseCombo {
 			}
 		}
 
+		if (pickerBackgroundColor != null) {
+			pickerPanel.setBackground(pickerBackgroundColor);
+		}
+		if (pickerForegroundColor != null) {
+			pickerPanel.setForeground(pickerForegroundColor);
+		}
+		if (pickerFont != null) {
+			pickerPanel.setFont(pickerFont);
+		}
+		
 		if (isDate) {
 			DatePicker dp = new DatePicker(this);
 			dp.setScrollable(scrollable);
 			dp.setFields(calendarFields);
-			dp.updateView();
+			dp.updateView();//TODO
 			picker = dp;
 		} else if (isTime) {
 			if ((style & CDT.CLOCK_DISCRETE) != 0) {
@@ -1364,73 +1365,74 @@ public class CDateTime extends BaseCombo {
 
 		setFormat(style);
 
-		if (!isSimple()) {
-			if (isDropDown()) {
-				if ((style & CDT.BUTTON_AUTO) != 0) {
-					setButtonVisibility(BaseCombo.BUTTON_AUTO);
-				} else {
-					setButtonVisibility(BaseCombo.BUTTON_ALWAYS);
-				}
+		if (isSimple()) {
+			return;
+		}
+		if (isDropDown()) {
+			if ((style & CDT.BUTTON_AUTO) != 0) {
+				setButtonVisibility(BaseCombo.BUTTON_AUTO);
 			} else {
-				setButtonVisibility(BaseCombo.BUTTON_NEVER);
-				if ((style & CDT.SPINNER) != 0) {
-					int sStyle = SWT.VERTICAL;
-					if (gtk && (style & CDT.BORDER) != 0) {
-						sStyle |= SWT.BORDER;
-					}
-					spinner = VNative.create(Spinner.class, panel, sStyle);
-					if (win32) {
-						spinner.setBackground(
-								text.getControl().getBackground());
-					}
-					spinner.getControl().setMinimum(0);
-					spinner.getControl().setMaximum(50);
-					spinner.getControl().setDigits(1);
-					spinner.getControl().setIncrement(1);
-					spinner.getControl().setPageIncrement(1);
-					spinner.getControl().setSelection(25);
-					spinner.getControl().addFocusListener(new FocusAdapter() {
-						@Override
-						public void focusGained(FocusEvent e) {
-							internalFocusShift = true;
-							setFocus();
-							internalFocusShift = false;
-						}
-					});
-					spinner.getControl().addMouseListener(new MouseAdapter() {
-						@Override
-						public void mouseDown(MouseEvent e) {
-							if (e.button == 2) {
-								fieldNext();
-							}
-						}
-					});
-					spinner.getControl()
-							.addSelectionListener(new SelectionAdapter() {
-								@Override
-								public void widgetSelected(SelectionEvent e) {
-									if (VTracker.getMouseDownButton() != 2) {
-										if (spinner.getControl()
-												.getSelection() > 25) {
-											fieldAdjust(1);
-										} else {
-											fieldAdjust(-1);
-										}
-										spinner.getControl().setSelection(25);
-									}
-								}
-							});
-					panel.setLayout(new SpinnerLayout());
+				setButtonVisibility(BaseCombo.BUTTON_ALWAYS);
+			}
+		} else {
+			setButtonVisibility(BaseCombo.BUTTON_NEVER);
+			if ((style & CDT.SPINNER) != 0) {
+				int sStyle = SWT.VERTICAL;
+				if (gtk && (style & CDT.BORDER) != 0) {
+					sStyle |= SWT.BORDER;
 				}
+				spinner = VNative.create(Spinner.class, panel, sStyle);
+				if (win32) {
+					spinner.setBackground(
+							text.getControl().getBackground());
+				}
+				spinner.getControl().setMinimum(0);
+				spinner.getControl().setMaximum(50);
+				spinner.getControl().setDigits(1);
+				spinner.getControl().setIncrement(1);
+				spinner.getControl().setPageIncrement(1);
+				spinner.getControl().setSelection(25);
+				spinner.getControl().addFocusListener(new FocusAdapter() {
+					@Override
+					public void focusGained(FocusEvent e) {
+						internalFocusShift = true;
+						setFocus();
+						internalFocusShift = false;
+					}
+				});
+				spinner.getControl().addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseDown(MouseEvent e) {
+						if (e.button == 2) {
+							fieldNext();
+						}
+					}
+				});
+				spinner.getControl()
+						.addSelectionListener(new SelectionAdapter() {
+							@Override
+							public void widgetSelected(SelectionEvent e) {
+								if (VTracker.getMouseDownButton() != 2) {
+									if (spinner.getControl()
+											.getSelection() > 25) {
+										fieldAdjust(1);
+									} else {
+										fieldAdjust(-1);
+									}
+									spinner.getControl().setSelection(25);
+								}
+							}
+						});
+				panel.setLayout(new SpinnerLayout());
 			}
+		}
 
-			updateText();
-			activeField = -5;
-			setActiveField(FIELD_NONE);
+		updateText();
+		activeField = -5;
+		setActiveField(FIELD_NONE);
 
-			if (checkText()) {
-				addTextListener();
-			}
+		if (checkText()) {
+			addTextListener();
 		}
 	}
 
@@ -2240,26 +2242,38 @@ public class CDateTime extends BaseCombo {
 		if (spinner != null) {
 			spinner.setBackground(color);
 		}
+		picker.updateColorsAndFont();
+	}
+
+	
+	
+	public void setForeground(Color color) {
+		super.setForeground(color);
+		picker.updateColorsAndFont();
 	}
 
 	public void setButtonHoverBackgroundColor(Color color) {
 		checkWidget();
 		this.buttonHoverBackgroundColor = color;
+		picker.updateColorsAndFont();
 	}
 
 	public void setButtonHoverBorderColor(Color color) {
 		checkWidget();
 		this.buttonHoverBorderColor = color;
+		picker.updateColorsAndFont();
 	}
 
 	public void setButtonSelectedBackgroundColor(Color color) {
 		checkWidget();
 		this.buttonSelectedBackgroundColor = color;
+		picker.updateColorsAndFont();
 	}
 
 	public void setButtonSelectedBorderColor(Color color) {
 		checkWidget();
 		this.buttonSelectedBorderColor = color;
+		picker.updateColorsAndFont();
 	}
 
 	public Color getPickerForegroundColor() {
@@ -2270,6 +2284,10 @@ public class CDateTime extends BaseCombo {
 	public void setPickerForegroundColor(Color pickerForegroundColor) {
 		checkWidget();
 		this.pickerForegroundColor = pickerForegroundColor;
+		if (pickerForegroundColor != null) {
+			pickerPanel.setForeground(pickerForegroundColor);
+		}
+		picker.updateColorsAndFont();
 	}
 
 	public Color getPickerBackgroundColor() {
@@ -2280,6 +2298,10 @@ public class CDateTime extends BaseCombo {
 	public void setPickerBackgroundColor(Color pickerBackgroundColor) {
 		checkWidget();
 		this.pickerBackgroundColor = pickerBackgroundColor;
+		if (pickerBackgroundColor != null) {
+			pickerPanel.setBackground(pickerBackgroundColor);
+		}
+		picker.updateColorsAndFont();
 	}
 
 	public Font getPickerFont() {
@@ -2290,6 +2312,10 @@ public class CDateTime extends BaseCombo {
 	public void setPickerFont(Font pickerFont) {
 		checkWidget();
 		this.pickerFont = pickerFont;
+		if (pickerFont != null) {
+			pickerPanel.setFont(pickerFont);
+		}
+		picker.updateColorsAndFont();
 	}
 
 	public Color getButtonHoverBackgroundColor() {
@@ -2320,6 +2346,7 @@ public class CDateTime extends BaseCombo {
 	public void setPickerActiveDayColor(Color pickerActiveDayColor) {
 		checkWidget();
 		this.pickerActiveDayColor = pickerActiveDayColor;
+		picker.updateColorsAndFont();
 	}
 
 	public Color getPickerInactiveDayColor() {
@@ -2330,6 +2357,7 @@ public class CDateTime extends BaseCombo {
 	public void setPickerInactiveDayColor(Color pickerInactiveDayColor) {
 		checkWidget();
 		this.pickerInactiveDayColor = pickerInactiveDayColor;
+		picker.updateColorsAndFont();
 	}
 
 	public Color getPickerTodayColor() {
@@ -2340,6 +2368,29 @@ public class CDateTime extends BaseCombo {
 	public void setPickerTodayColor(Color pickerTodayColor) {
 		checkWidget();
 		this.pickerTodayColor = pickerTodayColor;
+		picker.updateColorsAndFont();
+	}
+
+	public Color getPickerMinutesColor() {
+		checkWidget();
+		return pickerMinutesColor;
+	}
+
+	public void setPickerMinutesColor(Color pickerMinutesColor) {
+		checkWidget();
+		this.pickerMinutesColor = pickerMinutesColor;
+		picker.updateColorsAndFont();
+	}
+
+	public Color getPickerMinutesBackgroundColor() {
+		checkWidget();
+		return pickerMinutesBackgroundColor;
+	}
+
+	public void setPickerMinutesBackgroundColor(Color pickerMinutesBackgroundColor) {
+		checkWidget();
+		this.pickerMinutesBackgroundColor = pickerMinutesBackgroundColor;
+		picker.updateColorsAndFont();
 	}
 
 	

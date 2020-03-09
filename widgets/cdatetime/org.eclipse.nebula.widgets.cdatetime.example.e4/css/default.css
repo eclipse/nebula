@@ -1,0 +1,77 @@
+/* 
+CSS for CDateTime
+*/
+
+CDateTime#one {
+	cdt-font: Verdana 11px;
+	cdt-color: white;
+	cdt-background-color: darkred;
+}
+
+CDateTime#two {
+	cdt-picker-font: Verdana 10px;
+	cdt-picker-color: magenta;
+	cdt-picker-background-color: #ffffcc;
+
+	cdt-picker-active-day-color: darkgreen;
+	cdt-picker-inactive-day-color: cyan;
+	cdt-picker-today-color: darkred;
+}
+
+CDateTime#three {
+	cdt-picker-font: Verdana 10px;
+	cdt-picker-color: magenta;
+	cdt-picker-background-color: #ffffcc;
+
+	cdt-picker-active-day-color: darkgreen;
+	cdt-picker-inactive-day-color: cyan;
+	cdt-picker-today-color: darkred;
+	cdt-picker-minutes-color: white;
+	cdt-picker-minutes-background-color: darkblue;
+	
+	
+	cdt-button-hover-border-color: cyan;
+	cdt-button-hover-background-color: darkblue;
+	cdt-button-selected-border-color: darkred;
+	cdt-button-selected-background-color: red;
+}
+
+CDateTime#four,CDateTime#five,CDateTime#six {
+	cdt-picker-font: Verdana 10px;
+	cdt-picker-color: magenta;
+	cdt-picker-background-color: #ffffcc;
+
+	cdt-picker-active-day-color: darkgreen;
+	cdt-picker-inactive-day-color: cyan;
+	cdt-picker-today-color: darkred;
+	cdt-picker-minutes-color: white;
+	cdt-picker-minutes-background-color: darkblue;
+	
+	
+	cdt-button-hover-border-color: cyan;
+	cdt-button-hover-background-color: darkblue;
+	cdt-button-selected-border-color: darkred;
+	cdt-button-selected-background-color: red;
+}
+
+CDateTime#big_one {
+	cdt-picker-font: Verdana 10px;
+	cdt-picker-color: magenta;
+	cdt-picker-background-color: #ffffcc;
+
+	cdt-picker-active-day-color: darkgreen;
+	cdt-picker-inactive-day-color: cyan;
+	cdt-picker-today-color: darkred;
+	cdt-picker-minutes-color: white;
+	cdt-picker-minutes-background-color: darkblue;
+	
+	
+	cdt-button-hover-border-color: cyan;
+	cdt-button-hover-background-color: darkblue;
+	cdt-button-selected-border-color: darkred;
+	cdt-button-selected-background-color: red;
+}
+
+CDateTime#big_two {
+	cdt-background-color: darkred;
+}

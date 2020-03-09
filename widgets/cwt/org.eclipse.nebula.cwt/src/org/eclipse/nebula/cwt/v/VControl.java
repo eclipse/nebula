@@ -299,6 +299,9 @@ public abstract class VControl {
 
 		if(text != null) {
 			GC gc = new GC(composite);
+			if (getFont() != null && !getFont().isDisposed()) {
+				gc.setFont(getFont());
+			}
 			Point tSize = gc.textExtent(text);
 			gc.dispose();
 			size.x += tSize.x;

@@ -306,4 +306,7 @@ public class VPanel extends VControl {
 		Collections.sort(children, comparator);
 	}
 	
+	public void updateColorsAndFont() {
+	}
+	
 }

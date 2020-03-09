@@ -46,6 +46,11 @@
          version="0.0.0"/>
 
    <includes
+         id="org.eclipse.nebula.widgets.tablecombo.css.feature"
+         version="0.0.0"/>
+
+
+   <includes
          id="org.eclipse.nebula.widgets.xviewer.feature"
          version="0.0.0"/>
 
@@ -56,6 +61,11 @@
    <includes
          id="org.eclipse.nebula.widgets.cdatetime.feature"
          version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.nebula.widgets.cdatetime.css.feature"
+         version="0.0.0"/>
+
 
    <includes
          id="org.eclipse.nebula.widgets.paperclips.feature"

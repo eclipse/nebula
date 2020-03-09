@@ -21,6 +21,10 @@
 	    <module>org.eclipse.nebula.widgets.cdatetime.tests</module>
 		<module>org.eclipse.nebula.widgets.cdatetime.feature</module>
 
+		<module>org.eclipse.nebula.widgets.cdatetime.css</module>
+		<module>org.eclipse.nebula.widgets.cdatetime.example.e4</module>
+		<module>org.eclipse.nebula.widgets.cdatetime.feature.css</module>
+
 	</modules>
 
 </project>

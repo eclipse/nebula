@@ -179,18 +179,34 @@ public class VButton extends VControl {
 		}
 	}
 
+	/**
+	 * Set the background color when the mouse is hover the button
+	 * @param hoverBackgroundColor new color
+	 */
 	public void setHoverBackgroundColor(Color hoverBackgroundColor) {
 		this.hoverBackgroundColor = hoverBackgroundColor;
 	}
 
+	/**
+	 * border color when the mouse is hover the button
+	 * @param hoverBorderColor new color
+	 */
 	public void setHoverBorderColor(Color hoverBorderColor) {
 		this.hoverBorderColor = hoverBorderColor;
 	}
 
+	/**
+	 * background color when the button is selected
+	 * @param selectedBackgroundColor new color
+	 */
 	public void setSelectedBackgroundColor(Color selectedBackgroundColor) {
 		this.selectedBackgroundColor = selectedBackgroundColor;
 	}
 
+	/**
+	 * border color when the button is selected
+	 * @param selectedBorderColor new color
+	 */
 	public void setSelectedBorderColor(Color selectedBorderColor) {
 		this.selectedBorderColor = selectedBorderColor;
 	}
