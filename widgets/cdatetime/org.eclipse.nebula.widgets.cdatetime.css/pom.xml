@@ -20,7 +20,7 @@ Contributors:
 
 	<parent>
 		<groupId>org.eclipse.nebula</groupId>
-		<artifactId>tablecombo</artifactId>
+		<artifactId>cdatetime</artifactId>
 		<version>1.4.0-SNAPSHOT</version>
 	</parent>
 
