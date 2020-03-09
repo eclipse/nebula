@@ -26,7 +26,7 @@ Contributors:
 		<version>1.4.0-SNAPSHOT</version>
 	</parent>
 
-  <artifactId>org.eclipse.nebula.widgets.cdatetime.feature.css</artifactId>
+  <artifactId>org.eclipse.nebula.widgets.cdatetime.css.feature</artifactId>
   <packaging>eclipse-feature</packaging>
 
   <name>Nebula CDateTime CSS Feature</name>

@@ -23,7 +23,7 @@
 
 		<module>org.eclipse.nebula.widgets.cdatetime.css</module>
 		<module>org.eclipse.nebula.widgets.cdatetime.example.e4</module>
-		<module>org.eclipse.nebula.widgets.cdatetime.feature.css</module>
+		<module>org.eclipse.nebula.widgets.cdatetime.css.feature</module>
 
 	</modules>
 
