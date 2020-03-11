@@ -14,7 +14,6 @@
  ******************************************************************************/
 package org.eclipse.nebula.widgets.oscilloscope.multichannel;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 
 import javax.sound.sampled.AudioSystem;
@@ -22,6 +21,7 @@ import javax.sound.sampled.Clip;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
@@ -174,7 +174,7 @@ public class OscilloscopeDispatcher {
 	private boolean isRunning;
 
 	private Color activeForegroundColor = Display.getDefault().getSystemColor(SWT.COLOR_GREEN);
-	private final Color inactiveForegroundColor = Display.getDefault().getSystemColor(SWT.COLOR_RED);
+	private Color inactiveForegroundColor = Display.getDefault().getSystemColor(SWT.COLOR_RED);
 	
 	/**
 	 * @param channel
@@ -339,16 +339,30 @@ public class OscilloscopeDispatcher {
 	 *         supply your own Image.
 	 */
 	public Image getBackgroundImage() {
-
 		if (this.backgroundImage == null) {
-			byte[] bytes = new byte[OscilloscopeDispatcher.BACKGROUND_MONITOR.length];
-			for (int i = 0; i < OscilloscopeDispatcher.BACKGROUND_MONITOR.length; i++) {
-				bytes[i] = (byte) OscilloscopeDispatcher.BACKGROUND_MONITOR[i];
-			}
-			this.backgroundImage = new Image(null, new ByteArrayInputStream(bytes));
+			this.backgroundImage = createGridImage();
 		}
 		return this.backgroundImage;
 	}
+	
+	private Image createGridImage() {
+		Display display = Display.getDefault();
+		int width = getOscilloscope().getGridSquareSize();
+		Image image = new Image(display, width, width);
+		GC gc = new GC(image);
+
+		gc.setAdvanced(true);
+		gc.setBackground(getOscilloscope().getGridBackground());
+		gc.fillRectangle(0, 0, width, width);
+
+		gc.setForeground(getOscilloscope().getGridForeground());
+		gc.setLineWidth(getOscilloscope().getGridLineWidth());
+		gc.drawLine(width/2, 0, width/2, width);
+		gc.drawLine(0, width/2, width, width/2);
+		gc.dispose();
+		return image;
+	}
+
 
 	/**
 	 * Override this to set the offset of the scope line in percentages where
@@ -435,7 +449,7 @@ public class OscilloscopeDispatcher {
 	 * @see Oscilloscope#setForeground(Color)
 	 */
 	public void setInactiveForegoundColor(final Color color) {
-		activeForegroundColor = color;
+		this.inactiveForegroundColor = color;
 	}
 
 	/**
