@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.e4.ui.css.core.elementProvider">
+      <provider
+            class="org.eclipse.nebula.widgets.oscilloscope.css.OscilloscopeElementProvider">
+         <widget
+               class="org.eclipse.nebula.widgets.oscilloscope.multichannel.Oscilloscope"></widget>
+      </provider>
+   </extension>
+   <extension
+         point="org.eclipse.e4.ui.css.core.propertyHandler">
+      <handler
+            adapter="org.eclipse.nebula.widgets.oscilloscope.css.OscilloscopeElement"
+            composite="true"
+            handler="org.eclipse.nebula.widgets.oscilloscope.css.OscilloscopePropertyHandler">
+			<property-name name="grid-square-size"> </property-name>
+			<property-name name="grid-background-color"> </property-name>
+			<property-name name="grid-color"> </property-name>
+			<property-name name="grid-line-width"> </property-name>
+			<property-name name="channel-color-0"> </property-name>
+			<property-name name="channel-active-color-0"> </property-name>
+			<property-name name="channel-inactive-color-0"> </property-name>
+			<property-name name="channel-color-1"> </property-name>
+			<property-name name="channel-active-color-1"> </property-name>
+			<property-name name="channel-inactive-color-1"> </property-name>
+			<property-name name="channel-color-2"> </property-name>
+			<property-name name="channel-active-color-2"> </property-name>
+			<property-name name="channel-inactive-color-2"> </property-name>
+			<property-name name="channel-color-3"> </property-name>
+			<property-name name="channel-active-color-3"> </property-name>
+			<property-name name="channel-inactive-color-3"> </property-name>
+			<property-name name="channel-color-4"> </property-name>
+			<property-name name="channel-active-color-4"> </property-name>
+			<property-name name="channel-inactive-color-4"> </property-name>
+			<property-name name="channel-color-5"> </property-name>
+			<property-name name="channel-active-color-5"> </property-name>
+			<property-name name="channel-inactive-color-5"> </property-name>
+			<property-name name="channel-color-6"> </property-name>
+			<property-name name="channel-active-color-6"> </property-name>
+			<property-name name="channel-inactive-color-6"> </property-name>
+			<property-name name="channel-color-7"> </property-name>
+			<property-name name="channel-active-color-7"> </property-name>
+			<property-name name="channel-inactive-color-7"> </property-name>
+			<property-name name="channel-color-8"> </property-name>
+			<property-name name="channel-active-color-8"> </property-name>
+			<property-name name="channel-inactive-color-8"> </property-name>
+			<property-name name="channel-color-9"> </property-name>
+			<property-name name="channel-active-color-9"> </property-name>
+			<property-name name="channel-inactive-color-9"> </property-name>
+      </handler>
+   </extension>
+
+</plugin>
