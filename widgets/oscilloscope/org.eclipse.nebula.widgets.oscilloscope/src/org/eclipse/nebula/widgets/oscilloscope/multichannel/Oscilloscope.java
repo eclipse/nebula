@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
@@ -330,6 +331,10 @@ public class Oscilloscope extends Canvas {
 
 	private int width;
 
+	private int gridSquareSize;
+	private int gridLineWidth;
+	private Color gridBackground, gridForeground;
+	
 	/**
 	 * Creates a scope with one channel.
 	 *
@@ -404,6 +409,17 @@ public class Oscilloscope extends Canvas {
 			Oscilloscope.this.controlResized(e);
 		});
 
+		gridSquareSize = 20;
+		gridLineWidth = 1;
+		final Color defaultGridBackground = new Color(getDisplay(), 57, 52, 56);
+		gridBackground = defaultGridBackground;
+		final Color defaultGridForeground = new Color(getDisplay(), 81, 96, 77);
+		gridForeground = defaultGridForeground;
+		addListener(SWT.Dispose, e-> {
+			defaultGridBackground.dispose();
+			defaultGridForeground.dispose();
+		});
+		
 	}
 
 	/**
@@ -1102,4 +1118,147 @@ public class Oscilloscope extends Canvas {
 			element.fg.dispose();
 		}
 	}
+
+	/**
+	 * @return the width of the square displayed in the grid
+	 *
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 * </ul>
+	 */
+	public int getGridSquareSize() {
+		checkWidget();
+		return gridSquareSize;
+	}
+
+	/**
+	 * Set the size of the square displayed in the grid
+	 * @param size the new size
+	 *
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *    <li>ERROR_INVALID_ARGUMENT - if size is lower than 1</li>
+	 * </ul>
+	 */
+	public void setGridSquareSize(int size) {
+		checkWidget();
+		if (size < 1) {
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+		}
+		this.gridSquareSize = size;
+		updateGrid();
+	}
+
+	private void updateGrid() {
+		if (chan.length > 0) {
+			OscilloscopeDispatcher dispatcher = chan[0].dispatcher;
+			dispatcher.updateBackgroundImage();
+			setBackgroundImage(dispatcher.getBackgroundImage());
+		}
+	}
+
+	/**
+	 * @return the width of the lines of the grid
+	 *
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 * </ul>
+	 */
+	public int getGridLineWidth() {
+		checkWidget();
+		return gridLineWidth;
+	}
+
+	/**
+	 * Set the with of the lines size of the square displayed in the grid
+	 * @param gridLineWidth the new size
+	 *
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *    <li>ERROR_INVALID_ARGUMENT - if gridLineWidth is lower than 1</li>
+	 * </ul>
+	 */
+	public void setGridLineWidth(int gridLineWidth) {
+		checkWidget();
+		if (gridLineWidth < 1) {
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+		}
+		this.gridLineWidth = gridLineWidth;
+		updateGrid();
+	}
+
+	/**
+	 * Returns the background color of the oscilloscope.
+	 *
+	 * @return the oscilloscope background color
+	 *
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 * </ul>
+	 */
+	public Color getGridBackground() {
+		checkWidget();
+		return gridBackground;
+	}
+
+	/**
+	 * Sets the oscilloscope's background color to the color specified
+	 * by the argument, or to the default system color for the control
+	 * if the argument is null.
+	 * @param color the new color (or null)
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_INVALID_ARGUMENT - if the argument has been disposed</li>
+	 * </ul>
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 * </ul>
+	 */
+	public void setGridBackground(Color gridBackground) {
+		checkWidget();
+		this.gridBackground = gridBackground;
+		updateGrid();
+	}
+
+	/**
+	 * Returns the color of the grid.
+	 *
+	 * @return the color or the grid
+	 *
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 * </ul>
+	 */
+	public Color getGridForeground() {
+		checkWidget();
+		return gridForeground;
+	}
+
+	/**
+	 * Sets the color of the grid to the color specified by the argument, or to the default system color for the control
+	 * if the argument is null.
+	 * @param color the new color (or null)
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_INVALID_ARGUMENT - if the argument has been disposed</li>
+	 * </ul>
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 * </ul>
+	 */
+	public void setGridForeground(Color gridForeground) {
+		checkWidget();
+		this.gridForeground = gridForeground;
+		updateGrid();
+	}
+	
+	
 }
