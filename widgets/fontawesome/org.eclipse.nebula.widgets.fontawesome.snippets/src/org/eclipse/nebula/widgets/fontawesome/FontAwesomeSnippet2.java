@@ -51,18 +51,19 @@ public class FontAwesomeSnippet2 {
 
 		// Toolbar
 		new Label(shell, SWT.NONE).setText("In ToolBar");
-		ToolBar toobar = new ToolBar(shell, SWT.NONE);
-		ToolItem item1 = new ToolItem(toobar, SWT.NONE);
+		ToolBar toolbar = new ToolBar(shell, SWT.NONE);
+		toolbar.setFont(FontAwesome.getFont(15));
+		ToolItem item1 = new ToolItem(toolbar, SWT.NONE);
 		item1.setText(FontAwesome.align_left);
-		ToolItem item2 = new ToolItem(toobar, SWT.NONE);
+		ToolItem item2 = new ToolItem(toolbar, SWT.NONE);
 		item2.setText(FontAwesome.align_center);
-		ToolItem item3 = new ToolItem(toobar, SWT.NONE);
+		ToolItem item3 = new ToolItem(toolbar, SWT.NONE);
 		item3.setText(FontAwesome.align_right);
-		new ToolItem(toobar, SWT.SEPARATOR);
-		ToolItem item4 = new ToolItem(toobar, SWT.NONE);
+		new ToolItem(toolbar, SWT.SEPARATOR);
+		ToolItem item4 = new ToolItem(toolbar, SWT.NONE);
 		item4.setText(FontAwesome.quote_left);
-		new ToolItem(toobar, SWT.SEPARATOR);
-		ToolItem item5 = new ToolItem(toobar, SWT.NONE);
+		new ToolItem(toolbar, SWT.SEPARATOR);
+		ToolItem item5 = new ToolItem(toolbar, SWT.NONE);
 		item5.setText(FontAwesome.question);
 
 		shell.pack();
