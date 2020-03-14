@@ -75,6 +75,7 @@
 		<module>../../widgets/stepbar</module>
 		<module>../../widgets/chips</module>
 		<module>../../widgets/carousel</module>
+		<module>../../widgets/fontawesome</module>
 
 		<!-- Releng -->
 		<module>../org.eclipse.nebula.feature</module>

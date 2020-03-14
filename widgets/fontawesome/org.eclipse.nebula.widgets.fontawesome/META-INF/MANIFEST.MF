@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: FontAwesome widget plug-in
+Bundle-SymbolicName: org.eclipse.nebula.widgets.fontawesome
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Nebula
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: org.eclipse.nebula.widgets.fontawesome
+Require-Bundle: org.eclipse.swt;visibility:=reexport
