@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="timeline" nsURI="http://eclipse.org/nebula/timeline/1.0" nsPrefix="timeline">
+  <eClassifiers xsi:type="ecore:EClass" name="Timeline">
+    <eOperations name="createTrack" lowerBound="1" eType="#//Track">
+      <eParameters name="title" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eOperations>
+    <eOperations name="createCursor" lowerBound="1" eType="#//Cursor">
+      <eParameters name="timestamp" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
+      <eParameters name="timeUnit" eType="#//TimeUnit"/>
+    </eOperations>
+    <eOperations name="createCursor" lowerBound="1" eType="#//Cursor">
+      <eParameters name="timestamp" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="tracks" upperBound="-1"
+        eType="#//Track" containment="true" eOpposite="#//Track/timeline"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="cursors" upperBound="-1"
+        eType="#//Cursor" containment="true" eOpposite="#//Cursor/timeline"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="selectedEvent" eType="#//TimelineEvent"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Track">
+    <eOperations name="createLane" lowerBound="1" eType="#//Lane"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="timeline" lowerBound="1"
+        eType="#//Timeline" eOpposite="#//Timeline/tracks"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="lanes" upperBound="-1"
+        eType="#//Lane" containment="true" eOpposite="#//Lane/track"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="title" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Lane" eSuperTypes="#//Colored">
+    <eOperations name="createEvent" lowerBound="1" eType="#//TimelineEvent">
+      <eParameters name="title" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eParameters name="message" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eParameters name="startTimestamp" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
+      <eParameters name="duration" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
+      <eParameters name="timeUnit" eType="#//TimeUnit"/>
+    </eOperations>
+    <eOperations name="createEvent" lowerBound="1" eType="#//TimelineEvent">
+      <eParameters name="title" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eParameters name="message" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eParameters name="startTimestamp" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
+      <eParameters name="duration" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="track" lowerBound="1" eType="#//Track"
+        eOpposite="#//Track/lanes"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="timeEvents" upperBound="-1"
+        eType="#//TimelineEvent" containment="true" eOpposite="#//TimelineEvent/lane"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TimelineEvent" eSuperTypes="#//Colored #//Timed">
+    <eOperations name="getDuration" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
+    <eOperations name="setStartTimestamp">
+      <eParameters name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
+      <eParameters name="timeUnit" eType="#//TimeUnit"/>
+    </eOperations>
+    <eOperations name="setEndTimestamp">
+      <eParameters name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
+      <eParameters name="timeUnit" eType="#//TimeUnit"/>
+    </eOperations>
+    <eOperations name="setDuration">
+      <eParameters name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
+      <eParameters name="timeUnit" eType="#//TimeUnit"/>
+    </eOperations>
+    <eOperations name="setDuration">
+      <eParameters name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="lane" lowerBound="1" eType="#//Lane"
+        eOpposite="#//Lane/timeEvents"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="startTimestamp" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="endTimestamp" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="title" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="message" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Cursor" eSuperTypes="#//Timed">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="timeline" lowerBound="1"
+        eType="#//Timeline" eOpposite="#//Timeline/cursors"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="timestamp" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="TimeUnit" instanceClassName="java.util.concurrent.TimeUnit"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="RGB" instanceClassName="org.eclipse.swt.graphics.RGB"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Colored" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="colorCode" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="HTML color code, eg &quot;#23885F&quot;"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="rgb" eType="#//RGB" changeable="false"
+        volatile="true" transient="true" derived="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Timed" abstract="true" interface="true">
+    <eOperations name="getTiming" eType="#//Timing"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="Timing" instanceClassName="org.eclipse.nebula.widgets.timeline.Timing"
+      serializable="false"/>
+</ecore:EPackage>

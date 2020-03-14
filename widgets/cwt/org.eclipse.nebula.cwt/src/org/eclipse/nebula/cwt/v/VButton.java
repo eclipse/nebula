@@ -15,6 +15,7 @@
 package org.eclipse.nebula.cwt.v;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Event;
 
@@ -28,6 +29,17 @@ public class VButton extends VControl {
 	boolean paintInactive = false;
 	private boolean armed = false;
 
+	Color hoverBackgroundColor, defaultHoverBackgroundColor;
+	Color hoverBorderColor, defaultHoverBorderColor;
+
+	Color selectedBackgroundColor, defaultSelectedBackgroundColor;
+	Color selectedBorderColor, defaultSelectedBorderColor;
+
+	/**
+	 * Constructor
+	 * @param panel parent panel
+	 * @param style button style
+	 */
 	public VButton(VPanel panel, int style) {
 		super(panel, style);
 		if (!hasStyle(SWT.CHECK | SWT.RADIO | SWT.TOGGLE)) {
@@ -36,9 +48,23 @@ public class VButton extends VControl {
 		setPainter(new VButtonPainter());
 		addListener(SWT.MouseDown);
 		addListener(SWT.MouseUp);
+
+		defaultSelectedBorderColor = new Color(getDisplay(), 1, 85, 153);
+		defaultSelectedBackgroundColor = new Color(getDisplay(), 204, 228, 247);
+		defaultHoverBorderColor = new Color(getDisplay(), 1, 121, 215);
+		defaultHoverBackgroundColor = new Color(getDisplay(), 229, 241, 251);
+	}
+
+	public void dispose() {
+		super.dispose();
+		defaultHoverBackgroundColor.dispose();
+		defaultHoverBorderColor.dispose();
+		defaultSelectedBackgroundColor.dispose();
+		defaultSelectedBorderColor.dispose();
 	}
 
 	/**
+	 * @return the paintNative flag
 	 * @see #setPaintNative(boolean)
 	 */
 	public boolean getNativeBackground() {
@@ -152,4 +178,39 @@ public class VButton extends VControl {
 			}
 		}
 	}
+
+	/**
+	 * Set the background color when the mouse is hover the button
+	 * @param hoverBackgroundColor new color
+	 */
+	public void setHoverBackgroundColor(Color hoverBackgroundColor) {
+		this.hoverBackgroundColor = hoverBackgroundColor;
+	}
+
+	/**
+	 * border color when the mouse is hover the button
+	 * @param hoverBorderColor new color
+	 */
+	public void setHoverBorderColor(Color hoverBorderColor) {
+		this.hoverBorderColor = hoverBorderColor;
+	}
+
+	/**
+	 * background color when the button is selected
+	 * @param selectedBackgroundColor new color
+	 */
+	public void setSelectedBackgroundColor(Color selectedBackgroundColor) {
+		this.selectedBackgroundColor = selectedBackgroundColor;
+	}
+
+	/**
+	 * background color when the button is selected
+	 * @param selectedBorderColor new color
+	 */
+	public void setSelectedBorderColor(Color selectedBorderColor) {
+		this.selectedBorderColor = selectedBorderColor;
+	}
+
+	
+	
 }

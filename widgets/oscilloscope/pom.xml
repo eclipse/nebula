@@ -18,6 +18,9 @@
 		<module>org.eclipse.nebula.widgets.oscilloscope.example</module>
 		<module>org.eclipse.nebula.widgets.oscilloscope.tests</module>
 		<module>org.eclipse.nebula.widgets.oscilloscope.feature</module>
+		<module>org.eclipse.nebula.widgets.oscilloscope.example.e4</module>
+		<module>org.eclipse.nebula.widgets.oscilloscope.css</module>
+		<module>org.eclipse.nebula.widgets.oscilloscope.css.feature</module>
 	</modules>
 
 </project>

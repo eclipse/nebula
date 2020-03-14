@@ -14,7 +14,6 @@
  ******************************************************************************/
 package org.eclipse.nebula.widgets.oscilloscope.multichannel;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 
 import javax.sound.sampled.AudioSystem;
@@ -22,6 +21,7 @@ import javax.sound.sampled.Clip;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
@@ -173,6 +173,9 @@ public class OscilloscopeDispatcher {
 
 	private boolean isRunning;
 
+	private Color activeForegroundColor = Display.getDefault().getSystemColor(SWT.COLOR_GREEN);
+	private Color inactiveForegroundColor = Display.getDefault().getSystemColor(SWT.COLOR_RED);
+	
 	/**
 	 * @param channel
 	 * @see #getChannel()
@@ -288,15 +291,33 @@ public class OscilloscopeDispatcher {
 	 * measured is returned by the {@link #isServiceActive()} method. The result
 	 * of this method will be used in the
 	 * {@link Oscilloscope#setForeground(Color)} method.
-	 * 
-	 * @return the system color green. Override if you want to control the
-	 *         foreground color.
-	 * 
+	 *
+	 * @return the system color green.
+	 *
 	 * @see #getInactiveForegoundColor()
+	 * @see #getActiveForegoundColor()
+	 * @see #setActiveForegoundColor(Color)
 	 * @see Oscilloscope#setForeground(Color)
 	 */
 	public Color getActiveForegoundColor() {
-		return getOscilloscope().getDisplay().getSystemColor(SWT.COLOR_GREEN);
+		return activeForegroundColor;
+	}
+
+	/**
+	 * Is used to get the color of the foreground when the thing that the scope
+	 * is measuring is still alive. The aliveness of the thing that is being
+	 * measured is returned by the {@link #isServiceActive()} method. The result
+	 * of this method will be used in the
+	 * {@link Oscilloscope#setForeground(Color)} method.
+	 *
+	 * @param color the new color.
+	 *
+	 * @see #getInactiveForegoundColor()
+	 * @see #getActiveForegoundColor()
+	 * @see #getActiveForegoundColor()
+	 */
+	public void setActiveForegoundColor(final Color color) {
+		activeForegroundColor = color;
 	}
 
 	/**
@@ -318,16 +339,30 @@ public class OscilloscopeDispatcher {
 	 *         supply your own Image.
 	 */
 	public Image getBackgroundImage() {
-
 		if (this.backgroundImage == null) {
-			byte[] bytes = new byte[OscilloscopeDispatcher.BACKGROUND_MONITOR.length];
-			for (int i = 0; i < OscilloscopeDispatcher.BACKGROUND_MONITOR.length; i++) {
-				bytes[i] = (byte) OscilloscopeDispatcher.BACKGROUND_MONITOR[i];
-			}
-			this.backgroundImage = new Image(null, new ByteArrayInputStream(bytes));
+			this.backgroundImage = createGridImage();
 		}
 		return this.backgroundImage;
 	}
+	
+	private Image createGridImage() {
+		Display display = Display.getDefault();
+		int width = getOscilloscope().getGridSquareSize();
+		Image image = new Image(display, width, width);
+		GC gc = new GC(image);
+
+		gc.setAdvanced(true);
+		gc.setBackground(getOscilloscope().getGridBackground());
+		gc.fillRectangle(0, 0, width, width);
+
+		gc.setForeground(getOscilloscope().getGridForeground());
+		gc.setLineWidth(getOscilloscope().getGridLineWidth());
+		gc.drawLine(width/2, 0, width/2, width);
+		gc.drawLine(0, width/2, width, width/2);
+		gc.dispose();
+		return image;
+	}
+
 
 	/**
 	 * Override this to set the offset of the scope line in percentages where
@@ -386,16 +421,35 @@ public class OscilloscopeDispatcher {
 	 * measured is returned by the {@link #isServiceActive()} method. The result
 	 * of this method will be used in the
 	 * {@link Oscilloscope#setForeground(Color)} method.
-	 * 
+	 *
 	 * @return the system color red, override if you want to control the
 	 *         inactive foreground color
-	 * 
+	 *
+	 * @see #setInactiveForegoundColor(Color)
 	 * @see #getActiveForegoundColor()
+	 * @see #setActiveForegoundColor(Color)
 	 * @see Oscilloscope#setForeground(Color)
 	 */
 	public Color getInactiveForegoundColor() {
-		return getOscilloscope().getDisplay().getSystemColor(SWT.COLOR_RED);
+		return inactiveForegroundColor;
+	}
 
+	/**
+	 * Is used to get the color of the foreground when the thing that the scope
+	 * is measuring is still alive. The aliveness of the thing that is being
+	 * measured is returned by the {@link #isServiceActive()} method. The result
+	 * of this method will be used in the
+	 * {@link Oscilloscope#setForeground(Color)} method.
+	 *
+	 * @param color the new color.
+	 *
+	 * @see #getInactiveForegoundColor()
+	 * @see #getActiveForegoundColor()
+	 * @see #setActiveForegoundColor(Color)
+	 * @see Oscilloscope#setForeground(Color)
+	 */
+	public void setInactiveForegoundColor(final Color color) {
+		this.inactiveForegroundColor = color;
 	}
 
 	/**
@@ -690,5 +744,12 @@ public class OscilloscopeDispatcher {
 	 */
 	public boolean mustConnect() {
 		return false;
+	}
+
+	void updateBackgroundImage() {
+		if (backgroundImage != null && !backgroundImage.isDisposed()) {
+			backgroundImage.dispose();
+		}
+		backgroundImage = null;
 	}
 }

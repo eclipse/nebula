@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors: Laurent CARON (laurent.caron@gmail.com)
@@ -41,7 +41,7 @@ public class MultiChoiceSnippet {
 		// Data
 		final String[] euroZone = new String[] { "Austria", "Belgium", "Cyprus", "Estonia", "Finland", "France", "Germany", "Greece", "Ireland", "Italy", "Luxembourg", "Malta", "Netherlands", "Portugal", "Slovakia", "Slovenia", "Spain" };
 
-		final List<Country> membersOfEuropeanUnion = new ArrayList<Country>();
+		final List<Country> membersOfEuropeanUnion = new ArrayList<>();
 		membersOfEuropeanUnion.add(new Country("Austria", 8372930));
 		membersOfEuropeanUnion.add(new Country("Belgium", 10827519));
 		membersOfEuropeanUnion.add(new Country("Bulgaria", 7576751));
@@ -70,11 +70,11 @@ public class MultiChoiceSnippet {
 		membersOfEuropeanUnion.add(new Country("Sweden", 9347899));
 		membersOfEuropeanUnion.add(new Country("United Kingdom", 62041708));
 
-		final List<Country> membersOfEUSelectAll = new ArrayList<Country>();
+		final List<Country> membersOfEUSelectAll = new ArrayList<>();
 		membersOfEUSelectAll.addAll(membersOfEuropeanUnion);
 		membersOfEUSelectAll.add(new Country("Select All", -1));
 
-		final List<Country> countryCodes = new ArrayList<Country>();
+		final List<Country> countryCodes = new ArrayList<>();
 		countryCodes.add(new Country("France", "FR"));
 		countryCodes.add(new Country("United states", "US"));
 		countryCodes.add(new Country("United Kingdom", "UK"));
@@ -87,7 +87,8 @@ public class MultiChoiceSnippet {
 
 		// Draw the window
 		drawLabel(shell, "Simple Multichoice :");
-		final MultiChoice<String> mcSimple = new MultiChoice<String>(shell, SWT.READ_ONLY);
+		final MultiChoice<String> mcSimple = new MultiChoice<>(shell, SWT.READ_ONLY);
+		mcSimple.setEditable(false);
 		final GridData gridData = new GridData(GridData.FILL, GridData.BEGINNING, true, true);
 		gridData.widthHint = 200;
 		mcSimple.setLayoutData(gridData);
@@ -95,14 +96,14 @@ public class MultiChoiceSnippet {
 		addButons(mcSimple);
 
 		drawLabel(shell, "Multichoice with beans :");
-		final MultiChoice<Country> mcBeans = new MultiChoice<Country>(shell, SWT.READ_ONLY);
+		final MultiChoice<Country> mcBeans = new MultiChoice<>(shell, SWT.READ_ONLY);
 		mcBeans.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, true));
 		mcBeans.addAll(membersOfEuropeanUnion);
 		mcBeans.setText("Non european country");
 		addButons(mcBeans);
 
 		drawLabel(shell, "Selection listener :");
-		final MultiChoice<Country> mcSL = new MultiChoice<Country>(shell, SWT.READ_ONLY);
+		final MultiChoice<Country> mcSL = new MultiChoice<>(shell, SWT.READ_ONLY);
 		mcSL.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, true));
 		mcSL.setSelectionListener(new MultiChoiceSelectionListener<Country>(mcSL) {
 
@@ -124,21 +125,21 @@ public class MultiChoiceSnippet {
 		addButons(mcSL);
 
 		drawLabel(shell, "3 columns :");
-		final MultiChoice<String> mc3Columns = new MultiChoice<String>(shell, SWT.READ_ONLY);
+		final MultiChoice<String> mc3Columns = new MultiChoice<>(shell, SWT.READ_ONLY);
 		mc3Columns.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, true));
 		mc3Columns.addAll(euroZone);
 		mc3Columns.setNumberOfColumns(3);
 		addButons(mc3Columns);
 
 		drawLabel(shell, "Other separator :");
-		final MultiChoice<String> mcOtherSeparator = new MultiChoice<String>(shell, SWT.READ_ONLY);
+		final MultiChoice<String> mcOtherSeparator = new MultiChoice<>(shell, SWT.READ_ONLY);
 		mcOtherSeparator.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, true));
 		mcOtherSeparator.addAll(euroZone);
 		mcOtherSeparator.setSeparator(" - ");
 		addButons(mcOtherSeparator);
 
 		drawLabel(shell, "Modifiable combo :");
-		final MultiChoice<Country> mcModify = new MultiChoice<Country>(shell, SWT.NONE);
+		final MultiChoice<Country> mcModify = new MultiChoice<>(shell, SWT.NONE);
 		mcModify.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, true));
 		mcModify.setLabelProvider(new MultiChoiceLabelProvider() {
 			@Override
@@ -153,11 +154,11 @@ public class MultiChoiceSnippet {
 		addButons(mcModify);
 
 		drawLabel(shell, "Lot of data :");
-		final List<String> data = new ArrayList<String>();
+		final List<String> data = new ArrayList<>();
 		for (int i = 0; i < 1000; i++) {
 			data.add("Data #" + i);
 		}
-		final MultiChoice<String> mcLotOfData = new MultiChoice<String>(shell, SWT.NONE);
+		final MultiChoice<String> mcLotOfData = new MultiChoice<>(shell, SWT.NONE);
 		mcLotOfData.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, true));
 		mcLotOfData.setLabelProvider(new MultiChoiceLabelProvider() {
 			@Override
@@ -170,6 +171,15 @@ public class MultiChoiceSnippet {
 		});
 		mcLotOfData.addAll(data);
 		addButons(mcLotOfData);
+
+		drawLabel(shell, "Non Editable Multichoice :");
+		final MultiChoice<String> mcNotEditable = new MultiChoice<>(shell, SWT.READ_ONLY);
+		final GridData gridDataNotEditable = new GridData(GridData.FILL, GridData.BEGINNING, true, true);
+		gridDataNotEditable.widthHint = 200;
+		mcNotEditable.setLayoutData(gridDataNotEditable);
+		mcNotEditable.addAll(euroZone);
+		mcNotEditable.setEditable(false);
+		addButons(mcNotEditable);
 
 		// display the shell...
 		shell.open();

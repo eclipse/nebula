@@ -5,7 +5,7 @@
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
@@ -86,6 +86,8 @@ import org.eclipse.swt.widgets.Widget;
  */
 
 public class TableCombo extends Composite {
+	private static int newStyle;
+	private final boolean hasBorder;
 	private Shell popup;
 	private Button arrow;
 	private Label selectedImage;
@@ -99,6 +101,9 @@ public class TableCombo extends Composite {
 	private int displayColumnIndex = 0;
 	private Color foreground;
 	private Color background;
+	private Color borderColor;
+	private Color oddLinesForegroundColor, oddLinesBackgroundColor;
+	private Color evenLinesForegroundColor, evenLinesBackgroundColor;
 	private int[] columnWidths;
 	private int tableWidthPercentage = 100;
 	private boolean showImageWithinSelection = true;
@@ -141,15 +146,15 @@ public class TableCombo extends Composite {
 	 * @see SWT#FLAT
 	 * @see Widget#getStyle()
 	 */
-	public TableCombo(final Composite parent, int style) {
-		super(parent, style = checkStyle(style));
-
+	public TableCombo(final Composite parent, final int style) {
+		super(parent, newStyle = checkStyle(style));
+		hasBorder = (style & SWT.BORDER) == SWT.BORDER;
 		// set the label style
 		int textStyle = SWT.SINGLE;
-		if ((style & SWT.READ_ONLY) != 0) {
+		if ((newStyle & SWT.READ_ONLY) != 0) {
 			textStyle |= SWT.READ_ONLY;
 		}
-		if ((style & SWT.FLAT) != 0) {
+		if ((newStyle & SWT.FLAT) != 0) {
 			textStyle |= SWT.FLAT;
 		}
 
@@ -170,7 +175,7 @@ public class TableCombo extends Composite {
 
 		// set the arrow style.
 		int arrowStyle = SWT.ARROW | SWT.DOWN;
-		if ((style & SWT.FLAT) != 0) {
+		if ((newStyle & SWT.FLAT) != 0) {
 			arrowStyle |= SWT.FLAT;
 		}
 
@@ -274,6 +279,18 @@ public class TableCombo extends Composite {
 				});
 			}
 		};
+
+		if (hasBorder) {
+			borderColor = getDisplay().getSystemColor(SWT.COLOR_WIDGET_BORDER);
+			addListener(SWT.Paint, e -> {
+				final GC gc = e.gc;
+				final Color previousColor = gc.getForeground();
+				gc.setForeground(borderColor);
+				gc.drawRectangle(0, 0, getBounds().width - 1, getBounds().height - 1);
+				gc.setForeground(previousColor);
+			});
+		}
+
 	}
 
 	/**
@@ -281,7 +298,7 @@ public class TableCombo extends Composite {
 	 * @return
 	 */
 	private static int checkStyle(final int style) {
-		final int mask = SWT.BORDER | SWT.READ_ONLY | SWT.FLAT | SWT.LEFT_TO_RIGHT | SWT.RIGHT_TO_LEFT;
+		final int mask = SWT.READ_ONLY | SWT.FLAT | SWT.LEFT_TO_RIGHT | SWT.RIGHT_TO_LEFT;
 		return SWT.NO_FOCUS | style & mask;
 	}
 
@@ -573,7 +590,7 @@ public class TableCombo extends Composite {
 
 		int overallWidth = 0;
 		int overallHeight = 0;
-		final int borderWidth = getBorderWidth();
+		final int borderWidth = hasBorder ? 2 : 0;
 
 		// use user defined values if they are specified.
 		if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT) {
@@ -854,6 +871,28 @@ public class TableCombo extends Composite {
 
 		// set the bounds of the popup
 		popup.setBounds(x, y, overallWidth, overallHeight);
+
+		// Change color for odd & even lines
+		for (int i = 0; i < table.getItemCount(); i++) {
+			final TableItem item = table.getItem(i);
+			if (i % 2 == 0) {
+				// Odd lines
+				if (oddLinesForegroundColor != null) {
+					item.setForeground(oddLinesForegroundColor);
+				}
+				if (oddLinesBackgroundColor != null) {
+					item.setBackground(oddLinesBackgroundColor);
+				}
+			} else {
+				// Event lines
+				if (evenLinesForegroundColor != null) {
+					item.setForeground(evenLinesForegroundColor);
+				}
+				if (evenLinesBackgroundColor != null) {
+					item.setBackground(evenLinesBackgroundColor);
+				}
+			}
+		}
 
 		// set the popup visible
 		popup.setVisible(true);
@@ -1447,8 +1486,9 @@ public class TableCombo extends Composite {
 		if (selectedImage.getImage() == null) {
 			// set image, text, and arrow boundaries
 			selectedImage.setBounds(0, 0, 0, 0);
-			text.setBounds(0, textYPos, width - arrowSize.x, textSize.y);
-			arrow.setBounds(width - arrowSize.x, 0, arrowSize.x, arrowSize.y);
+			text.setBounds(hasBorder ? 2 : 0, textYPos, width - arrowSize.x - (hasBorder ? 2 : 0), textSize.y);
+			arrow.setBounds(width - arrowSize.x + (hasBorder ? 1 : 0), hasBorder ? 1 : 0,
+					arrowSize.x - (hasBorder ? 2 : 0), arrowSize.y - (hasBorder ? 2 : 0));
 		} else {
 			// calculate the amount of width left in the control after taking
 			// into account the arrow selector
@@ -1469,9 +1509,11 @@ public class TableCombo extends Composite {
 			final int textWidth = remainingWidth;
 
 			// set image, text, and arrow boundaries
-			selectedImage.setBounds(0, 0, imageWidth, imageSize.y);
+			selectedImage.setBounds(hasBorder ? 2 : 0, hasBorder ? 2 : 0, imageWidth,
+					imageSize.y - (hasBorder ? 4 : 0));
 			text.setBounds(imageWidth, textYPos, textWidth, textSize.y);
-			arrow.setBounds(imageWidth + textWidth, 0, arrowSize.x, arrowSize.y);
+			arrow.setBounds(imageWidth + textWidth + (hasBorder ? 1 : 0), hasBorder ? 1 : 0,
+					arrowSize.x - (hasBorder ? 2 : 0), arrowSize.y - (hasBorder ? 2 : 0));
 		}
 	}
 
@@ -2693,21 +2735,21 @@ public class TableCombo extends Composite {
 		}
 	}
 
-	void selectedImageEvent(Event event) {
+	void selectedImageEvent(final Event event) {
 		switch (event.type) {
-			case SWT.MouseDown: {
-				Event mouseEvent = new Event();
-				mouseEvent.button = event.button;
-				mouseEvent.count = event.count;
-				mouseEvent.stateMask = event.stateMask;
-				mouseEvent.time = event.time;
-				mouseEvent.x = event.x;
-				mouseEvent.y = event.y;
-				notifyListeners(SWT.MouseDown, mouseEvent);
-				event.doit = mouseEvent.doit;
-				dropDown(!isDropped());
-				break;
-			}
+		case SWT.MouseDown: {
+			final Event mouseEvent = new Event();
+			mouseEvent.button = event.button;
+			mouseEvent.count = event.count;
+			mouseEvent.stateMask = event.stateMask;
+			mouseEvent.time = event.time;
+			mouseEvent.x = event.x;
+			mouseEvent.y = event.y;
+			notifyListeners(SWT.MouseDown, mouseEvent);
+			event.doit = mouseEvent.doit;
+			dropDown(!isDropped());
+			break;
+		}
 		}
 	}
 
@@ -2747,4 +2789,146 @@ public class TableCombo extends Composite {
 		checkWidget();
 		return text;
 	}
+
+	/**
+	 * Returns the Arrow control reference.
+	 *
+	 * @return
+	 */
+	public Button getArrowControl() {
+		checkWidget();
+		return arrow;
+	}
+
+	/**
+	 * Sets the receiver's border color to the color specified by the argument, or
+	 * to the default system color for the control if the argument is null.
+	 *
+	 * @param color
+	 *            the new color (or null)
+	 *
+	 * @exception IllegalArgumentException
+	 *                <ul>
+	 *                <li>ERROR_INVALID_ARGUMENT - if the argument has been
+	 *                disposed</li>
+	 *                </ul>
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
+	 *                </ul>
+	 */
+	public void setBorderColor(final Color color) {
+		checkWidget();
+		borderColor = color == null ? getDisplay().getSystemColor(SWT.COLOR_WIDGET_BORDER) : color;
+		redraw();
+	}
+
+	/**
+	 * Sets the receiver's background color for odd lines to the color specified by
+	 * the argument, or to the default system color for the control if the argument
+	 * is null.
+	 *
+	 * @param color
+	 *            the new color (or null)
+	 *
+	 * @exception IllegalArgumentException
+	 *                <ul>
+	 *                <li>ERROR_INVALID_ARGUMENT - if the argument has been
+	 *                disposed</li>
+	 *                </ul>
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
+	 *                </ul>
+	 */
+	public void setOddLinesBackgroundColor(final Color color) {
+		checkWidget();
+		oddLinesBackgroundColor = color;
+	}
+
+	/**
+	 * Sets the receiver's color for odd lines to the color specified by the
+	 * argument, or to the default system color for the control if the argument is
+	 * null.
+	 *
+	 * @param color
+	 *            the new color (or null)
+	 *
+	 * @exception IllegalArgumentException
+	 *                <ul>
+	 *                <li>ERROR_INVALID_ARGUMENT - if the argument has been
+	 *                disposed</li>
+	 *                </ul>
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
+	 *                </ul>
+	 */
+	public void setOddLinesForegroundColor(final Color color) {
+		checkWidget();
+		oddLinesForegroundColor = color;
+
+	}
+
+	/**
+	 * Sets the receiver's color for even lines to the color specified by the
+	 * argument, or to the default system color for the control if the argument is
+	 * null.
+	 *
+	 * @param color
+	 *            the new color (or null)
+	 *
+	 * @exception IllegalArgumentException
+	 *                <ul>
+	 *                <li>ERROR_INVALID_ARGUMENT - if the argument has been
+	 *                disposed</li>
+	 *                </ul>
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
+	 *                </ul>
+	 */
+	public void setEvenLinesForegroundColor(final Color color) {
+		checkWidget();
+		evenLinesForegroundColor = color;
+	}
+
+	/**
+	 * Sets the receiver's background color for even lines to the color specified by
+	 * the argument, or to the default system color for the control if the argument
+	 * is null.
+	 *
+	 * @param color
+	 *            the new color (or null)
+	 *
+	 * @exception IllegalArgumentException
+	 *                <ul>
+	 *                <li>ERROR_INVALID_ARGUMENT - if the argument has been
+	 *                disposed</li>
+	 *                </ul>
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
+	 *                </ul>
+	 */
+	public void setEvenLinesBackgroundColor(final Color color) {
+		checkWidget();
+		evenLinesBackgroundColor = color;
+	}
+
 }

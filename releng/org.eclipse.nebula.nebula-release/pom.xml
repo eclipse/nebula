@@ -73,6 +73,8 @@
 		<module>../../widgets/ctreecombo</module>
 		<module>../../widgets/led</module>
 		<module>../../widgets/stepbar</module>
+		<module>../../widgets/chips</module>
+		<module>../../widgets/carousel</module>
 		<module>../../widgets/fontawesome</module>
 
 		<!-- Releng -->

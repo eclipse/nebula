@@ -1,0 +1,24 @@
+/* 
+CSS for Oscilloscope
+*/
+
+Oscilloscope#one {
+	grid-square-size: 30px;
+	grid-background-color: #808080;
+	grid-color: #ffffcc;
+	grid-line-width: 3;
+}
+
+
+Oscilloscope#two {
+	channel-color-0: #FF6A00;
+	channel-color-1: #0094FF;
+}
+
+Oscilloscope#three {
+	channel-color-0: #FF6A00;
+	channel-color-1: #0094FF;
+	channel-active-color-0: blue;
+	channel-inactive-color-0: #FF006E;
+	
+}
