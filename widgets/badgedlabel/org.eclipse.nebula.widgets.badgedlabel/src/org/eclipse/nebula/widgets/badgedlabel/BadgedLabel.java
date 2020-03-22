@@ -337,6 +337,11 @@ public class BadgedLabel extends Canvas {
 	@Override
 	public Point computeSize(final int wHint, final int hHint, final boolean changed) {
 		checkWidget();
+		
+		if (image == null && text == null) {
+			return super.computeSize(wHint, hHint, changed);
+		}
+		
 		// Button
 		final Point buttonSize = computeButtonSize();
 		int width = buttonSize.x;
