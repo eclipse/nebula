@@ -40,7 +40,7 @@ import org.eclipse.swt.widgets.Text;
  * <p>
  * <dl>
  * <dt><b>Styles:</b></dt>
- * <dd>READ_ONLY, FLAP</dd>
+ * <dd>READ_ONLY, FLAT</dd>
  * <dt><b>Events:</b></dt>
  * <dd>Selection, Modify</dd>
  * </dl>

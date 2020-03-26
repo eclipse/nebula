@@ -1,0 +1,22 @@
+/* 
+CSS for Grid
+*/
+
+#two {
+	grid-theme: win7;
+}
+
+#three {
+	grid-cell-header-selection-background-color: #ffffcc;
+	grid-header-visible: false;
+	grid-item-height: 30px;
+	grid-item-header-width: 150px;
+	grid-line-color: darkred;
+	grid-lines-visible: false;
+}
+
+#four {
+	grid-line-color: darkred;
+	grid-columns-alignment: center;
+	grid-columns-header-font: "Comic sans MS" italic 12px;
+}
