@@ -184,7 +184,7 @@ public class Win7PaletteProvider {
     		if ( def[i] == null ){
     			colors[i] = null;
     		} else if ( def[i] instanceof Integer ){
-    			colors[i] = display.getSystemColor(((Integer)def[i]).intValue());
+    			colors[i] = (display==null?Display.getCurrent():display).getSystemColor(((Integer)def[i]).intValue());
     		} else {
     			colors[i] = new Color(display, (RGB)def[i]);
     		}
