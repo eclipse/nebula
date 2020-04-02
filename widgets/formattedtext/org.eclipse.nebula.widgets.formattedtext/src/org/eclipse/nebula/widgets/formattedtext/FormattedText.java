@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * Formatted text viewer. Add formating capabilities to the <code>Text</code>
+ * Formatted text viewer. Adds formatting capabilities to the <code>Text</code>
  * widget of SWT. This control works on the same principle than the JFace
  * viewers. The embedded text widget is accessible by the getControl() method,
  * allowing to apply to it all necessary behaviors (layout, listeners...).<p>
