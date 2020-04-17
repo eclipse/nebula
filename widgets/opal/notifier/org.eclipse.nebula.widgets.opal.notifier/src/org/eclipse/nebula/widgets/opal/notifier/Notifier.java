@@ -231,6 +231,7 @@ public class Notifier {
 
 			gc.dispose();
 			closeImage.dispose();
+			SWTGraphicUtil.addDisposer(shell, newImage);
 
 			shell.setBackgroundImage(newImage);
 		});
