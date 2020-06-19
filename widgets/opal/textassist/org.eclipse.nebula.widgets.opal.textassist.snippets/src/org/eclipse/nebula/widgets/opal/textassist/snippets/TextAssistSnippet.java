@@ -29,6 +29,8 @@ import org.eclipse.swt.widgets.Text;
  * A simple snippet for the TextAssist Widget
  */
 public class TextAssistSnippet {
+	private static boolean useSingleClick = false;
+
 	public static void main(final String[] args) {
 		final Display display = new Display();
 		final Shell shell = new Shell(display);
@@ -68,7 +70,15 @@ public class TextAssistSnippet {
 		new Label(shell, SWT.NONE);
 		final Button button = new Button(shell, SWT.PUSH);
 		button.setText("Force focus on Text Assist Field");
-		button.addListener(SWT.Selection, (e) -> textAssist.setFocus());
+		button.addListener(SWT.Selection, e -> textAssist.setFocus());
+
+		new Label(shell, SWT.NONE);
+		final Button singleClickButton = new Button(shell, SWT.CHECK);
+		singleClickButton.setText("Use single click to select an entry");
+		singleClickButton.addListener(SWT.Selection, e -> {
+			useSingleClick = !useSingleClick;
+			textAssist.setUseSingleClick(useSingleClick);
+		});
 
 		shell.pack();
 		shell.open();

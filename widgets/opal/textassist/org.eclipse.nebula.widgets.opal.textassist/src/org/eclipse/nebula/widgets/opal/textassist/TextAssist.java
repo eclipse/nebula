@@ -51,6 +51,7 @@ public class TextAssist extends Composite {
 	private final Table table;
 	private TextAssistContentProvider contentProvider;
 	private int numberOfLines;
+	private boolean useSingleClick = false;
 
 	/**
 	 * Constructs a new instance of this class given its parent and a style
@@ -108,7 +109,7 @@ public class TextAssist extends Composite {
 		table = new Table(popup, SWT.SINGLE);
 
 		addTextListener();
-		addTableLittle();
+		addTableListener();
 
 		final int[] events = new int[] { SWT.Move, SWT.FocusOut };
 		for (final int event : events) {
@@ -125,8 +126,19 @@ public class TextAssist extends Composite {
 		text.addListener(SWT.FocusOut, createFocusOutListener());
 	}
 
-	private void addTableLittle() {
+	private void addTableListener() {
+		table.addListener(SWT.Selection, event -> {
+			if (!useSingleClick) {
+				return;
+			}
+			text.setText(table.getSelection()[0].getText());
+			popup.setVisible(false);
+		});
+
 		table.addListener(SWT.DefaultSelection, event -> {
+			if (useSingleClick) {
+				return;
+			}
 			text.setText(table.getSelection()[0].getText());
 			popup.setVisible(false);
 		});
@@ -577,7 +589,25 @@ public class TextAssist extends Composite {
 		checkWidget();
 		return text.getTopPixel();
 	}
-
+	
+	/**
+	 * Returns the single click enabled flag.
+	 * <p>
+	 * If the the single click flag is true, the user can select an entry with a single click.
+	 * Otherwise, the user can select an entry with a double click.
+	 * </p>
+	 *
+	 * @return whether or not single is enabled
+	 *
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 * </ul>
+	 */
+	public boolean getUseSingleClick() {
+		checkWidget();
+		return useSingleClick;
+	}
 	/**
 	 * @see org.eclipse.swt.widgets.Text#insert(java.lang.String)
 	 */
@@ -586,6 +616,8 @@ public class TextAssist extends Composite {
 		text.insert(string);
 	}
 
+
+	
 	/**
 	 * @see org.eclipse.swt.widgets.Text#paste()
 	 */
@@ -763,6 +795,25 @@ public class TextAssist extends Composite {
 	}
 
 	/**
+	 * Sets the single click enabled flag.
+	 * <p>
+	 * If the the single click flag is true, the user can select an entry with a single click.
+	 * Otherwise, the user can select an entry with a double click.
+	 * </p>
+	 *
+	 * @param singleClick the new single click flag
+	 *
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 * </ul>
+	 */
+	public void setUseSingleClick(boolean singleClick) {
+		checkWidget();
+		this.useSingleClick = singleClick;
+	}
+	
+	/**
 	 * @see org.eclipse.swt.widgets.Text#setTopIndex(int)
 	 */
 	public void setTopIndex(final int topIndex) {
@@ -778,4 +829,8 @@ public class TextAssist extends Composite {
 		text.showSelection();
 	}
 
+
+
+
+	
 }
