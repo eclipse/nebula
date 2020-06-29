@@ -2242,14 +2242,18 @@ public class CDateTime extends BaseCombo {
 		if (spinner != null) {
 			spinner.setBackground(color);
 		}
-		picker.updateColorsAndFont();
+		if (picker != null) {
+			picker.updateColorsAndFont();
+		}
 	}
 
 	
 	
 	public void setForeground(Color color) {
 		super.setForeground(color);
-		picker.updateColorsAndFont();
+		if (picker != null) {
+			picker.updateColorsAndFont();
+		}
 	}
 
 	public void setButtonHoverBackgroundColor(Color color) {
@@ -2261,19 +2265,25 @@ public class CDateTime extends BaseCombo {
 	public void setButtonHoverBorderColor(Color color) {
 		checkWidget();
 		this.buttonHoverBorderColor = color;
-		picker.updateColorsAndFont();
+		if (picker != null) {
+			picker.updateColorsAndFont();
+		}
 	}
-
+	
 	public void setButtonSelectedBackgroundColor(Color color) {
 		checkWidget();
 		this.buttonSelectedBackgroundColor = color;
-		picker.updateColorsAndFont();
+		if (picker != null) {
+			picker.updateColorsAndFont();
+		}
 	}
 
 	public void setButtonSelectedBorderColor(Color color) {
 		checkWidget();
 		this.buttonSelectedBorderColor = color;
-		picker.updateColorsAndFont();
+		if (picker != null) {
+			picker.updateColorsAndFont();
+		}
 	}
 
 	public Color getPickerForegroundColor() {
@@ -2287,7 +2297,9 @@ public class CDateTime extends BaseCombo {
 		if (pickerForegroundColor != null) {
 			pickerPanel.setForeground(pickerForegroundColor);
 		}
-		picker.updateColorsAndFont();
+		if (picker != null) {
+			picker.updateColorsAndFont();
+		}
 	}
 
 	public Color getPickerBackgroundColor() {
@@ -2301,7 +2313,9 @@ public class CDateTime extends BaseCombo {
 		if (pickerBackgroundColor != null) {
 			pickerPanel.setBackground(pickerBackgroundColor);
 		}
-		picker.updateColorsAndFont();
+		if (picker != null) {
+			picker.updateColorsAndFont();
+		}
 	}
 
 	public Font getPickerFont() {
@@ -2315,7 +2329,9 @@ public class CDateTime extends BaseCombo {
 		if (pickerFont != null) {
 			pickerPanel.setFont(pickerFont);
 		}
-		picker.updateColorsAndFont();
+		if (picker != null) {
+			picker.updateColorsAndFont();
+		}
 	}
 
 	public Color getButtonHoverBackgroundColor() {
@@ -2346,7 +2362,9 @@ public class CDateTime extends BaseCombo {
 	public void setPickerActiveDayColor(Color pickerActiveDayColor) {
 		checkWidget();
 		this.pickerActiveDayColor = pickerActiveDayColor;
-		picker.updateColorsAndFont();
+		if (picker != null) {
+			picker.updateColorsAndFont();
+		}
 	}
 
 	public Color getPickerInactiveDayColor() {
@@ -2357,7 +2375,9 @@ public class CDateTime extends BaseCombo {
 	public void setPickerInactiveDayColor(Color pickerInactiveDayColor) {
 		checkWidget();
 		this.pickerInactiveDayColor = pickerInactiveDayColor;
-		picker.updateColorsAndFont();
+		if (picker != null) {
+			picker.updateColorsAndFont();
+		}
 	}
 
 	public Color getPickerTodayColor() {
@@ -2368,7 +2388,9 @@ public class CDateTime extends BaseCombo {
 	public void setPickerTodayColor(Color pickerTodayColor) {
 		checkWidget();
 		this.pickerTodayColor = pickerTodayColor;
-		picker.updateColorsAndFont();
+		if (picker != null) {
+			picker.updateColorsAndFont();
+		}
 	}
 
 	public Color getPickerMinutesColor() {
@@ -2390,7 +2412,9 @@ public class CDateTime extends BaseCombo {
 	public void setPickerMinutesBackgroundColor(Color pickerMinutesBackgroundColor) {
 		checkWidget();
 		this.pickerMinutesBackgroundColor = pickerMinutesBackgroundColor;
-		picker.updateColorsAndFont();
+		if (picker != null) {
+			picker.updateColorsAndFont();
+		}
 	}
 
 	
