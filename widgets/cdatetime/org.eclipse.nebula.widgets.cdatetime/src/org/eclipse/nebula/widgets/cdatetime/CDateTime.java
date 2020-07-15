@@ -514,7 +514,7 @@ public class CDateTime extends BaseCombo {
 			DatePicker dp = new DatePicker(this);
 			dp.setScrollable(scrollable);
 			dp.setFields(calendarFields);
-			dp.updateView();//TODO
+			dp.updateView();
 			picker = dp;
 		} else if (isTime) {
 			if ((style & CDT.CLOCK_DISCRETE) != 0) {
@@ -2259,7 +2259,9 @@ public class CDateTime extends BaseCombo {
 	public void setButtonHoverBackgroundColor(Color color) {
 		checkWidget();
 		this.buttonHoverBackgroundColor = color;
-		picker.updateColorsAndFont();
+		if (picker != null) {
+			picker.updateColorsAndFont();
+		}
 	}
 
 	public void setButtonHoverBorderColor(Color color) {
@@ -2310,7 +2312,7 @@ public class CDateTime extends BaseCombo {
 	public void setPickerBackgroundColor(Color pickerBackgroundColor) {
 		checkWidget();
 		this.pickerBackgroundColor = pickerBackgroundColor;
-		if (pickerBackgroundColor != null) {
+		if (pickerBackgroundColor != null && pickerPanel != null) {
 			pickerPanel.setBackground(pickerBackgroundColor);
 		}
 		if (picker != null) {
@@ -2326,7 +2328,7 @@ public class CDateTime extends BaseCombo {
 	public void setPickerFont(Font pickerFont) {
 		checkWidget();
 		this.pickerFont = pickerFont;
-		if (pickerFont != null) {
+		if (pickerFont != null && pickerPanel != null) {
 			pickerPanel.setFont(pickerFont);
 		}
 		if (picker != null) {
@@ -2401,7 +2403,9 @@ public class CDateTime extends BaseCombo {
 	public void setPickerMinutesColor(Color pickerMinutesColor) {
 		checkWidget();
 		this.pickerMinutesColor = pickerMinutesColor;
-		picker.updateColorsAndFont();
+		if (picker != null) {
+			picker.updateColorsAndFont();
+		}
 	}
 
 	public Color getPickerMinutesBackgroundColor() {
