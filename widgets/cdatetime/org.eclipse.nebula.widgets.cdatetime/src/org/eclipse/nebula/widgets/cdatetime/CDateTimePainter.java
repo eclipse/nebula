@@ -565,7 +565,7 @@ public class CDateTimePainter implements IControlPainter {
 			final Color color = cdt.getPickerTodayColor();
 			control.setForeground(color!=null?color:control.getDisplay().getSystemColor(SWT.COLOR_RED));
 		} else if (isActive(control)) {
-			final Color color = cdt.getPickerForegroundColor();
+			final Color color = cdt.getPickerActiveDayColor();
 			control.setForeground(color!=null?color:control.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 		} else {
 			final Color color = cdt.getPickerInactiveDayColor();
