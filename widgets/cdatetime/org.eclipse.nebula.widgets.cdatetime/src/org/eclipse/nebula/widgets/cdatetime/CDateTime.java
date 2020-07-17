@@ -615,7 +615,7 @@ public class CDateTime extends BaseCombo {
 	}
 
 	/**
-	 * Adds the given amount to the active field, if there is one
+	 * Adds the given amount to the x² field, if there is one
 	 */
 	void fieldAdjust(int amount) {
 		if (!hasSelection()) {
@@ -2299,7 +2299,7 @@ public class CDateTime extends BaseCombo {
 		if (pickerForegroundColor != null) {
 			pickerPanel.setForeground(pickerForegroundColor);
 		}
-		if (picker != null) {
+		if (picker != null && pickerPanel != null) {
 			picker.updateColorsAndFont();
 		}
 	}
