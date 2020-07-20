@@ -2296,10 +2296,10 @@ public class CDateTime extends BaseCombo {
 	public void setPickerForegroundColor(Color pickerForegroundColor) {
 		checkWidget();
 		this.pickerForegroundColor = pickerForegroundColor;
-		if (pickerForegroundColor != null) {
+		if (pickerForegroundColor != null && pickerPanel != null) {
 			pickerPanel.setForeground(pickerForegroundColor);
 		}
-		if (picker != null && pickerPanel != null) {
+		if (picker != null && pickerPanel != null&& pickerPanel != null) {
 			picker.updateColorsAndFont();
 		}
 	}
