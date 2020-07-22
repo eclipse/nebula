@@ -15,10 +15,6 @@
 
 package org.eclipse.nebula.widgets.geomap;
 
-/**
- * This class encapsulates a tileserver, which has the concept of a baseurl and
- * a maximum zoon level.
- */
 public final class GoogleTileServer extends TileServer {
 
 	/**
@@ -30,7 +26,7 @@ public final class GoogleTileServer extends TileServer {
 	 *            the max zoom level supported by this server
 	 */
 	public GoogleTileServer(String url, int maxZoom) {
-		super(url, maxZoom, "&z={0}&x={1}&y={2}"); //$NON-NLS-1$
+		super(url, 0, maxZoom, "&z={0}&x={1}&y={2}"); //$NON-NLS-1$
 	}
 
 	/**

@@ -166,7 +166,7 @@ public class GeoMapUtil {
 	 *            the point that will remain at the same screen location.
 	 */
 	public static void zoomOut(GeoMapPositioned geoMap, Point pivot) {
-		if (geoMap.getZoom() <= 1) {
+		if (geoMap.getZoom() <= geoMap.getMinZoom()) {
 			return;
 		}
 		Point mapPosition = geoMap.getMapPosition();
@@ -201,13 +201,13 @@ public class GeoMapUtil {
 		if (mapSize.x < zoomMargin || mapSize.y < zoomMargin) {
 			return;
 		}
-		if (maxZoom < 0) {
+		if (maxZoom < geoMap.getMinZoom()) {
 			maxZoom = geoMap.getMaxZoom();
 		}
 		int zoom = geoMap.getZoom();
 		// compute zoom by zooming out until the rectangle fits within the
 		// viewport
-		while (zoom > 0 && (mapSize.x < zoomRectangle.width + zoomMargin
+		while (zoom > geoMap.getMinZoom() && (mapSize.x < zoomRectangle.width + zoomMargin
 				|| mapSize.y < zoomRectangle.height + zoomMargin
 				|| zoom > maxZoom)) {
 			// zoom out and scale zoom rectangle down

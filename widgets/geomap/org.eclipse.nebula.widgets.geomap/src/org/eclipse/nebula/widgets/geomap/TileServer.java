@@ -24,14 +24,14 @@ import org.eclipse.nebula.widgets.geomap.internal.URLService;
 
 /**
  * This class encapsulates a tileserver, which has the concept of a baseurl and
- * a maximum zoom level.
+ * a distinct range of zoom levels
  */
 public class TileServer extends URLService {
 
 	private String urlFormat = "{0}/{1}/{2}.png"; // slippy format //$NON-NLS-1$
 													// z/x/y, must match
 													// getURLFormatArguments
-	private final int maxZoom;
+	private final int minZoom, maxZoom;
 
 	// See https://raw.github.com/follesoe/MapReplace/master/js/interceptors.js
 	// for a list of tile servers
@@ -41,14 +41,17 @@ public class TileServer extends URLService {
 	 * 
 	 * @param url
 	 *            the base url of the TileServer
+	 * @param minZoom
+	 *            the min zoom level supported by this TileServer
 	 * @param maxZoom
 	 *            the max zoom level supported by this TileServer
 	 * @param urlFormat
 	 *            the format of the url parameters that are appended to the base
 	 *            url
 	 */
-	public TileServer(String url, int maxZoom, String urlFormat) {
+	public TileServer(String url, int minZoom, int maxZoom, String urlFormat) {
 		super(url, urlFormat);
+		this.minZoom = minZoom;
 		this.maxZoom = maxZoom;
 	}
 
@@ -62,6 +65,7 @@ public class TileServer extends URLService {
 	 */
 	public TileServer(String url, int maxZoom) {
 		parseUrl(url, "{0}/{1}/{2}.png"); //$NON-NLS-1$
+		this.minZoom = 0;
 		this.maxZoom = maxZoom;
 	}
 
@@ -115,6 +119,15 @@ public class TileServer extends URLService {
 	@Override
 	public String toString() {
 		return getURL();
+	}
+
+	/**
+	 * Gets the min zoom level supported by this TileServer
+	 * 
+	 * @return the min zoom level
+	 */
+	public int getMinZoom() {
+		return minZoom;
 	}
 
 	/**

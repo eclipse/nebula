@@ -52,6 +52,13 @@ public interface GeoMapPositioned {
 	public int getZoom();
 
 	/**
+	 * Gets the minimum supported zoom level
+	 * 
+	 * @return the minimum zoom level
+	 */
+	public int getMinZoom();
+
+	/**
 	 * Gets the maximum supported zoom level
 	 * 
 	 * @return the maximum zoom level

@@ -299,6 +299,15 @@ public class GeoMapHelper implements GeoMapPositioned, GeoMapHelperListener {
 
 	/**
 	 * @see
+	 * org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#getMinZoom()
+	 */
+	@Override
+	public int getMinZoom() {
+		return getTileServer().getMinZoom();
+	}
+
+	/**
+	 * @see
 	 * org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#getMaxZoom()
 	 */
 	@Override
@@ -320,7 +329,8 @@ public class GeoMapHelper implements GeoMapPositioned, GeoMapHelperListener {
 	@Override
 	public void setZoom(int zoom) {
 		zoomStamp.incrementAndGet();
-		this.zoom = Math.min(tileServer.getMaxZoom(), zoom);
+		// Constrain to zoom range
+		this.zoom = Math.max(tileServer.getMinZoom(), Math.min(tileServer.getMaxZoom(), zoom));
 		int size = TILE_SIZE * (1 << zoom);
 		mapSize.x = size;
 		mapSize.y = size;
