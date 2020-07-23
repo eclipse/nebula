@@ -28,14 +28,26 @@ import org.eclipse.swt.SWT;
  */
 public class CDT {
 
+	/**
+	 * @since 1.0
+	 *
+	 */
 	public enum Key {
 		Active, Compact, Date, Index, Panel, Today
 	}
 
+	/**
+	 * @since 1.0
+	 *
+	 */
 	public enum PickerPart {
 		BodyPanel, HeaderPanel, MonthLabel, MonthPrev, MonthNext, DateNow, YearPrev, YearNext, YearLabel, DayOfWeekPanel, DayOfWeekLabel, DayPanel, DayButton, FooterPanel, TodayButton, ClearButton, OkButton, CancelButton, Toolbar
 	}
 
+	/**
+	 * @since 1.0
+	 *
+	 */
 	public enum PickerType {
 		AnalogTime, Date, DateTime, DiscreteTime
 	}

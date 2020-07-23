@@ -630,6 +630,9 @@
 <item elementID="=org.eclipse.nebula.visualization.xygraph.test" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.visualization.feature" type="4"/>
 </workingSets>
+<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1534602593365_62" label="Website" name="Website">
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/nebula" type="4"/>
+</workingSets>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1330704941386_17" label="XViewer" name="XViewer">
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.nebula.widgets.xviewer.feature" type="4"/>
 <item elementID="=org.eclipse.nebula.widgets.xviewer.core" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
@@ -638,8 +641,5 @@
 <item elementID="=org.eclipse.nebula.widgets.xviewer.tests" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item elementID="=org.eclipse.nebula.widgets.xviewer.integration" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item elementID="=org.eclipse.nebula.widgets.xviewer.example" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
-</workingSets>
-<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1534602593365_62" label="Website" name="Website">
-<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/nebula" type="4"/>
 </workingSets>
 </psf>

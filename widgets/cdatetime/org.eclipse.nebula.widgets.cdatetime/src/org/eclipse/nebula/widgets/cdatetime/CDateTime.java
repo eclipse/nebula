@@ -82,6 +82,7 @@ import org.eclipse.swt.widgets.TypedListener;
  * </p>
  * 
  * @see CDT
+ * @since 1.5
  */
 public class CDateTime extends BaseCombo {
 
@@ -2212,7 +2213,7 @@ public class CDateTime extends BaseCombo {
 	 * Returns the minimum date or <code>null</code>.
 	 * 
 	 * @return Returns a clone of the minDate or <code>null</code> if not set.
-	 * @since 1.4.0
+	 * @since 1.4
 	 */
 	public Calendar getMinDate() {
 		if (minDate == null) {
@@ -2225,7 +2226,7 @@ public class CDateTime extends BaseCombo {
 	 * Returns the maximum date or <code>null</code>.
 	 * 
 	 * @return Returns a clone of the maxDate or <code>null</code> if not set.
-	 * @since 1.4.0
+	 * @since 1.4
 	 */
 	public Calendar getMaxDate() {
 		if (maxDate == null) {
@@ -2256,6 +2257,10 @@ public class CDateTime extends BaseCombo {
 		}
 	}
 
+	/**
+	 * @param color
+	 * @since 1.5
+	 */
 	public void setButtonHoverBackgroundColor(Color color) {
 		checkWidget();
 		this.buttonHoverBackgroundColor = color;
@@ -2264,6 +2269,10 @@ public class CDateTime extends BaseCombo {
 		}
 	}
 
+	/**
+	 * @param color
+	 * @since 1.5
+	 */
 	public void setButtonHoverBorderColor(Color color) {
 		checkWidget();
 		this.buttonHoverBorderColor = color;
@@ -2272,6 +2281,10 @@ public class CDateTime extends BaseCombo {
 		}
 	}
 	
+	/**
+	 * @param color
+	 * @since 1.5
+	 */
 	public void setButtonSelectedBackgroundColor(Color color) {
 		checkWidget();
 		this.buttonSelectedBackgroundColor = color;
@@ -2280,6 +2293,10 @@ public class CDateTime extends BaseCombo {
 		}
 	}
 
+	/**
+	 * @param color
+	 * @since 1.5
+	 */
 	public void setButtonSelectedBorderColor(Color color) {
 		checkWidget();
 		this.buttonSelectedBorderColor = color;
@@ -2288,11 +2305,19 @@ public class CDateTime extends BaseCombo {
 		}
 	}
 
+	/**
+	 * @return the picker foreground color
+	 * @since 1.5
+	 */
 	public Color getPickerForegroundColor() {
 		checkWidget();
 		return pickerForegroundColor;
 	}
 
+	/**
+	 * @param pickerForegroundColor
+	 * @since 1.5
+	 */
 	public void setPickerForegroundColor(Color pickerForegroundColor) {
 		checkWidget();
 		this.pickerForegroundColor = pickerForegroundColor;
@@ -2304,11 +2329,19 @@ public class CDateTime extends BaseCombo {
 		}
 	}
 
+	/**
+	 * @return the picker background color
+	 * @since 1.5
+	 */
 	public Color getPickerBackgroundColor() {
 		checkWidget();
 		return pickerBackgroundColor;
 	}
 
+	/**
+	 * @param pickerBackgroundColor
+	 * @since 1.5
+	 */
 	public void setPickerBackgroundColor(Color pickerBackgroundColor) {
 		checkWidget();
 		this.pickerBackgroundColor = pickerBackgroundColor;
@@ -2320,11 +2353,19 @@ public class CDateTime extends BaseCombo {
 		}
 	}
 
+	/**
+	 * @return the picker font
+	 * @since 1.5
+	 */
 	public Font getPickerFont() {
 		checkWidget();
 		return pickerFont;
 	}
 
+	/**
+	 * @param pickerFont
+	 * @since 1.5
+	 */
 	public void setPickerFont(Font pickerFont) {
 		checkWidget();
 		this.pickerFont = pickerFont;
@@ -2336,31 +2377,55 @@ public class CDateTime extends BaseCombo {
 		}
 	}
 
+	/**
+	 * @return the bg color of the button hover
+	 * @since 1.5
+	 */
 	public Color getButtonHoverBackgroundColor() {
 		checkWidget();
 		return buttonHoverBackgroundColor;
 	}
 
+	/**
+	 * @return the border color of the button hover
+	 * @since 1.5
+	 */
 	public Color getButtonHoverBorderColor() {
 		checkWidget();
 		return buttonHoverBorderColor;
 	}
 
+	/**
+	 * @return the selected background of the button
+	 * @since 1.5
+	 */
 	public Color getButtonSelectedBackgroundColor() {
 		checkWidget();
 		return buttonSelectedBackgroundColor;
 	}
 
+	/**
+	 * @return the border color of the selected button
+	 * @since 1.5
+	 */
 	public Color getButtonSelectedBorderColor() {
 		checkWidget();
 		return buttonSelectedBorderColor;
 	}
 
+	/**
+	 * @return the color of the active day
+	 * @since 1.5
+	 */
 	public Color getPickerActiveDayColor() {
 		checkWidget();
 		return pickerActiveDayColor;
 	}
 
+	/**
+	 * @param pickerActiveDayColor
+	 * @since 1.5
+	 */
 	public void setPickerActiveDayColor(Color pickerActiveDayColor) {
 		checkWidget();
 		this.pickerActiveDayColor = pickerActiveDayColor;
@@ -2369,11 +2434,19 @@ public class CDateTime extends BaseCombo {
 		}
 	}
 
+	/**
+	 * @return the color of the inactive day
+	 * @since 1.5
+	 */
 	public Color getPickerInactiveDayColor() {
 		checkWidget();
 		return pickerInactiveDayColor;
 	}
 
+	/**
+	 * @param pickerInactiveDayColor
+	 * @since 1.5
+	 */
 	public void setPickerInactiveDayColor(Color pickerInactiveDayColor) {
 		checkWidget();
 		this.pickerInactiveDayColor = pickerInactiveDayColor;
@@ -2382,11 +2455,19 @@ public class CDateTime extends BaseCombo {
 		}
 	}
 
+	/**
+	 * @return the color of the "today" section
+	 * @since 1.5
+	 */
 	public Color getPickerTodayColor() {
 		checkWidget();
 		return pickerTodayColor;
 	}
 
+	/**
+	 * @param pickerTodayColor
+	 * @since 1.5
+	 */
 	public void setPickerTodayColor(Color pickerTodayColor) {
 		checkWidget();
 		this.pickerTodayColor = pickerTodayColor;
@@ -2395,11 +2476,19 @@ public class CDateTime extends BaseCombo {
 		}
 	}
 
+	/**
+	 * @return the color of the minutes
+	 * @since 1.5
+	 */
 	public Color getPickerMinutesColor() {
 		checkWidget();
 		return pickerMinutesColor;
 	}
 
+	/**
+	 * @param pickerMinutesColor
+	 * @since 1.5
+	 */
 	public void setPickerMinutesColor(Color pickerMinutesColor) {
 		checkWidget();
 		this.pickerMinutesColor = pickerMinutesColor;
@@ -2408,11 +2497,19 @@ public class CDateTime extends BaseCombo {
 		}
 	}
 
+	/**
+	 * @return the minutes background
+	 * @since 1.5
+	 */
 	public Color getPickerMinutesBackgroundColor() {
 		checkWidget();
 		return pickerMinutesBackgroundColor;
 	}
 
+	/**
+	 * @param pickerMinutesBackgroundColor
+	 * @since 1.5
+	 */
 	public void setPickerMinutesBackgroundColor(Color pickerMinutesBackgroundColor) {
 		checkWidget();
 		this.pickerMinutesBackgroundColor = pickerMinutesBackgroundColor;
