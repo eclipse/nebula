@@ -24,7 +24,11 @@ Contributors:
 		<version>1.5.0-SNAPSHOT</version>
 	</parent>
 
+
+	<groupId>org.eclipse.nebula</groupId>
 	<artifactId>org.eclipse.nebula.widgets.cdatetime.css</artifactId>
 	<packaging>eclipse-plugin</packaging>
+	<version>1.0.0-SNAPSHOT</version>
+	
 
 </project>
