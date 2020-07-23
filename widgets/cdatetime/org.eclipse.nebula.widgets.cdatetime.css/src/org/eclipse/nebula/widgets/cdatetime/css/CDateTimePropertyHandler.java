@@ -15,6 +15,7 @@ import org.eclipse.e4.ui.css.core.css2.CSS2FontHelper;
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.impl.dom.Measure;
+import org.eclipse.e4.ui.css.swt.dom.ControlElement;
 import org.eclipse.nebula.widgets.cdatetime.CDateTime;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -29,7 +30,7 @@ import org.w3c.dom.css.CSSValueList;
 public class CDateTimePropertyHandler implements ICSSPropertyHandler {
 	@Override
 	public boolean applyCSSProperty(final Object element, final String property, final CSSValue value, final String pseudo, final CSSEngine engine) throws Exception {
-		final CDateTime cdt = (CDateTime) ((CDateTimeElement) element).getNativeWidget();
+		final CDateTime cdt =(CDateTime) ((ControlElement) element).getNativeWidget();
 
 		// General properties
 		if ("cdt-background-color".equals(property)) {
@@ -150,7 +151,7 @@ public class CDateTimePropertyHandler implements ICSSPropertyHandler {
 
 	private void applyCSSPropertyStyle(final Control widget, final CSSValue value, final boolean picker) throws Exception {
 		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-			final FontData fd = CSSEngineHelper.getFontData(widget);
+			final FontData fd = CSSEngineHelper.getFontData(widget, picker);
 			boolean modified = false;
 			if ("italic".equals(value.getCssText()) || "oblique".equals(value.getCssText())) {
 				modified = (fd.getStyle() & SWT.ITALIC) != SWT.ITALIC;
@@ -202,7 +203,7 @@ public class CDateTimePropertyHandler implements ICSSPropertyHandler {
 
 	private void applyCSSPropertySize(final Control widget, final CSSValue value, final boolean picker) throws Exception {
 		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-			final FontData fd = CSSEngineHelper.getFontData(widget);
+			final FontData fd = CSSEngineHelper.getFontData(widget, picker);
 			final Measure m = (Measure) value;
 
 			final int newSize = Math.round(m.getFloatValue((short) 0));
@@ -220,7 +221,7 @@ public class CDateTimePropertyHandler implements ICSSPropertyHandler {
 
 	private void applyCSSPropertyWeight(final Control widget, final CSSValue value, final boolean picker) throws Exception {
 		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-			final FontData fd = CSSEngineHelper.getFontData(widget);
+			final FontData fd = CSSEngineHelper.getFontData(widget, picker);
 			boolean modified = false;
 			if ("bold".equals(value.getCssText()) || "bolder".equals(value.getCssText())) {
 				modified = (fd.getStyle() & SWT.BOLD) != SWT.BOLD;
@@ -246,7 +247,7 @@ public class CDateTimePropertyHandler implements ICSSPropertyHandler {
 
 	private void applyCSSPropertyFamily(final Control widget, final CSSValue value, final boolean picker) throws Exception {
 		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-			final FontData fd = CSSEngineHelper.getFontData(widget);
+			final FontData fd = CSSEngineHelper.getFontData(widget, picker);
 			final boolean modified = !fd.getName().equals(value.getCssText());
 			if (modified) {
 				fd.setName(value.getCssText());

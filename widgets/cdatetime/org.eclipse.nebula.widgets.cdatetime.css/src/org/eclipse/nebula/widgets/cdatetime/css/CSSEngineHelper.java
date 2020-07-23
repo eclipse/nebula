@@ -11,13 +11,25 @@
  ******************************************************************************/
 package org.eclipse.nebula.widgets.cdatetime.css;
 
+import org.eclipse.nebula.widgets.cdatetime.CDateTime;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Control;
 
 public class CSSEngineHelper {
-	public static FontData getFontData(final Control control) {
-		final Font font = control.getFont();
+	public static FontData getFontData(final Control control, final boolean picker) {
+		final Font font ;
+		if (picker) {
+			CDateTime cdt = (CDateTime) control;
+			if (cdt.getPickerFont() == null) {
+				font = cdt.getDisplay().getSystemFont();
+			} else {
+				font = cdt.getPickerFont();
+			}
+		} else {
+			font = control.getFont();
+		}
+		
 		if (font == null || font.isDisposed()) {
 			return null;
 		}
