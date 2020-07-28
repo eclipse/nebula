@@ -5,7 +5,7 @@
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
@@ -90,22 +90,7 @@ public abstract class XViewerLabelProvider implements ITableLabelProvider, ITabl
          // Check if Pre Computed column
          if (xViewerColumn instanceof IXViewerPreComputedColumn) {
             IXViewerPreComputedColumn preComputedColumn = (IXViewerPreComputedColumn) xViewerColumn;
-            Long key = preComputedColumn.getKey(element);
-            String cachedValue = xViewerColumn.getPreComputedValue(key);
-            Long startTime = viewer.isDebugLoading() ? (new Date()).getTime() : 0L;
-            String result = ((IXViewerPreComputedColumn) xViewerColumn).getText(element, key, cachedValue);
-            if (result == null) {
-               // Give a single chance to populate a potentially new element, else store empty string to ensure good performance
-               preComputedColumn.populateCachedValues(Collections.singleton(element),
-                  xViewerColumn.getPreComputedValueMap());
-               result = xViewerColumn.getPreComputedValue(key);
-               if (viewer.isDebugLoading()) {
-                  xViewerColumn.addElapsedTime((new Date()).getTime() - startTime);
-               }
-               if (result == null) {
-                  xViewerColumn.getPreComputedValueMap().put(key, "");
-               }
-            }
+            String result = getPrecomputedText(element, xViewerColumn, preComputedColumn, true);
             return result;
          }
          // First check value column's methods
@@ -131,6 +116,25 @@ public abstract class XViewerLabelProvider implements ITableLabelProvider, ITabl
       } catch (Exception ex) {
          return XViewerCells.getCellExceptionString(ex);
       }
+   }
+
+   public static String getPrecomputedText(Object element, XViewerColumn xViewerColumn, IXViewerPreComputedColumn preComputedColumn, boolean debugLoading) {
+      Long key = preComputedColumn.getKey(element);
+      String cachedValue = xViewerColumn.getPreComputedValue(key);
+      Long startTime = debugLoading ? (new Date()).getTime() : 0L;
+      String result = ((IXViewerPreComputedColumn) xViewerColumn).getText(element, key, cachedValue);
+      if (result == null) {
+         // Give a single chance to populate a potentially new element, else store empty string to ensure good performance
+         preComputedColumn.populateCachedValues(Collections.singleton(element), xViewerColumn.getPreComputedValueMap());
+         result = xViewerColumn.getPreComputedValue(key);
+         if (debugLoading) {
+            xViewerColumn.addElapsedTime((new Date()).getTime() - startTime);
+         }
+         if (result == null) {
+            xViewerColumn.getPreComputedValueMap().put(key, "");
+         }
+      }
+      return result;
    }
 
    public Color getSearchBackground(Object element, int columnIndex) {
