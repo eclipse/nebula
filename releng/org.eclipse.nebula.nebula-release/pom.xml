@@ -76,6 +76,7 @@
 		<module>../../widgets/chips</module>
 		<module>../../widgets/carousel</module>
 		<module>../../widgets/fontawesome</module>
+		<module>../../widgets/roundedswitch</module>
 
 		<!-- Releng -->
 		<module>../org.eclipse.nebula.feature</module>
