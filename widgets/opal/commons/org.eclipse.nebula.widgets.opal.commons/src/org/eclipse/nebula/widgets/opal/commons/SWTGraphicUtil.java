@@ -52,11 +52,16 @@ public class SWTGraphicUtil {
 	 * Dispose safely any SWT resource when a widget is disposed
 	 *
 	 * @param widget widget attached to the resource
-	 * @param resource the resource to dispose
+	 * @param resources the resources to dispose
 	 */
-	public static void addDisposer(final Widget widget, final Resource resource) {
+	public static void addDisposer(final Widget widget, final Resource... resources) {
 		widget.addDisposeListener(e -> {
-			safeDispose(resource);
+			if (resources == null) {
+				return;
+			}
+			for (Resource resource:resources) {
+				safeDispose(resource);
+			}
 		});
 	}
 
