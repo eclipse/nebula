@@ -37,7 +37,7 @@ import org.eclipse.swt.widgets.Listener;
  * <dt><b>Styles:</b></dt>
  * <dd>BORDER</dd>
  * <dt><b>Events:</b></dt>
- * <dd>(none)</dd>
+ * <dd>Selection</dd>
  * </dl>
  * </p>
  */
@@ -306,8 +306,7 @@ public class RoundedCheckbox extends Canvas {
 
 	/**
 	 * Returns <code>true</code> if the receiver is grayed,
-	 * and false otherwise. When the widget does not have
-	 * the <code>CHECK</code> style, return false.
+	 * and false otherwise. 
 	 *
 	 * @return the grayed state of the checkbox
 	 *
@@ -326,13 +325,8 @@ public class RoundedCheckbox extends Canvas {
 
 	/**
 	 * Returns the receiver's color when the mouse is hover the widget.
-	 * <p>
-	 * Note: This operation is a hint and may be overridden by the platform.
-	 * For example, on some versions of Windows the background of a TabFolder,
-	 * is a gradient rather than a solid color.
-	 * </p>
 	 * 
-	 * @return the background color
+	 * @return the receiver's color
 	 *
 	 * @exception SWTException
 	 *                <ul>
@@ -347,11 +341,6 @@ public class RoundedCheckbox extends Canvas {
 
 	/**
 	 * Returns the receiver's background color when the widget is selected.
-	 * <p>
-	 * Note: This operation is a hint and may be overridden by the platform.
-	 * For example, on some versions of Windows the background of a TabFolder,
-	 * is a gradient rather than a solid color.
-	 * </p>
 	 * 
 	 * @return the background color
 	 *
@@ -368,13 +357,8 @@ public class RoundedCheckbox extends Canvas {
 
 	/**
 	 * Returns the receiver's foreground color when the widget is selected.
-	 * <p>
-	 * Note: This operation is a hint and may be overridden by the platform.
-	 * For example, on some versions of Windows the background of a TabFolder,
-	 * is a gradient rather than a solid color.
-	 * </p>
 	 * 
-	 * @return the background color
+	 * @return the foreground color
 	 *
 	 * @exception SWTException
 	 *                <ul>
@@ -390,11 +374,6 @@ public class RoundedCheckbox extends Canvas {
 	/**
 	 * Returns <code>true</code> if the receiver is selected,
 	 * and false otherwise.
-	 * <p>
-	 * When the receiver is of type <code>CHECK</code> or <code>RADIO</code>,
-	 * it is selected when it is checked. When it is of type <code>TOGGLE</code>,
-	 * it is selected when it is pushed in. If the receiver is of any other type,
-	 * this method returns false.
 	 *
 	 * @return the selection state
 	 *
@@ -411,13 +390,8 @@ public class RoundedCheckbox extends Canvas {
 
 	/**
 	 * Returns the receiver's foreground color when the widget is not selected.
-	 * <p>
-	 * Note: This operation is a hint and may be overridden by the platform.
-	 * For example, on some versions of Windows the background of a TabFolder,
-	 * is a gradient rather than a solid color.
-	 * </p>
 	 * 
-	 * @return the background color
+	 * @return the foreground color
 	 *
 	 * @exception SWTException
 	 *                <ul>
@@ -558,13 +532,7 @@ public class RoundedCheckbox extends Canvas {
 	}
 
 	/**
-	 * Sets the selection state of the receiver, if it is of type <code>CHECK</code>,
-	 * <code>RADIO</code>, or <code>TOGGLE</code>.
-	 *
-	 * <p>
-	 * When the receiver is of type <code>CHECK</code> or <code>RADIO</code>,
-	 * it is selected when it is checked. When it is of type <code>TOGGLE</code>,
-	 * it is selected when it is pushed in.
+	 * Sets the selection state of the receiver.
 	 *
 	 * @param selected the new selection state
 	 *
