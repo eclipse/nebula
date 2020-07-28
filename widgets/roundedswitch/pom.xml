@@ -18,6 +18,9 @@
 		<module>org.eclipse.nebula.widgets.roundedswitch</module>
 		<module>org.eclipse.nebula.widgets.roundedswitch.feature</module>
 		<module>org.eclipse.nebula.widgets.roundedswitch.snippets</module>
+		<module>org.eclipse.nebula.widgets.roundedswitch.example.e4</module>
+		<module>org.eclipse.nebula.widgets.roundedswitch.css</module>
+		<module>org.eclipse.nebula.widgets.roundedswitch.css.feature</module>
 	</modules>
 
 
