@@ -1,0 +1,31 @@
+/* 
+CSS for Rounded Switch
+*/
+
+RoundedSwitch  {
+  switch-border-width:2px;
+}
+
+.custom:checkedEnabled {
+  switch-border-color: #75B936;
+  switch-circle-color: #FFFFFF;
+  switch-background-color: #75B936;
+}
+
+.custom:uncheckedEnabled {
+  switch-border-color: #FF0000;
+  switch-circle-color: darkred;
+  switch-background-color: #FF0000;	
+}
+
+.custom:checkedDisabled {
+  switch-border-color: #C9C9C9;
+  switch-circle-color: #FFFFFF;
+  switch-background-color: #C9C9C9;
+}
+
+.custom:uncheckedDisabled {
+  switch-border-color: #C9C9C9;
+  switch-circle-color: #FFFFFF;
+  switch-background-color: #C9C9C9;	
+}
