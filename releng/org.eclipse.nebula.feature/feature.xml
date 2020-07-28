@@ -233,4 +233,8 @@
          id="org.eclipse.nebula.widgets.fontawesome.feature"
          version="0.0.0"/>
 
+   <includes
+         id="org.eclipse.nebula.widgets.roundedswitch.feature"
+         version="0.0.0"/>
+
 </feature>
