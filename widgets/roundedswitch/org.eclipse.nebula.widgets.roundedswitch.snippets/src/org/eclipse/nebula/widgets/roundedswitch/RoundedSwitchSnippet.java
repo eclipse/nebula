@@ -42,6 +42,9 @@ public class RoundedSwitchSnippet {
 		button1.setLayoutData(new GridData(GridData.CENTER, GridData.CENTER, false, false));
 		button1.setEnabled(true);
 		button1.setSelection(true);
+		button1.addListener(SWT.Selection, e-> {
+			System.out.println("Click");
+		});
 
 		final Label lbl2 = new Label(shell, SWT.NONE);
 		lbl2.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, true, false));
