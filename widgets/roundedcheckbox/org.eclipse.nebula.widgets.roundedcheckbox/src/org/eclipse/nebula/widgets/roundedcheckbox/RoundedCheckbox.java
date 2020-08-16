@@ -193,8 +193,38 @@ public class RoundedCheckbox extends Canvas {
 		final int centerY = (rect.height - rect.y) / 2;
 		final int distance = (int) Math.sqrt(Math.abs(e.x - centerX ^ 2 - (e.y - centerY) ^ 2));
 		if (distance < rect.width - 4) {
-			setSelection(!selected);
+			if (fireSelectionListeners(e)) {
+				setSelection(!selected);
+			}
 		}
+	}
+	
+	/**
+	 * Fire the selection listeners
+	 *
+	 * @param e mouse event
+	 * @return true if the selection could be changed, false otherwise
+	 */
+	private boolean fireSelectionListeners(final Event e) {
+		for (final SelectionListener listener : selectionListeners) {
+			final Event event = new Event();
+
+			event.button = e.button;
+			event.display = getDisplay();
+			event.item = null;
+			event.widget = this;
+			event.data = null;
+			event.time = e.time;
+			event.x = e.x;
+			event.y = e.y;
+
+			final SelectionEvent selEvent = new SelectionEvent(event);
+			listener.widgetSelected(selEvent);
+			if (!selEvent.doit) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private void onKeyPress(Event e) {
