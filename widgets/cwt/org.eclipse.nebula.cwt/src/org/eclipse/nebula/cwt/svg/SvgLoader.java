@@ -966,41 +966,51 @@ class SvgLoader {
 		List<Byte> types = new ArrayList<Byte>();
 		List<Float> points = new ArrayList<Float>();
 		int i = -1;
+		String lastCommand = ""; //$NON-NLS-1$
+		boolean useLastCommand = false;
 		while(i < sa.length - 1) {
-			i++;
-			switch(sa[i].charAt(0)) {
+			String command;
+			if(!useLastCommand) {
+				i++;
+				command = sa[i];
+			} else {
+				i--;
+				command = lastCommand;
+				useLastCommand = false;
+			}
+			switch(command.charAt(0)) {
 			case 'M':
 			case 'm':
 				types.add((byte) SWT.PATH_MOVE_TO);
-				relative = ('m' == sa[i].charAt(0));
+				relative = ('m' == command.charAt(0));
 				addPoint(points, sa[++i], relative);
 				addPoint(points, sa[++i], relative);
 				break;
 			case 'L':
 			case 'l':
 				types.add((byte) SWT.PATH_LINE_TO);
-				relative = ('l' == sa[i].charAt(0));
+				relative = ('l' == command.charAt(0));
 				addPoint(points, sa[++i], relative);
 				addPoint(points, sa[++i], relative);
 				break;
 			case 'H':
 			case 'h':
 				types.add((byte) SWT.PATH_LINE_TO);
-				relative = ('h' == sa[i].charAt(0));
+				relative = ('h' == command.charAt(0));
 				addPoint(points, sa[++i], relative);
 				points.add(points.get(points.size() - 2));
 				break;
 			case 'V':
 			case 'v':
 				types.add((byte) SWT.PATH_LINE_TO);
-				relative = ('v' == sa[i].charAt(0));
+				relative = ('v' == command.charAt(0));
 				points.add(points.get(points.size() - 2));
 				addPoint(points, sa[++i], relative);
 				break;
 			case 'C':
 			case 'c':
 				types.add((byte) SWT.PATH_CUBIC_TO);
-				relative = ('c' == sa[i].charAt(0));
+				relative = ('c' == command.charAt(0));
 				addPoint(points, sa[++i], relative);
 				addPoint(points, sa[++i], relative);
 				addPoint(points, sa[++i], relative);
@@ -1011,7 +1021,7 @@ class SvgLoader {
 			case 'S':
 			case 's':
 				types.add((byte) SWT.PATH_CUBIC_TO);
-				relative = ('s' == sa[i].charAt(0));
+				relative = ('s' == command.charAt(0));
 				if(SWT.PATH_CUBIC_TO == types.get(types.size() - 2)) {
 					float x2 = points.get(points.size() - 4);
 					float y2 = points.get(points.size() - 3);
@@ -1033,7 +1043,7 @@ class SvgLoader {
 			case 'Q':
 			case 'q':
 				types.add((byte) SWT.PATH_QUAD_TO);
-				relative = ('q' == sa[i].charAt(0));
+				relative = ('q' == command.charAt(0));
 				addPoint(points, sa[++i], relative);
 				addPoint(points, sa[++i], relative);
 				addPoint(points, sa[++i], relative);
@@ -1042,7 +1052,7 @@ class SvgLoader {
 			case 'T':
 			case 't':
 				types.add((byte) SWT.PATH_QUAD_TO);
-				relative = ('q' == sa[i].charAt(0));
+				relative = ('q' == command.charAt(0));
 				if(SWT.PATH_QUAD_TO == types.get(types.size() - 2)) {
 					float x2 = points.get(points.size() - 4);
 					float y2 = points.get(points.size() - 3);
@@ -1065,10 +1075,24 @@ class SvgLoader {
 				break;
 			case 'A':
 			case 'a':
-				relative = ('a' == sa[i].charAt(0));
+				relative = ('a' == command.charAt(0));
 				addArc(sa, ++i, types, points, relative);
 				i += 6;
 				break;
+			default:
+				char com = lastCommand.charAt(0);
+				if (com != 'Z' && com != 'z' && com != 'A' && com != 'a') {
+					useLastCommand = true;
+					if (com == 'M') {
+						lastCommand = "L";
+					}
+					if (com == 'm') {
+						lastCommand = "l";
+					}
+				}
+			}
+			if(!useLastCommand) {
+				lastCommand = command;
 			}
 		}
 
