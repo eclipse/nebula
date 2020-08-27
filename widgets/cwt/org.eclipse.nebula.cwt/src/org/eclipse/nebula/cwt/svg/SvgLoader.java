@@ -1081,7 +1081,7 @@ class SvgLoader {
 				break;
 			default:
 				char com = lastCommand.charAt(0);
-				if (com != 'Z' && com != 'z' && com != 'A' && com != 'a') {
+				if (com != 'Z' && com != 'z') {
 					useLastCommand = true;
 					if (com == 'M') {
 						lastCommand = "L";
