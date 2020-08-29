@@ -180,6 +180,16 @@ public class MultiChoiceSnippet {
 		mcNotEditable.addAll(euroZone);
 		mcNotEditable.setEditable(false);
 		addButons(mcNotEditable);
+		
+		
+		drawLabel(shell, "Not Enabled Multichoice :");
+		final MultiChoice<String> mcNotEnabled = new MultiChoice<>(shell, SWT.READ_ONLY);
+		final GridData gridDataNotEnabled = new GridData(GridData.FILL, GridData.BEGINNING, true, true);
+		gridDataNotEnabled.widthHint = 200;
+		mcNotEnabled.setLayoutData(gridDataNotEnabled);
+		mcNotEnabled.addAll(euroZone);
+		mcNotEnabled.setEditable(false);
+		addButons(mcNotEnabled);
 
 		// display the shell...
 		shell.open();
