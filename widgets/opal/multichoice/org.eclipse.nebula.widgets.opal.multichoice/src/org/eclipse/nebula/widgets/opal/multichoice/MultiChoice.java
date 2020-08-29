@@ -1089,7 +1089,7 @@ public class MultiChoice<T> extends Composite {
 			if (this.background != null) {
 				checkBoxButton.setBackground(this.background);
 			}
-			checkBoxButton.setEnabled(text.getEditable());
+			checkBoxButton.setEnabled(text.isEnabled()); //TODO
 
 			checkBoxButton.setData(o);
 			checkBoxButton.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false));
