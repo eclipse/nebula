@@ -312,6 +312,11 @@ public class CDateTime extends BaseCombo {
 			}
 			break;
 		case SWT.MouseWheel:
+			Control focusedControl = getDisplay().getFocusControl();
+			if (getTextWidget() != null && getTextWidget().getControl() != focusedControl) {
+				// Do not handle mousewheel events if the widget does not have focus
+				break;
+			}
 			if (event.count > 0) {
 				fieldAdjust(1);
 			} else {
