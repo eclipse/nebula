@@ -10,6 +10,7 @@
  *
  * Contributors:
  *    Jeremy Dowdall <jeremyd@aspencloud.com> - initial API and implementation
+ *    Edward Francis <edward.k.francis@gmail.com> - Handle Bézier relative commands correctly
  *    Edward Frnacis <edward.k.francis@gmail.com> - parsePathData handle multiple commands.
  *****************************************************************************/
 package org.eclipse.nebula.cwt.svg;
@@ -193,8 +194,12 @@ class SvgLoader {
 	}
 	
 	private static void addPoint(List<Float> points, String s, boolean relative) {
+		addPoint(points, s, relative, 2);
+	}
+	
+	private static void addPoint(List<Float> points, String s, boolean relative, int relativeOffset) {
 		if(relative) {
-			points.add(points.get(points.size() - 2) + Float.parseFloat(s));
+			points.add(points.get(points.size() - relativeOffset) + Float.parseFloat(s));
 		} else {
 			points.add(new Float(s));
 		}
@@ -1014,10 +1019,10 @@ class SvgLoader {
 				relative = ('c' == command.charAt(0));
 				addPoint(points, sa[++i], relative);
 				addPoint(points, sa[++i], relative);
-				addPoint(points, sa[++i], relative);
-				addPoint(points, sa[++i], relative);
-				addPoint(points, sa[++i], relative);
-				addPoint(points, sa[++i], relative);
+				addPoint(points, sa[++i], relative, 4);
+				addPoint(points, sa[++i], relative, 4);
+				addPoint(points, sa[++i], relative, 6);
+				addPoint(points, sa[++i], relative, 6);
 				break;
 			case 'S':
 			case 's':
@@ -1036,10 +1041,10 @@ class SvgLoader {
 					points.add(points.get(points.size() - 2));
 					points.add(points.get(points.size() - 2));
 				}
-				addPoint(points, sa[++i], relative);
-				addPoint(points, sa[++i], relative);
-				addPoint(points, sa[++i], relative);
-				addPoint(points, sa[++i], relative);
+				addPoint(points, sa[++i], relative, 4);
+				addPoint(points, sa[++i], relative, 4);
+				addPoint(points, sa[++i], relative, 6);
+				addPoint(points, sa[++i], relative, 6);
 				break;
 			case 'Q':
 			case 'q':
@@ -1047,8 +1052,8 @@ class SvgLoader {
 				relative = ('q' == command.charAt(0));
 				addPoint(points, sa[++i], relative);
 				addPoint(points, sa[++i], relative);
-				addPoint(points, sa[++i], relative);
-				addPoint(points, sa[++i], relative);
+				addPoint(points, sa[++i], relative, 4);
+				addPoint(points, sa[++i], relative, 4);
 				break;
 			case 'T':
 			case 't':
@@ -1067,8 +1072,8 @@ class SvgLoader {
 					points.add(points.get(points.size() - 2));
 					points.add(points.get(points.size() - 2));
 				}
-				addPoint(points, sa[++i], relative);
-				addPoint(points, sa[++i], relative);
+				addPoint(points, sa[++i], relative, 4);
+				addPoint(points, sa[++i], relative, 4);
 				break;
 			case 'Z':
 			case 'z':
@@ -1392,8 +1397,8 @@ class SvgLoader {
 				element.x = parseFloat(getAttrValue(ca, start, endAttrs, ATTR_X));
 				element.y = parseFloat(getAttrValue(ca, start, endAttrs, ATTR_Y));
 			}
-			element.width = parseLength(getAttrValue(ca, start, endAttrs, ATTR_WIDTH), "100%"); //$NON-NLS-1$
-			element.height = parseLength(getAttrValue(ca, start, endAttrs, ATTR_HEIGHT), "100%"); //$NON-NLS-1$
+			element.width = parseLength(getAttrValue(ca, start, endAttrs, ATTR_WIDTH), "10px"); //$NON-NLS-1$
+			element.height = parseLength(getAttrValue(ca, start, endAttrs, ATTR_HEIGHT), "10px"); //$NON-NLS-1$
 			element.viewBox = parseViewBox(getAttrValue(ca, start, endAttrs, ATTR_VIEWBOX));
 			//			TODO element.preserveAspectRatio = 
 			parse(element, ca, endAttrs, end);
