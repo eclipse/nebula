@@ -192,12 +192,8 @@ class SvgLoader {
 	}
 	
 	private static void addPoint(List<Float> points, String s, boolean relative) {
-		addPoint(points, s, relative, 2);
-	}
-	
-	private static void addPoint(List<Float> points, String s, boolean relative, int relativeOffset) {
 		if(relative) {
-			points.add(points.get(points.size() - relativeOffset) + Float.parseFloat(s));
+			points.add(points.get(points.size() - 2) + Float.parseFloat(s));
 		} else {
 			points.add(new Float(s));
 		}
@@ -969,7 +965,6 @@ class SvgLoader {
 		boolean relative;
 		List<Byte> types = new ArrayList<Byte>();
 		List<Float> points = new ArrayList<Float>();
-		List<Float> relativePoints = new ArrayList<Float>(2);
 		int i = -1;
 		String lastCommand = ""; //$NON-NLS-1$
 		boolean useLastCommand = false;
@@ -983,53 +978,50 @@ class SvgLoader {
 				command = lastCommand;
 				useLastCommand = false;
 			}
-			
-			relative = Character.isLowerCase(command.charAt(0));
-			
-			if(relative)
-			{
-				relativePoints.add(points.get(points.size() - 2));
-				relativePoints.add(points.get(points.size() - 1));
-			}
-			
 			switch(command.charAt(0)) {
 			case 'M':
 			case 'm':
 				types.add((byte) SWT.PATH_MOVE_TO);
+				relative = ('m' == command.charAt(0));
 				addPoint(points, sa[++i], relative);
 				addPoint(points, sa[++i], relative);
 				break;
 			case 'L':
 			case 'l':
 				types.add((byte) SWT.PATH_LINE_TO);
+				relative = ('l' == command.charAt(0));
 				addPoint(points, sa[++i], relative);
 				addPoint(points, sa[++i], relative);
 				break;
 			case 'H':
 			case 'h':
 				types.add((byte) SWT.PATH_LINE_TO);
+				relative = ('h' == command.charAt(0));
 				addPoint(points, sa[++i], relative);
 				points.add(points.get(points.size() - 2));
 				break;
 			case 'V':
 			case 'v':
 				types.add((byte) SWT.PATH_LINE_TO);
+				relative = ('v' == command.charAt(0));
 				points.add(points.get(points.size() - 2));
 				addPoint(points, sa[++i], relative);
 				break;
 			case 'C':
 			case 'c':
 				types.add((byte) SWT.PATH_CUBIC_TO);
+				relative = ('c' == command.charAt(0));
 				addPoint(points, sa[++i], relative);
 				addPoint(points, sa[++i], relative);
-				addPoint(points, sa[++i], relative, 4);
-				addPoint(points, sa[++i], relative, 4);
-				addPoint(points, sa[++i], relative, 6);
-				addPoint(points, sa[++i], relative, 6);
+				addPoint(points, sa[++i], relative);
+				addPoint(points, sa[++i], relative);
+				addPoint(points, sa[++i], relative);
+				addPoint(points, sa[++i], relative);
 				break;
 			case 'S':
 			case 's':
 				types.add((byte) SWT.PATH_CUBIC_TO);
+				relative = ('s' == command.charAt(0));
 				if(SWT.PATH_CUBIC_TO == types.get(types.size() - 2)) {
 					float x2 = points.get(points.size() - 4);
 					float y2 = points.get(points.size() - 3);
@@ -1043,22 +1035,24 @@ class SvgLoader {
 					points.add(points.get(points.size() - 2));
 					points.add(points.get(points.size() - 2));
 				}
-				addPoint(points, sa[++i], relative, 4);
-				addPoint(points, sa[++i], relative, 4);
-				addPoint(points, sa[++i], relative, 6);
-				addPoint(points, sa[++i], relative, 6);
+				addPoint(points, sa[++i], relative);
+				addPoint(points, sa[++i], relative);
+				addPoint(points, sa[++i], relative);
+				addPoint(points, sa[++i], relative);
 				break;
 			case 'Q':
 			case 'q':
 				types.add((byte) SWT.PATH_QUAD_TO);
+				relative = ('q' == command.charAt(0));
 				addPoint(points, sa[++i], relative);
 				addPoint(points, sa[++i], relative);
-				addPoint(points, sa[++i], relative, 4);
-				addPoint(points, sa[++i], relative, 4);
+				addPoint(points, sa[++i], relative);
+				addPoint(points, sa[++i], relative);
 				break;
 			case 'T':
 			case 't':
 				types.add((byte) SWT.PATH_QUAD_TO);
+				relative = ('q' == command.charAt(0));
 				if(SWT.PATH_QUAD_TO == types.get(types.size() - 2)) {
 					float x2 = points.get(points.size() - 4);
 					float y2 = points.get(points.size() - 3);
@@ -1072,8 +1066,8 @@ class SvgLoader {
 					points.add(points.get(points.size() - 2));
 					points.add(points.get(points.size() - 2));
 				}
-				addPoint(points, sa[++i], relative, 4);
-				addPoint(points, sa[++i], relative, 4);
+				addPoint(points, sa[++i], relative);
+				addPoint(points, sa[++i], relative);
 				break;
 			case 'Z':
 			case 'z':
@@ -1081,6 +1075,7 @@ class SvgLoader {
 				break;
 			case 'A':
 			case 'a':
+				relative = ('a' == command.charAt(0));
 				addArc(sa, ++i, types, points, relative);
 				i += 6;
 				break;
@@ -1099,8 +1094,6 @@ class SvgLoader {
 			if(!useLastCommand) {
 				lastCommand = command;
 			}
-			
-			relativePoints.clear();
 		}
 
 		path.pathData = new PathData();
