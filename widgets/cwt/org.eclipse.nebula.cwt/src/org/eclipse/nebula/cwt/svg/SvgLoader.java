@@ -10,6 +10,7 @@
  *
  * Contributors:
  *    Jeremy Dowdall <jeremyd@aspencloud.com> - initial API and implementation
+ *    Edward Francis <edward.francis@cerner.com> - parsePathData handle multiple commands. 
  *****************************************************************************/
 package org.eclipse.nebula.cwt.svg;
 
