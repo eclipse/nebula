@@ -70,11 +70,22 @@ abstract class BaseFocusControlListener implements FocusListener, ControlListene
 	/**
 	 * Apply the initial look of the widget
 	 */
-	private void applyInitialLook() {
+    protected void applyInitialLook() {
 		control.setFont(initialFont);
 		control.setBackground(initialBackgroundColor);
 		control.setForeground(initialForegroundColor);
 	}
+
+    /**
+     * Apply the prompt look of the widget
+     */
+    protected void applyPromptLook() {
+        final Font font = SWTGraphicUtil.buildFontFrom(control, PromptSupport.getFontStyle(control));
+        control.setFont(font);
+        SWTGraphicUtil.addDisposer(control, font);
+        control.setBackground(PromptSupport.getBackground(control));
+        control.setForeground(PromptSupport.getForeground(control));
+    }
 
 	/**
 	 * Code when the focus behiaviour is "Hide"
@@ -96,9 +107,7 @@ abstract class BaseFocusControlListener implements FocusListener, ControlListene
 		}
 
 		storeInitialLook();
-		applyForegroundColor();
-		applyBackgroundColor();
-		applyFontStyle();
+        applyPromptLook();
 		fillPromptText();
         PromptSupport.setPromptDisplayed(control, true);
 	}
@@ -108,29 +117,6 @@ abstract class BaseFocusControlListener implements FocusListener, ControlListene
 	 *         otherwise
 	 */
 	protected abstract boolean isFilled();
-
-	/**
-	 * Apply the foreground color for the prompt
-	 */
-	private void applyForegroundColor() {
-		control.setForeground(PromptSupport.getForeground(control));
-	}
-
-	/**
-	 * Apply the background color for the prompt
-	 */
-	private void applyBackgroundColor() {
-		control.setBackground(PromptSupport.getBackground(control));
-	}
-
-	/**
-	 * Apply the font style to the prompt
-	 */
-	private void applyFontStyle() {
-		final Font font = SWTGraphicUtil.buildFontFrom(control, PromptSupport.getFontStyle(control));
-		control.setFont(font);
-		SWTGraphicUtil.addDisposer(control, font);
-	}
 
 	/**
 	 * Fill the prompt text
@@ -150,7 +136,6 @@ abstract class BaseFocusControlListener implements FocusListener, ControlListene
 	@Override
 	public void controlResized(final ControlEvent e) {
 		if (firstDraw) {
-			storeInitialLook();
 			firstDraw = true;
 			focusLost(null);
 		}
@@ -159,9 +144,17 @@ abstract class BaseFocusControlListener implements FocusListener, ControlListene
 	/**
 	 * Store the initial look of the widget
 	 */
-	private void storeInitialLook() {
+    protected void storeInitialLook() {
 		initialFont = control.getFont();
 		initialBackgroundColor = control.getBackground();
 		initialForegroundColor = control.getForeground();
 	}
+
+    /**
+     * Attach listeners to the control
+     */
+    void hookControl() {
+        control.addFocusListener(this);
+        control.addControlListener(this);
+    }
 }
