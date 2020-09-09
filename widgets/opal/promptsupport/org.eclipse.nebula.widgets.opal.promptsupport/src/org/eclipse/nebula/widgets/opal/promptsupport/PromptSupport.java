@@ -216,8 +216,7 @@ public class PromptSupport {
 		control.setData(PROMPT, promptText);
 
 		final BaseFocusControlListener focusControlListener = FocusControlListenerFactory.getFocusControlListenerFor(control);
-		control.addFocusListener(focusControlListener);
-		control.addControlListener(focusControlListener);
+        focusControlListener.hookControl();
 		control.setData(SET, true);
 	}
 

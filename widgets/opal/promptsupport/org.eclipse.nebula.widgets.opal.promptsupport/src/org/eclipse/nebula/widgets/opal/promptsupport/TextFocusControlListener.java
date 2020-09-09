@@ -13,12 +13,16 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.promptsupport;
 
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Text;
 
 /**
  * Focus/Control listener for a Text widget
  */
-class TextFocusControlListener extends BaseFocusControlListener {
+class TextFocusControlListener extends BaseFocusControlListener implements ModifyListener {
+
+    protected boolean updatingPropmpt = false;
 
 	/**
 	 * Constructor
@@ -29,12 +33,42 @@ class TextFocusControlListener extends BaseFocusControlListener {
 		super(control);
 	}
 
+    @Override
+    void hookControl() {
+        super.hookControl();
+
+        // Attach dedicated listeners
+        ((Text) control).addModifyListener(this);
+    }
+
+    @Override
+    public void modifyText(ModifyEvent e) {
+        if (updatingPropmpt) {
+            return;
+        }
+
+        final String trimmedText = ((Text) control).getText().trim();
+        if (!EMPTY_STRING.equals(trimmedText)) {
+            applyInitialLook();
+            PromptSupport.setPromptDisplayed(control, false);
+            return;
+        }
+
+        if (!control.isFocusControl()) {
+            storeInitialLook();
+            applyPromptLook();
+            fillPromptText();
+            PromptSupport.setPromptDisplayed(control, true);
+            return;
+        }
+    }
+
 	/**
 	 * @see org.eclipse.nebula.widgets.opal.promptsupport.BaseFocusControlListener#hidePrompt()
 	 */
 	@Override
 	protected void hidePrompt() {
-		((Text) control).setText(EMPTY_STRING);
+        updatePrompt(EMPTY_STRING);
 	}
 
 	/**
@@ -60,7 +94,7 @@ class TextFocusControlListener extends BaseFocusControlListener {
 	protected void fillPromptText() {
 		final String promptText = PromptSupport.getPrompt(control);
 		if (promptText != null) {
-			((Text) control).setText(promptText);
+            updatePrompt(promptText);
 		}
 	}
 
@@ -77,4 +111,12 @@ class TextFocusControlListener extends BaseFocusControlListener {
 		return !EMPTY_STRING.equals(trimmedText);
 	}
 
+    protected void updatePrompt(String prompt) {
+        try {
+            updatingPropmpt = true;
+            ((Text) control).setText(prompt);
+        } finally {
+            updatingPropmpt = false;
+        }
+    }
 }
