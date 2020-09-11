@@ -100,6 +100,7 @@ abstract class BaseFocusControlListener implements FocusListener, ControlListene
 		applyBackgroundColor();
 		applyFontStyle();
 		fillPromptText();
+        PromptSupport.setPromptDisplayed(control, true);
 	}
 
 	/**
