@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Copyright (c) 2015, 2019 CEA LIST.
+ * Copyright (c) 2015, 2020 CEA LIST.
  *
  *
  * This program and the accompanying materials
@@ -11,7 +11,6 @@
  *
  * Contributors:
  *		Dirk Fauth <dirk.fauth@googlemail.com> - Initial API and implementation
- *
  *****************************************************************************/
 package org.eclipse.nebula.widgets.richtext;
 
@@ -628,7 +627,7 @@ public class RichTextPainter {
 							int pixel = Integer.valueOf(pixelValue.trim());
 							// the size in pixels specified in HTML
 							// so we need to convert it to point
-							int pointSize = 72 * pixel / Display.getDefault().getDPI().x;
+							int pointSize = 72 * ScalingHelper.convertHorizontalPixelToDpi(pixel) / Display.getDefault().getDPI().x;
 							styleInstruction.setFontSize(pointSize);
 						} catch (NumberFormatException e) {
 							e.printStackTrace();
@@ -711,7 +710,7 @@ public class RichTextPainter {
 	 *         <b>Note:</b> Between two paragraphs the paragraphSpace * 2 is added as space.
 	 */
 	public int getParagraphSpace() {
-		return this.paragraphSpace;
+		return ScalingHelper.convertVerticalPixelToDpi(this.paragraphSpace);
 	}
 
 	/**
