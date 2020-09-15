@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Copyright (c) 2015, 2016 CEA LIST.
+ * Copyright (c) 2015, 2020 CEA LIST.
  *
  *
  * This program and the accompanying materials
@@ -11,7 +11,6 @@
  *
  * Contributors:
  *		Dirk Fauth <dirk.fauth@googlemail.com> - Initial API and implementation
- *
  *****************************************************************************/
 package org.eclipse.nebula.widgets.richtext.example;
 
@@ -39,6 +38,7 @@ import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.nebula.widgets.richtext.RichTextCellEditor;
 import org.eclipse.nebula.widgets.richtext.RichTextCellLabelProvider;
 import org.eclipse.nebula.widgets.richtext.RichTextEditorConfiguration;
+import org.eclipse.nebula.widgets.richtext.ScalingHelper;
 import org.eclipse.nebula.widgets.richtext.toolbar.ToolbarButton;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -55,7 +55,9 @@ public class JFaceViewerIntegrationExample {
 
 		final Shell shell = new Shell(display);
 		shell.setText("Rich Text Editor JFace viewer integration example");
-		shell.setSize(800, 600);
+		shell.setSize(
+				ScalingHelper.convertHorizontalPixelToDpi(800), 
+				ScalingHelper.convertVerticalPixelToDpi(600));
 
 		shell.setLayout(new GridLayout(1, true));
 
