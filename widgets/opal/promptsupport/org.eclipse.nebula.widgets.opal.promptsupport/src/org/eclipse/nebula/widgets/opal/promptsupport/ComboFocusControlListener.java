@@ -52,7 +52,12 @@ class ComboFocusControlListener extends BaseFocusControlListener {
 		final String promptText = PromptSupport.getPrompt(control);
 		if (promptText != null) {
 			control.getDisplay().asyncExec(() -> {
-				((Combo) ComboFocusControlListener.this.control).setText(promptText);
+                Combo comboControl = (Combo) ComboFocusControlListener.this.control;
+                if (comboControl.isDisposed()) {
+                    return;
+                }
+
+                comboControl.setText(promptText);
 			});
 		}
 	}
