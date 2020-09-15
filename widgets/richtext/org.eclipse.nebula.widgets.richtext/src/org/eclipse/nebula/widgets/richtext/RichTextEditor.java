@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Copyright (c) 2015, 2019 CEA LIST.
+ * Copyright (c) 2015, 2020 CEA LIST.
  *
  *
  * This program and the accompanying materials
@@ -11,7 +11,6 @@
  *
  * Contributors:
  *		Dirk Fauth <dirk.fauth@googlemail.com> - Initial API and implementation
- *
  *****************************************************************************/
 package org.eclipse.nebula.widgets.richtext;
 
@@ -647,16 +646,18 @@ public class RichTextEditor extends Composite {
 	@Override
 	public void addFocusListener(FocusListener listener) {
 		checkWidget();
-		if (listener == null)
+		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
 		this.focusListener.add(listener);
 	}
 
 	@Override
 	public void removeFocusListener(FocusListener listener) {
 		checkWidget();
-		if (listener == null)
+		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
 		this.focusListener.remove(listener);
 	}
 
@@ -775,10 +776,16 @@ public class RichTextEditor extends Composite {
 	 *            the new height for the receiver
 	 */
 	void setInlineContainerBounds(int x, int y, int width, int height) {
+		width = ScalingHelper.convertHorizontalPixelToDpi(width);
+		height = ScalingHelper.convertVerticalPixelToDpi(height);
 		this.resizedBounds = new Rectangle(x, y, width, height);
 		if (this.embeddedShell != null) {
 			Point shellLocation = this.embeddedShell.getLocation();
-			this.embeddedShell.setBounds(shellLocation.x, shellLocation.y, width + 2, height + 2);
+			this.embeddedShell.setBounds(
+					shellLocation.x,
+					shellLocation.y,
+					width + 2,
+					height + 2);
 		}
 		else {
 			super.setBounds(x, y, width, height);
@@ -795,7 +802,7 @@ public class RichTextEditor extends Composite {
 	 *         editor resize minimum in case the editor was created with {@link SWT#MIN}
 	 */
 	protected int getMinimumHeight() {
-		return 200;
+		return ScalingHelper.convertVerticalPixelToDpi(200);
 	}
 
 	/**
@@ -808,7 +815,7 @@ public class RichTextEditor extends Composite {
 	 *         editor resize minimum in case the editor was created with {@link SWT#MIN}
 	 */
 	protected int getMinimumWidth() {
-		return 370;
+		return ScalingHelper.convertHorizontalPixelToDpi(370);
 	}
 
 	/**
@@ -859,16 +866,18 @@ public class RichTextEditor extends Composite {
 	@Override
 	public void addKeyListener(KeyListener listener) {
 		checkWidget();
-		if (listener == null)
+		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
 		this.keyListener.add(listener);
 	}
 
 	@Override
 	public void removeKeyListener(KeyListener listener) {
 		checkWidget();
-		if (listener == null)
+		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
 		this.keyListener.remove(listener);
 	}
 
@@ -962,8 +971,9 @@ public class RichTextEditor extends Composite {
 	 */
 	public void addModifyListener(ModifyListener listener) {
 		checkWidget();
-		if (listener == null)
+		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
 		this.modifyListener.add(listener);
 	}
 
@@ -990,8 +1000,9 @@ public class RichTextEditor extends Composite {
 	 */
 	public void removeModifyListener(ModifyListener listener) {
 		checkWidget();
-		if (listener == null)
+		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
 		this.modifyListener.remove(listener);
 	}
 
@@ -1231,8 +1242,9 @@ public class RichTextEditor extends Composite {
 	 */
 	public void addJavaCallbackListener(JavaCallbackListener listener) {
 		checkWidget();
-		if (listener == null)
+		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
 		this.javaCallbackListener.add(listener);
 	}
 
@@ -1245,8 +1257,9 @@ public class RichTextEditor extends Composite {
 	 */
 	public void removeJavaCallbackListener(JavaCallbackListener listener) {
 		checkWidget();
-		if (listener == null)
+		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
 		this.javaCallbackListener.remove(listener);
 	}
 

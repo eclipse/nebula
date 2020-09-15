@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Copyright (c) 2015, 2016 CEA LIST.
+ * Copyright (c) 2015, 2020 CEA LIST.
  *
  *
  * This program and the accompanying materials
@@ -11,7 +11,6 @@
  *
  * Contributors:
  *		Dirk Fauth <dirk.fauth@googlemail.com> - Initial API and implementation
- *
  *****************************************************************************/
 package org.eclipse.nebula.widgets.richtext;
 
@@ -219,7 +218,9 @@ public class RichTextCellEditor extends CellEditor {
 	 * @return The minimum dimension used for the rich text editor control.
 	 */
 	protected Point getMinimumDimension() {
-		return new Point(370, 200);
+		return new Point(
+				ScalingHelper.convertHorizontalPixelToDpi(370),
+				ScalingHelper.convertVerticalPixelToDpi(200));
 	}
 
 	@Override
