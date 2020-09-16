@@ -17,8 +17,8 @@
 		<module>org.eclipse.nebula.widgets.pagination</module>
 		<module>org.eclipse.nebula.widgets.pagination.example</module>
 		<module>org.eclipse.nebula.widgets.pagination.feature</module>
-		<module>org.eclipse.nebula.widgets.pagination.snippets</module>
-		<module>org.eclipse.nebula.widgets.pagination.tests</module>
+		<module>org.eclipse.nebula.widgets.pagination.snippets</module> 
+	<!--	<module>org.eclipse.nebula.widgets.pagination.tests</module> -->
 	</modules>
 
 
