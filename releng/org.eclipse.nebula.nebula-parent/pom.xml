@@ -32,7 +32,7 @@ Contributors:
 		<ejp-version>1.1.5</ejp-version>
 		<pmd-version>2.5</pmd-version>
 		<junit-version>4.8.1</junit-version>
-		<jacoco-version>0.7.9</jacoco-version>
+		<jacoco-version>0.8.5</jacoco-version>
 		
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
@@ -149,6 +149,15 @@ Contributors:
 				<configuration>
 					<useUIHarness>true</useUIHarness>
 					<argLine>${tycho.testArgLine} -Xmx512m -Djava.awt.headless=true	${tests.vmargs}</argLine>
+					<dependency-resolution>
+						<extraRequirements>
+							<requirement>
+								<type>eclipse-plugin</type>
+								<id>javax.annotation</id>
+								<versionRange>0.0.0</versionRange>
+							</requirement>
+						</extraRequirements>
+					</dependency-resolution>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -287,7 +296,7 @@ Contributors:
 		<profile>
 			<id>oxygen</id>
 			<activation> 
-				<activeByDefault>true</activeByDefault>
+				<activeByDefault>false</activeByDefault>
 			</activation>
 			<repositories>
 				<repository>
@@ -300,6 +309,26 @@ Contributors:
 					<id>platform</id>
 					<layout>p2</layout>
 					<url>http://download.eclipse.org/eclipse/updates/4.7/</url>
+				</repository>
+			</repositories>
+		</profile>
+
+		<profile>
+			<id>photon</id>
+			<activation> 
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<repositories>
+				<repository>
+					<id>projects</id>
+					<layout>p2</layout>
+					<url>http://download.eclipse.org/releases/photon/</url>
+				</repository>
+
+				<repository>
+					<id>platform</id>
+					<layout>p2</layout>
+					<url>http://download.eclipse.org/eclipse/updates/4.8/</url>
 				</repository>
 			</repositories>
 		</profile>
