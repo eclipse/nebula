@@ -33,6 +33,9 @@ Contributors:
 		<pmd-version>2.5</pmd-version>
 		<junit-version>4.8.1</junit-version>
 		<jacoco-version>0.7.9</jacoco-version>
+		
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
 
 		<tests.vmargs></tests.vmargs>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
@@ -366,14 +369,6 @@ Contributors:
 								<phase>verify</phase>
 							</execution>
 						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.eclipse.tycho</groupId>
-						<artifactId>tycho-compiler-plugin</artifactId>
-						<version>${tycho-version}</version>
-						<configuration>
-							<useJDK>BREE</useJDK>
-						</configuration>
 					</plugin>
 				</plugins>
 			</build>
