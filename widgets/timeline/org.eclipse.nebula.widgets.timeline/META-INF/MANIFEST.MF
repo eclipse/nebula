@@ -19,5 +19,5 @@ Require-Bundle: org.eclipse.swt,
  org.eclipse.draw2d,
  org.eclipse.emf.ecore;visibility:=reexport,
  org.eclipse.core.runtime,
- org.eclipse.ui
+ org.eclipse.jface;bundle-version="3.1.0"
 Bundle-ActivationPolicy: lazy

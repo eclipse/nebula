@@ -44,7 +44,12 @@ class StyledTextFocusControlListener extends BaseFocusControlListener {
 	@Override
 	protected void highLightPrompt() {
 		control.getDisplay().asyncExec(() -> {
-			((StyledText) StyledTextFocusControlListener.this.control).selectAll();
+            StyledText styledTextControl = (StyledText) StyledTextFocusControlListener.this.control;
+            if (styledTextControl.isDisposed()) {
+                return;
+            }
+
+            styledTextControl.selectAll();
 		});
 	}
 
