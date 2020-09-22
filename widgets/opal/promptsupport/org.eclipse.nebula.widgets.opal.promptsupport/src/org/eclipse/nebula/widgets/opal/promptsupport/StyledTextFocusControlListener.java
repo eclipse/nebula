@@ -44,7 +44,12 @@ class StyledTextFocusControlListener extends BaseFocusControlListener {
 	@Override
 	protected void highLightPrompt() {
 		control.getDisplay().asyncExec(() -> {
-			((StyledText) StyledTextFocusControlListener.this.control).selectAll();
+            StyledText styledTextControl = (StyledText) StyledTextFocusControlListener.this.control;
+            if (styledTextControl.isDisposed()) {
+                return;
+            }
+
+            styledTextControl.selectAll();
 		});
 	}
 
@@ -67,7 +72,7 @@ class StyledTextFocusControlListener extends BaseFocusControlListener {
 	protected boolean isFilled() {
 		final String promptText = PromptSupport.getPrompt(control);
 		final String trimmedText = ((StyledText) control).getText().trim();
-		if (promptText != null && promptText.equals(trimmedText) && !PromptSupport.isPromptDisplayed(control)) {
+        if (promptText != null && promptText.equals(trimmedText) && PromptSupport.isPromptDisplayed(control)) {
 			return false;
 		}
 		return !EMPTY_STRING.equals(trimmedText);

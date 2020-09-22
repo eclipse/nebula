@@ -44,7 +44,12 @@ class TextFocusControlListener extends BaseFocusControlListener {
 	protected void highLightPrompt() {
 		// If we do a select all directly, it's not working !
 		control.getDisplay().asyncExec(() -> {
-			((Text) TextFocusControlListener.this.control).selectAll();
+            Text textControl = (Text) TextFocusControlListener.this.control;
+		    if(textControl.isDisposed()) {
+		        return;
+		    }
+		    
+		    textControl.selectAll();
 		});
 	}
 
@@ -66,7 +71,7 @@ class TextFocusControlListener extends BaseFocusControlListener {
 	protected boolean isFilled() {
 		final String promptText = PromptSupport.getPrompt(control);
 		final String trimmedText = ((Text) control).getText().trim();
-		if (promptText != null && promptText.equals(trimmedText) && !PromptSupport.isPromptDisplayed(control)) {
+        if (promptText != null && promptText.equals(trimmedText) && PromptSupport.isPromptDisplayed(control)) {
 			return false;
 		}
 		return !EMPTY_STRING.equals(trimmedText);

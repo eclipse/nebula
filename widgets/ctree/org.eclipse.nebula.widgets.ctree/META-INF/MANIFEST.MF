@@ -7,3 +7,4 @@ Bundle-Vendor: Jeremy Dowdall <jeremyd@aspencloud.com>
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.swt
 Export-Package: org.eclipse.nebula.widgets.ctree
+Automatic-Module-Name: org.eclipse.nebula.widgets.ctree

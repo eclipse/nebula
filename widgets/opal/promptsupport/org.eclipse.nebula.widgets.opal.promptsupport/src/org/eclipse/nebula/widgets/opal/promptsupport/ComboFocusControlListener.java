@@ -34,7 +34,7 @@ class ComboFocusControlListener extends BaseFocusControlListener {
 	 */
 	@Override
 	protected void hidePrompt() {
-		((Combo) control).setText("");
+        ((Combo) control).setText(EMPTY_STRING);
 	}
 
 	/**
@@ -52,7 +52,12 @@ class ComboFocusControlListener extends BaseFocusControlListener {
 		final String promptText = PromptSupport.getPrompt(control);
 		if (promptText != null) {
 			control.getDisplay().asyncExec(() -> {
-				((Combo) ComboFocusControlListener.this.control).setText(promptText);
+                Combo comboControl = (Combo) ComboFocusControlListener.this.control;
+                if (comboControl.isDisposed()) {
+                    return;
+                }
+
+                comboControl.setText(promptText);
 			});
 		}
 	}
@@ -64,9 +69,9 @@ class ComboFocusControlListener extends BaseFocusControlListener {
 	protected boolean isFilled() {
 		final String promptText = PromptSupport.getPrompt(control);
 		final String trimmedText = ((Combo) control).getText().trim();
-		if (promptText != null && promptText.equals(trimmedText) && !PromptSupport.isPromptDisplayed(control)) {
+        if (promptText != null && promptText.equals(trimmedText) && PromptSupport.isPromptDisplayed(control)) {
 			return false;
 		}
-		return !"".equals(trimmedText);
+        return !EMPTY_STRING.equals(trimmedText);
 	}
 }
