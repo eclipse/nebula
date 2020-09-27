@@ -125,7 +125,19 @@ class AbsolutePanel extends BasePanel {
 				showError(shell, "The value [" + newThickness + "] should be between 1 and 50");
 				return;
 			}
+			int newDelay = 0;
+			try {
+				newDelay = Integer.valueOf(delay.getText());
+			} catch (final NumberFormatException nfe) {
+				showError(shell, "The value [" + delay.getText() + "] is not a number");
+				return;
+			}
+			if (newDelay < 1 || newDelay > 5000) {
+				showError(shell, "The value [" + newDelay + "] should be between 1 and 5000");
+				return;
+			}
 			//
+			circle.setAnimationDelay(newDelay);
 			circle.setMinimum(newMinimum);
 			circle.setMaximum(newMaximum);
 			circle.setSelection(newValue);

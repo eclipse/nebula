@@ -26,6 +26,7 @@ class BasePanel {
 
 	protected Text circleSize;
 	protected Text thickness;
+	protected Text delay;
 	protected Button checkbox;
 
 	protected void createCommonPart(final Group group) {
@@ -39,6 +40,10 @@ class BasePanel {
 		thickness = createTextWidget(group, 10);
 		createConstraintsLabel(group, "(1-50)");
 
+		createLeftLabel(group, "Delay");
+		delay = createTextWidget(group, 10);
+		createConstraintsLabel(group, "(delay in millis)");
+		
 		createLeftLabel(group, "Show text");
 		checkbox = new Button(group, SWT.CHECK);
 		final GridData gd = new GridData(GridData.FILL, GridData.CENTER, false, false);
