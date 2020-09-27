@@ -29,8 +29,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Widget;
 
 /**
- * Instances of this class represents a progress circle (also known as <i>donuts</i>), which represents a ratio.
- * It can also represent a remaining time, like an egg cooker.
+ * Instances of this class represents a progress circle (also known as
+ * <i>donuts</i>), which represents a ratio. It can also represent a remaining
+ * time, like an egg cooker.
  * <p>
  * <dl>
  * <dt><b>Styles:</b></dt>
@@ -56,6 +57,7 @@ public class ProgressCircle extends Canvas {
 	private String textPattern = PERCENTAGE_PATTERN;
 	private float floatValue;
 	private boolean isTimer;
+	private int fDelay = 10;
 
 	/**
 	 * Constructs a new instance of this class given its parent and a style value
@@ -70,20 +72,22 @@ public class ProgressCircle extends Canvas {
 	 * </p>
 	 *
 	 * @param parent a composite control which will be the parent of the new
-	 *            instance (cannot be null)
-	 * @param style the style of control to construct
+	 *               instance (cannot be null)
+	 * @param style  the style of control to construct
 	 *
 	 * @exception IllegalArgumentException
-	 *                <ul>
-	 *                <li>ERROR_NULL_ARGUMENT - if the parent is null</li>
-	 *                </ul>
+	 *                                     <ul>
+	 *                                     <li>ERROR_NULL_ARGUMENT - if the parent
+	 *                                     is null</li>
+	 *                                     </ul>
 	 * @exception SWTException
-	 *                <ul>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
-	 *                thread that created the parent</li>
-	 *                <li>ERROR_INVALID_SUBCLASS - if this class is not an allowed
-	 *                subclass</li>
-	 *                </ul>
+	 *                                     <ul>
+	 *                                     <li>ERROR_THREAD_INVALID_ACCESS - if not
+	 *                                     called from the thread that created the
+	 *                                     parent</li>
+	 *                                     <li>ERROR_INVALID_SUBCLASS - if this
+	 *                                     class is not an allowed subclass</li>
+	 *                                     </ul>
 	 *
 	 * @see Widget#getStyle()
 	 */
@@ -121,7 +125,8 @@ public class ProgressCircle extends Canvas {
 
 	private Font createDefaultFont() {
 		final FontData fontData = getFont().getFontData()[0];
-		final Font newFont = new Font(getDisplay(), fontData.getName(), Math.max(fontData.getHeight(), 20), fontData.getStyle());
+		final Font newFont = new Font(getDisplay(), fontData.getName(), Math.max(fontData.getHeight(), 20),
+				fontData.getStyle());
 		addDisposeListener(e -> {
 			if (!newFont.isDisposed()) {
 				newFont.dispose();
@@ -207,10 +212,12 @@ public class ProgressCircle extends Canvas {
 	 * @return the maximum
 	 *
 	 * @exception SWTException
-	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 *                </ul>
+	 *                         <ul>
+	 *                         <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                         disposed</li>
+	 *                         <li>ERROR_THREAD_INVALID_ACCESS - if not called from
+	 *                         the thread that created the receiver</li>
+	 *                         </ul>
 	 */
 	public int getMaximum() {
 		checkWidget();
@@ -223,16 +230,20 @@ public class ProgressCircle extends Canvas {
 	 * @param value the new maximum
 	 *
 	 * @exception SWTException
-	 *                <ul>
-	 *                <li>ERROR_INVALID_ARGUMENT - If maximum is lower than the minimum value</li>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 *                </ul>
+	 *                         <ul>
+	 *                         <li>ERROR_INVALID_ARGUMENT - If maximum is lower than
+	 *                         the minimum value</li>
+	 *                         <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                         disposed</li>
+	 *                         <li>ERROR_THREAD_INVALID_ACCESS - if not called from
+	 *                         the thread that created the receiver</li>
+	 *                         </ul>
 	 */
 	public void setMaximum(int maximum) {
 		checkWidget();
 		if (maximum < minimum) {
-			SWT.error(SWT.ERROR_INVALID_ARGUMENT, null, String.format("The value %d is lower than the minimum (%d)", maximum, minimum));
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT, null,
+					String.format("The value %d is lower than the minimum (%d)", maximum, minimum));
 		}
 		this.maximum = maximum;
 		redraw();
@@ -245,10 +256,12 @@ public class ProgressCircle extends Canvas {
 	 * @return the minimum
 	 *
 	 * @exception SWTException
-	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 *                </ul>
+	 *                         <ul>
+	 *                         <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                         disposed</li>
+	 *                         <li>ERROR_THREAD_INVALID_ACCESS - if not called from
+	 *                         the thread that created the receiver</li>
+	 *                         </ul>
 	 */
 	public int getMinimum() {
 		checkWidget();
@@ -261,16 +274,20 @@ public class ProgressCircle extends Canvas {
 	 * @param value the new minimum
 	 *
 	 * @exception SWTException
-	 *                <ul>
-	 *                <li>ERROR_INVALID_ARGUMENT - If minimum is greater than the maximum value</li>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 *                </ul>
+	 *                         <ul>
+	 *                         <li>ERROR_INVALID_ARGUMENT - If minimum is greater
+	 *                         than the maximum value</li>
+	 *                         <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                         disposed</li>
+	 *                         <li>ERROR_THREAD_INVALID_ACCESS - if not called from
+	 *                         the thread that created the receiver</li>
+	 *                         </ul>
 	 */
 	public void setMinimum(int minimum) {
 		checkWidget();
 		if (minimum > maximum) {
-			SWT.error(SWT.ERROR_INVALID_ARGUMENT, null, String.format("The value %d is greater than the maximum (%d)", minimum, maximum));
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT, null,
+					String.format("The value %d is greater than the maximum (%d)", minimum, maximum));
 		}
 		this.minimum = minimum;
 		redraw();
@@ -281,12 +298,12 @@ public class ProgressCircle extends Canvas {
 	 * @return selection value
 	 *
 	 * @exception SWTException
-	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
-	 *                disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
-	 *                thread that created the receiver</li>
-	 *                </ul>
+	 *                         <ul>
+	 *                         <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                         disposed</li>
+	 *                         <li>ERROR_THREAD_INVALID_ACCESS - if not called from
+	 *                         the thread that created the receiver</li>
+	 *                         </ul>
 	 */
 	public int getSelection() {
 		checkWidget();
@@ -299,17 +316,18 @@ public class ProgressCircle extends Canvas {
 	 * @param value the new percentage value
 	 *
 	 * @exception SWTException
-	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
-	 *                disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
-	 *                thread that created the receiver</li>
-	 *                </ul>
+	 *                         <ul>
+	 *                         <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                         disposed</li>
+	 *                         <li>ERROR_THREAD_INVALID_ACCESS - if not called from
+	 *                         the thread that created the receiver</li>
+	 *                         </ul>
 	 */
 	public void setSelection(int selection) {
 		checkWidget();
 		if (selection < minimum || selection > maximum) {
-			SWT.error(SWT.ERROR_INVALID_ARGUMENT, null, String.format("Value %d is out of range [%d - %d]", selection, minimum, maximum));
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT, null,
+					String.format("Value %d is out of range [%d - %d]", selection, minimum, maximum));
 		}
 		final int previousValue = value;
 		value = selection;
@@ -323,43 +341,60 @@ public class ProgressCircle extends Canvas {
 		final int endValue = value;
 		final float delta = (endValue - startValue) / 10f;
 		floatValue = 1.0f * startValue;
-		redraw();
-		update();
-		getDisplay().asyncExec(new Runnable() {
+		boolean animate = true;
 
-			@Override
-			public void run() {
-				floatValue = floatValue + delta;
-				value = (int) floatValue;
-				if (isDisposed()) {
-					return;
-				}
-				redraw();
-				update();
-
-				if (delta > 0 && value >= endValue || delta < 0 && value <= endValue) {
-					value = endValue;
-					redraw();
-					update();
-
-					return;
-				}
-				getDisplay().timerExec(50, this);
+		while (animate) {
+			floatValue = floatValue + delta;
+			value = (int) floatValue;
+			if (isDisposed()) {
+				return;
 			}
-		});
+			redraw();
+			flush();
 
+			if (delta > 0 && value >= endValue || delta < 0 && value <= endValue) {
+				value = endValue;
+				redraw();
+				flush();
+				animate = false;
+			}
+			else {
+				try {
+					Thread.sleep(fDelay);
+				} catch (InterruptedException e) {
+				}
+			}
+		}
+	}
+
+	/**
+	 * Sets the delay in animation time in milliseconds. The higher the delay the
+	 * slower the animation. The default is 10 ms.
+	 * 
+	 * @param delay the new delay
+	 * @return this object
+	 */
+	public ProgressCircle setAnimationDelay(int delay) {
+		fDelay = delay;
+		return this;
+	}
+
+	private void flush() {
+		while (getDisplay().readAndDispatch()) {
+			// flush the event queue to keep the animation going
+		}
 	}
 
 	/**
 	 * @return the size of the circle
 	 *
 	 * @exception SWTException
-	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
-	 *                disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
-	 *                thread that created the receiver</li>
-	 *                </ul>
+	 *                         <ul>
+	 *                         <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                         disposed</li>
+	 *                         <li>ERROR_THREAD_INVALID_ACCESS - if not called from
+	 *                         the thread that created the receiver</li>
+	 *                         </ul>
 	 */
 	public int getCircleSize() {
 		checkWidget();
@@ -372,12 +407,12 @@ public class ProgressCircle extends Canvas {
 	 * @param circleSize the new size of the circle
 	 *
 	 * @exception SWTException
-	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
-	 *                disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
-	 *                thread that created the receiver</li>
-	 *                </ul>
+	 *                         <ul>
+	 *                         <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                         disposed</li>
+	 *                         <li>ERROR_THREAD_INVALID_ACCESS - if not called from
+	 *                         the thread that created the receiver</li>
+	 *                         </ul>
 	 */
 	public void setCircleSize(int circleSize) {
 		checkWidget();
@@ -392,12 +427,12 @@ public class ProgressCircle extends Canvas {
 	 * @return the thickness of the circle
 	 *
 	 * @exception SWTException
-	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
-	 *                disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
-	 *                thread that created the receiver</li>
-	 *                </ul>
+	 *                         <ul>
+	 *                         <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                         disposed</li>
+	 *                         <li>ERROR_THREAD_INVALID_ACCESS - if not called from
+	 *                         the thread that created the receiver</li>
+	 *                         </ul>
 	 */
 	public int getThickness() {
 		checkWidget();
@@ -410,12 +445,12 @@ public class ProgressCircle extends Canvas {
 	 * @param thickness the new value
 	 *
 	 * @exception SWTException
-	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
-	 *                disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
-	 *                thread that created the receiver</li>
-	 *                </ul>
+	 *                         <ul>
+	 *                         <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                         disposed</li>
+	 *                         <li>ERROR_THREAD_INVALID_ACCESS - if not called from
+	 *                         the thread that created the receiver</li>
+	 *                         </ul>
 	 */
 	public void setThickness(int thickness) {
 		checkWidget();
@@ -428,12 +463,12 @@ public class ProgressCircle extends Canvas {
 	 * @return <code>true</code> if the text is displayed, false otherwise
 	 *
 	 * @exception SWTException
-	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
-	 *                disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
-	 *                thread that created the receiver</li>
-	 *                </ul>
+	 *                         <ul>
+	 *                         <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                         disposed</li>
+	 *                         <li>ERROR_THREAD_INVALID_ACCESS - if not called from
+	 *                         the thread that created the receiver</li>
+	 *                         </ul>
 	 */
 	public boolean isShowText() {
 		checkWidget();
@@ -446,13 +481,14 @@ public class ProgressCircle extends Canvas {
 	 * @param showPercentage if <code>true</code>, displays the percentage label
 	 *
 	 * @exception SWTException
-	 *                <ul>
-	 *                <li>ERROR_INVALID_ARGUMENT - if the display mode is not percentage</li>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
-	 *                disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
-	 *                thread that created the receiver</li>
-	 *                </ul>
+	 *                         <ul>
+	 *                         <li>ERROR_INVALID_ARGUMENT - if the display mode is
+	 *                         not percentage</li>
+	 *                         <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                         disposed</li>
+	 *                         <li>ERROR_THREAD_INVALID_ACCESS - if not called from
+	 *                         the thread that created the receiver</li>
+	 *                         </ul>
 	 */
 	public void setShowText(boolean showPercentage) {
 		checkWidget();
@@ -465,12 +501,12 @@ public class ProgressCircle extends Canvas {
 	 * @return the highlight color
 	 *
 	 * @exception SWTException
-	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
-	 *                disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
-	 *                thread that created the receiver</li>
-	 *                </ul>
+	 *                         <ul>
+	 *                         <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                         disposed</li>
+	 *                         <li>ERROR_THREAD_INVALID_ACCESS - if not called from
+	 *                         the thread that created the receiver</li>
+	 *                         </ul>
 	 */
 	public Color getHighlightColor() {
 		checkWidget();
@@ -483,12 +519,12 @@ public class ProgressCircle extends Canvas {
 	 * @param highlightColor the new highlight color
 	 *
 	 * @exception SWTException
-	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
-	 *                disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
-	 *                thread that created the receiver</li>
-	 *                </ul>
+	 *                         <ul>
+	 *                         <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                         disposed</li>
+	 *                         <li>ERROR_THREAD_INVALID_ACCESS - if not called from
+	 *                         the thread that created the receiver</li>
+	 *                         </ul>
 	 */
 	public void setHighlightColor(Color highlightColor) {
 		checkWidget();
@@ -501,12 +537,12 @@ public class ProgressCircle extends Canvas {
 	 * @return the text pattern used to display the value
 	 *
 	 * @exception SWTException
-	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
-	 *                disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
-	 *                thread that created the receiver</li>
-	 *                </ul>
+	 *                         <ul>
+	 *                         <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                         disposed</li>
+	 *                         <li>ERROR_THREAD_INVALID_ACCESS - if not called from
+	 *                         the thread that created the receiver</li>
+	 *                         </ul>
 	 */
 	public String getTextPattern() {
 		checkWidget();
@@ -519,13 +555,14 @@ public class ProgressCircle extends Canvas {
 	 * @param textPattern the new text pattern used to display the value
 	 *
 	 * @exception SWTException
-	 *                <ul>
-	 *                <li>ERROR_NULL_ARGUMENT - if the parameter is NULL</li>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
-	 *                disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
-	 *                thread that created the receiver</li>
-	 *                </ul>
+	 *                         <ul>
+	 *                         <li>ERROR_NULL_ARGUMENT - if the parameter is
+	 *                         NULL</li>
+	 *                         <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                         disposed</li>
+	 *                         <li>ERROR_THREAD_INVALID_ACCESS - if not called from
+	 *                         the thread that created the receiver</li>
+	 *                         </ul>
 	 */
 	public void setTextPattern(String textPattern) {
 		checkWidget();
