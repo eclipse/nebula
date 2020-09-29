@@ -13,12 +13,16 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.promptsupport;
 
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Combo;
 
 /**
  * Focus/Control listener for a Combo widget
  */
-class ComboFocusControlListener extends BaseFocusControlListener {
+class ComboFocusControlListener extends BaseFocusControlListener implements ModifyListener {
+
+    protected boolean updatingPropmpt = false;
 
 	/**
 	 * Constructor
@@ -29,12 +33,42 @@ class ComboFocusControlListener extends BaseFocusControlListener {
 		super(control);
 	}
 
+    @Override
+    void hookControl() {
+        super.hookControl();
+
+        // Attach dedicated listeners
+        ((Combo) control).addModifyListener(this);
+    }
+
+    @Override
+    public void modifyText(ModifyEvent e) {
+        if (updatingPropmpt) {
+            return;
+        }
+
+        final String trimmedText = ((Combo) control).getText().trim();
+        if (!EMPTY_STRING.equals(trimmedText)) {
+            applyInitialLook();
+            PromptSupport.setPromptDisplayed(control, false);
+            return;
+        }
+
+        if (!control.isFocusControl()) {
+            storeInitialLook();
+            applyPromptLook();
+            fillPromptText();
+            PromptSupport.setPromptDisplayed(control, true);
+            return;
+        }
+    }
+
 	/**
 	 * @see org.eclipse.nebula.widgets.opal.promptsupport.BaseFocusControlListener#hidePrompt()
 	 */
 	@Override
 	protected void hidePrompt() {
-        ((Combo) control).setText(EMPTY_STRING);
+        updatePrompt(EMPTY_STRING);
 	}
 
 	/**
@@ -57,7 +91,9 @@ class ComboFocusControlListener extends BaseFocusControlListener {
                     return;
                 }
 
-                comboControl.setText(promptText);
+                if (PromptSupport.isPromptDisplayed(control)) {
+                    updatePrompt(promptText);
+                }
 			});
 		}
 	}
@@ -74,4 +110,13 @@ class ComboFocusControlListener extends BaseFocusControlListener {
 		}
         return !EMPTY_STRING.equals(trimmedText);
 	}
+
+    protected void updatePrompt(String prompt) {
+        try {
+            updatingPropmpt = true;
+            ((Combo) control).setText(prompt);
+        } finally {
+            updatingPropmpt = false;
+        }
+    }
 }
