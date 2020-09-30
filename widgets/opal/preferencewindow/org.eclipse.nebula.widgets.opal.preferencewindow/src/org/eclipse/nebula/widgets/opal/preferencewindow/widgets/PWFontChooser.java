@@ -68,7 +68,7 @@ public class PWFontChooser extends PWChooser {
 				text.setText(buildFontInformation());
 			}
 		});
-
+		text.setText(buildFontInformation());
 	}
 
 	/**
