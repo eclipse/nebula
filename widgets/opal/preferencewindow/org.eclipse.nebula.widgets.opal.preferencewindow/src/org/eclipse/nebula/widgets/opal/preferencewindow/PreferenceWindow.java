@@ -184,7 +184,7 @@ public class PreferenceWindow {
 	 */
 	private void buildButtons() {
 		final Button buttonOK = new Button(shell, SWT.PUSH);
-		buttonOK.setText(ResourceManager.getLabel(ResourceManager.OK));
+		buttonOK.setText(ResourceManager.getLabel(ResourceManager.APPLY));
 		final GridData gridDataOk = new GridData(GridData.END, GridData.END, true, false);
 		gridDataOk.widthHint = 100;
 		buttonOK.setLayoutData(gridDataOk);
@@ -195,7 +195,7 @@ public class PreferenceWindow {
 		shell.setDefaultButton(buttonOK);
 
 		final Button buttonCancel = new Button(shell, SWT.PUSH);
-		buttonCancel.setText(ResourceManager.getLabel(ResourceManager.CANCEL));
+		buttonCancel.setText(ResourceManager.getLabel(ResourceManager.CLOSE));
 		final GridData gridDataCancel = new GridData(GridData.BEGINNING, GridData.END, false, false);
 		gridDataCancel.widthHint = 100;
 		buttonCancel.setLayoutData(gridDataCancel);
