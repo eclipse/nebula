@@ -18,16 +18,15 @@ import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Control;
 
 /**
  * Abstract class that contains code for the FocusLost, FocusGained and
  * ControlResized events
  */
-abstract class BaseFocusControlListener implements FocusListener {
+abstract class BaseFocusControlListener<T extends Control> implements FocusListener {
 
-	protected Control control;
+    protected T control;
 	private Font initialFont;
 	private Color initialBackgroundColor;
 	private Color initialForegroundColor;
@@ -39,7 +38,7 @@ abstract class BaseFocusControlListener implements FocusListener {
 	 *
 	 * @param control control on which this listener will be attached
 	 */
-	BaseFocusControlListener(final Control control) {
+    BaseFocusControlListener(final T control) {
 		this.control = control;
 	}
 

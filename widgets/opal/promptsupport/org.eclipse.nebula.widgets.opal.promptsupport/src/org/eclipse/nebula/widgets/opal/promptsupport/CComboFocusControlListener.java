@@ -20,7 +20,7 @@ import org.eclipse.swt.events.ModifyListener;
 /**
  * Focus/Control listener for a CCombo widget
  */
-class CComboFocusControlListener extends BaseFocusControlListener implements ModifyListener {
+class CComboFocusControlListener extends BaseFocusControlListener<CCombo> implements ModifyListener {
 
     protected boolean updatingPropmpt = false;
 
@@ -38,7 +38,7 @@ class CComboFocusControlListener extends BaseFocusControlListener implements Mod
         super.hookControl();
 
         // Attach dedicated listeners
-        ((CCombo) control).addModifyListener(this);
+        control.addModifyListener(this);
     }
 
     @Override
@@ -47,7 +47,7 @@ class CComboFocusControlListener extends BaseFocusControlListener implements Mod
             return;
         }
 
-        final String trimmedText = ((CCombo) control).getText().trim();
+        final String trimmedText = control.getText().trim();
         if (!EMPTY_STRING.equals(trimmedText)) {
             applyInitialLook();
             PromptSupport.setPromptDisplayed(control, false);
@@ -62,6 +62,7 @@ class CComboFocusControlListener extends BaseFocusControlListener implements Mod
             return;
         }
     }
+
 	/**
 	 * @see org.eclipse.nebula.widgets.opal.promptsupport.BaseFocusControlListener#hidePrompt()
 	 */
@@ -94,7 +95,7 @@ class CComboFocusControlListener extends BaseFocusControlListener implements Mod
 	@Override
 	protected boolean isFilled() {
 		final String promptText = PromptSupport.getPrompt(control);
-		final String trimmedText = ((CCombo) control).getText().trim();
+        final String trimmedText = control.getText().trim();
         if (promptText != null && promptText.equals(trimmedText) && PromptSupport.isPromptDisplayed(control)) {
 			return false;
 		}
@@ -104,7 +105,7 @@ class CComboFocusControlListener extends BaseFocusControlListener implements Mod
     protected void updatePrompt(String prompt) {
         try {
             updatingPropmpt = true;
-            ((CCombo) control).setText(prompt);
+            control.setText(prompt);
         } finally {
             updatingPropmpt = false;
         }
