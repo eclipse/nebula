@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Combo;
 /**
  * Focus/Control listener for a Combo widget
  */
-class ComboFocusControlListener extends BaseFocusControlListener implements ModifyListener {
+class ComboFocusControlListener extends BaseFocusControlListener<Combo> implements ModifyListener {
 
     protected boolean updatingPropmpt = false;
 
@@ -38,7 +38,7 @@ class ComboFocusControlListener extends BaseFocusControlListener implements Modi
         super.hookControl();
 
         // Attach dedicated listeners
-        ((Combo) control).addModifyListener(this);
+        control.addModifyListener(this);
     }
 
     @Override
@@ -47,7 +47,7 @@ class ComboFocusControlListener extends BaseFocusControlListener implements Modi
             return;
         }
 
-        final String trimmedText = ((Combo) control).getText().trim();
+        final String trimmedText = control.getText().trim();
         if (!EMPTY_STRING.equals(trimmedText)) {
             applyInitialLook();
             PromptSupport.setPromptDisplayed(control, false);
@@ -86,8 +86,7 @@ class ComboFocusControlListener extends BaseFocusControlListener implements Modi
 		final String promptText = PromptSupport.getPrompt(control);
 		if (promptText != null) {
 			control.getDisplay().asyncExec(() -> {
-                Combo comboControl = (Combo) ComboFocusControlListener.this.control;
-                if (comboControl.isDisposed()) {
+                if (control.isDisposed()) {
                     return;
                 }
 
@@ -104,7 +103,7 @@ class ComboFocusControlListener extends BaseFocusControlListener implements Modi
 	@Override
 	protected boolean isFilled() {
 		final String promptText = PromptSupport.getPrompt(control);
-		final String trimmedText = ((Combo) control).getText().trim();
+        final String trimmedText = control.getText().trim();
         if (promptText != null && promptText.equals(trimmedText) && PromptSupport.isPromptDisplayed(control)) {
 			return false;
 		}
@@ -114,7 +113,7 @@ class ComboFocusControlListener extends BaseFocusControlListener implements Modi
     protected void updatePrompt(String prompt) {
         try {
             updatingPropmpt = true;
-            ((Combo) control).setText(prompt);
+            control.setText(prompt);
         } finally {
             updatingPropmpt = false;
         }

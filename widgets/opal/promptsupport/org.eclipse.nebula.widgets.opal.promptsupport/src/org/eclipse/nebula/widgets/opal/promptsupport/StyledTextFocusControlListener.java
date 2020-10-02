@@ -21,7 +21,7 @@ import org.eclipse.swt.events.ModifyListener;
 /**
  * Focus/Control listener for a StyledText widget
  */
-class StyledTextFocusControlListener extends BaseFocusControlListener implements ModifyListener {
+class StyledTextFocusControlListener extends BaseFocusControlListener<StyledText> implements ModifyListener {
 
     protected boolean updatingPropmpt = false;
 
@@ -39,7 +39,7 @@ class StyledTextFocusControlListener extends BaseFocusControlListener implements
         super.hookControl();
 
         // Attach dedicated listeners
-        ((StyledText) control).addModifyListener(this);
+        control.addModifyListener(this);
     }
 
     @Override
@@ -48,7 +48,7 @@ class StyledTextFocusControlListener extends BaseFocusControlListener implements
             return;
         }
 
-        final String trimmedText = ((StyledText) control).getText().trim();
+        final String trimmedText = control.getText().trim();
         if (!EMPTY_STRING.equals(trimmedText)) {
             applyInitialLook();
             PromptSupport.setPromptDisplayed(control, false);
@@ -78,12 +78,11 @@ class StyledTextFocusControlListener extends BaseFocusControlListener implements
 	@Override
 	protected void highLightPrompt() {
 		control.getDisplay().asyncExec(() -> {
-            StyledText styledTextControl = (StyledText) StyledTextFocusControlListener.this.control;
-            if (styledTextControl.isDisposed()) {
+            if (control.isDisposed()) {
                 return;
             }
 
-            styledTextControl.selectAll();
+            control.selectAll();
 		});
 	}
 
@@ -105,7 +104,7 @@ class StyledTextFocusControlListener extends BaseFocusControlListener implements
 	@Override
 	protected boolean isFilled() {
 		final String promptText = PromptSupport.getPrompt(control);
-		final String trimmedText = ((StyledText) control).getText().trim();
+        final String trimmedText = control.getText().trim();
         if (promptText != null && promptText.equals(trimmedText) && PromptSupport.isPromptDisplayed(control)) {
 			return false;
 		}
@@ -115,7 +114,7 @@ class StyledTextFocusControlListener extends BaseFocusControlListener implements
     protected void updatePrompt(String prompt) {
         try {
             updatingPropmpt = true;
-            ((StyledText) control).setText(prompt);
+            control.setText(prompt);
         } finally {
             updatingPropmpt = false;
         }

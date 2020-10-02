@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Text;
 /**
  * Focus/Control listener for a Text widget
  */
-class TextFocusControlListener extends BaseFocusControlListener implements ModifyListener {
+class TextFocusControlListener extends BaseFocusControlListener<Text> implements ModifyListener {
 
     protected boolean updatingPropmpt = false;
 
@@ -38,7 +38,7 @@ class TextFocusControlListener extends BaseFocusControlListener implements Modif
         super.hookControl();
 
         // Attach dedicated listeners
-        ((Text) control).addModifyListener(this);
+        control.addModifyListener(this);
     }
 
     @Override
@@ -47,7 +47,7 @@ class TextFocusControlListener extends BaseFocusControlListener implements Modif
             return;
         }
 
-        final String trimmedText = ((Text) control).getText().trim();
+        final String trimmedText = control.getText().trim();
         if (!EMPTY_STRING.equals(trimmedText)) {
             applyInitialLook();
             PromptSupport.setPromptDisplayed(control, false);
@@ -78,12 +78,11 @@ class TextFocusControlListener extends BaseFocusControlListener implements Modif
 	protected void highLightPrompt() {
 		// If we do a select all directly, it's not working !
 		control.getDisplay().asyncExec(() -> {
-            Text textControl = (Text) TextFocusControlListener.this.control;
-		    if(textControl.isDisposed()) {
+            if (control.isDisposed()) {
 		        return;
 		    }
 		    
-		    textControl.selectAll();
+            control.selectAll();
 		});
 	}
 
@@ -104,7 +103,7 @@ class TextFocusControlListener extends BaseFocusControlListener implements Modif
 	@Override
 	protected boolean isFilled() {
 		final String promptText = PromptSupport.getPrompt(control);
-		final String trimmedText = ((Text) control).getText().trim();
+        final String trimmedText = control.getText().trim();
         if (promptText != null && promptText.equals(trimmedText) && PromptSupport.isPromptDisplayed(control)) {
 			return false;
 		}
@@ -114,7 +113,7 @@ class TextFocusControlListener extends BaseFocusControlListener implements Modif
     protected void updatePrompt(String prompt) {
         try {
             updatingPropmpt = true;
-            ((Text) control).setText(prompt);
+            control.setText(prompt);
         } finally {
             updatingPropmpt = false;
         }
