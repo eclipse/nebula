@@ -101,10 +101,7 @@ public class PromptSupport {
 	public static void setBackground(final Color color, final Control control) {
 		checkControl(control);
 		control.setData(BACKGROUND, color);
-        if (isPromptSet(control) && isPromptDisplayed(control)) {
-            BaseFocusControlListener bfcl = (BaseFocusControlListener) control.getData(FOCUS_CONTROL_LISTENER);
-            bfcl.applyPromptLook();
-        }
+        updatePromptLook(control);
 	}
 
 	/**
@@ -161,10 +158,7 @@ public class PromptSupport {
 	public static void setFontStyle(final int fontStyle, final Control control) {
 		checkControl(control);
 		control.setData(STYLE, fontStyle);
-        if (isPromptSet(control) && isPromptDisplayed(control)) {
-            BaseFocusControlListener bfcl = (BaseFocusControlListener) control.getData(FOCUS_CONTROL_LISTENER);
-            bfcl.applyPromptLook();
-        }
+        updatePromptLook(control);
 	}
 
 	/**
@@ -192,10 +186,7 @@ public class PromptSupport {
 	public static void setForeground(final Color color, final Control control) {
 		checkControl(control);
 		control.setData(FOREGROUND, color);
-        if (isPromptSet(control) && isPromptDisplayed(control)) {
-            BaseFocusControlListener bfcl = (BaseFocusControlListener) control.getData(FOCUS_CONTROL_LISTENER);
-            bfcl.applyPromptLook();
-        }
+        updatePromptLook(control);
 	}
 
 	/**
@@ -227,7 +218,7 @@ public class PromptSupport {
 		}
 		control.setData(PROMPT, promptText);
 
-		final BaseFocusControlListener focusControlListener = FocusControlListenerFactory.getFocusControlListenerFor(control);
+        final BaseFocusControlListener<?> focusControlListener = FocusControlListenerFactory.getFocusControlListenerFor(control);
         focusControlListener.hookControl();
         control.setData(FOCUS_CONTROL_LISTENER, focusControlListener);
 	}
@@ -242,6 +233,13 @@ public class PromptSupport {
 			throw new IllegalArgumentException("PromptSupport can only be used on a Text, a Combo, a StyledText or a CCombo widget.");
 		}
 	}
+
+    private static void updatePromptLook(final Control control) {
+        if (isPromptSet(control) && isPromptDisplayed(control)) {
+            BaseFocusControlListener<?> bfcl = (BaseFocusControlListener<?>) control.getData(FOCUS_CONTROL_LISTENER);
+            bfcl.applyPromptLook();
+        }
+    }
 
 	static boolean isPromptDisplayed(final Control control) {
         return control.getData(IS_PROMPT_DISPLAYED) == null ? false : (boolean) control.getData(IS_PROMPT_DISPLAYED);
