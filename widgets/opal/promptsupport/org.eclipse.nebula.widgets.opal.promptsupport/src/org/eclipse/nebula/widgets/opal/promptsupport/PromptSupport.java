@@ -44,8 +44,8 @@ public class PromptSupport {
 	static final String STYLE = KEY + ".style";
 	static final String BEHAVIOR = KEY + ".behavior";
 	static final String PROMPT = KEY + ".prompt";
-	static final String SET = KEY + ".set";
 	static final String IS_PROMPT_DISPLAYED = KEY + ".displayed";
+    static final String FOCUS_CONTROL_LISTENER = KEY + ".listener";
 
 	/**
 	 * <p>
@@ -101,6 +101,7 @@ public class PromptSupport {
 	public static void setBackground(final Color color, final Control control) {
 		checkControl(control);
 		control.setData(BACKGROUND, color);
+        updatePromptLook(control);
 	}
 
 	/**
@@ -157,6 +158,7 @@ public class PromptSupport {
 	public static void setFontStyle(final int fontStyle, final Control control) {
 		checkControl(control);
 		control.setData(STYLE, fontStyle);
+        updatePromptLook(control);
 	}
 
 	/**
@@ -184,6 +186,7 @@ public class PromptSupport {
 	public static void setForeground(final Color color, final Control control) {
 		checkControl(control);
 		control.setData(FOREGROUND, color);
+        updatePromptLook(control);
 	}
 
 	/**
@@ -209,16 +212,15 @@ public class PromptSupport {
 	public static void setPrompt(final String promptText, final Control control) {
 		checkControl(control);
 
-		final boolean alreadySet = control.getData(SET) == null ? false : (Boolean) control.getData(SET);
+        final boolean alreadySet = isPromptSet(control);
 		if (alreadySet) {
 			throw new IllegalArgumentException("A prompt has already been set on this control !");
 		}
 		control.setData(PROMPT, promptText);
 
-		final BaseFocusControlListener focusControlListener = FocusControlListenerFactory.getFocusControlListenerFor(control);
-		control.addFocusListener(focusControlListener);
-		control.addControlListener(focusControlListener);
-		control.setData(SET, true);
+        final BaseFocusControlListener<?> focusControlListener = FocusControlListenerFactory.getFocusControlListenerFor(control);
+        focusControlListener.hookControl();
+        control.setData(FOCUS_CONTROL_LISTENER, focusControlListener);
 	}
 
 	/**
@@ -232,11 +234,22 @@ public class PromptSupport {
 		}
 	}
 
+    private static void updatePromptLook(final Control control) {
+        if (isPromptSet(control) && isPromptDisplayed(control)) {
+            BaseFocusControlListener<?> bfcl = (BaseFocusControlListener<?>) control.getData(FOCUS_CONTROL_LISTENER);
+            bfcl.applyPromptLook();
+        }
+    }
+
 	static boolean isPromptDisplayed(final Control control) {
-		return (boolean) control.getData(IS_PROMPT_DISPLAYED);
+        return control.getData(IS_PROMPT_DISPLAYED) == null ? false : (boolean) control.getData(IS_PROMPT_DISPLAYED);
 	}
 
 	static void setPromptDisplayed(final Control control, boolean newValue) {
 		control.setData(IS_PROMPT_DISPLAYED, newValue);
 	}
+
+    static boolean isPromptSet(final Control control) {
+        return control.getData(FOCUS_CONTROL_LISTENER) != null;
+    }
 }
