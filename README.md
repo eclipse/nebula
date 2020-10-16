@@ -3,8 +3,8 @@ Welcome to the Eclipse Nebula project. This repositority contains a large set of
 Fat or Thin client applications based on Java and SWT.
 
 ## Contact
+* [Issues/Questions](https://github.com/eclipse/nebula/issues)
 * [Mailing list](https://dev.eclipse.org/mailman/listinfo/nebula-dev)
-* [Newsgroup/Forum](https://www.eclipse.org/forums/index.php/f/64/)
 
 ## Patches 
 We can accept your patches if you have signed the [Eclipse Contributors Agreement (ECA)](https://wiki.eclipse.org/ECA) 
