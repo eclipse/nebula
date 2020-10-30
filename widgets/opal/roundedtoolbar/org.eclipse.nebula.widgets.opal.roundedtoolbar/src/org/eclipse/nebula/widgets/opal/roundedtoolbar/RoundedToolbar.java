@@ -445,6 +445,7 @@ public class RoundedToolbar extends Canvas {
 		gc.drawRoundRectangle(0, 0, width - 1, height - 1, cornerRadius, cornerRadius);
 
 		gc.setClipping((Rectangle) null);
+		path.dispose();
 	}
 
 	/**
