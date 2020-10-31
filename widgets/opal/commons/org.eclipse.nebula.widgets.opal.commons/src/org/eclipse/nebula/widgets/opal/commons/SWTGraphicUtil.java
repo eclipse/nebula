@@ -268,8 +268,17 @@ public class SWTGraphicUtil {
 	 * @param shell shell to center
 	 */
 	public static void centerShell(final Shell shell) {
-		final Monitor primary = shell.getDisplay().getPrimaryMonitor();
-		final Rectangle bounds = primary.getBounds();
+		Monitor[] monitors = shell.getDisplay().getMonitors();
+		Monitor activeMonitor = null;
+		 
+		Rectangle r = shell.getBounds();
+		for (int i = 0; i < monitors.length; i++) {
+		    if (monitors[i].getBounds().intersects(r)) {
+		        activeMonitor = monitors[i];
+		    }
+		}
+		
+		final Rectangle bounds = activeMonitor.getBounds();
 		final Rectangle rect = shell.getBounds();
 		final int x = bounds.x + (bounds.width - rect.width) / 2;
 		final int y = bounds.y + (bounds.height - rect.height) / 2;
@@ -535,12 +544,9 @@ public class SWTGraphicUtil {
 	 * @return the width of text
 	 */
 	public static int computeWidth(final String text) {
-		final GC gc = new GC(Display.getDefault());
-		final int width = gc.textExtent(text).x;
-		gc.dispose();
-		return width;
+		return computeSize(text,null).x;
 	}
-
+	
 	/**
 	 * Compute the size of a text using a given font
 	 * @param text  
@@ -548,6 +554,9 @@ public class SWTGraphicUtil {
 	 * @return the size
 	 */
 	public static Point computeSize(String text, Font font) {
+		if (text == null) {
+			return new Point(0,0);
+		}
 		final GC gc = new GC(Display.getDefault());
 		gc.setFont(font);
 		final Point point = gc.textExtent(text);

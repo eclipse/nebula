@@ -1,5 +1,0 @@
-plugin@org.eclipse.nebula.widgets.gallery=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.gallery
-plugin@org.eclipse.nebula.widgets.gallery.tests=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.gallery.tests
-
-feature@org.eclipse.nebula.widgets.gallery_feature=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/features/org.eclipse.nebula.widgets.gallery_feature
-feature@org.eclipse.nebula.widgets.gallery.test_feature=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/features/org.eclipse.nebula.widgets.gallery.test_feature

@@ -1,5 +1,0 @@
-!**** the plugin
-plugin@org.eclipse.nebula.widgets.tablecombo=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.tablecombo
-
-!**** the feature
-feature@org.eclipse.nebula.widgets.tablecombo_feature=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/features/org.eclipse.nebula.widgets.tablecombo_feature
