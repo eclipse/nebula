@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.jface.window.DefaultToolTip;
+import org.eclipse.jface.window.ToolTip;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Color;
@@ -42,13 +44,17 @@ import org.eclipse.swt.widgets.Composite;
 @SuppressWarnings("restriction")
 public class SegmentedBar extends Canvas {
 
+	private static final int DEFAULT_SPACING = 3;
 	private static final int DEFAULT_WIDTH = 50;
 	private static final int HORIZONTAL_BORDER = 2;
+
 	private List<Segment> segments = new ArrayList<>();
-	private GC gc;
-	private int currentX;
-	private boolean isFirstItem;
-	private boolean isLastItem;
+	private int spacing = DEFAULT_SPACING;
+	GC gc;
+	int currentX;
+	boolean isFirstItem;
+	boolean isLastItem;
+	private DefaultToolTip toolTip;
 
 	/**
 	 * Constructs a new instance of this class given its parent and a style value
@@ -78,19 +84,34 @@ public class SegmentedBar extends Canvas {
 	 *
 	 */
 	public SegmentedBar(Composite parent, int style) {
-		super(parent, checkStyle(style) | SWT.DOUBLE_BUFFERED);
+		super(parent, style | SWT.DOUBLE_BUFFERED);
+		addListeners();
+		toolTip = new DefaultToolTip(this, ToolTip.RECREATE, false);
+		toolTip.setBackgroundColor(getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+		toolTip.setShift(new Point(10, 5));
+	}
 
+	private void addListeners() {
 		addListener(SWT.Paint, e -> {
 			gc = e.gc;
 			drawWidget();
 		});
-	}
 
-	private static int checkStyle(final int style) {
-		if ((style & SWT.BORDER) != 0) {
-			return style & ~SWT.BORDER;
-		}
-		return 0;
+		addListener(SWT.MouseMove, event -> {
+			toolTip.setText(null);
+			for (Segment segment : segments) {
+				if (segment.drawingArea == null) {
+					continue;
+				}
+				if (segment.drawingArea.contains(event.x, event.y)) {
+					toolTip.setText(segment.getTooltip());
+				}
+			}
+		});
+
+		addListener(SWT.MouseExit, event -> {
+			toolTip.setText(null);
+		});
 	}
 
 	private void drawWidget() {
@@ -108,7 +129,8 @@ public class SegmentedBar extends Canvas {
 			Segment segment = it.next();
 			int segmentSize = (int) ((totalWidth - HORIZONTAL_BORDER * 2) * (segment.getValue() / total));
 			isLastItem = !it.hasNext();
-			currentX += drawItem(segment, segmentSize);
+			drawItem(segment, segmentSize);
+			currentX += segmentSize + spacing;
 			isFirstItem = false;
 		}
 
@@ -116,15 +138,15 @@ public class SegmentedBar extends Canvas {
 		gc.setForeground(previousForeground);
 	}
 
-	private int drawItem(Segment segment, int segmentSize) {
-		// TODO Auto-generated method stub
-		return 0;
+	private void drawItem(Segment segment, int segmentSize) {
+		segment.setParent(this);
+		segment.draw(segmentSize);
 	}
 
 	/**
-	 * Returns the total value of the bar (sum of segments).
+	 * Returns the total value of the bar (sum of segments values).
 	 *
-	 * @return the total value of the bar (sum of segments).
+	 * @return the total value of the bar (sum of segments values).
 	 *
 	 * @exception SWTException
 	 *                <ul>
@@ -175,6 +197,44 @@ public class SegmentedBar extends Canvas {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
 		this.segments = segments;
+		redraw();
+		update();
+	}
+
+	/**
+	 * Return the spacing between 2 segments
+	 *
+	 * @return the spacing in pixels between 2 segments
+	 *
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                </ul>
+	 */
+	public int getSpacing() {
+		checkWidget();
+		return spacing;
+	}
+
+	/**
+	 * Sets the receiver's spacing between 2 segments
+	 *
+	 * @param spacing new spacing between 2 segments
+	 *
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                <li>ERROR_INVALID_ARGUMENT - if the new value is lower than 0</li>
+	 *                </ul>
+	 */
+	public void setSpacing(int spacing) {
+		checkWidget();
+		if (spacing < 0) {
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+		}
+		this.spacing = spacing;
 	}
 
 	/**
@@ -206,4 +266,47 @@ public class SegmentedBar extends Canvas {
 		return new Point(width, height);
 	}
 
+	/**
+	 * Add a segment to this widget
+	 *
+	 * @param segment segment to add
+	 *
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                <li>ERROR_NULL_ARGUMENT - if the segment is null</li>
+	 *                </ul>
+	 */
+	public void addSegment(Segment segment) {
+		checkWidget();
+		if (segment == null) {
+			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
+		segments.add(segment);
+		redraw();
+		update();
+	}
+
+	/**
+	 * Remove a segment to this widget
+	 *
+	 * @param segment segment to remove
+	 *
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                 <li>ERROR_NULL_ARGUMENT - if the segment is null</li>
+	 *                </ul>
+	 */
+	public void removeSegment(Segment segment) {
+		checkWidget();
+		if (segment == null) {
+			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
+		segments.remove(segment);
+		redraw();
+		update();
+	}
 }

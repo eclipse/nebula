@@ -17,14 +17,19 @@ package org.eclipse.nebula.widgets.segmentedbar;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.nebula.widgets.opal.commons.AdvancedPath;
 import org.eclipse.nebula.widgets.opal.commons.SWTGraphicUtil;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 
 /**
  * Instances of this object are items manipulated by the Segmented Bar widget. These items are highly customizable, you can set :
  * <ul>
- * <li>Background and foreground colors,
+ * <li>Background and foreground colors
  * <li>Font
  * <li>Image
  * <li>Text
@@ -34,6 +39,7 @@ import org.eclipse.swt.graphics.Font;
  * 
  */
 public class Segment {
+	static final int CORNER_RADIUS = 10;
 	private String text;
 	private String tooltip;
 	private Double value;
@@ -41,6 +47,8 @@ public class Segment {
 	private final Map<String, Object> data = new HashMap<String, Object>();
 	private Object datum;
 	private Color background, foreground;
+	private SegmentedBar parent;
+	Rectangle drawingArea;
 
 	/**
 	 * @return the tooltip of this item
@@ -52,7 +60,8 @@ public class Segment {
 	/**
 	 * Set the tooltip of this item
 	 * 
-	 * @param tooltip new value
+	 * @param tooltip the new value
+	 * @return the current segment
 	 */
 	public Segment setTooltip(String tooltip) {
 		this.tooltip = tooltip;
@@ -70,6 +79,7 @@ public class Segment {
 	 * Set the value associated to this item
 	 * 
 	 * @param value the new value
+	 * @return the current segment
 	 */
 	public Segment setValue(Double value) {
 		this.value = value;
@@ -120,7 +130,10 @@ public class Segment {
 	}
 
 	/**
-	 * @param background set the background color of this item
+	 * Set the background color of this item
+	 * 
+	 * @param background the new value
+	 * @return the current segment
 	 */
 	public Segment setBackground(final Color background) {
 		this.background = background;
@@ -128,7 +141,10 @@ public class Segment {
 	}
 
 	/**
-	 * @param font set the font of this item
+	 * Set the font of this item
+	 * 
+	 * @param font new value
+	 * @return the current segment
 	 */
 	public Segment setFont(final Font font) {
 		this.font = font;
@@ -136,7 +152,10 @@ public class Segment {
 	}
 
 	/**
-	 * @param foreground set the foreground color of this item
+	 * Set the foreground color of this item
+	 * 
+	 * @param foreground the new value
+	 * @return the current segment
 	 */
 	public Segment setForeground(final Color foreground) {
 		this.foreground = foreground;
@@ -144,7 +163,10 @@ public class Segment {
 	}
 
 	/**
-	 * @param text set the text of this item
+	 * Set the text of this item
+	 * 
+	 * @param text the new value
+	 * @return the current segment
 	 */
 	public Segment setText(final String text) {
 		this.text = text;
@@ -152,7 +174,10 @@ public class Segment {
 	}
 
 	/**
-	 * @param data set the data stored in this item
+	 * Set the data stored in this item
+	 * 
+	 * @param data the new value
+	 * @return the current segment
 	 */
 	public Segment setData(final Object data) {
 		this.datum = data;
@@ -164,7 +189,7 @@ public class Segment {
 	 * 
 	 * @param key key
 	 * @param value value associated to this key
-	 * @return 
+	 * @return the current segment
 	 */
 	public Segment setData(final String key, final Object value) {
 		this.data.put(key, value);
@@ -173,10 +198,75 @@ public class Segment {
 
 	int computeHeight() {
 		if (text == null) {
-			return 0;
+			return 30;
 		}
-		return SWTGraphicUtil.computeSize(text, font).y + 4;
+		return SWTGraphicUtil.computeSize(text, font).y + 4 + 2 * CORNER_RADIUS;
 	}
 
+	void setParent(SegmentedBar parent) {
+		this.parent = parent;
+	}
+
+	void draw(int segmentSize) {
+		final GC gc = parent.gc;
+		final Color previousForeground = gc.getForeground();
+		final Color previousBackground = gc.getBackground();
+		final Font previousFont = gc.getFont();
+		
+		
+		final AdvancedPath path = new AdvancedPath(parent.getDisplay());
+		int height = parent.getSize().y;
+		drawingArea = new Rectangle(parent.currentX, 0, segmentSize, height);
+		if (parent.isFirstItem) {
+			path.addRoundRectangleStraightRight(parent.currentX, 0, segmentSize, height, CORNER_RADIUS, CORNER_RADIUS);
+		} else if (parent.isLastItem) {
+			path.addRoundRectangleStraightLeft(parent.currentX, 0, segmentSize - CORNER_RADIUS, height, CORNER_RADIUS, CORNER_RADIUS);
+			drawingArea.width -= CORNER_RADIUS;
+		} else {
+			path.addRectangle(parent.currentX, 0, segmentSize, height);
+		}
+
+		if (background == null) {
+			gc.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_GRAY));
+		} else {
+			gc.setBackground(background);
+		}
+
+		gc.setClipping(path);
+		gc.fillRectangle(parent.currentX, 0, segmentSize, height);
+
+		gc.setClipping((Rectangle) null);
+		path.dispose();
+
+		if (text != null && !text.trim().equals("")) {
+			drawText(segmentSize);
+		}
+		
+		gc.setBackground(previousBackground);
+		gc.setForeground(previousForeground);
+		gc.setFont(previousFont);
+	}
+
+	private void drawText(int segmentSize) {
+		GC gc = parent.gc;
+		if (font != null) {
+			gc.setFont(font);
+		}
+		Point textSize = gc.textExtent(text, SWT.DRAW_TRANSPARENT);
+		int height = parent.getSize().y;
+		boolean tooLarge = (textSize.x > (segmentSize - 6));
+		boolean tooHigh = (textSize.y > (height - 2));
+		if (tooLarge || tooHigh) {
+			return;
+		}
+		if (foreground != null) {
+			gc.setForeground(foreground);
+		}
+		gc.drawText(text, parent.currentX + 3, (height - textSize.y) / 2, true);
+	}
+
+	public static Segment create() {
+		return new Segment();
+	}
 
 }
