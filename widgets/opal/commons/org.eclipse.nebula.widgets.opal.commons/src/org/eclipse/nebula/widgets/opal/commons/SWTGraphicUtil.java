@@ -26,6 +26,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.PaletteData;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Resource;
@@ -529,7 +530,8 @@ public class SWTGraphicUtil {
 	}
 
 	/**
-	 * @param text
+	 * Compute the width of a text using the current font
+	 * @param text 
 	 * @return the width of text
 	 */
 	public static int computeWidth(final String text) {
@@ -537,6 +539,20 @@ public class SWTGraphicUtil {
 		final int width = gc.textExtent(text).x;
 		gc.dispose();
 		return width;
+	}
+
+	/**
+	 * Compute the size of a text using a given font
+	 * @param text  
+	 * @param font given font
+	 * @return the size
+	 */
+	public static Point computeSize(String text, Font font) {
+		final GC gc = new GC(Display.getDefault());
+		gc.setFont(font);
+		final Point point = gc.textExtent(text);
+		gc.dispose();
+		return point;
 	}
 
 }
