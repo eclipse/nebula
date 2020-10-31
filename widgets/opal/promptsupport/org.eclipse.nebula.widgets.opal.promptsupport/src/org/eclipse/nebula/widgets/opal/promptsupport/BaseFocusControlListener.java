@@ -14,8 +14,6 @@ package org.eclipse.nebula.widgets.opal.promptsupport;
 
 import org.eclipse.nebula.widgets.opal.commons.SWTGraphicUtil;
 import org.eclipse.nebula.widgets.opal.promptsupport.PromptSupport.FocusBehavior;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.graphics.Color;
@@ -26,10 +24,9 @@ import org.eclipse.swt.widgets.Control;
  * Abstract class that contains code for the FocusLost, FocusGained and
  * ControlResized events
  */
-abstract class BaseFocusControlListener implements FocusListener, ControlListener {
+abstract class BaseFocusControlListener<T extends Control> implements FocusListener {
 
-	protected Control control;
-	private boolean firstDraw;
+    protected T control;
 	private Font initialFont;
 	private Color initialBackgroundColor;
 	private Color initialForegroundColor;
@@ -41,11 +38,8 @@ abstract class BaseFocusControlListener implements FocusListener, ControlListene
 	 *
 	 * @param control control on which this listener will be attached
 	 */
-	BaseFocusControlListener(final Control control) {
+    BaseFocusControlListener(final T control) {
 		this.control = control;
-		storeInitialLook();
-		firstDraw = true;
-		PromptSupport.setPromptDisplayed(control, false);
 	}
 
 	/**
@@ -53,11 +47,12 @@ abstract class BaseFocusControlListener implements FocusListener, ControlListene
 	 */
 	@Override
 	public void focusGained(final FocusEvent e) {
-		if (isFilled()) {
+        if (isFilled()) {
 			// Widget not empty
 			PromptSupport.setPromptDisplayed(control, false);
 			return;
 		}
+        
 		applyInitialLook();
 		PromptSupport.setPromptDisplayed(control, true);
 		if (PromptSupport.getFocusBehavior(control) == FocusBehavior.HIDE_PROMPT) {
@@ -70,11 +65,22 @@ abstract class BaseFocusControlListener implements FocusListener, ControlListene
 	/**
 	 * Apply the initial look of the widget
 	 */
-	private void applyInitialLook() {
+    protected void applyInitialLook() {
 		control.setFont(initialFont);
 		control.setBackground(initialBackgroundColor);
 		control.setForeground(initialForegroundColor);
 	}
+
+    /**
+     * Apply the prompt look of the widget
+     */
+    protected void applyPromptLook() {
+        final Font font = SWTGraphicUtil.buildFontFrom(control, PromptSupport.getFontStyle(control));
+        control.setFont(font);
+        SWTGraphicUtil.addDisposer(control, font);
+        control.setBackground(PromptSupport.getBackground(control));
+        control.setForeground(PromptSupport.getForeground(control));
+    }
 
 	/**
 	 * Code when the focus behiaviour is "Hide"
@@ -91,15 +97,15 @@ abstract class BaseFocusControlListener implements FocusListener, ControlListene
 	 */
 	@Override
 	public void focusLost(final FocusEvent e) {
-		if (isFilled()) {
+        if (isFilled()) {
+            PromptSupport.setPromptDisplayed(control, false);
 			return;
 		}
 
 		storeInitialLook();
-		applyForegroundColor();
-		applyBackgroundColor();
-		applyFontStyle();
+        applyPromptLook();
 		fillPromptText();
+        PromptSupport.setPromptDisplayed(control, true);
 	}
 
 	/**
@@ -109,58 +115,34 @@ abstract class BaseFocusControlListener implements FocusListener, ControlListene
 	protected abstract boolean isFilled();
 
 	/**
-	 * Apply the foreground color for the prompt
-	 */
-	private void applyForegroundColor() {
-		control.setForeground(PromptSupport.getForeground(control));
-	}
-
-	/**
-	 * Apply the background color for the prompt
-	 */
-	private void applyBackgroundColor() {
-		control.setBackground(PromptSupport.getBackground(control));
-	}
-
-	/**
-	 * Apply the font style to the prompt
-	 */
-	private void applyFontStyle() {
-		final Font font = SWTGraphicUtil.buildFontFrom(control, PromptSupport.getFontStyle(control));
-		control.setFont(font);
-		SWTGraphicUtil.addDisposer(control, font);
-	}
-
-	/**
 	 * Fill the prompt text
 	 */
 	protected abstract void fillPromptText();
 
 	/**
-	 * @see org.eclipse.swt.events.ControlListener#controlMoved(org.eclipse.swt.events.ControlEvent)
-	 */
-	@Override
-	public void controlMoved(final ControlEvent e) {
-	}
-
-	/**
-	 * @see org.eclipse.swt.events.ControlListener#controlResized(org.eclipse.swt.events.ControlEvent)
-	 */
-	@Override
-	public void controlResized(final ControlEvent e) {
-		if (firstDraw) {
-			storeInitialLook();
-			firstDraw = true;
-			focusLost(null);
-		}
-	}
-
-	/**
 	 * Store the initial look of the widget
 	 */
-	private void storeInitialLook() {
+    protected void storeInitialLook() {
 		initialFont = control.getFont();
 		initialBackgroundColor = control.getBackground();
 		initialForegroundColor = control.getForeground();
 	}
+
+    /**
+     * Attach listeners to the control
+     */
+    void hookControl() {
+        boolean isPromptDisplayed = false;
+        storeInitialLook();
+        
+        if (!control.isFocusControl() && !isFilled()) {
+            applyPromptLook();
+            fillPromptText();
+            isPromptDisplayed = true;
+        }
+
+        PromptSupport.setPromptDisplayed(control, isPromptDisplayed);
+        
+        control.addFocusListener(this);
+    }
 }

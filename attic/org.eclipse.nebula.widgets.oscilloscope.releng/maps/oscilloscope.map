@@ -1,3 +1,0 @@
-plugin@org.eclipse.nebula.widgets.oscilloscope=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/org.eclipse.nebula.widgets.oscilloscope
-
-feature@org.eclipse.nebula.widgets.oscilloscope_feature=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/technology,,org.eclipse.swt.nebula/features/org.eclipse.nebula.widgets.oscilloscope_feature

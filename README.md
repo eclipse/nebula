@@ -3,8 +3,8 @@ Welcome to the Eclipse Nebula project. This repositority contains a large set of
 Fat or Thin client applications based on Java and SWT.
 
 ## Contact
+* [Issues/Questions](https://github.com/eclipse/nebula/issues)
 * [Mailing list](https://dev.eclipse.org/mailman/listinfo/nebula-dev)
-* [Newsgroup/Forum](https://www.eclipse.org/forums/index.php/f/64/)
 
 ## Patches 
 We can accept your patches if you have signed the [Eclipse Contributors Agreement (ECA)](https://wiki.eclipse.org/ECA) 
@@ -40,9 +40,9 @@ There are a number of ways you can contribute.
 * New widgets in the Nebula Incubation project.
 * Maintain existing widgets
 
-If you choose the first option please contact the Nebula lead through the 
+If you choose any of these option contact the Nebula devs through the 
 [mailing list](https://dev.eclipse.org/mailman/listinfo/nebula-dev)
-and make your intentions clear. [Then continue to read on this page.](https://wiki.eclipse.org/Nebula/Development_Resources/HOWTO/Starting_A_New_Project)
+and state your intentions.
 
 ## New Widgets
 The 'New Widget' process is described here:

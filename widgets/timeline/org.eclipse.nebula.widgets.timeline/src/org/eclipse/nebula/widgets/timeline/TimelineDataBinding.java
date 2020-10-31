@@ -18,6 +18,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
@@ -28,7 +29,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.nebula.widgets.timeline.figures.detail.cursor.CursorFigure;
 import org.eclipse.nebula.widgets.timeline.jface.TimelineViewer;
 import org.eclipse.nebula.widgets.timeline.listeners.ICursorListener;
-import org.eclipse.ui.progress.UIJob;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Data binding that automatically updates the viewer on model updates. Cursor operations and selections on the view are also stored in the model. The model
@@ -145,7 +146,7 @@ public class TimelineDataBinding extends AdapterImpl implements ICursorListener,
 		}
 	}
 
-	private class ViewerRefreshJob extends UIJob {
+	private class ViewerRefreshJob extends Job {
 
 		private final List<EObject> fElementsToRefresh = new ArrayList<>();
 		private final List<EObject> fElementsToUpdate = new ArrayList<>();
@@ -184,45 +185,58 @@ public class TimelineDataBinding extends AdapterImpl implements ICursorListener,
 		}
 
 		@Override
-		public IStatus runInUIThread(IProgressMonitor monitor) {
-			Collection<EObject> elementsToRefresh;
-			synchronized (fElementsToRefresh) {
-				elementsToRefresh = new ArrayList<>(fElementsToRefresh);
-				fElementsToRefresh.clear();
-			}
+		public IStatus run(IProgressMonitor monitor) {
 
-			Collection<EObject> elementsToUpdate;
-			synchronized (fElementsToUpdate) {
-				elementsToUpdate = new ArrayList<>(fElementsToUpdate);
-				fElementsToUpdate.clear();
-			}
+			final IStatus[] result = new IStatus[] { Status.CANCEL_STATUS };
 
-			minimizeElements(elementsToRefresh, elementsToRefresh);
-			minimizeElements(elementsToUpdate, elementsToRefresh);
-			elementsToUpdate.removeAll(elementsToRefresh);
+			Display.getDefault().syncExec(() -> {
 
-			for (final EObject element : elementsToRefresh) {
-				if (monitor.isCanceled())
-					return Status.CANCEL_STATUS;
+				Collection<EObject> elementsToRefresh;
+				synchronized (fElementsToRefresh) {
+					elementsToRefresh = new ArrayList<>(fElementsToRefresh);
+					fElementsToRefresh.clear();
+				}
 
-				fViewer.refresh(element);
-			}
+				Collection<EObject> elementsToUpdate;
+				synchronized (fElementsToUpdate) {
+					elementsToUpdate = new ArrayList<>(fElementsToUpdate);
+					fElementsToUpdate.clear();
+				}
 
-			for (final EObject element : elementsToUpdate) {
-				if (monitor.isCanceled())
-					return Status.CANCEL_STATUS;
+				minimizeElements(elementsToRefresh, elementsToRefresh);
+				minimizeElements(elementsToUpdate, elementsToRefresh);
+				elementsToUpdate.removeAll(elementsToRefresh);
 
-				fViewer.update(element, null);
-			}
+				for (final EObject element : elementsToRefresh) {
+					if (monitor.isCanceled()) {
+						result[0] = Status.CANCEL_STATUS;
+						return;
+					}
 
-			if (fSelectionUpdate) {
-				fSelectionUpdate = false;
+					fViewer.refresh(element);
+				}
 
-				final ITimelineEvent selectedEvent = fModel.getSelectedEvent();
-				fViewer.setSelection((selectedEvent != null) ? new StructuredSelection(selectedEvent) : StructuredSelection.EMPTY);
-			}
+				for (final EObject element : elementsToUpdate) {
+					if (monitor.isCanceled()) {
+						result[0] = Status.CANCEL_STATUS;
+						return;
+					}
 
-			return Status.OK_STATUS;
+					fViewer.update(element, null);
+				}
+
+				if (fSelectionUpdate) {
+					fSelectionUpdate = false;
+
+					final ITimelineEvent selectedEvent = fModel.getSelectedEvent();
+					fViewer.setSelection((selectedEvent != null) ? new StructuredSelection(selectedEvent) : StructuredSelection.EMPTY);
+				}
+
+				result[0] = Status.OK_STATUS;
+				return;
+			});
+
+			return result[0];
 		}
 
 		/**
