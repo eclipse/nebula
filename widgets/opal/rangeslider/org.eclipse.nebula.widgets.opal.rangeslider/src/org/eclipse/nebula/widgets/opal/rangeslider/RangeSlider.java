@@ -464,6 +464,9 @@ public class RangeSlider extends Canvas {
 	 * @param e
 	 */
 	private void selectKnobs(final Event e) {
+		if (coordLower == null) {
+			return;
+		}
 		final Image img = orientation == SWT.HORIZONTAL ? slider : vSlider;
 		final int x = e.x, y = e.y;
 		lowerHover = x >= coordLower.x && x <= coordLower.x + img.getBounds().width && y >= coordLower.y && y <= coordLower.y + img.getBounds().height;
