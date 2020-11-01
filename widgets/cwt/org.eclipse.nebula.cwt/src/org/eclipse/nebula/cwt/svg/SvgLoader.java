@@ -1365,8 +1365,8 @@ class SvgLoader {
 				element.x = parseFloat(getAttrValue(ca, start, endAttrs, ATTR_X));
 				element.y = parseFloat(getAttrValue(ca, start, endAttrs, ATTR_Y));
 			}
-			element.width = parseLength(getAttrValue(ca, start, endAttrs, ATTR_WIDTH), "100%"); //$NON-NLS-1$
-			element.height = parseLength(getAttrValue(ca, start, endAttrs, ATTR_HEIGHT), "100%"); //$NON-NLS-1$
+			element.width = parseLength(getAttrValue(ca, start, endAttrs, ATTR_WIDTH), "10px"); //$NON-NLS-1$
+			element.height = parseLength(getAttrValue(ca, start, endAttrs, ATTR_HEIGHT), "10px"); //$NON-NLS-1$
 			element.viewBox = parseViewBox(getAttrValue(ca, start, endAttrs, ATTR_VIEWBOX));
 			//			TODO element.preserveAspectRatio = 
 			parse(element, ca, endAttrs, end);
