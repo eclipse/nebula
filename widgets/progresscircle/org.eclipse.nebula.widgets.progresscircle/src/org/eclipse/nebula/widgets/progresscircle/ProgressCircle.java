@@ -56,6 +56,7 @@ public class ProgressCircle extends Canvas {
 	private String textPattern = PERCENTAGE_PATTERN;
 	private float floatValue;
 	private boolean isTimer;
+	private int fDelay;
 
 	/**
 	 * Constructs a new instance of this class given its parent and a style value
@@ -323,31 +324,48 @@ public class ProgressCircle extends Canvas {
 		final int endValue = value;
 		final float delta = (endValue - startValue) / 10f;
 		floatValue = 1.0f * startValue;
-		redraw();
-		update();
-		getDisplay().asyncExec(new Runnable() {
+		boolean animate = true;
 
-			@Override
-			public void run() {
-				floatValue = floatValue + delta;
-				value = (int) floatValue;
-				if (isDisposed()) {
-					return;
-				}
-				redraw();
-				update();
-
-				if (delta > 0 && value >= endValue || delta < 0 && value <= endValue) {
-					value = endValue;
-					redraw();
-					update();
-
-					return;
-				}
-				getDisplay().timerExec(50, this);
+		while (animate) {
+			floatValue = floatValue + delta;
+			value = (int) floatValue;
+			if (isDisposed()) {
+				return;
 			}
-		});
+			redraw();
+			flush();
 
+			if (delta > 0 && value >= endValue || delta < 0 && value <= endValue) {
+				value = endValue;
+				redraw();
+				flush();
+				animate = false;
+			}
+			else {
+				try {
+					Thread.sleep(fDelay);
+				} catch (InterruptedException e) {
+				}
+			}
+		}
+	}
+
+	/**
+	 * Sets the delay in animation time in milliseconds. The higher the delay the
+	 * slower the animation. The default is 10 ms.
+	 * 
+	 * @param delay the new delay
+	 * @return this object
+	 */
+	public ProgressCircle setAnimationDelay(int delay) {
+		fDelay = delay;
+		return this;
+	}
+
+	private void flush() {
+		while (getDisplay().readAndDispatch()) {
+			// flush the event queue to keep the animation going
+		}
 	}
 
 	/**

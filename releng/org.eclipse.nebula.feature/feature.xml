@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.nebula.feature"
       label="Nebula Widgets"
-      version="2.4.2.qualifier"
+      version="2.4.3.qualifier"
       provider-name="Eclipse Nebula">
 
    <description url="http://eclipse.org/nebula">
@@ -235,6 +235,10 @@
 
    <includes
          id="org.eclipse.nebula.widgets.roundedswitch.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.nebula.widgets.segmentedbar.feature"
          version="0.0.0"/>
 
 </feature>

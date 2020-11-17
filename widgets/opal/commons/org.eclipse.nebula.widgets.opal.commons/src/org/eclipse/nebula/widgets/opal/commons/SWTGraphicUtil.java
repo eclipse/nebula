@@ -26,6 +26,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.PaletteData;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Resource;
@@ -267,8 +268,17 @@ public class SWTGraphicUtil {
 	 * @param shell shell to center
 	 */
 	public static void centerShell(final Shell shell) {
-		final Monitor primary = shell.getDisplay().getPrimaryMonitor();
-		final Rectangle bounds = primary.getBounds();
+		Monitor[] monitors = shell.getDisplay().getMonitors();
+		Monitor activeMonitor = null;
+		 
+		Rectangle r = shell.getBounds();
+		for (int i = 0; i < monitors.length; i++) {
+		    if (monitors[i].getBounds().intersects(r)) {
+		        activeMonitor = monitors[i];
+		    }
+		}
+		
+		final Rectangle bounds = activeMonitor.getBounds();
 		final Rectangle rect = shell.getBounds();
 		final int x = bounds.x + (bounds.width - rect.width) / 2;
 		final int y = bounds.y + (bounds.height - rect.height) / 2;
@@ -533,10 +543,25 @@ public class SWTGraphicUtil {
 	 * @return the width of text
 	 */
 	public static int computeWidth(final String text) {
+		return computeSize(text,null).x;
+	}
+	
+	/**
+	 * @param text
+	 * @param font
+	 * @return the width and height of this text for the given font
+	 */
+	public static Point computeSize(final String text, final Font font) {
+		if (text == null) {
+			return new Point(0,0);
+		}
 		final GC gc = new GC(Display.getDefault());
-		final int width = gc.textExtent(text).x;
+		if (font != null) {
+			gc.setFont(font);
+		}
+		final Point size = gc.textExtent(text);
 		gc.dispose();
-		return width;
+		return size;
 	}
 
 }

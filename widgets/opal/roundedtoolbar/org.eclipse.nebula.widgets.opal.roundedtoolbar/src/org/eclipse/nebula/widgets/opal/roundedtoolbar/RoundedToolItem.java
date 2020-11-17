@@ -360,6 +360,7 @@ public class RoundedToolItem extends Item {
 		gc.fillGradientRectangle(x, 0, width + parentToolbar.getCornerRadius(), toolbarHeight, true);
 
 		gc.setClipping((Rectangle) null);
+		path.dispose();
 	}
 
 	private void drawRightLine(final int x) {

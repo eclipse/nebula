@@ -165,7 +165,7 @@
    <feature url="features/org.eclipse.nebula.widgets.tablecombo.css.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.tablecombo.css.feature" version="1.2.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
-   <feature url="features/org.eclipse.nebula.feature_2.4.2.qualifier.jar" id="org.eclipse.nebula.feature" version="2.4.2.qualifier">
+   <feature url="features/org.eclipse.nebula.feature_2.4.3.qualifier.jar" id="org.eclipse.nebula.feature" version="2.4.3.qualifier">
       <category name="Nebula Release all Widgets and Examples"/>
    </feature>
    <feature url="features/org.eclipse.nebula.widgets.cdatetime.feature_0.0.0.jar" id="org.eclipse.nebula.widgets.cdatetime.feature" version="0.0.0">
@@ -175,6 +175,9 @@
       <category name="Nebula Release Individual Widgets"/>
    </feature>
    <feature url="features/org.eclipse.nebula.widgets.oscilloscope.css.feature_1.4.0.qualifier.jar" id="org.eclipse.nebula.widgets.oscilloscope.css.feature" version="1.4.0.qualifier">
+      <category name="Nebula Release Individual Widgets"/>
+   </feature>
+   <feature url="features/org.eclipse.nebula.widgets.segmentedbar.feature_1.0.0.qualifier.jar" id="org.eclipse.nebula.widgets.segmentedbar.feature" version="1.0.0.qualifier">
       <category name="Nebula Release Individual Widgets"/>
    </feature>
    <bundle id="org.eclipse.nebula.widgets.tablecombo" version="1.2.0.qualifier">

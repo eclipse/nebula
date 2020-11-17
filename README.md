@@ -2,9 +2,14 @@
 Welcome to the Eclipse Nebula project. This repositority contains a large set of UI elements that can be used in 
 Fat or Thin client applications based on Java and SWT.
 
+## Download
+Please have a look at https://www.eclipse.org/nebula/downloads.php
+
+You'll find update sites for all releases and also for the latest build
+
 ## Contact
+* [Issues/Questions](https://github.com/eclipse/nebula/issues)
 * [Mailing list](https://dev.eclipse.org/mailman/listinfo/nebula-dev)
-* [Newsgroup/Forum](https://www.eclipse.org/forums/index.php/f/64/)
 
 ## Patches 
 We can accept your patches if you have signed the [Eclipse Contributors Agreement (ECA)](https://wiki.eclipse.org/ECA) 

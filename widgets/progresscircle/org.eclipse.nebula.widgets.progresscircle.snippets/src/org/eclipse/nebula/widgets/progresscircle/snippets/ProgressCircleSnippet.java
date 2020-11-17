@@ -24,11 +24,12 @@ public class ProgressCircleSnippet {
 	public static void main(final String[] args) {
 		final Display display = new Display();
 		final Shell shell = new Shell(display);
-		shell.setLayout(new GridLayout(3, true));
+		shell.setLayout(new GridLayout(2, true));
 		final Color white = display.getSystemColor(SWT.COLOR_WHITE);
 		shell.setBackground(white);
 
 		new PercentagePanel(shell);
+		new RunningPercentage(shell);
 		new AbsolutePanel(shell);
 		new TimePanel(shell);
 

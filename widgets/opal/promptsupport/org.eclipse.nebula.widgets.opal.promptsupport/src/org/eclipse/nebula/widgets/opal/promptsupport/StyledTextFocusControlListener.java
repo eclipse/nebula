@@ -15,11 +15,15 @@
 package org.eclipse.nebula.widgets.opal.promptsupport;
 
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 
 /**
  * Focus/Control listener for a StyledText widget
  */
-class StyledTextFocusControlListener extends BaseFocusControlListener {
+class StyledTextFocusControlListener extends BaseFocusControlListener<StyledText> implements ModifyListener {
+
+    protected boolean updatingPropmpt = false;
 
 	/**
 	 * Constructor
@@ -30,12 +34,42 @@ class StyledTextFocusControlListener extends BaseFocusControlListener {
 		super(control);
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.promptsupport.BaseFocusControlListener#hidePrompt()
-	 */
+    @Override
+    void hookControl() {
+        super.hookControl();
+
+        // Attach dedicated listeners
+        control.addModifyListener(this);
+    }
+
+    @Override
+    public void modifyText(ModifyEvent e) {
+        if (updatingPropmpt) {
+            return;
+        }
+
+        final String trimmedText = control.getText().trim();
+        if (!EMPTY_STRING.equals(trimmedText)) {
+            applyInitialLook();
+            PromptSupport.setPromptDisplayed(control, false);
+            return;
+        }
+
+        if (!control.isFocusControl()) {
+            storeInitialLook();
+            applyPromptLook();
+            fillPromptText();
+            PromptSupport.setPromptDisplayed(control, true);
+            return;
+        }
+    }
+
+    /**
+     * @see org.eclipse.nebula.widgets.opal.promptsupport.BaseFocusControlListener#hidePrompt()
+     */
 	@Override
 	protected void hidePrompt() {
-		((StyledText) control).setText(EMPTY_STRING);
+        updatePrompt(EMPTY_STRING);
 	}
 
 	/**
@@ -44,12 +78,11 @@ class StyledTextFocusControlListener extends BaseFocusControlListener {
 	@Override
 	protected void highLightPrompt() {
 		control.getDisplay().asyncExec(() -> {
-            StyledText styledTextControl = (StyledText) StyledTextFocusControlListener.this.control;
-            if (styledTextControl.isDisposed()) {
+            if (control.isDisposed()) {
                 return;
             }
 
-            styledTextControl.selectAll();
+            control.selectAll();
 		});
 	}
 
@@ -60,7 +93,7 @@ class StyledTextFocusControlListener extends BaseFocusControlListener {
 	protected void fillPromptText() {
 		final String promptText = PromptSupport.getPrompt(control);
 		if (promptText != null) {
-			((StyledText) control).setText(promptText);
+            updatePrompt(promptText);
 		}
 
 	}
@@ -71,11 +104,19 @@ class StyledTextFocusControlListener extends BaseFocusControlListener {
 	@Override
 	protected boolean isFilled() {
 		final String promptText = PromptSupport.getPrompt(control);
-		final String trimmedText = ((StyledText) control).getText().trim();
+        final String trimmedText = control.getText().trim();
         if (promptText != null && promptText.equals(trimmedText) && PromptSupport.isPromptDisplayed(control)) {
 			return false;
 		}
 		return !EMPTY_STRING.equals(trimmedText);
 	}
 
+    protected void updatePrompt(String prompt) {
+        try {
+            updatingPropmpt = true;
+            control.setText(prompt);
+        } finally {
+            updatingPropmpt = false;
+        }
+    }
 }
