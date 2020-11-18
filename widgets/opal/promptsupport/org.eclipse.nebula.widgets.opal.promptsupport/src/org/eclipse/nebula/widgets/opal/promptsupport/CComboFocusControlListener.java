@@ -48,8 +48,9 @@ class CComboFocusControlListener extends BaseFocusControlListener<CCombo> implem
         }
 
         final String trimmedText = control.getText().trim();
+        applyInitialLook();
+
         if (!EMPTY_STRING.equals(trimmedText)) {
-            applyInitialLook();
             PromptSupport.setPromptDisplayed(control, false);
             return;
         }
