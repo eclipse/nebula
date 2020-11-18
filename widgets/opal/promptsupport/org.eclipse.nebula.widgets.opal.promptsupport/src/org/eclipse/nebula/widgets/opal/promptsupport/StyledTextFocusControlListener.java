@@ -49,8 +49,9 @@ class StyledTextFocusControlListener extends BaseFocusControlListener<StyledText
         }
 
         final String trimmedText = control.getText().trim();
+        applyInitialLook();
+
         if (!EMPTY_STRING.equals(trimmedText)) {
-            applyInitialLook();
             PromptSupport.setPromptDisplayed(control, false);
             return;
         }
