@@ -14,7 +14,6 @@ package org.eclipse.nebula.widgets.passwordrevealer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
-import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DragDetectListener;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.GestureListener;
@@ -84,7 +83,6 @@ public class PasswordRevealer extends Composite {
 
 	protected Text passwordField;
 	private final EyeButton eyeButton;
-	private final Composite comp;
 	private final char defaultEchoChar;
 
 	/**
@@ -123,13 +121,7 @@ public class PasswordRevealer extends Composite {
 		gl.horizontalSpacing = gl.verticalSpacing = gl.marginHeight = gl.marginWidth = 0;
 		setLayout(gl);
 
-		comp = new Composite(this, SWT.NONE);
-		final GridLayout glComp = new GridLayout(1, false);
-		glComp.horizontalSpacing = glComp.verticalSpacing = glComp.marginHeight = glComp.marginWidth = 0;
-		comp.setLayout(glComp);
-		comp.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, true));
-
-		passwordField = new Text(comp, style | SWT.PASSWORD | removeFields(style, SWT.BORDER));
+		passwordField = new Text(this, style | SWT.PASSWORD | removeFields(style, SWT.BORDER));
 		passwordField.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
 		defaultEchoChar = passwordField.getEchoChar();
 
@@ -1010,7 +1002,6 @@ public class PasswordRevealer extends Composite {
 	@Override
 	public void setFont(final Font font) {
 		super.setFont(font);
-		comp.setFont(font);
 		passwordField.setFont(font);
 	}
 
@@ -1324,34 +1315,6 @@ public class PasswordRevealer extends Composite {
 
 	/**
 	 * Adds the listener to the collection of listeners who will
-	 * be notified when the control is moved or resized, by sending
-	 * it one of the messages defined in the <code>ControlListener</code>
-	 * interface.
-	 *
-	 * @param listener the listener which should be notified
-	 *
-	 * @exception IllegalArgumentException
-	 *                <ul>
-	 *                <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
-	 *                </ul>
-	 * @exception SWTException
-	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 *                </ul>
-	 *
-	 * @see ControlListener
-	 * @see #removeControlListener
-	 */
-	@Override
-	public void addControlListener(final ControlListener listener) {
-		super.addControlListener(listener);
-		comp.addControlListener(listener);
-		passwordField.addControlListener(listener);
-	}
-
-	/**
-	 * Adds the listener to the collection of listeners who will
 	 * be notified when a drag gesture occurs, by sending it
 	 * one of the messages defined in the <code>DragDetectListener</code>
 	 * interface.
@@ -1376,7 +1339,7 @@ public class PasswordRevealer extends Composite {
 	@Override
 	public void addDragDetectListener(final DragDetectListener listener) {
 		super.addDragDetectListener(listener);
-		comp.addDragDetectListener(listener);
+		eyeButton.addDragDetectListener(listener);
 		passwordField.addDragDetectListener(listener);
 	}
 
@@ -1404,7 +1367,7 @@ public class PasswordRevealer extends Composite {
 	@Override
 	public void addFocusListener(final FocusListener listener) {
 		super.addFocusListener(listener);
-		comp.addFocusListener(listener);
+		eyeButton.addFocusListener(listener);
 		passwordField.addFocusListener(listener);
 	}
 
@@ -1445,7 +1408,7 @@ public class PasswordRevealer extends Composite {
 	@Override
 	public void addGestureListener(final GestureListener listener) {
 		super.addGestureListener(listener);
-		comp.addGestureListener(listener);
+		eyeButton.addGestureListener(listener);
 		passwordField.addGestureListener(listener);
 	}
 
@@ -1473,7 +1436,7 @@ public class PasswordRevealer extends Composite {
 	@Override
 	public void addHelpListener(final HelpListener listener) {
 		super.addHelpListener(listener);
-		comp.addHelpListener(listener);
+		eyeButton.addHelpListener(listener);
 		passwordField.addHelpListener(listener);
 	}
 
@@ -1513,7 +1476,7 @@ public class PasswordRevealer extends Composite {
 	@Override
 	public void addKeyListener(final KeyListener listener) {
 		super.addKeyListener(listener);
-		comp.addKeyListener(listener);
+		eyeButton.addKeyListener(listener);
 		passwordField.addKeyListener(listener);
 	}
 
@@ -1543,7 +1506,7 @@ public class PasswordRevealer extends Composite {
 	@Override
 	public void addMenuDetectListener(final MenuDetectListener listener) {
 		super.addMenuDetectListener(listener);
-		comp.addMenuDetectListener(listener);
+		eyeButton.addMenuDetectListener(listener);
 		passwordField.addMenuDetectListener(listener);
 	}
 
@@ -1571,7 +1534,7 @@ public class PasswordRevealer extends Composite {
 	@Override
 	public void addMouseListener(final MouseListener listener) {
 		super.addMouseListener(listener);
-		comp.addMouseListener(listener);
+		eyeButton.addMouseListener(listener);
 		passwordField.addMouseListener(listener);
 	}
 
@@ -1599,7 +1562,7 @@ public class PasswordRevealer extends Composite {
 	@Override
 	public void addMouseTrackListener(final MouseTrackListener listener) {
 		super.addMouseTrackListener(listener);
-		comp.addMouseTrackListener(listener);
+		eyeButton.addMouseTrackListener(listener);
 		passwordField.addMouseTrackListener(listener);
 	}
 
@@ -1627,7 +1590,7 @@ public class PasswordRevealer extends Composite {
 	@Override
 	public void addMouseMoveListener(final MouseMoveListener listener) {
 		super.addMouseMoveListener(listener);
-		comp.addMouseMoveListener(listener);
+		eyeButton.addMouseMoveListener(listener);
 		passwordField.addMouseMoveListener(listener);
 	}
 
@@ -1657,7 +1620,7 @@ public class PasswordRevealer extends Composite {
 	@Override
 	public void addMouseWheelListener(final MouseWheelListener listener) {
 		super.addMouseWheelListener(listener);
-		comp.addMouseWheelListener(listener);
+		eyeButton.addMouseWheelListener(listener);
 		passwordField.addMouseWheelListener(listener);
 	}
 
@@ -1697,7 +1660,7 @@ public class PasswordRevealer extends Composite {
 	@Override
 	public void addTouchListener(final TouchListener listener) {
 		super.addTouchListener(listener);
-		comp.addTouchListener(listener);
+		eyeButton.addTouchListener(listener);
 		passwordField.addTouchListener(listener);
 	}
 
@@ -1739,32 +1702,6 @@ public class PasswordRevealer extends Composite {
 
 	/**
 	 * Removes the listener from the collection of listeners who will
-	 * be notified when the control is moved or resized.
-	 *
-	 * @param listener the listener which should no longer be notified
-	 *
-	 * @exception IllegalArgumentException
-	 *                <ul>
-	 *                <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
-	 *                </ul>
-	 * @exception SWTException
-	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 *                </ul>
-	 *
-	 * @see ControlListener
-	 * @see #addControlListener
-	 */
-	@Override
-	public void removeControlListener(final ControlListener listener) {
-		super.removeControlListener(listener);
-		comp.removeControlListener(listener);
-		passwordField.removeControlListener(listener);
-	}
-
-	/**
-	 * Removes the listener from the collection of listeners who will
 	 * be notified when the control gains or loses focus.
 	 *
 	 * @param listener the listener which should no longer be notified
@@ -1785,7 +1722,7 @@ public class PasswordRevealer extends Composite {
 	@Override
 	public void removeFocusListener(final FocusListener listener) {
 		super.removeFocusListener(listener);
-		comp.removeFocusListener(listener);
+		eyeButton.removeFocusListener(listener);
 		passwordField.removeFocusListener(listener);
 	}
 
@@ -1813,7 +1750,7 @@ public class PasswordRevealer extends Composite {
 	@Override
 	public void removeGestureListener(final GestureListener listener) {
 		super.removeGestureListener(listener);
-		comp.removeGestureListener(listener);
+		eyeButton.removeGestureListener(listener);
 		passwordField.removeGestureListener(listener);
 	}
 
@@ -1839,7 +1776,7 @@ public class PasswordRevealer extends Composite {
 	@Override
 	public void removeHelpListener(final HelpListener listener) {
 		super.removeHelpListener(listener);
-		comp.removeHelpListener(listener);
+		eyeButton.removeHelpListener(listener);
 		passwordField.removeHelpListener(listener);
 	}
 
@@ -1865,7 +1802,7 @@ public class PasswordRevealer extends Composite {
 	@Override
 	public void removeKeyListener(final KeyListener listener) {
 		super.removeKeyListener(listener);
-		comp.removeKeyListener(listener);
+		eyeButton.removeKeyListener(listener);
 		passwordField.removeKeyListener(listener);
 	}
 
@@ -1894,7 +1831,7 @@ public class PasswordRevealer extends Composite {
 	@Override
 	public void removeMenuDetectListener(final MenuDetectListener listener) {
 		super.removeMenuDetectListener(listener);
-		comp.removeMenuDetectListener(listener);
+		eyeButton.removeMenuDetectListener(listener);
 		passwordField.removeMenuDetectListener(listener);
 	}
 
@@ -1920,7 +1857,7 @@ public class PasswordRevealer extends Composite {
 	@Override
 	public void removeMouseTrackListener(final MouseTrackListener listener) {
 		super.removeMouseTrackListener(listener);
-		comp.removeMouseTrackListener(listener);
+		eyeButton.removeMouseTrackListener(listener);
 		passwordField.removeMouseTrackListener(listener);
 	}
 
@@ -1946,7 +1883,7 @@ public class PasswordRevealer extends Composite {
 	@Override
 	public void removeMouseListener(final MouseListener listener) {
 		super.removeMouseListener(listener);
-		comp.removeMouseListener(listener);
+		eyeButton.removeMouseListener(listener);
 		passwordField.removeMouseListener(listener);
 	}
 
@@ -1972,7 +1909,7 @@ public class PasswordRevealer extends Composite {
 	@Override
 	public void removeMouseMoveListener(final MouseMoveListener listener) {
 		super.removeMouseMoveListener(listener);
-		comp.removeMouseMoveListener(listener);
+		eyeButton.removeMouseMoveListener(listener);
 		passwordField.removeMouseMoveListener(listener);
 	}
 
@@ -2000,7 +1937,7 @@ public class PasswordRevealer extends Composite {
 	@Override
 	public void removeMouseWheelListener(final MouseWheelListener listener) {
 		super.removeMouseWheelListener(listener);
-		comp.removeMouseWheelListener(listener);
+		eyeButton.removeMouseWheelListener(listener);
 		passwordField.removeMouseWheelListener(listener);
 	}
 
@@ -2028,7 +1965,7 @@ public class PasswordRevealer extends Composite {
 	@Override
 	public void removeTouchListener(final TouchListener listener) {
 		super.removeTouchListener(listener);
-		comp.removeTouchListener(listener);
+		eyeButton.removeTouchListener(listener);
 		passwordField.removeTouchListener(listener);
 	}
 
@@ -2055,7 +1992,7 @@ public class PasswordRevealer extends Composite {
 	@Override
 	public void setBackground(final Color color) {
 		super.setBackground(color);
-		comp.setBackground(color);
+		eyeButton.setBackground(color);
 		passwordField.setBackground(color);
 	}
 
@@ -2076,7 +2013,7 @@ public class PasswordRevealer extends Composite {
 	@Override
 	public void setCapture(final boolean capture) {
 		super.setCapture(capture);
-		comp.setCapture(capture);
+		eyeButton.setCapture(capture);
 		passwordField.setCapture(capture);
 	}
 
@@ -2121,7 +2058,7 @@ public class PasswordRevealer extends Composite {
 	@Override
 	public void setCursor(final Cursor cursor) {
 		super.setCursor(cursor);
-		comp.setCursor(cursor);
+		eyeButton.setCursor(cursor);
 		passwordField.setCursor(cursor);
 	}
 
@@ -2143,7 +2080,7 @@ public class PasswordRevealer extends Composite {
 	@Override
 	public void setDragDetect(final boolean dragDetect) {
 		super.setDragDetect(dragDetect);
-		comp.setDragDetect(dragDetect);
+		eyeButton.setDragDetect(dragDetect);
 		passwordField.setDragDetect(dragDetect);
 	}
 
@@ -2190,7 +2127,7 @@ public class PasswordRevealer extends Composite {
 	@Override
 	public void setForeground(final Color color) {
 		super.setForeground(color);
-		comp.setForeground(color);
+		eyeButton.setForeground(color);
 		passwordField.setForeground(color);
 	}
 
@@ -2224,7 +2161,7 @@ public class PasswordRevealer extends Composite {
 	@Override
 	public void setMenu(final Menu menu) {
 		super.setMenu(menu);
-		comp.setMenu(menu);
+		eyeButton.setMenu(menu);
 		passwordField.setMenu(menu);
 	}
 
@@ -2257,7 +2194,7 @@ public class PasswordRevealer extends Composite {
 	@Override
 	public void setToolTipText(final String string) {
 		super.setToolTipText(string);
-		comp.setToolTipText(string);
+		eyeButton.setToolTipText(string);
 		passwordField.setToolTipText(string);
 	}
 
@@ -2281,7 +2218,7 @@ public class PasswordRevealer extends Composite {
 	@Override
 	public void setTouchEnabled(final boolean enabled) {
 		super.setTouchEnabled(enabled);
-		comp.setTouchEnabled(enabled);
+		eyeButton.setTouchEnabled(enabled);
 		passwordField.setTouchEnabled(enabled);
 	}
 
