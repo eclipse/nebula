@@ -5189,6 +5189,7 @@ public class Grid extends Canvas {
 		boolean insertMarkPosFound = false;
 
 		final GridCellSpanManager cellSpanManager = new GridCellSpanManager();
+		Rectangle originalClipping = e.gc.getClipping();
 
 		e.gc.setBackground(getBackground());
 		this.drawBackground(e.gc, 0, 0, getSize().x, getSize().y);
@@ -5321,10 +5322,12 @@ public class Grid extends Canvas {
 							column.getCellRenderer().setBounds(x, y, width, sizeOfColumn.y);
 							final int cellInHeaderDelta = columnHeadersVisible ? headerHeight - y : 0;
 							if (cellInHeaderDelta > 0) {
-								e.gc.setClipping(new Rectangle(x - 1, y + cellInHeaderDelta, width + 1,
-										sizeOfColumn.y + 2 - cellInHeaderDelta));
+								Rectangle cellRect = new Rectangle(x - 1, y + cellInHeaderDelta, width + 1,
+										sizeOfColumn.y + 2 - cellInHeaderDelta);
+								e.gc.setClipping(originalClipping.intersection(cellRect));
 							} else {
-								e.gc.setClipping(new Rectangle(x - 1, y - 1, width + 1, sizeOfColumn.y + 2));
+								Rectangle cellRect = new Rectangle(x - 1, y - 1, width + 1, sizeOfColumn.y + 2); 
+								e.gc.setClipping(originalClipping.intersection(cellRect));
 							}
 
 							column.getCellRenderer().setRow(i + 1);
@@ -5504,8 +5507,9 @@ public class Grid extends Canvas {
 
 		// draw insertion mark
 		if (insertMarkPosFound) {
-			e.gc.setClipping(rowHeaderVisible ? rowHeaderWidth : 0, columnHeadersVisible ? headerHeight : 0,
+			Rectangle rect = new Rectangle(rowHeaderVisible ? rowHeaderWidth : 0, columnHeadersVisible ? headerHeight : 0,
 					getClientArea().width, getClientArea().height);
+			e.gc.setClipping(originalClipping.intersection(rect));
 			insertMarkRenderer.paint(e.gc,
 					new Rectangle(insertMarkPosX1, insertMarkPosY, insertMarkPosX2 - insertMarkPosX1, 0));
 		}
