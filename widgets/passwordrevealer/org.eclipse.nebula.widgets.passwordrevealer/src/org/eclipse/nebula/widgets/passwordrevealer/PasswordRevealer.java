@@ -119,9 +119,11 @@ public class PasswordRevealer extends Composite {
 		super(parent, SWT.BORDER);
 		final GridLayout gl = new GridLayout(2, false);
 		gl.horizontalSpacing = gl.verticalSpacing = gl.marginHeight = gl.marginWidth = 0;
+		gl.marginBottom = gl.marginLeft = gl.marginRight = gl.marginTop = 0;
 		setLayout(gl);
 
-		passwordField = new Text(this, style | SWT.PASSWORD | removeFields(style, SWT.BORDER));
+		super.setBackground(parent.getBackground());
+		passwordField = new Text(this, style | SWT.PASSWORD | removeFields(style, SWT.BORDER) );
 		passwordField.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
 		defaultEchoChar = passwordField.getEchoChar();
 
