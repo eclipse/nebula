@@ -2139,7 +2139,7 @@ public class CDateTime extends BaseCombo {
 		}
 
 		e.doit = false;
-		if (field.length == 0 || activeField == FIELD_NONE) {
+		if (field.length == 0 || activeField == FIELD_NONE || e.text == null) {
 			return;
 		}
 
