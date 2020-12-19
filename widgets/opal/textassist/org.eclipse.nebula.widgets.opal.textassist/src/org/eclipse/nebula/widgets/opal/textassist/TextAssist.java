@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Laurent CARON.
+ * Copyright (c) 2011-2020 Laurent CARON.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,6 +16,7 @@ package org.eclipse.nebula.widgets.opal.textassist;
 
 import java.util.List;
 
+import org.eclipse.nebula.widgets.opal.commons.SWTGraphicUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.ModifyListener;
@@ -28,7 +29,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -52,6 +52,7 @@ public class TextAssist extends Composite {
 	private TextAssistContentProvider contentProvider;
 	private int numberOfLines;
 	private boolean useSingleClick = false;
+	private boolean popupJustOpened;
 
 	/**
 	 * Constructs a new instance of this class given its parent and a style
@@ -142,6 +143,7 @@ public class TextAssist extends Composite {
 			text.setText(table.getSelection()[0].getText());
 			popup.setVisible(false);
 		});
+
 		table.addListener(SWT.KeyDown, event -> {
 			if (event.keyCode == SWT.ESC) {
 				popup.setVisible(false);
@@ -155,34 +157,31 @@ public class TextAssist extends Composite {
 	 * @return a listener for the keydown event
 	 */
 	private Listener createKeyDownListener() {
-		return new Listener() {
-			@Override
-			public void handleEvent(final Event event) {
-				switch (event.keyCode) {
-					case SWT.ARROW_DOWN:
-						int index = (table.getSelectionIndex() + 1) % table.getItemCount();
-						table.setSelection(index);
-						event.doit = false;
-						break;
-					case SWT.ARROW_UP:
-						index = table.getSelectionIndex() - 1;
-						if (index < 0) {
-							index = table.getItemCount() - 1;
-						}
-						table.setSelection(index);
-						event.doit = false;
-						break;
-					case SWT.CR:
-					case SWT.KEYPAD_CR:
-						if (popup.isVisible() && table.getSelectionIndex() != -1) {
-							text.setText(table.getSelection()[0].getText());
-							popup.setVisible(false);
-						}
-						break;
-					case SWT.ESC:
+		return event -> {
+			switch (event.keyCode) {
+				case SWT.ARROW_DOWN:
+					int index = (table.getSelectionIndex() + 1) % table.getItemCount();
+					table.setSelection(index);
+					event.doit = false;
+					break;
+				case SWT.ARROW_UP:
+					index = table.getSelectionIndex() - 1;
+					if (index < 0) {
+						index = table.getItemCount() - 1;
+					}
+					table.setSelection(index);
+					event.doit = false;
+					break;
+				case SWT.CR:
+				case SWT.KEYPAD_CR:
+					if (popup.isVisible() && table.getSelectionIndex() != -1) {
+						text.setText(table.getSelection()[0].getText());
 						popup.setVisible(false);
-						break;
-				}
+					}
+					break;
+				case SWT.ESC:
+					popup.setVisible(false);
+					break;
 			}
 		};
 	}
@@ -191,59 +190,57 @@ public class TextAssist extends Composite {
 	 * @return a listener for the modify event
 	 */
 	private Listener createModifyListener() {
-		return new Listener() {
-			@Override
-			public void handleEvent(final Event event) {
-				if (text.getData(SETTEXT_KEY) != null && Boolean.TRUE.equals(text.getData(SETTEXT_KEY))) {
-					text.setData(SETTEXT_KEY, null);
-					return;
-				}
+		return event -> {
+			if (text.getData(SETTEXT_KEY) != null && Boolean.TRUE.equals(text.getData(SETTEXT_KEY))) {
 				text.setData(SETTEXT_KEY, null);
-
-				final String string = text.getText();
-				if (string.length() == 0) {
-					popup.setVisible(false);
-					return;
-				}
-
-				List<String> values = contentProvider.getContent(string);
-				if (values == null || values.isEmpty()) {
-					popup.setVisible(false);
-					return;
-				}
-
-				if (values.size() > numberOfLines) {
-					values = values.subList(0, numberOfLines);
-				}
-
-				table.removeAll();
-				final int numberOfRows = Math.min(values.size(), numberOfLines);
-				for (int i = 0; i < numberOfRows; i++) {
-					final TableItem tableItem = new TableItem(table, SWT.NONE);
-					tableItem.setText(values.get(i));
-				}
-
-				final Point point = text.toDisplay(text.getLocation().x, text.getSize().y + text.getBorderWidth() - 3);
-				int x = point.x;
-				int y = point.y;
-
-				final Rectangle displayRect = getMonitor().getClientArea();
-				final Rectangle parentRect = getDisplay().map(getParent(), null, getBounds());
-				popup.pack();
-				final int width = popup.getBounds().width;
-				final int height = popup.getBounds().height;
-
-				if (y + height > displayRect.y + displayRect.height) {
-					y = parentRect.y - height;
-				}
-				if (x + width > displayRect.x + displayRect.width) {
-					x = displayRect.x + displayRect.width - width;
-				}
-
-				popup.setLocation(x, y);
-				popup.setVisible(true);
-
+				return;
 			}
+			text.setData(SETTEXT_KEY, null);
+
+			final String string = text.getText();
+			if (string.length() == 0) {
+				popup.setVisible(false);
+				return;
+			}
+
+			List<String> values = contentProvider.getContent(string);
+			if (values == null || values.isEmpty()) {
+				popup.setVisible(false);
+				return;
+			}
+
+			if (values.size() > numberOfLines) {
+				values = values.subList(0, numberOfLines);
+			}
+
+			table.removeAll();
+			final int numberOfRows = Math.min(values.size(), numberOfLines);
+			for (int i = 0; i < numberOfRows; i++) {
+				final TableItem tableItem = new TableItem(table, SWT.NONE);
+				tableItem.setText(values.get(i));
+			}
+
+			final Point point = text.toDisplay(text.getLocation().x, text.getSize().y + text.getBorderWidth() - 3);
+			int x = point.x;
+			int y = point.y;
+
+			final Rectangle displayRect = getMonitor().getClientArea();
+			final Rectangle parentRect = getDisplay().map(getParent(), null, getBounds());
+			popup.pack();
+			final int width = popup.getBounds().width;
+			final int height = popup.getBounds().height;
+
+			if (y + height > displayRect.y + displayRect.height) {
+				y = parentRect.y - height;
+			}
+			if (x + width > displayRect.x + displayRect.width) {
+				x = displayRect.x + displayRect.width - width;
+			}
+
+			popup.setLocation(x, y);
+			popupJustOpened = true;
+			popup.setVisible(true);
+
 		};
 	}
 
@@ -251,23 +248,20 @@ public class TextAssist extends Composite {
 	 * @return a listener for the FocusOut event
 	 */
 	private Listener createFocusOutListener() {
-		return new Listener() {
-			@Override
-			public void handleEvent(final Event event) {
-				/*
-				 * Async is needed to wait until focus reaches its new Control
-				 */
-				TextAssist.this.getDisplay().asyncExec(() -> {
-					if (TextAssist.this.isDisposed() || TextAssist.this.getDisplay().isDisposed()) {
-						return;
-					}
-					final Control control = TextAssist.this.getDisplay().getFocusControl();
-					if (control == null || control != text && control != table) {
-						popup.setVisible(false);
-					}
-				});
+		return event -> TextAssist.this.getDisplay().asyncExec(() -> {
+			if (TextAssist.this.isDisposed() || TextAssist.this.getDisplay().isDisposed()) {
+				return;
+			} 
+			if (popupJustOpened && SWTGraphicUtil.isLinux()) {
+				popupJustOpened = false;
+				text.forceFocus();
+				return;
 			}
-		};
+			final Control control = TextAssist.this.getDisplay().getFocusControl();
+			if (control == null || control != text && control != table) {
+				popup.setVisible(false);
+			}
+		});
 	}
 
 	/**
@@ -589,7 +583,7 @@ public class TextAssist extends Composite {
 		checkWidget();
 		return text.getTopPixel();
 	}
-	
+
 	/**
 	 * Returns the single click enabled flag.
 	 * <p>
@@ -599,15 +593,17 @@ public class TextAssist extends Composite {
 	 *
 	 * @return whether or not single is enabled
 	 *
-	 * @exception SWTException <ul>
-	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 * </ul>
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                </ul>
 	 */
 	public boolean getUseSingleClick() {
 		checkWidget();
 		return useSingleClick;
 	}
+
 	/**
 	 * @see org.eclipse.swt.widgets.Text#insert(java.lang.String)
 	 */
@@ -616,8 +612,6 @@ public class TextAssist extends Composite {
 		text.insert(string);
 	}
 
-
-	
 	/**
 	 * @see org.eclipse.swt.widgets.Text#paste()
 	 */
@@ -803,16 +797,17 @@ public class TextAssist extends Composite {
 	 *
 	 * @param singleClick the new single click flag
 	 *
-	 * @exception SWTException <ul>
-	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 * </ul>
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                </ul>
 	 */
 	public void setUseSingleClick(boolean singleClick) {
 		checkWidget();
 		this.useSingleClick = singleClick;
 	}
-	
+
 	/**
 	 * @see org.eclipse.swt.widgets.Text#setTopIndex(int)
 	 */
@@ -829,8 +824,4 @@ public class TextAssist extends Composite {
 		text.showSelection();
 	}
 
-
-
-
-	
 }

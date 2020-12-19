@@ -43,6 +43,8 @@ import org.eclipse.swt.widgets.Widget;
  */
 public class SWTGraphicUtil {
 
+	private static final String OS = System.getProperty("os.name").toLowerCase();
+	
 	/**
 	 * Constructor
 	 */
@@ -521,8 +523,14 @@ public class SWTGraphicUtil {
 	 * @return <code>true</code> if the operating system is MacOS, false otherwise
 	 */
 	public static boolean isMacOS() {
-		final String OS = System.getProperty("os.name").toLowerCase();
 		return OS.indexOf("mac") >= 0;
+	}
+	
+	/**
+	 * @return <code>true</code> if the operating system is Linux, false otherwise
+	 */
+	public static boolean isLinux() {
+		return OS.indexOf("nux") >= 0;
 	}
 
 	/**
