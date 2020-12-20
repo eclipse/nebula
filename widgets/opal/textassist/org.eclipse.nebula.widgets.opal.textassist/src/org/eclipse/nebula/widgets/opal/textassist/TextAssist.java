@@ -46,13 +46,14 @@ import org.eclipse.swt.widgets.Widget;
 public class TextAssist extends Composite {
 
 	private static final String SETTEXT_KEY = "org.eclipse.nebula.widgets.opal.textassist.TextAssist.settext";
+	private static final boolean IS_LINUX = SWTGraphicUtil.isLinux();
+
 	private final Text text;
 	private final Shell popup;
 	private final Table table;
 	private TextAssistContentProvider contentProvider;
 	private int numberOfLines;
 	private boolean useSingleClick = false;
-	private boolean popupJustOpened;
 
 	/**
 	 * Constructs a new instance of this class given its parent and a style
@@ -238,8 +239,14 @@ public class TextAssist extends Composite {
 			}
 
 			popup.setLocation(x, y);
-			popupJustOpened = true;
 			popup.setVisible(true);
+			if (IS_LINUX) {
+				getDisplay().timerExec(0, () -> {
+					table.forceFocus();
+					getDisplay().timerExec(0, () -> text.forceFocus());
+				});
+
+			}
 
 		};
 	}
@@ -252,12 +259,10 @@ public class TextAssist extends Composite {
 			if (TextAssist.this.isDisposed() || TextAssist.this.getDisplay().isDisposed()) {
 				return;
 			} 
-			if (popupJustOpened && SWTGraphicUtil.isLinux()) {
-				popupJustOpened = false;
-				text.forceFocus();
+			final Control control = TextAssist.this.getDisplay().getFocusControl();
+			if (control == null && SWTGraphicUtil.isLinux()) {
 				return;
 			}
-			final Control control = TextAssist.this.getDisplay().getFocusControl();
 			if (control == null || control != text && control != table) {
 				popup.setVisible(false);
 			}
