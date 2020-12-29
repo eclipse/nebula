@@ -299,6 +299,15 @@ public class GeoMapHelper implements GeoMapPositioned, GeoMapHelperListener {
 
 	/**
 	 * @see
+	 * org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#getMinZoom()
+	 */
+	@Override
+	public int getMinZoom() {
+		return getTileServer().getMinZoom();
+	}
+	
+	/**
+	 * @see
 	 * org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#getMaxZoom()
 	 */
 	@Override
