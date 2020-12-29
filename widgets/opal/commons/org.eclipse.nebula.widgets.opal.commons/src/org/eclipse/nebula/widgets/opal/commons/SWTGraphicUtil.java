@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -289,14 +290,24 @@ public class SWTGraphicUtil {
 
 	/**
 	 * @param shell
-	 * @return the bounds of the monitor on which the shell is running
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_NULL_ARGUMENT - if the provided shell is null</li>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the shell is disposed</li>
+	 *                </ul>
+	 *  @return the bounds of the monitor on which the shell is running
 	 */
 	public static Rectangle getBoundsOfMonitorOnWhichShellIsDisplayed(final Shell shell) {
-		Monitor monitor = shell.getDisplay().getPrimaryMonitor();
-		if(shell != null && shell.getMonitor() != null) {
-			monitor = shell.getMonitor();
-		} 
-		
+		if (shell == null) {
+			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
+		if (shell.isDisposed()) {
+			SWT.error(SWT.ERROR_WIDGET_DISPOSED);
+		}
+		Monitor monitor = shell.getMonitor();
+		if (monitor == null) {
+			monitor = shell.getDisplay().getPrimaryMonitor();
+		}
 		return monitor.getBounds();
 	}
 
