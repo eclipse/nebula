@@ -145,6 +145,9 @@ public class Dialog {
 
 		if (centerPolicy == CenterOption.CENTER_ON_SCREEN || shell.getParent() == null) {
 			Shell activeShell = shell.getDisplay().getActiveShell();
+			if (activeShell == null) {
+				activeShell = shell;
+			}
 			final Rectangle monitorBounds = SWTGraphicUtil.getBoundsOfMonitorOnWhichShellIsDisplayed(activeShell);
 			centerX = monitorBounds.x + (monitorBounds.width - preferredSize.x) / 2;
 			centerY = monitorBounds.y + (monitorBounds.height - preferredSize.y) / 2;
