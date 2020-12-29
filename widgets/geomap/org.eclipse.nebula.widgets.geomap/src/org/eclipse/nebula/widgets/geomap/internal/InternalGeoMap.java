@@ -31,8 +31,7 @@ import org.eclipse.swt.widgets.Composite;
  * @author stepan.rutz, hal
  * @version $Revision$
  */
-public class InternalGeoMap extends Canvas
-		implements GeoMapPositioned, GeoMapHelperListener {
+public class InternalGeoMap extends Canvas implements GeoMapPositioned, GeoMapHelperListener {
 
 	void redraw(TileRef tile) {
 		redraw();
@@ -59,11 +58,9 @@ public class InternalGeoMap extends Canvas
 	 *            initial cache size, eg number of tile-images that are kept in
 	 *            cache to prevent reloading from the network.
 	 */
-	protected InternalGeoMap(Composite parent, int style, Point mapPosition,
-			int zoom, int cacheSize) {
+	protected InternalGeoMap(Composite parent, int style, Point mapPosition, int zoom, int cacheSize) {
 		super(parent, SWT.DOUBLE_BUFFERED | style);
-		geoMapHelper = new GeoMapHelper(parent.getDisplay(), mapPosition, zoom,
-				cacheSize);
+		geoMapHelper = new GeoMapHelper(parent.getDisplay(), mapPosition, zoom, cacheSize);
 		geoMapHelper.addGeoMapHelperListener(this);
 
 		addDisposeListener(e -> InternalGeoMap.this.geoMapHelper.dispose());
@@ -78,8 +75,7 @@ public class InternalGeoMap extends Canvas
 	}
 
 	private void paintControl(PaintEvent e) {
-		geoMapHelper.paint(e.gc, new Rectangle(e.x, e.y, e.width, e.height),
-				getSize());
+		geoMapHelper.paint(e.gc, new Rectangle(e.x, e.y, e.width, e.height), getSize());
 	}
 
 	/**
@@ -102,22 +98,16 @@ public class InternalGeoMap extends Canvas
 
 	// GeoMapPositioned methods
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#
-	 * getMapPosition()
+	/**
+	 * @see org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#getMapPosition()
 	 */
 	@Override
 	public Point getMapPosition() {
 		return geoMapHelper.getMapPosition();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#
-	 * setMapPosition(int, int)
+	/**
+	 * @see org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#setMapPosition(int, int)
 	 */
 	@Override
 	public void setMapPosition(int x, int y) {
@@ -125,33 +115,32 @@ public class InternalGeoMap extends Canvas
 		redraw();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#getZoom()
+	/**
+	 * @see org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#getZoom()
 	 */
 	@Override
 	public int getZoom() {
 		return geoMapHelper.getZoom();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#getMaxZoom()
+	/**
+	 * @see org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#getMinZoom()
+	 */
+	@Override
+	public int getMinZoom() {
+		return geoMapHelper.getMinZoom();
+	}
+
+	/**
+	 * @see org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#getMaxZoom()
 	 */
 	@Override
 	public int getMaxZoom() {
 		return geoMapHelper.getMaxZoom();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#setZoom(int)
+	/**
+	 * @see org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#setZoom(int)
 	 */
 	@Override
 	public void setZoom(int zoom) {
