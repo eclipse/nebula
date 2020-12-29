@@ -48,6 +48,7 @@ public class PasswordRevealerSnippet {
 		gd.widthHint = 250;
 		revealer.setLayoutData(gd);
 		revealer.setBackground(shell.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
+		revealer.setForeground(shell.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 
 		new Label(shell, SWT.NONE);
 
@@ -64,6 +65,20 @@ public class PasswordRevealerSnippet {
 		revealer2.setImage(image);
 		revealer2.setClickImage(clickImage);
 
+		new Label(shell, SWT.NONE);
+		
+		final Label lbl3 = new Label(shell, SWT.NONE);
+		lbl3.setText("Password Revealer with push style:");
+		final GridData gdLabel3 = new GridData(GridData.BEGINNING, GridData.CENTER, true, false);
+		gdLabel3.widthHint = 200;
+		lbl3.setLayoutData(gdLabel3);
+
+		final PasswordRevealer revealer3 = new PasswordRevealer(shell, SWT.PUSH);
+		final GridData gd3 = new GridData(GridData.FILL, GridData.CENTER, true, false);
+		gd3.widthHint = 250;
+		revealer3.setLayoutData(gd3);
+
+		
 		shell.pack();
 		shell.open();
 
