@@ -49,12 +49,14 @@ import org.eclipse.swt.widgets.Widget;
 /**
  * Instances of this class are selectable user interface
  * objects that allow the user to enter and modify passwords.
- * A "eye" button is drawned on the right side of the widget. When one clicks on the button,
- * the password is revealed, and when the user stops clicking the password is displayed with dots.
+ * A "eye" button is drawned on the right side of the widget.
+ * If SWT.PUSH is set, when one clicks on the button the password is revealed and the button is switched on.
+ * When one clicks again, the password is displayed as a password (characters are replaced by dots) and the button is switched off.
+ * if SWT.PUSH is not set, when one clicks on the button the password is revealed, and when the user stops clicking the password is displayed with dots.
  * <p>
  * <dl>
  * <dt><b>Styles:</b></dt>
- * <dd>CENTER, ICON_CANCEL, ICON_SEARCH, LEFT, MULTI, PASSWORD, SEARCH, SINGLE, RIGHT, READ_ONLY, WRAP</dd>
+ * <dd>CENTER, ICON_CANCEL, ICON_SEARCH, LEFT, MULTI, PASSWORD, SEARCH, SINGLE, RIGHT, READ_ONLY, WRAP, PUSH</dd>
  * <dt><b>Events:</b></dt>
  * <dd>DefaultSelection, Modify, Verify, OrientationChange</dd>
  * </dl>
@@ -84,6 +86,7 @@ public class PasswordRevealer extends Composite {
 	protected Text passwordField;
 	private final EyeButton eyeButton;
 	private final char defaultEchoChar;
+	private boolean isPushMode;
 
 	/**
 	 * Constructs a new instance of this class given its parent and a style value
@@ -117,17 +120,18 @@ public class PasswordRevealer extends Composite {
 	 */
 	public PasswordRevealer(final Composite parent, final int style) {
 		super(parent, SWT.BORDER);
+		isPushMode = (style & SWT.PUSH) == SWT.PUSH;
 		final GridLayout gl = new GridLayout(2, false);
 		gl.horizontalSpacing = gl.verticalSpacing = gl.marginHeight = gl.marginWidth = 0;
 		gl.marginBottom = gl.marginLeft = gl.marginRight = gl.marginTop = 0;
 		setLayout(gl);
 
 		super.setBackground(parent.getBackground());
-		passwordField = new Text(this, style | SWT.PASSWORD | removeFields(style, SWT.BORDER) );
+		passwordField = new Text(this, removeFields(style, SWT.BORDER, SWT.PUSH) | SWT.PASSWORD);
 		passwordField.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
 		defaultEchoChar = passwordField.getEchoChar();
 
-		eyeButton = new EyeButton(this, SWT.NONE);
+		eyeButton = new EyeButton(this, isPushMode ? SWT.PUSH : SWT.NONE);
 		eyeButton.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, false));
 	}
 
@@ -1068,11 +1072,28 @@ public class PasswordRevealer extends Composite {
 	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
 	 *                </ul>
 	 *
-	 * @since 2.1.2
 	 */
 	@Override
 	public void setOrientation(final int orientation) {
 		passwordField.setOrientation(orientation);
+	}
+
+	/**
+	 * Sets the eye's button behaviour.
+	 *
+	 * @param pushMode new push mode
+	 *
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                </ul>
+	 *
+	 */
+	public void setPushMode(boolean pushMode) {
+		checkWidget();
+		this.isPushMode = pushMode;
+		eyeButton.setPushMode(pushMode);
 	}
 
 	/**
@@ -1700,6 +1721,22 @@ public class PasswordRevealer extends Composite {
 	@Override
 	public boolean isFocusControl() {
 		return passwordField.isFocusControl();
+	}
+
+	/**
+	 * Returns <code>true</code> if the eye button is a "push" button, and <code>false</code> otherwise.
+	 *
+	 * @return the eye button push mode
+	 *
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                </ul>
+	 */
+	public boolean isPushMode() {
+		checkWidget();
+		return isPushMode;
 	}
 
 	/**
