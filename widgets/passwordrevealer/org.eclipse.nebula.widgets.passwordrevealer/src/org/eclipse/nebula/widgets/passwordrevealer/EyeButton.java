@@ -29,13 +29,17 @@ class EyeButton extends Canvas {
 	private boolean pressed;
 	private final Color color;
 	private Image image, clickImage;
+	private boolean isPushMode;
+	private boolean pushState;
 
 	EyeButton(final Composite parent, final int style) {
 		super(parent, SWT.DOUBLE_BUFFERED);
+		isPushMode = (style & SWT.PUSH) == SWT.PUSH;
 		addListeners();
 		color = new Color(parent.getDisplay(), 0, 127, 222);
 		SWTGraphicUtil.addDisposer(this, color);
 		setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		pushState = false;
 	}
 
 	private void addListeners() {
@@ -55,12 +59,26 @@ class EyeButton extends Canvas {
 		});
 
 		addListener(SWT.MouseDown, event -> {
+			if (isPushMode) {
+				return;
+			}
+			
 			pressed = true;
 			((PasswordRevealer) getParent()).revealPassword();
 			redraw();
 		});
 
 		addListener(SWT.MouseUp, event -> {
+			if (isPushMode) {
+				pushState = !pushState;
+				if (pushState) {
+					((PasswordRevealer) getParent()).revealPassword();
+				} else {
+					((PasswordRevealer) getParent()).hidePassword();
+				}
+				return;
+			}
+			
 			pressed = false;
 			((PasswordRevealer) getParent()).hidePassword();
 			redraw();
@@ -158,6 +176,10 @@ class EyeButton extends Canvas {
 
 	Image getClickImage() {
 		return clickImage;
+	}
+
+	void setPushMode(boolean pushMode) {
+		isPushMode = pushMode;
 	}
 
 }
