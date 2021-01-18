@@ -197,6 +197,7 @@ public class ProgressCircle extends Canvas {
 			final int x = MARGIN + (circleSize - textSize.x) / 2;
 			final int y = (circleSize - textSize.y) / 2;
 			gc.drawText(text, x, y, true);
+			path.dispose();
 		}
 	}
 
