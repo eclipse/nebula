@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Laurent CARON
+ * Copyright (c) 2011-2021 Laurent CARON
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,9 +12,6 @@
  * Laurent CARON (laurent.caron at gmail dot com) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.switchbutton;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.nebula.widgets.opal.commons.SWTGraphicUtil;
 import org.eclipse.swt.SWT;
@@ -31,6 +28,8 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.TypedListener;
 
 /**
  * Instances of this class are simple switch button.
@@ -122,11 +121,6 @@ public class SwitchButton extends Canvas {
 	private GC gc;
 
 	/**
-	 * List of selection listeners
-	 */
-	private final List<SelectionListener> listOfSelectionListeners;
-
-	/**
 	 * True when the mouse entered the widget
 	 */
 	private boolean mouseInside;
@@ -161,14 +155,14 @@ public class SwitchButton extends Canvas {
 	public SwitchButton(final Composite parent, final int style) {
 		super(parent, style | SWT.DOUBLE_BUFFERED);
 
-		selection = false;
+		selection = true;
 		text = "";
 		textForSelect = "On";
 		textForUnselect = "Off";
 		round = true;
 		borderColor = null;
 		focusColor = getDisplay().getSystemColor(SWT.COLOR_YELLOW);
-		selectedForegroundColor = getDisplay().getSystemColor(SWT.COLOR_WHITE);
+		selectedForegroundColor = SWTGraphicUtil.getDefaultColor(this, 255, 255, 204);
 		selectedBackgroundColor = SWTGraphicUtil.getDefaultColor(this, 0, 112, 195);
 		unselectedForegroundColor = getDisplay().getSystemColor(SWT.COLOR_BLACK);
 		unselectedBackgroundColor = SWTGraphicUtil.getDefaultColor(this, 203, 203, 203);
@@ -176,23 +170,18 @@ public class SwitchButton extends Canvas {
 		buttonBackgroundColor1 = SWTGraphicUtil.getDefaultColor(this, 254, 254, 254);
 		buttonBackgroundColor2 = SWTGraphicUtil.getDefaultColor(this, 192, 192, 192);
 
-		listOfSelectionListeners = new ArrayList<SelectionListener>();
-
 		addPaintListener(event -> {
 			SwitchButton.this.onPaint(event);
 		});
 
 		addListener(SWT.MouseUp, e -> {
+			selection = !selection;
 			if (fireSelectionListeners(e)) {
-				selection = !selection;
 				SwitchButton.this.redraw();
-
-				// notify listeners that were registered via
-				// Widget#addListener
-				SwitchButton.this.notifyListeners(SWT.Selection, new Event());
-
+			} else {
+				// SelectionChanged event canceled
+				selection = !selection;
 			}
-
 		});
 
 		mouseInside = false;
@@ -311,25 +300,25 @@ public class SwitchButton extends Canvas {
 		gc.setForeground(buttonBackgroundColor1);
 		gc.setBackground(buttonBackgroundColor2);
 		if (selection) {
-			gc.fillGradientRectangle(arc, arc, buttonSize.x / 2, buttonSize.y, true);
-		} else {
 			gc.fillGradientRectangle(buttonSize.x / 2, arc, buttonSize.x / 2 + 2, buttonSize.y - 1, true);
+		} else {
+			gc.fillGradientRectangle(arc, arc, buttonSize.x / 2, buttonSize.y, true);
 		}
 
 		gc.setForeground(buttonBorderColor);
 		if (selection) {
-			gc.drawRoundRectangle(2, 2, buttonSize.x / 2, buttonSize.y, arc, arc);
-		} else {
 			gc.drawRoundRectangle(buttonSize.x / 2, 2, buttonSize.x / 2 + 2, buttonSize.y, arc, arc);
+		} else {
+			gc.drawRoundRectangle(2, 2, buttonSize.x / 2, buttonSize.y, arc, arc);
 		}
 
 		if (focusColor != null && mouseInside) {
 			gc.setForeground(focusColor);
 			gc.setLineWidth(2);
 			if (selection) {
-				gc.drawRoundRectangle(3, 3, buttonSize.x / 2, buttonSize.y - 1, 3, 3);
-			} else {
 				gc.drawRoundRectangle(buttonSize.x / 2 + 1, 3, buttonSize.x / 2, buttonSize.y - 2, 3, 3);
+			} else {
+				gc.drawRoundRectangle(3, 3, buttonSize.x / 2, buttonSize.y - 1, 3, 3);
 			}
 			gc.setLineWidth(1);
 		}
@@ -393,7 +382,7 @@ public class SwitchButton extends Canvas {
 	 * @return true if the selection could be changed, false otherwise
 	 */
 	private boolean fireSelectionListeners(final Event e) {
-		for (final SelectionListener listener : listOfSelectionListeners) {
+		for (final Listener listener : getListeners(SWT.Selection)) {
 			final Event event = new Event();
 
 			event.button = e.button;
@@ -404,10 +393,10 @@ public class SwitchButton extends Canvas {
 			event.time = e.time;
 			event.x = e.x;
 			event.y = e.y;
+			event.type = SWT.Selection;
 
-			final SelectionEvent selEvent = new SelectionEvent(event);
-			listener.widgetSelected(selEvent);
-			if (!selEvent.doit) {
+			listener.handleEvent(event);
+			if (!event.doit) {
 				return false;
 			}
 		}
@@ -446,7 +435,8 @@ public class SwitchButton extends Canvas {
 		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
-		listOfSelectionListeners.add(listener);
+		TypedListener typedListener = new TypedListener(listener);
+		addListener(SWT.Selection, typedListener);
 	}
 
 	/**
@@ -475,7 +465,16 @@ public class SwitchButton extends Canvas {
 		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
-		listOfSelectionListeners.remove(listener);
+		Listener[] listeners = getListeners(SWT.Selection);
+		for (Listener l : listeners) {
+			if (l instanceof TypedListener) {
+				TypedListener typedListener = (TypedListener) l;
+				if (typedListener.getEventListener() == listener) {
+					removeListener(SWT.Selection, ((TypedListener) l).getEventListener());
+					return;
+				}
+			}
+		}
 	}
 
 	/**
@@ -537,6 +536,7 @@ public class SwitchButton extends Canvas {
 	public void setSelection(final boolean selection) {
 		checkWidget();
 		this.selection = selection;
+		redraw();
 	}
 
 	/**
@@ -567,6 +567,7 @@ public class SwitchButton extends Canvas {
 	public void setTextForSelect(final String textForSelect) {
 		checkWidget();
 		this.textForSelect = textForSelect;
+		redraw();
 	}
 
 	/**
@@ -597,6 +598,7 @@ public class SwitchButton extends Canvas {
 	public void setTextForUnselect(final String textForUnselect) {
 		checkWidget();
 		this.textForUnselect = textForUnselect;
+		redraw();
 	}
 
 	/**
@@ -627,6 +629,7 @@ public class SwitchButton extends Canvas {
 	public void setText(final String text) {
 		checkWidget();
 		this.text = text;
+		redraw();
 	}
 
 	/**
@@ -658,6 +661,7 @@ public class SwitchButton extends Canvas {
 	public void setRound(final boolean round) {
 		checkWidget();
 		this.round = round;
+		redraw();
 	}
 
 	/**
@@ -688,6 +692,7 @@ public class SwitchButton extends Canvas {
 	public void setBorderColor(final Color borderColor) {
 		checkWidget();
 		this.borderColor = borderColor;
+		redraw();
 	}
 
 	/**
@@ -719,6 +724,7 @@ public class SwitchButton extends Canvas {
 	public void setFocusColor(final Color focusColor) {
 		checkWidget();
 		this.focusColor = focusColor;
+		redraw();
 	}
 
 	/**
@@ -751,6 +757,7 @@ public class SwitchButton extends Canvas {
 	public void setSelectedForegroundColor(final Color selectedForegroundColor) {
 		checkWidget();
 		this.selectedForegroundColor = selectedForegroundColor;
+		redraw();
 	}
 
 	/**
@@ -776,6 +783,7 @@ public class SwitchButton extends Canvas {
 	public void setSelectedBackgroundColor(final Color selectedBackgroundColor) {
 		checkWidget();
 		this.selectedBackgroundColor = selectedBackgroundColor;
+		redraw();
 	}
 
 	/**
@@ -808,6 +816,7 @@ public class SwitchButton extends Canvas {
 	public void setUnselectedForegroundColor(final Color unselectedForegroundColor) {
 		checkWidget();
 		this.unselectedForegroundColor = unselectedForegroundColor;
+		redraw();
 	}
 
 	/**
@@ -840,6 +849,7 @@ public class SwitchButton extends Canvas {
 	public void setUnselectedBackgroundColor(final Color unselectedBackgroundColor) {
 		checkWidget();
 		this.unselectedBackgroundColor = unselectedBackgroundColor;
+		redraw();
 	}
 
 	/**
@@ -870,6 +880,7 @@ public class SwitchButton extends Canvas {
 	public void setButtonBorderColor(final Color buttonBorderColor) {
 		checkWidget();
 		this.buttonBorderColor = buttonBorderColor;
+		redraw();
 	}
 
 	/**
@@ -900,6 +911,7 @@ public class SwitchButton extends Canvas {
 	public void setButtonBackgroundColor1(final Color buttonBackgroundColor1) {
 		checkWidget();
 		this.buttonBackgroundColor1 = buttonBackgroundColor1;
+		redraw();
 	}
 
 	/**
@@ -930,6 +942,7 @@ public class SwitchButton extends Canvas {
 	public void setButtonBackgroundColor2(final Color buttonBackgroundColor2) {
 		checkWidget();
 		this.buttonBackgroundColor2 = buttonBackgroundColor2;
+		redraw();
 	}
 
 	/**
@@ -960,6 +973,7 @@ public class SwitchButton extends Canvas {
 	public void setGap(final int gap) {
 		checkWidget();
 		this.gap = gap;
+		redraw();
 	}
 
 	/**
@@ -994,6 +1008,7 @@ public class SwitchButton extends Canvas {
 		checkWidget();
 		this.insideMarginX = insideMarginX;
 		this.insideMarginY = insideMarginY;
+		redraw();
 	}
 
 	/**
@@ -1011,6 +1026,7 @@ public class SwitchButton extends Canvas {
 		checkWidget();
 		insideMarginX = insideMargin.x;
 		insideMarginY = insideMargin.y;
+		redraw();
 	}
 
 	/**
@@ -1041,6 +1057,7 @@ public class SwitchButton extends Canvas {
 	public void setArc(final int arc) {
 		checkWidget();
 		this.arc = arc;
+		redraw();
 	}
 
 }
