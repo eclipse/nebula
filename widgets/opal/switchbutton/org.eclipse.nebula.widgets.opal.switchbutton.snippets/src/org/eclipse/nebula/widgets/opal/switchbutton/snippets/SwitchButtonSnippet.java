@@ -41,7 +41,8 @@ public class SwitchButtonSnippet {
 		// Default
 		final SwitchButton button1 = new SwitchButton(shell, SWT.NONE);
 		button1.setText("Default switchButton");
-
+		button1.setSelection(false);
+		
 		// With a border
 		final SwitchButton button2 = new SwitchButton(shell, SWT.NONE);
 		button2.setBorderColor(display.getSystemColor(SWT.COLOR_DARK_RED));
@@ -90,7 +91,7 @@ public class SwitchButtonSnippet {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				System.out.println("Before clicking, the selection was... " + button8.getSelection());
+				System.out.println("The new selection is... " + button8.getSelection());
 			}
 
 			@Override
