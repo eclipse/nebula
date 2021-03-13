@@ -12,9 +12,7 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.roundedswitch;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.eclipse.nebula.widgets.opal.commons.SelectionListenerUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.SelectionEvent;
@@ -26,7 +24,6 @@ import org.eclipse.swt.internal.DPIUtil;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 
 /**
  * Instances of this class provide a checkbox button displayed as a switch.<br/>
@@ -52,7 +49,6 @@ public class RoundedSwitch extends Canvas {
 
 	private static final int DEFAULT_WIDTH = 45;
 	private static final int DEFAULT_HEIGHT = 20;
-	private final List<SelectionListener> selectionListeners;
 	private boolean selected;
 	private GC gc;
 
@@ -92,7 +88,6 @@ public class RoundedSwitch extends Canvas {
 		checkedDisabledConfiguration = RoundedSwitchConfiguration.createCheckedDisabledConfiguration(this);
 		uncheckedDisabledConfiguration = RoundedSwitchConfiguration.createUncheckedDisabledConfiguration(this);
 
-		selectionListeners = new ArrayList<>();
 		addListener(SWT.Paint, e -> {
 			gc = e.gc;
 			drawWidget();
@@ -213,38 +208,11 @@ public class RoundedSwitch extends Canvas {
 		if (!isEnabled()) {
 			return;
 		}
-		if (fireSelectionListeners(e)) {
+		if (SelectionListenerUtil.fireSelectionListeners(this,e)) {
 			setSelection(!selected);
 		}
 	}
 
-	/**
-	 * Fire the selection listeners
-	 *
-	 * @param e click event
-	 * @return true if the selection could be changed, false otherwise
-	 */
-	private boolean fireSelectionListeners(final Event e) {
-		for (final SelectionListener listener : selectionListeners) {
-			final Event event = new Event();
-
-			event.button = e.button;
-			event.display = getDisplay();
-			event.item = null;
-			event.widget = this;
-			event.data = null;
-			event.time = e.time;
-			event.x = e.x;
-			event.y = e.y;
-
-			final SelectionEvent selEvent = new SelectionEvent(event);
-			listener.widgetSelected(selEvent);
-			if (!selEvent.doit) {
-				return false;
-			}
-		}
-		return true;
-	}
 	
 	private void onKeyPress(Event e) {
 		if (!isEnabled()) {
@@ -255,36 +223,7 @@ public class RoundedSwitch extends Canvas {
 		}
 	}
 
-	/**
-	 * @see org.eclipse.swt.widgets.Widget#addListener(int, org.eclipse.swt.widgets.Listener)
-	 */
-	@Override
-	public void addListener(int eventType, Listener listener) {
-		if (eventType == SWT.Selection) {
-			selectionListeners.add(new SelectionListener() {
 
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					widgetSelection(e);
-				}
-
-				@Override
-				public void widgetDefaultSelected(SelectionEvent e) {
-					widgetSelection(e);
-				}
-
-				private void widgetSelection(SelectionEvent e) {
-					final Event event = new Event();
-					event.widget = RoundedSwitch.this;
-					event.display = getDisplay();
-					event.type = SWT.Selection;
-					listener.handleEvent(event);
-				}
-			});
-			return;
-		}
-		super.addListener(eventType, listener);
-	}
 
 	/**
 	 * Adds the listener to the collection of listeners who will be notified when
@@ -315,10 +254,7 @@ public class RoundedSwitch extends Canvas {
 	 */
 	public void addSelectionListener(final SelectionListener listener) {
 		checkWidget();
-		if (listener == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		selectionListeners.add(listener);
+		SelectionListenerUtil.addSelectionListener(this, listener);
 	}
 
 	/**
@@ -386,10 +322,7 @@ public class RoundedSwitch extends Canvas {
 	 */
 	public void removeSelectionListener(final SelectionListener listener) {
 		checkWidget();
-		if (listener == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		selectionListeners.remove(listener);
+		SelectionListenerUtil.removeSelectionListener(this, listener);
 	}
 
 	/**

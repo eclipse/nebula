@@ -19,9 +19,6 @@ import java.util.List;
 import org.eclipse.nebula.widgets.opal.commons.SWTGraphicUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Color;
@@ -33,6 +30,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 
 /**
  * This composite contains all buttons
@@ -46,7 +44,7 @@ class CalculatorButtonsComposite extends Composite {
 	private final Color darkBlueColor;
 	private final CalculatorEngine engine;
 	private Label displayArea;
-	private KeyListener keyListener;
+	private Listener keyListener;
 	private final List<ModifyListener> modifyListeners;
 	private final CalculatorButtonsBehaviourEngine behaviourEngine;
 	private boolean readyToEnterNewNumber;
@@ -187,96 +185,90 @@ class CalculatorButtonsComposite extends Composite {
 	 * Add key listeners
 	 */
 	private void addKeyListeners() {
-		keyListener = new KeyAdapter() {
+		keyListener = e -> {
 
-			/**
-			 * @see org.eclipse.swt.events.KeyAdapter#keyPressed(org.eclipse.swt.events.KeyEvent)
-			 */
-			@Override
-			public void keyPressed(final KeyEvent e) {
-				switch (e.character) {
-					case '0':
-					case '1':
-					case '2':
-					case '3':
-					case '4':
-					case '5':
-					case '6':
-					case '7':
-					case '8':
-					case '9':
-						behaviourEngine.addDigitToDisplay(Integer.parseInt(String.valueOf(e.character)));
-						return;
-					case '.':
-						behaviourEngine.addDecimalPoint();
-						return;
-					case '+':
-						engine.processOperation(CalculatorEngine.OPERATOR_PLUS);
-						return;
-					case '-':
-						engine.processOperation(CalculatorEngine.OPERATOR_MINUS);
-						return;
-					case '*':
-						engine.processOperation(CalculatorEngine.OPERATOR_MULTIPLY);
-						return;
-					case '/':
-						engine.processOperation(CalculatorEngine.OPERATOR_DIVIDE);
-						return;
-					case '=':
-						engine.processEquals();
-						return;
-					case '%':
-						engine.processPerCentageOperation();
-						return;
+			switch (e.character) {
+				case '0':
+				case '1':
+				case '2':
+				case '3':
+				case '4':
+				case '5':
+				case '6':
+				case '7':
+				case '8':
+				case '9':
+					behaviourEngine.addDigitToDisplay(Integer.parseInt(String.valueOf(e.character)));
+					return;
+				case '.':
+					behaviourEngine.addDecimalPoint();
+					return;
+				case '+':
+					engine.processOperation(CalculatorEngine.OPERATOR_PLUS);
+					return;
+				case '-':
+					engine.processOperation(CalculatorEngine.OPERATOR_MINUS);
+					return;
+				case '*':
+					engine.processOperation(CalculatorEngine.OPERATOR_MULTIPLY);
+					return;
+				case '/':
+					engine.processOperation(CalculatorEngine.OPERATOR_DIVIDE);
+					return;
+				case '=':
+					engine.processEquals();
+					return;
+				case '%':
+					engine.processPerCentageOperation();
+					return;
 
-				}
+			}
 
-				switch (e.keyCode) {
-					case SWT.KEYPAD_0:
-					case SWT.KEYPAD_1:
-					case SWT.KEYPAD_2:
-					case SWT.KEYPAD_3:
-					case SWT.KEYPAD_4:
-					case SWT.KEYPAD_5:
-					case SWT.KEYPAD_6:
-					case SWT.KEYPAD_7:
-					case SWT.KEYPAD_8:
-					case SWT.KEYPAD_9:
-						final int digit = e.keyCode - SWT.KEYCODE_BIT - 47;
-						behaviourEngine.addDigitToDisplay(digit);
-						return;
-					case SWT.KEYPAD_ADD:
-						engine.processOperation(CalculatorEngine.OPERATOR_PLUS);
-						return;
-					case SWT.KEYPAD_SUBTRACT:
-						engine.processOperation(CalculatorEngine.OPERATOR_MINUS);
-						return;
-					case SWT.KEYPAD_DIVIDE:
-						engine.processOperation(CalculatorEngine.OPERATOR_DIVIDE);
-						return;
-					case SWT.KEYPAD_MULTIPLY:
-						engine.processOperation(CalculatorEngine.OPERATOR_MULTIPLY);
-						return;
-					case SWT.KEYPAD_CR:
-					case SWT.KEYPAD_EQUAL:
-					case SWT.CR:
-						engine.processEquals();
-						return;
-					case SWT.BS:
-						behaviourEngine.processBackSpace();
-						return;
-					case SWT.ESC:
-						behaviourEngine.clearResult();
-						engine.cancel();
-						return;
-				}
+			switch (e.keyCode) {
+				case SWT.KEYPAD_0:
+				case SWT.KEYPAD_1:
+				case SWT.KEYPAD_2:
+				case SWT.KEYPAD_3:
+				case SWT.KEYPAD_4:
+				case SWT.KEYPAD_5:
+				case SWT.KEYPAD_6:
+				case SWT.KEYPAD_7:
+				case SWT.KEYPAD_8:
+				case SWT.KEYPAD_9:
+					final int digit = e.keyCode - SWT.KEYCODE_BIT - 47;
+					behaviourEngine.addDigitToDisplay(digit);
+					return;
+				case SWT.KEYPAD_ADD:
+					engine.processOperation(CalculatorEngine.OPERATOR_PLUS);
+					return;
+				case SWT.KEYPAD_SUBTRACT:
+					engine.processOperation(CalculatorEngine.OPERATOR_MINUS);
+					return;
+				case SWT.KEYPAD_DIVIDE:
+					engine.processOperation(CalculatorEngine.OPERATOR_DIVIDE);
+					return;
+				case SWT.KEYPAD_MULTIPLY:
+					engine.processOperation(CalculatorEngine.OPERATOR_MULTIPLY);
+					return;
+				case SWT.KEYPAD_CR:
+				case SWT.KEYPAD_EQUAL:
+				case SWT.CR:
+					engine.processEquals();
+					return;
+				case SWT.BS:
+					behaviourEngine.processBackSpace();
+					return;
+				case SWT.ESC:
+					behaviourEngine.clearResult();
+					engine.cancel();
+					return;
 			}
 		};
 
 		for (final Control control : getChildren()) {
-			control.addKeyListener(keyListener);
+			control.addListener(SWT.KeyDown, keyListener);
 		}
-		addKeyListener(keyListener);
+		addListener(SWT.KeyDown, keyListener);
 
 	}
 
@@ -325,7 +317,7 @@ class CalculatorButtonsComposite extends Composite {
 	/**
 	 * @return the keyListener
 	 */
-	KeyListener getKeyListener() {
+	Listener getKeyListener() {
 		return keyListener;
 	}
 

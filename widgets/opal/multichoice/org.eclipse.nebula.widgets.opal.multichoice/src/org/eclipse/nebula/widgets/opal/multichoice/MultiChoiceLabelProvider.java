@@ -16,6 +16,7 @@ package org.eclipse.nebula.widgets.opal.multichoice;
 /**
  * Classes which implement this interface provide methods that determine what to show in a MultiChoice control.
  */
+@FunctionalInterface
 public interface MultiChoiceLabelProvider {
 	/**
 	 * @param element the element for which to provide the label text

@@ -16,6 +16,7 @@ package org.eclipse.nebula.widgets.opal.starrating;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.nebula.widgets.opal.commons.SelectionListenerUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.SelectionEvent;
@@ -54,7 +55,6 @@ public class StarRating extends Canvas {
 	private static final int DEFAULT_MAX_NUMBERS_OF_STARS = 5;
 	private final List<Star> stars;
 	private int orientation;
-	private final List<SelectionListener> selectionListeners;
 
 	/**
 	 * Constructs a new instance of this class given its parent and a style
@@ -93,7 +93,6 @@ public class StarRating extends Canvas {
 		}
 
 		stars = new ArrayList<Star>();
-		selectionListeners = new ArrayList<SelectionListener>();
 		setMaxNumberOfStars(DEFAULT_MAX_NUMBERS_OF_STARS);
 		initListeners();
 	}
@@ -170,7 +169,7 @@ public class StarRating extends Canvas {
 			final boolean selected = star.bounds.contains(event.x, event.y);
 			if (selected) {
 				setCurrentNumberOfStars(i + 1);
-				fireSelectionEvent();
+				SelectionListenerUtil.fireSelectionListeners(this,null);
 				redraw();
 				update();
 				break;
@@ -179,16 +178,6 @@ public class StarRating extends Canvas {
 
 	}
 
-	private void fireSelectionEvent() {
-		final Event event = new Event();
-		event.widget = this;
-		event.display = getDisplay();
-		event.item = this;
-		event.type = SWT.Selection;
-		for (final SelectionListener selectionListener : selectionListeners) {
-			selectionListener.widgetSelected(new SelectionEvent(event));
-		}
-	}
 
 	private void onMousePaint(final Event event) {
 		final GC gc = event.gc;
@@ -234,10 +223,7 @@ public class StarRating extends Canvas {
 	 */
 	public void addSelectionListener(final SelectionListener listener) {
 		checkWidget();
-		if (listener == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		this.selectionListeners.add(listener);
+		SelectionListenerUtil.addSelectionListener(this, listener);
 	}
 
 	/**
@@ -338,10 +324,7 @@ public class StarRating extends Canvas {
 	 */
 	public void removeSelectionListener(final SelectionListener listener) {
 		checkWidget();
-		if (listener == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		this.selectionListeners.remove(listener);
+		SelectionListenerUtil.removeSelectionListener(this, listener);
 	}
 
 	/**

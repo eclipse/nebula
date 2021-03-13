@@ -84,7 +84,7 @@ class LauncherLabel extends Canvas {
 		SWTGraphicUtil.addDisposer(this, defaultFont);
 
 		addPaintListener(event -> {
-			onPaint(event);
+			paintControl(event);
 		});
 
 	}
@@ -94,7 +94,7 @@ class LauncherLabel extends Canvas {
 	 *
 	 * @param event paintevent
 	 */
-	private void onPaint(final PaintEvent event) {
+	private void paintControl(final PaintEvent event) {
 		final Rectangle rect = getClientArea();
 		if (rect.width == 0 || rect.height == 0) {
 			return;

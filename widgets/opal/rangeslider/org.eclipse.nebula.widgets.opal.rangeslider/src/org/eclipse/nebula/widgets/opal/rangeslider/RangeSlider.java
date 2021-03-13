@@ -13,14 +13,12 @@
 package org.eclipse.nebula.widgets.opal.rangeslider;
 
 import java.text.Format;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.nebula.widgets.opal.commons.SWTGraphicUtil;
+import org.eclipse.nebula.widgets.opal.commons.SelectionListenerUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -71,7 +69,6 @@ public class RangeSlider extends Canvas {
 	private int maximum;
 	private int lowerValue;
 	private int upperValue;
-	private final List<SelectionListener> listeners;
 	private final Image slider, sliderHover, sliderDrag, sliderSelected;
 	private final Image vSlider, vSliderHover, vSliderDrag, vSliderSelected;
 	private int orientation;
@@ -127,7 +124,6 @@ public class RangeSlider extends Canvas {
 		super(parent, SWT.DOUBLE_BUFFERED | ((style & SWT.BORDER) == SWT.BORDER ? SWT.BORDER : SWT.NONE));
 		minimum = lowerValue = 0;
 		maximum = upperValue = 100;
-		listeners = new ArrayList<SelectionListener>();
 		increment = 1;
 		pageIncrement = 10;
 		slider = SWTGraphicUtil.createImageFromFile("images/slider-normal.png");
@@ -323,7 +319,7 @@ public class RangeSlider extends Canvas {
 	 */
 	private void validateNewValues(final Event e) {
 		if (upperValue != previousUpperValue || lowerValue != previousLowerValue) {
-			if (!fireSelectionListeners(e)) {
+			if (!SelectionListenerUtil.fireSelectionListeners(this,e)) {
 				upperValue = previousUpperValue;
 				lowerValue = previousLowerValue;
 			}
@@ -333,23 +329,6 @@ public class RangeSlider extends Canvas {
 		}
 	}
 
-	/**
-	 * Fire all selection listeners
-	 *
-	 * @param event selection event
-	 * @return <code>true</code> if no listener cancels the selection,
-	 *         <code>false</code> otherwise
-	 */
-	private boolean fireSelectionListeners(final Event event) {
-		for (final SelectionListener selectionListener : listeners) {
-			final SelectionEvent selectionEvent = new SelectionEvent(event);
-			selectionListener.widgetSelected(selectionEvent);
-			if (!selectionEvent.doit) {
-				return false;
-			}
-		}
-		return true;
-	}
 
 	/**
 	 * Code executed when the mouse pointer is moving
@@ -1148,7 +1127,7 @@ public class RangeSlider extends Canvas {
 	 */
 	public void addSelectionListener(final SelectionListener listener) {
 		checkWidget();
-		listeners.add(listener);
+		SelectionListenerUtil.addSelectionListener(this, listener);
 	}
 
 	/**
@@ -1342,7 +1321,7 @@ public class RangeSlider extends Canvas {
 	 */
 	public void removeSelectionListener(final SelectionListener listener) {
 		checkWidget();
-		listeners.remove(listener);
+		SelectionListenerUtil.removeSelectionListener(this, listener);
 	}
 
 	/**

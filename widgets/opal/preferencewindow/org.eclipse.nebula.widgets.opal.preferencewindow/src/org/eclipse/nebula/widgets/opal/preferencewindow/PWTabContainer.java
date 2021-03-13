@@ -75,7 +75,6 @@ class PWTabContainer extends Composite {
 	private void createButtonsContainer() {
 		createContainer();
 		createButtonsContainerBackground();
-
 	}
 
 	/**
