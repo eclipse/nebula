@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.nebula.widgets.opal.commons.SWTGraphicUtil;
+import org.eclipse.nebula.widgets.opal.commons.SelectionListenerUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -55,7 +56,6 @@ public class ColumnBrowserWidget extends ScrolledComposite {
 	private final List<Table> columns;
 	private final Composite composite;
 	private final Image columnArrow;
-	private final List<SelectionListener> selectionListeners;
 
 	/**
 	 * Constructs a new instance of this class given its parent and a style value
@@ -112,8 +112,6 @@ public class ColumnBrowserWidget extends ScrolledComposite {
 		setShowFocusedControl(true);
 		updateContent();
 		this.setMinSize(composite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-
-		selectionListeners = new ArrayList<SelectionListener>();
 
 		addDisposeListener(e -> {
 			SWTGraphicUtil.safeDispose(columnArrow);
@@ -197,38 +195,11 @@ public class ColumnBrowserWidget extends ScrolledComposite {
 		table.addListener(SWT.PaintItem, paintListener);
 
 		table.addListener(SWT.Selection, e -> {
-			fireSelectionListeners(e);
+			SelectionListenerUtil.fireSelectionListeners(this,e);
 		});
 	}
 
-	/**
-	 * Fire the selection listeners
-	 *
-	 * @param selectionEvent mouse event
-	 * @return true if the selection could be changed, false otherwise
-	 */
-	private boolean fireSelectionListeners(final Event selectionEvent) {
-		final Event event = new Event();
-
-		event.button = 0;
-		event.display = getDisplay();
-		event.item = null;
-		event.widget = this;
-		event.data = null;
-		event.time = selectionEvent.time;
-		event.x = selectionEvent.x;
-		event.y = selectionEvent.y;
-
-		final SelectionEvent selEvent = new SelectionEvent(event);
-
-		for (final SelectionListener listener : selectionListeners) {
-			listener.widgetSelected(selEvent);
-			if (!selEvent.doit) {
-				return false;
-			}
-		}
-		return true;
-	}
+	
 
 	/**
 	 * Perform actions when an item is selected (ie fill the next column and force
@@ -355,7 +326,7 @@ public class ColumnBrowserWidget extends ScrolledComposite {
 	 */
 	public void addSelectionListener(final SelectionListener listener) {
 		checkWidget();
-		selectionListeners.add(listener);
+		SelectionListenerUtil.addSelectionListener(this, listener);
 	}
 
 	/**
@@ -435,7 +406,7 @@ public class ColumnBrowserWidget extends ScrolledComposite {
 	 */
 	public void removeSelectionListener(final SelectionListener listener) {
 		checkWidget();
-		selectionListeners.remove(listener);
+		SelectionListenerUtil.removeSelectionListener(this, listener);
 	}
 
 	/**

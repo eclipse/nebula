@@ -18,8 +18,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Scale;
 
 /**
@@ -61,12 +59,7 @@ public class PWScale extends PWWidget {
 		final Integer originalValue = (Integer) PreferenceWindow.getInstance().getValueFor(getPropertyKey());
 		scale.setSelection(originalValue.intValue());
 
-		scale.addListener(SWT.Modify, new Listener() {
-			@Override
-			public void handleEvent(final Event event) {
-				PreferenceWindow.getInstance().setValue(getPropertyKey(), Integer.valueOf(scale.getSelection()));
-			}
-		});
+		scale.addListener(SWT.Modify, event -> PreferenceWindow.getInstance().setValue(getPropertyKey(), Integer.valueOf(scale.getSelection())));
 
 		return scale;
 	}

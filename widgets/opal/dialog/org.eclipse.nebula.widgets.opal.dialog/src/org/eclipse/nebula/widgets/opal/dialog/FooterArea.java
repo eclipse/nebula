@@ -29,7 +29,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
@@ -231,36 +230,33 @@ public class FooterArea extends DialogArea {
 
 		final int numberOfColumnsParam = numberOfColumns;
 
-		final Listener listener = new Listener() {
-			@Override
-			public void handleEvent(final Event event) {
-				if (FooterArea.this.parent.getMessageArea().getException() != null) {
-					if (detailsItem.getText().equals(expandedLabelText)) {
-						detailsItem.setText(collapsedLabelText);
-						detailsItem.setImage(FooterArea.this.getMoreDetailsImage());
+		final Listener listener = event -> {
+			if (FooterArea.this.parent.getMessageArea().getException() != null) {
+				if (detailsItem.getText().equals(expandedLabelText)) {
+					detailsItem.setText(collapsedLabelText);
+					detailsItem.setImage(FooterArea.this.getMoreDetailsImage());
 
-						FooterArea.this.parent.getMessageArea().hideException();
-					} else {
-						detailsItem.setText(expandedLabelText);
-						detailsItem.setImage(FooterArea.this.getFewerDetailsImage());
-
-						FooterArea.this.parent.getMessageArea().showException();
-					}
-
+					FooterArea.this.parent.getMessageArea().hideException();
 				} else {
-					if (detailsItem.getText().equals(expandedLabelText)) {
-						detailsItem.setText(collapsedLabelText);
-						detailsItem.setImage(FooterArea.this.getMoreDetailsImage());
+					detailsItem.setText(expandedLabelText);
+					detailsItem.setImage(FooterArea.this.getFewerDetailsImage());
 
-						expandedPanel.dispose();
-						FooterArea.this.parent.pack();
-					} else {
-						detailsItem.setText(expandedLabelText);
-						detailsItem.setImage(FooterArea.this.getFewerDetailsImage());
+					FooterArea.this.parent.getMessageArea().showException();
+				}
 
-						FooterArea.this.createExpandedPanel(numberOfColumnsParam);
-						FooterArea.this.parent.pack();
-					}
+			} else {
+				if (detailsItem.getText().equals(expandedLabelText)) {
+					detailsItem.setText(collapsedLabelText);
+					detailsItem.setImage(FooterArea.this.getMoreDetailsImage());
+
+					expandedPanel.dispose();
+					FooterArea.this.parent.pack();
+				} else {
+					detailsItem.setText(expandedLabelText);
+					detailsItem.setImage(FooterArea.this.getFewerDetailsImage());
+
+					FooterArea.this.createExpandedPanel(numberOfColumnsParam);
+					FooterArea.this.parent.pack();
 				}
 			}
 		};

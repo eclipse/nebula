@@ -14,15 +14,13 @@ package org.eclipse.nebula.widgets.carousel;
 
 import java.util.List;
 
+import org.eclipse.nebula.widgets.opal.commons.SelectionListenerUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
-import org.eclipse.swt.widgets.Event;
 
 class ImageContainer extends Canvas {
 
@@ -100,7 +98,7 @@ class ImageContainer extends Canvas {
 		final int direction = newSelection > carousel.getSelection() ? SWT.LEFT : SWT.RIGHT;
 		slide(newSelection, direction);
 		carousel.selection = newSelection;
-		fireSelectionEvent();
+		SelectionListenerUtil.fireSelectionListeners(carousel,null);
 		carousel.imageSelector.redraw();
 	}
 
@@ -111,7 +109,7 @@ class ImageContainer extends Canvas {
 		}
 		slide(newSelection, SWT.LEFT);
 		carousel.selection = newSelection;
-		fireSelectionEvent();
+		SelectionListenerUtil.fireSelectionListeners(carousel,null);
 		carousel.imageSelector.redraw();
 	}
 
@@ -192,21 +190,6 @@ class ImageContainer extends Canvas {
 		gc.dispose();
 	}
 
-	private void fireSelectionEvent() {
-		final Event e = new Event();
-		e.widget = carousel;
-		e.display = getDisplay();
-		e.index = carousel.selection;
-		e.type = SWT.Selection;
-
-		final SelectionEvent event = new SelectionEvent(e);
-		for (final SelectionListener listener : carousel.selectionListeners) {
-			listener.widgetSelected(event);
-			if (!event.doit) {
-				break;
-			}
-		}
-	}
 
 	void movePrevious() {
 		final Carousel carousel = (Carousel) getParent();
@@ -216,7 +199,7 @@ class ImageContainer extends Canvas {
 		}
 		slide(newSelection, SWT.RIGHT);
 		carousel.selection = newSelection;
-		fireSelectionEvent();
+		SelectionListenerUtil.fireSelectionListeners(carousel,null);
 		carousel.imageSelector.redraw();
 	}
 

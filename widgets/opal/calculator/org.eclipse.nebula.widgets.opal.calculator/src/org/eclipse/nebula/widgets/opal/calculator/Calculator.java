@@ -71,7 +71,7 @@ public class Calculator extends Composite {
 		panel = new CalculatorButtonsComposite(this, SWT.NONE);
 		panel.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 		panel.setDisplayArea(displayArea);
-		displayArea.addKeyListener(panel.getKeyListener());
+		displayArea.addListener(SWT.KeyDown,panel.getKeyListener());
 	}
 
 	/**

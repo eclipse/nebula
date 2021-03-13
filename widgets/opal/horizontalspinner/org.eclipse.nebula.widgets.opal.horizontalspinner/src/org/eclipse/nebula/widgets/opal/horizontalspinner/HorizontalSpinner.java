@@ -17,6 +17,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.nebula.widgets.opal.commons.SelectionListenerUtil;
 import org.eclipse.nebula.widgets.opal.commons.StringUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
@@ -53,7 +54,6 @@ public class HorizontalSpinner extends Composite {
 	};
 
 	private final List<ModifyListener> modifyListeners = new ArrayList<ModifyListener>();
-	private final List<SelectionListener> selectionListeners = new ArrayList<SelectionListener>();
 
 	private Button leftButton;
 	private Button rightButton;
@@ -254,9 +254,7 @@ public class HorizontalSpinner extends Composite {
 			return false;
 		}
 
-		for (final SelectionListener s : selectionListeners) {
-			s.widgetSelected(null);
-		}
+		SelectionListenerUtil.fireSelectionListeners(this,null);
 
 		return true;
 	}
@@ -366,7 +364,7 @@ public class HorizontalSpinner extends Composite {
 	 */
 	public void addSelectionListener(final SelectionListener listener) {
 		checkWidget();
-		selectionListeners.add(listener);
+		SelectionListenerUtil.addSelectionListener(this, listener);
 	}
 
 	/**
@@ -630,7 +628,7 @@ public class HorizontalSpinner extends Composite {
 	 */
 	public void removeSelectionListener(final SelectionListener listener) {
 		checkWidget();
-		selectionListeners.remove(listener);
+		SelectionListenerUtil.removeSelectionListener(this, listener);
 	}
 
 	/**
@@ -773,11 +771,6 @@ public class HorizontalSpinner extends Composite {
 
 		storedValue = selection;
 		text.setText(convertSelectionToStringValue());
-
-		for (final SelectionListener s : selectionListeners) {
-			s.widgetSelected(null);
-		}
-
 	}
 
 	/**

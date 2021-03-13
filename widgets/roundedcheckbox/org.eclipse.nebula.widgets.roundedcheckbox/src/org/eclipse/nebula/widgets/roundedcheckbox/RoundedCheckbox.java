@@ -12,9 +12,7 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.roundedcheckbox;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.eclipse.nebula.widgets.opal.commons.SelectionListenerUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.SelectionEvent;
@@ -27,7 +25,6 @@ import org.eclipse.swt.internal.DPIUtil;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 
 /**
  * Instances of this class provide a checkbox button.<br/>
@@ -45,7 +42,6 @@ import org.eclipse.swt.widgets.Listener;
 public class RoundedCheckbox extends Canvas {
 	private static final int DEFAULT_WIDTH = 20;
 	private static final int DEFAULT_HEIGHT = 20;
-	private final List<SelectionListener> selectionListeners;
 	private boolean selected;
 	private boolean grayed;
 	private Color unselectedColor, selectionBackground, selectionForeground, hoverColor;
@@ -82,7 +78,6 @@ public class RoundedCheckbox extends Canvas {
 	 */
 	public RoundedCheckbox(final Composite parent, final int style) {
 		super(parent, checkStyle(style) | SWT.DOUBLE_BUFFERED);
-		selectionListeners = new ArrayList<>();
 		disabledColor = getAndDisposeColor(204, 204, 204);
 		selectionBackground = getAndDisposeColor(0, 122, 255);
 		selectionForeground = getAndDisposeColor(255, 255, 255);
@@ -193,39 +188,12 @@ public class RoundedCheckbox extends Canvas {
 		final int centerY = (rect.height - rect.y) / 2;
 		final int distance = (int) Math.sqrt(Math.abs(e.x - centerX ^ 2 - (e.y - centerY) ^ 2));
 		if (distance < rect.width - 4) {
-			if (fireSelectionListeners(e)) {
+			if (SelectionListenerUtil.fireSelectionListeners(this,e)) {
 				setSelection(!selected);
 			}
 		}
 	}
 	
-	/**
-	 * Fire the selection listeners
-	 *
-	 * @param e mouse event
-	 * @return true if the selection could be changed, false otherwise
-	 */
-	private boolean fireSelectionListeners(final Event e) {
-		for (final SelectionListener listener : selectionListeners) {
-			final Event event = new Event();
-
-			event.button = e.button;
-			event.display = getDisplay();
-			event.item = null;
-			event.widget = this;
-			event.data = null;
-			event.time = e.time;
-			event.x = e.x;
-			event.y = e.y;
-
-			final SelectionEvent selEvent = new SelectionEvent(event);
-			listener.widgetSelected(selEvent);
-			if (!selEvent.doit) {
-				return false;
-			}
-		}
-		return true;
-	}
 
 	private void onKeyPress(Event e) {
 		if (e.character == ' ' || e.character == '+') {
@@ -243,36 +211,6 @@ public class RoundedCheckbox extends Canvas {
 		return color;
 	}
 
-	/**
-	 * @see org.eclipse.swt.widgets.Widget#addListener(int, org.eclipse.swt.widgets.Listener)
-	 */
-	@Override
-	public void addListener(int eventType, Listener listener) {
-		if (eventType == SWT.Selection) {
-			selectionListeners.add(new SelectionListener() {
-
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					widgetSelection(e);
-				}
-
-				@Override
-				public void widgetDefaultSelected(SelectionEvent e) {
-					widgetSelection(e);
-				}
-
-				private void widgetSelection(SelectionEvent e) {
-					final Event event = new Event();
-					event.widget = RoundedCheckbox.this;
-					event.display = getDisplay();
-					event.type = SWT.Selection;
-					listener.handleEvent(event);
-				}
-			});
-			return;
-		}
-		super.addListener(eventType, listener);
-	}
 
 	/**
 	 * Adds the listener to the collection of listeners who will be notified when
@@ -303,10 +241,7 @@ public class RoundedCheckbox extends Canvas {
 	 */
 	public void addSelectionListener(final SelectionListener listener) {
 		checkWidget();
-		if (listener == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		selectionListeners.add(listener);
+		SelectionListenerUtil.addSelectionListener(this, listener);
 	}
 
 	/**
@@ -457,10 +392,7 @@ public class RoundedCheckbox extends Canvas {
 	 */
 	public void removeSelectionListener(final SelectionListener listener) {
 		checkWidget();
-		if (listener == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		selectionListeners.remove(listener);
+		SelectionListenerUtil.removeSelectionListener(this, listener);
 	}
 
 	/**

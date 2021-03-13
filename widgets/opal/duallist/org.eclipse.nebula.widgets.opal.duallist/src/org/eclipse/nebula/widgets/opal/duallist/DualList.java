@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.nebula.widgets.opal.commons.SWTGraphicUtil;
+import org.eclipse.nebula.widgets.opal.commons.SelectionListenerUtil;
 import org.eclipse.nebula.widgets.opal.duallist.DLItem.LAST_ACTION;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
@@ -60,7 +61,6 @@ public class DualList extends Composite {
 	private Table itemsTable;
 	private Table selectionTable;
 
-	private List<SelectionListener> selectionListeners;
 	private List<SelectionChangeListener> selectionChangeListeners;
 
 	/**
@@ -306,10 +306,7 @@ public class DualList extends Composite {
 		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
-		if (selectionListeners == null) {
-			selectionListeners = new ArrayList<SelectionListener>();
-		}
-		selectionListeners.add(listener);
+		SelectionListenerUtil.addSelectionListener(this, listener);
 	}
 
 	/**
@@ -335,13 +332,7 @@ public class DualList extends Composite {
 	 */
 	public void removeSelectionListener(final SelectionListener listener) {
 		checkWidget();
-		if (listener == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		if (selectionListeners == null) {
-			return;
-		}
-		selectionListeners.remove(listener);
+		SelectionListenerUtil.removeSelectionListener(this, listener);
 	}
 
 	/**
@@ -1677,21 +1668,14 @@ public class DualList extends Composite {
 	 * @param item selected item
 	 */
 	private void fireSelectionEvent(final DLItem item) {
-		if (selectionListeners == null) {
-			return;
-		}
-
 		final Event event = new Event();
 		event.button = 1;
 		event.display = getDisplay();
 		event.item = null;
 		event.widget = this;
 		event.data = item;
-		final SelectionEvent selectionEvent = new SelectionEvent(event);
 
-		for (final SelectionListener listener : selectionListeners) {
-			listener.widgetSelected(selectionEvent);
-		}
+		SelectionListenerUtil.fireSelectionListeners(this, event);
 	}
 
 	private void fireSelectionChangeEvent(final List<DLItem> items) {

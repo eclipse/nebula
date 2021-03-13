@@ -16,7 +16,6 @@ package org.eclipse.nebula.widgets.opal.calculator;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
@@ -58,7 +57,7 @@ public class CalculatorCombo extends Composite {
 	private Shell popup;
 	private Listener listener, filter;
 	private boolean hasFocus;
-	private KeyListener keyListener;
+	private Listener keyListener;
 	private CalculatorButtonsComposite composite;
 
 	/**
@@ -91,32 +90,29 @@ public class CalculatorCombo extends Composite {
 		arrow = new Button(this, SWT.ARROW | SWT.DOWN);
 		arrow.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, false));
 
-		listener = new Listener() {
-			@Override
-			public void handleEvent(final Event event) {
-				if (popup == event.widget) {
-					handlePopupEvent(event);
-					return;
-				}
+		listener = event -> {
+			if (popup == event.widget) {
+				handlePopupEvent(event);
+				return;
+			}
 
-				if (arrow == event.widget) {
-					handleButtonEvent(event);
-					return;
-				}
+			if (arrow == event.widget) {
+				handleButtonEvent(event);
+				return;
+			}
 
-				if (CalculatorCombo.this == event.widget) {
-					handleMultiChoiceEvent(event);
-					return;
-				}
+			if (CalculatorCombo.this == event.widget) {
+				handleMultiChoiceEvent(event);
+				return;
+			}
 
-				if (getShell() == event.widget) {
-					getDisplay().asyncExec(() -> {
-						if (isDisposed()) {
-							return;
-						}
-						handleFocusEvent(SWT.FocusOut);
-					});
-				}
+			if (getShell() == event.widget) {
+				getDisplay().asyncExec(() -> {
+					if (isDisposed()) {
+						return;
+					}
+					handleFocusEvent(SWT.FocusOut);
+				});
 			}
 		};
 
@@ -130,13 +126,10 @@ public class CalculatorCombo extends Composite {
 			arrow.addListener(buttonEvent, listener);
 		}
 
-		filter = new Listener() {
-			@Override
-			public void handleEvent(final Event event) {
-				final Shell shell = ((Control) event.widget).getShell();
-				if (shell == CalculatorCombo.this.getShell()) {
-					handleFocusEvent(SWT.FocusOut);
-				}
+		filter = event -> {
+			final Shell shell = ((Control) event.widget).getShell();
+			if (shell == CalculatorCombo.this.getShell()) {
+				handleFocusEvent(SWT.FocusOut);
 			}
 		};
 
@@ -165,7 +158,7 @@ public class CalculatorCombo extends Composite {
 				break;
 			case SWT.Dispose:
 				if (keyListener != null) {
-					label.removeKeyListener(keyListener);
+					label.removeListener(SWT.KeyDown,keyListener);
 				}
 				break;
 		}
@@ -216,7 +209,7 @@ public class CalculatorCombo extends Composite {
 		composite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 		composite.setDisplayArea(label);
 		keyListener = composite.getKeyListener();
-		label.addKeyListener(keyListener);
+		label.addListener(SWT.KeyDown, keyListener);
 
 		popup.pack();
 	}
