@@ -16,6 +16,7 @@ package org.eclipse.nebula.widgets.opal.launcher;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.nebula.widgets.opal.commons.SelectionListenerUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.SelectionEvent;
@@ -40,7 +41,6 @@ import org.eclipse.swt.widgets.Event;
 public class Launcher extends Composite {
 
 	private final List<LauncherItem> items;
-	private final List<SelectionListener> selectionListeners;
 	private boolean needRedraw;
 	private int selection = -1;
 
@@ -74,7 +74,6 @@ public class Launcher extends Composite {
 	public Launcher(final Composite parent, final int style) {
 		super(parent, style | SWT.BORDER);
 		items = new ArrayList<LauncherItem>();
-		selectionListeners = new ArrayList<SelectionListener>();
 		needRedraw = true;
 		setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
 
@@ -142,11 +141,7 @@ public class Launcher extends Composite {
 	 */
 	public void addSelectionListener(final SelectionListener listener) {
 		checkWidget();
-		if (listener == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		selectionListeners.add(listener);
-
+		SelectionListenerUtil.addSelectionListener(this, listener);
 	}
 
 	/**
@@ -216,34 +211,6 @@ public class Launcher extends Composite {
 		needRedraw = false;
 	}
 
-	/**
-	 * Fire the selection listeners
-	 *
-	 * @param originalEvent mouse event
-	 * @return <code>true</code> if the selection could be changed,
-	 *         <code>false</code> otherwise
-	 */
-	private boolean fireSelectionListeners(final Event originalEvent) {
-		final Event event = new Event();
-
-		event.button = originalEvent.button;
-		event.display = getDisplay();
-		event.item = null;
-		event.widget = this;
-		event.data = null;
-		event.time = originalEvent.time;
-		event.x = originalEvent.x;
-		event.y = originalEvent.y;
-
-		for (final SelectionListener listener : selectionListeners) {
-			final SelectionEvent selEvent = new SelectionEvent(event);
-			listener.widgetSelected(selEvent);
-			if (!selEvent.doit) {
-				return false;
-			}
-		}
-		return true;
-	}
 
 	/**
 	 * Return the selected button
@@ -399,7 +366,7 @@ public class Launcher extends Composite {
 		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
-		selectionListeners.remove(listener);
+		SelectionListenerUtil.removeSelectionListener(this, listener);
 	}
 
 	/**
@@ -416,7 +383,7 @@ public class Launcher extends Composite {
 				if (label.incrementAnimation()) {
 					getDisplay().timerExec(20, this);
 				} else {
-					fireSelectionListeners(event);
+					SelectionListenerUtil.fireSelectionListeners(Launcher.this, event);
 				}
 			}
 		});

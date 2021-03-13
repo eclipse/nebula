@@ -27,7 +27,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Widget;
@@ -143,56 +142,45 @@ public class ChoiceWidget extends Composite {
 	 * Add mouse listeners
 	 */
 	private void addMouseListeners() {
-		final Listener mouseEnterListener = new Listener() {
+		final Listener mouseEnterListener = event -> {
 
-			@Override
-			public void handleEvent(final Event event) {
-
-				if (event.widget.equals(ChoiceWidget.this)) {
-					insideComposite = true;
-				}
-
-				if (event.widget.equals(image)) {
-					insideImage = true;
-				}
-				if (event.widget.equals(text)) {
-					insideText = true;
-				}
-				if (event.widget.equals(instruction)) {
-					insideInstruction = true;
-				}
-
-				drawComposite();
+			if (event.widget.equals(ChoiceWidget.this)) {
+				insideComposite = true;
 			}
+
+			if (event.widget.equals(image)) {
+				insideImage = true;
+			}
+			if (event.widget.equals(text)) {
+				insideText = true;
+			}
+			if (event.widget.equals(instruction)) {
+				insideInstruction = true;
+			}
+
+			drawComposite();
 		};
 
-		final Listener mouseExitListener = new Listener() {
-
-			@Override
-			public void handleEvent(final Event event) {
-				if (event.widget.equals(ChoiceWidget.this)) {
-					insideComposite = false;
-				}
-
-				if (event.widget.equals(image)) {
-					insideImage = false;
-				}
-				if (event.widget.equals(text)) {
-					insideText = false;
-				}
-				if (event.widget.equals(instruction)) {
-					insideInstruction = false;
-				}
-				drawComposite();
+		final Listener mouseExitListener = event -> {
+			if (event.widget.equals(ChoiceWidget.this)) {
+				insideComposite = false;
 			}
+
+			if (event.widget.equals(image)) {
+				insideImage = false;
+			}
+			if (event.widget.equals(text)) {
+				insideText = false;
+			}
+			if (event.widget.equals(instruction)) {
+				insideInstruction = false;
+			}
+			drawComposite();
 		};
 
-		final Listener mouseClickListener = new Listener() {
-			@Override
-			public void handleEvent(final Event event) {
-				for (final SelectionListener selectionListener : selectionListeners) {
-					selectionListener.widgetSelected(null);
-				}
+		final Listener mouseClickListener = event -> {
+			for (final SelectionListener selectionListener : selectionListeners) {
+				selectionListener.widgetSelected(null);
 			}
 		};
 

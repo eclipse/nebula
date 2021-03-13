@@ -18,8 +18,6 @@ import java.util.List;
 import org.eclipse.nebula.widgets.opal.duallist.DLItem;
 import org.eclipse.nebula.widgets.opal.duallist.DLItem.LAST_ACTION;
 import org.eclipse.nebula.widgets.opal.duallist.DualList;
-import org.eclipse.nebula.widgets.opal.duallist.SelectionChangeEvent;
-import org.eclipse.nebula.widgets.opal.duallist.SelectionChangeListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -45,21 +43,17 @@ public class DualListSnippet {
 		final DualList dl = new DualList(shell, SWT.NONE);
 		dl.setItems(createItems(shell));
 
-		dl.addSelectionChangeListener(new SelectionChangeListener() {
-
-			@Override
-			public void widgetSelected(final SelectionChangeEvent e) {
-				System.out.println("Selection Change Listener called");
-				for (final DLItem item : e.getItems()) {
-					final StringBuilder sb = new StringBuilder();
-					if (item.getLastAction() == LAST_ACTION.SELECTION) {
-						sb.append("[SELECTION] ");
-					} else {
-						sb.append("[DE-SELECTION] ");
-					}
-					sb.append(item.getText());
-					System.out.println(sb.toString());
+		dl.addSelectionChangeListener(e -> {
+			System.out.println("Selection Change Listener called");
+			for (final DLItem item : e.getItems()) {
+				final StringBuilder sb = new StringBuilder();
+				if (item.getLastAction() == LAST_ACTION.SELECTION) {
+					sb.append("[SELECTION] ");
+				} else {
+					sb.append("[DE-SELECTION] ");
 				}
+				sb.append(item.getText());
+				System.out.println(sb.toString());
 			}
 		});
 

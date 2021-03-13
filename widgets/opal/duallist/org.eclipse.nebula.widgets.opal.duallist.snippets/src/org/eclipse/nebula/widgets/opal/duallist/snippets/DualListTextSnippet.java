@@ -18,8 +18,6 @@ import java.util.List;
 import org.eclipse.nebula.widgets.opal.duallist.DLItem;
 import org.eclipse.nebula.widgets.opal.duallist.DualList;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
@@ -42,18 +40,8 @@ public class DualListTextSnippet {
 
 		final DualList dl = new DualList(shell, SWT.NONE);
 		dl.setItems(createItems(shell));
-		dl.addSelectionListener(new SelectionListener() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				System.out.println("Selection Listener called");
-
-			}
-
-			@Override
-			public void widgetDefaultSelected(final SelectionEvent e) {
-
-			}
+		dl.addListener(SWT.Selection, e -> {
+			System.out.println("Selection Listener called");
 		});
 
 		dl.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
