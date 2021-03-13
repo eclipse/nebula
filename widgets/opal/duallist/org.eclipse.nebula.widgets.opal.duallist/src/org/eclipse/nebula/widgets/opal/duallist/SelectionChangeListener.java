@@ -28,6 +28,7 @@ import org.eclipse.swt.internal.SWTEventListener;
  * @see SelectionChangeEvent
  */
 @SuppressWarnings("restriction")
+@FunctionalInterface
 public interface SelectionChangeListener extends SWTEventListener {
 
 	/**

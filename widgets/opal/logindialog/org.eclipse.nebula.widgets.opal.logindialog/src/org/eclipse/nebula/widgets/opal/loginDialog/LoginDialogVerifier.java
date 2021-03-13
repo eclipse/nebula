@@ -16,6 +16,7 @@ package org.eclipse.nebula.widgets.opal.loginDialog;
 /**
  * This interface describes a verifier for the LoginDialogWidget
  */
+@FunctionalInterface
 public interface LoginDialogVerifier {
 	/**
 	 * Check if the couple login/password is correct

@@ -142,13 +142,10 @@ public class MultiChoice<T> extends Composite {
 		createGlobalListener();
 		addListeners();
 
-		this.filter = new Listener() {
-			@Override
-			public void handleEvent(final Event event) {
-				final Shell shell = ((Control) event.widget).getShell();
-				if (shell == MultiChoice.this.getShell()) {
-					handleFocusEvents(SWT.FocusOut);
-				}
+		this.filter = event -> {
+			final Shell shell = ((Control) event.widget).getShell();
+			if (shell == MultiChoice.this.getShell()) {
+				handleFocusEvents(SWT.FocusOut);
 			}
 		};
 
@@ -162,35 +159,32 @@ public class MultiChoice<T> extends Composite {
 	}
 
 	private void createGlobalListener() {
-		this.listener = new Listener() {
-			@Override
-			public void handleEvent(final Event event) {
-				if (MultiChoice.this.popup == event.widget) {
-					handlePopupEvent(event);
-					return;
-				}
+		this.listener = event -> {
+			if (MultiChoice.this.popup == event.widget) {
+				handlePopupEvent(event);
+				return;
+			}
 
-				if (MultiChoice.this.arrow == event.widget) {
-					handleButtonEvent(event);
-					return;
-				}
+			if (MultiChoice.this.arrow == event.widget) {
+				handleButtonEvent(event);
+				return;
+			}
 
-				if (MultiChoice.this == event.widget) {
-					handleMultiChoiceEvents(event);
-					return;
-				}
+			if (MultiChoice.this == event.widget) {
+				handleMultiChoiceEvents(event);
+				return;
+			}
 
-				if (getShell() == event.widget) {
-					getDisplay().asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							if (isDisposed()) {
-								return;
-							}
-							handleFocusEvents(SWT.FocusOut);
+			if (getShell() == event.widget) {
+				getDisplay().asyncExec(new Runnable() {
+					@Override
+					public void run() {
+						if (isDisposed()) {
+							return;
 						}
-					});
-				}
+						handleFocusEvents(SWT.FocusOut);
+					}
+				});
 			}
 		};
 	}
@@ -203,13 +197,9 @@ public class MultiChoice<T> extends Composite {
 		}
 
 		if ((getStyle() & SWT.READ_ONLY) == 0) {
-			final Listener validationListener = new Listener() {
-
-				@Override
-				public void handleEvent(final Event event) {
-					if (!MultiChoice.this.popup.isDisposed() && !MultiChoice.this.popup.isVisible()) {
-						validateEntry();
-					}
+			final Listener validationListener = event -> {
+				if (!MultiChoice.this.popup.isDisposed() && !MultiChoice.this.popup.isVisible()) {
+					validateEntry();
 				}
 			};
 			this.text.addListener(SWT.FocusOut, validationListener);

@@ -12,9 +12,7 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.nebulaslider;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.eclipse.nebula.widgets.opal.commons.SelectionListenerUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.SelectionEvent;
@@ -27,8 +25,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Widget;
 
 /**
@@ -63,7 +59,6 @@ public class NebulaSlider extends Canvas {
 	private int value;
 	private int xPosition;
 	private int mouseDeltaX;
-	private final List<SelectionListener> selectionListeners;
 	private final Font textFont;
 
 	private boolean moving = false;
@@ -110,7 +105,6 @@ public class NebulaSlider extends Canvas {
 		selectorTextColor = getAndDisposeColor(255, 255, 255);
 		arrowColor = getAndDisposeColor(153, 203, 237);
 
-		selectionListeners = new ArrayList<>();
 		minimum = Integer.MIN_VALUE;
 		maximum = Integer.MAX_VALUE;
 		value = 0;
@@ -265,51 +259,12 @@ public class NebulaSlider extends Canvas {
 			float ratio = (float) xPosition / originalWidth;
 			value = (int) Math.floor(ratio * (maximum - minimum));
 
-			fireSelectionEvent();
+			SelectionListenerUtil.fireSelectionListeners(this,e);
 			redraw();
 		});
 	}
 
-	private void fireSelectionEvent() {
-		final Event event = new Event();
-		event.widget = this;
-		event.display = getDisplay();
-		event.type = SWT.Selection;
-		for (final SelectionListener selectionListener : selectionListeners) {
-			selectionListener.widgetSelected(new SelectionEvent(event));
-		}
-	}
 
-	/**
-	 * @see org.eclipse.swt.widgets.Widget#addListener(int, org.eclipse.swt.widgets.Listener)
-	 */
-	@Override
-	public void addListener(int eventType, Listener listener) {
-		if (eventType == SWT.Selection) {
-			selectionListeners.add(new SelectionListener() {
-
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					widgetSelection(e);
-				}
-
-				@Override
-				public void widgetDefaultSelected(SelectionEvent e) {
-					widgetSelection(e);
-				}
-
-				private void widgetSelection(SelectionEvent e) {
-					final Event event = new Event();
-					event.widget = NebulaSlider.this;
-					event.display = getDisplay();
-					event.type = SWT.Selection;
-					listener.handleEvent(event);
-				}
-			});
-			return;
-		}
-		super.addListener(eventType, listener);
-	}
 
 	/**
 	 * Adds the listener to the collection of listeners who will be notified when
@@ -340,10 +295,7 @@ public class NebulaSlider extends Canvas {
 	 */
 	public void addSelectionListener(final SelectionListener listener) {
 		checkWidget();
-		if (listener == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		selectionListeners.add(listener);
+		SelectionListenerUtil.addSelectionListener(this, listener);
 	}
 
 	/**
@@ -377,10 +329,7 @@ public class NebulaSlider extends Canvas {
 	 */
 	public void removeSelectionListener(final SelectionListener listener) {
 		checkWidget();
-		if (listener == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		selectionListeners.remove(listener);
+		SelectionListenerUtil.removeSelectionListener(this, listener);
 	}
 
 	// ----------------------- Getters & Setters

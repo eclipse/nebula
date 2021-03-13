@@ -14,6 +14,7 @@
 package org.eclipse.nebula.widgets.opal.switchbutton;
 
 import org.eclipse.nebula.widgets.opal.commons.SWTGraphicUtil;
+import org.eclipse.nebula.widgets.opal.commons.SelectionListenerUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.MouseEvent;
@@ -27,9 +28,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.TypedListener;
 
 /**
  * Instances of this class are simple switch button.
@@ -155,14 +153,14 @@ public class SwitchButton extends Canvas {
 	public SwitchButton(final Composite parent, final int style) {
 		super(parent, style | SWT.DOUBLE_BUFFERED);
 
-		selection = true;
+		selection = false;
 		text = "";
 		textForSelect = "On";
 		textForUnselect = "Off";
 		round = true;
 		borderColor = null;
-		focusColor = getDisplay().getSystemColor(SWT.COLOR_YELLOW);
-		selectedForegroundColor = SWTGraphicUtil.getDefaultColor(this, 255, 255, 204);
+		focusColor = getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY);
+		selectedForegroundColor = getDisplay().getSystemColor(SWT.COLOR_WHITE);
 		selectedBackgroundColor = SWTGraphicUtil.getDefaultColor(this, 0, 112, 195);
 		unselectedForegroundColor = getDisplay().getSystemColor(SWT.COLOR_BLACK);
 		unselectedBackgroundColor = SWTGraphicUtil.getDefaultColor(this, 203, 203, 203);
@@ -176,7 +174,7 @@ public class SwitchButton extends Canvas {
 
 		addListener(SWT.MouseUp, e -> {
 			selection = !selection;
-			if (fireSelectionListeners(e)) {
+			if (SelectionListenerUtil.fireSelectionListeners(this,e)) {
 				SwitchButton.this.redraw();
 			} else {
 				// SelectionChanged event canceled
@@ -375,33 +373,7 @@ public class SwitchButton extends Canvas {
 
 	}
 
-	/**
-	 * Fire the selection listeners
-	 *
-	 * @param e mouse event
-	 * @return true if the selection could be changed, false otherwise
-	 */
-	private boolean fireSelectionListeners(final Event e) {
-		for (final Listener listener : getListeners(SWT.Selection)) {
-			final Event event = new Event();
 
-			event.button = e.button;
-			event.display = getDisplay();
-			event.item = null;
-			event.widget = this;
-			event.data = null;
-			event.time = e.time;
-			event.x = e.x;
-			event.y = e.y;
-			event.type = SWT.Selection;
-
-			listener.handleEvent(event);
-			if (!event.doit) {
-				return false;
-			}
-		}
-		return true;
-	}
 
 	/**
 	 * Adds the listener to the collection of listeners who will be notified
@@ -432,11 +404,7 @@ public class SwitchButton extends Canvas {
 	 */
 	public void addSelectionListener(final SelectionListener listener) {
 		checkWidget();
-		if (listener == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		TypedListener typedListener = new TypedListener(listener);
-		addListener(SWT.Selection, typedListener);
+		SelectionListenerUtil.addSelectionListener(this, listener);
 	}
 
 	/**
@@ -462,19 +430,7 @@ public class SwitchButton extends Canvas {
 	 */
 	public void removeSelectionListener(final SelectionListener listener) {
 		checkWidget();
-		if (listener == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		Listener[] listeners = getListeners(SWT.Selection);
-		for (Listener l : listeners) {
-			if (l instanceof TypedListener) {
-				TypedListener typedListener = (TypedListener) l;
-				if (typedListener.getEventListener() == listener) {
-					removeListener(SWT.Selection, ((TypedListener) l).getEventListener());
-					return;
-				}
-			}
-		}
+		SelectionListenerUtil.removeSelectionListener(this, listener);
 	}
 
 	/**

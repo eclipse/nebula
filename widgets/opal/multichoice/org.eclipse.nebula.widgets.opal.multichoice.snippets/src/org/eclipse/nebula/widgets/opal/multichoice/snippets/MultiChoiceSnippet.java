@@ -141,14 +141,11 @@ public class MultiChoiceSnippet {
 		drawLabel(shell, "Modifiable combo :");
 		final MultiChoice<Country> mcModify = new MultiChoice<>(shell, SWT.NONE);
 		mcModify.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, true));
-		mcModify.setLabelProvider(new MultiChoiceLabelProvider() {
-			@Override
-			public String getText(final Object element) {
-				if (element == null || !(element instanceof Country)) {
-					return "";
-				}
-				return ((Country) element).getCode();
+		mcModify.setLabelProvider(element -> {
+			if (element == null || !(element instanceof Country)) {
+				return "";
 			}
+			return ((Country) element).getCode();
 		});
 		mcModify.addAll(countryCodes);
 		addButons(mcModify);

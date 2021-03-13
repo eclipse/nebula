@@ -30,7 +30,7 @@ class FocusControlListenerFactory {
 	 * @return a BaseControlFocus Listener that can be attached to the events
 	 *         focusLost, focusGained and controlResized
 	 */
-	static BaseFocusControlListener getFocusControlListenerFor(final Control control) {
+	static BaseFocusControlListener<?> getFocusControlListenerFor(final Control control) {
 		if (control instanceof Combo) {
 			return new ComboFocusControlListener((Combo) control);
 		}

@@ -53,27 +53,23 @@ public class LoginDialogSnippet {
 		button1.setText("Open basic dialog");
 		button1.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false));
 
-		final LoginDialogVerifier verifier = new LoginDialogVerifier() {
-
-			@Override
-			public void authenticate(final String login, final String password) throws Exception {
-				if ("".equals(login)) {
-					throw new Exception("Please enter a login.");
-				}
-
-				if ("".equals(password)) {
-					throw new Exception("Please enter a password.");
-				}
-
-				if (!login.equalsIgnoreCase("laurent")) {
-					throw new Exception("Login unknown.");
-				}
-
-				if (!password.equalsIgnoreCase("laurent")) {
-					throw new Exception("Authentication failed, please check your password.");
-				}
-
+		final LoginDialogVerifier verifier = (login, password) -> {
+			if ("".equals(login)) {
+				throw new Exception("Please enter a login.");
 			}
+
+			if ("".equals(password)) {
+				throw new Exception("Please enter a password.");
+			}
+
+			if (!login.equalsIgnoreCase("laurent")) {
+				throw new Exception("Login unknown.");
+			}
+
+			if (!password.equalsIgnoreCase("laurent")) {
+				throw new Exception("Authentication failed, please check your password.");
+			}
+
 		};
 
 		button1.addListener(SWT.Selection, e -> {

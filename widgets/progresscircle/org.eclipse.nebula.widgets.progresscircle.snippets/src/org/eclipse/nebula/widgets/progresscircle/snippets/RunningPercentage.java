@@ -17,17 +17,12 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 
 class RunningPercentage extends BasePanel {
 
-	private Shell fShell;
-
 	public RunningPercentage(Shell shell) {
-		fShell = shell;
 		final Color white = shell.getDisplay().getSystemColor(SWT.COLOR_WHITE);
 
 		final Group group = new Group(shell, SWT.NONE);

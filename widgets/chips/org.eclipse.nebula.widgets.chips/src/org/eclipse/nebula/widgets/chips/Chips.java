@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.nebula.widgets.opal.commons.SWTGraphicUtil;
+import org.eclipse.nebula.widgets.opal.commons.SelectionListenerUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.SelectionEvent;
@@ -60,7 +61,6 @@ public class Chips extends Canvas {
 	private final boolean isCheck;
 	private final boolean isPush;
 	private final boolean isClose;
-	private final List<SelectionListener> selectionListeners = new ArrayList<>();
 	private final List<CloseListener> closeListeners = new ArrayList<>();
 	private boolean cursorInside;
 	private Point closeCenter;
@@ -162,15 +162,11 @@ public class Chips extends Canvas {
 					}
 				}
 			}
-			setSelection(!selection);
-			final SelectionEvent event = new SelectionEvent(e);
-			for (final SelectionListener listener : selectionListeners) {
-				listener.widgetSelected(event);
-				if (!event.doit) {
-					break;
-				}
+			if (isDisposed()) {
+				return;
 			}
-
+			setSelection(!selection);
+			SelectionListenerUtil.fireSelectionListeners(this, e);
 		});
 	}
 
@@ -374,38 +370,13 @@ public class Chips extends Canvas {
 	 */
 	@Override
 	public void addListener(final int eventType, final Listener listener) {
-		if (eventType == SWT.Selection) {
-			selectionListeners.add(new SelectionListener() {
-
-				@Override
-				public void widgetSelected(final SelectionEvent e) {
-					widgetSelection(e);
-				}
-
-				@Override
-				public void widgetDefaultSelected(final SelectionEvent e) {
-					widgetSelection(e);
-				}
-
-				private void widgetSelection(final SelectionEvent e) {
-					final Event event = new Event();
-					event.widget = Chips.this;
-					event.display = getDisplay();
-					event.type = SWT.Selection;
-					listener.handleEvent(event);
-				}
-			});
-			return;
-		} else if (eventType == SWT.Close) {
-			closeListeners.add(new CloseListener() {
-				@Override
-				public void onClose(final CloseEvent e) {
-					final Event event = new Event();
-					event.widget = Chips.this;
-					event.display = getDisplay();
-					event.type = SWT.Close;
-					listener.handleEvent(event);
-				}
+		if (eventType == SWT.Close) {
+			closeListeners.add(e -> {
+				final Event event = new Event();
+				event.widget = Chips.this;
+				event.display = getDisplay();
+				event.type = SWT.Close;
+				listener.handleEvent(event);
 			});
 			return;
 		}
@@ -441,10 +412,7 @@ public class Chips extends Canvas {
 	 */
 	public void addSelectionListener(final SelectionListener listener) {
 		checkWidget();
-		if (listener == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		selectionListeners.add(listener);
+		SelectionListenerUtil.addSelectionListener(this, listener);
 	}
 
 	/**
@@ -499,10 +467,7 @@ public class Chips extends Canvas {
 	 */
 	public void removeSelectionListener(final SelectionListener listener) {
 		checkWidget();
-		if (listener == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		selectionListeners.remove(listener);
+		SelectionListenerUtil.removeSelectionListener(this, listener);
 	}
 
 	// ---- Getters & Setters
