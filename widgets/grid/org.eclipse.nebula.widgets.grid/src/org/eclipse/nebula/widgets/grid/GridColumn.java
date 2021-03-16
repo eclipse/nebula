@@ -121,7 +121,7 @@ public class GridColumn extends Item {
 	/**
 	 * Width of column.
 	 */
-	private int width = DEFAULT_WIDTH;
+	int width = DEFAULT_WIDTH;
 
 	/**
 	 * Sort style of column. Only used to draw indicator, does not actually sort
@@ -187,6 +187,7 @@ public class GridColumn extends Item {
 	private int minimumWidth = 0;
 
 	private String headerTooltip = null;
+	int index;
 
 	/**
 	 * Constructs a new instance of this class given its parent (which must be a
