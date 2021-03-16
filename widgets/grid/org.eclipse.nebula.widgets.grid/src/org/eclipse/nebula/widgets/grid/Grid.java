@@ -7783,17 +7783,21 @@ public class Grid extends Canvas {
 	 */
 	int newColumn(final GridColumn column, final int index) {
 
+		int size = columns.size();
 		if (index == -1) {
-			column.index = columns.size();
+			column.index = size;
 			columns.add(column);
 			displayOrderedColumns.add(column);
 		} else {
 			column.index = index;
 			columns.add(index, column);
+			for(int i = index + 1; i < size; i++) {
+				columns.get(i).index = i;
+			}
 			displayOrderedColumns.add(index, column);
 
 			dataVisualizer.addColumn(index);
-			for (int i = 0; i < columns.size(); i++) {
+			for(int i = 0; i < size; i++) {
 				columns.get(i).setColumnIndex(i);
 			}
 		}
@@ -7812,7 +7816,7 @@ public class Grid extends Canvas {
 		scrollValuesObsolete = true;
 		redraw();
 		clearDisplayOrderedCache();
-		return columns.size() - 1;
+		return size - 1;
 	}
 
 	/**
@@ -7849,6 +7853,10 @@ public class Grid extends Canvas {
 		}
 
 		columns.remove(column);
+		int size = columns.size();
+		for(int i = index; i < size; i++) {
+			columns.get(i).index = i;
+		}
 		displayOrderedColumns.remove(column);
 		dataVisualizer.clearColumn(index);
 
