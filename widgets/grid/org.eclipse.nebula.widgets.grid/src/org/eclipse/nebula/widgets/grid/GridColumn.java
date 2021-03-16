@@ -345,7 +345,7 @@ public class GridColumn extends Item {
 
 		cellRenderer.setCheck(check);
 		cellRenderer.setTree(tree);
-		cellRenderer.setColumn(parent.indexOf(this));
+		cellRenderer.setColumn(index);
 
 		if ((getStyle() & SWT.RIGHT) == SWT.RIGHT) {
 			cellRenderer.setAlignment(SWT.RIGHT);
@@ -659,7 +659,7 @@ public class GridColumn extends Item {
 		int newWidth = getHeaderRenderer().computeSize(gc, SWT.DEFAULT,
 				SWT.DEFAULT, this).x;
 
-		getCellRenderer().setColumn(parent.indexOf(this));
+		getCellRenderer().setColumn(index);
 		final boolean virtual = (getParent().getStyle() & SWT.VIRTUAL) != 0;
 		final int bottomIndex = getParent().getBottomIndex() + 1;
 		final int topIndex = getParent().getTopIndex();
