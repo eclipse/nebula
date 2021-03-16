@@ -1301,7 +1301,7 @@ public class GridItem extends Item {
 		GridColumn[] columns = getParent().getColumns();
 
 		for (int i = 0; i < columns.length; i++) {
-			Point cell = new Point(getParent().indexOf(columns[i]), index);
+			Point cell = new Point(columns[i].index, index);
 			if (getParent().isCellSelected(cell)) {
 				flag = true;
 				getParent().deselectCell(cell);
