@@ -2677,7 +2677,7 @@ public class Grid extends Canvas {
 			}
 		} else {
 			range.rows = range.endIndex - range.startIndex + 1;
-			range.height = (getItemHeight() + 1) * range.rows - 1;
+			range.height = (itemHeight + 1) * range.rows - 1;
 		}
 
 		return range;
@@ -2814,9 +2814,9 @@ public class Grid extends Canvas {
 			range.rows = consumedItems;
 			range.height = consumedHeight;
 		} else {
-			int availableRows = (availableHeight + 1) / (getItemHeight() + 1);
+			int availableRows = (availableHeight + 1) / (itemHeight + 1);
 
-			if (((getItemHeight() + 1) * range.rows - 1) + 1 < availableHeight) {
+			if(((itemHeight + 1) * range.rows - 1) + 1 < availableHeight) {
 				// not all available space used yet
 				// - so add another row if it need not be completely within availableHeight
 				if (!forceEndCompletelyInside) {
@@ -2835,7 +2835,7 @@ public class Grid extends Canvas {
 			range.startIndex = !inverse ? startIndex : otherIndex;
 			range.endIndex = !inverse ? otherIndex : startIndex;
 			range.rows = range.endIndex - range.startIndex + 1;
-			range.height = (getItemHeight() + 1) * range.rows - 1;
+			range.height = (itemHeight + 1) * range.rows - 1;
 		}
 
 		return range;
@@ -5209,13 +5209,13 @@ public class Grid extends Canvas {
 
 		Rectangle clientArea = getClientArea();
 		final int availableHeight = clientArea.height - y;
-		int visibleRows = availableHeight / getItemHeight() + 1;
+		int visibleRows = availableHeight / itemHeight + 1;
 		if (items.size() > 0 && availableHeight > 0) {
 			final RowRange range = getRowRange(getTopIndex(), availableHeight, false, false);
 			if (range.height >= availableHeight) {
 				visibleRows = range.rows;
 			} else {
-				visibleRows = range.rows + (availableHeight - range.height) / getItemHeight() + 1;
+				visibleRows = range.rows + (availableHeight - range.height) / itemHeight + 1;
 			}
 		}
 
@@ -5450,7 +5450,7 @@ public class Grid extends Canvas {
 					x += rowHeaderWidth;
 				}
 
-				emptyCellRenderer.setBounds(x, y, clientArea.width - x, getItemHeight());
+				emptyCellRenderer.setBounds(x, y, clientArea.width - x, itemHeight);
 				emptyCellRenderer.setFocus(false);
 				emptyCellRenderer.setSelected(false);
 				emptyCellRenderer.setRow(i + 1);
@@ -5460,7 +5460,7 @@ public class Grid extends Canvas {
 					if (column.isVisible()) {
 						int width = column.width;
 						if(x + width >= 0) {
-							emptyCellRenderer.setBounds(x, y, width, getItemHeight());
+							emptyCellRenderer.setBounds(x, y, width, itemHeight);
 							emptyCellRenderer.setColumn(indexOf(column));
 							emptyCellRenderer.paint(e.gc, this);
 						}
@@ -5472,7 +5472,7 @@ public class Grid extends Canvas {
 				}
 
 				if (x < clientArea.width) {
-					emptyCellRenderer.setBounds(x, y, clientArea.width - x + 1, getItemHeight());
+					emptyCellRenderer.setBounds(x, y, clientArea.width - x + 1, itemHeight);
 					emptyCellRenderer.setColumn(getColumnCount());
 					emptyCellRenderer.paint(e.gc, this);
 				}
@@ -5480,13 +5480,13 @@ public class Grid extends Canvas {
 				x = 0;
 
 				if (rowHeaderVisible) {
-					emptyRowHeaderRenderer.setBounds(x, y, rowHeaderWidth, getItemHeight() + 1);
+					emptyRowHeaderRenderer.setBounds(x, y, rowHeaderWidth, itemHeight + 1);
 					emptyRowHeaderRenderer.paint(e.gc, this);
 
 					x += rowHeaderWidth;
 				}
 
-				y += getItemHeight() + 1;
+				y += itemHeight + 1;
 			}
 
 			row++;
@@ -5839,7 +5839,7 @@ public class Grid extends Canvas {
 			if (!hasDifferingHeights) {
 				// in this case, the number of visible rows on screen is constant,
 				// so use this as thumb
-				thumb = (getVisibleGridHeight() + 1) / (getItemHeight() + 1);
+				thumb = (getVisibleGridHeight() + 1) / (itemHeight + 1);
 			} else {
 				// in this case, the number of visible rows on screen is variable,
 				// so we have to use 1 as thumb and decrease max by the number of
@@ -9838,7 +9838,7 @@ public class Grid extends Canvas {
 
 			int height = item.getImage(column).getBounds().height;
 			// FIXME Needs better algorithm
-			if (height + 20 > getItemHeight()) {
+			if(height + 20 > itemHeight) {
 				height = computeItemHeight(item);
 				setItemHeight(height);
 			}
