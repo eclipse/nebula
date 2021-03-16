@@ -1380,7 +1380,7 @@ public class Grid extends Canvas {
 			columnOrders = new int[columns.size()];
 			int i = 0;
 			for (GridColumn col : displayOrderedColumns) {
-				columnOrders[i] = columns.indexOf(col);
+				columnOrders[i] = col.index;
 				i++;
 			}
 		}
@@ -2952,7 +2952,7 @@ public class Grid extends Canvas {
 			return -1;
 		}
 
-		return columns.indexOf(column);
+		return column.index;
 	}
 
 	/**
@@ -5207,7 +5207,8 @@ public class Grid extends Canvas {
 			y += headerHeight;
 		}
 
-		final int availableHeight = getClientArea().height - y;
+		Rectangle clientArea = getClientArea();
+		final int availableHeight = clientArea.height - y;
 		int visibleRows = availableHeight / getItemHeight() + 1;
 		if (items.size() > 0 && availableHeight > 0) {
 			final RowRange range = getRowRange(getTopIndex(), availableHeight, false, false);
@@ -5316,7 +5317,7 @@ public class Grid extends Canvas {
 							cellSpanManager.addCellSpanInfo(colIndex, row, nrColumnsToSpan, nrRowsToSpan);
 						}
 
-						if (x + width >= 0 && x < getClientArea().width) {
+						if (x + width >= 0 && x < clientArea.width) {
 							final Point sizeOfColumn = item.getCellSize(indexOfColumn);
 
 							column.getCellRenderer().setBounds(x, y, width, sizeOfColumn.y);
@@ -5377,7 +5378,7 @@ public class Grid extends Canvas {
 
 								// x2-pos
 								if (insertMarkColumn == null) {
-									insertMarkPosX2 = getClientArea().x + getClientArea().width;
+									insertMarkPosX2 = clientArea.x + clientArea.width;
 								} else {
 									insertMarkPosX2 = x + width;
 								}
@@ -5388,13 +5389,15 @@ public class Grid extends Canvas {
 					} else {
 						cellSpanManager.consumeCell(colIndex, row);
 					}
-
+					if(x > clientArea.width) {
+						break;
+					}
 					x += column.getWidth();
 					colIndex++;
 
 				}
 
-				if (x < getClientArea().width) {
+				if (x < clientArea.width) {
 					// insertMarkPos needs correction
 					if (insertMarkPosFound && insertMarkColumn == null) {
 						insertMarkPosX2 = x;
@@ -5403,7 +5406,7 @@ public class Grid extends Canvas {
 					emptyCellRenderer.setSelected(selectedItems.contains(item));
 					emptyCellRenderer.setFocus(isFocusControl());
 					emptyCellRenderer.setRow(i + 1);
-					emptyCellRenderer.setBounds(x, y, getClientArea().width - x + 1, item.getHeight());
+					emptyCellRenderer.setBounds(x, y, clientArea.width - x + 1, item.getHeight());
 					emptyCellRenderer.setColumn(getColumnCount());
 					emptyCellRenderer.paint(e.gc, item);
 				}
@@ -5432,7 +5435,7 @@ public class Grid extends Canvas {
 							if (rowHeaderVisible) {
 								focusX = rowHeaderWidth;
 							}
-							focusRenderer.setBounds(focusX, focusY - 1, getClientArea().width - focusX - 1,
+							focusRenderer.setBounds(focusX, focusY - 1, clientArea.width - focusX - 1,
 									item.getHeight() + 1);
 							focusRenderer.paint(e.gc, item);
 						}
@@ -5447,7 +5450,7 @@ public class Grid extends Canvas {
 					x += rowHeaderWidth;
 				}
 
-				emptyCellRenderer.setBounds(x, y, getClientArea().width - x, getItemHeight());
+				emptyCellRenderer.setBounds(x, y, clientArea.width - x, getItemHeight());
 				emptyCellRenderer.setFocus(false);
 				emptyCellRenderer.setSelected(false);
 				emptyCellRenderer.setRow(i + 1);
@@ -5455,16 +5458,21 @@ public class Grid extends Canvas {
 				for (final GridColumn column : displayOrderedColumns) {
 
 					if (column.isVisible()) {
-						emptyCellRenderer.setBounds(x, y, column.getWidth(), getItemHeight());
-						emptyCellRenderer.setColumn(indexOf(column));
-						emptyCellRenderer.paint(e.gc, this);
-
-						x += column.getWidth();
+						int width = column.width;
+						if(x + width >= 0) {
+							emptyCellRenderer.setBounds(x, y, width, getItemHeight());
+							emptyCellRenderer.setColumn(indexOf(column));
+							emptyCellRenderer.paint(e.gc, this);
+						}
+						if(x > clientArea.width) {
+							break;
+						}
+						x += width;
 					}
 				}
 
-				if (x < getClientArea().width) {
-					emptyCellRenderer.setBounds(x, y, getClientArea().width - x + 1, getItemHeight());
+				if (x < clientArea.width) {
+					emptyCellRenderer.setBounds(x, y, clientArea.width - x + 1, getItemHeight());
 					emptyCellRenderer.setColumn(getColumnCount());
 					emptyCellRenderer.paint(e.gc, this);
 				}
@@ -5508,7 +5516,7 @@ public class Grid extends Canvas {
 		// draw insertion mark
 		if (insertMarkPosFound) {
 			Rectangle rect = new Rectangle(rowHeaderVisible ? rowHeaderWidth : 0, columnHeadersVisible ? headerHeight : 0,
-					getClientArea().width, getClientArea().height);
+					clientArea.width, clientArea.height);
 			e.gc.setClipping(originalClipping.intersection(rect));
 			insertMarkRenderer.paint(e.gc,
 					new Rectangle(insertMarkPosX1, insertMarkPosY, insertMarkPosX2 - insertMarkPosX1, 0));
@@ -7776,9 +7784,11 @@ public class Grid extends Canvas {
 	int newColumn(final GridColumn column, final int index) {
 
 		if (index == -1) {
+			column.index = columns.size();
 			columns.add(column);
 			displayOrderedColumns.add(column);
 		} else {
+			column.index = index;
 			columns.add(index, column);
 			displayOrderedColumns.add(index, column);
 
