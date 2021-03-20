@@ -58,7 +58,9 @@ class ImageContainer extends Canvas {
 			}
 
 			// Animation
-			gc.drawImage(scrollImage, slider, 0, clientArea.width, clientArea.height, 0, 0, clientArea.width, clientArea.height);
+			if (!scrollImage.isDisposed()) {
+				gc.drawImage(scrollImage, slider, 0, clientArea.width, clientArea.height, 0, 0, clientArea.width, clientArea.height);
+			}
 		});
 	}
 
