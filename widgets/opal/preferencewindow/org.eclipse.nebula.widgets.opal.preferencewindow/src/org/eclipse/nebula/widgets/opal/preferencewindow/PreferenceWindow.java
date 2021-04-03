@@ -210,8 +210,8 @@ public class PreferenceWindow {
 	 */
 	private void openShell() {
 		shell.pack();
-		shell.open();
 		SWTGraphicUtil.centerShell(shell);
+		shell.open();
 
 		while (!shell.isDisposed()) {
 			if (!shell.getDisplay().readAndDispatch()) {
