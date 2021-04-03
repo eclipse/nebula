@@ -1161,7 +1161,7 @@ public class TableCombo extends Composite {
 			if (hasFocus) {
 				return;
 			}
-			if (getEditable()) {
+			if (getEditable() ) {
 				text.selectAll();
 			}
 			hasFocus = true;
@@ -2443,7 +2443,12 @@ public class TableCombo extends Composite {
 		if (updateTextWithinSelection) {
 			text.setText(tableItem.getText(colIndexToUse));
 		}
-		text.selectAll();
+		boolean isReadOnly = (newStyle & SWT.READ_ONLY) != 0;
+		if (!isReadOnly) {
+			text.selectAll();
+		} else {
+			text.setSelection(text.getText().length());
+		}
 	}
 
 	/**
