@@ -285,7 +285,7 @@ public class TableCombo extends Composite {
 			addListener(SWT.Paint, e -> {
 				final GC gc = e.gc;
 				final Color previousColor = gc.getForeground();
-				gc.setForeground(borderColor);
+				gc.setForeground(getEnabled()?borderColor:getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
 				gc.drawRectangle(0, 0, getBounds().width - 1, getBounds().height - 1);
 				gc.setForeground(previousColor);
 			});
