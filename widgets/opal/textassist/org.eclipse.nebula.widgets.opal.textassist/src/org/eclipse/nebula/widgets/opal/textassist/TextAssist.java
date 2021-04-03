@@ -161,6 +161,10 @@ public class TextAssist extends Composite {
 		return event -> {
 			switch (event.keyCode) {
 				case SWT.ARROW_DOWN:
+					if (!popup.isVisible()) {
+						event.doit = false;
+						break;
+					}
 					int index = (table.getSelectionIndex() + 1) % table.getItemCount();
 					table.setSelection(index);
 					event.doit = false;
