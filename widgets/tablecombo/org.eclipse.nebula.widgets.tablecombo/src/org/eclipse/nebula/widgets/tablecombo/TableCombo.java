@@ -99,6 +99,7 @@ public class TableCombo extends Composite {
 	private Listener listener;
 	private Listener focusFilter;
 	private int displayColumnIndex = 0;
+	private TableComboRenderer renderer;
 	private Color foreground;
 	private Color background;
 	private Color borderColor;
@@ -213,6 +214,8 @@ public class TableCombo extends Composite {
 
 		initAccessible();
 
+		renderer = new DefaultTableComboRenderer(this);
+
 		addDisposeListener(e -> popup.dispose());
 	}
 
@@ -285,7 +288,8 @@ public class TableCombo extends Composite {
 			addListener(SWT.Paint, e -> {
 				final GC gc = e.gc;
 				final Color previousColor = gc.getForeground();
-				gc.setForeground(getEnabled()?borderColor:getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
+				gc.setForeground(
+						getEnabled() ? borderColor : getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
 				gc.drawRectangle(0, 0, getBounds().width - 1, getBounds().height - 1);
 				gc.setForeground(previousColor);
 			});
@@ -602,13 +606,13 @@ public class TableCombo extends Composite {
 			final GC gc = new GC(text);
 			final int spacer = gc.stringExtent(" ").x; //$NON-NLS-1$
 			int maxTextWidth = gc.stringExtent(text.getText()).x;
-			final int colIndex = getDisplayColumnIndex();
 			int maxImageHeight = 0;
 			int currTextWidth = 0;
 
 			// calculate the maximum text width and image height.
+			int index = 0;
 			for (final TableItem tableItem : tableItems) {
-				currTextWidth = gc.stringExtent(tableItem.getText(colIndex)).x;
+				currTextWidth = gc.stringExtent(renderer.getLabel(index++)).x;
 
 				// take image into account if there is one for the tableitem.
 				if (tableItem.getImage() != null) {
@@ -958,7 +962,7 @@ public class TableCombo extends Composite {
 	 */
 	public String getItem(final int index) {
 		checkWidget();
-		return table.getItem(index).getText(getDisplayColumnIndex());
+		return renderer.getLabel(index);
 	}
 
 	/**
@@ -1027,11 +1031,9 @@ public class TableCombo extends Composite {
 		// create string array to hold the total number of items.
 		final String[] stringItems = new String[totalItems];
 
-		final int colIndex = getDisplayColumnIndex();
-
 		// now copy the display string from the tableitems.
 		for (int index = 0; index < totalItems; index++) {
-			stringItems[index] = tableItems[index].getText(colIndex);
+			stringItems[index] = renderer.getLabel(index);
 		}
 
 		return stringItems;
@@ -1161,7 +1163,7 @@ public class TableCombo extends Composite {
 			if (hasFocus) {
 				return;
 			}
-			if (getEditable() ) {
+			if (getEditable()) {
 				text.selectAll();
 			}
 			hasFocus = true;
@@ -1229,11 +1231,10 @@ public class TableCombo extends Composite {
 		final TableItem[] tableItems = table.getItems();
 
 		final int totalItems = tableItems == null ? 0 : tableItems.length;
-		final int colIndex = getDisplayColumnIndex();
 
 		// now copy the display string from the tableitems.
 		for (int index = 0; index < totalItems; index++) {
-			if (string.equals(tableItems[index].getText(colIndex))) {
+			if (string.equals(renderer.getLabel(index))) {
 				return index;
 			}
 		}
@@ -1277,11 +1278,9 @@ public class TableCombo extends Composite {
 
 		if (start < totalItems) {
 
-			final int colIndex = getDisplayColumnIndex();
-
 			// now copy the display string from the tableitems.
 			for (int index = start; index < totalItems; index++) {
-				if (string.equals(tableItems[index].getText(colIndex))) {
+				if (string.equals(renderer.getLabel(index))) {
 					return index;
 				}
 			}
@@ -2376,7 +2375,7 @@ public class TableCombo extends Composite {
 	 *
 	 * @return
 	 */
-	private int getDisplayColumnIndex() {
+	int getDisplayColumnIndex() {
 		// make sure the requested column index is valid.
 		return displayColumnIndex <= table.getColumnCount() - 1 ? displayColumnIndex : 0;
 	}
@@ -2411,17 +2410,10 @@ public class TableCombo extends Composite {
 	 * Refreshes the label control with the selected object's details.
 	 */
 	private void refreshText(final int index) {
-
-		// get a reference to the selected TableItem
-		final TableItem tableItem = table.getItem(index);
-
-		// get the TableItem index to use for displaying the text.
-		final int colIndexToUse = getDisplayColumnIndex();
-
 		// set image if requested
 		if (showImageWithinSelection) {
 			// set the selected image
-			selectedImage.setImage(tableItem.getImage(colIndexToUse));
+			selectedImage.setImage(renderer.getImage(index));
 
 			// refresh the layout of the widget
 			internalLayout(false, false);
@@ -2429,19 +2421,21 @@ public class TableCombo extends Composite {
 
 		// set color if requested
 		if (showColorWithinSelection) {
-			text.setForeground(tableItem.getForeground(colIndexToUse));
-			text.setBackground(tableItem.getBackground(colIndexToUse));
+			if (renderer.getForeground(index) != null)
+				text.setForeground(renderer.getForeground(index));
+			if (renderer.getBackground(index) != null)
+				text.setBackground(renderer.getBackground(index));
 		}
 
 		// set font if requested
 		if (showFontWithinSelection) {
 			// set the selected font
-			text.setFont(tableItem.getFont(colIndexToUse));
+			text.setFont(renderer.getFont(index));
 		}
 
 		// set the label text.
 		if (updateTextWithinSelection) {
-			text.setText(tableItem.getText(colIndexToUse));
+			text.setText(renderer.getLabel(index));
 		}
 		boolean isReadOnly = (newStyle & SWT.READ_ONLY) != 0;
 		if (!isReadOnly) {
@@ -2934,6 +2928,47 @@ public class TableCombo extends Composite {
 	public void setEvenLinesBackgroundColor(final Color color) {
 		checkWidget();
 		evenLinesBackgroundColor = color;
+	}
+
+	/**
+	 * Get the renderer used to display the "text" part of the TableCombo.
+	 *
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
+	 *                </ul>
+	 */
+	public TableComboRenderer getRenderer() {
+		checkWidget(); // TODO Javadoc
+		return renderer;
+	}
+
+	/**
+	 * Sets the renderer used to display the "text" part of the TableCombo.
+	 *
+	 * @param renderer
+	 *            the new renderer (can not be null)
+	 *
+	 * @exception IllegalArgumentException
+	 *                <ul>
+	 *                <li>ERROR_NULL_ARGUMENT - if the argument is null</li>
+	 *                </ul>
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
+	 *                </ul>
+	 */
+	public void setRenderer(TableComboRenderer renderer) {
+		checkWidget(); 
+		if (renderer == null)
+			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		this.renderer = renderer;
 	}
 
 }
