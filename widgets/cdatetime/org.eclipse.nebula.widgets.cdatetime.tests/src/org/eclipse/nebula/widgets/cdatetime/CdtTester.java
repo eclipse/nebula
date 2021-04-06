@@ -110,8 +110,7 @@ public class CdtTester {
 		});
 	}
 
-	public void setPattern(final String pattern,
-			final TimeZone[] allowedTimeZones) {
+	public void setPattern(final String pattern, final TimeZone[] allowedTimeZones) {
 		display.syncExec(new Runnable() {
 			public void run() {
 				cdt.setPattern(pattern, allowedTimeZones);
@@ -168,9 +167,9 @@ public class CdtTester {
 //		System.err.println("\t Getcurrent: " + Display.getCurrent());
 //		System.err.println("\t GetDefault: " + Display.getDefault());
 //		System.err.println("\t Variable: " + display);
-		
+
 //		new Exception().printStackTrace(System.err);
-		
+
 		display.syncExec(new Runnable() {
 			public void run() {
 				tmpObj = cdt.getSelection();
@@ -251,6 +250,23 @@ public class CdtTester {
 
 	public VPanel getYearsPanel() {
 		return (VPanel) getPickerPanels()[0].getChildren()[2];
+	}
+
+	/*
+	 * TODO Replace this very implicit and error-prone code with a proper call to
+	 * the CDateTime API once it provides a method to resolve the internal Time
+	 * Picker (or its style).
+	 */
+	public VPanel getTimePicker() {
+		VPanel result = null;
+		Object bodyChild = getBodyPanel().getChildren()[2];
+		if (bodyChild instanceof VPanel) {
+			Object expectedTimePicker = ((VPanel) bodyChild).getChildren()[0];
+			if (expectedTimePicker instanceof VPanel) {
+				result = (VPanel) expectedTimePicker;
+			}
+		}
+		return result;
 	}
 
 }

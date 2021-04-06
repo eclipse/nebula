@@ -87,7 +87,13 @@ class DatePicker extends VPanel {
 
 	VButton[] yearButtons;
 
-	AnalogTimePicker timePanel;
+	/*
+	 * TODO Use a dedicated interface for different implementations of a Time
+	 * Picker instead of an unspecified VPanel here once it exists for the
+	 * different implementations of a time picker.
+	 */
+	VPanel timePanel;
+	private boolean useDiscreteClock;
 
 	private CDateTime cdt;
 	private SimpleDateFormat sdf;
@@ -105,6 +111,7 @@ class DatePicker extends VPanel {
 	public DatePicker(CDateTime parent) {
 		super(parent.pickerPanel, parent.style);
 		cdt = parent;
+		useDiscreteClock = (parent.style & CDT.CLOCK_DISCRETE) != 0;
 		init(parent.style);
 	}
 
@@ -713,7 +720,11 @@ class DatePicker extends VPanel {
 	private void createTime(Body b) {
 		VPanel bodyPanel = bodyPanels[bodyPanels.length - 1];
 
-		timePanel = new AnalogTimePicker(cdt, this);
+		if (useDiscreteClock) {
+			timePanel = new DiscreteTimePicker(cdt);
+		} else {
+			timePanel = new AnalogTimePicker(cdt, this);
+		}
 		timePanel.setParent(bodyPanel);
 
 		bodyPanel.getLayout(VStackLayout.class).setDefault(timePanel, false);
@@ -943,8 +954,14 @@ class DatePicker extends VPanel {
 			});
 		}
 
-		if (timePanel != null) {
-			timePanel.setFields(calendarFields);
+		/*
+		 * TODO Use the dedicated interface for the Time picker here instead of
+		 * using ugly instanceof cascades.
+		 */
+		if (timePanel instanceof AnalogTimePicker) {
+			((AnalogTimePicker) timePanel).setFields(calendarFields);
+		} else if (timePanel instanceof DiscreteTimePicker) {
+			((DiscreteTimePicker) timePanel).setFields(calendarFields);
 		}
 	}
 
@@ -1383,8 +1400,14 @@ class DatePicker extends VPanel {
 		}
 		updateMonths();
 		updateYears();
-		if (timePanel != null) {
-			timePanel.updateView();
+		/*
+		 * TODO Use the dedicated interface for the Time picker here instead of
+		 * using ugly instanceof cascades.
+		 */
+		if (timePanel instanceof AnalogTimePicker) {
+			((AnalogTimePicker) timePanel).updateView();
+		} else if (timePanel instanceof DiscreteTimePicker) {
+			((DiscreteTimePicker) timePanel).updateView();
 		}
 		updateFooter();
 	}
