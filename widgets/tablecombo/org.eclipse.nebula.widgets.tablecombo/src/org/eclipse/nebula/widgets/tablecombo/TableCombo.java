@@ -535,7 +535,9 @@ public class TableCombo extends Composite {
 			if (focusControl == arrow || focusControl == table) {
 				return;
 			}
-			if (!isDropped()) {
+			if (isDropped()) {
+				table.setFocus();
+			} else {
 				text.setFocus();
 			}
 			break;
@@ -842,6 +844,8 @@ public class TableCombo extends Composite {
 		// set the popup visible
 		popup.setVisible(true);
 
+		// set focus on the table.
+		table.setFocus();
 	}
 
 	/*
