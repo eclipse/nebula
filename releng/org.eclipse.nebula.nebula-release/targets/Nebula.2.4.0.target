@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pde?>
+<!-- generated with https://github.com/eclipse-cbi/targetplatform-dsl -->
+<target name="Nebula 2.4.0" sequenceNumber="1595506843">
+  <locations>
+    <location includeMode="slicer" includeAllPlatforms="false" includeSource="false" includeConfigurePhase="false" type="InstallableUnit">
+      <unit id="org.eclipse.nebula.feature.feature.group" version="2.4.0.202006092019"/>
+      <repository location="http://download.eclipse.org/nebula/releases/2.4.0"/>
+    </location>
+  </locations>
+</target>

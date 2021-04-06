@@ -1,9 +1,12 @@
 /*
  * Copyright (c) 2005 Matthew Hall and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  * 
  * Contributors:
  *     Matthew Hall - initial API and implementation
@@ -435,7 +438,7 @@ class TextIterator implements PrintIterator {
 	}
 
 	private String[] nextLines(final int width, final int maxLines) {
-		List nextLines = new ArrayList(Math.min(lines.length, maxLines));
+		List<String> nextLines = new ArrayList<>(Math.min(lines.length, maxLines));
 
 		while ((nextLines.size() < maxLines) && (row < lines.length)) {
 			String line = lines[row].substring(col);

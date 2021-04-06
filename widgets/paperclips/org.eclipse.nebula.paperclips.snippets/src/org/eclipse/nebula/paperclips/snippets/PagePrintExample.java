@@ -1,10 +1,13 @@
 /*
  * Copyright (c) 2005 Matthew Hall and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
  * 
+ * SPDX-License-Identifier: EPL-2.0
+ *
  * Contributors:
  *     Matthew Hall - initial API and implementation
  */
@@ -30,20 +33,18 @@ import org.eclipse.swt.printing.PrinterData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 /**
  * Demonstrate use of PagePrint and friends PageDecoration, PageNumberPrint, and
  * PageNumber.
- * 
+ *
  * @author Matthew
  */
 public class PagePrintExample {
 	/**
 	 * Executes the GridPrint example.
-	 * 
+	 *
 	 * @param args
 	 *            the command line arguments.
 	 */
@@ -67,27 +68,21 @@ public class PagePrintExample {
 
 		Button prev = new Button(buttonPanel, SWT.PUSH);
 		prev.setText("<< Prev");
-		prev.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				preview.setPageIndex(Math.max(preview.getPageIndex() - 1, 0));
-			}
+		prev.addListener(SWT.Selection, event -> {
+			preview.setPageIndex(Math.max(preview.getPageIndex() - 1, 0));
 		});
 
 		Button next = new Button(buttonPanel, SWT.PUSH);
 		next.setText("Next >>");
-		next.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				preview.setPageIndex(Math.min(preview.getPageIndex() + 1,
-						preview.getPageCount() - 1));
-			}
+		next.addListener(SWT.Selection, event -> {
+			preview.setPageIndex(Math.min(preview.getPageIndex() + 1,
+					preview.getPageCount() - 1));
 		});
 
 		Button print = new Button(buttonPanel, SWT.PUSH);
 		print.setText("Print");
-		print.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				PaperClips.print(job, new PrinterData());
-			}
+		print.addListener(SWT.Selection, event -> {
+			PaperClips.print(job, new PrinterData());
 		});
 
 		preview.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));

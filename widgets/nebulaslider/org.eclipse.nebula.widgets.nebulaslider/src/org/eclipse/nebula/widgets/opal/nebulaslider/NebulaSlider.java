@@ -1,17 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2018 Laurent CARON All rights reserved. This program and the
- * accompanying materials are made available under the terms of the Eclipse
- * Public License v1.0 which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2018 Laurent CARON
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors: Laurent CARON (laurent.caron at gmail dot com) - Initial
  * implementation and API
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.nebulaslider;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.eclipse.nebula.widgets.opal.commons.SelectionListenerUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.SelectionEvent;
@@ -24,8 +25,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Widget;
 
 /**
@@ -58,11 +57,11 @@ public class NebulaSlider extends Canvas {
 	private int minimum;
 	private int maximum;
 	private int value;
-	private final List<SelectionListener> selectionListeners;
+	private int xPosition;
+	private int mouseDeltaX;
 	private final Font textFont;
 
 	private boolean moving = false;
-	private int previousX;
 
 	/**
 	 * Constructs a new instance of this class given its parent and a style value
@@ -106,10 +105,10 @@ public class NebulaSlider extends Canvas {
 		selectorTextColor = getAndDisposeColor(255, 255, 255);
 		arrowColor = getAndDisposeColor(153, 203, 237);
 
-		selectionListeners = new ArrayList<>();
 		minimum = Integer.MIN_VALUE;
 		maximum = Integer.MAX_VALUE;
 		value = 0;
+		xPosition = -1;
 
 		textFont = createTextFont();
 
@@ -151,6 +150,11 @@ public class NebulaSlider extends Canvas {
 		gc.setAdvanced(true);
 		gc.setAntialias(SWT.ON);
 
+		if (xPosition < 0) {
+			// Compute xPosition
+			xPosition = computeXPosition();
+		}
+
 		drawBar(gc);
 		drawSelectionPart(gc);
 		drawSelector(gc);
@@ -177,13 +181,11 @@ public class NebulaSlider extends Canvas {
 		final int x = H_MARGIN + SELECTOR_WIDTH / 2;
 		final int y = (rect.height - BAR_HEIGHT) / 2;
 
-		final int width = getPosition();
-
-		gc.fillRoundRectangle(x, y, width, BAR_HEIGHT, BAR_HEIGHT, BAR_HEIGHT);
-		gc.drawRoundRectangle(x, y, width, BAR_HEIGHT, BAR_HEIGHT, BAR_HEIGHT);
+		gc.fillRoundRectangle(x, y, xPosition, BAR_HEIGHT, BAR_HEIGHT, BAR_HEIGHT);
+		gc.drawRoundRectangle(x, y, xPosition, BAR_HEIGHT, BAR_HEIGHT, BAR_HEIGHT);
 	}
 
-	private int getPosition() {
+	private int computeXPosition() {
 		final int originalWidth = getClientArea().width - H_MARGIN * 2 - SELECTOR_WIDTH;
 		final float coeff = value * 1f / (maximum - minimum);
 		final int position = (int) (coeff * originalWidth);
@@ -195,22 +197,21 @@ public class NebulaSlider extends Canvas {
 		gc.setForeground(selectorColorBorder);
 		gc.setBackground(selectorColor);
 
-		final int position = getPosition();
 		final int y = (rect.height - SELECTOR_HEIGHT) / 2;
 
 		// Draw the body
-		gc.fillRoundRectangle(H_MARGIN + position, y, SELECTOR_WIDTH, SELECTOR_HEIGHT, SELECTOR_HEIGHT, SELECTOR_HEIGHT);
-		gc.drawRoundRectangle(H_MARGIN + position, y, SELECTOR_WIDTH, SELECTOR_HEIGHT, SELECTOR_HEIGHT, SELECTOR_HEIGHT);
+		gc.fillRoundRectangle(H_MARGIN + xPosition, y, SELECTOR_WIDTH, SELECTOR_HEIGHT, SELECTOR_HEIGHT, SELECTOR_HEIGHT);
+		gc.drawRoundRectangle(H_MARGIN + xPosition, y, SELECTOR_WIDTH, SELECTOR_HEIGHT, SELECTOR_HEIGHT, SELECTOR_HEIGHT);
 
 		// Draw the arrows
 		gc.setForeground(arrowColor);
 		gc.setLineWidth(3);
 		final int baseY = y + SELECTOR_HEIGHT / 2;
-		gc.drawLine(H_MARGIN + position + 10, baseY, H_MARGIN + position + 17, baseY - 7);
-		gc.drawLine(H_MARGIN + position + 10, baseY, H_MARGIN + position + 17, baseY + 7);
+		gc.drawLine(H_MARGIN + xPosition + 10, baseY, H_MARGIN + xPosition + 17, baseY - 7);
+		gc.drawLine(H_MARGIN + xPosition + 10, baseY, H_MARGIN + xPosition + 17, baseY + 7);
 
-		gc.drawLine(H_MARGIN + position + SELECTOR_WIDTH - 10, baseY, H_MARGIN + position + SELECTOR_WIDTH - 17, baseY - 7);
-		gc.drawLine(H_MARGIN + position + SELECTOR_WIDTH - 10, baseY, H_MARGIN + position + SELECTOR_WIDTH - 17, baseY + 7);
+		gc.drawLine(H_MARGIN + xPosition + SELECTOR_WIDTH - 10, baseY, H_MARGIN + xPosition + SELECTOR_WIDTH - 17, baseY - 7);
+		gc.drawLine(H_MARGIN + xPosition + SELECTOR_WIDTH - 10, baseY, H_MARGIN + xPosition + SELECTOR_WIDTH - 17, baseY + 7);
 
 		// And the value
 		gc.setForeground(selectorTextColor);
@@ -218,87 +219,52 @@ public class NebulaSlider extends Canvas {
 		final String valueAsString = String.valueOf(value);
 		final Point textSize = gc.textExtent(valueAsString);
 
-		final int xText = H_MARGIN + position + SELECTOR_WIDTH / 2;
+		final int xText = H_MARGIN + xPosition + SELECTOR_WIDTH / 2;
 		gc.drawText(valueAsString, xText - textSize.x / 2, y + 2, true);
 	}
 
 	private void addMouseListeners() {
 		addListener(SWT.MouseDown, e -> {
-			final int position = getPosition();
 			final int y = (getClientArea().height - SELECTOR_HEIGHT) / 2;
-			final Rectangle rect = new Rectangle(position + H_MARGIN, y, SELECTOR_WIDTH, SELECTOR_HEIGHT);
+			final Rectangle rect = new Rectangle(xPosition + H_MARGIN, y, SELECTOR_WIDTH, SELECTOR_HEIGHT);
 			if (!rect.contains(e.x, e.y)) {
 				return;
 			}
 			moving = true;
-			previousX = getDisplay().getCursorLocation().x;
+			mouseDeltaX = xPosition - e.x;
 		});
 
 		addListener(SWT.MouseUp, e -> {
 			moving = false;
+			mouseDeltaX = 0;
+			redraw();
 		});
 
 		addListener(SWT.MouseMove, e -> {
 			if (!moving) {
 				return;
 			}
-			final int deltaX = previousX - getDisplay().getCursorLocation().x;
+
+			xPosition = e.x + mouseDeltaX;
+			if (xPosition < 0) {
+				xPosition = 0;
+			}
 			final int originalWidth = getClientArea().width - H_MARGIN * 2 - SELECTOR_WIDTH;
-			final float step = (maximum - minimum) / originalWidth;
-			value -= deltaX * step * 2;
-			if (value < minimum) {
-				value = minimum;
+
+			if (xPosition > originalWidth) {
+				xPosition = originalWidth;
 			}
-			if (value > maximum) {
-				value = maximum;
-			}
-			previousX = getDisplay().getCursorLocation().x;
-			fireSelectionEvent();
+
+			// Update value
+			float ratio = (float) xPosition / originalWidth;
+			value = (int) Math.floor(ratio * (maximum - minimum));
+
+			SelectionListenerUtil.fireSelectionListeners(this,e);
 			redraw();
-			update();
 		});
 	}
 
-	private void fireSelectionEvent() {
-		final Event event = new Event();
-		event.widget = this;
-		event.display = getDisplay();
-		event.type = SWT.Selection;
-		for (final SelectionListener selectionListener : selectionListeners) {
-			selectionListener.widgetSelected(new SelectionEvent(event));
-		}
-	}
 
-	/**
-	 * @see org.eclipse.swt.widgets.Widget#addListener(int, org.eclipse.swt.widgets.Listener)
-	 */
-	@Override
-	public void addListener(int eventType, Listener listener) {
-		if (eventType == SWT.Selection) {
-			selectionListeners.add(new SelectionListener() {
-
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					widgetSelection(e);
-				}
-
-				@Override
-				public void widgetDefaultSelected(SelectionEvent e) {
-					widgetSelection(e);
-				}
-
-				private void widgetSelection(SelectionEvent e) {
-					final Event event = new Event();
-					event.widget = NebulaSlider.this;
-					event.display = getDisplay();
-					event.type = SWT.Selection;
-					listener.handleEvent(event);
-				}
-			});
-			return;
-		}
-		super.addListener(eventType, listener);
-	}
 
 	/**
 	 * Adds the listener to the collection of listeners who will be notified when
@@ -329,10 +295,7 @@ public class NebulaSlider extends Canvas {
 	 */
 	public void addSelectionListener(final SelectionListener listener) {
 		checkWidget();
-		if (listener == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		selectionListeners.add(listener);
+		SelectionListenerUtil.addSelectionListener(this, listener);
 	}
 
 	/**
@@ -366,10 +329,7 @@ public class NebulaSlider extends Canvas {
 	 */
 	public void removeSelectionListener(final SelectionListener listener) {
 		checkWidget();
-		if (listener == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		selectionListeners.remove(listener);
+		SelectionListenerUtil.removeSelectionListener(this, listener);
 	}
 
 	// ----------------------- Getters & Setters
@@ -481,6 +441,7 @@ public class NebulaSlider extends Canvas {
 			SWT.error(SWT.ERROR_INVALID_ARGUMENT, new IllegalArgumentException(String.format("Value %d is not int the range [%d - %d]", value, minimum, maximum)));
 		}
 		this.value = value;
+		xPosition = -1;
 		redraw();
 		update();
 	}

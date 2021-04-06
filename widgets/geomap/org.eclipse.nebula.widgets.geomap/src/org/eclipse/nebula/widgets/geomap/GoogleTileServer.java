@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2008, 2012 Stepan Rutz.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *    Stepan Rutz - initial implementation
@@ -27,7 +30,7 @@ public final class GoogleTileServer extends TileServer {
 	 *            the max zoom level supported by this server
 	 */
 	public GoogleTileServer(String url, int maxZoom) {
-		super(url, maxZoom, "&z={0}&x={1}&y={2}"); //$NON-NLS-1$
+		super(url, 0, maxZoom, "&z={0}&x={1}&y={2}"); //$NON-NLS-1$
 	}
 
 	/**

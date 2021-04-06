@@ -1,11 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2011 Laurent CARON All rights reserved. This program and the
- * accompanying materials are made available under the terms of the Eclipse
- * Public License v1.0 which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2011-2019 Laurent CARON
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
- * Contributors: Laurent CARON (laurent.caron at gmail dot com) - Initial
- * implementation and API
+ * Contributors: 
+ * 	Laurent CARON (laurent.caron at gmail dot com) - Initial implementation and API
+ * 	Stefan Nöbauer - Bug 550437 
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.commons;
 
@@ -14,6 +18,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -22,6 +27,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.PaletteData;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Resource;
@@ -38,6 +44,8 @@ import org.eclipse.swt.widgets.Widget;
  */
 public class SWTGraphicUtil {
 
+	private static final String OS = System.getProperty("os.name").toLowerCase();
+	
 	/**
 	 * Constructor
 	 */
@@ -48,11 +56,16 @@ public class SWTGraphicUtil {
 	 * Dispose safely any SWT resource when a widget is disposed
 	 *
 	 * @param widget widget attached to the resource
-	 * @param resource the resource to dispose
+	 * @param resources the resources to dispose
 	 */
-	public static void addDisposer(final Widget widget, final Resource resource) {
+	public static void addDisposer(final Widget widget, final Resource... resources) {
 		widget.addDisposeListener(e -> {
-			safeDispose(resource);
+			if (resources == null) {
+				return;
+			}
+			for (Resource resource:resources) {
+				safeDispose(resource);
+			}
 		});
 	}
 
@@ -258,8 +271,17 @@ public class SWTGraphicUtil {
 	 * @param shell shell to center
 	 */
 	public static void centerShell(final Shell shell) {
-		final Monitor primary = shell.getDisplay().getPrimaryMonitor();
-		final Rectangle bounds = primary.getBounds();
+		Monitor[] monitors = shell.getDisplay().getMonitors();
+		Monitor activeMonitor = null;
+		 
+		Rectangle r = shell.getBounds();
+		for (int i = 0; i < monitors.length; i++) {
+		    if (monitors[i].getBounds().intersects(r)) {
+		        activeMonitor = monitors[i];
+		    }
+		}
+		
+		final Rectangle bounds = activeMonitor.getBounds();
 		final Rectangle rect = shell.getBounds();
 		final int x = bounds.x + (bounds.width - rect.width) / 2;
 		final int y = bounds.y + (bounds.height - rect.height) / 2;
@@ -268,18 +290,25 @@ public class SWTGraphicUtil {
 
 	/**
 	 * @param shell
-	 * @return the bounds of the monitor on which the shell is running
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_NULL_ARGUMENT - if the provided shell is null</li>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the shell is disposed</li>
+	 *                </ul>
+	 *  @return the bounds of the monitor on which the shell is running
 	 */
 	public static Rectangle getBoundsOfMonitorOnWhichShellIsDisplayed(final Shell shell) {
-		for (final Monitor monitor : shell.getDisplay().getMonitors()) {
-			final Rectangle monitorBounds = monitor.getBounds();
-			final Rectangle shellBounds = shell.getBounds();
-			if (monitorBounds.contains(shellBounds.x, shellBounds.y)) {
-				return monitorBounds;
-			}
+		if (shell == null) {
+			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
-		final Monitor primary = shell.getDisplay().getPrimaryMonitor();
-		return primary.getBounds();
+		if (shell.isDisposed()) {
+			SWT.error(SWT.ERROR_WIDGET_DISPOSED);
+		}
+		Monitor monitor = shell.getMonitor();
+		if (monitor == null) {
+			monitor = shell.getDisplay().getPrimaryMonitor();
+		}
+		return monitor.getBounds();
 	}
 
 	/**
@@ -505,8 +534,14 @@ public class SWTGraphicUtil {
 	 * @return <code>true</code> if the operating system is MacOS, false otherwise
 	 */
 	public static boolean isMacOS() {
-		final String OS = System.getProperty("os.name").toLowerCase();
 		return OS.indexOf("mac") >= 0;
+	}
+	
+	/**
+	 * @return <code>true</code> if the operating system is Linux, false otherwise
+	 */
+	public static boolean isLinux() {
+		return OS.indexOf("nux") >= 0;
 	}
 
 	/**
@@ -527,10 +562,25 @@ public class SWTGraphicUtil {
 	 * @return the width of text
 	 */
 	public static int computeWidth(final String text) {
+		return computeSize(text,null).x;
+	}
+	
+	/**
+	 * @param text
+	 * @param font
+	 * @return the width and height of this text for the given font
+	 */
+	public static Point computeSize(final String text, final Font font) {
+		if (text == null) {
+			return new Point(0,0);
+		}
 		final GC gc = new GC(Display.getDefault());
-		final int width = gc.textExtent(text).x;
+		if (font != null) {
+			gc.setFont(font);
+		}
+		final Point size = gc.textExtent(text);
 		gc.dispose();
-		return width;
+		return size;
 	}
 
 }

@@ -1,8 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2011,2012 Laurent CARON All rights reserved. This program and
- * the accompanying materials are made available under the terms of the Eclipse
- * Public License v1.0 which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2011,2012 Laurent CARON
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors: Laurent CARON (laurent.caron at gmail dot com) - Initial
  * implementation and API Marnix van Bochove (mgvanbochove at gmail dot com) -
@@ -10,15 +13,12 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.checkboxgroup;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.nebula.widgets.opal.commons.SWTGraphicUtil;
+import org.eclipse.nebula.widgets.opal.commons.SelectionListenerUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
@@ -48,7 +48,6 @@ import org.eclipse.swt.widgets.Widget;
 public class CheckBoxGroup extends Canvas implements PaintListener {
 	protected Button button;
 	private final Composite content;
-	private final List<SelectionListener> selectionListeners;
 
 	private boolean transparent = false;
 
@@ -86,8 +85,6 @@ public class CheckBoxGroup extends Canvas implements PaintListener {
 		super(parent, style);
 		super.setLayout(new GridLayout());
 
-		selectionListeners = new ArrayList<SelectionListener>();
-
 		createCheckBoxButton();
 
 		content = new Composite(this, style);
@@ -104,40 +101,17 @@ public class CheckBoxGroup extends Canvas implements PaintListener {
 		button.setSelection(true);
 		button.pack();
 
-		button.addSelectionListener(new SelectionAdapter() {
-			/**
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				e.doit = fireSelectionListeners(e);
-				if (!e.doit) {
-					return;
-				}
-				if (button.getSelection()) {
-					activate();
-				} else {
-					deactivate();
-				}
+		button.addListener(SWT.Selection, e -> {
+			e.doit = SelectionListenerUtil.fireSelectionListeners(this,e);
+			if (!e.doit) {
+				return;
+			}
+			if (button.getSelection()) {
+				activate();
+			} else {
+				deactivate();
 			}
 		});
-	}
-
-	/**
-	 * Fire the selection listeners
-	 *
-	 * @param selectionEvent mouse event
-	 * @return true if the selection could be changed, false otherwise
-	 */
-	private boolean fireSelectionListeners(final SelectionEvent selectionEvent) {
-		selectionEvent.widget = this;
-		for (final SelectionListener listener : selectionListeners) {
-			listener.widgetSelected(selectionEvent);
-			if (!selectionEvent.doit) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	/**
@@ -182,7 +156,7 @@ public class CheckBoxGroup extends Canvas implements PaintListener {
 	 */
 	public void addSelectionListener(final SelectionListener listener) {
 		checkWidget();
-		selectionListeners.add(listener);
+		SelectionListenerUtil.addSelectionListener(this, listener);	
 	}
 
 	/**
@@ -232,7 +206,7 @@ public class CheckBoxGroup extends Canvas implements PaintListener {
 	 */
 	public void removeSelectionListener(final SelectionListener listener) {
 		checkWidget();
-		selectionListeners.remove(listener);
+		SelectionListenerUtil.removeSelectionListener(this, listener);
 	}
 
 	/**
@@ -330,7 +304,7 @@ public class CheckBoxGroup extends Canvas implements PaintListener {
 	 * @param selection the new selection state
 	 */
 	public void setSelection(boolean selection) {
-		if (selection) {
+		if (selection) {// TODO
 			activate();
 		} else {
 			deactivate();

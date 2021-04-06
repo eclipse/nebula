@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Carousel widget plug-in
+Bundle-SymbolicName: org.eclipse.nebula.widgets.carousel
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Nebula
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: org.eclipse.nebula.widgets.carousel
+Require-Bundle: org.eclipse.nebula.widgets.opal.commons;visibility:=reexport,
+ org.eclipse.swt

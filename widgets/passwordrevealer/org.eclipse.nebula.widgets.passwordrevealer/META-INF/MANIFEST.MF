@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Nebula Password Revealer widget plug-in
+Bundle-SymbolicName: org.eclipse.nebula.widgets.passwordrevealer
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Nebula
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: org.eclipse.nebula.widgets.passwordrevealer
+Require-Bundle: org.eclipse.nebula.widgets.opal.commons;bundle-version="1.0.0";visibility:=reexport,
+ org.eclipse.swt

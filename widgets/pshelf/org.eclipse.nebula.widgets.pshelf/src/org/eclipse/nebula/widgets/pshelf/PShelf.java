@@ -1,9 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2006 Chris Gross. All rights reserved. This program and the
- * accompanying materials are made available under the terms of the Eclipse
- * Public License v1.0 which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html 
+ * Copyright (c) 2006 Chris Gross.
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
  * 
+ * SPDX-License-Identifier: EPL-2.0
+ *
  * Contributors: schtoo@schtoo.com(Chris Gross) - initial API and implementation
  ******************************************************************************/
 
@@ -14,9 +17,6 @@ import java.util.Iterator;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -29,16 +29,16 @@ import org.eclipse.swt.widgets.TypedListener;
 
 /**
  * <p>
- * NOTE:  THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.  THIS IS A PRE-RELEASE ALPHA 
+ * NOTE:  THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.  THIS IS A PRE-RELEASE ALPHA
  * VERSION.  USERS SHOULD EXPECT API CHANGES IN FUTURE VERSIONS.
- * </p> 
- * 
- * Instances of this class implement a selectable accordion metaphor, where each shelf contains 
+ * </p>
+ *
+ * Instances of this class implement a selectable accordion metaphor, where each shelf contains
  * a client area.
  * <p>
  * The item children that may be added to instances of this class
  * must be of type <code>PShelfItem</code>.
- * <code>Control</code> children are created on the body composite of each items accessed via 
+ * <code>Control</code> children are created on the body composite of each items accessed via
  * <code>PShelfItem#getBody</code>.
  * </p><p>
  * <dl>
@@ -52,19 +52,19 @@ import org.eclipse.swt.widgets.TypedListener;
  * </p>
  */
 public class PShelf extends Canvas {
-	
-	private ArrayList<PShelfItem> items = new ArrayList<PShelfItem>();
+
+	private ArrayList<PShelfItem> items = new ArrayList<>();
 	private AbstractRenderer renderer;
 	private PShelfItem openItem;
 	private PShelfItem focusItem;
 	private PShelfItem mouseDownItem;
 	private PShelfItem hoverItem;
     private int itemHeight = 0;
-    
-    private ArrayList<Integer> yCoordinates = new ArrayList<Integer>();
+
+    private ArrayList<Integer> yCoordinates = new ArrayList<>();
     private double animationSpeed = 0.02;
     private boolean redrawOnAnimation;
-	
+
     private static int checkStyle(int style)
     {
         int mask = SWT.LEFT_TO_RIGHT | SWT.RIGHT_TO_LEFT | SWT.BORDER | SWT.SIMPLE;
@@ -77,7 +77,7 @@ public class PShelf extends Canvas {
      * <p>
      * The style value is either one of the style constants defined in
      * class <code>SWT</code> which is applicable to instances of this
-     * class, or must be built by <em>bitwise OR</em>'ing together 
+     * class, or must be built by <em>bitwise OR</em>'ing together
      * (that is, using the <code>int</code> "|" operator) two or more
      * of those <code>SWT</code> style constants. The class description
      * lists the style constants that are applicable to the class.
@@ -96,57 +96,39 @@ public class PShelf extends Canvas {
      * </ul>
      */
 	public PShelf(Composite parent, int style) {
-		super(parent,checkStyle(style));
+		super(parent, checkStyle(style));
 		setRenderer(new PaletteShelfRenderer());
-		
-		this.addPaintListener(e -> onPaint(e.gc));
-		
+
+		this.addPaintListener(event -> onPaint(event.gc));
+
 		this.addListener(SWT.Resize, event -> onResize());
-		
-		this.addMouseListener(new MouseListener() {
-			@Override
-			public void mouseUp(MouseEvent e) {
-				PShelfItem item = getItem(new Point(1,e.y));
-				if ((item) == null)
-					return;
-				if (item == mouseDownItem && item != openItem){
-					openItem(item,true);
-				}
+
+		this.addListener(SWT.MouseUp, event -> {
+			PShelfItem item = getItem(new Point(1, event.y));
+			if ((item) == null)
+				return;
+			if (item == mouseDownItem && item != openItem) {
+				openItem(item, true);
 			}
-			@Override
-			public void mouseDown(MouseEvent e) {
-				mouseDownItem = getItem(new Point(1,e.y));
-			}
-			@Override
-			public void mouseDoubleClick(MouseEvent arg0) {
-			}		
 		});
-		
-		this.addDisposeListener(arg0 -> onDispose());
-		
-		this.addMouseTrackListener(new MouseTrackListener() {
-			@Override
-			public void mouseHover(MouseEvent arg0) {
-			}
-			@Override
-			public void mouseExit(MouseEvent arg0) {
-				hoverItem = null;
-				redraw();
-			}
-			@Override
-			public void mouseEnter(MouseEvent arg0) {
-			}		
+		this.addListener(SWT.MouseDown, event -> mouseDownItem = getItem(new Point(1, event.y)));
+
+		this.addDisposeListener(event -> onDispose());
+
+		this.addListener(SWT.MouseExit, event -> {
+			hoverItem = null;
+			redraw();
 		});
-		
-        this.addMouseMoveListener(e -> {
-			PShelfItem item = getItem(new Point(1,e.y));
-			if (item != hoverItem){
+
+		this.addMouseMoveListener(e -> {
+			PShelfItem item = getItem(new Point(1, e.y));
+			if (item != hoverItem) {
 				hoverItem = item;
 				redraw();
 			}
 		});
 	}
-	
+
     /**
      * Sets the renderer.
      *
@@ -163,24 +145,24 @@ public class PShelf extends Canvas {
     public void setRenderer(AbstractRenderer renderer)
     {
         checkWidget();
-        
+
         if (renderer == null)
             SWT.error(SWT.ERROR_NULL_ARGUMENT);
-        
+
         if (renderer.isDisposed())
             SWT.error(SWT.ERROR_WIDGET_DISPOSED);
-        
+
         if (this.renderer != null)
             this.renderer.dispose();
-        
+
         this.renderer = renderer;
         renderer.initialize(this);
-        
+
         computeItemHeight();
         onResize();
         redraw();
     }
-    
+
     /**
      * Returns the renderer.
      *
@@ -196,17 +178,17 @@ public class PShelf extends Canvas {
         checkWidget();
         return renderer;
     }
-    
-	/** 
+
+	/**
      * {@inheritDoc}
      */
     @Override
 	public Point computeSize(int wHint, int hHint, boolean changed)
     {
         checkWidget();
-        
+
         Point size = new Point(wHint,hHint);
-        
+
         if (wHint == SWT.DEFAULT || hHint == SWT.DEFAULT)
         {
             if (openItem != null)
@@ -214,7 +196,7 @@ public class PShelf extends Canvas {
                 Point prefSize = openItem.getBody().computeSize(SWT.DEFAULT,SWT.DEFAULT);
                 if (wHint == SWT.DEFAULT)
                     size.x = prefSize.x;
-                
+
                 if (hHint == SWT.DEFAULT)
                 {
                     size.y = prefSize.y + (items.size() * itemHeight);
@@ -225,7 +207,7 @@ public class PShelf extends Canvas {
                 return super.computeSize(wHint,hHint,changed);
             }
         }
-        
+
         return size;
     }
 
@@ -234,24 +216,24 @@ public class PShelf extends Canvas {
 	}
 
 	private void onPaint(GC gc) {
-		
+
 		gc.setAdvanced(true);
 		if (gc.getAdvanced())
 			gc.setTextAntialias(SWT.ON);
-		
+
 		Color back = getBackground();
 		Color fore = getForeground();
-		
+
 		int index = 0;
 
 		for (Iterator<PShelfItem> iter = items.iterator(); iter.hasNext();) {
 			PShelfItem item = iter.next();
-						
+
 			gc.setBackground(back);
 			gc.setForeground(fore);
-            
+
             Integer y = yCoordinates.get(index);
-			
+
             renderer.setBounds(0,y.intValue(),getClientArea().width,itemHeight);
             renderer.setSelected(item == openItem);
             renderer.setFocus(this.isFocusControl() && focusItem == item);
@@ -260,26 +242,26 @@ public class PShelf extends Canvas {
 
 			index ++;
 		}
-		
+
 	}
-    
+
     private void computeItemYCoordinates()
     {
         yCoordinates.clear();
-        
+
         int y = getClientArea().y;
         int i = 0;
-        
+
         for (Iterator<PShelfItem> iter = items.iterator(); iter.hasNext();)
         {
             i ++;
-            
+
             PShelfItem item = iter.next();
-            
+
             yCoordinates.add(new Integer(y));
-            
+
             y += itemHeight;
-            
+
             if (item == openItem)
                 y = getClientArea().y + getClientArea().height - (itemHeight * (items.size() - i));
         }
@@ -291,16 +273,16 @@ public class PShelf extends Canvas {
 		} else {
 			items.add(index,item);
 		}
-		
+
 		computeItemHeight();
-		
+
 		if (openItem == null){
 			openItem(item,false);
-		}	
+		}
 		//need to recompute ycoords and heights and such
 		onResize();
 	}
-	
+
 	void removeItem(PShelfItem item){
         computeItemHeight();
 		items.remove(item);
@@ -311,20 +293,20 @@ public class PShelf extends Canvas {
 			{
 				openItem(items.get(0),false);
 			}
-		}			
-        
+		}
+
         onResize();
 	}
-	
+
 	private void openItem(PShelfItem item, boolean animation){
 		PShelfItem previousOpen = openItem;
 		openItem = item;
 		focusItem = item;
-		
+
 		item.getBodyParent().setBounds(0,0,0,0);
 		item.getBodyParent().setVisible(true);
 		item.getBody().layout();
-		
+
 		if (animation && (getStyle() & SWT.SIMPLE) == 0){
   		    if(!redrawOnAnimation) {
   		      previousOpen.getBodyParent().setRedraw(false);
@@ -351,42 +333,42 @@ public class PShelf extends Canvas {
 		}
 		if (previousOpen != null)
 			previousOpen.getBodyParent().setVisible(false);
-		
+
 		redraw();
 		getDisplay().update();
-        
+
         Event e = new Event();
         e.item = openItem;
 
         this.notifyListeners(SWT.Selection,e);
-        
+
         computeItemYCoordinates();
         onResize();
 	}
-	
+
     private void animateOpen(PShelfItem previousItem, PShelfItem newItem, boolean openFromBottom)
     {
-        double percentOfWork = 0;        
+        double percentOfWork = 0;
         while (percentOfWork < 1)
-        {            
+        {
             yCoordinates.clear();
-            
+
             int yTop = getClientArea().y;
-            
+
             int yBottom = getClientArea().y + getClientArea().height - (itemHeight * (items.size() - (items.indexOf(newItem) + 1)));
-            
+
             int totalShrinkingGrowingArea = getClientArea().height - (itemHeight * items.size());
-            
+
             int collapsingGrowingSpace = (int)(totalShrinkingGrowingArea * (openFromBottom ? 1 - percentOfWork : percentOfWork));
             boolean addedCollapsingSpace = false;
-            
+
             for (int i = 0; i < items.size(); i++)
             {
                 if (i <= items.indexOf(previousItem))
                 {
                     //put on top
                     yCoordinates.add(new Integer(yTop));
-                    yTop += itemHeight;                    
+                    yTop += itemHeight;
                 }
                 else if (i > items.indexOf(newItem))
                 {
@@ -402,47 +384,42 @@ public class PShelf extends Canvas {
                         addedCollapsingSpace = true;
                     }
                     yCoordinates.add(new Integer(yTop));
-                    yTop += itemHeight;                        
+                    yTop += itemHeight;
                 }
-                
+
             }
-            
+
             sizeClients();
-            redraw(getClientArea().x,getClientArea().y, getClientArea().width, getClientArea().height, false);
+            redraw(getClientArea().x,getClientArea().y, getClientArea().width, getClientArea().height, true);
             update();
-            //workaround for SWT bug 193357
-            if (SWT.getPlatform().equals("carbon"))
-            {
-                getDisplay().readAndDispatch();
-            }
             percentOfWork += this.animationSpeed;
-        } 
-        
+        }
+
         computeItemYCoordinates();
         redraw();
     }
-	
-	void onResize(){        
+
+	void onResize(){
         computeItemYCoordinates();
         sizeClients();
-        
+
         int clientHeight = getClientArea().height - (itemHeight * items.size());
-        
+
         for (Iterator<PShelfItem> iter = items.iterator(); iter.hasNext();)
         {
             PShelfItem item = iter.next();
-            item.getBody().setBounds(0,0,getClientArea().width,clientHeight);            
+            item.getBody().setBounds(0,0,getClientArea().width,clientHeight);
         }
 	}
-    
+
     private void sizeClients()
     {
         if (openItem == null)
             return;
-        
+
         if (items.size() == 0)
             return;
-        
+
         for(int i = 0; i < items.size(); i ++)
         {
             PShelfItem item = items.get(i);
@@ -450,15 +427,15 @@ public class PShelf extends Canvas {
             int nextY = 0;
             if (i + 1 < items.size())
             {
-                nextY = yCoordinates.get(i + 1).intValue();    
+                nextY = yCoordinates.get(i + 1).intValue();
             }
             else
             {
                 nextY = getClientArea().y + getClientArea().height;
             }
-            
+
             int clientHeight = nextY - y - itemHeight;
-            
+
             if (clientHeight > 0)
             {
                 item.getBodyParent().setVisible(true);
@@ -467,14 +444,14 @@ public class PShelf extends Canvas {
             else
             {
                 item.getBodyParent().setVisible(false);
-            }            
-        }        
+            }
+        }
     }
-    
+
 
 	void computeItemHeight(){
 		GC gc = new GC(this);
-		
+
 		for (Iterator<PShelfItem> iter = items.iterator(); iter.hasNext();) {
 			PShelfItem item = iter.next();
 			itemHeight = Math.max(renderer.computeSize(gc, 0, SWT.DEFAULT, item).y,itemHeight);
@@ -482,7 +459,7 @@ public class PShelf extends Canvas {
 
 		gc.dispose();
 	}
-	
+
     /**
      * Returns the item at the given location.
      *
@@ -496,36 +473,36 @@ public class PShelf extends Canvas {
      *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
      * </ul>
      */
-	public PShelfItem getItem(Point point){	
+	public PShelfItem getItem(Point point){
         checkWidget();
-        
+
 		int y1 = 0;
 		int y2 = 0;
-        
+
         if (point == null)
             SWT.error(SWT.ERROR_NULL_ARGUMENT);
-        
+
         for (Iterator<PShelfItem> iter = items.iterator(); iter.hasNext();)
         {
             PShelfItem item = iter.next();
-            
+
             y2 += itemHeight;
-            
+
             if (point.y >= y1 && point.y <= y2 -1){
                 return item;
             }
-            
+
             y1 += itemHeight;
-            
-            if (item == openItem){            	
+
+            if (item == openItem){
                 y1 += openItem.getBodyParent().getSize().y;
                 y2 += openItem.getBodyParent().getSize().y;
             }
         }
-        	
+
 		return null;
 	}
-	
+
     /**
      * Sets the receiver's selection to the given item.
      *
@@ -541,23 +518,23 @@ public class PShelf extends Canvas {
      */
 	public void setSelection(PShelfItem item){
         checkWidget();
-        
+
         if (item == null)
             SWT.error(SWT.ERROR_NULL_ARGUMENT);
-        
+
 		if (!items.contains(item))
 			return;
-		
+
 		if (openItem == item)
 			return;
-		
+
 		openItem(item,true);
 	}
-	
+
     /**
      * Returns the <code>PShelfItem</code> that is currently
-     * selected in the receiver. 
-     * 
+     * selected in the receiver.
+     *
      * @return the currently selected item
      *
      * @exception SWTException <ul>
@@ -572,11 +549,11 @@ public class PShelf extends Canvas {
 
     /**
      * Returns an array of <code>PShelfItem</code>s which are the items
-     * in the receiver. 
+     * in the receiver.
      * <p>
      * Note: This is not the actual structure used by the receiver
      * to maintain its list of items, so modifying the array will
-     * not affect the receiver. 
+     * not affect the receiver.
      * </p>
      *
      * @return the items in the receiver
@@ -591,7 +568,7 @@ public class PShelf extends Canvas {
         checkWidget();
         return items.toArray(new PShelfItem[items.size()]);
     }
-    
+
     /**
      * Adds the listener to the collection of listeners who will
      * be notified when the receiver's selection changes, by sending
@@ -623,7 +600,7 @@ public class PShelf extends Canvas {
         addListener(SWT.Selection,typedListener);
         addListener(SWT.DefaultSelection,typedListener);
     }
-    
+
     /**
      * Removes the listener from the collection of listeners who will
      * be notified when the receiver's selection changes.
@@ -646,24 +623,37 @@ public class PShelf extends Canvas {
         if (listener == null) SWT.error (SWT.ERROR_NULL_ARGUMENT);
 
         removeListener(SWT.Selection, listener);
-        removeListener(SWT.DefaultSelection,listener);  
+        removeListener(SWT.DefaultSelection,listener);
     }
-    
+
+	/**
+	 * Removes all PShelfItems.
+	 */
+	public void removeAll() {
+		checkWidget();
+
+		// dispose widgets (also removes from items)
+		while (!items.isEmpty())
+			items.get(0).dispose();
+
+		onResize();
+	}
+
     /**
      * Sets the speed of animation.
      * This value indicates the relative growing/shrinking value for one step.
      * Values between 0.0 and 1.0 are allowed.
-     * 
+     *
      * @since 05.02.2016
      * @param animationSpeed
      */
     public void setAnimationSpeed(double animationSpeed) {
         this.animationSpeed = animationSpeed;
     }
-    
+
     /**
-     * Sets whether to redraw the items (previous and next item) when the open animation occours. 
-     * 
+     * Sets whether to redraw the items (previous and next item) when the open animation occours.
+     *
      * @since 05.02.2016
      * @param redrawOnAnimation
      */

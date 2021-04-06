@@ -1,10 +1,13 @@
 /*****************************************************************************
  * Copyright (c) 2015 CEA LIST.
  *
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *		Dirk Fauth <dirk.fauth@googlemail.com> - Initial API and implementation
@@ -34,13 +37,20 @@ public class TextPaintInstruction implements PaintInstruction {
 	private List<String> words = new ArrayList<>();
 
 	public TextPaintInstruction(TagProcessingState state, String text) {
+		this(state, text, "\\s");
+	}
+
+	/**
+	 * @since 1.3.0
+	 */
+	public TextPaintInstruction(TagProcessingState state, String text, String wordSplitRegex) {
 		this.state = state;
 		this.text = text;
 
 		// extract and store the trimmed words in the text
 		String word = text.trim();
 		if (word.length() > 0) {
-			String[] splitText = word.split("\\s");
+			String[] splitText = word.split(wordSplitRegex);
 			for (String splitWord : splitText) {
 				String trimmed = splitWord.trim();
 				if (trimmed.length() > 0) {
@@ -80,8 +90,7 @@ public class TextPaintInstruction implements PaintInstruction {
 				pointer.x += length;
 				textLength += length;
 			}
-		}
-		else {
+		} else {
 			textLength = getTextLength(gc);
 			gc.drawText(text, pointer.x, pointer.y + yAdvance, (!this.state.hasPreviousBgColor()));
 		}

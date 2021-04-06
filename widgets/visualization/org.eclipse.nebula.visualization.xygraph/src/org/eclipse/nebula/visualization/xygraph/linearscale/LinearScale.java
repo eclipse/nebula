@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 package org.eclipse.nebula.visualization.xygraph.linearscale;
 
@@ -248,42 +251,35 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 		double min = r.getLower();
 		double max = r.getUpper();
 		double pixelsToStart = 0;
+		double l = length - 2 * margin;
 		if (isLogScaleEnabled()) {
-			if (value <= 0)
-				value = min;
-			// throw new IllegalArgumentException(
-			// "Invalid value: value must be greater than 0");
-			pixelsToStart = ((Math.log10(value) - Math.log10(min)) / (Math.log10(max) - Math.log10(min))
-					* ((double) length - 2d * margin)) + margin;
+			if (value <= 0) {
+				pixelsToStart = margin;
+			} else {
+				pixelsToStart = ((Math.log10(value) - Math.log10(min)) / (Math.log10(max) - Math.log10(min)) * l) + margin;
+			}
 		} else {
 			double f = LargeNumberUtils.maxMagnitude(min, max);
 			max /= f;
 			min /= f;
 			double t = max - min;
-			pixelsToStart = ((value / f - min) / t * ((double) length - 2d * margin)) + margin;
+			pixelsToStart = ((value / f - min) / t * l) + margin;
 		}
 
 		if (relative) {
-			if (orientation == Orientation.HORIZONTAL)
-				return pixelsToStart;
-			else
-				return length - pixelsToStart;
+			return orientation == Orientation.HORIZONTAL ? pixelsToStart : length - pixelsToStart;
 		} else {
-			if (orientation == Orientation.HORIZONTAL)
-				return pixelsToStart + bounds.x;
-			else
-				return length - pixelsToStart + bounds.y;
+			return orientation == Orientation.HORIZONTAL ? pixelsToStart + bounds.x : length - pixelsToStart + bounds.y;
 		}
 	}
 
 	/**
 	 * Get the corresponding value on the position of the scale.
 	 * 
-	 * @param the
-	 *            position.
-	 * @param true
-	 *            if the position is relative to the left/bottom bound of the
-	 *            scale; False if it is the absolute position.
+	 * @param position
+	 * @param relative
+	 *            if true the position is relative to the left/bottom bound of the
+	 *            scale; if false it is the absolute position.
 	 * @return the value corresponding to the position.
 	 */
 	public double getPositionValue(int position, boolean relative) {
@@ -293,11 +289,10 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 	/**
 	 * Get the corresponding value on the position of the scale.
 	 * 
-	 * @param the
-	 *            position.
-	 * @param true
-	 *            if the position is relative to the left/bottom bound of the
-	 *            scale; False if it is the absolute position.
+	 * @param position
+	 * @param relative
+	 *            if true the position is relative to the left/bottom bound of the
+	 *            scale; if false it is the absolute position.
 	 * @return the value corresponding to the position.
 	 */
 	public double getPositionValue(double position, boolean relative) {
@@ -306,29 +301,24 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 		double pixelsToStart;
 		double value;
 		if (relative) {
-			if (isHorizontal())
-				pixelsToStart = position;
-			else
-				pixelsToStart = length - position;
+			pixelsToStart = isHorizontal() ? position : length - position;
 		} else {
-			if (isHorizontal())
-				pixelsToStart = position - bounds.x;
-			else
-				pixelsToStart = length + bounds.y - position;
+			pixelsToStart = isHorizontal() ? position - bounds.x : length + bounds.y - position;
 		}
 
 		Range r = getLocalRange();
 		double min = r.getLower();
 		double max = r.getUpper();
+		double l = length - 2 * margin;
 		if (isLogScaleEnabled()) {
-			value = Math.pow(10, (pixelsToStart - margin) * (Math.log10(max) - Math.log10(min)) / (length - 2 * margin)
+			value = Math.pow(10, (pixelsToStart - margin) * (Math.log10(max) - Math.log10(min)) / l
 					+ Math.log10(min));
 		} else {
 			double f = LargeNumberUtils.maxMagnitude(min, max);
 			max /= f;
 			min /= f;
 			double t = max - min;
-			value = ((pixelsToStart - margin) / (length - 2 * margin) * t + min) * f;
+			value = ((pixelsToStart - margin) / l * t + min) * f;
 		}
 
 		return value;
@@ -399,10 +389,11 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 	public void setBounds(Rectangle rect) {
 		if (!bounds.equals(rect)) {
 			setDirty(true);
-			if (isHorizontal())
+			if (isHorizontal()) {
 				length = rect.width - getInsets().getWidth();
-			else
+			} else {
 				length = rect.height - getInsets().getHeight();
+			}
 		}
 		super.setBounds(rect);
 
@@ -491,9 +482,10 @@ public class LinearScale extends AbstractScale implements IScaleProvider {
 			calcMargin();
 			setDirty(false);
 			length = isHorizontal() ? getClientArea().width : getClientArea().height;
-			if (length > 2 * margin)
-				tickLabels.update(length - 2 * margin);
-
+			int l = length - 2 * margin;
+			if (l > 0) {
+				tickLabels.update(l);
+			}
 		}
 	}
 

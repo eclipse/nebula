@@ -1,21 +1,24 @@
 /*******************************************************************************
  * Copyright (c) 2006-2007 Nicolas Richeton.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors :
  *    Nicolas Richeton (nicolas.richeton@gmail.com) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.nebula.widgets.gallery;
 
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Event;
 
 /**
  * <p>
@@ -157,8 +160,7 @@ public abstract class AbstractGalleryGroupRenderer {
 	 * @return false if event was handled by the group renderer and Gallery
 	 *         should not try to handle this event as a click on a GalleryItem.
 	 */
-	public abstract boolean mouseDown(GalleryItem group, MouseEvent e,
-			Point coords);
+	public abstract boolean mouseDown(GalleryItem group, Event e, Point coords);
 
 	public Gallery getGallery() {
 		return this.gallery;

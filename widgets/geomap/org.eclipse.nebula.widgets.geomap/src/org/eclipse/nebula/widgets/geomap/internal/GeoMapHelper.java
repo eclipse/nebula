@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2008, 2012 Stepan Rutz.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *    Stepan Rutz - initial implementation
@@ -13,7 +16,7 @@
 package org.eclipse.nebula.widgets.geomap.internal;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,10 +66,14 @@ public class GeoMapHelper implements GeoMapPositioned, GeoMapHelperListener {
 		return display;
 	}
 
-	/* basically not be changed, must be the same as GeoMapUtil's TILE_SIZE */
-	static final int TILE_SIZE = 256;
+	/**
+	 * basically not be changed, must be the same as GeoMapUtil's TILE_SIZE
+	 */
+	public static final int TILE_SIZE = 256;
 
 	private static final int DEFAULT_NUMBER_OF_IMAGEFETCHER_THREADS = 4;
+
+	private static final int MIN_CACHE_SIZE = 200;
 
 	private Point mapSize = new Point(0, 0);
 	private Point mapPosition = new Point(0, 0);
@@ -77,7 +84,7 @@ public class GeoMapHelper implements GeoMapPositioned, GeoMapHelperListener {
 	private TileServer tileServer = OsmTileServer.TILESERVERS[0];
 	private int cacheSize;
 	// must be readable from AsyncImage
-	HashMap<TileRef, AsyncImage> cache;
+	Map<TileRef, AsyncImage> cache;
 
 	private BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>();
 
@@ -111,8 +118,11 @@ public class GeoMapHelper implements GeoMapPositioned, GeoMapHelperListener {
 	public GeoMapHelper(Display display, Point mapPosition, int zoom,
 			int cacheSize) {
 		this(display);
+		if (cacheSize < MIN_CACHE_SIZE) {
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT,null," - Cache size should be greater than " + MIN_CACHE_SIZE); //$NON-NLS-1$
+		}
 		this.cacheSize = cacheSize;
-		this.cache = new LinkedHashMap<TileRef, AsyncImage>(cacheSize, 0.75f,
+		this.cache = Collections.synchronizedMap(new LinkedHashMap<TileRef, AsyncImage>(cacheSize, 0.75f,
 				true) {
 			@Override
 			protected boolean removeEldestEntry(
@@ -123,7 +133,7 @@ public class GeoMapHelper implements GeoMapPositioned, GeoMapHelperListener {
 				}
 				return remove;
 			}
-		};
+		});
 		waitBackground = new Color(display, 0x88, 0x88, 0x88);
 		waitForeground = new Color(display, 0x77, 0x77, 0x77);
 
@@ -270,22 +280,16 @@ public class GeoMapHelper implements GeoMapPositioned, GeoMapHelperListener {
 
 	//
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#
-	 * getMapPosition()
+	/**
+	 * @see org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#getMapPosition()
 	 */
 	@Override
 	public Point getMapPosition() {
 		return new Point(mapPosition.x, mapPosition.y);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#
-	 * setMapPosition(int, int)
+	/**
+	 * @see org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#setMapPosition(int, int)
 	 */
 	@Override
 	public void setMapPosition(int x, int y) {
@@ -293,9 +297,16 @@ public class GeoMapHelper implements GeoMapPositioned, GeoMapHelperListener {
 		mapPosition.y = y;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
+	 * @see
+	 * org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#getMinZoom()
+	 */
+	@Override
+	public int getMinZoom() {
+		return getTileServer().getMinZoom();
+	}
+	
+	/**
 	 * @see
 	 * org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#getMaxZoom()
 	 */
@@ -304,22 +315,16 @@ public class GeoMapHelper implements GeoMapPositioned, GeoMapHelperListener {
 		return getTileServer().getMaxZoom();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#getZoom()
+	/**
+	 * @see org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#getZoom()
 	 */
 	@Override
 	public int getZoom() {
 		return zoom;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#setZoom(int)
+	/**
+	 * @see org.eclipse.nebula.widgets.geomap.internal.GeoMapPositioned#setZoom(int)
 	 */
 	@Override
 	public void setZoom(int zoom) {
@@ -384,5 +389,12 @@ public class GeoMapHelper implements GeoMapPositioned, GeoMapHelperListener {
 	 */
 	public void removeInternalGeoMapListener(InternalGeoMapListener listener) {
 		internalGeoMapListeners.remove(listener);
+	}
+	
+	/**
+	 * @return the number of tiles
+	 */
+	public int getNumberOfTiles() {
+		return Math.max(cache.size(), cacheSize);
 	}
 }

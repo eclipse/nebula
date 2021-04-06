@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2011 Laurent CARON
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  * Laurent CARON (laurent.caron at gmail dot com) - Implementation
@@ -14,6 +17,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.nebula.widgets.opal.commons.SelectionListenerUtil;
 import org.eclipse.nebula.widgets.opal.commons.StringUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
@@ -37,7 +41,7 @@ import org.eclipse.swt.widgets.Text;
  * <p>
  * <dl>
  * <dt><b>Styles:</b></dt>
- * <dd>READ_ONLY, FLAP</dd>
+ * <dd>READ_ONLY, FLAT</dd>
  * <dt><b>Events:</b></dt>
  * <dd>Selection, Modify</dd>
  * </dl>
@@ -50,7 +54,6 @@ public class HorizontalSpinner extends Composite {
 	};
 
 	private final List<ModifyListener> modifyListeners = new ArrayList<ModifyListener>();
-	private final List<SelectionListener> selectionListeners = new ArrayList<SelectionListener>();
 
 	private Button leftButton;
 	private Button rightButton;
@@ -251,9 +254,7 @@ public class HorizontalSpinner extends Composite {
 			return false;
 		}
 
-		for (final SelectionListener s : selectionListeners) {
-			s.widgetSelected(null);
-		}
+		SelectionListenerUtil.fireSelectionListeners(this,null);
 
 		return true;
 	}
@@ -363,7 +364,7 @@ public class HorizontalSpinner extends Composite {
 	 */
 	public void addSelectionListener(final SelectionListener listener) {
 		checkWidget();
-		selectionListeners.add(listener);
+		SelectionListenerUtil.addSelectionListener(this, listener);
 	}
 
 	/**
@@ -627,7 +628,7 @@ public class HorizontalSpinner extends Composite {
 	 */
 	public void removeSelectionListener(final SelectionListener listener) {
 		checkWidget();
-		selectionListeners.remove(listener);
+		SelectionListenerUtil.removeSelectionListener(this, listener);
 	}
 
 	/**
@@ -770,11 +771,6 @@ public class HorizontalSpinner extends Composite {
 
 		storedValue = selection;
 		text.setText(convertSelectionToStringValue());
-
-		for (final SelectionListener s : selectionListeners) {
-			s.widgetSelected(null);
-		}
-
 	}
 
 	/**

@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (C) 2011 Angelo Zerr <angelo.zerr@gmail.com>, Pascal Leclercq <pascal.leclercq@gmail.com>
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Angelo ZERR - initial API and implementation
@@ -125,7 +128,6 @@ public abstract class AbstractPageControllerComposite extends Composite
 		this.controller.addPageChangedListener(this);
 	}
 
-	@SuppressWarnings("unchecked")
 	protected PageableController createController(int pageSize) {
 		if (pageContentProvider != null) {
 			return pageContentProvider.createController(pageSize);

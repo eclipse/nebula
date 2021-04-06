@@ -1,8 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2011 Laurent CARON All rights reserved. This program and the
- * accompanying materials are made available under the terms of the Eclipse
- * Public License v1.0 which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2011 Laurent CARON
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors: Laurent CARON (laurent.caron at gmail dot com) - initial API
  * and implementation
@@ -50,27 +53,23 @@ public class LoginDialogSnippet {
 		button1.setText("Open basic dialog");
 		button1.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false));
 
-		final LoginDialogVerifier verifier = new LoginDialogVerifier() {
-
-			@Override
-			public void authenticate(final String login, final String password) throws Exception {
-				if ("".equals(login)) {
-					throw new Exception("Please enter a login.");
-				}
-
-				if ("".equals(password)) {
-					throw new Exception("Please enter a password.");
-				}
-
-				if (!login.equalsIgnoreCase("laurent")) {
-					throw new Exception("Login unknown.");
-				}
-
-				if (!password.equalsIgnoreCase("laurent")) {
-					throw new Exception("Authentication failed, please check your password.");
-				}
-
+		final LoginDialogVerifier verifier = (login, password) -> {
+			if ("".equals(login)) {
+				throw new Exception("Please enter a login.");
 			}
+
+			if ("".equals(password)) {
+				throw new Exception("Please enter a password.");
+			}
+
+			if (!login.equalsIgnoreCase("laurent")) {
+				throw new Exception("Login unknown.");
+			}
+
+			if (!password.equalsIgnoreCase("laurent")) {
+				throw new Exception("Authentication failed, please check your password.");
+			}
+
 		};
 
 		button1.addListener(SWT.Selection, e -> {

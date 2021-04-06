@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (C) 2011 Angelo Zerr <angelo.zerr@gmail.com>, Pascal Leclercq <pascal.leclercq@gmail.com>
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Angelo ZERR - initial API and implementation
@@ -30,21 +33,21 @@ import org.eclipse.swt.widgets.Label;
 
 /**
  * This SWT {@link Composite} display :
- * 
+ *
  * <ul>
  * <li>on the left region the result page.</li>
  * <li>on the right region the page links navigation by using {@link GC}.</li>
  * </ul>
- * 
+ *
  * <p>
  * Example :
- * 
+ *
  * <pre>
  * 	Results 1-5 of 10          Previous 1 2 ...10 Next
  * </pre>
- * 
+ *
  * </p>
- * 
+ *
  */
 public class ResultAndNavigationPageGraphicsRenderer extends
 		AbstractPageControllerComposite {
@@ -73,13 +76,13 @@ public class ResultAndNavigationPageGraphicsRenderer extends
 
 	/**
 	 * Create the UI like this :
-	 * 
+	 *
 	 * <p>
-	 * 
+	 *
 	 * <pre>
 	 * Results 1-5 of 10          Previous 1 2 ...10 Next
 	 * </pre>
-	 * 
+	 *
 	 * </p>
 	 */
 	protected void createUI(Composite parent) {
@@ -94,7 +97,7 @@ public class ResultAndNavigationPageGraphicsRenderer extends
 
 	/**
 	 * Create result label "Results 1-5 of 10"
-	 * 
+	 *
 	 * @param parent
 	 */
 	private void createLeftContainer(Composite parent) {
@@ -112,7 +115,7 @@ public class ResultAndNavigationPageGraphicsRenderer extends
 
 	/**
 	 * Create page links "Previous 1 2 ...10 Next" with {@link GC}.
-	 * 
+	 *
 	 * @param parent
 	 */
 	private void createRightContainer(Composite parent) {
@@ -209,7 +212,7 @@ public class ResultAndNavigationPageGraphicsRenderer extends
 
 	/**
 	 * Returns the {@link GC} navigation page.
-	 * 
+	 *
 	 * @return
 	 */
 	public NavigationPageGraphics getNavigationPage() {
@@ -218,7 +221,7 @@ public class ResultAndNavigationPageGraphicsRenderer extends
 
 	/**
 	 * Configure navigation page.
-	 * 
+	 *
 	 * @param configurator
 	 */
 	public void setConfigurator(INavigationPageGraphicsConfigurator configurator) {

@@ -1,9 +1,12 @@
 /*******************************************************************************
 * Copyright (c) 2011 EBM WebSourcing (PetalsLink)
-* All rights reserved. This program and the accompanying materials
-* are made available under the terms of the Eclipse Public License v1.0
-* which accompanies this distribution, and is available at
-* http://www.eclipse.org/legal/epl-v10.html
+*
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
 *
 * Contributors:
 * Mickael Istria, EBM WebSourcing (PetalsLink) - initial API and implementation
@@ -55,8 +58,6 @@ import org.eclipse.swt.dnd.TreeDragSourceEffect;
 import org.eclipse.swt.dnd.TreeDropTargetEffect;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.events.TreeListener;
 import org.eclipse.swt.graphics.Image;
@@ -71,7 +72,7 @@ import org.eclipse.swt.widgets.TreeItem;
  * and an area to display mappings between tree nodes.
  * It relies on a {@link ISemanticTreeMapperSupport} to create your business mapping objects,
  * and to resolve the bounds of a mapping object to object that are provided in the trees.
- * 
+ *
  * @author Mickael Istria (EBM WebSourcing (PetalsLink))
  * @since 0.1.0
  * @noextend This class is not intended to be subclassed by clients.
@@ -84,7 +85,7 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 
 	private SashForm control;
 	private TreeMapperUIConfigProvider uiConfig;
-	
+
 	private TreeViewer leftTreeViewer;
 	private TreeViewer rightTreeViewer;
 	private TreeItem leftTopItem;
@@ -94,7 +95,7 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 	private LightweightSystem linkSystem;
 	private Figure linkRootFigure;
 	private boolean canvasNeedRedraw;
-	
+
 	private List<M> mappings;
 	private Map<LinkFigure, M> figuresToMappings;
 	private Map<M, LinkFigure> mappingsToFigures;
@@ -103,7 +104,7 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 	private ISemanticTreeMapperSupport<M, L, R> semanticSupport;
 	private IFigure warningFigure;
 
-	
+
 	public TreeMapper(Composite parent, ISemanticTreeMapperSupport<M, L, R> semanticSupport, TreeMapperUIConfigProvider uiConfig) {
 		this.uiConfig = uiConfig;
 		this.semanticSupport = semanticSupport;
@@ -121,10 +122,10 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 		linkSystem.setContents(linkRootFigure);
 		// right
 		rightTreeViewer = new TreeViewer(control);
-		
-		figuresToMappings = new HashMap<LinkFigure, M>();
-		mappingsToFigures = new HashMap<M, LinkFigure>();
-		
+
+		figuresToMappings = new HashMap<>();
+		mappingsToFigures = new HashMap<>();
+
 		// Resize
 		ControlListener resizeListener = new ControlListener() {
 			public void controlResized(ControlEvent e) {
@@ -138,21 +139,17 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 		rightTreeViewer.getTree().addControlListener(resizeListener);
 		linkCanvas.addControlListener(resizeListener);
 		// Scroll
-		leftTreeViewer.getTree().addPaintListener(new PaintListener() {
-			public void paintControl(PaintEvent e) {
-				if (canvasNeedRedraw || leftTreeViewer.getTree().getTopItem() != leftTopItem) {
-					leftTopItem = leftTreeViewer.getTree().getTopItem();
-					redrawMappings();
-				}
+		leftTreeViewer.getTree().addListener(SWT.Paint, e -> {
+			if (canvasNeedRedraw || leftTreeViewer.getTree().getTopItem() != leftTopItem) {
+				leftTopItem = leftTreeViewer.getTree().getTopItem();
+				redrawMappings();
 			}
 		});
-		rightTreeViewer.getTree().addPaintListener(new PaintListener() {
-			public void paintControl(PaintEvent e) {
-				if (canvasNeedRedraw || rightTreeViewer.getTree().getTopItem() != rightTopItem) {
-					rightTopItem = rightTreeViewer.getTree().getTopItem();
-					redrawMappings();
-					canvasNeedRedraw = false;
-				}
+		rightTreeViewer.getTree().addListener(SWT.Paint, e -> {
+			if (canvasNeedRedraw || rightTreeViewer.getTree().getTopItem() != rightTopItem) {
+				rightTopItem = rightTreeViewer.getTree().getTopItem();
+				redrawMappings();
+				canvasNeedRedraw = false;
 			}
 		});
 		// Expand
@@ -161,18 +158,18 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 				canvasNeedRedraw = true;
 			}
 			public void treeCollapsed(TreeEvent e) {
-				canvasNeedRedraw = true;	
+				canvasNeedRedraw = true;
 			}
 		};
 		leftTreeViewer.getTree().addTreeListener(treeListener);
 		rightTreeViewer.getTree().addTreeListener(treeListener);
-		
+
 		control.setWeights(new int[] { 1, 2, 1} );
-		
+
 		bindTreeForDND(leftTreeViewer, rightTreeViewer, SWT.LEFT_TO_RIGHT);
 		bindTreeForDND(rightTreeViewer, leftTreeViewer, SWT.RIGHT_TO_LEFT);
 	}
-	
+
 	/**
 	 * Set the content providers for both trees.
 	 * Both tree provides MUST HAVE their {@link ITreeContentProvider#getParent(Object)} method implemeneted.
@@ -183,12 +180,12 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 		leftTreeViewer.setContentProvider(leftContentProvider);
 		rightTreeViewer.setContentProvider(rightTreeContentProvider);
 	}
-	
+
 	public void setLabelProviders(IBaseLabelProvider leftLabelProvider, IBaseLabelProvider rightLabelProvider) {
 		leftTreeViewer.setLabelProvider(leftLabelProvider);
 		rightTreeViewer.setLabelProvider(rightLabelProvider);
 	}
-	
+
 	/**
 	 * Sets the input of the widget.
 	 * @param leftTreeInput The input for left {@link TreeViewer}
@@ -210,7 +207,7 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 			this.mappings = mappings;
 			canvasNeedRedraw = true;
 		} else {
-			this.mappings = new ArrayList<M>();
+			this.mappings = new ArrayList<>();
 		}
 		// Synchronize tree and viewers for mappings:
 		// Expand left and right items of mappings, and then restore
@@ -233,7 +230,7 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 		if (this.mappings == null) {
 			return;
 		}
-		
+
 		boolean everythingOK = true;
 		for (M mapping : this.mappings) {
 			everythingOK &= drawMapping(mapping);
@@ -285,7 +282,7 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 				event.detail = DND.DROP_LINK;
 				super.dragEnter(event);
 			}
-			
+
 			@Override
 			public void drop(DropTargetEvent event) {
 				performMappingByDrop(sourceTreeViewer, sourceTreeViewer.getSelection(), targetTreeViewer, (TreeItem) getItem(event.x, event.y), direction);
@@ -294,10 +291,11 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 	}
 
 	/**
-	 * @param targetTreeViewer 
+	 * @param targetTreeViewer
 	 * @param data
 	 * @param widget
 	 */
+	@SuppressWarnings("unchecked")
 	protected void performMappingByDrop(TreeViewer sourceTreeViewer, ISelection sourceData, TreeViewer targetTreeViewer, TreeItem targetTreeItem, int direction) {
 		Object resolvedTargetItem = resolveTreeViewerItem(targetTreeViewer, targetTreeItem);
 		for (Object sourceItem : ((IStructuredSelection)sourceData).toList()) {
@@ -339,9 +337,9 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 			mappingsToFigures.remove(mapping);
 			figuresToMappings.remove(previousFigure);
 		}
-		
+
 		final LinkFigure arrowFigure = new LinkFigure(linkRootFigure);
-		
+
 		{
 			boolean leftItemVisible = true;
 			TreeItem leftTreeItem = (TreeItem) leftTreeViewer.testFindItem(semanticSupport.resolveLeftItem(mapping));
@@ -363,7 +361,7 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 			arrowFigure.setLeftPoint(0, lastVisibleLeftTreeItem.getBounds().y + lastVisibleLeftTreeItem.getBounds().height / 2);
 			arrowFigure.setLeftMappingVisible(leftItemVisible);
 		}
-		
+
 		{
 			boolean rightItemVisible = true;
 			TreeItem rightTreeItem = (TreeItem) rightTreeViewer.testFindItem(semanticSupport.resolveRightItem(mapping));
@@ -385,7 +383,7 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 			arrowFigure.setRightPoint(linkRootFigure.getBounds().width, lastVisibleRightTreeItem.getBounds().y + rightTreeItem.getBounds().height / 2);
 			arrowFigure.setRightMappingVisible(rightItemVisible);
 		}
-		
+
 		arrowFigure.setLineWidth(uiConfig.getDefaultArrowWidth());
 		arrowFigure.seLineColor(uiConfig.getDefaultMappingColor());
 		arrowFigure.addMouseListener(new MouseListener() {
@@ -400,7 +398,6 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 			}
 		});
 		arrowFigure.addMouseMotionListener(new MouseMotionListener() {
-
 			public void mouseDragged(MouseEvent me) {
 			}
 
@@ -417,12 +414,12 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 
 			public void mouseMoved(MouseEvent me) {
 			}
-			
+
 		});
 		// store it
 		figuresToMappings.put(arrowFigure, mapping);
 		mappingsToFigures.put(mapping, arrowFigure);
-	
+
 		return true;
 	}
 
@@ -432,9 +429,8 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 	 * @return
 	 */
 	private Object resolveTreeViewerItem(TreeViewer treeViewer, TreeItem treeItem) {
-		//return treeItem.getData();
 		ITreeContentProvider contentProvider = (ITreeContentProvider) treeViewer.getContentProvider();
-		List<Integer> locations = new ArrayList<Integer>();
+		List<Integer> locations = new ArrayList<>();
 		TreeItem parentTreeItem = treeItem.getParentItem();
 		while (parentTreeItem != null) {
 			int index = Arrays.asList(parentTreeItem.getItems()).indexOf(treeItem);
@@ -462,36 +458,37 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 	public SashForm getControl() {
 		return control;
 	}
-	
-	
+
+
 	//
 	// Selection management
 	//
-	
-	private List<ISelectionChangedListener> selectionChangedListeners = new ArrayList<ISelectionChangedListener>();
+
+	private List<ISelectionChangedListener> selectionChangedListeners = new ArrayList<>();
 	private IStructuredSelection currentSelection = new StructuredSelection();
-	
+
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
 		this.selectionChangedListeners.add(listener);
 	}
-	
-	/* (non-Javadoc)
+
+	/**
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
 	 */
 	public IStructuredSelection getSelection() {
 		return currentSelection;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#removeSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
 	 */
 	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 		selectionChangedListeners.remove(listener);
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
 	 */
+	@SuppressWarnings("unchecked")
 	public void setSelection(ISelection selection) {
 		IStructuredSelection strSelection = (IStructuredSelection)selection;
 		if (strSelection.isEmpty()) {
@@ -502,7 +499,7 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 			fireMappingSelection(mapping, mappingsToFigures.get(mapping));
 		}
 	}
-	
+
 	/**
 	 * @param mapping
 	 * @param arrowFigure
@@ -519,7 +516,7 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 			listener.selectionChanged(new SelectionChangedEvent(this, currentSelection));
 		}
 	}
-	
+
 	/**
 	 * Select no item
 	 */
@@ -532,25 +529,22 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 		}
 	}
 
-	
+
 	//
 	// Creation management
 	//
-	
-	private List<INewMappingListener<M>> creationListeners = new ArrayList<INewMappingListener<M>>();
-	
+
+	private List<INewMappingListener<M>> creationListeners = new ArrayList<>();
+
 	/**
 	 * @param iNewMappingListener
 	 */
 	public void addNewMappingListener(INewMappingListener<M> listener) {
 		this.creationListeners.add(listener);
 	}
-	
-	
-	
-	
+
 	/**
-	 * 
+	 *
 	 */
 	private void applyDefaultMappingStyle(LinkFigure figure) {
 		figure.seLineColor(uiConfig.getDefaultMappingColor());
@@ -591,7 +585,7 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 	public TreeViewer getLeftTreeViewer() {
 		return leftTreeViewer;
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -599,7 +593,7 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 		return rightTreeViewer;
 	}
 
-	
+
 	/**
 	 * Refresh the widget by resetting the setInput value
 	 */
@@ -615,7 +609,7 @@ public class TreeMapper<M, L, R> implements ISelectionProvider {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void clearFigures() {
 		for (Entry<M, LinkFigure> entry : mappingsToFigures.entrySet()) {

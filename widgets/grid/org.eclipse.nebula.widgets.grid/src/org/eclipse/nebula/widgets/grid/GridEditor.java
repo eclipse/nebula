@@ -1,13 +1,16 @@
 /*******************************************************************************
  * Copyright (c) 2006 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *    chris.gross@us.ibm.com - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.nebula.widgets.grid;
 
 import org.eclipse.swt.SWT;
@@ -25,10 +28,10 @@ import org.eclipse.swt.widgets.Listener;
 
 /**
  * <p>
- * NOTE:  THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.  THIS IS A PRE-RELEASE ALPHA 
+ * NOTE:  THIS WIDGET AND ITS API ARE STILL UNDER DEVELOPMENT.  THIS IS A PRE-RELEASE ALPHA
  * VERSION.  USERS SHOULD EXPECT API CHANGES IN FUTURE VERSIONS.
- * </p> 
- * 
+ * </p>
+ *
  * A GridEditor is a manager for a Control that appears above a cell in a Grid
  * and tracks with the moving and resizing of that cell. It can be used to
  * display a text widget above a cell in a Grid so that the user can edit the
@@ -46,7 +49,7 @@ public class GridEditor extends ControlEditor
     int column = -1;
 
     ControlListener columnListener;
-    
+
     Listener resizeListener;
 
     private Listener columnVisibleListener;
@@ -54,19 +57,19 @@ public class GridEditor extends ControlEditor
     private Listener columnGroupListener;
 
     private SelectionListener scrollListener;
-    
+
     private TreeListener treeListener;
 
     /**
      * Creates a TableEditor for the specified Table.
-     * 
+     *
      * @param table the Table Control above which this editor will be displayed
      */
     public GridEditor(final Grid table)
     {
         super(table);
         this.table = table;
-        
+
         treeListener = new TreeListener () {
             final Runnable runnable = new Runnable() {
                 public void run() {
@@ -101,7 +104,7 @@ public class GridEditor extends ControlEditor
                 layout();
             }
         };
-        
+
         columnVisibleListener = new Listener()
         {
           public void handleEvent(Event event)
@@ -109,17 +112,17 @@ public class GridEditor extends ControlEditor
         	  if (getEditor() == null || getEditor().isDisposed ()) return;
               getEditor().setVisible(((GridColumn)event.widget).isVisible());
               if (getEditor().isVisible()) layout();
-            }  
+            }
         };
-        
+
         resizeListener = new Listener()
         {
          public void handleEvent(Event event)
             {
                  layout();
-            }   
+            }
         };
-        
+
         scrollListener = new SelectionListener()
         {
             public void widgetSelected(SelectionEvent e)
@@ -128,9 +131,9 @@ public class GridEditor extends ControlEditor
             }
             public void widgetDefaultSelected(SelectionEvent e)
             {
-            }        
+            }
         };
-        
+
         columnGroupListener = new Listener()
         {
             public void handleEvent(Event event)
@@ -145,7 +148,7 @@ public class GridEditor extends ControlEditor
         // Eclipse bug 105764
         // https://bugs.eclipse.org/bugs/show_bug.cgi?id=105764
         table.addListener(SWT.Resize, resizeListener);
-        
+
         if (table.getVerticalScrollBarProxy() != null)
         {
             table.getVerticalScrollBarProxy().addSelectionListener(scrollListener);
@@ -162,10 +165,10 @@ public class GridEditor extends ControlEditor
 
     /**
      * Returns the bounds of the editor.
-     * 
+     *
      * @return bounds of the editor.
      */
-    protected Rectangle computeBounds()
+    protected Rectangle computeEditorBounds()
     {
         if (item == null || column == -1 || item.isDisposed())
             return new Rectangle(0, 0, 0, 0);
@@ -215,15 +218,15 @@ public class GridEditor extends ControlEditor
         { // default is CENTER
             editorRect.y += (cell.height - editorRect.height) / 2;
         }
-        
+
         GridColumn c = table.getColumn(column);
-        
+
         if( c != null && c.isTree() ) {
         	int x = c.getCellRenderer().getTextBounds(item, false).x;
         	editorRect.x += x;
         	editorRect.width -= x;
         }
-        
+
         return editorRect;
     }
 
@@ -242,30 +245,30 @@ public class GridEditor extends ControlEditor
                 tableColumn.getColumnGroup().removeListener(SWT.Collapse, columnGroupListener);
             }
         }
-        
+
         if (!table.isDisposed())
         {
             table.removeListener(SWT.Resize, resizeListener);
-            
+
             if (table.getVerticalScrollBarProxy() != null)
                 table.getVerticalScrollBarProxy().removeSelectionListener(scrollListener);
-            
+
             if (table.getHorizontalScrollBarProxy() != null)
                 table.getHorizontalScrollBarProxy().removeSelectionListener(scrollListener);
         }
-        
+
         columnListener = null;
         resizeListener = null;
         table = null;
         item = null;
-        column = -1;        
+        column = -1;
         super.dispose();
     }
 
     /**
      * Returns the zero based index of the column of the cell being tracked by
      * this editor.
-     * 
+     *
      * @return the zero based index of the column of the cell being tracked by
      * this editor
      */
@@ -277,7 +280,7 @@ public class GridEditor extends ControlEditor
     /**
      * Returns the TableItem for the row of the cell being tracked by this
      * editor.
-     * 
+     *
      * @return the TableItem for the row of the cell being tracked by this
      * editor
      */
@@ -289,7 +292,7 @@ public class GridEditor extends ControlEditor
     /**
      * Sets the zero based index of the column of the cell being tracked by this
      * editor.
-     * 
+     *
      * @param column the zero based index of the column of the cell being
      * tracked by this editor
      */
@@ -330,7 +333,7 @@ public class GridEditor extends ControlEditor
 
     /**
      * Sets the item that this editor will function over.
-     * 
+     *
      * @param item editing item.
      */
     public void setItem(GridItem item)
@@ -345,7 +348,7 @@ public class GridEditor extends ControlEditor
      * <p>
      * Note: The Control provided as the editor <b>must</b> be created with its
      * parent being the Table control specified in the TableEditor constructor.
-     * 
+     *
      * @param editor the Control that is displayed above the cell being edited
      * @param item the TableItem for the row of the cell being tracked by this
      * editor
@@ -361,7 +364,7 @@ public class GridEditor extends ControlEditor
         layout();
     }
 
-    /** 
+    /**
      * {@inheritDoc}
      */
     public void layout()
@@ -387,7 +390,7 @@ public class GridEditor extends ControlEditor
         } // this doesn't work because
         // resizing the column takes the focus away
         // before we get here
-        getEditor().setBounds(computeBounds());
+        getEditor().setBounds(computeEditorBounds());
         if (hadFocus)
         {
             if (getEditor() == null || getEditor().isDisposed())

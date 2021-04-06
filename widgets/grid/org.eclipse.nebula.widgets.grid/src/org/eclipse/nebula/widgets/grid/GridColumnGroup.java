@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2006 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *    chris.gross@us.ibm.com - initial API and implementation
@@ -11,6 +14,8 @@
  *    Marty Jones<martybjones@gmail.com> - custom header/footer font in bug 293743
  *******************************************************************************/
 package org.eclipse.nebula.widgets.grid;
+
+import java.util.Vector;
 
 import org.eclipse.nebula.widgets.grid.internal.DefaultColumnGroupHeaderRenderer;
 import org.eclipse.swt.SWT;
@@ -21,8 +26,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.TypedListener;
-
-import java.util.Vector;
 
 /**
  * <p>
@@ -82,9 +85,22 @@ public class GridColumnGroup extends Item
         super(parent, style);
         this.parent = parent;
 
-        headerRenderer.setDisplay(getDisplay());
+        init(style);
         parent.newColumnGroup(this);
     }
+
+
+	private void init(int style) {
+		headerRenderer.setDisplay(getDisplay());
+		if ((getStyle() & SWT.RIGHT) == SWT.RIGHT) {
+			headerRenderer.setHorizontalAlignment(SWT.RIGHT);
+		}
+
+		if ((getStyle() & SWT.CENTER) == SWT.CENTER) {
+			headerRenderer.setHorizontalAlignment(SWT.CENTER);
+		}
+
+	}
 
     /**
      * Adds the listener to the collection of listeners who will
@@ -138,7 +154,7 @@ public class GridColumnGroup extends Item
     }
 
     /**
-     * Returns the parent grid.
+     * @return the parent grid
      *
      * @throws org.eclipse.swt.SWTException
      * <ul>
@@ -234,7 +250,7 @@ public class GridColumnGroup extends Item
     }
 
     /**
-     * Gets the header renderer.
+     * @return the header renderer.
      *
      * @throws org.eclipse.swt.SWTException
      * <ul>
@@ -308,7 +324,7 @@ public class GridColumnGroup extends Item
 
         if (!expanded && getParent().getCellSelectionEnabled())
         {
-            Vector collapsedCols = new Vector();
+            Vector<Integer> collapsedCols = new Vector<>();
             for (int j = 0; j < columns.length; j++)
             {
                 if (!columns[j].isSummary())
@@ -464,4 +480,21 @@ public class GridColumnGroup extends Item
     	checkWidget();
     	this.headerFont = font;
     }
+
+	/**
+	 * Returns the column group header alignment.
+	 *
+	 * @return SWT.LEFT, SWT.RIGHT, SWT.CENTER
+	 * @throws org.eclipse.swt.SWTException
+	 *             <ul>
+	 *             <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed
+	 *             </li>
+	 *             <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *             thread that created the receiver</li>
+	 *             </ul>
+	 */
+	public int getAlignment() {
+		checkWidget();
+		return headerRenderer.getHorizontalAlignment();
+	}
 }

@@ -1,8 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2011 Laurent CARON All rights reserved. This program and the
- * accompanying materials are made available under the terms of the Eclipse
- * Public License v1.0 which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2011 Laurent CARON
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors: Laurent CARON (laurent.caron at gmail dot com) - Initial
  * implementation and API
@@ -15,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.nebula.widgets.opal.commons.SWTGraphicUtil;
+import org.eclipse.nebula.widgets.opal.commons.SelectionListenerUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -52,7 +56,6 @@ public class ColumnBrowserWidget extends ScrolledComposite {
 	private final List<Table> columns;
 	private final Composite composite;
 	private final Image columnArrow;
-	private final List<SelectionListener> selectionListeners;
 
 	/**
 	 * Constructs a new instance of this class given its parent and a style value
@@ -109,8 +112,6 @@ public class ColumnBrowserWidget extends ScrolledComposite {
 		setShowFocusedControl(true);
 		updateContent();
 		this.setMinSize(composite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-
-		selectionListeners = new ArrayList<SelectionListener>();
 
 		addDisposeListener(e -> {
 			SWTGraphicUtil.safeDispose(columnArrow);
@@ -194,38 +195,11 @@ public class ColumnBrowserWidget extends ScrolledComposite {
 		table.addListener(SWT.PaintItem, paintListener);
 
 		table.addListener(SWT.Selection, e -> {
-			fireSelectionListeners(e);
+			SelectionListenerUtil.fireSelectionListeners(this,e);
 		});
 	}
 
-	/**
-	 * Fire the selection listeners
-	 *
-	 * @param selectionEvent mouse event
-	 * @return true if the selection could be changed, false otherwise
-	 */
-	private boolean fireSelectionListeners(final Event selectionEvent) {
-		final Event event = new Event();
-
-		event.button = 0;
-		event.display = getDisplay();
-		event.item = null;
-		event.widget = this;
-		event.data = null;
-		event.time = selectionEvent.time;
-		event.x = selectionEvent.x;
-		event.y = selectionEvent.y;
-
-		final SelectionEvent selEvent = new SelectionEvent(event);
-
-		for (final SelectionListener listener : selectionListeners) {
-			listener.widgetSelected(selEvent);
-			if (!selEvent.doit) {
-				return false;
-			}
-		}
-		return true;
-	}
+	
 
 	/**
 	 * Perform actions when an item is selected (ie fill the next column and force
@@ -352,7 +326,7 @@ public class ColumnBrowserWidget extends ScrolledComposite {
 	 */
 	public void addSelectionListener(final SelectionListener listener) {
 		checkWidget();
-		selectionListeners.add(listener);
+		SelectionListenerUtil.addSelectionListener(this, listener);
 	}
 
 	/**
@@ -432,7 +406,7 @@ public class ColumnBrowserWidget extends ScrolledComposite {
 	 */
 	public void removeSelectionListener(final SelectionListener listener) {
 		checkWidget();
-		selectionListeners.remove(listener);
+		SelectionListenerUtil.removeSelectionListener(this, listener);
 	}
 
 	/**

@@ -3,11 +3,10 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Bundle-SymbolicName: org.eclipse.nebula.widgets.pagination.tests
+Bundle-SymbolicName: org.eclipse.nebula.widgets.pagination.tests;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Require-Bundle: org.eclipse.swt,
- org.eclipse.nebula.widgets.pagination;bundle-version="1.0.0",
- org.eclipse.jface,
- org.junit
+Require-Bundle: org.junit
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Fragment-Host: org.eclipse.nebula.widgets.pagination
+Automatic-Module-Name: org.eclipse.nebula.widgets.pagination.tests

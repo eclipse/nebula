@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2014 Mario Hofmann.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Mario Hofmann (eclispe@hofmann-coswig.de) - initial API and implementation
@@ -96,7 +99,7 @@ public class BigIntegerFormatter extends NumberFormatter {
 	public Object getValue() {
 		Object value = super.getValue();
 		if (value instanceof BigInteger) {
-			return (BigInteger) value;
+			return value;
 		} else if (value instanceof Number) {
 			return new BigInteger(((Number) value).toString());
 		} else {
@@ -111,7 +114,7 @@ public class BigIntegerFormatter extends NumberFormatter {
 	 *
 	 * @return The value type.
 	 */
-	public Class getValueType() {
+	public Class<BigInteger> getValueType() {
 		return BigInteger.class;
 	}
 }

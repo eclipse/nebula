@@ -1,12 +1,15 @@
 /****************************************************************************
  * Copyright (c) 2008, 2009 Jeremy Dowdall
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *    Jeremy Dowdall <jeremyd@aspencloud.com> - initial API and implementation
+ * Jeremy Dowdall <jeremyd@aspencloud.com> - initial API and implementation
  *****************************************************************************/
 
 package org.eclipse.nebula.widgets.cdatetime.snippets;
@@ -21,14 +24,12 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-
-
 public class CDTSnippet03 {
 
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		final Display display = new Display();
 		final Shell shell = new Shell(display);
 		shell.setText("CDateTime");
@@ -36,20 +37,22 @@ public class CDTSnippet03 {
 
 		final CDateTime cdt = new CDateTime(shell, CDT.BORDER | CDT.SIMPLE);
 		cdt.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
-        
+
+		cdt.setBackground(display.getSystemColor(SWT.COLOR_BLUE));
+		cdt.setForeground(display.getSystemColor(SWT.COLOR_WHITE));
+		cdt.setPickerBackgroundColor(display.getSystemColor(SWT.COLOR_BLUE));
+		cdt.setPickerForegroundColor(display.getSystemColor(SWT.COLOR_WHITE));
+		cdt.setPickerTodayColor(display.getSystemColor(SWT.COLOR_YELLOW));
+
 		shell.pack();
-		Point size = shell.getSize();
-		Rectangle screen = display.getMonitors()[0].getBounds();
-		shell.setBounds(
-				(screen.width-size.x)/2,
-				(screen.height-size.y)/2,
-				size.x,
-				size.y
-		);
+		final Point size = shell.getSize();
+		final Rectangle screen = display.getMonitors()[0].getBounds();
+		shell.setBounds((screen.width - size.x) / 2, (screen.height - size.y) / 2, size.x, size.y);
 		shell.open();
 		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch())
+			if (!display.readAndDispatch()) {
 				display.sleep();
+			}
 		}
 		display.dispose();
 	}

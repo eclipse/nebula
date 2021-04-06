@@ -1,10 +1,13 @@
 /*******************************************************************************
  *  Copyright (c) 2010, 2012 Weltevree Beheer BV, Remain Software & Industrial-TSI
+ *
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
  * 
- * All rights reserved. 
- * This program and the accompanying materials are made available under the terms of
- * the Eclipse Public License v1.0 which accompanies this distribution, and is
- * available at http://www.eclipse.org/legal/epl-v10.html
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *   Wim S. Jongman - initial API and implementation
@@ -17,15 +20,13 @@ import org.eclipse.nebula.widgets.oscilloscope.multichannel.Oscilloscope;
 import org.eclipse.nebula.widgets.oscilloscope.multichannel.OscilloscopeDispatcher;
 import org.eclipse.nebula.widgets.oscilloscope.multichannel.OscilloscopeStackAdapter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /**
  * This snippet demonstrates how to run the dispatcher in simple mode.
- * 
+ *
  */
 public class MultiScope_ScopeWithDataAndProgression2Channels_3 {
 
@@ -33,7 +34,7 @@ public class MultiScope_ScopeWithDataAndProgression2Channels_3 {
 
 	/**
 	 * Launch the application.
-	 * 
+	 *
 	 * @param args
 	 */
 	public static void main(String[] args) {
@@ -59,14 +60,11 @@ public class MultiScope_ScopeWithDataAndProgression2Channels_3 {
 
 		// Create a single channel scope
 		final Oscilloscope scope = new Oscilloscope(4, shell, SWT.NONE);
-		scope.addControlListener(new ControlAdapter() {
-			@Override
-			public void controlResized(ControlEvent e) {
-				scope.setProgression(0, ((Oscilloscope) e.widget).getSize().x);
-				scope.setProgression(1, ((Oscilloscope) e.widget).getSize().x);
-				scope.setProgression(2, ((Oscilloscope) e.widget).getSize().x);
-				scope.setProgression(3, ((Oscilloscope) e.widget).getSize().x);
-			}
+		scope.addListener(SWT.Resize, e -> {
+			scope.setProgression(0, ((Oscilloscope) e.widget).getSize().x);
+			scope.setProgression(1, ((Oscilloscope) e.widget).getSize().x);
+			scope.setProgression(2, ((Oscilloscope) e.widget).getSize().x);
+			scope.setProgression(3, ((Oscilloscope) e.widget).getSize().x);
 		});
 
 		OscilloscopeStackAdapter stackAdapter = getStackAdapter();
@@ -81,15 +79,15 @@ public class MultiScope_ScopeWithDataAndProgression2Channels_3 {
 		scope.setBaseOffset(3, -50);
 
 		scope.setDispatcher(0, new OscilloscopeDispatcher(scope) {
-			
+
 			@Override
 			public void hookBeforeDraw(Oscilloscope oscilloscope, int counter) {
 			}
-			
+
 			@Override
 			public void hookAfterDraw(Oscilloscope oscilloscope, int counter) {
 			}
-			
+
 			@Override
 			public void hookChangeAttributes() {
 				getOscilloscope().setBackgroundImage(getBackgroundImage());
@@ -103,28 +101,9 @@ public class MultiScope_ScopeWithDataAndProgression2Channels_3 {
 									: getTailSize());
 					getOscilloscope().setSteady(i, isSteady(),
 							getSteadyPosition());
-					// getOscilloscope().setFade(i, getFade());
 					getOscilloscope().setTailFade(i, getTailFade());
 					getOscilloscope().setConnect(i, mustConnect());
 					getOscilloscope().setLineWidth(i, getLineWidth());
-					// getOscilloscope().setBaseOffset(i, getBaseOffset());
-
-//					if (i < 2) {
-//						// getOscilloscope().setBaseOffset(i, 50);
-//						getOscilloscope().setForeground(
-//								i,
-//								Display.getDefault().getSystemColor(
-//										SWT.COLOR_BLUE));
-//
-//					}
-
-//					else {
-//						// getOscilloscope().setBaseOffset(i, -50);
-//						getOscilloscope().setForeground(
-//								i,
-//								Display.getDefault().getSystemColor(
-//										SWT.COLOR_RED));
-//					}
 				}
 			}
 		});

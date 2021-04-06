@@ -1,8 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2006 Chris Gross. All rights reserved. This program and the
- * accompanying materials are made available under the terms of the Eclipse
- * Public License v1.0 which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html Contributors: schtoo@schtoo.com
+ * Copyright (c) 2006 Chris Gross.
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0 Contributors: schtoo@schtoo.com
  * (Chris Gross) - initial API and implementation
  ******************************************************************************/
 
@@ -47,20 +50,25 @@ public class SimpleGroupStrategy extends AbstractGroupStrategy
     private int fontHeight;
 
     /**
+     * @deprecated use constructor with PGroup element instead
+     */
+    public SimpleGroupStrategy() {
+    	this(null);
+    }
+    
+    /**
      * Creates a SimpleGroupStrategy with the given toggle and style.
      * 
      * @param ts
      * @param style
      */
-    public SimpleGroupStrategy()
+    public SimpleGroupStrategy(PGroup g)
     {
-        super();
+        super(g);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.swtplus.widgets.AbstractGroupStrategy#paintGroup(org.eclipse.swt.graphics.GC)
+    /** 
+     * @see org.eclipse.nebula.widgets.pgroup.AbstractGroupStrategy#paint(org.eclipse.swt.graphics.GC)
      */
     public void paint(GC gc)
     {
@@ -70,8 +78,6 @@ public class SimpleGroupStrategy extends AbstractGroupStrategy
             gc.fillRectangle(0,0,getGroup().getSize().x,getGroup().getSize().y);
         }
         
-        // gc.fillRectangle(0,0,getGroup().getSize().x,getTitleHeight());
-
         if (getGroup().getToggleRenderer() != null)
         {
             int toggleY = 0;
@@ -83,8 +89,6 @@ public class SimpleGroupStrategy extends AbstractGroupStrategy
             {
                 toggleY = (heightWithoutLine - getGroup().getToggleRenderer().getSize().y)
                           - vMargin;
-                // toggleY += ((getFontHeight() + (2*titleTextMargin) +
-                // (2*vMargin)) - getToggleStrategy().getSize().y)/2;
             }
 
             if ((getGroup().getTogglePosition() & SWT.LEAD) != 0)
@@ -174,15 +178,10 @@ public class SimpleGroupStrategy extends AbstractGroupStrategy
         {
             gc.setBackground(getGroup().getParent().getBackground());
         }
-        else
-        {
-            // e.gc.setBackground(parent.getParent().getBackground());
-        }
-        // gc.fillRectangle(0,getTitleHeight(),getGroup().getBounds().width,getGroup().getBounds().height);
     }
 
-    /**
-     * {@inheritDoc}
+    /** 
+     * @see org.eclipse.nebula.widgets.pgroup.AbstractGroupStrategy#isToggleLocation(int, int)
      */
     public boolean isToggleLocation(int x, int y)
     {
@@ -249,8 +248,8 @@ public class SimpleGroupStrategy extends AbstractGroupStrategy
         return new Rectangle(textX, textY, textWidth, fontHeight);
     }
 
-    /**
-     * {@inheritDoc}
+    /** 
+     * @see org.eclipse.nebula.widgets.pgroup.AbstractGroupStrategy#getClientArea()
      */
     public Rectangle getClientArea()
     {
@@ -261,8 +260,8 @@ public class SimpleGroupStrategy extends AbstractGroupStrategy
         return area;
     }
 
-    /**
-     * {@inheritDoc}
+    /** 
+     * @see org.eclipse.nebula.widgets.pgroup.AbstractGroupStrategy#computeTrim(int, int, int, int)
      */
     public Rectangle computeTrim(int x, int y, int width, int height)
     {
@@ -272,15 +271,16 @@ public class SimpleGroupStrategy extends AbstractGroupStrategy
         return area;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.swtplus.widgets.IGroupStrategy#dispose()
+    /** 
+     * @see org.eclipse.nebula.widgets.pgroup.AbstractGroupStrategy#dispose()
      */
     public void dispose()
     {
     }
 
+    /** 
+     * @see org.eclipse.nebula.widgets.pgroup.AbstractGroupStrategy#update()
+     */
     public void update()
     {
         GC gc = new GC(getGroup());

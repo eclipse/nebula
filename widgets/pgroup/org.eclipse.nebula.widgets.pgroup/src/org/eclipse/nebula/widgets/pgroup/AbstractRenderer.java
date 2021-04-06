@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2006 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *    chris.gross@us.ibm.com - initial API and implementation
@@ -64,10 +67,8 @@ public abstract class AbstractRenderer
         setBounds(new Rectangle(x, y, width, height));
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.ibm.mozart.mwt.widgets.table.IRenderer#setBounds(org.eclipse.swt.graphics.Rectangle)
+    /**
+     * @param bounds
      */
     public void setBounds(Rectangle bounds)
     {
@@ -85,7 +86,8 @@ public abstract class AbstractRenderer
     }
 
     /**
-     * {@inheritDoc}
+     * @param x
+     * @param y
      */
     public void setLocation(int x, int y)
     {
@@ -93,7 +95,7 @@ public abstract class AbstractRenderer
     }
 
     /**
-     * {@inheritDoc}
+     * @param location
      */
     public void setLocation(Point location)
     {
@@ -101,7 +103,8 @@ public abstract class AbstractRenderer
     }
 
     /**
-     * {@inheritDoc}
+     * @param width
+     * @param height
      */
     public void setSize(int width, int height)
     {
@@ -109,7 +112,7 @@ public abstract class AbstractRenderer
     }
 
     /**
-     * {@inheritDoc}
+     * @param size
      */
     public void setSize(Point size)
     {
@@ -126,10 +129,8 @@ public abstract class AbstractRenderer
         return focus;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.ibm.mozart.mwt.widgets.table.IRenderer#setFocus(boolean)
+    /**
+     * @param focus
      */
     public void setFocus(boolean focus)
     {
@@ -146,10 +147,8 @@ public abstract class AbstractRenderer
         return hover;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.ibm.mozart.mwt.widgets.table.IRenderer#setHover(boolean)
+    /**
+     * @param hover
      */
     public void setHover(boolean hover)
     {
@@ -167,10 +166,8 @@ public abstract class AbstractRenderer
         return mouseDown;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.ibm.mozart.mwt.widgets.table.IRenderer#setMouseDown(boolean)
+    /**
+     * @param mouseDown
      */
     public void setMouseDown(boolean mouseDown)
     {
@@ -187,10 +184,8 @@ public abstract class AbstractRenderer
         return selected;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.ibm.mozart.mwt.widgets.table.IRenderer#setSelected(boolean)
+    /**
+     * @param selected
      */
     public void setSelected(boolean selected)
     {

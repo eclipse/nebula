@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.TreeItem;
  * <br>
  * To edit your columns the columns must be ExtendedViewerColumns. <br>
  * Use the map in the ExtendedViewerColumn class to define the cells
- * 
+ *
  * @author Juergen Reichl
  */
 public class XViewerEditAdapter {
@@ -29,7 +29,7 @@ public class XViewerEditAdapter {
    TreeColumn klickedColumn;
 
    int orientationStyle;
-   
+
    final XViewerControlFactory factory;
    final XViewerConverter converter;
 
@@ -44,7 +44,7 @@ public class XViewerEditAdapter {
       this.factory = factory;
       this.converter = converter;
       this.orientationStyle = SWT.RIGHT;
-      
+
       this.swtEvent = SWT.MouseDown;
    }
 
@@ -54,12 +54,7 @@ public class XViewerEditAdapter {
       mouseListener = new MyMouseListener(swtEvent);
       xv.getTree().addMouseListener(mouseListener);
 
-      xv.getTree().addListener(SWT.Selection, new Listener() {
-         @Override
-         public void handleEvent(Event event) {
-            handleEditEvent(event);
-         }
-      });
+      xv.getTree().addListener(SWT.Selection, event -> handleEditEvent(event));
    }
 
    private class MyMouseListener implements MouseListener {
@@ -88,7 +83,7 @@ public class XViewerEditAdapter {
 
       @Override
       public void mouseUp(MouseEvent e) {
-         // not supported yet!			
+         // not supported yet!
          if (swtStyle == SWT.MouseUp) {
             klickedColumn = xv.getColumnUnderMouseClick(new Point(e.x, e.y));
             klickedCell = xv.getCell(new Point(e.x, e.y));
@@ -135,9 +130,7 @@ public class XViewerEditAdapter {
          }
 
          if (((TreeItem) event.item) != null) {
-            Listener myListener = new Listener() {
-               @Override
-               public void handleEvent(final Event e) {
+            Listener myListener = e-> {
                   switch (e.type) {
                      case SWT.FocusOut:
                         // set new value
@@ -186,8 +179,6 @@ public class XViewerEditAdapter {
                               break;
                         }
                   }
-               }
-
             };
             c.addListener(SWT.FocusOut, myListener);
             c.addListener(SWT.Traverse, myListener);
@@ -313,13 +304,13 @@ public class XViewerEditAdapter {
          c.setBounds(bounds);
       }
    }
-   
+
    /**
     * controls the positioning of  the input control in the
     * case the CellEditDescriptor Control does not take up
     * the whole cell space. Default value assumes right
     * placement.
-    *    
+    *
     * @param style
     */
    public void setInputControlOrientation(int style) {

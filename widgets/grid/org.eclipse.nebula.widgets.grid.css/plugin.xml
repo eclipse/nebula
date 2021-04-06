@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.e4.ui.css.core.elementProvider">
+      <provider
+            class="org.eclipse.nebula.widgets.grid.css.GridElementProvider">
+         <widget
+               class="org.eclipse.nebula.widgets.grid.Grid"></widget>
+      </provider>
+   </extension>
+   <extension
+         point="org.eclipse.e4.ui.css.core.propertyHandler">
+      <handler
+            adapter="org.eclipse.nebula.widgets.grid.css.GridElement"
+            composite="true"
+            handler="org.eclipse.nebula.widgets.grid.css.GridPropertyHandler">
+			<property-name name="grid-theme"> </property-name>
+			<property-name name="grid-cell-header-selection-background-color"> </property-name>
+			<property-name name="grid-header-visible"> </property-name>
+			<property-name name="grid-footer-visible"> </property-name>
+			<property-name name="grid-item-height"> </property-name>
+			<property-name name="grid-item-header-width"> </property-name>
+			<property-name name="grid-line-color"> </property-name>
+			<property-name name="grid-lines-visible"> </property-name>
+			<property-name name="grid-tree-lines-visible"> </property-name>
+			<property-name name="grid-columns-alignment"> </property-name>
+			<property-name name="grid-columns-header-font"> </property-name>
+			<property-name name="grid-columns-header-font-style"> </property-name>
+			<property-name name="grid-columns-header-font-size"> </property-name>
+			<property-name name="grid-columns-header-font-weight"> </property-name>
+			<property-name name="grid-columns-header-font-family"> </property-name>
+			<property-name name="grid-columns-footer-font"> </property-name>
+			<property-name name="grid-columns-footer-font-style"> </property-name>
+			<property-name name="grid-columns-footer-font-size"> </property-name>
+			<property-name name="grid-columns-footer-font-weight"> </property-name>
+			<property-name name="grid-columns-footer-font-family"> </property-name>
+      </handler>
+   </extension>
+
+</plugin>

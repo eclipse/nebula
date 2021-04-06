@@ -1,9 +1,12 @@
 /****************************************************************************
  * Copyright (c) 2007-2008 Jeremy Dowdall
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *    Jeremy Dowdall <jeremyd@aspencloud.com> - initial API and implementation
@@ -76,6 +79,8 @@ class DiscreteTimePicker extends VPanel {
 		}
 	}
 
+
+	
 	private void createHorizontal() {
 		for (int i = 0; i < hours.length; i++) {
 			hours[i] = new VButton(this, SWT.TOGGLE | SWT.NO_FOCUS);
@@ -91,6 +96,8 @@ class DiscreteTimePicker extends VPanel {
 				updateSelection();
 			});
 
+			colorButtons(hours[i]);
+			
 			if (!is24Hour && i == 11) {
 				VLabel lbl = new VLabel(this, SWT.SEPARATOR);
 				GridData data = new GridData(SWT.FILL, SWT.FILL, false, false);
@@ -109,6 +116,7 @@ class DiscreteTimePicker extends VPanel {
 					}
 					updateSelection();
 				});
+				colorButtons(am_pm[0]);
 			}
 		}
 
@@ -129,8 +137,13 @@ class DiscreteTimePicker extends VPanel {
 			minutes[i].setSquare(true);
 			minutes[i].setLayoutData(
 					new GridData(SWT.FILL, SWT.FILL, true, true));
-			minutes[i].setBackground(
-					getDisplay().getSystemColor(SWT.COLOR_WHITE));
+			colorButtons(minutes[i]);
+			minutes[i].setBackground(cdt.pickerMinutesBackgroundColor==null?
+					getDisplay().getSystemColor(SWT.COLOR_WHITE):
+						cdt.pickerMinutesBackgroundColor); 
+			minutes[i].setForeground(cdt.pickerMinutesColor==null?
+					getDisplay().getSystemColor(SWT.COLOR_BLACK):
+						cdt.pickerMinutesColor); 
 			minutes[i].addListener(SWT.Selection, event -> {
 				for (VButton button : minutes) {
 					if (button != event.data) {
@@ -146,6 +159,7 @@ class DiscreteTimePicker extends VPanel {
 			am_pm[1].setSquare(true);
 			am_pm[1].setLayoutData(
 					new GridData(SWT.FILL, SWT.FILL, true, true));
+			colorButtons(am_pm[1]);
 			am_pm[1].addListener(SWT.Selection, event -> {
 				for (VButton button : am_pm) {
 					if (button != event.data) {
@@ -157,6 +171,18 @@ class DiscreteTimePicker extends VPanel {
 		}
 	}
 
+	private void colorButtons(VButton button) {
+		button.setHoverBackgroundColor(cdt.buttonHoverBackgroundColor);
+		button.setHoverBorderColor(cdt.buttonHoverBorderColor);
+		button.setSelectedBackgroundColor(cdt.buttonSelectedBackgroundColor);
+		button.setSelectedBorderColor(cdt.buttonSelectedBorderColor);
+		if (cdt.pickerForegroundColor != null) {
+			button.setForeground(cdt.pickerForegroundColor);
+		}
+		button.setFont(cdt.pickerFont);
+	}
+
+	
 	private void createVertical() {
 		for (int i = 0; i < minutes.length; i++) {
 			hours[i] = new VButton(this, SWT.TOGGLE | SWT.NO_FOCUS);
@@ -171,13 +197,15 @@ class DiscreteTimePicker extends VPanel {
 				}
 				updateSelection();
 			});
-
+			colorButtons(hours[i]);
+			
 			int j = i + 12;
 			if (j < hours.length) {
 				hours[j] = new VButton(this, SWT.TOGGLE | SWT.NO_FOCUS);
 				hours[i].setSquare(true);
 				hours[j].setLayoutData(
 						new GridData(SWT.FILL, SWT.FILL, true, true));
+				colorButtons(hours[j]);
 				hours[j].addListener(SWT.Selection, event -> {
 					for (VButton button : hours) {
 						if (button != event.data) {
@@ -199,8 +227,13 @@ class DiscreteTimePicker extends VPanel {
 			minutes[i].setSquare(true);
 			minutes[i].setLayoutData(
 					new GridData(SWT.FILL, SWT.FILL, true, true));
-			minutes[i].setBackground(
-					getDisplay().getSystemColor(SWT.COLOR_WHITE));
+			minutes[i].setBackground(cdt.pickerMinutesBackgroundColor==null?
+					getDisplay().getSystemColor(SWT.COLOR_WHITE):
+						cdt.pickerMinutesBackgroundColor); 
+			minutes[i].setForeground(cdt.pickerMinutesColor==null?
+					getDisplay().getSystemColor(SWT.COLOR_BLACK):
+						cdt.pickerMinutesColor); 
+			colorButtons(minutes[i]);
 			minutes[i].addListener(SWT.Selection, event -> {
 				for (VButton button : minutes) {
 					if (button != event.data) {
@@ -223,6 +256,7 @@ class DiscreteTimePicker extends VPanel {
 			am_pm[i].setSquare(true);
 			am_pm[i].setLayoutData(
 					new GridData(SWT.FILL, SWT.FILL, true, true));
+			colorButtons(am_pm[i]);
 			am_pm[i].addListener(SWT.Selection, event -> {
 				for (VButton button : am_pm) {
 					if (button != event.data) {
@@ -260,7 +294,7 @@ class DiscreteTimePicker extends VPanel {
 
 	@Override
 	public boolean setFocus() {
-		return true;
+		return getComposite().forceFocus();
 	}
 
 	protected void updateLabels() {
@@ -272,7 +306,11 @@ class DiscreteTimePicker extends VPanel {
 				.getTimeInstance(DateFormat.SHORT, locale)).toPattern();
 		SimpleDateFormat sdf = null;
 		if (pattern.indexOf("HH") > -1) { //$NON-NLS-1$
-			sdf = new SimpleDateFormat("HH", locale); //$NON-NLS-1$
+			if (is24Hour) {
+				sdf = new SimpleDateFormat("HH", locale); //$NON-NLS-1$
+			} else {
+				sdf = new SimpleDateFormat("h", locale); //$NON-NLS-1$				
+			}
 		} else if (pattern.indexOf("H") > -1) { //$NON-NLS-1$
 			sdf = new SimpleDateFormat("H", locale); //$NON-NLS-1$
 		} else if (pattern.indexOf("hh") > -1) { //$NON-NLS-1$
@@ -337,5 +375,6 @@ class DiscreteTimePicker extends VPanel {
 	protected void updateView() {
 		clearButtons();
 	}
+
 
 }

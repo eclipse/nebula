@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2014 Mario Hofmann.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Mario Hofmann (eclispe@hofmann-coswig.de) - initial API and implementation
@@ -112,7 +115,24 @@ public class BigDecimalFormatter extends NumberFormatter {
 	 *
 	 * @return The value type.
 	 */
-	public Class getValueType() {
+	public Class<BigDecimal> getValueType() {
 		return BigDecimal.class;
+	}
+	
+	  /**
+	   * Sets the patterns and initializes the technical attributes used to manage
+	   * the operations.<p>
+	   * Override the NumberFormatter implementation to handle large numbers.
+	   * 
+	   * @param edit edit pattern
+	   * @param display display pattern
+	   * @param loc Locale to use
+	   * @throws IllegalArgumentException if a pattern is invalid
+		 * @see com.wdev91.comp4swt.core.NumberFormatter#setPatterns(java.lang.String, java.lang.String, java.util.Locale)
+	   */	
+	protected void setPatterns(String edit, String display, Locale loc) {
+		super.setPatterns(edit, display, loc);
+		nfEdit.setParseBigDecimal(true);
+		nfDisplay.setParseBigDecimal(true);
 	}
 }

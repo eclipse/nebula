@@ -1,9 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2012 Laurent CARON. All rights reserved.
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License v1.0 which accompanies this distribution,
- * and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2012 Laurent CARON.
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors: Laurent CARON (laurent.caron at gmail dot com) - initial API and implementation
  *******************************************************************************/
@@ -443,6 +445,7 @@ public class RoundedToolbar extends Canvas {
 		gc.drawRoundRectangle(0, 0, width - 1, height - 1, cornerRadius, cornerRadius);
 
 		gc.setClipping((Rectangle) null);
+		path.dispose();
 	}
 
 	/**

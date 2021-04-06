@@ -1,12 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2005, 2009 Eric Wuillai.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     Eric Wuillai (eric@wdev91.com) - initial API and implementation
+ * Eric Wuillai (eric@wdev91.com) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.nebula.widgets.datechooser;
 
@@ -32,10 +35,12 @@ import org.eclipse.swt.widgets.Text;
 /**
  * DateChooserCombo widget. This class represents a date field editor that combines
  * a text field and a calendar. Implementation is based on <code>FormattedText</code>
- * and <code>DateChooser</code>.<p>
+ * and <code>DateChooser</code>.
+ * <p>
  * 
  * Issues notification when the text content is modified or when a date is
- * selected in the calendar.<p>
+ * selected in the calendar.
+ * <p>
  * 
  * <dl>
  * <dt><b>Styles:</b>
@@ -66,25 +71,25 @@ public class DateChooserCombo extends AbstractCombo {
 	protected Locale locale;
 
 	static {
-		buttonImage = new Image(Display.getCurrent(),
-		                        DateChooserCombo.class.getResourceAsStream(IMAGE));
+		buttonImage = new Image(Display.getCurrent(), DateChooserCombo.class.getResourceAsStream(IMAGE));
 	}
 
 	/**
-   * Constructs a new instance of this class given its parent and a style value
-   * describing its behavior and appearance.<p>
-   * 
-   * The widget is initialized with a default image for the button, and a
-   * default <code>DateFormatter</code>.
-   * 
-   * @param parent a composite control which will be the parent of the new instance (cannot be null)
-   * @param style the style of control to construct
+	 * Constructs a new instance of this class given its parent and a style value
+	 * describing its behavior and appearance.
+	 * <p>
+	 * 
+	 * The widget is initialized with a default image for the button, and a
+	 * default <code>DateFormatter</code>.
+	 * 
+	 * @param parent a composite control which will be the parent of the new instance (cannot be null)
+	 * @param style the style of control to construct
 	 */
 	public DateChooserCombo(Composite parent, int style) {
-    super(parent, style);
+		super(parent, style);
 		setTheme(DateChooserTheme.getDefaultTheme());
 		setImage(buttonImage);
-    setCreateOnDrop(true);
+		setCreateOnDrop(true);
 		pack();
 	}
 
@@ -100,7 +105,7 @@ public class DateChooserCombo extends AbstractCombo {
 	public void addKeyListener(KeyListener listener) {
 		checkWidget();
 		text.addKeyListener(listener);
-  }
+	}
 
 	/**
 	 * Called just before the popup is dropped. The selected date of the
@@ -111,7 +116,7 @@ public class DateChooserCombo extends AbstractCombo {
 	protected void beforeDrop() {
 		Date d = (Date) formattedText.getValue();
 		DateChooser cal = (DateChooser) popupContent;
-		if ( d != null ) {
+		if (d != null) {
 			cal.setSelectedDate(d);
 			cal.setFocusOnDate(d);
 		} else {
@@ -139,14 +144,14 @@ public class DateChooserCombo extends AbstractCombo {
 		Point buttonSize = button.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
 		int borderWidth = getBorderWidth();
 
-		if ( wHint == SWT.DEFAULT ) {
+		if (wHint == SWT.DEFAULT) {
 			GC gc = new GC(formattedText.getControl());
 			int width = gc.textExtent("01/01/2000 ").x;
 			gc.dispose();
 			size.x = width + buttonSize.x + 2 * borderWidth;
 		}
-		if ( hHint == SWT.DEFAULT ) {
-			if ( WIN32 ) {
+		if (hHint == SWT.DEFAULT) {
+			if (WIN32) {
 				buttonSize.y = ((GridData) button.getLayoutData()).heightHint;
 			}
 			size.y = Math.max(textSize.y, buttonSize.y) + 2 * borderWidth;
@@ -172,12 +177,12 @@ public class DateChooserCombo extends AbstractCombo {
 	 * Creates the popup content. The content is a <code>DateChooser</code>.
 	 * 
 	 * @param parent The parent Composite that will contain the control
-	 * @return The created Control for the popup content 
+	 * @return The created Control for the popup content
 	 */
 	protected Control createPopupContent(Composite parent) {
 		DateChooser cal = new DateChooser(parent, SWT.NONE);
 		cal.setTheme(theme);
-		if ( locale != null ) {
+		if (locale != null) {
 			cal.setLocale(locale);
 		}
 		cal.setGridVisible(gridVisible);
@@ -185,7 +190,7 @@ public class DateChooserCombo extends AbstractCombo {
 		cal.setWeeksVisible(weeksVisible);
 		cal.setAutoSelectOnFooter(true);
 		cal.pack();
-  	return cal;
+		return cal;
 	}
 
 	/**
@@ -201,9 +206,9 @@ public class DateChooserCombo extends AbstractCombo {
 	 * @see org.eclipse.nebula.widgets.datechooser.AbstractCombo#createTextControl(int)
 	 */
 	protected Text createTextControl(int style) {
-    formattedText = new FormattedText(this, SWT.NONE);
-    formattedText.setFormatter(DefaultFormatterFactory.createFormatter(Date.class));
-    return formattedText.getControl();
+		formattedText = new FormattedText(this, SWT.NONE);
+		formattedText.setFormatter(DefaultFormatterFactory.createFormatter(Date.class));
+		return formattedText.getControl();
 	}
 
 	/**
@@ -217,13 +222,12 @@ public class DateChooserCombo extends AbstractCombo {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
 	 * @see org.eclipse.nebula.widgets.datechooser.AbstractCombo#dropDown(boolean)
 	 */
 	protected void dropDown(boolean drop) {
 		super.dropDown(drop);
-		if ( drop && GTK ) {
+		if (drop && GTK) {
 			/*
 			 * Bug GTK. When the popup is displayed, the calendar does not gain the
 			 * focus until the user click into it with the mouse. Then the keyboard
@@ -244,16 +248,17 @@ public class DateChooserCombo extends AbstractCombo {
 	}
 
 	/**
-   * Returns the current <code>Date</code> value of the widget.<p>
-   * 
-   * @return Current value
-   */
-  public Date getValue() {
+	 * Returns the current <code>Date</code> value of the widget.
+	 * <p>
+	 * 
+	 * @return Current value
+	 */
+	public Date getValue() {
 		checkWidget();
-  	return (Date) formattedText.getValue();
-  }
+		return (Date) formattedText.getValue();
+	}
 
-  /**
+	/**
 	 * Returns true if footer is visible in the popup calendar.
 	 * 
 	 * @return <code>true</code> if footer visible, else <code>false</code>
@@ -263,7 +268,7 @@ public class DateChooserCombo extends AbstractCombo {
 		return footerVisible;
 	}
 
-  /**
+	/**
 	 * Returns true if grid is visible in the calendar popup.
 	 * 
 	 * @return Returns the grid visible status.
@@ -293,7 +298,7 @@ public class DateChooserCombo extends AbstractCombo {
 	public void removeKeyListener(KeyListener listener) {
 		checkWidget();
 		formattedText.getControl().removeKeyListener(listener);
-  }
+	}
 
 	/**
 	 * Sets the footer of popup calendar visible or not. The footer displays the
@@ -307,18 +312,18 @@ public class DateChooserCombo extends AbstractCombo {
 	}
 
 	/**
-   * Associates a new <code>DateFormatter</code> to the text widget, replacing
-   * the default one.
-   * 
-   * @param formatter date formatter
-   */
-  public void setFormatter(DateFormatter formatter) {
+	 * Associates a new <code>DateFormatter</code> to the text widget, replacing
+	 * the default one.
+	 * 
+	 * @param formatter date formatter
+	 */
+	public void setFormatter(DateFormatter formatter) {
 		checkWidget();
-  	formattedText.setFormatter(formatter);
-  	this.locale = formatter.getLocale();
-  }
+		formattedText.setFormatter(formatter);
+		this.locale = formatter.getLocale();
+	}
 
-  /**
+	/**
 	 * Sets the grid visible or not in the calendar popup. By default, the grid
 	 * is visible.
 	 * 
@@ -340,51 +345,53 @@ public class DateChooserCombo extends AbstractCombo {
 	}
 
 	/**
-   * Sets a new image to display on the button, replacing the default one.
-   * 
-   * @param image new image
-   */
-  public void setImage(Image image) {
+	 * Sets a new image to display on the button, replacing the default one.
+	 * 
+	 * @param image new image
+	 */
+	public void setImage(Image image) {
 		checkWidget();
-		if ( image == null ) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-  	GridData buttonLayout = (GridData) button.getLayoutData();
-		if ( WIN32 ) {
-	  	ImageData id	= image.getImageData();
-	  	buttonLayout.widthHint	= id.width + 4;
-	  	buttonLayout.heightHint = id.height + 6;
+		if (image == null)
+			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		GridData buttonLayout = (GridData) button.getLayoutData();
+		if (WIN32) {
+			ImageData id = image.getImageData();
+			buttonLayout.widthHint = id.width + 4;
+			buttonLayout.heightHint = id.height + 6;
 		}
-  	button.setImage(image);
-  	pack();
-  }
+		button.setImage(image);
+		pack();
+	}
 
-  /**
-   * Sets the locale used both by the input mask and the calendar.
-   * 
-   * @param locale locale
-   */
-  public void setLocale(Locale locale) {
+	/**
+	 * Sets the locale used both by the input mask and the calendar.
+	 * 
+	 * @param locale locale
+	 */
+	public void setLocale(Locale locale) {
 		checkWidget();
 		this.locale = locale;
-  	((DateFormatter) formattedText.getFormatter()).setLocale(locale);
-  }
+		((DateFormatter) formattedText.getFormatter()).setLocale(locale);
+	}
 
-  /**
+	/**
 	 * Sets the theme to apply to the calendar popup.
 	 * 
 	 * @param theme new theme (must not be null)
 	 */
 	public void setTheme(DateChooserTheme theme) {
 		checkWidget();
-		if ( theme == null ) SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		if (theme == null)
+			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		this.theme = theme;
 		this.gridVisible = theme.gridVisible;
 	}
 
 	/**
-   * Sets a new <code>Date</code> value.
-   * 
-   * @param value new date value
-   */
+	 * Sets a new <code>Date</code> value.
+	 * 
+	 * @param value new date value
+	 */
 	public void setValue(Date value) {
 		checkWidget();
 		formattedText.setValue(value);

@@ -1,17 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2018 Laurent CARON. All rights reserved. This program and the
- * accompanying materials are made available under the terms of the Eclipse
- * Public License v1.0 which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2018 Laurent CARON.
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors: Laurent CARON (laurent.caron@gmail.com) - initial API and
  * implementation
  *******************************************************************************/
 package org.eclipse.nebula.widgets.roundedcheckbox;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.eclipse.nebula.widgets.opal.commons.SelectionListenerUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.SelectionEvent;
@@ -24,7 +25,6 @@ import org.eclipse.swt.internal.DPIUtil;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 
 /**
  * Instances of this class provide a checkbox button.<br/>
@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.Listener;
  * <dt><b>Styles:</b></dt>
  * <dd>BORDER</dd>
  * <dt><b>Events:</b></dt>
- * <dd>(none)</dd>
+ * <dd>Selection</dd>
  * </dl>
  * </p>
  */
@@ -42,7 +42,6 @@ import org.eclipse.swt.widgets.Listener;
 public class RoundedCheckbox extends Canvas {
 	private static final int DEFAULT_WIDTH = 20;
 	private static final int DEFAULT_HEIGHT = 20;
-	private final List<SelectionListener> selectionListeners;
 	private boolean selected;
 	private boolean grayed;
 	private Color unselectedColor, selectionBackground, selectionForeground, hoverColor;
@@ -79,7 +78,6 @@ public class RoundedCheckbox extends Canvas {
 	 */
 	public RoundedCheckbox(final Composite parent, final int style) {
 		super(parent, checkStyle(style) | SWT.DOUBLE_BUFFERED);
-		selectionListeners = new ArrayList<>();
 		disabledColor = getAndDisposeColor(204, 204, 204);
 		selectionBackground = getAndDisposeColor(0, 122, 255);
 		selectionForeground = getAndDisposeColor(255, 255, 255);
@@ -190,9 +188,12 @@ public class RoundedCheckbox extends Canvas {
 		final int centerY = (rect.height - rect.y) / 2;
 		final int distance = (int) Math.sqrt(Math.abs(e.x - centerX ^ 2 - (e.y - centerY) ^ 2));
 		if (distance < rect.width - 4) {
-			setSelection(!selected);
+			if (SelectionListenerUtil.fireSelectionListeners(this,e)) {
+				setSelection(!selected);
+			}
 		}
 	}
+	
 
 	private void onKeyPress(Event e) {
 		if (e.character == ' ' || e.character == '+') {
@@ -210,36 +211,6 @@ public class RoundedCheckbox extends Canvas {
 		return color;
 	}
 
-	/**
-	 * @see org.eclipse.swt.widgets.Widget#addListener(int, org.eclipse.swt.widgets.Listener)
-	 */
-	@Override
-	public void addListener(int eventType, Listener listener) {
-		if (eventType == SWT.Selection) {
-			selectionListeners.add(new SelectionListener() {
-
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					widgetSelection(e);
-				}
-
-				@Override
-				public void widgetDefaultSelected(SelectionEvent e) {
-					widgetSelection(e);
-				}
-
-				private void widgetSelection(SelectionEvent e) {
-					final Event event = new Event();
-					event.widget = RoundedCheckbox.this;
-					event.display = getDisplay();
-					event.type = SWT.Selection;
-					listener.handleEvent(event);
-				}
-			});
-			return;
-		}
-		super.addListener(eventType, listener);
-	}
 
 	/**
 	 * Adds the listener to the collection of listeners who will be notified when
@@ -270,10 +241,7 @@ public class RoundedCheckbox extends Canvas {
 	 */
 	public void addSelectionListener(final SelectionListener listener) {
 		checkWidget();
-		if (listener == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		selectionListeners.add(listener);
+		SelectionListenerUtil.addSelectionListener(this, listener);
 	}
 
 	/**
@@ -303,8 +271,7 @@ public class RoundedCheckbox extends Canvas {
 
 	/**
 	 * Returns <code>true</code> if the receiver is grayed,
-	 * and false otherwise. When the widget does not have
-	 * the <code>CHECK</code> style, return false.
+	 * and false otherwise. 
 	 *
 	 * @return the grayed state of the checkbox
 	 *
@@ -323,13 +290,8 @@ public class RoundedCheckbox extends Canvas {
 
 	/**
 	 * Returns the receiver's color when the mouse is hover the widget.
-	 * <p>
-	 * Note: This operation is a hint and may be overridden by the platform.
-	 * For example, on some versions of Windows the background of a TabFolder,
-	 * is a gradient rather than a solid color.
-	 * </p>
 	 * 
-	 * @return the background color
+	 * @return the receiver's color
 	 *
 	 * @exception SWTException
 	 *                <ul>
@@ -344,11 +306,6 @@ public class RoundedCheckbox extends Canvas {
 
 	/**
 	 * Returns the receiver's background color when the widget is selected.
-	 * <p>
-	 * Note: This operation is a hint and may be overridden by the platform.
-	 * For example, on some versions of Windows the background of a TabFolder,
-	 * is a gradient rather than a solid color.
-	 * </p>
 	 * 
 	 * @return the background color
 	 *
@@ -365,13 +322,8 @@ public class RoundedCheckbox extends Canvas {
 
 	/**
 	 * Returns the receiver's foreground color when the widget is selected.
-	 * <p>
-	 * Note: This operation is a hint and may be overridden by the platform.
-	 * For example, on some versions of Windows the background of a TabFolder,
-	 * is a gradient rather than a solid color.
-	 * </p>
 	 * 
-	 * @return the background color
+	 * @return the foreground color
 	 *
 	 * @exception SWTException
 	 *                <ul>
@@ -387,11 +339,6 @@ public class RoundedCheckbox extends Canvas {
 	/**
 	 * Returns <code>true</code> if the receiver is selected,
 	 * and false otherwise.
-	 * <p>
-	 * When the receiver is of type <code>CHECK</code> or <code>RADIO</code>,
-	 * it is selected when it is checked. When it is of type <code>TOGGLE</code>,
-	 * it is selected when it is pushed in. If the receiver is of any other type,
-	 * this method returns false.
 	 *
 	 * @return the selection state
 	 *
@@ -408,13 +355,8 @@ public class RoundedCheckbox extends Canvas {
 
 	/**
 	 * Returns the receiver's foreground color when the widget is not selected.
-	 * <p>
-	 * Note: This operation is a hint and may be overridden by the platform.
-	 * For example, on some versions of Windows the background of a TabFolder,
-	 * is a gradient rather than a solid color.
-	 * </p>
 	 * 
-	 * @return the background color
+	 * @return the foreground color
 	 *
 	 * @exception SWTException
 	 *                <ul>
@@ -450,10 +392,7 @@ public class RoundedCheckbox extends Canvas {
 	 */
 	public void removeSelectionListener(final SelectionListener listener) {
 		checkWidget();
-		if (listener == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		selectionListeners.remove(listener);
+		SelectionListenerUtil.removeSelectionListener(this, listener);
 	}
 
 	/**
@@ -555,13 +494,7 @@ public class RoundedCheckbox extends Canvas {
 	}
 
 	/**
-	 * Sets the selection state of the receiver, if it is of type <code>CHECK</code>,
-	 * <code>RADIO</code>, or <code>TOGGLE</code>.
-	 *
-	 * <p>
-	 * When the receiver is of type <code>CHECK</code> or <code>RADIO</code>,
-	 * it is selected when it is checked. When it is of type <code>TOGGLE</code>,
-	 * it is selected when it is pushed in.
+	 * Sets the selection state of the receiver.
 	 *
 	 * @param selected the new selection state
 	 *

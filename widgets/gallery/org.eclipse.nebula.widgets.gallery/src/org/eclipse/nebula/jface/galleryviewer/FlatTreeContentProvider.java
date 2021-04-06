@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2007-2008 Peter Centgraf.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors :
  *    Peter Centgraf - initial implementation
@@ -50,16 +53,15 @@ public class FlatTreeContentProvider implements ITreeContentProvider {
 	 * @param the
 	 *            single root node for the tree
 	 */
-	public FlatTreeContentProvider(IStructuredContentProvider provider, Object rootNode) {
+	public FlatTreeContentProvider(IStructuredContentProvider provider,
+			Object rootNode) {
 		this.provider = provider;
 		this.rootNode = rootNode;
 
 		roots = new Object[] { rootNode };
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
 	public Object getParent(Object element) {
@@ -70,45 +72,35 @@ public class FlatTreeContentProvider implements ITreeContentProvider {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
 	public boolean hasChildren(Object element) {
 		return element == rootNode;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
 	public Object[] getElements(Object inputElement) {
 		return roots;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
 	public Object[] getChildren(Object parentElement) {
 		return provider.getElements(parentElement);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	public void dispose() {
 		provider.dispose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
 	 *      java.lang.Object, java.lang.Object)
 	 */

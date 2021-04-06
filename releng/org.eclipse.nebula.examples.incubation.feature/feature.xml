@@ -18,8 +18,8 @@
    </license>
 
    <url>
-      <discovery label="Nebula Release" url="http://download.eclipse.org/technology/nebula/snapshot"/>
-      <discovery label="Nebula Incubation" url="http://download.eclipse.org/technology/nebula/incubation/snapshot"/>
+      <discovery label="Nebula Release" url="http://download.eclipse.org/nebula/snapshot"/>
+      <discovery label="Nebula Incubation" url="http://download.eclipse.org/nebula/incubation/snapshot"/>
    </url>
 
    <requires>
@@ -110,4 +110,12 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin
+         id="org.eclipse.nebula.widgets.timeline.example"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
 </feature>

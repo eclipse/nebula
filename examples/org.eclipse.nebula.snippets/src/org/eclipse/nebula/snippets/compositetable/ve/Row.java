@@ -1,13 +1,12 @@
 package org.eclipse.nebula.snippets.compositetable.ve;
 
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.nebula.widgets.compositetable.GridRowLayout;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Text;
 
 public class Row extends Composite {
 
@@ -33,4 +32,4 @@ public class Row extends Composite {
         setSize(new Point(307, 46));
     }
 
-}  //  @jve:decl-index=0:visual-constraint="10,10"
+}  

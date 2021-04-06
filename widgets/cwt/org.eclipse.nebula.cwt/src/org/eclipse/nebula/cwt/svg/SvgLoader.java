@@ -1,12 +1,17 @@
 /****************************************************************************
  * Copyright (c) 2008, 2009 Jeremy Dowdall
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *    Jeremy Dowdall <jeremyd@aspencloud.com> - initial API and implementation
+ *    Edward Francis <edward.k.francis@gmail.com> - Handle Bézier relative commands correctly
+ *    Edward Frnacis <edward.k.francis@gmail.com> - parsePathData handle multiple commands.
  *****************************************************************************/
 package org.eclipse.nebula.cwt.svg;
 
@@ -189,8 +194,12 @@ class SvgLoader {
 	}
 	
 	private static void addPoint(List<Float> points, String s, boolean relative) {
+		addPoint(points, s, relative, 2);
+	}
+	
+	private static void addPoint(List<Float> points, String s, boolean relative, int relativeOffset) {
 		if(relative) {
-			points.add(points.get(points.size() - 2) + Float.parseFloat(s));
+			points.add(points.get(points.size() - relativeOffset) + Float.parseFloat(s));
 		} else {
 			points.add(new Float(s));
 		}
@@ -963,52 +972,62 @@ class SvgLoader {
 		List<Byte> types = new ArrayList<Byte>();
 		List<Float> points = new ArrayList<Float>();
 		int i = -1;
+		String lastCommand = ""; //$NON-NLS-1$
+		boolean useLastCommand = false;
 		while(i < sa.length - 1) {
-			i++;
-			switch(sa[i].charAt(0)) {
+			String command;
+			if(!useLastCommand) {
+				i++;
+				command = sa[i];
+			} else {
+				i--;
+				command = lastCommand;
+				useLastCommand = false;
+			}
+			switch(command.charAt(0)) {
 			case 'M':
 			case 'm':
 				types.add((byte) SWT.PATH_MOVE_TO);
-				relative = ('m' == sa[i].charAt(0));
+				relative = ('m' == command.charAt(0));
 				addPoint(points, sa[++i], relative);
 				addPoint(points, sa[++i], relative);
 				break;
 			case 'L':
 			case 'l':
 				types.add((byte) SWT.PATH_LINE_TO);
-				relative = ('l' == sa[i].charAt(0));
+				relative = ('l' == command.charAt(0));
 				addPoint(points, sa[++i], relative);
 				addPoint(points, sa[++i], relative);
 				break;
 			case 'H':
 			case 'h':
 				types.add((byte) SWT.PATH_LINE_TO);
-				relative = ('h' == sa[i].charAt(0));
+				relative = ('h' == command.charAt(0));
 				addPoint(points, sa[++i], relative);
 				points.add(points.get(points.size() - 2));
 				break;
 			case 'V':
 			case 'v':
 				types.add((byte) SWT.PATH_LINE_TO);
-				relative = ('v' == sa[i].charAt(0));
+				relative = ('v' == command.charAt(0));
 				points.add(points.get(points.size() - 2));
 				addPoint(points, sa[++i], relative);
 				break;
 			case 'C':
 			case 'c':
 				types.add((byte) SWT.PATH_CUBIC_TO);
-				relative = ('c' == sa[i].charAt(0));
+				relative = ('c' == command.charAt(0));
 				addPoint(points, sa[++i], relative);
 				addPoint(points, sa[++i], relative);
-				addPoint(points, sa[++i], relative);
-				addPoint(points, sa[++i], relative);
-				addPoint(points, sa[++i], relative);
-				addPoint(points, sa[++i], relative);
+				addPoint(points, sa[++i], relative, 4);
+				addPoint(points, sa[++i], relative, 4);
+				addPoint(points, sa[++i], relative, 6);
+				addPoint(points, sa[++i], relative, 6);
 				break;
 			case 'S':
 			case 's':
 				types.add((byte) SWT.PATH_CUBIC_TO);
-				relative = ('s' == sa[i].charAt(0));
+				relative = ('s' == command.charAt(0));
 				if(SWT.PATH_CUBIC_TO == types.get(types.size() - 2)) {
 					float x2 = points.get(points.size() - 4);
 					float y2 = points.get(points.size() - 3);
@@ -1022,24 +1041,24 @@ class SvgLoader {
 					points.add(points.get(points.size() - 2));
 					points.add(points.get(points.size() - 2));
 				}
-				addPoint(points, sa[++i], relative);
-				addPoint(points, sa[++i], relative);
-				addPoint(points, sa[++i], relative);
-				addPoint(points, sa[++i], relative);
+				addPoint(points, sa[++i], relative, 4);
+				addPoint(points, sa[++i], relative, 4);
+				addPoint(points, sa[++i], relative, 6);
+				addPoint(points, sa[++i], relative, 6);
 				break;
 			case 'Q':
 			case 'q':
 				types.add((byte) SWT.PATH_QUAD_TO);
-				relative = ('q' == sa[i].charAt(0));
+				relative = ('q' == command.charAt(0));
 				addPoint(points, sa[++i], relative);
 				addPoint(points, sa[++i], relative);
-				addPoint(points, sa[++i], relative);
-				addPoint(points, sa[++i], relative);
+				addPoint(points, sa[++i], relative, 4);
+				addPoint(points, sa[++i], relative, 4);
 				break;
 			case 'T':
 			case 't':
 				types.add((byte) SWT.PATH_QUAD_TO);
-				relative = ('q' == sa[i].charAt(0));
+				relative = ('t' == command.charAt(0));
 				if(SWT.PATH_QUAD_TO == types.get(types.size() - 2)) {
 					float x2 = points.get(points.size() - 4);
 					float y2 = points.get(points.size() - 3);
@@ -1053,8 +1072,8 @@ class SvgLoader {
 					points.add(points.get(points.size() - 2));
 					points.add(points.get(points.size() - 2));
 				}
-				addPoint(points, sa[++i], relative);
-				addPoint(points, sa[++i], relative);
+				addPoint(points, sa[++i], relative, 4);
+				addPoint(points, sa[++i], relative, 4);
 				break;
 			case 'Z':
 			case 'z':
@@ -1062,10 +1081,24 @@ class SvgLoader {
 				break;
 			case 'A':
 			case 'a':
-				relative = ('a' == sa[i].charAt(0));
+				relative = ('a' == command.charAt(0));
 				addArc(sa, ++i, types, points, relative);
 				i += 6;
 				break;
+			default:
+				char com = lastCommand.charAt(0);
+				if(com != 'Z' && com != 'z') {
+					useLastCommand = true;
+					if(com == 'M') {
+						lastCommand = "L"; //$NON-NLS-1$
+					}
+					if(com == 'm') {
+						lastCommand = "l"; //$NON-NLS-1$
+					}
+				}
+			}
+			if(!useLastCommand) {
+				lastCommand = command;
 			}
 		}
 
@@ -1364,8 +1397,8 @@ class SvgLoader {
 				element.x = parseFloat(getAttrValue(ca, start, endAttrs, ATTR_X));
 				element.y = parseFloat(getAttrValue(ca, start, endAttrs, ATTR_Y));
 			}
-			element.width = parseLength(getAttrValue(ca, start, endAttrs, ATTR_WIDTH), "100%"); //$NON-NLS-1$
-			element.height = parseLength(getAttrValue(ca, start, endAttrs, ATTR_HEIGHT), "100%"); //$NON-NLS-1$
+			element.width = parseLength(getAttrValue(ca, start, endAttrs, ATTR_WIDTH), "10px"); //$NON-NLS-1$
+			element.height = parseLength(getAttrValue(ca, start, endAttrs, ATTR_HEIGHT), "10px"); //$NON-NLS-1$
 			element.viewBox = parseViewBox(getAttrValue(ca, start, endAttrs, ATTR_VIEWBOX));
 			//			TODO element.preserveAspectRatio = 
 			parse(element, ca, endAttrs, end);

@@ -1,8 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2018 Laurent CARON. All rights reserved. This program and the
- * accompanying materials are made available under the terms of the Eclipse
- * Public License v1.0 which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2018 Laurent CARON.
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors: Laurent CARON (laurent.caron@gmail.com)
  *******************************************************************************/
@@ -21,11 +24,12 @@ public class ProgressCircleSnippet {
 	public static void main(final String[] args) {
 		final Display display = new Display();
 		final Shell shell = new Shell(display);
-		shell.setLayout(new GridLayout(3, true));
+		shell.setLayout(new GridLayout(2, true));
 		final Color white = display.getSystemColor(SWT.COLOR_WHITE);
 		shell.setBackground(white);
 
 		new PercentagePanel(shell);
+		new RunningPercentage(shell);
 		new AbsolutePanel(shell);
 		new TimePanel(shell);
 

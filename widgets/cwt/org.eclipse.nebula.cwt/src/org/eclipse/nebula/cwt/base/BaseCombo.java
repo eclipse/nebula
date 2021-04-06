@@ -1,9 +1,12 @@
 /****************************************************************************
  * Copyright (c) 2005-2009 Jeremy Dowdall
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  * 	 IBM Corporation - SWT's CCombo was relied upon _heavily_ for example and reference
@@ -24,8 +27,11 @@ import org.eclipse.nebula.cwt.v.VPanel;
 import org.eclipse.nebula.cwt.v.VSimpleLayout;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -101,12 +107,6 @@ public abstract class BaseCombo extends Canvas {
 	}
 
 	/**
-	 * The value of {@link SWT#getVersion()} for the earliest known revision
-	 * that fixes the SWT bug mentioned in bug 185739.
-	 */
-	protected static int SWT_MODAL_FIX_VERSION = 3346;
-
-	/**
 	 * true if the platform is carbon, false otherwise
 	 */
 	protected static final boolean carbon = "carbon".equals(SWT.getPlatform()); //$NON-NLS-1$
@@ -120,16 +120,6 @@ public abstract class BaseCombo extends Canvas {
 	 * true if the platform is win32, false otherwise
 	 */
 	protected static final boolean win32 = "win32".equals(SWT.getPlatform()); //$NON-NLS-1$
-
-	/**
-	 * true if the platform is winXP, false otherwise
-	 */
-	protected static final boolean winxp = "win32".equals(SWT.getPlatform()) && "5.0".equals(System.getProperty("os.version")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
-	/**
-	 * true if the platform is win32, false otherwise
-	 */
-	protected static final boolean vista = "win32".equals(SWT.getPlatform()) && "6.0".equals(System.getProperty("os.version")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 	/**
 	 * A constant value used to pad the computed height for this widget, so that
@@ -178,6 +168,11 @@ public abstract class BaseCombo extends Canvas {
 	 */
 	protected static final int BUTTON_AUTO = 3;
 
+	/**
+	 * boolean to disable button on open state.
+	 */
+	boolean buttonActive = true;
+	
 	private static int checkStyle(int style) {
 		int rstyle = SWT.NONE;
 		if ((style & SWT.BORDER) != 0) {
@@ -342,6 +337,45 @@ public abstract class BaseCombo extends Canvas {
 	}
 
 	/**
+	 * Adds the listener to the collection of listeners who will
+	 * be notified when keys are pressed and released on the system keyboard, by sending
+	 * it one of the messages defined in the <code>KeyListener</code>
+	 * interface.
+	 * <p>
+	 * When a key listener is added to a control, the control
+	 * will take part in widget traversal.  By default, all
+	 * traversal keys (such as the tab key and so on) are
+	 * delivered to the control.  In order for a control to take
+	 * part in traversal, it should listen for traversal events.
+	 * Otherwise, the user can traverse into a control but not
+	 * out.  Note that native controls such as table and tree
+	 * implement key traversal in the operating system.  It is
+	 * not necessary to add traversal listeners for these controls,
+	 * unless you want to override the default traversal.
+	 * </p>
+	 * @param listener the listener which should be notified
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
+	 * </ul>
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 * </ul>
+	 *
+	 * @see KeyListener
+	 * @see #removeKeyListener
+	 */
+	public void addKeyListener (KeyListener listener) {
+		if (listener == null) {
+			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
+		if (checkText()) {
+			text.getControl().addKeyListener(listener);
+		}
+	}
+	
+	/**
 	 * Adds the listener to the collection of listeners who will be notified
 	 * when the receiver's text is modified, by sending it one of the messages
 	 * defined in the <code>ModifyListener</code> interface.<br/>
@@ -366,7 +400,7 @@ public abstract class BaseCombo extends Canvas {
 	 * @see ModifyListener
 	 * @see #removeModifyListener
 	 */
-	protected void addModifyListener(ModifyListener listener) {
+	public void addModifyListener(ModifyListener listener) {
 		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
@@ -379,7 +413,36 @@ public abstract class BaseCombo extends Canvas {
 		text.getControl().addListener(SWT.KeyDown, textListener);
 		text.getControl().addListener(SWT.Modify, textListener);
 	}
+	
+	/**
+	 * Adds the listener to the collection of listeners who will
+	 * be notified when traversal events occur, by sending it
+	 * one of the messages defined in the <code>TraverseListener</code>
+	 * interface.
+	 *
+	 * @param listener the listener which should be notified
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
+	 * </ul>
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 * </ul>
+	 *
+	 * @see TraverseListener
+	 * @see #removeTraverseListener
+	 */
+	public void addTraverseListener (TraverseListener listener) {
+		if (listener == null) {
+			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
+		if (checkText()) {
+			text.getControl().addTraverseListener(listener);
+		}
+	}
 
+	
 	/**
 	 * @return true if the {@link #button} field is in a fit state to be used
 	 */
@@ -419,7 +482,9 @@ public abstract class BaseCombo extends Canvas {
 		}
 		button.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				setOpen(!isOpen());
+				if(buttonActive) {
+					setOpen(!isOpen());
+				}
 			}
 		});
 
@@ -702,6 +767,33 @@ public abstract class BaseCombo extends Canvas {
 		// subclasses to implement if necessary
 	}
 
+	
+	/**
+	 * Removes the listener from the collection of listeners who will
+	 * be notified when keys are pressed and released on the system keyboard.
+	 *
+	 * @param listener the listener which should no longer be notified
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
+	 * </ul>
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 * </ul>
+	 *
+	 * @see KeyListener
+	 * @see #addKeyListener
+	 */
+	public void removeKeyListener(KeyListener listener) {
+		if (listener == null) {
+			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
+		if (checkText()) {
+			text.getControl().removeKeyListener(listener);
+		}
+	}	
+	
 	/**
 	 * Removes the listener from the collection of listeners who will be
 	 * notified when the receiver's text is modified.
@@ -724,7 +816,7 @@ public abstract class BaseCombo extends Canvas {
 	 * @see ModifyListener
 	 * @see #addModifyListener
 	 */
-	protected void removeModifyListener(ModifyListener listener) {
+	public void removeModifyListener(ModifyListener listener) {
 		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
@@ -736,6 +828,32 @@ public abstract class BaseCombo extends Canvas {
 	private void removeTextListener() {
 		text.getControl().removeListener(SWT.KeyDown, textListener);
 		text.getControl().removeListener(SWT.Modify, textListener);
+	}
+	
+	/**
+	 * Removes the listener from the collection of listeners who will
+	 * be notified when traversal events occur.
+	 *
+	 * @param listener the listener which should no longer be notified
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
+	 * </ul>
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 * </ul>
+	 *
+	 * @see TraverseListener
+	 * @see #addTraverseListener
+	 */
+	public void removeTraverseListener(TraverseListener listener) {
+		if (listener == null) {
+			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
+		if (checkText()) {
+			text.getControl().removeTraverseListener(listener);
+		}
 	}
 
 	/**
@@ -917,6 +1035,9 @@ public abstract class BaseCombo extends Canvas {
 		return panel.setFocus();
 	}
 
+	/**
+	 * @see org.eclipse.swt.widgets.Canvas#setFont(org.eclipse.swt.graphics.Font)
+	 */
 	public void setFont(Font font) {
 		super.setFont(font);
 		if (checkButton()) {
@@ -926,8 +1047,47 @@ public abstract class BaseCombo extends Canvas {
 			text.setFont(font);
 		}
 		if (checkContent()) {
-			content.setFont(font);
+			if( content != this ){
+				content.setFont(font);
+			}
 		}
+	}
+
+	/**
+	 * @see org.eclipse.swt.widgets.Control#setBackground(org.eclipse.swt.graphics.Color)
+	 */
+	public void setBackground(Color color) {
+		super.setBackground(color);
+		if (checkButton()) {
+			button.setBackground(color);
+		}
+		if (checkText()) {
+			text.setBackground(color);
+		}
+		if (checkContent()) {
+			if( content != this ){
+				content.setBackground(color);
+			}
+		}
+	}
+
+	/**
+	 * @see org.eclipse.swt.widgets.Control#setForeground(org.eclipse.swt.graphics.Color)
+	 */
+	public void setForeground(Color color) {
+		super.setForeground(color);
+		if (checkButton()) {
+			button.setForeground(color);
+		}
+		if (checkText()) {
+			text.setForeground(color);
+		}
+		if (checkContent()) {
+			if( content != this ){
+				content.setForeground(color);
+			}
+		}
+
 	}
 
 	/**
@@ -985,6 +1145,9 @@ public abstract class BaseCombo extends Canvas {
 	 * @see BaseCombo#setOpen(boolean, Runnable)
 	 */
 	protected void setOpen(boolean open) {
+		if (open == this.open) {
+			return;
+		}
 		setOpen(open, null);
 	}
 
@@ -1004,6 +1167,7 @@ public abstract class BaseCombo extends Canvas {
 	 * @see BaseCombo#setOpen(boolean)
 	 */
 	protected synchronized void setOpen(boolean open, final Runnable callback) {
+		buttonActive = false;
 		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=198240
 		// Avoid infinite loop:  
 		//		Button starts close
@@ -1055,6 +1219,8 @@ public abstract class BaseCombo extends Canvas {
 				Runnable runnable = new Runnable() {
 					public void run() {
 						postClose(contentShell);
+						buttonActive = true;
+						
 						if (callback != null) {
 							callback.run();
 						}

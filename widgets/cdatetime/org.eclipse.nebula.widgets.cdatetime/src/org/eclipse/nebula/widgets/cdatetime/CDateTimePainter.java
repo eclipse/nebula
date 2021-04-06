@@ -1,9 +1,12 @@
 /****************************************************************************
  * Copyright (c) 2008 Jeremy Dowdall
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *    Jeremy Dowdall <jeremyd@aspencloud.com> - initial API and implementation
@@ -22,6 +25,7 @@ import org.eclipse.nebula.cwt.v.VLabelPainter;
 import org.eclipse.nebula.cwt.v.VPanel;
 import org.eclipse.nebula.cwt.v.VPanelPainter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Event;
 
@@ -497,6 +501,9 @@ public class CDateTimePainter implements IControlPainter {
 	}
 
 	public final void update(VControl control) {
+		if (control == null) {
+			return;
+		}
 		switch ((CDT.PickerPart) control.getData(CDT.PickerPart)) {
 		case ClearButton:
 			updateClearButton(control);
@@ -555,14 +562,14 @@ public class CDateTimePainter implements IControlPainter {
 
 	protected void updateDayButton(VControl control) {
 		if (isToday(control)) {
-			control.setForeground(
-					control.getDisplay().getSystemColor(SWT.COLOR_RED));
+			final Color color = cdt.getPickerTodayColor();
+			control.setForeground(color!=null?color:control.getDisplay().getSystemColor(SWT.COLOR_RED));
 		} else if (isActive(control)) {
-			control.setForeground(
-					control.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+			final Color color = cdt.getPickerActiveDayColor();
+			control.setForeground(color!=null?color:control.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 		} else {
-			control.setForeground(
-					control.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
+			final Color color = cdt.getPickerInactiveDayColor();
+			control.setForeground(color!=null?color:control.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
 		}
 	}
 
@@ -570,13 +577,13 @@ public class CDateTimePainter implements IControlPainter {
 	}
 
 	protected void updateDayOfWeekPanel(VControl control) {
-		control.setBackground(
-				control.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		final Color color = cdt.getPickerBackgroundColor();
+		control.setBackground(color!=null?color:control.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 	}
 
 	protected void updateDayPanel(VControl control) {
-		control.setBackground(
-				control.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		final Color color = cdt.getPickerBackgroundColor();
+		control.setBackground(color!=null?color:control.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 	}
 
 	protected void updateFooterButton(VControl control) {

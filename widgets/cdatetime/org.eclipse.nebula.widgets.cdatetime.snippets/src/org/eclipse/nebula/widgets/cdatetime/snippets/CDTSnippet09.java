@@ -1,9 +1,12 @@
 /****************************************************************************
  * Copyright (c) 2012 Scott Klein
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *    Scott Klein <scott.klein@goldenhour.com> - initial API and implementation
@@ -13,7 +16,6 @@ package org.eclipse.nebula.widgets.cdatetime.snippets;
 
 import java.util.TimeZone;
 
-import org.eclipse.nebula.widgets.cdatetime.CDT;
 import org.eclipse.nebula.widgets.cdatetime.CDateTime;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -26,9 +28,9 @@ import org.eclipse.swt.widgets.Shell;
  * This snippet shows how to use the timezone features of the CDateTime widget.
  * Please notice that you are able to tab to the timezone field were you can
  * roll through them.
- * 
+ *
  */
-public class CDTSnippet09 { 
+public class CDTSnippet09 {
 
 	/**
 	 * @param args

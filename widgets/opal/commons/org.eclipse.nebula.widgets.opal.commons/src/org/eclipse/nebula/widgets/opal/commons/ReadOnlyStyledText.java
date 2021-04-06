@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2012 Laurent CARON
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  * Laurent CARON (laurent.caron at gmail dot com) - Initial implementation and API
@@ -13,8 +16,6 @@ package org.eclipse.nebula.widgets.opal.commons;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.widgets.Composite;
 
 /**
@@ -59,12 +60,7 @@ public class ReadOnlyStyledText extends StyledText {
 	 */
 	public ReadOnlyStyledText(final Composite parent, final int style) {
 		super(parent, style | SWT.WRAP | SWT.READ_ONLY);
-		addMouseTrackListener(new MouseTrackAdapter() {
-			@Override
-			public void mouseEnter(final MouseEvent e) {
-				setCursor(getDisplay().getSystemCursor(SWT.CURSOR_ARROW));
-			}
-		});
+		addListener(SWT.MouseEnter, e-> setCursor(getDisplay().getSystemCursor(SWT.CURSOR_ARROW)));
 		setCaret(null);
 		addListener(SWT.Selection, e -> {
 			setSelection(0, 0);

@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2006 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *    chris.gross@us.ibm.com - initial API and implementation
@@ -169,8 +172,7 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
 
         if (!isWordWrap())
         {
-          text = TextUtils.getShortString(gc, text, width);
-            //y -= gc.getFontMetrics().getHeight();
+          text = TextUtils.getShortStr(gc, text, width,truncationStyle);
         }
 
         if (column.getAlignment() == SWT.RIGHT)
@@ -201,10 +203,10 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
         	textLayout.setWidth(width < 1 ? 1 : width);
         	textLayout.setText(text);
         	y -= textLayout.getBounds().height;
-        	
+
         	// remove the first line shift
         	y+=gc.getFontMetrics().getHeight();
-        	
+
         	if (column.getParent().isAutoHeight())
         	{
         		column.getParent().recalculateHeader();
@@ -225,7 +227,7 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
                 + 1;
         	}
 
-            arrowRenderer.setSelected(column.getSort() == SWT.UP);
+            arrowRenderer.setSelected(column.getSort() == SWT.DOWN);
             if (drawSelected)
             {
                 arrowRenderer
@@ -387,7 +389,7 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
     }
 
 	/**
-	 * @return the bounds reserved for the control
+	 * @see org.eclipse.nebula.widgets.grid.GridHeaderRenderer#getControlBounds(java.lang.Object, boolean)
 	 */
 	protected Rectangle getControlBounds(Object value, boolean preferred) {
 		Rectangle bounds = getBounds();
@@ -420,6 +422,5 @@ public class DefaultColumnHeaderRenderer extends GridHeaderRenderer
                }
            });
        }
-       textLayout.setAlignment(column.getAlignment());
    }
 }

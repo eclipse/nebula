@@ -1,10 +1,13 @@
 /*****************************************************************************
  * Copyright (c) 2015 CEA LIST.
  *
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *		Dirk Fauth <dirk.fauth@googlemail.com> - Initial API and implementation
@@ -47,9 +50,17 @@ public abstract class RichTextCellLabelProvider<T> extends StyledCellLabelProvid
 	}
 
 	public RichTextCellLabelProvider(final Control viewerControl, final int leftRightMargin, boolean wordWrap) {
+		this(viewerControl, leftRightMargin, wordWrap, "\\s");
+	}
+	
+	/**
+	 * @since 1.3.0
+	 */
+	public RichTextCellLabelProvider(final Control viewerControl, final int leftRightMargin, boolean wordWrap, String wordSplitRegex) {
 		super(COLORS_ON_SELECTION);
 
 		this.painter = new RichTextPainter(wordWrap);
+		painter.setWordSplitRegex(wordSplitRegex);
 
 		if (viewerControl instanceof Tree) {
 			viewerControl.addListener(SWT.MeasureItem, new Listener() {

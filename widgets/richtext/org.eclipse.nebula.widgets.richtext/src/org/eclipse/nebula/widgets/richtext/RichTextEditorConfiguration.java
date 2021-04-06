@@ -1,10 +1,13 @@
 /*****************************************************************************
- * Copyright (c) 2016 Dirk Fauth.
+ * Copyright (c) 2016, 2019 Dirk Fauth.
  *
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *		Dirk Fauth <dirk.fauth@googlemail.com> - Initial API and implementation
@@ -12,6 +15,10 @@
  *****************************************************************************/
 package org.eclipse.nebula.widgets.richtext;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,9 +27,15 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.nebula.widgets.richtext.painter.ResourceHelper;
 import org.eclipse.nebula.widgets.richtext.toolbar.ToolbarButton;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.BrowserFunction;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.Display;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Configuration class that is used for general configurations of the CKEditor instance.
@@ -83,6 +96,41 @@ public class RichTextEditorConfiguration {
 	public static final String RESIZE_MINHEIGHT = "resize_minHeight";
 
 	/**
+	 * Collection of languages that are supported by CKEditor.
+	 */
+	public static final Collection<String> SUPPORTED_LANGUAGES = new HashSet<>();
+	private static URL resourceURL;
+	static {
+		resourceURL = RichTextEditorConfiguration.class.getClassLoader().getResource("org/eclipse/nebula/widgets/richtext/resources/ckeditor/lang");
+
+		// if we are in an OSGi context, we need to convert the bundle URL to a file URL
+		Bundle bundle = FrameworkUtil.getBundle(RichTextEditor.class);
+		if (bundle != null) {
+			try {
+				resourceURL = FileLocator.toFileURL(resourceURL);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} else if (resourceURL.toString().startsWith("jar")) {
+			BusyIndicator.showWhile(Display.getDefault(), new Runnable() {
+
+				@Override
+				public void run() {
+					resourceURL = ResourceHelper.getRichTextResource("ckeditor/lang");
+				}
+			});
+		}
+
+		File directory = new File(resourceURL.getFile());
+		File[] files = directory.listFiles();
+		if (files != null) {
+			for (File file : files) {
+				SUPPORTED_LANGUAGES.add(file.getName().substring(0, file.getName().indexOf('.')));
+			}
+		}
+	}
+	
+	/**
 	 * Configure whether to remove the <i>paste text</i> button from the
 	 * toolbar. Default is <code>true</code>.
 	 */
@@ -118,7 +166,7 @@ public class RichTextEditorConfiguration {
 	 */
 	public RichTextEditorConfiguration() {
 		this.options.put(DEFAULT_LANGUAGE, Locale.ENGLISH.getLanguage());
-		this.options.put(LANGUAGE, Locale.getDefault().getLanguage());
+		this.options.put(LANGUAGE, getSupportedLanguage(Locale.getDefault()));
 		// remove the bottom bar that shows the applied tags
 		this.options.put(REMOVE_PLUGINS, "elementspath");
 		// disable the ability to manually resize the editor
@@ -217,6 +265,36 @@ public class RichTextEditorConfiguration {
 	// convenience methods
 
 	/**
+	 * This method is used to get the language String that is supported by CKEditor. There are only
+	 * few languages that support the country code information, e.g. Portuguese Brasil, and for
+	 * those the special language code needs to be found. Otherwise the language code only is
+	 * supported.
+	 * 
+	 * @param locale
+	 *            The locale for which the language is requested.
+	 * @return The supported language code with country information if supported, or an empty
+	 *         String.
+	 */
+	private String getSupportedLanguage(Locale locale) {
+		if (SUPPORTED_LANGUAGES.isEmpty()) {
+			// the supported languages could not be determined therefore we simply use the language
+			// code of the given Locale
+			return locale.getLanguage();
+		}
+		
+		String localeString = locale.getLanguage();
+		if (!locale.getCountry().isEmpty()) {
+			localeString += "-" + locale.getCountry().toLowerCase();
+		}
+		if (SUPPORTED_LANGUAGES.contains(localeString)) {
+			return localeString;
+		} else if (SUPPORTED_LANGUAGES.contains(locale.getLanguage())) {
+			return locale.getLanguage();
+		}
+		return "";
+	}
+	
+	/**
 	 * @param lang
 	 *            The user interface language localization to use. If left empty, the editor will
 	 *            automatically be localized to the user language. If the user language is not
@@ -235,7 +313,7 @@ public class RichTextEditorConfiguration {
 	 *            setting is used.
 	 */
 	public void setLanguage(Locale locale) {
-		setLanguage(locale.getLanguage());
+		setLanguage(getSupportedLanguage(locale));
 	}
 
 	/**
@@ -253,7 +331,12 @@ public class RichTextEditorConfiguration {
 	 *            possible to localize the editor to the user language.
 	 */
 	public void setDefaultLanguage(Locale locale) {
-		setDefaultLanguage(locale.getLanguage());
+		String language = getSupportedLanguage(locale);
+		if (language.isEmpty()) {
+			// always fall back to English in case the given locale is not supported
+			language = "en";
+		}
+		setDefaultLanguage(language);
 	}
 
 	/**

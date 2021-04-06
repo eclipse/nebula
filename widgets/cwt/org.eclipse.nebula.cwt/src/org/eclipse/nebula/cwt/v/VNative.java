@@ -1,9 +1,12 @@
 /****************************************************************************
  * Copyright (c) 2008, 2009 Jeremy Dowdall
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *    Jeremy Dowdall <jeremyd@aspencloud.com> - initial API and implementation
@@ -94,7 +97,7 @@ public class VNative<T extends Control> extends VControl {
 	@Override
 	public String getText() {
 		try {
-			return (String) control.getClass().getMethod("getText").invoke(control);
+			return (String) control.getClass().getMethod("getText").invoke(control); //$NON-NLS-1$
 		} catch (Exception e) {
 			e.printStackTrace();
 			return super.getText();
@@ -126,8 +129,7 @@ public class VNative<T extends Control> extends VControl {
 		}
 		this.control = control;
 		control.addDisposeListener(disposeListener);
-		control.setData("cwt_vcontrol", this);
-//		VTracker.addNative(this);
+		control.setData("cwt_vcontrol", this); //$NON-NLS-1$
 	}
 
 	@Override
@@ -151,7 +153,7 @@ public class VNative<T extends Control> extends VControl {
 	@Override
 	public void setText(String text) {
 		try {
-			control.getClass().getMethod("setText", String.class).invoke(control, text);
+			control.getClass().getMethod("setText", String.class).invoke(control, text); //$NON-NLS-1$
 		} catch (Exception e) {
 			e.printStackTrace();
 			super.setText(text);

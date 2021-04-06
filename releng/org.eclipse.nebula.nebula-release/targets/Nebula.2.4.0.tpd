@@ -1,0 +1,4 @@
+target "Nebula 2.4.0"
+location "http://download.eclipse.org/nebula/releases/2.4.0" {
+	org.eclipse.nebula.feature.feature.group [2.4.0.202006092019,2.4.0.202006092019]
+}

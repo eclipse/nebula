@@ -1,8 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2018 Laurent CARON. All rights reserved. This program and the
- * accompanying materials are made available under the terms of the Eclipse
- * Public License v1.0 which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2018 Laurent CARON.
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors: Laurent CARON (laurent.caron@gmail.com)
  *******************************************************************************/
@@ -87,7 +90,19 @@ class PercentagePanel extends BasePanel {
 				showError(shell, "The value [" + newThickness + "] should be between 1 and 50");
 				return;
 			}
+			int newDelay = 0;
+			try {
+				newDelay = Integer.valueOf(delay.getText());
+			} catch (final NumberFormatException nfe) {
+				showError(shell, "The value [" + delay.getText() + "] is not a number");
+				return;
+			}
+			if (newDelay < 1 || newDelay > 5000) {
+				showError(shell, "The value [" + newDelay + "] should be between 1 and 5000");
+				return;
+			}
 			//
+			circle.setAnimationDelay(newDelay);
 			circle.setSelection(percentage);
 			circle.setThickness(newThickness);
 			circle.setCircleSize(newCircleSize);

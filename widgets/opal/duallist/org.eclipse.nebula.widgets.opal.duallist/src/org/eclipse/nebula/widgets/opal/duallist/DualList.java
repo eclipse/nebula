@@ -1,8 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2011 Laurent CARON All rights reserved. This program and the
- * accompanying materials are made available under the terms of the Eclipse
- * Public License v1.0 which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2011 Laurent CARON
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors: Laurent CARON (laurent.caron at gmail dot com) - initial API
  * and implementation
@@ -13,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.nebula.widgets.opal.commons.SWTGraphicUtil;
+import org.eclipse.nebula.widgets.opal.commons.SelectionListenerUtil;
 import org.eclipse.nebula.widgets.opal.duallist.DLItem.LAST_ACTION;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
@@ -57,7 +61,6 @@ public class DualList extends Composite {
 	private Table itemsTable;
 	private Table selectionTable;
 
-	private List<SelectionListener> selectionListeners;
 	private List<SelectionChangeListener> selectionChangeListeners;
 
 	/**
@@ -303,10 +306,7 @@ public class DualList extends Composite {
 		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
-		if (selectionListeners == null) {
-			selectionListeners = new ArrayList<SelectionListener>();
-		}
-		selectionListeners.add(listener);
+		SelectionListenerUtil.addSelectionListener(this, listener);
 	}
 
 	/**
@@ -332,13 +332,7 @@ public class DualList extends Composite {
 	 */
 	public void removeSelectionListener(final SelectionListener listener) {
 		checkWidget();
-		if (listener == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		if (selectionListeners == null) {
-			return;
-		}
-		selectionListeners.remove(listener);
+		SelectionListenerUtil.removeSelectionListener(this, listener);
 	}
 
 	/**
@@ -1674,21 +1668,14 @@ public class DualList extends Composite {
 	 * @param item selected item
 	 */
 	private void fireSelectionEvent(final DLItem item) {
-		if (selectionListeners == null) {
-			return;
-		}
-
 		final Event event = new Event();
 		event.button = 1;
 		event.display = getDisplay();
 		event.item = null;
 		event.widget = this;
 		event.data = item;
-		final SelectionEvent selectionEvent = new SelectionEvent(event);
 
-		for (final SelectionListener listener : selectionListeners) {
-			listener.widgetSelected(selectionEvent);
-		}
+		SelectionListenerUtil.fireSelectionListeners(this, event);
 	}
 
 	private void fireSelectionChangeEvent(final List<DLItem> items) {

@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (C) 2011 Angelo Zerr <angelo.zerr@gmail.com>, Pascal Leclercq <pascal.leclercq@gmail.com>
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Angelo ZERR - initial API and implementation
@@ -22,13 +25,13 @@ import java.util.List;
 
 /**
  * Utilities to retrieves values of POJO with the property name.
- * 
+ *
  */
 public class BeanUtils {
 
 	/**
 	 * Returns the value of the given property for the given bean.
-	 * 
+	 *
 	 * @param source
 	 *            the source bean
 	 * @param property
@@ -57,7 +60,7 @@ public class BeanUtils {
 
 	/**
 	 * Returns the value of the given property for the given bean.
-	 * 
+	 *
 	 * @param source
 	 *            the source bean
 	 * @param propertyDescriptor
@@ -75,7 +78,7 @@ public class BeanUtils {
 			if (!readMethod.isAccessible()) {
 				readMethod.setAccessible(true);
 			}
-			return readMethod.invoke(source, null);
+			return readMethod.invoke(source, (Object[])null);
 		} catch (InvocationTargetException e) {
 			/*
 			 * InvocationTargetException wraps any exception thrown by the
@@ -90,13 +93,13 @@ public class BeanUtils {
 	/**
 	 * Returns the property descriptor of the given bean class and the given
 	 * property.
-	 * 
+	 *
 	 * @param beanClass
 	 * @param propertyName
 	 * @return the PropertyDescriptor for the named property on the given bean
 	 *         class
 	 */
-	private static PropertyDescriptor getPropertyDescriptor(Class beanClass,
+	private static PropertyDescriptor getPropertyDescriptor(Class<? extends Object> beanClass,
 			String propertyName) {
 		if (!beanClass.isInterface()) {
 			BeanInfo beanInfo;
@@ -117,10 +120,10 @@ public class BeanUtils {
 		} else {
 			try {
 				PropertyDescriptor propertyDescriptors[];
-				List pds = new ArrayList();
+				List<PropertyDescriptor> pds = new ArrayList<>();
 				getInterfacePropertyDescriptors(pds, beanClass);
 				if (pds.size() > 0) {
-					propertyDescriptors = (PropertyDescriptor[]) pds
+					propertyDescriptors = pds
 							.toArray(new PropertyDescriptor[pds.size()]);
 					PropertyDescriptor descriptor;
 					for (int i = 0; i < propertyDescriptors.length; i++) {
@@ -141,7 +144,7 @@ public class BeanUtils {
 	/**
 	 * Goes recursively into the interface and gets all defined
 	 * propertyDescriptors
-	 * 
+	 *
 	 * @param propertyDescriptors
 	 *            The result list of all PropertyDescriptors the given interface
 	 *            defines (hierarchical)
@@ -150,7 +153,7 @@ public class BeanUtils {
 	 * @throws IntrospectionException
 	 */
 	private static void getInterfacePropertyDescriptors(
-			List propertyDescriptors, Class iface)
+			List<PropertyDescriptor> propertyDescriptors, Class<? extends Object> iface)
 			throws IntrospectionException {
 		BeanInfo beanInfo = Introspector.getBeanInfo(iface);
 		PropertyDescriptor[] pds = beanInfo.getPropertyDescriptors();
@@ -158,7 +161,7 @@ public class BeanUtils {
 			PropertyDescriptor pd = pds[i];
 			propertyDescriptors.add(pd);
 		}
-		Class[] subIntfs = iface.getInterfaces();
+		Class<?>[] subIntfs = iface.getInterfaces();
 		for (int j = 0; j < subIntfs.length; j++) {
 			getInterfacePropertyDescriptors(propertyDescriptors, subIntfs[j]);
 		}

@@ -1,43 +1,30 @@
 /*****************************************************************************
- * Copyright (c) 2015, 2016 CEA LIST.
+ * Copyright (c) 2015, 2020 CEA LIST.
  *
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *		Dirk Fauth <dirk.fauth@googlemail.com> - Initial API and implementation
- *
  *****************************************************************************/
 package org.eclipse.nebula.widgets.richtext;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
+import org.eclipse.nebula.widgets.richtext.painter.ResourceHelper;
 import org.eclipse.nebula.widgets.richtext.toolbar.JavaCallbackListener;
 import org.eclipse.nebula.widgets.richtext.toolbar.ToolbarButton;
 import org.eclipse.swt.SWT;
@@ -555,7 +542,10 @@ public class RichTextEditor extends Composite {
 	 * @since 1.1
 	 */
 	public void setLanguage(Locale locale, boolean update) {
-		setLanguage(locale.getLanguage(), update);
+		this.editorConfig.setLanguage(locale);
+		if (update) {
+			updateEditor();
+		}
 	}
 
 	/**
@@ -656,16 +646,18 @@ public class RichTextEditor extends Composite {
 	@Override
 	public void addFocusListener(FocusListener listener) {
 		checkWidget();
-		if (listener == null)
+		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
 		this.focusListener.add(listener);
 	}
 
 	@Override
 	public void removeFocusListener(FocusListener listener) {
 		checkWidget();
-		if (listener == null)
+		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
 		this.focusListener.remove(listener);
 	}
 
@@ -784,10 +776,16 @@ public class RichTextEditor extends Composite {
 	 *            the new height for the receiver
 	 */
 	void setInlineContainerBounds(int x, int y, int width, int height) {
+		width = ScalingHelper.convertHorizontalPixelToDpi(width);
+		height = ScalingHelper.convertVerticalPixelToDpi(height);
 		this.resizedBounds = new Rectangle(x, y, width, height);
 		if (this.embeddedShell != null) {
 			Point shellLocation = this.embeddedShell.getLocation();
-			this.embeddedShell.setBounds(shellLocation.x, shellLocation.y, width + 2, height + 2);
+			this.embeddedShell.setBounds(
+					shellLocation.x,
+					shellLocation.y,
+					width + 2,
+					height + 2);
 		}
 		else {
 			super.setBounds(x, y, width, height);
@@ -804,7 +802,7 @@ public class RichTextEditor extends Composite {
 	 *         editor resize minimum in case the editor was created with {@link SWT#MIN}
 	 */
 	protected int getMinimumHeight() {
-		return 200;
+		return ScalingHelper.convertVerticalPixelToDpi(200);
 	}
 
 	/**
@@ -817,7 +815,7 @@ public class RichTextEditor extends Composite {
 	 *         editor resize minimum in case the editor was created with {@link SWT#MIN}
 	 */
 	protected int getMinimumWidth() {
-		return 370;
+		return ScalingHelper.convertHorizontalPixelToDpi(370);
 	}
 
 	/**
@@ -868,16 +866,18 @@ public class RichTextEditor extends Composite {
 	@Override
 	public void addKeyListener(KeyListener listener) {
 		checkWidget();
-		if (listener == null)
+		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
 		this.keyListener.add(listener);
 	}
 
 	@Override
 	public void removeKeyListener(KeyListener listener) {
 		checkWidget();
-		if (listener == null)
+		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
 		this.keyListener.remove(listener);
 	}
 
@@ -971,8 +971,9 @@ public class RichTextEditor extends Composite {
 	 */
 	public void addModifyListener(ModifyListener listener) {
 		checkWidget();
-		if (listener == null)
+		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
 		this.modifyListener.add(listener);
 	}
 
@@ -999,8 +1000,9 @@ public class RichTextEditor extends Composite {
 	 */
 	public void removeModifyListener(ModifyListener listener) {
 		checkWidget();
-		if (listener == null)
+		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
 		this.modifyListener.remove(listener);
 	}
 
@@ -1240,8 +1242,9 @@ public class RichTextEditor extends Composite {
 	 */
 	public void addJavaCallbackListener(JavaCallbackListener listener) {
 		checkWidget();
-		if (listener == null)
+		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
 		this.javaCallbackListener.add(listener);
 	}
 
@@ -1254,8 +1257,9 @@ public class RichTextEditor extends Composite {
 	 */
 	public void removeJavaCallbackListener(JavaCallbackListener listener) {
 		checkWidget();
-		if (listener == null)
+		if (listener == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
 		this.javaCallbackListener.remove(listener);
 	}
 
@@ -1422,113 +1426,12 @@ public class RichTextEditor extends Composite {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		}
-		else if (templateURL.toString().startsWith("jar")) {
+		} else if (templateURL.toString().startsWith("jar")) {
 			BusyIndicator.showWhile(Display.getDefault(), new Runnable() {
 
 				@Override
 				public void run() {
-					URL jarURL = RichTextEditor.class.getProtectionDomain().getCodeSource().getLocation();
-					File jarFileReference = null;
-					if (jarURL.getProtocol().equals("file")) {
-						try {
-							String decodedPath = URLDecoder.decode(jarURL.getPath(), "UTF-8");
-							jarFileReference = new File(decodedPath);
-						} catch (UnsupportedEncodingException e) {
-							e.printStackTrace();
-						}
-					}
-					else {
-						// temporary download of jar file
-						// necessary to be able to unzip the resources
-						try {
-							final Path jar = Files.createTempFile("richtext", ".jar");
-							Files.copy(jarURL.openStream(), jar, StandardCopyOption.REPLACE_EXISTING);
-							jarFileReference = jar.toFile();
-
-							// delete the temporary file
-							Runtime.getRuntime().addShutdownHook(new Thread() {
-								@Override
-								public void run() {
-									try {
-										Files.delete(jar);
-									} catch (IOException e) {
-										e.printStackTrace();
-									}
-								}
-							});
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					}
-
-					if (jarFileReference != null) {
-						try (JarFile jarFile = new JarFile(jarFileReference)) {
-							String unpackDirectory = System.getProperty(JAR_UNPACK_LOCATION_PROPERTY);
-							// create the directory to unzip to
-							final java.nio.file.Path tempDir = (unpackDirectory == null)
-									? Files.createTempDirectory("richtext") : Files.createDirectories(Paths.get(unpackDirectory));
-
-							// only register the hook to delete the temp directory after shutdown if
-							// a temporary directory was used
-							if (unpackDirectory == null) {
-								Runtime.getRuntime().addShutdownHook(new Thread() {
-									@Override
-									public void run() {
-										try {
-											Files.walkFileTree(tempDir, new SimpleFileVisitor<Path>() {
-												@Override
-												public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-													Files.delete(file);
-													return FileVisitResult.CONTINUE;
-												}
-
-												@Override
-												public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-													Files.delete(dir);
-													return FileVisitResult.CONTINUE;
-												}
-
-											});
-										} catch (IOException e) {
-											e.printStackTrace();
-										}
-									}
-								});
-							}
-
-							Enumeration<JarEntry> entries = jarFile.entries();
-							while (entries.hasMoreElements()) {
-								JarEntry entry = entries.nextElement();
-								String name = entry.getName();
-								if (name.startsWith("org/eclipse/nebula/widgets/richtext/resources")) {
-									File file = new File(tempDir.toAbsolutePath() + File.separator + name);
-									if (!file.exists()) {
-										if (entry.isDirectory()) {
-											file.mkdirs();
-										}
-										else {
-											try (InputStream is = jarFile.getInputStream(entry);
-													OutputStream os = new FileOutputStream(file)) {
-												while (is.available() > 0) {
-													os.write(is.read());
-												}
-											}
-										}
-									}
-
-									// found the template.html in the jar entries, so remember the
-									// URL for further usage
-									if (name.endsWith("template.html")) {
-										templateURL = file.toURI().toURL();
-									}
-								}
-							}
-
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					}
+					templateURL = ResourceHelper.getRichTextResource("template.html");
 				}
 			});
 		}

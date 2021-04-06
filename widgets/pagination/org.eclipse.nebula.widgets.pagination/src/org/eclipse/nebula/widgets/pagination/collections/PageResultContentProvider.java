@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (C) 2011 Angelo Zerr <angelo.zerr@gmail.com>, Pascal Leclercq <pascal.leclercq@gmail.com>
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Angelo ZERR - initial API and implementation
@@ -20,7 +23,7 @@ import org.eclipse.nebula.widgets.pagination.PageableController;
  * Implementation of {@link IPageContentProvider} to retrieves pagination
  * information (total elements and paginated list) from the pagination structure
  * {@link PageResult}.
- * 
+ *
  */
 public class PageResultContentProvider implements IPageContentProvider {
 
@@ -28,16 +31,14 @@ public class PageResultContentProvider implements IPageContentProvider {
 
 	/**
 	 * Returns the singleton of {@link PageResultContentProvider}.
-	 * 
+	 *
 	 * @return
 	 */
 	public static IPageContentProvider getInstance() {
 		return INSTANCE;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see
 	 * org.eclipse.nebula.widgets.pagination.IPageContentProvider#createController
 	 * (int)
@@ -46,9 +47,7 @@ public class PageResultContentProvider implements IPageContentProvider {
 		return new PageableController(pageSize);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see
 	 * org.eclipse.nebula.widgets.pagination.IPageContentProvider#getTotalElements
 	 * (java.lang.Object)
@@ -57,9 +56,7 @@ public class PageResultContentProvider implements IPageContentProvider {
 		return ((PageResult<?>) page).getTotalElements();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see
 	 * org.eclipse.nebula.widgets.pagination.IPageContentProvider#getPaginatedList
 	 * (java.lang.Object)

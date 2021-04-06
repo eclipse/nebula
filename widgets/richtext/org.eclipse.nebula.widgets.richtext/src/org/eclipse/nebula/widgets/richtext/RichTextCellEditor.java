@@ -1,14 +1,16 @@
 /*****************************************************************************
- * Copyright (c) 2015, 2016 CEA LIST.
+ * Copyright (c) 2015, 2020 CEA LIST.
  *
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *		Dirk Fauth <dirk.fauth@googlemail.com> - Initial API and implementation
- *
  *****************************************************************************/
 package org.eclipse.nebula.widgets.richtext;
 
@@ -216,7 +218,9 @@ public class RichTextCellEditor extends CellEditor {
 	 * @return The minimum dimension used for the rich text editor control.
 	 */
 	protected Point getMinimumDimension() {
-		return new Point(370, 200);
+		return new Point(
+				ScalingHelper.convertHorizontalPixelToDpi(370),
+				ScalingHelper.convertVerticalPixelToDpi(200));
 	}
 
 	@Override

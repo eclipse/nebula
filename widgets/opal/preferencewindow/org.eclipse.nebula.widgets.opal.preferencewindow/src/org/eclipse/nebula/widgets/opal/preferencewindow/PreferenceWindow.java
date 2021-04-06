@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2011 Laurent CARON
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  * Laurent CARON (laurent.caron at gmail dot com) - Initial implementation and API
@@ -181,7 +184,7 @@ public class PreferenceWindow {
 	 */
 	private void buildButtons() {
 		final Button buttonOK = new Button(shell, SWT.PUSH);
-		buttonOK.setText(ResourceManager.getLabel(ResourceManager.OK));
+		buttonOK.setText(ResourceManager.getLabel(ResourceManager.APPLY));
 		final GridData gridDataOk = new GridData(GridData.END, GridData.END, true, false);
 		gridDataOk.widthHint = 100;
 		buttonOK.setLayoutData(gridDataOk);
@@ -192,7 +195,7 @@ public class PreferenceWindow {
 		shell.setDefaultButton(buttonOK);
 
 		final Button buttonCancel = new Button(shell, SWT.PUSH);
-		buttonCancel.setText(ResourceManager.getLabel(ResourceManager.CANCEL));
+		buttonCancel.setText(ResourceManager.getLabel(ResourceManager.CLOSE));
 		final GridData gridDataCancel = new GridData(GridData.BEGINNING, GridData.END, false, false);
 		gridDataCancel.widthHint = 100;
 		buttonCancel.setLayoutData(gridDataCancel);
@@ -207,8 +210,8 @@ public class PreferenceWindow {
 	 */
 	private void openShell() {
 		shell.pack();
-		shell.open();
 		SWTGraphicUtil.centerShell(shell);
+		shell.open();
 
 		while (!shell.isDisposed()) {
 			if (!shell.getDisplay().readAndDispatch()) {

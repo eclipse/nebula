@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2004, 2007 Boeing.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Boeing - initial API and implementation
@@ -23,8 +26,6 @@ import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.LocationListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
@@ -78,10 +79,7 @@ public class HtmlDialog extends MessageDialog {
       Menu menu = new Menu(b.getShell());
       MenuItem item = new MenuItem(menu, SWT.NONE);
       item.setText(XViewerText.get("HtmlDialog.menu.view_source")); //$NON-NLS-1$
-      item.addSelectionListener(new SelectionAdapter() {
-
-         @Override
-         public void widgetSelected(SelectionEvent e) {
+      item.addListener(SWT.Selection, e->  {
             String file = System.getProperty("user.home") + File.separator + "out.html"; //$NON-NLS-1$ //$NON-NLS-2$
             try {
                XViewerLib.writeStringToFile(html, new File(file));
@@ -89,7 +87,6 @@ public class HtmlDialog extends MessageDialog {
                XViewerLog.logAndPopup(Activator.class, Level.SEVERE, ex);
             }
             Program.launch(file);
-         }
       });
       return menu;
    }

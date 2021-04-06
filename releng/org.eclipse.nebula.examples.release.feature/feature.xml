@@ -18,8 +18,8 @@
    </license>
 
    <url>
-      <discovery label="Nebula Release" url="http://download.eclipse.org/technology/nebula/snapshot"/>
-      <discovery label="Nebula Incubation" url="http://download.eclipse.org/technology/nebula/incubation/snapshot"/>
+      <discovery label="Nebula Release" url="http://download.eclipse.org/nebula/snapshot"/>
+      <discovery label="Nebula Incubation" url="http://download.eclipse.org/nebula/incubation/snapshot"/>
    </url>
 
    <requires>
@@ -408,6 +408,71 @@
 
    <plugin 
          id="org.eclipse.nebula.widgets.nebulaslider.snippets"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>	
+
+   <plugin 
+         id="org.eclipse.nebula.widgets.floatingtext.snippets"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>	
+
+   <plugin 
+         id="org.eclipse.nebula.widgets.splitbutton.snippets"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>	
+
+   <plugin 
+         id="org.eclipse.nebula.widgets.badgedlabel.snippets"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>	
+
+   <plugin 
+         id="org.eclipse.nebula.widgets.passwordrevealer.snippets"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>	
+
+
+   <plugin 
+         id="org.eclipse.nebula.widgets.ctreecombo.snippets"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>	
+
+
+   <plugin 
+         id="org.eclipse.nebula.widgets.led.snippets"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>	
+
+   <plugin 
+         id="org.eclipse.nebula.widgets.stepbar.snippets"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>	
+
+  <plugin 
+         id="org.eclipse.nebula.widgets.carousel.snippets"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin 
+         id="org.eclipse.nebula.widgets.fontawesome.snippets"
          download-size="0"
          install-size="0"
          version="0.0.0"

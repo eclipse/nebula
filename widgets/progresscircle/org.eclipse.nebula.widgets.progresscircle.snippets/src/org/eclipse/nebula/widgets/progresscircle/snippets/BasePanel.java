@@ -1,8 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2018 Laurent CARON. All rights reserved. This program and the
- * accompanying materials are made available under the terms of the Eclipse
- * Public License v1.0 which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2018 Laurent CARON.
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors: Laurent CARON (laurent.caron@gmail.com)
  *******************************************************************************/
@@ -23,6 +26,7 @@ class BasePanel {
 
 	protected Text circleSize;
 	protected Text thickness;
+	protected Text delay;
 	protected Button checkbox;
 
 	protected void createCommonPart(final Group group) {
@@ -36,6 +40,10 @@ class BasePanel {
 		thickness = createTextWidget(group, 10);
 		createConstraintsLabel(group, "(1-50)");
 
+		createLeftLabel(group, "Delay");
+		delay = createTextWidget(group, 10);
+		createConstraintsLabel(group, "(delay in millis)");
+		
 		createLeftLabel(group, "Show text");
 		checkbox = new Button(group, SWT.CHECK);
 		final GridData gd = new GridData(GridData.FILL, GridData.CENTER, false, false);

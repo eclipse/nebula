@@ -1,9 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2013 Tom Schindl. All rights reserved. This program and the
- * accompanying materials are made available under the terms of the Eclipse
- * Public License v1.0 which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html 
+ * Copyright (c) 2013 Tom Schindl.
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
  * 
+ * SPDX-License-Identifier: EPL-2.0
+ *
  * Contributors: Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  ******************************************************************************/
 package org.eclipse.nebula.widgets.pshelf.css;
@@ -30,7 +33,7 @@ import org.eclipse.swt.widgets.Display;
  * <li>pshelf-basecolor-unselected</li>
  * <li>pshelf-basecolor-hover</li>
  * </ul>
- * 
+ *
  * @author Tom Schindl
  */
 public class CSSShelfRenderer extends AbstractRenderer {
@@ -65,11 +68,11 @@ public class CSSShelfRenderer extends AbstractRenderer {
 
 	private IStylingEngine engine;
 	private CSSEngineHelper csshelper;
-	
+
 	public CSSShelfRenderer(IStylingEngine engine) {
 		this.engine = engine;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -99,12 +102,11 @@ public class CSSShelfRenderer extends AbstractRenderer {
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * @see org.eclipse.nebula.widgets.pshelf.AbstractRenderer#paint(org.eclipse.swt.graphics.GC, java.lang.Object)
 	 */
 	public void paint(GC gc, Object value) {
 		PShelfItem item = (PShelfItem) value;
 
-		// Color back = parent.getBackground();
 		Color fore = parent.getForeground();
 
 		if (isSelected()) {
@@ -198,12 +200,10 @@ public class CSSShelfRenderer extends AbstractRenderer {
 
 		FontData fd = parent.getFont().getFontData()[0];
 		initialFont = csshelper.getUnselectedFont();
-		
+
 		if( initialFont == null ) {
 			initialFont = new Font(parent.getDisplay(), fd.getName(), fd.getHeight(), SWT.BOLD);
 		}
-		
-		// parent.setFont(initialFont);
 
 		Color tmp = csshelper.getBaseColorSelected();
 		Color baseColor;
@@ -214,12 +214,12 @@ public class CSSShelfRenderer extends AbstractRenderer {
 
 		baseColor = createNewBlendedColor(tmp, parent.getDisplay().getSystemColor(SWT.COLOR_WHITE), 80);
 		tmp.dispose();
-		
+
 		Color color2 = csshelper.getSelectedColorEnd();
 		if( color2 == null ) {
 			color2 = createNewSaturatedColor(baseColor, .01f);
 		}
-		
+
 
 		if ((parent.getStyle() & SWT.SIMPLE) != 0) {
 			gradient1 = color1;
@@ -234,20 +234,20 @@ public class CSSShelfRenderer extends AbstractRenderer {
 		tmp = csshelper.getBaseColorUnselected();
 		lineColor = createNewSaturatedColor(tmp, .02f);
 
-		color1 = csshelper.getUnselectedColorStart(); 
+		color1 = csshelper.getUnselectedColorStart();
 		if( color1 == null ) {
 			color1 = createNewBlendedColor(tmp, parent.getDisplay().getSystemColor(SWT.COLOR_WHITE), 70);
 		}
-				
+
 		baseColor = createNewBlendedColor(tmp, parent.getDisplay().getSystemColor(SWT.COLOR_BLACK), 80);
 
 		tmp.dispose();
-		
-		color2 = csshelper.getUnselectedColorEnd(); 
+
+		color2 = csshelper.getUnselectedColorEnd();
 		if( color2 == null ) {
 			color2 = createNewSaturatedColor(baseColor, .02f);
 		}
-				
+
 		if ((parent.getStyle() & SWT.SIMPLE) != 0) {
 			selectedGradient1 = color1;
 			selectedGradient2 = color2;
@@ -258,14 +258,13 @@ public class CSSShelfRenderer extends AbstractRenderer {
 
 		baseColor.dispose();
 
-		// initialOpenFont = FontUtils.createFont(parent.getFont(),4,SWT.BOLD);
 		if ((parent.getStyle() & SWT.SIMPLE) != 0) {
 			initialOpenFont = new Font(parent.getDisplay(), "Arial", 12, SWT.BOLD);
 		}
 		else {
 			initialOpenFont = csshelper.getSelectedFont();
 			if( initialOpenFont == null ) {
-				initialOpenFont = new Font(parent.getDisplay(), initialFont.getFontData());	
+				initialOpenFont = new Font(parent.getDisplay(), initialFont.getFontData());
 			}
 		}
 
@@ -276,14 +275,14 @@ public class CSSShelfRenderer extends AbstractRenderer {
 		if( inverseColor == null ) {
 			inverseColor = parent.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT);
 		}
-				
+
 		if ((parent.getStyle() & SWT.SIMPLE) != 0)
 			selectedForeground = inverseColor;
 		else {
 			foreground = inverseColor;
 			selectedForeground = csshelper.getSelectedForegroundColor();
 		}
-			
+
 		// the other color left null, foreground color of the parent will be
 		// used for it
 
@@ -298,7 +297,7 @@ public class CSSShelfRenderer extends AbstractRenderer {
 
 		Color baseColor2 = createNewBlendedColor(baseColor, parent.getDisplay().getSystemColor(SWT.COLOR_WHITE), 99);
 
-		hoverGradient2 = csshelper.getHoverColorEnd(); 
+		hoverGradient2 = csshelper.getHoverColorEnd();
 		if( hoverGradient2 == null ) {
 			hoverGradient2 = createNewSaturatedColor(baseColor2, .00f);
 		}
@@ -309,6 +308,9 @@ public class CSSShelfRenderer extends AbstractRenderer {
 		initialColors = new Color[] { gradient1, gradient2, selectedGradient1, selectedGradient2, hoverGradient1, hoverGradient2, lineColor, foreground };
 	}
 
+	/**
+	 * @see org.eclipse.nebula.widgets.pshelf.AbstractRenderer#dispose()
+	 */
 	public void dispose() {
 		initialFont.dispose();
 		initialOpenFont.dispose();
@@ -330,7 +332,7 @@ public class CSSShelfRenderer extends AbstractRenderer {
 		initialize(parent);
 		parent.redraw();
 	}
-	
+
 	public Color getLineColor() {
 		return lineColor;
 	}
@@ -393,7 +395,7 @@ public class CSSShelfRenderer extends AbstractRenderer {
 
 	/**
 	 * Sets text color for the selected item.
-	 * 
+	 *
 	 * @param selectedForeground
 	 *            Can be <code>null</code>, foreground color of the parent is
 	 *            used in that case.
@@ -408,7 +410,7 @@ public class CSSShelfRenderer extends AbstractRenderer {
 
 	/**
 	 * Sets text color for the hovered item.
-	 * 
+	 *
 	 * @param hoverForeground
 	 *            Can be <code>null</code>, foreground color of the parent is
 	 *            used in that case.
@@ -423,7 +425,7 @@ public class CSSShelfRenderer extends AbstractRenderer {
 
 	/**
 	 * Sets text color for non-selected items.
-	 * 
+	 *
 	 * @param foreground
 	 *            Can be <code>null</code>, foreground color of the parent is
 	 *            used in that case.

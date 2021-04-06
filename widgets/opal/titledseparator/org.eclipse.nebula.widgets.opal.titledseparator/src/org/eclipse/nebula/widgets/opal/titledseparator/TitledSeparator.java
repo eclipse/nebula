@@ -1,8 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2011 Laurent CARON. All rights reserved. This program and the
- * accompanying materials are made available under the terms of the Eclipse
- * Public License v1.0 which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2011 Laurent CARON.
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors: Laurent CARON (laurent.caron@gmail.com) - initial API and
  * implementation
@@ -20,10 +23,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
-import org.eclipse.swt.widgets.Listener;
 
 /**
  * Instances of this class provide a separator with a title and/or an image.
@@ -87,12 +88,7 @@ public class TitledSeparator extends Composite {
 			originalFont = null;
 		}
 
-		addListener(SWT.Resize, new Listener() {
-			@Override
-			public void handleEvent(final Event event) {
-				redrawComposite();
-			}
-		});
+		addListener(SWT.Resize, e-> redrawComposite());
 
 		SWTGraphicUtil.addDisposer(this, originalColor);
 		SWTGraphicUtil.addDisposer(this, originalFont);
@@ -167,7 +163,6 @@ public class TitledSeparator extends Composite {
 		if (text != null && !text.trim().equals("")) {
 			final Label textLabel = createLabel();
 			textLabel.setText(text);
-
 		}
 	}
 
@@ -265,6 +260,7 @@ public class TitledSeparator extends Composite {
 	public void setAlignment(final int alignment) {
 		checkWidget();
 		this.alignment = alignment;
+		redrawComposite();
 	}
 
 	/**
@@ -289,6 +285,7 @@ public class TitledSeparator extends Composite {
 	public void setImage(final Image image) {
 		checkWidget();
 		this.image = image;
+		redrawComposite();
 	}
 
 	/**
@@ -311,6 +308,6 @@ public class TitledSeparator extends Composite {
 	public void setText(final String text) {
 		checkWidget();
 		this.text = text;
+		redrawComposite();
 	}
-
 }

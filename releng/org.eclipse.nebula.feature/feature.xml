@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.nebula.feature"
       label="Nebula Widgets"
-      version="2.1.0.qualifier"
+      version="2.4.3.qualifier"
       provider-name="Eclipse Nebula">
 
    <description url="http://eclipse.org/nebula">
@@ -14,7 +14,7 @@
    </license>
 
    <url>
-      <discovery label="Nebula Incubation" url="http://download.eclipse.org/technology/nebula/incubation/snapshot"/>
+      <discovery label="Nebula Incubation" url="http://download.eclipse.org/nebula/incubation/snapshot"/>
    </url>
 
    <includes
@@ -199,6 +199,46 @@
 
    <includes
          id="org.eclipse.nebula.widgets.splitbutton.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.nebula.widgets.badgedlabel.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.nebula.widgets.passwordrevealer.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.nebula.widgets.ctreecombo.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.nebula.widgets.led.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.nebula.widgets.stepbar.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.nebula.widgets.chips.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.nebula.widgets.carousel.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.nebula.widgets.fontawesome.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.nebula.widgets.roundedswitch.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.nebula.widgets.segmentedbar.feature"
          version="0.0.0"/>
 
 </feature>

@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2005, 2009 Eric Wuillai.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Eric Wuillai (eric@wdev91.com) - initial API and implementation
@@ -36,7 +39,7 @@ import org.eclipse.swt.widgets.Text;
  * This class provides formatting of <code>Date</code> values in a
  * <code>FormattedText</code>. Supports a subset of date and time patterns
  * defined in <code>SimpleDateFormat</code> for input.<p>
- * 
+ *
  * <h4>Edit Patterns</h4>
  * Edit patterns are composed of letters defining the parts of the mask, and
  * characters defining the separators.<p>
@@ -98,11 +101,11 @@ import org.eclipse.swt.widgets.Text;
  * Edit patterns are limited to numeric formats (except am/pm marker). Variable
  * length fields and separators composed of more than one character are
  * supported for input.
- * 
+ *
  * <h4>Display Patterns</h4>
  * Display patterns are associated to a <code>SimpleDateFormat</code> object.
  * So they have to be compatible with it.
- * 
+ *
  * <h4>Examples</h4>
  * <ul>
  * 	 <li><code>new DateTimeFormatter("MM/dd/yyyy")</code> - 8 jul 2006 will edit
@@ -114,7 +117,7 @@ import org.eclipse.swt.widgets.Text;
  */
 public class DateTimeFormatter extends AbstractFormatter {
   /** Cache of patterns by locale ISO3 codes */
-  protected static Hashtable cachedPatterns = new Hashtable();
+  protected static Hashtable<String, String> cachedPatterns = new Hashtable<>();
   /** Numbers formatter */
   private static NumberFormat nf;
 
@@ -178,7 +181,7 @@ public class DateTimeFormatter extends AbstractFormatter {
   /**
    * Constructs a new instance with default edit and display masks for the given
    * locale.
-   * 
+   *
    * @param loc locale
    */
 	public DateTimeFormatter(Locale loc) {
@@ -188,7 +191,7 @@ public class DateTimeFormatter extends AbstractFormatter {
   /**
    * Constructs a new instance with the given edit mask. Display mask is
    * identical to the edit mask, and locale is the default one.
-   * 
+   *
    * @param editPattern edit mask
    */
 	public DateTimeFormatter(String editPattern) {
@@ -198,7 +201,7 @@ public class DateTimeFormatter extends AbstractFormatter {
   /**
    * Constructs a new instance with the given edit mask and locale. Display mask
    * is identical to the edit mask.
-   * 
+   *
    * @param editPattern edit mask
    * @param loc locale
    */
@@ -209,7 +212,7 @@ public class DateTimeFormatter extends AbstractFormatter {
   /**
    * Constructs a new instance with the given edit and display masks. Uses the
    * default locale.
-   * 
+   *
    * @param editPattern edit mask
    * @param displayPattern display mask
    */
@@ -219,7 +222,7 @@ public class DateTimeFormatter extends AbstractFormatter {
 
   /**
    * Constructs a new instance with the given masks and locale.
-   * 
+   *
    * @param editPattern edit mask
    * @param displayPattern display mask
    * @param loc locale
@@ -227,11 +230,10 @@ public class DateTimeFormatter extends AbstractFormatter {
 	public DateTimeFormatter(String editPattern, String displayPattern, Locale loc) {
     // Set the default value
     calendar = Calendar.getInstance(loc);
-    if ( yearStart == -1 ) {
-    	calendar.setTime(sdfDisplay.get2DigitYearStart());
-    	yearStart = calendar.get(Calendar.YEAR) % 100;
-    }
-    calendar.setTimeInMillis(0);
+    calendar.set(Calendar.HOUR_OF_DAY, 0);
+    calendar.set(Calendar.MINUTE, 0);
+    calendar.set(Calendar.SECOND, 0);
+    calendar.set(Calendar.MILLISECOND, 0);
 
     // Creates the formatter for the edit value
 		if ( editPattern == null ) {
@@ -244,6 +246,10 @@ public class DateTimeFormatter extends AbstractFormatter {
 			displayPattern = editPattern;
 		}
     sdfDisplay = new SimpleDateFormat(displayPattern, loc);
+    if ( yearStart == -1 ) {
+    	calendar.setTime(sdfDisplay.get2DigitYearStart());
+    	yearStart = calendar.get(Calendar.YEAR) % 100;
+    }
     locale		 = loc;
 
     // Instantiate the key listener
@@ -301,7 +307,7 @@ public class DateTimeFormatter extends AbstractFormatter {
 
 	/**
 	 * Adjust a field length in the mask to a given length.
-	 * 
+	 *
 	 * @param b begin position (inclusive)
 	 * @param e end position (exclusive)
 	 * @param l new length
@@ -324,10 +330,10 @@ public class DateTimeFormatter extends AbstractFormatter {
    * The calendar field at the position of cursor is incremented / decremented.
    * If the field value exceeds its range, the next larger field is incremented
    * or decremented and the field value is adjusted back into its range.<p>
-   * 
+   *
    * If the calendar is empty, it is initialized with the current date. In these
    * case, the arrow is ignored.
-   * 
+   *
    * @param inc +1 for increment, -1 for decrement
    */
 	private void arrow(int inc) {
@@ -359,7 +365,7 @@ public class DateTimeFormatter extends AbstractFormatter {
    * Clear a part of the input cache.<br>
    * Characters are replaced by spaces in the fields, but separators are
    * preserved.
-   * 
+   *
    * @param b beginning index (inclusive)
    * @param e end index (exclusive)
    */
@@ -400,7 +406,7 @@ public class DateTimeFormatter extends AbstractFormatter {
 	 * Pattern chars allowed are : y, M, d, H, h, s, S, a.
 	 * The presence of other pattern chars defined in <code>SimpleDateFormat</code>
 	 * will raised an <code>IllegalArgumentException</code>.
-	 * 
+	 *
 	 * @param editPattern edit pattern
 	 * @throws IllegalArgumentException pattern is invalid
 	 */
@@ -498,7 +504,7 @@ public class DateTimeFormatter extends AbstractFormatter {
 	/**
 	 * Returns the count of valid fields. Value returned is between 0 and
 	 * fieldcount.
-	 * 
+	 *
 	 * @return Count of valid fields
 	 */
 	private int countValid() {
@@ -512,9 +518,9 @@ public class DateTimeFormatter extends AbstractFormatter {
 	/**
 	 * Called when the formatter is replaced by an other one in the <code>FormattedText</code>
 	 * control. Allow to release resources like additional listeners.<p>
-	 * 
+	 *
 	 * Removes the <code>KeyListener</code> on the text widget.
-	 * 
+	 *
 	 * @see ITextFormatter#detach()
 	 */
 	public void detach() {
@@ -524,14 +530,14 @@ public class DateTimeFormatter extends AbstractFormatter {
 
 	/**
    * Returns the default edit pattern for the given <code>Locale</code>.<p>
-   * 
+   *
    * A <code>DateFormat</code> object is instantiated with SHORT format for
    * both date and time parts for the given locale. The corresponding pattern
    * string is then retrieved by calling the <code>toPattern</code>.<p>
-   * 
+   *
    * Default patterns are stored in a cache with ISO3 language and country codes
    * as key. So they are computed only once by locale.
-   * 
+   *
    * @param loc locale
    * @return edit pattern for the locale
    */
@@ -540,7 +546,7 @@ public class DateTimeFormatter extends AbstractFormatter {
 			loc = Locale.getDefault();
 		}
 		String key = "DT" + loc.toString();
-		String pattern = (String) cachedPatterns.get(key);
+		String pattern = cachedPatterns.get(key);
 		if ( pattern == null ) {
 			DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, loc);
 			if ( ! (df instanceof SimpleDateFormat) ) {
@@ -566,7 +572,7 @@ public class DateTimeFormatter extends AbstractFormatter {
    * with a <code>SimpleDateFormat<code> for the display pattern passed in
    * constructor. In case the input is invalid (eg. blanks fields), the edit
    * string is returned in place of the display string.
-   * 
+   *
    * @return display string if valid, edit string else
    * @see ITextFormatter#getDisplayString()
    */
@@ -579,7 +585,7 @@ public class DateTimeFormatter extends AbstractFormatter {
    * This method is called by <code>FormattedText</code> when the <code>Text</code>
    * widget gains focus.
    * The value returned is the content of the StringBuilder used as cache.
-   * 
+   *
    * @return edit string
    * @see ITextFormatter#getEditString()
    */
@@ -591,7 +597,7 @@ public class DateTimeFormatter extends AbstractFormatter {
 	 * Returns the field descriptor corresponding to a given position in the
 	 * <code>inputMask</code>. The current starting position and length of the
 	 * field are set in the descriptor.
-	 * 
+	 *
 	 * @param p position in mask of the field
 	 * @param from starting position in mask to search for the beginning of the field
 	 * @return Field descriptor
@@ -619,7 +625,7 @@ public class DateTimeFormatter extends AbstractFormatter {
 	/**
 	 * Returns a string representing the current value of a given field based on
 	 * the content of the calendar.
-	 * 
+	 *
 	 * @param f field descriptor
 	 * @return formatted value of field
 	 */
@@ -655,7 +661,7 @@ public class DateTimeFormatter extends AbstractFormatter {
 
 	/**
 	 * Returns the current Locale used by this formatter.
-	 * 
+	 *
 	 * @return Current Locale used
 	 */
 	public Locale getLocale() {
@@ -667,7 +673,7 @@ public class DateTimeFormatter extends AbstractFormatter {
    * <code>Date</code>.<br>
    * The date is valid if all the input fields are set. If invalid, returns
    * <code>null</code>.
-   * 
+   *
    * @return current date value if valid, <code>null</code> else
    * @see ITextFormatter#getValue()
    */
@@ -679,10 +685,10 @@ public class DateTimeFormatter extends AbstractFormatter {
    * Returns the type of value this {@link ITextFormatter} handles,
    * i.e. returns in {@link #getValue()}.<br>
    * A DateTimeFormatter always returns a Date value.
-   * 
+   *
    * @return The value type.
    */
-  public Class getValueType() {
+  public Class<Date> getValueType() {
 		return Date.class;
 	}
 
@@ -690,7 +696,7 @@ public class DateTimeFormatter extends AbstractFormatter {
    * Inserts a sequence of characters in the input buffer. The current content
    * of the buffer is override. The new position of the cursor is computed and
    * returned.
-   * 
+   *
    * @param txt String of characters to insert
    * @param p Starting position of insertion
    * @return New position of the cursor
@@ -735,7 +741,6 @@ public class DateTimeFormatter extends AbstractFormatter {
 					beep();
 					return p;
 				}
-//				if ( ! updateFieldValue(fd, p < fd.pos + fd.curLen - 1) ) {
 				if ( ! updateFieldValue(fd, true) ) {
 					if ( o != '#' ) {
 						inputCache.setCharAt(p, o);
@@ -794,7 +799,7 @@ public class DateTimeFormatter extends AbstractFormatter {
    * <code>false</code>.<br>
    * For a datetime, the value is considered empty if each field composing the
    * datetime pattern contains an empty string.
-   * 
+   *
    * @return true if empty, else false
    */
   public boolean isEmpty() {
@@ -807,7 +812,7 @@ public class DateTimeFormatter extends AbstractFormatter {
   /**
    * Returns <code>true</code> if current edited value is valid, else returns
    * <code>false</code>. An empty value is considered as invalid.
-   * 
+   *
    * @return true if valid, else false
    * @see ITextFormatter#isValid()
    */
@@ -818,7 +823,7 @@ public class DateTimeFormatter extends AbstractFormatter {
 	/**
 	 * Checks if a given char is valid for the edit pattern. This method must be
 	 * override to restrict the edit pattern in subclasses.
-	 * 
+	 *
 	 * @param c pattern char
 	 * @throws IllegalArgumentException if not valid
 	 */
@@ -841,7 +846,7 @@ public class DateTimeFormatter extends AbstractFormatter {
 	/**
 	 * Searches the current start position and length of a given field, starting
 	 * search to the given index.
-	 * 
+	 *
 	 * @param f field descriptor
 	 * @param from index to begin to search
 	 */
@@ -860,7 +865,7 @@ public class DateTimeFormatter extends AbstractFormatter {
 
 	/**
 	 * Returns the start position in cache of the next field of a given field.
-	 * 
+	 *
 	 * @param f field descriptor
 	 * @return start position of next field
 	 */
@@ -897,7 +902,7 @@ public class DateTimeFormatter extends AbstractFormatter {
 
 	/**
 	 * Sets a new <code>Locale</code> on this formatter.
-	 * 
+	 *
 	 * @param loc locale
 	 */
 	public void setLocale(Locale loc) {
@@ -917,9 +922,9 @@ public class DateTimeFormatter extends AbstractFormatter {
 
 	/**
    * Sets the <code>Text</code> widget that will be managed by this formatter.<p>
-   * 
+   *
    * The ancestor is override to add a key listener on the text widget.
-   * 
+   *
    * @param text Text widget
    * @see ITextFormatter#setText(Text)
    */
@@ -933,7 +938,7 @@ public class DateTimeFormatter extends AbstractFormatter {
 	 * Sets the time zone with the given time zone value. The time zone is applied
 	 * to both the <code>Calendar</code> used as value cache, and the
 	 * <code>SimpleDateFormat</code> used for display mask.
-	 * 
+	 *
 	 * @param zone Time zone
 	 */
 	public void setTimeZone(TimeZone zone) {
@@ -944,7 +949,7 @@ public class DateTimeFormatter extends AbstractFormatter {
 
 	/**
    * Sets the value to edit. The value provided must be a <code>Date</code>.
-   * 
+   *
    * @param value date value
    * @throws IllegalArgumentException if not a date
    * @see ITextFormatter#setValue(java.lang.Object)
@@ -972,11 +977,11 @@ public class DateTimeFormatter extends AbstractFormatter {
 	 * type. If the conversion is invalid, or if the value is out of the field
 	 * limits, it is rejected. Else the corresponding field is updated in the
 	 * calendar.
-	 * 
+	 *
 	 * If the checkLimits flag is set to true, we try to replace the last digit
 	 * of the field by 0 (if over max) or a 1 (if under min). If the resulting
 	 * value is valid, then the input cache is updated.
-	 * 
+	 *
 	 * @param f field descriptor
 	 * @param checkLimits <code>true</code> to check limits, else <code>false</code>
 	 * @return <code>true</code> if calendar has been updated, <code>false</code> if value is rejected
@@ -989,8 +994,8 @@ public class DateTimeFormatter extends AbstractFormatter {
       f.empty = true;
 			f.valid = false;
 		} else if ( f.field == Calendar.AM_PM ) {
-			calendar.set(f.field, sdfDisplay.getDateFormatSymbols()
-			             										.getAmPmStrings()[0].equals(s) ? 0 : 1);
+			calendar.set(f.field, sdfDisplay.getDateFormatSymbols().//
+			         getAmPmStrings()[0].equals(s) ? 0 : 1);
 			f.valid = true;
 		} else {
 			int v = 0;
@@ -1043,19 +1048,19 @@ public class DateTimeFormatter extends AbstractFormatter {
   /**
    * Handles a <code>VerifyEvent</code> sent when the text is about to be modified.
    * This method is the entry point of all operations of formatting.
-   * 
+   *
    * @see org.eclipse.swt.events.VerifyListener#verifyText(org.eclipse.swt.events.VerifyEvent)
    */
 	public void verifyText(VerifyEvent e) {
-  	if ( ignore ) {
-      return;
-    }
-  	e.doit = false;
-  	if ( e.keyCode == SWT.BS || e.keyCode == SWT.DEL ) {
-  		clear(e.start, e.end);
-  	} else {
-  		e.start = insert(e.text, e.start);
-  	}
-  	updateText(inputCache.toString(), e.start);
+		if (ignore) {
+			return;
+		}
+		e.doit = false;
+		if (e.keyCode == SWT.BS || e.keyCode == SWT.DEL) {
+			clear(e.start, e.end);
+		} else {
+			e.start = insert(e.text, e.start);
+		}
+		updateText(inputCache.toString(), e.start);
 	}
 }

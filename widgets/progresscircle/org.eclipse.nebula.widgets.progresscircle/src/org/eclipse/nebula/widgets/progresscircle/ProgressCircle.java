@@ -1,8 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2018 Laurent CARON. All rights reserved. This program and the
- * accompanying materials are made available under the terms of the Eclipse
- * Public License v1.0 which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2018 Laurent CARON.
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors: Laurent CARON (laurent.caron at gmail dot com) - initial API
  * and implementation
@@ -53,6 +56,7 @@ public class ProgressCircle extends Canvas {
 	private String textPattern = PERCENTAGE_PATTERN;
 	private float floatValue;
 	private boolean isTimer;
+	private int fDelay;
 
 	/**
 	 * Constructs a new instance of this class given its parent and a style value
@@ -193,6 +197,7 @@ public class ProgressCircle extends Canvas {
 			final int x = MARGIN + (circleSize - textSize.x) / 2;
 			final int y = (circleSize - textSize.y) / 2;
 			gc.drawText(text, x, y, true);
+			path.dispose();
 		}
 	}
 
@@ -320,31 +325,48 @@ public class ProgressCircle extends Canvas {
 		final int endValue = value;
 		final float delta = (endValue - startValue) / 10f;
 		floatValue = 1.0f * startValue;
-		redraw();
-		update();
-		getDisplay().asyncExec(new Runnable() {
+		boolean animate = true;
 
-			@Override
-			public void run() {
-				floatValue = floatValue + delta;
-				value = (int) floatValue;
-				if (isDisposed()) {
-					return;
-				}
-				redraw();
-				update();
-
-				if (delta > 0 && value >= endValue || delta < 0 && value <= endValue) {
-					value = endValue;
-					redraw();
-					update();
-
-					return;
-				}
-				getDisplay().timerExec(50, this);
+		while (animate) {
+			floatValue = floatValue + delta;
+			value = (int) floatValue;
+			if (isDisposed()) {
+				return;
 			}
-		});
+			redraw();
+			flush();
 
+			if (delta > 0 && value >= endValue || delta < 0 && value <= endValue) {
+				value = endValue;
+				redraw();
+				flush();
+				animate = false;
+			}
+			else {
+				try {
+					Thread.sleep(fDelay);
+				} catch (InterruptedException e) {
+				}
+			}
+		}
+	}
+
+	/**
+	 * Sets the delay in animation time in milliseconds. The higher the delay the
+	 * slower the animation. The default is 10 ms.
+	 * 
+	 * @param delay the new delay
+	 * @return this object
+	 */
+	public ProgressCircle setAnimationDelay(int delay) {
+		fDelay = delay;
+		return this;
+	}
+
+	private void flush() {
+		while (getDisplay().readAndDispatch()) {
+			// flush the event queue to keep the animation going
+		}
 	}
 
 	/**

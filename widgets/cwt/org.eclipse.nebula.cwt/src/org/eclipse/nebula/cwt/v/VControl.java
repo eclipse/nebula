@@ -1,9 +1,12 @@
 /****************************************************************************
  * Copyright (c) 2008, 2009 Jeremy Dowdall
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *    Jeremy Dowdall <jeremyd@aspencloud.com> - initial API and implementation
@@ -19,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.nebula.cwt.svg.SvgDocument;
+import org.eclipse.nebula.cwt.svg.SvgFragment;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
@@ -71,30 +75,34 @@ public abstract class VControl {
 	 */
 	public static final boolean win32 = "win32".equals(SWT.getPlatform()); //$NON-NLS-1$
 
-	private static final int[] Points_OK = { 2, 6, 5, 9, 10, 3, 9, 2, 5, 7, 3, 5 };
-	private static final int[] Points_Cancel = { 0, 1, 3, 4, 0, 7, 1, 8, 4, 5, 7, 8, 8, 7, 5, 4, 8, 1, 7, 0, 4, 3, 1, 0 };
+	private static final int[] Points_OK = { 2, 6, 5, 9, 10, 3, 9, 2, 5, 7, 3,
+			5 };
+	private static final int[] Points_Cancel = { 0, 1, 3, 4, 0, 7, 1, 8, 4, 5,
+			7, 8, 8, 7, 5, 4, 8, 1, 7, 0, 4, 3, 1, 0 };
 	private static final int[] Points_Left = { 9, 0, 4, 5, 9, 10 };
 	private static final int[] Points_Right = { 2, 0, 7, 5, 2, 10 };
 	private static final int[] Points_Up = { 10, 8, 5, 3, 0, 8 };
 	private static final int[] Points_Down = { 10, 2, 5, 7, 0, 2 };
-	private static final int[] Points_Add = { 2, 4, 4, 4, 4, 2, 5, 2, 5, 4, 7, 4, 7, 5, 5, 5, 5, 7, 4, 7, 4, 5, 2, 5 };
+	private static final int[] Points_Add = { 2, 4, 4, 4, 4, 2, 5, 2, 5, 4, 7,
+			4, 7, 5, 5, 5, 5, 7, 4, 7, 4, 5, 2, 5 };
 	private static final int[] Points_Subtract = { 2, 4, 7, 4, 7, 5, 2, 5 };
 
 	// public static final int STATE_INACTIVE = 1 << 0;
 	public static final int STATE_ACTIVE = 1 << 1;
 	public static final int STATE_SELECTED = 1 << 2;
-//	public static final int STATE_FOCUS = 1 << 3;
+	// public static final int STATE_FOCUS = 1 << 3;
 	public static final int STATE_ENABLED = 1 << 4;
 	public static final int STATE_MOUSE_DOWN = 1 << 5;
 
-	protected final static boolean containsControl(Control control, Composite composite) {
-		if(composite != null && !composite.isDisposed()) {
+	protected final static boolean containsControl(Control control,
+			Composite composite) {
+		if (composite != null && !composite.isDisposed()) {
 			Control[] children = composite.getChildren();
-			for(Control child : children) {
-				if(!child.isDisposed()) {
-					if(child == control) {
+			for (Control child : children) {
+				if (!child.isDisposed()) {
+					if (child == control) {
 						return true;
-					} else if(child instanceof Composite){
+					} else if (child instanceof Composite) {
 						return containsControl(control, (Composite) child);
 					}
 				}
@@ -102,7 +110,7 @@ public abstract class VControl {
 		}
 		return false;
 	}
-	
+
 	Composite composite;
 	VPanel parent;
 	private int style;
@@ -115,6 +123,7 @@ public abstract class VControl {
 	Color fill;
 	Color foreground;
 	Color background;
+	Font font;
 	private Cursor activeCursor;
 	private Cursor inactiveCursor;
 
@@ -143,8 +152,8 @@ public abstract class VControl {
 
 	private Listener listener = new Listener() {
 		public void handleEvent(Event event) {
-			if(event.type == SWT.FocusIn) {
-				if(VControl.this == VTracker.getFocusControl()) {
+			if (event.type == SWT.FocusIn) {
+				if (VControl.this == VTracker.getFocusControl()) {
 					return;
 				}
 			}
@@ -153,9 +162,10 @@ public abstract class VControl {
 	};
 
 	private boolean activatable = true;
-	
+
 	/**
 	 * Javadoc out of date // TODO: update javadoc
+	 * 
 	 * @param panel
 	 * @param style
 	 */
@@ -165,32 +175,35 @@ public abstract class VControl {
 		this.style = style;
 		bounds = new Rectangle(0, 0, 0, 0);
 
-		if((style & SWT.OK) != 0) {
+		if ((style & SWT.OK) != 0) {
 			setPolygon(Points_OK);
-			setForeground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_GREEN));
-		} else if((style & SWT.CANCEL) != 0) {
+			setForeground(
+					Display.getDefault().getSystemColor(SWT.COLOR_DARK_GREEN));
+		} else if ((style & SWT.CANCEL) != 0) {
 			setPolygon(Points_Cancel);
-			setForeground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED));
-		} else if((style & SWT.ARROW) != 0) {
-			if((style & SWT.DOWN) != 0) {
+			setForeground(
+					Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED));
+		} else if ((style & SWT.ARROW) != 0) {
+			if ((style & SWT.DOWN) != 0) {
 				setPolygon(Points_Down);
-			} else if((style & SWT.LEFT) != 0) {
+			} else if ((style & SWT.LEFT) != 0) {
 				setPolygon(Points_Left);
-			} else if((style & SWT.RIGHT) != 0) {
+			} else if ((style & SWT.RIGHT) != 0) {
 				setPolygon(Points_Right);
-			} else if((style & SWT.UP) != 0) {
+			} else if ((style & SWT.UP) != 0) {
 				setPolygon(Points_Up);
 			}
-		} else if((style & SWT.UP) != 0) {
+		} else if ((style & SWT.UP) != 0) {
 			setPolygon(Points_Add);
-		} else if((style & SWT.DOWN) != 0) {
+		} else if ((style & SWT.DOWN) != 0) {
 			setPolygon(Points_Subtract);
 		}
 
-		if(foreground == null) {
-			setForeground(Display.getDefault().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
+		if (foreground == null) {
+			setForeground(Display.getDefault()
+					.getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
 		}
-		if(fill == null) {
+		if (fill == null) {
 			setFill(getForeground());
 		}
 	}
@@ -198,88 +211,90 @@ public abstract class VControl {
 	void handleEvent(Event event) {
 		event.data = this;
 		filterEvent(event);
-		if(listeners != null && listeners.containsKey(event.type)) {
-			Listener[] la = listeners.get(event.type).toArray(new Listener[listeners.get(event.type).size()]);
-			for(Listener listener : la) {
+		if (listeners != null && listeners.containsKey(event.type)) {
+			Listener[] la = listeners.get(event.type)
+					.toArray(new Listener[listeners.get(event.type).size()]);
+			for (Listener listener : la) {
 				listener.handleEvent(event);
 			}
 		}
 	}
-	
+
 	void activate() {
-		if(activatable && hasState(STATE_ENABLED) && setState(STATE_ACTIVE, true)) {
+		if (activatable && hasState(STATE_ENABLED)
+				&& setState(STATE_ACTIVE, true)) {
 			setState(STATE_MOUSE_DOWN, VTracker.isMouseDown());
 			setCursor(activeCursor);
 			attachListeners(false);
-			if(redrawOnActivate()) {
+			if (redrawOnActivate()) {
 				redraw();
 			}
 			notifyListeners(SWT.Activate);
 		}
 	}
-	
+
 	void addListener(int eventType) {
 		eventTypes.add(eventType);
-		if(hasState(STATE_ACTIVE)) {
+		if (hasState(STATE_ACTIVE)) {
 			composite.addListener(eventType, listener);
 		}
 	}
 
 	public void addListener(int eventType, Listener listener) {
-		if(!listeners.containsKey(eventType)) {
+		if (!listeners.containsKey(eventType)) {
 			listeners.put(eventType, new ArrayList<Listener>());
 		}
 		listeners.get(eventType).add(listener);
-		if(hasState(STATE_ACTIVE)) {
+		if (hasState(STATE_ACTIVE)) {
 			composite.addListener(eventType, listener);
 		}
 	}
 
 	void attachListeners(boolean keyListeners) {
-	    Set<Integer> eventTypes = new HashSet<Integer>(this.eventTypes);
-	    eventTypes.addAll(listeners.keySet());
-	    for(Integer eventType : eventTypes) {
-	        if(include(keyListeners, eventType)) {
-	            composite.addListener(eventType, listener);
-	        }
-	    }
+		Set<Integer> eventTypes = new HashSet<Integer>(this.eventTypes);
+		eventTypes.addAll(listeners.keySet());
+		for (Integer eventType : eventTypes) {
+			if (include(keyListeners, eventType)) {
+				composite.addListener(eventType, listener);
+			}
+		}
 	}
 
 	void detachListeners(boolean keyListeners) {
 		Set<Integer> eventTypes = new HashSet<Integer>(this.eventTypes);
 		eventTypes.addAll(listeners.keySet());
-		for(Integer eventType : eventTypes) {
-			if(include(keyListeners, eventType)) {
+		for (Integer eventType : eventTypes) {
+			if (include(keyListeners, eventType)) {
 				composite.removeListener(eventType, listener);
 			}
 		}
 	}
-	
+
 	public Point computeSize(int wHint, int hHint) {
 		return computeSize(wHint, hHint, true);
 	}
 
 	public Point computeSize(int wHint, int hHint, boolean changed) {
-		if(wHint != SWT.DEFAULT && wHint < 0) {
+		if (wHint != SWT.DEFAULT && wHint < 0) {
 			wHint = 0;
 		}
-		if(hHint != SWT.DEFAULT && hHint < 0) {
+		if (hHint != SWT.DEFAULT && hHint < 0) {
 			hHint = 0;
 		}
 
 		Point size = new Point(2, 2);
 
-		if(image != null) {
+		if (image != null) {
 			Rectangle r = image.getBounds();
 			size.x = r.width;
 			size.y = r.height;
-		} else if(points != null) {
-			if(points.length > 2) {
+		} else if (points != null) {
+			if (points.length > 2) {
 				int minX = points[0];
 				int maxX = points[0];
 				int minY = points[1];
 				int maxY = points[1];
-				for(int i = 2; i < (points.length - 1); i++) {
+				for (int i = 2; i < (points.length - 1); i++) {
 					minX = Math.min(minX, points[i]);
 					maxX = Math.max(maxX, points[i]);
 					minY = Math.min(minY, points[i + 1]);
@@ -291,10 +306,33 @@ public abstract class VControl {
 				size.x += points[0];
 				size.y += points[1];
 			}
+		} else if (svg != null) {
+			Float width = null, height = null;
+			for (SvgFragment fragment : svg.getFragments()) {
+				if (fragment.getWidth() != null) {
+					width = fragment.getWidth();
+				}
+				if (fragment.getHeight() != null) {
+					height = fragment.getHeight();
+				}
+				if (fragment.getViewBox() != null && fragment.getViewBox().length>3) {
+					width = fragment.getViewBox()[2];
+					height = fragment.getViewBox()[3];
+				}
+			}
+			if (width != null) {
+				size.x=width.intValue();
+			}
+			if (height != null) {
+				size.y=height.intValue();
+			}			
 		}
 
-		if(text != null) {
+		if (text != null) {
 			GC gc = new GC(composite);
+			if (getFont() != null) {
+				gc.setFont(getFont());
+			}
 			Point tSize = gc.textExtent(text);
 			gc.dispose();
 			size.x += tSize.x;
@@ -304,7 +342,7 @@ public abstract class VControl {
 		size.x += (marginLeft + marginRight);
 		size.y += (marginTop + marginBottom);
 
-		if(square) {
+		if (square) {
 			size.x = size.y = Math.max(size.x, size.y);
 		}
 
@@ -315,7 +353,7 @@ public abstract class VControl {
 		menu = new Menu(composite);
 		addListener(SWT.MouseDown, new Listener() {
 			public void handleEvent(Event event) {
-				if(SWT.MouseDown == event.type && event.button == 3) {
+				if (SWT.MouseDown == event.type && event.button == 3) {
 					menu.setVisible(true);
 				}
 			}
@@ -324,11 +362,11 @@ public abstract class VControl {
 	}
 
 	void deactivate() {
-		if(setState(STATE_ACTIVE, false)) {
+		if (setState(STATE_ACTIVE, false)) {
 			setState(STATE_MOUSE_DOWN, false);
 			setCursor(inactiveCursor);
 			detachListeners(false);
-			if(redrawOnDeactivate()) {
+			if (redrawOnDeactivate()) {
 				redraw();
 			}
 			notifyListeners(SWT.Deactivate);
@@ -336,23 +374,23 @@ public abstract class VControl {
 	}
 
 	public void dispose() {
-		if(!disposed) {
+		if (!disposed) {
 			disposed = true;
 
 			notifyListeners(SWT.Dispose, new Event());
 
-			if(this == VTracker.getActiveControl()) {
+			if (this == VTracker.getActiveControl()) {
 				VTracker.instance().deactivate(this);
 			}
-			if(this == VTracker.getFocusControl()) {
+			if (this == VTracker.getFocusControl()) {
 				VTracker.instance().setFocusControl(null);
 			}
-			if(!composite.isDisposed()) {
+			if (!composite.isDisposed()) {
 				detachListeners(true);
 				detachListeners(false);
 			}
 			setParent(null);
-			if(painter != null) {
+			if (painter != null) {
 				painter.dispose();
 			}
 			listeners.clear();
@@ -366,12 +404,12 @@ public abstract class VControl {
 	}
 
 	public Color getBackground() {
-		if(background != null) {
+		if (background != null) {
 			return background;
 		}
 		VPanel p = parent;
-		while(p != null) {
-			if(p.background != null)
+		while (p != null) {
+			if (p.background != null)
 				return p.background;
 			p = p.parent;
 		}
@@ -383,12 +421,14 @@ public abstract class VControl {
 	}
 
 	public Rectangle getClientArea() {
-		return new Rectangle(bounds.x + marginLeft, bounds.y + marginTop, bounds.width - (marginLeft + marginRight),
+		return new Rectangle(bounds.x + marginLeft, bounds.y + marginTop,
+				bounds.width - (marginLeft + marginRight),
 				bounds.height - (marginTop + marginBottom));
 	}
 
 	public Point getClientSize() {
-		return new Point(bounds.width - (marginLeft + marginRight), bounds.height - (marginTop + marginBottom));
+		return new Point(bounds.width - (marginLeft + marginRight),
+				bounds.height - (marginTop + marginBottom));
 	}
 
 	public Composite getComposite() {
@@ -408,14 +448,14 @@ public abstract class VControl {
 	}
 
 	public Object getData(String name) {
-		if(dataMap != null) {
+		if (dataMap != null) {
 			return dataMap.get(name);
 		}
 		return null;
 	}
 
 	public <T> T getData(String name, Class<T> clazz) {
-		if(dataMap != null) {
+		if (dataMap != null) {
 			return (T) dataMap.get(name);
 		}
 		return null;
@@ -427,6 +467,10 @@ public abstract class VControl {
 
 	public boolean getEnabled() {
 		return hasState(STATE_ENABLED);
+	}
+
+	public Font getFont() {
+		return font;
 	}
 
 	public Color getForeground() {
@@ -445,7 +489,7 @@ public abstract class VControl {
 		List<Listener> l = listeners.get(eventType);
 		return l.toArray(new Listener[l.size()]);
 	}
-	
+
 	public Point getLocation() {
 		return new Point(bounds.x, bounds.y);
 	}
@@ -498,7 +542,7 @@ public abstract class VControl {
 	public boolean getVisible() {
 		return visibility > 0;
 	}
-	
+
 	public Composite getWidget() {
 		return getParent().getWidget();
 	}
@@ -516,13 +560,15 @@ public abstract class VControl {
 	}
 
 	private boolean include(boolean key, int type) {
-		if(type == SWT.Selection) {
+		if (type == SWT.Selection) {
 			return false;
 		}
-		if(key && (type == SWT.KeyDown || type == SWT.KeyUp || type == SWT.Traverse)) {
+		if (key && (type == SWT.KeyDown || type == SWT.KeyUp
+				|| type == SWT.Traverse)) {
 			return true;
 		}
-		if(!key && !(type == SWT.KeyDown || type == SWT.KeyUp || type == SWT.Traverse)) {
+		if (!key && !(type == SWT.KeyDown || type == SWT.KeyUp
+				|| type == SWT.Traverse)) {
 			return true;
 		}
 		return false;
@@ -531,15 +577,16 @@ public abstract class VControl {
 	public boolean isActivatable() {
 		return activatable;
 	}
-	
+
 	public boolean isDisposed() {
 		return disposed;
 	}
 
 	public boolean isEnabled() {
-		return getEnabled() && ((parent != null) ? parent.isEnabled() : composite.isEnabled());
+		return getEnabled() && ((parent != null) ? parent.isEnabled()
+				: composite.isEnabled());
 	}
-	
+
 	public boolean isSameWidgetAs(VControl control) {
 		return control != null && getWidget() == control.getWidget();
 	}
@@ -563,40 +610,45 @@ public abstract class VControl {
 	public void moveAbove(VControl control) {
 		parent.move(this, null);
 	}
-	
+
 	public void moveBelow(VControl control) {
 		parent.move(null, this);
 	}
-	
+
 	public void notifyListeners(int eventType) {
 		notifyListeners(eventType, null);
 	}
-	
+
 	public void notifyListeners(int eventType, Event event) {
-		if(listeners.containsKey(eventType)) {
-			if(event == null) {
+		if (listeners.containsKey(eventType)) {
+			if (event == null) {
 				event = new Event();
 			}
 			event.data = this;
 			event.type = eventType;
-			if(this instanceof VNative && eventType == SWT.FocusOut) {
+			if (this instanceof VNative && eventType == SWT.FocusOut) {
 				System.out.println("wtf");
 			}
-			for(Listener listener : getListeners(eventType)) {
+			for (Listener listener : getListeners(eventType)) {
 				listener.handleEvent(event);
 			}
 		}
 	}
 
 	public final void paintControl(Event e) {
-		if(painter != null && bounds.intersects(e.x, e.y, e.width, e.height) && isVisible()) {
+		if (painter != null && bounds.intersects(e.x, e.y, e.width, e.height)
+				&& isVisible()) {
 			int alpha = e.gc.getAlpha();
 			int fullX, fullY, fullW, fullH;
 			fullX = bounds.x - 1;
 			fullY = bounds.y - 1;
-			if(parent != null) {
-				fullW = Math.min(parent.bounds.x + parent.bounds.width - bounds.x, bounds.x + bounds.width) + 1;
-				fullH = Math.min(parent.bounds.y + parent.bounds.height - bounds.y, bounds.y + bounds.height) + 1;
+			if (parent != null) {
+				fullW = Math.min(
+						parent.bounds.x + parent.bounds.width - bounds.x,
+						bounds.x + bounds.width) + 1;
+				fullH = Math.min(
+						parent.bounds.y + parent.bounds.height - bounds.y,
+						bounds.y + bounds.height) + 1;
 			} else {
 				fullW = bounds.width;
 				fullH = bounds.height;
@@ -611,7 +663,7 @@ public abstract class VControl {
 			setAlpha(e.gc);
 			painter.paintBackground(this, e);
 
-			if(clientW > 0 && clientH > 0) {
+			if (clientW > 0 && clientH > 0) {
 				e.gc.setClipping(clientX, clientY, clientW, clientH);
 				setAlpha(e.gc);
 				painter.paintContent(this, e);
@@ -621,17 +673,18 @@ public abstract class VControl {
 			setAlpha(e.gc);
 			painter.paintBorders(this, e);
 
-			if(!getEnabled()) {
+			if (!getEnabled()) {
 				setAlpha(e.gc, 25);
-				e.gc.setBackground(e.display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+				e.gc.setBackground(
+						e.display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 				e.gc.fillRectangle(fullX, fullY, fullW, fullH);
 			}
-			
+
 			e.gc.setClipping((Rectangle) null);
 			e.gc.setAlpha(alpha);
 
-			if(listeners.containsKey(SWT.Paint)) {
-				for(Listener listener : listeners.get(SWT.Paint)) {
+			if (listeners.containsKey(SWT.Paint)) {
+				for (Listener listener : listeners.get(SWT.Paint)) {
 					listener.handleEvent(e);
 				}
 			}
@@ -639,8 +692,9 @@ public abstract class VControl {
 	}
 
 	public void redraw() {
-		if(composite != null && !composite.isDisposed()) {
-			composite.redraw(bounds.x, bounds.y, bounds.width, bounds.height, false);
+		if (composite != null && !composite.isDisposed()) {
+			composite.redraw(bounds.x, bounds.y, bounds.width, bounds.height,
+					false);
 		}
 	}
 
@@ -654,16 +708,16 @@ public abstract class VControl {
 
 	void removeListener(int eventType) {
 		eventTypes.remove(eventType);
-		if(hasState(STATE_ACTIVE)) {
+		if (hasState(STATE_ACTIVE)) {
 			composite.removeListener(eventType, listener);
 		}
 	}
 
 	public void removeListener(int eventType, Listener listener) {
-		if(listeners.containsKey(eventType)) {
+		if (listeners.containsKey(eventType)) {
 			listeners.get(eventType).remove(listener);
 		}
-		if(hasState(STATE_ACTIVE)) {
+		if (hasState(STATE_ACTIVE)) {
 			composite.removeListener(eventType, listener);
 		}
 	}
@@ -671,11 +725,11 @@ public abstract class VControl {
 	public void setActivatable(boolean activatable) {
 		this.activatable = activatable;
 	}
-	
+
 	public void setActiveCursor(Cursor cursor) {
 		activeCursor = cursor;
 	}
-	
+
 	/**
 	 * @param x
 	 * @param y
@@ -706,10 +760,10 @@ public abstract class VControl {
 		bounds.width = width;
 		bounds.height = height;
 
-		if(moved) {
+		if (moved) {
 			notifyListeners(SWT.Move, new Event());
 		}
-		if(resized) {
+		if (resized) {
 			notifyListeners(SWT.Resize, new Event());
 		}
 	}
@@ -721,21 +775,21 @@ public abstract class VControl {
 	public void setCursor(Cursor cursor) {
 		getComposite().setCursor(cursor);
 	}
-	
+
 	public void setData(Enum<?> name, Object value) {
 		setData(name.name(), value);
 	}
 
 	public void setData(String name, Object value) {
-		if(value == null) {
-			if(dataMap != null) {
+		if (value == null) {
+			if (dataMap != null) {
 				dataMap.remove(name);
-				if(dataMap.isEmpty()) {
+				if (dataMap.isEmpty()) {
 					dataMap = null;
 				}
 			}
 		} else {
-			if(dataMap == null) {
+			if (dataMap == null) {
 				dataMap = new HashMap<String, Object>();
 			}
 			dataMap.put(name, value);
@@ -743,14 +797,14 @@ public abstract class VControl {
 	}
 
 	public void setEnabled(boolean enabled) {
-		if(setState(STATE_ENABLED, enabled)) {
-			if(this instanceof VNative) {
+		if (setState(STATE_ENABLED, enabled)) {
+			if (this instanceof VNative) {
 				Control c = getControl();
-				if(c != null) {
+				if (c != null) {
 					c.setEnabled(enabled);
 				}
 			}
-			if(!enabled) {
+			if (!enabled) {
 				deactivate();
 			}
 			redraw();
@@ -766,8 +820,8 @@ public abstract class VControl {
 	}
 
 	protected boolean setFocus(boolean focus) {
-		if(!hasStyle(SWT.NO_FOCUS)) {
-			if(focus) {
+		if (!hasStyle(SWT.NO_FOCUS)) {
+			if (focus) {
 				attachListeners(true);
 				notifyListeners(SWT.FocusIn);
 			} else {
@@ -780,7 +834,7 @@ public abstract class VControl {
 	}
 
 	public void setFont(Font font) {
-		// TODO setFont
+		this.font = font;
 	}
 
 	public void setForeground(Color color) {
@@ -800,17 +854,17 @@ public abstract class VControl {
 	public void setInactiveCursor(Cursor cursor) {
 		inactiveCursor = cursor;
 	}
-	
+
 	public void setLayoutData(GridData data) {
 		layoutData = data;
 	}
 
 	public void setLocation(Point location) {
-		if(location != null) {
+		if (location != null) {
 			setLocation(location.x, location.y);
 		}
 	}
-	
+
 	public void setLocation(int x, int y) {
 		setBounds(x, y, bounds.width, bounds.height);
 	}
@@ -830,16 +884,16 @@ public abstract class VControl {
 	 * @param bottom
 	 */
 	public void setMargins(int left, int right, int top, int bottom) {
-		if(left >= 0) {
+		if (left >= 0) {
 			marginLeft = left;
 		}
-		if(right >= 0) {
+		if (right >= 0) {
 			marginRight = right;
 		}
-		if(top >= 0) {
+		if (top >= 0) {
 			marginTop = top;
 		}
-		if(bottom >= 0) {
+		if (bottom >= 0) {
 			marginBottom = bottom;
 		}
 	}
@@ -861,25 +915,26 @@ public abstract class VControl {
 	}
 
 	public void setParent(VPanel panel) {
-		if(this.parent != null) {
+		if (this.parent != null) {
 			this.parent.removeChild(this);
 		}
 		this.parent = panel;
-		if(this.parent != null) {
+		if (this.parent != null) {
 			this.composite = this.parent.composite;
 			this.parent.addChild(this);
 		}
 	}
 
 	public void setPolygon(int[] points) {
-		setPolygon(points, (fill != null ? fill : ((background != null) ? background : getForeground())));
+		setPolygon(points, (fill != null ? fill
+				: ((background != null) ? background : getForeground())));
 	}
 
 	public void setPolygon(int[] points, Color fillColor) {
-		if(points == null || points.length < 2 || points.length % 2 != 0) {
+		if (points == null || points.length < 2 || points.length % 2 != 0) {
 			return;
 		}
-		if(points.length == 2 && (points[0] < 1 || points[1] < 1)) {
+		if (points.length == 2 && (points[0] < 1 || points[1] < 1)) {
 			return;
 		}
 		this.points = points;
@@ -890,9 +945,9 @@ public abstract class VControl {
 	public void setScaleImage(boolean scale) {
 		this.scaleImage = scale;
 	}
-	
+
 	public void setSize(Point size) {
-		if(size != null) {
+		if (size != null) {
 			setBounds(bounds.x, bounds.y, size.x, size.y);
 		}
 	}
@@ -908,10 +963,10 @@ public abstract class VControl {
 	}
 
 	protected boolean setState(int state, boolean set) {
-		if(set && !hasState(state)) {
+		if (set && !hasState(state)) {
 			this.state |= state;
 			return true;
-		} else if(!set && hasState(state)) {
+		} else if (!set && hasState(state)) {
 			this.state &= ~state;
 			return true;
 		}
@@ -921,12 +976,12 @@ public abstract class VControl {
 	public void setStyle(int style) {
 		this.style = style;
 	}
-	
+
 	public boolean setStyle(int style, boolean set) {
-		if(set && !hasStyle(style)) {
+		if (set && !hasStyle(style)) {
 			this.style |= style;
 			return true;
-		} else if(!set && hasStyle(style)) {
+		} else if (!set && hasStyle(style)) {
 			this.style &= ~style;
 			return true;
 		}
@@ -946,14 +1001,14 @@ public abstract class VControl {
 	}
 
 	void setVisibility(int visibility) {
-		if(visibility > 100) {
+		if (visibility > 100) {
 			visibility = 100;
-		} else if(visibility < 0) {
+		} else if (visibility < 0) {
 			visibility = 0;
 		}
 		this.visibility = visibility;
-		if(!isVisible()) {
-			if(this == VTracker.getFocusControl()) {
+		if (!isVisible()) {
+			if (this == VTracker.getFocusControl()) {
 				VTracker.instance().setFocusControl(null);
 			}
 			VTracker.instance().deactivate(this);
@@ -969,8 +1024,9 @@ public abstract class VControl {
 		setVisible(visible, duration, null);
 	}
 
-	public void setVisible(final boolean visible, final int duration, final Runnable callback) {
-		if(duration <= 0) {
+	public void setVisible(final boolean visible, final int duration,
+			final Runnable callback) {
+		if (duration <= 0) {
 			setVisible(visible);
 		} else {
 			new Thread() {
@@ -979,31 +1035,32 @@ public abstract class VControl {
 					do {
 						Display.getDefault().syncExec(new Runnable() {
 							public void run() {
-								if(!disposed) {
-									setVisibility(visibility + (visible ? 10 : -10));
+								if (!disposed) {
+									setVisibility(
+											visibility + (visible ? 10 : -10));
 									composite.update();
 								}
 							}
 						});
-						if(!disposed) {
+						if (!disposed) {
 							try {
 								Thread.sleep(5 * duration / 100);
-							} catch(InterruptedException e) {
+							} catch (InterruptedException e) {
 								e.printStackTrace();
 							}
 						}
-					} while(!disposed && visibility > 0 && visibility < 100);
-					if(!disposed && visibility != 0 && visibility != 100) {
+					} while (!disposed && visibility > 0 && visibility < 100);
+					if (!disposed && visibility != 0 && visibility != 100) {
 						Display.getDefault().syncExec(new Runnable() {
 							public void run() {
-								if(!disposed) {
+								if (!disposed) {
 									setVisible(visible);
 									composite.update();
 								}
 							}
 						});
 					}
-					if(callback != null) {
+					if (callback != null) {
 						callback.run();
 					}
 				}
@@ -1014,11 +1071,11 @@ public abstract class VControl {
 	public Point toControl(Point point) {
 		return getComposite().toControl(point);
 	}
-	
+
 	public Point toControl(int x, int y) {
 		return getComposite().toControl(x, y);
 	}
-	
+
 	public Point toDisplay(Point point) {
 		return getComposite().toDisplay(point);
 	}
@@ -1031,9 +1088,9 @@ public abstract class VControl {
 	public String toString() {
 		return super.toString() + " {" + text + "}";
 	}
-	
+
 	public void update() {
-		if(composite != null && !composite.isDisposed()) {
+		if (composite != null && !composite.isDisposed()) {
 			composite.update();
 		}
 	}

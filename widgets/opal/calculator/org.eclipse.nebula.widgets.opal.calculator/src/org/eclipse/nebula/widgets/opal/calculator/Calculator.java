@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2012-2017 Laurent CARON
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * All rights reserved.
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  * Laurent CARON (laurent.caron at gmail dot com) - Initial API and implementation
@@ -68,7 +71,7 @@ public class Calculator extends Composite {
 		panel = new CalculatorButtonsComposite(this, SWT.NONE);
 		panel.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 		panel.setDisplayArea(displayArea);
-		displayArea.addKeyListener(panel.getKeyListener());
+		displayArea.addListener(SWT.KeyDown,panel.getKeyListener());
 	}
 
 	/**

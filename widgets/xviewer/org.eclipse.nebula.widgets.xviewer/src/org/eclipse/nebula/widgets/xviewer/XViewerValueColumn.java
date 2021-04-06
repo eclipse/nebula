@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2004, 2007 Boeing.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Boeing - initial API and implementation
@@ -36,8 +39,10 @@ public class XViewerValueColumn extends XViewerColumn implements IXViewerValueCo
     */
    @Override
    public XViewerValueColumn copy() {
-      return new XViewerValueColumn(getId(), getName(), getWidth(), getAlign(), isShow(), getSortDataType(),
+      XViewerValueColumn copyColumn = new XViewerValueColumn(getId(), getName(), getWidth(), getAlign(), isShow(), getSortDataType(),
          isMultiColumnEditable(), getDescription());
+      copyColumn.setSortForward(isSortForward());
+      return copyColumn;
    }
 
    public XViewerValueColumn(String id, String name, int width, XViewerAlign align, boolean show, SortDataType sortDataType, boolean multiColumnEditable, String description) {
@@ -49,25 +54,21 @@ public class XViewerValueColumn extends XViewerColumn implements IXViewerValueCo
    }
 
    @Override
-   @SuppressWarnings("unused")
    public Image getColumnImage(Object element, XViewerColumn column, int columnIndex) throws XViewerException {
       return null;
    }
 
    @Override
-   @SuppressWarnings("unused")
    public String getColumnText(Object element, XViewerColumn column, int columnIndex) throws XViewerException {
       return "unhandled";
    }
 
    @Override
-   @SuppressWarnings("unused")
    public Color getBackground(Object element, XViewerColumn xCol, int columnIndex) throws XViewerException {
       return null;
    }
 
    @Override
-   @SuppressWarnings("unused")
    public Color getForeground(Object element, XViewerColumn xCol, int columnIndex) throws XViewerException {
       return null;
    }
@@ -80,7 +81,6 @@ public class XViewerValueColumn extends XViewerColumn implements IXViewerValueCo
 
    //This method will only be called be the XViewerStyledTextLabelProvider
    @Override
-   @SuppressWarnings("unused")
    public Font getFont(Object element, XViewerColumn viewerColumn, int columnIndex) throws XViewerException {
       return null;
    }

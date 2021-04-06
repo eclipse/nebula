@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.e4.ui.css.core.elementProvider">
+      <provider
+            class="org.eclipse.nebula.widgets.roundedswitch.css.RoundedSwitchElementProvider">
+         <widget
+               class="org.eclipse.nebula.widgets.roundedswitch.RoundedSwitch"></widget>
+      </provider>
+   </extension>
+   <extension
+         point="org.eclipse.e4.ui.css.core.propertyHandler">
+      <handler
+            adapter="org.eclipse.nebula.widgets.roundedswitch.css.RoundedSwitchElement"
+            composite="true"
+            handler="org.eclipse.nebula.widgets.roundedswitch.css.RoundedSwitchPropertyHandler">
+			<property-name name="switch-border-width"> </property-name>
+			<property-name name="switch-border-color"> </property-name>
+			<property-name name="switch-circle-color"> </property-name>
+			<property-name name="switch-background-color"> </property-name>
+      </handler>
+   </extension>
+
+</plugin>

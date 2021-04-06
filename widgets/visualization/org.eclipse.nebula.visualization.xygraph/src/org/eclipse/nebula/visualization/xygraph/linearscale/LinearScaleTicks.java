@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2012, 2017 Diamond Light Source Ltd.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 package org.eclipse.nebula.visualization.xygraph.linearscale;
 
@@ -268,8 +271,23 @@ public class LinearScaleTicks implements ITicksProvider {
 		} else {
 			gridStep = Math.pow(10, exp); // 1*10^exponent
 		}
+
+		if (exp < 0) { // ensure grid steps are printable for scale format
+			String pattern = scale.getFormatPattern();
+			if (!pattern.contains("E")) {
+				int e = pattern.lastIndexOf(".") + 1;
+				if (e > 0) {
+					double g = Math.pow(10, -(pattern.length() - e));
+					if (gridStep < g) {
+						gridStep = g;
+					}
+				}
+			}
+		}
+
 		if (minBigger)
 			gridStep = -gridStep;
+
 		return gridStep;
 	}
 

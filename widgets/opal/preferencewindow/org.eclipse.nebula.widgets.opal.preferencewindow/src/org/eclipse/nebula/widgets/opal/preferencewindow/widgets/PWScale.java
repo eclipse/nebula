@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2011 Laurent CARON
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Laurent CARON (laurent.caron at gmail dot com) - Initial implementation and API
@@ -15,8 +18,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Scale;
 
 /**
@@ -58,12 +59,7 @@ public class PWScale extends PWWidget {
 		final Integer originalValue = (Integer) PreferenceWindow.getInstance().getValueFor(getPropertyKey());
 		scale.setSelection(originalValue.intValue());
 
-		scale.addListener(SWT.Modify, new Listener() {
-			@Override
-			public void handleEvent(final Event event) {
-				PreferenceWindow.getInstance().setValue(getPropertyKey(), Integer.valueOf(scale.getSelection()));
-			}
-		});
+		scale.addListener(SWT.Modify, event -> PreferenceWindow.getInstance().setValue(getPropertyKey(), Integer.valueOf(scale.getSelection())));
 
 		return scale;
 	}

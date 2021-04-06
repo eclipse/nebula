@@ -1,15 +1,19 @@
 /*******************************************************************************
  * Copyright (c) 2007 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *    rmcamara@us.ibm.com                       - initial API and implementation
  *    Tom Schindl <tom.schindl@bestsolution.at> - various significant contributions
  *    Mark-Oliver Reiser <mopr1@web.de>         - support for differing row heights ; fix in bug 191216
- *******************************************************************************/ 
+ *    Laurent Caron <laurent.caron@gmail.com>   - Fix bug 534631
+ *******************************************************************************/
 
 package org.eclipse.nebula.jface.gridviewer;
 
@@ -26,7 +30,7 @@ import org.eclipse.swt.widgets.Listener;
 /**
  * The concrete implementation of the ColumnViewer for the grid.
  */
-public final class GridViewerColumn extends ViewerColumn 
+public final class GridViewerColumn extends ViewerColumn
 {
     /** This is either a GridTableViewer or a GridTreeViewer. */
     private ColumnViewer viewer;
@@ -40,10 +44,11 @@ public final class GridViewerColumn extends ViewerColumn
     /** Listener used to get informed when the colum resizes */
     protected Listener columnResizeListener = null;
 
+    private EditingSupport currentEditingSupport;
 
     /**
      * Create a new column in the {@link GridTableViewer}
-     * 
+     *
      * @param viewer
      *            the viewer the column belongs to
      * @param style
@@ -51,14 +56,14 @@ public final class GridViewerColumn extends ViewerColumn
      *            {@link GridColumn}
      * @see GridColumn#GridColumn(Grid, int)
      */
-    public GridViewerColumn(GridTableViewer viewer, int style) 
+    public GridViewerColumn(GridTableViewer viewer, int style)
     {
         this(viewer, style, -1);
     }
 
     /**
      * Create a new column in the {@link GridTreeViewer}
-     * 
+     *
      * @param viewer
      *            the viewer the column belongs to
      * @param style
@@ -69,10 +74,10 @@ public final class GridViewerColumn extends ViewerColumn
     public GridViewerColumn(GridTreeViewer viewer, int style) {
     	 this(viewer, style, -1);
     }
-    
+
     /**
      * Create a new column in the {@link GridTableViewer}
-     * 
+     *
      * @param viewer
      *            the viewer the column belongs to
      * @param style
@@ -82,62 +87,63 @@ public final class GridViewerColumn extends ViewerColumn
      *            the index of the newly created column
      * @see GridColumn#GridColumn(Grid, int, int)
      */
-    public GridViewerColumn(GridTableViewer viewer, int style, int index) 
-    {
-        this(viewer, createColumn((Grid) viewer.getControl(), style, index));
-    }
-    
-    /**
-     * Create a new column in the {@link GridTreeViewer}
-     * 
-     * @param viewer
-     *            the viewer the column belongs to
-     * @param style
-     *            the style used to create the column for style bits see
-     *            {@link GridColumn}
-     * @param index
-     *            the index of the newly created column
-     * @see GridColumn#GridColumn(Grid, int, int)
-     */
-    public GridViewerColumn(GridTreeViewer viewer, int style, int index) 
+    public GridViewerColumn(GridTableViewer viewer, int style, int index)
     {
         this(viewer, createColumn((Grid) viewer.getControl(), style, index));
     }
 
     /**
-     * 
+     * Create a new column in the {@link GridTreeViewer}
+     *
+     * @param viewer
+     *            the viewer the column belongs to
+     * @param style
+     *            the style used to create the column for style bits see
+     *            {@link GridColumn}
+     * @param index
+     *            the index of the newly created column
+     * @see GridColumn#GridColumn(Grid, int, int)
+     */
+    public GridViewerColumn(GridTreeViewer viewer, int style, int index)
+    {
+        this(viewer, createColumn((Grid) viewer.getControl(), style, index));
+    }
+
+    /**
+     *
      * @param viewer
      *            the viewer the column belongs to
      * @param column
      *            the column the viewer is attached to
      */
-    public GridViewerColumn(GridTreeViewer viewer, GridColumn column) 
+    public GridViewerColumn(GridTreeViewer viewer, GridColumn column)
     {
     	this((ColumnViewer)viewer,column);
     }
-    
+
     /**
-     * 
+     *
      * @param viewer
      *            the viewer the column belongs to
      * @param column
      *            the column the viewer is attached to
      */
-    public GridViewerColumn(GridTableViewer viewer, GridColumn column) 
+    public GridViewerColumn(GridTableViewer viewer, GridColumn column)
     {
         this((ColumnViewer)viewer,column);
     }
-    
+
     GridViewerColumn(ColumnViewer viewer, GridColumn column) {
     	super(viewer, column);
     	this.viewer = viewer;
         this.column = column;
         hookColumnResizeListener();
+        hookVisibilityListener();
     }
-    
-    private static GridColumn createColumn(Grid table, int style, int index) 
+
+	private static GridColumn createColumn(Grid table, int style, int index)
     {
-        if (index >= 0) 
+        if (index >= 0)
         {
             return new GridColumn(table, style, index);
         }
@@ -147,34 +153,39 @@ public final class GridViewerColumn extends ViewerColumn
 
     /**
      * Returns the underlying column.
-     * 
+     *
      * @return the underlying Nebula column
      */
-    public GridColumn getColumn() 
+    public GridColumn getColumn()
     {
         return column;
     }
-    
+
     /** {@inheritDoc} */
     public void setEditingSupport(EditingSupport editingSupport)
     {
+    	currentEditingSupport = editingSupport;
+    	if (!getColumn().isVisible()) {
+    		return;
+    	}
+
         if (editingSupport instanceof CheckEditingSupport)
         {
             if (checkEditingSupport == null)
             {
                 final int colIndex = getColumn().getParent().indexOf(getColumn());
-                
+
                 getColumn().getParent().addListener(SWT.Selection, new Listener()
-                {                
+                {
                     public void handleEvent(Event event)
-                    {                         
+                    {
                         if (event.detail == SWT.CHECK && event.index == colIndex)
                         {
                             GridItem item = (GridItem)event.item;
                             Object element = item.getData();
                             checkEditingSupport.setValue(element, new Boolean(item.getChecked(colIndex)));
                         }
-                    }                
+                    }
                 });
             }
             checkEditingSupport = (CheckEditingSupport)editingSupport;
@@ -182,7 +193,7 @@ public final class GridViewerColumn extends ViewerColumn
         else
         {
             super.setEditingSupport(editingSupport);
-        }        
+        }
     }
 
 
@@ -219,7 +230,18 @@ public final class GridViewerColumn extends ViewerColumn
             columnResizeListener = null;
         }
     }
-    
+
+    private void hookVisibilityListener() {
+		column.addListener(SWT.Show, event -> {
+			// Show column : reactivate the ediitng support
+			 super.setEditingSupport(currentEditingSupport);
+		});
+		column.addListener(SWT.Hide, event -> {
+			// Hide column : deactive the editing support
+			 super.setEditingSupport(null);
+		});
+	}
+
     /**
      * {@inheritDoc}
      */

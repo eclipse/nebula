@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2016 Boeing.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Boeing - initial API and implementation
@@ -15,6 +18,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
 import org.eclipse.nebula.widgets.xviewer.core.util.CollectionsUtil;
 import org.eclipse.nebula.widgets.xviewer.core.util.XViewerUtil;
 import org.eclipse.nebula.widgets.xviewer.core.util.XmlUtil;
@@ -36,6 +40,7 @@ public class XViewerColumn {
    private String toolTip = "";
    protected Map<Long, String> preComputedValueMap = null;
    private Object xViewer;
+   private Long elapsedTime = 0L;
 
    protected XViewerColumn() {
       super();
@@ -73,6 +78,7 @@ public class XViewerColumn {
       toXCol.setMultiColumnEditable(fromXCol.multiColumnEditable);
       toXCol.setName(fromXCol.name);
       toXCol.setSortDataType(fromXCol.sortDataType);
+      toXCol.setSortForward(isSortForward());
       toXCol.setToolTip(fromXCol.toolTip);
       toXCol.setWidth(fromXCol.width);
       toXCol.setShow(fromXCol.show);
@@ -108,7 +114,7 @@ public class XViewerColumn {
    public final static String XTREECOLUMN_TAG = "xCol";
 
    public String toXml() {
-      StringBuffer sb = new StringBuffer("<" + XTREECOLUMN_TAG + ">");
+      StringBuilder sb = new StringBuilder("<" + XTREECOLUMN_TAG + ">");
       sb.append(XmlUtil.addTagData(ID, id));
       sb.append(XmlUtil.addTagData(NAME, name));
       sb.append(XmlUtil.addTagData(WIDTH, width + ""));
@@ -252,20 +258,20 @@ public class XViewerColumn {
    public String sumValues(Collection<String> values) {
       if (sortDataType == SortDataType.Float) {
          double sum = 0.0;
-         Set<String> exceptions = new HashSet<String>();
+         Set<String> exceptions = new HashSet<>();
          sum = sumFloatValues(values, sum, exceptions);
          return "Sum: " + XViewerUtil.doubleToI18nString(
             sum) + "\n\nNum Items: " + values.size() + (exceptions.size() > 0 ? "\n\nErrors: " + CollectionsUtil.toString(
                ";", exceptions) : "");
       } else if (sortDataType == SortDataType.Integer || sortDataType == SortDataType.Percent) {
          int sum = 0;
-         Set<String> exceptions = new HashSet<String>();
+         Set<String> exceptions = new HashSet<>();
          sum = sumIntegerValues(values, sum, exceptions);
          return "Sum: " + sum + "\n\nNum Items: " + values.size() + (exceptions.size() > 0 ? "\n\nErrors: " + CollectionsUtil.toString(
             ";", exceptions) : "");
       } else if (sortDataType == SortDataType.Long) {
          long sum = 0;
-         Set<String> exceptions = new HashSet<String>();
+         Set<String> exceptions = new HashSet<>();
          sum = sumLongValues(values, sum, exceptions);
          return "Sum: " + sum + "\n\nNum Items: " + values.size() + (exceptions.size() > 0 ? "\n\nErrors: " + CollectionsUtil.toString(
             ";", exceptions) : "");
@@ -290,7 +296,7 @@ public class XViewerColumn {
    public String averageValues(Collection<String> values) {
       if (sortDataType == SortDataType.Float) {
          double sum = 0.0;
-         Set<String> exceptions = new HashSet<String>();
+         Set<String> exceptions = new HashSet<>();
          sum = sumFloatValues(values, sum, exceptions);
          Double average = sum == 0 || values.isEmpty() ? 0 : sum / values.size();
          return "Average: " + XViewerUtil.doubleToI18nString(
@@ -298,14 +304,14 @@ public class XViewerColumn {
                ";", exceptions) : "");
       } else if (sortDataType == SortDataType.Integer || sortDataType == SortDataType.Percent) {
          int sum = 0;
-         Set<String> exceptions = new HashSet<String>();
+         Set<String> exceptions = new HashSet<>();
          sum = sumIntegerValues(values, sum, exceptions);
          Integer average = sum == 0 || values.isEmpty() ? 0 : sum / values.size();
          return "Average: " + average + "\n\nNum Items: " + values.size() + (exceptions.size() > 0 ? "\n\nErrors: " + CollectionsUtil.toString(
             ";", exceptions) : "");
       } else if (sortDataType == SortDataType.Long) {
          long sum = 0;
-         Set<String> exceptions = new HashSet<String>();
+         Set<String> exceptions = new HashSet<>();
          sum = sumLongValues(values, sum, exceptions);
          Long average = sum == 0 || values.isEmpty() ? 0 : sum / Long.valueOf(values.size());
          return "Average: " + average + "\n\nNum Items: " + values.size() + (exceptions.size() > 0 ? "\n\nErrors: " + CollectionsUtil.toString(
@@ -364,7 +370,7 @@ public class XViewerColumn {
 
    public Map<Long, String> getPreComputedValueMap() {
       if (preComputedValueMap == null) {
-         preComputedValueMap = new HashMap<Long, String>();
+         preComputedValueMap = new HashMap<>();
       }
       return preComputedValueMap;
    }
@@ -375,7 +381,26 @@ public class XViewerColumn {
 
    @Override
    public String toString() {
-      return "XViewerColumn [id=" + id + ", name=" + name + ", sortDataType=" + sortDataType + ", show=" + show + ", width=" + width + "]";
+      return "XViewerColumn [id=" + id + ", name=" + name + ", sortDataType=" + sortDataType + ", sortForward=" + isSortForward() + ", show=" + show + ", width=" + width + "]";
+   }
+
+   /**
+    * @return time in milliseconds
+    */
+   public Long getElapsedTime() {
+      return elapsedTime;
+   }
+
+   public void addElapsedTime(Long elapsedTimeMs) {
+      this.elapsedTime += elapsedTimeMs;
+   }
+
+   public void setElapsedTime(Long elapsedTimeMs) {
+      this.elapsedTime = elapsedTimeMs;
+   }
+
+   public void resetElapsedTime() {
+      this.elapsedTime = 0L;
    }
 
 }

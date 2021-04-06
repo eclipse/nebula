@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2004, 2007 Boeing.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Boeing - initial API and implementation
@@ -17,10 +20,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
+
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -30,7 +32,6 @@ import org.eclipse.nebula.widgets.xviewer.XViewer;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumnLabelProvider;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumnSorter;
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
-import org.eclipse.nebula.widgets.xviewer.core.model.ColumnData;
 import org.eclipse.nebula.widgets.xviewer.core.model.ColumnFilterData;
 import org.eclipse.nebula.widgets.xviewer.core.model.CustomizeData;
 import org.eclipse.nebula.widgets.xviewer.core.model.SortingData;
@@ -52,10 +53,6 @@ import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -121,14 +118,14 @@ public class XViewerCustomizeDialog extends MessageDialog {
          }
       }
 
-      /*
+      /**
        * @see org.eclipse.swt.dnd.DragSourceAdapter#dragSetData(org.eclipse.swt.dnd.DragSourceEvent)
        */
       @Override
       public void dragSetData(DragSourceEvent event) {
          if (TextTransfer.getInstance().isSupportedType(event.dataType)) {
             List<XViewerColumn> selCols = getHiddenTableSelection();
-            Collection<String> ids = new ArrayList<String>(selCols.size());
+            Collection<String> ids = new ArrayList<>(selCols.size());
 
             for (XViewerColumn xCol : selCols) {
                ids.add(xCol.getId());
@@ -138,6 +135,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
          }
       }
    };
+
    DropTargetAdapter hiddenTableDropListener = new DropTargetAdapter() {
 
       @Override
@@ -184,7 +182,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
 
       String droppedIds = (String) event.data;
 
-      List<XViewerColumn> droppedVisibleTableXCols = new ArrayList<XViewerColumn>();
+      List<XViewerColumn> droppedVisibleTableXCols = new ArrayList<>();
       List<XViewerColumn> orderCols = (List<XViewerColumn>) visibleColTable.getViewer().getInput();
       for (XViewerColumn xCol : orderCols) {
          if (droppedIds.contains(xCol.getId())) {
@@ -203,14 +201,14 @@ public class XViewerCustomizeDialog extends MessageDialog {
          }
       }
 
-      /*
+      /**
        * @see org.eclipse.swt.dnd.DragSourceAdapter#dragSetData(org.eclipse.swt.dnd.DragSourceEvent)
        */
       @Override
       public void dragSetData(DragSourceEvent event) {
          if (TextTransfer.getInstance().isSupportedType(event.dataType)) {
             List<XViewerColumn> selCols = getVisibleTableSelection();
-            Collection<String> ids = new ArrayList<String>(selCols.size());
+            Collection<String> ids = new ArrayList<>(selCols.size());
 
             for (XViewerColumn xCol : selCols) {
                ids.add(xCol.getId());
@@ -262,7 +260,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
          }
       }
 
-      List<XViewerColumn> droppedXCols = new ArrayList<XViewerColumn>();
+      List<XViewerColumn> droppedXCols = new ArrayList<>();
       List<XViewerColumn> orderCols = (List<XViewerColumn>) visibleColTable.getViewer().getInput();
       for (XViewerColumn xCol : orderCols) {
          if (droppedIds.contains(xCol.getId())) {
@@ -435,14 +433,11 @@ public class XViewerCustomizeDialog extends MessageDialog {
             }
          }
       });
-      custTable.getViewer().addSelectionChangedListener(new ISelectionChangedListener() {
-         @Override
-         public void selectionChanged(SelectionChangedEvent event) {
-            handleCustTableSelectionChanged();
-            updateButtonEnablements();
-            storeCustTableSelection();
-         }
-      });
+		custTable.getViewer().addSelectionChangedListener(event -> {
+			handleCustTableSelectionChanged();
+			updateButtonEnablements();
+			storeCustTableSelection();
+		});
 
       // Customization Table Buttons
       final Composite composite = new Composite(custComp, SWT.NONE);
@@ -454,25 +449,17 @@ public class XViewerCustomizeDialog extends MessageDialog {
       setDefaultButton = new Button(composite, SWT.NONE);
       setDefaultButton.setLayoutData(new GridData());
       setDefaultButton.setText(SET_AS_DEFAULT);
-      setDefaultButton.addSelectionListener(new SelectionAdapter() {
-         @Override
-         public void widgetSelected(SelectionEvent e) {
-            super.widgetSelected(e);
-            handleSetDefaultButton();
-            updateButtonEnablements();
-         }
-      });
+		setDefaultButton.addListener(SWT.Selection, e -> {
+			handleSetDefaultButton();
+			updateButtonEnablements();
+		});
 
       deleteButton = new Button(composite, SWT.NONE);
       deleteButton.setLayoutData(new GridData());
       deleteButton.setText(XViewerText.get("button.delete")); //$NON-NLS-1$
-      deleteButton.addSelectionListener(new SelectionAdapter() {
-         @Override
-         public void widgetSelected(SelectionEvent e) {
-            super.widgetSelected(e);
+      deleteButton.addListener(SWT.Selection, e -> {
             handleDeleteButton();
             updateButtonEnablements();
-         }
       });
    }
 
@@ -487,23 +474,11 @@ public class XViewerCustomizeDialog extends MessageDialog {
       // Customization Buttons
       renameButton = new Button(composite_1, SWT.NONE);
       renameButton.setText(XViewerText.get("button.rename")); //$NON-NLS-1$
-      renameButton.addSelectionListener(new SelectionAdapter() {
-         @Override
-         public void widgetSelected(SelectionEvent e) {
-            super.widgetSelected(e);
-            handleRenameButton();
-         }
-      });
+      renameButton.addListener(SWT.Selection, e -> handleRenameButton());
 
       saveButton = new Button(composite_1, SWT.NONE);
       saveButton.setText(XViewerText.get("button.save")); //$NON-NLS-1$
-      saveButton.addSelectionListener(new SelectionAdapter() {
-         @Override
-         public void widgetSelected(SelectionEvent e) {
-            super.widgetSelected(e);
-            handleSaveButton();
-         }
-      });
+      saveButton.addListener(SWT.Selection, e -> handleSaveButton());
    }
 
    private void createColumnFilterTextBlock(final Composite composite) {
@@ -522,22 +497,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
 
       final Label clearColumnFilterLabel = new Label(composite_8, SWT.PUSH);
       clearColumnFilterLabel.setImage(XViewerLib.getImage("clear.gif")); //$NON-NLS-1$
-      clearColumnFilterLabel.addMouseListener(new MouseListener() {
-         @Override
-         public void mouseDown(MouseEvent e) {
-            // do nothing
-         }
-
-         @Override
-         public void mouseDoubleClick(MouseEvent e) {
-            // do nothing
-         }
-
-         @Override
-         public void mouseUp(MouseEvent e) {
-            columnFilterText.setText(""); //$NON-NLS-1$
-         }
-      });
+      clearColumnFilterLabel.addListener(SWT.MouseUp, e -> columnFilterText.setText("")); //$NON-NLS-1$
    }
 
    private void createFilterTextBlock(final Composite composite) {
@@ -562,23 +522,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
 
       final Label clearFilterLabel = new Label(composite_7, SWT.PUSH);
       clearFilterLabel.setImage(XViewerLib.getImage("clear.gif")); //$NON-NLS-1$
-      clearFilterLabel.addMouseListener(new MouseListener() {
-         @Override
-         public void mouseDown(MouseEvent e) {
-            // do nothing
-         }
-
-         @Override
-         public void mouseDoubleClick(MouseEvent e) {
-            // do nothing
-
-         }
-
-         @Override
-         public void mouseUp(MouseEvent e) {
-            filterText.setText(""); //$NON-NLS-1$
-         }
-      });
+      clearFilterLabel.addListener(SWT.MouseUp, e -> filterText.setText("")); //$NON-NLS-1$
 
    }
 
@@ -591,23 +535,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
 
       final Label clearSorterLabel = new Label(composite, SWT.PUSH);
       clearSorterLabel.setImage(XViewerLib.getImage("clear.gif")); //$NON-NLS-1$
-      clearSorterLabel.addMouseListener(new MouseListener() {
-         @Override
-         public void mouseDown(MouseEvent e) {
-            // do nothing
-         }
-
-         @Override
-         public void mouseDoubleClick(MouseEvent e) {
-            // do nothing
-
-         }
-
-         @Override
-         public void mouseUp(MouseEvent e) {
-            sorterText.setText(""); //$NON-NLS-1$
-         }
-      });
+      clearSorterLabel.addListener(SWT.MouseUp, e -> sorterText.setText("")); //$NON-NLS-1$
    }
 
    private void createVisibleButtonsComposition(Composite parent) {
@@ -630,12 +558,8 @@ public class XViewerCustomizeDialog extends MessageDialog {
       table.setLayoutData(gd_table);
       visibleColTable.getViewer().setLabelProvider(new XViewerColumnLabelProvider());
       visibleColTable.getViewer().setContentProvider(new ArrayTreeContentProvider());
-      visibleColTable.getViewer().addSelectionChangedListener(new ISelectionChangedListener() {
-         @Override
-         public void selectionChanged(SelectionChangedEvent event) {
-            updateButtonEnablements();
-         }
-      });
+      visibleColTable.getViewer().addSelectionChangedListener(event ->updateButtonEnablements());
+
       visibleColTable.getViewer().addDragSupport(DND.DROP_MOVE, new Transfer[] {TextTransfer.getInstance()},
          visibleTableDragListener);
       visibleColTable.getViewer().addDropSupport(DND.DROP_MOVE, new Transfer[] {TextTransfer.getInstance()},
@@ -668,13 +592,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
       hiddenColTable.getViewer().setLabelProvider(new XViewerColumnLabelProvider());
       hiddenColTable.getViewer().setContentProvider(new ArrayTreeContentProvider());
       hiddenColTable.getViewer().setSorter(new XViewerColumnSorter());
-      hiddenColTable.getViewer().addSelectionChangedListener(new ISelectionChangedListener() {
-         @Override
-         public void selectionChanged(SelectionChangedEvent event) {
-            updateButtonEnablements();
-         }
-      });
-
+      hiddenColTable.getViewer().addSelectionChangedListener(event -> updateButtonEnablements());
    }
 
    private void createMoveButtons(Composite parent) {
@@ -689,71 +607,35 @@ public class XViewerCustomizeDialog extends MessageDialog {
       addItemButton.setText(">"); //$NON-NLS-1$
       addItemButton.setToolTipText(XViewerText.get("button.add.tip")); //$NON-NLS-1$
       addItemButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
-      addItemButton.addSelectionListener(new SelectionAdapter() {
-         @Override
-         public void widgetSelected(SelectionEvent e) {
-            super.widgetSelected(e);
-            handleAddItemButton();
-         }
-      });
+      addItemButton.addListener(SWT.Selection, e-> handleAddItemButton());
 
       addAllItemButton = new Button(moveButtonComp, SWT.NONE);
       addAllItemButton.setText(">>"); //$NON-NLS-1$
       addAllItemButton.setToolTipText(XViewerText.get("button.add_all.tip")); //$NON-NLS-1$
-      addAllItemButton.addSelectionListener(new SelectionAdapter() {
-         @Override
-         public void widgetSelected(SelectionEvent e) {
-            super.widgetSelected(e);
-            handleAddAllItemButton();
-         }
-      });
+      addAllItemButton.addListener(SWT.Selection, e-> handleAddAllItemButton());
 
       removeItemButton = new Button(moveButtonComp, SWT.NONE);
       removeItemButton.setText("<"); //$NON-NLS-1$
       removeItemButton.setToolTipText(XViewerText.get("button.remove.tip")); //$NON-NLS-1$
       removeItemButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
-      removeItemButton.addSelectionListener(new SelectionAdapter() {
-         @Override
-         public void widgetSelected(SelectionEvent e) {
-            super.widgetSelected(e);
-            handleRemoveItemButton();
-         }
-      });
+      removeItemButton.addListener(SWT.Selection, e-> handleRemoveItemButton());
 
       removeAllItemButton = new Button(moveButtonComp, SWT.NONE);
       removeAllItemButton.setText("<<"); //$NON-NLS-1$
       removeAllItemButton.setToolTipText(XViewerText.get("button.remove_all.tip")); //$NON-NLS-1$
-      removeAllItemButton.addSelectionListener(new SelectionAdapter() {
-         @Override
-         public void widgetSelected(SelectionEvent e) {
-            super.widgetSelected(e);
-            handleRemoveAllItemButton();
-         }
-      });
+      removeAllItemButton.addListener(SWT.Selection, e-> handleRemoveAllItemButton());
 
       moveUpButton = new Button(moveButtonComp, SWT.NONE);
       moveUpButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
       moveUpButton.setText("^"); //$NON-NLS-1$
       moveUpButton.setToolTipText(XViewerText.get("button.move_up.tip")); //$NON-NLS-1$
-      moveUpButton.addSelectionListener(new SelectionAdapter() {
-         @Override
-         public void widgetSelected(SelectionEvent e) {
-            super.widgetSelected(e);
-            handleMoveUpButton();
-         }
-      });
+      moveUpButton.addListener(SWT.Selection, e-> handleMoveUpButton());
 
       moveDownButton = new Button(moveButtonComp, SWT.NONE);
       moveDownButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
       moveDownButton.setText("v"); //$NON-NLS-1$
       moveDownButton.setToolTipText(XViewerText.get("button.move_down.tip")); //$NON-NLS-1$
-      moveDownButton.addSelectionListener(new SelectionAdapter() {
-         @Override
-         public void widgetSelected(SelectionEvent e) {
-            super.widgetSelected(e);
-            handleMoveDownButton();
-         }
-      });
+      moveDownButton.addListener(SWT.Selection, e-> handleMoveDownButton());
    }
 
    @SuppressWarnings("unchecked")
@@ -805,7 +687,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
          return;
       }
       // get visible column ids
-      List<String> visibleColumnIds = new ArrayList<String>();
+      List<String> visibleColumnIds = new ArrayList<>();
       for (XViewerColumn xCol : (List<XViewerColumn>) visibleColTable.getViewer().getInput()) {
          visibleColumnIds.add(xCol.getId());
       }
@@ -828,7 +710,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
          return;
       }
       // get visible column ids
-      List<String> visibleColumnIds = new ArrayList<String>();
+      List<String> visibleColumnIds = new ArrayList<>();
       for (XViewerColumn xCol : (List<XViewerColumn>) visibleColTable.getViewer().getInput()) {
          visibleColumnIds.add(xCol.getId());
       }
@@ -902,7 +784,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
       } else {
          return;
       }
-      ArrayList<XViewerColumn> selected = new ArrayList<XViewerColumn>();
+      ArrayList<XViewerColumn> selected = new ArrayList<>();
       selected.addAll(selCols);
       visibleColTable.getViewer().setSelection(new StructuredSelection(selected.toArray(new Object[selected.size()])));
       visibleColTable.getViewer().getTree().setFocus();
@@ -924,7 +806,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
       } else {
          return;
       }
-      ArrayList<XViewerColumn> selected = new ArrayList<XViewerColumn>();
+      ArrayList<XViewerColumn> selected = new ArrayList<>();
       selected.addAll(selCols);
       visibleColTable.getViewer().setSelection(new StructuredSelection(selected.toArray(new Object[selected.size()])));
       visibleColTable.getViewer().getTree().setFocus();
@@ -935,7 +817,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
     * @return xColumns from hidden and visible customization lists
     */
    private List<XViewerColumn> getConfigCustXViewerColumns() {
-      List<XViewerColumn> xCols = new ArrayList<XViewerColumn>();
+      List<XViewerColumn> xCols = new ArrayList<>();
       List<XViewerColumn> currColumns = xViewerToCustomize.getCustomizeMgr().getCurrentTableColumns();
       for (XViewerColumn xCol : getTableXViewerColumns(visibleColTable.getViewer())) {
          xCol.setShow(true);
@@ -960,7 +842,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
 
    private void handleSaveButton() {
       try {
-         List<CustomizeData> custDatas = new ArrayList<CustomizeData>();
+         List<CustomizeData> custDatas = new ArrayList<>();
          for (CustomizeData custData : xViewerToCustomize.getCustomizeMgr().getSavedCustDatas()) {
             if (custData.isPersonal()) {
                custDatas.add(custData);
@@ -1161,7 +1043,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
 
       // If selection not restored, select default
       if (getCustTableSelection() == null) {
-         ArrayList<Object> sel = new ArrayList<Object>();
+         ArrayList<Object> sel = new ArrayList<>();
          sel.add(currentCustData);
          custTable.getViewer().setSelection(new StructuredSelection(sel.toArray(new Object[sel.size()])));
          custTable.getViewer().getTree().setFocus();
@@ -1190,7 +1072,7 @@ public class XViewerCustomizeDialog extends MessageDialog {
    }
 
    private List<XViewerColumn> getTableSelection(TreeViewer xColTableViewer) {
-      List<XViewerColumn> xCols = new ArrayList<XViewerColumn>();
+      List<XViewerColumn> xCols = new ArrayList<>();
       IStructuredSelection selection = (IStructuredSelection) xColTableViewer.getSelection();
       if (selection.isEmpty()) {
          return null;
@@ -1217,8 +1099,8 @@ public class XViewerCustomizeDialog extends MessageDialog {
          return;
       }
 
-      List<XViewerColumn> hideXCols = new ArrayList<XViewerColumn>();
-      List<XViewerColumn> showXCols = new ArrayList<XViewerColumn>();
+      List<XViewerColumn> hideXCols = new ArrayList<>();
+      List<XViewerColumn> showXCols = new ArrayList<>();
       for (XViewerColumn xCol : custData.getColumnData().getColumns()) {
          if (xCol.isShow()) {
             showXCols.add(xCol);
@@ -1253,15 +1135,13 @@ public class XViewerCustomizeDialog extends MessageDialog {
       if (getCustTableSelection() != null) {
          selectedCustTableCustData = getCustTableSelection();
       }
-      //      System.out.println("Selection " + selectedCustTableCustData.getName() + " - " + selectedCustTableCustData.getGuid());
    }
 
    public void restoreCustTableSelection() {
       if (selectedCustTableCustData != null) {
-         ArrayList<Object> selected = new ArrayList<Object>();
+         ArrayList<Object> selected = new ArrayList<>();
          selected.add(selectedCustTableCustData);
          custTable.getViewer().setSelection(new StructuredSelection(selected.toArray(new Object[selected.size()])));
-         //         System.out.println("Restoring " + selectedCustTableCustData.getName() + " - " + selectedCustTableCustData.getGuid());
       }
    }
 

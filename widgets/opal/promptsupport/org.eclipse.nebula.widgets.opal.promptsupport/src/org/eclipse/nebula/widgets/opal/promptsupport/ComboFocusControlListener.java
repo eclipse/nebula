@@ -1,21 +1,28 @@
 /*******************************************************************************
  * Copyright (c) 2011 Laurent CARON.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  * Laurent CARON (laurent.caron at gmail dot com) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.promptsupport;
 
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Combo;
 
 /**
  * Focus/Control listener for a Combo widget
  */
-class ComboFocusControlListener extends BaseFocusControlListener {
+class ComboFocusControlListener extends BaseFocusControlListener<Combo> implements ModifyListener {
+
+    protected boolean updatingPropmpt = false;
 
 	/**
 	 * Constructor
@@ -26,12 +33,43 @@ class ComboFocusControlListener extends BaseFocusControlListener {
 		super(control);
 	}
 
+    @Override
+    void hookControl() {
+        super.hookControl();
+
+        // Attach dedicated listeners
+        control.addModifyListener(this);
+    }
+
+    @Override
+    public void modifyText(ModifyEvent e) {
+        if (updatingPropmpt) {
+            return;
+        }
+
+        final String trimmedText = control.getText().trim();
+        applyInitialLook();
+
+        if (!EMPTY_STRING.equals(trimmedText)) {
+            PromptSupport.setPromptDisplayed(control, false);
+            return;
+        }
+
+        if (!control.isFocusControl()) {
+            storeInitialLook();
+            applyPromptLook();
+            fillPromptText();
+            PromptSupport.setPromptDisplayed(control, true);
+            return;
+        }
+    }
+
 	/**
 	 * @see org.eclipse.nebula.widgets.opal.promptsupport.BaseFocusControlListener#hidePrompt()
 	 */
 	@Override
 	protected void hidePrompt() {
-		((Combo) control).setText("");
+        updatePrompt(EMPTY_STRING);
 	}
 
 	/**
@@ -49,7 +87,13 @@ class ComboFocusControlListener extends BaseFocusControlListener {
 		final String promptText = PromptSupport.getPrompt(control);
 		if (promptText != null) {
 			control.getDisplay().asyncExec(() -> {
-				((Combo) ComboFocusControlListener.this.control).setText(promptText);
+                if (control.isDisposed()) {
+                    return;
+                }
+
+                if (PromptSupport.isPromptDisplayed(control)) {
+                    updatePrompt(promptText);
+                }
 			});
 		}
 	}
@@ -60,10 +104,19 @@ class ComboFocusControlListener extends BaseFocusControlListener {
 	@Override
 	protected boolean isFilled() {
 		final String promptText = PromptSupport.getPrompt(control);
-		final String trimmedText = ((Combo) control).getText().trim();
-		if (promptText != null && promptText.equals(trimmedText) && !PromptSupport.isPromptDisplayed(control)) {
+        final String trimmedText = control.getText().trim();
+        if (promptText != null && promptText.equals(trimmedText) && PromptSupport.isPromptDisplayed(control)) {
 			return false;
 		}
-		return !"".equals(trimmedText);
+        return !EMPTY_STRING.equals(trimmedText);
 	}
+
+    protected void updatePrompt(String prompt) {
+        try {
+            updatingPropmpt = true;
+            control.setText(prompt);
+        } finally {
+            updatingPropmpt = false;
+        }
+    }
 }

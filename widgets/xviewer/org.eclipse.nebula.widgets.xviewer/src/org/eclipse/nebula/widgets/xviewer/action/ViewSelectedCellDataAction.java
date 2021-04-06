@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2004, 2007 Boeing.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Boeing - initial API and implementation
@@ -15,8 +18,10 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.nebula.widgets.xviewer.Activator;
 import org.eclipse.nebula.widgets.xviewer.IXViewerLabelProvider;
+import org.eclipse.nebula.widgets.xviewer.IXViewerPreComputedColumn;
 import org.eclipse.nebula.widgets.xviewer.IXViewerValueColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewer;
+import org.eclipse.nebula.widgets.xviewer.XViewerLabelProvider;
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.nebula.widgets.xviewer.core.model.XViewerColumn;
 import org.eclipse.nebula.widgets.xviewer.util.XViewerException;
@@ -74,6 +79,9 @@ public class ViewSelectedCellDataAction extends Action {
 
          if (xCol instanceof IXViewerValueColumn) {
             data = ((IXViewerValueColumn) xCol).getColumnText(treeItem.getData(), xCol, columnNum);
+         } else if (xCol instanceof IXViewerPreComputedColumn) {
+            data = XViewerLabelProvider.getPrecomputedText(treeItem.getData(), xCol, (IXViewerPreComputedColumn) xCol,
+               false);
          } else {
             data =
                ((IXViewerLabelProvider) xViewer.getLabelProvider()).getColumnText(treeItem.getData(), xCol, columnNum);

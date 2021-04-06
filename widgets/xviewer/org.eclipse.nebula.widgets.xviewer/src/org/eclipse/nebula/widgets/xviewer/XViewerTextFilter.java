@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2004, 2007 Boeing.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Boeing - initial API and implementation
@@ -64,10 +67,16 @@ public class XViewerTextFilter extends ViewerFilter {
       for (String colId : xViewer.getCustomizeMgr().getColumnFilterData().getColIds()) {
          String colFilterText = xViewer.getCustomizeMgr().getColumnFilterText(colId);
          if (colFilterText != null) {
-            boolean isNot = colFilterText.startsWith("!");
+            boolean isWrapped = (colFilterText.matches("^\\(.*\\)$"));
+            boolean isNot;
+            if (isWrapped) {
+               colFilterText = colFilterText.substring(1, colFilterText.length() - 1);
+            }
+            isNot = colFilterText.startsWith("!");
             if (isNot) {
                colFilterText = colFilterText.replaceFirst("^!", "");
             }
+            colFilterText = Pattern.quote(colFilterText);
             // Handle != case  ^(.(?<!big))*$
             if (isNot) {
                if (colFilterText.equals("")) {
@@ -82,8 +91,7 @@ public class XViewerTextFilter extends ViewerFilter {
                if (colFilterText.equals("")) {
                   colIdToPattern.put(colId, EMPTY_STR_PATTERN);
                } else {
-                  colIdToPattern.put(colId, Pattern.compile(
-                     xViewer.getCustomizeMgr().getColumnFilterData().getFilterText(colId), Pattern.CASE_INSENSITIVE));
+                  colIdToPattern.put(colId, Pattern.compile(colFilterText, Pattern.CASE_INSENSITIVE));
                }
             }
          }

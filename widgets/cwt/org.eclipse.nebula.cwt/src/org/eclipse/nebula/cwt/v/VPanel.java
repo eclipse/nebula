@@ -1,9 +1,12 @@
 /****************************************************************************
 * Copyright (c) 2008, 2009 Jeremy Dowdall
-* All rights reserved. This program and the accompanying materials
-* are made available under the terms of the Eclipse Public License v1.0
-* which accompanies this distribution, and is available at
-* http://www.eclipse.org/legal/epl-v10.html
+*
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
 *
 * Contributors:
 *    Jeremy Dowdall <jeremyd@aspencloud.com> - initial API and implementation
@@ -46,9 +49,6 @@ public class VPanel extends VControl {
 				case SWT.Dispose:
 					dispose(false);
 					break;
-//				case SWT.FocusIn:
-//					setFocus();
-//					break;
 				case SWT.Paint:
 					paintControl(event);
 					break;
@@ -300,19 +300,13 @@ public class VPanel extends VControl {
 	
 	public void setWidget(Composite widget) {
 		this.widget = widget;
-		this.widget.addListener(SWT.KeyDown, new Listener() {
-			public void handleEvent(Event event) {
-			}
-		});
-//		this.widget.addListener(SWT.FocusIn, new Listener() {
-//			public void handleEvent(Event event) {
-//				VPanel.this.getWidget().setFocus();
-//			}
-//		});
 	}
 
 	public void sort(Comparator<VControl> comparator) {
 		Collections.sort(children, comparator);
 	}
+	
+	public void updateColorsAndFont() {
+	} 
 	
 }

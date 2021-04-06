@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 package org.eclipse.nebula.visualization.xygraph.linearscale;
 
@@ -474,17 +477,7 @@ public abstract class AbstractScale extends Figure {
 
 		// calculate the default decimal format
 		if (formatPattern == null || formatPattern == default_decimal_format) {
-			double f = LargeNumberUtils.maxMagnitude(min, max);
-			double mantissa = Math.abs(max / f - min / f);
-			if (mantissa > 0.1*f) {
-				default_decimal_format = "############.##";
-			} else {
-				default_decimal_format = "##.##";
-				while (mantissa < f) {
-					mantissa *= 10.0;
-					default_decimal_format += "#";
-				}
-			}
+			default_decimal_format = createDefaultDecimalFormat(min, max);
 			formatPattern = default_decimal_format;
 			autoFormat = true;
 		}
@@ -501,6 +494,22 @@ public abstract class AbstractScale extends Figure {
 		setDirty(true);
 		revalidate();
 		repaint();
+	}
+
+	static String createDefaultDecimalFormat(double min, double max) {
+		double f = LargeNumberUtils.maxMagnitude(min, max);
+		double mantissa = Math.abs(max / f - min / f);
+		String decimalFormat;
+		if (mantissa > 0.1/f) {
+			decimalFormat = "############.##";
+		} else {
+			decimalFormat = "##.##";
+			while (mantissa < 1./f) {
+				mantissa *= 10.0;
+				decimalFormat += "#";
+			}
+		}
+		return decimalFormat;
 	}
 
 	protected void internalSetRange(Range range) {

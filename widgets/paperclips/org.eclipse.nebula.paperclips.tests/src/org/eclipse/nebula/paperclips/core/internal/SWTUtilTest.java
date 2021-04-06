@@ -1,22 +1,26 @@
 /*
  * Copyright (c) 2007-2008 Matthew Hall and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
  * 
+ * SPDX-License-Identifier: EPL-2.0
+ *
  * Contributors:
  *     Matthew Hall - initial API and implementation
  */
 package org.eclipse.nebula.paperclips.core.internal;
-
-import junit.framework.TestCase;
 
 import org.eclipse.nebula.paperclips.core.internal.util.SWTUtil;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.RGB;
 
+import junit.framework.TestCase;
+
+@SuppressWarnings("restriction")
 public class SWTUtilTest extends TestCase {
 	public void testDeriveRGB() {
 		assertEquals(new RGB(255, 0, 0), SWTUtil.deriveRGB(0xFF0000));
@@ -26,12 +30,12 @@ public class SWTUtilTest extends TestCase {
 
 	public void testEqualImageData_opaque() {
 		ImageData imageData = createImageData(100, 0, (byte) 0xFF);
-		assertTrue(SWTUtil.equal(imageData,
-				createImageData(100, 0, (byte) 0xFF)));
-		assertFalse(SWTUtil.equal(imageData, createImageData(101, 0,
-				(byte) 0xFF)));
-		assertFalse(SWTUtil.equal(imageData, createImageData(100, 1,
-				(byte) 0xFF)));
+		assertTrue(
+				SWTUtil.equal(imageData, createImageData(100, 0, (byte) 0xFF)));
+		assertFalse(
+				SWTUtil.equal(imageData, createImageData(101, 0, (byte) 0xFF)));
+		assertFalse(
+				SWTUtil.equal(imageData, createImageData(100, 1, (byte) 0xFF)));
 	}
 
 	public void testEqualImageData_transparent() {
@@ -44,8 +48,8 @@ public class SWTUtilTest extends TestCase {
 	}
 
 	private ImageData createImageData(int size, int color, byte alpha) {
-		ImageData imageData = new ImageData(size, size, 24, new PaletteData(
-				0xFF0000, 0x00FF00, 0x0000FF));
+		ImageData imageData = new ImageData(size, size, 24,
+				new PaletteData(0xFF0000, 0x00FF00, 0x0000FF));
 		int[] pixels = new int[size];
 		byte[] alphas = new byte[size];
 		for (int x = 0; x < size; x++) {

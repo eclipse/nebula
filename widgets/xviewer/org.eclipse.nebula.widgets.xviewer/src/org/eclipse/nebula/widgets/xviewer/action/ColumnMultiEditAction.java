@@ -14,17 +14,17 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.nebula.widgets.xviewer.XViewer;
 import org.eclipse.nebula.widgets.xviewer.XViewerColumnSorter;
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
+import org.eclipse.nebula.widgets.xviewer.util.internal.ArrayTreeContentProvider;
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerLib;
-import org.eclipse.nebula.widgets.xviewer.util.internal.dialog.ListDialogSortable;
+import org.eclipse.nebula.widgets.xviewer.util.internal.dialog.ListDialogSortableFiltered;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.dialogs.PatternFilter;
 
 /**
  * @author Megumi Telles
@@ -56,17 +56,16 @@ public class ColumnMultiEditAction extends Action {
          XViewerLib.popup(XViewerText.get("error"), XViewerText.get("error.no_columns.multi_editable")); //$NON-NLS-1$ //$NON-NLS-2$
          return;
       }
-      ListDialogSortable ld = new ListDialogSortable(new XViewerColumnSorter(), xViewer.getTree().getShell());
-      ld.setMessage(XViewerText.get("ColumnMultiEditAction.title")); //$NON-NLS-1$
+      String title = XViewerText.get("ColumnMultiEditAction.title"); //$NON-NLS-1$
+      ListDialogSortableFiltered ld = new ListDialogSortableFiltered(title, "Select an attribute.", new PatternFilter(),
+         new ArrayTreeContentProvider(), treeColumnLabelProvider, new XViewerColumnSorter());
       ld.setInput(editableColumns);
-      ld.setLabelProvider(treeColumnLabelProvider);
-      ld.setContentProvider(new ArrayContentProvider());
-      ld.setTitle(XViewerText.get("ColumnMultiEditAction.title")); //$NON-NLS-1$
       int result = ld.open();
       if (result != 0) {
          return;
       }
-      xViewer.handleColumnMultiEdit((TreeColumn) ld.getResult()[0], selectedTreeItems);
+      TreeColumn sel = ld.getSelectedFirst();
+      xViewer.handleColumnMultiEdit(sel, selectedTreeItems);
    }
 
    static LabelProvider treeColumnLabelProvider = new LabelProvider() {

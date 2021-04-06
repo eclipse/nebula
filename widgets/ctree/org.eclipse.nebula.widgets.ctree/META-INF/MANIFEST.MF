@@ -4,6 +4,7 @@ Bundle-Name: Nebula CTree Plug-in
 Bundle-SymbolicName: org.eclipse.nebula.widgets.ctree
 Bundle-Version: 0.8.0
 Bundle-Vendor: Jeremy Dowdall <jeremyd@aspencloud.com>
-Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.swt
 Export-Package: org.eclipse.nebula.widgets.ctree
+Automatic-Module-Name: org.eclipse.nebula.widgets.ctree

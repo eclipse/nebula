@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2010, 2017 Oak Ridge National Laboratory and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Xihui Chen - initial API and implementation
@@ -173,6 +176,16 @@ public class Annotation extends Figure implements IAxisListener, IDataProviderLi
 		updateToDefaultPosition();
 		xAxis.addListener(this);
 		yAxis.addListener(this);
+	}
+
+	public void remove() {
+		if (listeners != null) {
+			listeners.clear();
+			listeners = null;
+		}
+		if (getParent()!=null) getParent().remove(this);
+		xAxis.removeListener(this);
+		yAxis.removeListener(this);
 	}
 
 	public synchronized void addAnnotationListener(IAnnotationListener listener) {

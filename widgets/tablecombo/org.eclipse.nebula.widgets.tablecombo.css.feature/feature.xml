@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.nebula.widgets.tablecombo.css.feature"
+      label="Nebula TableCombo CSS Feature"
+      version="1.2.0.qualifier"
+      provider-name="Eclipse Nebula">
+
+   <description url="https://www.eclipse.org/nebula">
+      TableCombo CSS Feature
+   </description>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <requires>
+      <import feature="org.eclipse.nebula.widgets.tablecombo.feature" version="1.2.0.qualifier"/>
+   </requires>
+
+   <plugin
+         id="org.eclipse.nebula.widgets.tablecombo.css"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.nebula.widgets.tablecombo.css.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2004, 2007 Boeing.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     Boeing - initial API and implementation
@@ -17,8 +20,6 @@ import java.util.Set;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
 import org.eclipse.nebula.widgets.xviewer.util.internal.PatternFilter;
@@ -115,12 +116,7 @@ public class XCheckFilteredTreeDialog extends MessageDialog {
       GridData gd = new GridData(GridData.FILL_BOTH);
       gd.heightHint = 400;
       treeViewer.getViewer().getTree().setLayoutData(gd);
-      treeViewer.getViewer().addSelectionChangedListener(new ISelectionChangedListener() {
-         @Override
-         public void selectionChanged(SelectionChangedEvent event) {
-            updateStatusLabel();
-         }
-      });
+      treeViewer.getViewer().addSelectionChangedListener(event -> updateStatusLabel());
       if (input != null) {
          treeViewer.getViewer().setInput(input);
       }

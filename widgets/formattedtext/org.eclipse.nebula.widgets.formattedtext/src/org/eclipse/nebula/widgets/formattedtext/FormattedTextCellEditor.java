@@ -1,8 +1,6 @@
 package org.eclipse.nebula.widgets.formattedtext;
 
 import org.eclipse.jface.viewers.TextCellEditor;
-import org.eclipse.nebula.widgets.formattedtext.FormattedText;
-import org.eclipse.nebula.widgets.formattedtext.ITextFormatter;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
@@ -36,8 +34,7 @@ public class FormattedTextCellEditor extends TextCellEditor {
 		super(parent, style);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
 	 * @see org.eclipse.jface.viewers.TextCellEditor#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createControl(Composite parent) {
@@ -46,16 +43,14 @@ public class FormattedTextCellEditor extends TextCellEditor {
 		return text;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
 	 * @see org.eclipse.jface.viewers.TextCellEditor#doGetValue()
 	 */
 	protected Object doGetValue() {
 		return formattedText.getValue();
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
 	 * @see org.eclipse.jface.viewers.TextCellEditor#doSetValue(java.lang.Object)
 	 */
 	protected void doSetValue(Object value) {
@@ -64,7 +59,7 @@ public class FormattedTextCellEditor extends TextCellEditor {
 
 	/**
 	 * Returns the FormattedText object used by this cell editor.
-	 * 
+	 *
 	 * @return FormattedText object
 	 */
 	public FormattedText getFormattedText() {
@@ -73,10 +68,10 @@ public class FormattedTextCellEditor extends TextCellEditor {
 
 	/**
 	 * Sets the formatter that this cell editor must use to edit the value.
-	 * 
+	 *
 	 * @param formatter the formatter
 	 */
-  public void setFormatter(ITextFormatter formatter) {
+	public void setFormatter(ITextFormatter formatter) {
 		formattedText.setFormatter(formatter);
 	}
 }

@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2006-2009 Nicolas Richeton.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors :
  *    Nicolas Richeton (nicolas.richeton@gmail.com) - initial API and implementation
@@ -17,17 +20,6 @@ import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.TreeListener;
@@ -47,7 +39,7 @@ import org.eclipse.swt.widgets.TypedListener;
  * <p>
  * SWT Widget that displays an image gallery<br/>
  * see http://www.eclipse.org/nebula/widgets/gallery/gallery.php<br/>
- * This widget requires jdk-1.4+
+ * This widget requires jdk-1.8+
  * </p>
  * <p>
  * Style <code>VIRTUAL</code> is used to create a <code>Gallery</code> whose
@@ -595,34 +587,24 @@ public class Gallery extends Canvas {
 	 * Add internal dispose listeners to this gallery.
 	 */
 	private void _addDisposeListeners() {
-		this.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				onDispose();
-			}
-		});
+		this.addListener(SWT.Dispose, event -> onDispose());
 	}
 
 	/**
 	 * Add internal paint listeners to this gallery.
 	 */
 	private void _addPaintListeners() {
-		addPaintListener(new PaintListener() {
-			public void paintControl(PaintEvent event) {
-				onPaint(event.gc);
-			}
-		});
+		addListener(SWT.Paint, event -> onPaint(event.gc));
 	}
 
 	/**
 	 * Add internal resize listeners to this gallery.
 	 */
 	private void _addResizeListeners() {
-		addControlListener(new ControlAdapter() {
-			public void controlResized(ControlEvent event) {
-				updateStructuralValues(null, true);
-				updateScrollBarsProperties();
-				redraw();
-			}
+		addListener(SWT.Resize, event -> {
+			updateStructuralValues(null, true);
+			updateScrollBarsProperties();
+			redraw();
 		});
 	}
 
@@ -633,12 +615,9 @@ public class Gallery extends Canvas {
 		// Vertical bar
 		ScrollBar verticalBar = getVerticalBar();
 		if (verticalBar != null) {
-			verticalBar.addSelectionListener(new SelectionAdapter() {
-
-				public void widgetSelected(SelectionEvent event) {
-					if (vertical)
-						scrollVertical();
-				}
+			verticalBar.addListener(SWT.Selection, event -> {
+				if (vertical)
+					scrollVertical();
 			});
 		}
 
@@ -646,59 +625,47 @@ public class Gallery extends Canvas {
 
 		ScrollBar horizontalBar = getHorizontalBar();
 		if (horizontalBar != null) {
-			horizontalBar.addSelectionListener(new SelectionAdapter() {
-
-				public void widgetSelected(SelectionEvent event) {
-					if (!vertical)
-						scrollHorizontal();
-				}
+			horizontalBar.addListener(SWT.Selection, event -> {
+				if (!vertical)
+					scrollHorizontal();
 			});
 		}
 
 	}
 
 	private void _addKeyListeners() {
-		this.addKeyListener(new KeyListener() {
+		this.addListener(SWT.KeyDown, e -> {
+			switch (e.keyCode) {
+			case SWT.ARROW_LEFT:
+			case SWT.ARROW_RIGHT:
+			case SWT.ARROW_UP:
+			case SWT.ARROW_DOWN:
+			case SWT.PAGE_UP:
+			case SWT.PAGE_DOWN:
+			case SWT.HOME:
+			case SWT.END:
+				GalleryItem newItem = groupRenderer.getNextItem(lastSingleClick,
+						e.keyCode);
 
-			public void keyPressed(KeyEvent e) {
-
-				switch (e.keyCode) {
-				case SWT.ARROW_LEFT:
-				case SWT.ARROW_RIGHT:
-				case SWT.ARROW_UP:
-				case SWT.ARROW_DOWN:
-				case SWT.PAGE_UP:
-				case SWT.PAGE_DOWN:
-				case SWT.HOME:
-				case SWT.END:
-					GalleryItem newItem = groupRenderer
-							.getNextItem(lastSingleClick, e.keyCode);
-
-					if (newItem != null) {
-						_deselectAll(false);
-						setSelected(newItem, true, true);
-						lastSingleClick = newItem;
-						_showItem(newItem);
-						redraw();
-					}
-
-					break;
-				case SWT.CR:
-					GalleryItem[] selection = getSelection();
-					GalleryItem item = null;
-					if (selection != null && selection.length > 0) {
-						item = selection[0];
-					}
-
-					notifySelectionListeners(item, 0, true);
-					break;
+				if (newItem != null) {
+					_deselectAll(false);
+					setSelected(newItem, true, true);
+					lastSingleClick = newItem;
+					_showItem(newItem);
+					redraw();
 				}
-			}
 
-			public void keyReleased(KeyEvent e) {
-				// Nothing yet.
-			}
+				break;
+			case SWT.CR:
+				GalleryItem[] selection = getSelection();
+				GalleryItem item = null;
+				if (selection != null && selection.length > 0) {
+					item = selection[0];
+				}
 
+				notifySelectionListeners(item, 0, true);
+				break;
+			}
 		});
 	}
 
@@ -750,21 +717,9 @@ public class Gallery extends Canvas {
 	 * Add internal mouse listeners to this gallery.
 	 */
 	private void _addMouseListeners() {
-		addMouseListener(new MouseListener() {
-
-			public void mouseDoubleClick(MouseEvent e) {
-				onMouseDoubleClick(e);
-			}
-
-			public void mouseDown(MouseEvent e) {
-				onMouseDown(e);
-			}
-
-			public void mouseUp(MouseEvent e) {
-				onMouseUp(e);
-			}
-
-		});
+		addListener(SWT.MouseDoubleClick, event -> onMouseDoubleClick(event));
+		addListener(SWT.MouseDown, event -> onMouseDown(event));
+		addListener(SWT.MouseUp, event -> onMouseUp(event));
 	}
 
 	private void select(int from, int to) {
@@ -1021,7 +976,7 @@ public class Gallery extends Canvas {
 			notifySelectionListeners(null, -1, false);
 	}
 
-	void onMouseDoubleClick(MouseEvent e) {
+	void onMouseDoubleClick(Event e) {
 		if (DEBUG)
 			System.out.println("Mouse Double Click"); //$NON-NLS-1$
 
@@ -1032,7 +987,7 @@ public class Gallery extends Canvas {
 		mouseClickHandled = true;
 	}
 
-	void onMouseUp(MouseEvent e) {
+	void onMouseUp(Event e) {
 		if (DEBUG)
 			System.out.println("onMouseUp"); //$NON-NLS-1$
 
@@ -1075,7 +1030,7 @@ public class Gallery extends Canvas {
 
 	}
 
-	void onMouseDown(MouseEvent e) {
+	void onMouseDown(Event e) {
 		if (DEBUG)
 			System.out.println("Mouse down "); //$NON-NLS-1$
 
@@ -1110,8 +1065,8 @@ public class Gallery extends Canvas {
 		}
 	}
 
-	private void onMouseHandleLeftMod1(MouseEvent e, GalleryItem item,
-			boolean down, boolean up) {
+	private void onMouseHandleLeftMod1(Event e, GalleryItem item, boolean down,
+			boolean up) {
 		if (up) {
 			// if (lastSingleClick != null) {
 			if (item != null) {
@@ -1125,8 +1080,8 @@ public class Gallery extends Canvas {
 		}
 	}
 
-	private void onMouseHandleLeftShift(MouseEvent e, GalleryItem item,
-			boolean down, boolean up) {
+	private void onMouseHandleLeftShift(Event e, GalleryItem item, boolean down,
+			boolean up) {
 		if (up) {
 			if (lastSingleClick != null) {
 				_deselectAll(false);
@@ -1139,7 +1094,7 @@ public class Gallery extends Canvas {
 		}
 	}
 
-	void onMouseHandleLeft(MouseEvent e, GalleryItem item, boolean down,
+	void onMouseHandleLeft(Event e, GalleryItem item, boolean down,
 			boolean up) {
 		if (down) {
 			if (!isSelected(item)) {
@@ -1177,7 +1132,7 @@ public class Gallery extends Canvas {
 	 * @param down
 	 * @param up
 	 */
-	void onMouseHandleRight(MouseEvent e, GalleryItem item, boolean down,
+	void onMouseHandleRight(Event e, GalleryItem item, boolean down,
 			boolean up) {
 		if (down) {
 			if (DEBUG)
@@ -1272,15 +1227,11 @@ public class Gallery extends Canvas {
 		}
 	}
 
-	RedrawTimer redrawTimer = new RedrawTimer();
-
-	protected class RedrawTimer implements Runnable {
-		public void run() {
-			if (!isDisposed()) {
-				redraw();
-			}
+	Runnable redrawTimer = () -> {
+		if (!isDisposed()) {
+			redraw();
 		}
-	}
+	};
 
 	private int[] getVisibleItems(Rectangle clipping) {
 
@@ -1293,7 +1244,7 @@ public class Gallery extends Canvas {
 		int end = vertical ? (clipping.y + clipping.height + translate)
 				: (clipping.x + clipping.width + translate);
 
-		ArrayList al = new ArrayList();
+		ArrayList<Integer> al = new ArrayList<>();
 		int index = 0;
 		GalleryItem item = null;
 		while (index < items.length) {
@@ -1608,11 +1559,6 @@ public class Gallery extends Canvas {
 					this.groupRenderer.layout(null, item);
 					currentHeight += item.width;
 				}
-				// Unused ?
-				// Point s = this.getSize(item.hCount, item.vCount, itemSizeX,
-				// itemSizeY, userMargin, realMargin);
-
-				// item.height = s.y;
 			}
 
 		}
@@ -1795,7 +1741,7 @@ public class Gallery extends Canvas {
 
 			if (parent.items == null) {
 				return null;
-			} else {
+			} else if (index < parent.items.length) {
 				return parent.items[index];
 			}
 		}
@@ -1832,7 +1778,9 @@ public class Gallery extends Canvas {
 
 		if (index < getItemCount()) {
 			updateItem(null, index, create);
-			return items[index];
+			if (index < items.length) {
+				return items[index];
+			}
 		}
 
 		return null;
@@ -1846,7 +1794,7 @@ public class Gallery extends Canvas {
 	 *            The original MouseEvent
 	 * @return true if Gallery should continue standard mouse click handling
 	 */
-	protected boolean _mouseDown(MouseEvent event) {
+	protected boolean _mouseDown(Event event) {
 
 		if (DEBUG)
 			System.out.println("getitem " + event.x + " " + event.y); //$NON-NLS-1$//$NON-NLS-2$
@@ -1937,19 +1885,6 @@ public class Gallery extends Canvas {
 		checkWidget();
 		return _getGroup(coords);
 	}
-
-	// TODO: Not used ATM
-	// private void clear() {
-	// checkWidget();
-	// if (virtual) {
-	// setItemCount(0);
-	// } else {
-	// items = null;
-	// }
-	//
-	// updateStructuralValues(true);
-	// updateScrollBarsProperties();
-	// }
 
 	/**
 	 * Clear all Gallery items.<br/>
@@ -2166,9 +2101,7 @@ public class Gallery extends Canvas {
 		this.useControlColors = useControlColors;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.swt.widgets.Control#getBackground()
 	 */
 	public Color getBackground() {
@@ -2208,9 +2141,7 @@ public class Gallery extends Canvas {
 				: getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.swt.widgets.Control#getForeground()
 	 */
 	public Color getForeground() {
@@ -2251,12 +2182,9 @@ public class Gallery extends Canvas {
 				: getDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.swt.widgets.Control#setBackground(org.eclipse.swt.graphics
-	 * .Color)
+	/**
+	 * @see org.eclipse.swt.widgets.Control#setBackground(org.eclipse.swt.graphics
+	 *      .Color)
 	 */
 	public void setBackground(Color color) {
 		// Cache color locally
@@ -2269,12 +2197,9 @@ public class Gallery extends Canvas {
 		super.setBackground(color);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.swt.widgets.Control#setForeground(org.eclipse.swt.graphics
-	 * .Color)
+	/**
+	 * @see org.eclipse.swt.widgets.Control#setForeground(org.eclipse.swt.graphics
+	 *      .Color)
 	 */
 	public void setForeground(Color color) {
 		// Cache color locally
@@ -2407,16 +2332,11 @@ public class Gallery extends Canvas {
 	}
 
 	protected void _remove(int index) {
-		// if (!virtual) {
 		if (isSelected(items[index])) {
 			setSelected(items[index], false, false);
 		}
 
 		this.items = (GalleryItem[]) this._arrayRemoveItem(this.items, index);
-
-		// if( virtual)
-		// itemCount--;
-		// }
 	}
 
 	protected void _remove(GalleryItem parent, int index) {
