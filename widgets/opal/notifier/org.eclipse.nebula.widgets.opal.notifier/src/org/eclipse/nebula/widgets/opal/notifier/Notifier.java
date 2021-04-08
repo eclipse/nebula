@@ -46,7 +46,7 @@ public class Notifier {
 	 * will disappear after 4.5 s
 	 *
 	 * @param title the title of the popup window
-	 * @param text the text of the notification
+	 * @param text  the text of the notification
 	 *
 	 */
 	public static void notify(final String title, final String text) {
@@ -58,9 +58,9 @@ public class Notifier {
 	 * will disappear after 4.5 s
 	 *
 	 * @param image the image to display (if <code>null</code>, a default image is
-	 *            displayed)
+	 *              displayed)
 	 * @param title the title of the popup window
-	 * @param text the text of the notification
+	 * @param text  the text of the notification
 	 *
 	 */
 	public static void notify(final Image image, final String title, final String text) {
@@ -73,9 +73,9 @@ public class Notifier {
 	 * will disappear after 4.5 s
 	 *
 	 * @param title the title of the popup window
-	 * @param text the text of the notification
+	 * @param text  the text of the notification
 	 * @param theme the graphical theme. If <code>null</code>, the yellow theme is
-	 *            used
+	 *              used
 	 *
 	 * @see NotifierTheme
 	 */
@@ -88,29 +88,31 @@ public class Notifier {
 	 * will disappear after 4.5 s
 	 *
 	 * @param image the image to display (if <code>null</code>, a default image is
-	 *            displayed)
+	 *              displayed)
 	 * @param title the title of the popup window
-	 * @param text the text of the notification
+	 * @param text  the text of the notification
 	 * @param theme the graphical theme. If <code>null</code>, the yellow theme is
-	 *            used
+	 *              used
 	 *
 	 * @see NotifierTheme
 	 */
 	public static void notify(final Image image, final String title, final String text, final NotifierTheme theme) {
-		final Shell shell = createNotificationWindow(image, title, text, NotifierColorsFactory.getColorsForTheme(theme));
+		final Shell shell = createNotificationWindow(image, title, text,
+				NotifierColorsFactory.getColorsForTheme(theme));
 		makeShellAppears(shell);
 	}
 
 	/**
 	 * Creates a notification window
 	 *
-	 * @param image image. If <code>null</code>, a default image is used
-	 * @param title title, the title of the window
-	 * @param text text of the window
+	 * @param image  image. If <code>null</code>, a default image is used
+	 * @param title  title, the title of the window
+	 * @param text   text of the window
 	 * @param colors color set
 	 * @return the notification window as a shell object
 	 */
-	protected static Shell createNotificationWindow(final Image image, final String title, final String text, final NotifierColors colors) {
+	protected static Shell createNotificationWindow(final Image image, final String title, final String text,
+			final NotifierColors colors) {
 		final Shell shell = new Shell(Display.getDefault().getActiveShell(), SWT.NO_TRIM | SWT.NO_FOCUS | SWT.ON_TOP);
 		shell.setLayout(new GridLayout(2, false));
 		shell.setBackgroundMode(SWT.INHERIT_FORCE);
@@ -133,8 +135,8 @@ public class Notifier {
 	/**
 	 * Creates the title part of the window
 	 *
-	 * @param shell the window
-	 * @param title the title
+	 * @param shell  the window
+	 * @param title  the title
 	 * @param colors the color set
 	 */
 	private static void createTitle(final Shell shell, final String title, final NotifierColors colors) {
@@ -175,8 +177,8 @@ public class Notifier {
 	/**
 	 * Creates the text part of the window
 	 *
-	 * @param shell the window
-	 * @param text the text
+	 * @param shell  the window
+	 * @param text   the text
 	 * @param colors the color set
 	 */
 	private static void createText(final Shell shell, final String text, final NotifierColors colors) {
@@ -202,7 +204,7 @@ public class Notifier {
 	/**
 	 * Creates the background of the window
 	 *
-	 * @param shell the window
+	 * @param shell  the window
 	 * @param colors the color set of the window
 	 */
 	private static void createBackground(final Shell shell, final NotifierColors colors) {
@@ -282,7 +284,7 @@ public class Notifier {
 
 	/**
 	 * @param shell shell that will disappear
-	 * @param fast if true, the fading is much faster
+	 * @param fast  if true, the fading is much faster
 	 * @return a runnable
 	 */
 	private static Runnable fadeOut(final Shell shell, final boolean fast) {
@@ -323,7 +325,8 @@ public class Notifier {
 			final int xUpperLeftCorner = rect.width - 21;
 			final int yUpperLeftCorner = 13;
 
-			if (event.x >= xUpperLeftCorner && event.x <= xUpperLeftCorner + 8 && event.y >= yUpperLeftCorner && event.y <= yUpperLeftCorner + 8) {
+			if (event.x >= xUpperLeftCorner && event.x <= xUpperLeftCorner + 8 && event.y >= yUpperLeftCorner
+					&& event.y <= yUpperLeftCorner + 8) {
 				Display.getDefault().timerExec(0, fadeOut(shell, true));
 			}
 		});
