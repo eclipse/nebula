@@ -42,7 +42,8 @@ public class NotifierSnippet {
 		final Button testerYellow = new Button(shell, SWT.PUSH);
 		testerYellow.setText("Push me [Yellow theme]!");
 		testerYellow.addListener(SWT.Selection, event -> {
-			Notifier.notify("New Mail message", "Laurent CARON (lcaron@...)<br/><br/>Test message #" + counter[0] + "...");
+			Notifier.notify("New Mail message",
+					"Laurent CARON (lcaron@...)<br/><br/>Test message #" + counter[0] + "...");
 			counter[0]++;
 		});
 
@@ -50,7 +51,9 @@ public class NotifierSnippet {
 		final Button testerBlue = new Button(shell, SWT.PUSH);
 		testerBlue.setText("Push me [Blue theme]!");
 		testerBlue.addListener(SWT.Selection, event -> {
-			Notifier.notify("New Mail message", "Laurent CARON (lcaron@...)<br/><br/>Test message #" + counter[0] + "...", NotifierTheme.BLUE_THEME);
+			Notifier.notify("New Mail message",
+					"Laurent CARON (lcaron@...)<br/><br/>Test message #" + counter[0] + "...",
+					NotifierTheme.BLUE_THEME);
 			counter[0]++;
 		});
 
@@ -58,7 +61,9 @@ public class NotifierSnippet {
 		final Button testerGrey = new Button(shell, SWT.PUSH);
 		testerGrey.setText("Push me [Gray theme]!");
 		testerGrey.addListener(SWT.Selection, event -> {
-			Notifier.notify("New Mail message", "Laurent CARON (lcaron@...)<br/><br/>Test message #" + counter[0] + "...", NotifierTheme.GRAY_THEME);
+			Notifier.notify("New Mail message",
+					"Laurent CARON (lcaron@...)<br/><br/>Test message #" + counter[0] + "...",
+					NotifierTheme.GRAY_THEME);
 			counter[0]++;
 		});
 
