@@ -5,7 +5,7 @@
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
@@ -18,6 +18,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.nebula.widgets.xviewer.Activator;
 import org.eclipse.nebula.widgets.xviewer.IXViewerLabelProvider;
+import org.eclipse.nebula.widgets.xviewer.IXViewerPreComputedColumn;
 import org.eclipse.nebula.widgets.xviewer.IXViewerValueColumn;
 import org.eclipse.nebula.widgets.xviewer.XViewer;
 import org.eclipse.nebula.widgets.xviewer.XViewerText;
@@ -77,6 +78,11 @@ public class ViewSelectedCellDataAction extends Action {
 
          if (xCol instanceof IXViewerValueColumn) {
             data = ((IXViewerValueColumn) xCol).getColumnText(treeItem.getData(), xCol, columnNum);
+         } else if (xCol instanceof IXViewerPreComputedColumn) {
+            IXViewerPreComputedColumn preComputedColumn = (IXViewerPreComputedColumn) xCol;
+            Long key = preComputedColumn.getKey(treeItem.getData());
+            String cachedValue = xCol.getPreComputedValue(key);
+            data = ((IXViewerPreComputedColumn) xCol).getText(treeItem.getData(), key, cachedValue);
          } else {
             data =
                ((IXViewerLabelProvider) xViewer.getLabelProvider()).getColumnText(treeItem.getData(), xCol, columnNum);
