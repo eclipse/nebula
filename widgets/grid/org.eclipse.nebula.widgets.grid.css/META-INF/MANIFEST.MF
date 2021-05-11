@@ -11,5 +11,5 @@ Require-Bundle: org.eclipse.swt,
  org.eclipse.nebula.widgets.grid
 Export-Package: org.eclipse.nebula.widgets.grid.css
 Bundle-Vendor: Eclipse.org
-Import-Package: org.w3c.dom,
- org.w3c.dom.css
+Import-Package: org.w3c.dom;version="2.0.0",
+ org.w3c.dom.css;version="2.0.0"
