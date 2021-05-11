@@ -1051,7 +1051,7 @@ public class DualList extends Composite {
 			return;
 		}
 		final List<DLItem> selectedItems = new ArrayList<DLItem>();
-		final DLItem item = items.get(index);
+		final DLItem item = items.remove(index);
 		item.setLastAction(LAST_ACTION.SELECTION);
 		selectedItems.add(item);
 		selection.add(item);
@@ -1138,6 +1138,7 @@ public class DualList extends Composite {
 				fireSelectionEvent(item);
 			}
 		}
+		items.removeAll(selectedItems);
 		if (shouldFireEvents) {
 			fireSelectionChangeEvent(selectedItems);
 		}
