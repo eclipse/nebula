@@ -121,7 +121,7 @@ public class GridColumn extends Item {
 	/**
 	 * Width of column.
 	 */
-	private int width = DEFAULT_WIDTH;
+	int width = DEFAULT_WIDTH;
 
 	/**
 	 * Sort style of column. Only used to draw indicator, does not actually sort
@@ -187,6 +187,7 @@ public class GridColumn extends Item {
 	private int minimumWidth = 0;
 
 	private String headerTooltip = null;
+	int index;
 
 	/**
 	 * Constructs a new instance of this class given its parent (which must be a
@@ -344,7 +345,7 @@ public class GridColumn extends Item {
 
 		cellRenderer.setCheck(check);
 		cellRenderer.setTree(tree);
-		cellRenderer.setColumn(parent.indexOf(this));
+		cellRenderer.setColumn(index);
 
 		if ((getStyle() & SWT.RIGHT) == SWT.RIGHT) {
 			cellRenderer.setAlignment(SWT.RIGHT);
@@ -658,7 +659,7 @@ public class GridColumn extends Item {
 		int newWidth = getHeaderRenderer().computeSize(gc, SWT.DEFAULT,
 				SWT.DEFAULT, this).x;
 
-		getCellRenderer().setColumn(parent.indexOf(this));
+		getCellRenderer().setColumn(index);
 		final boolean virtual = (getParent().getStyle() & SWT.VIRTUAL) != 0;
 		final int bottomIndex = getParent().getBottomIndex() + 1;
 		final int topIndex = getParent().getTopIndex();

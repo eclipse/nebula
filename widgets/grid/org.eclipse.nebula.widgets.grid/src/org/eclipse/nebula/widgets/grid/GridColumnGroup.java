@@ -177,7 +177,7 @@ public class GridColumnGroup extends Item
         }
 
         GridColumn lastCol = columns[columns.length - 1];
-        return parent.indexOf(lastCol) + 1;
+		return lastCol.index + 1;
     }
 
     void newColumn(GridColumn column, int index)
@@ -232,7 +232,8 @@ public class GridColumnGroup extends Item
     /**
      * {@inheritDoc}
      */
-    public void dispose()
+    @Override
+	public void dispose()
     {
         super.dispose();
 
@@ -329,7 +330,7 @@ public class GridColumnGroup extends Item
             {
                 if (!columns[j].isSummary())
                 {
-                    collapsedCols.add(new Integer(getParent().indexOf(columns[j])));
+					collapsedCols.add(columns[j].index);
                 }
             }
             Point[] selection = getParent().getCellSelection();
