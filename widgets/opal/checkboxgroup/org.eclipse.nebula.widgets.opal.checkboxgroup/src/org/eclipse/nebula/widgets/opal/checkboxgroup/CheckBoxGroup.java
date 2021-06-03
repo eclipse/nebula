@@ -21,6 +21,7 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Rectangle;
@@ -99,6 +100,7 @@ public class CheckBoxGroup extends Canvas implements PaintListener {
 		gdButton.horizontalIndent = 15;
 		button.setLayoutData(gdButton);
 		button.setSelection(true);
+		button.setBackground(getBackground());
 		button.pack();
 
 		button.addListener(SWT.Selection, e -> {
@@ -207,6 +209,17 @@ public class CheckBoxGroup extends Canvas implements PaintListener {
 	public void removeSelectionListener(final SelectionListener listener) {
 		checkWidget();
 		SelectionListenerUtil.removeSelectionListener(this, listener);
+	}
+
+	
+	
+	/** 
+	 * @see org.eclipse.swt.widgets.Control#setBackground(org.eclipse.swt.graphics.Color)
+	 */
+	@Override
+	public void setBackground(final Color color) {
+		super.setBackground(color);
+		button.setBackground(color);
 	}
 
 	/**
