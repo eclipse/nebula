@@ -25,6 +25,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
@@ -48,7 +49,19 @@ public class CTreeComboItem extends Item {
 	static final String DATA_ID = "org.eclipse.nebula.widgets.ctreecombo.CTreeComboItem";
 	private CTreeCombo parent;
 	private CTreeComboItem parentItem;
-	private List<CTreeComboItem> childItems = new ArrayList<CTreeComboItem>();
+	private List<CTreeComboItem> childItems = new ArrayList<>();
+	private ArrayList<Color> backgroundColors = new ArrayList<>();
+	private ArrayList<Color> foregroundColors = new ArrayList<>();
+	private ArrayList<Font> fonts = new ArrayList<>();
+	private ArrayList<Image> images = new ArrayList<>();
+	private ArrayList<String> texts = new ArrayList<>();
+	private ArrayList<Rectangle> bounds = new ArrayList<>();
+	private ArrayList<Rectangle> textbounds = new ArrayList<>();
+	private ArrayList<Rectangle> imageBounds = new ArrayList<>();
+	private Color foreground, background;
+	private Font font;
+	private Rectangle bound;
+
 	private TreeItem realTreeItem;
 
 	/**
@@ -260,8 +273,8 @@ public class CTreeComboItem extends Item {
 			this.parentItem.childItems.remove(this);
 		}
 
-		for (CTreeComboItem i : childItems) {
-			i.dispose();
+		for (CTreeComboItem child : childItems) {
+			child.dispose();
 		}
 	}
 
@@ -318,11 +331,7 @@ public class CTreeComboItem extends Item {
 	 */
 	@Override
 	public void setImage(Image image) {
-		checkWidget();
 		super.setImage(image);
-		if (checkRealItem()) {
-			realTreeItem.setImage(image);
-		}
 	}
 
 	/**
@@ -346,11 +355,7 @@ public class CTreeComboItem extends Item {
 	 */
 	@Override
 	public void setText(String string) {
-		checkWidget();
 		super.setText(string);
-		if (checkRealItem()) {
-			realTreeItem.setText(string);
-		}
 	}
 
 	/**
@@ -368,10 +373,10 @@ public class CTreeComboItem extends Item {
 	 */
 	public Rectangle getBounds(int index) {
 		checkWidget();
-		if (checkRealItem()) {
-			return realTreeItem.getBounds(index);
+		if (index < 0 || index > (bounds.size() - 1)) {
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 		}
-		return null;
+		return bounds.get(index);
 	}
 
 	/**
@@ -388,10 +393,7 @@ public class CTreeComboItem extends Item {
 	 */
 	public Rectangle getBounds() {
 		checkWidget();
-		if (checkRealItem()) {
-			return realTreeItem.getBounds();
-		}
-		return null;
+		return bound;
 	}
 
 	/**
@@ -411,6 +413,22 @@ public class CTreeComboItem extends Item {
 	}
 
 	/**
+	 * Returns the background color of the receiver.
+	 *
+	 * @return the background color
+	 *
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                </ul>
+	 */
+	public Color getBackground() {
+		checkWidget();
+		return background;
+	}
+
+	/**
 	 * Returns the background color at the given column index in the receiver.
 	 *
 	 * @param index the column index
@@ -424,10 +442,26 @@ public class CTreeComboItem extends Item {
 	 */
 	public Color getBackground(int index) {
 		checkWidget();
-		if (checkRealItem()) {
-			return realTreeItem.getBackground(index);
+		if (index < 0 || index > (backgroundColors.size() - 1)) {
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 		}
-		return null;
+		return backgroundColors.get(index);
+	}
+
+	/**
+	 * Returns the font that the receiver will use to paint textual information
+	 *
+	 * @return the receiver's font
+	 *
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                </ul>
+	 */
+	public Font getFont() {
+		checkWidget();
+		return font;
 	}
 
 	/**
@@ -445,10 +479,27 @@ public class CTreeComboItem extends Item {
 	 */
 	public Font getFont(int index) {
 		checkWidget();
-		if (checkRealItem()) {
-			return realTreeItem.getFont(index);
+		if (index < 0 || index > (fonts.size() - 1)) {
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 		}
-		return null;
+		return fonts.get(index);
+	}
+
+	/**
+	 *
+	 * Returns the foreground color of the receiver.
+	 *
+	 * @return the foreground color
+	 *
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 *                </ul>
+	 */
+	public Color getForeground() {
+		checkWidget();
+		return foreground;
 	}
 
 	/**
@@ -466,10 +517,10 @@ public class CTreeComboItem extends Item {
 	 */
 	public Color getForeground(int index) {
 		checkWidget();
-		if (checkRealItem()) {
-			return realTreeItem.getForeground(index);
+		if (index < 0 || index > (foregroundColors.size() - 1)) {
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 		}
-		return null;
+		return foregroundColors.get(index);
 	}
 
 	/**
@@ -487,10 +538,10 @@ public class CTreeComboItem extends Item {
 	 */
 	public Image getImage(int index) {
 		checkWidget();
-		if (checkRealItem()) {
-			return realTreeItem.getImage(index);
+		if (index < 0 || index > (images.size() - 1)) {
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 		}
-		return null;
+		return images.get(index);
 	}
 
 	/**
@@ -508,10 +559,10 @@ public class CTreeComboItem extends Item {
 	 */
 	public String getText(int index) {
 		checkWidget();
-		if (checkRealItem()) {
-			return realTreeItem.getText(index);
+		if (index < 0 || index > (texts.size() - 1)) {
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 		}
-		return null;
+		return texts.get(index);
 	}
 
 	/**
@@ -537,13 +588,27 @@ public class CTreeComboItem extends Item {
 	 */
 	public void setBackground(int index, Color color) {
 		checkWidget();
-		if (checkRealItem()) {
-			realTreeItem.setBackground(index, color);
+		if (color != null && color.isDisposed()) {
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 		}
+
+		ensureArraySizes(index);
+		backgroundColors.set(index, color);
+	}
+
+	private void ensureArraySizes(int index) {
+		backgroundColors.ensureCapacity(index);
+		foregroundColors.ensureCapacity(index);
+		fonts.ensureCapacity(index);
+		images.ensureCapacity(index);
+		texts.ensureCapacity(index);
+		bounds.ensureCapacity(index);
+		textbounds.ensureCapacity(index);
+		imageBounds.ensureCapacity(index);
 	}
 
 	/**
-	 * Sets the background color at in the receiver to the color specified by the argument, 
+	 * Sets the background color at in the receiver to the color specified by the argument,
 	 * or to the default system color for the item if the argument is null.
 	 *
 	 * @param color the new color (or null)
@@ -563,15 +628,15 @@ public class CTreeComboItem extends Item {
 	 */
 	public void setBackground(Color color) {
 		checkWidget();
-		if (checkRealItem()) {
-			realTreeItem.setBackground(color);
+		if (color != null && color.isDisposed()) {
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 		}
+		this.background = color;
 	}
 
-	
 	/**
 	 * Sets the font that the receiver will use to paint textual information
-	 * for the item to the font specified by the argument, or to the default 
+	 * for the item to the font specified by the argument, or to the default
 	 * font for that kind of control if the argument is null.
 	 *
 	 * @param font the new font (or null)
@@ -590,11 +655,9 @@ public class CTreeComboItem extends Item {
 	 */
 	public void setFont(Font font) {
 		checkWidget();
-		if (checkRealItem()) {
-			realTreeItem.setFont(font);
-		}
-	}	
-	
+		this.font = font;
+	}
+
 	/**
 	 * Sets the font that the receiver will use to paint textual information
 	 * for the specified cell in this item to the font specified by the
@@ -618,9 +681,11 @@ public class CTreeComboItem extends Item {
 	 */
 	public void setFont(int index, Font font) {
 		checkWidget();
-		if (checkRealItem()) {
-			realTreeItem.setFont(index, font);
+		if (font != null && font.isDisposed()) {
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 		}
+		ensureArraySizes(index);
+		fonts.set(index, font);
 	}
 
 	/**
@@ -643,13 +708,15 @@ public class CTreeComboItem extends Item {
 	 */
 	public void setForeground(int index, Color color) {
 		checkWidget();
-		if (checkRealItem()) {
-			realTreeItem.setForeground(index, color);
+		if (color != null && color.isDisposed()) {
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 		}
+		ensureArraySizes(index);
+		foregroundColors.set(index, color);
 	}
 
 	/**
-	 * Sets the foreground color in the receiver to the color specified by the argument, 
+	 * Sets the foreground color in the receiver to the color specified by the argument,
 	 * or to the default system color for the item if the argument is null.
 	 *
 	 * @param color the new color (or null)
@@ -666,11 +733,12 @@ public class CTreeComboItem extends Item {
 	 */
 	public void setForeground(Color color) {
 		checkWidget();
-		if (checkRealItem()) {
-			realTreeItem.setForeground(color);
+		if (color != null && color.isDisposed()) {
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 		}
-	}	
-	
+		this.foreground = color;
+	}
+
 	/**
 	 * Sets the receiver's image at a column.
 	 *
@@ -689,9 +757,11 @@ public class CTreeComboItem extends Item {
 	 */
 	public void setImage(int index, Image image) {
 		checkWidget();
-		if (checkRealItem()) {
-			realTreeItem.setImage(index, image);
+		if (image != null && image.isDisposed()) {
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 		}
+		ensureArraySizes(index);
+		images.set(index, image);
 	}
 
 	/**
@@ -716,9 +786,8 @@ public class CTreeComboItem extends Item {
 	 */
 	public void setText(int index, String string) {
 		checkWidget();
-		if (checkRealItem()) {
-			realTreeItem.setText(index, string);
-		}
+		ensureArraySizes(index);
+		texts.set(index, string == null ? "" : string);
 	}
 
 	/**
@@ -840,11 +909,10 @@ public class CTreeComboItem extends Item {
 	 */
 	public Rectangle getTextBounds(int index) {
 		checkWidget();
-		if (checkRealItem()) {
-			return realTreeItem.getBounds(index);
+		if (index < 0 || index > (textbounds.size() - 1)) {
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 		}
-
-		return null;
+		return textbounds.get(index);
 	}
 
 	/**
@@ -863,10 +931,10 @@ public class CTreeComboItem extends Item {
 	 */
 	public Rectangle getImageBounds(int index) {
 		checkWidget();
-		if (checkRealItem()) {
-			return realTreeItem.getImageBounds(index);
+		if (index < 0 || index > (imageBounds.size() - 1)) {
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 		}
-		return null;
+		return imageBounds.get(index);
 	}
 
 	/**
@@ -955,5 +1023,49 @@ public class CTreeComboItem extends Item {
 	public void clearAll(boolean all) {
 		checkWidget();
 		realTreeItem.clearAll(all);
+	}
+
+	public void buildRealTreeItem(Tree tree, int numberOfColumns) {
+		final TreeItem ti;
+		if (parentItem != null && parentItem.realTreeItem != null) {
+			ti = new TreeItem(parentItem.realTreeItem, getStyle());
+		} else {
+			ti = new TreeItem(tree, getStyle());
+		}
+
+		if (getImage() != null) {
+			ti.setImage(getImage());
+		}
+		if (getText() != null) {
+			ti.setText(getText());
+		}
+		if (getBackground() != null) {
+			ti.setBackground(getBackground());
+		}
+		if (getForeground() != null) {
+			ti.setForeground(getForeground());
+		}
+		if (getFont() != null) {
+			ti.setFont(getFont());
+		}
+		
+		for (int i = 0; i < numberOfColumns; i++) {
+			if (getFont(i) != null) {
+				ti.setFont(i, getFont(i));
+			}
+			if (getBackground(i) != null) {
+				ti.setBackground(i, getBackground(i));
+			}
+			if (getForeground(i) != null) {
+				ti.setForeground(i, getForeground(i));
+			}
+			if (getImage(i) != null) {
+				ti.setImage(i, getImage(i));
+			}
+			if (getText(i) != null) {
+				ti.setText(i, getText(i));
+			}
+		}
+		setRealTreeItem(ti);
 	}
 }
