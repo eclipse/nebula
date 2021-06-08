@@ -1308,12 +1308,13 @@ public class DualList extends Composite {
 			selectionTable.getColumn(1).setWidth(selectionTableSize - selectionTable.getColumn(0).getWidth());
 
 		} else {
-			itemsTable.getColumn(0).setWidth(itemsTableSize);
-			selectionTable.getColumn(0).setWidth(selectionTableSize);
+			itemsTable.getColumn(0).setWidth(0);
+			itemsTable.getColumn(1).setWidth(itemsTableSize);
+			
+			selectionTable.getColumn(0).setWidth(0);
+			selectionTable.getColumn(1).setWidth(selectionTableSize);
 		}
 
-		itemsTable.getColumn(0).pack();
-		selectionTable.getColumn(0).pack();
 	}
 
 	/**
@@ -1488,7 +1489,6 @@ public class DualList extends Composite {
 	 * @param listOfData list of data
 	 */
 	private void fillData(final Table table, final List<DLItem> listOfData) {
-		final boolean itemsContainImage = itemsContainImage();
 		for (final DLItem item : listOfData) {
 			final TableItem tableItem = new TableItem(table, SWT.NONE);
 			tableItem.setData(item);
@@ -1508,8 +1508,7 @@ public class DualList extends Composite {
 			if (item.getFont() != null) {
 				tableItem.setFont(item.getFont());
 			}
-			final int textColumn = itemsContainImage ? 1 : 0;
-			tableItem.setText(textColumn, item.getText());
+			tableItem.setText(1, item.getText()); 
 		}
 	}
 
