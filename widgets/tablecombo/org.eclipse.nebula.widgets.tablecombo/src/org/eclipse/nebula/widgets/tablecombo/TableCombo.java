@@ -86,6 +86,9 @@ import org.eclipse.swt.widgets.Widget;
  */
 
 public class TableCombo extends Composite {
+	
+	private static final boolean IS_GTK = SWT.getPlatform().equalsIgnoreCase("gtk");
+	
 	private static int newStyle;
 	private final boolean hasBorder;
 	private Shell popup;
@@ -768,7 +771,8 @@ public class TableCombo extends Composite {
 		}
 
 		if (itemCount <= visibleItemCount) {
-			if (table.getHorizontalBar() != null && !table.getHorizontalBar().isVisible()) {
+			// There is a bug on GTK so in this case do not reduce the item height
+			if (table.getHorizontalBar() != null && !table.getHorizontalBar().isVisible() && !IS_GTK) {
 				itemHeight -= table.getHorizontalBar().getSize().y;
 			}
 		}
