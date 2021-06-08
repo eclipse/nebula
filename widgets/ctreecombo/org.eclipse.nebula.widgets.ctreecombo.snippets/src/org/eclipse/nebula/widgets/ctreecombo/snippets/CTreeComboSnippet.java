@@ -230,6 +230,23 @@ public class CTreeComboSnippet {
 		// add listener
 		ctc.addSelectionListener(new ItemSelected(ctc, "Sample3"));
 
+		////////////////////////////////////////////////////////////////////////
+		// Sample #4
+		////////////////////////////////////////////////////////////////////////
+		// create label
+		label = new Label(group, SWT.NONE);
+		label.setText("Not readonly");
+
+		// create TableCombo
+		ctc = new CTreeCombo(group, SWT.BORDER);
+		ctc.setLayoutData(new GridData(200, SWT.DEFAULT));
+
+		// load the dataset.
+		loadSingleDatasetWithColorsAndFonts(ctc);
+
+		// add listener
+		ctc.addSelectionListener(new ItemSelected(ctc, "Sample4"));
+		
 		// open the shell.
 		shell.open();
 
