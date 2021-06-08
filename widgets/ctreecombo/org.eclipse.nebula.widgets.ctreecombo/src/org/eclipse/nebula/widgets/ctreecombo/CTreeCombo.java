@@ -510,11 +510,28 @@ public class CTreeCombo extends Composite {
 	}
 
 	private void createTreeItems(CTreeComboItem[] items) {
+		boolean isReadOnly = (getStyle() & SWT.READ_ONLY) != 0;
+
 		for (final CTreeComboItem item : items) {
-			final TreeItem ti = new TreeItem(tree, item.getStyle());
-			item.setRealTreeItem(ti);
+			if (!isReadOnly && !match(item) && item.getItemCount() == 0) {
+				continue;
+			}
+			item.buildRealTreeItem(tree, columns.size());
 			createTreeItems(item.getItems());
+			if (!isReadOnly && !match(item) && item.getRealTreeItem().getItemCount() == 0) {
+				item.getRealTreeItem().dispose();
+			}
 		}
+	}
+
+
+	private boolean match(final CTreeComboItem item) {
+		final String entry = text.getText().trim().toLowerCase();
+		if (entry.equals("") || item.getText().trim().equals("")) {
+			return true;
+		}
+
+		return item.getText().trim().toLowerCase().indexOf(entry) > -1;
 	}
 
 	/**
@@ -543,20 +560,20 @@ public class CTreeCombo extends Composite {
 			return;
 		}
 
+		CTreeComboItem selectionIndex = null;
 		if (getShell() != popup.getParent()) {
 			final TreeItem[] s = tree.getSelection();
-			CTreeComboItem selectionIndex = null;
-
 			if (s.length > 0) {
 				selectionIndex = (CTreeComboItem) s[0].getData(CTreeComboItem.DATA_ID);
 			}
-
-			tree.removeListener(SWT.Dispose, listener);
-			popup.dispose();
-			popup = null;
-			tree = null;
-			createPopup(items, selectionIndex);
 		}
+
+		// Rebuild the popup and filter data if the widget is not read-only (based on what is typed)
+		tree.removeListener(SWT.Dispose, listener);
+		popup.dispose();
+		popup = null;
+		tree = null;
+		createPopup(items, selectionIndex);
 
 		final TreeItem[] items = tree.getSelection();
 		if (items.length != 0) {
