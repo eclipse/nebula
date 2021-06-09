@@ -1432,15 +1432,24 @@ public class DualList extends Composite {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
 
-		final List<DLItem> temp = new ArrayList<DLItem>();
+		final List<DLItem> unselectedItems = new ArrayList<DLItem>();
+		final List<DLItem> selectedItems = new ArrayList<DLItem>();
 		for (final DLItem item : items) {
 			if (item == null) {
 				SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 			}
-			temp.add(item);
+			if (item.getLastAction() == LAST_ACTION.SELECTION) {
+				selectedItems.add(item);
+			} else {
+				unselectedItems.add(item);
+			}
 		}
 		this.items.clear();
-		this.items.addAll(temp);
+		this.items.addAll(unselectedItems);
+
+		this.selection.clear();
+		this.selection.addAll(selectedItems);
+
 		redrawTables();
 	}
 
