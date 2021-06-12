@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Laurent CARON
+ * Copyright (c) 2011-2021 Laurent CARON
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -62,6 +63,9 @@ public class DualList extends Composite {
 	private Table selectionTable;
 
 	private List<SelectionChangeListener> selectionChangeListeners;
+	private DLConfiguration configuration;
+	private Button buttonSelectAll, buttonMoveFirst, buttonSelect, buttonMoveUp, //
+			buttonDeselect, buttonMoveDown, buttonDeselectAll, buttonMoveLast;
 
 	/**
 	 * Constructs a new instance of this class given its parent and a style value
@@ -132,7 +136,7 @@ public class DualList extends Composite {
 	}
 
 	private void createButtonSelectAll() {
-		final Button buttonSelectAll = createButton(DOUBLE_RIGHT_IMAGE, true, GridData.END);
+		buttonSelectAll = createButton(DOUBLE_RIGHT_IMAGE, true, GridData.END);
 		buttonSelectAll.addListener(SWT.Selection, e -> {
 			selectAll();
 		});
@@ -146,49 +150,49 @@ public class DualList extends Composite {
 	}
 
 	private void createButtonMoveFirst() {
-		final Button buttonMoveFirst = createButton(DOUBLE_UP_IMAGE, true, GridData.END);
+		buttonMoveFirst = createButton(DOUBLE_UP_IMAGE, true, GridData.END);
 		buttonMoveFirst.addListener(SWT.Selection, e -> {
 			moveSelectionToFirstPosition();
 		});
 	}
 
 	private void createButtonSelect() {
-		final Button buttonSelect = createButton(ARROW_RIGHT_IMAGE, false, GridData.CENTER);
+		buttonSelect = createButton(ARROW_RIGHT_IMAGE, false, GridData.CENTER);
 		buttonSelect.addListener(SWT.Selection, e -> {
 			selectItem();
 		});
 	}
 
 	private void createButtonMoveUp() {
-		final Button buttonMoveUp = createButton(ARROW_UP_IMAGE, false, GridData.CENTER);
+		buttonMoveUp = createButton(ARROW_UP_IMAGE, false, GridData.CENTER);
 		buttonMoveUp.addListener(SWT.Selection, e -> {
 			moveUpItem();
 		});
 	}
 
 	private void createButtonDeselect() {
-		final Button buttonDeselect = createButton(ARROW_LEFT_IMAGE, false, GridData.CENTER);
+		buttonDeselect = createButton(ARROW_LEFT_IMAGE, false, GridData.CENTER);
 		buttonDeselect.addListener(SWT.Selection, e -> {
 			deselectItem();
 		});
 	}
 
 	private void createButtonMoveDown() {
-		final Button buttonMoveDown = createButton(ARROW_DOWN_IMAGE, false, GridData.CENTER);
+		buttonMoveDown = createButton(ARROW_DOWN_IMAGE, false, GridData.CENTER);
 		buttonMoveDown.addListener(SWT.Selection, e -> {
 			moveDownItem();
 		});
 	}
 
 	private void createButtonDeselectAll() {
-		final Button buttonDeselectAll = createButton(DOUBLE_LEFT_IMAGE, false, GridData.BEGINNING);
+		buttonDeselectAll = createButton(DOUBLE_LEFT_IMAGE, false, GridData.BEGINNING);
 		buttonDeselectAll.addListener(SWT.Selection, e -> {
 			deselectAll();
 		});
 	}
 
 	private void createButtonMoveLast() {
-		final Button buttonMoveLast = createButton(DOUBLE_DOWN_IMAGE, true, GridData.BEGINNING);
+		buttonMoveLast = createButton(DOUBLE_DOWN_IMAGE, true, GridData.BEGINNING);
 		buttonMoveLast.addListener(SWT.Selection, e -> {
 			moveSelectionToLastPosition();
 		});
@@ -1286,13 +1290,14 @@ public class DualList extends Composite {
 	@Override
 	public void setBounds(final int x, final int y, final int width, final int height) {
 		super.setBounds(x, y, width, height);
+		layout(true);
 		final boolean itemsContainImage = itemsContainImage();
 		final Point itemsTableDefaultSize = itemsTable.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		final Point selectionTableDefaultSize = selectionTable.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 
 		int itemsTableSize = itemsTable.getSize().x;
 		if (itemsTableDefaultSize.y > itemsTable.getSize().y) {
-			itemsTableSize -= itemsTable.getVerticalBar().getSize().x;
+			itemsTableSize -= itemsTable.getVerticalBar().getSize().x + 1;
 		}
 
 		int selectionTableSize = selectionTable.getSize().x;
@@ -1310,7 +1315,7 @@ public class DualList extends Composite {
 		} else {
 			itemsTable.getColumn(0).setWidth(0);
 			itemsTable.getColumn(1).setWidth(itemsTableSize);
-			
+
 			selectionTable.getColumn(0).setWidth(0);
 			selectionTable.getColumn(1).setWidth(selectionTableSize);
 		}
@@ -1427,7 +1432,6 @@ public class DualList extends Composite {
 	 */
 	public void setItems(final List<DLItem> items) {
 		checkWidget();
-		checkWidget();
 		if (items == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
@@ -1460,8 +1464,9 @@ public class DualList extends Composite {
 		setRedraw(false);
 		redrawTable(itemsTable, false);
 		redrawTable(selectionTable, true);
+		Rectangle bounds = getBounds();
+		this.setBounds(bounds.x, bounds.y, bounds.width, bounds.height);
 		setRedraw(true);
-		this.setBounds(getBounds());
 	}
 
 	/**
@@ -1473,7 +1478,7 @@ public class DualList extends Composite {
 	 */
 	private void redrawTable(final Table table, final boolean isSelected) {
 		clean(table);
-		fillData(table, isSelected ? selection : items);
+		fillData(table, isSelected);
 	}
 
 	/**
@@ -1497,7 +1502,9 @@ public class DualList extends Composite {
 	 * @param table table to be filled
 	 * @param listOfData list of data
 	 */
-	private void fillData(final Table table, final List<DLItem> listOfData) {
+	private void fillData(final Table table, final boolean isSelected) {
+		List<DLItem> listOfData = isSelected ? selection : items;
+		int counter = 0;
 		for (final DLItem item : listOfData) {
 			final TableItem tableItem = new TableItem(table, SWT.NONE);
 			tableItem.setData(item);
@@ -1517,7 +1524,15 @@ public class DualList extends Composite {
 			if (item.getFont() != null) {
 				tableItem.setFont(item.getFont());
 			}
-			tableItem.setText(1, item.getText()); 
+			tableItem.setText(1, item.getText());
+			if (configuration != null && item.getBackground() == null && counter % 2 == 0) {
+				if (isSelected) {
+					tableItem.setBackground(configuration.getSelectionOddLinesColor());
+				} else {
+					tableItem.setBackground(configuration.getItemsOddLinesColor());
+				}
+			}
+			counter++;
 		}
 	}
 
@@ -1704,4 +1719,149 @@ public class DualList extends Composite {
 			listener.widgetSelected(selectionChangeEvent);
 		}
 	}
+
+	/**
+	 * Returns the configuration of the receiver.
+	 *
+	 * @return the current configuration of the receiver
+	 *
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
+	 *                </ul>
+	 */
+	public DLConfiguration getConfiguration() {
+		checkWidget();
+		return configuration;
+	}
+
+	/**
+	 * Sets the receiver's configuration
+	 *
+	 * @param configuration the new configuration
+	 *
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
+	 *                </ul>
+	 */
+	public void setConfiguration(DLConfiguration configuration) {
+		checkWidget();
+		this.configuration = configuration;
+		applyNewConfiguration();
+	}
+
+	private void applyNewConfiguration() {
+		try {
+			setRedraw(true);
+			if (configuration == null) {
+				resetConfigurationToDefault();
+			} else {
+				modifyPanelsColors();
+				modifyTextAlignment();
+				modifyButtonImages();
+				modifyButtonVisibility();
+			}
+			redrawTables();
+		} finally {
+			setRedraw(true);
+		}
+	}
+
+	private void resetConfigurationToDefault() {
+		itemsTable.setBackground(null);
+		itemsTable.setForeground(null);
+		selectionTable.setBackground(null);
+		selectionTable.setForeground(null);
+
+		recreateTableColumns(itemsTable, SWT.LEFT);
+		recreateTableColumns(selectionTable, SWT.LEFT);
+
+		resetButton(buttonMoveLast, DOUBLE_DOWN_IMAGE);
+		resetButton(buttonMoveFirst, DOUBLE_UP_IMAGE);
+		resetButton(buttonDeselectAll, DOUBLE_LEFT_IMAGE);
+		resetButton(buttonSelectAll, DOUBLE_RIGHT_IMAGE);
+		resetButton(buttonMoveDown, ARROW_DOWN_IMAGE);
+		resetButton(buttonMoveUp, ARROW_UP_IMAGE);
+		resetButton(buttonDeselect, ARROW_LEFT_IMAGE);
+		resetButton(buttonSelect, ARROW_RIGHT_IMAGE);
+	}
+
+	private void resetButton(Button button, String fileName) {
+		final Image image = SWTGraphicUtil.createImageFromFile("images/" + fileName);
+		button.setImage(image);
+		SWTGraphicUtil.addDisposer(button, image);
+		button.setVisible(true);
+	}
+
+	private void modifyPanelsColors() {
+		if (configuration.getItemsBackgroundColor() != null) {
+			itemsTable.setBackground(configuration.getItemsBackgroundColor());
+		}
+		if (configuration.getItemsForegroundColor() != null) {
+			itemsTable.setForeground(configuration.getItemsForegroundColor());
+		}
+		if (configuration.getSelectionBackgroundColor() != null) {
+			selectionTable.setBackground(configuration.getSelectionBackgroundColor());
+		}
+		if (configuration.getSelectionForegroundColor() != null) {
+			selectionTable.setForeground(configuration.getSelectionForegroundColor());
+		}
+	}
+
+	private void modifyTextAlignment() {
+		recreateTableColumns(itemsTable, configuration.getItemsTextAlignment());
+		recreateTableColumns(selectionTable, configuration.getSelectionTextAlignment());
+	}
+
+	private void recreateTableColumns(Table table, int textAlignment) {
+		for (TableColumn tc : table.getColumns()) {
+			tc.dispose();
+		}
+		new TableColumn(table, SWT.CENTER);
+		new TableColumn(table, textAlignment);
+	}
+
+	private void modifyButtonImages() {
+		if (configuration.getDoubleDownImage() != null) {
+			buttonMoveLast.setImage(configuration.getDoubleDownImage());
+		}
+		if (configuration.getDoubleUpImage() != null) {
+			buttonMoveFirst.setImage(configuration.getDoubleUpImage());
+		}
+		if (configuration.getDoubleLeftImage() != null) {
+			buttonDeselectAll.setImage(configuration.getDoubleLeftImage());
+		}
+		if (configuration.getDoubleRightImage() != null) {
+			buttonSelectAll.setImage(configuration.getDoubleRightImage());
+		}
+		if (configuration.getDownImage() != null) {
+			buttonMoveDown.setImage(configuration.getDownImage());
+		}
+		if (configuration.getUpImage() != null) {
+			buttonMoveUp.setImage(configuration.getUpImage());
+		}
+		if (configuration.getLeftImage() != null) {
+			buttonDeselect.setImage(configuration.getLeftImage());
+		}
+		if (configuration.getRightImage() != null) {
+			buttonSelect.setImage(configuration.getRightImage());
+		}
+	}
+
+	private void modifyButtonVisibility() {
+		buttonMoveLast.setVisible(configuration.isDoubleDownVisible());
+		buttonMoveFirst.setVisible(configuration.isDoubleUpVisible());
+		buttonDeselectAll.setVisible(configuration.isDoubleLeftVisible());
+		buttonSelectAll.setVisible(configuration.isDoubleRightVisible());
+		buttonMoveDown.setVisible(configuration.isDownVisible());
+		buttonMoveUp.setVisible(configuration.isUpVisible());
+	}
+
 }

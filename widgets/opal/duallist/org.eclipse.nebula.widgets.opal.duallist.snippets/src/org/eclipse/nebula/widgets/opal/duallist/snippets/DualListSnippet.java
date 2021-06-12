@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Laurent CARON.
+ * Copyright (c) 2011-2021 Laurent CARON.
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * A simple snipper for the ItemSelector Widget
+ * A simple snipper for the DualList Widget
  *
  */
 public class DualListSnippet {
