@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.layout.FillLayout;
@@ -43,6 +42,7 @@ public class PropertyTable extends Composite {
 	boolean showDescription;
 	boolean sorted;
 	int styleOfView;
+    List<PTProperty> propertiesOrigin;
 	final List<PTProperty> properties;
 	private boolean hasBeenBuilt = false;
 	private final List<PTPropertyChangeListener> changeListeners;
@@ -181,11 +181,11 @@ public class PropertyTable extends Composite {
 	 */
 	private PropertyTable rebuild() {
 		widget = widget.disposeAndBuild(this);
-		if (hasBeenBuilt) {
-			setLayout(new FillLayout());
-			widget.build();
-			layout();
-		}
+        if (hasBeenBuilt) {
+          setLayout(new FillLayout());
+          widget.build();
+          layout();
+        }
 		return this;
 	}
 
@@ -195,6 +195,19 @@ public class PropertyTable extends Composite {
 	public void refreshValues() {
 		rebuild();
 	}
+
+    /**
+     * Update the component when some values has changed
+     */
+    public void filter(List<PTProperty> pattern) {
+      if (getPropertiesOrigin() == null) {
+        propertiesOrigin = getPropertiesAsList();
+      }
+      properties.clear();
+      properties.addAll(pattern);
+      rebuild();
+    }
+
 
 	/**
 	 * Remove a change listener
@@ -282,4 +295,11 @@ public class PropertyTable extends Composite {
 		styleOfView = VIEW_AS_FLAT_LIST;
 		return rebuild();
 	}
+
+  public List<PTProperty> getPropertiesOrigin() {
+    if (propertiesOrigin == null) {
+      propertiesOrigin = getPropertiesAsList();
+    }
+    return propertiesOrigin;
+  }
 }
