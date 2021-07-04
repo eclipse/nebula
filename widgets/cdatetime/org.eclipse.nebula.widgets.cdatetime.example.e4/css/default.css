@@ -54,6 +54,13 @@ CDateTime#four,CDateTime#five,CDateTime#six {
 	cdt-button-selected-background-color: red;
 }
 
+CDateTime#okcancelclear {
+	cdt-ok-color: red;
+	cdt-cancel-color: green;
+	cdt-clear-color: cyan;
+	cdt-clear-font: Verdana 11px;
+}
+
 CDateTime#big_one {
 	cdt-picker-font: Verdana 10px;
 	cdt-picker-color: magenta;
@@ -75,3 +82,4 @@ CDateTime#big_one {
 CDateTime#big_two {
 	cdt-background-color: darkred;
 }
+
