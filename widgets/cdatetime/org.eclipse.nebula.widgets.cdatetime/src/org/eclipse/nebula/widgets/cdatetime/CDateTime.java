@@ -313,8 +313,10 @@ public class CDateTime extends BaseCombo {
 			break;
 		case SWT.MouseWheel:
 			Control focusedControl = getDisplay().getFocusControl();
-			if (getTextWidget() != null && getTextWidget().getControl() != focusedControl) {
-				// Do not handle mousewheel events if the widget does not have focus
+			if (getTextWidget() != null
+					&& getTextWidget().getControl() != focusedControl) {
+				// Do not handle mousewheel events if the widget does not have
+				// focus
 				break;
 			}
 			if (event.count > 0) {
@@ -371,7 +373,11 @@ public class CDateTime extends BaseCombo {
 
 	Color pickerActiveDayColor, pickerInactiveDayColor, pickerTodayColor;
 	Color pickerMinutesColor, pickerMinutesBackgroundColor;
-	
+
+	Color okButtonColor, cancelButtonColor, clearButtonForegroundColor;
+	Font clearButtonFont;
+	private VButton okButton, clearButton, cancelButton;
+
 	/**
 	 * Constructs a new instance of this class given its parent and a style
 	 * value describing its behavior and appearance. The current date and the
@@ -515,7 +521,7 @@ public class CDateTime extends BaseCombo {
 		if (pickerFont != null) {
 			pickerPanel.setFont(pickerFont);
 		}
-		
+
 		if (isDate) {
 			DatePicker dp = new DatePicker(this);
 			dp.setScrollable(scrollable);
@@ -552,47 +558,50 @@ public class CDateTime extends BaseCombo {
 		tb.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false));
 		tb.setData(CDT.PickerPart, PickerPart.Toolbar);
 
-		VButton b = new VButton(tb, SWT.OK | SWT.NO_FOCUS);
-		b.setData(CDT.PickerPart, PickerPart.OkButton);
-		b.setToolTipText(Resources.getString("accept.text", locale)); //$NON-NLS-1$
-		b.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-		b.addListener(SWT.Selection, event -> setOpen(false));
-		b.setHoverBackgroundColor(buttonHoverBackgroundColor);
-		b.setHoverBorderColor(buttonHoverBorderColor);
-		b.setSelectedBackgroundColor(buttonSelectedBackgroundColor);
-		b.setSelectedBorderColor(buttonSelectedBorderColor);
+		okButton = new VButton(tb, SWT.OK | SWT.NO_FOCUS);
+		okButton.setData(CDT.PickerPart, PickerPart.OkButton);
+		okButton.setToolTipText(Resources.getString("accept.text", locale)); //$NON-NLS-1$
+		okButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		okButton.addListener(SWT.Selection, event -> setOpen(false));
+		okButton.setHoverBackgroundColor(buttonHoverBackgroundColor);
+		okButton.setHoverBorderColor(buttonHoverBorderColor);
+		okButton.setSelectedBackgroundColor(buttonSelectedBackgroundColor);
+		okButton.setSelectedBorderColor(buttonSelectedBorderColor);
+		okButton.setForeground(okButtonColor);
 
-		b = new VButton(tb, SWT.CANCEL | SWT.NO_FOCUS);
-		b.setData(CDT.PickerPart, PickerPart.CancelButton);
-		b.setToolTipText(Resources.getString("cancel.text", locale)); //$NON-NLS-1$
-		b.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-		b.addListener(SWT.Selection, event -> {
+		cancelButton = new VButton(tb, SWT.CANCEL | SWT.NO_FOCUS); 
+		cancelButton.setData(CDT.PickerPart, PickerPart.CancelButton);
+		cancelButton.setToolTipText(Resources.getString("cancel.text", locale)); //$NON-NLS-1$
+		cancelButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		cancelButton.addListener(SWT.Selection, event -> {
 			setSelection(cancelDate);
 			fireSelectionChanged();
 			setOpen(false);
 		});
-		b.setHoverBackgroundColor(buttonHoverBackgroundColor);
-		b.setHoverBorderColor(buttonHoverBorderColor);
-		b.setSelectedBackgroundColor(buttonSelectedBackgroundColor);
-		b.setSelectedBorderColor(buttonSelectedBorderColor);
-
-		b = new VButton(tb, SWT.NO_FOCUS);
-		b.setData(CDT.PickerPart, PickerPart.ClearButton);
-		b.setText(Resources.getString("clear.text", locale)); //$NON-NLS-1$
-		b.setToolTipText(Resources.getString("clear.text", locale)); //$NON-NLS-1$
-		b.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-		b.addListener(SWT.Selection, event -> {
+		cancelButton.setHoverBackgroundColor(buttonHoverBackgroundColor);
+		cancelButton.setHoverBorderColor(buttonHoverBorderColor);
+		cancelButton.setSelectedBackgroundColor(buttonSelectedBackgroundColor);
+		cancelButton.setSelectedBorderColor(buttonSelectedBorderColor);
+		cancelButton.setForeground(cancelButtonColor);
+		
+		clearButton = new VButton(tb, SWT.NO_FOCUS); 
+		clearButton.setData(CDT.PickerPart, PickerPart.ClearButton);
+		clearButton.setText(Resources.getString("clear.text", locale)); //$NON-NLS-1$
+		clearButton.setToolTipText(Resources.getString("clear.text", locale)); //$NON-NLS-1$
+		clearButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		clearButton.addListener(SWT.Selection, event -> {
 			setOpen(false);
 			setSelection(null);
 			fireSelectionChanged();
 		});
-		b.setForeground(parent.getForeground());
-		b.setFont(parent.getFont());
-		b.setHoverBackgroundColor(buttonHoverBackgroundColor);
-		b.setHoverBorderColor(buttonHoverBorderColor);
-		b.setSelectedBackgroundColor(buttonSelectedBackgroundColor);
-		b.setSelectedBorderColor(buttonSelectedBorderColor);
-
+		clearButton.setForeground(clearButtonForegroundColor!=null?clearButtonForegroundColor:parent.getForeground());
+		clearButton.setFont(clearButtonFont!=null?clearButtonFont:parent.getFont());
+		clearButton.setHoverBackgroundColor(buttonHoverBackgroundColor);
+		clearButton.setHoverBorderColor(buttonHoverBorderColor);
+		clearButton.setSelectedBackgroundColor(buttonSelectedBackgroundColor);
+		clearButton.setSelectedBorderColor(buttonSelectedBorderColor);
+		
+		
 		VLabel sep = new VLabel(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
 		sep.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 	}
@@ -1389,8 +1398,7 @@ public class CDateTime extends BaseCombo {
 				}
 				spinner = VNative.create(Spinner.class, panel, sStyle);
 				if (win32) {
-					spinner.setBackground(
-							text.getControl().getBackground());
+					spinner.setBackground(text.getControl().getBackground());
 				}
 				spinner.getControl().setMinimum(0);
 				spinner.getControl().setMaximum(50);
@@ -2253,8 +2261,6 @@ public class CDateTime extends BaseCombo {
 		}
 	}
 
-	
-	
 	public void setForeground(Color color) {
 		super.setForeground(color);
 		if (picker != null) {
@@ -2285,7 +2291,7 @@ public class CDateTime extends BaseCombo {
 			picker.updateColorsAndFont();
 		}
 	}
-	
+
 	/**
 	 * @param color
 	 * @since 1.5
@@ -2329,7 +2335,7 @@ public class CDateTime extends BaseCombo {
 		if (pickerForegroundColor != null && pickerPanel != null) {
 			pickerPanel.setForeground(pickerForegroundColor);
 		}
-		if (picker != null && pickerPanel != null&& pickerPanel != null) {
+		if (picker != null && pickerPanel != null && pickerPanel != null) {
 			picker.updateColorsAndFont();
 		}
 	}
@@ -2515,7 +2521,8 @@ public class CDateTime extends BaseCombo {
 	 * @param pickerMinutesBackgroundColor
 	 * @since 1.5
 	 */
-	public void setPickerMinutesBackgroundColor(Color pickerMinutesBackgroundColor) {
+	public void setPickerMinutesBackgroundColor(
+			Color pickerMinutesBackgroundColor) {
 		checkWidget();
 		this.pickerMinutesBackgroundColor = pickerMinutesBackgroundColor;
 		if (picker != null) {
@@ -2523,5 +2530,73 @@ public class CDateTime extends BaseCombo {
 		}
 	}
 
-	
+	/**
+	 * @return the foreground color of the "Ok" button
+	 */
+	public Color getOkButtonColor() {
+		checkWidget();
+		return okButtonColor;
+	}
+
+	/**
+	 * @param okButtonColor the new foreground color of the "ok" button
+	 */
+	public void setOkButtonColor(Color okButtonColor) {
+		checkWidget();
+		this.okButtonColor = okButtonColor;
+		if (okButton != null) okButton.setForeground(okButtonColor);
+	}
+
+	/**
+	 * @return the foreground color of the "Cancel" button
+	 */
+	public Color getCancelButtonColor() {
+		checkWidget();
+		return cancelButtonColor;
+	}
+
+	/**
+	 * @param cancelButtonColor the new foreground color of the "cancel" button
+	 */
+	public void setCancelButtonColor(Color cancelButtonColor) {
+		checkWidget();
+		this.cancelButtonColor = cancelButtonColor;
+		if (cancelButton != null) cancelButton.setForeground(cancelButtonColor);
+	}
+
+	/**
+	 * @return the foreground color of the "clear" button
+	 */
+	public Color getClearButtonForegroundColor() {
+		checkWidget();
+		return clearButtonForegroundColor;
+	}
+
+	/**
+	 * @param clearButtonForegroundColor the new foreground color of the "clear" button
+	 */
+	public void setClearButtonForegroundColor(
+			Color clearButtonForegroundColor) {
+		checkWidget();
+		this.clearButtonForegroundColor = clearButtonForegroundColor;
+		if (clearButton != null) clearButton.setForeground(clearButtonForegroundColor);
+	}
+
+	/**
+	 * @return the font of the "clear" button
+	 */
+	public Font getClearButtonFont() {
+		checkWidget();
+		return clearButtonFont;
+	}
+
+	/**
+	 * @param clearButtonFont the new font of the "clear" button
+	 */
+	public void setClearButtonFont(Font clearButtonFont) {
+		checkWidget();
+		this.clearButtonFont = clearButtonFont;
+		if (clearButton != null) clearButton.setFont(clearButtonFont);
+	}
+
 }
