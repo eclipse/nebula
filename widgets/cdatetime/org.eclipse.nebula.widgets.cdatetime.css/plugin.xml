@@ -38,6 +38,15 @@
 			<property-name name="cdt-button-hover-background-color"> </property-name>
 			<property-name name="cdt-button-selected-border-color"> </property-name>
 			<property-name name="cdt-button-selected-background-color"> </property-name>
+			
+			<property-name name="cdt-ok-color"> </property-name>
+			<property-name name="cdt-cancel-color"> </property-name>
+			<property-name name="cdt-clear-color"> </property-name>
+			<property-name name="cdt-clear-color"> </property-name>
+			<property-name name="cdt-clear-font-style"> </property-name>
+			<property-name name="cdt-clear-font-size"> </property-name>
+			<property-name name="cdt-clear-font-weight"> </property-name>
+			<property-name name="cdt-clear-font-family"> </property-name>
       </handler>
    </extension>
 
