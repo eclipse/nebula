@@ -122,7 +122,36 @@ public class CDateTimePropertyHandler implements ICSSPropertyHandler {
 			final Color newColor = (Color) engine.convert(value, Color.class, cdt.getDisplay());
 			cdt.setButtonSelectedBackgroundColor(newColor);
 		}
+		
+		// Ok, Cancel & clear buttons
+		if ("cdt-ok-color".equals(property)) {
+			final Color newColor = (Color) engine.convert(value, Color.class, cdt.getDisplay());
+			cdt.setOkButtonColor(newColor);
+		}
+		if ("cdt-cancel-color".equals(property)) {
+			final Color newColor = (Color) engine.convert(value, Color.class, cdt.getDisplay());
+			cdt.setCancelButtonColor(newColor);
+		}
+		if ("cdt-clear-color".equals(property)) {
+			final Color newColor = (Color) engine.convert(value, Color.class, cdt.getDisplay());
+			cdt.setClearButtonForegroundColor(newColor);
+		}
 
+		if ("cdt-clear-font".equals(property)) {
+			applyCSSPropertyFont(cdt, value, true);
+		}
+		if ("cdt-clear-font-style".equals(property)) {
+			applyCSSPropertyStyle(cdt, value, true);
+		}
+		if ("cdt-clear-font-size".equals(property)) {
+			applyCSSPropertySize(cdt, value, true);
+		}
+		if ("cdt-clear-font-weight".equals(property)) {
+			applyCSSPropertyWeight(cdt, value, true);
+		}
+		if ("cdt-clear-font-family".equals(property)) {
+			applyCSSPropertyFamily(cdt, value, true);
+		}
 		return true;
 	}
 

@@ -54,10 +54,12 @@ import org.eclipse.swt.widgets.Widget;
  * or oval).</li>
  * </ul>
  */
+@SuppressWarnings("javadoc")
 public abstract class VControl {
 
 	public enum Type {
-		Button, Custom, Label, Native, Panel, Text, Spacer
+		Button, Custom, Label, 
+		Native, Panel, Text, Spacer
 	}
 
 	/**
@@ -150,15 +152,13 @@ public abstract class VControl {
 	Map<Integer, List<Listener>> listeners = new HashMap<Integer, List<Listener>>();
 	private Set<Integer> eventTypes = new HashSet<Integer>();
 
-	private Listener listener = new Listener() {
-		public void handleEvent(Event event) {
-			if (event.type == SWT.FocusIn) {
-				if (VControl.this == VTracker.getFocusControl()) {
-					return;
-				}
+	private Listener listener = event -> {
+		if (event.type == SWT.FocusIn) {
+			if (VControl.this == VTracker.getFocusControl()) {
+				return;
 			}
-			VControl.this.handleEvent(event);
 		}
+		VControl.this.handleEvent(event);
 	};
 
 	private boolean activatable = true;
@@ -177,12 +177,10 @@ public abstract class VControl {
 
 		if ((style & SWT.OK) != 0) {
 			setPolygon(Points_OK);
-			setForeground(
-					Display.getDefault().getSystemColor(SWT.COLOR_DARK_GREEN));
+			if (foreground == null) setForeground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_GREEN));
 		} else if ((style & SWT.CANCEL) != 0) {
 			setPolygon(Points_Cancel);
-			setForeground(
-					Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED));
+			if (foreground == null) setForeground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED));
 		} else if ((style & SWT.ARROW) != 0) {
 			if ((style & SWT.DOWN) != 0) {
 				setPolygon(Points_Down);
@@ -530,7 +528,7 @@ public abstract class VControl {
 	}
 
 	public String getToolTipText() {
-		return (tooltipText != null) ? tooltipText : "";
+		return (tooltipText != null) ? tooltipText : ""; //$NON-NLS-1$
 	}
 
 	public abstract Type getType();
@@ -627,7 +625,7 @@ public abstract class VControl {
 			event.data = this;
 			event.type = eventType;
 			if (this instanceof VNative && eventType == SWT.FocusOut) {
-				System.out.println("wtf");
+				System.out.println("wtf"); //$NON-NLS-1$
 			}
 			for (Listener listener : getListeners(eventType)) {
 				listener.handleEvent(event);
@@ -1086,7 +1084,7 @@ public abstract class VControl {
 
 	@Override
 	public String toString() {
-		return super.toString() + " {" + text + "}";
+		return super.toString() + " {" + text + "}"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public void update() {

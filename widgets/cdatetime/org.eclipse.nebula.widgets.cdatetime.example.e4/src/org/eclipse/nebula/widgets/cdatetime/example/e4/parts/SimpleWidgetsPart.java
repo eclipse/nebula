@@ -104,6 +104,18 @@ public class SimpleWidgetsPart {
 		year.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
 		year.setData(CSS_ID, "six");
 
+		// Last
+		label = new Label(group, SWT.NONE);
+		label.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
+		label.setText("Date widget with pop-up shell\n(custom ok/cancel/clear button");
+
+		final CDateTime cdt6 = new CDateTime(group, CDT.BORDER | CDT.COMPACT | CDT.DROP_DOWN | CDT.DATE_LONG | CDT.TIME_MEDIUM);
+		final GridData gd6 = new GridData(SWT.BEGINNING, SWT.CENTER, true, false);
+		gd6.widthHint = 150;
+		cdt6.setLayoutData(gd6);
+		cdt6.setSelection(new Date());
+		cdt6.setData(CSS_ID, "okcancelclear");
+		
 	}
 
 	@Focus

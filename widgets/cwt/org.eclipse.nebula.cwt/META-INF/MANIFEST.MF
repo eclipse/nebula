@@ -14,4 +14,4 @@ Export-Package: org.eclipse.nebula.cwt.animation,
  org.eclipse.nebula.cwt.svg,
  org.eclipse.nebula.cwt.v
 Automatic-Module-Name: org.eclipse.nebula.cwt
-Require-Bundle: org.eclipse.swt;bundle-version="3.1.0"
+Require-Bundle: org.eclipse.swt
