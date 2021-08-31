@@ -113,8 +113,11 @@ class PWTabContainer extends Composite {
 				oldButtonContainerImage.dispose();
 			}
 			oldButtonContainerImage = image;
+			SWTGraphicUtil.addDisposer(buttonContainer, oldButtonContainerImage);
 		});
-		SWTGraphicUtil.addDisposer(buttonContainer, oldButtonContainerImage);
+		if (oldButtonContainerImage != null) {
+			SWTGraphicUtil.addDisposer(buttonContainer, oldButtonContainerImage);
+		}
 	}
 
 	/**
