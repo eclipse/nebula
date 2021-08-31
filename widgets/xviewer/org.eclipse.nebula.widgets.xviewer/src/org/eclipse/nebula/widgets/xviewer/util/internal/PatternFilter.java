@@ -25,7 +25,6 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.ui.internal.misc.StringMatcher;
 
 /**
  * A filter used in conjunction with <code>FilteredTree</code>. In order to determine if a node should be filtered it
@@ -35,7 +34,6 @@ import org.eclipse.ui.internal.misc.StringMatcher;
  * @see org.eclipse.ui.dialogs.FilteredTree
  * @since 3.2
  */
-@SuppressWarnings("restriction")
 public class PatternFilter extends ViewerFilter {
    /*
     * Cache of filtered elements in the tree
