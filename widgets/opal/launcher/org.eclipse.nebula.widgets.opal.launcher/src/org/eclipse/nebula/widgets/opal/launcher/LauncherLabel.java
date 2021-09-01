@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Laurent CARON
+ * Copyright (c) 2011-2021 Laurent CARON
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.launcher;
 
-import org.eclipse.nebula.widgets.opal.commons.SWTGraphicUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.PaintEvent;
@@ -35,7 +34,7 @@ class LauncherLabel extends Canvas {
 	private Image image;
 	private Font font;
 
-	private static final int GAP = 12;
+	static final int GAP = 12;
 	private static int DRAW_FLAGS = SWT.DRAW_MNEMONIC | SWT.DRAW_TAB | SWT.DRAW_TRANSPARENT | SWT.DRAW_DELIMITER;
 	private static final int DEFAULT_MARGIN = 5;
 	private int leftMargin = DEFAULT_MARGIN;
@@ -77,11 +76,7 @@ class LauncherLabel extends Canvas {
 	LauncherLabel(final Composite parent, final int style) {
 		super(parent, style | SWT.BORDER | SWT.DOUBLE_BUFFERED);
 
-		final Font original = super.getFont();
-
-		final Font defaultFont = new Font(getDisplay(), original.getFontData()[0].getName(), 18, SWT.BOLD);
-		font = defaultFont;
-		SWTGraphicUtil.addDisposer(this, defaultFont);
+		font = parent.getFont();
 
 		addPaintListener(event -> {
 			paintControl(event);

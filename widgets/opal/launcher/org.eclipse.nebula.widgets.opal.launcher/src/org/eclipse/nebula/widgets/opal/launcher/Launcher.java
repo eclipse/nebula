@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Laurent CARON
+ * Copyright (c) 2011-2021 Laurent CARON
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,12 +16,16 @@ package org.eclipse.nebula.widgets.opal.launcher;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.nebula.widgets.opal.commons.SWTGraphicUtil;
 import org.eclipse.nebula.widgets.opal.commons.SelectionListenerUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -43,6 +47,9 @@ public class Launcher extends Composite {
 	private final List<LauncherItem> items;
 	private boolean needRedraw;
 	private int selection = -1;
+	private Color itemBackgroundColor, selectedItemBackgroundColor;
+	private int numberOfColumns = -1;
+	private boolean singleClickSelection = false;
 
 	/**
 	 * Constructs a new instance of this class given its parent and a style
@@ -84,6 +91,11 @@ public class Launcher extends Composite {
 		addListener(SWT.KeyUp, event -> {
 			handleKeyPressedEvent(event);
 		});
+
+		final Font original = super.getFont();
+		final Font defaultFont = new Font(getDisplay(), original.getFontData()[0].getName(), 18, SWT.BOLD);
+		setFont(defaultFont);
+		SWTGraphicUtil.addDisposer(this, defaultFont);
 	}
 
 	/**
@@ -148,12 +160,13 @@ public class Launcher extends Composite {
 	 * Change the background color of a given button
 	 *
 	 * @param index index of the button
-	 * @param isSelected if <code>true</code>, the background is the light
-	 *            shadow. Otherwise, the background color is white
+	 * @param isSelected by default, if <code>true</code>, the background is the lightshadow. Otherwise, the background color is white
 	 */
 	private void changeColor(final int index, final boolean isSelected) {
 		if (index != -1 && items.get(index).label != null) {
-			items.get(index).label.setBackground(isSelected ? getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW) : getDisplay().getSystemColor(SWT.COLOR_WHITE));
+			final Color selectedItemColor = selectedItemBackgroundColor == null ? getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW) : selectedItemBackgroundColor;
+			final Color itemColor = itemBackgroundColor == null ? getDisplay().getSystemColor(SWT.COLOR_WHITE) : itemBackgroundColor;
+			items.get(index).label.setBackground(isSelected ? selectedItemColor : itemColor);
 		}
 	}
 
@@ -161,12 +174,27 @@ public class Launcher extends Composite {
 	 * Create the buttons that will compose the launcher
 	 */
 	private void createButtons() {
-		final GridLayout gridLayout = new GridLayout(items.size() / 2, true);
+		if (numberOfColumns == -1) {
+			numberOfColumns = items.size() / 2;
+		}
+		final GridLayout gridLayout = new GridLayout(numberOfColumns, true);
 		gridLayout.horizontalSpacing = gridLayout.verticalSpacing = 0;
 		setLayout(gridLayout);
+		Point widthHeightHint = new Point(0, 0);
+
 		for (final LauncherItem item : items) {
 			createItem(item);
+			Point itemSize = item.label.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			widthHeightHint.x = Math.max(widthHeightHint.x, itemSize.x);
+			widthHeightHint.y = Math.max(widthHeightHint.y, itemSize.y);
 		}
+
+		for (final LauncherItem item : items) {
+			GridData gd = (GridData) item.label.getLayoutData();
+			gd.widthHint = widthHeightHint.x;
+			gd.heightHint = widthHeightHint.y;
+		}
+
 	}
 
 	private void createItem(final LauncherItem item) {
@@ -178,12 +206,13 @@ public class Launcher extends Composite {
 		final LauncherLabel label = new LauncherLabel(this, SWT.NONE);
 		label.setText(item.title);
 		label.setImage(item.image);
-		label.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
-		final GridData gd = new GridData(GridData.FILL, GridData.FILL, true, false);
-		gd.widthHint = 192;
-		gd.heightHint = 220;
+		label.setBackground(itemBackgroundColor == null ? getDisplay().getSystemColor(SWT.COLOR_WHITE) : //
+				itemBackgroundColor);
+		final GridData gd = new GridData(GridData.FILL, GridData.FILL, false, false);
 		label.setLayoutData(gd);
+
 		item.label = label;
+		label.setFont(getFont());
 		return label;
 	}
 
@@ -210,7 +239,6 @@ public class Launcher extends Composite {
 
 		needRedraw = false;
 	}
-
 
 	/**
 	 * Return the selected button
@@ -245,6 +273,9 @@ public class Launcher extends Composite {
 					selection = i;
 					changeColor(selection, true);
 				}
+				if (singleClickSelection) {
+					startAnimation(i, event);
+				}
 				return;
 			}
 		}
@@ -264,7 +295,9 @@ public class Launcher extends Composite {
 					selection = i;
 					changeColor(selection, true);
 				}
-				startAnimation(i, event);
+				if (!singleClickSelection) {
+					startAnimation(i, event);
+				}
 				return;
 			}
 		}
@@ -389,4 +422,133 @@ public class Launcher extends Composite {
 		});
 
 	}
+
+	/**
+	 * @return the background color of the item, <code>null</code> if default value
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
+	 *                </ul>
+	 *
+	 */
+	public Color getItemBackgroundColor() {
+		checkWidget();
+		return itemBackgroundColor;
+	}
+
+	/**
+	 * Set the background color for the items. If <code>null</code>, the default value (white) is used
+	 * 
+	 * @param color the new color to set
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
+	 *                </ul>
+	 *
+	 */
+	public void setItemBackgroundColor(Color color) {
+		checkWidget();
+		this.itemBackgroundColor = color;
+	}
+
+	/**
+	 * @return the background color of the item when it is selected, <code>null</code> if default value
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
+	 *                </ul>
+	 *
+	 */
+	public Color getSelectedItemBackgroundColor() {
+		checkWidget();
+		return selectedItemBackgroundColor;
+	}
+
+	/**
+	 * Set the background color for the items. If <code>null</code>, the default value (white) is used
+	 * 
+	 * @param color the new color to set
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
+	 *                </ul>
+	 */
+	public void setSelectedItemBackgroundColor(Color color) {
+		checkWidget();
+		this.selectedItemBackgroundColor = color;
+	}
+
+	/**
+	 * @return the number of columns (item size/2 by default)
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
+	 *                </ul>
+	 */
+	public int getNumberOfColumns() {
+		checkWidget();
+		return numberOfColumns;
+	}
+
+	/**
+	 * @param numberOfColumns the number of column to display
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
+	 *                </ul>
+	 */
+	public void setNumberOfColumns(int numberOfColumns) {
+		checkWidget();
+		this.numberOfColumns = numberOfColumns;
+		drawLauncher();
+	}
+
+	/**
+	 * @return <code>true</code> if the animation (and selection event) is fired when one clicks
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
+	 *                </ul>
+	 */
+	public boolean isSingleClickSelection() {
+		checkWidget();
+		return singleClickSelection;
+	}
+
+	/**
+	 * @param singleClickSelection if true, the animation (and selection event) is fired on a single click. If false the selection is performed on a double click
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
+	 *                </ul>
+	 */
+	public void setSingleClickSelection(boolean singleClickSelection) {
+		checkWidget();
+		this.singleClickSelection = singleClickSelection;
+	}
+
 }
