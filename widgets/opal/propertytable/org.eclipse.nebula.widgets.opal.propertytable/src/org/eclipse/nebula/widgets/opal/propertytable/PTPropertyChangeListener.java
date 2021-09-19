@@ -16,8 +16,8 @@ package org.eclipse.nebula.widgets.opal.propertytable;
 /**
  * Classes which implement this interface provide methods that deal with the
  * events that are generated when value of the property is changed
- * 
  */
+@FunctionalInterface
 public interface PTPropertyChangeListener {
 	/**
 	 * Sent when value is changed in a property.

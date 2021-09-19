@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors: Laurent CARON (laurent.caron at gmail dot com) - initial API
@@ -14,7 +14,6 @@ package org.eclipse.nebula.widgets.opal.propertytable;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.nebula.widgets.opal.commons.ResourceManager;
@@ -98,31 +97,27 @@ class PTWidgetTable extends AbstractPTWidget {
 	private void fillData() {
 		List<PTProperty> props;
 		if (getParentPropertyTable().sorted) {
-			props = new ArrayList<PTProperty>(getParentPropertyTable().getPropertiesAsList());
-			Collections.sort(props, new Comparator<PTProperty>() {
-
-				@Override
-				public int compare(final PTProperty o1, final PTProperty o2) {
-					if (o1 == null && o2 == null) {
-						return 0;
-					}
-
-					if (o1.getName() == null && o2.getName() != null) {
-						return -1;
-					}
-
-					if (o1.getName() != null && o2.getName() == null) {
-						return 1;
-					}
-
-					return o1.getName().compareTo(o2.getName());
+			props = new ArrayList<>(getParentPropertyTable().getPropertiesAsList());
+			Collections.sort(props, (o1, o2) -> {
+				if (o1 == null && o2 == null) {
+					return 0;
 				}
+
+				if (o1.getName() == null && o2.getName() != null) {
+					return -1;
+				}
+
+				if (o1.getName() != null && o2.getName() == null) {
+					return 1;
+				}
+
+				return o1.getName().compareTo(o2.getName());
 			});
 		} else {
-			props = new ArrayList<PTProperty>(getParentPropertyTable().getPropertiesAsList());
+			props = new ArrayList<>(getParentPropertyTable().getPropertiesAsList());
 		}
 
-		final List<ControlEditor> editors = new ArrayList<ControlEditor>();
+		final List<ControlEditor> editors = new ArrayList<>();
 		for (final PTProperty p : props) {
 			final TableItem item = new TableItem(table, SWT.NONE);
 			item.setData(p);
@@ -141,6 +136,7 @@ class PTWidgetTable extends AbstractPTWidget {
 			if (!p.isEnabled()) {
 				item.setForeground(table.getDisplay().getSystemColor(SWT.COLOR_GRAY));
 			}
+			p.setAssociatedItem(item);
 		}
 
 		table.setData(editors);
