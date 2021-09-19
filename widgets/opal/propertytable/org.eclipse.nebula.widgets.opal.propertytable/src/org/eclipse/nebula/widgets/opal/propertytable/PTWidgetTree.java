@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors: Laurent CARON (laurent.caron at gmail dot com) - initial API
@@ -100,9 +100,9 @@ public class PTWidgetTree extends AbstractPTWidget {
 		final Map<String, List<PTProperty>> data;
 
 		if (getParentPropertyTable().sorted) {
-			data = new TreeMap<String, List<PTProperty>>();
+			data = new TreeMap<>();
 		} else {
-			data = new HashMap<String, List<PTProperty>>();
+			data = new HashMap<>();
 		}
 
 		for (final PTProperty p : getParentPropertyTable().getPropertiesAsList()) {
@@ -145,6 +145,7 @@ public class PTWidgetTree extends AbstractPTWidget {
 					item.setForeground(item.getDisplay().getSystemColor(SWT.COLOR_GRAY));
 				}
 				item.setExpanded(true);
+				p.setAssociatedItem(item);
 			}
 			root.setExpanded(true);
 
