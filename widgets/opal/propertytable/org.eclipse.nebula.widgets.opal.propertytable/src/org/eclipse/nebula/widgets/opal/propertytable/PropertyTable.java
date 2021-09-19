@@ -5,7 +5,7 @@
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
@@ -48,6 +48,7 @@ public class PropertyTable extends Composite {
 	private final List<PTPropertyChangeListener> changeListeners;
 
 	private PTWidget widget;
+	private boolean bulkUpdateInProgress = false;
 
 	/**
 	 * Constructs a new instance of this class given its parent and a style
@@ -83,8 +84,8 @@ public class PropertyTable extends Composite {
 		showDescription = true;
 		sorted = true;
 		styleOfView = VIEW_AS_CATEGORIES;
-		properties = new ArrayList<PTProperty>();
-		changeListeners = new ArrayList<PTPropertyChangeListener>();
+		properties = new ArrayList<>();
+		changeListeners = new ArrayList<>();
 
 		widget = PTWidgetFactory.build(this);
 
@@ -140,7 +141,7 @@ public class PropertyTable extends Composite {
 	 *         name, values are values stored in a the property.
 	 */
 	public Map<String, Object> getProperties() {
-		final Map<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<>();
 		for (final PTProperty prop : properties) {
 			map.put(prop.getName(), prop.getValue());
 		}
@@ -151,7 +152,7 @@ public class PropertyTable extends Composite {
 	 * @return the properties stored in a list
 	 */
 	public List<PTProperty> getPropertiesAsList() {
-		return new ArrayList<PTProperty>(properties);
+		return new ArrayList<>(properties);
 	}
 
 	/**
@@ -179,7 +180,10 @@ public class PropertyTable extends Composite {
 	 *
 	 * @return this property table
 	 */
-	private PropertyTable rebuild() {
+	PropertyTable rebuild() {
+		if (bulkUpdateInProgress) {
+			return this;
+		}
 		widget = widget.disposeAndBuild(this);
 		if (hasBeenBuilt) {
 			setLayout(new FillLayout());
@@ -280,6 +284,20 @@ public class PropertyTable extends Composite {
 	 */
 	public PropertyTable viewAsFlatList() {
 		styleOfView = VIEW_AS_FLAT_LIST;
+		return rebuild();
+	}
+
+	/**
+	 * Discard all changes that happened in that table
+	 *
+	 * @return this property table
+	 */
+	public PropertyTable discardChanges() {
+		bulkUpdateInProgress = true;
+		for (final PTProperty prop : properties) {
+			prop.discardChange();
+		}
+		bulkUpdateInProgress = false;
 		return rebuild();
 	}
 }
