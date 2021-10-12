@@ -5,7 +5,7 @@
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
@@ -23,7 +23,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -63,6 +62,8 @@ import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerMenuDetectListene
 import org.eclipse.nebula.widgets.xviewer.util.internal.XViewerMouseListener;
 import org.eclipse.nebula.widgets.xviewer.util.internal.dialog.HtmlDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -82,7 +83,7 @@ public class XViewer extends TreeViewer {
 
    public static final String MENU_GROUP_PRE = "XVIEWER MENU GROUP PRE"; //$NON-NLS-1$
    public static final String MENU_GROUP_POST = "XVIEWER MENU GROUP POST"; //$NON-NLS-1$
-   private Label statusLabel;
+   private StyledText filterText;
    private final MenuManager menuManager;
    private static boolean ctrlKeyDown = false;
    private static boolean altKeyDown = false;
@@ -190,8 +191,8 @@ public class XViewer extends TreeViewer {
    }
 
    public void dispose() {
-      if (statusLabel != null && !statusLabel.isDisposed()) {
-         statusLabel.dispose();
+      if (filterText != null && !filterText.isDisposed()) {
+         filterText.dispose();
       }
       if (searchComp != null && !searchComp.isDisposed()) {
          searchComp.dispose();
@@ -267,10 +268,10 @@ public class XViewer extends TreeViewer {
          }
 
          if (xViewerFactory.isLoadedStatusLabelAvailable()) {
-            statusLabel = new Label(searchComp, SWT.NONE);
-            statusLabel.setText(" "); //$NON-NLS-1$
-            statusLabel.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
-            statusLabel.addListener(SWT.MouseUp, getCustomizationMouseListener());
+            filterText = new StyledText(searchComp, SWT.NONE);
+            filterText.setText(" "); //$NON-NLS-1$
+            filterText.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
+            filterText.addListener(SWT.MouseUp, getCustomizationMouseListener());
          }
       }
 
@@ -371,10 +372,10 @@ public class XViewer extends TreeViewer {
                @Override
                public void done(IJobChangeEvent event) {
                   Display.getDefault().asyncExec(() -> {
-						ElapsedTime time = new ElapsedTime("performLoad");
-						performLoad(input, xViewer);
-						time.end(Units.SEC);
-	             });
+                     ElapsedTime time = new ElapsedTime("performLoad");
+                     performLoad(input, xViewer);
+                     time.end(Units.SEC);
+                  });
                }
             });
             job.schedule();
@@ -492,25 +493,25 @@ public class XViewer extends TreeViewer {
       }
    }
    Listener displayKeysListener = event -> {
-         if (event.keyCode == SWT.CTRL) {
-            if (event.type == SWT.KeyDown) {
-               ctrlKeyDown = true;
-            } else if (event.type == SWT.KeyUp) {
-               ctrlKeyDown = false;
-            }
+      if (event.keyCode == SWT.CTRL) {
+         if (event.type == SWT.KeyDown) {
+            ctrlKeyDown = true;
+         } else if (event.type == SWT.KeyUp) {
+            ctrlKeyDown = false;
          }
-         if (event.keyCode == SWT.ALT) {
-            if (event.type == SWT.KeyDown) {
-               altKeyDown = true;
-            } else if (event.type == SWT.KeyUp) {
-               altKeyDown = false;
-            }
+      }
+      if (event.keyCode == SWT.ALT) {
+         if (event.type == SWT.KeyDown) {
+            altKeyDown = true;
+         } else if (event.type == SWT.KeyUp) {
+            altKeyDown = false;
          }
+      }
    };
    Listener displayFocusListener = event -> {
-         // Clear when focus is lost
-         ctrlKeyDown = false;
-         altKeyDown = false;
+      // Clear when focus is lost
+      ctrlKeyDown = false;
+      altKeyDown = false;
    };
    private Composite searchComp;
    private XViewerMouseListener mouseListener;
@@ -633,11 +634,12 @@ public class XViewer extends TreeViewer {
       if (!xViewerFactory.isLoadedStatusLabelAvailable()) {
          return;
       }
-      if (getTree().isDisposed() || statusLabel.isDisposed()) {
+      if (getTree().isDisposed() || filterText.isDisposed()) {
          return;
       }
       StringBuilder sb = new StringBuilder();
       boolean allItemsFiltered = false;
+      boolean filtered = false;
 
       if (loading) {
          sb.append("Loading...");
@@ -652,6 +654,13 @@ public class XViewer extends TreeViewer {
          if (allItemsFiltered) {
             sb.append(XViewerText.get("status.all_filtered")); //$NON-NLS-1$
          }
+
+         filtered = visibleNum < loadedNum;
+         if (!allItemsFiltered && filtered) {
+            sb.append(XViewerText.get("status.filtered")); //$NON-NLS-1$
+         }
+         sb.append(MessageFormat.format(XViewerText.get("status"), loadedNum, visibleNum, //$NON-NLS-1$
+            ((IStructuredSelection) getSelection()).size()));
          sb.append(MessageFormat.format(XViewerText.get("status"), loadedNum, visibleNum, //$NON-NLS-1$
             ((IStructuredSelection) getSelection()).size()));
          customizeMgr.appendToStatusLabel(sb);
@@ -670,15 +679,36 @@ public class XViewer extends TreeViewer {
 
       // Display status lines
       String str = sb.toString();
-      statusLabel.setText(str);
-      statusLabel.getParent().getParent().layout();
-      statusLabel.setToolTipText(str);
+
+      filterText.setText(str);
+      filterText.getParent().getParent().layout();
+      filterText.setToolTipText(str);
+      //Display display = new Display();
+      StyleRange filterStyleRange = new StyleRange();
+
       if (loading) {
-         statusLabel.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));
+         filterStyleRange.start = 0;
+         filterStyleRange.length = 7;
+         filterStyleRange.fontStyle = SWT.BOLD;
+         filterStyleRange.foreground = Display.getCurrent().getSystemColor(SWT.COLOR_BLUE);
+         filterText.setStyleRange(filterStyleRange);
       } else if (allItemsFiltered) {
-         statusLabel.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
+         filterStyleRange.start = 0;
+         filterStyleRange.length = 19;
+         filterStyleRange.fontStyle = SWT.BOLD;
+         filterStyleRange.foreground = Display.getCurrent().getSystemColor(SWT.COLOR_RED);
+         filterText.setStyleRange(filterStyleRange);
+      } else if (filtered) {
+         filterStyleRange.start = 0;
+         filterStyleRange.length = 8;
+         filterStyleRange.fontStyle = SWT.BOLD;
+         filterStyleRange.foreground = Display.getCurrent().getSystemColor(SWT.COLOR_RED);
+         filterText.setStyleRange(filterStyleRange);
       } else {
-         statusLabel.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
+         filterStyleRange.start = 0;
+         filterStyleRange.length = 19;
+         filterStyleRange.foreground = Display.getCurrent().getSystemColor(SWT.COLOR_BLACK);
+         filterText.setStyleRange(filterStyleRange);
       }
    }
 
@@ -688,19 +718,19 @@ public class XViewer extends TreeViewer {
    }
 
    private Listener getCustomizationMouseListener() {
-      return event-> {
-            if (event.button == 3 && event.count == 1) {
-               CustomizeData custData = getCustomizeMgr().getCurrentCustomizeData();
-               List<XViewerColumn> currentVisibleTableColumns = getCustomizeMgr().getCurrentVisibleTableColumns();
-               custData.getColumnData().getColumns().clear();
-               custData.getColumnData().getColumns().addAll(currentVisibleTableColumns);
-               String custStr = custData.toString();
-               custStr = custStr.replaceAll("XView", "\nXView");
-               custStr = custStr.replaceFirst("guid", "\nguid");
-               String html = HtmlUtil.simplePage(HtmlUtil.getPreData(custStr));
-               String title = String.format("Customization [%s]-[%s]", custData.getName(), custData.getGuid());
-               new HtmlDialog(title, title, html).open();
-            }
+      return event -> {
+         if (event.button == 3 && event.count == 1) {
+            CustomizeData custData = getCustomizeMgr().getCurrentCustomizeData();
+            List<XViewerColumn> currentVisibleTableColumns = getCustomizeMgr().getCurrentVisibleTableColumns();
+            custData.getColumnData().getColumns().clear();
+            custData.getColumnData().getColumns().addAll(currentVisibleTableColumns);
+            String custStr = custData.toString();
+            custStr = custStr.replaceAll("XView", "\nXView");
+            custStr = custStr.replaceFirst("guid", "\nguid");
+            String html = HtmlUtil.simplePage(HtmlUtil.getPreData(custStr));
+            String title = String.format("Customization [%s]-[%s]", custData.getName(), custData.getGuid());
+            new HtmlDialog(title, title, html).open();
+         }
       };
    }
 
@@ -712,8 +742,8 @@ public class XViewer extends TreeViewer {
       return xViewerFactory;
    }
 
-   public Label getStatusLabel() {
-      return statusLabel;
+   public StyledText getStatusLabel() {
+      return filterText;
    }
 
    public FilterDataUI getFilterDataUI() {
