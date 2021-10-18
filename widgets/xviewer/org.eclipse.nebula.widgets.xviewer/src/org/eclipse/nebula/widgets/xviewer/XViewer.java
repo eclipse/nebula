@@ -646,6 +646,7 @@ public class XViewer extends TreeViewer {
       } else {
          // Status Line 1
          int loadedNum = 0;
+         TreeItem[] treeItemArray = getTree().getItems();
          int visibleNum = getVisibleItemCount(getTree().getItems());
          if (getRoot() != null && ((ITreeContentProvider) getContentProvider()) != null) {
             loadedNum = ((ITreeContentProvider) getContentProvider()).getChildren(getRoot()).length;
@@ -659,8 +660,6 @@ public class XViewer extends TreeViewer {
          if (!allItemsFiltered && filtered) {
             sb.append(XViewerText.get("status.filtered")); //$NON-NLS-1$
          }
-         sb.append(MessageFormat.format(XViewerText.get("status"), loadedNum, visibleNum, //$NON-NLS-1$
-            ((IStructuredSelection) getSelection()).size()));
          sb.append(MessageFormat.format(XViewerText.get("status"), loadedNum, visibleNum, //$NON-NLS-1$
             ((IStructuredSelection) getSelection()).size()));
          customizeMgr.appendToStatusLabel(sb);
