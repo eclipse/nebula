@@ -646,7 +646,6 @@ public class XViewer extends TreeViewer {
       } else {
          // Status Line 1
          int loadedNum = 0;
-         TreeItem[] treeItemArray = getTree().getItems();
          int visibleNum = getVisibleItemCount(getTree().getItems());
          if (getRoot() != null && ((ITreeContentProvider) getContentProvider()) != null) {
             loadedNum = ((ITreeContentProvider) getContentProvider()).getChildren(getRoot()).length;
