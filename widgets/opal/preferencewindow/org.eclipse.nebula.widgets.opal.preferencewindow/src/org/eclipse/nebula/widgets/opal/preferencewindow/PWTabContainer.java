@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors: Laurent CARON (laurent.caron at gmail dot com) - Initial
@@ -33,9 +33,9 @@ class PWTabContainer extends Composite {
 
 	private final List<PWTab> tabs;
 	private Composite container;
-	private Image oldButtonContainerImage;
 	private final List<FlatButton> buttons;
 	private Composite buttonContainer;
+	private final Color grey;
 
 	/**
 	 * Constructor
@@ -46,16 +46,18 @@ class PWTabContainer extends Composite {
 	 */
 	PWTabContainer(final Composite parent, final int style, final List<PWTab> tabs) {
 		super(parent, style);
-		this.tabs = new ArrayList<PWTab>();
+		this.tabs = new ArrayList<>();
 		this.tabs.addAll(tabs);
 
-		buttons = new ArrayList<FlatButton>();
+		buttons = new ArrayList<>();
 
 		final GridLayout gridLayout = new GridLayout(2, false);
 		gridLayout.marginWidth = gridLayout.marginHeight = 0;
 		gridLayout.horizontalSpacing = gridLayout.verticalSpacing = 0;
 		setLayout(gridLayout);
 
+		grey = new Color(getDisplay(), 204, 204, 204);
+		SWTGraphicUtil.addDisposer(this, grey);
 	}
 
 	/**
@@ -103,21 +105,12 @@ class PWTabContainer extends Composite {
 			final Rectangle rect = buttonContainer.getClientArea();
 			final Image image = new Image(getDisplay(), Math.max(1, rect.width), Math.max(1, rect.height));
 			final GC gc = new GC(image);
-			final Color grey = new Color(getDisplay(), 204, 204, 204);
 			gc.setForeground(grey);
 			gc.drawLine(0, rect.height - 1, rect.width, rect.height - 1);
-			grey.dispose();
 			gc.dispose();
 			buttonContainer.setBackgroundImage(image);
-			if (oldButtonContainerImage != null) {
-				oldButtonContainerImage.dispose();
-			}
-			oldButtonContainerImage = image;
-			SWTGraphicUtil.addDisposer(buttonContainer, oldButtonContainerImage);
+			image.dispose();
 		});
-		if (oldButtonContainerImage != null) {
-			SWTGraphicUtil.addDisposer(buttonContainer, oldButtonContainerImage);
-		}
 	}
 
 	/**
