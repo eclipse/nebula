@@ -9,3 +9,4 @@ target/
 *.patch
 class/
 *.class
+.metadata/
