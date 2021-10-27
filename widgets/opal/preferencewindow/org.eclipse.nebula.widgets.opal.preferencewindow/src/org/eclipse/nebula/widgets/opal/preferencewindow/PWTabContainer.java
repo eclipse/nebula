@@ -85,7 +85,6 @@ class PWTabContainer extends Composite {
 	private void createContainer() {
 		buttonContainer = new Composite(this, SWT.NONE);
 		final GridData buttonContainerGridData = new GridData(GridData.FILL, GridData.FILL, true, false, 2, 1);
-		buttonContainerGridData.heightHint = 63;
 		buttonContainer.setLayoutData(buttonContainerGridData);
 
 		buttonContainer.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
