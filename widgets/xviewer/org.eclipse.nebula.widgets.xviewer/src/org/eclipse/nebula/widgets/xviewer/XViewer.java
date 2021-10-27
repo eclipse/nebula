@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.viewers.ColumnViewerEditor;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -677,36 +678,30 @@ public class XViewer extends TreeViewer {
 
       // Display status lines
       String str = sb.toString();
-
       filterText.setText(str);
       filterText.getParent().getParent().layout();
       filterText.setToolTipText(str);
-      //Display display = new Display();
-      StyleRange filterStyleRange = new StyleRange();
+      filterText.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+      filterText.setWordWrap(false);
+      FontDescriptor boldDescriptor = FontDescriptor.createFrom(filterText.getFont()).setStyle(SWT.BOLD);
+      filterText.setFont(boldDescriptor.createFont(Display.getCurrent()));
 
       if (loading) {
-         filterStyleRange.start = 0;
-         filterStyleRange.length = 7;
-         filterStyleRange.fontStyle = SWT.BOLD;
-         filterStyleRange.foreground = Display.getCurrent().getSystemColor(SWT.COLOR_BLUE);
-         filterText.setStyleRange(filterStyleRange);
+         filterText.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));
       } else if (allItemsFiltered) {
+         StyleRange filterStyleRange = new StyleRange();
          filterStyleRange.start = 0;
-         filterStyleRange.length = 19;
-         filterStyleRange.fontStyle = SWT.BOLD;
+         filterStyleRange.length = 18;
          filterStyleRange.foreground = Display.getCurrent().getSystemColor(SWT.COLOR_RED);
          filterText.setStyleRange(filterStyleRange);
-      } else if (filtered) {
+      } else if (filtered && !allItemsFiltered) {
+         StyleRange filterStyleRange = new StyleRange();
          filterStyleRange.start = 0;
          filterStyleRange.length = 8;
-         filterStyleRange.fontStyle = SWT.BOLD;
          filterStyleRange.foreground = Display.getCurrent().getSystemColor(SWT.COLOR_RED);
          filterText.setStyleRange(filterStyleRange);
       } else {
-         filterStyleRange.start = 0;
-         filterStyleRange.length = 19;
-         filterStyleRange.foreground = Display.getCurrent().getSystemColor(SWT.COLOR_BLACK);
-         filterText.setStyleRange(filterStyleRange);
+         filterText.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
       }
    }
 
