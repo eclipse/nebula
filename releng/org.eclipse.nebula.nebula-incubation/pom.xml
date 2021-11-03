@@ -36,8 +36,6 @@ Contributors:
 	<modules>
 		<!-- Dependencies -->
 		<module>../org.eclipse.nebula.nebula-parent</module>
-		<module>../../examples/org.eclipse.nebula.examples</module>
-		<module>../../examples/org.eclipse.nebula.examples.feature</module>
 		<module>../org.eclipse.nebula.examples.incubation.feature</module>
 
 		<module>../../widgets/collapsiblebuttons</module>
