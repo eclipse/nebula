@@ -12,9 +12,21 @@
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	<modules>
-		<module>releng/org.eclipse.nebula.nebula-release</module>
-		<module>releng/org.eclipse.nebula.nebula-incubation</module>
-	</modules>
-
+	<profiles>
+ 		<profile>
+  			<id>release</id>
+   			<activation>
+           		<activeByDefault>true</activeByDefault>
+        	</activation>
+			<modules>
+				<module>releng/org.eclipse.nebula.nebula-release</module>	  
+			</modules>
+ 		</profile>
+		 <profile>
+  			<id>incubation</id>
+				<modules>
+					<module>releng/org.eclipse.nebula.nebula-incubation</module>
+				</modules>
+ 		</profile>
+	 </profiles>
 </project>
