@@ -20,7 +20,7 @@ jobs:
         distribution: 'temurin' # See 'Supported distributions' for available options
         java-version: ${{ matrix.java }}
     - name: Build released widgets
-      run: mvn clean verify -DskipTests --file pom.xml
+      run: mvn clean verify --file pom.xml
     - name: Build incubating widgets
       run: mvn clean verify -Pincubation -DskipTests --file pom.xml
   
