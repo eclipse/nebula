@@ -15,8 +15,6 @@ package org.eclipse.nebula.cwt.svg;
 
 import org.eclipse.nebula.cwt.test.AbstractVTestCase;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -45,15 +43,13 @@ public class SvgRenderTests extends AbstractVTestCase {
 		} catch (IllegalArgumentException e) {
 			img = null;
 		}
-		syncExec(new Runnable() {
-			public void run() {
-				if(svg.getTitle() != null) {
-					svgLbl.setText("SVG: \"" + svg.getTitle() + "\"");
-				} else {
-					svgLbl.setText("SVG");
-				}
-				svgComposite.setToolTipText(svg.getDescription());
+		syncExec(() -> {
+			if(svg.getTitle() != null) {
+				svgLbl.setText("SVG: \"" + svg.getTitle() + "\"");
+			} else {
+				svgLbl.setText("SVG");
 			}
+			svgComposite.setToolTipText(svg.getDescription());
 		});
 		redraw(imgComposite);
 		redraw(svgComposite);
@@ -83,24 +79,22 @@ public class SvgRenderTests extends AbstractVTestCase {
 		imgComposite = new Composite(shell, SWT.BORDER);
 		imgComposite.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		imgComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		imgComposite.addPaintListener(new PaintListener() {
-			public void paintControl(PaintEvent e) {
-				if(img == null) {
-					e.gc.drawString("Original is not available", 10, 10);
-				} else {
-					Rectangle ob = imgComposite.getClientArea();
-					Rectangle ib = img.getBounds();
-					float ar = ib.width / ib.height;
-					int w = (int) (ob.width);
-					int h = (int) (w / ar);
-					if(h > ob.height) {
-						h = ob.height;
-						w = (int) (h * ar);
-					}
-					int x = (ob.width-w)/2;
-					int y = (ob.height-h)/2;
-					e.gc.drawImage(img, 0, 0, ib.width, ib.height, x, y, w, h);
+		imgComposite.addPaintListener(e -> {
+			if(img == null) {
+				e.gc.drawString("Original is not available", 10, 10);
+			} else {
+				Rectangle ob = imgComposite.getClientArea();
+				Rectangle ib = img.getBounds();
+				float ar = ib.width / ib.height;
+				int w = (int) (ob.width);
+				int h = (int) (w / ar);
+				if(h > ob.height) {
+					h = ob.height;
+					w = (int) (h * ar);
 				}
+				int x = (ob.width-w)/2;
+				int y = (ob.height-h)/2;
+				e.gc.drawImage(img, 0, 0, ib.width, ib.height, x, y, w, h);
 			}
 		});
 
@@ -110,14 +104,12 @@ public class SvgRenderTests extends AbstractVTestCase {
 		svgComposite = new Composite(shell, SWT.BORDER | SWT.DOUBLE_BUFFERED);
 		svgComposite.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		svgComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		svgComposite.addPaintListener(new PaintListener() {
-			public void paintControl(PaintEvent e) {
-				if(svg == null) {
-					e.gc.drawText("loading...", 10, 10);
-				} else {
-					Rectangle bounds = svgComposite.getClientArea();
-					svg.apply(e.gc, bounds);
-				}
+		svgComposite.addPaintListener(e -> {
+			if(svg == null) {
+				e.gc.drawText("loading...", 10, 10);
+			} else {
+				Rectangle bounds = svgComposite.getClientArea();
+				svg.apply(e.gc, bounds);
 			}
 		});
 		
