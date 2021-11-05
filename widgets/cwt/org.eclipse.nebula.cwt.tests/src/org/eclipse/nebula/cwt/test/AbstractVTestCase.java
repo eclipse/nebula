@@ -71,13 +71,11 @@ public abstract class AbstractVTestCase extends TestCase {
 	boolean testing = false;
 
 	protected void assertUserConfirm(final String message) {
-		syncExec(new Runnable() {
-			public void run() {
-				MessageBox mb = new MessageBox(shell, SWT.YES | SWT.NO);
-				mb.setMessage(message);
-				mb.setText("User Confirmation");
-				tmpObj = mb.open();
-			}
+		syncExec(() -> {
+			MessageBox mb = new MessageBox(shell, SWT.YES | SWT.NO);
+			mb.setMessage(message);
+			mb.setText("User Confirmation");
+			tmpObj = mb.open();
 		});
 		assertTrue(message, tmpObj.equals(SWT.YES));
 	}
@@ -91,12 +89,10 @@ public abstract class AbstractVTestCase extends TestCase {
 	}
 
 	public void capture(final Control control, final String suffix) {
-		syncExec(new Runnable() {
-			public void run() {
-				Point location = control.getParent().toDisplay(control.getLocation());
-				Point size = control.getSize();
-				capture(new Rectangle(location.x, location.y, size.x, size.y), suffix);
-			}
+		syncExec(() -> {
+			Point location = control.getParent().toDisplay(control.getLocation());
+			Point size = control.getSize();
+			capture(new Rectangle(location.x, location.y, size.x, size.y), suffix);
 		});
 	}
 
@@ -170,12 +166,10 @@ public abstract class AbstractVTestCase extends TestCase {
 	}
 
 	public void capture(final VControl control, final String suffix) {
-		syncExec(new Runnable() {
-			public void run() {
-				Point location = control.toDisplay(control.getLocation());
-				Point size = control.getSize();
-				capture(new Rectangle(location.x, location.y, size.x, size.y), suffix);
-			}
+		syncExec(() -> {
+			Point location = control.toDisplay(control.getLocation());
+			Point size = control.getSize();
+			capture(new Rectangle(location.x, location.y, size.x, size.y), suffix);
 		});
 	}
 
@@ -184,11 +178,7 @@ public abstract class AbstractVTestCase extends TestCase {
 	}
 
 	public void captureScreen(final String suffix) {
-		syncExec(new Runnable() {
-			public void run() {
-				capture(display.getBounds(), suffix);
-			}
-		});
+		syncExec(() -> capture(display.getBounds(), suffix));
 	}
 
 	public void captureShell() {
@@ -196,11 +186,7 @@ public abstract class AbstractVTestCase extends TestCase {
 	}
 
 	public void captureShell(final String suffix) {
-		syncExec(new Runnable() {
-			public void run() {
-				capture(shell.getBounds(), suffix);
-			}
-		});
+		syncExec(() -> capture(shell.getBounds(), suffix));
 	}
 
 	public void click() {
@@ -256,25 +242,19 @@ public abstract class AbstractVTestCase extends TestCase {
 
 	public Control getFocusControl() {
 		synchronized (this) {
-			syncExec(new Runnable() {
-				public void run() {
-					tmpObj = display.getFocusControl();
-				}
-			});
+			syncExec(() -> tmpObj = display.getFocusControl());
 			return (Control) tmpObj;
 		}
 	}
 
 	public VPanel getPanel(final Control control) {
 		final ArrayList<VPanel> result = new ArrayList<VPanel>();
-		syncExec(new Runnable() {
-			public void run() {
-				Object o = control.getData("cwt_vcontrol");
-				if (o instanceof VPanel) {
-					result.add((VPanel) o);
-				} else {
-					result.add(null);
-				}
+		syncExec(() -> {
+			Object o = control.getData("cwt_vcontrol");
+			if (o instanceof VPanel) {
+				result.add((VPanel) o);
+			} else {
+				result.add(null);
 			}
 		});
 
@@ -285,11 +265,7 @@ public abstract class AbstractVTestCase extends TestCase {
 	public Composite getComposite(final VPanel panel) {
 
 		final ArrayList<Composite> result = new ArrayList<Composite>();
-		syncExec(new Runnable() {
-			public void run() {
-				result.add(panel.getComposite());
-			}
-		});
+		syncExec(() -> result.add(panel.getComposite()));
 
 		return result.get(0);
 	}
@@ -301,11 +277,7 @@ public abstract class AbstractVTestCase extends TestCase {
 	public boolean hasFocus(Control control) {
 		synchronized (this) {
 			processEvents();
-			syncExec(new Runnable() {
-				public void run() {
-					tmpObj = display.getFocusControl();
-				}
-			});
+			syncExec(() -> tmpObj = display.getFocusControl());
 			return tmpObj == control;
 		}
 	}
@@ -387,17 +359,15 @@ public abstract class AbstractVTestCase extends TestCase {
 	}
 
 	public void layoutShell() {
-		syncExec(new Runnable() {
-			public void run() {
-				if (defaultSize != null) {
-					shell.setSize(defaultSize);
-				} else if (shell.getChildren().length > 0) {
-					shell.pack();
-				}
-				Point size = shell.getSize();
-				Rectangle screen = display.getMonitors()[0].getBounds();
-				shell.setBounds((screen.width - size.x) / 2, (screen.height - size.y) / 2, size.x, size.y);
+		syncExec(() -> {
+			if (defaultSize != null) {
+				shell.setSize(defaultSize);
+			} else if (shell.getChildren().length > 0) {
+				shell.pack();
 			}
+			Point size = shell.getSize();
+			Rectangle screen = display.getMonitors()[0].getBounds();
+			shell.setBounds((screen.width - size.x) / 2, (screen.height - size.y) / 2, size.x, size.y);
 		});
 	}
 
@@ -468,214 +438,196 @@ public abstract class AbstractVTestCase extends TestCase {
 	}
 
 	public void move(final int x, final int y) {
-		display.syncExec(new Runnable() {
-			public void run() {
-				Point point = display.getCursorLocation();
+		display.syncExec(() -> {
+			Point point = display.getCursorLocation();
 
-				Event event = new Event();
-				event.type = SWT.MouseMove;
-				event.stateMask = stateMask;
-				event.x = point.x + x;
-				event.y = point.y + y;
-				display.post(event);
+			Event event = new Event();
+			event.type = SWT.MouseMove;
+			event.stateMask = stateMask;
+			event.x = point.x + x;
+			event.y = point.y + y;
+			display.post(event);
 
-				event.x += 1;
-				display.post(event);
-			}
+			event.x += 1;
+			display.post(event);
 		});
 		pause(delay);
 	}
 
 	public void moveTo(final Control control) {
-		syncExec(new Runnable() {
-			public void run() {
-				Point location = control.getParent().toDisplay(control.getLocation());
-				Point size = control.getSize();
+		syncExec(() -> {
+			Point location = control.getParent().toDisplay(control.getLocation());
+			Point size = control.getSize();
 
-				Event event = new Event();
-				event.type = SWT.MouseMove;
-				event.stateMask = stateMask;
-				event.x = location.x + (size.x / 2) - 1;
-				event.y = location.y + (size.y / 2);
-				display.post(event);
+			Event event = new Event();
+			event.type = SWT.MouseMove;
+			event.stateMask = stateMask;
+			event.x = location.x + (size.x / 2) - 1;
+			event.y = location.y + (size.y / 2);
+			display.post(event);
 
-				event.x += 1;
-				display.post(event);
-			}
+			event.x += 1;
+			display.post(event);
 		});
 		pause(delay);
 	}
 
 	public void moveTo(final int x, final int y) {
-		display.syncExec(new Runnable() {
-			public void run() {
-				Event event = new Event();
-				event.type = SWT.MouseMove;
-				event.stateMask = stateMask;
-				event.x = x;
-				event.y = y;
-				display.post(event);
+		display.syncExec(() -> {
+			Event event = new Event();
+			event.type = SWT.MouseMove;
+			event.stateMask = stateMask;
+			event.x = x;
+			event.y = y;
+			display.post(event);
 
-				event.x += 1;
-				display.post(event);
-			}
+			event.x += 1;
+			display.post(event);
 		});
 		pause(delay);
 	}
 
 	public void moveX(final int x) {
-		display.syncExec(new Runnable() {
-			public void run() {
-				Point location = getDisplay().getCursorLocation();
+		display.syncExec(() -> {
+			Point location = getDisplay().getCursorLocation();
 
-				Event event = new Event();
-				event.type = SWT.MouseMove;
-				event.stateMask = stateMask;
-				event.x = location.x + x;
-				event.y = location.y;
-				display.post(event);
+			Event event = new Event();
+			event.type = SWT.MouseMove;
+			event.stateMask = stateMask;
+			event.x = location.x + x;
+			event.y = location.y;
+			display.post(event);
 
-				event.x += 1;
-				display.post(event);
-			}
+			event.x += 1;
+			display.post(event);
 		});
 		pause(delay);
 	}
 
 	public void moveY(final int y) {
-		display.syncExec(new Runnable() {
-			public void run() {
-				Point location = getDisplay().getCursorLocation();
+		display.syncExec(() -> {
+			Point location = getDisplay().getCursorLocation();
 
-				Event event = new Event();
-				event.type = SWT.MouseMove;
-				event.stateMask = stateMask;
-				event.x = location.x;
-				event.y = location.y + y;
-				display.post(event);
+			Event event = new Event();
+			event.type = SWT.MouseMove;
+			event.stateMask = stateMask;
+			event.x = location.x;
+			event.y = location.y + y;
+			display.post(event);
 
-				event.x += 1;
-				display.post(event);
-			}
+			event.x += 1;
+			display.post(event);
 		});
 		pause(delay);
 	}
 
 	public void moveTo(final VControl control) {
-		syncExec(new Runnable() {
-			public void run() {
-				Point location = control.toDisplay(control.getLocation());
-				Point size = control.getSize();
+		syncExec(() -> {
+			Point location = control.toDisplay(control.getLocation());
+			Point size = control.getSize();
 
-				int multiplier = (control.getShell().getStyle() & SWT.LEFT_TO_RIGHT) == SWT.LEFT_TO_RIGHT ? 1 : -1;
+			int multiplier = (control.getShell().getStyle() & SWT.LEFT_TO_RIGHT) == SWT.LEFT_TO_RIGHT ? 1 : -1;
 
-				Event event = new Event();
-				event.type = SWT.MouseMove;
-				event.stateMask = stateMask;
-				event.x = location.x + ((size.x / 2) * multiplier) - 1;
-				event.y = location.y + (size.y / 2);
-				display.post(event);
-				processEvents();
-				event.x += 1;
-				display.post(event);
-			}
+			Event event = new Event();
+			event.type = SWT.MouseMove;
+			event.stateMask = stateMask;
+			event.x = location.x + ((size.x / 2) * multiplier) - 1;
+			event.y = location.y + (size.y / 2);
+			display.post(event);
+			processEvents();
+			event.x += 1;
+			display.post(event);
 		});
 		processEvents();
 		pause(delay);
 	}
 
 	public void moveToEdge(final Control control, final int edge) {
-		syncExec(new Runnable() {
-			public void run() {
-				Point location = control.toDisplay(control.getLocation());
-				Point size = control.getSize();
+		syncExec(() -> {
+			Point location = control.toDisplay(control.getLocation());
+			Point size = control.getSize();
 
-				Event event = new Event();
-				event.type = SWT.MouseMove;
-				event.stateMask = stateMask;
-				if ((edge & SWT.LEFT) != 0) {
-					event.x = location.x;
-				} else if ((edge & SWT.RIGHT) != 0) {
-					event.x = location.x + size.x - 1;
-				} else {
-					event.x = location.x + (size.x / 2) - 1;
-				}
-				if ((edge & SWT.TOP) != 0) {
-					event.y = location.y;
-				} else if ((edge & SWT.BOTTOM) != 0) {
-					event.y = location.y + size.y - 1;
-				} else {
-					event.y = location.y + (size.y / 2) - 1;
-				}
-				display.post(event);
-				processEvents();
-				event.x += 1;
-				display.post(event);
+			Event event = new Event();
+			event.type = SWT.MouseMove;
+			event.stateMask = stateMask;
+			if ((edge & SWT.LEFT) != 0) {
+				event.x = location.x;
+			} else if ((edge & SWT.RIGHT) != 0) {
+				event.x = location.x + size.x - 1;
+			} else {
+				event.x = location.x + (size.x / 2) - 1;
 			}
+			if ((edge & SWT.TOP) != 0) {
+				event.y = location.y;
+			} else if ((edge & SWT.BOTTOM) != 0) {
+				event.y = location.y + size.y - 1;
+			} else {
+				event.y = location.y + (size.y / 2) - 1;
+			}
+			display.post(event);
+			processEvents();
+			event.x += 1;
+			display.post(event);
 		});
 		processEvents();
 		pause(delay);
 	}
 
 	public void moveToEdge(final VControl control, final int edge) {
-		syncExec(new Runnable() {
-			public void run() {
-				Point location = control.toDisplay(control.getLocation());
-				Point size = control.getSize();
+		syncExec(() -> {
+			Point location = control.toDisplay(control.getLocation());
+			Point size = control.getSize();
 
-				Event event = new Event();
-				event.type = SWT.MouseMove;
-				event.stateMask = stateMask;
-				if ((edge & SWT.LEFT) != 0) {
-					event.x = location.x;
-				} else if ((edge & SWT.RIGHT) != 0) {
-					event.x = location.x + size.x - 1;
-				} else {
-					event.x = location.x + (size.x / 2) - 1;
-				}
-				if ((edge & SWT.TOP) != 0) {
-					event.y = location.y;
-				} else if ((edge & SWT.BOTTOM) != 0) {
-					event.y = location.y + size.y - 1;
-				} else {
-					event.y = location.y + (size.y / 2) - 1;
-				}
-				display.post(event);
-				processEvents();
-				event.x += 1;
-				display.post(event);
+			Event event = new Event();
+			event.type = SWT.MouseMove;
+			event.stateMask = stateMask;
+			if ((edge & SWT.LEFT) != 0) {
+				event.x = location.x;
+			} else if ((edge & SWT.RIGHT) != 0) {
+				event.x = location.x + size.x - 1;
+			} else {
+				event.x = location.x + (size.x / 2) - 1;
 			}
+			if ((edge & SWT.TOP) != 0) {
+				event.y = location.y;
+			} else if ((edge & SWT.BOTTOM) != 0) {
+				event.y = location.y + size.y - 1;
+			} else {
+				event.y = location.y + (size.y / 2) - 1;
+			}
+			display.post(event);
+			processEvents();
+			event.x += 1;
+			display.post(event);
 		});
 		processEvents();
 		pause(delay);
 	}
 
 	public void moveTo(final VControl control, final int step) {
-		syncExec(new Runnable() {
-			public void run() {
-				Point location = control.toDisplay(control.getLocation());
-				Point size = control.getSize();
-				Point start = display.getCursorLocation();
-				Point end = new Point(location.x + (size.x / 2), location.y + (size.y / 2));
-				int x = start.x;
-				int y = start.y;
+		syncExec(() -> {
+			Point location = control.toDisplay(control.getLocation());
+			Point size = control.getSize();
+			Point start = display.getCursorLocation();
+			Point end = new Point(location.x + (size.x / 2), location.y + (size.y / 2));
+			int x = start.x;
+			int y = start.y;
 
-				while (x < end.x || y < end.y) {
-					if (x < end.x) {
-						x += step;
-					}
-					if (y < end.y) {
-						y += step;
-					}
-					Event event = new Event();
-					event.type = SWT.MouseMove;
-					event.stateMask = stateMask;
-					event.x = x;
-					event.y = y;
-					display.post(event);
-					processEvents();
-					pause(10);
+			while (x < end.x || y < end.y) {
+				if (x < end.x) {
+					x += step;
 				}
+				if (y < end.y) {
+					y += step;
+				}
+				Event event = new Event();
+				event.type = SWT.MouseMove;
+				event.stateMask = stateMask;
+				event.x = x;
+				event.y = y;
+				display.post(event);
+				processEvents();
+				pause(10);
 			}
 		});
 		pause(delay);
@@ -693,10 +645,8 @@ public abstract class AbstractVTestCase extends TestCase {
 	}
 
 	public void processEvents() {
-		syncExec(new Runnable() {
-			public void run() {
-				while (display.readAndDispatch()) {
-				}
+		syncExec(() -> {
+			while (display.readAndDispatch()) {
 			}
 		});
 	}
@@ -706,11 +656,7 @@ public abstract class AbstractVTestCase extends TestCase {
 	}
 
 	public void redraw(final Control control) {
-		syncExec(new Runnable() {
-			public void run() {
-				control.redraw();
-			}
-		});
+		syncExec(() -> control.redraw());
 	}
 
 	public void releaseAllEvents() {
@@ -734,49 +680,46 @@ public abstract class AbstractVTestCase extends TestCase {
 
 		display = Display.getDefault();
 
-		display.syncExec(new Runnable() {
+		display.syncExec(() -> {
+			shell = createShell();
+			shell.setText(name);
+			shell.setLayout(new FillLayout());
 
-			public void run() {
-				shell = createShell();
-				shell.setText(name);
-				shell.setLayout(new FillLayout());
-
-				try {
-					setUp();
-				} catch (Exception e) {
-					exception = e;
-				}
-
-				layoutShell();
-				shell.open();
-
-				pause(500);
-				processEvents();
-
-				testing = true;
-
-				if (name.endsWith("_Sync")) {
-					t.run();
-				} else {
-					t.start();
-				}
-
-				while (testing && !shell.isDisposed()) {
-					if (!display.readAndDispatch()) {
-						display.sleep();
-					}
-				}
-
-				try {
-					tearDown();
-				} catch (Exception e) {
-					exception = e;
-				}
-
-				display.dispose();
-				display = null;
-
+			try {
+				setUp();
+			} catch (Exception e1) {
+				exception = e1;
 			}
+
+			layoutShell();
+			shell.open();
+
+			pause(500);
+			processEvents();
+
+			testing = true;
+
+			if (name.endsWith("_Sync")) {
+				t.run();
+			} else {
+				t.start();
+			}
+
+			while (testing && !shell.isDisposed()) {
+				if (!display.readAndDispatch()) {
+					display.sleep();
+				}
+			}
+
+			try {
+				tearDown();
+			} catch (Exception e2) {
+				exception = e2;
+			}
+
+			display.dispose();
+			display = null;
+
 		});
 
 		if (exception != null) {
