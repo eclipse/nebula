@@ -36,7 +36,9 @@ public class SvgRenderTests extends AbstractVTestCase {
 	private Label svgLbl;
 	private Image img;
 	private SvgDocument svg;
-	private Boolean success;
+	private boolean success;
+	// SET THIS TO TRUE TO MANUAL REVIEW THE ViSUAL DISPLAY
+	private boolean DEBUG = false;
 	
 	protected void runTest(String file) {
 		svg = SvgDocument.load(SvgRenderTests.class.getResourceAsStream("resources/"+file+".svg"));
@@ -58,19 +60,21 @@ public class SvgRenderTests extends AbstractVTestCase {
 		redraw(imgComposite);
 		redraw(svgComposite);
 		layoutShell();
-		while(success == null) {
+
+		// check that no exception is thrown
+		assertTrue(true);
+
+		while(!success && DEBUG) {
 			try {
 				Thread.sleep(100);
 			} catch(InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
-		assertTrue(success);
 	}
 	
 	@Override
 	protected void setUp() throws Exception {
-		success = null;
 		setDefaultShellSize(new Point(400, 600));
 		
 		Shell shell = getShell();
