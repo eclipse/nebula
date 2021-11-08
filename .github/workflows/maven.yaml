@@ -28,5 +28,7 @@ jobs:
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
           ${{ runner.os }}-maven-   
-    - name: Build with Maven
+    - name: Build related widgets
       run: xvfb-run mvn -V clean verify  -Dtycho.localArtifacts=ignore
+    - name: Build incubation widgets Maven
+      run: xvfb-run mvn -V clean verify -Pincubation  -Dtycho.localArtifacts=ignore
