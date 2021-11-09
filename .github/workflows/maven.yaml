@@ -32,3 +32,8 @@ jobs:
       run: xvfb-run mvn -V clean verify  -Dtycho.localArtifacts=ignore
     - name: Build incubation widgets Maven
       run: xvfb-run mvn -V clean verify -Pincubation  -Dtycho.localArtifacts=ignore
+    - name: Publish Unit Test Results
+      uses: EnricoMi/publish-unit-test-result-action@v1
+      if: always()
+      with:
+       files: ./**/target/surefire-reports/TEST-*.xml
