@@ -102,6 +102,8 @@ public class PWColorChooser extends PWWidget {
 		gc.dispose();
 
 		button.setImage(newImage);
+		
+		button.addDisposeListener(e -> newImage.dispose());
 	}
 
 	/**
