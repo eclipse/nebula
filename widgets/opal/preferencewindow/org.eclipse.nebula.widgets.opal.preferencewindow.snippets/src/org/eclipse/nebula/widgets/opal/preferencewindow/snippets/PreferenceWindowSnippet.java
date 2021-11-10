@@ -106,8 +106,8 @@ public class PreferenceWindowSnippet {
 	private static Map<String, Object> fillData() {
 		final Map<String, Object> data = new HashMap<String, Object>();
 		data.put("text", "A string");
-		data.put("int", new Integer(42));
-		data.put("float", new Float(3.14));
+		data.put("int", Integer.valueOf(42));
+		data.put("float", Float.valueOf((float) 3.14));
 		data.put("url", "http://www.google.fr/");
 		data.put("password", "password");
 		data.put("directory", "");
@@ -116,15 +116,15 @@ public class PreferenceWindowSnippet {
 		data.put("comboReadOnly", "Value 1");
 		data.put("combo", "Other Value");
 
-		data.put("cb1", new Boolean(true));
+		data.put("cb1", Boolean.valueOf(true));
 		// cb2 is not initialized
-		data.put("slider", new Integer(40));
-		data.put("spinner", new Integer(30));
+		data.put("slider", Integer.valueOf(40));
+		data.put("spinner", Integer.valueOf(30));
 		data.put("color", new RGB(120, 15, 30));
 		// font is not initialized
 
 		data.put("radio", "Radio button 3");
-		data.put("cb3", new Boolean(true));
+		data.put("cb3", Boolean.valueOf(true));
 
 		// cb4 to cb14 are not initialised
 
