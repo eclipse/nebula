@@ -102,9 +102,9 @@ public class PWRow extends PWRowGroup {
 
 				final GridData gd = new GridData(alignment, GridData.BEGINNING, grabExcessSpace, false, colSpan, 1);
 				gd.horizontalIndent = widget.getIndent();
-				gd.widthHint = widget.getWidth();
+				gd.minimumWidth = widget.getWidth();
 				if (widget.getHeight() != -1) {
-					gd.heightHint = widget.getHeight();
+					gd.minimumHeight = widget.getHeight();
 				}
 				control.setLayoutData(gd);
 			}
