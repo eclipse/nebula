@@ -36,9 +36,6 @@ public class PWRow extends PWRowGroup {
 		this.widgets = new ArrayList<PWWidget>();
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.PWContainer#add(org.eclipse.nebula.widgets.opal.preferencewindow.widgets.PWWidget)
-	 */
 	@Override
 	public PWContainer add(final PWWidget widget) {
 		this.widgets.add(widget);
@@ -46,9 +43,6 @@ public class PWRow extends PWRowGroup {
 		return this;
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.PWContainer#add(org.eclipse.nebula.widgets.opal.preferencewindow.PWContainer)
-	 */
 	@Override
 	public PWContainer add(final PWContainer element) {
 		if (element instanceof PWRow || element instanceof PWGroup) {
@@ -58,9 +52,6 @@ public class PWRow extends PWRowGroup {
 		}
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.PWContainer#build(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void build(final Composite parent) {
 		final int size = this.widgets.size();
@@ -111,9 +102,6 @@ public class PWRow extends PWRowGroup {
 		}
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.PWRowGroup#checkParent(org.eclipse.nebula.widgets.opal.preferencewindow.PWContainer)
-	 */
 	@Override
 	protected void checkParent(final PWContainer parent) {
 		if (parent instanceof PWTab || parent instanceof PWGroup) {
@@ -122,9 +110,6 @@ public class PWRow extends PWRowGroup {
 		throw new UnsupportedOperationException("Bad parent, should be only PWTab or PWGroup");
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.PWRowGroup#enableOrDisable()
-	 */
 	@Override
 	public void enableOrDisable() {
 		if (this.enabler == null) {
