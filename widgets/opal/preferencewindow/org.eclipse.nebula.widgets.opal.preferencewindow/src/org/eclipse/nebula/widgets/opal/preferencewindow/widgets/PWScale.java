@@ -45,9 +45,6 @@ public class PWScale extends PWWidget {
 		this.increment = increment;
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.widgets.PWWidget#build(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public Control build(final Composite parent) {
 		buildLabel(parent, GridData.CENTER);
@@ -64,9 +61,6 @@ public class PWScale extends PWWidget {
 		return scale;
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.widgets.PWWidget#check()
-	 */
 	@Override
 	public void check() {
 		final Object value = PreferenceWindow.getInstance().getValueFor(getPropertyKey());

@@ -46,9 +46,6 @@ public class PWRadio extends PWWidget {
 		buttons = new ArrayList<Button>();
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.widgets.PWWidget#build(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public Control build(final Composite parent) {
 		buildLabel(parent, GridData.BEGINNING);
@@ -76,9 +73,6 @@ public class PWRadio extends PWWidget {
 		return composite;
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.widgets.PWWidget#check()
-	 */
 	@Override
 	public void check() {
 		final Object value = PreferenceWindow.getInstance().getValueFor(getPropertyKey());
