@@ -130,10 +130,8 @@ public class PreferenceWindow {
 	 * @param rowGroup the widget
 	 */
 	public void addRowGroupLinkedTo(final String propertyKey, final PWRowGroup rowGroup) {
-		if (!values.containsKey(propertyKey)) {
-			values.put(propertyKey, new ValueAndAssociatedWidgets(null));
-		}
-		values.get(propertyKey).addRowGroup(rowGroup);
+		ValueAndAssociatedWidgets value = values.computeIfAbsent(propertyKey, k-> new ValueAndAssociatedWidgets(null));
+		value.addRowGroup(rowGroup);
 	}
 
 	/**
