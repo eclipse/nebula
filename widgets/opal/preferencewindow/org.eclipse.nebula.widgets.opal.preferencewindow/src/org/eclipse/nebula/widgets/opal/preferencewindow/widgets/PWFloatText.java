@@ -82,7 +82,7 @@ public class PWFloatText extends PWText {
 	public void check() {
 		final Object value = PreferenceWindow.getInstance().getValueFor(getPropertyKey());
 		if (value == null) {
-			PreferenceWindow.getInstance().setValue(getPropertyKey(), new Float(0));
+			PreferenceWindow.getInstance().setValue(getPropertyKey(), Float.valueOf(0));
 		} else {
 			if (!(value instanceof Float)) {
 				throw new UnsupportedOperationException("The property '" + getPropertyKey() + "' has to be a Float because it is associated to a float text widget");
