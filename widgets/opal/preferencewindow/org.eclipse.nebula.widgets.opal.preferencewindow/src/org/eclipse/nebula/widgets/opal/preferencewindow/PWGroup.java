@@ -124,9 +124,6 @@ public class PWGroup extends PWRowGroup {
 		return numberOfColumns;
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.PWRowGroup#checkParent(org.eclipse.nebula.widgets.opal.preferencewindow.PWContainer)
-	 */
 	@Override
 	protected void checkParent(final PWContainer parent) {
 		if (parent instanceof PWTab) {
@@ -135,9 +132,6 @@ public class PWGroup extends PWRowGroup {
 		throw new UnsupportedOperationException("Bad parent, should be only PWTab ");
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.PWRowGroup#enableOrDisable()
-	 */
 	@Override
 	public void enableOrDisable() {
 		if (enabler == null) {

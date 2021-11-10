@@ -55,9 +55,6 @@ public class PWTab extends PWContainer {
 		return this;
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.PWContainer#add(org.eclipse.nebula.widgets.opal.preferencewindow.widgets.PWWidget)
-	 */
 	@Override
 	public PWContainer add(final PWWidget widget) {
 		final PWRow row = new PWRow();
@@ -67,9 +64,6 @@ public class PWTab extends PWContainer {
 		return this;
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.PWContainer#build(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void build(final Composite parent) {
 		final int numberOfColumns = computeNumberOfColums();
