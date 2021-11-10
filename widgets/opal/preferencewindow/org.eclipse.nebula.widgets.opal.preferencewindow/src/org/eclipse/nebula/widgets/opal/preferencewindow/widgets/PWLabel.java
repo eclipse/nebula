@@ -37,9 +37,6 @@ public class PWLabel extends PWWidget {
 		setGrabExcessSpace(true);
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.widgets.PWWidget#build(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public Control build(final Composite parent) {
 		if (getLabel() == null) {
@@ -53,16 +50,10 @@ public class PWLabel extends PWWidget {
 		return labelWidget;
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.widgets.PWWidget#check()
-	 */
 	@Override
 	public void check() {
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.widgets.PWWidget#enableOrDisable()
-	 */
 	@Override
 	public boolean enableOrDisable() {
 		if (enabler == null) {

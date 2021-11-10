@@ -37,9 +37,6 @@ public class PWButton extends PWWidget {
 		this.listener = listener;
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.widgets.PWWidget#build(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public Control build(final Composite parent) {
 		final Button button = new Button(parent, SWT.PUSH);
@@ -57,9 +54,6 @@ public class PWButton extends PWWidget {
 
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.widgets.PWWidget#check()
-	 */
 	@Override
 	public void check() {
 	}

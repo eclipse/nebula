@@ -36,9 +36,6 @@ public class PWURLText extends PWText {
 		setWidth(200);
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.widgets.PWText#addVerifyListeners()
-	 */
 	@Override
 	public void addVerifyListeners() {
 		text.addListener(SWT.FocusOut, event -> {
@@ -53,9 +50,6 @@ public class PWURLText extends PWText {
 
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.widgets.PWWidget#check()
-	 */
 	@Override
 	public void check() {
 		final Object value = PreferenceWindow.getInstance().getValueFor(getPropertyKey());
@@ -80,17 +74,11 @@ public class PWURLText extends PWText {
 		}
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.widgets.PWText#convertValue()
-	 */
 	@Override
 	public Object convertValue() {
 		return text.getText();
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.widgets.PWText#getStyle()
-	 */
 	@Override
 	public int getStyle() {
 		return SWT.NONE;

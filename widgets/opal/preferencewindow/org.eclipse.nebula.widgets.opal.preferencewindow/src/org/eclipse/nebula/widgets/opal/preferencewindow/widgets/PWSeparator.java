@@ -58,9 +58,6 @@ public class PWSeparator extends PWWidget {
 		setHeight(20);
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.widgets.PWWidget#build(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public Control build(final Composite parent) {
 		final TitledSeparator sep = new TitledSeparator(parent, SWT.NONE);
@@ -70,9 +67,6 @@ public class PWSeparator extends PWWidget {
 		return sep;
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.widgets.PWWidget#check()
-	 */
 	@Override
 	public void check() {
 	}

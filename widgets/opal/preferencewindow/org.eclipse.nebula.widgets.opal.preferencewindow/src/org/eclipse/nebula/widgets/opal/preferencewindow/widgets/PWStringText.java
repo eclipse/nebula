@@ -31,16 +31,10 @@ public class PWStringText extends PWText {
 		super(label, propertyKey);
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.widgets.PWText#addVerifyListeners()
-	 */
 	@Override
 	public void addVerifyListeners() {
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.widgets.PWWidget#check()
-	 */
 	@Override
 	public void check() {
 		final Object value = PreferenceWindow.getInstance().getValueFor(getPropertyKey());
@@ -53,17 +47,11 @@ public class PWStringText extends PWText {
 		}
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.widgets.PWText#convertValue()
-	 */
 	@Override
 	public Object convertValue() {
 		return this.text.getText();
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.widgets.PWText#getStyle()
-	 */
 	@Override
 	public int getStyle() {
 		return SWT.NONE;
