@@ -41,9 +41,6 @@ public class PWSpinner extends PWWidget {
 		this.max = max;
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.widgets.PWWidget#build(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public Control build(final Composite parent) {
 		buildLabel(parent, GridData.CENTER);
@@ -61,9 +58,6 @@ public class PWSpinner extends PWWidget {
 		return spinner;
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.widgets.PWWidget#check()
-	 */
 	@Override
 	public void check() {
 		final Object value = PreferenceWindow.getInstance().getValueFor(getPropertyKey());

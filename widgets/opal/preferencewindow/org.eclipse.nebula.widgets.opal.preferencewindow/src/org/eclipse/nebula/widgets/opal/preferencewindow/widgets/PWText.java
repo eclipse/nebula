@@ -38,9 +38,6 @@ public abstract class PWText extends PWWidget {
 		setGrabExcessSpace(true);
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.widgets.PWWidget#build(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public Control build(final Composite parent) {
 		buildLabel(parent, GridData.CENTER);

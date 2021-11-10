@@ -55,9 +55,6 @@ public class PWCombo extends PWWidget {
 		this.editable = editable;
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.widgets.PWWidget#build(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public Control build(final Composite parent) {
 		buildLabel(parent, GridData.CENTER);
@@ -80,9 +77,6 @@ public class PWCombo extends PWWidget {
 		return combo;
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.widgets.PWWidget#check()
-	 */
 	@Override
 	public void check() {
 		final Object value = PreferenceWindow.getInstance().getValueFor(getPropertyKey());

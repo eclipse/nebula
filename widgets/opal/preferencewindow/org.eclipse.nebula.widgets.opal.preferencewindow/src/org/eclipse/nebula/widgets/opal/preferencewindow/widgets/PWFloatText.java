@@ -31,9 +31,6 @@ public class PWFloatText extends PWText {
 		super(label, propertyKey);
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.widgets.PWText#addVerifyListeners()
-	 */
 	@Override
 	public void addVerifyListeners() {
 		text.addListener(SWT.Verify, e -> {
@@ -75,9 +72,6 @@ public class PWFloatText extends PWText {
 		return true;
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.widgets.PWWidget#check()
-	 */
 	@Override
 	public void check() {
 		final Object value = PreferenceWindow.getInstance().getValueFor(getPropertyKey());
@@ -90,17 +84,11 @@ public class PWFloatText extends PWText {
 		}
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.widgets.PWText#convertValue()
-	 */
 	@Override
 	public Object convertValue() {
 		return Float.parseFloat(text.getText());
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.widgets.PWText#getStyle()
-	 */
 	@Override
 	public int getStyle() {
 		return SWT.NONE;

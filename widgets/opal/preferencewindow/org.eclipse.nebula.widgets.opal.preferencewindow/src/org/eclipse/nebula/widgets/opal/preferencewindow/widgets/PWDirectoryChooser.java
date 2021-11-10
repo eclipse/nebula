@@ -34,10 +34,6 @@ public class PWDirectoryChooser extends PWChooser {
 		super(label, propertyKey);
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.widgets.PWChooser#setButtonAction(org.eclipse.swt.widgets.Text,
-	 *      org.eclipse.swt.widgets.Button)
-	 */
 	@Override
 	protected void setButtonAction(final Text text, final Button button) {
 
@@ -55,9 +51,6 @@ public class PWDirectoryChooser extends PWChooser {
 		});
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.widgets.PWWidget#check()
-	 */
 	@Override
 	public void check() {
 		final Object value = PreferenceWindow.getInstance().getValueFor(getPropertyKey());
