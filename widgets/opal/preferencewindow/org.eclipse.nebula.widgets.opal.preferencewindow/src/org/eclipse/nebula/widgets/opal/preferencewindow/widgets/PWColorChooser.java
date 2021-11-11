@@ -46,9 +46,6 @@ public class PWColorChooser extends PWWidget {
 		super(label, propertyKey, label == null ? 1 : 2, false);
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.widgets.PWWidget#build(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public Control build(final Composite parent) {
 		final RGB rgb = (RGB) PreferenceWindow.getInstance().getValueFor(getPropertyKey());
@@ -106,9 +103,6 @@ public class PWColorChooser extends PWWidget {
 		button.addDisposeListener(e -> newImage.dispose());
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.widgets.PWWidget#check()
-	 */
 	@Override
 	public void check() {
 		final Object value = PreferenceWindow.getInstance().getValueFor(getPropertyKey());
