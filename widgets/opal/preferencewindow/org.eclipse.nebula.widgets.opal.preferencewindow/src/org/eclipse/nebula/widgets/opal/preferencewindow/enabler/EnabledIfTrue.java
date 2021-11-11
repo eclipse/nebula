@@ -29,9 +29,6 @@ public class EnabledIfTrue extends Enabler {
 		super(prop);
 	}
 
-	/**
-	 * @see org.eclipse.nebula.widgets.opal.preferencewindow.enabler.Enabler#isEnabled()
-	 */
 	@Override
 	public boolean isEnabled() {
 		final Object value = PreferenceWindow.getInstance().getValueFor(this.prop);
