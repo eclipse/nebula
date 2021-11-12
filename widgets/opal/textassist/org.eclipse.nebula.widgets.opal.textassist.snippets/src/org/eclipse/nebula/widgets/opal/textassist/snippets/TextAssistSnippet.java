@@ -45,7 +45,7 @@ public class TextAssistSnippet {
 				final List<String> returnedList = new ArrayList<String>();
 
 				for (final String country : EUROZONE) {
-					if (country.toLowerCase().startsWith(entry.toLowerCase())) {
+					if (country.toLowerCase().matches(".*?"+ entry.toLowerCase() + ".*?")) {
 						returnedList.add(country);
 					}
 				}
@@ -57,8 +57,9 @@ public class TextAssistSnippet {
 		final Label lblTextAssist = new Label(shell, SWT.NONE);
 		lblTextAssist.setText("Text field with text assist:");
 
-		final TextAssist textAssist = new TextAssist(shell, SWT.SINGLE | SWT.BORDER, contentProvider);
+		final TextAssist textAssist = new TextAssist(shell, SWT.SINGLE | SWT.BORDER);
 		textAssist.setLayoutData(new GridData(150, SWT.DEFAULT));
+		textAssist.setContentProvider(contentProvider);
 
 		new Label(shell, SWT.NONE);
 		final Label lblSimpleText = new Label(shell, SWT.NONE);
