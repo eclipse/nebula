@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011-2020 Laurent CARON.
+ * Copyright (c) 2011-2021 Laurent CARON and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.nebula.widgets.opal.textassist;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.nebula.widgets.opal.commons.SWTGraphicUtil;
@@ -56,33 +57,35 @@ public class TextAssist extends Composite {
 	private boolean useSingleClick = false;
 
 	/**
-	 * Constructs a new instance of this class given its parent and a style
-	 * value describing its behavior and appearance.
+	 * Constructs a new instance of this class given its parent and a style value
+	 * describing its behavior and appearance.
 	 * <p>
 	 * The style value is either one of the style constants defined in class
-	 * <code>SWT</code> which is applicable to instances of this class, or must
-	 * be built by <em>bitwise OR</em>'ing together (that is, using the
-	 * <code>int</code> "|" operator) two or more of those <code>SWT</code>
-	 * style constants. The class description lists the style constants that are
+	 * <code>SWT</code> which is applicable to instances of this class, or must be
+	 * built by <em>bitwise OR</em>'ing together (that is, using the
+	 * <code>int</code> "|" operator) two or more of those <code>SWT</code> style
+	 * constants. The class description lists the style constants that are
 	 * applicable to the class. Style bits are also inherited from superclasses.
 	 * </p>
 	 *
-	 * @param parent a composite control which will be the parent of the new
-	 *            instance (cannot be null)
-	 * @param style the style of control to construct
+	 * @param parent          a composite control which will be the parent of the
+	 *                        new instance (cannot be null)
+	 * @param style           the style of control to construct
 	 * @param contentProvider the content provider
 	 *
 	 * @exception IllegalArgumentException
-	 *                <ul>
-	 *                <li>ERROR_NULL_ARGUMENT - if the parent is null</li>
-	 *                </ul>
+	 *                                     <ul>
+	 *                                     <li>ERROR_NULL_ARGUMENT - if the parent
+	 *                                     is null</li>
+	 *                                     </ul>
 	 * @exception SWTException
-	 *                <ul>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
-	 *                thread that created the parent</li>
-	 *                <li>ERROR_INVALID_SUBCLASS - if this class is not an
-	 *                allowed subclass</li>
-	 *                </ul>
+	 *                                     <ul>
+	 *                                     <li>ERROR_THREAD_INVALID_ACCESS - if not
+	 *                                     called from the thread that created the
+	 *                                     parent</li>
+	 *                                     <li>ERROR_INVALID_SUBCLASS - if this
+	 *                                     class is not an allowed subclass</li>
+	 *                                     </ul>
 	 *
 	 * @see SWT#SINGLE
 	 * @see SWT#MULTI
@@ -119,7 +122,63 @@ public class TextAssist extends Composite {
 				popup.setVisible(false);
 			});
 		}
+	}
 
+	/**
+	 * Constructs a new instance of this class with a default content provider given
+	 * its parent and a style value describing its behavior and appearance.
+	 * <p>
+	 * Call {@link #setContentProvider(TextAssistContentProvider)} after this call
+	 * to replace the default content provider.
+	 * <p>
+	 * The style value is either one of the style constants defined in class
+	 * <code>SWT</code> which is applicable to instances of this class, or must be
+	 * built by <em>bitwise OR</em>'ing together (that is, using the
+	 * <code>int</code> "|" operator) two or more of those <code>SWT</code> style
+	 * constants. The class description lists the style constants that are
+	 * applicable to the class. Style bits are also inherited from superclasses.
+	 * </p>
+	 *
+	 * @param parent a composite control which will be the parent of the new
+	 *               instance (cannot be null)
+	 * @param style  the style of control to construct
+	 *
+	 * @exception IllegalArgumentException
+	 *                                     <ul>
+	 *                                     <li>ERROR_NULL_ARGUMENT - if the parent
+	 *                                     is null</li>
+	 *                                     </ul>
+	 * @exception SWTException
+	 *                                     <ul>
+	 *                                     <li>ERROR_THREAD_INVALID_ACCESS - if not
+	 *                                     called from the thread that created the
+	 *                                     parent</li>
+	 *                                     <li>ERROR_INVALID_SUBCLASS - if this
+	 *                                     class is not an allowed subclass</li>
+	 *                                     </ul>
+	 *
+	 * @see SWT#SINGLE
+	 * @see SWT#MULTI
+	 * @see SWT#READ_ONLY
+	 * @see SWT#WRAP
+	 * @see SWT#LEFT
+	 * @see SWT#RIGHT
+	 * @see SWT#CENTER
+	 * @see SWT#PASSWORD
+	 * @see SWT#SEARCH
+	 * @see SWT#ICON_SEARCH
+	 * @see SWT#ICON_CANCEL
+	 * @see Widget#checkSubclass
+	 * @see Widget#getStyle
+	 */
+	public TextAssist(final Composite parent, final int style) {
+		this(parent, style, new TextAssistContentProvider() {
+
+			@Override
+			public List<String> getContent(String entry) {
+				return Arrays.asList(new String[] { "No TextAssistContentProvider Set" });
+			}
+		});
 	}
 
 	private void addTextListener() {
@@ -160,33 +219,33 @@ public class TextAssist extends Composite {
 	private Listener createKeyDownListener() {
 		return event -> {
 			switch (event.keyCode) {
-				case SWT.ARROW_DOWN:
-					if (!popup.isVisible()) {
-						event.doit = false;
-						break;
-					}
-					int index = (table.getSelectionIndex() + 1) % table.getItemCount();
-					table.setSelection(index);
+			case SWT.ARROW_DOWN:
+				if (!popup.isVisible()) {
 					event.doit = false;
 					break;
-				case SWT.ARROW_UP:
-					index = table.getSelectionIndex() - 1;
-					if (index < 0) {
-						index = table.getItemCount() - 1;
-					}
-					table.setSelection(index);
-					event.doit = false;
-					break;
-				case SWT.CR:
-				case SWT.KEYPAD_CR:
-					if (popup.isVisible() && table.getSelectionIndex() != -1) {
-						text.setText(table.getSelection()[0].getText());
-						popup.setVisible(false);
-					}
-					break;
-				case SWT.ESC:
+				}
+				int index = (table.getSelectionIndex() + 1) % table.getItemCount();
+				table.setSelection(index);
+				event.doit = false;
+				break;
+			case SWT.ARROW_UP:
+				index = table.getSelectionIndex() - 1;
+				if (index < 0) {
+					index = table.getItemCount() - 1;
+				}
+				table.setSelection(index);
+				event.doit = false;
+				break;
+			case SWT.CR:
+			case SWT.KEYPAD_CR:
+				if (popup.isVisible() && table.getSelectionIndex() != -1) {
+					text.setText(table.getSelection()[0].getText());
 					popup.setVisible(false);
-					break;
+				}
+				break;
+			case SWT.ESC:
+				popup.setVisible(false);
+				break;
 			}
 		};
 	}
@@ -262,7 +321,7 @@ public class TextAssist extends Composite {
 		return event -> TextAssist.this.getDisplay().asyncExec(() -> {
 			if (TextAssist.this.isDisposed() || TextAssist.this.getDisplay().isDisposed()) {
 				return;
-			} 
+			}
 			final Control control = TextAssist.this.getDisplay().getFocusControl();
 			if (control == null && SWTGraphicUtil.isLinux()) {
 				return;
@@ -596,17 +655,19 @@ public class TextAssist extends Composite {
 	/**
 	 * Returns the single click enabled flag.
 	 * <p>
-	 * If the the single click flag is true, the user can select an entry with a single click.
-	 * Otherwise, the user can select an entry with a double click.
+	 * If the the single click flag is true, the user can select an entry with a
+	 * single click. Otherwise, the user can select an entry with a double click.
 	 * </p>
 	 *
 	 * @return whether or not single is enabled
 	 *
 	 * @exception SWTException
-	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 *                </ul>
+	 *                         <ul>
+	 *                         <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                         disposed</li>
+	 *                         <li>ERROR_THREAD_INVALID_ACCESS - if not called from
+	 *                         the thread that created the receiver</li>
+	 *                         </ul>
 	 */
 	public boolean getUseSingleClick() {
 		checkWidget();
@@ -800,17 +861,19 @@ public class TextAssist extends Composite {
 	/**
 	 * Sets the single click enabled flag.
 	 * <p>
-	 * If the the single click flag is true, the user can select an entry with a single click.
-	 * Otherwise, the user can select an entry with a double click.
+	 * If the the single click flag is true, the user can select an entry with a
+	 * single click. Otherwise, the user can select an entry with a double click.
 	 * </p>
 	 *
 	 * @param singleClick the new single click flag
 	 *
 	 * @exception SWTException
-	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 *                </ul>
+	 *                         <ul>
+	 *                         <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                         disposed</li>
+	 *                         <li>ERROR_THREAD_INVALID_ACCESS - if not called from
+	 *                         the thread that created the receiver</li>
+	 *                         </ul>
 	 */
 	public void setUseSingleClick(boolean singleClick) {
 		checkWidget();
