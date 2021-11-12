@@ -28,9 +28,9 @@ jobs:
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
           ${{ runner.os }}-maven-   
-    - name: Build related widgets
+    - name: Build Stable Widgets
       run: xvfb-run mvn -V clean verify  -Dtycho.localArtifacts=ignore
-    - name: Build incubation widgets Maven
+    - name: Build Incubation Widgets
       run: xvfb-run mvn -V clean verify -Pincubation  -Dtycho.localArtifacts=ignore
     - name: Publish Unit Test Results
       uses: EnricoMi/publish-unit-test-result-action@v1
