@@ -23,10 +23,13 @@ import org.eclipse.nebula.widgets.opal.commons.ResourceManager;
 import org.eclipse.nebula.widgets.opal.commons.SWTGraphicUtil;
 import org.eclipse.nebula.widgets.opal.preferencewindow.widgets.PWWidget;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
@@ -181,10 +184,15 @@ public class PreferenceWindow {
 	 * Builds the buttons
 	 */
 	private void buildButtons() {
-		final Button buttonOK = new Button(shell, SWT.PUSH);
+		
+		Composite parent = new Composite(shell,SWT.NONE);
+		parent.setLayoutData(new GridData(SWT.RIGHT, SWT.BEGINNING, true, false));
+
+		parent.setLayout(new GridLayout(2, false));
+		final Button buttonOK = new Button(parent, SWT.PUSH);
 		buttonOK.setText(ResourceManager.getLabel(ResourceManager.APPLY));
 		final GridData gridDataOk = new GridData(GridData.END, GridData.END, true, false);
-		gridDataOk.widthHint = 100;
+		gridDataOk.minimumWidth = 100;
 		buttonOK.setLayoutData(gridDataOk);
 		buttonOK.addListener(SWT.Selection, e -> {
 			returnedValue = true;
@@ -192,10 +200,10 @@ public class PreferenceWindow {
 		});
 		shell.setDefaultButton(buttonOK);
 
-		final Button buttonCancel = new Button(shell, SWT.PUSH);
+		final Button buttonCancel = new Button(parent, SWT.PUSH);
 		buttonCancel.setText(ResourceManager.getLabel(ResourceManager.CLOSE));
-		final GridData gridDataCancel = new GridData(GridData.BEGINNING, GridData.END, false, false);
-		gridDataCancel.widthHint = 100;
+		final GridData gridDataCancel = new GridData(GridData.BEGINNING, GridData.END, true, false);
+		gridDataCancel.minimumWidth = 100;
 		buttonCancel.setLayoutData(gridDataCancel);
 		buttonCancel.addListener(SWT.Selection, e -> {
 			returnedValue = false;
